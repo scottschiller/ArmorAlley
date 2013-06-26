@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+<title>Armor Alley (prototype)</title>
+ <meta name="description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Apple Macintosh, later ported to the PC. Written for fun as a prototype / demo of JavaScript and browser capabilities." />
+ <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, animation, CSS3, arcade, retro, browser game" />
+ <meta name="author" content="Scott Schiller" />
+ <link rel="stylesheet" media="screen" href="css/aa.css" />
+ <script type="text/javascript" src="script/soundmanager2.js"></script>
+ <script type="text/javascript" src="script/aa.js"></script>
+</head>
+<body>
+
+<div id="aa">
+
+  <div id="world-wrapper">
+
+    <div id="world">
+
+      <div id="top-bar">
+
+       <div id="game-status-bar">
+
+        <div id="world-map">
+        </div>
+
+        <ul id="game-status">
+         <li> Funds: 0</li>
+         <li>Score: 0</li>
+        </ul>
+
+       </div>
+
+       <div id="player-status-bar">
+
+        <ul>
+         <li> Lives: 3</li>
+         <li>Infantry: 3</li>
+         <li>Missiles: 2</li>
+         <li>Ammo: &infin;</li>
+         <li>Bombs: &infin;</li>
+        </ul>
+
+        <div id="fuel-bar">
+         <div id="fuel-line"></div>
+        </div>
+
+       </div>
+
+      </div>
+
+      <div id="battlefield">
+		<!-- world goes here -->
+      </div>
+
+    </div>
+
+    <div style="position:absolute;bottom:0px;left:0px;margin-bottom:-2em;color:#666">&nbsp;Shift / ctrl to fire.</div>
+
+  </div>
+
+  <noscript>
+    <p>This game isn't going to work unless you have JavaScript enabled.</p>
+  </noscript>
+
+</div>
+
+</body>

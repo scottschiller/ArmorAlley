@@ -1,0 +1,460 @@
+html,
+body {
+ margin: 0px;
+ padding: 0px;
+}
+
+body {
+ font-family: verdana, tahoma, sans-serif;
+ font-size: 1em;
+ background: #111;
+ color: #fff;
+ -webkit-font-smoothing: none;
+ font-smooth: never;
+}
+
+#aa {
+}
+
+#world-wrapper {
+ position: absolute;
+ top: 50%;
+ left: 0px;
+ height: 384px;
+ width: 100%;
+
+/*
+ left: 50%;
+ width: 512px;
+ margin-left: -256px;
+*/
+
+ border-bottom: 2px solid #666;
+ margin-top: -192px;
+ background: #000;
+ font-size: 11px;
+ font-weight: bold;
+}
+
+#game-status-bar {
+ border: 1px solid rgb(23,160,7);
+ border-left: none;
+ border-right: none;
+ padding: 1px 0px;
+}
+
+#game-status {
+ position: absolute;
+ top: 6px;
+ left: 0px;
+}
+
+#game-status-bar #world-map {
+ height: 32px;
+}
+
+#player-status-bar {
+ line-height: 24px;
+}
+
+#aa ul,
+#aa ul li {
+ margin: 0px;
+ padding: 0px;
+}
+
+#aa ul {
+ list-style-type: none;
+}
+
+#aa ul li {
+ display: inline-block;
+ min-width: 19%;
+}
+
+#fuel-bar {
+ position: relative;
+ height: 5px;
+ background: #fff url(../image/fuel-bar-background.png);
+}
+
+#fuel-bar #fuel-line {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ width: 90%;
+ height: 100%;
+ background: #fff;
+}
+
+#world-wrapper {
+	background: transparent url(../image/star-background.png);
+}
+
+#top-bar {
+	background: #000;
+}
+
+#world {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+#battlefield {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 8192px;
+	height: 100%;
+}
+
+#world .sprite {
+	position: absolute;
+	bottom: 0px;
+	left: -128px; /* initially, position off-screen */
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	z-index: 1;
+	-moz-pointer-events: none;
+	pointer-events: none;
+}
+
+#world .balloon-bunker,
+#world .balloon-bunker.enemy {
+	background-image: url(../image/bunker.png);
+	width: 51px;
+	height: 25px;
+}
+
+#world .balloon-bunker.enemy {
+	background-image: url(../image/bunker-enemy.png);
+}
+
+#world .balloon,
+#world .balloon.enemy {
+	background-image: url(../image/balloon.png);
+    left: 0px;
+	width: 36px;
+	height: 14px;
+	z-index: 2;
+}
+
+#world .balloon.enemy {
+	background-image: url(../image/balloon-enemy.png);
+}
+
+#world .balloon-chain {
+	width: 0px;
+	border: 1px dotted #fff;
+	bottom: 27px;
+	left: 50%;
+	margin-left: -2px;
+}
+
+#world .missile-launcher {
+	background-image: url(../image/missile-launcher.png);
+	width: 52px;
+	height: 17px;
+	z-index: 2;
+}
+
+#world .tank,
+#world .tank.enemy {
+	background-image: url(../image/tank.gif);
+	width: 57px;
+	height: 18px;
+	z-index: 2;
+}
+
+#world .tank.enemy {
+	background-image: url(../image/tank-enemy.gif);
+}
+
+#world .tank.enemy.smouldering-phase-2 {
+	background-image: url(../image/tank-enemy-smouldering-phase-2.gif);
+	width: 58px;
+	height: 22px;
+}
+
+@-webkit-keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+@-moz-keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+@keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+#world .tank.enemy.exploding {
+	width: 54px;
+	height: 25px;
+	background-image: url(../image/tank-explosion.png);
+	background-position: 0px -250px; /* default state */
+	-webkit-animation: genericexplosion 1s steps(10);
+	-moz-animation: genericexplosion 1s steps(10);
+	animation: genericexplosion 1s steps(10);
+}
+
+#world .van {
+	background-image: url(../image/van.png);
+	width: 38px;
+	height: 16px;
+	z-index: 2;
+}
+
+#world .helicopter {
+	background-image: url(../image/helicopter.png);
+	bottom: auto;
+	top: 0px;
+	width: 48px;
+	height: 15px;
+	z-index: 2;
+}
+
+#world .helicopter.tilt, /* default case */
+#world .helicopter.facing-right.tilt {
+	background-image: url(../image/helicopter-lr-tilt-down.gif);
+	width: 51px;
+	height: 21px;
+}
+
+#world .helicopter.moving-left.tilt {
+	background-image: url(../image/helicopter-lr-tilt-up.gif);
+	width: 51px;
+	height: 21px;
+}
+
+#world .helicopter.facing-left.tilt {
+	background-image: url(../image/helicopter-rl-tilt-down.gif);
+	width: 51px;
+	height: 21px;
+}
+
+#world .helicopter.moving-left.facing-right.tilt {
+	background-image: url(../image/helicopter-lr-tilt-up.gif);
+	width: 51px;
+	height: 21px;
+}
+
+#world .helicopter.moving-right.facing-left.tilt {
+	background-image: url(../image/helicopter-rl-tilt-up.gif);
+	width: 51px;
+	height: 21px;
+}
+
+#world .helicopter.rotated-left,
+#world .helicopter.rotated-right {
+	background-image: url(../image/helicopter-rotating.png) !important;
+	width: 50px;
+	height: 20px;
+	-webkit-animation: rotateleft 0.33s steps(3);
+	-moz-animation: rotateleft 0.33s steps(3);
+	animation: rotateleft 0.33s steps(3);
+}
+
+#world .helicopter.rotated-right {
+	width: 50px;
+	height: 20px;
+	-webkit-animation: rotateright 0.33s steps(3);
+	-moz-animation: rotateright 0.33s steps(3);
+	animation: rotateright 0.33s steps(3);
+}
+
+@-webkit-keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@-moz-keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@-webkit-keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+@-moz-keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+@keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+#world .helicopter-gunfire {
+	position: absolute;
+	width: 2px;
+	height: 1px;
+	background: #ccc;
+	background-color: rgb(156,159,8);
+	z-index: 2;
+}
+
+#world .base {
+	background-image: url(../image/base.gif);
+	width: 102px;
+	height: 25px;
+}
+
+#world .end-bunker {
+	background-image: url(../image/end-bunker.png);
+	width: 39px;
+	height: 17px;
+}
+
+#world .barb-wire {
+	background-image: url(../image/barb-wire.png);
+	width: 16px;
+	height: 10px;
+}
+
+#world .cactus {
+	background-image: url(../image/cactus.png);
+	width: 8px;
+	height: 16px;
+}
+
+#world .base-landing-pad {
+	background-image: url(../image/base-landing-pad.gif);
+	width: 87px;
+	height: 7px;
+}
+
+#world .checkmark-grass {
+	background-image: url(../image/checkmark-grass.png);
+	width: 13px;
+	height: 10px;
+}
+
+#world .flower {
+	background-image: url(../image/flower.png);
+	width: 9px;
+	height: 7px;
+}
+
+#world .flowers {
+	background-image: url(../image/flowers.png);
+	width: 32px;
+	height: 10px;
+}
+
+#world .tree {
+	background-image: url(../image/tree.png);
+	width: 24px;
+	height: 26px;
+}
+
+#world .palm-tree {
+	background-image: url(../image/palm-tree.png);
+	width: 16px;
+	height: 21px;
+}
+
+#world .right-arrow-sign {
+	background-image: url(../image/right-arrow-sign.png);
+	width: 26px;
+	height: 24px;
+}
+
+#world .helicopter,
+#world .helicopter.facing-left,
+#world .helicopter.facing-right {
+	background-image: url(../image/helicopter-lr.gif);
+	width: 48px;
+	height: 15px;
+	z-index: 3;
+}
+
+#world .helicopter.facing-left {
+	background-image: url(../image/helicopter-rl.gif);
+}
+
+@-webkit-keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+@-moz-keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+@keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+@-webkit-keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+@-moz-keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+@keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+
+#world .bomb {
+	background-image: url(../image/bomb.png);
+	background-position: 0px -22px; /* default for when animation finishes: down state */
+	width: 11px;
+	height: 11px;
+	z-index: 3;
+}
+
+#world .bomb.dropping {
+	-webkit-animation: bomb 1s steps(3);
+	-moz-animation: bomb 1s steps(3);
+	animation: bomb 1s steps(3);
+}
+
+#world .bomb.dropping.spark,
+#world .bomb.dropping.explosion-large {
+	-webkit-animation: none;
+	-moz-animation:  none;
+	animation: none;
+	background-image: url(../image/explosion-spark.png);
+	background-position: 0px 0px;
+	width: 5px;
+	height: 5px;
+	top: auto !important;
+	bottom: 3px !important;
+}
+
+#world .bomb.dropping.explosion-large {
+	-webkit-animation: largeexplosion 0.5s steps(5);
+	-moz-animation: largeexplosion 0.5s steps(5);
+	animation: largeexplosion 0.5s steps(5);
+	background-image: url(../image/explosion-large.png);
+	/* default state */
+	background-position: 0px -110px;
+	width: 51px;
+	height: 22px;
+	margin-left: -26px;
+	bottom: 0px !important;
+}
