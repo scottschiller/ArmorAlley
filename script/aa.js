@@ -159,7 +159,8 @@
       missileLaunchers: [],
       tanks: [],
       vans: [],
-      helicopters: []
+      helicopters: [],
+      radar: null
     }
 
     function createObjects() {
@@ -167,6 +168,8 @@
       objects.gameLoop = new GameLoop();
 
       objects.view = new View();
+
+      objects.radar = new Radar();
 
       objects.balloonBunkers.push(new BalloonBunker({
         x: 1024
@@ -548,6 +551,118 @@
 
   }
 
+  function Radar() {
+
+    var data, css, dom, exports, objects;
+
+    objects = {
+      items: []
+    }
+
+    data = {
+      frameCount: 0,
+      animateModulus: 1 // TODO: review
+    }
+
+    dom = {
+      radar: null,
+      radarItem: null
+    }
+
+    function animate() {
+
+      var i, j, battleFieldWidth, battleFieldHeight;
+
+      data.frameCount++;
+
+      if (data.frameCount % data.animateModulus === 0) {
+
+        // move all radar items
+
+        battleFieldWidth = game.objects.view.data.battleField.width;
+        battleFieldHeight = game.objects.view.data.battleField.height;
+
+        for (i=0, j=objects.items.length; i<j; i++) {
+          // TODO: optimize
+          objects.items[i].o.style.left = (((objects.items[i].oParent.data.x + (objects.items[i].oParent.data.xOffset || 0)) / battleFieldWidth) * 100) + '%';
+          if (objects.items[i].oParent.data.y) {
+            objects.items[i].o.style.top = (objects.items[i].oParent.data.y/battleFieldHeight * 100) + '%';
+          }
+        }
+
+      }
+
+    }
+
+    function addItem(item, className) {
+
+      var itemObject, o;
+
+      o = dom.radarItem.cloneNode(true);
+
+      o.className = 'radar-item ' + className;
+
+      objects.items.push({
+        o: o,
+        oParent: item,
+        die: function() {
+          o.parentNode.removeChild(o);
+          o = null;
+          itemObject = null;
+        }
+      });
+
+      itemObject = objects.items[objects.items.length-1];
+
+      dom.radar.appendChild(o);
+
+      return itemObject;
+
+    }
+
+    function removeItem(item) {
+
+      console.log('radar.removeItem()', item);
+
+      // look up item
+      var i, j, foundItem;
+
+      // find and remove from DOM + array
+      for (i=items.length, j=0; i>j; i--) {
+        if (items[i].oParent === item) {
+          console.log('radar.removeItem(): found match', item);
+          items[i].o.parentNode.removeChild(items[i].o);
+          items.splice(i, 1);
+          foundItem = true;
+          break;
+        }
+      }
+
+      if (!foundItem) {
+        console.log('radar.removeItem(): Warn: No match found for item', item);
+      }
+
+    }
+
+    function init() {
+
+      dom.radar = document.getElementById('radar');
+
+      dom.radarItem = document.createElement('div');
+
+    }
+
+    init();
+
+    exports = {
+      addItem: addItem,
+      animate: animate
+    };
+
+    return exports;
+
+  }
+
   function GameLoop() {
 
     var data, timer, exports;
@@ -566,8 +681,14 @@
 
       for (item in gameObjects) {
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
-          for (i = 0, j = gameObjects[item].length; i < j; i++) {
-            gameObjects[item][i].animate();
+          // single object case
+          if (gameObjects[item].animate) {
+            gameObjects[item].animate();
+          } else {
+            // array case
+            for (i = 0, j = gameObjects[item].length; i < j; i++) {
+              gameObjects[item][i].animate();
+            }
           }
         }
       }
@@ -621,6 +742,7 @@
       isEnemy: options.isEnemy || false,
       leftMargin: options.leftMargin || 0,
       x: options.x || 0,
+      xOffset: 0,
       y: options.y || 0
     }
 
@@ -629,7 +751,7 @@
     }
 
     objects = {
-      balloon: null
+      base: options.base || null
     }
 
     function animate() {
@@ -681,17 +803,22 @@
         options.oParent.appendChild(dom.o);
       }
 
+      // TODO: review when balloon gets separated from base
+      data.xOffset = (objects.base ? objects.base.data.x : 0)
+
       data.y = Math.random() * 100;
 
-    }
+      game.objects.radar.addItem(exports, dom.o.className);
 
-    init();
+    }
 
     exports = {
       animate: animate,
       data: data,
       setEnemy: setEnemy
     }
+
+    init();
 
     return exports;
 
@@ -775,6 +902,7 @@
 
       objects.balloon = new Balloon({
         oParent: dom.o,
+        base: exports,
         leftMargin: 7,
         isEnemy: data.isEnemy
       });
@@ -785,10 +913,13 @@
 
       game.dom.world.appendChild(dom.o);
 
+      game.objects.radar.addItem(exports, dom.o.className);
+
     }
 
     exports = {
       animate: animate,
+      data: data,
       init: init
     }
 
@@ -872,7 +1003,8 @@
     init();
 
     exports = {
-      animate: animate
+      animate: animate,
+      data: data
     }
 
     return exports;
@@ -991,7 +1123,8 @@
     init();
 
     exports = {
-      animate: animate
+      animate: animate,
+      data: data
     }
 
     return exports;
@@ -1116,7 +1249,8 @@
     init();
 
     exports = {
-      animate: animate
+      animate: animate,
+      data: data
     }
 
     return exports;
@@ -1460,9 +1594,9 @@
 
       refreshCoords();
 
-    }
+     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-    init();
+    }
 
     exports = {
       animate: animate,
@@ -1472,13 +1606,15 @@
       setFiring: setFiring
     }
 
+    init();
+
     return exports;
 
   }
 
   function Tank(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, radarItem, exports;
 
     options = options || {};
 
@@ -1601,6 +1737,8 @@
         sounds.genericExplosion.play();
       }
 
+      radarItem.die();
+
     }
 
     function init() {
@@ -1620,15 +1758,18 @@
 
       game.dom.world.appendChild(dom.o);
 
-    }
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-    init();
+    }
 
     exports = {
       animate: animate,
+      data: data,
       hit: hit,
       die: die
     }
+
+    init();
 
     return exports;
 
@@ -1696,13 +1837,16 @@
 
       game.dom.world.appendChild(dom.o);
 
+      game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data
     }
 
     init();
-
-    exports = {
-      animate: animate
-    }
 
     return exports;
 
@@ -1770,13 +1914,16 @@
 
       game.dom.world.appendChild(dom.o);
 
+      game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data
     }
 
     init();
-
-    exports = {
-      animate: animate
-    }
 
     return exports;
 
