@@ -162,6 +162,10 @@ body {
 	z-index: 2;
 }
 
+#world .missile-launcher.enemy {
+	background-image: url(../image/missile-launcher-enemy.png);
+}
+
 #world .tank,
 #world .tank.enemy {
 	background-image: url(../image/tank.gif);
@@ -174,10 +178,15 @@ body {
 	background-image: url(../image/tank-enemy.gif);
 }
 
+#world .tank.enemy.smouldering-phase-1 {
+	outline: 1px dotted yellow;
+}
+
 #world .tank.enemy.smouldering-phase-2 {
 	background-image: url(../image/tank-enemy-smouldering-phase-2.gif);
 	width: 58px;
 	height: 22px;
+	outline: 1px dotted red;
 }
 
 @-webkit-keyframes genericexplosion {
@@ -211,6 +220,22 @@ body {
 	height: 16px;
 	z-index: 2;
 }
+
+#world .van.enemy {
+	background-image: url(../image/van-enemy.png);
+}
+
+#world .infantry {
+	background-image: url(../image/infantry.gif);
+	width: 10px;
+	height: 11px;
+	z-index: 2;
+}
+
+#world .van.enemy {
+	background-image: url(../image/van-enemy.png);
+}
+
 
 #world .helicopter {
 	background-image: url(../image/helicopter.png);

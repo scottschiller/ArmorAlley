@@ -155,6 +155,8 @@
       gameLoop: null,
       view: null,
       balloonBunkers: [],
+      infantry: [],
+      missileLaunchers: [],
       tanks: [],
       vans: [],
       helicopters: []
@@ -230,8 +232,28 @@
         x: -32
       }));
 
-      objects.vans.push(new MissileLauncher({
+      objects.missileLaunchers.push(new MissileLauncher({
         x: -128
+      }));
+
+      objects.infantry.push(new Infantry({
+        x: -192
+      }));
+
+      objects.infantry.push(new Infantry({
+        x: -212
+      }));
+
+      objects.infantry.push(new Infantry({
+        x: -232
+      }));
+
+      objects.infantry.push(new Infantry({
+        x: -252
+      }));
+
+      objects.infantry.push(new Infantry({
+        x: -272
       }));
 
       objects.helicopters.push(new Helicopter({
@@ -244,12 +266,35 @@
 
       objects.tanks.push(new Tank({
         x: 1048,
-        isEnemy: true,
-        extraClass: 'smouldering-phase-2'
+        isEnemy: true
       }));
 
       var thatTank = objects.tanks[objects.tanks.length-1];
-      window.setTimeout(thatTank.die, 5000);
+      window.setTimeout(thatTank.hit, 2000);
+
+      window.setTimeout(thatTank.hit, 4000);
+
+      window.setTimeout(thatTank.hit, 6000);
+
+      objects.tanks.push(new Tank({
+        x: 1112,
+        isEnemy: true
+      }));
+
+      objects.tanks.push(new Tank({
+        x: 1176,
+        isEnemy: true
+      }));
+
+      objects.tanks.push(new Van({
+        x: 1248,
+        isEnemy: true
+      }));
+
+      objects.missileLaunchers.push(new MissileLauncher({
+        x: 1302,
+        isEnemy: true
+      }));
 
       objects.tanks.push(new Tank({
         x: 8192,
@@ -755,8 +800,6 @@
 
   function Base() {}
 
-  function Infantry() {}
-
   function Engineer() {}
 
   function Paratrooper() {}
@@ -768,14 +811,18 @@
     options = options || {};
 
     css = {
-      className: 'missile-launcher'
+      className: 'missile-launcher',
+      enemy: 'enemy'
     }
 
     data = {
       energy: 10,
+      isEnemy: (options.isEnemy || false),
       direction: 0,
       x: options.x || 0,
-      y: options.y || 0
+      y: options.y || 0,
+      vX: (options.isEnemy ? -1 : 1),
+      vY: 0
     }
 
     dom = {
@@ -783,7 +830,7 @@
     }
 
     function animate() {
-      moveTo(data.x + 1, data.y);
+      moveTo(data.x + data.vX, data.y);
     }
 
     function moveTo(x, y) {
@@ -813,6 +860,10 @@
       dom.o = makeSprite({
         className: css.className
       });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
 
       game.dom.world.appendChild(dom.o);
 
@@ -1434,17 +1485,20 @@
     css = {
       className: 'tank',
       enemy: 'enemy',
-      hit1: '',
+      hit1: 'smouldering-phase-1',
       hit2: 'smouldering-phase-2',
       exploding: 'exploding'
     }
 
     data = {
       energy: 10,
+      energyMax: 10,
+      frameCount: 0,
       isEnemy: options.isEnemy || false,
+      healModulus: 50,
       x: options.x || 0,
       y: options.y || 0,
-      vX: 0
+      vX: (options.isEnemy ? -1 : 1)
     }
 
     dom = {
@@ -1452,9 +1506,24 @@
     }
 
     function animate() {
+
       if (!data.dead) {
+        data.frameCount++;
         moveTo(data.x + data.vX, data.y);
+        heal();
       }
+
+    }
+
+    function heal() {
+
+      if (data.frameCount % data.healModulus === 0) {
+        if (data.energy < data.energyMax) {
+          data.energy++;
+          updateHealth();
+        }
+      }
+
     }
 
     function moveTo(x, y) {
@@ -1479,6 +1548,37 @@
       dom.o.style.bottom = (y + 'px');
     }
 
+    function updateHealth() {
+      // smouldering, etc.
+      // TODO: optimize class swapping
+      if (data.energy <= 4) {
+        utils.css.add(dom.o, css.hit2);
+        utils.css.remove(dom.o, css.hit1);
+      } else if (data.energy <= 8) {
+        utils.css.add(dom.o, css.hit1);
+        utils.css.remove(dom.o, css.hit2);
+      } else {
+        // TODO: optimize
+        utils.css.remove(dom.o, css.hit1);
+        utils.css.remove(dom.o, css.hit2);
+      }
+    }
+
+    function hit(hitPoints) {
+
+      hitPoints = hitPoints || 4; // default: bomb
+
+      if (!data.dead) {
+        data.energy -= hitPoints;
+        updateHealth();
+        if (data.energy <= 0) {
+          die();
+        }
+
+      }
+
+    }
+
     function die() {
 
       if (data.dead) {
@@ -1493,6 +1593,8 @@
         dom.o = null;
       }, 1200);
 
+      data.energy = 0;
+
       data.dead = true;
 
       if (sounds.genericExplosion) {
@@ -1502,8 +1604,6 @@
     }
 
     function init() {
-
-      data.vX = (options.isEnemy ? -1 : 1);
 
       dom.o = makeSprite({
         className: css.className
@@ -1526,6 +1626,7 @@
 
     exports = {
       animate: animate,
+      hit: hit,
       die: die
     }
 
@@ -1535,31 +1636,30 @@
 
   function Van(options) {
 
-    var css, dom, data, objects, exports;
+    var css, dom, data, exports;
 
     options = options || {};
 
     css = {
-      className: 'van'
+      className: 'van',
+      enemy: 'enemy'
     }
 
     data = {
       energy: 1,
+      isEnemy: options.isEnemy || false,
       direction: 0,
       x: options.x || 0,
-      y: options.y || 0
+      y: options.y || 0,
+      vX: (options.isEnemy ? -1 : 1)
     }
 
     dom = {
       o: null
     }
 
-    objects = {
-      balloon: null
-    }
-
     function animate() {
-      moveTo(data.x + 1, data.y);
+      moveTo(data.x + data.vX, data.y);
     }
 
     function moveTo(x, y) {
@@ -1589,6 +1689,84 @@
       dom.o = makeSprite({
         className: css.className
       });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    init();
+
+    exports = {
+      animate: animate
+    }
+
+    return exports;
+
+  }
+
+  function Infantry(options) {
+
+    var css, dom, data, exports;
+
+    options = options || {};
+
+    css = {
+      className: 'infantry',
+      enemy: 'enemy'
+    }
+
+    data = {
+      energy: 1,
+      isEnemy: options.isEnemy || false,
+      direction: 0,
+      x: options.x || 0,
+      y: options.y || 0,
+      vX: (options.isEnemy ? -1 : 1)
+    }
+
+    dom = {
+      o: null
+    }
+
+    function animate() {
+      moveTo(data.x + data.vX, data.y);
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.bottom = (y + 'px');
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
 
       game.dom.world.appendChild(dom.o);
 
