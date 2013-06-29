@@ -1,10 +1,10 @@
-(function (window) {
+(function(window) {
 
   var game, utils;
 
   utils = {
 
-    css: (function () {
+    css: (function() {
 
       function hasClass(o, cStr) {
 
@@ -59,23 +59,23 @@
 
     }()),
 
-    events: (function () {
+    events: (function() {
 
       var add, remove, preventDefault;
 
-      add = (window.addEventListener !== undefined ? function (o, evtName, evtHandler) {
+      add = (window.addEventListener !== undefined ? function(o, evtName, evtHandler) {
         return o.addEventListener(evtName, evtHandler, false);
-      } : function (o, evtName, evtHandler) {
+      } : function(o, evtName, evtHandler) {
         o.attachEvent('on' + evtName, evtHandler);
       });
 
-      remove = (window.removeEventListener !== undefined ? function (o, evtName, evtHandler) {
+      remove = (window.removeEventListener !== undefined ? function(o, evtName, evtHandler) {
         return o.removeEventListener(evtName, evtHandler, false);
-      } : function (o, evtName, evtHandler) {
+      } : function(o, evtName, evtHandler) {
         return o.detachEvent('on' + evtName, evtHandler);
       });
 
-      preventDefault = function (e) {
+      preventDefault = function(e) {
         if (e.preventDefault) {
           e.preventDefault();
         } else {
@@ -143,7 +143,7 @@
     });
   });
 
-  game = (function () {
+  game = (function() {
 
     var data, dom, events, objects, keyboardMonitor, exports;
 
@@ -155,6 +155,7 @@
       gameLoop: null,
       view: null,
       balloonBunkers: [],
+      engineers: [],
       infantry: [],
       missileLaunchers: [],
       tanks: [],
@@ -258,6 +259,15 @@
       objects.infantry.push(new Infantry({
         x: -272
       }));
+
+      objects.engineers.push(new Engineer({
+        x: -300
+      }));
+
+      objects.engineers.push(new Engineer({
+        x: -320
+      }));
+
 
       objects.helicopters.push(new Helicopter({
         x: 204,
@@ -930,8 +940,6 @@
   }
 
   function Base() {}
-
-  function Engineer() {}
 
   function Paratrooper() {}
 
@@ -1859,13 +1867,17 @@
     options = options || {};
 
     css = {
-      className: 'infantry',
+      className: null,
+      infantry: 'infantry',
+      engineer: 'engineer',
       enemy: 'enemy'
     }
 
     data = {
       energy: 1,
       isEnemy: options.isEnemy || false,
+      role: options.role || 0,
+      roles: ['infantry', 'engineer'],
       direction: 0,
       x: options.x || 0,
       y: options.y || 0,
@@ -1902,7 +1914,24 @@
       dom.o.style.bottom = (y + 'px');
     }
 
+    function setRole(role, force) {
+      // TODO: minimize CSS thrashing, track lastClass etc.
+      if (data.role !== role || force) {
+        utils.css.remove(dom.o, css[data.roles[0]]);
+        utils.css.remove(dom.o, css[data.roles[1]]);
+        // role
+        data.role = role;
+        css.className = css[data.roles[data.role]];
+        if (dom.o) {
+          utils.css.add(dom.o, css.className);
+        }
+      }
+    }
+
     function init() {
+
+      // infantry, or engineer?
+      setRole(data.role, true);
 
       dom.o = makeSprite({
         className: css.className
@@ -1920,12 +1949,24 @@
 
     exports = {
       animate: animate,
-      data: data
+      data: data,
+      dom: dom
     }
 
     init();
 
     return exports;
+
+  }
+
+  function Engineer(options) {
+
+    options = options || {};
+
+    // flag as an engineer
+    options.role = 1;
+
+    return new Infantry(options);
 
   }
 

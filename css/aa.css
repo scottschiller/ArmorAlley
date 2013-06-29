@@ -223,17 +223,21 @@ body {
 	background-image: url(../image/van-enemy.png);
 }
 
-#world .infantry {
+#world .infantry,
+#world .engineer {
 	background-image: url(../image/infantry.gif);
 	width: 10px;
 	height: 11px;
 	z-index: 2;
 }
 
+#world .engineer {
+	background-image: url(../image/engineer.gif);
+}
+
 #world .van.enemy {
 	background-image: url(../image/van-enemy.png);
 }
-
 
 #world .helicopter {
 	background-image: url(../image/helicopter.png);
