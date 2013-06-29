@@ -107,7 +107,7 @@ function SoundManager(smURL, smID) {
   this.id = (smID || 'sm2movie');
   this.debugID = 'soundmanager-debug';
   this.debugURLParam = /([#?&])debug=1/i;
-  this.versionNumber = 'V2.97a.20130512';
+  this.versionNumber = 'V2.97a.20130512+DEV';
   this.version = null;
   this.movieURL = null;
   this.altURL = null;
@@ -872,6 +872,12 @@ function SoundManager(smURL, smID) {
               audioClone.play();
             };
             event.add(audioClone, 'ended', onended);
+            if (s._iO.volume !== undefined) {
+              audioClone.volume = Math.max(0, Math.min(1, s._iO.volume/100));
+            }
+            if (s._iO.muted) {
+              audioClone.muted = true;
+            }
             if (s._iO.position) {
               event.add(audioClone, 'canplay', oncanplay);
             } else {
@@ -2458,7 +2464,7 @@ function SoundManager(smURL, smID) {
             if (!sm2.useFlashBlock && canIgnoreFlash) {
               rebootIntoHTML5();
             } else {
-              processOnEvents({type:'ontimeout', ignoreInit: true});
+              processOnEvents({type:'ontimeout', ignoreInit: true, error: {type: 'INIT_FLASHBLOCK'}});
             }
           }
         } else {
@@ -2507,10 +2513,8 @@ function SoundManager(smURL, smID) {
         error;
     if (!wasTimeout) {
       didInit = true;
-      if (disabled) {
-        error = {type: (!hasFlash && needsFlash ? 'NO_FLASH' : 'INIT_TIMEOUT')};
-      }
     }
+    error = {type: (!hasFlash && needsFlash ? 'NO_FLASH' : 'INIT_TIMEOUT')};
     if (disabled || bNoDisable) {
       if (sm2.useFlashBlock && sm2.oMC) {
         sm2.oMC.className = getSWFCSS() + ' ' + (sm2.getMoviePercent() === null?swfCSS.swfTimedout:swfCSS.swfError);

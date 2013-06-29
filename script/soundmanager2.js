@@ -189,7 +189,7 @@ function SoundManager(smURL, smID) {
 
   // dynamic attributes
 
-  this.versionNumber = 'V2.97a.20130512';
+  this.versionNumber = 'V2.97a.20130512+DEV';
   this.version = null;
   this.movieURL = null;
   this.altURL = null;
@@ -2040,6 +2040,16 @@ function SoundManager(smURL, smID) {
             };
 
             event.add(audioClone, 'ended', onended);
+
+            // apply volume to clones, too
+            if (s._iO.volume !== undefined) {
+              audioClone.volume = Math.max(0, Math.min(1, s._iO.volume/100));
+            }
+
+            // playing multiple muted sounds? if you do this, you're weird ;) - but let's cover it.
+            if (s._iO.muted) {
+              audioClone.muted = true;
+            }
 
             if (s._iO.position) {
               // HTML5 audio can't seek before onplay() event has fired.
@@ -5523,7 +5533,7 @@ function SoundManager(smURL, smID) {
               _wDS('waitForever');
 
               // fire any regular registered ontimeout() listeners.
-              processOnEvents({type:'ontimeout', ignoreInit: true});
+              processOnEvents({type:'ontimeout', ignoreInit: true, error: {type: 'INIT_FLASHBLOCK'}});
 
             }
 
@@ -5642,10 +5652,9 @@ function SoundManager(smURL, smID) {
 
     if (!wasTimeout) {
       didInit = true;
-      if (disabled) {
-        error = {type: (!hasFlash && needsFlash ? 'NO_FLASH' : 'INIT_TIMEOUT')};
-      }
     }
+
+    error = {type: (!hasFlash && needsFlash ? 'NO_FLASH' : 'INIT_TIMEOUT')};
 
     sm2._wD('SoundManager 2 ' + (disabled ? 'failed to load' : 'loaded') + ' (' + (disabled ? 'Flash security/load error' : 'OK') + ')', disabled ? 2: 1);
 
