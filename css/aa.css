@@ -185,6 +185,10 @@ body {
 	z-index: 2;
 }
 
+#world .tank.stopped {
+	background-image: url(../image/tank.png);
+}
+
 #world .tank.enemy {
 	background-image: url(../image/tank-enemy.gif);
 }
@@ -338,7 +342,7 @@ body {
  to { background-position: 0px 20px; }
 }
 
-#world .helicopter-gunfire {
+#world .gunfire {
 	position: absolute;
 	width: 2px;
 	height: 1px;
@@ -347,7 +351,7 @@ body {
 	z-index: 2;
 }
 
-#world .helicopter-gunfire.expired {
+#world .gunfire.expired {
 	background-color: #555;
 }
 

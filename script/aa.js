@@ -238,6 +238,13 @@
         x: 48
       }));
 
+var testTank = objects.tanks[objects.tanks.length-1];
+
+window.setTimeout(function(){
+	testTank.stop();
+	window.setTimeout(testTank.resume, 5000);
+}, 5000);
+
       objects.vans.push(new Van({
         x: -32
       }));
@@ -1120,14 +1127,14 @@ if (Math.random() > 0.5) {
 
   }
 
-  function HelicopterGunFire(options) {
+  function GunFire(options) {
 
     var css, data, dom, exports;
 
     options = options || {};
 
     css = {
-      className: 'helicopter-gunfire',
+      className: 'gunfire',
       expired: 'expired'
     }
 
@@ -1135,8 +1142,8 @@ if (Math.random() > 0.5) {
       dead: false,
       expired: false,
       frameCount: 0,
-      expireFrameCount: 25,
-      dieFrameCount: 75, // live up to N frames, then die?
+      expireFrameCount: options.expireFrameCount || 25,
+      dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
       x: options.x || 0,
       y: options.y || 0,
       vX: options.vX || 0,
@@ -1234,6 +1241,9 @@ if (Math.random() > 0.5) {
       });
 
       game.dom.world.appendChild(dom.o);
+
+      setX(data.x);
+      setY(data.y);
 
     }
 
@@ -1577,6 +1587,11 @@ if (Math.random() > 0.5) {
 
       // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
+      // if not landed, that is.
+      if (data.y <= 0) {
+        return false;
+      }
+
       if (data.rotated) {
         // going back to L->R
         utils.css.remove(dom.o, css.facingLeft);
@@ -1663,7 +1678,7 @@ if (Math.random() > 0.5) {
 
         tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
-        objects.gunfire.push(new HelicopterGunFire({
+        objects.gunfire.push(new GunFire({
           x: data.x + (data.rotated ? 0 : data.width) - 8,
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
           vX: data.vX + 8 * (data.rotated ? -1 : 1),
@@ -1731,39 +1746,85 @@ if (Math.random() > 0.5) {
 
   function Tank(options) {
 
-    var css, data, dom, radarItem, exports;
+    var css, data, dom, radarItem, objects, exports;
 
     options = options || {};
 
     css = {
       className: 'tank',
       enemy: 'enemy',
+      exploding: 'exploding',
       hit1: 'smouldering-phase-1',
       hit2: 'smouldering-phase-2',
-      exploding: 'exploding'
+      stopped: 'stopped'
     }
 
     data = {
-      energy: 10,
-      energyMax: 10,
+      energy: 8,
+      energyMax: 8,
       frameCount: 0,
       isEnemy: options.isEnemy || false,
       healModulus: 50,
+      fireModulus: 6,
       x: options.x || 0,
       y: options.y || 0,
-      vX: (options.isEnemy ? -1 : 1)
+      vX: (options.isEnemy ? -1 : 1),
+      width: 57,
+      height: 18,
+      gunYOffset: 15,
+      stopped: false
     }
 
     dom = {
       o: null
     }
 
+    objects = {
+      gunfire: []
+    }
+
     function animate() {
 
+      var i;
+
       if (!data.dead) {
+
         data.frameCount++;
-        moveTo(data.x + data.vX, data.y);
+
+        for (i = objects.gunfire.length-1; i > 0; i--) {
+          if (!objects.gunfire[i].animate()) {
+            // object is dead - take it out.
+            objects.gunfire.splice(i, 1);
+          }
+        }
+
+        if (!data.stopped) {
+
+          moveTo(data.x + data.vX, data.y);
+
+        } else {
+
+          // only fire (i.e., GunFire objects) when stopped
+          fire();
+
+        }
+
         heal();
+
+      }
+
+    }
+
+    function fire() {
+
+      if (data.frameCount % data.fireModulus === 0) {
+
+        objects.gunfire.push(new GunFire({
+          x: data.x + ((data.width + 1) * (data.isEnemy ? -1 : 1)),
+          y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
+          vX: data.vX, // same velocity as tank
+          vY: 0
+        }));
       }
 
     }
@@ -1832,6 +1893,24 @@ if (Math.random() > 0.5) {
 
     }
 
+    function stop() {
+
+      if (!data.stopped) {
+        utils.css.add(dom.o, css.stopped);
+        data.stopped = true;
+      }
+
+    }
+
+    function resume() {
+
+      if (data.stopped) {
+        utils.css.remove(dom.o, css.stopped);
+        data.stopped = false;
+      }
+
+    }
+
     function die() {
 
       if (data.dead) {
@@ -1883,7 +1962,9 @@ if (Math.random() > 0.5) {
       animate: animate,
       data: data,
       hit: hit,
-      die: die
+      die: die,
+      stop: stop,
+      resume: resume
     }
 
     init();
