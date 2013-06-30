@@ -917,7 +917,7 @@
       data: data,
       die: die,
       hit: hit,
-      respawn: respawn
+      respawn: respawn,
       setEnemy: setEnemy
     }
 
