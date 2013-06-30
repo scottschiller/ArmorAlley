@@ -365,8 +365,11 @@ body {
 }
 
 #world .helicopter.exploding {
-	background-image: url(../image/generic-explosion.gif) !important;
-	background-position: 50% 50% !important;
+	background-image: url(../image/generic-explosion.png) !important;
+	background-position: 0px -30px; /* default when animation finishes */
+	-webkit-animation: genericexplosionsmall 0.45s steps(3);
+	-moz-animation: genericexplosionsmall 0.45s steps(3);
+	animation: genericexplosionsmall 0.45s steps(3);
 }
 
 #world .helicopter.dead {
