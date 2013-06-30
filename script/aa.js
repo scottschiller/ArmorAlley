@@ -123,10 +123,20 @@
     }
   }
 
+  soundManager.setup({
+    defaultOptions: {
+      volume: 25
+    }
+  });
+
   soundManager.onready(function() {
     hasSound = true;
-    sounds.helicopter.bomb = soundManager.createSound({
-      url: 'audio/bomb-explosion.wav',
+    sounds.genericBoom = soundManager.createSound({
+      url: 'audio/generic-boom.wav',
+      multiShot: true
+    });
+    sounds.genericExplosion = soundManager.createSound({
+      url: 'audio/generic-explosion.wav',
       multiShot: true
     });
     sounds.helicopter.gunfire = soundManager.createSound({
@@ -135,10 +145,6 @@
     });
     sounds.helicopter.rotate = soundManager.createSound({
       url: 'audio/helicopter-rotate.wav',
-      multiShot: true
-    });
-    sounds.genericExplosion = soundManager.createSound({
-      url: 'audio/tank-explosion.wav',
       multiShot: true
     });
   });
@@ -481,6 +487,7 @@
           return false;
         }
 
+        // are we moving left, centered or right?
         fractionWidth = data.browser.fractionWidth;
 
         // should we scroll the world?
@@ -492,9 +499,9 @@
         }
 
         if (rightScrollMargin < fractionWidth) {
-          setLeftScroll((fractionWidth - rightScrollMargin) * 0.0175);
+          setLeftScroll((fractionWidth - rightScrollMargin) * 0.01);
         } else if (leftScrollMargin < fractionWidth) {
-          setLeftScroll((fractionWidth - leftScrollMargin) * -0.0175);
+          setLeftScroll((fractionWidth - leftScrollMargin) * -0.01);
         }
 
     }
@@ -742,13 +749,18 @@
 
     css = {
       className: 'balloon',
-      enemy: 'enemy'
+      dead: 'dead',
+      enemy: 'enemy',
+      exploding: 'exploding'
     }
 
     data = {
+      dead: false,
       energy: 5,
+      defaultEnergy: 5,
       direction: 0,
       verticalDirection: 0.33,
+      verticalDirectionDefault: 0.33,
       isEnemy: options.isEnemy || false,
       leftMargin: options.leftMargin || 0,
       x: options.x || 0,
@@ -765,10 +777,38 @@
     }
 
     function animate() {
-      if (data.y > 100 || data.y < 0) {
-        data.verticalDirection *= -1;
+
+      if (!data.dead) {
+
+        if (data.y > 100 || data.y < 0) {
+          data.verticalDirection *= -1;
+        }
+
+        moveTo(0, data.y + data.verticalDirection);
+
+      } else {
+
+        if (data.y > 0) {
+
+          // dead, but chain has not retracted yet. Make sure it's moving down.
+          if (data.verticalDirection > 0) {
+            data.verticalDirection *= -1;
+          }
+
+          moveTo(0, data.y + data.verticalDirection);
+
+        } else {
+
+          // chain is at bottom, and the balloon can now reappear.
+          if (data.canRespawn) {
+            reset();
+            data.canRespawn = false;
+          }
+
+        }
+
       }
-      moveTo(0, data.y + data.verticalDirection);
+
     }
 
     function moveTo(x, y) {
@@ -797,6 +837,56 @@
       data.isEnemy = isEnemy;
     }
 
+    function hit() {
+      if (!data.dead) {
+        data.energy--;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        // hide the balloon
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function die() {
+      // pop!
+      if (!data.dead) {
+        utils.css.add(dom.o, css.exploding);
+        if (sounds.genericBoom) {
+          sounds.genericBoom.play();
+        }
+        window.setTimeout(dead, 500);
+        data.dead = true;
+        // testing: respawn
+        window.setTimeout(respawn, 1500);
+      }
+    }
+
+    function respawn() {
+      if (data.dead && !data.canRespawn) {
+        // restore balloon once chain reaches bottom
+        data.canRespawn = true;
+      }
+    }
+
+    function reset() {
+      // respawn can actually happen now
+      utils.css.remove(dom.o, css.dead);
+      data.energy = data.defaultEnergy;
+      // and restore default vertical
+      data.verticalDirection = data.verticalDirectionDefault;
+      // look ma, no longer dead!
+      data.dead = false;
+      // reset position, too
+      data.y = 0;
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -814,7 +904,7 @@
       }
 
       // TODO: review when balloon gets separated from base
-      data.xOffset = (objects.base ? objects.base.data.x : 0)
+      data.xOffset = (objects.base ? objects.base.data.x : 0);
 
       data.y = Math.random() * 100;
 
@@ -825,6 +915,9 @@
     exports = {
       animate: animate,
       data: data,
+      die: die,
+      hit: hit,
+      respawn: respawn
       setEnemy: setEnemy
     }
 
@@ -917,7 +1010,11 @@
         isEnemy: data.isEnemy
       });
 
-      // objects.balloon.setEnemy(data.isEnemy);
+if (Math.random() > 0.5) {
+  window.setTimeout(function() {
+    objects.balloon.die();
+  }, 1000 + Math.random() * 1000);
+}
 
       setX(data.x);
 
@@ -1187,8 +1284,8 @@
       // hit bottom?
       if (data.y > game.objects.view.data.battleField.height) {
         die();
-        if (sounds.helicopter.bomb) {
-          sounds.helicopter.bomb.play();
+        if (sounds.genericBoom) {
+          sounds.genericBoom.play();
         }
       }
 
