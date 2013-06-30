@@ -476,10 +476,10 @@ body {
 
 #world .bomb {
 	background-image: url(../image/bomb.png);
-	background-position: 0px -22px; /* default for when animation finishes: down state */
-	width: 11px;
-	height: 11px;
-	z-index: 3;
+	background-position: 0px -24px; /* default for when animation finishes: down state */
+	width: 13px;
+	height: 12px;
+	z-index: 2;
 }
 
 #world .bomb.dropping {

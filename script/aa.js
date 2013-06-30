@@ -1732,7 +1732,7 @@ if (Math.random() > 0.5) {
 
         objects.bombs.push(new Bomb({
           x: data.x + data.halfWidth,
-          y: data.y + data.height + 2,
+          y: data.y + data.height - 6,
           vX: data.vX,
           vY: data.vY // + tiltOffset
         }));
