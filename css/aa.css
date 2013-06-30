@@ -147,6 +147,14 @@ body {
 	background-image: url(../image/balloon-enemy.png);
 }
 
+#world .balloon.exploding {
+	background-image: url(../image/balloon-explosion.gif);
+}
+
+#world .balloon.dead {
+	background-image: none;
+}
+
 #world .balloon-chain {
 	width: 0px;
 	border: 1px dotted #fff;
