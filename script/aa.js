@@ -603,7 +603,8 @@
           // TODO: optimize
           objects.items[i].o.style.left = (((objects.items[i].oParent.data.x + (objects.items[i].oParent.data.xOffset || 0)) / battleFieldWidth) * 100) + '%';
           if (objects.items[i].oParent.data.y) {
-            objects.items[i].o.style.top = (objects.items[i].oParent.data.y/battleFieldHeight * 100) + '%';
+            // balloon
+            objects.items[i].o.style.bottom = objects.items[i].oParent.data.y + '%';
           }
         }
 
@@ -1126,14 +1127,16 @@ if (Math.random() > 0.5) {
     options = options || {};
 
     css = {
-      className: 'helicopter-gunfire'
+      className: 'helicopter-gunfire',
+      expired: 'expired'
     }
 
     data = {
       dead: false,
+      expired: false,
       frameCount: 0,
-      expireFrameCount: 33,
-      dieFrameCount: 33, // live up to N frames, then die?
+      expireFrameCount: 25,
+      dieFrameCount: 75, // live up to N frames, then die?
       x: options.x || 0,
       y: options.y || 0,
       vX: options.vX || 0,
@@ -1151,13 +1154,16 @@ if (Math.random() > 0.5) {
         return false;
       }
 
-/*
-      if (data.frameCount > data.expireFrameCount) {
-        data.gravity *= 1.25;
+      if (!data.expired && data.frameCount > data.expireFrameCount) {
+        utils.css.add(dom.o, css.expired);
+        data.expired = true;
       }
-*/
 
-      moveTo(data.x + data.vX, data.y + data.vY + (data.frameCount > data.expireFrameCount ? data.gravity : 0));
+      if (data.expired) {
+        data.gravity *= 1.1;
+      }
+
+      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
 
       // collision check?
 

@@ -347,6 +347,10 @@ body {
 	z-index: 2;
 }
 
+#world .helicopter-gunfire.expired {
+	background-color: #555;
+}
+
 #world .base {
 	background-image: url(../image/base.gif);
 	width: 102px;
