@@ -149,7 +149,11 @@ body {
 }
 
 #world .balloon.exploding {
-	background-image: url(../image/generic-explosion.gif);
+	background-image: url(../image/generic-explosion.png);
+	background-position: 0px -30px; /* default when animation finishes */
+	-webkit-animation: genericexplosionsmall 0.45s steps(3);
+	-moz-animation: genericexplosionsmall 0.45s steps(3);
+	animation: genericexplosionsmall 0.45s steps(3);
 }
 
 #world .balloon.dead {
@@ -216,6 +220,24 @@ body {
  from { background-position: 0px 0px; }
  to { background-position: 0px -250px; }
 }
+
+/* small */
+
+@-webkit-keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
+@-moz-keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
+@keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
 
 #world .tank.enemy.exploding {
 	width: 54px;

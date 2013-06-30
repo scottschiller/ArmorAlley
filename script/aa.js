@@ -868,7 +868,7 @@ window.setTimeout(function(){
         if (sounds.genericBoom) {
           sounds.genericBoom.play();
         }
-        window.setTimeout(dead, 500);
+        window.setTimeout(dead, 550);
         data.dead = true;
         // testing: respawn
         window.setTimeout(respawn, 1500);
