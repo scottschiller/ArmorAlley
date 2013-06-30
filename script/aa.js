@@ -765,7 +765,8 @@
       leftMargin: options.leftMargin || 0,
       x: options.x || 0,
       xOffset: 0,
-      y: options.y || 0
+      y: options.y || 0,
+      height: 14
     }
 
     dom = {
@@ -780,7 +781,7 @@
 
       if (!data.dead) {
 
-        if (data.y > 100 || data.y < 0) {
+        if ((data.y > 100 && data.verticalDirection > 0) || (data.y < 0 && data.verticalDirection < 0)) {
           data.verticalDirection *= -1;
         }
 
@@ -885,6 +886,7 @@
       data.dead = false;
       // reset position, too
       data.y = 0;
+      
     }
 
     function init() {
@@ -962,6 +964,7 @@
       if (objects.balloon) {
         objects.balloon.animate();
       }
+      // TODO: fix height: 0px case (1-pixel white border)
       dom.oChain.style.height = ((objects.balloon.data.y / 100 * 280) - data.height + 'px');
     }
 
@@ -1129,7 +1132,8 @@ if (Math.random() > 0.5) {
     data = {
       dead: false,
       frameCount: 0,
-      expireFrameCount: 100, // live up to N frames, then die?
+      expireFrameCount: 33,
+      dieFrameCount: 33, // live up to N frames, then die?
       x: options.x || 0,
       y: options.y || 0,
       vX: options.vX || 0,
@@ -1147,17 +1151,19 @@ if (Math.random() > 0.5) {
         return false;
       }
 
-      if (data.frameCount > 50) {
-        data.gravity *= 1.1;
+/*
+      if (data.frameCount > data.expireFrameCount) {
+        data.gravity *= 1.25;
       }
+*/
 
-      moveTo(data.x + data.vX, data.y + data.vY + (data.frameCount > 50 ? data.gravity : 0));
+      moveTo(data.x + data.vX, data.y + data.vY + (data.frameCount > data.expireFrameCount ? data.gravity : 0));
 
       // collision check?
 
       data.frameCount++;
 
-      if (data.frameCount >= data.expireFrameCount) {
+      if (data.frameCount >= data.dieFrameCount) {
         die();
       }
 
