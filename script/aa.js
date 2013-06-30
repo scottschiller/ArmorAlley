@@ -1507,14 +1507,14 @@ if (Math.random() > 0.5) {
 
       // animate child objects, too
 
-      for (i = objects.gunfire.length-1; i > 0; i--) {
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
         if (!objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
         }
       }
 
-      for (i = objects.bombs.length-1; i > 0; i--) {
+      for (i = objects.bombs.length-1; i >= 0; i--) {
         if (!objects.bombs[i].animate()) {
           // object is dead - take it out.
           objects.bombs.splice(i, 1);
