@@ -116,10 +116,8 @@
 
   var sounds = {
     helicopter: {
-      gunfire: null,
       bomb: null,
-      rotate: null,
-      genericExplosion: null
+      rotate: null
     }
   }
 
@@ -139,8 +137,8 @@
       url: 'audio/generic-explosion.wav',
       multiShot: true
     });
-    sounds.helicopter.gunfire = soundManager.createSound({
-      url: 'audio/helicopter-gunfire.wav',
+    sounds.genericGunFire = soundManager.createSound({
+      url: 'audio/generic-gunfire.wav',
       multiShot: true
     });
     sounds.helicopter.rotate = soundManager.createSound({
@@ -235,14 +233,14 @@
       //
 
       objects.tanks.push(new Tank({
-        x: 48
+        x: 96
       }));
 
 var testTank = objects.tanks[objects.tanks.length-1];
 
 window.setTimeout(function(){
 	testTank.stop();
-	window.setTimeout(testTank.resume, 5000);
+	window.setTimeout(testTank.resume, 2000);
 }, 5000);
 
       objects.vans.push(new Van({
@@ -1722,8 +1720,8 @@ if (Math.random() > 0.5) {
           vY: data.vY + tiltOffset
         }));
 
-        if (sounds.helicopter.gunfire) {
-          sounds.helicopter.gunfire.play();
+        if (sounds.genericGunFire) {
+          sounds.genericGunFire.play();
         }
 
       }
@@ -1890,6 +1888,11 @@ if (Math.random() > 0.5) {
           vX: data.vX, // same velocity as tank
           vY: 0
         }));
+
+        if (sounds.genericGunFire) {
+          sounds.genericGunFire.play();
+        }
+
       }
 
     }
