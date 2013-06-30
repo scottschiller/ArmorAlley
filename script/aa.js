@@ -1856,7 +1856,7 @@ if (Math.random() > 0.5) {
 
         data.frameCount++;
 
-        for (i = objects.gunfire.length-1; i > 0; i--) {
+        for (i = objects.gunfire.length-1; i >= 0; i--) {
           if (!objects.gunfire[i].animate()) {
             // object is dead - take it out.
             objects.gunfire.splice(i, 1);
