@@ -1399,17 +1399,22 @@ if (Math.random() > 0.5) {
       rotatedRight: 'rotated-right',
       movingLeft: 'moving-left',
       movingRight: 'moving-right',
-      tilt: 'tilt'
+      tilt: 'tilt',
+      exploding: 'exploding',
+      dead: 'dead'
     }
 
     data = {
       bombing: false,
       firing: false,
+      fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
+      fuelModulus: 15,
+      fuelModulusFlying: 5,
+      landed: false,
       rotated: false,
       rotateTimer: null,
-      fuel: 100,
       energy: 10,
       direction: 0,
       x: options.x || 0,
@@ -1433,15 +1438,14 @@ if (Math.random() > 0.5) {
     }
 
     dom = {
-      o: null
+      o: null,
+      fuelLine: null
     }
 
     events = {
 
       resize: function() {
-
         refreshCoords();
-
       },
 
       mousedown: function(e) {
@@ -1487,12 +1491,19 @@ if (Math.random() > 0.5) {
       // safety net: don't let chopper run on bottom of screen
       // TODO: or when on landing pad.
       if (data.y === 369) {
+        data.landed = true;
         data.vX = 0;
+      } else {
+        data.landed = false;
       }
 
-      applyTilt();
+      if (!data.dead) {
 
-      moveTo(data.x + data.vX, data.y + data.vY);
+        applyTilt();
+
+        moveTo(data.x + data.vX, data.y + data.vY);
+
+      }
 
       // animate child objects, too
 
@@ -1513,20 +1524,46 @@ if (Math.random() > 0.5) {
       // should we be firing, also?
       fire();
 
+      burnFuel();
+
+    }
+
+    function burnFuel() {
+
+      var frameCount, modulus;
+
+      frameCount = game.objects.gameLoop.data.frameCount;
+
+      modulus = (data.landed ? data.fuelModulus : data.fuelModulusFlying);
+
+      if (frameCount % modulus === 0 && data.fuel > 0) {
+        // burn!
+        data.fuel -= 0.1;
+        // update UI
+        dom.fuelLine.style.width = (data.fuel + '%');
+        if (data.fuel <= 0) {
+          die();
+        }
+      }
+
     }
 
     function setFiring(state) {
+
       if (data.firing !== state) {
          data.firing = state;
          // TODO: implement separately
          setBombing(state);
       }
+
     }
 
     function setBombing(state) {
+
       if (data.bombing !== state) {
          data.bombing = state;
       }
+
     }
 
     function applyTilt() {
@@ -1704,6 +1741,31 @@ if (Math.random() > 0.5) {
 
     }
 
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.exploding);
+
+      // timeout?
+      window.setTimeout(function() {
+        utils.css.add(dom.o, css.dead);
+      }, 1200);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+
+      radarItem.die();
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -1712,6 +1774,8 @@ if (Math.random() > 0.5) {
 
       setX(data.x);
       setY(data.y);
+
+      dom.fuelLine = document.getElementById('fuel-line');
 
       game.dom.world.appendChild(dom.o);
 
@@ -1733,6 +1797,7 @@ if (Math.random() > 0.5) {
     exports = {
       animate: animate,
       data: data,
+      die: die,
       fire: fire,
       setBombing: setBombing,
       setFiring: setFiring
