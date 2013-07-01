@@ -1408,9 +1408,9 @@ if (Math.random() > 0.5) {
       fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
-      fuelModulus: 15,
-      fuelModulusFlying: 5,
-      landed: false,
+      fuelModulus: 48,
+      fuelModulusFlying: 12,
+      landed: true,
       rotated: false,
       rotateTimer: null,
       energy: 10,
@@ -1622,8 +1622,8 @@ if (Math.random() > 0.5) {
 
       // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
-      // if not landed, that is.
-      if (data.y <= 0) {
+      // if not dead or landed, that is.
+      if (data.dead || data.y <= 0) {
         return false;
       }
 
