@@ -198,6 +198,9 @@ body {
 }
 
 #world .tank.enemy.smouldering-phase-1 {
+	background-image: url(../image/tank-enemy-smouldering-phase-1.gif);
+	width: 58px;
+	height: 18px;
 }
 
 #world .tank.enemy.smouldering-phase-2 {
@@ -240,14 +243,31 @@ body {
 
 
 #world .tank.enemy.exploding {
-	width: 54px;
-	height: 25px;
-	background-image: url(../image/tank-explosion.png);
-	background-position: 0px -250px; /* default state */
-	-webkit-animation: genericexplosion 1s steps(10);
-	-moz-animation: genericexplosion 1s steps(10);
-	animation: genericexplosion 1s steps(10);
+	width: 79px;
+	height: 32px;
+	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
+	background-image: url(../image/tank-enemy-explosion.png);
+	background-position: 0px -352px; /* default state */
+	-webkit-animation: enemytankexplosion 1s steps(12);
+	-moz-animation: enemytankexplosion 1s steps(12);
+	animation: enemytankexplosion 1s steps(12);
 }
+
+@-webkit-keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@-moz-keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
 
 #world .van {
 	background-image: url(../image/van.png);

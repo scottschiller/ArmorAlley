@@ -1991,7 +1991,7 @@ if (Math.random() > 0.5) {
       window.setTimeout(function() {
         dom.o.parentNode.removeChild(dom.o);
         dom.o = null;
-      }, 1200);
+      }, 1000);
 
       data.energy = 0;
 
