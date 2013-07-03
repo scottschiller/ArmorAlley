@@ -158,6 +158,7 @@
     objects = {
       gameLoop: null,
       view: null,
+      balloons: [],
       balloonBunkers: [],
       engineers: [],
       infantry: [],
@@ -279,7 +280,6 @@ window.setTimeout(function(){
         x: -320
       }));
 
-
       objects.helicopters.push(new Helicopter({
         x: 204,
         y: game.objects.view.data.world.height - 20,
@@ -293,12 +293,15 @@ window.setTimeout(function(){
         isEnemy: true
       }));
 
+/*
       var thatTank = objects.tanks[objects.tanks.length-1];
+
       window.setTimeout(thatTank.hit, 2000);
 
       window.setTimeout(thatTank.hit, 4000);
 
       window.setTimeout(thatTank.hit, 6000);
+*/
 
       objects.tanks.push(new Tank({
         x: 1112,
@@ -344,6 +347,7 @@ window.setTimeout(function(){
     }
 
     exports = {
+      data: data,
       dom: dom,
       init: init,
       objects: objects
@@ -702,6 +706,8 @@ window.setTimeout(function(){
 
       data.frameCount++;
 
+      // collision checks?
+
       for (item in gameObjects) {
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
           // single object case
@@ -715,6 +721,8 @@ window.setTimeout(function(){
           }
         }
       }
+
+      // collision detection?
 
       // view is separate
       gameObjects.view.animate();
@@ -762,8 +770,8 @@ window.setTimeout(function(){
 
     data = {
       dead: false,
-      energy: 5,
-      defaultEnergy: 5,
+      energy: 3,
+      defaultEnergy: 3,
       direction: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
@@ -772,6 +780,7 @@ window.setTimeout(function(){
       x: options.x || 0,
       xOffset: 0,
       y: options.y || 0,
+      width: 36,
       height: 14
     }
 
@@ -844,9 +853,10 @@ window.setTimeout(function(){
       data.isEnemy = isEnemy;
     }
 
-    function hit() {
+    function hit(hitPoints) {
       if (!data.dead) {
-        data.energy--;
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
         if (data.energy <= 0) {
           data.energy = 0;
           die();
@@ -1019,11 +1029,15 @@ window.setTimeout(function(){
         isEnemy: data.isEnemy
       });
 
+//      game.objects.balloons.push(objects.balloon);
+
+/*
 if (Math.random() > 0.5) {
   window.setTimeout(function() {
     objects.balloon.die();
   }, 1000 + Math.random() * 1000);
 }
+*/
 
       setX(data.x);
 
@@ -1035,6 +1049,7 @@ if (Math.random() > 0.5) {
 
     exports = {
       animate: animate,
+      objects: objects,
       data: data,
       init: init
     }
@@ -1057,7 +1072,9 @@ if (Math.random() > 0.5) {
 
     css = {
       className: 'missile-launcher',
-      enemy: 'enemy'
+      enemy: 'enemy',
+      exploding: 'exploding',
+      dead: 'dead'
     }
 
     data = {
@@ -1067,7 +1084,9 @@ if (Math.random() > 0.5) {
       x: options.x || 0,
       y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
-      vY: 0
+      vY: 0,
+      width: 52,
+      height: 17
     }
 
     dom = {
@@ -1075,7 +1094,11 @@ if (Math.random() > 0.5) {
     }
 
     function animate() {
-      moveTo(data.x + data.vX, data.y);
+
+      if (!data.dead) {
+        moveTo(data.x + data.vX, data.y);
+      }
+
     }
 
     function moveTo(x, y) {
@@ -1100,6 +1123,47 @@ if (Math.random() > 0.5) {
       dom.o.style.bottom = (y + 'px');
     }
 
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.exploding);
+
+      // timeout?
+      window.setTimeout(function() {
+        dom.o.parentNode.removeChild(dom.o);
+        dom.o = null;
+      }, 1000);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -1118,7 +1182,9 @@ if (Math.random() > 0.5) {
 
     exports = {
       animate: animate,
-      data: data
+      data: data,
+      hit: hit,
+      die: die
     }
 
     return exports;
@@ -1133,7 +1199,8 @@ if (Math.random() > 0.5) {
 
     css = {
       className: 'gunfire',
-      expired: 'expired'
+      expired: 'expired',
+      spark: 'spark'
     }
 
     data = {
@@ -1146,7 +1213,10 @@ if (Math.random() > 0.5) {
       y: options.y || 0,
       vX: options.vX || 0,
       vY: options.vY || 0,
-      gravity: 1
+      width: 2,
+      height: 1,
+      gravity: 1,
+      damagePoints: 1
     }
 
     dom = {
@@ -1154,6 +1224,8 @@ if (Math.random() > 0.5) {
     }
 
     function animate() {
+
+      var items, item, hit, tmpData, tmpObject;
 
       if (data.dead) {
         return false;
@@ -1188,8 +1260,103 @@ if (Math.random() > 0.5) {
         die();
       }
 
+      // did we hit a balloon?
+      if (!data.dead) {
+
+        for (item in game.objects.balloonBunkers) {
+
+          if (game.objects.balloonBunkers.hasOwnProperty(item) && !game.objects.balloonBunkers[item].objects.balloon.data.dead) {
+            tmpObject = game.objects.balloonBunkers[item];
+            // TODO: eliminate fixed pixel value, used for bottom-based vs. top-based positioning calculation
+            tmpData = getBalloonObject(tmpObject);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              sparkAndDie();
+              tmpObject.objects.balloon.hit(data.damagePoints);
+            }
+          }
+
+        }
+
+      }
+
+      // how about a tank?
+      if (!data.dead) {
+
+        for (item in game.objects.tanks) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.tanks.hasOwnProperty(item) && !game.objects.tanks[item].data.dead) {
+            tmpObject = game.objects.tanks[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
+      }
+
+      // how about a van?
+      if (!data.dead) {
+
+        for (item in game.objects.vans) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.vans.hasOwnProperty(item) && !game.objects.vans[item].data.dead) {
+            tmpObject = game.objects.vans[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
+      }
+
+      // missile launcher?
+      if (!data.dead) {
+
+        for (item in game.objects.missileLaunchers) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.missileLaunchers.hasOwnProperty(item) && !game.objects.missileLaunchers[item].data.dead) {
+            tmpObject = game.objects.missileLaunchers[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
+      }
+
       // notify caller if now dead
       return !data.dead;
+
+    }
+
+    function spark() {
+      utils.css.add(dom.o, css.spark);
+    }
+
+    function sparkAndDie() {
+
+      // TODO: reduce timers
+      spark();
+      // hack: no more animation.
+      data.dead = true;
+      // and cleanup shortly.
+      window.setTimeout(die, 250);
 
     }
 
@@ -1197,7 +1364,7 @@ if (Math.random() > 0.5) {
 
       // aieee!
 
-      if (data.dead) {
+      if (!dom.o) {
         return false;
       }
 
@@ -1276,7 +1443,10 @@ if (Math.random() > 0.5) {
       y: options.y || 0,
       vX: options.vX || 0,
       vY: options.vY || 0,
-      gravity: 1
+      width: 13,
+      height: 12,
+      gravity: 1,
+      damagePoints: 4
     }
 
     dom = {
@@ -1307,6 +1477,86 @@ if (Math.random() > 0.5) {
         if (sounds.genericBoom) {
           sounds.genericBoom.play();
         }
+      }
+
+      // did we hit a balloon?
+      if (!data.dead) {
+
+        for (item in game.objects.balloonBunkers) {
+
+          if (game.objects.balloonBunkers.hasOwnProperty(item) && !game.objects.balloonBunkers[item].objects.balloon.data.dead) {
+            tmpObject = game.objects.balloonBunkers[item];
+            // TODO: eliminate fixed pixel value, used for bottom-based vs. top-based positioning calculation
+            tmpData = getBalloonObject(tmpObject);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.objects.balloon.hit(data.damagePoints);
+            }
+          }
+
+        }
+
+      }
+
+      // how about a tank?
+      if (!data.dead) {
+
+        for (item in game.objects.tanks) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.tanks.hasOwnProperty(item) && !game.objects.tanks[item].data.dead) {
+            tmpObject = game.objects.tanks[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
+      }
+
+      // how about a van?
+      if (!data.dead) {
+
+        for (item in game.objects.vans) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.vans.hasOwnProperty(item) && !game.objects.vans[item].data.dead) {
+            tmpObject = game.objects.vans[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
+      }
+
+      // missile launcher?
+      if (!data.dead) {
+
+        for (item in game.objects.missileLaunchers) {
+
+          // TODO: and isEnemy !== local isEnemy...
+          if (game.objects.missileLaunchers.hasOwnProperty(item) && !game.objects.missileLaunchers[item].data.dead) {
+            tmpObject = game.objects.missileLaunchers[item];
+            tmpData = bottomAlignedObject(tmpObject.data);
+           hit = collisionCheck(data, tmpData);
+            if (hit) {
+              die();
+              tmpObject.hit(data.damagePoints);
+            }
+          }
+
+       }
+
       }
 
       // notify caller if now dead
@@ -1408,8 +1658,8 @@ if (Math.random() > 0.5) {
       fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
-      fuelModulus: 48,
-      fuelModulusFlying: 12,
+      fuelModulus: 40,
+      fuelModulusFlying: 6,
       landed: true,
       rotated: false,
       rotateTimer: null,
@@ -1948,7 +2198,7 @@ if (Math.random() > 0.5) {
 
     function hit(hitPoints) {
 
-      hitPoints = hitPoints || 4; // default: bomb
+      hitPoints = hitPoints || 1;
 
       if (!data.dead) {
         data.energy -= hitPoints;
@@ -2049,16 +2299,19 @@ if (Math.random() > 0.5) {
 
     css = {
       className: 'van',
-      enemy: 'enemy'
+      enemy: 'enemy',
+      exploding: 'exploding'
     }
 
     data = {
-      energy: 1,
+      energy: 3,
       isEnemy: options.isEnemy || false,
       direction: 0,
       x: options.x || 0,
       y: options.y || 0,
-      vX: (options.isEnemy ? -1 : 1)
+      vX: (options.isEnemy ? -1 : 1),
+      width: 38,
+      height: 16
     }
 
     dom = {
@@ -2066,7 +2319,11 @@ if (Math.random() > 0.5) {
     }
 
     function animate() {
-      moveTo(data.x + data.vX, data.y);
+
+      if (!data.dead) {
+        moveTo(data.x + data.vX, data.y);
+      }
+
     }
 
     function moveTo(x, y) {
@@ -2091,6 +2348,47 @@ if (Math.random() > 0.5) {
       dom.o.style.bottom = (y + 'px');
     }
 
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.exploding);
+
+      // timeout?
+      window.setTimeout(function() {
+        dom.o.parentNode.removeChild(dom.o);
+        dom.o = null;
+      }, 1000);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -2109,7 +2407,9 @@ if (Math.random() > 0.5) {
 
     exports = {
       animate: animate,
-      data: data
+      data: data,
+      hit: hit,
+      die: die
     }
 
     init();
@@ -2225,6 +2525,110 @@ if (Math.random() > 0.5) {
     options.role = 1;
 
     return new Infantry(options);
+
+  }
+
+  function getBalloonObject(obj) {
+
+    // compensate for bunker offset minus balloon offset
+    var data = {
+      x: obj.data.x - obj.objects.balloon.data.x,
+      // world minus radar
+      y: 370 - (280 * obj.objects.balloon.data.y/100),
+      width: obj.objects.balloon.data.width,
+      height: obj.objects.balloon.data.height
+    }
+
+    return data;
+
+  }
+
+  function bottomAlignedObject(obj) {
+
+    // compensate for objects positioned using bottom: 0
+
+    var data = {
+      x: obj.x,
+      // correct for fixed-value bottom positioning
+      y: 370 - 2,
+      width: obj.width,
+      height: obj.height
+    }
+
+    return data;
+
+  }
+
+  function collisionCheck(obj1, obj2) {
+
+    // given x, y, width and height, determine if one object is overlapping another.
+
+    if (!obj1 || !obj2) {
+      return null;
+    }
+
+    // presume each object has x, y, width, height - otherwise, all hell will break loose.
+    return checkPoints(obj1, obj2);
+
+  }
+
+  // stolen from survivor.js
+
+  function checkPoints(point1, point2) {
+
+    // given two boxes, check for intersects.
+    var result;
+
+/*
+    domPoint1.style.width = point1.width + 'px';
+    domPoint1.style.height = point1.height + 'px';
+    domPoint1.style.left = (point1.x - game.objects.view.data.battleField.scrollLeft) + 'px';
+    domPoint1.style.top = point1.y + 'px';
+
+    domPoint2.style.width = point2.width + 'px';
+    domPoint2.style.height = point2.height + 'px';
+    domPoint2.style.left = (point2.x - game.objects.view.data.battleField.scrollLeft) + 'px';
+    domPoint2.style.top = point2.y + 'px';
+*/
+
+    if (point2.x >= point1.x) {
+
+      // point 2 is to the right.
+
+      if (point1.x + point1.width >= point2.x) {
+        // point 1 overlaps point 2 on x.
+        if (point1.y < point2.y) {
+          // point 1 is above point 2.
+          if (point1.y + point1.h >= point2.y) {
+            // point 1 overlaps point 2 on y.
+            result = true;
+          }
+        } else {
+          result = (point1.y < point2.y + point2.height);
+        }
+      }
+
+    } else {
+
+      // point 1 is to the right.
+
+      if (point2.x + point2.width >= point1.x) {
+        // point 2 overlaps point 1 on x.
+        if (point2.y < point1.y) {
+          // point 2 is above point 1.
+          result = (point2.y + point2.height >= point1.y);
+        } else {
+          // point 2 is below point 1.
+          result = (point1.y + point1.height >= point2.y);
+        }
+      } else {
+        // no overlap?
+        result = false;
+      }
+
+    }
+
+    return result;
 
   }
 
@@ -2471,11 +2875,24 @@ if (Math.random() > 0.5) {
 
   }
 
+/*
+  var domPoint1 = document.createElement('div');
+  domPoint1.className = 'collision-check-1';
+
+  var domPoint2 = document.createElement('div');
+  domPoint2.className = 'collision-check-2';
+*/
+
   function init() {
 
     game.init();
 
     keyboardMonitor.init();
+
+/*
+    document.getElementById('world').appendChild(domPoint1);
+    document.getElementById('world').appendChild(domPoint2);
+*/
 
     addItem('end-bunker', 8);
 

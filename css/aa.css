@@ -156,7 +156,7 @@ body {
 	animation: genericexplosionsmall 0.45s steps(3);
 }
 
-#world .balloon.dead {
+#world .sprite.dead {
 	background-image: none;
 }
 
@@ -240,34 +240,6 @@ body {
  from { background-position: 0px 0px; }
  to { background-position: 0px -45px; }
 }
-
-
-#world .tank.enemy.exploding {
-	width: 79px;
-	height: 32px;
-	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
-	background-image: url(../image/tank-enemy-explosion.png);
-	background-position: 0px -352px; /* default state */
-	-webkit-animation: enemytankexplosion 1s steps(12);
-	-moz-animation: enemytankexplosion 1s steps(12);
-	animation: enemytankexplosion 1s steps(12);
-}
-
-@-webkit-keyframes enemytankexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
-@-moz-keyframes enemytankexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
-@keyframes enemytankexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
 
 #world .van {
 	background-image: url(../image/van.png);
@@ -390,10 +362,6 @@ body {
 	-webkit-animation: genericexplosionsmall 0.45s steps(3);
 	-moz-animation: genericexplosionsmall 0.45s steps(3);
 	animation: genericexplosionsmall 0.45s steps(3);
-}
-
-#world .helicopter.dead {
-	display: none;
 }
 
 #world .gunfire {
@@ -546,6 +514,14 @@ body {
 	bottom: 1px !important;
 }
 
+#world .gunfire.spark {
+	background-image: url(../image/explosion-spark.png);
+	background-position: 0px 0px;
+	width: 5px;
+	height: 5px;
+	z-index: 5;
+}
+
 #world .bomb.dropping.explosion-large {
 	-webkit-animation: largeexplosion 0.5s steps(5);
 	-moz-animation: largeexplosion 0.5s steps(5);
@@ -628,4 +604,48 @@ body {
 
 #game-status-bar #radar .sprite.enemy {
 	background-color: rgb(156,159,8) !important;
+}
+
+/* TODO: remove */
+
+.collision-check-1 {
+	position: absolute;
+	border: 1px solid #ff33ff;
+	background: rgba(255,64,255,0.25);
+}
+
+.collision-check-2 {
+	position: absolute;
+	border: 1px solid #33ff33;
+	background: rgba(64,255,64,0.25);
+}
+
+/* TODO: review explosions (enemy was used for original animation) */
+#world .tank.exploding,
+#world .van.exploding,
+#world .missile-launcher.exploding,
+#world .tank.enemy.exploding {
+	width: 79px;
+	height: 32px;
+	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
+	background-image: url(../image/tank-enemy-explosion.png);
+	background-position: 0px -352px; /* default state */
+	-webkit-animation: enemytankexplosion 1s steps(12);
+	-moz-animation: enemytankexplosion 1s steps(12);
+	animation: enemytankexplosion 1s steps(12);
+}
+
+@-webkit-keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@-moz-keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@keyframes enemytankexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
 }
