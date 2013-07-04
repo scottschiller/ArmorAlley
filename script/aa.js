@@ -94,6 +94,39 @@
 
   };
 
+  function mixin(oMain, oAdd) {
+
+    // non-destructive merge
+    var o1 = (oMain || {}), o2, o;
+
+    // if unspecified, o2 is the default options object
+    o2 = (oAdd === undefined ? {} : oAdd);
+
+    for (o in o2) {
+
+      if (o2.hasOwnProperty(o)) {
+
+        if (typeof o2[o] !== 'object' || o2[o] !== null) {
+
+          // assign directly
+          o1[o] = o2[o];
+
+        } else {
+
+          // recurse through o2
+          o1[o] = mixin(o1[o], o2[o]);
+
+        }
+
+      }
+
+    }
+
+    return o1;
+
+  };
+
+
   function stopEvent(e) {
 
     var evt = e || window.event;
@@ -778,6 +811,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      type: 'balloon',
       dead: false,
       energy: 3,
       defaultEnergy: 3,
@@ -1198,7 +1232,7 @@ window.setTimeout(function(){
 
   function GunFire(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, collisionItems, collisionOptions, exports;
 
     options = options || {};
 
@@ -1228,15 +1262,37 @@ window.setTimeout(function(){
       o: null
     }
 
-    function collisionTest(options) {
+    collisionOptions = {
+      source: exports, // initially undefined
+      targets: undefined,
+      bottomAligned: true,
+      hit: function(target) {
+        if (target.data.type && target.data.type === 'balloon') {
+          sparkAndDie(target);
+        } else {
+          gunFireHitTarget(target);
+        }
+      }
+    }
 
-      return collisionCheckArray({
-        source: exports,
-        targets: options.targets,
-        bottomAligned: true,
-        isBalloon: (options.isBalloon || false),
-        hit: (options.isBalloon ? sparkAndDie : gunFireHitTarget)
-      });
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+
+    function collisionTest() {
+
+      var i, j;
+
+      // hack: first-time run fix, as exports is initially undefined
+      if (!collisionOptions.source) {
+        collisionOptions.source = exports;
+      }
+
+      // loop through relevant game object arrays
+      for (i=0, j=collisionItems.length; i<j; i++) {
+        // ... and check them
+        collisionCheckArray(mixin(collisionOptions, {
+          targets: game.objects[collisionItems[i]]
+        }));
+      }
 
     }
 
@@ -1284,30 +1340,7 @@ window.setTimeout(function(){
         die();
       }
 
-      collisionTest({
-        targets: game.objects.balloons,
-        isBalloon: true
-      });
-
-      collisionTest({
-        targets: game.objects.tanks
-      });
-
-      collisionTest({
-        targets: game.objects.vans
-      });
-
-      collisionTest({
-        targets: game.objects.missileLaunchers
-      });
-
-      collisionTest({
-        targets: game.objects.infantry
-      });
-
-      collisionTest({
-        targets: game.objects.engineers
-      });
+      collisionTest();
 
       // notify caller if now dead
       return !data.dead;
@@ -1400,7 +1433,7 @@ window.setTimeout(function(){
 
   function Bomb(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, collisionItems, collisionOptions, exports;
 
     options = options || {};
 
@@ -1428,24 +1461,49 @@ window.setTimeout(function(){
       o: null
     }
 
-    function bombHitTarget(target, omitSound) {
-      die(omitSound);
+    function bombHitTarget(target) {
+
+      if (target.data.type && target.data.type === 'balloon') {
+        // omit own explosion sound, since balloon makes noise
+        die(true);
+      }
+
       target.hit(data.damagePoints);
-    }
 
-    function collisionTest(options) {
-
-      return collisionCheckArray({
-        source: exports,
-        targets: options.targets,
-        bottomAligned: true,
-        isBalloon: (options.isBalloon || false),
-        hit: function(target) {
-          bombHitTarget(target, options.isBalloon || false);
-        }
-      });
+      die();
 
     }
+
+    collisionOptions = {
+      source: exports, // initially undefined
+      targets: undefined,
+      bottomAligned: true,
+      hit: function(target) {
+        bombHitTarget(target);
+      }
+    }
+
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+
+    function collisionTest() {
+
+      var i, j;
+
+      // hack: first-time run fix, as exports is initially undefined
+      if (!collisionOptions.source) {
+        collisionOptions.source = exports;
+      }
+
+      // loop through relevant game object arrays
+      for (i=0, j=collisionItems.length; i<j; i++) {
+        // ... and check them
+        collisionCheckArray(mixin(collisionOptions, {
+          targets: game.objects[collisionItems[i]]
+        }));
+      }
+
+    }
+
 
     function animate() {
 
@@ -1470,30 +1528,7 @@ window.setTimeout(function(){
         die();
       }
 
-      collisionTest({
-        targets: game.objects.balloons,
-        isBalloon: true
-      });
-
-      collisionTest({
-        targets: game.objects.tanks
-      });
-
-      collisionTest({
-        targets: game.objects.vans
-      });
-
-      collisionTest({
-        targets: game.objects.missileLaunchers
-      });
-
-      collisionTest({
-        targets: game.objects.infantry
-      });
-
-      collisionTest({
-        targets: game.objects.engineers
-      });
+      collisionTest();
 
       // notify caller if now dead
       return !data.dead;
@@ -2551,7 +2586,7 @@ window.setTimeout(function(){
       return false;
     }
 
-    if (options.source.data.dead) {
+    if (options.source.data.dead || options.source.data.expired) {
       return false;
     }
 
@@ -2561,11 +2596,14 @@ window.setTimeout(function(){
 
       if (objects.hasOwnProperty(item) && !objects[item].data.dead) {
 
-        if (options.isBalloon) {
+        if (options.isBalloon || (objects[item].data.type && objects[item].data.type === 'balloon')) {
           // special case
           data2 = getBalloonObject(objects[item]);
         } else if (options.bottomAligned) {
           data2 = bottomAlignedObject(objects[item].data);
+        } else {
+          // normal top-aligned x/y case
+          data2 = objects[item].data;
         }
 
         hit = collisionCheck(options.source.data, data2);

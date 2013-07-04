@@ -624,6 +624,8 @@ body {
 #world .tank.exploding,
 #world .van.exploding,
 #world .missile-launcher.exploding,
+#world .infantry.exploding,
+#world .engineer.exploding,
 #world .tank.enemy.exploding {
 	width: 79px;
 	height: 32px;
