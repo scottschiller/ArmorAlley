@@ -192,7 +192,7 @@
       gameLoop: null,
       view: null,
       balloons: [],
-      balloonBunkers: [],
+      bunkers: [],
       engineers: [],
       infantry: [],
       missileLaunchers: [],
@@ -210,46 +210,46 @@
 
       objects.radar = new Radar();
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 1024
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 1536
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 2048
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 2560
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 3072
       }));
 
       // mid-level
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 4608,
         isEnemy: true
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 5120,
         isEnemy: true
       }));
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 5632,
         isEnemy: true
       }));
 
       // near-end / enemy territory
 
-      objects.balloonBunkers.push(new BalloonBunker({
+      objects.bunkers.push(new Bunker({
         x: 6656,
         isEnemy: true
       }));
@@ -691,7 +691,7 @@ window.setTimeout(function(){
 
     function removeItem(item) {
 
-      console.log('radar.removeItem()', item);
+      // console.log('radar.removeItem()', item);
 
       // look up item
       var i, j, foundItem;
@@ -699,7 +699,7 @@ window.setTimeout(function(){
       // find and remove from DOM + array
       for (i=items.length, j=0; i>j; i--) {
         if (items[i].oParent === item) {
-          console.log('radar.removeItem(): found match', item);
+          // console.log('radar.removeItem(): found match', item);
           items[i].o.parentNode.removeChild(items[i].o);
           items.splice(i, 1);
           foundItem = true;
@@ -799,7 +799,7 @@ window.setTimeout(function(){
 
   function Balloon(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, objects, exports;
 
     options = options || {};
 
@@ -831,7 +831,7 @@ window.setTimeout(function(){
     }
 
     objects = {
-      base: options.base || null
+      bunker: options.bunker || null
     }
 
     function animate() {
@@ -858,10 +858,7 @@ window.setTimeout(function(){
         } else {
 
           // chain is at bottom, and the balloon can now reappear.
-          if (data.canRespawn) {
-            reset();
-            data.canRespawn = false;
-          }
+          checkRespawn();
 
         }
 
@@ -923,16 +920,15 @@ window.setTimeout(function(){
         }
         window.setTimeout(dead, 550);
         data.dead = true;
-        // testing: respawn
-        window.setTimeout(respawn, 1500);
       }
     }
 
-    function respawn() {
-      if (data.dead && !data.canRespawn) {
-        // restore balloon once chain reaches bottom
-        data.canRespawn = true;
+    function checkRespawn() {
+
+      if (data.dead && !objects.bunker.data.dead) {
+        reset();
       }
+
     }
 
     function reset() {
@@ -945,7 +941,6 @@ window.setTimeout(function(){
       data.dead = false;
       // reset position, too
       data.y = 0;
-      
     }
 
     function init() {
@@ -962,8 +957,8 @@ window.setTimeout(function(){
 
       game.dom.world.appendChild(dom.o);
 
-      // TODO: review when balloon gets separated from base
-      data.x = options.x; // (objects.base ? objects.base.data.x : 0);
+      // TODO: review when balloon gets separated from bunker
+      data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
 
       setX(data.x);
 
@@ -978,7 +973,6 @@ window.setTimeout(function(){
       data: data,
       die: die,
       hit: hit,
-      respawn: respawn,
       setEnemy: setEnemy
     }
 
@@ -988,21 +982,20 @@ window.setTimeout(function(){
 
   }
 
-  function BalloonBunker(options) {
+  function Bunker(options) {
 
     var css, data, dom, objects, exports;
 
     options = options || {};
 
     css = {
-      className: 'balloon-bunker',
+      className: 'bunker',
       chainClassName: 'balloon-chain',
       enemy: 'enemy'
     }
 
     data = {
-      energy: 50,
-      // balloonHeight: 0,
+      energy: 30,
       isEnemy: options.isEnemy || false,
       x: options.x || 0,
       y: options.y || 0,
@@ -1052,6 +1045,47 @@ window.setTimeout(function(){
       dom.o.style.bottom = (y + 'px');
     }
 
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.exploding);
+
+      // timeout?
+      window.setTimeout(function() {
+        dom.o.parentNode.removeChild(dom.o);
+        dom.o = null;
+      }, 1000);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -1069,7 +1103,7 @@ window.setTimeout(function(){
       dom.o.appendChild(dom.oChain);
 
       objects.balloon = new Balloon({
-        base: exports,
+        bunker: exports,
         leftMargin: 7,
         isEnemy: data.isEnemy,
         x: data.x
@@ -1090,6 +1124,7 @@ window.setTimeout(function(){
       animate: animate,
       objects: objects,
       data: data,
+      hit: hit,
       init: init
     }
 
@@ -1275,7 +1310,7 @@ window.setTimeout(function(){
       }
     }
 
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers'];
 
     function collisionTest() {
 
@@ -1464,8 +1499,10 @@ window.setTimeout(function(){
     function bombHitTarget(target) {
 
       if (target.data.type && target.data.type === 'balloon') {
-        // omit own explosion sound, since balloon makes noise
-        die(true);
+        die({
+          omitSound: true,
+          retainPosition: true
+        });
       }
 
       target.hit(data.damagePoints);
@@ -1483,7 +1520,7 @@ window.setTimeout(function(){
       }
     }
 
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers'];
 
     function collisionTest() {
 
@@ -1535,22 +1572,33 @@ window.setTimeout(function(){
 
     }
 
-    function die(omitSound) {
+    function die(options) {
 
       // aieee!
+
+      var className;
 
       if (data.dead) {
         return false;
       }
 
+      options = options || {};
+
       // possible hit, blowing something up.
 
-      if (!omitSound && sounds.genericBoom) {
+      if (!options.omitSonud && sounds.genericBoom) {
         sounds.genericBoom.play();
       }
 
+      className = (Math.random () > 0.5 ? css.explosionLarge : css.spark);
+
+      if (!options.retainPosition) {
+        // stick this explosion to the bottom.
+        className += ' bottom-align';
+      }
+
       if (dom.o) {
-        utils.css.add(dom.o, Math.random() > 0.5 ? css.explosionLarge : css.spark);
+        utils.css.add(dom.o, className);
         // TODO: use single timer for all bombs
         window.setTimeout(function() {
           if (dom.o) {

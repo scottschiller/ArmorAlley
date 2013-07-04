@@ -123,15 +123,15 @@ body {
 	pointer-events: none;
 }
 
-#world .balloon-bunker,
-#world .balloon-bunker.enemy {
+#world .bunker,
+#world .bunker.enemy {
 	background-image: url(../image/bunker.png);
 	width: 51px;
 	height: 25px;
 	z-index: 1;
 }
 
-#world .balloon-bunker.enemy {
+#world .bunker.enemy {
 	background-image: url(../image/bunker-enemy.png);
 }
 
@@ -510,8 +510,10 @@ body {
 	background-position: 0px 0px;
 	width: 5px;
 	height: 5px;
+/*
 	top: auto !important;
 	bottom: 1px !important;
+*/
 }
 
 #world .gunfire.spark {
@@ -532,7 +534,9 @@ body {
 	width: 51px;
 	height: 22px;
 	margin-left: -26px;
+/*
 	bottom: 0px !important;
+*/
 }
 
 #game-status-bar #radar {
@@ -554,7 +558,7 @@ body {
 	background-color: rgb(23,160,7);
 }
 
-#game-status-bar #radar .sprite.balloon-bunker {
+#game-status-bar #radar .sprite.bunker {
 	background-color: #ccc;
 }
 
@@ -626,15 +630,19 @@ body {
 #world .missile-launcher.exploding,
 #world .infantry.exploding,
 #world .engineer.exploding,
-#world .tank.enemy.exploding {
+#world .tank.enemy.exploding,
+#world .bunker.exploding {
 	width: 79px;
 	height: 32px;
-	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
 	background-image: url(../image/tank-enemy-explosion.png);
 	background-position: 0px -352px; /* default state */
 	-webkit-animation: enemytankexplosion 1s steps(12);
 	-moz-animation: enemytankexplosion 1s steps(12);
 	animation: enemytankexplosion 1s steps(12);
+}
+
+#world .tank.exploding {
+	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
 }
 
 @-webkit-keyframes enemytankexplosion {
@@ -650,4 +658,9 @@ body {
 @keyframes enemytankexplosion {
  from { background-position: 0px 0px; }
  to { background-position: 0px -384px; }
+}
+
+#world .sprite.bottom-align {
+	top: auto !important;
+	bottom: 0px !important;
 }
