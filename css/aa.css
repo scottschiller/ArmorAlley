@@ -43,6 +43,11 @@ body {
  padding: 1px 0px;
 }
 
+#game-status-bar.building {
+ /* when inventory is being ordered */
+ border-color: #fff;
+}
+
 #game-status {
  position: absolute;
  top: 6px;

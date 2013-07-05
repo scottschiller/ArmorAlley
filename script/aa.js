@@ -151,6 +151,10 @@
     helicopter: {
       bomb: null,
       rotate: null
+    },
+    inventory: {
+      begin: null,
+      end: null
     }
   }
 
@@ -164,11 +168,13 @@
     hasSound = true;
     sounds.genericBoom = soundManager.createSound({
       url: 'audio/generic-boom.wav',
-      multiShot: true
+      multiShot: true,
+      volume: 20
     });
     sounds.genericExplosion = soundManager.createSound({
       url: 'audio/generic-explosion.wav',
-      multiShot: true
+      multiShot: true,
+      volume: 20
     });
     sounds.genericGunFire = soundManager.createSound({
       url: 'audio/generic-gunfire.wav',
@@ -178,6 +184,13 @@
       url: 'audio/helicopter-rotate.wav',
       multiShot: true
     });
+    sounds.inventory.begin = soundManager.createSound({
+      url: 'audio/order-start.wav'
+    });
+    sounds.inventory.end = soundManager.createSound({
+      url: 'audio/order-complete.wav'
+    });
+
   });
 
   game = (function() {
@@ -199,7 +212,8 @@
       tanks: [],
       vans: [],
       helicopters: [],
-      radar: null
+      radar: null,
+      inventory: null
     }
 
     function createObjects() {
@@ -209,6 +223,8 @@
       objects.view = new View();
 
       objects.radar = new Radar();
+
+      objects.inventory = new Inventory();
 
       objects.bunkers.push(new Bunker({
         x: 1024
@@ -485,38 +501,6 @@ window.setTimeout(function(){
 
     }
 
-/*
-
-    keyMap = {
-
-      'keyCode_86': {
-        method: function() {
-          game.objects.vans.push(new Van({
-            x: -32
-          }));
-        }
-      },
-
-      'keyCode_84': {
-        method: function() {
-          game.objects.vans.push(new Tank({
-            x: -32
-          }));
-        }
-      },
-
-      'keyCode_77': {
-        method: function() {
-          game.objects.vans.push(new MissileLauncher({
-            x: -32
-          }));
-        }
-      }
-
-    }
-
-*/
-
     function resetLeftScroll(x) {
 
       data.battleField.scrollLeft = x;
@@ -622,6 +606,98 @@ window.setTimeout(function(){
       data: data,
       setLeftScroll: setLeftScroll
     }
+
+    return exports;
+
+  }
+
+  function Inventory() {
+
+    var css, data, dom, exports;
+
+    css = {
+      building: 'building'
+    }
+
+    data = {
+      frameCount: 0,
+      // quick type-to-object/constructor array
+      types: {
+        tank: [game.objects.tanks, Tank],
+        van: [game.objects.vans, Van],
+        missileLauncher: [game.objects.missileLaunchers, MissileLauncher],
+        infantry: [game.objects.infantry, Infantry],
+        engineer: [game.objects.engineers, Engineer]
+      },
+      building: false
+    }
+
+    dom = {
+      gameStatusBar: null
+    }
+
+    function animate() {
+
+      data.frameCount++;
+
+      if (data.frameCount >= 0 && data.building) {
+
+        utils.css.remove(dom.gameStatusBar, css.building);
+
+        // "Construction complete."
+        data.building = false;
+
+        // play sound?
+        if (sounds.inventory.end) {
+          sounds.inventory.end.play();
+        }
+
+      }
+
+    }
+
+    function order(type, options) {
+
+      var typeData, orderObject;
+
+      options = options || {};
+
+      if (!data.building) {
+
+       // let's build something.
+       data.building = true;
+
+       typeData = data.types[type];
+
+       // create and append a new (something) to its appropriate array.
+       orderObject = new typeData[1](options);
+
+       typeData[0].push(orderObject);
+
+       // reset the frame count, and re-enable building when it surpasses this object's "build time"
+       data.frameCount = orderObject.data.inventory.frameCount * -1;
+
+       // update the UI
+       utils.css.add(dom.gameStatusBar, css.building);
+
+       if (sounds.inventory.begin) {
+         sounds.inventory.begin.play();
+       }
+
+      }
+
+    }
+
+    function init() {
+      dom.gameStatusBar = document.getElementById('game-status-bar');
+    }
+
+    exports = {
+      animate: animate,
+      order: order
+    }
+
+    init();
 
     return exports;
 
@@ -797,17 +873,21 @@ window.setTimeout(function(){
 
       data.frameCount++;
 
-      // collision checks?
-
       for (item in gameObjects) {
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
           // single object case
           if (gameObjects[item].animate) {
-            gameObjects[item].animate();
+            if (gameObjects[item].animate()) {
+              // object is dead - take it out.
+              gameObjects[item] = null;
+            }
           } else {
             // array case
-            for (i = 0, j = gameObjects[item].length; i < j; i++) {
-              gameObjects[item][i].animate();
+            for (i = gameObjects[item].length-1; i >= 0; i--) {
+              if (gameObjects[item][i].animate()) {
+                // object is dead - take it out.
+                gameObjects[item].splice(i, 1);
+              }
             }
           }
         }
@@ -1229,7 +1309,11 @@ window.setTimeout(function(){
       vX: (options.isEnemy ? -1 : 1),
       vY: 0,
       width: 52,
-      height: 17
+      height: 17,
+      inventory: {
+        frameCount: 50,
+        cost: 5
+      }
     }
 
     dom = {
@@ -1449,8 +1533,8 @@ window.setTimeout(function(){
 
       collisionTest();
 
-      // notify caller if now dead
-      return !data.dead;
+      // notify caller if now dead and can be removed.
+      return (data.dead && !dom.o);
 
     }
 
@@ -1639,8 +1723,8 @@ window.setTimeout(function(){
 
       collisionTest();
 
-      // notify caller if now dead
-      return !data.dead;
+      // notify caller if dead, and node has been removed.
+      return (data.dead && !dom.o);
 
     }
 
@@ -1744,7 +1828,11 @@ window.setTimeout(function(){
       movingRight: 'moving-right',
       tilt: 'tilt',
       exploding: 'exploding',
-      dead: 'dead'
+      dead: 'dead',
+      inventory: {
+        frameCount: 0,
+        cost: 20
+      }
     }
 
     data = {
@@ -1851,14 +1939,14 @@ window.setTimeout(function(){
       // animate child objects, too
 
       for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (!objects.gunfire[i].animate()) {
+        if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
         }
       }
 
       for (i = objects.bombs.length-1; i >= 0; i--) {
-        if (!objects.bombs[i].animate()) {
+        if (objects.bombs[i].animate()) {
           // object is dead - take it out.
           objects.bombs.splice(i, 1);
         }
@@ -2178,7 +2266,11 @@ window.setTimeout(function(){
       width: 57,
       height: 18,
       gunYOffset: 15,
-      stopped: false
+      stopped: false,
+      inventory: {
+        frameCount: 60,
+        cost: 5
+      }
     }
 
     dom = {
@@ -2193,16 +2285,22 @@ window.setTimeout(function(){
 
       var i;
 
+      data.frameCount++;
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
       if (!data.dead) {
 
-        data.frameCount++;
+        heal();
 
-        for (i = objects.gunfire.length-1; i >= 0; i--) {
-          if (!objects.gunfire[i].animate()) {
-            // object is dead - take it out.
-            objects.gunfire.splice(i, 1);
-          }
-        }
+      }
+
+      if (!data.dead) {
 
         if (!data.stopped) {
 
@@ -2215,9 +2313,10 @@ window.setTimeout(function(){
 
         }
 
-        heal();
-
       }
+
+      // TODO: return false - i.e., object is dead + inactive if (data.dead && !objects.gunfire.length)
+     return (data.dead && !dom.o && !objects.gunfire.length);
 
     }
 
@@ -2405,7 +2504,11 @@ window.setTimeout(function(){
       y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
-      height: 16
+      height: 16,
+      inventory: {
+        frameCount: 50,
+        cost: 5
+      }
     }
 
     dom = {
@@ -2538,7 +2641,11 @@ window.setTimeout(function(){
       y: options.y || 0,
       width: 10,
       height: 11,
-      vX: (options.isEnemy ? -1 : 1)
+      vX: (options.isEnemy ? -1 : 1),
+      inventory: {
+        frameCount: 150,
+        cost: 5
+      }
     }
 
     dom = {
@@ -2867,7 +2974,13 @@ window.setTimeout(function(){
          'left': 37,
          'up': 38,
          'right': 39,
-         'down': 40
+         'down': 40,
+         'missileLauncher': 77,
+         'tank': 84,
+         'van': 86,
+         'infantry': 73,
+         'engineer': 69
+         // 'helicopter': 72
        };
 
     events = {
@@ -3022,6 +3135,61 @@ window.setTimeout(function(){
         down: function() {
 
           // game.objects.smartbombController.fire();
+
+        }
+
+      },
+
+      // "m"
+      '77': {
+
+        down: function() {
+
+          game.objects.inventory.order('missileLauncher');
+
+        }
+
+      },
+
+      // "t"
+      '84': {
+
+        down: function() {
+
+          game.objects.inventory.order('tank');
+
+        }
+
+      },
+
+      // "v"
+      '86': {
+
+        down: function() {
+
+          game.objects.inventory.order('van');
+
+        }
+
+      },
+
+      // "e"
+      '69': {
+
+        down: function() {
+
+          game.objects.inventory.order('engineer');
+
+        }
+
+      },
+
+      // "i"
+      '73': {
+
+        down: function() {
+
+          game.objects.inventory.order('infantry');
 
         }
 
