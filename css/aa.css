@@ -177,8 +177,8 @@ body {
 
 #world .missile-launcher {
 	background-image: url(../image/missile-launcher.png);
-	width: 52px;
-	height: 17px;
+	width: 54px;
+	height: 18px;
 	z-index: 2;
 }
 
@@ -730,4 +730,17 @@ body {
 @keyframes infantryexplosion {
  from { background-position: 0px -286px; }
  to { background-position: 0px 0px; }
+}
+
+#key-legend {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	margin-bottom: -2em;
+	color: #666;
+}
+
+#key-legend em {
+	color: #999;
+	font-style: normal;
 }

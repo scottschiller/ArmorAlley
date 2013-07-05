@@ -184,6 +184,10 @@
       url: 'audio/helicopter-rotate.wav',
       multiShot: true
     });
+    sounds.inventory.denied = soundManager.createSound({
+      url: 'audio/order-denied.wav',
+      multiShot: true
+    });
     sounds.inventory.begin = soundManager.createSound({
       url: 'audio/order-start.wav'
     });
@@ -683,6 +687,14 @@ window.setTimeout(function(){
        if (sounds.inventory.begin) {
          sounds.inventory.begin.play();
        }
+
+      } else {
+
+        // busy.
+        if (sounds.inventory.denied) {
+          sounds.inventory.denied.play();
+        }
+
 
       }
 
@@ -1308,10 +1320,10 @@ window.setTimeout(function(){
       y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
       vY: 0,
-      width: 52,
-      height: 17,
+      width: 54,
+      height: 18,
       inventory: {
-        frameCount: 50,
+        frameCount: 60,
         cost: 5
       }
     }
