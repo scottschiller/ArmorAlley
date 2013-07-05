@@ -409,6 +409,14 @@ window.setTimeout(function(){
 
   }
 
+  function makeSubSprite() {
+
+    return makeSprite({
+      className: 'sub-sprite'
+    });
+
+  }
+
   function View() {
 
     var data, dom, events, exports;
@@ -652,10 +660,10 @@ window.setTimeout(function(){
 
         for (i=0, j=objects.items.length; i<j; i++) {
           // TODO: optimize
-          objects.items[i].o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+          objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
           if (objects.items[i].oParent.data.y) {
             // balloon
-            objects.items[i].o.style.bottom = objects.items[i].oParent.data.y + '%';
+            objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.y + '%';
           }
         }
 
@@ -663,27 +671,68 @@ window.setTimeout(function(){
 
     }
 
+    function RadarItem(options) {
+
+      var css, data, dom, oParent, exports;
+
+      css = {
+        radarItem: 'radar-item'
+      }
+
+      data = {
+        dead: false
+      }
+
+      dom = {
+        o: options.o
+      }
+
+      oParent = options.oParent;
+
+      function die() {
+        if (!data.dead) {
+          dom.o.style.display = 'none';
+          data.dead = true;
+        }
+      }
+
+      function reset() {
+        if (data.dead) {
+          dom.o.style.display = 'block';
+          data.dead = false;
+        }
+      }
+
+      function init() {
+        utils.css.add(dom.o, css.radarItem + ' ' + options.className);
+      }
+
+      init();
+
+      exports = {
+        dom: dom,
+        die: die,
+        oParent: oParent,
+        reset: reset
+      }
+
+      return exports;
+
+    }
+
     function addItem(item, className) {
 
       var itemObject, o;
 
-      o = dom.radarItem.cloneNode(true);
+      itemObject = new RadarItem({
+        o: dom.radarItem.cloneNode(true),
+        className: className,
+        oParent: item
+       });
 
-      o.className = 'radar-item ' + className;
+      objects.items.push(itemObject);
 
-      objects.items.push({
-        o: o,
-        oParent: item,
-        die: function() {
-          o.parentNode.removeChild(o);
-          o = null;
-          itemObject = null;
-        }
-      });
-
-      itemObject = objects.items[objects.items.length-1];
-
-      dom.radar.appendChild(o);
+      dom.radar.appendChild(itemObject.dom.o);
 
       return itemObject;
 
@@ -799,7 +848,7 @@ window.setTimeout(function(){
 
   function Balloon(options) {
 
-    var css, data, dom, objects, exports;
+    var css, data, dom, objects, radarItem, exports;
 
     options = options || {};
 
@@ -908,6 +957,7 @@ window.setTimeout(function(){
       if (data.dead && dom.o) {
         // hide the balloon
         utils.css.swap(dom.o, css.exploding, css.dead);
+        radarItem.die();
       }
     }
 
@@ -941,6 +991,7 @@ window.setTimeout(function(){
       data.dead = false;
       // reset position, too
       data.y = 0;
+      radarItem.reset();
     }
 
     function init() {
@@ -964,7 +1015,7 @@ window.setTimeout(function(){
 
       data.y = Math.random() * 100;
 
-      game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
@@ -984,28 +1035,33 @@ window.setTimeout(function(){
 
   function Bunker(options) {
 
-    var css, data, dom, objects, exports;
+    var css, data, dom, objects, radarItem, exports;
 
     options = options || {};
 
     css = {
       className: 'bunker',
       chainClassName: 'balloon-chain',
+      burning: 'burning',
+      exploding: 'exploding',
+      dead: 'dead',
       enemy: 'enemy'
     }
 
     data = {
+      type: 'bunker',
       energy: 30,
       isEnemy: options.isEnemy || false,
       x: options.x || 0,
       y: options.y || 0,
       width: 51,
       halfWidth: 25,
-      height: 31
+      height: 25
     }
 
     dom = {
       o: null,
+      oSubSprite: null,
       oChain: null
     }
 
@@ -1056,11 +1112,13 @@ window.setTimeout(function(){
       }
     }
 
+/*
     function dead() {
       if (data.dead && dom.o) {
         utils.css.swap(dom.o, css.exploding, css.dead);
       }
     }
+*/
 
     function die() {
 
@@ -1072,9 +1130,14 @@ window.setTimeout(function(){
 
       // timeout?
       window.setTimeout(function() {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
-      }, 1000);
+
+        utils.css.swap(dom.o, css.exploding, css.burning);
+
+        window.setTimeout(function() {
+          utils.css.swap(dom.o, css.burning, css.dead);
+        }, 10000);
+
+      }, 1100);
 
       data.energy = 0;
 
@@ -1084,6 +1147,8 @@ window.setTimeout(function(){
         sounds.genericExplosion.play();
       }
 
+      radarItem.die();
+
     }
 
     function init() {
@@ -1091,6 +1156,10 @@ window.setTimeout(function(){
       dom.o = makeSprite({
         className: css.className
       });
+
+      dom.oSubSprite = makeSubSprite();
+
+      dom.o.appendChild(dom.oSubSprite);
 
       dom.oChain = makeSprite({
         className: css.chainClassName
@@ -1116,7 +1185,7 @@ window.setTimeout(function(){
 
       game.dom.world.appendChild(dom.o);
 
-      game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
@@ -1140,7 +1209,7 @@ window.setTimeout(function(){
 
   function MissileLauncher(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, radarItem, exports;
 
     options = options || {};
 
@@ -1226,6 +1295,7 @@ window.setTimeout(function(){
       window.setTimeout(function() {
         dom.o.parentNode.removeChild(dom.o);
         dom.o = null;
+        radarItem.die();
       }, 1000);
 
       data.energy = 0;
@@ -1250,9 +1320,9 @@ window.setTimeout(function(){
 
       game.dom.world.appendChild(dom.o);
 
-    }
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-    init();
+    }
 
     exports = {
       animate: animate,
@@ -1260,6 +1330,8 @@ window.setTimeout(function(){
       hit: hit,
       die: die
     }
+
+    init();
 
     return exports;
 
@@ -1302,11 +1374,11 @@ window.setTimeout(function(){
       targets: undefined,
       bottomAligned: true,
       hit: function(target) {
-        if (target.data.type && target.data.type === 'balloon') {
+//        if (target.data.type && (target.data.type === 'balloon' || target.data.type === 'bunker')) {
           sparkAndDie(target);
-        } else {
-          gunFireHitTarget(target);
-        }
+//        } else {
+//          gunFireHitTarget(target);
+//        }
       }
     }
 
@@ -1658,7 +1730,7 @@ window.setTimeout(function(){
 
   function Helicopter(options) {
 
-    var css, data, dom, events, objects, exports;
+    var css, data, dom, events, objects, radarItem, exports;
 
     options = options || {};
 
@@ -2059,7 +2131,7 @@ window.setTimeout(function(){
 
       refreshCoords();
 
-     radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
@@ -2080,7 +2152,7 @@ window.setTimeout(function(){
 
   function Tank(options) {
 
-    var css, data, dom, radarItem, objects, exports;
+    var css, data, dom, radarItem, objects, radarItem, exports;
 
     options = options || {};
 
@@ -2262,6 +2334,7 @@ window.setTimeout(function(){
       window.setTimeout(function() {
         dom.o.parentNode.removeChild(dom.o);
         dom.o = null;
+        radarItem.die();
       }, 1000);
 
       data.energy = 0;
@@ -2314,7 +2387,7 @@ window.setTimeout(function(){
 
   function Van(options) {
 
-    var css, dom, data, exports;
+    var css, dom, data, radarItem, exports;
 
     options = options || {};
 
@@ -2398,6 +2471,7 @@ window.setTimeout(function(){
       window.setTimeout(function() {
         dom.o.parentNode.removeChild(dom.o);
         dom.o = null;
+        radarItem.die();
       }, 1000);
 
       data.energy = 0;
@@ -2422,7 +2496,7 @@ window.setTimeout(function(){
 
       game.dom.world.appendChild(dom.o);
 
-      game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
@@ -2441,7 +2515,7 @@ window.setTimeout(function(){
 
   function Infantry(options) {
 
-    var css, dom, data, exports;
+    var css, dom, data, radarItem, exports;
 
     options = options || {};
 
@@ -2546,7 +2620,8 @@ window.setTimeout(function(){
       window.setTimeout(function() {
         dom.o.parentNode.removeChild(dom.o);
         dom.o = null;
-      }, 1000);
+        radarItem.die();
+      }, 1200);
 
       data.energy = 0;
 
@@ -2575,7 +2650,7 @@ window.setTimeout(function(){
 
       game.dom.world.appendChild(dom.o);
 
-      game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 

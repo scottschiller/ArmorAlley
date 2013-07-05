@@ -510,10 +510,6 @@ body {
 	background-position: 0px 0px;
 	width: 5px;
 	height: 5px;
-/*
-	top: auto !important;
-	bottom: 1px !important;
-*/
 }
 
 #world .gunfire.spark {
@@ -534,9 +530,6 @@ body {
 	width: 51px;
 	height: 22px;
 	margin-left: -26px;
-/*
-	bottom: 0px !important;
-*/
 }
 
 #game-status-bar #radar {
@@ -586,6 +579,15 @@ body {
 */
 }
 
+#game-status-bar #radar .sprite.infantry,
+#game-status-bar #radar .sprite.engineer {
+	width: 1px;
+}
+
+#game-status-bar #radar .sprite.dead {
+	display: none;
+}
+
 /*
 @-webkit-keyframes blinker {
 	from {
@@ -628,8 +630,6 @@ body {
 #world .tank.exploding,
 #world .van.exploding,
 #world .missile-launcher.exploding,
-#world .infantry.exploding,
-#world .engineer.exploding,
 #world .tank.enemy.exploding,
 #world .bunker.exploding {
 	width: 79px;
@@ -639,6 +639,42 @@ body {
 	-webkit-animation: enemytankexplosion 1s steps(12);
 	-moz-animation: enemytankexplosion 1s steps(12);
 	animation: enemytankexplosion 1s steps(12);
+}
+
+#world .bunker.exploding {
+	/* bunker is normally 52px */
+	margin-left: -13px;
+}
+
+#world .sprite .sub-sprite {
+	/* explosion / burning overlays */
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#world .bunker.burning {
+	background-image: none;
+}
+
+#world .bunker.exploding .sub-sprite,
+#world .bunker.burning .sub-sprite {
+	/*
+	width: 52px;
+	height: 9px;
+	*/
+	background-image: url(../image/bunker-burning.gif);
+	background-position: 50% 100%;
+	background-repeat: none;
+}
+
+#world .bunker.dead {
+	display: block;
+	width: 52px;
+	height: 4px;
+	background-image: url(../image/bunker-dead.png);
 }
 
 #world .tank.exploding {
@@ -663,4 +699,30 @@ body {
 #world .sprite.bottom-align {
 	top: auto !important;
 	bottom: 0px !important;
+}
+
+#world .infantry.exploding,
+#world .engineer.exploding {
+	width: 54px;
+	height: 26px;
+	background-image: url(../image/infantry-explosion.png);
+	background-position: 0px -260px; /* default state */
+	-webkit-animation: infantryexplosion 1s steps(11);
+	-moz-animation: infantryexplosion 1s steps(11);
+	animation: infantryexplosion 1s steps(11);
+}
+
+@-webkit-keyframes infantryexplosion {
+ from { background-position: 0px -286px; }
+ to { background-position: 0px 0px; }
+}
+
+@-moz-keyframes infantryexplosion {
+ from { background-position: 0px -286px; }
+ to { background-position: 0px 0px; }
+}
+
+@keyframes infantryexplosion {
+ from { background-position: 0px -286px; }
+ to { background-position: 0px 0px; }
 }
