@@ -317,25 +317,26 @@ window.setTimeout(function(){
         x: -128
       }));
 
-      objects.infantry.push(new Infantry({
-        x: -192
-      }));
+      for (var i=0; i<5; i++) {
 
-      objects.infantry.push(new Infantry({
-        x: -212
-      }));
+        objects.infantry.push(new Infantry({
+          x: -192 + (i * -20)
+        }));
 
-      objects.infantry.push(new Infantry({
-        x: -232
-      }));
+        objects.infantry.push(new Infantry({
+          x: 500 + (i * 20)
+        }));
 
-      objects.infantry.push(new Infantry({
-        x: -252
-      }));
+        objects.infantry.push(new Infantry({
+          x: 1400 + (i * -20),
+          isEnemy: true
+        }));
 
-      objects.infantry.push(new Infantry({
-        x: -272
-      }));
+
+      }
+
+// test
+// objects.infantry[objects.infantry.length-1].stop();
 
       objects.engineers.push(new Engineer({
         x: -300
@@ -367,16 +368,6 @@ window.setTimeout(function(){
         isEnemy: true
       }));
 
-/*
-      var thatTank = objects.tanks[objects.tanks.length-1];
-
-      window.setTimeout(thatTank.hit, 2000);
-
-      window.setTimeout(thatTank.hit, 4000);
-
-      window.setTimeout(thatTank.hit, 6000);
-*/
-
       objects.tanks.push(new Tank({
         x: 1112,
         isEnemy: true
@@ -406,6 +397,15 @@ window.setTimeout(function(){
         x: 8000,
         isEnemy: true
       }));
+
+      for (var i=0; i<5; i++) {
+
+        objects.infantry.push(new Infantry({
+          x: 8000 + ((i+1) * -20),
+          isEnemy: true
+        }));
+
+      }
 
     }
 
@@ -761,7 +761,7 @@ window.setTimeout(function(){
         for (i=0, j=objects.items.length; i<j; i++) {
           // TODO: optimize
           objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
-          if (objects.items[i].oParent.data.y) {
+          if (objects.items[i].oParent.data.type && objects.items[i].oParent.data.type === 'balloon') {
             // balloon
             objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.y + '%';
           }
@@ -1489,7 +1489,7 @@ window.setTimeout(function(){
       }
     }
 
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers'];
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters'];
 
     function collisionTest() {
 
@@ -1919,7 +1919,10 @@ window.setTimeout(function(){
       source: exports, // initially undefined
       targets: undefined,
       hit: function(target) {
-        console.log('helicopter hit something', target);
+        // console.log('helicopter hit something', target);
+        die();
+        // should the target die, too? ... probably do.
+        target.hit(999);
       }
     }
 
@@ -1982,6 +1985,8 @@ window.setTimeout(function(){
         applyTilt();
 
         moveTo(data.x + data.vX, data.y + data.vY);
+
+        collisionTest();
 
       }
 
@@ -2177,6 +2182,17 @@ window.setTimeout(function(){
       dom.o.style.top = (y + 'px');
     }
 
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
     function fire() {
 
       var tiltOffset, frameCount;
@@ -2244,6 +2260,8 @@ window.setTimeout(function(){
 
       radarItem.die();
 
+      console.log('helicopter died.');
+
     }
 
     function init() {
@@ -2279,6 +2297,7 @@ window.setTimeout(function(){
       data: data,
       die: die,
       fire: fire,
+      hit: hit,
       setBombing: setBombing,
       setFiring: setFiring
     }
@@ -2350,8 +2369,8 @@ window.setTimeout(function(){
       }
     }
 
-    // who get fired at?
-    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+    // who gets fired at?
+    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
 
     function nearbyTest() {
 
@@ -2377,7 +2396,6 @@ window.setTimeout(function(){
       }
 
     }
-
 
     function animate() {
 
@@ -2408,7 +2426,7 @@ window.setTimeout(function(){
           // only fire (i.e., GunFire objects) when stopped
           fire();
 
-          // TODO: should we stop firing, and resume moving?
+          // should we stop firing, and resume moving?
           nearbyTest();
 
         }
@@ -2719,7 +2737,7 @@ window.setTimeout(function(){
 
   function Infantry(options) {
 
-    var css, dom, data, radarItem, exports;
+    var css, dom, data, objects, radarItem, exports;
 
     options = options || {};
 
@@ -2729,20 +2747,25 @@ window.setTimeout(function(){
       engineer: 'engineer',
       enemy: 'enemy',
       exploding: 'exploding',
-      dead: 'dead'
+      dead: 'dead',
+      stopped: 'stopped'
     }
 
     data = {
+      frameCount: 0,
       bottomAligned: true,
       energy: 2,
       isEnemy: options.isEnemy || false,
       role: options.role || 0,
       roles: ['infantry', 'engineer'],
+      stopped: false,
       direction: 0,
       x: options.x || 0,
       y: options.y || 0,
       width: 10,
       height: 11,
+      gunYOffset: 9,
+      fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
       inventory: {
         frameCount: 150,
@@ -2754,10 +2777,102 @@ window.setTimeout(function(){
       o: null
     }
 
+    objects = {
+      gunfire: []
+    }
+
+    var nearbyOptions, nearbyItems;
+
+    nearbyOptions = {
+      source: exports, // initially undefined
+      targets: undefined,
+      useLookAhead: true,
+      // TODO: rename to something generic?
+      hit: function(target) {
+        // stop moving, start firing.
+        stop();
+      },
+      miss: function() {
+        // resume moving, stop firing.
+        resume();
+      }
+    }
+
+    // who gets fired at?
+    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
+
+    function nearbyTest() {
+
+      var i, j, foundHit;
+
+      // hack: first-time run fix, as exports is initially undefined
+      if (!nearbyOptions.source) {
+        nearbyOptions.source = exports;
+      }
+
+      // loop through relevant game object arrays
+      for (i=0, j=nearbyItems.length; i<j; i++) {
+        // ... and check them
+        if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
+          foundHit = true;
+        }
+      }
+
+      // callback for no-hit case, too
+      if (!foundHit && nearbyOptions.miss) {
+        nearbyOptions.miss(nearbyOptions.source);
+      }
+
+    }
+
     function animate() {
 
+      data.frameCount++;
+
       if (!data.dead) {
-        moveTo(data.x + data.vX, data.y);
+
+        if (!data.stopped) {
+
+          moveTo(data.x + data.vX, data.y);
+
+          // are we near something that needs firing at?
+          nearbyTest();
+
+        } else {
+
+          // only fire (i.e., GunFire objects) when stopped
+          fire();
+
+          // should we stop firing, and resume moving?
+          nearbyTest();
+
+        }
+
+      }
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      return (data.dead && !dom.o && !objects.gunfire.length);
+
+    }
+
+    function fire() {
+
+      if (data.frameCount % data.fireModulus === 0) {
+
+        objects.gunfire.push(new GunFire({
+          isEnemy: data.isEnemy,
+          x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
+          y: game.objects.view.data.world.height - data.gunYOffset, // half of infantry height
+          vX: data.vX, // same velocity
+          vY: 0
+        }));
+
       }
 
     }
@@ -2782,6 +2897,24 @@ window.setTimeout(function(){
 
     function setY(y) {
       dom.o.style.bottom = (y + 'px');
+    }
+
+    function stop() {
+
+      if (!data.stopped) {
+        utils.css.add(dom.o, css.stopped);
+        data.stopped = true;
+      }
+
+    }
+
+    function resume() {
+
+      if (data.stopped) {
+        utils.css.remove(dom.o, css.stopped);
+        data.stopped = false;
+      }
+
     }
 
     function setRole(role, force) {
@@ -2890,13 +3023,19 @@ window.setTimeout(function(){
   function getBalloonObject(obj) {
 
     // compensate for bunker offset minus balloon offset
-    var data = {
-      x: obj.data.x,
-      // world minus radar
-      y: 370 - (280 * obj.data.y/100),
-      width: obj.data.width,
-      height: obj.data.height
-    }
+    var data;
+
+    // local copy
+    data = mixin({}, obj);
+
+    data.x = obj.data.x;
+
+    // world minus radar
+    data.y = 370 - (280 * obj.data.y/100);
+
+    data.width = obj.data.width;
+
+    data.height = obj.data.height;
 
     return data;
 
@@ -2932,7 +3071,7 @@ window.setTimeout(function(){
     // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
     if (options.useLookAhead) {
       // friendly things move further right, enemies move further left.
-      data1.x += (data1.width * 0.33 * (data1.isEnemy ? -1 : 1));
+      data1.x += (Math.max(16, data1.width * 0.33) * (data1.isEnemy ? -1 : 1));
     }
 
     objects = options.targets;
