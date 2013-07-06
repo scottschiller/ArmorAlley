@@ -231,7 +231,8 @@
       objects.inventory = new Inventory();
 
       objects.bunkers.push(new Bunker({
-        x: 1024
+        x: 1024,
+        isEnemy: true
       }));
 
       objects.bunkers.push(new Bunker({
@@ -296,6 +297,17 @@ window.setTimeout(function(){
 	testTank.stop();
 	window.setTimeout(testTank.resume, 2000);
 }, 5000);
+
+
+      objects.tanks.push(new Tank({
+        x: 700
+      }));
+
+
+      objects.tanks.push(new Tank({
+        x: 760
+      }));
+
 
       objects.vans.push(new Van({
         x: -32
@@ -952,6 +964,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true, // TODO: review/remove
       type: 'balloon',
       dead: false,
       energy: 3,
@@ -1141,6 +1154,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true,
       type: 'bunker',
       energy: 30,
       isEnemy: options.isEnemy || false,
@@ -1168,7 +1182,7 @@ window.setTimeout(function(){
       }
 */
       // TODO: fix height: 0px case (1-pixel white border)
-      dom.oChain.style.height = ((objects.balloon.data.y / 100 * 280) - data.height + 'px');
+      dom.oChain.style.height = ((objects.balloon.data.y / 100 * 280) - data.height - 6 + 'px');
     }
 
     function moveTo(x, y) {
@@ -1313,6 +1327,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true,
       energy: 3,
       isEnemy: (options.isEnemy || false),
       direction: 0,
@@ -1447,6 +1462,7 @@ window.setTimeout(function(){
 
     data = {
       dead: false,
+      isEnemy: options.isEnemy || false,
       expired: false,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 25,
@@ -1468,13 +1484,8 @@ window.setTimeout(function(){
     collisionOptions = {
       source: exports, // initially undefined
       targets: undefined,
-      bottomAligned: true,
       hit: function(target) {
-//        if (target.data.type && (target.data.type === 'balloon' || target.data.type === 'bunker')) {
-          sparkAndDie(target);
-//        } else {
-//          gunFireHitTarget(target);
-//        }
+        sparkAndDie(target);
       }
     }
 
@@ -1496,13 +1507,6 @@ window.setTimeout(function(){
           targets: game.objects[collisionItems[i]]
         }));
       }
-
-    }
-
-    function gunFireHitTarget(target) {
-
-      die();
-      target.hit(data.damagePoints);
 
     }
 
@@ -1649,6 +1653,7 @@ window.setTimeout(function(){
 
     data = {
       dead: false,
+      isEnemy: options.isEnemy || false,
       firstFrame: true,
       x: options.x || 0,
       y: options.y || 0,
@@ -1682,7 +1687,6 @@ window.setTimeout(function(){
     collisionOptions = {
       source: exports, // initially undefined
       targets: undefined,
-      bottomAligned: true,
       hit: function(target) {
         bombHitTarget(target);
       }
@@ -1848,6 +1852,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      isEnemy: options.isEnemy || false,
       bombing: false,
       firing: false,
       fuel: 100,
@@ -1906,6 +1911,38 @@ window.setTimeout(function(){
     objects = {
       bombs: [],
       gunfire: []
+    }
+
+    var collisionItems, collisionOptions;
+
+    collisionOptions = {
+      source: exports, // initially undefined
+      targets: undefined,
+      hit: function(target) {
+        console.log('helicopter hit something', target);
+      }
+    }
+
+    // hit any enemy building or vehicle? "boom."
+    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers'];
+
+    function collisionTest() {
+
+      var i, j;
+
+      // hack: first-time run fix, as exports is initially undefined
+      if (!collisionOptions.source) {
+        collisionOptions.source = exports;
+      }
+
+      // loop through relevant game object arrays
+      for (i=0, j=collisionItems.length; i<j; i++) {
+        // ... and check them
+        collisionCheckArray(mixin(collisionOptions, {
+          targets: game.objects[collisionItems[i]]
+        }));
+      }
+
     }
 
     function animate() {
@@ -2157,6 +2194,7 @@ window.setTimeout(function(){
         tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
         objects.gunfire.push(new GunFire({
+          isEnemy: data.isEnemy,
           x: data.x + (data.rotated ? 0 : data.width) - 8,
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
           vX: data.vX + 8 * (data.rotated ? -1 : 1),
@@ -2172,6 +2210,7 @@ window.setTimeout(function(){
       if (data.bombing && frameCount % data.bombModulus === 0) {
 
         objects.bombs.push(new Bomb({
+          isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: data.y + data.height - 6,
           vX: data.vX,
@@ -2266,11 +2305,12 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true,
       energy: 8,
       energyMax: 8,
       frameCount: 0,
       isEnemy: options.isEnemy || false,
-      healModulus: 50,
+      repairModulus: 50,
       fireModulus: 6,
       x: options.x || 0,
       y: options.y || 0,
@@ -2293,6 +2333,52 @@ window.setTimeout(function(){
       gunfire: []
     }
 
+    var nearbyOptions, nearbyItems;
+
+    nearbyOptions = {
+      source: exports, // initially undefined
+      targets: undefined,
+      useLookAhead: true,
+      // TODO: rename to something generic?
+      hit: function(target) {
+        // stop moving, start firing.
+        stop();
+      },
+      miss: function() {
+        // resume moving, stop firing.
+        resume();
+      }
+    }
+
+    // who get fired at?
+    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers'];
+
+    function nearbyTest() {
+
+      var i, j, foundHit;
+
+      // hack: first-time run fix, as exports is initially undefined
+      if (!nearbyOptions.source) {
+        nearbyOptions.source = exports;
+      }
+
+      // loop through relevant game object arrays
+      for (i=0, j=nearbyItems.length; i<j; i++) {
+        // ... and check them
+        if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
+          foundHit = true;
+        }
+      }
+
+
+      // callback for no-hit case, too
+      if (!foundHit && nearbyOptions.miss) {
+        nearbyOptions.miss(nearbyOptions.source);
+      }
+
+    }
+
+
     function animate() {
 
       var i;
@@ -2308,27 +2394,28 @@ window.setTimeout(function(){
 
       if (!data.dead) {
 
-        heal();
-
-      }
-
-      if (!data.dead) {
+        repair();
 
         if (!data.stopped) {
 
           moveTo(data.x + data.vX, data.y);
+
+          // are we near something that needs firing at?
+          nearbyTest();
 
         } else {
 
           // only fire (i.e., GunFire objects) when stopped
           fire();
 
+          // TODO: should we stop firing, and resume moving?
+          nearbyTest();
+
         }
 
       }
 
-      // TODO: return false - i.e., object is dead + inactive if (data.dead && !objects.gunfire.length)
-     return (data.dead && !dom.o && !objects.gunfire.length);
+      return (data.dead && !dom.o && !objects.gunfire.length);
 
     }
 
@@ -2337,7 +2424,8 @@ window.setTimeout(function(){
       if (data.frameCount % data.fireModulus === 0) {
 
         objects.gunfire.push(new GunFire({
-          x: data.x + ((data.width + 1) * (data.isEnemy ? -1 : 1)),
+          isEnemy: data.isEnemy,
+          x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
           vX: data.vX, // same velocity as tank
           vY: 0
@@ -2351,9 +2439,9 @@ window.setTimeout(function(){
 
     }
 
-    function heal() {
+    function repair() {
 
-      if (data.frameCount % data.healModulus === 0) {
+      if (data.frameCount % data.repairModulus === 0) {
         if (data.energy < data.energyMax) {
           data.energy++;
           updateHealth();
@@ -2390,7 +2478,7 @@ window.setTimeout(function(){
       if (data.energy <= 4) {
         utils.css.add(dom.o, css.hit2);
         utils.css.remove(dom.o, css.hit1);
-      } else if (data.energy <= 8) {
+      } else if (data.energy < 8) {
         utils.css.add(dom.o, css.hit1);
         utils.css.remove(dom.o, css.hit2);
       } else {
@@ -2509,6 +2597,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true,
       energy: 3,
       isEnemy: options.isEnemy || false,
       direction: 0,
@@ -2644,6 +2733,7 @@ window.setTimeout(function(){
     }
 
     data = {
+      bottomAligned: true,
       energy: 2,
       isEnemy: options.isEnemy || false,
       role: options.role || 0,
@@ -2817,12 +2907,11 @@ window.setTimeout(function(){
     /**
      * options = {
      *   source: object (eg., game.objects.gunfire[0]);
-     *   targets: array (eg., game.objects.tanks),
-     *   bottomAligned: Boolean
+     *   targets: array (eg., game.objects.tanks)
      * }
      */
 
-    var item, objects, data2;
+    var item, objects, data1, data2, foundHit;
 
     if (!options) {
       return false;
@@ -2832,32 +2921,54 @@ window.setTimeout(function(){
       return false;
     }
 
+    // local copy of souce object coordinates
+    data1 = mixin({}, options.source.data);
+
+    // should data1 be bottom-aligned?
+    if (data1.bottomAligned) {
+      data1 = bottomAlignedObject(data1);
+    }
+
+    // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
+    if (options.useLookAhead) {
+      // friendly things move further right, enemies move further left.
+      data1.x += (data1.width * 0.33 * (data1.isEnemy ? -1 : 1));
+    }
+
     objects = options.targets;
 
     for (item in objects) {
 
-      if (objects.hasOwnProperty(item) && !objects[item].data.dead) {
+      // don't check against friendly units, dead objects, or against self
+      if (objects.hasOwnProperty(item) && objects[item].data.isEnemy !== options.source.data.isEnemy && !objects[item].data.dead && objects[item] !== options.source) {
 
         if (options.isBalloon || (objects[item].data.type && objects[item].data.type === 'balloon')) {
           // special case
           data2 = getBalloonObject(objects[item]);
-        } else if (options.bottomAligned) {
+        } else if (objects[item].data.bottomAligned) {
           data2 = bottomAlignedObject(objects[item].data);
         } else {
-          // normal top-aligned x/y case
+          // normal top-aligned x/y case (or we're comparing apples and apples, i.e., two bottom-aligned items, and we don't care.)
           data2 = objects[item].data;
         }
 
-        hit = collisionCheck(options.source.data, data2);
+        hit = collisionCheck(data1, data2);
 
         if (hit) {
-          // custom override
-          options.hit(objects[item]);
+
+          foundHit = true;
+
+          if (options.hit) {
+            options.hit(objects[item]);
+          }
+
         }
 
       }
 
     }
+
+    return foundHit;
 
   }
 
@@ -2865,32 +2976,12 @@ window.setTimeout(function(){
 
     // compensate for objects positioned using bottom: 0
 
-    var data = {
-      x: obj.x,
-      // correct for fixed-value bottom positioning
-      y: 370 - 2,
-      width: obj.width,
-      height: obj.height
-    }
+    // correct for fixed-value bottom positioning
+    obj.y = 370 - 2;
 
-    return data;
+    return obj;
 
   }
-
-  function collisionCheck(obj1, obj2) {
-
-    // given x, y, width and height, determine if one object is overlapping another.
-
-    if (!obj1 || !obj2) {
-      return null;
-    }
-
-    // presume each object has x, y, width, height - otherwise, all hell will break loose.
-    return checkPoints(obj1, obj2);
-
-  }
-
-  // stolen from survivor.js
 
   var domPoint1, domPoint2;
 
@@ -2900,7 +2991,16 @@ window.setTimeout(function(){
   domPoint2 = document.createElement('div');
   domPoint2.className = 'collision-check-2';
 
-  function checkPoints(point1, point2) {
+
+  function collisionCheck(point1, point2) {
+
+    // given x, y, width and height, determine if one object is overlapping another.
+
+    if (!point1 || !point2) {
+      return null;
+    }
+
+    // presume each object has x, y, width, height - otherwise, all hell will break loose.
 
     // given two boxes, check for intersects.
     var result;
