@@ -289,7 +289,6 @@ body {
 
 #world .engineer.enemy {
 	/* haaacks */
-	-webkit-filter: grayscale(1);
 	-moz-transform: scaleX(-1);
 	-o-transform: scaleX(-1);
 	-webkit-transform: scaleX(-1);
@@ -414,6 +413,8 @@ body {
 }
 
 #world .helicopter.exploding {
+	width: 32px;
+	height: 15px;
 	background-image: url(../image/generic-explosion.png) !important;
 	background-position: 0px -30px; /* default when animation finishes */
 	-webkit-animation: genericexplosionsmall 0.45s steps(3);
@@ -691,11 +692,11 @@ body {
 #world .bunker.exploding {
 	width: 79px;
 	height: 32px;
-	background-image: url(../image/tank-enemy-explosion.png);
+	background-image: url(../image/explosion-shrapnel-2.png);
 	background-position: 0px -352px; /* default state */
-	-webkit-animation: enemytankexplosion 1s steps(12);
-	-moz-animation: enemytankexplosion 1s steps(12);
-	animation: enemytankexplosion 1s steps(12);
+	-webkit-animation: explosionshrapnel2 1s steps(12);
+	-moz-animation: explosionshrapnel2 1s steps(12);
+	animation: explosionshrapnel2 1s steps(12);
 }
 
 #world .bunker.exploding {
@@ -743,17 +744,17 @@ body {
 	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
 }
 
-@-webkit-keyframes enemytankexplosion {
+@-webkit-keyframes explosionshrapnel2 {
  from { background-position: 0px 0px; }
  to { background-position: 0px -384px; }
 }
 
-@-moz-keyframes enemytankexplosion {
+@-moz-keyframes explosionshrapnel2 {
  from { background-position: 0px 0px; }
  to { background-position: 0px -384px; }
 }
 
-@keyframes enemytankexplosion {
+@keyframes explosionshrapnel2 {
  from { background-position: 0px 0px; }
  to { background-position: 0px -384px; }
 }
@@ -765,28 +766,28 @@ body {
 
 #world .infantry.exploding,
 #world .engineer.exploding {
-	width: 54px;
-	height: 26px;
-	background-image: url(../image/infantry-explosion.png);
-	background-position: 0px -260px; /* default state */
-	-webkit-animation: infantryexplosion 1s steps(11);
-	-moz-animation: infantryexplosion 1s steps(11);
-	animation: infantryexplosion 1s steps(11);
+	width: 10px;
+	height: 22px;
+	background-image: url(../image/infantry-explosion-2.png);
+	background-position: 0px -220px; /* default state */
+	-webkit-animation: infantryexplosion 1s steps(10);
+	-moz-animation: infantryexplosion 1s steps(10);
+	animation: infantryexplosion 1s steps(10);
 }
 
 @-webkit-keyframes infantryexplosion {
- from { background-position: 0px -286px; }
- to { background-position: 0px 0px; }
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
 }
 
 @-moz-keyframes infantryexplosion {
- from { background-position: 0px -286px; }
- to { background-position: 0px 0px; }
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
 }
 
 @keyframes infantryexplosion {
- from { background-position: 0px -286px; }
- to { background-position: 0px 0px; }
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
 }
 
 #key-legend {
