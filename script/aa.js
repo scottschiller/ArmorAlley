@@ -328,7 +328,7 @@ window.setTimeout(function(){
         }));
 
         objects.infantry.push(new Infantry({
-          x: 1400 + (i * -20),
+          x: 1460 + (i * -20),
           isEnemy: true
         }));
 
@@ -2310,7 +2310,7 @@ window.setTimeout(function(){
 
   function Tank(options) {
 
-    var css, data, dom, radarItem, objects, radarItem, exports;
+    var css, data, dom, radarItem, objects, radarItem, nearbyOptions, nearbyItems, exports;
 
     options = options || {};
 
@@ -2352,8 +2352,6 @@ window.setTimeout(function(){
       gunfire: []
     }
 
-    var nearbyOptions, nearbyItems;
-
     nearbyOptions = {
       source: exports, // initially undefined
       targets: undefined,
@@ -2371,31 +2369,6 @@ window.setTimeout(function(){
 
     // who gets fired at?
     nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
-
-    function nearbyTest() {
-
-      var i, j, foundHit;
-
-      // hack: first-time run fix, as exports is initially undefined
-      if (!nearbyOptions.source) {
-        nearbyOptions.source = exports;
-      }
-
-      // loop through relevant game object arrays
-      for (i=0, j=nearbyItems.length; i<j; i++) {
-        // ... and check them
-        if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
-          foundHit = true;
-        }
-      }
-
-
-      // callback for no-hit case, too
-      if (!foundHit && nearbyOptions.miss) {
-        nearbyOptions.miss(nearbyOptions.source);
-      }
-
-    }
 
     function animate() {
 
@@ -2419,7 +2392,7 @@ window.setTimeout(function(){
           moveTo(data.x + data.vX, data.y);
 
           // are we near something that needs firing at?
-          nearbyTest();
+          nearbyTest(nearbyOptions, nearbyItems);
 
         } else {
 
@@ -2427,7 +2400,7 @@ window.setTimeout(function(){
           fire();
 
           // should we stop firing, and resume moving?
-          nearbyTest();
+          nearbyTest(nearbyOptions, nearbyItems);
 
         }
 
@@ -2585,6 +2558,8 @@ window.setTimeout(function(){
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+      nearbyOptions.source = exports;
+
     }
 
     exports = {
@@ -2616,7 +2591,7 @@ window.setTimeout(function(){
 
     data = {
       bottomAligned: true,
-      energy: 3,
+      energy: 1,
       isEnemy: options.isEnemy || false,
       direction: 0,
       x: options.x || 0,
@@ -2737,7 +2712,7 @@ window.setTimeout(function(){
 
   function Infantry(options) {
 
-    var css, dom, data, objects, radarItem, exports;
+    var css, dom, data, objects, radarItem, nearbyOptions, nearbyItems, exports;
 
     options = options || {};
 
@@ -2781,8 +2756,6 @@ window.setTimeout(function(){
       gunfire: []
     }
 
-    var nearbyOptions, nearbyItems;
-
     nearbyOptions = {
       source: exports, // initially undefined
       targets: undefined,
@@ -2801,30 +2774,6 @@ window.setTimeout(function(){
     // who gets fired at?
     nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
 
-    function nearbyTest() {
-
-      var i, j, foundHit;
-
-      // hack: first-time run fix, as exports is initially undefined
-      if (!nearbyOptions.source) {
-        nearbyOptions.source = exports;
-      }
-
-      // loop through relevant game object arrays
-      for (i=0, j=nearbyItems.length; i<j; i++) {
-        // ... and check them
-        if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
-          foundHit = true;
-        }
-      }
-
-      // callback for no-hit case, too
-      if (!foundHit && nearbyOptions.miss) {
-        nearbyOptions.miss(nearbyOptions.source);
-      }
-
-    }
-
     function animate() {
 
       data.frameCount++;
@@ -2836,7 +2785,7 @@ window.setTimeout(function(){
           moveTo(data.x + data.vX, data.y);
 
           // are we near something that needs firing at?
-          nearbyTest();
+          nearbyTest(nearbyOptions, nearbyItems);
 
         } else {
 
@@ -2844,7 +2793,7 @@ window.setTimeout(function(){
           fire();
 
           // should we stop firing, and resume moving?
-          nearbyTest();
+          nearbyTest(nearbyOptions, nearbyItems);
 
         }
 
@@ -2994,6 +2943,8 @@ window.setTimeout(function(){
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+      nearbyOptions.source = exports;
+
     }
 
     exports = {
@@ -3038,6 +2989,25 @@ window.setTimeout(function(){
     data.height = obj.data.height;
 
     return data;
+
+  }
+
+  function nearbyTest(nearbyOptions, nearbyItems) {
+
+    var i, j, foundHit;
+
+    // loop through relevant game object arrays
+    for (i=0, j=nearbyItems.length; i<j; i++) {
+      // ... and check them
+      if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
+        foundHit = true;
+      }
+    }
+
+    // callback for no-hit case, too
+    if (!foundHit && nearbyOptions.miss) {
+      nearbyOptions.miss(nearbyOptions.source);
+    }
 
   }
 
