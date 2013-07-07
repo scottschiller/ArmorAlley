@@ -2345,7 +2345,8 @@ window.setTimeout(function(){
     }
 
     dom = {
-      o: null
+      o: null,
+      oSubSprite: null
     }
 
     objects = {
@@ -2391,18 +2392,15 @@ window.setTimeout(function(){
 
           moveTo(data.x + data.vX, data.y);
 
-          // are we near something that needs firing at?
-          nearbyTest(nearbyOptions, nearbyItems);
-
         } else {
 
           // only fire (i.e., GunFire objects) when stopped
           fire();
 
-          // should we stop firing, and resume moving?
-          nearbyTest(nearbyOptions, nearbyItems);
-
         }
+
+        // stop, or start firing?
+        nearbyTest(nearbyOptions, nearbyItems);
 
       }
 
@@ -2466,10 +2464,10 @@ window.setTimeout(function(){
     function updateHealth() {
       // smouldering, etc.
       // TODO: optimize class swapping
-      if (data.energy <= 4) {
+      if (data.energy <= 3) {
         utils.css.add(dom.o, css.hit2);
         utils.css.remove(dom.o, css.hit1);
-      } else if (data.energy < 8) {
+      } else if (data.energy < 6) {
         utils.css.add(dom.o, css.hit1);
         utils.css.remove(dom.o, css.hit2);
       } else {
@@ -2548,6 +2546,10 @@ window.setTimeout(function(){
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
+
+      dom.oSubSprite = makeSubSprite();
+
+      dom.o.appendChild(dom.oSubSprite);
 
       // for testing
       if (options.extraClass) {
@@ -2784,18 +2786,15 @@ window.setTimeout(function(){
 
           moveTo(data.x + data.vX, data.y);
 
-          // are we near something that needs firing at?
-          nearbyTest(nearbyOptions, nearbyItems);
-
         } else {
 
           // only fire (i.e., GunFire objects) when stopped
           fire();
 
-          // should we stop firing, and resume moving?
-          nearbyTest(nearbyOptions, nearbyItems);
-
         }
+
+        // start, or stop firing?
+        nearbyTest(nearbyOptions, nearbyItems);
 
       }
 
