@@ -275,11 +275,16 @@ body {
 	z-index: 2;
 }
 
+#world .infantry.enemy {
+	background-image: url(../image/infantry-enemy.gif);
+	width: 11px;
+	height: 11px;
+}
+
 #world .engineer {
 	background-image: url(../image/engineer.gif);
 }
 
-#world .infantry.enemy,
 #world .engineer.enemy {
 	/* haaacks */
 	-webkit-filter: grayscale(1);
