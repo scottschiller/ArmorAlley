@@ -300,7 +300,8 @@ body {
 #world .tank.enemy.exploding,
 #world .infantry.enemy.exploding,
 #world .engineer.enemy.exploding,
-#world .tank .sub-sprite {
+#world .tank .sub-sprite,
+#world .helicopter .sub-sprite {
 	/* horizontal flip tricks */
 	filter: FlipH;
 	-ms-filter: "FlipH";
@@ -310,8 +311,9 @@ body {
 	transform: scaleX(-1);
 }
 
+#world .helicopter.enemy .sub-sprite,
 #world .tank.enemy .sub-sprite {
-	/* no flip on the enemy one, however. */
+	/* no flip on certain enemies, however. */
 	filter: none;
 	-ms-filter: none;
 	-moz-transform: none;
@@ -422,6 +424,19 @@ body {
 	animation: genericexplosionsmall 0.45s steps(3);
 }
 
+#world .helicopter.smouldering-phase-1 .sub-sprite {
+	display: block;
+	background-image: url(../image/smouldering-phase-1.gif);
+	background-position: 50% 66%;
+}
+
+#world .helicopter.smouldering-phase-2 .sub-sprite {
+	display: block;
+	background-image: url(../image/smouldering-phase-2.gif);
+	background-position: 50% 0px;
+}
+
+
 #world .gunfire {
 	position: absolute;
 	width: 2px;
@@ -437,6 +452,12 @@ body {
 
 #world .base {
 	background-image: url(../image/base.gif);
+	width: 102px;
+	height: 25px;
+}
+
+#world .base.enemy {
+	background-image: url(../image/base-grey.png);
 	width: 102px;
 	height: 25px;
 }
