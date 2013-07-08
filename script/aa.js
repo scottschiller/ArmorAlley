@@ -1467,7 +1467,7 @@ window.setTimeout(function(){
 
   function GunFire(options) {
 
-    var css, data, dom, collisionItems, collisionOptions, exports;
+    var css, data, dom, collision, exports;
 
     options = options || {};
 
@@ -1492,34 +1492,15 @@ window.setTimeout(function(){
       o: null
     }
 
-    collisionOptions = {
-      source: exports, // initially undefined
-      targets: undefined,
-      hit: function(target) {
-        sparkAndDie(target);
-      }
-    }
-
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters'];
-
-    function collisionTest() {
-
-      var i, j;
-
-      // hack: first-time run fix, as exports is initially undefined
-      if (!collisionOptions.source) {
-        collisionOptions.source = exports;
-      }
-
-      // loop through relevant game object arrays
-      // TODO: eliminate mixin in loop
-      for (i=0, j=collisionItems.length; i<j; i++) {
-        // ... and check them
-        collisionCheckArray(mixin(collisionOptions, {
-          targets: game.objects[collisionItems[i]]
-        }));
-      }
-
+    collision = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        hit: function(target) {
+          sparkAndDie(target);
+        }
+      },
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters']
     }
 
     function animate() {
@@ -1541,8 +1522,6 @@ window.setTimeout(function(){
 
       moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
 
-      // collision check?
-
       data.frameCount++;
 
       if (data.frameCount >= data.dieFrameCount) {
@@ -1559,7 +1538,7 @@ window.setTimeout(function(){
         die();
       }
 
-      collisionTest();
+      collisionTest(collision, exports);
 
       // notify caller if now dead and can be removed.
       return (data.dead && !dom.o);
@@ -1652,7 +1631,7 @@ window.setTimeout(function(){
 
   function Bomb(options) {
 
-    var css, data, dom, collisionItems, collisionOptions, exports;
+    var css, data, dom, collision, exports;
 
     options = options || {};
 
@@ -1690,36 +1669,16 @@ window.setTimeout(function(){
 
     }
 
-    collisionOptions = {
-      source: exports, // initially undefined
-      targets: undefined,
-      hit: function(target) {
-        bombHitTarget(target);
-      }
+    collision = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        hit: function(target) {
+          bombHitTarget(target);
+        }
+      },
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers']
     }
-
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers'];
-
-    function collisionTest() {
-
-      var i, j;
-
-      // hack: first-time run fix, as exports is initially undefined
-      if (!collisionOptions.source) {
-        collisionOptions.source = exports;
-      }
-
-      // loop through relevant game object arrays
-      // TODO: eliminate mixin in loop
-      for (i=0, j=collisionItems.length; i<j; i++) {
-        // ... and check them
-        collisionCheckArray(mixin(collisionOptions, {
-          targets: game.objects[collisionItems[i]]
-        }));
-      }
-
-    }
-
 
     function animate() {
 
@@ -1744,7 +1703,7 @@ window.setTimeout(function(){
         die();
       }
 
-      collisionTest();
+      collisionTest(collision, exports);
 
       // notify caller if dead, and node has been removed.
       return (data.dead && !dom.o);
@@ -1837,7 +1796,7 @@ window.setTimeout(function(){
 
   function Helicopter(options) {
 
-    var css, data, dom, events, objects, radarItem, exports;
+    var css, data, dom, events, objects, collision, radarItem, exports;
 
     options = options || {};
 
@@ -1915,40 +1874,18 @@ window.setTimeout(function(){
       gunfire: []
     }
 
-    var collisionItems, collisionOptions;
-
-    collisionOptions = {
-      source: exports, // initially undefined
-      targets: undefined,
-      hit: function(target) {
-        // console.log('helicopter hit something', target);
-        die();
-        // should the target die, too? ... probably do.
-        target.hit(999);
-      }
-    }
-
-    // hit any enemy building or vehicle? "boom."
-    collisionItems = ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers'];
-
-    function collisionTest() {
-
-      var i, j;
-
-      // hack: first-time run fix, as exports is initially undefined
-      if (!collisionOptions.source) {
-        collisionOptions.source = exports;
-      }
-
-      // loop through relevant game object arrays
-      // TODO: eliminate mixin in loop
-      for (i=0, j=collisionItems.length; i<j; i++) {
-        // ... and check them
-        collisionCheckArray(mixin(collisionOptions, {
-          targets: game.objects[collisionItems[i]]
-        }));
-      }
-
+    collision = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        hit: function(target) {
+          // console.log('helicopter hit something', target);
+          die();
+          // should the target die, too? ... probably do.
+          target.hit(999);
+        }
+      },
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers']
     }
 
     function animate() {
@@ -1989,7 +1926,7 @@ window.setTimeout(function(){
 
         moveTo(data.x + data.vX, data.y + data.vY);
 
-        collisionTest();
+        collisionTest(collision, exports);
 
       }
 
@@ -2313,7 +2250,7 @@ window.setTimeout(function(){
 
   function Tank(options) {
 
-    var css, data, dom, radarItem, objects, radarItem, nearbyOptions, nearbyItems, exports;
+    var css, data, dom, radarItem, objects, radarItem, nearby, exports;
 
     options = options || {};
 
@@ -2351,23 +2288,25 @@ window.setTimeout(function(){
       gunfire: []
     }
 
-    nearbyOptions = {
-      source: exports, // initially undefined
-      targets: undefined,
-      useLookAhead: true,
-      // TODO: rename to something generic?
-      hit: function(target) {
-        // stop moving, start firing.
-        stop();
+    nearby = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        useLookAhead: true,
+        // TODO: rename to something generic?
+        hit: function(target) {
+          // stop moving, start firing.
+          stop();
+        },
+        miss: function() {
+          // resume moving, stop firing.
+          resume();
+        }
       },
-      miss: function() {
-        // resume moving, stop firing.
-        resume();
-      }
+      // who gets fired at?
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'],
+      targets: []
     }
-
-    // who gets fired at?
-    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
 
     function animate() {
 
@@ -2397,8 +2336,8 @@ window.setTimeout(function(){
 
         }
 
-        // stop, or start firing?
-        nearbyTest(nearbyOptions, nearbyItems);
+        // start, or stop firing?
+        nearbyTest(nearby);
 
       }
 
@@ -2558,7 +2497,7 @@ window.setTimeout(function(){
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-      nearbyOptions.source = exports;
+      initNearby(nearby, exports);
 
     }
 
@@ -2707,7 +2646,7 @@ window.setTimeout(function(){
 
   function Infantry(options) {
 
-    var css, dom, data, objects, radarItem, nearbyOptions, nearbyItems, exports;
+    var css, dom, data, objects, radarItem, nearby, exports;
 
     options = options || {};
 
@@ -2745,23 +2684,25 @@ window.setTimeout(function(){
       gunfire: []
     }
 
-    nearbyOptions = {
-      source: exports, // initially undefined
-      targets: undefined,
-      useLookAhead: true,
-      // TODO: rename to something generic?
-      hit: function(target) {
-        // stop moving, start firing.
-        stop();
+    nearby = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        useLookAhead: true,
+        // TODO: rename to something generic?
+        hit: function(target) {
+          // stop moving, start firing.
+          stop();
+        },
+        miss: function() {
+          // resume moving, stop firing.
+          resume();
+        }
       },
-      miss: function() {
-        // resume moving, stop firing.
-        resume();
-      }
+      // who gets fired at?
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'],
+      targets: []
     }
-
-    // who gets fired at?
-    nearbyItems = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'];
 
     function animate() {
 
@@ -2781,7 +2722,7 @@ window.setTimeout(function(){
         }
 
         // start, or stop firing?
-        nearbyTest(nearbyOptions, nearbyItems);
+        nearbyTest(nearby);
 
       }
 
@@ -2929,7 +2870,7 @@ window.setTimeout(function(){
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-      nearbyOptions.source = exports;
+      initNearby(nearby, exports);
 
     }
 
@@ -2978,25 +2919,49 @@ window.setTimeout(function(){
 
   }
 
-  function nearbyTest(nearbyOptions, nearbyItems) {
+  function initNearby(nearby, exports) {
+    // map options.source -> exports
+    nearby.options.source = exports;
+  }
+
+  function nearbyTest(nearby) {
 
     var i, j, foundHit;
 
     // loop through relevant game object arrays
-    // TODO: eliminate mixin in loop
-    for (i=0, j=nearbyItems.length; i<j; i++) {
+    for (i=0, j=nearby.items.length; i<j; i++) {
       // ... and check them
-      if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
+      if (collisionCheckArray(mixin(nearby.options, { targets: game.objects[nearby.items[i]] }))) {
         foundHit = true;
       }
     }
 
     // callback for no-hit case, too
-    if (!foundHit && nearbyOptions.miss) {
-      nearbyOptions.miss(nearbyOptions.source);
+    if (!foundHit && nearby.options.miss) {
+      nearby.options.miss(nearby.options.source);
     }
 
   }
+
+  function collisionTest(collision, exports) {
+
+    var i, j;
+
+    // hack: first-time run fix, as exports is initially undefined
+    if (!collision.options.source) {
+      collision.options.source = exports;
+    }
+
+    // loop through relevant game object arrays
+    for (i=0, j=collision.items.length; i<j; i++) {
+      // ... and check them
+      collisionCheckArray(mixin(collision.options, {
+        targets: game.objects[collision.items[i]]
+      }));
+    }
+
+  }
+
 
   function collisionCheckArray(options) {
 
