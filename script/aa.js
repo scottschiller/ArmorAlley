@@ -106,7 +106,7 @@
 
       if (o2.hasOwnProperty(o)) {
 
-        if (typeof o2[o] !== 'object' || o2[o] !== null) {
+        if (typeof o2[o] !== 'object' || o2[o] === null || o2[o] === undefined || o2[o] instanceof Array) {
 
           // assign directly
           o1[o] = o2[o];
@@ -199,7 +199,16 @@
 
   game = (function() {
 
-    var data, dom, events, objects, keyboardMonitor, exports;
+    var data, defaults, dom, events, objects, keyboardMonitor, exports;
+
+    // inherited by vehicle objects
+    defaults = {
+      css: {
+        dead: 'dead',
+        enemy: 'enemy',
+        exploding: 'exploding'
+      }
+    }
 
     dom = {
       world: null
@@ -422,6 +431,7 @@ window.setTimeout(function(){
 
     exports = {
       data: data,
+      defaults: defaults,
       dom: dom,
       init: init,
       objects: objects
@@ -446,6 +456,33 @@ window.setTimeout(function(){
     return makeSprite({
       className: 'sub-sprite'
     });
+
+  }
+
+  function inheritCSS(options) {
+
+    return mixin(game.defaults.css, options);
+
+  }
+
+  function inheritData(data, options) {
+
+    // mixin defaults, and apply common options
+
+    var defaultData;
+
+    options = options || {};
+
+    defaultData = {
+      dead: false,
+      isEnemy: (options.isEnemy || false),
+      x: options.x || 0,
+      y: options.y || 0,
+      vX: options.vX || 0,
+      vY: options.vY || 0
+    }
+
+    return mixin(defaultData, data);
 
   }
 
@@ -956,29 +993,22 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
-      className: 'balloon',
-      dead: 'dead',
-      enemy: 'enemy',
-      exploding: 'exploding'
-    }
+    css = inheritCSS({
+      className: 'balloon'
+    });
 
-    data = {
+    data = inheritData({
       bottomAligned: true, // TODO: review/remove
       type: 'balloon',
-      dead: false,
       energy: 3,
       defaultEnergy: 3,
       direction: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
-      isEnemy: options.isEnemy || false,
       leftMargin: options.leftMargin || 0,
-      x: options.x || 0,
-      y: options.y || 0,
       width: 36,
       height: 14
-    }
+    }, options);
 
     dom = {
       o: null
@@ -1144,26 +1174,20 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'bunker',
       chainClassName: 'balloon-chain',
       burning: 'burning',
-      exploding: 'exploding',
-      dead: 'dead',
-      enemy: 'enemy'
-    }
+    });
 
-    data = {
+    data = inheritData({
       bottomAligned: true,
       type: 'bunker',
       energy: 30,
-      isEnemy: options.isEnemy || false,
-      x: options.x || 0,
-      y: options.y || 0,
       width: 51,
       halfWidth: 25,
       height: 25
-    }
+    }, options);
 
     dom = {
       o: null,
@@ -1319,29 +1343,22 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'missile-launcher',
-      enemy: 'enemy',
-      exploding: 'exploding',
-      dead: 'dead'
-    }
+    });
 
-    data = {
+    data = inheritData({
       bottomAligned: true,
       energy: 3,
-      isEnemy: (options.isEnemy || false),
       direction: 0,
-      x: options.x || 0,
-      y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
-      vY: 0,
       width: 54,
       height: 18,
       inventory: {
         frameCount: 60,
         cost: 5
       }
-    }
+    }, options);
 
     dom = {
       o: null
@@ -1454,28 +1471,22 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'gunfire',
       expired: 'expired',
       spark: 'spark'
-    }
+    });
 
-    data = {
-      dead: false,
-      isEnemy: options.isEnemy || false,
+    data = inheritData({
       expired: false,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 25,
       dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
-      x: options.x || 0,
-      y: options.y || 0,
-      vX: options.vX || 0,
-      vY: options.vY || 0,
       width: 2,
       height: 1,
       gravity: 1,
       damagePoints: 1
-    }
+    }, options);
 
     dom = {
       o: null
@@ -1501,6 +1512,7 @@ window.setTimeout(function(){
       }
 
       // loop through relevant game object arrays
+      // TODO: eliminate mixin in loop
       for (i=0, j=collisionItems.length; i<j; i++) {
         // ... and check them
         collisionCheckArray(mixin(collisionOptions, {
@@ -1644,26 +1656,20 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'bomb',
       dropping: 'dropping',
       explosionLarge: 'explosion-large',
       spark: 'spark'
-    }
+    });
 
-    data = {
-      dead: false,
-      isEnemy: options.isEnemy || false,
+    data = inheritData({
       firstFrame: true,
-      x: options.x || 0,
-      y: options.y || 0,
-      vX: options.vX || 0,
-      vY: options.vY || 0,
       width: 13,
       height: 12,
       gravity: 1,
       damagePoints: 3
-    }
+    }, options);
 
     dom = {
       o: null
@@ -1704,6 +1710,7 @@ window.setTimeout(function(){
       }
 
       // loop through relevant game object arrays
+      // TODO: eliminate mixin in loop
       for (i=0, j=collisionItems.length; i<j; i++) {
         // ... and check them
         collisionCheckArray(mixin(collisionOptions, {
@@ -1834,7 +1841,7 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'helicopter',
       facingLeft: 'facing-left',
       facingRight: 'facing-right',
@@ -1843,16 +1850,13 @@ window.setTimeout(function(){
       movingLeft: 'moving-left',
       movingRight: 'moving-right',
       tilt: 'tilt',
-      exploding: 'exploding',
-      dead: 'dead',
       inventory: {
         frameCount: 0,
         cost: 20
       }
-    }
+    });
 
-    data = {
-      isEnemy: options.isEnemy || false,
+    data = inheritData({
       bombing: false,
       firing: false,
       fuel: 100,
@@ -1865,10 +1869,8 @@ window.setTimeout(function(){
       rotateTimer: null,
       energy: 10,
       direction: 0,
-      x: options.x || 0,
       xMin: 0,
       xMax: null,
-      y: options.y || 0,
       yMin: 0,
       yMax: null,
       vX: 0,
@@ -1883,7 +1885,7 @@ window.setTimeout(function(){
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 2
-    }
+    }, options);
 
     dom = {
       o: null,
@@ -1939,6 +1941,7 @@ window.setTimeout(function(){
       }
 
       // loop through relevant game object arrays
+      // TODO: eliminate mixin in loop
       for (i=0, j=collisionItems.length; i<j; i++) {
         // ... and check them
         collisionCheckArray(mixin(collisionOptions, {
@@ -2314,25 +2317,20 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'tank',
-      enemy: 'enemy',
-      exploding: 'exploding',
       hit1: 'smouldering-phase-1',
       hit2: 'smouldering-phase-2',
       stopped: 'stopped'
-    }
+    });
 
-    data = {
+    data = inheritData({
       bottomAligned: true,
       energy: 8,
       energyMax: 8,
       frameCount: 0,
-      isEnemy: options.isEnemy || false,
       repairModulus: 50,
       fireModulus: 6,
-      x: options.x || 0,
-      y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
       width: 57,
       height: 18,
@@ -2342,7 +2340,7 @@ window.setTimeout(function(){
         frameCount: 60,
         cost: 5
       }
-    }
+    }, options);
 
     dom = {
       o: null,
@@ -2585,19 +2583,14 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'van',
-      enemy: 'enemy',
-      exploding: 'exploding'
-    }
+    });
 
-    data = {
+    data = inheritData({
       bottomAligned: true,
       energy: 1,
-      isEnemy: options.isEnemy || false,
       direction: 0,
-      x: options.x || 0,
-      y: options.y || 0,
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
       height: 16,
@@ -2605,7 +2598,7 @@ window.setTimeout(function(){
         frameCount: 50,
         cost: 5
       }
-    }
+    }, options);
 
     dom = {
       o: null
@@ -2718,27 +2711,21 @@ window.setTimeout(function(){
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: null,
       infantry: 'infantry',
       engineer: 'engineer',
-      enemy: 'enemy',
-      exploding: 'exploding',
-      dead: 'dead',
       stopped: 'stopped'
-    }
+    });
 
-    data = {
+    data = inheritData({
       frameCount: 0,
       bottomAligned: true,
       energy: 2,
-      isEnemy: options.isEnemy || false,
       role: options.role || 0,
       roles: ['infantry', 'engineer'],
       stopped: false,
       direction: 0,
-      x: options.x || 0,
-      y: options.y || 0,
       width: 10,
       height: 11,
       gunYOffset: 9,
@@ -2748,7 +2735,7 @@ window.setTimeout(function(){
         frameCount: 150,
         cost: 5
       }
-    }
+    }, options);
 
     dom = {
       o: null
@@ -2996,6 +2983,7 @@ window.setTimeout(function(){
     var i, j, foundHit;
 
     // loop through relevant game object arrays
+    // TODO: eliminate mixin in loop
     for (i=0, j=nearbyItems.length; i<j; i++) {
       // ... and check them
       if (collisionCheckArray(mixin(nearbyOptions, { targets: game.objects[nearbyItems[i]] }))) {
