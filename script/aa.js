@@ -1421,8 +1421,7 @@ window.setTimeout(function(){
 
       // timeout?
       window.setTimeout(function() {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
+        removeNodes(dom);
         radarItem.die();
       }, 1000);
 
@@ -1574,10 +1573,7 @@ window.setTimeout(function(){
         return false;
       }
 
-      if (dom.o) {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
-      }
+      removeNodes(dom);
 
       data.dead = true;
 
@@ -1739,10 +1735,7 @@ window.setTimeout(function(){
         utils.css.add(dom.o, className);
         // TODO: use single timer for all bombs
         window.setTimeout(function() {
-          if (dom.o) {
-            dom.o.parentNode.removeChild(dom.o);
-            dom.o = null;
-          }
+          removeNodes(dom);
         }, 750);
       }
 
@@ -1809,6 +1802,8 @@ window.setTimeout(function(){
       movingLeft: 'moving-left',
       movingRight: 'moving-right',
       tilt: 'tilt',
+      hit1: 'smouldering-phase-1',
+      hit2: 'smouldering-phase-2',
       inventory: {
         frameCount: 0,
         cost: 20
@@ -1848,7 +1843,8 @@ window.setTimeout(function(){
 
     dom = {
       o: null,
-      fuelLine: null
+      fuelLine: null,
+      subSprite: null
     }
 
     events = {
@@ -2122,10 +2118,27 @@ window.setTimeout(function(){
       dom.o.style.top = (y + 'px');
     }
 
+    function updateHealth() {
+      // smouldering, etc.
+      // TODO: optimize class swapping
+      if (data.energy < 4) {
+        utils.css.add(dom.o, css.hit2);
+        utils.css.remove(dom.o, css.hit1);
+      } else if (data.energy < 7) {
+        utils.css.add(dom.o, css.hit1);
+        utils.css.remove(dom.o, css.hit2);
+      } else {
+        // TODO: optimize
+        utils.css.remove(dom.o, css.hit1);
+        utils.css.remove(dom.o, css.hit2);
+      }
+    }
+
     function hit(hitPoints) {
       if (!data.dead) {
         hitPoints = hitPoints || 1;
         data.energy -= hitPoints;
+        updateHealth();
         if (data.energy <= 0) {
           data.energy = 0;
           die();
@@ -2209,6 +2222,10 @@ window.setTimeout(function(){
       dom.o = makeSprite({
         className: css.className
       });
+
+      dom.oSubSprite = makeSubSprite();
+
+      dom.o.appendChild(dom.oSubSprite);
 
       setX(data.x);
       setY(data.y);
@@ -2457,8 +2474,7 @@ window.setTimeout(function(){
 
       // timeout?
       window.setTimeout(function() {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
+        removeNodes(dom);
         radarItem.die();
       }, 1000);
 
@@ -2600,8 +2616,7 @@ window.setTimeout(function(){
 
       // timeout?
       window.setTimeout(function() {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
+        removeNodes(dom);
         radarItem.die();
       }, 1000);
 
@@ -2836,8 +2851,7 @@ window.setTimeout(function(){
 
       // timeout?
       window.setTimeout(function() {
-        dom.o.parentNode.removeChild(dom.o);
-        dom.o = null;
+        removeNodes(dom);
         radarItem.die();
       }, 1200);
 
@@ -3126,6 +3140,20 @@ window.setTimeout(function(){
     }
 
     return result;
+
+  }
+
+  function removeNodes(dom) {
+
+    // remove all nodes in a structure
+    var item;
+
+    for (item in dom) {
+      if (dom.hasOwnProperty(item) && dom[item]) {
+        dom[item].parentNode.removeChild(dom[item]);
+        dom[item] = null;
+      }
+    }
 
   }
 
