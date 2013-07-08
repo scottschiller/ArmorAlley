@@ -1000,6 +1000,7 @@ window.setTimeout(function(){
     data = inheritData({
       bottomAligned: true, // TODO: review/remove
       type: 'balloon',
+      canRespawn: false,
       energy: 3,
       defaultEnergy: 3,
       direction: 0,
@@ -1007,7 +1008,8 @@ window.setTimeout(function(){
       verticalDirectionDefault: 0.33,
       leftMargin: options.leftMargin || 0,
       width: 36,
-      height: 14
+      height: 14,
+      deadTimer: null
     }, options);
 
     dom = {
@@ -1039,12 +1041,9 @@ window.setTimeout(function(){
 
           moveTo(data.x, data.y + data.verticalDirection);
 
-        } else {
-
-          // chain is at bottom, and the balloon can now reappear.
-          checkRespawn();
-
         }
+
+        checkRespawn();
 
       }
 
@@ -1074,7 +1073,15 @@ window.setTimeout(function(){
     }
 
     function setEnemy(isEnemy) {
+
       data.isEnemy = isEnemy;
+
+      if (isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      } else {
+        utils.css.remove(dom.o, css.enemy);
+      }
+
     }
 
     function hit(hitPoints) {
@@ -1094,6 +1101,9 @@ window.setTimeout(function(){
         utils.css.swap(dom.o, css.exploding, css.dead);
         radarItem.die();
       }
+      if (data.deadTimer) {
+        data.deadTimer = null;
+      }
     }
 
     function die() {
@@ -1103,14 +1113,14 @@ window.setTimeout(function(){
         if (sounds.genericBoom) {
           sounds.genericBoom.play();
         }
-        window.setTimeout(dead, 550);
+        data.deadTimer = window.setTimeout(dead, 550);
         data.dead = true;
       }
     }
 
     function checkRespawn() {
 
-      if (data.dead && !objects.bunker.data.dead) {
+      if (data.canRespawn && data.dead && !objects.bunker.data.dead) {
         reset();
       }
 
@@ -1118,7 +1128,6 @@ window.setTimeout(function(){
 
     function reset() {
       // respawn can actually happen now
-      utils.css.remove(dom.o, css.dead);
       data.energy = data.defaultEnergy;
       // and restore default vertical
       data.verticalDirection = data.verticalDirectionDefault;
@@ -1127,6 +1136,15 @@ window.setTimeout(function(){
       // reset position, too
       data.y = 0;
       radarItem.reset();
+      data.canRespawn = false;
+      if (data.deadTimer) {
+        window.clearTimeout(data.deadTimer);
+        data.deadTimer = null;
+      }
+      // force UI update
+      animate();
+      utils.css.remove(dom.o, css.exploding);
+      utils.css.remove(dom.o, css.dead);
     }
 
     function init() {
@@ -1177,16 +1195,17 @@ window.setTimeout(function(){
     css = inheritCSS({
       className: 'bunker',
       chainClassName: 'balloon-chain',
-      burning: 'burning',
+      burning: 'burning'
     });
 
     data = inheritData({
-      bottomAligned: true,
       type: 'bunker',
+      bottomAligned: true,
       energy: 30,
       width: 51,
       halfWidth: 25,
-      height: 25
+      height: 25,
+      infantryTimer: null
     }, options);
 
     dom = {
@@ -1249,6 +1268,48 @@ window.setTimeout(function(){
       }
     }
 */
+
+    function infantryHit(target) {
+
+      // an infantry unit has made contact with a bunker.
+      if (target.data.isEnemy === data.isEnemy) {
+        // a friendly passer-by.
+        repair();
+      } else {
+        // non-friendly, kill the infantry - but let them capture the bunker first.
+        if (!data.infantryTimer) {
+          data.infantryTimer = window.setTimeout(function() {
+            // oh, what a hack! apply this when the infantry is roughly at the entrance to the base.
+            capture(target.data.isEnemy);
+            target.die();
+            data.infantryTimer = null;
+          }, 1000);
+        }
+      }
+
+    }
+
+    function capture(isEnemy) {
+
+      if (isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      } else {
+        utils.css.remove(dom.o, css.enemy);
+      }
+
+      data.isEnemy = isEnemy;
+
+      // and the balloon, too.
+      objects.balloon.setEnemy(isEnemy);
+
+    }
+
+    function repair() {
+
+      // fix the balloon, if it's broken.
+      objects.balloon.data.canRespawn = true;
+
+    }
 
     function die() {
 
@@ -1324,6 +1385,7 @@ window.setTimeout(function(){
       objects: objects,
       data: data,
       hit: hit,
+      infantryHit: infantryHit,
       init: init
     }
 
@@ -1477,6 +1539,8 @@ window.setTimeout(function(){
     });
 
     data = inheritData({
+      type: 'gunfire',
+      parentType: options.parentType || null,
       expired: false,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 25,
@@ -1499,7 +1563,14 @@ window.setTimeout(function(){
           sparkAndDie(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters']
+    }
+
+    // special case: tank gunfire should not hit bunkers.
+    if (data.parentType !== 'tank') {
+      collision.items.push('bunkers');
+      // also, balloons aren't expected to be in range of tanks.
+      collision.items.push('balloons');
     }
 
     function animate() {
@@ -1811,6 +1882,7 @@ window.setTimeout(function(){
     });
 
     data = inheritData({
+      type: 'helicopter',
       bombing: false,
       firing: false,
       fuel: 100,
@@ -2163,6 +2235,7 @@ window.setTimeout(function(){
         tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
         objects.gunfire.push(new GunFire({
+          parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + (data.rotated ? 0 : data.width) - 8,
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
@@ -2279,6 +2352,7 @@ window.setTimeout(function(){
     });
 
     data = inheritData({
+      type: 'tank',
       bottomAligned: true,
       energy: 8,
       energyMax: 8,
@@ -2367,6 +2441,7 @@ window.setTimeout(function(){
       if (data.frameCount % data.fireModulus === 0) {
 
         objects.gunfire.push(new GunFire({
+          parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
@@ -2543,6 +2618,7 @@ window.setTimeout(function(){
     });
 
     data = inheritData({
+      type: 'van',
       bottomAligned: true,
       energy: 1,
       direction: 0,
@@ -2661,7 +2737,7 @@ window.setTimeout(function(){
 
   function Infantry(options) {
 
-    var css, dom, data, objects, radarItem, nearby, exports;
+    var css, dom, data, objects, radarItem, nearby, collision, exports;
 
     options = options || {};
 
@@ -2673,6 +2749,7 @@ window.setTimeout(function(){
     });
 
     data = inheritData({
+      type: 'infantry',
       frameCount: 0,
       bottomAligned: true,
       energy: 2,
@@ -2719,6 +2796,19 @@ window.setTimeout(function(){
       targets: []
     }
 
+    collision = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        hit: function(target) {
+          // bunker might kill this infantry unit, etc.
+          target.infantryHit(exports);
+        }
+      },
+      items: ['bunkers']
+    }
+
+
     function animate() {
 
       data.frameCount++;
@@ -2735,6 +2825,8 @@ window.setTimeout(function(){
           fire();
 
         }
+
+        collisionTest(collision, exports);
 
         // start, or stop firing?
         nearbyTest(nearby);
@@ -2757,6 +2849,7 @@ window.setTimeout(function(){
       if (data.frameCount % data.fireModulus === 0) {
 
         objects.gunfire.push(new GunFire({
+          parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of infantry height
@@ -2891,6 +2984,7 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
+      die: die,
       dom: dom,
       hit: hit
     }
@@ -3014,8 +3108,8 @@ window.setTimeout(function(){
 
     for (item in objects) {
 
-      // don't check against friendly units, dead objects, or against self
-      if (objects.hasOwnProperty(item) && objects[item].data.isEnemy !== options.source.data.isEnemy && !objects[item].data.dead && objects[item] !== options.source) {
+      // don't check against friendly units (unless infantry and bunker), dead objects, or against self
+      if (objects.hasOwnProperty(item) && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') ) && !objects[item].data.dead && objects[item] !== options.source) {
 
         if (options.isBalloon || (objects[item].data.type && objects[item].data.type === 'balloon')) {
           // special case
