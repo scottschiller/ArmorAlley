@@ -2,6 +2,8 @@
 
   var game, utils;
 
+  var FRAMERATE = 1000/24;
+
   utils = {
 
     css: (function() {
@@ -294,22 +296,12 @@
 
       game.dom.world.appendChild(node);
 
-      //
-
       objects.tanks.push(new Tank({
         x: 96
       }));
 
-var testTank = objects.tanks[objects.tanks.length-1];
-
-window.setTimeout(function(){
-	testTank.stop();
-	window.setTimeout(testTank.resume, 2000);
-}, 5000);
-
-
       objects.tanks.push(new Tank({
-        x: 700
+        x: 690
       }));
 
 
@@ -317,20 +309,15 @@ window.setTimeout(function(){
         x: 760
       }));
 
-
       objects.vans.push(new Van({
-        x: -32
+        x: 435
       }));
 
       objects.missileLaunchers.push(new MissileLauncher({
-        x: -128
+        x: 350
       }));
 
       for (var i=0; i<5; i++) {
-
-        objects.infantry.push(new Infantry({
-          x: -192 + (i * -20)
-        }));
 
         objects.infantry.push(new Infantry({
           x: 500 + (i * 20)
@@ -341,11 +328,7 @@ window.setTimeout(function(){
           isEnemy: true
         }));
 
-
       }
-
-// test
-// objects.infantry[objects.infantry.length-1].stop();
 
       objects.engineers.push(new Engineer({
         x: -300
@@ -360,15 +343,6 @@ window.setTimeout(function(){
         y: game.objects.view.data.world.height - 20,
         attachEvents: true
       }));
-
-      objects.infantry.push(new Infantry({
-        x: 256
-      }));
-
-      objects.infantry.push(new Infantry({
-        x: 276
-      }));
-
 
       // some enemy stuff
 
@@ -669,7 +643,8 @@ window.setTimeout(function(){
     var css, data, dom, exports;
 
     css = {
-      building: 'building'
+      building: 'building',
+      ordering: 'ordering'
     }
 
     data = {
@@ -709,33 +684,102 @@ window.setTimeout(function(){
 
     }
 
+    function createObject(typeData, options) {
+
+      // create and append a new (something) to its appropriate array.
+
+      var orderObject;
+
+      orderObject = new typeData[1](options);
+
+      typeData[0].push(orderObject);
+
+      utils.css.add(orderObject.dom.o, css.building);
+
+      // TODO: review/reduce setTimeout() calls
+      window.setTimeout(function() {
+        utils.css.add(orderObject.dom.o, css.ordering);
+        /*
+        window.setTimeout(function() {
+          // undo
+          utils.css.swap(orderObject.dom.o, css.ordered);
+        }, 1200);
+        */
+      }, 1);
+
+      return orderObject;
+
+    }
+
     function order(type, options) {
 
-      var typeData, orderObject;
+      var i, typeData, orderObject, orderSize;
 
       options = options || {};
 
+      orderSize = 1;
+
+      // temporary hack
+      if (options.isEnemy) {
+ 
+        options.x = game.objects.view.data.battleField.scrollLeft + (game.objects.view.data.browser.width * 0.75);
+
+      } else {
+
+        options.x = -72; // default off-screen setting
+
+      }
+
       if (!data.building) {
 
-       // let's build something.
-       data.building = true;
+        // let's build something.
+        data.building = true;
 
-       typeData = data.types[type];
+        typeData = data.types[type];
 
-       // create and append a new (something) to its appropriate array.
-       orderObject = new typeData[1](options);
+        // infantry or engineer? handle those specially.
 
-       typeData[0].push(orderObject);
+        if (type === 'infantry') {
 
-       // reset the frame count, and re-enable building when it surpasses this object's "build time"
-       data.frameCount = orderObject.data.inventory.frameCount * -1;
+          orderSize = 5;
 
-       // update the UI
-       utils.css.add(dom.gameStatusBar, css.building);
+        } else if (type === 'engineer') {
 
-       if (sounds.inventory.begin) {
-         sounds.inventory.begin.play();
-       }
+          orderSize = 2;
+
+        }
+
+        if (orderSize < 2) {
+
+          // single-item order.
+          orderObject = createObject(typeData, options);
+
+        } else {
+
+          orderObject = createObject(typeData, options);
+
+          // multiples. note 1 offset.
+          for (i=1; i<orderSize; i++) {
+
+            // TODO: review, make smarter - queue-based off of data.frameCount % orderObject.data.inventory % frameCount === 0 and build a new item, instead of timeout-based.
+            window.setTimeout(function() {
+              createObject(typeData, options);
+            }, orderObject.data.inventory.frameCount * FRAMERATE * i); // approximate framerate
+
+          }
+        
+        }
+
+        // reset the frame count, and re-enable building when it surpasses this object's "build time"
+        // TODO: Don't play sounds if options.enemy set.
+        data.frameCount = orderObject.data.inventory.frameCount * -1 * (orderSize > 1 ? orderSize + 1 : orderSize);
+
+        // update the UI
+        utils.css.add(dom.gameStatusBar, css.building);
+
+        if (sounds.inventory.begin) {
+          sounds.inventory.begin.play();
+        }
 
       } else {
 
@@ -744,7 +788,11 @@ window.setTimeout(function(){
           sounds.inventory.denied.play();
         }
 
+      }
 
+      // HACK
+      if (options.isEnemy) {
+        data.building = false;
       }
 
     }
@@ -966,7 +1014,7 @@ window.setTimeout(function(){
       if (!timer) {
 
         // TODO: use rAF
-        timer = window.setInterval(animate, 1000 / 24);
+        timer = window.setInterval(animate, FRAMERATE);
 
       }
 
@@ -1159,14 +1207,14 @@ window.setTimeout(function(){
 
       dom.o.style.marginLeft = (data.leftMargin + 'px');
 
-      game.dom.world.appendChild(dom.o);
-
       // TODO: review when balloon gets separated from bunker
       data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
 
       setX(data.x);
 
       data.y = Math.random() * 100;
+
+      game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -1283,7 +1331,7 @@ window.setTimeout(function(){
             capture(target.data.isEnemy);
             target.die();
             data.infantryTimer = null;
-          }, 1000);
+          }, 1200);
         }
       }
 
@@ -1306,8 +1354,10 @@ window.setTimeout(function(){
 
     function repair() {
 
-      // fix the balloon, if it's broken.
-      objects.balloon.data.canRespawn = true;
+      // fix the balloon, if it's broken - or, rather, flag it for respawn.
+      if (objects.balloon.data.dead) {
+        objects.balloon.data.canRespawn = true;
+      }
 
     }
 
@@ -1507,6 +1557,9 @@ window.setTimeout(function(){
         utils.css.add(dom.o, css.enemy);
       }
 
+      setX(data.x);
+      setY(data.y);
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -1516,6 +1569,7 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       hit: hit,
       die: die
     }
@@ -1678,10 +1732,10 @@ window.setTimeout(function(){
         className: css.className
       });
 
-      game.dom.world.appendChild(dom.o);
-
       setX(data.x);
       setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
 
     }
 
@@ -1841,6 +1895,9 @@ window.setTimeout(function(){
       dom.o = makeSprite({
         className: css.className
       });
+
+      setX(data.x);
+      setY(data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -2300,10 +2357,10 @@ window.setTimeout(function(){
 
       dom.o.appendChild(dom.oSubSprite);
 
+      dom.fuelLine = document.getElementById('fuel-line');
+
       setX(data.x);
       setY(data.y);
-
-      dom.fuelLine = document.getElementById('fuel-line');
 
       game.dom.world.appendChild(dom.o);
 
@@ -2325,6 +2382,7 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       die: die,
       fire: fire,
       hit: hit,
@@ -2584,6 +2642,9 @@ window.setTimeout(function(){
         utils.css.add(dom.o, options.extraClass);
       }
 
+      setX(data.x);
+      setY(data.y);
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -2595,6 +2656,7 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       hit: hit,
       die: die,
       stop: stop,
@@ -2716,6 +2778,9 @@ window.setTimeout(function(){
         utils.css.add(dom.o, css.enemy);
       }
 
+      setX(data.x);
+      setY(data.y);
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -2725,6 +2790,7 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       hit: hit,
       die: die
     }
@@ -2763,7 +2829,7 @@ window.setTimeout(function(){
       fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
       inventory: {
-        frameCount: 150,
+        frameCount: 20,
         cost: 5
       }
     }, options);
@@ -2973,6 +3039,9 @@ window.setTimeout(function(){
         utils.css.add(dom.o, css.enemy);
       }
 
+      setX(data.x);
+      setY(data.y);
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -2984,8 +3053,8 @@ window.setTimeout(function(){
     exports = {
       animate: animate,
       data: data,
-      die: die,
       dom: dom,
+      die: die,
       hit: hit
     }
 
@@ -3438,9 +3507,9 @@ window.setTimeout(function(){
       // "m"
       '77': {
 
-        down: function() {
+        down: function(e) {
 
-          game.objects.inventory.order('missileLauncher');
+          game.objects.inventory.order('missileLauncher', { isEnemy: e.shiftKey });
 
         }
 
@@ -3449,9 +3518,9 @@ window.setTimeout(function(){
       // "t"
       '84': {
 
-        down: function() {
+        down: function(e) {
 
-          game.objects.inventory.order('tank');
+          game.objects.inventory.order('tank', { isEnemy: e.shiftKey });
 
         }
 
@@ -3460,9 +3529,9 @@ window.setTimeout(function(){
       // "v"
       '86': {
 
-        down: function() {
+        down: function(e) {
 
-          game.objects.inventory.order('van');
+          game.objects.inventory.order('van', { isEnemy: e.shiftKey });
 
         }
 
@@ -3471,9 +3540,9 @@ window.setTimeout(function(){
       // "e"
       '69': {
 
-        down: function() {
+        down: function(e) {
 
-          game.objects.inventory.order('engineer');
+          game.objects.inventory.order('engineer', { isEnemy: e.shiftKey });
 
         }
 
@@ -3482,9 +3551,9 @@ window.setTimeout(function(){
       // "i"
       '73': {
 
-        down: function() {
+        down: function(e) {
 
-          game.objects.inventory.order('infantry');
+          game.objects.inventory.order('infantry', { isEnemy: e.shiftKey });
 
         }
 

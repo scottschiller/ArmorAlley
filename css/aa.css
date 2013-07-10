@@ -826,3 +826,24 @@ body {
 	color: #999;
 	font-style: normal;
 }
+
+#world .sprite.missile-launcher.building,
+#world .sprite.tank.building {
+	margin-bottom: -18px;
+}
+
+#world .sprite.van.building {
+	margin-bottom: -16px;
+}
+
+#world .sprite.infantry.building,
+#world .sprite.engineer.building {
+	margin-bottom: -11px;
+}
+
+#world .sprite.ordering {
+	-webkit-transition: margin 2s;
+	-moz-transition: margin 2s;
+	transition: margin 2s;
+	margin-bottom: 0px !important; /* override .building rules */
+}
