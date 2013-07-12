@@ -453,6 +453,14 @@ body {
 	background-color: #555;
 }
 
+#world .smart-missile {
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	background: rgba(255,0,0,0.5);
+	border: 1px solid rgb(255,0,0);
+}
+
 #world .base {
 	background-image: url(../image/base.gif);
 	width: 102px;
@@ -594,6 +602,7 @@ body {
 	height: 5px;
 }
 
+#world .smart-missile.spark,
 #world .gunfire.spark {
 	background-image: url(../image/explosion-spark.png);
 	background-position: 0px 0px;
@@ -643,6 +652,16 @@ body {
 	background-color: #fff;
 }
 
+#game-status-bar #radar .sprite.smart-missile {
+	position: absolute;
+	top: auto;
+	left: 0px;
+	bottom: auto;
+	width: 1px;
+	height: 1px;
+	background-color: red;
+}
+
 #game-status-bar #radar .sprite.helicopter {
 	width: 0;
 	height: 0;
@@ -664,6 +683,12 @@ body {
 #game-status-bar #radar .sprite.infantry,
 #game-status-bar #radar .sprite.engineer {
 	width: 1px;
+}
+
+#game-status-bar #radar .smart-missile {
+	width: 1px;
+	height: 1px;
+ 	background: red;
 }
 
 #game-status-bar #radar .sprite.dead {

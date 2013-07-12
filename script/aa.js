@@ -227,6 +227,7 @@
       tanks: [],
       vans: [],
       helicopters: [],
+      smartMissiles: [],
       radar: null,
       inventory: null
     }
@@ -846,9 +847,14 @@
         for (i=0, j=objects.items.length; i<j; i++) {
           // TODO: optimize
           objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
-          if (objects.items[i].oParent.data.type && objects.items[i].oParent.data.type === 'balloon') {
-            // balloon
-            objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.y + '%';
+          if (objects.items[i].oParent.data.type) {
+            if (objects.items[i].oParent.data.type === 'balloon') {
+              // balloon
+              objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.y + '%';
+            }
+          }
+          if (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) {
+            objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
           }
         }
 
@@ -1914,6 +1920,277 @@
 
   }
 
+  function SmartMissile(options) {
+
+    /**
+     * I am so smart!
+     * I am so smart!
+     * S-MRT,
+     * I mean, S-MAR-T...
+     *  -- Homer Simpson
+     */
+
+    var css, dom, data, radarItem, objects, collision, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'smart-missile',
+      spark: 'spark'
+    });
+
+    data = inheritData({
+      type: 'smart-missile',
+      parentType: options.parentType || null,
+      energy: 1,
+      expired: false,
+      frameCount: 0,
+      expireFrameCount: options.expireFrameCount || 384,
+      dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
+      width: 12,
+      height: 12,
+      gravity: 1,
+      damagePoints: 15,
+      vX: 2,
+      vY: 2,
+      vXMax: 12,
+      vYMax: 12,
+      thrust: 0.75,
+      deadTimer: null
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    objects = {
+      target: options.target
+    }
+
+    collision = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        hit: function(target) {
+          sparkAndDie(target);
+        }
+      },
+      // TODO: can also hit other smart missiles?
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons']
+    }
+
+    function animate() {
+
+      var items, item, hit, tmpData, tmpObject, deltaX, deltaY, targetData;
+
+      if (data.dead) {
+        return false;
+      }
+
+      if (objects.target.data.type === 'balloon') {
+        targetData = getBalloonObject(objects.target);
+      } else if (objects.target.data.bottomAligned) {
+        targetData = mixin({}, objects.target.data);
+        targetData = bottomAlignedObject(targetData);
+      } else {
+        targetData = objects.target.data;
+      }
+
+      var targetHalfWidth = targetData.width/2;
+      var targetHalfHeight = targetData.height/2;
+
+      // delta of x/y between this and target
+      deltaX = (targetData.x + targetHalfWidth) - data.x;
+      deltaY = (targetData.y + targetHalfHeight) - data.y;
+
+      if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
+        utils.css.add(dom.o, css.expired);
+        data.expired = true;
+        // burst of thrust when the missile expires?
+        data.vX *= 1.5;
+        data.vY *= 1.5;
+      }
+
+      if (data.expired) {
+
+        // fall...
+        data.gravity *= 1.1;
+
+        // ... and decelerate on X-axis.
+        data.vX *= 0.95;
+
+      } else {
+
+        data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
+
+        if (deltaY <= targetData.height && deltaY >= -targetData.height) {
+          // "lock on target"
+          // data.vY *= 0.95;
+          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust) * 1.33;
+        } else {
+          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust) * 1.33;
+        }
+
+      }
+
+      // and throttle
+      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+
+      data.frameCount++;
+
+      if (data.frameCount >= data.dieFrameCount) {
+        die();
+      }
+
+/*
+      // hit top?
+      if (data.y < game.objects.view.data.topBar.height) {
+        die();
+      }
+*/
+
+      // bottom?
+      if (data.y > game.objects.view.data.battleField.height) {
+        die();
+      }
+
+      collisionTest(collision, exports);
+
+      // notify caller if now dead and can be removed.
+      return (data.dead && !dom.o);
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      // prevent from "crashing", only if not expiring and target is still alive
+      if (!data.expired && !objects.target.data.dead) {
+        y = Math.min(game.objects.view.data.battleField.height - data.height, y);
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+/*
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+*/
+
+    function spark() {
+      utils.css.add(dom.o, css.spark);
+    }
+
+    function sparkAndDie(target) {
+
+      // TODO: reduce timers
+      spark();
+
+      // hack: no more animation.
+      data.dead = true;
+
+      if (target) {
+        target.hit(data.damagePoints);
+      }
+
+      // and cleanup shortly.
+      window.setTimeout(die, 250);
+
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.spark, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (!data.deadTimer) {
+
+        utils.css.add(dom.o, css.spark);
+
+        // timeout?
+        data.deadTimer = window.setTimeout(function() {
+          removeNodes(dom);
+          radarItem.die();
+        }, 250);
+
+        data.energy = 0;
+
+      }
+
+      data.dead = true;
+
+/*
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+*/
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+      // findTarget();
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom,
+      hit: hit,
+      die: die
+    }
+
+    init();
+
+    return exports;
+
+  }
 
   function Helicopter(options) {
 
@@ -1942,11 +2219,13 @@
       type: 'helicopter',
       bombing: false,
       firing: false,
+      missileLaunching: false,
       fuel: 100,
       fireModulus: 3,
       bombModulus: 6,
       fuelModulus: 40,
       fuelModulusFlying: 6,
+      missileModulus: 12,
       landed: true,
       rotated: false,
       rotateTimer: null,
@@ -1996,7 +2275,8 @@
 
     objects = {
       bombs: [],
-      gunfire: []
+      gunfire: [],
+      smartMissiles: []
     }
 
     collision = {
@@ -2057,6 +2337,8 @@
 
       // animate child objects, too
 
+      // TODO: for ... in
+
       for (i = objects.gunfire.length-1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
@@ -2068,6 +2350,13 @@
         if (objects.bombs[i].animate()) {
           // object is dead - take it out.
           objects.bombs.splice(i, 1);
+        }
+      }
+
+      for (i = objects.smartMissiles.length-1; i >= 0; i--) {
+        if (objects.smartMissiles[i].animate()) {
+          // object is dead - take it out.
+          objects.smartMissiles.splice(i, 1);
         }
       }
 
@@ -2110,6 +2399,14 @@
 
       if (data.bombing !== state) {
          data.bombing = state;
+      }
+
+    }
+
+    function setMissileLaunching(state) {
+
+      if (data.missileLaunching !== state) {
+         data.missileLaunching = state;
       }
 
     }
@@ -2277,11 +2574,11 @@
 
     function fire() {
 
-      var tiltOffset, frameCount;
+      var tiltOffset, frameCount, missileTarget;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
-      if (!data.firing && !data.bombing) {
+      if (!data.firing && !data.bombing && !data.missileLaunching) {
         return false;
       }
 
@@ -2315,6 +2612,35 @@
           vX: data.vX,
           vY: data.vY // + tiltOffset
         }));
+
+      }
+
+      if (data.missileLaunching && frameCount % data.missileModulus === 0) {
+
+        missileTarget = getNearbyEnemyObject(exports);
+
+        if (missileTarget) {
+
+          objects.smartMissiles.push(new SmartMissile({
+            parentType: data.type,
+            isEnemy: data.isEnemy,
+            x: data.x + (data.rotated ? 0 : data.width) - 8,
+            y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
+            target: missileTarget
+            // vX: data.vX + 8 * (data.rotated ? -1 : 1)
+          }));
+
+          // TODO: missile sound
+          if (sounds.genericGunFire) {
+            sounds.genericGunFire.play();
+          }
+
+        } else {
+
+          // "unavailable" sound?
+
+        }
+
 
       }
 
@@ -2387,7 +2713,8 @@
       fire: fire,
       hit: hit,
       setBombing: setBombing,
-      setFiring: setFiring
+      setFiring: setFiring,
+      setMissileLaunching: setMissileLaunching
     }
 
     init();
@@ -3096,9 +3423,88 @@
 
   }
 
+// array
+
+function compare(property) {
+
+  return function(a, b) {
+    if (a[property] < b[property]) {
+      return -1;
+    } else if (a[property] > b[property]) {  
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+}
+
+// /array
+
+  function getNearbyEnemyObject(source) {
+
+    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, verticalBias;
+
+    objects = game.objects;
+
+    items = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons'];
+
+    localObjects = [];
+
+    // if the source object isn't near the ground, be biased toward airborne items.
+    if (source.data.y < game.objects.view.data.world.height - 100) {
+      verticalBias = 0.75;
+    }
+
+    for (i=0, j=items.length; i<j; i++) {
+
+      itemArray = objects[items[i]];
+
+      for (k=0, l=itemArray.length; k<l; k++) {
+
+        if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
+
+          if (itemArray[k].data.type === 'balloon') {
+           targetData = getBalloonObject(itemArray[k]);
+          } else if (itemArray[k].data.bottomAligned) {
+            targetData = mixin({}, itemArray[k].data);
+            targetData = bottomAlignedObject(targetData);
+          } else {
+            targetData = itemArray[k].data;
+          }
+
+          localObjects.push({
+            obj: itemArray[k],
+            totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * verticalBias) + Math.abs(source.data.y) * verticalBias
+          });
+        }
+
+      }
+
+    }
+
+    // and now, sort.
+    localObjects.sort(compare('totalDistance'));
+
+    if (localObjects.length) {
+
+      result = localObjects[0].obj;
+
+    } else {
+
+      result = null;
+
+    }
+
+    return result;
+
+  }
+
   function initNearby(nearby, exports) {
+
     // map options.source -> exports
     nearby.options.source = exports;
+
   }
 
   function nearbyTest(nearby) {
@@ -3138,7 +3544,6 @@
     }
 
   }
-
 
   function collisionCheckArray(options) {
 
@@ -3421,6 +3826,23 @@
 
       },
 
+      // space bar
+      '32': {
+
+        down: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(true);
+
+        },
+
+        up: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(false);
+
+        }
+
+      },
+
       // left
       '37': {
 
@@ -3488,17 +3910,6 @@
         up: function() {
 
           // game.objects.ship.endThrust();
-
-        }
-
-      },
-
-      // space bar!
-      '32': {
-
-        down: function() {
-
-          // game.objects.smartbombController.fire();
 
         }
 
@@ -3686,6 +4097,10 @@
     preferFlash: false,
     debugMode: false
   });
+
+  if (window.location.toString().match(/mute/i)) {
+    soundManager.disable();
+  }
 
   setTimeout(aa.init, 500);
 
