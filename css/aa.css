@@ -474,6 +474,13 @@ body {
 	border: none;
 }
 
+#world .smart-missile-trailer {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	background-color: rgb(156,159,8);
+}
+
 #world .base {
 	background-image: url(../image/base.gif);
 	width: 102px;

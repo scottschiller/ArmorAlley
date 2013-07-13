@@ -178,7 +178,11 @@
     inventory: {
       begin: null,
       end: null
-    }
+    },
+    genericBoom: null,
+    genericExplosion: null,
+    genericGunFire: null,
+    missileLaunch: null
   }
 
   soundManager.setup({
@@ -188,34 +192,46 @@
   });
 
   soundManager.onready(function() {
+
     hasSound = true;
+
     sounds.genericBoom = soundManager.createSound({
       url: 'audio/generic-boom.wav',
       multiShot: true,
       volume: 20
     });
+
     sounds.genericExplosion = soundManager.createSound({
       url: 'audio/generic-explosion.wav',
       multiShot: true,
       volume: 20
     });
+
     sounds.genericGunFire = soundManager.createSound({
       url: 'audio/generic-gunfire.wav',
       multiShot: true
     });
+
     sounds.helicopter.rotate = soundManager.createSound({
       url: 'audio/helicopter-rotate.wav',
       multiShot: true
     });
+
     sounds.inventory.denied = soundManager.createSound({
       url: 'audio/order-denied.wav',
       multiShot: true
     });
+
     sounds.inventory.begin = soundManager.createSound({
       url: 'audio/order-start.wav'
     });
+
     sounds.inventory.end = soundManager.createSound({
       url: 'audio/order-complete.wav'
+    });
+
+    sounds.missileLaunch = soundManager.createSound({
+      url: 'audio/missile-launch.wav'
     });
 
   });
@@ -390,6 +406,21 @@
 
       objects.missileLaunchers.push(new MissileLauncher({
         x: 1302,
+        isEnemy: true
+      }));
+
+      objects.tanks.push(new Tank({
+        x: 1600,
+        isEnemy: true
+      }));
+
+      objects.tanks.push(new Van({
+        x: 1680,
+        isEnemy: true
+      }));
+
+      objects.missileLaunchers.push(new MissileLauncher({
+        x: 1760,
         isEnemy: true
       }));
 
@@ -2073,6 +2104,7 @@
 
     css = inheritCSS({
       className: 'smart-missile',
+      trailer: 'smart-missile-trailer',
       expired: 'expired',
       spark: 'spark'
     });
@@ -2095,11 +2127,15 @@
       vXMax: 12,
       vYMax: 12,
       thrust: 0.75,
-      deadTimer: null
+      deadTimer: null,
+      trailerCount: 5,
+      xHistory: [],
+      yHistory: []
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      trailers: []
     }
 
     objects = {
@@ -2179,20 +2215,22 @@
 
       moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
 
+      moveTrailers();
+
       data.frameCount++;
 
       if (data.frameCount >= data.dieFrameCount) {
         die();
       }
 
-/*
+      /*
       // hit top?
       if (data.y < game.objects.view.data.topBar.height) {
         die();
       }
-*/
+      */
 
-      // bottom?
+      // hit bottom?
       if (data.y > game.objects.view.data.battleField.height) {
         die();
       }
@@ -2221,6 +2259,19 @@
         data.y = y;
       }
 
+      // push x/y to history arrays, maintain size
+
+      data.xHistory.push(data.x);
+      data.yHistory.push(data.y);
+
+      if (data.xHistory.length > data.trailerCount + 1) {
+        data.xHistory.shift();
+      }
+
+      if (data.yHistory.length > data.trailerCount + 1) {
+        data.yHistory.shift();
+      }
+
     }
 
     function setX(x) {
@@ -2229,6 +2280,22 @@
 
     function setY(y) {
       dom.o.style.top = (y + 'px');
+    }
+
+    function moveTrailers() {
+
+      var i, j;
+
+      for (i=0, j=data.trailerCount; i<j; i++) {
+
+        // if previous X value exists, apply it
+        if (data.xHistory[i]) {
+          dom.trailers[i].style.left = data.xHistory[i] + (data.width/2) + 'px';
+          dom.trailers[i].style.top = data.yHistory[i] + (data.height/2) + 'px';
+        }
+
+      }
+
     }
 
     function hit(hitPoints) {
@@ -2297,9 +2364,23 @@
 
     function init() {
 
+      var i, trailerConfig, fragment;
+
+      fragment = document.createDocumentFragment();
+
       dom.o = makeSprite({
         className: css.className
       });
+
+      trailerConfig = {
+        className: css.trailer
+      };
+
+      for (i=0; i<data.trailerCount; i++) {
+        dom.trailers.push(makeSprite(trailerConfig));
+        // TODO: clone, optimize etc.
+        fragment.appendChild(dom.trailers[i]);
+      }
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -2308,11 +2389,17 @@
       setX(data.x);
       setY(data.y);
 
+      game.dom.world.appendChild(fragment);
+
       game.dom.world.appendChild(dom.o);
 
       // findTarget();
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+      if (sounds.missileLaunch) {
+        sounds.missileLaunch.play();
+      }
 
     }
 
@@ -2771,14 +2858,12 @@
             // vX: data.vX + 8 * (data.rotated ? -1 : 1)
           }));
 
-          // TODO: missile sound
-          if (sounds.genericGunFire) {
-            sounds.genericGunFire.play();
-          }
-
         } else {
 
           // "unavailable" sound?
+          if (sounds.inventory.denied) {
+            sounds.inventory.denied.play();
+          }
 
         }
 
@@ -3891,6 +3976,13 @@
 
   }
 
+  function removeNodeArray(nodeArray) {
+    for (var i=0, j=nodeArray.length; i<j; i++) {
+      nodeArray[i].parentNode.removeChild(nodeArray[i]);
+      nodeArray[i] = null;
+    }
+  }
+
   function removeNodes(dom) {
 
     // remove all nodes in a structure
@@ -3898,7 +3990,12 @@
 
     for (item in dom) {
       if (dom.hasOwnProperty(item) && dom[item]) {
-        dom[item].parentNode.removeChild(dom[item]);
+        // node reference, or array of nodes?
+        if (dom[item] instanceof Array) {
+          removeNodeArray(dom[item]);
+        } else {
+          dom[item].parentNode.removeChild(dom[item]);
+        }
         dom[item] = null;
       }
     }
