@@ -461,6 +461,15 @@ body {
 	border: 1px solid rgb(255,0,0);
 }
 
+#world .smart-missile.expired {
+	background: rgba(255,255,255,0.25);
+	border: 1px solid rgb(128,128,128);
+}
+
+#world .smart-missile.spark {
+	border: none;
+}
+
 #world .base {
 	background-image: url(../image/base.gif);
 	width: 102px;

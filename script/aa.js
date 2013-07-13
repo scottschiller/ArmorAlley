@@ -6,6 +6,26 @@
 
   utils = {
 
+    array: (function() {
+
+      function compare(property) {
+        return function(a, b) {
+          if (a[property] < b[property]) {
+            return -1;
+          } else if (a[property] > b[property]) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+      }
+
+      return {
+        compare: compare
+      }
+
+    }()),
+
     css: (function() {
 
       function hasClass(o, cStr) {
@@ -1936,6 +1956,7 @@
 
     css = inheritCSS({
       className: 'smart-missile',
+      expired: 'expired',
       spark: 'spark'
     });
 
@@ -1944,8 +1965,9 @@
       parentType: options.parentType || null,
       energy: 1,
       expired: false,
+      hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       frameCount: 0,
-      expireFrameCount: options.expireFrameCount || 384,
+      expireFrameCount: options.expireFrameCount || 256,
       dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
       width: 12,
       height: 12,
@@ -2006,6 +2028,7 @@
       if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
         utils.css.add(dom.o, css.expired);
         data.expired = true;
+        data.hostile = true;
         // burst of thrust when the missile expires?
         data.vX *= 1.5;
         data.vY *= 1.5;
@@ -3423,27 +3446,11 @@
 
   }
 
-// array
-
-function compare(property) {
-
-  return function(a, b) {
-    if (a[property] < b[property]) {
-      return -1;
-    } else if (a[property] > b[property]) {  
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
-}
-
-// /array
-
   function getNearbyEnemyObject(source) {
 
-    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, verticalBias;
+    // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
+
+    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, verticalBias, isInFront;
 
     objects = game.objects;
 
@@ -3451,7 +3458,7 @@ function compare(property) {
 
     localObjects = [];
 
-    // if the source object isn't near the ground, be biased toward airborne items.
+    // if the source object isn't near the ground, be biased toward airborne items by effectively making them closer.
     if (source.data.y < game.objects.view.data.world.height - 100) {
       verticalBias = 0.75;
     }
@@ -3462,21 +3469,32 @@ function compare(property) {
 
       for (k=0, l=itemArray.length; k<l; k++) {
 
+        // potential target: not dead, and an enemy
         if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
 
-          if (itemArray[k].data.type === 'balloon') {
-           targetData = getBalloonObject(itemArray[k]);
-          } else if (itemArray[k].data.bottomAligned) {
-            targetData = mixin({}, itemArray[k].data);
-            targetData = bottomAlignedObject(targetData);
-          } else {
-            targetData = itemArray[k].data;
+          // is the target in front of the source?
+          isInFront = (itemArray[k].data.x >= source.data.x);
+
+          // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
+          if ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)) {
+
+            // TODO: refactor, optimize
+            if (itemArray[k].data.type === 'balloon') {
+             targetData = getBalloonObject(itemArray[k]);
+            } else if (itemArray[k].data.bottomAligned) {
+              targetData = mixin({}, itemArray[k].data);
+              targetData = bottomAlignedObject(targetData);
+            } else {
+              targetData = itemArray[k].data;
+            }
+
+            localObjects.push({
+              obj: itemArray[k],
+              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * verticalBias) + Math.abs(source.data.y) * verticalBias
+            });
+
           }
 
-          localObjects.push({
-            obj: itemArray[k],
-            totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * verticalBias) + Math.abs(source.data.y) * verticalBias
-          });
         }
 
       }
@@ -3484,7 +3502,7 @@ function compare(property) {
     }
 
     // and now, sort.
-    localObjects.sort(compare('totalDistance'));
+    localObjects.sort(utils.array.compare('totalDistance'));
 
     if (localObjects.length) {
 
@@ -3560,7 +3578,8 @@ function compare(property) {
       return false;
     }
 
-    if (options.source.data.dead || options.source.data.expired) {
+    // don't check if the object is dead. If it's expired, only allow the object if it's also "hostile" (can still hit things)
+    if (options.source.data.dead || (options.source.data.expired && !options.source.data.hostile)) {
       return false;
     }
 
@@ -3582,8 +3601,21 @@ function compare(property) {
 
     for (item in objects) {
 
-      // don't check against friendly units (unless infantry and bunker), dead objects, or against self
-      if (objects.hasOwnProperty(item) && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') ) && !objects[item].data.dead && objects[item] !== options.source) {
+      // non-standard formatting, lengthy logic check here...
+      if (
+
+        objects.hasOwnProperty(item)
+
+        // don't compare the object against itself
+        && objects[item] !== options.source
+
+        // ignore dead objects,
+        && !objects[item].data.dead
+
+        // don't check against friendly units, unless infantry vs. bunker, OR we're dealing with a "hostile" object (dangerous to both sides)
+        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.hostile || objects[item].data.hostile))
+
+      ) {
 
         if (options.isBalloon || (objects[item].data.type && objects[item].data.type === 'balloon')) {
           // special case
