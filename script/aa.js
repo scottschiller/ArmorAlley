@@ -838,13 +838,19 @@
 
     var data, css, dom, exports, objects;
 
+    css = {
+      incomingSmartMissile: 'incoming-smart-missile'
+    }
+
     objects = {
       items: []
     }
 
     data = {
       frameCount: 0,
-      animateModulus: 1 // TODO: review
+      animateModulus: 1, // TODO: review
+      lastMissileCount: 0,
+      incomingMissile: false
     }
 
     dom = {
@@ -852,11 +858,25 @@
       radarItem: null
     }
 
+    function setIncomingMissile(incoming) {
+
+      if (data.incomingMissile !== incoming) {
+
+        utils.css[incoming ? 'add' : 'remove'](dom.radar, css.incomingSmartMissile);
+
+        data.incomingMissile = incoming;
+
+      }
+
+    }
+
     function animate() {
 
-      var i, j, battleFieldWidth, battleFieldHeight;
+      var i, j, battleFieldWidth, battleFieldHeight, hasEnemyMissile;
 
       data.frameCount++;
+
+      hasEnemyMissile = false;
 
       if (data.frameCount % data.animateModulus === 0) {
 
@@ -877,6 +897,32 @@
           if (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) {
             objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
           }
+        }
+
+        // any active smart missiles?
+
+        if (game.objects.smartMissiles.length !== data.lastMissileCount) {
+
+          // change state?
+
+          for (i=0, j=game.objects.smartMissiles.length; i<j; i++) {
+
+            // is this missile not dead, not expired/hostile, and an enemy?
+
+            if (!game.objects.smartMissiles[i].data.dead && !game.objects.smartMissiles[i].data.hostile && game.objects.smartMissiles[i].data.isEnemy !== game.objects.helicopters[0].data.isEnemy) {
+
+              hasEnemyMissile = true;
+
+              break;  
+
+            }
+          
+          }
+
+          data.lastMissileCount = game.objects.smartMissiles.length;
+
+          setIncomingMissile(hasEnemyMissile);
+
         }
 
       }
@@ -1202,24 +1248,35 @@
     }
 
     function reset() {
+
       // respawn can actually happen now
+
       data.energy = data.defaultEnergy;
-      // and restore default vertical
+
+      // restore default vertical
       data.verticalDirection = data.verticalDirectionDefault;
+
       // look ma, no longer dead!
       data.dead = false;
+
       // reset position, too
       data.y = 0;
+
       radarItem.reset();
+
       data.canRespawn = false;
+
       if (data.deadTimer) {
         window.clearTimeout(data.deadTimer);
         data.deadTimer = null;
       }
-      // force UI update
+
+      // update UI, right away?
       animate();
+
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
+
     }
 
     function init() {
@@ -1558,7 +1615,7 @@
 
     function fire() {
 
-      var i, j, deltaX;
+      var i, j, deltaX, triggerDistance = game.objects.view.data.browser.width * 2/3;
 
       if (data.frameCount % data.fireModulus === 0) {
 
@@ -1568,7 +1625,7 @@
           // how far away is the target?
           deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
 
-          if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < 500) {
+          if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < triggerDistance) {
 
             // self-destruct, FIRE ZE MISSILE
             die();
@@ -1689,7 +1746,7 @@
           sparkAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'smartMissiles']
     }
 
     // special case: tank gunfire should not hit bunkers.
@@ -2044,7 +2101,7 @@
         }
       },
       // TODO: can also hit other smart missiles?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles']
     }
 
     function animate() {
@@ -2052,7 +2109,7 @@
       var items, item, hit, tmpData, tmpObject, deltaX, deltaY, targetData;
 
       if (data.dead) {
-        return false;
+        return true;
       }
 
       if (objects.target.data.type === 'balloon') {
@@ -2142,7 +2199,7 @@
 
       // prevent from "crashing", only if not expiring and target is still alive
       if (!data.expired && !objects.target.data.dead) {
-        y = Math.min(game.objects.view.data.battleField.height - data.height, y);
+        y = Math.min(game.objects.view.data.battleField.height - data.height - 3, y);
       }
 
       if (y !== undefined && data.y !== y) {
@@ -2160,7 +2217,6 @@
       dom.o.style.top = (y + 'px');
     }
 
-/*
     function hit(hitPoints) {
       if (!data.dead) {
         hitPoints = hitPoints || 1;
@@ -2171,7 +2227,6 @@
         }
       }
     }
-*/
 
     function spark() {
       utils.css.add(dom.o, css.spark);
@@ -2430,7 +2485,10 @@
       }
 
       // should we be firing, also?
-      fire();
+
+      if (!data.dead) {
+        fire();
+      }
 
       burnFuel();
 
@@ -3500,7 +3558,8 @@
 
     objects = game.objects;
 
-    items = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons'];
+    // should a smart missile be able to target another smart missile? ... why not.
+    items = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles'];
 
     localObjects = [];
 
