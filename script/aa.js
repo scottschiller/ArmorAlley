@@ -653,6 +653,7 @@
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       setLeftScroll: setLeftScroll
     }
 
@@ -862,7 +863,7 @@
 
       if (data.incomingMissile !== incoming) {
 
-        utils.css[incoming ? 'add' : 'remove'](dom.radar, css.incomingSmartMissile);
+        utils.css[incoming ? 'add' : 'remove'](game.objects.view.dom.worldWrapper, css.incomingSmartMissile);
 
         data.incomingMissile = incoming;
 
@@ -1615,7 +1616,7 @@
 
     function fire() {
 
-      var i, j, deltaX, triggerDistance = game.objects.view.data.browser.width * 2/3;
+      var i, j, k, l, deltaX, similarMissileCount, triggerDistance = game.objects.view.data.browser.width * 2/3;
 
       if (data.frameCount % data.fireModulus === 0) {
 
@@ -1627,16 +1628,29 @@
 
           if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < triggerDistance) {
 
-            // self-destruct, FIRE ZE MISSILE
-            die();
+            // any missiles already chasing the target?
+            similarMissileCount = 0;
 
-            game.objects.smartMissiles.push(new SmartMissile({
-              parentType: data.type,
-              isEnemy: data.isEnemy,
-              x: data.x + data.width/2,
-              y: bottomAlignedY(),
-              target: game.objects.helicopters[i]
-            }));
+            for (k=0, l=game.objects.smartMissiles.length; k<l; k++) {
+              if (game.objects.smartMissiles[k].data.target === game.objects.helicopters[i].exports) {
+                similarMissileCount++;
+              }
+            }
+
+            if (!similarMissileCount) {
+
+              // self-destruct, FIRE ZE MISSILE
+              die();
+
+              game.objects.smartMissiles.push(new SmartMissile({
+                parentType: data.type,
+                isEnemy: data.isEnemy,
+                x: data.x + data.width/2,
+                y: bottomAlignedY(),
+                target: game.objects.helicopters[i]
+              }));
+
+            }
 
           }
 
@@ -3144,7 +3158,9 @@
       inventory: {
         frameCount: 50,
         cost: 5
-      }
+      },
+      // if the van reaches the enemy base, it's game over.
+      xGameOver: (options.isEnemy ? 256 : game.objects.view.data.battleField.width - 256)
     }, options);
 
     dom = {
@@ -3154,8 +3170,25 @@
     function animate() {
 
       if (!data.dead) {
+
         moveTo(data.x + data.vX, data.y);
+
+        if (data.isEnemy && data.x <= data.xGameOver) {
+
+          // Game over, man, game over! (Enemy wins.)
+
+          console.log('The enemy has won the battle.');
+
+        } else if (!data.isEnemy && data.x >= data.xGameOver) {
+
+          // player wins
+          console.log('You have won the battle.');
+
+        }
+
       }
+
+      return data.dead;
 
     }
 
@@ -3554,7 +3587,7 @@
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, verticalBias, isInFront;
+    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, yBias, isInFront;
 
     objects = game.objects;
 
@@ -3563,9 +3596,9 @@
 
     localObjects = [];
 
-    // if the source object isn't near the ground, be biased toward airborne items by effectively making them closer.
+    // if the source object isn't near the ground, be biased toward airborne items.
     if (source.data.y < game.objects.view.data.world.height - 100) {
-      verticalBias = 0.75;
+      yBias = 1.5;
     }
 
     for (i=0, j=items.length; i<j; i++) {
@@ -3595,7 +3628,7 @@
 
             localObjects.push({
               obj: itemArray[k],
-              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * verticalBias) + Math.abs(source.data.y) * verticalBias
+              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * yBias) + Math.abs(source.data.y) * yBias
             });
 
           }
@@ -3606,7 +3639,7 @@
 
     }
 
-    // and now, sort.
+    // sort by distance, first item being the closest.
     localObjects.sort(utils.array.compare('totalDistance'));
 
     if (localObjects.length) {
@@ -3719,6 +3752,9 @@
 
         // don't check against friendly units, unless infantry vs. bunker, OR we're dealing with a "hostile" object (dangerous to both sides)
         && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.hostile || objects[item].data.hostile))
+
+        // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
+        && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
 
       ) {
 

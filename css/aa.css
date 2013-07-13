@@ -58,8 +58,8 @@ body {
  height: 32px;
 }
 
-#game-status-bar #radar.incoming-smart-missile {
- background-color: rgba(255,0,0,0.33);
+#world-wrapper.incoming-smart-missile {
+ border-color: #fff;
 }
 
 #player-status-bar {
