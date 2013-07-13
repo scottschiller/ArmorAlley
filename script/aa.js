@@ -2,7 +2,8 @@
 
   var game, utils;
 
-  var FRAMERATE = 1000/24;
+  var FPS = 24;
+  var FRAMERATE = 1000/FPS;
 
   utils = {
 
@@ -1486,10 +1487,13 @@
     });
 
     data = inheritData({
+      type: 'missile-launcher',
       bottomAligned: true,
       energy: 3,
       direction: 0,
       vX: (options.isEnemy ? -1 : 1),
+      frameCount: 0,
+      fireModulus: FPS, // check every second or so
       width: 54,
       height: 18,
       inventory: {
@@ -1504,9 +1508,18 @@
 
     function animate() {
 
+      data.frameCount++;
+
       if (!data.dead) {
+
         moveTo(data.x + data.vX, data.y);
+
+        // fire?
+        fire();
+
       }
+
+      return (data.dead && !dom.o);
 
     }
 
@@ -1541,6 +1554,39 @@
           die();
         }
       }
+    }
+
+    function fire() {
+
+      var i, j, deltaX;
+
+      if (data.frameCount % data.fireModulus === 0) {
+
+        // is an enemy helicopter nearby?
+        for (i=0, j=game.objects.helicopters.length; i<j; i++) {
+
+          // how far away is the target?
+          deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+
+          if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < 500) {
+
+            // self-destruct, FIRE ZE MISSILE
+            die();
+
+            game.objects.smartMissiles.push(new SmartMissile({
+              parentType: data.type,
+              isEnemy: data.isEnemy,
+              x: data.x + data.width/2,
+              y: bottomAlignedY(),
+              target: game.objects.helicopters[i]
+            }));
+
+          }
+
+        }
+
+      }
+
     }
 
     function dead() {
@@ -3647,12 +3693,19 @@
 
   }
 
+  function bottomAlignedY(y) {
+
+    // correct bottom-aligned Y value
+    return 370 - 2 - (y || 0);
+
+  }
+
   function bottomAlignedObject(obj) {
 
     // compensate for objects positioned using bottom: 0
 
     // correct for fixed-value bottom positioning
-    obj.y = 370 - 2;
+    obj.y = bottomAlignedY();
 
     return obj;
 
