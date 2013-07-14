@@ -472,7 +472,7 @@
 
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 5];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 60];
         var i=0;
 
         function orderNextItem() {
@@ -484,7 +484,7 @@
 
           game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
 
-          window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
+          window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
 
           i++;
           if (i >= enemyOrders.length) {
@@ -1033,6 +1033,9 @@
         if (!data.dead) {
           dom.o.style.display = 'none';
           data.dead = true;
+          if (!options.canRespawn) {
+            removeItem(exports);
+          }
         }
       }
 
@@ -1060,14 +1063,15 @@
 
     }
 
-    function addItem(item, className) {
+    function addItem(item, className, canRespawn) {
 
       var itemObject, o;
 
       itemObject = new RadarItem({
         o: dom.radarItem.cloneNode(true),
         className: className,
-        oParent: item
+        oParent: item,
+        canRespawn: (canRespawn || false)
        });
 
       objects.items.push(itemObject);
@@ -1086,11 +1090,12 @@
       var i, j, foundItem;
 
       // find and remove from DOM + array
-      for (i=items.length, j=0; i>j; i--) {
-        if (items[i].oParent === item) {
+      for (i=objects.items.length-1, j=0; i>=j; i--) {
+        if (objects.items[i] === item) {
           // console.log('radar.removeItem(): found match', item);
-          items[i].o.parentNode.removeChild(items[i].o);
-          items.splice(i, 1);
+          removeNodes(objects.items[i].dom);
+          // objects.items[i].dom.o.parentNode.removeChild(objects.items[i].dom);
+          objects.items.splice(i, 1);
           foundItem = true;
           break;
         }
@@ -1156,8 +1161,6 @@
           }
         }
       }
-
-      // collision detection?
 
       // view is separate
       gameObjects.view.animate();
@@ -1382,7 +1385,8 @@
 
       game.dom.world.appendChild(dom.o);
 
-      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      // TODO: review hacky "can respawn" parameter
+      radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
     }
 
@@ -4441,6 +4445,25 @@
     addItem('base', 8000);
 
     addItem('end-bunker', 8200);
+
+    function updateStats() {
+
+      var c1, c2;
+
+      c1 = document.getElementById('top-bar').querySelectorAll('.sprite').length;
+      c2 = document.getElementById('battlefield').querySelectorAll('.sprite').length;
+
+      console.log('bar, world: ' + c1 + ', ' + c2);      
+
+      window.setTimeout(updateStats, 5000);
+
+    }
+
+    if (window.location.toString().match(/profil/i)) {
+
+      updateStats();
+
+    }
 
   }
 
