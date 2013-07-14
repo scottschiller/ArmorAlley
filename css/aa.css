@@ -456,6 +456,10 @@ body {
 	background-image: url(../image/helicopter-enemy-rl.gif);
 }
 
+#world .helicopter.dead {
+	display: none;
+}
+
 #world .gunfire {
 	position: absolute;
 	width: 2px;

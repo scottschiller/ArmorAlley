@@ -2795,7 +2795,7 @@
 
       // haaaack
       if (!data.yMin) {
-        data.yMin = document.getElementById('top-bar').offsetHeight;
+        data.yMin = document.getElementById('game-status-bar').offsetHeight;
       }
 
     }
@@ -2937,7 +2937,7 @@
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
-      }, 1200);
+      }, 500);
 
       data.energy = 0;
 
@@ -2947,9 +2947,32 @@
         sounds.genericExplosion.play();
       }
 
-      radarItem.die();
+      // radarItem.die();
 
-      console.log('helicopter died.');
+      // temporary: unlimited respawn.
+      window.setTimeout(reset, 3000);
+
+    }
+
+    function reset() {
+
+      data.energy = 10;
+      updateHealth();
+
+      if (data.isEnemy) {
+        data.x = 8192;
+      } else {
+        data.vX = 0;
+        data.vY = 0;
+      }
+
+      setX(data.x);
+      setY(data.y);
+
+      utils.css.remove(dom.o, css.exploding);
+      utils.css.remove(dom.o, css.dead);
+
+      data.dead = false;
 
     }
 
