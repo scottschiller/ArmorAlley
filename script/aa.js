@@ -473,21 +473,24 @@
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
         var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 5];
-
-        var i=0, options;
-
-        options = {
-          isEnemy: true,
-          x: 8192
-        };
+        var i=0;
 
         function orderNextItem() {
+
+          var options = {
+            isEnemy: true,
+            x: 8192
+          };
+
           game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+
           window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
+
           i++;
           if (i >= enemyOrders.length) {
             i = 0;
           }
+
         }
 
         // and begin
