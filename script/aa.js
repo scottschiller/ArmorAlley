@@ -2446,7 +2446,7 @@
       firing: false,
       missileLaunching: false,
       fuel: 100,
-      fireModulus: 3,
+      fireModulus: 2,
       bombModulus: 6,
       fuelModulus: 40,
       fuelModulusFlying: 6,
@@ -3061,7 +3061,12 @@
         }));
 
         if (sounds.genericGunFire) {
-          sounds.genericGunFire.play();
+          if (!data.isEnemy) {
+            sounds.genericGunFire.play();
+          } else {
+            // offset enemy tank fire sounds
+            window.setTimeout(sounds.genericGunFire.play, 120);
+          }
         }
 
       }
@@ -3677,7 +3682,7 @@
     objects = game.objects;
 
     // should a smart missile be able to target another smart missile? ... why not.
-    items = ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles'];
+    items = ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles'];
 
     localObjects = [];
 
