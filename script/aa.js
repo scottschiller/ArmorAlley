@@ -384,6 +384,20 @@
 
       // some enemy stuff
 
+      var enemyCopter = new Helicopter({
+        x: 8192,
+        y: 72,
+        isEnemy: true
+      });
+
+      enemyCopter.rotate();
+
+      enemyCopter.data.vX = -8;
+
+      objects.helicopters.push(enemyCopter);
+
+      // console.log(enemyCopter);
+
       objects.tanks.push(new Tank({
         x: 1048,
         isEnemy: true
@@ -453,6 +467,33 @@
       createObjects();
 
       objects.gameLoop.init();
+
+      (function() {
+
+        // basic enemy ordering crap
+        var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 5];
+
+        var i=0, options;
+
+        options = {
+          isEnemy: true,
+          x: 8192
+        };
+
+        function orderNextItem() {
+          game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+          window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
+          i++;
+          if (i >= enemyOrders.length) {
+            i = 0;
+          }
+        }
+
+        // and begin
+        window.setTimeout(orderNextItem, 5000);
+
+      }());
 
     }
 
@@ -808,8 +849,12 @@
           // single-item order.
           orderObject = createObject(typeData, options);
 
+          // make one for the bad guy, too
+          // createObject(typeData, mixin(options, {x: 8192, isEnemy: true}));
+
         } else {
 
+          // make the first one immediately.
           orderObject = createObject(typeData, options);
 
           // multiples. note 1 offset.
@@ -857,6 +902,8 @@
 
     exports = {
       animate: animate,
+      data: data,
+      createObject: createObject,
       order: order
     }
 
@@ -1958,7 +2005,8 @@
         });
       }
 
-      target.hit(data.damagePoints);
+      // special case: one bomb kills a helicopter.
+      target.hit(target.data.type === 'helicopter' ? 999 : data.damagePoints);
 
       die();
 
@@ -1972,7 +2020,7 @@
           bombHitTarget(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters']
     }
 
     function animate() {
@@ -2487,7 +2535,7 @@
       },
 
       mousedown: function(e) {
-        if (e.button === 0) {
+        if (!data.isEnemy && e.button === 0) {
           rotate();
         }
       },
@@ -2515,7 +2563,7 @@
           target.hit(999);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters']
     }
 
     function animate() {
@@ -2525,20 +2573,25 @@
       var i, j, view, mouse;
 
       view = game.objects.view;
-      mouse = view.data.mouse;
 
-      // only allow X-axis if not on ground...
-      if (mouse.x) {
-        // accelerate scroll vX, so chopper nearly matches mouse when scrolling
-        data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9) + mouse.x - data.x - data.halfWidth) * 0.1;
-        // and limit
-        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      }
+      if (!data.isEnemy) {
 
-      if (mouse.y) {
-        data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
-        // and limit
-        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+        mouse = view.data.mouse;
+
+        // only allow X-axis if not on ground...
+        if (mouse.x) {
+          // accelerate scroll vX, so chopper nearly matches mouse when scrolling
+          data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
+          // and limit
+          data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        }
+
+        if (mouse.y) {
+          data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
+          // and limit
+          data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+        }
+
       }
 
       // safety net: don't let chopper run on bottom of screen
@@ -2837,8 +2890,7 @@
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: data.y + data.height - 6,
-          vX: data.vX,
-          vY: data.vY // + tiltOffset
+          vX: data.vX
         }));
 
       }
@@ -2866,7 +2918,6 @@
           }
 
         }
-
 
       }
 
@@ -2902,7 +2953,7 @@
     function init() {
 
       dom.o = makeSprite({
-        className: css.className
+        className: css.className + (data.isEnemy ? ' ' + css.enemy : '')
       });
 
       dom.oSubSprite = makeSubSprite();
@@ -2938,6 +2989,7 @@
       die: die,
       fire: fire,
       hit: hit,
+      rotate: rotate,
       setBombing: setBombing,
       setFiring: setFiring,
       setMissileLaunching: setMissileLaunching
