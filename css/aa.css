@@ -443,6 +443,18 @@ body {
 	background-position: 50% 0px;
 }
 
+#world .helicopter.enemy,
+#world .helicopter.enemy.facing-left,
+#world .helicopter.enemy.facing-right {
+	background-image: url(../image/helicopter-enemy-rl.gif);
+	width: 55px;
+	height: 18px;
+	z-index: 3;
+}
+
+#world .helicopter.enemy.facing-left {
+	background-image: url(../image/helicopter-enemy-rl.gif);
+}
 
 #world .gunfire {
 	position: absolute;
@@ -735,10 +747,6 @@ body {
 }
 */
 
-#game-status-bar #radar .sprite.enemy {
-	background-color: rgb(156,159,8) !important;
-}
-
 /* TODO: remove */
 
 .collision-check-1 {
@@ -891,4 +899,16 @@ body {
 	-moz-transition: margin 2s;
 	transition: margin 2s;
 	margin-bottom: 0px !important; /* override .building rules */
+}
+
+#game-status-bar #radar .sprite.enemy {
+	background-color: rgb(156,159,8);
+}
+
+#game-status-bar #radar .sprite.helicopter.enemy {
+	background-color: transparent;
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-left: 3px solid transparent;
+	border-right: 3px solid #ccc;
 }
