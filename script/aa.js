@@ -545,12 +545,19 @@
     options = options || {};
 
     defaultData = {
-      dead: false,
       isEnemy: (options.isEnemy || false),
+      bottomY: (options.bottomY || 0),
+      dead: false,
       x: options.x || 0,
       y: options.y || 0,
       vX: options.vX || 0,
       vY: options.vY || 0
+    };
+
+
+    // correct y data, if the object is bottom-aligned
+    if (data.bottomAligned) {
+      data.y = bottomAlignedY(defaultData.bottomY);
     }
 
     return mixin(defaultData, data);
@@ -973,7 +980,7 @@
           if (objects.items[i].oParent.data.type) {
             if (objects.items[i].oParent.data.type === 'balloon') {
               // balloon
-              objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.y + '%';
+              objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.bottomY + '%';
             }
           }
           if (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) {
@@ -1163,7 +1170,7 @@
       }
 
       // view is separate
-      gameObjects.view.animate();
+      // gameObjects.view.animate();
 
     }
 
@@ -1230,22 +1237,22 @@
 
       if (!data.dead) {
 
-        if ((data.y > 100 && data.verticalDirection > 0) || (data.y < 0 && data.verticalDirection < 0)) {
+        if ((data.bottomY > 100 && data.verticalDirection > 0) || (data.bottomY < 0 && data.verticalDirection < 0)) {
           data.verticalDirection *= -1;
         }
 
-        moveTo(data.x, data.y + data.verticalDirection);
+        moveTo(data.x, data.bottomY + data.verticalDirection);
 
       } else {
 
-        if (data.y > 0) {
+        if (data.bottomY > 0) {
 
           // dead, but chain has not retracted yet. Make sure it's moving down.
           if (data.verticalDirection > 0) {
             data.verticalDirection *= -1;
           }
 
-          moveTo(data.x, data.y + data.verticalDirection);
+          moveTo(data.x, data.bottomY + data.verticalDirection);
 
         }
 
@@ -1255,16 +1262,22 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+
+        setY(bottomY);
+
+        data.bottomY = bottomY;
+
+        // special handling for balloon case
+        // TODO: fix this
+        data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
       }
 
     }
@@ -1273,9 +1286,8 @@
       dom.o.style.left = (x + 'px');
     }
 
-    function setY(y) {
-      dom.o.style.bottom = ((280 * y / 100) + 'px');
-      // dom.o.style.top = y + 'px';
+    function setY(bottomY) {
+      dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
     }
 
     function setEnemy(isEnemy) {
@@ -1345,7 +1357,8 @@
       data.dead = false;
 
       // reset position, too
-      data.y = 0;
+      data.bottomY = 0;
+      data.y = bottomAlignedY(data.bottomY);
 
       radarItem.reset();
 
@@ -1381,7 +1394,8 @@
 
       setX(data.x);
 
-      data.y = Math.random() * 100;
+      data.bottomY = Math.random() * 100;
+      data.y = bottomAlignedY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -1437,25 +1451,21 @@
     }
 
     function animate() {
-/*
-      if (objects.balloon) {
-        objects.balloon.animate();
-      }
-*/
       // TODO: fix height: 0px case (1-pixel white border)
-      dom.oChain.style.height = ((objects.balloon.data.y / 100 * 280) - data.height - 6 + 'px');
+      dom.oChain.style.height = ((objects.balloon.data.bottomY / 100 * 280) - data.height - 6 + 'px');
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        setY(bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(data.bottomY);
       }
 
     }
@@ -1478,14 +1488,6 @@
         }
       }
     }
-
-/*
-    function dead() {
-      if (data.dead && dom.o) {
-        utils.css.swap(dom.o, css.exploding, css.dead);
-      }
-    }
-*/
 
     function infantryHit(target) {
 
@@ -1655,7 +1657,7 @@
 
       if (!data.dead) {
 
-        moveTo(data.x + data.vX, data.y);
+        moveTo(data.x + data.vX, data.bottomY);
 
         // fire?
         fire();
@@ -1666,16 +1668,17 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        setY(bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(bottomY);
       }
 
     }
@@ -1684,8 +1687,8 @@
       dom.o.style.left = (x + 'px');
     }
 
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
+    function setY(bottomY) {
+      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function hit(hitPoints) {
@@ -1786,7 +1789,7 @@
       }
 
       setX(data.x);
-      setY(data.y);
+      setY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -2217,14 +2220,7 @@
         return true;
       }
 
-      if (objects.target.data.type === 'balloon') {
-        targetData = getBalloonObject(objects.target);
-      } else if (objects.target.data.bottomAligned) {
-        targetData = mixin({}, objects.target.data);
-        targetData = bottomAlignedObject(targetData);
-      } else {
-        targetData = objects.target.data;
-      }
+      targetData = objects.target.data;
 
       var targetHalfWidth = targetData.width/2;
       var targetHalfHeight = targetData.height/2;
@@ -3111,7 +3107,7 @@
 
         if (!data.stopped) {
 
-          moveTo(data.x + data.vX, data.y);
+          moveTo(data.x + data.vX, data.bottomY);
 
         } else {
 
@@ -3166,16 +3162,17 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        setY(bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(bottomY);
       }
 
     }
@@ -3184,8 +3181,8 @@
       dom.o.style.left = (x + 'px');
     }
 
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
+    function setY(bottomY) {
+      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function updateHealth() {
@@ -3283,7 +3280,7 @@
       }
 
       setX(data.x);
-      setY(data.y);
+      setY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3343,7 +3340,7 @@
 
       if (!data.dead) {
 
-        moveTo(data.x + data.vX, data.y);
+        moveTo(data.x + data.vX, data.bottomY);
 
         if (data.isEnemy && data.x <= data.xGameOver) {
 
@@ -3364,16 +3361,17 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        setY(bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(bottomY);
       }
 
     }
@@ -3438,7 +3436,7 @@
       }
 
       setX(data.x);
-      setY(data.y);
+      setY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3542,7 +3540,7 @@
 
         if (!data.stopped) {
 
-          moveTo(data.x + data.vX, data.y);
+          moveTo(data.x + data.vX, data.bottomY);
 
         } else {
 
@@ -3586,16 +3584,17 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
-      if (y !== undefined && data.y !== y) {
-        setY(y);
-        data.y = y;
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        setY(bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(bottomY);
       }
 
     }
@@ -3604,8 +3603,8 @@
       dom.o.style.left = (x + 'px');
     }
 
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
+    function setY(bottomY) {
+      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function stop() {
@@ -3699,7 +3698,7 @@
       }
 
       setX(data.x);
-      setY(data.y);
+      setY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3731,27 +3730,6 @@
     options.role = 1;
 
     return new Infantry(options);
-
-  }
-
-  function getBalloonObject(obj) {
-
-    // compensate for bunker offset minus balloon offset
-    var data;
-
-    // local copy
-    data = mixin({}, obj);
-
-    data.x = obj.data.x;
-
-    // world minus radar
-    data.y = 370 - (280 * obj.data.y/100);
-
-    data.width = obj.data.width;
-
-    data.height = obj.data.height;
-
-    return data;
 
   }
 
@@ -3788,15 +3766,7 @@
           // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
           if ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)) {
 
-            // TODO: refactor, optimize
-            if (itemArray[k].data.type === 'balloon') {
-             targetData = getBalloonObject(itemArray[k]);
-            } else if (itemArray[k].data.bottomAligned) {
-              targetData = mixin({}, itemArray[k].data);
-              targetData = bottomAlignedObject(targetData);
-            } else {
-              targetData = itemArray[k].data;
-            }
+            targetData = itemArray[k].data;
 
             localObjects.push({
               obj: itemArray[k],
@@ -3840,6 +3810,7 @@
     var i, j, foundHit;
 
     // loop through relevant game object arrays
+    // TODO: revisit for object creation / garbage collection improvements
     for (i=0, j=nearby.items.length; i<j; i++) {
       // ... and check them
       if (collisionCheckArray(mixin(nearby.options, { targets: game.objects[nearby.items[i]] }))) {
@@ -3866,6 +3837,7 @@
     // loop through relevant game object arrays
     for (i=0, j=collision.items.length; i<j; i++) {
       // ... and check them
+      // TODO: revisit for object creation / garbage collection improvements
       collisionCheckArray(mixin(collision.options, {
         targets: game.objects[collision.items[i]]
       }));
@@ -3882,7 +3854,7 @@
      * }
      */
 
-    var item, objects, data1, data2, foundHit;
+    var item, objects, data1, data2, xLookAhead, foundHit;
 
     if (!options) {
       return false;
@@ -3893,19 +3865,16 @@
       return false;
     }
 
-    // local copy of souce object coordinates
-    data1 = mixin({}, options.source.data);
-
-    // should data1 be bottom-aligned?
-    if (data1.bottomAligned) {
-      data1 = bottomAlignedObject(data1);
-    }
-
     // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
     if (options.useLookAhead) {
       // friendly things move further right, enemies move further left.
-      data1.x += (Math.max(16, data1.width * 0.33) * (data1.isEnemy ? -1 : 1));
+      // data1.x += (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
+      xLookAhead = (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
+    } else {
+      xLookAhead = 0;
     }
+
+    data1 = options.source.data;
 
     objects = options.targets;
 
@@ -3930,17 +3899,9 @@
 
       ) {
 
-        if (options.isBalloon || (objects[item].data.type && objects[item].data.type === 'balloon')) {
-          // special case
-          data2 = getBalloonObject(objects[item]);
-        } else if (objects[item].data.bottomAligned) {
-          data2 = bottomAlignedObject(objects[item].data);
-        } else {
-          // normal top-aligned x/y case (or we're comparing apples and apples, i.e., two bottom-aligned items, and we don't care.)
-          data2 = objects[item].data;
-        }
+        data2 = objects[item].data;
 
-        hit = collisionCheck(data1, data2);
+        hit = collisionCheck(data1, data2, xLookAhead);
 
         if (hit) {
 
@@ -3967,17 +3928,6 @@
 
   }
 
-  function bottomAlignedObject(obj) {
-
-    // compensate for objects positioned using bottom: 0
-
-    // correct for fixed-value bottom positioning
-    obj.y = bottomAlignedY();
-
-    return obj;
-
-  }
-
   var domPoint1, domPoint2;
 
   domPoint1 = document.createElement('div');
@@ -3987,9 +3937,14 @@
   domPoint2.className = 'collision-check-2';
 
 
-  function collisionCheck(point1, point2) {
+  function collisionCheck(point1, point2, point1XLookAhead) {
 
-    // given x, y, width and height, determine if one object is overlapping another.
+    /**
+     * given x, y, width and height, determine if one object is overlapping another.
+     * additional hacky param: X-axis offset for object. Used for cases where tanks etc. need to know when objects are nearby.
+     * provided as an override because live objects are passed directly and can't be modified (eg., data1.x += ...).
+     * cloning these objects via mixin() works, but then lot of temporary objects are created, leading to increased garbage collection.
+     */
 
     if (!point1 || !point2) {
       return null;
@@ -4022,11 +3977,11 @@
 
     }
 
-    if (point2.x >= point1.x) {
+    if (point2.x >= point1.x + point1XLookAhead) {
 
       // point 2 is to the right.
 
-      if (point1.x + point1.width >= point2.x) {
+      if (point1.x + point1XLookAhead + point1.width >= point2.x) {
         // point 1 overlaps point 2 on x.
         if (point1.y < point2.y) {
           // point 1 is above point 2.
@@ -4043,7 +3998,7 @@
 
       // point 1 is to the right.
 
-      if (point2.x + point2.width >= point1.x) {
+      if (point2.x + point2.width >= point1.x + point1XLookAhead) {
         // point 2 overlaps point 1 on x.
         if (point2.y < point1.y) {
           // point 2 is above point 1.
