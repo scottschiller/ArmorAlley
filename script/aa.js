@@ -1,5 +1,21 @@
 (function(window) {
 
+/*
+
+                    MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMZ   MMMMMM   MMMM MMM MMMM MMMM       
+         D         MMMM   DMMM+MMM  $MMMM  MMMM MMMMMMMD MMMM MMM      MMMM  ZMMMM     MMMM     MMM NMM MMMM DMN        
+       MM   M      MMMM    MMM MMM:  MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM =M         
+ M   MMMMMMMM      MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMM~M         
+ M  MMMMMMMMM      MMMMM   MMM MMM:  MMMMMMMMMM MMM  MMM MMMM MMM     M7MMM   MMMM     MMMM     MMM MM    MMMM          
+ MMMMMMMMMMM      MM MMM   MMM?MM    MMMMN MMMM MMM  MMM MMMM MM     8M MMM   MMMM     MMMM     MMMMMM    MMMM          
+      .  ,        MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM          
+                  M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM          
+                 8M  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM          
+                 MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMM 8MMMMNMMM MMMMNMMM MMM MMM   MMMM          
+                 MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMM 8MMMMMMMM MMMMMMM MMMM MMM   MMMM          
+
+*/
+
   var game, utils;
 
   var FPS = 24;
@@ -265,6 +281,7 @@
       vans: [],
       helicopters: [],
       smartMissiles: [],
+      bases: [],
       radar: null,
       inventory: null
     }
@@ -278,6 +295,12 @@
       objects.radar = new Radar();
 
       objects.inventory = new Inventory();
+
+      objects.bases.push(new Base());
+
+      objects.bases.push(new Base({
+        isEnemy: true
+      }));
 
       objects.bunkers.push(new Bunker({
         x: 1024,
@@ -1617,7 +1640,64 @@
 
   }
 
-  function Base() {}
+  function Base(options) {
+
+    var data, exports;
+
+    options = options || {};
+
+    data = inheritData({
+      type: 'base',
+      bottomAligned: true,
+      dead: false,
+      frameCount: 0,
+      fireModulus: 50,
+      // left side, or right side (roughly)
+      x: (options.isEnemy ? 8192 - 64: 64),
+      y: 0,
+      width: 102,
+      height: 25
+    }, options);
+
+    function animate() {
+
+      if (!data.dead) {
+
+        data.frameCount++;
+
+        if (data.frameCount % data.fireModulus === 0) {
+          fire();
+        }
+
+      }
+
+    }
+
+    function fire() {
+
+      var targetHelicopter = enemyHelicopterNearby(data);
+
+      if (targetHelicopter) {
+
+        game.objects.smartMissiles.push(new SmartMissile({
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          x: data.x + data.width/2,
+          y: bottomAlignedY() - data.height/2,
+          target: targetHelicopter
+        }));
+
+      }      
+
+    }
+
+    exports = {
+      animate: animate
+    }
+
+    return exports;
+
+  }
 
   function Paratrooper() {}
 
@@ -1704,41 +1784,43 @@
 
     function fire() {
 
-      var i, j, k, l, deltaX, similarMissileCount, triggerDistance = game.objects.view.data.browser.width * 2/3;
+      var i, j, k, l, deltaX, similarMissileCount, triggerDistance, targetHelicopter;
+
+      triggerDistance = game.objects.view.data.browser.width * 2/3;
 
       if (data.frameCount % data.fireModulus === 0) {
 
         // is an enemy helicopter nearby?
-        for (i=0, j=game.objects.helicopters.length; i<j; i++) {
 
-          // how far away is the target?
-          deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+        targetHelicopter = enemyHelicopterNearby(data);
 
-          if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < triggerDistance) {
+        if (targetHelicopter) {
 
-            // any missiles already chasing the target?
-            similarMissileCount = 0;
+          // we have a possible target.
 
-            for (k=0, l=game.objects.smartMissiles.length; k<l; k++) {
-              if (game.objects.smartMissiles[k].data.target === game.objects.helicopters[i].exports) {
-                similarMissileCount++;
-              }
+          // any missiles already chasing the target?
+          similarMissileCount = 0;
+
+          for (k=0, l=game.objects.smartMissiles.length; k<l; k++) {
+
+            if (game.objects.smartMissiles[k].objects.target === targetHelicopter) {
+              similarMissileCount++;
             }
 
-            if (!similarMissileCount) {
+          }
 
-              // self-destruct, FIRE ZE MISSILE
-              die();
+          if (!similarMissileCount) {
 
-              game.objects.smartMissiles.push(new SmartMissile({
-                parentType: data.type,
-                isEnemy: data.isEnemy,
-                x: data.x + data.width/2,
-                y: bottomAlignedY(),
-                target: game.objects.helicopters[i]
-              }));
+            // self-destruct, FIRE ZE MISSILE
+            die();
 
-            }
+            game.objects.smartMissiles.push(new SmartMissile({
+              parentType: data.type,
+              isEnemy: data.isEnemy,
+              x: data.x + data.width/2,
+              y: bottomAlignedY(),
+              target: targetHelicopter
+            }));
 
           }
 
@@ -2459,7 +2541,8 @@
       data: data,
       dom: dom,
       hit: hit,
-      die: die
+      die: die,
+      objects: objects
     }
 
     init();
@@ -3319,6 +3402,9 @@
     data = inheritData({
       type: 'van',
       bottomAligned: true,
+      frameCount: 0,
+      radarJammerModulus: 50,
+      jamming: false,
       energy: 1,
       direction: 0,
       vX: (options.isEnemy ? -1 : 1),
@@ -3338,14 +3424,17 @@
 
     function animate() {
 
+      var enemyHelicopter;
+
       if (!data.dead) {
+
+        data.frameCount++;
 
         moveTo(data.x + data.vX, data.bottomY);
 
         if (data.isEnemy && data.x <= data.xGameOver) {
 
           // Game over, man, game over! (Enemy wins.)
-
           console.log('The enemy has won the battle.');
 
         } else if (!data.isEnemy && data.x >= data.xGameOver) {
@@ -3353,9 +3442,33 @@
           // player wins
           console.log('You have won the battle.');
 
+        } else {
+
+          if (data.frameCount % data.radarJammerModulus === 0) {
+
+            // look for nearby bad guys
+            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width * 2);
+
+            if (!data.jamming && enemyHelicopter) {
+
+              // [ obligatory Bob Marley reference goes here ]
+              data.jamming = true;
+
+              console.log('van: jamming radar');
+
+            } else if (data.jamming && !enemyHelicopter) {
+
+              data.jamming = false;
+
+              console.log('van: clearing radar');
+
+            }
+
+          }
+
         }
 
-      }
+      }      
 
       return data.dead;
 
@@ -3416,6 +3529,8 @@
       }, 1000);
 
       data.energy = 0;
+
+      data.jamming = false;
 
       data.dead = true;
 
@@ -3822,6 +3937,32 @@
     if (!foundHit && nearby.options.miss) {
       nearby.options.miss(nearby.options.source);
     }
+
+  }
+
+  function enemyHelicopterNearby(data, triggerDistance) {
+
+    var i, j, deltaX, result;
+
+    // by default, 67% of screen width
+    triggerDistance = triggerDistance || (game.objects.view.data.browser.width * 2/3);
+
+    for (i=0, j=game.objects.helicopters.length; i<j; i++) {
+
+      // how far away is the target?
+      deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+
+      if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < triggerDistance) {
+
+        result = game.objects.helicopters[i];
+
+        break;
+
+      }
+
+    }
+
+    return result;
 
   }
 
