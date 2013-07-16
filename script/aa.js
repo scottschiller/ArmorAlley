@@ -436,7 +436,7 @@
         isEnemy: true
       }));
 
-      objects.tanks.push(new Van({
+      objects.vans.push(new Van({
         x: 1248,
         isEnemy: true
       }));
@@ -451,7 +451,7 @@
         isEnemy: true
       }));
 
-      objects.tanks.push(new Van({
+      objects.vans.push(new Van({
         x: 1680,
         isEnemy: true
       }));
@@ -961,6 +961,8 @@
     data = {
       frameCount: 0,
       animateModulus: 1, // TODO: review
+      // jammingModulus: 12,
+      jammingTimer: null,
       lastMissileCount: 0,
       incomingMissile: false
     }
@@ -1112,6 +1114,40 @@
 
     }
 
+    function maybeJam() {
+
+      var jam = (Math.random() > 0.25);
+
+      // TODO: prevent excessive DOM I/O
+      dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
+
+      data.jammingTimer = null;
+
+      // and do this again.
+      startJamming(jam);
+
+    }
+
+    function startJamming(isJamming) {
+
+      // [ obligatory Bob Marley reference goes here ]
+
+      if (!data.jammingTimer) {
+        data.jammingTimer = window.setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
+      }
+
+    }
+
+    function stopJamming() {
+
+      if (data.jammingTimer) {
+        window.clearTimeout(data.jammingTimer);
+        data.jammingTimer = null;
+        dom.radar.style.visibility = 'visible';
+      }
+
+    }
+
     function removeItem(item) {
 
       // console.log('radar.removeItem()', item);
@@ -1149,7 +1185,11 @@
 
     exports = {
       addItem: addItem,
-      animate: animate
+      animate: animate,
+      data: data,
+      dom: dom,
+      startJamming: startJamming,
+      stopJamming: stopJamming
     };
 
     return exports;
@@ -2585,6 +2625,7 @@
       fuelModulus: 40,
       fuelModulusFlying: 6,
       missileModulus: 12,
+      radarJamming: 0,
       landed: true,
       rotated: false,
       rotateTimer: null,
@@ -2656,7 +2697,7 @@
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse;
+      var i, j, view, mouse, jamming = 0;
 
       view = game.objects.view;
 
@@ -2685,6 +2726,9 @@
       if (data.y === 369) {
         data.landed = true;
         data.vX = 0;
+        if (data.vY > 0) {
+          data.vY = 0;
+        }
       } else {
         data.landed = false;
       }
@@ -2728,6 +2772,33 @@
 
       if (!data.dead) {
         fire();
+      }
+
+      if (!data.dead && !data.isEnemy) {
+
+        // any enemy vans that jamming our radar?
+        for (i = 0, j = game.objects.vans.length; i<j; i++) {
+
+          if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
+
+            jamming++;
+
+          }
+
+        }
+
+        if (jamming && !data.radarJamming) {
+
+          data.radarJamming = jamming;
+          game.objects.radar.startJamming();
+
+        } else if (!jamming && data.radarJamming) {
+
+          data.radarJamming = jamming;
+          game.objects.radar.stopJamming();
+
+        }
+
       }
 
       burnFuel();
@@ -3447,20 +3518,15 @@
           if (data.frameCount % data.radarJammerModulus === 0) {
 
             // look for nearby bad guys
-            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width * 2);
+            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
 
             if (!data.jamming && enemyHelicopter) {
 
-              // [ obligatory Bob Marley reference goes here ]
               data.jamming = true;
-
-              console.log('van: jamming radar');
 
             } else if (data.jamming && !enemyHelicopter) {
 
               data.jamming = false;
-
-              console.log('van: clearing radar');
 
             }
 
