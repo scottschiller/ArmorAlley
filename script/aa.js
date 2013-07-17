@@ -307,33 +307,81 @@
         isEnemy: true
       }));
 
+      addItem('palm-tree', 1150);
+
+      addItem('rock2', 1280);
+
+      addItem('palm-tree', 1390);
+
       objects.bunkers.push(new Bunker({
         x: 1536
       }));
+
+      addItem('palm-tree', 1575);
+
+      addItem('palm-tree', 1565);
+
+      addItem('flower', 1850);
 
       objects.bunkers.push(new Bunker({
         x: 2048
       }));
 
+      addItem('tree', 2110);
+
+      addItem('gravestone', 2150);
+
+      addItem('palm-tree', 2260);
+
+      addItem('tree', 2460);
+
       objects.bunkers.push(new Bunker({
         x: 2560
       }));
+
+      addItem('tree', 2700);
 
       objects.bunkers.push(new Bunker({
         x: 3072
       }));
 
+      addItem('palm-tree', 3400);
+
+      addItem('palm-tree', 3450);
+
       // mid-level
+
+      addItem('checkmark-grass', 4220);
+
+      addItem('tree', 4300);
+
+      addItem('palm-tree', 4400);
+
+      addItem('palm-tree', 4500);
 
       objects.bunkers.push(new Bunker({
         x: 4608,
         isEnemy: true
       }));
 
+      addItem('tree', 4608);
+
+      addItem('tree', 4820);
+
+      addItem('palm-tree', 4850);
+
+      addItem('grave-cross', 4970);
+
       objects.bunkers.push(new Bunker({
         x: 5120,
         isEnemy: true
       }));
+
+      addItem('tree', 5110);
+
+      addItem('barb-wire', 5200);
+
+      addItem('grave-cross', 5275);
 
       objects.bunkers.push(new Bunker({
         x: 5632,
@@ -342,15 +390,41 @@
 
       // near-end / enemy territory
 
+      addItem('palm-tree', 3932);
+
+      addItem('tree', 3932 + 85);
+
+      addItem('palm-tree', 3932 + 85 + 230);
+
+      addItem('tree', 3932 + 85 + 230 + 90);
+
       objects.bunkers.push(new Bunker({
         x: 6656,
         isEnemy: true
       }));
 
+      addItem('tree', 6736);
+
+      addItem('tree', 6800);
+
+      addItem('palm-tree', 6888);
+
+      addItem('gravestone', 7038);
+
+      addItem('tree', 7070);
+
+      addItem('gravestone', 7160);
+
+      addItem('palm-tree', 7310);
+
+      addItem('tree', 7325);
+
+      addItem('flower', 7500);
+
       // enemy base
 
       node = makeSprite({
-        className: 'right-arrow-sign'
+        className: 'left-arrow-sign'
       });
 
       node.style.left = '7656px';

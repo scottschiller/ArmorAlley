@@ -130,6 +130,7 @@ body {
 	z-index: 1;
 	-moz-pointer-events: none;
 	pointer-events: none;
+	-webkit-transform: translate3d(1,1,1);
 }
 
 #world .bunker,
@@ -306,7 +307,8 @@ body {
 #world .engineer.enemy.exploding,
 #world .tank .sub-sprite,
 #world .helicopter .sub-sprite,
-#world .helicopter.facing-left.moving-right .sub-sprite {
+#world .helicopter.facing-left.moving-right .sub-sprite,
+#world .left-arrow-sign {
 	/* horizontal flip tricks */
 	filter: FlipH;
 	-ms-filter: "FlipH";
@@ -553,16 +555,48 @@ body {
 
 #world .tree {
 	background-image: url(../image/tree.png);
-	width: 24px;
-	height: 26px;
+	width: 26px;
+	height: 27px;
 }
 
 #world .palm-tree {
 	background-image: url(../image/palm-tree.png);
-	width: 16px;
-	height: 21px;
+	width: 18px;
+	height: 22px;
 }
 
+#world .rock {
+	background-image: url(../image/rock.png);
+	width: 18px;
+	height: 13px;
+}
+
+#world .rock2 {
+	background-image: url(../image/rock2.png);
+	width: 13px;
+	height: 11px;
+}
+
+#world .gravestone {
+	background-image: url(../image/gravestone.png);
+	width: 20px;
+	height: 13px;
+}
+
+#world .grave-cross {
+	background-image: url(../image/grave-cross.png);
+	width: 11px;
+	height: 9px;
+}
+
+#world .tree,
+#world .palm-tree,
+#world .rock,
+#world .rock-2 {
+	z-index: 3;
+}
+
+#world .left-arrow-sign,
 #world .right-arrow-sign {
 	background-image: url(../image/right-arrow-sign.png);
 	width: 26px;
@@ -906,7 +940,7 @@ body {
 }
 
 #game-status-bar #radar .sprite.enemy {
-	background-color: rgb(156,159,8);
+	background-color: #ccc;
 }
 
 #game-status-bar #radar .sprite.helicopter.enemy {
