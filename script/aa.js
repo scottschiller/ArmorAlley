@@ -220,7 +220,7 @@
     sounds.genericExplosion = soundManager.createSound({
       url: 'audio/generic-explosion.wav',
       multiShot: true,
-      volume: 20
+      volume: 18
     });
 
     sounds.genericGunFire = soundManager.createSound({
@@ -482,7 +482,7 @@
       // some enemy stuff
 
       var enemyCopter = new Helicopter({
-        x: 8192,
+        x: 8192 - 64,
         y: 72,
         isEnemy: true
       });
@@ -536,7 +536,7 @@
       }));
 
       objects.tanks.push(new Tank({
-        x: 8192,
+        x: 8192 - 64,
         isEnemy: true
       }));
 
@@ -576,7 +576,7 @@
 
           var options = {
             isEnemy: true,
-            x: 8192
+            x: 8192 - 64
           };
 
           game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
@@ -669,6 +669,7 @@
       browser: {
         width: 0,
         fractionWidth: 0,
+        halfWidth: 0,
         height: 0,
       },
       mouse: {
@@ -689,7 +690,8 @@
       },
       topBar: {
         height: 0
-      }
+      },
+      maxScroll: 6
     }
 
     dom = {
@@ -751,29 +753,21 @@
 
     function animate() {
 
-        var leftScrollMargin, rightScrollMargin, fractionWidth;
+      var scrollAmount, mouseDelta;
 
-        // don't scroll if the helicopter isn't moving.
-        if (game.objects.helicopters[0].data.vX === 0) {
-          return false;
-        }
+      // don't scroll if the helicopter isn't moving.
+      if (game.objects.helicopters[0].data.vX === 0) {
+        return false;
+      }
 
-        // are we moving left, centered or right?
-        fractionWidth = data.browser.fractionWidth;
+      // is the mouse to the right, or left?
+      mouseDelta = (data.mouse.x - data.browser.halfWidth);
 
-        // should we scroll the world?
-        if (data.mouse.x >= 0) {
-          rightScrollMargin = data.browser.width - data.mouse.x;
-          if (data.battleField.scrollLeft) {
-            leftScrollMargin = data.mouse.x;
-          }
-        }
+      // how much...
+      scrollAmount = mouseDelta / data.browser.halfWidth;
 
-        if (rightScrollMargin < fractionWidth) {
-          setLeftScroll((fractionWidth - rightScrollMargin) * 0.01);
-        } else if (leftScrollMargin < fractionWidth) {
-          setLeftScroll((fractionWidth - leftScrollMargin) * -0.01);
-        }
+      // and scale
+      setLeftScroll(scrollAmount * data.maxScroll);
 
     }
 
@@ -783,6 +777,8 @@
       data.browser.height = window.innerHeight;
 
       data.browser.fractionWidth = data.browser.width / 3;
+
+      data.browser.halfWidth = data.browser.width / 2;
 
       data.world.width = dom.worldWrapper.offsetWidth;
       data.world.height = dom.worldWrapper.offsetHeight;
@@ -957,7 +953,7 @@
           orderObject = createObject(typeData, options);
 
           // make one for the bad guy, too
-          // createObject(typeData, mixin(options, {x: 8192, isEnemy: true}));
+          // createObject(typeData, mixin(options, {x: 8192 - 64, isEnemy: true}));
 
         } else {
 
@@ -2418,8 +2414,8 @@
 
       targetData = objects.target.data;
 
-      var targetHalfWidth = targetData.width/2;
-      var targetHalfHeight = targetData.height/2;
+      var targetHalfWidth = targetData.width / 2;
+      var targetHalfHeight = targetData.height / 2;
 
       // delta of x/y between this and target
       deltaX = (targetData.x + targetHalfWidth) - data.x;
@@ -3188,7 +3184,7 @@
       updateHealth();
 
       if (data.isEnemy) {
-        data.x = 8192;
+        data.x = 8192 - 64;
       } else {
         data.vX = 0;
         data.vY = 0;
@@ -4680,7 +4676,7 @@
 
     addItem('base', 8000);
 
-    addItem('end-bunker', 8200);
+    addItem('end-bunker', 8192 - 48);
 
     function updateStats() {
 
