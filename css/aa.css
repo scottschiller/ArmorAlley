@@ -22,13 +22,6 @@ body {
  left: 0px;
  height: 384px;
  width: 100%;
-
-/*
- left: 50%;
- width: 512px;
- margin-left: -256px;
-*/
-
  border-bottom: 2px solid #666;
  margin-top: -192px;
  background: #000;
