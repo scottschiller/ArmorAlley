@@ -470,15 +470,14 @@ body {
 
 #world .smart-missile {
 	position: absolute;
-	width: 12px;
-	height: 12px;
-	background: rgba(255,0,0,0.5);
-	border: 1px solid rgb(255,0,0);
+	width: 16px;
+	height: 15px;
+	background: transparent url(../image/smart-missile.png) no-repeat 0px 0px;
 }
 
 #world .smart-missile.expired {
-	background: rgba(255,255,255,0.25);
-	border: 1px solid rgb(128,128,128);
+	/* TODO: review */
+	-webkit-filter: grayscale(1);
 }
 
 #world .smart-missile.spark {
