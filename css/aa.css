@@ -473,11 +473,25 @@ body {
 	width: 16px;
 	height: 15px;
 	background: transparent url(../image/smart-missile.png) no-repeat 0px 0px;
+	/* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
+	-ms-transition: -ms-transform 0.2s ease-none;
+	-moz-transition: -moz-transform 0.2s ease-none;
+	-webkit-transition: -webkit-transform 0.2s ease-none;
+	transition: transform 0.2s ease-none;
 }
 
 #world .smart-missile.expired {
 	/* TODO: review */
-	-webkit-filter: grayscale(1);
+}
+
+#world .smart-missile .sub-sprite {
+}
+
+#world .smart-missile .sub-sprite {
+	display: block;
+	background-image: url(../image/smouldering-phase-1.gif);
+	background-position: 0px 0px;
+xbackground: #ff33ff;
 }
 
 #world .smart-missile.spark {

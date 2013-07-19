@@ -21,6 +21,8 @@
   var FPS = 24;
   var FRAMERATE = 1000/FPS;
 
+  var winloc = window.location.href.toString();
+
   utils = {
 
     array: (function() {
@@ -165,7 +167,6 @@
 
   };
 
-
   function stopEvent(e) {
 
     var evt = e || window.event;
@@ -183,6 +184,132 @@
     return false;
 
   }
+
+var features;
+
+  var testDiv = document.createElement('div');
+
+  features = (function() {
+
+    var getAnimationFrame;
+
+    /**
+     * hat tip: paul irish
+     * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+     * https://gist.github.com/838785
+     */
+
+    var _animationFrame = (window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        null);
+
+    // apply to window, avoid "illegal invocation" errors in Chrome
+    getAnimationFrame = _animationFrame ? function() {
+      return _animationFrame.apply(window, arguments);
+    } : null;
+
+    // requestAnimationFrame is still somewhat slower in this case than an old-skool setInterval(). Not sure why.
+    if (getAnimationFrame && winloc.match(/raf=1/i)) {
+      console.log('preferring requestAnimationFrame for game loop');
+    } else {
+      getAnimationFrame = null;
+    }
+
+    var transform, styles, prop;
+
+    function has(prop) {
+
+      // test for feature support
+      var result = testDiv.style[prop];
+      return (result !== undefined ? prop : null);
+
+    }
+
+    // note local scope.
+    var features = {
+
+/*
+      audio: false, // set later via SM2
+
+      opacity: (function(){
+        try {
+          testDiv.style.opacity = '0.5';
+        } catch(e) {
+          return false;
+        }
+        return true;
+      }()),
+*/
+
+      transform: {
+        ie:  has('-ms-transform'),
+        moz: has('MozTransform'),
+        opera: has('OTransform'),
+        webkit: has('webkitTransform'),
+        w3: has('transform'),
+        prop: null // the normalized property value
+      },
+
+      rotate: {
+        has3D: false,
+        prop: null
+      },
+
+      'getAnimationFrame': getAnimationFrame
+
+    };
+
+    features.transform.prop = (
+      features.transform.w3 || 
+      features.transform.moz ||
+      features.transform.webkit ||
+      features.transform.ie ||
+      features.transform.opera
+    );
+
+    function attempt(style) {
+
+      try {
+        testDiv.style[transform] = style;
+      } catch(e) {
+        // that *definitely* didn't work.
+        return false;
+      }
+      // if we can read back the style, it should be cool.
+      return !!testDiv.style[transform];
+
+    }
+
+    if (features.transform.prop) {
+
+      // try to derive the rotate/3D support.
+      transform = features.transform.prop;
+      styles = {
+        css_2d: 'rotate(0deg)',
+        css_3d: 'rotate3d(0,0,0,0deg)'
+      };
+
+      if (attempt(styles.css_3d)) {
+        features.rotate.has3D = true;
+        prop = 'rotate3d';
+      } else if (attempt(styles.css_2d)) {
+        prop = 'rotate';
+      }
+
+      features.rotate.prop = prop;
+
+    }
+
+    console.log('user agent feature test:', features);
+
+    console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' available');
+
+    return features;
+
+  }());
 
   var hasSound = false;
 
@@ -2348,7 +2475,9 @@
      *  -- Homer Simpson
      */
 
-    var css, dom, data, radarItem, objects, collision, exports;
+    var css, dom, data, radarItem, objects, collision, exports, rad2Deg;
+
+    rad2Deg = 180/Math.PI;
 
     options = options || {};
 
@@ -2368,8 +2497,8 @@
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 256,
       dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
-      width: 12,
-      height: 12,
+      width: 14,
+      height: 15,
       gravity: 1,
       damagePoints: 15,
       vX: 2,
@@ -2380,7 +2509,8 @@
       deadTimer: null,
       trailerCount: 5,
       xHistory: [],
-      yHistory: []
+      yHistory: [],
+      yMax: null
     }, options);
 
     dom = {
@@ -2406,7 +2536,7 @@
 
     function animate() {
 
-      var items, item, hit, tmpData, tmpObject, deltaX, deltaY, targetData;
+      var items, item, hit, tmpData, tmpObject, deltaX, deltaY, targetData, angle, hitBottom;
 
       if (data.dead) {
         return true;
@@ -2456,7 +2586,21 @@
       data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
       data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
-      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+      hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+
+      if (!hitBottom) {
+
+        angle = Math.atan2(data.vY, data.vX) * rad2Deg;
+
+      } else {
+
+        angle = 0;
+
+      }
+
+      // TODO: make x-browser
+
+      dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
 
       moveTrailers();
 
@@ -2464,6 +2608,8 @@
 
       if (data.frameCount >= data.dieFrameCount) {
         die();
+        // but don't fall too fast?
+        data.vYMax *= 0.5;
       }
 
       /*
@@ -2487,14 +2633,17 @@
 
     function moveTo(x, y) {
 
+      var hitBottom = false;
+
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
       }
 
       // prevent from "crashing", only if not expiring and target is still alive
-      if (!data.expired && !objects.target.data.dead) {
-        y = Math.min(game.objects.view.data.battleField.height - data.height - 3, y);
+      if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
+        y = data.yMax;
+        hitBottom = true;
       }
 
       if (y !== undefined && data.y !== y) {
@@ -2514,6 +2663,8 @@
       if (data.yHistory.length > data.trailerCount + 1) {
         data.yHistory.shift();
       }
+
+      return hitBottom;
 
     }
 
@@ -2625,9 +2776,15 @@
         fragment.appendChild(dom.trailers[i]);
       }
 
+      // (literal) smoke test
+      dom.oSubSprite = makeSubSprite();
+      dom.o.appendChild(dom.oSubSprite);
+
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
+
+      data.yMax = (game.objects.view.data.battleField.height - data.height);
 
       setX(data.x);
       setY(data.y);
