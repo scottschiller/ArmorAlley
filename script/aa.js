@@ -2632,6 +2632,7 @@ var features;
 
       // hit bottom?
       if (data.y > game.objects.view.data.battleField.height) {
+        data.y = game.objects.view.data.battleField.height;
         die();
       }
 
