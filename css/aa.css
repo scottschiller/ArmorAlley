@@ -746,31 +746,46 @@ xbackground: #ff33ff;
 	border-top: 3px solid transparent;
 	border-bottom: 3px solid transparent;
 	border-left: 3px solid rgb(23,160,7);
-	-webkit-animation: blink 0.5s steps(4, start) infinite;
-	-moz-animation: blink 0.5s steps(4, start) infinite;
-	-ms-animation: blink 0.5s steps(4, start) infinite;
-	-o-animation: blink 0.5s steps(4, start) infinite;
-	animation: blink 0.5s steps(4, start) infinite;
+	-webkit-animation: blink 0.5s infinite;
+	-moz-animation: blink 0.5s infinite;
+	-ms-animation: blink 0.5s infinite;
+	-o-animation: blink 0.5s infinite;
+	animation: blink 0.5s infinite;
 }
 
 @-webkit-keyframes blink {
-    from {
-        visibility: visible;
+    0% {
+        opacity: 1;
     }
-    to {
-        visibility: hidden;
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
     }
 }
 
 @-moz-keyframes blink {
-    to {
-        visibility: hidden;
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
     }
 }
 
 @keyframes blink {
-    to {
-        visibility: hidden;
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
     }
 }
 
