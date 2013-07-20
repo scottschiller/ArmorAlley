@@ -305,7 +305,7 @@ var features;
 
     console.log('user agent feature test:', features);
 
-    console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' available');
+    console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' enabled');
 
     return features;
 
@@ -2232,7 +2232,10 @@ var features;
       data.dead = true;
 
       if (target) {
-        target.hit(data.damagePoints);
+        // special case: tanks are impervious to infantry gunfire.
+        if (target.data.type !== 'tank') {
+          target.hit(data.damagePoints);
+        }
       }
 
       // and cleanup shortly.
@@ -2594,13 +2597,19 @@ var features;
 
       } else {
 
-        angle = 0;
+        // bottom-aligned. Heading left, or right?
+
+        if (data.vX > 0) {
+          angle = 0;
+        } else {
+          angle = 180;
+        }
 
       }
 
-      // TODO: make x-browser
-
-      dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      }
 
       moveTrailers();
 
