@@ -2233,7 +2233,9 @@ var features;
 
       if (target) {
         // special case: tanks are impervious to infantry gunfire.
-        if (target.data.type !== 'tank') {
+        if (data.parentType === 'infantry' && target.data.type === 'tank') {
+          // do nothing
+        } else {
           target.hit(data.damagePoints);
         }
       }
