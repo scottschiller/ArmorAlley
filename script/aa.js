@@ -23,6 +23,9 @@
 
   var winloc = window.location.href.toString();
 
+  // just in case...
+  var console = (window.console || { log: function(){} });
+
   utils = {
 
     array: (function() {
@@ -870,9 +873,7 @@ var features;
       // scroll the battlefield.
       data.battleField.scrollLeftVX = x;
       data.battleField.scrollLeft = Math.max(-(data.browser.width/2), Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
-
       dom.worldWrapper.style.backgroundPosition = (-data.battleField.scrollLeft * 0.1) + 'px 0px';
-
       // dom.battleField.scrollLeft = data.battleField.scrollLeft;
       dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
 
@@ -900,8 +901,8 @@ var features;
 
     function refreshCoords() {
 
-      data.browser.width = window.innerWidth;
-      data.browser.height = window.innerHeight;
+      data.browser.width = window.innerWidth || document.body.clientWidth;
+      data.browser.height = window.innerHeight || document.body.clientHeight;
 
       data.browser.fractionWidth = data.browser.width / 3;
 
@@ -926,7 +927,11 @@ var features;
 
       utils.events.add(window, 'resize', events.resize);
       utils.events.add(document, 'mousemove', events.mousemove);
-      utils.events.add(document, 'keydown', events.keydown);
+
+      // TODO: sort out 'invalid argument' issue for IE 8 later.
+      if (!navigator.userAgent.match(/msie 8/i)) {
+        utils.events.add(document, 'keydown', events.keydown);
+      }
 
     }
 
@@ -1712,7 +1717,10 @@ var features;
 
     function animate() {
       // TODO: fix height: 0px case (1-pixel white border)
-      dom.oChain.style.height = ((objects.balloon.data.bottomY / 100 * 280) - data.height - 6 + 'px');
+      var height = (objects.balloon.data.bottomY / 100 * 280) - data.height - 6;
+      if (height >= 0) {
+        dom.oChain.style.height = (height + 'px');
+      }
     }
 
     function moveTo(x, bottomY) {
