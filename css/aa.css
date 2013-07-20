@@ -90,7 +90,9 @@ body {
 }
 
 #world-wrapper {
+/*
 	background: transparent url(../image/star-background.png);
+*/
 }
 
 #top-bar {
@@ -114,6 +116,17 @@ body {
 	height: 100%;
 }
 
+#stars {
+	/* GPU parallax, where possible */
+	position: absolute;
+	top: 64px;
+	left: 0px;
+	/* will be adjusted according to browser width + 10% of battlefield width. */
+	width: 100%;
+	height: 320px;
+	background: transparent url(../image/star-background.png);
+}
+
 #world .sprite {
 	position: absolute;
 	bottom: 0px;
@@ -123,7 +136,8 @@ body {
 	z-index: 1;
 	-moz-pointer-events: none;
 	pointer-events: none;
-	-webkit-transform: translate3d(1,1,1);
+	/* do the GPU thing. */
+	-webkit-transform: translate3d(0,0,0);
 }
 
 #world .bunker,

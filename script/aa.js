@@ -310,6 +310,10 @@ var features;
 
     console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' enabled');
 
+    if (features.transform) {
+      console.log('using transforms for parallax and rotation effects.');
+    }
+
     return features;
 
   }());
@@ -816,7 +820,8 @@ var features;
         width: 0,
         height: 0,
         scrollLeft: 0,
-        scrollLeftVX: 0
+        scrollLeftVX: 0,
+        parallaxRate: 0.1
       },
       topBar: {
         height: 0
@@ -826,6 +831,7 @@ var features;
 
     dom = {
       battleField: null,
+      stars: null,
       topBar: null
     }
 
@@ -873,9 +879,20 @@ var features;
       // scroll the battlefield.
       data.battleField.scrollLeftVX = x;
       data.battleField.scrollLeft = Math.max(-(data.browser.width/2), Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
-      dom.worldWrapper.style.backgroundPosition = (-data.battleField.scrollLeft * 0.1) + 'px 0px';
+
+      // dom.worldWrapper.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
       // dom.battleField.scrollLeft = data.battleField.scrollLeft;
-      dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
+
+      if (features.transform.prop) {
+        // aim for GPU-based scrolling...
+        dom.battleField.style[features.transform.prop] = 'translate3d(-' + data.battleField.scrollLeft + 'px, 0px, 0px)';
+        // ... and parallax.
+        dom.stars.style[features.transform.prop] = 'translate3d(' + (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px, 0px, 0px)';
+      } else {
+        // move via margin + background position
+        dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
+        dom.stars.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
+      }
 
     }
 
@@ -921,6 +938,11 @@ var features;
         data.topBar.height = dom.topBar.offsetHeight;
       }
 
+      if (dom.stars && features.transform.prop) {
+        // GPU case: Be wide enough to cover parallax scroll effect. browser width + (world width * 0.1)
+        dom.stars.style.width = data.browser.width + (data.battleField.width * 0.1) + 'px';
+      }
+
     }
 
     function addEvents() {
@@ -939,6 +961,7 @@ var features;
 
       dom.worldWrapper = document.getElementById('world-wrapper');
       dom.battleField = document.getElementById('battlefield');
+      dom.stars = document.getElementById('stars');
       dom.topBar = document.getElementById('top-bar');
 
     }
