@@ -746,14 +746,32 @@ xbackground: #ff33ff;
 	border-top: 3px solid transparent;
 	border-bottom: 3px solid transparent;
 	border-left: 3px solid rgb(23,160,7);
-/*
-	-webkit-animation-name: blinker;
-	-webkit-animation-iteration-count: infinite;
-	-webkit-animation-duration: 0.5s;
-	animation-name: blinker;
-	animation-iteration-count: infinite;
-	animation-duration: 0.5s;
-*/
+	-webkit-animation: blink 0.5s steps(4, start) infinite;
+	-moz-animation: blink 0.5s steps(4, start) infinite;
+	-ms-animation: blink 0.5s steps(4, start) infinite;
+	-o-animation: blink 0.5s steps(4, start) infinite;
+	animation: blink 0.5s steps(4, start) infinite;
+}
+
+@-webkit-keyframes blink {
+    from {
+        visibility: visible;
+    }
+    to {
+        visibility: hidden;
+    }
+}
+
+@-moz-keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
 }
 
 #game-status-bar #radar .sprite.infantry,
@@ -770,26 +788,6 @@ xbackground: #ff33ff;
 #game-status-bar #radar .sprite.dead {
 	display: none;
 }
-
-/*
-@-webkit-keyframes blinker {
-	from {
-		visibility: visible;
-	}
-	to {
-		visibility: hidden;
-	}
-}
-
-@-webkit-keyframes blinker {
-	from {
-		visibility: visible;
-	}
-	to {
-		visibility: hidden;
-	}
-}
-*/
 
 /* TODO: remove */
 
