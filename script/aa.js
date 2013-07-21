@@ -2581,11 +2581,13 @@ var features;
       targetData = objects.target.data;
 
       var targetHalfWidth = targetData.width / 2;
-      var targetHalfHeight = targetData.height / 2;
+      var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height : targetData.height / 2);
 
       // delta of x/y between this and target
       deltaX = (targetData.x + targetHalfWidth) - data.x;
-      deltaY = (targetData.y + targetHalfHeight) - data.y;
+
+      // TODO: hack full height for balloon?
+      deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
 
       if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
         utils.css.add(dom.o, css.expired);
@@ -2606,14 +2608,25 @@ var features;
 
       } else {
 
-        data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
+        // x-axis
+
+        // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
+
+        // if changing directions, cut in half.
+        data.vX += deltaX * 0.0065;
+
+        // y-axis
 
         if (deltaY <= targetData.height && deltaY >= -targetData.height) {
-          // "lock on target"
-          // data.vY *= 0.95;
-          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust) * 1.33;
+
+          // lock on target.
+
+          data.vY *= 0.8;
+ 
         } else {
-          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust) * 1.33;
+
+          data.vY += deltaY * 0.025;
+
         }
 
       }
@@ -2626,7 +2639,7 @@ var features;
 
       if (!hitBottom) {
 
-        angle = Math.atan2(data.vY, data.vX) * rad2Deg;
+        angle = Math.atan2(deltaY, deltaX) * rad2Deg;
 
       } else {
 
