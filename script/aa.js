@@ -2581,7 +2581,7 @@ var features;
       targetData = objects.target.data;
 
       var targetHalfWidth = targetData.width / 2;
-      var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height : targetData.height / 2);
+      var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height * 0 : targetData.height / 2);
 
       // delta of x/y between this and target
       deltaX = (targetData.x + targetHalfWidth) - data.x;
@@ -2625,7 +2625,10 @@ var features;
  
         } else {
 
-          data.vY += deltaY * 0.025;
+          // relative to target at all times
+          // data.vY += deltaY * 0.0125;
+
+          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust)
 
         }
 
@@ -2639,7 +2642,16 @@ var features;
 
       if (!hitBottom) {
 
-        angle = Math.atan2(deltaY, deltaX) * rad2Deg;
+        // hack deltas for angle
+
+        if (deltaX > 360) {
+
+          deltaX = (deltaX % 180);
+        }
+
+        // angle = Math.atan2(data.vY + deltaY, data.vX + deltaX) * rad2Deg;
+
+        angle = Math.atan2(deltaY, deltaX) * rad2Deg;        
 
       } else {
 
