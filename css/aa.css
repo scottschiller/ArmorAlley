@@ -307,6 +307,19 @@ body {
 	transform: scaleX(-1);
 }
 
+#world .parachute-infantry {
+	background-image: url(../image/parachute-infantry.png);
+	background-position: 0px -60px;
+	width: 14px;
+	/* shorter until parachute is deployed. */
+	height: 11px;
+}
+
+#world .parachute-infantry.parachute-open {
+	background-position: 0px 0px;
+	height: 19px;
+}
+
 #world .missile-launcher.enemy.exploding,
 #world .van.enemy.exploding,
 #world .tank.enemy.exploding,
@@ -804,6 +817,7 @@ xbackground: #ff33ff;
 }
 
 #game-status-bar #radar .sprite.infantry,
+#game-status-bar #radar .sprite.parachute-infantry,
 #game-status-bar #radar .sprite.engineer {
 	width: 1px;
 }
@@ -913,6 +927,7 @@ xbackground: #ff33ff;
 }
 
 #world .infantry.exploding,
+#world .parachute-infantry.exploding,
 #world .engineer.exploding {
 	width: 10px;
 	height: 22px;

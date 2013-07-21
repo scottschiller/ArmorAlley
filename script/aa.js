@@ -410,6 +410,7 @@ var features;
       bunkers: [],
       engineers: [],
       infantry: [],
+      parachuteInfantry: [],
       missileLaunchers: [],
       tanks: [],
       vans: [],
@@ -880,18 +881,15 @@ var features;
       data.battleField.scrollLeftVX = x;
       data.battleField.scrollLeft = Math.max(-(data.browser.width/2), Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
 
-      // dom.worldWrapper.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
-      // dom.battleField.scrollLeft = data.battleField.scrollLeft;
-
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
-        dom.battleField.style[features.transform.prop] = 'translate3d(-' + data.battleField.scrollLeft + 'px, 0px, 0px)';
+        dom.battleField.style[features.transform.prop] = 'translate3d(-' + parseInt(data.battleField.scrollLeft, 10) + 'px, 0px, 0px)';
         // ... and parallax.
-        dom.stars.style[features.transform.prop] = 'translate3d(' + (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px, 0px, 0px)';
+        dom.stars.style[features.transform.prop] = 'translate3d(' + parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px, 0px, 0px)';
       } else {
         // move via margin + background position
-        dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
-        dom.stars.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
+        dom.battleField.style.marginLeft = -parseInt(data.battleField.scrollLeft, 10) + 'px';
+        dom.stars.style.backgroundPosition = parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px 0px';
       }
 
     }
@@ -2198,7 +2196,7 @@ var features;
           sparkAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'smartMissiles']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles']
     }
 
     // special case: tank gunfire should not hit bunkers.
@@ -2385,7 +2383,7 @@ var features;
           bombHitTarget(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'bunkers', 'helicopters']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'helicopters']
     }
 
     function animate() {
@@ -2567,7 +2565,7 @@ var features;
         }
       },
       // TODO: can also hit other smart missiles?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles']
     }
 
     function animate() {
@@ -2649,9 +2647,7 @@ var features;
           deltaX = (deltaX % 180);
         }
 
-        // angle = Math.atan2(data.vY + deltaY, data.vX + deltaX) * rad2Deg;
-
-        angle = Math.atan2(deltaY, deltaX) * rad2Deg;        
+        angle = Math.atan2(deltaY, deltaX) * rad2Deg;
 
       } else {
 
@@ -3345,6 +3341,14 @@ var features;
           vX: data.vX
         }));
 
+	// test
+
+	game.objects.parachuteInfantry.push(new ParachuteInfantry({
+	  isEnemy: data.isEnemy,
+	  x: data.x + data.halfWidth,
+	  y: data.y + data.height - 11
+	}));
+
       }
 
       if (data.missileLaunching && frameCount % data.missileModulus === 0) {
@@ -3934,6 +3938,223 @@ var features;
 
   }
 
+  function ParachuteInfantry(options) {
+
+    var css, dom, data, radarItem, exports;
+
+    css = inheritCSS({
+      className: 'parachute-infantry',
+      parachuteOpen: 'parachute-open'
+    });
+
+    data = inheritData({
+      type: 'parachute-infantry',
+      frameCount: 0,
+      panicModulus: 3,
+      panicFrame: 0,
+      energy: 2,
+      parachuteOpen: false,
+      // "most of the time", a parachute will open. no idea what the original game did. 25% failure rate.
+      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (Math.random() > 0.75 ? 999 : 0),
+      direction: 0,
+      width: 10,
+      height: 11, // 19 when parachute opens
+      frameHeight: 20, // each sprite frame
+      vX: 0, // wind?
+      vY: 4
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    function openParachute() {
+
+      if (data.parachuteOpen) {
+        return false;
+      }
+
+      // undo manual assignment from free-fall animation
+      dom.o.style.backgroundPosition = '';
+
+      utils.css.add(dom.o, css.parachuteOpen);
+
+      data.vY = 2;
+
+      data.parachuteOpen = true;
+
+    }
+
+    function animate() {
+
+      data.frameCount++;
+
+      if (!data.dead) {
+
+        // falling?
+
+        moveTo(data.x + data.vX, data.y + data.vY);
+
+        if (!data.parachuteOpen) {
+
+          if (data.y >= data.parachuteOpensAtY) {
+
+            openParachute();
+
+          } else {
+
+            // like Tom Petty, free fallin'.
+            if (data.frameCount % data.panicModulus === 0) {
+
+              dom.o.style.backgroundPosition = '0px ' + -(60 + (data.frameHeight * data.panicFrame)) + 'px';
+
+              // alternate between 0/1
+              data.panicFrame = !data.panicFrame;
+
+            }
+
+          }
+
+        } else {
+
+          // (potentially) gone with the wind.
+
+        }
+
+        if (data.y >= 370) {
+
+          if (data.parachuteOpen) {
+
+            // touchdown! die "quietly", and transition into new infantry.
+            die(true);
+
+            game.objects.infantry.push(new Infantry({
+              x: data.x,
+              isEnemy: data.isEnemy
+            }));
+
+          } else {
+
+            // no parachute. gravity is a cruel mistress.
+            die();
+
+          }
+
+        }
+
+      }
+
+      return (data.dead && !dom.o);
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function hit(hitPoints) {
+
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function dieComplete() {
+
+      removeNodes(dom);
+      radarItem.die();
+
+    }
+
+    function die(silent) {
+
+      if (data.dead) {
+        return false;
+      }
+
+      if (!silent) {
+
+        utils.css.add(dom.o, css.exploding);
+
+        // timeout?
+        window.setTimeout(dieComplete, 1200);
+
+      } else {
+
+        // no explosion, remove right away.
+        dieComplete();
+
+      }
+
+      data.energy = 0;
+
+      data.dead = true;
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom,
+      die: die,
+      hit: hit
+    }
+
+    init();
+
+    return exports;
+
+  }
+
   function Infantry(options) {
 
     var css, dom, data, objects, radarItem, nearby, collision, exports;
@@ -4000,11 +4221,21 @@ var features;
         source: exports, // initially undefined
         targets: undefined,
         hit: function(target) {
-          // bunker might kill this infantry unit, etc.
-          target.infantryHit(exports);
+          /**
+           * bunkers and other objects infantry can interact with have an infantryHit() method.
+           * if no infantryHit(), just die.
+           * this is sort of an edge case, to prevent parachuting infantry landing in the middle of a tank.
+           * this would normally cause both objects to stop and fire, but unable to hit one another due to the overlap.
+           */
+          if (target.infantryHit) {
+            // bunker or other object
+            target.infantryHit(exports);
+          } else {
+            die();
+          }
         }
       },
-      items: ['bunkers']
+      items: ['bunkers', 'tanks']
     }
 
 
