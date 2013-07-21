@@ -2910,12 +2910,14 @@ var features;
       bombing: false,
       firing: false,
       missileLaunching: false,
+      parachuting: false,
       fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
       fuelModulus: 40,
       fuelModulusFlying: 6,
       missileModulus: 12,
+      parachuteModulus: 5,
       radarJamming: 0,
       landed: true,
       rotated: false,
@@ -3140,6 +3142,14 @@ var features;
 
     }
 
+    function setParachuting(state) {
+
+      if (data.parachuting !== state) {
+        data.parachuting = state;
+      }
+
+    }
+
     function applyTilt() {
 
       // L -> R / R -> L + foreward / backward
@@ -3307,7 +3317,7 @@ var features;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
-      if (!data.firing && !data.bombing && !data.missileLaunching) {
+      if (!data.firing && !data.bombing && !data.missileLaunching && !data.parachuting) {
         return false;
       }
 
@@ -3341,14 +3351,6 @@ var features;
           vX: data.vX
         }));
 
-	// test
-
-	game.objects.parachuteInfantry.push(new ParachuteInfantry({
-	  isEnemy: data.isEnemy,
-	  x: data.x + data.halfWidth,
-	  y: data.y + data.height - 11
-	}));
-
       }
 
       if (data.missileLaunching && frameCount % data.missileModulus === 0) {
@@ -3374,6 +3376,16 @@ var features;
           }
 
         }
+
+      }
+
+      if (data.parachuting && frameCount % data.parachuteModulus === 0) {
+
+	game.objects.parachuteInfantry.push(new ParachuteInfantry({
+	  isEnemy: data.isEnemy,
+	  x: data.x + data.halfWidth,
+	  y: data.y + data.height - 11
+	}));
 
       }
 
@@ -3471,7 +3483,8 @@ var features;
       rotate: rotate,
       setBombing: setBombing,
       setFiring: setFiring,
-      setMissileLaunching: setMissileLaunching
+      setMissileLaunching: setMissileLaunching,
+      setParachuting: setParachuting
     }
 
     init();
@@ -3951,6 +3964,7 @@ var features;
       type: 'parachute-infantry',
       frameCount: 0,
       panicModulus: 3,
+      windModulus: 8,
       panicFrame: 0,
       energy: 2,
       parachuteOpen: false,
@@ -3987,6 +4001,8 @@ var features;
 
     function animate() {
 
+      var randomWind, windMod, bgY;
+
       data.frameCount++;
 
       if (!data.dead) {
@@ -4018,6 +4034,49 @@ var features;
         } else {
 
           // (potentially) gone with the wind.
+
+          windMod = data.frameCount % data.windModulus;
+
+          if (windMod === 0) {
+
+            // choose a random direction?
+            if (Math.random() > 0.66) {
+
+              // -1, 0, 1
+              randomWind = parseInt(Math.random() * 3, 10) - 1;
+
+              data.vX = randomWind;
+
+              if (randomWind === -1) {
+
+                // moving left
+                bgY = -20;
+
+              } else if (randomWind === 1) {
+
+                // moving right
+                bgY = -40;
+
+              } else {
+
+                // not moving!
+                bgY = 0;
+
+              }
+
+              dom.o.style.backgroundPosition = ('0px ' + bgY + 'px');
+
+            } else {
+
+              // reset wind effect
+
+              data.vX = 0;
+
+              dom.o.style.backgroundPosition = '0px 0px';
+
+            }
+
+          }
 
         }
 
@@ -4808,6 +4867,8 @@ var features;
 
       keydown: function(e) {
 
+        // console.log(e.keyCode);
+
         if (keys[e.keyCode] && keys[e.keyCode].down) {
           if (downKeys[e.keyCode] === undefined) {
             downKeys[e.keyCode] = true;
@@ -4883,13 +4944,13 @@ var features;
 
         down: function() {
 
-          game.objects.helicopters[0].setMissileLaunching(true);
+          game.objects.helicopters[0].setParachuting(true);
 
         },
 
         up: function() {
 
-          game.objects.helicopters[0].setMissileLaunching(false);
+          game.objects.helicopters[0].setParachuting(false);
 
         }
 
@@ -4995,6 +5056,23 @@ var features;
         down: function(e) {
 
           game.objects.inventory.order('van', { isEnemy: e.shiftKey });
+
+        }
+
+      },
+
+      // "x"
+      '88': {
+
+        down: function(e) {
+
+          game.objects.helicopters[0].setMissileLaunching(true);
+
+        },
+
+        up: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(false);
 
         }
 
