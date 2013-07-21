@@ -805,11 +805,11 @@ var features;
         width: 0,
         fractionWidth: 0,
         halfWidth: 0,
-        height: 0,
+        height: 0
       },
       mouse: {
         x: 0,
-        y: 0,
+        y: 0
       },
       world: {
         width: 0,
@@ -1974,7 +1974,7 @@ var features;
     options = options || {};
 
     css = inheritCSS({
-      className: 'missile-launcher',
+      className: 'missile-launcher'
     });
 
     data = inheritData({
@@ -3766,7 +3766,7 @@ var features;
     options = options || {};
 
     css = inheritCSS({
-      className: 'van',
+      className: 'van'
     });
 
     data = inheritData({
