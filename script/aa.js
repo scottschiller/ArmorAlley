@@ -1214,8 +1214,6 @@ var features;
 
       var i, j, battleFieldWidth, battleFieldHeight, hasEnemyMissile;
 
-      data.frameCount++;
-
       hasEnemyMissile = false;
 
       if (data.frameCount % data.animateModulus === 0) {
@@ -1266,6 +1264,8 @@ var features;
         }
 
       }
+
+      data.frameCount++;
 
     }
 
@@ -1932,11 +1932,11 @@ var features;
 
       if (!data.dead) {
 
-        data.frameCount++;
-
         if (data.frameCount % data.fireModulus === 0) {
           fire();
         }
+
+        data.frameCount++;
 
       }
 
@@ -2784,8 +2784,7 @@ var features;
         target.hit(data.damagePoints);
       }
 
-      // and cleanup shortly.
-      window.setTimeout(die, 250);
+      die();
 
     }
 
@@ -2801,7 +2800,10 @@ var features;
 
         utils.css.add(dom.o, css.spark);
 
-        shrapnelExplosion(data, 5);
+        shrapnelExplosion(data, {
+          count: 3,
+          velocity: 2
+        });
 
         // timeout?
         data.deadTimer = window.setTimeout(function() {
@@ -3402,7 +3404,10 @@ var features;
 
       utils.css.add(dom.o, css.exploding);
 
-      shrapnelExplosion(data, 20);
+      shrapnelExplosion(data, {
+        count: 20,
+        velocity: 5
+      });
 
       // timeout?
       window.setTimeout(function() {
@@ -3713,6 +3718,8 @@ var features;
 
       utils.css.add(dom.o, css.exploding);
 
+      shrapnelExplosion(data);
+
       // timeout?
       window.setTimeout(function() {
         removeNodes(dom);
@@ -3816,8 +3823,6 @@ var features;
 
       if (!data.dead) {
 
-        data.frameCount++;
-
         moveTo(data.x + data.vX, data.bottomY);
 
         if (data.isEnemy && data.x <= data.xGameOver) {
@@ -3851,7 +3856,9 @@ var features;
 
         }
 
-      }      
+        data.frameCount++;
+
+      }
 
       return data.dead;
 
@@ -3904,6 +3911,8 @@ var features;
       }
 
       utils.css.add(dom.o, css.exploding);
+
+      shrapnelExplosion(data);
 
       // timeout?
       window.setTimeout(function() {
@@ -4008,8 +4017,6 @@ var features;
 
       var randomWind, windMod, bgY;
 
-      data.frameCount++;
-
       if (!data.dead) {
 
         // falling?
@@ -4083,24 +4090,26 @@ var features;
 
           }
 
-        }
+          data.frameCount++;
 
-        if (data.y >= 370) {
+          if (data.y >= 370) {
 
-          if (data.parachuteOpen) {
+            if (data.parachuteOpen) {
 
-            // touchdown! die "quietly", and transition into new infantry.
-            die(true);
+              // touchdown! die "quietly", and transition into new infantry.
+              die(true);
 
-            game.objects.infantry.push(new Infantry({
-              x: data.x,
-              isEnemy: data.isEnemy
-            }));
+              game.objects.infantry.push(new Infantry({
+                x: data.x,
+                isEnemy: data.isEnemy
+              }));
 
-          } else {
+            } else {
 
-            // no parachute. gravity is a cruel mistress.
-            die();
+              // no parachute. gravity is a cruel mistress.
+              die();
+
+            }
 
           }
 
@@ -4305,8 +4314,6 @@ var features;
 
     function animate() {
 
-      data.frameCount++;
-
       if (!data.dead) {
 
         if (!data.stopped) {
@@ -4333,6 +4340,8 @@ var features;
           objects.gunfire.splice(i, 1);
         }
       }
+
+      data.frameCount++;
 
       return (data.dead && !dom.o && !objects.gunfire.length);
 
@@ -4504,22 +4513,24 @@ var features;
 
   }
 
-  function shrapnelExplosion(options, count) {
+  function shrapnelExplosion(options, shrapnelOptions) {
 
     var localOptions, vX, vY;
 
     var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity, explosionVelocityMax;
+
+    shrapnelOptions = shrapnelOptions || {};
 
     localOptions = mixin({}, options);
 
     // center?
     localOptions.x += localOptions.width/2;
 
-    explosionVelocityMax = 5;
-
     angle = 0;
 
-    shrapnelCount = count || 20;
+    explosionVelocityMax = shrapnelOptions.velocity || 4;
+
+    shrapnelCount = shrapnelOptions.count || 8;
 
     angleIncrement = 180 / (shrapnelCount-1);
 
@@ -4532,6 +4543,11 @@ var features;
 
       localOptions.vX = (localOptions.vX * 0.5) + vectorX;
       localOptions.vY += vectorY;
+
+      // bottom-aligned object? explode "up".
+      if (localOptions.vY > 0 && options.bottomAligned) {
+        localOptions.vY *= -1;
+      }
 
       game.objects.shrapnel.push(new Shrapnel(localOptions));
 
@@ -4578,8 +4594,6 @@ var features;
 
       if (!data.dead) {
 
-        data.frameCount++;
-
         if (data.frameCount % data.animationModulus === 0) {
 
           data.spriteFrame++;
@@ -4602,6 +4616,8 @@ var features;
 
         // collision check
         collisionTest(collision, exports);
+
+        data.frameCount++;
 
       }      
 
