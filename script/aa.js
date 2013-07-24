@@ -26,6 +26,8 @@
   // just in case...
   var console = (window.console || { log: function(){} });
 
+  var deg2Rad = 180/Math.PI;
+
   utils = {
 
     array: (function() {
@@ -417,6 +419,7 @@ var features;
       helicopters: [],
       smartMissiles: [],
       bases: [],
+      shrapnel: [],
       radar: null,
       inventory: null
     }
@@ -2509,9 +2512,7 @@ var features;
      *  -- Homer Simpson
      */
 
-    var css, dom, data, radarItem, objects, collision, exports, rad2Deg;
-
-    rad2Deg = 180/Math.PI;
+    var css, dom, data, radarItem, objects, collision, exports;
 
     options = options || {};
 
@@ -2647,7 +2648,7 @@ var features;
           deltaX = (deltaX % 180);
         }
 
-        angle = Math.atan2(deltaY, deltaX) * rad2Deg;
+        angle = Math.atan2(deltaY, deltaX) * deg2Rad;
 
       } else {
 
@@ -2800,6 +2801,8 @@ var features;
 
         utils.css.add(dom.o, css.spark);
 
+        shrapnelExplosion(data, 5);
+
         // timeout?
         data.deadTimer = window.setTimeout(function() {
           removeNodes(dom);
@@ -2917,7 +2920,7 @@ var features;
       fuelModulus: 40,
       fuelModulusFlying: 6,
       missileModulus: 12,
-      parachuteModulus: 5,
+      parachuteModulus: 4,
       radarJamming: 0,
       landed: true,
       rotated: false,
@@ -3381,11 +3384,11 @@ var features;
 
       if (data.parachuting && frameCount % data.parachuteModulus === 0) {
 
-	game.objects.parachuteInfantry.push(new ParachuteInfantry({
-	  isEnemy: data.isEnemy,
-	  x: data.x + data.halfWidth,
-	  y: data.y + data.height - 11
-	}));
+        game.objects.parachuteInfantry.push(new ParachuteInfantry({
+          isEnemy: data.isEnemy,
+          x: data.x + data.halfWidth,
+          y: data.y + data.height - 11
+        }));
 
       }
 
@@ -3398,6 +3401,8 @@ var features;
       }
 
       utils.css.add(dom.o, css.exploding);
+
+      shrapnelExplosion(data, 20);
 
       // timeout?
       window.setTimeout(function() {
@@ -3993,7 +3998,7 @@ var features;
 
       utils.css.add(dom.o, css.parachuteOpen);
 
-      data.vY = 2;
+      data.vY = 1;
 
       data.parachuteOpen = true;
 
@@ -4496,6 +4501,216 @@ var features;
     options.role = 1;
 
     return new Infantry(options);
+
+  }
+
+  function shrapnelExplosion(options, count) {
+
+    var localOptions, vX, vY;
+
+    var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity, explosionVelocityMax;
+
+    localOptions = mixin({}, options);
+
+    // center?
+    localOptions.x += localOptions.width/2;
+
+    explosionVelocityMax = 5;
+
+    angle = 0;
+
+    shrapnelCount = count || 20;
+
+    angleIncrement = 180 / (shrapnelCount-1);
+
+    for (i=0; i<shrapnelCount; i++) {
+
+      explosionVelocity = Math.random() * explosionVelocityMax;
+
+      vectorX = -explosionVelocity * Math.cos(angle * deg2Rad);
+      vectorY = -explosionVelocity * Math.sin(angle * deg2Rad);
+
+      localOptions.vX = (localOptions.vX * 0.5) + vectorX;
+      localOptions.vY += vectorY;
+
+      game.objects.shrapnel.push(new Shrapnel(localOptions));
+
+      angle += angleIncrement;
+
+    }
+    
+  }
+
+  function Shrapnel(options) {
+
+    var css, dom, data, collision, exports, type, types;
+
+    types = 4;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'shrapnel type-' + parseInt(Math.random() * 4, 10)
+    });
+
+    data = inheritData({
+      type: 'shrapnel',
+      frameCount: 0,
+      animationModulus: 2,
+      spriteType: parseInt(Math.random() * 4, 10),
+      spriteFrame: 0,
+      spriteFrames: 3,
+      direction: 0,
+      vX: options.vX || 0,
+      vY: options.vY || 0,
+      gravity: 1,
+      width: 12,
+      height: 12,
+      hostile: true,
+      damagePoints: 3
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    function animate() {
+
+      if (!data.dead) {
+
+        data.frameCount++;
+
+        if (data.frameCount % data.animationModulus === 0) {
+
+          data.spriteFrame++;
+
+          if (data.spriteFrame > data.spriteFrames) {
+            data.spriteFrame = 0;
+          }
+
+          dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
+
+        }
+
+        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+
+        data.gravity *= 1.1;
+
+        if (data.y >= 370) {
+          die();
+        }
+
+        // collision check
+        collisionTest(collision, exports);
+
+      }      
+
+      return data.dead && !dom.o;
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        // utils.css.swap(dom.o, css.exploding, css.dead);
+        utils.css.add(dom.o, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      // timeout?
+      window.setTimeout(function() {
+        removeNodes(dom);
+      }, 200);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+    }
+
+    function hitAndDie(target) {
+
+      if (target) {
+        target.hit(data.damagePoints);
+      }
+
+      die();
+
+    }
+
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom,
+      die: die
+    }
+
+    collision = {
+      options: {
+        source: exports,
+        targets: undefined,
+        hit: function(target) {
+          hitAndDie(target);
+        }
+      },
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles']
+    }
+
+    init();
+
+    return exports;
 
   }
 

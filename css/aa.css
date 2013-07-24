@@ -443,16 +443,6 @@ body {
  to { background-position: 0px 20px; }
 }
 
-#world .helicopter.exploding {
-	width: 32px;
-	height: 15px;
-	background-image: url(../image/generic-explosion.png) !important;
-	background-position: 0px -30px; /* default when animation finishes */
-	-webkit-animation: genericexplosionsmall 0.45s steps(3);
-	-moz-animation: genericexplosionsmall 0.45s steps(3);
-	animation: genericexplosionsmall 0.45s steps(3);
-}
-
 #world .helicopter.smouldering-phase-1 .sub-sprite {
 	display: block;
 	background-image: url(../image/smouldering-phase-1.gif);
@@ -851,7 +841,8 @@ xbackground: #ff33ff;
 #world .van.exploding,
 #world .missile-launcher.exploding,
 #world .tank.enemy.exploding,
-#world .bunker.exploding {
+#world .bunker.exploding,
+#world .helicopter.exploding {
 	width: 79px;
 	height: 32px;
 	background-image: url(../image/explosion-shrapnel-2.png);
@@ -997,4 +988,15 @@ xbackground: #ff33ff;
 	border-bottom: 3px solid transparent;
 	border-left: 3px solid transparent;
 	border-right: 3px solid #ccc;
+}
+
+#world .shrapnel {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 12px;
+	height: 12px;
+	background-color: rgba(255,255,255,0.1);
+	background-image: url(../image/shrapnel.png);
+	background-position: 0px 0px;
 }
