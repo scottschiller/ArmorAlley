@@ -2408,7 +2408,7 @@ var features;
       // collision check?
 
       // hit bottom?
-      if (data.y > game.objects.view.data.battleField.height) {
+      if (data.y - data.height > game.objects.view.data.battleField.height) {
         die();
       }
 
@@ -2686,7 +2686,7 @@ var features;
       // hit bottom?
       if (data.y > game.objects.view.data.battleField.height) {
         data.y = game.objects.view.data.battleField.height;
-        die();
+        die(true);
       }
 
       collisionTest(collision, exports);
@@ -2794,16 +2794,18 @@ var features;
       }
     }
 
-    function die() {
+    function die(excludeShrapnel) {
 
       if (!data.deadTimer) {
 
         utils.css.add(dom.o, css.spark);
 
-        shrapnelExplosion(data, {
-          count: 3,
-          velocity: 2
-        });
+        if (!excludeShrapnel) {
+          shrapnelExplosion(data, {
+            count: 3,
+            velocity: 2
+          });
+        }
 
         // timeout?
         data.deadTimer = window.setTimeout(function() {
@@ -3978,7 +3980,7 @@ var features;
       type: 'parachute-infantry',
       frameCount: 0,
       panicModulus: 3,
-      windModulus: 8,
+      windModulus: 16 + parseInt(Math.random() * 16),
       panicFrame: 0,
       energy: 2,
       parachuteOpen: false,
@@ -3989,7 +3991,7 @@ var features;
       height: 11, // 19 when parachute opens
       frameHeight: 20, // each sprite frame
       vX: 0, // wind?
-      vY: 4
+      vY: 3
     }, options);
 
     dom = {
@@ -4007,7 +4009,7 @@ var features;
 
       utils.css.add(dom.o, css.parachuteOpen);
 
-      data.vY = 1;
+      data.vY = 0.5;
 
       data.parachuteOpen = true;
 
@@ -4057,7 +4059,7 @@ var features;
               // -1, 0, 1
               randomWind = parseInt(Math.random() * 3, 10) - 1;
 
-              data.vX = randomWind;
+              data.vX = randomWind * 0.5;
 
               if (randomWind === -1) {
 
@@ -4078,6 +4080,9 @@ var features;
 
               dom.o.style.backgroundPosition = ('0px ' + bgY + 'px');
 
+              // choose a new wind modulus, too.
+              data.windModulus = 16 + parseInt(Math.random() * 16);
+
             } else {
 
               // reset wind effect
@@ -4090,30 +4095,30 @@ var features;
 
           }
 
-          data.frameCount++;
+        }
 
-          if (data.y >= 370) {
+        if (data.y >= 370) {
 
-            if (data.parachuteOpen) {
+          if (data.parachuteOpen) {
 
-              // touchdown! die "quietly", and transition into new infantry.
-              die(true);
+            // touchdown! die "quietly", and transition into new infantry.
+            die(true);
 
-              game.objects.infantry.push(new Infantry({
-                x: data.x,
-                isEnemy: data.isEnemy
-              }));
+            game.objects.infantry.push(new Infantry({
+              x: data.x,
+              isEnemy: data.isEnemy
+            }));
 
-            } else {
+          } else {
 
-              // no parachute. gravity is a cruel mistress.
-              die();
-
-            }
+            // no parachute. gravity is a cruel mistress.
+            die();
 
           }
 
         }
+
+        data.frameCount++;
 
       }
 
@@ -4566,7 +4571,7 @@ var features;
     options = options || {};
 
     css = inheritCSS({
-      className: 'shrapnel type-' + parseInt(Math.random() * 4, 10)
+      className: 'shrapnel'
     });
 
     data = inheritData({
@@ -4610,7 +4615,7 @@ var features;
 
         data.gravity *= 1.1;
 
-        if (data.y >= 370) {
+        if (data.y - data.height >= 370) {
           die();
         }
 
