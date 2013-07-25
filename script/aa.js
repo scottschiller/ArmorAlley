@@ -4097,7 +4097,7 @@ var features;
 
         }
 
-        if (data.y >= 370) {
+        if (data.parachuteOpen && data.y >= 370) {
 
           if (data.parachuteOpen) {
 
@@ -4109,12 +4109,17 @@ var features;
               isEnemy: data.isEnemy
             }));
 
-          } else {
-
-            // no parachute. gravity is a cruel mistress.
-            die();
-
           }
+
+        } else if (!data.parachuteOpen && data.y - data.height + 4 >= 370) {
+
+          // hit ground, and no parachute. gravity is a cruel mistress.
+
+          // reposition, first
+          moveTo(data.x, 370);
+
+
+          die();
 
         }
 
@@ -4588,7 +4593,7 @@ var features;
       width: 12,
       height: 12,
       hostile: true,
-      damagePoints: 3
+      damagePoints: 1
     }, options);
 
     dom = {
@@ -4726,7 +4731,7 @@ var features;
           hitAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers']
     }
 
     init();
