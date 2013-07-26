@@ -155,14 +155,59 @@ body {
 #world .balloon,
 #world .balloon.enemy {
 	background-image: url(../image/balloon.png);
-    left: 0px;
-	width: 36px;
-	height: 14px;
+	background-position: 0px -120px;
+	left: 0px;
+	width: 38px;
+	height: 16px;
 	z-index: 1;
 }
 
 #world .balloon.enemy {
-	background-image: url(../image/balloon-enemy.png);
+	background-position: 0px 0px;
+}
+
+#world .balloon.facing-left {
+	background-position: 0px 0px; /* default when animation finishes */
+	-webkit-animation: balloonleft 1s steps(9);
+	-moz-animation: balloonleft 1s steps(9);
+	animation: balloonleft 1s steps(9);
+}
+
+#world .balloon.facing-right {
+	background-position: 0px -135px; /* default when animation finishes */
+	-webkit-animation: balloonright 1s steps(9);
+	-moz-animation: balloonright 1s steps(9);
+	animation: balloonright 1s steps(9);
+}
+
+@-webkit-keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@-moz-keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@-webkit-keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
+}
+
+@-moz-keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
+}
+
+@keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
 }
 
 #world .balloon.exploding {

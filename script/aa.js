@@ -2,8 +2,8 @@
 
 /*
 
-                    MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMZ   MMMMMM   MMMM MMM MMMM MMMM       
-         D         MMMM   DMMM+MMM  $MMMM  MMMM MMMMMMMD MMMM MMM      MMMM  ZMMMM     MMMM     MMM NMM MMMM DMN        
+                    MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM       
+         D         MMMM   DMMM+MMM  $MMMM  MMMM MMMMMMMD MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM DMN        
        MM   M      MMMM    MMM MMM:  MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM =M         
  M   MMMMMMMM      MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMM~M         
  M  MMMMMMMMM      MMMMM   MMM MMM:  MMMMMMMMMM MMM  MMM MMMM MMM     M7MMM   MMMM     MMMM     MMM MM    MMMM          
@@ -11,8 +11,8 @@
       .  ,        MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM          
                   M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM          
                  8M  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM          
-                 MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMM 8MMMMNMMM MMMMNMMM MMM MMM   MMMM          
-                 MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMM 8MMMMMMMM MMMMMMM MMMM MMM   MMMM          
+                 MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM          
+                 MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMMM MMMMMMM MMMM MMM   MMMM          
 
 */
 
@@ -1496,21 +1496,29 @@ var features;
     options = options || {};
 
     css = inheritCSS({
-      className: 'balloon'
+      className: 'balloon',
+      facingLeft: 'facing-left',
+      facingRight: 'facing-right'
     });
 
     data = inheritData({
-      bottomAligned: true, // TODO: review/remove
       type: 'balloon',
+      bottomAligned: true, // TODO: review/remove
       canRespawn: false,
+      frameCount: 0,
+      windModulus: 16,
+      windOffsetX: 0,
+      windOffsetY: 0,
       energy: 3,
       defaultEnergy: 3,
       direction: 0,
+      detached: false,
+      hostile: false, // dangerous when detached
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
       leftMargin: options.leftMargin || 0,
-      width: 36,
-      height: 14,
+      width: 38,
+      height: 16,
       deadTimer: null
     }, options);
 
@@ -1526,11 +1534,50 @@ var features;
 
       if (!data.dead) {
 
-        if ((data.bottomY > 100 && data.verticalDirection > 0) || (data.bottomY < 0 && data.verticalDirection < 0)) {
-          data.verticalDirection *= -1;
-        }
+        if (!data.detached) {
 
-        moveTo(data.x, data.bottomY + data.verticalDirection);
+          if ((data.bottomY >= 100 && data.verticalDirection > 0) || (data.bottomY <= 0 && data.verticalDirection < 0)) {
+            data.verticalDirection *= -1;
+          }
+
+          moveTo(data.x, data.bottomY + data.verticalDirection);
+
+        } else {
+
+          data.frameCount++;
+
+          if (data.frameCount % data.windModulus === 0) {
+
+            // TODO: improve, limit on axes
+
+            data.windOffsetX += Math.random() > 0.5 ? -0.5 : 0.5;
+
+            data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+
+            if (data.windOffsetX > 0 && data.direction !== 1) {
+              // heading right
+              utils.css.remove(dom.o, css.facingLeft);
+              utils.css.add(dom.o, css.facingRight);
+              data.direction = 1;
+            } else if (data.windOffsetX < 0 && data.direction !== -1) {
+              // heading left
+              utils.css.remove(dom.o, css.facingRight);
+              utils.css.add(dom.o, css.facingLeft);
+              data.direction = -1;
+            }
+
+            data.windOffsetY += Math.random() > 0.5 ? -0.1 : 0.1;
+
+            data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+
+            // and randomize
+            data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+
+          }
+
+          moveTo(data.x + data.windOffsetX, data.bottomY + data.windOffsetY);
+
+        }
 
       } else {
 
@@ -1558,15 +1605,23 @@ var features;
         data.x = x;
       }
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
+      if (bottomY !== undefined) {
 
-        setY(bottomY);
+        // if detached, don't go all the way to the bottom.
+        bottomY = Math.min(100, Math.max(data.detached ? 10 : 0, bottomY));
 
-        data.bottomY = bottomY;
+        if (data.bottomY !== bottomY) {
 
-        // special handling for balloon case
-        // TODO: fix this
-        data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
+          setY(bottomY);
+
+          data.bottomY = bottomY;
+
+          // special handling for balloon case
+          // TODO: fix this
+          data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
+
+        }
+
       }
 
     }
@@ -1587,6 +1642,16 @@ var features;
         utils.css.add(dom.o, css.enemy);
       } else {
         utils.css.remove(dom.o, css.enemy);
+      }
+
+    }
+
+    function detach() {
+
+      if (!data.detached) {
+        data.detached = true;
+        // and become hostile.
+        data.hostile = true;
       }
 
     }
@@ -1696,6 +1761,7 @@ var features;
     exports = {
       animate: animate,
       data: data,
+      detach: detach,
       die: die,
       hit: hit,
       setEnemy: setEnemy
@@ -1740,11 +1806,17 @@ var features;
     }
 
     function animate() {
+
       // TODO: fix height: 0px case (1-pixel white border)
-      var height = (objects.balloon.data.bottomY / 100 * 280) - data.height - 6;
-      if (height >= 0) {
-        dom.oChain.style.height = (height + 'px');
+      var height;
+
+      if (!objects.balloon.data.detached) {
+        height = (objects.balloon.data.bottomY / 100 * 280) - data.height - 6;
+        if (height >= 0) {
+          dom.oChain.style.height = (height + 'px');
+        }
       }
+
     }
 
     function moveTo(x, bottomY) {
@@ -1819,8 +1891,16 @@ var features;
     function repair() {
 
       // fix the balloon, if it's broken - or, rather, flag it for respawn.
-      if (objects.balloon.data.dead) {
+      if (objects.balloon.data.dead & !objects.balloon.data.detached) {
         objects.balloon.data.canRespawn = true;
+      }
+
+    }
+
+    function detachBalloon() {
+
+      if (objects.balloon) {
+        objects.balloon.detach();
       }
 
     }
@@ -1832,6 +1912,9 @@ var features;
       }
 
       utils.css.add(dom.o, css.exploding);
+
+      // detach balloon?
+      detachBalloon();
 
       // timeout?
       window.setTimeout(function() {
@@ -3414,7 +3497,7 @@ var features;
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
-      }, 500);
+      }, 1200);
 
       data.energy = 0;
 
