@@ -408,6 +408,7 @@ var features;
     objects = {
       gameLoop: null,
       view: null,
+      chains: [],
       balloons: [],
       bunkers: [],
       engineers: [],
@@ -1441,15 +1442,13 @@ var features;
       for (item in gameObjects) {
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
           // single object case
-          if (gameObjects[item].animate) {
-            if (gameObjects[item].animate()) {
-              // object is dead - take it out.
-              gameObjects[item] = null;
-            }
+          if (gameObjects[item].animate && gameObjects[item].animate()) {
+            // object is dead - take it out.
+            gameObjects[item] = null;
           } else {
             // array case
             for (i = gameObjects[item].length-1; i >= 0; i--) {
-              if (gameObjects[item][i].animate()) {
+              if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
                 // object is dead - take it out.
                 gameObjects[item].splice(i, 1);
               }
@@ -1519,6 +1518,7 @@ var features;
       leftMargin: options.leftMargin || 0,
       width: 38,
       height: 16,
+      halfWidth: 19,
       deadTimer: null
     }, options);
 
@@ -1649,9 +1649,18 @@ var features;
     function detach() {
 
       if (!data.detached) {
+
         data.detached = true;
+
         // and become hostile.
         data.hostile = true;
+
+        // disconnect bunker <-> balloon references
+        if (objects.bunker) {
+          objects.bunker.nullifyBalloon();
+          objects.bunker = null;
+        }
+
       }
 
     }
@@ -1781,7 +1790,6 @@ var features;
 
     css = inheritCSS({
       className: 'bunker',
-      chainClassName: 'balloon-chain',
       burning: 'burning'
     });
 
@@ -1797,26 +1805,12 @@ var features;
 
     dom = {
       o: null,
-      oSubSprite: null,
-      oChain: null
+      oSubSprite: null
     }
 
     objects = {
-      balloon: null
-    }
-
-    function animate() {
-
-      // TODO: fix height: 0px case (1-pixel white border)
-      var height;
-
-      if (!objects.balloon.data.detached) {
-        height = (objects.balloon.data.bottomY / 100 * 280) - data.height - 6;
-        if (height >= 0) {
-          dom.oChain.style.height = (height + 'px');
-        }
-      }
-
+      balloon: null,
+      chain: null
     }
 
     function moveTo(x, bottomY) {
@@ -1884,23 +1878,43 @@ var features;
       data.isEnemy = isEnemy;
 
       // and the balloon, too.
-      objects.balloon.setEnemy(isEnemy);
+      if (objects.balloon) {
+        objects.balloon.setEnemy(isEnemy);
+      }
 
     }
 
     function repair() {
 
       // fix the balloon, if it's broken - or, rather, flag it for respawn.
-      if (objects.balloon.data.dead & !objects.balloon.data.detached) {
-        objects.balloon.data.canRespawn = true;
+      if (objects.balloon) {
+
+        if (objects.balloon.data.dead) {
+          objects.balloon.data.canRespawn = true;
+        }
+
+      } else {
+
+        // make a new one
+        createBalloon();
+
       }
 
+    }
+
+    function nullifyChain() {
+      objects.chain = null;
+    }
+
+    function nullifyBalloon() {
+      objects.balloon = null;
     }
 
     function detachBalloon() {
 
       if (objects.balloon) {
         objects.balloon.detach();
+        nullifyBalloon();
       }
 
     }
@@ -1939,6 +1953,39 @@ var features;
 
     }
 
+    function createBalloon() {
+
+      if (!objects.balloon) {
+
+        objects.balloon = new Balloon({
+          bunker: exports,
+          leftMargin: 7,
+          isEnemy: data.isEnemy,
+          x: data.x
+        });
+
+        // push onto the larger array
+        game.objects.balloons.push(objects.balloon);
+
+      }
+
+      if (!objects.chain) {
+
+        // create a chain, linking the base and the balloon
+        objects.chain = new Chain({
+          x: data.x + data.halfWidth - 1,
+          y: data.y,
+          height: data.y - objects.balloon.data.y,
+          balloon: objects.balloon,
+          bunker: exports
+        });
+
+        game.objects.chains.push(objects.chain);
+
+      }
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -1949,25 +1996,11 @@ var features;
 
       dom.o.appendChild(dom.oSubSprite);
 
-      dom.oChain = makeSprite({
-        className: css.chainClassName
-      });
-
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
 
-      dom.o.appendChild(dom.oChain);
-
-      objects.balloon = new Balloon({
-        bunker: exports,
-        leftMargin: 7,
-        isEnemy: data.isEnemy,
-        x: data.x
-      });
-
-      // push onto the larger array
-      game.objects.balloons.push(objects.balloon);
+      createBalloon();
 
       setX(data.x);
 
@@ -1978,11 +2011,12 @@ var features;
     }
 
     exports = {
-      animate: animate,
       objects: objects,
       data: data,
       hit: hit,
       infantryHit: infantryHit,
+      nullifyChain: nullifyChain,
+      nullifyBalloon: nullifyBalloon,
       init: init
     }
 
@@ -2046,6 +2080,222 @@ var features;
     exports = {
       animate: animate
     }
+
+    return exports;
+
+  }
+
+  function Chain(options) {
+
+    var css, data, dom, objects, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'chain'
+    });
+
+    data = inheritData({
+      type: 'chain',
+      energy: 1,
+      hostile: false, // applies when detached from base or balloon
+      width: 1,
+      height: 0,
+      frameCount: 0,
+      animateModulus: 2,
+      damagePoints: 6
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    objects = {
+      bunker: options.bunker || null,
+      balloon: options.balloon || null
+    }
+
+    function animate() {
+
+      var x, y, height;
+
+      x = data.x;
+      y = data.y;
+      height = data.height;
+
+      if (data.frameCount % data.animateModulus === 0) {
+
+        // move if attached, fall if not
+
+        if (objects.bunker && !objects.bunker.data.dead) {
+
+          // bunker
+
+          data.isEnemy = objects.bunker.data.isEnemy;
+
+          if (objects.balloon) {
+
+            // + balloon
+
+            y = objects.balloon.data.y + objects.balloon.data.height;
+
+            height = 380 - y - objects.bunker.data.height;
+
+          } else {
+
+            // - balloon
+
+            y = 380 - data.height;
+
+          }
+
+        } else {
+
+          // no bunker
+
+          data.hostile = true;
+
+          if (objects.balloon && !objects.balloon.data.dead) {
+
+            x = objects.balloon.data.x + objects.balloon.data.halfWidth + 5;
+
+            y = objects.balloon.data.y + objects.balloon.data.height;
+
+          } else {
+
+            // free-falling chain
+            y = data.y;
+
+            y += 3;
+
+            if (y >= 380 + 3) {
+              die();
+            }
+
+          }
+
+        }
+
+        if (dom.o) {
+
+          moveTo(x, y, height);
+
+        }
+
+      }
+
+      data.frameCount++;
+
+      return (data.dead && !data.o);
+
+    }
+
+    function moveTo(x, y, height) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+      if (height !== undefined && data.height !== height) {
+        setHeight(height);
+        data.height = height;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function setHeight(height) {
+      dom.o.style.height = (height + 'px');
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function sparkAndDie(target) {
+
+      if (target) {
+        target.hit(data.damagePoints);
+      }
+
+      die();
+
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      removeNodes(dom);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      // detach balloon, if applicable
+      if (objects.balloon) {
+        objects.balloon.detach();
+        objects.balloon = null;
+      }
+
+      // remove bunker reference, too
+      if (objects.bunker) {
+        objects.bunker.nullifyChain();
+        objects.bunker = null;
+      }
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      setX(data.x);
+      setY(data.y);
+      setHeight(data.height);
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom,
+      hit: hit,
+      die: die,
+      sparkAndDie: sparkAndDie
+    }
+
+    init();
 
     return exports;
 
@@ -3071,13 +3321,17 @@ var features;
         source: exports, // initially undefined
         targets: undefined,
         hit: function(target) {
-          // console.log('helicopter hit something', target);
-          die();
-          // should the target die, too? ... probably do.
+          if (target.data.type === 'chain') {
+            // special case: chains do damage, but don't kill.
+            hit(target.data.damagePoints);
+          } else {
+            die();
+          }
+          // should the target die, too? ... probably so.
           target.hit(999);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains']
     }
 
     function animate() {

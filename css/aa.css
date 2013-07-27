@@ -162,22 +162,20 @@ body {
 	z-index: 1;
 }
 
-#world .balloon.enemy {
-	background-position: 0px 0px;
+#world .balloon,
+#world .balloon.facing-right {
+	background-position: 0px -120px; /* default when animation finishes */
+	-webkit-animation: balloonright 1s steps(9);
+	-moz-animation: balloonright 1s steps(9);
+	animation: balloonright 1s steps(9);
 }
 
+#world .balloon.enemy,
 #world .balloon.facing-left {
 	background-position: 0px 0px; /* default when animation finishes */
 	-webkit-animation: balloonleft 1s steps(9);
 	-moz-animation: balloonleft 1s steps(9);
 	animation: balloonleft 1s steps(9);
-}
-
-#world .balloon.facing-right {
-	background-position: 0px -135px; /* default when animation finishes */
-	-webkit-animation: balloonright 1s steps(9);
-	-moz-animation: balloonright 1s steps(9);
-	animation: balloonright 1s steps(9);
 }
 
 @-webkit-keyframes balloonright {
@@ -222,13 +220,12 @@ body {
 	background-image: none;
 }
 
-#world .balloon-chain {
-	width: 0px;
-	border: 1px dotted #fff;
-	bottom: 0px;
-	margin-bottom: 27px;
-	left: 50%;
-	margin-left: -2px;
+#world .chain {
+	width: 1px;
+	border-right: 1px dotted #fff;
+	margin-left: -1px;
+    top: 0px;
+	margin-left: 0px;
 	z-index: -1;
 }
 
