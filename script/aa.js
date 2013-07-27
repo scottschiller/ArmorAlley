@@ -2703,7 +2703,11 @@ var features;
 
           // lock on target.
 
-          data.vY *= 0.8;
+          if (data.vY >= 0 && data.vY >= 0.25) {
+            data.vY *= 0.8;
+          } else if (data.vY <= 0 && data.vY < -0.25) {
+            data.vY *= 0.8;
+          }
  
         } else {
 
