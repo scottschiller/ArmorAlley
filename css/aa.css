@@ -155,11 +155,12 @@ body {
 #world .balloon,
 #world .balloon.enemy {
 	background-image: url(../image/balloon.png);
-	background-position: 0px -120px;
+	/* initially, show neutral */
+	background-position: 0px -60px;
 	left: 0px;
 	width: 38px;
 	height: 16px;
-	z-index: 1;
+	z-index: 2;
 }
 
 #world .balloon,
@@ -223,9 +224,7 @@ body {
 #world .chain {
 	width: 1px;
 	border-right: 1px dotted #fff;
-	margin-left: -1px;
-    top: 0px;
-	margin-left: 0px;
+	top: 0px;
 	z-index: -1;
 }
 
@@ -485,6 +484,7 @@ body {
  to { background-position: 0px 20px; }
 }
 
+/*
 #world .helicopter.smouldering-phase-1 .sub-sprite {
 	display: block;
 	background-image: url(../image/smouldering-phase-1.gif);
@@ -496,6 +496,7 @@ body {
 	background-image: url(../image/smouldering-phase-2.gif);
 	background-position: 50% 0px;
 }
+*/
 
 #world .helicopter.enemy,
 #world .helicopter.enemy.facing-left,
@@ -550,7 +551,6 @@ body {
 	display: block;
 	background-image: url(../image/smouldering-phase-1.gif);
 	background-position: 0px 0px;
-xbackground: #ff33ff;
 }
 
 #world .smart-missile.spark {
@@ -562,6 +562,14 @@ xbackground: #ff33ff;
 	width: 1px;
 	height: 1px;
 	background-color: rgb(156,159,8);
+}
+
+#world .smoke {
+	position: absolute;
+	width: 9px;
+	height: 9px;
+	background: transparent url(../image/smoke-sprite.png) no-repeat 0px 0px;
+	z-index: 4;
 }
 
 #world .base {

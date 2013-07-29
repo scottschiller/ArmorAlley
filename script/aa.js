@@ -390,16 +390,7 @@ var features;
 
   game = (function() {
 
-    var data, defaults, dom, events, objects, keyboardMonitor, exports;
-
-    // inherited by vehicle objects
-    defaults = {
-      css: {
-        dead: 'dead',
-        enemy: 'enemy',
-        exploding: 'exploding'
-      }
-    }
+    var data, dom, events, objects, keyboardMonitor, exports;
 
     dom = {
       world: null
@@ -421,6 +412,7 @@ var features;
       smartMissiles: [],
       bases: [],
       shrapnel: [],
+      smoke: [],
       radar: null,
       inventory: null
     }
@@ -738,7 +730,6 @@ var features;
 
     exports = {
       data: data,
-      defaults: defaults,
       dom: dom,
       init: init,
       objects: objects
@@ -768,7 +759,17 @@ var features;
 
   function inheritCSS(options) {
 
-    return mixin(game.defaults.css, options);
+    var defaults;
+
+    options = options || {};
+
+    defaults = {
+      dead: 'dead',
+      enemy: 'enemy',
+      exploding: 'exploding'
+    }
+
+    return mixin(defaults, options);
 
   }
 
@@ -789,7 +790,6 @@ var features;
       vX: options.vX || 0,
       vY: options.vY || 0
     };
-
 
     // correct y data, if the object is bottom-aligned
     if (data.bottomAligned) {
@@ -869,13 +869,6 @@ var features;
         // throttle?
         refreshCoords();
       }
-
-    }
-
-    function resetLeftScroll(x) {
-
-      data.battleField.scrollLeft = x;
-      dom.battleField.scrollLeft = data.battleField.scrollLeft;
 
     }
 
@@ -974,9 +967,9 @@ var features;
 
       addEvents();
 
-      resetLeftScroll(0);
-
       refreshCoords();
+
+      setLeftScroll(0);
 
     }
 
@@ -1496,6 +1489,8 @@ var features;
 
     css = inheritCSS({
       className: 'balloon',
+      friendly: 'facing-right',
+      enemy: 'facing-left',
       facingLeft: 'facing-left',
       facingRight: 'facing-right'
     });
@@ -1519,7 +1514,9 @@ var features;
       width: 38,
       height: 16,
       halfWidth: 19,
-      deadTimer: null
+      deadTimer: null,
+      // relative % to pull down when rising from the ground...
+      bottomYOffset: 6
     }, options);
 
     dom = {
@@ -1555,15 +1552,22 @@ var features;
             data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
             if (data.windOffsetX > 0 && data.direction !== 1) {
+
               // heading right
               utils.css.remove(dom.o, css.facingLeft);
               utils.css.add(dom.o, css.facingRight);
+
               data.direction = 1;
+
             } else if (data.windOffsetX < 0 && data.direction !== -1) {
+
               // heading left
+
               utils.css.remove(dom.o, css.facingRight);
               utils.css.add(dom.o, css.facingLeft);
+
               data.direction = -1;
+
             }
 
             data.windOffsetY += Math.random() > 0.5 ? -0.1 : 0.1;
@@ -1608,7 +1612,7 @@ var features;
       if (bottomY !== undefined) {
 
         // if detached, don't go all the way to the bottom.
-        bottomY = Math.min(100, Math.max(data.detached ? 10 : 0, bottomY));
+        bottomY = Math.min(100, Math.max(data.detached ? 10 : -data.bottomYOffset, bottomY));
 
         if (data.bottomY !== bottomY) {
 
@@ -1639,9 +1643,11 @@ var features;
       data.isEnemy = isEnemy;
 
       if (isEnemy) {
+        utils.css.remove(dom.o, css.friendly);
         utils.css.add(dom.o, css.enemy);
       } else {
         utils.css.remove(dom.o, css.enemy);
+        utils.css.add(dom.o, css.friendly);
       }
 
     }
@@ -1701,7 +1707,8 @@ var features;
 
     function checkRespawn() {
 
-      if (data.canRespawn && data.dead && !objects.bunker.data.dead) {
+      // odd edge case - data not always defined if destroyed at the right time?
+      if (data && data.canRespawn && data.dead && !objects.bunker.data.dead) {
         reset();
       }
 
@@ -1720,7 +1727,7 @@ var features;
       data.dead = false;
 
       // reset position, too
-      data.bottomY = 0;
+      data.bottomY = -data.bottomYOffset;
       data.y = bottomAlignedY(data.bottomY);
 
       radarItem.reset();
@@ -1755,10 +1762,16 @@ var features;
       // TODO: review when balloon gets separated from bunker
       data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
 
+      // if bottomY is 0, subtract a few percent so the balloon rises from the depths.
+      if (data.bottomY === 0) {
+        data.bottomY = -data.bottomYOffset;
+      }
+
+      moveTo(data.x, data.bottomY);
+
       setX(data.x);
 
-      data.bottomY = Math.random() * 100;
-      data.y = bottomAlignedY(data.bottomY);
+      setY(data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -1773,6 +1786,7 @@ var features;
       detach: detach,
       die: die,
       hit: hit,
+      reset: reset,
       setEnemy: setEnemy
     }
 
@@ -1953,7 +1967,7 @@ var features;
 
     }
 
-    function createBalloon() {
+    function createBalloon(useRandomY) {
 
       if (!objects.balloon) {
 
@@ -1961,7 +1975,9 @@ var features;
           bunker: exports,
           leftMargin: 7,
           isEnemy: data.isEnemy,
-          x: data.x
+          x: data.x,
+          // if 0, balloon will "rise from the depths".
+          bottomY: (useRandomY ? parseInt(Math.random() * 100, 10) : 0)
         });
 
         // push onto the larger array
@@ -2000,7 +2016,8 @@ var features;
         utils.css.add(dom.o, css.enemy);
       }
 
-      createBalloon();
+      // first time, create at random Y location.
+      createBalloon(true);
 
       setX(data.x);
 
@@ -2039,7 +2056,7 @@ var features;
       frameCount: 0,
       fireModulus: 50,
       // left side, or right side (roughly)
-      x: (options.isEnemy ? 8192 - 64: 64),
+      x: (options.isEnemy ? 8192 - 192: 64),
       y: 0,
       width: 102,
       height: 25
@@ -2974,6 +2991,16 @@ var features;
       data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
       data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
+      if (Math.random() >= 0.99) {
+
+        game.objects.smoke.push(new Smoke({
+          x: data.x,
+          y: data.y,
+          spriteFrame: 3
+        }));
+
+      }
+
       hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
 
       if (!hitBottom) {
@@ -3262,6 +3289,7 @@ var features;
       fuelModulusFlying: 6,
       missileModulus: 12,
       parachuteModulus: 4,
+      smokeModulus: 2,
       radarJamming: 0,
       landed: true,
       rotated: false,
@@ -3437,6 +3465,23 @@ var features;
 
           data.radarJamming = jamming;
           game.objects.radar.stopJamming();
+
+        }
+
+      }
+
+      // trailer history
+
+      if (game.objects.gameLoop.data.frameCount % data.smokeModulus === 0) {
+
+        // smoke relative to damage
+
+        if (!data.dead && Math.random() > 1 - ((10-data.energy)/10)) {
+
+          game.objects.smoke.push(new Smoke({
+            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
+            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
+          }));
 
         }
 
@@ -3739,6 +3784,23 @@ var features;
 
     }
 
+    function moveTrailers() {
+
+      var i, j;
+
+      for (i=0, j=data.trailerCount; i<j; i++) {
+
+        // if previous X value exists, apply it
+        if (data.xHistory[i]) {
+          dom.trailers[i].style.left = data.xHistory[i] + (data.width/2) + 'px';
+          dom.trailers[i].style.top = data.yHistory[i] + (data.height/2) + 'px';
+          dom.trailers[i].style.backgroundPosition = '0px -' + ((j-i) * 10) + 'px';
+        }
+
+      }
+
+    }
+
     function die() {
 
       if (data.dead) {
@@ -3795,6 +3857,22 @@ var features;
     }
 
     function init() {
+
+      var i, trailerConfig, fragment;
+
+      fragment = document.createDocumentFragment();
+
+      trailerConfig = {
+        className: css.trailer
+      };
+
+      for (i=0; i<data.trailerCount; i++) {
+        dom.trailers.push(makeSprite(trailerConfig));
+        // TODO: clone, optimize etc.
+        fragment.appendChild(dom.trailers[i]);
+      }
+
+      game.dom.world.appendChild(fragment);
 
       dom.o = makeSprite({
         className: css.className + (data.isEnemy ? ' ' + css.enemy : '')
@@ -5073,6 +5151,115 @@ var features;
         }
       },
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers']
+    }
+
+    init();
+
+    return exports;
+
+  }
+
+  function Smoke(options) {
+
+    var css, dom, data, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'smoke'
+    });
+
+    data = inheritData({
+      type: 'smoke',
+      frameCount: 0,
+      animateModulus: 2,
+      spriteFrame: 0,
+      spriteFrames: 10,
+      direction: 0,
+      width: 9,
+      height: 10
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    function animate() {
+
+      if (data.frameCount % data.animateModulus === 0) {
+
+        data.spriteFrame++;
+
+        // advance smoke sprite
+        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';        
+
+        if (data.spriteFrame > data.spriteFrames) {
+
+          // animation finished
+          die();
+
+        }
+
+      }
+
+      data.frameCount++;
+
+      return (data.dead && !dom.o);
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      removeNodes(dom);
+
+      data.dead = true;
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom,
+      die: die
     }
 
     init();
