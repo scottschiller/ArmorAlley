@@ -876,11 +876,11 @@ var features;
 
       // scroll the battlefield.
       data.battleField.scrollLeftVX = x;
-      data.battleField.scrollLeft = Math.max(-(data.browser.width/2), Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
+      data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
-        dom.battleField.style[features.transform.prop] = 'translate3d(-' + parseInt(data.battleField.scrollLeft, 10) + 'px, 0px, 0px)';
+        dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.battleField.scrollLeft, 10) * -1) + 'px, 0px, 0px)';
         // ... and parallax.
         dom.stars.style[features.transform.prop] = 'translate3d(' + parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px, 0px, 0px)';
       } else {
@@ -3366,7 +3366,9 @@ var features;
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse, jamming = 0;
+      var i, j, view, mouse, jamming, newX;
+
+      jamming = 0;
 
       view = game.objects.view;
 
@@ -3404,9 +3406,17 @@ var features;
 
       if (!data.dead) {
 
-        applyTilt();
+        newX = data.x + data.vX;
 
-        moveTo(data.x + data.vX, data.y + data.vY);
+        // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
+
+        if (!data.isEnemy) {
+          newX = Math.max(view.data.battleField.scrollLeft + (data.width/2) , Math.min(view.data.browser.width + view.data.battleField.scrollLeft - (data.width * 1.5), newX));
+        }
+
+        moveTo(newX, data.y + data.vY);
+
+        applyTilt();
 
         collisionTest(collision, exports);
 
@@ -5150,7 +5160,7 @@ var features;
           hitAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'balloons']
     }
 
     init();
