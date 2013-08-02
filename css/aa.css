@@ -1049,3 +1049,23 @@ body {
 	background-image: url(../image/shrapnel.png);
 	background-position: 0px 0px;
 }
+
+#world .cloud1,
+#world .cloud2 {
+	left: 0px;
+	top: 0px;
+	/* clouds hide helicopters. */
+	z-index: 5;
+}
+
+#world .cloud1 {
+	background: url(../image/cloud-1.png) no-repeat 0px 0px;
+	width: 102px;
+	height: 29px;
+}
+
+#world .cloud2 {
+	background: url(../image/cloud-2.png) no-repeat 0px 0px;
+	width: 125px;
+	height: 34px;
+}

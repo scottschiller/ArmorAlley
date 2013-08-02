@@ -411,6 +411,7 @@ var features;
       helicopters: [],
       smartMissiles: [],
       bases: [],
+      clouds: [],
       shrapnel: [],
       smoke: [],
       radar: null,
@@ -561,6 +562,34 @@ var features;
       node.style.left = '7656px';
 
       game.dom.world.appendChild(node);
+
+      // happy little clouds!
+
+      objects.clouds.push(new Cloud({
+        x: 512
+      }));
+
+
+      objects.clouds.push(new Cloud({
+        x: 4096 - 256
+      }));
+
+      objects.clouds.push(new Cloud({
+        x: 4096 + 256
+      }));
+
+
+      objects.clouds.push(new Cloud({
+        x: 4096 + 512
+      }));
+
+
+      objects.clouds.push(new Cloud({
+        x: 4096 + 768
+      }));
+
+
+      // some enemy vehicles
 
       objects.tanks.push(new Tank({
         x: 96
@@ -2156,7 +2185,7 @@ var features;
 
             y = objects.balloon.data.y + objects.balloon.data.height;
 
-            height = 380 - y - objects.bunker.data.height;
+            height = 380 - y - objects.bunker.data.height + 4;
 
           } else {
 
@@ -2847,6 +2876,127 @@ var features;
       animate: animate,
       data: data
     }
+
+    return exports;
+
+  }
+
+  function Cloud(options) {
+
+    var css, dom, data, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'cloud' + (Math.random() > 0.5 ? 2 : 1)
+    });
+
+    data = inheritData({
+      type: 'cloud',
+      frameCount: 0,
+      windModulus: 16,
+      windOffsetX: 0,
+      windOffsetY: 0,
+      verticalDirection: 0.33,
+      verticalDirectionDefault: 0.33,
+      y: options.y || parseInt((380-80) * Math.random(), 10)
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    function animate() {
+
+      data.frameCount++;
+
+      if (data.frameCount % data.windModulus === 0) {
+
+        // TODO: improve, limit on axes
+
+        data.windOffsetX += (data.x < 0 || Math.random() > 0.5 ? 0.5 : -0.5);
+
+        data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+
+        data.windOffsetY += (data.y < 72 || Math.random() > 0.5 ? 0.1 : -0.1);
+
+        data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+
+        // and randomize
+        data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+
+      }
+
+      if (380 - data.y - 32 < 64 || data.y < 64) {
+
+        // reverse gears
+        data.windOffsetY *= -1;
+
+      }
+
+      moveTo(data.x + data.windOffsetX, data.y + data.windOffsetY);
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        setX(x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        setY(y);
+        data.y = y;
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom
+    }
+
+    init();
 
     return exports;
 
@@ -3555,7 +3705,17 @@ var features;
 
     function applyTilt() {
 
-      // L -> R / R -> L + foreward / backward
+      // L -> R / R -> L + forward / backward
+
+      if (features.transform.prop) {
+
+        // rotate by angle.
+        dom.o.style[features.transform.prop] = 'rotate(' + ((data.vX / data.vXMax) * 12.5) + 'deg)';
+
+        // TODO: clean up, improve
+        return false;
+
+      }
 
       if (data.tilt === null) {
 
