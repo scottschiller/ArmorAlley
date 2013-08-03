@@ -412,6 +412,7 @@ var features;
       smartMissiles: [],
       bases: [],
       clouds: [],
+      landingPads: [],
       shrapnel: [],
       smoke: [],
       radar: null,
@@ -562,6 +563,21 @@ var features;
       node.style.left = '7656px';
 
       game.dom.world.appendChild(node);
+
+      // landing pads
+
+      objects.landingPads.push(new LandingPad({
+        x: 190
+      }));
+
+      // midway
+      objects.landingPads.push(new LandingPad({
+        x: 4096 - 40
+      }));
+
+      objects.landingPads.push(new LandingPad({
+        x: 7800
+      }));
 
       // happy little clouds!
 
@@ -1184,6 +1200,7 @@ var features;
 
     exports = {
       animate: animate,
+      dom: dom,
       data: data,
       createObject: createObject,
       order: order
@@ -2899,7 +2916,7 @@ var features;
       windOffsetY: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
-      y: options.y || parseInt((380-80) * Math.random(), 10)
+      y: options.y || (96 + parseInt((380 - 96 - 32) * Math.random(), 10))
     }, options);
 
     dom = {
@@ -3439,12 +3456,17 @@ var features;
       fuelModulusFlying: 6,
       missileModulus: 12,
       parachuteModulus: 4,
+      repairModulus: 2,
       smokeModulus: 2,
       radarJamming: 0,
+      repairComplete: false,
       landed: true,
       rotated: false,
       rotateTimer: null,
+      repairing: false,
+      repairFrames: 0,
       energy: 10,
+      maxEnergy: 10,
       direction: 0,
       xMin: 0,
       xMax: null,
@@ -3461,7 +3483,16 @@ var features;
       halfHeight: 7,
       tilt: null,
       lastTiltCSS: null,
-      tiltYOffset: 2
+      tiltYOffset: 2,
+      ammo: 50,
+      maxAmmo: 50,
+      bombs: 10,
+      maxBombs: 10,
+      parachutes: 1,
+      maxParachutes: 5,
+      smartMissiles: 2,
+      maxSmartMissiles: 2,
+      maxFuel: 100
     }, options);
 
     dom = {
@@ -3552,6 +3583,7 @@ var features;
         }
       } else {
         data.landed = false;
+        stopRepairing();
       }
 
       if (!data.dead) {
@@ -3569,6 +3601,11 @@ var features;
         applyTilt();
 
         collisionTest(collision, exports);
+
+        // repairing?
+        if (data.repairing) {
+          repair();
+        }
 
       }
 
@@ -3655,18 +3692,130 @@ var features;
 
       var frameCount, modulus;
 
+      if (data.dead || data.repairing) {
+        // don't burn fuel in these cases
+        return false;
+      }
+
       frameCount = game.objects.gameLoop.data.frameCount;
 
       modulus = (data.landed ? data.fuelModulus : data.fuelModulusFlying);
 
       if (frameCount % modulus === 0 && data.fuel > 0) {
+
         // burn!
+
         data.fuel -= 0.1;
+
         // update UI
-        dom.fuelLine.style.width = (data.fuel + '%');
+
+        updateFuelUI();
+
         if (data.fuel <= 0) {
           die();
         }
+
+      }
+
+    }
+
+    function updateFuelUI() {
+
+      if (!data.isEnemy) {
+        dom.fuelLine.style.width = (data.fuel + '%');
+      }
+
+    }
+
+    function startRepairing() {
+
+      // called by landing pad
+
+      if (!data.repairing) {
+        data.repairing = true;
+      }
+
+    }
+
+    function stopRepairing() {
+
+      if (data.repairing) {
+
+        data.repairing = false;
+
+        if (data.repairComplete) {
+
+          data.repairComplete = false;
+
+          document.getElementById('repair-complete').style.display = 'none';
+
+        }
+
+      }
+
+    }
+
+    function repair() {
+
+      var hasUpdate;
+
+      data.repairFrames++;
+
+      data.fuel = Math.min(100, data.fuel + 0.2);
+
+      if (data.repairFrames % 2 === 0) {
+        data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
+        hasUpdate = 1;
+      }
+
+      if (data.repairFrames % 5 === 0) {
+
+        // fix damage
+        data.energy = Math.min(data.maxEnergy, data.energy + 1);
+
+      }
+
+      if (data.repairFrames % 25 === 0) {
+
+        data.bombs = Math.min(data.maxBombs, data.bombs + 1);
+        hasUpdate = 1;
+       
+      }
+
+      if (data.repairFrames % 200 === 0) {
+        data.smartMissiles = Math.min(data.maxSmartMissiles, data.smartMissiles + 1);
+        hasUpdate = 1;
+      }
+
+      updateFuelUI();
+
+      if (hasUpdate) {
+        updateStatusUI();
+      }
+
+    }
+
+    function updateStatusUI() {
+
+      if (!data.isEnemy) {
+
+        // TODO: optimize
+
+        document.getElementById('infantry-count').innerText = data.parachutes;
+        document.getElementById('ammo-count').innerText = data.ammo;
+        document.getElementById('bomb-count').innerText = data.bombs;
+        document.getElementById('missile-count').innerText = data.smartMissiles;
+
+        // fully-repaired?
+        if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs) {
+
+          data.repairComplete = true;
+
+          document.getElementById('repair-complete').style.display = 'block';
+
+        }
+        
+
       }
 
     }
@@ -3876,7 +4025,7 @@ var features;
 
     function fire() {
 
-      var tiltOffset, frameCount, missileTarget;
+      var tiltOffset, frameCount, missileTarget, hasUpdate;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -3886,7 +4035,7 @@ var features;
 
       // TODO: decrement ammo, etc.
 
-      if (data.firing && frameCount % data.fireModulus === 0) {
+      if (data.firing && data.ammo > 0 && frameCount % data.fireModulus === 0) {
 
         tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
@@ -3903,9 +4052,13 @@ var features;
           sounds.genericGunFire.play();
         }
 
+        data.ammo = Math.max(0, data.ammo - 1);
+
+        hasUpdate = 1;
+
       }
 
-      if (data.bombing && frameCount % data.bombModulus === 0) {
+      if (data.bombing && data.bombs > 0 && frameCount % data.bombModulus === 0) {
 
         objects.bombs.push(new Bomb({
           isEnemy: data.isEnemy,
@@ -3914,9 +4067,13 @@ var features;
           vX: data.vX
         }));
 
+        data.bombs = Math.max(0, data.bombs - 1);
+
+        hasUpdate = 1;
+
       }
 
-      if (data.missileLaunching && frameCount % data.missileModulus === 0) {
+      if (data.missileLaunching && data.smartMissiles > 0 && frameCount % data.missileModulus === 0) {
 
         missileTarget = getNearbyEnemyObject(exports);
 
@@ -3931,6 +4088,10 @@ var features;
             // vX: data.vX + 8 * (data.rotated ? -1 : 1)
           }));
 
+          data.smartMissiles = Math.max(0, data.smartMissiles - 1);
+
+          hasUpdate = 1;
+
         } else {
 
           // "unavailable" sound?
@@ -3942,13 +4103,23 @@ var features;
 
       }
 
-      if (data.parachuting && frameCount % data.parachuteModulus === 0) {
+      if (data.parachuting && data.parachutes > 0 && frameCount % data.parachuteModulus === 0) {
 
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: data.y + data.height - 11
         }));
+
+        data.parachutes = Math.max(0, data.parachutes - 1);
+
+        hasUpdate = 1;
+
+      }
+
+      if (hasUpdate) {
+
+        updateStatusUI();
 
       }
 
@@ -3976,6 +4147,9 @@ var features;
       if (data.dead) {
         return false;
       }
+
+      // reset animations
+      data.frameCount = 0;
 
       utils.css.add(dom.o, css.exploding);
 
@@ -4006,7 +4180,13 @@ var features;
 
     function reset() {
 
-      data.energy = 10;
+      data.fuel = data.maxFuel;
+      data.energy = data.maxEnergy;
+      data.parachutes = 1;
+      data.smartMissiles = data.maxSmartMissiles;
+      data.ammo = data.maxAmmo;
+      data.bombs = data.maxBombs;
+
       updateHealth();
 
       if (data.isEnemy) {
@@ -4023,6 +4203,8 @@ var features;
       utils.css.remove(dom.o, css.dead);
 
       data.dead = false;
+
+      updateStatusUI();
 
     }
 
@@ -4081,6 +4263,7 @@ var features;
       die: die,
       fire: fire,
       hit: hit,
+      startRepairing: startRepairing,
       rotate: rotate,
       setBombing: setBombing,
       setFiring: setFiring,
@@ -5112,6 +5295,90 @@ var features;
 
   }
 
+  function LandingPad(options) {
+
+    var css, dom, data, nearby, collision, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'landing-pad'
+    });
+
+    data = inheritData({
+      type: 'landing-pad',
+      isNeutral: true,
+      frameCount: 0,
+      energy: 2,
+      width: 81,
+      height: 7,
+      repairModulus: 5,
+      y: 380 - 4
+    }, options);
+
+    dom = {
+      o: null
+    }
+
+    collision = {
+      options: {
+        source: exports,
+        targets: undefined,
+        hit: function(target) {
+          if (target.startRepairing) {
+            target.startRepairing();
+          }
+        }
+      },
+      items: ['helicopters']
+    }
+
+
+    function animate() {
+
+      if (data.frameCount % data.repairModulus === 0) {
+
+        collisionTest(collision, exports);
+
+      }
+
+      data.frameCount++;
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom
+    }
+
+    init();
+
+    return exports;
+    
+  }
+
   function shrapnelExplosion(options, shrapnelOptions) {
 
     var localOptions, vX, vY;
@@ -5597,12 +5864,18 @@ var features;
     }
 
     // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
+
     if (options.useLookAhead) {
+
       // friendly things move further right, enemies move further left.
       // data1.x += (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
+
       xLookAhead = (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
+
     } else {
+
       xLookAhead = 0;
+
     }
 
     data1 = options.source.data;
@@ -5622,8 +5895,8 @@ var features;
         // ignore dead objects,
         && !objects[item].data.dead
 
-        // don't check against friendly units, unless infantry vs. bunker, OR we're dealing with a "hostile" object (dangerous to both sides)
-        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.hostile || objects[item].data.hostile))
+        // don't check against friendly units, unless infantry vs. bunker, OR we're dealing with a "hostile" object (dangerous to both sides) OR neutral object (friendly to both, and can interact.)
+        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.hostile || objects[item].data.hostile || data1.isNeutral || objects[item].data.isNeutral))
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
         && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
@@ -6137,7 +6410,7 @@ var features;
 
     addItem('barb-wire', 318);
 
-    addItem('base-landing-pad', 190);
+    // addItem('base-landing-pad', 190);
 
     addItem('checkmark-grass', 394);
 
@@ -6145,7 +6418,7 @@ var features;
 
     addItem('flowers', 620);
 
-    addItem('base-landing-pad', 7800);
+    // addItem('base-landing-pad', 7800);
 
     addItem('base', 8000);
 

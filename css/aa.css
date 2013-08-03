@@ -41,6 +41,10 @@ body {
  border-color: #fff;
 }
 
+#game-status-bar.repair-complete {
+ background-color: #ff33ff;
+}
+
 #game-status {
  position: absolute;
  top: 6px;
@@ -71,13 +75,14 @@ body {
 
 #aa ul li {
  display: inline-block;
- min-width: 19%;
+ min-width: 20%;
 }
 
 #fuel-bar {
  position: relative;
  height: 5px;
  background: #fff url(../image/fuel-bar-background.png);
+ margin-top: 3px;
 }
 
 #fuel-bar #fuel-line {
@@ -88,6 +93,66 @@ body {
  height: 100%;
  background: #fff;
 }
+
+#repair-complete {
+ position: absolute;
+ background: #000 url(../image/status-repair-complete.png) repeat-x 0px 0px;
+ display: none;
+ top: 35px;
+ left: 0px;
+ width: 100%;
+ height: 13px;
+}
+
+ul.stats-bar li {
+ vertical-align: top;
+ text-align: center;
+}
+
+ul.stats-bar em {
+ position: relative;
+ display: inline-block;
+ text-indent: -999em;
+ overflow: hidden;
+ vertical-align: middle;
+}
+
+ul.stats-bar .lives em {
+ background: transparent url(../image/status-helicopter.png) no-repeat 0px 0px;
+ width: 15px;
+ height: 6px;
+ margin-left: 0.5em;
+}
+
+ul.stats-bar .infantry {
+ background: transparent !important;
+ width: 20% !important;
+}
+
+ul.stats-bar .infantry em {
+ background: transparent url(../image/status-infantry.png) no-repeat 0px 0px;
+ width: 8px;
+ height: 13px;
+}
+
+ul.stats-bar .missiles em {
+ background: transparent url(../image/status-missile.png) no-repeat 0px 0px;
+ width: 10px;
+ height: 9px;
+}
+
+ul.stats-bar .ammo em {
+ background: transparent url(../image/status-ammo.png) no-repeat 0px 0px;
+ width: 14px;
+ height: 8px;
+}
+
+ul.stats-bar .bombs em {
+ background: transparent url(../image/status-bombs.png) no-repeat 0px 0px;
+ width: 3px;
+ height: 11px;
+}
+
 
 #world-wrapper {
 /*
@@ -602,7 +667,7 @@ body {
 	height: 16px;
 }
 
-#world .base-landing-pad {
+#world .landing-pad {
 	background-image: url(../image/base-landing-pad.gif);
 	width: 87px;
 	height: 7px;
