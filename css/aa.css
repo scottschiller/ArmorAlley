@@ -921,10 +921,17 @@ ul.stats-bar .bombs em {
     }
 }
 
+#game-status-bar #radar .sprite.van,
+#game-status-bar #radar .sprite.missile-launcher {
+	width: 2px;
+	height: 1px;
+}
+
 #game-status-bar #radar .sprite.infantry,
 #game-status-bar #radar .sprite.parachute-infantry,
 #game-status-bar #radar .sprite.engineer {
 	width: 1px;
+	height: 1px;
 }
 
 #game-status-bar #radar .smart-missile {

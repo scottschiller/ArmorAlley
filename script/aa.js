@@ -585,7 +585,6 @@ var features;
         x: 512
       }));
 
-
       objects.clouds.push(new Cloud({
         x: 4096 - 256
       }));
@@ -604,6 +603,23 @@ var features;
         x: 4096 + 768
       }));
 
+      // a few rogue balloons
+
+      objects.balloons.push(new Balloon({
+        x: 4096 - 256
+      }));
+
+      objects.balloons.push(new Balloon({
+        x: 4096 + 256
+      }));
+
+      objects.balloons.push(new Balloon({
+        x: 4096 + 512
+      }));
+
+      objects.balloons.push(new Balloon({
+        x: 4096 + 768
+      }));
 
       // some enemy vehicles
 
@@ -1806,7 +1822,7 @@ var features;
       dom.o.style.marginLeft = (data.leftMargin + 'px');
 
       // TODO: review when balloon gets separated from bunker
-      data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
+      // data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
 
       // if bottomY is 0, subtract a few percent so the balloon rises from the depths.
       if (data.bottomY === 0) {
@@ -1818,6 +1834,10 @@ var features;
       setX(data.x);
 
       setY(data.bottomY);
+
+      if (!objects.bunker) {
+        detach();
+      }
 
       game.dom.world.appendChild(dom.o);
 
@@ -3761,7 +3781,7 @@ var features;
 
       data.repairFrames++;
 
-      data.fuel = Math.min(100, data.fuel + 0.2);
+      data.fuel = Math.min(100, data.fuel + 0.4);
 
       if (data.repairFrames % 2 === 0) {
         data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
@@ -3807,7 +3827,7 @@ var features;
         document.getElementById('missile-count').innerText = data.smartMissiles;
 
         // fully-repaired?
-        if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs) {
+        if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
 
           data.repairComplete = true;
 
