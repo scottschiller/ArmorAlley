@@ -1049,7 +1049,7 @@ var features;
 
   function Inventory() {
 
-    var css, data, dom, exports;
+    var css, data, dom, objects, exports;
 
     css = {
       building: 'building',
@@ -1069,27 +1069,50 @@ var features;
       building: false
     }
 
+    objects = {
+      order: null
+    }
+
     dom = {
       gameStatusBar: null
     }
 
     function animate() {
 
-      data.frameCount++;
+      if (data.building) {
 
-      if (data.frameCount >= 0 && data.building) {
+        if (data.frameCount % objects.order.data.inventory.frameCount === 0) {
 
-        utils.css.remove(dom.gameStatusBar, css.building);
+          if (objects.order.size) {
 
-        // "Construction complete."
-        data.building = false;
+            // make an object.
 
-        // play sound?
-        if (sounds.inventory.end) {
-          sounds.inventory.end.play();
+            createObject(objects.order.typeData, objects.order.options);
+
+            objects.order.size--;
+
+          } else {
+
+            console.log('construction complete');
+
+            // "Construction complete."        
+
+            utils.css.remove(dom.gameStatusBar, css.building);
+
+            data.building = false;
+
+            // play sound?
+            if (sounds.inventory.end) {
+              sounds.inventory.end.play();
+            }
+
+          }
+
         }
 
       }
+
+      data.frameCount++;
 
     }
 
@@ -1144,6 +1167,8 @@ var features;
         // let's build something.
         data.building = true;
 
+        data.frameCount = 0;
+
         typeData = data.types[type];
 
         // infantry or engineer? handle those specially.
@@ -1158,34 +1183,19 @@ var features;
 
         }
 
-        if (orderSize < 2) {
+        // hackish: make a temporary object, so we can get the relevant data for the actual order.
+        orderObject = createObject(typeData, options);
 
-          // single-item order.
-          orderObject = createObject(typeData, options);
-
-          // make one for the bad guy, too
-          // createObject(typeData, mixin(options, {x: 8192 - 64, isEnemy: true}));
-
-        } else {
-
-          // make the first one immediately.
-          orderObject = createObject(typeData, options);
-
-          // multiples. note 1 offset.
-          for (i=1; i<orderSize; i++) {
-
-            // TODO: review, make smarter - queue-based off of data.frameCount % orderObject.data.inventory % frameCount === 0 and build a new item, instead of timeout-based.
-            window.setTimeout(function() {
-              createObject(typeData, options);
-            }, orderObject.data.inventory.frameCount * FRAMERATE * i); // approximate framerate
-
-          }
-        
-        }
+        objects.order = {
+          data: orderObject.data,
+          typeData: typeData,
+          options: options,
+          size: orderSize
+        };
 
         // reset the frame count, and re-enable building when it surpasses this object's "build time"
         // TODO: Don't play sounds if options.enemy set.
-        data.frameCount = orderObject.data.inventory.frameCount * -1 * (orderSize > 1 ? orderSize + 1 : orderSize);
+        // data.frameCount = orderObject.data.inventory.frameCount * -1 * (orderSize > 1 ? orderSize + 1 : orderSize);
 
         // update the UI
         utils.css.add(dom.gameStatusBar, css.building);
@@ -1880,7 +1890,8 @@ var features;
       width: 51,
       halfWidth: 25,
       height: 25,
-      infantryTimer: null
+      infantryTimer: null,
+      door: null
     }, options);
 
     dom = {
@@ -1930,19 +1941,24 @@ var features;
     function infantryHit(target) {
 
       // an infantry unit has made contact with a bunker.
+
       if (target.data.isEnemy === data.isEnemy) {
+
         // a friendly passer-by.
+
         repair();
+
       } else {
+
         // non-friendly, kill the infantry - but let them capture the bunker first.
-        if (!data.infantryTimer) {
-          data.infantryTimer = window.setTimeout(function() {
-            // oh, what a hack! apply this when the infantry is roughly at the entrance to the base.
-            capture(target.data.isEnemy);
-            target.die();
-            data.infantryTimer = null;
-          }, 1200);
+
+        if (collisionCheckMidPoint(exports, target)) {
+
+          capture(target.data.isEnemy);
+          target.die();
+
         }
+
       }
 
     }
@@ -2086,6 +2102,8 @@ var features;
       createBalloon(true);
 
       setX(data.x);
+
+      data.door = getDoorCoords(exports);
 
       game.dom.world.appendChild(dom.o);
 
@@ -4616,7 +4634,7 @@ var features;
       width: 38,
       height: 16,
       inventory: {
-        frameCount: 50,
+        frameCount: 60,
         cost: 5
       },
       // if the van reaches the enemy base, it's game over.
@@ -5493,7 +5511,7 @@ var features;
       width: 12,
       height: 12,
       hostile: true,
-      damagePoints: 1
+      damagePoints: 0.75
     }, options);
 
     dom = {
@@ -6061,6 +6079,40 @@ var features;
       }
 
     }
+
+    return result;
+
+  }
+
+  function collisionCheckMidPoint(obj1, obj2) {
+
+    // infantry-at-door (bunker) case
+
+    // "door" sub-object, inherits coordinates of parent
+
+    return collisionCheck(obj1.data.door, obj2.data, 0);
+
+  }
+
+  function getDoorCoords(obj) {
+
+    // for special collision check case with bunkers
+
+    var door, result;
+
+    door = {
+      width: 5,
+      height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
+      halfWidth: 2.5
+    };
+
+    result = {
+      width: door.width,
+      height: door.height,
+      // slight offset on X, don't subtract door half-width
+      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth, 10),
+      y: parseInt(obj.data.y + obj.data.height - door.height, 10)
+    };
 
     return result;
 
