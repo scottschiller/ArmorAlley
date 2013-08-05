@@ -27,6 +27,8 @@ body {
  background: #000;
  font-size: 11px;
  font-weight: bold;
+ cursor: crosshair;
+ cursor: url(../image/cursor-neutral.ico);
 }
 
 #game-status-bar {
@@ -49,8 +51,21 @@ body {
  position: absolute;
  top: 6px;
  left: 0px;
+ width: 100%;
 }
 
+#game-status li {
+ text-indent: 0.5em;
+ margin-right: 1em;
+}
+
+#game-status li:last-of-type {
+ position: absolute;
+ text-align: right;
+ right: 0.5em;
+ /* for now, no scoring */
+ opacity: 0.5;
+}
 #game-status-bar #radar {
  height: 32px;
 }

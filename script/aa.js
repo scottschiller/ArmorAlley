@@ -935,7 +935,7 @@ var features;
 
     function setLeftScroll(x) {
 
-      // scroll the battlefield.
+      // scroll the battlefield by relative amount.
       data.battleField.scrollLeftVX = x;
       data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
 
@@ -2936,7 +2936,7 @@ var features;
       windOffsetY: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
-      y: options.y || (96 + parseInt((380 - 96 - 32) * Math.random(), 10))
+      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10))
     }, options);
 
     dom = {
@@ -4191,10 +4191,21 @@ var features;
         sounds.genericExplosion.play();
       }
 
-      // radarItem.die();
+      window.setTimeout(respawn, 3000);
 
-      // temporary: unlimited respawn.
-      window.setTimeout(reset, 3000);
+    }
+
+    function respawn() {
+
+      // helicopter died. move view, and reset.
+
+      reset();
+
+      // local player? move the view back to zero.
+
+      if (!data.isEnemy) {
+        game.objects.view.setLeftScroll(game.objects.view.data.battleField.width * -1);
+      }
 
     }
 
@@ -4210,10 +4221,14 @@ var features;
       updateHealth();
 
       if (data.isEnemy) {
+
         data.x = 8192 - 64;
+
       } else {
-        data.vX = 0;
-        data.vY = 0;
+
+        data.x = 204;
+        data.y = game.objects.view.data.world.height - 20;
+
       }
 
       setX(data.x);
@@ -4596,6 +4611,7 @@ var features;
       jamming: false,
       energy: 1,
       direction: 0,
+      stopped: false,
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
       height: 16,
@@ -4604,7 +4620,7 @@ var features;
         cost: 5
       },
       // if the van reaches the enemy base, it's game over.
-      xGameOver: (options.isEnemy ? 256 : game.objects.view.data.battleField.width - 256)
+      xGameOver: (options.isEnemy ? 312 + 32 : game.objects.view.data.battleField.width - 256)
     }, options);
 
     dom = {
@@ -4615,11 +4631,13 @@ var features;
 
       var enemyHelicopter;
 
-      if (!data.dead) {
+      if (!data.dead && !data.stopped) {
 
         moveTo(data.x + data.vX, data.bottomY);
 
         if (data.isEnemy && data.x <= data.xGameOver) {
+
+          stop();
 
           // Game over, man, game over! (Enemy wins.)
           console.log('The enemy has won the battle.');
@@ -4655,6 +4673,12 @@ var features;
       }
 
       return data.dead;
+
+    }
+
+    function stop() {
+
+      data.stopped = true;
 
     }
 
