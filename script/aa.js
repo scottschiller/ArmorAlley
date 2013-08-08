@@ -1093,9 +1093,7 @@ var features;
 
           } else {
 
-            console.log('construction complete');
-
-            // "Construction complete."        
+            // "Construction complete."
 
             utils.css.remove(dom.gameStatusBar, css.building);
 
@@ -1891,7 +1889,7 @@ var features;
       halfWidth: 25,
       height: 25,
       infantryTimer: null,
-      door: null
+      midPoint: null
     }, options);
 
     dom = {
@@ -2103,7 +2101,7 @@ var features;
 
       setX(data.x);
 
-      data.door = getDoorCoords(exports);
+      data.midPoint = getDoorCoords(exports);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3530,8 +3528,16 @@ var features;
       maxParachutes: 5,
       smartMissiles: 2,
       maxSmartMissiles: 2,
-      maxFuel: 100
+      maxFuel: 100,
+      midPoint: null
     }, options);
+
+    data.midPoint = {
+      x: data.x + data.halfWidth,
+      y: data.y,
+      width: 5,
+      height: data.height
+    };
 
     dom = {
       o: null,
@@ -3571,14 +3577,28 @@ var features;
           if (target.data.type === 'chain') {
             // special case: chains do damage, but don't kill.
             hit(target.data.damagePoints);
+            // should the target die, too? ... probably so.
+            target.hit(999);
+          } else if (target.data.type === 'infantry') {
+            // friendly, landed infantry (or engineer)?
+            if (data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
+              // check if it's at the helicopter "door".
+              if (collisionCheckMidPoint(exports, target)) {
+                // pick up infantry
+                target.die(true);
+                data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
+                updateStatusUI();
+              }
+            }
           } else {
+            // hit something else. boom!
             die();
+            // should the target die, too? ... probably so.
+            target.hit(999);
           }
-          // should the target die, too? ... probably so.
-          target.hit(999);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry']
     }
 
     function animate() {
@@ -3851,8 +3871,11 @@ var features;
 
           document.getElementById('repair-complete').style.display = 'block';
 
+          if (sounds.inventory.end) {
+            sounds.inventory.end.play();
+          }
+
         }
-        
 
       }
 
@@ -4012,6 +4035,7 @@ var features;
         if (x && data.x !== x) {
           setX(x);
           data.x = x;
+          data.midPoint.x = data.x + data.halfWidth;
         }
       }
 
@@ -4020,6 +4044,8 @@ var features;
         if (data.y !== y) {
           setY(y);
           data.y = y;
+          // TODO: redundant?
+          data.midPoint.y = data.y;
         }
       }
 
@@ -5120,8 +5146,10 @@ var features;
         useLookAhead: true,
         // TODO: rename to something generic?
         hit: function(target) {
-          // stop moving, start firing.
-          stop();
+          // stop moving, start firing if not a friendly unit.
+          if (target.data.isEnemy !== data.isEnemy) {
+            stop();
+          }
         },
         miss: function() {
           // resume moving, stop firing.
@@ -5154,7 +5182,6 @@ var features;
       },
       items: ['bunkers', 'tanks']
     }
-
 
     function animate() {
 
@@ -5282,19 +5309,29 @@ var features;
       }
     }
 
-    function die() {
+    function dieComplete() {
+      removeNodes(dom);
+      radarItem.die();
+    }
+
+    function die(silent) {
 
       if (data.dead) {
         return false;
       }
 
-      utils.css.add(dom.o, css.exploding);
+      if (!silent) {
 
-      // timeout?
-      window.setTimeout(function() {
-        removeNodes(dom);
-        radarItem.die();
-      }, 1200);
+        utils.css.add(dom.o, css.exploding);
+
+        // timeout?
+        window.setTimeout(dieComplete, 1200);
+
+      } else {
+
+        dieComplete();
+
+      }
 
       data.energy = 0;
 
@@ -5393,8 +5430,7 @@ var features;
         }
       },
       items: ['helicopters']
-    }
-
+    };
 
     function animate() {
 
@@ -5957,8 +5993,8 @@ var features;
         // ignore dead objects,
         && !objects[item].data.dead
 
-        // don't check against friendly units, unless infantry vs. bunker, OR we're dealing with a "hostile" object (dangerous to both sides) OR neutral object (friendly to both, and can interact.)
-        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.hostile || objects[item].data.hostile || data1.isNeutral || objects[item].data.isNeutral))
+        // don't check against friendly units, unless infantry vs. bunker or helicopter, OR we're dealing with a "hostile" object (dangerous to both sides) OR neutral object (friendly to both, and can interact.)
+        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.type === 'helicopter' && objects[item].data.type === 'infantry') || (data1.hostile || objects[item].data.hostile || data1.isNeutral || objects[item].data.isNeutral))
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
         && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
@@ -6086,11 +6122,8 @@ var features;
 
   function collisionCheckMidPoint(obj1, obj2) {
 
-    // infantry-at-door (bunker) case
-
-    // "door" sub-object, inherits coordinates of parent
-
-    return collisionCheck(obj1.data.door, obj2.data, 0);
+    // infantry-at-midpoint (bunker or helicopter) case
+    return collisionCheck(obj1.data.midPoint, obj2.data, 0);
 
   }
 
