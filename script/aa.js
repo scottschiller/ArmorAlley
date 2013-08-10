@@ -442,6 +442,12 @@
         isEnemy: true
       }));
 
+      objects.endBunkers.push(new EndBunker({
+        isEnemy: true,
+        x: 530
+      }));
+
+
       objects.bunkers.push(new Bunker({
         x: 1024,
         isEnemy: true
@@ -2146,6 +2152,7 @@
       type: 'end-bunker',
       bottomAligned: true,
       frameCount: 0,
+      energy: 10,
       x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
       width: 39,
       halfWidth: 19,
@@ -2158,7 +2165,7 @@
     }, options);
 
     data.midPoint = {
-      x: data.x + data.halfWidth,
+      x: data.x + data.halfWidth + 5,
       y: data.y,
       width: 5,
       height: data.height
@@ -2174,9 +2181,17 @@
 
     function setFiring(state) {
 
-      if (data.firing !== state) {
+      if (state && data.energy) {
         data.firing = state;
+      } else {
+        data.firing = false;
       }
+
+    }
+
+    function hit() {
+
+      data.energy = Math.max(0, data.energy-1);
 
     }
 
@@ -2282,7 +2297,8 @@
     exports = {
       animate: animate,
       data: data,
-      dom: dom
+      dom: dom,
+      hit: hit
     }
 
     nearby = {
@@ -2816,7 +2832,12 @@
         source: exports, // initially undefined
         targets: undefined,
         hit: function(target) {
-          sparkAndDie(target);
+          // special case: if tank shooting at endBunker, don't hit if energy is 0.
+          if (data.parentType === 'tank' && target.data.type === 'endBunker' && target.data.energy === 0) {
+            return false;
+          } else {
+            sparkAndDie(target);
+          }
         }
       },
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles']
@@ -2827,6 +2848,9 @@
       collision.items.push('bunkers');
       // also, balloons aren't expected to be in range of tanks.
       collision.items.push('balloons');
+    } else {
+      // however, tanks (only) can fire and hit "end bunkers".
+      collision.items.push('endBunkers');
     }
 
     function animate() {
@@ -3306,7 +3330,6 @@
           sparkAndDie(target);
         }
       },
-      // TODO: can also hit other smart missiles?
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles']
     }
 
@@ -4598,7 +4621,12 @@
         // TODO: rename to something generic?
         hit: function(target) {
           // stop moving, start firing.
-          stop();
+          // special case: only fire at EndBunker if it has energy.
+          if ((target.data.type === 'end-bunker' && target.data.energy) || target.data.type !== 'end-bunker') {
+            stop();
+          } else {
+            resume();
+          }
         },
         miss: function() {
           // resume moving, stop firing.
@@ -4606,7 +4634,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'],
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'endBunkers'],
       targets: []
     }
 
@@ -6336,7 +6364,7 @@
       width: door.width,
       height: door.height,
       // slight offset on X, don't subtract door half-width
-      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth, 10),
+      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
       y: parseInt(obj.data.y + obj.data.height - door.height, 10)
     };
 
@@ -6752,8 +6780,6 @@
 
       c1 = document.getElementById('top-bar').querySelectorAll('.sprite').length;
       c2 = document.getElementById('battlefield').querySelectorAll('.sprite').length;
-
-      console.log('bar, world: ' + c1 + ', ' + c2);      
 
       window.setTimeout(updateStats, 5000);
 
