@@ -442,12 +442,6 @@
         isEnemy: true
       }));
 
-      objects.endBunkers.push(new EndBunker({
-        isEnemy: true,
-        x: 530
-      }));
-
-
       objects.bunkers.push(new Bunker({
         x: 1024,
         isEnemy: true
@@ -2604,8 +2598,6 @@
 
   }
 
-  function Paratrooper() {}
-
   function MissileLauncher(options) {
 
     var css, data, dom, radarItem, exports;
@@ -3744,7 +3736,7 @@
     }, options);
 
     data.midPoint = {
-      x: data.x + data.halfWidth,
+      x: data.x + data.halfWidth + 10,
       y: data.y,
       width: 5,
       height: data.height
@@ -3790,7 +3782,7 @@
             hit(target.data.damagePoints);
             // should the target die, too? ... probably so.
             target.hit(999);
-          } else if (target.data.type === 'infantry') {
+          } else if (target.data.type === 'infantry' || target.data.type === 'engineer') {
             // friendly, landed infantry (or engineer)?
             if (data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
@@ -3809,7 +3801,7 @@
           }
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry', 'engineers']
     }
 
     function animate() {
@@ -4385,11 +4377,25 @@
 
       if (data.parachuting && data.parachutes > 0 && frameCount % data.parachuteModulus === 0) {
 
-        game.objects.parachuteInfantry.push(new ParachuteInfantry({
-          isEnemy: data.isEnemy,
-          x: data.x + data.halfWidth,
-          y: data.y + data.height - 11
-        }));
+        // helicopter landed? Just create an infantry.
+        if (data.landed) {
+
+          game.objects.infantry.push(new Infantry({
+            isEnemy: data.isEnemy,
+            // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
+            x: data.x + (data.width * 0.75),
+            y: data.y + data.height - 11
+          }));
+
+        } else {
+
+          game.objects.parachuteInfantry.push(new ParachuteInfantry({
+            isEnemy: data.isEnemy,
+            x: data.x + data.halfWidth,
+            y: data.y + data.height - 11
+          }));
+
+        }
 
         data.parachutes = Math.max(0, data.parachutes - 1);
 
