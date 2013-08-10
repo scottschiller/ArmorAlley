@@ -190,7 +190,7 @@
 
   }
 
-var features;
+  var features;
 
   var testDiv = document.createElement('div');
 
@@ -402,6 +402,7 @@ var features;
       chains: [],
       balloons: [],
       bunkers: [],
+      endBunkers: [],
       engineers: [],
       infantry: [],
       parachuteInfantry: [],
@@ -432,6 +433,12 @@ var features;
       objects.bases.push(new Base());
 
       objects.bases.push(new Base({
+        isEnemy: true
+      }));
+
+      objects.endBunkers.push(new EndBunker());
+
+      objects.endBunkers.push(new EndBunker({
         isEnemy: true
       }));
 
@@ -2117,6 +2124,187 @@ var features;
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
       init: init
+    }
+
+    init();
+
+    return exports;
+
+  }
+
+  function EndBunker(options) {
+
+    var css, dom, data, objects, nearby, radarItem, exports;
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'end-bunker'
+    });
+
+    data = inheritData({
+      type: 'end-bunker',
+      bottomAligned: true,
+      frameCount: 0,
+      x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
+      width: 39,
+      halfWidth: 19,
+      height: 17,
+      funds: 0,
+      firing: false,
+      gunYOffset: 10,
+      fireModulus: 6,
+      midPoint: null
+    }, options);
+
+    data.midPoint = {
+      x: data.x + data.halfWidth,
+      y: data.y,
+      width: 5,
+      height: data.height
+    };
+
+    dom = {
+      o: null
+    }
+
+    objects = {
+      gunfire: []
+    }
+
+    function setFiring(state) {
+
+      if (data.firing !== state) {
+        data.firing = state;
+      }
+
+    }
+
+    function animate() {
+
+      var i;
+
+      data.frameCount++;
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      nearbyTest(nearby);
+
+      fire();
+
+      return (data.dead && !dom.o && !objects.gunfire.length);
+
+    }
+
+    function fire() {
+
+      if (data.firing && data.frameCount % data.fireModulus === 0) {
+
+        objects.gunfire.push(new GunFire({
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          x: data.x + (data.width + 1),
+          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
+          vX: 1,
+          vY: 0
+        }));
+
+        objects.gunfire.push(new GunFire({
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          x: (data.x - 1),
+          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
+          vX: -1,
+          vY: 0
+        }));
+
+        if (sounds.genericGunFire) {
+          sounds.genericGunFire.play();
+        }
+
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.bottom = (y + 'px');
+    }
+
+    function captureFunds(target) {
+
+      if (data.funds) {
+
+        console.log('funds captured!');
+
+        data.funds--;
+
+        if (target) {
+          target.die(true);
+        }
+
+        // updateStatusUI()
+
+      }
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      setX(data.x);
+      setY(data.bottomY);
+
+      // testing
+      data.funds = 5;
+
+      game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      dom: dom
+    }
+
+    nearby = {
+      options: {
+        source: exports, // initially undefined
+        targets: undefined,
+        useLookAhead: true,
+        // TODO: rename to something generic?
+        hit: function(target) {
+          // infantry at midpoint?
+          if (data.funds && target.data.type === 'infantry' && collisionCheckMidPoint(exports, target)) {
+            captureFunds(target);
+          }
+          setFiring(true);
+        },
+        miss: function() {
+          setFiring(false);
+        }
+      },
+      // who gets fired at?
+      items: ['infantry', 'engineers', 'helicopters'],
+      targets: []
     }
 
     init();
@@ -4120,7 +4308,7 @@ var features;
 
         hasUpdate = 1;
 
-        // SHIFT key still held down?
+        // SHIFT key still down?
         if (!keyboardMonitor.isDown(16)) {
           data.firing = false;
         }
@@ -6530,7 +6718,7 @@ var features;
     document.getElementById('world').appendChild(domPoint2);
 */
 
-    addItem('end-bunker', 8);
+    // addItem('end-bunker', 8);
 
     addItem('base', 64);
 
@@ -6556,7 +6744,7 @@ var features;
 
     addItem('base', 8000);
 
-    addItem('end-bunker', 8192 - 48);
+    // addItem('end-bunker', 8192 - 48);
 
     function updateStats() {
 
