@@ -3883,7 +3883,7 @@ var features;
 
     function setFiring(state) {
 
-      if (data.firing !== state) {
+      if (state) {
          data.firing = state;
       }
 
@@ -4119,6 +4119,11 @@ var features;
         data.ammo = Math.max(0, data.ammo - 1);
 
         hasUpdate = 1;
+
+        // SHIFT key still held down?
+        if (!keyboardMonitor.isDown(16)) {
+          data.firing = false;
+        }
 
       }
 
