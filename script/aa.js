@@ -3269,6 +3269,8 @@
 
     function moveTo(x, y) {
 
+      var hasNew;
+
       if (x !== undefined && data.x !== x) {
         setX(x);
         data.x = x;
@@ -3282,11 +3284,21 @@
     }
 
     function setX(x) {
-      dom.o.style.left = (x + 'px');
+      // TODO: review double-setting of transform
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.left = (x + 'px');
+      }
     }
 
     function setY(y) {
-      dom.o.style.top = (y + 'px');
+      // TODO: review double-setting of transform
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.top = (y + 'px');
+      }
     }
 
     function hit(hitPoints) {

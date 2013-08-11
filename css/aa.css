@@ -1226,10 +1226,10 @@ ul.stats-bar .bombs em {
 
 @-webkit-keyframes marquee {
     0% {
-        text-indent: 0px;
+        -webkit-transform: translate3d(0px, 0px, 0px);
     }
     100% {
-        text-indent: -120000px;
+        -webkit-transform: translate3d(-120000px, 0px, 0px);
     }
 }
 
