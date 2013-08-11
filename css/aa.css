@@ -422,11 +422,8 @@ ul.stats-bar .bombs em {
 }
 
 #world .engineer.enemy {
-	/* haaacks */
-	-moz-transform: scaleX(-1);
-	-o-transform: scaleX(-1);
-	-webkit-transform: scaleX(-1);
-	transform: scaleX(-1);
+	/* TODO: get proper enemy infantry images */
+	background-image: url(../image/engineer-enemy.gif);
 }
 
 #world .parachute-infantry {
