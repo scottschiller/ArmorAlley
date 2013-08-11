@@ -3014,11 +3014,19 @@
     }
 
     function setX(x) {
-      dom.o.style.left = (x + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.left = (x + 'px');
+      }
     }
 
     function setY(y) {
-      dom.o.style.top = (y + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.top = (y + 'px');
+      }
     }
 
     function init() {
@@ -3029,6 +3037,11 @@
 
       setX(data.x);
       setY(data.y);
+
+      // hack?
+      if (features.transform.prop) {
+        dom.o.style.left = dom.o.style.top = '0px';
+      }
 
       game.dom.world.appendChild(dom.o);
 
@@ -3179,11 +3192,19 @@
     }
 
     function setX(x) {
-      dom.o.style.left = (x + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.left = (x + 'px');
+      }
     }
 
     function setY(y) {
-      dom.o.style.top = (y + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.top = (y + 'px');
+      }
     }
 
     function init() {
@@ -3194,6 +3215,11 @@
 
       setX(data.x);
       setY(data.y);
+
+      // hack?
+      if (features.transform.prop) {
+        dom.o.style.left = dom.o.style.top = '0px';
+      }
 
       game.dom.world.appendChild(dom.o);
 
