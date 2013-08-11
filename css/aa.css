@@ -66,6 +66,7 @@ body {
  /* for now, no scoring */
  opacity: 0.5;
 }
+
 #game-status-bar #radar {
  height: 32px;
 }
@@ -949,10 +950,16 @@ ul.stats-bar .bombs em {
 	height: 1px;
 }
 
-#game-status-bar #radar .smart-missile {
+#game-status-bar #radar .sprite.smart-missile {
 	width: 1px;
 	height: 1px;
  	background: red;
+}
+
+#game-status-bar #radar .sprite.end-bunker {
+	width: 2px;
+	height: 1px;
+	margin-left: 1px;
 }
 
 #game-status-bar #radar .sprite.dead {
@@ -1155,4 +1162,87 @@ ul.stats-bar .bombs em {
 	background: url(../image/cloud-2.png) no-repeat 0px 0px;
 	width: 125px;
 	height: 34px;
+}
+
+#extra-content {
+	/* TODO: make this more friendly. */
+	display: none;
+}
+
+#game-tips {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#game-tips .tips-container {
+	position: absolute;
+	top: 33%;
+	left: 50%;
+	margin: -0.5em auto 0px -400px;
+	padding: 0px;
+	line-height: 1.5em;
+	width: 800px;
+	overflow: hidden;
+	display: none;
+}
+
+#game-tips .tips-container div {
+	position: relative;
+	width: 120800px; /* per-item value * 100 tips, plus padding */
+	margin: 0px;
+	padding: 0px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#game-tips.active .tips-container {
+	display: block;
+}
+
+#game-tips.active .tips-container div {
+	/* CSS3 <marquee>-like animation */
+	-webkit-animation: marquee 3000s infinite steps(32000);
+	-moz-animation: marquee 3000s infinite steps(32000);
+	-ms-animation: marquee 3000s infinite steps(32000);
+	-o-animation: marquee 3000s infinite steps(32000);
+	animation: marquee 3000s infinite steps(32000);
+}
+
+#game-tips .tips-container div:first-of-type {
+	/* bump first item over, so it scrolls into view from the right */
+	padding-left: 800px;
+}
+
+@-webkit-keyframes marquee {
+    0% {
+        text-indent: 0px;
+    }
+    100% {
+        text-indent: -120000px;
+    }
+}
+
+@-moz-keyframes marquee {
+    0% {
+        text-indent: 0px;
+    }
+    100% {
+        text-indent: -120000px;
+    }}
+
+@keyframes marquee {
+    0% {
+        text-indent: 0px;
+    }
+    100% {
+        text-indent: -120000px;
+    }
+}
+
+#game-tips .tips-container div span {
+	display: inline-block;
+	width: 1000px;
 }

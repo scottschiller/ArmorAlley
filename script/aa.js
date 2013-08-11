@@ -44,8 +44,26 @@
         }
       }
 
+      function shuffle(array) {
+
+        // Fisher-Yates shuffle algo
+
+        var i, j, temp;
+
+        for (i = array.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i+1));
+          temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+
+        return array;
+
+      }
+
       return {
-        compare: compare
+        compare: compare,
+        shuffle: shuffle
       }
 
     }()),
@@ -870,7 +888,13 @@
 
   function View() {
 
-    var data, dom, events, exports;
+    var css, data, dom, events, exports;
+
+    css = {
+      gameTips: {
+        active: 'active'
+      }
+    }
 
     data = {
       browser: {
@@ -899,13 +923,18 @@
       topBar: {
         height: 0
       },
-      maxScroll: 6
+      gameTips: {
+        active: false
+      },
+      maxScroll: 6,
     }
 
     dom = {
       battleField: null,
       stars: null,
-      topBar: null
+      topBar: null,
+      gameTips: null,
+      gameTipsList: null
     }
 
     events = {
@@ -1008,6 +1037,32 @@
 
     }
 
+    function setTipsActive(active) {
+       if (data.gameTips.active !== active) {
+         utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
+       }
+    }
+
+    function shuffleTips() {
+
+      var i, j, elements, fragment;
+
+      elements = dom.gameTips.getElementsByTagName('span');
+
+      fragment = document.createDocumentFragment();
+
+      elements = utils.array.shuffle(elements);
+
+      for (i=0, j=elements.length; i<j; i++) {
+        fragment.appendChild(elements[i]);
+      }
+
+      // re-append in new order
+      dom.gameTipsList.appendChild(fragment);
+
+    }
+
+
     function addEvents() {
 
       utils.events.add(window, 'resize', events.resize);
@@ -1026,6 +1081,8 @@
       dom.battleField = document.getElementById('battlefield');
       dom.stars = document.getElementById('stars');
       dom.topBar = document.getElementById('top-bar');
+      dom.gameTips = document.getElementById('game-tips');
+      dom.gameTipsList = document.getElementById('game-tips-list');
 
     }
 
@@ -1038,6 +1095,10 @@
       refreshCoords();
 
       setLeftScroll(0);
+
+      shuffleTips();
+
+      setTipsActive(true);
 
     }
 
@@ -3700,8 +3761,10 @@
       radarJamming: 0,
       repairComplete: false,
       landed: true,
+      onLandingPad: false,
       rotated: false,
       rotateTimer: null,
+      autoRotate: true,
       repairing: false,
       repairFrames: 0,
       energy: 10,
@@ -3713,6 +3776,7 @@
       yMax: null,
       vX: 0,
       vXMax: 12,
+      lastVX: 0,
       vY: 0,
       vyMin: 0,
       vYMax: 10,
@@ -3755,13 +3819,30 @@
       },
 
       mousedown: function(e) {
-        if (!data.isEnemy && e.button === 0) {
-          rotate();
+        if (!data.isEnemy) {
+          if (e.button === 0) {
+            rotate();
+            // disable auto-rotate
+            data.autoRotate = false;
+          }
         }
       },
 
       mouseup: function() {
         // setFiring(false);
+      },
+
+      dblclick: function(e) {
+        if (!data.isEnemy) {
+          if (e.button === 0) {
+            // revert to normal setting
+            if (data.rotated) {
+              rotate();
+            }
+            // enable auto-rotate
+            data.autoRotate = true;
+          }
+        }
       }
 
     }
@@ -3808,7 +3889,7 @@
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse, jamming, newX;
+      var i, j, view, mouse, jamming, newX, yLimit;
 
       jamming = 0;
 
@@ -3821,6 +3902,7 @@
         // only allow X-axis if not on ground...
         if (mouse.x) {
           // accelerate scroll vX, so chopper nearly matches mouse when scrolling
+          data.lastVX = parseFloat(data.vX);
           data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
           // and limit
           data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
@@ -3834,9 +3916,10 @@
 
       }
 
-      // safety net: don't let chopper run on bottom of screen
-      // TODO: or when on landing pad.
-      if (data.y === 369) {
+      yLimit = 369 - (data.onLandingPad ? 4 : 0);
+
+      // slight offset when on landing pad
+      if (data.y >= yLimit) {
         data.landed = true;
         data.vX = 0;
         if (data.vY > 0) {
@@ -3844,7 +3927,7 @@
         }
       } else {
         data.landed = false;
-        stopRepairing();
+        onLandingPad(false);
       }
 
       if (!data.dead) {
@@ -3988,9 +4071,19 @@
 
     }
 
-    function startRepairing() {
+    function onLandingPad(state) {
 
-      // called by landing pad
+      data.onLandingPad = state;
+
+      if (state) {
+        startRepairing();
+      } else {
+        stopRepairing();
+      }
+
+    }
+
+    function startRepairing() {
 
       if (!data.repairing) {
         data.repairing = true;
@@ -4120,6 +4213,11 @@
 
       // L -> R / R -> L + forward / backward
 
+      // auto-rotate feature
+      if (data.autoRotate && ((data.vX > 0 && data.lastVX < 0) || (data.vX < 0 && data.lastVX > 0))) {
+        rotate();
+      }
+
       if (features.transform.prop) {
 
         // rotate by angle.
@@ -4180,12 +4278,12 @@
 
     }
 
-    function rotate() {
+    function rotate(force) {
 
       // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
       // if not dead or landed, that is.
-      if (data.dead || data.y <= 0) {
+      if (!force && (data.dead || data.y <= 0 || data.landed)) {
         return false;
       }
 
@@ -4243,7 +4341,7 @@
       }
 
       if (y !== undefined) {
-        y = Math.max(data.yMin, Math.min(data.yMax, y));
+        y = Math.max(data.yMin, Math.min(data.yMax - (data.repairing ? 3 : 0), y));
         if (data.y !== y) {
           setY(y);
           data.y = y;
@@ -4447,6 +4545,10 @@
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
+        // undo rotate, if needed
+        if (data.autoRotate && data.rotated) {
+          rotate(true);
+        }
       }, 1200);
 
       data.energy = 0;
@@ -4483,6 +4585,9 @@
       data.smartMissiles = data.maxSmartMissiles;
       data.ammo = data.maxAmmo;
       data.bombs = data.maxBombs;
+      data.vX = 0;
+      data.vY = 0;
+      data.lastVX = 0;
 
       updateHealth();
 
@@ -4547,6 +4652,7 @@
       if (options.attachEvents) {
 
         utils.events.add(game.dom.world, 'mousedown', events.mousedown);
+        utils.events.add(game.dom.world, 'dblclick', events.dblclick);
         utils.events.add(game.dom.world, 'mouseup', events.mouseup);
 
       }
@@ -4564,6 +4670,7 @@
       die: die,
       fire: fire,
       hit: hit,
+      onLandingPad: onLandingPad,
       startRepairing: startRepairing,
       rotate: rotate,
       setBombing: setBombing,
@@ -5637,7 +5744,7 @@
       frameCount: 0,
       energy: 2,
       width: 81,
-      height: 7,
+      height: 4,
       repairModulus: 5,
       y: 380 - 4
     }, options);
@@ -5651,8 +5758,8 @@
         source: exports,
         targets: undefined,
         hit: function(target) {
-          if (target.startRepairing) {
-            target.startRepairing();
+          if (target.onLandingPad) {
+            target.onLandingPad(true);
           }
         }
       },
