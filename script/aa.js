@@ -432,6 +432,7 @@
       bases: [],
       clouds: [],
       landingPads: [],
+      turrets: [],
       shrapnel: [],
       smoke: [],
       radar: null,
@@ -463,6 +464,10 @@
       objects.bunkers.push(new Bunker({
         x: 1024,
         isEnemy: true
+      }));
+
+      objects.turrets.push(new Turret({
+        x: 1100
       }));
 
       addItem('palm-tree', 1150);
@@ -595,10 +600,21 @@
         x: 190
       }));
 
+      objects.turrets.push(new Turret({
+        x: 4096 - 128,
+        isEnemy: true
+      }));
+
       // midway
       objects.landingPads.push(new LandingPad({
         x: 4096 - 40
       }));
+
+      objects.turrets.push(new Turret({
+        x: 4096 + 72,
+        isEnemy: true
+      }));
+
 
       objects.landingPads.push(new LandingPad({
         x: 7800
@@ -2395,6 +2411,205 @@
 
   }
 
+  function Turret(options) {
+
+    var css, data, dom, objects, radarItem, exports;
+
+    options = options || {};
+
+    css = {
+      className: 'turret',
+      destroyed: 'destroyed'
+    };
+
+    data = inheritData({
+      type: 'turret',
+      bottomAligned: true,
+      dead: false,
+      energy: 25,
+      firing: false,
+      frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
+      fireModulus: 4,
+      scanModulus: 1,
+      y: 0,
+      width: 6,
+      height: 15,
+      angle: 0,
+      maxAngle: 60,
+      scanIncrement: 0
+    }, options);
+
+    // how fast to "scan" (left -> right, and back)
+    data.scanIncrement = (90 * data.scanModulus/FPS);
+
+    dom = {
+      o: null,
+      oSubSprite: null
+    };
+
+    objects = {
+      gunfire: []
+    };
+
+    function animate() {
+
+      var didFire;
+
+      if (!data.dead) {
+
+        if (data.frameCount % data.scanModulus === 0) {
+          fire();
+          if (!data.firing) {
+            scan();
+          }
+        }
+
+        data.frameCount++;
+
+      }
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+    }
+
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(y) {
+      dom.o.style.top = (y + 'px');
+    }
+
+    function scan() {
+
+      if (features.transform.prop) {
+        data.angle += data.scanIncrement;
+        if (data.angle > data.maxAngle || data.angle < -data.maxAngle) {
+          data.scanIncrement *= -1;
+        }
+        setAngle(data.angle);
+      }
+
+    }
+
+    function setAngle(angle) {
+
+      if (features.transform.prop) {
+        dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      }
+
+    }
+
+    function fire() {
+
+      var deltaX, deltaY, angle, targetHelicopter;
+
+      targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
+
+      if (targetHelicopter) {
+
+        data.firing = true;
+
+        deltaX = targetHelicopter.data.x - data.x;
+        deltaY = targetHelicopter.data.y - data.y;
+
+        // TODO: take velocity (Gretzky: "Skate where the puck is going to be") into account.
+
+        if (data.frameCount % data.fireModulus === 0) {
+
+          objects.gunfire.push(new GunFire({
+            parentType: data.type,
+            isEnemy: data.isEnemy,
+            x: data.x + data.width + 2,
+            y: bottomAlignedY() + 16,
+            vX: deltaX * 0.05,
+            vY: deltaY * 0.05
+          }));
+
+          // TODO: proper sound
+          if (sounds.genericGunFire) {
+            sounds.genericGunFire.play();
+          }
+
+        }
+
+        angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
+
+        angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
+
+        // target the enemy
+        setAngle(angle);
+
+        didFire = true;
+
+      } else {
+
+        data.firing = false;
+
+      }
+
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.destroyed);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      dom.oSubSprite = makeSubSprite();
+      dom.o.appendChild(dom.oSubSprite);
+
+      setX(data.x);
+      setY(data.y);
+
+      game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      hit: hit
+    }
+
+    init();
+
+    return exports;
+
+  }
+
   function Base(options) {
 
     var data, exports;
@@ -2904,7 +3119,7 @@
           }
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'turrets']
     }
 
     // special case: tank gunfire should not hit bunkers.
@@ -3107,7 +3322,7 @@
           bombHitTarget(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'helicopters']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'helicopters', 'turrets']
     }
 
     function animate() {
@@ -3432,7 +3647,7 @@
           sparkAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']
     }
 
     function animate() {
@@ -3524,7 +3739,6 @@
         // hack deltas for angle
 
         if (deltaX > 360) {
-
           deltaX = (deltaX % 180);
         }
 
@@ -5540,7 +5754,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters'],
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'turrets'],
       targets: []
     }
 
@@ -6069,7 +6283,7 @@
           hitAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'balloons']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'balloons', 'turrets']
     }
 
     init();
@@ -6196,7 +6410,7 @@
     objects = game.objects;
 
     // should a smart missile be able to target another smart missile? ... why not.
-    items = ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles'];
+    items = ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets'];
 
     localObjects = [];
 

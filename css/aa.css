@@ -797,6 +797,26 @@ ul.stats-bar .bombs em {
  to { background-position: 0px -110px; }
 }
 
+#world .turret,
+#world .turret .sub-sprite {
+	background: transparent url(../image/turret.png) 0px 0px no-repeat;
+	width: 18px;
+	height: 15px;
+}
+
+#world .turret.destroyed {
+	background-position: 0px -30px;
+}
+
+#world .turret .sub-sprite {
+	background-position: 50% -15px;
+	height: 30px !important;
+	top: 0px;
+}
+
+#world .turret.destroyed .sub-sprite {
+	display: none;
+}
 
 #world .bomb {
 	background-image: url(../image/bomb.png);
