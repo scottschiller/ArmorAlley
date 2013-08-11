@@ -1406,7 +1406,9 @@
       var css, data, dom, oParent, exports;
 
       css = {
-        radarItem: 'radar-item'
+        radarItem: 'radar-item',
+        dying: 'dying',
+        dead: 'dead'
       }
 
       data = {
@@ -1421,17 +1423,26 @@
 
       function die() {
         if (!data.dead) {
-          dom.o.style.display = 'none';
+          utils.css.add(dom.o, css.dying);
           data.dead = true;
           if (!options.canRespawn) {
-            removeItem(exports);
+            // permanent removal
+            window.setTimeout(function() {
+              removeItem(exports);
+            }, 2000);
+          } else {
+            // balloon, etc.
+            window.setTimeout(function() {
+              utils.css.add(dom.o, css.dead);
+            }, 1000);
           }
         }
       }
 
       function reset() {
         if (data.dead) {
-          dom.o.style.display = 'block';
+          utils.css.remove(dom.o, css.dying);
+          utils.css.remove(dom.o, css.dead);
           data.dead = false;
         }
       }

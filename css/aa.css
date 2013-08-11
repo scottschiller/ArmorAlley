@@ -962,6 +962,14 @@ ul.stats-bar .bombs em {
 	margin-left: 1px;
 }
 
+#game-status-bar #radar .sprite.dying {
+	-webkit-animation: blink 0.25s infinite;
+	-moz-animation: blink 0.25s infinite;
+	-ms-animation: blink 0.25s infinite;
+	-o-animation: blink 0.25s infinite;
+	animation: blink 0.25s infinite;
+}
+
 #game-status-bar #radar .sprite.dead {
 	display: none;
 }
