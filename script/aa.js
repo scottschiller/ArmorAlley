@@ -3775,7 +3775,7 @@
       onLandingPad: false,
       rotated: false,
       rotateTimer: null,
-      autoRotate: true,
+      autoRotate: (options.isEnemy || false),
       repairing: false,
       repairFrames: 0,
       energy: 10,
@@ -3832,9 +3832,9 @@
       mousedown: function(e) {
         if (!data.isEnemy) {
           if (e.button === 0) {
-            rotate();
             // disable auto-rotate
             data.autoRotate = false;
+            rotate();
           }
         }
       },
@@ -4319,7 +4319,7 @@
         }, 333);
       }
 
-      if (sounds.helicopter.rotate) {
+      if (!data.autoRotate && sounds.helicopter.rotate) {
         sounds.helicopter.rotate.play();
       }
 
@@ -5919,7 +5919,8 @@
 
         data.gravity *= 1.1;
 
-        if (data.y - data.height >= 370) {
+        if (data.y - data.height >= 380) {
+          moveTo(data.x + data.vX, 380);
           die();
         }
 
