@@ -804,18 +804,22 @@ ul.stats-bar .bombs em {
 	height: 15px;
 }
 
-#world .turret.destroyed {
-	background-position: 0px -30px;
+#world .turret .sub-sprite {
+	background-position: 50% -16px;
+	height: 31px !important;
+	top: -5px;
 }
 
-#world .turret .sub-sprite {
-	background-position: 50% -15px;
-	height: 30px !important;
-	top: 0px;
+#world .turret.destroyed {
+	background: transparent;
 }
 
 #world .turret.destroyed .sub-sprite {
-	display: none;
+	/* bottom-align dead sprite */
+	top: auto;
+	bottom: 0px;
+	height: 3px !important;
+	background-position: 50% 100%;
 }
 
 #world .bomb {
