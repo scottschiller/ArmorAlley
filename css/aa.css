@@ -804,6 +804,10 @@ ul.stats-bar .bombs em {
 	height: 15px;
 }
 
+#world .turret.enemy {
+	-webkit-filter: grayscale(1);
+}
+
 #world .turret .sub-sprite {
 	background-position: 50% -16px;
 	height: 31px !important;

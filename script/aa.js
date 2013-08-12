@@ -461,6 +461,12 @@
         isEnemy: true
       }));
 
+      // testing
+      objects.turrets.push(new Turret({
+        x: -16,
+        DOA: true
+      }));
+
       objects.turrets.push(new Turret({
         x: 420
       }));
@@ -2428,25 +2434,35 @@
 
     options = options || {};
 
-    css = {
+    css = inheritCSS({
       className: 'turret',
       destroyed: 'destroyed'
-    };
+    });
 
     data = inheritData({
       type: 'turret',
       bottomAligned: true,
       dead: false,
-      energy: 25,
+      // isNeutral: false,
+      energy: 50,
+      energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
       fireModulus: 4,
       scanModulus: 1,
+      claimModulus: 8,
+      repairModulus: 24,
+      smokeModulus: 2,
+      claimPoints: 0,
+      claimPointsMax: 50,
       y: 0,
       width: 6,
       height: 15,
+      // hacks
+      halfWidth: 7,
+      halfHeight: 7,
       angle: 0,
-      maxAngle: 60,
+      maxAngle: 90,
       scanIncrement: 0
     }, options);
 
@@ -2466,17 +2482,39 @@
 
       var didFire;
 
-      if (!data.dead) {
+      data.frameCount++;
 
-        if (data.frameCount % data.scanModulus === 0) {
+      if (data.frameCount % data.scanModulus === 0) {
+        if (!data.dead) {
           fire();
-          if (!data.firing) {
-            scan();
-          }
+        }
+        // workaround: allow scanning while being repaired
+        if (!data.firing || data.energy > 0) {
+          scan();
+        }
+      }
+
+      if (data.energy > 0 && data.energy < data.energyMax && data.frameCount % data.smokeModulus === 0) {
+
+        // smoke relative to damage
+
+        if (Math.random() > 1 - ((data.energyMax-data.energy)/data.energyMax)) {
+
+          game.objects.smoke.push(new Smoke({
+            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
+            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
+          }));
+
         }
 
-        data.frameCount++;
+        // randomize next one a bit
+        data.smokeModulus = 2 + parseInt(Math.random() * 24, 10);
 
+      }
+
+      if (!data.dead && data.energy > 0 && data.frameCount % data.repairModulus === 0) {
+        // self-repair
+        repair();
       }
 
       for (i = objects.gunfire.length-1; i >= 0; i--) {
@@ -2496,9 +2534,17 @@
       dom.o.style.top = (y + 'px');
     }
 
+    function okToMove() {
+      // guns scan and fire 100% of the time, OR a random percent bias based on the amount of damage they've sustained. No less than 25% of the time.
+      if (data.energy === 0) {
+        return false;
+      }
+      return (data.energy === data.energyMax || (1 - Math.random() < (Math.max(0.25, data.energy / data.energyMax))));
+    }
+
     function scan() {
 
-      if (features.transform.prop) {
+      if (features.transform.prop && okToMove()) {
         data.angle += data.scanIncrement;
         if (data.angle > data.maxAngle || data.angle < -data.maxAngle) {
           data.scanIncrement *= -1;
@@ -2518,7 +2564,7 @@
 
     function fire() {
 
-      var deltaX, deltaY, angle, targetHelicopter;
+      var deltaX, deltaY, vectorX, vectorY, angle, targetHelicopter, moveOK;
 
       targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
@@ -2531,13 +2577,23 @@
 
         // TODO: take velocity (Gretzky: "Skate where the puck is going to be") into account.
 
-        if (data.frameCount % data.fireModulus === 0) {
+        // turret angle
+        angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
+        angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
+
+        // bullet origin x/y
+        vectorX = 8 * Math.cos(angle * deg2Rad);
+        vectorY = 8 * Math.sin(angle * deg2Rad);
+
+        moveOK = okToMove();
+
+        if (data.frameCount % data.fireModulus === 0 && moveOK) {
 
           objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
-            x: data.x + data.width + 2,
-            y: bottomAlignedY() + 16,
+            x: data.x + data.width + 2 + (deltaX * 0.05),
+            y: bottomAlignedY() + 8 + (deltaY * 0.05),
             vX: deltaX * 0.05,
             vY: deltaY * 0.05
           }));
@@ -2549,12 +2605,11 @@
 
         }
 
-        angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
-
-        angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
-
         // target the enemy
-        setAngle(angle);
+        data.angle = angle;
+        if (moveOK) {
+          setAngle(angle);
+        }
 
         didFire = true;
 
@@ -2575,6 +2630,75 @@
           die();
         }
       }
+    }
+
+    function setEnemy(isEnemy) {
+
+      if (data.isEnemy !== isEnemy) {
+
+        data.isEnemy = isEnemy;
+        utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
+
+      }
+
+    }
+
+    function claim(isEnemy) {
+
+      if (data.frameCount % data.claimModulus === 0) {
+
+        data.claimPoints++;
+
+        if (data.claimPoints >= data.claimPointsMax) {
+          // change sides.
+          setEnemy(isEnemy);
+          data.claimPoints = 0;
+        }
+
+      }
+
+    }
+
+    function engineerHit(target) {
+
+      // target is an engineer.
+
+      if (data.isEnemy !== target.data.isEnemy) {
+        // gradual take-over.
+        claim(target.data.isEnemy);
+      } else {
+        repair();
+      }
+
+    }
+
+    function engineerCanInteract(isEnemy) {
+
+      // passing engineers should only stop if they have work to do.
+      return (data.isEnemy !== isEnemy || data.energy < data.energyMax);
+
+    }
+
+    function repair() {
+
+      if (data.energy < data.energyMax && data.frameCount % data.repairModulus === 0) {
+        restore();
+        data.energy = Math.min(data.energyMax, data.energy + 1);
+        if (data.dead && data.energy > data.energyMax * 0.25) {
+          // restore to life at 25%
+          data.dead = false;
+        }
+      }
+
+    }
+
+    function restore() {
+
+      // restore visual, but don't re-activate gun yet
+      if (data.dead) {
+        utils.css.remove(dom.o, css.destroyed);
+      }
+
     }
 
     function die() {
@@ -2607,6 +2731,10 @@
       setX(data.x);
       setY(data.y);
 
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -2616,10 +2744,17 @@
     exports = {
       animate: animate,
       data: data,
+      engineerCanInteract: engineerCanInteract,
+      engineerHit: engineerHit,
       hit: hit
     }
 
     init();
+
+    // "dead on arrival"
+    if (options.DOA) {
+      die();
+    }
 
     return exports;
 
@@ -2672,7 +2807,7 @@
           target: targetHelicopter
         }));
 
-      }      
+      }
 
     }
 
@@ -4141,7 +4276,7 @@
             hit(target.data.damagePoints);
             // should the target die, too? ... probably so.
             target.hit(999);
-          } else if (target.data.type === 'infantry' || target.data.type === 'engineer') {
+          } else if (target.data.type === 'infantry') {
             // friendly, landed infantry (or engineer)?
             if (data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
@@ -5731,6 +5866,7 @@
       role: options.role || 0,
       roles: ['infantry', 'engineer'],
       stopped: false,
+      noFire: false,
       direction: 0,
       width: 10,
       height: 11,
@@ -5758,8 +5894,18 @@
         useLookAhead: true,
         // TODO: rename to something generic?
         hit: function(target) {
-          // stop moving, start firing if not a friendly unit.
-          if (target.data.isEnemy !== data.isEnemy) {
+          // engineer + turret case? reclaim or repair.
+          if (data.role && target.data.type === 'turret') {
+            // is there work to do?
+            if (target.engineerCanInteract(data.isEnemy)) {
+              stop(true);
+              target.engineerHit(exports);
+            } else {
+              // nothing to see here.
+              resume();
+            }
+          } else if (target.data.isEnemy !== data.isEnemy) {
+            // stop moving, start firing if not a friendly unit.
             stop();
           }
         },
@@ -5784,10 +5930,11 @@
            * this is sort of an edge case, to prevent parachuting infantry landing in the middle of a tank.
            * this would normally cause both objects to stop and fire, but unable to hit one another due to the overlap.
            */
-          if (target.infantryHit) {
-            // bunker or other object
+          if (!data.role && target.infantryHit) {
+            // infantry hit bunker or other object
             target.infantryHit(exports);
-          } else {
+          } else if (target.data.type !== 'bunker') {
+            // probably a tank.
             die();
           }
         }
@@ -5805,8 +5952,12 @@
 
         } else {
 
+          // firing, or reclaiming/repairing?
+
           // only fire (i.e., GunFire objects) when stopped
-          fire();
+          if (!data.noFire) {
+            fire();
+          }
 
         }
 
@@ -5832,7 +5983,7 @@
 
     function fire() {
 
-      if (data.frameCount % data.fireModulus === 0) {
+      if (!data.noFire && data.frameCount % data.fireModulus === 0) {
 
         objects.gunfire.push(new GunFire({
           parentType: data.type,
@@ -5870,11 +6021,12 @@
       dom.o.style.bottom = (bottomY + 'px');
     }
 
-    function stop() {
+    function stop(noFire) {
 
       if (!data.stopped) {
         utils.css.add(dom.o, css.stopped);
         data.stopped = true;
+        data.noFire = !!noFire;
       }
 
     }
@@ -5884,6 +6036,7 @@
       if (data.stopped) {
         utils.css.remove(dom.o, css.stopped);
         data.stopped = false;
+        data.noFire = false;
       }
 
     }
@@ -5948,12 +6101,6 @@
       data.energy = 0;
 
       data.dead = true;
-
-/*
-      if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
-      }
-*/
 
     }
 
@@ -6603,11 +6750,22 @@
         // don't compare the object against itself
         && objects[item] !== options.source
 
-        // ignore dead objects,
-        && !objects[item].data.dead
+        // ignore dead objects (unless a turret, which can be reclaimed / repaired by engineers)
+        && (!objects[item].data.dead || (objects[item].data.type === 'turret' && data1.type === 'infantry' && data1.role))
 
-        // don't check against friendly units, unless infantry vs. bunker or helicopter, OR we're dealing with a "hostile" object (dangerous to both sides) OR neutral object (friendly to both, and can interact.)
-        && ((objects[item].data.isEnemy !== options.source.data.isEnemy) || (data1.type === 'infantry' && objects[item].data.type === 'bunker') || (data1.type === 'helicopter' && objects[item].data.type === 'infantry') || (data1.hostile || objects[item].data.hostile || data1.isNeutral || objects[item].data.isNeutral))
+        // more non-standard formatting....
+        && (
+          // don't check against friendly units
+          (objects[item].data.isEnemy !== options.source.data.isEnemy)
+          // unless infantry vs. bunker or helicopter
+          || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
+          || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
+          // OR engineer vs. turret
+          || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
+          // OR we're dealing with a hostile or neutral object
+          || (data1.hostile || objects[item].data.hostile)
+          || (data1.isNeutral || objects[item].data.isNeutral)
+        )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
         && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
