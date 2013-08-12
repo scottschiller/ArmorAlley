@@ -461,13 +461,13 @@
         isEnemy: true
       }));
 
+      objects.turrets.push(new Turret({
+        x: 420
+      }));
+
       objects.bunkers.push(new Bunker({
         x: 1024,
         isEnemy: true
-      }));
-
-      objects.turrets.push(new Turret({
-        x: 1100
       }));
 
       addItem('palm-tree', 1150);
@@ -1063,18 +1063,29 @@
 
       var i, j, elements, fragment;
 
-      elements = dom.gameTips.getElementsByTagName('span');
+      // TODO: this doesn't work in Firefox, barfs with "TypeError: Argument 1 of Node.appendChild is not an object." - likely due to live DOM list being returned.
+      try {
 
-      fragment = document.createDocumentFragment();
+        elements = dom.gameTips.getElementsByTagName('span');
 
-      elements = utils.array.shuffle(elements);
+        fragment = document.createDocumentFragment();
 
-      for (i=0, j=elements.length; i<j; i++) {
-        fragment.appendChild(elements[i]);
+        elements = utils.array.shuffle(elements);
+
+        for (i=0, j=elements.length; i<j; i++) {
+          fragment.appendChild(elements[i]);
+        }
+
+        // re-append in new order
+        dom.gameTipsList.appendChild(fragment);
+
+      } catch(e) {
+
+        if (console && console.warn) {
+          console.warn('Warning: Exception while shuffling game tips. TODO: Review/fix.', e);
+        }
+
       }
-
-      // re-append in new order
-      dom.gameTipsList.appendChild(fragment);
 
     }
 
@@ -2572,6 +2583,10 @@
         return false;
       }
 
+      // reset rotation
+      data.angle = 0;
+      setAngle(0);
+
       utils.css.add(dom.o, css.destroyed);
 
       data.energy = 0;
@@ -2621,7 +2636,7 @@
       bottomAligned: true,
       dead: false,
       frameCount: 0,
-      fireModulus: 50,
+      fireModulus: 100,
       // left side, or right side (roughly)
       x: (options.isEnemy ? 8192 - 192: 64),
       y: 0,
