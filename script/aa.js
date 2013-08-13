@@ -4600,8 +4600,8 @@
 
     function setBombing(state) {
 
-      if (data.bombing !== state) {
-         data.bombing = state;
+      if (state) {
+        data.bombing = state;
       }
 
     }
@@ -4835,7 +4835,7 @@
         hasUpdate = 1;
 
         // SHIFT key still down?
-        if (!keyboardMonitor.isDown(16)) {
+        if (!keyboardMonitor.isDown('shift')) {
           data.firing = false;
         }
 
@@ -4853,6 +4853,11 @@
         data.bombs = Math.max(0, data.bombs - 1);
 
         hasUpdate = 1;
+
+        // CTRL key still down?
+        if (!keyboardMonitor.isDown('ctrl')) {
+          data.bombing = false;
+        }
 
       }
 
@@ -7022,13 +7027,13 @@
 
           game.objects.helicopters[0].setFiring(true);
 
-        },
+        }/*,
 
         up: function() {
 
           game.objects.helicopters[0].setFiring(false);
 
-        }
+        }*/
 
       },
 
@@ -7041,13 +7046,13 @@
 
           game.objects.helicopters[0].setBombing(true);
 
-        },
-
+        }/*,
+        
         up: function() {
 
           game.objects.helicopters[0].setBombing(false);
 
-        }
+        }*/
 
       },
 
