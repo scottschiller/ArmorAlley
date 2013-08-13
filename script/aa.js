@@ -461,14 +461,9 @@
         isEnemy: true
       }));
 
-      // testing
       objects.turrets.push(new Turret({
-        x: -16,
+        x: 475,
         DOA: true
-      }));
-
-      objects.turrets.push(new Turret({
-        x: 420
       }));
 
       objects.bunkers.push(new Bunker({
@@ -2448,7 +2443,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: 4,
+      fireModulus: 12,
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: 24,
@@ -2564,7 +2559,7 @@
 
     function fire() {
 
-      var deltaX, deltaY, vectorX, vectorY, angle, targetHelicopter, moveOK;
+      var deltaX, deltaY, deltaXGretzky, deltaYGretzky, vectorX, vectorY, angle, targetHelicopter, moveOK;
 
       targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
@@ -2575,7 +2570,9 @@
         deltaX = targetHelicopter.data.x - data.x;
         deltaY = targetHelicopter.data.y - data.y;
 
-        // TODO: take velocity (Gretzky: "Skate where the puck is going to be") into account.
+        // Gretzky: "Skate where the puck is going to be".
+        deltaXGretzky = targetHelicopter.data.vX;
+        deltaYGretzky = targetHelicopter.data.vY;
 
         // turret angle
         angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
@@ -2594,8 +2591,8 @@
             isEnemy: data.isEnemy,
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
-            vX: deltaX * 0.05,
-            vY: deltaY * 0.05
+            vX: deltaX * 0.05 + deltaXGretzky,
+            vY: deltaY * 0.05 + deltaYGretzky
           }));
 
           // TODO: proper sound
@@ -3242,6 +3239,7 @@
     data = inheritData({
       type: 'gunfire',
       parentType: options.parentType || null,
+      isEnemy: options.isEnemy,
       expired: false,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 25,
