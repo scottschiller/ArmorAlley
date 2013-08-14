@@ -602,13 +602,13 @@
       }));
 
       objects.turrets.push(new Turret({
-        x: 4096 - 128,
+        x: 4096 - 256,
         isEnemy: true
       }));
 
       // midway
       objects.landingPads.push(new LandingPad({
-        x: 4096 - 40
+        x: 4096 - 40 + 128
       }));
 
       objects.turrets.push(new Turret({
@@ -663,7 +663,13 @@
         x: 4096 + 768
       }));
 
-      // some enemy vehicles
+// testing end-game
+/*
+      objects.vans.push(new Van({
+        x: 420,
+        isEnemy: true
+      }));
+*/
 
       objects.tanks.push(new Tank({
         x: 96
@@ -672,7 +678,6 @@
       objects.tanks.push(new Tank({
         x: 690
       }));
-
 
       objects.tanks.push(new Tank({
         x: 760
@@ -914,6 +919,7 @@
     }
 
     data = {
+      ignoreMouseEvents: false,
       browser: {
         width: 0,
         fractionWidth: 0,
@@ -956,27 +962,11 @@
 
     events = {
 
-      mousedown: function(e) {
-        // fire ze machine gun!!
-        if (game.objects.helicopters && game.objects.helicopters[0]) {
-          game.objects.helicopters[0].setFiring(true);
-        }
-        e.preventDefault();
-        return false;
-      },
-
-      mouseup: function(e) {
-        // stop firing ze machine gun!!
-        if (game.objects.helicopters && game.objects.helicopters[0]) {
-          game.objects.helicopters[0].setFiring(false);
-        }
-        e.preventDefault();
-        return false;
-      },
-
       mousemove: function(e) {
-        data.mouse.x = (e||event).clientX;
-        data.mouse.y = (e||event).clientY;
+        if (!data.ignoreMouseEvents) {
+          data.mouse.x = (e||event).clientX;
+          data.mouse.y = (e||event).clientY;
+        }
       },
 
       resize: function() {
@@ -1655,6 +1645,29 @@
     }
 
     return exports;
+
+  }
+
+
+  function gameOver(youWon) {
+
+    // somebody's base is about to get blown up.
+
+    var yourBase, enemyBase;
+
+    yourBase = game.objects.bases[0];
+    enemyBase = game.objects.bases[1];
+
+    if (!youWon) {
+
+      // sorry, better luck next time.
+      yourBase.die();
+
+    } else {
+
+      enemyBase.die();
+
+    }
 
   }
 
@@ -2773,7 +2786,12 @@
       x: (options.isEnemy ? 8192 - 192: 64),
       y: 0,
       width: 102,
-      height: 25
+      height: 25,
+      halfWidth: 56,
+      halfHeight: 12,
+      // bases don't move, but these are for explosions.
+      vX: 0,
+      vY: 0
     }, options);
 
     function animate() {
@@ -2808,8 +2826,99 @@
 
     }
 
+    function die() {
+
+      var counter = 0, counterMax = 30;
+
+      data.dead = true;
+
+      // move to the target
+      // TODO: transition
+      game.objects.view.setLeftScroll(game.objects.view.data.battleField.width * (data.isEnemy ? 1 : -1));
+
+      // disable view + helicopter events?
+      // TODO: make this a method; cleaner, etc.
+      game.objects.view.data.ignoreMouseEvents = true;
+      game.objects.helicopters[0].data.ignoreMouseEvents = true;
+
+      function randomCount() {
+        return (15 + parseInt(Math.random() * 15, 10));
+      }
+
+      function randomVelocity() {
+        return (5 + parseInt(Math.random() * 10, 10));
+      }
+
+      function boom() {
+
+        shrapnelExplosion(data, {
+          count: randomCount(),
+          velocity: randomVelocity(),
+          randomX: true
+        });
+
+        // make a noise?
+        if (sounds.genericExplosion) {
+          sounds.genericExplosion.play();
+        }
+
+        counter++;
+
+        if (counter >= counterMax) {
+
+          // HUGE boom, why not.
+          window.setTimeout(function() {
+
+            if (sounds.genericExplosion) {
+              sounds.genericExplosion.play();
+              sounds.genericExplosion.play();
+              sounds.genericExplosion.play();
+            }
+
+            window.setTimeout(function() {
+
+              var i;
+
+              for (i=0; i<3; i++) {
+
+                shrapnelExplosion(data, {
+                  count: 180,
+                  velocity: 20,
+                  randomX: true
+                });
+
+              }
+
+            }, 25);
+
+            if (!data.isEnemy) {
+              console.log('Congratulations, you won.');
+              document.getElementById('game-tips-list').innerHTML = '<span>Congratulations, you won.</span>';
+            } else {
+              console.log('Sorry! Better luck next time.');
+              document.getElementById('game-tips-list').innerHTML = '<span>Sorry! Better luck next time.</span>';
+            }
+
+          }, 3500);
+
+        } else {
+
+          // big boom
+          window.setTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
+
+        }
+
+      }
+
+      document.getElementById('game-tips-list').innerHTML = '';
+
+      boom();
+
+    }
+
     exports = {
-      animate: animate
+      animate: animate,
+      die: die
     }
 
     return exports;
@@ -4152,6 +4261,7 @@
       firing: false,
       missileLaunching: false,
       parachuting: false,
+      ignoreMouseEvents: false,
       fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
@@ -4222,7 +4332,7 @@
       },
 
       mousedown: function(e) {
-        if (!data.isEnemy) {
+        if (!data.ignoreMouseEvents && !data.isEnemy) {
           if (e.button === 0) {
             // disable auto-rotate
             data.autoRotate = false;
@@ -4236,7 +4346,7 @@
       },
 
       dblclick: function(e) {
-        if (!data.isEnemy) {
+        if (!data.ignoreMouseEvents && !data.isEnemy) {
           if (e.button === 0) {
             // revert to normal setting
             if (data.rotated) {
@@ -5428,10 +5538,14 @@
           // Game over, man, game over! (Enemy wins.)
           console.log('The enemy has won the battle.');
 
+          gameOver();
+
         } else if (!data.isEnemy && data.x >= data.xGameOver) {
 
           // player wins
           console.log('You have won the battle.');
+
+          gameOver(true);
 
         } else {
 
@@ -6233,7 +6347,7 @@
 
   function shrapnelExplosion(options, shrapnelOptions) {
 
-    var localOptions, vX, vY;
+    var localOptions, vX, vY, halfWidth;
 
     var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity, explosionVelocityMax;
 
@@ -6241,8 +6355,15 @@
 
     localOptions = mixin({}, options);
 
-    // center?
-    localOptions.x += localOptions.width/2;
+    halfWidth = localOptions.width/2;
+
+    // randomize X?
+    if (shrapnelOptions.randomX) {
+      localOptions.x += parseInt(Math.random() * localOptions.width, 10);
+    } else {
+      // center?
+      localOptions.x += halfWidth;
+    }
 
     angle = 0;
 
@@ -6297,6 +6418,7 @@
       direction: 0,
       vX: options.vX || 0,
       vY: options.vY || 0,
+      maxVY: 48,
       gravity: 1,
       width: 12,
       height: 12,
@@ -6324,7 +6446,7 @@
 
         }
 
-        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+        moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
 
         data.gravity *= 1.1;
 
