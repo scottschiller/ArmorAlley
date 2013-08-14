@@ -767,6 +767,8 @@ ul.stats-bar .bombs em {
 	background-image: url(../image/helicopter-rl.gif);
 }
 
+/* TODO: review/remove */
+
 @-webkit-keyframes bomb {
  from { background-position: 0px 0px; }
  to { background-position: 0px -33px; }
@@ -780,6 +782,23 @@ ul.stats-bar .bombs em {
 @keyframes bomb {
  from { background-position: 0px 0px; }
  to { background-position: 0px -33px; }
+}
+
+/* new transform-based rotate() effect */
+
+@-webkit-keyframes bomb-rotate {
+ from { -webkit-transform: rotate(-90deg); }
+ to { -webkit-transform: rotate(0deg); }
+}
+
+@-moz-keyframes bomb-rotate {
+ from { -moz-transform: rotate(-90deg); }
+ to { -moz-transform: rotate(0deg); }
+}
+
+@keyframes bomb-rotate {
+ from { transform: rotate(-90deg); }
+ to { transform: rotate(0deg); }
 }
 
 @-webkit-keyframes largeexplosion {
@@ -835,9 +854,14 @@ ul.stats-bar .bombs em {
 }
 
 #world .bomb.dropping {
+	/*
 	-webkit-animation: bomb 1s steps(3);
 	-moz-animation: bomb 1s steps(3);
 	animation: bomb 1s steps(3);
+	*/
+	-webkit-animation: bomb-rotate 1s ease-in-out;
+	-moz-animation: bomb-rotate 1s ease-in-out;
+	animation: bomb-rotate 1s ease-in-out;
 }
 
 #world .bomb.dropping.spark,
@@ -1237,11 +1261,11 @@ ul.stats-bar .bombs em {
 
 #game-tips.active .tips-container div {
 	/* CSS3 <marquee>-like animation */
-	-webkit-animation: marquee 3000s infinite steps(32000);
-	-moz-animation: marquee 3000s infinite steps(32000);
-	-ms-animation: marquee 3000s infinite steps(32000);
-	-o-animation: marquee 3000s infinite steps(32000);
-	animation: marquee 3000s infinite steps(32000);
+	-webkit-animation: marquee 2000s infinite steps(20000);
+	-moz-animation: marquee 2000s infinite steps(20000);
+	-ms-animation: marquee 2000s infinite steps(20000);
+	-o-animation: marquee 2000s infinite steps(20000);
+	animation: marquee 2000s infinite steps(20000);
 }
 
 #game-tips .tips-container div:first-of-type {

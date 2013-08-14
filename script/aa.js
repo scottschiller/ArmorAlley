@@ -3555,19 +3555,11 @@
     }
 
     function setX(x) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.left = (x + 'px');
-      }
+      dom.o.style.left = (x + 'px');
     }
 
     function setY(y) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.top = (y + 'px');
-      }
+      dom.o.style.top = (y + 'px');
     }
 
     function init() {
