@@ -602,20 +602,19 @@
       }));
 
       objects.turrets.push(new Turret({
-        x: 4096 - 256,
+        x: 4096 - 256 - 81, // width of landing pad
         isEnemy: true
       }));
 
       // midway
       objects.landingPads.push(new LandingPad({
-        x: 4096 - 40 + 128
+        x: 4096 - 40
       }));
 
       objects.turrets.push(new Turret({
-        x: 4096 + 72,
+        x: 4096 + 256 + 81, // width of landing pad
         isEnemy: true
       }));
-
 
       objects.landingPads.push(new LandingPad({
         x: 7800
