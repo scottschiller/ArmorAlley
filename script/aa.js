@@ -603,7 +603,8 @@
 
       objects.turrets.push(new Turret({
         x: 4096 - 256 - 81, // width of landing pad
-        isEnemy: true
+        isEnemy: true,
+        DOA: true
       }));
 
       // midway
@@ -2455,7 +2456,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: 12,
+      fireModulus: 8,
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: 24,
@@ -4376,8 +4377,8 @@
             // should the target die, too? ... probably so.
             target.hit(999);
           } else if (target.data.type === 'infantry') {
-            // friendly, landed infantry (or engineer)?
-            if (data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
+            // helicopter landed, and friendly, landed infantry (or engineer)?
+            if (data.landed && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
               if (collisionCheckMidPoint(exports, target)) {
                 // pick up infantry
