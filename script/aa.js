@@ -4300,6 +4300,7 @@
       parachuting: false,
       ignoreMouseEvents: false,
       fuel: 100,
+      maxFuel: 100,
       fireModulus: 2,
       bombModulus: 6,
       fuelModulus: 10,
@@ -4345,7 +4346,6 @@
       maxParachutes: 5,
       smartMissiles: 2,
       maxSmartMissiles: 2,
-      maxFuel: 100,
       midPoint: null
     }, options);
 
@@ -4369,7 +4369,7 @@
       },
 
       mousedown: function(e) {
-        if (!data.ignoreMouseEvents && !data.isEnemy) {
+        if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
           if (e.button === 0) {
             // disable auto-rotate
             data.autoRotate = false;
@@ -4383,7 +4383,7 @@
       },
 
       dblclick: function(e) {
-        if (!data.ignoreMouseEvents && !data.isEnemy) {
+        if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
           if (e.button === 0) {
             // revert to normal setting
             if (data.rotated) {
@@ -4445,7 +4445,7 @@
 
       view = game.objects.view;
 
-      if (!data.isEnemy) {
+      if (!data.isEnemy && data.fuel > 0) {
 
         mouse = view.data.mouse;
 
@@ -4478,6 +4478,22 @@
       } else {
         data.landed = false;
         onLandingPad(false);
+      }
+
+      // no fuel?
+      if (data.fuel <= 0) {
+
+        // gravity until dead.
+        if (data.vY < 0.5) {
+          data.vY = 0.5;
+        }
+
+        data.vY *= 1.1;
+
+        if (data.landed) {
+          die();
+        }
+
       }
 
       if (!data.dead) {
@@ -4667,14 +4683,14 @@
 
         // burn!
 
-        data.fuel -= 0.1;
+        data.fuel = Math.max(0, data.fuel - 0.1);
 
         // update UI
 
         updateFuelUI();
 
         if (data.fuel <= 0) {
-          die();
+          console.log('no fuel');
         }
 
       }
@@ -4733,7 +4749,7 @@
 
       data.repairFrames++;
 
-      data.fuel = Math.min(100, data.fuel + 0.4);
+      data.fuel = Math.min(data.maxFuel, data.fuel + 0.4);
 
       if (data.repairFrames % 2 === 0) {
         data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
