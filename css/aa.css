@@ -1191,6 +1191,20 @@ ul.stats-bar .bombs em {
 	border-right: 3px solid #ccc;
 }
 
+#game-status-bar #radar .sprite.turret {
+	width: 1px;
+	height: 2px;
+	background-color: rgb(23,160,7);
+}
+
+#game-status-bar #radar .sprite.turret.enemy {
+	background-color: #ccc;
+}
+
+#game-status-bar #radar .sprite.turret.destroyed {
+	opacity: 0.5;
+}
+
 #world .shrapnel {
 	position: absolute;
 	left: 0px;
