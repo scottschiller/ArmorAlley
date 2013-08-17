@@ -2330,6 +2330,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          collisionItems: nearby.items,
           x: data.x + (data.width + 1),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of height
           vX: 1,
@@ -2339,6 +2340,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          collisionItems: nearby.items,
           x: (data.x - 1),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of height
           vX: -1,
@@ -2602,6 +2604,8 @@
           objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
+            // turret gunfire should probably only hit airborne things.
+            collisionItems: ['helicopters', 'balloons', 'parachuteInfantry'],
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
             vX: deltaX * 0.05 + deltaXGretzky,
@@ -2891,7 +2895,7 @@
 
             }, 25);
 
-            if (!data.isEnemy) {
+            if (data.isEnemy) {
               console.log('Congratulations, you won.');
               document.getElementById('game-tips-list').innerHTML = '<span>Congratulations, you won.</span>';
             } else {
@@ -3376,17 +3380,8 @@
           }
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'turrets']
-    }
-
-    // special case: tank gunfire should not hit bunkers.
-    if (data.parentType !== 'tank') {
-      collision.items.push('bunkers');
-      // also, balloons aren't expected to be in range of tanks.
-      collision.items.push('balloons');
-    } else {
-      // however, tanks (only) can fire and hit "end bunkers".
-      collision.items.push('endBunkers');
+      // if unspecified, use default list of items which bullets can hit.
+      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'turrets']
     }
 
     function animate() {
@@ -5107,6 +5102,12 @@
       data.vY = 0;
       data.lastVX = 0;
 
+      // reset any queued firing actions
+      data.bombing = false;
+      data.firing = false;
+      data.missileLaunching = false;
+      data.parachuting = false;
+
       updateHealth();
 
       if (data.isEnemy) {
@@ -5313,6 +5314,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          collisionItems: nearby.items,
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
           vX: data.vX, // same velocity as tank
@@ -6097,6 +6099,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          collisionItems: nearby.items,
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of infantry height
           vX: data.vX, // same velocity
