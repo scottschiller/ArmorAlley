@@ -1208,20 +1208,25 @@
 
       orderObject = new typeData[1](options);
 
-      typeData[0].push(orderObject);
+      // ignore if this is the stub object case
+      if (!options.noInit) {
 
-      utils.css.add(orderObject.dom.o, css.building);
+        typeData[0].push(orderObject);
 
-      // TODO: review/reduce setTimeout() calls
-      window.setTimeout(function() {
-        utils.css.add(orderObject.dom.o, css.ordering);
-        /*
+        utils.css.add(orderObject.dom.o, css.building);
+
+        // TODO: review/reduce setTimeout() calls
         window.setTimeout(function() {
-          // undo
-          utils.css.swap(orderObject.dom.o, css.ordered);
-        }, 1200);
-        */
-      }, 1);
+          utils.css.add(orderObject.dom.o, css.ordering);
+          /*
+          window.setTimeout(function() {
+            // undo
+            utils.css.swap(orderObject.dom.o, css.ordered);
+          }, 1200);
+          */
+        }, 1);
+
+      }
 
       return orderObject;
 
@@ -1267,8 +1272,15 @@
 
         }
 
-        // hackish: make a temporary object, so we can get the relevant data for the actual order.
+        // Hack: make a temporary object, so we can get the relevant data for the actual order.
+        if (!options.isEnemy) {
+          options.noInit = true;
+        }
+
         orderObject = createObject(typeData, options);
+
+        // and now, remove that for the real build.
+        options.noInit = false;
 
         objects.order = {
           data: orderObject.data,
@@ -1281,11 +1293,15 @@
         // TODO: Don't play sounds if options.enemy set.
         // data.frameCount = orderObject.data.inventory.frameCount * -1 * (orderSize > 1 ? orderSize + 1 : orderSize);
 
-        // update the UI
-        utils.css.add(dom.gameStatusBar, css.building);
+        if (!options.isEnemy) {
 
-        if (sounds.inventory.begin) {
-          sounds.inventory.begin.play();
+          // update the UI
+          utils.css.add(dom.gameStatusBar, css.building);
+
+          if (sounds.inventory.begin) {
+            sounds.inventory.begin.play();
+          }
+
         }
 
       } else {
@@ -2259,7 +2275,7 @@
       type: 'end-bunker',
       bottomAligned: true,
       frameCount: 0,
-      energy: 10,
+      energy: 0,
       x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
       width: 39,
       halfWidth: 19,
@@ -2417,11 +2433,24 @@
         useLookAhead: true,
         // TODO: rename to something generic?
         hit: function(target) {
-          // infantry at midpoint?
-          if (data.funds && target.data.type === 'infantry' && collisionCheckMidPoint(exports, target)) {
-            captureFunds(target);
+          if (target.data.isEnemy && data.energy) {
+            // nearby enemy, and defenses activated? let 'em have it.
+            setFiring(true);
           }
-          setFiring(true);
+          // nearby infantry?
+          if (target.data.type === 'infantry') {
+            // enemy at door, and funds to steal?
+            if (target.data.isEnemy) {
+              if (data.funds && collisionCheckMidPoint(exports, target)) {
+                captureFunds(target);
+              }
+            } else if (!data.energy && collisionCheckMidPoint(exports, target)) {
+              // end bunker isn't "staffed" / manned by infantry, guns are inoperable.
+              // claim infantry, enable guns.
+              data.energy = 10;
+              target.die(true);
+            }
+          }
         },
         miss: function() {
           setFiring(false);
@@ -3331,7 +3360,9 @@
       die: die
     }
 
-    init();
+    if (!options.noInit) {
+      init();
+    }
 
     return exports;
 
@@ -5098,9 +5129,12 @@
       data.smartMissiles = data.maxSmartMissiles;
       data.ammo = data.maxAmmo;
       data.bombs = data.maxBombs;
-      data.vX = 0;
-      data.vY = 0;
-      data.lastVX = 0;
+
+      if (!data.isEnemy) {
+        data.vX = 0;
+        data.vY = 0;
+        data.lastVX = 0;
+      }
 
       // reset any queued firing actions
       data.bombing = false;
@@ -5485,7 +5519,9 @@
       resume: resume
     }
 
-    init();
+    if (!options.noInit) {
+      init();
+    }
 
     return exports;
 
@@ -5679,7 +5715,9 @@
       die: die
     }
 
-    init();
+    if (!options.noInit) {
+      init();
+    }
 
     return exports;
 
@@ -6248,7 +6286,9 @@
       hit: hit
     }
 
-    init();
+    if (!options.noInit) {
+      init();
+    }
 
     return exports;
 
@@ -6606,7 +6646,7 @@
         data.spriteFrame++;
 
         // advance smoke sprite
-        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';        
+        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';
 
         if (data.spriteFrame > data.spriteFrames) {
 
@@ -6877,8 +6917,9 @@
         && (
           // don't check against friendly units
           (objects[item].data.isEnemy !== options.source.data.isEnemy)
-          // unless infantry vs. bunker or helicopter
+          // unless infantry vs. bunker, end-bunker or helicopter
           || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
+          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry')
           || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
           // OR engineer vs. turret
           || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
