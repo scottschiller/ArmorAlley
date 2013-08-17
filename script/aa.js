@@ -6022,6 +6022,7 @@
       gunYOffset: 9,
       fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
+      xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
         frameCount: 20,
         cost: 5
@@ -6300,6 +6301,8 @@
 
     // flag as an engineer
     options.role = 1;
+    // hack: -ve lookahead offset allowing engineers to be basically atop turrets
+    options.xLookAhead = -8;
 
     return new Infantry(options);
 
@@ -6886,9 +6889,8 @@
     if (options.useLookAhead) {
 
       // friendly things move further right, enemies move further left.
-      // data1.x += (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
 
-      xLookAhead = (Math.max(16, options.source.data.width * 0.33) * (options.source.data.isEnemy ? -1 : 1));
+      xLookAhead = (Math.min(16, options.source.data.xLookAhead || (options.source.data.width * 0.33)) * (options.source.data.isEnemy ? -1 : 1));
 
     } else {
 
@@ -6919,7 +6921,7 @@
           (objects[item].data.isEnemy !== options.source.data.isEnemy)
           // unless infantry vs. bunker, end-bunker or helicopter
           || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
-          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry')
+          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
           || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
           // OR engineer vs. turret
           || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
