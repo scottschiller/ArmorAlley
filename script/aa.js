@@ -4496,6 +4496,12 @@
 
       }
 
+      // safety valve: don't move if ignoreMouseEvents
+      if (data.ignoreMouseEvents) {
+        data.vX = 0;
+        data.vY = 0;
+      }
+
       if (!data.dead) {
 
         newX = data.x + data.vX;
@@ -6611,7 +6617,7 @@
             data.spriteFrame = 0;
           }
 
-          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d().
+          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d(). May be faster.
 
           dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
 
@@ -6654,11 +6660,19 @@
     }
 
     function setX(x) {
-      dom.o.style.left = (x + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.left = (x + 'px');
+      }
     }
 
     function setY(y) {
-      dom.o.style.top = (y + 'px');
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
+      } else {
+        dom.o.style.top = (y + 'px');
+      }
     }
 
     function hit(hitPoints) {
