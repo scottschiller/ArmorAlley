@@ -26,6 +26,10 @@
   // just in case...
   var console = (window.console || { log: function(){} });
 
+  var noJamming = winloc.match(/nojam/i);
+
+  var noTransform = winloc.match(/notransform/i);
+
   var deg2Rad = 180/Math.PI;
 
   utils = {
@@ -330,8 +334,13 @@
 
     console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' enabled');
 
-    if (features.transform) {
-      console.log('using transforms for parallax and rotation effects.');
+    if (features.transform.prop) {
+      if (noTransform) {
+        console.log('transform support present, disabling via URL parameter');
+        features.transform.prop = null;
+      } else {
+        console.log('using transforms for parallax, rotation and some positioning.');
+      }
     }
 
     return features;
@@ -725,8 +734,6 @@
         y: 72,
         isEnemy: true
       });
-
-      enemyCopter.rotate();
 
       enemyCopter.data.vX = -8;
 
@@ -1522,7 +1529,9 @@
       var jam = (Math.random() > 0.25);
 
       // TODO: prevent excessive DOM I/O
-      dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
+      if (!noJamming) {
+        dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
+      }
 
       data.jammingTimer = null;
 
@@ -2740,6 +2749,7 @@
       // restore visual, but don't re-activate gun yet
       if (data.dead) {
         utils.css.remove(dom.o, css.destroyed);
+        utils.css.remove(radarItem.dom.o, css.destroyed);
       }
 
     }
@@ -2755,6 +2765,7 @@
       setAngle(0);
 
       utils.css.add(dom.o, css.destroyed);
+      utils.css.add(radarItem.dom.o, css.destroyed);
 
       data.energy = 0;
 
@@ -2912,10 +2923,10 @@
 
               var i;
 
-              for (i=0; i<3; i++) {
+              for (i=0; i<7; i++) {
 
                 shrapnelExplosion(data, {
-                  count: 180,
+                  count: 60,
                   velocity: 20,
                   randomX: true
                 });
@@ -3440,8 +3451,8 @@
         die();
       }
 
-      // hit top?
-      if (data.y < game.objects.view.data.topBar.height) {
+      // hit top? (TODO: get real # from DOM)
+      if (data.y < 32) { // game.objects.view.data.topBar.height) {
         die();
       }
 
@@ -4291,8 +4302,8 @@
       fuel: 100,
       fireModulus: 2,
       bombModulus: 6,
-      fuelModulus: 40,
-      fuelModulusFlying: 6,
+      fuelModulus: 10,
+      fuelModulusFlying: 3,
       missileModulus: 12,
       parachuteModulus: 4,
       repairModulus: 2,
@@ -4568,6 +4579,74 @@
       }
 
       burnFuel();
+
+      // TODO: isCPU
+
+      if (data.isEnemy) {
+
+        ai();
+
+      }
+
+    }
+
+    function ai() {
+
+      // rudimentary, dumb smarts.
+
+      // target balloons.
+
+      // TODO: Set target only once.
+      var balloon = getNearbyEnemyObject(exports, { items: ['balloons'] });
+
+      // console.log(balloon);
+
+      data.lastVX = parseFloat(data.vX);
+
+      if (balloon) {
+
+        // go go go!
+
+        var targetData = balloon.data;
+
+        var targetHalfWidth = targetData.width / 2;
+        var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height * 0 : targetData.height / 2);
+
+        // delta of x/y between this and target
+        deltaX = (targetData.x + targetHalfWidth) - data.x;
+
+        // TODO: hack full height for balloon?
+        deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+
+        // TODO: revise.
+        // data.vX = (Math.abs(deltaX) > 100 ? deltaX : 0);
+        data.vY = deltaY;
+
+        // throttle
+
+        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+        // data.vX += deltaX * 0.01;
+        // data.vY += deltaY * 0.01;
+
+        // within firing range?
+        if (Math.abs(deltaX) < 300) {
+          setFiring(true);
+        }
+
+      } else {
+
+        // default: go left
+        data.vX -= 0.25;
+        // and up
+        data.vY -= 0.1;
+
+        // and throttle
+        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+      }
 
     }
 
@@ -4870,6 +4949,11 @@
 
     function moveTo(x, y) {
 
+      // Hack: limit enemy helicopter to visible screen
+      if (data.isEnemy) {
+        x = Math.min(8192, Math.max(0, x));
+      }
+
       if (x !== undefined) {
         x = Math.min(data.xMax, x);
         if (x && data.x !== x) {
@@ -4937,8 +5021,6 @@
         return false;
       }
 
-      // TODO: decrement ammo, etc.
-
       if (data.firing && data.ammo > 0 && frameCount % data.fireModulus === 0) {
 
         tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
@@ -4956,9 +5038,15 @@
           sounds.genericGunFire.play();
         }
 
-        data.ammo = Math.max(0, data.ammo - 1);
+        // TODO: CPU
 
-        hasUpdate = 1;
+        if (!data.isEnemy) {
+
+          data.ammo = Math.max(0, data.ammo - 1);
+
+          hasUpdate = 1;
+
+        }
 
         // SHIFT key still down?
         if (!keyboardMonitor.isDown('shift')) {
@@ -5086,6 +5174,15 @@
         velocity: 5
       });
 
+      // drop infantry?
+      if (data.isEnemy || Math.random() > 0.75) {
+        game.objects.parachuteInfantry.push(new ParachuteInfantry({
+          isEnemy: data.isEnemy,
+          x: data.x + data.halfWidth,
+          y: data.y + data.height - 11
+        }));
+      }
+
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
@@ -5131,9 +5228,18 @@
       data.bombs = data.maxBombs;
 
       if (!data.isEnemy) {
+
         data.vX = 0;
         data.vY = 0;
         data.lastVX = 0;
+
+      } else {
+
+        data.y = 64;
+        data.vX = -8;
+        data.lastVX = 0;
+        data.vY = 0;
+
       }
 
       // reset any queued firing actions
@@ -5151,6 +5257,7 @@
       } else {
 
         data.x = 204;
+
         data.y = game.objects.view.data.world.height - 20;
 
       }
@@ -5740,8 +5847,8 @@
       panicFrame: 0,
       energy: 2,
       parachuteOpen: false,
-      // "most of the time", a parachute will open. no idea what the original game did. 25% failure rate.
-      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (Math.random() > 0.75 ? 999 : 0),
+      // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
+      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (Math.random() > 0.9 ? 999 : 0),
       direction: 0,
       width: 10,
       height: 11, // 19 when parachute opens
@@ -6488,7 +6595,11 @@
             data.spriteFrame = 0;
           }
 
+          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d().
+
           dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
+
+          // dom.o.style[features.transform.prop] = 'translate3d(' + (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px, 0px, 0px)';
 
         }
 
@@ -6726,21 +6837,23 @@
 
   }
 
-  function getNearbyEnemyObject(source) {
+  function getNearbyEnemyObject(source, options) {
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
     var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, yBias, isInFront;
 
+    options = options || {};
+
     objects = game.objects;
 
     // should a smart missile be able to target another smart missile? ... why not.
-    items = ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets'];
+    items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
 
     localObjects = [];
 
     // if the source object isn't near the ground, be biased toward airborne items.
-    if (source.data.y < game.objects.view.data.world.height - 100) {
+    if (source.data.type === 'helicopter' && source.data.y < game.objects.view.data.world.height - 100) {
       yBias = 1.5;
     }
 
