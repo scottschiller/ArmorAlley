@@ -3749,13 +3749,18 @@
 
     data = inheritData({
       type: 'cloud',
+      isNeutral: true,
       frameCount: 0,
       windModulus: 16,
       windOffsetX: 0,
       windOffsetY: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
-      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10))
+      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10)),
+      width: 102,
+      halfWidth: 51,
+      height: 29,
+      halfHeight: 14
     }, options);
 
     dom = {
@@ -3780,6 +3785,13 @@
 
         // and randomize
         data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+
+      }
+
+      if ((data.x > 8192 && data.windOffsetX) || (data.x < 0 && !data.windOffsetX)) {
+
+        // reverse gears
+        data.windOffsetX *= -1;
 
       }
 
@@ -4304,7 +4316,7 @@
       fireModulus: 2,
       bombModulus: 6,
       fuelModulus: 10,
-      fuelModulusFlying: 3,
+      fuelModulusFlying: 4,
       missileModulus: 12,
       parachuteModulus: 4,
       repairModulus: 2,
@@ -4372,7 +4384,7 @@
         if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
           if (e.button === 0) {
             // disable auto-rotate
-            data.autoRotate = false;
+            // data.autoRotate = false;
             rotate();
           }
         }
@@ -4616,44 +4628,59 @@
 
       // rudimentary, dumb smarts.
 
+      if (data.fuel <= 0) {
+        return false;
+      }
+
+      var target;
+
+      // HACK: no auto-rotate for now.
+      data.autoRotate = false;
+
       // target balloons.
 
-      // TODO: Set target only once.
-      var balloon = getNearbyEnemyObject(exports, { items: ['balloons'] });
+      target = getNearbyObject(exports, { items: ['balloons', 'clouds'] });
 
       // console.log(balloon);
 
       data.lastVX = parseFloat(data.vX);
 
-      if (balloon) {
+      if (target) {
 
         // go go go!
 
-        var targetData = balloon.data;
+        var targetData = target.data;
 
-        var targetHalfWidth = targetData.width / 2;
-        var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height * 0 : targetData.height / 2);
+        var result;
 
-        // delta of x/y between this and target
-        deltaX = (targetData.x + targetHalfWidth) - data.x;
+        result = trackObject(exports, target);
 
-        // TODO: hack full height for balloon?
-        deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+        // console.log(result);
 
         // TODO: revise.
-        // data.vX = (Math.abs(deltaX) > 100 ? deltaX : 0);
-        data.vY = deltaY;
+
+        var desiredVX, desiredVY;
+
+        desiredVX = result.deltaX * 0.25;
+        desiredVY = result.deltaY * 0.25;
+
+        var deltaX, deltaY;
+
+        // quickly normalize to target vX + vY.
+
+        // deltaX = result.deltaX - desiredVX;
+        // deltaY = result.deltaY - desiredVY;
+
+        data.vX = desiredVX; // += (deltaX * 0.5);
+        data.vY = desiredVY; // += (deltaY * 0.5);
 
         // throttle
 
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
-        // data.vX += deltaX * 0.01;
-        // data.vY += deltaY * 0.01;
-
         // within firing range?
-        if (Math.abs(deltaX) < 300) {
+        if (target.data.type === 'balloon' && Math.abs(result.deltaX) < 300) {
           setFiring(true);
         }
 
@@ -5099,7 +5126,7 @@
 
       if (data.missileLaunching && data.smartMissiles > 0 && frameCount % data.missileModulus === 0) {
 
-        missileTarget = getNearbyEnemyObject(exports);
+        missileTarget = getNearbyObject(exports);
 
         if (missileTarget) {
 
@@ -6867,7 +6894,52 @@
 
   }
 
-  function getNearbyEnemyObject(source, options) {
+  function trackObject(source, target, options) {
+
+    // given a source object (the helicopter) and a target, return the relevant vX / vY delta to get progressively closer to the target.
+
+    var deltaX, deltaY, vX, vY, result;
+
+    options = options || {};
+
+    // TODO: (target.data.x - target.data.halfWidth) results in helicopter being on left side. + target.data.halfWidth is screwy??
+
+    deltaX = target.data.x - source.data.x;
+
+    // deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
+
+    // deltaX += target.data.halfWidth; // ?
+
+    // by default, offset target to one side if a balloon.
+
+    if (target.data.type === 'balloon') {
+
+      if (target.data.x > source.data.x) {
+
+        deltaX -= 100;
+
+      } else {
+
+        deltaX += 100;
+
+      }
+
+    }
+
+    deltaY = target.data.y - source.data.y;
+
+    // deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+
+    result = {
+      deltaX: deltaX,
+      deltaY: deltaY
+    }
+
+    return result;
+
+  }
+
+  function getNearbyObject(source, options) {
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
