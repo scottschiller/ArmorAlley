@@ -260,36 +260,6 @@ ul.stats-bar .bombs em {
 	animation: balloonleft 1s steps(9);
 }
 
-@-webkit-keyframes balloonright {
- from { background-position: 0px 0px; }
- to { background-position: 0px -135px; }
-}
-
-@-moz-keyframes balloonright {
- from { background-position: 0px 0px; }
- to { background-position: 0px -135px; }
-}
-
-@keyframes balloonright {
- from { background-position: 0px 0px; }
- to { background-position: 0px -135px; }
-}
-
-@-webkit-keyframes balloonleft {
- from { background-position: 0px -135px; }
- to { background-position: 0px 0px; }
-}
-
-@-moz-keyframes balloonleft {
- from { background-position: 0px -135px; }
- to { background-position: 0px 0px; }
-}
-
-@keyframes balloonleft {
- from { background-position: 0px -135px; }
- to { background-position: 0px 0px; }
-}
-
 #world .balloon.exploding {
 	background-image: url(../image/generic-explosion.png);
 	background-position: 0px -30px; /* default when animation finishes */
@@ -358,38 +328,6 @@ ul.stats-bar .bombs em {
 
 #world .tank.exploding .sub-sprite {
 	display: none;
-}
-
-@-webkit-keyframes genericexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -250px; }
-}
-
-@-moz-keyframes genericexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -250px; }
-}
-
-@keyframes genericexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -250px; }
-}
-
-/* small */
-
-@-webkit-keyframes genericexplosionsmall {
- from { background-position: 0px 0px; }
- to { background-position: 0px -45px; }
-}
-
-@-moz-keyframes genericexplosionsmall {
- from { background-position: 0px 0px; }
- to { background-position: 0px -45px; }
-}
-
-@keyframes genericexplosionsmall {
- from { background-position: 0px 0px; }
- to { background-position: 0px -45px; }
 }
 
 #world .van {
@@ -531,50 +469,6 @@ ul.stats-bar .bombs em {
 	-moz-animation: rotateright 0.33s steps(3);
 	animation: rotateright 0.33s steps(3);
 }
-
-@-webkit-keyframes rotateleft {
- from { background-position: 0px 0px; }
- to { background-position: 0px -60px; }
-}
-
-@-moz-keyframes rotateleft {
- from { background-position: 0px 0px; }
- to { background-position: 0px -60px; }
-}
-
-@keyframes rotateleft {
- from { background-position: 0px 0px; }
- to { background-position: 0px -60px; }
-}
-
-@-webkit-keyframes rotateright {
- from { background-position: 0px -40px; }
- to { background-position: 0px 20px; }
-}
-
-@-moz-keyframes rotateright {
- from { background-position: 0px -40px; }
- to { background-position: 0px 20px; }
-}
-
-@keyframes rotateright {
- from { background-position: 0px -40px; }
- to { background-position: 0px 20px; }
-}
-
-/*
-#world .helicopter.smouldering-phase-1 .sub-sprite {
-	display: block;
-	background-image: url(../image/smouldering-phase-1.gif);
-	background-position: 50% 66%;
-}
-
-#world .helicopter.smouldering-phase-2 .sub-sprite {
-	display: block;
-	background-image: url(../image/smouldering-phase-2.gif);
-	background-position: 50% 0px;
-}
-*/
 
 #world .helicopter.enemy,
 #world .helicopter.enemy.facing-left,
@@ -767,55 +661,6 @@ ul.stats-bar .bombs em {
 	background-image: url(../image/helicopter-rl.gif);
 }
 
-/* TODO: review/remove */
-
-@-webkit-keyframes bomb {
- from { background-position: 0px 0px; }
- to { background-position: 0px -33px; }
-}
-
-@-moz-keyframes bomb {
- from { background-position: 0px 0px; }
- to { background-position: 0px -33px; }
-}
-
-@keyframes bomb {
- from { background-position: 0px 0px; }
- to { background-position: 0px -33px; }
-}
-
-/* new transform-based rotate() effect */
-
-@-webkit-keyframes bomb-rotate {
- from { -webkit-transform: rotate(-90deg); }
- to { -webkit-transform: rotate(0deg); }
-}
-
-@-moz-keyframes bomb-rotate {
- from { -moz-transform: rotate(-90deg); }
- to { -moz-transform: rotate(0deg); }
-}
-
-@keyframes bomb-rotate {
- from { transform: rotate(-90deg); }
- to { transform: rotate(0deg); }
-}
-
-@-webkit-keyframes largeexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -110px; }
-}
-
-@-moz-keyframes largeexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -110px; }
-}
-
-@keyframes largeexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -110px; }
-}
-
 #world .turret,
 #world .turret .sub-sprite {
 	background: transparent url(../image/turret.png) 0px 0px no-repeat;
@@ -950,42 +795,6 @@ ul.stats-bar .bombs em {
 	animation: blink 0.5s infinite;
 }
 
-@-webkit-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.125;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@-moz-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.125;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.125;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
 #game-status-bar #radar .sprite.van,
 #game-status-bar #radar .sprite.missile-launcher {
 	width: 2px;
@@ -1098,21 +907,6 @@ ul.stats-bar .bombs em {
 	margin-left: -11px; /* offset for 57-pixel-wide normal tank */
 }
 
-@-webkit-keyframes explosionshrapnel2 {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
-@-moz-keyframes explosionshrapnel2 {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
-@keyframes explosionshrapnel2 {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
 #world .sprite.bottom-align {
 	top: auto !important;
 	bottom: 0px !important;
@@ -1128,21 +922,6 @@ ul.stats-bar .bombs em {
 	-webkit-animation: infantryexplosion 1s steps(10);
 	-moz-animation: infantryexplosion 1s steps(10);
 	animation: infantryexplosion 1s steps(10);
-}
-
-@-webkit-keyframes infantryexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -220px; }
-}
-
-@-moz-keyframes infantryexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -220px; }
-}
-
-@keyframes infantryexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -220px; }
 }
 
 #key-legend {
@@ -1287,6 +1066,11 @@ ul.stats-bar .bombs em {
 	padding-left: 800px;
 }
 
+#game-tips .tips-container div span {
+	display: inline-block;
+	width: 1000px;
+}
+
 @-webkit-keyframes marquee {
     0% {
         -webkit-transform: translate3d(0px, 0px, 0px);
@@ -1313,7 +1097,209 @@ ul.stats-bar .bombs em {
     }
 }
 
-#game-tips .tips-container div span {
-	display: inline-block;
-	width: 1000px;
+/* TODO: review/remove */
+
+@-webkit-keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+@-moz-keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+@keyframes bomb {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -33px; }
+}
+
+/* new transform-based rotate() effect */
+
+@-webkit-keyframes bomb-rotate {
+ from { -webkit-transform: rotate(-90deg); }
+ to { -webkit-transform: rotate(0deg); }
+}
+
+@-moz-keyframes bomb-rotate {
+ from { -moz-transform: rotate(-90deg); }
+ to { -moz-transform: rotate(0deg); }
+}
+
+@keyframes bomb-rotate {
+ from { transform: rotate(-90deg); }
+ to { transform: rotate(0deg); }
+}
+
+@-webkit-keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+@-moz-keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+@keyframes largeexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -110px; }
+}
+
+@-webkit-keyframes explosionshrapnel2 {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@-moz-keyframes explosionshrapnel2 {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@keyframes explosionshrapnel2 {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -384px; }
+}
+
+@-webkit-keyframes infantryexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
+}
+
+@-moz-keyframes infantryexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
+}
+
+@keyframes infantryexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -220px; }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.125;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@-moz-keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@keyframes rotateleft {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -60px; }
+}
+
+@-webkit-keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+@-moz-keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+@keyframes rotateright {
+ from { background-position: 0px -40px; }
+ to { background-position: 0px 20px; }
+}
+
+@-webkit-keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+@-moz-keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+@keyframes genericexplosion {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -250px; }
+}
+
+/* small */
+
+@-webkit-keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
+@-moz-keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
+@keyframes genericexplosionsmall {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -45px; }
+}
+
+@-webkit-keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@-moz-keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@keyframes balloonright {
+ from { background-position: 0px 0px; }
+ to { background-position: 0px -135px; }
+}
+
+@-webkit-keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
+}
+
+@-moz-keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
+}
+
+@keyframes balloonleft {
+ from { background-position: 0px -135px; }
+ to { background-position: 0px 0px; }
 }
