@@ -1054,11 +1054,11 @@ ul.stats-bar .bombs em {
 
 #game-tips.active .tips-container div {
 	/* CSS3 <marquee>-like animation */
-	-webkit-animation: marquee 2000s infinite steps(20000);
-	-moz-animation: marquee 2000s infinite steps(20000);
-	-ms-animation: marquee 2000s infinite steps(20000);
-	-o-animation: marquee 2000s infinite steps(20000);
-	animation: marquee 2000s infinite steps(20000);
+	-webkit-animation: marquee 3000s infinite steps(30000);
+	-moz-animation: marquee 3000s infinite steps(30000);
+	-ms-animation: marquee 3000s infinite steps(30000);
+	-o-animation: marquee 3000s infinite steps(30000);
+	animation: marquee 3000s infinite steps(30000);
 }
 
 #game-tips .tips-container div:first-of-type {
