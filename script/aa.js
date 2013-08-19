@@ -4296,6 +4296,7 @@
       facingRight: 'facing-right',
       rotatedLeft: 'rotated-left',
       rotatedRight: 'rotated-right',
+      cloaked: 'cloaked',
       movingLeft: 'moving-left',
       movingRight: 'moving-right',
       tilt: 'tilt',
@@ -4328,6 +4329,7 @@
       repairComplete: false,
       landed: true,
       onLandingPad: false,
+      cloaked: false,
       rotated: false,
       rotateTimer: null,
       autoRotate: (options.isEnemy || false),
@@ -4439,6 +4441,8 @@
                 updateStatusUI();
               }
             }
+          } else if (target.data.type === 'cloud') {
+            cloak();
           } else {
             // hit something else. boom!
             die();
@@ -4447,7 +4451,7 @@
           }
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry', 'engineers']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry', 'engineers', 'clouds']
     }
 
     function animate() {
@@ -4625,9 +4629,36 @@
 
       }
 
+      // uncloak if not in a cloud?
+      uncloak();
+
     }
 
-var lastTarget;
+    function cloak() {
+
+      if (!data.cloaked) {
+        utils.css.add(dom.o, css.cloaked);
+        utils.css.add(radarItem.dom.o, css.cloaked);
+      }
+
+      // hackish: mark and/or update the current frame when this happened.
+      data.cloaked = game.objects.gameLoop.data.frameCount;
+
+    }
+
+    function uncloak() {
+
+      // hackish: uncloak if a frame or more has passed and we aren't in a cloud.
+      if (data.cloaked && data.cloaked !== game.objects.gameLoop.data.frameCount) {
+        utils.css.remove(dom.o, css.cloaked);
+        utils.css.remove(radarItem.dom.o, css.cloaked);
+        data.cloaked = false;
+      }
+
+    }
+
+    // TODO: move up top.
+    var lastTarget;
 
     function centerView() {
 
@@ -5263,7 +5294,7 @@ if (1) {
 
         missileTarget = getNearestObject(exports, { useInFront: true });
 
-        if (missileTarget) {
+        if (missileTarget && !missileTarget.data.cloaked) {
 
           objects.smartMissiles.push(new SmartMissile({
             parentType: data.type,
@@ -5359,11 +5390,12 @@ if (1) {
       });
 
       // drop infantry?
-      if (data.isEnemy || Math.random() > 0.75) {
+      if ((data.isEnemy && Math.random() > 0.5) || Math.random() > 0.75) {
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
-          y: data.y + data.height - 11
+          y: data.y + data.height - 11,
+          ignoreShrapnel: true
         }));
       }
 
@@ -6039,6 +6071,7 @@ if (1) {
       width: 10,
       height: 11, // 19 when parachute opens
       frameHeight: 20, // each sprite frame
+      ignoreShrapnel: options.ignoreShrapnel || false,
       vX: 0, // wind?
       vY: 3
     }, options);
@@ -6202,7 +6235,12 @@ if (1) {
       dom.o.style.top = (y + 'px');
     }
 
-    function hit(hitPoints) {
+    function hit(hitPoints, target) {
+
+      // special case: helicopter explosion resulting in a parachute infantry - make parachute invincible to shrapnel.
+      if (target && target.data && target.data.type === 'shrapnel' && data.ignoreShrapnel) {
+        return false;
+      }
 
       if (!data.dead) {
         hitPoints = hitPoints || 1;
@@ -6877,7 +6915,7 @@ if (1) {
     function hitAndDie(target) {
 
       if (target) {
-        target.hit(data.damagePoints);
+        target.hit(data.damagePoints, exports);
       }
 
       die();
@@ -7226,14 +7264,19 @@ if (1) {
 
     for (i=0, j=game.objects.helicopters.length; i<j; i++) {
 
-      // how far away is the target?
-      deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+      // not cloaked, not dead, and an enemy?
+      if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
 
-      if (!game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy && deltaX < triggerDistance) {
+        // how far away is the target?
+        deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
 
-        result = game.objects.helicopters[i];
+        if (deltaX < triggerDistance) {
 
-        break;
+          result = game.objects.helicopters[i];
+
+          break;
+
+        }
 
       }
 
@@ -7392,6 +7435,8 @@ if (1) {
 
     var d1, d2;
 
+    // var width, height;
+
     if (0) {
 
       d1 = domPoint1.cloneNode(false);
@@ -7417,16 +7462,32 @@ if (1) {
       // point 2 is to the right.
 
       if (point1.x + point1XLookAhead + point1.width >= point2.x) {
+
         // point 1 overlaps point 2 on x.
+
+        // width = point2.x - (point1.x + point1XLookAhead + point1.width);
+
         if (point1.y < point2.y) {
+
           // point 1 is above point 2.
+
           if (point1.y + point1.h >= point2.y) {
+
             // point 1 overlaps point 2 on y.
             result = true;
+
+            // height = point2.y - (point1.y + point1.h);
+
           }
+
         } else {
+
           result = (point1.y < point2.y + point2.height);
+
+          // height = (point2.y + point2.height) - point1.y;
+
         }
+
       }
 
     } else {
@@ -7434,21 +7495,41 @@ if (1) {
       // point 1 is to the right.
 
       if (point2.x + point2.width >= point1.x + point1XLookAhead) {
+
         // point 2 overlaps point 1 on x.
+
+        // width = point1.x - (point2.x + point1XLookAhead + point2.width);
+
         if (point2.y < point1.y) {
+
           // point 2 is above point 1.
           result = (point2.y + point2.height >= point1.y);
+
+          // height = point1.y - (point2.height + point2.y);
+
         } else {
+
           // point 2 is below point 1.
           result = (point1.y + point1.height >= point2.y);
+
+          // height = point2.y - (point1.y + point1.height);
+
         }
+
       } else {
+
         // no overlap?
         result = false;
+
       }
 
     }
 
+/*
+    if (width && height) {
+      console.log(width, height);
+    }
+*/
     return result;
 
   }

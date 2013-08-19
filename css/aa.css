@@ -419,6 +419,12 @@ ul.stats-bar .bombs em {
 	width: 48px;
 	height: 15px;
 	z-index: 2;
+	/* cloaking opacity effect */
+	opacity: 1;
+	-moz-transition: opacity 0.33s ease-in-out;
+	-ms-transition: opacity 0.33s ease-in-out;
+	-webkit-transition: opacity 0.33s ease-in-out;
+	transition: opacity 0.33s ease-in-out;
 }
 
 #world .helicopter.tilt, /* default case */
@@ -468,6 +474,14 @@ ul.stats-bar .bombs em {
 	-webkit-animation: rotateright 0.33s steps(3);
 	-moz-animation: rotateright 0.33s steps(3);
 	animation: rotateright 0.33s steps(3);
+}
+
+#world .helicopter.cloaked {
+	opacity: 0.33;
+}
+
+#game-status-bar #radar .helicopter.cloaked {
+	visibility: hidden;
 }
 
 #world .helicopter.enemy,
