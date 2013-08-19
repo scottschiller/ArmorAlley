@@ -30,6 +30,8 @@
 
   var noTransform = winloc.match(/notransform/i);
 
+  var trackEnemy = winloc.match(/trackenemy/i);
+
   var deg2Rad = 180/Math.PI;
 
   utils = {
@@ -1729,6 +1731,7 @@
       width: 38,
       height: 16,
       halfWidth: 19,
+      halfHeight: 8,
       deadTimer: null,
       // relative % to pull down when rising from the ground...
       bottomYOffset: 6
@@ -2829,10 +2832,10 @@
       // left side, or right side (roughly)
       x: (options.isEnemy ? 8192 - 192: 64),
       y: 0,
-      width: 102,
-      height: 25,
-      halfWidth: 56,
-      halfHeight: 12,
+      width: 125,
+      height: 34,
+      halfWidth: 62,
+      halfHeight: 17,
       // bases don't move, but these are for explosions.
       vX: 0,
       vY: 0
@@ -4624,6 +4627,18 @@
 
     }
 
+var lastTarget;
+
+    function centerView() {
+
+      // hack: center on enemy helicopter at all times.
+
+      if (trackEnemy) {
+        game.objects.view.dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px, 0px, 0px)'; 
+      }
+
+    }
+
     function ai() {
 
       // rudimentary, dumb smarts.
@@ -4632,16 +4647,106 @@
         return false;
       }
 
-      var target;
+      var target, balloonTarget;
 
-      // HACK: no auto-rotate for now.
-      data.autoRotate = false;
+      // low fuel means low fuel.
+
+      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 33 || data.energy < 3)) {
+
+        var target = game.objects.landingPads[game.objects.landingPads.length-1];
+
+        // head back toward base
+
+        var deltaX = target.data.x - data.x;
+        var deltaY = -4;
+
+        data.vX = deltaX;
+        data.vY = deltaY;
+
+        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+        data.lastVX = data.lastVX;
+        data.lastVY = data.lastVY;
+
+        // are we over the landing pad?
+
+        if (data.x >= target.data.x && data.x + data.width <= target.data.x + target.data.width) {
+
+          data.vX = 0;
+          data.vY = 4;
+
+        }
+
+        centerView();
+
+        return false;
+
+      }
+
+      if (data.landed) {
+
+        if (data.repairComplete) {
+
+          console.log('enemy helicopter repaired?');
+
+          // repair has completed. go go go!
+          data.vY = -4;
+          data.vX = -8;
+
+        } else {
+
+          // still repairing. don't move.
+
+          data.vX = 0;
+          data.vY = 0;
+
+          return false;
+
+        }
+
+      }
 
       // target balloons.
 
-      target = getNearbyObject(exports, { items: ['balloons', 'clouds'] });
+      if (lastTarget) {
 
-      // console.log(balloon);
+        // toast?
+
+        if (lastTarget.data.dead) {
+
+          lastTarget = null;
+
+        } else if (lastTarget.data.y > 340) {
+
+          lastTarget = null;
+
+        }
+
+      }
+
+      if (!lastTarget) {
+
+        lastTarget = objectInView(data, { items: 'balloons' }) || objectInView(data, { items: 'clouds' });
+
+        // is the new target too low?
+        if (lastTarget && lastTarget.data.y > 340) {
+          lastTarget = null;
+        }
+
+      } else if (lastTarget.data.type !== 'balloon') {
+
+        // we already have a target - can we get a balloon?
+        balloonTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
+
+        // better - go for that.
+        if (balloonTarget && !balloonTarget.data.dead) {
+          lastTarget = balloonTarget;
+        }
+
+      }
+
+      target = lastTarget;
 
       data.lastVX = parseFloat(data.vX);
 
@@ -4660,19 +4765,33 @@
         // TODO: revise.
 
         var desiredVX, desiredVY;
+        var deltaX, deltaY;
+
+
+if (1) {
 
         desiredVX = result.deltaX * 0.25;
         desiredVY = result.deltaY * 0.25;
 
-        var deltaX, deltaY;
-
         // quickly normalize to target vX + vY.
 
-        // deltaX = result.deltaX - desiredVX;
-        // deltaY = result.deltaY - desiredVY;
+        data.vX = desiredVX;
+        data.vY = desiredVY;
 
-        data.vX = desiredVX; // += (deltaX * 0.5);
-        data.vY = desiredVY; // += (deltaY * 0.5);
+        // data.vX = desiredVX; // += (deltaX * 0.5);
+        // data.vY = desiredVY; // += (deltaY * 0.5);
+
+        if (desiredVY > data.vY) {
+          data.vY++;
+        } else {
+          data.vY--;
+        }
+
+} else {
+
+        // change over time?
+
+}
 
         // throttle
 
@@ -4696,6 +4815,8 @@
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
       }
+
+      centerView();
 
     }
 
@@ -4743,9 +4864,13 @@
       data.onLandingPad = state;
 
       if (state) {
+
         startRepairing();
+
       } else {
+
         stopRepairing();
+
       }
 
     }
@@ -4753,7 +4878,9 @@
     function startRepairing() {
 
       if (!data.repairing) {
+
         data.repairing = true;
+
       }
 
     }
@@ -4768,7 +4895,11 @@
 
           data.repairComplete = false;
 
-          document.getElementById('repair-complete').style.display = 'none';
+          if (!data.isEnemy) {
+
+            document.getElementById('repair-complete').style.display = 'none';
+
+          }
 
         }
 
@@ -4827,10 +4958,14 @@
         document.getElementById('bomb-count').innerText = data.bombs;
         document.getElementById('missile-count').innerText = data.smartMissiles;
 
-        // fully-repaired?
-        if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
+      }
 
-          data.repairComplete = true;
+      // fully-repaired?
+      if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
+
+        data.repairComplete = true;
+
+        if (!data.isEnemy) {
 
           document.getElementById('repair-complete').style.display = 'block';
 
@@ -5079,7 +5214,7 @@
           isEnemy: data.isEnemy,
           x: data.x + (data.rotated ? 0 : data.width) - 8,
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
-          vX: data.vX + 8 * (data.rotated ? -1 : 1),
+          vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
           vY: data.vY + tiltOffset
         }));
 
@@ -5126,7 +5261,7 @@
 
       if (data.missileLaunching && data.smartMissiles > 0 && frameCount % data.missileModulus === 0) {
 
-        missileTarget = getNearbyObject(exports);
+        missileTarget = getNearestObject(exports, { useInFront: true });
 
         if (missileTarget) {
 
@@ -5283,6 +5418,8 @@
         data.lastVX = 0;
 
       } else {
+
+        lastTarget = null;
 
         data.y = 64;
         data.vX = -8;
@@ -6904,23 +7041,31 @@
 
     // TODO: (target.data.x - target.data.halfWidth) results in helicopter being on left side. + target.data.halfWidth is screwy??
 
-    deltaX = target.data.x - source.data.x;
+    // deltaX = target.data.x - source.data.x;
 
-    // deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
+// console.log(target.data.x, source.data.x);
+
+// console.log(target.data.halfWidth, source.data.halfWidth);
+
+// console.log(target.data.x, target.data.halfWidth, source.data.x, source.data.halfWidth);
+
+    deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
+
+// console.log(deltaX);
 
     // deltaX += target.data.halfWidth; // ?
 
-    // by default, offset target to one side if a balloon.
+    // by default, offset target to one side of a balloon.
 
     if (target.data.type === 'balloon') {
 
       if (target.data.x > source.data.x) {
 
-        deltaX -= 100;
+        deltaX -= 150;
 
       } else {
 
-        deltaX += 100;
+        deltaX += 150;
 
       }
 
@@ -6928,7 +7073,7 @@
 
     deltaY = target.data.y - source.data.y;
 
-    // deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+    deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
 
     result = {
       deltaX: deltaX,
@@ -6939,15 +7084,17 @@
 
   }
 
-  function getNearbyObject(source, options) {
+  function getNearestObject(source, options) {
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, yBias, isInFront;
+    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, yBias, isInFront, useInFront;
 
     options = options || {};
 
     objects = game.objects;
+
+    useInFront = (options.useInFront || null);
 
     // should a smart missile be able to target another smart missile? ... why not.
     items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
@@ -6971,8 +7118,11 @@
           // is the target in front of the source?
           isInFront = (itemArray[k].data.x >= source.data.x);
 
+          // [revised] - is the target within an acceptable range?
+          // isInFront = (itemArray[k].data.x >= source.data.x || itemArray[k].data.x - source.data.x > -100);
+
           // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
-          if ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)) {
+          if (!useInFront || (useInFront && (!source.data.rotated && isInFront) || (source.data.rotated && !isInFront))) {
 
             targetData = itemArray[k].data;
 
@@ -6989,16 +7139,50 @@
 
     }
 
-    // sort by distance, first item being the closest.
+    // sort by distance
     localObjects.sort(utils.array.compare('totalDistance'));
 
     if (localObjects.length) {
 
-      result = localObjects[0].obj;
+      // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
+      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length-1 : 0].obj;
 
     } else {
 
       result = null;
+
+    }
+
+    return result;
+
+  }
+
+  function objectInView(data, options) {
+
+    // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen).
+
+    var i, j, items, deltaX, result;
+
+    options = options || {};
+
+    // by default, 67% of screen width
+    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * 2/3);
+
+    // by default, take helicopters if nothing else.
+    items = game.objects[(options.items ? options.items : 'helicopters')];
+
+    for (i=0, j=items.length; i<j; i++) {
+
+      // how far away is the target?
+      deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
+
+      if (!items[i].data.dead && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
+
+        result = items[i];
+
+        break;
+
+      }
 
     }
 
