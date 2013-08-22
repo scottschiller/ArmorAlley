@@ -363,7 +363,8 @@
     genericBoom: null,
     genericExplosion: null,
     genericGunFire: null,
-    missileLaunch: null
+    missileLaunch: null,
+    turretGunFire: null
   }
 
   soundManager.setup({
@@ -390,6 +391,11 @@
 
     sounds.genericGunFire = soundManager.createSound({
       url: 'audio/generic-gunfire.wav',
+      multiShot: true
+    });
+
+    sounds.turretGunFire = soundManager.createSound({
+      url: 'audio/turret-gunfire.wav',
       multiShot: true
     });
 
@@ -467,10 +473,6 @@
       }));
 
       objects.endBunkers.push(new EndBunker());
-
-      objects.endBunkers.push(new EndBunker({
-        isEnemy: true
-      }));
 
       objects.turrets.push(new Turret({
         x: 475,
@@ -2288,7 +2290,7 @@
       bottomAligned: true,
       frameCount: 0,
       energy: 0,
-      x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
+      x: (options.x ? options.x : (options.isEnemy ? 8192 - 48 : 8)),
       width: 39,
       halfWidth: 19,
       height: 17,
@@ -2324,9 +2326,12 @@
 
     }
 
-    function hit() {
+    function hit(points, target) {
 
-      data.energy = Math.max(0, data.energy-1);
+      // only tank gunfire counts against end bunkers.
+      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+        data.energy = Math.max(0, data.energy-1);
+      }
 
     }
 
@@ -2353,7 +2358,7 @@
 
     function fire() {
 
-      if (data.firing && data.frameCount % data.fireModulus === 0) {
+      if (data.firing && data.energy && data.frameCount % data.fireModulus === 0) {
 
         objects.gunfire.push(new GunFire({
           parentType: data.type,
@@ -2445,18 +2450,19 @@
         useLookAhead: true,
         // TODO: rename to something generic?
         hit: function(target) {
-          if (target.data.isEnemy && data.energy) {
+          var isFriendly = (target.data.isEnemy === data.isEnemy);
+          if (!isFriendly && data.energy) {
             // nearby enemy, and defenses activated? let 'em have it.
             setFiring(true);
           }
           // nearby infantry?
           if (target.data.type === 'infantry') {
             // enemy at door, and funds to steal?
-            if (target.data.isEnemy) {
+            if (!isFriendly) {
               if (data.funds && collisionCheckMidPoint(exports, target)) {
                 captureFunds(target);
               }
-            } else if (!data.energy && collisionCheckMidPoint(exports, target)) {
+            } else if (!data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
               // end bunker isn't "staffed" / manned by infantry, guns are inoperable.
               // claim infantry, enable guns.
               data.energy = 10;
@@ -2654,8 +2660,8 @@
           }));
 
           // TODO: proper sound
-          if (sounds.genericGunFire) {
-            sounds.genericGunFire.play();
+          if (sounds.turretGunFire) {
+            sounds.turretGunFire.play();
           }
 
         }
@@ -3122,7 +3128,7 @@
     function sparkAndDie(target) {
 
       if (target) {
-        target.hit(data.damagePoints);
+        target.hit(data.damagePoints, exports);
       }
 
       die();
@@ -3417,8 +3423,8 @@
         source: exports, // initially undefined
         targets: undefined,
         hit: function(target) {
-          // special case: if tank shooting at endBunker, don't hit if energy is 0.
-          if (data.parentType === 'tank' && target.data.type === 'endBunker' && target.data.energy === 0) {
+          // special case: let tank gunfire pass thru if 0 energy, or friendly.
+          if (data.parentType === 'tank' && target.data.type === 'end-bunker' && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy)) {
             return false;
           } else {
             sparkAndDie(target);
@@ -3488,7 +3494,7 @@
         if (data.parentType === 'infantry' && target.data.type === 'tank') {
           // do nothing
         } else {
-          target.hit(data.damagePoints);
+          target.hit(data.damagePoints, exports);
         }
       }
 
@@ -4176,7 +4182,7 @@
       data.dead = true;
 
       if (target) {
-        target.hit(data.damagePoints);
+        target.hit(data.damagePoints, exports);
       }
 
       die();
@@ -4719,8 +4725,6 @@
 
         if (data.repairComplete) {
 
-          console.log('enemy helicopter repaired?');
-
           // repair has completed. go go go!
           data.vY = -4;
           data.vX = -8;
@@ -4790,8 +4794,6 @@
         var result;
 
         result = trackObject(exports, target);
-
-        // console.log(result);
 
         // TODO: revise.
 
@@ -5457,6 +5459,10 @@ if (1) {
         data.vX = -8;
         data.lastVX = 0;
         data.vY = 0;
+
+        if (data.rotated) {
+          rotate();
+        }
 
       }
 
@@ -6414,7 +6420,7 @@ if (1) {
           if (!data.role && target.infantryHit) {
             // infantry hit bunker or other object
             target.infantryHit(exports);
-          } else if (target.data.type !== 'bunker') {
+          } else if (target.data.type !== 'bunker' && target.data.type !== 'end-bunker') {
             // probably a tank.
             die();
           }
@@ -7081,15 +7087,7 @@ if (1) {
 
     // deltaX = target.data.x - source.data.x;
 
-// console.log(target.data.x, source.data.x);
-
-// console.log(target.data.halfWidth, source.data.halfWidth);
-
-// console.log(target.data.x, target.data.halfWidth, source.data.x, source.data.halfWidth);
-
     deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
-
-// console.log(deltaX);
 
     // deltaX += target.data.halfWidth; // ?
 
@@ -7364,6 +7362,7 @@ if (1) {
           // unless infantry vs. bunker, end-bunker or helicopter
           || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
           || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
+
           || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
           // OR engineer vs. turret
           || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
