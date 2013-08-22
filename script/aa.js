@@ -466,13 +466,20 @@
 
       objects.inventory = new Inventory();
 
-      objects.bases.push(new Base());
+      objects.bases.push(new Base({
+        x: 64
+      }));
 
       objects.bases.push(new Base({
+        x: 8000,
         isEnemy: true
       }));
 
       objects.endBunkers.push(new EndBunker());
+
+      objects.endBunkers.push(new EndBunker({
+        isEnemy: true
+      }));
 
       objects.turrets.push(new Turret({
         x: 475,
@@ -616,8 +623,8 @@
 
       objects.turrets.push(new Turret({
         x: 4096 - 256 - 81, // width of landing pad
-        isEnemy: true,
-        DOA: true
+        isEnemy: true
+        // DOA: true
       }));
 
       // midway
@@ -2825,9 +2832,13 @@
 
   function Base(options) {
 
-    var data, exports;
+    var css, data, exports, radarItem;
 
     options = options || {};
+
+    css = inheritCSS({
+      className: 'base'
+    });
 
     data = inheritData({
       type: 'base',
@@ -2836,8 +2847,9 @@
       frameCount: 0,
       fireModulus: 100,
       // left side, or right side (roughly)
-      x: (options.isEnemy ? 8192 - 192: 64),
+      x: (options.x ? options.x : (options.isEnemy ? 8192 - 192: 64)),
       y: 0,
+      bottomY: (options.bottomY || 0),
       width: 125,
       height: 34,
       halfWidth: 62,
@@ -2846,6 +2858,10 @@
       vX: 0,
       vY: 0
     }, options);
+
+    dom = {
+      o: null
+    };
 
     function animate() {
 
@@ -2969,10 +2985,41 @@
 
     }
 
+    function setX(x) {
+      dom.o.style.left = (x + 'px');
+    }
+
+    function setY(bottomY) {
+      dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      setX(data.x);
+
+      setY(data.bottomY);
+
+      game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
     exports = {
       animate: animate,
+      data: data,
       die: die
     }
+
+    init();
 
     return exports;
 
@@ -7940,7 +7987,7 @@ if (1) {
 
     // addItem('end-bunker', 8);
 
-    addItem('base', 64);
+    // addItem('base', 64);
 
     addItem('cactus', 355);
 
@@ -7962,7 +8009,7 @@ if (1) {
 
     // addItem('base-landing-pad', 7800);
 
-    addItem('base', 8000);
+    // addItem('base', 8000);
 
     // addItem('end-bunker', 8192 - 48);
 

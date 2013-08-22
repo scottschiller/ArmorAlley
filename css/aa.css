@@ -565,15 +565,17 @@ ul.stats-bar .bombs em {
 }
 
 #world .base.enemy {
-	background-image: url(../image/base-grey.png);
-	width: 102px;
-	height: 25px;
+	background-image: url(../image/base-enemy.gif);
 }
 
 #world .end-bunker {
 	background-image: url(../image/end-bunker.png);
 	width: 39px;
 	height: 17px;
+}
+
+#world .end-bunker.enemy {
+	background-image: url(../image/end-bunker-enemy.png);
 }
 
 #world .barb-wire {
@@ -828,6 +830,7 @@ ul.stats-bar .bombs em {
  	background: red;
 }
 
+#game-status-bar #radar .sprite.base,
 #game-status-bar #radar .sprite.end-bunker {
 	width: 2px;
 	height: 1px;
