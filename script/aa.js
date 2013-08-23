@@ -5927,6 +5927,9 @@ if (1) {
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
       height: 16,
+      state: 0,
+      stateMax: 2,
+      stateModulus: 38,
       inventory: {
         frameCount: 60,
         cost: 5
@@ -5964,6 +5967,25 @@ if (1) {
           gameOver(true);
 
         } else {
+
+          // bounce wheels?
+
+          if (data.frameCount % data.stateModulus === 0) {
+
+            data.state++;
+
+            if (data.state > data.stateMax) {
+              data.state = 0;
+            }
+
+            dom.o.style.backgroundPosition = '0px ' + -(data.height * data.state) + 'px';
+
+          } else if (data.frameCount % data.stateModulus === 4) {
+
+            // next frame - reset.
+            dom.o.style.backgroundPosition = '0px 0px';
+
+          }
 
           if (data.frameCount % data.radarJammerModulus === 0) {
 
