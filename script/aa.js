@@ -2636,7 +2636,7 @@
 
         data.firing = true;
 
-        deltaX = targetHelicopter.data.x - data.x;
+        deltaX = targetHelicopter.data.x - data.x - targetHelicopter.data.halfWidth;
         deltaY = targetHelicopter.data.y - data.y;
 
         // Gretzky: "Skate where the puck is going to be".
@@ -5037,10 +5037,10 @@ if (1) {
 
         // TODO: optimize
 
-        document.getElementById('infantry-count').innerText = data.parachutes;
-        document.getElementById('ammo-count').innerText = data.ammo;
-        document.getElementById('bomb-count').innerText = data.bombs;
-        document.getElementById('missile-count').innerText = data.smartMissiles;
+        document.getElementById('infantry-count').textContent = data.parachutes;
+        document.getElementById('ammo-count').textContent = data.ammo;
+        document.getElementById('bomb-count').textContent = data.bombs;
+        document.getElementById('missile-count').textContent = data.smartMissiles;
 
       }
 
@@ -6712,7 +6712,7 @@ if (1) {
     // flag as an engineer
     options.role = 1;
     // hack: -ve lookahead offset allowing engineers to be basically atop turrets
-    options.xLookAhead = -8;
+    options.xLookAhead = (options.isEnemy ? 4 : -8);
 
     return new Infantry(options);
 
