@@ -421,10 +421,10 @@ ul.stats-bar .bombs em {
 	z-index: 2;
 	/* cloaking opacity effect */
 	opacity: 1;
-	-moz-transition: opacity 0.33s ease-in-out;
-	-ms-transition: opacity 0.33s ease-in-out;
-	-webkit-transition: opacity 0.33s ease-in-out;
-	transition: opacity 0.33s ease-in-out;
+	-moz-transition: opacity 0.25s ease-in-out;
+	-ms-transition: opacity 0.25s ease-in-out;
+	-webkit-transition: opacity 0.25s ease-in-out;
+	transition: opacity 0.25s ease-in-out;
 }
 
 #world .helicopter.tilt, /* default case */
