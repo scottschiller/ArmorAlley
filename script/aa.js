@@ -2647,6 +2647,11 @@
         angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
         angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
 
+        // hack - helicopter directly to left, on ground of turret: correct 90 to -90 degrees.
+        if (deltaX < 0 && angle === 90) {
+          angle = -90;
+        }
+
         // bullet origin x/y
         vectorX = 8 * Math.cos(angle * deg2Rad);
         vectorY = 8 * Math.sin(angle * deg2Rad);
@@ -2666,7 +2671,6 @@
             vY: deltaY * 0.05 + deltaYGretzky
           }));
 
-          // TODO: proper sound
           if (sounds.turretGunFire) {
             sounds.turretGunFire.play();
           }
