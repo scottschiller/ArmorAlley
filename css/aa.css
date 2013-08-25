@@ -18,6 +18,32 @@ body {
  cursor: url(../image/cursor-cross.png), crosshair;
 }
 
+#logo {
+	position: absolute;
+	top: 53%;
+	left: 50%;
+	width: 391px;
+	height: 67px;
+	margin: -33px 0px 0px -195px;
+	background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
+	overflow: hidden;
+	line-height: 10em;
+	z-index: 1;
+	opacity: 1;
+	/* lazy transform */
+	-moz-transition: all 1s ease-in-out;
+	-ms-transition: all 1s ease-in-out;
+	-webkit-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+
+#logo.fade-out {
+	opacity: 0;
+	-ms-transform: scale(1.2);
+	-webkit-transform: scale(1.2);
+	transform: scale(1.2);
+}
+
 #world-wrapper {
  position: absolute;
  top: 50%;

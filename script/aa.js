@@ -7735,6 +7735,20 @@
 
     }
 
+    window.setTimeout(function() {
+
+      var logo = document.getElementById('logo');
+
+      utils.css.add(logo, 'fade-out');
+
+      // remove from the DOM eventually
+      window.setTimeout(function() {
+        logo.parentNode.removeChild(logo);
+        logo = null;
+      }, 2000);
+
+    }, 1000);
+
   }
 
   window.aa = {
