@@ -16,7 +16,7 @@
 
 */
 
-  var game, utils;
+  var game, utils, common;
 
   var FPS = 24;
   var FRAMERATE = 1000/FPS;
@@ -348,6 +348,65 @@
     return features;
 
   }());
+
+  common = {
+
+    setX: function(exports, x) {
+
+      if (exports && exports.dom) {
+        exports.dom.o.style.left = (x + 'px');
+      }
+
+    },
+
+    setY: function(exports, y) {
+
+      if (exports && exports.dom) {
+        exports.dom.o.style.top = (y + 'px');
+      }
+
+    },
+
+    setBottomY: function(exports, bottomY) {
+
+      if (exports && exports.dom) {
+        exports.dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
+      }
+
+    },
+
+    setBottomYPixels: function(exports, bottomY) {
+
+      if (exports && exports.dom) {
+        exports.dom.o.style.bottom = (bottomY + 'px');
+      }
+
+    },
+
+    setTransformX: function(exports, x) {
+
+      if (exports && exports.dom) {
+        if (features.transform.prop) {
+          exports.dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(exports.data.y, 10) +'px, 0px)';
+        } else {
+          exports.dom.o.style.left = (x + 'px');
+        }
+      }
+    },
+
+    setTransformY: function(exports, y) {
+
+      if (exports && exports.dom) {
+        if (features.transform.prop) {
+          exports.dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(exports.data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
+        } else {
+          exports.dom.o.style.top = (y + 'px');
+        }
+      }
+
+    }
+
+  };
 
   var hasSound = false;
 
@@ -1344,8 +1403,8 @@
 
     exports = {
       animate: animate,
-      dom: dom,
       data: data,
+      dom: dom,
       createObject: createObject,
       order: order
     }
@@ -1832,7 +1891,7 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
@@ -1843,7 +1902,7 @@
 
         if (data.bottomY !== bottomY) {
 
-          setY(bottomY);
+          common.setBottomY(exports, bottomY);
 
           data.bottomY = bottomY;
 
@@ -1855,14 +1914,6 @@
 
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(bottomY) {
-      dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
     }
 
     function setEnemy(isEnemy) {
@@ -1996,9 +2047,9 @@
 
       moveTo(data.x, data.bottomY);
 
-      setX(data.x);
+      common.setX(exports, data.x);
 
-      setY(data.bottomY);
+      common.setBottomY(exports, data.bottomY);
 
       if (!objects.bunker) {
         detach();
@@ -2016,6 +2067,7 @@
       data: data,
       detach: detach,
       die: die,
+      dom: dom,
       hit: hit,
       reset: reset,
       setEnemy: setEnemy
@@ -2062,24 +2114,16 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        setY(bottomY);
+        common.setBottomY(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(data.bottomY);
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
     }
 
     function hit(hitPoints) {
@@ -2256,7 +2300,7 @@
       // first time, create at random Y location.
       createBalloon(true);
 
-      setX(data.x);
+      common.setX(exports, data.x);
 
       data.midPoint = getDoorCoords(exports);
 
@@ -2269,6 +2313,7 @@
     exports = {
       objects: objects,
       data: data,
+      dom: dom,
       hit: hit,
       infantryHit: infantryHit,
       nullifyChain: nullifyChain,
@@ -2395,14 +2440,6 @@
 
     }
 
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
-    }
-
     function captureFunds(target) {
 
       if (data.funds) {
@@ -2431,8 +2468,8 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomY(exports, data.bottomY);
 
       // testing
       data.funds = 5;
@@ -2588,14 +2625,6 @@
         }
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function okToMove() {
@@ -2802,8 +2831,8 @@
       dom.oSubSprite = makeSubSprite();
       dom.o.appendChild(dom.oSubSprite);
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -2818,6 +2847,7 @@
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       engineerCanInteract: engineerCanInteract,
       engineerHit: engineerHit,
       hit: hit
@@ -2989,14 +3019,6 @@
 
     }
 
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(bottomY) {
-      dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -3007,9 +3029,8 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomY(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3020,6 +3041,7 @@
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       die: die
     }
 
@@ -3137,12 +3159,12 @@
     function moveTo(x, y, height) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setY(exports, y);
         data.y = y;
       }
 
@@ -3151,14 +3173,6 @@
         data.height = height;
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function setHeight(height) {
@@ -3222,8 +3236,8 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
       setHeight(data.height);
 
       game.dom.world.appendChild(dom.o);
@@ -3295,24 +3309,16 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        setY(bottomY);
+        common.setBottomY(bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(bottomY) {
-      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function hit(hitPoints) {
@@ -3414,8 +3420,8 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomY(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -3571,31 +3577,15 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setTransformY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.left = (x + 'px');
-      }
-    }
-
-    function setY(y) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.top = (y + 'px');
-      }
     }
 
     function init() {
@@ -3604,8 +3594,8 @@
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setTransformX(exports, data.x);
+      common.setTransformY(exports, data.y);
 
       // hack?
       if (features.transform.prop) {
@@ -3620,7 +3610,8 @@
 
     exports = {
       animate: animate,
-      data: data
+      data: data,
+      dom: dom
     }
 
     return exports;
@@ -3749,23 +3740,15 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function init() {
@@ -3774,8 +3757,8 @@
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       // hack?
       if (features.transform.prop) {
@@ -3790,7 +3773,8 @@
 
     exports = {
       animate: animate,
-      data: data
+      data: data,
+      dom: dom
     }
 
     return exports;
@@ -3871,33 +3855,15 @@
       var hasNew;
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setTransformY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      // TODO: review double-setting of transform
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.left = (x + 'px');
-      }
-    }
-
-    function setY(y) {
-      // TODO: review double-setting of transform
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.top = (y + 'px');
-      }
     }
 
     function hit(hitPoints) {
@@ -3923,8 +3889,8 @@
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setTransformX(exports, data.x);
+      common.setTransformY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -4153,7 +4119,7 @@
       var hitBottom = false;
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
@@ -4164,7 +4130,7 @@
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setY(exports, y);
         data.y = y;
       }
 
@@ -4183,14 +4149,6 @@
 
       return hitBottom;
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function moveTrailers() {
@@ -4309,8 +4267,8 @@
 
       data.yMax = (game.objects.view.data.battleField.height - data.height);
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       game.dom.world.appendChild(fragment);
 
@@ -5225,7 +5183,7 @@ if (1) {
       if (x !== undefined) {
         x = Math.min(data.xMax, x);
         if (x && data.x !== x) {
-          setX(x);
+          common.setX(exports, x);
           data.x = x;
           data.midPoint.x = data.x + data.halfWidth;
         }
@@ -5234,21 +5192,13 @@ if (1) {
       if (y !== undefined) {
         y = Math.max(data.yMin, Math.min(data.yMax - (data.repairing ? 3 : 0), y));
         if (data.y !== y) {
-          setY(y);
+          common.setY(exports, y);
           data.y = y;
           // TODO: redundant?
           data.midPoint.y = data.y;
         }
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function updateHealth() {
@@ -5537,8 +5487,8 @@ if (1) {
 
       }
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
@@ -5577,8 +5527,8 @@ if (1) {
 
       dom.fuelLine = document.getElementById('fuel-line');
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -5764,24 +5714,16 @@ if (1) {
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        setY(bottomY);
+        common.setBottomYPixels(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(bottomY) {
-      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function updateHealth() {
@@ -5880,8 +5822,8 @@ if (1) {
         utils.css.add(dom.o, options.extraClass);
       }
 
-      setX(data.x);
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6027,25 +5969,18 @@ if (1) {
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        setY(bottomY);
+        common.setBottomYPixels(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
 
     }
 
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.bottom = (y + 'px');
-    }
 
     function hit(hitPoints) {
       if (!data.dead) {
@@ -6102,8 +6037,8 @@ if (1) {
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6295,23 +6230,15 @@ if (1) {
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function hit(hitPoints, target) {
@@ -6381,8 +6308,8 @@ if (1) {
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6562,24 +6489,16 @@ if (1) {
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        setY(bottomY);
+        common.setBottomYPixels(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(bottomY) {
-      dom.o.style.bottom = (bottomY + 'px');
     }
 
     function stop(noFire) {
@@ -6678,8 +6597,8 @@ if (1) {
         utils.css.add(dom.o, css.enemy);
       }
 
-      setX(data.x);
-      setY(data.bottomY);
+      common.setX(exports, data.x);
+      common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6768,22 +6687,14 @@ if (1) {
 
     }
 
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
-    }
-
     function init() {
 
       dom.o = makeSprite({
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6929,31 +6840,15 @@ if (1) {
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setTransformY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(data.y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.left = (x + 'px');
-      }
-    }
-
-    function setY(y) {
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
-      } else {
-        dom.o.style.top = (y + 'px');
-      }
     }
 
     function hit(hitPoints) {
@@ -7008,8 +6903,8 @@ if (1) {
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setTransformX(exports, data.x);
+      common.setTransformY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -7091,23 +6986,15 @@ if (1) {
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        setX(x);
+        common.setX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        setY(y);
+        common.setY(exports, y);
         data.y = y;
       }
 
-    }
-
-    function setX(x) {
-      dom.o.style.left = (x + 'px');
-    }
-
-    function setY(y) {
-      dom.o.style.top = (y + 'px');
     }
 
     function die() {
@@ -7128,8 +7015,8 @@ if (1) {
         className: css.className
       });
 
-      setX(data.x);
-      setY(data.y);
+      common.setX(exports, data.x);
+      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
