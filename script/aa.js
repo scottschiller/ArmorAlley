@@ -19,7 +19,7 @@
 */
 
 /*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
-/*jslint browser: true, devel: true, nomen: true, plusplus: true, todo: true, vars: true, white: true */
+/*jslint devel: true, nomen: true, plusplus: true, todo: true, vars: true, white: true */
 
   var game, utils, common;
 
@@ -1072,36 +1072,7 @@
 
   game = (function() {
 
-    var dom, objects, exports;
-
-    dom = {
-      world: null
-    };
-
-    objects = {
-      gameLoop: null,
-      view: null,
-      chains: [],
-      balloons: [],
-      bunkers: [],
-      endBunkers: [],
-      engineers: [],
-      infantry: [],
-      parachuteInfantry: [],
-      missileLaunchers: [],
-      tanks: [],
-      vans: [],
-      helicopters: [],
-      smartMissiles: [],
-      bases: [],
-      clouds: [],
-      landingPads: [],
-      turrets: [],
-      shrapnel: [],
-      smoke: [],
-      radar: null,
-      inventory: null
-    };
+    var data, dom, objects, exports;
 
     function createObjects() {
 
@@ -1454,6 +1425,24 @@
 
     }
 
+    function pause() {
+
+      if (!data.paused) {
+        objects.gameLoop.stop();
+        data.paused = true;
+      }
+
+    }
+
+    function resume() {
+
+      if (data.paused) {
+        objects.gameLoop.start();
+        data.paused = false;
+      }
+  
+    }
+
     function init() {
 
       dom.world = document.getElementById('battlefield');
@@ -1495,10 +1484,45 @@
 
     }
 
+    data = {
+      paused: false
+    };
+
+    dom = {
+      world: null
+    };
+
+    objects = {
+      gameLoop: null,
+      view: null,
+      chains: [],
+      balloons: [],
+      bunkers: [],
+      endBunkers: [],
+      engineers: [],
+      infantry: [],
+      parachuteInfantry: [],
+      missileLaunchers: [],
+      tanks: [],
+      vans: [],
+      helicopters: [],
+      smartMissiles: [],
+      bases: [],
+      clouds: [],
+      landingPads: [],
+      turrets: [],
+      shrapnel: [],
+      smoke: [],
+      radar: null,
+      inventory: null
+    };
+
     exports = {
       dom: dom,
       init: init,
-      objects: objects
+      objects: objects,
+      pause: pause,
+      resume: resume
     };
 
     return exports;
@@ -1508,54 +1532,6 @@
   View = function() {
 
     var css, data, dom, events, exports;
-
-    css = {
-      gameTips: {
-        active: 'active'
-      }
-    };
-
-    data = {
-      ignoreMouseEvents: false,
-      browser: {
-        width: 0,
-        fractionWidth: 0,
-        halfWidth: 0,
-        height: 0
-      },
-      mouse: {
-        x: 0,
-        y: 0
-      },
-      world: {
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0
-      },
-      battleField: {
-        width: 0,
-        height: 0,
-        scrollLeft: 0,
-        scrollLeftVX: 0,
-        parallaxRate: 0.1
-      },
-      topBar: {
-        height: 0
-      },
-      gameTips: {
-        active: false
-      },
-      maxScroll: 6
-    };
-
-    dom = {
-      battleField: null,
-      stars: null,
-      topBar: null,
-      gameTips: null,
-      gameTipsList: null
-    };
 
     function setLeftScroll(x) {
 
@@ -1666,6 +1642,9 @@
       utils.events.add(window, 'resize', events.resize);
       utils.events.add(document, 'mousemove', events.mousemove);
 
+      utils.events.add(window, 'focus', events.focus);
+      utils.events.add(window, 'blur', events.blur);
+
       // TODO: sort out 'invalid argument' issue for IE 8 later.
       if (!navigator.userAgent.match(/msie 8/i)) {
         utils.events.add(document, 'keydown', events.keydown);
@@ -1700,12 +1679,72 @@
 
     }
 
+    css = {
+      gameTips: {
+        active: 'active'
+      }
+    };
+
+    data = {
+      ignoreMouseEvents: false,
+      browser: {
+        width: 0,
+        fractionWidth: 0,
+        halfWidth: 0,
+        height: 0
+      },
+      mouse: {
+        x: 0,
+        y: 0
+      },
+      world: {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0
+      },
+      battleField: {
+        width: 0,
+        height: 0,
+        scrollLeft: 0,
+        scrollLeftVX: 0,
+        parallaxRate: 0.1
+      },
+      topBar: {
+        height: 0
+      },
+      gameTips: {
+        active: false
+      },
+      maxScroll: 6
+    };
+
+    dom = {
+      battleField: null,
+      stars: null,
+      topBar: null,
+      gameTips: null,
+      gameTipsList: null
+    };
+
     events = {
+
+      blur: function() {
+
+        game.pause();
+
+      },
+
+      focus: function() {
+
+        game.resume();
+
+      },
 
       mousemove: function(e) {
         if (!data.ignoreMouseEvents) {
-          data.mouse.x = (e||event).clientX;
-          data.mouse.y = (e||event).clientY;
+          data.mouse.x = (e || window.event).clientX;
+          data.mouse.y = (e || window.event).clientY;
         }
       },
 
@@ -1732,32 +1771,6 @@
   Inventory = function() {
 
     var css, data, dom, objects, exports;
-
-    css = {
-      building: 'building',
-      ordering: 'ordering'
-    };
-
-    data = {
-      frameCount: 0,
-      // quick type-to-object/constructor array
-      types: {
-        tank: [game.objects.tanks, Tank],
-        van: [game.objects.vans, Van],
-        missileLauncher: [game.objects.missileLaunchers, MissileLauncher],
-        infantry: [game.objects.infantry, Infantry],
-        engineer: [game.objects.engineers, Engineer]
-      },
-      building: false
-    };
-
-    objects = {
-      order: null
-    };
-
-    dom = {
-      gameStatusBar: null
-    };
 
     function createObject(typeData, options) {
 
@@ -1920,6 +1933,32 @@
       dom.gameStatusBar = document.getElementById('game-status-bar');
     }
 
+    css = {
+      building: 'building',
+      ordering: 'ordering'
+    };
+
+    data = {
+      frameCount: 0,
+      // quick type-to-object/constructor array
+      types: {
+        tank: [game.objects.tanks, Tank],
+        van: [game.objects.vans, Van],
+        missileLauncher: [game.objects.missileLaunchers, MissileLauncher],
+        infantry: [game.objects.infantry, Infantry],
+        engineer: [game.objects.engineers, Engineer]
+      },
+      building: false
+    };
+
+    objects = {
+      order: null
+    };
+
+    dom = {
+      gameStatusBar: null
+    };
+
     exports = {
       animate: animate,
       data: data,
@@ -1937,22 +1976,6 @@
   function RadarItem(options) {
 
     var css, data, dom, oParent, exports;
-
-    css = {
-      radarItem: 'radar-item',
-      dying: 'dying',
-      dead: 'dead'
-    };
-
-    data = {
-      dead: false
-    };
-
-    dom = {
-      o: options.o
-    };
-
-    oParent = options.oParent;
 
     function die() {
       if (!data.dead) {
@@ -1984,6 +2007,22 @@
       utils.css.add(dom.o, css.radarItem + ' ' + options.className);
     }
 
+    css = {
+      radarItem: 'radar-item',
+      dying: 'dying',
+      dead: 'dead'
+    };
+
+    data = {
+      dead: false
+    };
+
+    dom = {
+      o: options.o
+    };
+
+    oParent = options.oParent;
+
     init();
 
     exports = {
@@ -2000,28 +2039,6 @@
   Radar = function() {
 
     var data, css, dom, maybeJam, exports, objects;
-
-    css = {
-      incomingSmartMissile: 'incoming-smart-missile'
-    };
-
-    objects = {
-      items: []
-    };
-
-    data = {
-      frameCount: 0,
-      animateModulus: 1, // TODO: review
-      // jammingModulus: 12,
-      jammingTimer: null,
-      lastMissileCount: 0,
-      incomingMissile: false
-    };
-
-    dom = {
-      radar: null,
-      radarItem: null
-    };
 
     function setIncomingMissile(incoming) {
 
@@ -2113,7 +2130,7 @@
 
         for (i=0, j=objects.items.length; i<j; i++) {
           // TODO: optimize
-          objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+         objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
           if (objects.items[i].oParent.data.type) {
             if (objects.items[i].oParent.data.type === 'balloon') {
               // balloon
@@ -2181,6 +2198,28 @@
 
     };
 
+    css = {
+      incomingSmartMissile: 'incoming-smart-missile'
+    };
+
+    objects = {
+      items: []
+    };
+
+    data = {
+      frameCount: 0,
+      animateModulus: 1, // TODO: review
+      // jammingModulus: 12,
+      jammingTimer: null,
+      lastMissileCount: 0,
+      incomingMissile: false
+    };
+
+    dom = {
+      radar: null,
+      radarItem: null
+    };
+
     init();
 
     exports = {
@@ -2200,10 +2239,6 @@
   GameLoop = function() {
 
     var data, timer, exports;
-
-    data = {
-      frameCount: 0
-    };
 
     function animate() {
 
@@ -2247,15 +2282,30 @@
 
     }
 
+    function stop() {
+
+      if (timer) {
+         window.clearInterval(timer);
+         timer = null;
+      }
+
+    }
+
     function init() {
 
       start();
 
     }
 
+    data = {
+      frameCount: 0
+    };
+
     exports = {
       data: data,
-      init: init
+      init: init,
+      stop: stop,
+      start: start
     };
 
     return exports;
@@ -2293,49 +2343,6 @@
   Balloon = function(options) {
 
     var css, data, dom, objects, radarItem, reset, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'balloon',
-      friendly: 'facing-right',
-      enemy: 'facing-left',
-      facingLeft: 'facing-left',
-      facingRight: 'facing-right'
-    });
-
-    data = inheritData({
-      type: 'balloon',
-      bottomAligned: true, // TODO: review/remove
-      canRespawn: false,
-      frameCount: 0,
-      windModulus: 16,
-      windOffsetX: 0,
-      windOffsetY: 0,
-      energy: 3,
-      defaultEnergy: 3,
-      direction: 0,
-      detached: false,
-      hostile: false, // dangerous when detached
-      verticalDirection: 0.33,
-      verticalDirectionDefault: 0.33,
-      leftMargin: options.leftMargin || 0,
-      width: 38,
-      height: 16,
-      halfWidth: 19,
-      halfHeight: 8,
-      deadTimer: null,
-      // relative % to pull down when rising from the ground...
-      bottomYOffset: 6
-    }, options);
-
-    dom = {
-      o: null
-    };
-
-    objects = {
-      bunker: options.bunker || null
-    };
 
     function moveTo(x, bottomY) {
 
@@ -2588,6 +2595,49 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'balloon',
+      friendly: 'facing-right',
+      enemy: 'facing-left',
+      facingLeft: 'facing-left',
+      facingRight: 'facing-right'
+    });
+
+    data = inheritData({
+      type: 'balloon',
+      bottomAligned: true, // TODO: review/remove
+      canRespawn: false,
+      frameCount: 0,
+      windModulus: 16,
+      windOffsetX: 0,
+      windOffsetY: 0,
+      energy: 3,
+      defaultEnergy: 3,
+      direction: 0,
+      detached: false,
+      hostile: false, // dangerous when detached
+      verticalDirection: 0.33,
+      verticalDirectionDefault: 0.33,
+      leftMargin: options.leftMargin || 0,
+      width: 38,
+      height: 16,
+      halfWidth: 19,
+      halfHeight: 8,
+      deadTimer: null,
+      // relative % to pull down when rising from the ground...
+      bottomYOffset: 6
+    }, options);
+
+    dom = {
+      o: null
+    };
+
+    objects = {
+      bunker: options.bunker || null
+    };
+
     exports = {
       animate: animate,
       data: data,
@@ -2608,34 +2658,6 @@
   Bunker = function(options) {
 
     var css, data, dom, objects, radarItem, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'bunker',
-      burning: 'burning'
-    });
-
-    data = inheritData({
-      type: 'bunker',
-      bottomAligned: true,
-      energy: 30,
-      width: 51,
-      halfWidth: 25,
-      height: 25,
-      infantryTimer: null,
-      midPoint: null
-    }, options);
-
-    dom = {
-      o: null,
-      oSubSprite: null
-    };
-
-    objects = {
-      balloon: null,
-      chain: null
-    };
 
     function createBalloon(useRandomY) {
 
@@ -2821,6 +2843,34 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'bunker',
+      burning: 'burning'
+    });
+
+    data = inheritData({
+      type: 'bunker',
+      bottomAligned: true,
+      energy: 30,
+      width: 51,
+      halfWidth: 25,
+      height: 25,
+      infantryTimer: null,
+      midPoint: null
+    }, options);
+
+    dom = {
+      o: null,
+      oSubSprite: null
+    };
+
+    objects = {
+      balloon: null,
+      chain: null
+    };
+
     exports = {
       objects: objects,
       data: data,
@@ -2841,43 +2891,6 @@
   EndBunker = function(options) {
 
     var css, dom, data, objects, nearby, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'end-bunker'
-    });
-
-    data = inheritData({
-      type: 'end-bunker',
-      bottomAligned: true,
-      frameCount: 0,
-      energy: 0,
-      x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
-      width: 39,
-      halfWidth: 19,
-      height: 17,
-      funds: 0,
-      firing: false,
-      gunYOffset: 10,
-      fireModulus: 6,
-      midPoint: null
-    }, options);
-
-    data.midPoint = {
-      x: data.x + data.halfWidth + 5,
-      y: data.y,
-      width: 5,
-      height: data.height
-    };
-
-    dom = {
-      o: null
-    };
-
-    objects = {
-      gunfire: []
-    };
 
     function setFiring(state) {
 
@@ -2991,6 +3004,43 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'end-bunker'
+    });
+
+    data = inheritData({
+      type: 'end-bunker',
+      bottomAligned: true,
+      frameCount: 0,
+      energy: 0,
+      x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
+      width: 39,
+      halfWidth: 19,
+      height: 17,
+      funds: 0,
+      firing: false,
+      gunYOffset: 10,
+      fireModulus: 6,
+      midPoint: null
+    }, options);
+
+    data.midPoint = {
+      x: data.x + data.halfWidth + 5,
+      y: data.y,
+      width: 5,
+      height: data.height
+    };
+
+    dom = {
+      o: null
+    };
+
+    objects = {
+      gunfire: []
+    };
+
     exports = {
       animate: animate,
       data: data,
@@ -3043,52 +3093,6 @@
   Turret = function(options) {
 
     var css, data, dom, objects, radarItem, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'turret',
-      destroyed: 'destroyed'
-    });
-
-    data = inheritData({
-      type: 'turret',
-      bottomAligned: true,
-      dead: false,
-      // isNeutral: false,
-      energy: 50,
-      energyMax: 50,
-      firing: false,
-      frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: 8,
-      scanModulus: 1,
-      claimModulus: 8,
-      repairModulus: 24,
-      smokeModulus: 2,
-      claimPoints: 0,
-      claimPointsMax: 50,
-      y: 0,
-      width: 6,
-      height: 15,
-      // hacks
-      halfWidth: 7,
-      halfHeight: 7,
-      angle: 0,
-      maxAngle: 90,
-      scanIncrement: 0
-    }, options);
-
-    // how fast to "scan" (left -> right, and back)
-    data.scanIncrement = (90 * data.scanModulus/FPS);
-
-    dom = {
-      o: null,
-      oSubSprite: null
-    };
-
-    objects = {
-      gunfire: []
-    };
 
     function okToMove() {
       // guns scan and fire 100% of the time, OR a random percent bias based on the amount of damage they've sustained. No less than 25% of the time.
@@ -3349,6 +3353,52 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'turret',
+      destroyed: 'destroyed'
+    });
+
+    data = inheritData({
+      type: 'turret',
+      bottomAligned: true,
+      dead: false,
+      // isNeutral: false,
+      energy: 50,
+      energyMax: 50,
+      firing: false,
+      frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
+      fireModulus: 8,
+      scanModulus: 1,
+      claimModulus: 8,
+      repairModulus: 24,
+      smokeModulus: 2,
+      claimPoints: 0,
+      claimPointsMax: 50,
+      y: 0,
+      width: 6,
+      height: 15,
+      // hacks
+      halfWidth: 7,
+      halfHeight: 7,
+      angle: 0,
+      maxAngle: 90,
+      scanIncrement: 0
+    }, options);
+
+    // how fast to "scan" (left -> right, and back)
+    data.scanIncrement = (90 * data.scanModulus/FPS);
+
+    dom = {
+      o: null,
+      oSubSprite: null
+    };
+
+    objects = {
+      gunfire: []
+    };
+
     exports = {
       animate: animate,
       data: data,
@@ -3372,35 +3422,6 @@
   Base = function(options) {
 
     var css, data, dom, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'base'
-    });
-
-    data = inheritData({
-      type: 'base',
-      bottomAligned: true,
-      dead: false,
-      frameCount: 0,
-      fireModulus: 100,
-      // left side, or right side (roughly)
-      x: (options.x || (options.isEnemy ? 8192 - 192: 64)),
-      y: 0,
-      bottomY: (options.bottomY || 0),
-      width: 125,
-      height: 34,
-      halfWidth: 62,
-      halfHeight: 17,
-      // bases don't move, but these are for explosions.
-      vX: 0,
-      vY: 0
-    }, options);
-
-    dom = {
-      o: null
-    };
 
     function fire() {
 
@@ -3543,6 +3564,35 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'base'
+    });
+
+    data = inheritData({
+      type: 'base',
+      bottomAligned: true,
+      dead: false,
+      frameCount: 0,
+      fireModulus: 100,
+      // left side, or right side (roughly)
+      x: (options.x || (options.isEnemy ? 8192 - 192: 64)),
+      y: 0,
+      bottomY: (options.bottomY || 0),
+      width: 125,
+      height: 34,
+      halfWidth: 62,
+      halfHeight: 17,
+      // bases don't move, but these are for explosions.
+      vX: 0,
+      vY: 0
+    }, options);
+
+    dom = {
+      o: null
+    };
+
     exports = {
       animate: animate,
       data: data,
@@ -3559,32 +3609,6 @@
   Chain = function(options) {
 
     var css, data, dom, objects, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'chain'
-    });
-
-    data = inheritData({
-      type: 'chain',
-      energy: 1,
-      hostile: false, // applies when detached from base or balloon
-      width: 1,
-      height: 0,
-      frameCount: 0,
-      animateModulus: 2,
-      damagePoints: 6
-    }, options);
-
-    dom = {
-      o: null
-    };
-
-    objects = {
-      bunker: options.bunker || null,
-      balloon: options.balloon || null
-    };
 
     function setHeight(height) {
       dom.o.style.height = (height + 'px');
@@ -3652,66 +3676,67 @@
 
       x = data.x;
       y = data.y;
+
       height = data.height;
 
-      if (data.frameCount % data.animateModulus === 0) {
+      // special case: animate every frame if detached from bunker and attached to balloon.
+
+      // (!objects.bunker || objects.bunker.data.dead) && objects.balloon)
 
         // move if attached, fall if not
 
-        if (objects.bunker && !objects.bunker.data.dead) {
+      if (objects.bunker && !objects.bunker.data.dead) {
 
-          // bunker
+        // bunker
 
-          data.isEnemy = objects.bunker.data.isEnemy;
+        data.isEnemy = objects.bunker.data.isEnemy;
 
-          if (objects.balloon) {
+        if (objects.balloon) {
 
-            // + balloon
+          // + balloon
 
-            y = objects.balloon.data.y + objects.balloon.data.height;
+          y = objects.balloon.data.y + objects.balloon.data.height;
 
-            height = 380 - y - objects.bunker.data.height + 4;
-
-          } else {
-
-            // - balloon
-
-            y = 380 - data.height;
-
-          }
+          height = 380 - y - objects.bunker.data.height + 4;
 
         } else {
 
-          // no bunker
+          // - balloon
 
-          data.hostile = true;
+          y = 380 - data.height;
 
-          if (objects.balloon && !objects.balloon.data.dead) {
+        }
 
-            x = objects.balloon.data.x + objects.balloon.data.halfWidth + 5;
+      } else {
 
-            y = objects.balloon.data.y + objects.balloon.data.height;
+        // no bunker
 
-          } else {
+        data.hostile = true;
 
-            // free-falling chain
-            y = data.y;
+        if (objects.balloon && !objects.balloon.data.dead) {
 
-            y += 3;
+          x = objects.balloon.data.x + objects.balloon.data.halfWidth + 5;
 
-            if (y >= 380 + 3) {
-              die();
-            }
+          y = objects.balloon.data.y + objects.balloon.data.height;
 
+        } else {
+
+          // free-falling chain
+          y = data.y;
+
+          y += 2;
+
+          if (y >= 380 + 2) {
+            die();
           }
 
         }
 
-        if (dom.o) {
+      }
 
-          moveTo(x, y, height);
+      if (dom.o) {
 
-        }
+        moveTo(x, y, height);
 
       }
 
@@ -3733,11 +3758,37 @@
 
       common.setX(exports, data.x);
       common.setY(exports, data.y);
+
       setHeight(data.height);
 
       game.dom.world.appendChild(dom.o);
 
     }
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'chain'
+    });
+
+    data = inheritData({
+      type: 'chain',
+      energy: 1,
+      hostile: false, // applies when detached from base or balloon
+      width: 1,
+      height: 0,
+      frameCount: 0,
+      damagePoints: 6
+    }, options);
+
+    dom = {
+      o: null
+    };
+
+    objects = {
+      bunker: options.bunker || null,
+      balloon: options.balloon || null
+    };
 
     exports = {
       animate: animate,
@@ -3756,32 +3807,6 @@
   MissileLauncher = function(options) {
 
     var css, data, dom, radarItem, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'missile-launcher'
-    });
-
-    data = inheritData({
-      type: 'missile-launcher',
-      bottomAligned: true,
-      energy: 3,
-      direction: 0,
-      vX: (options.isEnemy ? -1 : 1),
-      frameCount: 0,
-      fireModulus: FPS, // check every second or so
-      width: 54,
-      height: 18,
-      inventory: {
-        frameCount: 60,
-        cost: 5
-      }
-    }, options);
-
-    dom = {
-      o: null
-    };
 
     function moveTo(x, bottomY) {
 
@@ -3914,6 +3939,32 @@
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'missile-launcher'
+    });
+
+    data = inheritData({
+      type: 'missile-launcher',
+      bottomAligned: true,
+      energy: 3,
+      direction: 0,
+      vX: (options.isEnemy ? -1 : 1),
+      frameCount: 0,
+      fireModulus: FPS, // check every second or so
+      width: 54,
+      height: 18,
+      inventory: {
+        frameCount: 60,
+        cost: 5
+      }
+    }, options);
+
+    dom = {
+      o: null
+    };
 
     exports = {
       animate: animate,
@@ -4102,27 +4153,6 @@
 
     var css, data, dom, collision, exports;
 
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'bomb',
-      dropping: 'dropping',
-      explosionLarge: 'explosion-large',
-      spark: 'spark'
-    });
-
-    data = inheritData({
-      firstFrame: true,
-      width: 13,
-      height: 12,
-      gravity: 1,
-      damagePoints: 3
-    }, options);
-
-    dom = {
-      o: null
-    };
-
     function die(options) {
 
       // aieee!
@@ -4238,6 +4268,27 @@
 
     }
 
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'bomb',
+      dropping: 'dropping',
+      explosionLarge: 'explosion-large',
+      spark: 'spark'
+    });
+
+    data = inheritData({
+      firstFrame: true,
+      width: 13,
+      height: 12,
+      gravity: 1,
+      damagePoints: 3
+    }, options);
+
+    dom = {
+      o: null
+    };
+
     collision = {
       options: {
         source: exports, // initially undefined
@@ -4264,32 +4315,6 @@
   Cloud = function(options) {
 
     var css, dom, data, exports;
-
-    options = options || {};
-
-    css = inheritCSS({
-      className: 'cloud' + (Math.random() > 0.5 ? 2 : 1)
-    });
-
-    data = inheritData({
-      type: 'cloud',
-      isNeutral: true,
-      frameCount: 0,
-      windModulus: 16,
-      windOffsetX: 0,
-      windOffsetY: 0,
-      verticalDirection: 0.33,
-      verticalDirectionDefault: 0.33,
-      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10)),
-      width: 102,
-      halfWidth: 51,
-      height: 29,
-      halfHeight: 14
-    }, options);
-
-    dom = {
-      o: null
-    };
 
     function moveTo(x, y) {
 
@@ -4356,6 +4381,32 @@
       game.dom.world.appendChild(dom.o);
 
     }
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'cloud' + (Math.random() > 0.5 ? 2 : 1)
+    });
+
+    data = inheritData({
+      type: 'cloud',
+      isNeutral: true,
+      frameCount: 0,
+      windModulus: 16,
+      windOffsetX: 0,
+      windOffsetY: 0,
+      verticalDirection: 0.33,
+      verticalDirectionDefault: 0.33,
+      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10)),
+      width: 102,
+      halfWidth: 51,
+      height: 29,
+      halfHeight: 14
+    }, options);
+
+    dom = {
+      o: null
+    };
 
     exports = {
       animate: animate,
