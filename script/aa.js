@@ -1,5 +1,7 @@
 (function(window) {
 
+"use strict";
+
 /*
 
                     MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM       
@@ -16,6 +18,9 @@
 
 */
 
+/*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
+/*jslint browser: true, devel: true, nomen: true, plusplus: true, todo: true, vars: true, white: true */
+
   var game, utils, common;
 
   var FPS = 24;
@@ -24,7 +29,7 @@
   var winloc = window.location.href.toString();
 
   // just in case...
-  var console = (window.console || { log: function(){} });
+  var console = (window.console || { log: function(){ return; } });
 
   var noJamming = winloc.match(/nojam/i);
 
@@ -36,6 +41,14 @@
 
   var battleOver = false;
 
+  var keyboardMonitor;
+
+  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
+
+  var shrapnelExplosion;
+
+  var GameLoop, View;
+
   utils = {
 
     array: (function() {
@@ -46,10 +59,9 @@
             return -1;
           } else if (a[property] > b[property]) {
             return 1;
-          } else {
-            return 0;
           }
-        }
+          return 0;
+        };
       }
 
       function shuffle(array) {
@@ -72,7 +84,7 @@
       return {
         compare: compare,
         shuffle: shuffle
-      }
+      };
 
     }()),
 
@@ -166,6 +178,36 @@
 
   };
 
+  function removeNodeArray(nodeArray) {
+
+    var i, j;
+
+    for (i=0, j=nodeArray.length; i<j; i++) {
+      nodeArray[i].parentNode.removeChild(nodeArray[i]);
+      nodeArray[i] = null;
+    }
+
+  }
+
+  function removeNodes(dom) {
+
+    // remove all nodes in a structure
+    var item;
+
+    for (item in dom) {
+      if (dom.hasOwnProperty(item) && dom[item]) {
+        // node reference, or array of nodes?
+        if (dom[item] instanceof Array) {
+          removeNodeArray(dom[item]);
+        } else {
+          dom[item].parentNode.removeChild(dom[item]);
+        }
+        dom[item] = null;
+      }
+    }
+
+  }
+
   function mixin(oMain, oAdd) {
 
     // non-destructive merge
@@ -196,7 +238,7 @@
 
     return o1;
 
-  };
+  }
 
   function stopEvent(e) {
 
@@ -260,7 +302,7 @@
     }
 
     // note local scope.
-    var features = {
+    var localFeatures = {
 
 /*
       audio: false, // set later via SM2
@@ -293,12 +335,12 @@
 
     };
 
-    features.transform.prop = (
-      features.transform.w3 || 
-      features.transform.moz ||
-      features.transform.webkit ||
-      features.transform.ie ||
-      features.transform.opera
+    localFeatures.transform.prop = (
+      localFeatures.transform.w3 || 
+      localFeatures.transform.moz ||
+      localFeatures.transform.webkit ||
+      localFeatures.transform.ie ||
+      localFeatures.transform.opera
     );
 
     function attempt(style) {
@@ -314,40 +356,40 @@
 
     }
 
-    if (features.transform.prop) {
+    if (localFeatures.transform.prop) {
 
       // try to derive the rotate/3D support.
-      transform = features.transform.prop;
+      transform = localFeatures.transform.prop;
       styles = {
         css_2d: 'rotate(0deg)',
         css_3d: 'rotate3d(0,0,0,0deg)'
       };
 
       if (attempt(styles.css_3d)) {
-        features.rotate.has3D = true;
+        localFeatures.rotate.has3D = true;
         prop = 'rotate3d';
       } else if (attempt(styles.css_2d)) {
         prop = 'rotate';
       }
 
-      features.rotate.prop = prop;
+      localFeatures.rotate.prop = prop;
 
     }
 
-    console.log('user agent feature test:', features);
+    console.log('user agent feature test:', localFeatures);
 
-    console.log('requestAnimationFrame() is' + (features.getAnimationFrame ? '' : ' not') + ' enabled');
+    console.log('requestAnimationFrame() is' + (localFeatures.getAnimationFrame ? '' : ' not') + ' enabled');
 
-    if (features.transform.prop) {
+    if (localFeatures.transform.prop) {
       if (noTransform) {
         console.log('transform support present, disabling via URL parameter');
-        features.transform.prop = null;
+        localFeatures.transform.prop = null;
       } else {
         console.log('using transforms for parallax, rotation and some positioning.');
       }
     }
 
-    return features;
+    return localFeatures;
 
   }());
 
@@ -410,6 +452,579 @@
 
   };
 
+  function bottomAlignedY(y) {
+
+    // correct bottom-aligned Y value
+    return 370 - 2 - (y || 0);
+
+  }
+
+  function makeSprite(options) {
+
+    var o = document.createElement('div');
+
+    o.className = 'sprite ' + options.className;
+
+    return o;
+
+  }
+
+  function makeSubSprite() {
+
+    return makeSprite({
+      className: 'sub-sprite'
+    });
+
+  }
+
+  function addItem(className, x) {
+
+    var node = makeSprite({
+      className: className
+    });
+
+    if (x) {
+      node.style.left = x + 'px';
+    }
+
+    game.dom.world.appendChild(node);
+
+    return node;
+
+  }
+
+  function inheritCSS(options) {
+
+    var defaults;
+
+    options = options || {};
+
+    defaults = {
+      dead: 'dead',
+      enemy: 'enemy',
+      exploding: 'exploding'
+    };
+
+    return mixin(defaults, options);
+
+  }
+
+  function inheritData(data, options) {
+
+    // mixin defaults, and apply common options
+
+    var defaultData;
+
+    options = options || {};
+
+    defaultData = {
+      isEnemy: (options.isEnemy || false),
+      bottomY: (options.bottomY || 0),
+      dead: false,
+      x: options.x || 0,
+      y: options.y || 0,
+      vX: options.vX || 0,
+      vY: options.vY || 0
+    };
+
+    // correct y data, if the object is bottom-aligned
+    if (data.bottomAligned) {
+      data.y = bottomAlignedY(defaultData.bottomY);
+    }
+
+    return mixin(defaultData, data);
+
+  }
+
+  /**
+   * collision detection and related logic
+   */
+
+  var domPoint1, domPoint2;
+
+  domPoint1 = document.createElement('div');
+  domPoint1.className = 'collision-check-1';
+
+  domPoint2 = document.createElement('div');
+  domPoint2.className = 'collision-check-2';
+
+  function collisionCheck(point1, point2, point1XLookAhead) {
+
+    /**
+     * given x, y, width and height, determine if one object is overlapping another.
+     * additional hacky param: X-axis offset for object. Used for cases where tanks etc. need to know when objects are nearby.
+     * provided as an override because live objects are passed directly and can't be modified (eg., data1.x += ...).
+     * cloning these objects via mixin() works, but then lot of temporary objects are created, leading to increased garbage collection.
+     */
+
+    if (!point1 || !point2) {
+      return null;
+    }
+
+    // presume each object has x, y, width, height - otherwise, all hell will break loose.
+
+    // given two boxes, check for intersects.
+    var result;
+
+    var d1, d2;
+
+    // var width, height;
+
+    if (0) {
+
+      d1 = domPoint1.cloneNode(false);
+      d2 = domPoint2.cloneNode(false);
+
+      d1.style.width = point1.width + 'px';
+      d1.style.height = point1.height + 'px';
+      d1.style.left = (point1.x) + 'px';
+      d1.style.top = point1.y + 'px';
+
+      d2.style.width = point2.width + 'px';
+      d2.style.height = point2.height + 'px';
+      d2.style.left = (point2.x) + 'px';
+      d2.style.top = point2.y + 'px';
+
+      game.dom.world.appendChild(d1);
+      game.dom.world.appendChild(d2);
+
+    }
+
+    if (point2.x >= point1.x + point1XLookAhead) {
+
+      // point 2 is to the right.
+
+      if (point1.x + point1XLookAhead + point1.width >= point2.x) {
+
+        // point 1 overlaps point 2 on x.
+
+        // width = point2.x - (point1.x + point1XLookAhead + point1.width);
+
+        if (point1.y < point2.y) {
+
+          // point 1 is above point 2.
+
+          if (point1.y + point1.h >= point2.y) {
+
+            // point 1 overlaps point 2 on y.
+            result = true;
+
+            // height = point2.y - (point1.y + point1.h);
+
+          }
+
+        } else {
+
+          result = (point1.y < point2.y + point2.height);
+
+          // height = (point2.y + point2.height) - point1.y;
+
+        }
+
+      }
+
+    } else {
+
+      // point 1 is to the right.
+
+      if (point2.x + point2.width >= point1.x + point1XLookAhead) {
+
+        // point 2 overlaps point 1 on x.
+
+        // width = point1.x - (point2.x + point1XLookAhead + point2.width);
+
+        if (point2.y < point1.y) {
+
+          // point 2 is above point 1.
+          result = (point2.y + point2.height >= point1.y);
+
+          // height = point1.y - (point2.height + point2.y);
+
+        } else {
+
+          // point 2 is below point 1.
+          result = (point1.y + point1.height >= point2.y);
+
+          // height = point2.y - (point1.y + point1.height);
+
+        }
+
+      } else {
+
+        // no overlap?
+        result = false;
+
+      }
+
+    }
+
+/*
+    if (width && height) {
+      console.log(width, height);
+    }
+*/
+    return result;
+
+  }
+
+  function collisionCheckArray(options) {
+
+    /**
+     * options = {
+     *   source: object (eg., game.objects.gunfire[0]);
+     *   targets: array (eg., game.objects.tanks)
+     * }
+     */
+
+    var hit, item, objects, data1, data2, xLookAhead, foundHit;
+
+    if (!options) {
+      return false;
+    }
+
+    // don't check if the object is dead. If it's expired, only allow the object if it's also "hostile" (can still hit things)
+    if (options.source.data.dead || (options.source.data.expired && !options.source.data.hostile)) {
+      return false;
+    }
+
+    // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
+
+    if (options.useLookAhead) {
+
+      // friendly things move further right, enemies move further left.
+
+      xLookAhead = (Math.min(16, options.source.data.xLookAhead || (options.source.data.width * 0.33)) * (options.source.data.isEnemy ? -1 : 1));
+
+    } else {
+
+      xLookAhead = 0;
+
+    }
+
+    data1 = options.source.data;
+
+    objects = options.targets;
+
+    for (item in objects) {
+
+      // non-standard formatting, lengthy logic check here...
+      if (
+
+        objects.hasOwnProperty(item)
+
+        // don't compare the object against itself
+        && objects[item] !== options.source
+
+        // ignore dead objects (unless a turret, which can be reclaimed / repaired by engineers)
+        && (!objects[item].data.dead || (objects[item].data.type === 'turret' && data1.type === 'infantry' && data1.role))
+
+        // more non-standard formatting....
+        && (
+          // don't check against friendly units
+          (objects[item].data.isEnemy !== options.source.data.isEnemy)
+          // unless infantry vs. bunker, end-bunker or helicopter
+          || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
+          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
+
+          || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
+          // OR engineer vs. turret
+          || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
+          // OR we're dealing with a hostile or neutral object
+          || (data1.hostile || objects[item].data.hostile)
+          || (data1.isNeutral || objects[item].data.isNeutral)
+        )
+
+        // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
+        && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
+
+      ) {
+
+        data2 = objects[item].data;
+
+        hit = collisionCheck(data1, data2, xLookAhead);
+
+        if (hit) {
+
+          foundHit = true;
+
+          if (options.hit) {
+            options.hit(objects[item]);
+          }
+
+        }
+
+      }
+
+    }
+
+    return foundHit;
+
+  }
+
+  function collisionTest(collision, exports) {
+
+    var i, j;
+
+    // hack: first-time run fix, as exports is initially undefined
+    if (!collision.options.source) {
+      collision.options.source = exports;
+    }
+
+    // loop through relevant game object arrays
+    for (i=0, j=collision.items.length; i<j; i++) {
+      // ... and check them
+      // TODO: revisit for object creation / garbage collection improvements
+      collisionCheckArray(mixin(collision.options, {
+        targets: game.objects[collision.items[i]]
+      }));
+    }
+
+  }
+
+  function collisionCheckMidPoint(obj1, obj2) {
+
+    // infantry-at-midpoint (bunker or helicopter) case
+    return collisionCheck(obj1.data.midPoint, obj2.data, 0);
+
+  }
+
+  function trackObject(source, target, options) {
+
+    // given a source object (the helicopter) and a target, return the relevant vX / vY delta to get progressively closer to the target.
+
+    var deltaX, deltaY, result;
+
+    options = options || {};
+
+    // TODO: (target.data.x - target.data.halfWidth) results in helicopter being on left side. + target.data.halfWidth is screwy??
+
+    // deltaX = target.data.x - source.data.x;
+
+    deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
+
+    // deltaX += target.data.halfWidth; // ?
+
+    // by default, offset target to one side of a balloon.
+
+    if (target.data.type === 'balloon') {
+
+      if (target.data.x > source.data.x) {
+
+        deltaX -= 150;
+
+      } else {
+
+        deltaX += 150;
+
+      }
+
+    }
+
+    deltaY = target.data.y - source.data.y;
+
+    deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+
+    result = {
+      deltaX: deltaX,
+      deltaY: deltaY
+    };
+
+    return result;
+
+  }
+
+  function getNearestObject(source, options) {
+
+    // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
+
+    var i, j, k, l, objects, itemArray, items, localObjects, result, targetData, yBias, isInFront, useInFront;
+
+    options = options || {};
+
+    objects = game.objects;
+
+    useInFront = (options.useInFront || null);
+
+    // should a smart missile be able to target another smart missile? ... why not.
+    items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
+
+    localObjects = [];
+
+    // if the source object isn't near the ground, be biased toward airborne items.
+    if (source.data.type === 'helicopter' && source.data.y < game.objects.view.data.world.height - 100) {
+      yBias = 1.5;
+    }
+
+    for (i=0, j=items.length; i<j; i++) {
+
+      itemArray = objects[items[i]];
+
+      for (k=0, l=itemArray.length; k<l; k++) {
+
+        // potential target: not dead, and an enemy
+        if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
+
+          // is the target in front of the source?
+          isInFront = (itemArray[k].data.x >= source.data.x);
+
+          // [revised] - is the target within an acceptable range?
+          // isInFront = (itemArray[k].data.x >= source.data.x || itemArray[k].data.x - source.data.x > -100);
+
+          // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
+          if (!useInFront || (useInFront && ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)))) {
+
+            targetData = itemArray[k].data;
+
+            localObjects.push({
+              obj: itemArray[k],
+              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * yBias) + Math.abs(source.data.y) * yBias
+            });
+
+          }
+
+        }
+
+      }
+
+    }
+
+    // sort by distance
+    localObjects.sort(utils.array.compare('totalDistance'));
+
+    if (localObjects.length) {
+
+      // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
+      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length-1 : 0].obj;
+
+    } else {
+
+      result = null;
+
+    }
+
+    return result;
+
+  }
+
+  function objectInView(data, options) {
+
+    // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen).
+
+    var i, j, items, deltaX, result;
+
+    options = options || {};
+
+    // by default, 67% of screen width
+    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * 2/3);
+
+    // by default, take helicopters if nothing else.
+    items = game.objects[(options.items || 'helicopters')];
+
+    for (i=0, j=items.length; i<j; i++) {
+
+      // how far away is the target?
+      deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
+
+      if (!items[i].data.dead && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
+
+        result = items[i];
+
+        break;
+
+      }
+
+    }
+
+    return result;
+
+  }
+
+  function initNearby(nearby, exports) {
+
+    // map options.source -> exports
+    nearby.options.source = exports;
+
+  }
+
+  function nearbyTest(nearby) {
+
+    var i, j, foundHit;
+
+    // loop through relevant game object arrays
+    // TODO: revisit for object creation / garbage collection improvements
+    for (i=0, j=nearby.items.length; i<j; i++) {
+      // ... and check them
+      if (collisionCheckArray(mixin(nearby.options, { targets: game.objects[nearby.items[i]] }))) {
+        foundHit = true;
+      }
+    }
+
+    // callback for no-hit case, too
+    if (!foundHit && nearby.options.miss) {
+      nearby.options.miss(nearby.options.source);
+    }
+
+  }
+
+  function enemyHelicopterNearby(data, triggerDistance) {
+
+    var i, j, deltaX, result;
+
+    // by default, 67% of screen width
+    triggerDistance = triggerDistance || (game.objects.view.data.browser.width * 2/3);
+
+    for (i=0, j=game.objects.helicopters.length; i<j; i++) {
+
+      // not cloaked, not dead, and an enemy?
+      if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
+
+        // how far away is the target?
+        deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+
+        if (deltaX < triggerDistance) {
+
+          result = game.objects.helicopters[i];
+
+          break;
+
+        }
+
+      }
+
+    }
+
+    return result;
+
+  }
+
+  function getDoorCoords(obj) {
+
+    // for special collision check case with bunkers
+
+    var door, result;
+
+    door = {
+      width: 5,
+      height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
+      halfWidth: 2.5
+    };
+
+    result = {
+      width: door.width,
+      height: door.height,
+      // slight offset on X, don't subtract door half-width
+      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
+      y: parseInt(obj.data.y + obj.data.height - door.height, 10)
+    };
+
+    return result;
+
+  }
+
+  /**
+   * sound effects
+   */
+
   var hasSound = false;
 
   var sounds = {
@@ -426,7 +1041,7 @@
     genericGunFire: null,
     missileLaunch: null,
     turretGunFire: null
-  }
+  };
 
   soundManager.setup({
     defaultOptions: {
@@ -486,11 +1101,11 @@
 
   game = (function() {
 
-    var data, dom, events, objects, keyboardMonitor, exports;
+    var dom, objects, exports;
 
     dom = {
       world: null
-    }
+    };
 
     objects = {
       gameLoop: null,
@@ -515,9 +1130,11 @@
       smoke: [],
       radar: null,
       inventory: null
-    }
+    };
 
     function createObjects() {
+
+      var i, node;
 
       objects.gameLoop = new GameLoop();
 
@@ -764,7 +1381,7 @@
         x: 350
       }));
 
-      for (var i=0; i<5; i++) {
+      for (i=0; i<5; i++) {
 
         objects.infantry.push(new Infantry({
           x: 500 + (i * 20)
@@ -855,7 +1472,7 @@
         isEnemy: true
       }));
 
-      for (var i=0; i<5; i++) {
+      for (i=0; i<5; i++) {
 
         objects.infantry.push(new Infantry({
           x: 8000 + ((i+1) * -20),
@@ -908,78 +1525,16 @@
     }
 
     exports = {
-      data: data,
       dom: dom,
       init: init,
       objects: objects
-    }
+    };
 
     return exports;
 
   }());
 
-  function makeSprite(options) {
-
-    var o = document.createElement('div');
-
-    o.className = 'sprite ' + options.className;
-
-    return o;
-
-  }
-
-  function makeSubSprite() {
-
-    return makeSprite({
-      className: 'sub-sprite'
-    });
-
-  }
-
-  function inheritCSS(options) {
-
-    var defaults;
-
-    options = options || {};
-
-    defaults = {
-      dead: 'dead',
-      enemy: 'enemy',
-      exploding: 'exploding'
-    }
-
-    return mixin(defaults, options);
-
-  }
-
-  function inheritData(data, options) {
-
-    // mixin defaults, and apply common options
-
-    var defaultData;
-
-    options = options || {};
-
-    defaultData = {
-      isEnemy: (options.isEnemy || false),
-      bottomY: (options.bottomY || 0),
-      dead: false,
-      x: options.x || 0,
-      y: options.y || 0,
-      vX: options.vX || 0,
-      vY: options.vY || 0
-    };
-
-    // correct y data, if the object is bottom-aligned
-    if (data.bottomAligned) {
-      data.y = bottomAlignedY(defaultData.bottomY);
-    }
-
-    return mixin(defaultData, data);
-
-  }
-
-  function View() {
+  View = function() {
 
     var css, data, dom, events, exports;
 
@@ -987,7 +1542,7 @@
       gameTips: {
         active: 'active'
       }
-    }
+    };
 
     data = {
       ignoreMouseEvents: false,
@@ -1020,8 +1575,8 @@
       gameTips: {
         active: false
       },
-      maxScroll: 6,
-    }
+      maxScroll: 6
+    };
 
     dom = {
       battleField: null,
@@ -1029,23 +1584,7 @@
       topBar: null,
       gameTips: null,
       gameTipsList: null
-    }
-
-    events = {
-
-      mousemove: function(e) {
-        if (!data.ignoreMouseEvents) {
-          data.mouse.x = (e||event).clientX;
-          data.mouse.y = (e||event).clientY;
-        }
-      },
-
-      resize: function() {
-        // throttle?
-        refreshCoords();
-      }
-
-    }
+    };
 
     function setLeftScroll(x) {
 
@@ -1063,26 +1602,6 @@
         dom.battleField.style.marginLeft = -parseInt(data.battleField.scrollLeft, 10) + 'px';
         dom.stars.style.backgroundPosition = parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px 0px';
       }
-
-    }
-
-    function animate() {
-
-      var scrollAmount, mouseDelta;
-
-      // don't scroll if the helicopter isn't moving.
-      if (game.objects.helicopters[0].data.vX === 0) {
-        return false;
-      }
-
-      // is the mouse to the right, or left?
-      mouseDelta = (data.mouse.x - data.browser.halfWidth);
-
-      // how much...
-      scrollAmount = mouseDelta / data.browser.halfWidth;
-
-      // and scale
-      setLeftScroll(scrollAmount * data.maxScroll);
 
     }
 
@@ -1151,6 +1670,25 @@
 
     }
 
+    function animate() {
+
+      var scrollAmount, mouseDelta;
+
+      // don't scroll if the helicopter isn't moving.
+      if (game.objects.helicopters[0].data.vX === 0) {
+        return false;
+      }
+
+      // is the mouse to the right, or left?
+      mouseDelta = (data.mouse.x - data.browser.halfWidth);
+
+      // how much...
+      scrollAmount = mouseDelta / data.browser.halfWidth;
+
+      // and scale
+      setLeftScroll(scrollAmount * data.maxScroll);
+
+    }
 
     function addEvents() {
 
@@ -1191,6 +1729,22 @@
 
     }
 
+    events = {
+
+      mousemove: function(e) {
+        if (!data.ignoreMouseEvents) {
+          data.mouse.x = (e||event).clientX;
+          data.mouse.y = (e||event).clientY;
+        }
+      },
+
+      resize: function() {
+        // throttle?
+        refreshCoords();
+      }
+
+    };
+
     init();
 
     exports = {
@@ -1198,20 +1752,20 @@
       data: data,
       dom: dom,
       setLeftScroll: setLeftScroll
-    }
+    };
 
     return exports;
 
-  }
+  };
 
-  function Inventory() {
+  Inventory = function() {
 
     var css, data, dom, objects, exports;
 
     css = {
       building: 'building',
       ordering: 'ordering'
-    }
+    };
 
     data = {
       frameCount: 0,
@@ -1224,52 +1778,15 @@
         engineer: [game.objects.engineers, Engineer]
       },
       building: false
-    }
+    };
 
     objects = {
       order: null
-    }
+    };
 
     dom = {
       gameStatusBar: null
-    }
-
-    function animate() {
-
-      if (data.building) {
-
-        if (data.frameCount % objects.order.data.inventory.frameCount === 0) {
-
-          if (objects.order.size) {
-
-            // make an object.
-
-            createObject(objects.order.typeData, objects.order.options);
-
-            objects.order.size--;
-
-          } else {
-
-            // "Construction complete."
-
-            utils.css.remove(dom.gameStatusBar, css.building);
-
-            data.building = false;
-
-            // play sound?
-            if (sounds.inventory.end) {
-              sounds.inventory.end.play();
-            }
-
-          }
-
-        }
-
-      }
-
-      data.frameCount++;
-
-    }
+    };
 
     function createObject(typeData, options) {
 
@@ -1305,7 +1822,7 @@
 
     function order(type, options) {
 
-      var i, typeData, orderObject, orderSize;
+      var typeData, orderObject, orderSize;
 
       options = options || {};
 
@@ -1391,6 +1908,43 @@
 
     }
 
+    function animate() {
+
+      if (data.building) {
+
+        if (data.frameCount % objects.order.data.inventory.frameCount === 0) {
+
+          if (objects.order.size) {
+
+            // make an object.
+
+            createObject(objects.order.typeData, objects.order.options);
+
+            objects.order.size--;
+
+          } else {
+
+            // "Construction complete."
+
+            utils.css.remove(dom.gameStatusBar, css.building);
+
+            data.building = false;
+
+            // play sound?
+            if (sounds.inventory.end) {
+              sounds.inventory.end.play();
+            }
+
+          }
+
+        }
+
+      }
+
+      data.frameCount++;
+
+    }
+
     function init() {
       dom.gameStatusBar = document.getElementById('game-status-bar');
     }
@@ -1401,25 +1955,88 @@
       dom: dom,
       createObject: createObject,
       order: order
-    }
+    };
 
     init();
 
     return exports;
 
+  };
+
+  function RadarItem(options) {
+
+    var css, data, dom, oParent, exports;
+
+    css = {
+      radarItem: 'radar-item',
+      dying: 'dying',
+      dead: 'dead'
+    };
+
+    data = {
+      dead: false
+    };
+
+    dom = {
+      o: options.o
+    };
+
+    oParent = options.oParent;
+
+    function die() {
+      if (!data.dead) {
+        utils.css.add(dom.o, css.dying);
+        data.dead = true;
+        if (!options.canRespawn) {
+          // permanent removal
+          window.setTimeout(function() {
+            game.objects.radar.removeItem(exports);
+          }, 2000);
+        } else {
+          // balloon, etc.
+          window.setTimeout(function() {
+            utils.css.add(dom.o, css.dead);
+          }, 1000);
+        }
+      }
+    }
+
+    function reset() {
+      if (data.dead) {
+        utils.css.remove(dom.o, css.dying);
+        utils.css.remove(dom.o, css.dead);
+        data.dead = false;
+      }
+    }
+
+    function init() {
+      utils.css.add(dom.o, css.radarItem + ' ' + options.className);
+    }
+
+    init();
+
+    exports = {
+      dom: dom,
+      die: die,
+      oParent: oParent,
+      reset: reset
+    };
+
+    return exports;
+
   }
 
-  function Radar() {
+  Radar = function() {
 
-    var data, css, dom, exports, objects;
+    var data, css, dom, maybeJam, exports, objects;
 
     css = {
       incomingSmartMissile: 'incoming-smart-missile'
-    }
+    };
 
     objects = {
       items: []
-    }
+    };
 
     data = {
       frameCount: 0,
@@ -1428,12 +2045,12 @@
       jammingTimer: null,
       lastMissileCount: 0,
       incomingMissile: false
-    }
+    };
 
     dom = {
       radar: null,
       radarItem: null
-    }
+    };
 
     function setIncomingMissile(incoming) {
 
@@ -1443,6 +2060,70 @@
 
         data.incomingMissile = incoming;
 
+      }
+
+    }
+
+    function addItem(item, className, canRespawn) {
+
+      var itemObject;
+
+      itemObject = new RadarItem({
+        o: dom.radarItem.cloneNode(true),
+        className: className,
+        oParent: item,
+        canRespawn: (canRespawn || false)
+       });
+
+      objects.items.push(itemObject);
+
+      dom.radar.appendChild(itemObject.dom.o);
+
+      return itemObject;
+
+    }
+
+    function startJamming(isJamming) {
+
+      // [ obligatory Bob Marley reference goes here ]
+
+      if (!data.jammingTimer) {
+        data.jammingTimer = window.setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
+      }
+
+    }
+
+    function stopJamming() {
+
+      if (data.jammingTimer) {
+        window.clearTimeout(data.jammingTimer);
+        data.jammingTimer = null;
+        dom.radar.style.visibility = 'visible';
+      }
+
+    }
+
+    function removeItem(item) {
+
+      // console.log('radar.removeItem()', item);
+
+      // look up item
+      var i, j, foundItem;
+
+      // find and remove from DOM + array
+      for (i=objects.items.length-1, j=0; i>=j; i--) {
+        if (objects.items[i] === item) {
+          // console.log('radar.removeItem(): found match', item);
+          removeNodes(objects.items[i].dom);
+          // objects.items[i].dom.o.parentNode.removeChild(objects.items[i].dom);
+          objects.items.splice(i, 1);
+          foundItem = true;
+          break;
+        }
+      }
+
+      if (!foundItem) {
+        console.log('radar.removeItem(): Warn: No match found for item', item);
       }
 
     }
@@ -1506,89 +2187,15 @@
 
     }
 
-    function RadarItem(options) {
+    function init() {
 
-      var css, data, dom, oParent, exports;
+      dom.radar = document.getElementById('radar');
 
-      css = {
-        radarItem: 'radar-item',
-        dying: 'dying',
-        dead: 'dead'
-      }
-
-      data = {
-        dead: false
-      }
-
-      dom = {
-        o: options.o
-      }
-
-      oParent = options.oParent;
-
-      function die() {
-        if (!data.dead) {
-          utils.css.add(dom.o, css.dying);
-          data.dead = true;
-          if (!options.canRespawn) {
-            // permanent removal
-            window.setTimeout(function() {
-              removeItem(exports);
-            }, 2000);
-          } else {
-            // balloon, etc.
-            window.setTimeout(function() {
-              utils.css.add(dom.o, css.dead);
-            }, 1000);
-          }
-        }
-      }
-
-      function reset() {
-        if (data.dead) {
-          utils.css.remove(dom.o, css.dying);
-          utils.css.remove(dom.o, css.dead);
-          data.dead = false;
-        }
-      }
-
-      function init() {
-        utils.css.add(dom.o, css.radarItem + ' ' + options.className);
-      }
-
-      init();
-
-      exports = {
-        dom: dom,
-        die: die,
-        oParent: oParent,
-        reset: reset
-      }
-
-      return exports;
+      dom.radarItem = document.createElement('div');
 
     }
 
-    function addItem(item, className, canRespawn) {
-
-      var itemObject, o;
-
-      itemObject = new RadarItem({
-        o: dom.radarItem.cloneNode(true),
-        className: className,
-        oParent: item,
-        canRespawn: (canRespawn || false)
-       });
-
-      objects.items.push(itemObject);
-
-      dom.radar.appendChild(itemObject.dom.o);
-
-      return itemObject;
-
-    }
-
-    function maybeJam() {
+    maybeJam = function() {
 
       var jam = (Math.random() > 0.25);
 
@@ -1602,60 +2209,7 @@
       // and do this again.
       startJamming(jam);
 
-    }
-
-    function startJamming(isJamming) {
-
-      // [ obligatory Bob Marley reference goes here ]
-
-      if (!data.jammingTimer) {
-        data.jammingTimer = window.setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
-      }
-
-    }
-
-    function stopJamming() {
-
-      if (data.jammingTimer) {
-        window.clearTimeout(data.jammingTimer);
-        data.jammingTimer = null;
-        dom.radar.style.visibility = 'visible';
-      }
-
-    }
-
-    function removeItem(item) {
-
-      // console.log('radar.removeItem()', item);
-
-      // look up item
-      var i, j, foundItem;
-
-      // find and remove from DOM + array
-      for (i=objects.items.length-1, j=0; i>=j; i--) {
-        if (objects.items[i] === item) {
-          // console.log('radar.removeItem(): found match', item);
-          removeNodes(objects.items[i].dom);
-          // objects.items[i].dom.o.parentNode.removeChild(objects.items[i].dom);
-          objects.items.splice(i, 1);
-          foundItem = true;
-          break;
-        }
-      }
-
-      if (!foundItem) {
-        console.log('radar.removeItem(): Warn: No match found for item', item);
-      }
-
-    }
-
-    function init() {
-
-      dom.radar = document.getElementById('radar');
-
-      dom.radarItem = document.createElement('div');
-
-    }
+    };
 
     init();
 
@@ -1664,26 +2218,38 @@
       animate: animate,
       data: data,
       dom: dom,
+      removeItem: removeItem,
       startJamming: startJamming,
       stopJamming: stopJamming
     };
 
     return exports;
 
-  }
+  };
 
-  function GameLoop() {
+  GameLoop = function() {
 
     var data, timer, exports;
 
     data = {
       frameCount: 0
+    };
+
+    function start() {
+
+      if (!timer) {
+
+        // TODO: use rAF
+        timer = window.setInterval(animate, FRAMERATE);
+
+      }
+
     }
 
     function animate() {
 
       // loop through all objects, animate.
-      var item, i, j, k;
+      var item, i;
       var gameObjects = game.objects;
 
       data.frameCount++;
@@ -1711,17 +2277,6 @@
 
     }
 
-    function start() {
-
-      if (!timer) {
-
-        // TODO: use rAF
-        timer = window.setInterval(animate, FRAMERATE);
-
-      }
-
-    }
-
     function init() {
 
       start();
@@ -1731,11 +2286,11 @@
     exports = {
       data: data,
       init: init
-    }
+    };
 
     return exports;
 
-  }
+  };
 
   function gameOver(youWon) {
 
@@ -1765,9 +2320,9 @@
 
   }
 
-  function Balloon(options) {
+  Balloon = function(options) {
 
-    var css, data, dom, objects, radarItem, exports;
+    var css, data, dom, objects, radarItem, reset, exports;
 
     options = options || {};
 
@@ -1806,11 +2361,150 @@
 
     dom = {
       o: null
-    }
+    };
 
     objects = {
       bunker: options.bunker || null
+    };
+
+    function moveTo(x, bottomY) {
+
+      if (x !== undefined && data.x !== x) {
+        common.setX(exports, x);
+        data.x = x;
+      }
+
+      if (bottomY !== undefined) {
+
+        // if detached, don't go all the way to the bottom.
+        bottomY = Math.min(100, Math.max(data.detached ? 10 : -data.bottomYOffset, bottomY));
+
+        if (data.bottomY !== bottomY) {
+
+          common.setBottomY(exports, bottomY);
+
+          data.bottomY = bottomY;
+
+          // special handling for balloon case
+          // TODO: fix this
+          data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
+
+        }
+
+      }
+
     }
+
+    function checkRespawn() {
+
+      // odd edge case - data not always defined if destroyed at the right time?
+      if (data && data.canRespawn && data.dead && !objects.bunker.data.dead) {
+        reset();
+      }
+
+    }
+
+    function setEnemy(isEnemy) {
+
+      data.isEnemy = isEnemy;
+
+      if (isEnemy) {
+        utils.css.remove(dom.o, css.friendly);
+        utils.css.add(dom.o, css.enemy);
+      } else {
+        utils.css.remove(dom.o, css.enemy);
+        utils.css.add(dom.o, css.friendly);
+      }
+
+    }
+
+    function detach() {
+
+      if (!data.detached) {
+
+        data.detached = true;
+
+        // and become hostile.
+        data.hostile = true;
+
+        // disconnect bunker <-> balloon references
+        if (objects.bunker) {
+          objects.bunker.nullifyBalloon();
+          objects.bunker = null;
+        }
+
+      }
+
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        // hide the balloon
+        utils.css.swap(dom.o, css.exploding, css.dead);
+        radarItem.die();
+      }
+      if (data.deadTimer) {
+        data.deadTimer = null;
+      }
+    }
+
+    function die() {
+      // pop!
+      if (!data.dead) {
+        utils.css.add(dom.o, css.exploding);
+        if (sounds.genericBoom) {
+          sounds.genericBoom.play();
+        }
+        data.deadTimer = window.setTimeout(function() {
+          dead();
+        }, 550);
+        data.dead = true;
+      }
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    reset = function() {
+
+      // respawn can actually happen now
+
+      data.energy = data.defaultEnergy;
+
+      // restore default vertical
+      data.verticalDirection = data.verticalDirectionDefault;
+
+      // look ma, no longer dead!
+      data.dead = false;
+
+      // reset position, too
+      data.bottomY = -data.bottomYOffset;
+      data.y = bottomAlignedY(data.bottomY);
+
+      radarItem.reset();
+
+      data.canRespawn = false;
+
+      if (data.deadTimer) {
+        window.clearTimeout(data.deadTimer);
+        data.deadTimer = null;
+      }
+
+      // update UI, right away?
+      animate();
+
+      utils.css.remove(dom.o, css.exploding);
+      utils.css.remove(dom.o, css.dead);
+
+    };
 
     function animate() {
 
@@ -1887,143 +2581,6 @@
 
     }
 
-    function moveTo(x, bottomY) {
-
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
-
-      if (bottomY !== undefined) {
-
-        // if detached, don't go all the way to the bottom.
-        bottomY = Math.min(100, Math.max(data.detached ? 10 : -data.bottomYOffset, bottomY));
-
-        if (data.bottomY !== bottomY) {
-
-          common.setBottomY(exports, bottomY);
-
-          data.bottomY = bottomY;
-
-          // special handling for balloon case
-          // TODO: fix this
-          data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
-
-        }
-
-      }
-
-    }
-
-    function setEnemy(isEnemy) {
-
-      data.isEnemy = isEnemy;
-
-      if (isEnemy) {
-        utils.css.remove(dom.o, css.friendly);
-        utils.css.add(dom.o, css.enemy);
-      } else {
-        utils.css.remove(dom.o, css.enemy);
-        utils.css.add(dom.o, css.friendly);
-      }
-
-    }
-
-    function detach() {
-
-      if (!data.detached) {
-
-        data.detached = true;
-
-        // and become hostile.
-        data.hostile = true;
-
-        // disconnect bunker <-> balloon references
-        if (objects.bunker) {
-          objects.bunker.nullifyBalloon();
-          objects.bunker = null;
-        }
-
-      }
-
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
-    function dead() {
-      if (data.dead && dom.o) {
-        // hide the balloon
-        utils.css.swap(dom.o, css.exploding, css.dead);
-        radarItem.die();
-      }
-      if (data.deadTimer) {
-        data.deadTimer = null;
-      }
-    }
-
-    function die() {
-      // pop!
-      if (!data.dead) {
-        utils.css.add(dom.o, css.exploding);
-        if (sounds.genericBoom) {
-          sounds.genericBoom.play();
-        }
-        data.deadTimer = window.setTimeout(dead, 550);
-        data.dead = true;
-      }
-    }
-
-    function checkRespawn() {
-
-      // odd edge case - data not always defined if destroyed at the right time?
-      if (data && data.canRespawn && data.dead && !objects.bunker.data.dead) {
-        reset();
-      }
-
-    }
-
-    function reset() {
-
-      // respawn can actually happen now
-
-      data.energy = data.defaultEnergy;
-
-      // restore default vertical
-      data.verticalDirection = data.verticalDirectionDefault;
-
-      // look ma, no longer dead!
-      data.dead = false;
-
-      // reset position, too
-      data.bottomY = -data.bottomYOffset;
-      data.y = bottomAlignedY(data.bottomY);
-
-      radarItem.reset();
-
-      data.canRespawn = false;
-
-      if (data.deadTimer) {
-        window.clearTimeout(data.deadTimer);
-        data.deadTimer = null;
-      }
-
-      // update UI, right away?
-      animate();
-
-      utils.css.remove(dom.o, css.exploding);
-      utils.css.remove(dom.o, css.dead);
-
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -2070,15 +2627,15 @@
       hit: hit,
       reset: reset,
       setEnemy: setEnemy
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Bunker(options) {
+  Bunker = function(options) {
 
     var css, data, dom, objects, radarItem, exports;
 
@@ -2103,59 +2660,43 @@
     dom = {
       o: null,
       oSubSprite: null
-    }
+    };
 
     objects = {
       balloon: null,
       chain: null
-    }
+    };
 
-    function moveTo(x, bottomY) {
+    function createBalloon(useRandomY) {
 
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
+      if (!objects.balloon) {
+
+        objects.balloon = new Balloon({
+          bunker: exports,
+          leftMargin: 7,
+          isEnemy: data.isEnemy,
+          x: data.x,
+          // if 0, balloon will "rise from the depths".
+          bottomY: (useRandomY ? parseInt(Math.random() * 100, 10) : 0)
+        });
+
+        // push onto the larger array
+        game.objects.balloons.push(objects.balloon);
+
       }
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomY(exports, bottomY);
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(data.bottomY);
-      }
+      if (!objects.chain) {
 
-    }
+        // create a chain, linking the base and the balloon
+        objects.chain = new Chain({
+          x: data.x + data.halfWidth - 1,
+          y: data.y,
+          height: data.y - objects.balloon.data.y,
+          balloon: objects.balloon,
+          bunker: exports
+        });
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
-    function infantryHit(target) {
-
-      // an infantry unit has made contact with a bunker.
-
-      if (target.data.isEnemy === data.isEnemy) {
-
-        // a friendly passer-by.
-
-        repair();
-
-      } else {
-
-        // non-friendly, kill the infantry - but let them capture the bunker first.
-
-        if (collisionCheckMidPoint(exports, target)) {
-
-          capture(target.data.isEnemy);
-          target.die();
-
-        }
+        game.objects.chains.push(objects.chain);
 
       }
 
@@ -2247,36 +2788,37 @@
 
     }
 
-    function createBalloon(useRandomY) {
-
-      if (!objects.balloon) {
-
-        objects.balloon = new Balloon({
-          bunker: exports,
-          leftMargin: 7,
-          isEnemy: data.isEnemy,
-          x: data.x,
-          // if 0, balloon will "rise from the depths".
-          bottomY: (useRandomY ? parseInt(Math.random() * 100, 10) : 0)
-        });
-
-        // push onto the larger array
-        game.objects.balloons.push(objects.balloon);
-
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
       }
+    }
 
-      if (!objects.chain) {
+    function infantryHit(target) {
 
-        // create a chain, linking the base and the balloon
-        objects.chain = new Chain({
-          x: data.x + data.halfWidth - 1,
-          y: data.y,
-          height: data.y - objects.balloon.data.y,
-          balloon: objects.balloon,
-          bunker: exports
-        });
+      // an infantry unit has made contact with a bunker.
 
-        game.objects.chains.push(objects.chain);
+      if (target.data.isEnemy === data.isEnemy) {
+
+        // a friendly passer-by.
+
+        repair();
+
+      } else {
+
+        // non-friendly, kill the infantry - but let them capture the bunker first.
+
+        if (collisionCheckMidPoint(exports, target)) {
+
+          capture(target.data.isEnemy);
+          target.die();
+
+        }
 
       }
 
@@ -2318,15 +2860,15 @@
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
       init: init
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function EndBunker(options) {
+  EndBunker = function(options) {
 
     var css, dom, data, objects, nearby, radarItem, exports;
 
@@ -2361,11 +2903,11 @@
 
     dom = {
       o: null
-    }
+    };
 
     objects = {
       gunfire: []
-    }
+    };
 
     function setFiring(state) {
 
@@ -2383,27 +2925,6 @@
       if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
         data.energy = Math.max(0, data.energy-1);
       }
-
-    }
-
-    function animate() {
-
-      var i;
-
-      data.frameCount++;
-
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
-        }
-      }
-
-      nearbyTest(nearby);
-
-      fire();
-
-      return (data.dead && !dom.o && !objects.gunfire.length);
 
     }
 
@@ -2457,6 +2978,27 @@
 
     }
 
+    function animate() {
+
+      var i;
+
+      data.frameCount++;
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      nearbyTest(nearby);
+
+      fire();
+
+      return (data.dead && !dom.o && !objects.gunfire.length);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -2484,7 +3026,7 @@
       data: data,
       dom: dom,
       hit: hit
-    }
+    };
 
     nearby = {
       options: {
@@ -2520,15 +3062,15 @@
       // who gets fired at?
       items: ['infantry', 'engineers', 'helicopters'],
       targets: []
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Turret(options) {
+  Turret = function(options) {
 
     var css, data, dom, objects, radarItem, exports;
 
@@ -2578,60 +3120,20 @@
       gunfire: []
     };
 
-    function animate() {
-
-      var didFire;
-
-      data.frameCount++;
-
-      if (data.frameCount % data.scanModulus === 0) {
-        if (!data.dead) {
-          fire();
-        }
-        // workaround: allow scanning while being repaired
-        if (!data.firing || data.energy > 0) {
-          scan();
-        }
-      }
-
-      if (data.energy > 0 && data.energy < data.energyMax && data.frameCount % data.smokeModulus === 0) {
-
-        // smoke relative to damage
-
-        if (Math.random() > 1 - ((data.energyMax-data.energy)/data.energyMax)) {
-
-          game.objects.smoke.push(new Smoke({
-            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
-            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
-          }));
-
-        }
-
-        // randomize next one a bit
-        data.smokeModulus = 2 + parseInt(Math.random() * 24, 10);
-
-      }
-
-      if (!data.dead && data.energy > 0 && data.frameCount % data.repairModulus === 0) {
-        // self-repair
-        repair();
-      }
-
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
-        }
-      }
-
-    }
-
     function okToMove() {
       // guns scan and fire 100% of the time, OR a random percent bias based on the amount of damage they've sustained. No less than 25% of the time.
       if (data.energy === 0) {
         return false;
       }
       return (data.energy === data.energyMax || (1 - Math.random() < (Math.max(0.25, data.energy / data.energyMax))));
+    }
+
+    function setAngle(angle) {
+
+      if (features.transform.prop) {
+        dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      }
+
     }
 
     function scan() {
@@ -2642,14 +3144,6 @@
           data.scanIncrement *= -1;
         }
         setAngle(data.angle);
-      }
-
-    }
-
-    function setAngle(angle) {
-
-      if (features.transform.prop) {
-        dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
       }
 
     }
@@ -2711,12 +3205,52 @@
           setAngle(angle);
         }
 
-        didFire = true;
-
       } else {
 
         data.firing = false;
 
+      }
+
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      // reset rotation
+      data.angle = 0;
+      setAngle(0);
+
+      utils.css.add(dom.o, css.destroyed);
+      utils.css.add(radarItem.dom.o, css.destroyed);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+    }
+
+    function restore() {
+
+      // restore visual, but don't re-activate gun yet
+      if (data.dead) {
+        utils.css.remove(dom.o, css.destroyed);
+        utils.css.remove(radarItem.dom.o, css.destroyed);
+      }
+
+    }
+
+    function repair() {
+
+      if (data.energy < data.energyMax && data.frameCount % data.repairModulus === 0) {
+        restore();
+        data.energy = Math.min(data.energyMax, data.energy + 1);
+        if (data.dead && data.energy > data.energyMax * 0.25) {
+          // restore to life at 25%
+          data.dead = false;
+        }
       }
 
     }
@@ -2779,45 +3313,51 @@
 
     }
 
-    function repair() {
+    function animate() {
 
-      if (data.energy < data.energyMax && data.frameCount % data.repairModulus === 0) {
-        restore();
-        data.energy = Math.min(data.energyMax, data.energy + 1);
-        if (data.dead && data.energy > data.energyMax * 0.25) {
-          // restore to life at 25%
-          data.dead = false;
+      var i;
+
+      data.frameCount++;
+
+      if (data.frameCount % data.scanModulus === 0) {
+        if (!data.dead) {
+          fire();
+        }
+        // workaround: allow scanning while being repaired
+        if (!data.firing || data.energy > 0) {
+          scan();
         }
       }
 
-    }
+      if (data.energy > 0 && data.energy < data.energyMax && data.frameCount % data.smokeModulus === 0) {
 
-    function restore() {
+        // smoke relative to damage
 
-      // restore visual, but don't re-activate gun yet
-      if (data.dead) {
-        utils.css.remove(dom.o, css.destroyed);
-        utils.css.remove(radarItem.dom.o, css.destroyed);
+        if (Math.random() > 1 - ((data.energyMax-data.energy)/data.energyMax)) {
+
+          game.objects.smoke.push(new Smoke({
+            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
+            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
+          }));
+
+        }
+
+        // randomize next one a bit
+        data.smokeModulus = 2 + parseInt(Math.random() * 24, 10);
+
       }
 
-    }
-
-    function die() {
-
-      if (data.dead) {
-        return false;
+      if (!data.dead && data.energy > 0 && data.frameCount % data.repairModulus === 0) {
+        // self-repair
+        repair();
       }
 
-      // reset rotation
-      data.angle = 0;
-      setAngle(0);
-
-      utils.css.add(dom.o, css.destroyed);
-      utils.css.add(radarItem.dom.o, css.destroyed);
-
-      data.energy = 0;
-
-      data.dead = true;
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
 
     }
 
@@ -2850,7 +3390,7 @@
       engineerCanInteract: engineerCanInteract,
       engineerHit: engineerHit,
       hit: hit
-    }
+    };
 
     init();
 
@@ -2861,11 +3401,11 @@
 
     return exports;
 
-  }
+  };
 
-  function Base(options) {
+  Base = function(options) {
 
-    var css, data, exports, radarItem;
+    var css, data, dom, exports, radarItem;
 
     options = options || {};
 
@@ -2895,20 +3435,6 @@
     dom = {
       o: null
     };
-
-    function animate() {
-
-      if (!data.dead) {
-
-        if (data.frameCount % data.fireModulus === 0) {
-          fire();
-        }
-
-        data.frameCount++;
-
-      }
-
-    }
 
     function fire() {
 
@@ -3018,6 +3544,20 @@
 
     }
 
+    function animate() {
+
+      if (!data.dead) {
+
+        if (data.frameCount % data.fireModulus === 0) {
+          fire();
+        }
+
+        data.frameCount++;
+
+      }
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -3042,15 +3582,15 @@
       data: data,
       dom: dom,
       die: die
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Chain(options) {
+  Chain = function(options) {
 
     var css, data, dom, objects, exports;
 
@@ -3073,11 +3613,71 @@
 
     dom = {
       o: null
-    }
+    };
 
     objects = {
       bunker: options.bunker || null,
       balloon: options.balloon || null
+    };
+
+    function moveTo(x, y, height) {
+
+      if (x !== undefined && data.x !== x) {
+        common.setX(exports, x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        common.setY(exports, y);
+        data.y = y;
+      }
+
+      if (height !== undefined && data.height !== height) {
+        setHeight(height);
+        data.height = height;
+      }
+
+    }
+
+    function setHeight(height) {
+      dom.o.style.height = (height + 'px');
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      removeNodes(dom);
+
+      data.energy = 0;
+
+      data.dead = true;
+
+      // detach balloon, if applicable
+      if (objects.balloon) {
+        objects.balloon.detach();
+        objects.balloon = null;
+      }
+
+      // remove bunker reference, too
+      if (objects.bunker) {
+        objects.bunker.nullifyChain();
+        objects.bunker = null;
+      }
+
     }
 
     function animate() {
@@ -3155,76 +3755,6 @@
 
     }
 
-    function moveTo(x, y, height) {
-
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
-        data.y = y;
-      }
-
-      if (height !== undefined && data.height !== height) {
-        setHeight(height);
-        data.height = height;
-      }
-
-    }
-
-    function setHeight(height) {
-      dom.o.style.height = (height + 'px');
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
-    function sparkAndDie(target) {
-
-      if (target) {
-        target.hit(data.damagePoints, exports);
-      }
-
-      die();
-
-    }
-
-    function die() {
-
-      if (data.dead) {
-        return false;
-      }
-
-      removeNodes(dom);
-
-      data.energy = 0;
-
-      data.dead = true;
-
-      // detach balloon, if applicable
-      if (objects.balloon) {
-        objects.balloon.detach();
-        objects.balloon = null;
-      }
-
-      // remove bunker reference, too
-      if (objects.bunker) {
-        objects.bunker.nullifyChain();
-        objects.bunker = null;
-      }
-
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -3248,17 +3778,16 @@
       data: data,
       dom: dom,
       hit: hit,
-      die: die,
-      sparkAndDie: sparkAndDie
-    }
+      die: die
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function MissileLauncher(options) {
+  MissileLauncher = function(options) {
 
     var css, data, dom, radarItem, exports;
 
@@ -3286,24 +3815,7 @@
 
     dom = {
       o: null
-    }
-
-    function animate() {
-
-      data.frameCount++;
-
-      if (!data.dead) {
-
-        moveTo(data.x + data.vX, data.bottomY);
-
-        // fire?
-        fire();
-
-      }
-
-      return (data.dead && !dom.o);
-
-    }
+    };
 
     function moveTo(x, bottomY) {
 
@@ -3333,7 +3845,7 @@
 
     function fire() {
 
-      var i, j, k, l, deltaX, similarMissileCount, triggerDistance, targetHelicopter;
+      var i, j, deltaX, similarMissileCount, triggerDistance, targetHelicopter;
 
       triggerDistance = game.objects.view.data.browser.width * 2/3;
 
@@ -3350,9 +3862,9 @@
           // any missiles already chasing the target?
           similarMissileCount = 0;
 
-          for (k=0, l=game.objects.smartMissiles.length; k<l; k++) {
+          for (i=0, j=game.objects.smartMissiles.length; i<j; i++) {
 
-            if (game.objects.smartMissiles[k].objects.target === targetHelicopter) {
+            if (game.objects.smartMissiles[i].objects.target === targetHelicopter) {
               similarMissileCount++;
             }
 
@@ -3409,6 +3921,23 @@
 
     }
 
+    function animate() {
+
+      data.frameCount++;
+
+      if (!data.dead) {
+
+        moveTo(data.x + data.vX, data.bottomY);
+
+        // fire?
+        fire();
+
+      }
+
+      return (data.dead && !dom.o);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -3434,7 +3963,7 @@
       dom: dom,
       hit: hit,
       die: die
-    }
+    };
 
     if (!options.noInit) {
       init();
@@ -3442,9 +3971,9 @@
 
     return exports;
 
-  }
+  };
 
-  function GunFire(options) {
+  GunFire = function(options) {
 
     var css, data, dom, collision, exports;
 
@@ -3472,7 +4001,7 @@
 
     dom = {
       o: null
-    }
+    };
 
     collision = {
       options: {
@@ -3489,49 +4018,7 @@
       },
       // if unspecified, use default list of items which bullets can hit.
       items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'turrets']
-    }
-
-    function animate() {
-
-      var items, item, hit, tmpData, tmpObject;
-
-      if (data.dead) {
-        return false;
-      }
-
-      if (!data.expired && data.frameCount > data.expireFrameCount) {
-        utils.css.add(dom.o, css.expired);
-        data.expired = true;
-      }
-
-      if (data.expired) {
-        data.gravity *= 1.1;
-      }
-
-      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
-
-      data.frameCount++;
-
-      if (data.frameCount >= data.dieFrameCount) {
-        die();
-      }
-
-      // hit top? (TODO: get real # from DOM)
-      if (data.y < 32) { // game.objects.view.data.topBar.height) {
-        die();
-      }
-
-      // bottom?
-      if (data.y > game.objects.view.data.battleField.height) {
-        die();
-      }
-
-      collisionTest(collision, exports);
-
-      // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o);
-
-    }
+    };
 
     function spark() {
       utils.css.add(dom.o, css.spark);
@@ -3587,6 +4074,46 @@
 
     }
 
+    function animate() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      if (!data.expired && data.frameCount > data.expireFrameCount) {
+        utils.css.add(dom.o, css.expired);
+        data.expired = true;
+      }
+
+      if (data.expired) {
+        data.gravity *= 1.1;
+      }
+
+      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+
+      data.frameCount++;
+
+      if (data.frameCount >= data.dieFrameCount) {
+        die();
+      }
+
+      // hit top? (TODO: get real # from DOM)
+      if (data.y < 32) { // game.objects.view.data.topBar.height) {
+        die();
+      }
+
+      // bottom?
+      if (data.y > game.objects.view.data.battleField.height) {
+        die();
+      }
+
+      collisionTest(collision, exports);
+
+      // notify caller if now dead and can be removed.
+      return (data.dead && !dom.o);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -3611,13 +4138,13 @@
       animate: animate,
       data: data,
       dom: dom
-    }
+    };
 
     return exports;
 
-  }
+  };
 
-  function Bomb(options) {
+  Bomb = function(options) {
 
     var css, data, dom, collision, exports;
 
@@ -3640,7 +4167,7 @@
 
     dom = {
       o: null
-    }
+    };
 
     function bombHitTarget(target) {
 
@@ -3667,37 +4194,7 @@
         }
       },
       items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'helicopters', 'turrets']
-    }
-
-    function animate() {
-
-      if (data.dead) {
-        return false;
-      }
-
-      if (data.firstFrame) {
-        // trigger CSS animation on first frame
-        utils.css.add(dom.o, css.dropping);
-        data.firstFrame = false;
-      }
-
-      data.gravity *= 1.1;
-
-      moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
-
-      // collision check?
-
-      // hit bottom?
-      if (data.y - data.height > game.objects.view.data.battleField.height) {
-        die();
-      }
-
-      collisionTest(collision, exports);
-
-      // notify caller if dead, and node has been removed.
-      return (data.dead && !dom.o);
-
-    }
+    };
 
     function die(options) {
 
@@ -3750,6 +4247,36 @@
 
     }
 
+    function animate() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      if (data.firstFrame) {
+        // trigger CSS animation on first frame
+        utils.css.add(dom.o, css.dropping);
+        data.firstFrame = false;
+      }
+
+      data.gravity *= 1.1;
+
+      moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+
+      // collision check?
+
+      // hit bottom?
+      if (data.y - data.height > game.objects.view.data.battleField.height) {
+        die();
+      }
+
+      collisionTest(collision, exports);
+
+      // notify caller if dead, and node has been removed.
+      return (data.dead && !dom.o);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -3774,13 +4301,13 @@
       animate: animate,
       data: data,
       dom: dom
-    }
+    };
 
     return exports;
 
-  }
+  };
 
-  function Cloud(options) {
+  Cloud = function(options) {
 
     var css, dom, data, exports;
 
@@ -3808,6 +4335,39 @@
 
     dom = {
       o: null
+    };
+
+    function moveTo(x, y) {
+
+      var hasNew;
+
+      if (x !== undefined && data.x !== x) {
+        common.setTransformX(exports, x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        common.setTransformY(exports, y);
+        data.y = y;
+      }
+
+    }
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
     }
 
     function animate() {
@@ -3849,39 +4409,6 @@
 
     }
 
-    function moveTo(x, y) {
-
-      var hasNew;
-
-      if (x !== undefined && data.x !== x) {
-        common.setTransformX(exports, x);
-        data.x = x;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        common.setTransformY(exports, y);
-        data.y = y;
-      }
-
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
-    function dead() {
-      if (data.dead && dom.o) {
-        utils.css.swap(dom.o, css.exploding, css.dead);
-      }
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -3899,15 +4426,15 @@
       animate: animate,
       data: data,
       dom: dom
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function SmartMissile(options) {
+  SmartMissile = function(options) {
 
     /**
      * I am so smart!
@@ -3956,11 +4483,11 @@
     dom = {
       o: null,
       trailers: []
-    }
+    };
 
     objects = {
       target: options.target
-    }
+    };
 
     collision = {
       options: {
@@ -3971,147 +4498,7 @@
         }
       },
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']
-    }
-
-    function animate() {
-
-      var items, item, hit, tmpData, tmpObject, deltaX, deltaY, targetData, angle, hitBottom;
-
-      if (data.dead) {
-        return true;
-      }
-
-      targetData = objects.target.data;
-
-      var targetHalfWidth = targetData.width / 2;
-      var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height * 0 : targetData.height / 2);
-
-      // delta of x/y between this and target
-      deltaX = (targetData.x + targetHalfWidth) - data.x;
-
-      // TODO: hack full height for balloon?
-      deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
-
-      if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
-        utils.css.add(dom.o, css.expired);
-        data.expired = true;
-        data.hostile = true;
-        // burst of thrust when the missile expires?
-        data.vX *= 1.5;
-        data.vY *= 1.5;
-      }
-
-      if (data.expired) {
-
-        // fall...
-        data.gravity *= 1.1;
-
-        // ... and decelerate on X-axis.
-        data.vX *= 0.95;
-
-      } else {
-
-        // x-axis
-
-        // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
-
-        // if changing directions, cut in half.
-        data.vX += deltaX * 0.0065;
-
-        // y-axis
-
-        if (deltaY <= targetData.height && deltaY >= -targetData.height) {
-
-          // lock on target.
-
-          if (data.vY >= 0 && data.vY >= 0.25) {
-            data.vY *= 0.8;
-          } else if (data.vY <= 0 && data.vY < -0.25) {
-            data.vY *= 0.8;
-          }
- 
-        } else {
-
-          // relative to target at all times
-          // data.vY += deltaY * 0.0125;
-
-          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust)
-
-        }
-
-      }
-
-      // and throttle
-      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
-
-      if (Math.random() >= 0.99) {
-
-        game.objects.smoke.push(new Smoke({
-          x: data.x,
-          y: data.y,
-          spriteFrame: 3
-        }));
-
-      }
-
-      hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
-
-      if (!hitBottom) {
-
-        // hack deltas for angle
-
-        if (deltaX > 360) {
-          deltaX = (deltaX % 180);
-        }
-
-        angle = Math.atan2(deltaY, deltaX) * deg2Rad;
-
-      } else {
-
-        // bottom-aligned. Heading left, or right?
-
-        if (data.vX > 0) {
-          angle = 0;
-        } else {
-          angle = 180;
-        }
-
-      }
-
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
-      }
-
-      moveTrailers();
-
-      data.frameCount++;
-
-      if (data.frameCount >= data.dieFrameCount) {
-        die();
-        // but don't fall too fast?
-        data.vYMax *= 0.5;
-      }
-
-      /*
-      // hit top?
-      if (data.y < game.objects.view.data.topBar.height) {
-        die();
-      }
-      */
-
-      // hit bottom?
-      if (data.y > game.objects.view.data.battleField.height) {
-        data.y = game.objects.view.data.battleField.height;
-        die(true);
-      }
-
-      collisionTest(collision, exports);
-
-      // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o);
-
-    }
+    };
 
     function moveTo(x, y) {
 
@@ -4236,6 +4623,146 @@
 
     }
 
+    function animate() {
+
+      var hit, deltaX, deltaY, targetData, angle, hitBottom;
+
+      if (data.dead) {
+        return true;
+      }
+
+      targetData = objects.target.data;
+
+      var targetHalfWidth = targetData.width / 2;
+      var targetHeightOffset = (targetData.type === 'balloon' ? targetData.height * 0 : targetData.height / 2);
+
+      // delta of x/y between this and target
+      deltaX = (targetData.x + targetHalfWidth) - data.x;
+
+      // TODO: hack full height for balloon?
+      deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+
+      if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
+        utils.css.add(dom.o, css.expired);
+        data.expired = true;
+        data.hostile = true;
+        // burst of thrust when the missile expires?
+        data.vX *= 1.5;
+        data.vY *= 1.5;
+      }
+
+      if (data.expired) {
+
+        // fall...
+        data.gravity *= 1.1;
+
+        // ... and decelerate on X-axis.
+        data.vX *= 0.95;
+
+      } else {
+
+        // x-axis
+
+        // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
+
+        // if changing directions, cut in half.
+        data.vX += deltaX * 0.0065;
+
+        // y-axis
+
+        if (deltaY <= targetData.height && deltaY >= -targetData.height) {
+
+          // lock on target.
+
+          if (data.vY >= 0 && data.vY >= 0.25) {
+            data.vY *= 0.8;
+          } else if (data.vY <= 0 && data.vY < -0.25) {
+            data.vY *= 0.8;
+          }
+ 
+        } else {
+
+          // relative to target at all times
+          // data.vY += deltaY * 0.0125;
+
+          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
+
+        }
+
+      }
+
+      // and throttle
+      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+      if (Math.random() >= 0.99) {
+
+        game.objects.smoke.push(new Smoke({
+          x: data.x,
+          y: data.y,
+          spriteFrame: 3
+        }));
+
+      }
+
+      hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+
+      if (!hitBottom) {
+
+        // hack deltas for angle
+
+        if (deltaX > 360) {
+          deltaX = (deltaX % 180);
+        }
+
+        angle = Math.atan2(deltaY, deltaX) * deg2Rad;
+
+      } else {
+
+        // bottom-aligned. Heading left, or right?
+
+        if (data.vX > 0) {
+          angle = 0;
+        } else {
+          angle = 180;
+        }
+
+      }
+
+      if (features.transform.prop) {
+        dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      }
+
+      moveTrailers();
+
+      data.frameCount++;
+
+      if (data.frameCount >= data.dieFrameCount) {
+        die();
+        // but don't fall too fast?
+        data.vYMax *= 0.5;
+      }
+
+      /*
+      // hit top?
+      if (data.y < game.objects.view.data.topBar.height) {
+        die();
+      }
+      */
+
+      // hit bottom?
+      if (data.y > game.objects.view.data.battleField.height) {
+        data.y = game.objects.view.data.battleField.height;
+        die(true);
+      }
+
+      collisionTest(collision, exports);
+
+      // notify caller if now dead and can be removed.
+      return (data.dead && !dom.o);
+
+    }
+
     function init() {
 
       var i, trailerConfig, fragment;
@@ -4290,15 +4817,15 @@
       hit: hit,
       die: die,
       objects: objects
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Helicopter(options) {
+  Helicopter = function(options) {
 
     var css, data, dom, events, objects, collision, radarItem, exports;
 
@@ -4391,7 +4918,7 @@
       o: null,
       fuelLine: null,
       subSprite: null
-    }
+    };
 
     events = {
 
@@ -4426,13 +4953,13 @@
         }
       }
 
-    }
+    };
 
     objects = {
       bombs: [],
       gunfire: [],
       smartMissiles: []
-    }
+    };
 
     collision = {
       options: {
@@ -4466,187 +4993,7 @@
         }
       },
       items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry', 'engineers', 'clouds']
-    }
-
-    function animate() {
-
-      // move according to delta between helicopter x/y and mouse, up to a max.
-
-      var i, j, view, mouse, jamming, newX, yLimit;
-
-      jamming = 0;
-
-      view = game.objects.view;
-
-      if (!data.isEnemy && data.fuel > 0) {
-
-        mouse = view.data.mouse;
-
-        // only allow X-axis if not on ground...
-        if (mouse.x) {
-          // accelerate scroll vX, so chopper nearly matches mouse when scrolling
-          data.lastVX = parseFloat(data.vX);
-          data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
-          // and limit
-          data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-        }
-
-        if (mouse.y) {
-          data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
-          // and limit
-          data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
-        }
-
-      }
-
-      yLimit = 369 - (data.onLandingPad ? 4 : 0);
-
-      // slight offset when on landing pad
-      if (data.y >= yLimit) {
-        data.landed = true;
-        data.vX = 0;
-        if (data.vY > 0) {
-          data.vY = 0;
-        }
-      } else {
-        data.landed = false;
-        onLandingPad(false);
-      }
-
-      // no fuel?
-      if (data.fuel <= 0) {
-
-        // gravity until dead.
-        if (data.vY < 0.5) {
-          data.vY = 0.5;
-        }
-
-        data.vY *= 1.1;
-
-        if (data.landed) {
-          die();
-        }
-
-      }
-
-      // safety valve: don't move if ignoreMouseEvents
-      if (data.ignoreMouseEvents) {
-        data.vX = 0;
-        data.vY = 0;
-      }
-
-      if (!data.dead) {
-
-        newX = data.x + data.vX;
-
-        // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
-
-        if (!data.isEnemy) {
-          newX = Math.max(view.data.battleField.scrollLeft + (data.width/2) , Math.min(view.data.browser.width + view.data.battleField.scrollLeft - (data.width * 1.5), newX));
-        }
-
-        moveTo(newX, data.y + data.vY);
-
-        applyTilt();
-
-        collisionTest(collision, exports);
-
-        // repairing?
-        if (data.repairing) {
-          repair();
-        }
-
-      }
-
-      // animate child objects, too
-
-      // TODO: for ... in
-
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
-        }
-      }
-
-      for (i = objects.bombs.length-1; i >= 0; i--) {
-        if (objects.bombs[i].animate()) {
-          // object is dead - take it out.
-          objects.bombs.splice(i, 1);
-        }
-      }
-
-      for (i = objects.smartMissiles.length-1; i >= 0; i--) {
-        if (objects.smartMissiles[i].animate()) {
-          // object is dead - take it out.
-          objects.smartMissiles.splice(i, 1);
-        }
-      }
-
-      // should we be firing, also?
-
-      if (!data.dead) {
-        fire();
-      }
-
-      if (!data.dead && !data.isEnemy) {
-
-        // any enemy vans that jamming our radar?
-        for (i = 0, j = game.objects.vans.length; i<j; i++) {
-
-          if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
-
-            jamming++;
-
-          }
-
-        }
-
-        if (jamming && !data.radarJamming) {
-
-          data.radarJamming = jamming;
-          game.objects.radar.startJamming();
-
-        } else if (!jamming && data.radarJamming) {
-
-          data.radarJamming = jamming;
-          game.objects.radar.stopJamming();
-
-        }
-
-      }
-
-      // trailer history
-
-      if (game.objects.gameLoop.data.frameCount % data.smokeModulus === 0) {
-
-        // smoke relative to damage
-
-        if (!data.dead && Math.random() > 1 - ((10-data.energy)/10)) {
-
-          game.objects.smoke.push(new Smoke({
-            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
-            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
-          }));
-
-        }
-
-      }
-
-      burnFuel();
-
-      // TODO: isCPU
-
-      if (data.isEnemy) {
-
-        ai();
-
-      }
-
-      // uncloak if not in a cloud?
-      uncloak();
-
-    }
+    };
 
     function cloak() {
 
@@ -5498,6 +5845,186 @@ if (1) {
 
     }
 
+    function animate() {
+
+      // move according to delta between helicopter x/y and mouse, up to a max.
+
+      var i, j, view, mouse, jamming, newX, yLimit;
+
+      jamming = 0;
+
+      view = game.objects.view;
+
+      if (!data.isEnemy && data.fuel > 0) {
+
+        mouse = view.data.mouse;
+
+        // only allow X-axis if not on ground...
+        if (mouse.x) {
+          // accelerate scroll vX, so chopper nearly matches mouse when scrolling
+          data.lastVX = parseFloat(data.vX);
+          data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
+          // and limit
+          data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        }
+
+        if (mouse.y) {
+          data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
+          // and limit
+          data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+        }
+
+      }
+
+      yLimit = 369 - (data.onLandingPad ? 4 : 0);
+
+      // slight offset when on landing pad
+      if (data.y >= yLimit) {
+        data.landed = true;
+        data.vX = 0;
+        if (data.vY > 0) {
+          data.vY = 0;
+        }
+      } else {
+        data.landed = false;
+        onLandingPad(false);
+      }
+
+      // no fuel?
+      if (data.fuel <= 0) {
+
+        // gravity until dead.
+        if (data.vY < 0.5) {
+          data.vY = 0.5;
+        }
+
+        data.vY *= 1.1;
+
+        if (data.landed) {
+          die();
+        }
+
+      }
+
+      // safety valve: don't move if ignoreMouseEvents
+      if (data.ignoreMouseEvents) {
+        data.vX = 0;
+        data.vY = 0;
+      }
+
+      if (!data.dead) {
+
+        newX = data.x + data.vX;
+
+        // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
+
+        if (!data.isEnemy) {
+          newX = Math.max(view.data.battleField.scrollLeft + (data.width/2) , Math.min(view.data.browser.width + view.data.battleField.scrollLeft - (data.width * 1.5), newX));
+        }
+
+        moveTo(newX, data.y + data.vY);
+
+        applyTilt();
+
+        collisionTest(collision, exports);
+
+        // repairing?
+        if (data.repairing) {
+          repair();
+        }
+
+      }
+
+      // animate child objects, too
+
+      // TODO: for ... in
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      for (i = objects.bombs.length-1; i >= 0; i--) {
+        if (objects.bombs[i].animate()) {
+          // object is dead - take it out.
+          objects.bombs.splice(i, 1);
+        }
+      }
+
+      for (i = objects.smartMissiles.length-1; i >= 0; i--) {
+        if (objects.smartMissiles[i].animate()) {
+          // object is dead - take it out.
+          objects.smartMissiles.splice(i, 1);
+        }
+      }
+
+      // should we be firing, also?
+
+      if (!data.dead) {
+        fire();
+      }
+
+      if (!data.dead && !data.isEnemy) {
+
+        // any enemy vans that jamming our radar?
+        for (i = 0, j = game.objects.vans.length; i<j; i++) {
+
+          if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
+
+            jamming++;
+
+          }
+
+        }
+
+        if (jamming && !data.radarJamming) {
+
+          data.radarJamming = jamming;
+          game.objects.radar.startJamming();
+
+        } else if (!jamming && data.radarJamming) {
+
+          data.radarJamming = jamming;
+          game.objects.radar.stopJamming();
+
+        }
+
+      }
+
+      // trailer history
+
+      if (game.objects.gameLoop.data.frameCount % data.smokeModulus === 0) {
+
+        // smoke relative to damage
+
+        if (!data.dead && Math.random() > 1 - ((10-data.energy)/10)) {
+
+          game.objects.smoke.push(new Smoke({
+            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
+            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
+          }));
+
+        }
+
+      }
+
+      burnFuel();
+
+      // TODO: isCPU
+
+      if (data.isEnemy) {
+
+        ai();
+
+      }
+
+      // uncloak if not in a cloud?
+      uncloak();
+
+    }
+
     function init() {
 
       var i, trailerConfig, fragment;
@@ -5561,15 +6088,15 @@ if (1) {
       setFiring: setFiring,
       setMissileLaunching: setMissileLaunching,
       setParachuting: setParachuting
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Tank(options) {
+  Tank = function(options) {
 
     var css, data, dom, radarItem, objects, radarItem, nearby, exports;
 
@@ -5604,11 +6131,11 @@ if (1) {
     dom = {
       o: null,
       oSubSprite: null
-    }
+    };
 
     objects = {
       gunfire: []
-    }
+    };
 
     nearby = {
       options: {
@@ -5633,44 +6160,7 @@ if (1) {
       // who gets fired at?
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'endBunkers'],
       targets: []
-    }
-
-    function animate() {
-
-      var i;
-
-      data.frameCount++;
-
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
-        }
-      }
-
-      if (!data.dead) {
-
-        repair();
-
-        if (!data.stopped) {
-
-          moveTo(data.x + data.vX, data.bottomY);
-
-        } else {
-
-          // only fire (i.e., GunFire objects) when stopped
-          fire();
-
-        }
-
-        // start, or stop firing?
-        nearbyTest(nearby);
-
-      }
-
-      return (data.dead && !dom.o && !objects.gunfire.length);
-
-    }
+    };
 
     function fire() {
 
@@ -5802,6 +6292,43 @@ if (1) {
 
     }
 
+    function animate() {
+
+      var i;
+
+      data.frameCount++;
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      if (!data.dead) {
+
+        repair();
+
+        if (!data.stopped) {
+
+          moveTo(data.x + data.vX, data.bottomY);
+
+        } else {
+
+          // only fire (i.e., GunFire objects) when stopped
+          fire();
+
+        }
+
+        // start, or stop firing?
+        nearbyTest(nearby);
+
+      }
+
+      return (data.dead && !dom.o && !objects.gunfire.length);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -5840,7 +6367,7 @@ if (1) {
       die: die,
       stop: stop,
       resume: resume
-    }
+    };
 
     if (!options.noInit) {
       init();
@@ -5848,9 +6375,9 @@ if (1) {
 
     return exports;
 
-  }
+  };
 
-  function Van(options) {
+  Van = function(options) {
 
     var css, dom, data, radarItem, exports;
 
@@ -5885,6 +6412,73 @@ if (1) {
 
     dom = {
       o: null
+    };
+
+    function stop() {
+
+      data.stopped = true;
+
+    }
+
+    function moveTo(x, bottomY) {
+
+      if (x !== undefined && data.x !== x) {
+        common.setX(exports, x);
+        data.x = x;
+      }
+
+      if (bottomY !== undefined && data.bottomY !== bottomY) {
+        common.setBottomYPixels(exports, bottomY);
+        data.bottomY = bottomY;
+        data.y = bottomAlignedY(bottomY);
+      }
+
+    }
+
+
+    function hit(hitPoints) {
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      utils.css.add(dom.o, css.exploding);
+
+      shrapnelExplosion(data);
+
+      // timeout?
+      window.setTimeout(function() {
+        removeNodes(dom);
+        radarItem.die();
+      }, 1000);
+
+      data.energy = 0;
+
+      data.jamming = false;
+
+      data.dead = true;
+
+      if (sounds.genericExplosion) {
+        sounds.genericExplosion.play();
+      }
+
     }
 
     function animate() {
@@ -5961,73 +6555,6 @@ if (1) {
 
     }
 
-    function stop() {
-
-      data.stopped = true;
-
-    }
-
-    function moveTo(x, bottomY) {
-
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
-
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomYPixels(exports, bottomY);
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(bottomY);
-      }
-
-    }
-
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
-    function dead() {
-      if (data.dead && dom.o) {
-        utils.css.swap(dom.o, css.exploding, css.dead);
-      }
-    }
-
-    function die() {
-
-      if (data.dead) {
-        return false;
-      }
-
-      utils.css.add(dom.o, css.exploding);
-
-      shrapnelExplosion(data);
-
-      // timeout?
-      window.setTimeout(function() {
-        removeNodes(dom);
-        radarItem.die();
-      }, 1000);
-
-      data.energy = 0;
-
-      data.jamming = false;
-
-      data.dead = true;
-
-      if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
-      }
-
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -6053,7 +6580,7 @@ if (1) {
       dom: dom,
       hit: hit,
       die: die
-    }
+    };
 
     if (!options.noInit) {
       init();
@@ -6061,9 +6588,9 @@ if (1) {
 
     return exports;
 
-  }
+  };
 
-  function ParachuteInfantry(options) {
+  ParachuteInfantry = function(options) {
 
     var css, dom, data, radarItem, exports;
 
@@ -6093,7 +6620,7 @@ if (1) {
 
     dom = {
       o: null
-    }
+    };
 
     function openParachute() {
 
@@ -6109,6 +6636,77 @@ if (1) {
       data.vY = 0.5;
 
       data.parachuteOpen = true;
+
+    }
+
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        common.setX(exports, x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        common.setY(exports, y);
+        data.y = y;
+      }
+
+    }
+
+    function hit(hitPoints, target) {
+
+      // special case: helicopter explosion resulting in a parachute infantry - make parachute invincible to shrapnel.
+      if (target && target.data && target.data.type === 'shrapnel' && data.ignoreShrapnel) {
+        return false;
+      }
+
+      if (!data.dead) {
+        hitPoints = hitPoints || 1;
+        data.energy -= hitPoints;
+        if (data.energy <= 0) {
+          data.energy = 0;
+          die();
+        }
+      }
+
+    }
+
+    function dead() {
+      if (data.dead && dom.o) {
+        utils.css.swap(dom.o, css.exploding, css.dead);
+      }
+    }
+
+    function dieComplete() {
+
+      removeNodes(dom);
+      radarItem.die();
+
+    }
+
+    function die(silent) {
+
+      if (data.dead) {
+        return false;
+      }
+
+      if (!silent) {
+
+        utils.css.add(dom.o, css.exploding);
+
+        // timeout?
+        window.setTimeout(dieComplete, 1200);
+
+      } else {
+
+        // no explosion, remove right away.
+        dieComplete();
+
+      }
+
+      data.energy = 0;
+
+      data.dead = true;
 
     }
 
@@ -6228,77 +6826,6 @@ if (1) {
 
     }
 
-    function moveTo(x, y) {
-
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
-        data.y = y;
-      }
-
-    }
-
-    function hit(hitPoints, target) {
-
-      // special case: helicopter explosion resulting in a parachute infantry - make parachute invincible to shrapnel.
-      if (target && target.data && target.data.type === 'shrapnel' && data.ignoreShrapnel) {
-        return false;
-      }
-
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-
-    }
-
-    function dead() {
-      if (data.dead && dom.o) {
-        utils.css.swap(dom.o, css.exploding, css.dead);
-      }
-    }
-
-    function dieComplete() {
-
-      removeNodes(dom);
-      radarItem.die();
-
-    }
-
-    function die(silent) {
-
-      if (data.dead) {
-        return false;
-      }
-
-      if (!silent) {
-
-        utils.css.add(dom.o, css.exploding);
-
-        // timeout?
-        window.setTimeout(dieComplete, 1200);
-
-      } else {
-
-        // no explosion, remove right away.
-        dieComplete();
-
-      }
-
-      data.energy = 0;
-
-      data.dead = true;
-
-    }
-
     function init() {
 
       dom.o = makeSprite({
@@ -6324,15 +6851,15 @@ if (1) {
       dom: dom,
       die: die,
       hit: hit
-    }
+    };
 
     init();
 
     return exports;
 
-  }
+  };
 
-  function Infantry(options) {
+  Infantry = function(options) {
 
     var css, dom, data, objects, radarItem, nearby, collision, exports;
 
@@ -6369,11 +6896,11 @@ if (1) {
 
     dom = {
       o: null
-    }
+    };
 
     objects = {
       gunfire: []
-    }
+    };
 
     nearby = {
       options: {
@@ -6405,7 +6932,7 @@ if (1) {
       // who gets fired at?
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'turrets'],
       targets: []
-    }
+    };
 
     collision = {
       options: {
@@ -6428,46 +6955,7 @@ if (1) {
         }
       },
       items: ['bunkers', 'tanks']
-    }
-
-    function animate() {
-
-      if (!data.dead) {
-
-        if (!data.stopped) {
-
-          moveTo(data.x + data.vX, data.bottomY);
-
-        } else {
-
-          // firing, or reclaiming/repairing?
-
-          // only fire (i.e., GunFire objects) when stopped
-          if (!data.noFire) {
-            fire();
-          }
-
-        }
-
-        collisionTest(collision, exports);
-
-        // start, or stop firing?
-        nearbyTest(nearby);
-
-      }
-
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
-        }
-      }
-
-      data.frameCount++;
-
-      return (data.dead && !dom.o && !objects.gunfire.length);
-
-    }
+    };
 
     function fire() {
 
@@ -6585,6 +7073,47 @@ if (1) {
 
     }
 
+    function animate() {
+
+      var i;
+
+      if (!data.dead) {
+
+        if (!data.stopped) {
+
+          moveTo(data.x + data.vX, data.bottomY);
+
+        } else {
+
+          // firing, or reclaiming/repairing?
+
+          // only fire (i.e., GunFire objects) when stopped
+          if (!data.noFire) {
+            fire();
+          }
+
+        }
+
+        collisionTest(collision, exports);
+
+        // start, or stop firing?
+        nearbyTest(nearby);
+
+      }
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      data.frameCount++;
+
+      return (data.dead && !dom.o && !objects.gunfire.length);
+
+    }
+
     function init() {
 
       // infantry, or engineer?
@@ -6615,7 +7144,7 @@ if (1) {
       dom: dom,
       die: die,
       hit: hit
-    }
+    };
 
     if (!options.noInit) {
       init();
@@ -6623,9 +7152,9 @@ if (1) {
 
     return exports;
 
-  }
+  };
 
-  function Engineer(options) {
+  Engineer = function(options) {
 
     options = options || {};
 
@@ -6636,9 +7165,9 @@ if (1) {
 
     return new Infantry(options);
 
-  }
+  };
 
-  function LandingPad(options) {
+  LandingPad = function(options) {
 
     var css, dom, data, nearby, collision, exports;
 
@@ -6661,7 +7190,7 @@ if (1) {
 
     dom = {
       o: null
-    }
+    };
 
     collision = {
       options: {
@@ -6705,15 +7234,15 @@ if (1) {
       animate: animate,
       data: data,
       dom: dom
-    }
+    };
 
     init();
 
     return exports;
     
-  }
+  };
 
-  function shrapnelExplosion(options, shrapnelOptions) {
+  shrapnelExplosion = function(options, shrapnelOptions) {
 
     var localOptions, vX, vY, halfWidth;
 
@@ -6762,9 +7291,9 @@ if (1) {
 
     }
     
-  }
+  };
 
-  function Shrapnel(options) {
+  Shrapnel = function(options) {
 
     var css, dom, data, collision, exports, type, types;
 
@@ -6796,47 +7325,7 @@ if (1) {
 
     dom = {
       o: null
-    }
-
-    function animate() {
-
-      if (!data.dead) {
-
-        if (data.frameCount % data.animationModulus === 0) {
-
-          data.spriteFrame++;
-
-          if (data.spriteFrame > data.spriteFrames) {
-            data.spriteFrame = 0;
-          }
-
-          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d(). May be faster.
-
-          dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
-
-          // dom.o.style[features.transform.prop] = 'translate3d(' + (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px, 0px, 0px)';
-
-        }
-
-        moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
-
-        data.gravity *= 1.1;
-
-        if (data.y - data.height >= 380) {
-          moveTo(data.x + data.vX, 380);
-          die();
-        }
-
-        // collision check
-        collisionTest(collision, exports);
-
-        data.frameCount++;
-
-      }      
-
-      return data.dead && !dom.o;
-
-    }
+    };
 
     function moveTo(x, y) {
 
@@ -6897,6 +7386,45 @@ if (1) {
 
     }
 
+    function animate() {
+
+      if (!data.dead) {
+
+        if (data.frameCount % data.animationModulus === 0) {
+
+          data.spriteFrame++;
+
+          if (data.spriteFrame > data.spriteFrames) {
+            data.spriteFrame = 0;
+          }
+
+          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d(). May be faster.
+
+          dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
+
+          // dom.o.style[features.transform.prop] = 'translate3d(' + (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px, 0px, 0px)';
+
+        }
+
+        moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
+
+        data.gravity *= 1.1;
+
+        if (data.y - data.height >= 380) {
+          moveTo(data.x + data.vX, 380);
+          die();
+        }
+
+        // collision check
+        collisionTest(collision, exports);
+
+        data.frameCount++;
+
+      }      
+
+      return data.dead && !dom.o;
+
+    }
 
     function init() {
 
@@ -6916,7 +7444,7 @@ if (1) {
       data: data,
       dom: dom,
       die: die
-    }
+    };
 
     collision = {
       options: {
@@ -6933,9 +7461,9 @@ if (1) {
 
     return exports;
 
-  }
+  };
 
-  function Smoke(options) {
+  Smoke = function(options) {
 
     var css, dom, data, exports;
 
@@ -6958,31 +7486,7 @@ if (1) {
 
     dom = {
       o: null
-    }
-
-    function animate() {
-
-      if (data.frameCount % data.animateModulus === 0) {
-
-        data.spriteFrame++;
-
-        // advance smoke sprite
-        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';
-
-        if (data.spriteFrame > data.spriteFrames) {
-
-          // animation finished
-          die();
-
-        }
-
-      }
-
-      data.frameCount++;
-
-      return (data.dead && !dom.o);
-
-    }
+    };
 
     function moveTo(x, y) {
 
@@ -7010,6 +7514,30 @@ if (1) {
 
     }
 
+    function animate() {
+
+      if (data.frameCount % data.animateModulus === 0) {
+
+        data.spriteFrame++;
+
+        // advance smoke sprite
+        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';
+
+        if (data.spriteFrame > data.spriteFrames) {
+
+          // animation finished
+          die();
+
+        }
+
+      }
+
+      data.frameCount++;
+
+      return (data.dead && !dom.o);
+
+    }
+
     function init() {
 
       dom.o = makeSprite({
@@ -7028,528 +7556,13 @@ if (1) {
       data: data,
       dom: dom,
       die: die
-    }
+    };
 
     init();
 
     return exports;
 
-  }
-
-  function trackObject(source, target, options) {
-
-    // given a source object (the helicopter) and a target, return the relevant vX / vY delta to get progressively closer to the target.
-
-    var deltaX, deltaY, vX, vY, result;
-
-    options = options || {};
-
-    // TODO: (target.data.x - target.data.halfWidth) results in helicopter being on left side. + target.data.halfWidth is screwy??
-
-    // deltaX = target.data.x - source.data.x;
-
-    deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
-
-    // deltaX += target.data.halfWidth; // ?
-
-    // by default, offset target to one side of a balloon.
-
-    if (target.data.type === 'balloon') {
-
-      if (target.data.x > source.data.x) {
-
-        deltaX -= 150;
-
-      } else {
-
-        deltaX += 150;
-
-      }
-
-    }
-
-    deltaY = target.data.y - source.data.y;
-
-    deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
-
-    result = {
-      deltaX: deltaX,
-      deltaY: deltaY
-    }
-
-    return result;
-
-  }
-
-  function getNearestObject(source, options) {
-
-    // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
-
-    var i, j, k, l, objects, item, itemArray, items, localObjects, target, result, targetData, yBias, isInFront, useInFront;
-
-    options = options || {};
-
-    objects = game.objects;
-
-    useInFront = (options.useInFront || null);
-
-    // should a smart missile be able to target another smart missile? ... why not.
-    items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
-
-    localObjects = [];
-
-    // if the source object isn't near the ground, be biased toward airborne items.
-    if (source.data.type === 'helicopter' && source.data.y < game.objects.view.data.world.height - 100) {
-      yBias = 1.5;
-    }
-
-    for (i=0, j=items.length; i<j; i++) {
-
-      itemArray = objects[items[i]];
-
-      for (k=0, l=itemArray.length; k<l; k++) {
-
-        // potential target: not dead, and an enemy
-        if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
-
-          // is the target in front of the source?
-          isInFront = (itemArray[k].data.x >= source.data.x);
-
-          // [revised] - is the target within an acceptable range?
-          // isInFront = (itemArray[k].data.x >= source.data.x || itemArray[k].data.x - source.data.x > -100);
-
-          // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
-          if (!useInFront || (useInFront && (!source.data.rotated && isInFront) || (source.data.rotated && !isInFront))) {
-
-            targetData = itemArray[k].data;
-
-            localObjects.push({
-              obj: itemArray[k],
-              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * yBias) + Math.abs(source.data.y) * yBias
-            });
-
-          }
-
-        }
-
-      }
-
-    }
-
-    // sort by distance
-    localObjects.sort(utils.array.compare('totalDistance'));
-
-    if (localObjects.length) {
-
-      // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
-      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length-1 : 0].obj;
-
-    } else {
-
-      result = null;
-
-    }
-
-    return result;
-
-  }
-
-  function objectInView(data, options) {
-
-    // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen).
-
-    var i, j, items, deltaX, result;
-
-    options = options || {};
-
-    // by default, 67% of screen width
-    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * 2/3);
-
-    // by default, take helicopters if nothing else.
-    items = game.objects[(options.items ? options.items : 'helicopters')];
-
-    for (i=0, j=items.length; i<j; i++) {
-
-      // how far away is the target?
-      deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
-
-      if (!items[i].data.dead && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
-
-        result = items[i];
-
-        break;
-
-      }
-
-    }
-
-    return result;
-
-  }
-
-  function initNearby(nearby, exports) {
-
-    // map options.source -> exports
-    nearby.options.source = exports;
-
-  }
-
-  function nearbyTest(nearby) {
-
-    var i, j, foundHit;
-
-    // loop through relevant game object arrays
-    // TODO: revisit for object creation / garbage collection improvements
-    for (i=0, j=nearby.items.length; i<j; i++) {
-      // ... and check them
-      if (collisionCheckArray(mixin(nearby.options, { targets: game.objects[nearby.items[i]] }))) {
-        foundHit = true;
-      }
-    }
-
-    // callback for no-hit case, too
-    if (!foundHit && nearby.options.miss) {
-      nearby.options.miss(nearby.options.source);
-    }
-
-  }
-
-  function enemyHelicopterNearby(data, triggerDistance) {
-
-    var i, j, deltaX, result;
-
-    // by default, 67% of screen width
-    triggerDistance = triggerDistance || (game.objects.view.data.browser.width * 2/3);
-
-    for (i=0, j=game.objects.helicopters.length; i<j; i++) {
-
-      // not cloaked, not dead, and an enemy?
-      if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
-
-        // how far away is the target?
-        deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
-
-        if (deltaX < triggerDistance) {
-
-          result = game.objects.helicopters[i];
-
-          break;
-
-        }
-
-      }
-
-    }
-
-    return result;
-
-  }
-
-  function collisionTest(collision, exports) {
-
-    var i, j;
-
-    // hack: first-time run fix, as exports is initially undefined
-    if (!collision.options.source) {
-      collision.options.source = exports;
-    }
-
-    // loop through relevant game object arrays
-    for (i=0, j=collision.items.length; i<j; i++) {
-      // ... and check them
-      // TODO: revisit for object creation / garbage collection improvements
-      collisionCheckArray(mixin(collision.options, {
-        targets: game.objects[collision.items[i]]
-      }));
-    }
-
-  }
-
-  function collisionCheckArray(options) {
-
-    /**
-     * options = {
-     *   source: object (eg., game.objects.gunfire[0]);
-     *   targets: array (eg., game.objects.tanks)
-     * }
-     */
-
-    var item, objects, data1, data2, xLookAhead, foundHit;
-
-    if (!options) {
-      return false;
-    }
-
-    // don't check if the object is dead. If it's expired, only allow the object if it's also "hostile" (can still hit things)
-    if (options.source.data.dead || (options.source.data.expired && !options.source.data.hostile)) {
-      return false;
-    }
-
-    // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
-
-    if (options.useLookAhead) {
-
-      // friendly things move further right, enemies move further left.
-
-      xLookAhead = (Math.min(16, options.source.data.xLookAhead || (options.source.data.width * 0.33)) * (options.source.data.isEnemy ? -1 : 1));
-
-    } else {
-
-      xLookAhead = 0;
-
-    }
-
-    data1 = options.source.data;
-
-    objects = options.targets;
-
-    for (item in objects) {
-
-      // non-standard formatting, lengthy logic check here...
-      if (
-
-        objects.hasOwnProperty(item)
-
-        // don't compare the object against itself
-        && objects[item] !== options.source
-
-        // ignore dead objects (unless a turret, which can be reclaimed / repaired by engineers)
-        && (!objects[item].data.dead || (objects[item].data.type === 'turret' && data1.type === 'infantry' && data1.role))
-
-        // more non-standard formatting....
-        && (
-          // don't check against friendly units
-          (objects[item].data.isEnemy !== options.source.data.isEnemy)
-          // unless infantry vs. bunker, end-bunker or helicopter
-          || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
-          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
-
-          || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
-          // OR engineer vs. turret
-          || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
-          // OR we're dealing with a hostile or neutral object
-          || (data1.hostile || objects[item].data.hostile)
-          || (data1.isNeutral || objects[item].data.isNeutral)
-        )
-
-        // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
-        && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
-
-      ) {
-
-        data2 = objects[item].data;
-
-        hit = collisionCheck(data1, data2, xLookAhead);
-
-        if (hit) {
-
-          foundHit = true;
-
-          if (options.hit) {
-            options.hit(objects[item]);
-          }
-
-        }
-
-      }
-
-    }
-
-    return foundHit;
-
-  }
-
-  function bottomAlignedY(y) {
-
-    // correct bottom-aligned Y value
-    return 370 - 2 - (y || 0);
-
-  }
-
-  var domPoint1, domPoint2;
-
-  domPoint1 = document.createElement('div');
-  domPoint1.className = 'collision-check-1';
-
-  domPoint2 = document.createElement('div');
-  domPoint2.className = 'collision-check-2';
-
-
-  function collisionCheck(point1, point2, point1XLookAhead) {
-
-    /**
-     * given x, y, width and height, determine if one object is overlapping another.
-     * additional hacky param: X-axis offset for object. Used for cases where tanks etc. need to know when objects are nearby.
-     * provided as an override because live objects are passed directly and can't be modified (eg., data1.x += ...).
-     * cloning these objects via mixin() works, but then lot of temporary objects are created, leading to increased garbage collection.
-     */
-
-    if (!point1 || !point2) {
-      return null;
-    }
-
-    // presume each object has x, y, width, height - otherwise, all hell will break loose.
-
-    // given two boxes, check for intersects.
-    var result;
-
-    var d1, d2;
-
-    // var width, height;
-
-    if (0) {
-
-      d1 = domPoint1.cloneNode(false);
-      d2 = domPoint2.cloneNode(false);
-
-      d1.style.width = point1.width + 'px';
-      d1.style.height = point1.height + 'px';
-      d1.style.left = (point1.x) + 'px';
-      d1.style.top = point1.y + 'px';
-
-      d2.style.width = point2.width + 'px';
-      d2.style.height = point2.height + 'px';
-      d2.style.left = (point2.x) + 'px';
-      d2.style.top = point2.y + 'px';
-
-      game.dom.world.appendChild(d1);
-      game.dom.world.appendChild(d2);
-
-    }
-
-    if (point2.x >= point1.x + point1XLookAhead) {
-
-      // point 2 is to the right.
-
-      if (point1.x + point1XLookAhead + point1.width >= point2.x) {
-
-        // point 1 overlaps point 2 on x.
-
-        // width = point2.x - (point1.x + point1XLookAhead + point1.width);
-
-        if (point1.y < point2.y) {
-
-          // point 1 is above point 2.
-
-          if (point1.y + point1.h >= point2.y) {
-
-            // point 1 overlaps point 2 on y.
-            result = true;
-
-            // height = point2.y - (point1.y + point1.h);
-
-          }
-
-        } else {
-
-          result = (point1.y < point2.y + point2.height);
-
-          // height = (point2.y + point2.height) - point1.y;
-
-        }
-
-      }
-
-    } else {
-
-      // point 1 is to the right.
-
-      if (point2.x + point2.width >= point1.x + point1XLookAhead) {
-
-        // point 2 overlaps point 1 on x.
-
-        // width = point1.x - (point2.x + point1XLookAhead + point2.width);
-
-        if (point2.y < point1.y) {
-
-          // point 2 is above point 1.
-          result = (point2.y + point2.height >= point1.y);
-
-          // height = point1.y - (point2.height + point2.y);
-
-        } else {
-
-          // point 2 is below point 1.
-          result = (point1.y + point1.height >= point2.y);
-
-          // height = point2.y - (point1.y + point1.height);
-
-        }
-
-      } else {
-
-        // no overlap?
-        result = false;
-
-      }
-
-    }
-
-/*
-    if (width && height) {
-      console.log(width, height);
-    }
-*/
-    return result;
-
-  }
-
-  function collisionCheckMidPoint(obj1, obj2) {
-
-    // infantry-at-midpoint (bunker or helicopter) case
-    return collisionCheck(obj1.data.midPoint, obj2.data, 0);
-
-  }
-
-  function getDoorCoords(obj) {
-
-    // for special collision check case with bunkers
-
-    var door, result;
-
-    door = {
-      width: 5,
-      height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
-      halfWidth: 2.5
-    };
-
-    result = {
-      width: door.width,
-      height: door.height,
-      // slight offset on X, don't subtract door half-width
-      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
-      y: parseInt(obj.data.y + obj.data.height - door.height, 10)
-    };
-
-    return result;
-
-  }
-
-  function removeNodeArray(nodeArray) {
-    for (var i=0, j=nodeArray.length; i<j; i++) {
-      nodeArray[i].parentNode.removeChild(nodeArray[i]);
-      nodeArray[i] = null;
-    }
-  }
-
-  function removeNodes(dom) {
-
-    // remove all nodes in a structure
-    var item;
-
-    for (item in dom) {
-      if (dom.hasOwnProperty(item) && dom[item]) {
-        // node reference, or array of nodes?
-        if (dom[item] instanceof Array) {
-          removeNodeArray(dom[item]);
-        } else {
-          dom[item].parentNode.removeChild(dom[item]);
-        }
-        dom[item] = null;
-      }
-    }
-
-  }
+  };
 
   // recycled from survivor.js
 
@@ -7864,22 +7877,6 @@ if (1) {
 
   }());
 
-  function addItem(className, x) {
-
-    var node = makeSprite({
-      className: className
-    });
-
-    if (x) {
-      node.style.left = x + 'px';
-    }
-
-    game.dom.world.appendChild(node);
-
-    return node;
-
-  }
-
 /*
   var domPoint1 = document.createElement('div');
   domPoint1.className = 'collision-check-1';
@@ -7946,11 +7943,9 @@ if (1) {
 
   }
 
-  exports = {
+  window.aa = {
     init: init
   }
-
-  window.aa = exports;
 
   soundManager.audioFormats.mp3.required = false;
 
