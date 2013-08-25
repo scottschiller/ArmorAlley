@@ -34,6 +34,8 @@
 
   var deg2Rad = 180/Math.PI;
 
+  var battleOver = false;
+
   utils = {
 
     array: (function() {
@@ -741,14 +743,6 @@
       objects.balloons.push(new Balloon({
         x: 4096 + 768
       }));
-
-// testing end-game
-/*
-      objects.vans.push(new Van({
-        x: 420,
-        isEnemy: true
-      }));
-*/
 
       objects.tanks.push(new Tank({
         x: 96
@@ -1743,24 +1737,29 @@
 
   }
 
-
   function gameOver(youWon) {
 
     // somebody's base is about to get blown up.
 
     var yourBase, enemyBase;
 
-    yourBase = game.objects.bases[0];
-    enemyBase = game.objects.bases[1];
+    if (!battleOver) {
 
-    if (!youWon) {
+      yourBase = game.objects.bases[0];
+      enemyBase = game.objects.bases[1];
 
-      // sorry, better luck next time.
-      yourBase.die();
+      if (!youWon) {
 
-    } else {
+        // sorry, better luck next time.
+        yourBase.die();
 
-      enemyBase.die();
+      } else {
+
+        enemyBase.die();
+
+      }
+
+      battleOver = true;
 
     }
 
@@ -5906,6 +5905,8 @@ if (1) {
           gameOver();
 
         } else if (!data.isEnemy && data.x >= data.xGameOver) {
+
+          stop();
 
           // player wins
           console.log('You have won the battle.');
