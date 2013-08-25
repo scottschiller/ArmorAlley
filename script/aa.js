@@ -445,6 +445,17 @@
       }
     },
 
+    setTransformXY: function(o, x, y) {
+
+      if (o) {
+        if (features.transform.prop) {
+          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y +', 0px)';
+        } else {
+          o.style.left = (x + 'em');
+        }
+      }
+    },
+
     setTransformY: function(exports, y) {
 
       if (exports && exports.dom) {
@@ -1622,18 +1633,29 @@
       var scrollAmount, mouseDelta;
 
       // don't scroll if the helicopter isn't moving.
-      if (game.objects.helicopters[0].data.vX === 0) {
-        return false;
+      if (game.objects.helicopters[0].data.vX !== 0) {
+
+        // is the mouse to the right, or left?
+        mouseDelta = (data.mouse.x - data.browser.halfWidth);
+
+        // how much...
+        scrollAmount = mouseDelta / data.browser.halfWidth;
+
+        // and scale
+        setLeftScroll(scrollAmount * data.maxScroll);
+
       }
 
-      // is the mouse to the right, or left?
-      mouseDelta = (data.mouse.x - data.browser.halfWidth);
+      if (data.frameCount % data.marqueeModulus === 0) {
 
-      // how much...
-      scrollAmount = mouseDelta / data.browser.halfWidth;
+        // move the marquee.
+        common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -3) + 'px', 0);
 
-      // and scale
-      setLeftScroll(scrollAmount * data.maxScroll);
+      }
+
+      data.gameTips.scrollOffset++;
+
+      data.frameCount++;
 
     }
 
@@ -1686,6 +1708,7 @@
     };
 
     data = {
+      frameCount: 0,
       ignoreMouseEvents: false,
       browser: {
         width: 0,
@@ -1714,8 +1737,10 @@
         height: 0
       },
       gameTips: {
-        active: false
+        active: false,
+        scrollOffset: 0
       },
+      marqueeModulus: 2,
       maxScroll: 6
     };
 
@@ -4842,7 +4867,8 @@
     function updateFuelUI() {
 
       if (!data.isEnemy) {
-        dom.fuelLine.style.width = (data.fuel + '%');
+        // dom.fuelLine.style.width = (data.fuel + '%');
+        common.setTransformXY(dom.fuelLine, -100 + data.fuel + '%', '0px');
       }
 
     }
@@ -6414,7 +6440,7 @@
               data.state = 0;
             }
 
-            dom.o.style.backgroundPosition = '0px ' + -(data.height * data.state) + 'px';
+            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
 
           } else if (data.frameCount % data.stateModulus === 4) {
 
@@ -7753,19 +7779,11 @@
 
     addItem('barb-wire', 318);
 
-    // addItem('base-landing-pad', 190);
-
     addItem('checkmark-grass', 394);
 
     addItem('flower', 576);
 
     addItem('flowers', 620);
-
-    // addItem('base-landing-pad', 7800);
-
-    // addItem('base', 8000);
-
-    // addItem('end-bunker', 8192 - 48);
 
     function updateStats() {
 

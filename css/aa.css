@@ -9,6 +9,7 @@ body {
  font-size: 1em;
  background: #111;
  color: #fff;
+ /* retro */
  -webkit-font-smoothing: none;
  font-smooth: never;
 }
@@ -132,7 +133,7 @@ body {
  top: 0px;
  left: 0px;
  width: 100%;
- height: 100%;
+ height: 5px;
  background: #fff;
 }
 
@@ -1097,11 +1098,13 @@ ul.stats-bar .bombs em {
 
 #game-tips.active .tips-container div {
 	/* CSS3 <marquee>-like animation */
+	/*
 	-webkit-animation: marquee 3000s infinite steps(30000);
 	-moz-animation: marquee 3000s infinite steps(30000);
 	-ms-animation: marquee 3000s infinite steps(30000);
 	-o-animation: marquee 3000s infinite steps(30000);
 	animation: marquee 3000s infinite steps(30000);
+	*/
 }
 
 #game-tips .tips-container div:first-of-type {
