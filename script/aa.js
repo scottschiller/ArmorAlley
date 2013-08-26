@@ -33,7 +33,8 @@
 
   var noJamming = winloc.match(/nojam/i);
 
-  var noTransform = winloc.match(/notransform/i);
+  // IE 9 doesn't like some of the bigger transforms, for some reason.
+  var noTransform = (winloc.match(/notransform/i) || (navigator.userAgent.match(/msie 9|opera/i) && !winloc.match(/usetransform/i)));
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
@@ -451,7 +452,7 @@
         if (features.transform.prop) {
           o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y +', 0px)';
         } else {
-          o.style.left = (x + 'em');
+          o.style.left = x;
         }
       }
     },
@@ -1679,11 +1680,6 @@
 
       utils.events.add(window, 'focus', events.focus);
       utils.events.add(window, 'blur', events.blur);
-
-      // TODO: sort out 'invalid argument' issue for IE 8 later.
-      if (!navigator.userAgent.match(/msie 8/i)) {
-        utils.events.add(document, 'keydown', events.keydown);
-      }
 
     }
 
@@ -3615,7 +3611,9 @@
     var css, data, dom, objects, exports;
 
     function setHeight(height) {
-      dom.o.style.height = (height + 'px');
+      if (height >= 0) {
+        dom.o.style.height = (height + 'px');
+      }
     }
 
     function moveTo(x, y, height) {
