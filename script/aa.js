@@ -19,7 +19,7 @@
 */
 
 /*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
-/*jslint devel: true, nomen: true, plusplus: true, todo: true, vars: true, white: true */
+/*jslint nomen: true, plusplus: true, todo: true, vars: true, white: true */
 
   var game, utils, common;
 
@@ -7719,6 +7719,6 @@
     soundManager.disable();
   }
 
-  setTimeout(window.aa.init, 500);
+  setTimeout(window.aa.init, 20);
 
 }(window));
