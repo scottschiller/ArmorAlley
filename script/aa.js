@@ -1,4 +1,4 @@
-(function(window) {
+(function armorAlley(window) {
 
 "use strict";
 
@@ -463,6 +463,19 @@
           exports.dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(exports.data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
         } else {
           exports.dom.o.style.top = (y + 'px');
+        }
+      }
+
+    },
+
+    hit: function(exports, hitPoints) {
+
+      if (!exports.data.dead) {
+        hitPoints = hitPoints || 1;
+        exports.data.energy -= hitPoints;
+        if (exports.data.energy <= 0) {
+          exports.data.energy = 0;
+          exports.die();
         }
       }
 
@@ -2464,17 +2477,6 @@
       }
     }
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
     function animate() {
 
       if (!data.dead) {
@@ -2669,7 +2671,6 @@
       detach: detach,
       die: die,
       dom: dom,
-      hit: hit,
       reset: reset,
       setEnemy: setEnemy
     };
@@ -2805,17 +2806,6 @@
 
     }
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
     function infantryHit(target) {
 
       // an infantry unit has made contact with a bunker.
@@ -2899,8 +2889,8 @@
     exports = {
       objects: objects,
       data: data,
+      die: die,
       dom: dom,
-      hit: hit,
       infantryHit: infantryHit,
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
@@ -3250,17 +3240,6 @@
 
     }
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
     function setEnemy(isEnemy) {
 
       if (data.isEnemy !== isEnemy) {
@@ -3427,10 +3406,10 @@
     exports = {
       animate: animate,
       data: data,
+      die: die,
       dom: dom,
       engineerCanInteract: engineerCanInteract,
-      engineerHit: engineerHit,
-      hit: hit
+      engineerHit: engineerHit
     };
 
     init();
@@ -3684,17 +3663,6 @@
 
     }
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
     function animate() {
 
       var x, y, height;
@@ -3819,7 +3787,6 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit,
       die: die
     };
 
@@ -3870,17 +3837,6 @@
         sounds.genericExplosion.play();
       }
 
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
     }
 
     function fire() {
@@ -3995,7 +3951,6 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit,
       die: die
     };
 
@@ -4042,7 +3997,7 @@
       if (target) {
         // special case: tanks are impervious to infantry gunfire.
         if (!(data.parentType === 'infantry' && target.data.type === 'tank')) {
-          target.hit(data.damagePoints, exports);
+          common.hit(target, data.damagePoints);
         }
       }
 
@@ -4167,6 +4122,7 @@
     exports = {
       animate: animate,
       data: data,
+      die: die,
       dom: dom
     };
 
@@ -4239,7 +4195,7 @@
       }
 
       // special case: one bomb kills a helicopter.
-      target.hit(target.data.type === 'helicopter' ? 999 : data.damagePoints);
+      common.hit(target, target.data.type === 'helicopter' ? 999 : data.damagePoints);
 
       die();
 
@@ -4330,6 +4286,7 @@
     exports = {
       animate: animate,
       data: data,
+      die: die,
       dom: dom
     };
 
@@ -4541,17 +4498,6 @@
 
     }
 
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-    }
-
     function sparkAndDie(target) {
 
       // TODO: reduce timers
@@ -4561,7 +4507,7 @@
       data.dead = true;
 
       if (target) {
-        target.hit(data.damagePoints, exports);
+        common.hit(target, data.damagePoints);
       }
 
       die();
@@ -4813,7 +4759,6 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit,
       die: die,
       objects: objects
     };
@@ -5341,18 +5286,6 @@
 
       window.setTimeout(respawn, 3000);
 
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        updateHealth();
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
     }
 
     function fire() {
@@ -6008,9 +5941,9 @@
         hit: function(target) {
           if (target.data.type === 'chain') {
             // special case: chains do damage, but don't kill.
-            hit(target.data.damagePoints);
+            common.hit(exports, target.data.damagePoints);
             // should the target die, too? ... probably so.
-            target.hit(999);
+            common.hit(target, 999);
           } else if (target.data.type === 'infantry') {
             // helicopter landed, and friendly, landed infantry (or engineer)?
             if (data.landed && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
@@ -6028,7 +5961,7 @@
             // hit something else. boom!
             die();
             // should the target die, too? ... probably so.
-            target.hit(999);
+            common.hit(target, 999);
           }
         }
       },
@@ -6041,7 +5974,6 @@
       dom: dom,
       die: die,
       fire: fire,
-      hit: hit,
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
       rotate: rotate,
@@ -6155,21 +6087,6 @@
       }
 
       radarItem.die();
-
-    }
-
-    function hit(hitPoints) {
-
-      hitPoints = hitPoints || 1;
-
-      if (!data.dead) {
-        data.energy -= hitPoints;
-        updateHealth();
-        if (data.energy <= 0) {
-          die();
-        }
-
-      }
 
     }
 
@@ -6324,7 +6241,6 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit,
       die: die,
       stop: stop,
       resume: resume
@@ -6389,17 +6305,6 @@
         sounds.genericExplosion.play();
       }
 
-    }
-
-    function hit(hitPoints) {
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
     }
 
     function animate() {
@@ -6532,7 +6437,6 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit,
       die: die
     };
 
@@ -6619,14 +6523,7 @@
         return false;
       }
 
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
+      return common.hit(exports, hitPoints);
 
     }
 
@@ -6908,19 +6805,6 @@
 
     }
 
-    function hit(hitPoints) {
-
-      if (!data.dead) {
-        hitPoints = hitPoints || 1;
-        data.energy -= hitPoints;
-        if (data.energy <= 0) {
-          data.energy = 0;
-          die();
-        }
-      }
-
-    }
-
     function animate() {
 
       var i;
@@ -7084,8 +6968,7 @@
       animate: animate,
       data: data,
       dom: dom,
-      die: die,
-      hit: hit
+      die: die
     };
 
     if (!options.noInit) {
@@ -7273,7 +7156,7 @@
     function hitAndDie(target) {
 
       if (target) {
-        target.hit(data.damagePoints, exports);
+        common.hit(target, data.damagePoints);
       }
 
       die();
