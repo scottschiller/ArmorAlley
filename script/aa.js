@@ -4951,7 +4951,7 @@
 
         data.bombs = Math.min(data.maxBombs, data.bombs + 1);
         hasUpdate = 1;
-       
+
       }
 
       if (data.repairFrames % 200 === 0) {
@@ -4969,17 +4969,13 @@
 
     function setFiring(state) {
 
-      if (state) {
-         data.firing = state;
-      }
+      data.firing = state;
 
     }
 
     function setBombing(state) {
 
-      if (state) {
-        data.bombing = state;
-      }
+      data.bombing = state;
 
     }
 
@@ -5282,7 +5278,7 @@
         sounds.genericExplosion.play();
       }
 
-      window.setTimeout(respawn, 3000);
+      window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
 
     }
 
@@ -5315,9 +5311,9 @@
 
         // TODO: CPU
 
-        if (!data.isEnemy) {
+        data.ammo = Math.max(0, data.ammo - 1);
 
-          data.ammo = Math.max(0, data.ammo - 1);
+        if (!data.isEnemy) {
 
           hasUpdate = 1;
 
@@ -5341,11 +5337,15 @@
 
         data.bombs = Math.max(0, data.bombs - 1);
 
-        hasUpdate = 1;
+        if (!data.isEnemy) {
 
-        // CTRL key still down?
-        if (!keyboardMonitor.isDown('ctrl')) {
-          data.bombing = false;
+          hasUpdate = 1;
+
+          // CTRL key still down?
+          if (!keyboardMonitor.isDown('ctrl')) {
+            data.bombing = false;
+          }
+
         }
 
       }
@@ -5418,16 +5418,23 @@
 
     function ai() {
 
-      // rudimentary, dumb smarts.
-      var deltaX, deltaY, target, result, balloonTarget, desiredVX, desiredVY;
+      /**
+       * Rudimentary, dumb smarts.
+       * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
+       */
+
+      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY;
 
       if (data.fuel <= 0) {
         return false;
       }
 
-      // low fuel means low fuel.
+      // low fuel means low fuel. or ammo. or bombs.
 
-      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 33 || data.energy < 3)) {
+      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 30 || data.energy < 2 || !data.ammo || !data.bombs)) {
+
+        setFiring(false);
+        setBombing(false);
 
         target = game.objects.landingPads[game.objects.landingPads.length-1];
 
@@ -5454,6 +5461,7 @@
 
         }
 
+        // only for #trackEnemy case
         centerView();
 
         return false;
@@ -5466,7 +5474,7 @@
 
           // repair has completed. go go go!
           data.vY = -4;
-          data.vX = -8;
+          data.vX = -data.vxMax;
 
         } else {
 
@@ -5481,8 +5489,6 @@
 
       }
 
-      // target balloons.
-
       if (lastTarget) {
 
         // toast?
@@ -5491,8 +5497,9 @@
 
           lastTarget = null;
 
-        } else if (lastTarget.data.y > 340) {
+        } else if (lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
 
+          // is this a balloon that's flying too low?
           lastTarget = null;
 
         }
@@ -5501,21 +5508,21 @@
 
       if (!lastTarget) {
 
-        lastTarget = objectInView(data, { items: 'balloons' }) || objectInView(data, { items: 'clouds' });
+        lastTarget = objectInView(data, { items: 'balloons' }) || objectInView(data, { items: 'tanks' }) || objectInView(data, { items: 'clouds' });
 
         // is the new target too low?
-        if (lastTarget && lastTarget.data.y > 340) {
+        if (lastTarget && lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
           lastTarget = null;
         }
 
-      } else if (lastTarget.data.type !== 'balloon') {
+      } else if (lastTarget.data.type === 'cloud') {
 
-        // we already have a target - can we get a balloon?
-        balloonTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
+        // we already have a target - can we get a more interesting one?
+        altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth }) || objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
 
         // better - go for that.
-        if (balloonTarget && !balloonTarget.data.dead) {
-          lastTarget = balloonTarget;
+        if (altTarget && !altTarget.data.dead) {
+          lastTarget = altTarget;
         }
 
       }
@@ -5524,11 +5531,24 @@
 
       data.lastVX = parseFloat(data.vX);
 
-      if (target) {
+      if (target && !target.data.dead) {
 
         // go go go!
 
         result = trackObject(exports, target);
+
+        // hack: if target is not a balloon and is bottom-aligned (i.e., a tank), stay at current position.
+        if (target.data.type !== 'balloon') {
+
+          if (target.data.bottomAligned) {
+            result.deltaY = 0;
+          }
+
+        } else {
+
+          setBombing(false);
+
+        }
 
         // TODO: revise.
 
@@ -5555,8 +5575,21 @@
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
         // within firing range?
-        if (target.data.type === 'balloon' && Math.abs(result.deltaX) < 300) {
-          setFiring(true);
+        if (target.data.type === 'balloon') {
+          if (Math.abs(result.deltaX) < 300) {
+            setFiring(true);
+          }
+        } else if (target.data.type === 'tank') {
+          if (Math.abs(result.deltaX) < 25 && Math.abs(data.vX) < 2) {
+            // over a tank?
+            setBombing(true);
+          } else {
+            setBombing(false);
+          }
+        } else {
+          // safety case: don't fire or bomb.
+          setFiring(false);
+          setBombing(false);
         }
 
       } else {
@@ -5848,7 +5881,7 @@
       cloaked: false,
       rotated: false,
       rotateTimer: null,
-      autoRotate: (options.isEnemy || false),
+      autoRotate: false, // (options.isEnemy || false),
       repairing: false,
       repairFrames: 0,
       energy: 10,
@@ -6193,6 +6226,8 @@
       vX: (options.isEnemy ? -1 : 1),
       width: 57,
       height: 18,
+      halfWidth: 28,
+      halfHeight: 9,
       gunYOffset: 15,
       stopped: false,
       inventory: {
