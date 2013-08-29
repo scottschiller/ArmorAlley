@@ -1840,9 +1840,12 @@
 
     function order(type, options) {
 
-      var typeData, orderObject, orderSize;
+      var typeData, orderObject, orderSize, cost, objectOffset;
 
       options = options || {};
+
+      // for endBunker + helicopter references
+      objectOffset = (data.isEnemy ? 1 : 0);
 
       orderSize = 1;
 
@@ -1859,8 +1862,7 @@
 
       if (!data.building) {
 
-        // let's build something.
-        data.building = true;
+        // let's build something - provided you have the $$$, that is.
 
         data.frameCount = 0;
 
@@ -1885,8 +1887,32 @@
 
         orderObject = createObject(typeData, options);
 
+        // do we have enough funds for this?
+        cost = orderObject.data.inventory.cost;
+
+        if (game.objects.endBunkers[objectOffset].data.funds >= cost) {
+
+          game.objects.endBunkers[objectOffset].data.funds -= cost;
+
+          if (!data.isEnemy) {
+            game.objects.helicopters[objectOffset].updateStatusUI();
+          }
+
+        } else if (!data.isEnemy) {
+
+          // Insufficient funds. "We require more vespene gas."
+          if (sounds.inventory.denied) {
+            sounds.inventory.denied.play();
+          }
+
+          return false;
+
+        }
+
         // and now, remove that for the real build.
         options.noInit = false;
+
+        data.building = true;
 
         objects.order = {
           data: orderObject.data,
@@ -2879,7 +2905,8 @@
 
     objects = {
       balloon: null,
-      chain: null
+      chain: null,
+      helicopter: null
     };
 
     exports = {
@@ -2956,17 +2983,31 @@
 
     function captureFunds(target) {
 
+      var maxFunds, capturedFunds;
+
+      // you only get to steal so much at a time.
+      maxFunds = 20;
+
       if (data.funds) {
 
-        console.log('funds captured!');
+        capturedFunds = Math.min(data.funds, maxFunds);
 
-        data.funds--;
+        console.log(capturedFunds + ' funds captured!');
+
+        if (data.isEnemy) {
+          // hand it over to the (non-CPU) player.
+          game.objects.endBunkers[0].data.funds += capturedFunds;
+        }
+
+        data.funds -= capturedFunds;
 
         if (target) {
           target.die(true);
         }
 
-        // updateStatusUI()
+        // force update of the local helicopter
+        // TODO: yeah, this is a bit hackish.
+        game.objects.helicopters[0].updateStatusUI();
 
       }
 
@@ -2974,7 +3015,7 @@
 
     function animate() {
 
-      var i;
+      var i, offset, earnedFunds;
 
       data.frameCount++;
 
@@ -2989,6 +3030,39 @@
 
       fire();
 
+      if (data.frameCount % data.fundsModulus === 0) {
+
+        if (!objects.helicopter) {
+          objects.helicopter = game.objects.helicopters[(data.isEnemy ? 1 : 0)];
+        }
+
+        // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
+
+        offset = objects.helicopter.data.x / game.objects.view.data.battleField.width;
+
+        if (data.isEnemy) {
+          offset = 1 - (objects.helicopter.data.x / objects.helicopter.data.x);
+        }
+
+        if (offset < 0.33) {
+          earnedFunds = 1;
+        } else if (offset >= 0.33 && offset < 0.66) {
+          earnedFunds = 2;
+        } else {
+          earnedFunds = 3;
+        }
+
+        data.funds += earnedFunds;
+
+        if (data.isEnemy) {
+          console.log('the enemy now has ' + data.funds + ' funds.');
+        }
+
+        objects.helicopter.updateStatusUI();
+
+      }
+
+      // note: end bunkers never die, but leaving this in anyway.
       return (data.dead && !dom.o && !objects.gunfire.length);
 
     }
@@ -3034,6 +3108,7 @@
       firing: false,
       gunYOffset: 10,
       fireModulus: 6,
+      fundsModulus: FPS * 10,
       midPoint: null
     }, options);
 
@@ -3937,7 +4012,7 @@
       height: 18,
       inventory: {
         frameCount: 60,
-        cost: 5
+        cost: 3
       }
     }, options);
 
@@ -4885,6 +4960,10 @@
 
       if (state) {
 
+        // edge case: stop firing, etc.
+        setFiring(false);
+        setBombing(false);
+
         startRepairing();
 
       } else {
@@ -4905,6 +4984,9 @@
         document.getElementById('ammo-count').textContent = data.ammo;
         document.getElementById('bomb-count').textContent = data.bombs;
         document.getElementById('missile-count').textContent = data.smartMissiles;
+
+        // hackish, fix endBunkers reference
+        document.getElementById('funds-count').textContent = game.objects.endBunkers[0].data.funds;
 
       }
 
@@ -5644,14 +5726,13 @@
 
       // slight offset when on landing pad
       if (data.y >= yLimit) {
-        data.landed = true;
         data.vX = 0;
         if (data.vY > 0) {
           data.vY = 0;
         }
-        // stop firing, etc.
-        setFiring(false);
-        setBombing(false);
+        if (!data.landed) {
+          data.landed = true;
+        }
       } else {
         data.landed = false;
         onLandingPad(false);
@@ -6014,7 +6095,8 @@
       setBombing: setBombing,
       setFiring: setFiring,
       setMissileLaunching: setMissileLaunching,
-      setParachuting: setParachuting
+      setParachuting: setParachuting,
+      updateStatusUI: updateStatusUI
     };
 
     init();
@@ -6235,7 +6317,7 @@
       stopped: false,
       inventory: {
         frameCount: 60,
-        cost: 5
+        cost: 4
       }
     }, options);
 
@@ -6459,7 +6541,7 @@
       stateModulus: 38,
       inventory: {
         frameCount: 60,
-        cost: 5
+        cost: 2
       },
       // if the van reaches the enemy base, it's game over.
       xGameOver: (options.isEnemy ? 312 + 32 : game.objects.view.data.battleField.width - 256)
