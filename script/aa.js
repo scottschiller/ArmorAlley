@@ -1481,7 +1481,7 @@
 
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 60];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 120];
         var i=0;
 
         function orderNextItem() {
@@ -5649,6 +5649,9 @@
         if (data.vY > 0) {
           data.vY = 0;
         }
+        // stop firing, etc.
+        setFiring(false);
+        setBombing(false);
       } else {
         data.landed = false;
         onLandingPad(false);
