@@ -1267,7 +1267,7 @@
       }));
 
       objects.turrets.push(new Turret({
-        x: 4096 - 256 - 81, // width of landing pad
+        x: 4096 - 384 - 81, // width of landing pad
         isEnemy: true
         // DOA: true
       }));
@@ -1278,7 +1278,7 @@
       }));
 
       objects.turrets.push(new Turret({
-        x: 4096 + 256 + 81, // width of landing pad
+        x: 4096 + 384 + 81, // width of landing pad
         isEnemy: true
       }));
 
@@ -3037,7 +3037,6 @@
         }
 
         // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
-
         offset = objects.helicopter.data.x / game.objects.view.data.battleField.width;
 
         if (data.isEnemy) {
@@ -5577,6 +5576,12 @@
 
         if (lastTarget.data.dead) {
 
+          // was it a tank? reset tank-seeking mode until next interval.
+          if (lastTarget.data.type === 'tank') {
+            console.log('AI killed tank. Disabling tank targeting mode.');
+            data.targeting.tanks = false;
+          }
+
           lastTarget = null;
 
         } else if (lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
@@ -5590,7 +5595,17 @@
 
       if (!lastTarget) {
 
-        lastTarget = objectInView(data, { items: 'balloons' }) || objectInView(data, { items: 'tanks' }) || objectInView(data, { items: 'clouds' });
+        if (data.targeting.clouds) {
+          lastTarget = objectInView(data, { items: 'clouds' });
+        }
+
+        if (!lastTarget && data.targeting.balloons) {
+          lastTarget = objectInView(data, { items: 'balloons' });
+        }
+
+        if (!lastTarget && data.targeting.tanks) {
+          lastTarget = objectInView(data, { items: 'tanks' });
+        }
 
         // is the new target too low?
         if (lastTarget && lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
@@ -5600,7 +5615,13 @@
       } else if (lastTarget.data.type === 'cloud') {
 
         // we already have a target - can we get a more interesting one?
-        altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth }) || objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
+        if (data.targeting.balloons) {
+          altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
+        }
+
+        if (!altTarget && data.targeting.tanks) {
+          altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
+        }
 
         // better - go for that.
         if (altTarget && !altTarget.data.dead) {
@@ -5866,6 +5887,15 @@
 
         ai();
 
+        if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
+
+          // should we target tanks?
+          data.targeting.tanks = (Math.random() > 0.75);
+
+          console.log('AI tank targeting mode: ' + data.targeting.tanks);
+
+        }
+
       }
 
       // uncloak if not in a cloud?
@@ -5952,8 +5982,8 @@
       maxFuel: 100,
       fireModulus: 2,
       bombModulus: 6,
-      fuelModulus: 10,
-      fuelModulusFlying: 4,
+      fuelModulus: 8,
+      fuelModulusFlying: 3,
       missileModulus: 12,
       parachuteModulus: 4,
       repairModulus: 2,
@@ -5996,7 +6026,14 @@
       maxParachutes: 5,
       smartMissiles: 2,
       maxSmartMissiles: 2,
-      midPoint: null
+      midPoint: null,
+      // for AI
+      targeting: {
+        balloons: true,
+        clouds: true,
+        tanks: true
+      },
+      targetingModulus: FPS * 30
     }, options);
 
     data.midPoint = {
@@ -7355,7 +7392,7 @@
       width: 12,
       height: 12,
       hostile: true,
-      damagePoints: 0.75
+      damagePoints: 0.5
     }, options);
 
     dom = {
