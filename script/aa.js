@@ -6581,7 +6581,7 @@
         cost: 2
       },
       // if the van reaches the enemy base, it's game over.
-      xGameOver: (options.isEnemy ? 312 + 32 : game.objects.view.data.battleField.width - 256)
+      xGameOver: (options.isEnemy ? 312 + 32 : game.objects.view.data.battleField.width - 512 - 72)
     }, options);
 
     dom = {
