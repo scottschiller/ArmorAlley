@@ -6502,10 +6502,18 @@
 
             dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
 
+            // weird Webkit display hack - background position change doesn't draw otherwise.
+            dom.o.style.marginBottom = '-1px';
+            dom.o.style.paddingBottom = '1px';
+
           } else if (data.frameCount % data.stateModulus === 4) {
 
             // next frame - reset.
             dom.o.style.backgroundPosition = '0px 0px';
+
+            // undo Webkit display hack
+            dom.o.style.marginBottom = '0px';
+            dom.o.style.paddingBottom = '0px';
 
           }
 
