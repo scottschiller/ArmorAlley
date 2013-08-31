@@ -804,7 +804,8 @@ ul.stats-bar .bombs em {
 }
 
 #game-status-bar #radar .sprite.bunker {
-	background-color: #ccc;
+	/* yellow-ish tinge */
+	background-color: rgb(156,159,9);
 }
 
 #game-status-bar #radar .sprite.balloon {

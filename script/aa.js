@@ -1095,465 +1095,6 @@
 
   });
 
-  game = (function() {
-
-    var data, dom, objects, exports;
-
-    function createObjects() {
-
-      var i, node;
-
-      objects.gameLoop = new GameLoop();
-
-      objects.view = new View();
-
-      objects.radar = new Radar();
-
-      objects.inventory = new Inventory();
-
-      objects.bases.push(new Base({
-        x: 64
-      }));
-
-      objects.bases.push(new Base({
-        x: 8000,
-        isEnemy: true
-      }));
-
-      objects.endBunkers.push(new EndBunker());
-
-      objects.endBunkers.push(new EndBunker({
-        isEnemy: true
-      }));
-
-      objects.turrets.push(new Turret({
-        x: 475,
-        DOA: true
-      }));
-
-      objects.bunkers.push(new Bunker({
-        x: 1024,
-        isEnemy: true
-      }));
-
-      addItem('palm-tree', 1150);
-
-      addItem('rock2', 1280);
-
-      addItem('palm-tree', 1390);
-
-      objects.bunkers.push(new Bunker({
-        x: 1536
-      }));
-
-      addItem('palm-tree', 1575);
-
-      addItem('palm-tree', 1565);
-
-      addItem('flower', 1850);
-
-      objects.bunkers.push(new Bunker({
-        x: 2048
-      }));
-
-      addItem('tree', 2110);
-
-      addItem('gravestone', 2150);
-
-      addItem('palm-tree', 2260);
-
-      addItem('tree', 2460);
-
-      objects.bunkers.push(new Bunker({
-        x: 2560
-      }));
-
-      addItem('tree', 2700);
-
-      objects.bunkers.push(new Bunker({
-        x: 3072
-      }));
-
-      addItem('palm-tree', 3400);
-
-      addItem('palm-tree', 3450);
-
-      // mid-level
-
-      addItem('checkmark-grass', 4220);
-
-      addItem('tree', 4300);
-
-      addItem('palm-tree', 4400);
-
-      addItem('palm-tree', 4500);
-
-      objects.bunkers.push(new Bunker({
-        x: 4608,
-        isEnemy: true
-      }));
-
-      addItem('tree', 4608);
-
-      addItem('tree', 4820);
-
-      addItem('palm-tree', 4850);
-
-      addItem('grave-cross', 4970);
-
-      objects.bunkers.push(new Bunker({
-        x: 5120,
-        isEnemy: true
-      }));
-
-      addItem('tree', 5110);
-
-      addItem('barb-wire', 5200);
-
-      addItem('grave-cross', 5275);
-
-      objects.bunkers.push(new Bunker({
-        x: 5632,
-        isEnemy: true
-      }));
-
-      // near-end / enemy territory
-
-      addItem('palm-tree', 3932);
-
-      addItem('tree', 3932 + 85);
-
-      addItem('palm-tree', 3932 + 85 + 230);
-
-      addItem('tree', 3932 + 85 + 230 + 90);
-
-      objects.bunkers.push(new Bunker({
-        x: 6656,
-        isEnemy: true
-      }));
-
-      addItem('tree', 6736);
-
-      addItem('tree', 6800);
-
-      addItem('palm-tree', 6888);
-
-      addItem('gravestone', 7038);
-
-      addItem('tree', 7070);
-
-      addItem('gravestone', 7160);
-
-      addItem('palm-tree', 7310);
-
-      addItem('tree', 7325);
-
-      addItem('flower', 7500);
-
-      // enemy base
-
-      node = makeSprite({
-        className: 'left-arrow-sign'
-      });
-
-      node.style.left = '7656px';
-
-      game.dom.world.appendChild(node);
-
-      // landing pads
-
-      objects.landingPads.push(new LandingPad({
-        x: 190
-      }));
-
-      objects.turrets.push(new Turret({
-        x: 4096 - 384 - 81, // width of landing pad
-        isEnemy: true
-        // DOA: true
-      }));
-
-      // midway
-      objects.landingPads.push(new LandingPad({
-        x: 4096 - 40
-      }));
-
-      objects.turrets.push(new Turret({
-        x: 4096 + 384 + 81, // width of landing pad
-        isEnemy: true
-      }));
-
-      objects.landingPads.push(new LandingPad({
-        x: 7800
-      }));
-
-      // happy little clouds!
-
-      objects.clouds.push(new Cloud({
-        x: 512
-      }));
-
-      objects.clouds.push(new Cloud({
-        x: 4096 - 256
-      }));
-
-      objects.clouds.push(new Cloud({
-        x: 4096 + 256
-      }));
-
-
-      objects.clouds.push(new Cloud({
-        x: 4096 + 512
-      }));
-
-
-      objects.clouds.push(new Cloud({
-        x: 4096 + 768
-      }));
-
-      // a few rogue balloons
-
-      objects.balloons.push(new Balloon({
-        x: 4096 - 256
-      }));
-
-      objects.balloons.push(new Balloon({
-        x: 4096 + 256
-      }));
-
-      objects.balloons.push(new Balloon({
-        x: 4096 + 512
-      }));
-
-      objects.balloons.push(new Balloon({
-        x: 4096 + 768
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 96
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 690
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 760
-      }));
-
-      objects.vans.push(new Van({
-        x: 435
-      }));
-
-      objects.missileLaunchers.push(new MissileLauncher({
-        x: 350
-      }));
-
-      for (i=0; i<5; i++) {
-
-        objects.infantry.push(new Infantry({
-          x: 500 + (i * 20)
-        }));
-
-        objects.infantry.push(new Infantry({
-          x: 1460 + (i * -20),
-          isEnemy: true
-        }));
-
-      }
-
-      objects.engineers.push(new Engineer({
-        x: -300
-      }));
-
-      objects.engineers.push(new Engineer({
-        x: -320
-      }));
-
-      objects.helicopters.push(new Helicopter({
-        x: 204,
-        y: game.objects.view.data.world.height - 20,
-        attachEvents: true
-      }));
-
-      // some enemy stuff
-
-      var enemyCopter = new Helicopter({
-        x: 8192 - 64,
-        y: 72,
-        isEnemy: true
-      });
-
-      enemyCopter.data.vX = -8;
-
-      objects.helicopters.push(enemyCopter);
-
-      // console.log(enemyCopter);
-
-      objects.tanks.push(new Tank({
-        x: 1048,
-        isEnemy: true
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 1112,
-        isEnemy: true
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 1176,
-        isEnemy: true
-      }));
-
-      objects.vans.push(new Van({
-        x: 1248,
-        isEnemy: true
-      }));
-
-      objects.missileLaunchers.push(new MissileLauncher({
-        x: 1302,
-        isEnemy: true
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 1600,
-        isEnemy: true
-      }));
-
-      objects.vans.push(new Van({
-        x: 1680,
-        isEnemy: true
-      }));
-
-      objects.missileLaunchers.push(new MissileLauncher({
-        x: 1760,
-        isEnemy: true
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 8192 - 64,
-        isEnemy: true
-      }));
-
-      objects.tanks.push(new Tank({
-        x: 8000,
-        isEnemy: true
-      }));
-
-      for (i=0; i<5; i++) {
-
-        objects.infantry.push(new Infantry({
-          x: 8000 + ((i+1) * -20),
-          isEnemy: true
-        }));
-
-      }
-
-    }
-
-    function pause() {
-
-      if (!data.paused) {
-        objects.gameLoop.stop();
-        data.paused = true;
-      }
-
-    }
-
-    function resume() {
-
-      if (data.paused) {
-        objects.gameLoop.start();
-        data.paused = false;
-      }
-  
-    }
-
-    function init() {
-
-      dom.world = document.getElementById('battlefield');
-
-      // create objects?
-      createObjects();
-
-      objects.gameLoop.init();
-
-      (function() {
-
-        // basic enemy ordering crap
-        var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 120];
-        var i=0;
-
-        function orderNextItem() {
-
-          var options = {
-            isEnemy: true,
-            x: 8192 - 64
-          };
-
-          game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
-
-          window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
-
-          i++;
-          if (i >= enemyOrders.length) {
-            i = 0;
-          }
-
-        }
-
-        // and begin
-        window.setTimeout(orderNextItem, 5000);
-
-      }());
-
-    }
-
-    data = {
-      paused: false
-    };
-
-    dom = {
-      world: null
-    };
-
-    objects = {
-      gameLoop: null,
-      view: null,
-      chains: [],
-      balloons: [],
-      bunkers: [],
-      endBunkers: [],
-      engineers: [],
-      infantry: [],
-      parachuteInfantry: [],
-      missileLaunchers: [],
-      tanks: [],
-      vans: [],
-      helicopters: [],
-      smartMissiles: [],
-      bases: [],
-      clouds: [],
-      landingPads: [],
-      turrets: [],
-      shrapnel: [],
-      smoke: [],
-      radar: null,
-      inventory: null
-    };
-
-    exports = {
-      dom: dom,
-      init: init,
-      objects: objects,
-      pause: pause,
-      resume: resume
-    };
-
-    return exports;
-
-  }());
-
   View = function() {
 
     var css, data, dom, events, exports;
@@ -2746,8 +2287,10 @@
 
       if (isEnemy) {
         utils.css.add(dom.o, css.enemy);
+        utils.css.add(radarItem.dom.o, css.enemy);
       } else {
         utils.css.remove(dom.o, css.enemy);
+        utils.css.remove(radarItem.dom.o, css.enemy);
       }
 
       data.isEnemy = isEnemy;
@@ -2890,7 +2433,7 @@
     data = inheritData({
       type: 'bunker',
       bottomAligned: true,
-      energy: 30,
+      energy: 50,
       width: 51,
       halfWidth: 25,
       height: 25,
@@ -3079,9 +2622,6 @@
       common.setX(exports, data.x);
       common.setBottomY(exports, data.bottomY);
 
-      // testing
-      data.funds = 5;
-
       game.dom.world.appendChild(dom.o);
 
       game.objects.radar.addItem(exports, dom.o.className);
@@ -3103,7 +2643,7 @@
       width: 39,
       halfWidth: 19,
       height: 17,
-      funds: 0,
+      funds: (!options.isEnemy ? 32 : 0),
       firing: false,
       gunYOffset: 10,
       fireModulus: 6,
@@ -4794,7 +4334,7 @@
       width: 14,
       height: 15,
       gravity: 1,
-      damagePoints: 15,
+      damagePoints: 25,
       vX: 2,
       vY: 2,
       vXMax: 12,
@@ -6018,8 +5558,8 @@
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 2,
-      ammo: 50,
-      maxAmmo: 50,
+      ammo: 64,
+      maxAmmo: 64,
       bombs: 10,
       maxBombs: 10,
       parachutes: 1,
@@ -6156,17 +5696,12 @@
           collisionItems: nearby.items,
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
-          vX: data.vX, // same velocity as tank
+          vX: data.vX * 2,
           vY: 0
         }));
 
         if (sounds.genericGunFire) {
-          if (!data.isEnemy) {
-            sounds.genericGunFire.play();
-          } else {
-            // offset enemy tank fire sounds
-            window.setTimeout(sounds.genericGunFire.play, 120);
-          }
+          sounds.genericGunFire.play();
         }
 
       }
@@ -6344,7 +5879,8 @@
       energyMax: 8,
       frameCount: 0,
       repairModulus: 50,
-      fireModulus: 6,
+      // enemy tanks shoot a little faster
+      fireModulus: (options.isEnemy ? 4 : 6),
       vX: (options.isEnemy ? -1 : 1),
       width: 57,
       height: 18,
@@ -6588,8 +6124,8 @@
         frameCount: 60,
         cost: 2
       },
-      // if the van reaches the enemy base, it's game over.
-      xGameOver: (options.isEnemy ? 312 + 32 : game.objects.view.data.battleField.width - 512 - 72)
+      // if the van reaches the enemy base (near the landing pad), it's game over.
+      xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 128 : game.objects.landingPads[game.objects.landingPads.length-1].data.x - 40)
     }, options);
 
     dom = {
@@ -7809,21 +7345,474 @@
 
   }());
 
+  game = (function() {
+
+    var data, dom, objects, objectConstructors, exports;
+
+    function addObject(type, options) {
+
+      // given type of 'van', create object and append to respective array.
+
+      var object, objectArray;
+
+      // 'van' -> game.objects['vans'], etc.
+      objectArray = game.objects[type + (type === 'infantry' ? '' : 's')];
+
+      options = options || {};
+
+      // create and push an instance object onto its relevant array by type (e.g., 'van' -> game.objects['vans'])
+      object = new objectConstructors[type](options);
+
+      objectArray.push(object);
+
+      return object;
+
+    }
+
+    function createObjects() {
+
+      var i;
+
+      objects.gameLoop = new GameLoop();
+
+      objects.view = new View();
+
+      objects.radar = new Radar();
+
+      objects.inventory = new Inventory();
+
+      // landing pads
+
+      addObject('landingPad', {
+        x: 300
+      });
+
+      // midway
+      addObject('landingPad', {
+        x: 4096 - 40
+      });
+
+      addObject('landingPad', {
+        x: 7800
+      });
+
+      addObject('base', {
+        x: 160
+      });
+
+      addObject('van', {
+        x: 192
+      });
+
+      addObject('base', {
+        x: 8000,
+        isEnemy: true
+      });
+      
+      addObject('endBunker');
+
+      addObject('endBunker', {
+        isEnemy: true
+      });
+
+      addObject('turret', {
+        x: 475,
+        DOA: true
+      });
+
+      addObject('bunker', {
+        x: 1024,
+        isEnemy: true
+      });
+
+      addItem('palm-tree', 1150);
+
+      addItem('rock2', 1280);
+
+      addItem('palm-tree', 1390);
+
+      addObject('bunker', {
+        x: 1536
+      });
+
+      addItem('palm-tree', 1575);
+
+      addItem('palm-tree', 1565);
+
+      addItem('flower', 1850);
+
+      addObject('bunker', {
+        x: 2048
+      });
+
+      addItem('tree', 2110);
+
+      addItem('gravestone', 2150);
+
+      addItem('palm-tree', 2260);
+
+      addItem('tree', 2460);
+
+      addObject('bunker', {
+        x: 2560
+      });
+
+      addItem('tree', 2700);
+
+      addObject('bunker', {
+        x: 3072
+      });
+
+      addItem('palm-tree', 3400);
+
+      addItem('palm-tree', 3450);
+
+      // mid-level
+
+      addItem('checkmark-grass', 4220);
+
+      addItem('tree', 4300);
+
+      addItem('palm-tree', 4400);
+
+      addItem('palm-tree', 4500);
+
+      addObject('bunker', {
+        x: 4608,
+        isEnemy: true
+      });
+
+      addItem('tree', 4608);
+
+      addItem('tree', 4820);
+
+      addItem('palm-tree', 4850);
+
+      addItem('grave-cross', 4970);
+
+      addObject('bunker', {
+        x: 5120,
+        isEnemy: true
+      });
+
+      addItem('tree', 5110);
+
+      addItem('barb-wire', 5200);
+
+      addItem('grave-cross', 5275);
+
+      addObject('bunker', {
+        x: 5632,
+        isEnemy: true
+      });
+
+      // near-end / enemy territory
+
+      addItem('palm-tree', 3932);
+
+      addItem('tree', 3932 + 85);
+
+      addItem('palm-tree', 3932 + 85 + 230);
+
+      addItem('tree', 3932 + 85 + 230 + 90);
+
+      addObject('bunker', {
+        x: 6656,
+        isEnemy: true
+      });
+
+      addItem('tree', 6736);
+
+      addItem('tree', 6800);
+
+      addItem('palm-tree', 6888);
+
+      addItem('gravestone', 7038);
+
+      addItem('tree', 7070);
+
+      addItem('gravestone', 7160);
+
+      addItem('palm-tree', 7310);
+
+      addItem('tree', 7325);
+
+      addItem('flower', 7500);
+
+      // enemy base
+
+      addItem('left-arrow-sign', 7656);
+
+      addItem('left-arrow-sign', 8208);
+
+      addObject('turret', {
+        x: 4096 - 384 - 81, // width of landing pad
+        isEnemy: true
+        // DOA: true
+      });
+
+      addObject('turret', {
+        x: 4096 + 384 + 81, // width of landing pad
+        isEnemy: true
+      });
+
+      // happy little clouds!
+
+      addObject('cloud', {
+        x: 512
+      });
+
+      addObject('cloud', {
+        x: 4096 - 256
+      });
+
+      addObject('cloud', {
+        x: 4096 + 256
+      });
+
+      addObject('cloud', {
+        x: 4096 + 512
+      });
+
+      addObject('cloud', {
+        x: 4096 + 768
+      });
+
+      // a few rogue balloons
+
+      addObject('balloon', {
+        x: 4096 - 256
+      });
+
+      addObject('balloon', {
+        x: 4096 + 256
+      });
+
+      addObject('balloon', {
+        x: 4096 + 512
+      });
+
+      addObject('balloon', {
+        x: 4096 + 768
+      });
+
+      addObject('helicopter', {
+        x: 310,
+        y: game.objects.view.data.world.height - 20,
+        attachEvents: true
+      });
+
+      // some enemy stuff
+
+      var enemyCopter = addObject('helicopter', {
+        x: 8192 - 64,
+        y: 72,
+        isEnemy: true
+      });
+
+      enemyCopter.data.vX = -8;
+
+      for (i=0; i<5; i++) {
+
+        addObject('infantry', {
+          x: 600 + (i * 20)
+        });
+
+      }
+
+      addObject('van', {
+        x: 716
+      });
+
+      addObject('tank', {
+        x: 780
+      });
+
+      addObject('tank', {
+        x: 845
+      });
+
+      // first enemy convoy
+
+      addObject('tank', {
+        x: 1536,
+        isEnemy: true
+      });
+
+      addObject('tank', {
+        x: 1536 + 70,
+        isEnemy: true
+      });
+
+      addObject('tank', {
+        x: 1536 + 140,
+        isEnemy: true
+      });
+
+      addObject('van', {
+        x: 1536 + 210,
+        isEnemy: true
+      });
+
+      addObject('tank', {
+        x: 2048 + 256,
+        isEnemy: true
+      });
+
+      addObject('tank', {
+        x: 4608 + 256,
+        isEnemy: true
+      });
+
+      for (i=0; i<5; i++) {
+
+        // enemy infantry, way out there
+        addObject('infantry', {
+          x: 5120 + (i * 20),
+          isEnemy: true
+        });
+
+      }
+
+    }
+
+    function pause() {
+
+      if (!data.paused) {
+        objects.gameLoop.stop();
+        data.paused = true;
+      }
+
+    }
+
+    function resume() {
+
+      if (data.paused) {
+        objects.gameLoop.start();
+        data.paused = false;
+      }
+  
+    }
+
+    function init() {
+
+      dom.world = document.getElementById('battlefield');
+
+      // create objects?
+      createObjects();
+
+      objects.gameLoop.init();
+
+      (function() {
+
+        // basic enemy ordering crap
+        var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 120];
+        var i=0;
+
+        function orderNextItem() {
+
+          var options = {
+            isEnemy: true,
+            x: 8192 - 64
+          };
+
+          game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+
+          window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
+
+          i++;
+          if (i >= enemyOrders.length) {
+            i = 0;
+          }
+
+        }
+
+        // and begin
+        window.setTimeout(orderNextItem, 5000);
+
+      }());
+
+    }
+
+    data = {
+      paused: false
+    };
+
+    dom = {
+      world: null
+    };
+
+    objects = {
+      gameLoop: null,
+      view: null,
+      chains: [],
+      balloons: [],
+      bunkers: [],
+      endBunkers: [],
+      engineers: [],
+      infantry: [],
+      parachuteInfantry: [],
+      missileLaunchers: [],
+      tanks: [],
+      vans: [],
+      helicopters: [],
+      smartMissiles: [],
+      bases: [],
+      clouds: [],
+      landingPads: [],
+      turrets: [],
+      shrapnel: [],
+      smoke: [],
+      radar: null,
+      inventory: null
+    };
+
+    objectConstructors = {
+      'balloon': Balloon,
+      'base': Base,
+      'bunker': Bunker,
+      'cloud': Cloud,
+      'endBunker': EndBunker,
+      'engineer': Engineer,
+      'helicopter': Helicopter,
+      'infantry': Infantry,
+      'landingPad': LandingPad,
+      'missileLauncher': MissileLauncher,
+      'turret': Turret,
+      'tank': Tank,
+      'van': Van
+    };
+
+    exports = {
+      dom: dom,
+      init: init,
+      objects: objects,
+      pause: pause,
+      resume: resume
+    };
+
+    return exports;
+
+  }());
+
   function init() {
 
     game.init();
 
     keyboardMonitor.init();
 
-    addItem('cactus', 355);
+    addItem('cactus', 455);
 
     addItem('tree', 660);
 
-    addItem('palm-tree', 720);
+    addItem('right-arrow-sign', 700);
 
-    addItem('right-arrow-sign', 312);
+    addItem('palm-tree', 860);
 
-    addItem('barb-wire', 318);
+    addItem('right-arrow-sign', -32);
+
+    addItem('barb-wire', 918);
 
     addItem('checkmark-grass', 394);
 
