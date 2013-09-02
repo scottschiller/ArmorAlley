@@ -925,7 +925,7 @@
       // how far away is the target?
       deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
 
-      if (!items[i].data.dead && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
+      if (!items[i].data.dead && !items[i].data.cloaked && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
 
         result = items[i];
 
@@ -4493,26 +4493,6 @@
 
     }
 
-    function onLandingPad(state) {
-
-      data.onLandingPad = state;
-
-      if (state) {
-
-        // edge case: stop firing, etc.
-        setFiring(false);
-        setBombing(false);
-
-        startRepairing();
-
-      } else {
-
-        stopRepairing();
-
-      }
-
-    }
-
     function updateStatusUI() {
 
       if (!data.isEnemy) {
@@ -4721,6 +4701,26 @@
 
     }
 
+    function onLandingPad(state) {
+
+      data.onLandingPad = state;
+
+      if (state) {
+
+        // edge case: stop firing, etc.
+        setFiring(false);
+        setBombing(false);
+
+        startRepairing();
+
+      } else {
+
+        stopRepairing();
+
+      }
+
+    }
+
     function refreshCoords() {
 
       var view = game.objects.view;
@@ -4820,15 +4820,17 @@
 
       if (data.isEnemy) {
 
-        data.x = 8192 - 64;
+        // todo: clean up
+        data.x = game.objects.landingPads[game.objects.landingPads.length-1].data.x + game.objects.landingPads[game.objects.landingPads.length-1].data.width/2 - data.halfWidth + 10;
 
       } else {
 
-        data.x = 204;
-
-        data.y = game.objects.view.data.world.height - 20;
+        // todo: clean up
+        data.x = game.objects.landingPads[0].data.x + game.objects.landingPads[0].data.width/2 - data.halfWidth + 10;
 
       }
+
+      data.y = game.objects.view.data.world.height - 20;
 
       common.setX(exports, data.x);
       common.setY(exports, data.y);
@@ -5129,6 +5131,11 @@
           // is this a balloon that's flying too low?
           lastTarget = null;
 
+        } else if (lastTarget.data.cloaked) {
+
+          // did the player go behind a cloud?
+          lastTarget = null;
+
         }
 
       }
@@ -5147,6 +5154,10 @@
           lastTarget = objectInView(data, { items: 'tanks' });
         }
 
+        if (!lastTarget && data.targeting.helicopters) {
+          lastTarget = objectInView(data, { items: 'helicopters' });
+        }
+
         // is the new target too low?
         if (lastTarget && lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
           lastTarget = null;
@@ -5161,6 +5172,10 @@
 
         if (!altTarget && data.targeting.tanks) {
           altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
+        }
+
+        if (!altTarget && data.targeting.helicopters) {
+          altTarget = objectInView(data, { items: ['helicopters'], triggerDistance: game.objects.view.data.browser.width });
         }
 
         // better - go for that.
@@ -5193,6 +5208,15 @@
 
         }
 
+        // enforce distance limits?
+        if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
+
+          if (Math.abs(result.deltaX) < 250) {
+            result.deltaX = 0;
+          }
+
+        }
+
         // TODO: revise.
 
         desiredVX = result.deltaX * 0.25;
@@ -5218,7 +5242,7 @@
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
         // within firing range?
-        if (target.data.type === 'balloon') {
+        if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
           if (Math.abs(result.deltaX) < 300) {
             setFiring(true);
           }
@@ -5546,11 +5570,11 @@
       yMin: 0,
       yMax: null,
       vX: 0,
-      vXMax: 12,
+      vXMax: (options.isEnemy ? 8 : 12),
+      vYMax: (options.isEnemy ? 8 : 10),
       lastVX: 0,
       vY: 0,
       vyMin: 0,
-      vYMax: 10,
       width: 48,
       height: 15,
       halfWidth: 24,
@@ -5571,6 +5595,7 @@
       targeting: {
         balloons: true,
         clouds: true,
+        helicopters: true,
         tanks: true
       },
       targetingModulus: FPS * 30
