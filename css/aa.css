@@ -357,7 +357,8 @@ ul.stats-bar .bombs em {
 	display: none;
 }
 
-#world .van {
+#world .van,
+#world .van.enemy {
 	background-image: url(../image/van.png);
 	width: 38px;
 	height: 16px;
