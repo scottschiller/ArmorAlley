@@ -5219,22 +5219,29 @@
 
         // TODO: revise.
 
-        desiredVX = result.deltaX * 0.25;
-        desiredVY = result.deltaY * 0.25;
-
-        // quickly normalize to target vX + vY.
-
-        data.vX = desiredVX;
-        data.vY = desiredVY;
+        desiredVX = result.deltaX;
+        desiredVY = result.deltaY;
 
         // data.vX = desiredVX; // += (deltaX * 0.5);
         // data.vY = desiredVY; // += (deltaY * 0.5);
 
-        if (desiredVY > data.vY) {
-          data.vY++;
+/*
+
+        if (data.vX < desiredVX) {
+          data.vX += 0.5;
         } else {
-          data.vY--;
+          data.vX -= 0.5;
         }
+
+        if (data.vY < desiredVY) {
+          data.vY += 0.5;
+        } else {
+          data.vY -= 0.5;
+        }
+*/
+
+        data.vX = result.deltaX;
+        data.vY = result.deltaY;
 
         // throttle
 
@@ -5243,7 +5250,7 @@
 
         // within firing range?
         if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
-          if (Math.abs(result.deltaX) < 300) {
+          if (Math.abs(result.deltaX) < 200) {
             setFiring(true);
           }
         } else if (target.data.type === 'tank') {
@@ -5905,7 +5912,7 @@
       frameCount: 0,
       repairModulus: 50,
       // enemy tanks shoot a little faster
-      fireModulus: (options.isEnemy ? 4 : 6),
+      fireModulus: (options.isEnemy ? 5 : 6),
       vX: (options.isEnemy ? -1 : 1),
       width: 57,
       height: 18,
