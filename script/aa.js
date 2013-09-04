@@ -474,6 +474,10 @@
       if (!exports.data.dead) {
         hitPoints = hitPoints || 1;
         exports.data.energy -= hitPoints;
+        // special cases for updating state
+        if (exports.updateHealth) {
+          exports.updateHealth();
+        }
         if (exports.data.energy <= 0) {
           exports.data.energy = 0;
           exports.die();
@@ -5705,6 +5709,7 @@
       setFiring: setFiring,
       setMissileLaunching: setMissileLaunching,
       setParachuting: setParachuting,
+      updateHealth: updateHealth,
       updateStatusUI: updateStatusUI
     };
 
@@ -5966,7 +5971,8 @@
       dom: dom,
       die: die,
       stop: stop,
-      resume: resume
+      resume: resume,
+      updateHealth: updateHealth
     };
 
     if (!options.noInit) {
