@@ -5046,11 +5046,11 @@
     function ai() {
 
       /**
-       * Rudimentary, dumb smarts.
+       * Rudimentary, dumb smarts. To call this "AI" would be an insult to the AI community. ;)
        * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
        */
 
-      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY;
+      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY;
 
       if (data.fuel <= 0) {
         return false;
@@ -5102,6 +5102,9 @@
           // repair has completed. go go go!
           data.vY = -4;
           data.vX = -data.vxMax;
+
+          // reset target, too
+          lastTarget = null;
 
         } else {
 
@@ -5163,7 +5166,11 @@
         }
 
         // is the new target too low?
-        if (lastTarget && lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
+        if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > 340) {
+          lastTarget = null;
+        }
+
+        if (lastTarget && lastTarget.data.cloaked) {
           lastTarget = null;
         }
 
@@ -5187,6 +5194,14 @@
           lastTarget = altTarget;
         }
 
+      }
+
+      if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > 340) {
+        lastTarget = null;
+      }
+
+      if (lastTarget && lastTarget.data.cloaked) {
+        lastTarget = null;
       }
 
       target = lastTarget;
@@ -5229,23 +5244,34 @@
         // data.vX = desiredVX; // += (deltaX * 0.5);
         // data.vY = desiredVY; // += (deltaY * 0.5);
 
-/*
+        deltaVX = Math.abs(data.vX - result.deltaX);
 
-        if (data.vX < desiredVX) {
-          data.vX += 0.5;
+        if (Math.abs(deltaVX) > 0.5) {
+          if (data.vX < desiredVX) {
+            data.vX += 0.5;
+          } else {
+            data.vX -= 0.5;
+          }
         } else {
-          data.vX -= 0.5;
+          data.vX = 0;
         }
 
-        if (data.vY < desiredVY) {
-          data.vY += 0.5;
-        } else {
-          data.vY -= 0.5;
-        }
-*/
+        deltaVY = Math.abs(data.vY - result.deltaY);
 
-        data.vX = result.deltaX;
-        data.vY = result.deltaY;
+        if (Math.abs(deltaVY) > 0.5) {
+          if (data.vY < desiredVY) {
+            data.vY += 0.5;
+          } else {
+            data.vY -= 0.5;
+          }
+        } else {
+          data.vY = 0;
+        }
+
+        if (data.vY >= 0 && data.y > 340 && (!data.lastTarget || data.lastTarget !== 'landing-pad')) {
+          // hack: flying too low. limit.
+          data.y = 340;
+        }
 
         // throttle
 
@@ -5254,7 +5280,7 @@
 
         // within firing range?
         if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
-          if (Math.abs(result.deltaX) < 200) {
+          if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
             setFiring(true);
           }
         } else if (target.data.type === 'tank') {
@@ -5276,6 +5302,12 @@
         data.vX -= 0.25;
         // and up
         data.vY -= 0.1;
+
+        // edge case: data.vX sometimes becomes NaN - perhaps when CPU dies and resets??
+        if (isNaN(data.vX)) {
+          console.log('caught CPU edge case: data.vX NaN case. resetting to 0.');
+          data.vX = 0;
+        }
 
         // and throttle
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
@@ -5648,8 +5680,8 @@
             if (data.rotated) {
               rotate();
             }
-            // enable auto-rotate
-            data.autoRotate = true;
+            // toggle auto-rotate
+            data.autoRotate = !data.autoRotate;
           }
         }
       }
