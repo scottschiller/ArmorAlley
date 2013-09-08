@@ -1735,14 +1735,8 @@
 
         for (i=0, j=objects.items.length; i<j; i++) {
           // TODO: optimize
-         objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
-          if (objects.items[i].oParent.data.type) {
-            if (objects.items[i].oParent.data.type === 'balloon') {
-              // balloon
-              objects.items[i].dom.o.style.bottom = objects.items[i].oParent.data.bottomY + '%';
-            }
-          }
-          if (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) {
+          objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+          if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
             objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
           }
         }
@@ -5241,16 +5235,13 @@
         desiredVX = result.deltaX;
         desiredVY = result.deltaY;
 
-        // data.vX = desiredVX; // += (deltaX * 0.5);
-        // data.vY = desiredVY; // += (deltaY * 0.5);
-
         deltaVX = Math.abs(data.vX - result.deltaX);
 
-        if (Math.abs(deltaVX) > 0.5) {
+        if (Math.abs(deltaVX) > 1) {
           if (data.vX < desiredVX) {
-            data.vX += 0.5;
+            data.vX += 1;
           } else {
-            data.vX -= 0.5;
+            data.vX -= 1;
           }
         } else {
           data.vX = 0;
@@ -5258,11 +5249,11 @@
 
         deltaVY = Math.abs(data.vY - result.deltaY);
 
-        if (Math.abs(deltaVY) > 0.5) {
+        if (Math.abs(deltaVY) > 1) {
           if (data.vY < desiredVY) {
-            data.vY += 0.5;
+            data.vY += 1;
           } else {
-            data.vY -= 0.5;
+            data.vY -= 1;
           }
         } else {
           data.vY = 0;
@@ -6110,7 +6101,7 @@
 
             // weird Webkit display hack - background position change doesn't draw otherwise.
             dom.o.style.marginBottom = '-1px';
-            dom.o.style.paddingBottom = '1px';
+            dom.o.style.bottom = '1px';
 
           } else if (data.frameCount % data.stateModulus === 4) {
 
@@ -6119,7 +6110,7 @@
 
             // undo Webkit display hack
             dom.o.style.marginBottom = '0px';
-            dom.o.style.paddingBottom = '0px';
+            dom.o.style.bottom = '0px';
 
           }
 
