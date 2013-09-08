@@ -1187,6 +1187,33 @@
 
     }
 
+    function setAnnouncement(text, delay) {
+
+      if (text !== data.gameTips.lastAnnouncement && (!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text)) {
+
+        utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
+
+        dom.gameAnnouncements.textContent = text;
+
+        data.gameTips.lastAnnouncement = text;
+
+        if (data.gameTips.announcementTimer) {
+          window.clearTimeout(data.gameTips.announcementTimer);
+        }
+
+        if (text) {
+          // clear after an amount of time, if not -1
+          if ((delay !== undefined && delay !== -1)) {
+            data.gameTips.announcementTimer = window.setTimeout(setAnnouncement, delay || 5000);
+          }
+        }
+
+        data.gameTips.hasAnnouncement = !!text;
+
+      }
+
+    }
+
     function animate() {
 
       var scrollAmount, mouseDelta;
@@ -1205,14 +1232,18 @@
 
       }
 
-      if (data.frameCount % data.marqueeModulus === 0) {
+      if (!data.gameTips.hasAnnouncement) {
 
-        // move the marquee.
-        common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -3) + 'px', 0);
+        if (data.frameCount % data.marqueeModulus === 0) {
+
+          // move the marquee.
+          common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -3) + 'px', 0);
+
+        }
+
+        data.gameTips.scrollOffset++;
 
       }
-
-      data.gameTips.scrollOffset++;
 
       data.frameCount++;
 
@@ -1236,6 +1267,7 @@
       dom.topBar = document.getElementById('top-bar');
       dom.gameTips = document.getElementById('game-tips');
       dom.gameTipsList = document.getElementById('game-tips-list');
+      dom.gameAnnouncements = document.getElementById('game-announcements');
 
     }
 
@@ -1257,7 +1289,8 @@
 
     css = {
       gameTips: {
-        active: 'active'
+        active: 'active',
+        hasAnnouncement: 'has-announcement'
       }
     };
 
@@ -1291,7 +1324,10 @@
         height: 0
       },
       gameTips: {
+        announcementTimer: null,
         active: false,
+        hasAnnouncement: false,
+        lastText: null,
         scrollOffset: 0
       },
       marqueeModulus: 2,
@@ -1303,7 +1339,8 @@
       stars: null,
       topBar: null,
       gameTips: null,
-      gameTipsList: null
+      gameTipsList: null,
+      gameAnnouncements: null
     };
 
     events = {
@@ -1340,6 +1377,7 @@
       animate: animate,
       data: data,
       dom: dom,
+      setAnnouncement: setAnnouncement,
       setLeftScroll: setLeftScroll
     };
 
@@ -2529,11 +2567,13 @@
       // you only get to steal so much at a time.
       maxFunds = 20;
 
+      // TODO: case where enemy/CPU captures local player funds?
+
       if (data.funds) {
 
         capturedFunds = Math.min(data.funds, maxFunds);
 
-        console.log(capturedFunds + ' funds captured!');
+        game.objects.view.setAnnouncement(data.funds + ' enemy ' + (data.funds > 1 ? 'funds' : 'fund') + ' captured!');
 
         if (data.isEnemy) {
           // hand it over to the (non-CPU) player.
@@ -3117,14 +3157,6 @@
               }
 
             }, 25);
-
-            if (data.isEnemy) {
-              console.log('Congratulations, you won.');
-              document.getElementById('game-tips-list').innerHTML = '<span>Congratulations, you won.</span>';
-            } else {
-              console.log('Sorry! Better luck next time.');
-              document.getElementById('game-tips-list').innerHTML = '<span>Sorry! Better luck next time.</span>';
-            }
 
           }, 3500);
 
@@ -4422,8 +4454,25 @@
     function updateFuelUI() {
 
       if (!data.isEnemy) {
-        // dom.fuelLine.style.width = (data.fuel + '%');
+
         common.setTransformXY(dom.fuelLine, -100 + data.fuel + '%', '0px');
+
+        // hackish: notify for 1% of fuel burn process.
+
+        if (data.fuel < 33 && data.fuel > 32) {
+
+          game.objects.view.setAnnouncement('Low fuel');
+
+        } else if (data.fuel < 12.5 && data.fuel > 11.5) {
+
+          game.objects.view.setAnnouncement('Fuel critical');
+
+        } else if (data.fuel <= 0) {
+
+          game.objects.view.setAnnouncement('No fuel');
+
+        }
+
       }
 
     }
@@ -4792,6 +4841,8 @@
         data.vX = 0;
         data.vY = 0;
         data.lastVX = 0;
+
+        game.objects.view.setAnnouncement();
 
       } else {
 
@@ -6072,7 +6123,8 @@
           stop();
 
           // Game over, man, game over! (Enemy wins.)
-          console.log('The enemy has won the battle.');
+
+          game.objects.view.setAnnouncement('The enemy has won the battle.', -1);
 
           gameOver();
 
@@ -6081,7 +6133,8 @@
           stop();
 
           // player wins
-          console.log('You have won the battle.');
+
+          game.objects.view.setAnnouncement('You have won the battle.', -1);
 
           gameOver(true);
 
