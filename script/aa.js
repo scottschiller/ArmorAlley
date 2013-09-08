@@ -1189,7 +1189,7 @@
 
     function setAnnouncement(text, delay) {
 
-      if (text !== data.gameTips.lastAnnouncement && (!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text)) {
+      if (text !== data.gameTips.lastAnnouncement && ((!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text))) {
 
         utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
 
@@ -1203,7 +1203,7 @@
 
         if (text) {
           // clear after an amount of time, if not -1
-          if ((delay !== undefined && delay !== -1)) {
+          if ((delay === undefined || delay !== -1)) {
             data.gameTips.announcementTimer = window.setTimeout(setAnnouncement, delay || 5000);
           }
         }
@@ -1875,7 +1875,7 @@
 
   GameLoop = function() {
 
-    var data, timer, exports;
+    var data, exports;
 
     function animate() {
 
@@ -1884,6 +1884,11 @@
       var gameObjects = game.objects;
 
       data.frameCount++;
+
+      if (battleOver) {
+         // hack: only animate shrapnel.
+        gameObjects = game.objects.shrapnel;
+      }
 
       for (item in gameObjects) {
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
@@ -1910,10 +1915,10 @@
 
     function start() {
 
-      if (!timer) {
+      if (!data.timer) {
 
         // TODO: use rAF
-        timer = window.setInterval(animate, FRAMERATE);
+        data.timer = window.setInterval(animate, FRAMERATE);
 
       }
 
@@ -1921,9 +1926,9 @@
 
     function stop() {
 
-      if (timer) {
-         window.clearInterval(timer);
-         timer = null;
+      if (data.timer) {
+         window.clearInterval(data.timer);
+         data.timer = null;
       }
 
     }
@@ -4457,19 +4462,22 @@
 
         common.setTransformXY(dom.fuelLine, -100 + data.fuel + '%', '0px');
 
-        // hackish: notify for 1% of fuel burn process.
+        // hackish: show announcements across 1% of fuel burn process.
+        if (!data.repairing) {
 
-        if (data.fuel < 33 && data.fuel > 32) {
+          if (data.fuel < 33 && data.fuel > 32) {
 
-          game.objects.view.setAnnouncement('Low fuel');
+            game.objects.view.setAnnouncement('Low fuel');
 
-        } else if (data.fuel < 12.5 && data.fuel > 11.5) {
+          } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
-          game.objects.view.setAnnouncement('Fuel critical');
+            game.objects.view.setAnnouncement('Fuel critical');
 
-        } else if (data.fuel <= 0) {
+          } else if (data.fuel <= 0) {
 
-          game.objects.view.setAnnouncement('No fuel');
+            game.objects.view.setAnnouncement('No fuel');
+
+          }
 
         }
 
@@ -4499,10 +4507,6 @@
         // update UI
 
         updateFuelUI();
-
-        if (data.fuel <= 0) {
-          console.log('no fuel');
-        }
 
       }
 
@@ -4887,13 +4891,20 @@
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
 
+      // look ma, no longer dead!
       data.dead = false;
+      data.pilot = true;
 
       updateStatusUI();
 
     }
 
     function respawn() {
+
+      if (battleOver) {
+        // exit if game is over.
+        return false;
+      }
 
       // helicopter died. move view, and reset.
 
@@ -5083,6 +5094,24 @@
       if (hasUpdate) {
 
         updateStatusUI();
+
+      }
+
+    }
+
+    function eject() {
+
+      // bail!
+      if (!data.dead && data.pilot) {
+
+        game.objects.parachuteInfantry.push(new ParachuteInfantry({
+          x: data.x + data.halfWidth,
+          y: data.y + data.height - 11
+        }));
+
+        game.objects.view.setAnnouncement('No pilot');
+
+        data.pilot = false;
 
       }
 
@@ -5371,7 +5400,7 @@
 
       view = game.objects.view;
 
-      if (!data.isEnemy && data.fuel > 0) {
+      if (!data.isEnemy && (data.pilot && data.fuel > 0)) {
 
         mouse = view.data.mouse;
 
@@ -5409,14 +5438,14 @@
       }
 
       // no fuel?
-      if (data.fuel <= 0) {
+      if (data.fuel <= 0 || !data.pilot) {
 
         // gravity until dead.
         if (data.vY < 0.5) {
-          data.vY = 0.5;
+          data.vY += 0.5;
+        } else {
+          data.vY *= 1.1;
         }
-
-        data.vY *= 1.1;
 
         if (data.landed) {
           die();
@@ -5650,6 +5679,7 @@
       energy: 10,
       maxEnergy: 10,
       direction: 0,
+      pilot: true,
       xMin: 0,
       xMax: null,
       yMin: 0,
@@ -5775,6 +5805,7 @@
       data: data,
       dom: dom,
       die: die,
+      eject: eject,
       fire: fire,
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
@@ -7234,6 +7265,19 @@
       // NOTE: Each function gets an (e) event argument.
 
       // shift
+      '13': {
+
+        allowEvent: true, // don't use stopEvent()
+
+        down: function() {
+
+          game.objects.helicopters[0].eject();
+
+        }
+
+      },
+
+      // shift
       '16': {
 
         allowEvent: true, // don't use stopEvent()
@@ -7831,13 +7875,18 @@
             x: 8192 - 64
           };
 
-          game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+          if (!battleOver && !game.data.paused) {
 
-          window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
+            game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
 
-          i++;
-          if (i >= enemyOrders.length) {
-            i = 0;
+            window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
+
+            i++;
+
+            if (i >= enemyOrders.length) {
+              i = 0;
+            }
+
           }
 
         }
