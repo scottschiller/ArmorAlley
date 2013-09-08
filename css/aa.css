@@ -1119,6 +1119,30 @@ ul.stats-bar .bombs em {
 	width: 1000px;
 }
 
+#game-tips #game-announcements {
+	width: 100%;
+	text-align: center;
+}
+
+#game-tips #game-announcements {
+	/* hide by default. */
+	display: none;
+}
+
+#game-tips #game-announcements span {
+	display: block;
+	width: 100%;
+}
+
+#game-tips.has-announcement #game-tips-list {
+	display: none;	
+}
+
+#game-tips.has-announcement #game-announcements {
+	display: block;
+
+}
+
 @-webkit-keyframes marquee {
     0% {
         -webkit-transform: translate3d(0px, 0px, 0px);
