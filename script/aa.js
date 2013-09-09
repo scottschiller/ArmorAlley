@@ -42,6 +42,8 @@
 
   var battleOver = false;
 
+  var logoHidden = false;
+
   var keyboardMonitor;
 
   var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
@@ -5429,20 +5431,48 @@
 
       }
 
-      yLimit = 369 - (data.onLandingPad ? 4 : 0);
+      yLimit = 369 - (data.onLandingPad ? 3 : 0);
 
       // slight offset when on landing pad
+
       if (data.y >= yLimit) {
+
         data.vX = 0;
+
         if (data.vY > 0) {
           data.vY = 0;
         }
+
         if (!data.landed) {
           data.landed = true;
         }
+
       } else {
+
         data.landed = false;
         onLandingPad(false);
+
+        // hack: fade logo on first take-off.
+        if (!data.isEnemy && !logoHidden) {
+
+          logoHidden = true;
+
+          window.setTimeout(function() {
+
+            var logo = document.getElementById('logo');
+
+            utils.css.add(logo, 'fade-out');
+
+            // remove from the DOM eventually
+            window.setTimeout(function() {
+              logo.parentNode.removeChild(logo);
+              logo = null;
+            }, 2000);
+
+          }, 500);
+
+        }
+
       }
 
       // no fuel?
@@ -5677,7 +5707,7 @@
       radarJamming: 0,
       repairComplete: false,
       landed: true,
-      onLandingPad: false,
+      onLandingPad: true,
       cloaked: false,
       rotated: false,
       rotateTimer: null,
@@ -8009,20 +8039,6 @@
       updateStats();
 
     }
-
-    window.setTimeout(function() {
-
-      var logo = document.getElementById('logo');
-
-      utils.css.add(logo, 'fade-out');
-
-      // remove from the DOM eventually
-      window.setTimeout(function() {
-        logo.parentNode.removeChild(logo);
-        logo = null;
-      }, 2000);
-
-    }, 1000);
 
   }
 
