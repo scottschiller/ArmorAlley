@@ -480,7 +480,9 @@
         }
         if (exports.data.energy <= 0) {
           exports.data.energy = 0;
-          exports.die();
+          if (exports.die) {
+            exports.die();
+          }
         }
       }
 
@@ -2543,7 +2545,7 @@
           collisionItems: nearby.items,
           x: data.x + (data.width + 1),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of height
-          vX: 1,
+          vX: 2,
           vY: 0
         }));
 
@@ -2553,7 +2555,7 @@
           collisionItems: nearby.items,
           x: (data.x - 1),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of height
-          vX: -1,
+          vX: -2,
           vY: 0
         }));
 
@@ -2572,17 +2574,23 @@
       // you only get to steal so much at a time.
       maxFunds = 20;
 
-      // TODO: case where enemy/CPU captures local player funds?
-
       if (data.funds) {
 
         capturedFunds = Math.min(data.funds, maxFunds);
 
-        game.objects.view.setAnnouncement(data.funds + ' enemy ' + (data.funds > 1 ? 'funds' : 'fund') + ' captured!');
-
         if (data.isEnemy) {
-          // hand it over to the (non-CPU) player.
+          game.objects.view.setAnnouncement(data.funds + ' enemy ' + (data.funds > 1 ? 'funds' : 'fund') + ' captured!');
+        } else {
+          game.objects.view.setAnnouncement('The enemy captured ' + data.funds + ' of your funds');
+        }
+
+        // who gets the loot?
+        if (data.isEnemy) {
+          // local player
           game.objects.endBunkers[0].data.funds += capturedFunds;
+        } else {
+          // CPU
+          game.objects.endBunkers[1].data.funds += capturedFunds;
         }
 
         data.funds -= capturedFunds;
@@ -2689,7 +2697,7 @@
       funds: (!options.isEnemy ? 32 : 0),
       firing: false,
       gunYOffset: 10,
-      fireModulus: 6,
+      fireModulus: 4,
       fundsModulus: FPS * 10,
       midPoint: null
     }, options);
@@ -3643,7 +3651,7 @@
 
       if (target) {
         // special case: tanks are impervious to infantry gunfire.
-        if (!(data.parentType === 'infantry' && target.data.type === 'tank')) {
+        if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && target.data.type === 'end-bunker')) {
           common.hit(target, data.damagePoints);
         }
       }
@@ -7875,7 +7883,7 @@
             x: 8192 - 64
           };
 
-          if (!battleOver && !game.data.paused) {
+          if (!battleOver && !data.paused) {
 
             game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
 
