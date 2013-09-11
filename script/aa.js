@@ -6847,7 +6847,7 @@
       width: 10,
       height: 11,
       gunYOffset: 9,
-      fireModulus: 10,
+      fireModulus: 5,
       vX: (options.isEnemy ? -1 : 1),
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
