@@ -1036,14 +1036,19 @@
   var sounds = {
     helicopter: {
       bomb: null,
+      engine: null,
+      engineVolume: 25,
       rotate: null
     },
     inventory: {
       begin: null,
       end: null
     },
+    infantryGunFire: null,
+    balloonExplosion: null,
     genericBoom: null,
-    genericExplosion: null,
+    genericExplosion2: null,
+    explosionLarge: null,
     genericGunFire: null,
     missileLaunch: null,
     turretGunFire: null
@@ -1057,6 +1062,12 @@
 
   soundManager.onready(function() {
 
+    sounds.balloonExplosion = soundManager.createSound({
+      url: 'audio/balloon-explosion.wav',
+      multiShot: true,
+      volume: 20
+    });
+
     sounds.genericBoom = soundManager.createSound({
       url: 'audio/generic-boom.wav',
       multiShot: true,
@@ -1069,19 +1080,46 @@
       volume: 18
     });
 
+    sounds.genericExplosion2 = soundManager.createSound({
+      url: 'audio/generic-explosion-2.wav',
+      multiShot: true,
+      volume: 18
+    });
+
     sounds.genericGunFire = soundManager.createSound({
       url: 'audio/generic-gunfire.wav',
       multiShot: true
     });
 
+    sounds.infantryGunFire = soundManager.createSound({
+      url: 'audio/infantry-gunfire.wav',
+      multiShot: true,
+      volume: 25
+    });
+
     sounds.turretGunFire = soundManager.createSound({
       url: 'audio/turret-gunfire.wav',
-      multiShot: true
+      multiShot: true,
+      volume: 25
+    });
+
+    sounds.explosionLarge = soundManager.createSound({
+      url: 'audio/explosion-large.wav',
+      multiShot: true,
+      volume: 60
+    });
+
+    sounds.helicopter.engine = soundManager.createSound({
+      url: 'audio/helicopter-engine.wav',
+      volume: 25,
+      autoPlay: true,
+      loops: 999
     });
 
     sounds.helicopter.rotate = soundManager.createSound({
       url: 'audio/helicopter-rotate.wav',
-      multiShot: true
+      multiShot: true,
+      volume: 10
     });
 
     sounds.inventory.denied = soundManager.createSound({
@@ -2075,8 +2113,8 @@
       // pop!
       if (!data.dead) {
         utils.css.add(dom.o, css.exploding);
-        if (sounds.genericBoom) {
-          sounds.genericBoom.play();
+        if (sounds.balloonExplosion) {
+          sounds.balloonExplosion.play();
         }
         data.deadTimer = window.setTimeout(function() {
           dead();
@@ -2408,8 +2446,8 @@
 
       data.dead = true;
 
-      if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
+      if (sounds.explosionLarge) {
+        sounds.explosionLarge.play();
       }
 
       radarItem.die();
@@ -2581,9 +2619,9 @@
         capturedFunds = Math.min(data.funds, maxFunds);
 
         if (data.isEnemy) {
-          game.objects.view.setAnnouncement(data.funds + ' enemy ' + (data.funds > 1 ? 'funds' : 'fund') + ' captured!');
+          game.objects.view.setAnnouncement(data.funds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
         } else {
-          game.objects.view.setAnnouncement('The enemy captured ' + data.funds + ' of your funds');
+          game.objects.view.setAnnouncement('The enemy captured ' + capturedFunds + ' of your funds');
         }
 
         // who gets the loot?
@@ -2838,7 +2876,7 @@
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
             vX: deltaX * 0.05 + deltaXGretzky,
-            vY: deltaY * 0.05 + deltaYGretzky
+            vY: Math.min(0, deltaY * 0.05 + deltaYGretzky)
           }));
 
           if (sounds.turretGunFire) {
@@ -3036,7 +3074,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: 8,
+      fireModulus: 3,
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: 24,
@@ -3805,7 +3843,7 @@
 
       // possible hit, blowing something up.
 
-      if (!options.omitSonud && sounds.genericBoom) {
+      if (!options.omitSound && sounds.genericBoom) {
         sounds.genericBoom.play();
       }
 
@@ -4134,6 +4172,10 @@
 
         utils.css.add(dom.o, css.spark);
 
+        if (sounds.genericBoom) {
+          sounds.genericBoom.play();
+        }
+
         if (!excludeShrapnel) {
           shrapnelExplosion(data, {
             count: 3,
@@ -4433,8 +4475,14 @@
     function cloak() {
 
       if (!data.cloaked) {
+
         utils.css.add(dom.o, css.cloaked);
         utils.css.add(radarItem.dom.o, css.cloaked);
+
+        if (!data.isEnemy && sounds.helicopter.engine) {
+          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume/2.5);
+        }
+
       }
 
       // hackish: mark and/or update the current frame when this happened.
@@ -4446,9 +4494,17 @@
 
       // hackish: uncloak if a frame or more has passed and we aren't in a cloud.
       if (data.cloaked && data.cloaked !== game.objects.gameLoop.data.frameCount) {
+
         utils.css.remove(dom.o, css.cloaked);
         utils.css.remove(radarItem.dom.o, css.cloaked);
+
+        if (!data.isEnemy && sounds.helicopter.engine) {
+          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+        }
+
+
         data.cloaked = false;
+
       }
 
     }
@@ -4858,6 +4914,10 @@
 
         game.objects.view.setAnnouncement();
 
+        if (sounds.helicopter.engine) {
+          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+        }
+
       } else {
 
         lastTarget = null;
@@ -4967,8 +5027,12 @@
 
       data.dead = true;
 
-      if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
+      if (sounds.explosionLarge) {
+        sounds.explosionLarge.play();
+      }
+
+      if (!data.isEnemy && sounds.helicopter.engine) {
+        sounds.helicopter.engine.setVolume(0);
       }
 
       window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
@@ -5623,6 +5687,11 @@
 
       var i, trailerConfig, fragment;
 
+      if (data.isEnemy) {
+        // offset fire modulus by half, to offset sound
+        data.frameCount = Math.floor(data.fireModulus / 2);
+      }
+
       fragment = document.createDocumentFragment();
 
       trailerConfig = {
@@ -6173,8 +6242,8 @@
 
       data.dead = true;
 
-      if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
+      if (sounds.genericExplosion2) {
+        sounds.genericExplosion2.play();
       }
 
     }
@@ -6603,6 +6672,10 @@
           vX: data.vX, // same velocity
           vY: 0
         }));
+
+        if (sounds.infantryGunFire) {
+          sounds.infantryGunFire.play();
+        }
 
       }
 
@@ -7876,6 +7949,9 @@
 
       if (!data.paused) {
         objects.gameLoop.stop();
+        if (sounds.helicopter.engine) {
+          sounds.helicopter.engine.setVolume(0);
+        }
         data.paused = true;
       }
 
@@ -7885,6 +7961,9 @@
 
       if (data.paused) {
         objects.gameLoop.start();
+        if (sounds.helicopter.engine) {
+          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+        }
         data.paused = false;
       }
   
