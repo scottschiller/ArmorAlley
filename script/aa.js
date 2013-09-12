@@ -947,6 +947,13 @@
 
   }
 
+  function isOnScreen(target) {
+
+    // is the target within the range of screen coordinates?
+    return (target && target.data && target.data.x >= game.objects.view.data.battleField.scrollLeft && target.data.x < (game.objects.view.data.battleField.scrollLeft + game.objects.view.data.browser.width));
+
+  }
+
   function initNearby(nearby, exports) {
 
     // map options.source -> exports
@@ -1029,6 +1036,14 @@
 
   }
 
+  function playSound(soundReference, target) {
+
+    // common sound play wrapper, options for positioning and muting etc.
+
+    soundReference.sound.play(isOnScreen(target) ? soundReference.soundOptions.onScreen : soundReference.soundOptions.offScreen);
+
+  }
+
   /**
    * sound effects
    */
@@ -1062,80 +1077,102 @@
 
   soundManager.onready(function() {
 
-    sounds.balloonExplosion = soundManager.createSound({
+    var item;
+
+    function addSound(options) {
+
+      var result = {
+        sound: soundManager.createSound(options),
+        soundOptions: {
+          onScreen: {
+            volume: options.volume || 100
+          },
+          offScreen: {
+            // off-screen sounds are more quiet.
+            volume: parseInt((options.volume || 100) / 3, 10)
+          }
+        }
+      }
+
+      return result;
+
+    }
+
+    sounds.balloonExplosion = addSound({
       url: 'audio/balloon-explosion.wav',
       multiShot: true,
       volume: 20
     });
 
-    sounds.genericBoom = soundManager.createSound({
+    sounds.genericBoom = addSound({
       url: 'audio/generic-boom.wav',
       multiShot: true,
       volume: 20
     });
 
-    sounds.genericExplosion = soundManager.createSound({
+    sounds.genericExplosion = addSound({
       url: 'audio/generic-explosion.wav',
       multiShot: true,
       volume: 18
     });
 
-    sounds.genericExplosion2 = soundManager.createSound({
+    sounds.genericExplosion2 = addSound({
       url: 'audio/generic-explosion-2.wav',
       multiShot: true,
       volume: 18
     });
 
-    sounds.genericGunFire = soundManager.createSound({
+    sounds.genericGunFire = addSound({
       url: 'audio/generic-gunfire.wav',
-      multiShot: true
+      multiShot: true,
+      volume: 25
     });
 
-    sounds.infantryGunFire = soundManager.createSound({
+    sounds.infantryGunFire = addSound({
       url: 'audio/infantry-gunfire.wav',
       multiShot: true,
       volume: 25
     });
 
-    sounds.turretGunFire = soundManager.createSound({
+    sounds.turretGunFire = addSound({
       url: 'audio/turret-gunfire.wav',
       multiShot: true,
       volume: 25
     });
 
-    sounds.explosionLarge = soundManager.createSound({
+    sounds.explosionLarge = addSound({
       url: 'audio/explosion-large.wav',
       multiShot: true,
       volume: 60
     });
 
-    sounds.helicopter.engine = soundManager.createSound({
+    sounds.helicopter.engine = addSound({
       url: 'audio/helicopter-engine.wav',
       volume: 25,
       autoPlay: true,
       loops: 999
     });
 
-    sounds.helicopter.rotate = soundManager.createSound({
+    sounds.helicopter.rotate = addSound({
       url: 'audio/helicopter-rotate.wav',
       multiShot: true,
       volume: 10
     });
 
-    sounds.inventory.denied = soundManager.createSound({
+    sounds.inventory.denied = addSound({
       url: 'audio/order-denied.wav',
       multiShot: true
     });
 
-    sounds.inventory.begin = soundManager.createSound({
+    sounds.inventory.begin = addSound({
       url: 'audio/order-start.wav'
     });
 
-    sounds.inventory.end = soundManager.createSound({
+    sounds.inventory.end = addSound({
       url: 'audio/order-complete.wav'
     });
 
-    sounds.missileLaunch = soundManager.createSound({
+    sounds.missileLaunch = addSound({
       url: 'audio/missile-launch.wav'
     });
 
@@ -1527,7 +1564,7 @@
 
           // Insufficient funds. "We require more vespene gas."
           if (sounds.inventory.denied) {
-            sounds.inventory.denied.play();
+            playSound(sounds.inventory.denied);
           }
 
           return false;
@@ -1556,7 +1593,7 @@
           utils.css.add(dom.gameStatusBar, css.building);
 
           if (sounds.inventory.begin) {
-            sounds.inventory.begin.play();
+            playSound(sounds.inventory.begin);
           }
 
         }
@@ -1565,7 +1602,7 @@
 
         // busy.
         if (sounds.inventory.denied) {
-          sounds.inventory.denied.play();
+          playSound(sounds.inventory.denied);
         }
 
       }
@@ -1601,7 +1638,7 @@
 
             // play sound?
             if (sounds.inventory.end) {
-              sounds.inventory.end.play();
+              playSound(sounds.inventory.end);
             }
 
           }
@@ -2114,7 +2151,7 @@
       if (!data.dead) {
         utils.css.add(dom.o, css.exploding);
         if (sounds.balloonExplosion) {
-          sounds.balloonExplosion.play();
+          playSound(sounds.balloonExplosion, exports);
         }
         data.deadTimer = window.setTimeout(function() {
           dead();
@@ -2447,7 +2484,7 @@
       data.dead = true;
 
       if (sounds.explosionLarge) {
-        sounds.explosionLarge.play();
+        playSound(sounds.explosionLarge, exports);
       }
 
       radarItem.die();
@@ -2600,7 +2637,7 @@
         }));
 
         if (sounds.genericGunFire) {
-          sounds.genericGunFire.play();
+          playSound(sounds.genericGunFire, exports);
         }
 
       }
@@ -2880,7 +2917,7 @@
           }));
 
           if (sounds.turretGunFire) {
-            sounds.turretGunFire.play();
+            playSound(sounds.turretGunFire, exports);
           }
 
         }
@@ -3179,7 +3216,7 @@
 
         // make a noise?
         if (sounds.genericExplosion) {
-          sounds.genericExplosion.play();
+          playSound(sounds.genericExplosion, exports);
         }
 
         counter++;
@@ -3190,9 +3227,9 @@
           window.setTimeout(function() {
 
             if (sounds.genericExplosion) {
-              sounds.genericExplosion.play();
-              sounds.genericExplosion.play();
-              sounds.genericExplosion.play();
+              playSound(sounds.genericExplosion, exports);
+              playSound(sounds.genericExplosion, exports);
+              playSound(sounds.genericExplosion, exports);
             }
 
             window.setTimeout(function() {
@@ -3529,7 +3566,7 @@
       data.dead = true;
 
       if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
+        playSound(sounds.genericExplosion, exports);
       }
 
     }
@@ -3844,7 +3881,7 @@
       // possible hit, blowing something up.
 
       if (!options.omitSound && sounds.genericBoom) {
-        sounds.genericBoom.play();
+        playSound(sounds.genericBoom, exports);
       }
 
       className = (Math.random () > 0.5 ? css.explosionLarge : css.spark);
@@ -4173,7 +4210,7 @@
         utils.css.add(dom.o, css.spark);
 
         if (sounds.genericBoom) {
-          sounds.genericBoom.play();
+          playSound(sounds.genericBoom, exports);
         }
 
         if (!excludeShrapnel) {
@@ -4395,7 +4432,7 @@
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
       if (sounds.missileLaunch) {
-        sounds.missileLaunch.play();
+        playSound(sounds.missileLaunch, exports);
       }
 
     }
@@ -4480,7 +4517,7 @@
         utils.css.add(radarItem.dom.o, css.cloaked);
 
         if (!data.isEnemy && sounds.helicopter.engine) {
-          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume/2.5);
+          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume/2.5);
         }
 
       }
@@ -4499,7 +4536,7 @@
         utils.css.remove(radarItem.dom.o, css.cloaked);
 
         if (!data.isEnemy && sounds.helicopter.engine) {
-          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
 
 
@@ -4636,7 +4673,7 @@
           document.getElementById('repair-complete').style.display = 'block';
 
           if (sounds.inventory.end) {
-            sounds.inventory.end.play();
+            playSound(sounds.inventory.end);
           }
 
         }
@@ -4744,7 +4781,7 @@
       }
 
       if (!data.autoRotate && sounds.helicopter.rotate) {
-        sounds.helicopter.rotate.play();
+        playSound(sounds.helicopter.rotate);
       }
 
     }
@@ -4915,7 +4952,7 @@
         game.objects.view.setAnnouncement();
 
         if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
 
       } else {
@@ -5028,11 +5065,11 @@
       data.dead = true;
 
       if (sounds.explosionLarge) {
-        sounds.explosionLarge.play();
+          playSound(sounds.explosionLarge, exports);
       }
 
       if (!data.isEnemy && sounds.helicopter.engine) {
-        sounds.helicopter.engine.setVolume(0);
+        sounds.helicopter.engine.sound.setVolume(0);
       }
 
       window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
@@ -5049,119 +5086,163 @@
         return false;
       }
 
-      if (data.firing && data.ammo > 0 && frameCount % data.fireModulus === 0) {
+      if (data.firing && frameCount % data.fireModulus === 0) {
 
-        tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
+        if (data.ammo > 0) {
 
-        objects.gunfire.push(new GunFire({
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          x: data.x + (data.rotated ? 0 : data.width) - 8,
-          y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
-          vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
-          vY: data.vY + tiltOffset
-        }));
+          tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
-        if (sounds.genericGunFire) {
-          sounds.genericGunFire.play();
-        }
+          objects.gunfire.push(new GunFire({
+            parentType: data.type,
+            isEnemy: data.isEnemy,
+            x: data.x + (data.rotated ? 0 : data.width) - 8,
+            y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
+            vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
+            vY: data.vY + tiltOffset
+          }));
 
-        // TODO: CPU
+          if (sounds.genericGunFire) {
+            if (!data.isEnemy) {
+              // local? play quiet only if cloaked.
+              sounds.genericGunFire.sound.play(sounds.genericGunFire.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+            } else {
+              // play with volume based on visibility.
+              playSound(sounds.genericGunFire, exports);
+            }
+          }
 
-        data.ammo = Math.max(0, data.ammo - 1);
+          // TODO: CPU
 
-        if (!data.isEnemy) {
+          data.ammo = Math.max(0, data.ammo - 1);
 
-          hasUpdate = 1;
+          if (!data.isEnemy) {
+
+            hasUpdate = 1;
+
+          }
+
+        } else {
+
+          // player is out of ammo.
+          if (!data.isEnemy && sounds.inventory.denied) {
+            playSound(sounds.inventory.denied);
+          }
 
         }
 
         // SHIFT key still down?
-        if (!keyboardMonitor.isDown('shift')) {
+        if (!data.isEnemy && !keyboardMonitor.isDown('shift')) {
           data.firing = false;
         }
 
       }
 
-      if (data.bombing && data.bombs > 0 && frameCount % data.bombModulus === 0) {
+      if (data.bombing && frameCount % data.bombModulus === 0) {
 
-        objects.bombs.push(new Bomb({
-          isEnemy: data.isEnemy,
-          x: data.x + data.halfWidth,
-          y: data.y + data.height - 6,
-          vX: data.vX
-        }));
+        if (data.bombs > 0) {
 
-        data.bombs = Math.max(0, data.bombs - 1);
-
-        if (!data.isEnemy) {
-
-          hasUpdate = 1;
-
-          // CTRL key still down?
-          if (!keyboardMonitor.isDown('ctrl')) {
-            data.bombing = false;
-          }
-
-        }
-
-      }
-
-      if (data.missileLaunching && data.smartMissiles > 0 && frameCount % data.missileModulus === 0) {
-
-        missileTarget = getNearestObject(exports, { useInFront: true });
-
-        if (missileTarget && !missileTarget.data.cloaked) {
-
-          objects.smartMissiles.push(new SmartMissile({
-            parentType: data.type,
-            isEnemy: data.isEnemy,
-            x: data.x + (data.rotated ? 0 : data.width) - 8,
-            y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
-            target: missileTarget
-            // vX: data.vX + 8 * (data.rotated ? -1 : 1)
-          }));
-
-          data.smartMissiles = Math.max(0, data.smartMissiles - 1);
-
-          hasUpdate = 1;
-
-        } else {
-
-          // "unavailable" sound?
-          if (sounds.inventory.denied) {
-            sounds.inventory.denied.play();
-          }
-
-        }
-
-      }
-
-      if (data.parachuting && data.parachutes > 0 && frameCount % data.parachuteModulus === 0) {
-
-        // helicopter landed? Just create an infantry.
-        if (data.landed) {
-
-          game.objects.infantry.push(new Infantry({
-            isEnemy: data.isEnemy,
-            // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
-            x: data.x + (data.width * 0.75),
-            y: data.y + data.height - 11
-          }));
-
-        } else {
-
-          game.objects.parachuteInfantry.push(new ParachuteInfantry({
+          objects.bombs.push(new Bomb({
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
-            y: data.y + data.height - 11
+            y: data.y + data.height - 6,
+            vX: data.vX
           }));
+
+          data.bombs = Math.max(0, data.bombs - 1);
+
+          if (!data.isEnemy) {
+
+            hasUpdate = 1;
+
+          }
+
+        } else {
+
+          // player is out of ammo.
+          if (!data.isEnemy && sounds.inventory.denied) {
+            playSound(sounds.inventory.denied);
+          }
 
         }
 
-        data.parachutes = Math.max(0, data.parachutes - 1);
+        // CTRL key still down?
+        if (!data.isEnemy && !keyboardMonitor.isDown('ctrl')) {
+          data.bombing = false;
+        }
 
-        hasUpdate = 1;
+      }
+
+      if (data.missileLaunching && frameCount % data.missileModulus === 0) {
+
+        if (data.smartMissiles > 0) {
+
+          missileTarget = getNearestObject(exports, { useInFront: true });
+
+          if (missileTarget && !missileTarget.data.cloaked) {
+
+            objects.smartMissiles.push(new SmartMissile({
+              parentType: data.type,
+              isEnemy: data.isEnemy,
+              x: data.x + (data.rotated ? 0 : data.width) - 8,
+              y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
+              target: missileTarget
+              // vX: data.vX + 8 * (data.rotated ? -1 : 1)
+            }));
+
+            data.smartMissiles = Math.max(0, data.smartMissiles - 1);
+
+            hasUpdate = 1;
+
+         }
+
+       }
+
+       if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
+
+          // out of ammo / no available targets
+          if (sounds.inventory.denied) {
+            playSound(sounds.inventory.denied);
+          }
+
+       }
+
+      }
+
+      if (data.parachuting && frameCount % data.parachuteModulus === 0) {
+
+        if (data.parachutes > 0) {
+
+          // helicopter landed? Just create an infantry.
+          if (data.landed) {
+
+            game.objects.infantry.push(new Infantry({
+              isEnemy: data.isEnemy,
+              // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
+              x: data.x + (data.width * 0.75),
+              y: data.y + data.height - 11
+            }));
+
+          } else {
+
+            game.objects.parachuteInfantry.push(new ParachuteInfantry({
+              isEnemy: data.isEnemy,
+              x: data.x + data.halfWidth,
+              y: data.y + data.height - 11
+            }));
+
+          }
+
+          data.parachutes = Math.max(0, data.parachutes - 1);
+
+          hasUpdate = 1;
+
+        } else {
+
+          if (!data.isEnemy && sounds.inventory.denied) {
+            playSound(sounds.inventory.denied);
+          }
+
+        }
 
       }
 
@@ -5352,6 +5433,11 @@
         lastTarget = null;
       }
 
+/*
+      if (lastTarget.data.type === 'cloud' && !data.targeting.clouds) {
+        lastTarget = null;
+      }
+*/
       target = lastTarget;
 
       data.lastVX = parseFloat(data.vX);
@@ -5672,7 +5758,10 @@
           // should we target tanks?
           data.targeting.tanks = (Math.random() > 0.75);
 
-          console.log('AI tank targeting mode: ' + data.targeting.tanks);
+          // should we target clouds?
+          data.targeting.clouds = (Math.random() > 0.5);
+
+          console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds);
 
         }
 
@@ -5950,7 +6039,7 @@
         }));
 
         if (sounds.genericGunFire) {
-          sounds.genericGunFire.play();
+          playSound(sounds.genericGunFire, exports);
         }
 
       }
@@ -6020,7 +6109,7 @@
       data.dead = true;
 
       if (sounds.genericExplosion) {
-        sounds.genericExplosion.play();
+        playSound(sounds.genericExplosion, exports);
       }
 
       radarItem.die();
@@ -6243,7 +6332,7 @@
       data.dead = true;
 
       if (sounds.genericExplosion2) {
-        sounds.genericExplosion2.play();
+        playSound(sounds.genericExplosion2, exports);
       }
 
     }
@@ -6674,7 +6763,7 @@
         }));
 
         if (sounds.infantryGunFire) {
-          sounds.infantryGunFire.play();
+          playSound(sounds.infantryGunFire, exports);
         }
 
       }
@@ -7950,7 +8039,7 @@
       if (!data.paused) {
         objects.gameLoop.stop();
         if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.setVolume(0);
+          sounds.helicopter.engine.sound.setVolume(0);
         }
         data.paused = true;
       }
@@ -7962,7 +8051,7 @@
       if (data.paused) {
         objects.gameLoop.start();
         if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.setVolume(sounds.helicopter.engineVolume);
+          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
         data.paused = false;
       }
