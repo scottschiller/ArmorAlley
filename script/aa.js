@@ -814,6 +814,7 @@
 
     // by default, offset target to one side of a balloon.
 
+/*
     if (target.data.type === 'balloon') {
 
       if (target.data.x > source.data.x) {
@@ -827,10 +828,18 @@
       }
 
     }
+*/
 
-    deltaY = target.data.y - source.data.y;
+    if (target.data.type === 'tank') {
 
-    deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+      // hack: bomb from high up.
+      deltaY = (40 + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+
+    } else {
+
+      deltaY = (target.data.y + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
+
+    }
 
     result = {
       deltaX: deltaX,
@@ -1131,7 +1140,7 @@
     sounds.infantryGunFire = addSound({
       url: 'audio/infantry-gunfire.wav',
       multiShot: true,
-      volume: 25
+      volume: 20
     });
 
     sounds.turretGunFire = addSound({
@@ -1514,7 +1523,9 @@
       // temporary hack
       if (options.isEnemy) {
  
-        options.x = game.objects.view.data.battleField.scrollLeft + (game.objects.view.data.browser.width * 0.75);
+        options.x = game.objects.view.data.battleField.scrollLeft + (game.objects.view.data.browser.width * 0.25);
+
+        options.isEnemy = false;
 
       } else {
 
@@ -3974,7 +3985,9 @@
 
       // hack?
       if (features.transform.prop) {
-        dom.o.style.left = dom.o.style.top = '0px';
+        dom.o.style.left = data.x + 'px';
+        dom.o.style.top = data.y + 'px';
+        // dom.o.style.left = dom.o.style.top = '0px';
       }
 
       game.dom.world.appendChild(dom.o);
@@ -3995,7 +4008,8 @@
       width: 13,
       height: 12,
       gravity: 1,
-      damagePoints: 3
+      damagePoints: 3,
+      vX: (options.vX || 0)
     }, options);
 
     dom = {
@@ -5279,7 +5293,9 @@
        * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
        */
 
-      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY;
+      var deltaX, deltaY, target, result, altTarget, cloudTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
+
+      maxY = 320;
 
       if (data.fuel <= 0) {
         return false;
@@ -5287,14 +5303,22 @@
 
       // low fuel means low fuel. or ammo. or bombs.
 
-      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 30 || data.energy < 2 || !data.ammo || !data.bombs)) {
+      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 30 || data.energy < 2 || (!data.ammo && !data.bombs))) {
 
         setFiring(false);
         setBombing(false);
 
-        target = game.objects.landingPads[game.objects.landingPads.length-1];
+        /**
+         * fly toward closest landing pad.
+         * rightmost 25% of the battlefield? use own base.
+         * otherwise, use "neutral" mid-level base.
+         * if you're there and the enemy decides to land,
+         * you're going to find yourself in trouble. ;)
+         */
 
-        // head back toward base
+        target = game.objects.landingPads[game.objects.landingPads.length - (data.x > 6144 ? 1 : 2)];
+
+        // aim for landing pad
 
         deltaX = target.data.x - data.x;
         deltaY = -4;
@@ -5362,9 +5386,9 @@
 
           lastTarget = null;
 
-        } else if (lastTarget.data.type === 'balloon' && lastTarget.data.y > 340) {
+        } else if ((lastTarget.data.type === 'balloon' || lastTarget.data.type === 'tank') && lastTarget.data.y > maxY) {
 
-          // is this a balloon that's flying too low?
+          // flying too low?
           lastTarget = null;
 
         } else if (lastTarget.data.cloaked) {
@@ -5379,23 +5403,30 @@
       if (!lastTarget) {
 
         if (data.targeting.clouds) {
+
           lastTarget = objectInView(data, { items: 'clouds' });
+
+          // hack: only go after clouds in the player's half of the field.
+          if (lastTarget && lastTarget.data.x > 4096) {
+            lastTarget = null;
+          }
+
         }
 
-        if (!lastTarget && data.targeting.balloons) {
+        if (!lastTarget && data.targeting.balloons && data.ammo) {
           lastTarget = objectInView(data, { items: 'balloons' });
         }
 
-        if (!lastTarget && data.targeting.tanks) {
+        if (!lastTarget && data.targeting.tanks && data.bombs) {
           lastTarget = objectInView(data, { items: 'tanks' });
         }
 
-        if (!lastTarget && data.targeting.helicopters) {
+        if (!lastTarget && data.targeting.helicopters && data.ammo) {
           lastTarget = objectInView(data, { items: 'helicopters' });
         }
 
         // is the new target too low?
-        if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > 340) {
+        if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > maxY) {
           lastTarget = null;
         }
 
@@ -5406,15 +5437,15 @@
       } else if (lastTarget.data.type === 'cloud') {
 
         // we already have a target - can we get a more interesting one?
-        if (data.targeting.balloons) {
+        if (data.targeting.balloons && data.ammo) {
           altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
         }
 
-        if (!altTarget && data.targeting.tanks) {
+        if (!altTarget && data.targeting.tanks && data.bombs) {
           altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
         }
 
-        if (!altTarget && data.targeting.helicopters) {
+        if (!altTarget && data.targeting.helicopters && data.ammo) {
           altTarget = objectInView(data, { items: ['helicopters'], triggerDistance: game.objects.view.data.browser.width });
         }
 
@@ -5425,7 +5456,15 @@
 
       }
 
-      if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > 340) {
+      if (lastTarget && lastTarget.data.dead) {
+        lastTarget = null;
+      }
+
+      if (lastTarget && lastTarget.data.type === 'tank' && !data.bombs) {
+        lastTarget = null;
+      }
+
+      if (lastTarget &&  (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || !data.ammo)) {
         lastTarget = null;
       }
 
@@ -5433,11 +5472,24 @@
         lastTarget = null;
       }
 
-/*
-      if (lastTarget.data.type === 'cloud' && !data.targeting.clouds) {
-        lastTarget = null;
+      /**
+       * sanity check: if after all this, there is no target / nothing to do,
+       * clouds aren't being targeted and there's a nearby cloud, go for that.
+       */
+
+      if (!lastTarget && !data.targeting.clouds) {
+
+        lastTarget = objectInView(data, { items: 'clouds' });
+
+        // hack: only go after clouds in the player's half of the field.
+        if (lastTarget && lastTarget.data.x > 4096) {
+          lastTarget = null;
+        }
+
       }
-*/
+
+      // now go after the target.
+
       target = lastTarget;
 
       data.lastVX = parseFloat(data.vX);
@@ -5448,12 +5500,18 @@
 
         result = trackObject(exports, target);
 
-        // hack: if target is not a balloon and is bottom-aligned (i.e., a tank), stay at current position.
         if (target.data.type !== 'balloon') {
 
+          if (target.data.type === 'landing-pad') {
+            result.deltaY = 0;
+          }
+
+          /*
+          // hack: if target is not a balloon and is bottom-aligned (i.e., a tank), stay at current position.
           if (target.data.bottomAligned) {
             result.deltaY = 0;
           }
+          */
 
         } else {
 
@@ -5464,7 +5522,7 @@
         // enforce distance limits?
         if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
 
-          if (Math.abs(result.deltaX) < 250) {
+          if (Math.abs(result.deltaX) < 200) {
             result.deltaX = 0;
           }
 
@@ -5499,9 +5557,10 @@
           data.vY = 0;
         }
 
-        if (data.vY >= 0 && data.y > 340 && (!data.lastTarget || data.lastTarget !== 'landing-pad')) {
+        if (data.vY >= 0 && data.y > maxY && (!data.lastTarget || data.lastTarget !== 'landing-pad')) {
           // hack: flying too low. limit.
-          data.y = 340;
+          data.y = maxY;
+          data.vY--;
         }
 
         // throttle
@@ -5511,20 +5570,64 @@
 
         // within firing range?
         if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
-          if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
-            setFiring(true);
+
+          if (target.data.type === 'balloon') {
+
+            if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
+              setFiring(true);
+            } else {
+              setFiring(false);
+            }
+
+          } else {
+
+            // shoot at the player
+            if (Math.abs(result.deltaX) < 100) {
+
+              if (Math.abs(result.deltaY) < 48) {
+
+                setFiring(true);
+                setBombing(false);
+
+              } else {
+
+                setFiring(false);
+
+                // bomb the player?
+                // TODO: verify that deltaY is not negative.
+                if (Math.abs(result.deltaX) < 50 && result.deltaY > 48) {
+
+                  setBombing(true);
+
+                } else {
+
+                  setBombing(false);
+
+                }
+
+              }
+
+            }
+
           }
+
         } else if (target.data.type === 'tank') {
+
           if (Math.abs(result.deltaX) < 25 && Math.abs(data.vX) < 2) {
             // over a tank?
+            // hack: perfectly-straight bombing.
+            data.vX = 0;
             setBombing(true);
           } else {
             setBombing(false);
           }
+
         } else {
+
           // safety case: don't fire or bomb.
           setFiring(false);
           setBombing(false);
+
         }
 
       } else {
@@ -5543,6 +5646,44 @@
         // and throttle
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+      }
+
+      /**
+       * bonus: cloud-based "stealth bombing" mode
+       * if in a cloud and cloaked, not actively targeting tanks/helicopters
+       * but targets are passing underneath, bomb away.
+       */
+
+      if (data.targeting.clouds && !data.targeting.tanks && data.cloaked && data.bombs) {
+
+        // for once, literally, "in the cloud."
+
+        // is a tank very close by?
+
+        altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.fractionWidth });
+
+        if (altTarget) {
+
+          result = trackObject(exports, altTarget);
+
+          if (Math.abs(result.deltaX) < 50 && Math.abs(data.vX) < 2) {
+
+            // RELEASE ZE BOMBS
+
+            setBombing(true);
+
+          } else {
+
+            setBombing(false);
+
+          }
+
+        } else {
+
+          setBombing(false);
+
+        }
 
       }
 
@@ -5756,12 +5897,22 @@
         if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
 
           // should we target tanks?
-          data.targeting.tanks = (Math.random() > 0.75);
+          data.targeting.tanks = (Math.random() > 0.65);
 
           // should we target clouds?
           data.targeting.clouds = (Math.random() > 0.5);
 
-          console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds);
+          data.targeting.helicopters = (Math.random() > 0.25);
+
+          if (winloc.match(/clouds/i)) {
+            // hack/testing: cloud-only targeting mode
+            data.targeting.balloons = false;
+            data.targeting.tanks = false;
+            data.targeting.helicopters = false;
+            data.targeting.clouds = true;
+          }
+
+          console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds + ', helicopters: ' + data.targeting.helicopters);
 
         }
 
