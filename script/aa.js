@@ -1096,8 +1096,6 @@
 
   soundManager.onready(function() {
 
-    var item;
-
     function addSound(options) {
 
       var result = {
@@ -1111,7 +1109,7 @@
             volume: parseInt((options.volume || 100) / 3, 10)
           }
         }
-      }
+      };
 
       return result;
 
@@ -3879,9 +3877,11 @@
       }
 
       // hit top? (TODO: get real # from DOM)
+      /*
       if (data.y < 32) { // game.objects.view.data.topBar.height) {
         die();
       }
+      */
 
       // bottom?
       if (data.y > game.objects.view.data.battleField.height) {
@@ -4797,8 +4797,10 @@
       data.fuel = Math.min(data.maxFuel, data.fuel + 0.4);
 
       if (data.repairFrames % 2 === 0) {
+
         data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
         hasUpdate = 1;
+
       }
 
       if (data.repairFrames % 5 === 0) {
@@ -4816,14 +4818,18 @@
       }
 
       if (data.repairFrames % 200 === 0) {
+
         data.smartMissiles = Math.min(data.maxSmartMissiles, data.smartMissiles + 1);
         hasUpdate = 1;
+
       }
 
       updateFuelUI();
 
       if (hasUpdate) {
+
         updateStatusUI();
+
       }
 
     }
@@ -5204,7 +5210,7 @@
             x: data.x + (data.rotated ? 0 : data.width) - 8,
             y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
             vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
-            vY: data.vY + tiltOffset
+            vY: (data.y > data.yMin ? data.vY + tiltOffset : 0)
           }));
 
           if (sounds.genericGunFire) {
@@ -5385,7 +5391,7 @@
        * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
        */
 
-      var deltaX, deltaY, target, result, altTarget, cloudTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
+      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
 
       maxY = 320;
 
