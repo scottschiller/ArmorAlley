@@ -1068,6 +1068,15 @@
       begin: null,
       end: null
     },
+    shrapnel: {
+      counter: 0,
+      counterMax: 4,
+      hit0: null,
+      hit1: null,
+      hit2: null,
+      hit3: null
+    },
+    chainSnapping: null,
     infantryGunFire: null,
     balloonExplosion: null,
     genericBoom: null,
@@ -1075,6 +1084,7 @@
     explosionLarge: null,
     genericGunFire: null,
     missileLaunch: null,
+    parachuteOpen: null,
     turretGunFire: null
   };
 
@@ -1155,6 +1165,12 @@
       volume: 60
     });
 
+    sounds.chainSnapping = addSound({
+      url: 'audio/chain-snapping.wav',
+      multiShot: true,
+      volume: 15
+    });
+
     sounds.helicopter.engine = addSound({
       url: 'audio/helicopter-engine.wav',
       volume: 25,
@@ -1174,15 +1190,60 @@
     });
 
     sounds.inventory.begin = addSound({
-      url: 'audio/order-start.wav'
+      url: 'audio/order-start.wav',
+      volume: 40
     });
 
     sounds.inventory.end = addSound({
-      url: 'audio/order-complete.wav'
+      url: 'audio/order-complete.wav',
+      volume: 15
     });
 
     sounds.missileLaunch = addSound({
-      url: 'audio/missile-launch.wav'
+      url: 'audio/missile-launch.wav',
+      multiShot: true
+    });
+
+    sounds.parachuteOpen = addSound({
+      url: 'audio/parachute-open.wav',
+      multiShot: true,
+      volume: 15
+    });
+
+    sounds.shrapnel.hit0 = addSound({
+      url: 'audio/shrapnel-hit.wav',
+      multiShot: true,
+      volume: 6
+    });
+
+    sounds.shrapnel.hit1 = addSound({
+      url: 'audio/shrapnel-hit-2.wav',
+      multiShot: true,
+      volume: 6
+    });
+
+    sounds.shrapnel.hit2 = addSound({
+      url: 'audio/shrapnel-hit-3.wav',
+      multiShot: true,
+      volume: 6
+    });
+
+    sounds.shrapnel.hit3 = addSound({
+      url: 'audio/shrapnel-hit-4.wav',
+      multiShot: true,
+      volume: 6
+    });
+
+    sounds.splat = addSound({
+      url: 'audio/splat.wav',
+      multiShot: true,
+      volume: 25
+    });
+
+    sounds.radarJamming = addSound({
+      url: 'audio/radar-jamming.wav',
+      autoLoad: true,
+      volume: 10
     });
 
   });
@@ -1819,7 +1880,10 @@
       if (data.jammingTimer) {
         window.clearTimeout(data.jammingTimer);
         data.jammingTimer = null;
-        dom.radar.style.visibility = 'visible';
+        utils.css.remove(dom.radar, css.jammed);
+        if (sounds.radarJamming && sounds.radarJamming.sound) {
+          sounds.radarJamming.sound.stop();
+        }
       }
 
     }
@@ -1915,7 +1979,34 @@
 
       // TODO: prevent excessive DOM I/O
       if (!noJamming) {
-        dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
+
+        if (jam) {
+          utils.css.add(dom.radar, css.jammed);
+        } else {
+          utils.css.remove(dom.radar, css.jammed);
+        }
+
+        // dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
+
+        if (jam) {
+
+          if (sounds.radarJamming && sounds.radarJamming.sound) {
+            if (!sounds.radarJamming.sound.playState) {
+              sounds.radarJamming.sound.play({
+                // position: parseInt(Math.random() * sounds.radarJamming.sound.duration, 10),
+                loops: 999
+              });
+            }
+          }
+
+        } else {
+
+          if (sounds.radarJamming && sounds.radarJamming.sound) {
+            sounds.radarJamming.sound.stop();
+          }
+
+        }
+
       }
 
       data.jammingTimer = null;
@@ -1926,7 +2017,8 @@
     };
 
     css = {
-      incomingSmartMissile: 'incoming-smart-missile'
+      incomingSmartMissile: 'incoming-smart-missile',
+      jammed: 'jammed'
     };
 
     objects = {
@@ -2667,7 +2759,7 @@
         capturedFunds = Math.min(data.funds, maxFunds);
 
         if (data.isEnemy) {
-          game.objects.view.setAnnouncement(data.funds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
+          game.objects.view.setAnnouncement(capturedFunds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
         } else {
           game.objects.view.setAnnouncement('The enemy captured ' + capturedFunds + ' of your funds');
         }
@@ -5481,8 +5573,8 @@
 
         lastTarget = objectInView(data, { items: 'clouds' });
 
-        // hack: only go after clouds in the player's half of the field.
-        if (lastTarget && lastTarget.data.x > 4096) {
+        // hack: only go after clouds in the player's half of the field, plus one screen width
+        if (lastTarget && lastTarget.data.x > 4096 + game.objects.view.data.browser.width) {
           lastTarget = null;
         }
 
@@ -6121,6 +6213,10 @@
           if (target.data.type === 'chain') {
             // special case: chains do damage, but don't kill.
             common.hit(exports, target.data.damagePoints);
+            // and make noise.
+            if (sounds.chainSnapping) {
+              playSound(sounds.chainSnapping, target);
+            }
             // should the target die, too? ... probably so.
             common.hit(target, 999);
           } else if (target.data.type === 'infantry') {
@@ -6656,6 +6752,11 @@
 
       data.vY = 0.5;
 
+      // make the noise
+      if (sounds.parachuteOpen) {
+        playSound(sounds.parachuteOpen, exports);
+      }
+
       data.parachuteOpen = true;
 
     }
@@ -6821,6 +6922,10 @@
           // reposition, first
           moveTo(data.x, 370);
 
+          // balloon-on-skin "splat" sound
+          if (sounds.splat) {
+            playSound(sounds.splat, exports);
+          }
 
           die();
 
@@ -7305,6 +7410,9 @@
         localOptions.vY *= -1;
       }
 
+      // have first and last make noise
+      localOptions.hasSound = (i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1));
+
       game.objects.shrapnel.push(new Shrapnel(localOptions));
 
       angle += angleIncrement;
@@ -7331,11 +7439,35 @@
 
     }
 
+    function shrapnelNoise() {
+
+      var i;
+
+      if (data.hasSound) {
+
+        i = 'hit' + sounds.shrapnel.counter;
+
+        sounds.shrapnel.counter += (sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1);
+
+        if (sounds.shrapnel.counter >= sounds.shrapnel.counterMax) {
+          sounds.shrapnel.counter = 0;
+        }
+
+        if (sounds.shrapnel[i]) {
+          playSound(sounds.shrapnel[i], exports);
+        }
+
+      }
+
+    }
+
     function die() {
 
       if (data.dead) {
         return false;
       }
+
+      shrapnelNoise();
 
       // timeout?
       window.setTimeout(function() {
@@ -7409,6 +7541,8 @@
 
       game.dom.world.appendChild(dom.o);
 
+      shrapnelNoise();
+
     }
 
     options = options || {};
@@ -7432,7 +7566,8 @@
       width: 12,
       height: 12,
       hostile: true,
-      damagePoints: 0.5
+      damagePoints: 0.5,
+      hasSound: (options.hasSound || false)
     }, options);
 
     dom = {
