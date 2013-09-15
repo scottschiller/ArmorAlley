@@ -5509,7 +5509,7 @@
           lastTarget = objectInView(data, { items: 'balloons' });
         }
 
-        if (!lastTarget && data.targeting.tanks && data.bombs > 0) {
+        if (!lastTarget && data.targeting.tanks && data.bombs) {
           lastTarget = objectInView(data, { items: 'tanks' });
         }
 
@@ -5533,7 +5533,7 @@
           altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
         }
 
-        if (!altTarget && data.targeting.tanks && data.bombs > 0) {
+        if (!altTarget && data.targeting.tanks && data.bombs) {
           altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
         }
 
@@ -5703,7 +5703,7 @@
 
         } else if (target.data.type === 'tank') {
 
-          if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 2) {
+          if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3) {
             // over a tank?
             setBombing(true);
           } else {
@@ -6630,8 +6630,8 @@
             dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
 
             // weird Webkit display hack - background position change doesn't draw otherwise.
-            dom.o.style.marginBottom = '-1px';
-            dom.o.style.bottom = '1px';
+            // dom.o.style.marginBottom = '-1px';
+            // dom.o.style.bottom = '1px';
 
           } else if (data.frameCount % data.stateModulus === 4) {
 
@@ -6639,8 +6639,8 @@
             dom.o.style.backgroundPosition = '0px 0px';
 
             // undo Webkit display hack
-            dom.o.style.marginBottom = '0px';
-            dom.o.style.bottom = '0px';
+            // dom.o.style.marginBottom = '0px';
+            // dom.o.style.bottom = '0px';
 
           }
 
@@ -6683,6 +6683,12 @@
 
       common.setX(exports, data.x);
       common.setBottomYPixels(exports, data.bottomY);
+
+      // hackish
+      if (features.transform.prop) {
+        dom.o.style.left = data.x + 'px';
+        dom.o.style.top = data.y + 'px';
+      }
 
       game.dom.world.appendChild(dom.o);
 
