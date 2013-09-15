@@ -2988,7 +2988,7 @@
 
         data.firing = true;
 
-        deltaX = targetHelicopter.data.x - data.x - targetHelicopter.data.halfWidth;
+        deltaX = targetHelicopter.data.x - data.x;
         deltaY = targetHelicopter.data.y - data.y;
 
         // Gretzky: "Skate where the puck is going to be".
@@ -4886,7 +4886,7 @@
         }, 333);
       }
 
-      if (!data.autoRotate && sounds.helicopter.rotate) {
+      if (!data.isEnemy && !data.autoRotate && sounds.helicopter.rotate) {
         playSound(sounds.helicopter.rotate);
       }
 
@@ -5509,7 +5509,7 @@
           lastTarget = objectInView(data, { items: 'balloons' });
         }
 
-        if (!lastTarget && data.targeting.tanks && data.bombs) {
+        if (!lastTarget && data.targeting.tanks && data.bombs > 0) {
           lastTarget = objectInView(data, { items: 'tanks' });
         }
 
@@ -5533,7 +5533,7 @@
           altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
         }
 
-        if (!altTarget && data.targeting.tanks && data.bombs) {
+        if (!altTarget && data.targeting.tanks && data.bombs > 0) {
           altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
         }
 
@@ -5552,11 +5552,11 @@
         lastTarget = null;
       }
 
-      if (lastTarget && lastTarget.data.type === 'tank' && !data.bombs) {
+      if (lastTarget && lastTarget.data.type === 'tank' && data.bombs <= 0) {
         lastTarget = null;
       }
 
-      if (lastTarget &&  (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || !data.ammo)) {
+      if (lastTarget &&  (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || data.ammo <= 0)) {
         lastTarget = null;
       }
 
@@ -5619,8 +5619,6 @@
           }
 
         }
-
-        // TODO: revise.
 
         desiredVX = result.deltaX;
         desiredVY = result.deltaY;
@@ -5705,10 +5703,8 @@
 
         } else if (target.data.type === 'tank') {
 
-          if (Math.abs(result.deltaX) < 25 && Math.abs(data.vX) < 2) {
+          if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 2) {
             // over a tank?
-            // hack: perfectly-straight bombing.
-            data.vX = 0;
             setBombing(true);
           } else {
             setBombing(false);
@@ -5759,7 +5755,7 @@
 
           result = trackObject(exports, altTarget);
 
-          if (Math.abs(result.deltaX) < 50 && Math.abs(data.vX) < 2) {
+          if (Math.abs(result.deltaX) < 50 && Math.abs(data.vX) < 4) {
 
             // RELEASE ZE BOMBS
 
@@ -5777,6 +5773,13 @@
 
         }
 
+      }
+
+      // flip helicopter to point in the right direction?
+      if (data.vX < 0 && data.rotated) {
+        rotate();
+      } else if (data.vX > 0 && !data.rotated) {
+        rotate();
       }
 
       centerView();
@@ -6112,7 +6115,7 @@
       cloaked: false,
       rotated: false,
       rotateTimer: null,
-      autoRotate: false, // (options.isEnemy || false),
+      autoRotate: (options.isEnemy || false),
       repairing: false,
       repairFrames: 0,
       energy: 10,
@@ -8327,6 +8330,9 @@
         if (sounds.helicopter.engine) {
           sounds.helicopter.engine.sound.setVolume(0);
         }
+        if (sounds.radarJamming) {
+          sounds.radarJamming.sound.setVolume(0);
+        }
         data.paused = true;
       }
 
@@ -8338,6 +8344,10 @@
         objects.gameLoop.start();
         if (sounds.helicopter.engine) {
           sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
+        }
+        if (sounds.radarJamming) {
+          // TODO: move volume back into object
+          sounds.radarJamming.sound.setVolume(10);
         }
         data.paused = false;
       }
