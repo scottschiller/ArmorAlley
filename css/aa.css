@@ -497,12 +497,30 @@ ul.stats-bar .bombs em {
 	animation: rotateleft 0.33s steps(3);
 }
 
+#world .helicopter.rotated-left.enemy,
+#world .helicopter.rotated-right.enemy {
+	/* hack for enemy case */
+	background-image: url(../image/helicopter-rotating-enemy.png) !important;
+}
+
 #world .helicopter.rotated-right {
-	width: 50px;
-	height: 20px;
 	-webkit-animation: rotateright 0.33s steps(3);
 	-moz-animation: rotateright 0.33s steps(3);
 	animation: rotateright 0.33s steps(3);
+}
+
+#world .helicopter.rotated-left.enemy {
+	/* backwards */
+	-webkit-animation: rotateright 0.33s steps(3);
+	-moz-animation: rotateright 0.33s steps(3);
+	animation: rotateright 0.33s steps(3);
+}
+
+#world .helicopter.rotated-right.enemy {
+	/* backwards */
+	-webkit-animation: rotateleft 0.33s steps(3);
+	-moz-animation: rotateleft 0.33s steps(3);
+	animation: rotateleft 0.33s steps(3);
 }
 
 #world .helicopter.cloaked {
@@ -523,7 +541,8 @@ ul.stats-bar .bombs em {
 }
 
 #world .helicopter.enemy.facing-left {
-	background-image: url(../image/helicopter-enemy-rl.gif);
+    /* inverted logic here, but should be correct. */
+	background-image: url(../image/helicopter-enemy-lr.gif);
 }
 
 #world .helicopter.dead {
