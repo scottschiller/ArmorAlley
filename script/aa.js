@@ -1205,7 +1205,7 @@
     sounds.parachuteOpen = addSound({
       url: 'audio/parachute-open.wav',
       multiShot: true,
-      volume: 15
+      volume: 25
     });
 
     sounds.shrapnel.hit0 = addSound({
@@ -8386,7 +8386,7 @@
 
           var options = {
             isEnemy: true,
-            x: 8192 - 64
+            x: 8192 + 64
           };
 
           if (!battleOver && !data.paused) {
