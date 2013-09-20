@@ -1867,9 +1867,11 @@
       itemObject.dom.o.style.left = '0px';
 
       if (item.data.bottomAligned) {
+        itemObject.dom.o.style.top = 'auto';
         itemObject.dom.o.style.bottom = '0px';
       } else {
         itemObject.dom.o.style.top = '0px';
+        itemObject.dom.o.style.bottom = 'auto';
       }
 
       dom.radar.appendChild(itemObject.dom.o);
@@ -1943,7 +1945,7 @@
           for (i=0, j=objects.items.length; i<j; i++) {
             left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
-              top = parseInt((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 32 * (objects.items[i].oParent.data.type === 'balloon' ? -1 : 1), 10) + 'px';
+              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 32, 10) + 'px';
             } else {
               top = '0px';
             }
@@ -6584,15 +6586,32 @@
 
     function moveTo(x, bottomY) {
 
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
+      if (features.transform.prop) {
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomYPixels(exports, bottomY);
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(bottomY);
+        if (x !== undefined && data.x !== x) {
+          data.x = x;
+        }
+
+        if (bottomY !== undefined && data.bottomY !== bottomY) {
+          data.bottomY = bottomY;
+          data.y = bottomAlignedY(bottomY);
+        }
+
+        common.setTransformXY(dom.o, data.x + 'px', '0px');
+
+      } else {
+
+        if (x !== undefined && data.x !== x) {
+          common.setX(exports, x);
+          data.x = x;
+        }
+
+        if (bottomY !== undefined && data.bottomY !== bottomY) {
+          common.setBottomYPixels(exports, bottomY);
+          data.bottomY = bottomY;
+          data.y = bottomAlignedY(bottomY);
+        }
+
       }
 
     }
