@@ -1085,7 +1085,8 @@
     genericGunFire: null,
     missileLaunch: null,
     parachuteOpen: null,
-    turretGunFire: null
+    turretGunFire: null,
+    wilhemScream: null
   };
 
   soundManager.setup({
@@ -1167,6 +1168,12 @@
       url: 'audio/chain-snapping.wav',
       multiShot: true,
       volume: 15
+    });
+
+    sounds.wilhemScream = addSound({
+      url: 'audio/wilhem-scream.wav',
+      multiShot: true,
+      volume: 20
     });
 
     sounds.helicopter.engine = addSound({
@@ -6955,19 +6962,40 @@
 
           }
 
-        } else if (!data.parachuteOpen && data.y - data.height + 4 >= 370) {
+        } else if (!data.parachuteOpen) {
 
-          // hit ground, and no parachute. gravity is a cruel mistress.
+          if (data.parachuteOpensAtY > 370 && data.y > 300) {
 
-          // reposition, first
-          moveTo(data.x, 370);
+            // It's not looking good for our friend. Call up our buddy Wilhem.
+            // http://archive.org/details/WilhelmScreamSample
 
-          // balloon-on-skin "splat" sound
-          if (sounds.splat) {
-            playSound(sounds.splat, exports);
+            if (!data.didScream) {
+
+              if (sounds.wilhemScream) {
+                playSound(sounds.wilhemScream, exports);
+              }
+
+              data.didScream = true;
+
+            }
+
           }
 
-          die();
+          if (data.y - data.height + 4 >= 370) {
+
+            // hit ground, and no parachute. gravity is a cruel mistress.
+
+            // reposition, first
+            moveTo(data.x, 370);
+
+            // balloon-on-skin "splat" sound
+            if (sounds.splat) {
+              playSound(sounds.splat, exports);
+            }
+
+            die();
+
+          }
 
         }
 
@@ -7018,6 +7046,7 @@
       height: 11, // 19 when parachute opens
       frameHeight: 20, // each sprite frame
       ignoreShrapnel: options.ignoreShrapnel || false,
+      didScream: false,
       vX: 0, // wind?
       vY: 3
     }, options);
