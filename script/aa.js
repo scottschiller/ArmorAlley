@@ -1857,6 +1857,14 @@
 
       objects.items.push(itemObject);
 
+      itemObject.dom.o.style.left = '0px';
+
+      if (item.data.bottomAligned) {
+        itemObject.dom.o.style.bottom = '0px';
+      } else {
+        itemObject.dom.o.style.top = '0px';
+      }
+
       dom.radar.appendChild(itemObject.dom.o);
 
       return itemObject;
@@ -1913,7 +1921,7 @@
 
     function animate() {
 
-      var i, j, battleFieldWidth, hasEnemyMissile;
+      var i, j, left, top, battleFieldWidth, hasEnemyMissile;
 
       hasEnemyMissile = false;
 
@@ -1923,12 +1931,29 @@
 
         battleFieldWidth = game.objects.view.data.battleField.width;
 
-        for (i=0, j=objects.items.length; i<j; i++) {
-          // TODO: optimize
-          objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
-          if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
-            objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
+        if (features.transform.prop) {
+
+          for (i=0, j=objects.items.length; i<j; i++) {
+            left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
+            if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
+              top = parseInt((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 32 * (objects.items[i].oParent.data.type === 'balloon' ? -1 : 1), 10) + 'px';
+            } else {
+              top = '0px';
+            }
+            common.setTransformXY(objects.items[i].dom.o, left, top);
           }
+
+        } else {
+
+          for (i=0, j=objects.items.length; i<j; i++) {
+            // TODO: optimize
+            objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+            if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
+              objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
+            }
+          }
+
+
         }
 
         // any active smart missiles?
