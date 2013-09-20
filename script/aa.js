@@ -6686,18 +6686,10 @@
 
             dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
 
-            // weird Webkit display hack - background position change doesn't draw otherwise.
-            // dom.o.style.marginBottom = '-1px';
-            // dom.o.style.bottom = '1px';
-
           } else if (data.frameCount % data.stateModulus === 4) {
 
             // next frame - reset.
             dom.o.style.backgroundPosition = '0px 0px';
-
-            // undo Webkit display hack
-            // dom.o.style.marginBottom = '0px';
-            // dom.o.style.bottom = '0px';
 
           }
 
@@ -6741,9 +6733,9 @@
       common.setX(exports, data.x);
       common.setBottomYPixels(exports, data.bottomY);
 
-      // hackish
       if (features.transform.prop) {
-        dom.o.style.left = data.x + 'px';
+        // transform origin
+        dom.o.style.left = '0px';
         dom.o.style.top = data.y + 'px';
       }
 
