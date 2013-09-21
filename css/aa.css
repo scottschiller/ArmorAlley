@@ -859,7 +859,7 @@ ul.stats-bar .bombs em {
 	/* yellow-ish tinge */
 	background-color: rgb(156,159,9);
 	/* round corners */
-	border-radius: 1px 1px 0px 0px;
+	border-radius: 50% 50% 0px 0px;
 }
 
 #game-status-bar #radar .sprite.balloon {
