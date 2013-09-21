@@ -46,6 +46,38 @@
 
   var keyboardMonitor;
 
+  // TODO: move into view
+  var screenScale = 1;
+
+  function updateScreenScale() {
+
+    screenScale = (window.innerHeight / 460);
+
+    console.log('updateScreenScale', screenScale);
+
+  }
+
+  function applyScreenScale() {
+
+    if (features.transform.prop) {
+      // newer browsers can do this.
+      document.getElementById('world-wrapper').style[features.transform.prop] = 'scale(' + screenScale + ')';
+      document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
+      document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
+      document.getElementById('world-wrapper').style.width = Math.floor(window.innerWidth * (1/screenScale)) + 'px';
+    } else {
+      // this won't work in Firefox.
+      document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
+    }
+
+    /*
+    if (game.objects.view && game.objects.view.dom && game.objects.view.dom.worldWrapper) {
+      game.objects.view.dom.worldWrapper.style.fontSize = '50%';
+    }
+    */
+
+  }
+
   var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
   var shrapnelExplosion;
@@ -1278,8 +1310,12 @@
 
     function refreshCoords() {
 
-      data.browser.width = window.innerWidth || document.body.clientWidth;
-      data.browser.height = window.innerHeight || document.body.clientHeight;
+      updateScreenScale();
+
+      applyScreenScale();
+
+      data.browser.width = (window.innerWidth || document.body.clientWidth) * 1/screenScale;
+      data.browser.height = (window.innerHeight || document.body.clientHeight) * 1/screenScale;
 
       data.browser.fractionWidth = data.browser.width / 3;
 
@@ -1289,7 +1325,7 @@
       data.world.height = dom.worldWrapper.offsetHeight;
 
       data.world.x = 0;
-      data.world.y = dom.worldWrapper.offsetTop;
+      data.world.y = dom.worldWrapper.offsetTop * 1/screenScale;
 
       if (!data.battleField.width) {
         // dimensions assumed to be static, can be grabbed once
@@ -1391,7 +1427,7 @@
         if (data.frameCount % data.marqueeModulus === 0) {
 
           // move the marquee.
-          common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -3) + 'px', 0);
+          common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -2) + 'px', 0);
 
         }
 
@@ -1484,7 +1520,7 @@
         lastText: null,
         scrollOffset: 0
       },
-      marqueeModulus: 2,
+      marqueeModulus: 1,
       maxScroll: 6
     };
 
@@ -1513,8 +1549,8 @@
 
       mousemove: function(e) {
         if (!data.ignoreMouseEvents) {
-          data.mouse.x = (e || window.event).clientX;
-          data.mouse.y = (e || window.event).clientY;
+          data.mouse.x = parseInt((e || window.event).clientX * 1/screenScale, 10);
+          data.mouse.y = parseInt((e || window.event).clientY * 1/screenScale, 10);
         }
       },
 
@@ -5034,6 +5070,9 @@
         data.yMin = document.getElementById('game-status-bar').offsetHeight;
       }
 
+      updateScreenScale();
+      applyScreenScale();
+
     }
 
     function moveTo(x, y) {
@@ -8444,7 +8483,7 @@
 
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 120];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 60];
         var i=0;
 
         function orderNextItem() {
@@ -8539,6 +8578,9 @@
   }());
 
   function init() {
+
+    updateScreenScale();
+    applyScreenScale();
 
     game.init();
 
