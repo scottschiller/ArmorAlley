@@ -212,8 +212,6 @@
 
         activate: function() {
 
-          console.log('tutorial step activated');
-
           // TODO: create convoy and/or count units.
 
         },
@@ -222,7 +220,7 @@
 
           var counts = [countSides('tanks'), countSides('vans')];
 
-          if (counts[0].enemy < 4 && counts[1].enemy < 1) {
+          if (counts[0].enemy < 3 && counts[1].enemy < 1) {
 
             return true;
 
@@ -4415,7 +4413,7 @@
     function animate() {
 
       if (data.dead) {
-        return false;
+        return true;
       }
 
       if (!data.expired && data.frameCount > data.expireFrameCount) {
@@ -4434,13 +4432,6 @@
       if (data.frameCount >= data.dieFrameCount) {
         die();
       }
-
-      // hit top? (TODO: get real # from DOM)
-      /*
-      if (data.y < 32) { // game.objects.view.data.topBar.height) {
-        die();
-      }
-      */
 
       // bottom?
       if (data.y > game.objects.view.data.battleField.height) {
@@ -6924,7 +6915,6 @@
       // timeout?
       window.setTimeout(function() {
         removeNodes(dom);
-        radarItem.die();
       }, 1000);
 
       data.energy = 0;
