@@ -46,10 +46,20 @@
 
   var keyboardMonitor;
 
+  var tutorialMode = !!(winloc.match(/tutorial/i));
+
   // TODO: move into view
   var screenScale = 1;
 
+  var disableScaling = !!(winloc.match(/noscal/i));
+
   function updateScreenScale() {
+
+    if (disableScaling) {
+
+      return false;
+
+    }
 
     screenScale = (window.innerHeight / 460);
 
@@ -58,6 +68,12 @@
   }
 
   function applyScreenScale() {
+
+    if (disableScaling) {
+
+      return false;
+
+    }
 
     if (features.transform.prop) {
       // newer browsers can do this.
@@ -75,6 +91,457 @@
       game.objects.view.dom.worldWrapper.style.fontSize = '50%';
     }
     */
+
+  }
+
+  var tutorial;
+
+  var Tutorial;
+
+  Tutorial = function() {
+
+    var config, css, data, dom, exports, StepObject;
+
+    function StepObject(options) {
+
+      var data, exports;
+
+      data = {
+        activated: false,
+        completed: false
+      };
+
+      function animate() {
+
+        if (!data.activated) {
+
+          if (options.activate) {
+            options.activate();
+          }
+
+          data.activated = true;
+
+        } else if (!data.completed) {
+
+          if (options.animate()) {
+
+            if (options.complete) {
+
+              options.complete();
+
+            }
+
+            data.completed = true;
+
+          }
+
+        }
+
+      }
+
+      exports = {
+        animate: animate
+      };
+
+      return exports;
+
+    }
+
+    function addItem(options) {
+
+      config.steps.push(new StepObject(options));
+
+    }
+
+    function initDOM() {
+
+      dom.o = document.getElementById('tutorial');
+      dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
+      data.steps = dom.oList.length;
+
+    }
+
+    function nextItem() {
+
+      selectItem(data.step + 1);
+
+    }
+
+    function selectItem(i) {
+
+      if (dom.lastItem) {
+        utils.css.remove(dom.lastItem, css.selected);
+      }
+
+      dom.lastItem = dom.oList[i];
+
+      data.step = i;
+
+      utils.css.add(dom.lastItem, css.selected);
+      dom.lastItem.scrollIntoView(true);
+
+    }
+
+    function animate() {
+
+      // "runtime" for tutorial
+      if (data.frameCount % data.animateModulus === 0 && data.step !== null && config.steps[data.step]) {
+
+        config.steps[data.step].animate();
+
+      }
+
+      data.frameCount++;
+
+    }
+
+    function init() {
+
+      var temp;
+
+      initDOM();
+
+      utils.css.add(dom.o, css.active);
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial step activated');
+
+
+          // TODO: create convoy and/or count units.
+
+        },
+
+        animate: function() {
+
+          var counts = countSides('tanks');
+          console.log('tutorial run / end check', counts);
+
+          if (counts.enemy < 4) {
+
+            console.log('tutorial 1 finished');
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial complete');
+
+          nextItem();
+
+        }
+
+      });
+
+      // next step
+
+      addItem({
+
+        activate: function() {
+          console.log('tutorial 2: activated');
+        },
+
+        animate: function() {
+
+          console.log('tutorial 2: run / end check');
+
+          var chopper;
+
+          chopper = game.objects.helicopters[0].data;
+
+          // player either landed and refueled, or died. ;)
+          if (chopper.fuel === chopper.maxFuel) {
+            return true;
+          }
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 2: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 3
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 3: activated');
+
+          // keep track of original bunker states
+
+          temp = countSides('bunkers');
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 3: run / end check');
+
+          var bunkers;
+
+          bunkers = countSides('bunkers');
+
+          if (bunkers.enemy < temp.enemy) {
+
+            // a bunker was blown up, or claimed.
+            // TODO: handle and ignore bunker-blown-up case?
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 3: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+
+      // step 4
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 4: activated');
+
+          // track current inventory
+
+          temp = {
+
+            missileLaunchers: countFriendly('missileLaunchers'),
+            tanks: countFriendly('tanks'),
+            vans: countFriendly('vans')
+
+          };
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 4: run / end check');
+
+          var item, counts, isComplete;
+
+          // innocent until proven guilty.
+          isComplete = true;
+
+          counts = {
+
+            missileLaunchers: countFriendly('missileLaunchers'),
+            tanks: countFriendly('tanks'),
+            vans: countFriendly('vans')
+
+          };
+
+          // all counts must be > those in temp array.
+
+          for (item in counts) {
+
+            if (counts.hasOwnProperty(item)) {
+
+              if (counts[item] <= temp[item]) {
+
+                isComplete = false;
+
+              }
+
+            }
+
+          }
+
+          return isComplete;
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 4: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 5
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 5: activated');
+
+          // make sure enemy helicopter respawns
+
+          if (game.objects.helicopters[1].data.dead) {
+
+            game.objects.helicopters[1].data.respawn();
+          
+          }
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 5: run / end check');
+
+          return game.objects.helicopters[1].data.dead;
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 5: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+
+      // step 6
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 6: activated');
+
+          // TODO: make sure first turret is dead?
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 6: run / end check');
+
+          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 6: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 7
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 7: activated');
+
+          // TODO: make sure second turret is alive, and dangerous?
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 7: run / end check');
+
+          return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead);
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 7: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 8
+
+      addItem({
+
+        activate: function() {
+
+          console.log('tutorial 8: activated');
+
+        },
+
+        animate: function() {
+
+          console.log('tutorial 8: run / end check');
+
+          return (game.objects.endBunkers[0].data.funds >= 50);
+
+        },
+
+        complete: function() {
+
+          console.log('tutorial 8: complete');
+
+          nextItem();
+
+        }
+
+      });
+
+
+      selectItem(0);
+
+    }
+
+    config = {
+      steps: []
+    };
+
+    css = {
+      active: 'active',
+      selected: 'selected'
+    };
+
+    data = {
+      frameCount: 0,
+      animateModulus: FPS/2,
+      step: null,
+      steps: 0
+    };
+
+    dom = {
+      o: null,
+      oList: null,
+      lastItem: null
+    };
+
+    init();
+
+    exports = {
+      animate: animate
+    }
+
+    return exports;
 
   }
 
@@ -1074,6 +1541,43 @@
     };
 
     return result;
+
+  }
+
+  function countSides(objectType) {
+
+    var i, j, result;
+
+    result = {
+      friendly: 0,
+      enemy: 0
+    };
+
+    if (game.objects[objectType]) {
+
+      for (i=0, j=game.objects[objectType].length; i<j; i++) {
+
+        if (game.objects[objectType][i].data.isEnemy) {
+
+          result.enemy++;
+
+        } else {
+
+          result.friendly++;
+
+        }
+
+      }       
+
+    }
+
+    return result;
+
+  }
+
+  function countFriendly(objectType) {
+
+    return countSides(objectType).friendly;
 
   }
 
@@ -6334,6 +6838,7 @@
       fire: fire,
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
+      reset: reset,
       rotate: rotate,
       setBombing: setBombing,
       setFiring: setFiring,
@@ -8144,6 +8649,14 @@
 
       objects.inventory = new Inventory();
 
+      // tutorial?
+
+      if (tutorialMode) {
+
+        objects.tutorial = new Tutorial();
+
+      }
+
       // landing pads
 
       addObject('landingPad', {
@@ -8546,7 +9059,8 @@
       shrapnel: [],
       smoke: [],
       radar: null,
-      inventory: null
+      inventory: null,
+      tutorial: null
     };
 
     objectConstructors = {

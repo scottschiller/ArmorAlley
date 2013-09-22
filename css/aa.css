@@ -66,7 +66,9 @@ body {
  margin-top: -192px;
  background: #000;
  font-size: 11px;
+/*
  font-size: 50%;
+*/
  font-weight: normal;
 }
 
@@ -130,7 +132,7 @@ body {
  list-style-type: none;
 }
 
-#aa ul li {
+#top-bar ul li {
  display: inline-block;
  min-width: 20%;
 }
@@ -1389,4 +1391,105 @@ ul.stats-bar .bombs em {
 @keyframes balloonleft {
  from { background-position: 0px -135px; }
  to { background-position: 0px 0px; }
+}
+
+#tutorial {
+ position: absolute;
+ display: none;
+ top: 80px;
+ right: 8px;
+ width: 25em;
+ height: 15em;
+ color: #ccc;
+ font-size: xx-small;
+ -moz-box-sizing: padding-box;
+ -webkit-box-sizing: padding-box;
+ box-sizing: border-box;
+ background-color: #000;
+ background-color: rgba(0,0,0,0.85);
+ border: 1px solid #333;
+ z-index: 10;
+ overflow: hidden;
+}
+
+#tutorial.active {
+ display: block;
+}
+
+#tutorial:hover {
+ overflow: auto;
+}
+
+#tutorial h2,
+#tutorial h3 {
+ margin: 0px 0px 0.5em 0.25em;
+ padding: 0px;
+ color: #eee;
+ font-weight: lighter;
+}
+
+#tutorial h2 {
+ margin-top: 0px;
+}
+
+
+#tutorial ul li {
+ padding: 0px 0.5em;
+}
+
+#tutorial li b {
+ /* by default... */
+ font-weight: normal;
+}
+
+#tutorial h2,
+#tutorial h3 {
+ padding: 0.75em 0px 0px 0.5em;
+}
+
+#tutorial .bd {
+ padding: 0px 0.75em;
+}
+
+#tutorial li p {
+ margin: 0px;
+ padding: 0.25em;
+}
+
+#tutorial li p b {
+ color: #666;
+}
+
+#tutorial li p.instructions {
+ /* hide by default */
+ display: none;
+}
+
+#tutorial li.selected,
+#tutorial li.selected p b {
+ color: #fff;
+}
+
+#tutorial li {
+ border: 1px solid transparent;
+ border-left: none;
+ border-right: none;
+}
+
+#tutorial li.selected {
+ border-color: rgba(255,255,255,0.175);
+ background-color: rgba(255,0,0,0.25);
+}
+
+#tutorial li.selected b {
+ font-weight: bold;
+}
+
+#tutorial li.selected p:first-of-type {
+ color: #fff;
+}
+
+#tutorial li.selected p.instructions {
+ display: block;
+ color: #ccc;
 }
