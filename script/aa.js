@@ -53,6 +53,8 @@
 
   var disableScaling = !!(winloc.match(/noscal/i));
 
+  var screenScaleTimer;
+
   function updateScreenScale() {
 
     if (disableScaling) {
@@ -76,21 +78,20 @@
     }
 
     if (features.transform.prop) {
+
       // newer browsers can do this.
-      document.getElementById('world-wrapper').style[features.transform.prop] = 'scale(' + screenScale + ')';
-      document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
+
       document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
       document.getElementById('world-wrapper').style.width = Math.floor(window.innerWidth * (1/screenScale)) + 'px';
+      document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
+      document.getElementById('world-wrapper').style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
+
+      // TODO: Sort out + resolve Chrome "blurry font" issue. Text generally re-renders OK when resizing smaller.
+
     } else {
       // this won't work in Firefox.
       document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
     }
-
-    /*
-    if (game.objects.view && game.objects.view.dom && game.objects.view.dom.worldWrapper) {
-      game.objects.view.dom.worldWrapper.style.fontSize = '50%';
-    }
-    */
 
   }
 
@@ -178,7 +179,11 @@
       data.step = i;
 
       utils.css.add(dom.lastItem, css.selected);
-      dom.lastItem.scrollIntoView(true);
+      // dom.lastItem.scrollIntoView();
+
+      game.objects.view.setAnnouncement();
+
+      game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
 
     }
 
@@ -209,19 +214,15 @@
 
           console.log('tutorial step activated');
 
-
           // TODO: create convoy and/or count units.
 
         },
 
         animate: function() {
 
-          var counts = countSides('tanks');
-          console.log('tutorial run / end check', counts);
+          var counts = [countSides('tanks'), countSides('vans')];
 
-          if (counts.enemy < 4) {
-
-            console.log('tutorial 1 finished');
+          if (counts[0].enemy < 4 && counts[1].enemy < 1) {
 
             return true;
 
@@ -230,8 +231,6 @@
         },
 
         complete: function() {
-
-          console.log('tutorial complete');
 
           nextItem();
 
@@ -244,27 +243,22 @@
       addItem({
 
         activate: function() {
-          console.log('tutorial 2: activated');
         },
 
         animate: function() {
 
-          console.log('tutorial 2: run / end check');
-
           var chopper;
 
-          chopper = game.objects.helicopters[0].data;
+          chopper = game.objects.helicopters[0];
 
           // player either landed and refueled, or died. ;)
-          if (chopper.fuel === chopper.maxFuel) {
+          if (chopper.data.repairComplete) {
             return true;
           }
 
         },
 
         complete: function() {
-
-          console.log('tutorial 2: complete');
 
           nextItem();
 
@@ -278,17 +272,22 @@
 
         activate: function() {
 
-          console.log('tutorial 3: activated');
+          // ensure the first bunker is an enemy one.
+          game.objects.bunkers[0].capture(true);
+
+          // ... and has a balloon
+          game.objects.bunkers[0].repair();
+
+          // ensure that helicopter has at least one infantry
+          game.objects.helicopters[0].data.parachutes = 1;
+          game.objects.helicopters[0].updateStatusUI();
 
           // keep track of original bunker states
-
           temp = countSides('bunkers');
 
         },
 
         animate: function() {
-
-          console.log('tutorial 3: run / end check');
 
           var bunkers;
 
@@ -307,8 +306,6 @@
 
         complete: function() {
 
-          console.log('tutorial 3: complete');
-
           nextItem();
 
         }
@@ -321,8 +318,6 @@
       addItem({
 
         activate: function() {
-
-          console.log('tutorial 4: activated');
 
           // track current inventory
 
@@ -337,8 +332,6 @@
         },
 
         animate: function() {
-
-          console.log('tutorial 4: run / end check');
 
           var item, counts, isComplete;
 
@@ -375,8 +368,6 @@
 
         complete: function() {
 
-          console.log('tutorial 4: complete');
-
           nextItem();
 
         }
@@ -389,29 +380,25 @@
 
         activate: function() {
 
-          console.log('tutorial 5: activated');
-
           // make sure enemy helicopter respawns
 
+          /*
           if (game.objects.helicopters[1].data.dead) {
 
-            game.objects.helicopters[1].data.respawn();
+            game.objects.helicopters[1].respawn();
           
           }
+          */
 
         },
 
         animate: function() {
-
-          console.log('tutorial 5: run / end check');
 
           return game.objects.helicopters[1].data.dead;
 
         },
 
         complete: function() {
-
-          console.log('tutorial 5: complete');
 
           nextItem();
 
@@ -426,23 +413,17 @@
 
         activate: function() {
 
-          console.log('tutorial 6: activated');
-
           // TODO: make sure first turret is dead?
 
         },
 
         animate: function() {
 
-          console.log('tutorial 6: run / end check');
-
           return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
 
         },
 
         complete: function() {
-
-          console.log('tutorial 6: complete');
 
           nextItem();
 
@@ -456,23 +437,17 @@
 
         activate: function() {
 
-          console.log('tutorial 7: activated');
-
           // TODO: make sure second turret is alive, and dangerous?
 
         },
 
         animate: function() {
 
-          console.log('tutorial 7: run / end check');
-
           return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead);
 
         },
 
         complete: function() {
-
-          console.log('tutorial 7: complete');
 
           nextItem();
 
@@ -486,13 +461,9 @@
 
         activate: function() {
 
-          console.log('tutorial 8: activated');
-
         },
 
         animate: function() {
-
-          console.log('tutorial 8: run / end check');
 
           return (game.objects.endBunkers[0].data.funds >= 50);
 
@@ -500,14 +471,11 @@
 
         complete: function() {
 
-          console.log('tutorial 8: complete');
-
           nextItem();
 
         }
 
       });
-
 
       selectItem(0);
 
@@ -1353,7 +1321,7 @@
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-    var i, j, k, l, objects, itemArray, items, localObjects, result, targetData, yBias, isInFront, useInFront;
+    var i, j, k, l, objects, itemArray, items, localObjects, result, targetData, preferGround, isInFront, useInFront, totalDistance;
 
     options = options || {};
 
@@ -1367,8 +1335,9 @@
     localObjects = [];
 
     // if the source object isn't near the ground, be biased toward airborne items.
-    if (source.data.type === 'helicopter' && source.data.y < game.objects.view.data.world.height - 100) {
-      yBias = 1.5;
+    if (source.data.type === 'helicopter' && source.data.y > game.objects.view.data.world.height - 100) {
+      console.log('preferring ground');
+      preferGround = true;
     }
 
     for (i=0, j=items.length; i<j; i++) {
@@ -1391,10 +1360,20 @@
 
             targetData = itemArray[k].data;
 
-            localObjects.push({
-              obj: itemArray[k],
-              totalDistance: Math.abs(targetData.x) + Math.abs(source.data.x) + Math.abs(targetData.y * yBias) + Math.abs(source.data.y) * yBias
-            });
+            if ((preferGround && targetData.bottomAligned && targetData.type !== 'balloon') || (!preferGround && (!targetData.bottomAligned || targetData.type === 'balloon'))) {
+
+              totalDistance = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
+
+              if (totalDistance < 4096) {
+
+                localObjects.push({
+                  obj: itemArray[k],
+                  totalDistance: totalDistance
+                });
+
+              }
+
+            }
 
           }
 
@@ -1430,7 +1409,7 @@
 
     options = options || {};
 
-    // by default, 67% of screen width
+    // by default...
     options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * 2/3);
 
     // by default, take helicopters if nothing else.
@@ -1887,7 +1866,9 @@
 
         utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
 
-        dom.gameAnnouncements.textContent = text;
+        // dom.gameAnnouncements.textContent = text;
+
+        dom.gameAnnouncements.innerHTML = text;
 
         data.gameTips.lastAnnouncement = text;
 
@@ -3248,6 +3229,7 @@
     };
 
     exports = {
+      capture: capture,
       objects: objects,
       data: data,
       die: die,
@@ -3255,7 +3237,8 @@
       infantryHit: infantryHit,
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
-      init: init
+      init: init,
+      repair: repair
     };
 
     init();
@@ -3330,10 +3313,12 @@
 
         capturedFunds = Math.min(data.funds, maxFunds);
 
-        if (data.isEnemy) {
-          game.objects.view.setAnnouncement(capturedFunds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
-        } else {
-          game.objects.view.setAnnouncement('The enemy captured ' + capturedFunds + ' of your funds');
+        if (!tutorialMode) {
+          if (data.isEnemy) {
+            game.objects.view.setAnnouncement(capturedFunds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
+          } else {
+            game.objects.view.setAnnouncement('The enemy captured ' + capturedFunds + ' of your funds');
+          }
         }
 
         // who gets the loot?
@@ -3786,7 +3771,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: 3,
+      fireModulus: (tutorialMode ? 9 : 3),
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: 24,
@@ -5246,7 +5231,7 @@
         common.setTransformXY(dom.fuelLine, -100 + data.fuel + '%', '0px');
 
         // hackish: show announcements across 1% of fuel burn process.
-        if (!data.repairing) {
+        if (!data.repairing && !tutorialMode) {
 
           if (data.fuel < 33 && data.fuel > 32) {
 
@@ -5638,7 +5623,9 @@
         data.vY = 0;
         data.lastVX = 0;
 
-        game.objects.view.setAnnouncement();
+        if (!tutorialMode) {
+          game.objects.view.setAnnouncement();
+        }
 
         if (sounds.helicopter.engine) {
           sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
@@ -5953,7 +5940,9 @@
           y: data.y + data.height - 11
         }));
 
-        game.objects.view.setAnnouncement('No pilot');
+        if (!tutorialMode) {
+          game.objects.view.setAnnouncement('No pilot');
+        }
 
         data.pilot = false;
 
@@ -6580,7 +6569,7 @@
           // should we target clouds?
           data.targeting.clouds = (Math.random() > 0.5);
 
-          data.targeting.helicopters = (Math.random() > 0.25);
+          data.targeting.helicopters = (Math.random() > 0.25 || tutorialMode);
 
           if (winloc.match(/clouds/i)) {
             // hack/testing: cloud-only targeting mode
@@ -7202,6 +7191,9 @@
 
           // Game over, man, game over! (Enemy wins.)
 
+          // hack: clear any existing.
+          game.objects.view.setAnnouncement();
+
           game.objects.view.setAnnouncement('The enemy has won the battle.', -1);
 
           gameOver();
@@ -7211,6 +7203,9 @@
           stop();
 
           // player wins
+
+          // hack: clear any existing.
+          game.objects.view.setAnnouncement();
 
           game.objects.view.setAnnouncement('You have won the battle.', -1);
 
@@ -7595,7 +7590,7 @@
       energy: 2,
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (Math.random() > 0.9 ? 999 : 0),
+      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (!tutorialMode  && Math.random() > 0.9? 999 : 0),
       direction: 0,
       width: 10,
       height: 11, // 19 when parachute opens
@@ -8888,11 +8883,15 @@
 
       enemyCopter.data.vX = -8;
 
-      for (i=0; i<5; i++) {
+      if (!tutorialMode) {
 
-        addObject('infantry', {
-          x: 600 + (i * 20)
-        });
+        for (i=0; i<5; i++) {
+
+          addObject('infantry', {
+            x: 600 + (i * 20)
+          });
+
+        }
 
       }
 
@@ -9023,7 +9022,9 @@
         }
 
         // and begin
-        window.setTimeout(orderNextItem, 5000);
+        if (!tutorialMode) {
+          window.setTimeout(orderNextItem, 5000);
+        }
 
       }());
 

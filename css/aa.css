@@ -9,9 +9,11 @@ body {
  font-size: 1em;
  background: #111;
  color: #fff;
- /* retro */
+ /* retro typography */
+ /*
  -webkit-font-smoothing: none;
  font-smooth: never;
+ */
  /* image interpolation? */
  /*
  -ms-interpolation-mode: nearest-neighbor;
@@ -66,9 +68,6 @@ body {
  margin-top: -192px;
  background: #000;
  font-size: 11px;
-/*
- font-size: 50%;
-*/
  font-weight: normal;
 }
 
@@ -1165,8 +1164,14 @@ ul.stats-bar .bombs em {
 }
 
 #game-tips #game-announcements {
-	width: 100%;
+	width: 95%;
+	margin: 0px auto;
 	text-align: center;
+}
+
+#game-tips #game-announcements p {
+	white-space: normal;
+	overflow: visible;
 }
 
 #game-tips #game-announcements {
@@ -1397,9 +1402,9 @@ ul.stats-bar .bombs em {
  position: absolute;
  display: none;
  top: 80px;
- right: 8px;
- width: 25em;
- height: 15em;
+ left: 2%;
+ width: 96%;
+ height: 4em;
  color: #ccc;
  font-size: xx-small;
  -moz-box-sizing: padding-box;
@@ -1412,13 +1417,17 @@ ul.stats-bar .bombs em {
  overflow: hidden;
 }
 
+/*
 #tutorial.active {
  display: block;
 }
+*/
 
+/*
 #tutorial:hover {
  overflow: auto;
 }
+*/
 
 #tutorial h2,
 #tutorial h3 {
@@ -1492,4 +1501,8 @@ ul.stats-bar .bombs em {
 #tutorial li.selected p.instructions {
  display: block;
  color: #ccc;
+}
+
+p.instructions {
+	margin: 0px 0px 0.25em 0px;
 }
