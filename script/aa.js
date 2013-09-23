@@ -660,7 +660,19 @@
 
     var i, j;
 
-    for (i=0, j=nodeArray.length; i<j; i++) {
+    // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
+    // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
+
+    j = nodeArray.length;
+
+    // separate loop to hide first?
+    /*
+    for (i=0; i<j; i++) {
+      nodeArray[i].style.display = 'none';
+    }
+    */
+
+    for (i=0; i<j; i++) {
       nodeArray[i].parentNode.removeChild(nodeArray[i]);
       nodeArray[i] = null;
     }
@@ -678,6 +690,8 @@
         if (dom[item] instanceof Array) {
           removeNodeArray(dom[item]);
         } else {
+          // display: none - possibly prevent layout invalidation before removal?
+          // dom[item].style.display = 'none';
           dom[item].parentNode.removeChild(dom[item]);
         }
         dom[item] = null;
