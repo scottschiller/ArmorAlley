@@ -30,7 +30,7 @@ body {
 
 #logo {
 	position: absolute;
-	top: 53%;
+	top: 56%;
 	left: 50%;
 	width: 391px;
 	height: 67px;
@@ -41,10 +41,10 @@ body {
 	z-index: 1;
 	opacity: 1;
 	/* lazy transform */
-	-moz-transition: all 1s ease-in-out;
-	-ms-transition: all 1s ease-in-out;
-	-webkit-transition: all 1s ease-in-out;
-	transition: all 1s ease-in-out;
+	-moz-transition: all 0.66s ease-in-out;
+	-ms-transition: all 0.66s ease-in-out;
+	-webkit-transition: all 0.66s ease-in-out;
+	transition: all 0.66s ease-in-out;
 	-moz-transition-property: opacity, -moz-transform;
 	-ms-transition-property: opacity, -ms-transform;
 	-webkit-transition-property: opacity, -webkit-transform;
@@ -1399,110 +1399,36 @@ ul.stats-bar .bombs em {
 }
 
 #tutorial {
- position: absolute;
  display: none;
- top: 80px;
- left: 2%;
- width: 96%;
- height: 4em;
- color: #ccc;
- font-size: xx-small;
- -moz-box-sizing: padding-box;
- -webkit-box-sizing: padding-box;
- box-sizing: border-box;
- background-color: #000;
- background-color: rgba(0,0,0,0.85);
- border: 1px solid #333;
- z-index: 10;
- overflow: hidden;
 }
 
-/*
-#tutorial.active {
- display: block;
-}
-*/
-
-/*
-#tutorial:hover {
- overflow: auto;
-}
-*/
-
-#tutorial h2,
-#tutorial h3 {
- margin: 0px 0px 0.5em 0.25em;
- padding: 0px;
- color: #eee;
- font-weight: lighter;
+#game-announcements p.instructions {
+	margin: 0.75em 0px;
 }
 
-#tutorial h2 {
- margin-top: 0px;
-}
-
-
-#tutorial ul li {
- padding: 0px 0.5em;
-}
-
-#tutorial li b {
- /* by default... */
- font-weight: normal;
-}
-
-#tutorial h2,
-#tutorial h3 {
- padding: 0.75em 0px 0px 0.5em;
-}
-
-#tutorial .bd {
- padding: 0px 0.75em;
-}
-
-#tutorial li p {
- margin: 0px;
- padding: 0.25em;
-}
-
-#tutorial li p b {
+#help {
+ position: absolute;
+ bottom: 0px;
+ right: 0.5em;
+ margin-bottom: -2em;
  color: #666;
 }
 
-#tutorial li p.instructions {
- /* hide by default */
+#help a {
+ color: #009900;
+ text-decoration: none;
  display: none;
 }
 
-#tutorial li.selected,
-#tutorial li.selected p b {
+#help a.static {
+ display: inline;
+}
+
+#help a:hover {
  color: #fff;
 }
 
-#tutorial li {
- border: 1px solid transparent;
- border-left: none;
- border-right: none;
-}
-
-#tutorial li.selected {
- border-color: rgba(255,255,255,0.175);
- background-color: rgba(255,0,0,0.25);
-}
-
-#tutorial li.selected b {
- font-weight: bold;
-}
-
-#tutorial li.selected p:first-of-type {
- color: #fff;
-}
-
-#tutorial li.selected p.instructions {
- display: block;
- color: #ccc;
-}
-
-p.instructions {
-	margin: 0px 0px 0.25em 0px;
+#help.inactive a.start,
+#help.active a.exit {
+ display: inline;
 }

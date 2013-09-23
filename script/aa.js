@@ -46,9 +46,8 @@
 
   var keyboardMonitor;
 
-  var tutorialMode = !!(winloc.match(/tutorial/i));
-
   // TODO: move into view
+
   var screenScale = 1;
 
   var disableScaling = !!(winloc.match(/noscal/i));
@@ -64,8 +63,6 @@
     }
 
     screenScale = (window.innerHeight / 460);
-
-    console.log('updateScreenScale', screenScale);
 
   }
 
@@ -94,6 +91,10 @@
     }
 
   }
+
+  // TODO: reorganize
+
+  var tutorialMode = !!(winloc.match(/tutorial/i));
 
   var tutorial;
 
@@ -475,6 +476,7 @@
 
       });
 
+      // and begin
       selectItem(0);
 
     }
@@ -501,11 +503,12 @@
       lastItem: null
     };
 
-    init();
-
     exports = {
-      animate: animate
+      animate: animate,
+      selectItem: selectItem
     }
+
+    init();
 
     return exports;
 
@@ -5452,6 +5455,8 @@
 
       // L -> R / R -> L + forward / backward
 
+      var angle;
+
       // auto-rotate feature
       if (data.autoRotate && ((data.vX > 0 && data.lastVX < 0) || (data.vX < 0 && data.lastVX > 0))) {
         rotate();
@@ -5459,8 +5464,10 @@
 
       if (features.transform.prop) {
 
+        angle = (data.vX / data.vXMax) * 12.5;
+
         // rotate by angle.
-        dom.o.style[features.transform.prop] = 'rotate(' + ((data.vX / data.vXMax) * 12.5) + 'deg)';
+        dom.o.style[features.transform.prop] = (angle !== 0 ? 'rotate(' + angle + 'deg)' : '');
 
         // TODO: clean up, improve
         return false;
@@ -8639,6 +8646,12 @@
       if (tutorialMode) {
 
         objects.tutorial = new Tutorial();
+
+        utils.css.add(document.getElementById('help'), 'active');
+
+      } else {
+
+        utils.css.add(document.getElementById('help'), 'inactive');
 
       }
 
