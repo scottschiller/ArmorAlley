@@ -919,17 +919,6 @@
 
     },
 
-    setTransformX: function(exports, x) {
-
-      if (exports && exports.dom) {
-        if (features.transform.prop) {
-          exports.dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(x, 10) + 'px, ' + parseInt(exports.data.y, 10) +'px, 0px)';
-        } else {
-          exports.dom.o.style.left = (x + 'px');
-        }
-      }
-    },
-
     setTransformXY: function(o, x, y) {
 
       if (o) {
@@ -937,20 +926,9 @@
           o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y +', 0px)';
         } else {
           o.style.left = x;
+          o.style.top = y;
         }
       }
-    },
-
-    setTransformY: function(exports, y) {
-
-      if (exports && exports.dom) {
-        if (features.transform.prop) {
-          exports.dom.o.style[features.transform.prop] = 'translate3d(' + parseInt(exports.data.x, 10) + 'px, ' + parseInt(y, 10) +'px, 0px)';
-        } else {
-          exports.dom.o.style.top = (y + 'px');
-        }
-      }
-
     },
 
     hit: function(exports, hitPoints) {
@@ -1006,7 +984,14 @@
     });
 
     if (x) {
-      node.style.left = x + 'px';
+
+      if (features.transform.prop) {
+        // MOAR GPU
+        common.setTransformXY(node, x + 'px', '0px');
+      } else {
+        node.style.left = x + 'px';
+      }
+
     }
 
     game.dom.world.appendChild(node);
@@ -4416,14 +4401,14 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setTransformY(exports, y);
         data.y = y;
       }
+
+      common.setTransformXY(dom.o, x + 'px', y + 'px');
 
     }
 
@@ -4468,8 +4453,7 @@
         className: css.className
       });
 
-      common.setTransformX(exports, data.x);
-      common.setTransformY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
       // hack?
       if (features.transform.prop) {
@@ -4706,14 +4690,14 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setTransformY(exports, y);
         data.y = y;
       }
+
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
     }
 
@@ -4762,8 +4746,7 @@
         className: css.className
       });
 
-      common.setTransformX(exports, data.x);
-      common.setTransformY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
       game.dom.world.appendChild(dom.o);
 
@@ -8058,14 +8041,14 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        common.setTransformX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setTransformY(exports, y);
         data.y = y;
       }
+
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
     }
 
@@ -8166,8 +8149,7 @@
         className: css.className
       });
 
-      common.setTransformX(exports, data.x);
-      common.setTransformY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
       game.dom.world.appendChild(dom.o);
 
@@ -9118,7 +9100,7 @@
 
     keyboardMonitor.init();
 
-    addItem('cactus', 455);
+    addItem('cactus', 555);
 
     addItem('tree', 660);
 
@@ -9134,7 +9116,7 @@
 
     addItem('flower', 576);
 
-    addItem('flowers', 620);
+    addItem('flowers', 630);
 
     function updateStats() {
 
