@@ -1432,3 +1432,8 @@ ul.stats-bar .bombs em {
 #help.active a.exit {
  display: inline;
 }
+
+#key-legend,
+#help {
+ font-size: xx-small;
+}
