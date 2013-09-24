@@ -28,13 +28,20 @@
 
   var winloc = window.location.href.toString();
 
+  var ua = navigator.userAgent;
+
   // just in case...
   var console = (window.console || { log: function(){ return; } });
 
   var noJamming = winloc.match(/nojam/i);
 
   // IE 9 doesn't like some of the bigger transforms, for some reason.
-  var noTransform = (winloc.match(/notransform/i) || (navigator.userAgent.match(/msie 9|opera/i) && !winloc.match(/usetransform/i)));
+  var noTransform = (winloc.match(/notransform/i) || (ua.match(/msie 9|opera/i) && !winloc.match(/usetransform/i)));
+
+  // Evil tricks needed because Safari 6 (and Webkit nightly) scale text after rasterization, and make the helicopter jittery when moving.
+  var isWebkit = ua.match(/webkit/i);
+  var isChrome = (isWebkit && ua.match(/chrome/i));
+  var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
@@ -50,7 +57,9 @@
 
   var screenScale = 1;
 
-  var disableScaling = !!(winloc.match(/noscal/i));
+  var forceScaling = !!(winloc.match(/forcescal/i));
+
+  var disableScaling = !!(!forceScaling && winloc.match(/noscal/i));
 
   var screenScaleTimer;
 
@@ -74,7 +83,7 @@
 
     }
 
-    if (features.transform.prop) {
+    if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
 
@@ -87,6 +96,8 @@
 
     } else {
       // this won't work in Firefox.
+      // Safari 6 + Webkit nightlies (as of 09/2013) have a few rendering issues with the way I'm using scale3d().
+      // force using #forcescaling=1
       document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
     }
 

@@ -260,7 +260,9 @@ ul.stats-bar .bombs em {
 	-moz-pointer-events: none;
 	pointer-events: none;
 	/* do the GPU thing. */
+    -ms-transform: translate3d(0,0,0);
 	-webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
 }
 
 #world .bunker,
