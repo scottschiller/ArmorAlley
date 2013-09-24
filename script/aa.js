@@ -1258,12 +1258,15 @@
 
     // loop through relevant game object arrays
     for (i=0, j=collision.items.length; i<j; i++) {
+      // eliminated mixin() here, perhaps reduce object creation / GC?
+      // assign current targets...
+      collision.options.targets = game.objects[collision.items[i]];
       // ... and check them
-      // TODO: revisit for object creation / garbage collection improvements
-      collisionCheckArray(mixin(collision.options, {
-        targets: game.objects[collision.items[i]]
-      }));
+      collisionCheckArray(collision.options);
     }
+
+    // restore to original state
+    collision.targets = null;
 
   }
 
@@ -1609,17 +1612,12 @@
     genericExplosion2: null,
     explosionLarge: null,
     genericGunFire: null,
+    genericGunFireEnemy: null,
     missileLaunch: null,
     parachuteOpen: null,
     turretGunFire: null,
     wilhemScream: null
   };
-
-  soundManager.setup({
-    defaultOptions: {
-      volume: 25
-    }
-  });
 
   soundManager.onready(function() {
 
@@ -1644,61 +1642,58 @@
 
     sounds.balloonExplosion = addSound({
       url: 'audio/balloon-explosion.wav',
-      multiShot: true,
       volume: 20
     });
 
     sounds.genericBoom = addSound({
       url: 'audio/generic-boom.wav',
-      multiShot: true,
       volume: 20
     });
 
     sounds.genericExplosion = addSound({
       url: 'audio/generic-explosion.wav',
-      multiShot: true,
       volume: 18
     });
 
     sounds.genericExplosion2 = addSound({
       url: 'audio/generic-explosion-2.wav',
-      multiShot: true,
       volume: 18
     });
 
     sounds.genericGunFire = addSound({
       url: 'audio/generic-gunfire.wav',
-      multiShot: true,
+      volume: 25
+    });
+
+    sounds.genericGunFireEnemy = addSound({
+      url: 'audio/generic-gunfire.wav',
       volume: 25
     });
 
     sounds.infantryGunFire = addSound({
       url: 'audio/infantry-gunfire.wav',
-      multiShot: true,
       volume: 20
     });
 
     sounds.turretGunFire = addSound({
       url: 'audio/turret-gunfire.wav',
-      multiShot: true,
       volume: 25
     });
 
     sounds.explosionLarge = addSound({
       url: 'audio/explosion-large.wav',
+      // will result in GC, but perhaps an exception for this special case
       multiShot: true,
       volume: 60
     });
 
     sounds.chainSnapping = addSound({
       url: 'audio/chain-snapping.wav',
-      multiShot: true,
       volume: 15
     });
 
     sounds.wilhemScream = addSound({
       url: 'audio/wilhem-scream.wav',
-      multiShot: true,
       volume: 20
     });
 
@@ -1711,13 +1706,11 @@
 
     sounds.helicopter.rotate = addSound({
       url: 'audio/helicopter-rotate.wav',
-      multiShot: true,
       volume: 10
     });
 
     sounds.inventory.denied = addSound({
       url: 'audio/order-denied.wav',
-      multiShot: true
     });
 
     sounds.inventory.begin = addSound({
@@ -1732,48 +1725,40 @@
 
     sounds.missileLaunch = addSound({
       url: 'audio/missile-launch.wav',
-      multiShot: true
     });
 
     sounds.parachuteOpen = addSound({
       url: 'audio/parachute-open.wav',
-      multiShot: true,
       volume: 25
     });
 
     sounds.shrapnel.hit0 = addSound({
       url: 'audio/shrapnel-hit.wav',
-      multiShot: true,
       volume: 6
     });
 
     sounds.shrapnel.hit1 = addSound({
       url: 'audio/shrapnel-hit-2.wav',
-      multiShot: true,
       volume: 6
     });
 
     sounds.shrapnel.hit2 = addSound({
       url: 'audio/shrapnel-hit-3.wav',
-      multiShot: true,
       volume: 6
     });
 
     sounds.shrapnel.hit3 = addSound({
       url: 'audio/shrapnel-hit-4.wav',
-      multiShot: true,
       volume: 6
     });
 
     sounds.splat = addSound({
       url: 'audio/splat.wav',
-      multiShot: true,
       volume: 25
     });
 
     sounds.radarJamming = addSound({
       url: 'audio/radar-jamming.wav',
-      autoLoad: true,
       volume: 10
     });
 
@@ -3306,7 +3291,7 @@
         }));
 
         if (sounds.genericGunFire) {
-          playSound(sounds.genericGunFire, exports);
+          playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
         }
 
       }
@@ -5789,7 +5774,7 @@
               sounds.genericGunFire.sound.play(sounds.genericGunFire.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
             } else {
               // play with volume based on visibility.
-              playSound(sounds.genericGunFire, exports);
+              playSound(sounds.genericGunFireEnemy, exports);
             }
           }
 
@@ -6868,7 +6853,7 @@
         }));
 
         if (sounds.genericGunFire) {
-          playSound(sounds.genericGunFire, exports);
+          playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
         }
 
       }
@@ -9159,7 +9144,11 @@
   soundManager.setup({
     flashVersion: 9,
     preferFlash: false,
-    debugMode: false
+    debugMode: false,
+    defaultOptions: {
+      volume: 25,
+      multiShot: false
+    }
   });
 
   if (window.location.toString().match(/mute/i)) {
