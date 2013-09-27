@@ -8307,7 +8307,7 @@
 
         // console.log(e.keyCode);
 
-        if (!e.metaKey && !e.ctrlKey && keys[e.keyCode] && keys[e.keyCode].down) {
+        if (!e.metaKey && keys[e.keyCode] && keys[e.keyCode].down) {
           if (downKeys[e.keyCode] === undefined) {
             downKeys[e.keyCode] = true;
             keys[e.keyCode].down(e);
@@ -8321,7 +8321,7 @@
 
       keyup: function(e) {
 
-        if (!e.metaKey && !e.ctrlKey && downKeys[e.keyCode] !== undefined && keys[e.keyCode]) {
+        if (!e.metaKey && downKeys[e.keyCode] !== undefined && keys[e.keyCode]) {
           delete downKeys[e.keyCode];
           if (keys[e.keyCode].up) {
             keys[e.keyCode].up(e);
