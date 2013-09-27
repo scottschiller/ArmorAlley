@@ -53,6 +53,8 @@
 
   var keyboardMonitor;
 
+  var features;
+
   // TODO: move into view
 
   var screenScale = 1;
@@ -60,8 +62,6 @@
   var forceScaling = !!(winloc.match(/forcescal/i));
 
   var disableScaling = !!(!forceScaling && winloc.match(/noscal/i));
-
-  var screenScaleTimer;
 
   function updateScreenScale() {
 
@@ -107,423 +107,9 @@
 
   var tutorialMode = !!(winloc.match(/tutorial/i));
 
-  var tutorial;
-
   var Tutorial;
 
-  Tutorial = function() {
-
-    var config, css, data, dom, exports, StepObject;
-
-    function StepObject(options) {
-
-      var data, exports;
-
-      data = {
-        activated: false,
-        completed: false
-      };
-
-      function animate() {
-
-        if (!data.activated) {
-
-          if (options.activate) {
-            options.activate();
-          }
-
-          data.activated = true;
-
-        } else if (!data.completed) {
-
-          if (options.animate()) {
-
-            if (options.complete) {
-
-              options.complete();
-
-            }
-
-            data.completed = true;
-
-          }
-
-        }
-
-      }
-
-      exports = {
-        animate: animate
-      };
-
-      return exports;
-
-    }
-
-    function addItem(options) {
-
-      config.steps.push(new StepObject(options));
-
-    }
-
-    function initDOM() {
-
-      dom.o = document.getElementById('tutorial');
-      dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
-      data.steps = dom.oList.length;
-
-    }
-
-    function nextItem() {
-
-      selectItem(data.step + 1);
-
-    }
-
-    function selectItem(i) {
-
-      if (dom.lastItem) {
-        utils.css.remove(dom.lastItem, css.selected);
-      }
-
-      dom.lastItem = dom.oList[i];
-
-      data.step = i;
-
-      utils.css.add(dom.lastItem, css.selected);
-      // dom.lastItem.scrollIntoView();
-
-      game.objects.view.setAnnouncement();
-
-      game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
-
-    }
-
-    function animate() {
-
-      // "runtime" for tutorial
-      if (data.frameCount % data.animateModulus === 0 && data.step !== null && config.steps[data.step]) {
-
-        config.steps[data.step].animate();
-
-      }
-
-      data.frameCount++;
-
-    }
-
-    function init() {
-
-      var temp;
-
-      initDOM();
-
-      utils.css.add(dom.o, css.active);
-
-      addItem({
-
-        activate: function() {
-
-          // TODO: create convoy and/or count units.
-
-        },
-
-        animate: function() {
-
-          var counts = [countSides('tanks'), countSides('vans')];
-
-          if (counts[0].enemy < 3 && counts[1].enemy < 1) {
-
-            return true;
-
-          }
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // next step
-
-      addItem({
-
-        activate: function() {
-        },
-
-        animate: function() {
-
-          var chopper;
-
-          chopper = game.objects.helicopters[0];
-
-          // player either landed and refueled, or died. ;)
-          if (chopper.data.repairComplete) {
-            return true;
-          }
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // step 3
-
-      addItem({
-
-        activate: function() {
-
-          // ensure the first bunker is an enemy one.
-          game.objects.bunkers[0].capture(true);
-
-          // ... and has a balloon
-          game.objects.bunkers[0].repair();
-
-          // ensure that helicopter has at least one infantry
-          game.objects.helicopters[0].data.parachutes = 1;
-          game.objects.helicopters[0].updateStatusUI();
-
-          // keep track of original bunker states
-          temp = countSides('bunkers');
-
-        },
-
-        animate: function() {
-
-          var bunkers;
-
-          bunkers = countSides('bunkers');
-
-          if (bunkers.enemy < temp.enemy) {
-
-            // a bunker was blown up, or claimed.
-            // TODO: handle and ignore bunker-blown-up case?
-
-            return true;
-
-          }
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-
-      // step 4
-
-      addItem({
-
-        activate: function() {
-
-          // track current inventory
-
-          temp = {
-
-            missileLaunchers: countFriendly('missileLaunchers'),
-            tanks: countFriendly('tanks'),
-            vans: countFriendly('vans')
-
-          };
-
-        },
-
-        animate: function() {
-
-          var item, counts, isComplete;
-
-          // innocent until proven guilty.
-          isComplete = true;
-
-          counts = {
-
-            missileLaunchers: countFriendly('missileLaunchers'),
-            tanks: countFriendly('tanks'),
-            vans: countFriendly('vans')
-
-          };
-
-          // all counts must be > those in temp array.
-
-          for (item in counts) {
-
-            if (counts.hasOwnProperty(item)) {
-
-              if (counts[item] <= temp[item]) {
-
-                isComplete = false;
-
-              }
-
-            }
-
-          }
-
-          return isComplete;
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // step 5
-
-      addItem({
-
-        activate: function() {
-
-          // make sure enemy helicopter respawns
-
-          /*
-          if (game.objects.helicopters[1].data.dead) {
-
-            game.objects.helicopters[1].respawn();
-          
-          }
-          */
-
-        },
-
-        animate: function() {
-
-          return game.objects.helicopters[1].data.dead;
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-
-      // step 6
-
-      addItem({
-
-        activate: function() {
-
-          // TODO: make sure first turret is dead?
-
-        },
-
-        animate: function() {
-
-          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // step 7
-
-      addItem({
-
-        activate: function() {
-
-          // TODO: make sure second turret is alive, and dangerous?
-
-        },
-
-        animate: function() {
-
-          return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead);
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // step 8
-
-      addItem({
-
-        activate: function() {
-
-        },
-
-        animate: function() {
-
-          return (game.objects.endBunkers[0].data.funds >= 50);
-
-        },
-
-        complete: function() {
-
-          nextItem();
-
-        }
-
-      });
-
-      // and begin
-      selectItem(0);
-
-    }
-
-    config = {
-      steps: []
-    };
-
-    css = {
-      active: 'active',
-      selected: 'selected'
-    };
-
-    data = {
-      frameCount: 0,
-      animateModulus: FPS/2,
-      step: null,
-      steps: 0
-    };
-
-    dom = {
-      o: null,
-      oList: null,
-      lastItem: null
-    };
-
-    exports = {
-      animate: animate,
-      selectItem: selectItem
-    }
-
-    init();
-
-    return exports;
-
-  }
+  var TutorialStep;
 
   var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
@@ -760,8 +346,6 @@
     return false;
 
   }
-
-  var features;
 
   var testDiv = document.createElement('div');
 
@@ -1710,7 +1294,7 @@
     });
 
     sounds.inventory.denied = addSound({
-      url: 'audio/order-denied.wav',
+      url: 'audio/order-denied.wav'
     });
 
     sounds.inventory.begin = addSound({
@@ -1724,7 +1308,7 @@
     });
 
     sounds.missileLaunch = addSound({
-      url: 'audio/missile-launch.wav',
+      url: 'audio/missile-launch.wav'
     });
 
     sounds.parachuteOpen = addSound({
@@ -1793,8 +1377,8 @@
 
       applyScreenScale();
 
-      data.browser.width = (window.innerWidth || document.body.clientWidth) * 1/screenScale;
-      data.browser.height = (window.innerHeight || document.body.clientHeight) * 1/screenScale;
+      data.browser.width = (window.innerWidth || document.body.clientWidth) / screenScale;
+      data.browser.height = (window.innerHeight || document.body.clientHeight) / screenScale;
 
       data.browser.fractionWidth = data.browser.width / 3;
 
@@ -1804,7 +1388,7 @@
       data.world.height = dom.worldWrapper.offsetHeight;
 
       data.world.x = 0;
-      data.world.y = dom.worldWrapper.offsetTop * 1/screenScale;
+      data.world.y = dom.worldWrapper.offsetTop / screenScale;
 
       if (!data.battleField.width) {
         // dimensions assumed to be static, can be grabbed once
@@ -2030,8 +1614,8 @@
 
       mousemove: function(e) {
         if (!data.ignoreMouseEvents) {
-          data.mouse.x = parseInt((e || window.event).clientX * 1/screenScale, 10);
-          data.mouse.y = parseInt((e || window.event).clientY * 1/screenScale, 10);
+          data.mouse.x = parseInt((e || window.event).clientX / screenScale, 10);
+          data.mouse.y = parseInt((e || window.event).clientY / screenScale, 10);
         }
       },
 
@@ -2094,27 +1678,13 @@
 
     function order(type, options) {
 
-      var typeData, orderObject, orderSize, cost, objectOffset;
+      var typeData, orderObject, orderSize, cost;
 
       options = options || {};
 
-      // for endBunker + helicopter references
-      objectOffset = (data.isEnemy ? 1 : 0);
-
       orderSize = 1;
 
-      // temporary hack
-      if (options.isEnemy) {
- 
-        options.x = game.objects.view.data.battleField.scrollLeft + (game.objects.view.data.browser.width * 0.25);
-
-        options.isEnemy = false;
-
-      } else {
-
-        options.x = -72; // default off-screen setting
-
-      }
+      options.x = -72; // default off-screen setting
 
       if (!data.building) {
 
@@ -2146,12 +1716,12 @@
         // do we have enough funds for this?
         cost = orderObject.data.inventory.cost;
 
-        if (game.objects.endBunkers[objectOffset].data.funds >= cost) {
+        if (game.objects.endBunkers[0].data.funds >= cost) {
 
-          game.objects.endBunkers[objectOffset].data.funds -= cost;
+          game.objects.endBunkers[0].data.funds -= cost;
 
           if (!data.isEnemy) {
-            game.objects.helicopters[objectOffset].updateStatusUI();
+            game.objects.helicopters[0].updateStatusUI();
           }
 
         } else if (!data.isEnemy) {
@@ -8293,6 +7863,417 @@
 
   };
 
+  TutorialStep = function(options) {
+
+    var data, exports;
+
+    data = {
+      activated: false,
+      completed: false
+    };
+
+    function animate() {
+
+      if (!data.activated) {
+
+        if (options.activate) {
+          options.activate();
+        }
+
+        data.activated = true;
+
+      } else if (!data.completed) {
+
+        if (options.animate()) {
+
+          if (options.complete) {
+
+            options.complete();
+
+          }
+
+          data.completed = true;
+
+        }
+
+      }
+
+    }
+
+    exports = {
+      animate: animate
+    };
+
+    return exports;
+
+  };
+
+  Tutorial = function() {
+
+    var config, css, data, dom, exports;
+
+    function addStep(options) {
+
+      config.steps.push(new TutorialStep(options));
+
+    }
+
+    function initDOM() {
+
+      dom.o = document.getElementById('tutorial');
+      dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
+      data.steps = dom.oList.length;
+
+    }
+
+    function selectItem(i) {
+
+      if (dom.lastItem) {
+        utils.css.remove(dom.lastItem, css.selected);
+      }
+
+      dom.lastItem = dom.oList[i];
+
+      data.step = i;
+
+      utils.css.add(dom.lastItem, css.selected);
+      // dom.lastItem.scrollIntoView();
+
+      game.objects.view.setAnnouncement();
+
+      game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
+
+    }
+
+    function nextItem() {
+
+      selectItem(data.step + 1);
+
+    }
+
+    function animate() {
+
+      // "runtime" for tutorial
+      if (data.frameCount % data.animateModulus === 0 && data.step !== null && config.steps[data.step]) {
+
+        config.steps[data.step].animate();
+
+      }
+
+      data.frameCount++;
+
+    }
+
+    function init() {
+
+      var temp;
+
+      initDOM();
+
+      utils.css.add(dom.o, css.active);
+
+      addStep({
+
+        /*
+        activate: function() {
+
+          // TODO: create convoy and/or count units.
+
+        },
+        */
+
+        animate: function() {
+
+          var counts = [countSides('tanks'), countSides('vans')];
+
+          if (counts[0].enemy < 3 && counts[1].enemy < 1) {
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // next step
+
+      addStep({
+
+        animate: function() {
+
+          var chopper;
+
+          chopper = game.objects.helicopters[0];
+
+          // player either landed and refueled, or died. ;)
+          if (chopper.data.repairComplete) {
+            return true;
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 3
+
+      addStep({
+
+        activate: function() {
+
+          // ensure the first bunker is an enemy one.
+          game.objects.bunkers[0].capture(true);
+
+          // ... and has a balloon
+          game.objects.bunkers[0].repair();
+
+          // ensure that helicopter has at least one infantry
+          game.objects.helicopters[0].data.parachutes = 1;
+          game.objects.helicopters[0].updateStatusUI();
+
+          // keep track of original bunker states
+          temp = countSides('bunkers');
+
+        },
+
+        animate: function() {
+
+          var bunkers;
+
+          bunkers = countSides('bunkers');
+
+          if (bunkers.enemy < temp.enemy) {
+
+            // a bunker was blown up, or claimed.
+            // TODO: handle and ignore bunker-blown-up case?
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+
+      // step 4
+
+      addStep({
+
+        activate: function() {
+
+          // track current inventory
+
+          temp = {
+
+            missileLaunchers: countFriendly('missileLaunchers'),
+            tanks: countFriendly('tanks'),
+            vans: countFriendly('vans')
+
+          };
+
+        },
+
+        animate: function() {
+
+          var item, counts, isComplete;
+
+          // innocent until proven guilty.
+          isComplete = true;
+
+          counts = {
+
+            missileLaunchers: countFriendly('missileLaunchers'),
+            tanks: countFriendly('tanks'),
+            vans: countFriendly('vans')
+
+          };
+
+          // all counts must be > those in temp array.
+
+          for (item in counts) {
+
+            if (counts.hasOwnProperty(item)) {
+
+              if (counts[item] <= temp[item]) {
+
+                isComplete = false;
+
+              }
+
+            }
+
+          }
+
+          return isComplete;
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 5
+
+      addStep({
+
+        /*
+        activate: function() {
+
+          // make sure enemy helicopter respawns
+
+          // if (game.objects.helicopters[1].data.dead) {
+          //  game.objects.helicopters[1].respawn();
+          // }
+
+        },
+        */
+
+        animate: function() {
+
+          return game.objects.helicopters[1].data.dead;
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+
+      // step 6
+
+      addStep({
+
+        /*
+        activate: function() {
+
+          // TODO: make sure first turret is dead?
+
+        },
+        */
+
+        animate: function() {
+
+          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 7
+
+      addStep({
+
+        /*
+        activate: function() {
+
+          // TODO: make sure second turret is alive, and dangerous?
+
+        },
+        */
+
+        animate: function() {
+
+          return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead);
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // step 8
+
+      addStep({
+
+        animate: function() {
+
+          return (game.objects.endBunkers[0].data.funds >= 50);
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      // and begin
+      selectItem(0);
+
+    }
+
+    config = {
+      steps: []
+    };
+
+    css = {
+      active: 'active',
+      selected: 'selected'
+    };
+
+    data = {
+      frameCount: 0,
+      animateModulus: FPS/2,
+      step: null,
+      steps: 0
+    };
+
+    dom = {
+      o: null,
+      oList: null,
+      lastItem: null
+    };
+
+    exports = {
+      animate: animate,
+      selectItem: selectItem
+    };
+
+    init();
+
+    return exports;
+
+  };
+
   // recycled from survivor.js
 
   keyboardMonitor = (function() {
@@ -8326,7 +8307,7 @@
 
         // console.log(e.keyCode);
 
-        if (keys[e.keyCode] && keys[e.keyCode].down) {
+        if (!e.metaKey && !e.ctrlKey && keys[e.keyCode] && keys[e.keyCode].down) {
           if (downKeys[e.keyCode] === undefined) {
             downKeys[e.keyCode] = true;
             keys[e.keyCode].down(e);
@@ -8340,7 +8321,7 @@
 
       keyup: function(e) {
 
-        if (downKeys[e.keyCode] !== undefined && keys[e.keyCode]) {
+        if (!e.metaKey && !e.ctrlKey && downKeys[e.keyCode] !== undefined && keys[e.keyCode]) {
           delete downKeys[e.keyCode];
           if (keys[e.keyCode].up) {
             keys[e.keyCode].up(e);
@@ -8479,9 +8460,9 @@
       // "m"
       '77': {
 
-        down: function(e) {
+        down: function() {
 
-          game.objects.inventory.order('missileLauncher', { isEnemy: e.shiftKey });
+          game.objects.inventory.order('missileLauncher');
 
         }
 
@@ -8490,9 +8471,9 @@
       // "t"
       '84': {
 
-        down: function(e) {
+        down: function() {
 
-          game.objects.inventory.order('tank', { isEnemy: e.shiftKey });
+          game.objects.inventory.order('tank');
 
         }
 
@@ -8501,9 +8482,9 @@
       // "v"
       '86': {
 
-        down: function(e) {
+        down: function() {
 
-          game.objects.inventory.order('van', { isEnemy: e.shiftKey });
+          game.objects.inventory.order('van');
 
         }
 
@@ -8529,9 +8510,9 @@
       // "e"
       '69': {
 
-        down: function(e) {
+        down: function() {
 
-          game.objects.inventory.order('engineer', { isEnemy: e.shiftKey });
+          game.objects.inventory.order('engineer');
 
         }
 
@@ -8540,9 +8521,9 @@
       // "i"
       '73': {
 
-        down: function(e) {
+        down: function() {
 
-          game.objects.inventory.order('infantry', { isEnemy: e.shiftKey });
+          game.objects.inventory.order('infantry');
 
         }
 
@@ -9143,7 +9124,9 @@
 
   soundManager.setup({
     flashVersion: 9,
-    preferFlash: false,
+    // Safari has issues with HTML5 audio causing excess GC, or something. Need to troubleshoot more. :/
+    preferFlash: isSafari,
+    url: './swf/',
     debugMode: false,
     defaultOptions: {
       volume: 25,
