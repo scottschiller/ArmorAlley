@@ -23,7 +23,10 @@
 
   var game, utils, common;
 
-  var FPS = 24;
+  // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30.)
+  var FPS = 30;
+  var FPS_IDEAL = 30;
+
   var FRAMERATE = 1000/FPS;
 
   var winloc = window.location.href.toString();
@@ -83,6 +86,8 @@
 
     }
 
+    // disabled for now
+    // if (features.transform.prop && (!isSafari || forceScaling)) {
     if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
@@ -372,10 +377,13 @@
     } : null;
 
     // requestAnimationFrame is still somewhat slower in this case than an old-skool setInterval(). Not sure why.
-    if (getAnimationFrame && winloc.match(/raf=1/i)) {
-      console.log('preferring requestAnimationFrame for game loop');
-    } else {
-      getAnimationFrame = null;
+    if (getAnimationFrame) {
+      if (winloc.match(/noraf=1/i)) {
+        getAnimationFrame = null;
+        console.log('preferring setInterval for game loop');
+      } else {
+        console.log('preferring requestAnimationFrame for game loop');
+      }
     }
 
     var transform, styles, prop;
@@ -391,19 +399,6 @@
     // note local scope.
     var localFeatures = {
 
-/*
-      audio: false, // set later via SM2
-
-      opacity: (function(){
-        try {
-          testDiv.style.opacity = '0.5';
-        } catch(e) {
-          return false;
-        }
-        return true;
-      }()),
-*/
-
       transform: {
         ie:  has('-ms-transform'),
         moz: has('MozTransform'),
@@ -418,7 +413,7 @@
         prop: null
       },
 
-      'getAnimationFrame': getAnimationFrame
+      getAnimationFrame: getAnimationFrame
 
     };
 
@@ -728,11 +723,6 @@
 
     }
 
-/*
-    if (width && height) {
-      console.log(width, height);
-    }
-*/
     return result;
 
   }
@@ -934,7 +924,6 @@
 
     // if the source object isn't near the ground, be biased toward airborne items.
     if (source.data.type === 'helicopter' && source.data.y > game.objects.view.data.world.height - 100) {
-      console.log('preferring ground');
       preferGround = true;
     }
 
@@ -1622,6 +1611,7 @@
       resize: function() {
         // throttle?
         refreshCoords();
+        game.objects.gameLoop.resetFPS();
       }
 
     };
@@ -1992,25 +1982,18 @@
 
     function removeRadarItem(item) {
 
-      // console.log('radar.removeItem()', item);
-
       // look up item
       var i, j, foundItem;
 
       // find and remove from DOM + array
       for (i=objects.items.length-1, j=0; i>=j; i--) {
         if (objects.items[i] === item) {
-          // console.log('radar.removeItem(): found match', item);
           removeNodes(objects.items[i].dom);
           // objects.items[i].dom.o.parentNode.removeChild(objects.items[i].dom);
           objects.items.splice(i, 1);
           foundItem = true;
           break;
         }
-      }
-
-      if (!foundItem) {
-        console.log('radar.removeItem(): Warn: No match found for item', item);
       }
 
     }
@@ -2209,8 +2192,91 @@
         }
       }
 
-      // view is separate
-      // gameObjects.view.animate();
+    }
+
+    function animateRAF() {
+
+      // TODO: increase fpsInterval and eventually disable in "failure" case, when hardware can't handle desired framerate.
+
+      var now, fps, fpsMultiplier;
+
+      if (data.timer) {
+
+        now = Date.now();
+
+        // target ideal frame rate
+        if (now - data.lastExec >= FRAMERATE) {
+
+          data.elapsedTime += (now - data.lastExec);
+
+          data.lastExec = now;
+
+          animate();
+
+          data.frames++;
+
+          // try to adjust timer, to target ~30 FPS.
+          // when target fps hit, disable this check.
+          if (data.elapsedTime >= data.fpsInterval) {
+
+            // estimated FPS
+            fps = data.frames * (1000 / data.fpsInterval);
+
+            console.log('fps', fps);
+
+            if (!data.fpsLocked) {
+
+              if (fps !== FPS_IDEAL) {
+
+                data.targetFPSHit = 0;
+
+                // when adjusting, note that rate is non-linear.
+
+                if (fps > FPS_IDEAL) {
+
+                  // over target frame rate. slow down a little.
+                  fpsMultiplier = 0.9;
+
+                } else {
+
+                  // faster!
+                  fpsMultiplier = 1.1;
+
+                }
+
+                FRAMERATE = 1000/(FPS * fpsMultiplier);
+
+              } else {
+
+                // we've met the target.
+                data.targetFPSHit++;
+
+                // once stable for "long enough", disable this function.
+                if (data.targetFPSHit >= data.stableFPSCount) {
+
+                  console.log('locking in at ' + FRAMERATE);
+
+                  data.targetFPSHit = 0;
+                  data.fpsLocked = true;
+                  data.fpsInterval = 1000;
+
+                }
+
+              }
+
+            }
+
+            data.frames = 0;
+            data.elapsedTime = 0;
+
+          }
+
+        } 
+
+        // regardless, queue the next available frame
+        features.getAnimationFrame(animateRAF);
+
+      }
 
     }
 
@@ -2218,8 +2284,16 @@
 
       if (!data.timer) {
 
-        // TODO: use rAF
-        data.timer = window.setInterval(animate, FRAMERATE);
+        if (features.getAnimationFrame) {
+
+          data.timer = true;
+          animateRAF();
+
+        } else {
+
+          data.timer = window.setInterval(animate, FRAMERATE);
+
+        }
 
       }
 
@@ -2228,9 +2302,25 @@
     function stop() {
 
       if (data.timer) {
-         window.clearInterval(data.timer);
-         data.timer = null;
+
+        if (!utils.getAnimationFrame) {
+          window.clearInterval(data.timer);
+        }
+
+        data.timer = null;
+
       }
+
+    }
+
+    function resetFPS() {
+
+      // re-measure FPS timings.
+      data.lastExec = Date.now();
+      data.frames = 0;
+      data.fpsLocked = false;
+      data.fpsIntervalDefault = 100;
+      data.targetFPSHit = 0;
 
     }
 
@@ -2241,12 +2331,21 @@
     }
 
     data = {
-      frameCount: 0
+      frameCount: 0,
+      lastExec: 0,
+      elapsedTime: 0,
+      frames: 0,
+      fpsInterval: 100,
+      fpsIntervalDefault: 100,
+      fpsLocked: false,
+      targetFPSHit: 0,
+      stableFPSCount: 3
     };
 
     exports = {
       data: data,
       init: init,
+      resetFPS: resetFPS,
       stop: stop,
       start: start
     };
@@ -3281,7 +3380,7 @@
         }
 
         // randomize next one a bit
-        data.smokeModulus = 2 + parseInt(Math.random() * 24, 10);
+        data.smokeModulus = 2 + parseInt(Math.random() * FPS, 10);
 
       }
 
@@ -3340,7 +3439,7 @@
       fireModulus: (tutorialMode ? 9 : 3),
       scanModulus: 1,
       claimModulus: 8,
-      repairModulus: 24,
+      repairModulus: FPS,
       smokeModulus: 2,
       claimPoints: 0,
       claimPointsMax: 50,
@@ -6773,22 +6872,26 @@
 
         } else {
 
-          // bounce wheels?
+          // bounce wheels after the first few seconds
 
-          if (data.frameCount % data.stateModulus === 0) {
+          if (data.frameCount > FPS * 2) {
 
-            data.state++;
+            if (data.frameCount % data.stateModulus === 0) {
 
-            if (data.state > data.stateMax) {
-              data.state = 0;
+              data.state++;
+
+              if (data.state > data.stateMax) {
+                data.state = 0;
+              }
+
+              dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+
+            } else if (data.frameCount % data.stateModulus === 4) {
+
+              // next frame - reset.
+              dom.o.style.backgroundPosition = '0px 0px';
+
             }
-
-            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
-
-          } else if (data.frameCount % data.stateModulus === 4) {
-
-            // next frame - reset.
-            dom.o.style.backgroundPosition = '0px 0px';
 
           }
 
@@ -6835,7 +6938,6 @@
       if (features.transform.prop) {
         // transform origin
         dom.o.style.left = '0px';
-        dom.o.style.top = data.y + 'px';
       }
 
       game.dom.world.appendChild(dom.o);
@@ -8672,7 +8774,7 @@
         isEnemy: true
       });
 
-      addItem('palm-tree', 1150);
+      addItem('palm-tree', 1120);
 
       addItem('rock2', 1280);
 
@@ -8681,8 +8783,6 @@
       addObject('bunker', {
         x: 1536
       });
-
-      addItem('palm-tree', 1575);
 
       addItem('palm-tree', 1565);
 
@@ -8716,13 +8816,9 @@
 
       // mid-level
 
-      addItem('checkmark-grass', 4220);
+      addItem('checkmark-grass', 4120);
 
-      addItem('tree', 4300);
-
-      addItem('palm-tree', 4400);
-
-      addItem('palm-tree', 4500);
+      addItem('palm-tree', 4550);
 
       addObject('bunker', {
         x: 4608,
@@ -8755,7 +8851,7 @@
 
       // near-end / enemy territory
 
-      addItem('palm-tree', 3932);
+      addItem('palm-tree', 3932 + 32);
 
       addItem('tree', 3932 + 85);
 
@@ -8788,9 +8884,7 @@
 
       // enemy base
 
-      addItem('left-arrow-sign', 7656);
-
-      addItem('left-arrow-sign', 8208);
+      addItem('left-arrow-sign', 7700);
 
       addObject('turret', {
         x: 4096 - 384 - 81, // width of landing pad
@@ -8985,7 +9079,7 @@
 
             game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
 
-            window.setTimeout(orderNextItem, enemyDelays[i] * 1000 * 24/FPS);
+            window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
 
             i++;
 
@@ -9077,23 +9171,13 @@
 
     keyboardMonitor.init();
 
-    addItem('cactus', 555);
-
     addItem('tree', 660);
 
     addItem('right-arrow-sign', 700);
 
     addItem('palm-tree', 860);
 
-    addItem('right-arrow-sign', -32);
-
     addItem('barb-wire', 918);
-
-    addItem('checkmark-grass', 394);
-
-    addItem('flower', 576);
-
-    addItem('flowers', 630);
 
     function updateStats() {
 
@@ -9101,8 +9185,6 @@
 
       c1 = document.getElementById('top-bar').querySelectorAll('.sprite').length;
       c2 = document.getElementById('battlefield').querySelectorAll('.sprite').length;
-
-      console.log('top bar: ' + c1 + ', battlefield: ' + c2);
 
       window.setTimeout(updateStats, 5000);
 
@@ -9125,12 +9207,12 @@
   soundManager.setup({
     flashVersion: 9,
     // Safari has issues with HTML5 audio causing excess GC, or something. Need to troubleshoot more. :/
-    preferFlash: isSafari,
+    preferFlash: false,
     url: './swf/',
     debugMode: false,
     defaultOptions: {
       volume: 25,
-      multiShot: false
+      multiShot: !!(winloc.match(/multishot/i))
     }
   });
 
