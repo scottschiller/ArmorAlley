@@ -477,6 +477,12 @@
 
   common = {
 
+    defaultCSS: {
+      dead: 'dead',
+      enemy: 'enemy',
+      exploding: 'exploding'
+    },
+
     setX: function(exports, x) {
 
       if (exports && exports.dom) {
@@ -592,17 +598,23 @@
 
   function inheritCSS(options) {
 
-    var defaults;
+    // var defaults;
 
     options = options || {};
 
-    defaults = {
-      dead: 'dead',
-      enemy: 'enemy',
-      exploding: 'exploding'
-    };
+    if (options.dead === undefined) {
+      options.dead = common.defaultCSS.dead;
+    }
 
-    return mixin(defaults, options);
+    if (options.enemy === undefined) {
+      options.enemy = common.defaultCSS.enemy;
+    }
+
+    if (options.exploding === undefined) {
+      options.exploding = common.defaultCSS.exploding;
+    }
+
+    return options;
 
   }
 
@@ -610,9 +622,13 @@
 
     // mixin defaults, and apply common options
 
-    var defaultData;
-
     options = options || {};
+
+    // trying for memory / GC optimizations ...
+
+    /*
+
+    var defaultData;
 
     defaultData = {
       isEnemy: (options.isEnemy || false),
@@ -624,12 +640,46 @@
       vY: options.vY || 0
     };
 
+    return mixin(defaultData, data);
+
+    */
+
     // correct y data, if the object is bottom-aligned
     if (data.bottomAligned) {
-      data.y = bottomAlignedY(defaultData.bottomY);
+      data.y = bottomAlignedY(options.bottomY || 0);
     }
 
-    return mixin(defaultData, data);
+    if (data.isEnemy === undefined) {
+      data.isEnemy = (options.isEnemy || false);
+    }
+
+    if (data.bottomY === undefined) {
+      data.bottomY = (options.bottomY || 0);
+    }
+
+    if (data.dead === undefined) {
+      data.dead = false;
+    }
+
+    if (data.x === undefined) {
+      data.x = (options.x || 0);
+    }
+
+    if (data.y === undefined) {
+      data.y = (options.y || 0);
+    }
+
+    if (data.vX === undefined) {
+      data.vX = (options.vX || 0);
+    }
+
+    if (data.vY === undefined) {
+      data.vY = (options.vY || 0);
+    }
+
+    return data;
+
+    // return mixin(defaultData, data);
 
   }
 
@@ -1042,11 +1092,19 @@
     // loop through relevant game object arrays
     // TODO: revisit for object creation / garbage collection improvements
     for (i=0, j=nearby.items.length; i<j; i++) {
+
+      // assign current targets...
+      nearby.options.targets = game.objects[nearby.items[i]];
+
       // ... and check them
-      if (collisionCheckArray(mixin(nearby.options, { targets: game.objects[nearby.items[i]] }))) {
+      if (collisionCheckArray(nearby.options)) {
         foundHit = true;
       }
+
     }
+
+    // reset
+    nearby.options.targets = null;
 
     // callback for no-hit case, too
     if (!foundHit && nearby.options.miss) {
@@ -2175,21 +2233,31 @@
       }
 
       for (item in gameObjects) {
+
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
+
           // single object case
           if (gameObjects[item].animate && gameObjects[item].animate()) {
+
             // object is dead - take it out.
             gameObjects[item] = null;
+
           } else {
+
             // array case
             for (i = gameObjects[item].length-1; i >= 0; i--) {
+
               if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
                 // object is dead - take it out.
                 gameObjects[item].splice(i, 1);
               }
+
             }
+
           }
+
         }
+
       }
 
     }
@@ -4573,7 +4641,7 @@
 
     function animate() {
 
-      var deltaX, deltaY, targetData, angle, hitBottom;
+      var deltaX, deltaY, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
 
       if (data.dead) {
         return true;
@@ -4581,8 +4649,8 @@
 
       targetData = objects.target.data;
 
-      var targetHalfWidth = targetData.width / 2;
-      var targetHeightOffset = (targetData.type === 'balloon' ? 0 : targetData.height / 2);
+      targetHalfWidth = targetData.width / 2;
+      targetHeightOffset = (targetData.type === 'balloon' ? 0 : targetData.height / 2);
 
       // delta of x/y between this and target
       deltaX = (targetData.x + targetHalfWidth) - data.x;
