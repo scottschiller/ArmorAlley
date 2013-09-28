@@ -724,9 +724,16 @@ ul.stats-bar .bombs em {
 
 #world .left-arrow-sign,
 #world .right-arrow-sign {
-	background-image: url(../image/right-arrow-sign.png);
 	width: 26px;
 	height: 24px;
+}
+
+#world .left-arrow-sign {
+	background-image: url(../image/left-arrow-sign.png);
+}
+
+#world .right-arrow-sign {
+	background-image: url(../image/right-arrow-sign.png);
 }
 
 #world .helicopter,
