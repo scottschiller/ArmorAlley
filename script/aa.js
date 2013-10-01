@@ -277,6 +277,7 @@
     for (i=0; i<j; i++) {
       nodeArray[i].parentNode.removeChild(nodeArray[i]);
       nodeArray[i] = null;
+      delete nodeArray[i];
     }
 
   }
@@ -297,8 +298,11 @@
           dom[item].parentNode.removeChild(dom[item]);
         }
         dom[item] = null;
+        delete dom[item];
       }
     }
+
+    dom = null;
 
   }
 
@@ -329,6 +333,8 @@
       }
 
     }
+
+    o2 = null;
 
     return o1;
 
@@ -1919,6 +1925,7 @@
           // permanent removal
           window.setTimeout(function() {
             game.objects.radar.removeItem(exports);
+            dom.o = null;
           }, 2000);
         } else {
           // balloon, etc.
@@ -2291,6 +2298,8 @@
             fps = data.frames * (1000 / data.fpsInterval);
 
             console.log('fps', fps);
+
+            // window.performance.memory?
 
             if (!data.fpsLocked) {
 
@@ -2866,6 +2875,9 @@
           utils.css.swap(dom.o, css.burning, css.dead);
         }, 10000);
 
+        // nothing else to do here - drop the node reference.
+        dom.o = null;
+
       }, 1100);
 
       data.energy = 0;
@@ -3005,9 +3017,11 @@
 
     function fire() {
 
+      var options;
+
       if (data.firing && data.energy && data.frameCount % data.fireModulus === 0) {
 
-        objects.gunfire.push(new GunFire({
+        options = {
           parentType: data.type,
           isEnemy: data.isEnemy,
           collisionItems: nearby.items,
@@ -3015,17 +3029,17 @@
           y: game.objects.view.data.world.height - data.gunYOffset, // half of height
           vX: 2,
           vY: 0
-        }));
+        };
 
-        objects.gunfire.push(new GunFire({
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          collisionItems: nearby.items,
-          x: (data.x - 1),
-          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
-          vX: -2,
-          vY: 0
-        }));
+        objects.gunfire.push(new GunFire(options));
+
+        // other side
+        options.x = (data.x - 1);
+
+        // and reverse direction
+        options.vX = -2;
+
+        objects.gunfire.push(new GunFire(options));
 
         if (sounds.genericGunFire) {
           playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
@@ -4107,6 +4121,8 @@
 
       removeNodes(dom);
 
+      dom.o = null;
+ 
       data.dead = true;
 
     }
@@ -4176,7 +4192,7 @@
       collisionTest(collision, exports);
 
       // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o);
+      return (data.dead && (!dom || !dom.o));
 
     }
 
@@ -8825,7 +8841,7 @@
         x: 8000,
         isEnemy: true
       });
-      
+
       addObject('endBunker');
 
       addObject('endBunker', {
@@ -8841,6 +8857,14 @@
         x: 1024,
         isEnemy: true
       });
+
+      addItem('tree', 660);
+
+      addItem('right-arrow-sign', 700);
+
+      addItem('palm-tree', 860);
+
+      addItem('barb-wire', 918);
 
       addItem('palm-tree', 1120);
 
@@ -9021,6 +9045,10 @@
 
       enemyCopter.data.vX = -8;
 
+      // vehicles!
+
+      if (!winloc.match(/novehicles/i)) {
+
       if (!tutorialMode) {
 
         for (i=0; i<5; i++) {
@@ -9084,6 +9112,8 @@
           x: 5120 + (i * 20),
           isEnemy: true
         });
+
+      }
 
       }
 
@@ -9238,14 +9268,6 @@
     game.init();
 
     keyboardMonitor.init();
-
-    addItem('tree', 660);
-
-    addItem('right-arrow-sign', 700);
-
-    addItem('palm-tree', 860);
-
-    addItem('barb-wire', 918);
 
     function updateStats() {
 
