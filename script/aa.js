@@ -14,7 +14,18 @@
                   M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM          
                  8M  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM          
                  MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM          
-                 MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMMM MMMMMMM MMMM MMM   MMMM          
+                 MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM          
+
+
+		 A browser-based interpretation of the MS-DOS release of Armor Alley.
+
+		 Original game Copyright (C) 1990 Information Access Technologies.
+
+		 http://en.wikipedia.org/wiki/Armor_alley
+
+		 Images, text and other portions of the original game used with permission under an ISC license.
+
+		 Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
 */
 
@@ -24,6 +35,7 @@
   var game, utils, common;
 
   // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30.)
+
   var FPS = 30;
   var FPS_IDEAL = 30;
 
@@ -48,6 +60,8 @@
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
+  var debug = winloc.match(/debug/i);
+
   var deg2Rad = 180/Math.PI;
 
   var battleOver = false;
@@ -66,6 +80,8 @@
 
   var disableScaling = !!(!forceScaling && winloc.match(/noscal/i));
 
+  var userDisabledScaling = false;
+
   function updateScreenScale() {
 
     if (disableScaling) {
@@ -74,7 +90,15 @@
 
     }
 
-    screenScale = (window.innerHeight / 460);
+    if (userDisabledScaling) {
+
+      screenScale = 1;
+
+    } else {
+
+      screenScale = (window.innerHeight / 460);
+
+    }
 
   }
 
@@ -88,9 +112,12 @@
 
     // disabled for now
     // if (features.transform.prop && (!isSafari || forceScaling)) {
+
     if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
+
+      // TODO: dom.worldWrapper
 
       document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
       document.getElementById('world-wrapper').style.width = Math.floor(window.innerWidth * (1/screenScale)) + 'px';
@@ -100,10 +127,12 @@
       // TODO: Sort out + resolve Chrome "blurry font" issue. Text generally re-renders OK when resizing smaller.
 
     } else {
+
       // this won't work in Firefox.
       // Safari 6 + Webkit nightlies (as of 09/2013) have a few rendering issues with the way I'm using scale3d().
       // force using #forcescaling=1
       document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
+
     }
 
   }
@@ -123,6 +152,50 @@
   var GameLoop, View;
 
   utils = {
+
+    /*
+    object: (function() {
+
+      var exports;
+
+      function destroy(object) {
+
+        var item;
+
+        for (item in object) {
+
+          if (object.hasOwnProperty(item)) {
+
+            if (object[item] instanceof Object) {
+
+              // to understand recursion, one must first understand recursion.
+              object[item] = destroy(object[item]);
+
+            } else {
+
+              // destroy
+              object[item] = null;
+
+            }
+
+          }
+
+        }
+
+        console.log('object destroyed', object);
+
+        return object;
+
+      };
+
+      exports = {
+        destroy: destroy
+      };
+
+      return exports;
+
+    }()),
+    */
 
     array: (function() {
 
@@ -275,9 +348,11 @@
     */
 
     for (i=0; i<j; i++) {
+      // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
+      // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
+      // nodeArray[i].style[features.transform.prop] = 'none';
       nodeArray[i].parentNode.removeChild(nodeArray[i]);
       nodeArray[i] = null;
-      delete nodeArray[i];
     }
 
   }
@@ -295,14 +370,21 @@
         } else {
           // display: none - possibly prevent layout invalidation before removal?
           // dom[item].style.display = 'none';
+          // undo transform?
+          /*
+          if (features.transform.prop) {
+            dom[item].style[features.transform.prop] = 'none';
+          }
+          */
+          /*
+          // reset className?
+          dom[item].className = '';
+          */
           dom[item].parentNode.removeChild(dom[item]);
         }
         dom[item] = null;
-        delete dom[item];
       }
     }
-
-    dom = null;
 
   }
 
@@ -477,6 +559,8 @@
       }
     }
 
+    testDiv = null;
+
     return localFeatures;
 
   }());
@@ -566,6 +650,11 @@
     var o = document.createElement('div');
 
     o.className = 'sprite ' + options.className;
+
+    if (debug) {
+      o.innerHTML = options.className;
+      o.style.fontSize = 'xx-small';
+    }
 
     return o;
 
@@ -1299,6 +1388,7 @@
 
     sounds.genericGunFire = addSound({
       url: 'audio/generic-gunfire.wav',
+      // multiShot: isChrome,
       volume: 25
     });
 
@@ -1686,6 +1776,7 @@
       animate: animate,
       data: data,
       dom: dom,
+      events: events,
       setAnnouncement: setAnnouncement,
       setLeftScroll: setLeftScroll
     };
@@ -1926,6 +2017,7 @@
           window.setTimeout(function() {
             game.objects.radar.removeItem(exports);
             dom.o = null;
+            options.o = null;
           }, 2000);
         } else {
           // balloon, etc.
@@ -1998,7 +2090,7 @@
       var itemObject;
 
       itemObject = new RadarItem({
-        o: dom.radarItem.cloneNode(true),
+        o: document.createElement('div'),
         className: className,
         oParent: item,
         canRespawn: (canRespawn || false)
@@ -2048,15 +2140,13 @@
     function removeRadarItem(item) {
 
       // look up item
-      var i, j, foundItem;
+      var i, j;
 
       // find and remove from DOM + array
       for (i=objects.items.length-1, j=0; i>=j; i--) {
         if (objects.items[i] === item) {
           removeNodes(objects.items[i].dom);
-          // objects.items[i].dom.o.parentNode.removeChild(objects.items[i].dom);
           objects.items.splice(i, 1);
-          foundItem = true;
           break;
         }
       }
@@ -2135,8 +2225,6 @@
     function init() {
 
       dom.radar = document.getElementById('radar');
-
-      dom.radarItem = document.createElement('div');
 
     }
 
@@ -3017,11 +3105,11 @@
 
     function fire() {
 
-      var options;
+      var fireOptions;
 
       if (data.firing && data.energy && data.frameCount % data.fireModulus === 0) {
 
-        options = {
+        fireOptions = {
           parentType: data.type,
           isEnemy: data.isEnemy,
           collisionItems: nearby.items,
@@ -3031,15 +3119,15 @@
           vY: 0
         };
 
-        objects.gunfire.push(new GunFire(options));
+        objects.gunfire.push(new GunFire(fireOptions));
 
         // other side
-        options.x = (data.x - 1);
+        fireOptions.x = (data.x - 1);
 
         // and reverse direction
-        options.vX = -2;
+        fireOptions.vX = -2;
 
-        objects.gunfire.push(new GunFire(options));
+        objects.gunfire.push(new GunFire(fireOptions));
 
         if (sounds.genericGunFire) {
           playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
@@ -4121,8 +4209,6 @@
 
       removeNodes(dom);
 
-      dom.o = null;
- 
       data.dead = true;
 
     }
@@ -4134,6 +4220,8 @@
 
       // hack: no more animation.
       data.dead = true;
+
+      utils.css.add(dom.o, css.dead);
 
       if (target) {
         // special case: tanks are impervious to infantry gunfire.
@@ -4192,7 +4280,7 @@
       collisionTest(collision, exports);
 
       // notify caller if now dead and can be removed.
-      return (data.dead && (!dom || !dom.o));
+      return (data.dead && !dom.o);
 
     }
 
@@ -4209,7 +4297,7 @@
         dom.o.style.left = dom.o.style.top = '0px';
       }
 
-      game.dom.world.appendChild(dom.o);
+      dom.o = game.dom.world.appendChild(dom.o);
 
     }
 
@@ -4257,8 +4345,7 @@
     exports = {
       animate: animate,
       data: data,
-      die: die,
-      dom: dom
+      die: die
     };
 
     return exports;
@@ -6227,8 +6314,9 @@
       // TODO: for ... in
 
       for (i = objects.gunfire.length-1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
+        if (objects.gunfire[i] && objects.gunfire[i].animate()) {
           // object is dead - take it out.
+          objects.gunfire[i] = null;
           objects.gunfire.splice(i, 1);
         }
       }
@@ -9269,6 +9357,7 @@
 
     keyboardMonitor.init();
 
+/*
     function updateStats() {
 
       var c1, c2;
@@ -9285,11 +9374,28 @@
       updateStats();
 
     }
+*/
 
   }
 
   window.aa = {
-    init: init
+
+    init: init,
+
+    toggleScaling: function() {
+
+      userDisabledScaling = !userDisabledScaling;
+
+      updateScreenScale();
+
+      applyScreenScale();
+
+      game.objects.view.events.resize();
+
+      return false;
+
+    }
+
   };
 
   soundManager.audioFormats.mp3.required = false;
