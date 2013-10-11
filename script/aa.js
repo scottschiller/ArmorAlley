@@ -4195,8 +4195,19 @@
 
     options = options || {};
 
+    function randomDistance() {
+      return ((parseInt(Math.random() * 10, 10) * Math.random() > 0.5 ? -1 : 1) + 'px');
+    }
+
     function spark() {
       utils.css.add(dom.o, css.spark);
+      // randomize a little
+      if (Math.random() > 0.5) {
+        dom.o.style.marginLeft = randomDistance();
+      }
+      if (Math.random() > 0.5) {
+        dom.o.style.marginTop = randomDistance();
+      }
     }
 
     function die() {
