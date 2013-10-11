@@ -5509,6 +5509,8 @@
       data.dead = false;
       data.pilot = true;
 
+      radarItem.reset();
+
       updateStatusUI();
 
     }
@@ -5561,6 +5563,7 @@
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
+        radarItem.die();
         // undo rotate, if needed
         if (data.autoRotate && data.rotated) {
           rotate(true);
@@ -6050,12 +6053,6 @@
           data.vY = 0;
         }
 
-        if (data.vY >= 0 && data.y > maxY && (!data.lastTarget || data.lastTarget !== 'landing-pad')) {
-          // hack: flying too low. limit.
-          data.y = maxY;
-          data.vY--;
-        }
-
         // throttle
 
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
@@ -6176,6 +6173,18 @@
 
         }
 
+      }
+
+      // sanity check
+      if (!lastTarget || lastTarget.data.dead || lastTarget.data.type === 'cloud' || lastTarget.data.type === 'landing-pad') {
+        // no need to be firing...
+        setFiring(false);
+      }
+
+      if (data.vY > 0 && data.y > maxY && (!lastTarget || lastTarget.data.type !== 'landing-pad')) {
+        // hack: flying too low. limit.
+        data.y = maxY;
+        data.vY -= 0.25;
       }
 
       // flip helicopter to point in the right direction?
@@ -6471,7 +6480,8 @@
 
       refreshCoords();
 
-      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      // note final true param, for respawn purposes
+      radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
     }
 
