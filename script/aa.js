@@ -6223,8 +6223,8 @@
       yLimit = 369 - (data.onLandingPad ? 3 : 0);
 
       // slight offset when on landing pad
-
-      if (data.y >= yLimit) {
+      // hack for Safari, which sometimes confuses the bottom coordinate by a pixel or two. odd.
+      if (data.y >= yLimit - (isSafari ? 1 : 0)) {
 
         data.vX = 0;
 
@@ -6343,7 +6343,7 @@
 
       if (!data.dead && !data.isEnemy) {
 
-        // any enemy vans that jamming our radar?
+        // any enemy vans that are jamming our radar?
         for (i = 0, j = game.objects.vans.length; i<j; i++) {
 
           if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
