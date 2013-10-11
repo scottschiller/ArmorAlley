@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
-<title>Armor Alley (prototype)</title>
- <meta name="description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Apple Macintosh, later ported to the PC. Written for fun as a prototype / demo of JavaScript and browser capabilities." />
+<title>Armor Alley (Web Prototype)</title>
+ <meta name="description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Macintosh and MS-DOS computers. Written for fun as a prototype / demo of JavaScript and browser capabilities." />
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, animation, CSS3, arcade, retro, browser game" />
  <meta name="author" content="Scott Schiller" />
  <link rel="stylesheet" media="screen" href="css/aa.css" />
@@ -30,6 +30,7 @@
 
         <ul id="game-status">
          <li>Funds: <span id="funds-count">32</span></li>
+         <!-- not implemented. -->
          <!--
          <li>Score: 0</li>
          -->
@@ -254,23 +255,7 @@
         </li>
 
        </ul>
-
-       <h3>About The Game</h3>
-
-       <div class="bd">
- 
-        <p>Armor Alley is a side-scrolling simulation involving strategy. Your goal is to win by getting a van from your base to the enemy base, at the right end of the battlefield. Of course, it is not that simple; the van is completely unarmed, and incredibly vulnerable. You must defend the van with a convoy of tanks, missile launchers and other units on the ground, in addition to providing air cover with your helicopter.</p>
-
-       </div>
- 
-       <h3>Ground units</h3>
-
-       <div class="bd">
-
-         <p>Missile launchers, vans, tanks, infantry, engineers</p>
-
-       </div>
- 
+  
       </div>
 
      </div>
@@ -282,6 +267,8 @@
     <a href="#" onclick="window.location.hash = ''; window.location.reload()" title="Exit tutorial (reload required)" class="exit">exit tutorial</a>
      | 
     <a href="doc/" title="About the game, credits and thank-yous" class="static">about</a>
+     |
+    <a href="#noscale=1" title="Toggle 1:1 letterbox vs. MS-DOS-era resolution" onclick="return window.aa.toggleScaling()" class="static">scaling</a>
    </div>
 
   </div>
@@ -289,14 +276,6 @@
   <noscript>
     <p>This game isn't going to work unless you have JavaScript enabled.</p>
   </noscript>
-
-</div>
-
-<div id="extra-content">
-
-  <h3>Game hints</h3>
-
-  <p>Armor Alley&trade; was originally written for the Macintosh in 1984, and was ported to MS-DOS PCs in 1991.</p>
 
 </div>
 

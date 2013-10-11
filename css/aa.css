@@ -260,9 +260,9 @@ ul.stats-bar .bombs em {
 	-moz-pointer-events: none;
 	pointer-events: none;
 	/* do the GPU thing. */
-    -ms-transform: translate3d(0,0,0);
+	-ms-transform: translate3d(0,0,0);
 	-webkit-transform: translate3d(0,0,0);
-    transform: translate3d(0,0,0);
+	-transform: translate3d(0,0,0);
 }
 
 #world .bunker,
@@ -571,12 +571,17 @@ ul.stats-bar .bombs em {
 	width: 2px;
 	height: 1px;
 	background: #ccc;
+	background-color: #ccc;
 	background-color: rgb(156,159,8);
 	z-index: 2;
 }
 
 #world .gunfire.expired {
 	background-color: #555;
+}
+
+#world .gunfire.dead {
+	/* ? */
 }
 
 #world .smart-missile {
