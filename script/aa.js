@@ -5184,6 +5184,12 @@
 
         data.repairing = true;
 
+        if (!data.isEnemy) {
+
+          document.getElementById('spinner').style.display = 'block';
+
+        }
+
       }
 
     }
@@ -5193,6 +5199,12 @@
       if (data.repairing) {
 
         data.repairing = false;
+
+        if (!data.isEnemy) {
+
+          document.getElementById('spinner').style.display = 'none';
+
+        }
 
         if (data.repairComplete) {
 
@@ -5233,6 +5245,7 @@
 
         if (!data.isEnemy) {
 
+          document.getElementById('spinner').style.display = 'none';
           document.getElementById('repair-complete').style.display = 'block';
 
           if (sounds.inventory.end) {
