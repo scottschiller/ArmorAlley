@@ -37,7 +37,7 @@ body {
 	margin: -33px 0px 0px -195px;
 	background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
 	overflow: hidden;
-	line-height: 10em;
+	line-height: 20em;
 	z-index: 1;
 	opacity: 1;
 	/* lazy transform */
@@ -429,8 +429,8 @@ ul.stats-bar .bombs em {
 #world .infantry.enemy.exploding,
 #world .engineer.enemy.exploding,
 #world .tank .sub-sprite,
-#world .helicopter .sub-sprite,
-#world .helicopter.facing-left.moving-right .sub-sprite,
+/* #world .helicopter .sub-sprite, */
+/* #world .helicopter.facing-left.moving-right .sub-sprite, */
 #world .left-arrow-sign {
 	/* horizontal flip tricks */
 	filter: FlipH;
@@ -441,9 +441,11 @@ ul.stats-bar .bombs em {
 	transform: scaleX(-1);
 }
 
-#world .helicopter.enemy .sub-sprite,
+/* #world .helicopter.enemy .sub-sprite, */
+/*
 #world .helicopter.facing-left .sub-sprite,
 #world .helicopter.moving-left .sub-sprite,
+*/
 #world .tank.enemy .sub-sprite {
 	/* no flip in certain cases */
 	filter: none;
@@ -1175,6 +1177,10 @@ ul.stats-bar .bombs em {
 #game-tips .tips-container div span {
 	display: inline-block;
 	width: 1000px;
+}
+
+#game-tips.tutorial-mode .tips-container {
+	margin-top: -5em;
 }
 
 #game-tips #game-announcements {

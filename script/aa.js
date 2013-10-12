@@ -53,7 +53,14 @@
   // IE 9 doesn't like some of the bigger transforms, for some reason.
   var noTransform = (winloc.match(/notransform/i) || (ua.match(/msie 9|opera/i) && !winloc.match(/usetransform/i)));
 
-  // Evil tricks needed because Safari 6 (and Webkit nightly) scale text after rasterization, and make the helicopter jittery when moving.
+  /**
+   * Evil tricks needed because Safari 6 (and Webkit nightly)
+   * scale text after rasterization - thus, there's an option
+   * to use document.body.style.zoom vs. transform: scale3d()
+   * which renders text cleanly. Both have minor quirks.
+   * force-enable transform under Safari 6 w/ #forcescaling=1
+   */
+
   var isWebkit = ua.match(/webkit/i);
   var isChrome = (isWebkit && ua.match(/chrome/i));
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
@@ -110,27 +117,24 @@
 
     }
 
-    // disabled for now
-    // if (features.transform.prop && (!isSafari || forceScaling)) {
-
+    // Safari 6.0.5 (as of 10/2013) scales text after rasterizing via transform: scale3d(), thus it looks crap. Using document.body.zoom is OK, however.
+    // Force-enable transform-based scaling with #forcescaling=1
     if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
 
       // TODO: dom.worldWrapper
-
       document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
       document.getElementById('world-wrapper').style.width = Math.floor(window.innerWidth * (1/screenScale)) + 'px';
       document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
       document.getElementById('world-wrapper').style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
-      // TODO: Sort out + resolve Chrome "blurry font" issue. Text generally re-renders OK when resizing smaller.
+      // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
 
     } else {
 
-      // this won't work in Firefox.
-      // Safari 6 + Webkit nightlies (as of 09/2013) have a few rendering issues with the way I'm using scale3d().
-      // force using #forcescaling=1
+      // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
+      // Additional note: this won't work in Firefox.
       document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
 
     }
@@ -3662,7 +3666,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: (tutorialMode ? 9 : 3),
+      fireModulus: (tutorialMode ? 9 : 3), // a little easier in tutorial mode
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
@@ -8276,20 +8280,16 @@
       dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
       data.steps = dom.oList.length;
 
+      // hack: tweak positioning of #game-tips
+      utils.css.add(document.getElementById('game-tips'), 'tutorial-mode');
+
     }
 
     function selectItem(i) {
 
-      if (dom.lastItem) {
-        utils.css.remove(dom.lastItem, css.selected);
-      }
-
       dom.lastItem = dom.oList[i];
 
       data.step = i;
-
-      utils.css.add(dom.lastItem, css.selected);
-      // dom.lastItem.scrollIntoView();
 
       game.objects.view.setAnnouncement();
 
@@ -8598,8 +8598,7 @@
     };
 
     css = {
-      active: 'active',
-      selected: 'selected'
+      active: 'active'
     };
 
     data = {
