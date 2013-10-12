@@ -1300,11 +1300,53 @@
 
   }
 
+  function getSound(soundReference) {
+
+    // common sound wrapper, options for positioning and muting etc.
+    var soundObject;
+
+    // multiple sound case
+    if (soundReference instanceof Array) {
+
+      // tack on a counter for multiple sounds
+      if (soundReference.soundOffset === undefined) {
+        soundReference.soundOffset = 0;
+      }
+
+      // mark this object
+      soundObject = soundReference[soundReference.soundOffset];
+
+      // increase, and reset the counter as necessary
+
+      soundReference.soundOffset++;
+
+      if (soundReference.soundOffset >= soundReference.length) {
+        soundReference.soundOffset = 0;
+      }
+
+    } else {
+
+      soundObject = soundReference;
+
+    }
+
+    return soundObject;
+
+  }
+
   function playSound(soundReference, target) {
 
-    // common sound play wrapper, options for positioning and muting etc.
+    var soundObject = getSound(soundReference);
 
-    soundReference.sound.play(isOnScreen(target) ? soundReference.soundOptions.onScreen : soundReference.soundOptions.offScreen);
+    if (soundObject) {
+
+      soundObject.sound.play(isOnScreen(target) ? soundObject.soundOptions.onScreen : soundObject.soundOptions.offScreen);
+
+      // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
+      // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
+      soundObject.sound.setVolume(isOnScreen(target) ? soundObject.soundOptions.onScreen.volume : soundObject.soundOptions.offScreen.volume);
+
+    }
 
   }
 
@@ -1338,7 +1380,6 @@
     genericExplosion2: null,
     explosionLarge: null,
     genericGunFire: null,
-    genericGunFireEnemy: null,
     missileLaunch: null,
     parachuteOpen: null,
     turretGunFire: null,
@@ -1346,6 +1387,8 @@
   };
 
   soundManager.onready(function() {
+
+    var i;
 
     function addSound(options) {
 
@@ -1371,10 +1414,14 @@
       volume: 20
     });
 
-    sounds.genericBoom = addSound({
-      url: 'audio/generic-boom.wav',
-      volume: 20
-    });
+    sounds.genericBoom = [];
+
+    for (i=0; i<4; i++) {
+      sounds.genericBoom.push(addSound({
+        url: 'audio/generic-boom.wav',
+        volume: 20
+      }));
+    }
 
     sounds.genericExplosion = addSound({
       url: 'audio/generic-explosion.wav',
@@ -1386,26 +1433,35 @@
       volume: 18
     });
 
-    sounds.genericGunFire = addSound({
-      url: 'audio/generic-gunfire.wav',
-      // multiShot: isChrome,
-      volume: 25
-    });
+    sounds.genericGunFire = [];
 
-    sounds.genericGunFireEnemy = addSound({
-      url: 'audio/generic-gunfire.wav',
-      volume: 25
-    });
+    for (i=0; i<8; i++) {
+      sounds.genericGunFire.push(addSound({
+        url: 'audio/generic-gunfire.wav',
+        // multiShot: isChrome,
+        volume: 25
+      }));
+    }
 
-    sounds.infantryGunFire = addSound({
-      url: 'audio/infantry-gunfire.wav',
-      volume: 20
-    });
+    sounds.infantryGunFire = [
+      addSound({
+        url: 'audio/infantry-gunfire.wav',
+        volume: 20
+      }),
+      addSound({
+        url: 'audio/infantry-gunfire.wav',
+        volume: 20
+      })
+    ];
 
-    sounds.turretGunFire = addSound({
-      url: 'audio/turret-gunfire.wav',
-      volume: 25
-    });
+    sounds.turretGunFire = [];
+
+    for (i=0; i<3; i++) {
+      sounds.turretGunFire.push(addSound({
+        url: 'audio/turret-gunfire.wav',
+        volume: 25
+      }));
+    }
 
     sounds.explosionLarge = addSound({
       url: 'audio/explosion-large.wav',
@@ -1486,7 +1542,7 @@
 
     sounds.radarJamming = addSound({
       url: 'audio/radar-jamming.wav',
-      volume: 10
+      volume: 15
     });
 
   });
@@ -3130,7 +3186,7 @@
         objects.gunfire.push(new GunFire(fireOptions));
 
         if (sounds.genericGunFire) {
-          playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
+          playSound(sounds.genericGunFire, exports);
         }
 
       }
@@ -5599,7 +5655,7 @@
 
     function fire() {
 
-      var tiltOffset, frameCount, missileTarget, hasUpdate;
+      var tiltOffset, frameCount, missileTarget, hasUpdate, soundObject;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -5625,10 +5681,11 @@
           if (sounds.genericGunFire) {
             if (!data.isEnemy) {
               // local? play quiet only if cloaked.
-              sounds.genericGunFire.sound.play(sounds.genericGunFire.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+              soundObject = getSound(sounds.genericGunFire);
+              soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
             } else {
               // play with volume based on visibility.
-              playSound(sounds.genericGunFireEnemy, exports);
+              playSound(sounds.genericGunFire, exports);
             }
           }
 
@@ -6715,7 +6772,7 @@
         }));
 
         if (sounds.genericGunFire) {
-          playSound(data.isEnemy ? sounds.genericGunFireEnemy : sounds.genericGunFire, exports);
+          playSound(sounds.genericGunFire, exports);
         }
 
       }
@@ -7666,7 +7723,7 @@
       width: 10,
       height: 11,
       gunYOffset: 9,
-      fireModulus: 5,
+      fireModulus: 8,
       vX: (options.isEnemy ? -1 : 1),
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
