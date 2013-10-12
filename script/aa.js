@@ -1395,6 +1395,14 @@
 
     var i;
 
+    function getURL(file) {
+
+      // SM2 will determine the appropriate format to play, based on client support.
+      // URL pattern -> array of .ogg and .mp3 URLs
+      return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3'];
+
+    }
+
     function addSound(options) {
 
       var result = {
@@ -1415,7 +1423,7 @@
     }
 
     sounds.balloonExplosion = addSound({
-      url: 'audio/balloon-explosion.wav',
+      url: getURL('balloon-explosion'),
       volume: 20
     });
 
@@ -1423,18 +1431,18 @@
 
     for (i=0; i<4; i++) {
       sounds.genericBoom.push(addSound({
-        url: 'audio/generic-boom.wav',
+        url: getURL('generic-boom'),
         volume: 20
       }));
     }
 
     sounds.genericExplosion = addSound({
-      url: 'audio/generic-explosion.wav',
+      url: getURL('generic-explosion'),
       volume: 18
     });
 
     sounds.genericExplosion2 = addSound({
-      url: 'audio/generic-explosion-2.wav',
+      url: getURL('generic-explosion-2'),
       volume: 18
     });
 
@@ -1442,7 +1450,7 @@
 
     for (i=0; i<8; i++) {
       sounds.genericGunFire.push(addSound({
-        url: 'audio/generic-gunfire.wav',
+        url: getURL('generic-gunfire'),
         // multiShot: isChrome,
         volume: 25
       }));
@@ -1450,11 +1458,11 @@
 
     sounds.infantryGunFire = [
       addSound({
-        url: 'audio/infantry-gunfire.wav',
+        url: getURL('infantry-gunfire'),
         volume: 20
       }),
       addSound({
-        url: 'audio/infantry-gunfire.wav',
+        url: getURL('infantry-gunfire'),
         volume: 20
       })
     ];
@@ -1463,90 +1471,90 @@
 
     for (i=0; i<3; i++) {
       sounds.turretGunFire.push(addSound({
-        url: 'audio/turret-gunfire.wav',
+        url: getURL('turret-gunfire'),
         volume: 25
       }));
     }
 
     sounds.explosionLarge = addSound({
-      url: 'audio/explosion-large.wav',
+      url: getURL('explosion-large'),
       // will result in GC, but perhaps an exception for this special case
       multiShot: true,
       volume: 60
     });
 
     sounds.chainSnapping = addSound({
-      url: 'audio/chain-snapping.wav',
+      url: getURL('chain-snapping'),
       volume: 15
     });
 
     sounds.wilhemScream = addSound({
-      url: 'audio/wilhem-scream.wav',
+      url: getURL('wilhem-scream'),
       volume: 20
     });
 
     sounds.helicopter.engine = addSound({
-      url: 'audio/helicopter-engine.wav',
+      url: getURL('helicopter-engine'),
       volume: 25,
       autoPlay: true,
       loops: 999
     });
 
     sounds.helicopter.rotate = addSound({
-      url: 'audio/helicopter-rotate.wav',
+      url: getURL('helicopter-rotate'),
       volume: 10
     });
 
     sounds.inventory.denied = addSound({
-      url: 'audio/order-denied.wav'
+      url: getURL('order-denied')
     });
 
     sounds.inventory.begin = addSound({
-      url: 'audio/order-start.wav',
+      url: getURL('order-start'),
       volume: 40
     });
 
     sounds.inventory.end = addSound({
-      url: 'audio/order-complete.wav',
+      url: getURL('order-complete'),
       volume: 15
     });
 
     sounds.missileLaunch = addSound({
-      url: 'audio/missile-launch.wav'
+      url: getURL('missile-launch')
     });
 
     sounds.parachuteOpen = addSound({
-      url: 'audio/parachute-open.wav',
+      url: getURL('parachute-open'),
       volume: 25
     });
 
     sounds.shrapnel.hit0 = addSound({
-      url: 'audio/shrapnel-hit.wav',
+      url: getURL('shrapnel-hit'),
       volume: 6
     });
 
     sounds.shrapnel.hit1 = addSound({
-      url: 'audio/shrapnel-hit-2.wav',
+      url: getURL('shrapnel-hit-2'),
       volume: 6
     });
 
     sounds.shrapnel.hit2 = addSound({
-      url: 'audio/shrapnel-hit-3.wav',
+      url: getURL('shrapnel-hit-3'),
       volume: 6
     });
 
     sounds.shrapnel.hit3 = addSound({
-      url: 'audio/shrapnel-hit-4.wav',
+      url: getURL('shrapnel-hit-4'),
       volume: 6
     });
 
     sounds.splat = addSound({
-      url: 'audio/splat.wav',
+      url: getURL('splat'),
       volume: 25
     });
 
     sounds.radarJamming = addSound({
-      url: 'audio/radar-jamming.wav',
+      url: getURL('radar-jamming'),
       volume: 15
     });
 
