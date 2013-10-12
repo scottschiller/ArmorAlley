@@ -19,7 +19,7 @@
 
 		 A browser-based interpretation of the MS-DOS release of Armor Alley.
 
-		 Original game Copyright (C) 1990 Information Access Technologies.
+		 Original game Copyright (C) 1989 - 1991 Information Access Technologies.
 
 		 http://en.wikipedia.org/wiki/Armor_alley
 
@@ -34,7 +34,7 @@
 
   var game, utils, common;
 
-  // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30.)
+  // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30?)
 
   var FPS = 30;
   var FPS_IDEAL = 30;
@@ -119,6 +119,7 @@
 
     // Safari 6.0.5 (as of 10/2013) scales text after rasterizing via transform: scale3d(), thus it looks crap. Using document.body.zoom is OK, however.
     // Force-enable transform-based scaling with #forcescaling=1
+
     if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
