@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<head>
+<title>Armor Alley: Web browser-based Prototype - About &amp;Technical Notes</title>
+<style type="text/css">
+
+body {
+ font-family: "Helvetica Neue", "Helvetica", arial, verdana, tahoma, sans-serif;;
+ font-size: large;
+ font-weight: 300;
+}
+
+h1, h2 {
+ font-weight: 200;
+}
+
+h3, h4 {
+ font-weight: 500;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Armor Alley: Web Prototype</h1>
+
+<p>Armor Alley is a side-scrolling simulation involving strategy. The primary goal is to send a van from your base to the enemy base. Of course, it is not that simple; the van is completely unarmed, and incredibly vulnerable. You must defend the van with a convoy of tanks, missile launchers and other units on the ground, in addition to providing air cover with your helicopter against identical enemy forces.</p>
+
+<div style="max-width:1280px;margin:0px auto">
+ <iframe width="100%" height="720" src="https://www.youtube-nocookie.com/embed/MBYmkZ4GiV0?rel=0" frameborder="0" allowfullscreen></iframe>
+ <p style="text-align:center">Video: A four-minute fly-through of the Armor Alley web prototype. The goal: Get a van to the enemy's base, across the battlefield.</p>
+</div>
+
+<h2>Why do this?</h2>
+
+<p>... Because.</p>
+
+<blockquote>Any application that <i>can</i> be written in JavaScript, <i>will</i> eventually be written in JavaScript. -- <a href="http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html">Atwood's Law</a> (2007)</blockquote>
+
+<p>Writing a browser-based game using HTML, CSS and JavaScript is a great way to learn, re-learn and experiment with approaches to client-side programming. Games require a depth of logical thought, planning and effort to build, and encourage experimentation in architecture and development style.</p>
+
+<p>Performance and scalibility are both important factors in building games, and both present learning opportunties in regards to writing performant code that is compatible with a number of platforms and devices. Regardless of fidelity, a working game prototype can be both educational and fun.</p>
+
+<div style="float:right;display:inline;margin:0px 1em 1em 1em">
+ <img src="image/armor-alley-dosbox-2.png" alt="Armor Alley, PC-DOS version, 1990 (running in DOSBox)" />
+ <p style="text-align:center;margin-top:-2.5em">The reference: Armor Alley, PC-DOS version (1990)</p>
+</div>
+
+<h3>Premise</h3>
+
+<p>Build and defend convoys of Tanks, Missile Launchers, Infantry, Vans and Engineers as they cross the battlefield, using your helicopter for both offense and defense. The goal is to get your van to the enemy base on the other side of the battlefield.</p>
+
+<h3>Studying the original</h3>
+
+<p>PC-DOS, 1990 (port from original Macintosh version)</p>
+<p>Side-scrolling, fixed-height, 4-bit colour</p>
+<p>Reusable patterns (vehicles, shrapnel, gun fire, smoke, explosions)</p>
+<p>Low-fi animations</p>
+<p>Numerous interactions / behaviours between vehicles in the environment. Numerous, but somewhat shallow and limited complexity; relatively straightforward implementation.</p>
+
+<h3>Scope</h3>
+
+<p>Entirely client-side technologies: HTML, JavaScript, CSS.</p>
+<p>First "level", standard vehicles and terrain elements including anti-aircraft turrets / "guns", but no armored bunkers.</p>
+<p>Basic enemy "AI", automated convoy building / ordering + enemy chopper actions / defense - likely difficult to truly emulate original behaviour.</p>
+<p>No network / multi-player.</p>
+
+<h3>Process</h3>
+
+<div style="float:right;display:inline;width:50%;max-width:640px;margin:0px 1em 1em 1em">
+ <div style="margin-bottom:0.5em">
+ <a href="http://www.flickr.com/photos/schill/9644488079/in/set-72157634655626918/"><img src="http://farm6.staticflickr.com/5328/9644488079_e81ed327d0_z.jpg" style="width:100%"></a>
+ </div>
+ <div>
+  <a href="http://www.flickr.com/photos/schill/9707753178/in/set-72157634655626918/"><img src="http://farm8.staticflickr.com/7330/9707753178_3d23dea006_z.jpg" alt="" style="width:100%" /></a>
+ </div>
+ <p style="text-align:center">As with childhood family roadtrips: Source code, edited and annotated on the road.</p>
+</div>
+
+<div style="float:right;display:inline;width:188px;margin:0px 1em 1em 0px">
+ <img src="image/aa-sprite.png" alt="Armor Alley Web Prototype: Game Sprite (development version)" />
+ <p style="text-align:center">A tightly-packed sprite containing the majority of the in-game graphics, made for the web prototype.</p>
+</div>
+
+<p>Initial prototype: Basic landscape, terrain, vehicles, bunkers w/balloons and vehicle movement. Player helicopter can fly over terrain.</p>
+<p>Enemy vehicles added. Basics of enemy detection, gunfire, bombs &amp; collision detection added.</p>
+<p>Infantry, bunkers, vehicle-specific interactions.</p>
+<p>Status bar, fuel line landing pads + repair / refueling / reloading actions.</p>
+<p>Smart missiles and radar system.</p>
+<p>Inventory / ordering system.</p>
+<p>Nearby object finding / detection (smart missiles, AI)</p>
+
+<h3 style="clear:left">Troubleshooting &amp; Debugging</h3>
+
+<p>Chrome DevTools: Frames, memory, JS / CPU profiling</p>
+<p>CSS transforms + JS feature detection</p>
+<p>Hot loops, object creation / memory use / garbage collection</p>
+
+<h3 style="clear:left">"Architecture"</h3>
+
+<p>Raw (vanilla) JS, SoundManager 2 for audio</p>
+<p>Good old-fashioned DOM elements for rendering UI vs. <code>&lt;canvas&gt;</code> or WebGL, etc. Benefits: Natural DOM <code>createElement()</code> for making game objects, CSS to style them, <code>className</code>-based manipulation, transitions and animations.</p>
+<p>JavaScript: <code>utils</code> helper for CSS class name manipulation, DOM events, node tree removal, object mixins, cloning etc.</p>
+<p>Controllers, i.e., <code>gameLoop</code> iterate over collections of game objects, calling each object's <code>animate()</code> method.</p>
+<p>If <code>animate()</code> returns <code>true</code>, object is dead and controller can remove it from the array. Pattern is repeated for collections of vehicles, gunfire, buildings etc.</p>
+<p>MVC-like theme: <code>css</code>, <code>data</code>, <code>dom</code>, <code>objects</code> interface is defined for major game objects.</p>
+<p>Some objects have child and/or parent objects, i.e., <code>bunker</code> &larr; <code>chain</code> &rarr; <code>balloon</code>.</p>
+<p><code>frameCount</code> and modulus determine interval of behaviours - movement, firing, animation rate, enemy detection and so on - i.e., <code>if (frameCount % 10 === 0) { fire(); }</code></p>
+<p>Object names + types map between array names, constructor pattern, CSS class names (generally.) e.g., a van has <code>data.type</code> of 'van', CSS of <code>.van</code>, stored in <code>game.objects.vans</code> and so forth.</p>
+
+<p>Each object has a predictable DOM pattern, CSS class name and data structure.</p>
+<p><code>isEnemy</code> applies to JS, cascades to <code>.enemy</code> in CSS. UI + collision logic, otherwise, is mostly the same.</p>
+
+<h4>Collision detection / enemy + object interaction</h4>
+
+<p><code>nearbyOptions</code> - "who gets fired at?"</p>
+<p><code>nearbyObject()</code> - "is an X (i.e., helicopter) in range?"</p>
+<p>Object targeting - "move toward the helicopter"</p>
+<p>If there is an object overlap, call <code>target.hit()</code> and provide "source" object interface. Target determines interaction - i.e., target may die, but may also kill source.</p>
+
+<h4>Animations</h4>
+
+<p>Combination of <code>style.left/top</code>, some <code>backgroundPosition</code>-based sprite animation, and CSS animations and transitions.</p>
+<p>CSS step-based animations allow convenient <code>className</code>-triggered transitions, e.g., tank explosion: <code>.tank.dying {}</code> &rarr; <code>.tank.dead {}</code></p>
+<p><code>animate()</code> method applies <code>vX</code> + <code>vY</code> to <code>x</code> + <code>y</code>, updates <code>style.top/left</code> (traditional) or transform (GPU-accelerated) properties to reposition DOM node.</p>
+
+<h4>"Inheritance"</h4>
+
+<p>Mixin-based inheritance of <code>data</code>, <code>css</code> structures etc. Common CSS class names (states), data attributes like <code>x</code>, <code>y</code>, <code>dead</code>, <code>isEnemy</code> etc.</p>
+<p>Common operations: Move sprite (DOM x/y), object hit, die are in left in a top-level <code>common</code> helper, similar to <code>utils</code>.</p>
+
+<h4>Performance</h4>
+
+<p>Use <code>transform: translate3d()</code> where supported for GPU-based motion of elements on x/y axis, vs. traditional left/top style changes. Translate avoids expensive repaints, instead using GPU-based compositing for motion.</p>
+<p>JS: Avoid creating excessive garbage (e.g., cloning objects mixin-style) in hot/expensive loops; reduce GC, RAM use and overall churn. Pass objects directly / by reference, avoid creating new objects or modifying original object values in loops.</p>
+<p>Object destruction / clean-up: Remove node tree, JS/DOM references and parent array reference in the object collection case.</p>
+<p>Minimize DOM "I/O": Cache node references and coordinates to reduce reflow due to read operations (e.g., <code>offsetWidth</code>.) Update client coordinates only on critical events like init and <code>window.onresize()</code>.</p>
+
+<!-- here's a video I commented out because it wasn't very good. If you want to see it, watch away. -->
+<!--
+<div style="width:100%;max-width:1920px;margin:0px auto">
+ <iframe width="100%" height="720" src="https://www.youtube-nocookie.com/embed/cc_EXyP5Xxg?rel=0" frameborder="0" allowfullscreen></iframe>
+ <p style="text-align:center">Video showing effects of traditional <code>style.left</code> and <code>style.top</code>-based animation, and then with GPU <code>transform: translate3d()</code>-based GPU-accelerated rendering under Chrome DevTools. Red = redraw/repaint areas. More red = more expensive. With GPU acceleration present, there is notably-less redraw and thus improved rendering performance (i.e., frame rate.) Even with GPU acceleration, some elements still must redraw - i.e., helicopter, tank and infantry animations.</p>
+</div>
+-->
+
+<div style="max-width:1741px;min-width:480px;margin: 1em auto;padding-bottom:2em">
+ <img src="image/aa-timeline-with-transform.png" alt="Armor Alley: Web Prototype: GPU-accelerated transform:translate3d()" style="display:block;width:100%;max-width:1741px" />
+ <p style="text-align:center;margin-top:-1em;color:#666">^ Web Prototype <i>with</i> GPU-accelerated <code>transform: translate3d()</code>, and room for improvement. Note that most frames are &lt; 16 msec, 60+ fps.</p>
+</div>
+
+<div style="max-width:1741px;min-width:480px;margin: 1em auto;padding-bottom:2em">
+ <img src="image/aa-timeline-without-transform-3.png" alt="Armor Alley: Web Prototype: Traditional style.left/top-based animation (no GPU acceleration)" style="display:block;width:100%;max-width:1741px" />
+ <p style="text-align:center;margin-top:-1em;color:#666">^ Web Prototype <i>without</i> GPU-accelerated <code>transform: translate3d()</code> - note lots of red (expensive repaint), and very slow frames.</p>
+</div>
+
+<div style="max-width:1280px;min-width:480px;margin: 1em auto">
+ <img src="image/chrome-devtools-memory-use.png" alt="Armor Alley: Web Prototype: RAM allocation in hot loop (Chrome DevTools)" style="display:block;width:100%;max-width:1280px" />
+ <p style="text-align:center;color:#666">^ This is why you don't create temporary cloned objects inside hot loops. Screenshot shows "spikey" RAM use and garbage collection events before the expensive function is shunted via <code>return false</code>.</p>
+</div>
+
+<h4>"AI"</h4>
+
+<p>Actually, quite dumb. "Rule-based logic" is a more appropriate description of this implementation.</p>
+<p>Smart Missiles: Make a beeline, plus minor deviation with acceleration changes, toward target.</p>
+<p>Enemy helicopter: Target nearby cloud, balloon, tanks or player's helicopter if in range. Fixed acceleration rate, normalizes to 0 when "close enough" to target. Returns to base when out of ammo + bombs, fuel, or heavily damaged. Does not dodge targets nor obstacles.</p>
+<p>Enemy can hide in clouds, will bomb passing tanks within range if applicable.</p>
+<p>"Dogfight mode": Aim to align with player helicopter. Fire gun when within range. If player is directly underneath, try bombing. Disourages direct fly-over / fly-under.</p>
+<p>"Targeting" flags: Clouds, tanks, helicopter, balloons. If multiple target options, logic determines priority. (Rough preference, low to high: Clouds, balloons, helicopters, tanks.)</p>
+<p>Enemy convoy building / ordering: "MTVIE" sequence at fixed intervals - one every few minutes, depending on available funds.</p>
+<p>Enemy helicopter has slight speed advantage, making it harder to chase or run from.</p>
+
+<h4>GPU/Transform-based Quirk</h4>
+
+<p>While using GPU transform: translate, on Chrome: Odd/occasional redraw issues found if <code>style.left/top</code> or <code>transformOrigin</code> not initially assigned. Logical; otherwise browser says, "transform this element <i>relative to what</i>?" ... Recommendation: Apply initial top/left 0px and/or <code>transform-origin</code> values in CSS.</p>
+
+<h4>Sound Effects</h4>
+
+<p>Sound greatly enhances the game experience.</p>
+<p>Original 8-bit sounds could not be re-licensed; modern replacements (and new sounds) were mixed in from numerous Creative Commons and free sources on freesound.org. The hi-fi sounds made it more fun to blow up things, in particular.</p>
+<p>Distance affects volume, and ideally, panning effects on sounds (off-screen sounds are more quiet, and so on.)</p>
+
+<h4>Efficiency / Performance</h4>
+
+<p>Collision detection is largely just math. Caching / invalidation would probably be more expensive, not worth the effort.</p>
+<p>Ditto for other simple coordinate checks, e.g., object nearby / on-screen / targeting.</p>
+<p>Most time is spent in GPU/hardware, performing draw / layout / render operations.</p>
+
+<h4>In Retrospect: Things I Would Change / Do Differently</h4>
+
+<p>Revisit object, data &amp; function inheritance - could most all game objects inherit from a "sprite" base of some sort?</p>
+<p>Smarter collision detection algorithms could be researched and implemented.</p>
+<p>Event broadcasting? Would this be smart to use in terms of abstraction? (Still not sold.)</p>
+<p>Different "exports" / API per-object? More abstraction, less assumption about <code>css</code>, <code>data</code>, <code>dom</code>?</p>
+<p>Better "sprite" abstraction per-object. Easier DOM manipulation?</p>
+<p>Sprites in CSS earlier on / SASS / compass for automatic optimization</p>
+<p>Avoid writing <i>any</i> <code>setInterval()</code> / <code>setTimeout()</code> calls. Currently used for post-explosion delays before object destruction (DOM node removal, object clean-up.) Smarter: Use existing animation loop to apply an action after a given number of frames, and destroy object that way.</p>
+
+<h4>TODO: Tweaks and other bits to tidy up</h4>
+
+<p>Remove <code>setTimeout()</code> calls used for destruction of objects, move toward using <code>animate()</code> + <code>frameCount</code> for timing instead.</p>
+<p>Re-review object creation, memory allocation and garbage collection. Currently not too bad, but always room for improvement. Object pooling could be used for common objects like gunfire, etc.</p>
+<p>Further optimization considerations: Image sprites and sound sprites, where applicable. Remove all animated .GIFs in favour of sprites + CSS animations.</p>
+
+<h4>Things That Worked</h4>
+
+<p>Consistent naming convention within objects, public interface via <code>exports = { css, data, dom }; return exports;</code></p>
+<p>Common methods: <code>animate()</code>, <code>hit()</code>, <code>die()</code> etc.</p>
+<p>Object arrays (vans, tanks, bunkers) + single top-level controller, loop which calls <code>animate()</code> on each item and &amp; removes "dead" items accordingly.</p>
+<p>Collision accepts object <code>exports</code> (interface), standard properties like <code>data</code> and <code>hit()</code>.</p>
+<p><code>hit()</code> accepts optional point value, and source/target object. In some cases, both objects can be damaged or destroyed.</p>
+<p>JS swapping CSS class names based on state: <code>.enemy</code>, <code>.dying</code>, <code>.dead</code> and so forth.</p>
+<p>Common object "create" methods, optional configuration option/param eg., <code>isEnemy</code>, <code>x</code>, <code>y</code>, <code>vX</code>, <code>vY</code></p>
+<p><code>frameCount</code>-based intervals setting animation + behaviour rate, e.g., <code>move()</code> every frame, <code>fire()</code> only twice a second, detect enemies once a second etc.</p>
+<p>Nearby &amp; "collision" configuration - easily determine "who gets fired at", eg., tanks &rarr; infantry. Default "lookahead" affects vehicle's ability to "see" in front of it.</p>
+<p>"utils" for basic DOM events, CSS class name manipulation, node tree removal.</p>
+
+<h4>Features Not In The Original Game</h4>
+
+<p>Cloud hiding / cloaking from radar (perhaps implemented in original multiplayer mode - not sure.)</p>
+<p>Enemy can hide in clouds, and can bomb passing tanks ("Stealth cloud bombing mode".) Alternately, player can pass over enemy anti-aircraft guns, missile launchers and the enemy base, as well as the enemy helicopter, undetected. Sneaky.</p>
+<p>Additional sound effects for helicopter, parachute infantry, infantry gunfire, van jamming and shrapnel hit.</p>
+
+<h4>References</h4>
+
+<ul>
+ <li>"<a href="http://en.wikipedia.org/wiki/Armor_Alley" title="Armor Alley on Wikipedia">Armor Alley</a>" on Wikipedia</li>
+</ul>
+
+</body>
+
+</html>
