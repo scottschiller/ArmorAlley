@@ -200,6 +200,7 @@ h3, h4 {
 
 <p>Remove <code>setTimeout()</code> calls used for destruction of objects, move toward using <code>animate()</code> + <code>frameCount</code> for timing instead.</p>
 <p>Re-review object creation, memory allocation and garbage collection. Currently not too bad, but always room for improvement. Object pooling could be used for common objects like gunfire, etc.</p>
+<p>Batch DOM changes, particularly queueing and removal of nodes as the result of object destructors (i.e., a bunch of <code>GunFire</code> object instances dying.)</p>
 <p>Further optimization considerations: Image sprites and sound sprites, where applicable. Remove all animated .GIFs in favour of sprites + CSS animations.</p>
 
 <h4>Things That Worked</h4>
