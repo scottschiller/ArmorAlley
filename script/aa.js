@@ -9529,7 +9529,9 @@
     debugMode: false,
     defaultOptions: {
       volume: 25,
-      multiShot: !!(winloc.match(/multishot/i))
+      multiShot: !!(winloc.match(/multishot/i)),
+      // TODO: move to sound sprites, etc.
+      autoLoad: true
     }
   });
 
