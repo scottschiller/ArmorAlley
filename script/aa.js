@@ -5306,7 +5306,7 @@
 
       }
 
-      if (data.repairFrames % 25 === 0) {
+      if (data.repairFrames % 10 === 0) {
 
         data.bombs = Math.min(data.maxBombs, data.bombs + 1);
         hasUpdate = 1;
@@ -6591,6 +6591,11 @@
 
       refreshCoords();
 
+      // if not enemy, force-update status bar UI
+      if (!data.isEnemy) {
+        updateStatusUI();
+      }
+
       // note final true param, for respawn purposes
       radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
@@ -6664,10 +6669,10 @@
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 2,
-      ammo: 64,
-      maxAmmo: 64,
-      bombs: 10,
-      maxBombs: 10,
+      ammo: (tutorialMode && !options.isEnemy) ? 128 : 64,
+      maxAmmo: (tutorialMode && !options.isEnemy) ? 128 : 64,
+      bombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
+      maxBombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
       parachutes: 1,
       maxParachutes: 5,
       smartMissiles: 2,
