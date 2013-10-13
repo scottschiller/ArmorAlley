@@ -9497,11 +9497,11 @@
 
   };
 
+  // OGG is available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
   soundManager.setup({
     flashVersion: 9,
-    // Safari has issues with HTML5 audio causing excess GC, or something. Need to troubleshoot more. :/
     preferFlash: false,
     url: './swf/',
     debugMode: false,

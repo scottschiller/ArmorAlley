@@ -5,7 +5,7 @@ body {
 }
 
 body {
- font-family: verdana, tahoma, sans-serif;
+ font-family: "helvetica neue", helvetica, arial, verdana, tahoma, sans-serif;
  font-size: 1em;
  background: #111;
  color: #fff;
@@ -116,7 +116,7 @@ body {
 }
 
 #game-status li {
- text-indent: 0.5em;
+ text-indent: 0.25em;
  margin-right: 1em;
 }
 
@@ -1049,12 +1049,18 @@ ul.stats-bar .bombs em {
 	animation: infantryexplosion 1s steps(10);
 }
 
-#key-legend {
+#bottom {
 	position: absolute;
 	bottom: 0px;
 	left: 0px;
+	width: 100%;
 	margin-bottom: -2em;
 	color: #666;
+}
+
+#key-legend {
+	float: left;
+	display: inline;
 }
 
 #key-legend em {
@@ -1158,6 +1164,7 @@ ul.stats-bar .bombs em {
 	left: 50%;
 	margin: -0.5em auto 0px -400px;
 	padding: 0px;
+	font-family: verdana, arial, tahoma, sans-serif;
 	line-height: 1.5em;
 	width: 800px;
 	overflow: hidden;
@@ -1450,11 +1457,10 @@ ul.stats-bar .bombs em {
 }
 
 #help {
- position: absolute;
- bottom: 0px;
- right: 0.5em;
- margin-bottom: -2em;
- color: #666;
+ float: right;
+ display: inline;
+ margin-left: 1em;
+ margin-right: 0.5em;
 }
 
 #help a {
@@ -1478,5 +1484,5 @@ ul.stats-bar .bombs em {
 
 #key-legend,
 #help {
- font-size: xx-small;
+ font-size: x-small;
 }
