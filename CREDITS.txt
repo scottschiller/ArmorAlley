@@ -1,6 +1,6 @@
 Armor Alley: Web Prototype (2013)
 
-*Thank-yous and credits*
+*Acknowledgements and credits*
 
 Many thanks are due to the original game author for granting permission to use the Armor Alley images and related assets under an ISC license. http://opensource.org/licenses/ISC
 
