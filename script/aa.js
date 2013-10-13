@@ -1386,6 +1386,7 @@
     explosionLarge: null,
     genericGunFire: null,
     missileLaunch: null,
+    repairing: null,
     parachuteOpen: null,
     turretGunFire: null,
     wilhemScream: null
@@ -1555,7 +1556,13 @@
 
     sounds.radarJamming = addSound({
       url: getURL('radar-jamming'),
-      volume: 15
+      volume: 20
+    });
+
+    sounds.repairing = addSound({
+      url: getURL('repairing'),
+      volume: 75,
+      loops: 999
     });
 
   });
@@ -5197,6 +5204,8 @@
 
           document.getElementById('spinner').style.display = 'block';
 
+          playSound(sounds.repairing);
+
         }
 
       }
@@ -5212,6 +5221,10 @@
         if (!data.isEnemy) {
 
           document.getElementById('spinner').style.display = 'none';
+
+          if (sounds.repairing) {
+            sounds.repairing.sound.stop();
+          }
 
         }
 
@@ -5256,6 +5269,10 @@
 
           document.getElementById('spinner').style.display = 'none';
           document.getElementById('repair-complete').style.display = 'block';
+
+          if (sounds.repairing) {
+            sounds.repairing.sound.stop();
+          }
 
           if (sounds.inventory.end) {
             playSound(sounds.inventory.end);

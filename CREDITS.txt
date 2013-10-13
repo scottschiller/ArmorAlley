@@ -54,11 +54,17 @@ http://freesound.org/people/Simon_Lacelle/sounds/67352/
 "static.wav" by g_lowing
 http://freesound.org/people/g_lowing/sounds/84432/
 
+"vhs hum" by jocobzeier
+http://freesound.org/people/jacobzeier/sounds/166178/
+
 "Metal Click Sound" by mkoenig
 http://freesound.org/people/mkoenig/sounds/81175/
 
 "impact_water_splash_bomb_throw_flesh_01.wav" by m_O_m
 http://freesound.org/people/m_O_m/sounds/108758/
+
+"Faulty Flourescent Light Start & Hum.wav" by EverydaySounds
+http://freesound.org/people/EverydaySounds/sounds/125064/
 
 "Wilhem Scream Sample (1951)"
 http://archive.org/details/WilhelmScreamSample
