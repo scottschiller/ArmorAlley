@@ -71,6 +71,10 @@ body {
  font-weight: 200;
 }
 
+#world-wrapper b {
+ font-weight: bold;
+}
+
 #game-status-bar {
  border: 1px solid rgb(23,160,7);
  border-left: none;
