@@ -869,6 +869,12 @@ ul.stats-bar .bombs em {
 	visibility: hidden;
 }
 
+#world.tutorial-mode #game-status-bar #radar.jammed {
+	/* don't fully hide in tutorial mode. */
+	opacity: 0.5;
+	visibility: visible;
+}
+
 #game-status-bar #radar .sprite {
 	position: absolute;
 	bottom: 0px;
@@ -1168,7 +1174,6 @@ ul.stats-bar .bombs em {
 	left: 50%;
 	margin: -0.5em auto 0px -400px;
 	padding: 0px;
-	font-family: verdana, arial, tahoma, sans-serif;
 	line-height: 1.5em;
 	width: 800px;
 	overflow: hidden;
@@ -1198,7 +1203,7 @@ ul.stats-bar .bombs em {
 	width: 1000px;
 }
 
-#game-tips.tutorial-mode .tips-container {
+#world.tutorial-mode #game-tips .tips-container {
 	margin-top: -5em;
 }
 
@@ -1208,14 +1213,18 @@ ul.stats-bar .bombs em {
 	text-align: center;
 }
 
+#game-tips #game-announcements {
+	/* hide by default. */
+	display: none;
+}
+
 #game-tips #game-announcements p {
 	white-space: normal;
 	overflow: visible;
 }
 
-#game-tips #game-announcements {
-	/* hide by default. */
-	display: none;
+#game-tips #game-announcements img {
+	vertical-align: middle;
 }
 
 #game-tips #game-announcements span {

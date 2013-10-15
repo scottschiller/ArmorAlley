@@ -749,6 +749,8 @@
       data.y = bottomAlignedY(options.bottomY || 0);
     }
 
+    // TODO: revise to if (options.x !== undefined), apply then.
+
     if (data.isEnemy === undefined) {
       data.isEnemy = (options.isEnemy || false);
     }
@@ -775,6 +777,10 @@
 
     if (data.vY === undefined) {
       data.vY = (options.vY || 0);
+    }
+
+    if (options.fireModulus !== undefined) {
+      data.fireModulus = options.fireModulus;
     }
 
     return data;
@@ -1281,17 +1287,21 @@
 
       for (i=0, j=game.objects[objectType].length; i<j; i++) {
 
-        if (game.objects[objectType][i].data.isEnemy) {
+        if (!game.objects[objectType][i].data.dead) {
 
-          result.enemy++;
+          if (game.objects[objectType][i].data.isEnemy) {
 
-        } else {
+            result.enemy++;
 
-          result.friendly++;
+          } else {
+
+            result.friendly++;
+
+          }
 
         }
 
-      }       
+      }
 
     }
 
@@ -3037,10 +3047,9 @@
 
         window.setTimeout(function() {
           utils.css.swap(dom.o, css.burning, css.dead);
+          // nothing else to do here - drop the node reference.
+          dom.o = null;
         }, 10000);
-
-        // nothing else to do here - drop the node reference.
-        dom.o = null;
 
       }, 1100);
 
@@ -3276,6 +3285,11 @@
 
         if (!objects.helicopter) {
           objects.helicopter = game.objects.helicopters[(data.isEnemy ? 1 : 0)];
+        }
+
+        // edge case: tutorial mode, and no enemy chopper present yet
+        if (!objects.helicopter) {
+          return false;
         }
 
         // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
@@ -3682,7 +3696,7 @@
       energyMax: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: (tutorialMode ? 9 : 3), // a little easier in tutorial mode
+      fireModulus: (tutorialMode ? 12 : 3), // a little easier in tutorial mode
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
@@ -4512,28 +4526,28 @@
 
     function animate() {
 
-      if (data.dead) {
-        return false;
+      if (!data.dead) {
+
+        if (data.firstFrame) {
+          // trigger CSS animation on first frame
+          utils.css.add(dom.o, css.dropping);
+          data.firstFrame = false;
+        }
+
+        data.gravity *= 1.1;
+
+        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+
+        // collision check?
+
+        // hit bottom?
+        if (data.y - data.height > game.objects.view.data.battleField.height) {
+          die();
+        }
+
+        collisionTest(collision, exports);
+
       }
-
-      if (data.firstFrame) {
-        // trigger CSS animation on first frame
-        utils.css.add(dom.o, css.dropping);
-        data.firstFrame = false;
-      }
-
-      data.gravity *= 1.1;
-
-      moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
-
-      // collision check?
-
-      // hit bottom?
-      if (data.y - data.height > game.objects.view.data.battleField.height) {
-        die();
-      }
-
-      collisionTest(collision, exports);
 
       // notify caller if dead, and node has been removed.
       return (data.dead && !dom.o);
@@ -4833,136 +4847,129 @@
 
       var deltaX, deltaY, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
 
-      if (data.dead) {
-        return true;
-      }
+      if (!data.dead) {
 
-      targetData = objects.target.data;
+        targetData = objects.target.data;
 
-      targetHalfWidth = targetData.width / 2;
-      targetHeightOffset = (targetData.type === 'balloon' ? 0 : targetData.height / 2);
+        targetHalfWidth = targetData.width / 2;
+        targetHeightOffset = (targetData.type === 'balloon' ? 0 : targetData.height / 2);
 
-      // delta of x/y between this and target
-      deltaX = (targetData.x + targetHalfWidth) - data.x;
+        // delta of x/y between this and target
+        deltaX = (targetData.x + targetHalfWidth) - data.x;
 
-      // TODO: hack full height for balloon?
-      deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+        // TODO: hack full height for balloon?
+        deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
 
-      if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
-        utils.css.add(dom.o, css.expired);
-        data.expired = true;
-        data.hostile = true;
-        // burst of thrust when the missile expires?
-        data.vX *= 1.5;
-        data.vY *= 1.5;
-      }
+        if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
+          utils.css.add(dom.o, css.expired);
+          data.expired = true;
+          data.hostile = true;
+          // burst of thrust when the missile expires?
+          data.vX *= 1.5;
+          data.vY *= 1.5;
+        }
 
-      if (data.expired) {
+        if (data.expired) {
 
-        // fall...
-        data.gravity *= 1.1;
+          // fall...
+          data.gravity *= 1.1;
 
-        // ... and decelerate on X-axis.
-        data.vX *= 0.95;
+          // ... and decelerate on X-axis.
+          data.vX *= 0.95;
 
-      } else {
+        } else {
 
-        // x-axis
+          // x-axis
 
-        // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
+          // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
 
-        // if changing directions, cut in half.
-        data.vX += deltaX * 0.0065;
+          // if changing directions, cut in half.
+          data.vX += deltaX * 0.0065;
 
-        // y-axis
+          // y-axis
 
-        if (deltaY <= targetData.height && deltaY >= -targetData.height) {
+          if (deltaY <= targetData.height && deltaY >= -targetData.height) {
 
-          // lock on target.
+            // lock on target.
 
-          if (data.vY >= 0 && data.vY >= 0.25) {
-            data.vY *= 0.8;
-          } else if (data.vY <= 0 && data.vY < -0.25) {
-            data.vY *= 0.8;
-          }
+            if (data.vY >= 0 && data.vY >= 0.25) {
+              data.vY *= 0.8;
+            } else if (data.vY <= 0 && data.vY < -0.25) {
+              data.vY *= 0.8;
+            }
  
+          } else {
+
+            // relative to target at all times
+            // data.vY += deltaY * 0.0125;
+
+            data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
+
+          }
+
+        }
+
+        // and throttle
+        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+        if (Math.random() >= 0.99) {
+
+          game.objects.smoke.push(new Smoke({
+            x: data.x,
+            y: data.y,
+            spriteFrame: 3
+          }));
+
+        }
+
+        hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+
+        if (!hitBottom) {
+
+          // hack deltas for angle
+
+          if (deltaX > 360) {
+            deltaX = (deltaX % 180);
+          }
+
+          angle = Math.atan2(deltaY, deltaX) * deg2Rad;
+
         } else {
 
-          // relative to target at all times
-          // data.vY += deltaY * 0.0125;
+          // bottom-aligned. Heading left, or right?
 
-          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
+          if (data.vX > 0) {
+            angle = 0;
+          } else {
+            angle = 180;
+          }
 
         }
 
-      }
-
-      // and throttle
-      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
-
-      if (Math.random() >= 0.99) {
-
-        game.objects.smoke.push(new Smoke({
-          x: data.x,
-          y: data.y,
-          spriteFrame: 3
-        }));
-
-      }
-
-      hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
-
-      if (!hitBottom) {
-
-        // hack deltas for angle
-
-        if (deltaX > 360) {
-          deltaX = (deltaX % 180);
+        if (features.transform.prop) {
+          dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
         }
 
-        angle = Math.atan2(deltaY, deltaX) * deg2Rad;
+        moveTrailers();
 
-      } else {
+        data.frameCount++;
 
-        // bottom-aligned. Heading left, or right?
-
-        if (data.vX > 0) {
-          angle = 0;
-        } else {
-          angle = 180;
+        if (data.frameCount >= data.dieFrameCount) {
+          die();
+          // but don't fall too fast?
+          data.vYMax *= 0.5;
         }
 
+        // hit bottom?
+        if (data.y > game.objects.view.data.battleField.height) {
+          data.y = game.objects.view.data.battleField.height;
+          die(true);
+        }
+
+        collisionTest(collision, exports);
+
       }
-
-      if (features.transform.prop) {
-        dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
-      }
-
-      moveTrailers();
-
-      data.frameCount++;
-
-      if (data.frameCount >= data.dieFrameCount) {
-        die();
-        // but don't fall too fast?
-        data.vYMax *= 0.5;
-      }
-
-      /*
-      // hit top?
-      if (data.y < game.objects.view.data.topBar.height) {
-        die();
-      }
-      */
-
-      // hit bottom?
-      if (data.y > game.objects.view.data.battleField.height) {
-        data.y = game.objects.view.data.battleField.height;
-        die(true);
-      }
-
-      collisionTest(collision, exports);
 
       // notify caller if now dead and can be removed.
       return (data.dead && !dom.o);
@@ -5692,7 +5699,10 @@
         sounds.helicopter.engine.sound.setVolume(0);
       }
 
-      window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+      // don't respawn the enemy chopper during tutorial mode.
+      if (!data.isEnemy || !tutorialMode) {
+        window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+      }
 
     }
 
@@ -6783,6 +6793,7 @@
       die: die,
       eject: eject,
       fire: fire,
+      objects: objects,
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
       reset: reset,
@@ -8323,9 +8334,7 @@
       dom.o = document.getElementById('tutorial');
       dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
       data.steps = dom.oList.length;
-
-      // hack: tweak positioning of #game-tips
-      utils.css.add(document.getElementById('game-tips'), 'tutorial-mode');
+      utils.css.add(document.getElementById('world'), 'tutorial-mode');
 
     }
 
@@ -8370,19 +8379,17 @@
 
       addStep({
 
-        /*
-        activate: function() {
-
-          // TODO: create convoy and/or count units.
-
-        },
-        */
+        // introduction
 
         animate: function() {
 
-          var counts = [countSides('tanks'), countSides('vans')];
+          // the player's helicopter.
+          var chopper = game.objects.helicopters[0],
+              data = chopper.data;
 
-          if (counts[0].enemy < 3 && counts[1].enemy < 1) {
+          if (data.ammo < data.maxAmmo && data.bombs < data.maxBombs && !chopper.objects.bombs.length && !chopper.objects.gunfire.length) {
+
+            // off to a good start.
 
             return true;
 
@@ -8398,9 +8405,58 @@
 
       });
 
-      // next step
 
       addStep({
+
+        // look, ma! bad guys!
+
+        activate: function() {
+
+          game.addObject('tank', {
+            x: 1536,
+            isEnemy: true
+          });
+
+          game.addObject('tank', {
+            x: 1536 + 70,
+            isEnemy: true
+          });
+
+          game.addObject('tank', {
+            x: 1536 + 140,
+            isEnemy: true
+          });
+
+          game.addObject('van', {
+            x: 1536 + 210,
+            isEnemy: true
+          });
+
+        },
+
+        animate: function() {
+
+          var counts = [countSides('tanks'), countSides('vans')];
+
+          if (!counts[0].enemy && !counts[1].enemy) {
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      addStep({
+
+        // helicopter refuel/repair
 
         animate: function() {
 
@@ -8423,24 +8479,36 @@
 
       });
 
-      // step 3
-
       addStep({
+
+        // claiming a nearby enemy bunker
 
         activate: function() {
 
-          // ensure the first bunker is an enemy one.
-          game.objects.bunkers[0].capture(true);
+          if (!game.objects.bunkers[0].data.dead) {
 
-          // ... and has a balloon
-          game.objects.bunkers[0].repair();
+            // ensure the first bunker is an enemy one.
+            game.objects.bunkers[0].capture(true);
 
-          // ensure that helicopter has at least one infantry
-          game.objects.helicopters[0].data.parachutes = 1;
-          game.objects.helicopters[0].updateStatusUI();
+            // ... and has a balloon
+            game.objects.bunkers[0].repair();
 
-          // keep track of original bunker states
-          temp = countSides('bunkers');
+            // ensure that helicopter has at least one infantry
+            game.objects.helicopters[0].data.parachutes = 1;
+            game.objects.helicopters[0].updateStatusUI();
+
+            // keep track of original bunker states
+            temp = countSides('bunkers');
+
+          } else {
+
+            // edge case: bunker has already been blown up, etc. bail.
+            temp = countSides('bunkers');
+
+            // next animate() call will pick this up and move to next step.
+            temp.enemy++;
+
+          }
 
         },
 
@@ -8453,7 +8521,6 @@
           if (bunkers.enemy < temp.enemy) {
 
             // a bunker was blown up, or claimed.
-            // TODO: handle and ignore bunker-blown-up case?
 
             return true;
 
@@ -8469,24 +8536,9 @@
 
       });
 
-
-      // step 4
-
       addStep({
 
-        activate: function() {
-
-          // track current inventory
-
-          temp = {
-
-            missileLaunchers: countFriendly('missileLaunchers'),
-            tanks: countFriendly('tanks'),
-            vans: countFriendly('vans')
-
-          };
-
-        },
+        // order a Missile launcher, Tank, Van
 
         animate: function() {
 
@@ -8509,7 +8561,7 @@
 
             if (counts.hasOwnProperty(item)) {
 
-              if (counts[item] <= temp[item]) {
+              if (!counts[item]) {
 
                 isComplete = false;
 
@@ -8531,21 +8583,29 @@
 
       });
 
-      // step 5
-
       addStep({
 
-        /*
+        // destroy the enemy chopper!
+
         activate: function() {
 
-          // make sure enemy helicopter respawns
+          // make sure enemy helicopter is present
 
-          // if (game.objects.helicopters[1].data.dead) {
-          //  game.objects.helicopters[1].respawn();
-          // }
+          if (game.objects.helicopters.length < 2) {
+
+            // two screenfuls away, OR end of battlefield - whichever is less
+            game.addObject('helicopter', {
+              x: Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64),
+              y: 72,
+              isEnemy: true,
+              // give the player a serious advantage, here.
+              fireModulus: FPS/3,
+              vX: 0
+            });
+
+          }
 
         },
-        */
 
         animate: function() {
 
@@ -8562,17 +8622,9 @@
       });
 
 
-      // step 6
-
       addStep({
 
-        /*
-        activate: function() {
-
-          // TODO: make sure first turret is dead?
-
-        },
-        */
+        // rebuild the first friendly, dead turret
 
         animate: function() {
 
@@ -8588,17 +8640,27 @@
 
       });
 
-      // step 7
+      addStep({
+
+        // pick up a full load of infantry
+
+        animate: function() {
+
+          return (game.objects.helicopters[0].data.parachutes >= game.objects.helicopters[0].data.maxParachutes);
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
 
       addStep({
 
-        /*
-        activate: function() {
-
-          // TODO: make sure second turret is alive, and dangerous?
-
-        },
-        */
+        // destroy (or claim) the first enemy turret
 
         animate: function() {
 
@@ -8614,9 +8676,9 @@
 
       });
 
-      // step 8
-
       addStep({
+
+        // earn 50 funds
 
         animate: function() {
 
@@ -9042,10 +9104,6 @@
         x: 160
       });
 
-      addObject('van', {
-        x: 192
-      });
-
       addObject('base', {
         x: 8000,
         isEnemy: true
@@ -9246,19 +9304,26 @@
 
       // some enemy stuff
 
-      var enemyCopter = addObject('helicopter', {
-        x: 8192 - 64,
-        y: 72,
-        isEnemy: true
-      });
+      if (!tutorialMode) {
 
-      enemyCopter.data.vX = -8;
+        addObject('helicopter', {
+          x: 8192 - 64,
+          y: 72,
+          isEnemy: true,
+          vX: -8
+        });
+
+      }
 
       // vehicles!
 
-      if (!winloc.match(/novehicles/i)) {
+      if (!winloc.match(/novehicles/i) && !tutorialMode) {
 
-      if (!tutorialMode) {
+        // friendly units
+
+        addObject('van', {
+          x: 192
+        });
 
         for (i=0; i<5; i++) {
 
@@ -9268,61 +9333,59 @@
 
         }
 
-      }
+        addObject('van', {
+          x: 716
+        });
 
-      addObject('van', {
-        x: 716
-      });
+        addObject('tank', {
+          x: 780
+        });
 
-      addObject('tank', {
-        x: 780
-      });
+        addObject('tank', {
+          x: 845
+        });
 
-      addObject('tank', {
-        x: 845
-      });
+        // first enemy convoy
 
-      // first enemy convoy
-
-      addObject('tank', {
-        x: 1536,
-        isEnemy: true
-      });
-
-      addObject('tank', {
-        x: 1536 + 70,
-        isEnemy: true
-      });
-
-      addObject('tank', {
-        x: 1536 + 140,
-        isEnemy: true
-      });
-
-      addObject('van', {
-        x: 1536 + 210,
-        isEnemy: true
-      });
-
-      addObject('tank', {
-        x: 2048 + 256,
-        isEnemy: true
-      });
-
-      addObject('tank', {
-        x: 4608 + 256,
-        isEnemy: true
-      });
-
-      for (i=0; i<5; i++) {
-
-        // enemy infantry, way out there
-        addObject('infantry', {
-          x: 5120 + (i * 20),
+        addObject('tank', {
+          x: 1536,
           isEnemy: true
         });
 
-      }
+        addObject('tank', {
+          x: 1536 + 70,
+          isEnemy: true
+        });
+
+        addObject('tank', {
+          x: 1536 + 140,
+          isEnemy: true
+        });
+
+        addObject('van', {
+          x: 1536 + 210,
+          isEnemy: true
+        });
+
+        addObject('tank', {
+          x: 2048 + 256,
+          isEnemy: true
+        });
+
+        addObject('tank', {
+          x: 4608 + 256,
+          isEnemy: true
+        });
+
+        for (i=0; i<5; i++) {
+
+          // enemy infantry, way out there
+          addObject('infantry', {
+            x: 5120 + (i * 20),
+            isEnemy: true
+          });
+
+        }
 
       }
 
@@ -9458,6 +9521,7 @@
     };
 
     exports = {
+      addObject: addObject,
       dom: dom,
       init: init,
       objects: objects,
