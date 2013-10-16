@@ -911,6 +911,10 @@ ul.stats-bar .bombs em {
 	bottom: auto;
 	width: 1px;
 	height: 1px;
+}
+
+#game-status-bar #radar .sprite.smart-missile,
+#game-status-bar #radar .sprite.smart-missile.enemy {
 	background-color: red;
 }
 

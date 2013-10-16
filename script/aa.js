@@ -3894,7 +3894,7 @@
       bottomAligned: true,
       dead: false,
       frameCount: 0,
-      fireModulus: 100,
+      fireModulus: tutorialMode ? FPS * 5 : 100,
       // left side, or right side (roughly)
       x: (options.x || (options.isEnemy ? 8192 - 192: 64)),
       y: 0,
@@ -8405,6 +8405,30 @@
 
       });
 
+      addStep({
+
+        // helicopter refuel/repair
+
+        animate: function() {
+
+          var chopper;
+
+          chopper = game.objects.helicopters[0];
+
+          // player either landed and refueled, or died. ;)
+          if (chopper.data.repairComplete) {
+            return true;
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
 
       addStep({
 
@@ -8456,18 +8480,11 @@
 
       addStep({
 
-        // helicopter refuel/repair
+        // pick up a full load of infantry
 
         animate: function() {
 
-          var chopper;
-
-          chopper = game.objects.helicopters[0];
-
-          // player either landed and refueled, or died. ;)
-          if (chopper.data.repairComplete) {
-            return true;
-          }
+          return (game.objects.helicopters[0].data.parachutes >= game.objects.helicopters[0].data.maxParachutes);
 
         },
 
@@ -8493,8 +8510,6 @@
             // ... and has a balloon
             game.objects.bunkers[0].repair();
 
-            // ensure that helicopter has at least one infantry
-            game.objects.helicopters[0].data.parachutes = 1;
             game.objects.helicopters[0].updateStatusUI();
 
             // keep track of original bunker states
@@ -8621,14 +8636,30 @@
 
       });
 
-
       addStep({
 
-        // rebuild the first friendly, dead turret
+        // defeat an incoming smart missile
+
+        activate: function() {
+
+          var missileX = Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64);
+
+          // make ze missile launcher
+          game.addObject('missileLauncher', {
+            x: missileX,
+            isEnemy: true
+          });
+
+          game.addObject('missileLauncher', {
+            x: missileX + 64,
+            isEnemy: true
+          });
+
+        },
 
         animate: function() {
 
-          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
+          return (countSides('missileLaunchers').enemy === 0 && countSides('smartMissiles').enemy === 0);
 
         },
 
@@ -8642,11 +8673,11 @@
 
       addStep({
 
-        // pick up a full load of infantry
+        // rebuild the first friendly, dead turret
 
         animate: function() {
 
-          return (game.objects.helicopters[0].data.parachutes >= game.objects.helicopters[0].data.maxParachutes);
+          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
 
         },
 
@@ -8710,7 +8741,7 @@
     data = {
       frameCount: 0,
       animateModulus: FPS/2,
-      step: null,
+      step: 0,
       steps: 0
     };
 
