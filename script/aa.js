@@ -931,18 +931,23 @@
 
         // more non-standard formatting....
         && (
+
           // don't check against friendly units
           (objects[item].data.isEnemy !== options.source.data.isEnemy)
+
           // unless infantry vs. bunker, end-bunker or helicopter
           || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
           || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
 
           || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
+
           // OR engineer vs. turret
           || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
+
           // OR we're dealing with a hostile or neutral object
           || (data1.hostile || objects[item].data.hostile)
           || (data1.isNeutral || objects[item].data.isNeutral)
+
         )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
@@ -983,11 +988,15 @@
 
     // loop through relevant game object arrays
     for (i=0, j=collision.items.length; i<j; i++) {
+
       // eliminated mixin() here, perhaps reduce object creation / GC?
+
       // assign current targets...
       collision.options.targets = game.objects[collision.items[i]];
+
       // ... and check them
       collisionCheckArray(collision.options);
+
     }
 
     // restore to original state
@@ -1010,31 +1019,9 @@
 
     options = options || {};
 
-    // TODO: (target.data.x - target.data.halfWidth) results in helicopter being on left side. + target.data.halfWidth is screwy??
-
-    // deltaX = target.data.x - source.data.x;
-
     deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
 
-    // deltaX += target.data.halfWidth; // ?
-
     // by default, offset target to one side of a balloon.
-
-/*
-    if (target.data.type === 'balloon') {
-
-      if (target.data.x > source.data.x) {
-
-        deltaX -= 150;
-
-      } else {
-
-        deltaX += 150;
-
-      }
-
-    }
-*/
 
     if (target.data.type === 'tank') {
 
@@ -2090,23 +2077,33 @@
     var css, data, dom, oParent, exports;
 
     function die() {
+
       if (!data.dead) {
+
         utils.css.add(dom.o, css.dying);
+
         data.dead = true;
+
         if (!options.canRespawn) {
+
           // permanent removal
           window.setTimeout(function() {
             game.objects.radar.removeItem(exports);
             dom.o = null;
             options.o = null;
           }, 2000);
+
         } else {
+
           // balloon, etc.
           window.setTimeout(function() {
             utils.css.add(dom.o, css.dead);
           }, 1000);
+
         }
+
       }
+
     }
 
     function reset() {
