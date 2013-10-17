@@ -20,11 +20,9 @@
 		 A browser-based interpretation of the MS-DOS release of Armor Alley.
 
 		 Original game Copyright (C) 1989 - 1991 Information Access Technologies.
-
 		 http://en.wikipedia.org/wiki/Armor_alley
 
 		 Images, text and other portions of the original game used with permission under an ISC license.
-
 		 Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
 */
@@ -80,7 +78,6 @@
   var features;
 
   // TODO: move into view
-
   var screenScale = 1;
 
   var forceScaling = !!(winloc.match(/forcescal/i));
@@ -88,6 +85,18 @@
   var disableScaling = !!(!forceScaling && winloc.match(/noscal/i));
 
   var userDisabledScaling = false;
+
+  var tutorialMode = !!(winloc.match(/tutorial/i));
+
+  var Tutorial;
+
+  var TutorialStep;
+
+  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
+
+  var shrapnelExplosion;
+
+  var GameLoop, View;
 
   function updateScreenScale() {
 
@@ -141,20 +150,6 @@
     }
 
   }
-
-  // TODO: reorganize
-
-  var tutorialMode = !!(winloc.match(/tutorial/i));
-
-  var Tutorial;
-
-  var TutorialStep;
-
-  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
-
-  var shrapnelExplosion;
-
-  var GameLoop, View;
 
   utils = {
 
@@ -2180,7 +2175,7 @@
         className: className,
         oParent: item,
         canRespawn: (canRespawn || false)
-       });
+      });
 
       objects.items.push(itemObject);
 
@@ -2254,23 +2249,37 @@
         if (features.transform.prop) {
 
           for (i=0, j=objects.items.length; i<j; i++) {
+
             left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
+
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
+
               top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 32, 10) + 'px';
+
             } else {
+
               top = '0px';
+
             }
+
             common.setTransformXY(objects.items[i].dom.o, left, top);
+
           }
 
         } else {
 
           for (i=0, j=objects.items.length; i<j; i++) {
+
             // TODO: optimize
+
             objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
+
               objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
+
             }
+
           }
 
 
@@ -8392,9 +8401,9 @@
 
           // the player's helicopter.
           var chopper = game.objects.helicopters[0],
-              data = chopper.data;
+              chopperData = chopper.data;
 
-          if (data.ammo < data.maxAmmo && data.bombs < data.maxBombs && !chopper.objects.bombs.length && !chopper.objects.gunfire.length) {
+          if (chopperData.ammo < chopperData.maxAmmo && chopperData.bombs < chopperData.maxBombs && !chopper.objects.bombs.length && !chopper.objects.gunfire.length) {
 
             // off to a good start.
 
@@ -9296,13 +9305,13 @@
       addObject('turret', {
         x: 4096 - 384 - 81, // width of landing pad
         isEnemy: true,
-        DOA: !!(tutorialMode)
+        DOA: !!tutorialMode
       });
 
       addObject('turret', {
         x: 4096 + 384 + 81, // width of landing pad
         isEnemy: true,
-        DOA: !!(tutorialMode)
+        DOA: !!tutorialMode
       });
 
       // happy little clouds!
