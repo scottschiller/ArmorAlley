@@ -3550,11 +3550,11 @@
 
     }
 
-    function repair() {
+    function repair(complete) {
 
-      if (data.energy < data.energyMax && data.frameCount % data.repairModulus === 0) {
+      if (data.energy < data.energyMax && (data.frameCount % data.repairModulus === 0 || complete)) {
         restore();
-        data.energy = Math.min(data.energyMax, data.energy + 1);
+        data.energy = (complete ? data.energyMax : Math.min(data.energyMax, data.energy + 1));
         if (data.dead && data.energy > data.energyMax * 0.25) {
           // restore to life at 25%
           data.dead = false;
@@ -3691,7 +3691,6 @@
       type: 'turret',
       bottomAligned: true,
       dead: false,
-      // isNeutral: false,
       energy: 50,
       energyMax: 50,
       firing: false,
@@ -3732,7 +3731,9 @@
       die: die,
       dom: dom,
       engineerCanInteract: engineerCanInteract,
-      engineerHit: engineerHit
+      engineerHit: engineerHit,
+      restore: restore,
+      repair: repair
     };
 
     init();
@@ -8348,6 +8349,12 @@
 
       game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
 
+      // animate immediately, twice; first to activate, second to check for completion. useful if this step has already been passed, etc.
+      if (data.step > 0) {
+        config.steps[data.step].animate();
+        config.steps[data.step].animate();
+      }
+
     }
 
     function nextItem() {
@@ -8692,6 +8699,16 @@
       addStep({
 
         // destroy (or claim) the first enemy turret
+
+        activate: function() {
+
+          var turrets = game.objects.turrets;
+
+          // bring the mid-level turrets[1] and [2] to life.
+          turrets[1].repair(true);
+          turrets[2].repair(true);
+
+        },
 
         animate: function() {
 
@@ -9278,13 +9295,14 @@
 
       addObject('turret', {
         x: 4096 - 384 - 81, // width of landing pad
-        isEnemy: true
-        // DOA: true
+        isEnemy: true,
+        DOA: !!(tutorialMode)
       });
 
       addObject('turret', {
         x: 4096 + 384 + 81, // width of landing pad
-        isEnemy: true
+        isEnemy: true,
+        DOA: !!(tutorialMode)
       });
 
       // happy little clouds!
@@ -9426,12 +9444,7 @@
 
       if (!data.paused) {
         objects.gameLoop.stop();
-        if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(0);
-        }
-        if (sounds.radarJamming) {
-          sounds.radarJamming.sound.setVolume(0);
-        }
+        soundManager.mute();
         data.paused = true;
       }
 
@@ -9441,13 +9454,7 @@
 
       if (data.paused) {
         objects.gameLoop.start();
-        if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
-        }
-        if (sounds.radarJamming) {
-          // TODO: move volume back into object
-          sounds.radarJamming.sound.setVolume(10);
-        }
+        soundManager.unmute();
         data.paused = false;
       }
   
