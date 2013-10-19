@@ -1,10 +1,17 @@
-Armor Alley: Web Prototype (2013)
+Armor Alley: Web Prototype
 
-*Acknowledgements and credits*
+Acknowledgements and Credits
 
-Many thanks are due to the original game author for granting permission to use the Armor Alley images and related assets under an ISC license. http://opensource.org/licenses/ISC
+Many thanks are due to the original game author for granting permission
+to use the Armor Alley images and related assets under an ISC license.
+http://opensource.org/licenses/ISC
 
-As the original sound effects could not be re-licensed, modern (and higher-fidelity) sound effects were found on http://freesound.org/ - Thanks to the numerous contributors for a range of useful content. The majority of these sounds are provided under a Creative Commons Attribution license.
+As the original sound effects could not be re-licensed, modern
+(and higher-fidelity) sound effects were found on http://freesound.org
+
+Thanks go to numerous individuals for making their work available.
+The majority of these sounds have been published under a Creative Commons
+Attribution license; specifics are available at each link.
 
 "01587 helicopter.wav" by Robinhood76
 http://freesound.org/people/Robinhood76/sounds/94867/

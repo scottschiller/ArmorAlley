@@ -1,6 +1,7 @@
 Armor Alley: Web Prototype
 
 Copyright (c) 2013, Scott Schiller
+http://schillmania.com/armoralley/
 
 Code provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
 http://creativecommons.org/licenses/by-nc/3.0/
@@ -9,7 +10,8 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 (ISC license applies to original game images and related assets, used with permission)
 
-Armor Alley (original MS-DOS version) - http://en.wikipedia.org/wiki/Armor_alley
+Armor Alley (original MS-DOS version)
+http://en.wikipedia.org/wiki/Armor_alley
 
 Copyright (c) 1990, Information Access Technologies
 
@@ -24,3 +26,7 @@ INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
 OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
 OF THIS SOFTWARE.
+
+--------------------------------------------------------------------------------------
+
+Sound effects were sourced largely from freesound.org - see CREDITS.txt for details.
