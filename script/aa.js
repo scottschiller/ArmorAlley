@@ -6649,8 +6649,8 @@
       maxFuel: 100,
       fireModulus: 2,
       bombModulus: 6,
-      fuelModulus: 8,
-      fuelModulusFlying: 3,
+      fuelModulus: (tutorialMode ? 24 : 8),
+      fuelModulusFlying: (tutorialMode ? 9 : 3),
       missileModulus: 12,
       parachuteModulus: 4,
       repairModulus: 2,
@@ -8356,7 +8356,7 @@
       game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
 
       // animate immediately, twice; first to activate, second to check for completion. useful if this step has already been passed, etc.
-      if (data.step > 0) {
+      if (data.step > 0 && config.steps[data.step]) {
         config.steps[data.step].animate();
         config.steps[data.step].animate();
       }
@@ -8511,7 +8511,7 @@
 
       addStep({
 
-        // claiming a nearby enemy bunker
+        // claim a nearby enemy bunker
 
         activate: function() {
 
@@ -8718,7 +8718,7 @@
 
         animate: function() {
 
-          return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead);
+          return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead || !game.objects.turrets[2].data.isEnemy || game.objects.turrets[2].data.dead);
 
         },
 
@@ -8872,13 +8872,7 @@
 
           game.objects.helicopters[0].setFiring(true);
 
-        }/*,
-
-        up: function() {
-
-          game.objects.helicopters[0].setFiring(false);
-
-        }*/
+        }
 
       },
 
@@ -8891,13 +8885,7 @@
 
           game.objects.helicopters[0].setBombing(true);
 
-        }/*,
-        
-        up: function() {
-
-          game.objects.helicopters[0].setBombing(false);
-
-        }*/
+        }
 
       },
 
@@ -8917,56 +8905,6 @@
         }
 
       },
-
-/*
-      // left
-      '37': {
-
-        down: function() {
-        },
-
-
-        up: function() {
-        }
-
-      },
-
-      // up
-      '38': {
-
-        down: function() {
-        },
-
-
-        up: function() {
-        }
-
-      },
-
-      // right
-      '39': {
-
-        down: function() {
-        },
-
-
-        up: function() {
-        }
-
-      },
-
-      // down
-      '40': {
-
-        down: function() {
-        },
-
-
-        up: function() {
-        }
-
-      },
-*/
 
       // "m"
       '77': {
