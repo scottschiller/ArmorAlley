@@ -9215,9 +9215,9 @@
         isEnemy: true
       });
 
-      addItem('tree', 660);
+      addItem('right-arrow-sign', 550);
 
-      addItem('right-arrow-sign', 700);
+      addItem('tree', 660);
 
       addItem('palm-tree', 860);
 
