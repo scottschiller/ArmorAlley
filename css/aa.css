@@ -360,7 +360,7 @@ ul.stats-bar .bombs em {
 #world .sprite {
 	position: absolute;
 	bottom: 0px;
-	left: -128px; /* initially, position off-screen */
+	left: 0px; /* initially, position off-screen */
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 	z-index: 1;
@@ -573,7 +573,7 @@ ul.stats-bar .bombs em {
 	top: 0px;
 	width: 48px;
 	height: 15px;
-	z-index: 2;
+	/* z-index: 2; */
 	/* cloaking opacity effect */
 	opacity: 1;
 	-moz-transition: opacity 0.25s ease-in-out;
@@ -707,9 +707,6 @@ ul.stats-bar .bombs em {
 
 #world .smart-missile.expired {
 	/* TODO: review */
-}
-
-#world .smart-missile .sub-sprite {
 }
 
 #world .smart-missile .sub-sprite {
@@ -856,7 +853,7 @@ ul.stats-bar .bombs em {
 	background-image: url(../image/helicopter-lr.gif);
 	width: 48px;
 	height: 15px;
-	z-index: 3;
+	z-index: 1;
 }
 
 #world .helicopter.facing-left {
