@@ -6486,8 +6486,13 @@
 
             // remove from the DOM eventually
             window.setTimeout(function() {
+
               overlay.parentNode.removeChild(overlay);
               overlay = null;
+
+              // and reset FPS timings, as this may affect peformance.
+              game.objects.gameLoop.resetFPS();
+
             }, 2000);
 
           }, 1);
@@ -8678,8 +8683,6 @@
 
           };
 
-          // all counts must be > those in temp array.
-
           for (item in counts) {
 
             if (counts.hasOwnProperty(item)) {
@@ -9180,7 +9183,7 @@
 
       // midway
       addObject('landingPad', {
-        x: 4096 - 40
+        x: 4096 - 290
       });
 
       addObject('landingPad', {
@@ -9258,7 +9261,7 @@
 
       addItem('palm-tree', 3400);
 
-      addItem('palm-tree', 3450);
+      addItem('palm-tree', 3490);
 
       // mid-level
 
@@ -9333,13 +9336,13 @@
       addItem('left-arrow-sign', 7700);
 
       addObject('turret', {
-        x: 4096 - 384 - 81, // width of landing pad
+        x: 4096 - 640, // width of landing pad
         isEnemy: true,
         DOA: !!tutorialMode
       });
 
       addObject('turret', {
-        x: 4096 + 384 + 81, // width of landing pad
+        x: 4096 + 120, // width of landing pad
         isEnemy: true,
         DOA: !!tutorialMode
       });
