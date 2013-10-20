@@ -71,6 +71,8 @@
 
   var battleOver = false;
 
+  var canHideLogo = false;
+
   var logoHidden = false;
 
   var keyboardMonitor;
@@ -86,6 +88,8 @@
 
   var userDisabledScaling = false;
 
+  var userDisabledSound = false;
+
   var tutorialMode = !!(winloc.match(/tutorial/i));
 
   var Tutorial;
@@ -97,6 +101,8 @@
   var shrapnelExplosion;
 
   var GameLoop, View;
+
+  var prefs;
 
   function updateScreenScale() {
 
@@ -327,7 +333,91 @@
         remove: remove
       };
 
+    }()),
+
+    storage: (function() {
+
+      var exports,
+          data,
+          localStorage;
+
+      data = {};
+
+      // try ... catch because even referencing localStorage can cause a security exception.
+
+      try {
+        localStorage = window.localStorage || null;
+      } catch(e) {
+        console.log('localStorage not present, or denied');
+        localStorage = null;
+      }
+
+      function get(name) {
+
+        if (!localStorage) {
+          return;
+        }
+
+        try {
+          data[name] = localStorage.getItem(name);
+        } catch(ignore) {
+          // oh well
+        }
+
+        return data[name];
+
+      }
+
+      function set(name, value) {
+
+        data[name] = value;
+
+        if (!localStorage) {
+          return;
+        }
+
+        try {
+          localStorage.setItem(name, value);
+        } catch(ignore) {
+          // oh well
+        }
+
+      }
+
+      function remove(name) {
+
+        delete data[name];
+
+        if (!localStorage) {
+          return;
+        }
+
+        try {
+          localStorage.removeItem(name);
+        } catch(ignore) {
+          // oh well
+        }
+
+      }
+
+      // sanity check: try to read a value.
+      try {
+        get('testLocalStorage');
+      } catch(e) {
+        console.log('localStorage read test failed. Disabling.');
+        localStorage = null;
+      }
+
+      exports = {
+        get: get,
+        set: set,
+        remove: remove        
+      };
+
+      return exports;
+        
     }())
+
 
   };
 
@@ -464,7 +554,6 @@
       return _animationFrame.apply(window, arguments);
     } : null;
 
-    // requestAnimationFrame is still somewhat slower in this case than an old-skool setInterval(). Not sure why.
     if (getAnimationFrame) {
       if (winloc.match(/noraf=1/i)) {
         getAnimationFrame = null;
@@ -1335,7 +1424,7 @@
 
     var soundObject = getSound(soundReference);
 
-    if (soundObject) {
+    if (!userDisabledSound && soundObject) {
 
       soundObject.sound.play(isOnScreen(target) ? soundObject.soundOptions.onScreen : soundObject.soundOptions.offScreen);
 
@@ -1465,7 +1554,7 @@
     for (i=0; i<3; i++) {
       sounds.turretGunFire.push(addSound({
         url: getURL('turret-gunfire'),
-        volume: 25
+        volume: 60
       }));
     }
 
@@ -1489,7 +1578,6 @@
     sounds.helicopter.engine = addSound({
       url: getURL('helicopter-engine'),
       volume: 25,
-      autoPlay: true,
       loops: 999
     });
 
@@ -2337,7 +2425,7 @@
 
         if (jam) {
 
-          if (sounds.radarJamming && sounds.radarJamming.sound) {
+          if (!userDisabledSound && sounds.radarJamming && sounds.radarJamming.sound) {
             if (!sounds.radarJamming.sound.playState) {
               sounds.radarJamming.sound.play({
                 // position: parseInt(Math.random() * sounds.radarJamming.sound.duration, 10),
@@ -2477,7 +2565,10 @@
             // estimated FPS
             fps = data.frames * (1000 / data.fpsInterval);
 
-            console.log('fps', fps);
+            // interestingly, Chrome rAF performance suffers when logging FPS results during testing (and the console is open)?
+            if (data.fpsLocked) {
+              console.log('fps', fps);
+            }
 
             // window.performance.memory?
 
@@ -5741,8 +5832,10 @@
           if (sounds.genericGunFire) {
             if (!data.isEnemy) {
               // local? play quiet only if cloaked.
-              soundObject = getSound(sounds.genericGunFire);
-              soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+              if (!userDisabledSound) {
+                soundObject = getSound(sounds.genericGunFire);
+                soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+              }
             } else {
               // play with volume based on visibility.
               playSound(sounds.genericGunFire, exports);
@@ -6379,23 +6472,23 @@
         onLandingPad(false);
 
         // hack: fade logo on first take-off.
-        if (!data.isEnemy && !logoHidden) {
+        if (!data.isEnemy && (tutorialMode || canHideLogo) && !logoHidden) {
 
           logoHidden = true;
 
           window.setTimeout(function() {
 
-            var logo = document.getElementById('logo');
+            var overlay = document.getElementById('world-overlay');
 
-            utils.css.add(logo, 'fade-out');
+            utils.css.add(overlay, 'fade-out');
 
             // remove from the DOM eventually
             window.setTimeout(function() {
-              logo.parentNode.removeChild(logo);
-              logo = null;
+              overlay.parentNode.removeChild(overlay);
+              overlay = null;
             }, 2000);
 
-          }, 500);
+          }, 1);
 
         }
 
@@ -9398,7 +9491,9 @@
 
       if (data.paused) {
         objects.gameLoop.start();
-        soundManager.unmute();
+        if (!userDisabledSound) {
+          soundManager.unmute();
+        }
         data.paused = false;
       }
   
@@ -9412,6 +9507,12 @@
       createObjects();
 
       objects.gameLoop.init();
+
+      sounds.helicopter.engine.sound.play();
+
+      if (userDisabledSound) {
+        sounds.helicopter.engine.sound.mute();
+      }
 
       (function() {
 
@@ -9515,10 +9616,19 @@
 
   }());
 
-  function init() {
+  function startGame() {
 
-    updateScreenScale();
-    applyScreenScale();
+    // should scaling be disabled, per user preference?
+    if (utils.storage.get(prefs.noScaling)) {
+      userDisabledScaling = true;
+    }
+
+    if (utils.storage.get(prefs.noSound)) {
+      userDisabledSound = true;
+    }
+
+    // updateScreenScale();
+    // applyScreenScale();
 
     game.init();
 
@@ -9545,11 +9655,98 @@
 
   }
 
+  function init() {
+
+    // late addition: tutorial vs. regular game mode
+
+    startGame();
+
+    var menu,
+        gameType;
+
+    function menuClick(e) {
+
+      // infer game type from link, eg., #tutorial
+
+      var target = e.target,
+          param;
+
+      if (target && target.href) {
+
+        // cleanup
+        utils.events.remove(menu, 'click', menuClick);
+        menu = null;
+
+        param = target.href.substr(target.href.indexOf('#')+1);
+
+        if (param === 'regular') {
+
+          // window.location.hash = param;
+
+          // set local storage value, and continue
+          utils.storage.set(prefs.gameType, 'regular');
+
+        } else {
+
+          window.location.hash = 'tutorial';
+
+          window.location.reload();
+
+        }
+
+      }
+
+      utils.events.preventDefault(e);
+
+      canHideLogo = true;
+
+      return false;
+
+    }
+
+    winloc = window.location.href.toString();
+
+    // should we show the menu?
+
+    gameType = (winloc.match(/regular|tutorial/i) || utils.storage.get(prefs.gameType));
+
+    if (!gameType) {
+
+      menu = document.getElementById('game-menu');
+
+      if (menu) {
+
+        utils.css.add(menu, 'visible');
+
+        utils.events.add(menu, 'click', menuClick);
+
+      }
+
+    } else {
+
+      // prference set or game type in URL - start immediately.
+
+      // TODO: cleaner DOM reference
+      if (gameType === 'regular') {
+        utils.css.add(document.getElementById('world'), 'regular-mode');
+      }
+
+      canHideLogo = true;
+
+    }
+
+
+  }
+
   window.aa = {
 
     init: init,
 
-    toggleScaling: function() {
+    startGame: startGame,
+
+    toggleScaling: function(savePref) {
+
+      var prefName = prefs.noScaling;
 
       userDisabledScaling = !userDisabledScaling;
 
@@ -9559,10 +9756,71 @@
 
       game.objects.view.events.resize();
 
+      if (savePref) {
+
+        if (userDisabledScaling) {
+          utils.storage.set(prefName, true);
+        } else {
+          utils.storage.remove(prefName);
+        }
+
+      }
+
+      return false;
+
+    },
+
+    startTutorial: function() {
+
+      utils.storage.remove(prefs.gameType);
+
+      window.location.hash = 'tutorial';
+
+      window.setTimeout(function() {
+        window.location.reload();
+      }, 1);
+
+      return false;
+
+    },
+
+    exitTutorial: function() {
+
+      // delete stored preference
+      utils.storage.remove(prefs.gameType);
+
+      window.location.hash = '';
+
+      window.setTimeout(function() {
+        window.location.reload();
+      }, 1);
+
+      return false;
+
+    },
+
+    toggleSound: function() {
+
+      userDisabledSound = !userDisabledSound;
+
+      if (userDisabledSound) {
+        utils.storage.set(prefs.noSound, true);
+        soundManager.mute();
+      } else {
+        utils.storage.remove(prefs.noSound);
+        soundManager.unmute();
+      }
+
       return false;
 
     }
 
+  };
+
+  prefs = {
+    gameType: 'gameType',
+    noScaling: 'noScaling',
+    noSound: 'noSound'
   };
 
   // OGG is available, so MP3 is not required.

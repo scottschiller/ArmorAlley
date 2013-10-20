@@ -28,18 +28,14 @@ body {
  cursor: url(../image/cursor-cross.png), crosshair;
 }
 
-#logo {
+#world-overlay {
 	position: absolute;
-	top: 56%;
-	left: 50%;
-	width: 391px;
-	height: 67px;
-	margin: -33px 0px 0px -195px;
-	background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
-	overflow: hidden;
-	line-height: 20em;
-	z-index: 1;
-	opacity: 1;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: rgba(32,51,32,0.66);
+	z-index: 10;
 	/* lazy transform */
 	-moz-transition: all 0.66s ease-in-out;
 	-ms-transition: all 0.66s ease-in-out;
@@ -51,11 +47,85 @@ body {
 	transition-property: opacity, transform;
 }
 
-#logo.fade-out {
+#world.tutorial-mode #world-overlay,
+#world.regular-mode #world-overlay {
+	background: transparent;
+}
+
+#world-overlay.fade-out {
 	opacity: 0;
 	-ms-transform: scale(1.2);
 	-webkit-transform: scale(1.2);
 	transform: scale(1.2);
+}
+
+#logo {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	width: 391px;
+	height: 67px;
+	margin: -33px 0px 0px -195px;
+	background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
+	z-index: 11;
+	opacity: 1;
+}
+
+#logo h1 {
+	visibility: hidden;
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+
+#world.tutorial-mode #logo {
+	top: 56%;
+}
+
+#game-menu {
+	margin-top: 60px;
+	display: none;
+	/* left alignment tweak */
+	margin-left: -12px;
+	text-align: center;
+	color: #999;
+}
+
+#game-menu.visible {
+	display: block;
+}
+
+#game-menu h2 {
+	font-size: 1.1em;
+	line-height: 1.5em;
+	font-weight: 200;
+}
+
+#game-menu .cta {
+	display: inline-block;
+	width: 44%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	color: #00cc00;
+	border: 1px solid green;
+	font-size: 1.5em;
+	line-height: 1.33em;
+	padding: 0.25em 1em;
+	text-align: center;
+	text-decoration: none;
+	background-color: #003300;
+	background-color: rgba(0,102,0,0.5);
+}
+
+#game-menu .cta:hover {
+	background-color: #006600;
+	background-color: rgba(0,153,0,0.75);
+	color: #fff;
+}
+
+#game-menu .cta:last-of-type {
+	margin-left: 6%;
 }
 
 #world-wrapper {
@@ -116,7 +186,7 @@ body {
  top: 6px;
  left: 0px;
  width: 100%;
- z-index: 10;
+ z-index: 9;
 }
 
 #game-status li {
@@ -787,8 +857,9 @@ ul.stats-bar .bombs em {
 	height: 15px;
 }
 
-#world .turret.enemy {
-	-webkit-filter: grayscale(1);
+#world .turret.enemy,
+#world .turret.enemy .sub-sprite {
+	background-image: url(../image/turret-enemy.png);
 }
 
 #world .turret .sub-sprite {
@@ -1494,9 +1565,14 @@ ul.stats-bar .bombs em {
  color: #fff;
 }
 
+#help a.start,
 #help.inactive a.start,
 #help.active a.exit {
  display: inline;
+}
+
+#help.active a.start {
+ display: none;
 }
 
 #key-legend,
