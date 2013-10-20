@@ -742,8 +742,8 @@
     o.className = 'sprite ' + options.className;
 
     if (debug) {
-      o.innerHTML = options.className;
-      o.style.fontSize = 'xx-small';
+      o.innerHTML = options.className.replace(/sub\-sprite/i, '');
+      o.style.fontSize = 6 + (1/screenScale) + 'px';
     }
 
     return o;
