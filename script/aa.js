@@ -62,6 +62,7 @@
   var isWebkit = ua.match(/webkit/i);
   var isChrome = (isWebkit && ua.match(/chrome/i));
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
+  var isOldIE = (navigator.userAgent.match(/MSIE [6-8]/i));
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
@@ -118,7 +119,7 @@
 
     } else {
 
-      screenScale = (window.innerHeight / 460);
+      screenScale = (isOldIE ? 1 : window.innerHeight / 460);
 
     }
 
@@ -141,13 +142,13 @@
 
       // TODO: dom.worldWrapper
       document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
-      document.getElementById('world-wrapper').style.width = Math.floor(window.innerWidth * (1/screenScale)) + 'px';
+      document.getElementById('world-wrapper').style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1/screenScale)) + 'px';
       document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
       document.getElementById('world-wrapper').style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
       // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
 
-    } else {
+    } else if (!isOldIE) {
 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
@@ -1808,8 +1809,10 @@
       utils.events.add(window, 'resize', events.resize);
       utils.events.add(document, 'mousemove', events.mousemove);
 
-      utils.events.add(window, 'focus', events.focus);
-      utils.events.add(window, 'blur', events.blur);
+      if (!isOldIE) {
+        utils.events.add(window, 'focus', events.focus);
+        utils.events.add(window, 'blur', events.blur);
+      }
 
     }
 
@@ -2664,7 +2667,7 @@
     function resetFPS() {
 
       // re-measure FPS timings.
-      data.lastExec = Date.now();
+      data.lastExec = (isOldIE ? new Date().getTime() : Date.now());
       data.frames = 0;
       data.fpsLocked = false;
       data.fpsIntervalDefault = 100;
@@ -6493,7 +6496,7 @@
               // and reset FPS timings, as this may affect peformance.
               game.objects.gameLoop.resetFPS();
 
-            }, 2000);
+            }, (isOldIE ? 1 : 2000));
 
           }, 1);
 
@@ -9677,7 +9680,7 @@
 
       // infer game type from link, eg., #tutorial
 
-      var target = e.target,
+      var target = (e.target || event.sourceElement),
           param;
 
       if (target && target.href) {
