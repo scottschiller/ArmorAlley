@@ -6482,6 +6482,8 @@
 
             utils.css.add(overlay, 'fade-out');
 
+            utils.css.add(document.getElementById('world'), 'no-blur');
+
             // remove from the DOM eventually
             window.setTimeout(function() {
               overlay.parentNode.removeChild(overlay);
@@ -9508,10 +9510,14 @@
 
       objects.gameLoop.init();
 
-      sounds.helicopter.engine.sound.play();
+      if (sounds.helicopter.engine) {
 
-      if (userDisabledSound) {
-        sounds.helicopter.engine.sound.mute();
+        sounds.helicopter.engine.sound.play();
+
+        if (userDisabledSound) {
+          sounds.helicopter.engine.sound.mute();
+        }
+
       }
 
       (function() {
@@ -9715,6 +9721,8 @@
       menu = document.getElementById('game-menu');
 
       if (menu) {
+
+        utils.css.add(document.getElementById('world'), 'blurred');
 
         utils.css.add(menu, 'visible');
 

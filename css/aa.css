@@ -82,6 +82,19 @@ body {
 	top: 56%;
 }
 
+#world.blurred #battlefield,
+#world.blurred #game-tips .tips-container,
+#world.blurred #top-bar {
+	-webkit-transition: -webkit-filter 0.5s ease-in-out;
+	-webkit-filter: blur(2px);
+}
+
+#world.blurred.no-blur #battlefield,
+#world.blurred.no-blur #game-tips .tips-container,
+#world.blurred.no-blur #top-bar {
+	-webkit-filter: blur(0px);
+}
+
 #game-menu {
 	margin-top: 60px;
 	display: none;
@@ -1249,6 +1262,7 @@ ul.stats-bar .bombs em {
 	left: 50%;
 	margin: -0.5em auto 0px -400px;
 	padding: 0px;
+	font-size: 1.1em;
 	line-height: 1.5em;
 	width: 800px;
 	overflow: hidden;
