@@ -97,6 +97,8 @@
 
   var TutorialStep;
 
+  var FrameTimeout;
+
   var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
   var shrapnelExplosion;
@@ -1963,7 +1965,6 @@
 
         utils.css.add(orderObject.dom.o, css.building);
 
-        // TODO: review/reduce setTimeout() calls
         window.setTimeout(function() {
           utils.css.add(orderObject.dom.o, css.ordering);
           /*
@@ -2825,9 +2826,10 @@
         if (sounds.balloonExplosion) {
           playSound(sounds.balloonExplosion, exports);
         }
-        data.deadTimer = window.setTimeout(function() {
+        data.deadTimer = new FrameTimeout(FPS * 0.55, function() {
           dead();
-        }, 550);
+          data.deadTimer = null;
+        });
         data.dead = true;
       }
     }
@@ -2889,6 +2891,10 @@
         }
 
       } else {
+
+        if (data.deadTimer) {
+          data.deadTimer.animate();
+        }
 
         if (data.bottomY > 0) {
 
@@ -4382,7 +4388,7 @@
 
   GunFire = function(options) {
 
-    var css, data, dom, collision, exports;
+    var css, data, dom, collision, exports, frameTimeout;
 
     options = options || {};
 
@@ -4421,7 +4427,7 @@
       spark();
 
       // hack: no more animation.
-      data.dead = true;
+      // data.dead = true;
 
       utils.css.add(dom.o, css.dead);
 
@@ -4433,7 +4439,11 @@
       }
 
       // and cleanup shortly.
-      window.setTimeout(die, 250);
+      frameTimeout = new FrameTimeout(FPS * 0.25, function() {
+        die();
+        frameTimeout = null;
+      });
+      // window.setTimeout(die, 250);
 
     }
 
@@ -4452,6 +4462,12 @@
     }
 
     function animate() {
+
+      if (frameTimeout) {
+        // pending die()
+        frameTimeout.animate();
+        return false;
+      }
 
       if (data.dead) {
         return true;
@@ -4585,10 +4601,10 @@
 
       if (dom.o) {
         utils.css.add(dom.o, className);
-        // TODO: use single timer for all bombs
-        window.setTimeout(function() {
+        data.deadTimer = new FrameTimeout(FPS * 0.5, function() {
           removeNodes(dom);
-        }, 750);
+          data.deadTimer = null;
+        });
       }
 
       data.dead = true;
@@ -4648,10 +4664,14 @@
 
         collisionTest(collision, exports);
 
+      } else if (data.deadTimer) {
+
+        data.deadTimer.animate();
+
       }
 
       // notify caller if dead, and node has been removed.
-      return (data.dead && !dom.o);
+      return (data.dead && !data.deadTimer && !dom.o);
 
     }
 
@@ -4685,6 +4705,7 @@
     });
 
     data = inheritData({
+      deadTimer: null,
       firstFrame: true,
       width: 13,
       height: 12,
@@ -7001,9 +7022,10 @@
       shrapnelExplosion(data);
 
       // timeout?
-      window.setTimeout(function() {
+      data.deadTimer = new FrameTimeout(FPS, function() {
         removeNodes(dom);
-      }, 1000);
+        data.deadTimer = null;
+      });
 
       data.energy = 0;
 
@@ -7066,9 +7088,13 @@
         // start, or stop firing?
         nearbyTest(nearby);
 
+      } else if (data.deadTimer) {
+
+        data.deadTimer.animate();
+
       }
 
-      return (data.dead && !dom.o && !objects.gunfire.length);
+      return (data.dead && !data.deadTimer && !dom.o && !objects.gunfire.length);
 
     }
 
@@ -7114,6 +7140,7 @@
     data = inheritData({
       type: 'tank',
       bottomAligned: true,
+      deadTimer: null,
       energy: 8,
       energyMax: 8,
       frameCount: 0,
@@ -7238,10 +7265,11 @@
       shrapnelExplosion(data);
 
       // timeout?
-      window.setTimeout(function() {
+      data.deadTimer = new FrameTimeout(FPS, function() {
         removeNodes(dom);
         radarItem.die();
-      }, 1000);
+        data.deadTimer = null;
+      });
 
       data.energy = 0;
 
@@ -7335,9 +7363,13 @@
 
         data.frameCount++;
 
+      } else if (data.dead && data.deadTimer) {
+
+        data.deadTimer.animate();
+
       }
 
-      return data.dead;
+      return (data.dead && !data.deadTimer);
 
     }
 
@@ -7374,6 +7406,7 @@
     data = inheritData({
       type: 'van',
       bottomAligned: true,
+      deadTimer: null,
       frameCount: 0,
       radarJammerModulus: 50,
       jamming: false,
@@ -7471,7 +7504,10 @@
         utils.css.add(dom.o, css.exploding);
 
         // timeout?
-        window.setTimeout(dieComplete, 1200);
+        data.deadTimer = new FrameTimeout(FPS * 1.2, function() {
+          data.deadTimer = null;
+          dieComplete();
+        });
 
       } else {
 
@@ -7632,9 +7668,13 @@
 
         data.frameCount++;
 
+      } else if (data.deadTimer) {
+
+        data.deadTimer.animate();
+
       }
 
-      return (data.dead && !dom.o);
+      return (data.dead && !data.deadTimer && !dom.o);
 
     }
 
@@ -7791,7 +7831,10 @@
         utils.css.add(dom.o, css.exploding);
 
         // timeout?
-        window.setTimeout(dieComplete, 1200);
+        data.deadTimer = new FrameTimeout(FPS * 1.2, function() {
+          dieComplete();
+          data.deadTimer = null;
+        });
 
       } else {
 
@@ -7842,7 +7885,7 @@
 
       data.frameCount++;
 
-      return (data.dead && !dom.o && !objects.gunfire.length);
+      return (data.dead && !data.deadTimer && !dom.o && !objects.gunfire.length);
 
     }
 
@@ -7881,6 +7924,7 @@
 
     data = inheritData({
       type: 'infantry',
+      deadTimer: null,
       frameCount: 0,
       bottomAligned: true,
       energy: 2,
@@ -8169,10 +8213,10 @@
 
       shrapnelNoise();
 
-      // timeout?
-      window.setTimeout(function() {
+      data.deadTimer = new FrameTimeout(FPS * 0.2, function() {
         removeNodes(dom);
-      }, 200);
+        data.deadTimer = null;
+      });
 
       data.energy = 0;
 
@@ -8224,9 +8268,13 @@
 
         data.frameCount++;
 
-      }      
+      } else if (data.deadTimer) {
 
-      return data.dead && !dom.o;
+        data.deadTimer.animate();
+
+      }
+
+      return (data.dead && !data.deadTimer && !dom.o);
 
     }
 
@@ -8886,6 +8934,57 @@
 
   };
 
+  FrameTimeout = function(frameInterval, callback) {
+
+    /**
+     * basic frame-based counter / "in X frames, do something"
+     * cleaner alternate to setTimeout() / setInterval trickery
+     * that conveniently uses existing frame-based animation.
+     */
+
+    var data, exports;
+
+    data = {
+      frameCount: 0,
+      frameInterval: Math.floor(frameInterval, 10),
+      callbackFired: false
+    };
+
+    function animate() {
+
+      data.frameCount++;
+
+      if (data.frameCount >= data.frameInterval && !data.callbackFired) {
+
+        callback();
+
+        data.callbackFired = true;
+
+        return true;
+
+      }
+
+      return false;
+
+    }
+
+    function reset() {
+
+      data.frameCount = 0;
+      data.callbackFired = false;
+
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      reset: reset
+    };
+
+    return exports;
+
+  };
+
   // recycled from survivor.js
 
   keyboardMonitor = (function() {
@@ -9531,7 +9630,7 @@
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
         var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 60];
-        var i=0;
+        var i = 0;
 
         function orderNextItem() {
 
@@ -9680,7 +9779,7 @@
 
       // infer game type from link, eg., #tutorial
 
-      var target = (e.target || event.sourceElement),
+      var target = (e.target || window.event.sourceElement),
           param;
 
       if (target && target.href) {
