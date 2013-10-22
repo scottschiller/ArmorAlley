@@ -1150,6 +1150,7 @@ ul.stats-bar .bombs em {
 	left: 0px;
 	width: 100%;
 	margin-bottom: -2em;
+	font-size: 0.94em; /* fit at 1024px width */
 	color: #666;
 }
 
