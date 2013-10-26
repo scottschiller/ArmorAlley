@@ -1260,9 +1260,11 @@ ul.stats-bar .bombs em {
 	left: 50%;
 	margin: -0.5em auto 0px -400px;
 	padding: 0px;
-	font-size: 1.1em;
+	font-size: 1.25em;
 	line-height: 1.5em;
 	width: 800px;
+	font-weight: 100; /* neueueue */
+	letter-spacing: 0.04em; /* a little odd */
 	overflow: hidden;
 	display: none;
 }
@@ -1292,6 +1294,8 @@ ul.stats-bar .bombs em {
 
 #world.tutorial-mode #game-tips .tips-container {
 	margin-top: -5em;
+	font-size: 1.1em;
+	line-height: 1.5em;
 }
 
 #game-tips #game-announcements {
