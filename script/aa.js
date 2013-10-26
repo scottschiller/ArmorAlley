@@ -389,6 +389,7 @@
 
     game.objects.queue.add(function() {
       node.parentNode.removeChild(node);
+      node = null;
     });
 
   }
@@ -9830,6 +9831,11 @@
   function init() {
 
     // late addition: tutorial vs. regular game mode
+
+    // hackish: no-trasform CSS tweak
+    if (noTransform) {
+      utils.css.add(document.body, 'no-transform');
+    }
 
     startGame();
 

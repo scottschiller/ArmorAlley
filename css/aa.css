@@ -28,6 +28,15 @@ body {
  cursor: url(../image/cursor-cross.png), crosshair;
 }
 
+body.no-transform #stars,
+body.no-transform #world-overlay,
+body.no-transform .sprite {
+	/* unsupported or GPU disable override via #notransform=1 */
+	-moz-transform: none !important;
+	-webkit-transform: none !important;
+	transform: none !important;
+}
+
 #world-overlay {
 	position: absolute;
 	top: 0px;
