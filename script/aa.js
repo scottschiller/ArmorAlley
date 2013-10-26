@@ -99,6 +99,8 @@
 
   var FrameTimeout;
 
+  var Queue;
+
   var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
   var shrapnelExplosion;
@@ -161,50 +163,6 @@
   }
 
   utils = {
-
-    /*
-    object: (function() {
-
-      var exports;
-
-      function destroy(object) {
-
-        var item;
-
-        for (item in object) {
-
-          if (object.hasOwnProperty(item)) {
-
-            if (object[item] instanceof Object) {
-
-              // to understand recursion, one must first understand recursion.
-              object[item] = destroy(object[item]);
-
-            } else {
-
-              // destroy
-              object[item] = null;
-
-            }
-
-          }
-
-        }
-
-        console.log('object destroyed', object);
-
-        return object;
-
-      };
-
-      exports = {
-        destroy: destroy
-      };
-
-      return exports;
-
-    }()),
-    */
 
     array: (function() {
 
@@ -424,29 +382,48 @@
 
   };
 
+  function removeNode(node) {
+
+    // hide immediately
+    node.style.display = 'none';
+
+    game.objects.queue.add(function() {
+      node.parentNode.removeChild(node);
+    });
+
+  }
+
   function removeNodeArray(nodeArray) {
 
     var i, j;
 
-    // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
-    // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
-
-    j = nodeArray.length;
-
-    // separate loop to hide first?
-    /*
     for (i=0; i<j; i++) {
       nodeArray[i].style.display = 'none';
     }
-    */
 
-    for (i=0; i<j; i++) {
-      // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
-      // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
-      // nodeArray[i].style[features.transform.prop] = 'none';
-      nodeArray[i].parentNode.removeChild(nodeArray[i]);
-      nodeArray[i] = null;
-    }
+    game.objects.queue.add(function() {
+
+      // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
+      // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
+
+      j = nodeArray.length;
+
+      // separate loop to hide first?
+      /*
+      for (i=0; i<j; i++) {
+        nodeArray[i].style.display = 'none';
+      }
+      */
+
+      for (i=0; i<j; i++) {
+        // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
+        // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
+        // nodeArray[i].style[features.transform.prop] = 'none';
+        nodeArray[i].parentNode.removeChild(nodeArray[i]);
+        nodeArray[i] = null;
+      }
+
+    });
 
   }
 
@@ -473,7 +450,8 @@
           // reset className?
           dom[item].className = '';
           */
-          dom[item].parentNode.removeChild(dom[item]);
+          removeNode(dom[item]);
+          // dom[item].parentNode.removeChild(dom[item]);
         }
         dom[item] = null;
       }
@@ -4914,6 +4892,21 @@
 
     }
 
+    function hideTrailers() {
+
+      var i, j;
+
+      for (i=0, j=data.trailerCount; i<j; i++) {
+
+        // if previous X value exists, apply it
+        if (data.xHistory[i]) {
+          dom.trailers[i].style.display = 'none';
+        }
+
+      }
+
+    }
+
     function spark() {
       utils.css.add(dom.o, css.spark);
     }
@@ -4937,6 +4930,7 @@
 
         // timeout?
         data.deadTimer = window.setTimeout(function() {
+          hideTrailers();
           removeNodes(dom);
           radarItem.die();
         }, 250);
@@ -7817,7 +7811,6 @@
 
     function dieComplete() {
       removeNodes(dom);
-      radarItem.die();
     }
 
     function die(silent) {
@@ -7842,6 +7835,8 @@
 
       }
 
+      radarItem.die();
+
       data.energy = 0;
 
       data.dead = true;
@@ -7851,6 +7846,10 @@
     function animate() {
 
       var i;
+
+      if (data.deadTimer) {
+        data.deadTimer.animate();
+      }
 
       if (!data.dead) {
 
@@ -8934,6 +8933,65 @@
 
   };
 
+  Queue = function() {
+
+    var data, exports;
+
+    data = {
+      frameCount: 0,
+      processInterval: FPS * 3,
+      queue: [],
+      queueMax: 128
+    };
+
+    function add(callback) {
+
+      // reset frameCount on add?
+      data.frameCount = 0;
+      data.queue.push(callback);
+
+      if (data.queue.length >= data.queueMax) {
+        // flush the queue
+        process();
+      }
+
+    }
+
+    function process() {
+
+      // process all items in queue
+      var i, j;
+
+      for (i=0, j=data.queue.length; i<j; i++) {
+        data.queue[i]();
+      }
+
+      // reset the queue + counter
+      data.queue = [];
+      data.frameCount = 0;
+
+    }
+
+    function animate() {
+
+      data.frameCount++;
+
+      if (data.frameCount % data.processInterval === 0) {
+        process();
+      }
+
+    }
+
+    exports = {
+      add: add,
+      animate: animate,
+      process: process
+    };
+
+    return exports;
+
+  };
+
   FrameTimeout = function(frameInterval, callback) {
 
     /**
@@ -8946,7 +9004,7 @@
 
     data = {
       frameCount: 0,
-      frameInterval: Math.floor(frameInterval, 10),
+      frameInterval: parseInt(frameInterval, 10),
       callbackFired: false
     };
 
@@ -9256,6 +9314,8 @@
       var i;
 
       objects.gameLoop = new GameLoop();
+
+      objects.queue = new Queue();
 
       objects.view = new View();
 
@@ -9695,7 +9755,8 @@
       smoke: [],
       radar: null,
       inventory: null,
-      tutorial: null
+      tutorial: null,
+      queue: null
     };
 
     objectConstructors = {
