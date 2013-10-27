@@ -4635,6 +4635,8 @@
 
     function bombHitTarget(target) {
 
+      var isSpark;
+
       if (target.data.type && target.data.type === 'balloon') {
 
         die({
@@ -4644,9 +4646,12 @@
 
       } else {
 
+        // certain targets should get a spark vs. a large explosion
+        isSpark = target.data.type && target.data.type.match(/balloon|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i);
+
         die({
-          // certain targets should get a spark vs. a large explosion
-          spark: (target.data.type && target.data.type.match(/balloon|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i)),
+          spark: isSpark,
+          bottomAlign: !isSpark,
           // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
           extraY: (target.data.type && target.data.type.match(/tank/i) ? 3 + parseInt(Math.random() * 3, 10) : 0)
         });
