@@ -4635,7 +4635,11 @@
 
     function bombHitTarget(target) {
 
-      var isSpark;
+      var isSpark,
+          damagePoints;
+
+      // assume default
+      damagePoints = data.damagePoints;
 
       if (target.data.type && target.data.type === 'balloon') {
 
@@ -4658,9 +4662,24 @@
 
       }
 
-      // special case: one bomb kills a helicopter. otherwise, normal hit damaage.
-      common.hit(target, target.data.type && target.data.type === 'helicopter' ? target.data.maxEnergy : data.damagePoints);
+      // special cases for bomb -> target interactions
+      if (target.data.type) {
 
+        if (target.data.type === 'helicopter') {
+
+          // one bomb kills a helicopter.
+          damagePoints = target.data.maxEnergy;
+
+        } else if (target.data.type === 'turret') {
+
+          // bombs do more damage on turrets.
+          damagePoints = 10;
+
+        }
+
+      }
+
+      common.hit(target, damagePoints);
 
     }
 
