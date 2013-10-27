@@ -4591,11 +4591,20 @@
         playSound(sounds.genericBoom, exports);
       }
 
-      className = (Math.random () > 0.5 ? css.explosionLarge : css.spark);
+      // bombs blow up big on the ground, and "spark" on other things.
+      className = (!options.spark ? css.explosionLarge : css.spark);
 
-      if (!options.retainPosition) {
+      if (options.bottomAlign) {
+
         // stick this explosion to the bottom.
         className += ' bottom-align';
+
+      } else if (options.extraY) {
+
+        // move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
+        data.y += 3 + parseInt(Math.random() * 3, 10);
+        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+
       }
 
       if (dom.o) {
@@ -4627,16 +4636,26 @@
     function bombHitTarget(target) {
 
       if (target.data.type && target.data.type === 'balloon') {
+
         die({
           omitSound: true,
-          retainPosition: true
+          spark: true
         });
+
+      } else {
+
+        die({
+          // certain targets should get a spark vs. a large explosion
+          spark: (target.data.type && target.data.type.match(/balloon|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i)),
+          // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
+          extraY: (target.data.type && target.data.type.match(/tank/i) ? 3 + parseInt(Math.random() * 3, 10) : 0)
+        });
+
       }
 
-      // special case: one bomb kills a helicopter.
-      common.hit(target, target.data.type === 'helicopter' ? 999 : data.damagePoints);
+      // special case: one bomb kills a helicopter. otherwise, normal hit damaage.
+      common.hit(target, target.data.type && target.data.type === 'helicopter' ? target.data.maxEnergy : data.damagePoints);
 
-      die();
 
     }
 
@@ -4658,7 +4677,9 @@
 
         // hit bottom?
         if (data.y - data.height > game.objects.view.data.battleField.height) {
-          die();
+          die({
+            bottomAlign: true
+          });
         }
 
         collisionTest(collision, exports);
