@@ -691,18 +691,23 @@
     hit: function(exports, hitPoints) {
 
       if (!exports.data.dead) {
+
         hitPoints = hitPoints || 1;
+
         exports.data.energy -= hitPoints;
+
         // special cases for updating state
         if (exports.updateHealth) {
           exports.updateHealth();
         }
+
         if (exports.data.energy <= 0) {
           exports.data.energy = 0;
           if (exports.die) {
             exports.die();
           }
         }
+
       }
 
     }
@@ -3518,11 +3523,15 @@
     var css, data, dom, objects, radarItem, exports;
 
     function okToMove() {
+
       // guns scan and fire 100% of the time, OR a random percent bias based on the amount of damage they've sustained. No less than 25% of the time.
+
       if (data.energy === 0) {
         return false;
       }
+
       return (data.energy === data.energyMax || (1 - Math.random() < (Math.max(0.25, data.energy / data.energyMax))));
+
     }
 
     function setAngle(angle) {
@@ -4376,14 +4385,19 @@
     }
 
     function spark() {
+
       utils.css.add(dom.o, css.spark);
+
       // randomize a little
+
       if (Math.random() > 0.5) {
         dom.o.style.marginLeft = randomDistance();
       }
+
       if (Math.random() > 0.5) {
         dom.o.style.marginTop = randomDistance();
       }
+
     }
 
     function die() {
@@ -4411,10 +4425,17 @@
       utils.css.add(dom.o, css.dead);
 
       if (target) {
+
+        // special case: tanks hit turrets for a lot of damage.
+        if (data.parentType === 'tank' && target.data.type === 'turret') {
+          data.damagePoints = 5;
+        }
+
         // special case: tanks are impervious to infantry gunfire.
         if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && target.data.type === 'end-bunker')) {
           common.hit(target, data.damagePoints);
         }
+
       }
 
       // and cleanup shortly.
@@ -4422,7 +4443,6 @@
         die();
         frameTimeout = null;
       });
-      // window.setTimeout(die, 250);
 
     }
 
@@ -4515,7 +4535,7 @@
       width: 2,
       height: 1,
       gravity: 1,
-      damagePoints: 1
+      damagePoints: options.damagePoints || 1
     }, options);
 
     dom = {
@@ -6980,19 +7000,28 @@
     }
 
     function updateHealth() {
+
       // smouldering, etc.
       // TODO: optimize class swapping
+
       if (data.energy <= 3) {
+
         utils.css.add(dom.o, css.hit2);
         utils.css.remove(dom.o, css.hit1);
+
       } else if (data.energy < 6) {
+
         utils.css.add(dom.o, css.hit1);
         utils.css.remove(dom.o, css.hit2);
+
       } else {
+
         // TODO: optimize
         utils.css.remove(dom.o, css.hit1);
         utils.css.remove(dom.o, css.hit2);
+
       }
+
     }
 
     function repair() {
@@ -7185,7 +7214,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'endBunkers'],
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'turrets', 'helicopters', 'endBunkers'],
       targets: []
     };
 
@@ -8666,15 +8695,25 @@
 
         activate: function() {
 
-          if (!game.objects.bunkers[0].data.dead) {
+          var targetBunker,
+              i, j;
+
+          for (i=0, j=game.objects.bunkers.length; i<j; i++) {
+
+             if (!game.objects.bunkers[i].data.dead) {
+               targetBunker = game.objects.bunkers[i];
+               break;
+             }
+
+          }
+
+          if (targetBunker) {
 
             // ensure the first bunker is an enemy one.
-            game.objects.bunkers[0].capture(true);
+            targetBunker.capture(true);
 
             // ... and has a balloon
-            game.objects.bunkers[0].repair();
-
-            game.objects.helicopters[0].updateStatusUI();
+            targetBunker.repair();
 
             // keep track of original bunker states
             temp = countSides('bunkers');
