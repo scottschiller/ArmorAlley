@@ -591,6 +591,11 @@ ul.stats-bar .bombs em {
 	height: 11px;
 }
 
+#world .parachute-infantry.enemy {
+	background-image: url(../image/parachute-infantry-enemy.png);
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAABkCAYAAAC2JwHtAAAA8UlEQVR42u2WawqEMAyEde/YS3YPWZlfYTtNp8FFUDMw+MpXqg1Tt05NeHMBR+4AbVE/YAuDMEFaBor3ESAB9OEYhAlk0zsO4QoLqIcJrLV2EIkLSynLEIphnMMKNsg5n4M4DornoDNdWl81XTHNf4GlwDY1uxag8Hll5twuc5waqLv5/eywCCoakUCConnTMm8ybzJznvyfI7KHvqrKnvzXyewxX5o3i2sId8ujuiYOTpYCDjW5sytrWAEajEA4whLWfQprMNSrXCQ7Z1iUepXONwJFxyrEoME331Tx8IpNVQcyHIgNGigUGzqoMoNeqgNSZgUbRNhcMAAAAABJRU5ErkJggg==);
+}
+
 #world .parachute-infantry.parachute-open {
 	background-position: 0px 0px;
 	height: 19px;
