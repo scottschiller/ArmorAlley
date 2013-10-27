@@ -4301,11 +4301,49 @@
 
       data.frameCount++;
 
+      if (data.frameTimeout) {
+        data.frameTimeout.animate();
+      }
+
       if (!data.dead) {
 
         moveTo(data.x + data.vX, data.bottomY);
 
-        // fire?
+        if (data.orderComplete) {
+
+          // regular timer or back wheel bump
+          if (data.frameCount % data.stateModulus === 0) {
+
+            data.state++;
+
+            if (data.state > data.stateMax) {
+              data.state = 0;
+            }
+
+            // reset frameCount (timer)
+            data.frameCount = 0;
+
+            // first wheel, delay, then a few frames until we animate the next two.
+            if (data.state === 1 || data.state === 3) {
+              data.stateModulus = 36;
+            } else {
+              data.stateModulus = 4;
+            }
+
+            data.frameCount = 0;
+
+            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+
+          } else if (data.frameCount % data.stateModulus === 2) {
+
+            // next frame - reset.
+            dom.o.style.backgroundPosition = '0px 0px';
+
+          }
+
+        }
+
+        // (maybe) fire?
         fire();
 
       }
@@ -4327,6 +4365,19 @@
       common.setX(exports, data.x);
       common.setBottomY(exports, data.bottomY);
 
+      data.frameTimeout = new FrameTimeout(FPS * 2, function() {
+
+        // hackish redraw fix for Chrome, where backgroundPosition otherwise doesn't take effect.
+        if (dom.o && features.transform.prop) {
+          dom.o.style.left = data.x + 'px';
+          dom.o.style.top = (data.y-2) + 'px';
+        }
+
+        data.orderComplete = true;
+        data.frameTimeout = null;
+
+      });
+
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -4346,9 +4397,14 @@
       direction: 0,
       vX: (options.isEnemy ? -1 : 1),
       frameCount: 0,
+      frameTimeout: null,
       fireModulus: FPS, // check every second or so
       width: 54,
       height: 18,
+      orderComplete: false,
+      state: 0,
+      stateMax: 3,
+      stateModulus: 38,
       inventory: {
         frameCount: 60,
         cost: 3
@@ -7402,7 +7458,7 @@
 
               dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
 
-            } else if (data.frameCount % data.stateModulus === 4) {
+            } else if (data.frameCount % data.stateModulus === 2) {
 
               // next frame - reset.
               dom.o.style.backgroundPosition = '0px 0px';
@@ -7487,7 +7543,7 @@
       height: 16,
       state: 0,
       stateMax: 2,
-      stateModulus: 38,
+      stateModulus: 30,
       inventory: {
         frameCount: 60,
         cost: 2
