@@ -2152,11 +2152,13 @@
 
     var css, data, dom, oParent, exports;
 
-    function die() {
+    function die(dieOptions) {
 
       if (!data.dead) {
 
-        utils.css.add(dom.o, css.dying);
+        if (!dieOptions || !dieOptions.silent) {
+          utils.css.add(dom.o, css.dying);
+        }
 
         data.dead = true;
 
@@ -2167,7 +2169,7 @@
             game.objects.radar.removeItem(exports);
             dom.o = null;
             options.o = null;
-          }, 2000);
+          }, (dieOptions && dieOptions.silent ? 1 : 2000));
 
         } else {
 
@@ -7614,7 +7616,9 @@
     function dieComplete() {
 
       removeNodes(dom);
-      radarItem.die();
+      radarItem.die({
+        silent: true
+      });
 
     }
 
