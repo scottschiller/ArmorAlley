@@ -1418,6 +1418,12 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 	line-height: 1.5em;
 }
 
+#world.tutorial-mode #game-tips .tips-container h3 {
+	font-size: 2em;
+	font-weight: 200;
+	margin-bottom: 0.75em;
+}
+
 #game-tips #game-announcements {
 	width: 95%;
 	margin: 0px auto;
