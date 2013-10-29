@@ -565,6 +565,10 @@ ul.stats-bar .bombs em {
 	z-index: 2;
 }
 
+#world .infantry.stopped {
+	background-image: url(data:image/gif;base64,R0lGODlhCgALAPIFAAAAAAVVAVVVAQ6qAqsCAQAAAAAAAAAAACH5BAUIAAUALAAAAAAKAAsAAAMmWAoM+gUQ4mCc9bHQ2BoBGHAfB5gf2CyA6EUtNwxe3KiRIDS6kwAAOw==);
+}
+
 #world .infantry.enemy {
 	background-image: url(../image/infantry-enemy.gif);
 	background-image: url(data:image/gif;base64,R0lGODlhCwALAPIFAAAAAFVVAVVVVaqqqqsCAf///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJDQAFACwAAAAACwALAEADJlgKDPpsCCBZoSNn9xYhHBRVHRAEjomWX3g1lLXEmPtKU0jlu5MAACH5BAkNAAUALAAAAAAJAAsAAAMjWAoM+oAQ90qcq4HB7Pigw3Abl5UCZW1CSrFfugxpELy2lgAAIfkECQ0ABgAsAAAAAAgACwAAAx9oCgy6hLgHomtstFGG14yQacY2iNSJLupUngwVBE4CACH5BAUNAAUALAAAAAAIAAsAAAMeWAoMuoS4B6JrbLTB+85asQ3CJJIlxaULQJpiEAAJACH5BAUNAAQALAIABwAHAAQAAAMMCLQMIw2E4AS4d4IEADs=);
@@ -572,14 +576,26 @@ ul.stats-bar .bombs em {
 	height: 11px;
 }
 
+#world .infantry.enemy.stopped {
+	background-image: url(data:image/gif;base64,R0lGODlhCwALAPIFAAAAAFVVAVVVVaqqqqsCAQAAAAAAAAAAACH5BAUNAAUALAAAAAALAAsAAAMmWAoM+osQB+OEjQ32wPggVWjahpWCuHhCKmrp4C5yUy9B4AC5kwAAOw==);
+}
+
 #world .engineer {
 	background-image: url(../image/engineer.gif);
 	background-image: url(data:image/gif;base64,R0lGODlhCgALAPIHAFVVAQVVAQAAAA6qAqsCAf///6qqqgAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCAAHACwAAAAACgALAAADJngqLHpNEOJWKZI+UYwIEdMNARmAnEEyaDOszGZW8kkv8LMAwJ0AACH5BAUIAAQALAEABgAHAAUAAAMOKBLUHmEoFaEaEgClp0gAIfkECQgABAAsAAAGAAkABQAAAxAoOhMqZAUHpWCvZQrA60ICACH5BAkIAAQALAAABgAJAAUAAAMSKDoTKmQFByMLrQoARCbRw0EJACH5BAUIAAQALAAABgAJAAUAAAMRKDoTKoSI5mKcodqlNwAQkQAAOw==);
 }
 
+#world .engineer.stopped {
+	background-image: url(data:image/gif;base64,R0lGODlhCgALAPIHAA6qAgVVAQAAAFVVAasCAf///6qqqgAAACH5BAUIAAcALAAAAAAKAAsAAAMqeCosek0Q4lYpkj5RjAgR0wEBGYCcQTJoA6zMIpgxNINvfLsgNAyNnyMBADs=);
+}
+
 #world .engineer.enemy {
 	background-image: url(../image/engineer-enemy.gif);
 	background-image: url(data:image/gif;base64,R0lGODlhCwALAPIGAAAAAFVVAVVVVaqqqqsCAf///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJDQAGACwAAAAACwALAEADKWgKDPpsCCCZoSPr4iAhQMEtUWVdQeAAabd8zRoP1BiVw0hKk0v1P0cCACH5BAkNAAYALAAAAAAKAAsAAAMoaAoM+gYQ0tyaoJTKBhjbN4xk+HXjFqFCs3xCa0WDMLYPDATBvPeuBAAh+QQJDQAGACwAAAAACgALAAADKGgKDPoGENLcmqCUygYY21cMJBkCQmc6DZkyzyekUDTMVnzDEBAEuQQAIfkEBQ0ABgAsAAAAAAoACwAAAyVoCgz6BhDS3JqglMoGGNs3jGT4deMWoULzfEILRaMMdfYdBFYCACH5BAUNAAQALAIABwAHAAQAAAMMCLQMIw2E4AS4d4IEADs=);
+}
+
+#world .engineer.enemy.stopped {
+	background-image: url(data:image/gif;base64,R0lGODlhCwALAPIGAAAAAFVVAVVVVaqqqqsCAf///wAAAAAAACH5BAUNAAYALAAAAAALAAsAQAMpaAoM+mwIIJmhI+viICFAwS1RZV1B4ABpt3zNGg/UGJXDSEqTS/U/RwIAOw==);
 }
 
 #world .parachute-infantry {
