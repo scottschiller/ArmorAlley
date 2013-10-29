@@ -4710,7 +4710,7 @@
       } else {
 
         // certain targets should get a spark vs. a large explosion
-        isSpark = target.data.type && target.data.type.match(/balloon|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i);
+        isSpark = target.data.type && target.data.type.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i);
 
         die({
           spark: isSpark,
