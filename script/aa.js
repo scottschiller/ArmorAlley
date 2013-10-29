@@ -3989,7 +3989,7 @@
       bottomAligned: true,
       dead: false,
       frameCount: 0,
-      fireModulus: tutorialMode ? FPS * 5 : 100,
+      fireModulus: tutorialMode ? FPS * 5 : FPS * 2,
       // left side, or right side (roughly)
       x: (options.x || (options.isEnemy ? 8192 - 192: 64)),
       y: 0,
@@ -8066,7 +8066,7 @@
       width: 10,
       height: 11,
       gunYOffset: 9,
-      fireModulus: 8,
+      fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
