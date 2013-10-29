@@ -2798,7 +2798,6 @@
       if (data.dead && dom.o) {
         // hide the balloon
         utils.css.swap(dom.o, css.exploding, css.dead);
-        radarItem.die();
       }
       if (data.deadTimer) {
         data.deadTimer = null;
@@ -2812,6 +2811,7 @@
         if (sounds.balloonExplosion) {
           playSound(sounds.balloonExplosion, exports);
         }
+        radarItem.die();
         data.deadTimer = new FrameTimeout(FPS * 0.55, function() {
           dead();
           data.deadTimer = null;
@@ -4240,12 +4240,13 @@
       // timeout?
       window.setTimeout(function() {
         removeNodes(dom);
-        radarItem.die();
       }, 1000);
 
       data.energy = 0;
 
       data.dead = true;
+
+      radarItem.die();
 
       if (sounds.genericExplosion) {
         playSound(sounds.genericExplosion, exports);
@@ -5056,10 +5057,11 @@
         data.deadTimer = window.setTimeout(function() {
           hideTrailers();
           removeNodes(dom);
-          radarItem.die();
         }, 250);
 
         data.energy = 0;
+
+        radarItem.die();
 
       }
 
@@ -5920,7 +5922,6 @@
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
-        radarItem.die();
         // undo rotate, if needed
         if (data.autoRotate && data.rotated) {
           rotate(true);
@@ -5930,6 +5931,8 @@
       data.energy = 0;
 
       data.dead = true;
+
+      radarItem.die();
 
       if (sounds.explosionLarge) {
           playSound(sounds.explosionLarge, exports);
@@ -7394,7 +7397,6 @@
       // timeout?
       data.deadTimer = new FrameTimeout(FPS, function() {
         removeNodes(dom);
-        radarItem.die();
         data.deadTimer = null;
       });
 
@@ -7403,6 +7405,8 @@
       data.jamming = false;
 
       data.dead = true;
+
+      radarItem.die();
 
       if (sounds.genericExplosion2) {
         playSound(sounds.genericExplosion2, exports);
@@ -7616,9 +7620,6 @@
     function dieComplete() {
 
       removeNodes(dom);
-      radarItem.die({
-        silent: true
-      });
 
     }
 
@@ -7648,6 +7649,10 @@
       data.energy = 0;
 
       data.dead = true;
+
+      radarItem.die({
+        silent: true
+      });
 
     }
 
@@ -7970,11 +7975,11 @@
 
       }
 
-      radarItem.die();
-
       data.energy = 0;
 
       data.dead = true;
+
+      radarItem.die();
 
     }
 
