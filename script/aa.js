@@ -4638,6 +4638,20 @@
 
     var css, data, dom, collision, exports;
 
+    function moveTo(x, y) {
+
+      if (x !== undefined && data.x !== x) {
+        common.setX(exports, x);
+        data.x = x;
+      }
+
+      if (y !== undefined && data.y !== y) {
+        common.setY(exports, y);
+        data.y = y;
+      }
+
+    }
+
     function die(options) {
 
       // aieee!
@@ -4681,20 +4695,6 @@
       }
 
       data.dead = true;
-
-    }
-
-    function moveTo(x, y) {
-
-      if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
-        data.x = x;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
-        data.y = y;
-      }
 
     }
 
@@ -9100,19 +9100,6 @@
       queueMax: 128
     };
 
-    function add(callback) {
-
-      // reset frameCount on add?
-      data.frameCount = 0;
-      data.queue.push(callback);
-
-      if (data.queue.length >= data.queueMax) {
-        // flush the queue
-        process();
-      }
-
-    }
-
     function process() {
 
       // process all items in queue
@@ -9125,6 +9112,19 @@
       // reset the queue + counter
       data.queue = [];
       data.frameCount = 0;
+
+    }
+
+    function add(callback) {
+
+      // reset frameCount on add?
+      data.frameCount = 0;
+      data.queue.push(callback);
+
+      if (data.queue.length >= data.queueMax) {
+        // flush the queue
+        process();
+      }
 
     }
 
