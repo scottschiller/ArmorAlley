@@ -61,8 +61,11 @@
 
   var isWebkit = ua.match(/webkit/i);
   var isChrome = (isWebkit && ua.match(/chrome/i));
+  var isFirefox = ua.match(/firefox/i);
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
   var isOldIE = (navigator.userAgent.match(/MSIE [6-8]/i));
+
+  var useParallax = winloc.match(/parallax/i);
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
@@ -1648,7 +1651,10 @@
         // aim for GPU-based scrolling...
         dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.battleField.scrollLeft, 10) * -1) + 'px, 0px, 0px)';
         // ... and parallax.
-        dom.stars.style[features.transform.prop] = 'translate3d(' + parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px, 0px, 0px)';
+        if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
+          // firefox text rendering really doesn't look nice when translating the stars.
+          dom.stars.style[features.transform.prop] = 'translate3d(' + parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px, 0px, 0px)';
+        }
       } else {
         // move via margin + background position
         dom.battleField.style.marginLeft = -parseInt(data.battleField.scrollLeft, 10) + 'px';
