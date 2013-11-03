@@ -7407,6 +7407,9 @@
 
       utils.css.add(dom.o, css.exploding);
 
+      // revert to CSS rules, prevent first frame of explosion from sticking
+      dom.o.style.backgroundPosition = '0px -384px';
+
       shrapnelExplosion(data);
 
       // timeout?
