@@ -323,7 +323,7 @@ ul.stats-bar li {
 ul.stats-bar em {
  position: relative;
  display: inline-block;
- text-indent: -999em;
+ line-height: 3em;
  overflow: hidden;
  vertical-align: middle;
 }
@@ -367,13 +367,6 @@ ul.stats-bar .bombs em {
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAALCAYAAAC6ezfSAAAAKklEQVQIW2P4DwQMQLBq1ar/DCAOiAHmwBiYMquZGP+DMEgf5RyYAIgGAHvgOaZq6s+EAAAAAElFTkSuQmCC);
  width: 3px;
  height: 11px;
-}
-
-
-#world-wrapper {
-/*
- background: transparent url(../image/star-background.png);
-*/
 }
 
 #top-bar {
@@ -421,7 +414,7 @@ ul.stats-bar .bombs em {
  /* do the GPU thing. */
  -ms-transform: translate3d(0,0,0);
  -webkit-transform: translate3d(0,0,0);
- -transform: translate3d(0,0,0);
+ transform: translate3d(0,0,0);
 }
 
 #world .bunker,
@@ -663,29 +656,17 @@ ul.stats-bar .bombs em {
  filter: FlipH;
  -ms-filter: "FlipH";
  -moz-transform: scaleX(-1);
- -o-transform: scaleX(-1);
  -webkit-transform: scaleX(-1);
  transform: scaleX(-1);
 }
 
-/* #world .helicopter.enemy .sub-sprite, */
-/*
-#world .helicopter.facing-left .sub-sprite,
-#world .helicopter.moving-left .sub-sprite,
-*/
 #world .tank.enemy .sub-sprite {
  /* no flip in certain cases */
  filter: none;
  -ms-filter: none;
  -moz-transform: none;
- -o-transform: none;
  -webkit-transform: none;
  transform: none;
-}
-
-#world .van.enemy {
- background-image: url(../image/van-enemy.png);
- background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAwCAMAAABKbPgaAAAAElBMVEUAAABVVVUAAACqqqr/////qgEuNic2AAAAAXRSTlMAQObYZgAAALtJREFUeNrtlFEKxCAMRDdjcv8rb2OIj0Wo32U7IOj0mVgY8pnSrZIoyktm1xotmxrSoobaboajSYsSdgyo2mhRYBE0tNppUYKKgqAm5tUCKpoqH4zbkwMatrB5cPf+EgHlPryrJZVeFwiosk3KakmleExh2BeG+sdoWn5iKSmtXfiFzQa1R/gc9YPtPk3Bdv/N2+Pylp0PeSMwN3k7BcmPQdqvV+E3b38x33Id5xs5PM03HeYbXY6xJIdfcggNcGvSOCwAAAAASUVORK5CYII=);
 }
 
 #world .helicopter {
@@ -712,7 +693,8 @@ body.no-transform #world .helicopter.facing-right.tilt {
  height: 21px;
 }
 
-body.no-transform #world .helicopter.moving-left.tilt {
+body.no-transform #world .helicopter.moving-left.tilt,
+body.no-transform #world .helicopter.moving-left.facing-right.tilt {
  background-image: url(../image/helicopter-lr-tilt-up.gif);
  width: 51px;
  height: 21px;
@@ -720,12 +702,6 @@ body.no-transform #world .helicopter.moving-left.tilt {
 
 body.no-transform #world .helicopter.facing-left.tilt {
  background-image: url(../image/helicopter-rl-tilt-down.gif);
- width: 51px;
- height: 21px;
-}
-
-body.no-transform #world .helicopter.moving-left.facing-right.tilt {
- background-image: url(../image/helicopter-lr-tilt-up.gif);
  width: 51px;
  height: 21px;
 }
@@ -816,10 +792,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-color: #555;
 }
 
-#world .gunfire.dead {
- /* ? */
-}
-
 #world .smart-missile {
  position: absolute;
  width: 16px;
@@ -831,10 +803,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  -moz-transition: -moz-transform 0.2s ease-none;
  -webkit-transition: -webkit-transform 0.2s ease-none;
  transition: transform 0.2s ease-none;
-}
-
-#world .smart-missile.expired {
- /* TODO: review */
 }
 
 #world .smart-missile .sub-sprite {
@@ -1160,7 +1128,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  -webkit-animation: blink 0.5s infinite;
  -moz-animation: blink 0.5s infinite;
  -ms-animation: blink 0.5s infinite;
- -o-animation: blink 0.5s infinite;
  animation: blink 0.5s infinite;
 }
 
@@ -1194,7 +1161,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  -webkit-animation: blink 0.25s infinite;
  -moz-animation: blink 0.25s infinite;
  -ms-animation: blink 0.25s infinite;
- -o-animation: blink 0.25s infinite;
  animation: blink 0.25s infinite;
 }
 
@@ -1261,7 +1227,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(../image/bunker-burning.gif);
  background-image: url(data:image/gif;base64,R0lGODlhNAAJAKEDAAAAAKpVAaqqAv///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJGQADACwAAAAANAAJAAACVZyPqcvtKZ6cLSAR7dI7cRcxWfCFlPOdquk9aYRZmJCmRv2RB/uSAkAKAH62Q44T1DECsx0w+RwqfAgmZkAC/njYoLQrzHqtI8wwJARIhbNz1/xkBwoAIfkECRkAAwAsAAAAADQACQAAAlOcj6nL7SmePGFGJmJVe/qnBZ0xJmVzDunHpedqRFmVCaVrwiYkCoAYAPhgIxEF+CLVDkPkL3hB9KRL0c8XVT2tF+Bze82oAhlhF4DWmLGhMthWAAAh+QQJGQADACwAAAAANAAJAAACU5yPqcvtKd4KUFoRKdKKv1g5WeBZn4mmpRlhFCaUYFKSTA2RAkAGwI4zeGzC3uoQgB2ARp5vhkxulCTeDkppgnpOpy+JGeiuW4A588OkxWAzN1YAADs=);
  background-position: 50% 100%;
- background-repeat: none;
+ background-repeat: no-repeat;
 }
 
 #world .bunker.dead {
@@ -1730,7 +1696,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  display: none;
 }
 
-#game-announcements p.instructions {
+#game-announcements .instructions {
  margin: 0.75em 0px;
 }
 
