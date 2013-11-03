@@ -14,7 +14,9 @@
 Armor Alley: Web Prototype
 
 Copyright (c) 2013, Scott Schiller
-http://schillmania.com/armoralley/
+http://www.schillmania.com/armor-alley/
+http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+http://github.com/scottschiller/ArmorAlley/
 
 Code provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
 http://creativecommons.org/licenses/by-nc/3.0/
