@@ -5596,13 +5596,17 @@
 
     function setFiring(state) {
 
-      data.firing = state;
+      if (state && !data.onLandingPad) {
+        data.firing = state;
+      }
 
     }
 
     function setBombing(state) {
 
-      data.bombing = state;
+      if (state && !data.onLandingPad) {
+        data.bombing = state;
+      }
 
     }
 
