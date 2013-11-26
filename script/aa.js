@@ -10177,14 +10177,29 @@
   // OGG is available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
+  var preferFlash = false;
+
+  if (navigator.userAgent.match(/Version\/7\.0 Safari/i) && !window.location.toString().match(/html5audio/i)) {
+    // https://bugs.webkit.org/show_bug.cgi?id=116145
+    // looks like it will be fixed in a future release. try #html5audio=1 in URL to override/test.
+    console.log('Preferring Flash for audio due to Safari 7.0 HTML5 audio performance bug. https://bugs.webkit.org/show_bug.cgi?id=116145');
+    preferFlash = true;
+    // workaround for SM2, which will ignore preferFlash if MP3 + MP4 are not required.
+    soundManager.audioFormats.mp3.required = true;
+    // needed for good performance in Safari, otherwise multiShot lags a bit.
+    soundManager.setup({
+      useHighPerformance: true
+    });
+  }
+
   soundManager.setup({
     flashVersion: 9,
-    preferFlash: false,
+    preferFlash: preferFlash,
     url: './swf/',
     debugMode: false,
     defaultOptions: {
       volume: 25,
-      multiShot: !!(winloc.match(/multishot/i)),
+      multiShot: true, // !!(winloc.match(/multishot/i)),
       // TODO: move to sound sprites, etc.
       autoLoad: true
     }
