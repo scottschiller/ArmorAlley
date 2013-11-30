@@ -5596,7 +5596,7 @@
 
     function setFiring(state) {
 
-      if (state && !data.onLandingPad) {
+      if (state && (!data.onLandingPad || data.isEnemy)) {
         data.firing = state;
       }
 
@@ -5604,7 +5604,7 @@
 
     function setBombing(state) {
 
-      if (state && !data.onLandingPad) {
+      if (state && (!data.onLandingPad || data.isEnemy)) {
         data.bombing = state;
       }
 
