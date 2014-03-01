@@ -5350,7 +5350,7 @@
 
   Helicopter = function(options) {
 
-    var css, data, dom, events, objects, collision, radarItem, exports;
+    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget;
 
     function cloak() {
 
@@ -5388,9 +5388,6 @@
       }
 
     }
-
-    // TODO: move up top.
-    var lastTarget;
 
     function centerView() {
 
@@ -5596,7 +5593,7 @@
 
     function setFiring(state) {
 
-      if (state && (!data.onLandingPad || data.isEnemy)) {
+      if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
         data.firing = state;
       }
 
@@ -5604,7 +5601,7 @@
 
     function setBombing(state) {
 
-      if (state && (!data.onLandingPad || data.isEnemy)) {
+      if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
         data.bombing = state;
       }
 
