@@ -10176,7 +10176,7 @@
 
   var preferFlash = false;
 
-  if (isSafari && navigator.userAgent.match(/Version\/7/i) && !window.location.toString().match(/html5audio/i)) {
+  if (isSafari && navigator.userAgent.match(/Version\/7\.0/i) && !window.location.toString().match(/html5audio/i)) {
     // https://bugs.webkit.org/show_bug.cgi?id=116145
     // looks like it will be fixed in a future release. try #html5audio=1 in URL to override/test.
     console.log('Preferring Flash for audio due to Safari 7.0 HTML5 audio performance bug. https://bugs.webkit.org/show_bug.cgi?id=116145');
