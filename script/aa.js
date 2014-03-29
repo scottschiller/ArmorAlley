@@ -80,6 +80,9 @@
 
   var deg2Rad = 180/Math.PI;
 
+  // used for various measurements in the game
+  var worldHeight = 380;
+
   var battleOver = false;
 
   var canHideLogo = false;
@@ -89,6 +92,8 @@
   var keyboardMonitor;
 
   var features;
+
+  var getAnimationFrame;
 
   // TODO: move into view
   var screenScale = 1;
@@ -646,6 +651,10 @@
 
   }());
 
+  getAnimationFrame = features.getAnimationFrame ? features.getAnimationFrame: function(callback) {
+    callback();
+  }
+
   common = {
 
     defaultCSS: {
@@ -666,6 +675,25 @@
 
       if (exports && exports.dom) {
         exports.dom.o.style.top = (y + 'px');
+      }
+
+    },
+
+    setBalloonXY: function(exports, bottomY) {
+
+      if (exports && exports.dom) {
+
+        if (features.transform.prop) {
+
+          // top-based Y offset, including bunker / balloon offset
+          common.setTransformXY(exports.dom.o, exports.data.x + 'px', worldHeight - (280 * bottomY / 100) - 12 + 'px');
+
+        } else {
+
+          common.setBottomY(exports, bottomY);
+
+        }
+
       }
 
     },
@@ -2740,7 +2768,7 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
+        common.setTransformXY(dom.o, x + 'px', data.y + 'px');
         data.x = x;
       }
 
@@ -2751,7 +2779,7 @@
 
         if (data.bottomY !== bottomY) {
 
-          common.setBottomY(exports, bottomY);
+          common.setBalloonXY(exports, bottomY);
 
           data.bottomY = bottomY;
 
@@ -2967,9 +2995,12 @@
 
       moveTo(data.x, data.bottomY);
 
-      common.setX(exports, data.x);
+      // assign .style.left only if not doing a transform
+      if (!features.transform.prop) {
+        common.setX(exports, data.x);
+      }
 
-      common.setBottomY(exports, data.bottomY);
+      common.setBalloonXY(exports, data.bottomY);
 
       if (!objects.bunker) {
         detach();
@@ -4119,13 +4150,13 @@
 
           y = objects.balloon.data.y + objects.balloon.data.height;
 
-          height = 380 - y - objects.bunker.data.height + 4;
+          height = worldHeight - y - objects.bunker.data.height + 4;
 
         } else {
 
           // - balloon
 
-          y = 380 - data.height;
+          y = worldHeight - data.height;
 
         }
 
@@ -4148,7 +4179,7 @@
 
           y += 2;
 
-          if (y >= 380 + 2) {
+          if (y >= worldHeight + 2) {
             die();
           }
 
@@ -4906,7 +4937,7 @@
 
       }
 
-      if (380 - data.y - 32 < 64 || data.y < 64) {
+      if (worldHeight - data.y - 32 < 64 || data.y < 64) {
 
         // reverse gears
         data.windOffsetY *= -1;
@@ -4944,7 +4975,7 @@
       windOffsetY: 0,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
-      y: options.y || (96 + parseInt((380 - 96 - 128) * Math.random(), 10)),
+      y: options.y || (96 + parseInt((worldHeight - 96 - 128) * Math.random(), 10)),
       width: 102,
       halfWidth: 51,
       height: 29,
@@ -5505,19 +5536,25 @@
 
     }
 
+    function applyStatusUI() {
+
+        dom.statusBar.infantryCount.innerHTML = data.parachutes;
+        dom.statusBar.ammoCount.innerHTML = data.ammo;
+        dom.statusBar.bombCount.innerHTML = data.bombs;
+        dom.statusBar.missileCount.innerHTML = data.smartMissiles;
+
+        // hackish, fix endBunkers reference
+        dom.statusBar.fundsCount.innerHTML = game.objects.endBunkers[0].data.funds;
+
+    }
+
     function updateStatusUI() {
 
       if (!data.isEnemy) {
 
         // TODO: optimize
 
-        document.getElementById('infantry-count').textContent = data.parachutes;
-        document.getElementById('ammo-count').textContent = data.ammo;
-        document.getElementById('bomb-count').textContent = data.bombs;
-        document.getElementById('missile-count').textContent = data.smartMissiles;
-
-        // hackish, fix endBunkers reference
-        document.getElementById('funds-count').textContent = game.objects.endBunkers[0].data.funds;
+        getAnimationFrame(applyStatusUI);
 
       }
 
@@ -6976,7 +7013,15 @@
     dom = {
       o: null,
       fuelLine: null,
-      subSprite: null
+      subSprite: null,
+      // hackish
+      statusBar: {
+        infantryCount: document.getElementById('infantry-count'),
+        ammoCount: document.getElementById('ammo-count'),
+        bombCount: document.getElementById('bomb-count'),
+        missileCount: document.getElementById('missile-count'),
+        fundsCount: document.getElementById('funds-count')
+      }
     };
 
     events = {
@@ -8237,7 +8282,7 @@
       width: 81,
       height: 4,
       repairModulus: 5,
-      y: 380 - 4
+      y: worldHeight - 4
     }, options);
 
     dom = {
@@ -8416,8 +8461,8 @@
 
         data.gravity *= 1.1;
 
-        if (data.y - data.height >= 380) {
-          moveTo(data.x + data.vX, 380);
+        if (data.y - data.height >= worldHeight) {
+          moveTo(data.x + data.vX, worldHeight);
           die();
         }
 
