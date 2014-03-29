@@ -84,10 +84,10 @@ body.no-transform .sprite {
  -ms-transition: all 0.66s ease-in-out;
  -webkit-transition: all 0.66s ease-in-out;
  transition: all 0.66s ease-in-out;
- -moz-transition-property: opacity, -moz-transform;
- -ms-transition-property: opacity, -ms-transform;
- -webkit-transition-property: opacity, -webkit-transform;
- transition-property: opacity, transform;
+ -moz-transition-property: opacity -moz-transform;
+ -ms-transition-property: opacity -ms-transform;
+ -webkit-transition-property: opacity -webkit-transform;
+ transition-property: opacity transform;
 }
 
 #world.tutorial-mode #world-overlay,
@@ -97,9 +97,9 @@ body.no-transform .sprite {
 
 #world-overlay.fade-out {
  opacity: 0;
- -ms-transform: scale(1.2);
- -webkit-transform: scale(1.2);
- transform: scale(1.2);
+ -ms-transform: scale3d(1.2,1.2,0);
+ -webkit-transform: scale3d(1.2,1.2,0);
+ transform: scale3d(1.2,1.2,0);
 }
 
 #logo {
@@ -130,13 +130,17 @@ body.no-transform .sprite {
 #world.blurred #game-tips .tips-container,
 #world.blurred #top-bar {
  -webkit-transition: -webkit-filter 0.5s ease-in-out;
+ transition: filter 0.5s ease-in-out;
  -webkit-filter: blur(2px);
+ filter: blur(2px);
+ transition: filter 0.5s ease-in-out;
 }
 
 #world.blurred.no-blur #battlefield,
 #world.blurred.no-blur #game-tips .tips-container,
 #world.blurred.no-blur #top-bar {
  -webkit-filter: blur(0px);
+ filter: blur(0px);
 }
 
 #game-menu {
