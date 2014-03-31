@@ -1,3 +1,6 @@
+/*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
+/*jslint nomen: true, plusplus: true, todo: true, vars: true, white: true */
+
 (function armorAlley(window) {
 
 "use strict";
@@ -30,12 +33,12 @@
 
 	General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-	Version 1.0.20131031
+	Version 1.01.20140330
+	 - Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
+
+	Version 1.0.20131031 (original release)
 
 */
-
-/*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
-/*jslint nomen: true, plusplus: true, todo: true, vars: true, white: true */
 
   var game, utils, common;
 
@@ -108,6 +111,24 @@
 
   var tutorialMode = !!(winloc.match(/tutorial/i));
 
+  var convoyParam = winloc.toLowerCase().indexOf('convoydelay');
+
+  // how often the enemy attempts to build convoys
+  var convoyDelay = 60;
+
+  if (convoyParam) {
+
+    // for example, ?convoydelay=30
+    convoyDelay = parseInt(winloc.substr(convoyParam + 12), 10);
+
+    if (!isNaN(convoyDelay)) {
+      console.log('applying custom enemy convoy delay of ' + convoyDelay);
+    } else {
+      convoyDelay = 60;
+    }
+
+  }
+
   var Tutorial;
 
   var TutorialStep;
@@ -116,7 +137,7 @@
 
   var Queue;
 
-  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
+  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, SuperBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
   var shrapnelExplosion;
 
@@ -531,7 +552,7 @@
 
   features = (function() {
 
-    var getAnimationFrame;
+    var _getAnimationFrame;
 
     /**
      * hat tip: paul irish
@@ -547,13 +568,13 @@
         null);
 
     // apply to window, avoid "illegal invocation" errors in Chrome
-    getAnimationFrame = _animationFrame ? function() {
+    _getAnimationFrame = _animationFrame ? function() {
       return _animationFrame.apply(window, arguments);
     } : null;
 
-    if (getAnimationFrame) {
+    if (_getAnimationFrame) {
       if (winloc.match(/noraf=1/i)) {
-        getAnimationFrame = null;
+        _getAnimationFrame = null;
         console.log('preferring setInterval for game loop');
       } else {
         console.log('preferring requestAnimationFrame for game loop');
@@ -587,7 +608,7 @@
         prop: null
       },
 
-      getAnimationFrame: getAnimationFrame
+      getAnimationFrame: _getAnimationFrame
 
     };
 
@@ -651,9 +672,9 @@
 
   }());
 
-  getAnimationFrame = features.getAnimationFrame ? features.getAnimationFrame: function(callback) {
+  getAnimationFrame = features.getAnimationFrame || function(callback) {
     callback();
-  }
+  };
 
   common = {
 
@@ -726,24 +747,38 @@
       }
     },
 
-    hit: function(exports, hitPoints) {
+    hit: function(target, hitPoints, attacker) {
 
-      if (!exports.data.dead) {
+      if (!target.data.dead) {
+
+        /**
+         * special case: super-bunkers can only be damaged by tank gunfire.
+         * other things can hit super-bunkers, but we don't want damage done in this case.
+         */
+
+        if (target.data.type === 'super-bunker') {
+          if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== 'tank') {
+            return false;
+          }
+        }
 
         hitPoints = hitPoints || 1;
 
-        exports.data.energy -= hitPoints;
+        target.data.energy = Math.max(0, target.data.energy - hitPoints);
 
         // special cases for updating state
-        if (exports.updateHealth) {
-          exports.updateHealth();
+        if (target.updateHealth) {
+          target.updateHealth();
         }
 
-        if (exports.data.energy <= 0) {
-          exports.data.energy = 0;
-          if (exports.die) {
-            exports.die();
+        if (target.data.energy <= 0) {
+
+          target.data.energy = 0;
+
+          if (target.die) {
+            target.die();
           }
+
         }
 
       }
@@ -1049,9 +1084,10 @@
           // don't check against friendly units
           (objects[item].data.isEnemy !== options.source.data.isEnemy)
 
-          // unless infantry vs. bunker, end-bunker or helicopter
+          // unless infantry vs. bunker, end-bunker, super-bunker or helicopter
           || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
           || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
+          || (data1.type === 'super-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
 
           || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
 
@@ -1300,6 +1336,7 @@
 
       // ... and check them
       if (collisionCheckArray(nearby.options)) {
+        // TODO: break if hit found?
         foundHit = true;
       }
 
@@ -3267,7 +3304,6 @@
       width: 51,
       halfWidth: 25,
       height: 25,
-      infantryTimer: null,
       midPoint: null
     }, options);
 
@@ -3558,6 +3594,310 @@
       // who gets fired at?
       items: ['infantry', 'engineers', 'helicopters'],
       targets: []
+    };
+
+    init();
+
+    return exports;
+
+  };
+
+  SuperBunker = function(options) {
+
+    var css, dom, data, objects, nearby, radarItem, exports;
+
+    function setFiring(state) {
+
+      if (state && data.energy) {
+        data.firing = state;
+      } else {
+        data.firing = false;
+      }
+
+    }
+
+    function hit(points, target) {
+
+      // only tank gunfire counts against super bunkers.
+      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+        data.energy = Math.max(0, data.energy - points);
+      }
+
+    }
+
+    function die() {
+
+      if (data.dead) {
+        return false;
+      }
+
+      // gunfire from both sides should now hit this element.
+
+      data.energy = 0;
+
+      // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
+      data.dead = false;
+
+      data.hostile = true;
+
+    }
+
+    function fire() {
+
+      var fireOptions;
+
+      if (data.firing && data.energy !== 0 && data.frameCount % data.fireModulus === 0) {
+
+        fireOptions = {
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          collisionItems: nearby.items,
+          x: data.x + (data.width + 1),
+          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
+          vX: 2,
+          vY: 0
+        };
+
+        objects.gunfire.push(new GunFire(fireOptions));
+
+        // other side
+        fireOptions.x = (data.x - 1);
+
+        // and reverse direction
+        fireOptions.vX = -2;
+
+        objects.gunfire.push(new GunFire(fireOptions));
+
+        if (sounds.genericGunFire) {
+          playSound(sounds.genericGunFire, exports);
+        }
+
+      }
+
+    }
+
+    function animate() {
+
+      var i;
+
+      data.frameCount++;
+
+      for (i = objects.gunfire.length-1; i >= 0; i--) {
+        if (objects.gunfire[i].animate()) {
+          // object is dead - take it out.
+          objects.gunfire.splice(i, 1);
+        }
+      }
+
+      // start, or stop firing?
+      nearbyTest(nearby);
+
+      fire();
+
+      // note: super bunkers never die, but leaving this in anyway.
+      return (!dom.o && !objects.gunfire.length);
+
+    }
+
+    function init() {
+
+      dom.o = makeSprite({
+        className: css.className
+      });
+
+      if (data.isEnemy) {
+        utils.css.add(dom.o, css.enemy);
+      }
+
+      common.setX(exports, data.x);
+      common.setBottomY(exports, data.bottomY);
+
+      game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    }
+
+    options = options || {};
+
+    css = inheritCSS({
+      className: 'super-bunker',
+      friendly: 'friendly'
+    });
+
+    data = inheritData({
+      type: 'super-bunker',
+      bottomAligned: true,
+      frameCount: 0,
+      energy: (options.energy || 0),
+      isEnemy: (options.isEnemy || false),
+      energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
+      // x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
+      width: 66,
+      halfWidth: 33,
+      height: 28,
+      firing: false,
+      gunYOffset: 10,
+      fireModulus: 4,
+      fundsModulus: FPS * 10,
+      hostile: false,
+      midPoint: null
+    }, options);
+
+    if (data.energy === 0) {
+      // initially neutral/hostile only if 0 energy
+      data.hostile = true;
+    }
+
+    data.midPoint = {
+      x: data.x + data.halfWidth + 5,
+      y: data.y,
+      width: 5,
+      height: data.height
+    };
+
+    dom = {
+      o: null
+    };
+
+    objects = {
+      gunfire: []
+    };
+
+    exports = {
+      animate: animate,
+      data: data,
+      die: die,
+      dom: dom,
+      hit: hit
+    };
+
+    nearby = {
+
+      options: {
+
+        source: exports, // initially undefined
+        targets: undefined,
+        useLookAhead: true,
+
+        hit: function(target) {
+
+          var isFriendly = (target.data.isEnemy === data.isEnemy);
+
+          if (!isFriendly && data.energy > 0) {
+            // nearby enemy, and defenses activated? let 'em have it.
+            setFiring(true);
+          }
+
+          // gunfire from a tank? decrement energy until dead.
+
+          if (target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+
+            // limit to +/- range.
+            data.energy = Math.min(data.energyMax, data.energy-1);
+
+            if (data.energy === 0) {
+
+              // un-manned, but dangerous to helicopters on both sides.
+              data.hostile = true;
+
+            }
+
+          } else if (target.data.type === 'infantry') {
+
+            // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
+
+            if (data.energy < data.energyMax || !isFriendly) {
+
+              // infantry at door? contribute to capture, or arm base, depending.
+
+              if (collisionCheckMidPoint(exports, target)) {
+
+                // claim infantry, change "alignment" depending on friendliness.
+
+                if (data.energy === 0) {
+
+                  // claimed by infantry, switching sides from neutral/hostile.
+                  data.hostile = false;
+
+                  // ensure that if we were dead, we aren't any more.
+                  data.dead = false;
+
+                  // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
+                  if (target.data.isEnemy) {
+
+                    data.isEnemy = true;
+                    utils.css.remove(radarItem.dom.o, css.friendly);
+                    utils.css.add(radarItem.dom.o, css.enemy);
+
+                  } else {
+
+                    data.isEnemy = false;
+                    utils.css.remove(radarItem.dom.o, css.enemy);
+                    utils.css.add(dom.o, css.friendly);
+
+                  }
+
+                }
+
+                // add or subtract energy, depending on alignment.
+                // explicitly-verbose check, for legibility.
+
+                if (data.isEnemy) {
+
+                  // enemy-owned....
+                  if (target.data.isEnemy) {
+                    // friendly passer-by.
+                    data.energy++;
+                  } else {
+                    data.energy--;
+                  }
+
+                } else {
+
+                  // player-owned...
+                  if (!target.data.isEnemy) {
+                    data.energy++;
+                  } else {
+                    data.energy--;
+                  }
+
+                }
+
+                // limit to +/- range.
+                data.energy = Math.min(data.energyMax, data.energy);
+
+                if (data.energy === 0) {
+
+                  // un-manned, but dangerous to helicopters on both sides.
+                  data.hostile = true;
+
+                  utils.css.remove(radarItem.dom.o, css.friendly);
+                  utils.css.add(radarItem.dom.o, css.enemy);
+
+                }
+
+                // "claim" the infantry, kill if enemy and man the bunker if friendly.
+                target.die(true);
+
+              }
+
+            }
+
+          }
+
+        },
+
+        miss: function() {
+          setFiring(false);
+        }
+
+      },
+
+      // who gets fired at?
+      items: ['infantry', 'engineers', 'missileLaunchers', 'vans', 'helicopters'],
+      targets: []
+
     };
 
     init();
@@ -4536,9 +4876,9 @@
           data.damagePoints = 5;
         }
 
-        // special case: tanks are impervious to infantry gunfire.
-        if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && target.data.type === 'end-bunker')) {
-          common.hit(target, data.damagePoints);
+        // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
+        if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && (target.data.type === 'end-bunker' || target.data.type === 'super-bunker'))) {
+          common.hit(target, data.damagePoints, exports);
         }
 
       }
@@ -4659,7 +4999,7 @@
         }
       },
       // if unspecified, use default list of items which bullets can hit.
-      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'turrets']
+      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets']
     };
 
     init();
@@ -4875,7 +5215,7 @@
           bombHitTarget(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'helicopters', 'turrets']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'superBunkers', 'helicopters', 'turrets']
     };
 
     init();
@@ -4937,7 +5277,7 @@
 
       }
 
-      if (worldHeight - data.y - 32 < 64 || data.y < 64) {
+      if ((data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) || (data.windOffsetY < 0 && data.y < 64)) {
 
         // reverse gears
         data.windOffsetY *= -1;
@@ -5362,7 +5702,7 @@
           sparkAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'superBunkers', 'balloons', 'smartMissiles', 'turrets']
     };
 
     exports = {
@@ -7096,7 +7436,7 @@
           }
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'helicopters', 'chains', 'infantry', 'engineers', 'clouds']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'superBunkers', 'helicopters', 'chains', 'infantry', 'engineers', 'clouds']
     };
 
     exports = {
@@ -7368,8 +7708,8 @@
         // TODO: rename to something generic?
         hit: function(target) {
           // stop moving, start firing.
-          // special case: only fire at EndBunker if it has energy.
-          if ((target.data.type === 'end-bunker' && target.data.energy) || target.data.type !== 'end-bunker') {
+          // special case: only fire at EndBunker and SuperBunker if they have energy.
+          if (((target.data.type === 'end-bunker' || target.data.type === 'super-bunker') && target.data.energy !== 0) || (target.data.type !== 'end-bunker' && target.data.type !== 'super-bunker')) {
             stop();
           } else {
             resume();
@@ -7381,7 +7721,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'turrets', 'helicopters', 'endBunkers'],
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'turrets', 'helicopters', 'endBunkers', 'superBunkers'],
       targets: []
     };
 
@@ -8539,7 +8879,7 @@
           hitAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'balloons', 'turrets']
+      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'superBunkers', 'balloons', 'turrets']
     };
 
     init();
@@ -9707,9 +10047,17 @@
 
       addItem('flower', 7500);
 
-      // enemy base
+      // enemy base sign
 
       addItem('left-arrow-sign', 7700);
+
+      // more mid-level stuff
+
+      addObject('superBunker', {
+        x: 4096 - 640 - 128,
+        isEnemy: true,
+        energy: 5
+      });
 
       addObject('turret', {
         x: 4096 - 640, // width of landing pad
@@ -9903,7 +10251,7 @@
 
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, 60];
+        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, convoyDelay];
         var i = 0;
 
         function orderNextItem() {
@@ -9957,6 +10305,7 @@
       infantry: [],
       parachuteInfantry: [],
       missileLaunchers: [],
+      superBunkers: [],
       tanks: [],
       vans: [],
       helicopters: [],
@@ -9984,6 +10333,7 @@
       'infantry': Infantry,
       'landingPad': LandingPad,
       'missileLauncher': MissileLauncher,
+      'superBunker': SuperBunker,
       'turret': Turret,
       'tank': Tank,
       'van': Van
