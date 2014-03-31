@@ -3755,7 +3755,7 @@
       halfWidth: 33,
       height: 28,
       firing: false,
-      gunYOffset: 10,
+      gunYOffset: 9,
       fireModulus: 4,
       fundsModulus: FPS * 10,
       hostile: false,
