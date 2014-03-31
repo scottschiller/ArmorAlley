@@ -3606,6 +3606,24 @@
 
     var css, dom, data, objects, nearby, radarItem, exports;
 
+    function capture(isEnemy) {
+
+      if (isEnemy) {
+
+        data.isEnemy = true;
+        utils.css.remove(radarItem.dom.o, css.friendly);
+        utils.css.add(radarItem.dom.o, css.enemy);
+
+      } else {
+
+        data.isEnemy = false;
+        utils.css.remove(radarItem.dom.o, css.enemy);
+        utils.css.add(dom.o, css.friendly);
+
+      }
+
+    }
+
     function setFiring(state) {
 
       if (state && data.energy) {
@@ -3766,6 +3784,7 @@
 
     exports = {
       animate: animate,
+      capture: capture,
       data: data,
       die: die,
       dom: dom,
@@ -3826,15 +3845,11 @@
                   // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
                   if (target.data.isEnemy) {
 
-                    data.isEnemy = true;
-                    utils.css.remove(radarItem.dom.o, css.friendly);
-                    utils.css.add(radarItem.dom.o, css.enemy);
+                    capture(true);
 
                   } else {
 
-                    data.isEnemy = false;
-                    utils.css.remove(radarItem.dom.o, css.enemy);
-                    utils.css.add(dom.o, css.friendly);
+                    capture(false);
 
                   }
 
@@ -9253,6 +9268,63 @@
           if (bunkers.enemy < temp.enemy) {
 
             // a bunker was blown up, or claimed.
+
+            return true;
+
+          }
+
+        },
+
+        complete: function() {
+
+          nextItem();
+
+        }
+
+      });
+
+      addStep({
+
+        // claim a nearby enemy Super Bunker
+
+        activate: function() {
+
+          var targetSuperBunker;
+
+          targetSuperBunker = game.objects.superBunkers[0];
+
+          if (targetSuperBunker) {
+
+            // make it an enemy unit, if not already.
+            targetSuperBunker.capture(true);
+
+            // and arm it with infantry, such that 3 infantry will claim it.
+            targetSuperBunker.data.energy = 2;
+
+            // keep track of original bunker states
+            temp = countSides('superBunkers');
+
+          } else {
+
+            // edge case: bunker has already been blown up, etc. bail.
+            temp = countSides('superBunkers');
+
+            // next animate() call will pick this up and move to next step.
+            temp.enemy++;
+
+          }
+
+        },
+
+        animate: function() {
+
+          var superBunkers;
+
+          superBunkers = countSides('superBunkers');
+
+          if (superBunkers.enemy < temp.enemy) {
+
+            // a Super Bunker was claimed.
 
             return true;
 
