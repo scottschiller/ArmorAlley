@@ -1336,8 +1336,8 @@
 
       // ... and check them
       if (collisionCheckArray(nearby.options)) {
-        // TODO: break if hit found?
         foundHit = true;
+        break;
       }
 
     }
@@ -3606,6 +3606,13 @@
 
     var css, dom, data, objects, nearby, radarItem, exports;
 
+    function updateFireModulus() {
+
+      // firing speed increases with # of infantry
+      data.fireModulus = 8 - data.energy;
+
+    }
+
     function capture(isEnemy) {
 
       if (isEnemy) {
@@ -3639,6 +3646,7 @@
       // only tank gunfire counts against super bunkers.
       if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
         data.energy = Math.max(0, data.energy - points);
+        updateFireModulus();
       }
 
     }
@@ -3652,6 +3660,7 @@
       // gunfire from both sides should now hit this element.
 
       data.energy = 0;
+      updateFireModulus();
 
       // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
       data.dead = false;
@@ -3756,7 +3765,8 @@
       height: 28,
       firing: false,
       gunYOffset: 9,
-      fireModulus: 4,
+      // fire speed relative to # of infantry arming it
+      fireModulus: 8 - (options.energy || 0),
       fundsModulus: FPS * 10,
       hostile: false,
       midPoint: null
@@ -3814,6 +3824,9 @@
 
             // limit to +/- range.
             data.energy = Math.min(data.energyMax, data.energy-1);
+
+            // small detail: firing speed relative to # of infantry
+            updateFireModulus();
 
             if (data.energy === 0) {
 
@@ -3881,6 +3894,9 @@
 
                 // limit to +/- range.
                 data.energy = Math.min(data.energyMax, data.energy);
+
+                // small detail: firing speed relative to # of infantry
+                updateFireModulus();
 
                 if (data.energy === 0) {
 
@@ -6330,8 +6346,8 @@
       // timeout?
       window.setTimeout(function() {
         utils.css.add(dom.o, css.dead);
-        // undo rotate, if needed
-        if (data.autoRotate && data.rotated) {
+        // undo rotate
+        if (data.rotated) {
           rotate(true);
         }
       }, 1200);
@@ -7960,7 +7976,7 @@
       frameCount: 0,
       radarJammerModulus: 50,
       jamming: false,
-      energy: 1,
+      energy: 2,
       direction: 0,
       stopped: false,
       vX: (options.isEnemy ? -1 : 1),
