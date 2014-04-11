@@ -58,7 +58,7 @@
 
         <div id="game-menu">
          <h2>A browser-based interpretation of the classic 1990 MS-DOS game.</h2>
-         <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta">Tutorial Mode</a><a href="#regular" title="Get a van to the enemy base!" class="cta">Regular Game</a>
+         <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-large">Tutorial Mode</a><a href="#easy" title="Get a van to the enemy base! (Easy mode)" class="cta">Easy</a><a href="#hard" title="Get a van to the enemy base! (Hard mode)" class="cta">Hard</a>
         </div>
 
        </div>
@@ -332,8 +332,7 @@
    <div id="bottom">
 
      <div id="help">
-      <a href="#tutorial" onclick="return window.aa.startTutorial()" title="Start tutorial (reload required)" class="start">tutorial</a>
-      <a href="#" onclick="return window.aa.exitTutorial()" title="Exit tutorial (reload required)" class="exit">exit tutorial</a>
+      <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit</a>
       |
       <a href="#noscale=1" title="Toggle 1:1 letterbox vs. MS-DOS-era resolution" onclick="return window.aa.toggleScaling(true)" class="static">scaling</a>
       |
