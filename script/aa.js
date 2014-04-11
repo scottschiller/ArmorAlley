@@ -40,6 +40,7 @@
 
 */
 
+
   var game, utils, common;
 
   // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30?)
@@ -110,6 +111,8 @@
   var userDisabledSound = false;
 
   var tutorialMode = !!(winloc.match(/tutorial/i));
+
+  var gameType;
 
   var convoyParam = winloc.toLowerCase().indexOf('convoydelay');
 
@@ -2403,11 +2406,12 @@
 
           for (i=0, j=objects.items.length; i<j; i++) {
 
+
             left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
-              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 32, 10) + 'px';
+              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 32, 10) + 'px';
 
             } else {
 
@@ -4852,7 +4856,7 @@
 
   GunFire = function(options) {
 
-    var css, data, dom, collision, exports, frameTimeout;
+    var css, data, dom, collision, exports, frameTimeout, radarItem;
 
     options = options || {};
 
@@ -4887,6 +4891,8 @@
       removeNodes(dom);
 
       data.dead = true;
+
+      radarItem.die();
 
     }
 
@@ -4950,6 +4956,7 @@
 
       if (!data.expired && data.frameCount > data.expireFrameCount) {
         utils.css.add(dom.o, css.expired);
+        utils.css.add(radarItem.dom.o, css.expired);
         data.expired = true;
       }
 
@@ -4992,6 +4999,12 @@
 
       dom.o = game.dom.world.appendChild(dom.o);
 
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+      if (data.isEnemy) {
+        utils.css.add(radarItem.dom.o, css.enemy);
+      }
+
     }
 
     css = inheritCSS({
@@ -5033,13 +5046,13 @@
       items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets']
     };
 
-    init();
-
     exports = {
       animate: animate,
       data: data,
       die: die
     };
+
+    init();
 
     return exports;
 
@@ -5047,7 +5060,7 @@
 
   Bomb = function(options) {
 
-    var css, data, dom, collision, exports;
+    var css, data, dom, collision, radarItem, exports;
 
     function moveTo(x, y) {
 
@@ -5106,6 +5119,10 @@
       }
 
       data.dead = true;
+
+      if (radarItem) {
+        radarItem.die();
+      }
 
     }
 
@@ -5213,6 +5230,13 @@
 
       game.dom.world.appendChild(dom.o);
 
+      // TODO: don't create radar items for bombs from enemy helicopter when cloaked
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+      if (data.isEnemy) {
+        utils.css.add(radarItem.dom.o, css.enemy);
+      }
+
     }
 
     options = options || {};
@@ -5249,14 +5273,14 @@
       items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'superBunkers', 'helicopters', 'turrets']
     };
 
-    init();
-
     exports = {
       animate: animate,
       data: data,
       die: die,
       dom: dom
     };
+
+    init();
 
     return exports;
 
@@ -5521,6 +5545,7 @@
 
         if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
           utils.css.add(dom.o, css.expired);
+          utils.css.add(radarItem.dom.o, css.expired);
           data.expired = true;
           data.hostile = true;
           // burst of thrust when the missile expires?
@@ -7841,7 +7866,9 @@
 
       data.dead = true;
 
-      radarItem.die();
+      if (radarItem) {
+        radarItem.die();
+      }
 
       if (sounds.genericExplosion2) {
         playSound(sounds.genericExplosion2, exports);
@@ -7959,7 +7986,10 @@
 
       game.dom.world.appendChild(dom.o);
 
-      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      // enemy vans are so sneaky, they don't even appear on the radar.
+      if (tutorialMode || !options.isEnemy) {
+        radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      }
 
     }
 
@@ -9943,7 +9973,11 @@
       options = options || {};
 
       // create and push an instance object onto its relevant array by type (e.g., 'van' -> game.objects['vans'])
-      object = new objectConstructors[type](options);
+      if (objectConstructors[type]) {
+        object = new objectConstructors[type](options);
+      } else {
+        console.warn('No constructor of type ' + type);
+      }
 
       objectArray.push(object);
 
@@ -9953,7 +9987,7 @@
 
     function createObjects() {
 
-      var i;
+      var i, x;
 
       objects.gameLoop = new GameLoop();
 
@@ -9979,19 +10013,10 @@
 
       }
 
-      // landing pads
+      // player's landing pad
 
       addObject('landingPad', {
         x: 300
-      });
-
-      // midway
-      addObject('landingPad', {
-        x: 4096 - 290
-      });
-
-      addObject('landingPad', {
-        x: 7800
       });
 
       addObject('base', {
@@ -10003,161 +10028,627 @@
         isEnemy: true
       });
 
+      // local, and enemy base end bunkers
+
       addObject('endBunker');
 
       addObject('endBunker', {
         isEnemy: true
       });
 
-      addObject('turret', {
-        x: 475,
-        DOA: true
-      });
+      if (gameType === 'hard') {
 
-      addObject('bunker', {
-        x: 1024,
-        isEnemy: true
-      });
+        // level 9
 
-      addItem('right-arrow-sign', 550);
+        addItem('right-arrow-sign', 550);
 
-      addItem('tree', 660);
+        x = 630;
 
-      addItem('palm-tree', 860);
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
 
-      addItem('barb-wire', 918);
+        x += 230;
 
-      addItem('palm-tree', 1120);
+        addItem('grave-cross', x);
 
-      addItem('rock2', 1280);
+        x += 12;
 
-      addItem('palm-tree', 1390);
+        addItem('cactus2', x);
 
-      addObject('bunker', {
-        x: 1536
-      });
+        x += 92;
 
-      addItem('palm-tree', 1565);
+        addObject('turret', {
+          x: x,
+          isEnemy: true,
+          DOA: false
+        });
 
-      addItem('flower', 1850);
+        x += 175;
 
-      addObject('bunker', {
-        x: 2048
-      });
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
 
-      addItem('tree', 2110);
+        x += 100;
 
-      addItem('gravestone', 2150);
+        addObject('tank', {
+          x: x,
+          isEnemy: true
+        });
 
-      addItem('palm-tree', 2260);
+        addItem('grave-cross', x);
 
-      addItem('tree', 2460);
+        x += 40;
 
-      addObject('bunker', {
-        x: 2560
-      });
+        addItem('cactus', x);
 
-      addItem('tree', 2700);
+        x += 250;
 
-      addObject('bunker', {
-        x: 3072
-      });
+        addObject('tank', {
+          x: x,
+          isEnemy: true
+        });
 
-      addItem('palm-tree', 3400);
+        x += 50;
 
-      addItem('palm-tree', 3490);
+        addObject('tank', {
+          x: x,
+          isEnemy: true
+        });
 
-      // mid-level
+        x += 80;
 
-      addItem('checkmark-grass', 4120);
+        for (i=0; i<10; i++) {
 
-      addItem('palm-tree', 4550);
+          addObject('infantry', {
+            x: x + (i * 11),
+            isEnemy: true
+          });
 
-      addObject('bunker', {
-        x: 4608,
-        isEnemy: true
-      });
+        }
 
-      addItem('tree', 4608);
+        addObject('van', {
+          x: x + 210,
+          isEnemy: true
+        });
 
-      addItem('tree', 4820);
+        addItem('gravestone', x);
 
-      addItem('palm-tree', 4850);
+        x += 110;
 
-      addItem('grave-cross', 4970);
+        addObject('superBunker', {
+          x: x,
+          isEnemy: true,
+          energy: 5
+        });
 
-      addObject('bunker', {
-        x: 5120,
-        isEnemy: true
-      });
+        x += 120;
 
-      addItem('tree', 5110);
+        addObject('turret', {
+          x: x,
+          isEnemy: true,
+          DOA: false
+        });
 
-      addItem('barb-wire', 5200);
+        x += 640;
 
-      addItem('grave-cross', 5275);
+        addItem('gravestone', x);
 
-      addObject('bunker', {
-        x: 5632,
-        isEnemy: true
-      });
+        addObject('van', {
+          x: x,
+          isEnemy: true
+        });
 
-      // near-end / enemy territory
+        for (i=0; i<5; i++) {
 
-      addItem('palm-tree', 3932 + 32);
+          addObject('infantry', {
+            x: (x + 50) + (i * 11),
+            isEnemy: true
+          });
 
-      addItem('tree', 3932 + 85);
+        }
 
-      addItem('palm-tree', 3932 + 85 + 230);
+        x += 80;
 
-      addItem('tree', 3932 + 85 + 230 + 90);
+        addItem('sand-dunes', x);
 
-      addObject('bunker', {
-        x: 6656,
-        isEnemy: true
-      });
+        addObject('tank', {
+          x: x + 75,
+          isEnemy: true
+        });
 
-      addItem('tree', 6736);
+        for (i=0; i<5; i++) {
 
-      addItem('tree', 6800);
+          addObject('infantry', {
+            x: (x + 75) + (i * 11),
+            isEnemy: true
+          });
 
-      addItem('palm-tree', 6888);
+        }
 
-      addItem('gravestone', 7038);
+        addObject('tank', {
+          x: x + 240,
+          isEnemy: true
+        });
 
-      addItem('tree', 7070);
+        x += 540;
 
-      addItem('gravestone', 7160);
+        addObject('tank', {
+          x: x,
+          isEnemy: true
+        });
 
-      addItem('palm-tree', 7310);
+        addObject('tank', {
+          x: x + 240,
+          isEnemy: true
+        });
 
-      addItem('tree', 7325);
+        for (i=0; i<5; i++) {
 
-      addItem('flower', 7500);
+          addObject('infantry', {
+            x: (x + 240 + 75) + (i * 11),
+            isEnemy: true
+          });
 
-      // enemy base sign
+        }
 
-      addItem('left-arrow-sign', 7700);
+        addObject('van', {
+          x: x + 240 + 215,
+          isEnemy: true
+        });
 
-      // more mid-level stuff
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
 
-      addObject('superBunker', {
-        x: 4096 - 640 - 128,
-        isEnemy: true,
-        energy: 5
-      });
+        x += 135;
 
-      addObject('turret', {
-        x: 4096 - 640, // width of landing pad
-        isEnemy: true,
-        DOA: !!tutorialMode
-      });
+        addItem('gravestone', x);
 
-      addObject('turret', {
-        x: 4096 + 120, // width of landing pad
-        isEnemy: true,
-        DOA: !!tutorialMode
-      });
+        x += 25;
+
+        addItem('cactus2', x);
+
+        x += 260;
+
+        addItem('sand-dune', x);
+
+        x -= 40;
+
+        addItem('grave-cross', x);
+
+        x += 150;
+
+        addItem('sand-dunes', x);
+
+        x += 150;
+
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
+
+        x += 115;
+
+        addObject('landingPad', {
+          x: x
+        });
+
+        x += 88;
+
+        // gravestone sits behind...
+
+        x += 10;
+
+        addItem('gravestone', x);
+
+        x -= 10;
+
+        // now, stack on top
+
+        addItem('sand-dune', x);
+
+        addItem('grave-cross', x);
+
+        x += 54;
+
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
+
+        x -= 6;
+
+        addItem('checkmark-grass', x);
+
+        x += 90;
+
+        addItem('cactus', x);
+
+        x += 305;
+
+        addItem('gravestone', x);
+
+        x += 32;
+
+        addItem('grave-cross', x);
+
+        x += 80;
+
+        addItem('sand-dune', x);
+
+        x += 115;
+
+        addItem('grave-cross', x);
+
+        x += 175;
+
+        addItem('gravestone', x);
+
+        x += 55;
+
+        addItem('cactus2', x);
+
+        x += 85;
+
+        addItem('gravestone', x);
+
+        x += 25;
+
+        addItem('grave-cross', x);
+
+        x += 70;
+
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
+
+        x += 5;
+
+        addItem('gravestone', x);
+
+        x += 85;
+
+        addItem('gravestone', x);
+
+        x += 192;
+
+        addItem('gravestone', x);
+
+        x += 96;
+
+        addItem('gravestone', x);
+
+        x += 150;
+
+        addItem('grave-cross', x);
+
+        x += 50;
+
+        addItem('gravestone', x);
+
+        x += 260;
+
+        addItem('gravestone', x);
+
+        x += 45;
+
+        addItem('sand-dunes', x);
+
+        x += 215;
+
+        addItem('cactus2', x);
+
+        x += 60;
+
+        addObject('superBunker', {
+          x: x,
+          isEnemy: true,
+          energy: 5
+        });
+
+        x += 125;
+
+        addObject('turret', {
+          x: x,
+          isEnemy: true,
+          DOA: false
+        });
+
+        x += 145;
+
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
+
+        x += 128;
+
+        addObject('bunker', {
+          x: x,
+          isEnemy: true
+        });
+
+        x += 20;
+
+        addItem('grave-cross', x);
+
+        x += 64;
+
+        addItem('cactus2', x);
+
+        x += 50;
+
+        addItem('gravestone', x);
+
+        x += 200;
+
+        addItem('gravestone', x);
+
+        x += 115;
+
+        addItem('cactus', x);
+
+        x += 42;
+
+        addItem('grave-cross', x);
+
+        x += 140;
+
+        addItem('cactus2', x);
+
+        x += 12;
+
+        addItem('cactus2', x);
+
+        x += 100;
+
+        addItem('gravestone', x);
+
+        x += 145;
+
+        // ideally, this should be between the right post sign now.
+
+        addItem('grave-cross', x);
+
+      } else {
+        
+        // level 1
+
+        addObject('turret', {
+          x: 475,
+          DOA: true
+        });
+
+        addObject('bunker', {
+          x: 1024,
+          isEnemy: true
+        });
+
+        addItem('right-arrow-sign', 550);
+
+        addItem('tree', 660);
+
+        addItem('palm-tree', 860);
+
+        addItem('barb-wire', 918);
+
+        addItem('palm-tree', 1120);
+
+        addItem('rock2', 1280);
+
+        addItem('palm-tree', 1390);
+
+        addObject('bunker', {
+          x: 1536
+        });
+
+        addItem('palm-tree', 1565);
+
+        addItem('flower', 1850);
+
+        addObject('bunker', {
+          x: 2048
+        });
+
+        addItem('tree', 2110);
+
+        addItem('gravestone', 2150);
+
+        addItem('palm-tree', 2260);
+
+        addItem('tree', 2460);
+
+        addObject('bunker', {
+          x: 2560
+        });
+
+        addItem('tree', 2700);
+
+        addObject('bunker', {
+          x: 3072
+        });
+
+        addItem('palm-tree', 3400);
+
+        addItem('palm-tree', 3490);
+
+        // mid-level
+
+        addObject('landingPad', {
+          x: 4096 - 290
+        });
+
+        addItem('checkmark-grass', 4120);
+
+        addItem('palm-tree', 4550);
+
+        addObject('bunker', {
+          x: 4608,
+          isEnemy: true
+        });
+
+        addItem('tree', 4608);
+
+        addItem('tree', 4820);
+
+        addItem('palm-tree', 4850);
+
+        addItem('grave-cross', 4970);
+
+        addObject('bunker', {
+          x: 5120,
+          isEnemy: true
+        });
+
+        addItem('tree', 5110);
+
+        addItem('barb-wire', 5200);
+
+        addItem('grave-cross', 5275);
+
+        addObject('bunker', {
+          x: 5632,
+          isEnemy: true
+        });
+
+        // near-end / enemy territory
+
+        addItem('palm-tree', 3932 + 32);
+
+        addItem('tree', 3932 + 85);
+
+        addItem('palm-tree', 3932 + 85 + 230);
+
+        addItem('tree', 3932 + 85 + 230 + 90);
+
+        addObject('bunker', {
+          x: 6656,
+          isEnemy: true
+        });
+
+        addItem('tree', 6736);
+
+        addItem('tree', 6800);
+
+        addItem('palm-tree', 6888);
+
+        addItem('gravestone', 7038);
+
+        addItem('tree', 7070);
+
+        addItem('gravestone', 7160);
+
+        addItem('palm-tree', 7310);
+
+        addItem('tree', 7325);
+
+        addItem('flower', 7500);
+
+        // enemy base sign
+
+        addItem('left-arrow-sign', 7700);
+
+        // more mid-level stuff
+
+        addObject('superBunker', {
+          x: 4096 - 640 - 128,
+          isEnemy: true,
+          energy: 5
+        });
+
+        addObject('turret', {
+          x: 4096 - 640, // width of landing pad
+          isEnemy: true,
+          DOA: !!tutorialMode
+        });
+
+        addObject('turret', {
+          x: 4096 + 120, // width of landing pad
+          isEnemy: true,
+          DOA: !!tutorialMode
+        });
+
+        // vehicles!
+
+        if (!winloc.match(/novehicles/i) && !tutorialMode) {
+
+          // friendly units
+
+          addObject('van', {
+            x: 192
+          });
+
+          for (i=0; i<5; i++) {
+
+            addObject('infantry', {
+              x: 600 + (i * 20)
+            });
+
+          }
+
+          addObject('van', {
+            x: 716
+          });
+
+          addObject('tank', {
+            x: 780
+          });
+
+          addObject('tank', {
+            x: 845
+          });
+
+          // first enemy convoy
+
+          addObject('tank', {
+            x: 1536,
+            isEnemy: true
+          });
+
+          addObject('tank', {
+            x: 1536 + 70,
+            isEnemy: true
+          });
+
+          addObject('tank', {
+            x: 1536 + 140,
+            isEnemy: true
+          });
+
+          addObject('van', {
+            x: 1536 + 210,
+            isEnemy: true
+          });
+
+          addObject('tank', {
+            x: 2048 + 256,
+            isEnemy: true
+          });
+
+          addObject('tank', {
+            x: 4608 + 256,
+            isEnemy: true
+          });
+
+          for (i=0; i<5; i++) {
+
+            // enemy infantry, way out there
+            addObject('infantry', {
+              x: 5120 + (i * 20),
+              isEnemy: true
+            });
+
+          }
+
+        }
+
+      }
 
       // happy little clouds!
 
@@ -10199,13 +10690,19 @@
         x: 4096 + 768
       });
 
+      // enemy's landing pad
+
+      addObject('landingPad', {
+        x: 7800
+      });
+
+      // player + enemy helicopters
+
       addObject('helicopter', {
         x: 310,
         y: game.objects.view.data.world.height - 20,
         attachEvents: true
       });
-
-      // some enemy stuff
 
       if (!tutorialMode) {
 
@@ -10215,80 +10712,6 @@
           isEnemy: true,
           vX: -8
         });
-
-      }
-
-      // vehicles!
-
-      if (!winloc.match(/novehicles/i) && !tutorialMode) {
-
-        // friendly units
-
-        addObject('van', {
-          x: 192
-        });
-
-        for (i=0; i<5; i++) {
-
-          addObject('infantry', {
-            x: 600 + (i * 20)
-          });
-
-        }
-
-        addObject('van', {
-          x: 716
-        });
-
-        addObject('tank', {
-          x: 780
-        });
-
-        addObject('tank', {
-          x: 845
-        });
-
-        // first enemy convoy
-
-        addObject('tank', {
-          x: 1536,
-          isEnemy: true
-        });
-
-        addObject('tank', {
-          x: 1536 + 70,
-          isEnemy: true
-        });
-
-        addObject('tank', {
-          x: 1536 + 140,
-          isEnemy: true
-        });
-
-        addObject('van', {
-          x: 1536 + 210,
-          isEnemy: true
-        });
-
-        addObject('tank', {
-          x: 2048 + 256,
-          isEnemy: true
-        });
-
-        addObject('tank', {
-          x: 4608 + 256,
-          isEnemy: true
-        });
-
-        for (i=0; i<5; i++) {
-
-          // enemy infantry, way out there
-          addObject('infantry', {
-            x: 5120 + (i * 20),
-            isEnemy: true
-          });
-
-        }
 
       }
 
@@ -10488,10 +10911,7 @@
       utils.css.add(document.body, 'no-transform');
     }
 
-    startGame();
-
-    var menu,
-        gameType;
+    var menu;
 
     function menuClick(e) {
 
@@ -10508,12 +10928,26 @@
 
         param = target.href.substr(target.href.indexOf('#')+1);
 
-        if (param === 'regular') {
+        if (param === 'easy') {
 
           // window.location.hash = param;
 
           // set local storage value, and continue
-          utils.storage.set(prefs.gameType, 'regular');
+          utils.storage.set(prefs.gameType, 'easy');
+
+          if (gameType === 'hard') {
+
+            // reload, since we're switching from hard -> easy
+            window.location.reload();
+
+          }
+
+        } else if (param === 'hard') {
+
+          // set local storage value, and continue
+          utils.storage.set(prefs.gameType, 'hard');
+
+          window.location.reload();
 
         } else {
 
@@ -10537,7 +10971,11 @@
 
     // should we show the menu?
 
-    gameType = (winloc.match(/regular|tutorial/i) || utils.storage.get(prefs.gameType));
+    gameType = (winloc.match(/easy|hard|tutorial/i) || utils.storage.get(prefs.gameType));
+
+    if (gameType instanceof Array) {
+      gameType = gameType[0];
+    }
 
     if (!gameType) {
 
@@ -10558,7 +10996,7 @@
       // prference set or game type in URL - start immediately.
 
       // TODO: cleaner DOM reference
-      if (gameType === 'regular') {
+      if (gameType.match(/easy|hard/i)) {
         utils.css.add(document.getElementById('world'), 'regular-mode');
       }
 
@@ -10566,6 +11004,7 @@
 
     }
 
+    startGame();
 
   }
 
@@ -10615,7 +11054,7 @@
 
     },
 
-    exitTutorial: function() {
+    exit: function() {
 
       // delete stored preference
       utils.storage.remove(prefs.gameType);

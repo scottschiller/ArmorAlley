@@ -163,7 +163,7 @@ body.no-transform .gpu {
 
 #game-menu .cta {
  display: inline-block;
- width: 44%;
+ width: 22%;
  -webkit-box-sizing: border-box;
  -moz-box-sizing: border-box;
  box-sizing: border-box;
@@ -171,11 +171,16 @@ body.no-transform .gpu {
  border: 1px solid green;
  font-size: 1.5em;
  line-height: 1.33em;
- padding: 0.25em 1em;
+ padding: 0.25em 0.5em;
  text-align: center;
  text-decoration: none;
  background-color: #003300;
  background-color: rgba(0,102,0,0.5);
+ margin-left: 3%;
+}
+
+#game-menu .cta-large {
+ width: 44%;
 }
 
 #game-menu .cta:hover {
@@ -184,8 +189,8 @@ body.no-transform .gpu {
  color: #fff;
 }
 
-#game-menu .cta:last-of-type {
- margin-left: 6%;
+#game-menu .cta:first-of-type {
+ margin-left: 0%;
 }
 
 #world-wrapper {
@@ -887,11 +892,32 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  height: 16px;
 }
 
+#world .cactus2 {
+ background-image: url(../image/cactus2.png);
+ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAAoUlEQVR4AaWTUQrDMAxDl/1sB0wuuRwyox8q+nhFMRGYUhc/JCd9BS2rujQ8RgZFwGe2q+oQAeRCEKh9J6ockSDgBCKuEEcDAPl5vxinByfeZOsckXeAcaz3nW+HsHXutcdl053QE8D23fqV49Q7O8kQLgHuOB2OEwchCjnJxXckuNj8AXEQIUFwWwG0K9gROMk6drKOnQjAEFbVSRbvJEP+nXp3mMre38sAAAAASUVORK5CYII=);
+ width: 17px;
+ height: 25px;
+}
+
 #world .landing-pad {
  background-image: url(../image/base-landing-pad.gif);
  background-image: url(data:image/gif;base64,R0lGODlhUQAHAPIDAKMEAv+iBv///wAAAE1NTaKiogAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQEGQD/ACwAAAAAUQAHAEADQjgjEfowykmrvbIJRXovYCiOZGmeaDp6HeACjIPNdI1pLxB9au//qo7EFbMZj0ecThFCOp+XJoRFrVqv2Kx263kkAAAh+QQFGQADACwAAAAATwADAAADGTi63P4wyikFAEOEQLv/YHYB2saFaOpZYwIAIfkEBRkAAwAsAAAAAFEAAwAAAx04EyH6MMpJq71SsMcEAFgojuOnBUvzfWTrkitwJgAh+QQFGQADACwAAAAATwADAAADFzgjAPowykmrvZY5zLv/QiBqX2meiygmADs=);
  width: 87px;
  height: 7px;
+}
+
+#world .sand-dune {
+ background-image: url(../image/sand-dune.png);
+ background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAICAYAAABUHMdEAAAAiklEQVR4Ac2UUQoDIRBD1TvaS/aOSaWKxBIEh9IaeKiLH3k77KYvhgGuCZXc0OCZyTelrytXiFEh0eBSstak+7H2/eCvYhRmeUjZHTCiKoaPuzkiFRBoFCPgeZgJcS+2m1YkKgBTJsyRmEz0+MdB4TcC5rmRmkLwE3PIm4hK+GKhuyoEc3bfJIbkC4kCR2EUx824AAAAAElFTkSuQmCC);
+ width: 51px;
+ height: 8px;
+}
+
+#world .sand-dunes {
+ background-image: url(../image/sand-dunes.png);
+ background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAALCAYAAAAz46C7AAAA4klEQVR4AeXV4QrCMAwE4LbPaPqSvmOqyE7qLVvD/ZDBCkd0Ck0/Ui0XXiOVuy0GGMPHz3rWKe1GaAwzgZiVb/WtIoACmr9zZayRyRrGATLXML5VQkOuMF37JnjxoSI0rCxMnz6z/esJq53t/f8rwSDUcHhovjYM9GCwBd5yb3269B9RHJQPt2gaCb/XQ7A8Tvys8Z4xmA5TMTEfEIbRG69LMKAxVBf2FqZrpKbm4AoJ0cH4+VFdxZN7MlplNLyZ/1LNdBTEdTDCOgPTJ4sq9dt40kryKulQ3YrS/ClYHksPoF5HN4gGUuXOkQAAAABJRU5ErkJggg==);
+ width: 73px;
+ height: 11px;
 }
 
 #world .checkmark-grass {
@@ -1130,7 +1156,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  height: 1px;
 }
 
-#game-status-bar #radar .sprite.smart-missile,
 #game-status-bar #radar .sprite.smart-missile.enemy {
  background-color: red;
 }
@@ -1149,6 +1174,29 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  animation: blink 0.5s infinite;
 }
 
+#game-status-bar #radar .sprite.expired {
+ /* gunfire, etc. */
+ opacity: 0.4;
+}
+
+#game-status-bar #radar .sprite.bomb {
+ width: 2px;
+ height: 2px;
+}
+
+#game-status-bar #radar .sprite.bomb.enemy {
+ background-color: red;
+}
+
+#game-status-bar #radar .sprite.gunfire {
+ width: 1px;
+ height: 1px;
+}
+
+#game-status-bar #radar .sprite.gunfire.enemy {
+ background-color: red;
+}
+
 #game-status-bar #radar .sprite.van,
 #game-status-bar #radar .sprite.missile-launcher {
  width: 2px;
@@ -1165,7 +1213,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #game-status-bar #radar .sprite.smart-missile {
  width: 2px;
  height: 2px;
- background: red;
 }
 
 #game-status-bar #radar .sprite.base,
@@ -1780,13 +1827,15 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #help a.start,
 #help.inactive a.start,
-#help.active a.exit {
+#help a.exit {
  display: inline;
 }
 
+/*
 #help.active a.start {
  display: none;
 }
+*/
 
 #key-legend,
 #help {
