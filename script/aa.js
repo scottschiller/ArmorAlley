@@ -119,19 +119,6 @@
   // how often the enemy attempts to build convoys
   var convoyDelay = 60;
 
-  if (convoyParam) {
-
-    // for example, ?convoydelay=30
-    convoyDelay = parseInt(winloc.substr(convoyParam + 12), 10);
-
-    if (!isNaN(convoyDelay)) {
-      console.log('applying custom enemy convoy delay of ' + convoyDelay);
-    } else {
-      convoyDelay = 60;
-    }
-
-  }
-
   var Tutorial;
 
   var TutorialStep;
@@ -380,7 +367,10 @@
           localStorage.setItem(name, value);
         } catch(ignore) {
           // oh well
+          return false;
         }
+
+        return true;
 
       }
 
@@ -10743,6 +10733,19 @@
 
       dom.world = document.getElementById('battlefield');
 
+      if (convoyParam) {
+
+        // for example, ?convoydelay=30
+        convoyDelay = parseInt(winloc.substr(convoyParam + 12), 10);
+
+        if (!isNaN(convoyDelay)) {
+          console.log('applying custom enemy convoy delay of ' + convoyDelay);
+        } else {
+          convoyDelay = (gameType === 'hard' ? 30 : 60);
+        }
+
+      }
+
       // create objects?
       createObjects();
 
@@ -10918,6 +10921,7 @@
       // infer game type from link, eg., #tutorial
 
       var target = (e.target || window.event.sourceElement),
+          storedOK,
           param;
 
       if (target && target.href) {
@@ -10933,7 +10937,12 @@
           // window.location.hash = param;
 
           // set local storage value, and continue
-          utils.storage.set(prefs.gameType, 'easy');
+          storedOK = utils.storage.set(prefs.gameType, 'easy');
+
+          // stoage failed? use hash, then.
+          if (!storedOK) {
+            window.location.hash = param;
+          }
 
           if (gameType === 'hard') {
 
@@ -10945,7 +10954,12 @@
         } else if (param === 'hard') {
 
           // set local storage value, and continue
-          utils.storage.set(prefs.gameType, 'hard');
+          storedOK = utils.storage.set(prefs.gameType, 'hard');
+
+          // stoage failed? use hash, then.
+          if (!storedOK) {
+            window.location.hash = param;
+          }
 
           window.location.reload();
 
@@ -10975,6 +10989,11 @@
 
     if (gameType instanceof Array) {
       gameType = gameType[0];
+    }
+
+    // safety check
+    if (gameType && !gameType.match(/easy|hard|tutorial/i)) {
+      gameType = null;
     }
 
     if (!gameType) {
