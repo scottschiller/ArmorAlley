@@ -89,6 +89,8 @@
 
   var battleOver = false;
 
+  var productionHalted = false;
+
   var canHideLogo = false;
 
   var logoHidden = false;
@@ -365,7 +367,7 @@
 
         try {
           localStorage.setItem(name, value);
-        } catch(ignore) {
+        } catch(err) {
           // oh well
           return false;
         }
@@ -1400,7 +1402,7 @@
 
   }
 
-  function countSides(objectType) {
+  function countSides(objectType, includeDead) {
 
     var i, j, result;
 
@@ -1415,7 +1417,7 @@
 
         if (!game.objects[objectType][i].data.dead) {
 
-          if (game.objects[objectType][i].data.isEnemy) {
+          if (game.objects[objectType][i].data.isEnemy || game.objects[objectType][i].data.hostile) {
 
             result.enemy++;
 
@@ -1424,6 +1426,11 @@
             result.friendly++;
 
           }
+
+        } else if (includeDead) {
+
+          // things that are dead are considered harmless - therefore, friendly.
+          result.friendly++;
 
         }
 
@@ -1435,9 +1442,45 @@
 
   }
 
-  function countFriendly(objectType) {
+  function countFriendly(objectType, includeDead) {
 
-    return countSides(objectType).friendly;
+    includeDead = (includeDead || false);
+
+    return countSides(objectType, includeDead).friendly;
+
+  }
+
+  function playerOwnsBunkers() {
+
+    // has the player captured (or destroyed) all bunkers? this affects enemy convoy production.
+
+    var owned,
+        total;
+
+    owned = countFriendly('bunkers', true) + countFriendly('superBunkers', true);
+    total = game.objects.bunkers.length + game.objects.superBunkers.length;
+
+    return (owned >= total);
+
+  }
+
+  function checkProduction() {
+
+    var bunkersOwned = playerOwnsBunkers();
+
+    if (!productionHalted && bunkersOwned) {
+
+      // player is doing well; reward them for their efforts.
+      game.objects.view.setAnnouncement('You have captured all bunkers. Enemy convoy production has been halted.');
+      productionHalted = true;
+
+    } else if (productionHalted && !bunkersOwned) {
+
+      // CPU has regained control of a bunker.
+      game.objects.view.setAnnouncement('You no longer control all bunkers. Enemy convoy production is resuming.');
+      productionHalted = false;
+
+    }
 
   }
 
@@ -3159,6 +3202,9 @@
         objects.balloon.setEnemy(isEnemy);
       }
 
+      // check if enemy convoy production should stop or start
+      checkProduction();
+
     }
 
     function repair() {
@@ -3622,6 +3668,9 @@
         utils.css.add(dom.o, css.friendly);
 
       }
+
+      // check if enemy convoy production should stop or start
+      checkProduction();
 
     }
 
@@ -6328,7 +6377,7 @@
 
       if (!data.isEnemy) {
 
-        // hackish: hard reset battlefield scroll to 0
+        // hackish: hard reset battlefield scroll
         game.objects.view.data.battleField.scrollLeft = 0;
 
         // and update scroll view
@@ -6336,6 +6385,8 @@
 
         // reposition chopper on landing pad
         data.x = game.objects.landingPads[0].data.x + game.objects.landingPads[0].data.width/2 - data.halfWidth - 10;
+
+        common.setX(exports, data.x);
 
         // chopper should not be moving
         data.vX = 0;
@@ -10043,6 +10094,16 @@
 
         // level 9
 
+        // mid and end-level landing pad. create up-front, since vans rely on it for xGameOver.
+
+        addObject('landingPad', {
+          x: 3944
+        });
+
+        addObject('landingPad', {
+          x: 7800
+        });
+
         addItem('right-arrow-sign', 550);
 
         x = 630;
@@ -10237,9 +10298,7 @@
 
         x += 115;
 
-        addObject('landingPad', {
-          x: x
-        });
+        // landing pad is logically added here.
 
         x += 88;
 
@@ -10423,6 +10482,16 @@
         
         // level 1
 
+        // mid and end-level landing pads (affects van objects' xGameOver property, so create this ahead of vans.)
+
+        addObject('landingPad', {
+          x: 4096 - 290
+        });
+
+        addObject('landingPad', {
+          x: 7800
+        });
+
         addObject('turret', {
           x: 475,
           DOA: true
@@ -10480,12 +10549,6 @@
         addItem('palm-tree', 3400);
 
         addItem('palm-tree', 3490);
-
-        // mid-level
-
-        addObject('landingPad', {
-          x: 4096 - 290
-        });
 
         addItem('checkmark-grass', 4120);
 
@@ -10693,12 +10756,6 @@
         x: 4096 + 768
       });
 
-      // enemy's landing pad
-
-      addObject('landingPad', {
-        x: 7800
-      });
-
       // player + enemy helicopters
 
       addObject('helicopter', {
@@ -10783,14 +10840,18 @@
 
         function orderNextItem() {
 
-          var options = {
-            isEnemy: true,
-            x: 8192 + 64
-          };
+          var options;
 
           if (!battleOver && !data.paused) {
 
-            game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+            options = {
+              isEnemy: true,
+              x: 8192 + 64
+            };
+
+            if (!productionHalted) {
+              game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+            }
 
             window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
 
