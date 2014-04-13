@@ -6327,7 +6327,20 @@
       // local player? move the view back to zero.
 
       if (!data.isEnemy) {
-        game.objects.view.setLeftScroll(game.objects.view.data.battleField.width * -1);
+
+        // hackish: hard reset battlefield scroll to 0
+        game.objects.view.data.battleField.scrollLeft = 0;
+
+        // and update scroll view
+        game.objects.view.setLeftScroll(0);
+
+        // reposition chopper on landing pad
+        data.x = game.objects.landingPads[0].data.x + game.objects.landingPads[0].data.width/2 - data.halfWidth - 10;
+
+        // chopper should not be moving
+        data.vX = 0;
+        data.vY = 0;
+
       }
 
     }
