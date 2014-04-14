@@ -1781,10 +1781,31 @@
       volume: 30
     });
 
-    sounds.rubberChicken.die = addSound({
-      url: getURL('rubber-chicken-hit'),
+    sounds.rubberChicken.die = [];
+
+    sounds.rubberChicken.die.push(addSound({
+      url: getURL('rubber-chicken-hit-1'),
       volume: 20
-    });
+    }));
+
+    sounds.rubberChicken.die.push(addSound({
+      url: getURL('rubber-chicken-hit-2'),
+      volume: 20
+    }));
+
+    sounds.rubberChicken.die.push(addSound({
+      url: getURL('rubber-chicken-hit-3'),
+      volume: 20
+    }));
+
+    sounds.rubberChicken.die.push(addSound({
+      url: getURL('rubber-chicken-hit-4'),
+      volume: 20
+    }));
+
+    // randomize order a little
+    sounds.rubberChicken.die = utils.array.shuffle(sounds.rubberChicken.die);
+
 
   });
 
@@ -5567,6 +5588,8 @@
 
     function die(excludeShrapnel) {
 
+      var dieSound;
+
       if (!data.deadTimer) {
 
         utils.css.add(dom.o, css.spark);
@@ -5597,7 +5620,7 @@
           // don't "die" again if the chicken has already moaned, i.e., from expiring.
           if (!data.expired) {
 
-            playSound(sounds.rubberChicken.die, exports);
+            dieSound = playSound(sounds.rubberChicken.die, exports);
 
           }
 
@@ -5605,9 +5628,9 @@
 
             launchSound.stop();
 
-            if (!data.expired) {
+            if (!data.expired && dieSound) {
               // hackish: apply launch sound volume to die sound
-              sounds.rubberChicken.die.sound.setVolume(launchSound.volume);
+              dieSound.setVolume(launchSound.volume);
             }
 
           }
