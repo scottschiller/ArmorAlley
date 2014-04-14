@@ -821,6 +821,26 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  transition: transform 0.2s ease-none;
 }
 
+#world.rubber-chicken-mode ul.stats-bar .missiles em,
+#world .smart-missile.rubber-chicken {
+ /* heh */
+ background: transparent url(../image/rubber-chicken.gif) no-repeat 0px 0px;
+ background: transparent url(data:image/gif;base64,R0lGODlhIAAJAPcAANfXOP/qK//rJP/rM//sK//uKf/xMf/yKf/zJv/yM//zL//1K//zP//2MP/3Kf/2O//5Jv/4MP/4NP/4Nv/9Jf//H///Iv//Kf//Kv//OP//Of//Ov//O///Pf//Pv//P///QP//QRcFFf//SP//Sf//S///TP//Tv//T///Uf//Uv//VP//Vf//Xf//Xv//ZCAcCzEeGigiFywoCEAmJDQvCd4AAEsrHjk1Ez04GVg1LlBGDVVOE6lDOcNDAGBgFf4yMbZQNHRnFpBiT89dSNphQNdhS4qAJbh1IZWGF5CQQv+Iaf+KbP+LY/+PZf+QasfALv+wafu9A9DHNePMAObPJevUIOnWJPLaHO/ZNfDdIfDePfLjHvrkEP3lJvznO/3pLJqaLaioF6ioJicnCrGnFy8vDqioLqioMjY2Du/bNUQ+DD8/EcO0KMm2JmllC2pqGHNzD/PnSYZ4Jt7OL///Q5OIG//1LlhWJWRWGK2cIP/+LZKMLCglDLy8Yf/3HTErCf//RP//Tf//N7GlM//iL+PSKP//Rv//Rz45FT46FpuMHv//I6+pL//sLxYUCQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJBwAAACwAAAAAIAAJAEAItwABCBxIEEAjPooKKlzIsCGghhAL1jmhAsUIDhYueMgQgAADKFMiQHCAgIsPERAFBRKEaAOjP44eRRQ4hMmSJk6eRBlRyIAHEBsUJHjAoQ6JCVquZElSgyASHjAg4uEwaM8dQ31maj1kgsWKEhgqaKAw4IjCGT+A2BBII4YOgTKU+HnhogULEyE8fNjQIYWXAA0kLDggAEsXKVRwCLxRxAiRHkHyJNqxSA+hLV/AFLBSRUjDHAACAgAh+QQFBwB3ACwAAAIAIAAHAAAIqwDvCBxIUCAbOHHerCnIsCFDMmFYrCiBoYIGCgPUCGE44wcQGw4FAjihAsUIDhYueMgQgACDLFCmRIDgAAEXHyLu0IihQ6AMJS9ctGBhIoSHDxs6pPASoEEDCQsOCMDSRQoVHEOYLGni5EmUEQY8gNigIMEDDnVITNByJQuDJDUIIuEBQ+CNIkaI9AgyZ0cbOnK2fAFTwEoVN0dC5ggp0EwaNGfGiCljhzHBgAA7) no-repeat 0px 0px;
+ background-size: contain;
+ background-position: 50% 50%;
+}
+
+#world .smart-missile.rubber-chicken,
+#world.rubber-chicken-mode ul.stats-bar .missiles em {
+ width: 24px;
+ height: 12px;
+}
+
+#world.rubber-chicken-mode ul.stats-bar .missiles em {
+ /* special case */
+ background-position: 50% 33%;
+}
+
 #world .smart-missile .sub-sprite {
  display: block;
  background-image: url(../image/smouldering-phase-1.gif);
