@@ -1204,17 +1204,16 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  height: 2px;
 }
 
-#game-status-bar #radar .sprite.bomb.enemy {
+#game-status-bar #radar .sprite.shrapnel,
+#game-status-bar #radar .sprite.bomb.enemy,
+#game-status-bar #radar .sprite.gunfire.enemy {
  background-color: red;
 }
 
+#game-status-bar #radar .sprite.shrapnel,
 #game-status-bar #radar .sprite.gunfire {
  width: 1px;
  height: 1px;
-}
-
-#game-status-bar #radar .sprite.gunfire.enemy {
- background-color: red;
 }
 
 #game-status-bar #radar .sprite.van,

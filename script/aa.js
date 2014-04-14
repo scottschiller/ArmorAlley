@@ -2330,6 +2330,14 @@
 
     var css, data, dom, oParent, exports;
 
+    function dieComplete() {
+
+      game.objects.radar.removeItem(exports);
+      dom.o = null;
+      options.o = null;
+
+    }
+
     function die(dieOptions) {
 
       if (!data.dead) {
@@ -2343,11 +2351,16 @@
         if (!options.canRespawn) {
 
           // permanent removal
-          window.setTimeout(function() {
-            game.objects.radar.removeItem(exports);
-            dom.o = null;
-            options.o = null;
-          }, (dieOptions && dieOptions.silent ? 1 : 2000));
+          if (dieOptions && dieOptions.silent) {
+
+            // bye bye! (next scheduled frame)
+            features.getAnimationFrame(dieComplete);
+
+          } else {
+
+            window.setTimeout(dieComplete, 2000);
+
+          }
 
         } else {
 
@@ -5008,7 +5021,9 @@
 
       data.dead = true;
 
-      radarItem.die();
+      radarItem.die({
+        silent: true
+      });
 
     }
 
@@ -5237,7 +5252,9 @@
       data.dead = true;
 
       if (radarItem) {
-        radarItem.die();
+        radarItem.die({
+          silent: true
+        });
       }
 
     }
@@ -8963,7 +8980,7 @@
 
   Shrapnel = function(options) {
 
-    var css, dom, data, collision, exports;
+    var css, dom, data, collision, radarItem, exports;
 
     function moveTo(x, y) {
 
@@ -9017,6 +9034,12 @@
       data.energy = 0;
 
       data.dead = true;
+
+      if (radarItem) {
+        radarItem.die({
+          silent: true
+        });
+      }
 
     }
 
@@ -9083,6 +9106,8 @@
       common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
       game.dom.world.appendChild(dom.o);
+
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
       shrapnelNoise();
 
