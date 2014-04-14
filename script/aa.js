@@ -4052,7 +4052,7 @@
 
   Turret = function(options) {
 
-    var css, data, dom, objects, radarItem, exports;
+    var css, data, dom, objects, radarItem, collisionItems, exports;
 
     function okToMove() {
 
@@ -4120,7 +4120,7 @@
             parentType: data.type,
             isEnemy: data.isEnemy,
             // turret gunfire should probably only hit airborne things.
-            collisionItems: ['helicopters', 'balloons', 'parachuteInfantry'],
+            collisionItems: collisionItems,
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
             vX: deltaX * 0.05 + deltaXGretzky,
@@ -4304,6 +4304,13 @@
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+    }
+
+    collisionItems = ['helicopters', 'balloons', 'parachuteInfantry'];
+
+    if (gameType === 'hard') {
+      // additional challenge: make turret gunfire dangerous to some ground units, too.
+      collisionItems = collisionItems.concat(['tanks', 'vans', 'missileLaunchers']);
     }
 
     options = options || {};
