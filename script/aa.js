@@ -82,6 +82,9 @@
 
   var debug = winloc.match(/debug/i);
 
+  // whether to always "upgrade" Smart Missiles...
+  var forceRubberChicken = winloc.match(/chicken/i);
+
   var deg2Rad = 180/Math.PI;
 
   // used for various measurements in the game
@@ -1520,17 +1523,22 @@
 
   function playSound(soundReference, target) {
 
-    var soundObject = getSound(soundReference);
+    var soundObject = getSound(soundReference),
+        onScreen;
 
     if (!userDisabledSound && soundObject) {
 
-      soundObject.sound.play(isOnScreen(target) ? soundObject.soundOptions.onScreen : soundObject.soundOptions.offScreen);
+      onScreen = (!target || isOnScreen(target));
+
+      soundObject.sound.play(onScreen ? soundObject.soundOptions.onScreen : soundObject.soundOptions.offScreen);
 
       // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
       // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
-      soundObject.sound.setVolume(isOnScreen(target) ? soundObject.soundOptions.onScreen.volume : soundObject.soundOptions.offScreen.volume);
+      soundObject.sound.setVolume(onScreen ? soundObject.soundOptions.onScreen.volume : soundObject.soundOptions.offScreen.volume);
 
     }
+
+    return soundObject ? soundObject.sound : null;
 
   }
 
@@ -1566,6 +1574,11 @@
     genericGunFire: null,
     missileLaunch: null,
     repairing: null,
+    rubberChicken: {
+      launch: null,
+      expire: null,
+      die: null
+    },
     parachuteOpen: null,
     turretGunFire: null,
     wilhemScream: null
@@ -1741,6 +1754,36 @@
       url: getURL('repairing'),
       volume: 75,
       loops: 999
+    });
+
+    sounds.rubberChicken.launch = [];
+
+    sounds.rubberChicken.launch.push(addSound({
+      url: getURL('rubber-chicken-launch-1'),
+      volume: 20
+    }));
+
+    sounds.rubberChicken.launch.push(addSound({
+      url: getURL('rubber-chicken-launch-2'),
+      volume: 20
+    }));
+
+    sounds.rubberChicken.launch.push(addSound({
+      url: getURL('rubber-chicken-launch-3'),
+      volume: 20
+    }));
+
+    // randomize order a little
+    sounds.rubberChicken.launch = utils.array.shuffle(sounds.rubberChicken.launch);
+
+    sounds.rubberChicken.expire = addSound({
+      url: getURL('rubber-chicken-expire'),
+      volume: 30
+    });
+
+    sounds.rubberChicken.die = addSound({
+      url: getURL('rubber-chicken-hit'),
+      volume: 20
     });
 
   });
@@ -3274,6 +3317,9 @@
         playSound(sounds.explosionLarge, exports);
       }
 
+      // check if enemy convoy production should stop or start
+      checkProduction();
+
       radarItem.die();
 
     }
@@ -3709,6 +3755,9 @@
       data.dead = false;
 
       data.hostile = true;
+
+      // check if enemy convoy production should stop or start
+      checkProduction();
 
     }
 
@@ -4309,7 +4358,7 @@
 
     function fire() {
 
-      var targetHelicopter = enemyHelicopterNearby(data);
+      var targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
       if (targetHelicopter) {
 
@@ -5442,7 +5491,7 @@
      *  -- Homer Simpson
      */
 
-    var css, dom, data, radarItem, objects, collision, exports;
+    var css, dom, data, radarItem, objects, collision, launchSound, exports;
 
     function moveTo(x, y) {
 
@@ -5543,6 +5592,28 @@
 
         radarItem.die();
 
+        if (data.isRubberChicken && sounds.rubberChicken.die) {
+
+          // don't "die" again if the chicken has already moaned, i.e., from expiring.
+          if (!data.expired) {
+
+            playSound(sounds.rubberChicken.die, exports);
+
+          }
+
+          if (launchSound) {
+
+            launchSound.stop();
+
+            if (!data.expired) {
+              // hackish: apply launch sound volume to die sound
+              sounds.rubberChicken.die.sound.setVolume(launchSound.volume);
+            }
+
+          }
+
+        }
+
       }
 
       data.dead = true;
@@ -5583,13 +5654,28 @@
         deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
 
         if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
+
           utils.css.add(dom.o, css.expired);
           utils.css.add(radarItem.dom.o, css.expired);
+
           data.expired = true;
           data.hostile = true;
+
           // burst of thrust when the missile expires?
           data.vX *= 1.5;
           data.vY *= 1.5;
+
+          if (data.isRubberChicken && sounds.rubberChicken.expire) {
+
+            playSound(sounds.rubberChicken.expire, exports);
+
+            if (launchSound) {
+              // hackish: apply launch sound volume, for consistency
+              sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
+            }
+
+          }
+
         }
 
         if (data.expired) {
@@ -5740,13 +5826,24 @@
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-      if (sounds.missileLaunch) {
+      if (data.isRubberChicken && sounds.rubberChicken.launch) {
+
+        // special case: enemy missile launchers should always play at full volume - they're close enough.
+        launchSound = playSound(sounds.rubberChicken.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports));
+
+      } else if (sounds.missileLaunch) {
+
         playSound(sounds.missileLaunch, exports);
+
       }
 
     }
 
     options = options || {};
+
+    if (forceRubberChicken) {
+      options.isRubberChicken = true;
+    }
 
     css = inheritCSS({
       className: 'smart-missile',
@@ -5754,6 +5851,11 @@
       expired: 'expired',
       spark: 'spark'
     });
+
+    // special case
+    if (options.isRubberChicken) {
+      css.className += ' rubber-chicken';
+    }
 
     data = inheritData({
       type: 'smart-missile',
@@ -5764,10 +5866,11 @@
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 256,
       dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
-      width: 14,
+      width: (options.isRubberChicken ? 24 : 14),
       height: 15,
       gravity: 1,
       damagePoints: 25,
+      isRubberChicken: options.isRubberChicken || false,
       vX: 2,
       vY: 2,
       vXMax: 12,
@@ -6079,10 +6182,11 @@
 
     }
 
-    function setMissileLaunching(state) {
+    function setMissileLaunching(state, isRubberChicken) {
 
       if (data.missileLaunching !== state) {
          data.missileLaunching = state;
+         data.rubberChickenLaunching = !!isRubberChicken;
       }
 
     }
@@ -6328,6 +6432,7 @@
       data.bombing = false;
       data.firing = false;
       data.missileLaunching = false;
+      data.rubberChickenLaunching = false;
       data.parachuting = false;
 
       updateHealth();
@@ -6413,7 +6518,7 @@
       });
 
       // drop infantry?
-      if ((data.isEnemy && Math.random() > 0.5) || Math.random() > 0.75) {
+      if ((data.isEnemy && (gameType === 'hard' ? Math.random() > 0.25 : Math.random() > 0.5)) || Math.random() > 0.66) {
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
@@ -6564,7 +6669,9 @@
               isEnemy: data.isEnemy,
               x: data.x + (data.rotated ? 0 : data.width) - 8,
               y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
-              target: missileTarget
+              target: missileTarget,
+              // a special variant of the smart missile. ;)
+              isRubberChicken: data.rubberChickenLaunching
               // vX: data.vX + 8 * (data.rotated ? -1 : 1)
             }));
 
@@ -7391,6 +7498,7 @@
       bombing: false,
       firing: false,
       missileLaunching: false,
+      rubberChickenLaunching: false,
       parachuting: false,
       ignoreMouseEvents: false,
       fuel: 100,
@@ -9923,6 +10031,23 @@
 
       },
 
+      // "c" (rubber chicken)
+      '67': {
+
+        down: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(true, true);
+
+        },
+
+        up: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(false);
+
+        }
+
+      },
+
       // "x"
       '88': {
 
@@ -10953,6 +11078,10 @@
 
     // updateScreenScale();
     // applyScreenScale();
+
+    if (forceRubberChicken) {
+      utils.css.add(document.getElementById('world'), 'rubber-chicken-mode');
+    }
 
     game.init();
 
