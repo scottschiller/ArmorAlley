@@ -54,6 +54,9 @@ body {
  image-rendering: pixelated;
  image-rendering: crisp-edges;
  -ms-interpolation-mode: nearest-neighbor;
+ /* font trickery */
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
 }
 
 #aa {
@@ -207,7 +210,7 @@ body.no-transform .gpu {
 }
 
 #world-wrapper b {
- font-weight: bold;
+ font-weight: 200;
 }
 
 #game-status-bar {
