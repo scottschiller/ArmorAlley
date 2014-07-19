@@ -4406,6 +4406,7 @@
         game.objects.smartMissiles.push(new SmartMissile({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          isRubberChicken: true, // because why not, it's a special case anyway
           x: data.x + data.width/2,
           y: bottomAlignedY() - data.height/2,
           target: targetHelicopter
