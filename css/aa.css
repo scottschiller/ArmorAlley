@@ -1488,12 +1488,13 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  padding-right: 1px; /* hackish: fix slightly-short background on right side. */
  /**
   * gradient generated via this useful tool...
-  * http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%200\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2015\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2085\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%20100\%25\%29\%3B'
+  * http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%200\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B'
   */
- color-stop(50%, rgba(0,0,0,0)), color-stop(85%, rgba(0,0,0,0)), color-stop(100%, rgba(0,0,0,1)));
- background: -webkit-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 85%, rgba(0,0,0,1) 100%);
- background: -ms-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 85%, rgba(0,0,0,1) 100%);
- background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 85%, rgba(0,0,0,1) 100%);
+ background: -moz-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
+ background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,0,0,1)), color-stop(20%, rgba(0,0,0,0)), color-stop(50%, rgba(0,0,0,0)), color-stop(80%, rgba(0,0,0,0)), color-stop(95%, rgba(0,0,0,1)));
+ background: -webkit-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
+ background: -ms-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
+ background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
 }
 
 #game-tips .tips-container div {
