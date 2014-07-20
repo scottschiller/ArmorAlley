@@ -940,7 +940,7 @@
     /**
      * given x, y, width and height, determine if one object is overlapping another.
      * additional hacky param: X-axis offset for object. Used for cases where tanks etc. need to know when objects are nearby.
-     * provided as an override because live objects are passed directly and can't be modified (eg., data1.x += ...).
+     * provided as an override because live objects are passed directly and can't be modified (eg., options.source.data.x += ...).
      * cloning these objects via mixin() works, but then lot of temporary objects are created, leading to increased garbage collection.
      */
 
@@ -1034,7 +1034,7 @@
      * }
      */
 
-    var hit, item, objects, data1, data2, xLookAhead, foundHit;
+    var item, xLookAhead, foundHit;
 
     if (!options) {
       return false;
@@ -1059,60 +1059,52 @@
 
     }
 
-    data1 = options.source.data;
-
-    objects = options.targets;
-
-    for (item in objects) {
+    for (item in options.targets) {
 
       // non-standard formatting, lengthy logic check here...
       if (
 
-        objects.hasOwnProperty(item)
+        options.targets.hasOwnProperty(item)
 
         // don't compare the object against itself
-        && objects[item] !== options.source
+        && options.targets[item] !== options.source
 
-        // ignore dead objects (unless a turret, which can be reclaimed / repaired by engineers)
-        && (!objects[item].data.dead || (objects[item].data.type === 'turret' && data1.type === 'infantry' && data1.role))
+        // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
+        && (!options.targets[item].data.dead || (options.targets[item].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role))
 
         // more non-standard formatting....
         && (
 
           // don't check against friendly units
-          (objects[item].data.isEnemy !== options.source.data.isEnemy)
+          (options.targets[item].data.isEnemy !== options.source.data.isEnemy)
 
           // unless infantry vs. bunker, end-bunker, super-bunker or helicopter
-          || (data1.type === 'infantry' && objects[item].data.type === 'bunker')
-          || (data1.type === 'end-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
-          || (data1.type === 'super-bunker' && objects[item].data.type === 'infantry' && !objects[item].data.role)
+          || (options.source.data.type === 'infantry' && options.targets[item].data.type === 'bunker')
+          || (options.source.data.type === 'end-bunker' && options.targets[item].data.type === 'infantry' && !options.targets[item].data.role)
+          || (options.source.data.type === 'super-bunker' && options.targets[item].data.type === 'infantry' && !options.targets[item].data.role)
 
-          || (data1.type === 'helicopter' && objects[item].data.type === 'infantry')
+          || (options.source.data.type === 'helicopter' && options.targets[item].data.type === 'infantry')
 
           // OR engineer vs. turret
-          || (data1.type === 'infantry' && data1.role && objects[item].data.type === 'turret')
+          || (options.source.data.type === 'infantry' && options.source.data.role && options.targets[item].data.type === 'turret')
 
           // OR we're dealing with a hostile or neutral object
-          || (data1.hostile || objects[item].data.hostile)
-          || (data1.isNeutral || objects[item].data.isNeutral)
+          || (options.source.data.hostile || options.targets[item].data.hostile)
+          || (options.source.data.isNeutral || options.targets[item].data.isNeutral)
 
         )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
-        && ((!data1.hostile || !objects[item].data.hostile) || (data1.hostile !== objects[item].data.hostile))
+        && ((!options.source.data.hostile || !options.targets[item].data.hostile) || (options.source.data.hostile !== options.targets[item].data.hostile))
 
       ) {
 
-        data2 = objects[item].data;
-
-        hit = collisionCheck(data1, data2, xLookAhead);
-
-        if (hit) {
+        if (collisionCheck(options.source.data, options.targets[item].data, xLookAhead)) {
 
           foundHit = true;
 
           if (options.hit) {
-            options.hit(objects[item]);
+            options.hit(options.targets[item]);
           }
 
         }
