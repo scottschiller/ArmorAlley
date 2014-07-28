@@ -11462,7 +11462,14 @@
     soundManager.audioFormats.mp3.required = true;
     // needed for good performance in Safari, otherwise multiShot lags a bit.
     soundManager.setup({
-      useHighPerformance: true
+      useHighPerformance: true,
+      onready: function() {
+        if (soundManager.html5Only) {
+          // no flash or blocked etc., fell back to HTML5 anyway - this is bad. disable sound entirely.
+          console.log('SM2 fell back to HTML5 audio, which doesn\'t work here; disabling sound entirely.');
+          soundManager.disable();
+        }
+      }
     });
   }
 
