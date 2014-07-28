@@ -50,10 +50,12 @@ body {
  /*
  image-rendering: -webkit-optimize-contrast;
  */ 
- image-rendering: -moz-crisp-edges;
  image-rendering: crisp-edges;
  image-rendering: optimizeQuality;
  image-rendering: pixelated;
+ /* non-standard, but quite nice under Firefox */
+ image-rendering: -moz-crisp-edges;
+ /* who knows, for IE */
  -ms-interpolation-mode: nearest-neighbor;
  /* font trickery */
  -moz-osx-font-smoothing: grayscale;
