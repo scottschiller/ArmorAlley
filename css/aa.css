@@ -51,8 +51,9 @@ body {
  image-rendering: -webkit-optimize-contrast;
  */ 
  image-rendering: -moz-crisp-edges;
- image-rendering: pixelated;
  image-rendering: crisp-edges;
+ image-rendering: optimizeQuality;
+ image-rendering: pixelated;
  -ms-interpolation-mode: nearest-neighbor;
  /* font trickery */
  -moz-osx-font-smoothing: grayscale;
@@ -1294,6 +1295,38 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #world .van.exploding {
  /* 32px -> 79px */
  margin-left: -28px;
+}
+
+#world .sprite .energy-status {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ width: 100%;
+ font-size: 0px;
+ margin-top: -4px;
+ height: 1px;
+ background-color: #33cc33;
+ /* box-sizing: border-box; */
+}
+
+#world .sprite .energy-bg {
+ background-color: #333;
+}
+
+#world .sprite .energy-status {
+ transition: all 0.15s ease-out;
+ transition-property: width background-color;
+}
+
+#world .sprite.end-bunker .energy {
+ width: 0%;
+}
+
+#world .sprite.exploding .energy-status,
+#world .sprite.dead .energy-status,
+#world .sprite.burning .energy-status,
+#world .sprite.destroyed .energy-status {
+ display: none;
 }
 
 #world .sprite .sub-sprite {

@@ -82,6 +82,8 @@
 
   var debug = winloc.match(/debug/i);
 
+  var showHealth = winloc.match(/health/i);
+
   // whether to always "upgrade" Smart Missiles...
   var forceRubberChicken = winloc.match(/chicken/i);
 
@@ -769,6 +771,9 @@
           target.updateHealth();
         }
 
+        // for debugging / fun
+        updateEnergy(target);
+
         if (target.data.energy <= 0) {
 
           target.data.energy = 0;
@@ -792,15 +797,70 @@
 
   }
 
+  function updateEnergy(object) {
+
+    if (!showHealth) {
+      return false;
+    }
+
+    var nodes,
+        node,
+        energy;
+
+    if (document.querySelectorAll && object.dom && object.dom.o) {
+      nodes = object.dom.o.querySelectorAll('.energy');
+    }
+
+    if (nodes && nodes.length) {
+      node = nodes[0];
+    }
+
+    // console.log(node, object.data.energy, object.data.energyMax);
+
+    if (node) {
+      energy = (object.data.energy / object.data.energyMax) * 100;
+      if (!isNaN(energy)) {
+        if (energy > 66) {
+          node.style.backgroundColor = '#33cc33';
+        } else if (energy > 33) {
+          node.style.backgroundColor = '#cccc33';
+        } else {
+          node.style.backgroundColor = '#cc3333';
+        }
+        node.style.width = (energy+ '%');
+      }
+    }
+
+  }
+
   function makeSprite(options) {
 
-    var o = document.createElement('div');
+    var o, o2, frag;
+
+    o = document.createElement('div');
 
     o.className = 'sprite ' + options.className;
 
     if (debug) {
       o.innerHTML = options.className.replace(/sub\-sprite/i, '');
       o.style.fontSize = 6 + (1/screenScale) + 'px';
+    }
+
+    if (showHealth && options.className.match(/missilelauncher|tank|van|infantry|engineer|balloon|helicopter|bunker|turret/i)) {
+
+      frag = document.createDocumentFragment();
+
+      o2 = document.createElement('div');
+      o2.className = 'energy-status energy-bg';
+      frag.appendChild(o2);
+
+      o2 = document.createElement('div');
+      o2.className = 'energy-status energy';
+
+      frag.appendChild(o2);
+
+      o.appendChild(frag);
+
     }
 
     return o;
@@ -1105,6 +1165,8 @@
 
           if (options.hit) {
             options.hit(options.targets[item]);
+            // update energy?
+            updateEnergy(options.targets[item]);
           }
 
         }
@@ -2744,6 +2806,8 @@
               console.log('fps', fps);
             }
 
+            document.getElementById('fps-count').textContent = fps;
+
             // window.performance.memory?
 
             if (!data.fpsLocked) {
@@ -2979,6 +3043,7 @@
     }
 
     function dead() {
+
       if (data.dead && dom.o) {
         // hide the balloon
         utils.css.swap(dom.o, css.exploding, css.dead);
@@ -2986,9 +3051,11 @@
       if (data.deadTimer) {
         data.deadTimer = null;
       }
+
     }
 
     function die() {
+
       // pop!
       if (!data.dead) {
         utils.css.add(dom.o, css.exploding);
@@ -3002,6 +3069,7 @@
         });
         data.dead = true;
       }
+
     }
 
     function animate() {
@@ -3087,7 +3155,7 @@
 
       // respawn can actually happen now
 
-      data.energy = data.defaultEnergy;
+      data.energy = data.energyMax;
 
       // restore default vertical
       data.verticalDirection = data.verticalDirectionDefault;
@@ -3113,6 +3181,8 @@
 
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
+
+      updateEnergy(exports);
 
     };
 
@@ -3175,7 +3245,7 @@
       windOffsetX: 0,
       windOffsetY: 0,
       energy: 3,
-      defaultEnergy: 3,
+      energyMax: 3,
       direction: 0,
       detached: false,
       hostile: false, // dangerous when detached
@@ -3413,6 +3483,7 @@
       type: 'bunker',
       bottomAligned: true,
       energy: 50,
+      energyMax: 50,
       width: 51,
       halfWidth: 25,
       height: 25,
@@ -3468,6 +3539,7 @@
       // only tank gunfire counts against end bunkers.
       if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
         data.energy = Math.max(0, data.energy - points);
+        updateEnergy(exports);
       }
 
     }
@@ -3638,6 +3710,7 @@
       bottomAligned: true,
       frameCount: 0,
       energy: 0,
+      energyMax: 10,
       x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
       width: 39,
       halfWidth: 19,
@@ -3694,7 +3767,8 @@
             } else if (!data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
               // end bunker isn't "staffed" / manned by infantry, guns are inoperable.
               // claim infantry, enable guns.
-              data.energy = 10;
+              data.energy = data.energyMax;
+              updateEnergy(exports);
               target.die(true);
             }
           }
@@ -3762,6 +3836,7 @@
       if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
         data.energy = Math.max(0, data.energy - points);
         updateFireModulus();
+        updateEnergy(exports);
       }
 
     }
@@ -3875,8 +3950,8 @@
       bottomAligned: true,
       frameCount: 0,
       energy: (options.energy || 0),
-      isEnemy: (options.isEnemy || false),
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
+      isEnemy: (options.isEnemy || false),
       // x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
       width: 66,
       halfWidth: 33,
@@ -4169,6 +4244,8 @@
 
       data.dead = true;
 
+      updateEnergy(exports);
+
     }
 
     function restore() {
@@ -4190,6 +4267,7 @@
           // restore to life at 25%
           data.dead = false;
         }
+        updateEnergy(exports);
       }
 
     }
@@ -4940,6 +5018,7 @@
       type: 'missile-launcher',
       bottomAligned: true,
       energy: 3,
+      energyMax: 3,
       direction: 0,
       vX: (options.isEnemy ? -1 : 1),
       frameCount: 0,
@@ -5287,7 +5366,7 @@
         if (target.data.type === 'helicopter') {
 
           // one bomb kills a helicopter.
-          damagePoints = target.data.maxEnergy;
+          damagePoints = target.data.energyMax;
 
         } else if (target.data.type === 'turret') {
 
@@ -5901,6 +5980,7 @@
       type: 'smart-missile',
       parentType: options.parentType || null,
       energy: 1,
+      energyMax: 1,
       expired: false,
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       frameCount: 0,
@@ -6137,7 +6217,7 @@
       }
 
       // fully-repaired?
-      if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.maxEnergy && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
+      if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.energyMax && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
 
         data.repairComplete = true;
 
@@ -6178,7 +6258,7 @@
       if (data.repairFrames % 5 === 0) {
 
         // fix damage
-        data.energy = Math.min(data.maxEnergy, data.energy + 1);
+        data.energy = Math.min(data.energyMax, data.energy + 1);
 
       }
 
@@ -6201,6 +6281,8 @@
       if (hasUpdate) {
 
         updateStatusUI();
+
+        updateEnergy(exports);
 
       }
 
@@ -6433,7 +6515,7 @@
     function reset() {
 
       data.fuel = data.maxFuel;
-      data.energy = data.maxEnergy;
+      data.energy = data.energyMax;
       data.parachutes = 1;
       data.smartMissiles = data.maxSmartMissiles;
       data.ammo = data.maxAmmo;
@@ -6504,6 +6586,8 @@
       radarItem.reset();
 
       updateStatusUI();
+
+      updateEnergy(exports);
 
     }
 
@@ -6629,7 +6713,7 @@
                 soundObject = getSound(sounds.genericGunFire);
                 soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
               }
-            } else {
+            } else if (!userDisabledSound) {
               // play with volume based on visibility.
               playSound(sounds.genericGunFire, exports);
             }
@@ -7562,7 +7646,7 @@
       repairing: false,
       repairFrames: 0,
       energy: 10,
-      maxEnergy: 10,
+      energyMax: 10,
       direction: 0,
       pilot: true,
       xMin: 0,
@@ -7786,6 +7870,8 @@
         utils.css.remove(dom.o, css.hit2);
 
       }
+
+      updateEnergy(exports);
 
     }
 
@@ -8209,6 +8295,7 @@
       radarJammerModulus: 50,
       jamming: false,
       energy: 2,
+      energyMax: 2,
       direction: 0,
       stopped: false,
       vX: (options.isEnemy ? -1 : 1),
@@ -8510,6 +8597,7 @@
       windModulus: 16 + parseInt(Math.random() * 16, 10),
       panicFrame: 0,
       energy: 2,
+      energyMax: 2,
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
       parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (!tutorialMode  && Math.random() > 0.9? 999 : 0),
@@ -8734,6 +8822,7 @@
       frameCount: 0,
       bottomAligned: true,
       energy: 2,
+      energyMax: 2,
       role: options.role || 0,
       roles: ['infantry', 'engineer'],
       stopped: false,
@@ -10994,13 +11083,9 @@
 
       objects.gameLoop.init();
 
-      if (sounds.helicopter.engine) {
+      if (sounds.helicopter.engine && !userDisabledSound) {
 
         sounds.helicopter.engine.sound.play();
-
-        if (userDisabledSound) {
-          sounds.helicopter.engine.sound.mute();
-        }
 
       }
 
@@ -11368,10 +11453,10 @@
 
   var preferFlash = false;
 
-  if (isSafari && navigator.userAgent.match(/Version\/7\.[01]/i) && !window.location.toString().match(/html5audio/i)) {
+  if (isSafari && navigator.userAgent.match(/Version\/[7|8]/i) && !window.location.toString().match(/html5audio/i)) {
     // https://bugs.webkit.org/show_bug.cgi?id=116145
     // looks like it will be fixed in a future release. try #html5audio=1 in URL to override/test.
-    console.log('Preferring Flash for audio due to Safari 7.0/7.1 HTML5 audio performance bug. https://bugs.webkit.org/show_bug.cgi?id=116145');
+    console.log('Preferring Flash for audio due to Safari 7 + 8 HTML5 audio performance bug. https://bugs.webkit.org/show_bug.cgi?id=116145');
     preferFlash = true;
     // workaround for SM2, which will ignore preferFlash if MP3 + MP4 are not required.
     soundManager.audioFormats.mp3.required = true;
