@@ -441,15 +441,34 @@ ul.stats-bar .bombs em {
 #world .bunker,
 #world .bunker.enemy {
  background-image: url(../image/bunker.png);
- background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAFVBMVEUAAACqVQGqqgJVVVWqqqr/qgH///+DyFI7AAAAAXRSTlMAQObYZgAAAPlJREFUeNqFkoGOgzAMQ2la9v+fvJzzKqOU06INkJ1HTOD6ryJCR51/l5kl7hVab4xKqCDxJtZYWbHURed4VCpJ+JgIhgvCSCsYrN8AK9kuHZ1BxRH0iX7XJhhC0D6OIEew+4qwZMa3O29yJ2Sh3sQZjNewmYSezFo8HAUBBCOILmQz79BtiGgndDUGhGgFtbX2OUNIPLKt6vO4Z7ZSE/lzcL0bxkF6jpirDB72Y8QrdzSiOnwW06N9Py2bD2aMMKcxezdmBiqMhCKQrLODMae0mef8ceZx8rKsCVnebkcpHyZk6g9azOQSnRbmyCvQvrOh4O85hKVkjy9q2gb/wcoIqwAAAABJRU5ErkJggg==);
+ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAD1BMVEUAAACqqgKqqqqqVQFVVVUlRgN0AAAAAXRSTlMAQObYZgAAAOpJREFUeNqNkgsOwCAIQ8fn/meehAKKLBnJ1FCfFN3zFUTko81zzAw7N+k8MhY2AWLaCRZeQbz03ClbWIYpR0NSqJAD6ZGM/ATcaKj2Dcx5mkPUT20JQMijH7qMjMYqtTMh0tgNEvnWtzE8wwfDjOYQIGaIoh8wM4RUQrB2Q08xtTmtOdSutdeJByxvKF/ldm+JmAK12oQIEgi6DSGana5zsAbzxQi1/6d5q6GYQlDn6ud876hy+BYn2lkSlyqqYqGqtsSMdtbSJQXpWmxHxnXNOjhHgDqjWCKPLVHHwsHSy9tOaNaB2dTNywtycQhoEtVq0gAAAABJRU5ErkJggg==);
  width: 51px;
  height: 25px;
  z-index: 1;
 }
 
-#world .bunker.enemy {
- background-image: url(../image/bunker-enemy.png);
- background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAElBMVEWqqgKqVQEAAABVVVWqqqr/qgGWDG2/AAAA+0lEQVR42o2SCw7DMAhDCWH3v/KgBpfQVRpSPgW/mKYVfQkzwSwPyTsT2osDNBn7zYQFBhKNMVvmIVClcrWIjMk9+8oCAwSRGWTWfwB8tKqpmMzNUWEyT52JIw+fBs3u5IiPZqozRZyHEAlGwKhPz8b4kYh0xowtE9IKI0IG70PmHfoks8CIPCGdjILBvt4HTJLTJ4zP3gy62673hiwgMD6VexWT7D4LkDMpIdKvfLYGSEsBdxn/z+iNExk+TB8yvBsycKkUbEGMs+pude0dKV+2j1rBmG9R2klGTbTkmUE9GbmKGEDB7Noin5LyiQDIeuutE5s+2SwCnusLU3UF+AfplTEAAAAASUVORK5CYII=);
+#world .bunker .sub-sprite.arrow {
+ position: absolute;
+ top: 8px;
+ left: 38px;
+ width: 6px;
+ height: 10px;
+ background-image: url(../image/arrow-right.png);
+ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAAMElEQVR4AW3JwQkAIBTD0Lr/Ji5ZBQMe8nPMy63dq1GA8YOQaWQYpylgvjzJk8Z5AGtqUXNK2+JgAAAAAElFTkSuQmCC);
+ transition: transform 0.5s ease-in-out;
+}
+
+#world .bunker.enemy .sub-sprite.arrow {
+ /* first: old browser fallback. */
+ background-image: url(../image/arrow-left.png);
+ /* sneaky: modern browsers can use transforms, no need for a second image. */;
+ background-image: none, url(../image/arrow-right.png);
+ transform: rotate(-180deg);
+}
+
+#world .bunker.exploding .sub-sprite.arrow,
+#world .bunker.burning .sub-sprite.arrow {
+ display: none;
 }
 
 #world .balloon,
@@ -1458,6 +1477,30 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(../image/shrapnel.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEUAAACrAgGqqqr/qgH///8OqgJVVQE1mjlhAAAAAXRSTlMAQObYZgAAAWZJREFUOBEFwdF13FYUBDAM9/h/LqkCHukUsBTVgCIX4BLSfxUBAAAA4BwQoABeLcyAKMBxP1M5BhwFxfW7wzw3eMEWi+sc5OPfITkGay5Mgxx/BrkH9gUD2/czmDeW/Q1TdKYkhXWABfYh+AstbKAlBQAAAAAAAAACQAr+A1KQIYANpCBTogDySsnsP4OCtSHHKPP1M5UpsEjudDm+7p08LZnBdlyzM/fHlDw3Ps/iuYrMjr9pK68ryFWoIgUbAAACFgAAAAAAAGBBAqQAbDAnfqEAMshMkBYtMJjnY+E18OqCZpg/d5mj8FkLs1/MP99l7hZXYfJ54XgGb9jOLjLPcWPukhtWNpC8MUMUFJgdCgEAAAAAAAAA5CoRFFhArgfnFCls4JzrXpnvYyTpL7L9Dlt6tM7j5+Z4CnO9EXM38/UzJE+RGUjfNV/nlEyxACmZgsBmgRRTiAJAAaDYAACQAgAAAP4HhZQd0ScxvCoAAAAASUVORK5CYII=);
  background-position: 0px 0px;
+ -webkit-animation: rotating 0.5s linear infinite;
+ -moz-animation: rotating 0.5s linear infinite;
+ -ms-animation: rotating 0.5s linear infinite;
+ animation: rotating 0.5s linear infinite;
+}
+
+#world .shrapnel.reverse {
+ /* opposite spin direction */
+ -webkit-animation-direction: reverse;
+ -moz-animation-direction: reverse;
+ -ms-animation-direction: reverse;
+ animation-direction: reverse;
+}
+
+#world .shrapnel.stopped {
+ -webkit-animation: none;
+ -moz-animation: none;
+ -ms-animation: none;
+ animation: none;
+ opacity: 0;
+ -moz-transition: opacity 0.5s ease-in;
+ -ms-transition: opacity 0.5s ease-in;
+ -webkit-transition: opacity 0.5s ease-in-out;
+ transition: opacity 0.5s ease-in-out;
 }
 
 #world .cloud1,
@@ -1875,6 +1918,42 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
   }
 }
 
+@-webkit-keyframes rotating {
+ from {
+  -webkit-transform: rotate(0deg);
+ }
+ to {
+  -webkit-transform: rotate(360deg);
+ }
+}
+
+@-ms-keyframes rotating {
+ from {
+  -ms-transform: rotate(0deg);
+ }
+ to {
+  -ms-transform: rotate(360deg);
+ }
+}
+
+@-moz-keyframes rotating {
+ from {
+  -moz-transform: rotate(0deg);
+ }
+ to {
+  -moz-transform: rotate(360deg);
+ }
+}
+
+@keyframes rotating {
+ from {
+  transform: rotate(0deg);
+ }
+ to {
+  transform: rotate(360deg);
+ }
+}
+
 #tutorial {
  display: none;
 }
@@ -1919,4 +1998,10 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #key-legend,
 #help {
  font-size: 1em;
+}
+
+/* "Green line" mode */
+#world.x-ray .sprite {
+ background: transparent !important;
+ outline: 1px solid #339933;
 }
