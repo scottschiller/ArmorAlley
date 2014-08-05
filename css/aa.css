@@ -701,6 +701,12 @@ ul.stats-bar .bombs em {
  transform: scaleX(-1);
 }
 
+#world .infantry.enemy.exploding,
+#world .engineer.enemy.exploding {
+ /* stupid display fix */
+ height: 22px !important;
+}
+
 #world .tank.enemy .sub-sprite {
  /* no flip in certain cases */
  filter: none;
