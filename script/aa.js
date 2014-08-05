@@ -142,6 +142,8 @@
 
   var prefs;
 
+  var sounds;
+
   function updateScreenScale() {
 
     if (disableScaling) {
@@ -676,6 +678,42 @@
     callback();
   };
 
+  function updateEnergy(object) {
+
+    if (!showHealth) {
+      return false;
+    }
+
+    var nodes,
+        node,
+        energy;
+
+    if (document.querySelectorAll && object.dom && object.dom.o) {
+      nodes = object.dom.o.querySelectorAll('.energy');
+    }
+
+    if (nodes && nodes.length) {
+      node = nodes[0];
+    }
+
+    // console.log(node, object.data.energy, object.data.energyMax);
+
+    if (node) {
+      energy = (object.data.energy / object.data.energyMax) * 100;
+      if (!isNaN(energy)) {
+        if (energy > 66) {
+          node.style.backgroundColor = '#33cc33';
+        } else if (energy > 33) {
+          node.style.backgroundColor = '#cccc33';
+        } else {
+          node.style.backgroundColor = '#cc3333';
+        }
+        node.style.width = (energy+ '%');
+      }
+    }
+
+  }
+
   common = {
 
     defaultCSS: {
@@ -695,6 +733,15 @@
     setY: function(exports, y) {
 
       if (exports && exports.dom) {
+        exports.dom.o.style.top = (y + 'px');
+      }
+
+    },
+
+    setXY: function(exports, x, y) {
+
+      if (exports && exports.dom) {
+        exports.dom.o.style.left = (x + 'px');
         exports.dom.o.style.top = (y + 'px');
       }
 
@@ -797,42 +844,6 @@
 
   }
 
-  function updateEnergy(object) {
-
-    if (!showHealth) {
-      return false;
-    }
-
-    var nodes,
-        node,
-        energy;
-
-    if (document.querySelectorAll && object.dom && object.dom.o) {
-      nodes = object.dom.o.querySelectorAll('.energy');
-    }
-
-    if (nodes && nodes.length) {
-      node = nodes[0];
-    }
-
-    // console.log(node, object.data.energy, object.data.energyMax);
-
-    if (node) {
-      energy = (object.data.energy / object.data.energyMax) * 100;
-      if (!isNaN(energy)) {
-        if (energy > 66) {
-          node.style.backgroundColor = '#33cc33';
-        } else if (energy > 33) {
-          node.style.backgroundColor = '#cccc33';
-        } else {
-          node.style.backgroundColor = '#cc3333';
-        }
-        node.style.width = (energy+ '%');
-      }
-    }
-
-  }
-
   function makeSprite(options) {
 
     var o, o2, frag;
@@ -867,10 +878,10 @@
 
   }
 
-  function makeSubSprite() {
+  function makeSubSprite(extraClass) {
 
     return makeSprite({
-      className: 'sub-sprite'
+      className: 'sub-sprite' + (extraClass ? ' ' + extraClass : '')
     });
 
   }
@@ -1562,7 +1573,12 @@
       soundReference.soundOffset++;
 
       if (soundReference.soundOffset >= soundReference.length) {
+
+        // re-shuffle the array, randomize a little
+        soundReference = utils.array.shuffle(soundReference);
+
         soundReference.soundOffset = 0;
+
       }
 
     } else {
@@ -1575,20 +1591,27 @@
 
   }
 
-  function playSound(soundReference, target) {
+  function playSound(soundReference, target, soundOptions) {
 
     var soundObject = getSound(soundReference),
+        localOptions,
         onScreen;
 
     if (!userDisabledSound && soundObject) {
 
       onScreen = (!target || isOnScreen(target));
 
-      soundObject.sound.play(onScreen ? soundObject.soundOptions.onScreen : soundObject.soundOptions.offScreen);
+      localOptions = soundObject.soundOptions[onScreen ? 'onScreen' : 'offScreen'];
+
+      if (soundOptions) {
+        localOptions = mixin(localOptions, soundOptions);
+      }
+
+      soundObject.sound.play(localOptions);
 
       // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
       // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
-      soundObject.sound.setVolume(onScreen ? soundObject.soundOptions.onScreen.volume : soundObject.soundOptions.offScreen.volume);
+      soundObject.sound.setVolume(localOptions.volume);
 
     }
 
@@ -1596,11 +1619,105 @@
 
   }
 
+  function playSoundWithDelay() {
+
+    var args, delay;
+
+    args = Array.prototype.slice.call(arguments);
+
+    // modify args, and store last argument if it looks like a number.
+    if (!isNaN(args[args.length-1])) {
+      delay = args.pop();
+    }
+
+    if (!delay || isNaN(delay)) {
+      delay = 500;
+    }
+
+    window.setTimeout(function() {
+      playSound.apply(this, args);
+    }, delay);
+
+  }
+
+  function playRepairingWrench(isRepairing, exports) {
+
+    var args = arguments;
+
+    if (!isRepairing()) {
+      return false;
+    }
+
+    // slightly hackish: dynamic property on exports.
+    if (!exports.repairingWrenchTimer) {
+
+      // flag immediately, so subsequent immediate calls only trigger once
+      exports.repairingWrenchTimer = true;
+
+      playSound(sounds.repairingWrench, exports, {
+        onfinish: function() {
+          exports.repairingWrenchTimer = window.setTimeout(function() {
+            exports.repairingWrenchTimer = null;
+            if (isRepairing()) {
+              playRepairingWrench.apply(this, args);
+            }
+          }, 1000 + parseInt(Math.random() * 2000, 10));
+        }
+      });
+
+    }
+
+  }
+
+  function playImpactWrench(isRepairing, exports) {
+
+    var args = arguments;
+
+    if (!isRepairing()) {
+      return false;
+    }
+
+    // slightly hackish: dynamic property on exports.
+    if (!exports.impactWrenchTimer) {
+
+      // flag immediately, so subsequent immediate calls only trigger once
+      exports.impactWrenchTimer = true;
+
+      playSound(sounds.impactWrench, exports, {
+        onfinish: function() {
+          exports.impactWrenchTimer = window.setTimeout(function() {
+            exports.impactWrenchTimer = null;
+            if (isRepairing()) {
+              playImpactWrench.apply(this, args);
+            }
+          }, 500 + parseInt(Math.random() * 2000, 10));
+        }
+      });
+
+    }
+
+  }
+
+  function playTinkerWrench(isRepairing, exports) {
+
+    var args = arguments;
+
+    playSound(sounds.tinkerWrench, exports, {
+      position: parseInt(Math.random() * 8000, 10),
+      onfinish: function() {
+        if (isRepairing()) {
+          playTinkerWrench.apply(this, args);
+        }
+      }
+    });
+
+  }
+
   /**
    * sound effects
    */
 
-  var sounds = {
+  sounds = {
     helicopter: {
       bomb: null,
       engine: null,
@@ -1634,6 +1751,15 @@
       die: null
     },
     parachuteOpen: null,
+    impactWrench: null,
+    repairingWrench: null,
+    tinkerWrench: null,
+    friendlyClaim: null,
+    enemyClaim: null,
+    popSound: null,
+    popSound2: null,
+    crashAndGlass: null,
+    genericSplat: null,
     turretGunFire: null,
     wilhemScream: null
   };
@@ -1646,7 +1772,7 @@
 
       // SM2 will determine the appropriate format to play, based on client support.
       // URL pattern -> array of .ogg and .mp3 URLs
-      return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3'];
+      return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3', 'audio/wav/' + file + '.wav'];
 
     }
 
@@ -1669,10 +1795,105 @@
 
     }
 
+    sounds.impactWrench = [];
+
+    sounds.impactWrench.push(addSound({
+      // http://freesound.org/people/andrewgnau2/sounds/71534/
+      url: getURL('impact-wrench-1'),
+      volume: 10
+    }));
+
+    sounds.impactWrench.push(addSound({
+      url: getURL('impact-wrench-2'),
+      volume: 10
+    }));
+
+    sounds.impactWrench.push(addSound({
+      url: getURL('impact-wrench-3'),
+      volume: 10
+    }));
+
+    sounds.repairingWrench = [];
+
+    // http://freesound.org/people/TheGertz/sounds/131200/
+    sounds.repairingWrench.push(addSound({
+      url: getURL('socket-wrench-1'),
+      volume: 10
+    }));
+
+    // http://freesound.org/people/xxqmanxx/sounds/147018/
+    sounds.repairingWrench.push(addSound({
+      url: getURL('socket-wrench-2'),
+      volume: 10
+    }));
+
+    sounds.repairingWrench.push(addSound({
+      url: getURL('socket-wrench-3'),
+      volume: 10
+    }));
+
+    sounds.tinkerWrench = addSound({
+      // http://freesound.org/people/klankbeeld/sounds/198299/
+      url: getURL('tinker-wrench'),
+      multiShot: false,
+      volume: 20
+    });
+
+    sounds.friendlyClaim = addSound({
+      // http://freesound.org/people/Carlos_Vaquero/sounds/153616/
+      url: getURL('violin-c5-pizzicato-non-vibrato'),
+      volume: 8
+    });
+
+    sounds.enemyClaim = addSound({
+      // http://freesound.org/people/Carlos_Vaquero/sounds/153611/
+      url: getURL('violin-g4-pizzicato-non-vibrato'),
+      volume: 8
+    });
+
+    sounds.popSound = addSound({
+      // used when picking up infantry + engineers, and restoring turrets
+      // http://freesound.org/people/SunnySideSound/sounds/67095/
+      url: getURL('popsound1'),
+      volume: 10
+    });
+
+    sounds.popSound2 = addSound({
+      // used when deploying parachute infantry
+      // http://freesound.org/people/runirasmussen/sounds/178446/
+      url: getURL('popsound2'),
+      volume: 10
+    });
+
+    sounds.crashAndGlass = addSound({
+      // http://freesound.org/people/Rock%20Savage/sounds/59263/
+      url: getURL('crash-glass')
+    });
+
     sounds.balloonExplosion = addSound({
       url: getURL('balloon-explosion'),
       volume: 20
     });
+
+    sounds.genericSplat = [];
+    
+    // http://freesound.org/people/FreqMan/sounds/42962/
+    for (i=0; i<2; i++) {
+      sounds.genericSplat.push(addSound({
+        url: getURL('splat1'),
+        volume: 15
+      }));
+      sounds.genericSplat.push(addSound({
+        url: getURL('splat2'),
+        volume: 15
+      }));
+      sounds.genericSplat.push(addSound({
+        url: getURL('splat3'),
+        volume: 15
+      }));
+    }
+
+    sounds.genericSplat = utils.array.shuffle(sounds.genericSplat);
 
     sounds.genericBoom = [];
 
@@ -1716,11 +1937,83 @@
 
     sounds.turretGunFire = [];
 
-    for (i=0; i<3; i++) {
+    for (i=0; i<8; i++) {
       sounds.turretGunFire.push(addSound({
         url: getURL('turret-gunfire'),
         volume: 60
       }));
+    }
+
+    // http://freesound.org/people/ceberation/sounds/235513/
+    sounds.doorClose = addSound({
+      url: getURL('door-closing'),
+      volume: 12
+    });
+
+    // http://freesound.org/people/Tiger_v15/sounds/211015/
+    sounds.metalHitBreak = addSound({
+      url: getURL('metal-hit-break'),
+      volume: 12
+    });
+
+    sounds.metalHit = [];
+
+    sounds.metalHitLight = [];
+
+    for (i=0; i<4; i++) {
+
+      sounds.metalHit.push(addSound({
+        url: getURL('metal-hit-1'),
+        volume: 4
+      }));
+
+      sounds.metalHit.push(addSound({
+        url: getURL('metal-hit-2'),
+        volume: 4
+      }));
+
+      sounds.metalHit.push(addSound({
+        url: getURL('metal-hit-3'),
+        volume: 4
+      }));
+
+      sounds.metalHit.push(addSound({
+        url: getURL('metal-hit-4'),
+        volume: 4
+      }));
+
+      sounds.metalHit.push(addSound({
+        url: getURL('metal-hit-5'),
+        volume: 4
+      }));
+
+      // group
+
+      sounds.metalHitLight.push(addSound({
+        url: getURL('metal-hit-light-1'),
+        volume: 8
+      }));
+
+      sounds.metalHitLight.push(addSound({
+        url: getURL('metal-hit-light-2'),
+        volume: 8
+      }));
+
+      sounds.metalHitLight.push(addSound({
+        url: getURL('metal-hit-light-3'),
+        volume: 8
+      }));
+
+      sounds.metalHitLight.push(addSound({
+        url: getURL('metal-hit-light-4'),
+        volume: 8
+      }));
+
+      sounds.metalHitLight.push(addSound({
+        url: getURL('metal-hit-light-5'),
+        volume: 8
+      }));
+
     }
 
     sounds.explosionLarge = addSound({
@@ -1776,22 +2069,22 @@
 
     sounds.shrapnel.hit0 = addSound({
       url: getURL('shrapnel-hit'),
-      volume: 6
+      volume: 7
     });
 
     sounds.shrapnel.hit1 = addSound({
       url: getURL('shrapnel-hit-2'),
-      volume: 6
+      volume: 7
     });
 
     sounds.shrapnel.hit2 = addSound({
       url: getURL('shrapnel-hit-3'),
-      volume: 6
+      volume: 7
     });
 
     sounds.shrapnel.hit3 = addSound({
       url: getURL('shrapnel-hit-4'),
-      volume: 6
+      volume: 7
     });
 
     sounds.splat = addSound({
@@ -3184,6 +3477,9 @@
 
       updateEnergy(exports);
 
+      // presumably, triggered by an infantry.
+      playSound(sounds.repairingWrench, exports);
+
     };
 
     function init() {
@@ -3327,11 +3623,19 @@
     function capture(isEnemy) {
 
       if (isEnemy) {
+
         utils.css.add(dom.o, css.enemy);
         utils.css.add(radarItem.dom.o, css.enemy);
+
+        playSoundWithDelay(sounds.enemyClaim, exports, 500);
+
       } else {
+
         utils.css.remove(dom.o, css.enemy);
         utils.css.remove(radarItem.dom.o, css.enemy);
+
+        playSoundWithDelay(sounds.friendlyClaim, exports, 500);
+
       }
 
       data.isEnemy = isEnemy;
@@ -3340,6 +3644,8 @@
       if (objects.balloon) {
         objects.balloon.setEnemy(isEnemy);
       }
+
+      playSound(sounds.doorClose, exports);
 
       // check if enemy convoy production should stop or start
       checkProduction();
@@ -3410,6 +3716,7 @@
       data.dead = true;
 
       if (sounds.explosionLarge) {
+        playSound(sounds.crashAndGlass, exports);
         playSound(sounds.explosionLarge, exports);
       }
 
@@ -3453,7 +3760,10 @@
 
       dom.oSubSprite = makeSubSprite();
 
+      dom.oSubSpriteArrow = makeSubSprite(css.arrow);
+
       dom.o.appendChild(dom.oSubSprite);
+      dom.o.appendChild(dom.oSubSpriteArrow);
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -3476,6 +3786,7 @@
 
     css = inheritCSS({
       className: 'bunker',
+      arrow: 'arrow',
       burning: 'burning'
     });
 
@@ -3492,7 +3803,8 @@
 
     dom = {
       o: null,
-      oSubSprite: null
+      oSubSprite: null,
+      oSubSpriteArrow: null
     };
 
     objects = {
@@ -3610,6 +3922,7 @@
 
         if (target) {
           target.die(true);
+          playSound(sounds.doorClose, exports);
         }
 
         // force update of the local helicopter
@@ -3770,6 +4083,7 @@
               data.energy = data.energyMax;
               updateEnergy(exports);
               target.die(true);
+              playSound(sounds.doorClose, exports);
             }
           }
         },
@@ -3804,14 +4118,20 @@
       if (isEnemy) {
 
         data.isEnemy = true;
+
         utils.css.remove(radarItem.dom.o, css.friendly);
         utils.css.add(radarItem.dom.o, css.enemy);
+
+        playSoundWithDelay(sounds.enemyClaim, exports, 500);
 
       } else {
 
         data.isEnemy = false;
+
         utils.css.remove(radarItem.dom.o, css.enemy);
         utils.css.add(dom.o, css.friendly);
+
+        playSoundWithDelay(sounds.friendlyClaim, exports, 500);
 
       }
 
@@ -3856,6 +4176,8 @@
       data.dead = false;
 
       data.hostile = true;
+
+      updateEnergy(exports);
 
       // check if enemy convoy production should stop or start
       checkProduction();
@@ -4104,6 +4426,10 @@
                 // "claim" the infantry, kill if enemy and man the bunker if friendly.
                 target.die(true);
 
+                playSound(sounds.doorClose, target.data.exports);
+
+                updateEnergy(exports);
+
               }
 
             }
@@ -4199,7 +4525,7 @@
           objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
-            // turret gunfire should probably only hit airborne things.
+            // turret gunfire mostly hits airborne things.
             collisionItems: collisionItems,
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
@@ -4227,7 +4553,7 @@
 
     }
 
-    function die() {
+    function die(silent) {
 
       if (data.dead) {
         return false;
@@ -4246,29 +4572,68 @@
 
       updateEnergy(exports);
 
+      if (!silent) {
+        playSound(sounds.metalHitBreak, exports);
+      }
+
     }
 
     function restore() {
 
       // restore visual, but don't re-activate gun yet
-      if (data.dead) {
+      if (data.dead && data.energy === 0) {
+
         utils.css.remove(dom.o, css.destroyed);
         utils.css.remove(radarItem.dom.o, css.destroyed);
+
+        playSound(sounds.popSound, exports);
+
       }
+
+    }
+
+    function isEngineerInteracting() {
+
+      return (data.engineerInteracting && data.energy < data.energyMax);
 
     }
 
     function repair(complete) {
 
-      if (data.energy < data.energyMax && (data.frameCount % data.repairModulus === 0 || complete)) {
-        restore();
-        data.energy = (complete ? data.energyMax : Math.min(data.energyMax, data.energy + 1));
-        if (data.dead && data.energy > data.energyMax * 0.25) {
-          // restore to life at 25%
-          data.dead = false;
+      var result = false;
+
+      if (data.energy < data.energyMax) {
+
+        if (data.frameCount % data.repairModulus === 0 || complete) {
+
+          restore();
+
+          data.lastEnergy = data.energy;
+
+          data.energy = (complete ? data.energyMax : Math.min(data.energyMax, data.energy + 1));
+
+          if (data.dead && data.energy > data.energyMax * 0.25) {
+            // restore to life at 25%
+            data.dead = false;
+          }
+
+          updateEnergy(exports);
+
         }
-        updateEnergy(exports);
+
+        result = true;
+
+      } else {
+
+        // only stop sound once, when repair finishes
+        if (data.lastEnergy < data.energy) {
+          sounds.tinkerWrench.sound.stop();
+          data.lastEnergy = data.energy;
+        }
+
       }
+
+      return result;
 
     }
 
@@ -4277,7 +4642,10 @@
       if (data.isEnemy !== isEnemy) {
 
         data.isEnemy = isEnemy;
+
         utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
+
+        playSoundWithDelay((isEnemy ? sounds.enemyClaim : sounds.friendlyClaim), exports, 500);
 
       }
 
@@ -4301,14 +4669,27 @@
 
     function engineerHit(target) {
 
-      // target is an engineer.
+      // target is an engineer; either repairing, or claiming.
+
+      data.engineerInteracting = true;
 
       if (data.isEnemy !== target.data.isEnemy) {
+        
         // gradual take-over.
         claim(target.data.isEnemy);
+
       } else {
+
         repair();
+
       }
+
+      // play repair sounds?
+      playRepairingWrench(isEngineerInteracting, exports);
+
+      // playImpactWrench(isEngineerInteracting, exports);
+
+      playTinkerWrench(isEngineerInteracting, exports);
 
     }
 
@@ -4358,6 +4739,11 @@
         repair();
       }
 
+      // engineer interaction flag
+      if (data.engineerInteracting) {
+        data.engineerInteracting = false;
+      }
+
       for (i = objects.gunfire.length-1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
@@ -4393,7 +4779,7 @@
 
     if (gameType === 'hard') {
       // additional challenge: make turret gunfire dangerous to some ground units, too.
-      collisionItems = collisionItems.concat(['tanks', 'vans', 'missileLaunchers']);
+      collisionItems = collisionItems.concat(['tanks', 'vans', 'infantry', 'missileLaunchers', 'bunkers', 'superBunkers']);
     }
 
     options = options || {};
@@ -4409,15 +4795,17 @@
       dead: false,
       energy: 50,
       energyMax: 50,
+      lastEnergy: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: (tutorialMode ? 12 : 3), // a little easier in tutorial mode
+      fireModulus: (tutorialMode ? 12 : gameType === 'hard' ? 3 : 6), // a little easier in tutorial mode vs. hard vs. easy modes
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
       smokeModulus: 2,
       claimPoints: 0,
       claimPointsMax: 50,
+      engineerInteracting: false,
       y: 0,
       width: 6,
       height: 15,
@@ -4456,7 +4844,7 @@
 
     // "dead on arrival"
     if (options.DOA) {
-      die();
+      die(true);
     }
 
     return exports;
@@ -5119,6 +5507,29 @@
         // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
         if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && (target.data.type === 'end-bunker' || target.data.type === 'super-bunker'))) {
           common.hit(target, data.damagePoints, exports);
+        }
+
+        // play a sound for certain targets and source -> target combinations
+        if (
+          target.data.type === 'tank'
+          || target.data.type === 'helicopter'
+          || target.data.type === 'van'
+          || target.data.type === 'bunker'
+          || target.data.type === 'end-bunker'
+          || target.data.type === 'super-bunker'
+          // helicopter -> turret
+          || (data.parentType === 'helicopter' && target.data.type === 'turret')
+        ) {
+
+          playSound(sounds.metalHit, exports);
+
+        } else if (
+          target.data.type === 'balloon'
+          || target.data.type === 'turret'
+        ) {
+
+          playSound(sounds.metalHitLight, exports);
+
         }
 
       }
@@ -6144,6 +6555,10 @@
 
     }
 
+    function repairInProgress() {
+      return (data.repairing && !data.repairComplete);
+    }
+
     function startRepairing() {
 
       if (!data.repairing) {
@@ -6155,6 +6570,14 @@
           document.getElementById('spinner').style.display = 'block';
 
           playSound(sounds.repairing);
+
+          window.setTimeout(function() {
+            playRepairingWrench(repairInProgress, exports);
+          }, 500 + Math.random() * 1500);
+
+          window.setTimeout(function() {
+            playImpactWrench(repairInProgress, exports);
+          }, 500 + Math.random() * 1500);
 
         }
 
@@ -6845,6 +7268,8 @@
           data.parachutes = Math.max(0, data.parachutes - 1);
 
           hasUpdate = 1;
+
+          playSound(sounds.popSound2, exports);
 
         } else {
 
@@ -7762,8 +8187,9 @@
             if (data.landed && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
               if (collisionCheckMidPoint(exports, target)) {
-                // pick up infantry
+                // pick up infantry (silently)
                 target.die(true);
+                playSound(sounds.popSound, exports);
                 data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
                 updateStatusUI();
               }
@@ -8718,6 +9144,8 @@
 
         utils.css.add(dom.o, css.exploding);
 
+        playSound(sounds.genericSplat, exports);
+
         // timeout?
         data.deadTimer = new FrameTimeout(FPS * 1.2, function() {
           dieComplete();
@@ -8819,7 +9247,7 @@
     data = inheritData({
       type: 'infantry',
       deadTimer: null,
-      frameCount: 0,
+      frameCount: Math.random() > 0.5 ? 5 : 0,
       bottomAligned: true,
       energy: 2,
       energyMax: 2,
@@ -8835,7 +9263,7 @@
       vX: (options.isEnemy ? -1 : 1),
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
-        frameCount: 20,
+        frameCount: 12,
         cost: 5
       }
     }, options);
@@ -8924,6 +9352,7 @@
 
     // flag as an engineer
     options.role = 1;
+
     // hack: -ve lookahead offset allowing engineers to be basically atop turrets
     options.xLookAhead = (options.isEnemy ? 4 : -8);
 
@@ -9074,7 +9503,9 @@
         data.y = y;
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      // common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+
+      common.setXY(exports, data.x, data.y);
 
     }
 
@@ -9108,7 +9539,9 @@
 
       shrapnelNoise();
 
-      data.deadTimer = new FrameTimeout(FPS * 0.2, function() {
+      utils.css.add(dom.o, css.stopped);
+
+      data.deadTimer = new FrameTimeout(FPS * 0.75, function() {
         removeNodes(dom);
         data.deadTimer = null;
       });
@@ -9147,10 +9580,12 @@
             data.spriteFrame = 0;
           }
 
+          // old frameCount-based sprite animation (used if no CSS animation)
+          if (noTransform) {
+            dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
+          }
+
           // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d(). May be faster.
-
-          dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
-
           // dom.o.style[features.transform.prop] = 'translate3d(' + (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px, 0px, 0px)';
 
         }
@@ -9182,10 +9617,14 @@
     function init() {
 
       dom.o = makeSprite({
-        className: css.className
+        className: css.className + (Math.random() > 0.5 ? ' ' + css.reverse : '')
       });
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      // common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+
+      common.setXY(exports, data.x, data.y);
+
+      dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
 
       game.dom.world.appendChild(dom.o);
 
@@ -9198,7 +9637,9 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'shrapnel'
+      className: 'shrapnel',
+      reverse: 'reverse',
+      stopped: 'stopped'
     });
 
     data = inheritData({
@@ -9209,6 +9650,7 @@
       spriteFrame: 0,
       spriteFrames: 3,
       direction: 0,
+      // sometimes zero / non-moving?
       vX: options.vX || 0,
       vY: options.vY || 0,
       maxVY: 48,
@@ -9217,7 +9659,7 @@
       height: 12,
       hostile: true,
       damagePoints: 0.5,
-      hasSound: (options.hasSound || false)
+      hasSound: !!options.hasSound
     }, options);
 
     dom = {
@@ -9774,7 +10216,12 @@
 
         activate: function() {
 
-          var missileX = Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64);
+          var missileX;
+
+          // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
+          game.objects.superBunkers[0].data.energy = 0;
+
+          missileX = Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64);
 
           // make ze missile launcher
           game.addObject('missileLauncher', {
@@ -11093,7 +11540,7 @@
 
         // basic enemy ordering crap
         var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
-        var enemyDelays = [4, 4, 3, 1, 1, 1, 1, 1, 1, convoyDelay];
+        var enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45, convoyDelay];
         var i = 0;
 
         function orderNextItem() {
