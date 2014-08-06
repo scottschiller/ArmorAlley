@@ -35,37 +35,39 @@
 
   + August 2014 updates
 
-    + Sound events / sound effects
-     • Wrench and related sounds on helicopter repair/refuel, balloon repair, turret claiming/rebuilding/repair
-     • Violin notes for friendly capture events: bunker, turret etc. (C5). Enemy note is C4.
-     • "Pop" / "vacuum" sounds for infantry pick up + deployment, and turret restoration
-     • Door close for passing infantry entering bunkers
-     • Splat for infantry and engineer kills
-     • Crash-and-glass for bunker explosions
-     • Heavy/light impact sounds for bullets hitting metal (tanks) and other structures (bunkers)
-     • Turrets audibly "break" when destroyed.
+   + Sound events / sound effects
+    • Wrench and related sounds on helicopter repair/refuel, balloon repair, turret claiming/rebuilding/repair
+    • Violin notes for friendly capture events: bunker, turret etc. (C5). Enemy note is C4.
+    • "Pop" / "vacuum" sounds for infantry pick up + deployment, and turret restoration
+    • Door close for passing infantry entering bunkers
+    • Splat for infantry and engineer kills
+    • Crash-and-glass for bunker explosions
+    • Heavy/light impact sounds for bullets hitting metal (tanks) and other structures (bunkers)
+    • Turrets audibly "break" when destroyed.
 
-    + Game logic / rules
-     • Turret gunfire can now hit infantry, regular bunkers and Super Bunkers. However, only tank gunfire can hit Super Bunkers for damage.
-     • For "easy" game mode, turrets now fire at half the previous rate.
+   + Game logic / rules
+    • Turret gunfire can now hit infantry, regular bunkers and Super Bunkers. However, only tank gunfire can hit Super Bunkers for damage.
+    • For "easy" game mode, turrets now fire at half the previous rate.
 
-    + UI / design
-     • Arrows on bunkers now animate to the right/left when claimed by friendly/enemy infantry.
+   + UI / design
+    • Arrows on bunkers now animate to the right/left when claimed by friendly/enemy infantry.
 
-    + Miscellaneous
-     • Sound arrays (i.e., 5 bullet/metal sounds) shuffle on each rotation, reducing chance of repetitiveness.
-     • Upped turret gunfire sound array, possibly reduce cloning of Audio() in heavy fire cases.
-     • Infantry build "faster" now, so they are more closely grouped together (in units of five.)
-     • Shrapnel now rotates using CSS animations, rotation direction determined randomly.
-     • In tutorial mode, disarm user-armed Super Bunker so it doesn't accidentally kill Missile Launchers that later show up.
-     • Fixed enemy infantry + engineer die animation to be bottom-aligned.
+   + Miscellaneous
+    • Sound arrays (i.e., 5 bullet/metal sounds) shuffle on each rotation, reducing chance of repetitiveness.
+    • Upped turret gunfire sound array, possibly reduce cloning of Audio() in heavy fire cases.
+    • Infantry build "faster" now, so they are more closely grouped together (in units of five.)
+    • Shrapnel now rotates using CSS animations, rotation direction determined randomly.
+    • In tutorial mode, disarm user-armed Super Bunker so it doesn't accidentally kill Missile Launchers that later show up.
+    • Fixed enemy infantry + engineer die animation to be bottom-aligned.
 
   + July 2014 updates
+
    • Safari 7.1 and 8 (OS X 10.10/Yosemite preview) still have HTML5 audio jank bug, thus prefer Flash. https://bugs.webkit.org/show_bug.cgi?id=116145
    • Opacity fade on edge of game tips.
    • Font legibility tweaks.
    
   + April 2014 updates
+  
    • "Hard" game option, comparable to original game's level 9.
    • Gunfire and shrapnel now shows up on radar.
    • Enemy unit production halts when all bunkers are friendly / player-owned.
@@ -73,12 +75,12 @@
    • Turret gunfire can hit tanks, vans and missile launchers in "hard" mode. Protip: Don't approach turrets from low angles.
 
 	+ March 2014 updates
-	 • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
+	
+   • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
 
 	Original release: Version 1.0.20131031
 
 */
-
 
   var game, utils, common;
 
@@ -177,7 +179,9 @@
 
   var shrapnelExplosion;
 
-  var GameLoop, View;
+  var GameLoop;
+
+  var View;
 
   var prefs;
 
