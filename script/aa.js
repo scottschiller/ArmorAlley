@@ -33,7 +33,9 @@
 
 	General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-  + August 2014 updates
+  Changelog / revision history
+
+  + 08/2014
 
    + Sound events / sound effects
     • Wrench and related sounds on helicopter repair/refuel, balloon repair, turret claiming/rebuilding/repair
@@ -60,13 +62,13 @@
     • In tutorial mode, disarm user-armed Super Bunker so it doesn't accidentally kill Missile Launchers that later show up.
     • Fixed enemy infantry + engineer die animation to be bottom-aligned.
 
-  + July 2014 updates
+  + 07/2014
 
    • Safari 7.1 and 8 (OS X 10.10/Yosemite preview) still have HTML5 audio jank bug, thus prefer Flash. https://bugs.webkit.org/show_bug.cgi?id=116145
    • Opacity fade on edge of game tips.
    • Font legibility tweaks.
    
-  + April 2014 updates
+  + 04/2014
   
    • "Hard" game option, comparable to original game's level 9.
    • Gunfire and shrapnel now shows up on radar.
@@ -74,7 +76,7 @@
    • Heat-seeking rubber chickens (launched with C key.)
    • Turret gunfire can hit tanks, vans and missile launchers in "hard" mode. Protip: Don't approach turrets from low angles.
 
-	+ March 2014 updates
+	+ 03/2014
 	
    • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
 
@@ -2005,6 +2007,7 @@
 
     for (i=0; i<4; i++) {
 
+      // http://freesound.org/people/Tiger_v15/sounds/211015/
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-1'),
         volume: 4
@@ -2030,8 +2033,7 @@
         volume: 4
       }));
 
-      // group
-
+      // http://freesound.org/people/dheming/sounds/197398/
       sounds.metalHitLight.push(addSound({
         url: getURL('metal-hit-light-1'),
         volume: 8
