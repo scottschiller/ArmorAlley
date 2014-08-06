@@ -1616,6 +1616,11 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  margin-bottom: 0.75em;
 }
 
+#world.tutorial-mode #game-tips .tips-container .tips-fader {
+ /* don't overlay when in tutorial mode. */
+ display: none;
+}
+
 #game-tips #game-announcements {
  width: 95%;
  margin: 0px auto;
