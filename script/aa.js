@@ -9198,6 +9198,11 @@
 
       if (!silent) {
 
+        // HACK: remove "stopped" on exploding, fix a stupid display issue where enemy display gets screwed up if stopped + exploding classes are applied together.
+        if (data.stopped) {
+          utils.css.remove(dom.o, css.stopped);
+        }
+
         utils.css.add(dom.o, css.exploding);
 
         playSound(sounds.genericSplat, exports);
