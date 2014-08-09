@@ -2601,9 +2601,10 @@
 
         objects.order = {
           data: orderObject.data,
+          completeDelay: orderObject.data.inventory.orderCompleteDelay || 0, // how long to wait after last item before "complete" (for buffering space)
           typeData: typeData,
           options: options,
-          size: orderSize
+          size: orderSize,
         };
 
         // reset the frame count, and re-enable building when it surpasses this object's "build time"
@@ -2653,15 +2654,25 @@
 
           } else {
 
-            // "Construction complete."
+            // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
 
-            utils.css.remove(dom.gameStatusBar, css.building);
+            if (objects.order.completeDelay) {
 
-            data.building = false;
+              objects.order.completeDelay--;
 
-            // play sound?
-            if (sounds.inventory.end) {
-              playSound(sounds.inventory.end);
+            } else {
+
+              // "Construction complete."
+
+              utils.css.remove(dom.gameStatusBar, css.building);
+
+              data.building = false;
+
+              // play sound?
+              if (sounds.inventory.end) {
+                playSound(sounds.inventory.end);
+              }
+
             }
 
           }
@@ -9309,7 +9320,8 @@
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
       inventory: {
         frameCount: 12,
-        cost: 5
+        cost: 5,
+        orderCompleteDelay: 5 // last-item-in-order delay (decrements every frameCount animation loop), so tank doesn't overlap if ordered immediately afterward.
       }
     }, options);
 
@@ -9393,6 +9405,8 @@
 
   Engineer = function(options) {
 
+    var object;
+
     options = options || {};
 
     // flag as an engineer
@@ -9401,7 +9415,12 @@
     // hack: -ve lookahead offset allowing engineers to be basically atop turrets
     options.xLookAhead = (options.isEnemy ? 4 : -8);
 
-    return new Infantry(options);
+    object = new Infantry(options);
+
+    // selective override: shorter delay on engineers
+    object.data.inventory.orderCompleteDelay = 5;
+
+    return object;
 
   };
 
