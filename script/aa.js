@@ -741,11 +741,10 @@
       node = nodes[0];
     }
 
-    // console.log(node, object.data.energy, object.data.energyMax);
-
     if (node) {
       energy = (object.data.energy / object.data.energyMax) * 100;
       if (!isNaN(energy)) {
+        node.style.opacity = (energy < 100 ? 1 : 0);
         if (energy > 66) {
           node.style.backgroundColor = '#33cc33';
         } else if (energy > 33) {
@@ -8300,7 +8299,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
-          collisionItems: nearby.items,
+          collisionItems: nearby.items.concat('bunkers'), // special case: tanks don't stop to shoot bunkers, but their gunfire can damage them.
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
           vX: data.vX * 2,
@@ -9122,7 +9121,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
-          collisionItems: nearby.items,
+          collisionItems: nearby.items.concat('bunkers'), // special case: infantry + engineers don't stop to shoot bunkers, but their gunfire can damage them.
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of infantry height
           vX: data.vX, // same velocity
