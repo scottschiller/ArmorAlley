@@ -1333,6 +1333,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  margin-top: -4px;
  height: 1px;
  background-color: #33cc33;
+ opacity: 0;
  /* box-sizing: border-box; */
 }
 
@@ -1341,19 +1342,27 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #world .sprite .energy-status {
- transition: all 0.15s ease-out;
- transition-property: width background-color;
+ transition: all 0.2s ease-out;
+ transition-property: width background-color opacity;
 }
 
 #world .sprite.end-bunker .energy {
  width: 0%;
 }
 
-#world .sprite.exploding .energy-status,
-#world .sprite.dead .energy-status,
-#world .sprite.burning .energy-status,
-#world .sprite.destroyed .energy-status {
+#world .sprite.exploding .energy-status {
+ /* hide by default */
  display: none;
+}
+
+#world .balloon .energy-status
+#world .infantry .energy-status,
+#world .parachute-infantry .energy-status,
+#world .engineer .energy-status,
+#world .turret .energy-status/*,
+#world .sprite.destroyed .energy-status*/ {
+ /* selective overrides */
+ display: block !important;
 }
 
 #world .sprite .sub-sprite {
