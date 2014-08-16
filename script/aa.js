@@ -2603,7 +2603,7 @@
           completeDelay: orderObject.data.inventory.orderCompleteDelay || 0, // how long to wait after last item before "complete" (for buffering space)
           typeData: typeData,
           options: options,
-          size: orderSize,
+          size: orderSize
         };
 
         // reset the frame count, and re-enable building when it surpasses this object's "build time"
@@ -2917,7 +2917,6 @@
         if (features.transform.prop) {
 
           for (i=0, j=objects.items.length; i<j; i++) {
-
 
             left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
 
