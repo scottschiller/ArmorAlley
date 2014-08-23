@@ -1359,8 +1359,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #world .infantry .energy-status,
 #world .parachute-infantry .energy-status,
 #world .engineer .energy-status,
-#world .turret .energy-status/*,
-#world .sprite.destroyed .energy-status*/ {
+#world .turret .energy-status {
  /* selective overrides */
  display: block !important;
 }
