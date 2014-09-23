@@ -2020,7 +2020,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 /* "Green line" mode */
-#world.x-ray .sprite {
+#world.x-ray #battlefield .sprite {
  background: transparent !important;
  outline: 1px solid #339933;
 }
