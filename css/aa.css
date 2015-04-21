@@ -461,7 +461,7 @@ ul.stats-bar .bombs em {
 #world .bunker.enemy .sub-sprite.arrow {
  /* first: old browser fallback. */
  background-image: url(../image/arrow-left.png);
- /* sneaky: modern browsers can use transforms, no need for a second image. */;
+ /* sneaky: modern browsers can use transforms, no need for a second image. */
  background-image: none, url(../image/arrow-right.png);
  transform: rotate(-180deg);
 }
