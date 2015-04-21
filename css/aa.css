@@ -852,6 +852,16 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  -moz-transition: -moz-transform 0.2s ease-none;
  -webkit-transition: -webkit-transform 0.2s ease-none;
  transition: transform 0.2s ease-none;
+ opacity: 1;
+ }
+
+#world .smart-missile.expired {
+ -webkit-transition-property: -webkit-transform, -webkit-filter, opacity;
+ transition-property: transform, opacity;
+ -webkit-animation: blink 0.125s infinite;
+ -moz-animation: blink 0.125s infinite;
+ -ms-animation: blink 0.125s infinite;
+ animation: blink 0.125s infinite;
 }
 
 #world.rubber-chicken-mode ul.stats-bar .missiles em,
