@@ -455,6 +455,7 @@ ul.stats-bar .bombs em {
  height: 10px;
  background-image: url(../image/arrow-right.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAAMElEQVR4AW3JwQkAIBTD0Lr/Ji5ZBQMe8nPMy63dq1GA8YOQaWQYpylgvjzJk8Z5AGtqUXNK2+JgAAAAAElFTkSuQmCC);
+ -webkit-transition: -webkit-transform 0.5s ease-in-out;
  transition: transform 0.5s ease-in-out;
 }
 
@@ -463,8 +464,9 @@ ul.stats-bar .bombs em {
  background-image: url(../image/arrow-left.png);
  /* sneaky: modern browsers can use transforms, no need for a second image. */
  background-image: none, url(../image/arrow-right.png);
+ -webkit-transform: rotate(-180deg);
  transform: rotate(-180deg);
-}
+ }
 
 #world .bunker.exploding .sub-sprite.arrow,
 #world .bunker.burning .sub-sprite.arrow {
