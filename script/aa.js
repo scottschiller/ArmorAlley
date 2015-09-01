@@ -1082,7 +1082,7 @@
 
           // point 1 is above point 2.
 
-          if (point1.y + point1.h >= point2.y) {
+          if (point1.y + point1.height >= point2.y) {
 
             // point 1 overlaps point 2 on y.
             result = true;
@@ -2922,7 +2922,7 @@
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
-              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 32, 10) + 'px';
+              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 35, 10) + 'px';
 
             } else {
 
@@ -3846,7 +3846,7 @@
 
     data = inheritData({
       type: 'bunker',
-      bottomAligned: true,
+      y: worldHeight - 25 + 3, // override to fix helicopter / bunker vertical crash case
       energy: 50,
       energyMax: 50,
       width: 51,
