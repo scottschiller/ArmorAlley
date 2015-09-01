@@ -1235,6 +1235,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  -moz-animation: blink 0.5s infinite;
  -ms-animation: blink 0.5s infinite;
  animation: blink 0.5s infinite;
+ margin-top: -3px; /* radar positioning hack */
 }
 
 #game-status-bar #radar .sprite.expired {
