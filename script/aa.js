@@ -1214,7 +1214,11 @@
 
       ) {
 
-        if (collisionCheck(options.source.data, options.targets[item].data, xLookAhead)) {
+        // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
+        if (
+          collisionCheck(options.source.data, options.targets[item].data, xLookAhead)
+          || (options.targets[item].data.type === 'helicopter' && collisionCheck(options.source.data, options.targets[item].data, -xLookAhead))
+        ) {
 
           foundHit = true;
 
@@ -1459,12 +1463,47 @@
 
   }
 
+  function enemyNearby(data, targets, triggerDistance) {
+
+    var i, j, k, l, targetData, results;
+
+    results = [];
+
+    // "targets" is an array of class types, e.g., tank, missileLauncher etc.
+
+    for (i=0, j=targets.length; i<j; i++) {
+
+      for (k=0, l=game.objects[targets[i]].length; k<l; k++) {
+
+        targetData = game.objects[targets[i]][k].data;
+
+        // non-friendly, not dead, and nearby?
+        if (targetData.isEnemy !== data.isEnemy && !targetData.dead) {
+
+          if (targetData.x > data.x) {
+            if (targetData.x - data.x < triggerDistance) {
+              results.push(game.objects[targets[i]][k]);
+            }
+          } else if (data.x - targetData.x < triggerDistance) {
+            results.push(game.objects[targets[i]][k]);
+          }
+
+        }
+
+      }
+
+    }
+
+    return results;
+
+  }
+
   function enemyHelicopterNearby(data, triggerDistance) {
 
     var i, j, deltaX, result;
 
-    // by default, 67% of screen width
-    triggerDistance = triggerDistance || (game.objects.view.data.browser.width * 2/3);
+    // by default
+    triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
     for (i=0, j=game.objects.helicopters.length; i<j; i++) {
 
@@ -1472,7 +1511,7 @@
       if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
 
         // how far away is the target?
-        deltaX = (game.objects.helicopters[i].data.x > data.x ? game.objects.helicopters[i].data.x - data.x : data.x - game.objects.helicopters[i].data.x);
+        deltaX = Math.abs(game.objects.helicopters[i].data.x - data.x);
 
         if (deltaX < triggerDistance) {
 
@@ -1578,7 +1617,14 @@
 
   function checkProduction() {
 
-    var bunkersOwned = playerOwnsBunkers();
+    var bunkersOwned;
+
+    // playing extreme mode? this benefit would practically be cheating! ;)
+    if (gameType === 'extreme') {
+      return;
+    }
+
+    bunkersOwned = playerOwnsBunkers();
 
     if (!productionHalted && bunkersOwned) {
 
@@ -2236,8 +2282,8 @@
       data.browser.height = (window.innerHeight || document.body.clientHeight) / screenScale;
 
       data.browser.fractionWidth = data.browser.width / 3;
-
       data.browser.halfWidth = data.browser.width / 2;
+      data.browser.twoThirdsWidth = data.browser.width * 2/3;
 
       data.world.width = dom.worldWrapper.offsetWidth;
       data.world.height = dom.worldWrapper.offsetHeight;
@@ -2413,6 +2459,7 @@
         width: 0,
         fractionWidth: 0,
         halfWidth: 0,
+        twoThirdsWidth: 0,
         height: 0
       },
       mouse: {
@@ -4323,12 +4370,11 @@
 
     data = inheritData({
       type: 'super-bunker',
-      bottomAligned: true,
+      y: 358,
       frameCount: 0,
       energy: (options.energy || 0),
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
       isEnemy: (options.isEnemy || false),
-      // x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
       width: 66,
       halfWidth: 33,
       height: 28,
@@ -4512,7 +4558,7 @@
 
   Turret = function(options) {
 
-    var css, data, dom, objects, radarItem, collisionItems, exports;
+    var css, data, dom, objects, radarItem, collisionItems, targets, exports;
 
     function okToMove() {
 
@@ -4548,26 +4594,41 @@
 
     function fire() {
 
-      var deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, targetHelicopter, moveOK;
+      var deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
 
-      targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
+      target = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
-      if (targetHelicopter) {
+      // alternate target(s) within range?
+      if (!target && targets) {
+
+        otherTargets = enemyNearby(data, targets, game.objects.view.data.browser.fractionWidth);
+
+        if (otherTargets.length) {
+
+          // take first target as closest?
+          // TODO: sort by closest distance?
+          target = otherTargets[0];
+
+        }
+
+      }
+
+      if (target) {
 
         data.firing = true;
 
-        deltaX = targetHelicopter.data.x - data.x;
-        deltaY = targetHelicopter.data.y - data.y;
+        deltaX = target.data.x - data.x;
+        deltaY = target.data.y - data.y;
 
         // Gretzky: "Skate where the puck is going to be".
-        deltaXGretzky = targetHelicopter.data.vX;
-        deltaYGretzky = targetHelicopter.data.vY;
+        deltaXGretzky = target.data.vX;
+        deltaYGretzky = target.data.vY;
 
         // turret angle
         angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
         angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
 
-        // hack - helicopter directly to left, on ground of turret: correct 90 to -90 degrees.
+        // hack: target directly to left, on ground of turret: correct 90 to -90 degrees.
         if (deltaX < 0 && angle === 90) {
           angle = -90;
         }
@@ -4831,9 +4892,16 @@
 
     collisionItems = ['helicopters', 'balloons', 'parachuteInfantry'];
 
-    if (gameType === 'hard') {
+    if (gameType === 'hard' || gameType === 'extreme') {
       // additional challenge: make turret gunfire dangerous to some ground units, too.
       collisionItems = collisionItems.concat(['tanks', 'vans', 'infantry', 'missileLaunchers', 'bunkers', 'superBunkers']);
+    }
+
+    if (gameType === 'extreme') {
+      // additional challenge: make turret go after ground vehicles, as well. also, just to be extra-mean: smart missiles.
+      targets = ['tanks', 'vans', 'missileLaunchers', 'smartMissiles'];
+      // also: engineers will not be targeted, but can be hit.
+      collisionItems = collisionItems.concat(['engineers', 'smartmissiles']);
     }
 
     options = options || {};
@@ -4852,7 +4920,7 @@
       lastEnergy: 50,
       firing: false,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
-      fireModulus: (tutorialMode ? 12 : gameType === 'hard' ? 3 : 6), // a little easier in tutorial mode vs. hard vs. easy modes
+      fireModulus: (tutorialMode ? 12 : (gameType === 'extreme' ? 2 : (gameType === 'hard' ? 3 : 6))), // a little easier in tutorial mode vs. hard vs. easy modes
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
@@ -7119,7 +7187,7 @@
       });
 
       // drop infantry?
-      if ((data.isEnemy && (gameType === 'hard' ? Math.random() > 0.25 : Math.random() > 0.5)) || Math.random() > 0.66) {
+      if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.25 : Math.random() > 0.5)) || Math.random() > 0.66) {
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
@@ -8237,8 +8305,8 @@
             // should the target die, too? ... probably so.
             common.hit(target, 999);
           } else if (target.data.type === 'infantry') {
-            // helicopter landed, and friendly, landed infantry (or engineer)?
-            if (data.landed && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
+            // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
+            if (data.landed && !data.onLandingPad && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
               if (collisionCheckMidPoint(exports, target)) {
                 // pick up infantry (silently)
@@ -9659,6 +9727,7 @@
 
         moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
 
+
         data.gravity *= 1.1;
 
         if (data.y - data.height >= worldHeight) {
@@ -9696,6 +9765,10 @@
       game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+      if (data.isEnemy) {
+        utils.css.add(radarItem.dom.o, css.enemy);
+      }
 
       shrapnelNoise();
 
@@ -10866,7 +10939,7 @@
         isEnemy: true
       });
 
-      if (gameType === 'hard') {
+      if (gameType === 'hard' || gameType === 'extreme') {
 
         // level 9
 
@@ -10879,6 +10952,18 @@
         addObject('landingPad', {
           x: 7800
         });
+
+        // twin enemy turrets, mid-field - good luck.
+        if (gameType === 'extreme') {
+          addObject('turret', {
+            x: 3800,
+            isEnemy: true
+          });
+          addObject('turret', {
+            x: 4145,
+            isEnemy: true
+          });
+        }
 
         addItem('right-arrow-sign', 550);
 
@@ -11587,7 +11672,7 @@
         if (!isNaN(convoyDelay)) {
           console.log('applying custom enemy convoy delay of ' + convoyDelay);
         } else {
-          convoyDelay = (gameType === 'hard' ? 30 : 60);
+          convoyDelay = (gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60));
         }
 
       }
@@ -11764,7 +11849,40 @@
       utils.css.add(document.body, 'no-transform');
     }
 
-    var menu;
+    var menu,
+        description = document.getElementById('game-description'),
+        defaultDescription = description.innerHTML,
+        lastHTML = defaultDescription;
+
+    function menuUpdate(e) {
+
+      var target = (e.target || window.event.sourceElement),
+          title;
+
+      if (target && target.className.match(/cta/i)) {
+        title = target.title;
+        if (title) {
+          target.setAttribute('data-title', title);
+          target.title = '';
+        } else {
+          title = target.getAttribute('data-title');
+        }
+        if (lastHTML !== title) {
+          description.innerHTML = title;
+          lastHTML = title;
+        }
+      } else {
+        resetMenu();
+      }
+
+    }
+
+    function resetMenu() {
+      if (lastHTML != defaultDescription) {
+        description.innerHTML = defaultDescription;
+        lastHTML = defaultDescription;
+      }
+    }
 
     function menuClick(e) {
 
@@ -11778,6 +11896,8 @@
 
         // cleanup
         utils.events.remove(menu, 'click', menuClick);
+        utils.events.remove(menu, 'mouseover', menuUpdate);
+        utils.events.remove(menu, 'mouseout', menuUpdate);
         menu = null;
 
         param = target.href.substr(target.href.indexOf('#')+1);
@@ -11794,17 +11914,17 @@
             window.location.hash = param;
           }
 
-          if (gameType === 'hard') {
+          if (gameType === 'hard' || gameType === 'extreme') {
 
-            // reload, since we're switching from hard -> easy
+            // reload, since we're switching to easy
             window.location.reload();
 
           }
 
-        } else if (param === 'hard') {
+        } else if (param === 'hard' || param === 'extreme') {
 
           // set local storage value, and continue
-          storedOK = utils.storage.set(prefs.gameType, 'hard');
+          storedOK = utils.storage.set(prefs.gameType, param);
 
           // stoage failed? use hash, then.
           if (!storedOK) {
@@ -11835,14 +11955,14 @@
 
     // should we show the menu?
 
-    gameType = (winloc.match(/easy|hard|tutorial/i) || utils.storage.get(prefs.gameType));
+    gameType = (winloc.match(/easy|hard|extreme|tutorial/i) || utils.storage.get(prefs.gameType));
 
     if (gameType instanceof Array) {
       gameType = gameType[0];
     }
 
     // safety check
-    if (gameType && !gameType.match(/easy|hard|tutorial/i)) {
+    if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
       gameType = null;
     }
 
@@ -11858,6 +11978,10 @@
 
         utils.events.add(menu, 'click', menuClick);
 
+        utils.events.add(menu, 'mouseover', menuUpdate);
+
+        utils.events.add(menu, 'mouseout', menuUpdate);
+
       }
 
     } else {
@@ -11865,7 +11989,7 @@
       // prference set or game type in URL - start immediately.
 
       // TODO: cleaner DOM reference
-      if (gameType.match(/easy|hard/i)) {
+      if (gameType.match(/easy|hard|extreme/i)) {
         utils.css.add(document.getElementById('world'), 'regular-mode');
       }
 
