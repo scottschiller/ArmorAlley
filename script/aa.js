@@ -33,7 +33,24 @@
 
 	General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-  Changelog / revision history
+  Changelog / Revision History
+
+  + 09/2015
+
+   + "Extreme" game mode
+    • Higher enemy convoy production rate.
+    • Turrets fire at a faster rate.
+    • Twin enemy turrets near mid-field.
+    • Turrets fire at ground vehicles and smart missiles. Infantry and engineers are not targeted, but can be hit.
+    • Owning all bunkers does not halt enemy production.
+    
+   + Miscellaneous
+    • Fix for "negative look-ahead" case - enemy Super Bunker now fires at helicopter on both sides.
+    • `Math.abs()` checks on distance for missile launchers
+    • Fixed Bunker and Super Bunker vertical alignment / collision detection with helicopter
+    • Infantry will not be picked up when the helicopter is on a landing pad and repairing.
+    • Shrapnel shows on radar.
+    • Background color fixed on bullet and missile "spark" graphic.
 
   + 08/2014
 
