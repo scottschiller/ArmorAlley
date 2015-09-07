@@ -113,7 +113,7 @@ body.no-transform .gpu {
  left: 50%;
  width: 391px;
  height: 67px;
- margin: -33px 0px 0px -195px;
+ margin: -50px 0px 0px -195px;
  background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYcAAABDBAMAAACFPtRbAAAAGFBMVEUAAAD/qgH///+qqqoAAAAOqgKrVaoFVQESGVkpAAAAAXRSTlMAQObYZgAAAw1JREFUeAHtWgGO1DAMNCPgHVZfwNN4Ck/jBZW1zwDJQrC5Xs/b2bqXOhSJke5OTjJxxnF8iXalBh/eyfuP6Q/0bmBqZmtYt7XRdyx9UOFU5mYK0zAbrRVLP9o0+O1IoJBHrJeuSxsdCL3/MCoB4jTRpsvSNwMmFYR5IzDJDqDtd5oKOQlubrkJNdcP5dRSmCVEINkN3lcK3/ZjIZ7rNuXRVkIl8OAv2hyR0Bcsa3z3grg7j20E9umIbSzWhMpggRNtqkb8ZbybzOIGvqR8rEwsz+YDWeTnB3cBeEa3xzZs0b80g1AJnO9IgG01OBFB3OheqL5zasWh0KgMtMjnE8OjQwboGXKKS7lKEYwL4yLy5WlkjPy5Fz0UbWVrRNVO+XM34FYdcELeWt984KEthnUHxa5zspWLqEfBIf+0EnFLs9ER7rSb/Mvs5yICYw4oegPvJL+QTurpxGWqJPD5dXggQHujAxmEH2vDvHNJ3n/+uuH2Jom8M64qowGJmDcGaBNajBPd2JZK32e49jrrzy7nd7arQw/mG/pvpRkqvp5aDnFuhdEk9du4W7Fe7pFnVARyxFunT5TXYBcGT4YjRfVKEdb3jshSreaZDZLLxdCSdOq7vVLqGCC/FLf293IqEPe2rtJq2U0Ycn1YToSLWHFh4m76gb7/JRFWsdF+VAT22ZbZKT8YO2jGJvg4tIxwN5qyCTDsbKN26n++QOHIBdU673C3ohqLLnaEv5eKp7Y76tLJx2cTE6EjrrEFbmKJ9TmWv5L3BXejCZsD1elz/ept3B4JZBYAjYcnDWhGJ3I2PxPoeEx6NDkVeQfE5gBpoPBzri44N500Kl1MkO+fIcaHUWOHEh1I2dw1smK3x1q0OOqySYD40lbBBllXtr4K89agLdPA/G640fDZ6J4dXKd3wvN3Ik6tBzSGH6I0a/1tqzZNQNPHi9Gjm8NlNbheAZ1XDU88ZsuBzOo9pc/y1LEiPN/grKMesBa21WJstY5ZROaXXt/6KvEcPmiO1Dse3VDRxI6uTwYmTCp/Eb8Azq7u6tP90iYAAAAASUVORK5CYII=);
  z-index: 11;
@@ -185,10 +185,6 @@ body.no-transform .gpu {
  margin-left: 3%;
 }
 
-#game-menu .cta-large {
- width: 44%;
-}
-
 #game-menu .cta:hover {
  background-color: #006600;
  background-color: rgba(0,153,0,0.75);
@@ -197,6 +193,12 @@ body.no-transform .gpu {
 
 #game-menu .cta:first-of-type {
  margin-left: 0%;
+}
+
+#game-description {
+ margin-top: 0.75em;
+ font-size: 1.15em;
+ color: #009900;
 }
 
 #world-wrapper {
@@ -1146,6 +1148,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #world .smart-missile.spark,
 #world .gunfire.spark {
+ background-color: transparent;
  background-image: url(../image/explosion-spark.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAHklEQVR4AWMAgtVMjHASB///KhgHyALygQjCQFcPAKZrC8ti0oamAAAAAElFTkSuQmCC);
  background-position: 0px 0px;
@@ -1249,6 +1252,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #game-status-bar #radar .sprite.shrapnel,
+#game-status-bar #radar .sprite.shrapnel.enemy,
 #game-status-bar #radar .sprite.bomb.enemy,
 #game-status-bar #radar .sprite.gunfire.enemy {
  background-color: red;
@@ -1258,6 +1262,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #game-status-bar #radar .sprite.gunfire {
  width: 1px;
  height: 1px;
+ margin-top: -3px; /* hackish repositioning fix */
 }
 
 #game-status-bar #radar .sprite.van,
@@ -1495,7 +1500,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  opacity: 0.5;
 }
 
-#world .shrapnel {
+#battlefield .shrapnel {
  position: absolute;
  left: 0px;
  top: 0px;
@@ -1510,7 +1515,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  animation: rotating 0.5s linear infinite;
 }
 
-#world .shrapnel.reverse {
+#battlefield .shrapnel.reverse {
  /* opposite spin direction */
  -webkit-animation-direction: reverse;
  -moz-animation-direction: reverse;
@@ -1518,7 +1523,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  animation-direction: reverse;
 }
 
-#world .shrapnel.stopped {
+#battlefield .shrapnel.stopped {
  -webkit-animation: none;
  -moz-animation: none;
  -ms-animation: none;
