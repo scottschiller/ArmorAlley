@@ -206,6 +206,163 @@
 
   var sounds;
 
+  var stats;
+
+  function statsStructure() {
+    return {
+      'bullet': 0,
+      'balloon': 0,
+      'bunker': 0,
+      'missile-launcher': 0,
+      'gunfire': 0,
+      'tank': 0,
+      'van': 0,
+      'infantry': 0,
+      'engineer': 0,
+      'helicopter': 0,
+      'smart-missile': 0,
+      'bomb': 0,
+      'shrapnel': 0,
+      'turret': 0
+    };
+  }
+
+  function Stats() {
+    
+    var dom, data, dirty, exports;
+
+    function normalizeObj(obj) {
+      if (obj && !obj.data && obj.oParent) {
+        obj = obj.oParent;
+      }
+      return obj;      
+    }
+
+    function normalizeType(obj) {
+      var type = obj.data.type;
+      // special case: infantry -> engineer
+      if (obj.data.type === 'infantry' && obj.data.role) {
+        type = 'engineer';
+      }
+      return type;
+    }
+
+    function create(obj) {
+      var dataObj, type;
+      obj = normalizeObj(obj);
+      type = normalizeType(obj);
+      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
+      if (dataObj[type] !== undefined) {
+        dataObj[type]++;
+        dirty = true;
+        refreshStats();
+      }
+    }
+    
+    function destroy(obj) {
+      // there might be no data, so go up the chain.
+      var dataObj, type;
+      obj = normalizeObj(obj);
+      type = normalizeType(obj);
+      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
+      if (dataObj[type] !== undefined) {
+        dataObj[type]++;
+        dirty = true;
+        refreshStats();
+      }
+    }
+
+    function markEnd() {
+      data.time.end = new Date();
+    }
+
+    function showStats() {
+      var stats = document.getElementById('stats');
+    }
+
+    function refreshStats() {
+      if (!dirty) {
+        return;
+      }
+      var i, j, items, count, cols, type, percent;
+      items = document.getElementById('stats').getElementsByClassName('item');
+      for (i=0, j=items.length; i<j; i++) {
+        type = items[i].getAttribute('data-type');
+        if (type) {
+          cols = items[i].getElementsByClassName('count');
+          if (cols[0]) {
+            count = Math.max(0, data.player.created[type] - data.player.destroyed[type]) || 0;
+            // cols[0].childNodes[0].innerHTML = (data.player.destroyed[type] && count ? '<span class="of-count">' + count + ' / </span>' : '') + data.player.created[type];
+            // count = Math.max(0, data.player.created[type]);
+            cols[0].childNodes[0].textContent = count;
+          }
+          if (cols[1]) {
+            count = Math.max(0, data.enemy.created[type] - data.enemy.destroyed[type]) || 0;
+            // cols[1].childNodes[0].innerHTML = (data.enemy.destroyed[type] && count ? '<span class="of-count">' + count + ' / </span>' : '') + data.enemy.created[type];
+            // count = Math.max(0, data.enemy.created[type]);
+            cols[1].childNodes[0].textContent = count;
+          }
+          if (cols[0] && (data.player.created[type] || data.player.destroyed[type])) {
+            percent = (data.player.destroyed[type] / data.player.created[type]) * 100;
+            cols[0].getElementsByClassName('bar')[0].style.width = (100 - percent) + '%';
+          }
+          if (cols[1] && (data.enemy.created[type] || data.enemy.destroyed[type])) {
+            percent = (data.enemy.destroyed[type] / data.enemy.created[type]) * 100;
+            cols[1].getElementsByClassName('bar')[0].style.width = (100 - percent) + '%';
+          }
+        }
+      }
+      dirty = false;
+    }
+
+    function initStats() {
+      var stats = document.getElementById('stats');
+      var i, j, counts;
+      counts = stats.getElementsByClassName('count');
+      for (i=0, j=counts.length; i<j; i++) {
+        // counts[i].appendChild(div.cloneNode(true));
+        counts[i].innerHTML = '<span class="count-wrapper">' + counts[i].innerHTML + '</span><div class="bar"></div>';
+        console.log(counts[i].innerHTML, 'yay');
+      }
+      // window.setInterval(refreshStats, 1000);
+    }
+
+    data = {
+      time: {
+        start: new Date(),
+        end: null
+      },
+      player: {
+        created: statsStructure(),
+        destroyed: statsStructure()
+      },
+      enemy: {
+        created: statsStructure(),
+        destroyed: statsStructure()
+      }
+    };
+    
+    dom = {
+      barTemplate: document.createElement('div'),
+      bars: []
+    };
+
+    dom.barTemplate.className = 'bar';
+
+    exports = {
+      data: data,
+      create: create,
+      destroy: destroy,
+      markEnd: markEnd,
+      refreshStats: refreshStats
+    };
+
+    initStats();
+  
+    return exports;
+
+  };
+
   function updateScreenScale() {
 
     if (disableScaling) {
@@ -2812,6 +2969,8 @@
           utils.css.add(dom.o, css.dying);
         }
 
+        stats.destroy(exports);
+
         data.dead = true;
 
         if (!options.canRespawn) {
@@ -2846,6 +3005,8 @@
         utils.css.remove(dom.o, css.dying);
         utils.css.remove(dom.o, css.dead);
         data.dead = false;
+        // reset is the same as creating a new object.
+        stats.create(exports);
       }
     }
 
@@ -2922,6 +3083,8 @@
       }
 
       dom.radar.appendChild(itemObject.dom.o);
+
+      stats.create(item);
 
       return itemObject;
 
@@ -3414,7 +3577,7 @@
     function checkRespawn() {
 
       // odd edge case - data not always defined if destroyed at the right time?
-      if (data && data.canRespawn && data.dead && !objects.bunker.data.dead) {
+      if (data && data.canRespawn && data.dead && objects.bunker && objects.bunker.data && !objects.bunker.data.dead) {
         reset();
       }
 
@@ -6004,6 +6167,7 @@
     });
 
     data = inheritData({
+      type: 'bomb',
       deadTimer: null,
       firstFrame: true,
       width: 13,
@@ -8721,6 +8885,8 @@
 
       if (radarItem) {
         radarItem.die();
+      } else {
+        stats.destroy(exports);
       }
 
       if (sounds.genericExplosion2) {
@@ -8842,6 +9008,8 @@
       // enemy vans are so sneaky, they don't even appear on the radar.
       if (tutorialMode || !options.isEnemy) {
         radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      } else {
+        stats.create(exports);
       }
 
     }
@@ -10908,6 +11076,8 @@
     function createObjects() {
 
       var i, x;
+
+      stats = new Stats();
 
       objects.gameLoop = new GameLoop();
 
