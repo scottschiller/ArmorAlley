@@ -315,6 +315,26 @@
       dirty = false;
     }
 
+    function displayEndGameStats() {
+      var i, j, k, items, count, cols, type, percent, offset, dataSource;
+      items = document.getElementById('stats-endgame').getElementsByTagName('tr');
+      // data sources
+      dataSource = [data.player.destroyed, data.enemy.destroyed];
+      offset = 1;
+      for (i=0, j=items.length; i<j; i++) {
+        type = items[i].getAttribute('data-type');
+        if (type) {
+          cols = items[i].getElementsByTagName('td');
+          for (k=0; k<2; k++) {
+            if (cols[k+offset]) {
+              cols[k+offset].childNodes[0].textContent = dataSource[k][type];
+            }
+          }
+        }
+      }
+      document.getElementById('stats-endgame').style.display = 'block';
+    }
+
     function initStats() {
       var stats = document.getElementById('stats');
       var i, j, counts;
@@ -322,7 +342,6 @@
       for (i=0, j=counts.length; i<j; i++) {
         // counts[i].appendChild(div.cloneNode(true));
         counts[i].innerHTML = '<span class="count-wrapper">' + counts[i].innerHTML + '</span><div class="bar"></div>';
-        console.log(counts[i].innerHTML, 'yay');
       }
       // window.setInterval(refreshStats, 1000);
     }
@@ -354,7 +373,8 @@
       create: create,
       destroy: destroy,
       markEnd: markEnd,
-      refreshStats: refreshStats
+      refreshStats: refreshStats,
+      displayEndGameStats: displayEndGameStats
     };
 
     initStats();
@@ -3537,6 +3557,8 @@
       }
 
       battleOver = true;
+
+      stats.displayEndGameStats();
 
     }
 

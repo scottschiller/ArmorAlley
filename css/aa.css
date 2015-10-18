@@ -1653,6 +1653,52 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  color: transparent;
 }
 
+#stats-endgame {
+ position: absolute;
+ display: none;
+ left: 50%;
+ width: 22em;
+ margin-left: -11em;
+ margin-top: 13em;
+}
+
+#stats-endgame table {
+ border: 1px solid #009900;
+ width: 100%;
+ color: #eee;
+}
+
+#stats-endgame table th,
+#stats-endgame table td {
+ background-color: rgba(0,153,0,0.25);
+}
+
+#stats-endgame table thead th {
+ padding: 0.25em;
+ font-weight: 500;
+}
+
+#stats-endgame table thead th:first-of-type {
+ background-color: transparent;
+ border-color: transparent;
+}
+
+#stats-endgame table td {
+ border-top: 1px solid #009900;
+}
+
+#stats-endgame table th,
+#stats-endgame table td {
+ border-left: 1px solid #009900;
+ padding: 0.25em 0.33em;
+ min-width: 2em;
+}
+
+#stats-endgame table th:first-of-type,
+#stats-endgame table td:first-of-type {
+ border-left-color: transparent;
+}
+
 #game-tips {
  position: absolute;
  top: 0px;
