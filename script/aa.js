@@ -5967,7 +5967,7 @@
       }
 
       // bombs blow up big on the ground, and "spark" on other things.
-      className = (!options.spark ? css.explosionLarge : css.spark);
+      className = (!dieOptions.spark ? css.explosionLarge : css.spark);
 
       if (dieOptions.bottomAlign) {
 
