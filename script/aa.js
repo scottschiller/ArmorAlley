@@ -3,37 +3,40 @@
 
 (function armorAlley(window) {
 
-"use strict";
+'use strict';
 
 /*
 
-	   MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM       
-	  MMMM   DMMM+MMM  $MMMM  MMMM MMMMMMMD MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM DMN        
-	  MMMM    MMM MMM:  MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM =M         
-	  MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMM~M         
-	  MMMMM   MMM MMM:  MMMMMMMMMM MMM  MMM MMMM MMM     M7MMM   MMMM     MMMM     MMM MM    MMMM          
-	 MM MMM   MMM?MM    MMMMN MMMM MMM  MMM MMMM MM     8M MMM   MMMM     MMMM     MMMMMM    MMMM          
-	 MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM          
-	 M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM          
-	8M  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM          
-	MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM          
-	MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM          
+     MMM   MMMM?MN   ZMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM
+    MMMM   DMMM+MMM  $MMMM  MMMM MMMMMMMD MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM DMN
+    MMMM    MMM MMM:  MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM =M
+    MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMM~M
+    MMMMM   MMM MMM:  MMMMMMMMMM MMM  MMM MMMM MMM     M7MMM   MMMM     MMMM     MMM MM    MMMM
+   MM MMM   MMM?MM    MMMMN MMMM MMM  MMM MMMM MM     8M MMM   MMMM     MMMM     MMMMMM    MMMM
+   MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM
+   M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM
+  8M  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM
+  MM  MMMM DMMM7MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  DMD MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM
+  MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM
 
-	A browser-based interpretation of the MS-DOS release of Armor Alley.
+  A browser-based interpretation of the MS-DOS release of Armor Alley.
 
-	Original game Copyright (C) 1989 - 1991 Information Access Technologies.
-	http://en.wikipedia.org/wiki/Armor_alley
+  Original game Copyright (C) 1989 - 1991 Information Access Technologies.
+  http://en.wikipedia.org/wiki/Armor_alley
 
-	Images, text and other portions of the original game used with permission under an ISC license.
-	Original sound effects could not be re-licensed; modern replacements used from freesound.org.
+  Images, text and other portions of the original game used with permission under an ISC license.
+  Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
-	http://www.schillmania.com/armor-alley/
-	http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
-	http://github.com/scottschiller/ArmorAlley/
+  http://www.schillmania.com/armor-alley/
+  http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+  http://github.com/scottschiller/ArmorAlley/
 
-	General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
+  General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
   Changelog / Revision History
+
+  + 09/2017
+   + ESLint code clean-up.
 
   + 09/2015
 
@@ -43,7 +46,7 @@
     • Twin enemy turrets near mid-field.
     • Turrets fire at ground vehicles and smart missiles. Infantry and engineers are not targeted, but can be hit.
     • Owning all bunkers does not halt enemy production.
-    
+
    + Miscellaneous
     • Fix for "negative look-ahead" case - enemy Super Bunker now fires at helicopter on both sides.
     • `Math.abs()` checks on distance for missile launchers
@@ -84,20 +87,20 @@
    • Safari 7.1 and 8 (OS X 10.10/Yosemite preview) still have HTML5 audio jank bug, thus prefer Flash. https://bugs.webkit.org/show_bug.cgi?id=116145
    • Opacity fade on edge of game tips.
    • Font legibility tweaks.
-   
+
   + 04/2014
-  
+
    • "Hard" game option, comparable to original game's level 9.
    • Gunfire and shrapnel now shows up on radar.
    • Enemy unit production halts when all bunkers are friendly / player-owned.
    • Heat-seeking rubber chickens (launched with C key.)
    • Turret gunfire can hit tanks, vans and missile launchers in "hard" mode. Protip: Don't approach turrets from low angles.
 
-	+ 03/2014
-	
+  + 03/2014
+
    • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
 
-	Original release: Version 1.0.20131031
+  Original release: Version 1.0.20131031
 
 */
 
@@ -108,14 +111,14 @@
   var FPS = 30;
   var FPS_IDEAL = 30;
 
-  var FRAMERATE = 1000/FPS;
+  var FRAMERATE = 1000 / FPS;
 
   var winloc = window.location.href.toString();
 
   var ua = navigator.userAgent;
 
   // just in case...
-  var console = (window.console || { log: function(){ return; } });
+  var console = (window.console || { log: function() { } });
 
   var noJamming = winloc.match(/nojam/i);
 
@@ -147,7 +150,7 @@
   // whether to always "upgrade" Smart Missiles...
   var forceRubberChicken = winloc.match(/chicken/i);
 
-  var deg2Rad = 180/Math.PI;
+  var deg2Rad = 180 / Math.PI;
 
   // used for various measurements in the game
   var worldHeight = 380;
@@ -210,32 +213,32 @@
 
   function statsStructure() {
     return {
-      'bullet': 0,
-      'balloon': 0,
-      'bunker': 0,
+      bullet: 0,
+      balloon: 0,
+      bunker: 0,
       'missile-launcher': 0,
-      'gunfire': 0,
-      'tank': 0,
-      'van': 0,
-      'infantry': 0,
-      'engineer': 0,
-      'helicopter': 0,
+      gunfire: 0,
+      tank: 0,
+      van: 0,
+      infantry: 0,
+      engineer: 0,
+      helicopter: 0,
       'smart-missile': 0,
-      'bomb': 0,
-      'shrapnel': 0,
-      'turret': 0
+      bomb: 0,
+      shrapnel: 0,
+      turret: 0
     };
   }
 
   function Stats() {
-    
+
     var dom, data, dirty, exports;
 
     function normalizeObj(obj) {
       if (obj && !obj.data && obj.oParent) {
         obj = obj.oParent;
       }
-      return obj;      
+      return obj;
     }
 
     function normalizeType(obj) {
@@ -247,46 +250,13 @@
       return type;
     }
 
-    function create(obj) {
-      var dataObj, type;
-      obj = normalizeObj(obj);
-      type = normalizeType(obj);
-      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
-      if (dataObj[type] !== undefined) {
-        dataObj[type]++;
-        dirty = true;
-        refreshStats();
-      }
-    }
-    
-    function destroy(obj) {
-      // there might be no data, so go up the chain.
-      var dataObj, type;
-      obj = normalizeObj(obj);
-      type = normalizeType(obj);
-      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
-      if (dataObj[type] !== undefined) {
-        dataObj[type]++;
-        dirty = true;
-        refreshStats();
-      }
-    }
-
-    function markEnd() {
-      data.time.end = new Date();
-    }
-
-    function showStats() {
-      var stats = document.getElementById('stats');
-    }
-
     function refreshStats() {
       if (!dirty) {
         return;
       }
       var i, j, items, count, cols, type, percent;
       items = document.getElementById('stats').getElementsByClassName('item');
-      for (i=0, j=items.length; i<j; i++) {
+      for (i = 0, j = items.length; i < j; i++) {
         type = items[i].getAttribute('data-type');
         if (type) {
           cols = items[i].getElementsByClassName('count');
@@ -315,19 +285,48 @@
       dirty = false;
     }
 
+    function create(obj) {
+      var dataObj, type;
+      obj = normalizeObj(obj);
+      type = normalizeType(obj);
+      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
+      if (dataObj[type] !== undefined) {
+        dataObj[type]++;
+        dirty = true;
+        refreshStats();
+      }
+    }
+
+    function destroy(obj) {
+      // there might be no data, so go up the chain.
+      var dataObj, type;
+      obj = normalizeObj(obj);
+      type = normalizeType(obj);
+      dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
+      if (dataObj[type] !== undefined) {
+        dataObj[type]++;
+        dirty = true;
+        refreshStats();
+      }
+    }
+
+    function markEnd() {
+      data.time.end = new Date();
+    }
+
     function displayEndGameStats() {
-      var i, j, k, items, count, cols, type, percent, offset, dataSource;
+      var i, j, k, items, cols, type, offset, dataSource;
       items = document.getElementById('stats-endgame').getElementsByTagName('tr');
       // data sources
       dataSource = [data.player.destroyed, data.enemy.destroyed];
       offset = 1;
-      for (i=0, j=items.length; i<j; i++) {
+      for (i = 0, j = items.length; i < j; i++) {
         type = items[i].getAttribute('data-type');
         if (type) {
           cols = items[i].getElementsByTagName('td');
-          for (k=0; k<2; k++) {
-            if (cols[k+offset]) {
-              cols[k+offset].childNodes[0].textContent = dataSource[k][type];
+          for (k = 0; k < 2; k++) {
+            if (cols[k + offset]) {
+              cols[k + offset].childNodes[0].textContent = dataSource[k][type];
             }
           }
         }
@@ -336,10 +335,9 @@
     }
 
     function initStats() {
-      var stats = document.getElementById('stats');
       var i, j, counts;
-      counts = stats.getElementsByClassName('count');
-      for (i=0, j=counts.length; i<j; i++) {
+      counts = document.getElementById('stats').getElementsByClassName('count');
+      for (i = 0, j = counts.length; i < j; i++) {
         // counts[i].appendChild(div.cloneNode(true));
         counts[i].innerHTML = '<span class="count-wrapper">' + counts[i].innerHTML + '</span><div class="bar"></div>';
       }
@@ -360,7 +358,7 @@
         destroyed: statsStructure()
       }
     };
-    
+
     dom = {
       barTemplate: document.createElement('div'),
       bars: []
@@ -378,18 +376,14 @@
     };
 
     initStats();
-  
+
     return exports;
 
-  };
+  }
 
   function updateScreenScale() {
 
-    if (disableScaling) {
-
-      return false;
-
-    }
+    if (disableScaling) return;
 
     if (userDisabledScaling) {
 
@@ -405,11 +399,7 @@
 
   function applyScreenScale() {
 
-    if (disableScaling) {
-
-      return false;
-
-    }
+    if (disableScaling) return;
 
     // Safari 6.0.5 (as of 10/2013) scales text after rasterizing via transform: scale3d(), thus it looks crap. Using document.body.zoom is OK, however.
     // Force-enable transform-based scaling with #forcescaling=1
@@ -417,12 +407,12 @@
     if (features.transform.prop && (!isSafari || forceScaling)) {
 
       // newer browsers can do this.
-
       // TODO: dom.worldWrapper
-      document.getElementById('world-wrapper').style.marginTop = -((384 / 2) * screenScale) + 'px';
-      document.getElementById('world-wrapper').style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1/screenScale)) + 'px';
-      document.getElementById('world-wrapper').style[features.transform.prop + 'Origin'] = '0px 0px';
-      document.getElementById('world-wrapper').style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
+      var wrapper = document.getElementById('world-wrapper');
+      wrapper.style.marginTop = -((384 / 2) * screenScale) + 'px';
+      wrapper.style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale)) + 'px';
+      wrapper.style[features.transform.prop + 'Origin'] = '0px 0px';
+      wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
       // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
 
@@ -465,7 +455,7 @@
         var i, j, temp;
 
         for (i = array.length - 1; i > 0; i--) {
-          j = Math.floor(Math.random() * (i+1));
+          j = Math.floor(Math.random() * (i + 1));
           temp = array[i];
           array[i] = array[j];
           array[j] = temp;
@@ -492,18 +482,14 @@
 
       function addClass(o, cStr) {
 
-        if (!o || !cStr || hasClass(o, cStr)) {
-          return false; // safety net
-        }
+        if (!o || !cStr || hasClass(o, cStr)) return;
         o.className = (o.className ? o.className + ' ' : '') + cStr;
 
       }
 
       function removeClass(o, cStr) {
 
-        if (!o || !cStr || !hasClass(o, cStr)) {
-          return false;
-        }
+        if (!o || !cStr || !hasClass(o, cStr)) return;
         o.className = o.className.replace(new RegExp('( ' + cStr + ')|(' + cStr + ')', 'g'), '');
 
       }
@@ -589,9 +575,7 @@
 
       function get(name) {
 
-        if (!localStorage) {
-          return;
-        }
+        if (!localStorage) return undefined;
 
         try {
           data[name] = localStorage.getItem(name);
@@ -607,9 +591,7 @@
 
         data[name] = value;
 
-        if (!localStorage) {
-          return;
-        }
+        if (!localStorage) return undefined;
 
         try {
           localStorage.setItem(name, value);
@@ -626,14 +608,12 @@
 
         delete data[name];
 
-        if (!localStorage) {
-          return;
-        }
-
-        try {
-          localStorage.removeItem(name);
-        } catch(ignore) {
-          // oh well
+        if (localStorage) {
+          try {
+            localStorage.removeItem(name);
+          } catch(ignore) {
+            // oh well
+          }
         }
 
       }
@@ -649,11 +629,11 @@
       exports = {
         get: get,
         set: set,
-        remove: remove        
+        remove: remove
       };
 
       return exports;
-        
+
     }())
 
 
@@ -675,7 +655,7 @@
 
     var i, j;
 
-    for (i=0; i<j; i++) {
+    for (i = 0; i < j; i++) {
       nodeArray[i].style.display = 'none';
     }
 
@@ -693,7 +673,7 @@
       }
       */
 
-      for (i=0; i<j; i++) {
+      for (i = 0; i < j; i++) {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
         // nodeArray[i].style[features.transform.prop] = 'none';
@@ -824,11 +804,11 @@
 
     var transform, styles, prop;
 
-    function has(prop) {
+    function has(property) {
 
       // test for feature support
-      var result = testDiv.style[prop];
-      return (result !== undefined ? prop : null);
+      var result = testDiv.style[property];
+      return (result !== undefined ? property : null);
 
     }
 
@@ -836,7 +816,7 @@
     var localFeatures = {
 
       transform: {
-        ie:  has('-ms-transform'),
+        ie: has('-ms-transform'),
         moz: has('MozTransform'),
         opera: has('OTransform'),
         webkit: has('webkitTransform'),
@@ -854,7 +834,7 @@
     };
 
     localFeatures.transform.prop = (
-      localFeatures.transform.w3 || 
+      localFeatures.transform.w3 ||
       localFeatures.transform.moz ||
       localFeatures.transform.webkit ||
       localFeatures.transform.ie ||
@@ -919,9 +899,7 @@
 
   function updateEnergy(object) {
 
-    if (!showHealth) {
-      return false;
-    }
+    if (!showHealth) return;
 
     var nodes,
         node,
@@ -946,7 +924,7 @@
         } else {
           node.style.backgroundColor = '#cc3333';
         }
-        node.style.width = (energy+ '%');
+        node.style.width = (energy + '%');
       }
     }
 
@@ -992,7 +970,10 @@
         if (features.transform.prop) {
 
           // top-based Y offset, including bunker / balloon offset
-          common.setTransformXY(exports.dom.o, exports.data.x + 'px', worldHeight - (280 * bottomY / 100) - 12 + 'px');
+          var x = exports.data.x + 'px';
+          var y = worldHeight - (280 * (bottomY / 100));
+          // common.setTransformXY(exports.dom.o, exports.data.x + 'px', worldHeight - (280 * bottomY / 100) - 12 + 'px');
+          common.setTransformXY(exports.dom.o, x, (y - 12) + 'px');
 
         } else {
 
@@ -1007,7 +988,7 @@
     setBottomY: function(exports, bottomY) {
 
       if (exports && exports.dom) {
-        exports.dom.o.style.bottom = ((280 * bottomY / 100) + 'px');
+        exports.dom.o.style.bottom = ((280 * (bottomY / 100)) + 'px');
       }
 
     },
@@ -1024,7 +1005,7 @@
 
       if (o) {
         if (features.transform.prop) {
-          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y +', 0px)';
+          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)';
         } else {
           o.style.left = x;
           o.style.top = y;
@@ -1043,7 +1024,7 @@
 
         if (target.data.type === 'super-bunker') {
           if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== 'tank') {
-            return false;
+            return;
           }
         }
 
@@ -1091,8 +1072,8 @@
     o.className = 'sprite ' + options.className;
 
     if (debug) {
-      o.innerHTML = options.className.replace(/sub\-sprite/i, '');
-      o.style.fontSize = 6 + (1/screenScale) + 'px';
+      o.innerHTML = options.className.replace(/sub-sprite/i, '');
+      o.style.fontSize = 6 + (1 / screenScale) + 'px';
     }
 
     if (showHealth && options.className.match(/missilelauncher|tank|van|infantry|engineer|balloon|helicopter|bunker|turret/i)) {
@@ -1295,38 +1276,34 @@
 
       }
 
-    } else {
+    // otherwise, point 1 is to the right.
 
-      // point 1 is to the right.
+    } else if (point2.x + point2.width >= point1.x + point1XLookAhead) {
 
-      if (point2.x + point2.width >= point1.x + point1XLookAhead) {
+      // point 2 overlaps point 1 on x.
 
-        // point 2 overlaps point 1 on x.
+      // width = point1.x - (point2.x + point1XLookAhead + point2.width);
 
-        // width = point1.x - (point2.x + point1XLookAhead + point2.width);
+      if (point2.y < point1.y) {
 
-        if (point2.y < point1.y) {
+        // point 2 is above point 1.
+        result = (point2.y + point2.height >= point1.y);
 
-          // point 2 is above point 1.
-          result = (point2.y + point2.height >= point1.y);
-
-          // height = point1.y - (point2.height + point2.y);
-
-        } else {
-
-          // point 2 is below point 1.
-          result = (point1.y + point1.height >= point2.y);
-
-          // height = point2.y - (point1.y + point1.height);
-
-        }
+        // height = point1.y - (point2.height + point2.y);
 
       } else {
 
-        // no overlap?
-        result = false;
+        // point 2 is below point 1.
+        result = (point1.y + point1.height >= point2.y);
+
+        // height = point2.y - (point1.y + point1.height);
 
       }
+
+    } else {
+
+      // no overlap?
+      result = false;
 
     }
 
@@ -1442,7 +1419,7 @@
     }
 
     // loop through relevant game object arrays
-    for (i=0, j=collision.items.length; i<j; i++) {
+    for (i = 0, j = collision.items.length; i < j; i++) {
 
       // eliminated mixin() here, perhaps reduce object creation / GC?
 
@@ -1466,13 +1443,11 @@
 
   }
 
-  function trackObject(source, target, options) {
+  function trackObject(source, target) {
 
     // given a source object (the helicopter) and a target, return the relevant vX / vY delta to get progressively closer to the target.
 
     var deltaX, deltaY, result;
-
-    options = options || {};
 
     deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
 
@@ -1520,11 +1495,11 @@
       preferGround = true;
     }
 
-    for (i=0, j=items.length; i<j; i++) {
+    for (i = 0, j = items.length; i < j; i++) {
 
       itemArray = objects[items[i]];
 
-      for (k=0, l=itemArray.length; k<l; k++) {
+      for (k = 0, l = itemArray.length; k < l; k++) {
 
         // potential target: not dead, and an enemy
         if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
@@ -1569,7 +1544,7 @@
     if (localObjects.length) {
 
       // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
-      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length-1 : 0].obj;
+      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
 
     } else {
 
@@ -1590,12 +1565,12 @@
     options = options || {};
 
     // by default...
-    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * 2/3);
+    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * (2 / 3));
 
     // by default, take helicopters if nothing else.
     items = game.objects[(options.items || 'helicopters')];
 
-    for (i=0, j=items.length; i<j; i++) {
+    for (i = 0, j = items.length; i < j; i++) {
 
       // how far away is the target?
       deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
@@ -1634,7 +1609,7 @@
 
     // loop through relevant game object arrays
     // TODO: revisit for object creation / garbage collection improvements
-    for (i=0, j=nearby.items.length; i<j; i++) {
+    for (i = 0, j = nearby.items.length; i < j; i++) {
 
       // assign current targets...
       nearby.options.targets = game.objects[nearby.items[i]];
@@ -1665,9 +1640,9 @@
 
     // "targets" is an array of class types, e.g., tank, missileLauncher etc.
 
-    for (i=0, j=targets.length; i<j; i++) {
+    for (i = 0, j = targets.length; i < j; i++) {
 
-      for (k=0, l=game.objects[targets[i]].length; k<l; k++) {
+      for (k = 0, l = game.objects[targets[i]].length; k < l; k++) {
 
         targetData = game.objects[targets[i]][k].data;
 
@@ -1699,7 +1674,7 @@
     // by default
     triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
-    for (i=0, j=game.objects.helicopters.length; i<j; i++) {
+    for (i = 0, j = game.objects.helicopters.length; i < j; i++) {
 
       // not cloaked, not dead, and an enemy?
       if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
@@ -1740,7 +1715,7 @@
       height: door.height,
       // slight offset on X, don't subtract door half-width
       x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
-      y: parseInt(obj.data.y + obj.data.height - door.height, 10)
+      y: parseInt((obj.data.y + obj.data.height) - door.height, 10)
     };
 
     return result;
@@ -1758,7 +1733,7 @@
 
     if (game.objects[objectType]) {
 
-      for (i=0, j=game.objects[objectType].length; i<j; i++) {
+      for (i = 0, j = game.objects[objectType].length; i < j; i++) {
 
         if (!game.objects[objectType][i].data.dead) {
 
@@ -1910,7 +1885,7 @@
     args = Array.prototype.slice.call(arguments);
 
     // modify args, and store last argument if it looks like a number.
-    if (!isNaN(args[args.length-1])) {
+    if (!isNaN(args[args.length - 1])) {
       delay = args.pop();
     }
 
@@ -1928,9 +1903,7 @@
 
     var args = arguments;
 
-    if (!isRepairing()) {
-      return false;
-    }
+    if (!isRepairing()) return;
 
     // slightly hackish: dynamic property on exports.
     if (!exports.repairingWrenchTimer) {
@@ -1957,9 +1930,7 @@
 
     var args = arguments;
 
-    if (!isRepairing()) {
-      return false;
-    }
+    if (!isRepairing()) return;
 
     // slightly hackish: dynamic property on exports.
     if (!exports.impactWrenchTimer) {
@@ -2160,9 +2131,9 @@
     });
 
     sounds.genericSplat = [];
-    
+
     // http://freesound.org/people/FreqMan/sounds/42962/
-    for (i=0; i<2; i++) {
+    for (i = 0; i < 2; i++) {
       sounds.genericSplat.push(addSound({
         url: getURL('splat1'),
         volume: 15
@@ -2181,7 +2152,7 @@
 
     sounds.genericBoom = [];
 
-    for (i=0; i<4; i++) {
+    for (i = 0; i < 4; i++) {
       sounds.genericBoom.push(addSound({
         url: getURL('generic-boom'),
         volume: 20
@@ -2200,7 +2171,7 @@
 
     sounds.genericGunFire = [];
 
-    for (i=0; i<8; i++) {
+    for (i = 0; i < 8; i++) {
       sounds.genericGunFire.push(addSound({
         url: getURL('generic-gunfire'),
         // multiShot: isChrome,
@@ -2221,7 +2192,7 @@
 
     sounds.turretGunFire = [];
 
-    for (i=0; i<8; i++) {
+    for (i = 0; i < 8; i++) {
       sounds.turretGunFire.push(addSound({
         url: getURL('turret-gunfire'),
         volume: 60
@@ -2244,7 +2215,7 @@
 
     sounds.metalHitLight = [];
 
-    for (i=0; i<4; i++) {
+    for (i = 0; i < 4; i++) {
 
       // http://freesound.org/people/Tiger_v15/sounds/211015/
       sounds.metalHit.push(addSound({
@@ -2448,7 +2419,7 @@
 
       // scroll the battlefield by relative amount.
       data.battleField.scrollLeftVX = x;
-      data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - (data.browser.width/2), data.battleField.scrollLeft + x));
+      data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - (data.browser.width / 2), data.battleField.scrollLeft + x));
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
@@ -2477,7 +2448,7 @@
 
       data.browser.fractionWidth = data.browser.width / 3;
       data.browser.halfWidth = data.browser.width / 2;
-      data.browser.twoThirdsWidth = data.browser.width * 2/3;
+      data.browser.twoThirdsWidth = data.browser.width * (2 / 3);
 
       data.world.width = dom.worldWrapper.offsetWidth;
       data.world.height = dom.worldWrapper.offsetHeight;
@@ -2518,7 +2489,7 @@
 
         elements = utils.array.shuffle(elements);
 
-        for (i=0, j=elements.length; i<j; i++) {
+        for (i = 0, j = elements.length; i < j; i++) {
           fragment.appendChild(elements[i]);
         }
 
@@ -2623,7 +2594,7 @@
 
     }
 
-    function init() {
+    function initView() {
 
       initDOM();
 
@@ -2725,7 +2696,7 @@
 
     };
 
-    init();
+    initView();
 
     exports = {
       animate: animate,
@@ -2830,7 +2801,7 @@
             playSound(sounds.inventory.denied);
           }
 
-          return false;
+          return;
 
         }
 
@@ -2862,13 +2833,9 @@
 
         }
 
-      } else {
-
+      } else if (sounds.inventory.denied) {
         // busy.
-        if (sounds.inventory.denied) {
-          playSound(sounds.inventory.denied);
-        }
-
+        playSound(sounds.inventory.denied);
       }
 
       // HACK
@@ -2892,27 +2859,23 @@
 
             objects.order.size--;
 
-          } else {
+          } else if (objects.order.completeDelay) {
 
             // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
 
-            if (objects.order.completeDelay) {
+            objects.order.completeDelay--;
 
-              objects.order.completeDelay--;
+          } else {
 
-            } else {
+            // "Construction complete."
 
-              // "Construction complete."
+            utils.css.remove(dom.gameStatusBar, css.building);
 
-              utils.css.remove(dom.gameStatusBar, css.building);
+            data.building = false;
 
-              data.building = false;
-
-              // play sound?
-              if (sounds.inventory.end) {
-                playSound(sounds.inventory.end);
-              }
-
+            // play sound?
+            if (sounds.inventory.end) {
+              playSound(sounds.inventory.end);
             }
 
           }
@@ -2925,7 +2888,7 @@
 
     }
 
-    function init() {
+    function initStatusBar() {
       dom.gameStatusBar = document.getElementById('game-status-bar');
     }
 
@@ -2963,7 +2926,7 @@
       order: order
     };
 
-    init();
+    initStatusBar();
 
     return exports;
 
@@ -3030,7 +2993,7 @@
       }
     }
 
-    function init() {
+    function initRadarItem() {
       utils.css.add(dom.o, css.radarItem + ' ' + options.className);
     }
 
@@ -3050,7 +3013,7 @@
 
     oParent = options.oParent;
 
-    init();
+    initRadarItem();
 
     exports = {
       dom: dom,
@@ -3139,7 +3102,7 @@
       var i, j;
 
       // find and remove from DOM + array
-      for (i=objects.items.length-1, j=0; i>=j; i--) {
+      for (i = objects.items.length - 1, j = 0; i >= j; i--) {
         if (objects.items[i] === item) {
           removeNodes(objects.items[i].dom);
           objects.items.splice(i, 1);
@@ -3163,12 +3126,13 @@
 
         if (features.transform.prop) {
 
-          for (i=0, j=objects.items.length; i<j; i++) {
+          for (i = 0, j = objects.items.length; i < j; i++) {
 
             left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
+              // eslint-disable-next-line no-mixed-operators
               top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 35, 10) + 'px';
 
             } else {
@@ -3183,7 +3147,7 @@
 
         } else {
 
-          for (i=0, j=objects.items.length; i<j; i++) {
+          for (i = 0, j = objects.items.length; i < j; i++) {
 
             // TODO: optimize
 
@@ -3206,7 +3170,7 @@
 
           // change state?
 
-          for (i=0, j=game.objects.smartMissiles.length; i<j; i++) {
+          for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
 
             // is this missile not dead, not expired/hostile, and an enemy?
 
@@ -3214,10 +3178,10 @@
 
               hasEnemyMissile = true;
 
-              break;  
+              break;
 
             }
-          
+
           }
 
           data.lastMissileCount = game.objects.smartMissiles.length;
@@ -3232,7 +3196,7 @@
 
     }
 
-    function init() {
+    function initRadar() {
 
       dom.radar = document.getElementById('radar');
 
@@ -3264,12 +3228,8 @@
             }
           }
 
-        } else {
-
-          if (sounds.radarJamming && sounds.radarJamming.sound) {
-            sounds.radarJamming.sound.stop();
-          }
-
+        } else if (sounds.radarJamming && sounds.radarJamming.sound) {
+          sounds.radarJamming.sound.stop();
         }
 
       }
@@ -3304,7 +3264,7 @@
       radarItem: null
     };
 
-    init();
+    initRadar();
 
     exports = {
       addItem: addRadarItem,
@@ -3350,7 +3310,7 @@
           } else {
 
             // array case
-            for (i = gameObjects[item].length-1; i >= 0; i--) {
+            for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
               if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
                 // object is dead - take it out.
@@ -3424,7 +3384,7 @@
 
                 }
 
-                FRAMERATE = 1000/(FPS * fpsMultiplier);
+                FRAMERATE = 1000 / (FPS * fpsMultiplier);
 
               } else {
 
@@ -3451,7 +3411,7 @@
 
           }
 
-        } 
+        }
 
         // regardless, queue the next available frame
         features.getAnimationFrame(animateRAF);
@@ -3504,7 +3464,7 @@
 
     }
 
-    function init() {
+    function initGameLoop() {
 
       start();
 
@@ -3524,7 +3484,7 @@
 
     exports = {
       data: data,
-      init: init,
+      init: initGameLoop,
       resetFPS: resetFPS,
       stop: stop,
       start: start
@@ -3785,7 +3745,7 @@
 
     };
 
-    function init() {
+    function initBalloon() {
 
       dom.o = makeSprite({
         className: css.className
@@ -3878,7 +3838,7 @@
       setEnemy: setEnemy
     };
 
-    init();
+    initBalloon();
 
     return exports;
 
@@ -3910,7 +3870,7 @@
 
         // create a chain, linking the base and the balloon
         objects.chain = new Chain({
-          x: data.x + data.halfWidth - 1,
+          x: data.x + (data.halfWidth - 1),
           y: data.y,
           height: data.y - objects.balloon.data.y,
           balloon: objects.balloon,
@@ -3992,9 +3952,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
@@ -4040,22 +3998,18 @@
 
         repair();
 
-      } else {
+      } else if (collisionCheckMidPoint(exports, target)) {
 
         // non-friendly, kill the infantry - but let them capture the bunker first.
 
-        if (collisionCheckMidPoint(exports, target)) {
-
-          capture(target.data.isEnemy);
-          target.die();
-
-        }
+        capture(target.data.isEnemy);
+        target.die();
 
       }
 
     }
 
-    function init() {
+    function initBunker() {
 
       dom.o = makeSprite({
         className: css.className
@@ -4095,7 +4049,7 @@
 
     data = inheritData({
       type: 'bunker',
-      y: worldHeight - 25 + 3, // override to fix helicopter / bunker vertical crash case
+      y: (worldHeight - 25) + 3, // override to fix helicopter / bunker vertical crash case
       energy: 50,
       energyMax: 50,
       width: 51,
@@ -4125,11 +4079,11 @@
       infantryHit: infantryHit,
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
-      init: init,
+      init: initBunker,
       repair: repair
     };
 
-    init();
+    initBunker();
 
     return exports;
 
@@ -4242,7 +4196,7 @@
 
       data.frameCount++;
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
@@ -4296,7 +4250,7 @@
 
     }
 
-    function init() {
+    function initEndBunker() {
 
       dom.o = makeSprite({
         className: css.className
@@ -4399,7 +4353,7 @@
       targets: []
     };
 
-    init();
+    initEndBunker();
 
     return exports;
 
@@ -4466,9 +4420,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       // gunfire from both sides should now hit this element.
 
@@ -4527,7 +4479,7 @@
 
       data.frameCount++;
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
@@ -4544,7 +4496,7 @@
 
     }
 
-    function init() {
+    function initSuperBunker() {
 
       dom.o = makeSprite({
         className: css.className
@@ -4640,7 +4592,7 @@
           if (target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
 
             // limit to +/- range.
-            data.energy = Math.min(data.energyMax, data.energy-1);
+            data.energy = Math.min(data.energyMax, data.energy - 1);
 
             // small detail: firing speed relative to # of infantry
             updateFireModulus();
@@ -4698,15 +4650,11 @@
                     data.energy--;
                   }
 
-                } else {
-
+                } else if (!target.data.isEnemy) {
                   // player-owned...
-                  if (!target.data.isEnemy) {
-                    data.energy++;
-                  } else {
-                    data.energy--;
-                  }
-
+                  data.energy++;
+                } else {
+                  data.energy--;
                 }
 
                 // limit to +/- range.
@@ -4752,7 +4700,7 @@
 
     };
 
-    init();
+    initSuperBunker();
 
     return exports;
 
@@ -4846,8 +4794,8 @@
             collisionItems: collisionItems,
             x: data.x + data.width + 2 + (deltaX * 0.05),
             y: bottomAlignedY() + 8 + (deltaY * 0.05),
-            vX: deltaX * 0.05 + deltaXGretzky,
-            vY: Math.min(0, deltaY * 0.05 + deltaYGretzky)
+            vX: (deltaX * 0.05) + deltaXGretzky,
+            vY: Math.min(0, (deltaY * 0.05) + deltaYGretzky)
           }));
 
           if (sounds.turretGunFire) {
@@ -4872,9 +4820,7 @@
 
     function die(silent) {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       // reset rotation
       data.angle = 0;
@@ -4940,14 +4886,10 @@
 
         result = true;
 
-      } else {
-
+      } else if (data.lastEnergy < data.energy) {
         // only stop sound once, when repair finishes
-        if (data.lastEnergy < data.energy) {
-          sounds.tinkerWrench.sound.stop();
-          data.lastEnergy = data.energy;
-        }
-
+        sounds.tinkerWrench.sound.stop();
+        data.lastEnergy = data.energy;
       }
 
       return result;
@@ -4991,7 +4933,7 @@
       data.engineerInteracting = true;
 
       if (data.isEnemy !== target.data.isEnemy) {
-        
+
         // gradual take-over.
         claim(target.data.isEnemy);
 
@@ -5037,7 +4979,7 @@
 
         // smoke relative to damage
 
-        if (Math.random() > 1 - ((data.energyMax-data.energy)/data.energyMax)) {
+        if (Math.random() > 1 - ((data.energyMax - data.energy) / data.energyMax)) {
 
           game.objects.smoke.push(new Smoke({
             x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
@@ -5061,7 +5003,7 @@
         data.engineerInteracting = false;
       }
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
@@ -5070,7 +5012,7 @@
 
     }
 
-    function init() {
+    function initTurret() {
 
       dom.o = makeSprite({
         className: css.className
@@ -5142,7 +5084,7 @@
     }, options);
 
     // how fast to "scan" (left -> right, and back)
-    data.scanIncrement = (90 * data.scanModulus/FPS);
+    data.scanIncrement = ((90 * data.scanModulus) / FPS);
 
     dom = {
       o: null,
@@ -5164,7 +5106,7 @@
       repair: repair
     };
 
-    init();
+    initTurret();
 
     // "dead on arrival"
     if (options.DOA) {
@@ -5189,8 +5131,8 @@
           parentType: data.type,
           isEnemy: data.isEnemy,
           isRubberChicken: true, // because why not, it's a special case anyway
-          x: data.x + data.width/2,
-          y: bottomAlignedY() - data.height/2,
+          x: data.x + (data.width / 2),
+          y: bottomAlignedY() - (data.height / 2),
           target: targetHelicopter
         }));
 
@@ -5251,7 +5193,7 @@
 
               var i;
 
-              for (i=0; i<7; i++) {
+              for (i = 0; i < 7; i++) {
 
                 shrapnelExplosion(data, {
                   count: 60,
@@ -5294,7 +5236,7 @@
 
     }
 
-    function init() {
+    function initBase() {
 
       dom.o = makeSprite({
         className: css.className
@@ -5326,7 +5268,7 @@
       frameCount: 0,
       fireModulus: tutorialMode ? FPS * 5 : FPS * 2,
       // left side, or right side (roughly)
-      x: (options.x || (options.isEnemy ? 8192 - 192: 64)),
+      x: (options.x || (options.isEnemy ? 8192 - 192 : 64)),
       y: 0,
       bottomY: (options.bottomY || 0),
       width: 125,
@@ -5349,7 +5291,7 @@
       die: die
     };
 
-    init();
+    initBase();
 
     return exports;
 
@@ -5386,9 +5328,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       removeNodes(dom);
 
@@ -5437,7 +5377,7 @@
 
           y = objects.balloon.data.y + objects.balloon.data.height;
 
-          height = worldHeight - y - objects.bunker.data.height + 4;
+          height = (worldHeight - y - objects.bunker.data.height) + 4;
 
         } else {
 
@@ -5486,7 +5426,7 @@
 
     }
 
-    function init() {
+    function initChain() {
 
       dom.o = makeSprite({
         className: css.className
@@ -5537,7 +5477,7 @@
       die: die
     };
 
-    init();
+    initChain();
 
     return exports;
 
@@ -5564,9 +5504,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
@@ -5604,7 +5542,7 @@
           // any missiles already chasing the target?
           similarMissileCount = 0;
 
-          for (i=0, j=game.objects.smartMissiles.length; i<j; i++) {
+          for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
 
             if (game.objects.smartMissiles[i].objects.target === targetHelicopter) {
               similarMissileCount++;
@@ -5620,7 +5558,7 @@
             game.objects.smartMissiles.push(new SmartMissile({
               parentType: data.type,
               isEnemy: data.isEnemy,
-              x: data.x + data.width/2,
+              x: data.x + (data.width / 2),
               y: bottomAlignedY(),
               target: targetHelicopter
             }));
@@ -5688,7 +5626,7 @@
 
     }
 
-    function init() {
+    function initMissileLauncher() {
 
       dom.o = makeSprite({
         className: css.className
@@ -5706,7 +5644,7 @@
         // hackish redraw fix for Chrome, where backgroundPosition otherwise doesn't take effect.
         if (dom.o && features.transform.prop) {
           dom.o.style.left = data.x + 'px';
-          dom.o.style.top = (data.y-2) + 'px';
+          dom.o.style.top = (data.y - 2) + 'px';
         }
 
         data.orderComplete = true;
@@ -5760,7 +5698,7 @@
     };
 
     if (!options.noInit) {
-      init();
+      initMissileLauncher();
     }
 
     return exports;
@@ -5797,9 +5735,7 @@
 
       // aieee!
 
-      if (!dom.o) {
-        return false;
-      }
+      if (!dom.o) return;
 
       removeNodes(dom);
 
@@ -5922,7 +5858,7 @@
 
     }
 
-    function init() {
+    function initGunFire() {
 
       dom.o = makeSprite({
         className: css.className
@@ -5990,7 +5926,7 @@
       die: die
     };
 
-    init();
+    initGunFire();
 
     return exports;
 
@@ -6014,33 +5950,31 @@
 
     }
 
-    function die(options) {
+    function die(dieOptions) {
 
       // aieee!
 
       var className;
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
-      options = options || {};
+      dieOptions = dieOptions || {};
 
       // possible hit, blowing something up.
 
-      if (!options.omitSound && sounds.genericBoom) {
+      if (!dieOptions.omitSound && sounds.genericBoom) {
         playSound(sounds.genericBoom, exports);
       }
 
       // bombs blow up big on the ground, and "spark" on other things.
       className = (!options.spark ? css.explosionLarge : css.spark);
 
-      if (options.bottomAlign) {
+      if (dieOptions.bottomAlign) {
 
         // stick this explosion to the bottom.
         className += ' bottom-align';
 
-      } else if (options.extraY) {
+      } else if (dieOptions.extraY) {
 
         // move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
         data.y += 3 + parseInt(Math.random() * 3, 10);
@@ -6152,7 +6086,7 @@
 
     }
 
-    function init() {
+    function initBomb() {
 
       dom.o = makeSprite({
         className: css.className
@@ -6221,7 +6155,7 @@
       dom: dom
     };
 
-    init();
+    initBomb();
 
     return exports;
 
@@ -6284,7 +6218,7 @@
 
     }
 
-    function init() {
+    function initCloud() {
 
       dom.o = makeSprite({
         className: css.className
@@ -6328,7 +6262,7 @@
       dom: dom
     };
 
-    init();
+    initCloud();
 
     return exports;
 
@@ -6387,12 +6321,12 @@
 
       var i, j;
 
-      for (i=0, j=data.trailerCount; i<j; i++) {
+      for (i = 0, j = data.trailerCount; i < j; i++) {
 
         // if previous X value exists, apply it
         if (data.xHistory[i]) {
-          dom.trailers[i].style.left = data.xHistory[i] + (data.width/2) + 'px';
-          dom.trailers[i].style.top = data.yHistory[i] + (data.height/2) + 'px';
+          dom.trailers[i].style.left = data.xHistory[i] + (data.width / 2) + 'px';
+          dom.trailers[i].style.top = data.yHistory[i] + (data.height / 2) + 'px';
         }
 
       }
@@ -6403,7 +6337,7 @@
 
       var i, j;
 
-      for (i=0, j=data.trailerCount; i<j; i++) {
+      for (i = 0, j = data.trailerCount; i < j; i++) {
 
         // if previous X value exists, apply it
         if (data.xHistory[i]) {
@@ -6561,7 +6495,7 @@
             } else if (data.vY <= 0 && data.vY < -0.25) {
               data.vY *= 0.8;
             }
- 
+
           } else {
 
             // relative to target at all times
@@ -6594,20 +6528,19 @@
           // hack deltas for angle
 
           if (deltaX > 360) {
-            deltaX = (deltaX % 180);
+            deltaX %= 180;
           }
 
           angle = Math.atan2(deltaY, deltaX) * deg2Rad;
 
-        } else {
+        } else if (data.vX > 0) {
 
           // bottom-aligned. Heading left, or right?
+          angle = 0;
 
-          if (data.vX > 0) {
-            angle = 0;
-          } else {
-            angle = 180;
-          }
+        } else {
+
+          angle = 180;
 
         }
 
@@ -6640,7 +6573,7 @@
 
     }
 
-    function init() {
+    function initSmartMissle() {
 
       var i, trailerConfig, fragment;
 
@@ -6654,7 +6587,7 @@
         className: css.trailer
       };
 
-      for (i=0; i<data.trailerCount; i++) {
+      for (i = 0; i < data.trailerCount; i++) {
         dom.trailers.push(makeSprite(trailerConfig));
         // TODO: clone, optimize etc.
         fragment.appendChild(dom.trailers[i]);
@@ -6767,7 +6700,7 @@
       objects: objects
     };
 
-    init();
+    initSmartMissle();
 
     return exports;
 
@@ -6785,7 +6718,7 @@
         utils.css.add(radarItem.dom.o, css.cloaked);
 
         if (!data.isEnemy && sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume/2.5);
+          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
         }
 
       }
@@ -6819,7 +6752,7 @@
       // hack: center on enemy helicopter at all times.
 
       if (trackEnemy) {
-        game.objects.view.dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px, 0px, 0px)'; 
+        game.objects.view.dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px, 0px, 0px)';
       }
 
     }
@@ -6857,10 +6790,8 @@
 
       var frameCount, modulus;
 
-      if (data.dead || data.repairing) {
-        // don't burn fuel in these cases
-        return false;
-      }
+      // don't burn fuel in these cases
+      if (data.dead || data.repairing) return;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -6898,11 +6829,11 @@
 
           window.setTimeout(function() {
             playRepairingWrench(repairInProgress, exports);
-          }, 500 + Math.random() * 1500);
+          }, 500 + (Math.random() * 1500));
 
           window.setTimeout(function() {
             playImpactWrench(repairInProgress, exports);
-          }, 500 + Math.random() * 1500);
+          }, 500 + (Math.random() * 1500));
 
         }
 
@@ -7074,9 +7005,7 @@
       // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
       // if not dead or landed, that is.
-      if (!force && (data.dead || data.y <= 0 || data.landed)) {
-        return false;
-      }
+      if (!force && (data.dead || data.y <= 0 || data.landed)) return;
 
       if (data.rotated) {
         // going back to L->R
@@ -7124,7 +7053,7 @@
         dom.o.style[features.transform.prop] = (angle !== 0 ? 'rotate(' + angle + 'deg)' : '');
 
         // TODO: clean up, improve
-        return false;
+        return;
 
       }
 
@@ -7132,7 +7061,7 @@
 
         // new tilt
 
-        if (data.vX > data.vXMax/4) {
+        if (data.vX > (data.vXMax / 4)) {
 
           // L -> R
           utils.css.add(dom.o, css.tilt);
@@ -7141,7 +7070,7 @@
 
           data.tilt = 1;
 
-        } else if (data.vX < data.vXMax/4 * -1) {
+        } else if (data.vX < ((data.vXMax / 4) * -1)) {
 
           // R -> L
           utils.css.add(dom.o, css.tilt);
@@ -7152,27 +7081,23 @@
 
         }
 
-      } else {
+      } else if (data.tilt === 1 && data.vX < (data.vXMax / 4)) {
 
-        if (data.tilt === 1 && data.vX < data.vXMax/4) {
+        // leaving L -> R tilt
 
-          // leaving L -> R tilt
+        utils.css.remove(dom.o, css.tilt);
+        utils.css.remove(dom.o, css.movingRight);
 
-          utils.css.remove(dom.o, css.tilt);
-          utils.css.remove(dom.o, css.movingRight);
+        data.tilt = null;
 
-          data.tilt = null;
+      } else if (data.tilt === -1 && data.vX > ((data.vXMax / 4) * -1)) {
 
-        } else if (data.tilt === -1 && data.vX > data.vXMax/4 * -1) {
+        // leaving R -> L tilt
 
-          // leaving R -> L tilt
+        utils.css.remove(dom.o, css.tilt);
+        utils.css.remove(dom.o, css.movingLeft);
 
-          utils.css.remove(dom.o, css.tilt);
-          utils.css.remove(dom.o, css.movingLeft);
-
-          data.tilt = null;
-
-        }
+        data.tilt = null;
 
       }
 
@@ -7307,15 +7232,23 @@
 
       updateHealth();
 
+      var landingPad;
+
       if (data.isEnemy) {
 
-        // todo: clean up
-        data.x = game.objects.landingPads[game.objects.landingPads.length-1].data.x + game.objects.landingPads[game.objects.landingPads.length-1].data.width/2 - data.halfWidth + 10;
+        landingPad = game.objects.landingPads[game.objects.landingPads.length - 1];
+
+        // todo: clean up (linter dislikes "unexpected mix of '=' and '+'")
+        // eslint-disable-next-line no-mixed-operators
+        data.x = landingPad.data.x + (landingPad.data.width / 2) - data.halfWidth + 10;
 
       } else {
 
-        // todo: clean up
-        data.x = game.objects.landingPads[0].data.x + game.objects.landingPads[0].data.width/2 - data.halfWidth + 10;
+        landingPad = game.objects.landingPads[0];
+
+        // todo: clean up (linter dislikes "unexpected mix of '=' and '+'")
+        // eslint-disable-next-line no-mixed-operators
+        data.x = landingPad.data.x + (landingPad.data.width / 2) - data.halfWidth + 10;
 
       }
 
@@ -7341,10 +7274,8 @@
 
     function respawn() {
 
-      if (battleOver) {
-        // exit if game is over.
-        return false;
-      }
+      // exit if game is over.
+      if (battleOver) return;
 
       // helicopter died. move view, and reset.
 
@@ -7361,7 +7292,9 @@
         game.objects.view.setLeftScroll(0);
 
         // reposition chopper on landing pad
-        data.x = game.objects.landingPads[0].data.x + game.objects.landingPads[0].data.width/2 - data.halfWidth - 10;
+        // (linter dislikes "unexpected mix of '=' and '+'")
+        // eslint-disable-next-line no-mixed-operators
+        data.x = game.objects.landingPads[0].data.x + (game.objects.landingPads[0].data.width / 2) - data.halfWidth - 10;
 
         common.setX(exports, data.x);
 
@@ -7375,9 +7308,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       // reset animations
       data.frameCount = 0;
@@ -7394,7 +7325,7 @@
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
-          y: data.y + data.height - 11,
+          y: (data.y + data.height) - 11,
           ignoreShrapnel: true
         }));
       }
@@ -7435,9 +7366,7 @@
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
-      if (!data.firing && !data.bombing && !data.missileLaunching && !data.parachuting) {
-        return false;
-      }
+      if (!data.firing && !data.bombing && !data.missileLaunching && !data.parachuting) return;
 
       if (data.firing && frameCount % data.fireModulus === 0) {
 
@@ -7445,6 +7374,7 @@
 
           tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
+          /*eslint-disable no-mixed-operators */
           objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
@@ -7453,6 +7383,7 @@
             vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
             vY: (data.y > data.yMin ? data.vY + tiltOffset : 0)
           }));
+          /*eslint-enable no-mixed-operators */
 
           if (sounds.genericGunFire) {
             if (!data.isEnemy) {
@@ -7477,13 +7408,9 @@
 
           }
 
-        } else {
-
+        } else if (!data.isEnemy && sounds.inventory.denied) {
           // player is out of ammo.
-          if (!data.isEnemy && sounds.inventory.denied) {
-            playSound(sounds.inventory.denied);
-          }
-
+          playSound(sounds.inventory.denied);
         }
 
         // SHIFT key still down?
@@ -7500,7 +7427,7 @@
           objects.bombs.push(new Bomb({
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
-            y: data.y + data.height - 6,
+            y: (data.y + data.height) - 6,
             vX: data.vX
           }));
 
@@ -7512,13 +7439,9 @@
 
           }
 
-        } else {
-
+        } else if (!data.isEnemy && sounds.inventory.denied) {
           // player is out of ammo.
-          if (!data.isEnemy && sounds.inventory.denied) {
-            playSound(sounds.inventory.denied);
-          }
-
+          playSound(sounds.inventory.denied);
         }
 
         // CTRL key still down?
@@ -7536,6 +7459,7 @@
 
           if (missileTarget && !missileTarget.data.cloaked) {
 
+            /*eslint-disable no-mixed-operators */
             objects.smartMissiles.push(new SmartMissile({
               parentType: data.type,
               isEnemy: data.isEnemy,
@@ -7546,6 +7470,7 @@
               isRubberChicken: data.rubberChickenLaunching
               // vX: data.vX + 8 * (data.rotated ? -1 : 1)
             }));
+            /*eslint-enable no-mixed-operators */
 
             data.smartMissiles = Math.max(0, data.smartMissiles - 1);
 
@@ -7577,7 +7502,7 @@
               isEnemy: data.isEnemy,
               // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
               x: data.x + (data.width * 0.75),
-              y: data.y + data.height - 11
+              y: (data.y + data.height) - 11
             }));
 
           } else {
@@ -7585,7 +7510,7 @@
             game.objects.parachuteInfantry.push(new ParachuteInfantry({
               isEnemy: data.isEnemy,
               x: data.x + data.halfWidth,
-              y: data.y + data.height - 11
+              y: (data.y + data.height) - 11
             }));
 
           }
@@ -7596,12 +7521,8 @@
 
           playSound(sounds.popSound2, exports);
 
-        } else {
-
-          if (!data.isEnemy && sounds.inventory.denied) {
-            playSound(sounds.inventory.denied);
-          }
-
+        } else if (!data.isEnemy && sounds.inventory.denied) {
+          playSound(sounds.inventory.denied);
         }
 
       }
@@ -7621,7 +7542,7 @@
 
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           x: data.x + data.halfWidth,
-          y: data.y + data.height - 11
+          y: (data.y + data.height) - 11
         }));
 
         if (!tutorialMode) {
@@ -7645,9 +7566,7 @@
 
       maxY = 320;
 
-      if (data.fuel <= 0) {
-        return false;
-      }
+      if (data.fuel <= 0) return;
 
       // low fuel means low fuel. or ammo. or bombs.
 
@@ -7692,7 +7611,7 @@
         // only for #trackEnemy case
         centerView();
 
-        return false;
+        return;
 
       }
 
@@ -7714,7 +7633,7 @@
           data.vX = 0;
           data.vY = 0;
 
-          return false;
+          return;
 
         }
 
@@ -7812,7 +7731,7 @@
         lastTarget = null;
       }
 
-      if (lastTarget &&  (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || data.ammo <= 0)) {
+      if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || data.ammo <= 0)) {
         lastTarget = null;
       }
 
@@ -7919,31 +7838,28 @@
               setFiring(false);
             }
 
-          } else {
+          } else if (Math.abs(result.deltaX) < 100) {
 
             // shoot at the player
-            if (Math.abs(result.deltaX) < 100) {
 
-              if (Math.abs(result.deltaY) < 48) {
+            if (Math.abs(result.deltaY) < 48) {
 
-                setFiring(true);
-                setBombing(false);
+              setFiring(true);
+              setBombing(false);
+
+            } else {
+
+              setFiring(false);
+
+              // bomb the player?
+              // TODO: verify that deltaY is not negative.
+              if (Math.abs(result.deltaX) < 50 && result.deltaY > 48) {
+
+                setBombing(true);
 
               } else {
 
-                setFiring(false);
-
-                // bomb the player?
-                // TODO: verify that deltaY is not negative.
-                if (Math.abs(result.deltaX) < 50 && result.deltaY > 48) {
-
-                  setBombing(true);
-
-                } else {
-
-                  setBombing(false);
-
-                }
+                setBombing(false);
 
               }
 
@@ -8066,6 +7982,7 @@
         if (mouse.x) {
           // accelerate scroll vX, so chopper nearly matches mouse when scrolling
           data.lastVX = parseFloat(data.vX);
+          // eslint-disable-next-line no-mixed-operators
           data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
           // and limit
           data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
@@ -8159,7 +8076,7 @@
         // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
         if (!data.isEnemy) {
-          newX = Math.max(view.data.battleField.scrollLeft + (data.width/2) , Math.min(view.data.browser.width + view.data.battleField.scrollLeft - (data.width * 1.5), newX));
+          newX = Math.max(view.data.battleField.scrollLeft + (data.width / 2), Math.min((view.data.browser.width + view.data.battleField.scrollLeft) - (data.width * 1.5), newX));
         }
 
         moveTo(newX, data.y + data.vY);
@@ -8179,7 +8096,7 @@
 
       // TODO: for ... in
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i] && objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire[i] = null;
@@ -8187,14 +8104,14 @@
         }
       }
 
-      for (i = objects.bombs.length-1; i >= 0; i--) {
+      for (i = objects.bombs.length - 1; i >= 0; i--) {
         if (objects.bombs[i].animate()) {
           // object is dead - take it out.
           objects.bombs.splice(i, 1);
         }
       }
 
-      for (i = objects.smartMissiles.length-1; i >= 0; i--) {
+      for (i = objects.smartMissiles.length - 1; i >= 0; i--) {
         if (objects.smartMissiles[i].animate()) {
           // object is dead - take it out.
           objects.smartMissiles.splice(i, 1);
@@ -8210,7 +8127,7 @@
       if (!data.dead && !data.isEnemy) {
 
         // any enemy vans that are jamming our radar?
-        for (i = 0, j = game.objects.vans.length; i<j; i++) {
+        for (i = 0, j = game.objects.vans.length; i < j; i++) {
 
           if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
 
@@ -8240,7 +8157,7 @@
 
         // smoke relative to damage
 
-        if (!data.dead && Math.random() > 1 - ((10-data.energy)/10)) {
+        if (!data.dead && Math.random() > 1 - ((10 - data.energy) / 10)) {
 
           game.objects.smoke.push(new Smoke({
             x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
@@ -8288,7 +8205,7 @@
 
     }
 
-    function init() {
+    function initHelicopter() {
 
       var i, trailerConfig, fragment;
 
@@ -8303,7 +8220,7 @@
         className: css.trailer
       };
 
-      for (i=0; i<data.trailerCount; i++) {
+      for (i = 0; i < data.trailerCount; i++) {
         dom.trailers.push(makeSprite(trailerConfig));
         // TODO: clone, optimize etc.
         fragment.appendChild(dom.trailers[i]);
@@ -8552,7 +8469,7 @@
       updateStatusUI: updateStatusUI
     };
 
-    init();
+    initHelicopter();
 
     return exports;
 
@@ -8639,9 +8556,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
@@ -8689,7 +8604,7 @@
 
       data.frameCount++;
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
@@ -8724,7 +8639,7 @@
 
     }
 
-    function init() {
+    function initTank() {
 
       dom.o = makeSprite({
         className: css.className
@@ -8831,7 +8746,7 @@
     };
 
     if (!options.noInit) {
-      init();
+      initTank();
     }
 
     return exports;
@@ -8882,9 +8797,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
@@ -9007,7 +8920,7 @@
 
     }
 
-    function init() {
+    function initVan() {
 
       dom.o = makeSprite({
         className: css.className
@@ -9064,7 +8977,7 @@
         cost: 2
       },
       // if the van reaches the enemy base (near the landing pad), it's game over.
-      xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 128 : game.objects.landingPads[game.objects.landingPads.length-1].data.x - 40)
+      xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 128 : game.objects.landingPads[game.objects.landingPads.length - 1].data.x - 40)
     }, options);
 
     dom = {
@@ -9079,7 +8992,7 @@
     };
 
     if (!options.noInit) {
-      init();
+      initVan();
     }
 
     return exports;
@@ -9092,9 +9005,7 @@
 
     function openParachute() {
 
-      if (data.parachuteOpen) {
-        return false;
-      }
+      if (data.parachuteOpen) return;
 
       // undo manual assignment from free-fall animation
       dom.o.style.backgroundPosition = '';
@@ -9134,9 +9045,7 @@
 
     function die(silent) {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       if (!silent) {
 
@@ -9192,17 +9101,13 @@
 
             openParachute();
 
-          } else {
-
+          } else if (data.frameCount % data.panicModulus === 0) {
             // like Tom Petty, free fallin'.
-            if (data.frameCount % data.panicModulus === 0) {
 
-              dom.o.style.backgroundPosition = '0px ' + -(60 + (data.frameHeight * data.panicFrame)) + 'px';
+            dom.o.style.backgroundPosition = '0px ' + (-(60 + (data.frameHeight * data.panicFrame))) + 'px';
 
-              // alternate between 0/1
-              data.panicFrame = !data.panicFrame;
-
-            }
+            // alternate between 0/1
+            data.panicFrame = !data.panicFrame;
 
           }
 
@@ -9291,7 +9196,7 @@
 
           }
 
-          if (data.y - data.height + 4 >= 370) {
+          if ((data.y - data.height) + 4 >= 370) {
 
             // hit ground, and no parachute. gravity is a cruel mistress.
 
@@ -9321,7 +9226,7 @@
 
     }
 
-    function init() {
+    function initParachuteInfantry() {
 
       dom.o = makeSprite({
         className: css.className
@@ -9355,7 +9260,7 @@
       energyMax: 2,
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (!tutorialMode  && Math.random() > 0.9? 999 : 0),
+      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (!tutorialMode && Math.random() > 0.9 ? 999 : 0),
       direction: 0,
       width: 10,
       height: 11, // 19 when parachute opens
@@ -9378,7 +9283,7 @@
       hit: hit
     };
 
-    init();
+    initParachuteInfantry();
 
     return exports;
 
@@ -9465,9 +9370,7 @@
 
     function die(silent) {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       if (!silent) {
 
@@ -9514,15 +9417,10 @@
 
           moveTo(data.x + data.vX, data.bottomY);
 
-        } else {
-
+        } else if (!data.noFire) {
           // firing, or reclaiming/repairing?
-
           // only fire (i.e., GunFire objects) when stopped
-          if (!data.noFire) {
-            fire();
-          }
-
+          fire();
         }
 
         collisionTest(collision, exports);
@@ -9532,7 +9430,7 @@
 
       }
 
-      for (i = objects.gunfire.length-1; i >= 0; i--) {
+      for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire.splice(i, 1);
@@ -9545,7 +9443,7 @@
 
     }
 
-    function init() {
+    function initInfantry() {
 
       // infantry, or engineer?
       setRole(data.role, true);
@@ -9674,7 +9572,7 @@
     };
 
     if (!options.noInit) {
-      init();
+      initInfantry();
     }
 
     return exports;
@@ -9718,7 +9616,7 @@
 
     }
 
-    function init() {
+    function initLandingPad() {
 
       dom.o = makeSprite({
         className: css.className
@@ -9771,10 +9669,10 @@
       dom: dom
     };
 
-    init();
+    initLandingPad();
 
     return exports;
-    
+
   };
 
   shrapnelExplosion = function(options, shrapnelOptions) {
@@ -9787,7 +9685,7 @@
 
     localOptions = mixin({}, options);
 
-    halfWidth = localOptions.width/2;
+    halfWidth = localOptions.width / 2;
 
     // randomize X?
     if (shrapnelOptions.randomX) {
@@ -9803,9 +9701,9 @@
 
     shrapnelCount = shrapnelOptions.count || 8;
 
-    angleIncrement = 180 / (shrapnelCount-1);
+    angleIncrement = 180 / (shrapnelCount - 1);
 
-    for (i=0; i<shrapnelCount; i++) {
+    for (i = 0; i < shrapnelCount; i++) {
 
       explosionVelocity = Math.random() * explosionVelocityMax;
 
@@ -9828,7 +9726,7 @@
       angle += angleIncrement;
 
     }
-    
+
   };
 
   Shrapnel = function(options) {
@@ -9875,9 +9773,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       shrapnelNoise();
 
@@ -9957,7 +9853,7 @@
 
     }
 
-    function init() {
+    function initShrapnel() {
 
       dom.o = makeSprite({
         className: css.className + (Math.random() > 0.5 ? ' ' + css.reverse : '')
@@ -10031,7 +9927,7 @@
       items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'smartMissiles', 'bunkers', 'superBunkers', 'balloons', 'turrets']
     };
 
-    init();
+    initShrapnel();
 
     return exports;
 
@@ -10043,9 +9939,7 @@
 
     function die() {
 
-      if (data.dead) {
-        return false;
-      }
+      if (data.dead) return;
 
       removeNodes(dom);
 
@@ -10077,7 +9971,7 @@
 
     }
 
-    function init() {
+    function initSmoke() {
 
       dom.o = makeSprite({
         className: css.className
@@ -10118,7 +10012,7 @@
       die: die
     };
 
-    init();
+    initSmoke();
 
     return exports;
 
@@ -10225,7 +10119,7 @@
 
     }
 
-    function init() {
+    function initTutorial() {
 
       var temp;
 
@@ -10243,13 +10137,13 @@
           var chopper = game.objects.helicopters[0],
               chopperData = chopper.data;
 
-          if (chopperData.ammo < chopperData.maxAmmo && chopperData.bombs < chopperData.maxBombs && !chopper.objects.bombs.length && !chopper.objects.gunfire.length) {
-
-            // off to a good start.
-
-            return true;
-
-          }
+          // condition for completion
+          return (
+            chopperData.ammo < chopperData.maxAmmo
+            && chopperData.bombs < chopperData.maxBombs
+            && !chopper.objects.bombs.length
+            && !chopper.objects.gunfire.length
+          );
 
         },
 
@@ -10272,9 +10166,7 @@
           chopper = game.objects.helicopters[0];
 
           // player either landed and refueled, or died. ;)
-          if (chopper.data.repairComplete) {
-            return true;
-          }
+          return (chopper.data.repairComplete);
 
         },
 
@@ -10318,11 +10210,7 @@
 
           var counts = [countSides('tanks'), countSides('vans')];
 
-          if (!counts[0].enemy && !counts[1].enemy) {
-
-            return true;
-
-          }
+          return (!counts[0].enemy && !counts[1].enemy);
 
         },
 
@@ -10361,7 +10249,7 @@
           var targetBunker,
               i, j;
 
-          for (i=0, j=game.objects.bunkers.length; i<j; i++) {
+          for (i = 0, j = game.objects.bunkers.length; i < j; i++) {
 
              if (!game.objects.bunkers[i].data.dead) {
                targetBunker = game.objects.bunkers[i];
@@ -10399,13 +10287,8 @@
 
           bunkers = countSides('bunkers');
 
-          if (bunkers.enemy < temp.enemy) {
-
-            // a bunker was blown up, or claimed.
-
-            return true;
-
-          }
+          // a bunker was blown up, or claimed.
+          return (bunkers.enemy < temp.enemy);
 
         },
 
@@ -10456,13 +10339,8 @@
 
           superBunkers = countSides('superBunkers');
 
-          if (superBunkers.enemy < temp.enemy) {
-
-            // a Super Bunker was claimed.
-
-            return true;
-
-          }
+          // a Super Bunker was claimed.
+          return (superBunkers.enemy < temp.enemy);
 
         },
 
@@ -10531,11 +10409,11 @@
 
             // two screenfuls away, OR end of battlefield - whichever is less
             game.addObject('helicopter', {
-              x: Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64),
+              x: Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
               y: 72,
               isEnemy: true,
               // give the player a serious advantage, here.
-              fireModulus: FPS/3,
+              fireModulus: FPS / 3,
               vX: 0
             });
 
@@ -10568,7 +10446,7 @@
           // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
           game.objects.superBunkers[0].data.energy = 0;
 
-          missileX = Math.min(game.objects.helicopters[0].data.x + game.objects.view.data.browser.width * 2, game.objects.view.data.battleField.width - 64);
+          missileX = Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
 
           // make ze missile launcher
           game.addObject('missileLauncher', {
@@ -10603,7 +10481,11 @@
 
         animate: function() {
 
-          return (!game.objects.turrets[0].data.isEnemy && !game.objects.turrets[0].data.dead && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax);
+          return (
+            !game.objects.turrets[0].data.isEnemy
+            && !game.objects.turrets[0].data.dead
+            && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax
+          );
 
         },
 
@@ -10676,7 +10558,7 @@
 
     data = {
       frameCount: 0,
-      animateModulus: FPS/2,
+      animateModulus: FPS / 2,
       step: 0,
       steps: 0
     };
@@ -10692,7 +10574,7 @@
       selectItem: selectItem
     };
 
-    init();
+    initTutorial();
 
     return exports;
 
@@ -10714,7 +10596,7 @@
       // process all items in queue
       var i, j;
 
-      for (i=0, j=data.queue.length; i<j; i++) {
+      for (i = 0, j = data.queue.length; i < j; i++) {
         data.queue[i]();
       }
 
@@ -10820,18 +10702,18 @@
 
        // meaningful labels for key values
        keyMap = {
-         'shift': 16,
-         'ctrl': 17,
-         'space': 32,
-         'left': 37,
-         'up': 38,
-         'right': 39,
-         'down': 40,
-         'missileLauncher': 77,
-         'tank': 84,
-         'van': 86,
-         'infantry': 73,
-         'engineer': 69
+         shift: 16,
+         ctrl: 17,
+         space: 32,
+         left: 37,
+         up: 38,
+         right: 39,
+         down: 40,
+         missileLauncher: 77,
+         tank: 84,
+         van: 86,
+         infantry: 73,
+         engineer: 69
          // 'helicopter': 72
        };
 
@@ -10851,6 +10733,8 @@
           }
         }
 
+        return true;
+
       },
 
       keyup: function(e) {
@@ -10865,6 +10749,8 @@
           }
         }
 
+        return true;
+
       }
 
     };
@@ -10874,7 +10760,7 @@
       // NOTE: Each function gets an (e) event argument.
 
       // shift
-      '13': {
+      13: {
 
         allowEvent: true, // don't use stopEvent()
 
@@ -10887,7 +10773,7 @@
       },
 
       // shift
-      '16': {
+      16: {
 
         allowEvent: true, // don't use stopEvent()
 
@@ -10900,7 +10786,7 @@
       },
 
       // ctrl (alternate for shift key)
-      '17': {
+      17: {
 
         allowEvent: true, // don't use stopEvent()
 
@@ -10913,7 +10799,7 @@
       },
 
       // space bar
-      '32': {
+      32: {
 
         down: function() {
 
@@ -10930,7 +10816,7 @@
       },
 
       // "m"
-      '77': {
+      77: {
 
         down: function() {
 
@@ -10941,7 +10827,7 @@
       },
 
       // "t"
-      '84': {
+      84: {
 
         down: function() {
 
@@ -10952,7 +10838,7 @@
       },
 
       // "v"
-      '86': {
+      86: {
 
         down: function() {
 
@@ -10963,7 +10849,7 @@
       },
 
       // "c" (rubber chicken)
-      '67': {
+      67: {
 
         down: function() {
 
@@ -10980,7 +10866,7 @@
       },
 
       // "x"
-      '88': {
+      88: {
 
         down: function() {
 
@@ -10997,7 +10883,7 @@
       },
 
       // "e"
-      '69': {
+      69: {
 
         down: function() {
 
@@ -11008,7 +10894,7 @@
       },
 
       // "i"
-      '73': {
+      73: {
 
         down: function() {
 
@@ -11051,7 +10937,7 @@
 
     // init?
 
-    function init() {
+    function initKeyboardMonitor() {
 
       attachEvents();
 
@@ -11059,7 +10945,7 @@
 
     return {
 
-      init: init,
+      init: initKeyboardMonitor,
       isDown: isDown,
       releaseAll: releaseAll
 
@@ -11235,7 +11121,7 @@
 
         x += 80;
 
-        for (i=0; i<10; i++) {
+        for (i = 0; i < 10; i++) {
 
           addObject('infantry', {
             x: x + (i * 11),
@@ -11276,7 +11162,7 @@
           isEnemy: true
         });
 
-        for (i=0; i<5; i++) {
+        for (i = 0; i < 5; i++) {
 
           addObject('infantry', {
             x: (x + 50) + (i * 11),
@@ -11294,7 +11180,7 @@
           isEnemy: true
         });
 
-        for (i=0; i<5; i++) {
+        for (i = 0; i < 5; i++) {
 
           addObject('infantry', {
             x: (x + 75) + (i * 11),
@@ -11320,7 +11206,7 @@
           isEnemy: true
         });
 
-        for (i=0; i<5; i++) {
+        for (i = 0; i < 5; i++) {
 
           addObject('infantry', {
             x: (x + 240 + 75) + (i * 11),
@@ -11549,7 +11435,7 @@
         addItem('grave-cross', x);
 
       } else {
-        
+
         // level 1
 
         // mid and end-level landing pads (affects van objects' xGameOver property, so create this ahead of vans.)
@@ -11720,7 +11606,7 @@
             x: 192
           });
 
-          for (i=0; i<5; i++) {
+          for (i = 0; i < 5; i++) {
 
             addObject('infantry', {
               x: 600 + (i * 20)
@@ -11772,7 +11658,7 @@
             isEnemy: true
           });
 
-          for (i=0; i<5; i++) {
+          for (i = 0; i < 5; i++) {
 
             // enemy infantry, way out there
             addObject('infantry', {
@@ -11866,10 +11752,10 @@
         }
         data.paused = false;
       }
-  
+
     }
 
-    function init() {
+    function initGame() {
 
       dom.world = document.getElementById('battlefield');
 
@@ -11977,26 +11863,26 @@
     };
 
     objectConstructors = {
-      'balloon': Balloon,
-      'base': Base,
-      'bunker': Bunker,
-      'cloud': Cloud,
-      'endBunker': EndBunker,
-      'engineer': Engineer,
-      'helicopter': Helicopter,
-      'infantry': Infantry,
-      'landingPad': LandingPad,
-      'missileLauncher': MissileLauncher,
-      'superBunker': SuperBunker,
-      'turret': Turret,
-      'tank': Tank,
-      'van': Van
+      balloon: Balloon,
+      base: Base,
+      bunker: Bunker,
+      cloud: Cloud,
+      endBunker: EndBunker,
+      engineer: Engineer,
+      helicopter: Helicopter,
+      infantry: Infantry,
+      landingPad: LandingPad,
+      missileLauncher: MissileLauncher,
+      superBunker: SuperBunker,
+      turret: Turret,
+      tank: Tank,
+      van: Van
     };
 
     exports = {
       addObject: addObject,
       dom: dom,
-      init: init,
+      init: initGame,
       objects: objects,
       pause: pause,
       resume: resume
@@ -12049,7 +11935,7 @@
 
   }
 
-  function init() {
+  function initArmorAlley() {
 
     // late addition: tutorial vs. regular game mode
 
@@ -12062,6 +11948,13 @@
         description = document.getElementById('game-description'),
         defaultDescription = description.innerHTML,
         lastHTML = defaultDescription;
+
+    function resetMenu() {
+      if (lastHTML !== defaultDescription) {
+        description.innerHTML = defaultDescription;
+        lastHTML = defaultDescription;
+      }
+    }
 
     function menuUpdate(e) {
 
@@ -12086,13 +11979,6 @@
 
     }
 
-    function resetMenu() {
-      if (lastHTML != defaultDescription) {
-        description.innerHTML = defaultDescription;
-        lastHTML = defaultDescription;
-      }
-    }
-
     function menuClick(e) {
 
       // infer game type from link, eg., #tutorial
@@ -12109,7 +11995,7 @@
         utils.events.remove(menu, 'mouseout', menuUpdate);
         menu = null;
 
-        param = target.href.substr(target.href.indexOf('#')+1);
+        param = target.href.substr(target.href.indexOf('#') + 1);
 
         if (param === 'easy') {
 
@@ -12212,7 +12098,7 @@
 
   window.aa = {
 
-    init: init,
+    initArmorAlley: initArmorAlley,
 
     startGame: startGame,
 
@@ -12337,6 +12223,6 @@
     soundManager.disable();
   }
 
-  setTimeout(window.aa.init, 20);
+  setTimeout(window.aa.initArmorAlley, 20);
 
 }(window));
