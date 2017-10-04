@@ -35,7 +35,9 @@
 
   Changelog / Revision History
 
-  + 09/2017
+  + 10/2017
+   + Fixed up top stats layout in Firefox, Safari, Chrome.
+   + Emoji to convey meaning of tutorial, easy, hard, extreme modes.
    + ESLint code clean-up.
 
   + 09/2015
@@ -11961,6 +11963,11 @@
       var target = (e.target || window.event.sourceElement),
           title;
 
+      // normalize to <a>
+      if (target && utils.css.has(target, 'emoji')) {
+        target = target.parentNode;
+      }
+
       if (target && target.className.match(/cta/i)) {
         title = target.title;
         if (title) {
@@ -12013,6 +12020,14 @@
 
             // reload, since we're switching to easy
             window.location.reload();
+
+          } else {
+
+            // show exit link
+            var exit = document.getElementById('exit');
+            if (exit) {
+              exit.className = 'visible';
+            }
 
           }
 
@@ -12081,11 +12096,26 @@
 
     } else {
 
-      // prference set or game type in URL - start immediately.
+      // preference set or game type in URL - start immediately.
 
       // TODO: cleaner DOM reference
       if (gameType.match(/easy|hard|extreme/i)) {
         utils.css.add(document.getElementById('world'), 'regular-mode');
+      }
+
+      if (gameType) {
+        // copy emoji to "exit" link
+        var exitEmoji = document.getElementById('exit-emoji');
+        var emojiReference = document.getElementById('game-menu').getElementsByClassName('emoji-' + gameType);
+        emojiReference = emojiReference && emojiReference[0];
+        if (exitEmoji && emojiReference) {
+          exitEmoji.innerHTML = emojiReference.innerHTML;
+        }
+        // and show "exit"
+        var exit = document.getElementById('exit');
+        if (exit) {
+          exit.className = 'visible';
+        }
       }
 
       canHideLogo = true;

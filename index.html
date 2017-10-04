@@ -4,6 +4,7 @@
  <meta name="description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Macintosh and MS-DOS computers. Written for fun as a prototype / demo of JavaScript and browser capabilities." />
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, animation, CSS3, arcade, retro, browser game" />
  <meta name="author" content="Scott Schiller" />
+ <meta charset="UTF-8" />
  <link rel="shortcut icon" href="favicon.ico" />
  <link rel="stylesheet" media="screen" href="css/aa.css" />
  <script type="text/javascript" src="script/soundmanager2.js"></script>
@@ -37,7 +38,8 @@
 
 	General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-	Version 1.0.20131031
+    Original release: Version 1.0.20131031
+    Last update: 10/2017
 
  */
 </script>
@@ -58,7 +60,10 @@
 
         <div id="game-menu">
          <h2>A browser-based interpretation of the classic 1990 MS-DOS game.</h2>
-         <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-large">Tutorial</a><a href="#easy" title="Get a van to the enemy base! (Easy mode.)" class="cta">Easy</a><a href="#hard" title="Get a van to the enemy base! (Hard mode.) More enemies, more often. Turrets fire faster, and can harm more units. " class="cta">Hard</a><a href="#extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies, plus more turrets that fire rapidly and target ground vehicles &amp; smart missiles. While not targeted, infantry and engineers can be hit by turret gunfire. Also, claiming all bunkers is no longer an advantage." class="cta">Extreme</a>
+         <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-large">Tutorial <span class="emoji emoji-tutorial">📖</span></a>
+         <a href="#easy" title="Get a van to the enemy base! (Easy mode.)" class="cta">Easy <span class="emoji emoji-easy">😁</span></a>
+         <a href="#hard" title="Get a van to the enemy base! (Hard mode.) More enemies, more often. Turrets fire faster, and can harm more units. " class="cta">Hard <span class="emoji emoji-hard">😰</span></a>
+         <a href="#extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies, plus more turrets that fire rapidly and target ground vehicles &amp; smart missiles. While not targeted, infantry and engineers can be hit by turret gunfire. Also, claiming all bunkers is no longer an advantage." class="cta">Extreme <span class="emoji emoji-extreme">😱</span></a>
          <p id="game-description">Choose your level of comfort.</p>
         </div>
 
@@ -336,8 +341,10 @@
    <div id="bottom">
 
      <div id="help">
-      <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit</a>
-      |
+      <span id="exit">
+        <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit <span id="exit-emoji"></span></a>
+        |
+      </span>
       <a href="#noscale=1" title="Toggle 1:1 letterbox vs. MS-DOS-era resolution" onclick="return window.aa.toggleScaling(true)" class="static">scaling</a>
       |
       <a href="#mute=1" title="Toggle sound effects" onclick="return window.aa.toggleSound()" class="static">sound</a>

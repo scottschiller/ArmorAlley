@@ -84,15 +84,7 @@ body.no-transform .gpu {
  height: 100%;
  background: rgba(32,51,32,0.66);
  z-index: 10;
- /* lazy transform */
- -moz-transition: all 0.66s ease-in-out;
- -ms-transition: all 0.66s ease-in-out;
- -webkit-transition: all 0.66s ease-in-out;
- transition: all 0.66s ease-in-out;
- -moz-transition-property: opacity -moz-transform;
- -ms-transition-property: opacity -ms-transform;
- -webkit-transition-property: opacity -webkit-transform;
- transition-property: opacity transform;
+ transform: scale3d(1,1,1);
 }
 
 #world.tutorial-mode #world-overlay,
@@ -101,6 +93,8 @@ body.no-transform .gpu {
 }
 
 #world-overlay.fade-out {
+ transition: all 0.66s ease-in-out;
+ transition-property: opacity transform;
  opacity: 0;
  -ms-transform: scale3d(1.2,1.2,0);
  -webkit-transform: scale3d(1.2,1.2,0);
@@ -175,7 +169,7 @@ body.no-transform .gpu {
  box-sizing: border-box;
  color: #00cc00;
  border: 1px solid green;
- font-size: 1.5em;
+ font-size: 1.25em;
  line-height: 1.33em;
  padding: 0.25em 0.5em;
  text-align: center;
@@ -193,6 +187,32 @@ body.no-transform .gpu {
 
 #game-menu .cta:first-of-type {
  margin-left: 0%;
+}
+
+#game-menu .cta .emoji {
+ font-size: 0.9rem;
+ vertical-align: middle;
+ filter: grayscale(0.5);
+}
+
+#exit {
+  display: none;
+}
+
+#exit.visible {
+  display: inline;
+}
+
+#exit-emoji {
+  font-size: 0.5rem;
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
+#exit:hover #exit-emoji,
+#game-menu .cta:hover .emoji {
+  filter: grayscale(0);
+  opacity: 1;
 }
 
 #game-description {
@@ -1445,7 +1465,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #key-legend {
  float: left;
- display: inline;
 }
 
 #key-legend em {
@@ -2139,7 +2158,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #help {
- float: right;
  display: inline;
  margin-left: 1em;
  margin-right: 0.5em;
@@ -2148,7 +2166,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #help a {
  color: #009900;
  text-decoration: none;
- display: none;
 }
 
 #help a.static {
@@ -2160,8 +2177,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #help a.start,
-#help.inactive a.start,
-#help a.exit {
+#help.inactive a.start {
  display: inline;
 }
 
