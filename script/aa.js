@@ -1413,6 +1413,13 @@
 
   function collisionTest(collision, exports) {
 
+    // don't do collision detection during game-over sequence.
+    if (battleOver) {
+      // restore to original state
+      collision.targets = null;
+      return;
+    }
+
     var i, j;
 
     // hack: first-time run fix, as exports is initially undefined
