@@ -1564,14 +1564,13 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #stats {
  position: absolute;
- top: 0.5%;
+ top: -9.5%;
  left: 0.5%;
  left: 50%;
  margin-left: -200px;
  width: 99.25%;
  max-width: 400px;
  font-size: 0px; /* inline-block whitespace hack */
- margin-top: -2.4rem;
  color: #999;
 }
 
@@ -1580,13 +1579,16 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  display: inline-block;
  width: 31%;
  margin-right: 3%;
- vertical-align: top;
- font-size: 0.45rem;
- line-height: 0.45rem;
+ font-size: 7.25px;
+ line-height: 9px;
 }
 
 #stats .row:last-of-type {
  margin-right: 0px;
+}
+
+#stats .row .item {
+  position: relative;
 }
 
 #stats .row .item .count,
@@ -1606,7 +1608,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  white-space: nowrap;
  overflow: hidden;
  text-overflow: ellipsis;
- top: 2px; /* stupid alignment hack */
+ vertical-align: bottom;
  color: #339933;
 }
 
