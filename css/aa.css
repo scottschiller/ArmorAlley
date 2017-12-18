@@ -69,8 +69,6 @@ body {
 body.no-transform .sprite,
 body.no-transform .gpu {
  /* unsupported or GPU disable override via #notransform=1 */
- -moz-transform: none !important;
- -webkit-transform: none !important;
  transform: none !important;
 }
 
@@ -94,8 +92,6 @@ body.no-transform .gpu {
  transition: all 0.66s ease-in-out;
  transition-property: opacity transform;
  opacity: 0;
- -ms-transform: scale3d(1.2,1.2,0);
- -webkit-transform: scale3d(1.2,1.2,0);
  transform: scale3d(1.2,1.2,0);
 }
 
@@ -126,9 +122,6 @@ body.no-transform .gpu {
 #world.blurred #battlefield,
 #world.blurred #game-tips .tips-container,
 #world.blurred #top-bar {
- -webkit-transition: -webkit-filter 0.5s ease-in-out;
- transition: filter 0.5s ease-in-out;
- -webkit-filter: blur(2px);
  filter: blur(2px);
  transition: filter 0.5s ease-in-out;
 }
@@ -136,7 +129,6 @@ body.no-transform .gpu {
 #world.blurred.no-blur #battlefield,
 #world.blurred.no-blur #game-tips .tips-container,
 #world.blurred.no-blur #top-bar {
- -webkit-filter: blur(0px);
  filter: blur(0px);
 }
 
@@ -162,8 +154,6 @@ body.no-transform .gpu {
 #game-menu .cta {
  display: inline-block;
  width: 22%;
- -webkit-box-sizing: border-box;
- -moz-box-sizing: border-box;
  box-sizing: border-box;
  color: #00cc00;
  border: 1px solid green;
@@ -263,9 +253,6 @@ body.no-transform .gpu {
  background-position: 0px 0px; /* default when animation finishes */
  background-repeat: no-repeat;
  background-size: contain;
- -webkit-animation: spinning 0.5s linear infinite;
- -moz-animation: spinning 0.5s linear infinite;
- -ms-animation: spinning 0.5s linear infinite;
  animation: spinning 0.5s linear infinite;
 }
 
@@ -453,8 +440,6 @@ ul.stats-bar .bombs em {
 #world .sprite,
 #world .gpu {
  /* do the GPU thing. */
- -ms-transform: translate3d(0,0,0);
- -webkit-transform: translate3d(0,0,0);
  transform: translate3d(0,0,0);
 }
 
@@ -475,7 +460,6 @@ ul.stats-bar .bombs em {
  height: 10px;
  background-image: url(../image/arrow-right.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAAMElEQVR4AW3JwQkAIBTD0Lr/Ji5ZBQMe8nPMy63dq1GA8YOQaWQYpylgvjzJk8Z5AGtqUXNK2+JgAAAAAElFTkSuQmCC);
- -webkit-transition: -webkit-transform 0.5s ease-in-out;
  transition: transform 0.5s ease-in-out;
 }
 
@@ -484,7 +468,6 @@ ul.stats-bar .bombs em {
  background-image: url(../image/arrow-left.png);
  /* sneaky: modern browsers can use transforms, no need for a second image. */
  background-image: none, url(../image/arrow-right.png);
- -webkit-transform: rotate(-180deg);
  transform: rotate(-180deg);
  }
 
@@ -509,25 +492,18 @@ ul.stats-bar .bombs em {
 #world .balloon,
 #world .balloon.facing-right {
  background-position: 0px -120px; /* default when animation finishes */
- -webkit-animation: balloonright 1s steps(9);
- -moz-animation: balloonright 1s steps(9);
  animation: balloonright 1s steps(9);
 }
 
 #world .balloon.enemy,
 #world .balloon.facing-left {
  background-position: 0px 0px; /* default when animation finishes */
- -webkit-animation: balloonleft 1s steps(9);
- -moz-animation: balloonleft 1s steps(9);
- animation: balloonleft 1s steps(9);
 }
 
 #world .balloon.exploding {
  background-image: url(../image/generic-explosion.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAtCAMAAAD4OpkYAAAADFBMVEUAAACrAgH/qgH////RG0riAAAAAXRSTlMAQObYZgAAAJxJREFUeNrtkkESgzAMAyPl/3+uFdfWFAY4wKXTroOBbKJwYDwConKo+q7WwGrUU/ARQnSUxMYGJKhNzHfWCXXa8nNyOaehEwYmDaikGJ3B9HjnUF37CywPOYjwYLkspFaWEkUn+Htysgcqo72XRdf8zwGVWuC2I+dpa7BZs9MO9pEHcNDOoP5tHgcAqRjXnyswcO6vV/Bugvz38QJkMwE8W+8b+gAAAABJRU5ErkJggg==);
  background-position: 0px -30px; /* default when animation finishes */
- -webkit-animation: genericexplosionsmall 0.45s steps(3);
- -moz-animation: genericexplosionsmall 0.45s steps(3);
  animation: genericexplosionsmall 0.45s steps(3);
 }
 
@@ -571,8 +547,6 @@ ul.stats-bar .bombs em {
  background-position: 0px 100%;
  /* 30 fps? why not. */
  /*
- -webkit-animation: tank 0.1s steps(3) infinite;
- -moz-animation: tank 0.1s steps(3) infinite;
  animation: tank 0.1s steps(3) infinite;
  */
 }
@@ -588,8 +562,6 @@ ul.stats-bar .bombs em {
  /* 30 fps? why not. */
  /* the jury's out on reverse vs. backward. */
  /*
- -webkit-animation: tank 0.1s steps(3) backward infinite;
- -moz-animation: tank 0.1s steps(3) reverse infinite;
  animation: tank 0.1s steps(3) reverse infinite;
  */
 }
@@ -597,8 +569,6 @@ ul.stats-bar .bombs em {
 #world .tank.stopped {
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAAASCAMAAADWrYZCAAAAGFBMVEUAAAAFVQEAAAAOqgJVVVWqqqr/qgFVVQEEznDGAAAAAXRSTlMAQObYZgAAAMFJREFUeNqVkgEKxTAIQ7+Ntfe/8a8SVMoGXRhr3fIWHf29aJR+lyKz1sICRAS3sEOysGUQF7DZOzDMmzIj+IqymxMUCxRET4XbCg2wSGNBoWlEjmVsRTKT+8fMQI31JtPdwMc5aa8msz0jlzo+4ViBuZdDOV6x45uATs55fY2eOUWzm7O53rV6OducG1QNq9Kn5JSg+s1dx2Ea6hLAX5XF60C4huvMTLBbhHV/jjmZ2eZkRmb66nXP3oEEP/9bctQf2nsHgfjdoaIAAAAASUVORK5CYII=);
  background-position: 0px 100%;
- -webkit-animation: none;
- -moz-animation: none;
  animation: none;
 }
 
@@ -717,9 +687,6 @@ ul.stats-bar .bombs em {
 #world .left-arrow-sign {
  /* horizontal flip tricks */
  filter: FlipH;
- -ms-filter: "FlipH";
- -moz-transform: scaleX(-1);
- -webkit-transform: scaleX(-1);
  transform: scaleX(-1);
 }
 
@@ -732,9 +699,6 @@ ul.stats-bar .bombs em {
 #world .tank.enemy .sub-sprite {
  /* no flip in certain cases */
  filter: none;
- -ms-filter: none;
- -moz-transform: none;
- -webkit-transform: none;
  transform: none;
 }
 
@@ -749,9 +713,6 @@ ul.stats-bar .bombs em {
  /* z-index: 2; */
  /* cloaking opacity effect */
  opacity: 1;
- -moz-transition: opacity 0.25s ease-in-out;
- -ms-transition: opacity 0.25s ease-in-out;
- -webkit-transition: opacity 0.25s ease-in-out;
  transition: opacity 0.25s ease-in-out;
 }
 
@@ -787,8 +748,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAA8CAMAAAAT6xnzAAAAD1BMVEUAAAAAAAAOqgIFVQGqqqqFWKY8AAAAAXRSTlMAQObYZgAAAWxJREFUeNrV1stuwzAMRNHc4fz/Nxc0batyGlMu0EVnEWWhAwLjl14j7HmtB9thPyI4IkiybqwIM6URSBGyRzqPvRkxcvVXAmxEKQFUGZ4PDRQ5bRydAINMxsfOsmC47RFIA8c0WlPF2YaoIYfpLim2qvSTNCYisITiNII7kUbGaDdG0h2xNzOVLbWlwdx1qESPhtHKLTpQXafeDCWoEl9dpru+lv8a4DHQQ4Qz/O0UsCIEj4TikUmBcIgHQ0C1PBCIdVMCkSZYAFwItMKWBOMF2BnOjWLvOTqS0Xi/rD1bRSIjwWrHNUOkWe84BElXyHg/1O/vjwR6fiQQDWFKCkG363uUxLyDT6eEEuKN2GOAMvtfS0mAH7vNxZ6++vsKN92AYP76rwh8bs2Vm34PAU6Ri6UE3ZCasgFiWYSwRXcOxDLahTBWCmiOL/LUMki3YxQxtZugmzLEAP17VSdw+xjXFlDtT9+Iy1P7cf8XxGwI5RzMHTkAAAAASUVORK5CYII=) !important;
  width: 50px;
  height: 20px;
- -webkit-animation: rotateleft 0.33s steps(3);
- -moz-animation: rotateleft 0.33s steps(3);
  animation: rotateleft 0.33s steps(3);
 }
 
@@ -800,22 +759,16 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #world .helicopter.rotated-right {
- -webkit-animation: rotateright 0.33s steps(3);
- -moz-animation: rotateright 0.33s steps(3);
  animation: rotateright 0.33s steps(3);
 }
 
 #world .helicopter.rotated-left.enemy {
  /* backwards */
- -webkit-animation: rotateright 0.33s steps(3);
- -moz-animation: rotateright 0.33s steps(3);
  animation: rotateright 0.33s steps(3);
 }
 
 #world .helicopter.rotated-right.enemy {
  /* backwards */
- -webkit-animation: rotateleft 0.33s steps(3);
- -moz-animation: rotateleft 0.33s steps(3);
  animation: rotateleft 0.33s steps(3);
 }
 
@@ -868,19 +821,12 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background: transparent url(../image/smart-missile.png) no-repeat 0px 0px;
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAK0lEQVR4AWOgHhgF/wlgwgaAwSrG/6uZUDGxhv/HMIQwxnDdf/LwwINRAADw7UafvPxRawAAAABJRU5ErkJggg==);
  /* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
- -ms-transition: -ms-transform 0.2s ease-none;
- -moz-transition: -moz-transform 0.2s ease-none;
- -webkit-transition: -webkit-transform 0.2s ease-none;
  transition: transform 0.2s ease-none;
  opacity: 1;
  }
 
 #world .smart-missile.expired {
- -webkit-transition-property: -webkit-transform, -webkit-filter, opacity;
  transition-property: transform, opacity;
- -webkit-animation: blink 0.125s infinite;
- -moz-animation: blink 0.125s infinite;
- -ms-animation: blink 0.125s infinite;
  animation: blink 0.125s infinite;
 }
 
@@ -1147,15 +1093,11 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #world .bomb.dropping {
  background-position: 0px -24px;
- -webkit-animation: bomb-rotate 1s ease-in-out;
- -moz-animation: bomb-rotate 1s ease-in-out;
  animation: bomb-rotate 1s ease-in-out;
 }
 
 #world .bomb.dropping.spark,
 #world .bomb.dropping.explosion-large {
- -webkit-animation: none;
- -moz-animation:  none;
  animation: none;
  background-image: url(../image/explosion-spark.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAHklEQVR4AWMAgtVMjHASB///KhgHyALygQjCQFcPAKZrC8ti0oamAAAAAElFTkSuQmCC);
@@ -1176,8 +1118,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #world .bomb.dropping.explosion-large {
- -webkit-animation: largeexplosion 0.5s steps(5);
- -moz-animation: largeexplosion 0.5s steps(5);
  animation: largeexplosion 0.5s steps(5);
  background-image: url(../image/explosion-large.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAABuBAMAAAB4nzYwAAAAD1BMVEUAAACrAgH/qgH///9VVQEPaMayAAAAAXRSTlMAQObYZgAAAjZJREFUeAHt00HOGzcMxfE/pR7gkbqAyFxglBO0979UK3gEDPzBQYCmmyK/xQj2mydyYfNL/WbGJ+Kz9oNkGh+Uf7i1WerPPz5sWOF8EPXXh8wsGr/9JwwDufjK54VVLr6w+hYRVSF9iTKrKqrKebMbVSO/Z+qt5LuSo0Ylb0Z88/LvFfV11qoVe1o479zrH76W+Mp94/9E3UCYYQDiECCBqtJd9gw1PJBVRGUuup8M87VcqqxtxLxOSTa+VZrViHCvXBVpvPjKTK/M1xlZQ3c2onbj9dPIfaaf1v6mMrO2HdXZwqJGlEeke5TvXNxWZeR+VHnlvsJPbb+acY/az3Ruu5Ird2HvXpnjbsl8xBhRW46oHBzC3L3Cq0JrpdR5sh3nwgbGvyRe3CVAPEUX5pXlDcC4CS+BVxtaYsLFYYOOFdDa7N1Ef/7FaZMLmFAOR0zgMqADveU4o6y6cUtBKz97Wonb7A5knllecGpXYr2l0Bl1nBvFJmIYR2/q6Ezop2WG0YRaOp0tBFwgCUpcnBaBAGTJvhCu9BPNs6FgCVryYg2wedGB5mDN7wS7DAY7Y8GrKYCOAK/GhO1yMG4XmFelBHAfD+5i6/xaE3gyGhMaW3tsB1Pw1DnEbRpw2dv180fDDVpjM27G9nbL5KyHg3mC8WTn5RQXPGKdT80k9nlWbwLMwEgXPKnBNqdP0GOGOAw7+1l/RNfkeJTEcbo60XNfRwiOBogJx+SnCMCmMRudNx0Exs/5GzzTOTP5KQ0MAAAAAElFTkSuQmCC);
@@ -1252,9 +1192,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  border-top: 3px solid transparent;
  border-bottom: 3px solid transparent;
  border-left: 3px solid rgb(23,160,7);
- -webkit-animation: blink 0.5s infinite;
- -moz-animation: blink 0.5s infinite;
- -ms-animation: blink 0.5s infinite;
  animation: blink 0.5s infinite;
  margin-top: -3px; /* radar positioning hack */
 }
@@ -1309,9 +1246,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #game-status-bar #radar .sprite.dying {
- -webkit-animation: blink 0.25s infinite;
- -moz-animation: blink 0.25s infinite;
- -ms-animation: blink 0.25s infinite;
  animation: blink 0.25s infinite;
 }
 
@@ -1345,8 +1279,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(../image/explosion-shrapnel-2.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAGABAMAAAAe0yJgAAAAGFBMVEUAAACrAgH/qgGqqqoAAAD///9VVVWqqgL+5cU2AAAAAXRSTlMAQObYZgAAA2NJREFUeF7t2DFPJEcQxfF/TQuc1ivP5tsN5H3XQD4Hdnxg4S+AdLEzvr41iUEedrclEyBf/5IN9ulJI61qaosPNwzmHDD962s5K2Or7DEJDBp1QsJAm5y+sVdolVq7s1CW2yZnKPZSzlk5aO3ZtAa1DZpUSqhIuaQ/flTbheaFLYsSyrmspen352YPOVSyszErl9gpR4l0e9emUoqy2DJFfnwqJUoB+VTyWqltpXYlyuqqUCVKKVl5nyHxhqns4nGNXT2GA5w9lpLDN40RykXl6nL2CaNVe4oo2QE8tddGsxxSXOVlmZA7k3KO7IDJeMtUFA9zOFh2m/I/jSFeGZNUirQsRuQ7JklRArAyV16ZYimme/fJ05dm2SXFHqD9+jbo01T2hgAaCXPEilSpHGC88cLHGgaTc5zMWGGcIpM5eAKqGYgDdK/FUaLVBm7Ou8ykJcuUdEczJN7nWrRyTOd1kmbnfdKjIoqIC7AHLRxgUXJImC5qtSIJ+OWvTQyLUOyUcK9mUTLv83kuJR7E6gu2ZOddJn3TTlH2MslMZeE9zqycL+fZuVbZVYt7ZwtbzJZF0rKkpqfspvx+Y2Byn+dw0M2DA2ILA7t3X2uBKOIQdwnAHVzZjR4SfZyfwFBpdFnfuV2uI/e9WC2cLmbiFMMtNZxGxTjCcYB1f8SPNmIhEqRnjlLkuHRo59WwY48xl6Lv7dea2oRzkIWWJe+vI6dGcJDB5fKkvYUnjtNS5oKZsMk5zPWblFPDkfxQ0h3cmR3g7HDOlgVzXIvxPR2bKuGs5vBNZtMIrPPRjGPcXz8/tWF9+f93yYzaFfwqp8vXTJ/eQq5VARonpEYF6p+VkyqQnitdzm87g7ftZNBdBinxYRwSMJ3OOYlWceekpDtOcwwTZpxiTlx0zR5MF/X0NMMS7pUjwnnV02gGYz6e9MLnVPloRusrlTtdLHcGI9/RJX1pfY/fSKxSo8/5TaXLzY/OYOsdpCnxPzB+k6c00idboobUH2y1L6g7+pjoExcct10mGke8WSZa93z88LHXbj7NfByGFz6pcXdMtfPueHbbeXdMzx91d+yRGs5HS/x8hnHR2xqe6XPW+AQr189wv6Xrftup8tkMw8uYj8O4OY6bY79hLPXDMAzDMC71wzAMw/hz9DdaR2UkT+rrdQAAAABJRU5ErkJggg==);
  background-position: 0px -384px; /* default state */
- -webkit-animation: explosionshrapnel2 1s steps(12);
- -moz-animation: explosionshrapnel2 1s steps(12);
  animation: explosionshrapnel2 1s steps(12);
 }
 
@@ -1446,8 +1378,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(../image/infantry-explosion-2.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAADcCAYAAABJVTCPAAAAVklEQVRo3u3UQQ4AEAwEQPH/l/ST9QOROChmriKE3bYGbInoGdFzeXG6Aa5I9myDhFMxnxWP0xXB5eSz+A1V4K3vEyuvgJhddXF1hY/rYAAARgpoIXUNgZ1rR9Nfh7gAAAAASUVORK5CYII=);
  background-position: 0px -220px; /* default state */
- -webkit-animation: infantryexplosion 1s steps(10);
- -moz-animation: infantryexplosion 1s steps(10);
  animation: infantryexplosion 1s steps(10);
 }
 
@@ -1485,8 +1415,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 #world .sprite.ordering {
- -webkit-transition: margin 2s;
- -moz-transition: margin 2s;
  transition: margin 2s;
  margin-bottom: 0px !important; /* override .building rules */
 }
@@ -1526,29 +1454,17 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  background-image: url(../image/shrapnel.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEUAAACrAgGqqqr/qgH///8OqgJVVQE1mjlhAAAAAXRSTlMAQObYZgAAAWZJREFUOBEFwdF13FYUBDAM9/h/LqkCHukUsBTVgCIX4BLSfxUBAAAA4BwQoABeLcyAKMBxP1M5BhwFxfW7wzw3eMEWi+sc5OPfITkGay5Mgxx/BrkH9gUD2/czmDeW/Q1TdKYkhXWABfYh+AstbKAlBQAAAAAAAAACQAr+A1KQIYANpCBTogDySsnsP4OCtSHHKPP1M5UpsEjudDm+7p08LZnBdlyzM/fHlDw3Ps/iuYrMjr9pK68ryFWoIgUbAAACFgAAAAAAAGBBAqQAbDAnfqEAMshMkBYtMJjnY+E18OqCZpg/d5mj8FkLs1/MP99l7hZXYfJ54XgGb9jOLjLPcWPukhtWNpC8MUMUFJgdCgEAAAAAAAAA5CoRFFhArgfnFCls4JzrXpnvYyTpL7L9Dlt6tM7j5+Z4CnO9EXM38/UzJE+RGUjfNV/nlEyxACmZgsBmgRRTiAJAAaDYAACQAgAAAP4HhZQd0ScxvCoAAAAASUVORK5CYII=);
  background-position: 0px 0px;
- -webkit-animation: rotating 0.5s linear infinite;
- -moz-animation: rotating 0.5s linear infinite;
- -ms-animation: rotating 0.5s linear infinite;
  animation: rotating 0.5s linear infinite;
 }
 
 #battlefield .shrapnel.reverse {
  /* opposite spin direction */
- -webkit-animation-direction: reverse;
- -moz-animation-direction: reverse;
- -ms-animation-direction: reverse;
  animation-direction: reverse;
 }
 
 #battlefield .shrapnel.stopped {
- -webkit-animation: none;
- -moz-animation: none;
- -ms-animation: none;
  animation: none;
  opacity: 0;
- -moz-transition: opacity 0.5s ease-in;
- -ms-transition: opacity 0.5s ease-in;
- -webkit-transition: opacity 0.5s ease-in-out;
  transition: opacity 0.5s ease-in-out;
 }
 
@@ -1660,7 +1576,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  height: 1px;
  width: 0%;
  z-index: 2;
- -webkit-transition: width 0.25s ease-in-out;
  transition: width 0.25s ease-in-out;
 }
 
@@ -1756,11 +1671,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
   * gradient generated via this useful tool...
   * http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%205\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B'
   */
- background: -moz-linear-gradient(left, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
- background: -webkit-gradient(left top, right top, color-stop(5%, rgba(0,0,0,1)), color-stop(20%, rgba(0,0,0,0)), color-stop(50%, rgba(0,0,0,0)), color-stop(80%, rgba(0,0,0,0)), color-stop(95%, rgba(0,0,0,1)));
- background: -webkit-linear-gradient(left, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
- background: -o-linear-gradient(left, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
- background: -ms-linear-gradient(left, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
+ background: linear-gradient(to right, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
 }
 
 #game-tips .tips-container div {
@@ -1837,16 +1748,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 }
 
-@-webkit-keyframes bomb {
- from { background-position: 0px 0px; }
- to { background-position: 0px -33px; }
-}
-
-@-moz-keyframes bomb {
- from { background-position: 0px 0px; }
- to { background-position: 0px -33px; }
-}
-
 @keyframes bomb {
  from { background-position: 0px 0px; }
  to { background-position: 0px -33px; }
@@ -1854,29 +1755,9 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 /* new transform-based rotate() effect */
 
-@-webkit-keyframes bomb-rotate {
- from { -webkit-transform: rotate(-90deg); }
- to { -webkit-transform: rotate(0deg); }
-}
-
-@-moz-keyframes bomb-rotate {
- from { -moz-transform: rotate(-90deg); }
- to { -moz-transform: rotate(0deg); }
-}
-
 @keyframes bomb-rotate {
  from { transform: rotate(-90deg); }
  to { transform: rotate(0deg); }
-}
-
-@-webkit-keyframes largeexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -110px; }
-}
-
-@-moz-keyframes largeexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -110px; }
 }
 
 @keyframes largeexplosion {
@@ -1884,58 +1765,14 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  to { background-position: 0px -110px; }
 }
 
-@-webkit-keyframes explosionshrapnel2 {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
-@-moz-keyframes explosionshrapnel2 {
- from { background-position: 0px 0px; }
- to { background-position: 0px -384px; }
-}
-
 @keyframes explosionshrapnel2 {
  from { background-position: 0px 0px; }
  to { background-position: 0px -384px; }
 }
 
-@-webkit-keyframes infantryexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -220px; }
-}
-
-@-moz-keyframes infantryexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -220px; }
-}
-
 @keyframes infantryexplosion {
  from { background-position: 0px 0px; }
  to { background-position: 0px -220px; }
-}
-
-@-webkit-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.125;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@-moz-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.125;
-    }
-    100% {
-        opacity: 1;
-    }
 }
 
 @keyframes blink {
@@ -1950,29 +1787,9 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
     }
 }
 
-@-webkit-keyframes rotateleft {
- from { background-position: 0px 0px; }
- to { background-position: 0px -60px; }
-}
-
-@-moz-keyframes rotateleft {
- from { background-position: 0px 0px; }
- to { background-position: 0px -60px; }
-}
-
 @keyframes rotateleft {
  from { background-position: 0px 0px; }
  to { background-position: 0px -60px; }
-}
-
-@-webkit-keyframes rotateright {
- from { background-position: 0px -40px; }
- to { background-position: 0px 20px; }
-}
-
-@-moz-keyframes rotateright {
- from { background-position: 0px -40px; }
- to { background-position: 0px 20px; }
 }
 
 @keyframes rotateright {
@@ -1980,29 +1797,9 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  to { background-position: 0px 20px; }
 }
 
-@-moz-keyframes tank {
- from { background-position: 0px 0px; }
- to { background-position: 0px -54px; }
-}
-
-@-webkit-keyframes tank {
- from { background-position: 0px 0px; }
- to { background-position: 0px -54px; }
-}
-
 @keyframes tank {
  from { background-position: 0px 0px; }
  to { background-position: 0px -54px; }
-}
-
-@-webkit-keyframes genericexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -250px; }
-}
-
-@-moz-keyframes genericexplosion {
- from { background-position: 0px 0px; }
- to { background-position: 0px -250px; }
 }
 
 @keyframes genericexplosion {
@@ -2012,29 +1809,9 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 /* small */
 
-@-webkit-keyframes genericexplosionsmall {
- from { background-position: 0px 0px; }
- to { background-position: 0px -45px; }
-}
-
-@-moz-keyframes genericexplosionsmall {
- from { background-position: 0px 0px; }
- to { background-position: 0px -45px; }
-}
-
 @keyframes genericexplosionsmall {
  from { background-position: 0px 0px; }
  to { background-position: 0px -45px; }
-}
-
-@-webkit-keyframes balloonright {
- from { background-position: 0px 0px; }
- to { background-position: 0px -135px; }
-}
-
-@-moz-keyframes balloonright {
- from { background-position: 0px 0px; }
- to { background-position: 0px -135px; }
 }
 
 @keyframes balloonright {
@@ -2042,55 +1819,9 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  to { background-position: 0px -135px; }
 }
 
-@-webkit-keyframes balloonleft {
- from { background-position: 0px -135px; }
- to { background-position: 0px 0px; }
-}
-
-@-moz-keyframes balloonleft {
- from { background-position: 0px -135px; }
- to { background-position: 0px 0px; }
-}
-
 @keyframes balloonleft {
  from { background-position: 0px -135px; }
  to { background-position: 0px 0px; }
-}
-
-@-webkit-keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg) scale(0.5);
-  }
-  25% {
-    -webkit-transform: rotate(90deg) scale(0.75);
-  }
-  50% {
-    -webkit-transform: rotate(180deg) scale(1);
-  }
-  75% {
-    -webkit-transform: rotate(270deg) scale(0.75);
-  }
-  100% {
-    -webkit-transform: rotate(360deg) scale(0.5);
-  }
-}
-
-@-moz-keyframes spinning {
-  0% {
-    -moz-transform: rotate(0deg) scale(0.5);
-  }
-  25% {
-    -moz-transform: rotate(90deg) scale(0.75);
-  }
-  50% {
-    -moz-transform: rotate(180deg) scale(1);
-  }
-  75% {
-    -moz-transform: rotate(270deg) scale(0.75);
-  }
-  100% {
-    -moz-transform: rotate(360deg) scale(0.5);
-  }
 }
 
 @keyframes spinning {
@@ -2109,33 +1840,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
   100% {
     transform: rotate(360deg) scale(0.5);
   }
-}
-
-@-webkit-keyframes rotating {
- from {
-  -webkit-transform: rotate(0deg);
- }
- to {
-  -webkit-transform: rotate(360deg);
- }
-}
-
-@-ms-keyframes rotating {
- from {
-  -ms-transform: rotate(0deg);
- }
- to {
-  -ms-transform: rotate(360deg);
- }
-}
-
-@-moz-keyframes rotating {
- from {
-  -moz-transform: rotate(0deg);
- }
- to {
-  -moz-transform: rotate(360deg);
- }
 }
 
 @keyframes rotating {
