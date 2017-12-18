@@ -35,6 +35,12 @@
 
   Changelog / Revision History
 
+  + 12/2017
+   + Optimized performance / dropped CPU usage significantly by hiding off-screen elements.
+   + Fixed silly blank / empty frame in balloon right -> left animation sequence.
+   + Dropped numerous legacy -webkit and -moz prefixes in CSS.
+   + DOM Pruning option with offscreen logic (ultimately unused, too $$$ on style recalc.)
+
   + 10/2017
    + Fixed up top stats layout in Firefox, Safari, Chrome.
    + Emoji to convey meaning of tutorial, easy, hard, extreme modes.
