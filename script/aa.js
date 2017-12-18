@@ -657,7 +657,10 @@
     node.style.display = 'none';
 
     game.objects.queue.add(function() {
-      node.parentNode.removeChild(node);
+      if (!node) return;
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
       node = null;
     });
 
