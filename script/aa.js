@@ -1370,7 +1370,7 @@
 
     }
 
-    if (!options.targets) return;
+    if (!options.targets) return false;
 
     for (var i = 0, j = options.targets.length; i < j; i++) {
 
@@ -3315,7 +3315,7 @@
   };
 
   function updateIsOnScreen(o) {
-    if (!o || !o.data) return false;
+    if (!o || !o.data) return;
 
     if (isOnScreen(o)) {
 
@@ -3386,7 +3386,7 @@
           if (gameObjects[item].animate) {
 
             // onscreen?
-            updateIsOnScreen(gameObjects[item])
+            updateIsOnScreen(gameObjects[item]);
 
             if (gameObjects[item].animate()) {
               // object is dead - take it out.
