@@ -443,6 +443,14 @@ ul.stats-bar .bombs em {
  /* does will-change cause more jank or funny rendering? */
  will-change: transform;
 }
+
+#world .sprite.offscreen {
+  /* JS has determined an element is out of view. free up rendering / GPU resources. */
+  display: none;
+  /* does applying / removing transform cause jank? */
+  transform: none;
+  /* don't draw all those expensive animated .GIFs! */
+  background-image: none !important;
 }
 
 #world .bunker,
