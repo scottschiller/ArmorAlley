@@ -670,6 +670,8 @@
 
     var i, j;
 
+    j = nodeArray.length;
+
     for (i = 0; i < j; i++) {
       nodeArray[i].style.display = 'none';
     }
@@ -678,8 +680,6 @@
 
       // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
       // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
-
-      j = nodeArray.length;
 
       // separate loop to hide first?
       /*
