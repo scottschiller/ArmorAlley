@@ -948,6 +948,7 @@
   common = {
 
     defaultCSS: {
+      animating: 'animating',
       dead: 'dead',
       enemy: 'enemy',
       exploding: 'exploding'
@@ -1148,6 +1149,10 @@
     // var defaults;
 
     options = options || {};
+
+    if (options.animating === undefined) {
+      options.animating = common.defaultCSS.animating;
+    }
 
     if (options.dead === undefined) {
       options.dead = common.defaultCSS.dead;
