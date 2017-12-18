@@ -1831,7 +1831,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 }
 
 @keyframes balloonleft {
- from { background-position: 0px -135px; }
+ from { background-position: 0px -120px; }
  to { background-position: 0px 0px; }
 }
 
