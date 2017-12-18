@@ -721,7 +721,7 @@ ul.stats-bar .bombs em {
  top: 0px;
  width: 48px;
  height: 15px;
- /* z-index: 2; */
+ z-index: 2;
  /* cloaking opacity effect */
  opacity: 1;
  transition: opacity 0.25s ease-in-out;
