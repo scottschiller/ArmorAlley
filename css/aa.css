@@ -441,6 +441,9 @@ ul.stats-bar .bombs em {
 #world .gpu {
  /* do the GPU thing. */
  transform: translate3d(0,0,0);
+ /* does will-change cause more jank or funny rendering? */
+ will-change: transform;
+}
 }
 
 #world .bunker,
