@@ -951,6 +951,7 @@
       dead: 'dead',
       enemy: 'enemy',
       exploding: 'exploding'
+      offScreen: 'offscreen'
     },
 
     setX: function(exports, x) {
@@ -971,7 +972,7 @@
 
     setXY: function(exports, x, y) {
 
-      if (exports && exports.dom) {
+      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.left = (x + 'px');
         exports.dom.o.style.top = (y + 'px');
       }
@@ -980,7 +981,7 @@
 
     setBalloonXY: function(exports, bottomY) {
 
-      if (exports && exports.dom) {
+      if (exports && exports.dom && exports.data.isOnScreen) {
 
         if (features.transform.prop) {
 
@@ -1002,7 +1003,7 @@
 
     setBottomY: function(exports, bottomY) {
 
-      if (exports && exports.dom) {
+      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.bottom = ((280 * (bottomY / 100)) + 'px');
       }
 
@@ -1010,7 +1011,7 @@
 
     setBottomYPixels: function(exports, bottomY) {
 
-      if (exports && exports.dom) {
+      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.bottom = (bottomY + 'px');
       }
 
@@ -1196,6 +1197,11 @@
     }
 
     // TODO: revise to if (options.x !== undefined), apply then.
+
+    // assume in view at first, for initial positioning.
+    if (data.isOnScreen === undefined) {
+      data.isOnScreen = true;
+    }
 
     if (data.isEnemy === undefined) {
       data.isEnemy = (options.isEnemy || false);
@@ -3301,6 +3307,53 @@
 
   };
 
+  function updateIsOnScreen(o) {
+    if (!o || !o.data) return false;
+
+    if (isOnScreen(o)) {
+
+      if (!o.data.isOnScreen) {
+
+        o.data.isOnScreen = true;
+
+        if (o.dom && o.dom.o) {
+
+          utils.css.remove(o.dom.o, common.defaultCSS.offScreen);
+
+          if (useDOMPruning) {
+            if (o.dom._oRemovedParent) {
+              o.dom._oRemovedParent.appendChild(o.dom.o);
+              o.dom._oRemovedParent = null;
+            }
+          }
+
+        }
+
+      }
+
+    } else if (o.data.isOnScreen) {
+
+      o.data.isOnScreen = false;
+
+      if (o.dom && o.dom.o) {
+
+        if (useDOMPruning) {
+
+          if (o.dom.o.parentNode) {
+            o.dom._oRemovedParent = o.dom.o.parentNode;
+            o.dom._oRemovedParent.removeChild(o.dom.o);
+          }
+
+        }
+
+        utils.css.add(o.dom.o, common.defaultCSS.offScreen);
+
+      }
+
+    }
+
+  }
+
   GameLoop = function() {
 
     var data, exports;
@@ -3323,15 +3376,22 @@
         if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
 
           // single object case
-          if (gameObjects[item].animate && gameObjects[item].animate()) {
+          if (gameObjects[item].animate) {
 
-            // object is dead - take it out.
-            gameObjects[item] = null;
+            // onscreen?
+            updateIsOnScreen(gameObjects[item])
+
+            if (gameObjects[item].animate()) {
+              // object is dead - take it out.
+              gameObjects[item] = null;
+            }
 
           } else {
 
             // array case
             for (i = gameObjects[item].length - 1; i >= 0; i--) {
+
+              updateIsOnScreen(gameObjects[item][i]);
 
               if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
                 // object is dead - take it out.
@@ -3552,7 +3612,9 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        common.setTransformXY(dom.o, x + 'px', data.y + 'px');
+        if (data.isOnScreen) {
+          common.setTransformXY(dom.o, x + 'px', data.y + 'px');
+        }
         data.x = x;
       }
 
@@ -3597,6 +3659,17 @@
         utils.css.remove(dom.o, css.enemy);
         utils.css.add(dom.o, css.friendly);
       }
+
+      // apply CSS animation effect, and stop/remove in one second.
+      // this prevents the animation from replaying when switching
+      // between on / off-screen.
+      utils.css.add(dom.o, css.animating);
+
+      data.frameTimeout = new FrameTimeout(FPS * 1, function() {
+        if (!dom.o) return;
+        utils.css.remove(dom.o, css.animating);
+        data.frameTimeout = null;
+      });
 
     }
 
@@ -3650,6 +3723,10 @@
     }
 
     function animate() {
+
+      if (data.frameTimeout) {
+        data.frameTimeout.animate();
+      }
 
       if (!data.dead) {
 
@@ -5833,7 +5910,11 @@
         data.y = y;
       }
 
-      common.setTransformXY(dom.o, x + 'px', y + 'px');
+      updateIsOnScreen(exports);
+
+      if (data.isOnScreen) {
+        common.setTransformXY(dom.o, x + 'px', y + 'px');
+      }
 
     }
 
@@ -5959,14 +6040,22 @@
 
     function moveTo(x, y) {
 
+      updateIsOnScreen(exports);
+
       if (x !== undefined && data.x !== x) {
         common.setX(exports, x);
         data.x = x;
+        if (data.isOnScreen) {
+          common.setX(exports, x);
+        }
       }
 
       if (y !== undefined && data.y !== y) {
         common.setY(exports, y);
         data.y = y;
+        if (data.isOnScreen) {
+          common.setY(exports, y);
+        }
       }
 
     }
@@ -6196,7 +6285,9 @@
         data.y = y;
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      if (data.isOnScreen) {
+        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      }
 
     }
 
@@ -8797,7 +8888,9 @@
           data.y = bottomAlignedY(bottomY);
         }
 
-        common.setTransformXY(dom.o, data.x + 'px', '0px');
+        if (data.isOnScreen) {
+          common.setTransformXY(dom.o, data.x + 'px', '0px');
+        }
 
       } else {
 
