@@ -632,7 +632,7 @@ ul.stats-bar .bombs em {
  background-image: url(data:image/gif;base64,R0lGODlhCgALAPIFAAAAAAVVAVVVAQ6qAqsCAQAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCAAFACwCAAAACAALAAADHliwUK6EtAfiVCAwNkIPGtAtoTguyneJ4HpSgnAVCQAh+QQFCAAEACwBAAYABwAFAAADD0gU2hsDSABDkCMKIfcECQAh+QQJCAAEACwAAAYACQAFAAADEkgEMwFwsfCAdGzAuTEQwgYCCQAh+QQJCAAEACwBAAYACAAFAAADEUgwE/CvOaBYaBQIsZyCG5UAACH5BAUIAAQALAIABgAHAAUAAAMOCDMBrqERAiWFYFIhMkkAOw==);
  width: 10px;
  height: 11px;
- z-index: 2;
+ z-index: 3; /* on top of helicopter, bunkers etc. */
 }
 
 #world .infantry.stopped {
