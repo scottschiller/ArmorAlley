@@ -3366,7 +3366,7 @@
 
       data.frameCount++;
 
-      if (battleOver) {
+      if (battleOver && gameObjects !== game.objects.shrapnel) {
          // hack: only animate shrapnel.
         gameObjects = game.objects.shrapnel;
       }
