@@ -143,6 +143,10 @@
 
   var useParallax = winloc.match(/parallax/i);
 
+  // whether off-screen elements are forcefully removed from the DOM.
+  // (probably causes more layout / style recalc than it's worth.)
+  var useDOMPruning = winloc.match(/dompruning/i);
+
   var trackEnemy = winloc.match(/trackenemy/i);
 
   var debug = winloc.match(/debug/i);
@@ -642,6 +646,12 @@
   };
 
   function removeNode(node) {
+
+    // DOM pruning safety check: object dom references may include object -> parent node for items that died
+    // while they were off-screen (e.g., infantry) and removed from the DOM, if pruning is enabled.
+    // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
+    // the battlefield under any circumstances. ;)
+    if (useDOMPruning && node && node === game.objects.view.dom.battleField) return;
 
     // hide immediately
     node.style.display = 'none';
@@ -2432,16 +2442,16 @@
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
-        dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.battleField.scrollLeft, 10) * -1) + 'px, 0px, 0px)';
+        dom.battleField.style[features.transform.prop] = 'translate3d(' + (data.battleField.scrollLeft * -1) + 'px, 0px, 0px)';
         // ... and parallax.
         if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
           // firefox text rendering really doesn't look nice when translating the stars.
-          dom.stars.style[features.transform.prop] = 'translate3d(' + parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px, 0px, 0px)';
+          dom.stars.style[features.transform.prop] = 'translate3d(' + (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px, 0px, 0px)';
         }
       } else {
         // move via margin + background position
-        dom.battleField.style.marginLeft = -parseInt(data.battleField.scrollLeft, 10) + 'px';
-        dom.stars.style.backgroundPosition = parseInt(-data.battleField.scrollLeft * data.battleField.parallaxRate, 10) + 'px 0px';
+        dom.battleField.style.marginLeft = -(data.battleField.scrollLeft, 10) + 'px';
+        dom.stars.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
       }
 
     }
@@ -2692,8 +2702,8 @@
 
       mousemove: function(e) {
         if (!data.ignoreMouseEvents) {
-          data.mouse.x = parseInt((e || window.event).clientX / screenScale, 10);
-          data.mouse.y = parseInt((e || window.event).clientY / screenScale, 10);
+          data.mouse.x = ((e || window.event).clientX / screenScale);
+          data.mouse.y = ((e || window.event).clientY / screenScale);
         }
       },
 
@@ -3137,12 +3147,12 @@
 
           for (i = 0, j = objects.items.length; i < j; i++) {
 
-            left = (parseInt((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width, 10)) + 'px';
+            left = ((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width) + 'px';
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
               // eslint-disable-next-line no-mixed-operators
-              top = parseInt((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 35, 10) + 'px';
+              top = ((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 35) + 'px';
 
             } else {
 
