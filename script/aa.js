@@ -1015,13 +1015,12 @@
 
     setTransformXY: function(o, x, y) {
 
-      if (o) {
-        if (features.transform.prop) {
-          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)';
-        } else {
-          o.style.left = x;
-          o.style.top = y;
-        }
+      if (!o) return;
+      if (features.transform.prop) {
+        o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)';
+      } else {
+        o.style.left = x;
+        o.style.top = y;
       }
     },
 
