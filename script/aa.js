@@ -1364,50 +1364,50 @@
         options.targets.hasOwnProperty(item)
 
         // don't compare the object against itself
-        && options.targets[item] !== options.source
+        && options.targets[i] !== options.source
 
         // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
-        && (!options.targets[item].data.dead || (options.targets[item].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role))
+        && (!options.targets[i].data.dead || (options.targets[i].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role))
 
         // more non-standard formatting....
         && (
 
           // don't check against friendly units
-          (options.targets[item].data.isEnemy !== options.source.data.isEnemy)
+          (options.targets[i].data.isEnemy !== options.source.data.isEnemy)
 
           // unless infantry vs. bunker, end-bunker, super-bunker or helicopter
-          || (options.source.data.type === 'infantry' && options.targets[item].data.type === 'bunker')
-          || (options.source.data.type === 'end-bunker' && options.targets[item].data.type === 'infantry' && !options.targets[item].data.role)
-          || (options.source.data.type === 'super-bunker' && options.targets[item].data.type === 'infantry' && !options.targets[item].data.role)
+          || (options.source.data.type === 'infantry' && options.targets[i].data.type === 'bunker')
+          || (options.source.data.type === 'end-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
+          || (options.source.data.type === 'super-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
 
-          || (options.source.data.type === 'helicopter' && options.targets[item].data.type === 'infantry')
+          || (options.source.data.type === 'helicopter' && options.targets[i].data.type === 'infantry')
 
           // OR engineer vs. turret
-          || (options.source.data.type === 'infantry' && options.source.data.role && options.targets[item].data.type === 'turret')
+          || (options.source.data.type === 'infantry' && options.source.data.role && options.targets[i].data.type === 'turret')
 
           // OR we're dealing with a hostile or neutral object
-          || (options.source.data.hostile || options.targets[item].data.hostile)
-          || (options.source.data.isNeutral || options.targets[item].data.isNeutral)
+          || (options.source.data.hostile || options.targets[i].data.hostile)
+          || (options.source.data.isNeutral || options.targets[i].data.isNeutral)
 
         )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
-        && ((!options.source.data.hostile || !options.targets[item].data.hostile) || (options.source.data.hostile !== options.targets[item].data.hostile))
+        && ((!options.source.data.hostile || !options.targets[i].data.hostile) || (options.source.data.hostile !== options.targets[i].data.hostile))
 
       ) {
 
         // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
         if (
-          collisionCheck(options.source.data, options.targets[item].data, xLookAhead)
-          || (options.targets[item].data.type === 'helicopter' && collisionCheck(options.source.data, options.targets[item].data, -xLookAhead))
+          collisionCheck(options.source.data, options.targets[i].data, xLookAhead)
+          || (options.targets[i].data.type === 'helicopter' && collisionCheck(options.source.data, options.targets[i].data, -xLookAhead))
         ) {
 
           foundHit = true;
 
           if (options.hit) {
-            options.hit(options.targets[item]);
+            options.hit(options.targets[i]);
             // update energy?
-            updateEnergy(options.targets[item]);
+            updateEnergy(options.targets[i]);
           }
 
         }
