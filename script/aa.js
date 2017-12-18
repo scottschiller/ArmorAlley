@@ -951,7 +951,7 @@
       animating: 'animating',
       dead: 'dead',
       enemy: 'enemy',
-      exploding: 'exploding'
+      exploding: 'exploding',
       offScreen: 'offscreen'
     },
 
