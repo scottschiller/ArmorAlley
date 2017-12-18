@@ -1619,7 +1619,7 @@
   function isOnScreen(target) {
 
     // is the target within the range of screen coordinates?
-    return (target && target.data && target.data.x >= game.objects.view.data.battleField.scrollLeft && target.data.x < (game.objects.view.data.battleField.scrollLeft + game.objects.view.data.browser.width));
+    return (target && target.data && (target.data.x + target.data.width) >= game.objects.view.data.battleField.scrollLeft && target.data.x < (game.objects.view.data.battleField.scrollLeft + game.objects.view.data.browser.width));
 
   }
 
