@@ -6043,7 +6043,6 @@
       updateIsOnScreen(exports);
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
         data.x = x;
         if (data.isOnScreen) {
           common.setX(exports, x);
@@ -6051,7 +6050,6 @@
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
         data.y = y;
         if (data.isOnScreen) {
           common.setY(exports, y);
