@@ -1351,7 +1351,7 @@
      * }
      */
 
-    var item, xLookAhead, foundHit;
+    var xLookAhead, foundHit;
 
     if (!options) {
       return false;
@@ -1376,17 +1376,17 @@
 
     }
 
-    if (!options.targets) return false;
+    if (!options.targets) return;
 
     for (var i = 0, j = options.targets.length; i < j; i++) {
 
       // non-standard formatting, lengthy logic check here...
       if (
 
-        options.targets.hasOwnProperty(item)
+        // options.targets.hasOwnProperty(item)
 
         // don't compare the object against itself
-        && options.targets[i] !== options.source
+        options.targets[i] !== options.source
 
         // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
         && (!options.targets[i].data.dead || (options.targets[i].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role))
@@ -2511,9 +2511,9 @@
     }
 
     function setTipsActive(active) {
-       if (data.gameTips.active !== active) {
-         utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
-       }
+      if (data.gameTips.active !== active) {
+        utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
+      }
     }
 
     function shuffleTips() {
@@ -3321,7 +3321,7 @@
   };
 
   function updateIsOnScreen(o) {
-    if (!o || !o.data) return;
+    if (!o || !o.data) return false;
 
     if (isOnScreen(o)) {
 
@@ -3380,9 +3380,11 @@
       data.frameCount++;
 
       if (battleOver && gameObjects !== game.objects.shrapnel) {
-         // hack: only animate shrapnel.
+        // hack: only animate shrapnel.
         gameObjects = game.objects.shrapnel;
       }
+
+      var onScreenCount = 0;
 
       for (item in gameObjects) {
 
@@ -3392,7 +3394,7 @@
           if (gameObjects[item].animate) {
 
             // onscreen?
-            updateIsOnScreen(gameObjects[item]);
+            updateIsOnScreen(gameObjects[item])
 
             if (gameObjects[item].animate()) {
               // object is dead - take it out.
@@ -3418,6 +3420,8 @@
         }
 
       }
+
+      // if (onScreenCount) console.log(onScreenCount + ' items on screen');
 
     }
 
@@ -7109,8 +7113,8 @@
     function setMissileLaunching(state, isRubberChicken) {
 
       if (data.missileLaunching !== state) {
-         data.missileLaunching = state;
-         data.rubberChickenLaunching = !!isRubberChicken;
+        data.missileLaunching = state;
+        data.rubberChickenLaunching = !!isRubberChicken;
       }
 
     }
@@ -7599,18 +7603,18 @@
 
             hasUpdate = 1;
 
-         }
+        }
 
-       }
+      }
 
-       if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
+      if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
 
           // out of ammo / no available targets
           if (sounds.inventory.denied) {
             playSound(sounds.inventory.denied);
           }
 
-       }
+      }
 
       }
 
@@ -10376,10 +10380,10 @@
 
           for (i = 0, j = game.objects.bunkers.length; i < j; i++) {
 
-             if (!game.objects.bunkers[i].data.dead) {
-               targetBunker = game.objects.bunkers[i];
-               break;
-             }
+            if (!game.objects.bunkers[i].data.dead) {
+              targetBunker = game.objects.bunkers[i];
+              break;
+            }
 
           }
 
@@ -10822,25 +10826,25 @@
     var keys,
         events,
 
-       // hash for keys being pressed
-       downKeys = {},
+      // hash for keys being pressed
+      downKeys = {},
 
-       // meaningful labels for key values
-       keyMap = {
-         shift: 16,
-         ctrl: 17,
-         space: 32,
-         left: 37,
-         up: 38,
-         right: 39,
-         down: 40,
-         missileLauncher: 77,
-         tank: 84,
-         van: 86,
-         infantry: 73,
-         engineer: 69
-         // 'helicopter': 72
-       };
+      // meaningful labels for key values
+      keyMap = {
+        shift: 16,
+        ctrl: 17,
+        space: 32,
+        left: 37,
+        up: 38,
+        right: 39,
+        down: 40,
+        missileLauncher: 77,
+        tank: 84,
+        van: 86,
+        infantry: 73,
+        engineer: 69
+        // 'helicopter': 72
+      };
 
     events = {
 
@@ -12039,7 +12043,7 @@
 
     keyboardMonitor.init();
 
-/*
+  /*
     function updateStats() {
 
       var c1, c2;
@@ -12056,7 +12060,7 @@
       updateStats();
 
     }
-*/
+  */
 
   }
 
