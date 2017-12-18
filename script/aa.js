@@ -1365,7 +1365,9 @@
 
     }
 
-    for (item in options.targets) {
+    if (!options.targets) return;
+
+    for (var i = 0, j = options.targets.length; i < j; i++) {
 
       // non-standard formatting, lengthy logic check here...
       if (
