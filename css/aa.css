@@ -47,14 +47,12 @@ body {
   * Chrome + Safari may be worse when using -webkit-optimize-contrast vs. default.
   * https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering
   */
- /*
- image-rendering: -webkit-optimize-contrast;
- */ 
- image-rendering: crisp-edges;
  image-rendering: optimizeQuality;
+ image-rendering: crisp-edges;
  image-rendering: pixelated;
  /* non-standard, but quite nice under Firefox */
  image-rendering: -moz-crisp-edges;
+ image-rendering: crisp-edges;
  /* who knows, for IE */
  -ms-interpolation-mode: nearest-neighbor;
  /* font trickery */
