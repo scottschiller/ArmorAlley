@@ -432,7 +432,6 @@ ul.stats-bar .bombs em {
  left: 0px; /* initially, position off-screen */
  background-position: 0px 0px;
  background-repeat: no-repeat;
- z-index: 1;
  -moz-pointer-events: none;
  pointer-events: none;
 }
