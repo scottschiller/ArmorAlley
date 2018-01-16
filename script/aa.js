@@ -10768,6 +10768,7 @@
 
       // meaningful labels for key values
       keyMap = {
+        rubber_chicken: 67,
         shift: 16,
         ctrl: 17,
         space: 32,
@@ -10920,6 +10921,11 @@
         down: function() {
 
           game.objects.helicopters[0].setMissileLaunching(true, true);
+
+          // enable rubber chicken in UI, if not already.
+          if (!forceRubberChicken) {
+            utils.css.add(document.getElementById('world'), rubberChickenMode);
+          }
 
         },
 
