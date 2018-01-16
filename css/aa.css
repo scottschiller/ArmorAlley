@@ -1847,24 +1847,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  to { background-position: 0px 0px; }
 }
 
-@keyframes spinning {
-  0% {
-    transform: rotate(0deg) scale(0.5);
-  }
-  25% {
-    transform: rotate(90deg) scale(0.75);
-  }
-  50% {
-    transform: rotate(180deg) scale(1);
-  }
-  75% {
-    transform: rotate(270deg) scale(0.75);
-  }
-  100% {
-    transform: rotate(360deg) scale(0.5);
-  }
-}
-
 @keyframes rotating {
  from {
   transform: rotate(0deg);
