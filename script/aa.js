@@ -9920,7 +9920,7 @@
               // -1, 0, 1
               randomWind = parseInt(Math.random() * 3, 10) - 1;
 
-              data.vX = randomWind * 0.5;
+              data.vX = randomWind * 0.25;
 
               if (randomWind === -1) {
 
@@ -9942,7 +9942,7 @@
               dom.o.style.backgroundPosition = ('0px ' + bgY + 'px');
 
               // choose a new wind modulus, too.
-              data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+              data.windModulus = 32 + parseInt(Math.random() * 32, 10);
 
             } else {
 
@@ -10049,7 +10049,7 @@
       type: 'parachute-infantry',
       frameCount: 0,
       panicModulus: 3,
-      windModulus: 16 + parseInt(Math.random() * 16, 10),
+      windModulus: 32 + parseInt(Math.random() * 32, 10),
       panicFrame: 0,
       energy: 2,
       energyMax: 2,
