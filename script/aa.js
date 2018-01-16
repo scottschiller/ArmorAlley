@@ -430,11 +430,21 @@
 
       function hasClass(o, cStr) {
 
+        // modern
+        if (o && o.classList) {
+          return o.classList.contains(cStr);
+        }
+        // legacy
         return (o.className !== undefined ? new RegExp('(^|\\s)' + cStr + '(\\s|$)').test(o.className) : false);
 
       }
 
       function addClass(o, cStr) {
+
+        if (o && o.classList) {
+          o.classList.add(cStr);
+          return;
+        }
 
         if (!o || !cStr || hasClass(o, cStr)) return;
         o.className = (o.className ? o.className + ' ' : '') + cStr;
@@ -443,12 +453,23 @@
 
       function removeClass(o, cStr) {
 
+        if (o && o.classList) {
+          o.classList.remove(cStr);
+          return;
+        }
+
         if (!o || !cStr || !hasClass(o, cStr)) return;
         o.className = o.className.replace(new RegExp('( ' + cStr + ')|(' + cStr + ')', 'g'), '');
 
       }
 
       function swapClass(o, cStr1, cStr2) {
+
+        if (o && o.classList) {
+          o.classList.remove(cStr1);
+          o.classList.add(cStr2);
+          return;
+        }
 
         var tmpClass = {
           className: o.className
@@ -469,7 +490,15 @@
 
       return {
         has: hasClass,
-        add: addClass,
+        add: function(o, className) {
+          // accept space-delimited classNames, but each item
+          // needs to be added via o.classNames.add() one at a time.
+          if (!className) return;
+          var classNames = className.split(' ');
+          for (var i = 0, j = classNames.length; i < j; i++) {
+            addClass(o, classNames[i]);
+          }
+        },
         remove: removeClass,
         swap: swapClass,
         toggle: toggleClass
@@ -659,20 +688,7 @@
         if (dom[item] instanceof Array) {
           removeNodeArray(dom[item]);
         } else {
-          // display: none - possibly prevent layout invalidation before removal?
-          // dom[item].style.display = 'none';
-          // undo transform?
-          /*
-          if (features.transform.prop) {
-            dom[item].style[features.transform.prop] = 'none';
-          }
-          */
-          /*
-          // reset className?
-          dom[item].className = '';
-          */
           removeNode(dom[item]);
-          // dom[item].parentNode.removeChild(dom[item]);
         }
         dom[item] = null;
       }
@@ -763,6 +779,14 @@
       } else {
         console.log('preferring requestAnimationFrame for game loop');
       }
+    } else {
+      // IE 9? Really?
+      _getAnimationFrame = function(callback) {
+        var args = Array.prototype.slice.call(arguments).splice(1);
+        window.setTimeout(function() {
+          callback.apply(this, args);
+        }, 1);
+      };
     }
 
     var transform, styles, prop;
