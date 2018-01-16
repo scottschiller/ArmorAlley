@@ -3605,6 +3605,10 @@
 
       dom.radar.appendChild(itemObject.dom.o);
 
+      // Slightly hackish: tack radarItem on to exports.
+      // setTargetTracking() looks at this reference.
+      item.radarItem = itemObject;
+
       stats.create(item);
 
       return itemObject;
