@@ -12271,24 +12271,12 @@
 
   var preferFlash = false;
 
-  if (isSafari && navigator.userAgent.match(/Version\/[7|8]/i) && !window.location.toString().match(/html5audio/i)) {
+  if (isSafari && !window.location.toString().match(/html5audio/i)) {
+    // Safari 7+ engine freezes when multiple Audio() objects play simultaneously. Unacceptable.
     // https://bugs.webkit.org/show_bug.cgi?id=116145
-    // looks like it will be fixed in a future release. try #html5audio=1 in URL to override/test.
-    console.log('Preferring Flash for audio due to Safari 7 + 8 HTML5 audio performance bug. https://bugs.webkit.org/show_bug.cgi?id=116145');
-    preferFlash = true;
-    // workaround for SM2, which will ignore preferFlash if MP3 + MP4 are not required.
-    soundManager.audioFormats.mp3.required = true;
-    // needed for good performance in Safari, otherwise multiShot lags a bit.
-    soundManager.setup({
-      useHighPerformance: true,
-      onready: function() {
-        if (soundManager.html5Only) {
-          // no flash or blocked etc., fell back to HTML5 anyway - this is bad. disable sound entirely.
-          console.log('SM2 fell back to HTML5 audio, which doesn\'t work here; disabling sound entirely.');
-          soundManager.disable();
-        }
-      }
-    });
+    // try #html5audio=1 in URL to override/test.
+    console.log('Safari 7+ rendering engine stutters when multiple Audio() objects play simultaneously. Disabling audio. https://bugs.webkit.org/show_bug.cgi?id=116145');
+    soundManager.disable();
   }
 
   soundManager.setup({
