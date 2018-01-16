@@ -1135,6 +1135,14 @@
 
   }
 
+  function makeTransformSprite(extraClass) {
+
+    return makeSprite({
+      className: 'transform-sprite' + (extraClass ? ' ' + extraClass : '')
+    });
+
+  }
+
   function makeSubSprite(extraClass) {
 
     return makeSprite({
