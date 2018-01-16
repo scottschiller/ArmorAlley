@@ -11879,6 +11879,11 @@
               i = 0;
             }
 
+          } else if (data.paused) {
+
+            // game paused - wait another interval and retry.
+            setTimeout(orderNextItem, enemyDelays[i] * 1000);
+
           }
 
         }
