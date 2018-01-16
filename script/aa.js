@@ -9164,7 +9164,7 @@
       },
 
       mousedown: function(e) {
-        if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
+        if (!isMobile && !data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
           if (e.button === 0) {
             // disable auto-rotate
             // data.autoRotate = false;
@@ -9176,6 +9176,12 @@
       dblclick: function(e) {
         if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
           if (e.button === 0) {
+            if (isMobile) {
+              // only rotate on mobile.
+              rotate();
+              // and stop zoom, etc., from happening.
+              e.preventDefault();
+            }
             // revert to normal setting
             if (data.rotated) {
               rotate();
