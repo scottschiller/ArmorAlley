@@ -3077,9 +3077,25 @@
 
     }
 
+    function _removeRadarItem(offset) {
+      removeNodes(objects.items[offset].dom);
+      // faster splice - doesn't create new array object (IIRC.)
+      Array.prototype.splice.apply(objects.items, [offset, 1]);
+    }
+
     function removeRadarItem(item) {
 
-      // look up item
+      // find and remove from DOM + array
+
+      // Array.indexOf() method (IE9+)
+      var offset = objects.items.indexOf && objects.items.indexOf(item);
+
+      if (offset !== undefined) {
+        if (offset === -1) return;
+        _removeRadarItem(offset);
+        return;
+      }
+
       var i, j;
 
       // find and remove from DOM + array
@@ -3342,6 +3358,9 @@
 
           } else {
 
+            // arguments to be reused within loop (avoid making new array every time.)
+            var spliceArgs = [i, 1];
+
             // array case
             for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
@@ -3349,7 +3368,8 @@
 
               if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
                 // object is dead - take it out.
-                gameObjects[item].splice(i, 1);
+                spliceArgs[0] = i;
+                Array.prototype.splice.apply(gameObjects[item], spliceArgs);
               }
 
             }
@@ -4244,14 +4264,17 @@
 
     function animate() {
 
-      var i, offset, earnedFunds;
+      var i, offset, earnedFunds, spliceArgs;
+
+      spliceArgs = [i, 1];
 
       data.frameCount++;
 
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
@@ -4527,7 +4550,9 @@
 
     function animate() {
 
-      var i;
+      var i, spliceArgs;
+
+      spliceArgs = [i, 1];
 
       data.frameCount++;
 
@@ -5055,10 +5080,13 @@
         data.engineerInteracting = false;
       }
 
+      spliceArgs = [i, 1];
+
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
@@ -8032,7 +8060,9 @@
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse, jamming, newX, yLimit;
+      var i, j, view, mouse, jamming, newX, spliceArgs, yLimit;
+
+      spliceArgs = [i, 1];
 
       jamming = 0;
 
@@ -8164,21 +8194,24 @@
         if (objects.gunfire[i] && objects.gunfire[i].animate()) {
           // object is dead - take it out.
           objects.gunfire[i] = null;
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
       for (i = objects.bombs.length - 1; i >= 0; i--) {
         if (objects.bombs[i].animate()) {
           // object is dead - take it out.
-          objects.bombs.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.bombs, spliceArgs);
         }
       }
 
       for (i = objects.smartMissiles.length - 1; i >= 0; i--) {
         if (objects.smartMissiles[i].animate()) {
           // object is dead - take it out.
-          objects.smartMissiles.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.smartMissiles, spliceArgs);
         }
       }
 
@@ -8664,14 +8697,17 @@
 
     function animate() {
 
-      var i;
+      var i, spliceArgs;
+
+      spliceArgs = [i, 1];
 
       data.frameCount++;
 
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
@@ -9471,7 +9507,9 @@
 
     function animate() {
 
-      var i;
+      var i, spliceArgs;
+
+      spliceArgs = [i, 1];
 
       if (data.deadTimer) {
         data.deadTimer.animate();
@@ -9499,7 +9537,8 @@
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
