@@ -12183,6 +12183,8 @@
       gameType = null;
     }
 
+    alwaysJamRadar = (gameType === 'hard' || gameType === 'extreme');
+
     if (!gameType) {
 
       menu = document.getElementById('game-menu');
