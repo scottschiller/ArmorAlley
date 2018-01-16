@@ -12452,7 +12452,7 @@
     // applyScreenScale();
 
     if (forceRubberChicken) {
-      utils.css.add(document.getElementById('world'), 'rubber-chicken-mode');
+      utils.css.add(document.getElementById('world'), rubberChickenMode);
     }
 
     game.init();
