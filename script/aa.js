@@ -1013,18 +1013,11 @@
 
       if (exports && exports.dom && exports.data.isOnScreen) {
 
-        if (features.transform.prop) {
-
-          // top-based Y offset, including bunker / balloon offset
-          var x = exports.data.x + 'px';
-          var y = worldHeight - (280 * (bottomY / 100));
-          // common.setTransformXY(exports.dom.o, exports.data.x + 'px', worldHeight - (280 * bottomY / 100) - 12 + 'px');
-          common.setTransformXY(exports.dom.o, x, (y - 12) + 'px');
-
-        } else {
-
-          common.setBottomY(exports, bottomY);
-
+        // top-based Y offset, including bunker / balloon offset
+        var x = exports.data.x + 'px';
+        var y = (worldHeight - (280 * (bottomY / 100)) - 12) + 'px';
+        if (exports.data.isOnScreen) {
+          common.setTransformXY(exports.dom.o, x, y);
         }
 
       }
@@ -1165,14 +1158,7 @@
     });
 
     if (x) {
-
-      if (features.transform.prop) {
-        // MOAR GPU
-        common.setTransformXY(node, x + 'px', '0px');
-      } else {
-        node.style.left = x + 'px';
-      }
-
+      common.setTransformXY(node, x + 'px', '0px');
     }
 
     game.dom.world.appendChild(node);
@@ -3709,7 +3695,7 @@
 
             }
 
-            common.setTransformXY(objects.items[i].dom.o, left, top);
+            common.setTransformXY(objects.items[i].dom.o, left + 'px', top + 'px');
 
           }
 
@@ -3861,6 +3847,11 @@
 
         if (o.dom && o.dom.o) {
 
+          if (o.dom.o.style.transform) {
+            // MOAR GPU! re-apply transform that might have been removed
+            common.setTransformXY(o.dom.o, o.data.x + 'px', '0px');
+          }
+
           utils.css.remove(o.dom.o, common.defaultCSS.offScreen);
 
           if (useDOMPruning) {
@@ -3879,6 +3870,14 @@
       o.data.isOnScreen = false;
 
       if (o.dom && o.dom.o) {
+
+        // manually remove x/y transform, will be restored when on-screen.
+        if (o.dom.o.style.transform) {
+          // 'none' might be considered a type of transform per Chrome Dev Tools,
+          // and thus incur some sort of cost vs. an empty string. (wild guess, here.)
+          // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
+          o.dom.o.style.transform = 'none';
+        }
 
         if (useDOMPruning) {
 
@@ -4674,7 +4673,7 @@
       // first time, create at random Y location.
       createBalloon(true);
 
-      common.setX(exports, data.x);
+      common.setTransformXY(exports.dom.o, data.x + 'px', '0px');
 
       data.midPoint = getDoorCoords(exports);
 
@@ -5965,14 +5964,20 @@
 
     function moveTo(x, y, height) {
 
+      var needsUpdate = false;
+
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
         data.y = y;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate && data.isOnScreen) {
+        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
       }
 
       if (height !== undefined && data.height !== height) {
@@ -6092,8 +6097,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
       setHeight(data.height);
 
@@ -6145,15 +6149,22 @@
 
     function moveTo(x, bottomY) {
 
+      var needsUpdate;
+
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
         data.x = x;
+        needsUpdate = true;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
         common.setBottomY(bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
+        needsUpdate = true;
+      }
+
+      if (needsUpdate && data.isOnScreen) {
+        common.setTransformXY(dom.o, data.x + 'px', '0px');
       }
 
     }
@@ -6292,7 +6303,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
+      common.setTransformXY(dom.o, data.x + 'px', '0px');
       common.setBottomY(exports, data.bottomY);
 
       data.frameTimeout = new FrameTimeout(FPS * 2, function() {
@@ -9725,7 +9736,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
+      common.setTransformXY(dom.o, data.x + 'px', '0px');
       common.setBottomYPixels(exports, data.bottomY);
 
       if (features.transform.prop) {
@@ -10113,12 +10124,14 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
+        // common.setX(exports, x);
+        if (data.isOnScreen) {
+          common.setTransformXY(dom.o, exports.data.x + 'px', '0px');
+        }
         data.x = x;
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomYPixels(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
@@ -10254,7 +10267,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
+      common.setTransformXY(dom.o, data.x + 'px', '0px');
       common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
@@ -10541,9 +10554,9 @@
         data.y = y;
       }
 
-      // common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
-
-      common.setXY(exports, data.x, data.y);
+      if (needsUpdate && data.isOnScreen) {
+        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      }
 
     }
 
@@ -10657,9 +10670,7 @@
         className: css.className + (Math.random() > 0.5 ? ' ' + css.reverse : '')
       });
 
-      // common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
-      common.setXY(exports, data.x, data.y);
 
       dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
 
@@ -10775,8 +10786,7 @@
         className: css.className
       });
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
+      common.setTransformXY(exports.dom.o, data.x + 'px', data.y + 'px');
 
       game.dom.world.appendChild(dom.o);
 
