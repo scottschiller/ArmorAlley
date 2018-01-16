@@ -11803,7 +11803,8 @@
 
       if (!data.paused) {
         objects.gameLoop.stop();
-        soundManager.mute();
+        if (!userDisabledSound) {
+          soundManager.mute();
         data.paused = true;
       }
 
