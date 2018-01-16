@@ -9067,6 +9067,9 @@
         className: css.className + (data.isEnemy ? ' ' + css.enemy : '')
       });
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       dom.oSubSprite = makeSubSprite();
 
       dom.o.appendChild(dom.oSubSprite);
