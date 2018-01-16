@@ -5777,7 +5777,8 @@
 
     dom = {
       o: null,
-      oSubSprite: null
+      oSubSprite: null,
+      oTransformSprite: null,
     };
 
     objects = {
@@ -5938,6 +5939,9 @@
       common.setX(exports, data.x);
       common.setBottomY(exports, data.bottomY);
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       game.dom.world.appendChild(dom.o);
 
       game.objects.radar.addItem(exports, dom.o.className);
@@ -5970,7 +5974,8 @@
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      oTransformSprite: null,
     };
 
     exports = {
@@ -9192,6 +9197,7 @@
       o: null,
       fuelLine: null,
       subSprite: null,
+      oTransformSprite: null,
       // hackish
       statusBar: {
         infantryCount: document.getElementById('infantry-count'),
@@ -9487,8 +9493,10 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      dom.oSubSprite = makeSubSprite();
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
 
+      dom.oSubSprite = makeSubSprite();
       dom.o.appendChild(dom.oSubSprite);
 
       // for testing
@@ -9542,7 +9550,8 @@
 
     dom = {
       o: null,
-      oSubSprite: null
+      oSubSprite: null,
+      oTransformSprite: null
     };
 
     objects = {
@@ -10298,6 +10307,9 @@
         className: css.className
       });
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
@@ -10468,6 +10480,9 @@
         className: css.className
       });
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       common.setX(exports, data.x);
       common.setY(exports, data.y);
 
@@ -10493,7 +10508,8 @@
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      oTransformSprite: null,
     };
 
     collision = {
@@ -10709,6 +10725,8 @@
         className: css.className + (Math.random() > 0.5 ? ' ' + css.reverse : '')
       });
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
 
 
       dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
@@ -10754,7 +10772,8 @@
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      oTransformSprite: null,
     };
 
     exports = {
@@ -10825,6 +10844,9 @@
         className: css.className
       });
 
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       common.setTransformXY(exports.dom.o, data.x + 'px', data.y + 'px');
 
       game.dom.world.appendChild(dom.o);
@@ -10849,7 +10871,8 @@
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      oTransformSprite: null,
     };
 
     exports = {
