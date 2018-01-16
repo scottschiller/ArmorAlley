@@ -2861,31 +2861,31 @@
 
     function shuffleTips() {
 
-      var i, j, elements, fragment;
+      var i, j, elements, strings, node, fragment;
 
-      // TODO: this doesn't work in Firefox, barfs with "TypeError: Argument 1 of Node.appendChild is not an object." - likely due to live DOM list being returned.
-      try {
+      strings = [];
 
-        elements = dom.gameTips.getElementsByTagName('span');
+      elements = dom.gameTips.getElementsByTagName('span');
 
-        fragment = document.createDocumentFragment();
-
-        elements = utils.array.shuffle(elements);
-
-        for (i = 0, j = elements.length; i < j; i++) {
-          fragment.appendChild(elements[i]);
-        }
-
-        // re-append in new order
-        dom.gameTipsList.appendChild(fragment);
-
-      } catch(e) {
-
-        if (console && console.warn) {
-          console.warn('Warning: Exception while shuffling game tips. TODO: Review/fix.', e);
-        }
-
+      // read all the strings from the live DOM.
+      for (i = 0, j = elements.length; i < j; i++) {
+        strings[i] = elements[i].innerText;
       }
+
+      strings = utils.array.shuffle(strings);
+
+      fragment = document.createDocumentFragment();
+
+      // create new nodes, in order.
+      for (i = 0, j = strings.length; i < j; i++) {
+        node = document.createElement('span');
+        node.textContent = strings[i];
+        fragment.appendChild(node);
+      }
+
+      // clear and append re-ordered list.
+      dom.gameTipsList.innerHTML = '';
+      dom.gameTipsList.appendChild(fragment);
 
     }
 
