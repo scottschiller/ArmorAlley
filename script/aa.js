@@ -1231,26 +1231,6 @@
 
     options = options || {};
 
-    // trying for memory / GC optimizations ...
-
-    /*
-
-    var defaultData;
-
-    defaultData = {
-      isEnemy: (options.isEnemy || false),
-      bottomY: (options.bottomY || 0),
-      dead: false,
-      x: options.x || 0,
-      y: options.y || 0,
-      vX: options.vX || 0,
-      vY: options.vY || 0
-    };
-
-    return mixin(defaultData, data);
-
-    */
-
     // correct y data, if the object is bottom-aligned
     if (data.bottomAligned) {
       data.y = bottomAlignedY(options.bottomY || 0);
