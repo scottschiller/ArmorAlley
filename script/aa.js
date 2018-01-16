@@ -244,7 +244,7 @@
 
   function Stats() {
 
-    var dom, data, dirty, exports;
+    var data, exports;
 
     function normalizeObj(obj) {
       if (obj && !obj.data && obj.oParent) {
@@ -304,8 +304,6 @@
       dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
       if (dataObj[type] !== undefined) {
         dataObj[type]++;
-        dirty = true;
-        refreshStats();
       }
     }
 
@@ -346,16 +344,6 @@
       document.getElementById('stats-endgame').style.display = 'block';
     }
 
-    function initStats() {
-      var i, j, counts;
-      counts = document.getElementById('stats').getElementsByClassName('count');
-      for (i = 0, j = counts.length; i < j; i++) {
-        // counts[i].appendChild(div.cloneNode(true));
-        counts[i].innerHTML = '<span class="count-wrapper">' + counts[i].innerHTML + '</span><div class="bar"></div>';
-      }
-      // window.setInterval(refreshStats, 1000);
-    }
-
     data = {
       time: {
         start: new Date(),
@@ -371,23 +359,13 @@
       }
     };
 
-    dom = {
-      barTemplate: document.createElement('div'),
-      bars: []
-    };
-
-    dom.barTemplate.className = 'bar';
-
     exports = {
       data: data,
       create: create,
       destroy: destroy,
       markEnd: markEnd,
-      refreshStats: refreshStats,
       displayEndGameStats: displayEndGameStats
     };
-
-    initStats();
 
     return exports;
 
