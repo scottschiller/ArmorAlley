@@ -3460,17 +3460,21 @@
 
       // [ obligatory Bob Marley reference goes here ]
 
-      if (!data.jammingTimer) {
-        data.jammingTimer = window.setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
+      if (alwaysJamRadar) {
+        maybeJam();
+      } else if (!data.jammingTimer) {
+        data.jammingTimer = setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
       }
 
     }
 
     function stopJamming() {
 
-      if (data.jammingTimer) {
-        window.clearTimeout(data.jammingTimer);
-        data.jammingTimer = null;
+      if (data.jammingTimer || alwaysJamRadar) {
+        if (data.jammingTimer) {
+          window.clearTimeout(data.jammingTimer);
+          data.jammingTimer = null;
+        }
         utils.css.remove(dom.radar, css.jammed);
         if (sounds.radarJamming && sounds.radarJamming.sound) {
           sounds.radarJamming.sound.stop();
@@ -3603,20 +3607,14 @@
 
     maybeJam = function() {
 
-      var jam = (Math.random() > 0.25);
+      var jam = alwaysJamRadar ? true : (Math.random() > 0.25);
 
       // TODO: prevent excessive DOM I/O
       if (!noJamming) {
 
         if (jam) {
+
           utils.css.add(dom.radar, css.jammed);
-        } else {
-          utils.css.remove(dom.radar, css.jammed);
-        }
-
-        // dom.radar.style.visibility = (jam ? 'hidden' : 'visible');
-
-        if (jam) {
 
           if (!userDisabledSound && sounds.radarJamming && sounds.radarJamming.sound) {
             if (!sounds.radarJamming.sound.playState) {
@@ -3627,16 +3625,24 @@
             }
           }
 
-        } else if (sounds.radarJamming && sounds.radarJamming.sound) {
-          sounds.radarJamming.sound.stop();
+        } else {
+
+          utils.css.remove(dom.radar, css.jammed);
+
+          if (sounds.radarJamming && sounds.radarJamming.sound) {
+            sounds.radarJamming.sound.stop();
+          }
+
         }
 
       }
 
       data.jammingTimer = null;
 
-      // and do this again.
-      startJamming(jam);
+      // repeat, if a timer was involved (release / re-jam every so often.)
+      if (!alwaysJamRadar) {
+        startJamming(jam);
+      }
 
     };
 
