@@ -3152,6 +3152,8 @@
 
       blur: function() {
 
+        if (noPause) return;
+
         game.pause();
 
       },
