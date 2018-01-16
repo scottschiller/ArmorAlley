@@ -693,6 +693,102 @@ ul.stats-bar .bombs em {
 #world .parachute-infantry.parachute-open {
  background-position: 0px 0px;
  height: 19px;
+
+/* applied to sprites being actively targeted / tracked */
+#world .smart-missile-tracking::after,
+#world .smart-missile-tracking-spinning::after,
+#world .smart-missile-tracking-removal::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+  opacity: 1;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  content: "×"; /* &target; */
+  width: 13px;
+  height: 13px;
+  line-height: 13px;
+  vertical-align: middle;
+  color: #fff;
+  background: #ff0000;
+  border: 1px solid #fff;
+  border-radius: 100%;
+  text-decoration: blink;
+  text-indent: 0.5px; /* annoying offset */
+}
+
+#world .smart-missile-tracking::after {
+  animation: drop-in 0.33s ease-in-out;
+}
+
+#world .smart-missile-tracking-spinning::after {
+  animation: drop-in-spinning 2s linear infinite;
+}
+
+#world .smart-missile-tracking-removal::after {
+  animation: drop-in 0.33s reverse ease-in-out;
+  /* final state once animation finishes */
+  opacity: 0;
+}
+
+#world .radar-item.smart-missile-tracking::after,
+#world .turret.smart-missile-tracking::after,
+#world .smart-missile.smart-missile-tracking::after {
+  animation: drop-in-small 0.25s ease-out;
+  transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+}
+
+#world .radar-item.smart-missile-tracking-spinning::after,
+#world .turret.smart-missile-tracking-spinning::after {
+  animation: drop-in-spinning-small 2s linear infinite;
+}
+
+#world .radar-item.smart-missile-tracking-removal::after,
+#world .turret.smart-missile-tracking-removal::after {
+  animation: drop-in-small 0.33s reverse ease-in-out;
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.75) rotate(90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+  }
+}
+
+@keyframes drop-in-small {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1) rotate(90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+}
+
+@keyframes drop-in-spinning {
+  from {
+    transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.75) rotate(360deg);
+  }
+}
+
+@keyframes drop-in-spinning-small {
+  from {
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
+  }
+}
 }
 
 #world .missile-launcher.enemy.exploding,

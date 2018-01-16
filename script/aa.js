@@ -6851,6 +6851,71 @@
       utils.css.add(dom.o, css.spark);
     }
 
+    function makeTimeout(delay, callback) {
+      if (objects._timeout) {
+        window.clearTimeout(objects._timeout);
+        objects._timeout = null;
+      }
+      objects._timeout = setTimeout(function() {
+        if (!objects.target || !objects.target.dom.o) {
+          return;
+        }
+        callback();
+      }, delay);
+    }
+
+    function addTracking(targetNode, radarNode) {
+      if (targetNode) {
+        utils.css.add(targetNode, css.tracking);
+      }
+
+      if (radarNode) {
+        utils.css.add(radarNode, css.tracking);
+        makeTimeout(350, function() {
+          // TODO: check that node still exists?
+          // this animation needs to run possibly after the object has died.
+          utils.css.add(radarNode, css.trackingSpinning);
+        });
+      }
+    }
+
+    function removeTrackingFromNode(node) {
+      if (!node) return;
+      // remove tracking animation
+      utils.css.remove(node, css.tracking);
+      utils.css.remove(node, css.trackingSpinning);
+
+      // start fading/zooming out
+      utils.css.add(node, css.trackingRemoval);
+    }
+
+    function removeTracking(targetNode, radarNode) {
+
+      removeTrackingFromNode(targetNode);
+      removeTrackingFromNode(radarNode);
+
+      // one timer for both.
+      makeTimeout(350, function() {
+        if (targetNode) {
+          utils.css.remove(targetNode, css.trackingRemoval);
+        }
+        if (radarNode) {
+          utils.css.remove(radarNode, css.trackingRemoval);
+        }
+      });
+
+    }
+
+    function setTargetTracking(tracking) {
+      var targetNode = objects.target.dom.o;
+      var radarNode = (objects.target.radarItem && objects.target.radarItem.dom && objects.target.radarItem.dom.o);
+      if (tracking) {
+        addTracking(targetNode, radarNode);
+      } else {
+        removeTracking(targetNode, radarNode);
+      }
+    }
+
     function die(excludeShrapnel) {
 
       var dieSound;
@@ -6877,6 +6942,9 @@
         }, 250);
 
         data.energy = 0;
+
+        // stop tracking the target.
+        setTargetTracking();
 
         radarItem.die();
 
@@ -6926,7 +6994,11 @@
 
     function animate() {
 
-      var deltaX, deltaY, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
+      var deltaX, deltaY, newTarget, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
+
+      if (data.targetTimeout) {
+        data.targetTimeout.animate();
+      }
 
       if (!data.dead) {
 
@@ -6940,6 +7012,36 @@
 
         // TODO: hack full height for balloon?
         deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+
+        // if original target has died, try to find a new target.
+        // e.g., two missiles fired at enemy helicopter, first one hits and kills it.
+        // in the original game, missiles would die when the original target died -
+        // but, missiles are rare (you get two per chopper) and take time to re-arm,
+        // and they're "smart" - so in my version, missiles get retargeting capability
+        // for at least one animation frame after the original target is lost.
+        // if retargeting finds nothing at the moment the original is lost, the missile will die.
+        if (!data.expired && (!objects.target || objects.target.data.dead)) {
+
+          // stop tracking the old one, as applicable.
+          if (objects.target.data.dead) {
+            setTargetTracking();
+          }
+
+          newTarget = getNearestObject(exports, {
+            useInFront: true
+          });
+
+          if (newTarget && !newTarget.data.cloaked && !newTarget.data.dead) {
+            // we've got a live one!
+            if (launchSound) {
+              launchSound.stop().play();
+            }
+            objects.target = newTarget;
+            // and start tracking.
+            setTargetTracking(true);
+          }
+
+        }
 
         if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
 
@@ -6963,6 +7065,9 @@
             }
 
           }
+
+          // if still tracking something, un-mark it.
+          setTargetTracking();
 
         }
 
@@ -7109,6 +7214,9 @@
 
       game.dom.world.appendChild(dom.o);
 
+      // mark the target.
+      setTargetTracking(true);
+
       // findTarget();
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -7134,6 +7242,9 @@
 
     css = inheritCSS({
       className: 'smart-missile',
+      tracking: 'smart-missile-tracking',
+      trackingSpinning: 'smart-missile-tracking-spinning',
+      trackingRemoval: 'smart-missile-tracking-removal',
       trailer: 'smart-missile-trailer',
       expired: 'expired',
       spark: 'spark'
