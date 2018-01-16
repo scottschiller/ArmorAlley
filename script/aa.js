@@ -2960,10 +2960,130 @@
 
     }
 
+    function getTouchEvent(touchEvent) {
+      return data.touchEvents[touchEvent && touchEvent.identifier] || null;
+    }
+
+    function registerTouchEvent(touchEvent, options) {
+
+      if (!touchEvent || !touchEvent.identifier) return;
+
+      // keep track of a touch event, and its type.
+      var id = touchEvent.identifier;
+
+      data.touchEvents[id] = {
+        /*
+          type,
+          target,
+        */
+      };
+
+      // Object.assign()-like copying of properties.
+      for (var option in options) {
+        if (options.hasOwnProperty(option)) {
+          data.touchEvents[id][option] = options[option];
+        }
+      }
+
+      var target = options && options.target;
+
+      // special case for UI on buttons.
+      if (target && target.nodeName === 'A') {
+        utils.css.add(target, 'active');
+      }
+
+    }
+
+    function clearTouchEvent(touchEvent) {
+
+      if (!touchEvent || !touchEvent.identifier) return;
+
+      var target = data.touchEvents[touchEvent.identifier].target;
+
+      // special case for UI on buttons.
+      if (target && target.nodeName === 'A') {
+        utils.css.remove(target, 'active');
+      }
+
+      delete data.touchEvents[touchEvent.identifier];
+
+    }
+
+    function handleTouchStart(targetTouch) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
+      var target = targetTouch && targetTouch.target;
+
+      // touch should always have a target, but just in case...
+      if (target && target.nodeName === 'A') {
+        // it's a link; treat as a button. ignore subsequent move events.
+        registerTouchEvent(targetTouch, {
+          type: 'press',
+          target: target
+        });
+      } else {
+        // allow touchmove() for this one.
+        registerTouchEvent(targetTouch, {
+          type: 'joystick'
+        });
+        game.objects.joystick.start(targetTouch);
+        // and exit.
+        return false;
+      }
+
+      // some sort of button - inventory, or helicopter controls.
+      var keyMapLabel;
+      var keyCode;
+
+      keyMapLabel = target.getAttribute('data-keyMap');
+      keyCode = keyboardMonitor.keyMap[keyMapLabel];
+
+      if (keyCode) {
+        keyboardMonitor.keydown({
+          keyCode: keyCode
+        });
+        return true;
+      }
+      return false;
+    }
+
+    function handleTouchEnd(touchEvent) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
+      var target = touchEvent && touchEvent.target;
+
+      // was this a "move" (joystick) event? end if so.
+      var registeredEvent = getTouchEvent(touchEvent);
+      if (registeredEvent && registeredEvent.type === 'joystick') {
+        game.objects.joystick.end(touchEvent);
+      }
+
+      clearTouchEvent(touchEvent);
+      if (!target) return false;
+
+      var keyMapLabel;
+      var keyCode;
+
+      // release applicable key.
+      keyMapLabel = target.getAttribute('data-keyMap');
+      keyCode = keyboardMonitor.keyMap[keyMapLabel];
+
+      if (keyCode) {
+        keyboardMonitor.keyup({
+          keyCode: keyCode
+        });
+        return true;
+      }
+
+      return false;
+    }
+
     function addEvents() {
 
       utils.events.add(window, 'resize', events.resize);
       utils.events.add(document, 'mousemove', events.mousemove);
+      utils.events.add(document, 'mousedown', events.touchstart);
+      utils.events.add(document, 'touchstart', events.touchstart);
+      utils.events.add(document, 'touchmove', events.touchmove);
+      utils.events.add(document, 'touchend', events.touchend);
 
       if (!isOldIE) {
         utils.events.add(window, 'focus', events.focus);
@@ -3021,6 +3141,11 @@
         x: 0,
         y: 0
       },
+      touch: {
+        x: 0,
+        y: 0,
+      },
+      touchEvents: {},
       world: {
         width: 0,
         height: 0,
@@ -3075,6 +3200,61 @@
         if (!data.ignoreMouseEvents) {
           data.mouse.x = ((e || window.event).clientX / screenScale);
           data.mouse.y = ((e || window.event).clientY / screenScale);
+        }
+      },
+
+      touchstart: function(e) {
+        var touch = e.touches && e.touches[0];
+        var i, j;
+        var targetTouches = e.targetTouches;
+        var result;
+        var handledResult;
+        if (targetTouches) {
+          for (i = 0, j = targetTouches.length; i < j; i++) {
+            result = handleTouchStart(targetTouches[i], e);
+            if (result) {
+              handledResult = true;
+              e.preventDefault();
+            }
+          }
+        }
+        // mouse equivalent - set only if a button wasn't hit.
+        if (!handledResult && touch && !data.ignoreMouseEvents) {
+          data.touch.x = touch.clientX;
+          data.touch.y = touch.clientY;
+        }
+      },
+
+      touchmove: function(e) {
+        // primitive handling: take the first event.
+        var touch = e.changedTouches && e.changedTouches[0];
+
+        // just in case.
+        if (!touch) return true;
+
+        // if this event was registered at touchstart() as not a "move", ignore.
+        var registeredEvent = getTouchEvent(touch);
+
+        if (registeredEvent && registeredEvent.type !== 'joystick') {
+          return false;
+        }
+
+        if (!data.ignoreMouseEvents) {
+          // relative to coordinates of origin
+          game.objects.joystick.move(touch);
+          e.preventDefault();
+        }
+
+        return false;
+      },
+
+      touchend: function(e) {
+        var i, j;
+        var changed = e.changedTouches;
+        if (changed) {
+          for (i = 0, j = changed.length; i < j; i++) {
+            handleTouchEnd(changed[i], e);
+          }
         }
       },
 
@@ -11591,6 +11771,8 @@
 
       init: initKeyboardMonitor,
       isDown: isDown,
+      keyMap: keyMap,
+      keyup: events.keyup,
       releaseAll: releaseAll
 
     };
