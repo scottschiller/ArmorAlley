@@ -353,13 +353,46 @@
 
     if (disableScaling) return;
 
+    var innerHeight = window.innerHeight;
+    var offset = 0;
+    var localWorldHeight = 410;
+
+    // TODO: clean this up.
+    if (isMobile) {
+
+      var id = 'body-height-element';
+      var div = document.getElementById(id);
+
+      // make and append once, as necessary.
+      if (!div) {
+        div = document.createElement('div');
+        div.id = id;
+        document.body.appendChild(div);
+      }
+
+      // measure.
+      offset = parseInt(div.offsetHeight, 10) || 0;
+
+      // console.log('window.innerHeight vs. div.offsetHeight', innerHeight, offset);
+
+      // take the smaller one, in any case.
+      if (innerHeight < offset) {
+        // Safari URL / address bar is showing. hack around it.
+        // TODO: ignore touch, make user scroll window first?
+        console.log('scaling world down slightly because of Safari URL / address bar.');
+        // 50 (pixel height of URL bar) * 2, so world is centered nicely. I think. :D
+        localWorldHeight += 100;
+      }
+
+    }
+
     if (userDisabledScaling) {
 
       screenScale = 1;
 
     } else {
 
-      screenScale = (isOldIE ? 1 : window.innerHeight / 460);
+      screenScale = (isOldIE ? 1 : innerHeight / localWorldHeight);
 
     }
 
