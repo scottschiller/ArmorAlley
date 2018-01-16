@@ -9496,7 +9496,8 @@
         utils.css.add(dom.o, options.extraClass);
       }
 
-      common.setX(exports, data.x);
+      common.setTransformXY(dom.o, data.x + 'px', '0px');
+
       common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
