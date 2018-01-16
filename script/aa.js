@@ -5381,7 +5381,9 @@
 
       } else if (data.lastEnergy < data.energy) {
         // only stop sound once, when repair finishes
-        sounds.tinkerWrench.sound.stop();
+        if (sounds.tinkerWrench && sounds.tinkerWrench.sound) {
+          sounds.tinkerWrench.sound.stop();
+        }
         data.lastEnergy = data.energy;
       }
 
