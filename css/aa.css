@@ -734,6 +734,8 @@ ul.stats-bar .bombs em {
 #world .parachute-infantry.parachute-open {
  background-position: 0px 0px;
  height: 19px;
+ animation: parachute-swing 1s ease-in-out alternate infinite;
+}
 
 /* applied to sprites being actively targeted / tracked */
 #world .smart-missile-tracking::after,
@@ -830,6 +832,14 @@ ul.stats-bar .bombs em {
     transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
   }
 }
+
+@keyframes parachute-swing {
+  from {
+    transform: rotate(-12.5deg);
+  }
+  to {
+    transform: rotate(12.5deg);
+  }
 }
 
 #world .missile-launcher.enemy.exploding,
