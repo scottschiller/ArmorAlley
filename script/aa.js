@@ -11805,6 +11805,8 @@
         objects.gameLoop.stop();
         if (!userDisabledSound) {
           soundManager.mute();
+        }
+        utils.css.add(document.body, 'game-paused');
         data.paused = true;
       }
 
@@ -11817,6 +11819,7 @@
         if (!userDisabledSound) {
           soundManager.unmute();
         }
+        utils.css.remove(document.body, 'game-paused');
         data.paused = false;
       }
 
