@@ -1557,15 +1557,6 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  color: #666;
 }
 
-#key-legend {
- float: left;
-}
-
-#key-legend em {
- color: #999;
- font-style: normal;
-}
-
 #world .sprite.missile-launcher.building,
 #world .sprite.tank.building {
  margin-bottom: -18px;
