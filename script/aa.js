@@ -2928,11 +2928,11 @@
         if (data.frameCount % data.marqueeModulus === 0) {
 
           // move the marquee.
-          common.setTransformXY(dom.gameTipsList, (data.gameTips.scrollOffset * -2) + 'px', 0);
+          common.setTransformXY(dom.gameTipsList, data.gameTips.scrollOffset + 'px', 0);
 
         }
 
-        data.gameTips.scrollOffset++;
+        data.gameTips.scrollOffset -= 2;
 
       }
 
