@@ -11804,6 +11804,7 @@
 
       init: initKeyboardMonitor,
       isDown: isDown,
+      keydown: events.keydown,
       keyMap: keyMap,
       keyup: events.keyup,
       releaseAll: releaseAll
