@@ -8816,7 +8816,9 @@
             data.targeting.clouds = true;
           }
 
-          console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds + ', helicopters: ' + data.targeting.helicopters);
+          if (debug) {
+            console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds + ', helicopters: ' + data.targeting.helicopters);
+          }
 
         }
 
