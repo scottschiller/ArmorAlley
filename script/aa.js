@@ -11981,13 +11981,43 @@
     keyboardMonitor.init();
 
 
-      var c1, c2;
+  function orientationChange() {
+    // primarily for handling iPhone X, and position of The Notch.
+    // apply CSS to <body> per orientation, and iPhone-specific CSS will handle the padding.
+    var notchPosition;
 
+    // shortcuts
+    var body = document.body;
+    var add = utils.css.add;
+    var remove = utils.css.remove;
 
+    var atLeft = 'notch-at-left';
+    var atRight = 'notch-at-right';
 
+    if ('orientation' in window) {
+      // Mobile
+      if (window.orientation === 90) {
+        notchPosition = 'left';
+      } else if (window.orientation === -90) {
+        notchPosition = 'right';
+      }
+    } else if ('orientation' in window.screen) {
+      // Webkit
+      if (window.screen.orientation.type === 'landscape-primary') {
+        notchPosition = 'left';
+      } else if (window.screen.orientation.type === 'landscape-secondary') {
+        notchPosition = 'right';
+      }
     }
 
+    // inefficient/lazy: remove both, apply the active one.
+    remove(body, atLeft);
+    remove(body, atRight);
 
+    if (notchPosition === 'left') {
+      add(body, atLeft);
+    } else if (notchPosition === 'right') {
+      add(body, atRight);
     }
 
   }
@@ -11999,6 +12029,28 @@
     // hackish: no-trasform CSS tweak
     if (noTransform) {
       utils.css.add(document.body, 'no-transform');
+    }
+
+    if (isMobile) {
+      utils.css.add(document.body, 'is-mobile');
+      // if iPads etc. get The Notch, this will need updating. as of 01/2018, this is fine.
+      if (navigator.userAgent.match(/iphone/i)) {
+        /**
+         * iPhone X notch detection shenanigans. AA should avoid the notch,
+         * but doesn't need to pad the right end of the screen - thus, we detect
+         * this case and apply CSS for orientation so we know which side the notch is on.
+         *
+         * Tips o' the hat:
+         * PPK - hasNotch() detection. Doesn't seem to work on iOS 11.0.2 as of 01/2018.
+         * https://www.quirksmode.org/blog/archives/2017/10/safeareainset_v.html
+         * Mark Nolton on SO - orientation change.
+         * https://stackoverflow.com/a/47226825
+         */
+        console.log('watching orientation for possible iPhone X Notch handling.');
+        window.addEventListener('orientationchange', orientationChange);
+        // and get the current layout.
+        orientationChange();
+      }
     }
 
     var menu,

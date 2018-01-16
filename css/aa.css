@@ -1825,4 +1825,14 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 #world.x-ray #battlefield .sprite {
  background: transparent !important;
  outline: 1px solid #339933;
+body.is-mobile.notch-at-left #mobile-controls .mobile-controls-left {
+  /* iPhone X, landscape mode: avoid overlapping notch at left. */
+  padding-left: env(safe-area-inset-left);
+}
+
+body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
+  /* iPhone X, landscape mode: avoid overlapping notch at right. */
+  padding-right: env(safe-area-inset-right);
+}
+
 }
