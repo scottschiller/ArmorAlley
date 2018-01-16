@@ -356,7 +356,7 @@ ul.stats-bar li {
 ul.stats-bar em {
  position: relative;
  display: inline-block;
- line-height: 3em;
+ text-indent: 2rem; /* hide inner text */
  overflow: hidden;
  vertical-align: middle;
 }
