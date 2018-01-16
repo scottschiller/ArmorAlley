@@ -12826,6 +12826,7 @@
 
     keyboardMonitor.init();
 
+  }
 
   function orientationChange() {
     // primarily for handling iPhone X, and position of The Notch.
