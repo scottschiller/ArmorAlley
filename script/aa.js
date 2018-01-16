@@ -4967,7 +4967,8 @@
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {
           // object is dead - take it out.
-          objects.gunfire.splice(i, 1);
+          spliceArgs[0] = i;
+          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
         }
       }
 
