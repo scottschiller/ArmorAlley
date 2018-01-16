@@ -145,6 +145,7 @@
   var isChrome = (isWebkit && ua.match(/chrome/i));
   var isFirefox = ua.match(/firefox/i);
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
+  var isMobile = ua.match(/mobile/i); // should get iOS.
   var isOldIE = (navigator.userAgent.match(/MSIE [6-8]/i));
 
   var useParallax = winloc.match(/parallax/i);
