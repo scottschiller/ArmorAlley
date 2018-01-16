@@ -10654,10 +10654,14 @@
       frameCount: 0,
       processInterval: FPS * 3,
       queue: [],
-      queueMax: 128
+      queueMax: 512
     };
 
     function process() {
+
+      if (debug) {
+        console.log('processing queue of ' + data.queue.length + ' items at frameCount = ' + data.frameCount);
+      }
 
       // process all items in queue
       var i, j;
