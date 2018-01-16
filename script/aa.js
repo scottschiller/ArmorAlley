@@ -1170,6 +1170,24 @@
 
     game.dom.world.appendChild(node);
 
+    // basic structure for a terrain item
+    var obj = {
+      data: {
+        x: x,
+        y: 0,
+        // dirty / lazy - force layout, read from CSS.
+        width: node.offsetWidth,
+        height: node.offsetHeight,
+        isOnScreen: true
+      },
+      dom: {
+        o: node,
+      },
+    };
+
+    // these will be tracked only for on-screen / off-screen purposes.
+    game.objects.terrainItems.push(obj);
+
     return node;
 
   }
@@ -12364,6 +12382,7 @@
       turrets: [],
       shrapnel: [],
       smoke: [],
+      terrainItems: [],
       radar: null,
       inventory: null,
       tutorial: null,
