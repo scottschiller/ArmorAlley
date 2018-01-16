@@ -262,41 +262,6 @@
       return type;
     }
 
-    function refreshStats() {
-      if (!dirty) {
-        return;
-      }
-      var i, j, items, count, cols, type, percent;
-      items = document.getElementById('stats').getElementsByClassName('item');
-      for (i = 0, j = items.length; i < j; i++) {
-        type = items[i].getAttribute('data-type');
-        if (type) {
-          cols = items[i].getElementsByClassName('count');
-          if (cols[0]) {
-            count = Math.max(0, data.player.created[type] - data.player.destroyed[type]) || 0;
-            // cols[0].childNodes[0].innerHTML = (data.player.destroyed[type] && count ? '<span class="of-count">' + count + ' / </span>' : '') + data.player.created[type];
-            // count = Math.max(0, data.player.created[type]);
-            cols[0].childNodes[0].textContent = count;
-          }
-          if (cols[1]) {
-            count = Math.max(0, data.enemy.created[type] - data.enemy.destroyed[type]) || 0;
-            // cols[1].childNodes[0].innerHTML = (data.enemy.destroyed[type] && count ? '<span class="of-count">' + count + ' / </span>' : '') + data.enemy.created[type];
-            // count = Math.max(0, data.enemy.created[type]);
-            cols[1].childNodes[0].textContent = count;
-          }
-          if (cols[0] && (data.player.created[type] || data.player.destroyed[type])) {
-            percent = (data.player.destroyed[type] / data.player.created[type]) * 100;
-            cols[0].getElementsByClassName('bar')[0].style.width = (100 - percent) + '%';
-          }
-          if (cols[1] && (data.enemy.created[type] || data.enemy.destroyed[type])) {
-            percent = (data.enemy.destroyed[type] / data.enemy.created[type]) * 100;
-            cols[1].getElementsByClassName('bar')[0].style.width = (100 - percent) + '%';
-          }
-        }
-      }
-      dirty = false;
-    }
-
     function create(obj) {
       var dataObj, type;
       obj = normalizeObj(obj);
@@ -315,8 +280,6 @@
       dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
       if (dataObj[type] !== undefined) {
         dataObj[type]++;
-        dirty = true;
-        refreshStats();
       }
     }
 
@@ -12017,24 +11980,15 @@
 
     keyboardMonitor.init();
 
-  /*
-    function updateStats() {
 
       var c1, c2;
 
-      c1 = document.getElementById('top-bar').querySelectorAll('.sprite').length;
-      c2 = document.getElementById('battlefield').querySelectorAll('.sprite').length;
 
-      window.setTimeout(updateStats, 5000);
 
     }
 
-    if (window.location.toString().match(/profil/i)) {
-
-      updateStats();
 
     }
-  */
 
   }
 
