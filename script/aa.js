@@ -10581,11 +10581,15 @@
 
     function moveTo(x, y) {
 
+      var needsUpdate;
+
       if (x !== undefined && data.x !== x) {
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
+        needsUpdate = true;
         data.y = y;
       }
 
