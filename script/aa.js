@@ -3671,11 +3671,9 @@
 
       var i, j;
 
-      // find and remove from DOM + array
       for (i = objects.items.length - 1, j = 0; i >= j; i--) {
         if (objects.items[i] === item) {
-          removeNodes(objects.items[i].dom);
-          objects.items.splice(i, 1);
+          _removeRadarItem(i);
           break;
         }
       }
