@@ -197,6 +197,8 @@
 
   var gameType;
 
+  var alwaysJamRadar;
+
   var convoyParam = winloc.toLowerCase().indexOf('convoydelay');
 
   // how often the enemy attempts to build convoys
