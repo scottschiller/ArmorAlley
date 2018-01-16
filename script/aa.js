@@ -6129,13 +6129,6 @@
       common.setBottomY(exports, data.bottomY);
 
       data.frameTimeout = new FrameTimeout(FPS * 2, function() {
-
-        // hackish redraw fix for Chrome, where backgroundPosition otherwise doesn't take effect.
-        if (dom.o && features.transform.prop) {
-          dom.o.style.left = data.x + 'px';
-          dom.o.style.top = (data.y - 2) + 'px';
-        }
-
         data.orderComplete = true;
         data.frameTimeout = null;
 
