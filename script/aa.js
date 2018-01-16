@@ -8753,7 +8753,7 @@
       // enemy tanks shoot a little faster
       fireModulus: (options.isEnemy ? 5 : 6),
       vX: (options.isEnemy ? -1 : 1),
-      width: 57,
+      width: 58,
       height: 18,
       halfWidth: 28,
       halfHeight: 9,
