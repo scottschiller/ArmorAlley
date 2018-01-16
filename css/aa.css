@@ -436,30 +436,60 @@ ul.stats-bar .bombs em {
  pointer-events: none;
 }
 
-#world .sprite,
-#world .gpu {
- /* do the GPU thing. */
- transform: translate3d(0,0,0);
- /* does will-change cause more jank or funny rendering? */
- will-change: transform;
+/* specific list of items that benefit from transform (GPU acceleration) */
+#world .chain,
+#world .turret {
+  transform: translate3d(0,0,0);
 }
 
-#world .sprite.offscreen {
+#battlefield .chain,
+#game-tips-list,
+#fuel-line,
+#stars,
+#battlefield .sprite.helicopter,
+#battlefield .sprite.missile-launcher,
+#battlefield .sprite.tank,
+#battlefield .sprite.van,
+#battlefield .sprite.infantry,
+#battlefield .sprite.engineer,
+#battlefield .sprite.cloud1,
+#battlefield .sprite.cloud2,
+#battlefield .sprite.balloon,
+#battlefield .sprite.gunfire,
+#battlefield .sprite.shrapnel,
+#battlefield .turret .sub-sprite,
+#battlefield .sprite .transform-sprite,
+#battlefield .radar-item.parachute-infantry {
+  /* constant animation */
+  will-change: transform;
+}
+
+#world .transform-sprite {
+  /* GPU-accelerated, transform-based CSS animations on sprites. Look ma, no paint! 🎉 */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#world .sprite.offscreen,
+#world .gunfire.offscreen {
   /* JS has determined an element is out of view. free up rendering / GPU resources. */
-  display: none;
   /* does applying / removing transform cause jank? */
-  transform: none;
-  /* don't draw all those expensive animated .GIFs! */
+  /* position-related transforms are applied via JS and will be removed in the same manner. */
+  /* oh yeah, and don't draw all those expensive animated .GIFs! */
   background-image: none !important;
 }
 
+/* hide GPU-accelerated, transform-based animated sprites when exploding. */
+#world .sprite.exploding .transform-sprite {
+ display: none;
+ animation: none;
 #world .bunker,
 #world .bunker.enemy {
  background-image: url(../image/bunker.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAD1BMVEUAAACqqgKqqqqqVQFVVVUlRgN0AAAAAXRSTlMAQObYZgAAAOpJREFUeNqNkgsOwCAIQ8fn/meehAKKLBnJ1FCfFN3zFUTko81zzAw7N+k8MhY2AWLaCRZeQbz03ClbWIYpR0NSqJAD6ZGM/ATcaKj2Dcx5mkPUT20JQMijH7qMjMYqtTMh0tgNEvnWtzE8wwfDjOYQIGaIoh8wM4RUQrB2Q08xtTmtOdSutdeJByxvKF/ldm+JmAK12oQIEgi6DSGana5zsAbzxQi1/6d5q6GYQlDn6ud876hy+BYn2lkSlyqqYqGqtsSMdtbSJQXpWmxHxnXNOjhHgDqjWCKPLVHHwsHSy9tOaNaB2dTNywtycQhoEtVq0gAAAABJRU5ErkJggg==);
  width: 51px;
  height: 25px;
- z-index: 1;
 }
 
 #world .bunker .sub-sprite.arrow {
