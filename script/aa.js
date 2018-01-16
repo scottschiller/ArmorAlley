@@ -10471,6 +10471,7 @@
       if (data.frameCount % data.repairModulus === 0) {
 
         collisionTest(collision, exports);
+        data.frameCount = 0;
 
       }
 
