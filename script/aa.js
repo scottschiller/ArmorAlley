@@ -2413,7 +2413,7 @@
 
     sounds.radarJamming = addSound({
       url: getURL('radar-jamming'),
-      volume: 20
+      volume: 30
     });
 
     sounds.repairing = addSound({
