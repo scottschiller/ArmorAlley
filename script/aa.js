@@ -5918,6 +5918,7 @@
 
         if (data.frameCount % data.fireModulus === 0) {
           fire();
+          data.frameCount = 0;
         }
 
         data.frameCount++;
