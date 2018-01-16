@@ -6655,7 +6655,7 @@
 
   Cloud = function(options) {
 
-    var css, dom, data, exports;
+    var cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
 
     function moveTo(x, y) {
 
@@ -6681,7 +6681,7 @@
 
         // TODO: improve, limit on axes
 
-        data.windOffsetX += (data.x < 0 || Math.random() > 0.5 ? 0.5 : -0.5);
+        data.windOffsetX += (data.x < 0 || Math.random() > 0.5 ? 0.25 : -0.25);
 
         data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
@@ -6726,8 +6726,13 @@
 
     options = options || {};
 
+    cloudType = (Math.random() > 0.5 ? 2 : 1);
+
+    cloudWidth = (cloudType === 2 ? 125 : 102);
+    cloudHeight = (cloudType === 2 ? 34 : 29);
+
     css = inheritCSS({
-      className: 'cloud' + (Math.random() > 0.5 ? 2 : 1)
+      className: 'cloud' + cloudType
     });
 
     data = inheritData({
@@ -6740,10 +6745,10 @@
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
       y: options.y || (96 + parseInt((worldHeight - 96 - 128) * Math.random(), 10)),
-      width: 102,
-      halfWidth: 51,
-      height: 29,
-      halfHeight: 14
+      width: cloudWidth,
+      halfWidth: parseInt(cloudWidth / 2, 10),
+      height: cloudHeight,
+      halfHeight: parseInt(cloudHeight / 2, 10)
     }, options);
 
     dom = {
