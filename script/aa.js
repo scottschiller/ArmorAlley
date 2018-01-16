@@ -5614,7 +5614,7 @@
 
     function animate() {
 
-      var i;
+      var i, spliceArgs;
 
       data.frameCount++;
 
