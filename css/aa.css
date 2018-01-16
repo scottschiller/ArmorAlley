@@ -1722,6 +1722,37 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  display: none;
 }
 
+#game-paused {
+ position: absolute;
+ top: 50%;
+ left: 0px;
+ width: 100%;
+ font-size: 1rem;
+ height: 1rem;
+ margin-top: -0.5rem;
+ text-align: center;
+ color: #ccc;
+ font-weight: 200;
+ text-shadow: 0px 1px 0px #000; /* TODO: review. */
+ z-index: 10;
+ display: none;
+}
+
+#game-paused p {
+ padding: 0.25rem 0.5rem;
+ margin-top: -0.25rem 0px 0px 0px;
+ /* might overlap "game over" screen, etc. */
+ background:rgba(0,0,0,0.75);
+}
+
+body.game-paused #game-tips .tips-container {
+ display: none;
+}
+
+body.game-paused #game-paused {
+ display: block;
+}
+
 #game-tips .tips-container .tips-fader {
  /* overlay tips */
  position: absolute;
