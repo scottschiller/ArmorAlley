@@ -4151,6 +4151,8 @@
 
       battleOver = true;
 
+      utils.css.add(document.body, 'game-over');
+
       stats.displayEndGameStats();
 
     }
