@@ -150,9 +150,18 @@
 
   var useParallax = winloc.match(/parallax/i);
 
+  // feature flags: forcing or preventing transform: translate3d() on radar items
+  // (radar items on GPU can be $$$ / lots of layer compositing.)
+  // by default, Firefox will not get translate3d() on radar items.
+  var forceRadarGPU = winloc.match(/forceradarGPU=1/i);
+  var noRadarGPU = winloc.match(/noRadarGPU=1/i);
+
   // whether off-screen elements are forcefully removed from the DOM.
-  // (probably causes more layout / style recalc than it's worth.)
-  var useDOMPruning = winloc.match(/dompruning/i);
+  // may be expensive up front, and/or cause regular style recalcs
+  // while scrolling the world.
+  var useDOMPruning = !winloc.match(/nodompruning/i);
+
+  var noPause = winloc.match(/nopause/i);
 
   var trackEnemy = winloc.match(/trackenemy/i);
 
@@ -162,6 +171,9 @@
 
   // whether to always "upgrade" Smart Missiles...
   var forceRubberChicken = winloc.match(/chicken/i);
+
+  // can also be enabled by pressing "C".
+  var rubberChickenMode = 'rubber-chicken-mode';
 
   var deg2Rad = 180 / Math.PI;
 
