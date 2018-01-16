@@ -4276,10 +4276,32 @@
 
     }
 
+    function applyAnimatingTransition() {
+      // balloons might be off-screen, then return on-screen
+      // and will not animate unless explicitly enabled.
+      // this adds the animation class temporarily.
+      if (!dom || !dom.o) return;
+
+      // enable transition (balloon turning left or right, or dying.)
+      utils.css.add(dom.o, css.animating);
+
+      data.animationFrameTimeout = new FrameTimeout(FPS * 1, function() {
+        data.animationFrameTimeout = null;
+        // balloon might have been destroyed.
+        if (!dom || !dom.o) return;
+        utils.css.remove(dom.o, css.animating);
+        data.frameTimeout = null;
+      });
+    }
+
     function animate() {
 
       if (data.frameTimeout) {
         data.frameTimeout.animate();
+      }
+
+      if (data.animationFrameTimeout) {
+        data.animationFrameTimeout.animate();
       }
 
       if (!data.dead) {
@@ -4310,6 +4332,8 @@
               utils.css.remove(dom.o, css.facingLeft);
               utils.css.add(dom.o, css.facingRight);
 
+              applyAnimatingTransition();
+
               data.direction = 1;
 
             } else if (data.windOffsetX < 0 && data.direction !== -1) {
@@ -4318,6 +4342,8 @@
 
               utils.css.remove(dom.o, css.facingRight);
               utils.css.add(dom.o, css.facingLeft);
+
+              applyAnimatingTransition();
 
               data.direction = -1;
 
