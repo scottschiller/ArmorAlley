@@ -3596,11 +3596,11 @@
       itemObject.dom.o.style.left = '0px';
 
       if (item.data.bottomAligned) {
-        itemObject.dom.o.style.top = 'auto';
+        itemObject.dom.o.style.top = '';
         itemObject.dom.o.style.bottom = '0px';
       } else {
         itemObject.dom.o.style.top = '0px';
-        itemObject.dom.o.style.bottom = 'auto';
+        itemObject.dom.o.style.bottom = '';
       }
 
       dom.radar.appendChild(itemObject.dom.o);
