@@ -7492,13 +7492,13 @@
 
     function applyStatusUI() {
 
-        dom.statusBar.infantryCount.innerHTML = data.parachutes;
-        dom.statusBar.ammoCount.innerHTML = data.ammo;
-        dom.statusBar.bombCount.innerHTML = data.bombs;
-        dom.statusBar.missileCount.innerHTML = data.smartMissiles;
+      dom.statusBar.infantryCount.innerText = data.parachutes;
+      dom.statusBar.ammoCount.innerText = data.ammo;
+      dom.statusBar.bombCount.innerText = data.bombs;
+      dom.statusBar.missileCount.innerText = data.smartMissiles;
 
-        // hackish, fix endBunkers reference
-        dom.statusBar.fundsCount.innerHTML = game.objects.endBunkers[0].data.funds;
+      // hackish, fix endBunkers reference
+      dom.statusBar.fundsCount.innerText = game.objects.endBunkers[0].data.funds;
 
     }
 
