@@ -483,8 +483,10 @@ ul.stats-bar .bombs em {
 #world .sprite.offscreen,
 #world .gunfire.offscreen {
   /* JS has determined an element is out of view. free up rendering / GPU resources. */
+  display: none; 
   /* does applying / removing transform cause jank? */
   /* position-related transforms are applied via JS and will be removed in the same manner. */
+  transform: none !important;
   /* oh yeah, and don't draw all those expensive animated .GIFs! */
   background-image: none !important;
 }
