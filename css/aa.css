@@ -989,7 +989,7 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  /* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
  transition: transform 0.2s ease-none;
  opacity: 1;
- }
+}
 
 #world .smart-missile.expired {
  transition-property: transform, opacity;
