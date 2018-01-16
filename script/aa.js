@@ -405,12 +405,13 @@
     // Safari 6.0.5 (as of 10/2013) scales text after rasterizing via transform: scale3d(), thus it looks crap. Using document.body.zoom is OK, however.
     // Force-enable transform-based scaling with #forcescaling=1
 
-    if (features.transform.prop && (!isSafari || forceScaling)) {
+    // TODO: review and make sure mobile Safari scales text decently via transform.
+    if (!isSafari || forceScaling || isMobile) {
 
       // newer browsers can do this.
       // TODO: dom.worldWrapper
       var wrapper = document.getElementById('world-wrapper');
-      wrapper.style.marginTop = -((384 / 2) * screenScale) + 'px';
+      wrapper.style.marginTop = -((406 / 2) * screenScale) + 'px';
       wrapper.style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale)) + 'px';
       wrapper.style[features.transform.prop + 'Origin'] = '0px 0px';
       wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
@@ -420,8 +421,10 @@
     } else if (!isOldIE) {
 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
+      // 12/2017 update: Reduce scale by 5% so things still work.
       // Additional note: this won't work in Firefox.
-      document.body.style.zoom = parseInt(screenScale * 100, 10) + '%';
+      screenScale *= 0.95;
+      document.body.style.zoom = (screenScale * 100) + '%';
 
     }
 
