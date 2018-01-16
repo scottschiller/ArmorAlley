@@ -520,7 +520,7 @@ ul.stats-bar .bombs em {
  /* sneaky: modern browsers can use transforms, no need for a second image. */
  background-image: none, url(../image/arrow-right.png);
  transform: rotate(-180deg);
- }
+}
 
 #world .bunker.exploding .sub-sprite.arrow,
 #world .bunker.burning .sub-sprite.arrow {
