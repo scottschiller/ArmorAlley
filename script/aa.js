@@ -4293,7 +4293,7 @@
 
             // TODO: improve, limit on axes
 
-            data.windOffsetX += Math.random() > 0.5 ? -0.5 : 0.5;
+            data.windOffsetX += Math.random() > 0.5 ? -0.25 : 0.25;
 
             data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
