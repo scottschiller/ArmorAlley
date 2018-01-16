@@ -430,6 +430,13 @@
 
   }
 
+  // TODO: create a new FrameTimeout() which adds instance to main animation loop.
+  function setTimeout(callback, delay) {
+    if (debug) console.log('setTimeout', delay, callback);
+    var result = window.setTimeout(callback, delay);
+    return result;
+  }
+
   utils = {
 
     array: (function() {
@@ -1975,7 +1982,7 @@
       delay = 500;
     }
 
-    window.setTimeout(function() {
+    setTimeout(function() {
       playSound.apply(this, args);
     }, delay);
 
@@ -1995,7 +2002,7 @@
 
       playSound(sounds.repairingWrench, exports, {
         onfinish: function() {
-          exports.repairingWrenchTimer = window.setTimeout(function() {
+          exports.repairingWrenchTimer = setTimeout(function() {
             exports.repairingWrenchTimer = null;
             if (isRepairing()) {
               playRepairingWrench.apply(this, args);
@@ -2022,7 +2029,7 @@
 
       playSound(sounds.impactWrench, exports, {
         onfinish: function() {
-          exports.impactWrenchTimer = window.setTimeout(function() {
+          exports.impactWrenchTimer = setTimeout(function() {
             exports.impactWrenchTimer = null;
             if (isRepairing()) {
               playImpactWrench.apply(this, args);
@@ -2908,7 +2915,7 @@
         if (text) {
           // clear after an amount of time, if not -1
           if ((delay === undefined || delay !== -1)) {
-            data.gameTips.announcementTimer = window.setTimeout(setAnnouncement, delay || 5000);
+            data.gameTips.announcementTimer = setTimeout(setAnnouncement, delay || 5000);
           }
         }
 
@@ -3113,10 +3120,10 @@
 
         utils.css.add(orderObject.dom.o, css.building);
 
-        window.setTimeout(function() {
+        setTimeout(function() {
           utils.css.add(orderObject.dom.o, css.ordering);
           /*
-          window.setTimeout(function() {
+          setTimeout(function() {
             // undo
             utils.css.swap(orderObject.dom.o, css.ordered);
           }, 1200);
@@ -3349,14 +3356,14 @@
 
           } else {
 
-            window.setTimeout(dieComplete, 2000);
+            setTimeout(dieComplete, 2000);
 
           }
 
         } else {
 
           // balloon, etc.
-          window.setTimeout(function() {
+          setTimeout(function() {
             utils.css.add(dom.o, css.dead);
           }, 1000);
 
@@ -4440,11 +4447,11 @@
       detachBalloon();
 
       // timeout?
-      window.setTimeout(function() {
+      setTimeout(function() {
 
         utils.css.swap(dom.o, css.exploding, css.burning);
 
-        window.setTimeout(function() {
+        setTimeout(function() {
           utils.css.swap(dom.o, css.burning, css.dead);
           // nothing else to do here - drop the node reference.
           dom.o = null;
@@ -5670,7 +5677,7 @@
         if (counter >= counterMax) {
 
           // HUGE boom, why not.
-          window.setTimeout(function() {
+          setTimeout(function() {
 
             if (sounds.genericExplosion) {
               playSound(sounds.genericExplosion, exports);
@@ -5678,7 +5685,7 @@
               playSound(sounds.genericExplosion, exports);
             }
 
-            window.setTimeout(function() {
+            setTimeout(function() {
 
               var i;
 
@@ -5699,7 +5706,7 @@
         } else {
 
           // big boom
-          window.setTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
+          setTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
 
         }
 
@@ -5998,7 +6005,7 @@
       utils.css.add(dom.o, css.exploding);
 
       // timeout?
-      window.setTimeout(function() {
+      setTimeout(function() {
         removeNodes(dom);
       }, 1000);
 
@@ -7437,11 +7444,11 @@
 
           playSound(sounds.repairing);
 
-          window.setTimeout(function() {
+          setTimeout(function() {
             playRepairingWrench(repairInProgress, exports);
           }, 500 + (Math.random() * 1500));
 
-          window.setTimeout(function() {
+          setTimeout(function() {
             playImpactWrench(repairInProgress, exports);
           }, 500 + (Math.random() * 1500));
 
@@ -7631,7 +7638,7 @@
       utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
 
       if (!data.rotateTimer) {
-        data.rotateTimer = window.setTimeout(function() {
+        data.rotateTimer = setTimeout(function() {
           utils.css.remove(dom.o, (data.rotated ? css.rotatedLeft : css.rotatedRight));
           utils.css.add(dom.o, (data.rotated ? css.facingLeft : css.facingRight));
           data.rotateTimer = null;
@@ -7941,7 +7948,7 @@
       }
 
       // timeout?
-      window.setTimeout(function() {
+      setTimeout(function() {
         utils.css.add(dom.o, css.dead);
         // undo rotate
         if (data.rotated) {
@@ -7965,7 +7972,7 @@
 
       // don't respawn the enemy chopper during tutorial mode.
       if (!data.isEnemy || !tutorialMode) {
-        window.setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+        setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
       }
 
     }
@@ -8634,7 +8641,7 @@
 
           logoHidden = true;
 
-          window.setTimeout(function() {
+          setTimeout(function() {
 
             var overlay = document.getElementById('world-overlay');
 
@@ -8643,7 +8650,7 @@
             utils.css.add(document.getElementById('world'), 'no-blur');
 
             // remove from the DOM eventually
-            window.setTimeout(function() {
+            setTimeout(function() {
 
               overlay.parentNode.removeChild(overlay);
               overlay = null;
@@ -12455,7 +12462,8 @@
               game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
             }
 
-            window.setTimeout(orderNextItem, enemyDelays[i] * 1000);
+
+            setTimeout(orderNextItem, enemyDelays[i] * 1000);
 
             i++;
 
@@ -12474,7 +12482,7 @@
 
         // and begin
         if (!tutorialMode) {
-          window.setTimeout(orderNextItem, 5000);
+          setTimeout(orderNextItem, 5000);
         }
 
       }());
@@ -12863,7 +12871,7 @@
 
       window.location.hash = 'tutorial';
 
-      window.setTimeout(function() {
+      setTimeout(function() {
         window.location.reload();
       }, 1);
 
@@ -12878,7 +12886,7 @@
 
       window.location.hash = '';
 
-      window.setTimeout(function() {
+      setTimeout(function() {
         window.location.reload();
       }, 1);
 
