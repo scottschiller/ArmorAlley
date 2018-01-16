@@ -3688,16 +3688,16 @@
 
           for (i = 0, j = objects.items.length; i < j; i++) {
 
-            left = ((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width) + 'px';
+            left = ((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width);
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
               // eslint-disable-next-line no-mixed-operators
-              top = ((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 35) + 'px';
+              top = ((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 33);
 
             } else {
 
-              top = '0px';
+              top = 0;
 
             }
 
