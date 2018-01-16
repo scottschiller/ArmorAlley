@@ -1835,4 +1835,63 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   padding-right: env(safe-area-inset-right);
 }
 
+.joystick,
+.joystick-point {
+ position: absolute;
+ border: 1px solid rgba(255,255,255,0.33);
+ border-radius: 100%;
+ /* prevent other events on the joystick itself? */
+ pointer-events: none;
+ /* include border in w/h so centering works */
+ box-sizing: border-box;
+}
+
+.joystick {
+ /* TODO: fix dimension -> scale calculations. :D */
+ width: 100px;
+ height: 100px;
+ opacity: 0;
+ transform: scale(0.125);
+ transform-origin: 50% 50%;
+ transition: all 0.15s ease-in-out;
+ transition-property: opacity, transform;
+ background: rgba(255,255,255,0.025);
+}
+
+.joystick.joystick-active {
+ opacity: 1;
+ transform: scale(1);
+ /* slightly longer when appearing */
+ transition-duration: 0.2s;
+}
+
+.joystick-point {
+ width: 50%;
+ height: 50%;
+ top: 50%;
+ left: 50%;
+ margin: -25% 0% 0% -25%;
+ background: rgba(255,255,255,0.15);
+}
+
+/* for mobile. */
+#pointer {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  top: 50%;
+  left: 50%;
+  margin: -6.5px 0px 0px -6.5px;
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=);
+  background-size: contain;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  z-index: 1;
+  display: none;
+ }
+ 
+ body.is-mobile #pointer {
+  display: block;
+ }
+ 
 }

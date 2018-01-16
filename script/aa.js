@@ -2475,6 +2475,307 @@
 
   });
 
+  function Joystick(options) {
+
+    var css, data, dom, exports;
+
+    css = {
+      joystick: 'joystick',
+      joystickPoint: 'joystick-point',
+      active: 'joystick-active'
+    };
+
+    data = {
+      active: false,
+      oJoystickWidth: null,
+      oJoystickHeight: null,
+      oPointWidth: null,
+      oPointHeight: null,
+      oPointer: null,
+      start: {
+        x: null,
+        y: null
+      },
+      move: {
+        x: null,
+        y: null,
+      },
+      inertia: {
+        vX: 0,
+        vY: 0,
+      },
+      pointer: {
+        // percentages
+        x: 50,
+        y: 50,
+      },
+      // linear acceleration / deceleration
+      easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      tweenFrame: 0,
+      tweenFrames: [],
+    };
+
+    dom = {
+      o: null,
+      oJoystick: null,
+      oPoint: null,
+    };
+
+    var getEvent = function(e) {
+      // TODO: improve normalization of touch events.
+      var evt = (e.changedTouches && e.changedTouches[e.changedTouches.length - 1]) || e;
+      return evt;
+    };
+
+    function moveContainerTo(x, y) {
+      var targetX = x - (data.oJoystickWidth / 2);
+      var targetY = y - (data.oJoystickHeight / 2);
+      dom.oJoystick.style.left = targetX + 'px';
+      dom.oJoystick.style.top = targetY + 'px';
+    }
+
+    function resetPoint() {
+      dom.oPoint.style.left = '50%';
+      dom.oPoint.style.top = '50%';
+    }
+
+    function start(e) {
+      data.active = true;
+
+      var evt = getEvent(e);
+
+      data.start.x = evt.clientX;
+      data.start.y = evt.clientY;
+
+      // reposition joystick underneath mouse coords
+      moveContainerTo(data.start.x, data.start.y);
+
+      // re-center the "nub".
+      resetPoint();
+
+      // show joystick UI
+      utils.css.add(dom.oJoystick, css.active);
+
+      // stop touch from causing scroll, too?
+      e.preventDefault();
+
+    }
+
+    function makeTweenFrames(from, to) {
+
+      var frames = [];
+
+      // distance to move in total
+      var deltaX = to.x - from.x;
+      var deltaY = to.y - from.y;
+
+      // local copy of start coords, track position
+      var x = parseFloat(from.x);
+      var y = parseFloat(from.y);
+
+      // create array of x/y coordinates
+      for (var i = 0, j = data.easing.length; i < j; i++) {
+        // move % of total distance
+        x += (deltaX * data.easing[i] * 0.01);
+        y += (deltaY * data.easing[i] * 0.01);
+        frames[i] = {
+          x: x,
+          y: y
+        };
+      }
+
+      return frames;
+
+    }
+
+    function distance(p1, p2) {
+      var x1, y1, x2, y2;
+      x1 = p1[0];
+      y1 = p1[1];
+      x2 = p2[0];
+      y2 = p2[1];
+      // eslint recommends exponentation ** vs. Math.pow(), but ** is Chrome 52+ and not even in IE AFAIK. 😂
+      // eslint-disable-next-line no-restricted-properties
+      return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
+    // circle math hat-tip: duopixel
+    // https://stackoverflow.com/a/8528999
+
+    function limit(x, y) {
+      var halfWidth = data.oJoystickWidth / 2;
+      var halfHeight = data.oJoystickHeight / 2;
+      var radius = halfWidth;
+      var center = [halfWidth, halfHeight];
+      var dist = distance([x, y], center);
+
+      if (dist <= radius) {
+        return {
+          x: x,
+          y: y
+        };
+      }
+
+      x -= center[0];
+      y -= center[1];
+
+      var radians = Math.atan2(y, x);
+
+      return {
+        x: (Math.cos(radians) * radius) + center[0],
+        y: (Math.sin(radians) * radius) + center[1]
+      };
+
+    }
+
+    function movePoint(x, y) {
+      dom.oPoint.style.left = x + '%';
+      dom.oPoint.style.top = y + '%';
+    }
+
+    function setDirection(x, y) {
+
+      var from = {
+        x: (data.pointer.x / 100) * game.objects.view.data.browser.width,
+        y: (data.pointer.y / 100) * game.objects.view.data.browser.height
+      };
+
+      // x/y are relative to screen
+      var to = {
+        x: (x / 100) * game.objects.view.data.browser.width,
+        y: (y / 100) * game.objects.view.data.browser.height
+      };
+
+      data.tweenFrames = makeTweenFrames(from, to);
+
+      // tween can change while animating, i.e. mouse constantly moving.
+      // update tween in-place, when this happens.
+      if (data.tweenFrame >= data.tweenFrames.length) {
+        // console.log('resetting tweenFrame', data.tweenFrame);
+        data.tweenFrame = 0;
+      } else if (data.tweenFrame > 5) {
+        // allow tween to "rewind" slightly, but stay on upward motion curve.
+        // this keeps motion relatively fast during repeated touchmove() events.
+        data.tweenFrame--;
+      }
+
+    }
+
+    function move(e) {
+      // ignore if joystick isn't being dragged.
+      if (!data.active) return;
+
+      var evt = getEvent(e);
+
+      var halfWidth = data.oJoystickWidth / 2;
+      var halfHeight = data.oJoystickHeight / 2;
+
+      // calculate, limit between 0 and width/height.
+      var relativeX = Math.max(0, Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth));
+      var relativeY = Math.max(0, Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight));
+
+      var coords = limit(relativeX, relativeY);
+
+      // limit point to circle coordinates.
+      movePoint(coords.x, coords.y);
+
+      // set relative velocities based on square.
+      setDirection(relativeX, relativeY);
+
+    }
+
+    function end() {
+      if (data.active) {
+        utils.css.remove(dom.oJoystick, css.active);
+        data.active = false;
+      }
+    }
+
+    function refresh() {
+      data.oJoystickWidth = dom.oJoystick.offsetWidth;
+      data.oJoystickHeight = dom.oJoystick.offsetHeight;
+      data.oPointWidth = dom.oPoint.offsetWidth;
+      data.oPointHeight = dom.oPoint.offsetHeight;
+    }
+
+    function addEvents() {
+
+      // for testing from desktop
+      if (debug) {
+        utils.events.add(document, 'mousedown', start);
+        utils.events.add(document, 'mousemove', move);
+        utils.events.add(document, 'mouseup', end);
+      }
+
+      utils.events.add(window, 'resize', refresh);
+
+    }
+
+    function initDOM() {
+      // create joystick and inner point.
+      dom.o = (options && options.o) || document.body;
+
+      dom.oPointer = document.getElementById('pointer');
+
+      var oJoystick = document.createElement('div');
+      oJoystick.className = css.joystick;
+
+      var oPoint = document.createElement('div');
+      oPoint.className = css.joystickPoint;
+
+      oJoystick.appendChild(oPoint);
+
+      dom.o.appendChild(oJoystick);
+
+      dom.oJoystick = oJoystick;
+      dom.oPoint = oPoint;
+
+    }
+
+    function animate() {
+
+      var frame = data.tweenFrames && data.tweenFrames[data.tweenFrame];
+
+      if (frame) {
+
+        dom.oPointer.style.left = frame.x + 'px';
+        dom.oPointer.style.top = frame.y + 'px';
+
+        // update inner state
+        data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
+        data.pointer.y = (frame.y / game.objects.view.data.browser.height) * 100;
+
+        // next!
+        data.tweenFrame++;
+
+        if (exports.onSetDirection) {
+          exports.onSetDirection(data.pointer.x, data.pointer.y);
+        }
+
+      }
+
+    }
+
+    function init() {
+      initDOM();
+      addEvents();
+      // get initial coords
+      refresh();
+    }
+
+    init();
+
+    exports = {
+      animate: animate,
+      start: start,
+      move: move,
+      end: end
+    };
+
+    return exports;
+
+  }
+
   View = function() {
 
     var css, data, dom, events, exports;
