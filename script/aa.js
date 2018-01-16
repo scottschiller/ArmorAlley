@@ -4003,12 +4003,12 @@
                 if (fps > FPS_IDEAL) {
 
                   // over target frame rate. slow down a little.
-                  fpsMultiplier = 0.9;
+                  fpsMultiplier = 0.95;
 
                 } else {
 
                   // faster!
-                  fpsMultiplier = 1.1;
+                  fpsMultiplier = 1.05;
 
                 }
 
