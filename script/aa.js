@@ -7103,7 +7103,7 @@
         }
 
         // timeout?
-        data.deadTimer = window.setTimeout(function() {
+        data.deadTimer = setTimeout(function() {
           hideTrailers();
           removeNodes(dom);
         }, 250);
