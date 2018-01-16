@@ -11515,6 +11515,19 @@
 
       objects.view = new View();
 
+      // allow joystick if in debug mode (i.e., testing on desktop)
+      if (isMobile || debug) {
+
+        objects.joystick = new Joystick();
+
+        objects.joystick.onSetDirection = function(directionX, directionY) {
+          // percentage to pixels (circle coordinates)
+          objects.view.data.mouse.x = ((directionX / 100) * objects.view.data.browser.width);
+          objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
+        };
+
+      }
+
       objects.radar = new Radar();
 
       objects.inventory = new Inventory();
