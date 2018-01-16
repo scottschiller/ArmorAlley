@@ -7010,7 +7010,7 @@
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
-        if (Math.random() >= 0.99) {
+        if (Math.random() >= 0.95) {
 
           game.objects.smoke.push(new Smoke({
             x: data.x,
