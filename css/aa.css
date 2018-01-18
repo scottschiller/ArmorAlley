@@ -1641,6 +1641,19 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  color: #666;
 }
 
+#bottom .rotate-hint {
+  display: none;
+}
+
+#bottom.rotate-hint .rotate-hint {
+  display: inline;
+}
+
+#bottom.rotate-hint .rotate-hint .text {
+  color: #fff;
+  font-weight: bold;
+}
+
 #world .sprite.missile-launcher.building,
 #world .sprite.tank.building {
  margin-bottom: -18px;
