@@ -52,7 +52,7 @@ body {
  image-rendering: pixelated;
  /* non-standard, but quite nice under Firefox */
  image-rendering: -moz-crisp-edges;
- image-rendering: crisp-edges;
+ image-rendering: crisp-edges; /* chrome doesn't seem to implement this */
  /* who knows, for IE */
  -ms-interpolation-mode: nearest-neighbor;
  /* font trickery */
