@@ -276,7 +276,8 @@ body.no-transform .sprite {
  background-position: 0px 0px; /* default when animation finishes */
  background-repeat: no-repeat;
  background-size: contain;
- animation: spinning 0.5s linear infinite;
+ animation: rotating 2s linear infinite;
+ opacity: 0.67;
 }
 
 body.is-mobile {
