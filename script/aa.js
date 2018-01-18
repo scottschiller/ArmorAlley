@@ -146,6 +146,7 @@
   var isFirefox = ua.match(/firefox/i);
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
   var isMobile = ua.match(/mobile/i); // should get iOS.
+  var isiPhone = ua.match(/iphone/i);
   var isOldIE = (navigator.userAgent.match(/MSIE [6-8]/i));
 
   var useParallax = winloc.match(/parallax/i);
@@ -349,6 +350,35 @@
 
   }
 
+  function getLandscapeLayout() {
+
+    // notch position guesses, as well as general orientation.
+    var notchPosition;
+
+    if ('orientation' in window) {
+
+      // Mobile
+      if (window.orientation === 90) {
+        notchPosition = 'left';
+      } else if (window.orientation === -90) {
+        notchPosition = 'right';
+      }
+
+    } else if ('orientation' in window.screen) {
+
+      // Webkit
+      if (window.screen.orientation.type === 'landscape-primary') {
+        notchPosition = 'left';
+      } else if (window.screen.orientation.type === 'landscape-secondary') {
+        notchPosition = 'right';
+      }
+
+    }
+
+    return notchPosition;
+
+  }
+
   function updateScreenScale() {
 
     if (disableScaling) return;
@@ -363,6 +393,8 @@
       var id = 'body-height-element';
       var div = document.getElementById(id);
 
+      var bottom = document.getElementById('bottom');
+
       // make and append once, as necessary.
       if (!div) {
         div = document.createElement('div');
@@ -373,15 +405,27 @@
       // measure.
       offset = parseInt(div.offsetHeight, 10) || 0;
 
-      // console.log('window.innerHeight vs. div.offsetHeight', innerHeight, offset);
-
       // take the smaller one, in any case.
       if (innerHeight < offset) {
+
         // Safari URL / address bar is showing. hack around it.
         // TODO: ignore touch, make user scroll window first?
         console.log('scaling world down slightly because of Safari URL / address bar.');
-        // 50 (pixel height of URL bar) * 2, so world is centered nicely. I think. :D
+        // 50 (~pixel height of URL bar) * 2, so world is centered nicely. I think. :D
         localWorldHeight += 100;
+
+        utils.css.add(bottom, 'rotate-hint');
+
+      } else {
+
+        utils.css.remove(bottom, 'rotate-hint');
+
+        // if we were paused, but rotated and now full-screen
+        // (i.e., landscape and no address bar), resume automagically.
+        if (game.data.paused && getLandscapeLayout()) {
+          game.resume();
+        }
+
       }
 
     }
@@ -2823,6 +2867,10 @@
         // GPU case: Be wide enough to cover parallax scroll effect. browser width + (world width * 0.1)
         dom.stars.style.width = data.browser.width + (data.battleField.width * 0.1) + 'px';
       }
+
+      // helicopters need to know stuff, too.
+      if (game.objects.helicopters[0]) game.objects.helicopters[0].refreshCoords();
+      if (game.objects.helicopters[1]) game.objects.helicopters[1].refreshCoords();
 
     }
 
@@ -9305,6 +9353,7 @@
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
       reset: reset,
+      refreshCoords: refreshCoords,
       rotate: rotate,
       setBombing: setBombing,
       setFiring: setFiring,
@@ -12793,6 +12842,7 @@
 
     exports = {
       addObject: addObject,
+      data: data,
       dom: dom,
       init: initGame,
       objects: objects,
@@ -12831,7 +12881,6 @@
   function orientationChange() {
     // primarily for handling iPhone X, and position of The Notch.
     // apply CSS to <body> per orientation, and iPhone-specific CSS will handle the padding.
-    var notchPosition;
 
     // shortcuts
     var body = document.body;
@@ -12841,21 +12890,7 @@
     var atLeft = 'notch-at-left';
     var atRight = 'notch-at-right';
 
-    if ('orientation' in window) {
-      // Mobile
-      if (window.orientation === 90) {
-        notchPosition = 'left';
-      } else if (window.orientation === -90) {
-        notchPosition = 'right';
-      }
-    } else if ('orientation' in window.screen) {
-      // Webkit
-      if (window.screen.orientation.type === 'landscape-primary') {
-        notchPosition = 'left';
-      } else if (window.screen.orientation.type === 'landscape-secondary') {
-        notchPosition = 'right';
-      }
-    }
+    var notchPosition = getLandscapeLayout();
 
     // inefficient/lazy: remove both, apply the active one.
     remove(body, atLeft);
@@ -12866,6 +12901,10 @@
     } else if (notchPosition === 'right') {
       add(body, atRight);
     }
+
+    // helicopters need to know stuff, too.
+    if (game.objects.helicopters[0]) game.objects.helicopters[0].refreshCoords(true);
+    if (game.objects.helicopters[1]) game.objects.helicopters[1].refreshCoords();
 
   }
 
@@ -12881,7 +12920,7 @@
     if (isMobile) {
       utils.css.add(document.body, 'is-mobile');
       // if iPads etc. get The Notch, this will need updating. as of 01/2018, this is fine.
-      if (navigator.userAgent.match(/iphone/i)) {
+      if (isiPhone) {
         /**
          * iPhone X notch detection shenanigans. AA should avoid the notch,
          * but doesn't need to pad the right end of the screen - thus, we detect

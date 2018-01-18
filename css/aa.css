@@ -2412,4 +2412,34 @@ body.is-mobile.game-over #mobile-controls {
   display: block;
  }
  
+ #mobile-landscape-tip {
+   position: absolute;
+   display: none;
+   top: 0px;
+   left: 0px;
+   width: 100%;
+   text-align: center;
+   height: 1rem;
+   line-height: 1rem;
+   margin-top: -1.5rem;
+ }
+
+@media screen and (orientation:portrait) {
+  body.is-mobile #mobile-landscape-tip {
+    display: block;
+  }
+}
+
+body.is-mobile .hide-on-mobile,
+body:not(.is-mobile) .mobile-only {
+  display: none;
+}
+
+@media screen and (orientation:portrait) {
+  #game-paused .mobile-only {
+    font-size: 0.75rem;
+  }
+  body.game-paused #mobile-controls {
+    display: none;
+  }
 }

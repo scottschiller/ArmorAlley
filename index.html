@@ -71,6 +71,8 @@
          <p id="game-description">Choose your level of comfort.</p>
         </div>
 
+        <p id="mobile-landscape-tip">This game is best enjoyed in landscape view.</p>
+
        </div>
 
       </div>
@@ -400,14 +402,17 @@
 
      <div id="help">
       <span id="exit">
-        <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit <span id="exit-emoji"></span></a>
-        |
+       <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit <span id="exit-emoji"></span></a>
+       |
       </span>
       <a href="#noscale=1" title="Toggle 1:1 letterbox vs. MS-DOS-era resolution" onclick="return window.aa.toggleScaling(true)" class="static">scaling</a>
-      |
-      <a href="#mute=1" title="Toggle sound effects" onclick="return window.aa.toggleSound()" class="static">sound</a>
+      <span class="toggle-sound">|</span>
+      <a href="#mute=1" title="Toggle sound effects" onclick="return window.aa.toggleSound()" class="toggle-sound static">sound</a>
       | 
       <a href="http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/" title="Armor Alley Web Prototype: About the game, credits and thank-yous" class="static" target="_blank">about</a>
+      <span class="rotate-hint">| 
+       <span class="text">Not quite full-screen? Try rotating your phone to portrait, then back to landscape.</span>
+      </span>
      </div>
 
    </div>
