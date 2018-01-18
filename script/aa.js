@@ -2722,6 +2722,7 @@
     function end() {
       if (data.active) {
         utils.css.remove(dom.oJoystick, css.active);
+        data.tweenFrame = 0;
         data.active = false;
       }
     }
@@ -2769,24 +2770,26 @@
 
     function animate() {
 
+      // only move if joystick is active.
+      // i.e., stop any animation on release.
+      if (!data.active) return;
+
       var frame = data.tweenFrames && data.tweenFrames[data.tweenFrame];
 
-      if (frame) {
+      if (!frame) return;
 
-        dom.oPointer.style.left = frame.x + 'px';
-        dom.oPointer.style.top = frame.y + 'px';
+      dom.oPointer.style.left = frame.x + 'px';
+      dom.oPointer.style.top = frame.y + 'px';
 
-        // update inner state
-        data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
-        data.pointer.y = (frame.y / game.objects.view.data.browser.height) * 100;
+      // update inner state
+      data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
+      data.pointer.y = (frame.y / game.objects.view.data.browser.height) * 100;
 
-        // next!
-        data.tweenFrame++;
+      // next!
+      data.tweenFrame++;
 
-        if (exports.onSetDirection) {
-          exports.onSetDirection(data.pointer.x, data.pointer.y);
-        }
-
+      if (exports.onSetDirection) {
+        exports.onSetDirection(data.pointer.x, data.pointer.y);
       }
 
     }
