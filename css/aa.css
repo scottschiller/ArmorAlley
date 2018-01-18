@@ -322,7 +322,9 @@ body.is-mobile #game-status li:last-of-type {
 }
 
 #game-status-bar #radar {
+ position: relative;
  height: 32px;
+ overflow: hidden;
 }
 
 #world-wrapper.incoming-smart-missile {
