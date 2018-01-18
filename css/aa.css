@@ -240,7 +240,13 @@ body.no-transform .sprite {
 }
 
 #world-wrapper b {
- font-weight: 200;
+ font-weight: 500;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+ body.is-mobile #world-wrapper b {
+  font-weight: 200;
+ }
 }
 
 #game-status-bar {
