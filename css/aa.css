@@ -1885,7 +1885,7 @@ body.game-paused #game-paused {
  padding-left: 800px;
 }
 
-#game-tips .tips-container div span {
+#game-tips .tips-container div span:not(.hide-on-mobile) {
  display: inline-block;
  width: 1000px;
 }
@@ -1937,7 +1937,7 @@ body.is-mobile #game-tips #game-announcements {
  vertical-align: middle;
 }
 
-#game-tips #game-announcements span {
+#game-tips #game-announcements span:not(.hide-on-mobile) {
  display: block;
  width: 100%;
 }
