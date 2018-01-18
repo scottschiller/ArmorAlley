@@ -1896,6 +1896,16 @@ body.game-paused #game-paused {
  line-height: 1.5em;
 }
 
+body.is-mobile #world.tutorial-mode #game-tips .tips-container {
+  /* just a bit smaller. */
+  font-size: 1em;
+}
+
+body.is-mobile #game-tips #game-announcements {
+  /* a bit smaller. */
+  width: 75%;
+}
+
 #world.tutorial-mode #game-tips .tips-container h3 {
  font-size: 2em;
  font-weight: 200;
