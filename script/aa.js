@@ -3256,6 +3256,10 @@
       },
 
       touchstart: function(e) {
+        // if the paused screen is showing, resume the game.
+        if (game.data.paused) {
+          game.resume();
+        }
         var touch = e.touches && e.touches[0];
         var i, j;
         var targetTouches = e.targetTouches;
