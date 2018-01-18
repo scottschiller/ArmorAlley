@@ -2816,7 +2816,7 @@
 
   View = function() {
 
-    var css, data, dom, events, exports;
+    var costs, css, data, dom, events, exports;
 
     function setLeftScroll(x) {
 
@@ -2974,6 +2974,39 @@
       }
 
       data.frameCount++;
+
+    }
+
+    function updateFundsUI() {
+
+      // based on funds, update "affordability" bits of UI.
+      var playerFunds = game.objects.endBunkers[0].data.funds;
+
+      var o = document.getElementById('player-status-bar');
+
+      var toAdd = [];
+      var toRemove = [];
+
+      for (var item in costs) {
+        if (costs.hasOwnProperty(item)) {
+          // mark as "can not afford".
+          if (playerFunds < costs[item].funds) {
+            toAdd.push(costs[item].css);
+          } else {
+            toRemove.push(costs[item].css);
+          }
+        }
+      }
+
+      var i, j;
+
+      // add/remove expect space-delimited strings.
+      for (i = 0, j = toAdd.length; i < j; i++) {
+        utils.css.add(o, toAdd[i]);
+      }
+      for (i = 0, j = toRemove.length; i < j; i++) {
+        utils.css.remove(o, toRemove[i]);
+      }
 
     }
 
@@ -3285,6 +3318,29 @@
 
     };
 
+    costs = {
+      missileLauncher: {
+        funds: 3,
+        css: 'can-not-order-missile-launcher'
+      },
+      tank: {
+        funds: 4,
+        css: 'can-not-order-tank'
+      },
+      van: {
+        funds: 2,
+        css: 'can-not-order-van',
+      },
+      infantry: {
+        funds: 5,
+        css: 'can-not-order-infantry',
+      },
+      engineers: {
+        funds: 5,
+        css: 'can-not-order-engineer'
+      }
+    };
+
     initView();
 
     exports = {
@@ -3293,7 +3349,8 @@
       dom: dom,
       events: events,
       setAnnouncement: setAnnouncement,
-      setLeftScroll: setLeftScroll
+      setLeftScroll: setLeftScroll,
+      updateFundsUI: updateFundsUI
     };
 
     return exports;
@@ -3378,6 +3435,8 @@
         if (game.objects.endBunkers[0].data.funds >= cost) {
 
           game.objects.endBunkers[0].data.funds -= cost;
+
+          game.objects.view.updateFundsUI();
 
           if (!data.isEnemy) {
             game.objects.helicopters[0].updateStatusUI();
@@ -4899,6 +4958,7 @@
         if (data.isEnemy) {
           // local player
           game.objects.endBunkers[0].data.funds += capturedFunds;
+          game.objects.view.updateFundsUI();
         } else {
           // CPU
           game.objects.endBunkers[1].data.funds += capturedFunds;
@@ -4972,6 +5032,10 @@
           console.log('the enemy now has ' + data.funds + ' funds.');
         }
         */
+
+        if (!data.isEnemy) {
+          game.objects.view.updateFundsUI();
+        }
 
         objects.helicopter.updateStatusUI();
 
@@ -7758,6 +7822,46 @@
       dom.statusBar.ammoCount.innerText = data.ammo;
       dom.statusBar.bombCount.innerText = data.bombs;
       dom.statusBar.missileCount.innerText = data.smartMissiles;
+
+      // TODO: optimize
+      var statsBar = document.getElementById('stats-bar');
+      var mobileControls;
+      var mobileControlItems;
+
+      if (isMobile) {
+        mobileControls = document.getElementById('mobile-controls');
+        mobileControlItems = mobileControls.querySelectorAll('.mobile-controls-right li');
+      }
+
+      // TODO: optimize
+      var infantryCount = statsBar.querySelectorAll('li.infantry-count')[0];
+      var missiles = statsBar.querySelectorAll('li.missiles')[0];
+      var ammo = statsBar.querySelectorAll('li.ammo')[0];
+      var bombs = statsBar.querySelectorAll('li.bombs')[0];
+
+      var unavailable = 'weapon-unavailable';
+
+      function modify(o, count) {
+        if (count > 0) {
+          utils.css.remove(o, unavailable);
+        } else {
+          utils.css.add(o, unavailable);
+        }
+      }
+
+      modify(infantryCount, data.parachutes);
+      modify(ammo, data.ammo);
+      modify(bombs, data.bombs);
+      modify(missiles, data.smartMissiles);
+
+      if (isMobile) {
+        // TODO: hackish. fix.
+        // infantry, missiles, guns, bombs.
+        modify(mobileControlItems[0], data.parachutes);
+        modify(mobileControlItems[1], data.smartMissiles);
+        modify(mobileControlItems[2], data.ammo);
+        modify(mobileControlItems[3], data.bombs);
+      }
 
       // hackish, fix endBunkers reference
       dom.statusBar.fundsCount.innerText = game.objects.endBunkers[0].data.funds;
