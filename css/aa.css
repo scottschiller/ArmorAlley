@@ -685,8 +685,8 @@ ul.stats-bar .bombs em {
  /*
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA2BAMAAABkV5dgAAAAGFBMVEUAAAAAAAAFVQEOqgJVVVWqqqr/qgFVVQFUkEzkAAAAAXRSTlMAQObYZgAAARhJREFUeF7tlEFqwzAQRZMbeApu1vky2Uvf7gHsuUACPkC9yAHsRa/fGVTRlopQSJb5WCB4fEa2H9r9yF48sqvFwMe2JcQa3h/WjW8JYGwq1TUwnRYEUn5Ny1WQOF2dRikx+t44tarThUwAAj3R6Ks0mSbvGjxKiU+8+maF0yUQEE8ZewBohAROBnOOTaYrEJygEIAWaXK3Hmbatuf57yO5K5cRJFFeA56JQ54rnYI9gc5gz4TOtlpoqzpSJ0AnUkcEW6pT/KKdhl4VnSptIe+Hc6byMgbreDdB8z5MQ/ka9SNn+Eg3nm7MNTtuuhHvcGO46YbccmP+dqMix8PdeLohVTX+dW+0dTeKOffcG5eaG+U31s/8BT8BHhzBEwBsJKEAAAAASUVORK5CYII=);
  */
- width: 57px;
- height: 18px;
+ width: 58px;
+ height: 19px;
  z-index: 2;
  background-position: 0px 100%;
  /* 30 fps? why not. */
