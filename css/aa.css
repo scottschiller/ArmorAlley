@@ -2058,6 +2058,122 @@ body.game-paused #game-paused {
 #world.x-ray #battlefield .sprite {
  background: transparent !important;
  outline: 1px solid #339933;
+}
+
+#player-status-bar {
+  font-size: 80%;
+  font-weight: 400;
+  color: #999;
+  text-shadow: 0px 1px 0px #000;
+  text-align: center;
+}
+
+#player-status-bar .spacer {
+  min-width: 5%;
+}
+
+body.is-mobile #bottom .toggle-sound,
+body.is-mobile #player-status-bar .inventory-item,
+body.is-mobile #player-status-bar .spacer {
+  /* hide outright */
+  display: none;
+}
+
+body.is-mobile #player-status-bar .stats-item {
+  /* less items, so center-align. */
+  text-align: center;
+}
+
+#player-status-bar span.letter-block {
+  display: inline-block;
+  color: #666;
+  font-weight: 400;
+  vertical-align: middle;
+  min-width: 8px;
+  height: 12px;
+  line-height: 12px;
+  border: 1px solid #161616;
+  background-clip: padding-box;
+  border-radius: 2px;
+  padding: 0px 4px;
+  text-align: center;
+  background: #111;
+  margin-right: 0.15rem;
+  margin-top: -1px; /* align with nearby text, e.g., bomb count */
+}
+
+/* hi-dpi */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+ /* slightly thinner text */
+ #player-status-bar span.letter-block {
+  font-weight: 300;
+ }
+ #game-tips .tips-container {
+  /* thinner, but brighter. */
+  font-weight: 300;
+  color: #ccc;
+ }
+}
+
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 192dpi) {
+  /* iPhone X and friends? */
+  body.is-mobile #player-status-bar span.letter-block {
+   font-weight: 100;
+  }
+  body.is-mobile #game-tips .tips-container {
+   /* thinner, but brighter. */
+   font-weight: 100;
+   color: #ccc;
+  }
+}
+
+body.is-mobile #player-status-bar span.letter-block {
+  display: none;
+}
+
+body.is-mobile div#player-status-bar {
+  position: relative;
+  z-index: 4;
+}
+
+body.is-mobile #player-status-bar .inventory-item:hover,
+body.is-mobile #player-status-bar .inventory-item:active {
+  background-color: #999;
+  border-color: #fff;
+}
+
+#player-status-bar .inventory-item a {
+  display: inline-block;
+  vertical-align: middle;
+  background-size: contain;
+  background-repeat: no-repeat;
+  /* annoying vertical alignment fix */
+  margin-top: -1px;
+}
+
+#player-status-bar a {
+  /* inventory ordering */
+  filter: grayscale(0);
+  transition: filter 0.33s ease-out;
+  transition-property: filter, opacity;
+}
+
+/* grey out items when ordering is not possible. */
+#player-status-bar.can-not-order-missile-launcher .missile-launcher,
+#player-status-bar.can-not-order-tank .tank,
+#player-status-bar.can-not-order-van .van,
+#player-status-bar.can-not-order-infantry .infantry,
+#player-status-bar.can-not-order-engineer .engineer,
+/* and mobile controls */
+#mobile-controls.can-not-order-missile-launcher .missile-launcher,
+#mobile-controls.can-not-order-tank .tank,
+#mobile-controls.can-not-order-van .van,
+#mobile-controls.can-not-order-infantry .infantry,
+#mobile-controls.can-not-order-engineer .engineer {
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
 #mobile-controls {
   position: absolute;
   top: 0px;
@@ -2083,6 +2199,15 @@ body.is-mobile #mobile-controls {
   overflow: hidden;
 }
 
+@media screen and (orientation:portrait) {
+  /* mobile, portrait: smaller controls. */
+  body.is-mobile #mobile-controls .mobile-controls-left,
+  body.is-mobile #mobile-controls .mobile-controls-right {
+    min-width: 50px;
+    width: 10%;
+  }
+}
+
 #mobile-controls .mobile-controls-left {
   left: 0px;
 }
@@ -2093,12 +2218,20 @@ body.is-mobile #mobile-controls {
 
 body.is-mobile.notch-at-left #mobile-controls .mobile-controls-left {
   /* iPhone X, landscape mode: avoid overlapping notch at left. */
-  padding-left: env(safe-area-inset-left);
+  left: env(safe-area-inset-left);
 }
 
 body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   /* iPhone X, landscape mode: avoid overlapping notch at right. */
-  padding-right: env(safe-area-inset-right);
+  right: env(safe-area-inset-right);
+}
+
+#mobile-controls .mobile-controls-left {
+  padding-left: 2px;
+}
+
+#mobile-controls .mobile-controls-right {
+  padding-right: 2px;
 }
 
 #mobile-controls .mobile-controls-left li,
@@ -2111,26 +2244,33 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
 #mobile-controls li {
   position: relative;
   vertical-align: top;
-  height: 48px;
+  width: 100%;
+  height: 50px;
   box-sizing: border-box;
   line-height: 1rem;
   margin: 0px;
   margin-bottom: 1px;
   padding: 0px;
+  border: 1px dotted rgba(255,255,255,0.133);
+  border-bottom-color: transparent;
   vertical-align: middle;
   text-align: center;
-  font-size: 6px; /* microfiche (OK on mobile - note it gets scaled.) */
-  background-color: transparent;
+  font-size: 7px; /* microfiche, but OK on mobile. */
+  /* image/checkerboard-black-mask-75percent.png */
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlO/ABXOf08AAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
+}
+
+#mobile-controls li:last-of-type {
+  border-bottom-color: rgba(255,255,255,0.133);
 }
 
 #mobile-controls li a {
   position: relative;
   display: flex;
-  color: #999;
+  color: #ccc;
   text-shadow: 0px 1px 0px #000;
   text-decoration: none;
-  background-color: rgba(0,0,0,0.05);
-  border-radius: 5%;
+  background-color: rgba(0,0,0,0.1);
   align-items: center;
   width: 100%;
   height: 100%;
@@ -2145,12 +2285,15 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   background-position: 50% 50%;
   line-height: 1.5rem;
   background-repeat: no-repeat;
+  transition: background-color 0.15s ease-out;
  }
  
  #mobile-controls li a.active {
-  background-color: rgba(255,255,255,0.25);
+  background-color: rgba(27, 107, 27, 0.45);
   background-repeat: no-repeat;
   background-position: 50% 50%;
+  /* immediately go light. fade on release. */
+  transition-duration: 0;
  }
  
  #mobile-controls li span {
@@ -2158,11 +2301,57 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   bottom: 0px;
   width: 100%;
   text-align: center;
-  line-height: 0.85rem;
+  line-height: 1rem;
   letter-spacing: 0.05rem;
   /* ignore events, let the link get it. */
   pointer-events: none;
  }
+
+@media screen and (orientation:portrait) {
+  /* hide text when in portrait mode. */
+  /* only show if on a very wide device, e.g., ipad / tablet. */
+  body.is-mobile #player-status-bar span.letter-block {
+    display: none;
+  }
+  body.is-mobile #mobile-controls li span {
+    display: none;
+  }
+  /* smaller inventory sizes */
+  #mobile-controls li.inventory-item a.tank,
+  #mobile-controls li.inventory-item a.missile-launcher {
+    background-size: 66%;
+  }
+
+  #mobile-controls li.inventory-item a.van {
+    background-size: 50%;
+  }
+
+  #mobile-controls li.inventory-item a.infantry,
+  #mobile-controls li.inventory-item a.engineer {
+    background-size: 25%;
+  }
+
+  /* helicopter weapons */
+  #mobile-controls li.inventory-item a.parachute-infantry,
+  #mobile-controls li.inventory-item a.ammo {
+    background-size: 25%;
+  }
+  #mobile-controls li.inventory-item a.smart-missile {
+    background-size: 20%;
+  }
+  #mobile-controls li.inventory-item a.bombs {
+    background-size: 6.5%;
+  }
+}
+
+body.is-mobile.game-over #mobile-controls {
+  /* hide when game is over. */
+  display: none !important;
+}
+
+#world-wrapper {
+  transition: filter 0.5s ease-in;
+}
 
 .joystick,
 .joystick-point {
