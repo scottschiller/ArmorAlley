@@ -72,8 +72,7 @@ body {
  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=), crosshair;
 }
 
-body.no-transform .sprite,
-body.no-transform .gpu {
+body.no-transform .sprite {
  /* unsupported or GPU disable override via #notransform=1 */
  transform: none !important;
 }
