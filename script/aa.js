@@ -8106,21 +8106,54 @@
 
     }
 
-    function refreshCoords() {
+    function refreshCoords(fromOrientationEvent) {
 
       var view = game.objects.view;
+      var controlsWidth;
+      var landscapeDetail;
+
+      // roughly accurate for iPhone X, 01/2018.
+      var notchWidth = 50;
 
       // determine max X and Y coords
       data.xMax = view.data.battleField.width - data.width;
       data.yMax = view.data.world.height - data.height - 2; // including border
 
+      // if mobile, set xMin and mobileControlsWidth (referenced in animate()) to prevent chopper flying over/under mobile controls.
+      if (isMobile) {
+
+        // account for mobile controls, if in landscape mode.
+        landscapeDetail = getLandscapeLayout();
+
+        if (landscapeDetail) {
+
+          controlsWidth = parseInt(document.querySelectorAll('#mobile-controls ul')[0].offsetWidth, 10);
+
+          // slight offsets, allow helicopter to be very close to controls.
+          // some affordance for The Notch, on iPhone (just assume for now, because FFS.)
+          data.xMaxOffset = (controlsWidth * 0.75) + (isiPhone && landscapeDetail === 'right' ? notchWidth : 0);
+          data.xMin = (controlsWidth * 0.75) + (isiPhone && landscapeDetail === 'left' ? notchWidth : 0);
+
+        } else {
+
+          // portrait mode: just forget it altogether and let helicopter go atop controls.
+          // compensate for half of helicopter width being subtracted, too.
+          data.xMaxOffset = (-data.width * 0.5);
+          data.xMin = (-data.width * 0.5);
+
+          if (fromOrientationEvent) {
+            // pause and see if that's what the user wanted, though.
+            game.pause();
+          }
+
+        }
+
+      }
+
       // haaaack
       if (!data.yMin) {
         data.yMin = document.getElementById('game-status-bar').offsetHeight;
       }
-
-      updateScreenScale();
-      applyScreenScale();
 
     }
 
@@ -9311,6 +9344,7 @@
       pilot: true,
       xMin: 0,
       xMax: null,
+      xMaxOffset: 0,
       yMin: 0,
       yMax: null,
       vX: 0,
