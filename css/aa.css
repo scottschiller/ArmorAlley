@@ -113,6 +113,13 @@ body.no-transform .sprite {
  opacity: 1;
 }
 
+@media screen and (orientation:portrait) {
+ #logo {
+   /* hack! fit within iPhone X portrait dimensions. */
+   transform: scale(0.57);
+ }
+}
+
 #logo h1 {
  visibility: hidden;
  width: 0px;
