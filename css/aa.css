@@ -1805,16 +1805,17 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
 
 #game-tips .tips-container {
  position: absolute;
- top: 33%;
+ top: 35%;
  left: 50%;
  margin: -0.5em auto 0px -400px;
  padding: 0px;
  font-size: 1.1em;
  line-height: 1.5em;
  width: 800px;
- color: #ccc;
- font-weight: 200; /* 100 isn't legible when moving, even on retina. */
+ color: #777;
+ font-weight: 400; /* 100 isn't legible when moving, even on retina. */
  letter-spacing: 0.04em; /* a little odd */
+ text-shadow: 0px 1px 0px #000; /* TODO: review. */
  overflow: hidden;
  display: none;
 }
