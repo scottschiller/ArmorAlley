@@ -2371,7 +2371,12 @@ body.is-mobile.game-over #mobile-controls {
 .joystick,
 .joystick-point {
  position: absolute;
- border: 1px solid rgba(255,255,255,0.33);
+ /**
+  * hide for now. safari has some sort of redraw bug
+  * on desktop + iOS, the outer border gets gaps
+  * when the inner joystick nub is moving around.
+  */
+ /* border: 1px dotted rgba(255,255,255,0.33); */
  border-radius: 100%;
  /* prevent other events on the joystick itself? */
  pointer-events: none;
