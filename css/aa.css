@@ -133,15 +133,19 @@ body.no-transform .sprite {
 
 #world.blurred #battlefield,
 #world.blurred #game-tips .tips-container,
-#world.blurred #top-bar {
+#world.blurred #top-bar,
+#world.blurred #mobile-controls,
+#world.blurred #pointer {
  filter: blur(2px);
  transition: filter 0.5s ease-in-out;
 }
 
 #world.blurred.no-blur #battlefield,
 #world.blurred.no-blur #game-tips .tips-container,
-#world.blurred.no-blur #top-bar {
- filter: blur(0px);
+#world.blurred.no-blur #top-bar,
+#world.blurred.no-blur #mobile-controls,
+#world.blurred.no-blur #pointer {
+ filter: none;
 }
 
 #game-menu {
@@ -193,6 +197,7 @@ body.no-transform .sprite {
  font-size: 0.9rem;
  vertical-align: middle;
  filter: grayscale(0.5);
+ pointer-events: none;
 }
 
 #exit {
