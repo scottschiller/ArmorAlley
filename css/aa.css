@@ -279,11 +279,30 @@ body.no-transform .sprite {
  animation: spinning 0.5s linear infinite;
 }
 
-/*
-#game-status-bar.repair-complete {
- background-color: #ff33ff;
+body.is-mobile {
+ /* on mobile, aggressively disable selection. this is a game, not a document. ;) */
+ -webkit-user-select: none;
+ user-select: none;
 }
-*/
+
+/* a little more spacing on mobile. */
+body.is-mobile #game-status li:first-of-type {
+ margin-left: 1rem;
+}
+
+body.is-mobile #game-status li:last-of-type {
+ margin-right: 0.6rem;
+}
+
+@media screen and (orientation:portrait) {
+ /* remove for portrait mode. */
+ body.is-mobile #game-status li:first-of-type {
+  margin-left: 0.25rem;
+ }
+ body.is-mobile #game-status li:last-of-type {
+  margin-right: 0.25rem;
+ }
+}
 
 #game-status {
  position: absolute;
@@ -301,15 +320,6 @@ body.no-transform .sprite {
  text-indent: 0.25em;
  margin-right: 1em;
 }
-
-/*
-#game-status li:last-of-type {
- position: absolute;
- text-align: right;
- right: 0.5em;
- opacity: 0.5;
-}
-*/
 
 #game-status-bar #radar {
  height: 32px;
@@ -372,8 +382,58 @@ body.no-transform .sprite {
 }
 
 ul.stats-bar li {
- vertical-align: top;
- text-align: center;
+ min-width: 5%;
+ padding-right: 1% !important;
+ text-align: left;
+}
+
+body.is-mobile ul.stats-bar li {
+  /* bigger! mobile controls are moved to sides, so we have way more room. */
+  min-width: 10%;
+}
+
+body.is-mobile #player-status-bar .spacer {
+  /* hide entirely on mobile? */
+  display: none;
+}
+
+ul.stats-bar li.stats-item {
+  padding-right: 1.5% !important;
+}
+
+ul.stats-bar li.stats-item,
+#mobile-controls li.inventory-item {
+  filter: grayscale(0);
+  transition: filter 0.33s ease-out;
+  transition-property: filter, opacity;
+}
+
+ul.stats-bar li.stats-item.weapon-unavailable,
+#mobile-controls li.inventory-item.weapon-unavailable {
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
+ul.stats-bar li .double-wide {
+  display: inline-block;
+  min-width: 0.825rem; /* prevent 3 to 2 characters from causing UI shift. */
+}
+
+@media only screen and (max-width: 1024px) {
+  /* collapse a bit on smaller screens (but not hi-DPI.) */
+  body:not(.is-mobile) {
+    ul.stats-bar li {
+      padding-right: 0.75% !important;
+    }
+
+    ul.stats-bar li.stats-item {
+      min-width: 0%;
+    }
+
+    #player-status-bar .spacer {
+      display: none;
+    }
+  }
 }
 
 ul.stats-bar em {
@@ -392,9 +452,8 @@ ul.stats-bar .lives em {
  margin-left: 0.5em;
 }
 
-ul.stats-bar .infantry {
+ul.stats-bar .infantry-count {
  background: transparent !important;
- width: 20% !important;
 }
 
 ul.stats-bar .infantry em {
