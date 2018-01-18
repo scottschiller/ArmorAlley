@@ -1819,6 +1819,12 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  display: none;
 }
 
+@media screen and (orientation:portrait) {
+  body.is-mobile #game-tips .tips-container {
+    font-size: 0.67em;
+  }
+}
+
 #game-paused {
  position: absolute;
  top: 50%;
