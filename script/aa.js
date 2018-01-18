@@ -9098,7 +9098,7 @@
         // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
         if (!data.isEnemy) {
-          newX = Math.max(view.data.battleField.scrollLeft + (data.width / 2), Math.min((view.data.browser.width + view.data.battleField.scrollLeft) - (data.width * 1.5), newX));
+          newX = Math.max(view.data.battleField.scrollLeft + (data.width / 2) + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
         }
 
         moveTo(newX, data.y + data.vY);
