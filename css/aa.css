@@ -681,7 +681,6 @@ ul.stats-bar .bombs em {
  border-left: 1px dotted #fff;
  border-right: 1px dotted #fff;
  top: 0px;
- z-index: -1;
 }
 
 #world .missile-launcher {
