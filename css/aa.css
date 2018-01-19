@@ -2101,6 +2101,16 @@ body.is-mobile #game-tips #game-announcements {
  margin-right: 0.5em;
 }
 
+body.is-mobile #help {
+ margin-left: 2em;
+}
+
+@media screen and (orientation:portrait) {
+  body.is-mobile #help {
+    margin-left: 0.25rem;
+  }
+}
+
 #help a {
  color: #009900;
  text-decoration: none;
