@@ -101,8 +101,55 @@
          <div id="fuel-line"></div>
         </div>
 
-        <ul class="stats-bar">
-         <li class="lives"><em>Lives:</em> <span id="lives-count">&infin;</span></li><li class="infantry"><em>Infantry:</em> <span id="infantry-count">1</span></li><li class="missiles"><em>Missiles:</em> <span id="missile-count">2</span></li><li class="ammo"><em>Ammo:</em> <span id="ammo-count">64</span></li><li class="bombs"><em>Bombs:</em> <span id="bomb-count">10</span></li>
+        <ul id="stats-bar" class="stats-bar">
+
+         <li class="inventory-item">
+          <span class="letter-block">M</span> <a href="#" onclick="return false" data-keyMap="missileLauncher" title="Missile launcher (3 funds)" class="missile-launcher"></a>
+         </li>
+
+         <li class="inventory-item">
+          <span class="letter-block">T</span> <a href="#" onclick="return false" data-keyMap="tank" title="Tank (4 funds)" class="tank"></a>
+         </li>
+
+         <li class="inventory-item">
+          <span class="letter-block">V</span> <a href="#" onclick="return false" data-keyMap="van" title="Van (2 funds)" class="van"></a>
+         </li>
+
+         <li class="inventory-item">
+          <span class="letter-block">I</span> <a href="#" onclick="return false" data-keyMap="infantry" title="Infantry (5 funds)" class="infantry"></a>
+         </li>
+
+         <li class="inventory-item">
+          <span class="letter-block">E</span> <a href="#" onclick="return false" data-keyMap="engineer" title="Engineers (5 funds)" class="engineer"></a>
+         </li>
+
+         <li class="spacer"></li>
+        
+         <!-- not implemented. -->
+         <!--
+         <li class="lives"><em>Lives:</em> <span id="lives-count">&infin;</span></li>
+         -->
+
+         <li class="stats-item infantry-count">
+          <span class="letter-block">Space</span>
+          <em>Infantry:</em> <span id="infantry-count">1</span>
+         </li>
+
+         <li class="stats-item missiles">
+          <span class="letter-block">X</span>
+          <em>Smart Missiles:</em> <span id="missile-count">2</span>
+         </li>
+
+         <li class="stats-item ammo">
+          <span class="letter-block">Shift</span>
+          <em>Ammo:</em> <span id="ammo-count" class="double-wide">64</span>
+         </li>
+
+         <li class="stats-item bombs">
+          <span class="letter-block">Ctrl</span>
+          <em>Bombs:</em> <span id="bomb-count" class="double-wide">10</span>
+         </li>
+
         </ul>
 
         <div id="repair-complete"></div>
