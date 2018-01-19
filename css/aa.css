@@ -2429,6 +2429,18 @@ body.is-mobile.game-over #mobile-controls {
   transition: filter 0.5s ease-in;
 }
 
+#body-height-element {
+  /* shenanigans for measuring true body height on iOS Safari when URL bar is showing. */
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 1px;
+  height: 100%;
+  visibility: hidden;
+  /* just in case */
+  pointer-events: none;
+}
+
 .joystick,
 .joystick-point {
  position: absolute;
