@@ -2429,6 +2429,10 @@ body.is-mobile.game-over #mobile-controls {
   transition: filter 0.5s ease-in;
 }
 
+body.game-paused #world-wrapper {
+  /* side note: applying this to body {} throws off positioning in Firefox. */
+  filter: grayscale(100%);
+}
 #body-height-element {
   /* shenanigans for measuring true body height on iOS Safari when URL bar is showing. */
   position: absolute;
