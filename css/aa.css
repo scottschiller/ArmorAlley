@@ -1743,6 +1743,15 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
  opacity: 0.5;
 }
 
+#game-fps {
+ position: absolute;
+ right: 0.25rem;
+ top: 0px;
+ font-size: xx-small;
+ text-align: right;
+ color: #666;
+}
+
 #battlefield .shrapnel {
  position: absolute;
  left: 0px;
