@@ -83,7 +83,10 @@ body.no-transform .sprite {
  left: 0px;
  width: 100%;
  height: 100%;
- background: rgba(32,51,32,0.66);
+ background: rgba(27,107,27,0.45);
+ /* image/checkerboard-black-mask-50percent.png */
+ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
+ background-size: 32px;
  z-index: 10;
  transform: scale3d(1,1,1);
 }

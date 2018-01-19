@@ -11,7 +11,9 @@ As the original sound effects could not be re-licensed, modern
 
 Thanks go to numerous individuals for making their work available.
 The majority of these sounds have been published under a Creative Commons
-Attribution license; specifics are available at each link.
+Attribution license, or other as specified. Details at each link.
+
+** Sounds
 
 "01587 helicopter.wav" by Robinhood76
 http://freesound.org/people/Robinhood76/sounds/94867/
@@ -114,3 +116,8 @@ http://freesound.org/people/Tiger_v15/sounds/211015/
 
 "Metal_Hit_02.wav" by dheming
 http://freesound.org/people/dheming/sounds/197398/
+
+** Images
+
+Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
+https://github.com/fabianalexisinostroza/Antu
