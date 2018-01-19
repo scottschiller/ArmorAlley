@@ -411,6 +411,16 @@ ul.stats-bar li.stats-item,
   transition-property: filter, opacity;
 }
 
+#mobile-controls li.inventory-item {
+  /* default (available) green flash is fast */
+  transition-duration: 0.15s;
+}
+
+#mobile-controls li.inventory-item.weapon-unavailable {
+  /* override default active state of 0.15s. */
+  transition-duration: 0.33s;
+}
+
 ul.stats-bar li.stats-item.weapon-unavailable,
 #mobile-controls li.inventory-item.weapon-unavailable {
   filter: grayscale(1);
@@ -1379,12 +1389,45 @@ body.no-transform #world .helicopter.moving-right.facing-left.tilt {
  margin-left: -26px;
 }
 
-#game-status-bar #radar {
- position: relative;
+#radar-jammed-overlay {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ width: 100%;
+ height: 100%;
+ overflow: hidden;
+ display: none;
 }
 
-#game-status-bar #radar.jammed {
- visibility: hidden;
+#game-status-bar #radar.jammed .radar-item {
+ /* hide entirely. compositing can be $$$ otherwise. */
+ display: none !important;
+ animation: none !important;
+}
+
+#game-status-bar #radar.jammed #radar-jammed-overlay {
+ display: block;
+}
+
+#game-status-bar #radar.jammed #radar-jammed-overlay .transform-sprite {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ width: 100%;
+ height: 320px; /* container should be 32px; this animation has 10 frames. */
+ opacity: 0.2;
+ display: none; 
+}
+
+#game-status-bar #radar.jammed #radar-jammed-overlay .transform-sprite {
+ display: block;
+ background: transparent url(../image/tv-static-sprite.png);
+ will-change: transform;
+ animation: tv-static 300ms steps(10) infinite;
+}
+
+body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform-sprite {
+ animation: none;
 }
 
 #world.tutorial-mode #game-status-bar #radar.jammed {
