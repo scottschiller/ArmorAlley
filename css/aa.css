@@ -1758,6 +1758,8 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
  top: 0px;
  width: 12px;
  height: 12px;
+}
+
  background-image: url(../image/shrapnel.png);
  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEUAAACrAgGqqqr/qgH///8OqgJVVQE1mjlhAAAAAXRSTlMAQObYZgAAAWZJREFUOBEFwdF13FYUBDAM9/h/LqkCHukUsBTVgCIX4BLSfxUBAAAA4BwQoABeLcyAKMBxP1M5BhwFxfW7wzw3eMEWi+sc5OPfITkGay5Mgxx/BrkH9gUD2/czmDeW/Q1TdKYkhXWABfYh+AstbKAlBQAAAAAAAAACQAr+A1KQIYANpCBTogDySsnsP4OCtSHHKPP1M5UpsEjudDm+7p08LZnBdlyzM/fHlDw3Ps/iuYrMjr9pK68ryFWoIgUbAAACFgAAAAAAAGBBAqQAbDAnfqEAMshMkBYtMJjnY+E18OqCZpg/d5mj8FkLs1/MP99l7hZXYfJ54XgGb9jOLjLPcWPukhtWNpC8MUMUFJgdCgEAAAAAAAAA5CoRFFhArgfnFCls4JzrXpnvYyTpL7L9Dlt6tM7j5+Z4CnO9EXM38/UzJE+RGUjfNV/nlEyxACmZgsBmgRRTiAJAAaDYAACQAgAAAP4HhZQd0ScxvCoAAAAASUVORK5CYII=);
  background-position: 0px 0px;
