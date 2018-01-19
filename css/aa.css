@@ -678,8 +678,8 @@ ul.stats-bar .bombs em {
 
 #world .chain {
  width: 1px;
- border-left: 1px dotted #fff;
- border-right: 1px dotted #fff;
+ border-left: 1px dotted #999;
+ border-right: 1px dotted #999;
  top: 0px;
 }
 
