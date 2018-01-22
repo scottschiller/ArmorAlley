@@ -9851,18 +9851,22 @@
 
     function moveTo(x, bottomY) {
 
+      var needsUpdate;
+
       if (features.transform.prop) {
 
         if (x !== undefined && data.x !== x) {
           data.x = x;
+          needsUpdate = true;
         }
 
         if (bottomY !== undefined && data.bottomY !== bottomY) {
           data.bottomY = bottomY;
           data.y = bottomAlignedY(bottomY);
+          needsUpdate = true;
         }
 
-        if (data.isOnScreen) {
+        if (needsUpdate && data.isOnScreen) {
           common.setTransformXY(dom.o, data.x + 'px', '0px');
         }
 
