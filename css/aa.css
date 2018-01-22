@@ -573,6 +573,7 @@ ul.stats-bar .bombs em {
 
 #world .transform-sprite {
   /* GPU-accelerated, transform-based CSS animations on sprites. Look ma, no paint! 🎉 */
+  /* These elements move within a clipped parent element. */
   position: absolute;
   top: 0px;
   left: 0px;
