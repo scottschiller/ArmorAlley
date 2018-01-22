@@ -587,6 +587,8 @@ ul.stats-bar .bombs em {
   transform: none !important;
   /* oh yeah, and don't draw all those expensive animated .GIFs! */
   background-image: none !important;
+  /* and no CSS animation, eh!? */
+  animation: none !important;
 }
 
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
