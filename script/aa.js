@@ -6777,6 +6777,7 @@
     exports = {
       animate: animate,
       data: data,
+      dom: dom,
       die: die
     };
 
