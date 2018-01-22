@@ -3003,7 +3003,7 @@
       var playerFunds = game.objects.endBunkers[0].data.funds;
 
       var nodes = [
-        document.getElementById('player-status-bar');
+        document.getElementById('player-status-bar')
       ];
 
       if (isMobile) {
