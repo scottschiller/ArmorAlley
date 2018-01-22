@@ -3818,7 +3818,7 @@
 
         battleFieldWidth = game.objects.view.data.battleField.width;
 
-        if (features.transform.prop && (!isFirefox || forceRadarGPU) && !noRadarGPU) {
+        if (features.transform.prop && !noRadarGPU) {
 
           for (i = 0, j = objects.items.length; i < j; i++) {
 
