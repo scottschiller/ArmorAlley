@@ -1072,6 +1072,8 @@ ul.stats-bar .bombs em {
 
 #world .gunfire {
   position: absolute;
+  top: 0px;
+  left: 0px;
   width: 2px;
   height: 1px;
   background: #ccc;
