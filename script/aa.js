@@ -6725,11 +6725,6 @@
 
       common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
-      // hack?
-      if (features.transform.prop) {
-        dom.o.style.left = dom.o.style.top = '0px';
-      }
-
       dom.o = game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
