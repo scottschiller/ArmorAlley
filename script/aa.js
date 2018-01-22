@@ -13117,6 +13117,12 @@
         // and get the current layout.
         orientationChange();
       }
+
+      // disclaim potential warning, and performance note. Firefox 57+ seems to perform less well. cause unknown. :/
+      if (isFirefox) {
+        console.log('Firefox *might* warn about CSS `will-change` memory consumption. Even without, performance is not great vs. others. :/');
+      }
+
     }
 
     var menu,
