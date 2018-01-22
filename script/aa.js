@@ -11044,8 +11044,8 @@
 
         data.spriteFrame++;
 
-        // advance smoke sprite
-        dom.o.style.backgroundPosition = '0px -' + (data.height * data.spriteFrame) + 'px';
+        // advance smoke sprite, 0% -> -100% (L-R)
+        common.setTransformXY(exports.dom.oTransformSprite, -((data.spriteFrame / (data.spriteFrames - 1)) * 100) + '%', '0%');
 
         if (data.spriteFrame > data.spriteFrames) {
 
