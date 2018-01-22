@@ -13088,7 +13088,17 @@
     }
 
     if (isMobile) {
+
       utils.css.add(document.body, 'is-mobile');
+
+      // prevent context menu on links.
+      // this is dirty, but it works (supposedly) for Android.
+      window.oncontextmenu = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      };
+
       // if iPads etc. get The Notch, this will need updating. as of 01/2018, this is fine.
       if (isiPhone) {
         /**
