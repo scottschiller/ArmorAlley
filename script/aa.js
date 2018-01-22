@@ -3002,7 +3002,13 @@
       // based on funds, update "affordability" bits of UI.
       var playerFunds = game.objects.endBunkers[0].data.funds;
 
-      var o = document.getElementById('player-status-bar');
+      var nodes = [
+        document.getElementById('player-status-bar');
+      ];
+
+      if (isMobile) {
+        nodes.push(document.getElementById('mobile-controls'));
+      }
 
       var toAdd = [];
       var toRemove = [];
@@ -3020,13 +3026,18 @@
 
       var i, j;
 
-      // add/remove expect space-delimited strings.
-      for (i = 0, j = toAdd.length; i < j; i++) {
-        utils.css.add(o, toAdd[i]);
-      }
-      for (i = 0, j = toRemove.length; i < j; i++) {
-        utils.css.remove(o, toRemove[i]);
-      }
+      nodes.forEach(function(o) {
+
+        // add/remove expect space-delimited strings.
+        for (i = 0, j = toAdd.length; i < j; i++) {
+          utils.css.add(o, toAdd[i]);
+        }
+
+        for (i = 0, j = toRemove.length; i < j; i++) {
+          utils.css.remove(o, toRemove[i]);
+        }
+
+      });
 
     }
 
