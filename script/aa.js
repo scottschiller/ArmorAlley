@@ -7735,7 +7735,7 @@
       // hack: center on enemy helicopter at all times.
 
       if (trackEnemy) {
-        game.objects.view.dom.battleField.style[features.transform.prop] = 'translate3d(' + (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px, 0px, 0px)';
+        common.setTransformXY(game.objects.view.dom.battleField, (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px', '0px');
       }
 
     }
