@@ -9579,7 +9579,11 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
+
+        if (data.isOnScreen) {
+          common.setTransformXY(dom.o, data.x + 'px', '0px');
+        }
+
         data.x = x;
       }
 
