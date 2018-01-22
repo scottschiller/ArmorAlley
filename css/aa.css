@@ -546,16 +546,14 @@ ul.stats-bar .bombs em {
   pointer-events: none;
 }
 
-/* specific list of items that benefit from transform (GPU acceleration) */
-#world .chain,
-#world .turret {
-  transform: translate3d(0,0,0);
-}
-
 #battlefield .chain,
-#game-tips-list,
+/**
+ * #stars and #game-tips-list are lage may trigger this Firefox console warning:
+ * > Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (771270 px).
+ * > Occurrences of will-change over the budget will be ignored.
+ * this list should probably be reviewed over time.
+ */
 #fuel-line,
-#stars,
 #battlefield .sprite.helicopter,
 #battlefield .sprite.missile-launcher,
 #battlefield .sprite.tank,
@@ -568,7 +566,6 @@ ul.stats-bar .bombs em {
 #battlefield .sprite.gunfire,
 #battlefield .sprite.shrapnel,
 #battlefield .turret .sub-sprite,
-#battlefield .sprite .transform-sprite,
 #battlefield .radar-item.parachute-infantry {
   /* constant animation */
   will-change: transform;
