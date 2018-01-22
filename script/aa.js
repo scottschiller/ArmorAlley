@@ -10919,26 +10919,7 @@
 
       if (!data.dead) {
 
-        if (data.frameCount % data.animationModulus === 0) {
-
-          data.spriteFrame++;
-
-          if (data.spriteFrame > data.spriteFrames) {
-            data.spriteFrame = 0;
-          }
-
-          // old frameCount-based sprite animation (used if no CSS animation)
-          if (noTransform) {
-            dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
-          }
-
-          // TODO: use sub-sprite (double # of elements, bad?) and transform: translate3d(). May be faster.
-          // dom.o.style[features.transform.prop] = 'translate3d(' + (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px, 0px, 0px)';
-
-        }
-
         moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
-
 
         data.gravity *= 1.1;
 
@@ -10971,8 +10952,10 @@
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
-      dom.o.style.backgroundPosition = (data.spriteType * -data.width) + 'px ' + (data.spriteFrame * -data.height) + 'px';
+      // apply the type of shrapnel
+      dom.oTransformSprite.style.backgroundPosition = (data.spriteType * -data.width) + 'px 0px';
 
       game.dom.world.appendChild(dom.o);
 
@@ -10999,8 +10982,6 @@
       frameCount: 0,
       animationModulus: 2,
       spriteType: parseInt(Math.random() * 4, 10),
-      spriteFrame: 0,
-      spriteFrames: 3,
       direction: 0,
       // sometimes zero / non-moving?
       vX: options.vX || 0,
