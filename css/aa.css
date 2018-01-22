@@ -1487,6 +1487,7 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
   width: 3px;
   height: 3px;
   background-color: #ccc;
+  border-color: #ccc;
   margin-left: -1px;
   /* align things like balloon + chain with bunkers. */
 }
@@ -1496,18 +1497,43 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
   background-color: rgb(23,160,7);
 }
 
-#game-status-bar #radar .sprite.bunker {
-  /* yellow-ish tinge */
-  background-color: rgb(156,159,9);
+#game-status-bar #radar .sprite.enemy {
+  background-color: #ccc;
+}
+
+#game-status-bar #radar .sprite.bunker,
+#game-status-bar #radar .sprite.super-bunker {
+  /* friendly */
+  width: 3px;
+  margin-left: -1px;
+  background-color: rgb(23,160,7);
+  border: 1px solid rgba(23,160,7,0.75);
+  border-bottom-color: rgb(23,160,7);
   /* round corners */
-  border-radius: 50% 50% 0px 0px;
+  border-radius: 1px 1px 0px 0px;
+}
+
+#game-status-bar #radar .sprite.super-bunker {
+  width: 6px;
+  margin-left: -3px;
 }
 
 #game-status-bar #radar .sprite.balloon {
   width: 1px;
   height: 1px;
   background-color: #fff;
+  border: 1px solid #fff;
   margin-left: 0px;
+  /* ever-so-slightly elliptical. */
+  border-radius: 0px 3px 0px 3px;
+}
+
+#game-status-bar #radar .sprite.balloon,
+#game-status-bar #radar .sprite.bunker.enemy,
+#game-status-bar #radar .sprite.super-bunker.enemy {
+  /* yellow-ish tinge */
+  background-color: rgb(156,159,9);
+  border-color: rgb(156,159,9);
 }
 
 #game-status-bar #radar .sprite.smart-missile {
@@ -1590,8 +1616,8 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
 
 #game-status-bar #radar .sprite.base,
 #game-status-bar #radar .sprite.end-bunker {
-  width: 2px;
-  height: 1px;
+  width: 3px;
+  height: 2px;
   margin-left: 1px;
 }
 
@@ -1775,10 +1801,6 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
   transition: margin 2s;
   margin-bottom: 0px !important;
   /* override .building rules */
-}
-
-#game-status-bar #radar .sprite.enemy {
-  background-color: #ccc;
 }
 
 #game-status-bar #radar .sprite.helicopter.enemy {
