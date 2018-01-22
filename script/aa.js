@@ -116,22 +116,29 @@
 
   // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30?)
 
-  var FPS = 30;
-  var FPS_IDEAL = 30;
-
-  var FRAMERATE = 1000 / FPS;
-
   var winloc = window.location.href.toString();
 
   var ua = navigator.userAgent;
 
+  // URL hacking, if you like. game will run ~2x as fast.
+  var fpsCeiling = winloc.match(/frameRate=60/i) ? 60 : 30;
+
+  var unlimitedFrameRate = winloc.match(/frameRate=\*/i);
+
+  var FPS = fpsCeiling;
+  var FPS_IDEAL = 30;
+  var FRAMERATE = 1000 / FPS;
+
   // just in case...
   var console = (window.console || { log: function() { } });
 
-  var noJamming = winloc.match(/nojam/i);
+  var noJamming = winloc.match(/noJam/i);
 
   // IE 9 doesn't like some of the bigger transforms, for some reason.
-  var noTransform = (winloc.match(/notransform/i) || (ua.match(/msie 9|opera/i) && !winloc.match(/usetransform/i)));
+  var noTransform = (winloc.match(/noTransform/i) || (ua.match(/msie 9/i) && !winloc.match(/useTransform/i)));
+
+  // by default, transform: translate3d(), more GPU compositing seen vs.2d-base transform: translate().
+  var useTranslate3d = !winloc.match(/noTranslate3d/i);
 
   /**
    * Evil tricks needed because Safari 6 (and Webkit nightly)
@@ -151,20 +158,19 @@
 
   var useParallax = winloc.match(/parallax/i);
 
-  // feature flags: forcing or preventing transform: translate3d() on radar items
-  // (radar items on GPU can be $$$ / lots of layer compositing.)
-  // by default, Firefox will not get translate3d() on radar items.
-  var forceRadarGPU = winloc.match(/forceradarGPU=1/i);
+  // whether to prevent transform: translate3d() on radar items.
+  // gunfire and shrapnel can cause literal layer explosions,
+  // potentially $$$ even with GPU compositing (I think.)
   var noRadarGPU = winloc.match(/noRadarGPU=1/i);
 
   // whether off-screen elements are forcefully removed from the DOM.
-  // may be expensive up front, and/or cause regular style recalcs
-  // while scrolling the world.
-  var useDOMPruning = !winloc.match(/nodompruning/i);
+  // may be expensive up front, and/or cause style recalcs while
+  // scrolling the world. the fastest nodes are the ones that aren't there.
+  var useDOMPruning = !winloc.match(/noDomPruning/i);
 
-  var noPause = winloc.match(/nopause/i);
+  var noPause = winloc.match(/noPause/i);
 
-  var trackEnemy = winloc.match(/trackenemy/i);
+  var trackEnemy = winloc.match(/trackEnemy/i);
 
   var debug = winloc.match(/debug/i);
 
