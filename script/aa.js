@@ -1084,15 +1084,29 @@
 
     },
 
-    setTransformXY: function(o, x, y) {
+    setTransformXY: function(o, x, y, extraTransforms) {
 
       if (!o) return;
-      if (features.transform.prop) {
-        o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)';
+
+      if (features.transform.prop || !noTransform) {
+
+        // additional transform arguments, e.g., rotate(45deg)
+        extraTransforms = extraTransforms ? (' ' + extraTransforms) : '';
+
+        if (useTranslate3d) {
+          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)' + extraTransforms;
+        } else {
+          o.style[features.transform.prop] = 'translate(' + x + ', ' + y + ')' + extraTransforms;
+        }
+
       } else {
+
+        // legacy / fallback
         o.style.left = x;
         o.style.top = y;
+
       }
+
     },
 
     hit: function(target, hitPoints, attacker) {
@@ -3815,7 +3829,8 @@
 
             }
 
-            common.setTransformXY(objects.items[i].dom.o, left + 'px', top + 'px');
+            // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
+            common.setTransformXY(objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
 
           }
 
@@ -3932,7 +3947,11 @@
       // jammingModulus: 12,
       jammingTimer: null,
       lastMissileCount: 0,
-      incomingMissile: false
+      incomingMissile: false,
+      // additional transform properties applied during radar item animation
+      extraTransforms: {
+        balloon: 'rotate(-45deg)'
+      }
     };
 
     dom = {
