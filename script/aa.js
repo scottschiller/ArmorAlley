@@ -4110,7 +4110,7 @@
         now = Date.now();
 
         // target ideal frame rate
-        if (now - data.lastExec >= FRAMERATE) {
+        if (unlimitedFrameRate || now - data.lastExec >= FRAMERATE) {
 
           data.elapsedTime += (now - data.lastExec);
 
@@ -4122,7 +4122,7 @@
 
           // try to adjust timer, to target ~30 FPS.
           // when target fps hit, disable this check.
-          if (data.elapsedTime >= data.fpsInterval) {
+          if (!unlimitedFrameRate && data.elapsedTime >= data.fpsInterval) {
 
             // estimated FPS
             fps = data.frames * (1000 / data.fpsInterval);
