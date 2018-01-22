@@ -2846,11 +2846,11 @@
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
-        dom.battleField.style[features.transform.prop] = 'translate3d(' + (data.battleField.scrollLeft * -1) + 'px, 0px, 0px)';
+        common.setTransformXY(dom.battleField, (data.battleField.scrollLeft * -1) + 'px', '0px');
         // ... and parallax.
         if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
           // firefox text rendering really doesn't look nice when translating the stars.
-          dom.stars.style[features.transform.prop] = 'translate3d(' + (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px, 0px, 0px)';
+          common.setTransformXY(dom.stars, (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px', '0px');
         }
       } else {
         // move via margin + background position
