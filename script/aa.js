@@ -9111,16 +9111,23 @@
           setTimeout(function() {
 
             var overlay = document.getElementById('world-overlay');
+            var world = document.getElementById('world');
+            var blurred = 'blurred';
+            var noBlur = 'no-blur';
 
             utils.css.add(overlay, 'fade-out');
 
-            utils.css.add(document.getElementById('world'), 'no-blur');
+            utils.css.add(world, noBlur);
 
             // remove from the DOM eventually
             setTimeout(function() {
 
               overlay.parentNode.removeChild(overlay);
               overlay = null;
+
+              // remove blur / no-blur entirely.
+              utils.css.remove(world, blurred);
+              utils.css.remove(world, noBlur);
 
               // and reset FPS timings, as this may affect peformance.
               game.objects.gameLoop.resetFPS();
