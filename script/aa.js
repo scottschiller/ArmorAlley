@@ -2365,27 +2365,27 @@
       // http://freesound.org/people/Tiger_v15/sounds/211015/
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-1'),
-        volume: 4
+        volume: 5
       }));
 
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-2'),
-        volume: 4
+        volume: 5
       }));
 
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-3'),
-        volume: 4
+        volume: 5
       }));
 
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-4'),
-        volume: 4
+        volume: 5
       }));
 
       sounds.metalHit.push(addSound({
         url: getURL('metal-hit-5'),
-        volume: 4
+        volume: 5
       }));
 
       // http://freesound.org/people/dheming/sounds/197398/
