@@ -2345,6 +2345,17 @@
       }));
     }
 
+    sounds.tankGunFire = [];
+
+    // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
+    // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
+    for (i = 0; i < 8; i++) {
+      sounds.tankGunFire.push(addSound({
+        url: getURL('tank-gunfire'),
+        volume: 15
+      }));
+    }
+
     sounds.metalHit = [];
 
     sounds.metalHitLight = [];
@@ -9585,8 +9596,6 @@
           vY: 0
         }));
 
-        if (sounds.genericGunFire) {
-          playSound(sounds.genericGunFire, exports);
         }
 
       }

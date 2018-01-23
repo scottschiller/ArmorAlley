@@ -124,6 +124,9 @@ http://bolo.net/
 https://github.com/stephank/orona
 http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
 
+"Tank fire Mixed.wav" by Cyberkineticfilms (Creative Commons-0 License, “No Rights Reserved”)
+https://freesound.org/people/Cyberkineticfilms/sounds/127845/
+
 ** Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
