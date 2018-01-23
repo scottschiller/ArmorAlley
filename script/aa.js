@@ -2330,6 +2330,21 @@
       volume: 12
     });
 
+    sounds.boloTank = [];
+
+    // Bolo "hit tank self" sound, Copyright (C) Steuart Cheshire 1993.
+    // A subtle tribute to my favourite Mac game of all-time, hands down. <3
+    // https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
+    // http://bolo.net/
+    // https://github.com/stephank/orona/
+    // http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
+    for (i = 0; i < 8; i++) {
+      sounds.boloTank.push(addSound({
+        url: getURL('bolo-hit-tank-self'),
+        volume: 25
+      }));
+    }
+
     sounds.metalHit = [];
 
     sounds.metalHitLight = [];
@@ -6625,7 +6640,13 @@
         }
 
         // play a sound for certain targets and source -> target combinations
-        if (
+
+        if (target.data.type === 'helicopter') {
+
+          playSound(sounds.boloTank, exports);
+
+        } else if (
+
           target.data.type === 'tank'
           || target.data.type === 'helicopter'
           || target.data.type === 'van'

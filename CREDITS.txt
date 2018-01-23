@@ -117,6 +117,13 @@ http://freesound.org/people/Tiger_v15/sounds/211015/
 "Metal_Hit_02.wav" by dheming
 http://freesound.org/people/dheming/sounds/197398/
 
+"bolo-hit-tank-self.wav" (from Bolo), Copyright (C) Steuart Cheshire 1993.
+A subtle tribute to my favourite Mac game of all-time, hands down. <3
+https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
+http://bolo.net/
+https://github.com/stephank/orona
+http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
+
 ** Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
