@@ -6642,7 +6642,7 @@
 
         // special case: tanks hit turrets for a lot of damage.
         if (data.parentType === 'tank' && target.data.type === 'turret') {
-          data.damagePoints = 5;
+          data.damagePoints = 8;
         }
 
         // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
