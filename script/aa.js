@@ -9596,6 +9596,7 @@
         objects.gunfire.push(new GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
+          damagePoints: 2, // tanks fire at half-rate, so double damage.
           collisionItems: nearby.items.concat('bunkers'), // special case: tanks don't stop to shoot bunkers, but their gunfire can damage them.
           x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
           y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
