@@ -9805,7 +9805,7 @@
       frameCount: 0,
       repairModulus: 50,
       // enemy tanks shoot a little faster
-      fireModulus: (options.isEnemy ? 5 : 6),
+      fireModulus: (options.isEnemy ? 10 : 12),
       vX: (options.isEnemy ? -1 : 1),
       width: 58,
       height: 18,
