@@ -9612,6 +9612,8 @@
           vY: 0
         }));
 
+        if (sounds.tankGunFire) {
+          playSound(sounds.tankGunFire, exports);
         }
 
       }
