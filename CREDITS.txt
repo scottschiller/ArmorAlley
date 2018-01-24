@@ -124,8 +124,11 @@ http://bolo.net/
 https://github.com/stephank/orona
 http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
 
-"Tank fire Mixed.wav" by Cyberkineticfilms (Creative Commons-0 License, “No Rights Reserved”)
+"Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
 https://freesound.org/people/Cyberkineticfilms/sounds/127845/
+
+"Medals Clanking" by Gareth_H (BY-NC 3.0)
+https://freesound.org/people/Gareth_H/sounds/365799/
 
 ** Images
 

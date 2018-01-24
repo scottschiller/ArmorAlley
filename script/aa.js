@@ -2187,6 +2187,14 @@
       volume: 10
     }));
 
+    sounds.chainRepair = [];
+
+    // https://freesound.org/people/Gareth_H/sounds/365799/
+    sounds.chainRepair.push(addSound({
+      url: getURL('medals-clanking'),
+      volume: 66
+    }));
+
     sounds.repairingWrench = [];
 
     // http://freesound.org/people/TheGertz/sounds/131200/
@@ -4595,7 +4603,7 @@
       updateEnergy(exports);
 
       // presumably, triggered by an infantry.
-      playSound(sounds.repairingWrench, exports);
+      playSound(sounds.chainRepair, exports);
 
     };
 
