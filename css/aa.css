@@ -1491,6 +1491,8 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
   background-color: #ccc;
   border-color: #ccc;
   margin-left: -1px;
+  /* avoid border color bleed */
+  background-clip: padding-box;
   /* align things like balloon + chain with bunkers. */
 }
 
