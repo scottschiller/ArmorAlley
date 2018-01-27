@@ -135,7 +135,7 @@ body.no-transform .sprite {
   top: 56%;
 }
 
-#world.blurred #battlefield,
+#world.blurred #battlefield .sprite,
 #world.blurred #game-tips .tips-container,
 #world.blurred #top-bar,
 #world.blurred #mobile-controls,
@@ -144,7 +144,7 @@ body.no-transform .sprite {
   transition: filter 0.5s ease-in-out;
 }
 
-#world.blurred.no-blur #battlefield,
+#world.blurred.no-blur #battlefield .sprite,
 #world.blurred.no-blur #game-tips .tips-container,
 #world.blurred.no-blur #top-bar,
 #world.blurred.no-blur #mobile-controls,
