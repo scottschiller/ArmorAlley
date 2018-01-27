@@ -582,7 +582,7 @@ ul.stats-bar .bombs em {
 #world .sprite.offscreen,
 #world .gunfire.offscreen {
   /* JS has determined an element is out of view. free up rendering / GPU resources. */
-  display: none;
+  display: none !important;
   /* does applying / removing transform cause jank? */
   /* position-related transforms are applied via JS and will be removed in the same manner. */
   transform: none !important;
@@ -590,6 +590,8 @@ ul.stats-bar .bombs em {
   background-image: none !important;
   /* and no CSS animation, eh!? */
   animation: none !important;
+  /* reset more stuff */
+  will-change: initial !important;
 }
 
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
@@ -1627,6 +1629,9 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
 
 #game-status-bar #radar .sprite.dead {
   display: none;
+  /* just in case */
+  will-change: initial;
+  transform: initial;
 }
 
 /* TODO: remove */
