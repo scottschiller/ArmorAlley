@@ -2183,10 +2183,10 @@ body.is-mobile #game-tips #game-announcements {
 
 @keyframes animate-transform-sprite {
   from {
-    transform: translate3d(0%, 0%, 0px);
+    transform: translate(0%, 0%);
   }
   to {
-    transform: translate3d(-100%, 0%, 0px);
+    transform: translate(-100%, 0%);
   }
   /* NOTE: percentage values end up rendering nice and sharp vs. pixel values, in Chrome, which show blurry. Huh. */
 }
