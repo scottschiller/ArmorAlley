@@ -2136,38 +2136,61 @@
     genericSplat: null,
     turretGunFire: null,
     wilhemScream: null
+    machineGunFire: null,
+    machineGunFireEnd: null
   };
+
+  function getURL(file) {
+
+    // SM2 will determine the appropriate format to play, based on client support.
+    // URL pattern -> array of .ogg and .mp3 URLs
+    return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3', 'audio/wav/' + file + '.wav'];
+
+  }
+
+  function addSound(options) {
+
+    var result = {
+      sound: soundManager.createSound(options),
+      soundOptions: {
+        onScreen: {
+          volume: options.volume || 100
+        },
+        offScreen: {
+          // off-screen sounds are more quiet.
+          volume: parseInt((options.volume || 100) / 3, 10)
+        }
+      }
+    };
+
+    return result;
+
+  }
 
   soundManager.onready(function() {
 
     var i;
 
-    function getURL(file) {
+    sounds.machineGunFire = [];
 
-      // SM2 will determine the appropriate format to play, based on client support.
-      // URL pattern -> array of .ogg and .mp3 URLs
-      return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3', 'audio/wav/' + file + '.wav'];
-
+    for (i = 0; i < 9; i++) {
+      sounds.machineGunFire.push(addSound({
+        url: getURL('machinegun-' + (i+1)),
+        volume: 33
+      }));
     }
 
-    function addSound(options) {
+    sounds.machineGunFireEnd = addSound({
+      url: getURL('machinegun-end'),
+    });
 
-      var result = {
-        sound: soundManager.createSound(options),
-        soundOptions: {
-          onScreen: {
-            volume: options.volume || 100
-          },
-          offScreen: {
-            // off-screen sounds are more quiet.
-            volume: parseInt((options.volume || 100) / 3, 10)
-          }
-        }
-      };
+    sounds.bombHatch = [];
 
-      return result;
-
-    }
+    sounds.bombHatch.push(addSound({
+      // hat tip to the Death Adder for this one. ;)
+      url: getURL('ga-typewriter'),
+      volume: 33
+    }));
 
     sounds.impactWrench = [];
 
@@ -8435,6 +8458,9 @@
 
       data.dead = true;
 
+      // stop firing
+      stopFiringSound();
+
       radarItem.die();
 
       if (sounds.explosionLarge) {
@@ -8450,6 +8476,66 @@
         setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
       }
 
+    }
+
+    function startSound(sound) {
+
+      var soundObject;
+
+      soundObject = sound && getSound(sound);
+
+      if (!soundObject) return;
+
+      if (!data.isEnemy) {
+
+        // local? play quiet only if cloaked.
+        if (!userDisabledSound) {
+
+          // only start if not already playing
+          if (soundObject.sound.playState) {
+            soundObject.sound.stop();
+          }
+
+          // only start if not already playing
+          if (!soundObject.sound.playState) {
+            soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+          }
+
+        }
+
+      } else if (!userDisabledSound && soundObject && !soundObject.playState) {
+
+        // play with volume based on visibility.
+        playSound(sound, exports);
+
+      }
+
+    }
+
+    function stopSound(sound) {
+
+      var soundObject = sound && getSound(sound);
+
+      if (soundObject && soundObject.sound.playState) {
+        soundObject.sound.stop();
+      }
+
+    }
+
+    function stopFiringSound() {
+
+      var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
+
+      // stop the current loop, start one "firing end" sound.
+      if (soundObject) {
+        stopSound(soundObject);
+      }
+
+      // begin the one-shot (heh) ending sound, if ammo is left.
+      if (data.ammo) {
+        startSound(sounds.machineGunFireEnd);
+      }
+      
     }
 
     function fire() {
@@ -8477,17 +8563,15 @@
           }));
           /*eslint-enable no-mixed-operators */
 
-          if (sounds.genericGunFire) {
-            if (!data.isEnemy) {
-              // local? play quiet only if cloaked.
-              if (!userDisabledSound) {
-                soundObject = getSound(sounds.genericGunFire);
-                soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
-              }
-            } else if (!userDisabledSound) {
-              // play with volume based on visibility.
-              playSound(sounds.genericGunFire, exports);
-            }
+          // pick a random sound from the array
+          data.machineGunFireSoundOffset = parseInt(Math.random() * (sounds.machineGunFire && sounds.machineGunFire.length), 10);
+
+          var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
+
+          if (soundObject) {
+
+            startSound(soundObject);
+
           }
 
           // TODO: CPU
@@ -8501,13 +8585,20 @@
           }
 
         } else if (!data.isEnemy && sounds.inventory.denied) {
+
           // player is out of ammo.
           playSound(sounds.inventory.denied);
+
+          // make sure firing has stopped.
+          stopFiringSound();
+
         }
 
         // SHIFT key still down?
         if (!data.isEnemy && !keyboardMonitor.isDown('shift')) {
           data.firing = false;
+          // stop firing sound
+          stopFiringSound();
         }
 
       }
@@ -8522,6 +8613,10 @@
             y: (data.y + data.height) - 6,
             vX: data.vX
           }));
+
+          if (sounds.bombHatch) {
+            playSound(sounds.bombHatch);
+          }
 
           data.bombs = Math.max(0, data.bombs - 1);
 
