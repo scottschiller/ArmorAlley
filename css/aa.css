@@ -553,7 +553,12 @@ ul.stats-bar .bombs em {
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 8192px;
+  /**
+   * width was previously hard-coded at 8192px, but that's silly. 
+   * no need for a real layer that large, just for positioning.
+   * and a transform offset for terrain elements.
+   */
+  width: 0px;
   height: 100%;
 }
 
