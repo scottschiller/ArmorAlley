@@ -330,7 +330,15 @@ body.is-mobile #game-status li:last-of-type {
 
 #player-status-bar {
   position: relative;
+  /* so type lines up */
   line-height: 24px;
+  /* and room for green bars */
+  height: 48px;
+  overflow: hidden;
+  position: absolute;
+  top: 34px;
+  left: 0px;
+  width: 100%;
 }
 
 #aa ul,
@@ -523,6 +531,12 @@ ul.stats-bar .bombs em {
 }
 
 #top-bar {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 88px;
+  overflow: hidden;
   background: #000;
 }
 
@@ -2398,7 +2412,6 @@ body.is-mobile #player-status-bar span.letter-block {
 }
 
 body.is-mobile div#player-status-bar {
-  position: relative;
   z-index: 4;
 }
 
