@@ -4083,13 +4083,15 @@
 
       if (o.dom && o.dom.o) {
 
+        /*
         // manually remove x/y transform, will be restored when on-screen.
         if (o.dom.o.style.transform) {
           // 'none' might be considered a type of transform per Chrome Dev Tools,
-          // and thus incur some sort of cost vs. an empty string. (wild guess, here.)
+          // and thus incur an "inline transform" cost vs. an empty string.
           // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
           o.dom.o.style.transform = 'none';
         }
+        */
 
         if (useDOMPruning) {
 
