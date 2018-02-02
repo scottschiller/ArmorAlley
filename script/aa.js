@@ -9541,8 +9541,17 @@
 
       if (options.attachEvents) {
 
-        utils.events.add(game.dom.world, 'mousedown', events.mousedown);
-        utils.events.add(game.dom.world, 'dblclick', events.dblclick);
+        if (!isMobile) {
+          var world = document.getElementById('world');
+          // TODO: static DOM reference.
+          utils.events.add(world, 'mousedown', events.mousedown);
+          utils.events.add(world, 'dblclick', events.dblclick);
+          utils.events.add(window, 'scroll', function(e) {
+            // don't allow scrolling at all?
+            e.preventDefault();
+            return false;
+          });
+        }
 
       }
 
