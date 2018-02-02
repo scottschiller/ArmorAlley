@@ -14,65 +14,65 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 ### V1.5.20180201
 
- + **Big feature updates!**
++ **Big feature updates!**
 
-  • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
+ • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
 
-  • Inventory order queueing! 🎉 (Finally.) e.g., 3 tanks in a row. Queueing deducts funds immediately. No added UI or cancel ability (yet.)
+ • Inventory order queueing! 🎉 (Finally.) e.g., 3 tanks in a row. Queueing deducts funds immediately. No added UI or cancel ability (yet.)
 
-  • Battlefield view is now bigger on screen. Stats UI is dead, long live stats.
+ • Battlefield view is now bigger on screen. Stats UI is dead, long live stats.
   
-  • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
+ • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
 
- + **Sound**
++ **Sound**
  
-  • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
+ • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
 
-  • New + improved helicopter machine gun sounds. 9 different samples, played at random.
+ • New + improved helicopter machine gun sounds. 9 different samples, played at random.
 
-  • New sound effects: "bomb hatch" (helicopter bomb release), tank gunfire, bunker chain/balloon repair, helicopter gunfire hit.
+ • New sound effects: "bomb hatch" (helicopter bomb release), tank gunfire, bunker chain/balloon repair, helicopter gunfire hit.
 
-  • "Medals clanking" sound for bunker chain/balloon repair. (BY-NC 3.0.) https://freesound.org/people/Gareth_H/sounds/365799/
+ • "Medals clanking" sound for bunker chain/balloon repair. (BY-NC 3.0.) https://freesound.org/people/Gareth_H/sounds/365799/
 
-  • New tank gunfire sound: "Tank Fire Mixed.wav" by Cyberkineticfilms/freesound.org (CC0, "No Rights Reserved". 🙇)
+ • New tank gunfire sound: "Tank Fire Mixed.wav" by Cyberkineticfilms/freesound.org (CC0, "No Rights Reserved". 🙇)
 
-  • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
+ • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
 
- + **UX / UI**
++ **UX / UI**
   
-  • "Radar jammed" TV static-like overlay with transform sprite.
+ • "Radar jammed" TV static-like overlay with transform sprite.
 
-  • Slightly faster helicopter bombing rate - more responsive.
+ • Slightly faster helicopter bombing rate - more responsive.
   
-  • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
+ • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
 
-  • Balloons are yellow-ish on radar, and now transform-rotated to elliptical shapes. Bunkers / base color and border tweaks, friendly vs. enemy now look different.
+ • Balloons are yellow-ish on radar, and now transform-rotated to elliptical shapes. Bunkers / base color and border tweaks, friendly vs. enemy now look different.
 
-  • Inventory and helicopter ammo, etc., become greyed out when unaffordable / unavailable.
+ • Inventory and helicopter ammo, etc., become greyed out when unaffordable / unavailable.
 
-  • Target / "tracking" animation on Smart Missile targets.
+ • Target / "tracking" animation on Smart Missile targets.
 
-  • Smart Missiles can now re-target on the next frame after the original target dies. If a new target can not be immediately acquired, the Smart Missile dies as previously.
+ • Smart Missiles can now re-target on the next frame after the original target dies. If a new target can not be immediately acquired, the Smart Missile dies as previously.
 
-  • Radar items, clouds and some other sprites move more smoothly simply by dropping `parseInt()`.
+ • Radar items, clouds and some other sprites move more smoothly simply by dropping `parseInt()`.
 
-  • "C" / rubber chicken use causes UI to switch to rubber chicken mode.
+ • "C" / rubber chicken use causes UI to switch to rubber chicken mode.
 
-  • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
+ • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
 
-  • Jam radar all the time on hard + extreme game types.
+ • Jam radar all the time on hard + extreme game types.
 
- + **Miscellany**
- 
-  • Note re: Firefox `will-change` memory consumption warning that might show in console.
++ **Miscellany**
 
-  • URL feature flags: `noTranslate3d` and `noRadarGPU`. `frameRate=[60|*]` for testing of `requestAnimationFrame()` timing. camelCase others. Let Opera (now webkit-based) have transforms.
+ • Note re: Firefox `will-change` memory consumption warning that might show in console.
 
-  • +`makeTransformSprite()`, a sort of sub-sprite for CSS transform-based animations (GPU-accelerated animated .GIF alternatives.)
+ • URL feature flags: `noTranslate3d` and `noRadarGPU`. `frameRate=[60|*]` for testing of `requestAnimationFrame()` timing. camelCase others. Let Opera (now webkit-based) have transforms.
 
-  • `z-index: -1` can be harmful for performance / compositing.
+ • +`makeTransformSprite()`, a sort of sub-sprite for CSS transform-based animations (GPU-accelerated animated .GIF alternatives.)
 
-  • iPhone X notch handling based on orientation and whatnot.
+ • `z-index: -1` can be harmful for performance / compositing.
+
+ • iPhone X notch handling based on orientation and whatnot.
 
 -----
 
