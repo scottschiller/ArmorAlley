@@ -2175,7 +2175,7 @@
 
     for (i = 0; i < 9; i++) {
       sounds.machineGunFire.push(addSound({
-        url: getURL('machinegun-' + (i+1)),
+        url: getURL('machinegun-' + (i + 1)),
         volume: 33
       }));
     }
