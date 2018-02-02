@@ -14,7 +14,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 ### V1.5.20180201
 
-+ **Big feature updates!**
+**Big feature updates!**
 
  • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
 
@@ -24,7 +24,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
   
  • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
 
-+ **Sound**
+**Sound**
  
  • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
 
@@ -38,7 +38,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
  • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
 
-+ **UX / UI**
+**UX / UI**
   
  • "Radar jammed" TV static-like overlay with transform sprite.
 
@@ -62,7 +62,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
  • Jam radar all the time on hard + extreme game types.
 
-+ **Miscellany**
+**Miscellany**
 
  • Note re: Firefox `will-change` memory consumption warning that might show in console.
 
