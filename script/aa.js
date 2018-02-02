@@ -8007,12 +8007,15 @@
 
     function applyStatusUI() {
 
+      // clear pending update
+      data.pendingApplyStatusUI = null;
+
+      // TODO: optimize
       dom.statusBar.infantryCount.innerText = data.parachutes;
       dom.statusBar.ammoCount.innerText = data.ammo;
       dom.statusBar.bombCount.innerText = data.bombs;
       dom.statusBar.missileCount.innerText = data.smartMissiles;
 
-      // TODO: optimize
       var statsBar = document.getElementById('stats-bar');
       var mobileControls;
       var mobileControlItems;
@@ -8061,9 +8064,10 @@
 
       if (!data.isEnemy) {
 
-        // TODO: optimize
-
-        getAnimationFrame(applyStatusUI);
+        if (!data.pendingApplyStatusUI) {
+          // TODO: optimize further
+          data.pendingApplyStatusUI = getAnimationFrame(applyStatusUI);
+        }
 
       }
 
@@ -8711,9 +8715,7 @@
           data.bombs = Math.max(0, data.bombs - 1);
 
           if (!data.isEnemy) {
-
             hasUpdate = 1;
-
           }
 
         } else if (!data.isEnemy && sounds.inventory.denied) {
@@ -9646,6 +9648,7 @@
       smartMissiles: 2,
       maxSmartMissiles: 2,
       machineGunFireSoundOffset: 0,
+      pendingApplyStatusUI: null,
       midPoint: null,
       // for AI
       targeting: {
