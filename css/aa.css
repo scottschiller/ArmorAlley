@@ -356,7 +356,7 @@ body.is-mobile #game-status li:last-of-type {
   position: relative;
   height: 5px;
   /* background-image: url(../image/fuel-bar-background.png); */
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVQIW2NYzcT4nwEGQBwAHUEDW61K8xIAAAAASUVORK5CYII=) no-repeat 0px 0px;
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVQIW2NYzcT4nwEGQBwAHUEDW61K8xIAAAAASUVORK5CYII=);
   margin-top: 3px;
   opacity: 0.75;
 }
@@ -465,34 +465,55 @@ ul.stats-bar .infantry-count {
   background: transparent !important;
 }
 
+ul.stats-bar .infantry-count em,
+#mobile-controls li.inventory-item a.parachute-infantry {
+  /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAATCAYAAACgADyUAAAAd0lEQVR4Aa3R0QqAIAyFYRW67e18yfWQxrkZsvqdQYMDCn65ZQk1khQEVPSBsVszHJ+hkiO+NZsHIQD+cQ6VGVLijK/4alVZoogf0MwABXxa84NHr9tIhxWtlQRPaLVGGG72/RJCu/C+3C60+TfsvSoOw55hEq8bvTGFPiUQnUIAAAAASUVORK5CYII=);
+}
+
 ul.stats-bar .infantry-count em {
-  /* background: transparent url(../image/status-infantry.png) no-repeat 0px 0px; */
-  /* TODO: clean this up. */
-  background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px;
+  /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
   width: 10px;
   height: 14px;
   margin-top: -3px;
   transform-origin: left;
+  background-repeat: no-repeat;
+}
+
+ul.stats-bar .missiles em,
+#mobile-controls li.inventory-item a.smart-missile {
+  /* background: transparent url(../image/status-missile.png) no-repeat 0px 0px; */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAK0lEQVQYlWP4DwSrmRj/MxADQAqJVkw7k8lSTJQGkhT/X8X4H4aJcgpIIQDIDioT6Vi0KwAAAABJRU5ErkJggg==);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
 }
 
 ul.stats-bar .missiles em {
-  /* background: transparent url(../image/status-missile.png) no-repeat 0px 0px; */
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAK0lEQVQYlWP4DwSrmRj/MxADQAqJVkw7k8lSTJQGkhT/X8X4H4aJcgpIIQDIDioT6Vi0KwAAAABJRU5ErkJggg==) no-repeat 0px 0px;
   width: 10px;
   height: 9px;
 }
 
-ul.stats-bar .ammo em {
+ul.stats-bar .ammo em,
+#mobile-controls li.inventory-item a.ammo {
   /* background: transparent url(../image/status-ammo.png) no-repeat 0px 0px; */
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAICAYAAADJEc7MAAAAM0lEQVQY02NgIAH8BwLiBPGp+Q8Fq1atIgkzkKoJxQnoEtgUEdSIVQE2jchOJSWEydYIADt2mmamiXmJAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAICAYAAADJEc7MAAAAM0lEQVQY02NgIAH8BwLiBPGp+Q8Fq1atIgkzkKoJxQnoEtgUEdSIVQE2jchOJSWEydYIADt2mmamiXmJAAAAAElFTkSuQmCC);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+}
+
+ul.stats-bar .ammo em {
   width: 14px;
   height: 9px;
 }
 
-ul.stats-bar .bombs em {
+ul.stats-bar .bombs em,
+#mobile-controls li.inventory-item a.bombs {
   /* background: transparent url(../image/status-bombs.png) no-repeat 0px 0px; */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAALCAYAAAC6ezfSAAAAKklEQVQIW2P4DwQMQLBq1ar/DCAOiAHmwBiYMquZGP+DMEgf5RyYAIgGAHvgOaZq6s+EAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+}
+
+ul.stats-bar .bombs em {
   width: 3px;
   height: 11px;
   text-indent: -32px;
@@ -600,7 +621,7 @@ ul.stats-bar .bombs em {
 #world .bunker,
 #world .bunker.enemy {
   /* background-image: url(../image/bunker.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAD1BMVEUAAACqqgKqqqqqVQFVVVUlRgN0AAAAAXRSTlMAQObYZgAAAOpJREFUeNqNkgsOwCAIQ8fn/meehAKKLBnJ1FCfFN3zFUTko81zzAw7N+k8MhY2AWLaCRZeQbz03ClbWIYpR0NSqJAD6ZGM/ATcaKj2Dcx5mkPUT20JQMijH7qMjMYqtTMh0tgNEvnWtzE8wwfDjOYQIGaIoh8wM4RUQrB2Q08xtTmtOdSutdeJByxvKF/ldm+JmAK12oQIEgi6DSGana5zsAbzxQi1/6d5q6GYQlDn6ud876hy+BYn2lkSlyqqYqGqtsSMdtbSJQXpWmxHxnXNOjhHgDqjWCKPLVHHwsHSy9tOaNaB2dTNywtycQhoEtVq0gAAAABJRU5ErkJggg==);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAElBMVEXgY28AAABVVVWqVQGqqgKqqqqYdYVBAAAAAXRSTlMAQObYZgAAAO1JREFUeNqNkQEOwyAMA1ea/P/LS3DQMZpKiwRUNkcM/byVmWnOta+ecXGd7y2TlcuExEP47VHm2qZd91apuDEHUgYF8XQEOdY/gIIuN0bH/J4myM5TDwGohPkejyBtMCQYjrP2Ngj6E89g1yx/YTyM/UiIBrJ1H5gOkgSkaE/ogmEz0SbEswIdTFhbtmpPuz0bSDjlBnPcUuTeZyE2sWS65+yiKQjMzIpVENmYYEDoszPrbWDUhdwpiCgJvd7gHiOlWEaMtYrx+JQ1ikwvmNpWivxibJoaQsWM+iy9tqw+WQLxyQZBNrsVFj+zfAH0+g3OBtHhUgAAAABJRU5ErkJggg==);
   width: 51px;
   height: 25px;
 }
@@ -716,13 +737,14 @@ ul.stats-bar .bombs em {
   height: 19px;
   top: 1px;
   /* account for 1px bottom black border */
-  /* TODO: base64 */
-  background-image: url(../image/tank-sprite-horizontal.png);
+  /* background-image: url(../image/tank-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAAATCAMAAAA+hsZ3AAAAGFBMVEUAAAAAAABVVQEOqgIFVQH/qgGqqqpVVVWbfA2iAAAAAXRSTlMAQObYZgAAAQ5JREFUeNrN1uEKwjAMBGCzpM37v7HNEbyVKizbj3qItfM+Slccvn5EzvnR2S+pjuPQQ9XMFPhfZSg7dKQNGFQH/mOJ9mCtpYTdLtmWLzJoA4Vds0Oi3mghSVtOMnqK7JCoh03MjeZO87Os2SRhW86D2odSEjBbZPZ5HhhAAeeIbJM8CkqEhNGMiGyToLUMvEWSdumXX5FJliilVNy8pvnnxi/nwCvmMe0J61Ig765Jau6OrmfRE3pKj7dokT6UvSKxUVIfiXZ8x07MYXJEi7Qs542WJOC0U8ipYzk/X9fe5a4UkQdrkopYNGB5Ahin64o7JHfkuma/LJe/kpUf6SprT4X6k4GQ9lpuSsLn9A0BCB4yFXbZBAAAAABJRU5ErkJggg==);
   animation: animate-transform-sprite 0.1s steps(3) infinite;
 }
 
 #world .tank.enemy .transform-sprite {
-  background-image: url(../image/tank-enemy-sprite-horizontal.png);
+  /* background-image: url(../image/tank-enemy-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAAATCAMAAAA+hsZ3AAAAFVBMVEUAAAAAAABVVVWqqqpVVQH/////qgHJ3ZekAAAAAXRSTlMAQObYZgAAAQdJREFUeNrN1EEOhSAMBFAHRu5/5N/amlbiwrLhT0xA5EEaiMd7kHMUskEqPCX97Brz/yyFNU0farUP/LH0+W0M4cnul5jjsqtUGjabLVKbM12Z5rGX4fS2IQe2yPdKHVulboNCJfbInFd7d5V6xlYZ0M6nWUwIjVLj7CDZKxVa2pQYyp+xSTo9O2rZJJ1KyMLzkBWYZHHT6fZ2CfOBeNKIv7I9SmVFcl06DEqapc+kz6ZTXpR8WGBZsiQhMlPSLMnevO2xorZCeQWrEkmivGdQsN/SrK2UVzQ7VSqwIvOmizJsVKhWhdmWxycJoCKnK/hZImT17+AyKL/Sec/y3yjrz1mHdRn0B/iMFkwKMMVpAAAAAElFTkSuQmCC);
 }
 
 #world .tank.stopped .transform-sprite {
@@ -786,15 +808,15 @@ ul.stats-bar .bombs em {
   position: absolute;
   width: 55px;
   height: 11px;
-  /* TODO: base64 */
-  background-image: url(../image/infantry-sprite-horizontal.png);
+  /* background-image: url(../image/infantry-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAALCAYAAADbYxWQAAAAi0lEQVR4AeXSAQbDQBCF4SYUoLfbS7aHnDL88Js1WMro8mzYLxMvyUMrFK2hFvy5rwx4vv2DcgmeC6hMteDX+07MTsAzrXD1VkZbDn1DARk8x1KOgobVYDzu0MbGxokF+//9aTkclt3exbjefhCDta5MWw4jZ2u/cTy38z5rvAYrWvIyBz6IfT+r9l9RraQr7UjFBwAAAABJRU5ErkJggg==);
   /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
   animation: animate-transform-sprite 400ms steps(5) infinite reverse;
 }
 
 #world .infantry.enemy .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/infantry-enemy-sprite-horizontal.png);
+  /* background-image: url(../image/infantry-enemy-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAALCAYAAADbYxWQAAAAgUlEQVR42uXQUQqAMAwD0M079pLzkBUCIiSGIf0qBgI6H5vdoCSV0tcCn8dEgfvYfw6X3LXW897b4uNbgXtbnZ5wa4sIjAjCDa3eCOCN0aIdxo6iTW895GfU/IDeXH24r3uSVS9A17yPmCg557fDqdfQuew9NGvOUymbvQo+7zp/AT+lK1J5htg+AAAAAElFTkSuQmCC);
   /* proper L -> R order, in this case. */
   animation: animate-transform-sprite 400ms steps(5) infinite;
 }
@@ -820,8 +842,8 @@ ul.stats-bar .bombs em {
 }
 
 #world .engineer .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/engineer-sprite-horizontal.png);
+  /* background-image: url(../image/engineer-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAALCAMAAAAKlC7mAAAAGFBMVEXqAf8AAACrAgH///+qqqoFVQEOqgJVVQH/bDgwAAAAAXRSTlMAQObYZgAAAGhJREFUeNqNy0EKgEAMQ1G/mnj/G9tQVFCEZtF5hMlSAcg7FcC6Mla4beFc4Y5IpsrEsiSm6gkIploAl1u65X9VsFSIJEOQ7tH730NQEyxsQlsW3wk0zHHQTU4xxTW50O0NoJETQiNsnDC8BFieeXPVAAAAAElFTkSuQmCC);
   width: 50px;
   height: 11px;
   animation: animate-transform-sprite 400ms steps(5) infinite;
@@ -832,8 +854,8 @@ ul.stats-bar .bombs em {
 }
 
 #world .engineer.enemy .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/engineer-enemy-sprite-horizontal.png);
+  /* background-image: url(../image/engineer-enemy-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAALCAYAAAA9St7UAAAAjUlEQVR4AdXQAQqDMAwF0Lk75pLdIbtRMMCDrgQF6ofPRnw16ot0ajZ2wM/7GPXQo5zwjHBX121rLX8T7u/GYNaEVffLwt2+NzEHgUUXEQt3+94RUT5I9hkucSJgxWVwmLLrSwfy/1mX+nWuvUjhXrgO4iKzmY04RlfLXarTCtg1saA/M+eWYEnJskv7BYMO2aOZresWAAAAAElFTkSuQmCC);
 }
 
 #world .parachute-infantry {
@@ -1053,16 +1075,16 @@ ul.stats-bar .bombs em {
 }
 
 #world .helicopter.enemy .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/helicopter-enemy-sprite-horizontal.png);
+  /* background-image: url(../image/helicopter-enemy-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAASCAYAAAAwuLBFAAABMklEQVR4Ae3bB27EQAxD0VzSl/QlJ2hKE0KDrtzZL4Dbi567DczHSTVE0mo8kYkcVphv19SoWte17mNXOF3d8eM1OzUdkhy+5bib+XbN1rYabZlgD1e22fZwhs0P8+0avNqSCMC1PWHD9uq2n5gGWpZF5jJkn8DiP9Jt2LCJrYZAbW5dLoAJXJgNGzaB+q85A2UAPZj4/VQbNmx6Lf2JbMfJBspqwN+66QmHDVuirUHa8wM4cfxsxZ9o2LCl2PQWZGtLUjFgLXuPv9VJMDZsYTYB85uzYSd+ruGwYUu3HYddgHN+p2ADG7Z8m8BplAWzmnfQCoYNW5yt3rwbJyDVrBNs2DJtAlhxdpnqyszRq0B+YcOWbRNQnYK47/mFDdvcNj38ZqLhDtiwzTto851t2LB9AtafX7pIrcxLAAAAAElFTkSuQmCC);
   width: 220px;
   height: 18px;
   animation: animate-transform-sprite 520ms steps(4) infinite;
 }
 
 #world .helicopter.enemy.facing-left .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/helicopter-enemy-sprite-horizontal-facing-right.png);
+  /* background-image: url(../image/helicopter-enemy-sprite-horizontal-facing-right.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAASCAYAAAAwuLBFAAABNElEQVR4Ae3bAYrCMBCF4V6yl+wluwAMsGV8Ji+OTss/EHZVse+bYmID3Qrq/NHon7/Sy3mr70PTOo/jsEZU/B9/35VuRn1+3+p7OW9llTl6f+FmRyAfusJpmz84bxV+bStrdDVKzpZ2pv42bNi2/IOLUPu+q3GFJthmNmzYXFwJUM8eAqlnmZvasGFLD+wDNWwK+WK5F8jONmzYRAB/2VSNG0dejv8PleTDhq2bzQ+xsAOVLMkWLlDyMTZsN7GlF4/279uxC1CBG5hR9MyCDVtfW9RUoE+/b7U5GogNWzNbvDATah1XBsSGralNAEcQGq8DriA1Dhu2jjYBHB0a/F1cZMKGrbXNL393KJ5TIRVQ7FZhw/ZUm98IEc7Z+o3Chg3b0i0g7q0S2LBhe/6Ni9iwqfoD44Rfuq5Z/IUAAAAASUVORK5CYII=);
 }
 
 #world .helicopter.dead {
@@ -1110,11 +1132,12 @@ ul.stats-bar .bombs em {
 }
 
 #world.rubber-chicken-mode ul.stats-bar .missiles em {
-  /* TODO: base64 */
-  background: transparent url(../image/rubber-chicken-static.png) no-repeat 0px 0px;
+  /* background: transparent url(../image/rubber-chicken-static.png) no-repeat 0px 0px; */
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAJCAIAAADcu7ldAAAABnRSTlMA1wDXADj1tz/zAAABj0lEQVR4AWK4ft0CP1q/Un9Sj46dlRiQTQYiYAGAtXFYCDUAg+h/bds327Zt28ZDtMt4lPbZtm3b7qRd1odZzczx9pQAPdBiX4E1xZFmaWmJ1/cJAAcwP1Yr0AUxNv4wq/T184v7AliCPXiAO9iBLPwDHfYkmFFLSZA4G5GXfh4c/GVfVaVfEK4DMANHcAUnsAY9EAUZMARtpuWYlWPFqKJQsbFCg01ltiTZkGFFcnnkb4mZ8O3JlyOAsaS4yt+f3hqKJ6XSot+yskxzc0MgHAIhADzAHkyOe41AFwzAZW9M8oixrsymOmtyLMswI77c/Xt79P1O3qORWkFH45OQFepESjxJMaSGkRlBVizZMWDNsBJLKseNxqDLihLLaqzrgR6YgQ2bmot9IlPt4gtdBzOd2iZuoo8SKztKFUP9hBVkuKFB5K0tdyvR4Xqi9/lYj5XOltsCTFLCJOwsRQPceGf3yK2do7BxqfGHe7Z/nlv/fanz/53m6ysKz86rlqTjS7u2FpLQOCAVGWpzEq8YADuJD/9bkEwkAAAAAElFTkSuQmCC);
   background-position: 50% 33%;
-  min-width: 16px;
   background-size: 16px 4.5px;
+  background-repeat: no-repeat;
+  min-width: 16px;
 }
 
 #world .smart-missile.rubber-chicken {
@@ -1124,8 +1147,8 @@ ul.stats-bar .bombs em {
 
 #world .smart-missile .sub-sprite {
   display: block;
-  /* TODO: base64 */
-  background-image: url(../image/smouldering-phase-1.gif);
+  /* background-image: url(../image/smouldering-phase-1.gif); */
+  background-image: url(data:image/gif;base64,R0lGODlhOgAUAPIEAAAAAFVVVaqqqv///wAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJBQAEACwAAAAAOgAUAAADR0i63P7wgQmivRgDEWb+4LUNQhWeKDGVZupSrUO59MrSeLQFwZ3/i1WvBCyOOMTibyNoJpU4mw8ahVGv2Kx2y+16v+CwGJsAACH5BAkFAAQALCAAAAASAAwAAAMuSLq88KBJJ8SbEgwRImYAZymQ15RldX1EqAUj+4jx98CwiYWwyrYui27SKf0ICQAh+QQJBQAEACwiAAAAEgAMAAADLEi6zPCgSfWCiLOBIW7Wl0dAmEZC3fNR12CV2SNY4lfNdYyn6wiEqt6pR0gAACH5BAkFAAQALCUAAgAFAAUAAAMKSLAKsm68FV5bCQAh+QQJBQAEACwcAAIAEAAQAAADMEi6rPAtkiegXECMejEIXOc8gGieKEOWHSlUrJQBAxhHFBjKn2C3vtcON4OJVrdIAgAh+QQJBQAEACweAAIAEAAQAAADLki6rPCgyRdElAwMYXG2nedAl2ie6PSgj1V6AOeKlLC9TTwEFf5xPVps6MuQTAkAIfkECQUABAAsIAAKAAcACAAAAxRIsEAKQiwlQpCsxiWG5tEGYg9DJAAh+QQJBQAEACwaAAcADgAJAAADJki6C87uKUBeFEICES4YQTYJQ+ZwGFVtERCG6nqFKdOwpn1HupIAACH5BAkFAAQALBwACAAOAAgAAAMiSAQMqm0xIRgEdYIRKhRDhnWe1DXd+TQTWT5XlcEw69BKAgAh+QQJBQAEACweAAgADgAIAAADIUgErM5AMdEkoPEKLMXAQOBRljgNgflAmqA6K8XBK0Q7CQAh+QQJBQAEACwYAAYADgAKAAADJki6DC4sPkccXUAMYQUHGBB8QjBelfWMXKRk2+lWXg26j4dK6kwkACH5BAkFAAQALBoABgAOAAoAAAMqSLoLDiwSIIJTL9MhcnfC91EhWT4TEFjq2jVhFwcvFpschFGPfDUa1CIBACH5BAkFAAQALBwABgAOAAoAAAMqSLoMDiy6ICB54YEh6gWV0z0eWFUDpU2hQHkKmLLqYp4v/IVgb8WrByMBACH5BAkFAAQALB8ABgAKAAoAAAMfSLDUvoI5JUZcbAUsYuPd9QBB6X1hcFKdBYyROGJEAgAh+QQJBQAEACwhAAYACQAFAAADEAi6SiBCwTVEAPW+EG1kYAIAIfkECQUABAAsIwAGAAkABQAAAw4IukogQcElhniWauAkTQAh+QQJBQAEACwpAAYABQAFAAADCwgKBCJriKAmXCoBACH5BAUFAAAALAAAAAABAAEAAAMCCAkAOw==);
   background-position: 0px 0px;
 }
 
@@ -1153,8 +1176,8 @@ ul.stats-bar .bombs em {
 #world .smoke .transform-sprite {
   width: 90px;
   height: 9px;
-  /* TODO: base64 */
-  background: transparent url(../image/smoke-sprite.png) no-repeat 0px 0px;
+  /* background: transparent url(../image/smoke-sprite.png) no-repeat 0px 0px; */
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAAAJBAMAAABAnCZoAAAAD1BMVEUAAAAAAACioqJNTU3////HZUzpAAAAAXRSTlMAQObYZgAAAJtJREFUeAGFyrFNwDAYROF3XiB3pgecUdhfYhNwJjC/FYkiBVzx6RWHktyU5p/l7KN4GZTh7zVdxuIohE1iNmjzfK/DAlIcElJVNk7xfIMm6gvcXNRQenEXFOamifkGi4XmKjIBvsrMiW3woEjR4PVifbcLMpmsd1hg1mdMG4CuzS4yzuGcRVXYoJse+jD0jyK7UJJf/CQBdqAAP+1FI9VBsdXAAAAAAElFTkSuQmCC) no-repeat 0px 0px;
 }
 
 #world .base {
@@ -1166,14 +1189,14 @@ ul.stats-bar .bombs em {
 #world .base .transform-sprite {
   width: 510px;
   height: 25px;
-  /* TODO: base64 */
-  background-image: url(../image/base-sprite-horizontal.png);
+  /* background-image: url(../image/base-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAAZCAMAAADnh7yZAAAAG1BMVEUAAAAFVQEOqgJVVQEAAAD/qgGrAgGqqqr////9eV1TAAAAAXRSTlMAQObYZgAAAfFJREFUeNrt14FuwyAMBFBzEIf//+JZXpJrhpJtGu5KxVVVi93wlBZRIb8IJDBE3ic6vsEAeBvkOfeh8Yhqt28M32LxCiokUiGiMQoJVRIhClCLpQJ9mOU01AbDUxTV/soFEqigFq1AqIItIn2Yk4OvVlEVjVYMCb8XPEGBIbUCwQqBHszSMoSKXu9nqrmHIqZUlkZW4AlWCPxFIbNc3Uy52/y1as5rB4VMtGJMkEKE4xCFg3uly1ouwIVVVQ3popCJVQSWeIUJUIh0UNr/mCQMysXvsoiqmpGlj4Jiz2CFQqwiYyhk5MzwDYDiUsMsakYp69pLSU9QRKZyeb7UhkmwR2mZvC5meNbfKvKfikzlngHSHuyvnn2ULbCwboWpDKuQwXlC5M88Vo/C4e/FPJUBFTJAOjn5UjkW4Kbtn5vKYAqZZAgdUMlUvIgv2xAOxTKVkRQyvnIKkx7TNK5bUxlHIQO/YnlIYprGXWsqoyhkUgIXWbOamsZtaypjKYLUNVMZSpGUckbCt8kZP8pUBlNSBhIDD0s8WrjFuuPU99JUhlFgCI+MFl7mJ0cypzlZpcoKpjKCAiC5Q8TCachYXNmdo9QqW6by0grc8BaJYxbOSwZ5C/vtTnQqTeV1FUd8lW0ztooXOXiIlxqk2XOm8prKBwo1M21YfofeAAAAAElFTkSuQmCC);
   animation: animate-transform-sprite 1000ms steps(5) alternate infinite;
 }
 
 #world .base.enemy .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/base-enemy-sprite-horizontal.png);
+  /* background-image: url(../image/base-enemy-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAAZCAMAAADnh7yZAAAAGFBMVEXqAf9VVVWqqqpVVQEAAAD/qgGrAgH////ZlLQxAAAAAXRSTlMAQObYZgAAAeZJREFUeNrt191uqzAQRlFmj7Hf/40Pv/kgwqdVYaq48r5KcDIrxAQpw89jCE3M3yn/HQcYVLOMnN/ZFsIhIOdwRkDoz5ZCuJLFhCiCcqYQq0BJUwWi94X/3XJGHvm+ohUx4QqUnAoximIrUMlDzgne3JPy1MakX1KIVqCUBIQp6hnFc67fxXISIkbKyI8VRUlCWlfWQhVR9xXcc6lCFEi1kxmnuKkIiVKEhCpKTIiibpyLYoZyqS2S7l/LUupItMIsRCuiwhR1T1EOE5SHsbIziUHZcHJ4QIGUCFRUqKKaUiAlhzyOl0YC1uli5PCIYrGKhnblYoeXnBG/2BjDsDdG0ZIydOWUuxtrZgA+ZUs6voTtwYnpSpuKL+3zzOT4kfE1TrgoutKiAoe3w+tSqjp+UmyH6Ep7Cno/vN1C2EfaxsgBKYYtk7rSnGJTSdlbSdUXMGNmutKiMh5Kpi6W6gtMTFcaVCypi2tJ1RcwzAa60pjyaHSlKYVv5c6XGe5mXWlNsSnNcwDbA3f9zVRsmQI3N+tKM8o62I4dj0g+vc6dlyMdM3yG6EoLCsC1A3qIz62HxGjdj9D8GAO68tHKaaifIQSBb4EUqfocvi+uHkBXPldRgF9By0D1ovXk6Oy2z8YGdeUzlX/BTTI+8hNXigAAAABJRU5ErkJggg==);
 }
 
 #world .end-bunker {
@@ -1223,8 +1246,8 @@ ul.stats-bar .bombs em {
 }
 
 #world .landing-pad .transform-sprite {
-  /* TODO: base64 */
-  background-image: url(../image/landing-pad-sprite-horizontal.png);
+  /* background-image: url(../image/landing-pad-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUQAAAAHCAYAAABwUTSwAAAAtUlEQVR4Ae3WgQYCQRRG4ZX0dvuS04Nu242D2/Y3AMb5ObACn5nRdu54VxuP6vOtcqw8MDqHk4bTw+l5v1U4ZV/mwlnLvnPTcAPPCz39GGJ2havh1GNIwVfDZpjua/at3L/7CtxPZNcvazIjDfuwuyj6asjS2Yu+GrJ4X3kxxxhU36yVnTTUUMMFDPd9P1r8iMiuvDTUUMMlDPmHWGVca3CkoYYaLmPIvjB5TS3jaaihhksYvgDWFPBi+PT8mgAAAABJRU5ErkJggg==);
   width: 324px;
   height: 7px;
   animation: animate-transform-sprite 1000ms steps(4) infinite;
@@ -1342,13 +1365,14 @@ ul.stats-bar .bombs em {
 #world .helicopter .transform-sprite {
   width: 192px;
   height: 15px;
-  /* TODO: base64 */
-  background-image: url(../image/helicopter-sprite-horizontal.png);
+  /* background-image: url(../image/helicopter-sprite-horizontal.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAPCAMAAACFvDBUAAAAElBMVEUAAAAAAAALogUFTQKioqJNTU09uElQAAAAAXRSTlMAQObYZgAAAOlJREFUeNrVllEKg0AMRDPJ9P5XLglNR6otQVixzw/FfTPLIqsaYGYALAF/UEpJsCMgS5ztB4cYkbzS+IDYoglge7a+xs/2Qxz5InVGRkTbdLp7RHiKGmUANvRX9suPgCg1mF5SY3Ql5v76fgXCC1lJ+wl70Zj76/sL8NDTRfpaNDn3r+lH3pamxatFifv5BmYCb2IXzlP6rhnG/vJ+vea041tDU5GirLRhM399vz40TSdABvPsepDQl2bmr+8X20R5eNRRfiW0bTD1r+1Xwov2OnF/Xwl04GPr/4WPrzju7uuX0el7gPv5TyXdEOS/7/7zAAAAAElFTkSuQmCC);
   animation: animate-transform-sprite 360ms steps(4) infinite;
 }
 
 #world .helicopter.facing-left .transform-sprite {
-  background-image: url(../image/helicopter-sprite-horizontal-facing-left.png);
+  /* background-image: url(../image/helicopter-sprite-horizontal-facing-left.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAPCAMAAACFvDBUAAAAElBMVEUAAAAAAAALogUFTQKioqJNTU09uElQAAAAAXRSTlMAQObYZgAAAOFJREFUeNrVlYEKgzAMRHNp9v+/vDahvZU6qUKLnlDD+t6JDFVsMhBBXiI4JQMBfJU+IDLkXj+GGA4j4AXO+UAsNqWl42XI7X46mlJSVVOrTt+fDJjmAcu8YV+/FsoNLaal0Jj843Uee/r5R4WRcuhqDBTm+W39WnkKR6aZXeOxt597PnRCnIBn8loM5dbPhJY7vGF9v6DdnKImBMd/33KQSZ6vudX9TYjbLLM/75UfvjNzPD80i/tjCT6Mjx9ukqcyxzNL+2lWvprqeQs/PPAx4i28QPE3b+AF0DGmloPn81+LDhDkJERn1AAAAABJRU5ErkJggg==);
 }
 
 #world .turret,
@@ -1847,10 +1871,11 @@ body.game-paused #game-status-bar #radar.jammed #radar-jammed-overlay .transform
 }
 
 #battlefield .shrapnel .transform-sprite {
+  /* note: active width is 48px, but background image will be repositioned so only one type shows. */
   width: 12px;
   height: 12px;
   /* background-image: url(../image/shrapnel.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEUAAACrAgGqqqr/qgH///8OqgJVVQE1mjlhAAAAAXRSTlMAQObYZgAAAWZJREFUOBEFwdF13FYUBDAM9/h/LqkCHukUsBTVgCIX4BLSfxUBAAAA4BwQoABeLcyAKMBxP1M5BhwFxfW7wzw3eMEWi+sc5OPfITkGay5Mgxx/BrkH9gUD2/czmDeW/Q1TdKYkhXWABfYh+AstbKAlBQAAAAAAAAACQAr+A1KQIYANpCBTogDySsnsP4OCtSHHKPP1M5UpsEjudDm+7p08LZnBdlyzM/fHlDw3Ps/iuYrMjr9pK68ryFWoIgUbAAACFgAAAAAAAGBBAqQAbDAnfqEAMshMkBYtMJjnY+E18OqCZpg/d5mj8FkLs1/MP99l7hZXYfJ54XgGb9jOLjLPcWPukhtWNpC8MUMUFJgdCgEAAAAAAAAA5CoRFFhArgfnFCls4JzrXpnvYyTpL7L9Dlt6tM7j5+Z4CnO9EXM38/UzJE+RGUjfNV/nlEyxACmZgsBmgRRTiAJAAaDYAACQAgAAAP4HhZQd0ScxvCoAAAAASUVORK5CYII=);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMBAMAAADWlCNiAAAAElBMVEVVVQGqqqqrAgH/qgH///8OqgK+qm9ZAAAAAXRSTlMAQObYZgAAAHBJREFUGBkFwQFxw0AQBDD5QuCdEljvF0AmRpBOAZQ/mkoAAADwLBggAB4JtGAEYL/vxuyCHRCcXym93+ABx1icz2K+P2VmF6snmsHs32LehWtB4fi5i76wXC9okDbMBNYGC1xl8AcJHCBhAgAAAIB/0M0J+ZocFDIAAAAASUVORK5CYII=);
   background-position: 0px 0px;
   animation: rotating 0.5s linear infinite;
 }
@@ -2389,39 +2414,57 @@ body.is-mobile #player-status-bar .inventory-item:active {
   margin-top: -1px;
 }
 
-/* TODO: base64 all this. */
+#player-status-bar .inventory-item a.missile-launcher,
+#mobile-controls li.inventory-item a.missile-launcher {
+  /* background-image: url(../image/missile-launcher-static.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAASCAMAAAAnpt3PAAAAHlBMVEUAAQAAAABgYAACYAAJtAD/tACzAAC0tLSqqqpVVQEP4VSqAAAAAXRSTlMAQObYZgAAAMBJREFUeNqN0IEKwzAIBNBetDX7/x/eiWZKYWmPElB8mOZ4G1RYvWeDkaGqTw6eYnKKiGLQ7c24Lp7F3MHdoxm2mJKdxVqQKWMGZJ/bmGC4//Y1umERhFr1t01xvxjTjBniCc3IXIky6IxjuO8xoBjVcp2ZdcMWmQUj5HRjyDjIVMvovF8uWV7dyT5U6ZLpikR62TsoRwYIesoVXCwG4kmczTkR5yaaExLMqw/rOI9/geYEEw038T2xPtEvuWFt4gvAPggZ6Ysf1AAAAABJRU5ErkJggg==);
+}
+
 #player-status-bar .inventory-item a.missile-launcher {
-  /* TODO: clean this up. */
-  background-image: url(../image/missile-launcher-static.gif);
   background-size: contain;
+  background-position: 50% 50%;
   width: 27px;
   height: 9px;
 }
 
+#mobile-controls li.inventory-item a.tank,
 #player-status-bar .inventory-item a.tank {
-  /* TODO: clean this up. */
-  background-image: url(../image/tank-static.gif);
+  /* background-image: url(../image/tank-static.gif); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAASCAMAAAA9mj1BAAAAGFBMVEVhcAAAAAAFVQFVVQFVVVUOqgKqqqr/qgGVIxTWAAAAAXRSTlMAQObYZgAAAMFJREFUeNqV0IEOgzAIBNCVQvn/P16PnVI0TbqLscPdi8TPJm3NprNTvXfrZiJixxhKus34hKA28aGM9mTulHuLhd4S1EFpX4m6pw2Z1DkwtuRHYVulcr2VvzdvhXXOoFe9yAQZ9nPPOIIGrCkWLmWEpMSY8k3/i9lKRxvHF7JI0Xuhx35lccU4JkwqqhpdZVEJlVJxQ+tJh86gjf+ygzkMT0XMWqFyydIRzutzG6PQ1oT76rJZnOU59qdMe/x9K/wCOlII8vghfyEAAAAASUVORK5CYII=);
+}
+
+#player-status-bar .inventory-item a.tank {
   background-size: contain;
   width: 29px;
   height: 9px;
 }
 
+#player-status-bar .inventory-item a.van,
+#mobile-controls li.inventory-item a.van {
+  /* background-image: url(../image/van-static.gif); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAQCAMAAABNwP0sAAAAFVBMVEVvcm0AAABVVQEFVQEOqgL/qgGqqqptBTfSAAAAAXRSTlMAQObYZgAAAI1JREFUeNp9zkEOhDAMQ9HaSbn/kUlIGkvVaP6u5kFZEf61TgAzo5mRHlnmX+Gk8omeCRLjQpnLRXscMQ60YuP2FitX7HJ7HNGumbmg73baMZe6YCp9XcxJK9vsvFN7MoDOWodZs7MnI9k31qhfmr0YvnqTM6iF7HkeXGlfXZwY5zVdu4642K9dH1fX/gI/BQWst4OOWQAAAABJRU5ErkJggg==);
+}
+
 #player-status-bar .inventory-item a.van {
-  background-image: url(../image/van-static.gif);
   background-size: contain;
   width: 22px;
   height: 9px;
 }
 
+#player-status-bar .inventory-item a.infantry,
+#mobile-controls li.inventory-item a.infantry {
+  /* background-image: url(../image/infantry-static.gif); */
+  background-image: url(data:image/gif;base64,R0lGODlhCgALAMIFAAAAAAVVAVVVAQ6qAqsCAf///////////yH5BAEIAAcALAAAAAAKAAsAAAMmeAoM+gcQ4mCc9bHQ2BoBGHAfB5gf2CyA6EUtNwxe3KiRIDS6kwAAOw==);
+}
+
 #player-status-bar .inventory-item a.infantry {
-  background-image: url(../image/infantry-static.gif);
   background-size: contain;
   width: 8px;
   height: 9px;
 }
 
 #player-status-bar .inventory-item a.engineer {
-  background-image: url(../image/engineer-static.gif);
+  /* background-image: url(../image/engineer-static.gif); */
   background-size: contain;
   width: 8px;
   height: 9px;
@@ -2588,47 +2631,36 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   pointer-events: none;
 }
 
-/* TODO: base64 all this ish. */
-#mobile-controls li.inventory-item a.tank {
-  background-image: url(../image/tank-static.gif);
+#mobile-controls li.inventory-item a.engineer,
+#player-status-bar .inventory-item a.engineer {
+  /* background-image: url(../image/engineer-static.gif); */
+  background-image: url(data:image/gif;base64,R0lGODlhCgALAMIFAFVVAQVVAQAAAA6qAqsCAf///6qqqv///yH5BAEIAAcALAAAAAAKAAsAAAMqeCosek0Q4lYpkj5RjAgR0w0BGYCcQTJoM6zMIpgxNINvfLsgBACNnyMBADs=);
 }
 
-#mobile-controls li.inventory-item a.missile-launcher {
-  background-image: url(../image/missile-launcher-static.gif);
-}
-
-#mobile-controls li.inventory-item a.infantry {
-  background-image: url(../image/infantry-static.gif);
-  background-size: 12%;
-}
-
+#mobile-controls li.inventory-item a.infantry,
 #mobile-controls li.inventory-item a.engineer {
-  background-image: url(../image/engineer-static.gif);
   background-size: 12%;
-}
-
-#mobile-controls li.inventory-item a.van {
-  background-image: url(../image/van-static.gif);
 }
 
 #mobile-controls li.inventory-item a.parachute-infantry {
-  background-image: url(../image/parachute-infantry-static.png);
+  /* background-image: url(../image/parachute-infantry-static.png); */
   background-size: 12%;
 }
 
 #mobile-controls li.inventory-item a.smart-missile {
   /* background-image: url(../image/status-missile.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAK0lEQVQYlWP4DwSrmRj/MxADQAqJVkw7k8lSTJQGkhT/X8X4H4aJcgpIIQDIDioT6Vi0KwAAAABJRU5ErkJggg==);
   background-size: 10%;
+  background-position: 50% 50%;
 }
 
 #mobile-controls li.inventory-item a.ammo {
   /* background-image: url(../image/status-ammo.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAICAYAAADJEc7MAAAAM0lEQVQY02NgIAH8BwLiBPGp+Q8Fq1atIgkzkKoJxQnoEtgUEdSIVQE2jchOJSWEydYIADt2mmamiXmJAAAAAElFTkSuQmCC);
+  background-position: 50% 50%;
 }
 
 #mobile-controls li.inventory-item a.bombs {
-  background-image: url(../image/status-bombs.png);
+  /* background-image: url(../image/status-bombs.png); */
+  background-position: 50% 50%;
 }
 
 @media screen and (orientation: portrait) {
