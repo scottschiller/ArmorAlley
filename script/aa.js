@@ -8483,6 +8483,66 @@
 
     }
 
+    function stopSound(sound) {
+
+      var soundObject = sound && getSound(sound);
+
+      if (soundObject && soundObject.sound.playState) {
+        soundObject.sound.stop();
+      }
+
+    }
+
+    function startSound(sound) {
+
+      var soundObject;
+
+      soundObject = sound && getSound(sound);
+
+      if (!soundObject) return;
+
+      if (!data.isEnemy) {
+
+        // local? play quiet only if cloaked.
+        if (!userDisabledSound) {
+
+          // only start if not already playing
+          if (soundObject.sound.playState) {
+            soundObject.sound.stop();
+          }
+
+          // only start if not already playing
+          if (!soundObject.sound.playState) {
+            soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+          }
+
+        }
+
+      } else if (!userDisabledSound && soundObject && !soundObject.playState) {
+
+        // play with volume based on visibility.
+        playSound(sound, exports);
+
+      }
+
+    }
+
+    function stopFiringSound() {
+
+      var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
+
+      // stop the current loop, start one "firing end" sound.
+      if (soundObject) {
+        stopSound(soundObject);
+      }
+
+      // begin the one-shot (heh) ending sound, if ammo is left.
+      if (data.ammo) {
+        startSound(sounds.machineGunFireEnd);
+      }
+
+    }
+
     function die() {
 
       if (data.dead) return;
@@ -8526,7 +8586,7 @@
       radarItem.die();
 
       if (sounds.explosionLarge) {
-          playSound(sounds.explosionLarge, exports);
+        playSound(sounds.explosionLarge, exports);
       }
 
       if (!data.isEnemy && sounds.helicopter.engine) {
@@ -8540,69 +8600,9 @@
 
     }
 
-    function startSound(sound) {
-
-      var soundObject;
-
-      soundObject = sound && getSound(sound);
-
-      if (!soundObject) return;
-
-      if (!data.isEnemy) {
-
-        // local? play quiet only if cloaked.
-        if (!userDisabledSound) {
-
-          // only start if not already playing
-          if (soundObject.sound.playState) {
-            soundObject.sound.stop();
-          }
-
-          // only start if not already playing
-          if (!soundObject.sound.playState) {
-            soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
-          }
-
-        }
-
-      } else if (!userDisabledSound && soundObject && !soundObject.playState) {
-
-        // play with volume based on visibility.
-        playSound(sound, exports);
-
-      }
-
-    }
-
-    function stopSound(sound) {
-
-      var soundObject = sound && getSound(sound);
-
-      if (soundObject && soundObject.sound.playState) {
-        soundObject.sound.stop();
-      }
-
-    }
-
-    function stopFiringSound() {
-
-      var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
-
-      // stop the current loop, start one "firing end" sound.
-      if (soundObject) {
-        stopSound(soundObject);
-      }
-
-      // begin the one-shot (heh) ending sound, if ammo is left.
-      if (data.ammo) {
-        startSound(sounds.machineGunFireEnd);
-      }
-      
-    }
-
     function fire() {
 
-      var tiltOffset, frameCount, missileTarget, hasUpdate, soundObject;
+      var tiltOffset, frameCount, missileTarget, hasUpdate;
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -9608,6 +9608,7 @@
       maxParachutes: 5,
       smartMissiles: 2,
       maxSmartMissiles: 2,
+      machineGunFireSoundOffset: 0,
       midPoint: null,
       // for AI
       targeting: {
