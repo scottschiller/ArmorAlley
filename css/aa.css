@@ -632,7 +632,7 @@ ul.stats-bar .bombs em {
   /* and no CSS animation, eh!? */
   animation: none !important;
   /* reset more stuff */
-  will-change: initial !important;
+  will-change: auto !important;
 }
 
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
