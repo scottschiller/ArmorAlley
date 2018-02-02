@@ -4655,11 +4655,6 @@
 
       moveTo(data.x, data.bottomY);
 
-      // assign .style.left only if not doing a transform
-      if (!features.transform.prop) {
-        common.setX(exports, data.x);
-      }
-
       common.setBalloonXY(exports, data.bottomY);
 
       if (!objects.bunker) {
