@@ -715,9 +715,16 @@ ul.stats-bar .bombs em {
 }
 
 #world .chain {
-  width: 1px;
   border-left: 1px dotted #999;
   border-right: 1px dotted #999;
+  width: 1px;
+  /*
+   * height will be set / reset by JS.
+   * element is moved via transform and is effectively fixed-height when active.
+   * height is only zeroed when chain is at bottom - detached from balloon and/or bunker.
+   */
+  height: 0px;
+  /* top-aligned */
   top: 0px;
 }
 

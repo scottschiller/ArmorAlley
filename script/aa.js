@@ -4018,7 +4018,6 @@
     data = {
       frameCount: 0,
       animateModulus: 1, // TODO: review
-      // jammingModulus: 12,
       jammingTimer: null,
       lastMissileCount: 0,
       incomingMissile: false,
