@@ -9561,7 +9561,7 @@
       fuel: 100,
       maxFuel: 100,
       fireModulus: 2,
-      bombModulus: 6,
+      bombModulus: 5,
       fuelModulus: (tutorialMode ? 24 : 8),
       fuelModulusFlying: (tutorialMode ? 9 : 3),
       missileModulus: 12,
