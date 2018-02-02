@@ -1,6 +1,4 @@
 /*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
-/*jslint nomen: true, plusplus: true, todo: true, vars: true, white: true */
-
 (function armorAlley(window) {
 
 'use strict';
