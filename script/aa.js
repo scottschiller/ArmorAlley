@@ -2938,7 +2938,8 @@
 
       if (!data.battleField.width) {
         // dimensions assumed to be static, can be grabbed once
-        data.battleField.width = dom.battleField.offsetWidth;
+        // hard-code `battleField` width, instead of measuring.
+        data.battleField.width = 8192; // dom.battleField.offsetWidth;
         data.battleField.height = dom.battleField.offsetHeight;
         data.topBar.height = dom.topBar.offsetHeight;
       }
@@ -13203,7 +13204,7 @@
     };
 
     dom = {
-      world: null
+      world: null // TODO: rename to battlefield
     };
 
     objects = {
