@@ -7310,7 +7310,7 @@
         data.x = x;
       }
 
-      // prevent from "crashing", only if not expiring and target is still alive
+      // prevent from "crashing" into terrain, only if not expiring and target is still alive
       if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
         y = data.yMax;
         hitBottom = true;
@@ -7685,8 +7685,8 @@
         }
 
         // hit bottom?
-        if (data.y > game.objects.view.data.battleField.height) {
-          data.y = game.objects.view.data.battleField.height;
+        if (data.y > game.objects.view.data.battleField.height - 3) {
+          data.y = game.objects.view.data.battleField.height - 3;
           die(true);
         }
 
