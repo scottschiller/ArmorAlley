@@ -647,6 +647,7 @@ ul.stats-bar .bombs em {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAZCAMAAACrSOZIAAAAElBMVEXgY28AAABVVVWqVQGqqgKqqqqYdYVBAAAAAXRSTlMAQObYZgAAAO1JREFUeNqNkQEOwyAMA1ea/P/LS3DQMZpKiwRUNkcM/byVmWnOta+ecXGd7y2TlcuExEP47VHm2qZd91apuDEHUgYF8XQEOdY/gIIuN0bH/J4myM5TDwGohPkejyBtMCQYjrP2Ngj6E89g1yx/YTyM/UiIBrJ1H5gOkgSkaE/ogmEz0SbEswIdTFhbtmpPuz0bSDjlBnPcUuTeZyE2sWS65+yiKQjMzIpVENmYYEDoszPrbWDUhdwpiCgJvd7gHiOlWEaMtYrx+JQ1ikwvmNpWivxibJoaQsWM+iy9tqw+WQLxyQZBNrsVFj+zfAH0+g3OBtHhUgAAAABJRU5ErkJggg==);
   width: 51px;
   height: 25px;
+  z-index: 1; /* sit on top of chains. */
 }
 
 #world .bunker .sub-sprite.arrow {
