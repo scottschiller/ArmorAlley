@@ -5,11 +5,18 @@
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, animation, CSS3, arcade, retro, browser game" />
  <meta name="author" content="Scott Schiller" />
  <meta charset="UTF-8" />
- <link rel="shortcut icon" href="favicon.ico" />
+ <link rel="shortcut icon" href="./favicon.ico" />
  <!-- the special snowflake that is iOS -->
- <meta name="apple-mobile-web-app-capable" content="yes" />
- <!-- iPhone X and friends - CSS will handle the notch, etc. -->
- <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
+ <!-- TODO: scaling doesn't work on orientation change here when added to home screen. -->
+ <!-- <meta name="apple-mobile-web-app-capable" content="yes" /> -->
+ <!-- iPhone X and friends (and some scaling crap) - CSS will handle the notch. -->
+ <meta name="viewport" content="initial-scale=1, viewport-fit=cover, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+ <meta name="apple-mobile-web-app-title" content="Armor Alley" />
+ <!-- all kinds of icons -->
+ <link rel="apple-touch-icon" sizes="76x76" href="./image/apple-touch-icon-76x76.png?v=1" />
+ <link rel="apple-touch-icon" sizes="120x120" href="./image/apple-touch-icon-120x120.png?v=1" />
+ <link rel="apple-touch-icon" sizes="152x152" href="./image/apple-touch-icon-152x152.png?v=1" />
+ <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
  <link rel="stylesheet" media="screen" href="css/aa.css" />
  <script type="text/javascript" src="script/soundmanager2.js"></script>
  <script type="text/javascript" src="script/aa.js"></script>
