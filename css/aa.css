@@ -584,6 +584,7 @@ ul.stats-bar .bombs em {
   background-repeat: no-repeat;
   -moz-pointer-events: none;
   pointer-events: none;
+  overflow: hidden;
 }
 
 #battlefield .chain,
