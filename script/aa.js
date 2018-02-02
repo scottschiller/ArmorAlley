@@ -4627,7 +4627,9 @@
       updateEnergy(exports);
 
       // presumably, triggered by an infantry.
-      playSound(sounds.chainRepair, exports);
+      if (sounds.chainRepair) {
+        playSound(sounds.chainRepair, exports);
+      }
 
     };
 
