@@ -3484,6 +3484,43 @@
 
     }
 
+    function processNextOrder() {
+
+      // called each time an item is queued for building,
+      // and each time an item finishes building (to see if there's more in the queue.)
+
+      if (!data.building && data.queue.length) {
+
+        // start building!
+        data.building = true;
+
+      }
+
+      if (data.queue.length) {
+
+        // first or subsequent queue items being built.
+
+        // reset frame / build counter
+        data.frameCount = 0;
+
+        // take the first item out of the queue for building.
+        objects.order = data.queue.shift();
+
+      } else if (data.building && !data.queue.length) {
+
+        utils.css.remove(dom.gameStatusBar, css.building);
+
+        data.building = false;
+
+        // play sound?
+        if (!objects.order.options.isEnemy && sounds.inventory.end) {
+          playSound(sounds.inventory.end);
+        }
+
+      }
+
+    }
+
     function order(type, options) {
 
       var typeData, orderObject, orderSize, cost;
@@ -3492,90 +3529,89 @@
 
       orderSize = 1;
 
-      options.x = -72; // default off-screen setting
+      // default off-screen setting
+      options.x = -72;
+
+      // let's build something - provided you're good for the $$$, that is.
+
+      typeData = data.types[type];
+
+      // infantry or engineer? handle those specially.
+
+      if (type === 'infantry') {
+
+        orderSize = 5;
+
+      } else if (type === 'engineer') {
+
+        orderSize = 2;
+
+      }
+
+      // Hack: make a temporary object, so we can get the relevant data for the actual order.
+      if (!options.isEnemy) {
+        options.noInit = true;
+      }
+
+      orderObject = createObject(typeData, options);
+
+      // do we have enough funds for this?
+      cost = orderObject.data.inventory.cost;
+
+      if (game.objects.endBunkers[0].data.funds >= cost) {
+
+        game.objects.endBunkers[0].data.funds -= cost;
+
+        game.objects.view.updateFundsUI();
+
+        if (!data.isEnemy) {
+          game.objects.helicopters[0].updateStatusUI();
+        }
+
+      } else if (!data.isEnemy) {
+
+        // Insufficient funds. "We require more vespene gas."
+        if (sounds.inventory.denied) {
+          playSound(sounds.inventory.denied);
+        }
+
+        return;
+
+      }
+
+      // and now, remove that for the real build.
+      options.noInit = false;
+
+      // data.building = true;
+
+      // create and push onto the queue.
+      var newOrder = {
+        data: orderObject.data,
+        // how long to wait after last item before "complete" (for buffering space)
+        completeDelay: orderObject.data.inventory.orderCompleteDelay || 0,
+        typeData: typeData,
+        options: options,
+        size: orderSize
+      };
+
+      data.queue.push(newOrder);
+
+      if (!newOrder.options.isEnemy) {
+
+        // update the UI
+        utils.css.add(dom.gameStatusBar, css.building);
+
+        // and make a noise
+        if (sounds.inventory.begin) {
+          playSound(sounds.inventory.begin);
+        }
+
+      }
+
+      // only start processing if queue length is 1 - i.e., first item just added.
 
       if (!data.building) {
-
-        // let's build something - provided you have the $$$, that is.
-
-        data.frameCount = 0;
-
-        typeData = data.types[type];
-
-        // infantry or engineer? handle those specially.
-
-        if (type === 'infantry') {
-
-          orderSize = 5;
-
-        } else if (type === 'engineer') {
-
-          orderSize = 2;
-
-        }
-
-        // Hack: make a temporary object, so we can get the relevant data for the actual order.
-        if (!options.isEnemy) {
-          options.noInit = true;
-        }
-
-        orderObject = createObject(typeData, options);
-
-        // do we have enough funds for this?
-        cost = orderObject.data.inventory.cost;
-
-        if (game.objects.endBunkers[0].data.funds >= cost) {
-
-          game.objects.endBunkers[0].data.funds -= cost;
-
-          game.objects.view.updateFundsUI();
-
-          if (!data.isEnemy) {
-            game.objects.helicopters[0].updateStatusUI();
-          }
-
-        } else if (!data.isEnemy) {
-
-          // Insufficient funds. "We require more vespene gas."
-          if (sounds.inventory.denied) {
-            playSound(sounds.inventory.denied);
-          }
-
-          return;
-
-        }
-
-        // and now, remove that for the real build.
-        options.noInit = false;
-
-        data.building = true;
-
-        objects.order = {
-          data: orderObject.data,
-          completeDelay: orderObject.data.inventory.orderCompleteDelay || 0, // how long to wait after last item before "complete" (for buffering space)
-          typeData: typeData,
-          options: options,
-          size: orderSize
-        };
-
-        // reset the frame count, and re-enable building when it surpasses this object's "build time"
-        // TODO: Don't play sounds if options.enemy set.
-        // data.frameCount = orderObject.data.inventory.frameCount * -1 * (orderSize > 1 ? orderSize + 1 : orderSize);
-
-        if (!options.isEnemy) {
-
-          // update the UI
-          utils.css.add(dom.gameStatusBar, css.building);
-
-          if (sounds.inventory.begin) {
-            playSound(sounds.inventory.begin);
-          }
-
-        }
-
-      } else if (sounds.inventory.denied) {
-        // busy.
-        playSound(sounds.inventory.denied);
+        processNextOrder();
       }
 
       // HACK
@@ -3594,7 +3630,6 @@
           if (objects.order.size) {
 
             // make an object.
-
             createObject(objects.order.typeData, objects.order.options);
 
             objects.order.size--;
@@ -3602,21 +3637,13 @@
           } else if (objects.order.completeDelay) {
 
             // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
-
             objects.order.completeDelay--;
 
           } else {
 
             // "Construction complete."
 
-            utils.css.remove(dom.gameStatusBar, css.building);
-
-            data.building = false;
-
-            // play sound?
-            if (sounds.inventory.end) {
-              playSound(sounds.inventory.end);
-            }
+            processNextOrder();
 
           }
 
@@ -3647,7 +3674,8 @@
         infantry: [game.objects.infantry, Infantry],
         engineer: [game.objects.engineers, Engineer]
       },
-      building: false
+      building: false,
+      queue: [],
     };
 
     objects = {
