@@ -1,114 +1,152 @@
 /*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
 (function armorAlley(window) {
 
-'use strict';
+  'use strict';
 
-/*
+  /*
 
-     MMM   MMMM?MN   MMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM
-    MMMM   DMMM+MMM   MMMM  MMMM MMMMMMMM MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM MMM
-    MMMM    MMM MMM   MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM MM
-    MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMMMM
-    MMMMM   MMM MMM   MMMMMMMMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM MM    MMMM
-   MM MMM   MMM MM    MMMM  MMMM MMM  MMM MMMM MM     MM MMM   MMMM     MMMM     MMMMMM    MMMM
-   MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM
-   M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM
-  MM  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM
-  MM  MMMM DMMM MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  MMM MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM
-  MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM
+       MMM   MMMMMMN   MMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM
+      MMMM   DMMM MMM   MMMM  MMMM MMMMMMMM MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM MMM
+      MMMM    MMM MMM   MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM MM
+      MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMMMM
+      MMMMM   MMM MMM   MMMMMMMMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM MM    MMMM
+     MM MMM   MMM MM    MMMM  MMMM MMM  MMM MMMM MM     MM MMM   MMMM     MMMM     MMMMMM    MMMM
+     MM MMMN  MMM?MMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM
+     M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM
+    MM  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM
+    MM  MMMM DMMM MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  MMM MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM
+    MM  MMMM MMMM$ MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM
 
-  A browser-based interpretation of the MS-DOS release of Armor Alley.
+    A browser-based interpretation of the MS-DOS release of Armor Alley.
 
-  Original game Copyright (C) 1989 - 1991 Information Access Technologies.
-  http://en.wikipedia.org/wiki/Armor_alley
+    Original game Copyright (C) 1989 - 1991 Information Access Technologies.
+    http://en.wikipedia.org/wiki/Armor_alley
 
-  Images, text and other portions of the original game used with permission under an ISC license.
-  Original sound effects could not be re-licensed; modern replacements used from freesound.org.
+    Images, text and other portions of the original game used with permission under an ISC license.
+    Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
-  http://www.schillmania.com/armor-alley/
-  http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
-  http://github.com/scottschiller/ArmorAlley/
+    http://www.schillmania.com/armor-alley/
+    http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+    http://github.com/scottschiller/ArmorAlley/
 
-  General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
+    General disclaimer: This is a fun personal side project. The code could surely be better. ;)
 
-  Changelog / Revision History
+    Original release: Version 1.0.20131031
 
-  + 12/2017
-   + Optimized performance / dropped CPU usage significantly by hiding off-screen elements.
-   + Fixed silly blank / empty frame in balloon right -> left animation sequence.
-   + Dropped numerous legacy -webkit and -moz prefixes in CSS.
-   + DOM Pruning option with offscreen logic (ultimately unused, too $$$ on style recalc.)
+    Changelog / Revision History
 
-  + 10/2017
-   + Fixed up top stats layout in Firefox, Safari, Chrome.
-   + Emoji to convey meaning of tutorial, easy, hard, extreme modes.
-   + ESLint code clean-up.
+    + V1.5.20180201
 
-  + 09/2015
+     + Big feature updates!
+      • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
+      • Inventory order queueing! 🎉 (Finally.) e.g., 3 tanks in a row. Queueing deducts funds immediately. No added UI or cancel ability (yet.)
+      • Battlefield view is now bigger on screen. Stats UI is dead, long live stats.
+      • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
 
-   + "Extreme" game mode
-    • Higher enemy convoy production rate.
-    • Turrets fire at a faster rate.
-    • Twin enemy turrets near mid-field.
-    • Turrets fire at ground vehicles and smart missiles. Infantry and engineers are not targeted, but can be hit.
-    • Owning all bunkers does not halt enemy production.
+     + Sound
+      • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
+      • New + improved helicopter machine gun sounds. 9 different samples, played at random.
+      • New sound effects: "bomb hatch" (helicopter bomb release), tank gunfire, bunker chain/balloon repair, helicopter gunfire hit.
+      • "Medals clanking" sound for bunker chain/balloon repair. (BY-NC 3.0.) https://freesound.org/people/Gareth_H/sounds/365799/
+      • New tank gunfire sound: "Tank Fire Mixed.wav" by Cyberkineticfilms/freesound.org (CC0, "No Rights Reserved". 🙇)
+      • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
 
-   + Miscellaneous
-    • Fix for "negative look-ahead" case - enemy Super Bunker now fires at helicopter on both sides.
-    • `Math.abs()` checks on distance for missile launchers
-    • Fixed Bunker and Super Bunker vertical alignment / collision detection with helicopter
-    • Infantry will not be picked up when the helicopter is on a landing pad and repairing.
-    • Shrapnel shows on radar.
-    • Background color fixed on bullet and missile "spark" graphic.
+     + UX / UI
+      • "Radar jammed" TV static-like overlay with transform sprite.
+      • Slightly faster helicopter bombing rate - more responsive.
+      • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
+      • Balloons are yellow-ish on radar, and now transform-rotated to elliptical shapes. Bunkers / base color and border tweaks, friendly vs. enemy now look different.
+      • Inventory and helicopter ammo, etc., become greyed out when unaffordable / unavailable.
+      • Target / "tracking" animation on Smart Missile targets.
+      • Smart Missiles can now re-target on the next frame after the original target dies. If a new target can not be immediately acquired, the Smart Missile dies as previously.
+      • Radar items, clouds and some other sprites move more smoothly simply by dropping `parseInt()`.
+      • "C" / rubber chicken use causes UI to switch to rubber chicken mode.
+      • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
+      • Jam radar all the time on hard + extreme game types.
 
-  + 08/2014
+     + Miscellany
+      • Note re: Firefox `will-change` memory consumption warning that might show in console.
+      • URL feature flags: `noTranslate3d` and `noRadarGPU`. `frameRate=[60|*]` for testing of `requestAnimationFrame()` timing. camelCase others. Let Opera (now webkit-based) have transforms.
+      • +`makeTransformSprite()`, a sort of sub-sprite for CSS transform-based animations (GPU-accelerated animated .GIF alternatives.)
+      • `z-index: -1` can be harmful for performance / compositing.
+      • iPhone X notch handling based on orientation and whatnot.
 
-   + Sound events / sound effects
-    • Wrench and related sounds on helicopter repair/refuel, balloon repair, turret claiming/rebuilding/repair
-    • Violin notes for friendly capture events: bunker, turret etc. (C5). Enemy note is C4.
-    • "Pop" / "vacuum" sounds for infantry pick up + deployment, and turret restoration
-    • Door close for passing infantry entering bunkers
-    • Splat for infantry and engineer kills
-    • Crash-and-glass for bunker explosions
-    • Heavy/light impact sounds for bullets hitting metal (tanks) and other structures (bunkers)
-    • Turrets audibly "break" when destroyed.
+    + 12/2017
 
-   + Game logic / rules
-    • Turret gunfire can now hit infantry, regular bunkers and Super Bunkers. However, only tank gunfire can hit Super Bunkers for damage.
-    • For "easy" game mode, turrets now fire at half the previous rate.
+     + Optimized performance / dropped CPU usage significantly by hiding off-screen elements.
+     + Fixed silly blank / empty frame in balloon right -> left animation sequence.
+     + Dropped numerous legacy -webkit and -moz prefixes in CSS.
+     + DOM Pruning option with offscreen logic
 
-   + UI / design
-    • Arrows on bunkers now animate to the right/left when claimed by friendly/enemy infantry.
+    + 10/2017
 
-   + Miscellaneous
-    • Sound arrays (i.e., 5 bullet/metal sounds) shuffle on each rotation, reducing chance of repetitiveness.
-    • Upped turret gunfire sound array, possibly reduce cloning of Audio() in heavy fire cases.
-    • Infantry build "faster" now, so they are more closely grouped together (in units of five.)
-    • Shrapnel now rotates using CSS animations, rotation direction determined randomly.
-    • In tutorial mode, disarm user-armed Super Bunker so it doesn't accidentally kill Missile Launchers that later show up.
-    • Fixed enemy infantry + engineer die animation to be bottom-aligned.
+     + Fixed up top stats layout in Firefox, Safari, Chrome.
+     + Emoji to convey meaning of tutorial, easy, hard, extreme modes.
+     + ESLint code clean-up.
 
-  + 07/2014
+    + 09/2015
 
-   • Safari 7.1 and 8 (OS X 10.10/Yosemite preview) still have HTML5 audio jank bug, thus prefer Flash. https://bugs.webkit.org/show_bug.cgi?id=116145
-   • Opacity fade on edge of game tips.
-   • Font legibility tweaks.
+     + "Extreme" game mode
+      • Higher enemy convoy production rate.
+      • Turrets fire at a faster rate.
+      • Twin enemy turrets near mid-field.
+      • Turrets fire at ground vehicles and smart missiles. Infantry and engineers are not targeted, but can be hit.
+      • Owning all bunkers does not halt enemy production.
 
-  + 04/2014
+     + Miscellaneous
+      • Fix for "negative look-ahead" case - enemy Super Bunker now fires at helicopter on both sides.
+      • `Math.abs()` checks on distance for missile launchers
+      • Fixed Bunker and Super Bunker vertical alignment / collision detection with helicopter
+      • Infantry will not be picked up when the helicopter is on a landing pad and repairing.
+      • Shrapnel shows on radar.
+      • Background color fixed on bullet and missile "spark" graphic.
 
-   • "Hard" game option, comparable to original game's level 9.
-   • Gunfire and shrapnel now shows up on radar.
-   • Enemy unit production halts when all bunkers are friendly / player-owned.
-   • Heat-seeking rubber chickens (launched with C key.)
-   • Turret gunfire can hit tanks, vans and missile launchers in "hard" mode. Protip: Don't approach turrets from low angles.
+    + 08/2014
 
-  + 03/2014
+     + Sound events / sound effects
+      • Wrench and related sounds on helicopter repair/refuel, balloon repair, turret claiming/rebuilding/repair
+      • Violin notes for friendly capture events: bunker, turret etc. (C5). Enemy note is C4.
+      • "Pop" / "vacuum" sounds for infantry pick up + deployment, and turret restoration
+      • Door close for passing infantry entering bunkers
+      • Splat for infantry and engineer kills
+      • Crash-and-glass for bunker explosions
+      • Heavy/light impact sounds for bullets hitting metal (tanks) and other structures (bunkers)
+      • Turrets audibly "break" when destroyed.
 
-   • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
+     + Game logic / rules
+      • Turret gunfire can now hit infantry, regular bunkers and Super Bunkers. However, only tank gunfire can hit Super Bunkers for damage.
+      • For "easy" game mode, turrets now fire at half the previous rate.
 
-  Original release: Version 1.0.20131031
+     + UI / design
+      • Arrows on bunkers now animate to the right/left when claimed by friendly/enemy infantry.
 
-*/
+     + Miscellaneous
+      • Sound arrays (i.e., 5 bullet/metal sounds) shuffle on each rotation, reducing chance of repetitiveness.
+      • Upped turret gunfire sound array, possibly reduce cloning of Audio() in heavy fire cases.
+      • Infantry build "faster" now, so they are more closely grouped together (in units of five.)
+      • Shrapnel now rotates using CSS animations, rotation direction determined randomly.
+      • In tutorial mode, disarm user-armed Super Bunker so it doesn't accidentally kill Missile Launchers that later show up.
+      • Fixed enemy infantry + engineer die animation to be bottom-aligned.
+
+    + 07/2014
+
+     • Safari 7.1 and 8 (OS X 10.10/Yosemite preview) still have HTML5 audio jank bug, thus prefer Flash. https://bugs.webkit.org/show_bug.cgi?id=116145
+     • Opacity fade on edge of game tips.
+     • Font legibility tweaks.
+
+    + 04/2014
+
+     • "Hard" game option, comparable to original game's level 9.
+     • Gunfire and shrapnel now shows up on radar.
+     • Enemy unit production halts when all bunkers are friendly / player-owned.
+     • Heat-seeking rubber chickens (launched with C key.)
+     • Turret gunfire can hit tanks, vans and missile launchers in "hard" mode. Protip: Don't approach turrets from low angles.
+
+    + 03/2014
+
+     • Added "Super Bunkers" (pillbox bunkers) http://en.wikipedia.org/wiki/Armor_alley#Terrain_elements
+
+  */
 
   var game, utils, common;
 
