@@ -1,4 +1,4 @@
-** Armor Alley: Web Prototype
+# Armor Alley: Web Prototype
 
 Copyright (c) 2013, Scott Schiller
 http://www.schillmania.com/armor-alley/
@@ -10,17 +10,17 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 -----
 
-** Changelog / Revision History
+## Changelog / Revision History
 
-+ V1.5.20180201
+### V1.5.20180201
 
- + Big feature updates!
+ + **Big feature updates!**
   • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
   • Inventory order queueing! 🎉 (Finally.) e.g., 3 tanks in a row. Queueing deducts funds immediately. No added UI or cancel ability (yet.)
   • Battlefield view is now bigger on screen. Stats UI is dead, long live stats.
   • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
 
- + Sound
+ + **Sound**
   • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
   • New + improved helicopter machine gun sounds. 9 different samples, played at random.
   • New sound effects: "bomb hatch" (helicopter bomb release), tank gunfire, bunker chain/balloon repair, helicopter gunfire hit.
@@ -28,7 +28,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
   • New tank gunfire sound: "Tank Fire Mixed.wav" by Cyberkineticfilms/freesound.org (CC0, "No Rights Reserved". 🙇)
   • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
 
- + UX / UI
+ + **UX / UI**
   • "Radar jammed" TV static-like overlay with transform sprite.
   • Slightly faster helicopter bombing rate - more responsive.
   • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
@@ -41,7 +41,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
   • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
   • Jam radar all the time on hard + extreme game types.
 
- + Miscellany
+ + **Miscellany**
   • Note re: Firefox `will-change` memory consumption warning that might show in console.
   • URL feature flags: `noTranslate3d` and `noRadarGPU`. `frameRate=[60|*]` for testing of `requestAnimationFrame()` timing. camelCase others. Let Opera (now webkit-based) have transforms.
   • +`makeTransformSprite()`, a sort of sub-sprite for CSS transform-based animations (GPU-accelerated animated .GIF alternatives.)
@@ -49,6 +49,8 @@ http://creativecommons.org/licenses/by-nc/3.0/
   • iPhone X notch handling based on orientation and whatnot.
 
 -----
+
+## License
 
 (ISC license applies to original game images and related assets, used with permission)
 
@@ -71,7 +73,7 @@ OF THIS SOFTWARE.
 
 -----
 
-** Acknowledgements and Credits
+## Acknowledgements and Credits
 
 Many thanks are due to the original game author for granting permission
 to use the Armor Alley images and related assets under an ISC license.
@@ -84,127 +86,127 @@ Thanks go to numerous individuals for making their work available.
 The majority of these sounds have been published under a Creative Commons
 Attribution license, or other as specified. Details at each link.
 
-** Sounds
+### Sounds
 
-"01587 helicopter.wav" by Robinhood76
+`01587 helicopter.wav` by Robinhood76
 http://freesound.org/people/Robinhood76/sounds/94867/
 
-"Click" by lebcraftlp
+`Click` by lebcraftlp
 http://freesound.org/people/lebcraftlp/sounds/192279/
 
-"Cloth Flaps" by Sauron974
+`Cloth Flaps` by Sauron974
 http://freesound.org/people/Sauron974/sounds/188733/
 
-"DarkDetonation01.wav" by M-RED
+`DarkDetonation01.wav` by M-RED
 http://freesound.org/people/M-RED/sounds/183870/
 
-"Debris Sifting Dry.aif" by kantouth
+`Debris Sifting Dry.aif` by kantouth
 http://freesound.org/people/kantouth/sounds/115113/
 
-"explosion.mp3" by sarge4267
+`explosion.mp3` by sarge4267
 http://freesound.org/people/sarge4267/sounds/102719/
 
-"explosion3.wav" by sarge4267
+`explosion3.wav` by sarge4267
 http://freesound.org/people/sarge4267/sounds/102733/
 
-"explosion 4.aif" by harpoyume
+`explosion 4.aif` by harpoyume
 http://freesound.org/people/harpoyume/sounds/86032/
 
-"Gunshot 1.wav" by Adam_N
+`Gunshot 1.wav` by Adam_N
 http://freesound.org/people/Adam_N/sounds/164667/
 
-"GunShot.03.wav" by stintx
+`GunShot.03.wav` by stintx
 http://freesound.org/people/stintx/sounds/107620/
 
-"Warfare_gunshots_machine_gun_burst_001.wav" by soundscalpel.com
+`Warfare_gunshots_machine_gun_burst_001.wav` by soundscalpel.com
 http://freesound.org/people/soundscalpel.com/sounds/110622/
 
-"oddworld_bomb.wav" by Oddworld
+`oddworld_bomb.wav` by Oddworld
 http://freesound.org/people/Oddworld/sounds/75330/
 
-"D6.wav" by RealRhodesSounds
+`D6.wav` by RealRhodesSounds
 http://freesound.org/people/RealRhodesSounds/sounds/4194/
 
-"snapping-chain" by CosmicEmbers
+`snapping-chain` by CosmicEmbers
 http://freesound.org/people/CosmicEmbers/sounds/161650/
 
-"Stapler_Hands_05.wav" by Simon Lacelle
+`Stapler_Hands_05.wav` by Simon Lacelle
 http://freesound.org/people/Simon_Lacelle/sounds/67352/
 
-"static.wav" by g_lowing
+`static.wav` by g_lowing
 http://freesound.org/people/g_lowing/sounds/84432/
 
-"vhs hum" by jocobzeier
+`vhs hum` by jocobzeier
 http://freesound.org/people/jacobzeier/sounds/166178/
 
-"Metal Click Sound" by mkoenig
+`Metal Click Sound` by mkoenig
 http://freesound.org/people/mkoenig/sounds/81175/
 
-"impact_water_splash_bomb_throw_flesh_01.wav" by m_O_m
+`impact_water_splash_bomb_throw_flesh_01.wav` by m_O_m
 http://freesound.org/people/m_O_m/sounds/108758/
 
-"Faulty Flourescent Light Start & Hum.wav" by EverydaySounds
+`Faulty Flourescent Light Start & Hum.wav` by EverydaySounds
 http://freesound.org/people/EverydaySounds/sounds/125064/
 
-"Wilhem Scream Sample (1951)"
+`Wilhem Scream Sample (1951)`
 http://archive.org/details/WilhelmScreamSample
 
-"imppact wrench bounce.wav" by andrewgnau2
+`imppact wrench bounce.wav` by andrewgnau2
 http://freesound.org/people/andrewgnau2/sounds/71534/
 
-"Socket Wrench" by TheGertz
+`Socket Wrench` by TheGertz
 http://freesound.org/people/TheGertz/sounds/131200/
 
-"Socket Wrench" by xxqmanxx
+`Socket Wrench` by xxqmanxx
 http://freesound.org/people/xxqmanxx/sounds/147018/
 
-"alligator wrench 01.wav" by klankbeeld
+`alligator wrench 01.wav` by klankbeeld
 http://freesound.org/people/klankbeeld/sounds/198299/
 
-"Violin C-5 Pizzicato Non-Vibrato" by Carlos Vaquero
+`Violin C-5 Pizzicato Non-Vibrato` by Carlos Vaquero
 http://freesound.org/people/Carlos_Vaquero/sounds/153616/
 
-"Violin G-4 Pizzicato Non-Vibrato" by Carlos Vaquero
+`Violin G-4 Pizzicato Non-Vibrato` by Carlos Vaquero
 http://freesound.org/people/Carlos_Vaquero/sounds/153611/
 
-"Pop_9.aif" by SunnySideSound
+`Pop_9.aif` by SunnySideSound
 http://freesound.org/people/SunnySideSound/sounds/67095/
 
-"Pop SFX" by runirasmussen
+`Pop SFX` by runirasmussen
 http://freesound.org/people/runirasmussen/sounds/178446/
 
-"Crash & Glass.wav" by Rock Savage
+`Crash & Glass.wav` by Rock Savage
 http://freesound.org/people/Rock%20Savage/sounds/59263/
 
-"splats.wav" by FreqMan
+`splats.wav` by FreqMan
 http://freesound.org/people/FreqMan/sounds/42962/
 
-"Door Closing.wav" by ceberation
+`Door Closing.wav` by ceberation
 http://freesound.org/people/ceberation/sounds/235513/
 
-"Metal-Clanging.mp3" by Tiger_v15
+`Metal-Clanging.mp3` by Tiger_v15
 http://freesound.org/people/Tiger_v15/sounds/211015/
 
-"Metal_Hit_02.wav" by dheming
+`Metal_Hit_02.wav` by dheming
 http://freesound.org/people/dheming/sounds/197398/
 
-"bolo-hit-tank-self.wav" (from Bolo), Copyright (C) Steuart Cheshire 1993.
+`bolo-hit-tank-self.wav` (from Bolo), Copyright (C) Steuart Cheshire 1993.
 A subtle tribute to my favourite Mac game of all-time, hands down. <3
 https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
 http://bolo.net/
 https://github.com/stephank/orona
 http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
 
-"Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
+`Tank fire Mixed.wav` by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
 https://freesound.org/people/Cyberkineticfilms/sounds/127845/
 
-"Medals Clanking" by Gareth_H (BY-NC 3.0)
+`Medals Clanking` by Gareth_H (BY-NC 3.0)
 https://freesound.org/people/Gareth_H/sounds/365799/
 
-"Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) [Mixed]" by EFlexTheSoundDesigner (BY-NC 3.0)
+`Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) [Mixed]` by EFlexTheSoundDesigner (BY-NC 3.0)
 https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/
 
-** Images
+### Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
 https://github.com/fabianalexisinostroza/Antu
