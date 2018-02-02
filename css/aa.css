@@ -59,6 +59,9 @@ body {
   /* font trickery */
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
+  /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #aa {
@@ -277,12 +280,6 @@ body.no-transform .sprite {
   background-size: contain;
   animation: rotating 2s linear infinite;
   opacity: 0.67;
-}
-
-body.is-mobile {
-  /* on mobile, aggressively disable selection. this is a game, not a document. ;) */
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 /* a little more spacing on mobile. */
