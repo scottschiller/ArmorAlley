@@ -2171,7 +2171,7 @@
     crashAndGlass: null,
     genericSplat: null,
     turretGunFire: null,
-    wilhemScream: null
+    wilhemScream: null,
     machineGunFire: null,
     machineGunFireEnd: null
   };
