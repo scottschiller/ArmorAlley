@@ -3907,6 +3907,7 @@
           data.jammingTimer = null;
         }
 
+        data.isJammed = false;
         utils.css.remove(dom.radar, css.jammed);
 
         if (sounds.radarJamming && sounds.radarJamming.sound) {
@@ -3949,21 +3950,31 @@
 
     function animate() {
 
-      var i, j, left, top, battleFieldWidth, hasEnemyMissile;
+      var i, j, left, top, hasEnemyMissile;
 
       hasEnemyMissile = false;
 
-      if (data.frameCount % data.animateModulus === 0) {
+      if (data.frameCount % data.animateModulus !== 0) {
+        data.frameCount++;
+        return;
+      }
+
+      // don't animate when radar is jammed.
+      // avoid lots of redundant style recalculations.
+      if (data.isJammed) {
+        data.frameCount = 0;
+        return;
+      }
 
       // move all radar items
 
-        battleFieldWidth = game.objects.view.data.battleField.width;
+      if (!data.isJammed) {
 
         if (features.transform.prop && !noRadarGPU) {
 
           for (i = 0, j = objects.items.length; i < j; i++) {
 
-            left = ((objects.items[i].oParent.data.x / battleFieldWidth) * game.objects.view.data.browser.width);
+            left = ((objects.items[i].oParent.data.x / game.objects.view.data.battleField.width) * game.objects.view.data.browser.width);
 
             if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
 
@@ -4033,8 +4044,6 @@
 
       }
 
-      data.frameCount++;
-
     }
 
     function initRadar() {
@@ -4051,6 +4060,7 @@
 
         if (jam) {
 
+          data.isJammed = true;
           utils.css.add(dom.radar, css.jammed);
 
           if (!userDisabledSound && sounds.radarJamming && sounds.radarJamming.sound) {
@@ -4064,6 +4074,7 @@
 
         } else {
 
+          data.isJammed = false;
           utils.css.remove(dom.radar, css.jammed);
 
           if (sounds.radarJamming && sounds.radarJamming.sound) {
@@ -4096,6 +4107,7 @@
       frameCount: 0,
       animateModulus: 1, // TODO: review
       jammingTimer: null,
+      isJammed: false,
       lastMissileCount: 0,
       incomingMissile: false,
       // additional transform properties applied during radar item animation
