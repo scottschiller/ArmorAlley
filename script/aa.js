@@ -6135,13 +6135,17 @@
 
     function die() {
 
-      var counter = 0, counterMax = 30;
+      var counter = 0,
+        counterMax = 30,
+        leftOffset;
 
       data.dead = true;
 
       // move to the target
-      // TODO: transition
-      game.objects.view.setLeftScroll(game.objects.view.data.battleField.width * (data.isEnemy ? 1 : -1));
+      // TODO: transition? Get centering right. +/- half of screen width.
+      leftOffset = (game.objects.view.data.battleField.width * (data.isEnemy ? 1 : -1));
+
+      game.objects.view.setLeftScroll(leftOffset);
 
       // disable view + helicopter events?
       // TODO: make this a method; cleaner, etc.
@@ -6198,6 +6202,11 @@
                   randomX: true
                 });
 
+              }
+
+              // hide the base, too - since it should be gone.
+              if (dom && dom.o) {
+                dom.o.style.display = 'none';
               }
 
             }, 25);
