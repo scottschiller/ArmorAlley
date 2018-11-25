@@ -162,7 +162,8 @@
   var unlimitedFrameRate = winloc.match(/frameRate=\*/i);
 
   var FPS = fpsCeiling;
-  var FPS_IDEAL = 30;
+  // messing around
+  var FPS_IDEAL = 31.746;
   var FRAMERATE = 1000 / FPS;
 
   // just in case...
@@ -234,8 +235,6 @@
   var keyboardMonitor;
 
   var features;
-
-  var getAnimationFrame;
 
   // TODO: move into view
   var screenScale = 1;
@@ -895,25 +894,7 @@
 
   features = (function() {
 
-    var _getAnimationFrame;
-
-    /**
-     * hat tip: paul irish
-     * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-     * https://gist.github.com/838785
-     */
-
-    var _animationFrame = (window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        null);
-
-    // apply to window, avoid "illegal invocation" errors in Chrome
-    _getAnimationFrame = _animationFrame ? function() {
-      return _animationFrame.apply(window, arguments);
-    } : null;
+    var _getAnimationFrame = !!window.requestAnimationFrame;
 
     if (_getAnimationFrame) {
       if (winloc.match(/noraf=1/i)) {
@@ -1006,7 +987,7 @@
 
     console.log('user agent feature test:', localFeatures);
 
-    console.log('requestAnimationFrame() is' + (localFeatures.getAnimationFrame ? '' : ' not') + ' enabled');
+    console.log('requestAnimationFrame() is' + (localFeatures.getAnimationFrame ? '' : ' not') + ' available');
 
     if (localFeatures.transform.prop) {
       if (noTransform) {
@@ -1022,10 +1003,6 @@
     return localFeatures;
 
   }());
-
-  getAnimationFrame = features.getAnimationFrame || function(callback) {
-    callback();
-  };
 
   function updateEnergy(object) {
 
@@ -3776,7 +3753,7 @@
           if (dieOptions && dieOptions.silent) {
 
             // bye bye! (next scheduled frame)
-            features.getAnimationFrame(dieComplete);
+            window.requestAnimationFrame(dieComplete);
 
           } else {
 
@@ -4252,92 +4229,71 @@
 
     function animateRAF() {
 
-      // TODO: increase fpsInterval and eventually disable in "failure" case, when hardware can't handle desired framerate.
+      // var start = window.performance.now();
 
-      var now, fps, fpsMultiplier;
+      var elapsed, fps, now;
 
       if (data.timer) {
 
-        now = Date.now();
+        now = window.performance.now();
 
-        // target ideal frame rate
-        if (unlimitedFrameRate || now - data.lastExec >= FRAMERATE) {
+        /**
+         * first things first: always request the next frame right away.
+         * if expensive work is done here, at least the browser can plan accordingly
+         * if this frame misses its VSync (vertical synchronization) window.
+         * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
+         * https://www.html5rocks.com/en/tutorials/speed/rendering/
+         */
+        window.requestAnimationFrame(animateRAF);
 
-          data.elapsedTime += (now - data.lastExec);
+        elapsed = (now - data.lastExec) || 0;
 
-          data.lastExec = now;
-
-          animate();
-
-          data.frames++;
-
-          // try to adjust timer, to target ~30 FPS.
-          // when target fps hit, disable this check.
-          if (!unlimitedFrameRate && data.elapsedTime >= data.fpsInterval) {
-
-            // estimated FPS
-            fps = data.frames * (1000 / data.fpsInterval);
-
-            // interestingly, Chrome rAF performance suffers when logging FPS results during testing (and the console is open)?
-            if (data.fpsLocked) {
-              console.log('fps', fps);
-            }
-
-            document.getElementById('fps-count').textContent = fps;
-
-            // window.performance.memory?
-
-            if (!data.fpsLocked) {
-
-              if (fps !== FPS_IDEAL) {
-
-                data.targetFPSHit = 0;
-
-                // when adjusting, note that rate is non-linear.
-
-                if (fps > FPS_IDEAL) {
-
-                  // over target frame rate. slow down a little.
-                  fpsMultiplier = 0.95;
-
-                } else {
-
-                  // faster!
-                  fpsMultiplier = 1.05;
-
-                }
-
-                FRAMERATE = 1000 / (FPS * fpsMultiplier);
-
-              } else {
-
-                // we've met the target.
-                data.targetFPSHit++;
-
-                // once stable for "long enough", disable this function.
-                if (data.targetFPSHit >= data.stableFPSCount) {
-
-                  console.log('locking in at ' + FRAMERATE);
-
-                  data.targetFPSHit = 0;
-                  data.fpsLocked = true;
-                  data.fpsInterval = 1000;
-
-                }
-
-              }
-
-            }
-
-            data.frames = 0;
-            data.elapsedTime = 0;
-
-          }
-
+        // exit if it isn't approximately time to render the next frame.
+        if (Math.ceil(elapsed) / FRAMERATE < 0.95 && !unlimitedFrameRate) {
+          return;
         }
 
-        // regardless, queue the next available frame
-        features.getAnimationFrame(animateRAF);
+        // performance debugging: number of style changes (transform) for this frame.
+        if (debug) {
+          console.log('transform (style/recalc) count: ' + transformCount);
+        }
+
+        transformCount = 0;
+
+        if (debug && elapsed > 34 && window.console) {
+          var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
+          console.log(slowString);
+          if (console.timeStamp) console.timeStamp(slowString);
+        } else {
+          // console.timeStamp('frame: ' + elapsed);
+        }
+
+        data.elapsedTime += elapsed;
+
+        data.lastExec = now;
+
+        animate();
+
+        data.frames++;
+
+        // SUBTRACT the time spent animating?
+        // var start = window.performance.now();
+
+        // data.elapsedTime -= (start - now);
+
+        // try to adjust timer, to target ~30 FPS.
+        // when target fps hit, disable this check.
+        if (!unlimitedFrameRate && data.elapsedTime >= data.fpsInterval) {
+
+          // estimated FPS
+          fps = data.frames * (1000 / data.fpsInterval);
+
+          document.getElementById('fps-count').textContent = fps;
+
+          data.frames = 0;
+          data.elapsedTime = 0;
+
+        }
 
       }
 
@@ -4347,7 +4303,7 @@
 
       if (!data.timer) {
 
-        if (features.getAnimationFrame) {
+        if (window.requestAnimationFrame) {
 
           data.timer = true;
           animateRAF();
@@ -4366,11 +4322,12 @@
 
       if (data.timer) {
 
-        if (!utils.getAnimationFrame) {
+        if (!window.getAnimationFrame) {
           window.clearInterval(data.timer);
         }
 
         data.timer = null;
+        data.lastExec = 0;
 
       }
 
@@ -4379,7 +4336,7 @@
     function resetFPS() {
 
       // re-measure FPS timings.
-      data.lastExec = (isOldIE ? new Date().getTime() : Date.now());
+      data.lastExec = 0; // (isOldIE ? new Date().getTime() : Date.now());
       data.frames = 0;
       data.fpsLocked = false;
       data.fpsIntervalDefault = 100;
