@@ -777,7 +777,7 @@ ul.stats-bar .bombs em {
   /* account for 1px bottom black border */
   /* background-image: url(../image/tank-sprite-horizontal.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAAATCAMAAAA+hsZ3AAAAGFBMVEUAAAAAAABVVQEOqgIFVQH/qgGqqqpVVVWbfA2iAAAAAXRSTlMAQObYZgAAAQ5JREFUeNrN1uEKwjAMBGCzpM37v7HNEbyVKizbj3qItfM+Slccvn5EzvnR2S+pjuPQQ9XMFPhfZSg7dKQNGFQH/mOJ9mCtpYTdLtmWLzJoA4Vds0Oi3mghSVtOMnqK7JCoh03MjeZO87Os2SRhW86D2odSEjBbZPZ5HhhAAeeIbJM8CkqEhNGMiGyToLUMvEWSdumXX5FJliilVNy8pvnnxi/nwCvmMe0J61Ig765Jau6OrmfRE3pKj7dokT6UvSKxUVIfiXZ8x07MYXJEi7Qs542WJOC0U8ipYzk/X9fe5a4UkQdrkopYNGB5Ahin64o7JHfkuma/LJe/kpUf6SprT4X6k4GQ9lpuSsLn9A0BCB4yFXbZBAAAAABJRU5ErkJggg==);
-  animation: animate-transform-sprite 0.1s steps(3) infinite;
+  animation: animate-transform-sprite-tank 0.1s steps(3) infinite;
 }
 
 .tank.enemy .transform-sprite {
@@ -847,14 +847,14 @@ ul.stats-bar .bombs em {
   /* background-image: url(../image/infantry-sprite-horizontal.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAALCAYAAADbYxWQAAAAi0lEQVR4AeXSAQbDQBCF4SYUoLfbS7aHnDL88Js1WMro8mzYLxMvyUMrFK2hFvy5rwx4vv2DcgmeC6hMteDX+07MTsAzrXD1VkZbDn1DARk8x1KOgobVYDzu0MbGxokF+//9aTkclt3exbjefhCDta5MWw4jZ2u/cTy38z5rvAYrWvIyBz6IfT+r9l9RraQr7UjFBwAAAABJRU5ErkJggg==);
   /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
-  animation: animate-transform-sprite 400ms steps(5) infinite reverse;
+  animation: animate-transform-sprite-infantry 400ms steps(5) infinite reverse;
 }
 
 .infantry.enemy .transform-sprite {
   /* background-image: url(../image/infantry-enemy-sprite-horizontal.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAALCAYAAADbYxWQAAAAgUlEQVR42uXQUQqAMAwD0M079pLzkBUCIiSGIf0qBgI6H5vdoCSV0tcCn8dEgfvYfw6X3LXW897b4uNbgXtbnZ5wa4sIjAjCDa3eCOCN0aIdxo6iTW895GfU/IDeXH24r3uSVS9A17yPmCg557fDqdfQuew9NGvOUymbvQo+7zp/AT+lK1J5htg+AAAAAElFTkSuQmCC);
   /* proper L -> R order, in this case. */
-  animation: animate-transform-sprite 400ms steps(5) infinite;
+  animation: animate-transform-sprite-infantry 400ms steps(5) infinite;
 }
 
 .infantry.stopped {
@@ -882,7 +882,7 @@ ul.stats-bar .bombs em {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAALCAMAAAAKlC7mAAAAGFBMVEXqAf8AAACrAgH///+qqqoFVQEOqgJVVQH/bDgwAAAAAXRSTlMAQObYZgAAAGhJREFUeNqNy0EKgEAMQ1G/mnj/G9tQVFCEZtF5hMlSAcg7FcC6Mla4beFc4Y5IpsrEsiSm6gkIploAl1u65X9VsFSIJEOQ7tH730NQEyxsQlsW3wk0zHHQTU4xxTW50O0NoJETQiNsnDC8BFieeXPVAAAAAElFTkSuQmCC);
   width: 50px;
   height: 11px;
-  animation: animate-transform-sprite 400ms steps(5) infinite;
+  animation: animate-transform-sprite-engineer 400ms steps(5) infinite;
 }
 
 .engineer.stopped .transform-sprite {
@@ -1115,7 +1115,7 @@ ul.stats-bar .bombs em {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAASCAYAAAAwuLBFAAABMklEQVR4Ae3bB27EQAxD0VzSl/QlJ2hKE0KDrtzZL4Dbi567DczHSTVE0mo8kYkcVphv19SoWte17mNXOF3d8eM1OzUdkhy+5bib+XbN1rYabZlgD1e22fZwhs0P8+0avNqSCMC1PWHD9uq2n5gGWpZF5jJkn8DiP9Jt2LCJrYZAbW5dLoAJXJgNGzaB+q85A2UAPZj4/VQbNmx6Lf2JbMfJBspqwN+66QmHDVuirUHa8wM4cfxsxZ9o2LCl2PQWZGtLUjFgLXuPv9VJMDZsYTYB85uzYSd+ruGwYUu3HYddgHN+p2ADG7Z8m8BplAWzmnfQCoYNW5yt3rwbJyDVrBNs2DJtAlhxdpnqyszRq0B+YcOWbRNQnYK47/mFDdvcNj38ZqLhDtiwzTto851t2LB9AtafX7pIrcxLAAAAAElFTkSuQmCC);
   width: 220px;
   height: 18px;
-  animation: animate-transform-sprite 520ms steps(4) infinite;
+  animation: animate-transform-sprite-helicopter-enemy 520ms steps(4) infinite;
 }
 
 .helicopter.enemy.facing-left .transform-sprite {
@@ -1227,7 +1227,7 @@ ul.stats-bar .bombs em {
   height: 25px;
   /* background-image: url(../image/base-sprite-horizontal.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAAZCAMAAADnh7yZAAAAG1BMVEUAAAAFVQEOqgJVVQEAAAD/qgGrAgGqqqr////9eV1TAAAAAXRSTlMAQObYZgAAAfFJREFUeNrt14FuwyAMBFBzEIf//+JZXpJrhpJtGu5KxVVVi93wlBZRIb8IJDBE3ic6vsEAeBvkOfeh8Yhqt28M32LxCiokUiGiMQoJVRIhClCLpQJ9mOU01AbDUxTV/soFEqigFq1AqIItIn2Yk4OvVlEVjVYMCb8XPEGBIbUCwQqBHszSMoSKXu9nqrmHIqZUlkZW4AlWCPxFIbNc3Uy52/y1as5rB4VMtGJMkEKE4xCFg3uly1ouwIVVVQ3popCJVQSWeIUJUIh0UNr/mCQMysXvsoiqmpGlj4Jiz2CFQqwiYyhk5MzwDYDiUsMsakYp69pLSU9QRKZyeb7UhkmwR2mZvC5meNbfKvKfikzlngHSHuyvnn2ULbCwboWpDKuQwXlC5M88Vo/C4e/FPJUBFTJAOjn5UjkW4Kbtn5vKYAqZZAgdUMlUvIgv2xAOxTKVkRQyvnIKkx7TNK5bUxlHIQO/YnlIYprGXWsqoyhkUgIXWbOamsZtaypjKYLUNVMZSpGUckbCt8kZP8pUBlNSBhIDD0s8WrjFuuPU99JUhlFgCI+MFl7mJ0cypzlZpcoKpjKCAiC5Q8TCachYXNmdo9QqW6by0grc8BaJYxbOSwZ5C/vtTnQqTeV1FUd8lW0ztooXOXiIlxqk2XOm8prKBwo1M21YfofeAAAAAElFTkSuQmCC);
-  animation: animate-transform-sprite 1000ms steps(5) alternate infinite;
+  animation: animate-transform-sprite-base 1000ms steps(5) alternate infinite;
 }
 
 .base.enemy .transform-sprite {
@@ -1286,7 +1286,7 @@ ul.stats-bar .bombs em {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUQAAAAHCAYAAABwUTSwAAAAtUlEQVR4Ae3WgQYCQRRG4ZX0dvuS04Nu242D2/Y3AMb5ObACn5nRdu54VxuP6vOtcqw8MDqHk4bTw+l5v1U4ZV/mwlnLvnPTcAPPCz39GGJ2havh1GNIwVfDZpjua/at3L/7CtxPZNcvazIjDfuwuyj6asjS2Yu+GrJ4X3kxxxhU36yVnTTUUMMFDPd9P1r8iMiuvDTUUMMlDPmHWGVca3CkoYYaLmPIvjB5TS3jaaihhksYvgDWFPBi+PT8mgAAAABJRU5ErkJggg==);
   width: 324px;
   height: 7px;
-  animation: animate-transform-sprite 1000ms steps(4) infinite;
+  animation: animate-transform-sprite-landing-pad 1000ms steps(4) infinite;
 }
 
 .sand-dune {
@@ -1403,7 +1403,7 @@ ul.stats-bar .bombs em {
   height: 15px;
   /* background-image: url(../image/helicopter-sprite-horizontal.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAPCAMAAACFvDBUAAAAElBMVEUAAAAAAAALogUFTQKioqJNTU09uElQAAAAAXRSTlMAQObYZgAAAOlJREFUeNrVllEKg0AMRDPJ9P5XLglNR6otQVixzw/FfTPLIqsaYGYALAF/UEpJsCMgS5ztB4cYkbzS+IDYoglge7a+xs/2Qxz5InVGRkTbdLp7RHiKGmUANvRX9suPgCg1mF5SY3Ql5v76fgXCC1lJ+wl70Zj76/sL8NDTRfpaNDn3r+lH3pamxatFifv5BmYCb2IXzlP6rhnG/vJ+vea041tDU5GirLRhM399vz40TSdABvPsepDQl2bmr+8X20R5eNRRfiW0bTD1r+1Xwov2OnF/Xwl04GPr/4WPrzju7uuX0el7gPv5TyXdEOS/7/7zAAAAAElFTkSuQmCC);
-  animation: animate-transform-sprite 360ms steps(4) infinite;
+  animation: animate-transform-sprite-helicopter 360ms steps(4) infinite;
 }
 
 .helicopter.facing-left .transform-sprite {
@@ -2245,14 +2245,77 @@ body.is-mobile #game-tips #game-announcements {
   }
 }
 
-@keyframes animate-transform-sprite {
+@keyframes scan {
   from {
-    transform: translate(0%, 0%);
+    transform: rotate(-90deg);
   }
   to {
-    transform: translate(-100%, 0%);
+    transform: rotate(90deg);
   }
-  /* NOTE: percentage values end up rendering nice and sharp vs. pixel values, in Chrome, which show blurry. Huh. */
+}
+
+@keyframes animate-transform-sprite-tank {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-174px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-infantry {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-55px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-engineer {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-50px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-helicopter {
+  /* is translate vs. translate3d() any better? */
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-192px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-helicopter-enemy {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-220px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-base {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-510px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-landing-pad {
+  from {
+    transform: translate(0px, 0px);
+  }
+  to {
+    transform: translate(-324px, 0px);
+  }
 }
 
 @keyframes tv-static {
