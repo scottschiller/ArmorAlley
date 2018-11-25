@@ -2032,6 +2032,10 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
   display: none;
 }
 
+body.game-over #game-tips .tips-container {
+  top: 30%;
+}
+
 @media screen and (orientation: portrait) {
   body.is-mobile #game-tips .tips-container {
     font-size: 0.67em;
@@ -2086,6 +2090,7 @@ body.game-paused #game-paused {
 }
 
 #game-tips .tips-container div {
+  /* TODO: make this not be so damn big. */
   position: relative;
   width: 120800px;
   /* per-item value * 100 tips, plus padding */
