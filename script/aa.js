@@ -6812,9 +6812,11 @@
 
       data.dead = true;
 
-      radarItem.die({
-        silent: true
-      });
+      if (radarItem) {
+        radarItem.die({
+          silent: true
+        });
+      }
 
     }
 
@@ -6914,7 +6916,7 @@
 
       if (!data.expired && data.frameCount > data.expireFrameCount) {
         utils.css.add(dom.o, css.expired);
-        utils.css.add(radarItem.dom.o, css.expired);
+        if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
         data.expired = true;
       }
 
@@ -6954,7 +6956,7 @@
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-      if (data.isEnemy) {
+      if (radarItem && data.isEnemy) {
         utils.css.add(radarItem.dom.o, css.enemy);
       }
 
@@ -8691,6 +8693,7 @@
 
       if (sounds.explosionLarge) {
         playSound(sounds.explosionLarge, exports);
+        if (sounds.genericExplosion) playSound(sounds.genericExplosion, exports);
       }
 
       if (!data.isEnemy && sounds.helicopter.engine) {
