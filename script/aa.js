@@ -10354,10 +10354,12 @@
       common.setTransformXY(dom.o, data.x + 'px', '0px');
       common.setBottomYPixels(exports, data.bottomY);
 
+      /*
       if (features.transform.prop) {
         // transform origin
         dom.o.style.left = '0px';
       }
+      */
 
       game.dom.world.appendChild(dom.o);
 
