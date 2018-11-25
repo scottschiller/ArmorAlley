@@ -9454,9 +9454,9 @@
           newX = Math.max(view.data.battleField.scrollLeft + (data.width / 2) + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
         }
 
-        moveTo(newX, data.y + data.vY);
-
         applyTilt();
+
+        moveTo(newX, data.y + data.vY);
 
         collisionTest(collision, exports);
 
