@@ -278,6 +278,8 @@
 
   var sounds;
 
+  var transformCount = 0;
+
   var stats;
 
   function statsStructure() {
@@ -499,6 +501,8 @@
       wrapper.style.marginTop = -((406 / 2) * screenScale) + 'px';
       wrapper.style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale)) + 'px';
       wrapper.style[features.transform.prop + 'Origin'] = '0px 0px';
+      // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
+      // and will need more refactoring to make that work the same.
       wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
       // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
@@ -1112,10 +1116,27 @@
         // additional transform arguments, e.g., rotate(45deg)
         extraTransforms = extraTransforms ? (' ' + extraTransforms) : '';
 
+        // EXPERIMENTAL
+        // all elements are affected by scroll, too.
+        /*
+        if (x && x.indexOf('px') !== -1) {
+          if (game.objects.view && game.objects.view.data && game.objects.view.data.battleField) {
+            // console.log(game.objects.view.data.battleField.scrollLeft);
+            x = (parseInt(x, 10) - game.objects.view.data.battleField.scrollLeft) + 'px';
+          }
+        }
+        */
+
+        // if (game.objects.view && o !== game.objects.view.data.battleField) return;
+
         if (useTranslate3d) {
           o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)' + extraTransforms;
         } else {
           o.style[features.transform.prop] = 'translate(' + x + ', ' + y + ')' + extraTransforms;
+        }
+
+        if (debug) {
+          transformCount++;
         }
 
       } else {
