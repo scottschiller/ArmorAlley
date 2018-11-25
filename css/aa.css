@@ -2320,10 +2320,10 @@ body.is-mobile #game-tips #game-announcements {
 
 @keyframes tv-static {
   from {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translate(0px, 0px);
   }
   to {
-    transform: translate3d(0px, -320px, 0px);
+    transform: translate(0px, -320px);
   }
 }
 
