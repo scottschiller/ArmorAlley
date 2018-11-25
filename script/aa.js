@@ -3089,6 +3089,9 @@
 
         data.gameTips.scrollOffset -= 2;
 
+        // TODO: when one tip has scrolled by, reset and display next tip.
+        // console.log('data.gameTips.scrollOffset', data.gameTips.scrollOffset);
+
       }
 
       data.frameCount++;
@@ -4616,7 +4619,6 @@
             } else if (data.windOffsetX < 0 && data.direction !== -1) {
 
               // heading left
-
               utils.css.remove(dom.o, css.facingRight);
               utils.css.add(dom.o, css.facingLeft);
 
@@ -6720,7 +6722,6 @@
       data.frameTimeout = new FrameTimeout(FPS * 2, function() {
         data.orderComplete = true;
         data.frameTimeout = null;
-
       });
 
       game.dom.world.appendChild(dom.o);
@@ -11352,6 +11353,7 @@
 
     function initSmoke() {
 
+      // TODO: use a pool of smoke nodes.
       dom.o = makeSprite({
         className: css.className
       });
