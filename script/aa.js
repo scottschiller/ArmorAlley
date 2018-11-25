@@ -35,6 +35,18 @@
 
     Changelog / Revision History
 
+    + V1.5.20181124
+
+     + Performance tweaks
+      • More motion / animation is now on the GPU via `transform`, vs. `style.left` / `style.top`.
+      • Main animation loop calls `requestAnimationFrame()` first, before anything else (like VSYNC.)
+      • Drop legacy SM2 flash options.
+      • Turret scan is now driven by CSS animation vs. JS setting an angle transform every frame.
+
+     + Sound
+      • New base explosion, tweaked other explosion sound effects.
+      • New "heavy mechanics" bunker chain (repair) sound.
+
     + V1.5.20180201
 
      + Big feature updates!
