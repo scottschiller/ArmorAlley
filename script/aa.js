@@ -12154,7 +12154,7 @@
         // console.log(e.keyCode);
 
         if (!e.metaKey && keys[e.keyCode] && keys[e.keyCode].down) {
-          if (downKeys[e.keyCode] === undefined) {
+          if (!downKeys[e.keyCode]) {
             downKeys[e.keyCode] = true;
             keys[e.keyCode].down(e);
           }
@@ -12169,8 +12169,8 @@
 
       keyup: function(e) {
 
-        if (!e.metaKey && downKeys[e.keyCode] !== undefined && keys[e.keyCode]) {
-          delete downKeys[e.keyCode];
+        if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
+          downKeys[e.keyCode] = null;
           if (keys[e.keyCode].up) {
             keys[e.keyCode].up(e);
           }
@@ -12353,7 +12353,7 @@
       // reset all pressed key states.
       var item;
       for (item in downKeys) {
-        if (downKeys.hasOwnProperty(item)) {
+        if (downKeys.hasOwnProperty(item) && downKeys[item]) {
           // simulate the keyup event
           events.keyup({
             keyCode: item
