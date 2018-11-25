@@ -2152,34 +2152,14 @@
       hit2: null,
       hit3: null
     },
-    chainSnapping: null,
-    infantryGunFire: null,
-    balloonExplosion: null,
-    genericBoom: null,
-    genericExplosion2: null,
-    explosionLarge: null,
-    genericGunFire: null,
-    missileLaunch: null,
-    repairing: null,
     rubberChicken: {
       launch: null,
       expire: null,
       die: null
     },
-    parachuteOpen: null,
-    impactWrench: null,
-    repairingWrench: null,
-    tinkerWrench: null,
-    friendlyClaim: null,
-    enemyClaim: null,
-    popSound: null,
-    popSound2: null,
-    crashAndGlass: null,
-    genericSplat: null,
-    turretGunFire: null,
-    wilhemScream: null
     machineGunFire: null,
     machineGunFireEnd: null
+    // numerous others will be assigned at init time.
   };
 
   function getURL(file) {
@@ -2258,10 +2238,10 @@
 
     sounds.chainRepair = [];
 
-    // https://freesound.org/people/Gareth_H/sounds/365799/
+    // https://freesound.org/people/jorickhoofd/sounds/160048/
     sounds.chainRepair.push(addSound({
-      url: getURL('medals-clanking'),
-      volume: 66
+      url: getURL('heavy-mechanics'),
+      volume: 25
     }));
 
     sounds.repairingWrench = [];
@@ -2326,6 +2306,13 @@
       volume: 20
     });
 
+    sounds.baseExplosion = addSound({
+      // two sounds, edited and mixed together
+      // https://freesound.org/people/FxKid2/sounds/367622/
+      // https://freesound.org/people/Quaker540/sounds/245372/
+      url: getURL('hq-explosion-with-debris')
+    });
+
     sounds.genericSplat = [];
 
     // http://freesound.org/people/FreqMan/sounds/42962/
@@ -2350,20 +2337,27 @@
 
     for (i = 0; i < 4; i++) {
       sounds.genericBoom.push(addSound({
-        url: getURL('generic-boom'),
-        volume: 20
+        url: getURL('explosion'),
+        volume: 45
       }));
     }
 
-    sounds.genericExplosion = addSound({
+    sounds.genericExplosion = [];
+
+    sounds.genericExplosion.push(addSound({
       url: getURL('generic-explosion'),
       volume: 18
-    });
+    }));
 
-    sounds.genericExplosion2 = addSound({
+    sounds.genericExplosion.push(addSound({
       url: getURL('generic-explosion-2'),
       volume: 18
-    });
+    }));
+
+    sounds.genericExplosion.push(addSound({
+      url: getURL('generic-explosion-3'),
+      volume: 18
+    }));
 
     sounds.genericGunFire = [];
 
@@ -6157,6 +6151,10 @@
               playSound(sounds.genericExplosion, exports);
               playSound(sounds.genericExplosion, exports);
               playSound(sounds.genericExplosion, exports);
+            }
+
+            if (sounds.baseExplosion) {
+              playSound(sounds.baseExplosion, exports);
             }
 
             setTimeout(function() {
@@ -10206,8 +10204,8 @@
         stats.destroy(exports);
       }
 
-      if (sounds.genericExplosion2) {
-        playSound(sounds.genericExplosion2, exports);
+      if (sounds.genericExplosion) {
+        playSound(sounds.genericExplosion, exports);
       }
 
     }
