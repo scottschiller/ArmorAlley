@@ -623,7 +623,7 @@ ul.stats-bar .bombs em {
 .turret .sub-sprite,
 .radar-item.parachute-infantry {
   /* constant animation */
-  will-change: transform;
+  /* will-change: transform; */
 }
 
 .transform-sprite {
