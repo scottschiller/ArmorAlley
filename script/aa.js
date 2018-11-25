@@ -735,7 +735,7 @@
 
       function remove(name) {
 
-        delete data[name];
+        data[name] = null;
 
         if (localStorage) {
           try {
@@ -3187,7 +3187,7 @@
         utils.css.remove(target, 'active');
       }
 
-      delete data.touchEvents[touchEvent.identifier];
+      data.touchEvents[touchEvent.identifier] = null;
 
     }
 
