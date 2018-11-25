@@ -33,11 +33,17 @@ http://freesound.org/people/kantouth/sounds/115113/
 "explosion.mp3" by sarge4267
 http://freesound.org/people/sarge4267/sounds/102719/
 
-"explosion3.wav" by sarge4267
-http://freesound.org/people/sarge4267/sounds/102733/
+"Explosion2.wav" by steveygos93 (BY-NC 3.0)
+https://freesound.org/people/steveygos93/sounds/80401/
 
 "explosion 4.aif" by harpoyume
 http://freesound.org/people/harpoyume/sounds/86032/
+
+"Explosion with Debris" by FxKid2 (CC0 1.0)
+https://freesound.org/people/FxKid2/sounds/367622/
+
+"HQ Explosion" by Quaker540 (CC0 1.0)
+https://freesound.org/people/Quaker540/sounds/245372/
 
 "Gunshot 1.wav" by Adam_N
 http://freesound.org/people/Adam_N/sounds/164667/
@@ -127,8 +133,8 @@ http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winb
 "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
 https://freesound.org/people/Cyberkineticfilms/sounds/127845/
 
-"Medals Clanking" by Gareth_H (BY-NC 3.0)
-https://freesound.org/people/Gareth_H/sounds/365799/
+"Metal Heavy Mechanics" by jorickhoofd (CC-BY 3.0)
+https://freesound.org/people/jorickhoofd/sounds/160048/
 
 "Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) [Mixed]" by EFlexTheSoundDesigner (BY-NC 3.0)
 https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/
