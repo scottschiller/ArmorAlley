@@ -13682,8 +13682,6 @@
   // OGG is available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
-  var preferFlash = false;
-
   if (isSafari && !window.location.toString().match(/html5audio/i)) {
     // Safari 7+ engine freezes when multiple Audio() objects play simultaneously. Unacceptable.
     // https://bugs.webkit.org/show_bug.cgi?id=116145
@@ -13693,15 +13691,10 @@
   }
 
   soundManager.setup({
-    flashVersion: 9,
-    preferFlash: preferFlash,
-    url: './swf/',
     debugMode: false,
     defaultOptions: {
       volume: 25,
-      multiShot: true, // !!(winloc.match(/multishot/i)),
-      // TODO: move to sound sprites, etc.
-      autoLoad: true
+      multiShot: true // !!(winloc.match(/multishot/i)),
     }
   });
 
