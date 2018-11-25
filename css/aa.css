@@ -2183,7 +2183,6 @@ body.is-mobile #game-tips #game-announcements {
   }
 }
 
-/* new transform-based rotate() effect */
 @keyframes bomb-rotate {
   from {
     transform: rotate(-90deg);
