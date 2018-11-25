@@ -10199,7 +10199,7 @@
           common.setTransformXY(dom.o, data.x + 'px', '0px');
         }
 
-      } else {
+      }/* else {
 
         if (x !== undefined && data.x !== x) {
           common.setX(exports, x);
@@ -10212,7 +10212,7 @@
           data.y = bottomAlignedY(bottomY);
         }
 
-      }
+      }*/
 
     }
 
