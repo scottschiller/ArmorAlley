@@ -685,8 +685,8 @@
     storage: (function() {
 
       var exports,
-          data,
-          localStorage;
+        data,
+        localStorage;
 
       data = {};
 
@@ -694,7 +694,7 @@
 
       try {
         localStorage = window.localStorage || null;
-      } catch(e) {
+      } catch (e) {
         console.log('localStorage not present, or denied');
         localStorage = null;
       }
@@ -705,7 +705,7 @@
 
         try {
           data[name] = localStorage.getItem(name);
-        } catch(ignore) {
+        } catch (ignore) {
           // oh well
         }
 
@@ -721,7 +721,7 @@
 
         try {
           localStorage.setItem(name, value);
-        } catch(err) {
+        } catch (err) {
           // oh well
           return false;
         }
@@ -737,7 +737,7 @@
         if (localStorage) {
           try {
             localStorage.removeItem(name);
-          } catch(ignore) {
+          } catch (ignore) {
             // oh well
           }
         }
@@ -747,7 +747,7 @@
       // sanity check: try to read a value.
       try {
         get('testLocalStorage');
-      } catch(e) {
+      } catch (e) {
         console.log('localStorage read test failed. Disabling.');
         localStorage = null;
       }
@@ -975,7 +975,7 @@
 
       try {
         testDiv.style[transform] = style;
-      } catch(e) {
+      } catch (e) {
         // that *definitely* didn't work.
         return false;
       }
@@ -1032,8 +1032,8 @@
     if (!showHealth) return;
 
     var nodes,
-        node,
-        energy;
+      node,
+      energy;
 
     if (document.querySelectorAll && object.dom && object.dom.o) {
       nodes = object.dom.o.querySelectorAll('.energy');
@@ -1422,7 +1422,7 @@
 
       }
 
-    // otherwise, point 1 is to the right.
+      // otherwise, point 1 is to the right.
 
     } else if (point2.x + point2.width >= point1.x + point1XLookAhead) {
 
@@ -1504,7 +1504,10 @@
         options.targets[i] !== options.source
 
         // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
-        && (!options.targets[i].data.dead || (options.targets[i].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role))
+        && (
+          !options.targets[i].data.dead
+          || (options.targets[i].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role)
+        )
 
         // more non-standard formatting....
         && (
@@ -1516,7 +1519,6 @@
           || (options.source.data.type === 'infantry' && options.targets[i].data.type === 'bunker')
           || (options.source.data.type === 'end-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
           || (options.source.data.type === 'super-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
-
           || (options.source.data.type === 'helicopter' && options.targets[i].data.type === 'infantry')
 
           // OR engineer vs. turret
@@ -1529,7 +1531,10 @@
         )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
-        && ((!options.source.data.hostile || !options.targets[i].data.hostile) || (options.source.data.hostile !== options.targets[i].data.hostile))
+        && (
+          (!options.source.data.hostile || !options.targets[i].data.hostile)
+          || (options.source.data.hostile !== options.targets[i].data.hostile)
+        )
 
       ) {
 
@@ -1930,7 +1935,7 @@
     // has the player captured (or destroyed) all bunkers? this affects enemy convoy production.
 
     var owned,
-        total;
+      total;
 
     owned = countFriendly('bunkers', true) + countFriendly('superBunkers', true);
     total = game.objects.bunkers.length + game.objects.superBunkers.length;
@@ -2008,8 +2013,8 @@
   function playSound(soundReference, target, soundOptions) {
 
     var soundObject = getSound(soundReference),
-        localOptions,
-        onScreen;
+      localOptions,
+      onScreen;
 
     if (!userDisabledSound && soundObject) {
 
@@ -2180,7 +2185,11 @@
 
     // SM2 will determine the appropriate format to play, based on client support.
     // URL pattern -> array of .ogg and .mp3 URLs
-    return ['audio/ogg/' + file + '.ogg', 'audio/mp3/' + file + '.mp3', 'audio/wav/' + file + '.wav'];
+    return [
+      'audio/mp3/' + file + '.mp3',
+      'audio/ogg/' + file + '.ogg',
+      'audio/wav/' + file + '.wav'
+    ];
 
   }
 
@@ -3897,14 +3906,18 @@
     function stopJamming() {
 
       if (data.jammingTimer || alwaysJamRadar) {
+
         if (data.jammingTimer) {
           window.clearTimeout(data.jammingTimer);
           data.jammingTimer = null;
         }
+
         utils.css.remove(dom.radar, css.jammed);
+
         if (sounds.radarJamming && sounds.radarJamming.sound) {
           sounds.radarJamming.sound.stop();
         }
+
       }
 
     }
@@ -3947,7 +3960,7 @@
 
       if (data.frameCount % data.animateModulus === 0) {
 
-        // move all radar items
+      // move all radar items
 
         battleFieldWidth = game.objects.view.data.battleField.width;
 
@@ -3979,44 +3992,49 @@
 
             // TODO: optimize
 
-            objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / battleFieldWidth) * 100) + '%';
+            objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / game.objects.view.data.battleField.width) * 100) + '%';
 
-            if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
-
+            if (
+              (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0)
+              || objects.items[i].oParent.data.type === 'balloon'
+            ) {
               objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
 
             }
 
           }
 
-
         }
 
-        // any active smart missiles?
+      }
 
-        if (game.objects.smartMissiles.length !== data.lastMissileCount) {
+      // any active smart missiles?
 
-          // change state?
+      if (game.objects.smartMissiles.length !== data.lastMissileCount) {
 
-          for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
+        // change state?
 
-            // is this missile not dead, not expired/hostile, and an enemy?
+        for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
 
-            if (!game.objects.smartMissiles[i].data.dead && !game.objects.smartMissiles[i].data.hostile && game.objects.smartMissiles[i].data.isEnemy !== game.objects.helicopters[0].data.isEnemy) {
+          // is this missile not dead, not expired/hostile, and an enemy?
 
-              hasEnemyMissile = true;
+          if (
+            !game.objects.smartMissiles[i].data.dead
+            && !game.objects.smartMissiles[i].data.hostile
+            && game.objects.smartMissiles[i].data.isEnemy !== game.objects.helicopters[0].data.isEnemy
+          ) {
 
-              break;
+            hasEnemyMissile = true;
 
-            }
+            break;
 
           }
 
-          data.lastMissileCount = game.objects.smartMissiles.length;
-
-          setIncomingMissile(hasEnemyMissile);
-
         }
+
+        data.lastMissileCount = game.objects.smartMissiles.length;
+
+        setIncomingMissile(hasEnemyMissile);
 
       }
 
@@ -4034,7 +4052,6 @@
 
       var jam = alwaysJamRadar ? true : (Math.random() > 0.25);
 
-      // TODO: prevent excessive DOM I/O
       if (!noJamming) {
 
         if (jam) {
@@ -5196,11 +5213,9 @@
 
         data.funds += earnedFunds;
 
-        /*
-        if (data.isEnemy) {
+        if (debug && data.isEnemy) {
           console.log('the enemy now has ' + data.funds + ' funds.');
         }
-        */
 
         if (!data.isEnemy) {
           game.objects.view.updateFundsUI();
@@ -6824,13 +6839,16 @@
           || target.data.type === 'super-bunker'
           // helicopter -> turret
           || (data.parentType === 'helicopter' && target.data.type === 'turret')
+
         ) {
 
           playSound(sounds.metalHit, exports);
 
         } else if (
+
           target.data.type === 'balloon'
           || target.data.type === 'turret'
+
         ) {
 
           playSound(sounds.metalHitLight, exports);
@@ -7054,7 +7072,7 @@
     function bombHitTarget(target) {
 
       var isSpark,
-          damagePoints;
+        damagePoints;
 
       // assume default
       damagePoints = data.damagePoints;
@@ -8047,7 +8065,7 @@
       // clear pending update
       data.pendingApplyStatusUI = null;
 
-      // TODO: optimize
+      // TODO: optimize?
       dom.statusBar.infantryCount.innerText = data.parachutes;
       dom.statusBar.ammoCount.innerText = data.ammo;
       dom.statusBar.bombCount.innerText = data.bombs;
@@ -8792,18 +8810,18 @@
 
             hasUpdate = 1;
 
+          }
+
         }
 
-      }
-
-      if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
+        if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
 
           // out of ammo / no available targets
           if (sounds.inventory.denied) {
             playSound(sounds.inventory.denied);
           }
 
-      }
+        }
 
       }
 
@@ -9021,15 +9039,24 @@
 
         // we already have a target - can we get a more interesting one?
         if (data.targeting.balloons && data.ammo) {
-          altTarget = objectInView(data, { items: 'balloons', triggerDistance: game.objects.view.data.browser.halfWidth });
+          altTarget = objectInView(data, {
+            items: 'balloons',
+            triggerDistance: game.objects.view.data.browser.halfWidth
+          });
         }
 
         if (!altTarget && data.targeting.tanks && data.bombs) {
-          altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.width });
+          altTarget = objectInView(data, {
+            items: ['tanks'],
+            triggerDistance: game.objects.view.data.browser.width
+          });
         }
 
         if (!altTarget && data.targeting.helicopters && data.ammo) {
-          altTarget = objectInView(data, { items: ['helicopters'], triggerDistance: game.objects.view.data.browser.width });
+          altTarget = objectInView(data, {
+            items: ['helicopters'],
+            triggerDistance: game.objects.view.data.browser.width
+          });
         }
 
         // better - go for that.
@@ -9231,7 +9258,10 @@
 
         // is a tank very close by?
 
-        altTarget = objectInView(data, { items: ['tanks'], triggerDistance: game.objects.view.data.browser.fractionWidth });
+        altTarget = objectInView(data, {
+          items: ['tanks'],
+          triggerDistance: game.objects.view.data.browser.fractionWidth
+        });
 
         if (altTarget) {
 
@@ -11508,7 +11538,7 @@
 
           // the player's helicopter.
           var chopper = game.objects.helicopters[0],
-              chopperData = chopper.data;
+            chopperData = chopper.data;
 
           // condition for completion
           return (
@@ -11620,7 +11650,7 @@
         activate: function() {
 
           var targetBunker,
-              i, j;
+            i, j;
 
           for (i = 0, j = game.objects.bunkers.length; i < j; i++) {
 
@@ -12072,7 +12102,7 @@
   keyboardMonitor = (function() {
 
     var keys,
-        events,
+      events,
 
       // hash for keys being pressed
       downKeys = {},
@@ -13361,7 +13391,7 @@
 
     // late addition: tutorial vs. regular game mode
 
-    // hackish: no-trasform CSS tweak
+    // no-transform CSS tweak for legacy stuff.
     if (noTransform) {
       utils.css.add(document.body, 'no-transform');
     }
@@ -13405,9 +13435,9 @@
     }
 
     var menu,
-        description = document.getElementById('game-description'),
-        defaultDescription = description.innerHTML,
-        lastHTML = defaultDescription;
+      description = document.getElementById('game-description'),
+      defaultDescription = description.innerHTML,
+      lastHTML = defaultDescription;
 
     function resetMenu() {
       if (lastHTML !== defaultDescription) {
@@ -13419,7 +13449,7 @@
     function menuUpdate(e) {
 
       var target = (e.target || window.event.sourceElement),
-          title;
+        title;
 
       // normalize to <a>
       if (target && utils.css.has(target, 'emoji')) {
@@ -13449,8 +13479,8 @@
       // infer game type from link, eg., #tutorial
 
       var target = (e.target || window.event.sourceElement),
-          storedOK,
-          param;
+        storedOK,
+        param;
 
       if (target && target.href) {
 
