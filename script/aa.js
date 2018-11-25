@@ -1067,6 +1067,8 @@
 
     },
 
+    // no longer used
+    /*
     setXY: function(exports, x, y) {
 
       if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
@@ -1075,6 +1077,7 @@
       }
 
     },
+    */
 
     setBalloonXY: function(exports, bottomY) {
 
