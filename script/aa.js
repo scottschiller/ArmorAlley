@@ -8140,7 +8140,7 @@
 
         if (!data.pendingApplyStatusUI) {
           // TODO: optimize further
-          data.pendingApplyStatusUI = getAnimationFrame(applyStatusUI);
+          data.pendingApplyStatusUI = window.requestAnimationFrame(applyStatusUI);
         }
 
       }
