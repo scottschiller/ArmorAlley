@@ -82,6 +82,19 @@ body.no-transform .sprite {
   transform: none !important;
 }
 
+#battlefield {
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
+  contain: style layout;
+}
+
+#world-wrapper,
+#game-status,
+#radar,
+.sprite {
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
+  contain: strict;
+}
+
 #world-overlay {
   position: absolute;
   top: 0px;
