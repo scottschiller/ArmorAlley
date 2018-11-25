@@ -7914,7 +7914,7 @@
 
   Helicopter = function(options) {
 
-    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget;
+    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate;
 
     function cloak() {
 
@@ -8288,68 +8288,13 @@
 
       // L -> R / R -> L + forward / backward
 
-      var angle;
-
       // auto-rotate feature
       if (data.autoRotate && ((data.vX > 0 && data.lastVX < 0) || (data.vX < 0 && data.lastVX > 0))) {
         rotate();
       }
 
-      if (features.transform.prop) {
-
-        angle = (data.vX / data.vXMax) * 12.5;
-
-        // rotate by angle.
-        dom.o.style[features.transform.prop] = (angle !== 0 ? 'rotate(' + angle + 'deg)' : '');
-
-        // TODO: clean up, improve
-        return;
-
-      }
-
-      if (data.tilt === null) {
-
-        // new tilt
-
-        if (data.vX > (data.vXMax / 4)) {
-
-          // L -> R
-          utils.css.add(dom.o, css.tilt);
-
-          utils.css.add(dom.o, css.movingRight);
-
-          data.tilt = 1;
-
-        } else if (data.vX < ((data.vXMax / 4) * -1)) {
-
-          // R -> L
-          utils.css.add(dom.o, css.tilt);
-
-          utils.css.add(dom.o, css.movingLeft);
-
-          data.tilt = -1;
-
-        }
-
-      } else if (data.tilt === 1 && data.vX < (data.vXMax / 4)) {
-
-        // leaving L -> R tilt
-
-        utils.css.remove(dom.o, css.tilt);
-        utils.css.remove(dom.o, css.movingRight);
-
-        data.tilt = null;
-
-      } else if (data.tilt === -1 && data.vX > ((data.vXMax / 4) * -1)) {
-
-        // leaving R -> L tilt
-
-        utils.css.remove(dom.o, css.tilt);
-        utils.css.remove(dom.o, css.movingLeft);
-
-        data.tilt = null;
-
-      }
+      // transform-specific, to be provided to common.setTransformXY() as an additional transform
+      data.angle = 'rotate(' + ((data.vX / data.vXMax) * 12.5) + 'deg)';
 
     }
 
@@ -8426,6 +8371,11 @@
 
     function moveTo(x, y) {
 
+      var yMax = (data.yMax - (data.repairing ? 3 : 0));
+
+      // defined externally to avoid massive garbage creation
+      moveToNeedsUpdate = false;
+
       // Hack: limit enemy helicopter to visible screen
       if (data.isEnemy) {
         x = Math.min(8192, Math.max(0, x));
@@ -8434,20 +8384,28 @@
       if (x !== undefined) {
         x = Math.min(data.xMax, x);
         if (x && data.x !== x) {
-          common.setX(exports, x);
+          moveToNeedsUpdate = true;
           data.x = x;
           data.midPoint.x = data.x + data.halfWidth;
         }
       }
 
       if (y !== undefined) {
-        y = Math.max(data.yMin, Math.min(data.yMax - (data.repairing ? 3 : 0), y));
+        y = Math.max(data.yMin, Math.min(yMax, y));
         if (data.y !== y) {
-          common.setY(exports, y);
+          moveToNeedsUpdate = true;
           data.y = y;
           // TODO: redundant?
           data.midPoint.y = data.y;
         }
+      }
+
+      if (moveToNeedsUpdate) {
+        // reset angle if we're landed.
+        if (y >= yMax) {
+          data.angle = 0;
+        }
+        common.setTransformXY(dom.o, x + 'px', y + 'px', data.angle);
       }
 
     }
@@ -8537,8 +8495,7 @@
 
       data.y = game.objects.view.data.world.height - 20;
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
 
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
@@ -8579,7 +8536,7 @@
         // eslint-disable-next-line no-mixed-operators
         data.x = game.objects.landingPads[0].data.x + (game.objects.landingPads[0].data.width / 2) - data.halfWidth - 10;
 
-        common.setX(exports, data.x);
+        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
 
         // chopper should not be moving
         data.vX = 0;
@@ -9621,8 +9578,7 @@
 
       dom.fuelLine = document.getElementById('fuel-line');
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
+      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
 
       game.dom.world.appendChild(dom.o);
 
@@ -9678,6 +9634,7 @@
 
     data = inheritData({
       type: 'helicopter',
+      angle: 0,
       bombing: false,
       firing: false,
       missileLaunching: false,
