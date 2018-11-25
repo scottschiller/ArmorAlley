@@ -35,7 +35,7 @@
 
     Changelog / Revision History
 
-    + V1.5.20181124
+    + V1.51.20181124
 
      + Performance tweaks
       • More motion / animation is now on the GPU via `transform`, vs. `style.left` / `style.top`.
