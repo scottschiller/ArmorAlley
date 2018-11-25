@@ -5694,14 +5694,25 @@
 
     function setAngle(angle) {
 
+      // TODO: data.isOnScreen and/or CSS animation for this?
+      // updateIsOnScreen(exports); from within animate() ?
       if (features.transform.prop) {
         dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
       }
 
     }
 
+    function resetAngle() {
+
+      if (!features.transform.prop) return;
+      dom.oSubSprite.style[features.transform.prop] = '';
+
+    }
+
     function scan() {
 
+      // this is a CSS animation, now.
+      /*
       if (features.transform.prop && okToMove()) {
         data.angle += data.scanIncrement;
         if (data.angle > data.maxAngle || data.angle < -data.maxAngle) {
@@ -5709,6 +5720,7 @@
         }
         setAngle(data.angle);
       }
+      */
 
     }
 
@@ -5734,6 +5746,10 @@
       }
 
       if (target) {
+
+        if (!data.firing) {
+          utils.css.add(dom.o, css.firing);
+        }
 
         data.firing = true;
 
@@ -5780,10 +5796,10 @@
           setAngle(angle);
         }
 
-      } else {
-
+      } else if (data.firing) {
         data.firing = false;
-
+        resetAngle();
+        utils.css.remove(dom.o, css.firing);
       }
 
     }
@@ -6027,7 +6043,8 @@
 
     css = inheritCSS({
       className: 'turret',
-      destroyed: 'destroyed'
+      destroyed: 'destroyed',
+      firing: 'firing'
     });
 
     data = inheritData({
