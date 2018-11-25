@@ -42,6 +42,10 @@ http://creativecommons.org/licenses/by-nc/3.0/
   
  • "Radar jammed" TV static-like overlay with transform sprite.
 
+ • Parachute infantry swing in the air thanks to CSS animations, and move more smoothly when the wind picks up.
+
+ • Jam radar all the time when an enemy van is within range on hard + extreme game types. (previously, jamming could switch on/off at random intervals.)
+
  • Slightly faster helicopter bombing rate - more responsive.
   
  • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
@@ -60,7 +64,6 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
  • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
 
- • Jam radar all the time on hard + extreme game types.
 
 **Miscellany**
 
