@@ -10057,6 +10057,23 @@
 
         } else {
 
+          // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
+          // the original game had something like this, too.
+          if (data.frameCount % FPS === 0) {
+
+            // run "moving" animation for a few frames
+            utils.css.remove(dom.o, css.stopped);
+
+            moveTo(data.x + (data.isEnemy ? -1 : 1), data.bottomY);
+
+            // and then stop again if we haven't resumed for real by that time.
+            setFrameTimeout(function() {
+              if (data.stopped) {
+                utils.css.add(dom.o, css.stopped);
+              }
+            }, 150);
+          }
+
           // only fire (i.e., GunFire objects) when stopped
           fire();
 
