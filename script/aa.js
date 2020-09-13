@@ -6272,8 +6272,8 @@
               for (i = 0; i < 7; i++) {
 
                 shrapnelExplosion(data, {
-                  count: 60,
-                  velocity: 20,
+                  count: 64,
+                  velocity: 16,
                   randomX: true
                 });
 
