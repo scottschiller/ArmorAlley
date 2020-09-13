@@ -274,7 +274,9 @@
 
   var TutorialStep;
 
-  var FrameTimeout;
+  var setFrameTimeout;
+
+  var frameTimeoutManager;
 
   var Queue;
 
@@ -550,7 +552,7 @@
 
   }
 
-  // TODO: create a new FrameTimeout() which adds instance to main animation loop.
+  // NOTE: almost all calls now go through setFrameTimeout(), a frame-based timer.
   function setTimeout(callback, delay) {
     if (debug) console.log('setTimeout', delay, callback);
     var result = window.setTimeout(callback, delay);
@@ -2103,7 +2105,7 @@
       delay = 500;
     }
 
-    setTimeout(function() {
+    setFrameTimeout(function() {
       playSound.apply(this, args);
     }, delay);
 
@@ -2123,7 +2125,7 @@
 
       playSound(sounds.repairingWrench, exports, {
         onfinish: function() {
-          exports.repairingWrenchTimer = setTimeout(function() {
+          exports.repairingWrenchTimer = setFrameTimeout(function() {
             exports.repairingWrenchTimer = null;
             if (isRepairing()) {
               playRepairingWrench.apply(this, args);
@@ -2150,7 +2152,7 @@
 
       playSound(sounds.impactWrench, exports, {
         onfinish: function() {
-          exports.impactWrenchTimer = setTimeout(function() {
+          exports.impactWrenchTimer = setFrameTimeout(function() {
             exports.impactWrenchTimer = null;
             if (isRepairing()) {
               playImpactWrench.apply(this, args);
@@ -3099,13 +3101,14 @@
         data.gameTips.lastAnnouncement = text;
 
         if (data.gameTips.announcementTimer) {
-          window.clearTimeout(data.gameTips.announcementTimer);
+          data.gameTips.announcementTimer.reset();
+          data.gameTips.announcementTimer = null;
         }
 
         if (text) {
           // clear after an amount of time, if not -1
           if ((delay === undefined || delay !== -1)) {
-            data.gameTips.announcementTimer = setTimeout(setAnnouncement, delay || 5000);
+            data.gameTips.announcementTimer = setFrameTimeout(setAnnouncement, delay || 5000);
           }
         }
 
@@ -3567,15 +3570,9 @@
 
         utils.css.add(orderObject.dom.o, css.building);
 
-        setTimeout(function() {
+        window.requestAnimationFrame(function() {
           utils.css.add(orderObject.dom.o, css.ordering);
-          /*
-          setTimeout(function() {
-            // undo
-            utils.css.swap(orderObject.dom.o, css.ordered);
-          }, 1200);
-          */
-        }, 1);
+        });
 
       }
 
@@ -3833,14 +3830,14 @@
 
           } else {
 
-            setTimeout(dieComplete, 2000);
+            setFrameTimeout(dieComplete, 2000);
 
           }
 
         } else {
 
           // balloon, etc.
-          setTimeout(function() {
+          setFrameTimeout(function() {
             utils.css.add(dom.o, css.dead);
           }, 1000);
 
@@ -3951,7 +3948,7 @@
       if (alwaysJamRadar) {
         maybeJam();
       } else if (!data.jammingTimer) {
-        data.jammingTimer = setTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
+        data.jammingTimer = setFrameTimeout(maybeJam, 250 + parseInt(Math.random() * (isJamming ? 1000 : 500), 10));
       }
 
     }
@@ -3961,7 +3958,7 @@
       if (data.jammingTimer || alwaysJamRadar) {
 
         if (data.jammingTimer) {
-          window.clearTimeout(data.jammingTimer);
+          data.jammingTimer.reset();
           data.jammingTimer = null;
         }
 
@@ -4313,6 +4310,9 @@
 
       }
 
+      // update all setTimeout()-style FrameTimeout() instances.
+      frameTimeoutManager.animate();
+
     }
 
     function animateRAF() {
@@ -4554,11 +4554,11 @@
       // between on / off-screen.
       utils.css.add(dom.o, css.animating);
 
-      data.frameTimeout = new FrameTimeout(FPS * 1, function() {
+      data.frameTimeout = setFrameTimeout(function() {
         if (!dom.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
-      });
+      }, 1000);
 
     }
 
@@ -4602,10 +4602,10 @@
           playSound(sounds.balloonExplosion, exports);
         }
         radarItem.die();
-        data.deadTimer = new FrameTimeout(FPS * 0.55, function() {
+        data.deadTimer = setFrameTimeout(function() {
           dead();
           data.deadTimer = null;
-        });
+        }, 550);
         data.dead = true;
       }
 
@@ -4620,24 +4620,16 @@
       // enable transition (balloon turning left or right, or dying.)
       utils.css.add(dom.o, css.animating);
 
-      data.animationFrameTimeout = new FrameTimeout(FPS * 1, function() {
+      data.animationFrameTimeout = setFrameTimeout(function() {
         data.animationFrameTimeout = null;
         // balloon might have been destroyed.
         if (!dom || !dom.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
-      });
+      }, 550);
     }
 
     function animate() {
-
-      if (data.frameTimeout) {
-        data.frameTimeout.animate();
-      }
-
-      if (data.animationFrameTimeout) {
-        data.animationFrameTimeout.animate();
-      }
 
       if (!data.dead) {
 
@@ -4698,10 +4690,6 @@
 
       } else {
 
-        if (data.deadTimer) {
-          data.deadTimer.animate();
-        }
-
         if (data.bottomY > 0) {
 
           // dead, but chain has not retracted yet. Make sure it's moving down.
@@ -4740,7 +4728,7 @@
       data.canRespawn = false;
 
       if (data.deadTimer) {
-        window.clearTimeout(data.deadTimer);
+        data.deadTimer.reset();
         data.deadTimer = null;
       }
 
@@ -4977,12 +4965,10 @@
       // detach balloon?
       detachBalloon();
 
-      // timeout?
-      setTimeout(function() {
-
+      setFrameTimeout(function() {
         utils.css.swap(dom.o, css.exploding, css.burning);
 
-        setTimeout(function() {
+        setFrameTimeout(function() {
           utils.css.swap(dom.o, css.burning, css.dead);
           // nothing else to do here - drop the node reference.
           dom.o = null;
@@ -6235,7 +6221,7 @@
         if (counter >= counterMax) {
 
           // HUGE boom, why not.
-          setTimeout(function() {
+          setFrameTimeout(function() {
 
             if (sounds.genericExplosion) {
               playSound(sounds.genericExplosion, exports);
@@ -6247,7 +6233,7 @@
               playSound(sounds.baseExplosion, exports);
             }
 
-            setTimeout(function() {
+            setFrameTimeout(function() {
 
               var i;
 
@@ -6273,7 +6259,7 @@
         } else {
 
           // big boom
-          setTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
+          setFrameTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
 
         }
 
@@ -6643,8 +6629,7 @@
 
       utils.css.add(dom.o, css.exploding);
 
-      // timeout?
-      setTimeout(function() {
+      setFrameTimeout(function() {
         removeNodes(dom);
       }, 1000);
 
@@ -6710,10 +6695,6 @@
 
       data.frameCount++;
 
-      if (data.frameTimeout) {
-        data.frameTimeout.animate();
-      }
-
       if (!data.dead) {
 
         moveTo(data.x + data.vX, data.bottomY);
@@ -6774,10 +6755,10 @@
       common.setTransformXY(dom.o, data.x + 'px', '0px');
       common.setBottomY(exports, data.bottomY);
 
-      data.frameTimeout = new FrameTimeout(FPS * 2, function() {
+      data.frameTimeout = setFrameTimeout(function() {
         data.orderComplete = true;
         data.frameTimeout = null;
-      });
+      }, 2000);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6878,7 +6859,6 @@
 
     function sparkAndDie(target) {
 
-      // TODO: reduce timers
       spark();
 
       // hack: no more animation.
@@ -6933,10 +6913,10 @@
       }
 
       // and cleanup shortly.
-      frameTimeout = new FrameTimeout(FPS * 0.25, function() {
+      frameTimeout = setFrameTimeout(function() {
         die();
         frameTimeout = null;
-      });
+      }, 250);
 
     }
 
@@ -6960,11 +6940,8 @@
 
     function animate() {
 
-      if (frameTimeout) {
-        // pending die()
-        frameTimeout.animate();
-        return false;
-      }
+      // pending die()
+      if (frameTimeout) return false;
 
       if (data.dead) {
         return true;
@@ -7128,10 +7105,10 @@
 
       if (dom.o) {
         utils.css.add(dom.o, className);
-        data.deadTimer = new FrameTimeout(FPS * 0.5, function() {
+        data.deadTimer = setFrameTimeout(function() {
           removeNodes(dom);
           data.deadTimer = null;
-        });
+        }, 500);
       }
 
       data.dead = true;
@@ -7218,10 +7195,6 @@
         }
 
         collisionTest(collision, exports);
-
-      } else if (data.deadTimer) {
-
-        data.deadTimer.animate();
 
       }
 
@@ -7503,31 +7476,23 @@
       utils.css.add(dom.o, css.spark);
     }
 
-    function makeTimeout(delay, callback) {
-      if (objects._timeout) {
-        window.clearTimeout(objects._timeout);
-        objects._timeout = null;
-      }
-      objects._timeout = setTimeout(function() {
-        if (!objects.target || !objects.target.dom.o) {
-          return;
-        }
-        callback();
-      }, delay);
+    function makeTimeout(callback) {
+      if (objects._timeout) objects._timeout.reset();
+      objects._timeout = setFrameTimeout(callback, 350);
     }
 
     function addTracking(targetNode, radarNode) {
       if (targetNode) {
         utils.css.add(targetNode, css.tracking);
+        makeTimeout(function() {
+          // this animation needs to run possibly after the object has died.
+          if (targetNode) utils.css.add(targetNode, css.trackingActive);
+        });
       }
 
       if (radarNode) {
-        utils.css.add(radarNode, css.tracking);
-        makeTimeout(350, function() {
-          // TODO: check that node still exists?
-          // this animation needs to run possibly after the object has died.
-          utils.css.add(radarNode, css.trackingSpinning);
-        });
+        // radar goes immediately to "active" state, no transition.
+        utils.css.add(radarNode, css.trackingActive);
       }
     }
 
@@ -7547,7 +7512,7 @@
       removeTrackingFromNode(radarNode);
 
       // one timer for both.
-      makeTimeout(350, function() {
+      makeTimeout(function() {
         if (targetNode) {
           utils.css.remove(targetNode, css.trackingRemoval);
         }
@@ -7587,8 +7552,7 @@
           });
         }
 
-        // timeout?
-        data.deadTimer = setTimeout(function() {
+        data.deadTimer = setFrameTimeout(function() {
           hideTrailers();
           removeNodes(dom);
         }, 250);
@@ -7647,10 +7611,6 @@
     function animate() {
 
       var deltaX, deltaY, newTarget, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
-
-      if (data.targetTimeout) {
-        data.targetTimeout.animate();
-      }
 
       if (!data.dead) {
 
@@ -8089,11 +8049,11 @@
 
           playSound(sounds.repairing);
 
-          setTimeout(function() {
+          setFrameTimeout(function() {
             playRepairingWrench(repairInProgress, exports);
           }, 500 + (Math.random() * 1500));
 
-          setTimeout(function() {
+          setFrameTimeout(function() {
             playImpactWrench(repairInProgress, exports);
           }, 500 + (Math.random() * 1500));
 
@@ -8327,7 +8287,7 @@
       utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
 
       if (!data.rotateTimer) {
-        data.rotateTimer = setTimeout(function() {
+        data.rotateTimer = setFrameTimeout(function() {
           utils.css.remove(dom.o, (data.rotated ? css.rotatedLeft : css.rotatedRight));
           utils.css.add(dom.o, (data.rotated ? css.facingLeft : css.facingRight));
           data.rotateTimer = null;
@@ -8686,8 +8646,7 @@
         }));
       }
 
-      // timeout?
-      setTimeout(function() {
+      setFrameTimeout(function() {
         utils.css.add(dom.o, css.dead);
         // undo rotate
         if (data.rotated) {
@@ -8715,7 +8674,7 @@
 
       // don't respawn the enemy chopper during tutorial mode.
       if (!data.isEnemy || !tutorialMode) {
-        setTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+        setFrameTimeout(respawn, (data.isEnemy ? 8000 : 3000));
       }
 
     }
@@ -9403,7 +9362,7 @@
 
           logoHidden = true;
 
-          setTimeout(function() {
+          window.requestAnimationFrame(function() {
 
             var overlay = document.getElementById('world-overlay');
             var world = document.getElementById('world');
@@ -9415,7 +9374,7 @@
             utils.css.add(world, noBlur);
 
             // remove from the DOM eventually
-            setTimeout(function() {
+            setFrameTimeout(function() {
 
               overlay.parentNode.removeChild(overlay);
               overlay = null;
@@ -9429,7 +9388,7 @@
 
             }, (isOldIE ? 1 : 2000));
 
-          }, 1);
+          });
 
         }
 
@@ -9983,11 +9942,10 @@
 
       shrapnelExplosion(data);
 
-      // timeout?
-      data.deadTimer = new FrameTimeout(FPS, function() {
+      data.deadTimer = setFrameTimeout(function() {
         removeNodes(dom);
         data.deadTimer = null;
-      });
+      }, 1000);
 
       data.energy = 0;
 
@@ -10052,10 +10010,6 @@
 
         // start, or stop firing?
         nearbyTest(nearby);
-
-      } else if (data.deadTimer) {
-
-        data.deadTimer.animate();
 
       }
 
@@ -10240,11 +10194,10 @@
 
       shrapnelExplosion(data);
 
-      // timeout?
-      data.deadTimer = new FrameTimeout(FPS, function() {
+      data.deadTimer = setFrameTimeout(function() {
         removeNodes(dom);
         data.deadTimer = null;
-      });
+      }, 1000);
 
       data.energy = 0;
 
@@ -10343,10 +10296,6 @@
         }
 
         data.frameCount++;
-
-      } else if (data.dead && data.deadTimer) {
-
-        data.deadTimer.animate();
 
       }
 
@@ -10487,11 +10436,10 @@
 
         utils.css.add(dom.o, css.exploding);
 
-        // timeout?
-        data.deadTimer = new FrameTimeout(FPS * 1.2, function() {
+        data.deadTimer = setFrameTimeout(function() {
           data.deadTimer = null;
           dieComplete();
-        });
+        }, 1200);
 
       } else {
 
@@ -10651,10 +10599,6 @@
         }
 
         data.frameCount++;
-
-      } else if (data.deadTimer) {
-
-        data.deadTimer.animate();
 
       }
 
@@ -10821,11 +10765,10 @@
 
         playSound(sounds.genericSplat, exports);
 
-        // timeout?
-        data.deadTimer = new FrameTimeout(FPS * 1.2, function() {
+        data.deadTimer = setFrameTimeout(function() {
           dieComplete();
           data.deadTimer = null;
-        });
+        }, 1200);
 
       } else {
 
@@ -10846,10 +10789,6 @@
       var i, spliceArgs;
 
       spliceArgs = [i, 1];
-
-      if (data.deadTimer) {
-        data.deadTimer.animate();
-      }
 
       if (!data.dead) {
 
@@ -11232,10 +11171,10 @@
 
       utils.css.add(dom.o, css.stopped);
 
-      data.deadTimer = new FrameTimeout(FPS * 0.75, function() {
+      data.deadTimer = setFrameTimeout(function() {
         removeNodes(dom);
         data.deadTimer = null;
-      });
+      }, 750);
 
       data.energy = 0;
 
@@ -11276,10 +11215,6 @@
         collisionTest(collision, exports);
 
         data.frameCount++;
-
-      } else if (data.deadTimer) {
-
-        data.deadTimer.animate();
 
       }
 
@@ -12085,31 +12020,30 @@
   FrameTimeout = function(frameInterval, callback) {
 
     /**
-     * basic frame-based counter / "in X frames, do something"
-     * cleaner alternate to setTimeout() / setInterval trickery
-     * that conveniently uses existing frame-based animation.
+     * a frame-counting-based setTimeout() implementation.
+     * milisecond value (parameter) is converted to a frame count.
      */
 
     var data, exports;
 
     data = {
       frameCount: 0,
-      frameInterval: parseInt(frameInterval, 10),
-      callbackFired: false
+      frameInterval: parseInt(delayMsec / FRAMERATE, 10), // e.g., msec = 1000 -> frameInterval = 60
+      callbackFired: false,
+      didReset: false,
     };
 
     function animate() {
 
+      // if reset() was called, exit early
+      if (data.didReset) return true; 
+
       data.frameCount++;
 
-      if (data.frameCount >= data.frameInterval && !data.callbackFired) {
-
+      if (!data.callbackFired && data.frameCount >= data.frameInterval) {
         callback();
-
         data.callbackFired = true;
-
         return true;
-
       }
 
       return false;
@@ -12117,10 +12051,8 @@
     }
 
     function reset() {
-
-      data.frameCount = 0;
-      data.callbackFired = false;
-
+      // similar to clearTimeout()
+      data.didReset = true;
     }
 
     exports = {
@@ -12128,6 +12060,8 @@
       data: data,
       reset: reset
     };
+
+    frameTimeoutManager.addInstance(exports);
 
     return exports;
 
@@ -13274,8 +13208,7 @@
               game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
             }
 
-
-            setTimeout(orderNextItem, enemyDelays[i] * 1000);
+            setFrameTimeout(orderNextItem, enemyDelays[i] * 1000);
 
             i++;
 
@@ -13294,7 +13227,7 @@
 
         // and begin
         if (!tutorialMode) {
-          setTimeout(orderNextItem, 5000);
+          setFrameTimeout(orderNextItem, 5000);
         }
 
       }());
