@@ -902,23 +902,15 @@
     o2 = (oAdd === undefined ? {} : oAdd);
 
     for (o in o2) {
-
       if (o2.hasOwnProperty(o)) {
-
         if (typeof o2[o] !== 'object' || o2[o] === null || o2[o] === undefined || o2[o] instanceof Array) {
-
           // assign directly
           o1[o] = o2[o];
-
         } else {
-
           // recurse through o2
           o1[o] = mixin(o1[o], o2[o]);
-
         }
-
       }
-
     }
 
     o2 = null;
@@ -932,13 +924,9 @@
     var evt = e || window.event;
 
     if (evt.preventDefault !== undefined) {
-
       evt.preventDefault();
-
     } else {
-
       evt.cancelBubble = true;
-
     }
 
     return false;
@@ -1952,30 +1940,18 @@
     };
 
     if (game.objects[objectType]) {
-
       for (i = 0, j = game.objects[objectType].length; i < j; i++) {
-
         if (!game.objects[objectType][i].data.dead) {
-
           if (game.objects[objectType][i].data.isEnemy || game.objects[objectType][i].data.hostile) {
-
             result.enemy++;
-
           } else {
-
             result.friendly++;
-
           }
-
         } else if (includeDead) {
-
           // things that are dead are considered harmless - therefore, friendly.
           result.friendly++;
-
         }
-
       }
-
     }
 
     return result;
@@ -2048,14 +2024,12 @@
       soundObject = soundReference[soundReference.soundOffset];
 
       // increase, and reset the counter as necessary
-
       soundReference.soundOffset++;
 
       if (soundReference.soundOffset >= soundReference.length) {
 
         // re-shuffle the array, randomize a little
         soundReference = utils.array.shuffle(soundReference);
-
         soundReference.soundOffset = 0;
 
       }
@@ -3905,11 +3879,8 @@
     function setIncomingMissile(incoming) {
 
       if (data.incomingMissile !== incoming) {
-
         utils.css[incoming ? 'add' : 'remove'](game.objects.view.dom.worldWrapper, css.incomingSmartMissile);
-
         data.incomingMissile = incoming;
-
       }
 
     }
@@ -7970,7 +7941,6 @@
           sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
 
-
         data.cloaked = false;
 
       }
@@ -8030,11 +8000,9 @@
       if (frameCount % modulus === 0 && data.fuel > 0) {
 
         // burn!
-
         data.fuel = Math.max(0, data.fuel - 0.1);
 
         // update UI
-
         updateFuelUI();
 
       }
@@ -11422,15 +11390,10 @@
       } else if (!data.completed) {
 
         if (options.animate()) {
-
           if (options.complete) {
-
             options.complete();
-
           }
-
           data.completed = true;
-
         }
 
       }
