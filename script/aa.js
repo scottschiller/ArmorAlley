@@ -3112,6 +3112,9 @@
 
     function setAnnouncement(text, delay) {
 
+      // prevent `undefined` from being rendered. ;)
+      text = text || '';
+
       if (text !== data.gameTips.lastAnnouncement && ((!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text))) {
 
         utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
