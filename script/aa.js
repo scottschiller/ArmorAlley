@@ -7950,7 +7950,7 @@
 
   Helicopter = function(options) {
 
-    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate;
+    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate, statsBar;
 
     function cloak() {
 
@@ -8112,18 +8112,23 @@
 
     }
 
-    function applyStatusUI() {
+    // Status item
+    function modify(o, count) {
+      if (count > 0) {
+        utils.css.remove(o, css.unavailable);
+      } else {
+        utils.css.add(o, css.unavailable);
+      }
+    }
 
-      // clear pending update
-      data.pendingApplyStatusUI = null;
+    function applyStatusUI(updated) {
+      var force = updated.force;
 
-      // TODO: optimize?
-      dom.statusBar.infantryCount.innerText = data.parachutes;
-      dom.statusBar.ammoCount.innerText = data.ammo;
-      dom.statusBar.bombCount.innerText = data.bombs;
-      dom.statusBar.missileCount.innerText = data.smartMissiles;
+      if (force || updated.parachutes) dom.statusBar.infantryCount.innerText = data.parachutes;
+      if (force || updated.ammo) dom.statusBar.ammoCount.innerText = data.ammo;
+      if (force || updated.bombs) dom.statusBar.bombCount.innerText = data.bombs;
+      if (force || updated.smartMissiles) dom.statusBar.missileCount.innerText = data.smartMissiles;
 
-      var statsBar = document.getElementById('stats-bar');
       var mobileControls;
       var mobileControlItems;
 
@@ -8132,54 +8137,58 @@
         mobileControlItems = mobileControls.querySelectorAll('.mobile-controls-right li');
       }
 
-      // TODO: optimize
-      var infantryCount = statsBar.querySelectorAll('li.infantry-count')[0];
-      var missiles = statsBar.querySelectorAll('li.missiles')[0];
-      var ammo = statsBar.querySelectorAll('li.ammo')[0];
-      var bombs = statsBar.querySelectorAll('li.bombs')[0];
-
-      var unavailable = 'weapon-unavailable';
-
-      function modify(o, count) {
-        if (count > 0) {
-          utils.css.remove(o, unavailable);
-        } else {
-          utils.css.add(o, unavailable);
-        }
+      if (force || updated.parachutes) {
+        modify(dom.statusBar.infantryCountLI, data.parachutes);
+        if (isMobile) modify(mobileControlItems[0], data.parachutes);
       }
 
-      modify(infantryCount, data.parachutes);
-      modify(ammo, data.ammo);
-      modify(bombs, data.bombs);
-      modify(missiles, data.smartMissiles);
+      if (force || updated.smartMissiles) {
+        modify(dom.statusBar.missileCountLI, data.smartMissiles);
+        if (isMobile) modify(mobileControlItems[1], data.smartMissiles);
+      }
 
-      if (isMobile) {
-        // TODO: hackish. fix.
-        // infantry, missiles, guns, bombs.
-        modify(mobileControlItems[0], data.parachutes);
-        modify(mobileControlItems[1], data.smartMissiles);
-        modify(mobileControlItems[2], data.ammo);
-        modify(mobileControlItems[3], data.bombs);
+      if (force || updated.ammo) {
+        modify(dom.statusBar.ammoCountLI, data.ammo);
+        if (isMobile) modify(mobileControlItems[2], data.ammo);
+      }
+
+      if (force || updated.bombs) {
+        modify(dom.statusBar.bombCountLI, data.bombs);
+        if (isMobile) modify(mobileControlItems[3], data.bombs);
       }
 
       // hackish, fix endBunkers reference
-      dom.statusBar.fundsCount.innerText = game.objects.endBunkers[0].data.funds;
+      if (force || updated.funds) {
+        // update the funds UI
+        game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
+      }
 
     }
 
-    function updateStatusUI() {
+    function updateStatusUI(updated) {
 
-      if (!data.isEnemy) {
-
-        if (!data.pendingApplyStatusUI) {
-          // TODO: optimize further
-          data.pendingApplyStatusUI = window.requestAnimationFrame(applyStatusUI);
-        }
-
-      }
+      // ignore enemy repair / updates, but apply player's changes
+      if (
+        !data.isEnemy
+        && (
+          updated.funds
+          || updated.force
+          || updated.ammo
+          || updated.bombs
+          || updated.smartMissiles
+          || updated.parachutes)
+        ) applyStatusUI(updated);
 
       // fully-repaired?
-      if (data.repairing && !data.repairComplete && data.fuel === data.maxFuel && data.ammo === data.maxAmmo && data.energy === data.energyMax && data.bombs === data.maxBombs && data.smartMissiles === data.maxSmartMissiles) {
+      if (
+        data.repairing
+        && !data.repairComplete
+        && data.fuel === data.maxFuel
+        && data.ammo === data.maxAmmo
+        && data.energy === data.energyMax
+        && data.bombs === data.maxBombs
+        && data.smartMissiles === data.maxSmartMissiles
+      ) {
 
         data.repairComplete = true;
 
