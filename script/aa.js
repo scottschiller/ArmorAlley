@@ -12265,6 +12265,8 @@
             utils.css.add(document.getElementById('world'), rubberChickenMode);
           }
 
+          document.querySelector('#stats-bar .missiles .letter-block').innerHTML = 'C';
+
         },
 
         up: function() {
