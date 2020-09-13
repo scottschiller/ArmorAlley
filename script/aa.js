@@ -8745,9 +8745,9 @@
           objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
-            x: data.x + (data.rotated ? 0 : data.width) - 8,
+            x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
             y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
-            vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
+            vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
             vY: (data.y > data.yMin ? data.vY + tiltOffset : 0)
           }));
           /*eslint-enable no-mixed-operators */
