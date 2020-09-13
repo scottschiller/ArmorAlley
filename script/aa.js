@@ -1734,7 +1734,7 @@
 
               totalDistance = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
 
-              if (totalDistance < 4096) {
+              if (totalDistance < 3072) {
 
                 localObjects.push({
                   obj: itemArray[k],
