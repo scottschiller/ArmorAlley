@@ -292,6 +292,25 @@
 
   var transformCount = 0;
 
+  var TYPES = {
+    balloon: 'balloon',
+    helicopter: 'helicopter',
+    tank: 'tank',
+    turret: 'turret',
+    infantry: 'infantry',
+    parachuteInfantry: 'parachute-infantry',
+    parachuteInfantryCamel: 'parachuteInfantry',
+    engineer: 'engineer',
+    bunker: 'bunker',
+    endBunker: 'end-bunker',
+    endBunkerCamel: 'endBunker',
+    superBunker: 'super-bunker',
+    superBunkerCamel: 'superBunker',
+    missileLauncher: 'missile-launcher',
+    missileLauncherCamel: 'missileLauncher',
+    van: 'van'
+  };
+
   var stats;
 
   function statsStructure() {
@@ -327,8 +346,8 @@
     function normalizeType(obj) {
       var type = obj.data.type;
       // special case: infantry -> engineer
-      if (obj.data.type === 'infantry' && obj.data.role) {
-        type = 'engineer';
+      if (obj.data.type === TYPES.infantry && obj.data.role) {
+        type = TYPES.engineer;
       }
       return type;
     }
@@ -1173,8 +1192,8 @@
          * other things can hit super-bunkers, but we don't want damage done in this case.
          */
 
-        if (target.data.type === 'super-bunker') {
-          if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== 'tank') {
+        if (target.data.type === TYPES.superBunker) {
+          if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) {
             return;
           }
         }
@@ -1519,7 +1538,7 @@
         // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
         && (
           !options.targets[i].data.dead
-          || (options.targets[i].data.type === 'turret' && options.source.data.type === 'infantry' && options.source.data.role)
+          || (options.targets[i].data.type === TYPES.turret && options.source.data.type === TYPES.infantry && options.source.data.role)
         )
 
         // more non-standard formatting....
@@ -1529,13 +1548,16 @@
           (options.targets[i].data.isEnemy !== options.source.data.isEnemy)
 
           // unless infantry vs. bunker, end-bunker, super-bunker or helicopter
-          || (options.source.data.type === 'infantry' && options.targets[i].data.type === 'bunker')
-          || (options.source.data.type === 'end-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
-          || (options.source.data.type === 'super-bunker' && options.targets[i].data.type === 'infantry' && !options.targets[i].data.role)
-          || (options.source.data.type === 'helicopter' && options.targets[i].data.type === 'infantry')
+          || (options.source.data.type === TYPES.infantry && options.targets[i].data.type === TYPES.bunker)
+
+          || (options.targets[i].data.type === TYPES.infantry && (
+            (options.source.data.type === TYPES.endBunker && !options.targets[i].data.role)
+            || (options.source.data.type === TYPES.superBunker && !options.targets[i].data.role)
+            || (options.source.data.type === TYPES.helicopter)
+          ))
 
           // OR engineer vs. turret
-          || (options.source.data.type === 'infantry' && options.source.data.role && options.targets[i].data.type === 'turret')
+          || (options.source.data.type === TYPES.infantry && options.source.data.role && options.targets[i].data.type === TYPES.turret)
 
           // OR we're dealing with a hostile or neutral object
           || (options.source.data.hostile || options.targets[i].data.hostile)
@@ -1554,7 +1576,7 @@
         // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
         if (
           collisionCheck(options.source.data, options.targets[i].data, xLookAhead)
-          || (options.targets[i].data.type === 'helicopter' && collisionCheck(options.source.data, options.targets[i].data, -xLookAhead))
+          || (options.targets[i].data.type === TYPES.helicopter && collisionCheck(options.source.data, options.targets[i].data, -xLookAhead))
         ) {
 
           foundHit = true;
@@ -1626,7 +1648,7 @@
 
     // by default, offset target to one side of a balloon.
 
-    if (target.data.type === 'tank') {
+    if (target.data.type === TYPES.tank) {
 
       // hack: bomb from high up.
       deltaY = (40 + target.data.halfHeight) - (source.data.y + source.data.halfHeight);
@@ -1664,7 +1686,7 @@
     localObjects = [];
 
     // if the source object isn't near the ground, be biased toward airborne items.
-    if (source.data.type === 'helicopter' && source.data.y > game.objects.view.data.world.height - 100) {
+    if (source.data.type === TYPES.helicopter && source.data.y > game.objects.view.data.world.height - 100) {
       preferGround = true;
     }
 
@@ -1688,7 +1710,7 @@
 
             targetData = itemArray[k].data;
 
-            if ((preferGround && targetData.bottomAligned && targetData.type !== 'balloon') || (!preferGround && (!targetData.bottomAligned || targetData.type === 'balloon'))) {
+            if ((preferGround && targetData.bottomAligned && targetData.type !== TYPES.balloon) || (!preferGround && (!targetData.bottomAligned || targetData.type === TYPES.balloon))) {
 
               totalDistance = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
 
@@ -1717,7 +1739,7 @@
     if (localObjects.length) {
 
       // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
-      result = localObjects[source.data.type === 'helicopter' && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
+      result = localObjects[source.data.type === TYPES.helicopter && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
 
     } else {
 
@@ -2146,6 +2168,12 @@
    */
 
   sounds = {
+    // associate certain sounds with inventory / object types
+    types: {
+      metalHit: [TYPES.tank, TYPES.van, TYPES.missileLauncher, TYPES.bunker, TYPES.superBunker, TYPES.turret],
+      genericSplat: [TYPES.engineer,TYPES.infantry,TYPES.parachuteInfantry],
+    },
+    // sound configuration
     helicopter: {
       bomb: null,
       engine: null,
@@ -3594,11 +3622,11 @@
 
       // infantry or engineer? handle those specially.
 
-      if (type === 'infantry') {
+      if (type === TYPES.infantry) {
 
         orderSize = 5;
 
-      } else if (type === 'engineer') {
+      } else if (type === TYPES.engineer) {
 
         orderSize = 2;
 
@@ -4754,7 +4782,7 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'balloon',
+      className: TYPES.balloon,
       friendly: 'facing-right',
       enemy: 'facing-left',
       facingLeft: 'facing-left',
@@ -4762,7 +4790,7 @@
     });
 
     data = inheritData({
-      type: 'balloon',
+      type: TYPES.balloon,
       bottomAligned: true, // TODO: review/remove
       canRespawn: false,
       frameCount: 0,
@@ -5017,13 +5045,13 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'bunker',
+      className: TYPES.bunker,
       arrow: 'arrow',
       burning: 'burning'
     });
 
     data = inheritData({
-      type: 'bunker',
+      type: TYPES.bunker,
       y: (worldHeight - 25) + 3, // override to fix helicopter / bunker vertical crash case
       energy: 50,
       energyMax: 50,
@@ -5081,7 +5109,7 @@
     function hit(points, target) {
 
       // only tank gunfire counts against end bunkers.
-      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
         data.energy = Math.max(0, data.energy - points);
         updateEnergy(exports);
       }
@@ -5253,11 +5281,11 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'end-bunker'
+      className: TYPES.endBunker
     });
 
     data = inheritData({
-      type: 'end-bunker',
+      type: TYPES.endBunker,
       bottomAligned: true,
       frameCount: 0,
       energy: 0,
@@ -5309,7 +5337,7 @@
             setFiring(true);
           }
           // nearby infantry?
-          if (target.data.type === 'infantry') {
+          if (target.data.type === TYPES.infantry) {
             // enemy at door, and funds to steal?
             if (!isFriendly) {
               if (data.funds && collisionCheckMidPoint(exports, target)) {
@@ -5330,7 +5358,7 @@
         }
       },
       // who gets fired at?
-      items: ['infantry', 'engineers', 'helicopters'],
+      items: [TYPES.infantry, 'engineers', 'helicopters'],
       targets: []
     };
 
@@ -5391,7 +5419,7 @@
     function hit(points, target) {
 
       // only tank gunfire counts against super bunkers.
-      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
         data.energy = Math.max(0, data.energy - points);
         updateFireModulus();
         updateEnergy(exports);
@@ -5502,12 +5530,12 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'super-bunker',
+      className: TYPES.superBunker,
       friendly: 'friendly'
     });
 
     data = inheritData({
-      type: 'super-bunker',
+      type: TYPES.superBunker,
       y: 358,
       frameCount: 0,
       energy: (options.energy || 0),
@@ -5573,7 +5601,7 @@
 
           // gunfire from a tank? decrement energy until dead.
 
-          if (target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === 'tank') {
+          if (target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
 
             // limit to +/- range.
             data.energy = Math.min(data.energyMax, data.energy - 1);
@@ -5588,7 +5616,7 @@
 
             }
 
-          } else if (target.data.type === 'infantry') {
+          } else if (target.data.type === TYPES.infantry) {
 
             // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
 
@@ -5679,7 +5707,7 @@
       },
 
       // who gets fired at?
-      items: ['infantry', 'engineers', 'missileLaunchers', 'vans', 'helicopters'],
+      items: [TYPES.infantry, 'engineers', 'missileLaunchers', 'vans', 'helicopters'],
       targets: []
 
     };
@@ -6043,7 +6071,7 @@
 
     if (gameType === 'hard' || gameType === 'extreme') {
       // additional challenge: make turret gunfire dangerous to some ground units, too.
-      collisionItems = collisionItems.concat(['tanks', 'vans', 'infantry', 'missileLaunchers', 'bunkers', 'superBunkers']);
+      collisionItems = collisionItems.concat(['tanks', 'vans', TYPES.infantry, 'missileLaunchers', 'bunkers', 'superBunkers']);
     }
 
     if (gameType === 'extreme') {
@@ -6056,13 +6084,13 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'turret',
+      className: TYPES.turret,
       destroyed: 'destroyed',
       firing: 'firing'
     });
 
     data = inheritData({
-      type: 'turret',
+      type: TYPES.turret,
       bottomAligned: true,
       dead: false,
       energy: 50,
@@ -6846,31 +6874,31 @@
       if (target) {
 
         // special case: tanks hit turrets for a lot of damage.
-        if (data.parentType === 'tank' && target.data.type === 'turret') {
+        if (data.parentType === TYPES.tank && target.data.type === TYPES.turret) {
           data.damagePoints = 8;
         }
 
         // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
-        if (!(data.parentType === 'infantry' && target.data.type === 'tank') && !(data.parentType === 'helicopter' && (target.data.type === 'end-bunker' || target.data.type === 'super-bunker'))) {
+        if (!(data.parentType === TYPES.infantry && target.data.type === TYPES.tank) && !(data.parentType === TYPES.helicopter && (target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker))) {
           common.hit(target, data.damagePoints, exports);
         }
 
         // play a sound for certain targets and source -> target combinations
 
-        if (target.data.type === 'helicopter') {
+        if (target.data.type === TYPES.helicopter) {
 
           playSound(sounds.boloTank, exports);
 
         } else if (
 
-          target.data.type === 'tank'
-          || target.data.type === 'helicopter'
-          || target.data.type === 'van'
-          || target.data.type === 'bunker'
-          || target.data.type === 'end-bunker'
-          || target.data.type === 'super-bunker'
+          target.data.type === TYPES.tank
+          || target.data.type === TYPES.helicopter
+          || target.data.type === TYPES.van
+          || target.data.type === TYPES.bunker
+          || target.data.type === TYPES.endBunker
+          || target.data.type === TYPES.superBunker
           // helicopter -> turret
-          || (data.parentType === 'helicopter' && target.data.type === 'turret')
+          || (data.parentType === TYPES.helicopter && target.data.type === TYPES.turret)
 
         ) {
 
@@ -6878,8 +6906,8 @@
 
         } else if (
 
-          target.data.type === 'balloon'
-          || target.data.type === 'turret'
+          target.data.type === TYPES.balloon
+          || target.data.type === TYPES.turret
 
         ) {
 
@@ -7005,7 +7033,7 @@
         targets: undefined,
         hit: function(target) {
           // special case: let tank gunfire pass thru if 0 energy, or friendly.
-          if (!(data.parentType === 'tank' && target.data.type === 'end-bunker' && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
+          if (!(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
             sparkAndDie(target);
           }
         }
@@ -7109,7 +7137,7 @@
       // assume default
       damagePoints = data.damagePoints;
 
-      if (target.data.type && target.data.type === 'balloon') {
+      if (target.data.type && target.data.type === TYPES.balloon) {
 
         die({
           omitSound: true,
@@ -7133,12 +7161,12 @@
       // special cases for bomb -> target interactions
       if (target.data.type) {
 
-        if (target.data.type === 'helicopter') {
+        if (target.data.type === TYPES.helicopter) {
 
           // one bomb kills a helicopter.
           damagePoints = target.data.energyMax;
 
-        } else if (target.data.type === 'turret') {
+        } else if (target.data.type === TYPES.turret) {
 
           // bombs do more damage on turrets.
           damagePoints = 10;
@@ -8970,14 +8998,14 @@
         if (lastTarget.data.dead) {
 
           // was it a tank? reset tank-seeking mode until next interval.
-          if (lastTarget.data.type === 'tank') {
+          if (lastTarget.data.type === TYPES.tank) {
             console.log('AI killed tank. Disabling tank targeting mode.');
             data.targeting.tanks = false;
           }
 
           lastTarget = null;
 
-        } else if ((lastTarget.data.type === 'balloon' || lastTarget.data.type === 'tank') && lastTarget.data.y > maxY) {
+        } else if ((lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.tank) && lastTarget.data.y > maxY) {
 
           // flying too low?
           lastTarget = null;
@@ -9017,7 +9045,7 @@
         }
 
         // is the new target too low?
-        if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && lastTarget.data.y > maxY) {
+        if (lastTarget && (lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.helicopter) && lastTarget.data.y > maxY) {
           lastTarget = null;
         }
 
@@ -9060,11 +9088,11 @@
         lastTarget = null;
       }
 
-      if (lastTarget && lastTarget.data.type === 'tank' && data.bombs <= 0) {
+      if (lastTarget && lastTarget.data.type === TYPES.tank && data.bombs <= 0) {
         lastTarget = null;
       }
 
-      if (lastTarget && (lastTarget.data.type === 'balloon' || lastTarget.data.type === 'helicopter') && (lastTarget.data.y > maxY || data.ammo <= 0)) {
+      if (lastTarget && (lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.helicopter) && (lastTarget.data.y > maxY || data.ammo <= 0)) {
         lastTarget = null;
       }
 
@@ -9100,7 +9128,7 @@
 
         result = trackObject(exports, target);
 
-        if (target.data.type !== 'balloon') {
+        if (target.data.type !== TYPES.balloon) {
 
           if (target.data.type === 'landing-pad') {
             result.deltaY = 0;
@@ -9120,7 +9148,7 @@
         }
 
         // enforce distance limits?
-        if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
+        if (target.data.type === TYPES.balloon || target.data.type === TYPES.helicopter) {
 
           if (Math.abs(result.deltaX) < 200) {
             result.deltaX = 0;
@@ -9161,9 +9189,9 @@
         data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
         // within firing range?
-        if (target.data.type === 'balloon' || target.data.type === 'helicopter') {
+        if (target.data.type === TYPES.balloon || target.data.type === TYPES.helicopter) {
 
-          if (target.data.type === 'balloon') {
+          if (target.data.type === TYPES.balloon) {
 
             if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
               setFiring(true);
@@ -9200,7 +9228,7 @@
 
           }
 
-        } else if (target.data.type === 'tank') {
+        } else if (target.data.type === TYPES.tank) {
 
           if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3) {
             // over a tank?
@@ -9628,7 +9656,7 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'helicopter',
+      className: TYPES.helicopter,
       facingLeft: 'facing-left',
       facingRight: 'facing-right',
       rotatedLeft: 'rotated-left',
@@ -9646,7 +9674,7 @@
     });
 
     data = inheritData({
-      type: 'helicopter',
+      type: TYPES.helicopter,
       angle: 0,
       bombing: false,
       firing: false,
@@ -9796,7 +9824,7 @@
             }
             // should the target die, too? ... probably so.
             common.hit(target, 999);
-          } else if (target.data.type === 'infantry') {
+          } else if (target.data.type === TYPES.infantry) {
             // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
             if (data.landed && !data.onLandingPad && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
@@ -9818,7 +9846,7 @@
           }
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'superBunkers', 'helicopters', 'chains', 'infantry', 'engineers', 'clouds']
+      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'superBunkers', 'helicopters', 'chains', TYPES.infantry, 'engineers', 'clouds']
     };
 
     exports = {
@@ -10056,14 +10084,14 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'tank',
+      className: TYPES.tank,
       hit1: 'smouldering-phase-1',
       hit2: 'smouldering-phase-2',
       stopped: 'stopped'
     });
 
     data = inheritData({
-      type: 'tank',
+      type: TYPES.tank,
       bottomAligned: true,
       deadTimer: null,
       energy: 8,
@@ -10104,7 +10132,7 @@
         hit: function(target) {
           // stop moving, start firing.
           // special case: only fire at EndBunker and SuperBunker if they have energy.
-          if (((target.data.type === 'end-bunker' || target.data.type === 'super-bunker') && target.data.energy !== 0) || (target.data.type !== 'end-bunker' && target.data.type !== 'super-bunker')) {
+          if (((target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker) && target.data.energy !== 0) || (target.data.type !== TYPES.endBunker && target.data.type !== TYPES.superBunker)) {
             stop();
           } else {
             resume();
@@ -10116,7 +10144,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'turrets', 'helicopters', 'endBunkers', 'superBunkers'],
+      items: ['tanks', 'vans', 'missileLaunchers', TYPES.infantry, 'engineers', 'turrets', 'helicopters', 'endBunkers', 'superBunkers'],
       targets: []
     };
 
@@ -10345,11 +10373,11 @@
     options = options || {};
 
     css = inheritCSS({
-      className: 'van'
+      className: TYPES.van
     });
 
     data = inheritData({
-      type: 'van',
+      type: TYPES.van,
       bottomAligned: true,
       deadTimer: null,
       frameCount: 0,
@@ -10872,20 +10900,20 @@
 
     css = inheritCSS({
       className: null,
-      infantry: 'infantry',
-      engineer: 'engineer',
+      infantry: TYPES.infantry,
+      engineer: TYPES.engineer,
       stopped: 'stopped'
     });
 
     data = inheritData({
-      type: 'infantry',
+      type: TYPES.infantry,
       deadTimer: null,
       frameCount: Math.random() > 0.5 ? 5 : 0,
       bottomAligned: true,
       energy: 2,
       energyMax: 2,
       role: options.role || 0,
-      roles: ['infantry', 'engineer'],
+      roles: [TYPES.infantry, TYPES.engineer],
       stopped: false,
       noFire: false,
       direction: 0,
@@ -10918,7 +10946,7 @@
         // TODO: rename to something generic?
         hit: function(target) {
           // engineer + turret case? reclaim or repair.
-          if (data.role && target.data.type === 'turret') {
+          if (data.role && target.data.type === TYPES.turret) {
             // is there work to do?
             if (target.engineerCanInteract(data.isEnemy)) {
               stop(true);
@@ -10938,7 +10966,7 @@
         }
       },
       // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'engineers', 'helicopters', 'turrets'],
+      items: ['tanks', 'vans', 'missileLaunchers', TYPES.infantry, 'engineers', 'helicopters', 'turrets'],
       targets: []
     };
 
@@ -10956,7 +10984,7 @@
           if (!data.role && target.infantryHit) {
             // infantry hit bunker or other object
             target.infantryHit(exports);
-          } else if (target.data.type !== 'bunker' && target.data.type !== 'end-bunker') {
+          } else if (target.data.type !== TYPES.bunker && target.data.type !== TYPES.endBunker) {
             // probably a tank.
             die();
           }
@@ -11580,22 +11608,22 @@
 
         activate: function() {
 
-          game.addObject('tank', {
+          game.addObject(TYPES.tank, {
             x: 1536,
             isEnemy: true
           });
 
-          game.addObject('tank', {
+          game.addObject(TYPES.tank, {
             x: 1536 + 70,
             isEnemy: true
           });
 
-          game.addObject('tank', {
+          game.addObject(TYPES.tank, {
             x: 1536 + 140,
             isEnemy: true
           });
 
-          game.addObject('van', {
+          game.addObject(TYPES.van, {
             x: 1536 + 210,
             isEnemy: true
           });
@@ -11804,7 +11832,7 @@
           if (game.objects.helicopters.length < 2) {
 
             // two screenfuls away, OR end of battlefield - whichever is less
-            game.addObject('helicopter', {
+            game.addObject(TYPES.helicopter, {
               x: Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
               y: 72,
               isEnemy: true,
@@ -11845,12 +11873,12 @@
           missileX = Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
 
           // make ze missile launcher
-          game.addObject('missileLauncher', {
+          game.addObject(TYPES.missileLauncherCamel, {
             x: missileX,
             isEnemy: true
           });
 
-          game.addObject('missileLauncher', {
+          game.addObject(TYPES.missileLauncherCamel, {
             x: missileX + 64,
             isEnemy: true
           });
@@ -12221,7 +12249,7 @@
 
         down: function() {
 
-          game.objects.inventory.order('missileLauncher');
+          game.objects.inventory.order(TYPES.missileLauncherCamel);
 
         }
 
@@ -12232,7 +12260,7 @@
 
         down: function() {
 
-          game.objects.inventory.order('tank');
+          game.objects.inventory.order(TYPES.tank);
 
         }
 
@@ -12243,7 +12271,7 @@
 
         down: function() {
 
-          game.objects.inventory.order('van');
+          game.objects.inventory.order(TYPES.van);
 
         }
 
@@ -12293,7 +12321,7 @@
 
         down: function() {
 
-          game.objects.inventory.order('engineer');
+          game.objects.inventory.order(TYPES.engineer);
 
         }
 
@@ -12304,7 +12332,7 @@
 
         down: function() {
 
-          game.objects.inventory.order('infantry');
+          game.objects.inventory.order(TYPES.infantry);
 
         }
 
@@ -12368,16 +12396,16 @@
 
     function addObject(type, options) {
 
-      // given type of 'van', create object and append to respective array.
+      // given type of TYPES.van, create object and append to respective array.
 
       var object, objectArray;
 
-      // 'van' -> game.objects['vans'], etc.
-      objectArray = game.objects[type + (type === 'infantry' ? '' : 's')];
+      // TYPES.van -> game.objects['vans'], etc.
+      objectArray = game.objects[type + (type === TYPES.infantry ? '' : 's')];
 
       options = options || {};
 
-      // create and push an instance object onto its relevant array by type (e.g., 'van' -> game.objects['vans'])
+      // create and push an instance object onto its relevant array by type (e.g., TYPES.van -> game.objects['vans'])
       if (objectConstructors[type]) {
         object = new objectConstructors[type](options);
       } else {
@@ -12472,11 +12500,11 @@
 
         // twin enemy turrets, mid-field - good luck.
         if (gameType === 'extreme') {
-          addObject('turret', {
+          addObject(TYPES.turret, {
             x: 3800,
             isEnemy: true
           });
-          addObject('turret', {
+          addObject(TYPES.turret, {
             x: 4145,
             isEnemy: true
           });
@@ -12486,7 +12514,7 @@
 
         x = 630;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12501,7 +12529,7 @@
 
         x += 92;
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: x,
           isEnemy: true,
           DOA: false
@@ -12509,14 +12537,14 @@
 
         x += 175;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
 
         x += 100;
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x,
           isEnemy: true
         });
@@ -12529,14 +12557,14 @@
 
         x += 250;
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x,
           isEnemy: true
         });
 
         x += 50;
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x,
           isEnemy: true
         });
@@ -12545,14 +12573,14 @@
 
         for (i = 0; i < 10; i++) {
 
-          addObject('infantry', {
+          addObject(TYPES.infantry, {
             x: x + (i * 11),
             isEnemy: true
           });
 
         }
 
-        addObject('van', {
+        addObject(TYPES.van, {
           x: x + 210,
           isEnemy: true
         });
@@ -12561,7 +12589,7 @@
 
         x += 110;
 
-        addObject('superBunker', {
+        addObject(TYPES.superBunkerCamel, {
           x: x,
           isEnemy: true,
           energy: 5
@@ -12569,7 +12597,7 @@
 
         x += 120;
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: x,
           isEnemy: true,
           DOA: false
@@ -12579,14 +12607,14 @@
 
         addItem('gravestone', x);
 
-        addObject('van', {
+        addObject(TYPES.van, {
           x: x,
           isEnemy: true
         });
 
         for (i = 0; i < 5; i++) {
 
-          addObject('infantry', {
+          addObject(TYPES.infantry, {
             x: (x + 50) + (i * 11),
             isEnemy: true
           });
@@ -12597,52 +12625,52 @@
 
         addItem('sand-dunes', x);
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x + 75,
           isEnemy: true
         });
 
         for (i = 0; i < 5; i++) {
 
-          addObject('infantry', {
+          addObject(TYPES.infantry, {
             x: (x + 75) + (i * 11),
             isEnemy: true
           });
 
         }
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x + 240,
           isEnemy: true
         });
 
         x += 540;
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x,
           isEnemy: true
         });
 
-        addObject('tank', {
+        addObject(TYPES.tank, {
           x: x + 240,
           isEnemy: true
         });
 
         for (i = 0; i < 5; i++) {
 
-          addObject('infantry', {
+          addObject(TYPES.infantry, {
             x: (x + 240 + 75) + (i * 11),
             isEnemy: true
           });
 
         }
 
-        addObject('van', {
+        addObject(TYPES.van, {
           x: x + 240 + 215,
           isEnemy: true
         });
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12669,7 +12697,7 @@
 
         x += 150;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12696,7 +12724,7 @@
 
         x += 54;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12743,7 +12771,7 @@
 
         x += 70;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12786,7 +12814,7 @@
 
         x += 60;
 
-        addObject('superBunker', {
+        addObject(TYPES.superBunkerCamel, {
           x: x,
           isEnemy: true,
           energy: 5
@@ -12794,7 +12822,7 @@
 
         x += 125;
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: x,
           isEnemy: true,
           DOA: false
@@ -12802,14 +12830,14 @@
 
         x += 145;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
 
         x += 128;
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: x,
           isEnemy: true
         });
@@ -12870,12 +12898,12 @@
           x: 7800
         });
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: 475,
           DOA: true
         });
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 1024,
           isEnemy: true
         });
@@ -12894,7 +12922,7 @@
 
         addItem('palm-tree', 1390);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 1536
         });
 
@@ -12902,7 +12930,7 @@
 
         addItem('flower', 1850);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 2048
         });
 
@@ -12914,13 +12942,13 @@
 
         addItem('tree', 2460);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 2560
         });
 
         addItem('tree', 2700);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 3072
         });
 
@@ -12932,7 +12960,7 @@
 
         addItem('palm-tree', 4550);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 4608,
           isEnemy: true
         });
@@ -12945,7 +12973,7 @@
 
         addItem('grave-cross', 4970);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 5120,
           isEnemy: true
         });
@@ -12956,7 +12984,7 @@
 
         addItem('grave-cross', 5275);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 5632,
           isEnemy: true
         });
@@ -12971,7 +12999,7 @@
 
         addItem('tree', 3932 + 85 + 230 + 90);
 
-        addObject('bunker', {
+        addObject(TYPES.bunker, {
           x: 6656,
           isEnemy: true
         });
@@ -13000,19 +13028,19 @@
 
         // more mid-level stuff
 
-        addObject('superBunker', {
+        addObject(TYPES.superBunkerCamel, {
           x: 4096 - 640 - 128,
           isEnemy: true,
           energy: 5
         });
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: 4096 - 640, // width of landing pad
           isEnemy: true,
           DOA: !!tutorialMode
         });
 
-        addObject('turret', {
+        addObject(TYPES.turret, {
           x: 4096 + 120, // width of landing pad
           isEnemy: true,
           DOA: !!tutorialMode
@@ -13024,58 +13052,58 @@
 
           // friendly units
 
-          addObject('van', {
+          addObject(TYPES.van, {
             x: 192
           });
 
           for (i = 0; i < 5; i++) {
 
-            addObject('infantry', {
+            addObject(TYPES.infantry, {
               x: 600 + (i * 20)
             });
 
           }
 
-          addObject('van', {
+          addObject(TYPES.van, {
             x: 716
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 780
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 845
           });
 
           // first enemy convoy
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 1536,
             isEnemy: true
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 1536 + 70,
             isEnemy: true
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 1536 + 140,
             isEnemy: true
           });
 
-          addObject('van', {
+          addObject(TYPES.van, {
             x: 1536 + 210,
             isEnemy: true
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 2048 + 256,
             isEnemy: true
           });
 
-          addObject('tank', {
+          addObject(TYPES.tank, {
             x: 4608 + 256,
             isEnemy: true
           });
@@ -13083,7 +13111,7 @@
           for (i = 0; i < 5; i++) {
 
             // enemy infantry, way out there
-            addObject('infantry', {
+            addObject(TYPES.infantry, {
               x: 5120 + (i * 20),
               isEnemy: true
             });
@@ -13118,25 +13146,25 @@
 
       // a few rogue balloons
 
-      addObject('balloon', {
+      addObject(TYPES.balloon, {
         x: 4096 - 256
       });
 
-      addObject('balloon', {
+      addObject(TYPES.balloon, {
         x: 4096 + 256
       });
 
-      addObject('balloon', {
+      addObject(TYPES.balloon, {
         x: 4096 + 512
       });
 
-      addObject('balloon', {
+      addObject(TYPES.balloon, {
         x: 4096 + 768
       });
 
       // player + enemy helicopters
 
-      addObject('helicopter', {
+      addObject(TYPES.helicopter, {
         x: 310,
         y: game.objects.view.data.world.height - 20,
         attachEvents: true
@@ -13144,7 +13172,7 @@
 
       if (!tutorialMode) {
 
-        addObject('helicopter', {
+        addObject(TYPES.helicopter, {
           x: 8192 - 64,
           y: 72,
           isEnemy: true,
@@ -13212,7 +13240,7 @@
       (function() {
 
         // basic enemy ordering crap
-        var enemyOrders = ['missileLauncher', 'tank', 'van', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'engineer', 'engineer'];
+        var enemyOrders = [TYPES.missileLauncherCamel, TYPES.tank, TYPES.van, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.engineer, TYPES.engineer];
         var enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45, convoyDelay];
         var i = 0;
 
