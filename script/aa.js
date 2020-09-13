@@ -10336,7 +10336,7 @@
           if (data.frameCount % data.radarJammerModulus === 0) {
 
             // look for nearby bad guys
-            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
+            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.twoThirdsWidth);
 
             if (!data.jamming && enemyHelicopter) {
 
@@ -10604,7 +10604,7 @@
 
         }
 
-        if (data.parachuteOpen && data.y >= 370) {
+        if (data.parachuteOpen && data.y >= data.maxY) {
 
           if (data.parachuteOpen) {
 
@@ -10620,7 +10620,7 @@
 
         } else if (!data.parachuteOpen) {
 
-          if (data.parachuteOpensAtY > 370 && data.y > 300) {
+          if (data.parachuteOpensAtY > data.maxY && data.y > 300) {
 
             // It's not looking good for our friend. Call up our buddy Wilhem.
             // http://archive.org/details/WilhelmScreamSample
@@ -10637,12 +10637,12 @@
 
           }
 
-          if ((data.y - data.height) + 4 >= 370) {
+          if ((data.y - data.height) + 4 >= data.maxY) {
 
             // hit ground, and no parachute. gravity is a cruel mistress.
 
             // reposition, first
-            moveTo(data.x, 370);
+            moveTo(data.x, data.maxY);
 
             // balloon-on-skin "splat" sound
             if (sounds.splat) {
@@ -10705,7 +10705,8 @@
       ignoreShrapnel: options.ignoreShrapnel || false,
       didScream: false,
       vX: 0, // wind?
-      vY: 3
+      vY: 3,
+      maxY: 367,
     }, options);
 
     dom = {
