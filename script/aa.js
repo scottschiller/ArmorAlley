@@ -1047,6 +1047,15 @@
 
   }());
 
+  function applyRandomRotation(node) {
+    if (!node || noTransform) return;
+    /**
+     * Here be dragons: this should only be applied once, given concatenation,
+     * and might cause bugs and/or performance problems if it isn't. :D
+     */
+    node.style.transform += ' rotate(' + (Math.random() * 360) + 'deg)';
+  }
+
   function updateEnergy(object) {
 
     if (!showHealth) return;
@@ -6816,6 +6825,8 @@
         dom.o.style.marginTop = randomDistance();
       }
 
+      applyRandomRotation(dom.o);
+
     }
 
     function die() {
@@ -7084,6 +7095,11 @@
 
       if (dom.o) {
         utils.css.add(dom.o, className);
+
+        if (dieOptions.spark) {
+          applyRandomRotation(dom.o);
+        }
+
         data.deadTimer = setFrameTimeout(function() {
           removeNodes(dom);
           data.deadTimer = null;
@@ -7453,6 +7469,7 @@
 
     function spark() {
       utils.css.add(dom.o, css.spark);
+      applyRandomRotation(dom.o);
     }
 
     function makeTimeout(callback) {
@@ -7519,6 +7536,8 @@
       if (!data.deadTimer) {
 
         utils.css.add(dom.o, css.spark);
+
+        applyRandomRotation(dom.o);
 
         if (sounds.genericBoom) {
           playSound(sounds.genericBoom, exports);
