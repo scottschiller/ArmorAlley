@@ -3076,6 +3076,7 @@
 
     function setTipsActive(active) {
       if (data.gameTips.active !== active) {
+        data.gameTips.active = active;
         utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
       }
     }
@@ -3100,6 +3101,7 @@
       // create new nodes, in order.
       for (i = 0, j = strings.length; i < j; i++) {
         node = document.createElement('span');
+        node.className = 'tip';
         node.textContent = strings[i];
         fragment.appendChild(node);
       }
@@ -3118,8 +3120,6 @@
       if (text !== data.gameTips.lastAnnouncement && ((!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text))) {
 
         utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
-
-        // dom.gameAnnouncements.textContent = text;
 
         dom.gameAnnouncements.innerHTML = text;
 
@@ -3166,11 +3166,10 @@
         if (data.frameCount % data.marqueeModulus === 0) {
 
           // move the marquee.
+          data.gameTips.scrollOffset -= data.marqueeIncrement;
           common.setTransformXY(dom.gameTipsList, data.gameTips.scrollOffset + 'px', 0);
 
         }
-
-        data.gameTips.scrollOffset -= 2;
 
         // TODO: when one tip has scrolled by, reset and display next tip.
         // console.log('data.gameTips.scrollOffset', data.gameTips.scrollOffset);
@@ -3435,6 +3434,7 @@
         scrollOffset: 0
       },
       marqueeModulus: 1,
+      marqueeIncrement: 1,
       maxScroll: 6
     };
 
@@ -6988,9 +6988,7 @@
       // pending die()
       if (frameTimeout) return false;
 
-      if (data.dead) {
-        return true;
-      }
+      if (data.dead) return true;
 
       if (!data.expired && data.frameCount > data.expireFrameCount) {
         utils.css.add(dom.o, css.expired);
@@ -7545,13 +7543,15 @@
         // radar goes immediately to "active" state, no transition.
         utils.css.add(radarNode, css.trackingActive);
       }
+
     }
 
     function removeTrackingFromNode(node) {
       if (!node) return;
+
       // remove tracking animation
       utils.css.remove(node, css.tracking);
-      utils.css.remove(node, css.trackingSpinning);
+      utils.css.remove(node, css.trackingActive);
 
       // start fading/zooming out
       utils.css.add(node, css.trackingRemoval);
@@ -7670,7 +7670,7 @@
         targetData = objects.target.data;
 
         targetHalfWidth = targetData.width / 2;
-        targetHeightOffset = (targetData.type === 'balloon' ? 0 : targetData.height / 2);
+        targetHeightOffset = (targetData.type === TYPES.balloon ? 0 : targetData.height / 2);
 
         // delta of x/y between this and target
         deltaX = (targetData.x + targetHalfWidth) - data.x;
@@ -7908,7 +7908,7 @@
     css = inheritCSS({
       className: 'smart-missile',
       tracking: 'smart-missile-tracking',
-      trackingSpinning: 'smart-missile-tracking-spinning',
+      trackingActive: 'smart-missile-tracking-active',
       trackingRemoval: 'smart-missile-tracking-removal',
       trailer: 'smart-missile-trailer',
       expired: 'expired',
@@ -11271,7 +11271,7 @@
 
     var localOptions, halfWidth;
 
-    var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity, explosionVelocityMax;
+    var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
 
     shrapnelOptions = shrapnelOptions || {};
 
@@ -11297,10 +11297,11 @@
 
     for (i = 0; i < shrapnelCount; i++) {
 
-      explosionVelocity = Math.random() * explosionVelocityMax;
+      explosionVelocity1 = Math.random() * explosionVelocityMax;
+      explosionVelocity2 = Math.random() * explosionVelocityMax;
 
-      vectorX = -explosionVelocity * Math.cos(angle * deg2Rad);
-      vectorY = -explosionVelocity * Math.sin(angle * deg2Rad);
+      vectorX = -explosionVelocity1 * Math.cos(angle * deg2Rad);
+      vectorY = -explosionVelocity2 * Math.sin(angle * deg2Rad);
 
       localOptions.vX = (localOptions.vX * 0.5) + vectorX;
       localOptions.vY += vectorY;
