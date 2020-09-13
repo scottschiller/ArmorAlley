@@ -198,7 +198,7 @@
    */
 
   var isWebkit = ua.match(/webkit/i);
-  var isChrome = (isWebkit && ua.match(/chrome/i));
+  var isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
   var isFirefox = ua.match(/firefox/i);
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
   var isMobile = ua.match(/mobile/i); // should get iOS.
