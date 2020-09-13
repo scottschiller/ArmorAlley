@@ -7590,7 +7590,7 @@
         if (!excludeShrapnel) {
           shrapnelExplosion(data, {
             count: 3,
-            velocity: 2
+            velocity: 2 + Math.random()
           });
         }
 
