@@ -2637,9 +2637,14 @@
       volume: 25
     });
 
+    sounds.radarStatic = addSound({
+      url: getURL('radar-static'),
+      volume: 40
+    });
+
     sounds.radarJamming = addSound({
       url: getURL('radar-jamming'),
-      volume: 30
+      volume: 33
     });
 
     sounds.repairing = addSound({
@@ -3909,7 +3914,7 @@
 
   Radar = function() {
 
-    var data, css, dom, maybeJam, exports, objects;
+    var data, css, dom, maybeJam, exports, objects, spliceArgs = [null, 1];
 
     function setIncomingMissile(incoming) {
 
@@ -3977,7 +3982,7 @@
         }
 
         data.isJammed = false;
-        utils.css.remove(dom.radar, css.jammed);
+        utils.css.remove(game.objects.view.dom.worldWrapper, css.jammed);
 
         if (sounds.radarJamming && sounds.radarJamming.sound) {
           sounds.radarJamming.sound.stop();
@@ -3990,7 +3995,8 @@
     function _removeRadarItem(offset) {
       removeNodes(objects.items[offset].dom);
       // faster splice - doesn't create new array object (IIRC.)
-      Array.prototype.splice.apply(objects.items, [offset, 1]);
+      spliceArgs[0] = offset;
+      Array.prototype.splice.apply(objects.items, spliceArgs);
     }
 
     function removeRadarItem(item) {
@@ -4023,15 +4029,20 @@
 
       hasEnemyMissile = false;
 
-      if (data.frameCount % data.animateModulus !== 0) {
-        data.frameCount++;
+      // wait to update radar on interval
+      if (data.frameCount++ % data.animateModulus !== 0) {
         return;
       }
+
+      data.frameCount = 1;
 
       // don't animate when radar is jammed.
       // avoid lots of redundant style recalculations.
       if (data.isJammed) {
-        data.frameCount = 0;
+
+        // ensure tracking is off, too.
+        setIncomingMissile();
+
         return;
       }
 
@@ -4130,9 +4141,13 @@
         if (jam) {
 
           data.isJammed = true;
-          utils.css.add(dom.radar, css.jammed);
+          utils.css.add(game.objects.view.dom.worldWrapper, css.jammed);
 
           if (!userDisabledSound && sounds.radarJamming && sounds.radarJamming.sound) {
+            if (sounds.radarStatic) {
+              playSound(sounds.radarStatic);
+            }
+
             if (!sounds.radarJamming.sound.playState) {
               sounds.radarJamming.sound.play({
                 // position: parseInt(Math.random() * sounds.radarJamming.sound.duration, 10),
@@ -4144,7 +4159,7 @@
         } else {
 
           data.isJammed = false;
-          utils.css.remove(dom.radar, css.jammed);
+          utils.css.remove(game.objects.view.dom.worldWrapper, css.jammed);
 
           if (sounds.radarJamming && sounds.radarJamming.sound) {
             sounds.radarJamming.sound.stop();
