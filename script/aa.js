@@ -4070,45 +4070,41 @@
 
       // move all radar items
 
-      if (!data.isJammed) {
+      if (features.transform.prop && !noRadarGPU) {
 
-        if (features.transform.prop && !noRadarGPU) {
+        for (i = 0, j = objects.items.length; i < j; i++) {
 
-          for (i = 0, j = objects.items.length; i < j; i++) {
+          left = ((objects.items[i].oParent.data.x / game.objects.view.data.battleField.width) * game.objects.view.data.browser.width);
 
-            left = ((objects.items[i].oParent.data.x / game.objects.view.data.battleField.width) * game.objects.view.data.browser.width);
+          if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === TYPES.balloon) {
 
-            if ((!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0) || objects.items[i].oParent.data.type === 'balloon') {
+            // eslint-disable-next-line no-mixed-operators
+            top = ((objects.items[i].oParent.data.type === TYPES.balloon ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 33);
 
-              // eslint-disable-next-line no-mixed-operators
-              top = ((objects.items[i].oParent.data.type === 'balloon' ? -32 : 0) + Math.min(1, (objects.items[i].oParent.data.y / (game.objects.view.data.battleField.height + objects.items[i].oParent.data.height))) * 33);
+          } else {
 
-            } else {
-
-              top = 0;
-
-            }
-
-            // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-            common.setTransformXY(objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
+            top = 0;
 
           }
 
-        } else {
+          // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
+          common.setTransformXY(objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
 
-          for (i = 0, j = objects.items.length; i < j; i++) {
+        }
 
-            // TODO: optimize
+      } else {
 
-            objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / game.objects.view.data.battleField.width) * 100) + '%';
+        for (i = 0, j = objects.items.length; i < j; i++) {
 
-            if (
-              (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0)
-              || objects.items[i].oParent.data.type === 'balloon'
-            ) {
-              objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
+          // TODO: optimize
 
-            }
+          objects.items[i].dom.o.style.left = (((objects.items[i].oParent.data.x) / game.objects.view.data.battleField.width) * 100) + '%';
+
+          if (
+            (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0)
+            || objects.items[i].oParent.data.type === TYPES.balloon
+          ) {
+            objects.items[i].dom.o.style.top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * 100) + '%';
 
           }
 
