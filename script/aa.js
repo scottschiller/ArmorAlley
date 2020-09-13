@@ -579,6 +579,20 @@
 
       }
 
+      function includes(array, item) {
+        if (!array || !array.length) return false;
+
+        if (array.includes) return array.includes(item);
+
+        // legacy
+        for (var i = 0, j = array.length; i < j; i++) {
+          if (array[i] === item) return true;
+        }
+
+        // default
+        return false;
+      }
+
       function shuffle(array) {
 
         // Fisher-Yates shuffle algo
@@ -598,6 +612,7 @@
 
       return {
         compare: compare,
+        includes: includes,
         shuffle: shuffle
       };
 
