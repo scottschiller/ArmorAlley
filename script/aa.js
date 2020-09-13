@@ -2380,6 +2380,33 @@
 
     sounds.genericSplat = utils.array.shuffle(sounds.genericSplat);
 
+    sounds.scream = [];
+
+    for (i = 0; i < 2; i++) {
+      sounds.scream.push(addSound({
+        url: getURL('scream1'),
+        volume: 9
+      }));
+      sounds.scream.push(addSound({
+        url: getURL('scream2'),
+        volume: 9
+      }));
+      sounds.scream.push(addSound({
+        url: getURL('scream3'),
+        volume: 9
+      }));
+      sounds.scream.push(addSound({
+        url: getURL('scream4'),
+        volume: 9
+      }));
+      sounds.scream.push(addSound({
+        url: getURL('scream5'),
+        volume: 9
+      }));
+    }
+
+    sounds.scream = utils.array.shuffle(sounds.scream);
+
     sounds.genericBoom = [];
 
     for (i = 0; i < 4; i++) {
@@ -10754,6 +10781,7 @@
         utils.css.add(dom.o, css.exploding);
 
         playSound(sounds.genericSplat, exports);
+        playSound(sounds.scream, exports);
 
         data.deadTimer = setFrameTimeout(function() {
           dieComplete();
