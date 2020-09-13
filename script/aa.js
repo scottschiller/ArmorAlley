@@ -3630,9 +3630,12 @@
 
         data.building = false;
 
-        // play sound?
-        if (!objects.order.options.isEnemy && sounds.inventory.end) {
-          playSound(sounds.inventory.end);
+        if (!objects.order.options.isEnemy) {
+          if (sounds.inventory.end) {
+            playSound(sounds.inventory.end);
+          }
+          // clear the queue that just finished.
+          game.objects.helicopters[0].updateInventoryQueue();
         }
 
       }
@@ -3683,7 +3686,8 @@
         game.objects.view.updateFundsUI();
 
         if (!data.isEnemy) {
-          game.objects.helicopters[0].updateStatusUI();
+          // player may now be able to order things.
+          game.objects.helicopters[0].updateStatusUI({ funds: true });
         }
 
       } else if (!data.isEnemy) {
@@ -3700,8 +3704,6 @@
       // and now, remove that for the real build.
       options.noInit = false;
 
-      // data.building = true;
-
       // create and push onto the queue.
       var newOrder = {
         data: orderObject.data,
@@ -3709,10 +3711,12 @@
         completeDelay: orderObject.data.inventory.orderCompleteDelay || 0,
         typeData: typeData,
         options: options,
-        size: orderSize
+        size: orderSize,
+        onOrderStart: null,
+        onOrderComplete: null,
       };
 
-      data.queue.push(newOrder);
+      var queueEvents;
 
       if (!newOrder.options.isEnemy) {
 
@@ -3724,7 +3728,15 @@
           playSound(sounds.inventory.begin);
         }
 
+        // callback to update queue UI when the build actually begins
+        queueEvents = game.objects.helicopters[0].updateInventoryQueue(newOrder);
+
+        newOrder.onOrderStart = queueEvents.onOrderStart;
+        newOrder.onOrderComplete = queueEvents.onOrderComplete;
+
       }
+
+      data.queue.push(newOrder);
 
       // only start processing if queue length is 1 - i.e., first item just added.
 
@@ -4157,7 +4169,6 @@
 
             if (!sounds.radarJamming.sound.playState) {
               sounds.radarJamming.sound.play({
-                // position: parseInt(Math.random() * sounds.radarJamming.sound.duration, 10),
                 loops: 999
               });
             }
@@ -5221,7 +5232,7 @@
 
         // force update of the local helicopter
         // TODO: yeah, this is a bit hackish.
-        game.objects.helicopters[0].updateStatusUI();
+        game.objects.helicopters[0].updateStatusUI({ funds: true});
 
       }
 
@@ -5275,15 +5286,13 @@
 
         data.funds += earnedFunds;
 
-        if (debug && data.isEnemy) {
-          console.log('the enemy now has ' + data.funds + ' funds.');
-        }
-
-        if (!data.isEnemy) {
+        if (data.isEnemy) {
+          if (debug) console.log('the enemy now has ' + data.funds + ' funds.');
+        } else {
           game.objects.view.updateFundsUI();
         }
 
-        objects.helicopter.updateStatusUI();
+        objects.helicopter.updateStatusUI({ funds: true });
 
       }
 
@@ -8236,51 +8245,162 @@
 
     }
 
+    function addCSSToAll(nodes, className) {
+      for (var i=0, j=nodes.length; i<j; i++) {
+        utils.css.add(nodes[i], className);
+      }
+    }
+
+    function updateInventoryQueue(item) {
+      var dataCount, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oSubSprite, oLastChild, queue, i, j, count;
+
+      queue = document.getElementById('queue');
+
+      dataCount = 'data-count';
+      dataType = 'data-type';
+
+      count = 0;
+
+      // FIFO-based queue: `item` is provided when something is being queued.
+      // otherwise, the first item has finished and can be removed from the queue.
+      if (item) {
+
+        // tank, infrantry, or special-case: engineer.
+        type = item.data.role ? item.data.roles[item.data.role] : item.data.type;
+
+        oLastChild = queue.childNodes[queue.childNodes.length-1];
+
+        // are we appending a duplicate, e.g., two tanks in a row?
+        if (oLastChild) {
+          typeFromElement = oLastChild.getAttribute(dataType);
+          console.log('typeFromElement', typeFromElement);
+
+          // direct className match, or, engineer special case
+          if (typeFromElement === type) {
+            isDuplicate = true;
+          }
+          console.log('isDuplicate', isDuplicate);
+
+          element = oLastChild;
+
+        }
+
+        if (!isDuplicate) {
+          o = document.createElement('div');
+          // `stopped` = no sprite animation.
+          o.className = ['queue-item', 'stopped', type].join(' ');
+
+          /*
+          // special case - engineers
+          if (item.data.role) {
+            o.className += ' ' + item.data.roles[item.data.role];
+          }
+          */
+
+          // special engineer case vs. others.
+          o.setAttribute(dataType, type);
+
+          oSubSprite = document.createElement('div');
+          oSubSprite.className = 'transform-sprite';
+          o.appendChild(oSubSprite);
+
+          oCounter = document.createElement('div');
+          oCounter.className = 'counter';
+
+          o.appendChild(oCounter);
+
+          queue.appendChild(o);
+
+          element = o;
+
+        }
+
+        oCounter = element.getElementsByClassName('counter')[0];
+        count = (parseInt(element.getAttribute(dataCount), 10) || 0) + 1;
+        element.setAttribute(dataCount, count);
+        oCounter.innerHTML = count;
+
+        setFrameTimeout(function() {
+          // transition in
+          utils.css.add(o, 'queued');
+          // show or hide
+          if (count > 1) {
+            utils.css.add(element, 'has-counter');
+          } else {
+            utils.css.remove(element, 'has-counter');
+          }
+        }, 128);
+
+        // return callbacks for when building starts and finishes.
+        return {
+          onOrderStart: function() {
+            utils.css.add(o, 'building');
+            if (isDuplicate) {
+              // decrement until complete
+              count = (parseInt(element.getAttribute(dataCount), 10) || 1) - 1;
+              element.setAttribute(dataCount, count);
+            }
+          },
+          onOrderComplete: function() {
+            // mark as complete once all have been built.
+            console.log('onOrderComplete');
+            count = (parseInt(element.getAttribute(dataCount), 10) || 1) - 1;
+            if (!count) {
+              utils.css.remove(element, 'building');
+              utils.css.add(element, 'complete');
+            }
+          }
+        }
+
+      } else {
+
+        // clear entire queue.
+
+        setFrameTimeout(function() {
+          addCSSToAll(queue.childNodes, 'collapsing');
+          // finally, remove the nodes.
+          // hopefully, no race condition here. :P
+          setFrameTimeout(function() {
+            // TODO: improve.
+            queue.innerHTML = '';
+          }, 500);
+        }, 500);
+
+      }
+    
+    }
+
     function repair() {
 
-      var hasUpdate;
+      var updated = {};
 
       data.repairFrames++;
 
       data.fuel = Math.min(data.maxFuel, data.fuel + 0.4);
 
-      if (data.repairFrames % 2 === 0) {
-
-        data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
-        hasUpdate = 1;
-
+      if (data.ammo < data.maxAmmo && data.repairFrames % 2 === 0) {
+        data.ammo++;
+        updated.ammo = true;
       }
 
       if (data.repairFrames % 5 === 0) {
-
-        // fix damage
+        // fix damage (no UI for this)
         data.energy = Math.min(data.energyMax, data.energy + 1);
-
       }
 
-      if (data.repairFrames % 10 === 0) {
-
-        data.bombs = Math.min(data.maxBombs, data.bombs + 1);
-        hasUpdate = 1;
-
+      if (data.bombs < data.maxBombs && data.repairFrames % 10 === 0) {
+        data.bombs++;
+        updated.bombs = true;
       }
 
-      if (data.repairFrames % 200 === 0) {
-
-        data.smartMissiles = Math.min(data.maxSmartMissiles, data.smartMissiles + 1);
-        hasUpdate = 1;
-
+      if (data.smartMissiles < data.maxSmartMissiles && data.repairFrames % 200 === 0) {
+        data.smartMissiles++;
+        updated.smartMissiles = true;
       }
 
       updateFuelUI();
-
-      if (hasUpdate) {
-
-        updateStatusUI();
-
-        updateEnergy(exports);
-
-      }
+      updateStatusUI(updated);
+      updateEnergy(exports);
 
     }
 
@@ -8573,7 +8693,8 @@
 
       radarItem.reset();
 
-      updateStatusUI();
+      // reset everything.
+      updateStatusUI({ force: true });
 
       updateEnergy(exports);
 
@@ -8732,7 +8853,7 @@
 
     function fire() {
 
-      var tiltOffset, frameCount, missileTarget, hasUpdate;
+      var tiltOffset, frameCount, missileTarget, updated = {};
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -8772,7 +8893,7 @@
 
           if (!data.isEnemy) {
 
-            hasUpdate = 1;
+            updated.ammo = true;
 
           }
 
@@ -8813,7 +8934,7 @@
           data.bombs = Math.max(0, data.bombs - 1);
 
           if (!data.isEnemy) {
-            hasUpdate = 1;
+            updated.bombs = true;
           }
 
         } else if (!data.isEnemy && sounds.inventory.denied) {
@@ -8851,7 +8972,7 @@
 
             data.smartMissiles = Math.max(0, data.smartMissiles - 1);
 
-            hasUpdate = 1;
+            updated.smartMissiles = true;
 
           }
 
@@ -8894,7 +9015,7 @@
 
           data.parachutes = Math.max(0, data.parachutes - 1);
 
-          hasUpdate = 1;
+          updated.parachutes = true;
 
           playSound(sounds.popSound2, exports);
 
@@ -8904,10 +9025,8 @@
 
       }
 
-      if (hasUpdate) {
-
-        updateStatusUI();
-
+      if (updated.ammo || updated.bombs || updated.smartMissiles || updated.parachutes) {
+        updateStatusUI(updated);
       }
 
     }
@@ -9670,7 +9789,7 @@
 
       // if not enemy, force-update status bar UI
       if (!data.isEnemy) {
-        updateStatusUI();
+        updateStatusUI({ force: true });
       }
 
       // note final true param, for respawn purposes
@@ -9695,7 +9814,8 @@
       inventory: {
         frameCount: 0,
         cost: 20
-      }
+      },
+      unavailable: 'weapon-unavailable'
     });
 
     data = inheritData({
@@ -9758,7 +9878,6 @@
       smartMissiles: 2,
       maxSmartMissiles: 2,
       machineGunFireSoundOffset: 0,
-      pendingApplyStatusUI: null,
       midPoint: null,
       // for AI
       targeting: {
@@ -9777,18 +9896,24 @@
       height: data.height
     };
 
+    statsBar = document.getElementById('stats-bar');
+
     dom = {
       o: null,
       fuelLine: null,
       subSprite: null,
       oTransformSprite: null,
+      statsBar: statsBar,
       // hackish
       statusBar: {
         infantryCount: document.getElementById('infantry-count'),
+        infantryCountLI: statsBar.querySelectorAll('li.infantry-count')[0],
         ammoCount: document.getElementById('ammo-count'),
+        ammoCountLI: statsBar.querySelectorAll('li.ammo')[0],
         bombCount: document.getElementById('bomb-count'),
+        bombCountLI: statsBar.querySelectorAll('li.bombs')[0],
         missileCount: document.getElementById('missile-count'),
-        fundsCount: document.getElementById('funds-count')
+        missileCountLI: statsBar.querySelectorAll('li.missiles')[0],
       }
     };
 
@@ -9858,7 +9983,7 @@
                 target.die(true);
                 playSound(sounds.popSound, exports);
                 data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
-                updateStatusUI();
+                updateStatusUI({ parachutes: true });
               }
             }
           } else if (target.data.type === 'cloud') {
@@ -9892,7 +10017,8 @@
       setMissileLaunching: setMissileLaunching,
       setParachuting: setParachuting,
       updateHealth: updateHealth,
-      updateStatusUI: updateStatusUI
+      updateStatusUI: updateStatusUI,
+      updateInventoryQueue: updateInventoryQueue
     };
 
     initHelicopter();
@@ -13306,7 +13432,6 @@
 
       }
 
-      // create objects?
       createObjects();
 
       objects.gameLoop.init();
