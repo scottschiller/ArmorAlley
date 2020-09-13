@@ -13207,10 +13207,14 @@
 
       objects.gameLoop.init();
 
-      if (sounds.helicopter.engine && !userDisabledSound) {
-
+      function startEngine() {
         sounds.helicopter.engine.sound.play();
+        utils.events.remove(document, 'click', startEngine);
+      }
 
+      if (sounds.helicopter.engine && !userDisabledSound) {
+        // wait for click or keypress, "user interaction"
+        utils.events.add(document, 'click', startEngine);
       }
 
       (function() {
