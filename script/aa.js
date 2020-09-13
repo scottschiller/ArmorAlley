@@ -3741,29 +3741,36 @@
 
     function animate() {
 
-      if (data.building) {
+      if (data.building && data.frameCount % objects.order.data.inventory.frameCount === 0) {
 
-        if (data.frameCount % objects.order.data.inventory.frameCount === 0) {
+        if (objects.order.size) {
 
-          if (objects.order.size) {
+          // start building.
+          createObject(objects.order.typeData, objects.order.options);
 
-            // make an object.
-            createObject(objects.order.typeData, objects.order.options);
-
-            objects.order.size--;
-
-          } else if (objects.order.completeDelay) {
-
-            // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
-            objects.order.completeDelay--;
-
-          } else {
-
-            // "Construction complete."
-
-            processNextOrder();
-
+          if (objects.order.onOrderStart) {
+            objects.order.onOrderStart();
           }
+
+          objects.order.size--;
+
+        } else if (objects.order.completeDelay) {
+
+          // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
+          objects.order.completeDelay--;
+
+        } else {
+
+          // "Construction complete."
+
+          if (!objects.order.options.isEnemy) {
+            // drop the item that just finished building.
+            if (objects.order.onOrderComplete) {
+              objects.order.onOrderComplete();
+            }
+          }
+          
+          processNextOrder();
 
         }
 
