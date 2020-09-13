@@ -270,6 +270,9 @@
   // how often the enemy attempts to build convoys
   var convoyDelay = 60;
 
+  // unique IDs for quick object equality checks
+  var guid = 0;
+
   var Tutorial;
 
   var TutorialStep;
@@ -1366,6 +1369,11 @@
 
     options = options || {};
 
+    // for quick object comparison
+    if (data.id === undefined) {
+      data.id = (options.id || guid++);
+    }
+
     // correct y data, if the object is bottom-aligned
     if (data.bottomAligned) {
       data.y = bottomAlignedY(options.bottomY || 0);
@@ -1550,7 +1558,7 @@
         // options.targets.hasOwnProperty(item)
 
         // don't compare the object against itself
-        options.targets[i] !== options.source
+        options.targets[i].data.id !== options.source.data.id
 
         // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
         && (
