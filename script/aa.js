@@ -8684,8 +8684,8 @@
         velocity: 5
       });
 
-      // drop infantry?
-      if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.25 : Math.random() > 0.5)) || Math.random() > 0.66) {
+      // roll the dice: drop a parachute infantry (pilot ejects safely)
+      if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
         game.objects.parachuteInfantry.push(new ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
