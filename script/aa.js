@@ -162,21 +162,15 @@
 
   var game, utils, common;
 
-  // TODO: revisit why precision sucks in FPS targeting (eg., 24 doesn't work - ends up being 20 or 30?)
-
   var winloc = window.location.href.toString();
 
   var ua = navigator.userAgent;
 
   // URL hacking, if you like. game will run ~2x as fast.
-  var fpsCeiling = winloc.match(/frameRate=60/i) ? 60 : 30;
-
-  var unlimitedFrameRate = winloc.match(/frameRate=\*/i);
-
-  var FPS = fpsCeiling;
-  // messing around
-  var FPS_IDEAL = 31.746;
+  var FPS = winloc.match(/frameRate=60/i) ? 60 : 30;
   var FRAMERATE = 1000 / FPS;
+
+  var unlimitedFrameRate = winloc.match(/frameRate=\*|unlimitedFrameRate/i);
 
   // just in case...
   var console = (window.console || { log: function() { } });
@@ -4248,7 +4242,7 @@
 
   GameLoop = function() {
 
-    var data, exports;
+    var data, dom, exports, spliceArgs = [null, 1];
 
     function animate() {
 
@@ -4280,9 +4274,6 @@
 
           } else {
 
-            // arguments to be reused within loop (avoid making new array every time.)
-            var spliceArgs = [i, 1];
-
             // array case
             for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
@@ -4309,13 +4300,13 @@
 
     function animateRAF() {
 
-      // var start = window.performance.now();
-
       var elapsed, fps, now;
 
       if (data.timer) {
 
         now = window.performance.now();
+
+        if (!data.fpsTimer) data.fpsTimer = now;
 
         /**
          * first things first: always request the next frame right away.
@@ -4328,24 +4319,24 @@
 
         elapsed = (now - data.lastExec) || 0;
 
-        // exit if it isn't approximately time to render the next frame.
-        if (Math.ceil(elapsed) / FRAMERATE < 0.95 && !unlimitedFrameRate) {
+        /**
+         * exit if it isn't approximately time to render the next frame.
+         * this still counts as a frame render - we just got here early. Good!
+         */
+        if (!unlimitedFrameRate && (elapsed / FRAMERATE < 0.95)) {
+          data.frames++;
           return;
         }
 
         // performance debugging: number of style changes (transform) for this frame.
         if (debug) {
           console.log('transform (style/recalc) count: ' + transformCount);
-        }
-
-        transformCount = 0;
-
-        if (debug && elapsed > 34 && window.console) {
-          var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
-          console.log(slowString);
-          if (console.timeStamp) console.timeStamp(slowString);
-        } else {
-          // console.timeStamp('frame: ' + elapsed);
+          transformCount = 0;
+          if (elapsed > 34 && window.console) {
+            var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
+            console.log(slowString);
+            if (console.timeStamp) console.timeStamp(slowString);
+          }
         }
 
         data.elapsedTime += elapsed;
@@ -4356,22 +4347,18 @@
 
         data.frames++;
 
-        // SUBTRACT the time spent animating?
-        // var start = window.performance.now();
+        // every interval, update framerate.
+        if (!unlimitedFrameRate && now - data.fpsTimer >= data.fpsTimerInterval) {
 
-        // data.elapsedTime -= (start - now);
-
-        // try to adjust timer, to target ~30 FPS.
-        // when target fps hit, disable this check.
-        if (!unlimitedFrameRate && data.elapsedTime >= data.fpsInterval) {
-
-          // estimated FPS
-          fps = data.frames * (1000 / data.fpsInterval);
-
-          document.getElementById('fps-count').textContent = fps;
+          if (dom.fpsCount) {
+            dom.fpsCount.textContent = Math.floor(data.frames / (data.fpsTimerInterval / 1000));
+          }
 
           data.frames = 0;
           data.elapsedTime = 0;
+
+          // restart 1-second timer
+          data.fpsTimer = window.performance.now();
 
         }
 
@@ -4380,6 +4367,10 @@
     }
 
     function start() {
+
+      if (!dom.fpsCount) {
+        dom.fpsCount = document.getElementById('fps-count');
+      }
 
       if (!data.timer) {
 
@@ -4418,9 +4409,6 @@
       // re-measure FPS timings.
       data.lastExec = 0; // (isOldIE ? new Date().getTime() : Date.now());
       data.frames = 0;
-      data.fpsLocked = false;
-      data.fpsIntervalDefault = 100;
-      data.targetFPSHit = 0;
 
     }
 
@@ -4430,16 +4418,18 @@
 
     }
 
+    dom = {
+      fpsCount: null,
+    }
+
     data = {
       frameCount: 0,
       lastExec: 0,
       elapsedTime: 0,
       frames: 0,
-      fpsInterval: 100,
-      fpsIntervalDefault: 100,
-      fpsLocked: false,
-      targetFPSHit: 0,
-      stableFPSCount: 3
+      timer: null,
+      fpsTimer: null,
+      fpsTimerInterval: 1000,
     };
 
     exports = {
