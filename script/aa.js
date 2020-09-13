@@ -11251,8 +11251,21 @@
 
     function hitAndDie(target) {
 
+      var targetType;
+
       if (target) {
         common.hit(target, data.damagePoints);
+
+        // shrapnel hit something; what should it sound like, if anything?
+        targetType = target.data.type;
+
+        if (targetType === TYPES.helicopter) {
+          playSound(sounds.boloTank, exports);
+        } else if (utils.array.includes(sounds.types.metalHit, targetType)) {
+          playSound(sounds.metalHit, exports);
+        } else if (utils.array.includes(sounds.types.genericSplat, targetType)) {
+          playSound(sounds.genericSplat, exports);
+        }
       }
 
       die();
