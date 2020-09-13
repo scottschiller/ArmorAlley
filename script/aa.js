@@ -1780,7 +1780,8 @@
     options = options || {};
 
     // by default...
-    options.triggerDistance = options.triggerDistance || (game.objects.view.data.browser.width * (2 / 3));
+    
+    options.triggerDistance = options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
     // by default, take helicopters if nothing else.
     items = game.objects[(options.items || 'helicopters')];
