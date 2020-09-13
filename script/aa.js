@@ -1376,8 +1376,6 @@
       data.y = bottomAlignedY(options.bottomY || 0);
     }
 
-    // TODO: revise to if (options.x !== undefined), apply then.
-
     // assume in view at first, for initial positioning.
     if (data.isOnScreen === undefined) {
       data.isOnScreen = true;
@@ -1520,8 +1518,6 @@
      * }
      */
 
-    var xLookAhead, foundHit;
-
     if (!options) {
       return false;
     }
@@ -1531,13 +1527,21 @@
       return false;
     }
 
+    var xLookAhead, foundHit;
+
     // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
 
     if (options.useLookAhead) {
 
       // friendly things move further right, enemies move further left.
 
-      xLookAhead = (Math.min(16, options.source.data.xLookAhead || (options.source.data.width * 0.33)) * (options.source.data.isEnemy ? -1 : 1));
+      // hackish: define "one-third width" only once.
+      if (options.source.data.xLookAhead === undefined && options.source.data.widthOneThird === undefined) {
+          options.source.data.widthOneThird = options.source.data.width * 0.33;
+      }
+
+      xLookAhead = Math.min(16, options.source.data.xLookAhead || options.source.data.widthOneThird);
+      if (options.source.data.isEnemy) xLookAhead *= -1;
 
     } else {
 
