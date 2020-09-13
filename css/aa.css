@@ -333,6 +333,77 @@ body.is-mobile #game-status li:last-of-type {
 }
 
 #radar {
+#queue .queue-item.has-counter .counter {
+  opacity: 1;
+}
+
+#queue .queue-item.tank {
+  height: 19px;
+  top: -2px;
+  margin-right: 4px;
+}
+
+#queue .queue-item.tank .counter {
+  margin-left: -1px;
+}
+
+#queue .queue-item.missile-launcher {
+  height: 18px;
+  top: -1px;
+  margin-right: 8px;
+}
+
+#queue .queue-item.missile-launcher .counter {
+  margin-top: -1px;
+}
+
+#queue .queue-item.van {
+  height: 16px;
+  top: 1px;
+  /* more spacing for badge */
+  margin-left: 4px;
+}
+
+#queue .queue-item.van .counter {
+  margin-left: -8px;
+  margin-top: -3px;
+}
+
+#queue .queue-item.infantry,
+#queue .queue-item.engineer {
+  /* scale slightly larger */
+  transform: scale(1.33);
+  transform-origin: 0px 0px;
+  top: 2px;
+  padding-left: 1px;
+  padding-right: 1px;
+  /* more spacing for badge */
+  margin-left: 4px;
+  /* allow badge to float outside */
+  overflow: visible;
+}
+
+#queue .queue-item.engineer {
+  margin-left: 6px;
+}
+
+#queue .queue-item.infantry .transform-sprite,
+#queue .queue-item.engineer .transform-sprite {
+  /* prevent full sprite from showing given overflow is now shown */
+  width: 10px;
+}
+
+#queue .queue-item.infantry .counter,
+#queue .queue-item.engineer .counter {
+  transform: scale(0.71);
+  background: transparent;
+  margin-top: -4px;
+  margin-left: -7px;
+}
+
+#queue .queue-item.engineer .counter {
+  margin-left: -8px;
+}
   position: relative;
   height: 32px;
   overflow: hidden;
