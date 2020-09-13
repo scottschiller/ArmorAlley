@@ -6661,6 +6661,9 @@
 
       utils.css.add(dom.o, css.exploding);
 
+      // stop moving while exploding
+      data.vX = 0;
+
       setFrameTimeout(function() {
         removeNodes(dom);
       }, 1000);
@@ -9988,6 +9991,9 @@
 
       utils.css.add(dom.o, css.exploding);
 
+      // stop moving while exploding
+      data.vX = 0;
+
       shrapnelExplosion(data);
 
       data.deadTimer = setFrameTimeout(function() {
@@ -10236,6 +10242,9 @@
       if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
+
+      // stop moving while exploding
+      data.vX = 0;
 
       // revert to CSS rules, prevent first frame of explosion from sticking
       dom.o.style.backgroundPosition = '0px -384px';
@@ -10826,6 +10835,9 @@
       }
 
       data.energy = 0;
+
+      // stop moving while exploding
+      data.vX = 0;
 
       data.dead = true;
 
