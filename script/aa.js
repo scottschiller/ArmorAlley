@@ -225,6 +225,10 @@
   // can also be enabled by pressing "C".
   var rubberChickenMode = 'rubber-chicken-mode';
 
+  var INFINITY = '∞';
+
+  var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
+
   var deg2Rad = 180 / Math.PI;
 
   // used for various measurements in the game
@@ -274,6 +278,8 @@
   var setFrameTimeout;
 
   var frameTimeoutManager;
+
+  var Funds;
 
   var Queue;
 
@@ -2189,7 +2195,9 @@
     },
     inventory: {
       begin: null,
-      end: null
+      credit: null,
+      debit: null,
+      end: null,
     },
     shrapnel: {
       counter: 0,
@@ -2595,12 +2603,22 @@
 
     sounds.inventory.begin = addSound({
       url: getURL('order-start'),
-      volume: 40
+      volume: 30
+    });
+
+    sounds.inventory.debit = addSound({
+      url: getURL('funds-debit'),
+      volume: 50,
+    });
+
+    sounds.inventory.credit = addSound({
+      url: getURL('funds-credit'),
+      volume: 60,
     });
 
     sounds.inventory.end = addSound({
       url: getURL('order-complete'),
-      volume: 15
+      volume: 10
     });
 
     sounds.missileLaunch = addSound({
@@ -5335,7 +5353,7 @@
       width: 39,
       halfWidth: 19,
       height: 17,
-      funds: (!options.isEnemy ? 32 : 0),
+      funds: (!options.isEnemy ? DEFAULT_FUNDS : 0),
       firing: false,
       gunYOffset: 10,
       fireModulus: 4,
@@ -12230,6 +12248,190 @@
 
   };
 
+  Funds = function() {
+    var css, data, dom, exports;
+
+    css = {
+      collapsed: 'collapsed'
+    };
+
+    data = {
+      active: false,
+      value: DEFAULT_FUNDS,
+      displayValue: DEFAULT_FUNDS,
+      hideLeadingZeroes: true,
+      frameInterval: 3,
+      frameCount: 0,
+      fontSize: 10,
+      offsetType: 'px',
+      digitCount: 3,
+      // state for each digit  
+      offsetTop: [],
+      lastOffsetTop: [],
+      visible: []
+    };
+  
+    // initialize state
+    for (var n = 0; n < data.digitCount; n++) {
+      data.offsetTop[n] = null;
+      data.lastOffsetTop[n] = null;
+      data.visible[n] = true;
+    }
+
+    dom = {
+      o: null,
+      digits: null
+    }
+
+    function show(offset) {
+      if (data.visible[offset]) return;
+
+      data.visible[offset] = true;
+      utils.css.remove(dom.digits[offset].parentNode, css.collapsed);
+    }
+
+    function hide(offset) {
+      if (!data.visible[offset]) return;
+
+      data.visible[offset] = false;
+      utils.css.add(dom.digits[offset].parentNode, css.collapsed);
+    }
+    
+    function updateDOM() {
+      // raw string, and array of integers
+      var digits = data.displayValue.toString();
+      var digitInts = [];
+      var tensOffset = 0;
+
+      // pad with leading zeroes, e.g., 9 -> 009
+      if (digits.length < data.digitCount) {
+        // old-skool, ES5: use an array trick to get an arbitrary "repeating" string.
+        digits = new Array(data.digitCount - digits.length + 1).join('0') + digits;
+      }
+
+      if (!dom.digits) dom.digits = document.querySelectorAll('#funds-count .digit-wrapper');
+
+      // guard, in case these haven't rendered yet.
+      if (!dom.digits.length) return;
+
+      var delta;
+
+      // rough concept of rotation speed / velocity on the UI.
+      if (!data.active) {
+
+        // update frequency relative to the credits being spent / earned.
+        delta = Math.abs(data.displayValue - data.value);
+
+        // how fast should the ticks go by?
+        // (timed roughly to inventory ordering animations.)
+        var i;
+
+        if (delta >= 10) {
+          i = 2;
+        } else if (delta >= 9) {
+          i = 3;
+        } else if (delta >= 8) {
+          i = 4;
+        } else if (delta >= 7) {
+          i = 5;
+        } else if (delta >= 6) {
+          i = 6;
+        } else if (delta >= 5) {
+          i = 8;
+        } else if (delta >= 3) {
+          i = 10;
+        } else {
+          i = 21;
+        }
+
+        data.frameInterval = i;
+        
+        data.active = true;
+      }
+
+      var digitCountMinusOne = data.digitCount - 1;
+
+      // handle digit changes.
+      for (var i = 0, j = data.digitCount; i < j; i++) {
+        data.offsetTop[i] = digits[i] * -1;
+        if (data.lastOffsetTop[i] === data.offsetTop[i]) continue;
+        data.lastOffsetTop[i] = data.offsetTop[i];
+
+        // show or hide 10s / 100s "columns" accordingly.
+        if (data.hideLeadingZeroes && (!i || i < digitCountMinusOne)) {
+          // first digit: hide if zero.
+          digitInts[i] = parseInt(digits[i], 10);
+
+          // when not first nor last digit, show if non-zero - OR, when the digit to the left is non-zero.
+          if (digitInts[i] || digitInts[i-1]) {
+            show(i);
+          } else if (i < digitCountMinusOne) {
+            // never hide the rightmost, ones column.
+            hide(i);
+          }
+        }
+
+        // include the value of the prior column in the current background position offset.
+        // e.g., if there are 30 funds, the "ones" column should have an offset accounting for three "sets" of 0-9.
+        // without this, decrementing from 30 to 29 would cause the ones column to "jump" across a single set of digits visibly with the transition.
+        // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
+        tensOffset = (data.offsetTop[i-1] || 0) * 10;
+
+        dom.digits[i].style.backgroundPosition = '0px ' + ((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + data.offsetType;
+      }
+   
+    }
+  
+    function updateSound() {
+
+      // "... Press debit or credit" 🤣 -- Maria Bamford https://www.youtube.com/watch?v=hi8UURLK6FM
+      if (data.displayValue <= data.value) {
+        playSound(sounds.inventory.credit);
+      } else {
+        playSound(sounds.inventory.debit);
+      }
+    }
+
+    function animate() {
+      // are we up-to-date?
+      if (data.displayValue === data.value) {
+        data.active = false;
+        return false;
+      }
+
+      // wait until it's time.
+      data.frameCount++;
+      if (data.frameCount < data.frameInterval) return false;
+      
+      // otherwise, reset.
+      data.frameCount = 0;
+  
+      // debit or credit sound, first and foremost.
+      updateSound();
+   
+      data.displayValue += (data.displayValue < data.value ? 1 : -1);
+
+      updateDOM();
+    }
+    
+    function setFunds(newValue) {
+      data.value = newValue;
+      // allow "speed" to change
+      data.intervalApplied = false;
+    }
+
+    exports = {
+      animate: animate,
+      data: data,
+      setFunds: setFunds
+    }
+
+    updateDOM();
+
+    return exports;
+
+  }
+
   /**
    * hooks into main game requestAnimationFrame() loop.
    * calls animate() methods on active FrameTimeout() instances.
@@ -12631,6 +12833,8 @@
       stats = new Stats();
 
       objects.gameLoop = new GameLoop();
+
+      objects.funds = new Funds();
 
       objects.queue = new Queue();
 
@@ -13528,7 +13732,8 @@
       radar: null,
       inventory: null,
       tutorial: null,
-      queue: null
+      queue: null,
+      funds: null,
     };
 
     objectConstructors = {
