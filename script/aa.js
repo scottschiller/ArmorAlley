@@ -1926,6 +1926,68 @@
 
   }
 
+  function recycleTest(obj) {
+
+    // did a unit reach the other side? destroy the unit, and reward the player with credits.
+    var doRecycle, isEnemy, costObj, refund, type;
+
+    isEnemy = obj.data.isEnemy;
+
+    if (!obj || obj.data.dead || obj.data.isRecycling) return;
+
+    if (isEnemy) {
+      // slightly left of player's base
+      doRecycle = obj.data.x <= -48;
+    } else {
+      doRecycle = obj.data.x >= worldWidth;
+    }
+
+    if (doRecycle) {
+
+      obj.data.isRecycling = true;
+
+      // animate down, back into the depths from whence it came
+      utils.css.remove(obj.dom.o, 'ordering');
+      utils.css.add(obj.dom.o, 'recycling');
+
+      // ensure 'building' is set, as well. "pre-existing" game units will not have this.
+      setFrameTimeout(function() {
+        utils.css.add(obj.dom.o, 'building');
+      }, 16);
+
+      setFrameTimeout(function() {
+        // die silently, and go away.
+        obj.die({ silent: true});
+
+        // tank, infantry etc., or special-case: engineer.
+        type = obj.data.role ? obj.data.roles[obj.data.role] : obj.data.type;
+
+        // special case: infantry may have been dropped by player, or when helicopter exploded.
+        // exclude those from being "refunded" at all, given player was involved in their move.
+        // minor: players could collect and drop infantry near enemy base, and collect refunds.
+        if (type === TYPES.infantry && !obj.data.unassisted) return;
+
+        costObj = COSTS[TYPES[type]];
+
+        // reward player for their good work. 200% return on "per-item" cost.
+        // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
+        refund = (costObj.funds / (costObj.count || 1) * 2);
+
+        game.objects.endBunkers[isEnemy ? 1 : 0].data.funds += refund;
+        
+        if (!isEnemy) {
+          // notify player that a unit has been recycled?
+          game.objects.notifications.add('+' + refund + ' 💰: recycled ' + type + ' ♻️');
+          game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
+          game.objects.view.updateFundsUI();
+        }
+
+      }, 2000);
+
+    }
+
+  }
+
   function countSides(objectType, includeDead) {
 
     var i, j, result;
@@ -6945,6 +7007,8 @@
 
       }
 
+      recycleTest(exports);
+
       return (data.dead && !dom.o);
 
     }
@@ -10370,6 +10434,8 @@
 
       return (data.dead && !data.deadTimer && !dom.o && !objects.gunfire.length);
 
+      recycleTest(exports);
+
     }
 
     function initTank() {
@@ -11162,6 +11228,7 @@
         nearbyTest(nearby);
 
       }
+        recycleTest(exports);
 
       for (i = objects.gunfire.length - 1; i >= 0; i--) {
         if (objects.gunfire[i].animate()) {

@@ -1942,6 +1942,12 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
   /* override .building rules */
 }
 
+.sprite.recycling {
+  /* units drop "below", in reverse of ordering */
+  /* (when applied as .building.recycling) */
+  transition: margin 2s;
+}
+
 #radar .sprite.helicopter.enemy {
   background-color: transparent;
   border-top: 3px solid transparent;
