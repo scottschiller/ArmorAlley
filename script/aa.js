@@ -8393,6 +8393,20 @@
 
     }
 
+    function checkFacingTarget(target) {
+      // ensure the enemy chopper is facing the target before firing.
+      if (!target) return;
+
+      // ignore direction and prevent excessive flipping when bombing tanks, or if hidden within a cloud
+      if (data.bombing || data.cloaked) return;
+
+      if ((target.data.x + target.data.width) < data.x && data.rotated) {
+        rotate();
+      } else if ((target.data.x + target.data.width) > data.x && !data.rotated) {
+        rotate();
+      }
+    }
+
     function setFiring(state) {
 
       if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
@@ -9070,6 +9084,8 @@
 
         target = game.objects.landingPads[game.objects.landingPads.length - (data.x > 6144 ? 1 : 2)];
 
+        checkFacingTarget(target);
+
         // aim for landing pad
 
         deltaX = target.data.x - data.x;
@@ -9450,11 +9466,15 @@
         data.vY -= 0.25;
       }
 
-      // flip helicopter to point in the right direction?
-      if (data.vX < 0 && data.rotated) {
-        rotate();
-      } else if (data.vX > 0 && !data.rotated) {
-        rotate();
+      // ensure helicopter is pointing the right way, whether chasing a target or flying
+      if (target) {
+        checkFacingTarget(target);
+      } else {
+        if (data.vX < 0 && data.rotated) {
+          rotate();
+        } else if (data.vX > 0 && !data.rotated) {
+          rotate();
+        }
       }
 
       centerView();
