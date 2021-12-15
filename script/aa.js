@@ -1120,6 +1120,9 @@
   }
 
     setBottomY: function(exports, bottomY) {
+  function rndInt(number) {
+    return parseInt(rnd(number), 10);
+  }
 
       if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.bottom = ((280 * (bottomY / 100)) + 'px');
@@ -2162,7 +2165,7 @@
             if (isRepairing()) {
               playRepairingWrench.apply(this, args);
             }
-          }, 1000 + parseInt(Math.random() * 2000, 10));
+          }, 1000 + rndInt(2000));
         }
       });
 
@@ -2189,7 +2192,6 @@
             if (isRepairing()) {
               playImpactWrench.apply(this, args);
             }
-          }, 500 + parseInt(Math.random() * 2000, 10));
         }
       });
 
@@ -2202,7 +2204,7 @@
     var args = arguments;
 
     playSound(sounds.tinkerWrench, exports, {
-      position: parseInt(Math.random() * 8000, 10),
+      position: rndInt(8000),
       onfinish: function() {
         if (isRepairing()) {
           playTinkerWrench.apply(this, args);
@@ -5095,6 +5097,7 @@
           x: data.x,
           // if 0, balloon will "rise from the depths".
           bottomY: (useRandomY ? parseInt(Math.random() * 100, 10) : 0)
+          y: (useRandomY ? 48 + rndInt(game.objects.view.data.world.height - 48) : 0)
         });
 
         // push onto the larger array
@@ -6446,7 +6449,7 @@
         } else {
 
           // big boom
-          setFrameTimeout(boom, 20 + parseInt(Math.random() * 350, 10));
+          setFrameTimeout(boom, 100 + rndInt(100));
 
         }
 
@@ -7510,7 +7513,7 @@
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
-        data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+        data.windModulus = 16 + rndInt(16);
 
       }
 
@@ -8247,11 +8250,11 @@
 
           setFrameTimeout(function() {
             playRepairingWrench(repairInProgress, exports);
-          }, 500 + (Math.random() * 1500));
+          }, 500 + rndInt(1500));
 
           setFrameTimeout(function() {
             playImpactWrench(repairInProgress, exports);
-          }, 500 + (Math.random() * 1500));
+          }, 500 + rndInt(1500));
 
         }
 
@@ -10863,7 +10866,7 @@
             if (Math.random() > 0.66) {
 
               // -1, 0, 1
-              randomWind = parseInt(Math.random() * 3, 10) - 1;
+              randomWind = rndInt(3) - 1;
 
               data.vX = randomWind * 0.25;
 
@@ -10887,7 +10890,7 @@
               dom.o.style.backgroundPosition = ('0px ' + bgY + 'px');
 
               // choose a new wind modulus, too.
-              data.windModulus = 32 + parseInt(Math.random() * 32, 10);
+              data.windModulus = 64 + rndInt(64);
 
             } else {
 
@@ -10988,10 +10991,10 @@
 
     data = inheritData({
       type: 'parachute-infantry',
-      frameCount: 0,
+      frameCount: rndInt(3),
       panicModulus: 3,
-      windModulus: 32 + parseInt(Math.random() * 32, 10),
-      panicFrame: 0,
+      windModulus: 32 + rndInt(32),
+      panicFrame: rndInt(3),
       energy: 2,
       energyMax: 2,
       parachuteOpen: false,
@@ -11635,7 +11638,7 @@
       type: 'shrapnel',
       frameCount: 0,
       animationModulus: 2,
-      spriteType: parseInt(Math.random() * 4, 10),
+      spriteType: rndInt(4),
       direction: 0,
       // sometimes zero / non-moving?
       vX: options.vX || 0,
@@ -11742,7 +11745,7 @@
       type: 'smoke',
       frameCount: 0,
       animateModulus: 2,
-      spriteFrame: 0,
+      spriteFrame: rndInt(4),
       spriteFrames: 10,
       direction: 0,
       width: 9,
