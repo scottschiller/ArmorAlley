@@ -1959,9 +1959,7 @@
     var bunkersOwned;
 
     // playing extreme mode? this benefit would practically be cheating! ;)
-    if (gameType === 'extreme') {
-      return;
-    }
+    if (gameType === 'extreme') return;
 
     bunkersOwned = playerOwnsBunkers();
 
