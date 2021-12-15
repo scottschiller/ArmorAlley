@@ -5532,9 +5532,6 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
-      common.setBottomY(exports, data.bottomY);
-
       game.dom.world.appendChild(dom.o);
 
       game.objects.radar.addItem(exports, dom.o.className);
@@ -5768,9 +5765,6 @@
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
-
-      common.setX(exports, data.x);
-      common.setBottomY(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -6280,8 +6274,6 @@
       dom.oSubSprite = makeSubSprite();
       dom.o.appendChild(dom.oSubSprite);
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -6515,8 +6507,6 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
-      common.setBottomY(exports, data.bottomY);
 
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
@@ -6830,7 +6820,6 @@
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomY(bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
         needsUpdate = true;
@@ -6975,7 +6964,6 @@
       }
 
       common.setTransformXY(dom.o, data.x + 'px', '0px');
-      common.setBottomY(exports, data.bottomY);
 
       data.frameTimeout = setFrameTimeout(function() {
         data.orderComplete = true;
@@ -7279,16 +7267,10 @@
 
       if (x !== undefined && data.x !== x) {
         data.x = x;
-        if (data.isOnScreen) {
-          common.setX(exports, x);
-        }
       }
 
       if (y !== undefined && data.y !== y) {
         data.y = y;
-        if (data.isOnScreen) {
-          common.setY(exports, y);
-        }
       }
 
     }
@@ -7436,8 +7418,6 @@
         className: css.className
       });
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
 
       // hack?
       if (features.transform.prop) {
@@ -7635,7 +7615,6 @@
       var hitBottom = false;
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
         data.x = x;
       }
 
@@ -7646,7 +7625,6 @@
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
         data.y = y;
       }
 
@@ -8049,9 +8027,6 @@
       }
 
       data.yMax = (game.objects.view.data.battleField.height - data.height);
-
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
 
       game.dom.world.appendChild(fragment);
 
@@ -10254,7 +10229,6 @@
       }
 
       if (bottomY !== undefined && data.bottomY !== bottomY) {
-        common.setBottomYPixels(exports, bottomY);
         data.bottomY = bottomY;
         data.y = bottomAlignedY(bottomY);
       }
@@ -10425,7 +10399,6 @@
 
       common.setTransformXY(dom.o, data.x + 'px', '0px');
 
-      common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -10554,12 +10527,10 @@
       }/* else {
 
         if (x !== undefined && data.x !== x) {
-          common.setX(exports, x);
           data.x = x;
         }
 
         if (bottomY !== undefined && data.bottomY !== bottomY) {
-          common.setBottomYPixels(exports, bottomY);
           data.bottomY = bottomY;
           data.y = bottomAlignedY(bottomY);
         }
@@ -10702,7 +10673,6 @@
       }
 
       common.setTransformXY(dom.o, data.x + 'px', '0px');
-      common.setBottomYPixels(exports, data.bottomY);
 
       /*
       if (features.transform.prop) {
@@ -10799,12 +10769,10 @@
     function moveTo(x, y) {
 
       if (x !== undefined && data.x !== x) {
-        common.setX(exports, x);
         data.x = x;
       }
 
       if (y !== undefined && data.y !== y) {
-        common.setY(exports, y);
         data.y = y;
       }
 
@@ -11004,8 +10972,6 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
@@ -11087,7 +11053,6 @@
     function moveTo(x, bottomY) {
 
       if (x !== undefined && data.x !== x) {
-        // common.setX(exports, x);
         if (data.isOnScreen) {
           common.setTransformXY(dom.o, exports.data.x + 'px', '0px');
         }
@@ -11233,7 +11198,6 @@
       }
 
       common.setTransformXY(dom.o, data.x + 'px', '0px');
-      common.setBottomYPixels(exports, data.bottomY);
 
       game.dom.world.appendChild(dom.o);
 
@@ -11401,9 +11365,6 @@
 
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
-
-      common.setX(exports, data.x);
-      common.setY(exports, data.y);
 
       game.dom.world.appendChild(dom.o);
 
