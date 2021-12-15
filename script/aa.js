@@ -554,11 +554,6 @@
 
   }
 
-  // NOTE: almost all calls now go through setFrameTimeout(), a frame-based timer.
-  function setTimeout(callback, delay) {
-    if (debug) console.log('setTimeout', delay, callback);
-    var result = window.setTimeout(callback, delay);
-    return result;
   }
 
   utils = {
@@ -13664,11 +13659,6 @@
             if (i >= enemyOrders.length) {
               i = 0;
             }
-
-          } else if (data.paused) {
-
-            // game paused - wait another interval and retry.
-            setTimeout(orderNextItem, enemyDelays[i] * 1000);
 
           }
 
