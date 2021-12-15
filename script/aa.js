@@ -1,4 +1,3 @@
-/*global window, console, document, navigator, setTimeout, setInterval, clearInterval, soundManager */
 (function armorAlley(window) {
 
   'use strict';
@@ -13644,10 +13643,20 @@
 
       (function() {
 
-        // basic enemy ordering crap
+        // basic enemy ordering pattern
         var enemyOrders = [TYPES.missileLauncherCamel, TYPES.tank, TYPES.van, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.engineer, TYPES.engineer];
-        var enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45, convoyDelay];
+        var enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
         var i = 0;
+
+        if (gameType === 'extreme') {
+          // one more tank to round out the bunch, and (possibly) further complicate things :D
+          enemyOrders.push(TYPES.tank);
+          // 
+          enemyDelays.push(4);
+        }
+
+        // after ordering, wait a certain amount before the next convoy
+        enemyDelays.push(convoyDelay);
 
         function orderNextItem() {
 
