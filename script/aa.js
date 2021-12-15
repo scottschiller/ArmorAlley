@@ -1948,18 +1948,18 @@
       enemy: 0
     };
 
-    if (game.objects[objectType]) {
-      for (i = 0, j = game.objects[objectType].length; i < j; i++) {
-        if (!game.objects[objectType][i].data.dead) {
-          if (game.objects[objectType][i].data.isEnemy || game.objects[objectType][i].data.hostile) {
-            result.enemy++;
-          } else {
-            result.friendly++;
-          }
-        } else if (includeDead) {
-          // things that are dead are considered harmless - therefore, friendly.
+    if (!game.objects[objectType]) return result;
+
+    for (i = 0, j = game.objects[objectType].length; i < j; i++) {
+      if (!game.objects[objectType][i].data.dead) {
+        if (game.objects[objectType][i].data.isEnemy || game.objects[objectType][i].data.hostile) {
+          result.enemy++;
+        } else {
           result.friendly++;
         }
+      } else if (includeDead) {
+        // things that are dead are considered harmless - therefore, friendly.
+        result.friendly++;
       }
     }
 
