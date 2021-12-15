@@ -5259,7 +5259,7 @@
           vY: 0
         };
 
-        objects.gunfire.push(new GunFire(fireOptions));
+        game.objects.gunfire.push(new GunFire(fireOptions));
 
         // other side
         fireOptions.x = (data.x - 1);
@@ -5267,7 +5267,7 @@
         // and reverse direction
         fireOptions.vX = -2;
 
-        objects.gunfire.push(new GunFire(fireOptions));
+        game.objects.gunfire.push(new GunFire(fireOptions));
 
         if (sounds.genericGunFire) {
           playSound(sounds.genericGunFire, exports);
@@ -5329,14 +5329,6 @@
 
       data.frameCount++;
 
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
-      }
-
       nearbyTest(nearby);
 
       fire();
@@ -5380,7 +5372,7 @@
       }
 
       // note: end bunkers never die, but leaving this in anyway.
-      return (data.dead && !dom.o && !objects.gunfire.length);
+      return (data.dead && !dom.o);
 
     }
 
@@ -5439,7 +5431,7 @@
     };
 
     objects = {
-      gunfire: []
+      helicopter: null
     };
 
     exports = {
