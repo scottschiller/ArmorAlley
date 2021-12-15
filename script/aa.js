@@ -523,15 +523,42 @@
 
     if (disableScaling) return;
 
-    // Safari 6.0.5 (as of 10/2013) scales text after rasterizing via transform: scale3d(), thus it looks crap. Using document.body.zoom is OK, however.
-    // Force-enable transform-based scaling with #forcescaling=1
+    var wrapper = document.getElementById('world-wrapper');
 
-    // TODO: review and make sure mobile Safari scales text decently via transform.
-    if (!isSafari || forceScaling || isMobile) {
+    /**
+     * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
+     * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
+     * Safari 15 still scales and has "fuzzy" text via scale3d(), but style.zoom is slower.
+     * 
+     * 04/2020: It seems `style.zoom` is the way to go for performance, overall.
+     * Browsers seem to understand that this means "just magnify everything" in an efficient way.
+     * 
+     * 10/2013: Safari 6.0.5 scales text after rasterizing via transform: scale3d(), thus it looks crap.
+     * Using document[element].zoom is OK, however.
+     * 
+     * TESTING
+     * Force transform-based scaling with #forceTransform=1
+     * Force zoom-based scaling with #forceZoom=1
+     */
 
-      // newer browsers can do this.
-      // TODO: dom.worldWrapper
-      var wrapper = document.getElementById('world-wrapper');
+    // Pardon the non-standard formatting in exchange for legibility.
+    if (!forceZoom && (
+      // URL param: prefer transform-based scaling
+      forceTransform
+
+      // Firefox clips some of the world when using style.zoom.
+      || isFirefox
+    
+      // Chrome can do zoom, but mentions Safari in its userAgent.
+      // Safari does not do well with zoom.
+      || (!isChrome && isSafari)
+
+      // Assume that on mobile, transform (GPU) is the way to go
+      || isMobile
+    )) {
+
+      if (debug) console.log('using transform-based scaling');
+
       wrapper.style.marginTop = -((406 / 2) * screenScale) + 'px';
       wrapper.style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale)) + 'px';
       wrapper.style[features.transform.prop + 'Origin'] = '0px 0px';
@@ -539,19 +566,18 @@
       // and will need more refactoring to make that work the same.
       wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
-      // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
     } else {
 
+      if (debug) console.log('using style.zoom-based scaling');
+
+      wrapper.style.marginTop = -(406 / 2) + 'px';
 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
-      // 12/2017 update: Reduce scale by 5% so things still work.
       // Additional note: this won't work in Firefox.
-      screenScale *= 0.95;
-      document.body.style.zoom = (screenScale * 100) + '%';
+      document.getElementById('aa').style.zoom = (screenScale * 100) + '%';
 
     }
 
-  }
 
   }
 
