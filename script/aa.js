@@ -4725,33 +4725,23 @@
 
   Balloon = function(options) {
 
-    var css, data, dom, objects, radarItem, reset, exports;
+
+    function moveTo(x, y) {
 
     function moveTo(x, bottomY) {
+      var needsUpdate;
 
       if (x !== undefined && data.x !== x) {
         if (data.isOnScreen) {
-          common.setTransformXY(dom.o, x + 'px', data.y + 'px');
         }
         data.x = x;
+        needsUpdate = true;
       }
 
-      if (bottomY !== undefined) {
+        data.y = y;
+        needsUpdate = true;
 
-        // if detached, don't go all the way to the bottom.
-        bottomY = Math.min(100, Math.max(data.detached ? 10 : -data.bottomYOffset, bottomY));
-
-        if (data.bottomY !== bottomY) {
-
-          common.setBalloonXY(exports, bottomY);
-
-          data.bottomY = bottomY;
-
-          // special handling for balloon case
-          // TODO: fix this
-          data.y = game.objects.view.data.battleField.height - data.height - (280 * (bottomY / 100));
-
-        }
+      }
 
       }
 
@@ -4810,33 +4800,36 @@
 
     }
 
-    function dead() {
+    function die() {
 
-      if (data.dead && dom.o) {
-        // hide the balloon
+      if (data.dead) return;
+      // pop!
+      utils.css.add(dom.o, css.exploding);
+
         utils.css.swap(dom.o, css.exploding, css.dead);
+      if (sounds.balloonExplosion) {
+        playSound(sounds.balloonExplosion, exports);
       }
       if (data.deadTimer) {
         data.deadTimer = null;
+        });
       }
 
-    }
+      // if shot while a group of infantry are passing by the bunker,
+      // so only "finish" dying if still dead.
 
-    function die() {
+      // the parent (i.e., this) balloon's `data.dead` before hiding.
+      radarItem.die();
 
-      // pop!
-      if (!data.dead) {
-        utils.css.add(dom.o, css.exploding);
-        if (sounds.balloonExplosion) {
-          playSound(sounds.balloonExplosion, exports);
+      data.deadTimer = setFrameTimeout(function() {
+        data.deadTimer = null;
+
+        // sanity check: don't hide if already respawned
+        if (!data.dead) return;
+
+          // hide the balloon
+          utils.css.swap(dom.o, css.exploding, css.dead);
         }
-        radarItem.die();
-        data.deadTimer = setFrameTimeout(function() {
-          dead();
-          data.deadTimer = null;
-        }, 550);
-        data.dead = true;
-      }
 
     }
 
@@ -4849,6 +4842,8 @@
       // enable transition (balloon turning left or right, or dying.)
       utils.css.add(dom.o, css.animating);
 
+      // reset, if previously queued.
+      if (data.animationFrameTimeout) {
       data.animationFrameTimeout = setFrameTimeout(function() {
         data.animationFrameTimeout = null;
         // balloon might have been destroyed.
@@ -4861,6 +4856,7 @@
     function animate() {
 
       if (!data.dead) {
+
 
         if (!data.detached) {
 
@@ -4909,24 +4905,41 @@
             data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
             // and randomize
-            data.windModulus = 16 + parseInt(Math.random() * 16, 10);
+            data.windModulus = 32 + rndInt(32);
 
           }
 
-          moveTo(data.x + data.windOffsetX, data.bottomY + data.windOffsetY);
+          // if at end of world, change the wind and prevent randomization until within world limits
+          // this allows balloons to drift a little over, but they will return.
+          if (data.x + data.windOffsetX >= data.maxX) {
+            data.frameCount = 0;
+            data.windOffsetX -= 0.1;
+          } else if (data.x + data.windOffsetX <= data.minX) {
+            data.windOffsetX += 0.1;
+          }
+
+          // screen, too
+          if (data.y + data.windOffsetY >= data.maxY) {
+            data.frameCount = 0;
+            data.windOffsetY -= 0.1;
+            data.windOffsetY += 0.1;
+          }
+
+          // hackish: enforce world min/max limits
+          moveTo(data.x + data.windOffsetX, data.y + data.windOffsetY);
 
         }
 
       } else {
 
-        if (data.bottomY > 0) {
+        if (data.y > 0) {
 
           // dead, but chain has not retracted yet. Make sure it's moving down.
           if (data.verticalDirection > 0) {
             data.verticalDirection *= -1;
           }
 
-          moveTo(data.x, data.bottomY + data.verticalDirection);
+          moveTo(data.x, data.y + data.verticalDirection);
 
         }
 
@@ -4949,8 +4962,7 @@
       data.dead = false;
 
       // reset position, too
-      data.bottomY = -data.bottomYOffset;
-      data.y = bottomAlignedY(data.bottomY);
+      data.y = bottomAlignedY(-data.height);
 
       radarItem.reset();
 
@@ -4986,19 +4998,10 @@
         utils.css.add(dom.o, css.enemy);
       }
 
+      // TODO: remove?
       dom.o.style.marginLeft = (data.leftMargin + 'px');
 
-      // TODO: review when balloon gets separated from bunker
-      // data.x = options.x; // (objects.bunker ? objects.bunker.data.x : 0);
-
-      // if bottomY is 0, subtract a few percent so the balloon rises from the depths.
-      if (data.bottomY === 0) {
-        data.bottomY = -data.bottomYOffset;
-      }
-
-      moveTo(data.x, data.bottomY);
-
-      common.setBalloonXY(exports, data.bottomY);
+      moveTo(data.x, data.y);
 
       if (!objects.bunker) {
         detach();
@@ -5013,6 +5016,8 @@
 
     options = options || {};
 
+    height = 16;
+
     css = inheritCSS({
       className: TYPES.balloon,
       friendly: 'facing-right',
@@ -5023,7 +5028,6 @@
 
     data = inheritData({
       type: TYPES.balloon,
-      bottomAligned: true, // TODO: review/remove
       canRespawn: false,
       frameCount: 0,
       windModulus: 16,
@@ -5034,16 +5038,19 @@
       direction: 0,
       detached: false,
       hostile: false, // dangerous when detached
-      verticalDirection: 0.33,
-      verticalDirectionDefault: 0.33,
+      verticalDirection: 1,
+      verticalDirectionDefault: 1,
       leftMargin: options.leftMargin || 0,
       width: 38,
-      height: 16,
+      height: height,
       halfWidth: 19,
-      halfHeight: 8,
+      halfHeight: height / 2,
       deadTimer: null,
-      // relative % to pull down when rising from the ground...
-      bottomYOffset: 6
+      minX: 0,
+      maxX: worldWidth,
+      minY: 48,
+      // don't allow balloons to fly into ground units, generally speaking
+      maxY: game.objects.view.data.world.height - height - 32
     }, options);
 
     dom = {
@@ -5195,6 +5202,7 @@
       detachBalloon();
 
       setFrameTimeout(function() {
+
         utils.css.swap(dom.o, css.exploding, css.burning);
 
         setFrameTimeout(function() {
@@ -5203,7 +5211,7 @@
           dom.o = null;
         }, 10000);
 
-      }, 1100);
+      }, 1200);
 
       data.energy = 0;
 
