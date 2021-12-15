@@ -195,7 +195,6 @@
   var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
   var isMobile = ua.match(/mobile/i); // should get iOS.
   var isiPhone = ua.match(/iphone/i);
-  var isOldIE = (navigator.userAgent.match(/MSIE [6-8]/i));
 
   var useParallax = winloc.match(/parallax/i);
 
@@ -516,7 +515,7 @@
 
     } else {
 
-      screenScale = (isOldIE ? 1 : innerHeight / localWorldHeight);
+      screenScale = innerHeight / localWorldHeight;
 
     }
 
@@ -543,8 +542,8 @@
       wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
 
       // TODO: Sort out + resolve Chrome "blurry font" (rasterization?) issue. Text generally re-renders OK when resizing smaller.
+    } else {
 
-    } else if (!isOldIE) {
 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // 12/2017 update: Reduce scale by 5% so things still work.
@@ -822,6 +821,7 @@
     // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
     // the battlefield under any circumstances. ;)
     if (useDOMPruning && node && node === game.objects.view.dom.battleField) return;
+    if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
     // hide immediately
     node.style.display = 'none';
@@ -3437,11 +3437,8 @@
       utils.events.add(document, 'touchstart', events.touchstart);
       utils.events.add(document, 'touchmove', events.touchmove);
       utils.events.add(document, 'touchend', events.touchend);
-
-      if (!isOldIE) {
-        utils.events.add(window, 'focus', events.focus);
-        utils.events.add(window, 'blur', events.blur);
-      }
+      utils.events.add(window, 'focus', events.focus);
+      utils.events.add(window, 'blur', events.blur);
 
     }
 
@@ -4666,10 +4663,6 @@
 
       if (data.timer) {
 
-        if (!window.getAnimationFrame) {
-          window.clearInterval(data.timer);
-        }
-
         data.timer = null;
         data.lastExec = 0;
 
@@ -4680,7 +4673,7 @@
     function resetFPS() {
 
       // re-measure FPS timings.
-      data.lastExec = 0; // (isOldIE ? new Date().getTime() : Date.now());
+      data.lastExec = 0;
       data.frames = 0;
 
     }
