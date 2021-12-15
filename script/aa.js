@@ -1138,10 +1138,15 @@
       if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.bottom = (bottomY + 'px');
       }
+    setTransformXY: function(exports, o, x, y, extraTransforms) {
 
-    },
+      /**
+       * given an object (and its on-screen/off-screen status), apply transform to its live DOM node -
+       * and/or, if off-screen, as a string to be applied when the element is on-screen.
+       * positioning can be moderately complex, and is calculated with each animate() / moveTo() call.
+       */
 
-    setTransformXY: function(o, x, y, extraTransforms) {
+      var transformString;
 
       if (!o) return;
 
@@ -1164,14 +1169,29 @@
         // if (game.objects.view && o !== game.objects.view.data.battleField) return;
 
         if (useTranslate3d) {
-          o.style[features.transform.prop] = 'translate3d(' + x + ', ' + y + ', 0px)' + extraTransforms;
+          transformString = 'translate3d(' + x + ', ' + y + ', 0px)' + extraTransforms;
         } else {
-          o.style[features.transform.prop] = 'translate(' + x + ', ' + y + ')' + extraTransforms;
+          transformString = 'translate(' + x + ', ' + y + ')' + extraTransforms;
         }
 
-        if (debug) {
-          transformCount++;
+        /**
+         * sometimes, exports is explicitly provided as `undefined`.
+         * if any are undefined, "just do it" and apply the transform -
+         * provided we haven't applied the same one.
+         */
+        if ((!exports || !exports.data || exports.data.isOnScreen) && o._lastTransform !== transformString) {
+          o.style[features.transform.prop] = transformString;
+          if (debug) {
+            // show that this element was moved
+            o.style.outline = '1px solid #' + rndInt(9) + rndInt(9) + rndInt(9);
+            transformCount++;
+          }
+        } else if (debug) {
+          excludeTransformCount++;
         }
+
+        // assign for future re-append to DOM
+        o._lastTransform = transformString;
 
       } else {
 
