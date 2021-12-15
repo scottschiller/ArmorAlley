@@ -1436,10 +1436,8 @@
       return null;
     }
 
-    // presume each object has x, y, width, height - otherwise, all hell will break loose.
-
     // given two boxes, check for intersects.
-    var result;
+    // presume each object has x, y, width, height - otherwise, all hell will break loose.
 
     if (point2.x >= point1.x + point1XLookAhead) {
 
@@ -1448,7 +1446,6 @@
       if (point1.x + point1XLookAhead + point1.width >= point2.x) {
 
         // point 1 overlaps point 2 on x.
-
         // width = point2.x - (point1.x + point1XLookAhead + point1.width);
 
         if (point1.y < point2.y) {
@@ -1458,17 +1455,15 @@
           if (point1.y + point1.height >= point2.y) {
 
             // point 1 overlaps point 2 on y.
-            result = true;
-
             // height = point2.y - (point1.y + point1.h);
+            return true;
 
           }
 
         } else {
 
-          result = (point1.y < point2.y + point2.height);
-
           // height = (point2.y + point2.height) - point1.y;
+          return (point1.y < point2.y + point2.height);
 
         }
 
@@ -1479,33 +1474,28 @@
     } else if (point2.x + point2.width >= point1.x + point1XLookAhead) {
 
       // point 2 overlaps point 1 on x.
-
       // width = point1.x - (point2.x + point1XLookAhead + point2.width);
 
       if (point2.y < point1.y) {
 
         // point 2 is above point 1.
-        result = (point2.y + point2.height >= point1.y);
-
         // height = point1.y - (point2.height + point2.y);
+        return (point2.y + point2.height >= point1.y);
 
       } else {
 
         // point 2 is below point 1.
-        result = (point1.y + point1.height >= point2.y);
-
         // height = point2.y - (point1.y + point1.height);
+        return (point1.y + point1.height >= point2.y);
 
       }
 
     } else {
 
-      // no overlap?
-      result = false;
+      // no overlap, per checks.
+      return false;
 
     }
-
-    return result;
 
   }
 
