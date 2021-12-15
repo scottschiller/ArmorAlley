@@ -4067,9 +4067,13 @@
 
       var rect, result, type;
 
-      if (!itemObject || !itemObject.dom || !itemObject.dom.o) return itemObject;
-
       type = itemObject.data.parentType;
+
+      // cache hit, based on "type"
+      if (layoutCache[type]) {
+        // console.log('cache hit', className, layoutCache[className]);
+        return layoutCache[type];
+      }
 
       // data to merge with itemObject
       result = {
@@ -4080,10 +4084,10 @@
         bottomAlignedY: 0
       };
 
-      // cache hit, based on "type"
-      if (layoutCache[type]) {
-        // console.log('cache hit', className, layoutCache[className]);
-        return layoutCache[type];
+      // if we hit this, something is wrong.
+      if (!itemObject || !itemObject.dom || !itemObject.dom.o) {
+        console.warn('getLayout: something is wrong, returning empty result.', itemObject);
+        return result;
       }
 
       // TODO: remove this.
