@@ -5779,7 +5779,7 @@
 
   Turret = function(options) {
 
-    var css, data, dom, objects, radarItem, collisionItems, targets, exports;
+    var css, data, dom, height, radarItem, collisionItems, targets, exports;
 
     function okToMove() {
 
@@ -5795,9 +5795,9 @@
 
     function setAngle(angle) {
 
-      // TODO: data.isOnScreen and/or CSS animation for this?
+      // TODO: CSS animation for this?
       // updateIsOnScreen(exports); from within animate() ?
-      if (features.transform.prop) {
+      if (data.isOnScreen && features.transform.prop) {
         dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
       }
 
@@ -5810,7 +5810,6 @@
 
     }
 
-    function scan() {
     function fire() {
 
       var deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
@@ -5832,61 +5831,73 @@
 
       }
 
-      if (target) {
-
-        if (!data.firing) {
-          utils.css.add(dom.o, css.firing);
-        }
-
-        data.firing = true;
-
-        deltaX = target.data.x - data.x;
-        deltaY = target.data.y - data.y;
-
-        // Gretzky: "Skate where the puck is going to be".
-        deltaXGretzky = target.data.vX;
-        deltaYGretzky = target.data.vY;
-
-        // turret angle
-        angle = (Math.atan2(deltaY, deltaX) * deg2Rad) + 90;
-        angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
-
-        // hack: target directly to left, on ground of turret: correct 90 to -90 degrees.
-        if (deltaX < 0 && angle === 90) {
-          angle = -90;
-        }
-
-        moveOK = okToMove();
-
-        if (data.frameCount % data.fireModulus === 0 && moveOK) {
-
-          objects.gunfire.push(new GunFire({
-            parentType: data.type,
-            isEnemy: data.isEnemy,
-            // turret gunfire mostly hits airborne things.
-            collisionItems: collisionItems,
-            x: data.x + data.width + 2 + (deltaX * 0.05),
-            y: bottomAlignedY() + 8 + (deltaY * 0.05),
-            vX: (deltaX * 0.05) + deltaXGretzky,
-            vY: Math.min(0, (deltaY * 0.05) + deltaYGretzky)
-          }));
-
-          if (sounds.turretGunFire) {
-            playSound(sounds.turretGunFire, exports);
-          }
-
-        }
-
-        // target the enemy
-        data.angle = angle;
-        if (moveOK) {
-          setAngle(angle);
-        }
-
-      } else if (data.firing) {
+      // target has been lost (or died, etc.)
+      if (!target && data.firing) {
         data.firing = false;
+        data.fireCount = 0;
         resetAngle();
         utils.css.remove(dom.o, css.firing);
+      }
+
+      if (!target) return;
+
+      // we have a live one.
+
+      if (!data.firing) {
+        utils.css.add(dom.o, css.firing);
+        data.firing = true;
+      }
+
+      deltaX = target.data.x - data.x;
+      deltaY = target.data.y - data.y;
+
+      // Gretzky: "Skate where the puck is going to be".
+      deltaXGretzky = target.data.vX;
+      deltaYGretzky = target.data.vY;
+
+      // turret angle
+      angle = (Math.atan2(deltaY, deltaX) * rad2Deg) + 90;
+      angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
+
+      // hack: target directly to left, on ground of turret: correct 90 to -90 degrees.
+      if (deltaX < 0 && angle === 90) {
+        angle = -90;
+      }
+
+      moveOK = okToMove();
+
+      if (data.frameCount % data.fireModulus === 0 && moveOK) {
+
+        data.fireCount++;
+
+        game.objects.gunfire.push(new GunFire({
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          // turret gunfire mostly hits airborne things.
+          collisionItems: collisionItems,
+          x: data.x + data.width + 2 + (deltaX * 0.05),
+          y: bottomAlignedY() + 8 + (deltaY * 0.05),
+          vX: (deltaX * 0.05) + deltaXGretzky,
+          vY: Math.min(0, (deltaY * 0.05) + deltaYGretzky)
+        }));
+
+        if (sounds.turretGunFire) {
+          playSound(sounds.turretGunFire, exports);
+
+          if (data.fireCount === 1 || data.fireCount % data.shellCasingInterval === 0) {
+            // shell casing?
+            setFrameTimeout(function() {
+              playSound(sounds.bulletShellCasing, exports);
+            }, 250 + rnd(250));
+          }
+        }
+
+      }
+
+      // target the enemy
+      data.angle = angle;
+      if (moveOK) {
+        setAngle(angle);
       }
 
     }
@@ -6036,15 +6047,9 @@
 
     function animate() {
 
-      var i, spliceArgs;
-
       data.frameCount++;
 
       if (data.frameCount % data.scanModulus === 0) {
-        if (!data.dead) {
-          fire();
-        }
-        // workaround: allow scanning while being repaired
         if (!data.dead) fire();
       }
 
@@ -6074,16 +6079,6 @@
       // engineer interaction flag
       if (data.engineerInteracting) {
         data.engineerInteracting = false;
-      }
-
-      spliceArgs = [i, 1];
-
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
       }
 
     }
@@ -6126,6 +6121,8 @@
 
     options = options || {};
 
+    height = 15;
+
     css = inheritCSS({
       className: TYPES.turret,
       destroyed: 'destroyed',
@@ -6151,7 +6148,7 @@
       engineerInteracting: false,
       y: 0,
       width: 6,
-      height: 15,
+      height: height,
       // hacks
       halfWidth: 7,
       halfHeight: 7,
@@ -6163,10 +6160,6 @@
       o: null,
       oSubSprite: null,
       oTransformSprite: null,
-    };
-
-    objects = {
-      gunfire: []
     };
 
     exports = {
@@ -13689,6 +13682,7 @@
       bunkers: [],
       endBunkers: [],
       engineers: [],
+      gunfire: [],
       infantry: [],
       parachuteInfantry: [],
       missileLaunchers: [],
