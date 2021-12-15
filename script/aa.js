@@ -2013,6 +2013,8 @@
 
   function getSound(soundReference) {
 
+    if (userDisabledSound) return;
+
     // common sound wrapper, options for positioning and muting etc.
     var soundObject;
 
