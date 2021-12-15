@@ -3033,4 +3033,66 @@ body:not(.is-mobile) .mobile-only {
   body.game-paused #mobile-controls {
     display: none;
   }
+#notifications {
+  position: absolute;
+  top: 6px;
+  left: 3px;
+  font-size: 7px;
+}
+
+#notification-toasts {
+  position: absolute;
+  top: 0px;
+  right: 8px;
+  width: 12rem;
+  height: 67%;
+  margin-top: 96px;
+  overflow: hidden;
+}
+
+.notification-toast {
+  position: relative;
+  top: 0px;
+  text-align: right;
+  color: #999;
+  left: 100%;
+  opacity: 0;
+  transition: all 0.33s ease-in-out;
+  transition-property: margin, opacity;
+  will-change: transform;
+}
+
+.notification-toast.toast-active {
+  /* bring text into view */
+  left: 0%;
+  opacity: 1;
+  /* and, a little slower */
+  transition-duration: 0.5s;
+}
+
+.notification-toast.toast-expiring {
+  /* fade */
+  opacity: 0;
+}
+
+.notification-toast.toast-expired {
+  /* vertical collapse, not quite a full line */
+  margin-top: -0.9rem;
+  /* account for annoying vertical shift */
+  top: -3px;
+}
+
+.notification-toast.double-height.toast-expired {
+  /* vertical collapse, works OK for two lines?? */
+  margin-top: -1.3rem;
+}
+
+.notification-toast span {
+  display: inline-block;
+  font-size: 6px;
+  border: 1px solid transparent;
+  padding-bottom: 1px;
+  background: rgba(0,0,0,0.25);
+}
+
 }
