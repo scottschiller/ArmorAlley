@@ -1508,12 +1508,12 @@
      * }
      */
 
-    if (!options) {
+    if (!options || !options.targets) {
       return false;
     }
 
-    // don't check if the object is dead. If it's expired, only allow the object if it's also "hostile" (can still hit things)
-    if (options.source.data.dead || (options.source.data.expired && !options.source.data.hostile)) {
+    // don't check if the object is dead or inert. If expired, only allow the object if it's also "hostile" (can still hit things)
+    if (options.source.data.dead || options.source.data.isInert || (options.source.data.expired && !options.source.data.hostile)) {
       return false;
     }
 
@@ -1539,14 +1539,10 @@
 
     }
 
-    if (!options.targets) return false;
-
     for (var i = 0, j = options.targets.length; i < j; i++) {
 
       // non-standard formatting, lengthy logic check here...
       if (
-
-        // options.targets.hasOwnProperty(item)
 
         // don't compare the object against itself
         options.targets[i].data.id !== options.source.data.id
@@ -1560,10 +1556,10 @@
         // more non-standard formatting....
         && (
 
-          // don't check against friendly units
-          (options.targets[i].data.isEnemy !== options.source.data.isEnemy)
+          // don't check against friendly units by default, UNLESS looking only for friendly.
+          ((options.friendlyOnly && options.targets[i].data.isEnemy === options.source.data.isEnemy) || (!options.friendlyOnly && options.targets[i].data.isEnemy !== options.source.data.isEnemy))
 
-          // unless infantry vs. bunker, end-bunker, super-bunker or helicopter
+          // specific friendly cases: infantry vs. bunker, end-bunker, super-bunker or helicopter
           || (options.source.data.type === TYPES.infantry && options.targets[i].data.type === TYPES.bunker)
 
           || (options.targets[i].data.type === TYPES.infantry && (
