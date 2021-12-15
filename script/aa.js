@@ -14136,12 +14136,21 @@
   // OGG is available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
-  if (isSafari && !window.location.toString().match(/html5audio/i)) {
-    // Safari 7+ engine freezes when multiple Audio() objects play simultaneously. Unacceptable.
+  if (isSafari) {
+    // Safari 7+ engine freezes when multiple Audio() objects play simultaneously, making gameplay unacceptable.
     // https://bugs.webkit.org/show_bug.cgi?id=116145
-    // try #html5audio=1 in URL to override/test.
-    console.log('Safari 7+ rendering engine stutters when multiple Audio() objects play simultaneously. Disabling audio. https://bugs.webkit.org/show_bug.cgi?id=116145');
-    soundManager.disable();
+    // try html5audio=1 in URL to override/test.
+    var matches = navigator.userAgent.match(/Version\/([0-9]+)/i);
+    // last item should be the version number.
+    var majorVersion = matches && matches.pop && parseInt(matches.pop(), 10);
+    if (majorVersion && majorVersion >= 7) {
+      console.log('Safari 7-15 (and maybe newer) rendering engine stutters when multiple Audio() objects play simultaneously, possibly due to trackbar. https://bugs.webkit.org/show_bug.cgi?id=116145');
+      if (!winloc.match(/html5audio/i)) {
+        console.log('Audio is disabled by default. You can try forcing audio by adding html5audio=1 to the URL.');
+        userDisabledSound = true;
+        soundManager.disable();
+      }
+    }
   }
 
   soundManager.setup({
