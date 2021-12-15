@@ -2015,10 +2015,38 @@
 
     }
 
+    /**
+     * hackish: create and destroy SMSound instances once they finish playing,
+     * unless they have an `onfinish()` provided. this is to avoid hitting a
+     * a very reasonable Chrome restriction on the maximum number of active
+     * audio decoders, as they're relatively $$$ and browsers may now block.
+     * https://bugs.chromium.org/p/chromium/issues/detail?id=1144736#c27
+     */
+    if (soundObject && !soundObject.sound) {
+      // make it happen! if not needed, throw away when finished.
+      soundObject.options.id = 's' + soundIDs + '_' + soundObject.options.url;
+      soundIDs++;
+
+      if (!soundObject.options.onfinish) {
+
+        soundObject.onAASoundEnd = function() {
+          if (!soundObject.sound) return;
+          soundManager.destroySound(soundObject.sound.id);
+          soundObject.sound = null;
+        }
+
+        // SM2 will call this method, as will others locally
+        soundObject.options.onfinish = soundObject.onAASoundEnd;
+      }
+
+      soundObject.sound = soundManager.createSound(soundObject.options);
+    }
+
     return soundObject;
 
   }
 
+  var soundIDs = 0;
   function playSound(soundReference, target, soundOptions) {
 
     var soundObject = getSound(soundReference),
