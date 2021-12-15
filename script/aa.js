@@ -3093,7 +3093,7 @@
 
     function shuffleTips() {
 
-      var i, j, elements, strings, node, fragment;
+      var i, j, elements, strings;
 
       strings = [];
 
@@ -3103,22 +3103,65 @@
       for (i = 0, j = elements.length; i < j; i++) {
         strings[i] = elements[i].innerText;
       }
+      
+      data.gameTips.tips = utils.array.shuffle(strings);
 
-      strings = utils.array.shuffle(strings);
+      // replace the source material with placeholders for rendering, and an invisible element which drives the CSS animation loop.
+      // CSS `onanimationend()` is used to show the next tip.
+      dom.gameTipsList.innerHTML = [
+        '<div class="animation-node">&nbsp;</div>',
+        '<div class="tip"></div>',
+        '<div class="tip"></div>'
+      ].join('');
 
-      fragment = document.createDocumentFragment();
+      refreshTipDOM();
 
-      // create new nodes, in order.
-      for (i = 0, j = strings.length; i < j; i++) {
-        node = document.createElement('span');
-        node.className = 'tip';
-        node.textContent = strings[i];
-        fragment.appendChild(node);
+    }
+
+    function refreshTipDOM() {
+
+      dom.gameTipNodes = dom.gameTipsList.getElementsByClassName('tip');
+      dom.animationNode = dom.gameTipsList.getElementsByClassName('animation-node')[0];
+
+    }
+
+    function showNextTip() {
+
+      var tips = dom.gameTipNodes;
+
+      // tip 1: initially empty, then the "previous" tip for all subsequent iterations.
+      tips[0].innerHTML = !data.gameTips.tipsOffset ? '&nbsp' : data.gameTips.tips[Math.max(0, data.gameTips.tipsOffset - 1)];
+
+      // last tip will be undefined (one beyond .length), render empty if so.
+      tips[1].innerHTML = data.gameTips.tips[data.gameTips.tipsOffset] || '&nbsp';
+
+      // clone + replace to restart CSS R->L animation
+      dom.gameTipsList.replaceChild(tips[0].cloneNode(true), tips[0]);
+      dom.gameTipsList.replaceChild(tips[1].cloneNode(true), tips[1]);
+
+      // and the animation node, too
+      dom.gameTipsList.replaceChild(dom.animationNode.cloneNode(true), dom.animationNode);
+
+      // re-fetch everything we just replaced
+      refreshTipDOM();
+
+      // wrap around as needed
+      if (data.gameTips.tipsOffset >= data.gameTips.tips.length) {
+        data.gameTips.tipsOffset = -1;
       }
 
-      // clear and append re-ordered list.
-      dom.gameTipsList.innerHTML = '';
-      dom.gameTipsList.appendChild(fragment);
+      // animation event: a tip has scrolled by.
+      dom.animationNode.onanimationend = function() {
+
+        // move first tip node (which just scrolled off to the left) to the end (to the right.)
+        // it will then scroll R->L into view as the new tip.
+        dom.gameTipsList.appendChild(dom.gameTipNodes[0]);
+        refreshTipDOM();
+
+        data.gameTips.tipsOffset++;
+        showNextTip();
+
+      }
 
     }
 
@@ -3168,21 +3211,6 @@
 
         // and scale
         setLeftScroll(scrollAmount * data.maxScroll);
-
-      }
-
-      if (!data.gameTips.hasAnnouncement) {
-
-        if (data.frameCount % data.marqueeModulus === 0) {
-
-          // move the marquee.
-          data.gameTips.scrollOffset -= data.marqueeIncrement;
-          common.setTransformXY(dom.gameTipsList, data.gameTips.scrollOffset + 'px', 0);
-
-        }
-
-        // TODO: when one tip has scrolled by, reset and display next tip.
-        // console.log('data.gameTips.scrollOffset', data.gameTips.scrollOffset);
 
       }
 
@@ -3441,7 +3469,8 @@
         active: false,
         hasAnnouncement: false,
         lastText: null,
-        scrollOffset: 0
+        tips: [],
+        tipsOffset: 0
       },
       marqueeModulus: 1,
       marqueeIncrement: 1,
@@ -3454,6 +3483,8 @@
       topBar: null,
       gameTips: null,
       gameTipsList: null,
+      gameTipNodes: null,
+      animationNode: null,
       gameAnnouncements: null
     };
 

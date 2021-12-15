@@ -2085,32 +2085,27 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
 
 #game-tips .tips-container {
   position: absolute;
-  top: 35%;
+  top: 23.5%;
   left: 50%;
-  margin: -0.5em auto 0px -400px;
+  margin: -0.5em auto 0px -225px;
   padding: 0px;
-  font-size: 1.1em;
-  line-height: 1.5em;
-  width: 800px;
-  color: #777;
-  font-weight: 400;
-  /* 100 isn't legible when moving, even on retina. */
-  letter-spacing: 0.04em;
-  /* a little odd */
+  width: 450px;
+  color: #707070;
   text-shadow: 0px 1px 0px #000;
-  /* TODO: review. */
   overflow: hidden;
   display: none;
 }
 
-body.game-over #game-tips .tips-container {
-  top: 30%;
+#world.tutorial-mode #game-tips .tips-container {
+  color: #999;
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-tips .tips-container {
-    font-size: 0.67em;
-  }
+#world.tutorial-mode #game-tips .tips-container b {
+  color: #fff;
+}
+
+body.game-over #game-tips .tips-container {
+  top: 30%;
 }
 
 #game-paused {
@@ -2123,7 +2118,6 @@ body.game-over #game-tips .tips-container {
   margin-top: -0.5rem;
   text-align: center;
   color: #ccc;
-  font-weight: 200;
   text-shadow: 0px 1px 0px #000;
   /* TODO: review. */
   z-index: 10;
@@ -2138,7 +2132,14 @@ body.game-over #game-tips .tips-container {
 }
 
 body.game-paused #game-tips .tips-container {
-  display: none;
+  /* hide, vs. display: none which will reset CSS animations. */
+  visibility: hidden;
+}
+
+body.game-paused #game-tips .tips-container .tip,
+body.game-paused #game-tips .tips-container .animation-node {
+  /* pause tip scrolling effect */
+  animation-play-state: paused;
 }
 
 body.game-paused #game-paused {
@@ -2152,43 +2153,56 @@ body.game-paused #game-paused {
   top: 0px;
   width: 100%;
   height: 100%;
-  margin: 0px;
-  padding: 0px;
-  padding-right: 1px;
-  /* hackish: fix slightly-short background on right side. */
-  /** * gradient generated via this useful tool... * http: //www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%205\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B' */
-  background: linear-gradient(to right, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 95%);
+  /**
+   * gradient generated via this useful tool...
+   * cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%205\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B'
+   */
+  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,1) 100%);
 }
 
-#game-tips .tips-container div {
-  /* TODO: make this not be so damn big. */
+#game-tips .tips-container #game-tips-list {
   position: relative;
-  width: 120800px;
-  /* per-item value * 100 tips, plus padding */
+  display: inline-block;
   margin: 0px;
   padding: 0px;
   white-space: nowrap;
   overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
 }
 
 #game-tips.active .tips-container {
   display: block;
 }
 
-#game-tips .tips-container div:first-of-type {
-  /* bump first item over, so it scrolls into view from the right */
-  padding-left: 800px;
+#game-tips .tips-container .tip,
+#game-tips .tips-container .animation-node {
+  font-size: 0.5rem;
+  line-height: 0.5rem;
+  animation: scrollText 12s linear;
+  padding: 1px;
+  /* "ticker-tape" style? */
+  /* animation-timing-function: steps(100); */
 }
 
-#game-tips .tips-container div span:not(.hide-on-mobile) {
+#game-tips .tips-container .animation-node {
+  /* used to trigger `onanimationend()` events for tip display. */
+  position: absolute;
+  top: -1px;
+  left: 0px;
+  height: 0px;
+  visibility: hidden;
+}
+
+#game-tips .tips-container .tip:not(.hide-on-mobile),
+#game-tips .tips-container .animation-node:not(.hide-on-mobile) {
   display: inline-block;
-  width: 1000px;
+  width: 32rem;
 }
 
 #world.tutorial-mode #game-tips .tips-container {
-  margin-top: -5em;
-  font-size: 1.1em;
-  line-height: 1.5em;
+  width: 38rem;
+  margin-left: -19rem;
 }
 
 body.is-mobile #world.tutorial-mode #game-tips .tips-container {
@@ -2202,9 +2216,8 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #world.tutorial-mode #game-tips .tips-container h3 {
-  font-size: 2em;
-  font-weight: 200;
-  margin-bottom: 0.75em;
+  font-size: 1em;
+  color: #fff;
 }
 
 #world.tutorial-mode #game-tips .tips-container .tips-fader {
@@ -2213,14 +2226,19 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #game-tips #game-announcements {
-  width: 95%;
+  /* overlay-type thingy */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
   margin: 0px auto;
+  font-size: 0.75em;
+  line-height: 0.75rem;
   text-align: center;
-}
-
-#game-tips #game-announcements {
-  /* hide by default. */
-  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  color: #999;
 }
 
 #game-tips #game-announcements p {
@@ -2238,11 +2256,16 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #game-tips.has-announcement #game-tips-list {
-  display: none;
+  opacity: 0;
 }
 
 #game-tips.has-announcement #game-announcements {
-  display: block;
+  opacity: 1;
+}
+
+#world.tutorial-mode #game-tips.has-announcement #game-announcements {
+  position: relative;
+  margin-top: -1rem;
 }
 
 @keyframes bomb {
