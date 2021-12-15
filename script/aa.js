@@ -1098,71 +1098,34 @@
       offScreen: 'offscreen'
     },
 
-    setX: function(exports, x) {
+    energy = (object.data.energy / object.data.energyMax) * 100;
 
-      if (exports && exports.dom) {
-        exports.dom.o.style.left = (x + 'px');
-      }
 
-    },
 
-    setY: function(exports, y) {
 
-      if (exports && exports.dom) {
-        exports.dom.o.style.top = (y + 'px');
-      }
 
-    },
 
-    // no longer used
-    /*
-    setXY: function(exports, x, y) {
 
-      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
-        exports.dom.o.style.left = (x + 'px');
-        exports.dom.o.style.top = (y + 'px');
-      }
 
-    },
-    */
 
-    setBalloonXY: function(exports, bottomY) {
 
-      if (exports && exports.dom && exports.data.isOnScreen) {
 
-        // top-based Y offset, including bunker / balloon offset
-        var x = exports.data.x + 'px';
-        var y = (worldHeight - (280 * (bottomY / 100)) - 12) + 'px';
-        if (exports.data.isOnScreen) {
-          common.setTransformXY(exports.dom.o, x, y);
-        }
 
-      }
 
-    },
   function rnd(number) {
     return Math.random() * number;
   }
 
-    setBottomY: function(exports, bottomY) {
   function rndInt(number) {
     return parseInt(rnd(number), 10);
   }
 
-      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
-        exports.dom.o.style.bottom = ((280 * (bottomY / 100)) + 'px');
-      }
   function plusMinus() {
     return Math.random() >= 0.5 ? 1 : -1;
   }
 
-    },
 
-    setBottomYPixels: function(exports, bottomY) {
 
-      if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
-        exports.dom.o.style.bottom = (bottomY + 'px');
-      }
     setTransformXY: function(exports, o, x, y, extraTransforms) {
 
       /**
