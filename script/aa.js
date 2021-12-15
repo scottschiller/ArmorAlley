@@ -259,8 +259,6 @@
 
   var gameType;
 
-  var alwaysJamRadar;
-
   var convoyParam = winloc.toLowerCase().indexOf('convoydelay');
 
   // how often the enemy attempts to build convoys
@@ -1237,32 +1235,18 @@
 
   function makeSprite(options) {
 
-    var o, o2, frag;
-
-    o = document.createElement('div');
+    var o = document.createElement('div');
 
     o.className = 'sprite ' + options.className;
 
-    if (debug) {
-      o.innerHTML = options.className.replace(/sub-sprite/i, '');
-      o.style.fontSize = 6 + (1 / screenScale) + 'px';
+    if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
+      o.style.top = '0px';
+      o.style.left = '0px';
     }
 
-    if (showHealth && options.className.match(/missilelauncher|tank|van|infantry|engineer|balloon|helicopter|bunker|turret/i)) {
-
-      frag = document.createDocumentFragment();
-
-      o2 = document.createElement('div');
-      o2.className = 'energy-status energy-bg';
-      frag.appendChild(o2);
-
-      o2 = document.createElement('div');
-      o2.className = 'energy-status energy';
-
-      frag.appendChild(o2);
-
-      o.appendChild(frag);
-
+    if (debugType) {
+      o.innerHTML = options.className.replace(/sub-sprite/i, '');
+      o.style.fontSize = '3px';
     }
 
     return o;
@@ -1285,35 +1269,63 @@
 
   }
 
+  var layoutCache = {};
+
   function addItem(className, x) {
 
-    var node = makeSprite({
-      className: className
+    var node, data, dom, width, height, inCache, exports;
+
+    node = makeSprite({
+      className: className + ' terrain-item'
     });
 
     if (x) {
-      common.setTransformXY(node, x + 'px', '0px');
+      common.setTransformXY(undefined, node, x + 'px', '0px');
+    }
+    
+    if (layoutCache[className]) {
+      inCache = true;
+      width = layoutCache[className].width;
+      height = layoutCache[className].height;
     }
 
-    game.dom.world.appendChild(node);
+    if (!inCache) {
+      // append only so we can read layout
+      game.dom.world.appendChild(node);
+    }
 
-    // basic structure for a terrain item
-    var obj = {
-      data: {
-        x: x,
-        y: 0,
-        // dirty / lazy - force layout, read from CSS.
-        width: node.offsetWidth,
-        height: node.offsetHeight,
-        isOnScreen: true
-      },
-      dom: {
-        o: node,
-      },
+    data = {
+      type: className,
+      x: x,
+      y: 0,
+      // dirty / lazy - force layout, read from CSS.
+      width: width || node.offsetWidth,
+      height: height || node.offsetHeight      
     };
 
+    dom = {
+      o: node
+    };
+
+    // basic structure for a terrain item
+    exports = {
+      data: data,
+      dom: dom
+    };
+
+    if (!inCache) {
+      // store
+      layoutCache[className] = {
+        width: data.width,
+        height: data.height
+      };
+
+      // and now, remove; these will be re-appended when on-screen only.
+      game.dom.world.removeChild(node);
+    }
+
     // these will be tracked only for on-screen / off-screen purposes.
-    game.objects.terrainItems.push(obj);
+    game.objects.terrainItems.push(exports);
 
     return node;
 
@@ -1356,14 +1368,9 @@
       data.id = (options.id || guid++);
     }
 
-    // correct y data, if the object is bottom-aligned
-    if (data.bottomAligned) {
-      data.y = bottomAlignedY(options.bottomY || 0);
-    }
-
-    // assume in view at first, for initial positioning.
+    // assume not in view at first, used for DOM pruning / performance
     if (data.isOnScreen === undefined) {
-      data.isOnScreen = true;
+      data.isOnScreen = false;
     }
 
     if (data.isEnemy === undefined) {
@@ -14212,11 +14219,6 @@
         orientationChange();
       }
 
-      // disclaim potential warning, and performance note. Firefox 57+ seems to perform less well. cause unknown. :/
-      if (isFirefox) {
-        console.log('Firefox *might* warn about CSS `will-change` memory consumption. Even without, performance is not great vs. others. :/');
-      }
-
     }
 
     var menu,
@@ -14348,8 +14350,6 @@
     if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
       gameType = null;
     }
-
-    alwaysJamRadar = (gameType === 'hard' || gameType === 'extreme');
 
     if (!gameType) {
 
