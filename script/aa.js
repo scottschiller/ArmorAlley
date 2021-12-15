@@ -166,14 +166,13 @@
 
   var ua = navigator.userAgent;
 
-  // URL hacking, if you like. game will run ~2x as fast.
-  var FPS = winloc.match(/frameRate=60/i) ? 60 : 30;
+  var FPS = 30;
   var FRAMERATE = 1000 / FPS;
 
-  var unlimitedFrameRate = winloc.match(/frameRate=\*|unlimitedFrameRate/i);
+  // skip frame(s) as needed, prevent the game from running too fast.
+  var FRAME_MIN_TIME = FRAMERATE * 0.95;
 
-  // just in case...
-  var console = (window.console || { log: function() { } });
+  var unlimitedFrameRate = winloc.match(/frameRate=\*/i);
 
   var noJamming = winloc.match(/noJam/i);
 
@@ -4404,69 +4403,67 @@
 
     }
 
-    function animateRAF() {
+    function animateRAF(ts) {
 
-      var elapsed, fps, now;
+      var elapsed;
 
-      if (data.timer) {
+      if (!data.timer) return;
 
-        now = window.performance.now();
+      if (!data.fpsTimer) data.fpsTimer = ts;
 
-        if (!data.fpsTimer) data.fpsTimer = now;
+      /**
+       * first things first: always request the next frame right away.
+       * if expensive work is done here, at least the browser can plan accordingly
+       * if this frame misses its VSync (vertical synchronization) window.
+       * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
+       * https://www.html5rocks.com/en/tutorials/speed/rendering/
+       */
+      window.requestAnimationFrame(animateRAF);
 
-        /**
-         * first things first: always request the next frame right away.
-         * if expensive work is done here, at least the browser can plan accordingly
-         * if this frame misses its VSync (vertical synchronization) window.
-         * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
-         * https://www.html5rocks.com/en/tutorials/speed/rendering/
-         */
-        window.requestAnimationFrame(animateRAF);
+      elapsed = (ts - data.lastExec) || 0;
 
-        elapsed = (now - data.lastExec) || 0;
+      /**
+       * frame-rate limiting: exit if it isn't approximately time to render the next frame.
+       * this still counts as a frame render - we just got here early. Good!
+       * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
+       */
+      if (!unlimitedFrameRate && elapsed < FRAME_MIN_TIME) return;
 
-        /**
-         * exit if it isn't approximately time to render the next frame.
-         * this still counts as a frame render - we just got here early. Good!
-         */
-        if (!unlimitedFrameRate && (elapsed / FRAMERATE < 0.95)) {
-          data.frames++;
-          return;
+      // performance debugging: number of style changes (transform) for this frame.
+      if (debug) {
+        console.log('transform (style/recalc) count: ' + transformCount + ' / ' + excludeTransformCount + ' (incl./excl)');
+        transformCount = 0;
+        excludeTransformCount = 0;
+        if (elapsed > 34 && window.console) {
+          var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
+          console.log(slowString);
+          if (console.timeStamp) console.timeStamp(slowString);
+        }
+      }
+
+      data.elapsedTime += elapsed;
+
+      data.lastExec = ts;
+
+      animate();
+
+      data.frames++;
+
+      // every interval, update framerate.
+      if (!unlimitedFrameRate && ts - data.fpsTimer >= data.fpsTimerInterval) {
+
+        if (dom.fpsCount && data.frames !== data.lastFrames) {
+          dom.fpsCount.innerText = data.frames;
+          data.lastFrames = data.frames;
         }
 
-        // performance debugging: number of style changes (transform) for this frame.
-        if (debug) {
-          console.log('transform (style/recalc) count: ' + transformCount);
-          transformCount = 0;
-          if (elapsed > 34 && window.console) {
-            var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
-            console.log(slowString);
-            if (console.timeStamp) console.timeStamp(slowString);
-          }
-        }
+        data.frames = 0;
+        data.elapsedTime = 0;
 
-        data.elapsedTime += elapsed;
+        // update / restart 1-second timer
+        data.fpsTimer = ts;
 
-        data.lastExec = now;
-
-        animate();
-
-        data.frames++;
-
-        // every interval, update framerate.
-        if (!unlimitedFrameRate && now - data.fpsTimer >= data.fpsTimerInterval) {
-
-          if (dom.fpsCount) {
-            dom.fpsCount.textContent = Math.floor(data.frames / (data.fpsTimerInterval / 1000));
-          }
-
-          data.frames = 0;
-          data.elapsedTime = 0;
-
-          // restart 1-second timer
-          data.fpsTimer = window.performance.now();
-
-        }
+      }
 
       }
 
