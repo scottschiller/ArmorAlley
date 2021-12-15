@@ -848,13 +848,6 @@
       // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
       // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
 
-      // separate loop to hide first?
-      /*
-      for (i=0; i<j; i++) {
-        nodeArray[i].style.display = 'none';
-      }
-      */
-
       for (i = 0; i < j; i++) {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
@@ -862,6 +855,8 @@
         nodeArray[i].parentNode.removeChild(nodeArray[i]);
         nodeArray[i] = null;
       }
+
+      nodeArray = null;
 
     });
 
