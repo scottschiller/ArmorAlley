@@ -599,7 +599,7 @@
         var i, j, temp;
 
         for (i = array.length - 1; i > 0; i--) {
-          j = Math.floor(Math.random() * (i + 1));
+          j = Math.floor(rnd(i + 1));
           temp = array[i];
           array[i] = array[j];
           array[j] = temp;
@@ -1027,7 +1027,7 @@
      * Here be dragons: this should only be applied once, given concatenation,
      * and might cause bugs and/or performance problems if it isn't. :D
      */
-    node.style.transform += ' rotate(' + (Math.random() * 360) + 'deg)';
+    node.style.transform += ' rotate(' + rnd(360) + 'deg)';
   }
 
   function updateEnergy(object) {
@@ -1115,6 +1115,9 @@
       }
 
     },
+  function rnd(number) {
+    return Math.random() * number;
+  }
 
     setBottomY: function(exports, bottomY) {
 
@@ -10993,7 +10996,7 @@
       energyMax: 2,
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-      parachuteOpensAtY: options.y + (Math.random() * (370 - options.y)) + (!tutorialMode && Math.random() > 0.9 ? 999 : 0),
+      parachuteOpensAtY: options.y + (rnd(370 - options.y)) + (!tutorialMode && Math.random() > 0.9 ? 999 : 0),
       direction: 0,
       width: 10,
       height: 11, // 19 when parachute opens
@@ -11451,8 +11454,8 @@
 
     for (i = 0; i < shrapnelCount; i++) {
 
-      explosionVelocity1 = Math.random() * explosionVelocityMax;
-      explosionVelocity2 = Math.random() * explosionVelocityMax;
+      explosionVelocity1 = rnd(explosionVelocityMax);
+      explosionVelocity2 = rnd(explosionVelocityMax);
 
       vectorX = -explosionVelocity1 * Math.cos(angle * deg2Rad);
       vectorY = -explosionVelocity2 * Math.sin(angle * deg2Rad);
