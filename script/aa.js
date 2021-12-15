@@ -1127,6 +1127,9 @@
       if (exports && exports.dom && exports.data && exports.data.isOnScreen) {
         exports.dom.o.style.bottom = ((280 * (bottomY / 100)) + 'px');
       }
+  function plusMinus() {
+    return Math.random() >= 0.5 ? 1 : -1;
+  }
 
     },
 
@@ -7013,7 +7016,7 @@
     options = options || {};
 
     function randomDistance() {
-      return ((parseInt(Math.random() * 10, 10) * Math.random() > 0.5 ? -1 : 1) + 'px');
+      return (rndInt(10) * plusMinus()) + 'px';
     }
 
     function spark() {
