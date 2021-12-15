@@ -230,6 +230,7 @@
   var deg2Rad = 180 / Math.PI;
 
   // used for various measurements in the game
+  var worldWidth = 8192;
   var worldHeight = 380;
 
   var battleOver = false;
@@ -2047,31 +2048,76 @@
   }
 
   var soundIDs = 0;
+
+  var soundsToPlay = [];
+
+  function playQueuedSounds() {
+    // empty queue
+    for (var i=0, j=soundsToPlay.length; i<j; i++) {
+      if (soundsToPlay[i] && soundsToPlay[i].soundObject && soundsToPlay[i].soundObject.sound) {
+        soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
+
+        // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
+        // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
+        soundsToPlay[i].soundObject.sound.setVolume(soundsToPlay[i].localOptions.volume);
+      }
+    }
+
+    // reset, instead of creating a new array object
+    soundsToPlay.length = 0;
+  }
+
+  function getVolumeFromDistance(obj1, obj2) {
+    // based on two objects' distance from each other, return volume -
+    // e.g., things far away are quiet, things close-up are loud
+    if (!obj1 || !obj2) return 100;
+
+    var delta = Math.abs(obj1.data.x - obj2.data.x);
+
+    // volume range: 5-30%?
+    return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
+  }
+
   function playSound(soundReference, target, soundOptions) {
 
     var soundObject = getSound(soundReference),
       localOptions,
       onScreen;
 
-    if (!userDisabledSound && soundObject) {
+    // just in case
+    if (!soundObject || !soundObject.sound) return null;
 
-      onScreen = (!target || isOnScreen(target));
+    if (userDisabledSound) return soundObject.sound;
 
-      localOptions = soundObject.soundOptions[onScreen ? 'onScreen' : 'offScreen'];
+    // TODO: revisit on-screen logic, drop the function call
+    onScreen = (!target || isOnScreen(target));
+    // onScreen = (target && target.data && target.data.isOnScreen);
+    
+    // old: determine volume based on on/off-screen status
+    // localOptions = soundObject.soundOptions[onScreen ? 'onScreen' : 'offScreen'];
 
-      if (soundOptions) {
-        localOptions = mixin(localOptions, soundOptions);
-      }
-
-      soundObject.sound.play(localOptions);
-
-      // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
-      // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
-      soundObject.sound.setVolume(localOptions.volume);
-
+    // new: calculate volume as range based on distance
+    if (onScreen) {
+      localOptions = soundObject.soundOptions.onScreen;
+    } else {
+      // determine volume based on distance
+      localOptions = {
+        volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects.helicopters[0])
+      };
     }
 
-    return soundObject ? soundObject.sound : null;
+    if (soundOptions) {
+      localOptions = mixin(localOptions, soundOptions);
+    }
+      
+    // 01/2021: push sound calls off to next frame to be played in a batch,
+    // trade-off of slight async vs. blocking(?) current frame
+    soundsToPlay.push({
+      soundObject: soundObject,
+      localOptions: localOptions
+    });
+
+    return soundObject.sound;
 
   }
 
@@ -4354,6 +4400,8 @@
         // hack: only animate shrapnel.
         gameObjects = game.objects.shrapnel;
       }
+      // there may be sounds from the last frame, ready to go.
+      playQueuedSounds();
 
       for (item in gameObjects) {
 
