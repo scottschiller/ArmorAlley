@@ -844,7 +844,6 @@
     // while they were off-screen (e.g., infantry) and removed from the DOM, if pruning is enabled.
     // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
     // the battlefield under any circumstances. ;)
-    if (useDOMPruning && node && node === game.objects.view.dom.battleField) return;
     if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
     // hide immediately
