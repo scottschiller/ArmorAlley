@@ -5495,7 +5495,7 @@
 
   SuperBunker = function(options) {
 
-    var css, dom, data, objects, nearby, radarItem, exports;
+    var css, dom, data, height, nearby, radarItem, exports;
 
     function updateFireModulus() {
 
@@ -5589,7 +5589,7 @@
           vY: 0
         };
 
-        objects.gunfire.push(new GunFire(fireOptions));
+        game.objects.gunfire.push(new GunFire(fireOptions));
 
         // other side
         fireOptions.x = (data.x - 1);
@@ -5597,7 +5597,7 @@
         // and reverse direction
         fireOptions.vX = -2;
 
-        objects.gunfire.push(new GunFire(fireOptions));
+        game.objects.gunfire.push(new GunFire(fireOptions));
 
         if (sounds.genericGunFire) {
           playSound(sounds.genericGunFire, exports);
@@ -5609,19 +5609,7 @@
 
     function animate() {
 
-      var i, spliceArgs;
-
-      spliceArgs = [i, 1];
-
       data.frameCount++;
-
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
-      }
 
       // start, or stop firing?
       nearbyTest(nearby);
@@ -5629,7 +5617,7 @@
       fire();
 
       // note: super bunkers never die, but leaving this in anyway.
-      return (!dom.o && !objects.gunfire.length);
+      return (!dom.o);
 
     }
 
@@ -5692,10 +5680,6 @@
 
     dom = {
       o: null
-    };
-
-    objects = {
-      gunfire: []
     };
 
     exports = {
