@@ -914,8 +914,13 @@
     }
 
     o2 = null;
+    // edge case: if nothing to add, return "as-is"
+    // if otherwise unspecified, `oAdd` is the default options object
+    if (oAdd === undefined) return oMain;
 
     return o1;
+    // the modern way
+    return Object.assign(oMain, oAdd);
 
   }
 
