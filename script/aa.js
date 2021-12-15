@@ -7358,18 +7358,17 @@
 
       }
 
-      if ((data.x > 8192 && data.windOffsetX) || (data.x < 0 && !data.windOffsetX)) {
-
-        // reverse gears
-        data.windOffsetX *= -1;
-
+      // prevent clouds drifting out of the world, by shifting the wind
+      // (previously: hard bounce / reverse, didn't look right.)
+      if (data.x + data.width > worldWidth) {
+        data.windOffsetX = Math.max(data.windOffsetX - 0.05, -3);
+      } else if (data.x < 0) {
+        data.windOffsetX = Math.min(data.windOffsetX + 0.05, 3);
       }
 
       if ((data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) || (data.windOffsetY < 0 && data.y < 64)) {
-
         // reverse gears
         data.windOffsetY *= -1;
-
       }
 
       moveTo(data.x + data.windOffsetX, data.y + data.windOffsetY);
