@@ -894,30 +894,10 @@
 
   function mixin(oMain, oAdd) {
 
-    // non-destructive merge
-    var o1 = (oMain || {}), o2, o;
-
-    // if unspecified, o2 is the default options object
-    o2 = (oAdd === undefined ? {} : oAdd);
-
-    for (o in o2) {
-      if (o2.hasOwnProperty(o)) {
-        if (typeof o2[o] !== 'object' || o2[o] === null || o2[o] === undefined || o2[o] instanceof Array) {
-          // assign directly
-          o1[o] = o2[o];
-        } else {
-          // recurse through o2
-          o1[o] = mixin(o1[o], o2[o]);
-        }
-      }
-    }
-
-    o2 = null;
     // edge case: if nothing to add, return "as-is"
     // if otherwise unspecified, `oAdd` is the default options object
     if (oAdd === undefined) return oMain;
 
-    return o1;
     // the modern way
     return Object.assign(oMain, oAdd);
 
