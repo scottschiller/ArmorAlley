@@ -3962,7 +3962,7 @@
           if (dieOptions && dieOptions.silent) {
 
             // bye bye! (next scheduled frame)
-            window.requestAnimationFrame(dieComplete);
+            setFrameTimeout(dieComplete, 1);
 
           } else {
 
@@ -3974,6 +3974,9 @@
 
           // balloon, etc.
           setFrameTimeout(function() {
+            // only do this if the parent (balloon) is still dead.
+            // it may have respawned almost immediately by passing infantry.
+            if (oParent && oParent.data && !oParent.data.dead) return;
             utils.css.add(dom.o, css.dead);
           }, 1000);
 
