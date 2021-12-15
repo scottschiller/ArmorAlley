@@ -4438,33 +4438,42 @@
 
   };
 
-  function updateIsOnScreen(o) {
-    if (!o || !o.data) return;
+  function updateIsOnScreen(o, forceUpdate) {
+    if (!o || !o.data || !useDOMPruning) return;
 
-    if (isOnScreen(o)) {
+    if (isOnScreen(o) || forceUpdate) {
 
-      if (!o.data.isOnScreen) {
+      // exit if not already updated
+      if (o.data.isOnScreen) return;
 
-        o.data.isOnScreen = true;
+      o.data.isOnScreen = true;
 
-        if (o.dom && o.dom.o) {
+      // node may not exist
+      if (!o.dom || !o.dom.o) return;
 
-          if (o.dom.o.style.transform) {
-            // MOAR GPU! re-apply transform that might have been removed
-            common.setTransformXY(o.dom.o, o.data.x + 'px', '0px');
-          }
+      if (o.dom.o._lastTransform) {
+        // MOAR GPU! re-apply transform that was present at, or updated since, removal
+        o.dom.o.style.transform = o.dom.o._lastTransform;
+      }
 
-          utils.css.remove(o.dom.o, common.defaultCSS.offScreen);
+      o.dom.o.style.contentVisibility = 'visible';
 
-          if (useDOMPruning) {
-            if (o.dom._oRemovedParent) {
-              o.dom._oRemovedParent.appendChild(o.dom.o);
-              o.dom._oRemovedParent = null;
-            }
-          }
+      if (o.dom._oRemovedParent) {
 
-        }
+        // previously removed: re-append to DOM
+        o.dom._oRemovedParent.appendChild(o.dom.o);
+        o.dom._oRemovedParent = null;
 
+      } else {
+
+        // first-time append, first time on-screen
+        game.dom.world.appendChild(o.dom.o);
+
+      }
+     
+      // callback, if defined
+      if (o.isOnScreenChange) {
+        o.isOnScreenChange(o.data.isOnScreen);
       }
 
     } else if (o.data.isOnScreen) {
@@ -4473,27 +4482,27 @@
 
       if (o.dom && o.dom.o) {
 
-        /*
         // manually remove x/y transform, will be restored when on-screen.
         if (o.dom.o.style.transform) {
           // 'none' might be considered a type of transform per Chrome Dev Tools,
           // and thus incur an "inline transform" cost vs. an empty string.
           // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
+          o.dom.o._lastTransform = o.dom.o.style.transform;
           o.dom.o.style.transform = 'none';
         }
-        */
 
-        if (useDOMPruning) {
-
-          if (o.dom.o.parentNode) {
-            o.dom._oRemovedParent = o.dom.o.parentNode;
-            o.dom._oRemovedParent.removeChild(o.dom.o);
-          }
-
+        if (o.dom.o.parentNode) {
+          o.dom._oRemovedParent = o.dom.o.parentNode;
+          o.dom._oRemovedParent.removeChild(o.dom.o);
         }
 
-        utils.css.add(o.dom.o, common.defaultCSS.offScreen);
+        o.dom.o.style.contentVisibility = 'hidden';
 
+      }
+
+      // callback, if defined
+      if (o.isOnScreenChange) {
+        o.isOnScreenChange(o.data.isOnScreen);
       }
 
     }
