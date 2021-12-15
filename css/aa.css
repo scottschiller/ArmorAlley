@@ -1502,7 +1502,7 @@ ul.stats-bar .bombs em {
   top: -5px;
 }
 
-.turret:not(.destroyed):not(.firing) .sub-sprite {
+.turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
   animation: scan 2s linear alternate infinite;
 }
 

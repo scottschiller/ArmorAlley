@@ -5834,20 +5834,6 @@
     }
 
     function scan() {
-
-      // this is a CSS animation, now.
-      /*
-      if (features.transform.prop && okToMove()) {
-        data.angle += data.scanIncrement;
-        if (data.angle > data.maxAngle || data.angle < -data.maxAngle) {
-          data.scanIncrement *= -1;
-        }
-        setAngle(data.angle);
-      }
-      */
-
-    }
-
     function fire() {
 
       var deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
@@ -6082,9 +6068,7 @@
           fire();
         }
         // workaround: allow scanning while being repaired
-        if (!data.firing || data.energy > 0) {
-          scan();
-        }
+        if (!data.dead) fire();
       }
 
       if (data.energy > 0 && data.energy < data.energyMax && data.frameCount % data.smokeModulus === 0) {
@@ -6196,11 +6180,7 @@
       halfHeight: 7,
       angle: 0,
       maxAngle: 90,
-      scanIncrement: 0
     }, options);
-
-    // how fast to "scan" (left -> right, and back)
-    data.scanIncrement = ((90 * data.scanModulus) / FPS);
 
     dom = {
       o: null,
