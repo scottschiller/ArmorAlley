@@ -8919,7 +8919,7 @@
           tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
 
           /*eslint-disable no-mixed-operators */
-          objects.gunfire.push(new GunFire({
+          game.objects.gunfire.push(new GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
@@ -9671,15 +9671,6 @@
       // animate child objects, too
 
       // TODO: for ... in
-
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i] && objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          objects.gunfire[i] = null;
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
-      }
 
       for (i = objects.bombs.length - 1; i >= 0; i--) {
         if (objects.bombs[i].animate()) {
