@@ -1865,7 +1865,10 @@
           foundHit = true;
 
           if (options.hit) {
-            options.hit(options.targets[i]);
+            
+            // provide target, "no specific points", source.
+            options.hit(options.targets[i], null, options.source);
+
             // update energy?
             updateEnergy(options.targets[i]);
           }
