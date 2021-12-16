@@ -14348,6 +14348,7 @@
 
       // meaningful labels for key values
       keyMap = {
+        banana: 66,
         rubber_chicken: 67,
         shift: 16,
         ctrl: 17,
@@ -14495,19 +14496,34 @@
 
       },
 
+      // "b" (banana)
+      66: {
+        down: function() {
+
+          // heat-seeking banana
+          setMissileMode(bananaMode);
+
+          game.objects.helicopters[0].setMissileLaunching(true);
+
+        },
+
+        up: function() {
+
+          game.objects.helicopters[0].setMissileLaunching(false);
+
+        }
+
+      },
+
       // "c" (rubber chicken)
       67: {
 
         down: function() {
 
-          game.objects.helicopters[0].setMissileLaunching(true, true);
+          // heat-seeking rubber chicken
+          setMissileMode(rubberChickenMode);
 
-          // enable rubber chicken in UI, if not already.
-          if (!forceRubberChicken) {
-            utils.css.add(document.getElementById('world'), rubberChickenMode);
-          }
-
-          document.querySelector('#stats-bar .missiles .letter-block').innerHTML = 'C';
+          game.objects.helicopters[0].setMissileLaunching(true);
 
         },
 
@@ -14523,6 +14539,9 @@
       88: {
 
         down: function() {
+
+          // standard heat-seeking missile
+          setMissileMode(defaultMissileMode);
 
           game.objects.helicopters[0].setMissileLaunching(true);
 
