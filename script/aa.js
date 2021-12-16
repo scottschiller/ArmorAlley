@@ -239,7 +239,9 @@
 
   var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
 
-  var deg2Rad = 180 / Math.PI;
+  var DEFAULT_VOLUME = 25;
+
+  var rad2Deg = 180 / Math.PI;
 
   // used for various measurements in the game
   var worldWidth = 8192;
@@ -12563,11 +12565,15 @@
     halfWidth = localOptions.width / 2;
 
     // randomize X?
-    if (shrapnelOptions.randomX) {
-      localOptions.x += parseInt(Math.random() * localOptions.width, 10);
-    } else {
-      // center?
+    if (shrapnelOptions.centerX) {
       localOptions.x += halfWidth;
+    } else {
+      localOptions.x += rnd(localOptions.width);
+    }
+
+    // silly, but copy right over.
+    if (shrapnelOptions.noInitialSmoke) {
+      localOptions.noInitialSmoke = shrapnelOptions.noInitialSmoke;
     }
 
     angle = 0;
@@ -12583,8 +12589,8 @@
       explosionVelocity1 = rnd(explosionVelocityMax);
       explosionVelocity2 = rnd(explosionVelocityMax);
 
-      vectorX = -explosionVelocity1 * Math.cos(angle * deg2Rad);
-      vectorY = -explosionVelocity2 * Math.sin(angle * deg2Rad);
+      vectorX = -explosionVelocity1 * Math.cos(angle * rad2Deg);
+      vectorY = -explosionVelocity2 * Math.sin(angle * rad2Deg);
 
       localOptions.vX = (localOptions.vX * 0.5) + vectorX;
       localOptions.vY += vectorY;
