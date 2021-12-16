@@ -8381,188 +8381,220 @@
 
     function animate() {
 
-      var deltaX, deltaY, newTarget, targetData, angle, hitBottom, targetHalfWidth, targetHeightOffset;
+      var deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
 
-      if (!data.dead) {
+      // notify caller if now dead and can be removed.
+      if (data.dead) return (data.dead && !dom.o);
 
-        targetData = objects.target.data;
+      targetData = objects.target.data;
 
-        targetHalfWidth = targetData.width / 2;
-        targetHeightOffset = (targetData.type === TYPES.balloon ? 0 : targetData.height / 2);
+      targetHalfWidth = targetData.width / 2;
+      targetHeightOffset = (targetData.type === TYPES.balloon ? 0 : targetData.height / 2);
 
-        // delta of x/y between this and target
-        deltaX = (targetData.x + targetHalfWidth) - data.x;
+      // delta of x/y between this and target
+      deltaX = (targetData.x + targetHalfWidth) - data.x;
 
-        // TODO: hack full height for balloon?
-        deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+      // TODO: hack full height for balloon?
+      deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
 
-        // if original target has died, try to find a new target.
-        // e.g., two missiles fired at enemy helicopter, first one hits and kills it.
-        // in the original game, missiles would die when the original target died -
-        // but, missiles are rare (you get two per chopper) and take time to re-arm,
-        // and they're "smart" - so in my version, missiles get retargeting capability
-        // for at least one animation frame after the original target is lost.
-        // if retargeting finds nothing at the moment the original is lost, the missile will die.
-        if (!data.expired && (!objects.target || objects.target.data.dead)) {
+      // if original target has died, try to find a new target.
+      // e.g., two missiles fired at enemy helicopter, first one hits and kills it.
+      // in the original game, missiles would die when the original target died -
+      // but, missiles are rare (you get two per chopper) and take time to re-arm,
+      // and they're "smart" - so in my version, missiles get retargeting capability
+      // for at least one animation frame after the original target is lost.
+      // if retargeting finds nothing at the moment the original is lost, the missile will die.
+      if (!data.expired && (!objects.target || objects.target.data.dead)) {
 
-          // stop tracking the old one, as applicable.
-          if (objects.target.data.dead) {
-            setTargetTracking();
-          }
-
-          newTarget = getNearestObject(exports, {
-            useInFront: true
-          });
-
-          if (newTarget && !newTarget.data.cloaked && !newTarget.data.dead) {
-            // we've got a live one!
-            if (launchSound) {
-              launchSound.stop().play();
-            }
-            objects.target = newTarget;
-            // and start tracking.
-            setTargetTracking(true);
-          }
-
-        }
-
-        if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
-
-          utils.css.add(dom.o, css.expired);
-          utils.css.add(radarItem.dom.o, css.expired);
-
-          data.expired = true;
-          data.hostile = true;
-
-          // burst of thrust when the missile expires?
-          data.vX *= 1.5;
-          data.vY *= 1.5;
-
-          if (data.isRubberChicken && sounds.rubberChicken.expire) {
-
-            playSound(sounds.rubberChicken.expire, exports);
-
-            if (launchSound) {
-              // hackish: apply launch sound volume, for consistency
-              sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
-            }
-
-          }
-
-          // if still tracking something, un-mark it.
+        // stop tracking the old one, as applicable.
+        if (objects.target.data.dead) {
           setTargetTracking();
-
         }
 
-        if (data.expired) {
+        newTarget = getNearestObject(exports, {
+          useInFront: true
+        });
 
-          // fall...
-          data.gravity *= 1.1;
+        if (newTarget && !newTarget.data.cloaked && !newTarget.data.dead) {
+          // we've got a live one!
+          objects.target = newTarget;
 
-          // ... and decelerate on X-axis.
-          data.vX *= 0.95;
-
-        } else {
-
-          // x-axis
-
-          // data.vX += (deltaX >= 0 ? data.thrust : -data.thrust);
-
-          // if changing directions, cut in half.
-          data.vX += deltaX * 0.0065;
-
-          // y-axis
-
-          if (deltaY <= targetData.height && deltaY >= -targetData.height) {
-
-            // lock on target.
-
-            if (data.vY >= 0 && data.vY >= 0.25) {
-              data.vY *= 0.8;
-            } else if (data.vY <= 0 && data.vY < -0.25) {
-              data.vY *= 0.8;
-            }
-
-          } else {
-
-            // relative to target at all times
-            // data.vY += deltaY * 0.0125;
-
-            data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
-
+          if (launchSound) {
+            launchSound.stop();
+            launchSound.play();
           }
 
+          // and start tracking.
+          setTargetTracking(true);
         }
-
-        // and throttle
-        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
-
-        if (Math.random() >= 0.95) {
-
-          game.objects.smoke.push(new Smoke({
-            x: data.x,
-            y: data.y,
-            spriteFrame: 3
-          }));
-
-        }
-
-        hitBottom = moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
-
-        if (!hitBottom) {
-
-          // hack deltas for angle
-
-          if (deltaX > 360) {
-            deltaX %= 180;
-          }
-
-          angle = Math.atan2(deltaY, deltaX) * deg2Rad;
-
-        } else if (data.vX > 0) {
-
-          // bottom-aligned. Heading left, or right?
-          angle = 0;
-
-        } else {
-
-          angle = 180;
-
-        }
-
-        if (features.transform.prop) {
-          dom.o.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
-        }
-
-        moveTrailers();
-
-        data.frameCount++;
-
-        if (data.frameCount >= data.dieFrameCount) {
-          die();
-          // but don't fall too fast?
-          data.vYMax *= 0.5;
-        }
-
-        // hit bottom?
-        if (data.y > game.objects.view.data.battleField.height - 3) {
-          data.y = game.objects.view.data.battleField.height - 3;
-          die(true);
-        }
-
-        collisionTest(collision, exports);
 
       }
 
-      // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o);
+      // "out of gas" -> dangerous to both sides -> fall to ground
+      if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
 
+        utils.css.add(dom.o, css.expired);
+        utils.css.add(radarItem.dom.o, css.expired);
+
+        data.expired = true;
+        data.hostile = true;
+
+        if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.expire) {
+
+          playSound(sounds.rubberChicken.expire, exports);
+
+          if (launchSound) {
+            // hackish: apply launch sound volume, for consistency
+            if (sounds.rubberChicken.expire.sound) sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
+          }
+
+        }
+
+        if (data.isBanana && sounds.banana.expire) {
+
+          playSound(sounds.banana.expire, exports);
+
+          if (launchSound) {
+            // hackish: apply launch sound volume, for consistency
+            if (sounds.banana.expire.sound) sounds.banana.expire.sound.setVolume(launchSound.volume);
+          }
+
+        }
+
+        // if still tracking something, un-mark it.
+        setTargetTracking();
+
+      }
+
+      if (data.expired) {
+
+        // fall...
+        data.gravity *= 1.085;
+
+        // ... and decelerate on X-axis.
+        data.vX *= 0.95;
+
+      } else {
+
+        // x-axis
+
+        // if changing directions, cut in half.
+        data.vX += deltaX * 0.0033;
+
+        // y-axis
+
+        if (deltaY <= targetData.height && deltaY >= -targetData.height) {
+
+          // lock on target.
+
+          if (data.vY >= 0 && data.vY >= 0.25) {
+            data.vY *= 0.8;
+          } else if (data.vY <= 0 && data.vY < -0.25) {
+            data.vY *= 0.8;
+          }
+
+        } else {
+
+          data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
+
+        }
+
+      }
+
+      // and throttle
+      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+      var progress = data.frameCount / data.expireFrameCount;
+
+      // smoke increases as missle nears expiry
+      var smokeThreshold = 1.25 - (Math.min(1, progress));
+
+      if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
+        data.nearExpiry = true;
+
+        // if targeting the player, start expiry warning sound
+        if (objects.target && objects.target === game.objects.helicopters[0]) {
+          playSound(sounds.missileWarningExpiry, exports);
+          stopSound(sounds.missileWarning);
+        }
+
+        // allow a burst of thrust when near expiry, as in the original game.
+        // this can make "almost-done" missiles very dangerous.
+        data.vXMax *= gameType === 'extreme' ? 1.25 : 1.1;
+        data.vYMax *= gameType === 'extreme' ? 1.25 : 1.1;
+      }
+
+      if (
+        data.isOnScreen && (
+          data.expired
+          || progress >= data.nearExpiryThreshold
+          || (progress >= 0.05 && Math.random() >= smokeThreshold)
+        )
+      ) {
+        game.objects.smoke.push(new Smoke({
+          x: data.x + (data.vX < 0 ? data.width - 2: 0),
+          y: data.y + 3,
+          spriteFrame: 3
+        }));
+      }
+
+      newX = data.x + data.vX;
+      newY = data.y + (!data.expired ? data.vY : (Math.min(data.vY + data.gravity, data.vYMaxExpired)));
+
+      // determine angle of missile (pointing at target, not necessarily always heading that way)
+      rad = Math.atan2(deltaY, deltaX);
+
+      moveTo(newX, newY, rad * rad2Deg);
+
+      // push x/y to trailer history arrays, maintain size
+      data.xHistory.push(data.x);
+      data.yHistory.push(data.y);
+
+      if (data.xHistory.length > data.trailerCount + 1) {
+        data.xHistory.shift();
+        data.yHistory.shift();
+      }
+
+      moveTrailers();
+
+      data.frameCount++;
+
+      if (data.frameCount >= data.dieFrameCount) {
+        die();
+        // but don't fall too fast?
+        data.vYMax *= 0.5;
+      }
+
+      // hit bottom?
+      if (data.y > game.objects.view.data.battleField.height - 3) {
+        data.y = game.objects.view.data.battleField.height - 3;
+        die({ silent: true });
+
+        // if targeting the player, stop expiry sound
+        if (objects.target && objects.target === game.objects.helicopters[0]) {
+          stopSound(sounds.missileWarningExpiry);
+        }
+      }
+
+      // missiles are animated by their parent - e.g., helicopters,
+      // and not the main game loop. so, on-screen status is checked manually here.
+      updateIsOnScreen(exports);
+
+      collisionTest(collision, exports);
+
+    }
+
+    function isOnScreenChange(isOnScreen) {
+      if (!isOnScreen) {
+        // missile might leave trailers when it leaves the screen
+        hideTrailers();
+      }
     }
 
     function initSmartMissle() {
 
-      var i, trailerConfig, fragment;
+      var i, trailerConfig, oTrailer, fragment;
 
       fragment = document.createDocumentFragment();
 
@@ -8574,15 +8606,17 @@
         className: css.trailer
       };
 
+      oTrailer = makeSprite(trailerConfig);
+
+      // initial placement
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + data.angle + 'deg)');
+
       for (i = 0; i < data.trailerCount; i++) {
-        dom.trailers.push(makeSprite(trailerConfig));
-        // TODO: clone, optimize etc.
+        dom.trailers.push(oTrailer.cloneNode(true));
         fragment.appendChild(dom.trailers[i]);
       }
 
-      // (literal) smoke test
-      dom.oSubSprite = makeSubSprite();
-      dom.o.appendChild(dom.oSubSprite);
+      oTrailer = null;
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -8590,9 +8624,8 @@
 
       data.yMax = (game.objects.view.data.battleField.height - data.height);
 
+      // TODO: review and see if trailer fragment can be dynamically-appended when on-screen, too
       game.dom.world.appendChild(fragment);
-
-      game.dom.world.appendChild(dom.o);
 
       // mark the target.
       setTargetTracking(true);
@@ -8601,7 +8634,12 @@
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-      if (data.isRubberChicken && sounds.rubberChicken.launch) {
+      if (data.isBanana && sounds.banana.launch) {
+
+        // special case: enemy missile launchers should always play at full volume - they're close enough.
+        launchSound = playSound(sounds.banana.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports));
+
+      } else if (data.isRubberChicken && sounds.rubberChicken.launch) {
 
         // special case: enemy missile launchers should always play at full volume - they're close enough.
         launchSound = playSound(sounds.rubberChicken.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports));
@@ -8620,8 +8658,14 @@
       options.isRubberChicken = true;
     }
 
+    if (forceBanana) {
+      options.isBanana = true;
+    }
+
     css = inheritCSS({
       className: 'smart-missile',
+      banana: 'banana',
+      rubberChicken: 'rubber-chicken',
       tracking: 'smart-missile-tracking',
       trackingActive: 'smart-missile-tracking-active',
       trackingRemoval: 'smart-missile-tracking-removal',
@@ -8632,7 +8676,11 @@
 
     // special case
     if (options.isRubberChicken) {
-      css.className += ' rubber-chicken';
+      css.className += ' ' + css.rubberChicken;
+    }
+
+    if (options.isBanana) {
+      css.className += ' ' + css.banana;
     }
 
     data = inheritData({
@@ -8642,6 +8690,8 @@
       energyMax: 1,
       expired: false,
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
+      nearExpiry: false,
+      nearExpiryThreshold: 0.88,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 256,
       dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
@@ -8649,17 +8699,23 @@
       height: 15,
       gravity: 1,
       damagePoints: 25,
-      isRubberChicken: options.isRubberChicken || false,
+      isRubberChicken: !!options.isRubberChicken,
+      isBanana: !!options.isBanana,
+      onDie: options.onDie || null,
       vX: 1 + Math.random(),
       vY: 1 + Math.random(),
-      vXMax: 10 + (Math.random() * 3),
-      vYMax: 10 + (Math.random() * 3),
-      thrust: 0.5 + (Math.random() * 0.5),
+      vXMax: 12 + rnd(6) + (options.vXMax || 0),
+      vYMax: 12 + rnd(6) + (options.vYMax || 0),
+      vYMaxExpired: 36,
+      thrust: 0.5 + rnd(0.5),
       deadTimer: null,
-      trailerCount: 5,
+      trailerCount: 16,
       xHistory: [],
       yHistory: [],
-      yMax: null
+      yMax: null,
+      angle: options.isEnemy ? 180 : 0,
+      angleIncrement: 45,
+      noEnergyStatus: true
     }, options);
 
     dom = {
@@ -8679,7 +8735,7 @@
           sparkAndDie(target);
         }
       },
-      items: ['tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'bunkers', 'superBunkers', 'balloons', 'smartMissiles', 'turrets']
+      items: ['superBunkers', 'helicopters', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'balloons', 'smartMissiles', 'turrets']
     };
 
     exports = {
@@ -8687,6 +8743,7 @@
       data: data,
       dom: dom,
       die: die,
+      isOnScreenChange: isOnScreenChange,
       objects: objects
     };
 
