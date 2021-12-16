@@ -3327,15 +3327,16 @@
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
-        common.setTransformXY(dom.battleField, (data.battleField.scrollLeft * -1) + 'px', '0px');
+        common.setTransformXY(undefined, dom.battleField, -data.battleField.scrollLeft + 'px', '0px');
         // ... and parallax.
         if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
           // firefox text rendering really doesn't look nice when translating the stars.
-          common.setTransformXY(dom.stars, (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px', '0px');
+          // TODO: revisit the firefox thing.
+          common.setTransformXY(undefined, dom.stars, (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px', '0px');
         }
       } else {
         // move via margin + background position
-        dom.battleField.style.marginLeft = -(data.battleField.scrollLeft, 10) + 'px';
+        dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
         dom.stars.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
       }
 
@@ -3350,6 +3351,7 @@
       data.browser.width = (window.innerWidth || document.body.clientWidth) / screenScale;
       data.browser.height = (window.innerHeight || document.body.clientHeight) / screenScale;
 
+      data.browser.eighthWidth = data.browser.width / 8;
       data.browser.fractionWidth = data.browser.width / 3;
       data.browser.halfWidth = data.browser.width / 2;
       data.browser.twoThirdsWidth = data.browser.width * (2 / 3);
@@ -3363,13 +3365,16 @@
       if (!data.battleField.width) {
         // dimensions assumed to be static, can be grabbed once
         // hard-code `battleField` width, instead of measuring.
-        data.battleField.width = 8192; // dom.battleField.offsetWidth;
+        data.battleField.width = worldWidth; // dom.battleField.offsetWidth;
         data.battleField.height = dom.battleField.offsetHeight;
         data.topBar.height = dom.topBar.offsetHeight;
       }
 
+      // isOnScreen() references this a lot.
+      data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
+
       if (dom.stars && features.transform.prop) {
-        // GPU case: Be wide enough to cover parallax scroll effect. browser width + (world width * 0.1)
+        // GPU case: Be wide enough to cover parallax scroll effect. browser width + 10% of world width
         dom.stars.style.width = data.browser.width + (data.battleField.width * 0.1) + 'px';
       }
 
