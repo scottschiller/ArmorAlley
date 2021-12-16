@@ -1193,37 +1193,18 @@
 
     hit: function(target, hitPoints, attacker) {
 
-      if (!target.data.dead) {
 
-        /**
-         * special case: super-bunkers can only be damaged by tank gunfire.
-         * other things can hit super-bunkers, but we don't want damage done in this case.
-         */
+      if (target.data.dead) return;
 
-        if (target.data.type === TYPES.superBunker) {
-          if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) {
-            return;
-          }
         }
 
-        hitPoints = hitPoints || 1;
 
-        target.data.energy = Math.max(0, target.data.energy - hitPoints);
 
-        // special cases for updating state
-        if (target.updateHealth) {
-          target.updateHealth();
         }
 
-        // for debugging / fun
-        updateEnergy(target);
 
-        if (target.data.energy <= 0) {
 
-          target.data.energy = 0;
 
-          if (target.die) {
-            target.die();
           }
 
         }
