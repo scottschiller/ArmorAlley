@@ -1926,32 +1926,29 @@
 
   function objectInView(data, options) {
 
-    // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen).
+    // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen),
+    // alive, either enemy or friendly (depending on option), not cloaked, and within range.
 
-    var i, j, items, deltaX, result;
+    var i, j, items, result;
 
     options = options || {};
 
-    // by default...
-    
+    // defaults
     options.triggerDistance = options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+    options.friendlyOnly = !!options.friendlyOnly;
 
-    // by default, take helicopters if nothing else.
     items = game.objects[(options.items || 'helicopters')];
 
     for (i = 0, j = items.length; i < j; i++) {
-
-      // how far away is the target?
-      deltaX = (items[i].data.x > data.x ? items[i].data.x - data.x : data.x - items[i].data.x);
-
-      if (!items[i].data.dead && !items[i].data.cloaked && deltaX < options.triggerDistance && (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral)) {
-
+      if (
+        !items[i].data.dead
+        && !items[i].data.cloaked
+        && (options.friendlyOnly ? data.isEnemy === items[i].data.isEnemy : (data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral))
+        && Math.abs(items[i].data.x - data.x) < options.triggerDistance
+      ) {
         result = items[i];
-
         break;
-
       }
-
     }
 
     return result;
