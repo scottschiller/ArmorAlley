@@ -2270,6 +2270,7 @@
             if (isRepairing()) {
               playImpactWrench.apply(this, args);
             }
+          }, 500 + rndInt(2000));
         }
       });
 
