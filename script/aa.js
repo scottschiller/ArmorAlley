@@ -4958,10 +4958,13 @@
     }
 
     data = {
+      battleOverFrameCount: 0,
+      gameStopped: false,
       frameCount: 0,
       lastExec: 0,
       elapsedTime: 0,
       frames: 0,
+      lastFrames: 0,
       timer: null,
       fpsTimer: null,
       fpsTimerInterval: 1000,
@@ -4985,29 +4988,28 @@
 
     var yourBase, enemyBase;
 
-    if (!battleOver) {
+    // just in case
+    if (battleOver) return;
 
-      yourBase = game.objects.bases[0];
-      enemyBase = game.objects.bases[1];
+    yourBase = game.objects.bases[0];
+    enemyBase = game.objects.bases[1];
 
-      if (!youWon) {
+    if (!youWon) {
 
-        // sorry, better luck next time.
-        yourBase.die();
+      // sorry, better luck next time.
+      yourBase.die();
 
-      } else {
+    } else {
 
-        enemyBase.die();
-
-      }
-
-      battleOver = true;
-
-      utils.css.add(document.body, 'game-over');
-
-      stats.displayEndGameStats();
+      enemyBase.die();
 
     }
+
+    battleOver = true;
+
+    utils.css.add(document.body, 'game-over');
+
+    stats.displayEndGameStats();
 
   }
 
