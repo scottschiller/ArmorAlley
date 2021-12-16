@@ -4606,6 +4606,8 @@
       // update some items every frame, most items can be throttled.
       isInterval = (data.frameCount++ >= data.animateInterval);
 
+      if (isInterval) {
+        data.frameCount = 0;
       }
 
       /*
@@ -4996,6 +4998,9 @@
 
       }
 
+      // snow?
+      if (window.snowStorm && window.snowStorm.snow) {
+        window.snowStorm.snow();
       }
 
     }
@@ -5110,27 +5115,25 @@
 
   Balloon = function(options) {
 
+    var css, data, dom, height, objects, radarItem, reset, exports;
 
     function moveTo(x, y) {
 
-    function moveTo(x, bottomY) {
       var needsUpdate;
 
       if (x !== undefined && data.x !== x) {
-        if (data.isOnScreen) {
-        }
         data.x = x;
         needsUpdate = true;
       }
 
+      if (y !== undefined && data.y !== y) {
         data.y = y;
         needsUpdate = true;
 
       }
 
-      // snow?
-      if (window.snowStorm && window.snowStorm.snow) {
-        window.snowStorm.snow();
+      if (needsUpdate) {
+        common.setTransformXY(exports, exports.dom.o, data.x + 'px', data.y + 'px');
       }
 
     }
@@ -5694,19 +5697,16 @@
     function infantryHit(target) {
 
       // an infantry unit has made contact with a bunker.
-
       if (target.data.isEnemy === data.isEnemy) {
 
         // a friendly passer-by.
-
         repair();
 
       } else if (collisionCheckMidPoint(exports, target)) {
 
         // non-friendly, kill the infantry - but let them capture the bunker first.
-
         capture(target.data.isEnemy);
-        target.die();
+        target.die({ silent: true });
 
       }
 
@@ -5732,11 +5732,10 @@
       // first time, create at random Y location.
       createBalloon(true);
 
-      common.setTransformXY(exports.dom.o, data.x + 'px', '0px');
+      // note hackish Y-offset, sprite position vs. collision detection
+      common.setTransformXY(exports, exports.dom.o, data.x + 'px', (data.y - 3) + 'px');
 
       data.midPoint = getDoorCoords(exports);
-
-      game.dom.world.appendChild(dom.o);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
