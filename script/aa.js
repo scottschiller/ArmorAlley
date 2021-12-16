@@ -6071,6 +6071,8 @@
 
     options = options || {};
 
+    height = 28;
+
     css = inheritCSS({
       className: TYPES.superBunker,
       friendly: 'friendly'
@@ -6078,21 +6080,23 @@
 
     data = inheritData({
       type: TYPES.superBunker,
-      y: 358,
+      bottomAligned: true,
       frameCount: 0,
       energy: (options.energy || 0),
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
       isEnemy: (options.isEnemy || false),
       width: 66,
       halfWidth: 33,
-      height: 28,
+      doorWidth: 6,
+      height: height,
       firing: false,
-      gunYOffset: 9,
+      gunYOffset: 20.5,
       // fire speed relative to # of infantry arming it
       fireModulus: 8 - (options.energy || 0),
       fundsModulus: FPS * 10,
       hostile: false,
-      midPoint: null
+      midPoint: null,
+      y: game.objects.view.data.world.height - height
     }, options);
 
     if (data.energy === 0) {
@@ -6100,10 +6104,12 @@
       data.hostile = true;
     }
 
+    // coordinates of the doorway
     data.midPoint = {
-      x: data.x + data.halfWidth + 5,
+      x: data.x + data.halfWidth - (data.doorWidth / 2),
       y: data.y,
-      width: 5,
+      // hackish: make the collision point the center, not the actual width
+      width: 1,
       height: data.height
     };
 
@@ -6117,7 +6123,8 @@
       data: data,
       die: die,
       dom: dom,
-      hit: hit
+      hit: hit,
+      updateHealth: updateHealth
     };
 
     nearby = {
@@ -6576,7 +6583,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
