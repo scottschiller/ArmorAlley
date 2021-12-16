@@ -5615,7 +5615,7 @@
 
   EndBunker = function(options) {
 
-    var css, dom, data, objects, nearby, exports;
+    var css, dom, data, height, objects, nearby, exports;
 
     function setFiring(state) {
 
@@ -5967,7 +5967,7 @@
           isEnemy: data.isEnemy,
           collisionItems: nearby.items,
           x: data.x + (data.width + 1),
-          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
+          y: data.y + data.gunYOffset, // half of height
           vX: 2,
           vY: 0
         };
