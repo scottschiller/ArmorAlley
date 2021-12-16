@@ -2019,15 +2019,9 @@
 
         // non-friendly, not dead, and nearby?
         if (targetData.isEnemy !== data.isEnemy && !targetData.dead) {
-
-          if (targetData.x > data.x) {
-            if (targetData.x - data.x < triggerDistance) {
-              results.push(game.objects[targets[i]][k]);
-            }
-          } else if (data.x - targetData.x < triggerDistance) {
+          if (Math.abs(targetData.x - data.x) < triggerDistance) {
             results.push(game.objects[targets[i]][k]);
           }
-
         }
 
       }
