@@ -1343,6 +1343,31 @@
       }
 
     },
+
+    smokeRelativeToDamage: function(exports, chance) {
+      
+      if (!exports || !exports.data || !exports.dom) return;
+
+      var data = exports.data;
+
+      if (!data.isOnScreen) return;
+
+      // first off: certain chance of no smoke, regardless of status
+      if (Math.random() >= (chance || 0.66)) return;
+      
+      // a proper roll of the dice: smoke at random. higher damage = greater chance of smoke
+      if (Math.random() < 1 - ((data.energyMax -data.energy) / data.energyMax)) return;
+
+      game.objects.smoke.push(new Smoke({
+        x: data.x + data.halfWidth + (parseInt(rnd(data.halfWidth) * 0.33 * plusMinus(), 10)),
+        y: data.y + data.halfHeight + (parseInt(rnd(data.halfHeight) * 0.25 * (data.vY <= 0 ? -1 : 1), 10)),
+        // if undefined or zero, allow smoke to go left or right
+        // special handling for helicopters and turrets. this should be moved into config options.
+        vX: (data.type === TYPES.helicopter ? rnd(1.5) * plusMinus() : -(data.vX || 0) + rnd(1.5) * (data.vX === undefined || data.vX === 0 ? plusMinus() : 1)),
+        vY: (data.type === TYPES.helicopter || data.type === TYPES.turret ? rnd(-3) : -(data.vY || 0.25) + rnd(-2))
+      }));
+
+    },
     }
 
   };
