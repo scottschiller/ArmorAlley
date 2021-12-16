@@ -7181,9 +7181,21 @@
 
   MissileLauncher = function(options) {
 
-    var css, data, dom, radarItem, exports;
+    var css, data, dom, friendlyNearby, height, radarItem, exports;
 
-    function moveTo(x, bottomY) {
+    function stop() {
+
+      data.stopped = true;
+
+    }
+
+    function resume() {
+
+      data.stopped = false;
+
+    }
+
+    function moveTo(x, y) {
 
       var needsUpdate;
 
@@ -7192,40 +7204,49 @@
         needsUpdate = true;
       }
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(bottomY);
+      if (y !== undefined && data.y !== y) {
+        data.y = y;
         needsUpdate = true;
       }
 
-      if (needsUpdate && data.isOnScreen) {
-        common.setTransformXY(dom.o, data.x + 'px', '0px');
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
       }
 
     }
 
-    function die() {
+    function die(options) {
 
       if (data.dead) return;
 
-      utils.css.add(dom.o, css.exploding);
+      if (!options || !options.silent) {
 
+        utils.css.add(dom.o, css.exploding);
+
+        if (sounds.genericExplosion) {
+          playSound(sounds.genericExplosion, exports);
+        }
+
+        common.inertGunfireExplosion({ exports: exports });
+
+        setFrameTimeout(function() {
+          removeNodes(dom);
+        }, 1000);
+
+      } else {
+
+        removeNodes(dom);
+
+      }
+  
       // stop moving while exploding
       data.vX = 0;
-
-      setFrameTimeout(function() {
-        removeNodes(dom);
-      }, 1000);
 
       data.energy = 0;
 
       data.dead = true;
 
-      radarItem.die();
-
-      if (sounds.genericExplosion) {
-        playSound(sounds.genericExplosion, exports);
-      }
+      radarItem.die({ silent: (options && options.silent) });
 
     }
 
@@ -7297,50 +7318,54 @@
 
       data.frameCount++;
 
-      if (!data.dead) {
+      if (data.dead) return !dom.o;
 
-        moveTo(data.x + data.vX, data.bottomY);
+      if (!data.stopped) {
+        moveTo(data.x + data.vX, data.y);
+      }
 
-        if (data.orderComplete) {
+      common.smokeRelativeToDamage(exports);
 
-          // regular timer or back wheel bump
-          if (data.frameCount % data.stateModulus === 0) {
+      if (data.orderComplete && !data.stopped) {
 
-            data.state++;
+        // regular timer or back wheel bump
+        if (data.frameCount % data.stateModulus === 0) {
 
-            if (data.state > data.stateMax) {
-              data.state = 0;
-            }
+          data.state++;
 
-            // reset frameCount (timer)
-            data.frameCount = 0;
-
-            // first wheel, delay, then a few frames until we animate the next two.
-            if (data.state === 1 || data.state === 3) {
-              data.stateModulus = 36;
-            } else {
-              data.stateModulus = 4;
-            }
-
-            data.frameCount = 0;
-
-            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
-
-          } else if (data.frameCount % data.stateModulus === 2) {
-
-            // next frame - reset.
-            dom.o.style.backgroundPosition = '0px 0px';
-
+          if (data.state > data.stateMax) {
+            data.state = 0;
           }
 
-        }
+          // reset frameCount (timer)
+          data.frameCount = 0;
 
-        // (maybe) fire?
-        fire();
+          // first wheel, delay, then a few frames until we animate the next two.
+          if (data.state === 1 || data.state === 3) {
+            data.stateModulus = 36;
+          } else {
+            data.stateModulus = 4;
+          }
+
+          data.frameCount = 0;
+
+          if (data.isOnScreen) {
+            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+          }
+
+        } else if (data.frameCount % data.stateModulus === 2 && data.isOnScreen) {
+
+          // next frame - reset.
+          dom.o.style.backgroundPosition = '0px 0px';
+
+        }
 
       }
 
       recycleTest(exports);
+
+      // (maybe) fire?
+      fire();
 
       return (data.dead && !dom.o);
 
@@ -7356,20 +7381,21 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', '0px');
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+
 
       data.frameTimeout = setFrameTimeout(function() {
         data.orderComplete = true;
         data.frameTimeout = null;
       }, 2000);
 
-      game.dom.world.appendChild(dom.o);
-
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
     options = options || {};
+
+    height = 18;
 
     css = inheritCSS({
       className: 'missile-launcher'
@@ -7386,7 +7412,9 @@
       frameTimeout: null,
       fireModulus: FPS, // check every second or so
       width: 54,
-      height: 18,
+      halfWidth: 27,
+      height: height,
+      halfHeight: height / 2,
       orderComplete: false,
       state: 0,
       stateMax: 3,
@@ -7394,7 +7422,10 @@
       inventory: {
         frameCount: 60,
         cost: 3
-      }
+      },
+      x: options.x || 0,
+      y: game.objects.view.data.world.height - height - 2
+      
     }, options);
 
     dom = {
