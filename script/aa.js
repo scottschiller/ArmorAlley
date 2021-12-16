@@ -2454,6 +2454,19 @@
 
   }
 
+  function stopSound(sound) {
+
+    var soundObject = sound && getSound(sound);
+
+    if (!soundObject) return;
+
+    soundObject.sound.stop();
+
+    // manually destruct
+    soundObject.onAASoundEnd();
+
+  }
+
   function playRepairingWrench(isRepairing, exports) {
 
     var args = arguments;
