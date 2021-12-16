@@ -5148,7 +5148,7 @@
         if (!dom.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
-      }, 1000);
+      }, 1200);
 
     }
 
@@ -5174,21 +5174,30 @@
     function die() {
 
       if (data.dead) return;
+
       // pop!
       utils.css.add(dom.o, css.exploding);
 
-        utils.css.swap(dom.o, css.exploding, css.dead);
       if (sounds.balloonExplosion) {
         playSound(sounds.balloonExplosion, exports);
       }
-      if (data.deadTimer) {
-        data.deadTimer = null;
+
+      common.inertGunfireExplosion({ exports: exports });
+
+      common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+
+      if (gameType === 'hard' || gameType === 'extreme') {
+        shrapnelExplosion(data, {
+          count: 3 + rndInt(3),
+          velocity: rndInt(4)
         });
       }
 
+      // sanity check: balloon may be almost immediately restored
       // if shot while a group of infantry are passing by the bunker,
       // so only "finish" dying if still dead.
 
+      // radar die -> hide has its own timeout, it will check
       // the parent (i.e., this) balloon's `data.dead` before hiding.
       radarItem.die();
 
@@ -5198,9 +5207,13 @@
         // sanity check: don't hide if already respawned
         if (!data.dead) return;
 
+        if (dom.o) {
           // hide the balloon
           utils.css.swap(dom.o, css.exploding, css.dead);
         }
+      }, 550);
+
+      data.dead = true;
 
     }
 
@@ -5215,27 +5228,31 @@
 
       // reset, if previously queued.
       if (data.animationFrameTimeout) {
+        data.animationFrameTimeout.reset();
+      }
+
       data.animationFrameTimeout = setFrameTimeout(function() {
         data.animationFrameTimeout = null;
         // balloon might have been destroyed.
         if (!dom || !dom.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
-      }, 550);
+      }, 1200);
     }
 
     function animate() {
 
       if (!data.dead) {
 
+        common.smokeRelativeToDamage(exports, 0.25);
 
         if (!data.detached) {
 
-          if ((data.bottomY >= 100 && data.verticalDirection > 0) || (data.bottomY <= 0 && data.verticalDirection < 0)) {
+          if ((data.y >= data.maxY && data.verticalDirection > 0) || (data.y <= data.minY && data.verticalDirection < 0)) {
             data.verticalDirection *= -1;
           }
 
-          moveTo(data.x, data.bottomY + data.verticalDirection);
+          moveTo(data.x, data.y + data.verticalDirection);
 
         } else {
 
@@ -5245,7 +5262,7 @@
 
             // TODO: improve, limit on axes
 
-            data.windOffsetX += Math.random() > 0.5 ? -0.25 : 0.25;
+            data.windOffsetX += (plusMinus() * 0.25);
 
             data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
@@ -5271,7 +5288,7 @@
 
             }
 
-            data.windOffsetY += Math.random() > 0.5 ? -0.1 : 0.1;
+            data.windOffsetY += (plusMinus() * 0.05);
 
             data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
@@ -5286,6 +5303,7 @@
             data.frameCount = 0;
             data.windOffsetX -= 0.1;
           } else if (data.x + data.windOffsetX <= data.minX) {
+            data.frameCount = 0;
             data.windOffsetX += 0.1;
           }
 
@@ -5293,6 +5311,8 @@
           if (data.y + data.windOffsetY >= data.maxY) {
             data.frameCount = 0;
             data.windOffsetY -= 0.1;
+          } else if (data.y + data.windOffsetY <= data.minY) {
+            data.frameCount = 0;
             data.windOffsetY += 0.1;
           }
 
@@ -5378,8 +5398,6 @@
         detach();
       }
 
-      game.dom.world.appendChild(dom.o);
-
       // TODO: review hacky "can respawn" parameter
       radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
@@ -5458,11 +5476,10 @@
 
         objects.balloon = new Balloon({
           bunker: exports,
-          leftMargin: 7,
+          leftMargin: 8,
           isEnemy: data.isEnemy,
           x: data.x,
           // if 0, balloon will "rise from the depths".
-          bottomY: (useRandomY ? parseInt(Math.random() * 100, 10) : 0)
           y: (useRandomY ? 48 + rndInt(game.objects.view.data.world.height - 48) : 0)
         });
 
