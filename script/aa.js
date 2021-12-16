@@ -1368,6 +1368,35 @@
       }));
 
     },
+
+    inertGunfireExplosion: function(options) {
+
+      /* { count: int, exports: exports } */
+
+      if (!options || !options.exports || !options.exports.data) return;
+
+      var data = options.exports.data;
+
+      if (!data.isOnScreen) return;
+
+      // create some inert (harmless) gunfire, as decorative shrapnel.
+      for (var i = 0, j = options.count || (3 + rndInt(1)); i < j; i++) {
+
+        game.objects.gunfire.push(new GunFire({
+          parentType: data.type,
+          isEnemy: data.isEnemy,
+          isInert: true,
+          // empty array may prevent collision, but `isInert` is provided explicitly for this purpose
+          collisionItems: [],
+          x: data.x + data.halfWidth,
+          y: data.y + data.halfHeight,
+          // if there are more "particles", allow them to move further.
+          vX: rnd(2) * plusMinus() * (j > 4 ? rnd(j / 2) : 1),
+          vY: -rnd(2)  * (j > 4 ? rnd(j / 2) : 1)
+        }));
+
+      }
+
     }
 
   };
