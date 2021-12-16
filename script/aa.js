@@ -7367,6 +7367,8 @@
       // (maybe) fire?
       fire();
 
+      nearbyTest(friendlyNearby);
+
       return (data.dead && !dom.o);
 
     }
@@ -7383,6 +7385,7 @@
 
       common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
+      initNearby(friendlyNearby, exports);
 
       data.frameTimeout = setFrameTimeout(function() {
         data.orderComplete = true;
@@ -7437,6 +7440,21 @@
       data: data,
       dom: dom,
       die: die
+    };
+
+    friendlyNearby = {
+      options: {
+        source: exports,
+        targets: undefined,
+        useLookAhead: true,
+        // stop moving if we roll up behind a friendly vehicle
+        friendlyOnly: true,
+        hit: stop,
+        miss: resume
+      },
+      // who are we looking for nearby?
+      items: ['tanks', 'vans', 'missileLaunchers'],
+      targets: []
     };
 
     if (!options.noInit) {
