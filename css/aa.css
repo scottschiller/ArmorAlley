@@ -1810,41 +1810,36 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
 
 .sprite .energy-status {
   position: absolute;
-  top: 0px;
+  bottom: 0.1px; /* hackish, rounding fix */
   left: 0px;
   width: 100%;
-  font-size: 0px;
-  margin-top: -4px;
   height: 1px;
+  font-size: 0px;
+  border: 0.25px solid #000;
+  border-radius: 1px;
   background-color: #33cc33;
   opacity: 0;
-  /* box-sizing: border-box; */
-}
-
-.sprite .energy-bg {
-  background-color: #333;
-}
-
-.sprite .energy-status {
+  z-index: 2;
   transition: all 0.2s ease-out;
-  transition-property: width background-color opacity;
+  transition-property: width, height, left, background-color, opacity;
 }
 
-.sprite.end-bunker .energy {
-  width: 0%;
+.sprite.balloon .energy-status {
+  /* pull down slightly, and make more visible */
+  bottom: -1px;
+  height: 1.5px;
 }
 
-.sprite.exploding .energy-status {
-  /* hide by default */
-  display: none;
+.sprite.parachute-infantry .energy-status,
+.sprite.infantry .energy-status {
+  height: 0.5px;
 }
 
-.balloon .energy-status.infantry .energy-status,
-.parachute-infantry .energy-status,
-.engineer .energy-status,
-.turret .energy-status {
-  /* selective overrides */
-  display: block !important;
+.sprite.enemy .energy-status,
+.helicopter.facing-left .energy-status {
+  /* right-align on certain units, i.e., flipped helicopter w/custom width */
+  left: auto;
+  right: 0px;
 }
 
 .sprite .sub-sprite {

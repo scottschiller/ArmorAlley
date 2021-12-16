@@ -1103,58 +1103,88 @@
   function updateEnergy(object) {
 
     if (!showHealth) return;
+    
+    var node,
+      didCreate,
+      energy,
+      energyLineScale,
+      DEFAULT_ENERGY_SCALE;
 
-    var nodes,
-      node,
-      energy;
+    DEFAULT_ENERGY_SCALE = 1;
 
-    if (document.querySelectorAll && object.dom && object.dom.o) {
-      nodes = object.dom.o.querySelectorAll('.energy');
+    // only do work if visible, and valid
+    if (!object.data.isOnScreen || !object.dom || !object.dom.o) return;
+
+    // prevent certain things from rendering this, e.g., smart missiles.
+    if (object.data.noEnergyStatus) return;
+
+    // dynamically create and remove `.energy` node
+    if (!object.dom.oEnergy) {
+      // create on the fly
+      node = document.createElement('div');
+      node.className = 'energy-status energy';
+      object.dom.oEnergy = object.dom.o.appendChild(node);
+      didCreate = true;
     }
 
-    if (nodes && nodes.length) {
-      node = nodes[0];
-    }
+    node = object.dom.oEnergy;
 
-    if (node) {
-      energy = (object.data.energy / object.data.energyMax) * 100;
-      if (!isNaN(energy)) {
-        node.style.opacity = (energy < 100 ? 1 : 0);
-        if (energy > 66) {
-          node.style.backgroundColor = '#33cc33';
-        } else if (energy > 33) {
-          node.style.backgroundColor = '#cccc33';
-        } else {
-          node.style.backgroundColor = '#cc3333';
-        }
-        node.style.width = (energy + '%');
-      }
-    }
+    if (!node) return;
 
-  }
-
-
-    defaultCSS: {
-      animating: 'animating',
-      dead: 'dead',
-      enemy: 'enemy',
-      exploding: 'exploding',
-      offScreen: 'offscreen'
-    },
+    // some objects may have a custom width, e.g., 0.33.
+    energyLineScale = object.data.energyLineScale || DEFAULT_ENERGY_SCALE;
 
     energy = (object.data.energy / object.data.energyMax) * 100;
 
+    if (isNaN(energy)) return;
 
+    // if just created, allow node to be shown.
+    if (object.data.lastEnergy === energy && !didCreate) return;
 
+    object.data.lastEnergy = energy;
 
+    // show when damaged, but not when dead.
+    node.style.opacity = (energy < 100 ? 1 : 0);
 
+    if (energy > 66) {
+      node.style.backgroundColor = '#33cc33';
+    } else if (energy > 33) {
+      node.style.backgroundColor = '#cccc33';
+    } else {
+      node.style.backgroundColor = '#cc3333';
+    }
 
+    // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
+    node.style.width = (energy * energyLineScale) + '%';
+    
+    // only center if full-width
+    if (energyLineScale === DEFAULT_ENERGY_SCALE) {
+      node.style.left = ((100 - energy) / 2) + '%';
+    }
 
+    // hide in a moment, clearing any existing timers.
+    if (object.data.energyTimerFade) {
+      object.data.energyTimerFade.reset();
+    }
 
+    if (object.data.energyTimerRemove) {
+      object.data.energyTimerRemove.reset();
+    }
 
+    // fade out, and eventually remove
+    object.data.energyTimerFade = setFrameTimeout(function() {
+      if (node) node.style.opacity = 0;
 
+      // fade should be completed within 250 msec
+      object.data.energyTimerRemove = setFrameTimeout(function() {
+        if (node && node.parentNode) node.parentNode.removeChild(node);
+        object.dom.oEnergy = null;
+        node = null;
+      }, 250);
 
+    }, 2000);
 
+  }
 
   function rnd(number) {
     return Math.random() * number;
