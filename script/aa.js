@@ -2040,7 +2040,7 @@
 
   function enemyHelicopterNearby(data, triggerDistance) {
 
-    var i, j, deltaX, result;
+    var i, j, result;
 
     // by default
     triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
@@ -2051,14 +2051,9 @@
       if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
 
         // how far away is the target?
-        deltaX = Math.abs(game.objects.helicopters[i].data.x - data.x);
-
-        if (deltaX < triggerDistance) {
-
+        if (Math.abs(game.objects.helicopters[i].data.x - data.x) < triggerDistance) {
           result = game.objects.helicopters[i];
-
           break;
-
         }
 
       }
