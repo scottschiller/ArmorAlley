@@ -12210,7 +12210,7 @@
 
       }
 
-      return (data.dead && !data.deadTimer && !dom.o);
+      return (data.dead && !dom.o);
 
     }
 
@@ -13014,7 +13014,7 @@
 
       }
 
-      return (data.dead && !dom.o);
+      return (data.dead && !data.deadTimer && !dom.o);
 
     }
 
