@@ -13635,6 +13635,7 @@
       frameCount: 0,
       processInterval: FPS * 3,
       queue: [],
+      nextFrameQueue: [],
       queueMax: 512
     };
 
@@ -13657,6 +13658,23 @@
 
     }
 
+    function processNextFrame() {
+
+      // process all items in queue
+      var i, queueLength;
+      
+      queueLength = data.nextFrameQueue.length;
+
+      if (!queueLength) return;
+
+      for (i = 0; i < queueLength; i++) {
+        data.nextFrameQueue[i]();
+      }
+
+      data.nextFrameQueue = [];
+
+    }
+
     function add(callback) {
 
       // reset frameCount on add?
@@ -13670,9 +13688,17 @@
 
     }
 
+    function addNextFrame(callback) {
+
+      data.nextFrameQueue.push(callback);
+
+    }
+
     function animate() {
 
       data.frameCount++;
+
+      processNextFrame();
 
       if (data.frameCount % data.processInterval === 0) {
         process();
@@ -13682,6 +13708,7 @@
 
     exports = {
       add: add,
+      addNextFrame: addNextFrame,
       animate: animate,
       process: process
     };
