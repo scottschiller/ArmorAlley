@@ -5727,9 +5727,7 @@
 
     function animate() {
 
-      var i, offset, earnedFunds, spliceArgs;
-
-      spliceArgs = [i, 1];
+      var offset, earnedFunds;
 
       data.frameCount++;
 
@@ -5768,6 +5766,8 @@
         if (data.isEnemy) {
           if (debug) console.log('the enemy now has ' + data.funds + ' funds.');
         } else {
+
+          game.objects.notifications.add('+' + (earnedFunds === 1 ? '💰' : earnedFunds + ' 💰'));
           game.objects.view.updateFundsUI();
         }
 
