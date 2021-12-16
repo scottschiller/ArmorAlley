@@ -3274,6 +3274,9 @@
       // ignore if joystick isn't being dragged.
       if (!data.active) return;
 
+      // ignore while respawning.
+      if (data.respawning) return;
+
       var evt = getEvent(e);
 
       var halfWidth = data.oJoystickWidth / 2;
@@ -3594,8 +3597,8 @@
 
       var scrollAmount, mouseDelta;
 
-      // don't scroll if the helicopter isn't moving.
-      if (game.objects.helicopters[0].data.vX !== 0) {
+      // don't scroll if helicopter is respawning, or not moving.
+      if (!game.objects.helicopters[0].data.respawning && game.objects.helicopters[0].data.vX !== 0) {
 
         // is the mouse to the right, or left?
         mouseDelta = (data.mouse.x - data.browser.halfWidth);
@@ -9404,19 +9407,61 @@
 
     }
 
-    function setMissileLaunching(state, isRubberChicken) {
-
-      if (data.missileLaunching !== state) {
-        data.missileLaunching = state;
-        data.rubberChickenLaunching = !!isRubberChicken;
-      }
-
+    function setMissileLaunching(state) {
+      data.missileLaunching = state;
     }
 
     function setParachuting(state) {
+      data.parachuting = state;
+    }
 
-      if (data.parachuting !== state) {
-        data.parachuting = state;
+    function setRespawning(state) {
+
+      var force = true;
+
+      data.respawning = state;
+
+      // initial respawning CSS
+      if (state) {
+
+        if (data.isEnemy) {
+          // hackish: force enemy helicopter to be on-screen when respawning
+          // this helps ensure it animates up from the landing pad properly
+          updateIsOnScreen(exports, force);
+        } else {
+          // local player? move the view back to zero.
+
+          // hackish: hard reset battlefield scroll
+          game.objects.view.data.battleField.scrollLeft = 0;
+
+          game.objects.view.data.battleField.scrollLeftWithBrowserWidth = game.objects.view.data.browser.width;
+
+          // "get to the choppa!" (center the view on it, that is.)
+          game.objects.view.setLeftScrollToPlayer(exports);
+        }
+        
+        utils.css.add(dom.o, css.respawning);
+      } else {
+        utils.css.remove(dom.o, css.respawning);
+      }
+
+      // transition, helicopter rises from landing pad
+      setFrameTimeout(function() {
+        if (state) {
+          utils.css.add(dom.o, css.respawningActive);
+        } else {
+          utils.css.remove(dom.o, css.respawningActive);
+        }
+      }, 30);
+
+      if (state) {
+        // "complete" respawn, re-enable mouse etc.
+        setFrameTimeout(function() {
+          setRespawning(false);
+          if (data.isEnemy) {
+            data.vY = -1;
+          }
+        }, data.respawningDelay);
       }
 
     }
@@ -9426,7 +9471,7 @@
       // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
       // if not dead or landed, that is.
-      if (!force && (data.dead || data.y <= 0 || data.landed)) return;
+      if (!force && (data.respawning || data.landed || data.onLandingPad || data.dead || data.y <= 0)) return;
 
       if (data.rotated) {
         // going back to L->R
@@ -9464,26 +9509,46 @@
         rotate();
       }
 
+      data.tiltOffset = (data.dead || data.respawning || data.landed || data.onLandingPad ? 0 : ((data.vX / data.vXMax) * 12.5) + data.shakeOffset);
+
       // transform-specific, to be provided to common.setTransformXY() as an additional transform
-      data.angle = 'rotate(' + ((data.vX / data.vXMax) * 12.5) + 'deg)';
+      data.angle = 'rotate(' + data.tiltOffset + 'deg)';
 
     }
 
     function onLandingPad(state) {
 
+      // our work may already be done.
+      if (data.onLandingPad === state && data.landed === state) return;
+
       data.onLandingPad = state;
+      data.landed = state;
+
+      // edge case: helicopter is "live", but not active yet.
+      if (data.respawning) return;
 
       if (state) {
+
+        data.vX = 0;
+        data.vY = 0;
+
+        applyTilt();
+
+        // force update, ensure position and angle
+        moveTo(data.x, data.y, true /* (force) */);
 
         // edge case: stop firing, etc.
         setFiring(false);
         setBombing(false);
 
-        startRepairing();
+        startRepairing(state);
 
       } else {
 
         stopRepairing();
+
+        // only allow repair, etc., once hasLiftOff has been set.
+        data.hasLiftOff = true;
 
       }
 
@@ -9599,12 +9664,55 @@
 
     function reset() {
 
+      var i, j, objects, xLookAhead, foundObject, landingPad, noEntry;
+
+      if (data.isEnemy) {
+        landingPad = game.objects.landingPads[game.objects.landingPads.length - 1];
+      } else {
+        landingPad = game.objects.landingPads[0];
+      }
+
+      /**
+       * determine if there is an enemy on, or about to be on the landing pad.
+       * if so, repeat this operation in a moment to avoid the copter dying immediately.
+       * this can happen when you have a convoy of tanks near the enemy base -
+       * the enemy chopper can respawn each time a tank is over it. :(
+       */
+
+      objects = Array.prototype.concat(game.objects.missileLaunchers, game.objects.tanks, game.objects.vans, game.objects.infantry);
+      xLookAhead = 0;
+
+      // is there a "foreign" object on, or over the base?
+      for (i = 0, j = objects.length; i < j; i++) {
+        // enemy chopper is vulnerable if local player is at their base, and vice-versa.
+        if (objects[i].data.isEnemy !== data.isEnemy && objects[i].data && collisionCheck(objects[i].data, landingPad.data, xLookAhead)) {
+          foundObject = objects[i];
+          break;
+        }
+      }
+
+      // something is covering the landing pad - retry shortly.
+      if (foundObject) {
+        if (!data.isEnemy) {
+          noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
+          game.objects.view.setAnnouncement(noEntry + ' Landing pad obstructed. Waiting for clearance. ' + noEntry);
+        }
+        setFrameTimeout(reset, 500);
+        return;
+      }
+
       data.fuel = data.maxFuel;
       data.energy = data.energyMax;
       data.parachutes = 1;
       data.smartMissiles = data.maxSmartMissiles;
       data.ammo = data.maxAmmo;
       data.bombs = data.maxBombs;
+
+      // various landed / repaired state
+      data.landed = true;
+      data.onLandingPad = true;
+      data.repairComplete = false;
+      data.hasLiftOff = false;
 
       if (!data.isEnemy) {
 
@@ -9617,17 +9725,16 @@
         }
 
         if (sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
+          if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
 
       } else {
 
         lastTarget = null;
 
-        data.y = 64;
         data.vX = -8;
-        data.lastVX = 0;
         data.vY = 0;
+        data.lastVX = 0;
 
         if (data.rotated) {
           rotate();
@@ -9639,37 +9746,20 @@
       data.bombing = false;
       data.firing = false;
       data.missileLaunching = false;
-      data.rubberChickenLaunching = false;
       data.parachuting = false;
-
-      updateHealth();
-
-      var landingPad;
-
-      if (data.isEnemy) {
-
-        landingPad = game.objects.landingPads[game.objects.landingPads.length - 1];
-
-        // todo: clean up (linter dislikes "unexpected mix of '=' and '+'")
-        // eslint-disable-next-line no-mixed-operators
-        data.x = landingPad.data.x + (landingPad.data.width / 2) - data.halfWidth + 10;
-
-      } else {
-
-        landingPad = game.objects.landingPads[0];
-
-        // todo: clean up (linter dislikes "unexpected mix of '=' and '+'")
-        // eslint-disable-next-line no-mixed-operators
-        data.x = landingPad.data.x + (landingPad.data.width / 2) - data.halfWidth + 10;
-
-      }
-
-      data.y = game.objects.view.data.world.height - 20;
-
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
 
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
+
+      // reposition on appropriate landing pad
+      data.x = common.getLandingPadOffsetX(exports);
+      data.y = worldHeight - data.height;
+
+      // ensure tilt angle is reset to 0
+      applyTilt();
+
+      // move to landing pad
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.angle);
 
       // look ma, no longer dead!
       data.dead = false;
@@ -9682,6 +9772,7 @@
 
       updateEnergy(exports);
 
+      setRespawning(true);
     }
 
     function respawn() {
@@ -9690,41 +9781,7 @@
       if (battleOver) return;
 
       // helicopter died. move view, and reset.
-
       reset();
-
-      // local player? move the view back to zero.
-
-      if (!data.isEnemy) {
-
-        // hackish: hard reset battlefield scroll
-        game.objects.view.data.battleField.scrollLeft = 0;
-
-        // and update scroll view
-        game.objects.view.setLeftScroll(0);
-
-        // reposition chopper on landing pad
-        // (linter dislikes "unexpected mix of '=' and '+'")
-        // eslint-disable-next-line no-mixed-operators
-        data.x = game.objects.landingPads[0].data.x + (game.objects.landingPads[0].data.width / 2) - data.halfWidth - 10;
-
-        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
-
-        // chopper should not be moving
-        data.vX = 0;
-        data.vY = 0;
-
-      }
-
-    }
-
-    function stopSound(sound) {
-
-      var soundObject = sound && getSound(sound);
-
-      if (soundObject && soundObject.sound.playState) {
-        soundObject.sound.stop();
-      }
 
     }
 
@@ -10044,13 +10101,17 @@
 
       var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
 
-      maxY = 320;
+      // wait until fully-respawned.
+      if (data.respawning) return;
 
+      // ignore if on empty.
       if (data.fuel <= 0) return;
+
+      maxY = 320;
 
       // low fuel means low fuel. or ammo. or bombs.
 
-      if (data.energy > 0 && !data.landed && !data.repairing && (data.fuel < 30 || data.energy < 2 || (!data.ammo && !data.bombs))) {
+      if ((data.fuel < 30 || data.energy < 2 || (!data.ammo && !data.bombs)) && data.energy > 0 && !data.landed && !data.repairing) {
 
         setFiring(false);
         setBombing(false);

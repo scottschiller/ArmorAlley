@@ -1128,6 +1128,15 @@ ul.stats-bar .bombs em {
   transition: opacity 0.25s ease-in-out;
 }
 
+.helicopter.respawning .transform-sprite {
+  top: 15px;
+}
+
+.helicopter.respawning-active .transform-sprite {
+  transition: top 1.5s ease-in-out;
+  top: 0px;
+}
+
 .helicopter.rotated-left,
 .helicopter.rotated-right {
   /* background-image: url(../image/helicopter-rotating.png) !important; */
