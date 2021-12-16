@@ -8112,9 +8112,7 @@
 
     var css, dom, data, radarItem, objects, collision, launchSound, exports;
 
-    function moveTo(x, y) {
-
-      var hitBottom = false;
+    function moveTo(x, y, angle) {
 
       if (x !== undefined && data.x !== x) {
         data.x = x;
@@ -8123,12 +8121,33 @@
       // prevent from "crashing" into terrain, only if not expiring and target is still alive
       if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
         y = data.yMax;
-        hitBottom = true;
       }
 
       if (y !== undefined && data.y !== y) {
         data.y = y;
       }
+
+      // determine angle
+      if (data.isBanana) {
+
+        data.angle += data.angleIncrement;
+
+        if (data.angle >= 360) {
+          data.angle -= 360;
+        }
+
+        // if dropping, "slow your roll"
+        if (data.expired) {
+          data.angleIncrement *= 0.97;
+        }
+
+      } else {
+
+        data.angle = angle;
+
+      }
+
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + data.angle + 'deg)');
 
       // push x/y to history arrays, maintain size
 
@@ -8137,26 +8156,26 @@
 
       if (data.xHistory.length > data.trailerCount + 1) {
         data.xHistory.shift();
-      }
-
-      if (data.yHistory.length > data.trailerCount + 1) {
         data.yHistory.shift();
       }
-
-      return hitBottom;
 
     }
 
     function moveTrailers() {
 
-      var i, j;
+      var i, j, xOffset, yOffset;
+
+      if (!data.isOnScreen) return;
+
+      xOffset = data.width / 2;
+      yOffset = (data.height / 2) - 1;
 
       for (i = 0, j = data.trailerCount; i < j; i++) {
 
         // if previous X value exists, apply it
         if (data.xHistory[i]) {
-          dom.trailers[i].style.left = data.xHistory[i] + (data.width / 2) + 'px';
-          dom.trailers[i].style.top = data.yHistory[i] + (data.height / 2) + 'px';
+          common.setTransformXY(exports, dom.trailers[i], data.xHistory[i] + xOffset + 'px', data.yHistory[i] + yOffset + 'px');
+          dom.trailers[i].style.opacity = Math.max(0.25, (i+1) / j);
         }
 
       }
@@ -8168,27 +8187,27 @@
       var i, j;
 
       for (i = 0, j = data.trailerCount; i < j; i++) {
-
-        // if previous X value exists, apply it
-        if (data.xHistory[i]) {
-          dom.trailers[i].style.display = 'none';
-        }
-
+        dom.trailers[i].style.opacity = 0;
       }
 
     }
 
     function spark() {
+
       utils.css.add(dom.o, css.spark);
       applyRandomRotation(dom.o);
+
     }
 
     function makeTimeout(callback) {
+
       if (objects._timeout) objects._timeout.reset();
       objects._timeout = setFrameTimeout(callback, 350);
+
     }
 
     function addTracking(targetNode, radarNode) {
+
       if (targetNode) {
         utils.css.add(targetNode, css.tracking);
         makeTimeout(function() {
@@ -8205,6 +8224,7 @@
     }
 
     function removeTrackingFromNode(node) {
+
       if (!node) return;
 
       // remove tracking animation
@@ -8213,6 +8233,7 @@
 
       // start fading/zooming out
       utils.css.add(node, css.trackingRemoval);
+
     }
 
     function removeTracking(targetNode, radarNode) {
@@ -8233,16 +8254,19 @@
     }
 
     function setTargetTracking(tracking) {
+
       var targetNode = objects.target.dom.o;
       var radarNode = (objects.target.radarItem && objects.target.radarItem.dom && objects.target.radarItem.dom.o);
+
       if (tracking) {
         addTracking(targetNode, radarNode);
       } else {
         removeTracking(targetNode, radarNode);
       }
+
     }
 
-    function die(excludeShrapnel) {
+    function die() {
 
       var dieSound;
 
@@ -8256,17 +8280,18 @@
           playSound(sounds.genericBoom, exports);
         }
 
-        if (!excludeShrapnel) {
-          shrapnelExplosion(data, {
-            count: 3,
-            velocity: 2 + Math.random()
-          });
-        }
+        common.inertGunfireExplosion({ exports: exports });
+
+        shrapnelExplosion(data, {
+          count: 3 + rndInt(3),
+          velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
+        });
+
+        hideTrailers();
 
         data.deadTimer = setFrameTimeout(function() {
-          hideTrailers();
           removeNodes(dom);
-        }, 250);
+        }, 500);
 
         data.energy = 0;
 
@@ -8275,7 +8300,7 @@
 
         radarItem.die();
 
-        if (data.isRubberChicken && sounds.rubberChicken.die) {
+        if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.die) {
 
           // don't "die" again if the chicken has already moaned, i.e., from expiring.
           if (!data.expired) {
@@ -8297,6 +8322,22 @@
 
         }
 
+        if (data.isBanana) {
+          
+          if (launchSound) {
+            launchSound.stop();
+          }
+
+        }
+
+        // if targeting the player, ensure the expiry warning sound is stopped.
+        if (objects.target && objects.target === game.objects.helicopters[0]) {
+          stopSound(sounds.missileWarningExpiry);
+        }
+
+        // optional callback
+        if (data.onDie) data.onDie();
+
       }
 
       data.dead = true;
@@ -8312,7 +8353,26 @@
       data.dead = true;
 
       if (target) {
-        common.hit(target, data.damagePoints);
+        common.hit(target, data.damagePoints, exports);
+
+        // bonus "hit" sounds for certain targets
+        if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
+          playSound(sounds.metalHit, exports);
+        } else if (target.data.type === TYPES.bunker) {
+          playSound(sounds.concreteHit, exports);
+        }
+
+        if (data.isBanana) {
+          common.smokeRing(exports, {
+            count: 16,
+            velocityMax: 24,
+            offsetX: target.data.width / 2,
+            offsetY: data.height - 2,
+            isGroundUnit: target.data.bottomAligned,
+            parentVX: data.vX,
+            parentVY: data.vY
+          });
+        }
       }
 
       die();
