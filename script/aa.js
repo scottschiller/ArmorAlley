@@ -9622,6 +9622,10 @@
       if (data.ammo < data.maxAmmo && data.repairFrames % 2 === 0) {
         data.ammo++;
         updated.ammo = true;
+        if (data.ammo >= data.maxAmmo) {
+          // stop blinking
+          updated.ammoComplete = true;
+        }
       }
 
       if (data.repairFrames % 5 === 0) {
@@ -9632,11 +9636,17 @@
       if (data.bombs < data.maxBombs && data.repairFrames % 10 === 0) {
         data.bombs++;
         updated.bombs = true;
+        if (data.bombs >= data.maxBombs) {
+          updated.bombsComplete = true;
+        }
       }
 
       if (data.smartMissiles < data.maxSmartMissiles && data.repairFrames % 200 === 0) {
         data.smartMissiles++;
         updated.smartMissiles = true;
+        if (data.smartMissiles >= data.maxSmartMissiles) {
+          updated.smartMissilesComplete = true;
+        }
       }
 
       updateFuelUI();
