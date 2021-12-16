@@ -218,11 +218,24 @@
 
   // whether to always "upgrade" Smart Missiles...
   var forceRubberChicken = winloc.match(/chicken/i);
+  // TODO: move missile mode bits into game object
+  var missileMode;
+
+  var defaultMissileMode = null;
 
   // can also be enabled by pressing "C".
   var rubberChickenMode = 'rubber-chicken-mode';
 
   var INFINITY = '∞';
+  var bananaMode = 'banana-mode';
+  function setMissileMode(mode) {
+    if (missileMode === mode) return;
+    
+    // swap in new class, removing old one
+    utils.css.swap(document.getElementById('world'), missileMode, mode);
+
+    missileMode = mode;
+  }
 
   var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
 
@@ -6739,21 +6752,46 @@
 
   Base = function(options) {
 
-    var css, data, dom, exports;
+    var css, data, dom, exports, height, missileVMax;
 
     function fire() {
 
-      var targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
+      var targetHelicopter;
+
+      targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
       if (targetHelicopter) {
 
         game.objects.smartMissiles.push(new SmartMissile({
           parentType: data.type,
           isEnemy: data.isEnemy,
-          isRubberChicken: true, // because why not, it's a special case anyway
-          x: data.x + (data.width / 2),
-          y: bottomAlignedY() - (data.height / 2),
-          target: targetHelicopter
+          isBanana: (data.missileMode === bananaMode),
+          isRubberChicken: (data.missileMode === rubberChickenMode),
+          // position roughly around "launcher" point of base
+          x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
+          y: data.y,
+          // hackish: these add to existing max vX / vY, they don't replace.
+          vXMax: missileVMax,
+          vYMax: missileVMax,
+          target: targetHelicopter,
+          onDie: function() {
+            // extreme mode, human player at enemy base: spawn another immediately on die().
+            if (gameType !== 'extreme') return;
+
+            // check again, within a screen's distance.
+            targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
+            
+            // if not within range, reset vX + vY max for next time
+            if (!targetHelicopter) {
+              missileVMax = 0;
+              return;
+            }
+
+            // re-load and fire ze missles, now more aggressive!
+            missileVMax = Math.min(data.missileVMax, missileVMax + 1);
+
+            setFrameTimeout(fire, 250 + rnd(250));
+          }
         }));
 
       }
@@ -6764,36 +6802,53 @@
 
       var counter = 0,
         counterMax = 30,
+        overrideMax = true,
         leftOffset;
 
       data.dead = true;
 
-      // move to the target
-      // TODO: transition? Get centering right. +/- half of screen width.
-      leftOffset = (game.objects.view.data.battleField.width * (data.isEnemy ? 1 : -1));
+      // bring the target base into view, and position slightly for the explosions
+      if (data.isEnemy) {
+        leftOffset = game.objects.view.data.battleField.width;
+        // shift so there is room for shrapnel, etc.
+        leftOffset -= (game.objects.view.data.browser.width * 0.9);
+      } else {
+        leftOffset = -(game.objects.view.data.browser.width * 0.1);
+      }
 
-      game.objects.view.setLeftScroll(leftOffset);
+      game.objects.view.setLeftScroll(leftOffset, overrideMax);
 
       // disable view + helicopter events?
       // TODO: make this a method; cleaner, etc.
       game.objects.view.data.ignoreMouseEvents = true;
-      game.objects.helicopters[0].data.ignoreMouseEvents = true;
 
-      function randomCount() {
-        return (15 + parseInt(Math.random() * 15, 10));
-      }
+      function smallBoom(exports) {
 
-      function randomVelocity() {
-        return (5 + parseInt(Math.random() * 10, 10));
+        shrapnelExplosion(exports.data, {
+          count: 5 + rndInt(5),
+          velocity: 5 + rndInt(10),
+          // don't create identical "clouds" of smoke *at* base.
+          noInitialSmoke: true
+        });
+
+        common.smokeRing(exports, {
+          offsetX: (exports.data.width * 0.33) + rnd(exports.data.width * 0.33),
+          offsetY: rnd(exports.data.height / 4),
+          count: 5 + rndInt(5),
+          velocityMax: 6 + rndInt(6),
+          isGroundUnit: true,
+          increaseDeceleration: (Math.random() >= 0.5 ? 1 : undefined)
+        });
+        
       }
 
       function boom() {
 
-        shrapnelExplosion(data, {
-          count: randomCount(),
-          velocity: randomVelocity(),
-          randomX: true
-        });
+        var endBunker = game.objects.endBunkers[data.isEnemy ? 1 : 0];
+
+        // smaller explosions on both end bunker, and base (array offset)
+        smallBoom(endBunker);
+        smallBoom(exports);
 
         // make a noise?
         if (sounds.genericExplosion) {
@@ -6807,6 +6862,11 @@
           // HUGE boom, why not.
           setFrameTimeout(function() {
 
+            // ensure incoming missile is silenced
+            if (sounds.missileWarning) {
+              stopSound(sounds.missileWarning);
+            }
+
             if (sounds.genericExplosion) {
               playSound(sounds.genericExplosion, exports);
               playSound(sounds.genericExplosion, exports);
@@ -6819,26 +6879,48 @@
 
             setFrameTimeout(function() {
 
-              var i;
+              var i, iteration;
+              iteration = 0;
 
               for (i = 0; i < 7; i++) {
-
                 shrapnelExplosion(data, {
-                  count: 64,
-                  velocity: 16,
-                  randomX: true
+                  count: rndInt(36) + rndInt(36),
+                  velocity: 8 + rnd(8),
+                  // don't create identical "clouds" of smoke *at* base.
+                  noInitialSmoke: true
                 });
-
               }
+
+              for (i = 0; i < 3; i++) {
+                setFrameTimeout(function() {
+                  // first one is always big.
+                  var isBigBoom = (!iteration || rnd(0.75));
+
+                  common.smokeRing(exports, {
+                    velocityMax: 64,
+                    count: (isBigBoom ? 24 : 16),
+                    offsetX: (data.width * 0.33) + rnd(data.width * 0.33),
+                    offsetY: data.height,
+                    isGroundUnit: true
+                  });
+                  iteration++;
+
+                }, 10 * i);
+              }
+
+              smallBoom(endBunker);
 
               // hide the base, too - since it should be gone.
               if (dom && dom.o) {
                 dom.o.style.display = 'none';
               }
 
+              // end bunker, too.
+              game.objects.endBunkers[data.isEnemy ? 1 : 0].dom.o.style.visibility = 'hidden';
+
             }, 25);
 
-          }, 3500);
+          }, 2500);
 
         } else {
 
@@ -6870,6 +6952,20 @@
 
     }
 
+    function getRandomMissileMode() {
+      // 20% chance of default, 40% chance of chickens or bananas
+      var rnd = Math.random();
+      if (rnd <= 0.2) return defaultMissileMode;
+      if (rnd > 0.2 && rnd < 0.6) return rubberChickenMode;
+      return bananaMode;
+    }
+
+    function isOnScreenChange(isOnScreen) {
+      if (!isOnScreen) return;
+      // allow base to switch up its defenses
+      data.missileMode = getRandomMissileMode();
+    }
+
     function initBase() {
 
       dom.o = makeSprite({
@@ -6880,17 +6976,18 @@
         utils.css.add(dom.o, css.enemy);
       }
 
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
-
-      game.dom.world.appendChild(dom.o);
 
       game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
     options = options || {};
+
+    height = 25;
 
     css = inheritCSS({
       className: 'base'
@@ -6902,17 +6999,19 @@
       dead: false,
       frameCount: 0,
       fireModulus: tutorialMode ? FPS * 5 : FPS * 2,
+      missileMode: getRandomMissileMode(),
       // left side, or right side (roughly)
-      x: (options.x || (options.isEnemy ? 8192 - 192 : 64)),
-      y: 0,
-      bottomY: (options.bottomY || 0),
+      x: (options.x || (options.isEnemy ? worldWidth - 192 : 64)),
+      y: game.objects.view.data.world.height - height - 2,
       width: 125,
-      height: 34,
+      height: height,
       halfWidth: 62,
-      halfHeight: 17,
+      halfHeight: height / 2,
       // bases don't move, but these are for explosions.
       vX: 0,
-      vY: 0
+      vY: 0,
+      // allow missiles to become more dangerous "if necessary"
+      missileVMax: 8,
     }, options);
 
     dom = {
@@ -6924,7 +7023,8 @@
       animate: animate,
       data: data,
       dom: dom,
-      die: die
+      die: die,
+      isOnScreenChange: isOnScreenChange
     };
 
     initBase();
