@@ -15371,19 +15371,23 @@
       // a few rogue balloons
 
       addObject(TYPES.balloon, {
-        x: 4096 - 256
+        x: 4096 - 256,
+        y: rnd(worldHeight)
       });
 
       addObject(TYPES.balloon, {
-        x: 4096 + 256
+        x: 4096 + 256,
+        y: rnd(worldHeight)
       });
 
       addObject(TYPES.balloon, {
-        x: 4096 + 512
+        x: 4096 + 512,
+        y: rnd(worldHeight)
       });
 
       addObject(TYPES.balloon, {
-        x: 4096 + 768
+        x: 4096 + 768,
+        y: rnd(worldHeight)
       });
 
       // player + enemy helicopters
