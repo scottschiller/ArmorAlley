@@ -12055,42 +12055,67 @@
 
   Infantry = function(options) {
 
-    var css, dom, data, objects, radarItem, nearby, collision, exports;
+    var css, dom, data, height, radarItem, nearby, collision, exports;
 
     function fire() {
 
-      if (!data.noFire && data.frameCount % data.fireModulus === 0) {
+      if (data.noFire) return;
 
-        objects.gunfire.push(new GunFire({
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          collisionItems: nearby.items.concat('bunkers'), // special case: infantry + engineers don't stop to shoot bunkers, but their gunfire can damage them.
-          x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
-          y: game.objects.view.data.world.height - data.gunYOffset, // half of infantry height
-          vX: data.vX, // same velocity
-          vY: 0
-        }));
+      // walking is synced with animation, but bullets fire less often
+      // always do positioning work, and maybe fire
 
-        if (sounds.infantryGunFire) {
-          playSound(sounds.infantryGunFire, exports);
-        }
+      // only infantry: move back and forth a bit, and flip animation, while firing - like original game
+      var offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
+      moveTo(data.x + offset, data.y);
+
+      // hackish: undo the change `moveTo()` just applied to `data.x` so we don't actually change collision / position logic.
+      data.x += (offset * -1);
+
+      data.vXFrameOffset++;
+
+      if (data.vXFrameOffset >= data.vXFrames.length) {
+        // reverse direction!
+        data.vXFrameOffset = 0;
+        // and visually flip the sprite
+        data.flipTransform = !data.flipTransform ? 'scaleX(-1)' : null;
+      }
+      
+      // only fire every so often
+      if (data.frameCount % data.fireModulus !== 0) return;
+
+      game.objects.gunfire.push(new GunFire({
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        collisionItems: nearby.items.concat('bunkers'), // special case: infantry + engineers don't stop to shoot bunkers, but their gunfire can damage them.
+        x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
+        y: data.y + data.halfHeight,
+        vX: data.vX, // same velocity
+        vY: 0
+      }));
+
+      if (sounds.infantryGunFire) {
+        playSound(sounds.infantryGunFire, exports);
       }
 
     }
 
-    function moveTo(x, bottomY) {
+    function moveTo(x, y) {
+
+      var needsUpdate;
 
       if (x !== undefined && data.x !== x) {
-        if (data.isOnScreen) {
-          common.setTransformXY(dom.o, exports.data.x + 'px', '0px');
-        }
         data.x = x;
+        needsUpdate = true;
       }
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(bottomY);
+      if (y !== undefined && data.y !== y) {
+        data.y = y;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, x + 'px', (data.y - data.yOffset) + 'px', data.flipTransform);
       }
 
     }
@@ -12098,20 +12123,28 @@
     function stop(noFire) {
 
       if (!data.stopped) {
-        utils.css.add(dom.o, css.stopped);
         data.stopped = true;
         data.noFire = !!noFire;
+        // engineers always stop, e.g., to repair and/or capture turrets.
+        // infantry keep animation, but will appear to walk back and forth while firing.
+        if (data.noFire) {
+          utils.css.add(dom.o, css.stopped);
+        } else {
+          // infantry: reset "walking" offset, so initial movement is reduced
+          data.vXFrameOffset = 0;
+        }
       }
 
     }
 
     function resume() {
 
-      if (data.stopped) {
-        utils.css.remove(dom.o, css.stopped);
-        data.stopped = false;
-        data.noFire = false;
-      }
+      if (!data.stopped) return;
+
+      utils.css.remove(dom.o, css.stopped);
+      data.flipTransform = null;
+      data.stopped = false;
+      data.noFire = false;
 
     }
 
@@ -12129,36 +12162,20 @@
       }
     }
 
-    function dieComplete() {
-      removeNodes(dom);
-    }
-
-    function die(silent) {
+    function die(options) {
 
       if (data.dead) return;
 
-      if (!silent) {
-
-        // HACK: remove "stopped" on exploding, fix a stupid display issue where enemy display gets screwed up if stopped + exploding classes are applied together.
-        if (data.stopped) {
-          utils.css.remove(dom.o, css.stopped);
-        }
-
-        utils.css.add(dom.o, css.exploding);
+      if (!options || !options.silent) {
 
         playSound(sounds.genericSplat, exports);
         playSound(sounds.scream, exports);
 
-        data.deadTimer = setFrameTimeout(function() {
-          dieComplete();
-          data.deadTimer = null;
-        }, 1200);
-
-      } else {
-
-        dieComplete();
+        common.inertGunfireExplosion({ exports: exports });
 
       }
+
+      removeNodes(dom);
 
       data.energy = 0;
 
@@ -12167,26 +12184,37 @@
 
       data.dead = true;
 
-      radarItem.die();
+      radarItem.die({ silent: (options && options.silent) });
 
     }
 
     function animate() {
 
-      var i, spliceArgs;
-
-      spliceArgs = [i, 1];
-
       if (!data.dead) {
 
         if (!data.stopped) {
 
-          moveTo(data.x + data.vX, data.bottomY);
+          if (data.roles[data.role] === TYPES.infantry) {
+
+            // infantry walking "pace" varies slightly, similar to original game
+            moveTo(data.x + (data.vX * data.vXFrames[data.vXFrameOffset]), data.y);
+
+            data.vXFrameOffset++;
+            if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
+
+          } else {
+
+            // engineers always move one pixel at a time; let's say it's because of the backpacks.
+            moveTo(data.x + data.vX, data.y);
+
+          }
 
         } else if (!data.noFire) {
+
           // firing, or reclaiming/repairing?
           // only fire (i.e., GunFire objects) when stopped
           fire();
+
         }
 
         collisionTest(collision, exports);
@@ -12194,20 +12222,13 @@
         // start, or stop firing?
         nearbyTest(nearby);
 
-      }
         recycleTest(exports);
 
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
       }
 
       data.frameCount++;
 
-      return (data.dead && !data.deadTimer && !dom.o && !objects.gunfire.length);
+      return (data.dead && !dom.o);
 
     }
 
@@ -12227,9 +12248,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', '0px');
-
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -12238,6 +12257,8 @@
     }
 
     options = options || {};
+
+    height = 11;
 
     css = inheritCSS({
       className: null,
@@ -12248,7 +12269,6 @@
 
     data = inheritData({
       type: TYPES.infantry,
-      deadTimer: null,
       frameCount: Math.random() > 0.5 ? 5 : 0,
       bottomAligned: true,
       energy: 2,
@@ -12259,24 +12279,31 @@
       noFire: false,
       direction: 0,
       width: 10,
-      height: 11,
-      gunYOffset: 9,
+      halfWidth: 5,
+      height: height,
+      halfHeight: height / 2,
       fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
+      // how fast the infantry "walk", taking relative paces / steps so they still move 10 pixels in 10 frames
+      vXFrames: [0.5, 0.75, 1, 1.25, 1.5, 1.5, 1.25, 1, 0.75, 0.5],
+      vXFrameOffset: 0,
       xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
+      unassisted: true,
       inventory: {
         frameCount: 12,
         cost: 5,
         orderCompleteDelay: 5 // last-item-in-order delay (decrements every frameCount animation loop), so tank doesn't overlap if ordered immediately afterward.
-      }
+      },
+      flipTransform: null,
+      x: options.x || 0,
+      // one more pixel, making a "headshot" look more accurate
+      y: game.objects.view.data.world.height - height - 1,
+      // slight offset for sprite vs. logical position
+      yOffset: 1
     }, options);
 
     dom = {
       o: null
-    };
-
-    objects = {
-      gunfire: []
     };
 
     nearby = {
@@ -12288,6 +12315,7 @@
         hit: function(target) {
           // engineer + turret case? reclaim or repair.
           if (data.role && target.data.type === TYPES.turret) {
+
             // is there work to do?
             if (target.engineerCanInteract(data.isEnemy)) {
               stop(true);
@@ -12303,8 +12331,36 @@
             target.engineerHit(exports);
 
           } else if (target.data.isEnemy !== data.isEnemy) {
-            // stop moving, start firing if not a friendly unit.
-            stop();
+
+            // stop moving, start firing if not a friendly unit
+
+            // BUT, ignore if it's an infantry/engineer -> enemy bunker case.
+            // we don't want either types firing at bunkers.
+            if (target.data.type === TYPES.bunker) {
+              // ensure we're moving, in case we were stopped
+              resume();
+              return;
+            }
+
+            // fire at a non-friendly unit, IF it's actually in front of us.
+            // nearby also includes a certain lookAhead amount behind.
+            if ((data.isEnemy && target.data.x < data.x) || (!data.isEnemy && data.x < target.data.x)) {
+
+              stop();
+
+            } else {
+
+              // infantry has already passed the nearby unit.
+              resume();
+
+            }
+
+          } else {
+
+            // failsafe: infantry may have stopped to fire at an engineer repairing a bunker.
+            // ensure the infantry stop firing, by resuming "walking."
+            resume();
+
           }
         },
         miss: function() {
