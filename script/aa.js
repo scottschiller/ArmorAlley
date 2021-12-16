@@ -9403,6 +9403,11 @@
 
       if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
         data.bombing = state;
+        if (!data.isEnemy) {
+          // start or stop immediately, too.
+          // TODO: setting this breaks enemy helicopter bombing.
+          data.bombFrameCount = parseInt(data.bombModulus / 2, 10);
+        }
       }
 
     }
@@ -9501,6 +9506,12 @@
     }
 
     function applyTilt() {
+
+      if (data.energy <= data.shakeThreshold) {
+        data.shakeOffset = rnd(1) * (data.shakeOffsetMax * ((data.shakeThreshold - data.energy) / data.shakeThreshold) * plusMinus());
+      } else {
+        data.shakeOffset = 0;
+      }
 
       // L -> R / R -> L + forward / backward
 
@@ -9605,16 +9616,16 @@
 
     }
 
-    function moveTo(x, y) {
+    function moveTo(x, y, forceUpdate) {
 
       var yMax = (data.yMax - (data.repairing ? 3 : 0));
 
       // defined externally to avoid massive garbage creation
-      moveToNeedsUpdate = false;
+      moveToNeedsUpdate = !!forceUpdate;
 
       // Hack: limit enemy helicopter to visible screen
       if (data.isEnemy) {
-        x = Math.min(8192, Math.max(0, x));
+        x = Math.min(worldWidth, Math.max(0, x));
       }
 
       if (x !== undefined) {
@@ -9641,24 +9652,32 @@
         if (y >= yMax) {
           data.angle = 0;
         }
-        common.setTransformXY(dom.o, x + 'px', y + 'px', data.angle);
+        common.setTransformXY(exports, dom.o, x + 'px', y + 'px', data.angle);
       }
 
     }
 
-    function updateHealth() {
-      // smouldering, etc.
-      // TODO: optimize class swapping
-      if (data.energy < 4) {
-        utils.css.add(dom.o, css.hit2);
-        utils.css.remove(dom.o, css.hit1);
-      } else if (data.energy < 7) {
-        utils.css.add(dom.o, css.hit1);
-        utils.css.remove(dom.o, css.hit2);
-      } else {
-        // TODO: optimize
-        utils.css.remove(dom.o, css.hit1);
-        utils.css.remove(dom.o, css.hit2);
+    function moveTrailers() {
+      var i, j;
+
+      if (!data.isOnScreen) return;
+
+      for (i = 0, j = data.trailerCount; i < j; i++) {
+
+        // if previous X value exists, apply it
+        if (data.xHistory[i]) {
+          common.setTransformXY(exports, dom.trailers[i], data.xHistory[i] + 'px', data.yHistory[i] + data.halfHeightAdjusted + 'px');
+          dom.trailers[i].style.opacity = data.dead ? 0 : Math.max(0.25, (i+1) / j);
+        }
+
+      }
+    }
+
+    function hideTrailers() {
+      var i, j;
+
+      for (i = 0, j = data.trailerCount; i < j; i++) {
+        dom.trailers[i].style.opacity = 0;
       }
     }
 
@@ -9747,6 +9766,7 @@
       data.firing = false;
       data.missileLaunching = false;
       data.parachuting = false;
+      data.shakeOffset = 0;
 
       utils.css.remove(dom.o, css.exploding);
       utils.css.remove(dom.o, css.dead);
@@ -9805,7 +9825,7 @@
 
           // only start if not already playing
           if (!soundObject.sound.playState) {
-            soundObject.sound.play(soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen']);
+            soundObject.sound.play(soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'] / 100));
           }
 
         }
@@ -9819,23 +9839,7 @@
 
     }
 
-    function stopFiringSound() {
-
-      var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
-
-      // stop the current loop, start one "firing end" sound.
-      if (soundObject) {
-        stopSound(soundObject);
-      }
-
-      // begin the one-shot (heh) ending sound, if ammo is left.
-      if (data.ammo) {
-        startSound(sounds.machineGunFireEnd);
-      }
-
-    }
-
-    function die() {
+    function die(dieOptions) {
 
       if (data.dead) return;
 
@@ -9844,10 +9848,33 @@
 
       utils.css.add(dom.o, css.exploding);
 
+      if (dieOptions && dieOptions.attacker
+        && (
+          (dieOptions.attacker.data.type === TYPES.helicopter || dieOptions.attacker.data.type === TYPES.smartMissile)
+          || (dieOptions.attacker.data.type === TYPES.gunfire && dieOptions.attacker.data.parentType === TYPES.turret)
+        )
+      ) {
+        // hit by other helicopter, missile, or turret gunfire? special (big) smoke ring.
+        common.smokeRing(exports, {
+          count: 20,
+          velocityMax: 20,
+          offsetY: data.height - 2,
+          isGroundUnit: (data.landed || data.onLandingPad || data.bottomAligned),
+          parentVX: data.vX,
+          parentVY: data.vY
+        });
+      }
+
       shrapnelExplosion(data, {
         count: 20,
-        velocity: 5
+        velocity: 6,
+        // first burst always looks too similar, here.
+        noInitialSmoke: true
       });
+
+      common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+
+      common.inertGunfireExplosion({ count: 4 + rndInt(4), exports: exports });
 
       // roll the dice: drop a parachute infantry (pilot ejects safely)
       if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
@@ -9865,14 +9892,16 @@
         if (data.rotated) {
           rotate(true);
         }
-      }, 1200);
+      }, 1500);
 
       data.energy = 0;
 
-      data.dead = true;
+      // ensure any health bar is updated and hidden ASAP
+      updateEnergy(exports);
 
-      // stop firing
-      stopFiringSound();
+      hideTrailers();
+
+      data.dead = true;
 
       radarItem.die();
 
@@ -9882,7 +9911,7 @@
       }
 
       if (!data.isEnemy && sounds.helicopter.engine) {
-        sounds.helicopter.engine.sound.setVolume(0);
+        if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(0);
       }
 
       // don't respawn the enemy chopper during tutorial mode.
@@ -9904,7 +9933,8 @@
 
         if (data.ammo > 0) {
 
-          tiltOffset = (data.tilt !== null ? data.tiltYOffset * data.tilt * (data.rotated ? -1 : 1) : 0);
+          // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
+          tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
 
           /*eslint-disable no-mixed-operators */
           game.objects.gunfire.push(new GunFire({
@@ -9913,14 +9943,12 @@
             x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
             y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
             vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
-            vY: (data.y > data.yMin ? data.vY + tiltOffset : 0)
+            vY: data.vY + tiltOffset
+            // vY: (data.y > data.yMin ? data.vY : 0) + tiltOffset
           }));
           /*eslint-enable no-mixed-operators */
 
-          // pick a random sound from the array
-          data.machineGunFireSoundOffset = parseInt(Math.random() * (sounds.machineGunFire && sounds.machineGunFire.length), 10);
-
-          var soundObject = sounds.machineGunFire && sounds.machineGunFire[data.machineGunFireSoundOffset];
+          var soundObject = data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire;
 
           if (soundObject) {
 
@@ -9943,29 +9971,26 @@
           // player is out of ammo.
           playSound(sounds.inventory.denied);
 
-          // make sure firing has stopped.
-          stopFiringSound();
-
         }
 
         // SHIFT key still down?
         if (!data.isEnemy && !keyboardMonitor.isDown('shift')) {
           data.firing = false;
-          // stop firing sound
-          stopFiringSound();
         }
 
       }
 
-      if (data.bombing && frameCount % data.bombModulus === 0) {
+      if (data.bombing && data.bombFrameCount % data.bombModulus === 0) {
 
         if (data.bombs > 0) {
 
           objects.bombs.push(new Bomb({
+            parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
             y: (data.y + data.height) - 6,
-            vX: data.vX
+            vX: data.vX,
+            vY: data.vY
           }));
 
           if (sounds.bombHatch) {
@@ -9990,6 +10015,8 @@
 
       }
 
+      data.bombFrameCount++;
+
       if (data.missileLaunching && frameCount % data.missileModulus === 0) {
 
         if (data.smartMissiles > 0) {
@@ -10005,9 +10032,9 @@
               x: data.x + (data.rotated ? 0 : data.width) - 8,
               y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
               target: missileTarget,
-              // a special variant of the smart missile. ;)
-              isRubberChicken: data.rubberChickenLaunching
-              // vX: data.vX + 8 * (data.rotated ? -1 : 1)
+              // special variants of the smart missile. ;)
+              isRubberChicken: missileMode === rubberChickenMode && !data.isEnemy,
+              isBanana: missileMode === bananaMode && !data.isEnemy
             }));
             /*eslint-enable no-mixed-operators */
 
@@ -10041,7 +10068,9 @@
               isEnemy: data.isEnemy,
               // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
               x: data.x + (data.width * 0.75),
-              y: (data.y + data.height) - 11
+              y: (data.y + data.height) - 11,
+              // exclude from recycle "refund" / reward case
+              unassisted: false
             }));
 
           } else {
@@ -10084,6 +10113,7 @@
 
         if (!tutorialMode) {
           game.objects.view.setAnnouncement('No pilot');
+          game.objects.notifications.add('No pilot!? 😱☠️');
         }
 
         data.pilot = false;
@@ -10158,13 +10188,13 @@
 
       }
 
-      if (data.landed) {
+      if (data.onLandingPad) {
 
         if (data.repairComplete) {
 
           // repair has completed. go go go!
           data.vY = -4;
-          data.vX = -data.vxMax;
+          data.vX = -data.vXMax;
 
           // reset target, too
           lastTarget = null;
@@ -10236,6 +10266,7 @@
         }
 
         // is the new target too low?
+        // TODO: exclude if targeting player helicopter in extreme mode?
         if (lastTarget && (lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.helicopter) && lastTarget.data.y > maxY) {
           lastTarget = null;
         }
@@ -10274,6 +10305,8 @@
         }
 
       }
+
+      // all the cases where a target can be considered toast.
 
       if (lastTarget && lastTarget.data.dead) {
         lastTarget = null;
@@ -10421,8 +10454,9 @@
 
         } else if (target.data.type === TYPES.tank) {
 
-          if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3) {
-            // over a tank?
+          // targeting a tank? randomize bombing depending on game difficulty.
+          // default to 10% chance if no specific gameType match.
+          if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3 && Math.random() > (data.bombingThreshold[gameType] || 0.9)) {
             setBombing(true);
           } else {
             setBombing(false);
@@ -10440,14 +10474,9 @@
 
         // default: go left
         data.vX -= 0.25;
+
         // and up
         data.vY -= 0.1;
-
-        // edge case: data.vX sometimes becomes NaN - perhaps when CPU dies and resets??
-        if (isNaN(data.vX)) {
-          console.log('caught CPU edge case: data.vX NaN case. resetting to 0.');
-          data.vX = 0;
-        }
 
         // and throttle
         data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
@@ -10523,11 +10552,20 @@
 
     }
 
+    function isOnScreenChange(isOnScreen) {
+      if (data.isEnemy && !isOnScreen) {
+        // helicopter might leave trailers when it dies while on-screen.
+        hideTrailers();
+      }
+    }
+
     function animate() {
+
+      if (data.respawning) return;
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse, jamming, newX, spliceArgs, yLimit;
+      var i, j, view, mouse, jamming, newX, spliceArgs, maxY, yOffset;
 
       spliceArgs = [i, 1];
 
@@ -10557,23 +10595,39 @@
 
       }
 
-      yLimit = 369 - (data.onLandingPad ? 3 : 0);
-
-      // slight offset when on landing pad
-      // hack for Safari, which sometimes confuses the bottom coordinate by a pixel or two. odd.
-      if (data.y >= yLimit - (isSafari ? 1 : 0)) {
-
+      // prevent X-axis motion if landed, including on landing pad
+      // Y-axis is motion still allowed, so helicopter can move upward and leave this state
+      if (data.landed || data.onLandingPad) {
         data.vX = 0;
+      }
 
-        if (data.vY > 0) {
+      // has the helicopter landed?
+      // TODO: note and fix(?) slight offset, helicopter falls short of perfect alignment with bottom.
+      yOffset = 3;
+      maxY = worldHeight - data.height + yOffset;
+
+      // allow helicopter to land on the absolute bottom, IF it is not on a landing pad (which sits a bit above.)
+      if (data.y >= maxY && data.vY > 0 && !data.landed) {
+
+        // slightly annoying: allow one additional pixel when landing.
+        data.y = maxY + 1;
+
+        // only "reset" for human player
+        if (!data.isEnemy) {
+          data.vX = 0;
           data.vY = 0;
         }
 
-        if (!data.landed) {
-          data.landed = true;
-        }
+        applyTilt();
 
-      } else {
+        // force update, ensure position and angle
+        moveTo(data.x, data.y, true /* (force) */);
+
+        data.landed = true;
+
+      } else if (data.vY < 0 && (data.landed || data.onLandingPad)) {
+
+        // once landed, only leave once we're moving upward.
 
         data.landed = false;
         onLandingPad(false);
@@ -10607,12 +10661,22 @@
               // and reset FPS timings, as this may affect peformance.
               game.objects.gameLoop.resetFPS();
 
-            }, (isOldIE ? 1 : 2000));
+            }, 2000);
 
           });
 
         }
 
+      } else if (data.onLandingPad) {
+
+        // ensure the helicopter stays aligned with the landing pad.
+        data.y = maxY - yOffset;
+
+      }
+
+      if (data.landed && !data.isEnemy) {
+        // don't throw bullets with vY, if landed
+        data.vY = 0;
       }
 
       // no fuel?
@@ -10644,7 +10708,7 @@
         // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
         if (!data.isEnemy) {
-          newX = Math.max(view.data.battleField.scrollLeft + (data.width / 2) + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
+          newX = Math.max(view.data.battleField.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
         }
 
         applyTilt();
@@ -10657,6 +10721,8 @@
         if (data.repairing) {
           repair();
         }
+
+        common.smokeRelativeToDamage(exports);
 
       }
 
@@ -10714,19 +10780,19 @@
       }
 
       // trailer history
+      // push x/y to trailer history arrays, maintain size
 
-      if (game.objects.gameLoop.data.frameCount % data.smokeModulus === 0) {
+      if (data.isOnScreen && game.objects.gameLoop.data.frameCount % data.trailerModulus === 0) {
 
-        // smoke relative to damage
+        data.xHistory.push(data.x);
+        data.yHistory.push(data.y);
 
-        if (!data.dead && Math.random() > 1 - ((10 - data.energy) / 10)) {
-
-          game.objects.smoke.push(new Smoke({
-            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
-            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
-          }));
-
+        if (data.xHistory.length > data.trailerCount + 1) {
+          data.xHistory.shift();
+          data.yHistory.shift();
         }
+      
+        moveTrailers();
 
       }
 
@@ -10805,9 +10871,17 @@
 
       dom.fuelLine = document.getElementById('fuel-line');
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px', data.angle);
+      // if not specified (e.g., 0), assign landing pad position.
+      if (!data.x) {
+        data.x = common.getLandingPadOffsetX(exports);
+      }
 
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.angle);
+
+      // for human player: append immediately, so initial game start / respawn animation works nicely
+      updateIsOnScreen(exports);
+
+      setRespawning(true);
 
       // attach events?
 
@@ -10851,38 +10925,47 @@
       movingLeft: 'moving-left',
       movingRight: 'moving-right',
       tilt: 'tilt',
-      hit1: 'smouldering-phase-1',
-      hit2: 'smouldering-phase-2',
+      repairing: 'repairing',
+      respawning: 'respawning',
+      respawningActive: 'respawning-active',
       inventory: {
         frameCount: 0,
         cost: 20
       },
       unavailable: 'weapon-unavailable'
+      trailer: 'helicopter-trailer'
     });
 
     data = inheritData({
       type: TYPES.helicopter,
       angle: 0,
+      tiltOffset: 0,
+      shakeOffset: 0,
+      shakeOffsetMax: 6,
+      shakeThreshold: 7,
       bombing: false,
       firing: false,
+      respawning: false,
+      respawningDelay: 1750,
       missileLaunching: false,
-      rubberChickenLaunching: false,
       parachuting: false,
       ignoreMouseEvents: false,
       fuel: 100,
       maxFuel: 100,
       fireModulus: 2,
-      bombModulus: 5,
+      bombModulus: 4,
+      bombFrameCount: 0,
       fuelModulus: (tutorialMode ? 24 : 8),
       fuelModulusFlying: (tutorialMode ? 9 : 3),
       missileModulus: 12,
       parachuteModulus: 4,
       repairModulus: 2,
-      smokeModulus: 2,
+      trailerModulus: 2,
       radarJamming: 0,
       repairComplete: false,
       landed: true,
       onLandingPad: true,
+      hasLiftOff: false,
       cloaked: false,
       rotated: false,
       rotateTimer: null,
@@ -10891,6 +10974,7 @@
       repairFrames: 0,
       energy: 10,
       energyMax: 10,
+      energyLineScale: 0.25,
       direction: 0,
       pilot: true,
       xMin: 0,
@@ -10908,9 +10992,10 @@
       height: 15,
       halfWidth: 24,
       halfHeight: 7,
+      halfHeightAdjusted: 5,
       tilt: null,
       lastTiltCSS: null,
-      tiltYOffset: 2,
+      tiltYOffset: 0.25,
       ammo: (tutorialMode && !options.isEnemy) ? 128 : 64,
       maxAmmo: (tutorialMode && !options.isEnemy) ? 128 : 64,
       bombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
@@ -10919,8 +11004,10 @@
       maxParachutes: 5,
       smartMissiles: 2,
       maxSmartMissiles: 2,
-      machineGunFireSoundOffset: 0,
       midPoint: null,
+      trailerCount: 16,
+      xHistory: [],
+      yHistory: [],
       // for AI
       targeting: {
         balloons: true,
@@ -10928,7 +11015,13 @@
         helicopters: true,
         tanks: true
       },
-      targetingModulus: FPS * 30
+      targetingModulus: FPS * 30,
+      // chance per gameType
+      bombingThreshold: {
+        'easy': 0.9,
+        'hard': 0.85,
+        'extreme': 0.75,
+      }
     }, options);
 
     data.midPoint = {
@@ -10956,7 +11049,8 @@
         bombCountLI: statsBar.querySelectorAll('li.bombs')[0],
         missileCount: document.getElementById('missile-count'),
         missileCountLI: statsBar.querySelectorAll('li.missiles')[0],
-      }
+      },
+      trailers: []
     };
 
     events = {
@@ -10998,7 +11092,6 @@
 
     objects = {
       bombs: [],
-      gunfire: [],
       smartMissiles: []
     };
 
@@ -11048,6 +11141,7 @@
       die: die,
       eject: eject,
       fire: fire,
+      isOnScreenChange: isOnScreenChange,
       objects: objects,
       onLandingPad: onLandingPad,
       startRepairing: startRepairing,
@@ -11115,27 +11209,6 @@
     }
 
     function updateHealth() {
-
-      // smouldering, etc.
-      // TODO: optimize class swapping
-
-      if (data.energy <= 3) {
-
-        utils.css.add(dom.o, css.hit2);
-        utils.css.remove(dom.o, css.hit1);
-
-      } else if (data.energy < 6) {
-
-        utils.css.add(dom.o, css.hit1);
-        utils.css.remove(dom.o, css.hit2);
-
-      } else {
-
-        // TODO: optimize
-        utils.css.remove(dom.o, css.hit1);
-        utils.css.remove(dom.o, css.hit2);
-
-      }
 
       updateEnergy(exports);
 
@@ -11293,8 +11366,6 @@
 
     css = inheritCSS({
       className: TYPES.tank,
-      hit1: 'smouldering-phase-1',
-      hit2: 'smouldering-phase-2',
       stopped: 'stopped'
     });
 
