@@ -7761,16 +7761,28 @@
 
     var css, data, dom, collision, radarItem, exports;
 
-    function moveTo(x, y) {
+    function moveTo(x, y, rotateAngle, forceUpdate) {
 
-      updateIsOnScreen(exports);
+      var deltaX, deltaY, rad, needsUpdate;
+      
+      deltaX = 0;
+      deltaY = 0;
 
       if (x !== undefined && data.x !== x) {
+        deltaX = x - data.x;
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
+        deltaY = y - data.y;
         data.y = y;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate || forceUpdate) {
+        rad = Math.atan2(deltaY, deltaX);
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + (rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)) + 'deg');
       }
 
     }
@@ -7779,16 +7791,19 @@
 
       // aieee!
 
-      var className;
+      var className, defaultAngle, forceUpdate;
 
       if (data.dead) return;
 
       dieOptions = dieOptions || {};
 
+      defaultAngle = 0;
+      forceUpdate = true;
+
       // possible hit, blowing something up.
 
-      if (!dieOptions.omitSound && sounds.genericBoom) {
-        playSound(sounds.genericBoom, exports);
+      if (!dieOptions.omitSound && sounds.bombExplosion) {
+        playSound(sounds.bombExplosion, exports);
       }
 
       // bombs blow up big on the ground, and "spark" on other things.
@@ -7796,14 +7811,33 @@
 
       if (dieOptions.bottomAlign) {
 
-        // stick this explosion to the bottom.
-        className += ' bottom-align';
+        // TODO: set explosionHeight as 22 or something.
+        data.y = worldHeight - 17;
 
-      } else if (dieOptions.extraY) {
+        // stop moving
+        data.vY = 0;
+        data.gravity = 0;
 
-        // move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
-        data.y += 3 + parseInt(Math.random() * 3, 10);
-        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
+        // reposition immediately
+        moveTo(data.x, data.y, defaultAngle, forceUpdate);
+
+      } else {
+        
+        // align to whatever we hit
+        if (dieOptions.type && common.ricochetBoundaries[dieOptions.type]) {
+
+          // ensure that the bomb stays at or above the height of its target - e.g., bunker or tank.
+          data.y = Math.min(worldHeight - common.ricochetBoundaries[dieOptions.type], data.y);
+
+          // go there immediately
+          moveTo(data.x, data.y, defaultAngle, forceUpdate);
+
+        } else {
+
+          // extraY: move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
+          moveTo(data.x, data.y + (dieOptions.extraY || 0), defaultAngle, forceUpdate);
+
+        }
 
       }
 
@@ -7817,7 +7851,20 @@
         data.deadTimer = setFrameTimeout(function() {
           removeNodes(dom);
           data.deadTimer = null;
-        }, 500);
+        }, 600);
+      }
+
+      // TODO: move into something common?
+      if (data.isOnScreen) {
+        for (var i=0; i<3; i++) {
+          game.objects.smoke.push(new Smoke({
+            x: data.x + 6 + (rndInt(6) * 0.33 * plusMinus()),
+            y: data.y + 12,
+            vX: (rnd(4) * plusMinus()),
+            vY: rnd(-4),
+            spriteFrame: rndInt(5)
+          }));
+        }
       }
 
       data.dead = true;
@@ -7838,9 +7885,10 @@
       // assume default
       damagePoints = data.damagePoints;
 
-      if (target.data.type && target.data.type === TYPES.balloon) {
+      if (target.data.type && (target.data.type === TYPES.balloon || target.data.type === 'smart-missile')) {
 
         die({
+          type: target.data.type,
           omitSound: true,
           spark: true
         });
@@ -7848,13 +7896,15 @@
       } else {
 
         // certain targets should get a spark vs. a large explosion
-        isSpark = target.data.type && target.data.type.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret/i);
+        isSpark = target.data.type && target.data.type.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret|smartMissile/i);
 
         die({
+          type: target.data.type,
           spark: isSpark,
-          bottomAlign: !isSpark,
+          bottomAlign: !isSpark && (!target.data.type || target.data.type === TYPES.balloon || target.data.type === TYPES.infantry),
           // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
-          extraY: (target.data.type && target.data.type.match(/tank/i) ? 3 + parseInt(Math.random() * 3, 10) : 0)
+          extraY: (target.data.type && target.data.type.match(/tank/i) ? 3 + rndInt(3) : 0),
+          target: target
         });
 
       }
@@ -7874,9 +7924,16 @@
 
         }
 
+        // bonus "hit" sounds for certain targets
+        if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
+          playSound(sounds.metalHit, exports);
+        } else if (target.data.type === TYPES.bunker) {
+          playSound(sounds.concreteHit, exports);
+        }
+
       }
 
-      common.hit(target, damagePoints);
+      common.hit(target, damagePoints, exports);
 
     }
 
@@ -7884,17 +7941,9 @@
 
       if (!data.dead) {
 
-        if (data.firstFrame) {
-          // trigger CSS animation on first frame
-          utils.css.add(dom.o, css.dropping);
-          data.firstFrame = false;
-        }
-
         data.gravity *= 1.1;
 
-        moveTo(data.x + data.vX, data.y + data.vY + data.gravity);
-
-        // collision check?
+        moveTo(data.x + data.vX, data.y + Math.min(data.vY + data.gravity, data.vYMax));
 
         // hit bottom?
         if (data.y - data.height > game.objects.view.data.battleField.height) {
@@ -7904,6 +7953,10 @@
         }
 
         collisionTest(collision, exports);
+
+        // bombs are animated by their parent - e.g., helicopters,
+        // and not the main game loop. so, on-screen status is checked manually here.
+        updateIsOnScreen(exports);
 
       }
 
@@ -7918,15 +7971,12 @@
         className: css.className
       });
 
+      // parent gets transform position, subsprite gets rotation animation
+      dom.oSubSprite = makeSubSprite();
 
-      // hack?
-      if (features.transform.prop) {
-        dom.o.style.left = data.x + 'px';
-        dom.o.style.top = data.y + 'px';
-        // dom.o.style.left = dom.o.style.top = '0px';
-      }
+      dom.o.appendChild(dom.oSubSprite);
 
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       // TODO: don't create radar items for bombs from enemy helicopter when cloaked
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -7941,24 +7991,25 @@
 
     css = inheritCSS({
       className: 'bomb',
-      dropping: 'dropping',
       explosionLarge: 'explosion-large',
       spark: 'spark'
     });
 
     data = inheritData({
       type: 'bomb',
+      parentType: options.parentType || null,
       deadTimer: null,
-      firstFrame: true,
       width: 13,
       height: 12,
       gravity: 1,
       damagePoints: 3,
-      vX: (options.vX || 0)
+      vX: (options.vX || 0),
+      vYMax: 32
     }, options);
 
     dom = {
-      o: null
+      o: null,
+      oSubSprite: null
     };
 
     collision = {
@@ -7969,7 +8020,7 @@
           bombHitTarget(target);
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'superBunkers', 'helicopters', 'turrets']
+      items: ['superBunkers', 'bunkers', 'tanks', 'helicopters', 'balloons', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'turrets', 'smartMissiles']
     };
 
     exports = {

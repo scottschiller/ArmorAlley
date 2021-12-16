@@ -1881,11 +1881,6 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
   /* offset for 57-pixel-wide normal tank */
 }
 
-.sprite.bottom-align {
-  top: auto !important;
-  bottom: 0px !important;
-}
-
 .infantry.exploding,
 .parachute-infantry.exploding,
 .engineer.exploding {
