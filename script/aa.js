@@ -1088,7 +1088,6 @@
 
   }
 
-  common = {
 
     defaultCSS: {
       animating: 'animating',
@@ -1124,7 +1123,14 @@
     return Math.random() >= 0.5 ? 1 : -1;
   }
 
+  common = {
 
+    defaultCSS: {
+      animating: 'animating',
+      dead: 'dead',
+      enemy: 'enemy',
+      exploding: 'exploding',
+    },
 
     setTransformXY: function(exports, o, x, y, extraTransforms) {
 
@@ -1193,10 +1199,66 @@
 
     hit: function(target, hitPoints, attacker) {
 
+      var newEnergy, energyChanged;
 
       if (target.data.dead) return;
 
+      hitPoints = hitPoints || 1;
+
+      /**
+       * special case: super-bunkers can only be damaged by tank gunfire.
+       * other things can hit super-bunkers, but we don't want damage done in this case.
+       */
+
+      if (target.data.type === TYPES.superBunker) {
+        // non-tank gunfire will ricochet off of super bunkers.
+        if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) {
+          return;
         }
+      } else if (target.data.type === TYPES.tank) {
+        // tanks shouldn't be damaged by shrapnel - but, let the shrapnel die.
+        if (attacker && attacker.data && attacker.data.parentType && attacker.data.parentType === TYPES.shrapnel) {
+          hitPoints = 0;
+        }
+      }
+
+      newEnergy = Math.max(0, target.data.energy - hitPoints);
+
+      energyChanged = target.data.energy !== newEnergy;
+
+      target.data.energy = newEnergy;
+
+      // special cases for updating state
+      if (energyChanged && target.updateHealth) {
+        target.updateHealth(attacker);
+      }
+
+      updateEnergy(target);
+
+      if (!target.data.energy) {
+
+        if (target.die) {
+          target.die({ attacker: attacker });
+        }
+
+      }
+
+    },
+
+    // height offsets for certain common ground units
+    // TODO: reference constants or similar
+    ricochetBoundaries: {
+      'tank': 18,
+      'bunker': 25,
+      'super-bunker': 28
+    },
+
+    lastInfantryRicochet: 0,
+
+    getLandingPadOffsetX: function(helicopter) {
+      var landingPad = game.objects.landingPads[helicopter.data.isEnemy ? game.objects.landingPads.length - 1 : 0];
+      return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
+    },
 
 
 
