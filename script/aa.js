@@ -7991,16 +7991,20 @@
 
     function moveTo(x, y) {
 
+      var needsUpdate;
+
       if (x !== undefined && data.x !== x) {
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
         data.y = y;
+        needsUpdate = true;
       }
 
-      if (data.isOnScreen) {
-        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
       }
 
     }
@@ -8049,9 +8053,7 @@
         className: css.className
       });
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
-
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
     }
 
