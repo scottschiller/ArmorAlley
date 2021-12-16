@@ -12296,6 +12296,12 @@
               // nothing to see here.
               resume();
             }
+
+          } else if (data.role && target.data.type === TYPES.bunker && data.isEnemy === target.data.isEnemy && target.engineerHit) {
+
+            // engineer + friendly bunker: repair, as needed
+            target.engineerHit(exports);
+
           } else if (target.data.isEnemy !== data.isEnemy) {
             // stop moving, start firing if not a friendly unit.
             stop();
@@ -12306,8 +12312,8 @@
           resume();
         }
       },
-      // who gets fired at?
-      items: ['tanks', 'vans', 'missileLaunchers', TYPES.infantry, 'engineers', 'helicopters', 'turrets'],
+      // who gets fired at (or interacted with)?
+      items: ['tanks', 'vans', 'missileLaunchers', TYPES.infantry, 'engineers', 'helicopters', 'turrets', 'bunkers'],
       targets: []
     };
 
@@ -12325,6 +12331,9 @@
           if (!data.role && target.infantryHit) {
             // infantry hit bunker or other object
             target.infantryHit(exports);
+          } else if (data.role && target.engineerHit) {
+            // engineer hit bunker or other object
+            target.engineerHit(exports);
           } else if (target.data.type !== TYPES.bunker && target.data.type !== TYPES.endBunker) {
             // probably a tank.
             die();
@@ -12338,7 +12347,9 @@
       animate: animate,
       data: data,
       dom: dom,
-      die: die
+      die: die,
+      stop: stop,
+      resume: resume
     };
 
     if (!options.noInit) {
