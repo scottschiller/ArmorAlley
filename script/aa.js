@@ -11662,7 +11662,7 @@
 
   Van = function(options) {
 
-    var css, dom, data, radarItem, exports;
+    var css, dom, data, friendlyNearby, height, radarItem, exports;
 
     function stop() {
 
@@ -11670,7 +11670,13 @@
 
     }
 
-    function moveTo(x, bottomY) {
+    function resume() {
+
+      data.stopped = false;
+
+    }
+
+    function moveTo(x, y) {
 
       var needsUpdate;
 
@@ -11681,28 +11687,17 @@
           needsUpdate = true;
         }
 
-        if (bottomY !== undefined && data.bottomY !== bottomY) {
-          data.bottomY = bottomY;
-          data.y = bottomAlignedY(bottomY);
+        if (y !== undefined && data.y !== y) {
+          data.y = y;
           needsUpdate = true;
         }
 
-        if (needsUpdate && data.isOnScreen) {
-          common.setTransformXY(dom.o, data.x + 'px', '0px');
+        // hackish: allow setting transform if game over, so position is updated
+        if (needsUpdate || battleOver) {
+          common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
         }
 
-      }/* else {
-
-        if (x !== undefined && data.x !== x) {
-          data.x = x;
-        }
-
-        if (bottomY !== undefined && data.bottomY !== bottomY) {
-          data.bottomY = bottomY;
-          data.y = bottomAlignedY(bottomY);
-        }
-
-      }*/
+      }
 
     }
 
@@ -11718,7 +11713,9 @@
       // revert to CSS rules, prevent first frame of explosion from sticking
       dom.o.style.backgroundPosition = '0px -384px';
 
-      shrapnelExplosion(data);
+      shrapnelExplosion(data, { centerX: true, velocity: 6 });
+
+      common.inertGunfireExplosion({ exports: exports });
 
       data.deadTimer = setFrameTimeout(function() {
         removeNodes(dom);
@@ -11747,83 +11744,94 @@
 
       var enemyHelicopter;
 
-      if (!data.dead && !data.stopped) {
+      if (data.dead) return (data.dead && !data.deadTimer);
 
-        moveTo(data.x + data.vX, data.bottomY);
+      if (!data.stopped) {
+        moveTo(data.x + data.vX, data.y);
+      }
 
-        if (data.isEnemy && data.x <= data.xGameOver) {
+      common.smokeRelativeToDamage(exports, 0.25);
 
-          stop();
+      // just in case: prevent any multiple "game over" actions via animation
+      if (battleOver) return;
 
-          // Game over, man, game over! (Enemy wins.)
+      if (theyWin || (data.isEnemy && data.x <= data.xGameOver)) {
 
-          // hack: clear any existing.
-          game.objects.view.setAnnouncement();
+        stop();
 
-          game.objects.view.setAnnouncement('The enemy has won the battle.', -1);
+        // Game over, man, game over! (Enemy wins.)
 
-          gameOver();
+        // hack: clear any existing.
+        game.objects.view.setAnnouncement();
 
-        } else if (!data.isEnemy && data.x >= data.xGameOver) {
+        game.objects.view.setAnnouncement('The enemy has won the battle.', -1);
 
-          stop();
+        gameOver();
 
-          // player wins
+      } else if (youWin || (!data.isEnemy && data.x >= data.xGameOver)) {
 
-          // hack: clear any existing.
-          game.objects.view.setAnnouncement();
+        stop();
 
-          game.objects.view.setAnnouncement('You have won the battle.', -1);
+        // player wins
 
-          gameOver(true);
+        // hack: clear any existing.
+        game.objects.view.setAnnouncement();
 
-        } else {
+        game.objects.view.setAnnouncement('You have won the battle.', -1);
 
-          // bounce wheels after the first few seconds
+        gameOver(true);
 
-          if (data.frameCount > FPS * 2) {
+      } else {
 
-            if (data.frameCount % data.stateModulus === 0) {
+        // bounce wheels after the first few seconds
 
-              data.state++;
+        if (data.frameCount > FPS * 2) {
 
-              if (data.state > data.stateMax) {
-                data.state = 0;
-              }
+          if (data.frameCount % data.stateModulus === 0) {
 
-              dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+            data.state++;
 
-            } else if (data.frameCount % data.stateModulus === 2) {
-
-              // next frame - reset.
-              dom.o.style.backgroundPosition = '0px 0px';
-
+            if (data.state > data.stateMax) {
+              data.state = 0;
             }
 
-          }
+            if (data.isOnScreen) {
+              dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+            }
 
-          if (data.frameCount % data.radarJammerModulus === 0) {
+          } else if (data.frameCount % data.stateModulus === 2) {
 
-            // look for nearby bad guys
-            enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.twoThirdsWidth);
-
-            if (!data.jamming && enemyHelicopter) {
-
-              data.jamming = true;
-
-            } else if (data.jamming && !enemyHelicopter) {
-
-              data.jamming = false;
-
+            // next frame - reset.
+            if (data.isOnScreen) {
+              dom.o.style.backgroundPosition = '0px 0px';
             }
 
           }
 
         }
 
-        data.frameCount++;
+        if (data.frameCount % data.radarJammerModulus === 0) {
+
+          // look for nearby bad guys
+          enemyHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.twoThirdsWidth);
+
+          if (!data.jamming && enemyHelicopter) {
+
+            data.jamming = true;
+
+          } else if (data.jamming && !enemyHelicopter) {
+
+            data.jamming = false;
+
+          }
+
+        }
 
       }
+
+      nearbyTest(friendlyNearby);
+
+      data.frameCount++;
 
       return (data.dead && !data.deadTimer);
 
@@ -11839,16 +11847,9 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', '0px');
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
-      /*
-      if (features.transform.prop) {
-        // transform origin
-        dom.o.style.left = '0px';
-      }
-      */
-
-      game.dom.world.appendChild(dom.o);
+      initNearby(friendlyNearby, exports);
 
       // enemy vans are so sneaky, they don't even appear on the radar.
       if (tutorialMode || !options.isEnemy) {
@@ -11860,6 +11861,8 @@
     }
 
     options = options || {};
+
+    height = 16;
 
     css = inheritCSS({
       className: TYPES.van
@@ -11875,23 +11878,42 @@
       energy: 2,
       energyMax: 2,
       direction: 0,
-      stopped: false,
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
-      height: 16,
+      halfWidth: 19,
+      height: height,
+      halfHeight: height / 2,
       state: 0,
       stateMax: 2,
       stateModulus: 30,
+      stopped: false,
       inventory: {
         frameCount: 60,
         cost: 2
       },
       // if the van reaches the enemy base (near the landing pad), it's game over.
-      xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 128 : game.objects.landingPads[game.objects.landingPads.length - 1].data.x - 40)
+      xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 88 : game.objects.landingPads[game.objects.landingPads.length - 1].data.x - 44),
+      x: options.x || 0,
+      y: game.objects.view.data.world.height - height - 2
     }, options);
 
     dom = {
       o: null
+    };
+
+    friendlyNearby = {
+      options: {
+        source: exports,
+        targets: undefined,
+        useLookAhead: true,
+        // stop moving if we roll up behind a friendly vehicle
+        friendlyOnly: true,
+        hit: stop,
+        miss: resume
+      },
+      // who are we looking for nearby?
+      items: ['tanks', 'missileLaunchers', 'vans'],
+      targets: []
     };
 
     exports = {
@@ -12933,7 +12955,7 @@
 
       }
 
-      return (data.dead && !data.deadTimer && !dom.o);
+      return (data.dead && !dom.o);
 
     }
 
