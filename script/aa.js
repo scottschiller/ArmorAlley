@@ -6308,7 +6308,7 @@
         fireOptions.x = (data.x - 1);
 
         // and reverse direction
-        fireOptions.vX = -2;
+        fireOptions.vX *= -1;
 
         game.objects.gunfire.push(new GunFire(fireOptions));
 
