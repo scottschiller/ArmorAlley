@@ -1478,6 +1478,21 @@
 
   };
 
+  function getNormalizedUnitName(item) {
+    if (!item || !item.data) return;
+
+    // gunfire has `parentType`, e.g., fired from a tank
+    var type = item.data.parentType || item.data.type;
+
+    if (!type) return;
+
+    // hackish: fixes
+    type = type.replace('missileLauncher', 'missile launcher');
+    type = type.replace('-', ' ');
+
+    return type;
+  }
+
   function bottomAlignedY(y) {
 
     // correct bottom-aligned Y value
@@ -5602,14 +5617,27 @@
 
     }
 
-    function die() {
+    function die(options) {
+
+      var normalizedType;
 
       if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
+      common.inertGunfireExplosion({ count: 8 + rndInt(8), exports: exports });
+
+      common.smokeRing(exports, {
+        count: 24,
+        velocityMax: 16,
+        offsetY: data.height - 2,
+        isGroundUnit: true
+      });
+
       // detach balloon?
       detachBalloon();
+
+      shrapnelExplosion(data, { velocity: rnd(-10) });
 
       setFrameTimeout(function() {
 
@@ -5630,6 +5658,21 @@
       if (sounds.explosionLarge) {
         playSound(sounds.crashAndGlass, exports);
         playSound(sounds.explosionLarge, exports);
+      }
+
+      if (options && options.attacker && options.attacker.data) {
+
+        normalizedType = getNormalizedUnitName(options.attacker) || 'unit';
+
+        if (options.attacker.data.isEnemy) {
+          game.objects.notifications.add('An enemy ' + normalizedType + ' destroyed a bunker 💥');
+        } else {
+          if ((options.attacker.data.parentType && options.attacker.data.parentType === TYPES.helicopter) || options.attacker.data.type === TYPES.helicopter) {
+            game.objects.notifications.add('You destroyed a bunker 💥');
+          } else {
+            game.objects.notifications.add('A friendly ' + normalizedType + ' destroyed a bunker 💥');
+          }
+        }
       }
 
       // check if enemy convoy production should stop or start
