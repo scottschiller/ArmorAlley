@@ -4006,10 +4006,22 @@
 
         typeData[0].push(orderObject);
 
+        // force-append this thing, if it's on-screen right now
+        updateIsOnScreen(orderObject);
+
+        // set up the initial transition
         utils.css.add(orderObject.dom.o, css.building);
 
+        // and start the "rise" animation
         window.requestAnimationFrame(function() {
           utils.css.add(orderObject.dom.o, css.ordering);
+
+          setFrameTimeout(function() {
+            if (!orderObject.dom || !orderObject.dom.o) return;
+            utils.css.remove(orderObject.dom.o, css.ordering);
+            utils.css.remove(orderObject.dom.o, css.building);
+          }, 2200);
+
         });
 
       }
