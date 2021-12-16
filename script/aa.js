@@ -5673,45 +5673,55 @@
 
     function captureFunds(target) {
 
-      var maxFunds, capturedFunds;
+      var maxFunds, capturedFunds, allFunds;
 
-      // you only get to steal so much at a time.
-      maxFunds = 20;
+      // infantry only get to steal so much at a time.
+      // because they're special, engineers get to rob the bank! 💰
+      allFunds = !!target.data.role;
+      maxFunds = allFunds ? game.objects.endBunkers[data.isEnemy ? 1 : 0].data.funds : 20;
 
-      if (data.funds) {
+      capturedFunds = Math.min(data.funds, maxFunds);
 
-        capturedFunds = Math.min(data.funds, maxFunds);
-
-        if (!tutorialMode) {
-          if (data.isEnemy) {
-            game.objects.view.setAnnouncement(capturedFunds + ' enemy ' + (capturedFunds > 1 ? 'funds' : 'fund') + ' captured!');
+      if (!tutorialMode) {
+        if (data.isEnemy) {
+          if (!capturedFunds) {
+            game.objects.notifications.add('🏦🏴‍☠️🤷 Your engineer captured 0 enemy funds. 😒 Good effort, though.');
           } else {
-            game.objects.view.setAnnouncement('The enemy captured ' + capturedFunds + ' of your funds');
+            if (allFunds) {
+              game.objects.notifications.add('🏦🏴‍☠️💰 Your engineer captured all ' + capturedFunds + (capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'));
+            } else {
+              game.objects.notifications.add('🏦🏴‍☠️💸 ' + capturedFunds + ' enemy ' + (capturedFunds > 1 ? ' funds' : ' fund') + ' captured! 💰');
+            }
+          }
+        } else {
+          if (allFunds) {
+            game.objects.notifications.add('🏦🏴‍☠️💸 The enemy\'s engineer captured all of your funds. 😱');
+          } else {
+            game.objects.notifications.add('🏦🏴‍☠️💸 The enemy captured ' + capturedFunds + ' of your funds. 😨');
           }
         }
-
-        // who gets the loot?
-        if (data.isEnemy) {
-          // local player
-          game.objects.endBunkers[0].data.funds += capturedFunds;
-          game.objects.view.updateFundsUI();
-        } else {
-          // CPU
-          game.objects.endBunkers[1].data.funds += capturedFunds;
-        }
-
-        data.funds -= capturedFunds;
-
-        if (target) {
-          target.die(true);
-          playSound(sounds.doorClose, exports);
-        }
-
-        // force update of the local helicopter
-        // TODO: yeah, this is a bit hackish.
-        game.objects.helicopters[0].updateStatusUI({ funds: true});
-
       }
+
+      // who gets the loot?
+      if (data.isEnemy) {
+        // local player
+        game.objects.endBunkers[0].data.funds += capturedFunds;
+        game.objects.view.updateFundsUI();
+      } else {
+        // CPU
+        game.objects.endBunkers[1].data.funds += capturedFunds;
+      }
+
+      data.funds -= capturedFunds;
+
+      if (target) {
+        target.die({ silent: true });
+        playSound(sounds.doorClose, exports);
+      }
+
+      // force update of the local helicopter
+      // TODO: yeah, this is a bit hackish.
+      game.objects.helicopters[0].updateStatusUI({ funds: true});
 
     }
 
