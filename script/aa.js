@@ -5780,6 +5780,18 @@
 
     }
 
+    function updateHealth(attacker) {
+      // notify if just neutralized by tank gunfire
+      if (data.energy) return;
+      if (!attacker || attacker.data.type !== TYPES.gunfire || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) return;
+      // we have a tank, after all
+      if (attacker.data.isEnemy) {
+        game.objects.notifications.add('The enemy neutralized your end bunker 🚩', { noRepeat: true });
+      } else {
+        game.objects.notifications.add('You neutralized the enemy\'s end bunker ⛳', { noRepeat: true });
+      }
+    }
+
     function initEndBunker() {
 
       dom.o = makeSprite({
@@ -5790,13 +5802,15 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
     options = options || {};
+
+    height = 19;
 
     css = inheritCSS({
       className: TYPES.endBunker
@@ -5808,10 +5822,11 @@
       frameCount: 0,
       energy: 0,
       energyMax: 10,
-      x: (options.x || (options.isEnemy ? 8192 - 48 : 8)),
+      x: (options.x || (options.isEnemy ? worldWidth - 48 : 8)),
+      y: game.objects.view.data.world.height - height - 2,
       width: 39,
       halfWidth: 19,
-      height: 17,
+      height: height,
       funds: (!options.isEnemy ? DEFAULT_FUNDS : 0),
       firing: false,
       gunYOffset: 10,
@@ -5839,7 +5854,8 @@
       animate: animate,
       data: data,
       dom: dom,
-      hit: hit
+      hit: hit,
+      updateHealth: updateHealth
     };
 
     nearby = {
@@ -5850,26 +5866,30 @@
         // TODO: rename to something generic?
         hit: function(target) {
           var isFriendly = (target.data.isEnemy === data.isEnemy);
+
           if (!isFriendly && data.energy) {
             // nearby enemy, and defenses activated? let 'em have it.
             setFiring(true);
           }
-          // nearby infantry?
+
+          // nearby infantry or engineer?
           if (target.data.type === TYPES.infantry) {
             // enemy at door, and funds to steal?
             if (!isFriendly) {
               if (data.funds && collisionCheckMidPoint(exports, target)) {
                 captureFunds(target);
               }
-            } else if (!data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
-              // end bunker isn't "staffed" / manned by infantry, guns are inoperable.
+            } else if (!target.data.role && !data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
+              // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
               // claim infantry, enable guns.
               data.energy = data.energyMax;
               updateEnergy(exports);
-              target.die(true);
+              // die silently.
+              target.die({ silent: true });
               playSound(sounds.doorClose, exports);
             }
           }
+
         },
         miss: function() {
           setFiring(false);
