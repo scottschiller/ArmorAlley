@@ -14091,9 +14091,9 @@
    * calls animate() methods on active FrameTimeout() instances.
    */
   frameTimeoutManager = (function() {
-    var completedCount, exports, instances, spliceArgs = [null, 1];
-
-    instances = [];
+    var exports,
+      instances = [],
+      spliceArgs = [null, 1];
 
     function addInstance(frameTimeout) {
       instances.push(frameTimeout);
@@ -14132,7 +14132,7 @@
 
     /**
      * a frame-counting-based setTimeout() implementation.
-     * milisecond value (parameter) is converted to a frame count.
+     * millisecond value (parameter) is converted to a frame count.
      */
 
     var data, exports;
