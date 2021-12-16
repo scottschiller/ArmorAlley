@@ -6419,13 +6419,38 @@
 
     }
 
-    function die(silent) {
+    function die(options) {
 
       if (data.dead) return;
 
       // reset rotation
       data.angle = 0;
       setAngle(0);
+
+      // special case: when turret is initially rendered as dead, don't explode etc.
+      if (!options || !options.silent) {
+
+        if (!data.isOnScreen) {
+          if (!data.isEnemy) {
+            game.objects.notifications.add('The enemy neutralized a turret 💥');
+          } else {
+            game.objects.notifications.add('You neutralized a turret 💥');
+          }
+        }
+
+        utils.css.add(dom.o, css.exploding);
+
+        setFrameTimeout(function() {
+          utils.css.remove(dom.o, css.exploding);
+        }, 1200);
+
+        common.inertGunfireExplosion({ count: 4 + rndInt(4), exports: exports });
+
+        common.smokeRing(exports, { isGroundUnit: true });
+
+        playSound(sounds.metalHitBreak, exports);
+        playSound(sounds.genericExplosion, exports);
+      }
 
       utils.css.add(dom.o, css.destroyed);
       utils.css.add(radarItem.dom.o, css.destroyed);
@@ -6435,10 +6460,6 @@
       data.dead = true;
 
       updateEnergy(exports);
-
-      if (!silent) {
-        playSound(sounds.metalHitBreak, exports);
-      }
 
     }
 
@@ -6450,7 +6471,13 @@
         utils.css.remove(dom.o, css.destroyed);
         utils.css.remove(radarItem.dom.o, css.destroyed);
 
-        playSound(sounds.popSound, exports);
+        if (data.isEnemy) {
+          game.objects.notifications.add('The enemy started rebuilding a turret 🛠️');
+        } else {
+          game.objects.notifications.add('You started rebuilding a turret 🛠️');
+        }
+
+        playSound(sounds.turretEnabled, exports);
 
       }
 
@@ -6462,7 +6489,7 @@
 
     }
 
-    function repair(complete) {
+    function repair(engineer, complete) {
 
       var result = false;
 
@@ -6476,9 +6503,14 @@
 
           data.energy = (complete ? data.energyMax : Math.min(data.energyMax, data.energy + 1));
 
-          if (data.dead && data.energy > data.energyMax * 0.25) {
+          if (data.dead && data.energy > (data.energyMax * 0.25)) {
             // restore to life at 25%
             data.dead = false;
+            if (data.isEnemy) {
+              game.objects.notifications.add('The enemy re-enabled a turret');
+            } else {
+              game.objects.notifications.add('You re-enabled a turret');
+            }
           }
 
           updateEnergy(exports);
@@ -6490,7 +6522,7 @@
       } else if (data.lastEnergy < data.energy) {
         // only stop sound once, when repair finishes
         if (sounds.tinkerWrench && sounds.tinkerWrench.sound) {
-          sounds.tinkerWrench.sound.stop();
+          stopSound(sounds.tinkerWrench);
         }
         data.lastEnergy = data.energy;
       }
@@ -6501,31 +6533,37 @@
 
     function setEnemy(isEnemy) {
 
-      if (data.isEnemy !== isEnemy) {
+      if (data.isEnemy === isEnemy) return;
 
-        data.isEnemy = isEnemy;
+      data.isEnemy = isEnemy;
 
-        utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
+      utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
 
-        playSoundWithDelay((isEnemy ? sounds.enemyClaim : sounds.friendlyClaim), exports, 500);
-
-      }
+      playSoundWithDelay((isEnemy ? sounds.enemyClaim : sounds.friendlyClaim), exports, 500);
 
     }
 
     function claim(isEnemy) {
 
-      if (data.frameCount % data.claimModulus === 0) {
+      if (data.frameCount % data.claimModulus !== 0) return;
 
-        data.claimPoints++;
+      data.claimPoints++;
 
-        if (data.claimPoints >= data.claimPointsMax) {
-          // change sides.
-          setEnemy(isEnemy);
-          data.claimPoints = 0;
+      if (data.claimPoints < data.claimPointsMax) return;
+
+      // change sides.
+      if (!data.dead) {
+        // notify only if engineer is capturing a live turret.
+        // otherwise, it'll be neutralized and then rebuilt.
+        if (isEnemy) {
+          game.objects.notifications.add('The enemy captured a turret 🚩');
+        } else {
+          game.objects.notifications.add('You captured a turret ⛳');
         }
-
       }
+
+      setEnemy(isEnemy);
+      data.claimPoints = 0;
 
     }
 
@@ -6542,7 +6580,7 @@
 
       } else {
 
-        repair();
+        repair(target);
 
       }
 
