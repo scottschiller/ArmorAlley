@@ -12613,11 +12613,11 @@
 
   Shrapnel = function(options) {
 
-    var css, dom, data, collision, radarItem, exports;
+    var css, dom, data, collision, radarItem, scale, exports;
 
     function moveTo(x, y) {
 
-      var needsUpdate;
+      var relativeScale, needsUpdate;
 
       if (x !== undefined && data.x !== x) {
         data.x = x;
@@ -12629,30 +12629,35 @@
         data.y = y;
       }
 
-      if (needsUpdate && data.isOnScreen) {
-        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      if (needsUpdate) {
+        // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
+        relativeScale = Math.min(1, data.y / (worldHeight * 0.9));
+
+        // allow slightly larger, and a fair bit smaller
+        relativeScale = 1.1 - (relativeScale * 0.45);
+
+        data.scaleTransform = 'scale3d(' + [relativeScale, relativeScale, 1].join(',') + ')'
+
+        // move, and retain 3d scaling
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.scaleTransform);
       }
 
     }
 
     function shrapnelNoise() {
 
-      var i;
+      if (!data.hasSound) return;
 
-      if (data.hasSound) {
+      var i = 'hit' + sounds.shrapnel.counter;
 
-        i = 'hit' + sounds.shrapnel.counter;
+      sounds.shrapnel.counter += (sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1);
 
-        sounds.shrapnel.counter += (sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1);
+      if (sounds.shrapnel.counter >= sounds.shrapnel.counterMax) {
+        sounds.shrapnel.counter = 0;
+      }
 
-        if (sounds.shrapnel.counter >= sounds.shrapnel.counterMax) {
-          sounds.shrapnel.counter = 0;
-        }
-
-        if (sounds.shrapnel[i]) {
-          playSound(sounds.shrapnel[i], exports);
-        }
-
+      if (sounds.shrapnel[i]) {
+        playSound(sounds.shrapnel[i], exports);
       }
 
     }
@@ -12738,12 +12743,17 @@
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
-      // apply the type of shrapnel
-      dom.oTransformSprite.style.backgroundPosition = (data.spriteType * -data.width) + 'px 0px';
+      // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
+      dom.oTransformSprite.style.backgroundPosition = (data.spriteType * -data.width * 1 / data.scale) + 'px 0px';
 
-      game.dom.world.appendChild(dom.o);
+      // spinning animation duration?
+      dom.oTransformSprite.style.animationDuration = (0.2 + Math.random()) + 's';
+
+      if (Math.random() >= 0.5) {
+        dom.oTransformSprite.style.animationDirection = 'reverse';
+      }
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -12751,11 +12761,19 @@
         utils.css.add(radarItem.dom.o, css.enemy);
       }
 
+      // special case for end game (base) explosion: don't create identical "clouds" of smoke *at* base.
+      if (data.isOnScreen && !options.noInitialSmoke) {
+        makeSmoke();
+      }
+
       shrapnelNoise();
 
     }
 
     options = options || {};
+
+    // default
+    scale = options.scale || (0.8 + rnd(0.15));
 
     css = inheritCSS({
       className: 'shrapnel',
@@ -12765,20 +12783,25 @@
 
     data = inheritData({
       type: 'shrapnel',
+      parentType: (options.type || null),
       frameCount: 0,
-      animationModulus: 2,
       spriteType: rndInt(4),
       direction: 0,
       // sometimes zero / non-moving?
       vX: options.vX || 0,
       vY: options.vY || 0,
-      maxVY: 48,
+      maxVX: 36,
+      maxVY: 32,
       gravity: 1,
-      width: 12,
-      height: 12,
+      // randomize fall rate
+      gravityRate: 1.06 + rnd(0.05),
+      width: 12 * scale,
+      height: 12 * scale,
+      scale: scale,
+      scaleTransform: 'scale3d(' + [scale, scale, 1].join(',') + ')',
       hostile: true,
       damagePoints: 0.5,
-      hasSound: !!options.hasSound
+      hasSound: !!options.hasSound,
     }, options);
 
     dom = {
