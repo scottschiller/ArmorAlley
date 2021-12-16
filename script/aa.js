@@ -9024,9 +9024,11 @@
 
     function updateFuelUI() {
 
+      var noRepeat = { noRepeat: true };
+
       if (!data.isEnemy) {
 
-        common.setTransformXY(dom.fuelLine, -100 + data.fuel + '%', '0px');
+        common.setTransformXY(undefined, dom.fuelLine, -100 + data.fuel + '%', '0px');
 
         // hackish: show announcements across 1% of fuel burn process.
         if (!data.repairing && !tutorialMode) {
@@ -9034,14 +9036,17 @@
           if (data.fuel < 33 && data.fuel > 32) {
 
             game.objects.view.setAnnouncement('Low fuel');
+            game.objects.notifications.add('Low fuel ⛽🤏⚠️', noRepeat);
 
           } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
             game.objects.view.setAnnouncement('Fuel critical');
+            game.objects.notifications.add('Fuel critical ⛽🤏😱', noRepeat);
 
           } else if (data.fuel <= 0) {
 
             game.objects.view.setAnnouncement('No fuel');
+            game.objects.notifications.add('No fuel ☠️', noRepeat);
 
           }
 
