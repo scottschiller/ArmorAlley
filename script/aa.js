@@ -1958,7 +1958,12 @@
   function isOnScreen(target) {
 
     // is the target within the range of screen coordinates?
-    return (target && target.data && (target.data.x + target.data.width) >= game.objects.view.data.battleField.scrollLeft && target.data.x < (game.objects.view.data.battleField.scrollLeft + game.objects.view.data.browser.width));
+    return (
+      target
+      && target.data
+      && (target.data.x + target.data.width) >= game.objects.view.data.battleField.scrollLeft
+      && target.data.x < game.objects.view.data.battleField.scrollLeftWithBrowserWidth
+    );
 
   }
 
@@ -3307,11 +3312,18 @@
 
     var costs, css, data, dom, events, exports;
 
-    function setLeftScroll(x) {
+    function setLeftScroll(x, allowOverride) {
 
-      // scroll the battlefield by relative amount.
-      data.battleField.scrollLeftVX = x;
-      data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - (data.browser.width / 2), data.battleField.scrollLeft + x));
+      if (allowOverride) {
+        data.battleField.scrollLeftVX = 0;
+        data.battleField.scrollLeft = x;
+      } else {
+        // scroll the battlefield by relative amount.
+        data.battleField.scrollLeftVX = x;
+        data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
+      }
+      
+      data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
       if (features.transform.prop) {
         // aim for GPU-based scrolling...
