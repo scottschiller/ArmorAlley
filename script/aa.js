@@ -9447,20 +9447,37 @@
     }
 
     function updateInventoryQueue(item) {
-      var dataCount, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oSubSprite, oLastChild, queue, i, j, count;
+      // TODO: this queue and X-of-Y built logic could use a refactoring.
+      var dataBuilt, dataCount, dataCountOriginal, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oLastChild, queue, count;
 
       queue = document.getElementById('queue');
 
+      dataBuilt = 'data-built';
       dataCount = 'data-count';
+      dataCountOriginal = 'data-count-original';
       dataType = 'data-type';
 
       count = 0;
+
+      function updateBuilt() {
+        var built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
+        built++;
+        element.setAttribute(dataBuilt, built);
+      }
+
+      function updateCount() {
+        var built, originalCount;
+        originalCount = element.getAttribute(dataCountOriginal);
+        built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
+        var adjustedCount = Math.min(built, originalCount);
+        oCounter.innerHTML = '<span class="fraction-wrapper"><sup>' + adjustedCount + '</sup><em class="fraction">&frasl;</em><sub>' + originalCount + '</sub></span>';
+      }
 
       // FIFO-based queue: `item` is provided when something is being queued.
       // otherwise, the first item has finished and can be removed from the queue.
       if (item) {
 
-        // tank, infrantry, or special-case: engineer.
+        // tank, infantry, or special-case: engineer.
         type = item.data.role ? item.data.roles[item.data.role] : item.data.type;
 
         oLastChild = queue.childNodes[queue.childNodes.length-1];
@@ -9468,13 +9485,9 @@
         // are we appending a duplicate, e.g., two tanks in a row?
         if (oLastChild) {
           typeFromElement = oLastChild.getAttribute(dataType);
-          console.log('typeFromElement', typeFromElement);
 
           // direct className match, or, engineer special case
-          if (typeFromElement === type) {
-            isDuplicate = true;
-          }
-          console.log('isDuplicate', isDuplicate);
+          if (typeFromElement === type) isDuplicate = true;
 
           element = oLastChild;
 
@@ -9482,22 +9495,13 @@
 
         if (!isDuplicate) {
           o = document.createElement('div');
-          // `stopped` = no sprite animation.
-          o.className = ['queue-item', 'stopped', type].join(' ');
-
-          /*
-          // special case - engineers
-          if (item.data.role) {
-            o.className += ' ' + item.data.roles[item.data.role];
-          }
-          */
+          o.className = 'queue-item';
 
           // special engineer case vs. others.
           o.setAttribute(dataType, type);
 
-          oSubSprite = document.createElement('div');
-          oSubSprite.className = 'transform-sprite';
-          o.appendChild(oSubSprite);
+          // tank -> T etc.
+          o.innerHTML = type.charAt(0).toUpperCase();
 
           oCounter = document.createElement('div');
           oCounter.className = 'counter';
@@ -9507,14 +9511,36 @@
           queue.appendChild(o);
 
           element = o;
-
         }
 
         oCounter = element.getElementsByClassName('counter')[0];
-        count = (parseInt(element.getAttribute(dataCount), 10) || 0) + 1;
-        element.setAttribute(dataCount, count);
-        oCounter.innerHTML = count;
 
+        // active tracking counter: how many to build (decremented as builds happen)
+        count = (parseInt(element.getAttribute(dataCount), 10) || 0) + 1;
+
+        element.setAttribute(dataCount, count);
+
+        // how many have been built - always starting with 1
+        element.setAttribute(dataBuilt, parseInt(element.getAttribute(dataBuilt), 10) || 1);
+
+        // how many have been ordered, always incrementing only
+        element.setAttribute(dataCountOriginal, (parseInt(element.getAttribute(dataCountOriginal), 10) || 0) + 1);
+
+        // offset text, if needed
+        if (count >= 10) {
+          utils.css.add(element, 'over-ten');
+        }
+
+        // TODO: fix logic for when to display number vs. fraction, based on `isBuilding`
+        // and counting logic - e.g., building tanks, 2/3, and you order another tank. should be 2/4.
+        if (utils.css.has(element, 'building')) {
+          // show the fraction
+          updateCount();
+        } else {
+          // show the number to build
+          oCounter.innerHTML = count;
+        }
+        
         setFrameTimeout(function() {
           // transition in
           utils.css.add(o, 'queued');
@@ -9530,32 +9556,52 @@
         return {
           onOrderStart: function() {
             utils.css.add(o, 'building');
-            if (isDuplicate) {
-              // decrement until complete
-              count = (parseInt(element.getAttribute(dataCount), 10) || 1) - 1;
-              element.setAttribute(dataCount, count);
+            count = (parseInt(element.getAttribute(dataCount), 10) || 1);
+
+            // first unit being built?
+            if (!isDuplicate) {
+              updateCount();
+              return;
             }
+
+            // decrement and update, x/y
+            count--;
+            element.setAttribute(dataCount, count);
+            updateCount();
           },
           onOrderComplete: function() {
             // mark as complete once all have been built.
-            console.log('onOrderComplete');
+            updateBuilt();
+
+            // not "complete" until count is 0
             count = (parseInt(element.getAttribute(dataCount), 10) || 1) - 1;
-            if (!count) {
-              utils.css.remove(element, 'building');
-              utils.css.add(element, 'complete');
-            }
+            if (count) return;
+
+            // show the raw digit
+            oCounter.innerHTML = element.getAttribute(dataCountOriginal);
+
+            utils.css.remove(element, 'building');
+            utils.css.add(element, 'complete');
+
+            // prevent element leaks
+            oCounter = null;
+            element = null;
+            o = null;
           }
         }
 
       } else {
 
         // clear entire queue.
-
         setFrameTimeout(function() {
           addCSSToAll(queue.childNodes, 'collapsing');
           // finally, remove the nodes.
           // hopefully, no race condition here. :P
           setFrameTimeout(function() {
+            // prevent element leaks
+            oCounter = null;
+            element = null;
+            o = null;
             // TODO: improve.
             queue.innerHTML = '';
           }, 500);
