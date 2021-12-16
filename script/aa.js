@@ -14061,6 +14061,7 @@
   }
 
   Funds = function() {
+    // a "Dune 2"-style credits UI that "spins", with matching sound effects.
     var css, data, dom, exports;
 
     css = {
@@ -14071,11 +14072,15 @@
       active: false,
       value: DEFAULT_FUNDS,
       displayValue: DEFAULT_FUNDS,
+      lastActiveDisplayValue: DEFAULT_FUNDS,
       hideLeadingZeroes: true,
       frameInterval: 3,
       frameCount: 0,
       fontSize: 10,
       offsetType: 'px',
+      pixelShift: isChrome ? -0.1825 * 0 : 0,
+      // sometimes, things don't line up exactly perfectly.
+      pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
       digitCount: 3,
       // state for each digit  
       offsetTop: [],
@@ -14109,7 +14114,41 @@
       utils.css.add(dom.digits[offset].parentNode, css.collapsed);
     }
     
+    function updateFrameInterval(delta) {
+      var i;
+      // how fast should the ticks go by?
+      // (timed roughly to inventory ordering animations.)
+
+      // if adding funds, always animate "fast"?
+      if (data.value > data.lastActiveDisplayValue) {
+        if (delta >= 10) {
+          i = 2;
+        } else {
+          i = 3;
+        }
+      } else if (delta >= 10) {
+        i = 2;
+      } else if (delta >= 9) {
+        i = 3;
+      } else if (delta >= 8) {
+        i = 4;
+      } else if (delta >= 7) {
+        i = 5;
+      } else if (delta >= 6) {
+        i = 6;
+      } else if (delta >= 5) {
+        i = 8;
+      } else if (delta >= 3) {
+        i = 10;
+      } else {
+        i = 21;
+      }
+
+      data.frameInterval = i;
+    }
+
     function updateDOM() {
+      var i, j;
       // raw string, and array of integers
       var digits = data.displayValue.toString();
       var digitInts = [];
@@ -14126,47 +14165,26 @@
       // guard, in case these haven't rendered yet.
       if (!dom.digits.length) return;
 
-      var delta;
-
       // rough concept of rotation speed / velocity on the UI.
       if (!data.active) {
 
         // update frequency relative to the credits being spent / earned.
-        delta = Math.abs(data.displayValue - data.value);
+        data.delta = Math.abs(data.displayValue - data.value);
 
-        // how fast should the ticks go by?
-        // (timed roughly to inventory ordering animations.)
-        var i;
-
-        if (delta >= 10) {
-          i = 2;
-        } else if (delta >= 9) {
-          i = 3;
-        } else if (delta >= 8) {
-          i = 4;
-        } else if (delta >= 7) {
-          i = 5;
-        } else if (delta >= 6) {
-          i = 6;
-        } else if (delta >= 5) {
-          i = 8;
-        } else if (delta >= 3) {
-          i = 10;
-        } else {
-          i = 21;
-        }
-
-        data.frameInterval = i;
-        
+        updateFrameInterval(data.delta);
+      
         data.active = true;
       }
 
       var digitCountMinusOne = data.digitCount - 1;
 
       // handle digit changes.
-      for (var i = 0, j = data.digitCount; i < j; i++) {
+      for (i = 0, j = data.digitCount; i < j; i++) {
         data.offsetTop[i] = digits[i] * -1;
+
+        // only update those which have changed.
         if (data.lastOffsetTop[i] === data.offsetTop[i]) continue;
+
         data.lastOffsetTop[i] = data.offsetTop[i];
 
         // show or hide 10s / 100s "columns" accordingly.
@@ -14189,14 +14207,35 @@
         // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
         tensOffset = (data.offsetTop[i-1] || 0) * 10;
 
-        dom.digits[i].style.backgroundPosition = '0px ' + ((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + data.offsetType;
+        dom.digits[i].style.backgroundPosition = '0px ' + ((((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]) + data.offsetType;
       }
    
     }
   
+    function updateScale() {
+      // transforms are exempt, only apply to zoom
+      if (isFirefox) return;
+
+      // read the actual rendered height from the DOM
+      // this will then be used to do offsets for animating numbers
+      if (!dom.digits.length) return;
+
+      var funds = document.getElementById('funds');
+
+      // first, offset zoom scaling.
+      funds.style.zoom = screenScale;
+
+      var adjustedScale = (1 / screenScale);
+
+      // now, transform back so things look right, without throwing off background positioning on digits.
+      document.getElementById('funds').style.transform = 'scale3d(' + [adjustedScale, adjustedScale, 1].join(',') + ')';
+      document.getElementById('funds').style.transformOrigin = '0px 0px';
+    }
+
     function updateSound() {
 
-      // "... Press debit or credit" 🤣 -- Maria Bamford https://www.youtube.com/watch?v=hi8UURLK6FM
+      // "... Press debit or credit" 🤣 -- Maria Bamford
+      // https://www.youtube.com/watch?v=hi8UURLK6FM
       if (data.displayValue <= data.value) {
         playSound(sounds.inventory.credit);
       } else {
@@ -14208,6 +14247,8 @@
       // are we up-to-date?
       if (data.displayValue === data.value) {
         data.active = false;
+        // update
+        data.lastActiveDisplayValue = data.displayValue;
         return false;
       }
 
@@ -14227,15 +14268,21 @@
     }
     
     function setFunds(newValue) {
+      // update delta, too.
+      // this means the "spinner" speed can update as the rate of fund spend/gain changes.
+      var newDelta = Math.abs(data.lastActiveDisplayValue - newValue);
+
       data.value = newValue;
-      // allow "speed" to change
-      data.intervalApplied = false;
+      data.delta = newDelta;
+
+      updateFrameInterval(data.delta);      
     }
 
     exports = {
       animate: animate,
       data: data,
-      setFunds: setFunds
+      setFunds: setFunds,
+      updateScale: updateScale
     }
 
     updateDOM();
