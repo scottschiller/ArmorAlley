@@ -2505,20 +2505,20 @@
 
   function addSound(options) {
 
-    var result = {
-      sound: soundManager.createSound(options),
+    return {
+      // sound object is now deferred until play(), which itself is now queued.
+      sound: null,
+      options: options,
       soundOptions: {
         onScreen: {
-          volume: options.volume || 100
+          volume: options.volume || DEFAULT_VOLUME
         },
         offScreen: {
           // off-screen sounds are more quiet.
-          volume: parseInt((options.volume || 100) / 3, 10)
+          volume: parseInt((options.volume || DEFAULT_VOLUME) / 4, 10)
         }
       }
     };
-
-    return result;
 
   }
 
