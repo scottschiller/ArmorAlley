@@ -235,6 +235,16 @@
     utils.css.swap(document.getElementById('world'), missileMode, mode);
 
     missileMode = mode;
+
+    // determine which letter to highlight
+    var html = [
+      renderMissileText('X', defaultMissileMode),
+      renderMissileText('C', rubberChickenMode),
+      renderMissileText('B', bananaMode)
+    ].join('<span class="divider">|</span>');
+
+    document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
+
   }
 
   var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
