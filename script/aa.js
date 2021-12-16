@@ -6938,10 +6938,8 @@
     var css, data, dom, objects, exports, defaultHeight;
 
     function applyHeight() {
-
       dom.o.style.height = (data.height + 'px');
       data.appliedHeight = parseInt(data.height, 10);
-
     }
 
     function moveTo(x, y, height) {
@@ -6958,8 +6956,8 @@
         needsUpdate = true;
       }
 
-      if (needsUpdate && data.isOnScreen) {
-        common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
       }
 
       if (height !== undefined && data.height !== height) {
@@ -7122,11 +7120,9 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       applyHeight();
-
-      game.dom.world.appendChild(dom.o);
 
     }
 
