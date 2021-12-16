@@ -1260,19 +1260,89 @@
       return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
     },
 
+    smokeRing: function(item, smokeOptions) {
 
+      // don't create if not visible
+      if (!item.data.isOnScreen) return;
 
+      smokeOptions = smokeOptions || {};
+      
+      var angle, smokeArgs, angleIncrement, count, i, radians, velocityMax, vX, vY, vectorX, vectorY;
+
+      angle = 0;
+
+      // some sort of min / max
+      velocityMax = smokeOptions.velocityMax || (3 + rnd(4));
+
+      // # of smoke elements
+      count = parseInt((smokeOptions.count ? smokeOptions.count / 2 : 5) + rndInt(smokeOptions.count || 11), 10);
+
+      angleIncrement = 180 / count;
+
+      // random: 50% to 100% of range
+      vX = vY = (velocityMax / 2) + rnd(velocityMax / 2);
+
+      for (i = 0; i < count; i++) {
+
+        angle += angleIncrement;
+
+        // calculate vectors for each element
+        radians = angle * Math.PI / 90;
+
+        vectorX = vX * Math.cos(radians);
+        vectorY = vY * Math.sin(radians);
+
+        // ground-based object, e.g., base? explode "up", and don't mirror the upper half.
+        if (vectorY > 0 && smokeOptions.isGroundUnit) {
+          vectorY *= -0.33;
+          vectorX *= 0.33;
         }
 
+        smokeArgs = {
+          // fixedSpeed: true, // don't randomize vX / vY each time
+          x: item.data.x + ((smokeOptions.offsetX || 0) || (item.data.halfWidth || 0)),
+          y: item.data.y + ((smokeOptions.offsetY || 0) || (item.data.halfHeight || 0)),
+          // account for some of parent object's motion, e.g., helicopter was moving when it blew up
+          vX: vectorX + ((smokeOptions.parentVX || 0) / 3),
+          vY: vectorY + ((smokeOptions.parentVY || 0) / 3),
+          // spriteFrame: (Math.random() > 0.5 ? 0 : rndInt(5)),
+          spriteFrameModulus: smokeOptions.spriteFrameModulus || 3,
+          gravity: 0.25,
+          deceleration: 0.98,
+          increaseDeceleration: 0.9985
+        };
 
+        game.objects.smoke.push(new Smoke(smokeArgs));
 
+        // past a certain amount, create inner "rings"
+        if (count >= 20 || velocityMax > 15) {
 
+          // second inner ring
+          if (i % 2 === 0) {
+            game.objects.smoke.push(new Smoke(
+              mixin(smokeArgs, { vX: vectorX * 0.75, vY: vectorY * 0.75})
+            ));
+          }
+
+          // third inner ring
+          if (i % 3 === 0) {
+            game.objects.smoke.push(new Smoke(
+              mixin(smokeArgs, { vX: vectorX * 0.66, vY: vectorY * 0.66})
+            ));
+          }
+
+          // fourth inner ring
+          if (i % 4 === 0) {
+            game.objects.smoke.push(new Smoke(
+              mixin(smokeArgs, { vX: vectorX * 0.50, vY: vectorY * 0.50})
+            ));
           }
 
         }
 
       }
 
+    },
     }
 
   };
