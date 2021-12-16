@@ -9083,17 +9083,42 @@
       return (data.repairing && !data.repairComplete);
     }
 
-    function startRepairing() {
+    function startRepairing(landingPad) {
 
       if (!data.repairing) {
 
         data.repairing = true;
 
+        // reset "counter" for missiles, etc.
+        data.repairFrames = 0;
+
         if (!data.isEnemy) {
 
           document.getElementById('spinner').style.display = 'block';
 
+          var welcomeMessage = landingPad.data.welcomeMessage;
+
           playSound(sounds.repairing);
+
+          // only if we're going to be "a while"
+          if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
+            playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+            game.objects.notifications.add(welcomeMessage, { doubleHeight: true, noRepeat: true });
+          }
+
+          // start blinking certain things
+
+          if (data.smartMissiles < data.maxSmartMissiles) {
+            utils.css.add(dom.statusBar.missileCountLI, css.repairing);
+          }
+
+          if (data.ammo < data.maxAmmo) {
+            utils.css.add(dom.statusBar.ammoCountLI, css.repairing);
+          }
+
+          if (data.bombs < data.maxBombs) {
+            utils.css.add(dom.statusBar.bombCountLI, css.repairing);
+          }
 
           setFrameTimeout(function() {
             playRepairingWrench(repairInProgress, exports);
@@ -9111,33 +9136,34 @@
 
     function stopRepairing() {
 
-      if (data.repairing) {
-
+      if (!data.repairing || data.isEnemy) {
+        // force-reset "complete" flag at this point, regardless
         data.repairing = false;
-
-        if (!data.isEnemy) {
-
-          document.getElementById('spinner').style.display = 'none';
-
-          if (sounds.repairing) {
-            sounds.repairing.sound.stop();
-          }
-
-        }
-
-        if (data.repairComplete) {
-
-          data.repairComplete = false;
-
-          if (!data.isEnemy) {
-
-            document.getElementById('repair-complete').style.display = 'none';
-
-          }
-
-        }
-
+        data.repairComplete = false;
+        return;
       }
+
+      // ensure counters aren't blinking
+      utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
+      utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
+      utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
+
+      document.getElementById('spinner').style.display = 'none';
+
+      if (sounds.repairing) {
+        stopSound(sounds.repairing);
+      }
+
+      if (sounds.ipanemaMuzak) {
+        stopSound(sounds.ipanemaMuzak);
+      }
+
+      if (data.repairComplete) {
+        document.getElementById('repair-complete').style.display = 'none';
+      }
+
+      data.repairing = false;
+      data.repairComplete = false;
 
     }
 
@@ -9153,10 +9179,30 @@
     function applyStatusUI(updated) {
       var force = updated.force;
 
-      if (force || updated.parachutes) dom.statusBar.infantryCount.innerText = data.parachutes;
-      if (force || updated.ammo) dom.statusBar.ammoCount.innerText = data.ammo;
-      if (force || updated.bombs) dom.statusBar.bombCount.innerText = data.bombs;
-      if (force || updated.smartMissiles) dom.statusBar.missileCount.innerText = data.smartMissiles;
+      if (force || updated.parachutes) {
+        dom.statusBar.infantryCount.innerText = data.parachutes;
+      }
+      
+      if (force || updated.ammo) {
+        dom.statusBar.ammoCount.innerText = data.ammo;
+        if (updated.ammoComplete) {
+          utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
+        }
+      }
+
+      if (force || updated.bombs) {
+        dom.statusBar.bombCount.innerText = data.bombs;
+        if (updated.bombsComplete) {
+          utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
+        }
+      }
+
+      if (force || updated.smartMissiles) {
+        dom.statusBar.missileCount.innerText = data.smartMissiles;
+        if (updated.smartMissilesComplete) {
+          utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
+        }
+      }
 
       var mobileControls;
       var mobileControlItems;
@@ -9205,8 +9251,13 @@
           || updated.ammo
           || updated.bombs
           || updated.smartMissiles
-          || updated.parachutes)
-        ) applyStatusUI(updated);
+          || updated.parachutes
+        )
+      ) {
+        game.objects.queue.addNextFrame(function() {
+          applyStatusUI(updated);
+        });
+      }
 
       // fully-repaired?
       if (
@@ -9227,7 +9278,11 @@
           document.getElementById('repair-complete').style.display = 'block';
 
           if (sounds.repairing) {
-            sounds.repairing.sound.stop();
+            stopSound(sounds.repairing);
+          }
+
+          if (sounds.ipanemaMuzak) {
+            stopSound(sounds.ipanemaMuzak);
           }
 
           if (sounds.inventory.end) {
