@@ -314,6 +314,31 @@
     van: 'van'
   };
 
+  var COSTS = {
+    missileLauncher: {
+      funds: 3,
+      css: 'can-not-order-missile-launcher'
+    },
+    tank: {
+      funds: 4,
+      css: 'can-not-order-tank'
+    },
+    van: {
+      funds: 2,
+      css: 'can-not-order-van',
+    },
+    infantry: {
+      funds: 5,
+      count: 5,
+      css: 'can-not-order-infantry',
+    },
+    engineer: {
+      funds: 5,
+      count: 2,
+      css: 'can-not-order-engineer'
+    }
+  };
+
   var stats;
 
   function statsStructure() {
@@ -3302,7 +3327,8 @@
 
   View = function() {
 
-    var costs, css, data, dom, events, exports;
+    var css, data, dom, events, exports;
+
     function setLeftScrollToPlayer(helicopter) {
       var allowOverride = true, x;
 
@@ -3381,12 +3407,18 @@
       if (game.objects.helicopters[0]) game.objects.helicopters[0].refreshCoords();
       if (game.objects.helicopters[1]) game.objects.helicopters[1].refreshCoords();
 
+      // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
+      if (game.objects.radar) game.objects.radar.setStale(true);
+
     }
 
     function setTipsActive(active) {
       if (data.gameTips.active !== active) {
         data.gameTips.active = active;
         utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
+        if (!data.gameTips.tipsOffset) {
+          showNextTip();
+        }
       }
     }
 
@@ -3533,13 +3565,13 @@
       var toAdd = [];
       var toRemove = [];
 
-      for (var item in costs) {
-        if (costs.hasOwnProperty(item)) {
+      for (var item in COSTS) {
+        if (Object.prototype.hasOwnProperty.call(COSTS, item)) {
           // mark as "can not afford".
-          if (playerFunds < costs[item].funds) {
-            toAdd.push(costs[item].css);
+          if (playerFunds < COSTS[item].funds) {
+            toAdd.push(COSTS[item].css);
           } else {
-            toRemove.push(costs[item].css);
+            toRemove.push(COSTS[item].css);
           }
         }
       }
@@ -3710,8 +3742,6 @@
 
       refreshCoords();
 
-      setLeftScroll(0);
-
       shuffleTips();
 
       setTipsActive(true);
@@ -3730,6 +3760,7 @@
       ignoreMouseEvents: false,
       browser: {
         width: 0,
+        eighthWidth: 0,
         fractionWidth: 0,
         halfWidth: 0,
         twoThirdsWidth: 0,
@@ -3752,6 +3783,7 @@
       },
       battleField: {
         width: 0,
+        scrollLeftWithBrowserWidth: 0,
         height: 0,
         scrollLeft: 0,
         scrollLeftVX: 0,
@@ -3872,29 +3904,6 @@
         game.objects.gameLoop.resetFPS();
       }
 
-    };
-
-    costs = {
-      missileLauncher: {
-        funds: 3,
-        css: 'can-not-order-missile-launcher'
-      },
-      tank: {
-        funds: 4,
-        css: 'can-not-order-tank'
-      },
-      van: {
-        funds: 2,
-        css: 'can-not-order-van',
-      },
-      infantry: {
-        funds: 5,
-        css: 'can-not-order-infantry',
-      },
-      engineers: {
-        funds: 5,
-        css: 'can-not-order-engineer'
-      }
     };
 
     initView();
