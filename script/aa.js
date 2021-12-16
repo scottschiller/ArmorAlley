@@ -6184,100 +6184,91 @@
             setFiring(true);
           }
 
-          // gunfire from a tank? decrement energy until dead.
+          // only infantry (and engineer sub-types) are involved, beyond this point
+          if (target.data.type !== TYPES.infantry) return;
 
-          if (target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
+          // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
+          if (data.energy < data.energyMax || !isFriendly) {
 
-            // limit to +/- range.
-            data.energy = Math.min(data.energyMax, data.energy - 1);
+            // infantry at door? contribute to capture, or arm base, depending.
 
-            // small detail: firing speed relative to # of infantry
-            updateFireModulus();
+            if (collisionCheckMidPoint(exports, target)) {
 
-            if (data.energy === 0) {
+              // claim infantry, change "alignment" depending on friendliness.
 
-              // un-manned, but dangerous to helicopters on both sides.
-              data.hostile = true;
+              if (data.energy === 0) {
 
-            }
+                // claimed by infantry, switching sides from neutral/hostile.
+                data.hostile = false;
 
-          } else if (target.data.type === TYPES.infantry) {
+                // ensure that if we were dead, we aren't any more.
+                data.dead = false;
 
-            // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
+                // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
+                if (target.data.isEnemy) {
 
-            if (data.energy < data.energyMax || !isFriendly) {
+                  capture(true);
 
-              // infantry at door? contribute to capture, or arm base, depending.
+                } else {
 
-              if (collisionCheckMidPoint(exports, target)) {
-
-                // claim infantry, change "alignment" depending on friendliness.
-
-                if (data.energy === 0) {
-
-                  // claimed by infantry, switching sides from neutral/hostile.
-                  data.hostile = false;
-
-                  // ensure that if we were dead, we aren't any more.
-                  data.dead = false;
-
-                  // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
-                  if (target.data.isEnemy) {
-
-                    capture(true);
-
-                  } else {
-
-                    capture(false);
-
-                  }
+                  capture(false);
 
                 }
 
-                // add or subtract energy, depending on alignment.
-                // explicitly-verbose check, for legibility.
+              }
 
-                if (data.isEnemy) {
+              // add or subtract energy, depending on alignment.
+              // explicitly-verbose check, for legibility.
 
-                  // enemy-owned....
-                  if (target.data.isEnemy) {
-                    // friendly passer-by.
-                    data.energy++;
-                  } else {
-                    data.energy--;
-                  }
+              if (data.isEnemy) {
 
-                } else if (!target.data.isEnemy) {
-                  // player-owned...
+                // enemy-owned....
+                if (target.data.isEnemy) {
+                  // friendly passer-by.
+                  if (data.energy) game.objects.notifications.add('The enemy reinforced a super bunker 💪');
                   data.energy++;
                 } else {
+                  if (data.energy > 1) game.objects.notifications.add('You weakened a super bunker ⚔️');
                   data.energy--;
                 }
 
-                // limit to +/- range.
-                data.energy = Math.min(data.energyMax, data.energy);
+              } else if (!target.data.isEnemy) {
+                // player-owned...
+                if (data.energy) game.objects.notifications.add('You reinforced a super bunker 💪');
+                data.energy++;
+              } else {
+                if (data.energy > 1) game.objects.notifications.add('The enemy weakened a super bunker ⚔️');
+                data.energy--;
+              }
 
-                // small detail: firing speed relative to # of infantry
-                updateFireModulus();
+              // limit to +/- range.
+              data.energy = Math.min(data.energyMax, data.energy);
 
-                if (data.energy === 0) {
+              // small detail: firing speed relative to # of infantry
+              updateFireModulus();
 
-                  // un-manned, but dangerous to helicopters on both sides.
-                  data.hostile = true;
+              if (data.energy === 0) {
 
-                  utils.css.remove(radarItem.dom.o, css.friendly);
-                  utils.css.add(radarItem.dom.o, css.enemy);
+                // un-manned, but dangerous to helicopters on both sides.
+                data.hostile = true;
 
+                if (target.data.isEnemy) {
+                  game.objects.notifications.add('Enemy infantry neutralized a super bunker ⚔️');
+                } else {
+                  game.objects.notifications.add('Your infantry neutralized a super bunker ⛳');
                 }
 
-                // "claim" the infantry, kill if enemy and man the bunker if friendly.
-                target.die(true);
-
-                playSound(sounds.doorClose, target.data.exports);
-
-                updateEnergy(exports);
+                utils.css.remove(radarItem.dom.o, css.friendly);
+                utils.css.add(radarItem.dom.o, css.enemy);
 
               }
+
+              // "claim" the infantry, kill if enemy and man the bunker if friendly.
+              target.die({ silent: true });
+
+              playSound(sounds.doorClose, target.data.exports);
+
+              updateEnergy(exports);
 
             }
 
