@@ -7489,7 +7489,9 @@
         dom.o.style.marginTop = randomDistance();
       }
 
-      applyRandomRotation(dom.o);
+      if (data.isOnScreen) {
+        applyRandomRotation(dom.o);
+      }
 
     }
 
@@ -7513,12 +7515,9 @@
 
     function sparkAndDie(target) {
 
-      spark();
-
-      // hack: no more animation.
-      // data.dead = true;
-
-      utils.css.add(dom.o, css.dead);
+      var now;
+      var canSpark = true;
+      var canDie = true;
 
       if (target) {
 
@@ -7528,7 +7527,10 @@
         }
 
         // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
-        if (!(data.parentType === TYPES.infantry && target.data.type === TYPES.tank) && !(data.parentType === TYPES.helicopter && (target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker))) {
+        if (
+          !(data.parentType === TYPES.infantry && target.data.type === TYPES.tank)
+          && !(data.parentType === TYPES.helicopter && (target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker))
+        ) {
           common.hit(target, data.damagePoints, exports);
         }
 
@@ -7551,16 +7553,51 @@
 
         ) {
 
-          playSound(sounds.metalHit, exports);
+          // impervious to gunfire?
+          if (
+            // infantry -> tank = ricochet.
+            data.parentType === TYPES.infantry && target.data.type === TYPES.tank
+
+            // nothing can hit end or super bunkers, except tanks.
+            || ((target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker) && data.parentType !== TYPES.tank)
+          ) {
+
+            // up to five infantry may be firing at the tank.
+            // prevent the sounds from piling up.
+            now = performance.now();
+
+            if (now - common.lastInfantryRicochet > data.ricochetSoundThrottle) {
+              playSound(sounds.ricochet, exports);
+              common.lastInfantryRicochet = now;
+            }
+            
+            canSpark = false;
+            canDie = false;
+
+            // bounce! reverse, and maybe flip on vertical.
+            data.vX *= -rnd(1);
+            data.vY *= rnd(1) * plusMinus();
+
+            // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
+            data.x += data.vX;
+            data.y += data.vY;
+          } else {
+            // otherwise, it "sounds" like a hit.
+            if (target.data.type === TYPES.bunker) {
+              playSound(sounds.concreteHit, exports);
+            } else {
+              playSound(sounds.metalHit, exports);
+            }
+          }
 
         } else if (
 
-          target.data.type === TYPES.balloon
-          || target.data.type === TYPES.turret
+          (target.data.type === TYPES.balloon || target.data.type === TYPES.turret)
+          && sounds.balloonHit
 
         ) {
 
-          playSound(sounds.metalHitLight, exports);
+          playSound(sounds.balloonHit, exports);
 
         }
 
@@ -7607,30 +7644,36 @@
 
       if (data.dead) return true;
 
-      if (!data.expired && data.frameCount > data.expireFrameCount) {
+      if (!data.isInert && !data.expired && data.frameCount > data.expireFrameCount) {
         utils.css.add(dom.o, css.expired);
         if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
         data.expired = true;
       }
 
-      if (data.expired) {
-        data.gravity *= 1.1;
+      if (data.isInert || data.expired) {
+        data.gravity *= (data.isInert ? 1.09 : 1.1);
       }
 
-      moveTo(data.x + data.vX, data.y + data.vY + (data.expired ? data.gravity : 0));
+      moveTo(data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
 
       data.frameCount++;
 
-      if (data.frameCount >= data.dieFrameCount) {
+      // inert "gunfire" animates until it hits the ground.
+      if (!data.isInert && data.frameCount >= data.dieFrameCount) {
         die();
       }
 
       // bottom?
       if (data.y > game.objects.view.data.battleField.height) {
+        if (!data.isInert) {
+          playSound(sounds.bulletGroundHit, exports);
+        }
         die();
       }
 
-      collisionTest(collision, exports);
+      if (!data.isInert) {
+        collisionTest(collision, exports);
+      }
 
       // notify caller if now dead and can be removed.
       return (data.dead && !dom.o);
@@ -7645,12 +7688,16 @@
 
       common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
 
-      dom.o = game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      if (!data.isInert) {
 
-      if (radarItem && data.isEnemy) {
-        utils.css.add(radarItem.dom.o, css.enemy);
+
+        if (data.isEnemy) {
+          utils.css.add(radarItem.dom.o, css.enemy);
+        }
+
       }
 
     }
@@ -7664,6 +7711,7 @@
     data = inheritData({
       type: 'gunfire',
       parentType: options.parentType || null,
+      isInert: !!options.isInert,
       isEnemy: options.isEnemy,
       expired: false,
       frameCount: 0,
@@ -7671,8 +7719,10 @@
       dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
       width: 2,
       height: 1,
-      gravity: 1,
-      damagePoints: options.damagePoints || 1
+      gravity: (options.isInert ? 0.25 : 1),
+      damagePoints: options.damagePoints || 1,
+      ricochetSoundThrottle: (options.parentType && options.parentType === TYPES.infantry ? 250 : 100),
+      vyMax: 32
     }, options);
 
     dom = {
