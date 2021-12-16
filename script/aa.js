@@ -309,12 +309,16 @@
   var transformCount = 0;
 
   var TYPES = {
+    bomb: 'bomb',
     balloon: 'balloon',
+    cloud: 'cloud',
     helicopter: 'helicopter',
     tank: 'tank',
+    gunfire: 'gunfire',
     turret: 'turret',
     infantry: 'infantry',
     parachuteInfantry: 'parachute-infantry',
+    'parachute-infantry': 'parachuteInfrantry',
     parachuteInfantryCamel: 'parachuteInfantry',
     engineer: 'engineer',
     bunker: 'bunker',
@@ -323,7 +327,10 @@
     superBunker: 'super-bunker',
     superBunkerCamel: 'superBunker',
     missileLauncher: 'missile-launcher',
+    'missile-launcher': 'missileLauncher',
     missileLauncherCamel: 'missileLauncher',
+    smartMissile: 'smart-missile',
+    shrapnel: 'shrapnel',
     van: 'van'
   };
 
