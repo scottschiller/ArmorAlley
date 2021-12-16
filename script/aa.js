@@ -11316,14 +11316,14 @@
               playSound(sounds.chainSnapping, target);
             }
             // should the target die, too? ... probably so.
-            common.hit(target, 999);
+            common.hit(target, 999, exports);
           } else if (target.data.type === TYPES.infantry) {
             // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
             if (data.landed && !data.onLandingPad && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
               // check if it's at the helicopter "door".
               if (collisionCheckMidPoint(exports, target)) {
                 // pick up infantry (silently)
-                target.die(true);
+                target.die({ silent: true });
                 playSound(sounds.popSound, exports);
                 data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
                 updateStatusUI({ parachutes: true });
@@ -11333,13 +11333,21 @@
             cloak();
           } else {
             // hit something else. boom!
-            die();
+            // special case: ensure we crash on the "roof" of a super-bunker.
+            if (target.data.type === TYPES.superBunker) {
+              data.y = Math.min(worldHeight - (common.ricochetBoundaries[target.data.type] || 0) - data.height, data.y);
+              // stop falling, too
+              data.vY = 0;
+              // and go to adjusted position
+              moveTo(data.x, data.y);
+            }
+            die({ attacker: target });
             // should the target die, too? ... probably so.
-            common.hit(target, 999);
+            common.hit(target, 999, exports);
           }
         }
       },
-      items: ['balloons', 'tanks', 'vans', 'missileLaunchers', 'bunkers', 'superBunkers', 'helicopters', 'chains', TYPES.infantry, 'engineers', 'clouds']
+      items: ['helicopters', 'superBunkers', 'bunkers', 'balloons', 'tanks', 'vans', 'missileLaunchers', 'chains', TYPES.infantry, 'engineers', 'clouds']
     };
 
     exports = {
@@ -11360,7 +11368,6 @@
       setFiring: setFiring,
       setMissileLaunching: setMissileLaunching,
       setParachuting: setParachuting,
-      updateHealth: updateHealth,
       updateStatusUI: updateStatusUI,
       updateInventoryQueue: updateInventoryQueue
     };
