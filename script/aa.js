@@ -5417,12 +5417,16 @@
         utils.css.add(dom.o, css.enemy);
         utils.css.add(radarItem.dom.o, css.enemy);
 
+        game.objects.notifications.add('The enemy captured a bunker 🚩');
+
         playSoundWithDelay(sounds.enemyClaim, exports, 500);
 
       } else {
 
         utils.css.remove(dom.o, css.enemy);
         utils.css.remove(radarItem.dom.o, css.enemy);
+
+        game.objects.notifications.add('You captured a bunker ⛳');
 
         playSoundWithDelay(sounds.friendlyClaim, exports, 500);
 
