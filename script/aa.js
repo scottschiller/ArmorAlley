@@ -7233,45 +7233,63 @@
 
       var i, j, similarMissileCount, targetHelicopter;
 
-      if (data.frameCount % data.fireModulus === 0) {
+      if (data.frameCount % data.fireModulus !== 0) return;
 
-        // is an enemy helicopter nearby?
+      // is an enemy helicopter nearby?
+      targetHelicopter = enemyHelicopterNearby(data, 256);
 
-        targetHelicopter = enemyHelicopterNearby(data);
+      if (!targetHelicopter) return;
 
-        if (targetHelicopter) {
+      // we have a possible target. any missiles already chasing it?
+      similarMissileCount = 0;
 
-          // we have a possible target.
+      for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
+        if (game.objects.smartMissiles[i].objects.target === targetHelicopter) {
+          similarMissileCount++;
+        }
+      }
 
-          // any missiles already chasing the target?
-          similarMissileCount = 0;
+      if (similarMissileCount) return;
 
-          for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
+      /**
+       * player's missile launchers: fire and target enemy chopper only when "unattended."
+       * e.g., don't fire if a friendly turret or helicopter is nearby; they can handle it.
+       * CPU makes missile launchers routinely, whereas they're strategic for human player.
+       * in the enemy case, fire at player regardless of who's nearby. makes game tougher.
+       */
 
-            if (game.objects.smartMissiles[i].objects.target === targetHelicopter) {
-              similarMissileCount++;
-            }
+      if (!data.isEnemy) {
 
-          }
+        // friendly turret
+        if (objectInView(data, {
+          items: 'turrets',
+          friendlyOnly: true
+        })) {
+          return;
+        }
 
-          if (!similarMissileCount) {
-
-            // self-destruct, FIRE ZE MISSILE
-            die();
-
-            game.objects.smartMissiles.push(new SmartMissile({
-              parentType: data.type,
-              isEnemy: data.isEnemy,
-              x: data.x + (data.width / 2),
-              y: bottomAlignedY(),
-              target: targetHelicopter
-            }));
-
-          }
-
+        // friendly helicopter
+        if (objectInView(data, {
+          items: 'helicopters',
+          friendlyOnly: true
+        })) {
+          return;
         }
 
       }
+
+      // self-destruct, FIRE ZE MISSILE
+      die();
+
+      game.objects.smartMissiles.push(new SmartMissile({
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        isBanana: (missileMode === bananaMode),
+        isRubberChicken: (missileMode === rubberChickenMode),
+        x: data.x + (data.width / 2),
+        y: data.y,
+        target: targetHelicopter
+      }));
 
     }
 
