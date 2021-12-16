@@ -11780,11 +11780,19 @@
       if (data.parachuteOpen) return;
 
       // undo manual assignment from free-fall animation
-      dom.o.style.backgroundPosition = '';
+      dom.oTransformSprite.style.backgroundPosition = '';
 
       utils.css.add(dom.o, css.parachuteOpen);
 
-      data.vY = 0.5;
+      // update model with open height
+      data.height - 19;
+      data.halfHeight = data.height / 2;
+
+      // randomize the animation a little
+      dom.oTransformSprite.style.animationDuration = (0.75 + rnd(0.75)) + 's';
+
+      // and parachute speed, too.
+      data.vY = 0.3 + rnd(0.3);
 
       // make the noise
       if (sounds.parachuteOpen) {
@@ -11797,41 +11805,37 @@
 
     function moveTo(x, y) {
 
+      var needsUpdate;
+
       if (x !== undefined && data.x !== x) {
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
         data.y = y;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
       }
 
     }
 
-    function dieComplete() {
-
-      removeNodes(dom);
-
-    }
-
-    function die(silent) {
+    function die(options) {
 
       if (data.dead) return;
 
-      if (!silent) {
+      if (!options || !options.silent) {
 
-        utils.css.add(dom.o, css.exploding);
+        common.inertGunfireExplosion({ exports: exports });
 
-        data.deadTimer = setFrameTimeout(function() {
-          data.deadTimer = null;
-          dieComplete();
-        }, 1200);
-
-      } else {
-
-        // no explosion, remove right away.
-        dieComplete();
+        playSound(sounds.scream, exports);
 
       }
+      
+      removeNodes(dom);
 
       data.energy = 0;
 
@@ -11873,7 +11877,9 @@
           } else if (data.frameCount % data.panicModulus === 0) {
             // like Tom Petty, free fallin'.
 
-            dom.o.style.backgroundPosition = '0px ' + (-(60 + (data.frameHeight * data.panicFrame))) + 'px';
+            if (data.isOnScreen) {
+              dom.oTransformSprite.style.backgroundPosition = '0px ' + (-(60 + (data.frameHeight * data.panicFrame))) + 'px';
+            }
 
             // alternate between 0/1
             data.panicFrame = !data.panicFrame;
@@ -11889,7 +11895,7 @@
           if (windMod === 0) {
 
             // choose a random direction?
-            if (Math.random() > 0.66) {
+            if (Math.random() > 0.5) {
 
               // -1, 0, 1
               randomWind = rndInt(3) - 1;
@@ -11913,7 +11919,9 @@
 
               }
 
-              dom.o.style.backgroundPosition = ('0px ' + bgY + 'px');
+              if (data.isOnScreen) {
+                dom.oTransformSprite.style.backgroundPosition = ('0px ' + bgY + 'px');
+              }
 
               // choose a new wind modulus, too.
               data.windModulus = 64 + rndInt(64);
@@ -11924,7 +11932,9 @@
 
               data.vX = 0;
 
-              dom.o.style.backgroundPosition = '0px 0px';
+              if (data.isOnScreen) {
+                dom.oTransformSprite.style.backgroundPosition = '0px 0px';
+              }
 
             }
 
@@ -11932,40 +11942,34 @@
 
         }
 
-        if (data.parachuteOpen && data.y >= data.maxY) {
+        if (data.parachuteOpen && data.y >= data.maxYParachute) {
 
-          if (data.parachuteOpen) {
+          // touchdown! die "quietly", and transition into new infantry.
+          die({ silent: true });
 
-            // touchdown! die "quietly", and transition into new infantry.
-            die(true);
-
-            game.objects.infantry.push(new Infantry({
-              x: data.x,
-              isEnemy: data.isEnemy
-            }));
-
-          }
+          game.objects.infantry.push(new Infantry({
+            x: data.x,
+            isEnemy: data.isEnemy,
+            // exclude from recycle "refund" / reward case
+            unassisted: false
+          }));
 
         } else if (!data.parachuteOpen) {
 
-          if (data.parachuteOpensAtY > data.maxY && data.y > 300) {
+          if (data.y > data.maxYPanic && !data.didScream) {
 
             // It's not looking good for our friend. Call up our buddy Wilhem.
             // http://archive.org/details/WilhelmScreamSample
 
-            if (!data.didScream) {
-
-              if (sounds.wilhemScream) {
-                playSound(sounds.wilhemScream, exports);
-              }
-
-              data.didScream = true;
-
+            if (sounds.wilhemScream) {
+              playSound(sounds.wilhemScream, exports);
             }
+
+            data.didScream = true;
 
           }
 
-          if ((data.y - data.height) + 4 >= data.maxY) {
+          if (data.y >= data.maxY) {
 
             // hit ground, and no parachute. gravity is a cruel mistress.
 
@@ -11997,12 +12001,15 @@
         className: css.className
       });
 
+      // CSS animation (rotation) gets applied to this element
+      dom.oTransformSprite = makeTransformSprite();
+      dom.o.appendChild(dom.oTransformSprite);
+
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
 
-
-      game.dom.world.appendChild(dom.o);
+      moveTo(data.x, data.y);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -12026,13 +12033,17 @@
       parachuteOpensAtY: options.y + (rnd(370 - options.y)) + (!tutorialMode && Math.random() > 0.9 ? 999 : 0),
       direction: 0,
       width: 10,
+      halfWidth: 5,
       height: 11, // 19 when parachute opens
+      halfHeight: 5.5,
       frameHeight: 20, // each sprite frame
       ignoreShrapnel: options.ignoreShrapnel || false,
       didScream: false,
-      vX: 0, // wind?
-      vY: 3,
-      maxY: 367,
+      vX: 0, // wind
+      vY: 2 + Math.random() + Math.random(),
+      maxY: worldHeight + 3,
+      maxYPanic: 300,
+      maxYParachute: worldHeight - 13,
     }, options);
 
     dom = {
@@ -12708,7 +12719,7 @@
 
       }
 
-      return (data.dead && !data.deadTimer && !dom.o);
+      return (data.dead && !dom.o);
 
     }
 
