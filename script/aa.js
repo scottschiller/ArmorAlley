@@ -1851,13 +1851,11 @@
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-    var i, j, k, l, objects, itemArray, items, localObjects, result, targetData, preferGround, isInFront, useInFront, totalDistance;
+    var i, j, k, l, itemArray, items, localObjects, targetData, preferGround, isInFront, useInFront, totalDistance;
 
     options = options || {};
 
-    objects = game.objects;
-
-    useInFront = (options.useInFront || null);
+    useInFront = !!options.useInFront;
 
     // should a smart missile be able to target another smart missile? ... why not.
     items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
@@ -1865,13 +1863,13 @@
     localObjects = [];
 
     // if the source object isn't near the ground, be biased toward airborne items.
-    if (source.data.type === TYPES.helicopter && source.data.y > game.objects.view.data.world.height - 100) {
+    if (source.data.type === TYPES.helicopter && source.data.y > worldHeight - 100) {
       preferGround = true;
     }
 
     for (i = 0, j = items.length; i < j; i++) {
 
-      itemArray = objects[items[i]];
+      itemArray = game.objects[items[i]];
 
       for (k = 0, l = itemArray.length; k < l; k++) {
 
@@ -1889,10 +1887,14 @@
 
             targetData = itemArray[k].data;
 
-            if ((preferGround && targetData.bottomAligned && targetData.type !== TYPES.balloon) || (!preferGround && (!targetData.bottomAligned || targetData.type === TYPES.balloon))) {
+            if (
+              (preferGround && targetData.bottomAligned && targetData.type !== TYPES.balloon)
+              || (!preferGround && (!targetData.bottomAligned || targetData.type === TYPES.balloon))
+            ) {
 
               totalDistance = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
 
+              // "within range"
               if (totalDistance < 3072) {
 
                 localObjects.push({
@@ -1912,21 +1914,13 @@
 
     }
 
+    if (!localObjects.length) return null;
+
     // sort by distance
     localObjects.sort(utils.array.compare('totalDistance'));
 
-    if (localObjects.length) {
-
-      // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
-      result = localObjects[source.data.type === TYPES.helicopter && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
-
-    } else {
-
-      result = null;
-
-    }
-
-    return result;
+    // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
+    return localObjects[source.data.type === TYPES.helicopter && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
 
   }
 
