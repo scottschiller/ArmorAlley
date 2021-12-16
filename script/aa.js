@@ -3303,6 +3303,13 @@
   View = function() {
 
     var costs, css, data, dom, events, exports;
+    function setLeftScrollToPlayer(helicopter) {
+      var allowOverride = true, x;
+
+      x = helicopter.data.x + (helicopter.data.width * (1 / screenScale)) - game.objects.view.data.browser.halfWidth;
+
+      setLeftScroll(x, allowOverride);
+    }
 
     function setLeftScroll(x, allowOverride) {
 
@@ -3899,6 +3906,7 @@
       events: events,
       setAnnouncement: setAnnouncement,
       setLeftScroll: setLeftScroll,
+      setLeftScrollToPlayer: setLeftScrollToPlayer,
       updateFundsUI: updateFundsUI
     };
 
