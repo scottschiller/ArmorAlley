@@ -5919,21 +5919,25 @@
 
     function capture(isEnemy) {
 
-      if (isEnemy) {
+      if (isEnemy && !data.isEnemy) {
 
         data.isEnemy = true;
 
         utils.css.remove(radarItem.dom.o, css.friendly);
         utils.css.add(radarItem.dom.o, css.enemy);
 
+        game.objects.notifications.add('The enemy captured a super bunker 🚩');
+
         playSoundWithDelay(sounds.enemyClaim, exports, 500);
 
-      } else {
+      } else if (!isEnemy && data.isEnemy) {
 
         data.isEnemy = false;
 
         utils.css.remove(radarItem.dom.o, css.enemy);
-        utils.css.add(dom.o, css.friendly);
+        utils.css.add(radarItem.dom.o, css.friendly);
+
+        game.objects.notifications.add('You captured a super bunker ⛳');
 
         playSoundWithDelay(sounds.friendlyClaim, exports, 500);
 
@@ -5989,6 +5993,10 @@
       data.dead = false;
 
       data.hostile = true;
+
+      // ensure the radar shows this, too
+      utils.css.remove(radarItem.dom.o, css.friendly);
+      utils.css.add(radarItem.dom.o, css.enemy);
 
       updateEnergy(exports);
 
