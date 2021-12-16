@@ -4008,7 +4008,7 @@
 
   Inventory = function() {
 
-    var css, data, dom, objects, exports;
+    var css, data, dom, objects, orderNotificationOptions, exports;
 
     function createObject(typeData, options) {
 
@@ -4076,11 +4076,19 @@
         data.building = false;
 
         if (!objects.order.options.isEnemy) {
+
           if (sounds.inventory.end) {
             playSound(sounds.inventory.end);
           }
+
           // clear the queue that just finished.
           game.objects.helicopters[0].updateInventoryQueue();
+
+          // clear the copy of the queue used for notifications.
+          data.queueCopy = [];
+
+          game.objects.notifications.add('Order complete 🛠️');
+          
         }
 
       }
@@ -4089,7 +4097,9 @@
 
     function order(type, options) {
 
-      var typeData, orderObject, orderSize, cost;
+      var typeData, orderObject, orderSize, cost, pendingNotification;
+
+      if (battleOver) return;
 
       options = options || {};
 
@@ -4131,6 +4141,12 @@
         game.objects.view.updateFundsUI();
 
         if (!data.isEnemy) {
+
+          // hackish: this will be executed below.
+          pendingNotification = function() {
+            game.objects.notifications.add('Order: %s 🛠️', orderNotificationOptions);
+          }
+
           // player may now be able to order things.
           game.objects.helicopters[0].updateStatusUI({ funds: true });
         }
@@ -4142,11 +4158,29 @@
           playSound(sounds.inventory.denied);
         }
 
+        game.objects.notifications.add('%s1%s2: %c1/%c2 💰🤏🤷', {
+          type: 'NSF',
+          onRender: function(input) {
+            // hack: special-case missile launcher
+            var text = type.replace('missileLauncher', 'missile launcher');
+            // long vs. short-hand copy, flag set once NSF is hit and the order completes
+            var result = input.replace('%s1', data.canShowNSF ? '' : 'Insufficient funds: ')
+              .replace('%s2', (data.canShowNSF ? '🚫 ' : '') + text.charAt(0).toUpperCase() + (data.canShowNSF ? '' : text.slice(1)))
+              .replace('%c1', game.objects.endBunkers[0].data.funds)
+              .replace('%c2', cost);
+            return result;
+          },
+          onComplete: function() {
+            // start showing "NSF" short-hand, now that user has seen the long form
+            data.canShowNSF = true;
+          }
+        });
+
         return;
 
       }
 
-      // and now, remove that for the real build.
+      // and now, remove `noInit` for the real build.
       options.noInit = false;
 
       // create and push onto the queue.
@@ -4157,11 +4191,18 @@
         typeData: typeData,
         options: options,
         size: orderSize,
+        originalSize: orderSize,
         onOrderStart: null,
         onOrderComplete: null,
       };
 
       var queueEvents;
+
+      data.queue.push(newOrder);
+
+      // preserve original list for display of notifications.
+      // live `data.queue` is modified via `shift()` as it's processed.
+      data.queueCopy.push(newOrder);
 
       if (!newOrder.options.isEnemy) {
 
@@ -4179,9 +4220,12 @@
         newOrder.onOrderStart = queueEvents.onOrderStart;
         newOrder.onOrderComplete = queueEvents.onOrderComplete;
 
-      }
+        // display, if provided (relies on queue array to update order counts)
+        if (pendingNotification) {
+          pendingNotification();
+        }
 
-      data.queue.push(newOrder);
+      }
 
       // only start processing if queue length is 1 - i.e., first item just added.
 
@@ -4205,7 +4249,8 @@
           // start building.
           createObject(objects.order.typeData, objects.order.options);
 
-          if (objects.order.onOrderStart) {
+          // only fire "order start" once, whether a single tank or the first of five infantry.
+          if (objects.order.size === objects.order.originalSize && objects.order.onOrderStart) {
             objects.order.onOrderStart();
           }
 
@@ -4220,11 +4265,9 @@
 
           // "Construction complete."
 
-          if (!objects.order.options.isEnemy) {
-            // drop the item that just finished building.
-            if (objects.order.onOrderComplete) {
-              objects.order.onOrderComplete();
-            }
+          // drop the item that just finished building.
+          if (!objects.order.options.isEnemy && objects.order.onOrderComplete) {
+            objects.order.onOrderComplete();
           }
           
           processNextOrder();
@@ -4239,6 +4282,48 @@
 
     function initStatusBar() {
       dom.gameStatusBar = document.getElementById('game-status-bar');
+    }
+
+    orderNotificationOptions = {
+      type: 'order',
+      onRender: function(input) {
+        var i, j, actualType, types, counts, output;
+
+        types = [];
+        counts = [];
+        output = [];
+
+        // build arrays of unique items, and counts
+        for (i=0, j=data.queueCopy.length; i<j; i++) {
+
+          // same item as before? handle difference between infantry and engineers
+          actualType = (data.queueCopy[i].data.role ? data.queueCopy[i].data.roles[data.queueCopy[i].data.role] : data.queueCopy[i].data.type);
+
+          if (i > 0 && actualType === types[types.length-1]) {
+            counts[counts.length-1] = (counts[counts.length-1] || 0) + 1;
+          } else {
+            // new type, first of its kind
+            types.push(actualType);
+            counts.push(1);
+          }
+
+        }
+
+        if (types.length === 1) {
+          // full type, removing dash from "missile-launcher"
+          output.push(types[0].charAt(0).toUpperCase() + types[0].slice(1).replace('-', ' ') + (counts[0] > 1 ? '<sup>' + counts[0] + '</sup>' : ''));
+        } else {
+          for (i=0, j=types.length; i<j; i++) {
+            output.push(types[i].charAt(0).toUpperCase() + (counts[i] > 1 ? '<sup>' + counts[i] + '</sup>' : ''));
+          }
+        }
+
+        return input.replace('%s', output.join(' '));
+      }, onComplete: function() {
+        // clear the copy of the queue used for notifications.
+        // any new notifications will start with a fresh queue.
+        data.queueCopy = [];
+      }
     }
 
     css = {
@@ -4258,6 +4343,8 @@
       },
       building: false,
       queue: [],
+      queueCopy: [],
+      canShowNSF: false
     };
 
     objects = {
