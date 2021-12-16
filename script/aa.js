@@ -5446,6 +5446,21 @@
 
     }
 
+    function engineerRepair(engineer) {
+
+      if (data.energy < data.energyMax) {
+        // stop, and don't fire
+        engineer.stop(true);
+        data.energy = Math.min(data.energy + 0.05, data.energyMax);
+      } else {
+        // repair complete - keep moving
+        engineer.resume();
+      }
+
+      updateEnergy(exports);
+
+    }
+
     function repair() {
 
       // fix the balloon, if it's broken - or, rather, flag it for respawn.
@@ -5525,6 +5540,15 @@
 
       radarItem.die();
 
+    }
+
+    function engineerHit(target) {
+
+      // a friendly engineer unit has made contact with a bunker. repair damage, if any.
+      if (target.data.isEnemy === data.isEnemy) {
+        engineerRepair(target);
+      }
+     
     }
 
     function infantryHit(target) {
@@ -5615,6 +5639,7 @@
       data: data,
       die: die,
       dom: dom,
+      engineerHit: engineerHit,
       infantryHit: infantryHit,
       nullifyChain: nullifyChain,
       nullifyBalloon: nullifyBalloon,
