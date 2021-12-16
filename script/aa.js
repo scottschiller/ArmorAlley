@@ -2192,7 +2192,7 @@
 
   function checkProduction() {
 
-    var bunkersOwned;
+    var bunkersOwned, announcement;
 
     // playing extreme mode? this benefit would practically be cheating! ;)
     if (gameType === 'extreme') return;
@@ -2202,15 +2202,20 @@
     if (!productionHalted && bunkersOwned) {
 
       // player is doing well; reward them for their efforts.
-      game.objects.view.setAnnouncement('You have captured all bunkers. Enemy convoy production has been halted.');
+      announcement = '🎉 You have captured all bunkers. Enemy convoy production has been halted. 🚫';
       productionHalted = true;
 
     } else if (productionHalted && !bunkersOwned) {
 
       // CPU has regained control of a bunker.
-      game.objects.view.setAnnouncement('You no longer control all bunkers. Enemy convoy production is resuming.');
+      announcement = '😰 You no longer control all bunkers. Enemy convoy production is resuming. 🛠️';
       productionHalted = false;
 
+    }
+
+    if (announcement) {
+      game.objects.view.setAnnouncement(announcement);
+      game.objects.notifications.add(announcement);
     }
 
   }
