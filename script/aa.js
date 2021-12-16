@@ -4771,31 +4771,25 @@
 
       data.frameCount++;
 
-      if (battleOver && gameObjects !== game.objects.shrapnel) {
-        // hack: only animate shrapnel.
-        gameObjects = game.objects.shrapnel;
-      }
       // there may be sounds from the last frame, ready to go.
       playQueuedSounds();
 
+      // view will have jumped to player or enemy base.
+      // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.
+
+      if (data.gameStopped) {
+        // end game, all units updated, subsequent frames: only animate shrapnel and smoke.
+        gameObjects = game.objects.shrapnel.concat(game.objects.smoke);
+      }
+
       for (item in gameObjects) {
 
-        if (gameObjects.hasOwnProperty(item) && gameObjects[item]) {
+        if (gameObjects[item]) {
 
-          // single object case
-          if (gameObjects[item].animate) {
+          // array of objects
 
-            // onscreen?
-            updateIsOnScreen(gameObjects[item]);
+          if (gameObjects[item].length) {
 
-            if (gameObjects[item].animate()) {
-              // object is dead - take it out.
-              gameObjects[item] = null;
-            }
-
-          } else {
-
-            // array case
             for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
               updateIsOnScreen(gameObjects[item][i]);
@@ -4808,10 +4802,27 @@
 
             }
 
+          } else {
+
+            // single object case
+
+            updateIsOnScreen(gameObjects[item]);
+
+            if (gameObjects[item].animate && gameObjects[item].animate()) {
+              // object is dead - take it out.
+              gameObjects[item] = null;
+            }
+
           }
 
         }
 
+      }
+
+      if (battleOver && !data.gameStopped) {
+        if (data.battleOverFrameCount++ > 1) {
+          data.gameStopped = true;
+        }
       }
 
       // update all setTimeout()-style FrameTimeout() instances.
@@ -5011,6 +5022,9 @@
 
       }
 
+      // snow?
+      if (window.snowStorm && window.snowStorm.snow) {
+        window.snowStorm.snow();
       }
 
     }
