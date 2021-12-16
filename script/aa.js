@@ -5954,15 +5954,26 @@
 
     }
 
-    function hit(points, target) {
+    function updateHealth(attacker) {
+      // notify if just disarmed by tank gunfire
+      // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
+      if (data.energy) return;
+      if (!attacker || attacker.data.type !== TYPES.gunfire || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) return;
+      // we have a tank, after all
+      if (attacker.data.isEnemy) {
+        game.objects.notifications.add('An enemy tank disarmed a super bunker 🚩', { noRepeat: true });
+      } else {
+        game.objects.notifications.add('A friendly tank disarmed a super bunker ⛳', { noRepeat: true });
+      }
+    }
 
+    function hit(points, target) {
       // only tank gunfire counts against super bunkers.
       if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
         data.energy = Math.max(0, data.energy - points);
         updateFireModulus();
         updateEnergy(exports);
       }
-
     }
 
     function die() {
