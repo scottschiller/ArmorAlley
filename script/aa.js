@@ -309,6 +309,7 @@
   var sounds;
 
   var transformCount = 0;
+  var excludeTransformCount = 0;
 
   var TYPES = {
     bomb: 'bomb',
@@ -625,6 +626,7 @@
 
     }
 
+    game.objects.funds.updateScale();
 
   }
 
@@ -651,6 +653,7 @@
       }
 
       function includes(array, item) {
+
         if (!array || !array.length) return false;
 
         if (array.includes) return array.includes(item);
@@ -662,6 +665,7 @@
 
         // default
         return false;
+
       }
 
       function shuffle(array) {
@@ -941,7 +945,7 @@
     var item;
 
     for (item in dom) {
-      if (dom.hasOwnProperty(item) && dom[item]) {
+      if (Object.prototype.hasOwnProperty.call(dom, item) && dom[item]) {
         // node reference, or array of nodes?
         if (dom[item] instanceof Array) {
           removeNodeArray(dom[item]);
@@ -1073,10 +1077,6 @@
       localFeatures.rotate.prop = prop;
 
     }
-
-    console.log('user agent feature test:', localFeatures);
-
-    console.log('requestAnimationFrame() is' + (localFeatures.getAnimationFrame ? '' : ' not') + ' available');
 
     if (localFeatures.transform.prop) {
       if (noTransform) {
@@ -1837,10 +1837,12 @@
         )
 
         // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
+        /*
         && (
           (!options.source.data.hostile || !options.targets[i].data.hostile)
-          || (options.source.data.hostile !== options.targets[i].data.hostile)
+          // || (options.source.data.hostile !== options.targets[i].data.hostile) // TODO: safe to remove?
         )
+        */
 
       ) {
 
@@ -3277,7 +3279,6 @@
       // tween can change while animating, i.e. mouse constantly moving.
       // update tween in-place, when this happens.
       if (data.tweenFrame >= data.tweenFrames.length) {
-        // console.log('resetting tweenFrame', data.tweenFrame);
         data.tweenFrame = 0;
       } else if (data.tweenFrame > 5) {
         // allow tween to "rewind" slightly, but stay on upward motion curve.
@@ -3696,7 +3697,7 @@
 
       // Object.assign()-like copying of properties.
       for (var option in options) {
-        if (options.hasOwnProperty(option)) {
+        if (Object.prototype.hasOwnProperty.call(options, option)) {
           data.touchEvents[id][option] = options[option];
         }
       }
@@ -5838,12 +5839,13 @@
 
     data = inheritData({
       type: TYPES.bunker,
-      y: (worldHeight - 25) + 3, // override to fix helicopter / bunker vertical crash case
+      y: (game.objects.view.data.world.height - 25) + 1, // override to fix helicopter / bunker vertical crash case
       energy: 50,
       energyMax: 50,
       width: 51,
       halfWidth: 25,
       height: 25,
+      halfHeight: 12.5,
       midPoint: null
     }, options);
 
@@ -5914,7 +5916,7 @@
           isEnemy: data.isEnemy,
           collisionItems: nearby.items,
           x: data.x + (data.width + 1),
-          y: game.objects.view.data.world.height - data.gunYOffset, // half of height
+          y: data.y + data.gunYOffset, // half of height
           vX: 2,
           vY: 0
         };
@@ -6282,7 +6284,7 @@
           isEnemy: data.isEnemy,
           collisionItems: nearby.items,
           x: data.x + (data.width + 1),
-          y: data.y + data.gunYOffset, // half of height
+          y: data.y + data.gunYOffset, // position of bunker gun
           vX: 2,
           vY: 0
         };
@@ -6329,7 +6331,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -7358,7 +7360,7 @@
           }
 
           // always track height, only assign if chain becomes detached.
-          height = (worldHeight - y - objects.bunker.data.height) + 4;
+          height = (game.objects.view.data.world.height - y - objects.bunker.data.height) + 4;
 
         } else {
 
@@ -7366,7 +7368,7 @@
           // this case should probably never happen
           // and might be a bug if it does. ;)
 
-          y = worldHeight - data.height;
+          y = game.objects.view.data.world.height - data.height;
 
         }
 
@@ -7393,7 +7395,7 @@
           // cheap gravity acceleration
           data.fallingVelocity += data.fallingVelocityIncrement;
 
-          if (y >= worldHeight + 2) {
+          if (y >= game.objects.view.data.world.height + 2) {
             die();
           }
 
@@ -7433,7 +7435,7 @@
       className: 'chain'
     });
 
-    defaultHeight = worldHeight + 5;
+    defaultHeight = game.objects.view.data.world.height + 5;
 
     data = inheritData({
       type: 'chain',
@@ -9115,7 +9117,7 @@
         utils.css.add(radarItem.dom.o, css.cloaked);
 
         if (!data.isEnemy && sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
+          if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
         }
 
       }
@@ -9134,7 +9136,7 @@
         utils.css.remove(radarItem.dom.o, css.cloaked);
 
         if (!data.isEnemy && sounds.helicopter.engine) {
-          sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
+          if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
         }
 
         data.cloaked = false;
@@ -9146,10 +9148,9 @@
     function centerView() {
 
       // hack: center on enemy helicopter at all times.
+      if (!trackEnemy) return;
 
-      if (trackEnemy) {
-        common.setTransformXY(game.objects.view.dom.battleField, (parseInt(data.x - game.objects.view.data.browser.halfWidth, 10) * -1) + 'px', '0px');
-      }
+      common.setTransformXY(undefined, game.objects.view.dom.battleField, ((data.x - game.objects.view.data.browser.halfWidth) * -1) + 'px', '0px');
 
     }
 
@@ -10428,7 +10429,6 @@
 
           // was it a tank? reset tank-seeking mode until next interval.
           if (lastTarget.data.type === TYPES.tank) {
-            console.log('AI killed tank. Disabling tank targeting mode.');
             data.targeting.tanks = false;
           }
 
@@ -11140,7 +11140,7 @@
         frameCount: 0,
         cost: 20
       },
-      unavailable: 'weapon-unavailable'
+      unavailable: 'weapon-unavailable',
       trailer: 'helicopter-trailer'
     });
 
@@ -13346,8 +13346,6 @@
           return (
             chopperData.ammo < chopperData.maxAmmo
             && chopperData.bombs < chopperData.maxBombs
-            && !chopper.objects.bombs.length
-            && !chopper.objects.gunfire.length
           );
 
         },
@@ -13578,7 +13576,7 @@
 
           for (item in counts) {
 
-            if (counts.hasOwnProperty(item)) {
+            if (Object.prototype.hasOwnProperty.call(counts, item)) {
 
               if (!counts[item]) {
 
@@ -13708,11 +13706,15 @@
 
         activate: function() {
 
-          var turrets = game.objects.turrets;
+          var turrets, engineer, complete;
+
+          turrets = game.objects.turrets;
+          engineer = null;
+          complete = true;
 
           // bring the mid-level turrets[1] and [2] to life.
-          turrets[1].repair(true);
-          turrets[2].repair(true);
+          turrets[1].repair(engineer, complete);
+          turrets[2].repair(engineer, complete);
 
         },
 
@@ -14384,7 +14386,6 @@
   };
 
   // recycled from survivor.js
-
   keyboardMonitor = (function() {
 
     var keys,
@@ -14480,7 +14481,7 @@
 
       },
 
-      // ctrl (alternate for shift key)
+      // ctrl
       17: {
 
         allowEvent: true, // don't use stopEvent()
@@ -14638,7 +14639,7 @@
       // reset all pressed key states.
       var item;
       for (item in downKeys) {
-        if (downKeys.hasOwnProperty(item) && downKeys[item]) {
+        if (Object.prototype.hasOwnProperty.call(downKeys, item) && downKeys[item]) {
           // simulate the keyup event
           events.keyup({
             keyCode: item
@@ -15525,7 +15526,7 @@
       objects.gameLoop.init();
 
       function startEngine() {
-        sounds.helicopter.engine.sound.play();
+        playSound(sounds.helicopter.engine);
         utils.events.remove(document, 'click', startEngine);
       }
 
@@ -15559,7 +15560,7 @@
 
             options = {
               isEnemy: true,
-              x: 8192 + 64
+              x: worldWidth + 64
             };
 
             if (!productionHalted) {
@@ -15669,9 +15670,6 @@
       userDisabledSound = true;
     }
 
-    // updateScreenScale();
-    // applyScreenScale();
-
     if (forceRubberChicken) {
       utils.css.add(document.getElementById('world'), rubberChickenMode);
       document.querySelector('#stats-bar .missiles .letter-block').innerHTML = 'C';
@@ -15721,6 +15719,8 @@
     if (noTransform) {
       utils.css.add(document.body, 'no-transform');
     }
+
+    if (isFirefox) utils.css.add(document.body, 'is_firefox');
 
     if (isMobile) {
 
