@@ -7686,13 +7686,15 @@
         className: css.className
       });
 
-      common.setTransformXY(dom.o, data.x + 'px', data.y + 'px');
+      // randomize a little: ±1 pixel.
+      data.x += plusMinus();
+      data.y += plusMinus();
 
       common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
 
-      radarItem = game.objects.radar.addItem(exports, dom.o.className);
       if (!data.isInert) {
 
+        radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
         if (data.isEnemy) {
           utils.css.add(radarItem.dom.o, css.enemy);
