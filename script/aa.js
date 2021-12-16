@@ -7566,28 +7566,36 @@
 
       }
 
-      // and cleanup shortly.
-      frameTimeout = setFrameTimeout(function() {
-        die();
-        frameTimeout = null;
-      }, 250);
+      if (canSpark) spark();
+
+      if (canDie) {
+        utils.css.add(dom.o, css.dead);
+
+        // and cleanup shortly.
+        frameTimeout = setFrameTimeout(function() {
+          die();
+          frameTimeout = null;
+        }, 250);
+      }
 
     }
 
     function moveTo(x, y) {
 
+      var needsUpdate;
+
       if (x !== undefined && data.x !== x) {
         data.x = x;
+        needsUpdate = true;
       }
 
       if (y !== undefined && data.y !== y) {
         data.y = y;
+        needsUpdate = true;
       }
 
-      updateIsOnScreen(exports);
-
-      if (data.isOnScreen) {
-        common.setTransformXY(dom.o, x + 'px', y + 'px');
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
       }
 
     }
