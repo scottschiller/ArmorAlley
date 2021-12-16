@@ -2178,10 +2178,8 @@
 
   function playerOwnsBunkers() {
 
-    // has the player captured (or destroyed) all bunkers? this affects enemy convoy production.
-
-    var owned,
-      total;
+    // has the player captured (or destroyed) all bunkers? this may affect enemy convoy production.
+    var owned, total;
 
     owned = countFriendly('bunkers', true) + countFriendly('superBunkers', true);
     total = game.objects.bunkers.length + game.objects.superBunkers.length;
