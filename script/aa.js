@@ -6703,22 +6703,8 @@
         if (!data.dead) fire();
       }
 
-      if (data.energy > 0 && data.energy < data.energyMax && data.frameCount % data.smokeModulus === 0) {
-
-        // smoke relative to damage
-
-        if (Math.random() > 1 - ((data.energyMax - data.energy) / data.energyMax)) {
-
-          game.objects.smoke.push(new Smoke({
-            x: data.x + data.halfWidth + (parseInt(Math.random() * data.halfWidth * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10)),
-            y: data.y + data.halfHeight + (parseInt(Math.random() * data.halfHeight * 0.5 * (Math.random() > 0.5 ? -1 : 1), 10))
-          }));
-
-        }
-
-        // randomize next one a bit
-        data.smokeModulus = 2 + parseInt(Math.random() * FPS, 10);
-
+      if (!data.dead && data.energy > 0) {
+        common.smokeRelativeToDamage(exports);
       }
 
       if (!data.dead && data.energy > 0 && data.frameCount % data.repairModulus === 0) {
@@ -6742,18 +6728,17 @@
       dom.oSubSprite = makeSubSprite();
       dom.o.appendChild(dom.oSubSprite);
 
+      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     }
 
-    collisionItems = ['helicopters', 'balloons', 'parachuteInfantry'];
+    collisionItems = ['helicopters', 'balloons', 'parachuteInfantry', 'shrapnel'];
 
     if (gameType === 'hard' || gameType === 'extreme') {
       // additional challenge: make turret gunfire dangerous to some ground units, too.
@@ -6785,23 +6770,26 @@
       energyMax: 50,
       lastEnergy: 50,
       firing: false,
+      fireCount: 0,
       frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
       fireModulus: (tutorialMode ? 12 : (gameType === 'extreme' ? 2 : (gameType === 'hard' ? 3 : 6))), // a little easier in tutorial mode vs. hard vs. easy modes
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
-      smokeModulus: 2,
+      shellCasingInterval: (tutorialMode || gameType === 'easy' ? 1 : 2),
       claimPoints: 0,
       claimPointsMax: 50,
       engineerInteracting: false,
-      y: 0,
       width: 6,
       height: height,
-      // hacks
-      halfWidth: 7,
-      halfHeight: 7,
+      halfWidth: 3,
+      halfHeight: height / 2,
       angle: 0,
       maxAngle: 90,
+      x: options.x || 0,
+      y: game.objects.view.data.world.height - height,
+      // logical vs. sprite offset
+      yOffset: 3
     }, options);
 
     dom = {
@@ -6825,7 +6813,7 @@
 
     // "dead on arrival"
     if (options.DOA) {
-      die(true);
+      die({ silent: true });
     }
 
     return exports;
