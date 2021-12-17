@@ -11844,80 +11844,85 @@
 
     }
 
+    function shouldFireAtTarget(target) {
+
+      if (!target || !target.data) return false;
+
+      // TODO: ensure the target is "in front of" the tank.
+
+      // fire at "bad guys" that have energy left. this includes end-bunkers and super-bunkers which haven't yet been neutralized.
+      if (target.data.isEnemy !== data.isEnemy && target.data.energy !== 0) return true;
+
+    }
+
     function stop() {
 
-      if (!data.stopped) {
-        utils.css.add(dom.o, css.stopped);
-        data.stopped = true;
-      }
+      if (data.stopped) return;
+
+      utils.css.add(dom.o, css.stopped);
+      data.stopped = true;
 
     }
 
     function resume() {
 
-      if (data.stopped) {
-        utils.css.remove(dom.o, css.stopped);
-        data.stopped = false;
-      }
+      if (!data.stopped) return;
+
+      if (data.lastNearbyTarget) return;
+
+      utils.css.remove(dom.o, css.stopped);
+      data.stopped = false;
 
     }
 
     function animate() {
 
-      var i, spliceArgs;
-
-      spliceArgs = [i, 1];
-
       data.frameCount++;
 
-      for (i = objects.gunfire.length - 1; i >= 0; i--) {
-        if (objects.gunfire[i].animate()) {
-          // object is dead - take it out.
-          spliceArgs[0] = i;
-          Array.prototype.splice.apply(objects.gunfire, spliceArgs);
-        }
-      }
+      // exit early if dead
+      if (data.dead) return (!data.deadTimer && !dom.o);
 
-      if (!data.dead) {
+      repair();
 
-        repair();
+      common.smokeRelativeToDamage(exports);
 
-        if (!data.stopped) {
+      if (!data.stopped) {
 
-          moveTo(data.x + data.vX, data.bottomY);
+        moveTo(data.x + data.vX, data.y);
 
-        } else {
+      } else if (shouldFireAtTarget(data.lastNearbyTarget)) {
 
-          // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
-          // the original game had something like this, too.
-          if (data.frameCount % FPS === 0) {
+        // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
+        // the original game had something like this, too.
+        if (data.frameCount % FPS === 0) {
 
-            // run "moving" animation for a few frames
-            utils.css.remove(dom.o, css.stopped);
+          // run "moving" animation for a few frames
+          utils.css.remove(dom.o, css.stopped);
 
-            moveTo(data.x + (data.isEnemy ? -1 : 1), data.bottomY);
+          moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
 
-            // and then stop again if we haven't resumed for real by that time.
-            setFrameTimeout(function() {
-              if (data.stopped) {
-                utils.css.add(dom.o, css.stopped);
-              }
-            }, 150);
-          }
-
-          // only fire (i.e., GunFire objects) when stopped
-          fire();
-
+          // and then stop again if we haven't resumed for real by that time.
+          setFrameTimeout(function() {
+            if (data.stopped) {
+              utils.css.add(dom.o, css.stopped);
+            }
+          }, 150);
         }
 
-        // start, or stop firing?
-        nearbyTest(nearby);
+        // only fire (i.e., GunFire objects) when stopped
+        fire();
 
       }
 
-      return (data.dead && !data.deadTimer && !dom.o && !objects.gunfire.length);
+      // start, or stop firing?
+      nearbyTest(nearby);
+
+      // stop moving, if we approach another friendly tank
+      nearbyTest(friendlyNearby);
 
       recycleTest(exports);
+
+      return (data.dead && !data.deadTimer && !dom.o);
 
     }
 
@@ -11944,6 +11949,7 @@
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
       
       initNearby(nearby, exports);
+      initNearby(friendlyNearby, exports);
 
     }
 
@@ -11962,6 +11968,7 @@
       deadTimer: null,
       energy: 8,
       energyMax: 8,
+      energyLineScale: 0.8,
       frameCount: 0,
       repairModulus: 5,
       // enemy tanks shoot a little faster
@@ -11977,6 +11984,7 @@
         frameCount: 60,
         cost: 4
       },
+      lastNearbyTarget: null,
       x: options.x || 0,
       y: game.objects.view.data.world.height - tankHeight - 1,
       // hackish: logical vs. sprite alignment offset
@@ -11988,8 +11996,30 @@
       oTransformSprite: null
     };
 
-    objects = {
-      gunfire: []
+    friendlyNearby = {
+      options: {
+        source: exports,
+        targets: undefined,
+        useLookAhead: true,
+        // stop moving if we roll up behind a friendly tank
+        friendlyOnly: true,
+        hit: function(target) {
+          // TODO: data.halfWidth instead of 0, but be able to resume and separate tanks when there are no enemies nearby.
+          // for now: stop when we pull up immediately behind the next tank, vs. being "nearby."
+          if (collisionCheck(data, target.data, 0)) {
+            stop();
+          } else {
+            resume();
+          }
+        },
+        miss: function() {
+          // resume, if tank is not also firing
+          resume();
+        }
+      },
+      // who are we looking for nearby?
+      items: ['tanks'],
+      targets: []
     };
 
     nearby = {
@@ -11997,18 +12027,20 @@
         source: exports, // initially undefined
         targets: undefined,
         useLookAhead: true,
-        // TODO: rename to something generic?
         hit: function(target) {
-          // stop moving, start firing.
-          // special case: only fire at EndBunker and SuperBunker if they have energy.
-          if (((target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker) && target.data.energy !== 0) || (target.data.type !== TYPES.endBunker && target.data.type !== TYPES.superBunker)) {
+          // determine whether to fire, or resume (if no friendly tank nearby)
+          if (shouldFireAtTarget(target)) {
+            data.lastNearbyTarget = target;
             stop();
           } else {
+            // resume, if not also stopped for a nearby friendly tank
+            data.lastNearbyTarget = null;
             resume();
           }
         },
         miss: function() {
           // resume moving, stop firing.
+          data.lastNearbyTarget = null;
           resume();
         }
       },
