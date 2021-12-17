@@ -2604,8 +2604,12 @@
       expire: null,
       die: null
     },
+    banana: {
+      launch: null,
+      expire: null,
+    },
     machineGunFire: null,
-    machineGunFireEnd: null
+    machineGunFireEnemy: null
     // numerous others will be assigned at init time.
   };
 
@@ -2646,16 +2650,44 @@
 
     sounds.machineGunFire = [];
 
-    for (i = 0; i < 9; i++) {
-      sounds.machineGunFire.push(addSound({
-        url: getURL('machinegun-' + (i + 1)),
-        volume: 33
-      }));
+    // 09/2020: Firefox needs lots of copies to play smoothly.
+    for (i = 0; i < 8; i++) {
+      sounds.machineGunFire.push(
+        addSound({
+          url: getURL('machinegun'),
+          volume: 25,
+          // multiShot: true
+          // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
+          // url: 'audio/Gun_Machine_Gun_M60E_Burst_1_edit.wav'
+          // url: 'audio/Gun_AK47_Machine_Gun_1_edit.wav'
+        })
+      )
     }
 
-    sounds.machineGunFireEnd = addSound({
-      url: getURL('machinegun-end'),
+    sounds.machineGunFireEnemy = addSound({
+      // url: getURL('machinegun'),
+      // multiShot: true,
+      url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit')
+      // url: 'audio/Gun_Machine_Gun_M60E_Burst_1_edit.wav'
+      // url: 'audio/Gun_AK47_Machine_Gun_1_edit.wav'
     });
+
+    sounds.bulletGroundHit = utils.array.shuffle([
+      addSound({ url: getURL('234853__mlsulli__body-hits-concrete_1'), volume: 10 }),
+      addSound({ url: getURL('234853__mlsulli__body-hits-concrete_2'), volume: 10 }),
+      addSound({ url: getURL('234853__mlsulli__body-hits-concrete_3'), volume: 10 }),
+      addSound({ url: getURL('234853__mlsulli__body-hits-concrete_4'), volume: 10 }),
+      addSound({ url: getURL('234853__mlsulli__body-hits-concrete_5'), volume: 10 }),
+    ]);
+
+    sounds.bulletShellCasing = utils.array.shuffle([
+      addSound({ url: getURL('522290__filmmakersmanual__shell-hitting-ground-12'), volume: 50 }),
+      addSound({ url: getURL('522294__filmmakersmanual__shell-hitting-ground-16'), volume: 50 }),
+      addSound({ url: getURL('522391__filmmakersmanual__shells-hitting-ground-2'), volume: 50 }),
+      addSound({ url: getURL('522394__filmmakersmanual__shell-hitting-ground-36'), volume: 50 }),
+      addSound({ url: getURL('522395__filmmakersmanual__shell-hitting-ground-3'), volume: 50 }),
+      addSound({ url: getURL('522399__filmmakersmanual__shell-hitting-ground-37'), volume: 50 }),
+    ]);
 
     sounds.bombHatch = [];
 
@@ -2663,6 +2695,11 @@
       // hat tip to the Death Adder for this one. ;)
       url: getURL('ga-typewriter'),
       volume: 33
+      /*
+        // different sound for enemy?
+        url: getURL('ta-bombrel'),
+        volume: 33
+      */
     }));
 
     sounds.impactWrench = [];
@@ -2729,11 +2766,20 @@
       volume: 8
     });
 
-    sounds.popSound = addSound({
-      // used when picking up infantry + engineers, and restoring turrets
+    sounds.turretEnabled = addSound({
+      // used when picking up infantry + engineers
       // http://freesound.org/people/SunnySideSound/sounds/67095/
-      url: getURL('popsound1'),
-      volume: 10
+      // hat tip: "tower turn" sound from TA, guns like the Guardian - a personal favourite.
+      url: getURL('ta-twrturn3'),
+      volume: 25
+    });
+
+    sounds.popSound = addSound({
+      // used when picking up infantry + engineers
+      // http://freesound.org/people/SunnySideSound/sounds/67095/
+      // url: getURL('ta-loadair'),
+      url: getURL('ga-234_pickup'),
+      volume: 25
     });
 
     sounds.popSound2 = addSound({
@@ -2763,94 +2809,140 @@
     sounds.genericSplat = [];
 
     // http://freesound.org/people/FreqMan/sounds/42962/
-    for (i = 0; i < 2; i++) {
-      sounds.genericSplat.push(addSound({
+    sounds.genericSplat = [
+      addSound({
         url: getURL('splat1'),
         volume: 15
-      }));
-      sounds.genericSplat.push(addSound({
+      }),
+      addSound({
         url: getURL('splat2'),
         volume: 15
-      }));
-      sounds.genericSplat.push(addSound({
+      }),
+      addSound({
         url: getURL('splat3'),
         volume: 15
-      }));
-    }
+      })
+    ];
 
     sounds.genericSplat = utils.array.shuffle(sounds.genericSplat);
 
-    sounds.scream = [];
-
-    for (i = 0; i < 2; i++) {
-      sounds.scream.push(addSound({
+    sounds.scream = utils.array.shuffle([
+      addSound({
         url: getURL('scream1'),
         volume: 9
-      }));
-      sounds.scream.push(addSound({
+      }),
+      addSound({
         url: getURL('scream2'),
         volume: 9
-      }));
-      sounds.scream.push(addSound({
+      }),
+      addSound({
         url: getURL('scream3'),
         volume: 9
-      }));
-      sounds.scream.push(addSound({
+      }),
+      addSound({
         url: getURL('scream4'),
         volume: 9
-      }));
-      sounds.scream.push(addSound({
+      }),
+      addSound({
         url: getURL('scream5'),
         volume: 9
-      }));
-    }
+      }),
+      addSound({
+        url: getURL('ga-191_ouch'),
+        volume: 40
+      }),
+      addSound({
+        url: getURL('ga-237_ouch2'),
+        volume: 40
+      }),
+    ]);
 
-    sounds.scream = utils.array.shuffle(sounds.scream);
-
-    sounds.genericBoom = [];
-
-    for (i = 0; i < 4; i++) {
-      sounds.genericBoom.push(addSound({
+    sounds.bombExplosion = [
+      addSound({
+        url: getURL('ga-219_bomb'),
+        volume: 50,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('ga-220_bomb'),
+        volume: 50,
+        multiShot: true
+      }),
+      addSound({
         url: getURL('explosion'),
-        volume: 45
-      }));
-    }
+        volume: 45,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('ga-219_bomb'),
+        volume: 50,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('ga-220_bomb'),
+        volume: 50,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('explosion'),
+        volume: 45,
+        multiShot: true
+      })
+    ];
 
-    sounds.genericExplosion = [];
+    sounds.genericBoom = [
+      addSound({
+        url: getURL('explosion'),
+        volume: 45,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('explosion'),
+        volume: 45,
+        multiShot: true
+      })
+    ];
 
-    sounds.genericExplosion.push(addSound({
-      url: getURL('generic-explosion'),
-      volume: 18
-    }));
-
-    sounds.genericExplosion.push(addSound({
-      url: getURL('generic-explosion-2'),
-      volume: 18
-    }));
-
-    sounds.genericExplosion.push(addSound({
-      url: getURL('generic-explosion-3'),
-      volume: 18
-    }));
+    sounds.genericExplosion = [
+      addSound({
+        url: getURL('generic-explosion'),
+        volume: 24,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('generic-explosion-2'),
+        volume: 24,
+        multiShot: true
+      }),
+      addSound({
+        url: getURL('generic-explosion-3'),
+        volume: 24,
+        multiShot: true
+      })
+    ];
 
     sounds.genericGunFire = [];
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 4; i++) {
       sounds.genericGunFire.push(addSound({
         url: getURL('generic-gunfire'),
-        // multiShot: isChrome,
+        multiShot: true,
         volume: 25
       }));
     }
 
     sounds.infantryGunFire = [
       addSound({
-        url: getURL('infantry-gunfire'),
-        volume: 20
+        // url: getURL('infantry-gunfire'),
+        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
+        // volume: 20
+        // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
       }),
       addSound({
-        url: getURL('infantry-gunfire'),
-        volume: 20
+        // url: getURL('infantry-gunfire'),
+        // volume: 20
+        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
+        // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
       })
     ];
 
@@ -2858,8 +2950,11 @@
 
     for (i = 0; i < 8; i++) {
       sounds.turretGunFire.push(addSound({
-        url: getURL('turret-gunfire'),
-        volume: 60
+        // url: getURL('turret-gunfire'),
+        // url: 'audio/161429__ryanconway__anti-air-gun-3-sounds_edit.wav',
+        url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
+        multiShot: true, // could be dangerous
+        volume: 40
       }));
     }
 
@@ -2869,10 +2964,12 @@
       volume: 12
     });
 
-    // http://freesound.org/people/Tiger_v15/sounds/211015/
+    // http://freesound.org/people/Tiger_v15/sounds/211015/ - NO LONGER USED
     sounds.metalHitBreak = addSound({
-      url: getURL('metal-hit-break'),
-      volume: 12
+      // url: getURL('metal-hit-break'),
+      // url: 'audio/315858__bevibeldesign__gunshot-ricochet_metal_hit_break.wav',
+      url: getURL('115919__issalcake__chairs-break-crash-pieces-move'),
+      volume: 40
     });
 
     sounds.boloTank = [];
@@ -2883,7 +2980,7 @@
     // http://bolo.net/
     // https://github.com/stephank/orona/
     // http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 4; i++) {
       sounds.boloTank.push(addSound({
         url: getURL('bolo-hit-tank-self'),
         volume: 25
@@ -2892,47 +2989,55 @@
 
     sounds.tankGunFire = [];
 
-    // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
+    // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
     // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
-    for (i = 0; i < 8; i++) {
-      sounds.tankGunFire.push(addSound({
-        url: getURL('tank-gunfire'),
-        volume: 15
-      }));
-    }
+    sounds.tankGunFire = addSound({
+      url: getURL('tank-gunfire'),
+      volume: 15,
+      multiShot: true
+    });
 
     sounds.metalHit = [];
 
-    sounds.metalHitLight = [];
+    // sounds.metalHitLight = [];
 
-    for (i = 0; i < 4; i++) {
+    // for (i = 0; i < 4; i++) {
 
       // http://freesound.org/people/Tiger_v15/sounds/211015/
+      // sounds.metalHit.push(addSound({
+        // url: getURL('metal-hit-1'),
+        // volume: 5
+      // }));
+
       sounds.metalHit.push(addSound({
-        url: getURL('metal-hit-1'),
-        volume: 5
+        // url: getURL('metal-hit-2'),
+        // volume: 5
+        url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
+        volume: 25
       }));
 
       sounds.metalHit.push(addSound({
-        url: getURL('metal-hit-2'),
-        volume: 5
+        // url: getURL('metal-hit-3'),
+        // volume: 5
+        url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
+        volume: 25
       }));
 
       sounds.metalHit.push(addSound({
-        url: getURL('metal-hit-3'),
-        volume: 5
+        // url: getURL('metal-hit-4'),
+        // volume: 5
+        url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
+        volume: 25
       }));
 
       sounds.metalHit.push(addSound({
-        url: getURL('metal-hit-4'),
-        volume: 5
+        // url: getURL('metal-hit-5'),
+        // volume: 5
+        url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
+        volume: 25
       }));
 
-      sounds.metalHit.push(addSound({
-        url: getURL('metal-hit-5'),
-        volume: 5
-      }));
-
+      /*
       // http://freesound.org/people/dheming/sounds/197398/
       sounds.metalHitLight.push(addSound({
         url: getURL('metal-hit-light-1'),
@@ -2958,29 +3063,133 @@
         url: getURL('metal-hit-light-5'),
         volume: 8
       }));
+      */
 
-    }
+    // }
 
-    sounds.explosionLarge = addSound({
-      url: getURL('explosion-large'),
-      // will result in GC, but perhaps an exception for this special case
+    sounds.concreteHit = utils.array.shuffle([
+      addSound({
+        url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit')
+      }),
+      addSound({
+        url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit')
+      }),
+      addSound({
+        url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit')
+      })
+    ]);
+
+    sounds.ricochet = utils.array.shuffle([
+      addSound({
+        url: getURL('109957__rakurka__incoming-ricochets-2_1'),
+        volume: 25,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('109957__rakurka__incoming-ricochets-2_2'),
+        volume: 25,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('109957__rakurka__incoming-ricochets-2_3'),
+        volume: 25,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('109957__rakurka__incoming-ricochets-2_4'),
+        volume: 25,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_2'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_3'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_4'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_5'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_6'),
+        volume: 4,
+        multiShot: true
+      }),
+
+      addSound({
+        url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_7'),
+        volume: 4,
+        multiShot: true
+      }),
+
+    ]);
+
+    sounds.balloonHit = addSound({
+      url: getURL('430302__citeyo1__aparicion_edit'),
       multiShot: true,
-      volume: 60
     });
+    
+    sounds.explosionLarge = utils.array.shuffle([
+      addSound({
+        url: getURL('explosion-large'),
+        multiShot: true,
+        volume: 60
+      }),
+      addSound({
+        url: getURL('245372__quaker540__hq-explosion'),
+        multiShot: true,
+        volume: 50
+      }),
+      addSound({
+        url: getURL('414345__bykgames__explosion-near'),
+        multiShot: true,
+        volume: 50
+      }),
+    ]);
 
     sounds.chainSnapping = addSound({
       url: getURL('chain-snapping'),
       volume: 15
     });
 
-    sounds.wilhemScream = addSound({
-      url: getURL('wilhem-scream'),
-      volume: 20
-    });
+    sounds.wilhemScream = utils.array.shuffle([
+      addSound({
+        url: getURL('wilhem-scream'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('ga-156_scream'),
+        volume: 40
+      }),
+    ]);
 
     sounds.helicopter.engine = addSound({
       url: getURL('helicopter-engine'),
-      volume: 25,
+      volume: 50,
       loops: 999
     });
 
@@ -2995,17 +3204,20 @@
 
     sounds.inventory.begin = addSound({
       url: getURL('order-start'),
+      multiShot: true,
       volume: 30
     });
 
     sounds.inventory.debit = addSound({
       url: getURL('funds-debit'),
       volume: 50,
+      multiShot: true,
     });
 
     sounds.inventory.credit = addSound({
       url: getURL('funds-credit'),
       volume: 60,
+      multiShot: true,
     });
 
     sounds.inventory.end = addSound({
@@ -3014,8 +3226,24 @@
     });
 
     sounds.missileLaunch = addSound({
-      url: getURL('missile-launch')
+      url: getURL('ga-217_missile_launch'),
+      volume: 25
     });
+
+    sounds.missileWarning = addSound({
+      // http://soundbible.com/1766-Fire-Pager.html
+      // public domain
+      url: getURL('fire_pager-jason-1283464858_edit'),
+      loops: 999,
+      volume: 3
+    });
+
+    sounds.missileWarningExpiry = addSound({
+      // http://soundbible.com/1766-Fire-Pager.html
+      // public domain
+      url: getURL('fire_pager-jason-1283464858_edit_long'),
+      volume: 2
+    })
 
     sounds.parachuteOpen = addSound({
       url: getURL('parachute-open'),
@@ -3054,66 +3282,85 @@
 
     sounds.radarJamming = addSound({
       url: getURL('radar-jamming'),
-      volume: 33
+      volume: 33,
+      loops: 999
     });
 
     sounds.repairing = addSound({
       url: getURL('repairing'),
-      volume: 75,
+      volume: 15,
       loops: 999
     });
 
-    sounds.rubberChicken.launch = [];
+    sounds.ipanemaMuzak = addSound({
+      // hat tip to Mike Russell for the "vintage radio" / elevator muzak EQ effect: https://youtu.be/ko9hRYx1lF4
+      url: getURL('ipanema-elevator'),
+      volume: 5,
+      loops: 999
+    })
 
-    sounds.rubberChicken.launch.push(addSound({
-      url: getURL('rubber-chicken-launch-1'),
-      volume: 20
-    }));
-
-    sounds.rubberChicken.launch.push(addSound({
-      url: getURL('rubber-chicken-launch-2'),
-      volume: 20
-    }));
-
-    sounds.rubberChicken.launch.push(addSound({
-      url: getURL('rubber-chicken-launch-3'),
-      volume: 20
-    }));
-
-    // randomize order a little
-    sounds.rubberChicken.launch = utils.array.shuffle(sounds.rubberChicken.launch);
+    sounds.rubberChicken.launch = utils.array.shuffle([
+      addSound({
+        url: getURL('rubber-chicken-launch-1'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('rubber-chicken-launch-2'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('rubber-chicken-launch-3'),
+        volume: 20
+      })
+    ]);
 
     sounds.rubberChicken.expire = addSound({
       url: getURL('rubber-chicken-expire'),
       volume: 30
     });
 
-    sounds.rubberChicken.die = [];
+    sounds.rubberChicken.die = utils.array.shuffle([
+      addSound({
+        url: getURL('rubber-chicken-hit-1'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('rubber-chicken-hit-2'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('rubber-chicken-hit-3'),
+        volume: 20
+      }),
+      addSound({
+        url: getURL('rubber-chicken-hit-4'),
+        volume: 20
+      })
+    ]);
 
-    sounds.rubberChicken.die.push(addSound({
-      url: getURL('rubber-chicken-hit-1'),
-      volume: 20
-    }));
+    sounds.banana.launch = [
+      addSound({
+        url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
+        volume: 50,
+        multiShot: false,
+      }),
+      addSound({
+        url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
+        volume: 50,
+        multiShot: false,
+      }),
+      addSound({
+        url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
+        volume: 50,
+        multiShot: false,
+      })
+    ];
 
-    sounds.rubberChicken.die.push(addSound({
-      url: getURL('rubber-chicken-hit-2'),
-      volume: 20
-    }));
-
-    sounds.rubberChicken.die.push(addSound({
-      url: getURL('rubber-chicken-hit-3'),
-      volume: 20
-    }));
-
-    sounds.rubberChicken.die.push(addSound({
-      url: getURL('rubber-chicken-hit-4'),
-      volume: 20
-    }));
-
-    // randomize order a little
-    sounds.rubberChicken.die = utils.array.shuffle(sounds.rubberChicken.die);
-
-
+    sounds.banana.expire = addSound({
+      url: getURL('ufo-expire'),
+      volume: 75,
+    });
+    
   });
 
   function Joystick(options) {
@@ -16112,9 +16359,20 @@
   soundManager.setup({
     debugMode: false,
     defaultOptions: {
-      volume: 25,
-      multiShot: true // !!(winloc.match(/multishot/i)),
-    }
+      volume: DEFAULT_VOLUME,
+      multiShot: false // !isSafari // !!(winloc.match(/multishot/i)),
+    },
+  });
+
+  function updateSound(ok) {
+    var soundOption = document.getElementById('sound-option');
+    if (soundOption) soundOption.style.display = ok ? 'inline' : 'none';
+  }
+
+  soundManager.onready(updateSound);
+  soundManager.ontimeout(function() {
+    var ok = false;
+    updateSound(ok);
   });
 
   if (window.location.toString().match(/mute/i)) {
