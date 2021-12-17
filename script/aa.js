@@ -7600,7 +7600,7 @@
           if (objects.balloon.data.dead) {
 
             // fall until the bottom is reached.
-            if (data.y < worldHeight + 2) {
+            if (data.y < game.objects.view.data.world.height + 2) {
 
               data.fallingVelocity += data.fallingVelocityIncrement;
               y = data.y + data.fallingVelocity;
