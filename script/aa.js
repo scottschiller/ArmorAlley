@@ -15162,6 +15162,7 @@
       // player's landing pad
 
       addObject('landingPad', {
+        name: 'THE LANDING PAD',
         x: 300
       });
 
@@ -15184,19 +15185,21 @@
 
       if (gameType === 'hard' || gameType === 'extreme') {
 
-        // level 9
+        // "level 9"
 
         // mid and end-level landing pad. create up-front, since vans rely on it for xGameOver.
 
         addObject('landingPad', {
+          name: 'THE MIDWAY',
           x: 3944
         });
 
         addObject('landingPad', {
+          name: 'THE DANGER ZONE',
           x: 7800
         });
 
-        // twin enemy turrets, mid-field - good luck.
+        // twin enemy turrets, mid-field - good luck. 😅
         if (gameType === 'extreme') {
           addObject(TYPES.turret, {
             x: 3800,
@@ -15589,10 +15592,12 @@
         // mid and end-level landing pads (affects van objects' xGameOver property, so create this ahead of vans.)
 
         addObject('landingPad', {
+          name: 'THE MIDWAY',
           x: 4096 - 290
         });
 
         addObject('landingPad', {
+          name: 'THE DANGER ZONE',
           x: 7800
         });
 
