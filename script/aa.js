@@ -11563,7 +11563,8 @@
         'easy': 0.9,
         'hard': 0.85,
         'extreme': 0.75,
-      }
+      },
+      y: game.objects.view.data.world.height - 20
     }, options);
 
     data.midPoint = {
@@ -15802,10 +15803,7 @@
       if (!tutorialMode) {
 
         addObject(TYPES.helicopter, {
-          x: 8192 - 64,
-          y: 72,
-          isEnemy: true,
-          vX: -8
+          isEnemy: true
         });
 
       }
