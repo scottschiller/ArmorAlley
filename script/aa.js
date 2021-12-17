@@ -11380,7 +11380,7 @@
 
     function initHelicopter() {
 
-      var i, trailerConfig, fragment;
+      var i, trailerConfig, oTrailer, fragment;
 
       if (data.isEnemy) {
         // offset fire modulus by half, to offset sound
@@ -11393,12 +11393,16 @@
         className: css.trailer
       };
 
+      oTrailer = makeSprite(trailerConfig);
+
       for (i = 0; i < data.trailerCount; i++) {
-        dom.trailers.push(makeSprite(trailerConfig));
-        // TODO: clone, optimize etc.
+        dom.trailers.push(oTrailer.cloneNode(true));
         fragment.appendChild(dom.trailers[i]);
       }
 
+      oTrailer = null;
+
+      // TODO: review and append only when on-screen
       game.dom.world.appendChild(fragment);
 
       dom.o = makeSprite({
