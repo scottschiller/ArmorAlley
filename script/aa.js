@@ -1238,6 +1238,32 @@
       exploding: 'exploding',
     },
 
+    updateXY(exports, x, y) {
+
+      var didUpdate;
+
+      if (x !== undefined && exports.data.x !== x) {
+        exports.data.x = x;
+        didUpdate = true;
+      }
+
+      if (y !== undefined && exports.data.y !== y) {
+        exports.data.y = y;
+        didUpdate = true;
+      }
+
+      return didUpdate;
+    },
+
+    moveTo: function(exports, x, y) {
+
+      // only set transform if data changed
+      if (common.updateXY(exports, x, y)) {
+        common.setTransformXY(exports, exports.dom.o, exports.data.x + 'px', exports.data.y + 'px');
+      }
+     
+    },
+
     setTransformXY: function(exports, o, x, y, extraTransforms) {
 
       /**
@@ -5484,27 +5510,6 @@
 
     var css, data, dom, height, objects, radarItem, reset, exports;
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, exports.dom.o, data.x + 'px', data.y + 'px');
-      }
-
-    }
-
     function checkRespawn() {
 
       // odd edge case - data not always defined if destroyed at the right time?
@@ -5639,7 +5644,7 @@
             data.verticalDirection *= -1;
           }
 
-          moveTo(data.x, data.y + data.verticalDirection);
+          common.moveTo(exports, data.x, data.y + data.verticalDirection);
 
         } else {
 
@@ -5704,7 +5709,7 @@
           }
 
           // hackish: enforce world min/max limits
-          moveTo(data.x + data.windOffsetX, data.y + data.windOffsetY);
+          common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
 
         }
 
@@ -5717,7 +5722,7 @@
             data.verticalDirection *= -1;
           }
 
-          moveTo(data.x, data.y + data.verticalDirection);
+          common.moveTo(exports, data.x, data.y + data.verticalDirection);
 
         }
 
@@ -5779,7 +5784,7 @@
       // TODO: remove?
       dom.o.style.marginLeft = (data.leftMargin + 'px');
 
-      moveTo(data.x, data.y);
+      common.moveTo(exports, data.x, data.y);
 
       if (!objects.bunker) {
         detach();
@@ -7526,21 +7531,7 @@
 
     function moveTo(x, y, height) {
 
-      var needsUpdate = false;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-      }
+      common.moveTo(exports, x, y);
 
       if (height !== undefined && data.height !== height) {
         // don't update DOM - $$$ paint even when GPU compositing,
@@ -7774,26 +7765,6 @@
 
     }
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-      }
-
-    }
-
     function die(options) {
 
       if (data.dead) return;
@@ -7900,7 +7871,7 @@
       if (data.dead) return !dom.o;
 
       if (!data.stopped) {
-        moveTo(data.x + data.vX, data.y);
+        common.moveTo(exports, data.x + data.vX, data.y);
       }
 
       common.smokeRelativeToDamage(exports);
@@ -8196,26 +8167,6 @@
 
     }
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-      }
-
-    }
-
     function animate() {
 
       // pending die()
@@ -8233,7 +8184,7 @@
         data.gravity *= (data.isInert ? 1.09 : 1.1);
       }
 
-      moveTo(data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
+      common.moveTo(exports, data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
 
       data.frameCount++;
 
@@ -8344,24 +8295,20 @@
 
     function moveTo(x, y, rotateAngle, forceUpdate) {
 
-      var deltaX, deltaY, rad, needsUpdate;
+      var deltaX, deltaY, rad;
       
       deltaX = 0;
       deltaY = 0;
 
-      if (x !== undefined && data.x !== x) {
+      if (x !== undefined) {
         deltaX = x - data.x;
-        data.x = x;
-        needsUpdate = true;
       }
 
-      if (y !== undefined && data.y !== y) {
+      if (y !== undefined) {
         deltaY = y - data.y;
-        data.y = y;
-        needsUpdate = true;
       }
 
-      if (needsUpdate || forceUpdate) {
+      if (common.updateXY(exports, x, y) || forceUpdate) {
         rad = Math.atan2(deltaY, deltaX);
         common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + (rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)) + 'deg');
       }
@@ -8621,26 +8568,6 @@
 
     var cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-      }
-
-    }
-
     function animate() {
 
       data.frameCount++;
@@ -8675,7 +8602,7 @@
         data.windOffsetY *= -1;
       }
 
-      moveTo(data.x + data.windOffsetX, data.y + data.windOffsetY);
+      common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
 
     }
 
@@ -8746,18 +8673,12 @@
 
     function moveTo(x, y, angle) {
 
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-      }
-
       // prevent from "crashing" into terrain, only if not expiring and target is still alive
       if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
         y = data.yMax;
       }
 
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-      }
+      common.updateXY(exports, x, y);
 
       // determine angle
       if (data.isBanana) {
@@ -11769,19 +11690,7 @@
 
     function moveTo(x, y) {
 
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
+      if (common.updateXY(exports, x, y)) {
         common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
       }
 
@@ -12083,31 +11992,6 @@
 
     }
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (features.transform.prop) {
-
-        if (x !== undefined && data.x !== x) {
-          data.x = x;
-          needsUpdate = true;
-        }
-
-        if (y !== undefined && data.y !== y) {
-          data.y = y;
-          needsUpdate = true;
-        }
-
-        // hackish: allow setting transform if game over, so position is updated
-        if (needsUpdate || battleOver) {
-          common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-        }
-
-      }
-
-    }
-
     function die() {
 
       if (data.dead) return;
@@ -12154,7 +12038,7 @@
       if (data.dead) return (data.dead && !data.deadTimer);
 
       if (!data.stopped) {
-        moveTo(data.x + data.vX, data.y);
+        common.moveTo(exports, data.x + data.vX, data.y);
       }
 
       common.smokeRelativeToDamage(exports, 0.25);
@@ -12370,26 +12254,6 @@
 
     }
 
-    function moveTo(x, y) {
-
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
-      }
-
-    }
-
     function die(options) {
 
       if (data.dead) return;
@@ -12433,7 +12297,7 @@
 
         // falling?
 
-        moveTo(data.x + data.vX, data.y + data.vY);
+        common.moveTo(exports, data.x + data.vX, data.y + data.vY);
 
         if (!data.parachuteOpen) {
 
@@ -12541,7 +12405,7 @@
             // hit ground, and no parachute. gravity is a cruel mistress.
 
             // reposition, first
-            moveTo(data.x, data.maxY);
+            common.moveTo(exports, data.x, data.maxY);
 
             // balloon-on-skin "splat" sound
             if (sounds.splat) {
@@ -12576,7 +12440,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      moveTo(data.x, data.y);
+      common.moveTo(exports, data.x, data.y);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -12680,19 +12544,7 @@
 
     function moveTo(x, y) {
 
-      var needsUpdate;
-
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        data.y = y;
-        needsUpdate = true;
-      }
-
-      if (needsUpdate) {
+      if (common.updateXY(exports, x, y)) {
         common.setTransformXY(exports, dom.o, x + 'px', (data.y - data.yOffset) + 'px', data.flipTransform);
       }
 
@@ -13182,19 +13034,9 @@
 
     function moveTo(x, y) {
 
-      var relativeScale, needsUpdate;
+      var relativeScale;
 
-      if (x !== undefined && data.x !== x) {
-        data.x = x;
-        needsUpdate = true;
-      }
-
-      if (y !== undefined && data.y !== y) {
-        needsUpdate = true;
-        data.y = y;
-      }
-
-      if (needsUpdate) {
+      if (common.updateXY(exports, x, y)) {
         // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
         relativeScale = Math.min(1, data.y / (worldHeight * 0.9));
 
