@@ -1,3 +1,4 @@
+/*global soundManager */
 (function armorAlley(window) {
 
   'use strict';
@@ -184,9 +185,9 @@
   /**
    * Evil tricks needed because Safari 6 (and Webkit nightly)
    * scale text after rasterization - thus, there's an option
-   * to use document.body.style.zoom vs. transform: scale3d()
+   * to use document[element].style.zoom vs. transform: scale3d()
    * which renders text cleanly. Both have minor quirks.
-   * force-enable transform under Safari 6 w/ #forcescaling=1
+   * force-enable transform under Safari 6 w/ #forceTransform=1
    */
 
   var isWebkit = ua.match(/webkit/i);
@@ -214,10 +215,15 @@
 
   var debug = winloc.match(/debug/i);
 
-  var showHealth = winloc.match(/health/i);
+  // TODO: get rid of this.
+  var debugType = winloc.match(/debugType/i);
+
+  var showHealth = true; // winloc.match(/health/i);
 
   // whether to always "upgrade" Smart Missiles...
   var forceRubberChicken = winloc.match(/chicken/i);
+  var forceBanana = winloc.match(/banana/i);
+
   // TODO: move missile mode bits into game object
   var missileMode;
 
@@ -226,8 +232,14 @@
   // can also be enabled by pressing "C".
   var rubberChickenMode = 'rubber-chicken-mode';
 
-  var INFINITY = '∞';
+  // can also be enabled by pressing "B".
   var bananaMode = 'banana-mode';
+
+  function renderMissileText(character, mode) {
+    if (mode === missileMode) return character;
+    return '<span style="opacity:0.5">' + character + '</span>';
+  }
+
   function setMissileMode(mode) {
     if (missileMode === mode) return;
     
@@ -246,6 +258,10 @@
     document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
 
   }
+
+  // for testing end sequence
+  var theyWin = winloc.match(/theyWin/i);
+  var youWin = winloc.match(/youWin/i);
 
   var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
 
@@ -272,9 +288,11 @@
   // TODO: move into view
   var screenScale = 1;
 
-  var forceScaling = !!(winloc.match(/forcescal/i));
+  var forceTransform = !!(winloc.match(/forceTransform/i));
 
-  var disableScaling = !!(!forceScaling && winloc.match(/noscal/i));
+  var forceZoom = !!(winloc.match(/forceZoom/i));
+
+  var disableScaling = !!(!forceTransform && winloc.match(/noscal/i));
 
   var userDisabledScaling = false;
 
@@ -825,6 +843,7 @@
       data = {};
 
       // try ... catch because even referencing localStorage can cause a security exception.
+      // this handles cases like incognito windows, privacy stuff, and "cookies disabled" in Firefox.
 
       try {
         localStorage = window.localStorage || null;
@@ -9737,7 +9756,6 @@
           if (typeFromElement === type) isDuplicate = true;
 
           element = oLastChild;
-
         }
 
         if (!isDuplicate) {
@@ -16291,7 +16309,7 @@
 
       setTimeout(function() {
         window.location.reload();
-      }, 1);
+      }, 100);
 
       return false;
 
@@ -16306,7 +16324,7 @@
 
       setTimeout(function() {
         window.location.reload();
-      }, 1);
+      }, 100);
 
       return false;
 
@@ -16375,7 +16393,7 @@
     updateSound(ok);
   });
 
-  if (window.location.toString().match(/mute/i)) {
+  if (winloc.match(/mute/i)) {
     soundManager.disable();
   }
 
