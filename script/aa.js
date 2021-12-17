@@ -11720,45 +11720,69 @@
 
   Tank = function(options) {
 
-    var css, data, dom, radarItem, objects, nearby, exports;
+    var css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
 
     function fire() {
 
-      if (data.frameCount % data.fireModulus === 0) {
+      var collisionItems;
 
-        objects.gunfire.push(new GunFire({
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          damagePoints: 2, // tanks fire at half-rate, so double damage.
-          collisionItems: nearby.items.concat('bunkers'), // special case: tanks don't stop to shoot bunkers, but their gunfire can damage them.
-          x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
-          y: game.objects.view.data.world.height - data.gunYOffset, // half of tank height
-          vX: data.vX * 2,
-          vY: 0
-        }));
+      if (data.frameCount % data.fireModulus !== 0) return;
 
-        if (sounds.tankGunFire) {
-          playSound(sounds.tankGunFire, exports);
-        }
+      /**
+       * Special case: tanks don't stop to shoot bunkers, but allow gunfire to hit and damage bunkers
+       * ONLY IF the tank is targeting a helicopter (i.e., defense) or another tank.
+       * 
+       * Otherwise, let bullets pass through bunkers and kill whatever "lesser" units the tank is firing at.
+       * 
+       * This should be an improvement from the original game, where tanks could get "stuck" shooting into
+       * a bunker and eventually destroying it while trying to take out an infantry.
+       */
 
+      if (
+        data.lastNearbyTarget && data.lastNearbyTarget.data.type
+        && (data.lastNearbyTarget.data.type === TYPES.helicopter || data.lastNearbyTarget.data.type === TYPES.tank)
+      ) {
+        // allow bullets to hit bunkers
+        collisionItems = nearby.items.concat('bunkers');
+      } else {
+        // bullets "pass through" bunkers
+        collisionItems = nearby.items;
+      }
+
+      game.objects.gunfire.push(new GunFire({
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        damagePoints: 2, // tanks fire at half-rate, so double damage.
+        collisionItems: collisionItems,
+        x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
+        // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry
+        y: data.y + data.halfHeight,
+        vX: data.vX * 2,
+        vY: 0
+      }));
+
+      if (sounds.tankGunFire) {
+        playSound(sounds.tankGunFire, exports);
       }
 
     }
 
-    function moveTo(x, bottomY) {
+    function moveTo(x, y) {
+
+      var needsUpdate;
 
       if (x !== undefined && data.x !== x) {
-
-        if (data.isOnScreen) {
-          common.setTransformXY(dom.o, data.x + 'px', '0px');
-        }
-
         data.x = x;
+        needsUpdate = true;
       }
 
-      if (bottomY !== undefined && data.bottomY !== bottomY) {
-        data.bottomY = bottomY;
-        data.y = bottomAlignedY(bottomY);
+      if (y !== undefined && data.y !== y) {
+        data.y = y;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate) {
+        common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
       }
 
     }
@@ -11898,26 +11922,22 @@
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
-      dom.oSubSprite = makeSubSprite();
-      dom.o.appendChild(dom.oSubSprite);
-
       // for testing
       if (options.extraClass) {
         utils.css.add(dom.o, options.extraClass);
       }
 
-      common.setTransformXY(dom.o, data.x + 'px', '0px');
-
-
-      game.dom.world.appendChild(dom.o);
+      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
+      
       initNearby(nearby, exports);
 
     }
 
     options = options || {};
+
+    tankHeight = 18;
 
     css = inheritCSS({
       className: TYPES.tank,
@@ -11935,21 +11955,24 @@
       // enemy tanks shoot a little faster
       fireModulus: (options.isEnemy ? 10 : 12),
       vX: (options.isEnemy ? -1 : 1),
+      vXDefault: (options.isEnemy ? -1 : 1),
       width: 58,
-      height: 18,
+      height: tankHeight,
       halfWidth: 28,
-      halfHeight: 9,
-      gunYOffset: 15,
+      halfHeight: tankHeight / 2,
       stopped: false,
       inventory: {
         frameCount: 60,
         cost: 4
-      }
+      },
+      x: options.x || 0,
+      y: game.objects.view.data.world.height - tankHeight - 1,
+      // hackish: logical vs. sprite alignment offset
+      yOffset: 2
     }, options);
 
     dom = {
       o: null,
-      oSubSprite: null,
       oTransformSprite: null
     };
 
