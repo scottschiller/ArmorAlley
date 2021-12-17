@@ -11797,7 +11797,7 @@
 
       if (data.frameCount % data.repairModulus === 0) {
         if (data.energy < data.energyMax) {
-          data.energy++;
+          data.energy += 0.1;
           updateHealth();
         }
       }
@@ -11951,7 +11951,7 @@
       energy: 8,
       energyMax: 8,
       frameCount: 0,
-      repairModulus: 50,
+      repairModulus: 5,
       // enemy tanks shoot a little faster
       fireModulus: (options.isEnemy ? 10 : 12),
       vX: (options.isEnemy ? -1 : 1),
