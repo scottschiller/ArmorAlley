@@ -7593,7 +7593,8 @@
 
           // bunker -> chain -> balloon
 
-          y = objects.balloon.data.y + objects.balloon.data.height;
+          // slight offset, so chain runs right underneath balloon
+          y = objects.balloon.data.y + objects.balloon.data.height - 3;
 
           // make the chain fall faster if the balloon is toast.
           if (objects.balloon.data.dead) {
