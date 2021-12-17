@@ -11804,27 +11804,39 @@
 
     }
 
-    function die() {
+    function die(options) {
 
       if (data.dead) return;
 
-      utils.css.add(dom.o, css.exploding);
+      if (!options || !options.silent) {
+
+        utils.css.add(dom.o, css.exploding);
+
+        shrapnelExplosion(data, { velocity: 8 });
+
+        common.inertGunfireExplosion({ exports: exports });
+
+        common.smokeRing(exports, { isGroundUnit: true });
+
+        data.deadTimer = setFrameTimeout(function() {
+          removeNodes(dom);
+          data.deadTimer = null;
+        }, 1500);
+  
+      } else {
+
+        removeNodes(dom);
+
+      }
 
       // stop moving while exploding
       data.vX = 0;
-
-      shrapnelExplosion(data);
-
-      data.deadTimer = setFrameTimeout(function() {
-        removeNodes(dom);
-        data.deadTimer = null;
-      }, 1000);
 
       data.energy = 0;
 
       data.dead = true;
 
-      if (sounds.genericExplosion) {
+      if ((!options || !options.silent) && sounds.genericExplosion) {
         playSound(sounds.genericExplosion, exports);
       }
 
