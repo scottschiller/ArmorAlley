@@ -11691,9 +11691,9 @@
 
   };
 
-  Van = function(options) {
+  Van = options => {
 
-    var css, dom, data, friendlyNearby, height, radarItem, exports;
+    let css, dom, data, friendlyNearby, height, radarItem, exports;
 
     function stop() {
 
@@ -11721,9 +11721,9 @@
 
       shrapnelExplosion(data, { centerX: true, velocity: 6 });
 
-      common.inertGunfireExplosion({ exports: exports });
+      common.inertGunfireExplosion({ exports });
 
-      data.deadTimer = setFrameTimeout(function() {
+      data.deadTimer = setFrameTimeout(() => {
         removeNodes(dom);
         data.deadTimer = null;
       }, 1000);
@@ -11748,9 +11748,9 @@
 
     function animate() {
 
-      var enemyHelicopter;
+      let enemyHelicopter;
 
-      if (data.dead) return (data.dead && !data.deadTimer);
+      if (data.dead) return !data.deadTimer;
 
       if (!data.stopped) {
         common.moveTo(exports, data.x + data.vX, data.y);
@@ -11802,7 +11802,7 @@
             }
 
             if (data.isOnScreen) {
-              dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+              dom.o.style.backgroundPosition = `0px ${data.height * data.state * -1}px`;
             }
 
           } else if (data.frameCount % data.stateModulus === 2) {
@@ -11853,7 +11853,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       initNearby(friendlyNearby, exports);
 
@@ -11887,7 +11887,7 @@
       vX: (options.isEnemy ? -1 : 1),
       width: 38,
       halfWidth: 19,
-      height: height,
+      height,
       halfHeight: height / 2,
       state: 0,
       stateMax: 2,
@@ -11923,10 +11923,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die
+      animate,
+      data,
+      dom,
+      die
     };
 
     if (!options.noInit) {
