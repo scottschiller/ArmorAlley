@@ -6973,60 +6973,58 @@
 
   };
 
-  Base = function(options) {
+  Base = options => {
 
-    var css, data, dom, exports, height, missileVMax;
+    let css, data, dom, exports, height, missileVMax;
 
     function fire() {
 
-      var targetHelicopter;
+      let targetHelicopter;
 
       targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
-      if (targetHelicopter) {
+      if (!targetHelicopter) return;
 
-        game.objects.smartMissiles.push(new SmartMissile({
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          isBanana: (data.missileMode === bananaMode),
-          isRubberChicken: (data.missileMode === rubberChickenMode),
-          // position roughly around "launcher" point of base
-          x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
-          y: data.y,
-          // hackish: these add to existing max vX / vY, they don't replace.
-          vXMax: missileVMax,
-          vYMax: missileVMax,
-          target: targetHelicopter,
-          onDie: function() {
-            // extreme mode, human player at enemy base: spawn another immediately on die().
-            if (gameType !== 'extreme') return;
+      game.objects.smartMissiles.push(SmartMissile({
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        isBanana: (data.missileMode === bananaMode),
+        isRubberChicken: (data.missileMode === rubberChickenMode),
+        // position roughly around "launcher" point of base
+        x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
+        y: data.y,
+        // hackish: these add to existing max vX / vY, they don't replace.
+        vXMax: missileVMax,
+        vYMax: missileVMax,
+        target: targetHelicopter,
+        onDie() {
+          // extreme mode, human player at enemy base: spawn another immediately on die().
+          if (gameType !== 'extreme') return;
 
-            // check again, within a screen's distance.
-            targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
-            
-            // if not within range, reset vX + vY max for next time
-            if (!targetHelicopter) {
-              missileVMax = 0;
-              return;
-            }
-
-            // re-load and fire ze missles, now more aggressive!
-            missileVMax = Math.min(data.missileVMax, missileVMax + 1);
-
-            setFrameTimeout(fire, 250 + rnd(250));
+          // check again, within a screen's distance.
+          targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
+          
+          // if not within range, reset vX + vY max for next time
+          if (!targetHelicopter) {
+            missileVMax = 0;
+            return;
           }
-        }));
 
-      }
+          // re-load and fire ze missles, now more aggressive!
+          missileVMax = Math.min(data.missileVMax, missileVMax + 1);
+
+          setFrameTimeout(fire, 250 + rnd(250));
+        }
+      }));
 
     }
 
     function die() {
 
-      var counter = 0,
-        counterMax = 30,
-        overrideMax = true,
-        leftOffset;
+      let counter = 0;
+      const counterMax = 30;
+      const overrideMax = true;
+      let leftOffset;
 
       data.dead = true;
 
@@ -7067,7 +7065,7 @@
 
       function boom() {
 
-        var endBunker = game.objects.endBunkers[data.isEnemy ? 1 : 0];
+        const endBunker = game.objects.endBunkers[data.isEnemy ? 1 : 0];
 
         // smaller explosions on both end bunker, and base (array offset)
         smallBoom(endBunker);
@@ -7083,7 +7081,7 @@
         if (counter >= counterMax) {
 
           // HUGE boom, why not.
-          setFrameTimeout(function() {
+          setFrameTimeout(() => {
 
             // ensure incoming missile is silenced
             if (sounds.missileWarning) {
@@ -7100,9 +7098,9 @@
               playSound(sounds.baseExplosion, exports);
             }
 
-            setFrameTimeout(function() {
+            setFrameTimeout(() => {
 
-              var i, iteration;
+              let i, iteration;
               iteration = 0;
 
               for (i = 0; i < 7; i++) {
@@ -7115,9 +7113,9 @@
               }
 
               for (i = 0; i < 3; i++) {
-                setFrameTimeout(function() {
+                setFrameTimeout(() => {
                   // first one is always big.
-                  var isBigBoom = (!iteration || rnd(0.75));
+                  const isBigBoom = (!iteration || rnd(0.75));
 
                   common.smokeRing(exports, {
                     velocityMax: 64,
@@ -7157,36 +7155,40 @@
       document.getElementById('game-tips-list').innerHTML = '';
 
       boom();
-
     }
 
     function animate() {
 
-      if (!data.dead) {
+      if (data.dead) return;
 
-        if (data.frameCount % data.fireModulus === 0) {
-          fire();
-          data.frameCount = 0;
-        }
-
-        data.frameCount++;
-
+      if (data.frameCount % data.fireModulus === 0) {
+        fire();
+        data.frameCount = 0;
       }
+
+      data.frameCount++;
 
     }
 
     function getRandomMissileMode() {
+
       // 20% chance of default, 40% chance of chickens or bananas
-      var rnd = Math.random();
+      const rnd = Math.random();
+
       if (rnd <= 0.2) return defaultMissileMode;
       if (rnd > 0.2 && rnd < 0.6) return rubberChickenMode;
+
       return bananaMode;
+
     }
 
     function isOnScreenChange(isOnScreen) {
+
       if (!isOnScreen) return;
+
       // allow base to switch up its defenses
       data.missileMode = getRandomMissileMode();
+
     }
 
     function initBase() {
@@ -7199,7 +7201,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
@@ -7227,7 +7229,7 @@
       x: (options.x || (options.isEnemy ? worldWidth - 192 : 64)),
       y: game.objects.view.data.world.height - height - 2,
       width: 125,
-      height: height,
+      height,
       halfWidth: 62,
       halfHeight: height / 2,
       // bases don't move, but these are for explosions.
@@ -7243,11 +7245,11 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      isOnScreenChange: isOnScreenChange
+      animate,
+      data,
+      dom,
+      die,
+      isOnScreenChange
     };
 
     initBase();
