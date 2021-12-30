@@ -1233,28 +1233,28 @@
           increaseDeceleration: 0.9985
         };
 
-        game.objects.smoke.push(new Smoke(smokeArgs));
+        game.objects.smoke.push(Smoke(smokeArgs));
 
         // past a certain amount, create inner "rings"
         if (count >= 20 || velocityMax > 15) {
 
           // second inner ring
           if (i % 2 === 0) {
-            game.objects.smoke.push(new Smoke(
+            game.objects.smoke.push(Smoke(
               mixin(smokeArgs, { vX: vectorX * 0.75, vY: vectorY * 0.75})
             ));
           }
 
           // third inner ring
           if (i % 3 === 0) {
-            game.objects.smoke.push(new Smoke(
+            game.objects.smoke.push(Smoke(
               mixin(smokeArgs, { vX: vectorX * 0.66, vY: vectorY * 0.66})
             ));
           }
 
           // fourth inner ring
           if (i % 4 === 0) {
-            game.objects.smoke.push(new Smoke(
+            game.objects.smoke.push(Smoke(
               mixin(smokeArgs, { vX: vectorX * 0.50, vY: vectorY * 0.50})
             ));
           }
@@ -1279,7 +1279,7 @@
       // a proper roll of the dice: smoke at random. higher damage = greater chance of smoke
       if (Math.random() < 1 - ((data.energyMax -data.energy) / data.energyMax)) return;
 
-      game.objects.smoke.push(new Smoke({
+      game.objects.smoke.push(Smoke({
         x: data.x + data.halfWidth + (parseInt(rnd(data.halfWidth) * 0.33 * plusMinus(), 10)),
         y: data.y + data.halfHeight + (parseInt(rnd(data.halfHeight) * 0.25 * (data.vY <= 0 ? -1 : 1), 10)),
         // if undefined or zero, allow smoke to go left or right
@@ -12676,11 +12676,11 @@
 
   };
 
-  shrapnelExplosion = function(options, shrapnelOptions) {
+  shrapnelExplosion = (options, shrapnelOptions) => {
 
-    var localOptions, halfWidth;
+    let localOptions, halfWidth;
 
-    var vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
+    let vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
 
     shrapnelOptions = shrapnelOptions || {};
 
@@ -12727,7 +12727,7 @@
       // have first and last make noise
       localOptions.hasSound = (i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1));
 
-      game.objects.shrapnel.push(new Shrapnel(localOptions));
+      game.objects.shrapnel.push(Shrapnel(localOptions));
 
       angle += angleIncrement;
 
@@ -12735,13 +12735,13 @@
 
   };
 
-  Shrapnel = function(options) {
+  Shrapnel = options => {
 
-    var css, dom, data, collision, radarItem, scale, exports;
+    let css, dom, data, collision, radarItem, scale, exports;
 
     function moveTo(x, y) {
 
-      var relativeScale;
+      let relativeScale;
 
       if (common.updateXY(exports, x, y)) {
         // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
@@ -12750,10 +12750,10 @@
         // allow slightly larger, and a fair bit smaller
         relativeScale = 1.1 - (relativeScale * 0.45);
 
-        data.scaleTransform = 'scale3d(' + [relativeScale, relativeScale, 1].join(',') + ')'
+        data.scaleTransform = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
 
         // move, and retain 3d scaling
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.scaleTransform);
+        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.scaleTransform);
       }
 
     }
@@ -12762,7 +12762,7 @@
 
       if (!data.hasSound) return;
 
-      var i = 'hit' + sounds.shrapnel.counter;
+      const i = `hit${sounds.shrapnel.counter}`;
 
       sounds.shrapnel.counter += (sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1);
 
@@ -12784,7 +12784,7 @@
 
       utils.css.add(dom.o, css.stopped);
 
-      data.deadTimer = setFrameTimeout(function() {
+      data.deadTimer = setFrameTimeout(() => {
         removeNodes(dom);
         data.deadTimer = null;
       }, 750);
@@ -12803,41 +12803,42 @@
 
     function hitAndDie(target) {
 
-      var targetType, damageTarget = true;
+      let targetType, damageTarget = true;
 
-      if (target) {
+      if (!target) {
+        die();
+        return;
+      }
 
-        // hackish: there was a collision, but "pass-thru" if the target says to ignore shrapnel.
-        // e.g., parachute infantry dropped from a helicopter while it's exploding mid-air,
-        // so the infantry doesn't die and the shrapnel isn't taken out in the process.
-        if (target.data.ignoreShrapnel) return;
+      // hackish: there was a collision, but "pass-thru" if the target says to ignore shrapnel.
+      // e.g., parachute infantry dropped from a helicopter while it's exploding mid-air,
+      // so the infantry doesn't die and the shrapnel isn't taken out in the process.
+      if (target.data.ignoreShrapnel) return;
 
-        // shrapnel hit something; what should it sound like, if anything?
-        targetType = target.data.type;
+      // shrapnel hit something; what should it sound like, if anything?
+      targetType = target.data.type;
 
-        if (targetType === TYPES.helicopter) {
-          playSound(sounds.boloTank, exports);
-        } else if (targetType === TYPES.tank || targetType === TYPES.superBunker) {
-          // shrapnel -> [tank | superbunker]: no damage.
-          damageTarget = false;
+      if (targetType === TYPES.helicopter) {
+        playSound(sounds.boloTank, exports);
+      } else if (targetType === TYPES.tank || targetType === TYPES.superBunker) {
+        // shrapnel -> [tank | superbunker]: no damage.
+        damageTarget = false;
 
-          // ricochet if shrapnel is connected to "sky" units (helicopter, balloon etc.)
-          // otherwise, die silently. this helps prevent ground units' shrapnel from causing mayhem with neighbouring tanks etc.
-          if (data.ricochetTypes.includes(data.parentType)) {
-            ricochet(targetType);
-            // bail early, don't die
-            return;
-          }
-        } else if (utils.array.includes(sounds.types.metalHit, targetType)) {
-          playSound(sounds.metalHit, exports);
-        } else if (utils.array.includes(sounds.types.genericSplat, targetType)) {
-          playSound(sounds.genericSplat, exports);
+        // ricochet if shrapnel is connected to "sky" units (helicopter, balloon etc.)
+        // otherwise, die silently. this helps prevent ground units' shrapnel from causing mayhem with neighbouring tanks etc.
+        if (data.ricochetTypes.includes(data.parentType)) {
+          ricochet(targetType);
+          // bail early, don't die
+          return;
         }
+      } else if (utils.array.includes(sounds.types.metalHit, targetType)) {
+        playSound(sounds.metalHit, exports);
+      } else if (utils.array.includes(sounds.types.genericSplat, targetType)) {
+        playSound(sounds.genericSplat, exports);
+      }
 
-        if (damageTarget) {
-          common.hit(target, data.damagePoints);
-        }
-
+      if (damageTarget) {
+        common.hit(target, data.damagePoints);
       }
 
       die();
@@ -12847,69 +12848,65 @@
     function ricochet(targetType) {
 
       // bounce upward if ultimately heading down
-      if ((data.vY + data.gravity) > 0) {
+      if ((data.vY + data.gravity) <= 0) return;
 
-        // at least...
-        data.vY = Math.max(data.vY, data.maxVY / 6);
+      // at least...
+      data.vY = Math.max(data.vY, data.maxVY / 6);
 
-        // but no more than...
-        data.vY = Math.min(data.vY, data.maxVY / 3);
+      // but no more than...
+      data.vY = Math.min(data.vY, data.maxVY / 3);
 
-        // ensure we end negative, and lose (or gain) a bit of velocity
-        data.vY = Math.abs(data.vY) * -data.rndRicochetAmount;
+      // ensure we end negative, and lose (or gain) a bit of velocity
+      data.vY = Math.abs(data.vY) * -data.rndRicochetAmount;
 
-        // sanity check: don't get stuck "inside" tank or super bunker sprites.
-        // ensure that the shrapnel stays at or above the height of both.
-        data.y = Math.min(worldHeight - ((common.ricochetBoundaries[targetType]) || 16), data.y);
+      // sanity check: don't get stuck "inside" tank or super bunker sprites.
+      // ensure that the shrapnel stays at or above the height of both.
+      data.y = Math.min(worldHeight - ((common.ricochetBoundaries[targetType]) || 16), data.y);
 
-        // randomize vX strength, and randomly reverse direction.
-        data.vX += Math.random();
-        data.vX *= (Math.random() > 0.75 ? -1 : 1);
+      // randomize vX strength, and randomly reverse direction.
+      data.vX += Math.random();
+      data.vX *= (Math.random() > 0.75 ? -1 : 1);
 
-        // and, throttle
-        if (data.vX > 0) {
-          data.vX = Math.min(data.vX, data.maxVX);
-        } else {
-          data.vX = Math.max(data.vX, data.maxVX * -1);
-        }
-
-        // reset "gravity" effect, too.
-        data.gravity = 1;
-
-        // data.y may have been "corrected" - move again, just to be safe.
-        moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
-
-        playSound(sounds.ricochet, exports);
-
+      // and, throttle
+      if (data.vX > 0) {
+        data.vX = Math.min(data.vX, data.maxVX);
+      } else {
+        data.vX = Math.max(data.vX, data.maxVX * -1);
       }
+
+      // reset "gravity" effect, too.
+      data.gravity = 1;
+
+      // data.y may have been "corrected" - move again, just to be safe.
+      moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
+
+      playSound(sounds.ricochet, exports);
 
     }
 
     function animate() {
 
-      if (!data.dead) {
+      if (data.dead) return (!data.deadTimer && !dom.o);
 
-        moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
+      moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
 
-        // random: smoke while moving?
-        if (data.isOnScreen && Math.random() >= 0.99) {
-          makeSmoke();
-        }
-
-        // did we hit the ground?
-        if (data.y - data.height >= worldHeight) {
-          moveTo(data.x + data.vX, worldHeight);
-          die();
-        }
-
-        // collision check
-        collisionTest(collision, exports);
-
-        data.gravity *= data.gravityRate;
-
-        data.frameCount++;
-
+      // random: smoke while moving?
+      if (data.isOnScreen && Math.random() >= 0.99) {
+        makeSmoke();
       }
+
+      // did we hit the ground?
+      if (data.y - data.height >= worldHeight) {
+        moveTo(data.x + data.vX, worldHeight);
+        die();
+      }
+
+      // collision check
+      collisionTest(collision, exports);
+
+      data.gravity *= data.gravityRate;
+
+      data.frameCount++;
 
       return (data.dead && !data.deadTimer && !dom.o);
 
@@ -12917,7 +12914,7 @@
 
     function makeSmoke() {
 
-      game.objects.smoke.push(new Smoke({
+      game.objects.smoke.push(Smoke({
         x: data.x + 6 + rnd(6) * 0.33 * plusMinus(),
         y: data.y + 6 + rnd(6) * 0.33 * plusMinus(),
         vX: rnd(6) * plusMinus(),
@@ -12930,19 +12927,19 @@
     function initShrapnel() {
 
       dom.o = makeSprite({
-        className: css.className + (Math.random() > 0.5 ? ' ' + css.reverse : '')
+        className: css.className + (Math.random() > 0.5 ? ` ${css.reverse}` : '')
       });
 
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
-      dom.oTransformSprite.style.backgroundPosition = (data.spriteType * -data.width * 1 / data.scale) + 'px 0px';
+      dom.oTransformSprite.style.backgroundPosition = `${data.spriteType * -data.width * 1 / data.scale}px 0px`;
 
       // spinning animation duration?
-      dom.oTransformSprite.style.animationDuration = (0.2 + Math.random()) + 's';
+      dom.oTransformSprite.style.animationDuration = `${0.2 + Math.random()}s`;
 
       if (Math.random() >= 0.5) {
         dom.oTransformSprite.style.animationDirection = 'reverse';
@@ -12990,8 +12987,8 @@
       gravityRate: 1.06 + rnd(0.05),
       width: 12 * scale,
       height: 12 * scale,
-      scale: scale,
-      scaleTransform: 'scale3d(' + [scale, scale, 1].join(',') + ')',
+      scale,
+      scaleTransform: `scale3d(${[scale, scale, 1].join(',')})`,
       hostile: true,
       damagePoints: 0.5,
       hasSound: !!options.hasSound,
@@ -13006,17 +13003,17 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die
+      animate,
+      data,
+      dom,
+      die
     };
 
     collision = {
       options: {
         source: exports,
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           hitAndDie(target);
         }
       },
@@ -13029,9 +13026,9 @@
 
   };
 
-  Smoke = function(options) {
+  Smoke = options => {
 
-    var css, dom, data, exports;
+    let css, dom, data, exports;
 
     options = options || {};
 
@@ -13047,7 +13044,7 @@
 
     function animate() {
 
-      var scale = null;
+      let scale = null;
 
       if (data.frameCount % data.animateModulus === 0) {
 
@@ -13076,10 +13073,10 @@
           }
 
           if (scale) {
-            scale = 'scale3d(' + [scale, scale, 1].join(', ') + ')';
+            scale = `scale3d(${[scale, scale, 1].join(', ')})`;
           }
 
-          common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', (data.rotation ? 'rotate(' + data.rotation + 'deg) ' : '') + (scale ? ' ' + scale : ''));
+          common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, (data.rotation ? `rotate(${data.rotation}deg) ` : '') + (scale ? ` ${scale}` : ''));
 
         }
 
@@ -13089,7 +13086,7 @@
           // first, animate through sprite. then, fade opacity.
           if (data.spriteFrame < data.spriteFrames - 1) {
             // advance smoke sprite, 0% -> -100% (L-R)
-            common.setTransformXY(exports, dom.oTransformSprite, -((data.spriteFrame / (data.spriteFrames - 1)) * 100) + '%', '0%');
+            common.setTransformXY(exports, dom.oTransformSprite, `${-((data.spriteFrame / (data.spriteFrames - 1)) * 100)}%`, '0%');
             data.spriteFrame++;
           } else {
             data.isFading = true;
@@ -13130,7 +13127,7 @@
 
       dom.o.appendChild(dom.oTransformSprite);
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       // keep things centered when scaling
       dom.o.style.transformOrigin = '50% 50%';
@@ -13172,10 +13169,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die
+      animate,
+      data,
+      dom,
+      die
     };
 
     initSmoke();
