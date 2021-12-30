@@ -13252,9 +13252,9 @@
 
   };
 
-  Tutorial = function() {
+  Tutorial = () => {
 
-    var config, css, data, dom, exports;
+    let config, css, data, dom, exports;
 
     function addStep(options) {
 
@@ -13310,7 +13310,7 @@
 
     function initTutorial() {
 
-      var temp;
+      let temp;
 
       initDOM();
 
@@ -13320,11 +13320,10 @@
 
         // introduction
 
-        animate: function() {
+        animate() {
 
           // the player's helicopter.
-          var chopper = game.objects.helicopters[0],
-            chopperData = chopper.data;
+          const chopper = game.objects.helicopters[0], chopperData = chopper.data;
 
           // condition for completion
           return (
@@ -13334,7 +13333,7 @@
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13346,18 +13345,16 @@
 
         // helicopter refuel/repair
 
-        animate: function() {
+        animate() {
 
-          var chopper;
-
-          chopper = game.objects.helicopters[0];
+          let chopper = game.objects.helicopters[0];
 
           // player either landed and refueled, or died. ;)
-          return (chopper.data.repairComplete);
+          return chopper.data.repairComplete;
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13369,7 +13366,7 @@
 
         // look, ma! bad guys!
 
-        activate: function() {
+        activate() {
 
           game.addObject(TYPES.tank, {
             x: 1536,
@@ -13393,15 +13390,15 @@
 
         },
 
-        animate: function() {
+        animate() {
 
-          var counts = [countSides('tanks'), countSides('vans')];
+          const counts = [countSides('tanks'), countSides('vans')];
 
           return (!counts[0].enemy && !counts[1].enemy);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13413,13 +13410,13 @@
 
         // pick up a full load of infantry
 
-        animate: function() {
+        animate() {
 
           return (game.objects.helicopters[0].data.parachutes >= game.objects.helicopters[0].data.maxParachutes);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13431,10 +13428,9 @@
 
         // claim a nearby enemy bunker
 
-        activate: function() {
+        activate() {
 
-          var targetBunker,
-            i, j;
+          let targetBunker, i, j;
 
           for (i = 0, j = game.objects.bunkers.length; i < j; i++) {
 
@@ -13468,18 +13464,16 @@
 
         },
 
-        animate: function() {
+        animate() {
 
-          var bunkers;
-
-          bunkers = countSides('bunkers');
+          let bunkers = countSides('bunkers');
 
           // a bunker was blown up, or claimed.
           return (bunkers.enemy < temp.enemy);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13491,11 +13485,9 @@
 
         // claim a nearby enemy Super Bunker
 
-        activate: function() {
+        activate() {
 
-          var targetSuperBunker;
-
-          targetSuperBunker = game.objects.superBunkers[0];
+          let targetSuperBunker = game.objects.superBunkers[0];
 
           if (targetSuperBunker) {
 
@@ -13520,18 +13512,16 @@
 
         },
 
-        animate: function() {
+        animate() {
 
-          var superBunkers;
-
-          superBunkers = countSides('superBunkers');
+          let superBunkers = countSides('superBunkers');
 
           // a Super Bunker was claimed.
           return (superBunkers.enemy < temp.enemy);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13543,9 +13533,9 @@
 
         // order a Missile launcher, Tank, Van
 
-        animate: function() {
+        animate() {
 
-          var item, counts, isComplete;
+          let item, counts, isComplete;
 
           // innocent until proven guilty.
           isComplete = true;
@@ -13576,7 +13566,7 @@
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13588,7 +13578,7 @@
 
         // destroy the enemy chopper!
 
-        activate: function() {
+        activate() {
 
           // make sure enemy helicopter is present
 
@@ -13608,13 +13598,13 @@
 
         },
 
-        animate: function() {
+        animate() {
 
           return game.objects.helicopters[1].data.dead;
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13626,9 +13616,9 @@
 
         // defeat an incoming smart missile
 
-        activate: function() {
+        activate() {
 
-          var missileX;
+          let missileX;
 
           // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
           game.objects.superBunkers[0].data.energy = 0;
@@ -13648,13 +13638,13 @@
 
         },
 
-        animate: function() {
+        animate() {
 
           return (countSides('missileLaunchers').enemy === 0 && countSides('smartMissiles').enemy === 0);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13666,7 +13656,7 @@
 
         // rebuild the first friendly, dead turret
 
-        animate: function() {
+        animate() {
 
           return (
             !game.objects.turrets[0].data.isEnemy
@@ -13676,7 +13666,7 @@
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13688,9 +13678,9 @@
 
         // destroy (or claim) the first enemy turret
 
-        activate: function() {
+        activate() {
 
-          var turrets, engineer, complete;
+          let turrets, engineer, complete;
 
           turrets = game.objects.turrets;
           engineer = null;
@@ -13702,13 +13692,13 @@
 
         },
 
-        animate: function() {
+        animate() {
 
           return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead || !game.objects.turrets[2].data.isEnemy || game.objects.turrets[2].data.dead);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13720,13 +13710,13 @@
 
         // earn 50 funds
 
-        animate: function() {
+        animate() {
 
           return (game.objects.endBunkers[0].data.funds >= 50);
 
         },
 
-        complete: function() {
+        complete() {
 
           nextItem();
 
@@ -13761,8 +13751,8 @@
     };
 
     exports = {
-      animate: animate,
-      selectItem: selectItem
+      animate,
+      selectItem
     };
 
     initTutorial();
