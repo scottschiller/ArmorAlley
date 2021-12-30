@@ -1303,7 +1303,7 @@
       // create some inert (harmless) gunfire, as decorative shrapnel.
       for (let i = 0, j = options.count || (3 + rndInt(1)); i < j; i++) {
 
-        game.objects.gunfire.push(new GunFire({
+        game.objects.gunfire.push(GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
           isInert: true,
@@ -7740,14 +7740,14 @@
 
   };
 
-  GunFire = function(options) {
+  GunFire = options => {
 
-    var css, data, dom, collision, exports, frameTimeout, radarItem;
+    let css, data, dom, collision, exports, frameTimeout, radarItem;
 
     options = options || {};
 
     function randomDistance() {
-      return (rndInt(10) * plusMinus()) + 'px';
+      return `${rndInt(10) * plusMinus()}px`;
     }
 
     function spark() {
@@ -7790,9 +7790,9 @@
 
     function sparkAndDie(target) {
 
-      var now;
-      var canSpark = true;
-      var canDie = true;
+      let now;
+      let canSpark = true;
+      let canDie = true;
 
       if (target) {
 
@@ -7884,7 +7884,7 @@
         utils.css.add(dom.o, css.dead);
 
         // and cleanup shortly.
-        frameTimeout = setFrameTimeout(function() {
+        frameTimeout = setFrameTimeout(() => {
           die();
           frameTimeout = null;
         }, 250);
@@ -7906,7 +7906,7 @@
       }
 
       if (data.isInert || data.expired) {
-        data.gravity *= (data.isInert ? 1.09 : 1.1);
+        data.gravity *= data.gravityRate;
       }
 
       common.moveTo(exports, data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
@@ -7945,7 +7945,7 @@
       data.x += plusMinus();
       data.y += plusMinus();
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       if (!data.isInert) {
 
@@ -7977,8 +7977,9 @@
       width: 2,
       height: 1,
       gravity: (options.isInert ? 0.25 : 1),
+      gravityRate: (options.isInert ? 1.09 : 1.1) + (Math.random() * 0.025),
       damagePoints: options.damagePoints || 1,
-      ricochetSoundThrottle: (options.parentType && options.parentType === TYPES.infantry ? 250 : 100),
+      ricochetSoundThrottle: (options?.parentType === TYPES.infantry ? 250 : 100),
       vyMax: 32
     }, options);
 
@@ -7990,7 +7991,7 @@
       options: {
         source: exports, // initially undefined
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           // special case: let tank gunfire pass thru if 0 energy, or friendly.
           if (!(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
             sparkAndDie(target);
@@ -8002,10 +8003,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die
+      animate,
+      data,
+      dom,
+      die
     };
 
     initGunFire();
@@ -10127,7 +10128,7 @@
           tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
 
           /*eslint-disable no-mixed-operators */
-          game.objects.gunfire.push(new GunFire({
+          game.objects.gunfire.push(GunFire({
             parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
@@ -11395,7 +11396,7 @@
         collisionItems = nearby.items;
       }
 
-      game.objects.gunfire.push(new GunFire({
+      game.objects.gunfire.push(GunFire({
         parentType: data.type,
         isEnemy: data.isEnemy,
         damagePoints: 2, // tanks fire at half-rate, so double damage.
@@ -12251,7 +12252,7 @@
       // only fire every so often
       if (data.frameCount % data.fireModulus !== 0) return;
 
-      game.objects.gunfire.push(new GunFire({
+      game.objects.gunfire.push(GunFire({
         parentType: data.type,
         isEnemy: data.isEnemy,
         collisionItems: nearby.items.concat('bunkers'), // special case: infantry + engineers don't stop to shoot bunkers, but their gunfire can damage them.
