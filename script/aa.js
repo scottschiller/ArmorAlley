@@ -11243,13 +11243,47 @@
         refreshCoords();
       },
 
-      mousedown: function(e) {
-        if (!isMobile && !data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
-          if (e.button === 0) {
-            // disable auto-rotate
-            // data.autoRotate = false;
+      mousedown(e) {
+        let args;
+
+        if (e.button !== 0 || isMobile || data.isEnemy || !data.fuel) return;
+
+        if (!battleOver) {
+
+          if (!data.autoRotate) {
             rotate();
           }
+
+        } else {
+          
+          args = {
+            x: e.clientX * (1 / screenScale) + game.objects.view.data.battleField.scrollLeft,
+            y: e.clientY * (1 / screenScale),
+            vX: rndInt(10),
+            vY: -rndInt(12),
+            width: 1,
+            height: 1,
+            halfWidth: 1,
+            halfHeight: 1,
+            isOnScreen: true
+          };
+
+          // TODO: special case - clean this up
+          shrapnelExplosion(args, {
+            count: rndInt(8) + rndInt(8),
+            // don't create identical "clouds" of smoke *at* base.
+            noInitialSmoke: true
+          });
+
+          playSound(sounds.genericExplosion);
+
+          for (let i = 0; i < 2; i++) {
+            common.smokeRing({ data: args }, {
+              velocityMax: 15,
+              count: 5 + rndInt(5)
+            });
+          }
+
         }
       },
 
