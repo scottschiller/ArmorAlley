@@ -4655,7 +4655,7 @@
         className += ` ${css.radarItemAnimated}`;
       }
 
-      itemObject = new RadarItem({
+      itemObject = RadarItem({
         o: document.createElement('div'),
         parentType: item.data.type,
         className,
