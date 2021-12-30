@@ -4079,7 +4079,7 @@
 
       let orderObject;
 
-      orderObject = new typeData[1](options);
+      orderObject = typeData[1](options);
 
       // ignore if this is the stub object case
       if (!options.noInit) {
