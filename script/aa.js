@@ -3227,17 +3227,17 @@
       oPoint: null,
     };
 
-    var getEvent = function(e) {
+    const getEvent = e => {
       // TODO: improve normalization of touch events.
-      var evt = (e.changedTouches && e.changedTouches[e.changedTouches.length - 1]) || e;
+      const evt = (e.changedTouches && e.changedTouches[e.changedTouches.length - 1]) || e;
       return evt;
     };
 
     function moveContainerTo(x, y) {
-      var targetX = x - (data.oJoystickWidth / 2);
-      var targetY = y - (data.oJoystickHeight / 2);
-      dom.oJoystick.style.left = targetX + 'px';
-      dom.oJoystick.style.top = targetY + 'px';
+      const targetX = x - (data.oJoystickWidth / 2);
+      const targetY = y - (data.oJoystickHeight / 2);
+      dom.oJoystick.style.left = `${targetX}px`;
+      dom.oJoystick.style.top = `${targetY}px`;
     }
 
     function resetPoint() {
@@ -3248,7 +3248,7 @@
     function start(e) {
       data.active = true;
 
-      var evt = getEvent(e);
+      const evt = getEvent(e);
 
       data.start.x = evt.clientX;
       data.start.y = evt.clientY;
@@ -3269,24 +3269,24 @@
 
     function makeTweenFrames(from, to) {
 
-      var frames = [];
+      const frames = [];
 
       // distance to move in total
-      var deltaX = to.x - from.x;
-      var deltaY = to.y - from.y;
+      const deltaX = to.x - from.x;
+      const deltaY = to.y - from.y;
 
       // local copy of start coords, track position
-      var x = parseFloat(from.x);
-      var y = parseFloat(from.y);
+      let x = parseFloat(from.x);
+      let y = parseFloat(from.y);
 
       // create array of x/y coordinates
-      for (var i = 0, j = data.easing.length; i < j; i++) {
+      for (let i = 0, j = data.easing.length; i < j; i++) {
         // move % of total distance
         x += (deltaX * data.easing[i] * 0.01);
         y += (deltaY * data.easing[i] * 0.01);
         frames[i] = {
-          x: x,
-          y: y
+          x,
+          y
         };
       }
 
@@ -3295,37 +3295,37 @@
     }
 
     function distance(p1, p2) {
-      var x1, y1, x2, y2;
+      let x1, y1, x2, y2;
       x1 = p1[0];
       y1 = p1[1];
       x2 = p2[0];
       y2 = p2[1];
       // eslint recommends exponentation ** vs. Math.pow(), but ** is Chrome 52+ and not even in IE AFAIK. 😂
       // eslint-disable-next-line no-restricted-properties
-      return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+      return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
     }
 
     // circle math hat-tip: duopixel
     // https://stackoverflow.com/a/8528999
 
     function limit(x, y) {
-      var halfWidth = data.oJoystickWidth / 2;
-      var halfHeight = data.oJoystickHeight / 2;
-      var radius = halfWidth;
-      var center = [halfWidth, halfHeight];
-      var dist = distance([x, y], center);
+      const halfWidth = data.oJoystickWidth / 2;
+      const halfHeight = data.oJoystickHeight / 2;
+      const radius = halfWidth;
+      const center = [halfWidth, halfHeight];
+      const dist = distance([x, y], center);
 
       if (dist <= radius) {
         return {
-          x: x,
-          y: y
+          x,
+          y
         };
       }
 
       x -= center[0];
       y -= center[1];
 
-      var radians = Math.atan2(y, x);
+      const radians = Math.atan2(y, x);
 
       return {
         x: (Math.cos(radians) * radius) + center[0],
@@ -3335,19 +3335,19 @@
     }
 
     function movePoint(x, y) {
-      dom.oPoint.style.left = x + '%';
-      dom.oPoint.style.top = y + '%';
+      dom.oPoint.style.left = `${x}%`;
+      dom.oPoint.style.top = `${y}%`;
     }
 
     function setDirection(x, y) {
 
-      var from = {
+      const from = {
         x: (data.pointer.x / 100) * game.objects.view.data.browser.width,
         y: (data.pointer.y / 100) * game.objects.view.data.browser.height
       };
 
       // x/y are relative to screen
-      var to = {
+      const to = {
         x: (x / 100) * game.objects.view.data.browser.width,
         y: (y / 100) * game.objects.view.data.browser.height
       };
@@ -3373,16 +3373,16 @@
       // ignore while respawning.
       if (data.respawning) return;
 
-      var evt = getEvent(e);
+      const evt = getEvent(e);
 
-      var halfWidth = data.oJoystickWidth / 2;
-      var halfHeight = data.oJoystickHeight / 2;
+      const halfWidth = data.oJoystickWidth / 2;
+      const halfHeight = data.oJoystickHeight / 2;
 
       // calculate, limit between 0 and width/height.
-      var relativeX = Math.max(0, Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth));
-      var relativeY = Math.max(0, Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight));
+      const relativeX = Math.max(0, Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth));
+      const relativeY = Math.max(0, Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight));
 
-      var coords = limit(relativeX, relativeY);
+      const coords = limit(relativeX, relativeY);
 
       // limit point to circle coordinates.
       movePoint(coords.x, coords.y);
@@ -3426,10 +3426,10 @@
 
       dom.oPointer = document.getElementById('pointer');
 
-      var oJoystick = document.createElement('div');
+      const oJoystick = document.createElement('div');
       oJoystick.className = css.joystick;
 
-      var oPoint = document.createElement('div');
+      const oPoint = document.createElement('div');
       oPoint.className = css.joystickPoint;
 
       oJoystick.appendChild(oPoint);
@@ -3447,12 +3447,12 @@
       // i.e., stop any animation on release.
       if (!data.active) return;
 
-      var frame = data.tweenFrames && data.tweenFrames[data.tweenFrame];
+      const frame = data.tweenFrames && data.tweenFrames[data.tweenFrame];
 
       if (!frame) return;
 
-      dom.oPointer.style.left = frame.x + 'px';
-      dom.oPointer.style.top = frame.y + 'px';
+      dom.oPointer.style.left = `${frame.x}px`;
+      dom.oPointer.style.top = `${frame.y}px`;
 
       // update inner state
       data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
@@ -3477,10 +3477,10 @@
     init();
 
     exports = {
-      animate: animate,
-      start: start,
-      move: move,
-      end: end
+      animate,
+      start,
+      move,
+      end
     };
 
     return exports;
