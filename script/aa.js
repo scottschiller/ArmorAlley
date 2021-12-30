@@ -4535,9 +4535,15 @@
 
   }
 
-  Radar = function() {
+  Radar = () => {
 
-    var data, css, dom, exports, layoutCache, objects, spliceArgs = [null, 1];
+    let data;
+    let css;
+    let dom;
+    let exports;
+    let layoutCache;
+    let objects;
+    const spliceArgs = [null, 1];
 
     function setStale(isStale) {
       data.isStale = isStale;
@@ -4559,7 +4565,7 @@
         */
 
         playSound(sounds.missileWarning);
-      } else if (sounds.missileWarning && sounds.missileWarning.sound) {
+      } else if (sounds.missileWarning?.sound) {
         stopSound(sounds.missileWarning);
       }
 
@@ -4567,7 +4573,7 @@
 
     function getLayout(itemObject) {
 
-      var rect, result, type;
+      let rect, result, type;
 
       type = itemObject.data.parentType;
 
@@ -4587,7 +4593,7 @@
       };
 
       // if we hit this, something is wrong.
-      if (!itemObject || !itemObject.dom || !itemObject.dom.o) {
+      if (!itemObject?.dom?.o) {
         console.warn('getLayout: something is wrong, returning empty result.', itemObject);
         return result;
       }
@@ -4642,17 +4648,17 @@
 
     function addRadarItem(item, className, canRespawn) {
 
-      var itemObject;
+      let itemObject;
 
       // for GPU acceleration: note if this is an "animated" type.
       if (data.animatedTypes.includes(item.data.type)) {
-        className += ' ' + css.radarItemAnimated;
+        className += ` ${css.radarItemAnimated}`;
       }
 
       itemObject = new RadarItem({
         o: document.createElement('div'),
         parentType: item.data.type,
-        className: className,
+        className,
         oParent: item,
         canRespawn: (canRespawn || false),
         isStatic: false,
@@ -4662,7 +4668,7 @@
         bottomAlignedY: 0
       });
 
-      game.objects.queue.addNextFrame(function() {
+      game.objects.queue.addNextFrame(() => {
         dom.radar.appendChild(itemObject.dom.o);
 
         // attempt to read from layout cache, or live DOM if needed for item height / positioning
@@ -4719,18 +4725,18 @@
     }
 
     function _removeRadarItem(offset) {
+
       removeNodes(objects.items[offset].dom);
       // faster splice - doesn't create new array object (IIRC.)
       spliceArgs[0] = offset;
       Array.prototype.splice.apply(objects.items, spliceArgs);
+
     }
 
     function removeRadarItem(item) {
 
       // find and remove from DOM + array
-
-      // Array.indexOf() method (IE9+)
-      var offset = objects.items.indexOf && objects.items.indexOf(item);
+      const offset = objects?.items?.indexOf(item);
 
       if (offset !== undefined) {
         if (offset === -1) return;
@@ -4738,20 +4744,11 @@
         return;
       }
 
-      var i, j;
-
-      for (i = objects.items.length - 1, j = 0; i >= j; i--) {
-        if (objects.items[i] === item) {
-          _removeRadarItem(i);
-          break;
-        }
-      }
-
     }
 
     function animate() {
 
-      var i, j, left, top, hasEnemyMissile, isInterval;
+      let i, j, left, top, hasEnemyMissile, isInterval;
 
       hasEnemyMissile = false;
 
@@ -4801,71 +4798,45 @@
 
       // move all radar items
 
-      if (features.transform.prop && !noRadarGPU) {
+      for (i = 0, j = objects.items.length; i < j; i++) {
 
-        for (i = 0, j = objects.items.length; i < j; i++) {
+        // is this a "static" item which is positioned only once and never moves?
+        // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
+        // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
 
-          // is this a "static" item which is positioned only once and never moves?
-          // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
-          // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
-
-          if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
-            
-            if (
-              objects.items[i].oParent.data.type === TYPES.turret
-              || objects.items[i].oParent.data.type === TYPES.base
-              || objects.items[i].oParent.data.type === TYPES.bunker
-              || objects.items[i].oParent.data.type === TYPES.endBunker
-              || objects.items[i].oParent.data.type === TYPES.superBunker
-            ) {
-              objects.items[i].isStatic = true;
-            }
-
-            // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
-            left = ((objects.items[i].oParent.data.x / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
-
-            // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
-            if (!objects.items[i].layout) {
-              objects.items[i] = mixin(objects.items[i], getLayout(objects.items[i]));
-            }
-
-            // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
-            top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - objects.items[i].layout.height;
-
-            // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-            // common.setTransformXY(objects.items[i], objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
-            common.setTransformXY(null /* exports */, objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
-
-          }
-
-        }
-
-        // reset, only do this once.
-        data.isStale = false;
-
-      } else {
-
-        for (i = 0, j = objects.items.length; i < j; i++) {
-
-          // TODO: optimize
-
-          left = ((objects.items[i].oParent.data.x / worldWidth) * game.objects.view.data.battleField.width);
-
+        if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
+          
           if (
-            (!objects.items[i].oParent.data.bottomAligned && objects.items[i].oParent.data.y > 0)
-            || objects.items[i].oParent.data.type === TYPES.balloon
+            objects.items[i].oParent.data.type === TYPES.turret
+            || objects.items[i].oParent.data.type === TYPES.base
+            || objects.items[i].oParent.data.type === TYPES.bunker
+            || objects.items[i].oParent.data.type === TYPES.endBunker
+            || objects.items[i].oParent.data.type === TYPES.superBunker
           ) {
-            top = ((objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height);
-
-          } else {
-            top = data.height;
+            objects.items[i].isStatic = true;
           }
 
-          common.setTransformXY(null /* exports */, objects.items[i].dom.o, left + 'px', top + 'px');
+          // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
+          left = ((objects.items[i].oParent.data.x / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
+
+          // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
+          if (!objects.items[i].layout) {
+            objects.items[i] = mixin(objects.items[i], getLayout(objects.items[i]));
+          }
+
+          // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
+          top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - objects.items[i].layout.height;
+
+          // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
+          // common.setTransformXY(objects.items[i], objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
+          common.setTransformXY(null /* exports */, objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
 
         }
 
       }
+
+      // reset, only do this once.
+      data.isStale = false;
 
     }
 
@@ -4933,17 +4904,16 @@
 
     exports = {
       addItem: addRadarItem,
-      animate: animate,
-      data: data,
-      dom: dom,
+      animate,
+      data,
+      dom,
       removeItem: removeRadarItem,
-      setStale: setStale,
-      startJamming: startJamming,
-      stopJamming: stopJamming
+      setStale,
+      startJamming,
+      stopJamming
     };
 
     return exports;
-
   };
 
   function updateIsOnScreen(o, forceUpdate) {
