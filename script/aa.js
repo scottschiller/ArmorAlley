@@ -2069,7 +2069,7 @@
 
   function countSides(objectType, includeDead) {
 
-    var i, j, result;
+    let i, j, result;
 
     result = {
       friendly: 0,
@@ -2106,9 +2106,9 @@
   function playerOwnsBunkers() {
 
     // has the player captured (or destroyed) all bunkers? this may affect enemy convoy production.
-    var owned, total;
+    let owned, total, includeDead = true;
 
-    owned = countFriendly('bunkers', true) + countFriendly('superBunkers', true);
+    owned = countFriendly('bunkers', includeDead) + countFriendly('superBunkers', includeDead);
     total = game.objects.bunkers.length + game.objects.superBunkers.length;
 
     return (owned >= total);
@@ -2117,7 +2117,7 @@
 
   function checkProduction() {
 
-    var bunkersOwned, announcement;
+    let bunkersOwned, announcement;
 
     // playing extreme mode? this benefit would practically be cheating! ;)
     if (gameType === 'extreme') return;
