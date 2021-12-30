@@ -237,7 +237,7 @@
 
   function renderMissileText(character, mode) {
     if (mode === missileMode) return character;
-    return '<span style="opacity:0.5">' + character + '</span>';
+    return `<span style="opacity:0.5">${character}</span>`;
   }
 
   function setMissileMode(mode) {
@@ -249,7 +249,7 @@
     missileMode = mode;
 
     // determine which letter to highlight
-    var html = [
+    const html = [
       renderMissileText('X', defaultMissileMode),
       renderMissileText('C', rubberChickenMode),
       renderMissileText('B', bananaMode)
@@ -488,11 +488,11 @@
     };
 
     exports = {
-      data: data,
-      create: create,
-      destroy: destroy,
-      markEnd: markEnd,
-      displayEndGameStats: displayEndGameStats
+      data,
+      create,
+      destroy,
+      markEnd,
+      displayEndGameStats
     };
 
     return exports;
@@ -854,7 +854,7 @@
 
   function removeNodeArray(nodeArray) {
 
-    var i, j;
+    let i, j;
 
     j = nodeArray.length;
 
@@ -4917,6 +4917,7 @@
   };
 
   function updateIsOnScreen(o, forceUpdate) {
+
     if (!o || !o.data || !useDOMPruning) return;
 
     if (isOnScreen(o) || forceUpdate) {
@@ -5211,7 +5212,7 @@
 
     // somebody's base is about to get blown up.
 
-    var yourBase, enemyBase;
+    let yourBase, enemyBase;
 
     // just in case
     if (battleOver) return;
@@ -8205,9 +8206,7 @@
         });
       }
 
-        // bombs are animated by their parent - e.g., helicopters,
-        // and not the main game loop. so, on-screen status is checked manually here.
-        updateIsOnScreen(exports);
+      collisionTest(collision, exports);
 
       // bombs are animated by their parent - e.g., helicopters,
       // and not the main game loop. so, on-screen status is checked manually here.
