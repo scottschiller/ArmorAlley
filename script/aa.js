@@ -15693,7 +15693,7 @@
 
       // prevent context menu on links.
       // this is dirty, but it works (supposedly) for Android.
-      window.oncontextmenu = function(e) {
+      window.oncontextmenu = e => {
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -15720,10 +15720,10 @@
 
     }
 
-    var menu,
-      description = document.getElementById('game-description'),
-      defaultDescription = description.innerHTML,
-      lastHTML = defaultDescription;
+    let menu;
+    const description = document.getElementById('game-description');
+    const defaultDescription = description.innerHTML;
+    let lastHTML = defaultDescription;
 
     function resetMenu() {
       if (lastHTML !== defaultDescription) {
@@ -15734,8 +15734,7 @@
 
     function menuUpdate(e) {
 
-      var target = (e.target || window.event.sourceElement),
-        title;
+      let target = (e.target || window.event.sourceElement), title;
 
       // normalize to <a>
       if (target && utils.css.has(target, 'emoji')) {
@@ -15764,9 +15763,10 @@
 
       // infer game type from link, eg., #tutorial
 
-      var target = (e.target || window.event.sourceElement),
-        storedOK,
-        param;
+      const target = (e.target || window.event.sourceElement);
+
+      let storedOK;
+      let param;
 
       if (target && target.href) {
 
@@ -15798,7 +15798,7 @@
           } else {
 
             // show exit link
-            var exit = document.getElementById('exit');
+            const exit = document.getElementById('exit');
             if (exit) {
               exit.className = 'visible';
             }
@@ -15832,7 +15832,6 @@
       canHideLogo = true;
 
       return false;
-
     }
 
     winloc = window.location.href.toString();
@@ -15879,14 +15878,14 @@
 
       if (gameType) {
         // copy emoji to "exit" link
-        var exitEmoji = document.getElementById('exit-emoji');
-        var emojiReference = document.getElementById('game-menu').getElementsByClassName('emoji-' + gameType);
+        const exitEmoji = document.getElementById('exit-emoji');
+        let emojiReference = document.getElementById('game-menu').getElementsByClassName(`emoji-${gameType}`);
         emojiReference = emojiReference && emojiReference[0];
         if (exitEmoji && emojiReference) {
           exitEmoji.innerHTML = emojiReference.innerHTML;
         }
         // and show "exit"
-        var exit = document.getElementById('exit');
+        const exit = document.getElementById('exit');
         if (exit) {
           exit.className = 'visible';
         }
@@ -15897,18 +15896,17 @@
     }
 
     startGame();
-
   }
 
   window.aa = {
 
-    initArmorAlley: initArmorAlley,
+    initArmorAlley,
 
-    startGame: startGame,
+    startGame,
 
-    toggleScaling: function(savePref) {
+    toggleScaling(savePref) {
 
-      var prefName = prefs.noScaling;
+      const prefName = prefs.noScaling;
 
       userDisabledScaling = !userDisabledScaling;
 
