@@ -15651,14 +15651,14 @@
     // apply CSS to <body> per orientation, and iPhone-specific CSS will handle the padding.
 
     // shortcuts
-    var body = document.body;
-    var add = utils.css.add;
-    var remove = utils.css.remove;
+    const body = document.body;
+    const add = utils.css.add;
+    const remove = utils.css.remove;
 
-    var atLeft = 'notch-at-left';
-    var atRight = 'notch-at-right';
+    const atLeft = 'notch-at-left';
+    const atRight = 'notch-at-right';
 
-    var notchPosition = getLandscapeLayout();
+    const notchPosition = getLandscapeLayout();
 
     // inefficient/lazy: remove both, apply the active one.
     remove(body, atLeft);
@@ -15677,7 +15677,6 @@
   }
 
   function initArmorAlley() {
-
     // late addition: tutorial vs. regular game mode
 
     // no-transform CSS tweak for legacy stuff.
@@ -15760,7 +15759,6 @@
     }
 
     function menuClick(e) {
-
       // infer game type from link, eg., #tutorial
 
       const target = (e.target || window.event.sourceElement);
@@ -15930,13 +15928,13 @@
 
     },
 
-    startTutorial: function() {
+    startTutorial() {
 
       utils.storage.remove(prefs.gameType);
 
       window.location.hash = 'tutorial';
 
-      setTimeout(function() {
+      setTimeout(() => {
         window.location.reload();
       }, 100);
 
@@ -15944,14 +15942,14 @@
 
     },
 
-    exit: function() {
+    exit() {
 
       // delete stored preference
       utils.storage.remove(prefs.gameType);
 
       window.location.hash = '';
 
-      setTimeout(function() {
+      setTimeout(() => {
         window.location.reload();
       }, 100);
 
@@ -15959,7 +15957,7 @@
 
     },
 
-    toggleSound: function() {
+    toggleSound() {
 
       userDisabledSound = !userDisabledSound;
 
@@ -15990,9 +15988,9 @@
     // Safari 7+ engine freezes when multiple Audio() objects play simultaneously, making gameplay unacceptable.
     // https://bugs.webkit.org/show_bug.cgi?id=116145
     // try html5audio=1 in URL to override/test.
-    var matches = navigator.userAgent.match(/Version\/([0-9]+)/i);
+    const matches = navigator.userAgent.match(/Version\/([0-9]+)/i);
     // last item should be the version number.
-    var majorVersion = matches && matches.pop && parseInt(matches.pop(), 10);
+    const majorVersion = matches && matches.pop && parseInt(matches.pop(), 10);
     if (majorVersion && majorVersion >= 7) {
       console.log('Safari 7-15 (and maybe newer) rendering engine stutters when multiple Audio() objects play simultaneously, possibly due to trackbar. https://bugs.webkit.org/show_bug.cgi?id=116145');
       if (!winloc.match(/html5audio/i)) {
@@ -16012,13 +16010,13 @@
   });
 
   function updateSound(ok) {
-    var soundOption = document.getElementById('sound-option');
+    const soundOption = document.getElementById('sound-option');
     if (soundOption) soundOption.style.display = ok ? 'inline' : 'none';
   }
 
   soundManager.onready(updateSound);
-  soundManager.ontimeout(function() {
-    var ok = false;
+  soundManager.ontimeout(() => {
+    const ok = false;
     updateSound(ok);
   });
 
