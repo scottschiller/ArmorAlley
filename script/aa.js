@@ -13737,9 +13737,9 @@
 
   };
 
-  Queue = function() {
+  Queue = () => {
 
-    var data, exports;
+    let data, exports;
 
     data = {
       frameCount: 0,
@@ -13752,11 +13752,11 @@
     function process() {
 
       if (debug) {
-        console.log('processing queue of ' + data.queue.length + ' items at frameCount = ' + data.frameCount);
+        console.log(`processing queue of ${data.queue.length} items at frameCount = ${data.frameCount}`);
       }
 
       // process all items in queue
-      var i, j;
+      let i, j;
 
       for (i = 0, j = data.queue.length; i < j; i++) {
         data.queue[i]();
@@ -13771,7 +13771,7 @@
     function processNextFrame() {
 
       // process all items in queue
-      var i, queueLength;
+      let i, queueLength;
       
       queueLength = data.nextFrameQueue.length;
 
@@ -13817,10 +13817,10 @@
     }
 
     exports = {
-      add: add,
-      addNextFrame: addNextFrame,
-      animate: animate,
-      process: process
+      add,
+      addNextFrame,
+      animate,
+      process
     };
 
     return exports;
