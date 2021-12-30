@@ -4987,15 +4987,19 @@
 
   }
 
-  GameLoop = function() {
+  GameLoop = () => {
 
-    var data, dom, exports, spliceArgs = [null, 1];
+    let data;
+    let dom;
+    let exports;
+
+    const spliceArgs = [null, 1];
 
     function animate() {
 
       // loop through all objects, animate.
-      var item, i;
-      var gameObjects = game.objects;
+      let item, i;
+      let gameObjects = game.objects;
 
       data.frameCount++;
 
@@ -5060,7 +5064,7 @@
 
     function animateRAF(ts) {
 
-      var elapsed;
+      let elapsed;
 
       if (!data.timer) return;
 
@@ -5086,11 +5090,11 @@
 
       // performance debugging: number of style changes (transform) for this frame.
       if (debug) {
-        console.log('transform (style/recalc) count: ' + transformCount + ' / ' + excludeTransformCount + ' (incl./excl)');
+        console.log(`transform (style/recalc) count: ${transformCount} / ${excludeTransformCount} (incl./excl)`);
         transformCount = 0;
         excludeTransformCount = 0;
         if (elapsed > 34 && window.console) {
-          var slowString = 'slow frame (' + Math.floor(elapsed) + 'ms)';
+          const slowString = `slow frame (${Math.floor(elapsed)}ms)`;
           console.log(slowString);
           if (console.timeStamp) console.timeStamp(slowString);
         }
@@ -5193,15 +5197,14 @@
     };
 
     exports = {
-      data: data,
+      data,
       init: initGameLoop,
-      resetFPS: resetFPS,
-      stop: stop,
-      start: start
+      resetFPS,
+      stop,
+      start
     };
 
     return exports;
-
   };
 
   function gameOver(youWon) {
