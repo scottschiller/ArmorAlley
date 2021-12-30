@@ -14646,15 +14646,15 @@
 
   }());
 
-  game = (function() {
+  game = (() => {
 
-    var data, dom, objects, objectConstructors, exports;
+    let data, dom, objects, objectConstructors, exports;
 
     function addObject(type, options) {
 
       // given type of TYPES.van, create object and append to respective array.
 
-      var object, objectArray;
+      let object, objectArray;
 
       // TYPES.van -> game.objects['vans'], etc.
       objectArray = game.objects[type + (type === TYPES.infantry ? '' : 's')];
@@ -14663,9 +14663,9 @@
 
       // create and push an instance object onto its relevant array by type (e.g., TYPES.van -> game.objects['vans'])
       if (objectConstructors[type]) {
-        object = new objectConstructors[type](options);
+        object = objectConstructors[type](options);
       } else {
-        console.warn('No constructor of type ' + type);
+        console.warn(`No constructor of type ${type}`);
       }
 
       objectArray.push(object);
@@ -14676,26 +14676,26 @@
 
     function createObjects() {
 
-      var i, x;
+      let i, x;
 
-      stats = new Stats();
+      stats = Stats();
 
-      objects.gameLoop = new GameLoop();
+      objects.gameLoop = GameLoop();
 
-      objects.notifications = new Notifications();
+      objects.notifications = Notifications();
 
-      objects.funds = new Funds();
+      objects.funds = Funds();
 
-      objects.queue = new Queue();
+      objects.queue = Queue();
 
-      objects.view = new View();
+      objects.view = View();
 
       // allow joystick if in debug mode (i.e., testing on desktop)
       if (isMobile || debug) {
 
-        objects.joystick = new Joystick();
+        objects.joystick = Joystick();
 
-        objects.joystick.onSetDirection = function(directionX, directionY) {
+        objects.joystick.onSetDirection = (directionX, directionY) => {
           // percentage to pixels (circle coordinates)
           objects.view.data.mouse.x = ((directionX / 100) * objects.view.data.browser.width);
           objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
@@ -14703,15 +14703,15 @@
 
       }
 
-      objects.radar = new Radar();
+      objects.radar = Radar();
 
-      objects.inventory = new Inventory();
+      objects.inventory = Inventory();
 
       // tutorial?
 
       if (tutorialMode) {
 
-        objects.tutorial = new Tutorial();
+        objects.tutorial = Tutorial();
 
         utils.css.add(document.getElementById('help'), 'active');
 
@@ -14773,12 +14773,19 @@
           });
         }
 
+        // addItem('snoopy_doghouse', -192);
+        addObject(TYPES.flyingAceCamel, {
+          x: -192
+        });
+
+        addItem('tree', 505);
+
         addItem('right-arrow-sign', 550);
 
         x = 630;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14793,7 +14800,7 @@
         x += 92;
 
         addObject(TYPES.turret, {
-          x: x,
+          x,
           isEnemy: true,
           DOA: false
         });
@@ -14801,14 +14808,14 @@
         x += 175;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
         x += 100;
 
         addObject(TYPES.tank, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14821,14 +14828,14 @@
         x += 250;
 
         addObject(TYPES.tank, {
-          x: x,
+          x,
           isEnemy: true
         });
 
         x += 50;
 
         addObject(TYPES.tank, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14853,7 +14860,7 @@
         x += 110;
 
         addObject(TYPES.superBunkerCamel, {
-          x: x,
+          x,
           isEnemy: true,
           energy: 5
         });
@@ -14861,7 +14868,7 @@
         x += 120;
 
         addObject(TYPES.turret, {
-          x: x,
+          x,
           isEnemy: true,
           DOA: false
         });
@@ -14871,7 +14878,7 @@
         addItem('gravestone', x);
 
         addObject(TYPES.van, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14910,7 +14917,7 @@
         x += 540;
 
         addObject(TYPES.tank, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14934,7 +14941,7 @@
         });
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14961,7 +14968,7 @@
         x += 150;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -14988,7 +14995,7 @@
         x += 54;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -15035,7 +15042,7 @@
         x += 70;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -15078,7 +15085,7 @@
         x += 60;
 
         addObject(TYPES.superBunkerCamel, {
-          x: x,
+          x,
           isEnemy: true,
           energy: 5
         });
@@ -15086,7 +15093,7 @@
         x += 125;
 
         addObject(TYPES.turret, {
-          x: x,
+          x,
           isEnemy: true,
           DOA: false
         });
@@ -15094,14 +15101,14 @@
         x += 145;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
         x += 128;
 
         addObject(TYPES.bunker, {
-          x: x,
+          x,
           isEnemy: true
         });
 
@@ -15434,8 +15441,6 @@
       // player + enemy helicopters
 
       addObject(TYPES.helicopter, {
-        x: 310,
-        y: game.objects.view.data.world.height - 20,
         attachEvents: true
       });
 
@@ -15479,18 +15484,7 @@
 
       dom.world = document.getElementById('battlefield');
 
-      if (convoyParam) {
-
-        // for example, ?convoydelay=30
-        convoyDelay = parseInt(winloc.substr(convoyParam + 12), 10);
-
-        if (!isNaN(convoyDelay)) {
-          console.log('applying custom enemy convoy delay of ' + convoyDelay);
-        } else {
-          convoyDelay = (gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60));
-        }
-
-      }
+      convoyDelay = (gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60));
 
       createObjects();
 
@@ -15506,12 +15500,12 @@
         utils.events.add(document, 'click', startEngine);
       }
 
-      (function() {
+      (() => {
 
         // basic enemy ordering pattern
-        var enemyOrders = [TYPES.missileLauncherCamel, TYPES.tank, TYPES.van, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.engineer, TYPES.engineer];
-        var enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
-        var i = 0;
+        const enemyOrders = [TYPES.missileLauncherCamel, TYPES.tank, TYPES.van, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.engineer, TYPES.engineer];
+        const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
+        let i = 0;
 
         if (gameType === 'extreme') {
           // one more tank to round out the bunch, and (possibly) further complicate things :D
@@ -15525,7 +15519,7 @@
 
         function orderNextItem() {
 
-          var options;
+          let options;
 
           if (!battleOver && !data.paused) {
 
@@ -15555,7 +15549,7 @@
           setFrameTimeout(orderNextItem, 5000);
         }
 
-      }());
+      })();
 
     }
 
@@ -15617,18 +15611,18 @@
     };
 
     exports = {
-      addObject: addObject,
-      data: data,
-      dom: dom,
+      addObject,
+      data,
+      dom,
       init: initGame,
-      objects: objects,
-      pause: pause,
-      resume: resume
+      objects,
+      pause,
+      resume
     };
 
     return exports;
 
-  }());
+  })();
 
   function startGame() {
 
