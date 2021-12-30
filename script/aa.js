@@ -14031,9 +14031,9 @@
     
   }
 
-  Funds = function() {
+  Funds = () => {
     // a "Dune 2"-style credits UI that "spins", with matching sound effects.
-    var css, data, dom, exports;
+    let css, data, dom, exports;
 
     css = {
       collapsed: 'collapsed'
@@ -14049,7 +14049,7 @@
       frameCount: 0,
       fontSize: 10,
       offsetType: 'px',
-      pixelShift: isChrome ? -0.1825 * 0 : 0,
+      pixelShift: isChrome ? -0.1825 * 1 : 0,
       // sometimes, things don't line up exactly perfectly.
       pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
       digitCount: 3,
@@ -14060,7 +14060,7 @@
     };
   
     // initialize state
-    for (var n = 0; n < data.digitCount; n++) {
+    for (let n = 0; n < data.digitCount; n++) {
       data.offsetTop[n] = null;
       data.lastOffsetTop[n] = null;
       data.visible[n] = true;
@@ -14086,7 +14086,7 @@
     }
     
     function updateFrameInterval(delta) {
-      var i;
+      let i;
       // how fast should the ticks go by?
       // (timed roughly to inventory ordering animations.)
 
@@ -14119,16 +14119,18 @@
     }
 
     function updateDOM() {
-      var i, j;
+      let i, j;
       // raw string, and array of integers
-      var digits = data.displayValue.toString();
-      var digitInts = [];
-      var tensOffset = 0;
+      let digits = data.displayValue.toString();
+      const digitInts = [];
+      let tensOffset = 0;
 
       // pad with leading zeroes, e.g., 9 -> 009
       if (digits.length < data.digitCount) {
-        // old-skool, ES5: use an array trick to get an arbitrary "repeating" string.
+        // TODO: move to ES6 .repeat()
         digits = new Array(data.digitCount - digits.length + 1).join('0') + digits;
+        // digits = '0'.repeat(data.digitCount - digits.length) + digits;
+
       }
 
       if (!dom.digits) dom.digits = document.querySelectorAll('#funds-count .digit-wrapper');
@@ -14147,7 +14149,7 @@
         data.active = true;
       }
 
-      var digitCountMinusOne = data.digitCount - 1;
+      const digitCountMinusOne = data.digitCount - 1;
 
       // handle digit changes.
       for (i = 0, j = data.digitCount; i < j; i++) {
@@ -14178,7 +14180,7 @@
         // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
         tensOffset = (data.offsetTop[i-1] || 0) * 10;
 
-        dom.digits[i].style.backgroundPosition = '0px ' + ((((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]) + data.offsetType;
+        dom.digits[i].style.backgroundPosition = `0px ${(((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]}${data.offsetType}`;
       }
    
     }
@@ -14191,16 +14193,16 @@
       // this will then be used to do offsets for animating numbers
       if (!dom.digits.length) return;
 
-      var funds = document.getElementById('funds');
+      const funds = document.getElementById('funds');
 
       // first, offset zoom scaling.
       funds.style.zoom = screenScale;
 
-      var adjustedScale = (1 / screenScale);
+      const adjustedScale = (1 / screenScale);
 
       // now, transform back so things look right, without throwing off background positioning on digits.
-      document.getElementById('funds').style.transform = 'scale3d(' + [adjustedScale, adjustedScale, 1].join(',') + ')';
-      document.getElementById('funds').style.transformOrigin = '0px 0px';
+      funds.style.transform = `scale3d(${[adjustedScale, adjustedScale, 1].join(',')})`;
+      funds.style.transformOrigin = '0px 0px';
     }
 
     function updateSound() {
@@ -14241,7 +14243,7 @@
     function setFunds(newValue) {
       // update delta, too.
       // this means the "spinner" speed can update as the rate of fund spend/gain changes.
-      var newDelta = Math.abs(data.lastActiveDisplayValue - newValue);
+      const newDelta = Math.abs(data.lastActiveDisplayValue - newValue);
 
       data.value = newValue;
       data.delta = newDelta;
@@ -14250,10 +14252,10 @@
     }
 
     exports = {
-      animate: animate,
-      data: data,
-      setFunds: setFunds,
-      updateScale: updateScale
+      animate,
+      data,
+      setFunds,
+      updateScale
     }
 
     updateDOM();
