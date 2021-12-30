@@ -1326,7 +1326,7 @@
     if (!item || !item.data) return;
 
     // gunfire has `parentType`, e.g., fired from a tank
-    var type = item.data.parentType || item.data.type;
+    let type = item.data.parentType || item.data.type;
 
     if (!type) return;
 
@@ -1346,9 +1346,9 @@
 
   function makeSprite(options) {
 
-    var o = document.createElement('div');
+    const o = document.createElement('div');
 
-    o.className = 'sprite ' + options.className;
+    o.className = `sprite ${options.className}`;
 
     if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
       o.style.top = '0px';
@@ -1367,7 +1367,7 @@
   function makeTransformSprite(extraClass) {
 
     return makeSprite({
-      className: 'transform-sprite' + (extraClass ? ' ' + extraClass : '')
+      className: `transform-sprite${extraClass ? ` ${extraClass}` : ''}`
     });
 
   }
@@ -1375,23 +1375,23 @@
   function makeSubSprite(extraClass) {
 
     return makeSprite({
-      className: 'sub-sprite' + (extraClass ? ' ' + extraClass : '')
+      className: `sub-sprite${extraClass ? ` ${extraClass}` : ''}`
     });
 
   }
 
-  var layoutCache = {};
+  const layoutCache = {};
 
   function addItem(className, x) {
 
-    var node, data, dom, width, height, inCache, exports;
+    let node, data, dom, width, height, inCache, exports;
 
     node = makeSprite({
-      className: className + ' terrain-item'
+      className: `${className} terrain-item`
     });
 
     if (x) {
-      common.setTransformXY(undefined, node, x + 'px', '0px');
+      common.setTransformXY(undefined, node, `${x}px`, '0px');
     }
     
     if (layoutCache[className]) {
@@ -1407,7 +1407,7 @@
 
     data = {
       type: className,
-      x: x,
+      x,
       y: 0,
       // dirty / lazy - force layout, read from CSS.
       width: width || node.offsetWidth,
@@ -1420,8 +1420,8 @@
 
     // basic structure for a terrain item
     exports = {
-      data: data,
-      dom: dom
+      data,
+      dom
     };
 
     if (!inCache) {
@@ -1517,8 +1517,6 @@
     }
 
     return data;
-
-    // return mixin(defaultData, data);
 
   }
 
