@@ -6194,9 +6194,9 @@
 
   };
 
-  SuperBunker = function(options) {
+  SuperBunker = options => {
 
-    var css, dom, data, height, nearby, radarItem, exports;
+    let css, dom, data, height, nearby, radarItem, exports;
 
     function updateFireModulus() {
 
@@ -6247,21 +6247,25 @@
     }
 
     function updateHealth(attacker) {
+
       // notify if just disarmed by tank gunfire
       // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
       if (data.energy) return;
-      if (!attacker || attacker.data.type !== TYPES.gunfire || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) return;
+
+      if (!attacker || attacker.data.type !== TYPES.gunfire || !attacker.data?.parentType !== TYPES.tank) return;
+
       // we have a tank, after all
       if (attacker.data.isEnemy) {
-        game.objects.notifications.add('An enemy tank disarmed a super bunker 🚩', { noRepeat: true });
+        game.objects.notifications.addNoRepeat('An enemy tank disarmed a super bunker 🚩');
       } else {
-        game.objects.notifications.add('A friendly tank disarmed a super bunker ⛳', { noRepeat: true });
+        game.objects.notifications.addNoRepeat('A friendly tank disarmed a super bunker ⛳');
       }
+
     }
 
     function hit(points, target) {
       // only tank gunfire counts against super bunkers.
-      if (target && target.data.type === 'gunfire' && target.data.parentType && target.data.parentType === TYPES.tank) {
+      if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
         data.energy = Math.max(0, data.energy - points);
         updateFireModulus();
         updateEnergy(exports);
@@ -6295,34 +6299,32 @@
 
     function fire() {
 
-      var fireOptions;
+      let fireOptions;
 
-      if (data.firing && data.energy !== 0 && data.frameCount % data.fireModulus === 0) {
+      if (!data.firing || !data.energy || data.frameCount % data.fireModulus !== 0) return;
 
-        fireOptions = {
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          collisionItems: nearby.items,
-          x: data.x + (data.width + 1),
-          y: data.y + data.gunYOffset, // position of bunker gun
-          vX: 2,
-          vY: 0
-        };
+      fireOptions = {
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        collisionItems: nearby.items,
+        x: data.x + (data.width + 1),
+        y: data.y + data.gunYOffset, // position of bunker gun
+        vX: 2,
+        vY: 0
+      };
 
-        game.objects.gunfire.push(new GunFire(fireOptions));
+      game.objects.gunfire.push(GunFire(fireOptions));
 
-        // other side
-        fireOptions.x = (data.x - 1);
+      // other side
+      fireOptions.x = (data.x - 1);
 
-        // and reverse direction
-        fireOptions.vX *= -1;
+      // and reverse direction
+      fireOptions.vX *= -1;
 
-        game.objects.gunfire.push(new GunFire(fireOptions));
+      game.objects.gunfire.push(GunFire(fireOptions));
 
-        if (sounds.genericGunFire) {
-          playSound(sounds.genericGunFire, exports);
-        }
-
+      if (sounds.genericGunFire) {
+        playSound(sounds.genericGunFire, exports);
       }
 
     }
@@ -6351,7 +6353,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -6376,7 +6378,7 @@
       width: 66,
       halfWidth: 33,
       doorWidth: 6,
-      height: height,
+      height,
       firing: false,
       gunYOffset: 20.5,
       // fire speed relative to # of infantry arming it
@@ -6406,13 +6408,13 @@
     };
 
     exports = {
-      animate: animate,
-      capture: capture,
-      data: data,
-      die: die,
-      dom: dom,
-      hit: hit,
-      updateHealth: updateHealth
+      animate,
+      capture,
+      data,
+      die,
+      dom,
+      hit,
+      updateHealth
     };
 
     nearby = {
@@ -6423,9 +6425,9 @@
         targets: undefined,
         useLookAhead: true,
 
-        hit: function(target) {
+        hit(target) {
 
-          var isFriendly = (target.data.isEnemy === data.isEnemy);
+          const isFriendly = (target.data.isEnemy === data.isEnemy);
 
           if (!isFriendly && data.energy > 0) {
             // nearby enemy, and defenses activated? let 'em have it.
@@ -6524,7 +6526,7 @@
 
         },
 
-        miss: function() {
+        miss() {
           setFiring(false);
         }
 
