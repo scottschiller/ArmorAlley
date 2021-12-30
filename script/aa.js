@@ -8384,7 +8384,7 @@
 
   };
 
-  SmartMissile = function(options) {
+  SmartMissile = options => {
 
     /**
      * I am so smart!
@@ -8394,7 +8394,7 @@
      *  -- Homer Simpson
      */
 
-    var css, dom, data, radarItem, objects, collision, launchSound, exports;
+    let css, dom, data, radarItem, objects, collision, launchSound, exports;
 
     function moveTo(x, y, angle) {
 
@@ -8425,7 +8425,7 @@
 
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + data.angle + 'deg)');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${data.angle}deg)`);
 
       // push x/y to history arrays, maintain size
 
@@ -8441,7 +8441,7 @@
 
     function moveTrailers() {
 
-      var i, j, xOffset, yOffset;
+      let i, j, xOffset, yOffset;
 
       if (!data.isOnScreen) return;
 
@@ -8452,7 +8452,7 @@
 
         // if previous X value exists, apply it
         if (data.xHistory[i]) {
-          common.setTransformXY(exports, dom.trailers[i], data.xHistory[i] + xOffset + 'px', data.yHistory[i] + yOffset + 'px');
+          common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i] + xOffset}px`, `${data.yHistory[i] + yOffset}px`);
           dom.trailers[i].style.opacity = Math.max(0.25, (i+1) / j);
         }
 
@@ -8462,7 +8462,7 @@
 
     function hideTrailers() {
 
-      var i, j;
+      let i, j;
 
       for (i = 0, j = data.trailerCount; i < j; i++) {
         dom.trailers[i].style.opacity = 0;
@@ -8488,7 +8488,7 @@
 
       if (targetNode) {
         utils.css.add(targetNode, css.tracking);
-        makeTimeout(function() {
+        makeTimeout(() => {
           // this animation needs to run possibly after the object has died.
           if (targetNode) utils.css.add(targetNode, css.trackingActive);
         });
@@ -8520,7 +8520,7 @@
       removeTrackingFromNode(radarNode);
 
       // one timer for both.
-      makeTimeout(function() {
+      makeTimeout(() => {
         if (targetNode) {
           utils.css.remove(targetNode, css.trackingRemoval);
         }
@@ -8533,8 +8533,8 @@
 
     function setTargetTracking(tracking) {
 
-      var targetNode = objects.target.dom.o;
-      var radarNode = (objects.target.radarItem && objects.target.radarItem.dom && objects.target.radarItem.dom.o);
+      const targetNode = objects.target.dom.o;
+      const radarNode = objects.target.radarItem?.dom?.o;
 
       if (tracking) {
         addTracking(targetNode, radarNode);
@@ -8546,7 +8546,7 @@
 
     function die() {
 
-      var dieSound;
+      let dieSound;
 
       if (!data.deadTimer) {
 
@@ -8558,7 +8558,7 @@
           playSound(sounds.genericBoom, exports);
         }
 
-        common.inertGunfireExplosion({ exports: exports });
+        common.inertGunfireExplosion({ exports });
 
         shrapnelExplosion(data, {
           count: 3 + rndInt(3),
@@ -8567,7 +8567,7 @@
 
         hideTrailers();
 
-        data.deadTimer = setFrameTimeout(function() {
+        data.deadTimer = setFrameTimeout(() => {
           removeNodes(dom);
         }, 500);
 
@@ -8600,16 +8600,12 @@
 
         }
 
-        if (data.isBanana) {
-          
-          if (launchSound) {
-            launchSound.stop();
-          }
-
+        if (data.isBanana && launchSound) {
+          launchSound.stop();
         }
 
         // if targeting the player, ensure the expiry warning sound is stopped.
-        if (objects.target && objects.target === game.objects.helicopters[0]) {
+        if (objects?.target === game.objects.helicopters[0]) {
           stopSound(sounds.missileWarningExpiry);
         }
 
@@ -8659,7 +8655,7 @@
 
     function animate() {
 
-      var deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
+      let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
 
       // notify caller if now dead and can be removed.
       if (data.dead) return (data.dead && !dom.o);
@@ -8783,16 +8779,16 @@
       data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
       data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
 
-      var progress = data.frameCount / data.expireFrameCount;
+      const progress = data.frameCount / data.expireFrameCount;
 
       // smoke increases as missle nears expiry
-      var smokeThreshold = 1.25 - (Math.min(1, progress));
+      const smokeThreshold = 1.25 - (Math.min(1, progress));
 
       if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
         data.nearExpiry = true;
 
         // if targeting the player, start expiry warning sound
-        if (objects.target && objects.target === game.objects.helicopters[0]) {
+        if (objects?.target === game.objects.helicopters[0]) {
           playSound(sounds.missileWarningExpiry, exports);
           stopSound(sounds.missileWarning);
         }
@@ -8810,7 +8806,7 @@
           || (progress >= 0.05 && Math.random() >= smokeThreshold)
         )
       ) {
-        game.objects.smoke.push(new Smoke({
+        game.objects.smoke.push(Smoke({
           x: data.x + (data.vX < 0 ? data.width - 2: 0),
           y: data.y + 3,
           spriteFrame: 3
@@ -8850,7 +8846,7 @@
         die({ silent: true });
 
         // if targeting the player, stop expiry sound
-        if (objects.target && objects.target === game.objects.helicopters[0]) {
+        if (objects?.target === game.objects.helicopters[0]) {
           stopSound(sounds.missileWarningExpiry);
         }
       }
@@ -8872,7 +8868,7 @@
 
     function initSmartMissle() {
 
-      var i, trailerConfig, oTrailer, fragment;
+      let i, trailerConfig, oTrailer, fragment;
 
       fragment = document.createDocumentFragment();
 
@@ -8887,7 +8883,7 @@
       oTrailer = makeSprite(trailerConfig);
 
       // initial placement
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + data.angle + 'deg)');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${data.angle}deg)`);
 
       for (i = 0; i < data.trailerCount; i++) {
         dom.trailers.push(oTrailer.cloneNode(true));
@@ -8954,11 +8950,11 @@
 
     // special case
     if (options.isRubberChicken) {
-      css.className += ' ' + css.rubberChicken;
+      css.className += ` ${css.rubberChicken}`;
     }
 
     if (options.isBanana) {
-      css.className += ' ' + css.banana;
+      css.className += ` ${css.banana}`;
     }
 
     data = inheritData({
@@ -9009,7 +9005,7 @@
       options: {
         source: exports, // initially undefined
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           sparkAndDie(target);
         }
       },
@@ -9017,12 +9013,12 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      isOnScreenChange: isOnScreenChange,
-      objects: objects
+      animate,
+      data,
+      dom,
+      die,
+      isOnScreenChange,
+      objects
     };
 
     initSmartMissle();
@@ -10216,7 +10212,7 @@
           if (missileTarget && !missileTarget.data.cloaked) {
 
             /*eslint-disable no-mixed-operators */
-            objects.smartMissiles.push(new SmartMissile({
+            objects.smartMissiles.push(SmartMissile({
               parentType: data.type,
               isEnemy: data.isEnemy,
               x: data.x + (data.rotated ? 0 : data.width) - 8,
