@@ -160,27 +160,27 @@
 
   */
 
-  var game, utils, common;
+  let game, utils, common;
 
-  var winloc = window.location.href.toString();
+  let winloc = window.location.href.toString();
 
-  var ua = navigator.userAgent;
+  const ua = navigator.userAgent;
 
-  var FPS = 30;
-  var FRAMERATE = 1000 / FPS;
+  const FPS = 30;
+  const FRAMERATE = 1000 / FPS;
 
   // skip frame(s) as needed, prevent the game from running too fast.
-  var FRAME_MIN_TIME = FRAMERATE * 0.95;
+  const FRAME_MIN_TIME = FRAMERATE * 0.95;
 
-  var unlimitedFrameRate = winloc.match(/frameRate=\*/i);
+  const unlimitedFrameRate = winloc.match(/frameRate=\*/i);
 
-  var noJamming = winloc.match(/noJam/i);
+  const noJamming = winloc.match(/noJam/i);
 
   // IE 9 doesn't like some of the bigger transforms, for some reason.
-  var noTransform = (winloc.match(/noTransform/i) || (ua.match(/msie 9/i) && !winloc.match(/useTransform/i)));
+  const noTransform = (winloc.match(/noTransform/i) || (ua.match(/msie 9/i) && !winloc.match(/useTransform/i)));
 
   // by default, transform: translate3d(), more GPU compositing seen vs.2d-base transform: translate().
-  var useTranslate3d = !winloc.match(/noTranslate3d/i);
+  const useTranslate3d = !winloc.match(/noTranslate3d/i);
 
   /**
    * Evil tricks needed because Safari 6 (and Webkit nightly)
@@ -190,50 +190,50 @@
    * force-enable transform under Safari 6 w/ #forceTransform=1
    */
 
-  var isWebkit = ua.match(/webkit/i);
-  var isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
-  var isFirefox = ua.match(/firefox/i);
-  var isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
-  var isMobile = ua.match(/mobile/i); // should get iOS.
-  var isiPhone = ua.match(/iphone/i);
+  const isWebkit = ua.match(/webkit/i);
+  const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
+  const isFirefox = ua.match(/firefox/i);
+  const isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
+  const isMobile = ua.match(/mobile/i); // should get iOS.
+  const isiPhone = ua.match(/iphone/i);
 
-  var useParallax = winloc.match(/parallax/i);
+  const useParallax = winloc.match(/parallax/i);
 
   // whether to prevent transform: translate3d() on radar items.
   // gunfire and shrapnel can cause literal layer explosions,
   // potentially $$$ even with GPU compositing (I think.)
-  var noRadarGPU = winloc.match(/noRadarGPU=1/i);
+  const noRadarGPU = winloc.match(/noRadarGPU=1/i);
 
   // whether off-screen elements are forcefully removed from the DOM.
   // may be expensive up front, and/or cause style recalcs while
   // scrolling the world. the fastest nodes are the ones that aren't there.
-  var useDOMPruning = !winloc.match(/noDomPruning/i);
+  const useDOMPruning = !winloc.match(/noDomPruning/i);
 
-  var noPause = winloc.match(/noPause/i);
+  const noPause = winloc.match(/noPause/i);
 
-  var trackEnemy = winloc.match(/trackEnemy/i);
+  const trackEnemy = winloc.match(/trackEnemy/i);
 
-  var debug = winloc.match(/debug/i);
+  const debug = winloc.match(/debug/i);
 
   // TODO: get rid of this.
-  var debugType = winloc.match(/debugType/i);
+  const debugType = winloc.match(/debugType/i);
 
-  var showHealth = true; // winloc.match(/health/i);
+  const showHealth = true; // winloc.match(/health/i);
 
   // whether to always "upgrade" Smart Missiles...
-  var forceRubberChicken = winloc.match(/chicken/i);
-  var forceBanana = winloc.match(/banana/i);
+  const forceRubberChicken = winloc.match(/chicken/i);
+  const forceBanana = winloc.match(/banana/i);
 
   // TODO: move missile mode bits into game object
-  var missileMode;
+  let missileMode;
 
-  var defaultMissileMode = null;
+  const defaultMissileMode = null;
 
   // can also be enabled by pressing "C".
-  var rubberChickenMode = 'rubber-chicken-mode';
+  const rubberChickenMode = 'rubber-chicken-mode';
 
   // can also be enabled by pressing "B".
-  var bananaMode = 'banana-mode';
+  const bananaMode = 'banana-mode';
 
   function renderMissileText(character, mode) {
     if (mode === missileMode) return character;
@@ -260,86 +260,82 @@
   }
 
   // for testing end sequence
-  var theyWin = winloc.match(/theyWin/i);
-  var youWin = winloc.match(/youWin/i);
+  const theyWin = winloc.match(/theyWin/i);
+  const youWin = winloc.match(/youWin/i);
 
-  var DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
+  const DEFAULT_FUNDS = winloc.match(/FUNDS/i) ? 999 : 32;
 
-  var DEFAULT_VOLUME = 25;
+  const DEFAULT_VOLUME = 25;
 
-  var rad2Deg = 180 / Math.PI;
+  const rad2Deg = 180 / Math.PI;
 
   // used for various measurements in the game
-  var worldWidth = 8192;
-  var worldHeight = 380;
+  const worldWidth = 8192;
+  const worldHeight = 380;
 
-  var battleOver = false;
+  let battleOver = false;
 
-  var productionHalted = false;
+  let productionHalted = false;
 
-  var canHideLogo = false;
+  let canHideLogo = false;
 
-  var logoHidden = false;
+  let logoHidden = false;
 
-  var keyboardMonitor;
-
-  var features;
+  let keyboardMonitor;
 
   // TODO: move into view
-  var screenScale = 1;
+  let screenScale = 1;
 
-  var forceTransform = !!(winloc.match(/forceTransform/i));
+  const forceTransform = !!(winloc.match(/forceTransform/i));
 
-  var forceZoom = !!(winloc.match(/forceZoom/i));
+  const forceZoom = !!(winloc.match(/forceZoom/i));
 
-  var disableScaling = !!(!forceTransform && winloc.match(/noscal/i));
+  const disableScaling = !!(!forceTransform && winloc.match(/noscal/i));
 
-  var userDisabledScaling = false;
+  let userDisabledScaling = false;
 
-  var userDisabledSound = false;
+  let userDisabledSound = false;
 
-  var tutorialMode = !!(winloc.match(/tutorial/i));
+  const tutorialMode = !!(winloc.match(/tutorial/i));
 
-  var gameType;
-
-  var convoyParam = winloc.toLowerCase().indexOf('convoydelay');
+  let gameType;
 
   // how often the enemy attempts to build convoys
-  var convoyDelay = 60;
+  let convoyDelay = 60;
 
   // unique IDs for quick object equality checks
-  var guid = 0;
+  let guid = 0;
 
-  var Tutorial;
+  let Tutorial;
 
-  var TutorialStep;
+  let TutorialStep;
 
-  var setFrameTimeout;
+  let setFrameTimeout;
 
-  var frameTimeoutManager;
+  let frameTimeoutManager;
 
-  var Funds;
+  let Funds;
 
-  var Notifications;
+  let Notifications;
 
-  var Queue;
+  let Queue;
 
-  var Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, SuperBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
+  let Tank, Van, Infantry, ParachuteInfantry, Engineer, MissileLauncher, SmartMissile, Helicopter, Bunker, EndBunker, SuperBunker, Balloon, Chain, Base, Cloud, LandingPad, Turret, Smoke, Shrapnel, GunFire, Bomb, Radar, Inventory;
 
-  var shrapnelExplosion;
+  let shrapnelExplosion;
 
-  var GameLoop;
+  let GameLoop;
 
-  var View;
+  let View;
 
-  var prefs;
+  let prefs;
 
-  var sounds;
+  let sounds;
 
-  var transformCount = 0;
-  var excludeTransformCount = 0;
+  let transformCount = 0;
+  let excludeTransformCount = 0;
 
-  var TYPES = {
+  const TYPES = {
     bomb: 'bomb',
     balloon: 'balloon',
     cloud: 'cloud',
@@ -365,7 +361,7 @@
     van: 'van'
   };
 
-  var COSTS = {
+  const COSTS = {
     missileLauncher: {
       funds: 3,
       css: 'can-not-order-missile-launcher'
@@ -390,7 +386,7 @@
     }
   };
 
-  var stats;
+  let stats;
 
   function statsStructure() {
     return {
