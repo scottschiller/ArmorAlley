@@ -3183,7 +3183,7 @@
 
   function Joystick(options) {
 
-    var css, data, dom, exports;
+    let css, data, dom, exports;
 
     css = {
       joystick: 'joystick',
@@ -3487,12 +3487,13 @@
 
   }
 
-  View = function() {
+  View = () => {
 
-    var css, data, dom, events, exports;
+    let css, data, dom, events, exports;
 
     function setLeftScrollToPlayer(helicopter) {
-      var allowOverride = true, x;
+      const allowOverride = true;
+      let x;
 
       x = helicopter.data.x + (helicopter.data.width * (1 / screenScale)) - game.objects.view.data.browser.halfWidth;
 
@@ -3512,19 +3513,13 @@
       
       data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
-      if (features.transform.prop) {
-        // aim for GPU-based scrolling...
-        common.setTransformXY(undefined, dom.battleField, -data.battleField.scrollLeft + 'px', '0px');
-        // ... and parallax.
-        if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
-          // firefox text rendering really doesn't look nice when translating the stars.
-          // TODO: revisit the firefox thing.
-          common.setTransformXY(undefined, dom.stars, (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px', '0px');
-        }
-      } else {
-        // move via margin + background position
-        dom.battleField.style.marginLeft = -data.battleField.scrollLeft + 'px';
-        dom.stars.style.backgroundPosition = (-data.battleField.scrollLeft * data.battleField.parallaxRate) + 'px 0px';
+      // aim for GPU-based scrolling...
+      common.setTransformXY(undefined, dom.battleField, `${-data.battleField.scrollLeft}px`, '0px');
+      // ... and parallax.
+      if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
+        // firefox text rendering really doesn't look nice when translating the stars.
+        // TODO: revisit the firefox thing.
+        common.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, '0px');
       }
 
     }
@@ -3560,14 +3555,14 @@
       // isOnScreen() references this a lot.
       data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
-      if (dom.stars && features.transform.prop) {
+      if (dom.stars) {
         // GPU case: Be wide enough to cover parallax scroll effect. browser width + 10% of world width
-        dom.stars.style.width = data.browser.width + (data.battleField.width * 0.1) + 'px';
+        dom.stars.style.width = `${data.browser.width + (data.battleField.width * 0.1)}px`;
       }
 
       // helicopters need to know stuff, too.
-      if (game.objects.helicopters[0]) game.objects.helicopters[0].refreshCoords();
-      if (game.objects.helicopters[1]) game.objects.helicopters[1].refreshCoords();
+      game.objects.helicopters[0]?.refreshCoords();
+      game.objects.helicopters[1]?.refreshCoords();
 
       // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
       if (game.objects.radar) game.objects.radar.setStale(true);
@@ -3586,7 +3581,7 @@
 
     function shuffleTips() {
 
-      var i, j, elements, strings;
+      let i, j, elements, strings;
 
       strings = [];
 
@@ -3620,7 +3615,7 @@
 
     function showNextTip() {
 
-      var tips = dom.gameTipNodes;
+      const tips = dom.gameTipNodes;
 
       // tip 1: initially empty, then the "previous" tip for all subsequent iterations.
       tips[0].innerHTML = !data.gameTips.tipsOffset ? '&nbsp' : data.gameTips.tips[Math.max(0, data.gameTips.tipsOffset - 1)];
@@ -3644,7 +3639,7 @@
       }
 
       // animation event: a tip has scrolled by.
-      dom.animationNode.onanimationend = function() {
+      dom.animationNode.onanimationend = () => {
 
         // move first tip node (which just scrolled off to the left) to the end (to the right.)
         // it will then scroll R->L into view as the new tip.
@@ -3691,7 +3686,7 @@
 
     function animate() {
 
-      var scrollAmount, mouseDelta;
+      let scrollAmount, mouseDelta;
 
       // don't scroll if helicopter is respawning, or not moving.
       if (!game.objects.helicopters[0].data.respawning && game.objects.helicopters[0].data.vX !== 0) {
@@ -3714,9 +3709,9 @@
     function updateFundsUI() {
 
       // based on funds, update "affordability" bits of UI.
-      var playerFunds = game.objects.endBunkers[0].data.funds;
+      const playerFunds = game.objects.endBunkers[0].data.funds;
 
-      var nodes = [
+      const nodes = [
         document.getElementById('player-status-bar')
       ];
 
@@ -3724,10 +3719,10 @@
         nodes.push(document.getElementById('mobile-controls'));
       }
 
-      var toAdd = [];
-      var toRemove = [];
+      const toAdd = [];
+      const toRemove = [];
 
-      for (var item in COSTS) {
+      for (const item in COSTS) {
         if (Object.prototype.hasOwnProperty.call(COSTS, item)) {
           // mark as "can not afford".
           if (playerFunds < COSTS[item].funds) {
@@ -3738,18 +3733,10 @@
         }
       }
 
-      var i, j;
+      nodes.forEach(o => {
 
-      nodes.forEach(function(o) {
-
-        // add/remove expect space-delimited strings.
-        for (i = 0, j = toAdd.length; i < j; i++) {
-          utils.css.add(o, toAdd[i]);
-        }
-
-        for (i = 0, j = toRemove.length; i < j; i++) {
-          utils.css.remove(o, toRemove[i]);
-        }
+        if (toAdd.length) utils.css.add(o, ...toAdd);
+        if (toRemove.length) utils.css.remove(o, ...toRemove);
 
       });
 
@@ -3764,23 +3751,23 @@
       if (!touchEvent || !touchEvent.identifier) return;
 
       // keep track of a touch event, and its type.
-      var id = touchEvent.identifier;
+      const id = touchEvent.identifier;
 
       data.touchEvents[id] = {
         /*
           type,
-          target,
+          target
         */
       };
 
       // Object.assign()-like copying of properties.
-      for (var option in options) {
+      for (const option in options) {
         if (Object.prototype.hasOwnProperty.call(options, option)) {
           data.touchEvents[id][option] = options[option];
         }
       }
 
-      var target = options && options.target;
+      const target = options && options.target;
 
       // special case for UI on buttons.
       if (target && target.nodeName === 'A') {
@@ -3793,7 +3780,7 @@
 
       if (!touchEvent || !touchEvent.identifier) return;
 
-      var target = data.touchEvents[touchEvent.identifier].target;
+      const target = data.touchEvents[touchEvent.identifier].target;
 
       // special case for UI on buttons.
       if (target && target.nodeName === 'A') {
@@ -3806,14 +3793,14 @@
 
     function handleTouchStart(targetTouch) {
       // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
-      var target = targetTouch && targetTouch.target;
+      const target = targetTouch && targetTouch.target;
 
       // touch should always have a target, but just in case...
       if (target && target.nodeName === 'A') {
         // it's a link; treat as a button. ignore subsequent move events.
         registerTouchEvent(targetTouch, {
           type: 'press',
-          target: target
+          target
         });
       } else {
         // allow touchmove() for this one.
@@ -3826,15 +3813,15 @@
       }
 
       // some sort of button - inventory, or helicopter controls.
-      var keyMapLabel;
-      var keyCode;
+      let keyMapLabel;
+      let keyCode;
 
       keyMapLabel = target.getAttribute('data-keyMap');
       keyCode = keyboardMonitor.keyMap[keyMapLabel];
 
       if (keyCode) {
         keyboardMonitor.keydown({
-          keyCode: keyCode
+          keyCode
         });
         return true;
       }
@@ -3843,19 +3830,19 @@
 
     function handleTouchEnd(touchEvent) {
       // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
-      var target = touchEvent && touchEvent.target;
+      const target = touchEvent?.target;
 
       // was this a "move" (joystick) event? end if so.
-      var registeredEvent = getTouchEvent(touchEvent);
-      if (registeredEvent && registeredEvent.type === 'joystick') {
+      const registeredEvent = getTouchEvent(touchEvent);
+      if (registeredEvent?.type === 'joystick') {
         game.objects.joystick.end(touchEvent);
       }
 
       clearTouchEvent(touchEvent);
       if (!target) return false;
 
-      var keyMapLabel;
-      var keyCode;
+      let keyMapLabel;
+      let keyCode;
 
       // release applicable key.
       keyMapLabel = target.getAttribute('data-keyMap');
@@ -3863,7 +3850,7 @@
 
       if (keyCode) {
         keyboardMonitor.keyup({
-          keyCode: keyCode
+          keyCode
         });
         return true;
       }
@@ -3980,7 +3967,7 @@
 
     events = {
 
-      blur: function() {
+      blur() {
 
         if (noPause) return;
 
@@ -3988,29 +3975,29 @@
 
       },
 
-      focus: function() {
+      focus() {
 
         game.resume();
 
       },
 
-      mousemove: function(e) {
+      mousemove(e) {
         if (!data.ignoreMouseEvents) {
-          data.mouse.x = ((e || window.event).clientX / screenScale);
-          data.mouse.y = ((e || window.event).clientY / screenScale);
+          data.mouse.x = e.clientX / screenScale;
+          data.mouse.y = e.clientY / screenScale;
         }
       },
 
-      touchstart: function(e) {
+      touchstart(e) {
         // if the paused screen is showing, resume the game.
         if (game.data.paused) {
           game.resume();
         }
-        var touch = e.touches && e.touches[0];
-        var i, j;
-        var targetTouches = e.targetTouches;
-        var result;
-        var handledResult;
+        const touch = e.touches?.[0];
+        let i, j;
+        const targetTouches = e.targetTouches;
+        let result;
+        let handledResult;
         if (targetTouches) {
           for (i = 0, j = targetTouches.length; i < j; i++) {
             result = handleTouchStart(targetTouches[i], e);
@@ -4027,17 +4014,17 @@
         }
       },
 
-      touchmove: function(e) {
+      touchmove(e) {
         // primitive handling: take the first event.
-        var touch = e.changedTouches && e.changedTouches[0];
+        const touch = e.changedTouches?.[0];
 
         // just in case.
         if (!touch) return true;
 
         // if this event was registered at touchstart() as not a "move", ignore.
-        var registeredEvent = getTouchEvent(touch);
+        const registeredEvent = getTouchEvent(touch);
 
-        if (registeredEvent && registeredEvent.type !== 'joystick') {
+        if (registeredEvent?.type !== 'joystick') {
           return false;
         }
 
@@ -4050,9 +4037,9 @@
         return false;
       },
 
-      touchend: function(e) {
-        var i, j;
-        var changed = e.changedTouches;
+      touchend(e) {
+        let i, j;
+        const changed = e.changedTouches;
         if (changed) {
           for (i = 0, j = changed.length; i < j; i++) {
             handleTouchEnd(changed[i], e);
@@ -4060,7 +4047,7 @@
         }
       },
 
-      resize: function() {
+      resize() {
         // throttle?
         refreshCoords();
         game.objects.gameLoop.resetFPS();
@@ -4071,14 +4058,14 @@
     initView();
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      events: events,
-      setAnnouncement: setAnnouncement,
-      setLeftScroll: setLeftScroll,
-      setLeftScrollToPlayer: setLeftScrollToPlayer,
-      updateFundsUI: updateFundsUI
+      animate,
+      data,
+      dom,
+      events,
+      setAnnouncement,
+      setLeftScroll,
+      setLeftScrollToPlayer,
+      updateFundsUI
     };
 
     return exports;
