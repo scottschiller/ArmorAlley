@@ -4072,15 +4072,15 @@
 
   };
 
-  Inventory = function() {
+  Inventory = () => {
 
-    var css, data, dom, objects, orderNotificationOptions, exports;
+    let css, data, dom, objects, orderNotificationOptions, exports;
 
     function createObject(typeData, options) {
 
       // create and append a new (something) to its appropriate array.
 
-      var orderObject;
+      let orderObject;
 
       orderObject = new typeData[1](options);
 
@@ -4096,11 +4096,11 @@
         utils.css.add(orderObject.dom.o, css.building);
 
         // and start the "rise" animation
-        window.requestAnimationFrame(function() {
+        window.requestAnimationFrame(() => {
           utils.css.add(orderObject.dom.o, css.ordering);
 
-          setFrameTimeout(function() {
-            if (!orderObject.dom || !orderObject.dom.o) return;
+          setFrameTimeout(() => {
+            if (!orderObject.dom?.o) return;
             utils.css.remove(orderObject.dom.o, css.ordering);
             utils.css.remove(orderObject.dom.o, css.building);
           }, 2200);
@@ -4163,7 +4163,7 @@
 
     function order(type, options) {
 
-      var typeData, orderObject, orderSize, cost, pendingNotification;
+      let typeData, orderObject, orderSize, cost, pendingNotification;
 
       if (battleOver) return;
 
@@ -4209,7 +4209,7 @@
         if (!data.isEnemy) {
 
           // hackish: this will be executed below.
-          pendingNotification = function() {
+          pendingNotification = () => {
             game.objects.notifications.add('Order: %s 🛠️', orderNotificationOptions);
           }
 
@@ -4226,17 +4226,17 @@
 
         game.objects.notifications.add('%s1%s2: %c1/%c2 💰🤏🤷', {
           type: 'NSF',
-          onRender: function(input) {
+          onRender(input) {
             // hack: special-case missile launcher
-            var text = type.replace('missileLauncher', 'missile launcher');
+            const text = type.replace('missileLauncher', 'missile launcher');
             // long vs. short-hand copy, flag set once NSF is hit and the order completes
-            var result = input.replace('%s1', data.canShowNSF ? '' : 'Insufficient funds: ')
+            const result = input.replace('%s1', data.canShowNSF ? '' : 'Insufficient funds: ')
               .replace('%s2', (data.canShowNSF ? '🚫 ' : '') + text.charAt(0).toUpperCase() + (data.canShowNSF ? '' : text.slice(1)))
               .replace('%c1', game.objects.endBunkers[0].data.funds)
               .replace('%c2', cost);
             return result;
           },
-          onComplete: function() {
+          onComplete() {
             // start showing "NSF" short-hand, now that user has seen the long form
             data.canShowNSF = true;
           }
@@ -4250,19 +4250,19 @@
       options.noInit = false;
 
       // create and push onto the queue.
-      var newOrder = {
+      const newOrder = {
         data: orderObject.data,
         // how long to wait after last item before "complete" (for buffering space)
         completeDelay: orderObject.data.inventory.orderCompleteDelay || 0,
-        typeData: typeData,
-        options: options,
+        typeData,
+        options,
         size: orderSize,
         originalSize: orderSize,
         onOrderStart: null,
         onOrderComplete: null,
       };
 
-      var queueEvents;
+      let queueEvents;
 
       data.queue.push(newOrder);
 
@@ -4308,41 +4308,37 @@
 
     function animate() {
 
-      if (data.building && data.frameCount % objects.order.data.inventory.frameCount === 0) {
+      if (!data.building || data.frameCount++ % objects.order.data.inventory.frameCount !== 0) return;
 
-        if (objects.order.size) {
+      if (objects.order.size) {
 
-          // start building.
-          createObject(objects.order.typeData, objects.order.options);
+        // start building.
+        createObject(objects.order.typeData, objects.order.options);
 
-          // only fire "order start" once, whether a single tank or the first of five infantry.
-          if (objects.order.size === objects.order.originalSize && objects.order.onOrderStart) {
-            objects.order.onOrderStart();
-          }
-
-          objects.order.size--;
-
-        } else if (objects.order.completeDelay) {
-
-          // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
-          objects.order.completeDelay--;
-
-        } else {
-
-          // "Construction complete."
-
-          // drop the item that just finished building.
-          if (!objects.order.options.isEnemy && objects.order.onOrderComplete) {
-            objects.order.onOrderComplete();
-          }
-          
-          processNextOrder();
-
+        // only fire "order start" once, whether a single tank or the first of five infantry.
+        if (objects.order.size === objects.order.originalSize && objects.order.onOrderStart) {
+          objects.order.onOrderStart();
         }
 
-      }
+        objects.order.size--;
 
-      data.frameCount++;
+      } else if (objects.order.completeDelay) {
+
+        // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
+        objects.order.completeDelay--;
+
+      } else {
+
+        // "Construction complete."
+
+        // drop the item that just finished building.
+        if (!objects.order.options.isEnemy && objects.order.onOrderComplete) {
+          objects.order.onOrderComplete();
+        }
+        
+        processNextOrder();
+
+      }
 
     }
 
@@ -4352,8 +4348,8 @@
 
     orderNotificationOptions = {
       type: 'order',
-      onRender: function(input) {
-        var i, j, actualType, types, counts, output;
+      onRender(input) {
+        let i, j, actualType, types, counts, output;
 
         types = [];
         counts = [];
@@ -4377,15 +4373,15 @@
 
         if (types.length === 1) {
           // full type, removing dash from "missile-launcher"
-          output.push(types[0].charAt(0).toUpperCase() + types[0].slice(1).replace('-', ' ') + (counts[0] > 1 ? '<sup>' + counts[0] + '</sup>' : ''));
+          output.push(types[0].charAt(0).toUpperCase() + types[0].slice(1).replace('-', ' ') + (counts[0] > 1 ? `<sup>${counts[0]}</sup>` : ''));
         } else {
           for (i=0, j=types.length; i<j; i++) {
-            output.push(types[i].charAt(0).toUpperCase() + (counts[i] > 1 ? '<sup>' + counts[i] + '</sup>' : ''));
+            output.push(types[i].charAt(0).toUpperCase() + (counts[i] > 1 ? `<sup>${counts[i]}</sup>` : ''));
           }
         }
 
         return input.replace('%s', output.join(' '));
-      }, onComplete: function() {
+      }, onComplete() {
         // clear the copy of the queue used for notifications.
         // any new notifications will start with a fresh queue.
         data.queueCopy = [];
@@ -4422,11 +4418,11 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      createObject: createObject,
-      order: order
+      animate,
+      data,
+      dom,
+      createObject,
+      order
     };
 
     initStatusBar();
