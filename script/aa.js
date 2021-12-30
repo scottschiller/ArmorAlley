@@ -11354,13 +11354,13 @@
 
   };
 
-  Tank = function(options) {
+  Tank = options => {
 
-    var css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
+    let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
 
     function fire() {
 
-      var collisionItems;
+      let collisionItems;
 
       if (data.frameCount % data.fireModulus !== 0) return;
 
@@ -11389,7 +11389,7 @@
         parentType: data.type,
         isEnemy: data.isEnemy,
         damagePoints: 2, // tanks fire at half-rate, so double damage.
-        collisionItems: collisionItems,
+        collisionItems,
         x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
         // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry
         y: data.y + data.halfHeight,
@@ -11406,7 +11406,7 @@
     function moveTo(x, y) {
 
       if (common.updateXY(exports, x, y)) {
-        common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
+        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
       }
 
     }
@@ -11438,11 +11438,11 @@
 
         shrapnelExplosion(data, { velocity: 8 });
 
-        common.inertGunfireExplosion({ exports: exports });
+        common.inertGunfireExplosion({ exports });
 
         common.smokeRing(exports, { isGroundUnit: true });
 
-        data.deadTimer = setFrameTimeout(function() {
+        data.deadTimer = setFrameTimeout(() => {
           removeNodes(dom);
           data.deadTimer = null;
         }, 1500);
@@ -11470,7 +11470,7 @@
 
     function shouldFireAtTarget(target) {
 
-      if (!target || !target.data) return false;
+      if (!target?.data) return false;
 
       // TODO: ensure the target is "in front of" the tank.
 
@@ -11526,7 +11526,7 @@
           moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
 
           // and then stop again if we haven't resumed for real by that time.
-          setFrameTimeout(function() {
+          setFrameTimeout(() => {
             if (data.stopped) {
               utils.css.add(dom.o, css.stopped);
             }
@@ -11568,7 +11568,7 @@
         utils.css.add(dom.o, options.extraClass);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
       
@@ -11627,7 +11627,7 @@
         useLookAhead: true,
         // stop moving if we roll up behind a friendly tank
         friendlyOnly: true,
-        hit: function(target) {
+        hit(target) {
           // TODO: data.halfWidth instead of 0, but be able to resume and separate tanks when there are no enemies nearby.
           // for now: stop when we pull up immediately behind the next tank, vs. being "nearby."
           if (collisionCheck(data, target.data, 0)) {
@@ -11636,7 +11636,7 @@
             resume();
           }
         },
-        miss: function() {
+        miss() {
           // resume, if tank is not also firing
           resume();
         }
@@ -11651,7 +11651,7 @@
         source: exports, // initially undefined
         targets: undefined,
         useLookAhead: true,
-        hit: function(target) {
+        hit(target) {
           // determine whether to fire, or resume (if no friendly tank nearby)
           if (shouldFireAtTarget(target)) {
             data.lastNearbyTarget = target;
@@ -11662,7 +11662,7 @@
             resume();
           }
         },
-        miss: function() {
+        miss() {
           // resume moving, stop firing.
           data.lastNearbyTarget = null;
           resume();
@@ -11674,13 +11674,13 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      stop: stop,
-      resume: resume,
-      updateHealth: updateHealth
+      animate,
+      data,
+      dom,
+      die,
+      stop,
+      resume,
+      updateHealth
     };
 
     if (!options.noInit) {
