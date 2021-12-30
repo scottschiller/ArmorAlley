@@ -1,8 +1,5 @@
 /* global soundManager */
 (function armorAlley(window) {
-
-  'use strict';
-
   /*
 
        MMM   MMMMMMN   MMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM
