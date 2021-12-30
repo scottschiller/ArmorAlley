@@ -14268,10 +14268,10 @@
    * hooks into main game requestAnimationFrame() loop.
    * calls animate() methods on active FrameTimeout() instances.
    */
-  frameTimeoutManager = (function() {
-    var exports,
-      instances = [],
-      spliceArgs = [null, 1];
+  frameTimeoutManager = (() => {
+    let exports;
+    const instances = [];
+    const spliceArgs = [null, 1];
 
     function addInstance(frameTimeout) {
       instances.push(frameTimeout);
@@ -14280,7 +14280,7 @@
     function animate() {
       if (!instances || !instances.length) return;
 
-      var completed = [];
+      const completed = [];
 
       for (var i = 0, j = instances.length; i < j; i++) {
         // do work, and track completion
@@ -14299,21 +14299,21 @@
     }
 
     exports = {
-      addInstance: addInstance,
-      animate: animate
+      addInstance,
+      animate
     };
 
     return exports;
-  }());
+  })();
 
-  setFrameTimeout = function(callback, delayMsec) {
+  setFrameTimeout = (callback, delayMsec) => {
 
     /**
      * a frame-counting-based setTimeout() implementation.
      * millisecond value (parameter) is converted to a frame count.
      */
 
-    var data, exports;
+    let data, exports;
 
     data = {
       frameCount: 0,
@@ -14345,9 +14345,9 @@
     }
 
     exports = {
-      animate: animate,
-      data: data,
-      reset: reset
+      animate,
+      data,
+      reset
     };
 
     frameTimeoutManager.addInstance(exports);
@@ -14644,8 +14644,6 @@
 
     };
   })();
-
-  }());
 
   game = (() => {
 
