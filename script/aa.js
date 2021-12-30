@@ -409,7 +409,7 @@
 
   function Stats() {
 
-    var data, exports;
+    let data, exports;
 
     function normalizeObj(obj) {
       if (obj && !obj.data && obj.oParent) {
@@ -419,7 +419,7 @@
     }
 
     function normalizeType(obj) {
-      var type = obj.data.type;
+      let type = obj.data.type;
       // special case: infantry -> engineer
       if (obj.data.type === TYPES.infantry && obj.data.role) {
         type = TYPES.engineer;
@@ -428,7 +428,7 @@
     }
 
     function create(obj) {
-      var dataObj, type;
+      let dataObj, type;
       obj = normalizeObj(obj);
       type = normalizeType(obj);
       dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
@@ -439,7 +439,7 @@
 
     function destroy(obj) {
       // there might be no data, so go up the chain.
-      var dataObj, type;
+      let dataObj, type;
       obj = normalizeObj(obj);
       type = normalizeType(obj);
       dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
@@ -453,7 +453,7 @@
     }
 
     function displayEndGameStats() {
-      var i, j, k, items, cols, type, offset, dataSource;
+      let i, j, k, items, cols, type, offset, dataSource;
       items = document.getElementById('stats-endgame').getElementsByTagName('tr');
       // data sources
       dataSource = [data.player.destroyed, data.enemy.destroyed];
@@ -502,7 +502,7 @@
   function getLandscapeLayout() {
 
     // notch position guesses, as well as general orientation.
-    var notchPosition;
+    let notchPosition;
 
     if ('orientation' in window) {
 
@@ -532,17 +532,17 @@
 
     if (disableScaling) return;
 
-    var innerHeight = window.innerHeight;
-    var offset = 0;
-    var localWorldHeight = 410;
+    const innerHeight = window.innerHeight;
+    let offset = 0;
+    let localWorldHeight = 410;
 
     // TODO: clean this up.
     if (isMobile) {
 
-      var id = 'body-height-element';
-      var div = document.getElementById(id);
+      const id = 'body-height-element';
+      let div = document.getElementById(id);
 
-      var bottom = document.getElementById('bottom');
+      const bottom = document.getElementById('bottom');
 
       // make and append once, as necessary.
       if (!div) {
@@ -595,7 +595,7 @@
 
     if (disableScaling) return;
 
-    var wrapper = document.getElementById('world-wrapper');
+    const wrapper = document.getElementById('world-wrapper');
 
     /**
      * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
@@ -631,22 +631,22 @@
 
       if (debug) console.log('using transform-based scaling');
 
-      wrapper.style.marginTop = -((406 / 2) * screenScale) + 'px';
-      wrapper.style.width = Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale)) + 'px';
-      wrapper.style[features.transform.prop + 'Origin'] = '0px 0px';
+      wrapper.style.marginTop = `${-((406 / 2) * screenScale)}px`;
+      wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale))}px`;
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
-      wrapper.style[features.transform.prop] = 'scale3d(' + screenScale + ', ' + screenScale + ', 1)';
+      wrapper.style.transform = `scale3d(${screenScale}, ${screenScale}, 1)`;
+      wrapper.style.transformOrigin = '0px 0px';
 
     } else {
 
       if (debug) console.log('using style.zoom-based scaling');
 
-      wrapper.style.marginTop = -(406 / 2) + 'px';
+      wrapper.style.marginTop = `${-(406 / 2)}px`;
 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
-      document.getElementById('aa').style.zoom = (screenScale * 100) + '%';
+      document.getElementById('aa').style.zoom = `${screenScale * 100}%`;
 
     }
 
