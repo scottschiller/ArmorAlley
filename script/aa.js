@@ -5238,9 +5238,9 @@
 
   }
 
-  Balloon = function(options) {
+  Balloon = options => {
 
-    var css, data, dom, height, objects, radarItem, reset, exports;
+    let css, data, dom, height, objects, radarItem, reset, exports;
 
     function checkRespawn() {
 
@@ -5268,7 +5268,7 @@
       // between on / off-screen.
       utils.css.add(dom.o, css.animating);
 
-      data.frameTimeout = setFrameTimeout(function() {
+      data.frameTimeout = setFrameTimeout(() => {
         if (!dom.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
@@ -5278,19 +5278,17 @@
 
     function detach() {
 
-      if (!data.detached) {
+      if (data.detached) return;
 
-        data.detached = true;
+      data.detached = true;
 
-        // and become hostile.
-        data.hostile = true;
+      // and become hostile.
+      data.hostile = true;
 
-        // disconnect bunker <-> balloon references
-        if (objects.bunker) {
-          objects.bunker.nullifyBalloon();
-          objects.bunker = null;
-        }
-
+      // disconnect bunker <-> balloon references
+      if (objects.bunker) {
+        objects.bunker.nullifyBalloon();
+        objects.bunker = null;
       }
 
     }
@@ -5306,7 +5304,7 @@
         playSound(sounds.balloonExplosion, exports);
       }
 
-      common.inertGunfireExplosion({ exports: exports });
+      common.inertGunfireExplosion({ exports });
 
       common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
 
@@ -5325,7 +5323,7 @@
       // the parent (i.e., this) balloon's `data.dead` before hiding.
       radarItem.die();
 
-      data.deadTimer = setFrameTimeout(function() {
+      data.deadTimer = setFrameTimeout(() => {
         data.deadTimer = null;
 
         // sanity check: don't hide if already respawned
@@ -5342,10 +5340,11 @@
     }
 
     function applyAnimatingTransition() {
+
       // balloons might be off-screen, then return on-screen
       // and will not animate unless explicitly enabled.
       // this adds the animation class temporarily.
-      if (!dom || !dom.o) return;
+      if (!dom?.o) return;
 
       // enable transition (balloon turning left or right, or dying.)
       utils.css.add(dom.o, css.animating);
@@ -5355,97 +5354,19 @@
         data.animationFrameTimeout.reset();
       }
 
-      data.animationFrameTimeout = setFrameTimeout(function() {
+      data.animationFrameTimeout = setFrameTimeout(() => {
         data.animationFrameTimeout = null;
         // balloon might have been destroyed.
-        if (!dom || !dom.o) return;
+        if (!dom?.o) return;
         utils.css.remove(dom.o, css.animating);
         data.frameTimeout = null;
       }, 1200);
+
     }
 
     function animate() {
 
-      if (!data.dead) {
-
-        common.smokeRelativeToDamage(exports, 0.25);
-
-        if (!data.detached) {
-
-          if ((data.y >= data.maxY && data.verticalDirection > 0) || (data.y <= data.minY && data.verticalDirection < 0)) {
-            data.verticalDirection *= -1;
-          }
-
-          common.moveTo(exports, data.x, data.y + data.verticalDirection);
-
-        } else {
-
-          data.frameCount++;
-
-          if (data.frameCount % data.windModulus === 0) {
-
-            // TODO: improve, limit on axes
-
-            data.windOffsetX += (plusMinus() * 0.25);
-
-            data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
-
-            if (data.windOffsetX > 0 && data.direction !== 1) {
-
-              // heading right
-              utils.css.remove(dom.o, css.facingLeft);
-              utils.css.add(dom.o, css.facingRight);
-
-              applyAnimatingTransition();
-
-              data.direction = 1;
-
-            } else if (data.windOffsetX < 0 && data.direction !== -1) {
-
-              // heading left
-              utils.css.remove(dom.o, css.facingRight);
-              utils.css.add(dom.o, css.facingLeft);
-
-              applyAnimatingTransition();
-
-              data.direction = -1;
-
-            }
-
-            data.windOffsetY += (plusMinus() * 0.05);
-
-            data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
-
-            // and randomize
-            data.windModulus = 32 + rndInt(32);
-
-          }
-
-          // if at end of world, change the wind and prevent randomization until within world limits
-          // this allows balloons to drift a little over, but they will return.
-          if (data.x + data.windOffsetX >= data.maxX) {
-            data.frameCount = 0;
-            data.windOffsetX -= 0.1;
-          } else if (data.x + data.windOffsetX <= data.minX) {
-            data.frameCount = 0;
-            data.windOffsetX += 0.1;
-          }
-
-          // screen, too
-          if (data.y + data.windOffsetY >= data.maxY) {
-            data.frameCount = 0;
-            data.windOffsetY -= 0.1;
-          } else if (data.y + data.windOffsetY <= data.minY) {
-            data.frameCount = 0;
-            data.windOffsetY += 0.1;
-          }
-
-          // hackish: enforce world min/max limits
-          common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
-
-        }
-
-      } else {
+      if (data.dead) {
 
         if (data.y > 0) {
 
@@ -5460,11 +5381,97 @@
 
         checkRespawn();
 
+        return;
+
+      }
+
+      // not dead...
+
+      common.smokeRelativeToDamage(exports, 0.25);
+
+      if (!data.detached) {
+
+        // move relative to bunker
+
+        if ((data.y >= data.maxY && data.verticalDirection > 0) || (data.y <= data.minY && data.verticalDirection < 0)) {
+          data.verticalDirection *= -1;
+        }
+
+        common.moveTo(exports, data.x, data.y + data.verticalDirection);
+
+      } else {
+
+        // free-floating balloon
+
+        data.frameCount++;
+
+        if (data.frameCount % data.windModulus === 0) {
+
+          data.windOffsetX += (plusMinus() * 0.25);
+
+          data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+
+          if (data.windOffsetX > 0 && data.direction !== 1) {
+
+            // heading right
+            utils.css.remove(dom.o, css.facingLeft);
+            utils.css.add(dom.o, css.facingRight);
+
+            applyAnimatingTransition();
+
+            data.direction = 1;
+
+          } else if (data.windOffsetX < 0 && data.direction !== -1) {
+
+            // heading left
+            utils.css.remove(dom.o, css.facingRight);
+            utils.css.add(dom.o, css.facingLeft);
+
+            applyAnimatingTransition();
+
+            data.direction = -1;
+
+          // dead, but chain has not retracted yet. Make sure it's moving down.
+          if (data.verticalDirection > 0) {
+            data.verticalDirection *= -1;
+          }
+
+          data.windOffsetY += (plusMinus() * 0.05);
+
+          data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+
+          // and randomize
+          data.windModulus = 32 + rndInt(32);
+
+        }
+
+        // if at end of world, change the wind and prevent randomization until within world limits
+        // this allows balloons to drift a little over, but they will return.
+        if (data.x + data.windOffsetX >= data.maxX) {
+          data.frameCount = 0;
+          data.windOffsetX -= 0.1;
+        } else if (data.x + data.windOffsetX <= data.minX) {
+          data.frameCount = 0;
+          data.windOffsetX += 0.1;
+        }
+
+        // limit to screen, too
+        if (data.y + data.windOffsetY >= data.maxY) {
+          data.frameCount = 0;
+          data.windOffsetY -= 0.1;
+        } else if (data.y + data.windOffsetY <= data.minY) {
+          data.frameCount = 0;
+          data.windOffsetY += 0.1;
+        }
+
+        // hackish: enforce world min/max limits
+        common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
+
       }
 
     }
 
-    reset = function() {
+    reset = () => {
 
       // respawn can actually happen now
 
@@ -5514,7 +5521,7 @@
       }
 
       // TODO: remove?
-      dom.o.style.marginLeft = (data.leftMargin + 'px');
+      dom.o.style.marginLeft = `${data.leftMargin}px`;
 
       common.moveTo(exports, data.x, data.y);
 
@@ -5555,7 +5562,7 @@
       verticalDirectionDefault: 1,
       leftMargin: options.leftMargin || 0,
       width: 38,
-      height: height,
+      height,
       halfWidth: 19,
       halfHeight: height / 2,
       deadTimer: null,
@@ -5575,13 +5582,13 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      detach: detach,
-      die: die,
-      dom: dom,
-      reset: reset,
-      setEnemy: setEnemy
+      animate,
+      data,
+      detach,
+      die,
+      dom,
+      reset,
+      setEnemy
     };
 
     initBalloon();
