@@ -5431,9 +5431,6 @@
 
             data.direction = -1;
 
-          // dead, but chain has not retracted yet. Make sure it's moving down.
-          if (data.verticalDirection > 0) {
-            data.verticalDirection *= -1;
           }
 
           data.windOffsetY += (plusMinus() * 0.05);
@@ -7477,9 +7474,9 @@
 
   };
 
-  MissileLauncher = function(options) {
+  MissileLauncher = options => {
 
-    var css, data, dom, friendlyNearby, height, radarItem, exports;
+    let css, data, dom, friendlyNearby, height, radarItem, exports;
 
     function stop() {
 
@@ -7497,7 +7494,7 @@
 
       if (data.dead) return;
 
-      if (!options || !options.silent) {
+      if (!options?.silent) {
 
         utils.css.add(dom.o, css.exploding);
 
@@ -7505,9 +7502,9 @@
           playSound(sounds.genericExplosion, exports);
         }
 
-        common.inertGunfireExplosion({ exports: exports });
+        common.inertGunfireExplosion({ exports });
 
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           removeNodes(dom);
         }, 1000);
 
@@ -7530,7 +7527,7 @@
 
     function fire() {
 
-      var i, j, similarMissileCount, targetHelicopter;
+      let i, j, similarMissileCount, targetHelicopter;
 
       if (data.frameCount % data.fireModulus !== 0) return;
 
@@ -7580,7 +7577,7 @@
       // self-destruct, FIRE ZE MISSILE
       die();
 
-      game.objects.smartMissiles.push(new SmartMissile({
+      game.objects.smartMissiles.push(SmartMissile({
         parentType: data.type,
         isEnemy: data.isEnemy,
         isBanana: (missileMode === bananaMode),
@@ -7628,7 +7625,7 @@
           data.frameCount = 0;
 
           if (data.isOnScreen) {
-            dom.o.style.backgroundPosition = '0px ' + (data.height * data.state * -1) + 'px';
+            dom.o.style.backgroundPosition = `0px ${data.height * data.state * -1}px`;
           }
 
         } else if (data.frameCount % data.stateModulus === 2 && data.isOnScreen) {
@@ -7661,11 +7658,11 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       initNearby(friendlyNearby, exports);
 
-      data.frameTimeout = setFrameTimeout(function() {
+      data.frameTimeout = setFrameTimeout(() => {
         data.orderComplete = true;
         data.frameTimeout = null;
       }, 2000);
@@ -7694,7 +7691,7 @@
       fireModulus: FPS, // check every second or so
       width: 54,
       halfWidth: 27,
-      height: height,
+      height,
       halfHeight: height / 2,
       orderComplete: false,
       state: 0,
@@ -7714,10 +7711,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die
+      animate,
+      data,
+      dom,
+      die
     };
 
     friendlyNearby = {
