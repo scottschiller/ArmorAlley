@@ -9027,9 +9027,9 @@
 
   };
 
-  Helicopter = function(options) {
+  Helicopter = options => {
 
-    var css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate, statsBar;
+    let css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate, statsBar;
 
     function cloak() {
 
@@ -9072,39 +9072,42 @@
       // hack: center on enemy helicopter at all times.
       if (!trackEnemy) return;
 
-      common.setTransformXY(undefined, game.objects.view.dom.battleField, ((data.x - game.objects.view.data.browser.halfWidth) * -1) + 'px', '0px');
+      common.setTransformXY(undefined, game.objects.view.dom.battleField, `${(data.x - game.objects.view.data.browser.halfWidth) * -1}px`, '0px');
 
     }
 
     function updateFuelUI() {
 
-      var noRepeat = { noRepeat: true };
+      if (data.isEnemy) return;
 
-      if (!data.isEnemy) {
+      common.setTransformXY(undefined, dom.fuelLine, `${-100 + data.fuel}%`, '0px');
 
-        common.setTransformXY(undefined, dom.fuelLine, -100 + data.fuel + '%', '0px');
+      if (data.repairing || tutorialMode) return;
 
-        // hackish: show announcements across 1% of fuel burn process.
-        if (!data.repairing && !tutorialMode) {
+      // hackish: show announcements across 1% of fuel burn process.
 
-          if (data.fuel < 33 && data.fuel > 32) {
+      let text;
 
-            game.objects.view.setAnnouncement('Low fuel');
-            game.objects.notifications.add('Low fuel ⛽🤏⚠️', noRepeat);
+      if (data.fuel < 33 && data.fuel > 32) {
 
-          } else if (data.fuel < 12.5 && data.fuel > 11.5) {
+        text = 'Low fuel ⛽🤏⚠️';
 
-            game.objects.view.setAnnouncement('Fuel critical');
-            game.objects.notifications.add('Fuel critical ⛽🤏😱', noRepeat);
+        game.objects.view.setAnnouncement(text);
+        game.objects.notifications.addNoRepeat(text);
 
-          } else if (data.fuel <= 0) {
+      } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
-            game.objects.view.setAnnouncement('No fuel');
-            game.objects.notifications.add('No fuel ☠️', noRepeat);
+        text = 'Fuel critical ⛽🤏😱';
 
-          }
+        game.objects.view.setAnnouncement(text);
+        game.objects.notifications.addNoRepeat(text);
 
-        }
+      } else if (data.fuel <= 0) {
+
+        text = 'No fuel ☠️';
+
+        game.objects.view.setAnnouncement(text);
+        game.objects.notifications.addNoRepeat(text);
 
       }
 
@@ -9112,7 +9115,7 @@
 
     function burnFuel() {
 
-      var frameCount, modulus;
+      let frameCount, modulus;
 
       // don't burn fuel in these cases
       if (data.dead || data.repairing) return;
@@ -9139,50 +9142,48 @@
 
     function startRepairing(landingPad) {
 
-      if (!data.repairing) {
+      if (data.repairing) return;
 
-        data.repairing = true;
+      data.repairing = true;
 
-        // reset "counter" for missiles, etc.
-        data.repairFrames = 0;
+      // reset "counter" for missiles, etc.
+      data.repairFrames = 0;
 
-        if (!data.isEnemy) {
+      if (!data.isEnemy) {
 
-          document.getElementById('spinner').style.display = 'block';
+        document.getElementById('spinner').style.display = 'block';
 
-          var welcomeMessage = landingPad.data.welcomeMessage;
+        const welcomeMessage = landingPad.data.welcomeMessage;
 
-          playSound(sounds.repairing);
+        playSound(sounds.repairing);
 
-          // only if we're going to be "a while"
-          if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
-            playSound(sounds.ipanemaMuzak, null, { position: 13700 });
-            game.objects.notifications.add(welcomeMessage, { doubleHeight: true, noRepeat: true });
-          }
-
-          // start blinking certain things
-
-          if (data.smartMissiles < data.maxSmartMissiles) {
-            utils.css.add(dom.statusBar.missileCountLI, css.repairing);
-          }
-
-          if (data.ammo < data.maxAmmo) {
-            utils.css.add(dom.statusBar.ammoCountLI, css.repairing);
-          }
-
-          if (data.bombs < data.maxBombs) {
-            utils.css.add(dom.statusBar.bombCountLI, css.repairing);
-          }
-
-          setFrameTimeout(function() {
-            playRepairingWrench(repairInProgress, exports);
-          }, 500 + rndInt(1500));
-
-          setFrameTimeout(function() {
-            playImpactWrench(repairInProgress, exports);
-          }, 500 + rndInt(1500));
-
+        // only if we're going to be "a while"
+        if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
+          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+          game.objects.notifications.addNoRepeat(welcomeMessage, { doubleHeight: true });
         }
+
+        // start blinking certain things
+
+        if (data.smartMissiles < data.maxSmartMissiles) {
+          utils.css.add(dom.statusBar.missileCountLI, css.repairing);
+        }
+
+        if (data.ammo < data.maxAmmo) {
+          utils.css.add(dom.statusBar.ammoCountLI, css.repairing);
+        }
+
+        if (data.bombs < data.maxBombs) {
+          utils.css.add(dom.statusBar.bombCountLI, css.repairing);
+        }
+
+        setFrameTimeout(() => {
+          playRepairingWrench(repairInProgress, exports);
+        }, 500 + rndInt(1500));
+
+        setFrameTimeout(() => {
+          playImpactWrench(repairInProgress, exports);
+        }, 500 + rndInt(1500));
 
       }
 
@@ -9231,7 +9232,7 @@
     }
 
     function applyStatusUI(updated) {
-      var force = updated.force;
+      const force = updated.force;
 
       if (force || updated.parachutes) {
         dom.statusBar.infantryCount.innerText = data.parachutes;
@@ -9258,8 +9259,8 @@
         }
       }
 
-      var mobileControls;
-      var mobileControlItems;
+      let mobileControls;
+      let mobileControlItems;
 
       if (isMobile) {
         mobileControls = document.getElementById('mobile-controls');
@@ -9308,7 +9309,7 @@
           || updated.parachutes
         )
       ) {
-        game.objects.queue.addNextFrame(function() {
+        game.objects.queue.addNextFrame(() => {
           applyStatusUI(updated);
         });
       }
@@ -9350,14 +9351,14 @@
     }
 
     function addCSSToAll(nodes, className) {
-      for (var i=0, j=nodes.length; i<j; i++) {
+      for (let i=0, j=nodes.length; i<j; i++) {
         utils.css.add(nodes[i], className);
       }
     }
 
     function updateInventoryQueue(item) {
       // TODO: this queue and X-of-Y built logic could use a refactoring.
-      var dataBuilt, dataCount, dataCountOriginal, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oLastChild, queue, count;
+      let dataBuilt, dataCount, dataCountOriginal, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oLastChild, queue, count;
 
       queue = document.getElementById('queue');
 
@@ -9369,17 +9370,17 @@
       count = 0;
 
       function updateBuilt() {
-        var built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
+        let built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
         built++;
         element.setAttribute(dataBuilt, built);
       }
 
       function updateCount() {
-        var built, originalCount;
+        let built, originalCount;
         originalCount = element.getAttribute(dataCountOriginal);
         built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
-        var adjustedCount = Math.min(built, originalCount);
-        oCounter.innerHTML = '<span class="fraction-wrapper"><sup>' + adjustedCount + '</sup><em class="fraction">&frasl;</em><sub>' + originalCount + '</sub></span>';
+        const adjustedCount = Math.min(built, originalCount);
+        oCounter.innerHTML = `<span class="fraction-wrapper"><sup>${adjustedCount}</sup><em class="fraction">&frasl;</em><sub>${originalCount}</sub></span>`;
       }
 
       // FIFO-based queue: `item` is provided when something is being queued.
@@ -9449,7 +9450,7 @@
           oCounter.innerHTML = count;
         }
         
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           // transition in
           utils.css.add(o, 'queued');
           // show or hide
@@ -9462,7 +9463,7 @@
 
         // return callbacks for when building starts and finishes.
         return {
-          onOrderStart: function() {
+          onOrderStart() {
             utils.css.add(o, 'building');
             count = (parseInt(element.getAttribute(dataCount), 10) || 1);
 
@@ -9477,7 +9478,7 @@
             element.setAttribute(dataCount, count);
             updateCount();
           },
-          onOrderComplete: function() {
+          onOrderComplete() {
             // mark as complete once all have been built.
             updateBuilt();
 
@@ -9496,16 +9497,16 @@
             element = null;
             o = null;
           }
-        }
+        };
 
       } else {
 
         // clear entire queue.
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           addCSSToAll(queue.childNodes, 'collapsing');
           // finally, remove the nodes.
           // hopefully, no race condition here. :P
-          setFrameTimeout(function() {
+          setFrameTimeout(() => {
             // prevent element leaks
             oCounter = null;
             element = null;
@@ -9521,7 +9522,7 @@
 
     function repair() {
 
-      var updated = {};
+      const updated = {};
 
       data.repairFrames++;
 
@@ -9564,6 +9565,7 @@
     }
 
     function checkFacingTarget(target) {
+
       // ensure the enemy chopper is facing the target before firing.
       if (!target) return;
 
@@ -9575,6 +9577,7 @@
       } else if ((target.data.x + target.data.width) > data.x && !data.rotated) {
         rotate();
       }
+
     }
 
     function setFiring(state) {
@@ -9608,7 +9611,7 @@
 
     function setRespawning(state) {
 
-      var force = true;
+      const force = true;
 
       data.respawning = state;
 
@@ -9637,7 +9640,7 @@
       }
 
       // transition, helicopter rises from landing pad
-      setFrameTimeout(function() {
+      setFrameTimeout(() => {
         if (state) {
           utils.css.add(dom.o, css.respawningActive);
         } else {
@@ -9647,7 +9650,7 @@
 
       if (state) {
         // "complete" respawn, re-enable mouse etc.
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           setRespawning(false);
           if (data.isEnemy) {
             data.vY = -1;
@@ -9678,7 +9681,7 @@
       utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
 
       if (!data.rotateTimer) {
-        data.rotateTimer = setFrameTimeout(function() {
+        data.rotateTimer = setFrameTimeout(() => {
           utils.css.remove(dom.o, (data.rotated ? css.rotatedLeft : css.rotatedRight));
           utils.css.add(dom.o, (data.rotated ? css.facingLeft : css.facingRight));
           data.rotateTimer = null;
@@ -9709,7 +9712,7 @@
       data.tiltOffset = (data.dead || data.respawning || data.landed || data.onLandingPad ? 0 : ((data.vX / data.vXMax) * 12.5) + data.shakeOffset);
 
       // transform-specific, to be provided to common.setTransformXY() as an additional transform
-      data.angle = 'rotate(' + data.tiltOffset + 'deg)';
+      data.angle = `rotate(${data.tiltOffset}deg)`;
 
     }
 
@@ -9753,12 +9756,12 @@
 
     function refreshCoords(fromOrientationEvent) {
 
-      var view = game.objects.view;
-      var controlsWidth;
-      var landscapeDetail;
+      const view = game.objects.view;
+      let controlsWidth;
+      let landscapeDetail;
 
       // roughly accurate for iPhone X, 01/2018.
-      var notchWidth = 50;
+      const notchWidth = 50;
 
       // determine max X and Y coords
       data.xMax = view.data.battleField.width - data.width;
@@ -9804,7 +9807,7 @@
 
     function moveTo(x, y, forceUpdate) {
 
-      var yMax = (data.yMax - (data.repairing ? 3 : 0));
+      const yMax = (data.yMax - (data.repairing ? 3 : 0));
 
       // defined externally to avoid massive garbage creation
       moveToNeedsUpdate = !!forceUpdate;
@@ -9838,13 +9841,13 @@
         if (y >= yMax) {
           data.angle = 0;
         }
-        common.setTransformXY(exports, dom.o, x + 'px', y + 'px', data.angle);
+        common.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
       }
 
     }
 
     function moveTrailers() {
-      var i, j;
+      let i, j;
 
       if (!data.isOnScreen) return;
 
@@ -9852,7 +9855,7 @@
 
         // if previous X value exists, apply it
         if (data.xHistory[i]) {
-          common.setTransformXY(exports, dom.trailers[i], data.xHistory[i] + 'px', data.yHistory[i] + data.halfHeightAdjusted + 'px');
+          common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i]}px`, `${data.yHistory[i] + data.halfHeightAdjusted}px`);
           dom.trailers[i].style.opacity = data.dead ? 0 : Math.max(0.25, (i+1) / j);
         }
 
@@ -9860,7 +9863,7 @@
     }
 
     function hideTrailers() {
-      var i, j;
+      let i, j;
 
       for (i = 0, j = data.trailerCount; i < j; i++) {
         dom.trailers[i].style.opacity = 0;
@@ -9869,7 +9872,7 @@
 
     function reset() {
 
-      var i, j, objects, xLookAhead, foundObject, landingPad, noEntry;
+      let i, j, objects, xLookAhead, foundObject, landingPad, noEntry;
 
       if (data.isEnemy) {
         landingPad = game.objects.landingPads[game.objects.landingPads.length - 1];
@@ -9900,7 +9903,7 @@
       if (foundObject) {
         if (!data.isEnemy) {
           noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
-          game.objects.view.setAnnouncement(noEntry + ' Landing pad obstructed. Waiting for clearance. ' + noEntry);
+          game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed. Waiting for clearance. ${noEntry}`);
         }
         setFrameTimeout(reset, 500);
         return;
@@ -9919,27 +9922,25 @@
       data.repairComplete = false;
       data.hasLiftOff = false;
 
+      data.vY = 0;
+      data.lastVX = 0;
+
       if (!data.isEnemy) {
 
         data.vX = 0;
-        data.vY = 0;
         data.lastVX = 0;
 
         if (!tutorialMode) {
           game.objects.view.setAnnouncement();
         }
 
-        if (sounds.helicopter.engine) {
-          if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
-        }
+        if (sounds.helicopter.engine?.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
 
       } else {
 
         lastTarget = null;
 
         data.vX = -8;
-        data.vY = 0;
-        data.lastVX = 0;
 
         if (data.rotated) {
           rotate();
@@ -9965,7 +9966,7 @@
       applyTilt();
 
       // move to landing pad
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.angle);
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
       // look ma, no longer dead!
       data.dead = false;
@@ -9993,7 +9994,7 @@
 
     function startSound(sound) {
 
-      var soundObject;
+      let soundObject;
 
       soundObject = sound && getSound(sound);
 
@@ -10060,11 +10061,11 @@
 
       common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
 
-      common.inertGunfireExplosion({ count: 4 + rndInt(4), exports: exports });
+      common.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
       // roll the dice: drop a parachute infantry (pilot ejects safely)
       if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
-        game.objects.parachuteInfantry.push(new ParachuteInfantry({
+        game.objects.parachuteInfantry.push(ParachuteInfantry({
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: (data.y + data.height) - 11,
@@ -10072,7 +10073,7 @@
         }));
       }
 
-      setFrameTimeout(function() {
+      setFrameTimeout(() => {
         utils.css.add(dom.o, css.dead);
         // undo rotate
         if (data.rotated) {
@@ -10109,7 +10110,10 @@
 
     function fire() {
 
-      var tiltOffset, frameCount, missileTarget, updated = {};
+      let tiltOffset;
+      let frameCount;
+      let missileTarget;
+      const updated = {};
 
       frameCount = game.objects.gameLoop.data.frameCount;
 
@@ -10134,7 +10138,7 @@
           }));
           /*eslint-enable no-mixed-operators */
 
-          var soundObject = data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire;
+          const soundObject = data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire;
 
           if (soundObject) {
 
@@ -10250,7 +10254,7 @@
           // helicopter landed? Just create an infantry.
           if (data.landed) {
 
-            game.objects.infantry.push(new Infantry({
+            game.objects.infantry.push(Infantry({
               isEnemy: data.isEnemy,
               // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
               x: data.x + (data.width * 0.75),
@@ -10261,7 +10265,7 @@
 
           } else {
 
-            game.objects.parachuteInfantry.push(new ParachuteInfantry({
+            game.objects.parachuteInfantry.push(ParachuteInfantry({
               isEnemy: data.isEnemy,
               x: data.x + data.halfWidth,
               y: (data.y + data.height) - 11
@@ -10284,7 +10288,6 @@
       if (updated.ammo || updated.bombs || updated.smartMissiles || updated.parachutes) {
         updateStatusUI(updated);
       }
-
     }
 
     function eject() {
@@ -10292,7 +10295,7 @@
       // bail!
       if (!data.dead && data.pilot) {
 
-        game.objects.parachuteInfantry.push(new ParachuteInfantry({
+        game.objects.parachuteInfantry.push(ParachuteInfantry({
           x: data.x + data.halfWidth,
           y: (data.y + data.height) - 11
         }));
@@ -10315,7 +10318,7 @@
        * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
        */
 
-      var deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
+      let deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
 
       // wait until fully-respawned.
       if (data.respawning) return;
@@ -10493,19 +10496,19 @@
 
       // all the cases where a target can be considered toast.
 
-      if (lastTarget && lastTarget.data.dead) {
+      if (lastTarget?.data?.dead) {
         lastTarget = null;
       }
 
-      if (lastTarget && lastTarget.data.type === TYPES.tank && data.bombs <= 0) {
+      if (lastTarget?.data?.type === TYPES.tank && data.bombs <= 0) {
         lastTarget = null;
       }
 
-      if (lastTarget && (lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.helicopter) && (lastTarget.data.y > maxY || data.ammo <= 0)) {
+      if (lastTarget?.data && (lastTarget.data.type === TYPES.balloon || lastTarget.data.type === TYPES.helicopter) && (lastTarget.data.y > maxY || data.ammo <= 0)) {
         lastTarget = null;
       }
 
-      if (lastTarget && lastTarget.data.cloaked) {
+      if (lastTarget?.data?.cloaked) {
         lastTarget = null;
       }
 
@@ -10750,7 +10753,7 @@
 
       // move according to delta between helicopter x/y and mouse, up to a max.
 
-      var i, j, view, mouse, jamming, newX, spliceArgs, maxY, yOffset;
+      let i, j, view, mouse, jamming, newX, spliceArgs, maxY, yOffset;
 
       spliceArgs = [i, 1];
 
@@ -10822,19 +10825,19 @@
 
           logoHidden = true;
 
-          window.requestAnimationFrame(function() {
+          window.requestAnimationFrame(() => {
 
-            var overlay = document.getElementById('world-overlay');
-            var world = document.getElementById('world');
-            var blurred = 'blurred';
-            var noBlur = 'no-blur';
+            let overlay = document.getElementById('world-overlay');
+            const world = document.getElementById('world');
+            const blurred = 'blurred';
+            const noBlur = 'no-blur';
 
             utils.css.add(overlay, 'fade-out');
 
             utils.css.add(world, noBlur);
 
             // remove from the DOM eventually
-            setFrameTimeout(function() {
+            setFrameTimeout(() => {
 
               overlay.parentNode.removeChild(overlay);
               overlay = null;
@@ -10912,8 +10915,7 @@
       }
 
       // animate child objects, too
-
-      // TODO: for ... in
+      // TODO: move out to game.objects
 
       for (i = objects.bombs.length - 1; i >= 0; i--) {
         if (objects.bombs[i].animate()) {
@@ -11008,7 +11010,7 @@
           }
 
           if (debug) {
-            console.log('AI tank targeting mode: ' + data.targeting.tanks + ', clouds: ' + data.targeting.clouds + ', helicopters: ' + data.targeting.helicopters);
+            console.log(`AI tank targeting mode: ${data.targeting.tanks}, clouds: ${data.targeting.clouds}, helicopters: ${data.targeting.helicopters}`);
           }
 
         }
@@ -11022,7 +11024,7 @@
 
     function initHelicopter() {
 
-      var i, trailerConfig, oTrailer, fragment;
+      let i, trailerConfig, oTrailer, fragment;
 
       if (data.isEnemy) {
         // offset fire modulus by half, to offset sound
@@ -11048,7 +11050,7 @@
       game.dom.world.appendChild(fragment);
 
       dom.o = makeSprite({
-        className: css.className + (data.isEnemy ? ' ' + css.enemy : '')
+        className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
       });
 
       dom.oTransformSprite = makeTransformSprite();
@@ -11065,7 +11067,7 @@
         data.x = common.getLandingPadOffsetX(exports);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', data.angle);
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
       // for human player: append immediately, so initial game start / respawn animation works nicely
       updateIsOnScreen(exports);
@@ -11074,20 +11076,16 @@
 
       // attach events?
 
-      if (options.attachEvents) {
-
-        if (!isMobile) {
-          var world = document.getElementById('world');
-          // TODO: static DOM reference.
-          utils.events.add(world, 'mousedown', events.mousedown);
-          utils.events.add(world, 'dblclick', events.dblclick);
-          utils.events.add(window, 'scroll', function(e) {
-            // don't allow scrolling at all?
-            e.preventDefault();
-            return false;
-          });
-        }
-
+      if (options.attachEvents && !isMobile) {
+        const world = document.getElementById('world');
+        // TODO: static DOM reference.
+        utils.events.add(world, 'mousedown', events.mousedown);
+        utils.events.add(world, 'dblclick', events.dblclick);
+        utils.events.add(window, 'scroll', e => {
+          // don't allow scrolling at all?
+          e.preventDefault();
+          return false;
+        });
       }
 
       refreshCoords();
@@ -11228,7 +11226,7 @@
       fuelLine: null,
       subSprite: null,
       oTransformSprite: null,
-      statsBar: statsBar,
+      statsBar,
       // hackish
       statusBar: {
         infantryCount: document.getElementById('infantry-count'),
@@ -11245,7 +11243,7 @@
 
     events = {
 
-      resize: function() {
+      resize() {
         refreshCoords();
       },
 
@@ -11259,25 +11257,22 @@
         }
       },
 
-      dblclick: function(e) {
-        if (!data.ignoreMouseEvents && !data.isEnemy && data.fuel > 0) {
-          if (e.button === 0) {
-            if (isMobile) {
-              // only rotate on mobile.
-              rotate();
-              // and stop zoom, etc., from happening.
-              e.preventDefault();
-            }
-            // revert to normal setting
-            if (data.rotated) {
-              rotate();
-            }
-            // toggle auto-rotate
-            data.autoRotate = !data.autoRotate;
-          }
-        }
-      }
+      dblclick(e) {
+        if (e.button !== 0 || data.ignoreMouseEvents || data.isEnemy || !data.fuel) return;
 
+        if (isMobile) {
+          // only rotate on mobile.
+          rotate();
+          // and stop zoom, etc., from happening.
+          e.preventDefault();
+        }
+        // revert to normal setting
+        if (data.rotated) {
+          rotate();
+        }
+        // toggle auto-rotate
+        data.autoRotate = !data.autoRotate;
+      }
     };
 
     objects = {
@@ -11289,7 +11284,7 @@
       options: {
         source: exports, // initially undefined
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           if (target.data.type === 'chain') {
             // special case: chains do damage, but don't kill.
             common.hit(exports, target.data.damagePoints);
@@ -11333,25 +11328,25 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      eject: eject,
-      fire: fire,
-      isOnScreenChange: isOnScreenChange,
-      objects: objects,
-      onLandingPad: onLandingPad,
-      startRepairing: startRepairing,
-      reset: reset,
-      refreshCoords: refreshCoords,
-      rotate: rotate,
-      setBombing: setBombing,
-      setFiring: setFiring,
-      setMissileLaunching: setMissileLaunching,
-      setParachuting: setParachuting,
-      updateStatusUI: updateStatusUI,
-      updateInventoryQueue: updateInventoryQueue
+      animate,
+      data,
+      dom,
+      die,
+      eject,
+      fire,
+      isOnScreenChange,
+      objects,
+      onLandingPad,
+      startRepairing,
+      reset,
+      refreshCoords,
+      rotate,
+      setBombing,
+      setFiring,
+      setMissileLaunching,
+      setParachuting,
+      updateStatusUI,
+      updateInventoryQueue
     };
 
     initHelicopter();
