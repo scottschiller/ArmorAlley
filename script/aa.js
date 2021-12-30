@@ -8289,9 +8289,9 @@
 
   };
 
-  Cloud = function(options) {
+  Cloud = options => {
 
-    var cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
+    let cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
 
     function animate() {
 
@@ -8337,7 +8337,7 @@
         className: css.className
       });
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     }
 
@@ -8349,7 +8349,7 @@
     cloudHeight = (cloudType === 2 ? 34 : 29);
 
     css = inheritCSS({
-      className: 'cloud' + cloudType
+      className: `cloud${cloudType}`
     });
 
     data = inheritData({
@@ -8373,9 +8373,9 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom
+      animate,
+      data,
+      dom
     };
 
     initCloud();
