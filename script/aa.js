@@ -13178,9 +13178,9 @@
 
   };
 
-  TutorialStep = function(options) {
+  TutorialStep = options => {
 
-    var data, exports;
+    let data, exports;
 
     data = {
       activated: false,
@@ -13211,7 +13211,7 @@
     }
 
     exports = {
-      animate: animate
+      animate
     };
 
     return exports;
@@ -13224,7 +13224,7 @@
 
     function addStep(options) {
 
-      config.steps.push(new TutorialStep(options));
+      config.steps.push(TutorialStep(options));
 
     }
 
