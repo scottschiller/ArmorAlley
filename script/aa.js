@@ -6544,9 +6544,9 @@
 
   };
 
-  Turret = function(options) {
+  Turret = options => {
 
-    var css, data, dom, height, radarItem, collisionItems, targets, exports;
+    let css, data, dom, height, radarItem, collisionItems, targets, exports;
 
     function okToMove() {
 
@@ -6564,22 +6564,21 @@
 
       // TODO: CSS animation for this?
       // updateIsOnScreen(exports); from within animate() ?
-      if (data.isOnScreen && features.transform.prop) {
-        dom.oSubSprite.style[features.transform.prop] = 'rotate(' + angle + 'deg)';
+      if (data.isOnScreen) {
+        dom.oSubSprite.style.transform = `rotate(${angle}deg)`;
       }
 
     }
 
     function resetAngle() {
 
-      if (!features.transform.prop) return;
-      dom.oSubSprite.style[features.transform.prop] = '';
+      dom.oSubSprite.style.transform = '';
 
     }
 
     function fire() {
 
-      var deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
+      let deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
 
       target = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
 
@@ -6637,11 +6636,11 @@
 
         data.fireCount++;
 
-        game.objects.gunfire.push(new GunFire({
+        game.objects.gunfire.push(GunFire({
           parentType: data.type,
           isEnemy: data.isEnemy,
           // turret gunfire mostly hits airborne things.
-          collisionItems: collisionItems,
+          collisionItems,
           x: data.x + data.width + 2 + (deltaX * 0.05),
           y: bottomAlignedY() + 8 + (deltaY * 0.05),
           vX: (deltaX * 0.05) + deltaXGretzky,
@@ -6653,7 +6652,7 @@
 
           if (data.fireCount === 1 || data.fireCount % data.shellCasingInterval === 0) {
             // shell casing?
-            setFrameTimeout(function() {
+            setFrameTimeout(() => {
               playSound(sounds.bulletShellCasing, exports);
             }, 250 + rnd(250));
           }
@@ -6663,6 +6662,7 @@
 
       // target the enemy
       data.angle = angle;
+
       if (moveOK) {
         setAngle(angle);
       }
@@ -6678,7 +6678,7 @@
       setAngle(0);
 
       // special case: when turret is initially rendered as dead, don't explode etc.
-      if (!options || !options.silent) {
+      if (!options?.silent) {
 
         if (!data.isOnScreen) {
           if (!data.isEnemy) {
@@ -6690,11 +6690,11 @@
 
         utils.css.add(dom.o, css.exploding);
 
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           utils.css.remove(dom.o, css.exploding);
         }, 1200);
 
-        common.inertGunfireExplosion({ count: 4 + rndInt(4), exports: exports });
+        common.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
         common.smokeRing(exports, { isGroundUnit: true });
 
@@ -6716,20 +6716,18 @@
     function restore() {
 
       // restore visual, but don't re-activate gun yet
-      if (data.dead && data.energy === 0) {
+      if (!data.dead && data.energy !== 0) return;
 
-        utils.css.remove(dom.o, css.destroyed);
-        utils.css.remove(radarItem.dom.o, css.destroyed);
+      utils.css.remove(dom.o, css.destroyed);
+      utils.css.remove(radarItem.dom.o, css.destroyed);
 
-        if (data.isEnemy) {
-          game.objects.notifications.add('The enemy started rebuilding a turret 🛠️');
-        } else {
-          game.objects.notifications.add('You started rebuilding a turret 🛠️');
-        }
-
-        playSound(sounds.turretEnabled, exports);
-
+      if (data.isEnemy) {
+        game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');
+      } else {
+        game.objects.notifications.addNoRepeat('You started rebuilding a turret 🛠️');
       }
+
+      playSound(sounds.turretEnabled, exports);
 
     }
 
@@ -6741,7 +6739,7 @@
 
     function repair(engineer, complete) {
 
-      var result = false;
+      let result = false;
 
       if (data.energy < data.energyMax) {
 
@@ -6883,7 +6881,7 @@
       dom.oSubSprite = makeSubSprite();
       dom.o.appendChild(dom.oSubSprite);
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
       if (data.isEnemy) {
         utils.css.add(dom.o, css.enemy);
@@ -6936,7 +6934,7 @@
       claimPointsMax: 50,
       engineerInteracting: false,
       width: 6,
-      height: height,
+      height,
       halfWidth: 3,
       halfHeight: height / 2,
       angle: 0,
@@ -6954,14 +6952,14 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      die: die,
-      dom: dom,
-      engineerCanInteract: engineerCanInteract,
-      engineerHit: engineerHit,
-      restore: restore,
-      repair: repair
+      animate,
+      data,
+      die,
+      dom,
+      engineerCanInteract,
+      engineerHit,
+      restore,
+      repair
     };
 
     initTurret();
