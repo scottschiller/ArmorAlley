@@ -12204,9 +12204,9 @@
 
   };
 
-  Infantry = function(options) {
+  Infantry = options => {
 
-    var css, dom, data, height, radarItem, nearby, collision, exports;
+    let css, dom, data, height, radarItem, nearby, collision, exports;
 
     function fire() {
 
@@ -12216,7 +12216,7 @@
       // always do positioning work, and maybe fire
 
       // only infantry: move back and forth a bit, and flip animation, while firing - like original game
-      var offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
+      const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
       moveTo(data.x + offset, data.y);
 
@@ -12254,7 +12254,7 @@
     function moveTo(x, y) {
 
       if (common.updateXY(exports, x, y)) {
-        common.setTransformXY(exports, dom.o, x + 'px', (data.y - data.yOffset) + 'px', data.flipTransform);
+        common.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`, data.flipTransform);
       }
 
     }
@@ -12305,12 +12305,12 @@
 
       if (data.dead) return;
 
-      if (!options || !options.silent) {
+      if (!options?.silent) {
 
         playSound(sounds.genericSplat, exports);
         playSound(sounds.scream, exports);
 
-        common.inertGunfireExplosion({ exports: exports });
+        common.inertGunfireExplosion({ exports });
 
       }
 
@@ -12329,41 +12329,39 @@
 
     function animate() {
 
-      if (!data.dead) {
+      if (data.dead) return !dom.o;
 
-        if (!data.stopped) {
+      if (!data.stopped) {
 
-          if (data.roles[data.role] === TYPES.infantry) {
+        if (data.roles[data.role] === TYPES.infantry) {
 
-            // infantry walking "pace" varies slightly, similar to original game
-            moveTo(data.x + (data.vX * data.vXFrames[data.vXFrameOffset]), data.y);
+          // infantry walking "pace" varies slightly, similar to original game
+          moveTo(data.x + (data.vX * data.vXFrames[data.vXFrameOffset]), data.y);
 
-            data.vXFrameOffset++;
-            if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
+          data.vXFrameOffset++;
+          if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
 
-          } else {
+        } else {
 
-            // engineers always move one pixel at a time; let's say it's because of the backpacks.
-            moveTo(data.x + data.vX, data.y);
-
-          }
-
-        } else if (!data.noFire) {
-
-          // firing, or reclaiming/repairing?
-          // only fire (i.e., GunFire objects) when stopped
-          fire();
+          // engineers always move one pixel at a time; let's say it's because of the backpacks.
+          moveTo(data.x + data.vX, data.y);
 
         }
 
-        collisionTest(collision, exports);
+      } else if (!data.noFire) {
 
-        // start, or stop firing?
-        nearbyTest(nearby);
-
-        recycleTest(exports);
+        // firing, or reclaiming/repairing?
+        // only fire (i.e., GunFire objects) when stopped
+        fire();
 
       }
+
+      collisionTest(collision, exports);
+
+      // start, or stop firing?
+      nearbyTest(nearby);
+
+      recycleTest(exports);
 
       data.frameCount++;
 
@@ -12387,7 +12385,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', (data.y - data.yOffset) + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -12419,7 +12417,7 @@
       direction: 0,
       width: 10,
       halfWidth: 5,
-      height: height,
+      height,
       halfHeight: height / 2,
       fireModulus: 10,
       vX: (options.isEnemy ? -1 : 1),
@@ -12451,7 +12449,7 @@
         targets: undefined,
         useLookAhead: true,
         // TODO: rename to something generic?
-        hit: function(target) {
+        hit(target) {
           // engineer + turret case? reclaim or repair.
           if (data.role && target.data.type === TYPES.turret) {
 
@@ -12502,7 +12500,7 @@
 
           }
         },
-        miss: function() {
+        miss() {
           // resume moving, stop firing.
           resume();
         }
@@ -12516,7 +12514,7 @@
       options: {
         source: exports, // initially undefined
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           /**
            * bunkers and other objects infantry can interact with have an infantryHit() method.
            * if no infantryHit(), just die.
@@ -12539,12 +12537,12 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      stop: stop,
-      resume: resume
+      animate,
+      data,
+      dom,
+      die,
+      stop,
+      resume
     };
 
     if (!options.noInit) {
@@ -12555,9 +12553,9 @@
 
   };
 
-  Engineer = function(options) {
+  Engineer = options => {
 
-    var object;
+    let object;
 
     options = options || {};
 
@@ -12567,7 +12565,7 @@
     // hack: -ve lookahead offset allowing engineers to be basically atop turrets
     options.xLookAhead = (options.isEnemy ? 4 : -8);
 
-    object = new Infantry(options);
+    object = Infantry(options);
 
     // selective override: shorter delay on engineers
     object.data.inventory.orderCompleteDelay = 5;
