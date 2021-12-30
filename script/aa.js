@@ -8015,13 +8015,13 @@
 
   };
 
-  Bomb = function(options) {
+  Bomb = options => {
 
-    var css, data, dom, collision, radarItem, exports;
+    let css, data, dom, collision, radarItem, exports;
 
     function moveTo(x, y, rotateAngle, forceUpdate) {
 
-      var deltaX, deltaY, rad;
+      let deltaX, deltaY, rad;
       
       deltaX = 0;
       deltaY = 0;
@@ -8036,7 +8036,7 @@
 
       if (common.updateXY(exports, x, y) || forceUpdate) {
         rad = Math.atan2(deltaY, deltaX);
-        common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px', 'rotate(' + (rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)) + 'deg');
+        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
       }
 
     }
@@ -8045,7 +8045,7 @@
 
       // aieee!
 
-      var className, defaultAngle, forceUpdate;
+      let className, defaultAngle, forceUpdate;
 
       if (data.dead) return;
 
@@ -8102,7 +8102,7 @@
           applyRandomRotation(dom.o);
         }
 
-        data.deadTimer = setFrameTimeout(function() {
+        data.deadTimer = setFrameTimeout(() => {
           removeNodes(dom);
           data.deadTimer = null;
         }, 600);
@@ -8110,8 +8110,8 @@
 
       // TODO: move into something common?
       if (data.isOnScreen) {
-        for (var i=0; i<3; i++) {
-          game.objects.smoke.push(new Smoke({
+        for (let i=0; i<3; i++) {
+          game.objects.smoke.push(Smoke({
             x: data.x + 6 + (rndInt(6) * 0.33 * plusMinus()),
             y: data.y + 12,
             vX: (rnd(4) * plusMinus()),
@@ -8133,8 +8133,7 @@
 
     function bombHitTarget(target) {
 
-      var isSpark,
-        damagePoints;
+      let isSpark, damagePoints;
 
       // assume default
       damagePoints = data.damagePoints;
@@ -8150,15 +8149,15 @@
       } else {
 
         // certain targets should get a spark vs. a large explosion
-        isSpark = target.data.type && target.data.type.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret|smartMissile/i);
+        isSpark = target.data.type?.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret|smartMissile/i);
 
         die({
           type: target.data.type,
           spark: isSpark,
           bottomAlign: !isSpark && (!target.data.type || target.data.type === TYPES.balloon || target.data.type === TYPES.infantry),
           // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
-          extraY: (target.data.type && target.data.type.match(/tank/i) ? 3 + rndInt(3) : 0),
-          target: target
+          extraY: (target.data.type?.match(/tank/i) ? 3 + rndInt(3) : 0),
+          target
         });
 
       }
@@ -8193,26 +8192,26 @@
 
     function animate() {
 
-      if (!data.dead) {
+      if (data.dead) return (!data.deadTimer && !dom.o);
 
-        data.gravity *= 1.1;
+      data.gravity *= 1.1;
 
-        moveTo(data.x + data.vX, data.y + Math.min(data.vY + data.gravity, data.vYMax));
+      moveTo(data.x + data.vX, data.y + Math.min(data.vY + data.gravity, data.vYMax));
 
-        // hit bottom?
-        if (data.y - data.height > game.objects.view.data.battleField.height) {
-          die({
-            bottomAlign: true
-          });
-        }
-
-        collisionTest(collision, exports);
+      // hit bottom?
+      if (data.y - data.height > game.objects.view.data.battleField.height) {
+        die({
+          bottomAlign: true
+        });
+      }
 
         // bombs are animated by their parent - e.g., helicopters,
         // and not the main game loop. so, on-screen status is checked manually here.
         updateIsOnScreen(exports);
 
-      }
+      // bombs are animated by their parent - e.g., helicopters,
+      // and not the main game loop. so, on-screen status is checked manually here.
+      updateIsOnScreen(exports);
 
       // notify caller if dead, and node has been removed.
       return (data.dead && !data.deadTimer && !dom.o);
@@ -8230,7 +8229,7 @@
 
       dom.o.appendChild(dom.oSubSprite);
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       // TODO: don't create radar items for bombs from enemy helicopter when cloaked
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -8270,7 +8269,7 @@
       options: {
         source: exports, // initially undefined
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           bombHitTarget(target);
         }
       },
@@ -8278,10 +8277,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      die: die,
-      dom: dom
+      animate,
+      data,
+      die,
+      dom
     };
 
     initBomb();
@@ -10175,7 +10174,7 @@
 
         if (data.bombs > 0) {
 
-          objects.bombs.push(new Bomb({
+          objects.bombs.push(Bomb({
             parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
