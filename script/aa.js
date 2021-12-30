@@ -4433,7 +4433,7 @@
 
   function RadarItem(options) {
 
-    var css, data, dom, oParent, exports;
+    let css, data, dom, oParent, exports;
 
     function dieComplete() {
 
@@ -4445,58 +4445,61 @@
 
     function die(dieOptions) {
 
-      if (!data.dead) {
+      if (data.dead) return;
 
-        if (!dieOptions || !dieOptions.silent) {
-          utils.css.add(dom.o, css.dying);
-        }
+      if (!dieOptions?.silent) {
+        utils.css.add(dom.o, css.dying);
+      }
 
-        stats.destroy(exports);
+      stats.destroy(exports);
 
-        data.dead = true;
+      data.dead = true;
 
-        if (!options.canRespawn) {
+      if (!options.canRespawn) {
 
-          // permanent removal
-          if (dieOptions && dieOptions.silent) {
+        // permanent removal
+        if (dieOptions?.silent) {
 
-            // bye bye! (next scheduled frame)
-            setFrameTimeout(dieComplete, 1);
-
-          } else {
-
-            setFrameTimeout(dieComplete, 2000);
-
-          }
+          // bye bye! (next scheduled frame)
+          setFrameTimeout(dieComplete, 1);
 
         } else {
 
-          // balloon, etc.
-          setFrameTimeout(function() {
-            // only do this if the parent (balloon) is still dead.
-            // it may have respawned almost immediately by passing infantry.
-            if (oParent && oParent.data && !oParent.data.dead) return;
-            utils.css.add(dom.o, css.dead);
-          }, 1000);
+          setFrameTimeout(dieComplete, 2000);
 
         }
+
+      } else {
+
+        // balloon, etc.
+        setFrameTimeout(() => {
+          // only do this if the parent (balloon) is still dead.
+          // it may have respawned almost immediately by passing infantry.
+          if (!oParent?.data?.dead) return;
+          utils.css.add(dom.o, css.dead);
+        }, 1000);
 
       }
 
     }
 
     function reset() {
-      if (data.dead) {
-        utils.css.remove(dom.o, css.dying);
-        utils.css.remove(dom.o, css.dead);
-        data.dead = false;
-        // reset is the same as creating a new object.
-        stats.create(exports);
-      }
+
+      if (!data.dead) return;
+
+      utils.css.remove(dom.o, css.dying);
+      utils.css.remove(dom.o, css.dead);
+      data.dead = false;
+
+      // reset is the same as creating a new object.
+      stats.create(exports);
+
     }
 
     function initRadarItem() {
-      utils.css.add(dom.o, css.radarItem + ' ' + options.className);
+      // string -> array as params
+      const classNames = options.className.split(' ');
+      utils.css.add(dom.o, css.radarItem, ...classNames);
     }
 
     css = {
@@ -4521,11 +4524,11 @@
     initRadarItem();
 
     exports = {
-      data: data,
-      dom: dom,
-      die: die,
-      oParent: oParent,
-      reset: reset
+      data,
+      dom,
+      die,
+      oParent,
+      reset
     };
 
     return exports;
