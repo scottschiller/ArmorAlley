@@ -656,13 +656,13 @@
 
   utils = {
 
-    array: (function() {
+    array: (() => {
 
       function compare(property) {
 
-        var result;
+        let result;
 
-        return function(a, b) {
+        return (a, b) => {
 
           if (a[property] < b[property]) {
             result = -1;
@@ -678,12 +678,12 @@
 
       function includes(array, item) {
 
-        if (!array || !array.length) return false;
+        if (!array?.length) return false;
 
         if (array.includes) return array.includes(item);
 
         // legacy
-        for (var i = 0, j = array.length; i < j; i++) {
+        for (let i = 0, j = array.length; i < j; i++) {
           if (array[i] === item) return true;
         }
 
@@ -696,7 +696,7 @@
 
         // Fisher-Yates shuffle algo
 
-        var i, j, temp;
+        let i, j, temp;
 
         for (i = array.length - 1; i > 0; i--) {
           j = Math.floor(rnd(i + 1));
@@ -710,133 +710,52 @@
       }
 
       return {
-        compare: compare,
-        includes: includes,
-        shuffle: shuffle
+        compare,
+        includes,
+        shuffle
       };
 
-    }()),
+    })(),
 
-    css: (function() {
+    css: {
 
-      function hasClass(o, cStr) {
+      has: (o, cStr) => {
 
         // modern
-        if (o && o.classList) {
+        if (o?.classList) {
           return o.classList.contains(cStr);
         }
         // legacy
-        return (o.className !== undefined ? new RegExp('(^|\\s)' + cStr + '(\\s|$)').test(o.className) : false);
+        return o.className !== undefined ? new RegExp(`(^|\\s)${cStr}(\\s|$)`).test(o.className) : false;
+
+      },
+
+      add: (o, ...toAdd) => o?.classList?.add(...toAdd),
+
+      remove: (o, ...toRemove) => o?.classList?.remove(toRemove),
+
+      swap: (o, c1, c2) => {
+
+        o?.classList?.remove(c1);
+        o?.classList?.add(c2);
 
       }
 
-      function addClass(o, cStr) {
+    },
 
-        if (o && o.classList) {
-          o.classList.add(cStr);
-          return;
-        }
+    events: {
 
-        if (!o || !cStr || hasClass(o, cStr)) return;
-        o.className = (o.className ? o.className + ' ' : '') + cStr;
+      add: (o, evtName, evtHandler) => o.addEventListener(evtName, evtHandler, false),
 
-      }
+      remove: (o, evtName, evtHandler) => o.removeEventListener(evtName, evtHandler, false),
 
-      function removeClass(o, cStr) {
+      preventDefault: e => e.preventDefault()
 
-        if (o && o.classList) {
-          o.classList.remove(cStr);
-          return;
-        }
+    },
 
-        if (!o || !cStr || !hasClass(o, cStr)) return;
-        o.className = o.className.replace(new RegExp('( ' + cStr + ')|(' + cStr + ')', 'g'), '');
+    storage: (() => {
 
-      }
-
-      function swapClass(o, cStr1, cStr2) {
-
-        if (o && o.classList) {
-          o.classList.remove(cStr1);
-          o.classList.add(cStr2);
-          return;
-        }
-
-        var tmpClass = {
-          className: o.className
-        };
-
-        removeClass(tmpClass, cStr1);
-        addClass(tmpClass, cStr2);
-
-        o.className = tmpClass.className;
-
-      }
-
-      function toggleClass(o, cStr) {
-
-        (hasClass(o, cStr) ? removeClass : addClass)(o, cStr);
-
-      }
-
-      return {
-        has: hasClass,
-        add: function(o, className) {
-          // accept space-delimited classNames, but each item
-          // needs to be added via o.classNames.add() one at a time.
-          if (!className) return;
-          var classNames = className.split(' ');
-          for (var i = 0, j = classNames.length; i < j; i++) {
-            addClass(o, classNames[i]);
-          }
-        },
-        remove: removeClass,
-        swap: swapClass,
-        toggle: toggleClass
-      };
-
-    }()),
-
-    events: (function() {
-
-      var add, remove, preventDefault;
-
-      add = (window.addEventListener !== undefined ? function(o, evtName, evtHandler) {
-        return o.addEventListener(evtName, evtHandler, false);
-      } : function(o, evtName, evtHandler) {
-        o.attachEvent('on' + evtName, evtHandler);
-      });
-
-      remove = (window.removeEventListener !== undefined ? function(o, evtName, evtHandler) {
-        return o.removeEventListener(evtName, evtHandler, false);
-      } : function(o, evtName, evtHandler) {
-        return o.detachEvent('on' + evtName, evtHandler);
-      });
-
-      preventDefault = function(e) {
-        if (e.preventDefault) {
-          e.preventDefault();
-        } else {
-          e.returnValue = false;
-          e.cancelBubble = true;
-        }
-      };
-
-      return {
-        add: add,
-        preventDefault: preventDefault,
-        remove: remove
-      };
-
-    }()),
-
-    storage: (function() {
-
-      var exports,
-        data,
-        localStorage;
-
-      data = {};
+      let data = {}, localStorage;
 
       // try ... catch because even referencing localStorage can cause a security exception.
       // this handles cases like incognito windows, privacy stuff, and "cookies disabled" in Firefox.
@@ -901,15 +820,13 @@
         localStorage = null;
       }
 
-      exports = {
-        get: get,
-        set: set,
-        remove: remove
+      return {
+        get,
+        set,
+        remove
       };
 
-      return exports;
-
-    }())
+    })()
 
 
   };
@@ -996,7 +913,7 @@
 
   function stopEvent(e) {
 
-    var evt = e || window.event;
+    const evt = e || window.event;
 
     if (evt.preventDefault !== undefined) {
       evt.preventDefault();
@@ -1007,116 +924,6 @@
     return false;
 
   }
-
-  var testDiv = document.createElement('div');
-
-  features = (function() {
-
-    var _getAnimationFrame = !!window.requestAnimationFrame;
-
-    if (_getAnimationFrame) {
-      if (winloc.match(/noraf=1/i)) {
-        _getAnimationFrame = null;
-        console.log('preferring setInterval for game loop');
-      } else {
-        console.log('preferring requestAnimationFrame for game loop');
-      }
-    } else {
-      // IE 9? Really?
-      _getAnimationFrame = function(callback) {
-        var args = Array.prototype.slice.call(arguments).splice(1);
-        window.setTimeout(function() {
-          callback.apply(this, args);
-        }, 1);
-      };
-    }
-
-    var transform, styles, prop;
-
-    function has(property) {
-
-      // test for feature support
-      var result = testDiv.style[property];
-      return (result !== undefined ? property : null);
-
-    }
-
-    // note local scope.
-    var localFeatures = {
-
-      transform: {
-        ie: has('-ms-transform'),
-        moz: has('MozTransform'),
-        opera: has('OTransform'),
-        webkit: has('webkitTransform'),
-        w3: has('transform'),
-        prop: null // the normalized property value
-      },
-
-      rotate: {
-        has3D: false,
-        prop: null
-      },
-
-      getAnimationFrame: _getAnimationFrame
-
-    };
-
-    localFeatures.transform.prop = (
-      localFeatures.transform.w3 ||
-      localFeatures.transform.moz ||
-      localFeatures.transform.webkit ||
-      localFeatures.transform.ie ||
-      localFeatures.transform.opera
-    );
-
-    function attempt(style) {
-
-      try {
-        testDiv.style[transform] = style;
-      } catch (e) {
-        // that *definitely* didn't work.
-        return false;
-      }
-      // if we can read back the style, it should be cool.
-      return !!testDiv.style[transform];
-
-    }
-
-    if (localFeatures.transform.prop) {
-
-      // try to derive the rotate/3D support.
-      transform = localFeatures.transform.prop;
-      styles = {
-        css_2d: 'rotate(0deg)',
-        css_3d: 'rotate3d(0,0,0,0deg)'
-      };
-
-      if (attempt(styles.css_3d)) {
-        localFeatures.rotate.has3D = true;
-        prop = 'rotate3d';
-      } else if (attempt(styles.css_2d)) {
-        prop = 'rotate';
-      }
-
-      localFeatures.rotate.prop = prop;
-
-    }
-
-    if (localFeatures.transform.prop) {
-      if (noTransform) {
-        console.log('transform support present, disabling via URL parameter');
-        localFeatures.transform.prop = null;
-      } else {
-        console.log('using transforms for parallax, rotation and some positioning.');
-      }
-    }
-
-    testDiv = null;
-
-    return localFeatures;
-
-  }());
 
   function applyRandomRotation(node) {
     if (!node || noTransform) return;
