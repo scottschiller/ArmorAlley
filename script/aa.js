@@ -13827,13 +13827,24 @@
 
   };
 
-  Notifications = function() {
-    var css, data, dom, exports;
+  Notifications = () => {
+
+    let css, data, dom, exports;
+
+    function addNoRepeat(text, options = {}) {
+
+      options = {
+        ...options,
+        noRepeat: true
+      };
+
+      return add(text, options);
+    }
 
     function add(text, options) {
       /* options = { onRender, onComplete, type } */
 
-      var i, j, item, isDuplicate, replacementItem, renderedText;
+      let i, j, item, isDuplicate, replacementItem, renderedText;
 
       options = options || {};
 
@@ -13862,7 +13873,7 @@
           // provided text, or, custom render function
           // if options.onRender(), that function gets called to do the work.
           // otherwise, plain text - and if options.onRepeat, don't show multiplier.
-          item.node.innerHTML = '<span>' + (options.onRender ? renderedText : ( item.text + (options.noRepeat ? '' : ' × ' + item.count))) + '</span>';
+          item.node.innerHTML = `<span>${options.onRender ? renderedText : ( item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
 
           // clear, start new timer
           if (item.timer) {
@@ -13882,7 +13893,7 @@
       if (replacementItem) return replacementItem;
 
       item = {
-        text: text,
+        text,
         count: 1,
         node: null,
         delay: calcDelay(text),
@@ -13895,11 +13906,13 @@
       data.items.push(item);
 
       showItem(item);
+
     }
 
     function calcDelay(text) {
+
       // number of words / letters? let's say 240 WPM, 4 words per second as an optimum.
-      var delay, defaultDelay, delayPerWord, maxDelay;
+      let delay, defaultDelay, delayPerWord, maxDelay;
 
       defaultDelay = 2000;
       delayPerWord = 1000;
@@ -13915,10 +13928,12 @@
       delay = Math.min(text.replace('/<(.|\n)*?>/', '').split(' ').length * delayPerWord, maxDelay);
 
       return delay;
+
     }
 
     function showItem(item) {
-      var oToast;
+
+      let oToast;
 
       // show, and queue the next check.
       oToast = document.createElement('div');
@@ -13926,12 +13941,12 @@
 
       if (item.doubleHeight) utils.css.add(oToast, css.doubleHeight);
 
-      oToast.innerHTML = '<span>' + (item.onRender ? item.onRender(item.text) : item.text) + '</span>';
+      oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
 
       dom.oToasts.appendChild(oToast);
 
       // delay required for transition to work
-      setFrameTimeout(function() {
+      setFrameTimeout(() => {
         utils.css.add(oToast, css.toastActive);
       }, 96);
 
@@ -13943,10 +13958,12 @@
         data.isDisplaying = true;
         item.timer = setFrameTimeout(displayItemComplete, item.delay);
       }
+
     }
 
     function displayItemComplete() {
-      var item;
+
+      let item;
 
       if (!data.items.length) {
         data.isDisplaying = false;
@@ -13964,9 +13981,9 @@
       }
 
       // collapse height, and then disappear.
-      setFrameTimeout(function() {
+      setFrameTimeout(() => {
         utils.css.add(item.node, css.toastExpired);
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           item.node.parentNode.removeChild(item.node);
         }, 500);
       }, 500);
@@ -13979,6 +13996,7 @@
         // queue its removal.
         setFrameTimeout(displayItemComplete, data.items[0].delay);
       }
+
     }
 
     function initDOM() {
@@ -14005,7 +14023,8 @@
     initDOM();
 
     exports = {
-      add: add
+      add,
+      addNoRepeat
     };
 
     return exports;
