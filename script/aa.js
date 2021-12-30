@@ -12574,9 +12574,9 @@
 
   };
 
-  LandingPad = function(options) {
+  LandingPad = options => {
 
-    var css, dom, data, collision, exports;
+    let css, dom, data, collision, exports;
 
     function animate() {
 
@@ -12590,12 +12590,12 @@
     }
 
     function setWelcomeMessage() {
-      var eat, drink;
+      let eat, drink;
 
       eat = data.edible[rndInt(data.edible.length)];
       drink = data.drinkable[rndInt(data.drinkable.length)];
 
-      data.welcomeMessage = '-* 🚁 Welcome to ' + data.name + ' ⛽🛠️ *-<br>Today\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat);
+      data.welcomeMessage = `-* 🚁 Welcome to ${data.name}${' ⛽🛠️ *-<br>Today\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat)}`;
     }
 
     function initLandingPad() {
@@ -12607,7 +12607,7 @@
       dom.oTransformSprite = makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       setWelcomeMessage();
     }
@@ -12620,7 +12620,7 @@
 
     data = inheritData({
       type: 'landing-pad',
-      name: options && options.name,
+      name: options?.name,
       isNeutral: true,
       energy: 2,
       width: 81,
@@ -12639,7 +12639,7 @@
       options: {
         source: exports,
         targets: undefined,
-        hit: function(target) {
+        hit(target) {
           if (!target.onLandingPad) return;
           /**
            * slightly hackish: landing pad shape doesn't take full height of bounding box.
@@ -12664,10 +12664,10 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      isOnScreenChange: isOnScreenChange
+      animate,
+      data,
+      dom,
+      isOnScreenChange
     };
 
     initLandingPad();
