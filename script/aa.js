@@ -2150,7 +2150,7 @@
     if (userDisabledSound) return;
 
     // common sound wrapper, options for positioning and muting etc.
-    var soundObject;
+    let soundObject;
 
     // multiple sound case
     if (soundReference instanceof Array) {
@@ -2182,19 +2182,19 @@
 
     /**
      * hackish: create and destroy SMSound instances once they finish playing,
-     * unless they have an `onfinish()` provided. this is to avoid hitting a
+     * unless they have an `onfinish()` provided. this is to avoid hitting
      * a very reasonable Chrome restriction on the maximum number of active
      * audio decoders, as they're relatively $$$ and browsers may now block.
      * https://bugs.chromium.org/p/chromium/issues/detail?id=1144736#c27
      */
     if (soundObject && !soundObject.sound) {
       // make it happen! if not needed, throw away when finished.
-      soundObject.options.id = 's' + soundIDs + '_' + soundObject.options.url;
+      soundObject.options.id = `s${soundIDs}_${soundObject.options.url}`;
       soundIDs++;
 
       if (!soundObject.options.onfinish) {
 
-        soundObject.onAASoundEnd = function() {
+        soundObject.onAASoundEnd = () => {
           if (!soundObject.sound) return;
           soundManager.destroySound(soundObject.sound.id);
           soundObject.sound = null;
@@ -2213,12 +2213,12 @@
 
   var soundIDs = 0;
 
-  var soundsToPlay = [];
+  const soundsToPlay = [];
 
   function playQueuedSounds() {
     // empty queue
-    for (var i=0, j=soundsToPlay.length; i<j; i++) {
-      if (soundsToPlay[i] && soundsToPlay[i].soundObject && soundsToPlay[i].soundObject.sound) {
+    for (let i = 0, j = soundsToPlay.length; i < j; i++) {
+      if (soundsToPlay[i]?.soundObject?.sound) {
         soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
 
         // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
@@ -2236,17 +2236,16 @@
     // e.g., things far away are quiet, things close-up are loud
     if (!obj1 || !obj2) return 100;
 
-    var delta = Math.abs(obj1.data.x - obj2.data.x);
+    const delta = Math.abs(obj1.data.x - obj2.data.x);
 
     // volume range: 5-30%?
     return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
   }
 
   function playSound(soundReference, target, soundOptions) {
-
-    var soundObject = getSound(soundReference),
-      localOptions,
-      onScreen;
+    const soundObject = getSound(soundReference);
+    let localOptions;
+    let onScreen;
 
     // just in case
     if (!soundObject || !soundObject.sound) return null;
@@ -2256,7 +2255,7 @@
     // TODO: revisit on-screen logic, drop the function call
     onScreen = (!target || isOnScreen(target));
     // onScreen = (target && target.data && target.data.isOnScreen);
-    
+
     // old: determine volume based on on/off-screen status
     // localOptions = soundObject.soundOptions[onScreen ? 'onScreen' : 'offScreen'];
 
@@ -2273,21 +2272,20 @@
     if (soundOptions) {
       localOptions = mixin(localOptions, soundOptions);
     }
-      
+
     // 01/2021: push sound calls off to next frame to be played in a batch,
     // trade-off of slight async vs. blocking(?) current frame
     soundsToPlay.push({
-      soundObject: soundObject,
-      localOptions: localOptions
+      soundObject,
+      localOptions
     });
 
     return soundObject.sound;
-
   }
 
   function playSoundWithDelay() {
 
-    var args, delay;
+    let args, delay;
 
     args = Array.prototype.slice.call(arguments);
 
@@ -2308,7 +2306,7 @@
 
   function stopSound(sound) {
 
-    var soundObject = sound && getSound(sound);
+    const soundObject = sound && getSound(sound);
 
     if (!soundObject) return;
 
@@ -2321,7 +2319,7 @@
 
   function playRepairingWrench(isRepairing, exports) {
 
-    var args = arguments;
+    const args = arguments;
 
     if (!isRepairing()) return;
 
@@ -2332,7 +2330,7 @@
       exports.repairingWrenchTimer = true;
 
       playSound(sounds.repairingWrench, exports, {
-        onfinish: function() {
+        onfinish() {
           exports.repairingWrenchTimer = setFrameTimeout(function() {
             exports.repairingWrenchTimer = null;
             if (isRepairing()) {
@@ -2348,7 +2346,7 @@
 
   function playImpactWrench(isRepairing, exports) {
 
-    var args = arguments;
+    const args = arguments;
 
     if (!isRepairing()) return;
 
@@ -2359,7 +2357,7 @@
       exports.impactWrenchTimer = true;
 
       playSound(sounds.impactWrench, exports, {
-        onfinish: function() {
+        onfinish() {
           exports.impactWrenchTimer = setFrameTimeout(function() {
             exports.impactWrenchTimer = null;
             if (isRepairing()) {
@@ -2375,11 +2373,11 @@
 
   function playTinkerWrench(isRepairing, exports) {
 
-    var args = arguments;
+    const args = arguments;
 
     playSound(sounds.tinkerWrench, exports, {
       position: rndInt(8000),
-      onfinish: function() {
+      onfinish() {
         if (isRepairing()) {
           playTinkerWrench.apply(this, args);
         }
@@ -2438,9 +2436,9 @@
     // SM2 will determine the appropriate format to play, based on client support.
     // URL pattern -> array of .ogg and .mp3 URLs
     return [
-      'audio/mp3/' + file + '.mp3',
-      'audio/ogg/' + file + '.ogg',
-      'audio/wav/' + file + '.wav'
+      `audio/mp3/${file}.mp3`,
+      `audio/ogg/${file}.ogg`,
+      `audio/wav/${file}.wav`
     ];
 
   }
@@ -2450,7 +2448,7 @@
     return {
       // sound object is now deferred until play(), which itself is now queued.
       sound: null,
-      options: options,
+      options,
       soundOptions: {
         onScreen: {
           volume: options.volume || DEFAULT_VOLUME
@@ -2464,9 +2462,9 @@
 
   }
 
-  soundManager.onready(function() {
+  soundManager.onready(() => {
 
-    var i;
+    let i;
 
     sounds.machineGunFire = [];
 
