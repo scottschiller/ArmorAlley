@@ -1618,7 +1618,7 @@
       return false;
     }
 
-    var xLookAhead, foundHit;
+    let xLookAhead, foundHit;
 
     // is this a "lookahead" (nearby) case? buffer the x value, if so. Armed vehicles use this.
 
@@ -1640,7 +1640,7 @@
 
     }
 
-    for (var i = 0, j = options.targets.length; i < j; i++) {
+    for (let i = 0, j = options.targets.length; i < j; i++) {
 
       // non-standard formatting, lengthy logic check here...
       if (
@@ -1677,14 +1677,6 @@
           || (options.source.data.isNeutral || options.targets[i].data.isNeutral)
 
         )
-
-        // ignore if both objects are hostile, i.e., free-floating balloons (or missiles)
-        /*
-        && (
-          (!options.source.data.hostile || !options.targets[i].data.hostile)
-          // || (options.source.data.hostile !== options.targets[i].data.hostile) // TODO: safe to remove?
-        )
-        */
 
       ) {
 
@@ -1724,7 +1716,7 @@
       return;
     }
 
-    var i, j;
+    let i, j;
 
     // hack: first-time run fix, as exports is initially undefined
     if (!collision.options.source) {
@@ -1733,8 +1725,6 @@
 
     // loop through relevant game object arrays
     for (i = 0, j = collision.items.length; i < j; i++) {
-
-      // eliminated mixin() here, perhaps reduce object creation / GC?
 
       // assign current targets...
       collision.options.targets = game.objects[collision.items[i]];
@@ -1760,7 +1750,7 @@
 
     // given a source object (the helicopter) and a target, return the relevant vX / vY delta to get progressively closer to the target.
 
-    var deltaX, deltaY, result;
+    let deltaX, deltaY;
 
     deltaX = (target.data.x + target.data.halfWidth) - (source.data.x + source.data.halfWidth);
 
@@ -1777,12 +1767,10 @@
 
     }
 
-    result = {
-      deltaX: deltaX,
-      deltaY: deltaY
+    return {
+      deltaX,
+      deltaY
     };
-
-    return result;
 
   }
 
@@ -1790,7 +1778,7 @@
 
     // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-    var i, j, k, l, itemArray, items, localObjects, targetData, preferGround, isInFront, useInFront, totalDistance;
+    let i, j, k, l, itemArray, items, localObjects, targetData, preferGround, isInFront, useInFront, totalDistance;
 
     options = options || {};
 
@@ -1838,7 +1826,7 @@
 
                 localObjects.push({
                   obj: itemArray[k],
-                  totalDistance: totalDistance
+                  totalDistance
                 });
 
               }
@@ -1868,7 +1856,7 @@
     // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen),
     // alive, either enemy or friendly (depending on option), not cloaked, and within range.
 
-    var i, j, items, result;
+    let i, j, items, result;
 
     options = options || {};
 
@@ -1915,7 +1903,7 @@
 
   function nearbyTest(nearby) {
 
-    var i, j, foundHit;
+    let i, j, foundHit;
 
     // loop through relevant game object arrays
     // TODO: revisit for object creation / garbage collection improvements
@@ -1944,7 +1932,7 @@
 
   function enemyNearby(data, targets, triggerDistance) {
 
-    var i, j, k, l, targetData, results;
+    let i, j, k, l, targetData, results;
 
     results = [];
 
@@ -1960,6 +1948,8 @@
         if (targetData.isEnemy !== data.isEnemy && !targetData.dead) {
           if (Math.abs(targetData.x - data.x) < triggerDistance) {
             results.push(game.objects[targets[i]][k]);
+            // 12/2021: take first result, and exit.
+            return results;
           }
         }
 
@@ -1973,7 +1963,7 @@
 
   function enemyHelicopterNearby(data, triggerDistance) {
 
-    var i, j, result;
+    let i, j, result;
 
     // by default
     triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
@@ -2001,7 +1991,7 @@
 
     // for special collision check case with bunkers
 
-    var door = {
+    const door = {
       width: 5,
       height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
       halfWidth: 2.5
@@ -2020,7 +2010,7 @@
   function recycleTest(obj) {
 
     // did a unit reach the other side? destroy the unit, and reward the player with credits.
-    var doRecycle, isEnemy, costObj, refund, type;
+    let doRecycle, isEnemy, costObj, refund, type;
 
     isEnemy = obj.data.isEnemy;
 
@@ -2033,49 +2023,47 @@
       doRecycle = obj.data.x >= worldWidth;
     }
 
-    if (doRecycle) {
+    if (!doRecycle) return;
 
-      obj.data.isRecycling = true;
+    obj.data.isRecycling = true;
 
-      // animate down, back into the depths from whence it came
-      utils.css.remove(obj.dom.o, 'ordering');
-      utils.css.add(obj.dom.o, 'recycling');
+    // animate down, back into the depths from whence it came
+    utils.css.remove(obj.dom.o, 'ordering');
+    utils.css.add(obj.dom.o, 'recycling');
 
-      // ensure 'building' is set, as well. "pre-existing" game units will not have this.
-      setFrameTimeout(function() {
-        utils.css.add(obj.dom.o, 'building');
-      }, 16);
+    // ensure 'building' is set, as well. "pre-existing" game units will not have this.
+    setFrameTimeout(() => {
+      utils.css.add(obj.dom.o, 'building');
+    }, 16);
 
-      setFrameTimeout(function() {
-        // die silently, and go away.
-        obj.die({ silent: true});
+    setFrameTimeout(() => {
+      // die silently, and go away.
+      obj.die({ silent: true});
 
-        // tank, infantry etc., or special-case: engineer.
-        type = obj.data.role ? obj.data.roles[obj.data.role] : obj.data.type;
+      // tank, infantry etc., or special-case: engineer.
+      type = obj.data.role ? obj.data.roles[obj.data.role] : obj.data.type;
 
-        // special case: infantry may have been dropped by player, or when helicopter exploded.
-        // exclude those from being "refunded" at all, given player was involved in their move.
-        // minor: players could collect and drop infantry near enemy base, and collect refunds.
-        if (type === TYPES.infantry && !obj.data.unassisted) return;
+      // special case: infantry may have been dropped by player, or when helicopter exploded.
+      // exclude those from being "refunded" at all, given player was involved in their move.
+      // minor: players could collect and drop infantry near enemy base, and collect refunds.
+      if (type === TYPES.infantry && !obj.data.unassisted) return;
 
-        costObj = COSTS[TYPES[type]];
+      costObj = COSTS[TYPES[type]];
 
-        // reward player for their good work. 200% return on "per-item" cost.
-        // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
-        refund = (costObj.funds / (costObj.count || 1) * 2);
+      // reward player for their good work. 200% return on "per-item" cost.
+      // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
+      refund = (costObj.funds / (costObj.count || 1) * 2);
 
-        game.objects.endBunkers[isEnemy ? 1 : 0].data.funds += refund;
-        
-        if (!isEnemy) {
-          // notify player that a unit has been recycled?
-          game.objects.notifications.add('+' + refund + ' 💰: recycled ' + type + ' ♻️');
-          game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
-          game.objects.view.updateFundsUI();
-        }
+      game.objects.endBunkers[isEnemy ? 1 : 0].data.funds += refund;
+      
+      if (!isEnemy) {
+        // notify player that a unit has been recycled?
+        game.objects.notifications.add(`+${refund} 💰: recycled ${type} ♻️`);
+        game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
+        game.objects.view.updateFundsUI();
+      }
 
-      }, 2000);
-
-    }
+    }, 2000);
 
   }
 
