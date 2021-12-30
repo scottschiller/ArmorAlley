@@ -1,4 +1,4 @@
-/*global soundManager */
+/* global soundManager */
 (function armorAlley(window) {
 
   'use strict';
