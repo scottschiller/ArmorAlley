@@ -884,7 +884,7 @@
   function removeNodes(dom) {
 
     // remove all nodes in a structure
-    var item;
+    let item;
 
     for (item in dom) {
       if (Object.prototype.hasOwnProperty.call(dom, item) && dom[item]) {
@@ -931,18 +931,14 @@
      * Here be dragons: this should only be applied once, given concatenation,
      * and might cause bugs and/or performance problems if it isn't. :D
      */
-    node.style.transform += ' rotate(' + rnd(360) + 'deg)';
+    node.style.transform += ` rotate(${rnd(360)}deg)`;
   }
 
   function updateEnergy(object) {
 
     if (!showHealth) return;
     
-    var node,
-      didCreate,
-      energy,
-      energyLineScale,
-      DEFAULT_ENERGY_SCALE;
+    let node, didCreate, energy, energyLineScale, DEFAULT_ENERGY_SCALE;
 
     DEFAULT_ENERGY_SCALE = 1;
 
@@ -989,11 +985,11 @@
     }
 
     // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
-    node.style.width = (energy * energyLineScale) + '%';
+    node.style.width = `${energy * energyLineScale}%`;
     
     // only center if full-width
     if (energyLineScale === DEFAULT_ENERGY_SCALE) {
-      node.style.left = ((100 - energy) / 2) + '%';
+      node.style.left = `${(100 - energy) / 2}%`;
     }
 
     // hide in a moment, clearing any existing timers.
@@ -1006,12 +1002,12 @@
     }
 
     // fade out, and eventually remove
-    object.data.energyTimerFade = setFrameTimeout(function() {
+    object.data.energyTimerFade = setFrameTimeout(() => {
       if (node) node.style.opacity = 0;
 
       // fade should be completed within 250 msec
-      object.data.energyTimerRemove = setFrameTimeout(function() {
-        if (node && node.parentNode) node.parentNode.removeChild(node);
+      object.data.energyTimerRemove = setFrameTimeout(() => {
+        if (node?.parentNode) node.parentNode.removeChild(node);
         object.dom.oEnergy = null;
         node = null;
       }, 250);
@@ -1043,7 +1039,7 @@
 
     updateXY(exports, x, y) {
 
-      var didUpdate;
+      let didUpdate;
 
       if (x !== undefined && exports.data.x !== x) {
         exports.data.x = x;
@@ -1058,16 +1054,16 @@
       return didUpdate;
     },
 
-    moveTo: function(exports, x, y) {
+    moveTo(exports, x, y) {
 
       // only set transform if data changed
       if (common.updateXY(exports, x, y)) {
-        common.setTransformXY(exports, exports.dom.o, exports.data.x + 'px', exports.data.y + 'px');
+        common.setTransformXY(exports, exports.dom.o, `${exports.data.x}px`, `${exports.data.y}px`);
       }
      
     },
 
-    setTransformXY: function(exports, o, x, y, extraTransforms) {
+    setTransformXY(exports, o, x, y, extraTransforms) {
 
       /**
        * given an object (and its on-screen/off-screen status), apply transform to its live DOM node -
@@ -1075,66 +1071,56 @@
        * positioning can be moderately complex, and is calculated with each animate() / moveTo() call.
        */
 
-      var transformString;
+      let transformString;
 
       if (!o) return;
 
-      if (features.transform.prop || !noTransform) {
+      // additional transform arguments, e.g., rotate(45deg)
+      extraTransforms = extraTransforms ? (` ${extraTransforms}`) : '';
 
-        // additional transform arguments, e.g., rotate(45deg)
-        extraTransforms = extraTransforms ? (' ' + extraTransforms) : '';
-
-        // EXPERIMENTAL
-        // all elements are affected by scroll, too.
-        /*
-        if (x && x.indexOf('px') !== -1) {
-          if (game.objects.view && game.objects.view.data && game.objects.view.data.battleField) {
-            // console.log(game.objects.view.data.battleField.scrollLeft);
-            x = (parseInt(x, 10) - game.objects.view.data.battleField.scrollLeft) + 'px';
-          }
+      // EXPERIMENTAL
+      // all elements are affected by scroll, too.
+      /*
+      if (x && x.indexOf('px') !== -1) {
+        if (game.objects.view && game.objects.view.data && game.objects.view.data.battleField) {
+          // console.log(game.objects.view.data.battleField.scrollLeft);
+          x = (parseInt(x, 10) - game.objects.view.data.battleField.scrollLeft) + 'px';
         }
-        */
-
-        // if (game.objects.view && o !== game.objects.view.data.battleField) return;
-
-        if (useTranslate3d) {
-          transformString = 'translate3d(' + x + ', ' + y + ', 0px)' + extraTransforms;
-        } else {
-          transformString = 'translate(' + x + ', ' + y + ')' + extraTransforms;
-        }
-
-        /**
-         * sometimes, exports is explicitly provided as `undefined`.
-         * if any are undefined, "just do it" and apply the transform -
-         * provided we haven't applied the same one.
-         */
-        if ((!exports || !exports.data || exports.data.isOnScreen) && o._lastTransform !== transformString) {
-          o.style[features.transform.prop] = transformString;
-          if (debug) {
-            // show that this element was moved
-            o.style.outline = '1px solid #' + rndInt(9) + rndInt(9) + rndInt(9);
-            transformCount++;
-          }
-        } else if (debug) {
-          excludeTransformCount++;
-        }
-
-        // assign for future re-append to DOM
-        o._lastTransform = transformString;
-
-      } else {
-
-        // legacy / fallback
-        o.style.left = x;
-        o.style.top = y;
-
       }
+      */
+
+      // if (game.objects.view && o !== game.objects.view.data.battleField) return;
+
+      if (useTranslate3d) {
+        transformString = `translate3d(${x}, ${y}, 0px)${extraTransforms}`;
+      } else {
+        transformString = `translate(${x}, ${y})${extraTransforms}`;
+      }
+
+      /**
+       * sometimes, exports is explicitly provided as `undefined`.
+       * if any are undefined, "just do it" and apply the transform -
+       * provided we haven't applied the same one.
+       */
+      if ((!exports || !exports.data || exports.data.isOnScreen) && o._lastTransform !== transformString) {
+        o.style.transform = transformString;
+        if (debug) {
+          // show that this element was moved
+          o.style.outline = `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`;
+          transformCount++;
+        }
+      } else if (debug) {
+        excludeTransformCount++;
+      }
+
+      // assign for future re-append to DOM
+      o._lastTransform = transformString;
 
     },
 
-    hit: function(target, hitPoints, attacker) {
+    hit(target, hitPoints, attacker) {
 
-      var newEnergy, energyChanged;
+      let newEnergy, energyChanged;
 
       if (target.data.dead) return;
 
@@ -1173,7 +1159,7 @@
       if (!target.data.energy) {
 
         if (target.die) {
-          target.die({ attacker: attacker });
+          target.die({ attacker });
         }
 
       }
@@ -1190,19 +1176,19 @@
 
     lastInfantryRicochet: 0,
 
-    getLandingPadOffsetX: function(helicopter) {
-      var landingPad = game.objects.landingPads[helicopter.data.isEnemy ? game.objects.landingPads.length - 1 : 0];
+    getLandingPadOffsetX(helicopter) {
+      const landingPad = game.objects.landingPads[helicopter.data.isEnemy ? game.objects.landingPads.length - 1 : 0];
       return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
     },
 
-    smokeRing: function(item, smokeOptions) {
+    smokeRing(item, smokeOptions) {
 
       // don't create if not visible
       if (!item.data.isOnScreen) return;
 
       smokeOptions = smokeOptions || {};
       
-      var angle, smokeArgs, angleIncrement, count, i, radians, velocityMax, vX, vY, vectorX, vectorY;
+      let angle, smokeArgs, angleIncrement, count, i, radians, velocityMax, vX, vY, vectorX, vectorY;
 
       angle = 0;
 
@@ -1279,11 +1265,11 @@
 
     },
 
-    smokeRelativeToDamage: function(exports, chance) {
+    smokeRelativeToDamage(exports, chance) {
       
       if (!exports || !exports.data || !exports.dom) return;
 
-      var data = exports.data;
+      const data = exports.data;
 
       if (!data.isOnScreen) return;
 
@@ -1304,18 +1290,18 @@
 
     },
 
-    inertGunfireExplosion: function(options) {
+    inertGunfireExplosion(options) {
 
       /* { count: int, exports: exports } */
 
       if (!options || !options.exports || !options.exports.data) return;
 
-      var data = options.exports.data;
+      const data = options.exports.data;
 
       if (!data.isOnScreen) return;
 
       // create some inert (harmless) gunfire, as decorative shrapnel.
-      for (var i = 0, j = options.count || (3 + rndInt(1)); i < j; i++) {
+      for (let i = 0, j = options.count || (3 + rndInt(1)); i < j; i++) {
 
         game.objects.gunfire.push(new GunFire({
           parentType: data.type,
