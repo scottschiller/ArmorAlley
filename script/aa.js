@@ -16024,6 +16024,6 @@
     soundManager.disable();
   }
 
-  setTimeout(window.aa.initArmorAlley, 20);
+  window.addEventListener('DOMContentLoaded', window.aa.initArmorAlley);
 
 }(window));
