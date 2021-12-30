@@ -5597,15 +5597,15 @@
 
   };
 
-  Bunker = function(options) {
+  Bunker = options => {
 
-    var css, data, dom, objects, radarItem, exports;
+    let css, data, dom, objects, radarItem, exports;
 
     function createBalloon(useRandomY) {
 
       if (!objects.balloon) {
 
-        objects.balloon = new Balloon({
+        objects.balloon = Balloon({
           bunker: exports,
           leftMargin: 8,
           isEnemy: data.isEnemy,
@@ -5622,7 +5622,7 @@
       if (!objects.chain) {
 
         // create a chain, linking the base and the balloon
-        objects.chain = new Chain({
+        objects.chain = Chain({
           x: data.x + (data.halfWidth - 1),
           y: data.y,
           height: data.y - objects.balloon.data.y,
@@ -5661,9 +5661,7 @@
       data.isEnemy = isEnemy;
 
       // and the balloon, too.
-      if (objects.balloon) {
-        objects.balloon.setEnemy(isEnemy);
-      }
+      objects?.balloon?.setEnemy(isEnemy);
 
       playSound(sounds.doorClose, exports);
 
@@ -5720,9 +5718,7 @@
       // once height is assigned, the chain will either
       // hang from the balloon it's attached to, OR, will
       // fall due to gravity (i.e., no base, no balloon.)
-      if (objects.chain) {
-        objects.chain.applyHeight();
-      }
+      objects?.chain?.applyHeight();
 
       if (objects.balloon) {
         objects.balloon.detach();
@@ -5733,13 +5729,13 @@
 
     function die(options) {
 
-      var normalizedType;
+      let normalizedType;
 
       if (data.dead) return;
 
       utils.css.add(dom.o, css.exploding);
 
-      common.inertGunfireExplosion({ count: 8 + rndInt(8), exports: exports });
+      common.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
       common.smokeRing(exports, {
         count: 24,
@@ -5753,11 +5749,11 @@
 
       shrapnelExplosion(data, { velocity: rnd(-10) });
 
-      setFrameTimeout(function() {
+      setFrameTimeout(() => {
 
         utils.css.swap(dom.o, css.exploding, css.burning);
 
-        setFrameTimeout(function() {
+        setFrameTimeout(() => {
           utils.css.swap(dom.o, css.burning, css.dead);
           // nothing else to do here - drop the node reference.
           dom.o = null;
@@ -5774,17 +5770,17 @@
         playSound(sounds.explosionLarge, exports);
       }
 
-      if (options && options.attacker && options.attacker.data) {
+      if (options?.attacker?.data) {
 
         normalizedType = getNormalizedUnitName(options.attacker) || 'unit';
 
         if (options.attacker.data.isEnemy) {
-          game.objects.notifications.add('An enemy ' + normalizedType + ' destroyed a bunker 💥');
+          game.objects.notifications.add(`An enemy ${normalizedType} destroyed a bunker 💥`);
         } else {
           if ((options.attacker.data.parentType && options.attacker.data.parentType === TYPES.helicopter) || options.attacker.data.type === TYPES.helicopter) {
             game.objects.notifications.add('You destroyed a bunker 💥');
           } else {
-            game.objects.notifications.add('A friendly ' + normalizedType + ' destroyed a bunker 💥');
+            game.objects.notifications.add(`A friendly ${normalizedType} destroyed a bunker 💥`);
           }
         }
       }
@@ -5844,7 +5840,7 @@
       createBalloon(true);
 
       // note hackish Y-offset, sprite position vs. collision detection
-      common.setTransformXY(exports, exports.dom.o, data.x + 'px', (data.y - 3) + 'px');
+      common.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
 
       data.midPoint = getDoorCoords(exports);
 
@@ -5885,17 +5881,17 @@
     };
 
     exports = {
-      capture: capture,
-      objects: objects,
-      data: data,
-      die: die,
-      dom: dom,
-      engineerHit: engineerHit,
-      infantryHit: infantryHit,
-      nullifyChain: nullifyChain,
-      nullifyBalloon: nullifyBalloon,
+      capture,
+      objects,
+      data,
+      die,
+      dom,
+      engineerHit,
+      infantryHit,
+      nullifyChain,
+      nullifyBalloon,
       init: initBunker,
-      repair: repair
+      repair
     };
 
     initBunker();
@@ -7259,26 +7255,13 @@
 
   };
 
-  Chain = function(options) {
+  Chain = options => {
 
-    var css, data, dom, objects, exports, defaultHeight;
+    let css, data, dom, objects, exports, defaultHeight;
 
     function applyHeight() {
-      dom.o.style.height = (data.height + 'px');
+      dom.o.style.height = (`${data.height}px`);
       data.appliedHeight = parseInt(data.height, 10);
-    }
-
-    function moveTo(x, y, height) {
-
-      common.moveTo(exports, x, y);
-
-      if (height !== undefined && data.height !== height) {
-        // don't update DOM - $$$ paint even when GPU compositing,
-        // because this invalidates the texture going to the GPU (AFAICT)
-        // on every animation frame. just translate and keep fixed height.
-        data.height = height;
-      }
-
     }
 
     function die() {
@@ -7307,7 +7290,7 @@
 
     function animate() {
 
-      var x, y, height;
+      let x, y, height;
 
       height = data.height;
 
@@ -7413,13 +7396,16 @@
 
       }
 
-      if (dom.o) {
+      common.moveTo(exports, x, y);
 
-        moveTo(x, y, height);
+      if (height !== undefined && data.height !== height) {
+        // don't update DOM - $$$ paint even when GPU compositing,
+        // because this invalidates the texture going to the GPU (AFAICT)
+        // on every animation frame. just translate and keep fixed height.
+        data.height = height;
+      }  
 
-      }
-
-      return (data.dead && !data.o);
+      return (data.dead && !dom.o);
 
     }
 
@@ -7433,7 +7419,7 @@
         utils.css.add(dom.o, css.enemy);
       }
 
-      common.setTransformXY(exports, dom.o, data.x + 'px', data.y + 'px');
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       applyHeight();
 
@@ -7475,11 +7461,11 @@
     };
 
     exports = {
-      animate: animate,
-      data: data,
-      dom: dom,
-      die: die,
-      applyHeight: applyHeight
+      animate,
+      data,
+      dom,
+      die,
+      applyHeight
     };
 
     initChain();
