@@ -14355,40 +14355,38 @@
   };
 
   // recycled from survivor.js
-  keyboardMonitor = (function() {
+  keyboardMonitor = (() => {
+    let keys;
+    let events;
 
-    var keys,
-      events,
+    const // hash for keys being pressed
+    downKeys = {};
 
-      // hash for keys being pressed
-      downKeys = {},
-
-      // meaningful labels for key values
-      keyMap = {
-        banana: 66,
-        rubber_chicken: 67,
-        shift: 16,
-        ctrl: 17,
-        space: 32,
-        left: 37,
-        up: 38,
-        right: 39,
-        down: 40,
-        missileLauncher: 77,
-        tank: 84,
-        van: 86,
-        infantry: 73,
-        engineer: 69
-        // 'helicopter': 72
-      };
+    const // meaningful labels for key values
+    keyMap = {
+      banana: 66,
+      rubber_chicken: 67,
+      shift: 16,
+      ctrl: 17,
+      space: 32,
+      left: 37,
+      up: 38,
+      right: 39,
+      down: 40,
+      missileLauncher: 77,
+      tank: 84,
+      van: 86,
+      infantry: 73,
+      engineer: 69
+    };
 
     events = {
 
-      keydown: function(e) {
+      keydown(e) {
 
         // console.log(e.keyCode);
 
-        if (!e.metaKey && keys[e.keyCode] && keys[e.keyCode].down) {
+        if (!e.metaKey && keys[e.keyCode]?.down) {
           if (!downKeys[e.keyCode]) {
             downKeys[e.keyCode] = true;
             keys[e.keyCode].down(e);
@@ -14402,7 +14400,7 @@
 
       },
 
-      keyup: function(e) {
+      keyup(e) {
 
         if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
           downKeys[e.keyCode] = null;
@@ -14429,7 +14427,7 @@
 
         allowEvent: true, // don't use stopEvent()
 
-        down: function() {
+        down() {
 
           game.objects.helicopters[0].eject();
 
@@ -14442,7 +14440,7 @@
 
         allowEvent: true, // don't use stopEvent()
 
-        down: function() {
+        down() {
 
           game.objects.helicopters[0].setFiring(true);
 
@@ -14455,7 +14453,7 @@
 
         allowEvent: true, // don't use stopEvent()
 
-        down: function() {
+        down() {
 
           game.objects.helicopters[0].setBombing(true);
 
@@ -14466,13 +14464,13 @@
       // space bar
       32: {
 
-        down: function() {
+        down() {
 
           game.objects.helicopters[0].setParachuting(true);
 
         },
 
-        up: function() {
+        up() {
 
           game.objects.helicopters[0].setParachuting(false);
 
@@ -14483,7 +14481,7 @@
       // "m"
       77: {
 
-        down: function() {
+        down() {
 
           game.objects.inventory.order(TYPES.missileLauncherCamel);
 
@@ -14494,7 +14492,7 @@
       // "t"
       84: {
 
-        down: function() {
+        down() {
 
           game.objects.inventory.order(TYPES.tank);
 
@@ -14505,7 +14503,7 @@
       // "v"
       86: {
 
-        down: function() {
+        down() {
 
           game.objects.inventory.order(TYPES.van);
 
@@ -14515,7 +14513,7 @@
 
       // "b" (banana)
       66: {
-        down: function() {
+        down() {
 
           // heat-seeking banana
           setMissileMode(bananaMode);
@@ -14524,7 +14522,7 @@
 
         },
 
-        up: function() {
+        up() {
 
           game.objects.helicopters[0].setMissileLaunching(false);
 
@@ -14535,7 +14533,7 @@
       // "c" (rubber chicken)
       67: {
 
-        down: function() {
+        down() {
 
           // heat-seeking rubber chicken
           setMissileMode(rubberChickenMode);
@@ -14544,7 +14542,7 @@
 
         },
 
-        up: function() {
+        up() {
 
           game.objects.helicopters[0].setMissileLaunching(false);
 
@@ -14555,7 +14553,7 @@
       // "x"
       88: {
 
-        down: function() {
+        down() {
 
           // standard heat-seeking missile
           setMissileMode(defaultMissileMode);
@@ -14564,7 +14562,7 @@
 
         },
 
-        up: function() {
+        up() {
 
           game.objects.helicopters[0].setMissileLaunching(false);
 
@@ -14575,7 +14573,7 @@
       // "e"
       69: {
 
-        down: function() {
+        down() {
 
           game.objects.inventory.order(TYPES.engineer);
 
@@ -14586,7 +14584,7 @@
       // "i"
       73: {
 
-        down: function() {
+        down() {
 
           game.objects.inventory.order(TYPES.infantry);
 
@@ -14606,9 +14604,9 @@
     function releaseAll() {
 
       // reset all pressed key states.
-      var item;
+      let item;
       for (item in downKeys) {
-        if (Object.prototype.hasOwnProperty.call(downKeys, item) && downKeys[item]) {
+        if (downKeys[item]) {
           // simulate the keyup event
           events.keyup({
             keyCode: item
@@ -14636,13 +14634,14 @@
     return {
 
       init: initKeyboardMonitor,
-      isDown: isDown,
+      isDown,
       keydown: events.keydown,
-      keyMap: keyMap,
+      keyMap,
       keyup: events.keyup,
-      releaseAll: releaseAll
+      releaseAll
 
     };
+  })();
 
   }());
 
