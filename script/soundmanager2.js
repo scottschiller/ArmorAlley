@@ -609,8 +609,6 @@ function SoundManager(smURL, smID) {
     // Disable all callbacks after stop(), when the sound is being destroyed
     oS._iO = {};
     
-    oS.unload();
-
     for (i = 0; i < sm2.soundIDs.length; i++) {
       if (sm2.soundIDs[i] === sID) {
         sm2.soundIDs.splice(i, 1);
@@ -622,6 +620,9 @@ function SoundManager(smURL, smID) {
       // ignore if being called from SMSound instance
       oS.destruct(true);
     }
+
+    // whether destroyed or not, ensure we unload and reset properties.
+    oS.unload();
 
     oS = null;
     delete sm2.sounds[sID];
@@ -1375,6 +1376,17 @@ function SoundManager(smURL, smID) {
 
   };
 
+  this.destroyAllSounds = function() {
+
+    var i;
+
+    for (i = sm2.soundIDs.length - 1; i >= 0; i--) {
+      sm2.sounds[sm2.soundIDs[i]].destruct();
+    }
+
+  };
+
+
   /**
    * Restarts and re-initializes the SoundManager instance.
    *
@@ -1395,9 +1407,7 @@ function SoundManager(smURL, smID) {
 
     var i, j, k;
 
-    for (i = sm2.soundIDs.length- 1 ; i >= 0; i--) {
-      sm2.sounds[sm2.soundIDs[i]].destruct();
-    }
+    this.destroyAllSounds();
 
     // trash ze flash (remove from the DOM)
 
@@ -1841,8 +1851,11 @@ function SoundManager(smURL, smID) {
         stop_html5_timer();
 
         if (s._a) {
+
           s._a.pause();
+
           html5Unload(s._a);
+          
           if (!useGlobalHTML5Audio) {
             remove_html5_events();
           }
@@ -1856,6 +1869,7 @@ function SoundManager(smURL, smID) {
       if (!_bFromSM) {
         // ensure deletion from controller
         sm2.destroySound(s.id, true);
+        s = null;
       }
 
     };
@@ -2887,6 +2901,7 @@ function SoundManager(smURL, smID) {
       onplay_called = false;
 
       s._hasTimer = null;
+      if (s._a) s._a._s = null; // 10/12/2021 - TODO: review, see if this breaks anything
       s._a = null;
       s._html5_canplay = false;
       s.bytesLoaded = null;
