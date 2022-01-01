@@ -9,9 +9,11 @@
  * http://schillmania.com/projects/soundmanager2/license.txt
  *
  * V2.97a.20150601
+ * Edited 01/2022 to meet some ESLint rules around globals,
+ * unnecessary regex escaping and Object.hasOwnProperty() calls
  */
 
-/*global window, SM2_DEFER, sm2Debugger, console, document, navigator, setTimeout, setInterval, clearInterval, Audio, opera, module, define */
+/*global SM2_DEFER, sm2Debugger, opera, module, define */
 /*jslint regexp: true, sloppy: true, white: true, nomen: true, plusplus: true, todo: true */
 
 /**
@@ -277,7 +279,7 @@ function SoundManager(smURL, smID) {
   isSafari = (ua.match(/safari/i) && !ua.match(/chrome/i)),
   isOpera = (ua.match(/opera/i)),
   mobileHTML5 = (ua.match(/(mobile|pre\/|xoom)/i) || is_iDevice || isAndroid),
-  isBadSafari = (!wl.match(/usehtml5audio/i) && !wl.match(/sm2\-ignorebadua/i) && isSafari && !ua.match(/silk/i) && ua.match(/OS X 10_6_([3-7])/i)), // Safari 4 and 5 (excluding Kindle Fire, "Silk") occasionally fail to load/play HTML5 audio on Snow Leopard 10.6.3 through 10.6.7 due to bug(s) in QuickTime X and/or other underlying frameworks. :/ Confirmed bug. https://bugs.webkit.org/show_bug.cgi?id=32159
+  isBadSafari = (!wl.match(/usehtml5audio/i) && !wl.match(/sm2-ignorebadua/i) && isSafari && !ua.match(/silk/i) && ua.match(/OS X 10_6_([3-7])/i)), // Safari 4 and 5 (excluding Kindle Fire, "Silk") occasionally fail to load/play HTML5 audio on Snow Leopard 10.6.3 through 10.6.7 due to bug(s) in QuickTime X and/or other underlying frameworks. :/ Confirmed bug. https://bugs.webkit.org/show_bug.cgi?id=32159
   hasConsole = (window.console !== _undefined && console.log !== _undefined),
   isFocused = (doc.hasFocus !== _undefined ? doc.hasFocus() : null),
   tryInitOnFocus = (isSafari && (doc.hasFocus === _undefined || !doc.hasFocus())),
@@ -535,7 +537,7 @@ function SoundManager(smURL, smID) {
 
       // TODO: Move HTML5/flash checks into generic URL parsing/handling function.
 
-      if (sm2.html5.usingFlash && options.url && options.url.match(/data\:/i)) {
+      if (sm2.html5.usingFlash && options.url && options.url.match(/data:/i)) {
         // data: URIs not supported by Flash, either.
         sm2._wD(options.id + ': data: URIs not supported via Flash. Exiting.');
         return make();
@@ -807,10 +809,8 @@ function SoundManager(smURL, smID) {
     sm2._wD(sm + '.stopAll()', 1);
 
     for (oSound in sm2.sounds) {
-      if (sm2.sounds.hasOwnProperty(oSound)) {
-        // apply only to sound objects
-        sm2.sounds[oSound].stop();
-      }
+      // apply only to sound objects
+      sm2.sounds[oSound].stop();
     }
 
   };
@@ -1446,10 +1446,8 @@ function SoundManager(smURL, smID) {
     if (!resetEvents) {
       // reset callbacks for onready, ontimeout etc. so that they will fire again on re-init
       for (i in on_queue) {
-        if (on_queue.hasOwnProperty(i)) {
-          for (j = 0, k = on_queue[i].length; j < k; j++) {
-            on_queue[i][j].fired = false;
-          }
+        for (j = 0, k = on_queue[i].length; j < k; j++) {
+          on_queue[i][j].fired = false;
         }
       }
     } else {
@@ -1744,7 +1742,7 @@ function SoundManager(smURL, smID) {
           return s;
         }
 
-        if (s._iO.url && s._iO.url.match(/data\:/i)) {
+        if (s._iO.url && s._iO.url.match(/data:/i)) {
           // data: URIs not supported by Flash, either.
           sm2._wD(s.id + ': data: URIs not supported via Flash. Exiting.');
           return s;
@@ -2750,7 +2748,7 @@ function SoundManager(smURL, smID) {
           item.method.apply(item.scope, [item.position]);
         
           //  reset j -- onPositionItems.length can be changed in the item callback above... occasionally breaking the loop.
-		      j = onPositionItems.length;
+          j = onPositionItems.length;
         
         }
       
@@ -2847,9 +2845,7 @@ function SoundManager(smURL, smID) {
       if (op) {
 
         for (item in op) {
-          if (op.hasOwnProperty(item)) {
-            s.onPosition(parseInt(item, 10), op[item]);
-          }
+          s.onPosition(parseInt(item, 10), op[item]);
         }
 
       }
@@ -2866,9 +2862,7 @@ function SoundManager(smURL, smID) {
       if (op) {
 
         for (item in op) {
-          if (op.hasOwnProperty(item)) {
-            s.clearOnPosition(parseInt(item, 10));
-          }
+          s.clearOnPosition(parseInt(item, 10));
         }
 
       }
@@ -3184,9 +3178,7 @@ function SoundManager(smURL, smID) {
       s._a._added_events = true;
 
       for (f in html5_events) {
-        if (html5_events.hasOwnProperty(f)) {
-          add(f, html5_events[f]);
-        }
+        add(f, html5_events[f]);
       }
 
       return true;
@@ -3207,9 +3199,7 @@ function SoundManager(smURL, smID) {
       s._a._added_events = false;
 
       for (f in html5_events) {
-        if (html5_events.hasOwnProperty(f)) {
-          remove(f, html5_events[f]);
-        }
+        remove(f, html5_events[f]);
       }
 
     };
@@ -3615,7 +3605,7 @@ function SoundManager(smURL, smID) {
 
     for (o in o2) {
 
-      if (o2.hasOwnProperty(o) && o1[o] === _undefined) {
+      if (o1[o] === _undefined) {
 
         if (typeof o2[o] !== 'object' || o2[o] === null) {
 
@@ -3687,24 +3677,18 @@ function SoundManager(smURL, smID) {
 
       for (i in setupOptions) {
 
-        if (setupOptions.hasOwnProperty(i)) {
-          result.push(i);
-        }
+        result.push(i);
 
       }
 
       for (i in bonusOptions) {
 
-        if (bonusOptions.hasOwnProperty(i)) {
-
-          if (typeof sm2[i] === 'object') {
-            result.push(i + ': {...}');
-          } else if (sm2[i] instanceof Function) {
-            result.push(i + ': function() {...}');
-          } else {
-            result.push(i);
-          }
-
+        if (typeof sm2[i] === 'object') {
+          result.push(i + ': {...}');
+        } else if (sm2[i] instanceof Function) {
+          result.push(i + ': function() {...}');
+        } else {
+          result.push(i);
         }
 
       }
@@ -3719,72 +3703,68 @@ function SoundManager(smURL, smID) {
 
     for (i in o) {
 
-      if (o.hasOwnProperty(i)) {
+      // if not an {object} we want to recurse through...
 
-        // if not an {object} we want to recurse through...
+      if (typeof o[i] !== 'object' || o[i] === null || o[i] instanceof Array || o[i] instanceof RegExp) {
 
-        if (typeof o[i] !== 'object' || o[i] === null || o[i] instanceof Array || o[i] instanceof RegExp) {
+        // check "allowed" options
 
-          // check "allowed" options
+        if (hasParent && bonusOptions[oParent] !== _undefined) {
 
-          if (hasParent && bonusOptions[oParent] !== _undefined) {
+          // valid recursive / nested object option, eg., { defaultOptions: { volume: 50 } }
+          sm2[oParent][i] = o[i];
 
-            // valid recursive / nested object option, eg., { defaultOptions: { volume: 50 } }
-            sm2[oParent][i] = o[i];
+        } else if (setupOptions[i] !== _undefined) {
 
-          } else if (setupOptions[i] !== _undefined) {
+          // special case: assign to setupOptions object, which soundManager property references
+          sm2.setupOptions[i] = o[i];
 
-            // special case: assign to setupOptions object, which soundManager property references
-            sm2.setupOptions[i] = o[i];
+          // assign directly to soundManager, too
+          sm2[i] = o[i];
 
-            // assign directly to soundManager, too
-            sm2[i] = o[i];
+        } else if (bonusOptions[i] === _undefined) {
 
-          } else if (bonusOptions[i] === _undefined) {
+          // invalid or disallowed parameter. complain.
+          complain(str((sm2[i] === _undefined ? 'setupUndef' : 'setupError'), i), 2);
 
-            // invalid or disallowed parameter. complain.
-            complain(str((sm2[i] === _undefined ? 'setupUndef' : 'setupError'), i), 2);
-
-            result = false;
-
-          } else {
-
-            /**
-             * valid extraOptions (bonusOptions) parameter.
-             * is it a method, like onready/ontimeout? call it.
-             * multiple parameters should be in an array, eg. soundManager.setup({onready: [myHandler, myScope]});
-             */
-
-            if (sm2[i] instanceof Function) {
-
-              sm2[i].apply(sm2, (o[i] instanceof Array ? o[i] : [o[i]]));
-
-            } else {
-
-              // good old-fashioned direct assignment
-              sm2[i] = o[i];
-
-            }
-
-          }
+          result = false;
 
         } else {
 
-          // recursion case, eg., { defaultOptions: { ... } }
+          /**
+           * valid extraOptions (bonusOptions) parameter.
+           * is it a method, like onready/ontimeout? call it.
+           * multiple parameters should be in an array, eg. soundManager.setup({onready: [myHandler, myScope]});
+           */
 
-          if (bonusOptions[i] === _undefined) {
+          if (sm2[i] instanceof Function) {
 
-            // invalid or disallowed parameter. complain.
-            complain(str((sm2[i] === _undefined ? 'setupUndef' : 'setupError'), i), 2);
-
-            result = false;
+            sm2[i].apply(sm2, (o[i] instanceof Array ? o[i] : [o[i]]));
 
           } else {
 
-            // recurse through object
-            return assign(o[i], i);
+            // good old-fashioned direct assignment
+            sm2[i] = o[i];
 
           }
+
+        }
+
+      } else {
+
+        // recursion case, eg., { defaultOptions: { ... } }
+
+        if (bonusOptions[i] === _undefined) {
+
+          // invalid or disallowed parameter. complain.
+          complain(str((sm2[i] === _undefined ? 'setupUndef' : 'setupError'), i), 2);
+
+          result = false;
+
+        } else {
+
+          // recurse through object
+          return assign(o[i], i);
 
         }
 
@@ -4183,7 +4163,7 @@ function SoundManager(smURL, smID) {
     } else {
 
       // Use type, if specified. Pass data: URIs to HTML5. If HTML5-only mode, no other options, so just give 'er
-      result = ((iO.type ? html5CanPlay({type:iO.type}) : html5CanPlay({url:iO.url}) || sm2.html5Only || iO.url.match(/data\:/i)));
+      result = ((iO.type ? html5CanPlay({type:iO.type}) : html5CanPlay({url:iO.url}) || sm2.html5Only || iO.url.match(/data:/i)));
 
     }
 
@@ -4263,16 +4243,12 @@ function SoundManager(smURL, smID) {
       
       for (item in aF) {
       
-        if (aF.hasOwnProperty(item)) {
-      
-          html5Ext.push(item);
-      
-          if (aF[item].related) {
-            html5Ext = html5Ext.concat(aF[item].related);
-          }
-      
+        html5Ext.push(item);
+    
+        if (aF[item].related) {
+          html5Ext = html5Ext.concat(aF[item].related);
         }
-      
+     
       }
       
       html5Ext = new RegExp('\\.('+html5Ext.join('|')+')(\\?.*)?$','i');
@@ -4393,40 +4369,36 @@ function SoundManager(smURL, smID) {
 
     for (item in aF) {
 
-      if (aF.hasOwnProperty(item)) {
+      lookup = 'audio/' + item;
 
-        lookup = 'audio/' + item;
+      support[item] = cp(aF[item].type);
 
-        support[item] = cp(aF[item].type);
+      // write back generic type too, eg. audio/mp3
+      support[lookup] = support[item];
 
-        // write back generic type too, eg. audio/mp3
-        support[lookup] = support[item];
+      // assign flash
+      if (item.match(flashMIME)) {
 
-        // assign flash
-        if (item.match(flashMIME)) {
+        sm2.flash[item] = true;
+        sm2.flash[lookup] = true;
 
-          sm2.flash[item] = true;
-          sm2.flash[lookup] = true;
+      } else {
 
-        } else {
+        sm2.flash[item] = false;
+        sm2.flash[lookup] = false;
 
-          sm2.flash[item] = false;
-          sm2.flash[lookup] = false;
+      }
 
-        }
+      // assign result to related formats, too
 
-        // assign result to related formats, too
+      if (aF[item] && aF[item].related) {
 
-        if (aF[item] && aF[item].related) {
+        for (i = aF[item].related.length - 1; i >= 0; i--) {
 
-          for (i = aF[item].related.length - 1; i >= 0; i--) {
-
-            // eg. audio/m4a
-            support['audio/' + aF[item].related[i]] = support[item];
-            sm2.html5[aF[item].related[i]] = support[item];
-            sm2.flash[aF[item].related[i]] = support[item];
-
-          }
+          // eg. audio/m4a
+          support['audio/' + aF[item].related[i]] = support[item];
+          sm2.html5[aF[item].related[i]] = support[item];
+          sm2.flash[aF[item].related[i]] = support[item];
 
         }
 
@@ -4573,7 +4545,7 @@ function SoundManager(smURL, smID) {
     var oProp;
 
     for (oProp in o) {
-      if (o.hasOwnProperty(oProp) && typeof o[oProp] === 'function') {
+      if (typeof o[oProp] === 'function') {
         o[oProp] = doNothing;
       }
     }
@@ -4737,9 +4709,7 @@ function SoundManager(smURL, smID) {
       }
 
       for (tmp in oToggle) {
-        if (oToggle.hasOwnProperty(tmp)) {
-          oD.style[tmp] = oToggle[tmp];
-        }
+        oD.style[tmp] = oToggle[tmp];
       }
 
       oDebug = doc.createElement('div');
@@ -5085,26 +5055,22 @@ featureCheck = function() {
       canIgnoreFlash = true;
 
       for (item in formats) {
-        
-        if (formats.hasOwnProperty(item)) {
-        
-          if (formats[item].required) {
-        
-            if (!sm2.html5.canPlayType(formats[item].type)) {
-        
-              // 100% HTML5 mode is not possible.
-              canIgnoreFlash = false;
-              flashNeeded = true;
-        
-            } else if (sm2.preferFlash && (sm2.flash[item] || sm2.flash[formats[item].type])) {
-        
-              // flash may be required, or preferred for this format.
-              flashNeeded = true;
-        
-            }
-        
+      
+        if (formats[item].required) {
+      
+          if (!sm2.html5.canPlayType(formats[item].type)) {
+      
+            // 100% HTML5 mode is not possible.
+            canIgnoreFlash = false;
+            flashNeeded = true;
+      
+          } else if (sm2.preferFlash && (sm2.flash[item] || sm2.flash[formats[item].type])) {
+      
+            // flash may be required, or preferred for this format.
+            flashNeeded = true;
+      
           }
-
+      
         }
 
       }
@@ -5283,20 +5249,16 @@ featureCheck = function() {
 
     for (item in aF) {
 
-      if (aF.hasOwnProperty(item)) {
+      if (item === 'mp3' || item === 'mp4') {
 
-        if (item === 'mp3' || item === 'mp4') {
+        sm2._wD(sm + ': Using flash fallback for ' + item + ' format');
+        sm2.html5[item] = false;
 
-          sm2._wD(sm + ': Using flash fallback for ' + item + ' format');
-          sm2.html5[item] = false;
-
-          // assign result to related formats, too
-          if (aF[item] && aF[item].related) {
-            for (i = aF[item].related.length - 1; i >= 0; i--) {
-              sm2.html5[aF[item].related[i]] = false;
-            }
+        // assign result to related formats, too
+        if (aF[item] && aF[item].related) {
+          for (i = aF[item].related.length - 1; i >= 0; i--) {
+            sm2.html5[aF[item].related[i]] = false;
           }
-
         }
 
       }
@@ -5551,9 +5513,7 @@ featureCheck = function() {
 
       oMovie = doc.createElement('embed');
       for (tmp in oEmbed) {
-        if (oEmbed.hasOwnProperty(tmp)) {
-          oMovie.setAttribute(tmp, oEmbed[tmp]);
-        }
+        oMovie.setAttribute(tmp, oEmbed[tmp]);
       }
 
     }
@@ -5607,9 +5567,7 @@ featureCheck = function() {
 
         if (!sm2.debugFlash) {
           for (x in s) {
-            if (s.hasOwnProperty(x)) {
-              sm2.oMC.style[x] = s[x];
-            }
+            sm2.oMC.style[x] = s[x];
           }
         }
 
@@ -5949,9 +5907,7 @@ featureCheck = function() {
 
     if (sm2.useHTML5Audio && sm2.hasHTML5) {
       for (item in sm2.audioFormats) {
-        if (sm2.audioFormats.hasOwnProperty(item)) {
-          tests.push(item + ' = ' + sm2.html5[item] + (!sm2.html5[item] && needsFlash && sm2.flash[item] ? ' (using flash)' : (sm2.preferFlash && sm2.flash[item] && needsFlash ? ' (preferring flash)' : (!sm2.html5[item] ? ' (' + (sm2.audioFormats[item].required ? 'required, ' : '') + 'and no flash support)' : ''))));
-        }
+        tests.push(item + ' = ' + sm2.html5[item] + (!sm2.html5[item] && needsFlash && sm2.flash[item] ? ' (using flash)' : (sm2.preferFlash && sm2.flash[item] && needsFlash ? ' (preferring flash)' : (!sm2.html5[item] ? ' (' + (sm2.audioFormats[item].required ? 'required, ' : '') + 'and no flash support)' : ''))));
       }
       sm2._wD('SoundManager 2 HTML5 support: ' + tests.join(', '), 1);
     }
@@ -6049,20 +6005,16 @@ featureCheck = function() {
 
     for (i in o) {
 
-      if (o.hasOwnProperty(i)) {
+      // assign local property if not already defined
 
-        // assign local property if not already defined
+      if (sm2[i] === _undefined) {
 
-        if (sm2[i] === _undefined) {
+        sm2[i] = o[i];
 
-          sm2[i] = o[i];
+      } else if (sm2[i] !== o[i]) {
 
-        } else if (sm2[i] !== o[i]) {
-
-          // legacy support: write manually-assigned property (eg., soundManager.url) back to setupOptions to keep things in sync
-          sm2.setupOptions[i] = sm2[i];
-
-        }
+        // legacy support: write manually-assigned property (eg., soundManager.url) back to setupOptions to keep things in sync
+        sm2.setupOptions[i] = sm2[i];
 
       }
 
