@@ -450,6 +450,11 @@
     }
 
     function displayEndGameStats() {
+
+      console.log('TODO: fix endgame stats. 😅');
+      return;
+
+      /*
       let i, j, k, items, cols, type, offset, dataSource;
       items = document.getElementById('stats-endgame').getElementsByTagName('tr');
       // data sources
@@ -467,6 +472,8 @@
         }
       }
       document.getElementById('stats-endgame').style.display = 'block';
+      */
+
     }
 
     data = {
