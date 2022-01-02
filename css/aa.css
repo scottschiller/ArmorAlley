@@ -1993,7 +1993,6 @@ body.is_firefox #world-wrapper.jammed #radar {
   transform: initial;
 }
 
-/* TODO: review explosions (enemy was used for original animation) */
 .tank.exploding,
 .van.exploding,
 .missile-launcher.exploding,
@@ -2012,9 +2011,28 @@ body.is_firefox #world-wrapper.jammed #radar {
   animation: explosionshrapnel2 1s steps(12);
 }
 
+.tank.exploding {
+  /* align with where tank was */
+  margin-top: -12px;
+}
+
+.helicopter.exploding,
+.missile-launcher.exploding,
+.turret.exploding,
+.van.exploding {
+  /* align with where unit was */
+  margin-top: -16px;
+}
+
 .bunker.exploding {
   /* bunker is normally 52px */
-  margin-left: -13px;
+  margin-left: -14px;
+  margin-top: -7px;
+}
+
+.turret.exploding {
+  /* adjust for larger explosion sprite */
+  margin-left: -30.5px;
 }
 
 .van.exploding {
