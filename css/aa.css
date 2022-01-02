@@ -259,6 +259,8 @@ body {
   height: 384px;
   width: 100%;
   border-bottom: 2px solid #666;
+  /* mac style */
+  border-bottom-color: rgb(135,84,0);
   margin-top: -192px;
   background: #000;
   font-size: 11px;
