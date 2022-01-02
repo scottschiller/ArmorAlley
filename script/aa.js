@@ -6182,9 +6182,9 @@
 
           // nearby infantry or engineer?
           if (target.data.type === TYPES.infantry) {
-            // enemy at door, and funds to steal?
             if (!isFriendly) {
-              if (data.funds && collisionCheckMidPoint(exports, target)) {
+              // funds to steal, "at the door", AND, infantry - OR, an engineer who can rob the bank
+              if (data.funds && collisionCheckMidPoint(exports, target) && (!target.data.role || gamePrefs.engineers_rob_the_bank)) {
                 captureFunds(target);
               }
             } else if (!target.data.role && !data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
