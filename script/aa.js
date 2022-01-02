@@ -7008,8 +7008,8 @@
       game.objects.smartMissiles.push(SmartMissile({
         parentType: data.type,
         isEnemy: data.isEnemy,
-        isBanana: (data.missileMode === bananaMode),
-        isRubberChicken: (data.missileMode === rubberChickenMode),
+        isBanana: gamePrefs.enemy_missile_match_type && data.missileMode === bananaMode,
+        isRubberChicken: data.missileMode === rubberChickenMode,
         // position roughly around "launcher" point of base
         x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
         y: data.y,
@@ -7603,8 +7603,8 @@
       game.objects.smartMissiles.push(SmartMissile({
         parentType: data.type,
         isEnemy: data.isEnemy,
-        isBanana: (missileMode === bananaMode),
-        isRubberChicken: (missileMode === rubberChickenMode),
+        isBanana: gamePrefs.enemy_missile_match_type && missileMode === bananaMode,
+        isRubberChicken: gamePrefs.enemy_missile_match_type && missileMode === rubberChickenMode,
         x: data.x + (data.width / 2),
         y: data.y,
         target: targetHelicopter
