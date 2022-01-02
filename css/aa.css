@@ -2783,33 +2783,6 @@ body.is-mobile #player-status-bar .stats-item {
   /* align with nearby text, e.g., bomb count */
 }
 
-/* hi-dpi */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  /* slightly thinner text */
-  #player-status-bar span.letter-block {
-    font-weight: 300;
-  }
-
-  #game-tips .tips-container {
-    /* thinner, but brighter. */
-    font-weight: 300;
-    color: #ccc;
-  }
-}
-
-@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 192dpi) {
-  /* iPhone X and friends? */
-  body.is-mobile #player-status-bar span.letter-block {
-    font-weight: 100;
-  }
-
-  body.is-mobile #game-tips .tips-container {
-  /* thinner, but brighter. */
-    font-weight: 100;
-    color: #ccc;
-  }
-}
-
 body.is-mobile #player-status-bar span.letter-block {
   display: none;
 }
@@ -3138,11 +3111,7 @@ body.game-paused #world-wrapper {
 }
 
 body.game-paused .sprite {
-  /* TODO: replace animated versions with static ones. */
-  /* background: transparent; */
   animation: none !important;
-  /* for now, hide sprites and sub-sprites. */
-  /* display: none; */
 }
 
 #body-height-element {
