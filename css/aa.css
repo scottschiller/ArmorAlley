@@ -2224,7 +2224,7 @@ body.is_firefox #world-wrapper.jammed #radar {
   /* background-image: url(../image/shrapnel.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMBAMAAADWlCNiAAAAElBMVEVVVQGqqqqrAgH/qgH///8OqgK+qm9ZAAAAAXRSTlMAQObYZgAAAHBJREFUGBkFwQFxw0AQBDD5QuCdEljvF0AmRpBOAZQ/mkoAAADwLBggAB4JtGAEYL/vxuyCHRCcXym93+ABx1icz2K+P2VmF6snmsHs32LehWtB4fi5i76wXC9okDbMBNYGC1xl8AcJHCBhAgAAAIB/0M0J+ZocFDIAAAAASUVORK5CYII=);
   background-position: 0px 0px;
-  animation: rotating 0.5s linear infinite;
+  animation: rotating3d 0.5s linear infinite;
 }
 
 .shrapnel.reverse .transform-sprite {
