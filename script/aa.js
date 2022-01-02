@@ -2759,6 +2759,11 @@
         url: getURL('generic-explosion-3'),
         volume: 24,
         multiShot: true
+      }),
+      addSound({
+        url: getURL('explosion2'),
+        volume: 33,
+        multiShot: true
       })
     ];
 
