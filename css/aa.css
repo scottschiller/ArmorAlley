@@ -2194,9 +2194,9 @@ body.is_firefox #world-wrapper.jammed #radar {
 
 #game-fps {
   position: absolute;
-  right: 0.25rem;
+  right: 0.33rem;
   top: 0px;
-  font-size: xx-small;
+  font-size: 75%;
   text-align: right;
   color: #666;
 }
