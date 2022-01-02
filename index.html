@@ -74,8 +74,8 @@
          <h2>A browser-based interpretation of the classic 1990 MS-DOS game.</h2>
          <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-large">Tutorial <span class="emoji emoji-tutorial">📖</span></a>
          <a href="#easy" title="Get a van to the enemy base! (Easy mode.)" class="cta">Easy <span class="emoji emoji-easy">😁</span></a>
-         <a href="#hard" title="Get a van to the enemy base! (Hard mode.) More enemies, more often. Turrets fire faster, and can harm more units. " class="cta">Hard <span class="emoji emoji-hard">😰</span></a>
-         <a href="#extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies, plus more turrets that fire rapidly and target ground vehicles &amp; smart missiles. While not targeted, infantry and engineers can be hit by turret gunfire. Also, claiming all bunkers is no longer an advantage." class="cta">Extreme <span class="emoji emoji-extreme">😱</span></a>
+         <a href="#hard" title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets fire faster, and can harm more units." class="cta">Hard <span class="emoji emoji-hard">😰</span></a>
+         <a href="#extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Aggressive turrets fire at ground vehicles &amp; missiles, and can hit infantry and engineers. Owning all bunkers no longer stops enemy production." class="cta">Extreme <span class="emoji emoji-extreme">😱</span></a>
          <p id="game-description">Choose your level of comfort.</p>
         </div>
 
@@ -154,22 +154,30 @@
 
          <li class="stats-item infantry-count">
           <span class="letter-block">Space</span>
-          <em>Infantry:</em> <span id="infantry-count">1</span>
+          <span class="wrapper">
+           <em>Infantry:</em> <span id="infantry-count">1</span>
+          </span>
          </li>
 
          <li class="stats-item missiles">
-          <span class="letter-block">X</span>
-          <em>Smart Missiles:</em> <span id="missile-count">2</span>
+          <span class="letter-block">X<span class="divider">|</span>C<span class="divider">|</span>B</span>
+          <span class="wrapper">
+           <em>Smart Missiles:</em> <span id="missile-count" class="weapon-count">2</span>
+          </span>
          </li>
 
          <li class="stats-item ammo">
           <span class="letter-block">Shift</span>
-          <em>Ammo:</em> <span id="ammo-count" class="double-wide">64</span>
+          <span class="wrapper">
+           <em>Ammo:</em> <span id="ammo-count" class="weapon-count double-wide">64</span>
+          </span>
          </li>
 
          <li class="stats-item bombs">
           <span class="letter-block">Ctrl</span>
-          <em>Bombs:</em> <span id="bomb-count" class="double-wide">10</span>
+          <span class="wrapper">
+           <em>Bombs:</em> <span id="bomb-count" class="weapon-count double-wide">10</span>
+          </span>
          </li>
 
         </ul>
