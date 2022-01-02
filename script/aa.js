@@ -3611,7 +3611,7 @@
 
       strings = [];
 
-      elements = dom.gameTips.getElementsByTagName('span');
+      elements = dom.gameTipsList.getElementsByTagName('span');
 
       // read all the strings from the live DOM.
       for (i = 0, j = elements.length; i < j; i++) {
