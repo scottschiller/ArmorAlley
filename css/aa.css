@@ -2436,8 +2436,8 @@ body.game-paused.prefs-modal-open #game-paused {
 }
 
 #world.tutorial-mode #game-tips .tips-container {
-  width: 38rem;
-  margin-left: -19rem;
+  width: 30rem;
+  margin-left: -15rem;
 }
 
 body.is-mobile #world.tutorial-mode #game-tips .tips-container {
@@ -2468,8 +2468,8 @@ body.is-mobile #game-tips #game-announcements {
   width: 100%;
   height: 100%;
   margin: 0px auto;
-  font-size: 0.75em;
-  line-height: 0.75rem;
+  font-size: 0.45rem;
+  line-height: 0.45rem;
   text-align: center;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
