@@ -19,6 +19,7 @@
  <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
  <link rel="stylesheet" media="screen" href="css/aa.css" />
  <script type="text/javascript" src="script/soundmanager2.js"></script>
+ <script type="text/javascript" src="script/snowstorm_es6.js"></script>
  <script type="text/javascript" src="script/aa.js"></script>
  <!--
 
@@ -316,7 +317,7 @@
          <span>Clouds can be dangerous</span>
          <span>The enemy knows how to hide, too</span>
          <span>Beware the wily rubber <b><u>c</u></b>hicken</span>
-         <span>Tired of regular missiles? try "c" instead of "x"</span>
+         <span>Tired of regular missiles? Try "c" instead of "x"</span>
          <span>Don’t eat yellow snow</span>
 
         </div>
@@ -485,7 +486,13 @@
 
    <div id="bottom">
 
+     <div id="queue"></div>
+
      <div id="help">
+      <span>
+       <a id="game-options-link" href="#">options</a>
+       |
+      </span>
       <span id="exit">
        <a href="#" onclick="return window.aa.exit()" title="Exit (reload required)" class="exit">exit <span id="exit-emoji"></span></a>
        |
@@ -498,69 +505,76 @@
 
    </div>
 
-  <noscript>
-    <p>This game isn’t going to work unless you have JavaScript enabled.</p>
-  </noscript>
+    <noscript>
+      <p>This game isn’t going to work unless you have JavaScript enabled.</p>
+    </noscript>
 
-  <div id="stats-endgame">
+    <div id="stats-endgame">
 
-    <table cellpadding="0" cellspacing="0">
+      <table cellpadding="0" cellspacing="0">
 
-        <thead>
-            <th>Destruction Report</th>
-            <th>You</th>
-            <th>Enemy</th>
-        </thead>
+          <thead>
+              <th>Destruction Report</th>
+              <th>You</th>
+              <th>Enemy</th>
+          </thead>
 
-        <tr data-type="tank">
-            <td>Tanks</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="tank">
+              <td>Tanks</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="missile-launcher">
-            <td>Missile Launchers</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="missile-launcher">
+              <td>Missile Launchers</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="van">
-            <td>Vans</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="van">
+              <td>Vans</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="engineer">
-            <td>Engineers</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="engineer">
+              <td>Engineers</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="infantry">
-            <td>Infantry</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="infantry">
+              <td>Infantry</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="gunfire">
-            <td>Gunfire</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="gunfire">
+              <td>Gunfire</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="bomb">
-            <td>Bombs</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="bomb">
+              <td>Bombs</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-        <tr data-type="smart-missile">
-            <td>Missiles</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+          <tr data-type="smart-missile">
+              <td>Missiles</td>
+              <td>0</td>
+              <td>0</td>
+          </tr>
 
-    </table>
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
 <!-- prototype UI bits
 <div class="finder dialog">
   <div class="title-bar">
