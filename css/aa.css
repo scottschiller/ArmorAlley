@@ -1233,25 +1233,19 @@ ul.stats-bar .bombs em {
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    transform: translate(-50%, -50%) scale(0.15) rotate(0deg);
   }
 }
 
-@keyframes drop-in-spinning {
-  from {
-    transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+@keyframes tracking-active {
+  0% {
+    transform: translate(-50%, -50%) scale(0.75);
   }
-  to {
-    transform: translate(-50%, -50%) scale(0.75) rotate(360deg);
+  50% {
+    transform: translate(-50%, -50%) scale(0.33);
   }
-}
-
-@keyframes drop-in-spinning-small {
-  from {
-    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
+  100% {
+    transform: translate(-50%, -50%) scale(0.75);
   }
 }
 
@@ -1261,6 +1255,16 @@ ul.stats-bar .bombs em {
   }
   to {
     transform: rotate(12.5deg);
+  }
+}
+
+@keyframes scrollText {
+  from {
+    transform: translate3d(0%, 0px, 0px);
+  }
+
+  to {
+    transform: translate3d(-100%, 0px, 0px);
   }
 }
 
@@ -2523,24 +2527,16 @@ body.is-mobile #game-tips #game-announcements {
   }
 }
 
-@keyframes infantryexplosion {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -220px;
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
 
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
+@keyframes sorta-blink {
   50% {
-    opacity: 0.125;
-  }
-  100% {
-    opacity: 1;
+    opacity: 0.65;
+    transform: scale3d(1.1, 1.1, 1.1);
   }
 }
 
@@ -2573,74 +2569,74 @@ body.is-mobile #game-tips #game-announcements {
 
 @keyframes animate-transform-sprite-tank {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-174px, 0px);
+    transform: translate3d(-174px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-infantry {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-55px, 0px);
+    transform: translate3d(-55px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-engineer {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-50px, 0px);
+    transform: translate3d(-50px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-helicopter {
   /* is translate vs. translate3d() any better? */
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-192px, 0px);
+    transform: translate3d(-192px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-helicopter-enemy {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-220px, 0px);
+    transform: translate3d(-220px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-base {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-510px, 0px);
+    transform: translate3d(-510px, 0px, 0px);
   }
 }
 
 @keyframes animate-transform-sprite-landing-pad {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(-324px, 0px);
+    transform: translate3d(-324px, 0px, 0px);
   }
 }
 
 @keyframes tv-static {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate(0px, -320px);
+    transform: translate3d(0px, -320px, 0px);
   }
 }
 
@@ -2687,6 +2683,24 @@ body.is-mobile #game-tips #game-announcements {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes rotating3d {
+  from {
+    transform: rotate3d(1,1,1,0deg) rotate(0deg);
+  }
+  to {
+    transform: rotate3d(1,1,1,360deg) rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.66);
+  }
+  to {
+    transform: scale(0.33);
   }
 }
 
