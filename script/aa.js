@@ -5885,6 +5885,8 @@
       y: (game.objects.view.data.world.height - 25) + 1, // override to fix helicopter / bunker vertical crash case
       energy: 50,
       energyMax: 50,
+      energyLineScale: 0.95,
+      centerEnergyLine: true,
       width: 51,
       halfWidth: 25,
       height: 25,
@@ -6398,6 +6400,8 @@
       frameCount: 0,
       energy: (options.energy || 0),
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
+      energyLineScale: 0.95,
+      centerEnergyLine: true,
       isEnemy: (options.isEnemy || false),
       width: 66,
       halfWidth: 33,

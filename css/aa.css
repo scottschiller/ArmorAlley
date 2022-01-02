@@ -1889,6 +1889,13 @@ body.game-paused #radar.jammed #radar-jammed-overlay .transform-sprite {
   height: 0.5px;
 }
 
+.sprite.super-bunker .energy-status {
+  /* special case: improve legibility */
+  bottom: auto;
+  top: 3.25px;
+  height: 1.5px;
+}
+
 .sprite.enemy .energy-status,
 .helicopter.facing-left .energy-status {
   /* right-align on certain units, i.e., flipped helicopter w/custom width */
