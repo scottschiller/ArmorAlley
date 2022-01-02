@@ -501,8 +501,28 @@ body.is-mobile #game-status li:last-of-type {
 #queue .queue-item.has-counter .counter {
   opacity: 1;
 }
+
+#radar-container,
+#radar {
   height: 32px;
+}
+
+#radar-container {
+  position: relative;
   overflow: hidden;
+  background: rgb(14,54,14);
+  /* image/checkerboard-black-mask-50percent.png */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
+}
+
+#radar {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  overflow: hidden;
+  transition: filter 0.75s ease-in-out;
+  filter: unset;
 }
 
 #world-wrapper.incoming-smart-missile {
