@@ -57,18 +57,17 @@ body {
   background: #111;
   color: #fff;
   /**
-   * avoid smooth image resizing, keep things pixelated - more true to the original.
+   * avoid smooth image resizing, keep things pixelated - like the original.
    * Firefox does a great job here; Safari is OK (though not pixel-sharp.)
    * Chrome + Safari may be worse when using -webkit-optimize-contrast vs. default.
-   * https: //developer.mozilla.org/en-US/docs/Web/CSS/image-rendering
+   * https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering
    */
   image-rendering: optimizeQuality;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
   /* non-standard, but quite nice under Firefox */
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  /* chrome doesn't seem to implement this */
+  image-rendering: pixelated;
   /* who knows, for IE */
   -ms-interpolation-mode: nearest-neighbor;
   /* font trickery */
