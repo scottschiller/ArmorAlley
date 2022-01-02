@@ -1460,11 +1460,17 @@ ul.stats-bar .bombs em {
   border: none;
 }
 
+.helicopter-trailer,
 .smart-missile-trailer {
   position: absolute;
   width: 1px;
   height: 1px;
   background-color: rgb(156,159,8);
+  transition: opacity 0.5s ease-in-out;
+}
+
+.helicopter-trailer {
+  background-color: #666;
 }
 
 .smoke {
