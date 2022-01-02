@@ -197,11 +197,6 @@
 
   const useParallax = winloc.match(/parallax/i);
 
-  // whether to prevent transform: translate3d() on radar items.
-  // gunfire and shrapnel can cause literal layer explosions,
-  // potentially $$$ even with GPU compositing (I think.)
-  const noRadarGPU = winloc.match(/noRadarGPU=1/i);
-
   // whether off-screen elements are forcefully removed from the DOM.
   // may be expensive up front, and/or cause style recalcs while
   // scrolling the world. the fastest nodes are the ones that aren't there.
@@ -216,7 +211,6 @@
   // TODO: get rid of this.
   const debugType = winloc.match(/debugType/i);
 
-  const showHealth = true; // winloc.match(/health/i);
   // TODO: move missile mode bits into game object
   let missileMode;
 
@@ -278,6 +272,9 @@
 
   // TODO: move into view
   let screenScale = 1;
+  
+  // transform, or zoom
+  let usingZoom;
 
   const forceTransform = !!(winloc.match(/forceTransform/i));
 
@@ -286,8 +283,6 @@
   const disableScaling = !!(!forceTransform && winloc.match(/noscal/i));
 
   let userDisabledScaling = false;
-
-  let userDisabledSound = false;
 
   const tutorialMode = !!(winloc.match(/tutorial/i));
 
@@ -321,7 +316,13 @@
 
   let View;
 
+  // legacy: game type, etc.
   let prefs;
+
+  // modern
+  let gamePrefs;
+
+  let prefsManager;
 
   let sounds;
 
@@ -533,6 +534,7 @@
     if (disableScaling) return;
 
     const innerHeight = window.innerHeight;
+
     let offset = 0;
     let localWorldHeight = 410;
 
@@ -589,6 +591,8 @@
 
     }
 
+    prefsManager.updateScreenScale();
+
   }
 
   function applyScreenScale() {
@@ -631,6 +635,8 @@
 
       if (debug) console.log('using transform-based scaling');
 
+      usingZoom = false;
+
       wrapper.style.marginTop = `${-((406 / 2) * screenScale)}px`;
       wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale))}px`;
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
@@ -641,6 +647,8 @@
     } else {
 
       if (debug) console.log('using style.zoom-based scaling');
+
+      usingZoom = true;
 
       wrapper.style.marginTop = `${-(406 / 2)}px`;
 
@@ -767,7 +775,7 @@
       try {
         localStorage = window.localStorage || null;
       } catch (e) {
-        console.log('localStorage not present, or denied');
+        console.info('localStorage not accessible, likely denied. Game options will not be saved.');
         localStorage = null;
       }
 
@@ -2149,7 +2157,7 @@
 
   function getSound(soundReference) {
 
-    if (userDisabledSound) return;
+    if (!gamePrefs.sound) return;
 
     // common sound wrapper, options for positioning and muting etc.
     let soundObject;
@@ -2252,7 +2260,7 @@
     // just in case
     if (!soundObject || !soundObject.sound) return null;
 
-    if (userDisabledSound) return soundObject.sound;
+    if (!gamePrefs.sound) return soundObject.sound;
 
     // TODO: revisit on-screen logic, drop the function call
     onScreen = (!target || isOnScreen(target));
@@ -4699,14 +4707,14 @@
       data.isJammed = true;
       utils.css.add(game.objects.view.dom.worldWrapper, css.jammed);
 
-      if (!userDisabledSound) {
-        if (sounds.radarStatic) {
-          playSound(sounds.radarStatic);
-        }
+      if (!gamePrefs.sound) return;
 
-        if (sounds.radarJamming) {
-          playSound(sounds.radarJamming);
-        }
+      if (sounds.radarStatic) {
+        playSound(sounds.radarStatic);
+      }
+
+      if (sounds.radarJamming) {
+        playSound(sounds.radarJamming);
       }
 
       // extreme mode: don't warn player about incoming missiles when radar is jammed, either.
@@ -9989,28 +9997,26 @@
 
       let soundObject;
 
-      soundObject = sound && getSound(sound);
+      if (!gamePrefs.sound || !sound) return;
+
+      soundObject = getSound(sound);
 
       if (!soundObject) return;
 
       if (!data.isEnemy) {
 
         // local? play quiet only if cloaked.
-        if (!userDisabledSound) {
-
-          // only start if not already playing
-          if (soundObject.sound.playState) {
-            soundObject.sound.stop();
-          }
-
-          // only start if not already playing
-          if (!soundObject.sound.playState) {
-            soundObject.sound.play(soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'] / 100));
-          }
-
+        // only start if not already playing
+        if (soundObject?.sound?.playState) {
+          soundObject.sound.stop();
         }
 
-      } else if (!userDisabledSound && soundObject && !soundObject.playState) {
+        // only start if not already playing
+        if (!soundObject?.sound?.playState) {
+          soundObject.sound.play(soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'] / 100));
+        }
+
+      } else if (!soundObject.playState) {
 
         // play with volume based on visibility.
         playSound(sound, exports);
@@ -14407,6 +14413,8 @@
 
       keydown(e) {
 
+        if (game.data.paused) return;
+
         // console.log(e.keyCode);
 
         if (!e.metaKey && keys[e.keyCode]?.down) {
@@ -14424,6 +14432,8 @@
       },
 
       keyup(e) {
+
+        if (game.data.paused) return;
 
         if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
           downKeys[e.keyCode] = null;
@@ -15476,27 +15486,54 @@
 
     function pause() {
 
-      if (!data.paused) {
-        objects.gameLoop.stop();
-        if (!userDisabledSound) {
-          soundManager.mute();
-        }
-        utils.css.add(document.body, 'game-paused');
-        data.paused = true;
+      if (data.paused) return;
+
+      objects.gameLoop.stop();
+
+      if (gamePrefs.sound) {
+        soundManager.mute();
       }
+
+      // shuffle "resume prompts" messages by hiding all except one; hopefully, they're considered humorous. ;)
+      let prompts = document.querySelectorAll('#game-paused .resume-prompt');
+      let rnd = rndInt(prompts.length);
+
+      for (let i = 0; i < prompts.length; i++) {
+        prompts[i].style.display = (i === rnd) ? 'inline-block' : 'none';
+      }
+
+      let css = ['game-paused'];
+      
+      // don't show paused status / tips in certain cases
+
+      if (prefsManager.isActive()) {
+        css.push('prefs-modal-open');
+      }
+
+      if (!gameType) {
+        css.push('game-menu-open');
+      utils.css.add(document.body, ...css);
+
+      data.paused = true;
 
     }
 
     function resume() {
 
-      if (data.paused) {
-        objects.gameLoop.start();
-        if (!userDisabledSound) {
-          soundManager.unmute();
-        }
-        utils.css.remove(document.body, 'game-paused');
-        data.paused = false;
+      // exit if preferences menu is open; it will handle resume on close.
+      if (prefsManager.isActive()) return;
+
+      if (!data.paused) return;
+
+      objects.gameLoop.start();
+
+      if (gamePrefs.sound) {
+        soundManager.unmute();
       }
+
+      utils.css.remove(document.body, 'game-paused', 'prefs-modal-open', 'game-menu-open');
+
+      data.paused = false;
 
     }
 
@@ -15515,7 +15552,7 @@
         utils.events.remove(document, 'click', startEngine);
       }
 
-      if (sounds.helicopter.engine && !userDisabledSound) {
+      if (gamePrefs.sound) {
         // wait for click or keypress, "user interaction"
         utils.events.add(document, 'click', startEngine);
       }
@@ -15646,17 +15683,9 @@
 
   function startGame() {
 
-    // should scaling be disabled, per user preference?
-    if (utils.storage.get(prefs.noScaling)) {
-      userDisabledScaling = true;
-    }
-
-    if (utils.storage.get(prefs.noSound)) {
-      userDisabledSound = true;
-    }
-
-
     game.init();
+
+    prefsManager.init();
 
     keyboardMonitor.init();
 
@@ -15700,7 +15729,9 @@
       utils.css.add(document.body, 'no-transform');
     }
 
+    // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
+    if (isSafari) utils.css.add(document.body, 'is_safari');
 
     if (isMobile) {
 
@@ -15917,32 +15948,6 @@
     initArmorAlley,
 
     startGame,
-
-    toggleScaling(savePref) {
-
-      const prefName = prefs.noScaling;
-
-      userDisabledScaling = !userDisabledScaling;
-
-      updateScreenScale();
-
-      applyScreenScale();
-
-      game.objects.view.events.resize();
-
-      if (savePref) {
-
-        if (userDisabledScaling) {
-          utils.storage.set(prefName, true);
-        } else {
-          utils.storage.remove(prefName);
-        }
-
-      }
-
-      return false;
-
-    },
 
     startTutorial() {
 
@@ -16397,7 +16402,6 @@
       console.log('Safari 7-15 (and maybe newer) rendering engine stutters when multiple Audio() objects play simultaneously, possibly due to trackbar. https://bugs.webkit.org/show_bug.cgi?id=116145');
       if (!winloc.match(/html5audio/i)) {
         console.log('Audio is disabled by default. You can try forcing audio by adding html5audio=1 to the URL.');
-        userDisabledSound = true;
         soundManager.disable();
       }
     }
