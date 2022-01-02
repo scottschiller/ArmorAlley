@@ -813,13 +813,31 @@ ul.stats-bar .bombs em {
   overflow: hidden;
 }
 
+#stars,
+.sprite.balloon,
+.sprite.chain,
+.sprite.cloud1,
+.sprite.cloud2,
+.sprite.gunfire,
+.sprite.smart-missile,
+.sprite.van,
+.sprite.missile-launcher,
+/* .sprite.smoke, */
+.smoke .transform-sprite,
+.sprite.shrapnel,
+.turret .sub-sprite,
+#radar .radar-item--animated {
+  /**
+   * 09/2021: Chrome may benefit from explicit "layer" promotion, per dev tools.
+   * Here, green paint flashing (and thus, performance) is notably improved
+   * by carefully applying `will-change` to a number of common elements.
+   * https://developer.mozilla.org/en-US/docs/Web/CSS/will-change
+   */
+  will-change: transform;
+}
+
+/*
 .chain,
-/**
- * #stars and #game-tips-list are lage may trigger this Firefox console warning:
- * > Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (771270 px).
- * > Occurrences of will-change over the budget will be ignored.
- * this list should probably be reviewed over time.
- */
 #fuel-line,
 .sprite.helicopter,
 .sprite.missile-launcher,
@@ -834,37 +852,29 @@ ul.stats-bar .bombs em {
 .sprite.shrapnel,
 .turret .sub-sprite,
 .radar-item.parachute-infantry {
-  /* constant animation */
+*/
+  /**
+   * elements with constant transform-based motion / animation
+   * #stars and #game-tips-list are large, may trigger this Firefox console warning:
+   * > Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (771270 px).
+   * > Occurrences of will-change over the budget will be ignored.
+   * this list should probably be reviewed over time.
+   */
+  /* 08/2021: I suspect this makes Chrome performance worse. */
   /* will-change: transform; */
-}
+/* } */
 
 .transform-sprite {
-  /* GPU-accelerated, transform-based CSS animations on sprites. Look ma, no paint! 🎉 */
+  /* GPU-accelerated, transform-based CSS animations on sprites. Look ma, no paint! */
   /* These elements move within a clipped parent element. */
   position: absolute;
   top: 0px;
   left: 0px;
 }
 
-.sprite.offscreen,
-.gunfire.offscreen {
-  /* JS has determined an element is out of view. free up rendering / GPU resources. */
-  display: none !important;
-  /* does applying / removing transform cause jank? */
-  /* position-related transforms are applied via JS and will be removed in the same manner. */
-  transform: none !important;
-  /* oh yeah, and don't draw all those expensive animated .GIFs! */
-  background-image: none !important;
-  /* and no CSS animation, eh!? */
-  animation: none !important;
-  /* reset more stuff */
-  will-change: auto !important;
-}
-
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
 .sprite.exploding .transform-sprite {
   display: none;
-  animation: none;
 }
 
 .bunker,
