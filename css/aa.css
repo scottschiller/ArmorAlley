@@ -262,17 +262,6 @@ body {
   margin-top: -192px;
   background: #000;
   font-size: 11px;
-  font-weight: 200;
-}
-
-#world-wrapper b {
-  font-weight: 500;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  body.is-mobile #world-wrapper b {
-    font-weight: 200;
-  }
 }
 
 #game-status-bar {
@@ -286,7 +275,8 @@ body {
   border-color: #fff;
 }
 
-#player-status-bar #spinner {
+/* nested in #player-status-bar */
+#spinner {
   /* gear spinner */
   position: absolute;
   display: none;
@@ -328,12 +318,12 @@ body.is-mobile #game-status li:last-of-type {
   height: 11px;
   overflow: hidden;
   z-index: 9;
-  font-size: 85%;
+  font-size: 65%;
   color: #999;
 }
 
 #game-status li {
-  text-indent: 0.25em;
+  text-indent: 0.33em;
   margin-right: 1em;
 }
 
@@ -350,7 +340,6 @@ body.is-mobile #game-status li:last-of-type {
   font-size: 0px;
   min-width: 10px;
   transform: scale(0.85);
-
   /* earlier "jetbrains mono" version */
   /*
   margin-left: -0.33rem;
@@ -397,10 +386,7 @@ body.is-mobile #game-status li:last-of-type {
   /* "rotating" number */
   transition: all 0.25s ease-in-out;
   transition-property: margin, background-position;
-  /* opacity: 0.55; */
-  /* transform: scale(1); */
   background: transparent url(../image/number-strip-chicago.svg);
-  /* background: transparent url(../number-strip-chicago-999.png); */
   background-size: 100% 1000%; /* height ~10 pixels? */
   background-position: 0px 0px;
   width: 100%;
