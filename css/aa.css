@@ -1575,6 +1575,8 @@ ul.stats-bar .bombs em {
   width: 81px;
   height: 7px;
   overflow: hidden;
+  /* cover all ground units */
+  z-index: 5;
 }
 
 .landing-pad .transform-sprite {
@@ -1669,11 +1671,9 @@ ul.stats-bar .bombs em {
   height: 9px;
 }
 
-.tree,
-.palm-tree,
-.rock,
-.rock-2 {
-  z-index: 3;
+.terrain-item {
+  /* all these things: rocks, graves, trees, barb wire etc. */
+  z-index: 5;
 }
 
 .left-arrow-sign,
@@ -1702,7 +1702,7 @@ ul.stats-bar .bombs em {
   width: 48px;
   height: 15px;
   overflow: hidden;
-  z-index: 2;
+  z-index: 4; /* show on top of landing pad */
 }
 
 .helicopter .transform-sprite {
