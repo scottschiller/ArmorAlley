@@ -1480,6 +1480,8 @@ ul.stats-bar .bombs em {
   width: 9px;
   height: 9px;
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: 9px 9px;
   z-index: 4;
 }
 
@@ -1995,7 +1997,7 @@ body.is_firefox #world-wrapper.jammed #radar {
 #radar .sprite.dead {
   display: none;
   /* just in case */
-  will-change: initial;
+  /* will-change: initial; */
   transform: initial;
 }
 
@@ -2126,8 +2128,8 @@ body.is_firefox #world-wrapper.jammed #radar {
   bottom: 0px;
   left: 0px;
   width: 100%;
-  margin-bottom: -1.75em;
-  font-size: 0.94em;
+  margin-bottom: -2.5em;
+  font-size: 0.65em;
   /* fit at 1024px width */
   color: #666;
 }
@@ -2280,7 +2282,6 @@ body.is_firefox #world-wrapper.jammed #radar {
 
 #stats-endgame table thead th {
   padding: 0.25em;
-  font-weight: 500;
 }
 
 #stats-endgame table thead th:first-of-type {
@@ -2348,7 +2349,6 @@ body.game-over #game-tips .tips-container {
   text-align: center;
   color: #ccc;
   text-shadow: 0px 1px 0px #000;
-  /* TODO: review. */
   z-index: 10;
   display: none;
 }
@@ -2356,8 +2356,6 @@ body.game-over #game-tips .tips-container {
 #game-paused p {
   padding: 0.25rem 0.5rem;
   margin-top: -0.25rem 0px 0px 0px;
-  /* might overlap "game over" screen, etc. */
-  background: rgba(0,0,0,0.75);
 }
 
 body.game-paused #game-tips .tips-container {
@@ -2681,13 +2679,13 @@ body.is-mobile #game-tips #game-announcements {
     background-position: 0px 0px;
   }
   to {
-    background-position: 0px -135px;
+    background-position: 0px -128px; /* original yellow version: 0px -135px */
   }
 }
 
 @keyframes balloonleft {
   from {
-    background-position: 0px -120px;
+    background-position: 0px -128px;  /* original yellow version: 0px -120px */
   }
   to {
     background-position: 0px 0px;
@@ -2730,9 +2728,9 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #help {
-  display: inline;
+  float: right;
   margin-left: 1em;
-  margin-right: 0.5em;
+  margin-right: 1em;
 }
 
 body.is-mobile #help {
@@ -2865,7 +2863,7 @@ body.is-mobile #player-status-bar .inventory-item:active {
 #player-status-bar .inventory-item a.van,
 #mobile-controls li.inventory-item a.van {
   /* background-image: url(../image/van-static.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAQCAMAAABNwP0sAAAAFVBMVEVvcm0AAABVVQEFVQEOqgL/qgGqqqptBTfSAAAAAXRSTlMAQObYZgAAAI1JREFUeNp9zkEOhDAMQ9HaSbn/kUlIGkvVaP6u5kFZEf61TgAzo5mRHlnmX+Gk8omeCRLjQpnLRXscMQ60YuP2FitX7HJ7HNGumbmg73baMZe6YCp9XcxJK9vsvFN7MoDOWodZs7MnI9k31qhfmr0YvnqTM6iF7HkeXGlfXZwY5zVdu4642K9dH1fX/gI/BQWst4OOWQAAAABJRU5ErkJggg==);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAgBAMAAABKj4M5AAAAFVBMVEVhcAAAAABVVQEFVQEOqgL/qgGqqqooo0ftAAAAAXRSTlMAQObYZgAAAKFJREFUeF6VzsERAyEMQ1FaUAtqwS24hW2B/ksIjjY4HJJZ/RMj3gyMFf411GMGsApGBJmrqPId4DCpuum7hoScwcjIw13bEXIOCzFV7Gom57HTXdsRciaLbLiYXO8wmFDDUsWUzZL8freUnHaDAUxKbBY3++wGI5mahSsd924xVLhtu0D3mFVzTpyh91E9YWopLje6Y/cZfjD4rL/a9e6wF9MGwLd0KLg4AAAAAElFTkSuQmCC);
 }
 
 #player-status-bar .inventory-item a.van {
@@ -2912,7 +2910,7 @@ body.is-mobile #player-status-bar .inventory-item:active {
 #mobile-controls.can-not-order-infantry .infantry,
 #mobile-controls.can-not-order-engineer .engineer {
   filter: grayscale(1);
-  opacity: 0.75;
+  opacity: 0.5;
 }
 
 #mobile-controls {
@@ -3104,7 +3102,7 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
   }
 
   #mobile-controls li.inventory-item a.van {
-    background-size: 50%;
+    background-size: 25%;
   }
 
   #mobile-controls li.inventory-item a.infantry,
