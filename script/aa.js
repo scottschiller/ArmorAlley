@@ -216,11 +216,6 @@
   const debugType = winloc.match(/debugType/i);
 
   const showHealth = true; // winloc.match(/health/i);
-
-  // whether to always "upgrade" Smart Missiles...
-  const forceRubberChicken = winloc.match(/chicken/i);
-  const forceBanana = winloc.match(/banana/i);
-
   // TODO: move missile mode bits into game object
   let missileMode;
 
@@ -8933,14 +8928,6 @@
 
     options = options || {};
 
-    if (forceRubberChicken) {
-      options.isRubberChicken = true;
-    }
-
-    if (forceBanana) {
-      options.isBanana = true;
-    }
-
     css = inheritCSS({
       className: 'smart-missile',
       banana: 'banana',
@@ -15667,10 +15654,6 @@
       userDisabledSound = true;
     }
 
-    if (forceRubberChicken) {
-      utils.css.add(document.getElementById('world'), rubberChickenMode);
-      document.querySelector('#stats-bar .missiles .letter-block').innerHTML = 'C';
-    }
 
     game.init();
 
