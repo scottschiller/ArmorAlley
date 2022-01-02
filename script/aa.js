@@ -5148,7 +5148,7 @@
       }
 
       // snow?
-      if (window.snowStorm && window.snowStorm.snow) {
+      if (gamePrefs.snow && window.snowStorm?.snow) {
         window.snowStorm.snow();
       }
 
