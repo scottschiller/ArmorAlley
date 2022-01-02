@@ -4822,18 +4822,23 @@
 
       for (i = 0, j = objects.items.length; i < j; i++) {
 
+        // just in case: ensure the object still has a DOM node.
+        if (!objects.items[i]?.dom?.o) continue;
+
         // is this a "static" item which is positioned only once and never moves?
         // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
         // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
 
         if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
           
-          if (
-            objects.items[i].oParent.data.type === TYPES.turret
-            || objects.items[i].oParent.data.type === TYPES.base
-            || objects.items[i].oParent.data.type === TYPES.bunker
-            || objects.items[i].oParent.data.type === TYPES.endBunker
-            || objects.items[i].oParent.data.type === TYPES.superBunker
+          if (!objects.items[i].isStatic
+            && (
+              objects.items[i].oParent.data.type === TYPES.turret
+              || objects.items[i].oParent.data.type === TYPES.base
+              || objects.items[i].oParent.data.type === TYPES.bunker
+              || objects.items[i].oParent.data.type === TYPES.endBunker
+              || objects.items[i].oParent.data.type === TYPES.superBunker
+            )
           ) {
             objects.items[i].isStatic = true;
           }
@@ -4847,10 +4852,9 @@
           }
 
           // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
-          top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - objects.items[i].layout.height;
+          top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - (objects.items[i]?.layout?.height || 0);
 
           // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-          // common.setTransformXY(objects.items[i], objects.items[i].dom.o, left + 'px', top + 'px', data.extraTransforms[objects.items[i].oParent.data.type]);
           common.setTransformXY(null /* exports */, objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
 
         }
