@@ -2114,6 +2114,7 @@ body.is_firefox #world-wrapper.jammed #radar {
   display: block;
   width: 52px;
   height: 4px;
+  margin-top: 21px; /* to get 25px height, align with bottom */
   /* background-image: url(../image/bunker-dead.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAEAgMAAAC8bPTVAAAADFBMVEUAAAAAAACqVQGqqgKrKM85AAAAAXRSTlMAQObYZgAAAD1JREFUCB1j4v35jwEImBqAmIFJ9+F8EKNOq4GB8wPTnwtnHJg2cBZ9/MAxv4Gp+I+tzdozUg1PeJZv0AMA4/wUXgTuWxIAAAAASUVORK5CYII=);
 }
