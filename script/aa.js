@@ -944,23 +944,32 @@
     node.style.transform += ` rotate(${rnd(360)}deg)`;
   }
 
-  function updateEnergy(object) {
+  function updateEnergy(object, forceUpdate) {
 
-    if (!showHealth) return;
+    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) {
+      // if present, remove right away
+      if (object?.dom?.oEnergy) {
+        object.dom.oEnergy.remove();
+        object.dom.oEnergy = null;
+      }
+      return;
+    }
     
-    let node, didCreate, energy, energyLineScale, DEFAULT_ENERGY_SCALE;
+    let node, didCreate, energy, energyLineScale, newWidth, DEFAULT_ENERGY_SCALE;
 
     DEFAULT_ENERGY_SCALE = 1;
 
-    // only do work if visible, and valid
-    if (!object.data.isOnScreen || !object.dom || !object.dom.o) return;
+    // only do work if valid
+    if (!object?.dom?.o) return;
+
+    // only do work if visible, OR "always" shown and needing updates
+    if (!object.data.isOnScreen && gamePrefs.show_health_status !== PREFS.SHOW_HEALTH_ALWAYS) return;
 
     // prevent certain things from rendering this, e.g., smart missiles.
     if (object.data.noEnergyStatus) return;
 
-    // dynamically create and remove `.energy` node
+    // dynamically create, and maybe queue removal of `.energy` node
     if (!object.dom.oEnergy) {
-      // create on the fly
       node = document.createElement('div');
       node.className = 'energy-status energy';
       object.dom.oEnergy = object.dom.o.appendChild(node);
@@ -969,8 +978,6 @@
 
     node = object.dom.oEnergy;
 
-    if (!node) return;
-
     // some objects may have a custom width, e.g., 0.33.
     energyLineScale = object.data.energyLineScale || DEFAULT_ENERGY_SCALE;
 
@@ -978,8 +985,8 @@
 
     if (isNaN(energy)) return;
 
-    // if just created, allow node to be shown.
-    if (object.data.lastEnergy === energy && !didCreate) return;
+    // don't show node unless just created, or forced
+    if (object.data.lastEnergy === energy && !didCreate && !forceUpdate) return;
 
     object.data.lastEnergy = energy;
 
@@ -994,13 +1001,18 @@
       node.style.backgroundColor = '#cc3333';
     }
 
+    newWidth = energy * energyLineScale;
+
     // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
-    node.style.width = `${energy * energyLineScale}%`;
+    node.style.width = `${newWidth}%`;
     
-    // only center if full-width
-    if (energyLineScale === DEFAULT_ENERGY_SCALE) {
-      node.style.left = `${(100 - energy) / 2}%`;
+    // only center if full-width, or explicitly specified
+    if (energyLineScale === DEFAULT_ENERGY_SCALE || object.data.centerEnergyLine) {
+      node.style.left = ((100 - newWidth) / 2) + '%';
     }
+
+    // if "always" show, no further work to do
+    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
 
     // hide in a moment, clearing any existing timers.
     if (object.data.energyTimerFade) {
@@ -1013,6 +1025,10 @@
 
     // fade out, and eventually remove
     object.data.energyTimerFade = setFrameTimeout(() => {
+
+      // in case prefs changed during a timer, prevent removal now
+      if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
+
       if (node) node.style.opacity = 0;
 
       // fade should be completed within 250 msec
