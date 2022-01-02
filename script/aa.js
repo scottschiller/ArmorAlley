@@ -4605,7 +4605,6 @@
 
       // cache hit, based on "type"
       if (layoutCache[type]) {
-        // console.log('cache hit', className, layoutCache[className]);
         return layoutCache[type];
       }
 
@@ -4623,9 +4622,6 @@
         console.warn('getLayout: something is wrong, returning empty result.', itemObject);
         return result;
       }
-
-      // TODO: remove this.
-      // window.layoutCache = layoutCache;
 
       // if radar is jammed, items will be display: none and layout can't be read. bail.
       if (data.isJammed) return itemObject;
@@ -15528,6 +15524,8 @@
 
       if (!gameType) {
         css.push('game-menu-open');
+      }
+
       utils.css.add(document.body, ...css);
 
       data.paused = true;
@@ -15564,8 +15562,13 @@
       objects.gameLoop.init();
 
       function startEngine() {
+
+        // wait until available
+        if (!sounds.helicopter.engine) return;
+
         playSound(sounds.helicopter.engine);
         utils.events.remove(document, 'click', startEngine);
+
       }
 
       if (gamePrefs.sound) {
