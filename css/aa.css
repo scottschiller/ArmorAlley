@@ -1137,62 +1137,70 @@ ul.stats-bar .bombs em {
   animation: parachute-swing 1s ease-in-out alternate infinite;
 }
 
-/* applied to sprites being actively targeted / tracked */
-.smart-missile-tracking::after,
-.smart-missile-tracking-spinning::after,
-.smart-missile-tracking-removal::after {
+/* applied to sprites being actively targeted / tracked - excluding radar item sprites */
+.smart-missile-tracking:not(.radar-item)::after,
+.smart-missile-tracking-active:not(.radar-item)::after,
+.smart-missile-tracking-removal:not(.radar-item)::after {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+  transform: translate(-50%, -50%) scale(0.75);
   opacity: 1;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  font-size: 15px;
-  content: "×";
-  /* ⌖ */
+  transition: transform, opacity 0.33s ease-in-out;
   width: 13px;
   height: 13px;
-  line-height: 13px;
-  vertical-align: middle;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  line-height: 12px;
+  vertical-align: top;
+  content: "⦿";
   color: #fff;
   background: #ff0000;
-  border: 1px solid #fff;
+  overflow: hidden;
   border-radius: 100%;
-  text-decoration: blink;
-  text-indent: 0.5px;
-  /* annoying offset */
+  z-index: 4;
 }
 
 .smart-missile-tracking::after {
   animation: drop-in 0.33s ease-in-out;
 }
 
-.smart-missile-tracking-spinning::after {
-  animation: drop-in-spinning 2s linear infinite;
+.smart-missile-tracking-active::after {
+  animation: blink 0.25s ease-in-out infinite;
 }
 
-.smart-missile-tracking-removal::after {
+.smart-missile-tracking-removal::after,
+.smart-missile-tracking-removal:not(.radar-item)::after {
   animation: drop-in 0.33s reverse ease-in-out;
   /* final state once animation finishes */
   opacity: 0;
 }
 
-.radar-item.smart-missile-tracking::after,
-.turret.smart-missile-tracking::after,
 .smart-missile.smart-missile-tracking::after {
   animation: drop-in-small 0.25s ease-out;
   transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
 }
 
-.radar-item.smart-missile-tracking-spinning::after,
-.turret.smart-missile-tracking-spinning::after {
-  animation: drop-in-spinning-small 2s linear infinite;
+.radar-item.smart-missile-tracking-active {
+  animation: blink 0.25s infinite;
 }
 
-.radar-item.smart-missile-tracking-removal::after,
-.turret.smart-missile-tracking-removal::after {
-  animation: drop-in-small 0.33s reverse ease-in-out;
+.radar-item.smart-missile-tracking-active:not(.helicopter) {
+  /* make the missile target obvious on the radar. */
+  /* helicopters are a special border-only case. */
+  background-color: #ff0000 !important;
+  border-color: #ff0000 !important;
+}
+
+.radar-item.helicopter:not(.enemy).smart-missile-tracking-active {
+  /* player's helicopter */
+  border-left-color: #ff0000 !important;
+}
+
+.radar-item.helicopter.enemy.smart-missile-tracking-active {
+  /* enemy helicopter */
+  border-right-color: #ff0000 !important;
 }
 
 @keyframes drop-in {
