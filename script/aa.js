@@ -33,6 +33,80 @@
 
     Changelog / Revision History
 
+    ---- ** 2022 BETA UPDATE ** ----
+
+    + V1.6.20220101
+
+    Work in progress - more to come.
+
+    New and improved smoke / particle effects, more explosions, more fun!
+    Dune ][-style credit / debit UI and sounds
+    Toast-style game notifications
+    Health status bars when units are being hit or repaired
+    Heat-seeking bananas
+    Units can now be "recycled" (and you are refunded 2x cost)
+    Engineers can now steal all funds from enemy bunker
+    Engineers can now repair (but not rebuid) friendly bunkers
+    Performance improvements: More GPU-accelerated rendering, reduced DOM nodes
+    Additional shrapnel
+    Bullets now ricochet off non-friendly super-bunkers
+    Shrapnel will ricochet off certain units (tank, super-bunker)
+    Improved bomb and shrapnel alignment / collision positioning with balloons, tanks, bunkers, and super-bunkers
+    Bombing floating balloons no longer causes an explosion on the ground
+    Fixed bug with quickly-respawning balloons (shooting balloon while infantry are passing under bunker, for example.)
+    Updated sound effects: Infantry gunfire, death, credit +/-, helicopter and turret guns, shell casings on turrets, bullets hitting the ground, turret being disabled and enabled (restored), 
+    Sound performance: Only create `Audio()` when actively playing sounds, and destroy when they finish playing. Browsers are starting to limit the number of `Audio()` instances.
+    Sound: Queue and play sounds as a task with each animation frame callback, vs. prior ad-hoc behaviour.
+    Performance: Refactored game tip scroller to only show two nodes at a time, 1024px width vs. 102,400px. [youtube link here]
+    Order queue: Refactored UI to show letters (e.g., MTVIE), with superscript numbers as appropriate.
+    Fixed UI bug where the "incoming missile" white line would not always disappear.
+    "Incoming missile" doesn't show in extreme mode when the radar is jammed.
+    Performance: Don't update known static radar items: turret, base, bunkers (bunker, end bunker, super bunker) unless marked as "stale" during resize / world scaling
+    Performance: CSS / `contentVisibility` to reduce / optimize rendering costs
+    Animation loop: improved timing, target 30 fps. Request next frame right away. Exit early if next frame arrives too quickly.
+    Turret "scan" now a CSS animation
+    End base, extreme mode: if a defense missile is destroyed, respawn another within 0.5 seconds.
+    Game end: Improve alignment of view and base
+    Smart missiles, helicopters: trailers are now GPU-accelerated
+    Missiles smoke more, and in extreme mode, have a burst of thrust (as in the original game) as they near expiry
+    Missile launchers trigger when closer to the helicopter, more likely now to be on-screen
+    Helicopter respawn: Delay if certain ground units are obstructing the landing pad.
+    Enemy helicopter AI: Default 10% of dropping bombs when targeting a tank, subject to game difficulty (hard: 15%, extreme: 25%.)
+    Helicopter / super-bunker: Improve vertical alignment if helicopter crashes on superbunker "roof."
+    Pseudo-3D effect on shrapnel: Increase size slightly with vertical position on screen
+    Bombs can now collide with smart missiles and take them out
+    Ground units are "behind" most terrain elements like trees, bushes etc.
+    Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank (bug fix: previously, tanks could destroy a bunker trying to hit an infantry on the other side.)
+    Fixed radar item for Super Bunkers, now shows correct friendly / enemy status.
+    Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar. (This includes when tanks dis-arm a bunker by firing at it.)
+    Cloud "wind" accelerates / delecerates more smoothly
+    Clouds no longer "bounce" when they drift off the end of the world, but get a nice bit of wind to bring them back into view.
+    Slight vertical alignment tweaks on gunfire and balloons in radar view.
+    Bomb trajectory now includes the helicopter's Y-axis velocity, too.
+    Improved orientation of heat-seeking smart missiles (and rubber chickens and bananas) as they track their target
+    Tweaked movement and velocity of smart missiles, making them potentially faster / more random
+    Enemy helicopter will now turn to face targets. Sometimes it would fire the other way. ;)
+    Helicopters now rise up from the landing pad on game start and respawn, like the original.
+    Improved helicopter motion when approaching landing pad - "bounce" has largely been eliminated.
+    Adjusted initial position of game, centering view on the helicopter + base
+    Improved off-screen / on-screen DOM pruning, restoration of 3D transforms when re-appending DOM elements
+    Fixed end-game bug, sometimes ground units (e.g. van) did not appear at base when blowing up.
+    Helicopter gunfire takes tilt / angle into account again.
+    Helicopter "shake" starts when health is under 70%, gets worse with damage.
+    Your missile launchers only fire at the enemy helicopter when the convoy is "unassisted", e.g., there is no friendly helicopter or turret nearby.
+    DOM nodes are not appended at create time, now deferred until the object is on-screen for the first time
+    Extreme mode: If you shoot down the enemy base's smart missiles while near the base, it will launch new ones that are faster and more difficult to dodge.
+    Adjusted collision detection: if helicopter is hiding "in" a friendly super-bunker, bombs should hit the roof of the super bunker and not the helicopter.
+    You may have to land to shoot infantry immediately next to you.
+    Don't assume the top of the battlefield is always safe; watch out for balloons!
+    Performance: Battlefield and radar units are now positioned via transform: translate3d() - no more legacy CSS shenanigans using `bottom: 0px`.
+    Bunkers, balloons and super-bunkers now use graphics from the Macintosh (68K) version of Armor Alley; a bit more orange, and less garish yellow.
+    Parachute infantry now fall at slightly different rates, and may be affected more by wind
+    Memory leak fixes: DOM nodes, audio events, and a few others.
+    Game logic: Ground vehicles try to leave space between, and avoid overlapping each other. Tanks will now "park" behind friendly tanks, avoiding a pile-up. Tanks normally only stop to fire. Vans and missile launchers will now wait for each other, too. Tanks will not stop for vans or missile launchers, giving tanks a greater chance of ending up at the front of a convoy - a preferable offensive position.
+
+    ----
+
     + V1.51.20181124
 
      + Performance tweaks
