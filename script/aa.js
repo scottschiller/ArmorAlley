@@ -11426,11 +11426,15 @@
         data.lastNearbyTarget && data.lastNearbyTarget.data.type
         && (data.lastNearbyTarget.data.type === TYPES.helicopter || data.lastNearbyTarget.data.type === TYPES.tank)
       ) {
-        // allow bullets to hit bunkers
+
+        // allow bullets to hit bunkers when firing at a helicopter or tank
         collisionItems = nearby.items.concat('bunkers');
-      } else {
-        // bullets "pass through" bunkers
+
+      } else if (gamePrefs.tank_gunfire_miss_bunkers) {
+
+        // bullets "pass through" bunkers when targeting infantry, engineers, missile launchers, and vans.
         collisionItems = nearby.items;
+
       }
 
       game.objects.gunfire.push(GunFire({
