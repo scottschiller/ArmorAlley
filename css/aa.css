@@ -1993,19 +1993,6 @@ body.is_firefox #world-wrapper.jammed #radar {
   transform: initial;
 }
 
-/* TODO: remove */
-.collision-check-1 {
-  position: absolute;
-  border: 1px solid #ff33ff;
-  background: rgba(255,64,255,0.25);
-}
-
-.collision-check-2 {
-  position: absolute;
-  border: 1px solid #33ff33;
-  background: rgba(64,255,64,0.25);
-}
-
 /* TODO: review explosions (enemy was used for original animation) */
 .tank.exploding,
 .van.exploding,
