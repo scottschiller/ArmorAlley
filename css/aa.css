@@ -954,9 +954,10 @@ ul.stats-bar .bombs em {
 }
 
 .chain {
-  border-left: 1px dotted #999;
-  border-right: 1px dotted #999;
-  width: 1px;
+  /* slightly over 1px to "thicken up" when scaled */
+  border-left: 1.02px dotted #999;
+  border-right: 1.02px dotted #999;
+  width: 0.75px;
   /*
    * height will be set / reset by JS.
    * element is moved via transform and is effectively fixed-height when active.
