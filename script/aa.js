@@ -174,9 +174,6 @@
 
   const noJamming = winloc.match(/noJam/i);
 
-  // IE 9 doesn't like some of the bigger transforms, for some reason.
-  const noTransform = (winloc.match(/noTransform/i) || (ua.match(/msie 9/i) && !winloc.match(/useTransform/i)));
-
   // by default, transform: translate3d(), more GPU compositing seen vs.2d-base transform: translate().
   const useTranslate3d = !winloc.match(/noTranslate3d/i);
 
@@ -936,7 +933,7 @@
   }
 
   function applyRandomRotation(node) {
-    if (!node || noTransform) return;
+    if (!node) return;
     /**
      * Here be dragons: this should only be applied once, given concatenation,
      * and might cause bugs and/or performance problems if it isn't. :D
@@ -15771,12 +15768,6 @@
   }
 
   function initArmorAlley() {
-    // late addition: tutorial vs. regular game mode
-
-    // no-transform CSS tweak for legacy stuff.
-    if (noTransform) {
-      utils.css.add(document.body, 'no-transform');
-    }
 
     // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
@@ -15990,6 +15981,7 @@
     }
 
     startGame();
+
   }
 
   window.aa = {
