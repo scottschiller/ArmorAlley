@@ -2375,6 +2375,12 @@ body.game-paused #game-paused {
   display: block;
 }
 
+body.game-paused.game-menu-open #game-paused,
+body.game-paused.prefs-modal-open #game-paused {
+  /* hide even when paused, in certain cases. */
+  display: none;
+}
+
 #game-tips .tips-container .tips-fader {
   /* overlay tips */
   position: absolute;
