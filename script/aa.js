@@ -12508,7 +12508,7 @@
               resume();
             }
 
-          } else if (data.role && target.data.type === TYPES.bunker && data.isEnemy === target.data.isEnemy && target.engineerHit) {
+          } else if (gamePrefs.engineers_repair_bunkers && data.role && target.data.type === TYPES.bunker && data.isEnemy === target.data.isEnemy && target.engineerHit) {
 
             // engineer + friendly bunker: repair, as needed
             target.engineerHit(exports);
