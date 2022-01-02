@@ -3252,11 +3252,6 @@ body:not(.is-mobile) .mobile-only {
   body.game-paused #mobile-controls {
     display: none;
   }
-#notifications {
-  position: absolute;
-  top: 6px;
-  left: 3px;
-  font-size: 7px;
 }
 
 #notification-toasts {
@@ -3269,6 +3264,11 @@ body:not(.is-mobile) .mobile-only {
   overflow: hidden;
 }
 
+#notification-toasts.left-aligned {
+  right: auto;
+  left: 8px;
+}
+
 .notification-toast {
   position: relative;
   top: 0px;
@@ -3279,6 +3279,10 @@ body:not(.is-mobile) .mobile-only {
   transition: all 0.33s ease-in-out;
   transition-property: margin, opacity;
   will-change: transform;
+}
+
+#notification-toasts.left-aligned .notification-toast {
+  text-align: left;
 }
 
 .notification-toast.toast-active {
@@ -3312,6 +3316,75 @@ body:not(.is-mobile) .mobile-only {
   border: 1px solid transparent;
   padding-bottom: 1px;
   background: rgba(0,0,0,0.25);
+}
+
+.notification-toast .fraction,
+#queue .fraction {
+  /* "slash" character */
+  font-size: 110%;
+  font-style: normal;
+}
+
+.notification-toast sup.nsf,
+#queue sup {
+  position: relative;
+  font-size: 75%;
+  /* pull closer to text at left */
+  margin-left: -1.5px;
+  /* super-script: closer to fraction "slash" */
+  top: 1px;
+  right: -1px;
+}
+
+.notification-toast sup:not(.nsf) {
+  /* bump out a bit, e.g., tank[3] - multiple tanks being ordered */
+  padding-left: 0.5px;
+}
+
+#queue span.fraction-wrapper {
+  /* building queue: nudge a little */
+  position: relative;
+  top: -1px;
+  left: 3px;
+}
+
+#queue .queue-item.has-counter .fraction-wrapper {
+  /* hackish - so numbers don't overlap */
+  display: inline-block;
+  transform: scale3d(0.9, 0.9, 1);
+}
+
+#queue .queue-item.has-counter.over-ten .fraction-wrapper {
+  /* hackish - so numbers don't overlap */
+  display: inline-block;
+  transform: scale3d(0.75, 0.75, 1);
+}
+
+.notification-toast sub.nsf,
+#queue sub {
+  position: relative;
+  font-size: 75%;
+  /* sub-script: closer to fraction "slash" */
+  top: -1px;
+  left: -1px;
+}
+
+#queue sup,
+#queue sub {
+  font-size: 65%;
+}
+
+#queue sup {
+  margin-left: 0px;
+  left: 0.5px;
+}
+
+#queue sub {
+  left: -0.5px;
+}
+
+#queue .fraction {
+  font-size: 75%;
 }
 
 /* prefs + modal stuff - based on original 68K Macintosh UI */
