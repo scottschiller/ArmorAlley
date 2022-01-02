@@ -6730,7 +6730,7 @@
       utils.css.add(radarItem.dom.o, css.destroyed);
 
       data.energy = 0;
-
+      data.restoring = false;
       data.dead = true;
 
       updateEnergy(exports);
@@ -6741,6 +6741,11 @@
 
       // restore visual, but don't re-activate gun yet
       if (!data.dead && data.energy !== 0) return;
+
+      // don't repeat if already underway
+      if (data.restoring) return;
+
+      data.restoring = true;      
 
       utils.css.remove(dom.o, css.destroyed);
       utils.css.remove(radarItem.dom.o, css.destroyed);
@@ -6779,9 +6784,9 @@
             // restore to life at 25%
             data.dead = false;
             if (data.isEnemy) {
-              game.objects.notifications.add('The enemy re-enabled a turret');
+              game.objects.notifications.add('The enemy re-enabled a turret 🛠️');
             } else {
-              game.objects.notifications.add('You re-enabled a turret');
+              game.objects.notifications.add('You re-enabled a turret 🛠️');
             }
           }
 
@@ -6791,12 +6796,18 @@
 
         result = true;
 
-      } else if (data.lastEnergy < data.energy) {
+      } else if (data.lastEnergy !== data.energy) {
+
         // only stop sound once, when repair finishes
         if (sounds.tinkerWrench && sounds.tinkerWrench.sound) {
           stopSound(sounds.tinkerWrench);
         }
+
         data.lastEnergy = data.energy;
+
+        // reset, since work is commplete
+        data.restoring = false;
+
       }
 
       return result;
@@ -6953,6 +6964,7 @@
       scanModulus: 1,
       claimModulus: 8,
       repairModulus: FPS,
+      restoring: false,
       shellCasingInterval: (tutorialMode || gameType === 'easy' ? 1 : 2),
       claimPoints: 0,
       claimPointsMax: 50,
