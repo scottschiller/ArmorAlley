@@ -2258,11 +2258,6 @@ body.is_firefox #world-wrapper.jammed #radar {
   height: 34px;
 }
 
-#extra-content {
-  /* TODO: make this more friendly. */
-  display: none;
-}
-
 #stats-endgame {
   position: absolute;
   display: none;
