@@ -14115,7 +14115,7 @@
       frameCount: 0,
       fontSize: 10,
       offsetType: 'px',
-      pixelShift: isChrome ? -0.1825 * 1 : 0,
+      pixelShift: isChrome ? -0.1825 * 0.5 : 0,
       // sometimes, things don't line up exactly perfectly.
       pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
       digitCount: 3,
