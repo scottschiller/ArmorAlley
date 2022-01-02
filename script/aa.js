@@ -847,10 +847,10 @@
     // the battlefield under any circumstances. ;)
     if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
-    // hide immediately
-    node.style.display = 'none';
+    // hide immediately, cheaply
+    node.style.opacity = 0;
 
-    game.objects.queue.add(function() {
+    game.objects.queue.add(() => {
       if (!node) return;
       if (node.parentNode) {
         node.parentNode.removeChild(node);
@@ -866,19 +866,17 @@
 
     j = nodeArray.length;
 
+    // removal will invalidate layout, $$$. hide first, cheaply.
     for (i = 0; i < j; i++) {
-      nodeArray[i].style.display = 'none';
+      nodeArray[i].style.opacity = 0;
     }
 
-    game.objects.queue.add(function() {
-
-      // this is going to invalidate layout, and that's expensive. set display: none first, maybe minimize damage.
-      // TODO: Put these in a queue, and do own "GC" of nodes every few seconds or something.
+    game.objects.queue.add(() => {
 
       for (i = 0; i < j; i++) {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
-        // nodeArray[i].style[features.transform.prop] = 'none';
+        // nodeArray[i].style.transform = 'none';
         nodeArray[i].parentNode.removeChild(nodeArray[i]);
         nodeArray[i] = null;
       }
