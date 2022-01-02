@@ -31,6 +31,20 @@
 
 */
 
+@font-face {
+  /* Credit and thank-you (Apache 2.0): https://www.jetbrains.com/lp/mono/ */
+  font-family: "JetBrains Mono";
+  src: url('../font/JetBrainsMono/JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  /* https://fontsarena.com/sysfont-by-alina-sava/ (SIL Open Font License 1.1) */
+  font-family: 'FA Sysfont C';
+  src: url('../font/sysfont/sysfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   margin: 0px;
@@ -38,8 +52,8 @@ body {
 }
 
 body {
-  font-family: "helvetica neue", helvetica, arial, verdana, tahoma, sans-serif;
-  font-size: 1em;
+  /* Classic Mac OS-style "chicago" by default, with an array of safe fallbacks. */
+  font-family: 'FA Sysfont C', 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
   background: #111;
   color: #fff;
   /**
@@ -2296,6 +2310,11 @@ body.is-mobile #game-tips #game-announcements {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   color: #999;
+}
+
+#world.tutorial-mode #game-tips #game-announcements {
+  /* this is nicer to read vs. huge blocks of chicago. */
+  font-family: 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
 }
 
 #game-tips #game-announcements p {
