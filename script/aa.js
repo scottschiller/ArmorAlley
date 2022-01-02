@@ -7665,7 +7665,9 @@
       // (maybe) fire?
       fire();
 
-      nearbyTest(friendlyNearby);
+      if (gamePrefs.ground_unit_traffic_control) {
+        nearbyTest(friendlyNearby);
+      }
 
       return (data.dead && !dom.o);
 
@@ -11588,7 +11590,9 @@
       nearbyTest(nearby);
 
       // stop moving, if we approach another friendly tank
-      nearbyTest(friendlyNearby);
+      if (gamePrefs.ground_unit_traffic_control) {
+        nearbyTest(friendlyNearby);
+      }
 
       recycleTest(exports);
 
@@ -11881,7 +11885,9 @@
 
       }
 
-      nearbyTest(friendlyNearby);
+      if (gamePrefs.ground_unit_traffic_control) {
+        nearbyTest(friendlyNearby);
+      }
 
       data.frameCount++;
 
