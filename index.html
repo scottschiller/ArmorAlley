@@ -539,9 +539,257 @@
         </tr>
 
     </table>
-
+<!-- prototype UI bits
+<div class="finder dialog">
+  <div class="title-bar">
+    <div class="close-button-wrapper">
+      <div class="close-button-outer"></div>
+      <div class="close-button-inner"></div>  
+    </div>
+    <div class="title-bar-stripes"></div>
+    <div class="title-bar-label">Armor Alley&trade;</div>
   </div>
+  <div class="body">
+    <p>
+      Copyright &copy; 1988-1991<br />
+      Information Access Technologies, Inc.<br />
+      All Rights Reserved.<br />
+    </p>
+    <p>
+      Armor Alley&trade; is a trademark of Information Access Technologies, Inc.
+    </p>
+    <p>
+      Published by:<br />
+      Three-Sixty Pacific, Inc.<br />
+      2105 South Bascom Avenue, Suite 380<br />
+      Campbell, California 95008<br />
+      Telephone: 408-879-9144<br />
+      Technical support line: 409-776-2187
+    </p>
+    <p>
+      <button>OK</button>
+      <button class="primary">Cancel</button>
+    </p>
+  </div>
+</div>
 
+<div class="modal dialog">
+  <div class="border-3">
+    <div class="border-2">
+      <div class="border-1">
+        <div class="body">
+          <p style="padding-top:3px;margin-bottom:0.25rem">
+            <img src="image/aa_logo_wordmark.png" alt="Armor Alley&trade; wordmark and helicopter image" style="width:161.5px;height:25px;vertical-align: middle;margin-right:0.75rem" />
+            <button class="primary" style="position:relative;top:-1px">OK</button>
+          </p>
+          <p style="position:relative">
+            <img src="image/three_sixty_software_logo.png" alt="Three-Sixty Pacific, Inc. logo" style="position:absolute;top:0px;right:0.125rem;margin-top:-8px;width:88px;height:88px" />
+<textarea>Copyright &copy; 1988-1991
+Information Access Technologies, Inc.
+All Rights Reserved.
+
+Armor Alley&trade; is a trademark of Information Access Technologies, Inc.
+
+Published by:
+Three-Sixty Pacific, Inc.
+2105 South Bascom Avenue, Suite 380
+Campbell, California 95008
+Telephone: 408-879-9144
+Technical support line: 409-776-2187
+</textarea>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+
+<div id="game-prefs-modal" class="modal">
+  <!-- And here, we do terrible, terrible things. :D -->
+  <div class="border-3">
+    <div class="border-2">
+      <div class="border-1">
+        <div class="body">
+
+          <form id="game-prefs-form" name="prefs_form" method="get" autocomplete="off" novalidate onsubmit="return false">
+
+            <!-- TODO: more terrible things; move to external CSS, etc. -->
+            <div style="text-align: center">
+              <div style="position:relative;display:inline-block;margin:0px auto;padding-top:5px">
+                <button type="submit" class="primary" style="position:relative;float:right;margin-top:6px">OK</button>
+                <img src="image/aa_logo_wordmark.png" alt="Armor Alley&trade; wordmark and helicopter image" style="float:left;width:161.5px;height:25px;margin-right:8px" />
+              </div>
+            </div>
+
+            <!-- Ugh! -->
+            <fieldset style="margin-top:1px">
+
+              <legend>General / UI Options</legend>
+
+              <ul>
+
+                <li>
+                  <label for="cb_sound">
+                    <input type="checkbox" id="cb_sound" name="sound" value="1" checked /> <span class="label-text">Sound</span>
+                    <p id="cb_sound_description">Ambience and audible hints - e.g., when convoys are building, or distant gunfire.</p>
+                  </label>
+                </li>
+
+                <li>
+                  <label for="cb_snow">
+                    <input type="checkbox" id="cb_snow" name="snow" value="1" /> <span class="label-text">Snow*</span>
+                    <p>
+                      “It was a dark and stormy night”&mdash;now with snow&mdash;on the battlefield.<br />
+                      <b>*Note</b>: This may be slow on some computers.
+                    </p>
+                  </label>
+                </li>
+
+                <li style="margin-bottom:2px">
+                  <label for="cb_game_tips">
+                    <input type="checkbox" id="cb_game_tips" name="show_game_tips" value="1" checked /> <span class="label-text">Game Tips / Hints</span>
+                    <p>You never know &ndash; you might learn something from these tips that scroll by.</p>
+                  </label>
+                </li>
+
+                <li style="display:inline-block;margin-right:3px">
+                  <p class="options-heading" style="padding-bottom:1px"><b>Status Bar</b></p>
+                  <label for="cb_inventory">
+                    <input type="checkbox" id="cb_inventory" name="show_inventory" value="1" checked /> <span class="label-text">Inventory</span>
+                  </label>
+                </li>
+
+                <li style="display:inline-block;margin-right:3px">
+                  <label for="cb_weapons_status">
+                    <input type="checkbox" id="cb_weapons_status" name="show_weapons_status" value="1" checked /> <span class="label-text">Weapons</span>
+                  </label>
+                </li>
+
+                <li style="display:inline-block;margin-right:3px">
+                  <label for="cb_keyboard_labels">
+                    <input type="checkbox" id="cb_keyboard_labels" name="show_keyboard_labels" value="1" checked /> <span class="label-text">Keyboard labels</span>
+                  </label>
+                </li>
+
+                <li>
+                  <p class="compact options-heading"><b>Unit Energy / Damage</b></p>
+                  <p class="non-indented">By default, shown briefly when a unit is hit or repairing.</p>
+                  <ul class="less-bottom-spacing">
+                    <li>
+                      <input type="radio" id="radio_health_status_never" name="show_health_status" value="never" /> <label for="radio_health_status_never">Never</label>
+                    </li>
+                    <li>
+                      <input type="radio" id="radio_health_status_sometimes" name="show_health_status" value="sometimes" checked /> <label for="radio_health_status_sometimes">Sometimes</label>
+                    </li>
+                    <li>
+                      <input type="radio" id="radio_health_status_always" name="show_health_status" value="always" /> <label for="radio_health_status_always">Always</label>
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+
+                  <p class="compact options-heading"><b>Notifications UI Location</b></p>
+    
+                  <p class="non-indented">Where would you like your toast?</p>
+
+                  <ul>
+  
+                    <li class="compact">
+                      <label for="notifications_location_left">
+                        <input type="radio" id="notifications_location_left" name="notifications_location" value="left" /> <span class="label-text">Left</span>
+                      </label>
+                    </li>
+  
+                    <li>
+                      <label for="notifications_location_right">
+                        <input type="radio" id="notifications_location_right" name="notifications_location" value="right" checked /> <span class="label-text">Right</span>
+                      </label>
+                    </li>
+  
+                  </ul>
+  
+                  </fieldset>      
+
+                </li>
+
+              </ul>
+
+            </fieldset>
+
+            <fieldset>
+
+              <legend>Gameplay Options</legend>
+
+              <ul>
+
+                <li>
+                  <label for="cb_enemy_missiles_same">
+                    <input type="checkbox" id="cb_enemy_missiles_same" name="enemy_missile_match_type" value="1" checked /> <span class="label-text">Enemy matches your missile type (original / rubber chicken / banana)</span>
+                    <p>Mimic, or original. End bases will fire random types, to keep it fun.</p>
+                  </label>
+                </li>
+
+                <li>
+                  <label for="cb_engineers_can_repair_bunkers">
+                    <input type="checkbox" id="cb_engineers_can_repair_bunkers" name="engineers_repair_bunkers" value="1" checked /> <span class="label-text">Engineers can repair bunkers</span>
+                    <p>Engineers originally had limited roles, interacting only with turrets.</p>
+                  </label>
+                </li>
+
+                <li>
+                  <label for="cb_engineers_can_rob_the_bank">
+                    <input type="checkbox" id="cb_engineers_can_rob_the_bank" name="engineers_rob_the_bank" value="1" checked /> <span class="label-text">Engineers can “rob the bank”</span>
+                    <p>Infantry can capture up to 20 funds from an enemy end bunker. <br />This allows engineers to capture <i>all</i> funds, as a reward for their risk.</p>
+                  </label>
+                </li>
+
+                <li>
+                  <label for="cb_tank_gunfire_miss_bunkers">
+                    <input type="checkbox" id="cb_tank_gunfire_miss_bunkers" name="tank_gunfire_miss_bunkers" value="1" checked /> <span class="label-text">Tank gunfire / bunker pass-thru</span>
+                    <p>Allow tanks to fire through bunkers at units other than helicopters or tanks. Previously, tanks could destroy a bunker while trying to fire at infantry.</p>
+                  </label>
+                </li>
+              
+              </ul>
+
+            </fieldset>
+
+            <fieldset>
+
+              <legend>Ground Vehicle "Traffic Control"</legend>
+
+              <ul>
+
+                <li>
+                  <label for="ground_unit_traffic_control_classic">
+                    <input type="radio" id="ground_unit_traffic_control_classic" name="ground_unit_traffic_control" value="0" /> <span class="label-text">Allow overlapping (original game style)</span>
+                    <p>
+                      Tanks are the only vehicles that stop to fire at things. This can cause "pile-ups," where multiple tanks can overlap and appear as one.
+                    </p>
+                  </label>
+                </li>
+
+                <li>
+                  <label for="ground_unit_traffic_control_enable">
+                    <input type="radio" id="ground_unit_traffic_control_enable" name="ground_unit_traffic_control" value="1" checked /> <span class="label-text">Reduce overlapping, "tanks first"</span>
+                    <p>
+                      Vehicles will "park" behind each other. Tanks stop only for other tanks, and will tend to head up convoys. Infantry and engineers don't wait for anyone.
+                    </p>
+                  </label>
+                </li>
+
+              </ul>
+
+            </fieldset>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

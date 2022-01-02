@@ -3145,4 +3145,412 @@ body:not(.is-mobile) .mobile-only {
   background: rgba(0,0,0,0.25);
 }
 
+/* prefs + modal stuff - based on original 68K Macintosh UI */
+
+#game-prefs-modal {
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* scale3d() will be updated via JS */
+  zoom: 2; /* zoom up, and then scale down looks better where supported (Chrome + Safari) */
+  border: 0.5px solid #000;
+  width: 20rem; /* 224px; */
+  z-index: 11;
+  /* collapse */
+  font-size: 0px;
+  overflow: hidden;
+}
+
+/* prototype stuff, not presently in use */
+/*
+
+.finder.modal {
+  display: none;
+}
+
+.finder .title-bar {
+ position: relative;
+ overflow: hidden;
+ background: rgb(243,243,243);
+ border: 0.5px solid rgb(218,218,255);
+ border-bottom-color: rgb(179,179,218);
+ border-right-color: rgb(179,179,218);
+ text-align: center;
+}
+
+.finder .title-bar-label {
+  position: relative;
+  display: inline-block;
+  background: rgb(243,243,243);
+  padding: 0px 4px;
+  margin-top: -0.75px;
+  text-align: center;
+  font-family: Chicago, "FA Sysfont C", courier, sans-serif;
+  font-size: 7px;
+  font-weight: normal;
+  color: #000;
+}
+
+.finder .title-bar-stripes {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgb(243,243,243);
+  border-left: none;
+  border-right: none;
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAECAYAAADvRz3UAAAAH0lEQVR42uXOMREAAACCQPsHoK7GYJC73wlQkz9w3wBa+rBBgfHfewAAAABJRU5ErkJggg==);
+  background-size: 8px 1px;
+}
+
+.finder .close-button-wrapper {
+  position: absolute;
+  z-index: 2;
+  top: 0.5px;
+  left: 3px;
+  background: rgb(243,243,243);
+  width: 6.5px;
+  height: 6.5px;
+}
+
+.finder .close-button-outer,
+.finder .close-button-inner {
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+}
+
+.finder .close-button-outer {
+  width: 5.5px;
+  height: 5.5px;
+}
+
+.finder .close-button-outer,
+.finder .close-button-inner {
+  position: absolute;
+  top: 0.5px;
+  left: 0.5px;
+  background: rgb(192,192,192);
+  border: 0.5px solid rgb(84,84,135);
+}
+
+.finder .close-button-outer {
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.finder .close-button-inner {
+  margin-top: 0.5px;
+  margin-left: 0.5px;
+  background: transparent;
+  border-color: rgb(218,218,255);
+}
+
+*/
+
+#game-prefs-modal .body {
+  position: relative;
+  border-top: 0.5px solid #000;
+  background: rgb(243,243,243);
+  height: 10rem;
+  font-family: geneva, verdana, arial, sans-serif;
+  font-size: 5px;
+  color: #000;
+  overflow: auto;
+  /* Firefox may show scaled-up scrollbars - this corrects it. */
+  scrollbar-width: thin;
+}
+
+#game-prefs-modal {
+  width: 228px;
+}
+
+#game-prefs-modal .body {
+  /* border all the way around */
+  border: 0.5px solid #000;
+}
+
+#game-prefs-modal textarea {
+  width: 23rem;
+  height: 16rem;
+  font-family: geneva, verdana, arial, sans-serif;
+  font-size: 10px;
+  color: #000;
+  transform: scale3d(0.33, 0.33, 1);
+  transform-origin: 0px 0px;
+}
+
+#game-prefs-modal fieldset {
+  margin: 4px;
+  border: 0.75px solid #000;
+}
+
+#game-prefs-modal fieldset legend {
+  font-family: Chicago, "FA Sysfont C", courier, sans-serif;
+  font-size: 7px;
+  vertical-align: middle;
+}
+
+#game-prefs-modal fieldset ul {
+  list-style-type: none;
+}
+
+#game-prefs-modal fieldset ul,
+#game-prefs-modal fieldset ul li {
+  margin: 0px;
+  padding: 0px;
+}
+
+#game-prefs-modal fieldset ul li {
+  margin-top: 1px;
+  margin-bottom: 4px;
+}
+
+#game-prefs-modal ul.less-bottom-spacing li {
+  margin-bottom: 0px;
+}
+
+#game-prefs-modal fieldset ul li:last-of-type {
+  margin-bottom: 1px;
+}
+
+#game-prefs-modal fieldset ul li.less-bottom-spacing {
+  margin-bottom: 3px;
+}
+
+#game-prefs-modal fieldset ul li ul li {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+#game-prefs-modal fieldset p {
+  margin: 0px;
+  padding-top: 1px;
+  padding-bottom: 3px;
+}
+
+#game-prefs-modal .compact,
+#game-prefs-modal ul.compact li {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+#game-prefs-modal fieldset ul li p {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  margin-left: 9px;
+}
+
+#game-prefs-modal fieldset ul li p,
+#game-prefs-modal .indented {
+  margin-left: 9px;
+}
+
+#game-prefs-modal .non-indented {
+  margin-left: 0px;
+}
+
+#game-prefs-modal fieldset ul li p.options-heading {
+  margin-left: 0px;
+}
+
+#game-prefs-modal input,
+#game-prefs-modal label {
+  vertical-align: middle;
+}
+
+#game-prefs-modal input {
+  margin: 0px;
+  padding: 0px;
+  width: 7px;
+  height: 7px;
+  margin-top: -1px; /* vertical align w/text */
+}
+
+#game-prefs-modal input[type="checkbox"] {
+  margin-top: -2px;
+}
+
+#game-prefs-modal input[type="radio"],
+#game-prefs-modal input[type="checkbox"] {
+  position: relative;
+  /* https://moderncss.dev/pure-css-custom-styled-radio-buttons/ */
+  -webkit-appearance: none;
+  appearance: none;
+  /* Not removed via appearance */
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 7px;
+  height: 7px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  transform: translateY(-0.5px);
+}
+
+#game-prefs-modal input[type="checkbox"] {
+  border-radius: 1px;
+}
+
+#game-prefs-modal input[type="checkbox"]::before,
+#game-prefs-modal input[type="radio"]::before {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  content: '';
+  line-height: 7px;
+  border-radius: 50%;
+  transform: scale(0.66);
+  visibility: hidden;
+  background: #000;
+}
+
+#game-prefs-modal input[type="checkbox"]::before {
+  background: transparent;
+  content: '×';
+  text-align: center;
+  line-height: 7px;
+  height: 7px;
+  font-size: 10px;
+  margin: -1.5px 0px 0px -0.5px;
+  vertical-align: middle;
+  font-weight: bold;
+  border-radius: 0px;
+}
+
+body.is_firefox #game-prefs-modal input[type="checkbox"]::before {
+  margin-top: -2px;
+}
+
+#game-prefs-modal input[type="radio"]:checked::before,
+#game-prefs-modal input[type="checkbox"]:checked::before {
+  visibility: visible;
+}
+
+#game-prefs-modal input[type="checkbox"]:active {
+  opacity: 0.75;
+}
+
+#game-prefs-modal input[type="checkbox"]:active::before {
+  transform: scale(0.5);
+  opacity: 0.5;
+  visibility: visible;
+}
+
+#game-prefs-modal input[type="checkbox"]:active,
+#game-prefs-modal input[type="checkbox"]:focus {
+  background: #ccc;
+}
+
+#game-prefs-modal input[type="radio"]:active::before {
+  visibility: visible;
+  transform: scale(0.4);
+  transform-origin: 50%;
+}
+
+#game-prefs-modal input[type="radio"]:focus::before {
+  animation: pulse 0.5s ease-in-out infinite alternate-reverse;
+}
+
+#game-prefs-modal input[type="radio"]:disabled,
+#game-prefs-modal input[type="checkbox"]:disabled {
+  opacity: 0.33;
+}
+
+#game-prefs-modal input[type="radio"]:focus-visible,
+#game-prefs-modal input[type="checkbox"]:focus-visible {
+  /* hide outline, because we have the animation */
+  outline: none;
+}
+
+#game-prefs-modal .label-text {
+  font-weight: bold;
+}
+
+body.is_safari #game-prefs-modal .label-text {
+  letter-spacing: -0.25px; /* :shake_fist: */
+}
+
+#game-prefs-modal p {
+  margin: 0px;
+  padding: 0px;
+  margin-top: 0.1rem;
+  margin-left: 0.25rem;
+  margin-bottom: 0.5rem;
+  margin-right: 0.25rem;
+}
+
+#game-prefs-modal button {
+  position: relative;
+  font-family: Chicago, "FA Sysfont C", courier, sans-serif;
+  font-size: 7px;
+  font-weight: normal;
+  color: #000;
+  margin: 0px;
+  background: #fff;
+  padding: 0.5px 5px;
+  border: 0.25px solid #000;
+  border-radius: 2px;
+  margin-right: 0.2rem;
+  min-width: 1.75rem;
+  cursor: pointer;
+}
+
+#game-prefs-modal button.primary {
+  /**
+   * Most, but not all browsers can do a double-border this way,
+   * where the outline follows border-radius styling as well.
+   * Guess who the exception is ... :D ... see the next rule.
+   */
+  outline: 1px solid #000;
+  outline-offset: 0.5px;
+}
+
+#game-prefs-modal button.primary {
+  /**
+   * IRONY: Safari doesn't apply border-radius to outlines, but
+   * everyone else does; and this is for the 68K classic mac UI.
+   * So, we'll use box-shadow shenanigans. :P
+   */
+   outline: none;
+
+   /* original button border, a little bigger */
+   border-width: 0.5px;
+
+   /* inner white, followed by outer black borders */
+   box-shadow:
+    0 0 0 0.5px #fff,
+    0 0 0 1.5px #000;
+
+    /* Safari collapses buttons more than the others. :/ */
+    padding: 0.5px 10px;
+}
+
+#game-prefs-modal button:active {
+  background: #000;
+  color: #fff;
+}
+
+/* outer -> inner */
+#game-prefs-modal .border-3 {
+  border: 0.5px solid rgb(218,218,255);
+  border-bottom-color: rgb(135,135,179);
+  border-right-color: rgb(135,135,179);
+}
+
+#game-prefs-modal .border-2 {
+  border: 0.5px solid rgb(205,205,205);
+}
+
+#game-prefs-modal .border-1 {
+  border: 0.5px solid rgb(135,135,179);
+  border-bottom-color: rgb(218,218,255);
+  border-right-color: rgb(218,218,255);
 }
