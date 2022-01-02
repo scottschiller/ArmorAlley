@@ -535,14 +535,13 @@ body.is-mobile #game-status li:last-of-type {
   line-height: 24px;
   /* and room for green bars */
   height: 48px;
-  overflow: hidden;
   top: 34px;
   left: 0px;
   width: 100%;
 }
 
 #aa ul,
-#aa ul li {
+#aa li {
   margin: 0px;
   padding: 0px;
 }
@@ -551,12 +550,12 @@ body.is-mobile #game-status li:last-of-type {
   list-style-type: none;
 }
 
-#top-bar ul li {
+#top-bar li {
   display: inline-block;
 }
 
 #fuel-bar,
-#fuel-bar #fuel-line {
+#fuel-line {
   background-color: #161616;
 }
 
@@ -571,7 +570,7 @@ body.is-mobile #game-status li:last-of-type {
   opacity: 0.75;
 }
 
-#fuel-bar #fuel-line {
+#fuel-line {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -583,7 +582,7 @@ body.is-mobile #game-status li:last-of-type {
 #repair-complete {
   position: absolute;
   /* background: #000 url(../image/status-repair-complete.png) repeat-x 0px 0px; */
-  background: #000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAANCAYAAACgu+4kAAAAGUlEQVQoz2NgWMXwnyI8CMCoF0a9MBi8AADkY4TRAX5SfwAAAABJRU5ErkJggg==) repeat-x 0px 0px;
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAANCAYAAACgu+4kAAAAGUlEQVQoz2NgWMXwnyI8CMCoF0a9MBi8AADkY4TRAX5SfwAAAABJRU5ErkJggg==) repeat-x 0px 0px;
   display: none;
   top: 35px;
   left: 0px;
@@ -592,10 +591,31 @@ body.is-mobile #game-status li:last-of-type {
   z-index: 1;
 }
 
+ul.stats-bar {
+  /* whitespace hack */
+  font-size: 0px;
+}
+
 ul.stats-bar li {
+  position: relative;
+  overflow: hidden;
+  font-size: 7px;
   min-width: 5%;
   padding-right: 1% !important;
   text-align: left;
+  color: #ccc;
+}
+
+#stats-bar.hide-inventory li.inventory-item,
+#stats-bar.hide-weapons-status .stats-item,
+#stats-bar.hide-keyboard-labels .letter-block {
+  /* user has chosen to hide via game prefs */
+  display: none;
+}
+
+#stats-bar.hide-keyboard-labels li {
+  /* balance things nicely, since the variable-width labels are gone. */
+  text-align: center;
 }
 
 body.is-mobile ul.stats-bar li {
@@ -612,8 +632,15 @@ ul.stats-bar li.stats-item {
   padding-right: 1.5% !important;
 }
 
-ul.stats-bar li.stats-item,
-  #mobile-controls li.inventory-item {
+ul.stats-bar li.stats-item .weapon-count {
+  display: inline-block;
+  /* prevent a shift when as number counts change (for variable-width fonts) */
+  min-width: 0.65rem;
+  margin-left: 0.15rem;
+}
+
+ul.stats-bar li.stats-item .wrapper,
+#mobile-controls li.inventory-item {
   filter: grayscale(0);
   transition: filter 0.33s ease-out;
   transition-property: filter, opacity;
@@ -629,10 +656,10 @@ ul.stats-bar li.stats-item,
   transition-duration: 0.33s;
 }
 
-ul.stats-bar li.stats-item.weapon-unavailable,
-  #mobile-controls li.inventory-item.weapon-unavailable {
+ul.stats-bar li.stats-item.weapon-unavailable:not(.repairing) .wrapper,
+#mobile-controls li.inventory-item.weapon-unavailable {
   filter: grayscale(1);
-  opacity: 0.75;
+  opacity: 0.5;
 }
 
 ul.stats-bar li .double-wide {
@@ -641,19 +668,8 @@ ul.stats-bar li .double-wide {
   /* prevent 3 to 2 characters from causing UI shift. */
 }
 
-@media only screen and (max-width: 1024px) {
-  /* collapse a bit on smaller screens (but not hi-DPI.) */
-  body:not(.is-mobile) {
-    ul.stats-bar li {
-      padding-right: 0.75% !important;
-    }
-    ul.stats-bar li.stats-item {
-      min-width: 0%;
-    }
-    #player-status-bar .spacer {
-      display: none;
-    }
-  }
+ul.stats-bar li.repairing em {
+  animation: sorta-blink 0.5s ease-in-out alternate infinite;
 }
 
 ul.stats-bar em {
@@ -688,9 +704,24 @@ ul.stats-bar .infantry-count em {
   background-size: contain;
   width: 10px;
   height: 14px;
-  margin-top: -3px;
+  margin-top: -2px;
+  margin-right: 3px;
   transform-origin: left;
   background-repeat: no-repeat;
+}
+
+ul.stats-bar .missiles em {
+  min-width: 16px; /* accommodate rubber chicken mode */
+  width: 10px;
+  height: 9px;
+}
+
+#world ul.stats-bar .missiles span.divider {
+  /* X|C|B */
+  display: inline-block;
+  opacity: 0.25;
+  text-align: center;
+  min-width: 0.5rem;
 }
 
 ul.stats-bar .missiles em,
@@ -698,12 +729,7 @@ ul.stats-bar .missiles em,
   /* background: transparent url(../image/status-missile.png) no-repeat 0px 0px; */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAK0lEQVQYlWP4DwSrmRj/MxADQAqJVkw7k8lSTJQGkhT/X8X4H4aJcgpIIQDIDioT6Vi0KwAAAABJRU5ErkJggg==);
   background-repeat: no-repeat;
-  background-position: 0px 0px;
-}
-
-ul.stats-bar .missiles em {
-  width: 10px;
-  height: 9px;
+  background-position: 50% 0px;
 }
 
 ul.stats-bar .ammo em,
@@ -780,7 +806,6 @@ ul.stats-bar .bombs em {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  /* initially, position off-screen */
   background-position: 0px 0px;
   background-repeat: no-repeat;
   -moz-pointer-events: none;
