@@ -3688,18 +3688,18 @@ body.is_safari #game-prefs-modal .label-text {
    * everyone else does; and this is for the 68K classic mac UI.
    * So, we'll use box-shadow shenanigans. :P
    */
-   outline: none;
+  outline: none;
 
-   /* original button border, a little bigger */
-   border-width: 0.5px;
+  /* original button border, a little bigger */
+  border-width: 0.5px;
 
-   /* inner white, followed by outer black borders */
-   box-shadow:
+  /* inner white, followed by outer black borders */
+  box-shadow:
     0 0 0 0.5px #fff,
     0 0 0 1.5px #000;
 
-    /* Safari collapses buttons more than the others. :/ */
-    padding: 0.5px 10px;
+  /* Safari collapses buttons more than the others. :/ */
+  padding: 0.5px 10px;
 }
 
 #game-prefs-modal button:active {
