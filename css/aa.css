@@ -121,7 +121,7 @@ body {
 
 #world-overlay.fade-out {
   transition: all 0.66s ease-in-out;
-  transition-property: opacity transform;
+  transition-property: opacity, transform;
   opacity: 0;
   transform: scale3d(1.2,1.2,0);
 }
