@@ -171,7 +171,7 @@ body {
 #world.blurred.no-blur #top-bar,
 #world.blurred.no-blur #mobile-controls,
 #world.blurred.no-blur #pointer {
-  filter: none;
+  filter: unset;
 }
 
 #game-menu {
