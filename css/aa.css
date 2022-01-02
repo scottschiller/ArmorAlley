@@ -395,54 +395,112 @@ body.is-mobile #game-status li:last-of-type {
   height: 100%;
 }
 
-#queue .queue-item.van {
-  height: 16px;
+#queue {
+  position: absolute;
+  vertical-align: top;
+  /* collapse whitespace */
+  font-size: 0px;
+  white-space: nowrap;
   top: 1px;
-  /* more spacing for badge */
-  margin-left: 4px;
+  left: 4px;
 }
 
-#queue .queue-item.van .counter {
-  margin-left: -8px;
-  margin-top: -3px;
+#queue .progress {
+  position: absolute;
+  bottom: -1px;
+  left: 0px;
+  width: 100%;
+  height: 1px;
+  background: #3399ff;
 }
 
-#queue .queue-item.infantry,
-#queue .queue-item.engineer {
-  /* scale slightly larger */
-  transform: scale(1.33);
-  transform-origin: 0px 0px;
-  top: 2px;
-  padding-left: 1px;
-  padding-right: 1px;
-  /* more spacing for badge */
-  margin-left: 4px;
-  /* allow badge to float outside */
-  overflow: visible;
-}
-
-#queue .queue-item.engineer {
-  margin-left: 6px;
-}
-
-#queue .queue-item.infantry .transform-sprite,
-#queue .queue-item.engineer .transform-sprite {
-  /* prevent full sprite from showing given overflow is now shown */
-  width: 10px;
-}
-
-#queue .queue-item.infantry .counter,
-#queue .queue-item.engineer .counter {
-  transform: scale(0.71);
-  background: transparent;
-  margin-top: -4px;
-  margin-left: -7px;
-}
-
-#queue .queue-item.engineer .counter {
-  margin-left: -8px;
-}
+#queue .queue-item {
   position: relative;
+  display: inline-block;
+  vertical-align: top;
+  height: 22px;
+  margin-top: 15px;
+  margin-right: 0px;
+  filter: grayscale(1) blur(8px);
+  opacity: 0;
+  transition: all 0.25s ease-out;
+  transition-property: width, margin, opacity, filter, transform, font-weight;
+  /* small letter, e.g., "T" for "Tank" */
+  width: 0.5rem;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
+  padding-right: 1px;
+  font-size: 0.5rem;
+  color: #ccc;
+  background: none;
+}
+
+#queue .queue-item.has-counter {
+  /* expand */
+  width: 1rem;
+  margin-right: -3px;
+}
+
+#queue .queue-item.has-counter.over-ten {
+  width: 1rem;
+  margin-right: 0px;
+}
+
+#queue .queue-item.queued {
+  opacity: 0.66;
+  filter: grayscale(1) blur(0px);
+  margin-top: 0px;
+}
+
+#queue .queue-item.building {
+  opacity: 1;
+  font-weight: bold;
+  filter: grayscale(0) blur(0px);
+}
+
+#queue .queue-item.complete {
+  /* opacity: 0; */
+  /* filter: grayscale(0) blur(8px); */
+  filter: grayscale(0);
+  color: #999;
+}
+
+#queue .queue-item.complete .counter {
+  filter: grayscale(1);
+}
+
+#queue .queue-item.collapsing {
+  opacity: 0;
+  filter: grayscale(0) blur(8px);
+  /* faster */
+  transition-duration: 0.33s;
+  transition-timing-function: ease-in;
+}
+
+#queue .queue-item .counter {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  transform: scale(1);
+  text-shadow: 0px 1px 0px #000;
+  display: inline-block;
+  text-align: right;
+  font-size: 0.4rem;
+  margin-top: -3px;
+  margin-right: 4px;
+  padding: 1px 2px;
+  vertical-align: middle;
+  transition: all 0.175s ease-in-out;
+  transition-property: opacity, filter;
+  opacity: 0;
+}
+
+#queue .queue-item.over-ten .counter {
+  margin-right: 0px;
+}
+
+#queue .queue-item.has-counter .counter {
+  opacity: 1;
+}
   height: 32px;
   overflow: hidden;
 }
