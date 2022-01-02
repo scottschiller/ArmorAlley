@@ -90,19 +90,10 @@ body {
   cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=), crosshair;
 }
 
-body.no-transform .sprite {
-  /* unsupported or GPU disable override via #notransform=1 */
-  transform: none !important;
-}
-
-#battlefield {
-  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
-  contain: style layout;
-}
-
-#world-wrapper,
+#world-container,
 #game-status,
 #radar,
+#radar-container,
 .sprite {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
   contain: strict;
@@ -117,9 +108,10 @@ body.no-transform .sprite {
   background: rgba(27,107,27,0.45);
   /* image/checkerboard-black-mask-50percent.png */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
-  background-size: 32px;
+  background-size: 64px;
   z-index: 10;
   transform: scale3d(1,1,1);
+  image-rendering: pixelated;
 }
 
 #world.tutorial-mode #world-overlay,
