@@ -738,6 +738,10 @@
 
       remove: (o, ...toRemove) => o?.classList?.remove(...toRemove),
 
+      addOrRemove: (o, conditionToAdd, ...classNames) => {
+         utils.css[conditionToAdd ? 'add' : 'remove'](o, ...classNames);
+      },
+ 
       swap: (o, c1, c2) => {
 
         o?.classList?.remove(c1);
