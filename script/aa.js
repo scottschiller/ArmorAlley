@@ -736,7 +736,7 @@
 
       add: (o, ...toAdd) => o?.classList?.add(...toAdd),
 
-      remove: (o, ...toRemove) => o?.classList?.remove(toRemove),
+      remove: (o, ...toRemove) => o?.classList?.remove(...toRemove),
 
       swap: (o, c1, c2) => {
 
