@@ -1014,7 +1014,7 @@
      * Here be dragons: this should only be applied once, given concatenation,
      * and might cause bugs and/or performance problems if it isn't. :D
      */
-    node.style.transform += ` rotate(${rnd(360)}deg)`;
+    node.style.transform += ` rotate3d(0, 0, 1, ${rnd(360)}deg)`;
   }
 
   function updateEnergy(object, forceUpdate) {
@@ -1174,7 +1174,7 @@
 
       if (!o) return;
 
-      // additional transform arguments, e.g., rotate(45deg)
+      // additional transform arguments, e.g., rotate3d(0, 0, 1, 45deg)
       extraTransforms = extraTransforms ? (` ${extraTransforms}`) : '';
 
       // EXPERIMENTAL
@@ -4995,7 +4995,7 @@
       incomingMissile: false,
       // additional transform properties applied during radar item animation
       extraTransforms: {
-        balloon: 'rotate(-45deg)'
+        balloon: 'rotate3d(0, 0, 1, -45deg)'
       }
     };
 
@@ -6671,7 +6671,7 @@
       // TODO: CSS animation for this?
       // updateIsOnScreen(exports); from within animate() ?
       if (data.isOnScreen) {
-        dom.oSubSprite.style.transform = `rotate(${angle}deg)`;
+        dom.oSubSprite.style.transform = `rotate3d(0, 0, 1, ${angle}deg)`;
       }
 
     }
@@ -8159,7 +8159,7 @@
 
       if (common.updateXY(exports, x, y) || forceUpdate) {
         rad = Math.atan2(deltaY, deltaX);
-        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
+        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
       }
 
     }
@@ -8546,7 +8546,7 @@
 
       }
 
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${data.angle}deg)`);
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
 
       // push x/y to history arrays, maintain size
 
@@ -9004,7 +9004,7 @@
       oTrailer = makeSprite(trailerConfig);
 
       // initial placement
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate(${data.angle}deg)`);
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
 
       for (i = 0; i < data.trailerCount; i++) {
         dom.trailers.push(oTrailer.cloneNode(true));
@@ -9825,7 +9825,7 @@
       data.tiltOffset = (data.dead || data.respawning || data.landed || data.onLandingPad ? 0 : ((data.vX / data.vXMax) * 12.5) + data.shakeOffset);
 
       // transform-specific, to be provided to common.setTransformXY() as an additional transform
-      data.angle = `rotate(${data.tiltOffset}deg)`;
+      data.angle = `rotate3d(0, 0, 1, ${data.tiltOffset}deg)`;
 
     }
 
@@ -13230,7 +13230,7 @@
             scale = `scale3d(${[scale, scale, 1].join(', ')})`;
           }
 
-          common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, (data.rotation ? `rotate(${data.rotation}deg) ` : '') + (scale ? ` ${scale}` : ''));
+          common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, (data.rotation ? `rotate3d(0, 0, 1, ${data.rotation}deg) ` : '') + (scale ? ` ${scale}` : ''));
 
         }
 
