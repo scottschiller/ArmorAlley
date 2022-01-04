@@ -16496,7 +16496,7 @@
         // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
         let scale = screenScale * (usingZoom || isSafari ? 0.5 : 1);
 
-        dom.o.style.transform = `translate(-50%, -50%) scale3d(${scale},${scale},1)`;
+        dom.o.style.transform = `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`;
 
       }
 
