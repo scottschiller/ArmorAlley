@@ -24,12 +24,14 @@
     Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
     http://www.schillmania.com/armor-alley/
-    http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
     http://github.com/scottschiller/ArmorAlley/
+    http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
 
     General disclaimer: This is a fun personal side project. The code could surely be better. ;)
 
-    Original release: Version 1.0.20131031
+    This release: V1.6.20220201
+    Previous release: V1.5.20180201
+    Original release: V1.0.20131031
 
     Changelog / Revision History
 

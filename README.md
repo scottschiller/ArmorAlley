@@ -12,6 +12,10 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 ## Changelog / Revision History
 
+This release: V1.6.20220201
+Previous release: V1.5.20180201
+Original release: V1.0.20131031
+
 ### V1.51.20181124
 
 **Performance tweaks**
