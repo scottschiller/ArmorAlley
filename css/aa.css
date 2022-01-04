@@ -290,7 +290,7 @@ body {
   /* Gear SVG (gear.svg) by Fabián Alexis - https: //github.com/fabianalexisinostroza/Antu, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470 */
   background: transparent url(data:image/svg+xml;base64,PCEtLSBodHRwczovL2NvbW1vbnMud2lraW1lZGlhLm9yZy93aWtpL0NhdGVnb3J5OkdlYXJfaWNvbnMjL21lZGlhL0ZpbGU6QW50dV9hZGp1c3RsZXZlbHMuc3ZnIC0tPgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDIyIDIyIj48cGF0aCBkPSJNMTguOTIxIDkuNjNhLjMyNy4zMjcgMCAwIDAtLjIxOC0uMTNsLTEuOTA3LS4yOTJhNi4yODQgNi4yODQgMCAwIDAtLjQyNy0xLjAyYy4xMjUtLjE3NC4zMTItLjQxOS41NjItLjczNS4yNS0uMzE2LjQyNy0uNTQ3LjUzMi0uNjkzYS40MDEuNDAxIDAgMCAwIC4wODMtLjI0LjMzNi4zMzYgMCAwIDAtLjA3My0uMjI4Yy0uMjUtLjM1NS0uODIzLS45NDUtMS43MTktMS43NzFhLjQwMi40MDIgMCAwIDAtLjI2LS4xMDQuMzM4LjMzOCAwIDAgMC0uMjUuMDkzbC0xLjQ4IDEuMTE1YTYuNTE0IDYuNTE0IDAgMCAwLS45MzctLjM4NmwtLjI5MS0xLjkxN2EuMzA5LjMwOSAwIDAgMC0uMTItLjIyNC4zOTMuMzkzIDAgMCAwLS4yNTYtLjA4OEg5Ljg0N2MtLjIgMC0uMzI2LjA5Ny0uMzc1LjI5MS0uMDkuMzQ3LS4xOS45OTMtLjMwMiAxLjkzN2E1Ljk4MiA1Ljk4MiAwIDAgMC0uOTQ4LjM5Nkw2Ljc4NSA0LjUyYS40NDMuNDQzIDAgMCAwLS4yNzEtLjEwNGMtLjE1MyAwLS40OC4yNDgtLjk4NC43NDQtLjUwNC40OTctLjg0Ni44Ny0xLjAyNyAxLjEyYS40MzkuNDM5IDAgMCAwLS4wOTQuMjRjMCAuMDgzLjAzNS4xNjYuMTA0LjI1LjQ2Ni41NjIuODM3IDEuMDQxIDEuMTE1IDEuNDM3YTUuMTQgNS4xNCAwIDAgMC0uNDA2Ljk1OWwtMS45MzcuMjkxYS4zMTQuMzE0IDAgMCAwLS4xOTguMTM2LjQwMS40MDEgMCAwIDAtLjA4NC4yNHYyLjMxMmMwIC4wOS4wMjguMTcyLjA4NC4yNDVhLjMyNy4zMjcgMCAwIDAgLjIxOC4xM2wxLjkwNy4yODJjLjA5Ny4zNC4yNC42ODQuNDI3IDEuMDNhMjEuOTggMjEuOTggMCAwIDEtLjU2My43MzVjLS4yNS4zMTYtLjQyNy41NDctLjUzLjY5MmEuNDAyLjQwMiAwIDAgMC0uMDExLjQ4Yy4yNy4zNzUuODQzLjk1OCAxLjcxOSAxLjc1YS4zNTkuMzU5IDAgMCAwIC4yNi4xMTQuMzc1LjM3NSAwIDAgMCAuMjYtLjA5M2wxLjQ3LTEuMTE1Yy4yODQuMTQ2LjU5Ny4yNzQuOTM3LjM4NmwuMjkyIDEuOTE3YS4zMS4zMSAwIDAgMCAuMTIuMjI0LjM5LjM5IDAgMCAwIC4yNTUuMDg4aDIuMzEzYy4yMDEgMCAuMzI2LS4wOTcuMzc1LS4yOTIuMDktLjM0Ny4xOS0uOTkzLjMwMi0xLjkzN2E1LjkyIDUuOTIgMCAwIDAgLjk0OC0uMzk2bDEuNDM3IDEuMTI2YS41MS41MSAwIDAgMCAuMjcxLjA5M2MuMTUzIDAgLjQ4LS4yNDYuOTgtLjc0LjUtLjQ5Mi44NDMtLjg2OCAxLjAzLTEuMTI1YS4zNDcuMzQ3IDAgMCAwIC4wOTQtLjIzOS40MDIuNDAyIDAgMCAwLS4xMDUtLjI2Yy0uNS0uNjEyLS44NzEtMS4wOS0xLjExNC0xLjQzOGE2LjY4IDYuNjggMCAwIDAgLjQwNi0uOTQ4bDEuOTI3LS4yOTFhLjMxOC4zMTggMCAwIDAgLjIwOC0uMTM2LjQwMi40MDIgMCAwIDAgLjA4My0uMjRWOS44NzRhLjM5My4zOTMgMCAwIDAtLjA4My0uMjQ0bS02LjAzMSAzLjI2NWEyLjU3IDIuNTcgMCAwIDEtMS44ODYuNzgyIDIuNTcgMi41NyAwIDAgMS0xLjg4NS0uNzgyIDIuNTcgMi41NyAwIDAgMS0uNzgxLTEuODg1YzAtLjczNi4yNi0xLjM2NS43OC0xLjg4NmEyLjU3IDIuNTcgMCAwIDEgMS44ODYtLjc4MWMuNzM3IDAgMS4zNjUuMjYgMS44ODYuNzgxLjUyLjUyMS43ODEgMS4xNS43ODEgMS44ODZhMi41NyAyLjU3IDAgMCAxLS43ODEgMS44ODUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=) no-repeat 0px 0px;
   background-size: contain;
-  animation: rotating 2s linear infinite;
+  animation: rotating3d 2s linear infinite;
   opacity: 0.67;
 }
 
@@ -906,7 +906,7 @@ ul.stats-bar .bombs em {
 }
 
 .bunker.enemy .sub-sprite.arrow {
-  transform: rotate(-180deg);
+  transform: rotate3d(0, 0, 1, -180deg);
 }
 
 .bunker.exploding .sub-sprite.arrow,
@@ -1157,7 +1157,7 @@ ul.stats-bar .bombs em {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.75);
+  transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
   opacity: 1;
   transition: transform, opacity 0.33s ease-in-out;
   width: 13px;
@@ -1192,7 +1192,7 @@ ul.stats-bar .bombs em {
 
 .smart-missile.smart-missile-tracking::after {
   animation: drop-in-small 0.25s ease-out;
-  transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  transform: translate3d(-50%, -50%, 0px) scale3d(0.5, 0.5, 1) rotate3d(0, 0, 1, 0deg);
 }
 
 .radar-item.smart-missile-tracking-active {
@@ -1219,43 +1219,43 @@ ul.stats-bar .bombs em {
 @keyframes drop-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.75) rotate(90deg);
+    transform: translate3d(-50%, -50%, 0px) scale3d(1.75, 1.75, 1) rotate3d(0, 0, 1, 90deg);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.75) rotate(0deg);
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1) rotate3d(0, 0, 1, 0deg);
   }
 }
 
 @keyframes drop-in-small {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1) rotate(90deg);
+    transform: translate3d(-50%, -50%, 0px) scale3d(1, 1, 1) rotate3d(0, 0, 1, 90deg);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.15) rotate(0deg);
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.15, 0.15, 1) rotate3d(0, 0, 1, 0deg);
   }
 }
 
 @keyframes tracking-active {
   0% {
-    transform: translate(-50%, -50%) scale(0.75);
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
   }
   50% {
-    transform: translate(-50%, -50%) scale(0.33);
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.33, 0.33, 1);
   }
   100% {
-    transform: translate(-50%, -50%) scale(0.75);
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
   }
 }
 
 @keyframes parachute-swing {
   from {
-    transform: rotate(-12.5deg);
+    transform: rotate3d(0, 0, 1, -12.5deg);
   }
   to {
-    transform: rotate(12.5deg);
+    transform: rotate3d(0, 0, 1, 12.5deg);
   }
 }
 
@@ -2226,7 +2226,7 @@ body.is_firefox #world-wrapper.jammed #radar {
   /* background-image: url(../image/shrapnel.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMBAMAAADWlCNiAAAAElBMVEVVVQGqqqqrAgH/qgH///8OqgK+qm9ZAAAAAXRSTlMAQObYZgAAAHBJREFUGBkFwQFxw0AQBDD5QuCdEljvF0AmRpBOAZQ/mkoAAADwLBggAB4JtGAEYL/vxuyCHRCcXym93+ABx1icz2K+P2VmF6snmsHs32LehWtB4fi5i76wXC9okDbMBNYGC1xl8AcJHCBhAgAAAIB/0M0J+ZocFDIAAAAASUVORK5CYII=);
   background-position: 0px 0px;
-  animation: rotating3d 0.5s linear infinite;
+  animation: spinning3d 0.5s linear infinite;
 }
 
 .shrapnel.reverse .transform-sprite {
@@ -2694,30 +2694,30 @@ body.is-mobile #game-tips #game-announcements {
   }
 }
 
-@keyframes rotating {
+@keyframes rotating3d {
   from {
-    transform: rotate(0deg);
+    transform: rotate3d(0, 0, 1, 0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate3d(0, 0, 1, 360deg);
   }
 }
 
-@keyframes rotating3d {
+@keyframes spinning3d {
   from {
-    transform: rotate3d(1,1,1,0deg) rotate(0deg);
+    transform: rotate3d(1, 1, 1, 0deg);
   }
   to {
-    transform: rotate3d(1,1,1,360deg) rotate(360deg);
+    transform: rotate3d(1, 1, 1, 360deg);
   }
 }
 
 @keyframes pulse {
   from {
-    transform: scale(0.66);
+    transform: scale3d(0.66, 0.66, 1);
   }
   to {
-    transform: scale(0.33);
+    transform: scale3d(0.33, 0.33, 1);
   }
 }
 
@@ -3391,7 +3391,7 @@ body:not(.is-mobile) .mobile-only {
   display: none;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* scale3d() will be updated via JS */
+  transform: translate3d(-50%, -50%, 0px); /* scale3d() will be updated via JS */
   zoom: 2; /* zoom up, and then scale down looks better where supported (Chrome + Safari) */
   border: 0.5px solid #000;
   width: 20rem; /* 224px; */
