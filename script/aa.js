@@ -86,7 +86,7 @@
       • Adjusted initial position of game, centering view on the helicopter + base
       • Helicopter / super-bunker: Improve vertical alignment if helicopter crashes on superbunker "roof."
       • Fixed radar item for Super Bunkers, now shows correct friendly / enemy status.
-      • Cloud "wind" accelerates / delecerates more smoothly
+      • Cloud "wind" accelerates / decelerates more smoothly
       • Clouds no longer "bounce" when they drift off the end of the world, but get a nice bit of wind to bring them back into view.
       • Slight vertical alignment tweaks on gunfire and balloons in radar view.
       • Improved orientation of heat-seeking smart missiles (and rubber chickens and bananas) as they track their target

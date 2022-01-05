@@ -105,7 +105,7 @@ bullets hitting the ground, turret being disabled and enabled (restored.)
 
  • Fixed radar item for Super Bunkers, now shows correct friendly / enemy status.
 
- • Cloud "wind" accelerates / delecerates more smoothly
+ • Cloud "wind" accelerates / decelerates more smoothly
 
  • Clouds no longer "bounce" when they drift off the end of the world, but get a nice bit of wind to bring them back into view.
 
