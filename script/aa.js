@@ -114,7 +114,7 @@
       • Enemy helicopter AI: Default 10% of dropping bombs when targeting a tank, subject to game difficulty (hard: 15%, extreme: 25%.)
       • Bombs can now collide with smart missiles and take them out
       • Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank
-        (bug fix: previously, tanks could destroy a bunker trying to hitan infantry on the other side.)
+        (bug fix: previously, tanks could destroy a bunker trying to hit an infantry on the other side.)
       • Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar.
         (This includes when tanks disarm a bunker by firing at it.)
       • Bomb trajectory now includes the helicopter's Y-axis velocity, and they now rotate along with their trajectory.

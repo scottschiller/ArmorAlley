@@ -129,9 +129,7 @@ bullets hitting the ground, turret being disabled and enabled (restored.)
 
  • New weapon: Heat-seeking bananas
 
- • Ground unit "Traffic Control" option: Vehicles try to leave space between, and avoid overlapping each other. Tanks will now "park" behind friendly tanks,
-avoiding a pile-up. Tanks normally only stop to fire. Vans and missile launchers will now wait for each other, too. Tanks will not stop for vans or
-missile launchers, giving tanks a greater chance of ending up at the front of a convoy - a preferable offensive position.
+ • Ground unit "Traffic Control" option: Vehicles try to leave space between, and avoid overlapping each other. Tanks will now "park" behind friendly tanks, avoiding a pile-up. Tanks normally only stop to fire. Vans and missile launchers will now wait for each other, too. Tanks will not stop for vans or missile launchers, giving tanks a greater chance of ending up at the front of a convoy - a preferable offensive position.
 
  • Units can now be "recycled" if they cross the battlefield, you are rewarded 2x cost in credits
 
@@ -155,11 +153,9 @@ missile launchers, giving tanks a greater chance of ending up at the front of a 
 
  • Bombs can now collide with smart missiles and take them out
 
- • Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank
-(bug fix: previously, tanks could destroy a bunker trying to hitan infantry on the other side.)
+ • Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank (bug fix: previously, tanks could destroy a bunker trying to hit an infantry on the other side.)
 
- • Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar.
-(This includes when tanks disarm a bunker by firing at it.)
+ • Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar. (This includes when tanks disarm a bunker by firing at it.)
 
  • Bomb trajectory now includes the helicopter's Y-axis velocity, and they now rotate along with their trajectory.
 
