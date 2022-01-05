@@ -15692,10 +15692,13 @@
         let i = 0;
 
         if (gameType === 'extreme') {
+
           // one more tank to round out the bunch, and (possibly) further complicate things :D
           enemyOrders.push(TYPES.tank);
-          // 
+
+          // matching delay, too
           enemyDelays.push(4);
+
         }
 
         // after ordering, wait a certain amount before the next convoy
