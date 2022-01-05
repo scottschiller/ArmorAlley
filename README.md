@@ -1,22 +1,29 @@
 # Armor Alley: Web Prototype
 
 Copyright (c) 2013, Scott Schiller
-http://www.schillmania.com/armor-alley/
-http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
-http://github.com/scottschiller/ArmorAlley/
 
-Code provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
-http://creativecommons.org/licenses/by-nc/3.0/
+http://www.schillmania.com/armor-alley/
+
+[Original article about building "V1.0"](http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
+
+Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
+
+Code provided under the [Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License](http://creativecommons.org/licenses/by-nc/3.0/)
 
 -----
 
 ## Changelog / Revision History
 
-This release: V1.6.20220201
 Previous release: V1.5.20180201
+
 Original release: V1.0.20131031
 
+
 ### V1.6.20220101: Massive update for 2022, based on work from 2020 + 2021
+
+![Armor Alley: Home Screen](https://user-images.githubusercontent.com/174437/148264540-d92c7440-8170-4413-b143-e113717ead8f.png)
+
+![Armor Alley: Gameplay. A tank has just been taken out by the mid-level landing pad.](https://user-images.githubusercontent.com/174437/148266111-7ca11fe3-a3ea-46d7-8e7c-5a70c98ed00b.jpg)
 
 **Video overview**
 
