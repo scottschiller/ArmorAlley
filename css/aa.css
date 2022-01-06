@@ -1,16 +1,17 @@
 /*
 
-     MMM   MMMMMMN   MMMMM  MMMMM  MMMM  MMMMMMMM       MMM   MMMMMM   MMMMMM   MMMM MMM MMMM MMMM
-    MMMM   MMMM MMM   MMMM  MMMM MMMMMMMM MMMM MMM      MMMM   MMMM     MMMM     MMM NMM MMMM MMM
-    MMMM    MMM MMM   MMMM  MMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM  MM  MMM MM
-    MMMMM   MMM MMMM  MMMMMMMMMM MMM  MMM MMMM MMM     MNMMM   MMMM     MMMM     MMM      MMMMMM
-    MMMMM   MMM MMM   MMMMMMMMMM MMM  MMM MMMM MMM     MMMMM   MMMM     MMMM     MMM MM    MMMM
-   MM MMM   MMM MM    MMMM  MMMM MMM  MMM MMMM MM     MM MMM   MMMM     MMMM     MMMMMM    MMMM
-   MM MMMN  MMMMMMM   MMMM  MMMM MMM  MMM MMMMMMMM    MM MMMM  MMMM     MMMM     MMM MM    MMMM
-   M MMMMN  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    MMNMMMM  MMMM   M MMMM   M MMM       MMMM
-  MM  MMMM  MMM MMMM  MMMM  MMMM MMM  MMM MMMM MMM    M  MMMM  MMMM  MM MMMM  MM MMM  MM   MMMM
-  MM  MMMM DMMM MMMMM MMMM  MMMM  MMMMMM  MMMM MMMM  MMM MMMMM MMMMNMMM MMMMNMMM MMM MMM   MMMM
-  MM  MMMM MMMMM MMM  MMMM  MMMM    MM    MMMM  MN   MMM MMMMM MMMMMMM  MMMMMMM MMMM MMM   MMMM
+                                         ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██▌███▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
+                        ▄██▀            ▕█████▏   ████▌ ████▌  ▐████▌  ████▌ ████▎▐███▊ ████▌ ████▌        █████▏   █████      █████       ████ ▝██▋ ▝███▉   ▐███▘
+                      ▄█▀               ▐▐████▎   ████▌ ████▙  ▝█████ ▌████▌▐███▊  ████▏████▌ ████▙       ▐▐████▎   █████      █████       ████   ▝▋  ▝███▙ ▗███▘
+      ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄      █▌████▋   ████▌▗████▘   ▌█████▌████▌████▊  ████▌████▌▗████▘       █▌████▋   █████      █████       ████ ▗█▌    ▝███▙▝█▘
+                  ▄█████▄▄▄▄  ▀▀▀      ▐█▌▐████   ████▌████▘    ▌█████▌████▌████▊  ████▌████▌████▘       ▐█▌▐████   █████      █████       ████▐██▌     ▐████▌
+  ▄          ▄████████████████▄        ██ ▄████▎  ████▌▝███▙    █▐████ ████▌████▊  ████▌████▌▝███▙       ██ ▄████▎  █████      █████       ████ ▝█▌     ▐████▌
+  ██        ▀████████████████████▄    ▐█▌██████▌  ████▌ ████▌  ▕█ ███▌ ████▌▐███▊  ████ ████▌ ████▌     ▐█▌██████▌  █████    ▗▋█████    ▗▋ ████   ▗▋    ▐████▌
+  ▀███     ▄██████████████████████    ███  ▐████  ████▌ ████▌▗▋▐█ ▐██  ████▌ ████▎▐███▊ ████▌ ████▌▗▋   ███  ▐████  █████  ▗██▌█████  ▗██▌ ████ ▗██▌    ▐████▌
+   ████▄▄███████████████████████▀    ▄███▄ ▄████▌▄█████▄▀████▀▄██▄ █▌ ▄█████▄ ▀██▌███▀ ▄█████▄▀████▀   ▄███▄ ▄████▌▄█████▐████▌█████▌████▌▄████▐███▌   ▄██████▄
+  ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
+   ██▀              ██▘▘ ██▘▘
+
 
   A browser-based interpretation of the MS-DOS release of Armor Alley.
 
