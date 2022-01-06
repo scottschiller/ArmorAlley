@@ -44,4 +44,4 @@ OF THIS SOFTWARE.
 
 --------------------------------------------------------------------------------------
 
-Sound effects were sourced largely from freesound.org - see CREDITS.txt for details.
+Sound effects were sourced largely from freesound.org - see README.md for details.
