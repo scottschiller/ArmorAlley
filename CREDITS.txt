@@ -182,3 +182,11 @@ https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
 https://github.com/fabianalexisinostroza/Antu
+
+** Fonts ("Typefaces" :P)
+
+"FA Sysfont C" by Alina Sava (SIL Open Font License 1.1)
+https://fontsarena.com/sysfont-by-alina-sava/ 
+
+"JetBrains Mono" webfont, JetBrains. https://www.jetbrains.com/lp/mono/#license
+https://www.jetbrains.com/lp/mono/
