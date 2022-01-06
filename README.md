@@ -315,183 +315,125 @@ Thanks go to numerous individuals for making their work available.
 The majority of these sounds have been published under a Creative Commons
 Attribution license, or other as specified. Details at each link.
 
-### Sounds
+## Sounds
 
-`01587 helicopter.wav` by Robinhood76
-http://freesound.org/people/Robinhood76/sounds/94867/
+[01587 helicopter.wav](http://freesound.org/people/Robinhood76/sounds/94867/) by Robinhood76
 
-`Click` by lebcraftlp
-http://freesound.org/people/lebcraftlp/sounds/192279/
+[Click](http://freesound.org/people/lebcraftlp/sounds/192279/) by lebcraftlp
 
-`Cloth Flaps` by Sauron974
-http://freesound.org/people/Sauron974/sounds/188733/
+[Cloth Flaps](http://freesound.org/people/Sauron974/sounds/188733/) by Sauron974
 
-`DarkDetonation01.wav` by M-RED
-http://freesound.org/people/M-RED/sounds/183870/
+[DarkDetonation01.wav](http://freesound.org/people/M-RED/sounds/183870/) by M-RED
 
-`Debris Sifting Dry.aif` by kantouth
-http://freesound.org/people/kantouth/sounds/115113/
+[Debris Sifting Dry.aif](http://freesound.org/people/kantouth/sounds/115113/) by kantouth
 
-`explosion.mp3` by sarge4267
-http://freesound.org/people/sarge4267/sounds/102719/
+[explosion.mp3](http://freesound.org/people/sarge4267/sounds/102719/) by sarge4267
 
-`explosion3.wav` by sarge4267
-http://freesound.org/people/sarge4267/sounds/102733/
+[explosion3.wav](http://freesound.org/people/sarge4267/sounds/102733/) by sarge4267
 
-`explosion 4.aif` by harpoyume
-http://freesound.org/people/harpoyume/sounds/86032/
+[explosion 4.aif](http://freesound.org/people/harpoyume/sounds/86032/) by harpoyume
 
-`Gunshot 1.wav` by Adam_N
-http://freesound.org/people/Adam_N/sounds/164667/
+[Gunshot 1.wav](http://freesound.org/people/Adam_N/sounds/164667/) by Adam_N
 
-`GunShot.03.wav` by stintx
-http://freesound.org/people/stintx/sounds/107620/
+[GunShot.03.wav](http://freesound.org/people/stintx/sounds/107620/) by stintx
 
-`Warfare_gunshots_machine_gun_burst_001.wav` by soundscalpel.com
-http://freesound.org/people/soundscalpel.com/sounds/110622/
+[Warfare_gunshots_machine_gun_burst_001.wav](http://freesound.org/people/soundscalpel.com/sounds/110622/) by soundscalpel.com
 
-`oddworld_bomb.wav` by Oddworld
-http://freesound.org/people/Oddworld/sounds/75330/
+[oddworld_bomb.wav](http://freesound.org/people/Oddworld/sounds/75330/) by Oddworld
 
-`D6.wav` by RealRhodesSounds
-http://freesound.org/people/RealRhodesSounds/sounds/4194/
+[D6.wav](http://freesound.org/people/RealRhodesSounds/sounds/4194/) by RealRhodesSounds
 
-`snapping-chain` by CosmicEmbers
-http://freesound.org/people/CosmicEmbers/sounds/161650/
+[snapping-chain](http://freesound.org/people/CosmicEmbers/sounds/161650/) by CosmicEmbers
 
-`Stapler_Hands_05.wav` by Simon Lacelle
-http://freesound.org/people/Simon_Lacelle/sounds/67352/
+[Stapler_Hands_05.wav](http://freesound.org/people/Simon_Lacelle/sounds/67352/) by Simon Lacelle
 
-`static.wav` by g_lowing
-http://freesound.org/people/g_lowing/sounds/84432/
+[static.wav](http://freesound.org/people/g_lowing/sounds/84432/) by g_lowing
 
-`vhs hum` by jocobzeier
-http://freesound.org/people/jacobzeier/sounds/166178/
+[vhs hum](http://freesound.org/people/jacobzeier/sounds/166178/) by jocobzeier
 
-`Metal Click Sound` by mkoenig
-http://freesound.org/people/mkoenig/sounds/81175/
+[Metal Click Sound](http://freesound.org/people/mkoenig/sounds/81175/) by mkoenig
 
-`impact_water_splash_bomb_throw_flesh_01.wav` by m_O_m
-http://freesound.org/people/m_O_m/sounds/108758/
+[impact_water_splash_bomb_throw_flesh_01.wav](http://freesound.org/people/m_O_m/sounds/108758/) by m_O_m
 
-`Faulty Flourescent Light Start & Hum.wav` by EverydaySounds
-http://freesound.org/people/EverydaySounds/sounds/125064/
+[Faulty Flourescent Light Start & Hum.wav](http://freesound.org/people/EverydaySounds/sounds/125064/) by EverydaySounds
 
-`Wilhem Scream Sample (1951)`
-http://archive.org/details/WilhelmScreamSample
+[Wilhem Scream Sample (1951)](http://archive.org/details/WilhelmScreamSample) - archive.org
 
-`imppact wrench bounce.wav` by andrewgnau2
-http://freesound.org/people/andrewgnau2/sounds/71534/
+[imppact wrench bounce.wav](http://freesound.org/people/andrewgnau2/sounds/71534/) by andrewgnau2
 
-`Socket Wrench` by TheGertz
-http://freesound.org/people/TheGertz/sounds/131200/
+[Socket Wrench](http://freesound.org/people/TheGertz/sounds/131200/) by TheGertz
 
-`Socket Wrench` by xxqmanxx
-http://freesound.org/people/xxqmanxx/sounds/147018/
+[Socket Wrench](http://freesound.org/people/xxqmanxx/sounds/147018/) by xxqmanxx
 
-`alligator wrench 01.wav` by klankbeeld
-http://freesound.org/people/klankbeeld/sounds/198299/
+[alligator wrench 01.wav](http://freesound.org/people/klankbeeld/sounds/198299/) by klankbeeld
 
-`Violin C-5 Pizzicato Non-Vibrato` by Carlos Vaquero
-http://freesound.org/people/Carlos_Vaquero/sounds/153616/
+[Violin C-5 Pizzicato Non-Vibrato](http://freesound.org/people/Carlos_Vaquero/sounds/153616/) by Carlos Vaquero
 
-`Violin G-4 Pizzicato Non-Vibrato` by Carlos Vaquero
-http://freesound.org/people/Carlos_Vaquero/sounds/153611/
+[Violin G-4 Pizzicato Non-Vibrato](http://freesound.org/people/Carlos_Vaquero/sounds/153611/) by Carlos Vaquero
 
-`Pop_9.aif` by SunnySideSound
-http://freesound.org/people/SunnySideSound/sounds/67095/
+[Pop_9.aif](http://freesound.org/people/SunnySideSound/sounds/67095/) by SunnySideSound
 
-`Pop SFX` by runirasmussen
-http://freesound.org/people/runirasmussen/sounds/178446/
+[Pop SFX](http://freesound.org/people/runirasmussen/sounds/178446/) by runirasmussen
 
-`Crash & Glass.wav` by Rock Savage
-http://freesound.org/people/Rock%20Savage/sounds/59263/
+[Crash & Glass.wav](http://freesound.org/people/Rock%20Savage/sounds/59263/) by Rock Savage
 
-`splats.wav` by FreqMan
-http://freesound.org/people/FreqMan/sounds/42962/
+[splats.wav](http://freesound.org/people/FreqMan/sounds/42962/) by FreqMan
 
-`Door Closing.wav` by ceberation
-http://freesound.org/people/ceberation/sounds/235513/
+[Door Closing.wav](http://freesound.org/people/ceberation/sounds/235513/) by ceberation
 
-`Metal-Clanging.mp3` by Tiger_v15
-http://freesound.org/people/Tiger_v15/sounds/211015/
+[Metal-Clanging.mp3](http://freesound.org/people/Tiger_v15/sounds/211015/) by Tiger_v15
 
-`Metal_Hit_02.wav` by dheming
-http://freesound.org/people/dheming/sounds/197398/
+[Metal_Hit_02.wav](http://freesound.org/people/dheming/sounds/197398/) by dheming
 
-`bolo-hit-tank-self.wav` (from Bolo), Copyright (C) Steuart Cheshire 1993.
-A subtle tribute to my favourite Mac game of all-time, hands down. <3
-https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
-http://bolo.net/
-https://github.com/stephank/orona
-http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
+[bolo-hit-tank-self.wav](https://en.wikipedia.org/wiki/Bolo_(1987_video_game)) from "[Bolo](http://bolo.net/)", Copyright (C) Steuart Cheshire 1993. A subtle tribute to my favourite Mac game of all-time, hands down. <3
 
-`Tank fire Mixed.wav` by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
-https://freesound.org/people/Cyberkineticfilms/sounds/127845/
+(See also: [Orona](https://github.com/stephank/orona) Coffeescript partial port, WinBolo source code [on Google Code via archive.org](http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/) and [on GitHub](https://github.com/kippandrew/winbolo))
 
-`Medals Clanking` by Gareth_H (BY-NC 3.0)
-https://freesound.org/people/Gareth_H/sounds/365799/
+[Tank fire Mixed.wav](https://freesound.org/people/Cyberkineticfilms/sounds/127845/) by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
 
-`Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) [Mixed]` by EFlexTheSoundDesigner (BY-NC 3.0)
-https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/
+[Medals Clanking](https://freesound.org/people/Gareth_H/sounds/365799/) by Gareth_H (BY-NC 3.0)
 
-`Tank fire Mixed.wav` by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
-https://freesound.org/people/Cyberkineticfilms/sounds/127845/
+[Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) (Mixed)](https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/) by EFlexTheSoundDesigner (BY-NC 3.0)
 
-`Metal Heavy Mechanics` by jorickhoofd (CC-BY 3.0)
-https://freesound.org/people/jorickhoofd/sounds/160048/
+[Tank fire Mixed.wav](https://freesound.org/people/Cyberkineticfilms/sounds/127845/) by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
 
-`Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) [Mixed]` by EFlexTheSoundDesigner (BY-NC 3.0)
-https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/
+[Metal Heavy Mechanics](https://freesound.org/people/jorickhoofd/sounds/160048/) by jorickhoofd (CC-BY 3.0)
 
-`Gun_AR15_Machine_Gun_3_Single_Shot` and `Gun_Machine_Gun_M60E_Burst_1`, by The Recordist
-http://creativesounddesign.com/the-recordist-free-sound-effects/
+[Gun/Canon » Auto Assault Rifle/Gun Burst (Outdoor/Close) (Mixed)](https://freesound.org/people/EFlexTheSoundDesigner/sounds/393671/) by EFlexTheSoundDesigner (BY-NC 3.0)
 
-`Body Hits_Concrete.wav` by mlsulli (CC0)
-https://freesound.org/people/mlsulli/sounds/234853/
+[`Gun_AR15_Machine_Gun_3_Single_Shot` and `Gun_Machine_Gun_M60E_Burst_1`](http://creativesounddesign.com/the-recordist-free-sound-effects/) by The Recordist
 
-`Gun Shells Hitting Ground` (2,3,12,16,36,37) by FilmmakersManual (CC0)
-https://freesound.org/search/?g=1&q=shell%20hitting%20ground&f=%20username:%22filmmakersmanual%22
+[Body Hits_Concrete.wav](https://freesound.org/people/mlsulli/sounds/234853/) by mlsulli (CC0)
 
-`Heavy machine gun.wav` by CGEffex (CC BY 3.0)
-https://freesound.org/people/CGEffex/sounds/101961/
+[Gun Shells Hitting Ground](https://freesound.org/search/?g=1&q=shell%20hitting%20ground&f=%20username:%22filmmakersmanual%22) (2,3,12,16,36,37) by FilmmakersManual (CC0)
 
-`Chairs Break, Crash, pieces move.wav` by issalcake (CC0)
-https://freesound.org/people/issalcake/sounds/115919/
+[Heavy machine gun.wav](https://freesound.org/people/CGEffex/sounds/101961/) by CGEffex (CC BY 3.0)
 
-`Bullet - Metal Hit (2-4)` by FilmmakersManual (CC0)
-https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
+[Chairs Break, Crash, pieces move.wav](https://freesound.org/people/issalcake/sounds/115919/) by issalcake (CC0)
 
-`Bullet - Concrete Hit (2-4)` by FilmmakersManual (CC0)
-https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
+[Bullet - Metal Hit (2-4)](https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22) by FilmmakersManual (CC0)
 
-`Incoming Ricochets 2.wav` by rakurka (CC BY 3.0)
-https://freesound.org/people/rakurka/sounds/109957/
+[Bullet - Concrete Hit (2-4)](https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22) by FilmmakersManual (CC0)
 
-`Rick O'Shay » selected ricochets (no bang) from craigsmith's freesound 486071.wav` by Timbre (CC BY-NC 3.0)
-https://freesound.org/people/Timbre/sounds/486343/
+[Incoming Ricochets 2.wav](https://freesound.org/people/rakurka/sounds/109957/) by rakurka (CC BY 3.0)
 
-`aparicion .wav` by citeyo1 (CC0)
-https://freesound.org/people/citeyo1/sounds/430302/
+[Rick O'Shay » selected ricochets (no bang) from craigsmith's freesound 486071.wav](https://freesound.org/people/Timbre/sounds/486343/) by Timbre (CC BY-NC 3.0)
 
-`HQ Explosion` by Quaker540 (CC0)
-https://freesound.org/people/Quaker540/sounds/245372/
+[aparicion .wav](https://freesound.org/people/citeyo1/sounds/430302/) by citeyo1 (CC0)
 
-`Explosion Near.wav` by Bykgames (CC BY-NC 3.0)
-https://freesound.org/people/Bykgames/sounds/414345/
+[HQ Explosion](https://freesound.org/people/Quaker540/sounds/245372/) by Quaker540 (CC0)
 
-`musical saw ascending UFO` by JohnsonBrandEditing (CC0)
-https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
+[Explosion Near.wav](https://freesound.org/people/Bykgames/sounds/414345/) by Bykgames (CC BY-NC 3.0)
 
-### Images
+[musical saw ascending UFO](https://freesound.org/people/JohnsonBrandEditing/sounds/173948/) by JohnsonBrandEditing (CC0)
+
+## Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
 https://github.com/fabianalexisinostroza/Antu
 
-** Fonts ("Typefaces" :P)
+## Fonts ("Typefaces" :P)
 
-`FA Sysfont C` by Alina Sava (SIL Open Font License 1.1)
-https://fontsarena.com/sysfont-by-alina-sava/ 
+[FA Sysfont C](https://fontsarena.com/sysfont-by-alina-sava/) by Alina Sava (SIL Open Font License 1.1)
 
-`JetBrains Mono` webfont, JetBrains. https://www.jetbrains.com/lp/mono/#license
-https://www.jetbrains.com/lp/mono/
+[JetBrains Mono](https://www.jetbrains.com/lp/mono/) webfont, JetBrains. [SIL Open Font License 1.1](https://www.jetbrains.com/lp/mono/#license)
