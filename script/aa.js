@@ -2592,29 +2592,25 @@
 
     sounds.machineGunFire = [];
 
-    // 09/2020: Firefox needs lots of copies to play smoothly.
+    // 09/2020: Firefox needs lots of copies to play smoothly?
     for (i = 0; i < 8; i++) {
       sounds.machineGunFire.push(
         addSound({
           url: getURL('machinegun'),
-          volume: 25,
+          volume: 25
           // multiShot: true
-          // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
-          // url: 'audio/Gun_Machine_Gun_M60E_Burst_1_edit.wav'
-          // url: 'audio/Gun_AK47_Machine_Gun_1_edit.wav'
         })
       )
     }
 
     sounds.machineGunFireEnemy = addSound({
-      // url: getURL('machinegun'),
       // multiShot: true,
+      // http://creativesounddesign.com/the-recordist-free-sound-effects/
       url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit')
-      // url: 'audio/Gun_Machine_Gun_M60E_Burst_1_edit.wav'
-      // url: 'audio/Gun_AK47_Machine_Gun_1_edit.wav'
     });
 
     sounds.bulletGroundHit = utils.array.shuffle([
+      // https://freesound.org/people/mlsulli/sounds/234853/
       addSound({ url: getURL('234853__mlsulli__body-hits-concrete_1'), volume: 10 }),
       addSound({ url: getURL('234853__mlsulli__body-hits-concrete_2'), volume: 10 }),
       addSound({ url: getURL('234853__mlsulli__body-hits-concrete_3'), volume: 10 }),
@@ -2623,6 +2619,7 @@
     ]);
 
     sounds.bulletShellCasing = utils.array.shuffle([
+      // https://freesound.org/search/?g=1&q=shell%20hitting%20ground&f=%20username:%22filmmakersmanual%22
       addSound({ url: getURL('522290__filmmakersmanual__shell-hitting-ground-12'), volume: 50 }),
       addSound({ url: getURL('522294__filmmakersmanual__shell-hitting-ground-16'), volume: 50 }),
       addSound({ url: getURL('522391__filmmakersmanual__shells-hitting-ground-2'), volume: 50 }),
@@ -2635,6 +2632,7 @@
 
     sounds.bombHatch.push(addSound({
       // hat tip to the Death Adder for this one. ;)
+      // https://youtu.be/PAER-rSS8Jk
       url: getURL('ga-typewriter'),
       volume: 33
       /*
@@ -2880,16 +2878,11 @@
 
     sounds.infantryGunFire = [
       addSound({
-        // url: getURL('infantry-gunfire'),
-        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
-        // volume: 20
-        // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
+        // http://creativesounddesign.com/the-recordist-free-sound-effects/
+        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
       }),
       addSound({
-        // url: getURL('infantry-gunfire'),
-        // volume: 20
-        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
-        // url: 'audio/Gun_AR15_Machine_Gun_3_Single_Shot_edit.wav'
+        url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
       })
     ];
 
@@ -2897,8 +2890,7 @@
 
     for (i = 0; i < 8; i++) {
       sounds.turretGunFire.push(addSound({
-        // url: getURL('turret-gunfire'),
-        // url: 'audio/161429__ryanconway__anti-air-gun-3-sounds_edit.wav',
+        // https://freesound.org/people/CGEffex/sounds/101961/
         url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
         multiShot: true, // could be dangerous
         volume: 40
@@ -2911,10 +2903,8 @@
       volume: 12
     });
 
-    // http://freesound.org/people/Tiger_v15/sounds/211015/ - NO LONGER USED
     sounds.metalHitBreak = addSound({
-      // url: getURL('metal-hit-break'),
-      // url: 'audio/315858__bevibeldesign__gunshot-ricochet_metal_hit_break.wav',
+      // https://freesound.org/people/issalcake/sounds/115919/
       url: getURL('115919__issalcake__chairs-break-crash-pieces-move'),
       volume: 40
     });
@@ -2946,74 +2936,28 @@
 
     sounds.metalHit = [];
 
-    // sounds.metalHitLight = [];
+    // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
+    sounds.metalHit.push(addSound({
+      url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
+      volume: 25
+    }));
 
-    // for (i = 0; i < 4; i++) {
+    sounds.metalHit.push(addSound({
+      url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
+      volume: 25
+    }));
 
-      // http://freesound.org/people/Tiger_v15/sounds/211015/
-      // sounds.metalHit.push(addSound({
-        // url: getURL('metal-hit-1'),
-        // volume: 5
-      // }));
+    sounds.metalHit.push(addSound({
+      url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
+      volume: 25
+    }));
 
-      sounds.metalHit.push(addSound({
-        // url: getURL('metal-hit-2'),
-        // volume: 5
-        url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
-        volume: 25
-      }));
+    sounds.metalHit.push(addSound({
+      url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
+      volume: 25
+    }));
 
-      sounds.metalHit.push(addSound({
-        // url: getURL('metal-hit-3'),
-        // volume: 5
-        url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
-        volume: 25
-      }));
-
-      sounds.metalHit.push(addSound({
-        // url: getURL('metal-hit-4'),
-        // volume: 5
-        url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
-        volume: 25
-      }));
-
-      sounds.metalHit.push(addSound({
-        // url: getURL('metal-hit-5'),
-        // volume: 5
-        url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
-        volume: 25
-      }));
-
-      /*
-      // http://freesound.org/people/dheming/sounds/197398/
-      sounds.metalHitLight.push(addSound({
-        url: getURL('metal-hit-light-1'),
-        volume: 8
-      }));
-
-      sounds.metalHitLight.push(addSound({
-        url: getURL('metal-hit-light-2'),
-        volume: 8
-      }));
-
-      sounds.metalHitLight.push(addSound({
-        url: getURL('metal-hit-light-3'),
-        volume: 8
-      }));
-
-      sounds.metalHitLight.push(addSound({
-        url: getURL('metal-hit-light-4'),
-        volume: 8
-      }));
-
-      sounds.metalHitLight.push(addSound({
-        url: getURL('metal-hit-light-5'),
-        volume: 8
-      }));
-      */
-
-    // }
-
+    // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
     sounds.concreteHit = utils.array.shuffle([
       addSound({
         url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit')
@@ -3026,6 +2970,7 @@
       })
     ]);
 
+    // https://freesound.org/people/rakurka/sounds/109957/
     sounds.ricochet = utils.array.shuffle([
       addSound({
         url: getURL('109957__rakurka__incoming-ricochets-2_1'),
@@ -3051,6 +2996,7 @@
         multiShot: true
       }),
 
+      // https://freesound.org/people/Timbre/sounds/486343/
       addSound({
         url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1'),
         volume: 4,
@@ -3096,6 +3042,7 @@
     ]);
 
     sounds.balloonHit = addSound({
+      // https://freesound.org/people/citeyo1/sounds/430302/
       url: getURL('430302__citeyo1__aparicion_edit'),
       multiShot: true,
     });
@@ -3107,11 +3054,13 @@
         volume: 60
       }),
       addSound({
+        // https://freesound.org/people/Quaker540/sounds/245372/
         url: getURL('245372__quaker540__hq-explosion'),
         multiShot: true,
         volume: 50
       }),
       addSound({
+        // https://freesound.org/people/Bykgames/sounds/414345/
         url: getURL('414345__bykgames__explosion-near'),
         multiShot: true,
         volume: 50
@@ -3286,6 +3235,7 @@
     ]);
 
     sounds.banana.launch = [
+      // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
       addSound({
         url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
         volume: 50,
