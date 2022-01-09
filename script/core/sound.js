@@ -256,51 +256,53 @@ function playTinkerWrench(isRepairing, exports) {
  * sound effects
  */
 
-let sounds = {};
+let sounds = {
+  types: {
+    // dependent on `TYPES`, set via `initSoundTypes()`
+    metalHit: [],
+    genericSplat: []
+  },
+  // sound configuration
+  helicopter: {
+    bomb: null,
+    engine: null,
+    engineVolume: 25,
+    rotate: null
+  },
+  inventory: {
+    begin: null,
+    credit: null,
+    debit: null,
+    end: null,
+  },
+  shrapnel: {
+    counter: 0,
+    counterMax: 4,
+    hit0: null,
+    hit1: null,
+    hit2: null,
+    hit3: null
+  },
+  rubberChicken: {
+    launch: null,
+    expire: null,
+    die: null
+  },
+  banana: {
+    launch: null,
+    expire: null,
+  },
+  machineGunFire: null,
+  machineGunFireEnemy: null
+  // numerous others will be assigned at init time.
+};
 
-function initSounds() {
-
-  sounds = {
+function initSoundTypes() {
+  sounds.types = {
     // associate certain sounds with inventory / object types
-    types: {
-      metalHit: [TYPES.tank, TYPES.van, TYPES.missileLauncher, TYPES.bunker, TYPES.superBunker, TYPES.turret],
-      genericSplat: [TYPES.engineer,TYPES.infantry,TYPES.parachuteInfantry],
-    },
-    // sound configuration
-    helicopter: {
-      bomb: null,
-      engine: null,
-      engineVolume: 25,
-      rotate: null
-    },
-    inventory: {
-      begin: null,
-      credit: null,
-      debit: null,
-      end: null,
-    },
-    shrapnel: {
-      counter: 0,
-      counterMax: 4,
-      hit0: null,
-      hit1: null,
-      hit2: null,
-      hit3: null
-    },
-    rubberChicken: {
-      launch: null,
-      expire: null,
-      die: null
-    },
-    banana: {
-      launch: null,
-      expire: null,
-    },
-    machineGunFire: null,
-    machineGunFireEnemy: null
-    // numerous others will be assigned at init time.
-  };
-
+    metalHit: [TYPES.tank, TYPES.van, TYPES.missileLauncher, TYPES.bunker, TYPES.superBunker, TYPES.turret],
+    genericSplat: [TYPES.engineer,TYPES.infantry,TYPES.parachuteInfantry],
+  }
 }
 
 function getURL(file) {
@@ -334,9 +336,12 @@ function addSound(options) {
 
 }
 
+// if SM2 is disabled or fails, still complete the sound config.
+window.soundManager.ontimeout(initSoundTypes);
+
 window.soundManager.onready(() => {
 
-  initSounds();
+  initSoundTypes();
 
   let i;
 
