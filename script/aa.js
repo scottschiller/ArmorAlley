@@ -2992,7 +2992,6 @@ window.addEventListener('DOMContentLoaded', window.aa.initArmorAlley);
 import { common } from './core/common.js';
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
-import { Smoke } from './elements/Smoke.js';
 import { Shrapnel } from './elements/Shrapnel.js';
 
 // some other modules reference this from here.
