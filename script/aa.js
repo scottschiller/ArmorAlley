@@ -363,18 +363,6 @@ function bottomAlignedY(y) {
 
 }
 
-function startGame() {
-
-  game.init();
-
-  prefsManager.init();
-
-  keyboardMonitor = KeyboardMonitor();
-  
-  keyboardMonitor.init();
-
-}
-
 function initArmorAlley() {
 
   // A few specific CSS tweaks - regrettably - are required.
@@ -586,29 +574,19 @@ function initArmorAlley() {
 
   }
 
-  startGame();
+  game.init();
+
+  prefsManager.init();
+
+  keyboardMonitor = KeyboardMonitor();
+  
+  keyboardMonitor.init();
 
 }
 
 window.aa = {
 
   initArmorAlley,
-
-  startGame,
-
-  startTutorial() {
-
-    utils.storage.remove(prefs.gameType);
-
-    window.location.hash = 'tutorial';
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
-
-    return false;
-
-  },
 
   exit() {
 
@@ -688,7 +666,6 @@ import {
   orientationChange
 } from './UI/mobile.js';
 
-import { common } from './core/common.js';
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
