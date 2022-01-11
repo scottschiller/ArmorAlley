@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  shrapnelExplosion,
   setFrameTimeout,
   makeSprite,
   gameType,
@@ -93,7 +92,7 @@ const Balloon = options => {
     common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
 
     if (gameType === 'hard' || gameType === 'extreme') {
-      shrapnelExplosion(data, {
+      common.shrapnelExplosion(data, {
         count: 3 + rndInt(3),
         velocity: rndInt(4)
       });

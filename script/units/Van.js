@@ -3,7 +3,6 @@ import {
   utils,
   makeSprite,
   gamePrefs,
-  shrapnelExplosion,
   setFrameTimeout,
 } from '../aa.js';
 
@@ -54,7 +53,7 @@ const Van = options => {
     // revert to CSS rules, prevent first frame of explosion from sticking
     dom.o.style.backgroundPosition = '0px -384px';
 
-    shrapnelExplosion(data, { centerX: true, velocity: 6 });
+    common.shrapnelExplosion(data, { centerX: true, velocity: 6 });
 
     common.inertGunfireExplosion({ exports });
 

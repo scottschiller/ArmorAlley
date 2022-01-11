@@ -3,7 +3,6 @@ import {
   utils,
   setFrameTimeout,
   makeSprite,
-  shrapnelExplosion,
   rndInt,
   gameType,
   rad2Deg,
@@ -203,7 +202,7 @@ const SmartMissile = options => {
 
       common.inertGunfireExplosion({ exports });
 
-      shrapnelExplosion(data, {
+      common.shrapnelExplosion(data, {
         count: 3 + rndInt(3),
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
       });

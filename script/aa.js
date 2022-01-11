@@ -311,8 +311,6 @@ let setFrameTimeout;
 
 let frameTimeoutManager;
 
-let shrapnelExplosion;
-
 let prefsManager = PrefsManager();
 
 let stats;
@@ -466,65 +464,6 @@ function addItem(className, x) {
   return node;
 
 }
-
-shrapnelExplosion = (options, shrapnelOptions) => {
-
-  let localOptions, halfWidth;
-
-  let vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
-
-  shrapnelOptions = shrapnelOptions || {};
-
-  localOptions = common.mixin({}, options);
-
-  halfWidth = localOptions.width / 2;
-
-  // randomize X?
-  if (shrapnelOptions.centerX) {
-    localOptions.x += halfWidth;
-  } else {
-    localOptions.x += rnd(localOptions.width);
-  }
-
-  // silly, but copy right over.
-  if (shrapnelOptions.noInitialSmoke) {
-    localOptions.noInitialSmoke = shrapnelOptions.noInitialSmoke;
-  }
-
-  angle = 0;
-
-  explosionVelocityMax = shrapnelOptions.velocity || 4;
-
-  shrapnelCount = shrapnelOptions.count || 8;
-
-  angleIncrement = 180 / (shrapnelCount - 1);
-
-  for (i = 0; i < shrapnelCount; i++) {
-
-    explosionVelocity1 = rnd(explosionVelocityMax);
-    explosionVelocity2 = rnd(explosionVelocityMax);
-
-    vectorX = -explosionVelocity1 * Math.cos(angle * rad2Deg);
-    vectorY = -explosionVelocity2 * Math.sin(angle * rad2Deg);
-
-    localOptions.vX = (localOptions.vX * 0.5) + vectorX;
-    localOptions.vY += vectorY;
-
-    // bottom-aligned object? explode "up".
-    if (localOptions.vY > 0 && options.bottomAligned) {
-      localOptions.vY *= -1;
-    }
-
-    // have first and last make noise
-    localOptions.hasSound = (i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1));
-
-    game.objects.shrapnel.push(Shrapnel(localOptions));
-
-    angle += angleIncrement;
-
-  }
-
-};
 
 /**
  * hooks into main game requestAnimationFrame() loop.
@@ -1283,8 +1222,7 @@ import {
   isMobile,
   isiPhone,
   debugType,
-  DEFAULT_VOLUME,
-  rad2Deg
+  DEFAULT_VOLUME
 } from './core/global.js';
 
 import {
@@ -1308,7 +1246,6 @@ export {
   game,
   gamePrefs,
   utils,
-  shrapnelExplosion,
   setFrameTimeout,
   makeSprite,
   makeTransformSprite,

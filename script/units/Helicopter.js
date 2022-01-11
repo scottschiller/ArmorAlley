@@ -7,7 +7,6 @@ import {
   rubberChickenMode,
   gameType,
   setFrameTimeout,
-  shrapnelExplosion,
   rnd,
   rndInt,
   makeTransformSprite,
@@ -1074,7 +1073,7 @@ const Helicopter = options => {
       });
     }
 
-    shrapnelExplosion(data, {
+    common.shrapnelExplosion(data, {
       count: 20,
       velocity: 6,
       // first burst always looks too similar, here.
@@ -2296,7 +2295,7 @@ const Helicopter = options => {
         };
 
         // TODO: special case - clean this up
-        shrapnelExplosion(args, {
+        common.shrapnelExplosion(args, {
           count: rndInt(8) + rndInt(8),
           // don't create identical "clouds" of smoke *at* base.
           noInitialSmoke: true

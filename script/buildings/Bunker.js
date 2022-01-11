@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  shrapnelExplosion,
   setFrameTimeout,
   makeSprite,
   rndInt,
@@ -173,7 +172,7 @@ const Bunker = options => {
     // detach balloon?
     detachBalloon();
 
-    shrapnelExplosion(data, { velocity: rnd(-10) });
+    common.shrapnelExplosion(data, { velocity: rnd(-10) });
 
     setFrameTimeout(() => {
 

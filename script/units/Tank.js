@@ -2,7 +2,6 @@ import {
   game,
   gamePrefs,
   utils,
-  shrapnelExplosion,
   setFrameTimeout,
   makeSprite,
   makeTransformSprite,
@@ -109,11 +108,11 @@ const Tank = options => {
 
         utils.css.add(dom.o, css.exploding);
 
-        shrapnelExplosion(data, { velocity: 8 });
+        common.shrapnelExplosion(data, { velocity: 8 });
 
         common.inertGunfireExplosion({ exports });
 
-        common.smokeRing(exports, { isGroundUnit: true });
+        common.common.smokeRing(exports, { isGroundUnit: true });
 
         data.deadTimer = setFrameTimeout(() => {
           common.removeNodes(dom);

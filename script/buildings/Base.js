@@ -7,7 +7,6 @@ import {
   rubberChickenMode,
   gameType,
   setFrameTimeout,
-  shrapnelExplosion,
   rnd,
   rndInt,
   defaultMissileMode,
@@ -103,7 +102,7 @@ const Base = options => {
 
     function smallBoom(exports) {
 
-      shrapnelExplosion(exports.data, {
+      common.shrapnelExplosion(exports.data, {
         count: 5 + rndInt(5),
         velocity: 5 + rndInt(10),
         // don't create identical "clouds" of smoke *at* base.
@@ -162,7 +161,7 @@ const Base = options => {
             iteration = 0;
 
             for (i = 0; i < 7; i++) {
-              shrapnelExplosion(data, {
+              common.shrapnelExplosion(data, {
                 count: rndInt(36) + rndInt(36),
                 velocity: 8 + rnd(8),
                 // don't create identical "clouds" of smoke *at* base.
