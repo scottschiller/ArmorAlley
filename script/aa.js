@@ -738,7 +738,6 @@ window.addEventListener('DOMContentLoaded', window.aa.initArmorAlley);
 // TODO: clean up local references to this stuff.
 import {
   winloc,
-  FRAMERATE,
   isFirefox,
   isSafari,
   isMobile,
@@ -754,7 +753,6 @@ import {
 import { common } from './core/common.js';
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
-import { frameTimeoutManager } from './core/GameLoop.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
 
 import { gamePrefs, prefs, PrefsManager } from './UI/preferences.js';
