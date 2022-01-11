@@ -51,7 +51,7 @@ const Turret = options => {
   function setAngle(angle) {
 
     // TODO: CSS animation for this?
-    // updateIsOnScreen(exports); from within animate() ?
+    // common.updateIsOnScreen(exports); from within animate() ?
     if (data.isOnScreen) {
       dom.oSubSprite.style.transform = `rotate3d(0, 0, 1, ${angle}deg)`;
     }

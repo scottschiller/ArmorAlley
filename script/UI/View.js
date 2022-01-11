@@ -95,7 +95,7 @@ const View = () => {
       data.topBar.height = dom.topBar.offsetHeight;
     }
 
-    // isOnScreen() references this a lot.
+    // common.isOnScreen() references this a lot.
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
     if (dom.stars) {

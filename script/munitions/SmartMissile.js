@@ -9,13 +9,11 @@ import {
   getNearestObject,
   gameType,
   rad2Deg,
-  updateIsOnScreen,
   collisionTest,
   rnd
 } from '../aa.js';
 
 import { common } from '../core/common.js';
-
 import { TYPES } from '../core/global.js';
 
 import {
@@ -495,7 +493,7 @@ const SmartMissile = options => {
 
     // missiles are animated by their parent - e.g., helicopters,
     // and not the main game loop. so, on-screen status is checked manually here.
-    updateIsOnScreen(exports);
+    common.updateIsOnScreen(exports);
 
     collisionTest(collision, exports);
 

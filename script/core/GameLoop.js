@@ -1,7 +1,6 @@
 import {
   gamePrefs,
   game,
-  updateIsOnScreen,
   battleOver,
   frameTimeoutManager,
 } from '../aa.js';
@@ -13,6 +12,7 @@ import {
   debug
 } from '../core/global.js';
 
+import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 
 const GameLoop = () => {
@@ -52,7 +52,7 @@ const GameLoop = () => {
 
           for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
-            updateIsOnScreen(gameObjects[item][i]);
+            common.updateIsOnScreen(gameObjects[item][i]);
 
             if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
               // object is dead - take it out.
@@ -66,7 +66,7 @@ const GameLoop = () => {
 
           // single object case
 
-          updateIsOnScreen(gameObjects[item]);
+          common.updateIsOnScreen(gameObjects[item]);
 
           if (gameObjects[item].animate && gameObjects[item].animate()) {
             // object is dead - take it out.

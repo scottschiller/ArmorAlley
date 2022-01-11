@@ -3,7 +3,6 @@ import {
   gamePrefs,
   setFrameTimeout,
   rndInt,
-  isOnScreen,
   game
 } from '../aa.js';
 
@@ -123,7 +122,7 @@ function playSound(soundReference, target, soundOptions) {
   if (!gamePrefs.sound) return soundObject.sound;
 
   // TODO: revisit on-screen logic, drop the function call
-  onScreen = (!target || isOnScreen(target));
+  onScreen = (!target || common.isOnScreen(target));
   // onScreen = (target && target.data && target.data.isOnScreen);
 
   // old: determine volume based on on/off-screen status

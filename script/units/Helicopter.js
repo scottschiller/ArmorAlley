@@ -13,7 +13,6 @@ import {
   makeTransformSprite,
   trackEnemy,
   updateEnergy,
-  updateIsOnScreen,
   plusMinus,
   getLandscapeLayout,
   collisionCheck,
@@ -653,7 +652,7 @@ const Helicopter = options => {
       if (data.isEnemy) {
         // hackish: force enemy helicopter to be on-screen when respawning
         // this helps ensure it animates up from the landing pad properly
-        updateIsOnScreen(exports, force);
+        common.updateIsOnScreen(exports, force);
       } else {
         // local player? move the view back to zero.
 
@@ -2100,7 +2099,7 @@ const Helicopter = options => {
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
     // for human player: append immediately, so initial game start / respawn animation works nicely
-    updateIsOnScreen(exports);
+    common.updateIsOnScreen(exports);
 
     setRespawning(true);
 

@@ -9,7 +9,6 @@ import {
   applyRandomRotation,
   plusMinus,
   collisionTest,
-  updateIsOnScreen,
   makeSubSprite
 } from '../aa.js';
 
@@ -221,7 +220,7 @@ const Bomb = options => {
 
     // bombs are animated by their parent - e.g., helicopters,
     // and not the main game loop. so, on-screen status is checked manually here.
-    updateIsOnScreen(exports);
+    common.updateIsOnScreen(exports);
 
     // notify caller if dead, and node has been removed.
     return (data.dead && !data.deadTimer && !dom.o);

@@ -251,6 +251,90 @@ const common = {
 
   },
 
+  isOnScreen(target) {
+
+    // is the target within the range of screen coordinates?
+    return (
+      target
+      && target.data
+      && (target.data.x + target.data.width) >= game.objects.view.data.battleField.scrollLeft
+      && target.data.x < game.objects.view.data.battleField.scrollLeftWithBrowserWidth
+    );
+  
+  },
+
+  updateIsOnScreen(o, forceUpdate) {
+
+    if (!o || !o.data || !useDOMPruning) return;
+  
+    if (common.isOnScreen(o) || forceUpdate) {
+  
+      // exit if not already updated
+      if (o.data.isOnScreen) return;
+  
+      o.data.isOnScreen = true;
+  
+      // node may not exist
+      if (!o.dom || !o.dom.o) return;
+  
+      if (o.dom.o._lastTransform) {
+        // MOAR GPU! re-apply transform that was present at, or updated since, removal
+        o.dom.o.style.transform = o.dom.o._lastTransform;
+      }
+  
+      o.dom.o.style.contentVisibility = 'visible';
+  
+      if (o.dom._oRemovedParent) {
+  
+        // previously removed: re-append to DOM
+        o.dom._oRemovedParent.appendChild(o.dom.o);
+        o.dom._oRemovedParent = null;
+  
+      } else {
+  
+        // first-time append, first time on-screen
+        game.dom.world.appendChild(o.dom.o);
+  
+      }
+      
+      // callback, if defined
+      if (o.isOnScreenChange) {
+        o.isOnScreenChange(o.data.isOnScreen);
+      }
+  
+    } else if (o.data.isOnScreen) {
+  
+      o.data.isOnScreen = false;
+  
+      if (o.dom && o.dom.o) {
+  
+        // manually remove x/y transform, will be restored when on-screen.
+        if (o.dom.o.style.transform) {
+          // 'none' might be considered a type of transform per Chrome Dev Tools,
+          // and thus incur an "inline transform" cost vs. an empty string.
+          // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
+          o.dom.o._lastTransform = o.dom.o.style.transform;
+          o.dom.o.style.transform = 'none';
+        }
+  
+        if (o.dom.o.parentNode) {
+          o.dom._oRemovedParent = o.dom.o.parentNode;
+          o.dom._oRemovedParent.removeChild(o.dom.o);
+        }
+  
+        o.dom.o.style.contentVisibility = 'hidden';
+  
+      }
+  
+      // callback, if defined
+      if (o.isOnScreenChange) {
+        o.isOnScreenChange(o.data.isOnScreen);
+      }
+  
+    }
+  
+  },
+
   mixin(oMain, oAdd) {
 
     // edge case: if nothing to add, return "as-is"

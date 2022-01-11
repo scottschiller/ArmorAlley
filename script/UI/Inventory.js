@@ -2,7 +2,6 @@ import {
   game,
   utils,
   setFrameTimeout,
-  updateIsOnScreen,
   battleOver
 } from '../aa.js';
 
@@ -12,6 +11,8 @@ import {
   playSound,
   sounds
 } from '../core/sound.js';
+
+import { common} from '../core/common.js';
 
 import { MissileLauncher } from '../units/MissileLauncher.js';
 import { Tank } from '../units/Tank.js';
@@ -37,7 +38,7 @@ const Inventory = () => {
       typeData[0].push(orderObject);
 
       // force-append this thing, if it's on-screen right now
-      updateIsOnScreen(orderObject);
+      common.updateIsOnScreen(orderObject);
 
       // set up the initial transition
       utils.css.add(orderObject.dom.o, css.building);
