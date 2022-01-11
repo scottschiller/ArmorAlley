@@ -3,8 +3,7 @@ import {
   utils,
   gameType,
   rndInt,
-  plusMinus,
-  bottomAlignedY
+  plusMinus
 } from '../aa.js';
 
 import {
@@ -262,7 +261,7 @@ const Balloon = options => {
     data.dead = false;
 
     // reset position, too
-    data.y = bottomAlignedY(-data.height);
+    data.y = common.bottomAlignedY(-data.height);
 
     radarItem.reset();
 

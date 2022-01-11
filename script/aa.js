@@ -313,13 +313,6 @@ function getNormalizedUnitName(item) {
   return type;
 }
 
-function bottomAlignedY(y) {
-
-  // correct bottom-aligned Y value
-  return 370 - 2 - (y || 0);
-
-}
-
 // used by the "exit [game type]" link
 window.aa = {
 
@@ -406,7 +399,6 @@ export {
   rndInt,
   plusMinus,
   rnd,
-  bottomAlignedY,
   getNormalizedUnitName,
   getLandscapeLayout,
   screenScale,

@@ -498,6 +498,13 @@ const common = {
     return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
   },
 
+  bottomAlignedY(y) {
+
+    // correct bottom-aligned Y value
+    return 370 - 2 - (y || 0);
+  
+  },
+
   getDoorCoords(obj) {
 
     // for special collision check case with bunkers

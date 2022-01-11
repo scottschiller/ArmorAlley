@@ -2,7 +2,6 @@ import {
   game,
   utils,
   FPS,
-  bottomAlignedY,
   rnd,
   rndInt,
   rad2Deg,
@@ -126,7 +125,7 @@ const Turret = options => {
         // turret gunfire mostly hits airborne things.
         collisionItems,
         x: data.x + data.width + 2 + (deltaX * 0.05),
-        y: bottomAlignedY() + 8 + (deltaY * 0.05),
+        y: common.bottomAlignedY() + 8 + (deltaY * 0.05),
         vX: (deltaX * 0.05) + deltaXGretzky,
         vY: Math.min(0, (deltaY * 0.05) + deltaYGretzky)
       }));
