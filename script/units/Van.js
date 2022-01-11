@@ -2,17 +2,13 @@ import {
   game,
   utils,
   makeSprite,
-  nearbyTest,
-  initNearby,
   gamePrefs,
   shrapnelExplosion,
   setFrameTimeout,
-  battleOver,
-  gameOver,
-  enemyHelicopterNearby,
 } from '../aa.js';
 
 import { common } from '../core/common.js';
+import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
 
 import {
   TYPES,
@@ -98,7 +94,7 @@ const Van = options => {
     common.smokeRelativeToDamage(exports, 0.25);
 
     // just in case: prevent any multiple "game over" actions via animation
-    if (battleOver) return;
+    if (isGameOver()) return;
 
     if (theyWin || (data.isEnemy && data.x <= data.xGameOver)) {
 
@@ -111,7 +107,7 @@ const Van = options => {
 
       game.objects.view.setAnnouncement('The enemy has won the battle.', -1);
 
-      gameOver();
+      gameOver(false);
 
     } else if (youWin || (!data.isEnemy && data.x >= data.xGameOver)) {
 
@@ -184,6 +180,37 @@ const Van = options => {
 
   }
 
+  function gameOver(youWon) {
+
+    // somebody's base is about to get blown up.
+  
+    let yourBase, enemyBase;
+  
+    // just in case
+    if (isGameOver()) return;
+  
+    yourBase = game.objects.bases[0];
+    enemyBase = game.objects.bases[1];
+  
+    if (!youWon) {
+  
+      // sorry, better luck next time.
+      yourBase.die();
+  
+    } else {
+  
+      enemyBase.die();
+  
+    }
+  
+    game.data.battleOver = true;
+  
+    utils.css.add(document.body, 'game-over');
+  
+    game.objects.stats.displayEndGameStats();
+  
+  }
+
   function initVan() {
 
     dom.o = makeSprite({
@@ -196,7 +223,7 @@ const Van = options => {
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    initNearby(friendlyNearby, exports);
+    common.initNearby(friendlyNearby, exports);
 
     // enemy vans are so sneaky, they don't even appear on the radar.
     if (tutorialMode || !options.isEnemy) {

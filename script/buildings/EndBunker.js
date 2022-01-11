@@ -3,8 +3,6 @@ import {
   utils,
   makeSprite,
   updateEnergy,
-  nearbyTest,
-  collisionCheckMidPoint,
   gamePrefs
 } from '../aa.js';
 
@@ -16,6 +14,8 @@ import {
   worldWidth,
   FPS
 } from '../core/global.js';
+
+import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 
 import {
   playSound,

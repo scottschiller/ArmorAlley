@@ -1,11 +1,11 @@
 import {
   makeSprite,
-  collisionTest,
   rndInt,
   makeTransformSprite
 } from '../aa.js';
 
 import { worldHeight } from '../core/global.js';
+import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 
 const LandingPad = options => {

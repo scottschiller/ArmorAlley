@@ -3,19 +3,14 @@ import {
   gamePrefs,
   utils,
   setFrameTimeout,
-  nearbyTest,
   makeSprite,
-  initNearby,
-  recycleTest,
-  enemyHelicopterNearby,
-  objectInView,
   missileMode,
   bananaMode,
   rubberChickenMode
 } from '../aa.js';
 
 import { common } from '../core/common.js';
-
+import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';
 import { FPS } from '../core/global.js';
 
 import {
@@ -213,7 +208,7 @@ const MissileLauncher = options => {
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    initNearby(friendlyNearby, exports);
+    common.initNearby(friendlyNearby, exports);
 
     data.frameTimeout = setFrameTimeout(() => {
       data.orderComplete = true;

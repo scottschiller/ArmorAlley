@@ -6,12 +6,11 @@ import {
   rndInt,
   plusMinus,
   applyRandomRotation,
-  rnd,
-  collisionTest
+  rnd
 } from '../aa.js';
 
 import { common } from '../core/common.js';
-
+import { collisionTest } from '../core/logic.js';
 import { TYPES } from '../core/global.js';
 
 import {

@@ -6,14 +6,18 @@ import {
   applyRandomRotation,
   shrapnelExplosion,
   rndInt,
-  getNearestObject,
   gameType,
   rad2Deg,
-  collisionTest,
   rnd
 } from '../aa.js';
 
 import { common } from '../core/common.js';
+
+import {
+  collisionTest,
+  getNearestObject
+} from '../core/logic.js';
+
 import { TYPES } from '../core/global.js';
 
 import {

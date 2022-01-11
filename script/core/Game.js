@@ -5,13 +5,11 @@ import {
   setFrameTimeout,
   rnd,
   rndInt,
-  battleOver,
   debug,
   addItem,
   prefsManager,
   convoyDelay,
   setConvoyDelay,
-  productionHalted
 } from '../aa.js';
 
 import {
@@ -969,14 +967,14 @@ const game = (() => {
 
         let options;
 
-        if (!battleOver && !data.paused) {
+        if (!data.battleOver && !data.paused) {
 
           options = {
             isEnemy: true,
             x: worldWidth + 64
           };
 
-          if (!productionHalted) {
+          if (!data.productionHalted) {
             game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
           }
 
@@ -1002,7 +1000,9 @@ const game = (() => {
   }
 
   data = {
-    paused: false
+    battleOver: false,
+    paused: false,
+    productionHalted: false
   };
 
   dom = {

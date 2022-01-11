@@ -2,7 +2,6 @@ import {
   game,
   utils,
   makeSprite,
-  enemyHelicopterNearby,
   gamePrefs,
   bananaMode,
   rubberChickenMode,
@@ -28,6 +27,7 @@ import {
 } from '../core/sound.js';
 
 import { common } from '../core/common.js';
+import { enemyHelicopterNearby } from '../core/logic.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 

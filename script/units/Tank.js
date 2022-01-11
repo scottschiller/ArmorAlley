@@ -5,15 +5,12 @@ import {
   utils,
   shrapnelExplosion,
   setFrameTimeout,
-  nearbyTest,
   makeSprite,
   makeTransformSprite,
-  initNearby,
-  recycleTest,
-  collisionCheck
 } from '../aa.js';
 
 import { common } from '../core/common.js';
+import { collisionCheck, nearbyTest, recycleTest } from '../core/logic.js';
 
 import {
   TYPES,
@@ -251,8 +248,8 @@ const Tank = options => {
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
       
-      initNearby(nearby, exports);
-      initNearby(friendlyNearby, exports);
+      common.initNearby(nearby, exports);
+      common.initNearby(friendlyNearby, exports);
 
     }
 

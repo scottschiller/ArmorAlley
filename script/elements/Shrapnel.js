@@ -5,12 +5,12 @@ import {
   setFrameTimeout,
   rnd,
   rndInt,
-  collisionTest,
   plusMinus,
   makeTransformSprite
 } from '../aa.js';
 
 import { common } from '../core/common.js';
+import { collisionTest } from '../core/logic.js';
 
 import {
   TYPES,

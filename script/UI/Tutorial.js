@@ -1,14 +1,14 @@
 import {
   game,
-  utils,
-  countSides,
-  countFriendly,
+  utils
 } from '../aa.js';
 
 import {
   TYPES,
   FPS
 } from '../core/global.js';
+
+import { countFriendly, countSides } from '../core/logic.js';
 
 import { TutorialStep } from './TutorialStep.js';
 

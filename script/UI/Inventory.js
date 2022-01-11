@@ -1,8 +1,7 @@
 import {
   game,
   utils,
-  setFrameTimeout,
-  battleOver
+  setFrameTimeout
 } from '../aa.js';
 
 import { TYPES } from '../core/global.js';
@@ -12,7 +11,8 @@ import {
   sounds
 } from '../core/sound.js';
 
-import { common} from '../core/common.js';
+import { common } from '../core/common.js';
+import { isGameOver } from '../core/logic.js';
 
 import { MissileLauncher } from '../units/MissileLauncher.js';
 import { Tank } from '../units/Tank.js';
@@ -113,7 +113,7 @@ const Inventory = () => {
 
     let typeData, orderObject, orderSize, cost, pendingNotification;
 
-    if (battleOver) return;
+    if (isGameOver()) return;
 
     options = options || {};
 

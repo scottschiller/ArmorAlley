@@ -7,16 +7,13 @@ import {
   makeSprite,
   rndInt,
   makeSubSprite,
-  getDoorCoords,
   getNormalizedUnitName,
-  checkProduction,
   rnd,
-  collisionCheckMidPoint
 } from '../aa.js';
 
 import { TYPES } from '../core/global.js';
-
 import { common } from '../core/common.js';
+import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 
 import {
   playSound,
@@ -272,7 +269,7 @@ const Bunker = options => {
     // note hackish Y-offset, sprite position vs. collision detection
     common.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
 
-    data.midPoint = getDoorCoords(exports);
+    data.midPoint = common.getDoorCoords(exports);
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 

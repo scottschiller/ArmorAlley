@@ -8,11 +8,11 @@ import {
   rad2Deg,
   applyRandomRotation,
   plusMinus,
-  collisionTest,
   makeSubSprite
 } from '../aa.js';
 
 import { common } from '../core/common.js';
+import { collisionTest } from '../core/logic.js';
 
 import {
   worldHeight,

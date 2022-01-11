@@ -409,6 +409,33 @@ const common = {
     return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
   },
 
+  getDoorCoords(obj) {
+
+    // for special collision check case with bunkers
+  
+    const door = {
+      width: 5,
+      height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
+      halfWidth: 2.5
+    };
+  
+    return ({
+      width: door.width,
+      height: door.height,
+      // slight offset on X, don't subtract door half-width
+      x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
+      y: parseInt((obj.data.y + obj.data.height) - door.height, 10)
+    });
+  
+  },
+
+  initNearby(nearby, exports) {
+
+    // map options.source -> exports
+    nearby.options.source = exports;
+  
+  },
+
   smokeRing(item, smokeOptions) {
 
     // don't create if not visible

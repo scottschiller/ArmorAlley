@@ -1,7 +1,6 @@
 import {
   gamePrefs,
   game,
-  battleOver,
   frameTimeoutManager,
 } from '../aa.js';
 
@@ -14,6 +13,7 @@ import {
 
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
+import { isGameOver } from '../core/logic.js';
 
 const GameLoop = () => {
 
@@ -79,7 +79,7 @@ const GameLoop = () => {
 
     }
 
-    if (battleOver && !data.gameStopped) {
+    if (isGameOver() && !data.gameStopped) {
       if (data.battleOverFrameCount++ > 1) {
         data.gameStopped = true;
       }

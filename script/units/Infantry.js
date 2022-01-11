@@ -3,15 +3,11 @@ import {
   utils,
   makeSprite,
   makeTransformSprite,
-  collisionTest,
-  nearbyTest,
-  recycleTest,
-  initNearby,
   gamePrefs
 } from '../aa.js';
 
 import { common } from '../core/common.js';
-
+import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
 import { TYPES } from '../core/global.js';
 
 import {
@@ -206,7 +202,7 @@ const Infantry = options => {
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
-    initNearby(nearby, exports);
+    common.initNearby(nearby, exports);
 
   }
 

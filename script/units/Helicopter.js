@@ -15,18 +15,11 @@ import {
   updateEnergy,
   plusMinus,
   getLandscapeLayout,
-  collisionCheck,
-  battleOver,
-  getNearestObject,
   missileMode,
-  objectInView,
-  collisionCheckMidPoint,
   makeSubSprite,
   screenScale,
   canHideLogo,
-  keyboardMonitor,
-  trackObject,
-  collisionTest
+  keyboardMonitor
 } from '../aa.js';
 
 import {
@@ -51,6 +44,7 @@ import {
 } from '../core/sound.js';
 
 import { common } from '../core/common.js';
+import { collisionCheck, collisionCheckMidPoint, collisionTest, getNearestObject, isGameOver, objectInView, trackObject } from '../core/logic.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { ParachuteInfantry } from './ParachuteInfantry.js';
@@ -1016,7 +1010,7 @@ const Helicopter = options => {
   function respawn() {
 
     // exit if game is over.
-    if (battleOver) return;
+    if (isGameOver()) return;
 
     // helicopter died. move view, and reset.
     reset();
@@ -2282,7 +2276,7 @@ const Helicopter = options => {
 
       if (e.button !== 0 || isMobile || data.isEnemy || !data.fuel) return;
 
-      if (!battleOver) {
+      if (!isGameOver()) {
 
         if (!data.autoRotate) {
           rotate();

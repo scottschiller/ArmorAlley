@@ -4,8 +4,6 @@ import {
   makeSprite,
   updateEnergy,
   FPS,
-  enemyHelicopterNearby,
-  enemyNearby,
   bottomAlignedY,
   setFrameTimeout,
   rnd,
@@ -30,6 +28,8 @@ import {
 } from '../core/sound.js';
 
 import { common } from '../core/common.js';
+import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
+
 import { GunFire } from '../munitions/GunFire.js';
 
 const Turret = options => {

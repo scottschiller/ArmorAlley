@@ -2,10 +2,7 @@ import {
   game,
   utils,
   makeSprite,
-  updateEnergy,
-  nearbyTest,
-  collisionCheckMidPoint,
-  checkProduction
+  updateEnergy
 } from '../aa.js';
 
 import {
@@ -20,6 +17,7 @@ import {
 } from '../core/sound.js';
 
 import { common } from '../core/common.js';
+import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
 
 const SuperBunker = options => {
