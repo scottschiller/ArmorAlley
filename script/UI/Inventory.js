@@ -3,9 +3,10 @@ import {
   utils,
   setFrameTimeout,
   updateIsOnScreen,
-  battleOver,
-  TYPES
+  battleOver
 } from '../aa.js';
+
+import { TYPES } from '../core/global.js';
 
 import {
   playSound,

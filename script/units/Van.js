@@ -1,12 +1,9 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  removeNodes,
-  TYPES,
   nearbyTest,
   initNearby,
   gamePrefs,
@@ -14,11 +11,17 @@ import {
   setFrameTimeout,
   battleOver,
   gameOver,
+  enemyHelicopterNearby,
+} from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  TYPES,
   winloc,
   FPS,
-  enemyHelicopterNearby,
   tutorialMode
-} from '../aa.js';
+} from '../core/global.js';
 
 import {
   playSound,
@@ -62,7 +65,7 @@ const Van = options => {
     common.inertGunfireExplosion({ exports });
 
     data.deadTimer = setFrameTimeout(() => {
-      removeNodes(dom);
+      common.removeNodes(dom);
       data.deadTimer = null;
     }, 1000);
 

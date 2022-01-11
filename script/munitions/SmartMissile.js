@@ -1,16 +1,13 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   setFrameTimeout,
-  removeNodes,
   makeSprite,
   applyRandomRotation,
   shrapnelExplosion,
   rndInt,
-  TYPES,
   getNearestObject,
   gameType,
   rad2Deg,
@@ -18,6 +15,10 @@ import {
   collisionTest,
   rnd
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import { TYPES } from '../core/global.js';
 
 import {
   playSound,
@@ -211,7 +212,7 @@ const SmartMissile = options => {
       hideTrailers();
 
       data.deadTimer = setFrameTimeout(() => {
-        removeNodes(dom);
+        common.removeNodes(dom);
       }, 500);
 
       data.energy = 0;

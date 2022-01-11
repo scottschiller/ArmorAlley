@@ -257,45 +257,6 @@
 
 */
 
-let winloc = window.location.href.toString();
-
-const ua = navigator.userAgent;
-
-const FPS = 30;
-const FRAMERATE = 1000 / FPS;
-
-// skip frame(s) as needed, prevent the game from running too fast.
-const FRAME_MIN_TIME = FRAMERATE * 0.95;
-
-const unlimitedFrameRate = winloc.match(/frameRate=\*/i);
-
-/**
- * Evil tricks needed because Safari 6 (and Webkit nightly)
- * scale text after rasterization - thus, there's an option
- * to use document[element].style.zoom vs. transform: scale3d()
- * which renders text cleanly. Both have minor quirks.
- * force-enable transform under Safari 6 w/ #forceTransform=1
- */
-
-const isWebkit = ua.match(/webkit/i);
-const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
-const isFirefox = ua.match(/firefox/i);
-const isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
-const isMobile = ua.match(/mobile/i); // should get iOS.
-const isiPhone = ua.match(/iphone/i);
-
-// whether off-screen elements are forcefully removed from the DOM.
-// may be expensive up front, and/or cause style recalcs while
-// scrolling the world. the fastest nodes are the ones that aren't there.
-const useDOMPruning = !winloc.match(/noDomPruning/i);
-
-const trackEnemy = winloc.match(/trackEnemy/i);
-
-const debug = winloc.match(/debug/i);
-
-// TODO: get rid of this.
-const debugType = winloc.match(/debugType/i);
-
 // TODO: move missile mode bits into game object
 let missileMode;
 
@@ -328,16 +289,7 @@ function setMissileMode(mode) {
   ].join('<span class="divider">|</span>');
 
   document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
-
 }
-
-const DEFAULT_VOLUME = 25;
-
-const rad2Deg = 180 / Math.PI;
-
-// used for various measurements in the game
-const worldWidth = 8192;
-const worldHeight = 380;
 
 let battleOver = false;
 
@@ -349,19 +301,6 @@ let keyboardMonitor;
 
 // TODO: move into view
 let screenScale = 1;
-
-// transform, or zoom
-let usingZoom;
-
-const forceTransform = !!(winloc.match(/forceTransform/i));
-
-const forceZoom = !!(winloc.match(/forceZoom/i));
-
-const disableScaling = !!(!forceTransform && winloc.match(/noscal/i));
-
-let userDisabledScaling = false;
-
-const tutorialMode = !!(winloc.match(/tutorial/i));
 
 let gameType;
 
@@ -389,297 +328,10 @@ let gamePrefs;
 
 let prefsManager;
 
-const TYPES = {
-  bomb: 'bomb',
-  balloon: 'balloon',
-  cloud: 'cloud',
-  helicopter: 'helicopter',
-  tank: 'tank',
-  gunfire: 'gunfire',
-  turret: 'turret',
-  infantry: 'infantry',
-  parachuteInfantry: 'parachute-infantry',
-  'parachute-infantry': 'parachuteInfrantry',
-  parachuteInfantryCamel: 'parachuteInfantry',
-  engineer: 'engineer',
-  bunker: 'bunker',
-  endBunker: 'end-bunker',
-  endBunkerCamel: 'endBunker',
-  superBunker: 'super-bunker',
-  superBunkerCamel: 'superBunker',
-  missileLauncher: 'missile-launcher',
-  'missile-launcher': 'missileLauncher',
-  missileLauncherCamel: 'missileLauncher',
-  smartMissile: 'smart-missile',
-  shrapnel: 'shrapnel',
-  van: 'van'
-};
-
-const COSTS = {
-  missileLauncher: {
-    funds: 3,
-    css: 'can-not-order-missile-launcher'
-  },
-  tank: {
-    funds: 4,
-    css: 'can-not-order-tank'
-  },
-  van: {
-    funds: 2,
-    css: 'can-not-order-van',
-  },
-  infantry: {
-    funds: 5,
-    count: 5,
-    css: 'can-not-order-infantry',
-  },
-  engineer: {
-    funds: 5,
-    count: 2,
-    css: 'can-not-order-engineer'
-  }
-};
-
 let stats;
 
-function getLandscapeLayout() {
-
-  // notch position guesses, as well as general orientation.
-  let notchPosition;
-
-  if ('orientation' in window) {
-
-    // Mobile
-    if (window.orientation === 90) {
-      notchPosition = 'left';
-    } else if (window.orientation === -90) {
-      notchPosition = 'right';
-    }
-
-  } else if ('orientation' in window.screen) {
-
-    // Webkit
-    if (window.screen.orientation.type === 'landscape-primary') {
-      notchPosition = 'left';
-    } else if (window.screen.orientation.type === 'landscape-secondary') {
-      notchPosition = 'right';
-    }
-
-  }
-
-  return notchPosition;
-
-}
-
-function updateScreenScale() {
-
-  if (disableScaling) return;
-
-  const innerHeight = window.innerHeight;
-
-  let offset = 0;
-  let localWorldHeight = 410;
-
-  // TODO: clean this up.
-  if (isMobile) {
-
-    const id = 'body-height-element';
-    let div = document.getElementById(id);
-
-    const bottom = document.getElementById('bottom');
-
-    // make and append once, as necessary.
-    if (!div) {
-      div = document.createElement('div');
-      div.id = id;
-      document.body.appendChild(div);
-    }
-
-    // measure.
-    offset = parseInt(div.offsetHeight, 10) || 0;
-
-    // take the smaller one, in any case.
-    if (innerHeight < offset) {
-
-      // Safari URL / address bar is showing. hack around it.
-      // TODO: ignore touch, make user scroll window first?
-      console.log('scaling world down slightly because of Safari URL / address bar.');
-      // 50 (~pixel height of URL bar) * 2, so world is centered nicely. I think. :D
-      localWorldHeight += 100;
-
-      utils.css.add(bottom, 'rotate-hint');
-
-    } else {
-
-      utils.css.remove(bottom, 'rotate-hint');
-
-      // if we were paused, but rotated and now full-screen
-      // (i.e., landscape and no address bar), resume automagically.
-      if (game.data.paused && getLandscapeLayout()) {
-        game.resume();
-      }
-
-    }
-
-  }
-
-  if (userDisabledScaling) {
-
-    screenScale = 1;
-
-  } else {
-
-    screenScale = innerHeight / localWorldHeight;
-
-  }
-
-  prefsManager.updateScreenScale();
-
-}
-
-function applyScreenScale() {
-
-  if (disableScaling) return;
-
-  const wrapper = document.getElementById('world-wrapper');
-
-  /**
-   * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
-   * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
-   * Safari 15 still scales and has "fuzzy" text via scale3d(), but style.zoom is slower.
-   * 
-   * 04/2020: It seems `style.zoom` is the way to go for performance, overall.
-   * Browsers seem to understand that this means "just magnify everything" in an efficient way.
-   * 
-   * 10/2013: Safari 6.0.5 scales text after rasterizing via transform: scale3d(), thus it looks crap.
-   * Using document[element].zoom is OK, however.
-   * 
-   * TESTING
-   * Force transform-based scaling with #forceTransform=1
-   * Force zoom-based scaling with #forceZoom=1
-   */
-
-  // Pardon the non-standard formatting in exchange for legibility.
-  if (!forceZoom && (
-    // URL param: prefer transform-based scaling
-    forceTransform
-
-    // Firefox clips some of the world when using style.zoom.
-    || isFirefox
-  
-    // Chrome can do zoom, but mentions Safari in its userAgent.
-    // Safari does not do well with zoom.
-    || (!isChrome && isSafari)
-
-    // Assume that on mobile, transform (GPU) is the way to go
-    || isMobile
-  )) {
-
-    if (debug) console.log('using transform-based scaling');
-
-    usingZoom = false;
-
-    wrapper.style.marginTop = `${-((406 / 2) * screenScale)}px`;
-    wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale))}px`;
-    // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
-    // and will need more refactoring to make that work the same.
-    wrapper.style.transform = `scale3d(${screenScale}, ${screenScale}, 1)`;
-    wrapper.style.transformOrigin = '0px 0px';
-
-  } else {
-
-    if (debug) console.log('using style.zoom-based scaling');
-
-    usingZoom = true;
-
-    wrapper.style.marginTop = `${-(406 / 2)}px`;
-
-    // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
-    // Additional note: this won't work in Firefox.
-    document.getElementById('aa').style.zoom = `${screenScale * 100}%`;
-
-  }
-
-  game.objects.funds.updateScale();
-
-}
-
-function removeNode(node) {
-
-  // DOM pruning safety check: object dom references may include object -> parent node for items that died
-  // while they were off-screen (e.g., infantry) and removed from the DOM, if pruning is enabled.
-  // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
-  // the battlefield under any circumstances. ;)
-  if (useDOMPruning && node === game.objects.view.dom.battleField) return;
-
-  // hide immediately, cheaply
-  node.style.opacity = 0;
-
-  game.objects.queue.add(() => {
-    if (!node) return;
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-    node = null;
-  });
-
-}
-
-function removeNodeArray(nodeArray) {
-
-  let i, j;
-
-  j = nodeArray.length;
-
-  // removal will invalidate layout, $$$. hide first, cheaply.
-  for (i = 0; i < j; i++) {
-    nodeArray[i].style.opacity = 0;
-  }
-
-  game.objects.queue.add(() => {
-
-    for (i = 0; i < j; i++) {
-      // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
-      // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
-      // nodeArray[i].style.transform = 'none';
-      nodeArray[i].parentNode.removeChild(nodeArray[i]);
-      nodeArray[i] = null;
-    }
-
-    nodeArray = null;
-
-  });
-
-}
-
-function removeNodes(dom) {
-
-  // remove all nodes in a structure
-  let item;
-
-  for (item in dom) {
-    if (Object.prototype.hasOwnProperty.call(dom, item) && dom[item]) {
-      // node reference, or array of nodes?
-      if (dom[item] instanceof Array) {
-        removeNodeArray(dom[item]);
-      } else {
-        removeNode(dom[item]);
-      }
-      dom[item] = null;
-    }
-  }
-
-}
-
-function mixin(oMain, oAdd) {
-
-  // edge case: if nothing to add, return "as-is"
-  // if otherwise unspecified, `oAdd` is the default options object
-  if (oAdd === undefined) return oMain;
-
-  // the modern way
-  return Object.assign(oMain, oAdd);
-
+function setScreenScale(scale) {
+  screenScale = scale;
 }
 
 function stopEvent(e) {
@@ -1751,7 +1403,7 @@ shrapnelExplosion = (options, shrapnelOptions) => {
 
   shrapnelOptions = shrapnelOptions || {};
 
-  localOptions = mixin({}, options);
+  localOptions = common.mixin({}, options);
 
   halfWidth = localOptions.width / 2;
 
@@ -2251,36 +1903,6 @@ function startGame() {
 
 }
 
-function orientationChange() {
-  // primarily for handling iPhone X, and position of The Notch.
-  // apply CSS to <body> per orientation, and iPhone-specific CSS will handle the padding.
-
-  // shortcuts
-  const body = document.body;
-  const add = utils.css.add;
-  const remove = utils.css.remove;
-
-  const atLeft = 'notch-at-left';
-  const atRight = 'notch-at-right';
-
-  const notchPosition = getLandscapeLayout();
-
-  // inefficient/lazy: remove both, apply the active one.
-  remove(body, atLeft);
-  remove(body, atRight);
-
-  if (notchPosition === 'left') {
-    add(body, atLeft);
-  } else if (notchPosition === 'right') {
-    add(body, atRight);
-  }
-
-  // helicopters need to know stuff, too.
-  if (game.objects.helicopters[0]) game.objects.helicopters[0].refreshCoords(true);
-  if (game.objects.helicopters[1]) game.objects.helicopters[1].refreshCoords();
-
-}
-
 function initArmorAlley() {
 
   // A few specific CSS tweaks - regrettably - are required.
@@ -2432,8 +2054,6 @@ function initArmorAlley() {
 
     return false;
   }
-
-  winloc = window.location.href.toString();
 
   // should we show the menu?
 
@@ -2817,11 +2437,6 @@ prefsManager = (function() {
 
     let prefsFromStorage = {};
 
-    // should scaling be disabled, per user preference?
-    if (utils.storage.get(prefs.noScaling)) {
-      userDisabledScaling = true;
-    }
-
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
@@ -2927,7 +2542,7 @@ prefsManager = (function() {
       if (!data.active || !dom.o) return;
 
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
-      let scale = screenScale * (usingZoom || isSafari ? 0.5 : 1);
+      let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
 
       dom.o.style.transform = `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`;
 
@@ -2989,28 +2604,51 @@ window.addEventListener('DOMContentLoaded', window.aa.initArmorAlley);
 
 // --- THE END ---
 
+// TODO: clean up local references to this stuff.
+import {
+  TYPES,
+  COSTS,
+  winloc,
+  FRAMERATE,
+  isChrome,
+  isFirefox,
+  isSafari,
+  isMobile,
+  isiPhone,
+  useDOMPruning,
+  debug,
+  debugType,
+  DEFAULT_VOLUME,
+  rad2Deg,
+  worldWidth,
+  worldHeight,
+  forceZoom,
+  forceTransform,
+  tutorialMode
+} from './core/global.js';
+
+import {
+  getLandscapeLayout,
+  orientationChange
+} from './UI/mobile.js';
+
 import { common } from './core/common.js';
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { Shrapnel } from './elements/Shrapnel.js';
 
-// some other modules reference this from here.
-// TODO: move this into a better shared place.
-export { DEFAULT_FUNDS } from './UI/Funds.js';
+export * from './core/global.js';
 
 export {
-  common,
+  setScreenScale,
   game,
   gamePrefs,
   inheritData,
-  inheritCSS,
-  TYPES,
+  inheritCSS,  
   updateEnergy,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
-  removeNodes,
-  FPS,
   nearbyTest,
   makeSprite,
   makeTransformSprite,
@@ -3022,9 +2660,6 @@ export {
   applyRandomRotation,
   rnd,
   collisionTest,
-  mixin,
-  worldWidth,
-  worldHeight,
   bottomAlignedY,
   gameType,
   makeSubSprite,
@@ -3038,41 +2673,24 @@ export {
   bananaMode,
   rubberChickenMode,
   getNearestObject,
-  rad2Deg,
   updateIsOnScreen,
-  tutorialMode,
-  debug,
   enemyNearby,
   defaultMissileMode,
   canHideLogo,
   battleOver,
   getLandscapeLayout,
-  isMobile,
-  isiPhone,
   keyboardMonitor,
   screenScale,
-  trackEnemy,
   trackObject,
-  winloc,
   gameOver,
   stats,
-  isFirefox,
-  COSTS,
-  updateScreenScale,
-  applyScreenScale,
-  isSafari,
-  isChrome,
   countFriendly,
   countSides,
-  FRAMERATE,
-  FRAME_MIN_TIME,
-  unlimitedFrameRate,
   frameTimeoutManager,
   addItem,
   convoyDelay,
   setConvoyDelay,
   productionHalted,
   prefsManager,
-  DEFAULT_VOLUME,
   isOnScreen
 };

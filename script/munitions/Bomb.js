@@ -1,5 +1,4 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
@@ -9,15 +8,19 @@ import {
   rnd,
   rndInt,
   rad2Deg,
-  worldHeight,
   applyRandomRotation,
   plusMinus,
-  removeNodes,
-  TYPES,
   collisionTest,
   updateIsOnScreen,
   makeSubSprite
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  worldHeight,
+  TYPES
+} from '../core/global.js';
 
 import {
   playSound,
@@ -114,7 +117,7 @@ const Bomb = options => {
       }
 
       data.deadTimer = setFrameTimeout(() => {
-        removeNodes(dom);
+        common.removeNodes(dom);
         data.deadTimer = null;
       }, 600);
     }

@@ -1,9 +1,7 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
-  TYPES,
   updateEnergy,
   utils,
   shrapnelExplosion,
@@ -12,14 +10,20 @@ import {
   gameType,
   rndInt,
   plusMinus,
-  bottomAlignedY,
-  worldWidth
+  bottomAlignedY
 } from '../aa.js';
+
+import {
+  worldWidth,
+  TYPES
+} from '../core/global.js';
 
 import {
   playSound,
   sounds
 } from '../core/sound.js';
+
+import { common } from '../core/common.js';
 
 const Balloon = options => {
 

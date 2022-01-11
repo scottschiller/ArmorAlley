@@ -1,17 +1,19 @@
 import {
   gamePrefs,
-  FRAMERATE,
   game,
   updateIsOnScreen,
   battleOver,
   frameTimeoutManager,
-  unlimitedFrameRate,
-  FRAME_MIN_TIME,
-  debug,
 } from '../aa.js';
 
-import { playQueuedSounds } from './sound.js';
+import {
+  FRAMERATE,
+  unlimitedFrameRate,
+  FRAME_MIN_TIME,
+  debug
+} from '../core/global.js';
 
+import { playQueuedSounds } from './sound.js';
 
 const GameLoop = () => {
 
@@ -242,6 +244,7 @@ const GameLoop = () => {
   };
 
   return exports;
+
 };
 
 export { GameLoop };

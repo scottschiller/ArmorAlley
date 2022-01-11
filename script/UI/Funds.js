@@ -1,18 +1,22 @@
 import {
   utils,
-  isChrome,
-  isFirefox,
   screenScale
 } from '../aa.js';
+
+import {
+  isChrome,
+  isFirefox
+} from '../core/global.js';
 
 import {
   playSound,
   sounds
 } from '../core/sound.js';
 
-const DEFAULT_FUNDS = window.location.toString().match(/FUNDS/i) ? 999 : 32;
+import { DEFAULT_FUNDS } from '../core/global.js';
 
 const Funds = () => {
+
   // a "Dune 2"-style credits UI that "spins", with matching sound effects.
   let css, data, dom, exports;
 

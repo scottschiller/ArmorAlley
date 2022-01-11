@@ -1,20 +1,23 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  removeNodes,
-  TYPES,
   setFrameTimeout,
-  worldHeight,
   rnd,
   rndInt,
   collisionTest,
   plusMinus,
   makeTransformSprite
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  TYPES,
+  worldHeight
+} from '../core/global.js';
 
 import {
   playSound,
@@ -73,7 +76,7 @@ const Shrapnel = options => {
     utils.css.add(dom.o, css.stopped);
 
     data.deadTimer = setFrameTimeout(() => {
-      removeNodes(dom);
+      common.removeNodes(dom);
       data.deadTimer = null;
     }, 750);
 

@@ -1,12 +1,12 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   makeSprite,
-  removeNodes,
   utils
 } from '../aa.js';
+
+import { common } from '../core/common.js';
 
 const Chain = options => {
 
@@ -21,7 +21,7 @@ const Chain = options => {
 
     if (data.dead) return;
 
-    removeNodes(dom);
+    common.removeNodes(dom);
 
     data.energy = 0;
 

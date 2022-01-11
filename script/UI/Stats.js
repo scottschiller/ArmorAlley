@@ -1,6 +1,4 @@
-import {
-  TYPES
-} from '../aa.js';
+import { TYPES } from '../core/global.js';
 
 function Stats() {
 

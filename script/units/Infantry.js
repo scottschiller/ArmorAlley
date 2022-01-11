@@ -1,19 +1,20 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  removeNodes,
   makeTransformSprite,
-  TYPES,
   collisionTest,
   nearbyTest,
   recycleTest,
   initNearby,
   gamePrefs
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import { TYPES } from '../core/global.js';
 
 import {
   playSound,
@@ -132,7 +133,7 @@ const Infantry = options => {
 
     }
 
-    removeNodes(dom);
+    common.removeNodes(dom);
 
     data.energy = 0;
 

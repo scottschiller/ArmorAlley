@@ -1,11 +1,9 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  FPS,
   gamePrefs,
   bananaMode,
   rubberChickenMode,
@@ -15,17 +13,11 @@ import {
   rnd,
   rndInt,
   makeTransformSprite,
-  tutorialMode,
-  worldWidth,
-  worldHeight,
-  TYPES,
   trackEnemy,
-  isMobile,
   updateEnergy,
   updateIsOnScreen,
   plusMinus,
   getLandscapeLayout,
-  isiPhone,
   collisionCheck,
   battleOver,
   getNearestObject,
@@ -34,13 +26,23 @@ import {
   collisionCheckMidPoint,
   makeSubSprite,
   screenScale,
-  winloc,
-  debug,
   canHideLogo,
   keyboardMonitor,
   trackObject,
   collisionTest
 } from '../aa.js';
+
+import {
+  FPS,
+  tutorialMode,
+  worldWidth,
+  worldHeight,
+  TYPES,
+  isMobile,
+  isiPhone,
+  winloc,
+  debug
+} from '../core/global.js';
 
 import {
   playSound,
@@ -51,6 +53,7 @@ import {
   playRepairingWrench
 } from '../core/sound.js';
 
+import { common } from '../core/common.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { ParachuteInfantry } from './ParachuteInfantry.js';

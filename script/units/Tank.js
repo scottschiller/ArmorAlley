@@ -1,16 +1,12 @@
 import {
-  common,
   game,
   gamePrefs,
   inheritData,
   inheritCSS,
-  TYPES,
   updateEnergy,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
-  removeNodes,
-  FPS,
   nearbyTest,
   makeSprite,
   makeTransformSprite,
@@ -18,6 +14,13 @@ import {
   recycleTest,
   collisionCheck
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  TYPES,
+  FPS
+} from '../core/global.js';
 
 import {
   playSound,
@@ -119,13 +122,13 @@ const Tank = options => {
         common.smokeRing(exports, { isGroundUnit: true });
 
         data.deadTimer = setFrameTimeout(() => {
-          removeNodes(dom);
+          common.removeNodes(dom);
           data.deadTimer = null;
         }, 1500);
   
       } else {
 
-        removeNodes(dom);
+        common.removeNodes(dom);
 
       }
 

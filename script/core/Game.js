@@ -5,13 +5,7 @@ import {
   setFrameTimeout,
   rnd,
   rndInt,
-  tutorialMode,
-  worldWidth,
-  worldHeight,
-  TYPES,
-  isMobile,
   battleOver,
-  winloc,
   debug,
   addItem,
   prefsManager,
@@ -19,6 +13,15 @@ import {
   setConvoyDelay,
   productionHalted
 } from '../aa.js';
+
+import {
+  isMobile,
+  TYPES,
+  tutorialMode,
+  winloc,
+  worldWidth,
+  worldHeight
+} from './global.js';
 
 import {
   playSound,

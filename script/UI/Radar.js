@@ -1,17 +1,19 @@
 import {
   game,
   utils,
-  isFirefox,
-  isSafari,
-  mixin,
-  winloc,
-  TYPES,
   screenScale,
   gamePrefs,
-  removeNodes,
-  common,
-  worldWidth
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  isFirefox,
+  isSafari,
+  winloc,
+  TYPES,
+  worldWidth
+} from '../core/global.js';
 
 import {
   playSound,
@@ -156,7 +158,7 @@ const Radar = () => {
       dom.radar.appendChild(itemObject.dom.o);
 
       // attempt to read from layout cache, or live DOM if needed for item height / positioning
-      itemObject = mixin(itemObject, getLayout(itemObject));
+      itemObject = common.mixin(itemObject, getLayout(itemObject));
 
       objects.items.push(itemObject);
 
@@ -210,7 +212,7 @@ const Radar = () => {
 
   function _removeRadarItem(offset) {
 
-    removeNodes(objects.items[offset].dom);
+    common.removeNodes(objects.items[offset].dom);
     // faster splice - doesn't create new array object (IIRC.)
     spliceArgs[0] = offset;
     Array.prototype.splice.apply(objects.items, spliceArgs);
@@ -310,7 +312,7 @@ const Radar = () => {
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
         if (!objects.items[i].layout) {
-          objects.items[i] = mixin(objects.items[i], getLayout(objects.items[i]));
+          objects.items[i] = common.mixin(objects.items[i], getLayout(objects.items[i]));
         }
 
         // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height

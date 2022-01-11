@@ -1,13 +1,10 @@
 import {
-  common,
   game,
   gamePrefs,
   inheritData,
   inheritCSS,
   utils,
   setFrameTimeout,
-  removeNodes,
-  FPS,
   nearbyTest,
   makeSprite,
   initNearby,
@@ -18,6 +15,10 @@ import {
   bananaMode,
   rubberChickenMode
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import { FPS } from '../core/global.js';
 
 import {
   playSound,
@@ -57,12 +58,12 @@ const MissileLauncher = options => {
       common.inertGunfireExplosion({ exports });
 
       setFrameTimeout(() => {
-        removeNodes(dom);
+        common.removeNodes(dom);
       }, 1000);
 
     } else {
 
-      removeNodes(dom);
+      common.removeNodes(dom);
 
     }
 

@@ -1,8 +1,9 @@
 import {
   game,
   utils,
-  debug
 } from '../aa.js';
+
+import { debug } from '../core/global.js';
 
 function Joystick(options) {
 

@@ -1,13 +1,16 @@
 import {
-  common,
   inheritData,
   inheritCSS,
   makeSprite,
   rndInt,
+} from '../aa.js';
+
+import {
   worldWidth,
   worldHeight
+} from '../core/global.js';
 
-} from '../aa.js';
+import { common } from '../core/common.js';
 
 const Cloud = options => {
 

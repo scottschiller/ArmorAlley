@@ -1,11 +1,9 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  FPS,
   enemyHelicopterNearby,
   gamePrefs,
   bananaMode,
@@ -17,15 +15,21 @@ import {
   rndInt,
   defaultMissileMode,
   makeTransformSprite,
+} from '../aa.js';
+
+import {
+  FPS,
   tutorialMode,
   worldWidth
-} from '../aa.js';
+} from '../core/global.js';
 
 import {
   playSound,
   stopSound,
   sounds
 } from '../core/sound.js';
+
+import { common } from '../core/common.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 

@@ -1,24 +1,36 @@
 import {
-  common,
   game,
   utils,
   setFrameTimeout,
-  tutorialMode,
-  worldWidth,
-  isMobile,
   screenScale,
   keyboardMonitor,
-  isFirefox,
-  winloc,
-  updateScreenScale,
-  applyScreenScale,
-  COSTS
+  setScreenScale,
+  prefsManager
 } from '../aa.js';
+
+import {
+  COSTS,
+  forceZoom,
+  forceTransform,
+  isChrome,
+  isSafari,
+  debug,
+  isMobile,
+  isFirefox,
+  tutorialMode,
+  worldWidth,
+  winloc
+} from '../core/global.js';
+
+import { getLandscapeLayout } from '../UI/mobile.js';
+
+import { common } from '../core/common.js';
 
 const View = () => {
 
   let css, data, dom, events, exports;
 
+  const disableScaling = winloc.match(/noscal/i);
   const useParallax = winloc.match(/parallax/i);
   const noPause = winloc.match(/noPause/i);
 
@@ -389,6 +401,143 @@ const View = () => {
     return false;
   }
 
+  // import { disableScaling }
+  // import getLandscapeLayout, 
+
+  function updateScreenScale() {
+
+    if (disableScaling) return;
+  
+    const innerHeight = window.innerHeight;
+  
+    let offset = 0;
+    let localWorldHeight = 410;
+  
+    // TODO: clean this up.
+    if (isMobile) {
+  
+      const id = 'body-height-element';
+      let div = document.getElementById(id);
+  
+      const bottom = document.getElementById('bottom');
+  
+      // make and append once, as necessary.
+      if (!div) {
+        div = document.createElement('div');
+        div.id = id;
+        document.body.appendChild(div);
+      }
+  
+      // measure.
+      offset = parseInt(div.offsetHeight, 10) || 0;
+  
+      // take the smaller one, in any case.
+      if (innerHeight < offset) {
+  
+        // Safari URL / address bar is showing. hack around it.
+        // TODO: ignore touch, make user scroll window first?
+        console.log('scaling world down slightly because of Safari URL / address bar.');
+        // 50 (~pixel height of URL bar) * 2, so world is centered nicely. I think. :D
+        localWorldHeight += 100;
+  
+        utils.css.add(bottom, 'rotate-hint');
+  
+      } else {
+  
+        utils.css.remove(bottom, 'rotate-hint');
+  
+        // if we were paused, but rotated and now full-screen
+        // (i.e., landscape and no address bar), resume automagically.
+        if (game.data.paused && getLandscapeLayout()) {
+          game.resume();
+        }
+  
+      }
+  
+    }
+  
+    // for testing game without any scaling applied
+    if (disableScaling) {
+  
+      setScreenScale(1);
+  
+    } else {
+  
+      setScreenScale(innerHeight / localWorldHeight);
+  
+    }
+  
+    prefsManager.updateScreenScale();
+  
+  }
+  
+  function applyScreenScale() {
+  
+    if (disableScaling) return;
+  
+    const wrapper = document.getElementById('world-wrapper');
+  
+    /**
+     * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
+     * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
+     * Safari 15 still scales and has "fuzzy" text via scale3d(), but style.zoom is slower.
+     * 
+     * 04/2020: It seems `style.zoom` is the way to go for performance, overall.
+     * Browsers seem to understand that this means "just magnify everything" in an efficient way.
+     * 
+     * 10/2013: Safari 6.0.5 scales text after rasterizing via transform: scale3d(), thus it looks crap.
+     * Using document[element].zoom is OK, however.
+     * 
+     * TESTING
+     * Force transform-based scaling with #forceTransform=1
+     * Force zoom-based scaling with #forceZoom=1
+     */
+  
+    // Pardon the non-standard formatting in exchange for legibility.
+    if (!forceZoom && (
+      // URL param: prefer transform-based scaling
+      forceTransform
+  
+      // Firefox clips some of the world when using style.zoom.
+      || isFirefox
+    
+      // Chrome can do zoom, but mentions Safari in its userAgent.
+      // Safari does not do well with zoom.
+      || (!isChrome && isSafari)
+  
+      // Assume that on mobile, transform (GPU) is the way to go
+      || isMobile
+    )) {
+  
+      if (debug) console.log('using transform-based scaling');
+  
+      data.usingZoom = false;
+  
+      wrapper.style.marginTop = `${-((406 / 2) * screenScale)}px`;
+      wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale))}px`;
+      // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
+      // and will need more refactoring to make that work the same.
+      wrapper.style.transform = `scale3d(${screenScale}, ${screenScale}, 1)`;
+      wrapper.style.transformOrigin = '0px 0px';
+  
+    } else {
+  
+      if (debug) console.log('using style.zoom-based scaling');
+  
+      data.usingZoom = true;
+  
+      wrapper.style.marginTop = `${-(406 / 2)}px`;
+  
+      // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
+      // Additional note: this won't work in Firefox.
+      document.getElementById('aa').style.zoom = `${screenScale * 100}%`;
+  
+    }
+  
+    game.objects.funds.updateScale();
+  
+  }
+
   function addEvents() {
 
     utils.events.add(window, 'resize', events.resize);
@@ -482,7 +631,8 @@ const View = () => {
     },
     marqueeModulus: 1,
     marqueeIncrement: 1,
-    maxScroll: 6
+    maxScroll: 6,
+    usingZoom: null
   };
 
   dom = {
@@ -590,13 +740,15 @@ const View = () => {
 
   exports = {
     animate,
+    applyScreenScale,
     data,
     dom,
     events,
     setAnnouncement,
     setLeftScroll,
     setLeftScrollToPlayer,
-    updateFundsUI
+    updateFundsUI,
+    updateScreenScale
   };
 
   return exports;

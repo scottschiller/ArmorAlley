@@ -3,13 +3,17 @@ import {
   gamePrefs,
   setFrameTimeout,
   rndInt,
-  worldWidth,
-  TYPES,
-  DEFAULT_VOLUME,
   isOnScreen,
-  mixin,
   game
 } from '../aa.js';
+
+import {
+  TYPES,
+  worldWidth,
+  DEFAULT_VOLUME
+} from './global.js';
+
+import { common } from './common.js';
 
 function getSound(soundReference) {
 
@@ -136,7 +140,7 @@ function playSound(soundReference, target, soundOptions) {
   }
 
   if (soundOptions) {
-    localOptions = mixin(localOptions, soundOptions);
+    localOptions = common.mixin(localOptions, soundOptions);
   }
 
   // 01/2021: push sound calls off to next frame to be played in a batch,

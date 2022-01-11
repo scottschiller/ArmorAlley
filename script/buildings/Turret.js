@@ -1,11 +1,9 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  TYPES,
   updateEnergy,
   FPS,
   enemyHelicopterNearby,
@@ -15,10 +13,14 @@ import {
   rnd,
   rndInt,
   rad2Deg,
-  tutorialMode,
   makeSubSprite,
   gameType
 } from '../aa.js';
+
+import {
+  TYPES,
+  tutorialMode
+} from '../core/global.js';
 
 import {
   playSound,
@@ -29,7 +31,7 @@ import {
   sounds
 } from '../core/sound.js';
 
-
+import { common } from '../core/common.js';
 import { GunFire } from '../munitions/GunFire.js';
 
 const Turret = options => {

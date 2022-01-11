@@ -1,11 +1,14 @@
 import {
   game,
   utils,
-  TYPES,
   countSides,
   countFriendly,
-  FPS
 } from '../aa.js';
+
+import {
+  TYPES,
+  FPS
+} from '../core/global.js';
 
 import { TutorialStep } from './TutorialStep.js';
 

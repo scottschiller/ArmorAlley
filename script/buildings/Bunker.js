@@ -1,9 +1,7 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
-  TYPES,
   updateEnergy,
   utils,
   shrapnelExplosion,
@@ -17,6 +15,10 @@ import {
   rnd,
   collisionCheckMidPoint
 } from '../aa.js';
+
+import { TYPES } from '../core/global.js';
+
+import { common } from '../core/common.js';
 
 import {
   playSound,

@@ -1,17 +1,19 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  TYPES,
   updateEnergy,
   nearbyTest,
-  FPS,
   collisionCheckMidPoint,
   checkProduction
 } from '../aa.js';
+
+import {
+  TYPES,
+  FPS
+} from '../core/global.js';
 
 import {
   playSound,
@@ -19,6 +21,7 @@ import {
   sounds
 } from '../core/sound.js';
 
+import { common } from '../core/common.js';
 import { GunFire } from '../munitions/GunFire.js';
 
 const SuperBunker = options => {

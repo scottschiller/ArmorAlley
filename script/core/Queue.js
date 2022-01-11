@@ -1,7 +1,7 @@
 import {
   FPS,
   debug
-} from '../aa.js';
+} from '../core/global.js';
 
 const Queue = () => {
 

@@ -1,26 +1,30 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
   utils,
   makeSprite,
-  TYPES,
   updateEnergy,
-  tutorialMode,
   nearbyTest,
-  debug,
-  worldWidth,
-  DEFAULT_FUNDS,
-  FPS,
   collisionCheckMidPoint,
   gamePrefs
 } from '../aa.js';
 
 import {
+  DEFAULT_FUNDS,
+  TYPES,
+  tutorialMode,
+  debug,
+  worldWidth,
+  FPS
+} from '../core/global.js';
+
+import {
   playSound,
   sounds
 } from '../core/sound.js';
+
+import { common } from '../core/common.js';
 
 import { GunFire } from '../munitions/GunFire.js';
 

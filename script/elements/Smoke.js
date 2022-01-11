@@ -1,14 +1,14 @@
 import {
-  common,
   inheritData,
   inheritCSS,
-  removeNodes,
   makeSprite,
   rndInt,
   rnd,
   makeTransformSprite,
   plusMinus
 } from '../aa.js';
+
+import { common } from '../core/common.js';
 
 const Smoke = options => {
 
@@ -20,7 +20,7 @@ const Smoke = options => {
 
     if (data.dead) return;
 
-    removeNodes(dom);
+    common.removeNodes(dom);
 
     data.dead = true;
 

@@ -1,5 +1,4 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
@@ -7,11 +6,15 @@ import {
   makeSprite,
   rnd,
   rndInt,
-  worldHeight,
-  removeNodes,
-  makeTransformSprite,
-  tutorialMode
+  makeTransformSprite
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import {
+  worldHeight,
+  tutorialMode
+} from '../core/global.js';
 
 import {
   playSound,
@@ -64,7 +67,7 @@ const ParachuteInfantry = options => {
 
     }
     
-    removeNodes(dom);
+    common.removeNodes(dom);
 
     data.energy = 0;
 

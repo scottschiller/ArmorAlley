@@ -1,13 +1,14 @@
 import {
-  common,
   inheritData,
   inheritCSS,
   makeSprite,
   collisionTest,
   rndInt,
-  makeTransformSprite,
-  worldHeight
+  makeTransformSprite
 } from '../aa.js';
+
+import { worldHeight } from '../core/global.js';
+import { common } from '../core/common.js';
 
 const LandingPad = options => {
 

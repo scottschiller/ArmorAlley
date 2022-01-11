@@ -1,22 +1,17 @@
 import {
   game,
-  TYPES,
   updateEnergy,
   rnd,
   rndInt,
-  mixin,
   plusMinus
 } from '../aa.js';
 
+import { debug, TYPES, useDOMPruning, winloc } from '../core/global.js';
 import { GunFire } from '../munitions/GunFire.js'
 import { Smoke } from '../elements/Smoke.js';
 
-const winloc = window.location.href.toString();
-
 // by default, transform: translate3d(), more GPU compositing seen vs.2d-base transform: translate().
 const useTranslate3d = !winloc.match(/noTranslate3d/i);
-
-const debug = winloc.match(/debug/i);
 
 const common = {
 
@@ -105,6 +100,84 @@ const common = {
 
     // assign for future re-append to DOM
     o._lastTransform = transformString;
+
+  },
+
+  removeNode(node) {
+
+    // DOM pruning safety check: object dom references may include object -> parent node for items that died
+    // while they were off-screen (e.g., infantry) and removed from the DOM, if pruning is enabled.
+    // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
+    // the battlefield under any circumstances. ;)
+    if (useDOMPruning && node === game.objects.view.dom.battleField) return;
+
+    // hide immediately, cheaply
+    node.style.opacity = 0;
+
+    game.objects.queue.add(() => {
+      if (!node) return;
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+      node = null;
+    });
+
+  },
+
+  removeNodeArray(nodeArray) {
+
+    let i, j;
+
+    j = nodeArray.length;
+
+    // removal will invalidate layout, $$$. hide first, cheaply.
+    for (i = 0; i < j; i++) {
+      nodeArray[i].style.opacity = 0;
+    }
+
+    game.objects.queue.add(() => {
+
+      for (i = 0; i < j; i++) {
+        // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
+        // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
+        // nodeArray[i].style.transform = 'none';
+        nodeArray[i].parentNode.removeChild(nodeArray[i]);
+        nodeArray[i] = null;
+      }
+
+      nodeArray = null;
+
+    });
+
+  },
+
+  removeNodes(dom) {
+
+    // remove all nodes in a structure
+    let item;
+
+    for (item in dom) {
+      if (Object.prototype.hasOwnProperty.call(dom, item) && dom[item]) {
+        // node reference, or array of nodes?
+        if (dom[item] instanceof Array) {
+          common.removeNodeArray(dom[item]);
+        } else {
+          common.removeNode(dom[item]);
+        }
+        dom[item] = null;
+      }
+    }
+
+  },
+
+  mixin(oMain, oAdd) {
+
+    // edge case: if nothing to add, return "as-is"
+    // if otherwise unspecified, `oAdd` is the default options object
+    if (oAdd === undefined) return oMain;
+
+    // the modern way
+    return Object.assign(oMain, oAdd);
 
   },
 
@@ -231,21 +304,21 @@ const common = {
         // second inner ring
         if (i % 2 === 0) {
           game.objects.smoke.push(Smoke(
-            mixin(smokeArgs, { vX: vectorX * 0.75, vY: vectorY * 0.75})
+            common.mixin(smokeArgs, { vX: vectorX * 0.75, vY: vectorY * 0.75})
           ));
         }
 
         // third inner ring
         if (i % 3 === 0) {
           game.objects.smoke.push(Smoke(
-            mixin(smokeArgs, { vX: vectorX * 0.66, vY: vectorY * 0.66})
+            common.mixin(smokeArgs, { vX: vectorX * 0.66, vY: vectorY * 0.66})
           ));
         }
 
         // fourth inner ring
         if (i % 4 === 0) {
           game.objects.smoke.push(Smoke(
-            mixin(smokeArgs, { vX: vectorX * 0.50, vY: vectorY * 0.50})
+            common.mixin(smokeArgs, { vX: vectorX * 0.50, vY: vectorY * 0.50})
           ));
         }
 

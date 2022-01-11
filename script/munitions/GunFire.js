@@ -1,12 +1,9 @@
 import {
-  common,
   game,
   inheritData,
   inheritCSS,
-  TYPES,
   utils,
   setFrameTimeout,
-  removeNodes,
   makeSprite,
   rndInt,
   plusMinus,
@@ -14,6 +11,10 @@ import {
   rnd,
   collisionTest
 } from '../aa.js';
+
+import { common } from '../core/common.js';
+
+import { TYPES } from '../core/global.js';
 
 import {
   playSound,
@@ -56,7 +57,7 @@ const GunFire = options => {
 
       if (!dom.o) return;
 
-      removeNodes(dom);
+      common.removeNodes(dom);
 
       data.dead = true;
 
