@@ -1,7 +1,6 @@
 import {
   game,
   gamePrefs,
-  updateEnergy,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
@@ -87,7 +86,7 @@ const Tank = options => {
 
     function updateHealth() {
 
-      updateEnergy(exports);
+      common.updateEnergy(exports);
 
     }
 

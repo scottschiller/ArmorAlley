@@ -1,6 +1,5 @@
 import {
   game,
-  updateEnergy,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
@@ -283,7 +282,7 @@ const Balloon = options => {
     utils.css.remove(dom.o, css.exploding);
     utils.css.remove(dom.o, css.dead);
 
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
     // presumably, triggered by an infantry.
     if (sounds.chainRepair) {

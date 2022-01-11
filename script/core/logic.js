@@ -5,7 +5,6 @@
  import {
   game,
   gameType,
-  updateEnergy,
   utils,
   setFrameTimeout
 } from '../aa.js';
@@ -16,6 +15,8 @@ import {
   worldWidth,
   worldHeight
 } from './global.js';
+
+import { common } from './common.js';
 
  function collisionCheck(point1, point2, point1XLookAhead) {
 
@@ -187,7 +188,7 @@ function collisionCheckArray(options) {
           options.hit(options.targets[i], null, options.source);
 
           // update energy?
-          updateEnergy(options.targets[i]);
+          common.updateEnergy(options.targets[i]);
         }
 
       }

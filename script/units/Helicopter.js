@@ -12,7 +12,6 @@ import {
   rndInt,
   makeTransformSprite,
   trackEnemy,
-  updateEnergy,
   plusMinus,
   getLandscapeLayout,
   missileMode,
@@ -585,7 +584,7 @@ const Helicopter = options => {
 
     updateFuelUI();
     updateStatusUI(updated);
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
   }
 
@@ -1002,7 +1001,7 @@ const Helicopter = options => {
     // reset everything.
     updateStatusUI({ force: true });
 
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
     setRespawning(true);
   }
@@ -1107,7 +1106,7 @@ const Helicopter = options => {
     data.energy = 0;
 
     // ensure any health bar is updated and hidden ASAP
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
     hideTrailers();
 

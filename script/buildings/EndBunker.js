@@ -2,7 +2,6 @@ import {
   game,
   utils,
   makeSprite,
-  updateEnergy,
   gamePrefs
 } from '../aa.js';
 
@@ -45,7 +44,7 @@ const EndBunker = options => {
     // only tank gunfire counts against end bunkers.
     if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
       data.energy = Math.max(0, data.energy - points);
-      updateEnergy(exports);
+      common.updateEnergy(exports);
     }
 
   }
@@ -297,7 +296,7 @@ const EndBunker = options => {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
-            updateEnergy(exports);
+            common.updateEnergy(exports);
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);

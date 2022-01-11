@@ -5,7 +5,6 @@ import {
   makeSprite,
   rndInt,
   plusMinus,
-  applyRandomRotation,
   rnd
 } from '../aa.js';
 
@@ -43,7 +42,7 @@ const GunFire = options => {
       }
 
       if (data.isOnScreen) {
-        applyRandomRotation(dom.o);
+        common.applyRandomRotation(dom.o);
       }
 
     }

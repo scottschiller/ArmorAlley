@@ -1,8 +1,7 @@
 import {
   game,
   utils,
-  makeSprite,
-  updateEnergy
+  makeSprite
 } from '../aa.js';
 
 import {
@@ -94,7 +93,7 @@ const SuperBunker = options => {
     if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
       data.energy = Math.max(0, data.energy - points);
       updateFireModulus();
-      updateEnergy(exports);
+      common.updateEnergy(exports);
     }
   }
 
@@ -116,7 +115,7 @@ const SuperBunker = options => {
     utils.css.remove(radarItem.dom.o, css.friendly);
     utils.css.add(radarItem.dom.o, css.enemy);
 
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
     // check if enemy convoy production should stop or start
     checkProduction();
@@ -346,7 +345,7 @@ const SuperBunker = options => {
 
             playSound(sounds.doorClose, target.data.exports);
 
-            updateEnergy(exports);
+            common.updateEnergy(exports);
 
           }
 

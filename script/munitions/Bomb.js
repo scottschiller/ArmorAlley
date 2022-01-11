@@ -6,7 +6,6 @@ import {
   rnd,
   rndInt,
   rad2Deg,
-  applyRandomRotation,
   plusMinus,
   makeSubSprite
 } from '../aa.js';
@@ -110,7 +109,7 @@ const Bomb = options => {
       utils.css.add(dom.o, className);
 
       if (dieOptions.spark) {
-        applyRandomRotation(dom.o);
+        common.applyRandomRotation(dom.o);
       }
 
       data.deadTimer = setFrameTimeout(() => {

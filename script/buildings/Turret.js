@@ -2,7 +2,6 @@ import {
   game,
   utils,
   makeSprite,
-  updateEnergy,
   FPS,
   bottomAlignedY,
   setFrameTimeout,
@@ -197,7 +196,7 @@ const Turret = options => {
     data.restoring = false;
     data.dead = true;
 
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
   }
 
@@ -254,7 +253,7 @@ const Turret = options => {
           }
         }
 
-        updateEnergy(exports);
+        common.updateEnergy(exports);
 
       }
 

@@ -1,6 +1,5 @@
 import {
   game,
-  updateEnergy,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
@@ -108,7 +107,7 @@ const Bunker = options => {
       engineer.resume();
     }
 
-    updateEnergy(exports);
+    common.updateEnergy(exports);
 
   }
 

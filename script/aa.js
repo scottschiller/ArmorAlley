@@ -341,113 +341,6 @@ function stopEvent(e) {
 
 }
 
-function applyRandomRotation(node) {
-  if (!node) return;
-  /**
-   * Here be dragons: this should only be applied once, given concatenation,
-   * and might cause bugs and/or performance problems if it isn't. :D
-   */
-  node.style.transform += ` rotate3d(0, 0, 1, ${rnd(360)}deg)`;
-}
-
-function updateEnergy(object, forceUpdate) {
-
-  if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) {
-    // if present, remove right away
-    if (object?.dom?.oEnergy) {
-      object.dom.oEnergy.remove();
-      object.dom.oEnergy = null;
-    }
-    return;
-  }
-  
-  let node, didCreate, energy, energyLineScale, newWidth, DEFAULT_ENERGY_SCALE;
-
-  DEFAULT_ENERGY_SCALE = 1;
-
-  // only do work if valid
-  if (!object?.dom?.o) return;
-
-  // only do work if visible, OR "always" shown and needing updates
-  if (!object.data.isOnScreen && gamePrefs.show_health_status !== PREFS.SHOW_HEALTH_ALWAYS) return;
-
-  // prevent certain things from rendering this, e.g., smart missiles.
-  if (object.data.noEnergyStatus) return;
-
-  // dynamically create, and maybe queue removal of `.energy` node
-  if (!object.dom.oEnergy) {
-    node = document.createElement('div');
-    node.className = 'energy-status energy';
-    object.dom.oEnergy = object.dom.o.appendChild(node);
-    didCreate = true;
-  }
-
-  node = object.dom.oEnergy;
-
-  // some objects may have a custom width, e.g., 0.33.
-  energyLineScale = object.data.energyLineScale || DEFAULT_ENERGY_SCALE;
-
-  energy = (object.data.energy / object.data.energyMax) * 100;
-
-  if (isNaN(energy)) return;
-
-  // don't show node unless just created, or forced
-  if (object.data.lastEnergy === energy && !didCreate && !forceUpdate) return;
-
-  object.data.lastEnergy = energy;
-
-  // show when damaged, but not when dead.
-  node.style.opacity = (energy < 100 ? 1 : 0);
-
-  if (energy > 66) {
-    node.style.backgroundColor = '#33cc33';
-  } else if (energy > 33) {
-    node.style.backgroundColor = '#cccc33';
-  } else {
-    node.style.backgroundColor = '#cc3333';
-  }
-
-  newWidth = energy * energyLineScale;
-
-  // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
-  node.style.width = `${newWidth}%`;
-  
-  // only center if full-width, or explicitly specified
-  if (energyLineScale === DEFAULT_ENERGY_SCALE || object.data.centerEnergyLine) {
-    node.style.left = ((100 - newWidth) / 2) + '%';
-  }
-
-  // if "always" show, no further work to do
-  if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
-
-  // hide in a moment, clearing any existing timers.
-  if (object.data.energyTimerFade) {
-    object.data.energyTimerFade.reset();
-  }
-
-  if (object.data.energyTimerRemove) {
-    object.data.energyTimerRemove.reset();
-  }
-
-  // fade out, and eventually remove
-  object.data.energyTimerFade = setFrameTimeout(() => {
-
-    // in case prefs changed during a timer, prevent removal now
-    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
-
-    if (node) node.style.opacity = 0;
-
-    // fade should be completed within 250 msec
-    object.data.energyTimerRemove = setFrameTimeout(() => {
-      if (node?.parentNode) node.parentNode.removeChild(node);
-      object.dom.oEnergy = null;
-      node = null;
-    }, 250);
-
-  }, 2000);
-
-}
-
 function rnd(number) {
   return Math.random() * number;
 }
@@ -1709,7 +1602,7 @@ prefsManager = (function() {
 
             // update immediately if pref is now "always" show, OR, "sometimes/never" and we have an energy DOM node present.
             if (newValue === PREFS.SHOW_HEALTH_ALWAYS || obj?.dom?.oEnergy) {
-              updateEnergy(obj, forceUpdate);
+              common.updateEnergy(obj, forceUpdate);
             }
 
           });
@@ -1820,7 +1713,7 @@ export {
   setScreenScale,
   game,
   gamePrefs,
-  updateEnergy,
+  PREFS,
   utils,
   shrapnelExplosion,
   setFrameTimeout,
@@ -1828,7 +1721,6 @@ export {
   makeTransformSprite,
   rndInt,
   plusMinus,
-  applyRandomRotation,
   rnd,
   bottomAlignedY,
   gameType,

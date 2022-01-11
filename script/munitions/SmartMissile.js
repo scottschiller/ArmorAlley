@@ -3,7 +3,6 @@ import {
   utils,
   setFrameTimeout,
   makeSprite,
-  applyRandomRotation,
   shrapnelExplosion,
   rndInt,
   gameType,
@@ -117,7 +116,7 @@ const SmartMissile = options => {
   function spark() {
 
     utils.css.add(dom.o, css.spark);
-    applyRandomRotation(dom.o);
+    common.applyRandomRotation(dom.o);
 
   }
 
@@ -196,7 +195,7 @@ const SmartMissile = options => {
 
       utils.css.add(dom.o, css.spark);
 
-      applyRandomRotation(dom.o);
+      common.applyRandomRotation(dom.o);
 
       if (sounds.genericBoom) {
         playSound(sounds.genericBoom, exports);
