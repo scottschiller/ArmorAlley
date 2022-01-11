@@ -112,7 +112,7 @@ const Tank = options => {
 
         common.inertGunfireExplosion({ exports });
 
-        common.common.smokeRing(exports, { isGroundUnit: true });
+        common.smokeRing(exports, { isGroundUnit: true });
 
         data.deadTimer = setFrameTimeout(() => {
           common.removeNodes(dom);
