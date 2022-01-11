@@ -1,17 +1,16 @@
 import {
-  utils,
   gamePrefs,
-  gameType,
   rnd,
   rndInt,
   debug,
-  prefsManager,
-  convoyDelay,
-  setConvoyDelay,
+  prefsManager
 } from '../aa.js';
 
 import {
+  isFirefox,
+  isSafari,
   isMobile,
+  isiPhone,
   TYPES,
   tutorialMode,
   winloc,
@@ -19,7 +18,11 @@ import {
   worldHeight
 } from './global.js';
 
+import { utils } from './utils.js';
 import { common } from './common.js';
+
+import { prefs } from '../UI/preferences.js';
+import { orientationChange } from '../UI/mobile.js';
 
 import {
   playSound,
@@ -51,6 +54,9 @@ import { Infantry } from '../units/Infantry.js';
 import { Engineer } from '../units/Engineer.js';
 import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
+
+// a very commonly-accessed attribute
+let gameType;
 
 const game = (() => {
 
@@ -978,11 +984,12 @@ const game = (() => {
 
   }
 
-  function initGame() {
+  // when the player has chosen a game type - tutorial, easy/hard/extreme.
+  function init() {
 
     dom.world = document.getElementById('battlefield');
 
-    setConvoyDelay(gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60));
+    data.convoyDelay = gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60);
 
     createObjects();
 
@@ -1021,7 +1028,7 @@ const game = (() => {
       }
 
       // after ordering, wait a certain amount before the next convoy
-      enemyDelays.push(convoyDelay);
+      enemyDelays.push(data.convoyDelay);
 
       function orderNextItem() {
 
@@ -1059,8 +1066,230 @@ const game = (() => {
 
   }
 
+  // the home screen: choose a game type.
+  function initArmorAlley() {
+
+    // A few specific CSS tweaks - regrettably - are required.
+    if (isFirefox) utils.css.add(document.body, 'is_firefox');
+    if (isSafari) utils.css.add(document.body, 'is_safari');
+  
+    if (isMobile) {
+  
+      utils.css.add(document.body, 'is-mobile');
+  
+      // prevent context menu on links.
+      // this is dirty, but it works (supposedly) for Android.
+      window.oncontextmenu = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      };
+  
+      // if iPads etc. get The Notch, this will need updating. as of 01/2018, this is fine.
+      if (isiPhone) {
+        /**
+         * iPhone X notch detection shenanigans. AA should avoid the notch,
+         * but doesn't need to pad the right end of the screen - thus, we detect
+         * this case and apply CSS for orientation so we know which side the notch is on.
+         *
+         * Tips o' the hat:
+         * PPK - hasNotch() detection. Doesn't seem to work on iOS 11.0.2 as of 01/2018.
+         * https://www.quirksmode.org/blog/archives/2017/10/safeareainset_v.html
+         * Mark Nolton on SO - orientation change.
+         * https://stackoverflow.com/a/47226825
+         */
+        console.log('watching orientation for possible iPhone X Notch handling.');
+        window.addEventListener('orientationchange', orientationChange);
+        // and get the current layout.
+        orientationChange();
+      }
+  
+    }
+  
+    // TODO: clean up this mess. :P
+    let menu;
+
+    const description = document.getElementById('game-description');
+    const defaultDescription = description.innerHTML;
+    let lastHTML = defaultDescription;
+  
+    function resetMenu() {
+      if (lastHTML !== defaultDescription) {
+        description.innerHTML = defaultDescription;
+        lastHTML = defaultDescription;
+      }
+    }
+  
+    function menuUpdate(e) {
+  
+      let target = (e.target || window.event.sourceElement), title;
+  
+      // normalize to <a>
+      if (target && utils.css.has(target, 'emoji')) {
+        target = target.parentNode;
+      }
+  
+      if (target && target.className.match(/cta/i)) {
+        title = target.title;
+        if (title) {
+          target.setAttribute('data-title', title);
+          target.title = '';
+        } else {
+          title = target.getAttribute('data-title');
+        }
+        if (lastHTML !== title) {
+          description.innerHTML = title;
+          lastHTML = title;
+        }
+      } else {
+        resetMenu();
+      }
+  
+    }
+  
+    function menuClick(e) {
+      // infer game type from link, eg., #tutorial
+  
+      const target = (e.target || window.event.sourceElement);
+  
+      let storedOK;
+      let param;
+  
+      if (target && target.href) {
+  
+        // cleanup
+        utils.events.remove(menu, 'click', menuClick);
+        utils.events.remove(menu, 'mouseover', menuUpdate);
+        utils.events.remove(menu, 'mouseout', menuUpdate);
+        menu = null;
+  
+        param = target.href.substr(target.href.indexOf('#') + 1);
+  
+        if (param === 'easy') {
+  
+          // window.location.hash = param;
+  
+          // set local storage value, and continue
+          storedOK = utils.storage.set(prefs.gameType, 'easy');
+  
+          // stoage failed? use hash, then.
+          if (!storedOK) {
+            window.location.hash = param;
+          }
+  
+          if (gameType === 'hard' || gameType === 'extreme') {
+  
+            // reload, since we're switching to easy
+            window.location.reload();
+  
+          } else {
+  
+            // show exit link
+            const exit = document.getElementById('exit');
+            if (exit) {
+              exit.className = 'visible';
+            }
+  
+          }
+  
+        } else if (param === 'hard' || param === 'extreme') {
+  
+          // set local storage value, and continue
+          storedOK = utils.storage.set(prefs.gameType, param);
+  
+          // stoage failed? use hash, then.
+          if (!storedOK) {
+            window.location.hash = param;
+          }
+  
+          window.location.reload();
+  
+        } else {
+  
+          window.location.hash = 'tutorial';
+  
+          window.location.reload();
+  
+        }
+  
+      }
+  
+      utils.events.preventDefault(e);
+  
+      data.canHideLogo = true;
+  
+      return false;
+    }
+  
+    // should we show the menu?
+  
+    gameType = (winloc.match(/easy|hard|extreme|tutorial/i) || utils.storage.get(prefs.gameType));
+  
+    if (gameType instanceof Array) {
+      gameType = gameType[0];
+    }
+  
+    // safety check
+    if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
+      gameType = null;
+    }
+  
+    if (!gameType) {
+  
+      menu = document.getElementById('game-menu');
+  
+      if (menu) {
+  
+        utils.css.add(document.getElementById('world'), 'blurred');
+  
+        utils.css.add(menu, 'visible');
+  
+        utils.events.add(menu, 'click', menuClick);
+  
+        utils.events.add(menu, 'mouseover', menuUpdate);
+  
+        utils.events.add(menu, 'mouseout', menuUpdate);
+  
+      }
+  
+    } else {
+  
+      // preference set or game type in URL - start immediately.
+  
+      // TODO: cleaner DOM reference
+      if (gameType.match(/easy|hard|extreme/i)) {
+        utils.css.add(document.getElementById('world'), 'regular-mode');
+      }
+  
+      if (gameType) {
+        // copy emoji to "exit" link
+        const exitEmoji = document.getElementById('exit-emoji');
+        let emojiReference = document.getElementById('game-menu').getElementsByClassName(`emoji-${gameType}`);
+        emojiReference = emojiReference && emojiReference[0];
+        if (exitEmoji && emojiReference) {
+          exitEmoji.innerHTML = emojiReference.innerHTML;
+        }
+        // and show "exit"
+        const exit = document.getElementById('exit');
+        if (exit) {
+          exit.className = 'visible';
+        }
+      }
+  
+      data.canHideLogo = true;
+  
+    }
+  
+    game.init();
+  
+    prefsManager.init();
+  
+  }
+
   data = {
     battleOver: false,
+    canHideLogo: false,
+    convoyDelay: 60,
     paused: false,
     productionHalted: false
   };
@@ -1125,7 +1354,8 @@ const game = (() => {
     addObject,
     data,
     dom,
-    init: initGame,
+    init,
+    initArmorAlley,
     objects,
     pause,
     resume
@@ -1135,4 +1365,4 @@ const game = (() => {
 
 })();
 
-export { game }
+export { game, gameType };

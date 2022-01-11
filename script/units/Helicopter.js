@@ -12,7 +12,6 @@ import {
   getLandscapeLayout,
   missileMode,
   screenScale,
-  canHideLogo,
   keyboardMonitor
 } from '../aa.js';
 
@@ -1838,7 +1837,7 @@ const Helicopter = options => {
       onLandingPad(false);
 
       // hack: fade logo on first take-off.
-      if (!data.isEnemy && (tutorialMode || canHideLogo) && !data.logoHidden) {
+      if (!data.isEnemy && (tutorialMode || game.data.canHideLogo) && !data.logoHidden) {
 
         data.logoHidden = true;
 
