@@ -401,17 +401,6 @@ soundManager.setup({
   },
 });
 
-function updateSound(ok) {
-  const soundOption = document.getElementById('sound-option');
-  if (soundOption) soundOption.style.display = ok ? 'inline' : 'none';
-}
-
-soundManager.onready(updateSound);
-soundManager.ontimeout(() => {
-  const ok = false;
-  updateSound(ok);
-});
-
 if (winloc.match(/mute/i)) {
   soundManager.disable();
 }
