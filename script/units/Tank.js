@@ -1,8 +1,7 @@
 import {
   game,
   gamePrefs,
-  utils,
-  setFrameTimeout
+  utils
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -112,7 +111,7 @@ const Tank = options => {
 
         common.smokeRing(exports, { isGroundUnit: true });
 
-        data.deadTimer = setFrameTimeout(() => {
+        data.deadTimer = common.setFrameTimeout(() => {
           common.removeNodes(dom);
           data.deadTimer = null;
         }, 1500);
@@ -196,7 +195,7 @@ const Tank = options => {
           moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
 
           // and then stop again if we haven't resumed for real by that time.
-          setFrameTimeout(() => {
+          common.setFrameTimeout(() => {
             if (data.stopped) {
               utils.css.add(dom.o, css.stopped);
             }

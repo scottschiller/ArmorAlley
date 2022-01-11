@@ -1,8 +1,9 @@
 import {
   game,
   utils,
-  setFrameTimeout
 } from '../aa.js';
+
+import { common } from '../core/common.js';
 
 function RadarItem(options) {
 
@@ -34,18 +35,18 @@ function RadarItem(options) {
       if (dieOptions?.silent) {
 
         // bye bye! (next scheduled frame)
-        setFrameTimeout(dieComplete, 1);
+        common.setFrameTimeout(dieComplete, 1);
 
       } else {
 
-        setFrameTimeout(dieComplete, 2000);
+        common.setFrameTimeout(dieComplete, 2000);
 
       }
 
     } else {
 
       // balloon, etc.
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         // only do this if the parent (balloon) is still dead.
         // it may have respawned almost immediately by passing infantry.
         if (!oParent?.data?.dead) return;

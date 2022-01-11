@@ -1,7 +1,5 @@
-import {
-  utils,
-  setFrameTimeout
-} from '../aa.js';
+import { utils } from '../aa.js';
+import { common } from '../core/common.js';
 
 const Notifications = () => {
 
@@ -54,7 +52,7 @@ const Notifications = () => {
         // clear, start new timer
         if (item.timer) {
           item.timer.reset();
-          item.timer = setFrameTimeout(displayItemComplete, item.delay);
+          item.timer = common.setFrameTimeout(displayItemComplete, item.delay);
         }
 
         replacementItem = item;
@@ -122,7 +120,7 @@ const Notifications = () => {
     dom.oToasts.appendChild(oToast);
 
     // delay required for transition to work
-    setFrameTimeout(() => {
+    common.setFrameTimeout(() => {
       utils.css.add(oToast, css.toastActive);
     }, 96);
 
@@ -132,7 +130,7 @@ const Notifications = () => {
     // these can pile up. display immediately but process one at a time, FIFO.
     if (!data.isDisplaying) {
       data.isDisplaying = true;
-      item.timer = setFrameTimeout(displayItemComplete, item.delay);
+      item.timer = common.setFrameTimeout(displayItemComplete, item.delay);
     }
 
   }
@@ -157,9 +155,9 @@ const Notifications = () => {
     }
 
     // collapse height, and then disappear.
-    setFrameTimeout(() => {
+    common.setFrameTimeout(() => {
       utils.css.add(item.node, css.toastExpired);
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         item.node.parentNode.removeChild(item.node);
       }, 500);
     }, 500);
@@ -170,7 +168,7 @@ const Notifications = () => {
     } else {
       // we're onto the next one.
       // queue its removal.
-      setFrameTimeout(displayItemComplete, data.items[0].delay);
+      common.setFrameTimeout(displayItemComplete, data.items[0].delay);
     }
 
   }

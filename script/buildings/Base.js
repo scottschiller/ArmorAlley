@@ -5,7 +5,6 @@ import {
   bananaMode,
   rubberChickenMode,
   gameType,
-  setFrameTimeout,
   rnd,
   rndInt,
   defaultMissileMode
@@ -68,7 +67,7 @@ const Base = options => {
         // re-load and fire ze missles, now more aggressive!
         missileVMax = Math.min(data.missileVMax, missileVMax + 1);
 
-        setFrameTimeout(fire, 250 + rnd(250));
+        common.setFrameTimeout(fire, 250 + rnd(250));
       }
     }));
 
@@ -136,7 +135,7 @@ const Base = options => {
       if (counter >= counterMax) {
 
         // HUGE boom, why not.
-        setFrameTimeout(() => {
+        common.setFrameTimeout(() => {
 
           // ensure incoming missile is silenced
           if (sounds.missileWarning) {
@@ -153,7 +152,7 @@ const Base = options => {
             playSound(sounds.baseExplosion, exports);
           }
 
-          setFrameTimeout(() => {
+          common.setFrameTimeout(() => {
 
             let i, iteration;
             iteration = 0;
@@ -168,7 +167,7 @@ const Base = options => {
             }
 
             for (i = 0; i < 3; i++) {
-              setFrameTimeout(() => {
+              common.setFrameTimeout(() => {
                 // first one is always big.
                 const isBigBoom = (!iteration || rnd(0.75));
 
@@ -201,7 +200,7 @@ const Base = options => {
       } else {
 
         // big boom
-        setFrameTimeout(boom, 100 + rndInt(100));
+        common.setFrameTimeout(boom, 100 + rndInt(100));
 
       }
 

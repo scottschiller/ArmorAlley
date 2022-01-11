@@ -5,8 +5,7 @@
  import {
   game,
   gameType,
-  utils,
-  setFrameTimeout
+  utils
 } from '../aa.js';
 
 import {
@@ -487,11 +486,11 @@ function recycleTest(obj) {
   utils.css.add(obj.dom.o, 'recycling');
 
   // ensure 'building' is set, as well. "pre-existing" game units will not have this.
-  setFrameTimeout(() => {
+  common.setFrameTimeout(() => {
     utils.css.add(obj.dom.o, 'building');
   }, 16);
 
-  setFrameTimeout(() => {
+  common.setFrameTimeout(() => {
     // die silently, and go away.
     obj.die({ silent: true});
 

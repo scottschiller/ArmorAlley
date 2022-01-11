@@ -1,7 +1,6 @@
 import {
   utils,
   gamePrefs,
-  setFrameTimeout,
   rndInt,
   game
 } from '../aa.js';
@@ -167,7 +166,7 @@ function playSoundWithDelay() {
     delay = 500;
   }
 
-  setFrameTimeout(function() {
+  common.setFrameTimeout(() => {
     playSound.apply(this, args);
   }, delay);
 
@@ -200,7 +199,7 @@ function playRepairingWrench(isRepairing, exports) {
 
     playSound(sounds.repairingWrench, exports, {
       onfinish() {
-        exports.repairingWrenchTimer = setFrameTimeout(function() {
+        exports.repairingWrenchTimer = common.setFrameTimeout(function() {
           exports.repairingWrenchTimer = null;
           if (isRepairing()) {
             playRepairingWrench.apply(this, args);
@@ -227,7 +226,7 @@ function playImpactWrench(isRepairing, exports) {
 
     playSound(sounds.impactWrench, exports, {
       onfinish() {
-        exports.impactWrenchTimer = setFrameTimeout(function() {
+        exports.impactWrenchTimer = common.setFrameTimeout(function() {
           exports.impactWrenchTimer = null;
           if (isRepairing()) {
             playImpactWrench.apply(this, args);

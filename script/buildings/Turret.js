@@ -3,7 +3,6 @@ import {
   utils,
   FPS,
   bottomAlignedY,
-  setFrameTimeout,
   rnd,
   rndInt,
   rad2Deg,
@@ -137,7 +136,7 @@ const Turret = options => {
 
         if (data.fireCount === 1 || data.fireCount % data.shellCasingInterval === 0) {
           // shell casing?
-          setFrameTimeout(() => {
+          common.setFrameTimeout(() => {
             playSound(sounds.bulletShellCasing, exports);
           }, 250 + rnd(250));
         }
@@ -175,7 +174,7 @@ const Turret = options => {
 
       utils.css.add(dom.o, css.exploding);
 
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         utils.css.remove(dom.o, css.exploding);
       }, 1200);
 

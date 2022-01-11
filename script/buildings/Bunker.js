@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   rndInt,
   getNormalizedUnitName,
   rnd,
@@ -172,11 +171,11 @@ const Bunker = options => {
 
     common.shrapnelExplosion(data, { velocity: rnd(-10) });
 
-    setFrameTimeout(() => {
+    common.setFrameTimeout(() => {
 
       utils.css.swap(dom.o, css.exploding, css.burning);
 
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         utils.css.swap(dom.o, css.burning, css.dead);
         // nothing else to do here - drop the node reference.
         dom.o = null;

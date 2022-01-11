@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   screenScale,
   keyboardMonitor,
   setScreenScale,
@@ -217,7 +216,7 @@ const View = () => {
       if (text) {
         // clear after an amount of time, if not -1
         if ((delay === undefined || delay !== -1)) {
-          data.gameTips.announcementTimer = setFrameTimeout(setAnnouncement, delay || 5000);
+          data.gameTips.announcementTimer = common.setFrameTimeout(setAnnouncement, delay || 5000);
         }
       }
 

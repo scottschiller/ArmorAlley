@@ -2,7 +2,6 @@ import {
   game,
   gamePrefs,
   utils,
-  setFrameTimeout,
   missileMode,
   bananaMode,
   rubberChickenMode
@@ -49,7 +48,7 @@ const MissileLauncher = options => {
 
       common.inertGunfireExplosion({ exports });
 
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         common.removeNodes(dom);
       }, 1000);
 
@@ -209,7 +208,7 @@ const MissileLauncher = options => {
 
     common.initNearby(friendlyNearby, exports);
 
-    data.frameTimeout = setFrameTimeout(() => {
+    data.frameTimeout = common.setFrameTimeout(() => {
       data.orderComplete = true;
       data.frameTimeout = null;
     }, 2000);

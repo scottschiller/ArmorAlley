@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   rnd,
   rndInt,
   plusMinus
@@ -71,7 +70,7 @@ const Shrapnel = options => {
 
     utils.css.add(dom.o, css.stopped);
 
-    data.deadTimer = setFrameTimeout(() => {
+    data.deadTimer = common.setFrameTimeout(() => {
       common.removeNodes(dom);
       data.deadTimer = null;
     }, 750);

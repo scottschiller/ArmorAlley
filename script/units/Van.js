@@ -2,7 +2,6 @@ import {
   game,
   utils,
   gamePrefs,
-  setFrameTimeout,
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -56,7 +55,7 @@ const Van = options => {
 
     common.inertGunfireExplosion({ exports });
 
-    data.deadTimer = setFrameTimeout(() => {
+    data.deadTimer = common.setFrameTimeout(() => {
       common.removeNodes(dom);
       data.deadTimer = null;
     }, 1000);

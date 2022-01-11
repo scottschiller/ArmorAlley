@@ -4,11 +4,11 @@ import {
   rndInt,
   plusMinus,
   gamePrefs,
-  PREFS,
-  setFrameTimeout
+  PREFS
 } from '../aa.js';
 
-import { debug, debugType, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
+import { debug, debugType, FRAMERATE, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
+import { frameTimeoutManager } from '../core/GameLoop.js';
 import { GunFire } from '../munitions/GunFire.js'
 import { Shrapnel } from '../elements/Shrapnel.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -20,6 +20,56 @@ const useTranslate3d = !winloc.match(/noTranslate3d/i);
 let guid = 0;
 
 const common = {
+
+  setFrameTimeout: (callback, delayMsec) => {
+
+    /**
+     * a frame-counting-based setTimeout() implementation.
+     * millisecond value (parameter) is converted to a frame count.
+     */
+  
+    let data, exports;
+  
+    data = {
+      frameCount: 0,
+      frameInterval: parseInt(delayMsec / FRAMERATE, 10), // e.g., msec = 1000 -> frameInterval = 60
+      callbackFired: false,
+      didReset: false,
+    };
+  
+    function animate() {
+  
+      // if reset() was called, exit early
+      if (data.didReset) return true; 
+  
+      data.frameCount++;
+  
+      if (!data.callbackFired && data.frameCount >= data.frameInterval) {
+        callback();
+        data.callbackFired = true;
+        return true;
+      }
+  
+      return false;
+  
+    }
+  
+    function reset() {
+      // similar to clearTimeout()
+      data.didReset = true;
+    }
+  
+    exports = {
+      animate,
+      data,
+      reset
+    };
+  
+    frameTimeoutManager.addInstance(exports);
+  
+    return exports;
+  
+  },
 
   inheritData(data, options) {
 
@@ -567,7 +617,7 @@ const common = {
     }
   
     // fade out, and eventually remove
-    object.data.energyTimerFade = setFrameTimeout(() => {
+    object.data.energyTimerFade = common.setFrameTimeout(() => {
   
       // in case prefs changed during a timer, prevent removal now
       if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
@@ -575,7 +625,7 @@ const common = {
       if (node) node.style.opacity = 0;
   
       // fade should be completed within 250 msec
-      object.data.energyTimerRemove = setFrameTimeout(() => {
+      object.data.energyTimerRemove = common.setFrameTimeout(() => {
         if (node?.parentNode) node.parentNode.removeChild(node);
         object.dom.oEnergy = null;
         node = null;

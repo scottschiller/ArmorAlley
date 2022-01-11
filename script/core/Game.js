@@ -2,7 +2,6 @@ import {
   utils,
   gamePrefs,
   gameType,
-  setFrameTimeout,
   rnd,
   rndInt,
   debug,
@@ -20,6 +19,8 @@ import {
   worldWidth,
   worldHeight
 } from './global.js';
+
+import { common } from './common.js';
 
 import {
   playSound,
@@ -978,7 +979,7 @@ const game = (() => {
             game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
           }
 
-          setFrameTimeout(orderNextItem, enemyDelays[i] * 1000);
+          common.setFrameTimeout(orderNextItem, enemyDelays[i] * 1000);
 
           i++;
 
@@ -992,7 +993,7 @@ const game = (() => {
 
       // and begin
       if (!tutorialMode) {
-        setFrameTimeout(orderNextItem, 5000);
+        common.setFrameTimeout(orderNextItem, 5000);
       }
 
     })();

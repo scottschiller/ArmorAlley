@@ -1,7 +1,6 @@
 import {
   game,
-  utils,
-  setFrameTimeout
+  utils
 } from '../aa.js';
 
 import { TYPES } from '../core/global.js';
@@ -47,7 +46,7 @@ const Inventory = () => {
       window.requestAnimationFrame(() => {
         utils.css.add(orderObject.dom.o, css.ordering);
 
-        setFrameTimeout(() => {
+        common.setFrameTimeout(() => {
           if (!orderObject.dom?.o) return;
           utils.css.remove(orderObject.dom.o, css.ordering);
           utils.css.remove(orderObject.dom.o, css.building);

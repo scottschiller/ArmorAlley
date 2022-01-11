@@ -5,7 +5,6 @@ import {
   bananaMode,
   rubberChickenMode,
   gameType,
-  setFrameTimeout,
   rnd,
   rndInt,
   trackEnemy,
@@ -197,11 +196,11 @@ const Helicopter = options => {
         utils.css.add(dom.statusBar.bombCountLI, css.repairing);
       }
 
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         playRepairingWrench(repairInProgress, exports);
       }, 500 + rndInt(1500));
 
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         playImpactWrench(repairInProgress, exports);
       }, 500 + rndInt(1500));
 
@@ -470,7 +469,7 @@ const Helicopter = options => {
         oCounter.innerHTML = count;
       }
       
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         // transition in
         utils.css.add(o, 'queued');
         // show or hide
@@ -522,11 +521,11 @@ const Helicopter = options => {
     } else {
 
       // clear entire queue.
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         addCSSToAll(queue.childNodes, 'collapsing');
         // finally, remove the nodes.
         // hopefully, no race condition here. :P
-        setFrameTimeout(() => {
+        common.setFrameTimeout(() => {
           // prevent element leaks
           oCounter = null;
           element = null;
@@ -660,7 +659,7 @@ const Helicopter = options => {
     }
 
     // transition, helicopter rises from landing pad
-    setFrameTimeout(() => {
+    common.setFrameTimeout(() => {
       if (state) {
         utils.css.add(dom.o, css.respawningActive);
       } else {
@@ -670,7 +669,7 @@ const Helicopter = options => {
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
-      setFrameTimeout(() => {
+      common.setFrameTimeout(() => {
         setRespawning(false);
         if (data.isEnemy) {
           data.vY = -1;
@@ -701,7 +700,7 @@ const Helicopter = options => {
     utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
 
     if (!data.rotateTimer) {
-      data.rotateTimer = setFrameTimeout(() => {
+      data.rotateTimer = common.setFrameTimeout(() => {
         utils.css.remove(dom.o, (data.rotated ? css.rotatedLeft : css.rotatedRight));
         utils.css.add(dom.o, (data.rotated ? css.facingLeft : css.facingRight));
         data.rotateTimer = null;
@@ -925,7 +924,7 @@ const Helicopter = options => {
         noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
         game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed. Waiting for clearance. ${noEntry}`);
       }
-      setFrameTimeout(reset, 500);
+      common.setFrameTimeout(reset, 500);
       return;
     }
 
@@ -1091,7 +1090,7 @@ const Helicopter = options => {
       }));
     }
 
-    setFrameTimeout(() => {
+    common.setFrameTimeout(() => {
       utils.css.add(dom.o, css.dead);
       // undo rotate
       if (data.rotated) {
@@ -1121,7 +1120,7 @@ const Helicopter = options => {
 
     // don't respawn the enemy chopper during tutorial mode.
     if (!data.isEnemy || !tutorialMode) {
-      setFrameTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+      common.setFrameTimeout(respawn, (data.isEnemy ? 8000 : 3000));
     }
 
   }
@@ -1855,7 +1854,7 @@ const Helicopter = options => {
           utils.css.add(world, noBlur);
 
           // remove from the DOM eventually
-          setFrameTimeout(() => {
+          common.setFrameTimeout(() => {
 
             overlay.parentNode.removeChild(overlay);
             overlay = null;

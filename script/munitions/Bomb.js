@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   rnd,
   rndInt,
   rad2Deg,
@@ -110,7 +109,7 @@ const Bomb = options => {
         common.applyRandomRotation(dom.o);
       }
 
-      data.deadTimer = setFrameTimeout(() => {
+      data.deadTimer = common.setFrameTimeout(() => {
         common.removeNodes(dom);
         data.deadTimer = null;
       }, 600);

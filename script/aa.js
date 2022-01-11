@@ -307,8 +307,6 @@ function setConvoyDelay(delay) {
   convoyDelay = delay;
 }
 
-let setFrameTimeout;
-
 let prefsManager = PrefsManager();
 
 let stats;
@@ -426,56 +424,6 @@ function addItem(className, x) {
   return node;
 
 }
-
-setFrameTimeout = (callback, delayMsec) => {
-
-  /**
-   * a frame-counting-based setTimeout() implementation.
-   * millisecond value (parameter) is converted to a frame count.
-   */
-
-  let data, exports;
-
-  data = {
-    frameCount: 0,
-    frameInterval: parseInt(delayMsec / FRAMERATE, 10), // e.g., msec = 1000 -> frameInterval = 60
-    callbackFired: false,
-    didReset: false,
-  };
-
-  function animate() {
-
-    // if reset() was called, exit early
-    if (data.didReset) return true; 
-
-    data.frameCount++;
-
-    if (!data.callbackFired && data.frameCount >= data.frameInterval) {
-      callback();
-      data.callbackFired = true;
-      return true;
-    }
-
-    return false;
-
-  }
-
-  function reset() {
-    // similar to clearTimeout()
-    data.didReset = true;
-  }
-
-  exports = {
-    animate,
-    data,
-    reset
-  };
-
-  frameTimeoutManager.addInstance(exports);
-
-  return exports;
-
-};
 
 function startGame() {
 
@@ -820,7 +768,6 @@ export {
   game,
   gamePrefs,
   utils,
-  setFrameTimeout,
   rndInt,
   plusMinus,
   rnd,

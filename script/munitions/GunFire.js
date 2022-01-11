@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   rndInt,
   plusMinus,
   rnd
@@ -160,7 +159,7 @@ const GunFire = options => {
         utils.css.add(dom.o, css.dead);
 
         // and cleanup shortly.
-        frameTimeout = setFrameTimeout(() => {
+        frameTimeout = common.setFrameTimeout(() => {
           die();
           frameTimeout = null;
         }, 250);

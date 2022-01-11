@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   gameType,
   rndInt,
   plusMinus,
@@ -50,7 +49,7 @@ const Balloon = options => {
     // between on / off-screen.
     utils.css.add(dom.o, css.animating);
 
-    data.frameTimeout = setFrameTimeout(() => {
+    data.frameTimeout = common.setFrameTimeout(() => {
       if (!dom.o) return;
       utils.css.remove(dom.o, css.animating);
       data.frameTimeout = null;
@@ -105,7 +104,7 @@ const Balloon = options => {
     // the parent (i.e., this) balloon's `data.dead` before hiding.
     radarItem.die();
 
-    data.deadTimer = setFrameTimeout(() => {
+    data.deadTimer = common.setFrameTimeout(() => {
       data.deadTimer = null;
 
       // sanity check: don't hide if already respawned
@@ -136,7 +135,7 @@ const Balloon = options => {
       data.animationFrameTimeout.reset();
     }
 
-    data.animationFrameTimeout = setFrameTimeout(() => {
+    data.animationFrameTimeout = common.setFrameTimeout(() => {
       data.animationFrameTimeout = null;
       // balloon might have been destroyed.
       if (!dom?.o) return;

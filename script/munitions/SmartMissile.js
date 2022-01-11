@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  setFrameTimeout,
   rndInt,
   gameType,
   rad2Deg,
@@ -121,7 +120,7 @@ const SmartMissile = options => {
   function makeTimeout(callback) {
 
     if (objects._timeout) objects._timeout.reset();
-    objects._timeout = setFrameTimeout(callback, 350);
+    objects._timeout = common.setFrameTimeout(callback, 350);
 
   }
 
@@ -208,7 +207,7 @@ const SmartMissile = options => {
 
       hideTrailers();
 
-      data.deadTimer = setFrameTimeout(() => {
+      data.deadTimer = common.setFrameTimeout(() => {
         common.removeNodes(dom);
       }, 500);
 
