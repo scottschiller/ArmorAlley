@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   enemyHelicopterNearby,
@@ -274,11 +272,11 @@ const Base = options => {
 
   height = 25;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'base'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'base',
     bottomAligned: true,
     dead: false,

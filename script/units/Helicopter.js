@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   gamePrefs,
@@ -2134,7 +2132,7 @@ const Helicopter = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.helicopter,
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
@@ -2155,7 +2153,7 @@ const Helicopter = options => {
     trailer: 'helicopter-trailer'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.helicopter,
     angle: 0,
     tiltOffset: 0,

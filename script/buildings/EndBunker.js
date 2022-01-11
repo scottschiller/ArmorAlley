@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   updateEnergy,
@@ -228,11 +226,11 @@ const EndBunker = options => {
 
   height = 19;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.endBunker
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.endBunker,
     bottomAligned: true,
     frameCount: 0,

@@ -1,6 +1,4 @@
 import {
-  inheritData,
-  inheritCSS,
   makeSprite,
   rndInt,
   rnd,
@@ -120,11 +118,11 @@ const Smoke = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'smoke'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'smoke',
     frameCount: 0,
     animateModulus: 1,

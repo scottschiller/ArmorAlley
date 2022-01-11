@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   makeTransformSprite,
@@ -216,14 +214,14 @@ const Infantry = options => {
 
   height = 11;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: null,
     infantry: TYPES.infantry,
     engineer: TYPES.engineer,
     stopped: 'stopped'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.infantry,
     frameCount: Math.random() > 0.5 ? 5 : 0,
     bottomAligned: true,

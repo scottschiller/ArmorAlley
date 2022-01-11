@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   nearbyTest,
@@ -213,11 +211,11 @@ const Van = options => {
 
   height = 16;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.van
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.van,
     bottomAligned: true,
     deadTimer: null,

@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   updateEnergy,
@@ -410,13 +408,13 @@ const Turret = options => {
 
   height = 15;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.turret,
     destroyed: 'destroyed',
     firing: 'firing'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.turret,
     bottomAligned: true,
     dead: false,

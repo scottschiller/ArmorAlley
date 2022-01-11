@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   updateEnergy,
   utils,
   shrapnelExplosion,
@@ -322,7 +320,7 @@ const Balloon = options => {
 
   height = 16;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.balloon,
     friendly: 'facing-right',
     enemy: 'facing-left',
@@ -330,7 +328,7 @@ const Balloon = options => {
     facingRight: 'facing-right'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.balloon,
     canRespawn: false,
     frameCount: 0,

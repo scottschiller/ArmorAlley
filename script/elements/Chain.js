@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   makeSprite,
   utils
 } from '../aa.js';
@@ -180,13 +178,13 @@ const Chain = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'chain'
   });
 
   defaultHeight = game.objects.view.data.world.height + 5;
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'chain',
     energy: 1,
     hostile: false, // applies when detached from base or balloon

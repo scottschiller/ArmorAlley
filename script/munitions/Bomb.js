@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   setFrameTimeout,
@@ -254,13 +252,13 @@ const Bomb = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'bomb',
     explosionLarge: 'explosion-large',
     spark: 'spark'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'bomb',
     parentType: options.parentType || null,
     deadTimer: null,

@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   rnd,
@@ -241,12 +239,12 @@ const ParachuteInfantry = options => {
 
   }
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'parachute-infantry',
     parachuteOpen: 'parachute-open'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'parachute-infantry',
     frameCount: rndInt(3),
     panicModulus: 3,

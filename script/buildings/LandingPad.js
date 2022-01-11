@@ -1,6 +1,4 @@
 import {
-  inheritData,
-  inheritCSS,
   makeSprite,
   collisionTest,
   rndInt,
@@ -50,11 +48,11 @@ const LandingPad = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'landing-pad'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'landing-pad',
     name: options?.name,
     isNeutral: true,

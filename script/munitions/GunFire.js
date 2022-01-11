@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   setFrameTimeout,
   makeSprite,
@@ -240,13 +238,13 @@ const GunFire = options => {
 
     }
 
-    css = inheritCSS({
+    css = common.inheritCSS({
       className: 'gunfire',
       expired: 'expired',
       spark: 'spark'
     });
 
-    data = inheritData({
+    data = common.inheritData({
       type: 'gunfire',
       parentType: options.parentType || null,
       isInert: !!options.isInert,

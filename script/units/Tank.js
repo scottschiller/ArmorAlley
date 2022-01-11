@@ -1,8 +1,6 @@
 import {
   game,
   gamePrefs,
-  inheritData,
-  inheritCSS,
   updateEnergy,
   utils,
   shrapnelExplosion,
@@ -262,12 +260,12 @@ const Tank = options => {
 
     tankHeight = 18;
 
-    css = inheritCSS({
+    css = common.inheritCSS({
       className: TYPES.tank,
       stopped: 'stopped'
     });
 
-    data = inheritData({
+    data = common.inheritData({
       type: TYPES.tank,
       bottomAligned: true,
       deadTimer: null,

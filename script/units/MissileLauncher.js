@@ -1,8 +1,6 @@
 import {
   game,
   gamePrefs,
-  inheritData,
-  inheritCSS,
   utils,
   setFrameTimeout,
   nearbyTest,
@@ -230,11 +228,11 @@ const MissileLauncher = options => {
 
   height = 18;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'missile-launcher'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'missile-launcher',
     bottomAligned: true,
     energy: 3,

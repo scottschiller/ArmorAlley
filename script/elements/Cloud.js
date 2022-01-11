@@ -1,6 +1,4 @@
 import {
-  inheritData,
-  inheritCSS,
   makeSprite,
   rndInt,
 } from '../aa.js';
@@ -71,11 +69,11 @@ const Cloud = options => {
   cloudWidth = (cloudType === 2 ? 125 : 102);
   cloudHeight = (cloudType === 2 ? 34 : 29);
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: `cloud${cloudType}`
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'cloud',
     isNeutral: true,
     frameCount: 0,

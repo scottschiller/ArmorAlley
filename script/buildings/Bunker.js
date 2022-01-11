@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   updateEnergy,
   utils,
   shrapnelExplosion,
@@ -282,13 +280,13 @@ const Bunker = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.bunker,
     arrow: 'arrow',
     burning: 'burning'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.bunker,
     y: (game.objects.view.data.world.height - 25) + 1, // override to fix helicopter / bunker vertical crash case
     energy: 50,

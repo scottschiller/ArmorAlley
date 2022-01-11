@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   updateEnergy,
@@ -193,12 +191,12 @@ const SuperBunker = options => {
 
   height = 28;
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: TYPES.superBunker,
     friendly: 'friendly'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: TYPES.superBunker,
     bottomAligned: true,
     frameCount: 0,

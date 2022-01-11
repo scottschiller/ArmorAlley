@@ -311,9 +311,6 @@ function setConvoyDelay(delay) {
   convoyDelay = delay;
 }
 
-// unique IDs for quick object equality checks
-let guid = 0;
-
 let setFrameTimeout;
 
 let frameTimeoutManager;
@@ -584,84 +581,6 @@ function addItem(className, x) {
   game.objects.terrainItems.push(exports);
 
   return node;
-
-}
-
-function inheritCSS(options) {
-
-  // var defaults;
-
-  options = options || {};
-
-  if (options.animating === undefined) {
-    options.animating = common.defaultCSS.animating;
-  }
-
-  if (options.dead === undefined) {
-    options.dead = common.defaultCSS.dead;
-  }
-
-  if (options.enemy === undefined) {
-    options.enemy = common.defaultCSS.enemy;
-  }
-
-  if (options.exploding === undefined) {
-    options.exploding = common.defaultCSS.exploding;
-  }
-
-  return options;
-
-}
-
-function inheritData(data, options) {
-
-  // mixin defaults, and apply common options
-
-  options = options || {};
-
-  // for quick object comparison
-  if (data.id === undefined) {
-    data.id = (options.id || guid++);
-  }
-
-  // assume not in view at first, used for DOM pruning / performance
-  if (data.isOnScreen === undefined) {
-    data.isOnScreen = false;
-  }
-
-  if (data.isEnemy === undefined) {
-    data.isEnemy = (options.isEnemy || false);
-  }
-
-  if (data.bottomY === undefined) {
-    data.bottomY = (options.bottomY || 0);
-  }
-
-  if (data.dead === undefined) {
-    data.dead = false;
-  }
-
-  if (data.x === undefined) {
-    data.x = (options.x || 0);
-  }
-
-  if (data.y === undefined) {
-    data.y = (options.y || 0);
-  }
-
-  if (data.vX === undefined) {
-    data.vX = (options.vX || 0);
-  }
-
-  if (data.vY === undefined) {
-    data.vY = (options.vY || 0);
-  }
-
-  if (options.fireModulus !== undefined) {
-    data.fireModulus = options.fireModulus;
-  }
-
-  return data;
 
 }
 
@@ -2639,8 +2558,6 @@ export {
   setScreenScale,
   game,
   gamePrefs,
-  inheritData,
-  inheritCSS,  
   updateEnergy,
   utils,
   shrapnelExplosion,

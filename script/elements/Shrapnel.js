@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   makeSprite,
   setFrameTimeout,
@@ -256,13 +254,13 @@ const Shrapnel = options => {
   // default
   scale = options.scale || (0.8 + rnd(0.15));
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'shrapnel',
     reverse: 'reverse',
     stopped: 'stopped'
   });
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'shrapnel',
     parentType: (options.type || null),
     frameCount: 0,

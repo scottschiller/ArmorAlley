@@ -1,7 +1,5 @@
 import {
   game,
-  inheritData,
-  inheritCSS,
   utils,
   setFrameTimeout,
   makeSprite,
@@ -572,7 +570,7 @@ const SmartMissile = options => {
 
   options = options || {};
 
-  css = inheritCSS({
+  css = common.inheritCSS({
     className: 'smart-missile',
     banana: 'banana',
     rubberChicken: 'rubber-chicken',
@@ -593,7 +591,7 @@ const SmartMissile = options => {
     css.className += ` ${css.banana}`;
   }
 
-  data = inheritData({
+  data = common.inheritData({
     type: 'smart-missile',
     parentType: options.parentType || null,
     energy: 1,
