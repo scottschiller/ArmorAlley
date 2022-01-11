@@ -1,6 +1,5 @@
 import {
   game,
-  makeSprite,
   utils
 } from '../aa.js';
 
@@ -162,7 +161,7 @@ const Chain = options => {
 
   function initChain() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

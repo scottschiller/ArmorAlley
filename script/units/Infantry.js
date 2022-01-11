@@ -1,8 +1,6 @@
 import {
   game,
   utils,
-  makeSprite,
-  makeTransformSprite,
   gamePrefs
 } from '../aa.js';
 
@@ -187,11 +185,11 @@ const Infantry = options => {
     // infantry, or engineer?
     setRole(data.role, true);
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
     if (data.isEnemy) {

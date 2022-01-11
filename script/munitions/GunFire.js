@@ -2,7 +2,6 @@ import {
   game,
   utils,
   setFrameTimeout,
-  makeSprite,
   rndInt,
   plusMinus,
   rnd
@@ -214,7 +213,7 @@ const GunFire = options => {
 
     function initGunFire() {
 
-      dom.o = makeSprite({
+      dom.o = common.makeSprite({
         className: css.className
       });
 

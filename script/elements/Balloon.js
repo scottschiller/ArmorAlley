@@ -2,7 +2,6 @@ import {
   game,
   utils,
   setFrameTimeout,
-  makeSprite,
   gameType,
   rndInt,
   plusMinus,
@@ -292,7 +291,7 @@ const Balloon = options => {
 
   function initBalloon() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

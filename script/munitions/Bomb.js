@@ -1,13 +1,11 @@
 import {
   game,
   utils,
-  makeSprite,
   setFrameTimeout,
   rnd,
   rndInt,
   rad2Deg,
-  plusMinus,
-  makeSubSprite
+  plusMinus
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -228,12 +226,12 @@ const Bomb = options => {
 
   function initBomb() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
     // parent gets transform position, subsprite gets rotation animation
-    dom.oSubSprite = makeSubSprite();
+    dom.oSubSprite = common.makeSubSprite();
 
     dom.o.appendChild(dom.oSubSprite);
 

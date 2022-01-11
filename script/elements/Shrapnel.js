@@ -1,12 +1,10 @@
 import {
   game,
   utils,
-  makeSprite,
   setFrameTimeout,
   rnd,
   rndInt,
-  plusMinus,
-  makeTransformSprite
+  plusMinus
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -215,11 +213,11 @@ const Shrapnel = options => {
 
   function initShrapnel() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className + (Math.random() > 0.5 ? ` ${css.reverse}` : '')
     });
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);

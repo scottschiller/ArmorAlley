@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  makeSprite,
   gamePrefs,
   bananaMode,
   rubberChickenMode,
@@ -9,12 +8,10 @@ import {
   setFrameTimeout,
   rnd,
   rndInt,
-  makeTransformSprite,
   trackEnemy,
   plusMinus,
   getLandscapeLayout,
   missileMode,
-  makeSubSprite,
   screenScale,
   canHideLogo,
   keyboardMonitor
@@ -2058,7 +2055,7 @@ const Helicopter = options => {
       className: css.trailer
     };
 
-    oTrailer = makeSprite(trailerConfig);
+    oTrailer = common.makeSprite(trailerConfig);
 
     for (i = 0; i < data.trailerCount; i++) {
       dom.trailers.push(oTrailer.cloneNode(true));
@@ -2070,14 +2067,14 @@ const Helicopter = options => {
     // TODO: review and append only when on-screen
     game.dom.world.appendChild(fragment);
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
     });
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
-    dom.oSubSprite = makeSubSprite();
+    dom.oSubSprite = common.makeSubSprite();
 
     dom.o.appendChild(dom.oSubSprite);
 

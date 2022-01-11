@@ -2,9 +2,7 @@ import {
   game,
   utils,
   setFrameTimeout,
-  makeSprite,
   rndInt,
-  makeSubSprite,
   getNormalizedUnitName,
   rnd,
 } from '../aa.js';
@@ -246,13 +244,13 @@ const Bunker = options => {
 
   function initBunker() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oSubSprite = makeSubSprite();
+    dom.oSubSprite = common.makeSubSprite();
 
-    dom.oSubSpriteArrow = makeSubSprite(css.arrow);
+    dom.oSubSpriteArrow = common.makeSubSprite(css.arrow);
 
     dom.o.appendChild(dom.oSubSprite);
     dom.o.appendChild(dom.oSubSpriteArrow);

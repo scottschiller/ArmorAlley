@@ -1,8 +1,6 @@
 import {
-  makeSprite,
   rndInt,
   rnd,
-  makeTransformSprite,
   plusMinus
 } from '../aa.js';
 
@@ -101,11 +99,11 @@ const Smoke = options => {
   function initSmoke() {
 
     // TODO: use a pool of smoke nodes?
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
 
     dom.o.appendChild(dom.oTransformSprite);
 

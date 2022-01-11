@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  makeSprite,
   gamePrefs,
   setFrameTimeout,
 } from '../aa.js';
@@ -212,7 +211,7 @@ const Van = options => {
 
   function initVan() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

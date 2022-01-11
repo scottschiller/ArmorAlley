@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  makeSprite,
   gamePrefs,
   bananaMode,
   rubberChickenMode,
@@ -9,8 +8,7 @@ import {
   setFrameTimeout,
   rnd,
   rndInt,
-  defaultMissileMode,
-  makeTransformSprite,
+  defaultMissileMode
 } from '../aa.js';
 
 import {
@@ -250,7 +248,7 @@ const Base = options => {
 
   function initBase() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
@@ -260,7 +258,7 @@ const Base = options => {
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
     game.objects.radar.addItem(exports, dom.o.className);

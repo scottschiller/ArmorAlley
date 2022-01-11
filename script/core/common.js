@@ -8,7 +8,7 @@ import {
   setFrameTimeout
 } from '../aa.js';
 
-import { debug, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
+import { debug, debugType, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
 import { GunFire } from '../munitions/GunFire.js'
 import { Shrapnel } from '../elements/Shrapnel.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -106,6 +106,42 @@ const common = {
     exploding: 'exploding',
   },
 
+  makeSprite(options) {
+
+    const o = document.createElement('div');
+  
+    o.className = `sprite ${options.className}`;
+  
+    if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
+      o.style.top = '0px';
+      o.style.left = '0px';
+    }
+  
+    if (debugType) {
+      o.innerHTML = options.className.replace(/sub-sprite/i, '');
+      o.style.fontSize = '3px';
+    }
+  
+    return o;
+  
+  },
+  
+  makeTransformSprite(extraClass) {
+  
+    return common.makeSprite({
+      className: `transform-sprite${extraClass ? ` ${extraClass}` : ''}`
+    });
+  
+  },
+  
+  makeSubSprite(extraClass) {
+  
+    return common.makeSprite({
+      className: `sub-sprite${extraClass ? ` ${extraClass}` : ''}`
+    });
+  
+  },
+  
   updateXY(exports, x, y) {
 
     let didUpdate;

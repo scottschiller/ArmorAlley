@@ -1,14 +1,12 @@
 import {
   game,
   utils,
-  makeSprite,
   FPS,
   bottomAlignedY,
   setFrameTimeout,
   rnd,
   rndInt,
   rad2Deg,
-  makeSubSprite,
   gameType
 } from '../aa.js';
 
@@ -372,11 +370,11 @@ const Turret = options => {
 
   function initTurret() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oSubSprite = makeSubSprite();
+    dom.oSubSprite = common.makeSubSprite();
     dom.o.appendChild(dom.oSubSprite);
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);

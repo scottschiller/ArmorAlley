@@ -1,5 +1,4 @@
 import {
-  makeSprite,
   rndInt,
 } from '../aa.js';
 
@@ -54,7 +53,7 @@ const Cloud = options => {
 
   function initCloud() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

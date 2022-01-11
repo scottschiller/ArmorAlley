@@ -3,7 +3,6 @@ import {
   gamePrefs,
   utils,
   setFrameTimeout,
-  makeSprite,
   missileMode,
   bananaMode,
   rubberChickenMode
@@ -198,7 +197,7 @@ const MissileLauncher = options => {
 
   function initMissileLauncher() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

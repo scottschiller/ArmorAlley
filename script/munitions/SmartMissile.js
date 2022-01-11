@@ -2,7 +2,6 @@ import {
   game,
   utils,
   setFrameTimeout,
-  makeSprite,
   rndInt,
   gameType,
   rad2Deg,
@@ -514,7 +513,7 @@ const SmartMissile = options => {
 
     fragment = document.createDocumentFragment();
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
@@ -522,7 +521,7 @@ const SmartMissile = options => {
       className: css.trailer
     };
 
-    oTrailer = makeSprite(trailerConfig);
+    oTrailer = common.makeSprite(trailerConfig);
 
     // initial placement
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);

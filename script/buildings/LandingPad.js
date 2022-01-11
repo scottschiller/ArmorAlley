@@ -1,7 +1,5 @@
 import {
-  makeSprite,
-  rndInt,
-  makeTransformSprite
+  rndInt
 } from '../aa.js';
 
 import { worldHeight } from '../core/global.js';
@@ -34,11 +32,11 @@ const LandingPad = options => {
 
   function initLandingPad() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);

@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  makeSprite,
   gamePrefs
 } from '../aa.js';
 
@@ -207,7 +206,7 @@ const EndBunker = options => {
 
   function initEndBunker() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

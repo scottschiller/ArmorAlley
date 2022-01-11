@@ -2,9 +2,7 @@ import {
   game,
   gamePrefs,
   utils,
-  setFrameTimeout,
-  makeSprite,
-  makeTransformSprite,
+  setFrameTimeout
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -226,7 +224,7 @@ const Tank = options => {
 
     function initTank() {
 
-      dom.o = makeSprite({
+      dom.o = common.makeSprite({
         className: css.className
       });
 
@@ -234,7 +232,7 @@ const Tank = options => {
         utils.css.add(dom.o, css.enemy);
       }
 
-      dom.oTransformSprite = makeTransformSprite();
+      dom.oTransformSprite = common.makeTransformSprite();
       dom.o.appendChild(dom.oTransformSprite);
 
       // for testing

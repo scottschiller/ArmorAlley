@@ -1,10 +1,8 @@
 import {
   game,
   utils,
-  makeSprite,
   rnd,
-  rndInt,
-  makeTransformSprite
+  rndInt
 } from '../aa.js';
 
 import { common } from '../core/common.js';
@@ -221,12 +219,12 @@ const ParachuteInfantry = options => {
 
   function initParachuteInfantry() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 
     // CSS animation (rotation) gets applied to this element
-    dom.oTransformSprite = makeTransformSprite();
+    dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
     if (data.isEnemy) {

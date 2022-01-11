@@ -1,7 +1,6 @@
 import {
   game,
-  utils,
-  makeSprite
+  utils
 } from '../aa.js';
 
 import {
@@ -170,7 +169,7 @@ const SuperBunker = options => {
 
   function initSuperBunker() {
 
-    dom.o = makeSprite({
+    dom.o = common.makeSprite({
       className: css.className
     });
 

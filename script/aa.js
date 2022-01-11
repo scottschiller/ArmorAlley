@@ -367,49 +367,13 @@ function bottomAlignedY(y) {
 
 }
 
-function makeSprite(options) {
-
-  const o = document.createElement('div');
-
-  o.className = `sprite ${options.className}`;
-
-  if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
-    o.style.top = '0px';
-    o.style.left = '0px';
-  }
-
-  if (debugType) {
-    o.innerHTML = options.className.replace(/sub-sprite/i, '');
-    o.style.fontSize = '3px';
-  }
-
-  return o;
-
-}
-
-function makeTransformSprite(extraClass) {
-
-  return makeSprite({
-    className: `transform-sprite${extraClass ? ` ${extraClass}` : ''}`
-  });
-
-}
-
-function makeSubSprite(extraClass) {
-
-  return makeSprite({
-    className: `sub-sprite${extraClass ? ` ${extraClass}` : ''}`
-  });
-
-}
-
 const layoutCache = {};
 
 function addItem(className, x) {
 
   let node, data, dom, width, height, inCache, exports;
 
-  node = makeSprite({
+  node = common.makeSprite({
     className: `${className} terrain-item`
   });
 
@@ -875,7 +839,6 @@ import {
   isSafari,
   isMobile,
   isiPhone,
-  debugType,
   DEFAULT_VOLUME
 } from './core/global.js';
 
@@ -901,14 +864,11 @@ export {
   gamePrefs,
   utils,
   setFrameTimeout,
-  makeSprite,
-  makeTransformSprite,
   rndInt,
   plusMinus,
   rnd,
   bottomAlignedY,
   gameType,
-  makeSubSprite,
   getNormalizedUnitName,
   missileMode,
   bananaMode,
