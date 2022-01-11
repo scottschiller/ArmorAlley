@@ -21,14 +21,14 @@ const GameLoop = () => {
   let dom;
   let exports;
 
+  // high-use local variables
+  let item, i, gameObjects = game.objects;
+
   const spliceArgs = [null, 1];
 
   function animate() {
 
     // loop through all objects, animate.
-    let item, i;
-    let gameObjects = game.objects;
-
     data.frameCount++;
 
     // there may be sounds from the last frame, ready to go.
@@ -92,8 +92,6 @@ const GameLoop = () => {
 
   function animateRAF(ts) {
 
-    let elapsed;
-
     if (!data.timer) return;
 
     if (!data.fpsTimer) data.fpsTimer = ts;
@@ -107,28 +105,28 @@ const GameLoop = () => {
      */
     window.requestAnimationFrame(animateRAF);
 
-    elapsed = (ts - data.lastExec) || 0;
+    data.elapsed = (ts - data.lastExec) || 0;
 
     /**
      * frame-rate limiting: exit if it isn't approximately time to render the next frame.
      * this still counts as a frame render - we just got here early. Good!
      * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
      */
-    if (!unlimitedFrameRate && elapsed < FRAME_MIN_TIME) return;
+    if (!unlimitedFrameRate && data.elapsed < FRAME_MIN_TIME) return;
 
     // performance debugging: number of style changes (transform) for this frame.
     if (debug) {
       console.log(`transform (style/recalc) count: ${data.transformCount} / ${data.excludeTransformCount} (incl./excl)`);
       data.transformCount = 0;
       data.excludeTransformCount = 0;
-      if (elapsed > 34 && window.console) {
-        const slowString = `slow frame (${Math.floor(elapsed)}ms)`;
+      if (data.elapsed > 34 && window.console) {
+        const slowString = `slow frame (${Math.floor(data.elapsed)}ms)`;
         console.log(slowString);
         if (console.timeStamp) console.timeStamp(slowString);
       }
     }
 
-    data.elapsedTime += elapsed;
+    data.elapsedTime += data.elapsed;
 
     data.lastExec = ts;
 
@@ -165,18 +163,16 @@ const GameLoop = () => {
       dom.fpsCount = document.getElementById('fps-count');
     }
 
-    if (!data.timer) {
+    if (data.timer) return;
 
-      if (window.requestAnimationFrame) {
+    if (window.requestAnimationFrame) {
 
-        data.timer = true;
-        animateRAF();
+      data.timer = true;
+      animateRAF();
 
-      } else {
+    } else {
 
-        data.timer = window.setInterval(animate, FRAMERATE);
-
-      }
+      data.timer = window.setInterval(animate, FRAMERATE);
 
     }
 
@@ -184,12 +180,10 @@ const GameLoop = () => {
 
   function stop() {
 
-    if (data.timer) {
+    if (!data.timer) return;
 
-      data.timer = null;
-      data.lastExec = 0;
-
-    }
+    data.timer = null;
+    data.lastExec = 0;
 
   }
 
@@ -202,11 +196,13 @@ const GameLoop = () => {
   }
 
   function incrementTransformCount(isExclude) {
+
     if (isExclude) {
       data.excludeTransformCount++;
     } else {
       data.transformCount++;
     }
+
   }
 
   function initGameLoop() {
@@ -224,6 +220,7 @@ const GameLoop = () => {
     gameStopped: false,
     frameCount: 0,
     lastExec: 0,
+    elapsed: 0,
     elapsedTime: 0,
     frames: 0,
     lastFrames: 0,
