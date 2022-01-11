@@ -5,7 +5,6 @@ import {
   rnd,
   rndInt,
   debug,
-  addItem,
   prefsManager,
   convoyDelay,
   setConvoyDelay,
@@ -55,7 +54,67 @@ import { LandingPad } from '../buildings/LandingPad.js';
 
 const game = (() => {
 
-  let data, dom, objects, objectConstructors, exports;
+  let data, dom, layoutCache = {}, objects, objectConstructors, exports;
+
+  function addItem(className, x) {
+
+    let node, data, dom, width, height, inCache, exports;
+
+    node = common.makeSprite({
+      className: `${className} terrain-item`
+    });
+
+    if (x) {
+      common.setTransformXY(undefined, node, `${x}px`, '0px');
+    }
+    
+    if (layoutCache[className]) {
+      inCache = true;
+      width = layoutCache[className].width;
+      height = layoutCache[className].height;
+    }
+
+    if (!inCache) {
+      // append only so we can read layout
+      game.dom.world.appendChild(node);
+    }
+
+    data = {
+      type: className,
+      x,
+      y: 0,
+      // dirty / lazy - force layout, read from CSS.
+      width: width || node.offsetWidth,
+      height: height || node.offsetHeight      
+    };
+
+    dom = {
+      o: node
+    };
+
+    // basic structure for a terrain item
+    exports = {
+      data,
+      dom
+    };
+
+    if (!inCache) {
+      // store
+      layoutCache[className] = {
+        width: data.width,
+        height: data.height
+      };
+
+      // and now, remove; these will be re-appended when on-screen only.
+      game.dom.world.removeChild(node);
+    }
+
+    // these will be tracked only for on-screen / off-screen purposes.
+    game.objects.terrainItems.push(exports);
+
+    return node;
+
+  }
 
   function addObject(type, options) {
 
