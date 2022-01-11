@@ -2610,20 +2610,16 @@ import {
   COSTS,
   winloc,
   FRAMERATE,
-  isChrome,
   isFirefox,
   isSafari,
   isMobile,
   isiPhone,
   useDOMPruning,
-  debug,
   debugType,
   DEFAULT_VOLUME,
   rad2Deg,
   worldWidth,
   worldHeight,
-  forceZoom,
-  forceTransform,
   tutorialMode
 } from './core/global.js';
 
