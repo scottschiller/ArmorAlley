@@ -18,7 +18,10 @@ import {
   isFirefox,
   tutorialMode,
   worldWidth,
-  winloc
+  winloc,
+  defaultMissileMode,
+  rubberChickenMode,
+  bananaMode
 } from '../core/global.js';
 
 import { getLandscapeLayout } from '../UI/mobile.js';
@@ -537,6 +540,33 @@ const View = () => {
   
   }
 
+  function renderMissileText(character, mode) {
+
+    if (mode === data.missileMode) return character;
+    return `<span style="opacity:0.5">${character}</span>`;
+
+  }
+
+  function setMissileMode(mode) {
+
+    if (data.missileMode === mode) return;
+    
+    // swap in new class, removing old one
+    utils.css.swap(document.getElementById('world'), data.missileMode, mode);
+
+    data.missileMode = mode;
+
+    // determine which letter to highlight
+    const html = [
+      renderMissileText('X', defaultMissileMode),
+      renderMissileText('C', rubberChickenMode),
+      renderMissileText('B', bananaMode)
+    ].join('<span class="divider">|</span>');
+
+    document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
+
+  }
+
   function addEvents() {
 
     utils.events.add(window, 'resize', events.resize);
@@ -631,7 +661,8 @@ const View = () => {
     marqueeModulus: 1,
     marqueeIncrement: 1,
     maxScroll: 6,
-    usingZoom: null
+    usingZoom: null,
+    missileMode: null
   };
 
   dom = {
@@ -746,6 +777,7 @@ const View = () => {
     setAnnouncement,
     setLeftScroll,
     setLeftScrollToPlayer,
+    setMissileMode,
     updateFundsUI,
     updateScreenScale
   };

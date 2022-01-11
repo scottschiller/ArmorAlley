@@ -1,15 +1,12 @@
 import {
   game,
   gamePrefs,
-  utils,
-  missileMode,
-  bananaMode,
-  rubberChickenMode
+  utils
 } from '../aa.js';
 
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';
-import { FPS } from '../core/global.js';
+import { FPS, bananaMode, rubberChickenMode } from '../core/global.js';
 
 import {
   playSound,
@@ -124,8 +121,8 @@ const MissileLauncher = options => {
     game.objects.smartMissiles.push(SmartMissile({
       parentType: data.type,
       isEnemy: data.isEnemy,
-      isBanana: gamePrefs.enemy_missile_match_type && missileMode === bananaMode,
-      isRubberChicken: gamePrefs.enemy_missile_match_type && missileMode === rubberChickenMode,
+      isBanana: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === bananaMode,
+      isRubberChicken: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === rubberChickenMode,
       x: data.x + (data.width / 2),
       y: data.y,
       target: targetHelicopter

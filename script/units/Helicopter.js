@@ -10,7 +10,6 @@ import {
   trackEnemy,
   plusMinus,
   getLandscapeLayout,
-  missileMode,
   screenScale,
   keyboardMonitor
 } from '../aa.js';
@@ -36,8 +35,17 @@ import {
   playRepairingWrench
 } from '../core/sound.js';
 
+import {
+  collisionCheck,
+  collisionCheckMidPoint,
+  collisionTest,
+  getNearestObject,
+  isGameOver,
+  objectInView,
+  trackObject
+} from '../core/logic.js';
+
 import { common } from '../core/common.js';
-import { collisionCheck, collisionCheckMidPoint, collisionTest, getNearestObject, isGameOver, objectInView, trackObject } from '../core/logic.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { ParachuteInfantry } from './ParachuteInfantry.js';
@@ -1239,8 +1247,8 @@ const Helicopter = options => {
             y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
             target: missileTarget,
             // special variants of the smart missile. ;)
-            isRubberChicken: missileMode === rubberChickenMode && !data.isEnemy,
-            isBanana: missileMode === bananaMode && !data.isEnemy
+            isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && !data.isEnemy,
+            isBanana: game.objects.view.data.missileMode === bananaMode && !data.isEnemy
           }));
           /*eslint-enable no-mixed-operators */
 

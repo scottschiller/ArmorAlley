@@ -257,40 +257,6 @@
 
 */
 
-// TODO: move missile mode bits into game object
-let missileMode;
-
-const defaultMissileMode = null;
-
-// can also be enabled by pressing "C".
-const rubberChickenMode = 'rubber-chicken-mode';
-
-// can also be enabled by pressing "B".
-const bananaMode = 'banana-mode';
-
-function renderMissileText(character, mode) {
-  if (mode === missileMode) return character;
-  return `<span style="opacity:0.5">${character}</span>`;
-}
-
-function setMissileMode(mode) {
-  if (missileMode === mode) return;
-  
-  // swap in new class, removing old one
-  utils.css.swap(document.getElementById('world'), missileMode, mode);
-
-  missileMode = mode;
-
-  // determine which letter to highlight
-  const html = [
-    renderMissileText('X', defaultMissileMode),
-    renderMissileText('C', rubberChickenMode),
-    renderMissileText('B', bananaMode)
-  ].join('<span class="divider">|</span>');
-
-  document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
-}
-
 // TODO: move into view
 let screenScale = 1;
 
@@ -442,14 +408,9 @@ export {
   rnd,
   bottomAlignedY,
   getNormalizedUnitName,
-  missileMode,
-  bananaMode,
-  rubberChickenMode,
-  defaultMissileMode,
   getLandscapeLayout,
   screenScale,
   stats,
   stopEvent,
-  setMissileMode,
   prefsManager
 };

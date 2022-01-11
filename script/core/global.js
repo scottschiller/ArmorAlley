@@ -104,6 +104,16 @@ const forceZoom = !!(winloc.match(/forceZoom/i));
 const forceTransform = !!(winloc.match(/forceTransform/i));
 const tutorialMode = !!(winloc.match(/tutorial/i));
 
+// classic missile style
+const defaultMissileMode = null;
+
+// can also be enabled by pressing "C".
+const rubberChickenMode = 'rubber-chicken-mode';
+
+// can also be enabled by pressing "B".
+const bananaMode = 'banana-mode';
+
+
 export {
   DEFAULT_FUNDS,
   TYPES,
@@ -129,5 +139,8 @@ export {
   worldHeight,
   forceZoom,
   forceTransform,
-  tutorialMode
+  tutorialMode,
+  defaultMissileMode,
+  rubberChickenMode,
+  bananaMode
 };

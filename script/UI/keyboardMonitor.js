@@ -1,12 +1,13 @@
 import { game } from '../aa.js';
 import { utils } from '../core/utils.js';
-import { TYPES } from '../core/global.js';
+import {
+  TYPES,
+  defaultMissileMode,
+  rubberChickenMode,
+  bananaMode
+} from '../core/global.js';
 
 import {
-  setMissileMode,
-  bananaMode,
-  rubberChickenMode,
-  defaultMissileMode,
   stopEvent
 } from '../aa.js';
 
@@ -177,7 +178,7 @@ function KeyboardMonitor() {
       down() {
 
         // heat-seeking banana
-        setMissileMode(bananaMode);
+        game.objects.view.setMissileMode(bananaMode);
 
         game.objects.helicopters[0].setMissileLaunching(true);
 
@@ -197,7 +198,7 @@ function KeyboardMonitor() {
       down() {
 
         // heat-seeking rubber chicken
-        setMissileMode(rubberChickenMode);
+        game.objects.view.setMissileMode(rubberChickenMode);
 
         game.objects.helicopters[0].setMissileLaunching(true);
 
@@ -217,7 +218,7 @@ function KeyboardMonitor() {
       down() {
 
         // standard heat-seeking missile
-        setMissileMode(defaultMissileMode);
+        game.objects.view.setMissileMode(defaultMissileMode);
 
         game.objects.helicopters[0].setMissileLaunching(true);
 
