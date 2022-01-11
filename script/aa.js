@@ -309,8 +309,6 @@ function setConvoyDelay(delay) {
 
 let setFrameTimeout;
 
-let frameTimeoutManager;
-
 let prefsManager = PrefsManager();
 
 let stats;
@@ -428,48 +426,6 @@ function addItem(className, x) {
   return node;
 
 }
-
-/**
- * hooks into main game requestAnimationFrame() loop.
- * calls animate() methods on active FrameTimeout() instances.
- */
-frameTimeoutManager = (() => {
-  let exports;
-  const instances = [];
-  const spliceArgs = [null, 1];
-
-  function addInstance(frameTimeout) {
-    instances.push(frameTimeout);
-  }
-
-  function animate() {
-    if (!instances || !instances.length) return;
-
-    const completed = [];
-
-    for (var i = 0, j = instances.length; i < j; i++) {
-      // do work, and track completion
-      if (instances[i].animate()) {
-        completed.push(instances[i]);
-      }
-    }
-
-    if (completed.length) {
-      for (i=0, j=completed.length; i<j; i++) {
-        spliceArgs[0] = instances.indexOf(completed[i]);
-        Array.prototype.splice.apply(instances, spliceArgs);
-      }
-    }
-    
-  }
-
-  exports = {
-    addInstance,
-    animate
-  };
-
-  return exports;
-})();
 
 setFrameTimeout = (callback, delayMsec) => {
 
@@ -850,6 +806,7 @@ import {
 import { common } from './core/common.js';
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
+import { frameTimeoutManager } from './core/GameLoop.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
 
 import { gamePrefs, prefs, PrefsManager } from './UI/preferences.js';
@@ -879,7 +836,6 @@ export {
   keyboardMonitor,
   screenScale,
   stats,
-  frameTimeoutManager,
   addItem,
   convoyDelay,
   setConvoyDelay,

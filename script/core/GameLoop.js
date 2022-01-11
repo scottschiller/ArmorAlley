@@ -1,7 +1,6 @@
 import {
   gamePrefs,
-  game,
-  frameTimeoutManager,
+  game
 } from '../aa.js';
 
 import {
@@ -244,4 +243,51 @@ const GameLoop = () => {
 
 };
 
-export { GameLoop };
+/**
+ * hooks into main game requestAnimationFrame() loop.
+ * calls animate() methods on active FrameTimeout() instances.
+ */
+ const frameTimeoutManager = (() => {
+
+  let exports;
+  const instances = [];
+  const spliceArgs = [null, 1];
+
+  function addInstance(frameTimeout) {
+    instances.push(frameTimeout);
+  }
+
+  function animate() {
+    if (!instances || !instances.length) return;
+
+    const completed = [];
+
+    for (var i = 0, j = instances.length; i < j; i++) {
+      // do work, and track completion
+      if (instances[i].animate()) {
+        completed.push(instances[i]);
+      }
+    }
+
+    if (completed.length) {
+      for (i=0, j=completed.length; i<j; i++) {
+        spliceArgs[0] = instances.indexOf(completed[i]);
+        Array.prototype.splice.apply(instances, spliceArgs);
+      }
+    }
+    
+  }
+
+  exports = {
+    addInstance,
+    animate
+  };
+
+  return exports;
+
+})();
+
+export {
+  GameLoop,
+  frameTimeoutManager
+};
