@@ -1,6 +1,7 @@
-import { game, utils, rndInt, rnd } from '../aa.js';
-import { TYPES } from '../core/global.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
+import { rndInt, rnd, TYPES } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';

@@ -1,18 +1,9 @@
-import {
-  game,
-  utils
-} from '../aa.js';
-
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 import { TYPES } from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { isGameOver } from '../core/logic.js';
-
 import { MissileLauncher } from '../units/MissileLauncher.js';
 import { Tank } from '../units/Tank.js';
 import { Van } from '../units/Van.js';

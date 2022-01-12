@@ -1,15 +1,7 @@
-import {
-  game,
-  utils
-} from '../aa.js';
-
-import {
-  TYPES,
-  FPS
-} from '../core/global.js';
-
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
+import { TYPES, FPS } from '../core/global.js';
 import { countFriendly, countSides } from '../core/logic.js';
-
 import { TutorialStep } from './TutorialStep.js';
 
 const Tutorial = () => {

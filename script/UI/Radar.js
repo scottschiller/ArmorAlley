@@ -1,16 +1,9 @@
-import { game, screenScale } from '../aa.js';
+import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
+import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-
-import {
-  isFirefox,
-  isSafari,
-  TYPES,
-  winloc,
-  worldWidth
-} from '../core/global.js';
-
+import { isFirefox, isSafari, TYPES, winloc, worldWidth } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { RadarItem } from './RadarItem.js';
 

@@ -1,9 +1,6 @@
-import {
-  game,
-  utils,
-  keyboardMonitor,
-  prefsManager
-} from '../aa.js';
+import { keyboardMonitor, prefsManager } from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 
 import {
   COSTS,

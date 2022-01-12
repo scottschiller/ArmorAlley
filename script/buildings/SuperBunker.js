@@ -1,19 +1,7 @@
-import {
-  game,
-  utils
-} from '../aa.js';
-
-import {
-  TYPES,
-  FPS
-} from '../core/global.js';
-
-import {
-  playSound,
-  playSoundWithDelay,
-  sounds
-} from '../core/sound.js';
-
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
+import { TYPES, FPS } from '../core/global.js';
+import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';

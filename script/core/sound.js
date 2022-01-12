@@ -1,12 +1,7 @@
-import { utils, rndInt, game } from '../aa.js';
+import { utils } from '../core/utils.js';
+import { game } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-
-import {
-  TYPES,
-  worldWidth,
-  DEFAULT_VOLUME
-} from './global.js';
-
+import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
 
 function getSound(soundReference) {

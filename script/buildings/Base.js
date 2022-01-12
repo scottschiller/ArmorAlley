@@ -1,13 +1,11 @@
-import {
-  game,
-  utils,
-  bananaMode,
-  rubberChickenMode,
-  gameType,
-  defaultMissileMode
-} from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
+import { gameType } from '../aa.js';
 
 import {
+  bananaMode,
+  rubberChickenMode,
+  defaultMissileMode,
   FPS,
   rnd,
   rndInt,
@@ -15,12 +13,7 @@ import {
   worldWidth
 } from '../core/global.js';
 
-import {
-  playSound,
-  stopSound,
-  sounds
-} from '../core/sound.js';
-
+import { playSound, stopSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';

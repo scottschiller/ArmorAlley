@@ -1,12 +1,10 @@
-import {
-  game,
-  utils,
-  FPS,
-  rad2Deg,
-  gameType
-} from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
+import { gameType } from '../aa.js';
 
 import {
+  FPS,
+  rad2Deg,
   rnd,
   rndInt,
   TYPES,

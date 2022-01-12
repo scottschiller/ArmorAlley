@@ -1,7 +1,8 @@
-import { game, utils, rad2Deg } from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/global.js';
+import { rad2Deg, plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 

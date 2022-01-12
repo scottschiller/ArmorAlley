@@ -1,27 +1,10 @@
-import {
-  game,
-  utils,
-  rndInt,
-  gameType,
-  rad2Deg,
-  rnd
-} from '../aa.js';
-
+import { gameType } from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-
-import {
-  collisionTest,
-  getNearestObject
-} from '../core/logic.js';
-
-import { TYPES } from '../core/global.js';
-
-import {
-  playSound,
-  stopSound,
-  sounds
-} from '../core/sound.js';
-
+import { collisionTest, getNearestObject } from '../core/logic.js';
+import { rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
+import { playSound, stopSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 
 const SmartMissile = options => {

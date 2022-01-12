@@ -1,7 +1,7 @@
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { isSafari, tutorialMode } from '../core/global.js';
-import { game, screenScale } from '../aa.js';
+import { screenScale } from '../aa.js';
 
 const prefs = {
   // legacy: game type, etc.

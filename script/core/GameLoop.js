@@ -1,4 +1,4 @@
-import { game } from '../aa.js';
+import { game } from './Game.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 import {

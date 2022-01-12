@@ -1,13 +1,7 @@
-import { game, utils } from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-
-import {
-  rnd,
-  rndInt,
-  worldHeight,
-  tutorialMode
-} from '../core/global.js';
-
+import { rnd, rndInt, worldHeight, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Infantry } from './Infantry.js';
 

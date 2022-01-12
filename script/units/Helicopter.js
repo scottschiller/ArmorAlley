@@ -1,15 +1,11 @@
-import {
-  game,
-  utils,
-  bananaMode,
-  rubberChickenMode,
-  gameType,
-  trackEnemy,
-  keyboardMonitor,
-  screenScale
-} from '../aa.js';
+import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
+import { gameType, keyboardMonitor, screenScale } from '../aa.js';
 
 import {
+  trackEnemy,
+  bananaMode,
+  rubberChickenMode,
   debug,
   FPS,
   isiPhone,

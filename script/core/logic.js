@@ -2,20 +2,11 @@
  * collision detection and related game logic / rules
  */
 
- import {
-  game,
-  gameType,
-  utils
-} from '../aa.js';
-
-import {
-  COSTS,
-  TYPES,
-  worldWidth,
-  worldHeight
-} from './global.js';
-
+import { gameType } from '../aa.js';
+import { utils } from './utils.js';
 import { common } from './common.js';
+import { game } from './Game.js';
+import { COSTS, TYPES, worldWidth, worldHeight } from './global.js';
 
  function collisionCheck(point1, point2, point1XLookAhead) {
 

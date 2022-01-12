@@ -1,4 +1,4 @@
-import { utils } from '../aa.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 
 const Notifications = () => {

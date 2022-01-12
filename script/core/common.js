@@ -1,6 +1,6 @@
-import { game, rnd, rndInt } from '../aa.js';
+import { game } from '../core/Game.js';
 import { gamePrefs, PREFS } from '../UI/preferences.js';
-import { debug, debugType, FRAMERATE, plusMinus, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
+import { debug, debugType, FRAMERATE, rnd, rndInt, plusMinus, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { GunFire } from '../munitions/GunFire.js'
 import { Shrapnel } from '../elements/Shrapnel.js';
