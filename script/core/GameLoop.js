@@ -1,7 +1,5 @@
-import {
-  gamePrefs,
-  game
-} from '../aa.js';
+import { game } from '../aa.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 import {
   FRAMERATE,

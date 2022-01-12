@@ -1,9 +1,7 @@
 import {
   game,
   utils,
-  screenScale,
   keyboardMonitor,
-  setScreenScale,
   prefsManager
 } from '../aa.js';
 
@@ -40,7 +38,7 @@ const View = () => {
     const allowOverride = true;
     let x;
 
-    x = helicopter.data.x + (helicopter.data.width * (1 / screenScale)) - game.objects.view.data.browser.halfWidth;
+    x = helicopter.data.x + (helicopter.data.width * (1 / data.screenScale)) - game.objects.view.data.browser.halfWidth;
 
     setLeftScroll(x, allowOverride);
   }
@@ -75,8 +73,8 @@ const View = () => {
 
     applyScreenScale();
 
-    data.browser.width = (window.innerWidth || document.body.clientWidth) / screenScale;
-    data.browser.height = (window.innerHeight || document.body.clientHeight) / screenScale;
+    data.browser.width = (window.innerWidth || document.body.clientWidth) / data.screenScale;
+    data.browser.height = (window.innerHeight || document.body.clientHeight) / data.screenScale;
 
     data.browser.eighthWidth = data.browser.width / 8;
     data.browser.fractionWidth = data.browser.width / 3;
@@ -87,7 +85,7 @@ const View = () => {
     data.world.height = dom.worldWrapper.offsetHeight;
 
     data.world.x = 0;
-    data.world.y = dom.worldWrapper.offsetTop / screenScale;
+    data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
     if (!data.battleField.width) {
       // dimensions assumed to be static, can be grabbed once
@@ -461,11 +459,11 @@ const View = () => {
     // for testing game without any scaling applied
     if (disableScaling) {
   
-      setScreenScale(1);
+      data.screenScale = 1;
   
     } else {
   
-      setScreenScale(innerHeight / localWorldHeight);
+      data.screenScale = (innerHeight / localWorldHeight);
   
     }
   
@@ -515,11 +513,11 @@ const View = () => {
   
       data.usingZoom = false;
   
-      wrapper.style.marginTop = `${-((406 / 2) * screenScale)}px`;
-      wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / screenScale))}px`;
+      wrapper.style.marginTop = `${-((406 / 2) * data.screenScale)}px`;
+      wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / data.screenScale))}px`;
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
-      wrapper.style.transform = `scale3d(${screenScale}, ${screenScale}, 1)`;
+      wrapper.style.transform = `scale3d(${data.screenScale}, ${data.screenScale}, 1)`;
       wrapper.style.transformOrigin = '0px 0px';
   
     } else {
@@ -532,7 +530,7 @@ const View = () => {
   
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
-      document.getElementById('aa').style.zoom = `${screenScale * 100}%`;
+      document.getElementById('aa').style.zoom = `${data.screenScale * 100}%`;
   
     }
   
@@ -661,8 +659,9 @@ const View = () => {
     marqueeModulus: 1,
     marqueeIncrement: 1,
     maxScroll: 6,
+    missileMode: null,
+    screenScale: 1,
     usingZoom: null,
-    missileMode: null
   };
 
   dom = {
@@ -694,8 +693,8 @@ const View = () => {
 
     mousemove(e) {
       if (!data.ignoreMouseEvents) {
-        data.mouse.x = e.clientX / screenScale;
-        data.mouse.y = e.clientY / screenScale;
+        data.mouse.x = e.clientX / data.screenScale;
+        data.mouse.y = e.clientY / data.screenScale;
       }
     },
 

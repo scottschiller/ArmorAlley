@@ -113,7 +113,6 @@ const rubberChickenMode = 'rubber-chicken-mode';
 // can also be enabled by pressing "B".
 const bananaMode = 'banana-mode';
 
-
 export {
   DEFAULT_FUNDS,
   TYPES,

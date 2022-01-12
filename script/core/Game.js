@@ -1,10 +1,4 @@
-import {
-  gamePrefs,
-  rnd,
-  rndInt,
-  debug,
-  prefsManager
-} from '../aa.js';
+import { prefsManager, rnd, rndInt, debug } from '../aa.js';
 
 import {
   isFirefox,
@@ -21,7 +15,7 @@ import {
 import { utils } from './utils.js';
 import { common } from './common.js';
 
-import { prefs } from '../UI/preferences.js';
+import { gamePrefs, prefs } from '../UI/preferences.js';
 import { orientationChange } from '../UI/mobile.js';
 
 import {
@@ -55,8 +49,9 @@ import { Engineer } from '../units/Engineer.js';
 import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
 
-// a very commonly-accessed attribute
+// very commonly-accessed attributes to be exported
 let gameType;
+let screenScale = 1;
 
 const game = (() => {
 
@@ -161,6 +156,9 @@ const game = (() => {
     objects.queue = Queue();
 
     objects.view = View();
+
+    // hackish: now, assign the thing being exported from this module to everywhere else via `aa.js`
+    screenScale = objects.view.data.screenScale;
 
     // allow joystick if in debug mode (i.e., testing on desktop)
     if (isMobile || debug) {
@@ -1365,4 +1363,4 @@ const game = (() => {
 
 })();
 
-export { game, gameType };
+export { game, gameType, screenScale };

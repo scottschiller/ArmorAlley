@@ -2,11 +2,10 @@ import {
   game,
   rnd,
   rndInt,
-  plusMinus,
-  gamePrefs,
-  PREFS
+  plusMinus
 } from '../aa.js';
 
+import { gamePrefs, PREFS } from '../UI/preferences.js';
 import { debug, debugType, FRAMERATE, rad2Deg, TYPES, useDOMPruning, winloc } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { GunFire } from '../munitions/GunFire.js'

@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  gamePrefs,
   bananaMode,
   rubberChickenMode,
   gameType,
@@ -10,20 +9,20 @@ import {
   trackEnemy,
   plusMinus,
   getLandscapeLayout,
-  screenScale,
-  keyboardMonitor
+  keyboardMonitor,
+  screenScale
 } from '../aa.js';
 
 import {
+  debug,
   FPS,
-  tutorialMode,
-  worldWidth,
-  worldHeight,
-  TYPES,
-  isMobile,
   isiPhone,
+  isMobile,
+  tutorialMode,
+  TYPES,
   winloc,
-  debug
+  worldWidth,
+  worldHeight
 } from '../core/global.js';
 
 import {
@@ -46,6 +45,7 @@ import {
 } from '../core/logic.js';
 
 import { common } from '../core/common.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { ParachuteInfantry } from './ParachuteInfantry.js';

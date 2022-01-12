@@ -1,7 +1,6 @@
 import {
   game,
   utils,
-  gamePrefs,
   bananaMode,
   rubberChickenMode,
   gameType,
@@ -22,9 +21,9 @@ import {
   sounds
 } from '../core/sound.js';
 
+import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
-
 import { SmartMissile } from '../munitions/SmartMissile.js';
 
 const Base = options => {

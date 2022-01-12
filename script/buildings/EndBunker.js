@@ -1,8 +1,4 @@
-import {
-  game,
-  utils,
-  gamePrefs
-} from '../aa.js';
+import { game, utils } from '../aa.js';
 
 import {
   DEFAULT_FUNDS,
@@ -13,15 +9,10 @@ import {
   FPS
 } from '../core/global.js';
 
+import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
-
 import { GunFire } from '../munitions/GunFire.js';
 
 const EndBunker = options => {

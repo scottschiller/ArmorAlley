@@ -1,18 +1,16 @@
-import {
-  game,
-  gamePrefs,
-  utils
-} from '../aa.js';
-
+import { game, utils } from '../aa.js';
 import { common } from '../core/common.js';
-import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';
 import { FPS, bananaMode, rubberChickenMode } from '../core/global.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 import {
-  playSound,
-  sounds
-} from '../core/sound.js';
+  enemyHelicopterNearby,
+  nearbyTest,
+  objectInView,
+  recycleTest
+} from '../core/logic.js';
 
+import { playSound, sounds } from '../core/sound.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 
 const MissileLauncher = options => {

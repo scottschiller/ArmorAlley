@@ -1,9 +1,5 @@
-import {
-  utils,
-  gamePrefs,
-  rndInt,
-  game
-} from '../aa.js';
+import { utils, rndInt, game } from '../aa.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 import {
   TYPES,

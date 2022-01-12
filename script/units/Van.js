@@ -1,10 +1,6 @@
-import {
-  game,
-  utils,
-  gamePrefs,
-} from '../aa.js';
-
+import { game, utils } from '../aa.js';
 import { common } from '../core/common.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
 
 import {
@@ -14,10 +10,7 @@ import {
   tutorialMode
 } from '../core/global.js';
 
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
+import { playSound, sounds } from '../core/sound.js';
 
 const Van = options => {
 

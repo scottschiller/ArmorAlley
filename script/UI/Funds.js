@@ -1,19 +1,7 @@
-import {
-  utils,
-  screenScale
-} from '../aa.js';
-
-import {
-  isChrome,
-  isFirefox
-} from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
-import { DEFAULT_FUNDS } from '../core/global.js';
+import { utils } from '../core/utils.js';
+import { playSound, sounds } from '../core/sound.js';
+import { screenScale } from '../core/Game.js';
+import { DEFAULT_FUNDS, isChrome, isFirefox } from '../core/global.js';
 
 const Funds = () => {
 

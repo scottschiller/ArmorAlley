@@ -1,22 +1,9 @@
-import {
-  game,
-  gamePrefs,
-  utils
-} from '../aa.js';
-
+import { game, utils } from '../aa.js';
 import { common } from '../core/common.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheck, nearbyTest, recycleTest } from '../core/logic.js';
-
-import {
-  TYPES,
-  FPS
-} from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { TYPES, FPS } from '../core/global.js';
+import { playSound, sounds } from '../core/sound.js';
 import { GunFire } from '../munitions/GunFire.js'
 
 const Tank = options => {

@@ -257,9 +257,6 @@
 
 */
 
-// TODO: move into view
-let screenScale = 1;
-
 const prefsManager = PrefsManager();
 
 const keyboardMonitor = KeyboardMonitor();
@@ -267,10 +264,6 @@ const keyboardMonitor = KeyboardMonitor();
 keyboardMonitor.init();
 
 let stats;
-
-function setScreenScale(scale) {
-  screenScale = scale;
-}
 
 function stopEvent(e) {
 
@@ -382,27 +375,24 @@ import {
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
-import { gamePrefs, prefs, PrefsManager } from './UI/preferences.js';
 
-// TODO: review. This method may be more DRY.
-export { gameType } from './core/Game.js';
-export { PREFS } from './UI/preferences.js';
+import { prefs, PrefsManager } from './UI/preferences.js';
+
+// a few hot globals
+export { gameType, screenScale } from './core/Game.js';
 
 export * from './core/global.js';
 
 export {
   keyboardMonitor,
-  setScreenScale,
   game,
-  gamePrefs,
   utils,
   rndInt,
   plusMinus,
   rnd,
   getNormalizedUnitName,
   getLandscapeLayout,
-  screenScale,
+  prefsManager,
   stats,
-  stopEvent,
-  prefsManager
+  stopEvent
 };
