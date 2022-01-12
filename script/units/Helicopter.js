@@ -111,14 +111,14 @@ const Helicopter = options => {
 
     if (data.fuel < 33 && data.fuel > 32) {
 
-      text = 'Low fuel ⛽🤏⚠️';
+      text = 'Low fuel ⛽ 🤏 ⚠️';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
 
     } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
-      text = 'Fuel critical ⛽🤏😱';
+      text = 'Fuel critical ⛽ 🤏 😱';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -1321,7 +1321,7 @@ const Helicopter = options => {
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement('No pilot');
-        game.objects.notifications.add('No pilot!? 😱☠️');
+        game.objects.notifications.add('No pilot!? 😱 ☠️');
       }
 
       data.pilot = false;

@@ -77,19 +77,19 @@ const EndBunker = options => {
     if (!tutorialMode) {
       if (data.isEnemy) {
         if (!capturedFunds) {
-          game.objects.notifications.add('🏦🏴‍☠️🤷 Your engineer captured 0 enemy funds. 😒 Good effort, though.');
+          game.objects.notifications.add('🏦 🏴‍☠️ 🤷 Your engineer captured 0 enemy funds. 😒 Good effort, though.');
         } else {
           if (allFunds) {
-            game.objects.notifications.add(`🏦🏴‍☠️💰 Your engineer captured all ${capturedFunds}${capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'}`);
+            game.objects.notifications.add(`🏦 🏴‍☠️ 💰 Your engineer captured all ${capturedFunds}${capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'}`);
           } else {
-            game.objects.notifications.add(`🏦🏴‍☠️💸 ${capturedFunds} enemy ${capturedFunds > 1 ? ' funds' : ' fund'} captured! 💰`);
+            game.objects.notifications.add(`🏦 🏴‍☠️ 💸 ${capturedFunds} enemy ${capturedFunds > 1 ? ' funds' : ' fund'} captured! 💰`);
           }
         }
       } else {
         if (allFunds) {
-          game.objects.notifications.add('🏦🏴‍☠️💸 The enemy\'s engineer captured all of your funds. 😱');
+          game.objects.notifications.add('🏦 🏴‍☠️ 💸 The enemy\'s engineer captured all of your funds. 😱');
         } else {
-          game.objects.notifications.add(`🏦🏴‍☠️💸 The enemy captured ${capturedFunds} of your funds. 😨`);
+          game.objects.notifications.add(`🏦 🏴‍☠️ 💸 The enemy captured ${capturedFunds} of your funds. 😨`);
         }
       }
     }

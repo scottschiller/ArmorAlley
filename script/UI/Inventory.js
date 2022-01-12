@@ -162,7 +162,7 @@ const Inventory = () => {
         playSound(sounds.inventory.denied);
       }
 
-      game.objects.notifications.add('%s1%s2: %c1/%c2 💰🤏🤷', {
+      game.objects.notifications.add('%s1%s2: %c1/%c2 💰 🤏 🤷', {
         type: 'NSF',
         onRender(input) {
           // hack: special-case missile launcher
