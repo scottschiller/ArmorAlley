@@ -1,28 +1,10 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-
-import {
-  FPS,
-  rad2Deg,
-  rnd,
-  rndInt,
-  TYPES,
-  tutorialMode
-} from '../core/global.js';
-
-import {
-  playSound,
-  stopSound,
-  playSoundWithDelay,
-  playRepairingWrench,
-  playTinkerWrench,
-  sounds
-} from '../core/sound.js';
-
+import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode } from '../core/global.js';
+import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
-
 import { GunFire } from '../munitions/GunFire.js';
 
 const Turret = options => {

@@ -1,30 +1,10 @@
-import { prefsManager, debug } from '../aa.js';
-
-import {
-  isFirefox,
-  isSafari,
-  isMobile,
-  isiPhone,
-  rnd,
-  rndInt,
-  TYPES,
-  tutorialMode,
-  winloc,
-  worldWidth,
-  worldHeight
-} from './global.js';
-
+import { prefsManager } from '../aa.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, rnd, rndInt, TYPES, tutorialMode, winloc, worldWidth, worldHeight } from './global.js';
 import { utils } from './utils.js';
 import { common } from './common.js';
-
 import { gamePrefs, prefs } from '../UI/preferences.js';
 import { orientationChange } from '../UI/mobile.js';
-
-import {
-  playSound,
-  sounds
-} from './sound.js';
-
+import { playSound, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
 import { Joystick} from '../UI/Joystick.js';
 import { View } from '../UI/View.js';
@@ -35,7 +15,6 @@ import { Notifications } from '../UI/Notifications.js';
 import { Queue } from './Queue.js';
 import { GameLoop } from './GameLoop.js';
 import { Funds } from '../UI/Funds.js';
-
 import { Tank } from '../units/Tank.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Bunker } from '../buildings/Bunker.js';

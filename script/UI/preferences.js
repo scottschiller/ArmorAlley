@@ -1,4 +1,5 @@
 import { utils } from '../core/utils.js';
+import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { isSafari, tutorialMode } from '../core/global.js';
 import { screenScale } from '../aa.js';

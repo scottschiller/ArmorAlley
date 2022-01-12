@@ -1,8 +1,4 @@
-import {
-  rndInt
-} from '../aa.js';
-
-import { worldHeight } from '../core/global.js';
+import { rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 
@@ -11,9 +7,7 @@ const LandingPad = options => {
   let css, dom, data, collision, exports;
 
   function animate() {
-
     collisionTest(collision, exports);
-
   }
 
   function isOnScreenChange(isOnScreen) {
@@ -22,12 +16,14 @@ const LandingPad = options => {
   }
 
   function setWelcomeMessage() {
+
     let eat, drink;
 
     eat = data.edible[rndInt(data.edible.length)];
     drink = data.drinkable[rndInt(data.drinkable.length)];
 
     data.welcomeMessage = `-* 🚁 Welcome to ${data.name}${' ⛽🛠️ *-<br>Today\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat)}`;
+
   }
 
   function initLandingPad() {

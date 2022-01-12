@@ -1,18 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-
-import {
-  bananaMode,
-  rubberChickenMode,
-  defaultMissileMode,
-  FPS,
-  rnd,
-  rndInt,
-  tutorialMode,
-  worldWidth
-} from '../core/global.js';
-
+import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';

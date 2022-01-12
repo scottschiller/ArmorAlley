@@ -1,13 +1,6 @@
 import { game } from './Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-
-import {
-  FRAMERATE,
-  unlimitedFrameRate,
-  FRAME_MIN_TIME,
-  debug
-} from '../core/global.js';
-
+import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';

@@ -330,7 +330,4 @@ import { prefs, PrefsManager } from './UI/preferences.js';
 // a few hot globals
 export { gameType, screenScale } from './core/Game.js';
 
-// ... and the rest
-export * from './core/global.js';
-
 export { keyboardMonitor, prefsManager, stats };

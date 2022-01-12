@@ -1,12 +1,4 @@
-import {
-  rndInt,
-} from '../aa.js';
-
-import {
-  worldWidth,
-  worldHeight
-} from '../core/global.js';
-
+import { rndInt, worldWidth, worldHeight } from '../core/global.js';
 import { common } from '../core/common.js';
 
 const Cloud = options => {

@@ -1,12 +1,6 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-
-import {
-  TYPES,
-  defaultMissileMode,
-  rubberChickenMode,
-  bananaMode
-} from '../core/global.js';
+import { TYPES, defaultMissileMode, rubberChickenMode, bananaMode } from '../core/global.js';
 
 // recycled from survivor.js
 function KeyboardMonitor() {

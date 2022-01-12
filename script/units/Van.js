@@ -3,14 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
-
-import {
-  TYPES,
-  winloc,
-  FPS,
-  tutorialMode
-} from '../core/global.js';
-
+import { TYPES, winloc, FPS, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 
 const Van = options => {

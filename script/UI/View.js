@@ -1,6 +1,8 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
+import { getLandscapeLayout } from '../UI/mobile.js';
+import { common } from '../core/common.js';
 
 import {
   COSTS,
@@ -18,10 +20,6 @@ import {
   rubberChickenMode,
   bananaMode
 } from '../core/global.js';
-
-import { getLandscapeLayout } from '../UI/mobile.js';
-
-import { common } from '../core/common.js';
 
 const View = () => {
 

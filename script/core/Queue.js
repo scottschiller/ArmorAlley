@@ -1,7 +1,4 @@
-import {
-  FPS,
-  debug
-} from '../core/global.js';
+import { FPS, debug } from '../core/global.js';
 
 const Queue = () => {
 

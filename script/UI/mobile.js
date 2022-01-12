@@ -1,5 +1,4 @@
 // phones, tablets and non-desktop-type devices
-
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 
