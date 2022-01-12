@@ -7,10 +7,6 @@ import {
   bananaMode
 } from '../core/global.js';
 
-import {
-  stopEvent
-} from '../aa.js';
-
 // recycled from survivor.js
 function KeyboardMonitor() {
 
@@ -285,7 +281,19 @@ function KeyboardMonitor() {
 
   }
 
-  // init?
+  function stopEvent(e) {
+
+    const evt = e || window.event;
+  
+    if (evt.preventDefault !== undefined) {
+      evt.preventDefault();
+    } else {
+      evt.cancelBubble = true;
+    }
+  
+    return false;
+  
+  }  
 
   function initKeyboardMonitor() {
 

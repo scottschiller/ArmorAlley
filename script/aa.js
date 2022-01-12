@@ -265,20 +265,6 @@ keyboardMonitor.init();
 
 let stats;
 
-function stopEvent(e) {
-
-  const evt = e || window.event;
-
-  if (evt.preventDefault !== undefined) {
-    evt.preventDefault();
-  } else {
-    evt.cancelBubble = true;
-  }
-
-  return false;
-
-}
-
 // used by the "exit [game type]" link
 window.aa = {
 
@@ -362,6 +348,5 @@ export {
   utils,
   getLandscapeLayout,
   prefsManager,
-  stats,
-  stopEvent
+  stats
 };
