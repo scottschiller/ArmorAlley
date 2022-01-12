@@ -2,13 +2,13 @@ import {
   game,
   utils,
   FPS,
-  rnd,
-  rndInt,
   rad2Deg,
   gameType
 } from '../aa.js';
 
 import {
+  rnd,
+  rndInt,
   TYPES,
   tutorialMode
 } from '../core/global.js';

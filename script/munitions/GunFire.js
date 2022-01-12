@@ -1,19 +1,9 @@
-import {
-  game,
-  utils,
-  rndInt,
-  plusMinus,
-  rnd
-} from '../aa.js';
-
+import { game } from '../aa.js';
+import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { TYPES } from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
+import { rndInt, plusMinus, rnd, TYPES } from '../core/global.js';
+import { playSound, sounds } from '../core/sound.js';
 
 const GunFire = options => {
 

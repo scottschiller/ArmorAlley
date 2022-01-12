@@ -1,21 +1,6 @@
-import {
-  game,
-  utils,
-  gameType,
-  rndInt,
-  plusMinus
-} from '../aa.js';
-
-import {
-  worldWidth,
-  TYPES
-} from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { game, utils, gameType, rndInt } from '../aa.js';
+import { plusMinus, worldWidth, TYPES } from '../core/global.js';
+import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 
 const Balloon = options => {

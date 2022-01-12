@@ -1,24 +1,8 @@
-import {
-  game,
-  utils,
-  rnd,
-  rndInt,
-  plusMinus
-} from '../aa.js';
-
+import { game, utils } from '../aa.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-
-import {
-  TYPES,
-  worldHeight
-} from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
+import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 
 const Shrapnel = options => {

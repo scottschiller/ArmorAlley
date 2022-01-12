@@ -279,33 +279,6 @@ function stopEvent(e) {
 
 }
 
-function rnd(number) {
-  return Math.random() * number;
-}
-
-function rndInt(number) {
-  return parseInt(rnd(number), 10);
-}
-
-function plusMinus() {
-  return Math.random() >= 0.5 ? 1 : -1;
-}
-
-function getNormalizedUnitName(item) {
-  if (!item || !item.data) return;
-
-  // gunfire has `parentType`, e.g., fired from a tank
-  let type = item.data.parentType || item.data.type;
-
-  if (!type) return;
-
-  // hackish: fixes
-  type = type.replace('missileLauncher', 'missile launcher');
-  type = type.replace('-', ' ');
-
-  return type;
-}
-
 // used by the "exit [game type]" link
 window.aa = {
 
@@ -387,10 +360,6 @@ export {
   keyboardMonitor,
   game,
   utils,
-  rndInt,
-  plusMinus,
-  rnd,
-  getNormalizedUnitName,
   getLandscapeLayout,
   prefsManager,
   stats,

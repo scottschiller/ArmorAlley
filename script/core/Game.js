@@ -1,10 +1,12 @@
-import { prefsManager, rnd, rndInt, debug } from '../aa.js';
+import { prefsManager, debug } from '../aa.js';
 
 import {
   isFirefox,
   isSafari,
   isMobile,
   isiPhone,
+  rnd,
+  rndInt,
   TYPES,
   tutorialMode,
   winloc,

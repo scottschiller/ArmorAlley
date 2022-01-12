@@ -1,22 +1,14 @@
-import {
-  game,
-  utils,
-  rnd,
-  rndInt
-} from '../aa.js';
-
+import { game, utils } from '../aa.js';
 import { common } from '../core/common.js';
 
 import {
+  rnd,
+  rndInt,
   worldHeight,
   tutorialMode
 } from '../core/global.js';
 
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { playSound, sounds } from '../core/sound.js';
 import { Infantry } from './Infantry.js';
 
 const ParachuteInfantry = options => {

@@ -1,4 +1,4 @@
-// oft-referenced constants.
+// oft-referenced constants, and a few simple methods.
 
 const DEFAULT_FUNDS = window.location.toString().match(/FUNDS/i) ? 999 : 32;
 
@@ -113,6 +113,20 @@ const rubberChickenMode = 'rubber-chicken-mode';
 // can also be enabled by pressing "B".
 const bananaMode = 'banana-mode';
 
+// methods which prefer brevity, vs. being tacked onto `common` or `utils`
+
+function rnd(number) {
+  return Math.random() * number;
+}
+
+function rndInt(number) {
+  return parseInt(rnd(number), 10);
+}
+
+function plusMinus() {
+  return Math.random() >= 0.5 ? 1 : -1;
+}
+
 export {
   DEFAULT_FUNDS,
   TYPES,
@@ -141,5 +155,8 @@ export {
   tutorialMode,
   defaultMissileMode,
   rubberChickenMode,
-  bananaMode
+  bananaMode,
+  rnd,
+  rndInt,
+  plusMinus
 };

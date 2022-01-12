@@ -1,25 +1,8 @@
-import {
-  game,
-  utils,
-  rnd,
-  rndInt,
-  rad2Deg,
-  plusMinus
-} from '../aa.js';
-
+import { game, utils, rad2Deg } from '../aa.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-
-import {
-  worldHeight,
-  TYPES
-} from '../core/global.js';
-
-import {
-  playSound,
-  sounds
-} from '../core/sound.js';
-
+import { plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/global.js';
+import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 
 const Bomb = options => {

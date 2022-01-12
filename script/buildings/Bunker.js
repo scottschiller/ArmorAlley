@@ -1,21 +1,8 @@
-import {
-  game,
-  utils,
-  rndInt,
-  getNormalizedUnitName,
-  rnd,
-} from '../aa.js';
-
+import { game, utils, rndInt, rnd } from '../aa.js';
 import { TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
-
-import {
-  playSound,
-  playSoundWithDelay,
-  sounds
-} from '../core/sound.js';
-
+import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Chain } from '../elements/Chain.js';
 
@@ -148,6 +135,21 @@ const Bunker = options => {
     }
 
   }
+
+  function getNormalizedUnitName(item) {
+    if (!item || !item.data) return;
+  
+    // gunfire has `parentType`, e.g., fired from a tank
+    let type = item.data.parentType || item.data.type;
+  
+    if (!type) return;
+  
+    // hackish: fixes
+    type = type.replace('missileLauncher', 'missile launcher');
+    type = type.replace('-', ' ');
+  
+    return type;
+  }  
 
   function die(options) {
 

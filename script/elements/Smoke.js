@@ -1,9 +1,4 @@
-import {
-  rndInt,
-  rnd,
-  plusMinus
-} from '../aa.js';
-
+import { rnd, rndInt, plusMinus } from '../core/global.js';
 import { common } from '../core/common.js';
 
 const Smoke = options => {

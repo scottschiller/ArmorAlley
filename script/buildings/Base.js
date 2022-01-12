@@ -4,13 +4,13 @@ import {
   bananaMode,
   rubberChickenMode,
   gameType,
-  rnd,
-  rndInt,
   defaultMissileMode
 } from '../aa.js';
 
 import {
   FPS,
+  rnd,
+  rndInt,
   tutorialMode,
   worldWidth
 } from '../core/global.js';
