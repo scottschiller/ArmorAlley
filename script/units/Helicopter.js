@@ -5,7 +5,6 @@ import {
   rubberChickenMode,
   gameType,
   trackEnemy,
-  getLandscapeLayout,
   keyboardMonitor,
   screenScale
 } from '../aa.js';
@@ -46,7 +45,7 @@ import {
 
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
-
+import { getLandscapeLayout } from '../UI/mobile.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { ParachuteInfantry } from './ParachuteInfantry.js';
 import { Infantry } from './Infantry.js';

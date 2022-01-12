@@ -321,20 +321,11 @@ window.addEventListener('DOMContentLoaded', game.initArmorAlley);
 // --- THE END ---
 
 // TODO: clean up local references to this stuff.
-import {
-  winloc,
-  isSafari,
-  DEFAULT_VOLUME
-} from './core/global.js';
-
-import {
-  getLandscapeLayout
-} from './UI/mobile.js';
+import { winloc, isSafari, DEFAULT_VOLUME } from './core/global.js';
 
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
-
 import { prefs, PrefsManager } from './UI/preferences.js';
 
 // a few hot globals
@@ -346,7 +337,6 @@ export {
   keyboardMonitor,
   game,
   utils,
-  getLandscapeLayout,
   prefsManager,
   stats
 };

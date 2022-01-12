@@ -401,9 +401,6 @@ const View = () => {
     return false;
   }
 
-  // import { disableScaling }
-  // import getLandscapeLayout, 
-
   function updateScreenScale() {
 
     if (disableScaling) return;
