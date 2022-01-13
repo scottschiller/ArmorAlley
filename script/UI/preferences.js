@@ -289,7 +289,7 @@ function PrefsManager() {
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
-      if (value !== undefined) {
+      if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
     });
