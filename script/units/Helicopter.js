@@ -1203,7 +1203,7 @@ const Helicopter = options => {
         }));
 
         if (sounds.bombHatch) {
-          playSound(sounds.bombHatch);
+          playSound(sounds.bombHatch, exports);
         }
 
         data.bombs = Math.max(0, data.bombs - 1);
@@ -2299,7 +2299,7 @@ const Helicopter = options => {
           noInitialSmoke: true
         });
 
-        playSound(sounds.genericExplosion);
+        playSound(sounds.genericExplosion, exports);
 
         for (let i = 0; i < 2; i++) {
           common.smokeRing({ data: args }, {
