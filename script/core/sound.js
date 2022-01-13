@@ -4,6 +4,10 @@ import { gamePrefs } from '../UI/preferences.js';
 import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
 
+let soundIDs = 0;
+let soundIDsToPlay = {};
+const soundsToPlay = [];
+
 function getSound(soundReference) {
 
   if (!gamePrefs.sound) return;
@@ -70,11 +74,10 @@ function getSound(soundReference) {
 
 }
 
-var soundIDs = 0;
-
-const soundsToPlay = [];
-
 function playQueuedSounds() {
+
+  if (!soundsToPlay.length) return;
+
   // empty queue
   for (let i = 0, j = soundsToPlay.length; i < j; i++) {
     if (soundsToPlay[i]?.soundObject?.sound) {
@@ -88,6 +91,8 @@ function playQueuedSounds() {
 
   // reset, instead of creating a new array object
   soundsToPlay.length = 0;
+  soundIDsToPlay = {};
+
 }
 
 function getVolumeFromDistance(source, chopper) {
@@ -127,6 +132,7 @@ function getPanFromLocation(source, chopper) {
 
 function playSound(soundReference, target, soundOptions) {
 
+
   const soundObject = getSound(soundReference);
   let localOptions;
   let onScreen;
@@ -160,10 +166,18 @@ function playSound(soundReference, target, soundOptions) {
 
   // 01/2021: push sound calls off to next frame to be played in a batch,
   // trade-off of slight async vs. blocking(?) current frame
-  soundsToPlay.push({
-    soundObject,
-    localOptions
-  });
+  // 01/2022: only play if not already queued.
+
+  if (!soundIDsToPlay[soundObject.sound.id]) {
+
+    soundIDsToPlay[soundObject.sound.id] = true;
+
+    soundsToPlay.push({
+      soundObject,
+      localOptions
+    });
+
+  }
 
   return soundObject.sound;
 
