@@ -1852,6 +1852,14 @@ function SoundManager(smURL, smID) {
 
           s._a.pause();
 
+          if (s.source) {
+            s.source.disconnect();
+            s.source = null;
+            s.biquadFilter = null;
+            s.gainNode = null;
+            s.panNode = null;
+          }
+
           html5Unload(s._a);
           
           if (!useGlobalHTML5Audio) {
@@ -2543,8 +2551,26 @@ function SoundManager(smURL, smID) {
       }
 
       if (!s.isHTML5) {
+
         flash._setPan(s.id, nPan);
-      } // else { no HTML5 pan? }
+
+      } else {
+
+        if (s.panNode && s._lastPan !== nPan) {
+
+          s.panNode.pan.value = nPan;
+          s._lastPan == nPan;
+
+          // ARMOR ALLEY prototype / feature hack
+          if (s.biquadFilter) {
+            // sounds further away get more of a low-pass filter applied.
+            var filterFreq = Math.min(22050, Math.max(1000, 22050 - (22050 * Math.abs(nPan) * 2)));
+            s.biquadFilter.frequency.setValueAtTime(nPan === 0 ? 22050 : filterFreq, audioContext.currentTime);
+          }
+
+        }
+
+      }
 
       s._iO.pan = nPan;
 
@@ -2573,6 +2599,8 @@ function SoundManager(smURL, smID) {
        * http://developer.apple.com/library/safari/documentation/AudioVideo/Conceptual/HTML-canvas-guide/AddingSoundtoCanvasAnimations/AddingSoundtoCanvasAnimations.html
        */
 
+      var newVol;
+
       if (nVol === _undefined) {
         nVol = 100;
       }
@@ -2592,8 +2620,22 @@ function SoundManager(smURL, smID) {
           s._a.muted = true;
         }
 
-        // valid range for native HTML5 Audio(): 0-1
-        s._a.volume = Math.max(0, Math.min(1, nVol/100));
+        if (s.gainNode) {
+
+          // valid range for Web Audio API gainNode: 0 - 2.
+          newVol = Math.max(0, Math.min(2, nVol/100));
+
+          if (s._lastVolume !== newVol) {
+            s.gainNode.gain.value = newVol;
+            s._lastVolume = newVol;
+          }
+
+        } else {
+
+          // valid range for native HTML5 Audio(): 0-1
+          s._a.volume = Math.max(0, Math.min(1, nVol/100));
+
+        }
 
       }
 
@@ -3117,6 +3159,35 @@ function SoundManager(smURL, smID) {
 
           // null for stupid Opera 9.64 case
           s._a = (isOpera && opera.version() < 10 ? new Audio(null) : new Audio());
+
+        }
+
+        // ARMOR ALLEY prototype feature: Web Audio API gain + filter + pan nodes.
+        if (audioContext) {
+
+          // volume [0...2 = 0% - 200%] + panning (where panNode.pan.value is from -1 to 1)
+          s.gainNode = audioContext.createGain();
+
+          s.panNode = new StereoPannerNode(audioContext, { pan : 0 });
+
+          s.biquadFilter = audioContext.createBiquadFilter();
+
+          s.biquadFilter.type = 'lowpass';
+
+          s.biquadFilter.frequency.setValueAtTime(22050, audioContext.currentTime);
+
+          // internal tracking
+          s._lastPan = 0;
+
+          // media source
+          s.source = audioContext.createMediaElementSource(s._a);
+
+          // routing: source (mediaElement) -> modification nodes -> destination (context.destination)
+
+          s.source.connect(s.gainNode)
+            .connect(s.biquadFilter)
+            .connect(s.panNode)
+            .connect(audioContext.destination);
 
         }
 
@@ -6280,6 +6351,9 @@ if (typeof module === 'object' && module && typeof module.exports === 'object') 
   });
 
 }
+
+var AudioContext = window.AudioContext || window.webkitAudioContext;
+var audioContext = AudioContext ? new AudioContext() : null;
 
 // standard browser case
 
