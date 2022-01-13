@@ -601,10 +601,14 @@ ul.stats-bar li {
   position: relative;
   overflow: hidden;
   font-size: 7px;
-  min-width: 5%;
-  padding-right: 1% !important;
   text-align: left;
   color: #ccc;
+}
+
+ul.stats-bar li.inventory-item:not(:last-of-type),
+ul.stats-bar li.stats-item:not(:last-of-type) {
+  /* annoying, but need to override #aa rules */
+  padding-right: 8px !important;
 }
 
 #stats-bar.hide-inventory li.inventory-item,
@@ -619,6 +623,17 @@ ul.stats-bar li {
   text-align: center;
 }
 
+#stats-bar.hide-keyboard-labels li .weapon-count {
+  /* tighten up spacing on numbers, items will be spaced out more here */
+  margin-left: 0px;
+}
+
+#stats-bar.hide-keyboard-labels li.inventory-item:not(:last-of-type),
+#stats-bar.hide-keyboard-labels li.stats-item:not(:last-of-type) {
+  /* ugh, one more override. */
+  padding-right: 12px !important;
+}
+
 body.is-mobile ul.stats-bar li {
   /* bigger! mobile controls are moved to sides, so we have way more room. */
   min-width: 10%;
@@ -629,15 +644,11 @@ body.is-mobile #player-status-bar .spacer {
   display: none;
 }
 
-ul.stats-bar li.stats-item {
-  padding-right: 1.5% !important;
-}
-
 ul.stats-bar li.stats-item .weapon-count {
   display: inline-block;
   /* prevent a shift when as number counts change (for variable-width fonts) */
   min-width: 0.65rem;
-  margin-left: 0.15rem;
+  margin-left: 0.075rem;
 }
 
 ul.stats-bar li.stats-item .wrapper,
@@ -703,12 +714,18 @@ ul.stats-bar .infantry-count em,
 ul.stats-bar .infantry-count em {
   /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
-  width: 10px;
-  height: 14px;
-  margin-top: -2px;
+  width: 9px;
+  height: 13px;
+  margin-top: -3px;
   margin-right: 3px;
   transform-origin: left;
   background-repeat: no-repeat;
+}
+
+/* hackish: min-width fix for pixel shift from 1/0. Ugh. */
+#infantry-count {
+  display: inline-block;
+  min-width: 0.25rem;
 }
 
 ul.stats-bar .missiles em {
@@ -728,9 +745,11 @@ ul.stats-bar .missiles em {
 ul.stats-bar .missiles em,
 #mobile-controls li.inventory-item a.smart-missile {
   /* background: transparent url(../image/status-missile.png) no-repeat 0px 0px; */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAK0lEQVQYlWP4DwSrmRj/MxADQAqJVkw7k8lSTJQGkhT/X8X4H4aJcgpIIQDIDioT6Vi0KwAAAABJRU5ErkJggg==);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAK0lEQVR4AWOgHhgF/wlgwgaAwSrG/6uZUDGxhv/HMIQwxnDdf/LwwINRAADw7UafvPxRawAAAABJRU5ErkJggg==);
   background-repeat: no-repeat;
-  background-position: 50% 0px;
+  background-position: 50% 50%;
+  background-size: 75%;
+  transform: rotate(-5deg);
 }
 
 ul.stats-bar .ammo em,
@@ -738,7 +757,8 @@ ul.stats-bar .ammo em,
   /* background: transparent url(../image/status-ammo.png) no-repeat 0px 0px; */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAICAYAAADJEc7MAAAAM0lEQVQY02NgIAH8BwLiBPGp+Q8Fq1atIgkzkKoJxQnoEtgUEdSIVQE2jchOJSWEydYIADt2mmamiXmJAAAAAElFTkSuQmCC);
   background-repeat: no-repeat;
-  background-position: 0px 0px;
+  background-position: 2px 1px;
+  background-size: 80%;
 }
 
 ul.stats-bar .ammo em {
@@ -750,11 +770,14 @@ ul.stats-bar .bombs em,
 #mobile-controls li.inventory-item a.bombs {
   /* background: transparent url(../image/status-bombs.png) no-repeat 0px 0px; */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAALCAYAAAC6ezfSAAAAKklEQVQIW2P4DwQMQLBq1ar/DCAOiAHmwBiYMquZGP+DMEgf5RyYAIgGAHvgOaZq6s+EAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+  background-size: 75%;
+  background-position: 50% 1px;
 }
 
 ul.stats-bar .bombs em {
   width: 3px;
   height: 11px;
+  margin-left: 1px;
   text-indent: -32px;
 }
 
@@ -2796,7 +2819,7 @@ body.is-mobile #player-status-bar .stats-item {
 
 #player-status-bar span.letter-block {
   display: inline-block;
-  color: #6f6f6f;
+  color: #777;
   vertical-align: middle;
   min-width: 6px;
   height: 10px;
@@ -2806,7 +2829,7 @@ body.is-mobile #player-status-bar .stats-item {
   border-radius: 2px;
   padding: 0px 3px;
   text-align: center;
-  background: rgba(32,32,32,0.5);
+  background: rgba(32,32,32,0.75);
   margin-top: -1px;
   /* align with nearby text, e.g., bomb count */
 }
