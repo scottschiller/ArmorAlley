@@ -101,7 +101,32 @@ function getVolumeFromDistance(obj1, obj2) {
   return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
 }
 
+function getPanFromLocation(source, chopper) {
+
+  // rough panning based on distance from chopper, relative to world width
+  if (!source || !chopper) return 0;
+
+  let delta; 
+  let pan = 0;
+
+  // don't allow 100% L/R pan, exactly
+
+  if (source.data.x < chopper.data.x) {
+    // target is to the left
+    delta = chopper.data.x - source.data.x;
+    pan = -(delta / worldWidth) * 0.75;
+  } else {
+    // to the right
+    delta = source.data.x - chopper.data.x;
+    pan = (delta / worldWidth) * 0.75;
+  }
+
+  return pan;
+
+}
+
 function playSound(soundReference, target, soundOptions) {
+
   const soundObject = getSound(soundReference);
   let localOptions;
   let onScreen;
@@ -124,7 +149,8 @@ function playSound(soundReference, target, soundOptions) {
   } else {
     // determine volume based on distance
     localOptions = {
-      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects.helicopters[0])
+      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects.helicopters[0]),
+      pan: getPanFromLocation(target, game.objects.helicopters[0])
     };
   }
 
@@ -140,6 +166,7 @@ function playSound(soundReference, target, soundOptions) {
   });
 
   return soundObject.sound;
+
 }
 
 function playSoundWithDelay() {
@@ -327,7 +354,8 @@ function addSound(options) {
     options,
     soundOptions: {
       onScreen: {
-        volume: options.volume || DEFAULT_VOLUME
+        volume: options.volume || DEFAULT_VOLUME,
+        pan: 0
       },
       offScreen: {
         // off-screen sounds are more quiet.
