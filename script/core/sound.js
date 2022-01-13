@@ -90,12 +90,12 @@ function playQueuedSounds() {
   soundsToPlay.length = 0;
 }
 
-function getVolumeFromDistance(obj1, obj2) {
+function getVolumeFromDistance(source, chopper) {
   // based on two objects' distance from each other, return volume -
   // e.g., things far away are quiet, things close-up are loud
-  if (!obj1 || !obj2) return 100;
+  if (!source || !chopper) return 100;
 
-  const delta = Math.abs(obj1.data.x - obj2.data.x);
+  const delta = Math.abs(source.data.x - chopper.data.x);
 
   // volume range: 5-30%?
   return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
