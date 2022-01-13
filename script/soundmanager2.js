@@ -1890,7 +1890,7 @@ function SoundManager(smURL, smID) {
     this.play = function(oOptions, _updatePlayState) {
 
       var fN, allowMulti, a, onready,
-          audioClone, onended, oncanplay,
+          audioClone,
           startOK = true,
           exit = null;
 
@@ -2166,46 +2166,23 @@ function SoundManager(smURL, smID) {
 
             sm2._wD(s.id + ': Cloning Audio() for instance #' + s.instanceCount + '...');
 
-            audioClone = new Audio(s._iO.url);
+            var cloneId = s.id + '_clone_' + s.instanceCount;
 
-            onended = function() {
-              event.remove(audioClone, 'ended', onended);
-              s._onfinish(s);
-              // cleanup
-              html5Unload(audioClone);
-              audioClone = null;
-            };
-
-            oncanplay = function() {
-              event.remove(audioClone, 'canplay', oncanplay);
-              try {
-                audioClone.currentTime = s._iO.position/msecScale;
-              } catch(err) {
-                complain(s.id + ': multiShot play() failed to apply position of ' + (s._iO.position/msecScale));
+            // have the clone take itself out when finished.
+            var cloneParams = {
+              ...s._iO,
+              id: cloneId,
+              instanceCount: 0,
+              multiShot: false,
+              onfinish: () => {
+                soundManager.destroySound(cloneId);
               }
-              audioClone.play();
-            };
-
-            event.add(audioClone, 'ended', onended);
-
-            // apply volume to clones, too
-            if (s._iO.volume !== _undefined) {
-              audioClone.volume = Math.max(0, Math.min(1, s._iO.volume/100));
             }
 
-            // playing multiple muted sounds? if you do this, you're weird ;) - but let's cover it.
-            if (s.muted) {
-              audioClone.muted = true;
-            }
+            // make a new sound - inheriting most, but overriding the clone's instance count and multi-shot ability.
+            audioClone = soundManager.createSound(cloneParams);
 
-            if (s._iO.position) {
-              // HTML5 audio can't seek before onplay() event has fired.
-              // wait for canplay, then seek to position and start playback.
-              event.add(audioClone, 'canplay', oncanplay);
-            } else {
-              // begin playback at currentTime: 0
-              audioClone.play();
-            }
+            audioClone.play();
 
           }
 
