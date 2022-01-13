@@ -83,9 +83,10 @@ function playQueuedSounds() {
     if (soundsToPlay[i]?.soundObject?.sound) {
       soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
 
+      // WIP: probably due to cloning.
       // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
       // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
-      soundsToPlay[i].soundObject.sound.setVolume(soundsToPlay[i].localOptions.volume);
+      // soundsToPlay[i].soundObject.sound.setVolume(soundsToPlay[i].localOptions.volume);
     }
   }
 
