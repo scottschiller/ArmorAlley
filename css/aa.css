@@ -2041,6 +2041,7 @@ body.is_firefox #world-wrapper.jammed #radar {
   /* default state */
   background-repeat: no-repeat;
   animation: explosionshrapnel2 1s steps(12);
+  animation-fill-mode: forwards; /* Stay on last frame when finished */
 }
 
 .tank.exploding {
