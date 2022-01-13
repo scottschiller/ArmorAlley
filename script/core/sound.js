@@ -234,14 +234,23 @@ function playTinkerWrench(isRepairing, exports) {
 
   const args = arguments;
 
-  playSound(sounds.tinkerWrench, exports, {
-    position: rndInt(8000),
-    onfinish() {
-      if (isRepairing()) {
-        playTinkerWrench.apply(this, args);
+  // slightly hackish: dynamic property on exports.
+  if (!exports.tinkerWrenchActive) {
+
+    // flag immediately, so subsequent immediate calls only trigger once
+    exports.tinkerWrenchActive = true;
+
+    playSound(sounds.tinkerWrench, exports, {
+      position: rndInt(8000),
+      onfinish() {
+        exports.tinkerWrenchActive = false;
+        if (isRepairing()) {
+          playTinkerWrench.apply(this, args);
+        }
       }
-    }
-  });
+    });
+
+  }
 
 }
 

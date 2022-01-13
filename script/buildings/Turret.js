@@ -309,8 +309,6 @@ const Turret = options => {
     // play repair sounds?
     playRepairingWrench(isEngineerInteracting, exports);
 
-    // playImpactWrench(isEngineerInteracting, exports);
-
     playTinkerWrench(isEngineerInteracting, exports);
 
   }
