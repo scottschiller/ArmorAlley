@@ -62,7 +62,13 @@ const Bunker = options => {
       utils.css.remove(dom.o, css.enemy);
       utils.css.remove(radarItem.dom.o, css.enemy);
 
-      game.objects.notifications.add('You captured a bunker ⛳');
+      // first time capture (of original bunker state) vs. taking back from the enemy
+      if (!data.isRecapture) {
+        game.objects.notifications.add('You captured a bunker ⛳');
+        data.isRecapture = true;
+      } else {
+        game.objects.notifications.add('You recaptured a bunker ⛳');
+      }
 
       playSoundWithDelay(sounds.friendlyClaim, exports, 500);
 
@@ -288,6 +294,7 @@ const Bunker = options => {
     energyMax: 50,
     energyLineScale: 0.95,
     centerEnergyLine: true,
+    isRecapture: false,
     width: 51,
     halfWidth: 25,
     height: 25,
