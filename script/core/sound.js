@@ -224,24 +224,21 @@ function playRepairingWrench(isRepairing, exports) {
 
   if (!isRepairing()) return;
 
-  // slightly hackish: dynamic property on exports.
-  if (!exports.repairingWrenchTimer) {
+  // hackish: prevent duplicate play calls.
+  if (exports.repairingWrenchTimer) return;
 
-    // flag immediately, so subsequent immediate calls only trigger once
-    exports.repairingWrenchTimer = true;
+  exports.repairingWrenchTimer = true;
 
-    playSound(sounds.repairingWrench, exports, {
-      onfinish() {
-        exports.repairingWrenchTimer = common.setFrameTimeout(function() {
-          exports.repairingWrenchTimer = null;
-          if (isRepairing()) {
-            playRepairingWrench.apply(this, args);
-          }
-        }, 1000 + rndInt(2000));
-      }
-    });
-
-  }
+  playSound(sounds.repairingWrench, exports, {
+    onfinish() {
+      exports.repairingWrenchTimer = common.setFrameTimeout(function() {
+        exports.repairingWrenchTimer = null;
+        if (isRepairing()) {
+          playRepairingWrench.apply(this, args);
+        }
+      }, 1000 + rndInt(2000));
+    }
+  });
 
 }
 
@@ -252,23 +249,21 @@ function playImpactWrench(isRepairing, exports) {
   if (!isRepairing()) return;
 
   // slightly hackish: dynamic property on exports.
-  if (!exports.impactWrenchTimer) {
+  if (exports.impactWrenchTimer) return;
 
-    // flag immediately, so subsequent immediate calls only trigger once
-    exports.impactWrenchTimer = true;
+  // flag immediately, so subsequent immediate calls only trigger once
+  exports.impactWrenchTimer = true;
 
-    playSound(sounds.impactWrench, exports, {
-      onfinish() {
-        exports.impactWrenchTimer = common.setFrameTimeout(function() {
-          exports.impactWrenchTimer = null;
-          if (isRepairing()) {
-            playImpactWrench.apply(this, args);
-          }
-        }, 500 + rndInt(2000));
-      }
-    });
-
-  }
+  playSound(sounds.impactWrench, exports, {
+    onfinish() {
+      exports.impactWrenchTimer = common.setFrameTimeout(function() {
+        exports.impactWrenchTimer = null;
+        if (isRepairing()) {
+          playImpactWrench.apply(this, args);
+        }
+      }, 500 + rndInt(2000));
+    }
+  });
 
 }
 
@@ -277,22 +272,20 @@ function playTinkerWrench(isRepairing, exports) {
   const args = arguments;
 
   // slightly hackish: dynamic property on exports.
-  if (!exports.tinkerWrenchActive) {
+  if (exports.tinkerWrenchActive) return;
 
-    // flag immediately, so subsequent immediate calls only trigger once
-    exports.tinkerWrenchActive = true;
+  // flag immediately, so subsequent immediate calls only trigger once
+  exports.tinkerWrenchActive = true;
 
-    playSound(sounds.tinkerWrench, exports, {
-      position: rndInt(8000),
-      onfinish() {
-        exports.tinkerWrenchActive = false;
-        if (isRepairing()) {
-          playTinkerWrench.apply(this, args);
-        }
+  playSound(sounds.tinkerWrench, exports, {
+    position: rndInt(8000),
+    onfinish() {
+      exports.tinkerWrenchActive = false;
+      if (isRepairing()) {
+        playTinkerWrench.apply(this, args);
       }
-    });
-
-  }
+    }
+  });
 
 }
 
