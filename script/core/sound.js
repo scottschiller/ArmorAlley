@@ -388,21 +388,16 @@ window.soundManager.onready(() => {
 
   sounds.machineGunFire = [];
 
-  // 09/2020: Firefox needs lots of copies to play smoothly?
-  for (i = 0; i < 8; i++) {
-    sounds.machineGunFire.push(
-      addSound({
-        url: getURL('machinegun'),
-        volume: 25
-        // multiShot: true
-      })
-    )
-  }
+  sounds.machineGunFire = addSound({
+    url: getURL('machinegun'),
+    volume: 25,
+    multiShot: true
+  });
 
   sounds.machineGunFireEnemy = addSound({
-    // multiShot: true,
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
-    url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit')
+    url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit'),
+    multiShot: true
   });
 
   sounds.bulletGroundHit = utils.array.shuffle([
@@ -607,36 +602,14 @@ window.soundManager.onready(() => {
       url: getURL('explosion'),
       volume: 45,
       multiShot: true
-    }),
-    addSound({
-      url: getURL('ga-219_bomb'),
-      volume: 50,
-      multiShot: true
-    }),
-    addSound({
-      url: getURL('ga-220_bomb'),
-      volume: 50,
-      multiShot: true
-    }),
-    addSound({
-      url: getURL('explosion'),
-      volume: 45,
-      multiShot: true
     })
   ];
 
-  sounds.genericBoom = [
-    addSound({
-      url: getURL('explosion'),
-      volume: 45,
-      multiShot: true
-    }),
-    addSound({
-      url: getURL('explosion'),
-      volume: 45,
-      multiShot: true
-    })
-  ];
+  sounds.genericBoom = addSound({
+    url: getURL('explosion'),
+    volume: 45,
+    multiShot: true
+  });
 
   sounds.genericExplosion = [
     addSound({
@@ -661,36 +634,26 @@ window.soundManager.onready(() => {
     })
   ];
 
-  sounds.genericGunFire = [];
+  sounds.genericGunFire = addSound({
+    url: getURL('generic-gunfire'),
+    multiShot: true,
+    volume: 25
+  });
 
-  for (i = 0; i < 4; i++) {
-    sounds.genericGunFire.push(addSound({
-      url: getURL('generic-gunfire'),
-      multiShot: true,
-      volume: 25
-    }));
-  }
-
-  sounds.infantryGunFire = [
-    addSound({
-      // http://creativesounddesign.com/the-recordist-free-sound-effects/
-      url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
-    }),
-    addSound({
-      url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
-    })
-  ];
+  sounds.infantryGunFire = addSound({
+    // http://creativesounddesign.com/the-recordist-free-sound-effects/
+    url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
+    multiShot: true
+  });
 
   sounds.turretGunFire = [];
 
-  for (i = 0; i < 8; i++) {
-    sounds.turretGunFire.push(addSound({
-      // https://freesound.org/people/CGEffex/sounds/101961/
-      url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
-      multiShot: true, // could be dangerous
-      volume: 40
-    }));
-  }
+  sounds.turretGunFire = addSound({
+    // https://freesound.org/people/CGEffex/sounds/101961/
+    url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
+    multiShot: true,
+    volume: 40
+  });
 
   // http://freesound.org/people/ceberation/sounds/235513/
   sounds.doorClose = addSound({
@@ -704,22 +667,16 @@ window.soundManager.onready(() => {
     volume: 40
   });
 
-  sounds.boloTank = [];
-
   // Bolo "hit tank self" sound, Copyright (C) Steuart Cheshire 1993.
   // A subtle tribute to my favourite Mac game of all-time, hands down. <3
   // https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
   // http://bolo.net/
   // https://github.com/stephank/orona/
   // http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
-  for (i = 0; i < 4; i++) {
-    sounds.boloTank.push(addSound({
-      url: getURL('bolo-hit-tank-self'),
-      volume: 25
-    }));
-  }
-
-  sounds.tankGunFire = [];
+  sounds.boloTank = addSound({
+    url: getURL('bolo-hit-tank-self'),
+    volume: 25
+  });
 
   // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
   // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
@@ -729,39 +686,46 @@ window.soundManager.onready(() => {
     multiShot: true
   });
 
-  sounds.metalHit = [];
+  sounds.metalHit = utils.array.shuffle([
+    // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
+    addSound({
+      url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
+      volume: 25,
+      multiShot: true
+    }),
 
-  // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
-  sounds.metalHit.push(addSound({
-    url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
-    volume: 25
-  }));
+    addSound({
+      url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
+      volume: 25,
+      multiShot: true
+    }),
 
-  sounds.metalHit.push(addSound({
-    url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
-    volume: 25
-  }));
+    addSound({
+      url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
+      volume: 25,
+      multiShot: true
+    }),
 
-  sounds.metalHit.push(addSound({
-    url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
-    volume: 25
-  }));
-
-  sounds.metalHit.push(addSound({
-    url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
-    volume: 25
-  }));
+    addSound({
+      url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
+      volume: 25,
+      multiShot: true
+    })
+  ]);
 
   // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
   sounds.concreteHit = utils.array.shuffle([
     addSound({
-      url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit')
+      url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit'),
+      multiShot: true
     }),
     addSound({
-      url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit')
+      url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit'),
+      multiShot: true
     }),
     addSound({
-      url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit')
+      url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit'),
+      multiShot: true
     })
   ]);
 
@@ -839,7 +803,7 @@ window.soundManager.onready(() => {
   sounds.balloonHit = addSound({
     // https://freesound.org/people/citeyo1/sounds/430302/
     url: getURL('430302__citeyo1__aparicion_edit'),
-    multiShot: true,
+    multiShot: true
   });
   
   sounds.explosionLarge = utils.array.shuffle([
@@ -902,13 +866,13 @@ window.soundManager.onready(() => {
   sounds.inventory.debit = addSound({
     url: getURL('funds-debit'),
     volume: 50,
-    multiShot: true,
+    multiShot: true
   });
 
   sounds.inventory.credit = addSound({
     url: getURL('funds-credit'),
     volume: 60,
-    multiShot: true,
+    multiShot: true
   });
 
   sounds.inventory.end = addSound({
@@ -943,27 +907,32 @@ window.soundManager.onready(() => {
 
   sounds.shrapnel.hit0 = addSound({
     url: getURL('shrapnel-hit'),
-    volume: 7
+    volume: 7,
+    multiShot: true
   });
 
   sounds.shrapnel.hit1 = addSound({
     url: getURL('shrapnel-hit-2'),
-    volume: 7
+    volume: 7,
+    multiShot: true
   });
 
   sounds.shrapnel.hit2 = addSound({
     url: getURL('shrapnel-hit-3'),
-    volume: 7
+    volume: 7,
+    multiShot: true
   });
 
   sounds.shrapnel.hit3 = addSound({
     url: getURL('shrapnel-hit-4'),
-    volume: 7
+    volume: 7,
+    multiShot: true
   });
 
   sounds.splat = addSound({
     url: getURL('splat'),
-    volume: 25
+    volume: 25,
+    multiShot: true
   });
 
   sounds.radarStatic = addSound({
@@ -1034,23 +1003,23 @@ window.soundManager.onready(() => {
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
       volume: 50,
-      multiShot: false,
+      multiShot: false
     }),
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
       volume: 50,
-      multiShot: false,
+      multiShot: false
     }),
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
       volume: 50,
-      multiShot: false,
+      multiShot: false
     })
   ];
 
   sounds.banana.expire = addSound({
     url: getURL('ufo-expire'),
-    volume: 75,
+    volume: 75
   });
   
 });
