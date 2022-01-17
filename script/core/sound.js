@@ -133,7 +133,6 @@ function getPanFromLocation(source, chopper) {
 
 function playSound(soundReference, target, soundOptions) {
 
-
   const soundObject = getSound(soundReference);
   let localOptions;
   let onScreen;
@@ -152,13 +151,17 @@ function playSound(soundReference, target, soundOptions) {
 
   // new: calculate volume as range based on distance
   if (onScreen) {
+
     localOptions = soundObject.soundOptions.onScreen;
+
   } else {
+
     // determine volume based on distance
     localOptions = {
       volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects.helicopters[0]),
       pan: getPanFromLocation(target, game.objects.helicopters[0])
     };
+
   }
 
   if (soundOptions) {
