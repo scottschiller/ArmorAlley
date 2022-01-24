@@ -384,20 +384,16 @@ window.soundManager.onready(() => {
 
   initSoundTypes();
 
-  let i;
-
   sounds.machineGunFire = [];
 
   sounds.machineGunFire = addSound({
     url: getURL('machinegun'),
-    volume: 25,
-    multiShot: true
+    volume: 25
   });
 
   sounds.machineGunFireEnemy = addSound({
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
-    url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit'),
-    multiShot: true
+    url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit')
   });
 
   sounds.bulletGroundHit = utils.array.shuffle([
@@ -590,60 +586,49 @@ window.soundManager.onready(() => {
   sounds.bombExplosion = [
     addSound({
       url: getURL('ga-219_bomb'),
-      volume: 50,
-      multiShot: true
+      volume: 50
     }),
     addSound({
       url: getURL('ga-220_bomb'),
-      volume: 50,
-      multiShot: true
+      volume: 50
     }),
     addSound({
       url: getURL('explosion'),
-      volume: 45,
-      multiShot: true
+      volume: 45
     })
   ];
 
   sounds.genericBoom = addSound({
     url: getURL('explosion'),
-    volume: 45,
-    multiShot: true
+    volume: 45
   });
 
   sounds.genericExplosion = [
     addSound({
       url: getURL('generic-explosion'),
-      volume: 24,
-      multiShot: true
+      volume: 24
     }),
     addSound({
       url: getURL('generic-explosion-2'),
-      volume: 24,
-      multiShot: true
+      volume: 24
     }),
     addSound({
       url: getURL('generic-explosion-3'),
-      volume: 24,
-      multiShot: true
+      volume: 24
     }),
     addSound({
       url: getURL('explosion2'),
-      volume: 33,
-      multiShot: true
+      volume: 33
     })
   ];
 
   sounds.genericGunFire = addSound({
-    url: getURL('generic-gunfire'),
-    multiShot: true,
-    volume: 25
+    url: getURL('generic-gunfire')
   });
 
   sounds.infantryGunFire = addSound({
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
-    url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit'),
-    multiShot: true
+    url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
   });
 
   sounds.turretGunFire = [];
@@ -651,7 +636,6 @@ window.soundManager.onready(() => {
   sounds.turretGunFire = addSound({
     // https://freesound.org/people/CGEffex/sounds/101961/
     url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
-    multiShot: true,
     volume: 40
   });
 
@@ -682,50 +666,42 @@ window.soundManager.onready(() => {
   // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
   sounds.tankGunFire = addSound({
     url: getURL('tank-gunfire'),
-    volume: 15,
-    multiShot: true
+    volume: 15
   });
 
   sounds.metalHit = utils.array.shuffle([
     // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
     addSound({
       url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     })
   ]);
 
   // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
   sounds.concreteHit = utils.array.shuffle([
     addSound({
-      url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit'),
-      multiShot: true
+      url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit')
     }),
     addSound({
-      url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit'),
-      multiShot: true
+      url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit')
     }),
     addSound({
-      url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit'),
-      multiShot: true
+      url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit')
     })
   ]);
 
@@ -733,95 +709,80 @@ window.soundManager.onready(() => {
   sounds.ricochet = utils.array.shuffle([
     addSound({
       url: getURL('109957__rakurka__incoming-ricochets-2_1'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('109957__rakurka__incoming-ricochets-2_2'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('109957__rakurka__incoming-ricochets-2_3'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     addSound({
       url: getURL('109957__rakurka__incoming-ricochets-2_4'),
-      volume: 25,
-      multiShot: true
+      volume: 25
     }),
 
     // https://freesound.org/people/Timbre/sounds/486343/
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_2'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_3'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_4'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_5'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_6'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
     addSound({
       url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_7'),
-      volume: 4,
-      multiShot: true
+      volume: 4
     }),
 
   ]);
 
   sounds.balloonHit = addSound({
     // https://freesound.org/people/citeyo1/sounds/430302/
-    url: getURL('430302__citeyo1__aparicion_edit'),
-    multiShot: true
+    url: getURL('430302__citeyo1__aparicion_edit')
   });
   
   sounds.explosionLarge = utils.array.shuffle([
     addSound({
       url: getURL('explosion-large'),
-      multiShot: true,
       volume: 60
     }),
     addSound({
       // https://freesound.org/people/Quaker540/sounds/245372/
       url: getURL('245372__quaker540__hq-explosion'),
-      multiShot: true,
       volume: 50
     }),
     addSound({
       // https://freesound.org/people/Bykgames/sounds/414345/
       url: getURL('414345__bykgames__explosion-near'),
-      multiShot: true,
       volume: 50
     }),
   ]);
@@ -859,20 +820,17 @@ window.soundManager.onready(() => {
 
   sounds.inventory.begin = addSound({
     url: getURL('order-start'),
-    multiShot: true,
     volume: 30
   });
 
   sounds.inventory.debit = addSound({
     url: getURL('funds-debit'),
     volume: 50,
-    multiShot: true
   });
 
   sounds.inventory.credit = addSound({
     url: getURL('funds-credit'),
     volume: 60,
-    multiShot: true
   });
 
   sounds.inventory.end = addSound({
@@ -907,32 +865,27 @@ window.soundManager.onready(() => {
 
   sounds.shrapnel.hit0 = addSound({
     url: getURL('shrapnel-hit'),
-    volume: 7,
-    multiShot: true
+    volume: 7
   });
 
   sounds.shrapnel.hit1 = addSound({
     url: getURL('shrapnel-hit-2'),
-    volume: 7,
-    multiShot: true
+    volume: 7
   });
 
   sounds.shrapnel.hit2 = addSound({
     url: getURL('shrapnel-hit-3'),
-    volume: 7,
-    multiShot: true
+    volume: 7
   });
 
   sounds.shrapnel.hit3 = addSound({
     url: getURL('shrapnel-hit-4'),
-    volume: 7,
-    multiShot: true
+    volume: 7
   });
 
   sounds.splat = addSound({
     url: getURL('splat'),
-    volume: 25,
-    multiShot: true
+    volume: 25
   });
 
   sounds.radarStatic = addSound({
@@ -1002,18 +955,15 @@ window.soundManager.onready(() => {
     // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50,
-      multiShot: false
+      volume: 50
     }),
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50,
-      multiShot: false
+      volume: 50
     }),
     addSound({
       url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50,
-      multiShot: false
+      volume: 50
     })
   ];
 

@@ -307,8 +307,7 @@ if (isSafari) {
 soundManager.setup({
   debugMode: false,
   defaultOptions: {
-    volume: DEFAULT_VOLUME,
-    multiShot: false // !isSafari // !!(winloc.match(/multishot/i)),
+    volume: DEFAULT_VOLUME
   },
 });
 
