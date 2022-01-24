@@ -1025,16 +1025,11 @@ const Helicopter = options => {
 
     if (!data.isEnemy) {
 
-      // local? play quiet only if cloaked.
-      // only start if not already playing
-      if (soundObject?.sound?.playState) {
-        soundObject.sound.stop();
-      }
-
-      // only start if not already playing
-      if (!soundObject?.sound?.playState) {
-        soundObject.sound.play(soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'] / 100));
-      }
+      soundObject.sound.play({
+        // TODO: volume is now driven by distance. confirm and clean up.
+        // volume: soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'].volume / 100),
+        playbackRate: 0.75 + (Math.random() * 0.25)
+      });
 
     } else if (!soundObject.playState) {
 
