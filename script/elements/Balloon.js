@@ -12,7 +12,7 @@ const Balloon = options => {
   function checkRespawn() {
 
     // odd edge case - data not always defined if destroyed at the right time?
-    if (data && data.canRespawn && data.dead && objects.bunker && objects.bunker.data && !objects.bunker.data.dead) {
+    if (data?.canRespawn && data?.dead && !objects?.bunker?.data?.dead) {
       reset();
     }
 
