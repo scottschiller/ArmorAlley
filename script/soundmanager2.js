@@ -88,7 +88,8 @@ function SoundManager(smURL, smID) {
     'html5Test': /^(probably|maybe)$/i, // HTML5 Audio() format support test. Use /^probably$/i; if you want to be more conservative.
     'preferFlash': false,               // overrides useHTML5audio, will use Flash for MP3/MP4/AAC if present. Potential option if HTML5 playback with these formats is quirky.
     'noSWFCache': false,                // if true, appends ?ts={date} to break aggressive SWF caching.
-    'idPrefix': 'sound'                 // if an id is not provided to createSound(), this prefix is used for generated IDs - 'sound0', 'sound1' etc.
+    'idPrefix': 'sound',                // if an id is not provided to createSound(), this prefix is used for generated IDs - 'sound0', 'sound1' etc.
+    'usePlaybackRate': false            // experimental Web Audio API feature, Firefox may choke when lots of audio instances use this.
 
   };
 
@@ -117,6 +118,8 @@ function SoundManager(smURL, smID) {
     'multiShot': true,        // let sounds "restart" or layer on top of each other when played multiple times, rather than one-shot/one at a time
     'multiShotEvents': false, // fire multiple sound events (currently onfinish() only) when multiShot is enabled
     'position': null,         // offset (milliseconds) to seek to within loaded sound data.
+    'playbackRate': 1.0,      // how "fast" the sound should be played. browsers may mute sound if values are outside of 0.25 to 4.0.
+    'preservesPitch': false,  // by default, work like a vinyl record or tape (vs. "time-stretch") when using `playbackRate`
     'pan': 0,                 // "pan" settings, left-to-right, -100 to 100
     'stream': true,           // allows playing before entire file has loaded (recommended)
     'to': null,               // position to end playback within a sound (msec), default = end
@@ -935,6 +938,25 @@ function SoundManager(smURL, smID) {
     }
 
     return sm2.sounds[sID].setVolume(nVol);
+
+  };
+
+  /**
+   * Calls the setPlaybackRate() method of a SMSound object by ID
+   *
+   * @param {string} sID The ID of the sound
+   * @param {number} nPlaybackRate The playback rate. Values outside of 0.25 to 4.0 may cause the browser to mute the sound.
+   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playbackRate
+   * @return {SMSound} The SMSound object
+   */
+
+  this.setPlaybackRate = function(sID, nPlaybackRate) {
+
+    if (!idCheck(sID)) {
+      return false;
+    }
+
+    return sm2.sounds[sID].setPlaybackRate(nPlaybackRate);
 
   };
 
@@ -1944,13 +1966,19 @@ function SoundManager(smURL, smID) {
           sm2._wD(fN + 'Already playing (one-shot)', 1);
 
           if (s.isHTML5) {
+
             // go back to original position.
             s.setPosition(s._iO.position);
+
+            // hackish: update playbackRate, which may have changed.
+            s.setPlaybackRate(s._iO.playbackRate, true);
+
           }
 
           exit = s;
 
         } else {
+
           sm2._wD(fN + 'Already playing (multi-shot)', 1);
         }
 
@@ -2022,6 +2050,8 @@ function SoundManager(smURL, smID) {
         sm2._wD(fN.substr(0, fN.lastIndexOf(':')));
 
       }
+
+      s.setPlaybackRate(s._iO.playbackRate, true);
 
       if (exit !== null) {
         return exit;
@@ -2157,6 +2187,11 @@ function SoundManager(smURL, smID) {
             a = s._setup_html5();
 
             s.setPosition(s._iO.position);
+
+            // 01/2022: prefixes for best compatibility
+            if (audioContext && sm2.usePlaybackRate) {
+              a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = !!s._iO.preservesPitch;
+            }
 
             a.play();
 
@@ -2559,6 +2594,35 @@ function SoundManager(smURL, smID) {
       return s;
 
     };
+
+    /**
+     * Sets the `playbackRate` of a sound.
+     *
+     * @param {number} nPlaybackRate The playback rate. Values outside of 0.25 to 4.0 may cause the browser to mute the sound.
+     * https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playbackRate
+     * @return {SMSound} The SMSound object
+     */
+
+    this.setPlaybackRate = function(nPlaybackRate, _bInstanceOnly) {
+
+      if (nPlaybackRate === undefined) {
+        return s;
+      }
+
+      s._iO.playbackRate = nPlaybackRate;
+
+      if (!_bInstanceOnly) {
+        s.playbackRate = nPlaybackRate;
+        s.options.playbackRate = nPlaybackRate;
+      }
+
+      if (sm2.usePlaybackRate && s.isHTML5 && s._a) {
+        s._a.playbackRate = nPlaybackRate;
+      }
+
+      return s;
+
+    }
 
     /**
      * Sets the volume.
@@ -6329,8 +6393,27 @@ if (typeof module === 'object' && module && typeof module.exports === 'object') 
 
 }
 
+function onClick() {
+
+  // if not created yet, do that.
+  if (!audioContext) {
+    audioContext = AudioContext ? new AudioContext() : null;
+  }
+
+  // if suspended, try to resume.
+  if (audioContext?.state === 'suspended') {
+    audioContext.resume();
+  }
+
+}
+
 var AudioContext = window.AudioContext || window.webkitAudioContext;
-var audioContext = AudioContext ? new AudioContext() : null;
+var audioContext;
+
+if (AudioContext) {
+  // wait for user interaction
+  window.addEventListener('click', onClick);
+}
 
 // standard browser case
 
