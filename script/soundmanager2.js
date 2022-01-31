@@ -4003,9 +4003,11 @@ function SoundManager(smURL, smID) {
 
     }),
 
-    // enough has loaded to play
-
     canplay: html5_event(function() {
+
+      // enough has loaded to play
+      // 01/2022: sound may have started playback before `canplay` has fired,
+      // so don't assume position is 0 nor that position should be set to 0.
 
       var s = this._s,
           position1K;
@@ -4022,8 +4024,8 @@ function SoundManager(smURL, smID) {
       // position according to instance options
       position1K = (s._iO.position !== _undefined && !isNaN(s._iO.position) ? s._iO.position/msecScale : null);
 
-      // set the position if position was provided before the sound loaded
-      if (this.currentTime !== position1K) {
+      // set the position only if specified, otherwise sounds might play twice (or sort of twice.)
+      if (position1K && this.currentTime !== position1K) {
         sm2._wD(s.id + ': canplay: Setting position to ' + position1K);
         try {
           this.currentTime = position1K;
