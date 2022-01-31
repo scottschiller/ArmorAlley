@@ -4043,6 +4043,8 @@ function SoundManager(smURL, smID) {
 
     canplaythrough: html5_event(function() {
 
+      // browser has determined it can play without having to stop to buffer.
+
       var s = this._s;
 
       if (!s.loaded) {
