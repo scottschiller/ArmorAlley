@@ -2154,7 +2154,7 @@ function SoundManager(smURL, smID) {
         }
 
         if (s._iO.onplay && _updatePlayState) {
-          s._iO.onplay.apply(s);
+          s._iO.onplay.apply(s, [s]);
           onplay_called = true;
         }
 
@@ -2305,7 +2305,7 @@ function SoundManager(smURL, smID) {
         s._iO = {};
 
         if (instanceOptions.onstop) {
-          instanceOptions.onstop.apply(s);
+          instanceOptions.onstop.apply(s, [s]);
         }
 
       }
@@ -2454,7 +2454,7 @@ function SoundManager(smURL, smID) {
       }
 
       if (s._iO.onpause) {
-        s._iO.onpause.apply(s);
+        s._iO.onpause.apply(s, [s]);
       }
 
       return s;
@@ -2506,12 +2506,12 @@ function SoundManager(smURL, smID) {
 
       if (!onplay_called && instanceOptions.onplay) {
 
-        instanceOptions.onplay.apply(s);
+        instanceOptions.onplay.apply(s, [s]);
         onplay_called = true;
 
       } else if (instanceOptions.onresume) {
 
-        instanceOptions.onresume.apply(s);
+        instanceOptions.onresume.apply(s, [s]);
 
       }
 
@@ -3387,7 +3387,7 @@ function SoundManager(smURL, smID) {
 
       if (s._iO.onsuspend) {
         sm2._wD(s.id + ': Playback suspended');
-        s._iO.onsuspend.apply(s);
+        s._iO.onsuspend.apply(s, [s]);
       }
 
       return true;
@@ -3463,7 +3463,7 @@ function SoundManager(smURL, smID) {
           if (io_onfinish) {
             sm2._wD(s.id + ': onfinish()');
             wrapCallback(s, function() {
-              io_onfinish.apply(s);
+              io_onfinish.apply(s, [s]);
             });
           }
         }
@@ -3506,7 +3506,7 @@ function SoundManager(smURL, smID) {
 
       // allow whileloading to fire even if "load" fired under HTML5, due to HTTP range/partials
       if ((s.readyState !== 3 || s.isHTML5) && instanceOptions.whileloading) {
-        instanceOptions.whileloading.apply(s);
+        instanceOptions.whileloading.apply(s, [s]);
       }
 
     };
@@ -3564,7 +3564,7 @@ function SoundManager(smURL, smID) {
 
         if (instanceOptions.whileplaying) {
           // flash may call after actual finish
-          instanceOptions.whileplaying.apply(s);
+          instanceOptions.whileplaying.apply(s, [s]);
         }
 
       }
@@ -3638,7 +3638,7 @@ function SoundManager(smURL, smID) {
       s.id3 = mixin(s.id3, oData);
 
       if (s._iO.onid3) {
-        s._iO.onid3.apply(s);
+        s._iO.onid3.apply(s, [s]);
       }
 
     };
@@ -3679,7 +3679,7 @@ function SoundManager(smURL, smID) {
       if (s.playState > 0) {
         sm2._wD(s.id + ': Data error: ' + sError);
         if (s._iO.ondataerror) {
-          s._iO.ondataerror.apply(s);
+          s._iO.ondataerror.apply(s, [s]);
         }
       }
 
