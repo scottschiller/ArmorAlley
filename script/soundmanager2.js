@@ -2160,6 +2160,7 @@ function SoundManager(smURL, smID) {
 
         s.setVolume(s._iO.volume, true);
         s.setPan(s._iO.pan, true);
+        s.setPlaybackRate(s._iO.playbackRate, true);
 
         if (!s.isHTML5) {
 
