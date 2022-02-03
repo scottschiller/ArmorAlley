@@ -2204,21 +2204,33 @@ function SoundManager(smURL, smID) {
 
             var cloneId = s.id + '_clone_' + s.instanceCount;
 
-            // have the clone take itself out when finished.
+            // make a new sound - inheriting most properties, resetting only the basics
             var cloneParams = {
               ...s._iO,
               id: cloneId,
               instanceCount: 0,
               multiShot: false,
-              onfinish: () => {
-                soundManager.destroySound(cloneId);
-              }
-            }
+              onfinish: function() {
 
-            // make a new sound - inheriting most, but overriding the clone's instance count and multi-shot ability.
+                if (s && s._iO && s._iO.onfinish && s._iO.multiShotEvents) {
+                  // apply "original" onfinish, scoped to clone.
+                  s._iO.onfinish.apply(audioClone, [audioClone]);
+                }
+
+                // have the clone take itself out.
+                this.destruct();
+
+              }
+            };
+
             audioClone = soundManager.createSound(cloneParams);
 
             audioClone.play();
+
+            // return the clone, so it can be accessed
+            if (s._iO.multiShotEvents) {
+              return audioClone;
+            }
 
           }
 
