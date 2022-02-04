@@ -248,7 +248,7 @@ const Balloon = options => {
     data.dead = false;
 
     // reset position, too
-    data.y = common.bottomAlignedY(-data.height);
+    data.y = common.bottomAlignedY(-height);
 
     radarItem.reset();
 
