@@ -99,7 +99,7 @@ function KeyboardMonitor() {
     // shift
     16: {
 
-      allowEvent: true, // don't use stopEvent()
+      allowEvent: true,
 
       down() {
 
@@ -112,7 +112,7 @@ function KeyboardMonitor() {
     // ctrl
     17: {
 
-      allowEvent: true, // don't use stopEvent()
+      allowEvent: true,
 
       down() {
 
@@ -285,8 +285,7 @@ function KeyboardMonitor() {
   function releaseAll() {
 
     // reset all pressed key states.
-    let item;
-    for (item in downKeys) {
+    for (let item in downKeys) {
       if (downKeys[item]) {
         // simulate the keyup event
         events.keyup({
