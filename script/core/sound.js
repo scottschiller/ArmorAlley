@@ -91,14 +91,13 @@ function playQueuedSounds() {
 
   // empty queue
   for (let i = 0, j = soundsToPlay.length; i < j; i++) {
-    if (soundsToPlay[i]?.soundObject?.sound) {
-      soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
 
-      // WIP: probably due to cloning.
-      // TODO: Determine why setVolume() call is needed when playing or re-playing actively-playing HTML5 sounds instead of options. Possible SM2 bug.
-      // ex: actively-firing turret offscreen, moves on-screen - sound volume does not change.
-      // soundsToPlay[i].soundObject.sound.setVolume(soundsToPlay[i].localOptions.volume);
-    }
+    // guard
+    if (!soundsToPlay[i]?.soundObject?.sound) continue;
+
+    // play() may result in a new SM2 object being created, given cloning for the `multiShot` case.
+    soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
+
   }
 
   // reset, instead of creating a new array object
