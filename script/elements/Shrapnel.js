@@ -255,7 +255,7 @@ const Shrapnel = options => {
     maxVY: 32,
     gravity: 1,
     // randomize fall rate
-    gravityRate: 1.06 + rnd(0.05),
+    gravityRate: 1.05 + rnd(.06),
     width: 12 * scale,
     height: 12 * scale,
     scale,
