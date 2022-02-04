@@ -1,4 +1,5 @@
 import { game } from '../core/Game.js';
+import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -9,7 +10,7 @@ import { GunFire } from '../munitions/GunFire.js'
 
 const Tank = options => {
 
-    let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
+    let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight, fireRates;
 
     function fire() {
 
@@ -240,6 +241,16 @@ const Tank = options => {
 
     tankHeight = 18;
 
+    // gunfire every N frames, based on game type.
+    // lower number = faster firing rate.
+    fireRates = {
+      'default': 12,
+      'tutorial': 12,
+      'easy': 12,
+      'hard': 11,
+      'extreme': 10
+    };
+
     css = common.inheritCSS({
       className: TYPES.tank,
       stopped: 'stopped'
@@ -254,8 +265,8 @@ const Tank = options => {
       energyLineScale: 0.8,
       frameCount: 0,
       repairModulus: 5,
-      // enemy tanks shoot a little faster
-      fireModulus: (options.isEnemy ? 10 : 12),
+      // enemy tanks shoot a little faster, depending on the game difficulty
+      fireModulus: fireRates[(options.isEnemy ? gameType : 'default')],
       vX: (options.isEnemy ? -1 : 1),
       vXDefault: (options.isEnemy ? -1 : 1),
       width: 58,
