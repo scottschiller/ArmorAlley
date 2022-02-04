@@ -263,8 +263,13 @@ function playRepairingWrench(isRepairing, exports) {
 
   exports.repairingWrenchTimer = true;
 
+  let repairingWrench;
+
   playSound(sounds.repairingWrench, exports, {
+    onplay: (sound) => repairingWrench = sound,
+    onstop: (sound) => sound.destruct(),
     onfinish() {
+      destroySound(repairingWrench);
       exports.repairingWrenchTimer = common.setFrameTimeout(function() {
         exports.repairingWrenchTimer = null;
         if (isRepairing()) {
@@ -288,8 +293,13 @@ function playImpactWrench(isRepairing, exports) {
   // flag immediately, so subsequent immediate calls only trigger once
   exports.impactWrenchTimer = true;
 
+  let impactWrench;
+
   playSound(sounds.impactWrench, exports, {
+    onplay: (sound) => impactWrench = sound,
+    onstop: (sound) => sound.destruct(),
     onfinish() {
+      destroySound(impactWrench);
       exports.impactWrenchTimer = common.setFrameTimeout(function() {
         exports.impactWrenchTimer = null;
         if (isRepairing()) {
@@ -311,9 +321,14 @@ function playTinkerWrench(isRepairing, exports) {
   // flag immediately, so subsequent immediate calls only trigger once
   exports.tinkerWrenchActive = true;
 
+  let tinkerWrench;
+
   playSound(sounds.tinkerWrench, exports, {
+    onplay: (sound) => tinkerWrench = sound,
+    onstop: (sound) => sound.destruct(),
     position: rndInt(8000),
     onfinish() {
+      destroySound(tinkerWrench);
       exports.tinkerWrenchActive = false;
       if (isRepairing()) {
         playTinkerWrench.apply(this, args);
