@@ -52,22 +52,32 @@ function getSound(soundReference) {
    * https://bugs.chromium.org/p/chromium/issues/detail?id=1144736#c27
    */
   if (soundObject && !soundObject.sound) {
+
     // make it happen! if not needed, throw away when finished.
     soundObject.options.id = `s${soundIDs}_${soundObject.options.url}`;
     soundIDs++;
 
-    if (!soundObject.options.onfinish) {
+    let _onfinish;
 
-      soundObject.onAASoundEnd = () => {
-        if (!soundObject.sound) return;
-        window.soundManager.destroySound(soundObject.sound.id);
-        soundObject.sound = null;
-      }
+    soundObject.onAASoundEnd = () => {
 
-      // SM2 will call this method, as will others locally
-      soundObject.options.onfinish = soundObject.onAASoundEnd;
+      // call the original, if specified
+      if (_onfinish) _onfinish();
+
+      // just to be sure
+      window.soundManager.destroySound(soundObject.options.id);
+
+      soundObject.sound = null;
+
     }
 
+    if (soundObject.options.onfinish) {
+      // local copy, before overwriting
+      _onfinish = soundObject.options.onfinish;
+    }
+
+    soundObject.options.onfinish = soundObject.onAASoundEnd;
+  
     soundObject.sound = window.soundManager.createSound(soundObject.options);
   }
 
@@ -218,7 +228,23 @@ function stopSound(sound) {
   soundObject.sound.stop();
 
   // manually destruct
-  soundObject.onAASoundEnd();
+  destroySound(soundObject);
+
+  soundObject.sound = null;
+
+}
+
+function destroySound(sound) {
+
+  if (!sound) return;
+
+  // AA sound object case
+  if (sound.onAASoundEnd) return sound.onAASoundEnd();
+
+  // SMSound instance, an actual SM2 sound object
+  if (sound.id) {
+    window.soundManager.destroySound(sound.id);
+  }
 
 }
 
@@ -974,6 +1000,7 @@ window.soundManager.onready(() => {
 });
 
 export {
+  destroySound,
   getSound,
   playQueuedSounds,
   playSound,
