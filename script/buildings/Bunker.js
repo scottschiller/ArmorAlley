@@ -225,8 +225,8 @@ const Bunker = options => {
 
   function engineerHit(target) {
 
-    // a friendly engineer unit has made contact with a bunker. repair damage, if any.
-    if (target.data.isEnemy === data.isEnemy) {
+    // a friendly engineer unit has made contact with a bunker. repair damage when at the door, if any.
+    if (target.data.isEnemy === data.isEnemy && collisionCheckMidPoint(exports, target)) {
       engineerRepair(target);
     }
    
