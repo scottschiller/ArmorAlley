@@ -384,8 +384,6 @@ window.soundManager.onready(() => {
 
   initSoundTypes();
 
-  sounds.machineGunFire = [];
-
   sounds.machineGunFire = addSound({
     url: getURL('machinegun'),
     volume: 25
@@ -415,9 +413,7 @@ window.soundManager.onready(() => {
     addSound({ url: getURL('522399__filmmakersmanual__shell-hitting-ground-37'), volume: 50 }),
   ]);
 
-  sounds.bombHatch = [];
-
-  sounds.bombHatch.push(addSound({
+  sounds.bombHatch = addSound({
     // hat tip to the Death Adder for this one. ;)
     // https://youtu.be/PAER-rSS8Jk
     url: getURL('ga-typewriter'),
@@ -427,52 +423,46 @@ window.soundManager.onready(() => {
       url: getURL('ta-bombrel'),
       volume: 33
     */
-  }));
+  });
 
-  sounds.impactWrench = [];
+  sounds.impactWrench = [
+    addSound({
+      // http://freesound.org/people/andrewgnau2/sounds/71534/
+      url: getURL('impact-wrench-1'),
+      volume: 10
+    }),
 
-  sounds.impactWrench.push(addSound({
-    // http://freesound.org/people/andrewgnau2/sounds/71534/
-    url: getURL('impact-wrench-1'),
-    volume: 10
-  }));
-
-  sounds.impactWrench.push(addSound({
-    url: getURL('impact-wrench-2'),
-    volume: 10
-  }));
-
-  sounds.impactWrench.push(addSound({
-    url: getURL('impact-wrench-3'),
-    volume: 10
-  }));
+    addSound({
+      url: getURL('impact-wrench-2'),
+      volume: 10
+    }),
 
   sounds.chainRepair = [];
 
   // https://freesound.org/people/jorickhoofd/sounds/160048/
-  sounds.chainRepair.push(addSound({
+  sounds.chainRepair = addSound({
     url: getURL('heavy-mechanics'),
     volume: 25
-  }));
+  });
 
-  sounds.repairingWrench = [];
+  sounds.repairingWrench = [
+    // http://freesound.org/people/TheGertz/sounds/131200/
+    addSound({
+      url: getURL('socket-wrench-1'),
+      volume: 10
+    }),
 
-  // http://freesound.org/people/TheGertz/sounds/131200/
-  sounds.repairingWrench.push(addSound({
-    url: getURL('socket-wrench-1'),
-    volume: 10
-  }));
+    // http://freesound.org/people/xxqmanxx/sounds/147018/
+    addSound({
+      url: getURL('socket-wrench-2'),
+      volume: 10
+    }),
 
-  // http://freesound.org/people/xxqmanxx/sounds/147018/
-  sounds.repairingWrench.push(addSound({
-    url: getURL('socket-wrench-2'),
-    volume: 10
-  }));
-
-  sounds.repairingWrench.push(addSound({
-    url: getURL('socket-wrench-3'),
-    volume: 10
-  }));
+    addSound({
+      url: getURL('socket-wrench-3'),
+      volume: 10
+    })
+  ];
 
   sounds.tinkerWrench = addSound({
     // http://freesound.org/people/klankbeeld/sounds/198299/
@@ -630,8 +620,6 @@ window.soundManager.onready(() => {
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
     url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
   });
-
-  sounds.turretGunFire = [];
 
   sounds.turretGunFire = addSound({
     // https://freesound.org/people/CGEffex/sounds/101961/
@@ -951,21 +939,11 @@ window.soundManager.onready(() => {
     })
   ]);
 
-  sounds.banana.launch = [
-    // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
-    addSound({
-      url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50
-    }),
-    addSound({
-      url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50
-    }),
-    addSound({
-      url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
-      volume: 50
-    })
-  ];
+  // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
+  sounds.banana.launch = addSound({
+    url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
+    volume: 50
+  });
 
   sounds.banana.expire = addSound({
     url: getURL('ufo-expire'),
