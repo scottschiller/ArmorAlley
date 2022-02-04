@@ -107,6 +107,7 @@ function playQueuedSounds() {
 }
 
 function getVolumeFromDistance(source, chopper) {
+
   // based on two objects' distance from each other, return volume -
   // e.g., things far away are quiet, things close-up are loud
   if (!source || !chopper) return 100;
@@ -115,6 +116,7 @@ function getVolumeFromDistance(source, chopper) {
 
   // volume range: 5-30%?
   return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
+
 }
 
 function getPanFromLocation(source, chopper) {
@@ -384,11 +386,13 @@ let sounds = {
 };
 
 function initSoundTypes() {
+
   sounds.types = {
     // associate certain sounds with inventory / object types
     metalHit: [TYPES.tank, TYPES.van, TYPES.missileLauncher, TYPES.bunker, TYPES.superBunker, TYPES.turret],
     genericSplat: [TYPES.engineer,TYPES.infantry,TYPES.parachuteInfantry],
   }
+
 }
 
 function getURL(file) {
