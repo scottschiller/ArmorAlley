@@ -2,7 +2,6 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { isSafari, tutorialMode } from '../core/global.js';
-import { screenScale } from '../aa.js';
 
 const prefs = {
   // legacy: game type, etc.
@@ -93,6 +92,16 @@ function PrefsManager() {
     dom.o.style.opacity = null;
 
     getPrefsFromStorage();
+
+  }
+
+  function toggleDisplay() {
+
+    if (data.active) {
+      hide();
+    } else {
+      show();
+    }
 
   }
 
@@ -388,7 +397,9 @@ function PrefsManager() {
 
     updateScreenScale: () => {
 
-      if (!data.active || !dom.o) return;
+      const screenScale = game?.objects?.view?.data?.screenScale;
+
+      if (!screenScale || !data.active || !dom.o) return;
 
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
       let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
@@ -402,6 +413,7 @@ function PrefsManager() {
   return {
     init,
     isActive,
+    toggleDisplay,
     updateScreenScale: events.updateScreenScale
   };
 
