@@ -79,7 +79,7 @@ const Tank = options => {
 
       if (data.frameCount % data.repairModulus === 0) {
         if (data.energy < data.energyMax) {
-          data.energy += 0.1;
+          data.energy += 0.6;
           updateHealth();
         }
       }
@@ -264,7 +264,7 @@ const Tank = options => {
       energyMax: 8,
       energyLineScale: 0.8,
       frameCount: 0,
-      repairModulus: 5,
+      repairModulus: 30,
       // enemy tanks shoot a little faster, depending on the game difficulty
       fireModulus: fireRates[(options.isEnemy ? gameType : 'default')],
       vX: (options.isEnemy ? -1 : 1),
