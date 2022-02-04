@@ -1,3 +1,4 @@
+import { prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { TYPES, defaultMissileMode, rubberChickenMode, bananaMode } from '../core/global.js';
@@ -26,14 +27,21 @@ function KeyboardMonitor() {
     tank: 84,
     van: 86,
     infantry: 73,
-    engineer: 69
+    engineer: 69,
+    pause_p: 80,
+    esc: 27
+  };
+
+  const allowedInPause = {
+    [keyMap.pause_p]: true,
+    [keyMap.esc]: true
   };
 
   events = {
 
     keydown(e) {
 
-      if (game.data.paused) return;
+      if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
       // console.log(e.keyCode);
 
@@ -53,7 +61,7 @@ function KeyboardMonitor() {
 
     keyup(e) {
 
-      if (game.data.paused) return;
+      if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
       if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
         downKeys[e.keyCode] = null;
@@ -243,7 +251,27 @@ function KeyboardMonitor() {
 
       }
 
-    }
+    },
+
+    27: {
+
+      down() {
+
+        prefsManager.toggleDisplay();
+
+      }
+
+    },
+
+    80: {
+
+      down() {
+
+        game.togglePause();
+
+      }
+  
+    },
 
   };
 
