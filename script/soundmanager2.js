@@ -1897,8 +1897,12 @@ function SoundManager(smURL, smID) {
       if (!_bFromSM) {
         // ensure deletion from controller
         sm2.destroySound(s.id, true);
-        s = null;
       }
+
+      // disable own methods
+      disableObject(s);
+
+      s = null;
 
     };
 
