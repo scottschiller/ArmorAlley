@@ -206,13 +206,23 @@ const SmartMissile = options => {
         // don't "die" again if the chicken has already moaned, i.e., from expiring.
         if (!data.expired) {
 
-          dieSound = playSound(sounds.rubberChicken.die, exports);
+          if (launchSound) {
+            // "mute" and forget; the sound will finish playing, and will be destroyed / freed up.
+            launchSound.mute();
+            launchSound = null;
+          }
+
+          playSound(sounds.rubberChicken.die, exports, {
+            onplay: (sound) => dieSound = sound,
+            playbackRate: data.playbackRate
+          });
 
         }
 
         if (launchSound) {
 
-          launchSound.stop();
+          launchSound.mute();
+          launchSound = null;
 
           if (!data.expired && dieSound) {
             // hackish: apply launch sound volume to die sound
@@ -224,7 +234,10 @@ const SmartMissile = options => {
       }
 
       if (data.isBanana && launchSound) {
-        launchSound.stop();
+
+        launchSound.mute();
+        launchSound = null;
+
       }
 
       // if targeting the player, ensure the expiry warning sound is stopped.
@@ -278,7 +291,7 @@ const SmartMissile = options => {
 
   function animate() {
 
-    let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
+    let deltaX, deltaY, newSound, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
 
     // notify caller if now dead and can be removed.
     if (data.dead) return (data.dead && !dom.o);
@@ -318,7 +331,10 @@ const SmartMissile = options => {
 
         if (launchSound) {
           launchSound.stop();
-          launchSound.play();
+          launchSound.play({
+            playbackRate: data.playbackRate,
+            onplay: (sound) => launchSound = sound
+          });
         }
 
         // and start tracking.
@@ -337,23 +353,31 @@ const SmartMissile = options => {
       data.hostile = true;
 
       if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.expire) {
+        
+        playSound(sounds.rubberChicken.expire, exports, {
+          onplay: (sound) => newSound = sound,
+          playbackRate: data.playbackRate
+        });
 
-        playSound(sounds.rubberChicken.expire, exports);
-
-        if (launchSound) {
-          // hackish: apply launch sound volume, for consistency
-          if (sounds.rubberChicken.expire.sound) sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
+        // TODO: review and remove
+        // hackish: apply launch sound volume, for consistency
+        if (launchSound && sounds.rubberChicken.expire.sound) {
+          sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
         }
 
       }
 
       if (data.isBanana && sounds.banana.expire) {
 
-        playSound(sounds.banana.expire, exports);
+        playSound(sounds.banana.expire, exports, {
+          onplay: (sound) => newSound = sound,
+          playbackRate: data.playbackRate
+        });
 
-        if (launchSound) {
-          // hackish: apply launch sound volume, for consistency
-          if (sounds.banana.expire.sound) sounds.banana.expire.sound.setVolume(launchSound.volume);
+        // TODO: review and remove
+        // hackish: apply launch sound volume, for consistency
+        if (launchSound && sounds.banana.expire.sound) {
+          sounds.banana.expire.sound.setVolume(launchSound.volume);
         }
 
       }
@@ -534,16 +558,25 @@ const SmartMissile = options => {
     if (data.isBanana && sounds.banana.launch) {
 
       // special case: enemy missile launchers should always play at full volume - they're close enough.
-      launchSound = playSound(sounds.banana.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports));
+      playSound(sounds.banana.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+        onplay: (sound) => launchSound = sound,
+        playbackRate: data.playbackRate
+      });
 
     } else if (data.isRubberChicken && sounds.rubberChicken.launch) {
 
       // special case: enemy missile launchers should always play at full volume - they're close enough.
-      launchSound = playSound(sounds.rubberChicken.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports));
+      playSound(sounds.rubberChicken.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+        onplay: (sound) => launchSound = sound,
+        playbackRate: data.playbackRate
+      });
 
     } else if (sounds.missileLaunch) {
 
-      playSound(sounds.missileLaunch, exports);
+      launchSound = playSound(sounds.missileLaunch, exports, {
+        onplay: (sound) => launchSound = sound,
+        playbackRate: data.playbackRate
+      });
 
     }
 
@@ -591,6 +624,7 @@ const SmartMissile = options => {
     isRubberChicken: !!options.isRubberChicken,
     isBanana: !!options.isBanana,
     onDie: options.onDie || null,
+    playbackRate: 0.95 + (Math.random() * 0.1),
     vX: 1 + Math.random(),
     vY: 1 + Math.random(),
     vXMax: 12 + rnd(6) + (options.vXMax || 0),
