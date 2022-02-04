@@ -178,6 +178,11 @@ function playSound(soundReference, target, soundOptions) {
     localOptions = common.mixin(localOptions, soundOptions);
   }
 
+  // playback speed based on object's `playbackRate`, OR, ±5% on playback speed, for variety
+  if (!soundObject?.options?.fixedPlaybackRate) {
+    localOptions.playbackRate = target?.data.playbackRate || (0.95 + (Math.random() * 0.1));
+  }
+
   // 01/2021: push sound calls off to next frame to be played in a batch,
   // trade-off of slight async vs. blocking(?) current frame
   // 01/2022: only play if not already queued.
