@@ -659,7 +659,7 @@ const common = {
 
     for (i = 0; i < count; i++) {
 
-      angle += angleIncrement;
+      angle += (angleIncrement + plusMinus(rnd(angleIncrement * 0.25)));
 
       // calculate vectors for each element
       radians = angle * Math.PI / 90;
@@ -678,8 +678,8 @@ const common = {
         x: item.data.x + ((smokeOptions.offsetX || 0) || (item.data.halfWidth || 0)),
         y: item.data.y + ((smokeOptions.offsetY || 0) || (item.data.halfHeight || 0)),
         // account for some of parent object's motion, e.g., helicopter was moving when it blew up
-        vX: vectorX + ((smokeOptions.parentVX || 0) / 3),
-        vY: vectorY + ((smokeOptions.parentVY || 0) / 3),
+        vX: (vectorX + ((smokeOptions.parentVX || 0) / 3)) * (1 + rnd(0.25)),
+        vY: (vectorY + ((smokeOptions.parentVY || 0) / 3)) * (1 + rnd(0.25)),
         // spriteFrame: (Math.random() > 0.5 ? 0 : rndInt(5)),
         spriteFrameModulus: smokeOptions.spriteFrameModulus || 3,
         gravity: 0.25,
