@@ -306,8 +306,11 @@ if (isSafari) {
 
 soundManager.setup({
   debugMode: false,
+  // Audio in Firefox starts breaking up at some number of active sounds, if this is enabled. :/
+  usePlaybackRate: !isFirefox || winloc.match(/forcePlaybackRate/i),
   defaultOptions: {
-    volume: DEFAULT_VOLUME
+    volume: DEFAULT_VOLUME,
+    multiShotEvents: true
   },
 });
 
@@ -319,7 +322,7 @@ window.addEventListener('DOMContentLoaded', game.initArmorAlley);
 
 // --- THE END ---
 
-import { winloc, isSafari, DEFAULT_VOLUME } from './core/global.js';
+import { winloc, isFirefox, isSafari, DEFAULT_VOLUME } from './core/global.js';
 
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
