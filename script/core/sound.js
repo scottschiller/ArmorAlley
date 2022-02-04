@@ -438,7 +438,11 @@ window.soundManager.onready(() => {
       volume: 10
     }),
 
-  sounds.chainRepair = [];
+    addSound({
+      url: getURL('impact-wrench-3'),
+      volume: 10
+    })
+  ];
 
   // https://freesound.org/people/jorickhoofd/sounds/160048/
   sounds.chainRepair = addSound({
