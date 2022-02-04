@@ -908,6 +908,16 @@ const game = (() => {
 
   }
 
+  function togglePause() {
+
+    if (data.paused) {
+      resume();
+    } else {
+      pause();
+    }
+
+  }
+
   function pause() {
 
     if (data.paused) return;
@@ -1337,7 +1347,8 @@ const game = (() => {
     initArmorAlley,
     objects,
     pause,
-    resume
+    resume,
+    togglePause
   };
 
   return exports;
