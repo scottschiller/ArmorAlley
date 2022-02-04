@@ -7,6 +7,7 @@ import { common } from './common.js';
 let soundIDs = 0;
 let soundIDsToPlay = {};
 const soundsToPlay = [];
+const fixedPlaybackRate = true;
 
 function getSound(soundReference) {
 
@@ -474,12 +475,14 @@ window.soundManager.onready(() => {
   sounds.friendlyClaim = addSound({
     // http://freesound.org/people/Carlos_Vaquero/sounds/153616/
     url: getURL('violin-c5-pizzicato-non-vibrato'),
+    fixedPlaybackRate,
     volume: 8
   });
 
   sounds.enemyClaim = addSound({
     // http://freesound.org/people/Carlos_Vaquero/sounds/153611/
     url: getURL('violin-g4-pizzicato-non-vibrato'),
+    fixedPlaybackRate,
     volume: 8
   });
 
@@ -487,6 +490,7 @@ window.soundManager.onready(() => {
     // used when picking up infantry + engineers
     // hat tip: "tower turn" sound from TA, guns like the Guardian - a personal favourite.
     url: getURL('ta-twrturn3'),
+    fixedPlaybackRate,
     volume: 25
   });
 
@@ -495,6 +499,7 @@ window.soundManager.onready(() => {
     // http://freesound.org/people/SunnySideSound/sounds/67095/
     // url: getURL('ta-loadair'),
     url: getURL('ga-234_pickup'),
+    fixedPlaybackRate,
     volume: 25
   });
 
@@ -793,36 +798,43 @@ window.soundManager.onready(() => {
 
   sounds.helicopter.engine = addSound({
     url: getURL('helicopter-engine'),
+    fixedPlaybackRate,
     volume: 50,
     loops: 999
   });
 
   sounds.helicopter.rotate = addSound({
     url: getURL('helicopter-rotate'),
+    fixedPlaybackRate,
     volume: 10
   });
 
   sounds.inventory.denied = addSound({
-    url: getURL('order-denied')
+    url: getURL('order-denied'),
+    fixedPlaybackRate,
   });
 
   sounds.inventory.begin = addSound({
     url: getURL('order-start'),
+    fixedPlaybackRate,
     volume: 30
   });
 
   sounds.inventory.debit = addSound({
     url: getURL('funds-debit'),
-    volume: 50,
+    fixedPlaybackRate,
+    volume: 50
   });
 
   sounds.inventory.credit = addSound({
     url: getURL('funds-credit'),
-    volume: 60,
+    fixedPlaybackRate,
+    volume: 60
   });
 
   sounds.inventory.end = addSound({
     url: getURL('order-complete'),
+    fixedPlaybackRate,
     volume: 10
   });
 
@@ -835,6 +847,7 @@ window.soundManager.onready(() => {
     // http://soundbible.com/1766-Fire-Pager.html
     // public domain
     url: getURL('fire_pager-jason-1283464858_edit'),
+    fixedPlaybackRate,
     loops: 999,
     volume: 3
   });
@@ -843,6 +856,7 @@ window.soundManager.onready(() => {
     // http://soundbible.com/1766-Fire-Pager.html
     // public domain
     url: getURL('fire_pager-jason-1283464858_edit_long'),
+    fixedPlaybackRate,
     volume: 2
   })
 
@@ -878,11 +892,13 @@ window.soundManager.onready(() => {
 
   sounds.radarStatic = addSound({
     url: getURL('radar-static'),
+    fixedPlaybackRate,
     volume: 40
   });
 
   sounds.radarJamming = addSound({
     url: getURL('radar-jamming'),
+    fixedPlaybackRate,
     volume: 33,
     loops: 999
   });
@@ -896,6 +912,7 @@ window.soundManager.onready(() => {
   sounds.ipanemaMuzak = addSound({
     // hat tip to Mike Russell for the "vintage radio" / elevator muzak EQ effect: https://youtu.be/ko9hRYx1lF4
     url: getURL('ipanema-elevator'),
+    fixedPlaybackRate,
     volume: 5,
     loops: 999
   })
