@@ -356,7 +356,7 @@ const SmartMissile = options => {
         
         playSound(sounds.rubberChicken.expire, exports, {
           playbackRate: data.playbackRate,
-          volume: launchSound?.volume || undefined
+          volume: launchSound?.volume
         });
 
       }
@@ -365,7 +365,7 @@ const SmartMissile = options => {
 
         playSound(sounds.banana.expire, exports, {
           playbackRate: data.playbackRate,
-          volume: launchSound?.volume || undefined
+          volume: launchSound?.volume
         });
 
       }
