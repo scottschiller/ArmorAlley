@@ -291,7 +291,7 @@ const SmartMissile = options => {
 
   function animate() {
 
-    let deltaX, deltaY, newSound, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
+    let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
 
     // notify caller if now dead and can be removed.
     if (data.dead) return (data.dead && !dom.o);
@@ -355,30 +355,18 @@ const SmartMissile = options => {
       if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.expire) {
         
         playSound(sounds.rubberChicken.expire, exports, {
-          onplay: (sound) => newSound = sound,
-          playbackRate: data.playbackRate
+          playbackRate: data.playbackRate,
+          volume: launchSound?.volume || undefined
         });
-
-        // TODO: review and remove
-        // hackish: apply launch sound volume, for consistency
-        if (launchSound && sounds.rubberChicken.expire.sound) {
-          sounds.rubberChicken.expire.sound.setVolume(launchSound.volume);
-        }
 
       }
 
       if (data.isBanana && sounds.banana.expire) {
 
         playSound(sounds.banana.expire, exports, {
-          onplay: (sound) => newSound = sound,
-          playbackRate: data.playbackRate
+          playbackRate: data.playbackRate,
+          volume: launchSound?.volume || undefined
         });
-
-        // TODO: review and remove
-        // hackish: apply launch sound volume, for consistency
-        if (launchSound && sounds.banana.expire.sound) {
-          sounds.banana.expire.sound.setVolume(launchSound.volume);
-        }
 
       }
 
