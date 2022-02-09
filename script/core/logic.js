@@ -6,7 +6,7 @@ import { gameType } from '../aa.js';
 import { utils } from './utils.js';
 import { common } from './common.js';
 import { game } from './Game.js';
-import { COSTS, TYPES, worldWidth, worldHeight } from './global.js';
+import { COSTS, TYPES, worldWidth } from './global.js';
 
  function collisionCheck(point1, point2, point1XLookAhead) {
 
@@ -262,7 +262,9 @@ function getNearestObject(source, options) {
 
   // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
-  let i, j, k, l, itemArray, items, localObjects, targetData, preferGround, isInFront, useInFront, totalDistance;
+  let i, j, k, l, itemArray, items, localObjects, targetData, isInFront, useInFront, distanceX, distanceY;
+
+  const isNearGround = source.data.y >= 340;
 
   options = options || {};
 
@@ -273,11 +275,6 @@ function getNearestObject(source, options) {
 
   localObjects = [];
 
-  // if the source object isn't near the ground, be biased toward airborne items.
-  if (source.data.type === TYPES.helicopter && source.data.y > worldHeight - 100) {
-    preferGround = true;
-  }
-
   for (i = 0, j = items.length; i < j; i++) {
 
     itemArray = game.objects[items[i]];
@@ -285,39 +282,31 @@ function getNearestObject(source, options) {
     for (k = 0, l = itemArray.length; k < l; k++) {
 
       // potential target: not dead, and an enemy
-      if (!itemArray[k].data.dead && itemArray[k].data.isEnemy !== source.data.isEnemy) {
+      if (itemArray[k].data.dead || itemArray[k].data.isEnemy === source.data.isEnemy) continue;
+      
+      // is the target in front of the source?
+      isInFront = (itemArray[k].data.x >= source.data.x);
 
-        // is the target in front of the source?
-        isInFront = (itemArray[k].data.x >= source.data.x);
+      // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
+      if (!useInFront || (useInFront && ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)))) {
 
-        // [revised] - is the target within an acceptable range?
-        // isInFront = (itemArray[k].data.x >= source.data.x || itemArray[k].data.x - source.data.x > -100);
+        targetData = itemArray[k].data;
 
-        // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
-        if (!useInFront || (useInFront && ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)))) {
+        // how far to the target?
+        distanceX = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
+        distanceY = Math.abs(Math.abs(targetData.y) - Math.abs(source.data.y));
 
-          targetData = itemArray[k].data;
+        // too far away for a missile to reach?
+        if (distanceX > 3072) continue;
 
-          if (
-            (preferGround && targetData.bottomAligned && targetData.type !== TYPES.balloon)
-            || (!preferGround && (!targetData.bottomAligned || targetData.type === TYPES.balloon))
-          ) {
+        // near-ground bias: restrict to bottom-aligned and very low units if close to the bottom.
+        if (isNearGround && distanceY > 40) continue;
 
-            totalDistance = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
-
-            // "within range"
-            if (totalDistance < 3072) {
-
-              localObjects.push({
-                obj: itemArray[k],
-                totalDistance
-              });
-
-            }
-
-          }
-
-        }
+        localObjects.push({
+          obj: itemArray[k],
+          // Given X and Y, determine the hypotenuse - the third side of our "distance triangle." Hat tip: Pythagoras.
+          totalDistance: Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2))
+        });
 
       }
 
@@ -330,8 +319,13 @@ function getNearestObject(source, options) {
   // sort by distance
   localObjects.sort(utils.array.compare('totalDistance'));
 
-  // TODO: review and remove ugly hack here - enemy helicopter gets reverse-order logic.
-  return localObjects[source.data.type === TYPES.helicopter && source.data.isEnemy ? localObjects.length - 1 : 0].obj;
+  // enemy helicopter: reverse the array.
+  if (source.data.type === TYPES.helicopter && source.data.isEnemy) {
+    localObjects.reverse();
+  }
+
+  // return the best candidate.
+  return localObjects[0].obj;
 
 }
 
