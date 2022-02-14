@@ -87,6 +87,8 @@ const SmartMissile = options => {
 
     let i, j;
 
+    if (!dom.trailers?.length) return;
+
     for (i = 0, j = data.trailerCount; i < j; i++) {
       dom.trailers[i].style.opacity = 0;
     }
