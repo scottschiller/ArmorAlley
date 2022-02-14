@@ -20,8 +20,7 @@ const Bunker = options => {
         leftMargin: 8,
         isEnemy: data.isEnemy,
         x: data.x,
-        // if 0, balloon will "rise from the depths".
-        y: (useRandomY ? 48 + rndInt(game.objects.view.data.world.height - 48) : 0)
+        y: (useRandomY ? undefined : common.bottomAlignedY(-data.height))
       });
 
       // push onto the larger array

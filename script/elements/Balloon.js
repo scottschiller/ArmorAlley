@@ -248,7 +248,7 @@ const Balloon = options => {
     data.dead = false;
 
     // reset position, too
-    data.y = common.bottomAlignedY(-height);
+    data.y = common.bottomAlignedY(-data.height);
 
     radarItem.reset();
 
@@ -336,6 +336,9 @@ const Balloon = options => {
     // don't allow balloons to fly into ground units, generally speaking
     maxY: game.objects.view.data.world.height - height - 32
   }, options);
+
+  // random Y start position, unless specified
+  data.y = data.y || rndInt(data.maxY);
 
   dom = {
     o: null
