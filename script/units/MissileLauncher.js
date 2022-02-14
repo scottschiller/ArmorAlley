@@ -97,11 +97,11 @@ const MissileLauncher = options => {
         return;
       }
 
-      // friendly helicopter
+      // friendly helicopter, and armed with at least one missile
       if (objectInView(data, {
         items: 'helicopters',
         friendlyOnly: true
-      })) {
+      }) && game.objects.helicopters[0].data.smartMissiles > 0) {
         return;
       }
 
