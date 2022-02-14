@@ -1257,6 +1257,10 @@ const Helicopter = options => {
           playSound(sounds.inventory.denied);
         }
 
+        if (data.smartMissiles && !missileTarget) {
+          game.objects.notifications.add('🚀 Missile: No nearby target? 📡 🚫', { noRepeat: true });
+        }
+
       }
 
     }
