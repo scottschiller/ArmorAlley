@@ -322,7 +322,7 @@ const Balloon = options => {
     direction: 0,
     detached: false,
     hostile: false, // dangerous when detached
-    verticalDirection: 1,
+    verticalDirection: plusMinus(1),
     verticalDirectionDefault: 1,
     leftMargin: options.leftMargin || 0,
     width: 38,
