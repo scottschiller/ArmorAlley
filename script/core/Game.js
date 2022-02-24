@@ -40,7 +40,7 @@ const game = (() => {
 
   function addItem(className, x) {
 
-    let node, data, dom, width, height, inCache, exports;
+    let node, data, width, height, inCache, exports;
 
     node = common.makeSprite({
       className: `${className} terrain-item`
@@ -58,7 +58,7 @@ const game = (() => {
 
     if (!inCache) {
       // append only so we can read layout
-      game.dom.world.appendChild(node);
+      dom.world.appendChild(node);
     }
 
     data = {
@@ -70,14 +70,12 @@ const game = (() => {
       height: height || node.offsetHeight      
     };
 
-    dom = {
-      o: node
-    };
-
     // basic structure for a terrain item
     exports = {
       data,
-      dom
+      dom: {
+        o: node
+      }
     };
 
     if (!inCache) {
@@ -88,7 +86,7 @@ const game = (() => {
       };
 
       // and now, remove; these will be re-appended when on-screen only.
-      game.dom.world.removeChild(node);
+      node.remove();
     }
 
     // these will be tracked only for on-screen / off-screen purposes.
@@ -1229,7 +1227,7 @@ const game = (() => {
   
       if (menu) {
   
-        utils.css.add(document.getElementById('world'), 'blurred');
+        utils.css.add(dom.world, 'blurred');
   
         utils.css.add(menu, 'visible');
   
@@ -1245,9 +1243,8 @@ const game = (() => {
   
       // preference set or game type in URL - start immediately.
   
-      // TODO: cleaner DOM reference
       if (gameType.match(/easy|hard|extreme/i)) {
-        utils.css.add(document.getElementById('world'), 'regular-mode');
+        utils.css.add(dom.world, 'regular-mode');
       }
   
       if (gameType) {
