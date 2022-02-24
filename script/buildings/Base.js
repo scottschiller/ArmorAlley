@@ -24,7 +24,7 @@ const Base = options => {
       parentType: data.type,
       isEnemy: data.isEnemy,
       isBanana: gamePrefs.enemy_missile_match_type && data.missileMode === bananaMode,
-      isRubberChicken: data.missileMode === rubberChickenMode,
+      isRubberChicken: gamePrefs.enemy_missile_match_type && data.missileMode === rubberChickenMode,
       // position roughly around "launcher" point of base
       x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
       y: data.y,
