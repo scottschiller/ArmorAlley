@@ -307,9 +307,7 @@ const common = {
 
     game.objects.queue.add(() => {
       if (!node) return;
-      if (node.parentNode) {
-        node.parentNode.removeChild(node);
-      }
+      node.remove();
       node = null;
     });
 
@@ -332,7 +330,7 @@ const common = {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
         // nodeArray[i].style.transform = 'none';
-        nodeArray[i].parentNode.removeChild(nodeArray[i]);
+        nodeArray[i].remove();
         nodeArray[i] = null;
       }
 
@@ -654,7 +652,10 @@ const common = {
   
       // fade should be completed within 250 msec
       object.data.energyTimerRemove = common.setFrameTimeout(() => {
-        if (node?.parentNode) node.parentNode.removeChild(node);
+        // if (node?.parentNode) node.parentNode.removeChild(node);
+        if (node) {
+          node.remove();
+        }
         object.dom.oEnergy = null;
         node = null;
       }, 250);
