@@ -302,13 +302,9 @@ const Tutorial = () => {
 
         for (item in counts) {
 
-          if (Object.prototype.hasOwnProperty.call(counts, item)) {
+          if (!counts[item]) {
 
-            if (!counts[item]) {
-
-              isComplete = false;
-
-            }
+            isComplete = false;
 
           }
 

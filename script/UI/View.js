@@ -300,9 +300,7 @@ const View = () => {
 
     // Object.assign()-like copying of properties.
     for (const option in options) {
-      if (Object.prototype.hasOwnProperty.call(options, option)) {
-        data.touchEvents[id][option] = options[option];
-      }
+      data.touchEvents[id][option] = options[option];
     }
 
     const target = options && options.target;

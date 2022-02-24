@@ -345,15 +345,13 @@ const common = {
     let item;
 
     for (item in dom) {
-      if (Object.prototype.hasOwnProperty.call(dom, item) && dom[item]) {
-        // node reference, or array of nodes?
-        if (dom[item] instanceof Array) {
-          common.removeNodeArray(dom[item]);
-        } else {
-          common.removeNode(dom[item]);
-        }
-        dom[item] = null;
+      // node reference, or array of nodes?
+      if (dom[item] instanceof Array) {
+        common.removeNodeArray(dom[item]);
+      } else {
+        common.removeNode(dom[item]);
       }
+      dom[item] = null;
     }
 
   },
