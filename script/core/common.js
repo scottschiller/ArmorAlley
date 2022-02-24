@@ -651,7 +651,6 @@ const common = {
   
       // fade should be completed within 250 msec
       object.data.energyTimerRemove = common.setFrameTimeout(() => {
-        // if (node?.parentNode) node.parentNode.removeChild(node);
         if (node) {
           node.remove();
           node._style = null;
