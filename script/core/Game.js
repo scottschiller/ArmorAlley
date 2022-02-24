@@ -150,6 +150,10 @@ const game = (() => {
         objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
       };
 
+    } else {
+
+      document.getElementById('mobile-controls').remove();
+
     }
 
     objects.radar = Radar();
