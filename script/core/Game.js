@@ -924,6 +924,11 @@ const game = (() => {
 
     if (data.paused) return;
 
+    // good time to process the queue - prune the DOM, etc.
+    if (objects.queue) {
+      objects.queue.process();
+    }
+
     objects.gameLoop.stop();
 
     if (gamePrefs.sound && window.soundManager) {
