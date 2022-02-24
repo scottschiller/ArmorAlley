@@ -179,18 +179,18 @@ const common = {
 
   makeSprite(options) {
 
-    const o = document.createElement('div');
+    const o = common.withStyle(document.createElement('div'));
   
     o.className = `sprite ${options.className}`;
   
     if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
-      o.style.top = '0px';
-      o.style.left = '0px';
+      o._style.setProperty('top', '0px');
+      o._style.setProperty('left', '0px');
     }
   
     if (debugType) {
       o.innerHTML = options.className.replace(/sub-sprite/i, '');
-      o.style.fontSize = '3px';
+      o._style.setProperty('font-size', '3px');
     }
   
     return o;
@@ -279,10 +279,10 @@ const common = {
      * provided we haven't applied the same one.
      */
     if ((!exports || !exports.data || exports.data.isOnScreen) && o._lastTransform !== transformString) {
-      o.style.transform = transformString;
+      o._style.setProperty('transform', transformString);
       if (debug) {
         // show that this element was moved
-        o.style.outline = `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`;
+        o._style.setProperty('outline', `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`);
         game.objects.gameLoop.incrementTransformCount();
       }
     } else if (debug) {
@@ -303,11 +303,12 @@ const common = {
     if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
     // hide immediately, cheaply
-    node.style.opacity = 0;
+    node?._style?.setProperty('opacity', 0);
 
     game.objects.queue.add(() => {
       if (!node) return;
       node.remove();
+      node._style = null;
       node = null;
     });
 
@@ -329,8 +330,8 @@ const common = {
       for (i = 0; i < j; i++) {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
-        // nodeArray[i].style.transform = 'none';
         nodeArray[i].remove();
+        nodeArray[i]._style = null;
         nodeArray[i] = null;
       }
 
@@ -387,10 +388,10 @@ const common = {
   
       if (o.dom.o._lastTransform) {
         // MOAR GPU! re-apply transform that was present at, or updated since, removal
-        o.dom.o.style.transform = o.dom.o._lastTransform;
+        o.dom.o._style.setProperty('transform', o.dom.o._lastTransform);
       }
   
-      o.dom.o.style.contentVisibility = 'visible';
+      o.dom.o._style.setProperty('content-visibility', 'visible');
   
       if (o.dom._oRemovedParent) {
   
@@ -416,13 +417,15 @@ const common = {
   
       if (o.dom && o.dom.o) {
   
+        let transform = o.dom.o._style.getPropertyValue('transform');
+
         // manually remove x/y transform, will be restored when on-screen.
-        if (o.dom.o.style.transform) {
+        if (transform) {
           // 'none' might be considered a type of transform per Chrome Dev Tools,
           // and thus incur an "inline transform" cost vs. an empty string.
           // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
-          o.dom.o._lastTransform = o.dom.o.style.transform;
-          o.dom.o.style.transform = 'none';
+          o.dom.o._lastTransform = transform;
+          o.dom.o._style.setProperty('transform', 'none');
         }
   
         if (o.dom.o.parentNode) {
@@ -430,7 +433,7 @@ const common = {
           o.dom._oRemovedParent.removeChild(o.dom.o);
         }
   
-        o.dom.o.style.contentVisibility = 'hidden';
+        o.dom.o._style.setProperty('content-visibility', 'hidden');
   
       }
   
@@ -559,7 +562,7 @@ const common = {
      * Here be dragons: this should only be applied once, given concatenation,
      * and might cause bugs and/or performance problems if it isn't. :D
      */
-    node.style.transform += ` rotate3d(0, 0, 1, ${rnd(360)}deg)`;
+    node._style.setProperty('transform', `${node._style.getPropertyValue('transform')} rotate3d(0, 0, 1, ${rnd(360)}deg)`);
 
   },
   
@@ -589,7 +592,7 @@ const common = {
   
     // dynamically create, and maybe queue removal of `.energy` node
     if (!object.dom.oEnergy) {
-      node = document.createElement('div');
+      node = common.withStyle(document.createElement('div'));
       node.className = 'energy-status energy';
       object.dom.oEnergy = object.dom.o.appendChild(node);
       didCreate = true;
@@ -610,24 +613,24 @@ const common = {
     object.data.lastEnergy = energy;
   
     // show when damaged, but not when dead.
-    node.style.opacity = (energy < 100 ? 1 : 0);
+    node._style.setProperty('opacity', (energy < 100 ? 1 : 0));
   
     if (energy > 66) {
-      node.style.backgroundColor = '#33cc33';
+      node._style.setProperty('background-color', '#33cc33');
     } else if (energy > 33) {
-      node.style.backgroundColor = '#cccc33';
+      node._style.setProperty('background-color', '#cccc33');
     } else {
-      node.style.backgroundColor = '#cc3333';
+      node._style.setProperty('background-color', '#cc3333');
     }
   
     newWidth = energy * energyLineScale;
   
     // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
-    node.style.width = `${newWidth}%`;
+    node._style.setProperty('width', `${newWidth}%`);
     
     // only center if full-width, or explicitly specified
     if (energyLineScale === DEFAULT_ENERGY_SCALE || object.data.centerEnergyLine) {
-      node.style.left = ((100 - newWidth) / 2) + '%';
+      node._style.setProperty('left', ((100 - newWidth) / 2) + '%');
     }
   
     // if "always" show, no further work to do
@@ -648,13 +651,14 @@ const common = {
       // in case prefs changed during a timer, prevent removal now
       if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
   
-      if (node) node.style.opacity = 0;
+      if (node?._style) node._style.setProperty('opacity', 0);
   
       // fade should be completed within 250 msec
       object.data.energyTimerRemove = common.setFrameTimeout(() => {
         // if (node?.parentNode) node.parentNode.removeChild(node);
         if (node) {
           node.remove();
+          node._style = null;
         }
         object.dom.oEnergy = null;
         node = null;
