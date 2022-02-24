@@ -14,6 +14,34 @@ let guid = 0;
 
 const common = {
 
+  withStyle: (node) => {
+
+    // experimental: decorate a DOM node with shortcuts, perhaps reducing style "access"
+    if (node && !node._style) {
+
+      // this may be no different vs. direct access(?)
+      // node._style = node.style;
+
+      // this may be faster, at least in Chrome.
+      node._style = {
+        getPropertyValue: node.style.getPropertyValue.bind(node.style),
+        setProperty: node.style.setProperty.bind(node.style)
+      }
+
+    }
+
+    return node;
+    
+  },
+
+  getWithStyle: (id) => {
+
+    var node = document.getElementById(id);
+
+    return common.withStyle(node);
+
+  },
+
   setFrameTimeout: (callback, delayMsec) => {
 
     /**
