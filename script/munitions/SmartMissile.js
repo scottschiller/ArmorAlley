@@ -309,13 +309,18 @@ const SmartMissile = options => {
     // TODO: hack full height for balloon?
     deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
 
-    // if original target has died, try to find a new target.
-    // e.g., two missiles fired at enemy helicopter, first one hits and kills it.
-    // in the original game, missiles would die when the original target died -
-    // but, missiles are rare (you get two per chopper) and take time to re-arm,
-    // and they're "smart" - so in my version, missiles get retargeting capability
-    // for at least one animation frame after the original target is lost.
-    // if retargeting finds nothing at the moment the original is lost, the missile will die.
+    /**
+     * if original target has died OR has become friendly, try to find a new target.
+     * e.g., enemy bunker that was originally targeted, is captured and became friendly -
+     * or, two missiles fired at enemy helicopter, but the first one hits and kills it.
+     * 
+     * in the original game, missiles would die when the original target died -
+     * but, missiles are rare (you get two per chopper) and take time to re-arm,
+     * and they're "smart" - so in my version, missiles get retargeting capability
+     * for at least one animation frame after the original target is lost.
+     * 
+     * if retargeting finds nothing at the moment the original is lost, the missile will die.
+     */
     if (!data.expired && (!objects.target || objects.target.data.dead)) {
 
       // stop tracking the old one, as applicable.
@@ -323,9 +328,7 @@ const SmartMissile = options => {
         setTargetTracking();
       }
 
-      newTarget = getNearestObject(exports, {
-        useInFront: true
-      });
+      newTarget = getNearestObject(exports);
 
       if (newTarget && !newTarget.data.cloaked && !newTarget.data.dead) {
         // we've got a live one!
