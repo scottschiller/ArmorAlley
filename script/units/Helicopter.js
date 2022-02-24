@@ -1857,7 +1857,7 @@ const Helicopter = options => {
           // remove from the DOM eventually
           common.setFrameTimeout(() => {
 
-            overlay.parentNode.removeChild(overlay);
+            overlay?.remove();
             overlay = null;
 
             // remove blur / no-blur entirely.
