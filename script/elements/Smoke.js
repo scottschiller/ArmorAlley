@@ -76,7 +76,7 @@ const Smoke = options => {
       data.fadeFrame++;
 
       if (data.fadeFrame < data.fadeFrames && data.isOnScreen) {
-        dom.o.style.opacity = 1 - (data.fadeFrame / data.fadeFrames);
+        dom.o._style.setProperty('opacity', 1 - (data.fadeFrame / data.fadeFrames));
       }
 
       if (data.fadeFrame > data.fadeFrames) {
@@ -105,7 +105,7 @@ const Smoke = options => {
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // keep things centered when scaling
-    dom.o.style.transformOrigin = '50% 50%';
+    dom.o._style.setProperty('transform-origin', '50% 50%');
 
   }
 

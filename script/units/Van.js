@@ -36,7 +36,7 @@ const Van = options => {
     data.vX = 0;
 
     // revert to CSS rules, prevent first frame of explosion from sticking
-    dom.o.style.backgroundPosition = '0px -384px';
+    dom.o._style.setProperty('background-position', '0px -384px');
 
     common.shrapnelExplosion(data, { centerX: true, velocity: 6 });
 
@@ -121,14 +121,14 @@ const Van = options => {
           }
 
           if (data.isOnScreen) {
-            dom.o.style.backgroundPosition = `0px ${data.height * data.state * -1}px`;
+            dom.o._style.setProperty('background-position', `0px ${data.height * data.state * -1}px`);
           }
 
         } else if (data.frameCount % data.stateModulus === 2) {
 
           // next frame - reset.
           if (data.isOnScreen) {
-            dom.o.style.backgroundPosition = '0px 0px';
+            dom.o._style.setProperty('background-position', '0px 0px');
           }
 
         }

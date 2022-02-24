@@ -877,7 +877,7 @@ const Helicopter = options => {
       // if previous X value exists, apply it
       if (data.xHistory[i]) {
         common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i]}px`, `${data.yHistory[i] + data.halfHeightAdjusted}px`);
-        dom.trailers[i].style.opacity = data.dead ? 0 : Math.max(0.25, (i+1) / j);
+        dom.trailers[i]._style.setProperty('opacity', data.dead ? 0 : Math.max(0.25, (i+1) / j));
       }
 
     }
@@ -887,7 +887,7 @@ const Helicopter = options => {
     let i, j;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
-      dom.trailers[i].style.opacity = 0;
+      dom.trailers[i]._style.setProperty('opacity', 0);
     }
   }
 
@@ -2074,7 +2074,7 @@ const Helicopter = options => {
 
     dom.o.appendChild(dom.oSubSprite);
 
-    dom.fuelLine = document.getElementById('fuel-line');
+    dom.fuelLine = common.getWithStyle('fuel-line');
 
     // if not specified (e.g., 0), assign landing pad position.
     if (!data.x) {

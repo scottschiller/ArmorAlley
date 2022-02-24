@@ -2,6 +2,7 @@ import { utils } from '../core/utils.js';
 import { playSound, sounds } from '../core/sound.js';
 import { screenScale } from '../core/Game.js';
 import { DEFAULT_FUNDS, isChrome, isFirefox } from '../core/global.js';
+import { common } from '../core/common.js';
 
 const Funds = () => {
 
@@ -153,7 +154,7 @@ const Funds = () => {
       // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
       tensOffset = (data.offsetTop[i-1] || 0) * 10;
 
-      dom.digits[i].style.backgroundPosition = `0px ${(((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]}${data.offsetType}`;
+      dom.digits[i].style.setProperty('background-position', `0px ${(((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]}${data.offsetType}`);
     }
  
   }
@@ -166,16 +167,16 @@ const Funds = () => {
     // this will then be used to do offsets for animating numbers
     if (!dom.digits.length) return;
 
-    const funds = document.getElementById('funds');
+    const funds = common.getWithStyle('funds');
 
     // first, offset zoom scaling.
-    funds.style.zoom = screenScale;
+    funds._style.setProperty('zoom', screenScale);
 
     const adjustedScale = (1 / screenScale);
 
     // now, transform back so things look right, without throwing off background positioning on digits.
-    funds.style.transform = `scale3d(${[adjustedScale, adjustedScale, 1].join(',')})`;
-    funds.style.transformOrigin = '0px 0px';
+    funds._style.setProperty('transform', `scale3d(${[adjustedScale, adjustedScale, 1].join(',')})`);
+    funds._style.setProperty('transform-origin', '0px 0px');
   }
 
   function updateSound() {

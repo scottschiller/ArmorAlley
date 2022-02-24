@@ -207,13 +207,13 @@ const Shrapnel = options => {
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
-    dom.oTransformSprite.style.backgroundPosition = `${data.spriteType * -data.width * 1 / data.scale}px 0px`;
+    dom.oTransformSprite._style.setProperty('background-position', `${data.spriteType * -data.width * 1 / data.scale}px 0px`);
 
     // spinning animation duration?
-    dom.oTransformSprite.style.animationDuration = `${0.2 + Math.random()}s`;
+    dom.oTransformSprite._style.setProperty('animation-duration', `${0.2 + Math.random()}s`);
 
     if (Math.random() >= 0.5) {
-      dom.oTransformSprite.style.animationDirection = 'reverse';
+      dom.oTransformSprite._style.setProperty('animation-direction', 'reverse');
     }
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);

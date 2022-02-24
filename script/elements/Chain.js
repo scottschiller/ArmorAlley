@@ -7,7 +7,7 @@ const Chain = options => {
   let css, data, dom, objects, exports, defaultHeight;
 
   function applyHeight() {
-    dom.o.style.height = (`${data.height}px`);
+    dom.o._style.setProperty('height', (`${data.height}px`));
     data.appliedHeight = parseInt(data.height, 10);
   }
 

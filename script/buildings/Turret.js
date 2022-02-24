@@ -28,14 +28,14 @@ const Turret = options => {
     // TODO: CSS animation for this?
     // common.updateIsOnScreen(exports); from within animate() ?
     if (data.isOnScreen) {
-      dom.oSubSprite.style.transform = `rotate3d(0, 0, 1, ${angle}deg)`;
+      dom.oSubSprite._style.setProperty('transform', `rotate3d(0, 0, 1, ${angle}deg)`);
     }
 
   }
 
   function resetAngle() {
 
-    dom.oSubSprite.style.transform = '';
+    dom.oSubSprite._style.setProperty('transform', '');
 
   }
 

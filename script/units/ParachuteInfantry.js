@@ -23,7 +23,7 @@ const ParachuteInfantry = options => {
     data.halfHeight = data.height / 2;
 
     // randomize the animation a little
-    dom.oTransformSprite.style.animationDuration = `${0.75 + rnd(0.75)}s`;
+    dom.oTransformSprite._style.setProperty('animation-duration', `${0.75 + rnd(0.75)}s`);
 
     // and parachute speed, too.
     data.vY = 0.3 + rnd(0.3);
@@ -92,7 +92,7 @@ const ParachuteInfantry = options => {
         // like Tom Petty, free fallin'.
 
         if (data.isOnScreen) {
-          dom.oTransformSprite.style.backgroundPosition = `0px ${-(60 + (data.frameHeight * data.panicFrame))}px`;
+          dom.oTransformSprite._style.setProperty('background-position', `0px ${-(60 + (data.frameHeight * data.panicFrame))}px`);
         }
 
         // alternate between 0/1
@@ -132,7 +132,7 @@ const ParachuteInfantry = options => {
           }
 
           if (data.isOnScreen) {
-            dom.oTransformSprite.style.backgroundPosition = (`0px ${bgY}px`);
+            dom.oTransformSprite._style.setProperty('background-position', (`0px ${bgY}px`));
           }
 
           // choose a new wind modulus, too.
@@ -145,7 +145,7 @@ const ParachuteInfantry = options => {
           data.vX = 0;
 
           if (data.isOnScreen) {
-            dom.oTransformSprite.style.backgroundPosition = '0px 0px';
+            dom.oTransformSprite._style.setProperty('background-position', '0px 0px');
           }
 
         }

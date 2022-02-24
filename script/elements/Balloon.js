@@ -285,7 +285,7 @@ const Balloon = options => {
     }
 
     // TODO: remove?
-    dom.o.style.marginLeft = `${data.leftMargin}px`;
+    dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
     common.moveTo(exports, data.x, data.y);
 

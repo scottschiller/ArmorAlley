@@ -95,7 +95,7 @@ const View = () => {
 
     if (dom.stars) {
       // GPU case: Be wide enough to cover parallax scroll effect. browser width + 10% of world width
-      dom.stars.style.width = `${data.browser.width + (data.battleField.width * 0.1)}px`;
+      dom.stars._style.setProperty('width', `${data.browser.width + (data.battleField.width * 0.1)}px`);
     }
 
     // helicopters need to know stuff, too.

@@ -63,16 +63,16 @@ function PrefsManager() {
 
     // hackish: adjust dialog body to "natural" height, prevent scrollbars.
     // display temporarily, read layout, adjust and then hide.
-    dom.o.style.opacity = 0;
-    dom.o.style.display = 'block';
+    dom.o.style.setProperty('opacity', 0);
+    dom.o.style.setProperty('display', 'block');
 
     let body = dom.o.querySelector('.body');
-    body.style.height = 'auto';
+    body.style.setProperty('height', 'auto');
 
     let height = body.offsetHeight;
 
     // now assign the natural content height
-    body.style.height = height + 'px';
+    body.style.setProperty('height', height + 'px');
 
     // one more thing: audio is force-disabled in Safari.
     // handle exceptions here.
@@ -89,7 +89,7 @@ function PrefsManager() {
     dom.o.remove();
 
     // reset opacity
-    dom.o.style.opacity = null;
+    dom.o.style.setProperty('opacity', null);
 
     getPrefsFromStorage();
 
@@ -404,7 +404,7 @@ function PrefsManager() {
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
       let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
 
-      dom.o.style.transform = `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`;
+      dom.o.style.setProperty('transform', `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`);
 
     }
 

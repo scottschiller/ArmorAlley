@@ -57,13 +57,13 @@ function Joystick(options) {
   function moveContainerTo(x, y) {
     const targetX = x - (data.oJoystickWidth / 2);
     const targetY = y - (data.oJoystickHeight / 2);
-    dom.oJoystick.style.left = `${targetX}px`;
-    dom.oJoystick.style.top = `${targetY}px`;
+    dom.oJoystick.style.setProperty('left', `${targetX}px`);
+    dom.oJoystick.style.setProperty('top', `${targetY}px`);
   }
 
   function resetPoint() {
-    dom.oPoint.style.left = '50%';
-    dom.oPoint.style.top = '50%';
+    dom.oPoint.style.setProperty('left', '50%');
+    dom.oPoint.style.setProperty('top', '50%');
   }
 
   function start(e) {
@@ -156,8 +156,8 @@ function Joystick(options) {
   }
 
   function movePoint(x, y) {
-    dom.oPoint.style.left = `${x}%`;
-    dom.oPoint.style.top = `${y}%`;
+    dom.oPoint.style.setProperty('left', `${x}%`);
+    dom.oPoint.style.setProperty('top', `${y}%`);
   }
 
   function setDirection(x, y) {
@@ -272,8 +272,8 @@ function Joystick(options) {
 
     if (!frame) return;
 
-    dom.oPointer.style.left = `${frame.x}px`;
-    dom.oPointer.style.top = `${frame.y}px`;
+    dom.oPointer.style.setProperty('left', `${frame.x}px`);
+    dom.oPointer.style.setProperty('top', `${frame.y}px`);
 
     // update inner state
     data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;

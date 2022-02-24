@@ -158,13 +158,13 @@ const MissileLauncher = options => {
         data.frameCount = 0;
 
         if (data.isOnScreen) {
-          dom.o.style.backgroundPosition = `0px ${data.height * data.state * -1}px`;
+          dom.o._style.setProperty('background-position', `0px ${data.height * data.state * -1}px`);
         }
 
       } else if (data.frameCount % data.stateModulus === 2 && data.isOnScreen) {
 
         // next frame - reset.
-        dom.o.style.backgroundPosition = '0px 0px';
+        dom.o._style.setProperty('background-position', '0px 0px');
 
       }
 

@@ -22,11 +22,11 @@ const GunFire = options => {
       // randomize a little
 
       if (Math.random() > 0.5) {
-        dom.o.style.marginLeft = randomDistance();
+        dom.o._style.setProperty('margin-left', randomDistance());
       }
 
       if (Math.random() > 0.5) {
-        dom.o.style.marginTop = randomDistance();
+        dom.o._style.setProperty('margin-top', randomDistance());
       }
 
       if (data.isOnScreen) {
