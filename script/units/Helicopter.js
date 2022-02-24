@@ -2042,7 +2042,7 @@ const Helicopter = options => {
 
   function initHelicopter() {
 
-    let i, trailerConfig, oTrailer, fragment;
+    let i, trailerConfig, fragment;
 
     if (data.isEnemy) {
       // offset fire modulus by half, to offset sound
@@ -2055,14 +2055,10 @@ const Helicopter = options => {
       className: css.trailer
     };
 
-    oTrailer = common.makeSprite(trailerConfig);
-
     for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(oTrailer.cloneNode(true));
+      dom.trailers.push(common.makeSprite(trailerConfig));
       fragment.appendChild(dom.trailers[i]);
     }
-
-    oTrailer = null;
 
     // TODO: review and append only when on-screen
     game.dom.world.appendChild(fragment);

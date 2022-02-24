@@ -505,7 +505,7 @@ const SmartMissile = options => {
 
   function initSmartMissle() {
 
-    let i, trailerConfig, oTrailer, fragment;
+    let i, trailerConfig, fragment;
 
     fragment = document.createDocumentFragment();
 
@@ -517,17 +517,13 @@ const SmartMissile = options => {
       className: css.trailer
     };
 
-    oTrailer = common.makeSprite(trailerConfig);
-
     // initial placement
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
 
     for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(oTrailer.cloneNode(true));
+      dom.trailers.push(common.makeSprite(trailerConfig));
       fragment.appendChild(dom.trailers[i]);
     }
-
-    oTrailer = null;
 
     if (data.isEnemy) {
       utils.css.add(dom.o, css.enemy);
