@@ -465,8 +465,6 @@ const View = () => {
   
     if (disableScaling) return;
   
-    const wrapper = document.getElementById('world-wrapper');
-  
     /**
      * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
      * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
@@ -503,12 +501,12 @@ const View = () => {
   
       data.usingZoom = false;
   
-      wrapper.style.marginTop = `${-((406 / 2) * data.screenScale)}px`;
-      wrapper.style.width = `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / data.screenScale))}px`;
+      dom.worldWrapper._style.setProperty('margin-top', `${-((406 / 2) * data.screenScale)}px`);
+      dom.worldWrapper._style.setProperty('width', `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / data.screenScale))}px`);
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
-      wrapper.style.transform = `scale3d(${data.screenScale}, ${data.screenScale}, 1)`;
-      wrapper.style.transformOrigin = '0px 0px';
+      dom.worldWrapper._style.setProperty('transform', `scale3d(${data.screenScale}, ${data.screenScale}, 1)`);
+      dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
   
     } else {
   
@@ -516,7 +514,7 @@ const View = () => {
   
       data.usingZoom = true;
   
-      wrapper.style.marginTop = `${-(406 / 2)}px`;
+      dom.worldWrapper._style.setProperty('margin-top', `${-(406 / 2)}px`);
   
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
@@ -570,13 +568,13 @@ const View = () => {
 
   function initDOM() {
 
-    dom.worldWrapper = document.getElementById('world-wrapper');
-    dom.battleField = document.getElementById('battlefield');
-    dom.stars = document.getElementById('stars');
-    dom.topBar = document.getElementById('top-bar');
-    dom.gameTips = document.getElementById('game-tips');
-    dom.gameTipsList = document.getElementById('game-tips-list');
-    dom.gameAnnouncements = document.getElementById('game-announcements');
+    dom.worldWrapper = common.getWithStyle('world-wrapper');
+    dom.battleField = common.getWithStyle('battlefield');
+    dom.stars = common.getWithStyle('stars');
+    dom.topBar = common.getWithStyle('top-bar');
+    dom.gameTips = common.getWithStyle('game-tips');
+    dom.gameTipsList = common.getWithStyle('game-tips-list');
+    dom.gameAnnouncements = common.getWithStyle('game-announcements');
 
   }
 
