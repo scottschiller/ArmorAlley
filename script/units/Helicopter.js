@@ -640,10 +640,14 @@ const Helicopter = options => {
     if (state) {
 
       if (data.isEnemy) {
+
         // hackish: force enemy helicopter to be on-screen when respawning
         // this helps ensure it animates up from the landing pad properly
+
         common.updateIsOnScreen(exports, force);
+
       } else {
+
         // local player? move the view back to zero.
 
         // hackish: hard reset battlefield scroll
@@ -653,11 +657,20 @@ const Helicopter = options => {
 
         // "get to the choppa!" (center the view on it, that is.)
         game.objects.view.setLeftScrollToPlayer(exports);
+
+        // good time to do some DOM pruning, etc.
+        if (game.objects.queue) {
+          game.objects.queue.process();
+        }
+
       }
       
       utils.css.add(dom.o, css.respawning);
+
     } else {
+
       utils.css.remove(dom.o, css.respawning);
+
     }
 
     // transition, helicopter rises from landing pad
