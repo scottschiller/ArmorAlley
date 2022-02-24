@@ -126,7 +126,7 @@ const Radar = () => {
     }
 
     itemObject = RadarItem({
-      o: document.createElement('div'),
+      o: common.withStyle(document.createElement('div')),
       parentType: item.data.type,
       className,
       oParent: item,
