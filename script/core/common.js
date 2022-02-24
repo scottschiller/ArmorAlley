@@ -318,11 +318,9 @@ const common = {
 
     let i, j;
 
-    j = nodeArray.length;
-
     // removal will invalidate layout, $$$. hide first, cheaply.
-    for (i = 0; i < j; i++) {
-      nodeArray[i].style.opacity = 0;
+    for (i = 0, j = nodeArray.length; i < j; i++) {
+      nodeArray[i]?._style?.setProperty('opacity', 0);
     }
 
     game.objects.queue.add(() => {
