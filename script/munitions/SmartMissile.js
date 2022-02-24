@@ -171,86 +171,84 @@ const SmartMissile = options => {
 
   function die() {
 
+    if (data.deadTimer) return;
+
     let dieSound;
 
-    if (!data.deadTimer) {
+    utils.css.add(dom.o, css.spark);
 
-      utils.css.add(dom.o, css.spark);
+    common.applyRandomRotation(dom.o);
 
-      common.applyRandomRotation(dom.o);
+    if (sounds.genericBoom) {
+      playSound(sounds.genericBoom, exports);
+    }
 
-      if (sounds.genericBoom) {
-        playSound(sounds.genericBoom, exports);
-      }
+    common.inertGunfireExplosion({ exports });
 
-      common.inertGunfireExplosion({ exports });
+    common.shrapnelExplosion(data, {
+      count: 3 + rndInt(3),
+      velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
+    });
 
-      common.shrapnelExplosion(data, {
-        count: 3 + rndInt(3),
-        velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
-      });
+    hideTrailers();
 
-      hideTrailers();
+    data.deadTimer = common.setFrameTimeout(() => {
+      common.removeNodes(dom);
+    }, 500);
 
-      data.deadTimer = common.setFrameTimeout(() => {
-        common.removeNodes(dom);
-      }, 500);
+    data.energy = 0;
 
-      data.energy = 0;
+    // stop tracking the target.
+    setTargetTracking();
 
-      // stop tracking the target.
-      setTargetTracking();
+    radarItem.die();
 
-      radarItem.die();
+    if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.die) {
 
-      if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.die) {
-
-        // don't "die" again if the chicken has already moaned, i.e., from expiring.
-        if (!data.expired) {
-
-          if (launchSound) {
-            // "mute" and forget; the sound will finish playing, and will be destroyed / freed up.
-            launchSound.mute();
-            launchSound = null;
-          }
-
-          playSound(sounds.rubberChicken.die, exports, {
-            onplay: (sound) => dieSound = sound,
-            playbackRate: data.playbackRate
-          });
-
-        }
+      // don't "die" again if the chicken has already moaned, i.e., from expiring.
+      if (!data.expired) {
 
         if (launchSound) {
-
+          // "mute" and forget; the sound will finish playing, and will be destroyed / freed up.
           launchSound.mute();
           launchSound = null;
-
-          if (!data.expired && dieSound) {
-            // hackish: apply launch sound volume to die sound
-            dieSound.setVolume(launchSound.volume);
-          }
-
         }
+
+        playSound(sounds.rubberChicken.die, exports, {
+          onplay: (sound) => dieSound = sound,
+          playbackRate: data.playbackRate
+        });
 
       }
 
-      if (data.isBanana && launchSound) {
+      if (launchSound) {
 
         launchSound.mute();
         launchSound = null;
 
-      }
+        if (!data.expired && dieSound) {
+          // hackish: apply launch sound volume to die sound
+          dieSound.setVolume(launchSound.volume);
+        }
 
-      // if targeting the player, ensure the expiry warning sound is stopped.
-      if (objects?.target === game.objects.helicopters[0]) {
-        stopSound(sounds.missileWarningExpiry);
       }
-
-      // optional callback
-      if (data.onDie) data.onDie();
 
     }
+
+    if (data.isBanana && launchSound) {
+
+      launchSound.mute();
+      launchSound = null;
+
+    }
+
+    // if targeting the player, ensure the expiry warning sound is stopped.
+    if (objects?.target === game.objects.helicopters[0]) {
+      stopSound(sounds.missileWarningExpiry);
+    }
+
+    // optional callback
+    if (data.onDie) data.onDie();
 
     data.dead = true;
 
