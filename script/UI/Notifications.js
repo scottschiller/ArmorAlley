@@ -158,7 +158,7 @@ const Notifications = () => {
     common.setFrameTimeout(() => {
       utils.css.add(item.node, css.toastExpired);
       common.setFrameTimeout(() => {
-        item.node.parentNode.removeChild(item.node);
+        item?.node?.remove();
       }, 500);
     }, 500);
 
