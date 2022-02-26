@@ -29,7 +29,11 @@ const GameLoop = () => {
 
     if (data.gameStopped) {
       // end game, all units updated, subsequent frames: only animate shrapnel and smoke.
-      gameObjects = game.objects.shrapnel.concat(game.objects.smoke);
+      gameObjects = {
+        shrapnel: game.objects.shrapnel,
+        smoke: game.objects.smoke,
+        queue: game.objects.queue
+      }
     }
 
     for (item in gameObjects) {
