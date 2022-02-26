@@ -105,7 +105,7 @@ const common = {
   
     // assume not in view at first, used for DOM pruning / performance
     if (data.isOnScreen === undefined) {
-      data.isOnScreen = false;
+      data.isOnScreen = null;
     }
   
     if (data.isEnemy === undefined) {
