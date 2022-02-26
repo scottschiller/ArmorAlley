@@ -325,7 +325,7 @@ const common = {
 
     game.objects.queue.add(() => {
 
-      for (i = 0; i < j; i++) {
+      for (i = 0, j = nodeArray.length; i < j; i++) {
         // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
         // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
         nodeArray[i].remove();
@@ -333,6 +333,7 @@ const common = {
         nodeArray[i] = null;
       }
 
+      j = null;
       nodeArray = null;
 
     });
