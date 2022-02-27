@@ -527,7 +527,8 @@ const SmartMissile = options => {
     fragment = document.createDocumentFragment();
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     trailerConfig = {
@@ -540,10 +541,6 @@ const SmartMissile = options => {
     for (i = 0; i < data.trailerCount; i++) {
       dom.trailers.push(common.makeSprite(trailerConfig));
       fragment.appendChild(dom.trailers[i]);
-    }
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
     }
 
     // TODO: review and see if trailer fragment can be dynamically-appended when on-screen, too

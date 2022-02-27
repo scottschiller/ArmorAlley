@@ -162,10 +162,6 @@ const Chain = options => {
       className: css.className
     });
 
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
-
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
     
   }
