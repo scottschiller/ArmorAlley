@@ -303,15 +303,10 @@ const common = {
     // the battlefield under any circumstances. ;)
     if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
-    // hide immediately, cheaply
-    node?._style?.setProperty('opacity', 0);
-
-    game.objects.queue.add(() => {
-      if (!node) return;
-      node.remove();
-      node._style = null;
-      node = null;
-    });
+    if (!node) return;
+    node.remove();
+    node._style = null;
+    node = null;
 
   },
 
@@ -319,25 +314,16 @@ const common = {
 
     let i, j;
 
-    // removal will invalidate layout, $$$. hide first, cheaply.
     for (i = 0, j = nodeArray.length; i < j; i++) {
-      nodeArray[i]?._style?.setProperty('opacity', 0);
+      // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
+      // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
+      nodeArray[i].remove();
+      nodeArray[i]._style = null;
+      nodeArray[i] = null;
     }
 
-    game.objects.queue.add(() => {
-
-      for (i = 0, j = nodeArray.length; i < j; i++) {
-        // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
-        // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
-        nodeArray[i].remove();
-        nodeArray[i]._style = null;
-        nodeArray[i] = null;
-      }
-
-      j = null;
-      nodeArray = null;
-
-    });
+    j = null;
+    nodeArray = null;
 
   },
 
