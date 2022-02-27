@@ -360,23 +360,21 @@ const common = {
 
     if (!o || !o.data || !useDOMPruning) return;
   
-    if (common.isOnScreen(o) || forceUpdate) {
+    if (forceUpdate || common.isOnScreen(o)) {
   
       // exit if not already updated
       if (o.data.isOnScreen) return;
   
       o.data.isOnScreen = true;
   
-      // node may not exist
-      if (!o.dom || !o.dom.o) return;
-  
+      // object may be in the process of being destroyed
+      if (!o?.dom?.o) return;
+      
       if (o.dom.o._lastTransform) {
         // MOAR GPU! re-apply transform that was present at, or updated since, removal
         o.dom.o._style.setProperty('transform', o.dom.o._lastTransform);
       }
-  
-      o.dom.o._style.setProperty('content-visibility', 'visible');
-  
+
       if (o.dom._oRemovedParent) {
   
         // previously removed: re-append to DOM
