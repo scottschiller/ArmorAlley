@@ -104,7 +104,7 @@ const SmartMissile = options => {
 
   function makeTimeout(callback) {
 
-    if (objects._timeout) objects._timeout.reset();
+    objects?._timeout?.reset();
     objects._timeout = common.setFrameTimeout(callback, 350);
 
   }
