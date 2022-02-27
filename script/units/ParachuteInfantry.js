@@ -206,16 +206,13 @@ const ParachuteInfantry = options => {
   function initDOM() {
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     // CSS animation (rotation) gets applied to this element
     dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
 
     common.moveTo(exports, data.x, data.y);
 

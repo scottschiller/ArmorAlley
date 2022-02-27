@@ -252,15 +252,12 @@ const Bunker = options => {
   function initDOM() {
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     dom.o.appendChild(common.makeSubSprite());
     dom.o.appendChild(common.makeSubSprite(css.arrow));
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
 
     data.oClassName = dom.o.className;
 

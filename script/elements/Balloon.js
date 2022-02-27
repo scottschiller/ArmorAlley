@@ -277,12 +277,9 @@ const Balloon = options => {
   function initDOM() {
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
 
     // TODO: remove?
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);

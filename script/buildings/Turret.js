@@ -347,17 +347,14 @@ const Turret = options => {
   function initDOM() {
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     dom.oSubSprite = common.makeSubSprite();
     dom.o.appendChild(dom.oSubSprite);
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
     
   }
 

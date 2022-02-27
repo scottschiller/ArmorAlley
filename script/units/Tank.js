@@ -213,12 +213,9 @@ const Tank = options => {
     function initDOM() {
 
       dom.o = common.makeSprite({
-        className: css.className
+        className: css.className,
+        isEnemy: (data.isEnemy ? css.enemy : false)
       });
-
-      if (data.isEnemy) {
-        utils.css.add(dom.o, css.enemy);
-      }
 
       dom.o.appendChild(common.makeTransformSprite());
 

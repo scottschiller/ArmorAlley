@@ -181,7 +181,8 @@ const common = {
 
     const o = common.withStyle(document.createElement('div'));
   
-    o.className = `sprite ${options.className}`;
+    // note: `isEnemy` value may not be 'enemy', but 'facing-left' (e.g., for balloons.)
+    o.className = `sprite ${options.className}${options.isEnemy ? ' ' + options.isEnemy : ''}`;
   
     if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
       o._style.setProperty('top', '0px');

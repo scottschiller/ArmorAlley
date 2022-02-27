@@ -190,12 +190,9 @@ const EndBunker = options => {
   function initEndBunker() {
 
     dom.o = common.makeSprite({
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
-
-    if (data.isEnemy) {
-      utils.css.add(dom.o, css.enemy);
-    }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
