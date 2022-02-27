@@ -43,11 +43,17 @@ const Cloud = options => {
 
   }
 
-  function initCloud() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
     });
+
+  }
+
+  function initCloud() {
+
+    initDOM();
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
@@ -87,7 +93,8 @@ const Cloud = options => {
   exports = {
     animate,
     data,
-    dom
+    dom,
+    initDOM
   };
 
   initCloud();

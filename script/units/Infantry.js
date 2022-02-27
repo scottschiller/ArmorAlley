@@ -172,23 +172,28 @@ const Infantry = options => {
 
   }
 
-  function initInfantry() {
-
-    // infantry, or engineer?
-    setRole(data.role, true);
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oTransformSprite = common.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
+    dom.o.appendChild(common.makeTransformSprite());
 
     if (data.isEnemy) {
       utils.css.add(dom.o, css.enemy);
     }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+
+  }
+
+  function initInfantry() {
+
+    // infantry, or engineer?
+    setRole(data.role, true);
+
+    initDOM();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -344,8 +349,9 @@ const Infantry = options => {
     data,
     dom,
     die,
-    stop,
-    resume
+    initDOM,
+    resume,
+    stop
   };
 
   if (!options.noInit) {

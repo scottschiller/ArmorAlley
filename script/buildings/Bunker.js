@@ -249,32 +249,36 @@ const Bunker = options => {
 
   }
 
-  function initBunker() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
     });
 
-    dom.oSubSprite = common.makeSubSprite();
-
-    dom.oSubSpriteArrow = common.makeSubSprite(css.arrow);
-
-    dom.o.appendChild(dom.oSubSprite);
-    dom.o.appendChild(dom.oSubSpriteArrow);
+    dom.o.appendChild(common.makeSubSprite());
+    dom.o.appendChild(common.makeSubSprite(css.arrow));
 
     if (data.isEnemy) {
       utils.css.add(dom.o, css.enemy);
     }
 
-    // first time, create at random Y location.
-    createBalloon(true);
+    data.oClassName = dom.o.className;
 
     // note hackish Y-offset, sprite position vs. collision detection
     common.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
 
+  }
+
+  function initBunker() {
+
+    initDOM();
+
+    // first time, create at random Y location.
+    createBalloon(true);
+
     data.midPoint = common.getDoorCoords(exports);
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, data.oClassName);
 
   }
 
@@ -302,9 +306,7 @@ const Bunker = options => {
   }, options);
 
   dom = {
-    o: null,
-    oSubSprite: null,
-    oSubSpriteArrow: null
+    o: null
   };
 
   objects = {
@@ -321,6 +323,7 @@ const Bunker = options => {
     dom,
     engineerHit,
     infantryHit,
+    initDOM,
     nullifyChain,
     nullifyBalloon,
     init: initBunker,

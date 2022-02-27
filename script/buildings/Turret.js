@@ -344,7 +344,7 @@ const Turret = options => {
 
   }
 
-  function initTurret() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -358,6 +358,12 @@ const Turret = options => {
     if (data.isEnemy) {
       utils.css.add(dom.o, css.enemy);
     }
+    
+  }
+
+  function initTurret() {
+
+    initDOM();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -420,8 +426,7 @@ const Turret = options => {
 
   dom = {
     o: null,
-    oSubSprite: null,
-    oTransformSprite: null,
+    oSubSprite: null
   };
 
   exports = {
@@ -431,6 +436,7 @@ const Turret = options => {
     dom,
     engineerCanInteract,
     engineerHit,
+    initDOM,
     restore,
     repair
   };

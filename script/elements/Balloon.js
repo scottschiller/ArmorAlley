@@ -274,7 +274,7 @@ const Balloon = options => {
 
   };
 
-  function initBalloon() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -288,6 +288,12 @@ const Balloon = options => {
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
     common.moveTo(exports, data.x, data.y);
+
+  }
+
+  function initBalloon() {
+
+    initDOM();
 
     if (!objects.bunker) {
       detach();
@@ -354,6 +360,7 @@ const Balloon = options => {
     detach,
     die,
     dom,
+    initDOM,
     reset,
     setEnemy
   };

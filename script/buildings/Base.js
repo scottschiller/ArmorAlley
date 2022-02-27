@@ -238,8 +238,7 @@ const Base = options => {
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    dom.oTransformSprite = common.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
+    dom.o.appendChild(common.makeTransformSprite());
 
     game.objects.radar.addItem(exports, dom.o.className);
 
@@ -275,8 +274,7 @@ const Base = options => {
   }, options);
 
   dom = {
-    o: null,
-    oTransformSprite: null,
+    o: null
   };
 
   exports = {

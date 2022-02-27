@@ -32,8 +32,7 @@ const LandingPad = options => {
       className: css.className
     });
 
-    dom.oTransformSprite = common.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
+    dom.o.appendChild(common.makeTransformSprite());
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
@@ -59,8 +58,7 @@ const LandingPad = options => {
   }, options);
 
   dom = {
-    o: null,
-    oTransformSprite: null,
+    o: null
   };
 
   collision = {

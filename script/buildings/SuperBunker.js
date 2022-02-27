@@ -155,7 +155,7 @@ const SuperBunker = options => {
 
   }
 
-  function initSuperBunker() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -166,6 +166,12 @@ const SuperBunker = options => {
     }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  }
+
+  function initSuperBunker() {
+
+    initDOM();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -228,6 +234,7 @@ const SuperBunker = options => {
     die,
     dom,
     hit,
+    initDOM,
     updateHealth
   };
 

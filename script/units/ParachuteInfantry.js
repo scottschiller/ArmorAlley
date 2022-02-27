@@ -203,7 +203,7 @@ const ParachuteInfantry = options => {
 
   }
 
-  function initParachuteInfantry() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -218,6 +218,12 @@ const ParachuteInfantry = options => {
     }
 
     common.moveTo(exports, data.x, data.y);
+
+  }
+
+  function initParachuteInfantry() {
+
+    initDOM();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -255,7 +261,8 @@ const ParachuteInfantry = options => {
   }, options);
 
   dom = {
-    o: null
+    o: null,
+    oTransformSprite: null
   };
 
   exports = {
@@ -263,7 +270,8 @@ const ParachuteInfantry = options => {
     data,
     dom,
     die,
-    hit
+    hit,
+    initDOM
   };
 
   initParachuteInfantry();

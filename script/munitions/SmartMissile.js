@@ -504,7 +504,7 @@ const SmartMissile = options => {
     }
   }
 
-  function initSmartMissle() {
+  function initDOM() {
 
     let i, trailerConfig, fragment;
 
@@ -530,10 +530,16 @@ const SmartMissile = options => {
       utils.css.add(dom.o, css.enemy);
     }
 
-    data.yMax = (game.objects.view.data.battleField.height - data.height);
-
     // TODO: review and see if trailer fragment can be dynamically-appended when on-screen, too
     game.dom.world.appendChild(fragment);
+
+  }
+
+  function initSmartMissle() {
+
+    initDOM();
+
+    data.yMax = (game.objects.view.data.battleField.height - data.height);
 
     // mark the target.
     setTargetTracking(true);
@@ -653,6 +659,7 @@ const SmartMissile = options => {
     data,
     dom,
     die,
+    initDOM,
     isOnScreenChange,
     objects
   };

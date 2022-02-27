@@ -200,11 +200,17 @@ const GunFire = options => {
 
     }
 
-    function initGunFire() {
+    function initDOM() {
 
       dom.o = common.makeSprite({
         className: css.className
       });
+      
+    }
+
+    function initGunFire() {
+
+      initDOM();
 
       // randomize a little: ±1 pixel.
       data.x += plusMinus();
@@ -271,7 +277,8 @@ const GunFire = options => {
       animate,
       data,
       dom,
-      die
+      die,
+      initDOM
     };
 
     initGunFire();

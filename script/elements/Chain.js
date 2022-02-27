@@ -156,7 +156,7 @@ const Chain = options => {
 
   }
 
-  function initChain() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -167,6 +167,12 @@ const Chain = options => {
     }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    
+  }
+
+  function initChain() {
+
+    initDOM();
 
     applyHeight();
 

@@ -183,7 +183,7 @@ const MissileLauncher = options => {
 
   }
 
-  function initMissileLauncher() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -194,6 +194,12 @@ const MissileLauncher = options => {
     }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  }
+
+  function initMissileLauncher() {
+    
+    initDOM();
 
     common.initNearby(friendlyNearby, exports);
 
@@ -249,7 +255,8 @@ const MissileLauncher = options => {
     animate,
     data,
     dom,
-    die
+    die,
+    initDOM
   };
 
   friendlyNearby = {

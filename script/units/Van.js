@@ -195,7 +195,7 @@ const Van = options => {
   
   }
 
-  function initVan() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
@@ -206,6 +206,12 @@ const Van = options => {
     }
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  }
+
+  function initVan() {
+
+    initDOM();
 
     common.initNearby(friendlyNearby, exports);
 

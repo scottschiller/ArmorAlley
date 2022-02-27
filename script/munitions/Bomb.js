@@ -207,18 +207,22 @@ const Bomb = options => {
 
   }
 
-  function initBomb() {
+  function initDOM() {
 
     dom.o = common.makeSprite({
       className: css.className
     });
 
     // parent gets transform position, subsprite gets rotation animation
-    dom.oSubSprite = common.makeSubSprite();
-
-    dom.o.appendChild(dom.oSubSprite);
+    dom.o.appendChild(common.makeSubSprite());
 
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    
+  }
+
+  function initBomb() {
+
+    initDOM();
 
     // TODO: don't create radar items for bombs from enemy helicopter when cloaked
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -250,8 +254,7 @@ const Bomb = options => {
   }, options);
 
   dom = {
-    o: null,
-    oSubSprite: null
+    o: null
   };
 
   collision = {
@@ -269,7 +272,8 @@ const Bomb = options => {
     animate,
     data,
     die,
-    dom
+    dom,
+    initDOM
   };
 
   initBomb();

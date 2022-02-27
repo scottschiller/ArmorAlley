@@ -210,7 +210,7 @@ const Tank = options => {
 
     }
 
-    function initTank() {
+    function initDOM() {
 
       dom.o = common.makeSprite({
         className: css.className
@@ -220,8 +220,7 @@ const Tank = options => {
         utils.css.add(dom.o, css.enemy);
       }
 
-      dom.oTransformSprite = common.makeTransformSprite();
-      dom.o.appendChild(dom.oTransformSprite);
+      dom.o.appendChild(common.makeTransformSprite());
 
       // for testing
       if (options.extraClass) {
@@ -229,6 +228,10 @@ const Tank = options => {
       }
 
       common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+
+    }
+
+    function initTank() {
 
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
       
@@ -286,8 +289,7 @@ const Tank = options => {
     }, options);
 
     dom = {
-      o: null,
-      oTransformSprite: null
+      o: null
     };
 
     friendlyNearby = {
@@ -348,12 +350,14 @@ const Tank = options => {
       data,
       dom,
       die,
+      initDOM,
       stop,
       resume,
       updateHealth
     };
 
     if (!options.noInit) {
+      initDOM();
       initTank();
     }
 
