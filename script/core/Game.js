@@ -40,45 +40,64 @@ const game = (() => {
 
   function addItem(className, x) {
 
-    let node, data, width, height, inCache, exports;
+    let data, _dom, width, height, inCache, exports;
 
-    node = common.makeSprite({
-      className: `${className} terrain-item`
-    });
+    function initDOM() {
 
-    if (x) {
-      common.setTransformXY(undefined, node, `${x}px`, '0px');
+      _dom.o = common.makeSprite({
+        className: `${className} terrain-item`
+      });
+
+      if (x) {
+        common.setTransformXY(undefined, _dom.o, `${x}px`, '0px');
+      }
+
     }
     
-    if (layoutCache[className]) {
-      inCache = true;
-      width = layoutCache[className].width;
-      height = layoutCache[className].height;
+    function initItem() {
+
+      if (layoutCache[className]) {
+
+        inCache = true;
+        width = layoutCache[className].width;
+        height = layoutCache[className].height;
+  
+      } else {
+  
+        // create + append only so we can read layout
+        initDOM();
+        dom.world.appendChild(_dom.o);
+  
+      }
+
     }
 
-    if (!inCache) {
-      // append only so we can read layout
-      dom.world.appendChild(node);
-    }
+    // prefixed to avoid name conflict with parent game namespace
+    // TODO: break this out into an Item class.
+    _dom = {
+      o: null
+    };
+
+    initItem();
 
     data = {
       type: className,
       x,
       y: 0,
       // dirty / lazy - force layout, read from CSS.
-      width: width || node.offsetWidth,
-      height: height || node.offsetHeight      
+      width: width || _dom?.o?.offsetWidth,
+      height: height || _dom?.o?.offsetHeight      
     };
 
     // basic structure for a terrain item
     exports = {
       data,
-      dom: {
-        o: node
-      }
+      dom: _dom,
+      initDOM
     };
 
     if (!inCache) {
+
       // store
       layoutCache[className] = {
         width: data.width,
@@ -86,7 +105,10 @@ const game = (() => {
       };
 
       // and now, remove; these will be re-appended when on-screen only.
-      node.remove();
+      _dom.o.remove();
+      _dom.o._style = null;
+      _dom.o = null;
+
     }
 
     // these will be tracked only for on-screen / off-screen purposes.
