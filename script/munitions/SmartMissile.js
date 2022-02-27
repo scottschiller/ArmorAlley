@@ -112,11 +112,20 @@ const SmartMissile = options => {
   function addTracking(targetNode, radarNode) {
 
     if (targetNode) {
+
       utils.css.add(targetNode, css.tracking);
+
       makeTimeout(() => {
+
         // this animation needs to run possibly after the object has died.
         if (targetNode) utils.css.add(targetNode, css.trackingActive);
+
+        // prevent leaks?
+        targetNode = null;
+        radarNode = null;
+
       });
+
     }
 
     if (radarNode) {
@@ -146,12 +155,19 @@ const SmartMissile = options => {
 
     // one timer for both.
     makeTimeout(() => {
+
       if (targetNode) {
         utils.css.remove(targetNode, css.trackingRemoval);
       }
+
       if (radarNode) {
         utils.css.remove(radarNode, css.trackingRemoval);
       }
+
+      // prevent leaks?
+      targetNode = null;
+      radarNode = null;
+
     });
 
   }
