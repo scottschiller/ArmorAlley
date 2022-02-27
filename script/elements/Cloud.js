@@ -83,7 +83,8 @@ const Cloud = options => {
     width: cloudWidth,
     halfWidth: parseInt(cloudWidth / 2, 10),
     height: cloudHeight,
-    halfHeight: parseInt(cloudHeight / 2, 10)
+    halfHeight: parseInt(cloudHeight / 2, 10),
+    noEnergyStatus: true
   }, options);
 
   dom = {
