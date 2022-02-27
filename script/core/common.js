@@ -396,9 +396,14 @@ const common = {
     } else if (o.data.isOnScreen) {
   
       o.data.isOnScreen = false;
+
+      // only do work if detaching node from live DOM
+      if (o?.dom?.o?.parentNode) {
   
-      if (o.dom && o.dom.o) {
-  
+        // detach, retaining parent node, for later re-append
+        o.dom._oRemovedParent = o.dom.o.parentNode;
+        o.dom.o.remove();
+
         let transform = o.dom.o._style.getPropertyValue('transform');
 
         // manually remove x/y transform, will be restored when on-screen.
@@ -409,14 +414,7 @@ const common = {
           o.dom.o._lastTransform = transform;
           o.dom.o._style.setProperty('transform', 'none');
         }
-  
-        if (o.dom.o.parentNode) {
-          o.dom._oRemovedParent = o.dom.o.parentNode;
-          o.dom._oRemovedParent.removeChild(o.dom.o);
-        }
-  
-        o.dom.o._style.setProperty('content-visibility', 'hidden');
-  
+        
       }
   
       // callback, if defined
