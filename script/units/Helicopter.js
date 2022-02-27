@@ -682,6 +682,11 @@ const Helicopter = options => {
       }
     }, 30);
 
+    // player: restore trailers that may have been removed on die()
+    if (!data.isEnemy) {
+      initTrailers();
+    }
+
     if (state) {
       // "complete" respawn, re-enable mouse etc.
       common.setFrameTimeout(() => {
@@ -881,9 +886,11 @@ const Helicopter = options => {
   }
 
   function moveTrailers() {
+
     let i, j;
 
     if (!data.isOnScreen) return;
+    if (!dom?.trailers?.length) return;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
 
@@ -892,16 +899,38 @@ const Helicopter = options => {
         common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i]}px`, `${data.yHistory[i] + data.halfHeightAdjusted}px`);
         dom.trailers[i]._style.setProperty('opacity', data.dead ? 0 : Math.max(0.25, (i+1) / j));
       }
-
     }
+
   }
 
-  function hideTrailers() {
+  function hideTrailers(resetHistory) {
+
     let i, j;
+
+    if (!dom?.trailers?.length) return;
+
+    // exit if removel pending
+    if (data.removeTrailerTimer) return;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
       dom.trailers[i]._style.setProperty('opacity', 0);
     }
+
+    if (resetHistory) {
+      data.xHistory = [];
+      data.yHistory = [];
+    }
+
+    data.removeTrailerTimer = common.setFrameTimeout(removeTrailers, 666);
+
+  }
+
+  function removeTrailers() {
+
+    common.removeNodeArray(dom.trailers);
+    dom.trailers = [];
+    data.removeTrailerTimer = null;
+    
   }
 
   function reset() {
@@ -1113,7 +1142,7 @@ const Helicopter = options => {
     // ensure any health bar is updated and hidden ASAP
     common.updateEnergy(exports);
 
-    hideTrailers();
+    hideTrailers(true /* reset x + y history */);
 
     data.dead = true;
 
@@ -1772,7 +1801,10 @@ const Helicopter = options => {
   }
 
   function isOnScreenChange(isOnScreen) {
-    if (data.isEnemy && !isOnScreen) {
+    if (isOnScreen) {
+      // make sure trailers are present, if not already
+      initTrailers();
+    } else if (data.isEnemy) {
       // helicopter might leave trailers when it dies while on-screen.
       hideTrailers();
     }
@@ -2053,14 +2085,18 @@ const Helicopter = options => {
 
   }
 
-  function initHelicopter() {
+  function initTrailers() {
 
     let i, trailerConfig, fragment;
 
-    if (data.isEnemy) {
-      // offset fire modulus by half, to offset sound
-      data.frameCount = Math.floor(data.fireModulus / 2);
+    // if a removal is pending (i.e., helicopter just went off-screen), wait and try again.
+    if (data.removeTrailerTimer) {
+      common.setFrameTimeout(initTrailers, 666);
+      return;
     }
+
+    // already present
+    if (dom.trailers.length) return;
 
     fragment = document.createDocumentFragment();
 
@@ -2073,8 +2109,16 @@ const Helicopter = options => {
       fragment.appendChild(dom.trailers[i]);
     }
 
-    // TODO: review and append only when on-screen
     game.dom.world.appendChild(fragment);
+
+  }
+
+  function initHelicopter() {
+
+    if (data.isEnemy) {
+      // offset fire modulus by half, to offset sound
+      data.frameCount = Math.floor(data.fireModulus / 2);
+    }
 
     dom.o = common.makeSprite({
       className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
