@@ -2080,12 +2080,8 @@ const Helicopter = options => {
       className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
     });
 
-    dom.oTransformSprite = common.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
-
-    dom.oSubSprite = common.makeSubSprite();
-
-    dom.o.appendChild(dom.oSubSprite);
+    dom.o.appendChild(common.makeTransformSprite());
+    dom.o.appendChild(common.makeSubSprite());
 
     dom.fuelLine = common.getWithStyle('fuel-line');
 
@@ -2252,8 +2248,6 @@ const Helicopter = options => {
   dom = {
     o: null,
     fuelLine: null,
-    subSprite: null,
-    oTransformSprite: null,
     statsBar,
     // hackish
     statusBar: {
