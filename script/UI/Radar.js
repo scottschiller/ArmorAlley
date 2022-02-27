@@ -116,7 +116,7 @@ const Radar = () => {
 
   }
 
-  function addRadarItem(item, className, canRespawn) {
+  function addItem(item, className, canRespawn) {
 
     let itemObject;
 
@@ -377,7 +377,7 @@ const Radar = () => {
   initRadar();
 
   exports = {
-    addItem: addRadarItem,
+    addItem,
     animate,
     data,
     dom,
