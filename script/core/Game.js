@@ -92,8 +92,6 @@ const game = (() => {
     // these will be tracked only for on-screen / off-screen purposes.
     game.objects.terrainItems.push(exports);
 
-    return node;
-
   }
 
   function addObject(type, options) {
@@ -115,8 +113,6 @@ const game = (() => {
     }
 
     objectArray.push(object);
-
-    return object;
 
   }
 
