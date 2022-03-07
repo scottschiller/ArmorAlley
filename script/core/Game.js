@@ -171,6 +171,7 @@ const game = (() => {
     } else {
 
       document.getElementById('mobile-controls').remove();
+      document.getElementById('pointer').remove();
 
     }
 
@@ -189,6 +190,8 @@ const game = (() => {
     } else {
 
       utils.css.add(document.getElementById('help'), 'inactive');
+
+      document.getElementById('tutorial').remove();
 
     }
 
