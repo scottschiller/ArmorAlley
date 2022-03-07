@@ -2333,10 +2333,10 @@ body.is_firefox #world-wrapper.jammed #radar {
 
 #game-tips {
   position: absolute;
-  top: 0px;
+  top: 88px;
   left: 0px;
   width: 100%;
-  height: 100%;
+  height: 13px;
 }
 
 #game-tips .tips-container {
