@@ -221,7 +221,9 @@ const Base = options => {
 
     if (!isOnScreen) return;
 
-    // allow base to switch up its defenses
+    // allow base to switch up its defenses, if "matching" is enabled
+    if (!gamePrefs.enemy_missile_match_type) return;
+    
     data.missileMode = getRandomMissileMode();
 
   }
@@ -255,7 +257,7 @@ const Base = options => {
     dead: false,
     frameCount: 0,
     fireModulus: tutorialMode ? FPS * 5 : FPS * 2,
-    missileMode: getRandomMissileMode(),
+    missileMode: defaultMissileMode,
     // left side, or right side (roughly)
     x: (options.x || (options.isEnemy ? worldWidth - 192 : 64)),
     y: game.objects.view.data.world.height - height - 2,
