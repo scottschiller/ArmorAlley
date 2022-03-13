@@ -64,17 +64,18 @@ const Infantry = options => {
 
   function stop(noFire) {
 
-    if (!data.stopped) {
-      data.stopped = true;
-      data.noFire = !!noFire;
-      // engineers always stop, e.g., to repair and/or capture turrets.
-      // infantry keep animation, but will appear to walk back and forth while firing.
-      if (data.noFire) {
-        utils.css.add(dom.o, css.stopped);
-      } else {
-        // infantry: reset "walking" offset, so initial movement is reduced
-        data.vXFrameOffset = 0;
-      }
+    if (data.stopped) return;
+
+    data.stopped = true;
+    data.noFire = !!noFire;
+
+    // engineers always stop, e.g., to repair and/or capture turrets.
+    // infantry keep animation, but will appear to walk back and forth while firing.
+    if (data.noFire) {
+      utils.css.add(dom.o, css.stopped);
+    } else {
+      // infantry: reset "walking" offset, so initial movement is reduced
+      data.vXFrameOffset = 0;
     }
 
   }
