@@ -385,9 +385,9 @@ const common = {
       if (o.isOnScreenChange) {
         o.isOnScreenChange(o.data.isOnScreen);
       }
-  
-    } else if (o.data.isOnScreen) {
-  
+
+    } else if (o.data.isOnScreen || o.data.isOnScreen === null) {
+
       o.data.isOnScreen = false;
 
       // only do work if detaching node from live DOM
