@@ -129,12 +129,12 @@ const Bomb = options => {
 
   function bombHitTarget(target) {
 
-    let isSpark, damagePoints;
+    let spark, damagePoints, hidden;
 
     // assume default
     damagePoints = data.damagePoints;
 
-    if (target.data.type && (target.data.type === TYPES.balloon || target.data.type === 'smart-missile')) {
+    if (target.data.type && (target.data.type === 'smart-missile')) {
 
       die({
         type: target.data.type,
@@ -145,12 +145,17 @@ const Bomb = options => {
     } else {
 
       // certain targets should get a spark vs. a large explosion
-      isSpark = target.data.type?.match(/balloon|helicopter|tank|van|missileLauncher|parachuteInfantry|bunker|turret|smartMissile/i);
+      spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile/i);
+
+      hidden = target.data.type.match(/balloon|helicopter/i);
+
+      // hide bomb sprite entirely on collision with these items...
 
       die({
         type: target.data.type,
-        spark: isSpark,
-        bottomAlign: !isSpark && (!target.data.type || target.data.type === TYPES.balloon || target.data.type === TYPES.infantry),
+        spark,
+        hidden,
+        bottomAlign: (!spark && !hidden && target.data.type !== TYPES.balloon) || target.data.type === TYPES.infantry,
         // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
         extraY: (target.data.type?.match(/tank/i) ? 3 + rndInt(3) : 0),
         target
