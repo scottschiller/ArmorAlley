@@ -12,6 +12,8 @@ const useTranslate3d = !winloc.match(/noTranslate3d/i);
 // unique IDs for quick object equality checks
 let guid = 0;
 
+let transformString;
+
 const common = {
 
   withStyle: (node) => {
@@ -238,33 +240,26 @@ const common = {
    
   },
 
-  setTransformXY(exports, o, x, y, extraTransforms) {
+  setTransformXY(exports, o, x, y, extraTransforms = '') {
 
     /**
-     * given an object (and its on-screen/off-screen status), apply transform to its live DOM node -
-     * and/or, if off-screen, as a string to be applied when the element is on-screen.
-     * positioning can be moderately complex, and is calculated with each animate() / moveTo() call.
+     * given an object (and its on-screen/off-screen status), apply transform to its live DOM node.
+     * battlefield scroll and "target" offset can also be included.
      */
-
-    let transformString;
 
     if (!o) return;
 
-    // additional transform arguments, e.g., rotate3d(0, 0, 1, 45deg)
-    extraTransforms = extraTransforms ? (` ${extraTransforms}`) : '';
-
-    // EXPERIMENTAL
-    // all elements are affected by scroll, too.
-    /*
-    if (x && x.indexOf('px') !== -1) {
-      if (game.objects.view && game.objects.view.data && game.objects.view.data.battleField) {
-        // console.log(game.objects.view.data.battleField.scrollLeft);
-        x = (parseInt(x, 10) - game.objects.view.data.battleField.scrollLeft) + 'px';
-      }
+    // take object defaults, if not specified otherwise
+    if (!extraTransforms && exports?.data?.extraTransforms) {
+      extraTransforms = exports.data.extraTransforms;
     }
-    */
 
-    // if (game.objects.view && o !== game.objects.view.data.battleField) return;
+    // format additional transform arguments, e.g., rotate3d(0, 0, 1, 45deg)
+    if (extraTransforms) extraTransforms = ` ${extraTransforms}`;
+
+
+      }
+
 
     if (useTranslate3d) {
       transformString = `translate3d(${x}, ${y}, 0px)${extraTransforms}`;
@@ -274,22 +269,23 @@ const common = {
 
     /**
      * sometimes, exports is explicitly provided as `undefined`.
-     * if any are undefined, "just do it" and apply the transform -
-     * provided we haven't applied the same one.
+     * if any are undefined, "just do it" and apply the transform.
      */
-    if ((!exports || !exports.data || exports.data.isOnScreen) && o._lastTransform !== transformString) {
+    if (!exports?.data || exports.data.isOnScreen) {
+
       o._style.setProperty('transform', transformString);
+
       if (debug) {
         // show that this element was moved
         o._style.setProperty('outline', `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`);
         game.objects.gameLoop.incrementTransformCount();
       }
-    } else if (debug) {
-      game.objects.gameLoop.incrementTransformCount(true /* count as an "excluded" transform */);
-    }
 
-    // assign for future re-append to DOM
-    o._lastTransform = transformString;
+    } else if (debug) {
+
+      game.objects.gameLoop.incrementTransformCount(true /* count as an "excluded" transform */);
+
+    }
 
   },
 
@@ -302,6 +298,7 @@ const common = {
     if (useDOMPruning && node === game.objects.view.dom.battleField) return;
 
     if (!node) return;
+
     node.remove();
     node._style = null;
     node = null;
@@ -359,33 +356,31 @@ const common = {
     if (!o || !o.data || !useDOMPruning) return;
   
     if (forceUpdate || common.isOnScreen(o)) {
-  
+
       // exit if not already updated
       if (o.data.isOnScreen) return;
-  
+
       o.data.isOnScreen = true;
-  
+
       // object may be in the process of being destroyed
       if (!o?.dom?.o) return;
-      
-      if (o.dom.o._lastTransform) {
-        // MOAR GPU! re-apply transform that was present at, or updated since, removal
-        o.dom.o._style.setProperty('transform', o.dom.o._lastTransform);
-      }
+
+      // restore position, including battlefield scroll offset
+      common.moveWithScrollOffset(o);
 
       if (o.dom._oRemovedParent) {
-  
+
         // previously removed: re-append to DOM
         o.dom._oRemovedParent.appendChild(o.dom.o);
         o.dom._oRemovedParent = null;
-  
+
       } else {
-  
+
         // first-time append, first time on-screen
         game.dom.world.appendChild(o.dom.o);
   
       }
-      
+
       // callback, if defined
       if (o.isOnScreenChange) {
         o.isOnScreenChange(o.data.isOnScreen);
@@ -397,7 +392,7 @@ const common = {
 
       // only do work if detaching node from live DOM
       if (o?.dom?.o?.parentNode) {
-  
+
         // detach, retaining parent node, for later re-append
         o.dom._oRemovedParent = o.dom.o.parentNode;
         o.dom.o.remove();
@@ -409,19 +404,18 @@ const common = {
           // 'none' might be considered a type of transform per Chrome Dev Tools,
           // and thus incur an "inline transform" cost vs. an empty string.
           // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
-          o.dom.o._lastTransform = transform;
           o.dom.o._style.setProperty('transform', 'none');
         }
-        
+
       }
-  
+
       // callback, if defined
       if (o.isOnScreenChange) {
         o.isOnScreenChange(o.data.isOnScreen);
       }
-  
+
     }
-  
+
   },
 
   mixin(oMain, oAdd) {
