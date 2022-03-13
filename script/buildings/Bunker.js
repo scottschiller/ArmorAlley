@@ -185,8 +185,6 @@ const Bunker = options => {
 
       common.setFrameTimeout(() => {
         utils.css.swap(dom.o, css.burning, css.dead);
-        // nothing else to do here - drop the node reference.
-        dom.o = null;
       }, 10000);
 
     }, 1200);
