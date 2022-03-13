@@ -1,3 +1,4 @@
+import { gameType } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 
@@ -177,6 +178,19 @@ const Notifications = () => {
     dom.oToasts = document.getElementById('notification-toasts');
   }
 
+  function welcome() {
+
+    const gameTypes = {
+      tutorial: 'This is the tutorial mode.',
+      other: `You are playing ${gameType.toUpperCase()} mode.`
+    }
+
+    const playingMessage = gameTypes[gameType] || gameTypes.other;
+
+    add(`Welcome to ARMOR ALLEY 🚁<br />${playingMessage}`);
+
+  }
+
   css = {
     doubleHeight: 'double-height',
     notificationToast: 'notification-toast',
@@ -198,7 +212,8 @@ const Notifications = () => {
 
   exports = {
     add,
-    addNoRepeat
+    addNoRepeat,
+    welcome
   };
 
   return exports;

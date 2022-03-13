@@ -231,12 +231,10 @@ const common = {
     return didUpdate;
   },
 
-  moveTo(exports, x, y) {
+  moveTo(exports, x, y, extraTransforms) {
 
-    // only set transform if data changed
-    if (common.updateXY(exports, x, y)) {
-      common.setTransformXY(exports, exports.dom.o, `${exports.data.x}px`, `${exports.data.y}px`);
-    }
+    common.updateXY(exports, x, y);
+    common.setTransformXY(exports, exports.dom.o, `${exports.data.x}px`, `${exports.data.y}px`, extraTransforms);
    
   },
 
