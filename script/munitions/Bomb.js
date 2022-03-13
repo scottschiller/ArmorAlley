@@ -10,7 +10,7 @@ const Bomb = options => {
 
   let css, data, dom, collision, radarItem, exports;
 
-  function moveTo(x, y, rotateAngle, forceUpdate) {
+  function moveTo(x, y, rotateAngle) {
 
     let deltaX, deltaY, rad;
     
@@ -25,10 +25,12 @@ const Bomb = options => {
       deltaY = y - data.y;
     }
 
-    if (common.updateXY(exports, x, y) || forceUpdate) {
-      rad = Math.atan2(deltaY, deltaX);
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
-    }
+    data.x = x;
+    data.y = y;
+
+    rad = Math.atan2(deltaY, deltaX);
+
+    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
 
   }
 
@@ -36,14 +38,12 @@ const Bomb = options => {
 
     // aieee!
 
-    let className, defaultAngle, forceUpdate;
+    let className;
 
     if (data.dead) return;
 
     dieOptions = dieOptions || {};
 
-    defaultAngle = 0;
-    forceUpdate = true;
 
     // possible hit, blowing something up.
 
@@ -51,8 +51,16 @@ const Bomb = options => {
       playSound(sounds.bombExplosion, exports);
     }
 
+    if (dieOptions.spark) {
+      data.extraTransforms = `rotate3d(0, 0, 1, ${rnd(15) * plusMinus()}deg)`;
+    }
+
     // bombs blow up big on the ground, and "spark" on other things.
-    className = (!dieOptions.spark ? css.explosionLarge : css.spark);
+    if (dieOptions.hidden) {
+      dom.o.style.visibility = 'hidden';
+    } else {
+      className = (!dieOptions.spark ? css.explosionLarge : css.spark);
+    }
 
     if (dieOptions.bottomAlign) {
 
@@ -64,7 +72,7 @@ const Bomb = options => {
       data.gravity = 0;
 
       // reposition immediately
-      moveTo(data.x, data.y, defaultAngle, forceUpdate);
+      moveTo(data.x, data.y);
 
     } else {
       
@@ -75,23 +83,20 @@ const Bomb = options => {
         data.y = Math.min(worldHeight - common.ricochetBoundaries[dieOptions.type], data.y);
 
         // go there immediately
-        moveTo(data.x, data.y, defaultAngle, forceUpdate);
+        moveTo(data.x, data.y);
 
       } else {
 
         // extraY: move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
-        moveTo(data.x, data.y + (dieOptions.extraY || 0), defaultAngle, forceUpdate);
+        moveTo(data.x, data.y + (dieOptions.extraY || 0));
 
       }
 
     }
 
     if (dom.o) {
-      utils.css.add(dom.o, className);
 
-      if (dieOptions.spark) {
-        common.applyRandomRotation(dom.o);
-      }
+      utils.css.add(dom.o, className);
 
       data.deadTimer = common.setFrameTimeout(() => {
         common.removeNodes(dom);
