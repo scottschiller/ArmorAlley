@@ -214,7 +214,7 @@ const ParachuteInfantry = options => {
     dom.oTransformSprite = common.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
-    common.moveTo(exports, data.x, data.y);
+    common.moveTo(exports);
 
   }
 

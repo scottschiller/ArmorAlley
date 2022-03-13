@@ -233,10 +233,10 @@ const common = {
     return didUpdate;
   },
 
-  moveTo(exports, x, y, extraTransforms) {
+  moveTo(exports, x = exports.data.x, y = exports.data.y, extraTransforms = exports.data.extraTransforms) {
 
     common.updateXY(exports, x, y);
-    common.setTransformXY(exports, exports.dom.o, `${exports.data.x}px`, `${exports.data.y}px`, extraTransforms);
+    common.setTransformXY(exports, exports.dom.o, `${x}px`, `${y}px`, extraTransforms);
    
   },
 
