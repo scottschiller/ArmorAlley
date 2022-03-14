@@ -13,7 +13,6 @@ import {
   debug,
   isMobile,
   isFirefox,
-  tutorialMode,
   worldWidth,
   winloc,
   defaultMissileMode,
@@ -26,7 +25,6 @@ const View = () => {
   let css, data, dom, events, exports;
 
   const disableScaling = winloc.match(/noscal/i);
-  const useParallax = winloc.match(/parallax/i);
   const noPause = winloc.match(/noPause/i);
 
   function setLeftScrollToPlayer(helicopter) {
@@ -51,12 +49,8 @@ const View = () => {
     
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
-    // ... and parallax.
-    if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
-      // firefox text rendering really doesn't look nice when translating the stars.
-      // TODO: revisit the firefox thing.
-      common.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, '0px');
-    }
+    // Parallax star effect.
+    common.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, `${(game?.objects?.helicopters[0]?.data?.y / data.battleField.height) * -2 || -2}px`);
 
   }
 
