@@ -404,8 +404,8 @@ const common = {
       } else {
 
         // first-time append, first time on-screen
-        game.dom.world.appendChild(o.dom.o);
-  
+        game.dom.battlefield.appendChild(o.dom.o);
+
       }
 
       // callback, if defined
