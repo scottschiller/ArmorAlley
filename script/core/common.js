@@ -230,6 +230,15 @@ const common = {
    
   },
 
+  moveWithScrollOffset(exports) {
+
+    // ignore if not on-screen.
+    if (!exports?.data?.isOnScreen) return;
+
+    common.setTransformXY(exports, exports.dom.o, `${exports.data.x}px`, `${exports.data.y}px`, exports.data.extraTransforms);
+
+  },
+
   attachToTarget(exports, target) {
 
     // "stick" a target, moving a munition (bomb, gunfire, spark) relative to the target it has hit
