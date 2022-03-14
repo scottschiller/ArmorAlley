@@ -230,6 +230,21 @@ const common = {
    
   },
 
+  attachToTarget(exports, target) {
+
+    // "stick" a target, moving a munition (bomb, gunfire, spark) relative to the target it has hit
+
+    if (!exports?.data || !target) return;
+
+    // track and move with the target, too
+    exports.data.target = target;
+
+    // note the target's coords at moment of impact; this will be checked by setTransformXY()
+    exports.data.targetStartX = target?.data?.x;
+    exports.data.targetStartY = target?.data?.y;
+
+  },
+
   setTransformXY(exports, o, x, y, extraTransforms = '') {
 
     /**
