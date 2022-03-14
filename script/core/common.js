@@ -12,8 +12,6 @@ const useTranslate3d = !winloc.match(/noTranslate3d/i);
 // unique IDs for quick object equality checks
 let guid = 0;
 
-let transformString;
-
 const common = {
 
   withStyle: (node) => {
@@ -261,6 +259,9 @@ const common = {
      * battlefield scroll and "target" offset can also be included.
      */
 
+    // ignore if off-screen
+    if (exports && !exports.data.isOnScreen) return;
+
     if (!o) return;
 
     // take object defaults, if not specified otherwise
@@ -271,34 +272,45 @@ const common = {
     // format additional transform arguments, e.g., rotate3d(0, 0, 1, 45deg)
     if (extraTransforms) extraTransforms = ` ${extraTransforms}`;
 
+    // somewhat hackish: include scroll and "target" offset for most pixel-based values
+    if (exports?.data?.type && !exports.data.excludeLeftScroll && x.indexOf('px') !== -1) {
+
+      // drop px
+      x = parseFloat(x);
+
+      x -= game.objects.view.data.battleField.scrollLeft;
+
+      // animating e.g., a bomb that's hit a tank: move the spark sprite
+      // relative to the tank, as the tank may still be alive and moving
+      if (exports?.data?.target) {
+
+        // has the target moved?
+        let deltaX = exports.data.target.data.x - exports.data.targetStartX;
+        let deltaY = exports.data.target.data.y - exports.data.targetStartY;
+
+        x += deltaX;
+
+        y = parseFloat(y);
+        y += deltaY;
+        y = `${y}px`;
 
       }
 
+      // back to pixels
+      x = `${x}px`;
 
-    if (useTranslate3d) {
-      transformString = `translate3d(${x}, ${y}, 0px)${extraTransforms}`;
-    } else {
-      transformString = `translate(${x}, ${y})${extraTransforms}`;
     }
 
-    /**
-     * sometimes, exports is explicitly provided as `undefined`.
-     * if any are undefined, "just do it" and apply the transform.
-     */
-    if (!exports?.data || exports.data.isOnScreen) {
+    if (useTranslate3d) {
+      o._style.setProperty('transform', `translate3d(${x}, ${y}, 0px)${extraTransforms}`);
+    } else {
+      o._style.setProperty('transform', `translate(${x}, ${y})${extraTransforms}`);
+    }
 
-      o._style.setProperty('transform', transformString);
-
-      if (debug) {
-        // show that this element was moved
-        o._style.setProperty('outline', `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`);
-        game.objects.gameLoop.incrementTransformCount();
-      }
-
-    } else if (debug) {
-
-      game.objects.gameLoop.incrementTransformCount(true /* count as an "excluded" transform */);
-
+    if (debug) {
+      // show that this element was moved
+      o._style.setProperty('outline', `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`);
+      game.objects.gameLoop.incrementTransformCount();
     }
 
   },
