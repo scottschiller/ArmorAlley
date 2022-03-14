@@ -63,9 +63,8 @@ const Tank = options => {
 
     function moveTo(x, y) {
 
-      if (common.updateXY(exports, x, y)) {
-        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
-      }
+      common.updateXY(exports, x, y);
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
     }
 
