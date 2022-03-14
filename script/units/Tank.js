@@ -171,27 +171,33 @@ const Tank = options => {
 
         moveTo(data.x + data.vX, data.y);
 
-      } else if (shouldFireAtTarget(data.lastNearbyTarget)) {
+      } else {
+        
+        common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+        
+        if (shouldFireAtTarget(data.lastNearbyTarget)) {
 
-        // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
-        // the original game had something like this, too.
-        if (data.frameCount % FPS === 0) {
+          // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
+          // the original game had something like this, too.
+          if (data.frameCount % FPS === 0) {
 
-          // run "moving" animation for a few frames
-          utils.css.remove(dom.o, css.stopped);
+            // run "moving" animation for a few frames
+            utils.css.remove(dom.o, css.stopped);
 
-          moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
+            moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
 
-          // and then stop again if we haven't resumed for real by that time.
-          common.setFrameTimeout(() => {
-            if (data.stopped) {
-              utils.css.add(dom.o, css.stopped);
-            }
-          }, 150);
+            // and then stop again if we haven't resumed for real by that time.
+            common.setFrameTimeout(() => {
+              if (data.stopped) {
+                utils.css.add(dom.o, css.stopped);
+              }
+            }, 150);
+          }
+
+          // only fire (i.e., GunFire objects) when stopped
+          fire();
+
         }
-
-        // only fire (i.e., GunFire objects) when stopped
-        fire();
 
       }
 
