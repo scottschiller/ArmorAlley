@@ -51,8 +51,6 @@ const View = () => {
     
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
-    // aim for GPU-based scrolling...
-    common.setTransformXY(undefined, dom.battleField, `${-data.battleField.scrollLeft}px`, '0px');
     // ... and parallax.
     if (!tutorialMode || (tutorialMode && (!isFirefox || useParallax))) {
       // firefox text rendering really doesn't look nice when translating the stars.
