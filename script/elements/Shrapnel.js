@@ -106,6 +106,9 @@ const Shrapnel = options => {
       playSound(sounds.genericSplat, exports);
     }
 
+    // "embed", so this object moves relative to the target it hit
+    common.attachToTarget(exports, target);
+
     if (damageTarget) {
       common.hit(target, data.damagePoints);
     }

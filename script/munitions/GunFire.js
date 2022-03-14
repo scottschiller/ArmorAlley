@@ -146,6 +146,10 @@ const GunFire = options => {
       if (canSpark) spark();
 
       if (canDie) {
+
+        // "embed", so this object moves relative to the target it hit
+        common.attachToTarget(exports, target);
+
         utils.css.add(dom.o, css.dead);
 
         // and cleanup shortly.
@@ -153,6 +157,7 @@ const GunFire = options => {
           die();
           frameTimeout = null;
         }, 250);
+
       }
 
     }
@@ -255,6 +260,7 @@ const GunFire = options => {
       gravityRate: (options.isInert ? 1.09 : 1.1) + (Math.random() * 0.025),
       damagePoints: options.damagePoints || 1,
       ricochetSoundThrottle: (options?.parentType === TYPES.infantry ? 250 : 100),
+      target: null,
       vyMax: 32
     }, options);
 

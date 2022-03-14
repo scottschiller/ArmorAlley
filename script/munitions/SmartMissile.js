@@ -210,6 +210,7 @@ const SmartMissile = options => {
 
     data.deadTimer = common.setFrameTimeout(() => {
       common.removeNodes(dom);
+      // removeNodes on trailers???
     }, 500);
 
     data.energy = 0;
@@ -278,6 +279,9 @@ const SmartMissile = options => {
     if (target) {
 
       common.hit(target, data.damagePoints, exports);
+
+      // "embed", so this object moves relative to the target it hit
+      common.attachToTarget(exports, target);
 
       // bonus "hit" sounds for certain targets
       if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
@@ -633,6 +637,7 @@ const SmartMissile = options => {
     isBanana: !!options.isBanana,
     onDie: options.onDie || null,
     playbackRate: 0.95 + (Math.random() * 0.1),
+    target: null,
     vX: 1 + Math.random(),
     vY: 1 + Math.random(),
     vXMax: 12 + rnd(6) + (options.vXMax || 0),

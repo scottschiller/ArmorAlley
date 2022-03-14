@@ -44,7 +44,6 @@ const Bomb = options => {
 
     dieOptions = dieOptions || {};
 
-
     // possible hit, blowing something up.
 
     if (!dieOptions.omitSound && sounds.bombExplosion) {
@@ -94,6 +93,9 @@ const Bomb = options => {
 
     }
 
+    // "embed", so this object moves relative to the target it hit
+    common.attachToTarget(exports, dieOptions.target);
+
     if (dom.o) {
 
       utils.css.add(dom.o, className);
@@ -139,7 +141,8 @@ const Bomb = options => {
       die({
         type: target.data.type,
         omitSound: true,
-        spark: true
+        spark: true,
+        target
       });
 
     } else {
@@ -267,6 +270,7 @@ const Bomb = options => {
     height: 12,
     gravity: 1,
     damagePoints: 3,
+    target: null,
     vX: (options.vX || 0),
     vYMax: 32
   }, options);
