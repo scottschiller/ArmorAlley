@@ -961,7 +961,7 @@ const game = (() => {
     let rnd = rndInt(prompts.length);
 
     for (let i = 0; i < prompts.length; i++) {
-      prompts[i].style.display = (i === rnd) ? 'inline-block' : 'none';
+      prompts[i].style.display = (i === rnd ? 'inline-block' : 'none');
     }
 
     let css = ['game-paused'];
@@ -1255,11 +1255,11 @@ const game = (() => {
     }
   
     if (!gameType) {
-  
+     
       menu = document.getElementById('game-menu');
-  
+ 
       if (menu) {
-  
+
         utils.css.add(dom.world, 'blurred');
   
         utils.css.add(menu, 'visible');
@@ -1281,15 +1281,20 @@ const game = (() => {
       }
   
       if (gameType) {
+
         // copy emoji to "exit" link
         const exitEmoji = document.getElementById('exit-emoji');
+
         let emojiReference = document.getElementById('game-menu').getElementsByClassName(`emoji-${gameType}`);
         emojiReference = emojiReference && emojiReference[0];
+
         if (exitEmoji && emojiReference) {
           exitEmoji.innerHTML = emojiReference.innerHTML;
         }
+
         // and show "exit"
         const exit = document.getElementById('exit');
+
         if (exit) {
           exit.className = 'visible';
         }
