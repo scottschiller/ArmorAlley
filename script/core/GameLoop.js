@@ -12,7 +12,7 @@ const GameLoop = () => {
   let exports;
 
   // high-use local variables
-  let item, i, gameObjects = game.objects;
+  let item, i, j, gameObjects = game.objects;
 
   const spliceArgs = [null, 1];
 
@@ -71,6 +71,11 @@ const GameLoop = () => {
 
       }
 
+    }
+
+    // move static terrain items, too, given we're scrolling.
+    for (i = 0, j = game.objects.terrainItems.length; i < j; i++) {
+      common.moveWithScrollOffset(game.objects.terrainItems[i]);
     }
 
     if (isGameOver() && !data.gameStopped) {
