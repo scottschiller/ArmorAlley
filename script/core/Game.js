@@ -1004,8 +1004,6 @@ const game = (() => {
   // when the player has chosen a game type - tutorial, easy/hard/extreme.
   function init() {
 
-    dom.world = document.getElementById('battlefield');
-
     data.convoyDelay = gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60);
 
     createObjects();
@@ -1237,7 +1235,12 @@ const game = (() => {
   
       return false;
     }
-  
+
+    // TODO: DOM init method or similar, ideally
+    
+    dom.world = document.getElementById('world');
+    dom.battlefield = document.getElementById('battlefield');
+
     // should we show the menu?
   
     gameType = (winloc.match(/easy|hard|extreme|tutorial/i) || utils.storage.get(prefs.gameType));
@@ -1311,7 +1314,8 @@ const game = (() => {
   };
 
   dom = {
-    world: null // TODO: rename to battlefield
+    battlefield: null,
+    world: null
   };
 
   objects = {
