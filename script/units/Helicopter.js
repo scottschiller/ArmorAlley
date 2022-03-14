@@ -50,7 +50,7 @@ import { Bomb } from '../munitions/Bomb.js';
 
 const Helicopter = options => {
 
-  let css, data, dom, events, objects, collision, radarItem, exports, lastTarget, moveToNeedsUpdate, statsBar;
+  let css, data, dom, events, objects, collision, radarItem, exports, lastTarget, statsBar;
 
   function cloak() {
 
@@ -658,6 +658,8 @@ const Helicopter = options => {
         // "get to the choppa!" (center the view on it, that is.)
         game.objects.view.setLeftScrollToPlayer(exports);
 
+        common.moveWithScrollOffset(exports);
+
         // good time to do some DOM pruning, etc.
         if (game.objects.queue) {
           game.objects.queue.process();
@@ -771,10 +773,7 @@ const Helicopter = options => {
       data.vX = 0;
       data.vY = 0;
 
-      applyTilt();
-
-      // force update, ensure position and angle
-      moveTo(data.x, data.y, true /* (force) */);
+      moveTo(data.x, data.y);
 
       // edge case: stop firing, etc.
       setFiring(false);
@@ -844,12 +843,9 @@ const Helicopter = options => {
 
   }
 
-  function moveTo(x, y, forceUpdate) {
+  function moveTo(x, y) {
 
     const yMax = (data.yMax - (data.repairing ? 3 : 0));
-
-    // defined externally to avoid massive garbage creation
-    moveToNeedsUpdate = !!forceUpdate;
 
     // Hack: limit enemy helicopter to visible screen
     if (data.isEnemy) {
@@ -859,7 +855,6 @@ const Helicopter = options => {
     if (x !== undefined) {
       x = Math.min(data.xMax, x);
       if (x && data.x !== x) {
-        moveToNeedsUpdate = true;
         data.x = x;
         data.midPoint.x = data.x + data.halfWidth;
       }
@@ -868,20 +863,20 @@ const Helicopter = options => {
     if (y !== undefined) {
       y = Math.max(data.yMin, Math.min(yMax, y));
       if (data.y !== y) {
-        moveToNeedsUpdate = true;
         data.y = y;
         // TODO: redundant?
         data.midPoint.y = data.y;
       }
     }
 
-    if (moveToNeedsUpdate) {
-      // reset angle if we're landed.
-      if (y >= yMax) {
-        data.angle = 0;
-      }
-      common.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
+    // reset angle if we're landed.
+    if (y >= yMax) {
+      data.tiltOffset = 0;
     }
+      
+    applyTilt();
+      
+    common.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
 
   }
 
@@ -1812,7 +1807,10 @@ const Helicopter = options => {
 
   function animate() {
 
-    if (data.respawning) return;
+    if (data.respawning) {
+      common.moveWithScrollOffset(exports);
+      return;
+    }
 
     // move according to delta between helicopter x/y and mouse, up to a max.
 
@@ -1869,10 +1867,7 @@ const Helicopter = options => {
         data.vY = 0;
       }
 
-      applyTilt();
-
-      // force update, ensure position and angle
-      moveTo(data.x, data.y, true /* (force) */);
+      moveTo(data.x, data.y);
 
       data.landed = true;
 
@@ -1961,8 +1956,6 @@ const Helicopter = options => {
       if (!data.isEnemy) {
         newX = Math.max(view.data.battleField.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
       }
-
-      applyTilt();
 
       moveTo(newX, data.y + data.vY);
 
@@ -2109,7 +2102,7 @@ const Helicopter = options => {
       fragment.appendChild(dom.trailers[i]);
     }
 
-    game.dom.world.appendChild(fragment);
+    game.dom.battlefield.appendChild(fragment);
 
   }
 
