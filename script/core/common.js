@@ -221,10 +221,11 @@ const common = {
 
   },
 
-  moveTo(exports, x = exports.data.x, y = exports.data.y, extraTransforms = exports.data.extraTransforms) {
+  moveTo(exports, x = exports.data.x, y = exports.data.y) {
 
     common.updateXY(exports, x, y);
-    common.setTransformXY(exports, exports.dom.o, `${x}px`, `${y}px`, extraTransforms);
+
+    common.moveWithScrollOffset(exports);
    
   },
 
