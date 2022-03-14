@@ -32,7 +32,7 @@ const Infantry = options => {
       // reverse direction!
       data.vXFrameOffset = 0;
       // and visually flip the sprite
-      data.flipTransform = !data.flipTransform ? 'scaleX(-1)' : null;
+      data.extraTransforms = !data.extraTransforms ? 'scaleX(-1)' : null;
     }
     
     // only fire every so often
@@ -56,9 +56,10 @@ const Infantry = options => {
 
   function moveTo(x, y) {
 
-    if (common.updateXY(exports, x, y)) {
-      common.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`, data.flipTransform);
-    }
+      data.x = x;
+      data.y = y;
+
+      common.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`);
 
   }
 
@@ -85,13 +86,14 @@ const Infantry = options => {
     if (!data.stopped) return;
 
     utils.css.remove(dom.o, css.stopped);
-    data.flipTransform = null;
+    data.extraTransforms = null;
     data.stopped = false;
     data.noFire = false;
 
   }
 
   function setRole(role, force) {
+
     // TODO: minimize CSS thrashing, track lastClass etc.
     if (data.role !== role || force) {
       utils.css.remove(dom.o, css[data.roles[0]]);
@@ -103,6 +105,7 @@ const Infantry = options => {
         utils.css.add(dom.o, css.className);
       }
     }
+
   }
 
   function die(options) {
@@ -159,11 +162,17 @@ const Infantry = options => {
 
       }
 
-    } else if (!data.noFire) {
+    } else {
 
-      // firing, or reclaiming/repairing?
-      // only fire (i.e., GunFire objects) when stopped
-      fire();
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+
+      if (!data.noFire) {
+
+        // firing, or reclaiming/repairing?
+        // only fire (i.e., GunFire objects) when stopped
+        fire();
+
+      }
 
     }
 
@@ -244,7 +253,7 @@ const Infantry = options => {
       cost: 5,
       orderCompleteDelay: 5 // last-item-in-order delay (decrements every frameCount animation loop), so tank doesn't overlap if ordered immediately afterward.
     },
-    flipTransform: null,
+    extraTransforms: null,
     x: options.x || 0,
     // one more pixel, making a "headshot" look more accurate
     y: game.objects.view.data.world.height - height - 1,
