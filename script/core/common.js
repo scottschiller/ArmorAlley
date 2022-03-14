@@ -218,19 +218,9 @@ const common = {
   
   updateXY(exports, x, y) {
 
-    let didUpdate;
+    exports.data.x = x;
+    exports.data.y = y;
 
-    if (x !== undefined && exports.data.x !== x) {
-      exports.data.x = x;
-      didUpdate = true;
-    }
-
-    if (y !== undefined && exports.data.y !== y) {
-      exports.data.y = y;
-      didUpdate = true;
-    }
-
-    return didUpdate;
   },
 
   moveTo(exports, x = exports.data.x, y = exports.data.y, extraTransforms = exports.data.extraTransforms) {

@@ -220,6 +220,12 @@ const Bunker = options => {
 
   }
 
+  function animate() {
+
+    common.moveWithScrollOffset(exports);
+
+  }
+
   function engineerHit(target) {
 
     // a friendly engineer unit has made contact with a bunker. repair damage when at the door, if any.
@@ -287,7 +293,7 @@ const Bunker = options => {
 
   data = common.inheritData({
     type: TYPES.bunker,
-    y: (game.objects.view.data.world.height - 25) + 1, // override to fix helicopter / bunker vertical crash case
+    y: (game.objects.view.data.world.height - 25) - 2, // override to fix helicopter / bunker vertical crash case
     energy: 50,
     energyMax: 50,
     energyLineScale: 0.95,
@@ -311,6 +317,7 @@ const Bunker = options => {
   };
 
   exports = {
+    animate,
     capture,
     objects,
     data,
