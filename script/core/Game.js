@@ -38,7 +38,7 @@ const game = (() => {
 
   let data, dom, layoutCache = {}, objects, objectConstructors, exports;
 
-  function addItem(className, x) {
+  function addItem(className, x, extraTransforms) {
 
     let data, _dom, width, height, inCache, exports;
 
@@ -48,13 +48,11 @@ const game = (() => {
         className: `${className} terrain-item`
       });
 
-      if (x) {
-        common.setTransformXY(undefined, _dom.o, `${x}px`, '0px');
-      }
-
     }
     
     function initItem() {
+
+      initDOM();
 
       if (layoutCache[className]) {
 
@@ -64,9 +62,8 @@ const game = (() => {
   
       } else {
   
-        // create + append only so we can read layout
-        initDOM();
-        dom.world.appendChild(_dom.o);
+        // append to get layout (based on CSS)
+        dom.battlefield.appendChild(_dom.o);
   
       }
 
@@ -79,21 +76,16 @@ const game = (() => {
     };
 
     initItem();
-
+    
     data = {
       type: className,
       x,
       y: 0,
-      // dirty / lazy - force layout, read from CSS.
+      // dirty: force layout, read from CSS, and cache below
       width: width || _dom?.o?.offsetWidth,
-      height: height || _dom?.o?.offsetHeight      
-    };
-
-    // basic structure for a terrain item
-    exports = {
-      data,
-      dom: _dom,
-      initDOM
+      height: height || _dom?.o?.offsetHeight,
+      isOnScreen: null,
+      extraTransforms
     };
 
     if (!inCache) {
@@ -104,12 +96,18 @@ const game = (() => {
         height: data.height
       };
 
-      // and now, remove; these will be re-appended when on-screen only.
+      // remove the node, now that we have its layout.
+      // this will be re-appended when on-screen.
       _dom.o.remove();
-      _dom.o._style = null;
-      _dom.o = null;
 
     }
+
+    // basic structure for a terrain item
+    exports = {
+      data,
+      dom: _dom,
+      initDOM
+    };
 
     // these will be tracked only for on-screen / off-screen purposes.
     game.objects.terrainItems.push(exports);
