@@ -167,9 +167,7 @@ const Base = options => {
             smallBoom(endBunker);
 
             // hide the base, too - since it should be gone.
-            if (dom && dom.o) {
-              dom.o.style.display = 'none';
-            }
+            dom.o.style.visibility = 'hidden';
 
             // end bunker, too.
             game.objects.endBunkers[data.isEnemy ? 1 : 0].dom.o.style.visibility = 'hidden';
