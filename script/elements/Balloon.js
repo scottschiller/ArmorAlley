@@ -135,15 +135,9 @@ const Balloon = options => {
 
     if (data.dead) {
 
-      if (data.y > 0) {
-
-        // dead, but chain has not retracted yet. Make sure it's moving down.
-        if (data.verticalDirection > 0) {
-          data.verticalDirection *= -1;
-        }
-
-        common.moveTo(exports, data.x, data.y + data.verticalDirection);
-
+      // explosion underway: move, accounting for scroll
+      if (data.deadTimer) {
+        common.moveWithScrollOffset(exports);
       }
 
       checkRespawn();
@@ -164,7 +158,7 @@ const Balloon = options => {
         data.verticalDirection *= -1;
       }
 
-      common.moveTo(exports, data.x, data.y + data.verticalDirection);
+      data.y += data.verticalDirection;
 
     } else {
 
@@ -228,10 +222,12 @@ const Balloon = options => {
         data.windOffsetY += 0.1;
       }
 
-      // hackish: enforce world min/max limits
-      common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
+      data.x += data.windOffsetX;
+      data.y += data.windOffsetY;
 
     }
+
+    common.moveWithScrollOffset(exports);
 
   }
 
@@ -284,7 +280,7 @@ const Balloon = options => {
     // TODO: remove?
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
-    common.moveTo(exports, data.x, data.y);
+    common.moveTo(exports);
 
   }
 
