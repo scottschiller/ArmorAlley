@@ -303,7 +303,7 @@ const Radar = () => {
         top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - (objects.items[i]?.layout?.height || 0);
 
         // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-        common.setTransformXY(null /* exports */, objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
+        common.setTransformXY(objects.items[i], objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
 
       }
 
