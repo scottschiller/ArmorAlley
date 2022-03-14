@@ -193,7 +193,15 @@ const Bomb = options => {
 
   function animate() {
 
-    if (data.dead) return (!data.deadTimer && !dom.o);
+    if (data.dead) {
+
+      if (dom.o) {
+        common.moveWithScrollOffset(exports);
+      }
+
+      return (!data.deadTimer && !dom.o);
+
+    }
 
     data.gravity *= 1.1;
 

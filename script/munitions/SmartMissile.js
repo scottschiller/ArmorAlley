@@ -310,7 +310,10 @@ const SmartMissile = options => {
     let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
 
     // notify caller if now dead and can be removed.
-    if (data.dead) return (data.dead && !dom.o);
+    if (data.dead) {
+      common.moveWithScrollOffset(exports);
+      return (data.dead && !dom.o);
+    }
 
     targetData = objects.target.data;
 

@@ -7,12 +7,19 @@ const LandingPad = options => {
   let css, dom, data, collision, exports;
 
   function animate() {
+
+    common.moveWithScrollOffset(exports);
+
     collisionTest(collision, exports);
+
   }
 
   function isOnScreenChange(isOnScreen) {
+
     if (!isOnScreen) return;
+
     setWelcomeMessage();
+
   }
 
   function setWelcomeMessage() {

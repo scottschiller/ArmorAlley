@@ -160,7 +160,11 @@ const GunFire = options => {
     function animate() {
 
       // pending die()
-      if (frameTimeout) return false;
+      if (frameTimeout) {
+        // keep moving with scroll, while visible
+        common.moveWithScrollOffset(exports);
+        return false;
+      }
 
       if (data.dead) return true;
 

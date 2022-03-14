@@ -143,6 +143,8 @@ const SuperBunker = options => {
 
   function animate() {
 
+    common.moveWithScrollOffset(exports);
+
     data.frameCount++;
 
     // start, or stop firing?

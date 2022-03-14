@@ -322,6 +322,8 @@ const Turret = options => {
 
   function animate() {
 
+    common.moveWithScrollOffset(exports);
+
     data.frameCount++;
 
     if (data.frameCount % data.scanModulus === 0) {
@@ -416,7 +418,7 @@ const Turret = options => {
     angle: 0,
     maxAngle: 90,
     x: options.x || 0,
-    y: game.objects.view.data.world.height - height,
+    y: game.objects.view.data.world.height - height - 2,
     // logical vs. sprite offset
     yOffset: 3
   }, options);

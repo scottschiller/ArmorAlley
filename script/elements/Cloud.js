@@ -39,7 +39,10 @@ const Cloud = options => {
       data.windOffsetY *= -1;
     }
 
-    common.moveTo(exports, data.x + data.windOffsetX, data.y + data.windOffsetY);
+    data.x += data.windOffsetX;
+    data.y += data.windOffsetY;
+
+    common.moveWithScrollOffset(exports);
 
   }
 

@@ -130,6 +130,9 @@ const MissileLauncher = options => {
 
     if (!data.stopped) {
       common.moveTo(exports, data.x + data.vX, data.y);
+    } else {
+      // if stopped, just take scroll into effect
+      common.moveWithScrollOffset(exports);
     }
 
     common.smokeRelativeToDamage(exports);

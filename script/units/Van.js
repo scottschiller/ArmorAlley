@@ -69,11 +69,14 @@ const Van = options => {
 
     let enemyHelicopter;
 
-    if (data.dead) return !data.deadTimer;
-
     if (!data.stopped) {
       common.moveTo(exports, data.x + data.vX, data.y);
+    } else {
+      // if stopped, just take scroll into effect
+      common.moveWithScrollOffset(exports);
     }
+
+    if (data.dead) return !data.deadTimer;
 
     common.smokeRelativeToDamage(exports, 0.25);
 

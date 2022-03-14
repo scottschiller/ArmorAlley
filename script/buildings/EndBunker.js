@@ -121,6 +121,8 @@ const EndBunker = options => {
 
     let offset, earnedFunds;
 
+    common.moveWithScrollOffset(exports);
+
     data.frameCount++;
 
     nearbyTest(nearby);

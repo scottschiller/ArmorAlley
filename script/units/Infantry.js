@@ -133,7 +133,14 @@ const Infantry = options => {
 
   function animate() {
 
-    if (data.dead) return !dom.o;
+    if (data.dead) {
+
+      // keep in sync with battlefield
+      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+
+      return !dom.o;
+
+    }
 
     if (!data.stopped) {
 
