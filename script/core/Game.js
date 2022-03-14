@@ -200,6 +200,8 @@ const game = (() => {
       x: 300
     });
 
+    addItem('right-arrow-sign', -48);
+
     addObject('base', {
       x: 160
     });
@@ -655,8 +657,6 @@ const game = (() => {
         isEnemy: true
       });
 
-      addItem('right-arrow-sign', 550);
-
       addItem('tree', 660);
 
       addItem('palm-tree', 860);
@@ -768,10 +768,6 @@ const game = (() => {
       addItem('tree', 7325);
 
       addItem('flower', 7500);
-
-      // enemy base sign
-
-      addItem('left-arrow-sign', 7700);
 
       // more mid-level stuff
 
@@ -912,6 +908,12 @@ const game = (() => {
       x: 4096 + 768,
       y: rnd(worldHeight)
     });
+
+    // enemy base signs (flipped via `extraTransform`)
+
+    addItem('left-arrow-sign', 7700, 'scaleX(-1)');
+
+    addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
 
     // player + enemy helicopters
 
