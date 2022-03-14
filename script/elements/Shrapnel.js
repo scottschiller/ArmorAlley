@@ -14,18 +14,16 @@ const Shrapnel = options => {
 
     let relativeScale;
 
-    if (common.updateXY(exports, x, y)) {
-      // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
-      relativeScale = Math.min(1, data.y / (worldHeight * 0.9));
+    // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
+    relativeScale = Math.min(1, data.y / (worldHeight * 0.9));
 
-      // allow slightly larger, and a fair bit smaller
-      relativeScale = 1.1 - (relativeScale * 0.45);
+    // allow slightly larger, and a fair bit smaller
+    relativeScale = 1.1 - (relativeScale * 0.45);
 
-      data.scaleTransform = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
+    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
 
-      // move, and retain 3d scaling
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.scaleTransform);
-    }
+    // move, and retain 3d scaling (via extraTransforms)
+    common.moveTo(exports, x, y);
 
   }
 
@@ -266,7 +264,7 @@ const Shrapnel = options => {
     width: 12 * scale,
     height: 12 * scale,
     scale,
-    scaleTransform: `scale3d(${[scale, scale, 1].join(',')})`,
+    extraTransforms: `scale3d(${[scale, scale, 1].join(',')})`,
     hostile: true,
     damagePoints: 0.5,
     hasSound: !!options.hasSound,
