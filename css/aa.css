@@ -2333,7 +2333,14 @@ body.is_firefox #world-wrapper.jammed #radar {
   top: 88px;
   left: 0px;
   width: 100%;
+  /* single line height */
   height: 13px;
+}
+
+#world.tutorial-mode #game-tips {
+  /* more space needed for tutorial instructions */
+  top: 0px;
+  height: 100%;
 }
 
 #game-tips .tips-container {
