@@ -1722,12 +1722,6 @@ ul.stats-bar .bombs em {
   background-image: url(../image/right-arrow-sign-mac_snow.png);
 }
 
-.right-arrow-sign {
-  /* horizontal flip tricks */
-  filter: FlipH;
-  transform: scaleX(-1);
-}
-
 .helicopter,
 .helicopter.facing-left,
 .helicopter.facing-right {
