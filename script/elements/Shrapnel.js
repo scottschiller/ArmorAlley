@@ -157,7 +157,14 @@ const Shrapnel = options => {
 
   function animate() {
 
-    if (data.dead) return (!data.deadTimer && !dom.o);
+    if (data.dead) {
+
+      // keep moving with scroll, while visible
+      common.moveWithScrollOffset(exports);
+
+      return (!data.deadTimer && !dom.o);
+
+    }
 
     moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
 
