@@ -91,6 +91,7 @@ body {
   cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=), crosshair;
 }
 
+#world,
 #world-container,
 #game-status,
 #radar,
@@ -265,6 +266,8 @@ body {
   margin-top: -192px;
   background: #000;
   font-size: 11px;
+  /* for initial game fade */
+  transition: filter 0.5s ease-in;
 }
 
 #game-status-bar {
@@ -3145,10 +3148,6 @@ body.is-mobile.notch-at-right #mobile-controls .mobile-controls-right {
 body.is-mobile.game-over #mobile-controls {
   /* hide when game is over. */
   display: none !important;
-}
-
-#world-wrapper {
-  transition: filter 0.5s ease-in;
 }
 
 body.game-paused #world-wrapper {

@@ -1878,41 +1878,6 @@ const Helicopter = options => {
       data.landed = false;
       onLandingPad(false);
 
-      // hack: fade logo on first take-off.
-      if (!data.isEnemy && (tutorialMode || game.data.canHideLogo) && !data.logoHidden) {
-
-        data.logoHidden = true;
-
-        window.requestAnimationFrame(() => {
-
-          let overlay = document.getElementById('world-overlay');
-          const world = document.getElementById('world');
-          const blurred = 'blurred';
-          const noBlur = 'no-blur';
-
-          utils.css.add(overlay, 'fade-out');
-
-          utils.css.add(world, noBlur);
-
-          // remove from the DOM eventually
-          common.setFrameTimeout(() => {
-
-            overlay?.remove();
-            overlay = null;
-
-            // remove blur / no-blur entirely.
-            utils.css.remove(world, blurred);
-            utils.css.remove(world, noBlur);
-
-            // and reset FPS timings, as this may affect peformance.
-            game.objects.gameLoop.resetFPS();
-
-          }, 2000);
-
-        });
-
-      }
-
     } else if (data.onLandingPad) {
 
       // ensure the helicopter stays aligned with the landing pad.
@@ -1923,6 +1888,47 @@ const Helicopter = options => {
     if (data.landed && !data.isEnemy) {
       // don't throw bullets with vY, if landed
       data.vY = 0;
+    }
+
+    // hack: fade logo.
+    if (!data.logoHidden && !data.isEnemy && (tutorialMode || game.data.canHideLogo)) {
+
+      data.logoHidden = true;
+
+      window.requestAnimationFrame(() => {
+
+        let overlay = document.getElementById('world-overlay');
+        const world = document.getElementById('world');
+
+        const blurred = 'blurred';
+        const noBlur = 'no-blur';
+
+        utils.css.add(overlay, 'fade-out');
+
+        utils.css.add(world, noBlur);
+
+        game.objects.notifications.welcome();
+
+        // remove from the DOM eventually
+        common.setFrameTimeout(() => {
+
+          overlay?.remove();
+          overlay = null;
+
+          // remove blur / no-blur entirely.
+          utils.css.remove(world, blurred);
+          utils.css.remove(world, noBlur);
+
+          // and transition, too.
+          game.objects.view.dom.worldWrapper.style.transition = '';
+
+          // and reset FPS timings, as this may affect peformance.
+          game.objects.gameLoop.resetFPS();
+
+        }, 2000);
+
+      });
+
     }
 
     // no fuel?

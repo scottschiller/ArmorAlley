@@ -1298,6 +1298,10 @@ const game = (() => {
         if (exit) {
           exit.className = 'visible';
         }
+        
+        // hackish: remove green overlay
+        document.getElementById('world-overlay').style.background = 'transparent';
+
       }
   
       data.canHideLogo = true;
