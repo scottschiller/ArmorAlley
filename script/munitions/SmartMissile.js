@@ -26,8 +26,6 @@ const SmartMissile = options => {
       y = data.yMax;
     }
 
-    common.updateXY(exports, x, y);
-
     // determine angle
     if (data.isBanana) {
 
@@ -48,7 +46,9 @@ const SmartMissile = options => {
 
     }
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
+    data.extraTransforms = `rotate3d(0, 0, 1, ${data.angle}deg)`;
+
+    common.moveTo(exports, x, y);
 
     // push x/y to history arrays, maintain size
 
@@ -275,10 +275,8 @@ const SmartMissile = options => {
     // TODO: reduce timers
     spark();
 
-    // hack: no more animation.
-    data.dead = true;
-
     if (target) {
+
       common.hit(target, data.damagePoints, exports);
 
       // bonus "hit" sounds for certain targets
@@ -299,6 +297,7 @@ const SmartMissile = options => {
           parentVY: data.vY
         });
       }
+
     }
 
     die();
