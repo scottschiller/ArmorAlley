@@ -81,6 +81,8 @@ function RadarItem(options) {
 
   data = {
     type: 'radar-item',
+    excludeLeftScroll: true, // don't include battlefield scroll in transform(x)
+    isOnScreen: true, // radar items are always within view
     parentType: options.parentType,
     className: options.className,
     dead: false
