@@ -831,7 +831,7 @@ const common = {
   
     angle = 0;
   
-    explosionVelocityMax = shrapnelOptions.velocity || 4;
+    explosionVelocityMax = shrapnelOptions.velocity || 4.5;
   
     shrapnelCount = shrapnelOptions.count || 8;
   

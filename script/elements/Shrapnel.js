@@ -147,7 +147,7 @@ const Shrapnel = options => {
     }
 
     // reset "gravity" effect, too.
-    data.gravity = 1;
+    data.gravity = data.gravityRate;
 
     // data.y may have been "corrected" - move again, just to be safe.
     moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
@@ -263,7 +263,7 @@ const Shrapnel = options => {
     maxVY: 32,
     gravity: 1,
     // randomize fall rate
-    gravityRate: 1.05 + rnd(.06),
+    gravityRate: 1.05 + rnd(.065),
     width: 12 * scale,
     height: 12 * scale,
     scale,

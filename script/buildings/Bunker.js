@@ -174,7 +174,6 @@ const Bunker = options => {
       isGroundUnit: true
     });
 
-    // detach balloon?
     detachBalloon();
 
     common.shrapnelExplosion(data, { velocity: rnd(-10) });

@@ -142,7 +142,7 @@ const Chain = options => {
       }
 
     }
-
+    
     common.moveTo(exports, x, y);
 
     if (height !== undefined && data.height !== height) {
