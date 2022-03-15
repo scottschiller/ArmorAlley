@@ -126,7 +126,7 @@ const Bomb = options => {
     if (data.isOnScreen) {
       for (let i=0; i<3; i++) {
         game.objects.smoke.push(Smoke({
-          x: data.x + 6 + (rndInt(6) * 0.33 * plusMinus()),
+          x: data.x + (data.width / 2) + (rndInt((data.width / 2)) * 0.33 * plusMinus()),
           y: data.y + 12,
           vX: (rnd(4) * plusMinus()),
           vY: rnd(-4),

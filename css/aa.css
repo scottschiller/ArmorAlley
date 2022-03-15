@@ -849,7 +849,12 @@ ul.stats-bar .bombs em {
 .sprite.smart-missile,
 .sprite.van,
 .sprite.missile-launcher,
-/* .sprite.smoke, */
+/* bunkers go green when overlapping with ground units, i.e., tanks? */
+.sprite.bunker,
+.sprite.end-bunker,
+.sprite.super-bunker,
+/* all terrain items need acceleration? */
+.sprite.terrain-item,
 .smoke .transform-sprite,
 .sprite.shrapnel,
 .turret .sub-sprite,
@@ -1824,7 +1829,7 @@ ul.stats-bar .bombs em {
 .bomb.explosion-large {
   width: 51px;
   height: 22px;
-  margin-left: -26px;
+  margin-left: 0px;
   background: none;
 }
 
@@ -1837,15 +1842,7 @@ ul.stats-bar .bombs em {
 }
 
 #world-wrapper.jammed #radar {
-  /* taking out for now, probably $$$. */
-  /* filter: blur(4px) grayscale(1); */
-  display: none;
-}
-
-body.is_firefox #world-wrapper.jammed #radar {
-  /* filters are too $$$ in Firefox. */
-  /* filter: unset; */
-  display: none;
+  visibility: hidden;
 }
 
 #world.tutorial-mode #world-wrapper.jammed #radar {
@@ -3281,7 +3278,7 @@ body:not(.is-mobile) .mobile-only {
   right: 8px;
   width: 12rem;
   height: 67%;
-  margin-top: 96px;
+  margin-top: 104px;
   overflow: hidden;
 }
 
@@ -3816,4 +3813,15 @@ body.is_safari #game-prefs-modal .label-text {
   border: 0.5px solid rgb(135,135,179);
   border-bottom-color: rgb(218,218,255);
   border-right-color: rgb(218,218,255);
+}
+
+
+.flying-ace {
+  /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
+  width: 25px;
+  height: 40.5px;
+  background: url(../image/flying_ace.png);
+  background-size: contain;
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
 }
