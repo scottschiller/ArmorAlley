@@ -290,10 +290,7 @@ const common = {
         let deltaY = exports.data.target.data.y - exports.data.targetStartY;
 
         x += deltaX;
-
-        y = parseFloat(y);
-        y += deltaY;
-        y = `${y}px`;
+        y = `${parseFloat(y) + deltaY}px`;
 
       }
 
@@ -418,7 +415,7 @@ const common = {
       o.data.isOnScreen = false;
 
       // only do work if detaching node from live DOM
-      if (o?.dom?.o?.parentNode) {
+      if (o.dom?.o?.parentNode) {
 
         // detach, retaining parent node, for later re-append
         o.dom._oRemovedParent = o.dom.o.parentNode;
