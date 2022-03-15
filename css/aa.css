@@ -2257,8 +2257,8 @@ body.is_firefox #world-wrapper.jammed #radar {
 
 .shrapnel.stopped .transform-sprite {
   animation: none;
+  transition: opacity 0.75s ease-in-out;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
 }
 
 .cloud1,

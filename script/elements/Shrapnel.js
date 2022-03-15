@@ -51,12 +51,20 @@ const Shrapnel = options => {
 
     shrapnelNoise();
 
+    // random fade duration
+    const delay = 750 + rnd(750);
+
+    // this shouldn't be needed, but CSS seems to be applying "all" or ignoring the property.
+    dom.o.style.setProperty('transition-property', 'opacity');
+
+    dom.o.style.setProperty('transition-duration', delay + 'ms');
+
     utils.css.add(dom.o, css.stopped);
 
     data.deadTimer = common.setFrameTimeout(() => {
       common.removeNodes(dom);
       data.deadTimer = null;
-    }, 750);
+    }, delay + 50);
 
     data.energy = 0;
 
