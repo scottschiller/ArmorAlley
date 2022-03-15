@@ -1113,6 +1113,8 @@ const Helicopter = options => {
     common.shrapnelExplosion(data, {
       count: 20,
       velocity: 6,
+      vX: data.vX,
+      vY: data.vY,
       // first burst always looks too similar, here.
       noInitialSmoke: true
     });
