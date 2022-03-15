@@ -806,7 +806,7 @@ const common = {
 
     let localOptions, halfWidth;
   
-    let vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
+    let vX, vY, vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
   
     shrapnelOptions = shrapnelOptions || {};
   
@@ -826,6 +826,10 @@ const common = {
       localOptions.noInitialSmoke = shrapnelOptions.noInitialSmoke;
     }
   
+    // note: "in addition to" velocity option.
+    vX = shrapnelOptions.vX || 0;
+    vY = shrapnelOptions.vY || 0;
+
     angle = 0;
   
     explosionVelocityMax = shrapnelOptions.velocity || 4.5;
@@ -836,8 +840,8 @@ const common = {
   
     for (i = 0; i < shrapnelCount; i++) {
   
-      explosionVelocity1 = rnd(explosionVelocityMax);
-      explosionVelocity2 = rnd(explosionVelocityMax);
+      explosionVelocity1 = rnd(explosionVelocityMax + vX);
+      explosionVelocity2 = rnd(explosionVelocityMax + vY);
   
       vectorX = -explosionVelocity1 * Math.cos(angle * rad2Deg);
       vectorY = -explosionVelocity2 * Math.sin(angle * rad2Deg);
