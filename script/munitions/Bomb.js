@@ -38,8 +38,8 @@ const Bomb = options => {
     // aieee!
 
     let className;
-
-    if (data.dead) return;
+    
+    if (data.dead || data.groundCollisionTest) return;
 
     dieOptions = dieOptions || {};
 
@@ -62,7 +62,17 @@ const Bomb = options => {
 
     if (dieOptions.bottomAlign) {
 
-      // TODO: set explosionHeight as 22 or something.
+      // bombs explode, and dimensions change when they hit the ground.
+
+      // adjust for larger explosion, "expanding" on both sides
+      data.x -= ((data.explosionWidth - data.width) / 2);
+
+      // assign new dimensions for explosion
+      data.width = data.explosionWidth;
+      data.height = data.explosionHeight;
+
+      // bottom-align
+      // TODO: review why 17, still. :P
       data.y = worldHeight - 17;
 
       // stop moving
@@ -71,6 +81,13 @@ const Bomb = options => {
 
       // reposition immediately
       moveTo(data.x, data.y);
+
+      // hackish: do one more collision check, since coords have changed, before this element is dead.
+      // this will cause another call, which van be ignored.
+      if (!data.groundCollisionTest) {
+        data.groundCollisionTest = true;
+        collisionTest(collision, exports);
+      }
 
     } else {
       
@@ -90,10 +107,10 @@ const Bomb = options => {
 
       }
 
-    }
+      // "embed", so this object moves relative to the target it hit
+      common.attachToTarget(exports, dieOptions.target);
 
-    // "embed", so this object moves relative to the target it hit
-    common.attachToTarget(exports, dieOptions.target);
+    }
 
     if (dom.o) {
 
@@ -130,12 +147,14 @@ const Bomb = options => {
 
   function bombHitTarget(target) {
 
-    let spark, damagePoints, hidden;
+    let spark, bottomAlign, damagePoints, hidden;
 
     // assume default
     damagePoints = data.damagePoints;
 
-    if (target.data.type && (target.data.type === 'smart-missile')) {
+    // some special cases, here
+
+    if (target.data.type === 'smart-missile') {
 
       die({
         type: target.data.type,
@@ -144,20 +163,33 @@ const Bomb = options => {
         target
       });
 
+    } else if (target.data.type === 'infantry') {
+
+      /**
+       * bomb -> infantry special case: don't let bomb die; keep on truckin'.
+       * continue to ground, where larger explosion may take out a group of infantry.
+       * only do damage once we're on the ground. this means infantry will play the
+       * hit / "smack" sound, but don't die + scream until the bomb hits the ground.
+       */
+      if (!data.hasHitGround) {
+        damagePoints = 0;
+      }
+
     } else {
 
       // certain targets should get a spark vs. a large explosion
       spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile/i);
 
+      // hide bomb sprite entirely on collision with these items...
       hidden = target.data.type.match(/balloon|helicopter/i);
 
-      // hide bomb sprite entirely on collision with these items...
+      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon) || target.data.type === TYPES.infantry;
 
       die({
         type: target.data.type,
         spark,
         hidden,
-        bottomAlign: (!spark && !hidden && target.data.type !== TYPES.balloon) || target.data.type === TYPES.infantry,
+        bottomAlign,
         // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
         extraY: (target.data.type?.match(/tank/i) ? 3 + rndInt(3) : 0),
         target
@@ -175,8 +207,13 @@ const Bomb = options => {
 
       } else if (target.data.type === TYPES.turret) {
 
-        // bombs do more damage on turrets.
-        damagePoints = 10;
+        // bombs do more damage on turrets if a direct hit; less, if from a nearby explosion.
+        damagePoints = (data.hasHitGround ? 3 : 10);
+
+      } else if (data.hasHitGround) {
+
+        // no specific target match: take 33% cut on bomb damage
+        damagePoints = data.damagePointsOnGround;
 
       }
 
@@ -211,6 +248,7 @@ const Bomb = options => {
 
     // hit bottom?
     if (data.y - data.height > game.objects.view.data.battleField.height) {
+      data.hasHitGround = true;
       die({
         bottomAlign: true
       });
@@ -266,10 +304,15 @@ const Bomb = options => {
     parentType: options.parentType || null,
     deadTimer: null,
     extraTransforms: null,
+    hasHitGround: false,
+    groundCollisionTest: false,
     width: 13,
     height: 12,
+    explosionWidth: 51,
+    explosionHeight: 22,
     gravity: 1,
     damagePoints: 3,
+    damagePointsOnGround: 2,
     target: null,
     vX: (options.vX || 0),
     vYMax: 32
