@@ -25,12 +25,11 @@ const Bomb = options => {
       deltaY = y - data.y;
     }
 
-    data.x = x;
-    data.y = y;
-
     rad = Math.atan2(deltaY, deltaX);
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`);
+    data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`;
+
+    common.moveTo(exports, x, y);
 
   }
 
@@ -266,6 +265,7 @@ const Bomb = options => {
     type: 'bomb',
     parentType: options.parentType || null,
     deadTimer: null,
+    extraTransforms: null,
     width: 13,
     height: 12,
     gravity: 1,
