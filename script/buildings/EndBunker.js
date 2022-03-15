@@ -1,5 +1,4 @@
 import { game } from '../core/Game.js';
-import { utils } from '../core/utils.js';
 import { DEFAULT_FUNDS, TYPES, tutorialMode, debug, worldWidth, FPS } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';

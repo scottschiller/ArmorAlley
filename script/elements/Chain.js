@@ -1,5 +1,4 @@
 import { game } from '../core/Game.js';
-import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 
 const Chain = options => {
