@@ -449,20 +449,19 @@ function enemyHelicopterNearby(data, triggerDistance) {
 function recycleTest(obj) {
 
   // did a unit reach the other side? destroy the unit, and reward the player with credits.
-  let doRecycle, isEnemy, costObj, refund, type;
+  let isEnemy, costObj, refund, type;
 
   isEnemy = obj.data.isEnemy;
 
   if (!obj || obj.data.dead || obj.data.isRecycling) return;
 
   if (isEnemy) {
-    // slightly left of player's base
-    doRecycle = obj.data.x <= -48;
+    // recycle point: slightly left of player's base
+    if (obj.data.x > -48) return;
   } else {
-    doRecycle = obj.data.x >= worldWidth;
+    // recycle point: end of world
+    if (obj.data.x < worldWidth) return;
   }
-
-  if (!doRecycle) return;
 
   obj.data.isRecycling = true;
 
