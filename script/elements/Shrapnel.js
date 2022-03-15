@@ -15,10 +15,12 @@ const Shrapnel = options => {
     let relativeScale;
 
     // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
-    relativeScale = Math.min(1, data.y / (worldHeight * 0.9));
+    relativeScale = Math.min(1, y / (worldHeight * 0.9));
 
     // allow slightly larger, and a fair bit smaller
-    relativeScale = 1.1 - (relativeScale * 0.45);
+    relativeScale = 1.1 - (relativeScale * data.scaleRange);
+
+    data.relativeScale = relativeScale;
 
     data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
 
@@ -114,12 +116,12 @@ const Shrapnel = options => {
       playSound(sounds.genericSplat, exports);
     }
 
-    // "embed", so this object moves relative to the target it hit
-    common.attachToTarget(exports, target);
-
     if (damageTarget) {
       common.hit(target, data.damagePoints);
     }
+
+    // "embed", so this object moves relative to the target it hit
+    common.attachToTarget(exports, target);
 
     die();
 
@@ -184,7 +186,8 @@ const Shrapnel = options => {
 
     // did we hit the ground?
     if (data.y - data.height >= worldHeight) {
-      moveTo(data.x + data.vX, worldHeight);
+      // align w/ground, slightly lower
+      moveTo(data.x, worldHeight - (12 * data.relativeScale) + 4);
       die();
     }
 
@@ -275,6 +278,7 @@ const Shrapnel = options => {
     width: 12 * scale,
     height: 12 * scale,
     scale,
+    scaleRange: 0.4 + rnd(0.2),
     extraTransforms: `scale3d(${[scale, scale, 1].join(',')})`,
     hostile: true,
     damagePoints: 0.5,
