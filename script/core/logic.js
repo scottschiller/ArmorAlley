@@ -8,79 +8,30 @@ import { common } from './common.js';
 import { game } from './Game.js';
 import { COSTS, TYPES, worldWidth } from './global.js';
 
- function collisionCheck(point1, point2, point1XLookAhead) {
+ function collisionCheck(rect1, rect2, rect1XLookAhead) {
 
   /**
-   * given x, y, width and height, determine if one object is overlapping another.
-   * additional hacky param: X-axis offset for object. Used for cases where tanks etc. need to know when objects are nearby.
-   * provided as an override because live objects are passed directly and can't be modified (eg., options.source.data.x += ...).
-   * cloning these objects via mixin() works, but then lot of temporary objects are created, leading to increased garbage collection.
+   * Given two rect objects with shape { x, y, width, height }, determine if there is overlap.
+   * Additional hacky param: `rect1XLookAhead`, x-axis offset. Used for cases where tanks etc. need to know when objects are nearby.
+   * Extra param because live objects are passed directly and can't be modified (eg., options.source.data.x += ...).
+   * Cloning via mixin() works, but this creates a lot of extra objects and garbage collection thrashing.
    */
 
-  if (!point1 || !point2) {
+  if (!rect1 || !rect2) {
     return null;
   }
 
-  // given two boxes, check for intersects.
-  // presume each object has x, y, width, height - otherwise, all hell will break loose.
-
-  if (point2.x >= point1.x + point1XLookAhead) {
-
-    // point 2 is to the right.
-
-    if (point1.x + point1XLookAhead + point1.width >= point2.x) {
-
-      // point 1 overlaps point 2 on x.
-      // width = point2.x - (point1.x + point1XLookAhead + point1.width);
-
-      if (point1.y < point2.y) {
-
-        // point 1 is above point 2.
-
-        if (point1.y + point1.height >= point2.y) {
-
-          // point 1 overlaps point 2 on y.
-          // height = point2.y - (point1.y + point1.h);
-          return true;
-
-        }
-
-      } else {
-
-        // height = (point2.y + point2.height) - point1.y;
-        return (point1.y < point2.y + point2.height);
-
-      }
-
-    }
-
-    // otherwise, point 1 is to the right.
-
-  } else if (point2.x + point2.width >= point1.x + point1XLookAhead) {
-
-    // point 2 overlaps point 1 on x.
-    // width = point1.x - (point2.x + point1XLookAhead + point2.width);
-
-    if (point2.y < point1.y) {
-
-      // point 2 is above point 1.
-      // height = point1.y - (point2.height + point2.y);
-      return (point2.y + point2.height >= point1.y);
-
-    } else {
-
-      // point 2 is below point 1.
-      // height = point2.y - (point1.y + point1.height);
-      return (point1.y + point1.height >= point2.y);
-
-    }
-
-  } else {
-
-    // no overlap, per checks.
-    return false;
-
-  }
+  // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  return (
+    // rect 2 is to the right.
+    rect1.x + rect1XLookAhead < rect2.x + rect2.width &&
+    // overlap on x axis.
+    rect1.x + rect1.width + rect1XLookAhead > rect2.x &&
+    // rect 1 is above rect 2.
+    rect1.y < rect2.y + rect2.height &&
+    // overlap on y axis.
+    rect1.y + rect1.height > rect2.y
+  );
 
 }
 
