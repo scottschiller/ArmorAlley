@@ -17,10 +17,6 @@ import { COSTS, TYPES, worldWidth } from './global.js';
    * Cloning via mixin() works, but this creates a lot of extra objects and garbage collection thrashing.
    */
 
-  if (!rect1 || !rect2) {
-    return null;
-  }
-
   // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   return (
     // rect 2 is to the right.
