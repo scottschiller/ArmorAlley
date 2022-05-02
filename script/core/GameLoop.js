@@ -258,7 +258,8 @@ const GameLoop = () => {
   }
 
   function animate() {
-    if (!instances || !instances.length) return;
+
+    if (!instances?.length) return;
 
     const completed = [];
 
