@@ -271,7 +271,7 @@ const GameLoop = () => {
     }
 
     if (completed.length) {
-      for (i=0, j=completed.length; i<j; i++) {
+      for (i = 0, j = completed.length; i < j; i++) {
         spliceArgs[0] = instances.indexOf(completed[i]);
         Array.prototype.splice.apply(instances, spliceArgs);
       }
