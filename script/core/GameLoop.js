@@ -64,7 +64,7 @@ const GameLoop = () => {
 
           if (gameObjects[item].animate && gameObjects[item].animate()) {
             // object is dead - take it out.
-            gameObjects[item] = null;
+            gameObjects[item] = undefined;
           }
 
         }
