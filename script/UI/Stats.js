@@ -49,15 +49,27 @@ function Stats() {
     }
   }
 
-  function destroy(obj) {
+  function destroy(obj, options) {
     // there might be no data, so go up the chain.
+
     let dataObj, type;
-    obj = normalizeObj(obj);
+
+    // most objects have oParent, except vans which are "hidden" from radar.
+    obj = normalizeObj(obj.oParent || obj);
+
     type = normalizeType(obj);
+
+    // notify when something was destroyed, if not a "silent" death
+    if (!(options?.silent)) maybeNotify(type, obj);
+
+    // increment the relevant stat
     dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
+
     if (dataObj[type] !== undefined) {
       dataObj[type]++;
     }
+
+  }
   }
 
   function markEnd() {

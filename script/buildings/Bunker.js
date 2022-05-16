@@ -142,24 +142,7 @@ const Bunker = options => {
 
   }
 
-  function getNormalizedUnitName(item) {
-    if (!item || !item.data) return;
-  
-    // gunfire has `parentType`, e.g., fired from a tank
-    let type = item.data.parentType || item.data.type;
-  
-    if (!type) return;
-  
-    // hackish: fixes
-    type = type.replace('missileLauncher', 'missile launcher');
-    type = type.replace('-', ' ');
-  
-    return type;
-  }  
-
-  function die(options) {
-
-    let normalizedType;
+  function die() {
 
     if (data.dead) return;
 
@@ -195,21 +178,6 @@ const Bunker = options => {
     if (sounds.explosionLarge) {
       playSound(sounds.crashAndGlass, exports);
       playSound(sounds.explosionLarge, exports);
-    }
-
-    if (options?.attacker?.data) {
-
-      normalizedType = getNormalizedUnitName(options.attacker) || 'unit';
-
-      if (options.attacker.data.isEnemy) {
-        game.objects.notifications.add(`An enemy ${normalizedType} destroyed a bunker 💥`);
-      } else {
-        if ((options.attacker.data.parentType && options.attacker.data.parentType === TYPES.helicopter) || options.attacker.data.type === TYPES.helicopter) {
-          game.objects.notifications.add('You destroyed a bunker 💥');
-        } else {
-          game.objects.notifications.add(`A friendly ${normalizedType} destroyed a bunker 💥`);
-        }
-      }
     }
 
     // check if enemy convoy production should stop or start
