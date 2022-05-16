@@ -185,6 +185,9 @@ const ParachuteInfantry = options => {
 
         // hit ground, and no parachute. gravity is a cruel mistress.
 
+        // special case: mark the "occasion."
+        data.didHitGround = true;
+
         // reposition, first
         common.moveTo(exports, data.x, data.maxY);
 
@@ -250,6 +253,7 @@ const ParachuteInfantry = options => {
     frameHeight: 20, // each sprite frame
     ignoreShrapnel: options.ignoreShrapnel || false,
     didScream: false,
+    didHitGround: false,
     vX: 0, // wind
     vY: 2 + Math.random() + Math.random(),
     maxY: worldHeight + 3,
