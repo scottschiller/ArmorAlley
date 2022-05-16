@@ -55,9 +55,7 @@ const ParachuteInfantry = options => {
 
     data.dead = true;
 
-    radarItem.die({
-      silent: true
-    });
+    radarItem.die(options);
 
   }
 
