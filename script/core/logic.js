@@ -77,7 +77,7 @@ function collisionCheckArray(options) {
     if (
 
       // don't compare the object against itself
-      options.targets[i].data.id !== options.source.data.id
+      options.targets[i] && options.targets[i].data.id !== options.source.data.id
 
       // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
       && (
