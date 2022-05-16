@@ -145,9 +145,9 @@ const Turret = options => {
 
       if (!data.isOnScreen) {
         if (!data.isEnemy) {
-          game.objects.notifications.add('The enemy neutralized a turret 💥');
+          game.objects.notifications.add('The enemy disabled a turret 💥');
         } else {
-          game.objects.notifications.add('You neutralized a turret 💥');
+          game.objects.notifications.add('You disabled a turret 💥');
         }
       }
 
