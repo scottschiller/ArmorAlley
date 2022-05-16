@@ -1093,10 +1093,12 @@ const Helicopter = options => {
 
     utils.css.add(dom.o, css.exploding);
 
-    if (dieOptions && dieOptions.attacker
+    const attacker = dieOptions?.attacker;
+    
+    if (attacker
       && (
-        (dieOptions.attacker.data.type === TYPES.helicopter || dieOptions.attacker.data.type === TYPES.smartMissile)
-        || (dieOptions.attacker.data.type === TYPES.gunfire && dieOptions.attacker.data.parentType === TYPES.turret)
+        (attacker.data.type === TYPES.helicopter || attacker.data.type === TYPES.smartMissile)
+        || (attacker.data.type === TYPES.gunfire && attacker.data.parentType === TYPES.turret)
       )
     ) {
       // hit by other helicopter, missile, or turret gunfire? special (big) smoke ring.
