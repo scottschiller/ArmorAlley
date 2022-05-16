@@ -117,7 +117,7 @@ const Shrapnel = options => {
     }
 
     if (damageTarget) {
-      common.hit(target, data.damagePoints);
+      common.hit(target, data.damagePoints, exports);
     }
 
     // "embed", so this object moves relative to the target it hit
