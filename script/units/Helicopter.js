@@ -1368,7 +1368,7 @@ const Helicopter = options => {
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement('No pilot');
-        game.objects.notifications.add('No pilot!? 😱 ☠️');
+        game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
       }
 
       data.pilot = false;
