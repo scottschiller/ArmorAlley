@@ -466,14 +466,12 @@ const common = {
      * other things can hit super-bunkers, but we don't want damage done in this case.
      */
 
-    if (target.data.type === TYPES.superBunker) {
-      // non-tank gunfire will ricochet off of super bunkers.
-      if (!attacker || !attacker.data || !attacker.data.parentType || attacker.data.parentType !== TYPES.tank) {
-        return;
-      }
-    } else if (target.data.type === TYPES.tank) {
+    // non-tank gunfire will ricochet off of super bunkers.
+    if (target.data.type === TYPES.superBunker && !(attacker?.data?.parentType === TYPES.tank)) return;
+
+    if (target.data.type === TYPES.tank) {
       // tanks shouldn't be damaged by shrapnel - but, let the shrapnel die.
-      if (attacker && attacker.data && attacker.data.parentType && attacker.data.parentType === TYPES.shrapnel) {
+      if (attacker?.data?.parentType === TYPES.shrapnel) {
         hitPoints = 0;
       }
     }
