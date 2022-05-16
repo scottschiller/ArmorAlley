@@ -489,11 +489,12 @@ const common = {
 
     common.updateEnergy(target);
 
-    if (!target.data.energy) {
+    if (!target.data.energy && target.die) {
 
-      if (target.die) {
-        target.die({ attacker });
-      }
+      // mutate the object: assign its attacker.
+      target.data.attacker = attacker;
+
+      target.die({ attacker });
 
     }
 
