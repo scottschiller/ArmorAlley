@@ -158,6 +158,27 @@ function Stats() {
       return type;
 
   }
+
+  function getNormalizedUnitName(item) {
+
+    if (!item || !item.data) return;
+
+    // special case: shrapnel and other hostile items can be "from" a helicopter, but ignore the parent type - we want shrapnel.
+    if (item.data.hostile) return formatForDisplay(item.data.type, item);
+    
+    // some objects have `parentType`, e.g., gunfire fired from a tank. by default, we check for that.
+    // then, account for infantry which are actually engineers.
+    let type = item.data.type;
+    
+    // special case: if we have a smart missile, don't go up the chain to the missile launcher.
+    // otherwise, check the parent and then handle the infantry/engineer case.
+    if (type !== TYPES.smartMissile) {
+      type = item.data.parentType || normalizeType(item);
+    }
+
+    return formatForDisplay(type, item);
+
+  }
   }
 
   function markEnd() {
