@@ -1,4 +1,5 @@
 import { TYPES } from '../core/global.js';
+import { game } from '../core/Game.js';
 
 function Stats() {
 
@@ -209,6 +210,113 @@ function Stats() {
     return `your ${normalizedType}`;
 
   }
+
+  function maybeNotify(type, target) {
+
+    // notify when a game object is being destroyed, given a target died (subject to the type.)
+    // e.g., target is a tank object, and its `data.attacker` is the unit or munition which took out the target.
+    if (!type || !target) return;
+
+    const notifyItem = notifyTypes[type];
+
+    // lots of types, e.g., gunfire and bombs, can be ignored when they die.
+    if (!notifyItem || notifyItem.exclude) return;
+
+    // special case: parachute infantry hit the ground, the parachute didn't open in time.
+    if (target.data.didHitGround) {
+      game.objects.notifications.add(`${target.data.isEnemy ? 'An enemy' : 'Your'} infantry’s parachute failed to open. ☠️`);
+      return;
+    }
+
+    // the object responsible for killing the target
+    const attacker = target.data?.attacker?.data;
+
+    // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
+    if (!attacker) return;
+
+    // did a helicopter die?
+    const isHelicopter = (type === TYPES.helicopter);
+
+    // action word based on attacker type; e.g., gunfire = "shot", bomb = "bombed" etc.
+    // allow for object-specific interactions also, e.g., gunfire hitting a balloon -> `gunfire = { balloon_verb: 'popped' }`
+    const attackerItem = notifyTypes[attacker.type] || {};
+
+    const verb = attackerItem[`verb_${type}`] || attackerItem.verb || 'UNKNOWN_VERB';
+
+    // special case: handle when types match, e.g., "their infantry shot one of yours"
+    // the attacker may be the gunfire of a tank, so check the parent as well.
+    // smart missiles can launch from either helicopters or missile launchers, so don't presume they're the same.
+    let isSameType;
+
+    // check the parent, if it's gunfire.
+    // e.g., player helicopter's gunfire hitting the CPU helicopter.
+    if (attacker.type === TYPES.gunfire) {
+
+      isSameType = (attacker.parentType === type);
+
+    } else {
+
+      // perhaps two missiles, etc., took each other out.
+      isSameType = (attacker.type === type);
+
+      // check for helicopter collision - with other helicopter, or a building or ground unit.
+      if (isHelicopter) {
+
+        // extra-special case: player + CPU helicopters collided.
+        // this will fire twice, for human + CPU - so report once for the human player, and then bail.
+        if (attacker.type === TYPES.helicopter) {
+          if (!target.data.isEnemy) game.objects.notifications.add('You collided with the enemy. ☠️ ☠️');
+          return;
+        }
+
+        // helicopter hit something that was not another helicopter.
+        // if the helicopter collided with a non-munition - i.e., ground unit or building - bail.
+        // this avoids a duplicate notification, e.g., "a balloon hit a helicopter."
+        if (attacker.type !== TYPES.smartMissile && attacker.type !== TYPES.bomb) return;
+
+      }
+
+    }
+
+    // if (e.g.) two tanks fought, determine who won. "your" or "their" (attacking) tank "took out one of theirs / yours."
+    let didYoursWin = isSameType && !attacker.isEnemy;
+
+    let text;
+    let youWonText = 'one of theirs';
+    let theyWonText = 'one of yours';
+
+    // special case: when player's helicopter dies, use special verbiage. "You (were) X by a Y"
+    if (!isSameType && isHelicopter && attacker.isEnemy) {
+
+      text = `You were ${verb} by ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+
+    } else if (isHelicopter) {
+
+      // one helicopter shot down the other.
+      youWonText = 'the enemy helicopter';
+      theyWonText = 'you';
+    }
+
+    // if not already set via special case, assign now.
+
+    if (!text) {
+
+      // "something" [shot/bombed/killed] [one of yours|an|a] "something", including same-type and hostile-killed-[enemy|friendly] cases
+      text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${isSameType ? (didYoursWin ? youWonText : theyWonText ) : (attacker.hostile ? (target.data.isEnemy ? 'an enemy ' : 'a friendly ') : (notifyItem.isAn ? 'an ' : 'a ')) + getNormalizedUnitName(target)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+
+      // hackish: replace helicopter reference
+      // TODO: fix this up so the enemy chopper is properly normalized.
+      text = text.replace('a helicopter', 'the enemy helicopter');
+
+    }
+
+    // don't show if on-screen, *unless* it's the helicopter.
+    // TODO: improve target vs. attacker helicopter logic, work onScreen check into notification preferences.
+    if (target.data.isOnScreen && (!isHelicopter && attacker.type !== TYPES.helicopter)) return;
+
+    // "go go go", capitalizing the first letter.
+    game.objects.notifications.add(text.charAt(0).toUpperCase() + text.slice(1));
+
   }
 
   function markEnd() {
