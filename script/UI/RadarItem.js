@@ -22,7 +22,7 @@ function RadarItem(options) {
       utils.css.add(dom.o, css.dying);
     }
 
-    game.objects.stats.destroy(exports);
+    game.objects.stats.destroy(exports, dieOptions);
 
     data.dead = true;
 
