@@ -179,6 +179,36 @@ function Stats() {
     return formatForDisplay(type, item);
 
   }
+
+  function getNormalizedAttackerString(attacker) {
+
+    // common string building: "somebody did something."
+
+    const normalizedType = getNormalizedUnitName(attacker);
+
+    const aData = attacker.data;
+    
+    // this shouldn't happen.
+    if (!normalizedType || !aData) return 'an unknown unit';
+
+    // special case: return hostile objects (shrapnel, expired missiles) as-is.
+    if (aData.hostile) return (notifyTypes[aData.type]?.hostilePrefix || '') + normalizedType;
+
+    // treat helicopters as the actor for gunfire, and bombs (e.g., "you bombed a tank") - but not smart missiles, nor shrapnel - e.g., when you died.
+    const isHelicopter = (aData?.parentType === TYPES.helicopter || aData.type === TYPES.helicopter) && aData.type !== TYPES.shrapnel && aData.type !== TYPES.smartMissile;
+
+    // build out string, based on friendliness.
+
+    // enemy case: "the enemy helicopter" vs. "an enemy tank"
+    if (aData.isEnemy) return isHelicopter ? `the enemy ${normalizedType}`: `an enemy ${normalizedType}`;
+
+    // it's you.
+    if (isHelicopter) return 'you';
+
+    // everything else: "your infantry"
+    return `your ${normalizedType}`;
+
+  }
   }
 
   function markEnd() {
