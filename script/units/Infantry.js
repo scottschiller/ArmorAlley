@@ -351,6 +351,7 @@ const Infantry = options => {
           target.engineerHit(exports);
         } else if (target.data.type !== TYPES.bunker && target.data.type !== TYPES.endBunker) {
           // probably a tank.
+          data.attacker = target;
           die();
         }
       }
