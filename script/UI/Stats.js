@@ -136,6 +136,28 @@ function Stats() {
       'verb_smart-missile': 'took out'
     }
   }
+
+  function formatForDisplay(type, item) {
+
+      // hackish: fixes for display to user
+      type = type.replace('missileLauncher', 'missile launcher');
+      type = type.replace('smartMissile', 'smart missile');
+
+      // e.g., parachute-infantry
+      type = type.replace('-', ' ');
+
+      // special missile check: handle variant types, too. ;)
+      if (item.data.type === TYPES.smartMissile) {
+        if (item.data.isBanana) {
+          type = type.replace('missile', 'banana 🍌');
+        } else if (item.data.isRubberChicken) {
+          type = type.replace('missile', 'rubber chicken 🐓');
+        }
+      }
+
+      return type;
+
+  }
   }
 
   function markEnd() {
