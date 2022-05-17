@@ -70,6 +70,72 @@ function Stats() {
     }
 
   }
+
+  /**
+   * by type, behaviours for notifications when units are destroyed including
+   * icon type (death vs. explosion) and language / notification options
+   */
+   const notifyTypes = {
+    // special case: missile launchers can destroy things, or be destroyed by an infantry or tank.
+    // they typically die with silent: true, when self-destructing in order to launch a missile.
+    'missile-launcher': true,
+    tank: {
+      verb: 'blasted',
+      verb_engineer: 'steamrolled',
+      verb_infantry: 'steamrolled'
+    },
+    van: true,
+    infantry: {
+      showSkull: true,
+      isAn: true,
+    },
+    'parachute-infantry': {
+      showSkull: true
+    },
+    engineer: {
+      showSkull: true,
+      isAn: true,
+    },
+    balloon: true,
+    bunker: true,
+    helicopter: {
+      showSkull: true,
+      verb: 'crashed into',
+      'verb_smart-missile': 'hit'
+    },
+    bomb: {
+      exclude: true,
+      verb: 'bombed',
+      verb_infantry: 'nuked',
+      verb_engineer: 'annihilated'
+    },
+    gunfire: {
+      exclude: true,
+      verb: 'shot',
+      verb_balloon: 'popped',
+      verb_bunker: 'blew out',
+      verb_helicopter: 'toasted',
+      verb_infantry: 'killed',
+      verb_engineer: 'killed',
+      'verb_smart-missile': 'shot down',
+      verb_tank: 'took out'
+    },
+    shrapnel: {
+      exclude: true,
+      verb: 'killed',
+      verb_balloon: 'popped'
+    },
+    'smart-missile': {
+      // special case: smart missiles are the "attacker" only when hostile.
+      hostilePrefix: 'a hostile ',
+      // exclude: true,
+      verb: 'smoked',
+      verb_bunker: 'destroyed',
+      verb_infantry: 'killed',
+      verb_engineer: 'killed',
+      'verb_smart-missile': 'took out'
+    }
+  }
   }
 
   function markEnd() {
