@@ -89,9 +89,9 @@ const Notifications = () => {
     // number of words / letters? let's say 240 WPM, 4 words per second as an optimum.
     let delay, defaultDelay, delayPerWord, maxDelay;
 
-    defaultDelay = 2000;
-    delayPerWord = 1000;
-    maxDelay = 5000;
+    defaultDelay = 2500;
+    delayPerWord = 500;
+    maxDelay = 4000;
 
     // just in case
     if (!text || !text.length || text.indexOf(' ') === -1) return defaultDelay;
@@ -167,9 +167,8 @@ const Notifications = () => {
       // all done.
       data.isDisplaying = false;
     } else {
-      // we're onto the next one.
-      // queue its removal.
-      common.setFrameTimeout(displayItemComplete, data.items[0].delay);
+      // we're onto the next one. queue its removal, and start running faster as the queue grows in size.
+      common.setFrameTimeout(displayItemComplete, data.items[0].delay * (data.items.length > 5 ? (5 / data.items.length) : 1));
     }
 
   }
