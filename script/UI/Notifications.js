@@ -17,7 +17,7 @@ const Notifications = () => {
   }
 
   function add(text, options) {
-    /* options = { onRender, onComplete, type } */
+    /* options = { noRepeat, onRender, onComplete, type } */
 
     let i, j, item, isDuplicate, replacementItem, renderedText;
 
@@ -47,7 +47,7 @@ const Notifications = () => {
 
         // provided text, or, custom render function
         // if options.onRender(), that function gets called to do the work.
-        // otherwise, plain text - and if options.onRepeat, don't show multiplier.
+        // otherwise, plain text - and if options.noRepeat, don't show multiplier.
         item.node.innerHTML = `<span>${options.onRender ? renderedText : ( item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
 
         // clear, start new timer
@@ -59,7 +59,9 @@ const Notifications = () => {
         replacementItem = item;
 
         break;
+
       }
+
     }
 
     // the last item was going to be repeated
