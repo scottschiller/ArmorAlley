@@ -26,7 +26,8 @@ const Notifications = () => {
     if (!data.items) data.items = [];
 
     // account for duplicate / repeated items
-    for (i = 0, j = data.items.length; i < j; i++) {
+    for (i = Math.max(0, data.items.length - 1), j = data.items.length; i < j; i++) {
+
       item = data.items[i];
 
       // hackish: update item / node of same text, or matching type
