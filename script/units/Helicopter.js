@@ -1127,12 +1127,12 @@ const Helicopter = options => {
 
     // roll the dice: drop a parachute infantry (pilot ejects safely)
     if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
-      game.objects.parachuteInfantry.push(ParachuteInfantry({
+      deployParachuteInfantry({
         isEnemy: data.isEnemy,
         x: data.x + data.halfWidth,
         y: (data.y + data.height) - 11,
         ignoreShrapnel: true
-      }));
+      });
     }
 
     common.setFrameTimeout(() => {
@@ -1331,11 +1331,11 @@ const Helicopter = options => {
 
         } else {
 
-          game.objects.parachuteInfantry.push(ParachuteInfantry({
+          deployParachuteInfantry({
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
             y: (data.y + data.height) - 11
-          }));
+          });
 
         }
 
@@ -1361,10 +1361,10 @@ const Helicopter = options => {
     // bail!
     if (!data.dead && data.pilot) {
 
-      game.objects.parachuteInfantry.push(ParachuteInfantry({
+      deployParachuteInfantry({
         x: data.x + data.halfWidth,
         y: (data.y + data.height) - 11
-      }));
+      });
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement('No pilot');
@@ -1374,6 +1374,30 @@ const Helicopter = options => {
       data.pilot = false;
 
     }
+
+  }
+
+  function deployParachuteInfantry(options) {
+
+    /**
+     * mid-air deployment: check and possibly become the chaff / decoy target for "vulnerable"
+     * smart missles that have just launched, and have not yet locked onto their intended target.
+     * in the original game, the enemy helicopter would use this trick to distract your missiles.
+     */
+
+    const pi = ParachuteInfantry(options);
+    
+    game.objects.parachuteInfantry.push(pi);
+
+    // now, maybe confuse any nearby smart missiles.
+    checkSmartMissileDecoy(pi);
+
+  }
+
+  function checkSmartMissileDecoy(parachuteInfantry) {
+
+    // given the current helicopter, find missles targeting it and possibly distract them.
+    game.objects.smartMissiles.forEach((missile) => missile.maybeTargetDecoy(parachuteInfantry));
 
   }
 
