@@ -280,7 +280,7 @@ const SmartMissile = options => {
 
     if (target) {
 
-      common.hit(target, data.damagePoints, exports);
+      common.hit(target, (data.armed ? data.damagePoints : 1), exports);
 
       // "embed", so this object moves relative to the target it hit
       common.attachToTarget(exports, target);
@@ -496,6 +496,12 @@ const SmartMissile = options => {
 
     data.frameCount++;
 
+    if (!data.armed && data.frameCount >= data.ramiusFrameCount) {
+      // become dangerous at this point.
+      // obligatory: https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
+      data.armed = true;
+    }
+
     if (data.frameCount >= data.dieFrameCount) {
       die();
       // but don't fall too fast?
@@ -624,11 +630,13 @@ const SmartMissile = options => {
     parentType: options.parentType || null,
     energy: 1,
     energyMax: 1,
+    armed: false,
     expired: false,
     hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
     nearExpiry: false,
     nearExpiryThreshold: 0.88,
     frameCount: 0,
+    ramiusFrameCount: 15, // https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
     expireFrameCount: options.expireFrameCount || 256,
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
     width: (options.isRubberChicken ? 24 : 14),
