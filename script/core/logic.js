@@ -211,7 +211,7 @@ function getNearestObject(source, options) {
 
   let i, j, k, l, itemArray, items, localObjects, targetData, isInFront, useInFront, distanceX, distanceY;
 
-  const isNearGround = source.data.y >= 340;
+  const isNearGround = source.data.y >= 340 && !options?.ignoreNearGround;
 
   options = options || {};
 
@@ -261,7 +261,7 @@ function getNearestObject(source, options) {
 
   }
 
-  if (!localObjects.length) return null;
+  if (!localObjects.length) return !options?.getAll ? null : localObjects;
 
   // sort by distance
   localObjects.sort(utils.array.compare('totalDistance'));
@@ -271,7 +271,10 @@ function getNearestObject(source, options) {
     localObjects.reverse();
   }
 
-  // return the best candidate.
+  // optional/hackish: return array.
+  if (options?.getAll) return localObjects.map(object => object.obj);
+
+  // default: return the best single candidate.
   return localObjects[0].obj;
 
 }
