@@ -338,10 +338,10 @@ const SmartMissile = options => {
         playSound(sounds.concreteHit, exports);
       }
 
-      if (data.isBanana) {
+      if (data.isBanana || !data.armed) {
         common.smokeRing(exports, {
           count: data.armed ? 16 : 8,
-          velocityMax: 24,
+          velocityMax: data.armed ? 24 : 12,
           offsetX: target.data.width / 2,
           offsetY: data.height - 2,
           isGroundUnit: target.data.bottomAligned,
