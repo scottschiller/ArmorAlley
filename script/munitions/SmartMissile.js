@@ -235,16 +235,24 @@ const SmartMissile = options => {
 
     common.applyRandomRotation(dom.o);
 
-    if (sounds.genericBoom) {
-      playSound(sounds.genericBoom, exports);
-    }
-
     common.inertGunfireExplosion({ exports });
 
-    common.shrapnelExplosion(data, {
-      count: 3 + rndInt(3),
-      velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
-    });
+    if (data.armed) {
+
+      common.shrapnelExplosion(data, {
+        count: 3 + rndInt(3),
+        velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
+      });
+
+      if (sounds.genericBoom) {
+        playSound(sounds.genericBoom, exports);
+      }
+
+    } else if (sounds.metalClang) {
+
+      playSound(sounds.metalClang, exports);
+
+    }
 
     hideTrailers();
 
