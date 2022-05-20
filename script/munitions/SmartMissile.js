@@ -109,6 +109,44 @@ const SmartMissile = options => {
 
   }
 
+  function maybeTargetDecoy(decoyTarget) {
+
+    // missile must be targeting a chopper.
+    if (objects.target?.data?.type !== TYPES.helicopter) return;
+
+    // guard, and ensure this is a "vs" situation.
+    if (!decoyTarget?.data || data.isEnemy === decoyTarget.data.isEnemy) return;
+
+    // missile must be live, not already distracted, and "fresh"; potential decoy must be live.
+    if (data.expired || data.foundDecoy || decoyTarget.data.dead || data.frameCount >= data.decoyFrameCount) return;
+
+    // crucially: is it within range?
+    const nearby = getNearestObject(exports, { items: data.decoyItemTypes, ignoreNearGround: true, getAll: true });
+
+    // too far away
+    if (!nearby?.includes(decoyTarget)) return;
+
+    data.foundDecoy = true;
+
+    // drop tracking on current target, if one exists
+    setTargetTracking(false);
+
+    // we've got a live one!
+    objects.target = decoyTarget;
+
+    if (launchSound) {
+      launchSound.stop();
+      launchSound.play({
+        playbackRate: data.playbackRate,
+        onplay: (sound) => launchSound = sound
+      });
+    }
+
+    // and start tracking.
+    setTargetTracking(true);
+
+  }
+
   function addTracking(targetNode, radarNode) {
 
     if (targetNode) {
@@ -636,6 +674,9 @@ const SmartMissile = options => {
     nearExpiry: false,
     nearExpiryThreshold: 0.88,
     frameCount: 0,
+    foundDecoy: false,
+    decoyItemTypes: ['parachuteInfantry'],
+    decoyFrameCount: 10,
     ramiusFrameCount: 15, // https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
     expireFrameCount: options.expireFrameCount || 256,
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
@@ -691,6 +732,7 @@ const SmartMissile = options => {
     die,
     initDOM,
     isOnScreenChange,
+    maybeTargetDecoy,
     objects
   };
 
