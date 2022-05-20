@@ -695,17 +695,17 @@ window.soundManager.onready(() => {
     // http://freesound.org/people/Tiger_v15/sounds/211015/
     addSound({
       url: getURL('metal-hit-1'),
-      volume: 12
+      volume: 10
     }),
 
     addSound({
       url: getURL('metal-hit-2'),
-      volume: 12
+      volume: 10
     }),
 
     addSound({
       url: getURL('metal-hit-3'),
-      volume: 12
+      volume: 10
     })
   ]);
 
