@@ -174,6 +174,8 @@ const SmartMissile = options => {
 
   function setTargetTracking(tracking) {
 
+    if (!objects.target) return;
+
     const targetNode = objects.target.dom.o;
     const radarNode = objects.target.radarItem?.dom?.o;
 
