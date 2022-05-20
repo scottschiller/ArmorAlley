@@ -427,6 +427,8 @@ Attribution license, or other as specified. Details at each link.
 
 [musical saw ascending UFO](https://freesound.org/people/JohnsonBrandEditing/sounds/173948/) by JohnsonBrandEditing (CC0)
 
+[Metal-Clanging.mp3](http://freesound.org/people/Tiger_v15/sounds/211015/) by Tiger_v15 (CC BY 4.0)
+
 ## Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)

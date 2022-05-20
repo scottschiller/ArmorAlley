@@ -318,7 +318,7 @@ const SmartMissile = options => {
 
     if (target) {
 
-      common.hit(target, (data.armed ? data.damagePoints : 1), exports);
+      common.hit(target, (data.armed ? data.damagePoints : 0), exports);
 
       // "embed", so this object moves relative to the target it hit
       common.attachToTarget(exports, target);
@@ -332,7 +332,7 @@ const SmartMissile = options => {
 
       if (data.isBanana) {
         common.smokeRing(exports, {
-          count: 16,
+          count: data.armed ? 16 : 8,
           velocityMax: 24,
           offsetX: target.data.width / 2,
           offsetY: data.height - 2,

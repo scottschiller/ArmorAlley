@@ -691,6 +691,24 @@ window.soundManager.onready(() => {
     volume: 12
   });
 
+  sounds.metalClang = utils.array.shuffle([
+    // http://freesound.org/people/Tiger_v15/sounds/211015/
+    addSound({
+      url: getURL('metal-hit-1'),
+      volume: 12
+    }),
+
+    addSound({
+      url: getURL('metal-hit-2'),
+      volume: 12
+    }),
+
+    addSound({
+      url: getURL('metal-hit-3'),
+      volume: 12
+    })
+  ]);
+
   sounds.metalHitBreak = addSound({
     // https://freesound.org/people/issalcake/sounds/115919/
     url: getURL('115919__issalcake__chairs-break-crash-pieces-move'),
