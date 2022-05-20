@@ -453,13 +453,11 @@ const common = {
 
   },
 
-  hit(target, hitPoints, attacker) {
+  hit(target, hitPoints = 1, attacker) {
 
     let newEnergy, energyChanged;
 
     if (target.data.dead) return;
-
-    hitPoints = hitPoints || 1;
 
     /**
      * special case: super-bunkers can only be damaged by tank gunfire.
