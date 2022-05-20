@@ -546,6 +546,7 @@ const SmartMissile = options => {
       // become dangerous at this point.
       // obligatory: https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
       data.armed = true;
+      utils.css.add(dom.o, css.armed);
     }
 
     if (data.frameCount >= data.dieFrameCount) {
@@ -652,6 +653,7 @@ const SmartMissile = options => {
 
   css = common.inheritCSS({
     className: 'smart-missile',
+    armed: 'armed',
     banana: 'banana',
     rubberChicken: 'rubber-chicken',
     tracking: 'smart-missile-tracking',

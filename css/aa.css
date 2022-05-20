@@ -1440,7 +1440,9 @@ ul.stats-bar .bombs em {
   opacity: 1;
 }
 
+#battlefield .smart-missile:not(.armed),
 .smart-missile.expired {
+  /* blink initially, until armed - and when expired */
   transition-property: transform, opacity;
   animation: blink 0.125s infinite;
 }
