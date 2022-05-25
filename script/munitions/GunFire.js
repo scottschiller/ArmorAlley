@@ -130,14 +130,19 @@ const GunFire = options => {
             }
           }
 
-        } else if (
-
-          (target.data.type === TYPES.balloon || target.data.type === TYPES.turret)
-          && sounds.balloonHit
-
-        ) {
+        } else if (target.data.type === TYPES.balloon && sounds.balloonHit) {
 
           playSound(sounds.balloonHit, exports);
+
+        } else if (target.data.type === TYPES.turret) {
+
+          playSound(sounds.metalHit, exports);
+
+        } else if (target.data.type === TYPES.gunfire) {
+
+          // gunfire hit gunfire!
+          playSound(sounds.ricochet, exports);
+          playSound(sounds.metalHit, exports);
 
         }
 
