@@ -1200,13 +1200,8 @@ const Helicopter = options => {
         }));
         /*eslint-enable no-mixed-operators */
 
-        const soundObject = data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire;
+        startSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire);
 
-        if (soundObject) {
-
-          startSound(soundObject);
-
-        }
 
         // TODO: CPU
 
