@@ -685,8 +685,8 @@ const SmartMissile = options => {
     frameCount: 0,
     foundDecoy: false,
     decoyItemTypes: ['parachuteInfantry'],
-    decoyFrameCount: 10,
-    ramiusFrameCount: 15, // https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
+    decoyFrameCount: 11,
+    ramiusFrameCount: 15,
     expireFrameCount: options.expireFrameCount || 256,
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
     width: (options.isRubberChicken ? 24 : 14),
