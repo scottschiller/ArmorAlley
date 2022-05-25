@@ -326,7 +326,7 @@ const SmartMissile = options => {
 
     if (target) {
 
-      common.hit(target, (data.armed ? data.damagePoints : 0), exports);
+      common.hit(target, (data.armed ? data.damagePoints : 1), exports);
 
       // "embed", so this object moves relative to the target it hit
       common.attachToTarget(exports, target);
