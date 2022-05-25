@@ -273,14 +273,14 @@ const GunFire = options => {
         source: exports, // initially undefined
         targets: undefined,
         hit(target) {
-          // special case: let tank gunfire pass thru if 0 energy, or friendly.
-          if (!(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
+          // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
+          if (!data.isInert && !(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
             sparkAndDie(target);
           }
         }
       },
       // if unspecified, use default list of items which bullets can hit.
-      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets']
+      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets', 'gunfire']
     };
 
     exports = {
