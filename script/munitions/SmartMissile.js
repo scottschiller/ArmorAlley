@@ -321,7 +321,6 @@ const SmartMissile = options => {
 
   function sparkAndDie(target) {
 
-    // TODO: reduce timers
     spark();
 
     if (target) {
