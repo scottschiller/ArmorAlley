@@ -282,10 +282,13 @@ const SmartMissile = options => {
           launchSound = null;
         }
 
-        playSound(sounds.rubberChicken.die, exports, {
-          onplay: (sound) => dieSound = sound,
-          playbackRate: data.playbackRate
-        });
+        // play only if "armed", as an audible hint that it was capable of doing damage.
+        if (data.armed) {
+          playSound(sounds.rubberChicken.die, exports, {
+            onplay: (sound) => dieSound = sound,
+            playbackRate: data.playbackRate
+          });
+        }
 
       }
 
