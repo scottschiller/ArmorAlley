@@ -244,7 +244,10 @@ const SmartMissile = options => {
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
       });
 
-      if (sounds.genericBoom) {
+      // special-case: shot down by gunfire, vs. generic "boom"
+      if (data?.attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
+        playSound(sounds.metalClang, exports);
+      } else if (sounds.genericBoom) {
         playSound(sounds.genericBoom, exports);
       }
 
