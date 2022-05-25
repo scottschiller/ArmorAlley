@@ -83,7 +83,7 @@ const Bomb = options => {
       moveTo(data.x, data.y);
 
       // hackish: do one more collision check, since coords have changed, before this element is dead.
-      // this will cause another call, which van be ignored.
+      // this will cause another call, which can be ignored.
       if (!data.groundCollisionTest) {
         data.groundCollisionTest = true;
         collisionTest(collision, exports);
