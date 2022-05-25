@@ -220,10 +220,21 @@ const Bomb = options => {
       }
 
       // bonus "hit" sounds for certain targets
-      if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
-        playSound(sounds.metalHit, exports);
-      } else if (target.data.type === TYPES.bunker) {
-        playSound(sounds.concreteHit, exports);
+      if (!data.isMuted) {
+
+        if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
+          playSound(sounds.metalHit, exports);
+        } else if (target.data.type === TYPES.bunker) {
+          playSound(sounds.concreteHit, exports);
+          data.isMuted = true;
+        } else if (target.data.type === TYPES.bomb || target.data.type === TYPES.gunfire) {
+          playSound(sounds.ricochet, exports);
+        } else if (target.data.type === TYPES.van || target.data.type === TYPES.missileLauncher) {
+          playSound(sounds.metalHit, exports);
+          playSound(sounds.metalClang, exports);
+          data.isMuted = true;
+        }
+
       }
 
     }
@@ -307,6 +318,7 @@ const Bomb = options => {
     deadTimer: null,
     extraTransforms: null,
     hasHitGround: false,
+    isMuted: false,
     groundCollisionTest: false,
     width: 13,
     height: 12,
