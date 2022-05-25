@@ -369,6 +369,7 @@ function Stats() {
     data,
     create,
     destroy,
+    formatForDisplay,
     markEnd,
     displayEndGameStats
   };
