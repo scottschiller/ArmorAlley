@@ -349,6 +349,19 @@ const SmartMissile = options => {
         });
       }
 
+      // notify if the missile hit something (wasn't shot down), and was unarmed.
+      // a missile could hit e.g., three infantry at once - so, prevent dupes.
+      if (!data.didNotify && !data.armed && !data?.attacker?.type !== TYPES.gunfire && !data?.attacker?.type !== TYPES.bomb) {
+
+        const whose = (data.isEnemy ? 'An enemy' : (data?.parentType === TYPES.helicopter ? 'Your' : 'A friendly'));
+        const missileType = game.objects.stats.formatForDisplay(data.type, exports);
+
+        game.objects.notifications.add(`${whose} ${missileType} died before arming itself.`);
+
+        data.didNotify = true;
+
+      }
+
     }
 
     die();
@@ -678,6 +691,7 @@ const SmartMissile = options => {
     energy: 1,
     energyMax: 1,
     armed: false,
+    didNotify: false,
     expired: false,
     hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
     nearExpiry: false,
