@@ -1,4 +1,5 @@
 import { game } from '../core/Game.js';
+import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
@@ -120,6 +121,7 @@ const Bomb = options => {
         common.removeNodes(dom);
         data.deadTimer = null;
       }, 600);
+
     }
 
     // TODO: move into something common?
@@ -178,12 +180,12 @@ const Bomb = options => {
     } else {
 
       // certain targets should get a spark vs. a large explosion
-      spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile/i);
+      spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile|gunfire/i);
 
       // hide bomb sprite entirely on collision with these items...
       hidden = target.data.type.match(/balloon|helicopter/i);
 
-      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon) || target.data.type === TYPES.infantry;
+      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire) || target.data.type === TYPES.infantry;
 
       die({
         type: target.data.type,
@@ -311,6 +313,7 @@ const Bomb = options => {
     explosionWidth: 51,
     explosionHeight: 22,
     gravity: 1,
+    energy: 3,
     damagePoints: 3,
     damagePointsOnGround: 2,
     target: null,
@@ -327,10 +330,17 @@ const Bomb = options => {
       source: exports, // initially undefined
       targets: undefined,
       hit(target) {
+        // special case: bomb being hit, eventually shot down by gunfire
+        if (target.data.type === TYPES.gunfire && data.energy) {
+          data.energy = Math.max(0, data.energy - target.data.damagePoints);
+          playSound(sounds.metalHit, exports);
+          common.inertGunfireExplosion({ exports, count: 2 + rndInt(2) });
+          return;
+        }
         bombHitTarget(target);
       }
     },
-    items: ['superBunkers', 'bunkers', 'tanks', 'helicopters', 'balloons', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'turrets', 'smartMissiles']
+    items: ['superBunkers', 'bunkers', 'tanks', 'helicopters', 'balloons', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'turrets', 'smartMissiles'].concat(gameType === 'extreme' ? ['gunfire'] : [])
   };
 
   exports = {
