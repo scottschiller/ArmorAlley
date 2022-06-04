@@ -988,6 +988,15 @@ window.soundManager.onready(() => {
     loops: 999
   })
 
+  sounds.dangerZone = addSound({
+    // hat tip:【MIDI】Top Gun | Kenny Loggins - Danger Zone | DOOM-Styled - https://youtu.be/4awuwMHtn54
+    // Soundfont: Roland Sound Canvas VA SC-55 VSTi
+    url: getURL('danger_zone_midi_doom_style'),
+    fixedPlaybackRate,
+    volume: 33,
+    loops: 999
+  })
+
   sounds.rubberChicken.launch = utils.array.shuffle([
     addSound({
       url: getURL('rubber-chicken-launch-1'),

@@ -180,14 +180,33 @@ const Helicopter = options => {
 
       if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
 
-        // hit the chorus, if we'll be "a while."
-        playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+        if (landingPad.data.isKennyLoggins) {
+
+          // welcome to *** THE DANGER ZONE! ***
+          playSound(sounds.dangerZone, null);
+
+        } else {
+
+          // hit the chorus, if we'll be "a while."
+          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+
+        }
+
         game.objects.notifications.addNoRepeat(welcomeMessage, { doubleHeight: true });
 
       } else {
 
-        // start from the beginning, if a shorter visit.
-        playSound(sounds.ipanemaMuzak, null, { position: 0 });
+        if (landingPad.data.isKennyLoggins) {
+
+          // welcome to *** THE DANGER ZONE! ***
+          playSound(sounds.dangerZone, null);
+
+        } else {
+
+          // start from the beginning, if a shorter visit.
+          playSound(sounds.ipanemaMuzak, null, { position: 0 });
+
+        }
 
       }
 
@@ -239,6 +258,10 @@ const Helicopter = options => {
 
     if (sounds.ipanemaMuzak) {
       stopSound(sounds.ipanemaMuzak);
+    }
+
+    if (sounds.dangerZone) {
+      stopSound(sounds.dangerZone);
     }
 
     if (data.repairComplete) {
@@ -366,6 +389,10 @@ const Helicopter = options => {
 
         if (sounds.ipanemaMuzak) {
           stopSound(sounds.ipanemaMuzak);
+        }
+
+        if (sounds.dangerZone) {
+          stopSound(sounds.dangerZone);
         }
 
         if (sounds.inventory.end) {

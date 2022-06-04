@@ -644,6 +644,7 @@ const game = (() => {
 
       addObject('landingPad', {
         name: 'THE DANGER ZONE',
+        isKennyLoggins: true,
         x: 7800
       });
 

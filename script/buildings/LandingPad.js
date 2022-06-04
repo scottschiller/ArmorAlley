@@ -55,6 +55,7 @@ const LandingPad = options => {
   data = common.inheritData({
     type: 'landing-pad',
     name: options?.name,
+    isKennyLoggins: options?.isKennyLoggins,
     isNeutral: true,
     energy: 2,
     width: 81,
