@@ -45,8 +45,8 @@ const Bomb = options => {
     dieOptions = dieOptions || {};
 
     // possible hit, blowing something up.
-
-    if (!dieOptions.omitSound && sounds.bombExplosion) {
+    // special case: don't play "generic boom" if we hit a balloon
+    if (!dieOptions.omitSound && sounds.bombExplosion && dieOptions?.type !== TYPES.balloon) {
       playSound(sounds.bombExplosion, exports);
     }
 
