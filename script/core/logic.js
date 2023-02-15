@@ -277,7 +277,7 @@ function getNearestObject(source, options = {}) {
 
 }
 
-function objectInView(data, options) {
+function objectInView(data, options = {}) {
 
   // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen),
   // alive, either enemy or friendly (depending on option), not cloaked, and within range.
