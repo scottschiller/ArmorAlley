@@ -107,8 +107,6 @@ const Smoke = (options = {}) => {
 
   }
 
-  options = options || {};
-
   css = common.inheritCSS({
     className: 'smoke'
   });

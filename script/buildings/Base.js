@@ -242,8 +242,6 @@ const Base = (options = {}) => {
 
   }
 
-  options = options || {};
-
   height = 25;
 
   css = common.inheritCSS({

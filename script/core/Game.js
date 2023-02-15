@@ -114,7 +114,7 @@ const game = (() => {
 
   }
 
-  function addObject(type, options) {
+  function addObject(type, options = {}) {
 
     // given type of TYPES.van, create object and append to respective array.
 
@@ -122,8 +122,6 @@ const game = (() => {
 
     // TYPES.van -> game.objects['vans'], etc.
     objectArray = game.objects[type + (type === TYPES.infantry ? '' : 's')];
-
-    options = options || {};
 
     // create and push an instance object onto its relevant array by type (e.g., TYPES.van -> game.objects['vans'])
     if (objectConstructors[type]) {

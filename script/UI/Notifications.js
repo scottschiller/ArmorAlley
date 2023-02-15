@@ -16,12 +16,10 @@ const Notifications = () => {
     return add(text, options);
   }
 
-  function add(text, options) {
     /* options = { noRepeat, onRender, onComplete, type } */
+  function add(text, options = {}) {
 
     let i, j, item, isDuplicate, replacementItem, renderedText;
-
-    options = options || {};
 
     if (!data.items) data.items = [];
 

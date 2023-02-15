@@ -284,8 +284,6 @@ function objectInView(data, options) {
 
   let i, j, items, result;
 
-  options = options || {};
-
   // defaults
   options.triggerDistance = options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
   options.friendlyOnly = !!options.friendlyOnly;

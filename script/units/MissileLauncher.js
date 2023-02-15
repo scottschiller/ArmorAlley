@@ -23,11 +23,11 @@ const MissileLauncher = (options = {}) => {
 
   }
 
-  function die(options) {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
-    if (!options?.silent) {
+    if (!dieOptions?.silent) {
 
       utils.css.add(dom.o, css.exploding);
 
@@ -54,7 +54,7 @@ const MissileLauncher = (options = {}) => {
 
     data.dead = true;
 
-    radarItem.die({ silent: (options && options.silent) });
+    radarItem.die({ silent: !!dieOptions.silent });
 
   }
 
