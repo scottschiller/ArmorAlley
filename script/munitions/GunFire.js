@@ -5,11 +5,9 @@ import { collisionTest } from '../core/logic.js';
 import { rndInt, plusMinus, rnd, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 
-const GunFire = options => {
+const GunFire = (options = {}) => {
 
     let css, data, dom, collision, exports, frameTimeout, radarItem;
-
-    options = options || {};
 
     function randomDistance() {
       return `${rndInt(10) * plusMinus()}px`;

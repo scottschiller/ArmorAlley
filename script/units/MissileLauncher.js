@@ -7,7 +7,7 @@ import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '..
 import { playSound, sounds } from '../core/sound.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 
-const MissileLauncher = options => {
+const MissileLauncher = (options = {}) => {
 
   let css, data, dom, friendlyNearby, height, radarItem, exports;
 
@@ -211,8 +211,6 @@ const MissileLauncher = options => {
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
   }
-
-  options = options || {};
 
   height = 18;
 

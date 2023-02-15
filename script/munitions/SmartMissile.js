@@ -7,7 +7,7 @@ import { rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 
-const SmartMissile = options => {
+const SmartMissile = (options = {}) => {
 
   /**
    * I am so smart!
@@ -667,7 +667,6 @@ const SmartMissile = options => {
 
   }
 
-  options = options || {};
 
   css = common.inheritCSS({
     className: 'smart-missile',

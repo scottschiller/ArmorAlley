@@ -7,7 +7,7 @@ import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 
-const Base = options => {
+const Base = (options = {}) => {
 
   let css, data, dom, exports, height, missileVMax;
 

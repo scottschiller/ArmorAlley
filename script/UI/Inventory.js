@@ -14,7 +14,7 @@ const Inventory = () => {
 
   let css, data, dom, objects, orderNotificationOptions, exports;
 
-  function createObject(typeData, options) {
+  function createObject(typeData, options = {}) {
 
     // create and append a new (something) to its appropriate array.
 
@@ -104,8 +104,6 @@ const Inventory = () => {
     let typeData, orderObject, orderSize, cost, pendingNotification;
 
     if (isGameOver()) return;
-
-    options = options || {};
 
     orderSize = 1;
 

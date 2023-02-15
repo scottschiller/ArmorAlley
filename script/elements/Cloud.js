@@ -1,7 +1,7 @@
 import { rndInt, worldWidth, worldHeight } from '../core/global.js';
 import { common } from '../core/common.js';
 
-const Cloud = options => {
+const Cloud = (options = {}) => {
 
   let cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
 
@@ -61,8 +61,6 @@ const Cloud = options => {
     common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
-
-  options = options || {};
 
   cloudType = (Math.random() > 0.5 ? 2 : 1);
 

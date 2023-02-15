@@ -205,15 +205,13 @@ function trackObject(source, target) {
 
 }
 
-function getNearestObject(source, options) {
+function getNearestObject(source, options = {}) {
 
   // given a source object (the helicopter), find the nearest enemy in front of the source - dependent on X axis + facing direction.
 
   let i, j, k, l, itemArray, items, localObjects, targetData, isInFront, useInFront, distanceX, distanceY;
 
   const isNearGround = source.data.y >= 340 && !options?.ignoreNearGround;
-
-  options = options || {};
 
   useInFront = !!options.useInFront;
 

@@ -7,7 +7,7 @@ import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Chain } from '../elements/Chain.js';
 
-const Bunker = options => {
+const Bunker = (options = {}) => {
 
   let css, data, dom, objects, radarItem, exports;
 
@@ -249,8 +249,6 @@ const Bunker = options => {
     radarItem = game.objects.radar.addItem(exports, data.oClassName);
 
   }
-
-  options = options || {};
 
   css = common.inheritCSS({
     className: TYPES.bunker,

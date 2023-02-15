@@ -6,7 +6,7 @@ import { common } from '../core/common.js';
 import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
 
-const SuperBunker = options => {
+const SuperBunker = (options = {}) => {
 
   let css, dom, data, height, nearby, radarItem, exports;
 
@@ -175,8 +175,6 @@ const SuperBunker = options => {
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
   }
-
-  options = options || {};
 
   height = 28;
 

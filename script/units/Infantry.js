@@ -7,7 +7,7 @@ import { TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { GunFire } from '../munitions/GunFire.js';
 
-const Infantry = options => {
+const Infantry = (options = {}) => {
 
   let css, dom, data, height, radarItem, nearby, collision, exports;
 
@@ -215,7 +215,6 @@ const Infantry = options => {
 
   }
 
-  options = options || {};
 
   height = 11;
 

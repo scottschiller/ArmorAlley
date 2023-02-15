@@ -8,7 +8,7 @@ import { TYPES, FPS } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { GunFire } from '../munitions/GunFire.js'
 
-const Tank = options => {
+const Tank = (options = {}) => {
 
     let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight, fireRates;
 

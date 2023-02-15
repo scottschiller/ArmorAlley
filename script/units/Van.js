@@ -6,7 +6,7 @@ import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js'
 import { TYPES, winloc, FPS, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 
-const Van = options => {
+const Van = (options = {}) => {
 
   let css, dom, data, friendlyNearby, height, radarItem, exports;
 
@@ -223,8 +223,6 @@ const Van = options => {
     }
 
   }
-
-  options = options || {};
 
   height = 16;
 

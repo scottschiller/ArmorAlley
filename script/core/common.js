@@ -92,11 +92,9 @@ const common = {
   
   },
 
-  inheritData(data, options) {
+  inheritData(data, options = {}) {
 
     // mixin defaults, and apply common options
-  
-    options = options || {};
   
     // for quick object comparison
     if (data.id === undefined) {
@@ -147,9 +145,6 @@ const common = {
   inheritCSS(options) {
 
     // var defaults;
-  
-    options = options || {};
-  
     if (options.animating === undefined) {
       options.animating = common.defaultCSS.animating;
     }

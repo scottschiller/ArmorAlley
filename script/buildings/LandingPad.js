@@ -2,7 +2,7 @@ import { rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 
-const LandingPad = options => {
+const LandingPad = (options = {}) => {
 
   let css, dom, data, collision, exports;
 
@@ -45,8 +45,6 @@ const LandingPad = options => {
 
     setWelcomeMessage();
   }
-
-  options = options || {};
 
   css = common.inheritCSS({
     className: 'landing-pad'

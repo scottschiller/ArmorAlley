@@ -5,7 +5,7 @@ import { rnd, rndInt, worldHeight, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Infantry } from './Infantry.js';
 
-const ParachuteInfantry = options => {
+const ParachuteInfantry = (options = {}) => {
 
   let css, dom, data, radarItem, exports;
 

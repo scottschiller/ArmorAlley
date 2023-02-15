@@ -7,7 +7,7 @@ import { rad2Deg, plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/glo
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 
-const Bomb = options => {
+const Bomb = (options = {}) => {
 
   let css, data, dom, collision, radarItem, exports;
 
@@ -34,15 +34,13 @@ const Bomb = options => {
 
   }
 
-  function die(dieOptions) {
+  function die(dieOptions = {}) {
 
     // aieee!
 
     let className;
     
     if (data.dead || data.groundCollisionTest) return;
-
-    dieOptions = dieOptions || {};
 
     // possible hit, blowing something up.
     // special case: don't play "generic boom" if we hit a balloon
@@ -303,8 +301,6 @@ const Bomb = options => {
     }
 
   }
-
-  options = options || {};
 
   css = common.inheritCSS({
     className: 'bomb',

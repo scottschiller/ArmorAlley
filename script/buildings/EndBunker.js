@@ -6,7 +6,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { GunFire } from '../munitions/GunFire.js';
 
-const EndBunker = options => {
+const EndBunker = (options = {}) => {
 
   let css, dom, data, height, objects, nearby, exports;
 
@@ -200,8 +200,6 @@ const EndBunker = options => {
     game.objects.radar.addItem(exports, dom.o.className);
 
   }
-
-  options = options || {};
 
   height = 19;
 

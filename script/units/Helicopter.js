@@ -48,7 +48,7 @@ import { Infantry } from './Infantry.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { Bomb } from '../munitions/Bomb.js';
 
-const Helicopter = options => {
+const Helicopter = (options = {}) => {
 
   let css, data, dom, events, objects, collision, radarItem, exports, lastTarget, statsBar;
 
@@ -2222,8 +2222,6 @@ const Helicopter = options => {
     radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
   }
-
-  options = options || {};
 
   css = common.inheritCSS({
     className: TYPES.helicopter,

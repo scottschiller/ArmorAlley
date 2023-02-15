@@ -1,4 +1,4 @@
-const TutorialStep = options => {
+const TutorialStep = (options = {}) => {
 
   let data, exports;
 

@@ -1,11 +1,9 @@
 import { rnd, rndInt, plusMinus } from '../core/global.js';
 import { common } from '../core/common.js';
 
-const Smoke = options => {
+const Smoke = (options = {}) => {
 
   let css, dom, data, exports;
-
-  options = options || {};
 
   function die() {
 

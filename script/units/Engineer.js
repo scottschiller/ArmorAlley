@@ -1,10 +1,8 @@
 import { Infantry } from './Infantry.js';
 
-const Engineer = options => {
+const Engineer = (options = {}) => {
 
   let object;
-
-  options = options || {};
 
   // flag as an engineer
   options.role = 1;

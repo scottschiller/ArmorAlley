@@ -6,7 +6,7 @@ import { plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 
-const Shrapnel = options => {
+const Shrapnel = (options = {}) => {
 
   let css, dom, data, collision, radarItem, scale, exports;
 
@@ -250,7 +250,6 @@ const Shrapnel = options => {
 
   }
 
-  options = options || {};
 
   // default
   scale = options.scale || (0.8 + rnd(0.15));

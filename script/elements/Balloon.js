@@ -5,7 +5,7 @@ import { gameType } from '../aa.js';
 import { rndInt, plusMinus, worldWidth, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 
-const Balloon = options => {
+const Balloon = (options = {}) => {
 
   let css, data, dom, height, objects, radarItem, reset, exports;
 
@@ -296,8 +296,6 @@ const Balloon = options => {
     radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
   }
-
-  options = options || {};
 
   height = 16;
 

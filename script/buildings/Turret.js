@@ -7,7 +7,7 @@ import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
 
-const Turret = options => {
+const Turret = (options = {} )=> {
 
   let css, data, dom, height, radarItem, collisionItems, targets, exports;
 

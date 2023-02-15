@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 
-const Chain = options => {
+const Chain = (options = {}) => {
 
   let css, data, dom, objects, exports, defaultHeight;
 
@@ -172,8 +172,6 @@ const Chain = options => {
     applyHeight();
 
   }
-
-  options = options || {};
 
   css = common.inheritCSS({
     className: 'chain'
