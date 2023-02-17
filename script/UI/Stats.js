@@ -91,14 +91,14 @@ function Stats() {
     van: true,
     infantry: {
       showSkull: true,
-      isAn: true,
+      isAn: true
     },
     'parachute-infantry': {
       showSkull: true
     },
     engineer: {
       showSkull: true,
-      isAn: true,
+      isAn: true
     },
     balloon: true,
     bunker: true,
