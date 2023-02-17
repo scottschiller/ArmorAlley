@@ -1,5 +1,6 @@
 import { TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
+const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
 function Stats() {
 
@@ -86,7 +87,9 @@ function Stats() {
     tank: {
       verb: 'blasted',
       verb_engineer: 'steamrolled',
-      verb_infantry: 'steamrolled'
+      verb_infantry: 'steamrolled',
+      // hackish: ignore when a tank "hits" a smart missile
+      'verb_smart-missile': UNKNOWN_VERB
     },
     van: true,
     infantry: {
