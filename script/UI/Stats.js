@@ -255,7 +255,12 @@ function Stats() {
     // allow for object-specific interactions also, e.g., gunfire hitting a balloon -> `gunfire = { balloon_verb: 'popped' }`
     const attackerItem = notifyTypes[attacker.type] || {};
 
-    const verb = attackerItem[`verb_${type}`] || attackerItem.verb || 'UNKNOWN_VERB';
+    const verb = attackerItem[`verb_${type}`] || attackerItem.verb || UNKNOWN_VERB;
+
+    if (verb === UNKNOWN_VERB) {
+      console.warn(`${UNKNOWN_VERB} for type / target`, type, target);
+      return;
+    }
 
     // special case: handle when types match, e.g., "their infantry shot one of yours"
     // the attacker may be the gunfire of a tank, so check the parent as well.
