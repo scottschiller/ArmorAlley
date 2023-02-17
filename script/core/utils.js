@@ -23,6 +23,9 @@ const utils = {
 
       // Fisher-Yates shuffle algo
 
+      // guard / avoid redundant work
+      if (!array || array.excludeShuffle) return array;
+
       let i, j, temp;
 
       for (i = array.length - 1; i > 0; i--) {
@@ -31,6 +34,9 @@ const utils = {
         array[i] = array[j];
         array[j] = temp;
       }
+
+      // special case: shuffle 2-item arrays only once to avoid errant repetition.
+      if (array.length === 2) array.excludeShuffle = true;
 
       return array;
 
