@@ -228,6 +228,16 @@ function Stats() {
     // e.g., target is a tank object, and its `data.attacker` is the unit or munition which took out the target.
     if (!type || !target) return;
 
+    return common.setFrameTimeout(() => maybeNotifyRAF(type, target), 16);
+
+  }
+
+  function maybeNotifyRAF(type, target) {
+
+    // notify when a game object is being destroyed, given a target died (subject to the type.)
+    // e.g., target is a tank object, and its `data.attacker` is the unit or munition which took out the target.
+    if (!type || !target) return;
+
     const notifyItem = notifyTypes[type];
 
     // lots of types, e.g., gunfire and bombs, can be ignored when they die.
