@@ -290,7 +290,7 @@ function Stats() {
         // helicopter hit something that was not another helicopter.
         // if the helicopter collided with a non-munition - i.e., ground unit or building - bail.
         // this avoids a duplicate notification, e.g., "a balloon hit a helicopter."
-        if (attacker.type !== TYPES.smartMissile && attacker.type !== TYPES.bomb) return;
+        if (attacker.type !== TYPES.smartMissile && attacker.type !== TYPES.bomb && attacker.type !== TYPES.chain) return;
 
       }
 
