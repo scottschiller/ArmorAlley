@@ -325,7 +325,7 @@ function Stats() {
     if (!text) {
 
       // "something" [shot/bombed/killed] [one of yours|an|a] "something", including same-type and hostile-killed-[enemy|friendly] cases
-      text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${isSameType ? (didYoursWin ? youWonText : theyWonText ) : (attacker.hostile ? (target.data.isEnemy ? 'an enemy ' : 'a friendly ') : (notifyItem.isAn ? 'an ' : 'a ')) + getNormalizedUnitName(target)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+      text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${isSameType ? (didYoursWin ? youWonText : theyWonText) : (attacker.hostile ? (target.data.isEnemy ? 'an enemy ' : 'a friendly ') : (notifyItem.isAn ? 'an ' : 'a ')) + getNormalizedUnitName(target)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
 
       // hackish: replace helicopter reference
       // TODO: fix this up so the enemy chopper is properly normalized.
