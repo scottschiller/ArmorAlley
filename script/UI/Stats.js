@@ -161,9 +161,9 @@ function Stats() {
       // special missile check: handle variant types, too. ;)
       if (item.data.type === TYPES.smartMissile) {
         if (item.data.isBanana) {
-          type = type.replace('missile', 'banana 🍌');
+          type = type.replace('smart missile', '🍌');
         } else if (item.data.isRubberChicken) {
-          type = type.replace('missile', 'rubber chicken 🐓');
+          type = type.replace('smart missile', '🐓');
         }
       }
 
