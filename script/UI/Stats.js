@@ -77,6 +77,9 @@ function Stats() {
    * icon type (death vs. explosion) and language / notification options
    */
    const notifyTypes = {
+    'chain': {
+      verb: 'flew into'
+    },
     // special case: missile launchers can destroy things, or be destroyed by an infantry or tank.
     // they typically die with silent: true, when self-destructing in order to launch a missile.
     'missile-launcher': true,
@@ -288,7 +291,12 @@ function Stats() {
     // special case: when player's helicopter dies, use special verbiage. "You (were) X by a Y"
     if (!isSameType && isHelicopter && attacker.isEnemy) {
 
-      text = `You were ${verb} by ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+      // hacks
+      if (attacker.type === TYPES.chain) {
+        text = `You ${verb} ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`
+      } else {
+        text = `You were ${verb} by ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+      }
 
     } else if (isHelicopter) {
 
