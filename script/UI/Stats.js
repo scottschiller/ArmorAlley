@@ -104,7 +104,9 @@ function Stats() {
       isAn: true
     },
     balloon: true,
-    bunker: true,
+    bunker: {
+      exclude: true
+    },
     helicopter: {
       showSkull: true,
       verb: 'crashed into',
@@ -141,6 +143,9 @@ function Stats() {
       verb_infantry: 'killed',
       verb_engineer: 'killed',
       'verb_smart-missile': 'took out'
+    },
+    'super-bunker': {
+      exclude: true
     }
   }
 
