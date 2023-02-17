@@ -245,6 +245,9 @@ function Stats() {
     // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
     if (!attacker) return;
 
+    // certain targets can be ignored, too. i.e., bunkers don't kill missiles.
+    if (notifyTypes[attacker.type]?.exclude) return;
+
     // did a helicopter die?
     const isHelicopter = (type === TYPES.helicopter);
 
