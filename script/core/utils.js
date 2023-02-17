@@ -1,8 +1,8 @@
 const utils = {
 
-  array: (() => {
+  array: {
 
-    function compare(property) {
+    compare: (property) => {
 
       let result;
 
@@ -17,25 +17,9 @@ const utils = {
         return result;
       };
 
-    }
+    },
 
-    function includes(array, item) {
-
-      if (!array?.length) return false;
-
-      if (array.includes) return array.includes(item);
-
-      // legacy
-      for (let i = 0, j = array.length; i < j; i++) {
-        if (array[i] === item) return true;
-      }
-
-      // default
-      return false;
-
-    }
-
-    function shuffle(array) {
+    shuffle: (array) => {
 
       // Fisher-Yates shuffle algo
 
@@ -52,13 +36,7 @@ const utils = {
 
     }
 
-    return {
-      compare,
-      includes,
-      shuffle
-    };
-
-  })(),
+  },
 
   css: {
 
