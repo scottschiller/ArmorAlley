@@ -94,7 +94,7 @@ const utils = {
     try {
       localStorage = window.localStorage || null;
     } catch (e) {
-      console.info('localStorage not accessible, likely denied. Game options will not be saved.');
+      console.info('localStorage not available, likely "cookies blocked." Game options will not be saved.');
       localStorage = null;
     }
 
