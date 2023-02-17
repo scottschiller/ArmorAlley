@@ -169,8 +169,8 @@ const utils = {
 
     return {
       get,
-      set,
-      remove
+      remove,
+      set
     };
 
   })()
