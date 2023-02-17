@@ -282,9 +282,8 @@ function Stats() {
       if (isHelicopter) {
 
         // extra-special case: player + CPU helicopters collided.
-        // this will fire twice, for human + CPU - so report once for the human player, and then bail.
         if (attacker.type === TYPES.helicopter) {
-          if (!target.data.isEnemy) game.objects.notifications.add('You collided with the enemy. ☠️ ☠️');
+          game.objects.notifications.add('You collided with the enemy. ☠️☠️');
           return;
         }
 
