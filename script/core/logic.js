@@ -517,7 +517,7 @@ function checkProduction() {
   } else if (game.data.productionHalted && !bunkersOwned) {
 
     // CPU has regained control of a bunker.
-    announcement = '😰 You no longer control all bunkers. Enemy convoy production is resuming. 🛠️';
+    announcement = '😰 You no longer control all bunkers. Enemy production is resuming. 🛠️';
     game.data.productionHalted = false;
 
   }
