@@ -511,7 +511,7 @@ function checkProduction() {
   if (!game.data.productionHalted && bunkersOwned) {
 
     // player is doing well; reward them for their efforts.
-    announcement = '🎉 You have captured all bunkers. Enemy convoy production has been halted. 🚫';
+    announcement = '🎉 You control all bunkers. Enemy production is halted. 🚫';
     game.data.productionHalted = true;
 
   } else if (game.data.productionHalted && !bunkersOwned) {
