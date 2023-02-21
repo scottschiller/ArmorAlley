@@ -8,7 +8,7 @@ import { common } from './common.js';
 import { game } from './Game.js';
 import { COSTS, TYPES, worldWidth } from './global.js';
 
- function collisionCheck(rect1, rect2, rect1XLookAhead) {
+function collisionCheck(rect1, rect2, rect1XLookAhead) {
 
   /**
    * Given two rect objects with shape { x, y, width, height }, determine if there is overlap.
@@ -20,13 +20,13 @@ import { COSTS, TYPES, worldWidth } from './global.js';
   // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   return (
     // rect 2 is to the right.
-    rect1.x + rect1XLookAhead < rect2.x + rect2.width &&
+    rect1.x + rect1XLookAhead < rect2.x + rect2.width
     // overlap on x axis.
-    rect1.x + rect1.width + rect1XLookAhead > rect2.x &&
+    && rect1.x + rect1.width + rect1XLookAhead > rect2.x
     // rect 1 is above rect 2.
-    rect1.y < rect2.y + rect2.height &&
+    && rect1.y < rect2.y + rect2.height
     // overlap on y axis.
-    rect1.y + rect1.height > rect2.y
+    && rect1.y + rect1.height > rect2.y
   );
 
 }
