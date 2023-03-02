@@ -39,6 +39,14 @@ const MissileLauncher = (options = {}) => {
 
       effects.inertGunfireExplosion({ exports });
 
+      effects.domFetti(exports, dieOptions.attacker);
+
+      // only cause damage if there was an attacker.
+      // otherwise, regular self-destruct case will also stop the missile. ;)
+      if (dieOptions.attacker) {
+        effects.damageExplosion(exports);
+      }
+
       common.setFrameTimeout(() => {
         sprites.removeNodesAndUnlink(exports);
       }, 1000);
@@ -245,8 +253,12 @@ const MissileLauncher = (options = {}) => {
       cost: 3
     },
     x: options.x || 0,
-    y: game.objects.view.data.world.height - height - 2
-    
+    y: game.objects.view.data.world.height - height - 2,
+    domFetti: {
+      colorType: options.isEnemy ? 'grey' : 'green',
+      elementCount: 7 + rndInt(7),
+      startVelocity: 10 + rndInt(10)
+    }
   }, options);
 
   dom = {
