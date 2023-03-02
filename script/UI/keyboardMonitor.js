@@ -26,6 +26,7 @@ function KeyboardMonitor() {
     missileLauncher: 77,
     tank: 84,
     van: 86,
+    smart_missile: 88,
     infantry: 73,
     engineer: 69,
     pause_p: 80,
@@ -90,7 +91,7 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.objects.helicopters[0].eject();
+        game.objects.helicopter[0].eject();
 
       }
 
@@ -103,7 +104,7 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.objects.helicopters[0].setFiring(true);
+        game.objects.helicopter[0].setFiring(true);
 
       }
 
@@ -116,7 +117,7 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.objects.helicopters[0].setBombing(true);
+        game.objects.helicopter[0].setBombing(true);
 
       }
 
@@ -127,13 +128,13 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.objects.helicopters[0].setParachuting(true);
+        game.objects.helicopter[0].setParachuting(true);
 
       },
 
       up() {
 
-        game.objects.helicopters[0].setParachuting(false);
+        game.objects.helicopter[0].setParachuting(false);
 
       }
 
@@ -144,7 +145,7 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.objects.inventory.order(TYPES.missileLauncherCamel);
+        game.objects.inventory.order(TYPES.missileLauncher);
 
       }
 
@@ -179,13 +180,13 @@ function KeyboardMonitor() {
         // heat-seeking banana
         game.objects.view.setMissileMode(bananaMode);
 
-        game.objects.helicopters[0].setMissileLaunching(true);
+        game.objects.helicopter[0].setMissileLaunching(true);
 
       },
 
       up() {
 
-        game.objects.helicopters[0].setMissileLaunching(false);
+        game.objects.helicopter[0].setMissileLaunching(false);
 
       }
 
@@ -199,13 +200,13 @@ function KeyboardMonitor() {
         // heat-seeking rubber chicken
         game.objects.view.setMissileMode(rubberChickenMode);
 
-        game.objects.helicopters[0].setMissileLaunching(true);
+        game.objects.helicopter[0].setMissileLaunching(true);
 
       },
 
       up() {
 
-        game.objects.helicopters[0].setMissileLaunching(false);
+        game.objects.helicopter[0].setMissileLaunching(false);
 
       }
 
@@ -219,13 +220,13 @@ function KeyboardMonitor() {
         // standard heat-seeking missile
         game.objects.view.setMissileMode(defaultMissileMode);
 
-        game.objects.helicopters[0].setMissileLaunching(true);
+        game.objects.helicopter[0].setMissileLaunching(true);
 
       },
 
       up() {
 
-        game.objects.helicopters[0].setMissileLaunching(false);
+        game.objects.helicopter[0].setMissileLaunching(false);
 
       }
 
