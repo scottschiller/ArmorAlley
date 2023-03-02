@@ -3,14 +3,14 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
-import { TYPES, winloc, FPS, tutorialMode } from '../core/global.js';
+import { TYPES, winloc, FPS, tutorialMode, rndInt, getTypes } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const Van = (options = {}) => {
 
-  let css, dom, data, friendlyNearby, height, radarItem, exports;
+  let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
 
   // for testing end sequence
   const theyWin = winloc.match(/theyWin/i);
@@ -28,9 +28,15 @@ const Van = (options = {}) => {
 
   }
 
-  function die() {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
+
+    data.energy = 0;
+
+    data.jamming = false;
+
+    data.dead = true;
 
     utils.css.add(dom.o, css.exploding);
 
@@ -52,12 +58,6 @@ const Van = (options = {}) => {
       sprites.removeNodesAndUnlink(exports);
       data.deadTimer = null;
     }, 1000);
-
-    data.energy = 0;
-
-    data.jamming = false;
-
-    data.dead = true;
 
     if (radarItem) {
       radarItem.die();
@@ -84,7 +84,7 @@ const Van = (options = {}) => {
 
     if (data.dead) return !data.deadTimer;
 
-    common.smokeRelativeToDamage(exports, 0.25);
+    effects.smokeRelativeToDamage(exports);
 
     // just in case: prevent any multiple "game over" actions via animation
     if (isGameOver()) return;
@@ -182,8 +182,10 @@ const Van = (options = {}) => {
     // just in case
     if (isGameOver()) return;
   
-    yourBase = game.objects.bases[0];
-    enemyBase = game.objects.bases[1];
+    const bases = game.objects[TYPES.base];
+
+    yourBase = bases[0];
+    enemyBase = bases[1];
   
     if (!youWon) {
   
@@ -191,9 +193,9 @@ const Van = (options = {}) => {
       yourBase.die();
   
     } else {
-  
+
       enemyBase.die();
-  
+
     }
   
     game.data.battleOver = true;
@@ -230,6 +232,8 @@ const Van = (options = {}) => {
 
   }
 
+  pads = game.objects[TYPES.landingPad];
+
   height = 16;
 
   css = common.inheritCSS({
@@ -260,9 +264,14 @@ const Van = (options = {}) => {
       cost: 2
     },
     // if the van reaches the enemy base (near the landing pad), it's game over.
-    xGameOver: (options.isEnemy ? game.objects.landingPads[0].data.x + 88 : game.objects.landingPads[game.objects.landingPads.length - 1].data.x - 44),
+    xGameOver: (options.isEnemy ? pads[0].data.x + 88 : pads[pads.length - 1].data.x - 44),
     x: options.x || 0,
     y: game.objects.view.data.world.height - height - 2
+    domFetti: {
+      colorType: options.isEnemy ? 'grey' : 'green',
+      elementCount: 5 + rndInt(5),
+      startVelocity: 8 + rndInt(8)
+    }
   }, options);
 
   dom = {
