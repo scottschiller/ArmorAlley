@@ -1,5 +1,6 @@
 import { rndInt, worldWidth, worldHeight } from '../core/global.js';
 import { common } from '../core/common.js';
+import { zones } from '../core/zones.js';
 
 const Cloud = (options = {}) => {
 
@@ -42,7 +43,7 @@ const Cloud = (options = {}) => {
     data.x += data.windOffsetX;
     data.y += data.windOffsetY;
 
-    common.moveWithScrollOffset(exports);
+    zones.refreshZone(exports);
 
   }
 

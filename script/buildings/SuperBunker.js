@@ -5,6 +5,7 @@ import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
+import { zones } from '../core/zones.js';
 
 const SuperBunker = (options = {}) => {
 
@@ -23,8 +24,7 @@ const SuperBunker = (options = {}) => {
 
       data.isEnemy = true;
 
-      utils.css.remove(radarItem.dom.o, css.friendly);
-      utils.css.add(radarItem.dom.o, css.enemy);
+      setFriendly(false);
 
       game.objects.notifications.add('The enemy captured a super bunker 🚩');
 
@@ -34,8 +34,7 @@ const SuperBunker = (options = {}) => {
 
       data.isEnemy = false;
 
-      utils.css.remove(radarItem.dom.o, css.enemy);
-      utils.css.add(radarItem.dom.o, css.friendly);
+      setFriendly(true);
 
       game.objects.notifications.add('You captured a super bunker ⛳');
 
@@ -46,6 +45,15 @@ const SuperBunker = (options = {}) => {
     // check if enemy convoy production should stop or start
     checkProduction();
 
+  }
+
+  function setFriendly(isFriendly) {
+
+    utils.css.addOrRemove(radarItem.dom.o, isFriendly, css.friendly);
+    utils.css.addOrRemove(radarItem.dom.o, !isFriendly, css.enemy);
+
+    zones.changeOwnership(exports);
+    
   }
 
   function setFiring(state) {
@@ -73,6 +81,9 @@ const SuperBunker = (options = {}) => {
       game.objects.notifications.addNoRepeat('A friendly tank disarmed a super bunker ⛳');
     }
 
+    // disarmed super bunkers are dangerous to both sides.
+    setFriendly(false);
+
   }
 
   function hit(points, target) {
@@ -98,9 +109,7 @@ const SuperBunker = (options = {}) => {
 
     data.hostile = true;
 
-    // ensure the radar shows this, too
-    utils.css.remove(radarItem.dom.o, css.friendly);
-    utils.css.add(radarItem.dom.o, css.enemy);
+    setFriendly(false);
 
     common.updateEnergy(exports);
 
@@ -326,8 +335,7 @@ const SuperBunker = (options = {}) => {
                 game.objects.notifications.add('Your infantry neutralized a super bunker ⛳');
               }
 
-              utils.css.remove(radarItem.dom.o, css.friendly);
-              utils.css.add(radarItem.dom.o, css.enemy);
+              setFriendly(false);
 
             }
 

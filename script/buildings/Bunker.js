@@ -6,6 +6,7 @@ import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Chain } from '../elements/Chain.js';
+import { zones } from '../core/zones.js';
 
 const Bunker = (options = {}) => {
 
@@ -74,6 +75,8 @@ const Bunker = (options = {}) => {
     }
 
     data.isEnemy = isEnemy;
+
+    zones.changeOwnership(exports);
 
     // and the balloon, too.
     objects?.balloon?.setEnemy(isEnemy);

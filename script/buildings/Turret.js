@@ -6,6 +6,7 @@ import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTink
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
+import { zones } from '../core/zones.js';
 
 const Turret = (options = {} )=> {
 
@@ -258,6 +259,8 @@ const Turret = (options = {} )=> {
     if (data.isEnemy === isEnemy) return;
 
     data.isEnemy = isEnemy;
+
+    zones.changeOwnership(exports);
 
     utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
 

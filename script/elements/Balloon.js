@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
 import { rndInt, plusMinus, worldWidth, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
+import { zones } from '../core/zones.js';
 
 const Balloon = (options = {}) => {
 
@@ -50,7 +51,11 @@ const Balloon = (options = {}) => {
     data.detached = true;
 
     // and become hostile.
-    data.hostile = true;
+
+    if (!data.hostile) {
+      data.hostile = true;
+      zones.changeOwnership(exports);
+    }
 
     // disconnect bunker <-> balloon references
     if (objects.bunker) {
@@ -101,6 +106,8 @@ const Balloon = (options = {}) => {
         utils.css.swap(dom.o, css.exploding, css.dead);
       }
     }, 550);
+
+    zones.leaveAllZones(exports);
 
     data.dead = true;
 
@@ -225,6 +232,8 @@ const Balloon = (options = {}) => {
       data.x += data.windOffsetX;
       data.y += data.windOffsetY;
 
+      zones.refreshZone(exports);
+
     }
 
     common.moveWithScrollOffset(exports);
@@ -254,6 +263,8 @@ const Balloon = (options = {}) => {
       data.deadTimer.reset();
       data.deadTimer = null;
     }
+
+    zones.refreshZone(exports);
 
     // update UI, right away?
     animate();

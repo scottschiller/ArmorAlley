@@ -1,5 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
+import { zones } from '../core/zones.js';
 
 const Chain = (options = {}) => {
 
@@ -113,9 +114,15 @@ const Chain = (options = {}) => {
 
     } else {
 
-      // no bunker
+      // no bunker: free, as a bird
 
-      data.hostile = true;
+      if (!data.hostile) {
+
+        data.hostile = true;
+
+        zones.changeOwnership(exports);
+
+      }
 
       if (objects.balloon && !objects.balloon.data.dead) {
 

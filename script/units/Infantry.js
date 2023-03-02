@@ -6,6 +6,7 @@ import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
 import { TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { GunFire } from '../munitions/GunFire.js';
+import { zones } from '../core/zones.js';
 
 const Infantry = (options = {}) => {
 
@@ -60,6 +61,7 @@ const Infantry = (options = {}) => {
       data.y = y;
 
       common.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`);
+      zones.refreshZone(exports);
 
   }
 
