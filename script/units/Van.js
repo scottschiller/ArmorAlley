@@ -278,6 +278,14 @@ const Van = (options = {}) => {
     o: null
   };
 
+  exports = {
+    animate,
+    data,
+    dom,
+    die,
+    init: initVan
+  };
+
   friendlyNearby = {
     options: {
       source: exports,
@@ -289,20 +297,9 @@ const Van = (options = {}) => {
       miss: resume
     },
     // who are we looking for nearby?
-    items: ['tanks', 'missileLaunchers', 'vans'],
+    items: getTypes('tank, missileLauncher, van', { group: 'friendly', exports }),
     targets: []
   };
-
-  exports = {
-    animate,
-    data,
-    dom,
-    die
-  };
-
-  if (!options.noInit) {
-    initVan();
-  }
 
   return exports;
 

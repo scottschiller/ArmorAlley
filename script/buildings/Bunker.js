@@ -18,7 +18,7 @@ const Bunker = (options = {}) => {
 
     if (!objects.balloon) {
 
-      objects.balloon = Balloon({
+      objects.balloon = game.addObject(TYPES.balloon, {
         bunker: exports,
         leftMargin: 8,
         isEnemy: data.isEnemy,
@@ -26,15 +26,13 @@ const Bunker = (options = {}) => {
         y: (useRandomY ? undefined : common.bottomAlignedY(-data.height))
       });
 
-      // push onto the larger array
-      game.objects.balloons.push(objects.balloon);
-
     }
 
     if (!objects.chain) {
 
       // create a chain, linking the base and the balloon
-      objects.chain = Chain({
+      objects.chain = game.addObject(TYPES.chain, {
+        isEnemy: data.isEnemy,
         x: data.x + (data.halfWidth - 1),
         y: data.y,
         height: data.y - objects.balloon.data.y,
@@ -42,7 +40,8 @@ const Bunker = (options = {}) => {
         bunker: exports
       });
 
-      game.objects.chains.push(objects.chain);
+      // balloon <-> chain
+      objects?.balloon?.attachChain(objects.chain);
 
     }
 
@@ -331,14 +330,11 @@ const Bunker = (options = {}) => {
     dom,
     engineerHit,
     infantryHit,
-    initDOM,
+    init: initBunker,
     nullifyChain,
     nullifyBalloon,
-    init: initBunker,
     repair
   };
-
-  initBunker();
 
   return exports;
 

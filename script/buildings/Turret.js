@@ -1,16 +1,15 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode } from '../core/global.js';
 import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds } from '../core/sound.js';
+import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode, getTypes } from '../core/global.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
-import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
-const Turret = (options = {} )=> {
+const Turret = (options = {}) => {
 
   let css, data, dom, height, radarItem, collisionItems, targets, exports;
 
@@ -101,7 +100,7 @@ const Turret = (options = {} )=> {
 
       data.fireCount++;
 
-      game.objects.gunfire.push(GunFire({
+      game.addObject(TYPES.gunfire, {
         parentType: data.type,
         isEnemy: data.isEnemy,
         // turret gunfire mostly hits airborne things.
@@ -110,7 +109,7 @@ const Turret = (options = {} )=> {
         y: common.bottomAlignedY() + 8 + (deltaY * 0.05),
         vX: (deltaX * 0.05) + deltaXGretzky,
         vY: Math.min(0, (deltaY * 0.05) + deltaYGretzky)
-      }));
+      });
 
       if (sounds.turretGunFire) {
         playSound(sounds.turretGunFire, exports);
@@ -356,11 +355,40 @@ const Turret = (options = {} )=> {
 
   }
 
+  function refreshCollisionItems() {
+
+    // set on init, updated with `zones.changeOwnership()` as targets change sides
+
+    collisionItems = getTypes('helicopter, balloon, parachuteInfantry, shrapnel', { exports });
+
+    if (gameType === 'hard' || gameType === 'extreme') {
+      // additional challenge: make turret gunfire dangerous to some ground units, too.
+      collisionItems = collisionItems.concat(getTypes('tank, van, infantry, missileLauncher, bunker, superBunker', { exports }));
+    }
+
+    if (gameType === 'extreme') {
+      /**
+       * additional challenge: make turret go after ground vehicles, as well. also, just to be extra-mean: smart missiles.
+       * note: vans are given a pass; they're so weak, they'll be taken out in a convoy by gunfire + explosions.
+       * otherwise, a single van may be able to "sneak by" a turret.
+       * 
+       * 02/2023: I had smartMissile in here, but it's insanely tough with these being shot down. Maybe for insane mode.
+      */
+      targets = getTypes('tank, missileLauncher', { exports });
+  
+      // also: these things may not be targeted, but can be hit.
+      collisionItems = collisionItems.concat(getTypes('engineer, smartMissile', { exports }));
+    }
+
+  }
+
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    const isEnemy = (data.isEnemy ? css.enemy : false);
+
+    dom.o = sprites.create({
       className: css.className,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy
     });
 
     dom.oSubSprite = sprites.makeSubSprite();
@@ -372,27 +400,27 @@ const Turret = (options = {} )=> {
 
   function initTurret() {
 
+    refreshCollisionItems();
+
     initDOM();
+
+    objects.cornholio = game.addObject(TYPES.cornholio, {
+      x: data.x - data.cornholioOffsetX,
+      y: data.y
+    });
+
+    if (options.DOA || data.isEnemy) {
+      objects.cornholio.hide();
+    }
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+    // "dead on arrival"
+    if (options.DOA) {
+      die({ silent: true });
+    }
+
   }
-
-  collisionItems = ['helicopters', 'balloons', 'parachuteInfantry', 'shrapnel'];
-
-  if (gameType === 'hard' || gameType === 'extreme') {
-    // additional challenge: make turret gunfire dangerous to some ground units, too.
-    collisionItems = collisionItems.concat(['tanks', 'vans', TYPES.infantry, 'missileLaunchers', 'bunkers', 'superBunkers']);
-  }
-
-  if (gameType === 'extreme') {
-    // additional challenge: make turret go after ground vehicles, as well. also, just to be extra-mean: smart missiles.
-    targets = ['tanks', 'vans', 'missileLaunchers', 'smartMissiles'];
-    // also: engineers will not be targeted, but can be hit.
-    collisionItems = collisionItems.concat(['engineers', 'smartmissiles']);
-  }
-
-  options = options || {};
 
   height = 15;
 
@@ -445,17 +473,11 @@ const Turret = (options = {} )=> {
     dom,
     engineerCanInteract,
     engineerHit,
-    initDOM,
+    init: initTurret,
+    refreshCollisionItems,
     restore,
     repair
   };
-
-  initTurret();
-
-  // "dead on arrival"
-  if (options.DOA) {
-    die({ silent: true });
-  }
 
   return exports;
 

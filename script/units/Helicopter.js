@@ -925,7 +925,7 @@ const Helicopter = (options = {}) => {
 
       // if previous X value exists, apply it
       if (data.xHistory[i]) {
-        common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i]}px`, `${data.yHistory[i] + data.halfHeightAdjusted}px`);
+        sprites.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i]}px`, `${data.yHistory[i] + data.halfHeightAdjusted}px`);
         dom.trailers[i]._style.setProperty('opacity', data.dead ? 0 : Math.max(0.25, (i+1) / j));
       }
     }
@@ -956,7 +956,7 @@ const Helicopter = (options = {}) => {
 
   function removeTrailers() {
 
-    common.removeNodeArray(dom.trailers);
+    sprites.removeNodeArray(dom.trailers);
     dom.trailers = [];
     data.removeTrailerTimer = null;
     
@@ -2434,6 +2434,30 @@ const Helicopter = (options = {}) => {
     smartMissiles: []
   };
 
+  exports = {
+    animate,
+    data,
+    dom,
+    die,
+    eject,
+    fire,
+    init: initHelicopter,
+    isOnScreenChange,
+    objects,
+    onLandingPad,
+    startRepairing,
+    reset,
+    refreshCoords,
+    rotate,
+    setBombing,
+    setFiring,
+    setMissileLaunching,
+    setParachuting,
+    setRespawning,
+    updateStatusUI,
+    updateInventoryQueue
+  };
+
   collision = {
     options: {
       source: exports, // initially undefined
@@ -2478,32 +2502,8 @@ const Helicopter = (options = {}) => {
         }
       }
     },
-    items: ['helicopters', 'superBunkers', 'bunkers', 'balloons', 'tanks', 'vans', 'missileLaunchers', 'chains', TYPES.infantry, 'engineers', 'clouds']
+    items: getTypes('helicopter, superBunker, bunker, balloon, tank, van, missileLauncher, chain, infantry:friendly, engineer:friendly, cloud:all', { exports })
   };
-
-  exports = {
-    animate,
-    data,
-    dom,
-    die,
-    eject,
-    fire,
-    isOnScreenChange,
-    objects,
-    onLandingPad,
-    startRepairing,
-    reset,
-    refreshCoords,
-    rotate,
-    setBombing,
-    setFiring,
-    setMissileLaunching,
-    setParachuting,
-    updateStatusUI,
-    updateInventoryQueue
-  };
-
-  initHelicopter();
 
   return exports;
 

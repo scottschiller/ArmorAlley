@@ -1,4 +1,4 @@
-import { rndInt, worldHeight } from '../core/global.js';
+import { getTypes, rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
@@ -68,6 +68,14 @@ const LandingPad = (options = {}) => {
     o: null
   };
 
+  exports = {
+    animate,
+    data,
+    dom,
+    init: initLandingPad,
+    isOnScreenChange
+  };
+
   collision = {
     options: {
       source: exports,
@@ -93,17 +101,8 @@ const LandingPad = (options = {}) => {
         }
       },
     },
-    items: ['helicopters']
+    items: getTypes('helicopter:all', { exports })
   };
-
-  exports = {
-    animate,
-    data,
-    dom,
-    isOnScreenChange
-  };
-
-  initLandingPad();
 
   return exports;
 

@@ -3,9 +3,8 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import { TYPES } from '../core/global.js';
+import { getTypes, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
-import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 
@@ -267,12 +266,24 @@ const Infantry = (options = {}) => {
     o: null
   };
 
+  exports = {
+    animate,
+    data,
+    dom,
+    die,
+    init: initInfantry,
+    refreshHeight,
+    resume,
+    stop
+  };
+
+  defaultItems = getTypes('tank, van, missileLauncher, infantry, engineer, helicopter, turret', { exports });
+
   nearby = {
     options: {
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       useLookAhead: true,
-      // TODO: rename to something generic?
       hit(target) {
         // engineer + turret case? reclaim or repair.
         if (data.role && target.data.type === TYPES.turret) {
@@ -330,13 +341,14 @@ const Infantry = (options = {}) => {
       }
     },
     // who gets fired at (or interacted with)?
-    items: ['tanks', 'vans', 'missileLaunchers', TYPES.infantry, 'engineers', 'helicopters', 'turrets', 'bunkers'],
+    // infantry can also claim enemy bunkers, or repair the balloons on friendly ones.
+    items: options.nearbyItems || defaultItems.concat(getTypes('bunker:all', { exports })),
     targets: []
   };
 
   collision = {
     options: {
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       hit(target) {
         /**
@@ -358,22 +370,8 @@ const Infantry = (options = {}) => {
         }
       }
     },
-    items: ['bunkers', 'tanks']
+    items: getTypes('bunker:all, tank:enemy', { exports })
   };
-
-  exports = {
-    animate,
-    data,
-    dom,
-    die,
-    initDOM,
-    resume,
-    stop
-  };
-
-  if (!options.noInit) {
-    initInfantry();
-  }
 
   return exports;
 

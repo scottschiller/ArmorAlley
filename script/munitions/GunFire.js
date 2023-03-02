@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
-import { rndInt, plusMinus, rnd, TYPES } from '../core/global.js';
+import { rndInt, plusMinus, rnd, TYPES, getTypes } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -288,9 +288,17 @@ const GunFire = (options = {}) => {
       o: null
     };
 
+    exports = {
+      animate,
+      data,
+      dom,
+      die,
+      init: initGunFire
+    };
+
     collision = {
       options: {
-        source: exports, // initially undefined
+        source: exports,
         targets: undefined,
         hit(target) {
           // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
@@ -300,18 +308,8 @@ const GunFire = (options = {}) => {
         }
       },
       // if unspecified, use default list of items which bullets can hit.
-      items: options.collisionItems || ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets', 'gunfire']
+      items: options.collisionItems || getTypes('tank, van, bunker, missileLauncher, infantry, parachuteInfantry, engineer, helicopter, balloon, smartMissile, endBunker, superBunker, turret, gunfire', { exports })
     };
-
-    exports = {
-      animate,
-      data,
-      dom,
-      die,
-      initDOM
-    };
-
-    initGunFire();
 
     return exports;
 

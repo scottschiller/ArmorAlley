@@ -2,6 +2,7 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { FPS, bananaMode, rubberChickenMode } from '../core/global.js';
+import { FPS, getTypes, rndInt, TYPES } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -255,7 +256,7 @@ const MissileLauncher = (options = {}) => {
     data,
     dom,
     die,
-    initDOM
+    init: initMissileLauncher
   };
 
   friendlyNearby = {
@@ -269,13 +270,9 @@ const MissileLauncher = (options = {}) => {
       miss: resume
     },
     // who are we looking for nearby?
-    items: ['tanks', 'vans', 'missileLaunchers'],
+    items: getTypes('tank, van, missileLauncher', { group: 'friendly', exports }),
     targets: []
   };
-
-  if (!options.noInit) {
-    initMissileLauncher();
-  }
 
   return exports;
 

@@ -75,7 +75,7 @@ const Tutorial = () => {
       animate() {
 
         // the player's helicopter.
-        const chopper = game.objects.helicopters[0], chopperData = chopper.data;
+        const chopper = game.objects.helicopter[0], chopperData = chopper.data;
 
         // condition for completion
         return (
@@ -99,7 +99,7 @@ const Tutorial = () => {
 
       animate() {
 
-        let chopper = game.objects.helicopters[0];
+        let chopper = game.objects.helicopter[0];
 
         // player either landed and refueled, or died. ;)
         return chopper.data.repairComplete;
@@ -144,7 +144,7 @@ const Tutorial = () => {
 
       animate() {
 
-        const counts = [countSides('tanks'), countSides('vans')];
+        const counts = [countSides(TYPES.tank), countSides(TYPES.van)];
 
         return (!counts[0].enemy && !counts[1].enemy);
 
@@ -164,7 +164,7 @@ const Tutorial = () => {
 
       animate() {
 
-        return (game.objects.helicopters[0].data.parachutes >= game.objects.helicopters[0].data.maxParachutes);
+        return (game.objects.helicopter[0].data.parachutes >= game.objects.helicopter[0].data.maxParachutes);
 
       },
 
@@ -184,10 +184,10 @@ const Tutorial = () => {
 
         let targetBunker, i, j;
 
-        for (i = 0, j = game.objects.bunkers.length; i < j; i++) {
+        for (i = 0, j = game.objects.bunker.length; i < j; i++) {
 
-          if (!game.objects.bunkers[i].data.dead) {
-            targetBunker = game.objects.bunkers[i];
+          if (!game.objects.bunker[i].data.dead) {
+            targetBunker = game.objects.bunker[i];
             break;
           }
 
@@ -202,12 +202,12 @@ const Tutorial = () => {
           targetBunker.repair();
 
           // keep track of original bunker states
-          temp = countSides('bunkers');
+          temp = countSides(TYPES.bunker);
 
         } else {
 
           // edge case: bunker has already been blown up, etc. bail.
-          temp = countSides('bunkers');
+          temp = countSides(TYPES.bunker);
 
           // next animate() call will pick this up and move to next step.
           temp.enemy++;
@@ -218,7 +218,7 @@ const Tutorial = () => {
 
       animate() {
 
-        let bunkers = countSides('bunkers');
+        let bunkers = countSides(TYPES.bunker);
 
         // a bunker was blown up, or claimed.
         return (bunkers.enemy < temp.enemy);
@@ -239,7 +239,7 @@ const Tutorial = () => {
 
       activate() {
 
-        let targetSuperBunker = game.objects.superBunkers[0];
+        let targetSuperBunker = game.objects.superBunker[0];
 
         if (targetSuperBunker) {
 
@@ -250,12 +250,12 @@ const Tutorial = () => {
           targetSuperBunker.data.energy = 2;
 
           // keep track of original bunker states
-          temp = countSides('superBunkers');
+          temp = countSides(TYPES.superBunker);
 
         } else {
 
           // edge case: bunker has already been blown up, etc. bail.
-          temp = countSides('superBunkers');
+          temp = countSides(TYPES.superBunker);
 
           // next animate() call will pick this up and move to next step.
           temp.enemy++;
@@ -266,7 +266,7 @@ const Tutorial = () => {
 
       animate() {
 
-        let superBunkers = countSides('superBunkers');
+        let superBunkers = countSides(TYPES.superBunker);
 
         // a Super Bunker was claimed.
         return (superBunkers.enemy < temp.enemy);
@@ -294,9 +294,9 @@ const Tutorial = () => {
 
         counts = {
 
-          missileLaunchers: countFriendly('missileLaunchers'),
-          tanks: countFriendly('tanks'),
-          vans: countFriendly('vans')
+          missileLaunchers: countFriendly(TYPES.missileLauncher),
+          tanks: countFriendly(TYPES.tank),
+          vans: countFriendly(TYPES.van)
 
         };
 
@@ -330,11 +330,11 @@ const Tutorial = () => {
 
         // make sure enemy helicopter is present
 
-        if (game.objects.helicopters.length < 2) {
+        if (game.objects.helicopter.length < 2) {
 
           // two screenfuls away, OR end of battlefield - whichever is less
           game.addObject(TYPES.helicopter, {
-            x: Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
+            x: Math.min(game.objects.helicopter[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
             y: 72,
             isEnemy: true,
             // give the player a serious advantage, here.
@@ -348,7 +348,7 @@ const Tutorial = () => {
 
       animate() {
 
-        return game.objects.helicopters[1].data.dead;
+        return game.objects.helicopter[1].data.dead;
 
       },
 
@@ -369,17 +369,17 @@ const Tutorial = () => {
         let missileX;
 
         // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
-        game.objects.superBunkers[0].data.energy = 0;
+        game.objects.superBunker[0].data.energy = 0;
 
-        missileX = Math.min(game.objects.helicopters[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
+        missileX = Math.min(game.objects.helicopter[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
 
         // make ze missile launcher
-        game.addObject(TYPES.missileLauncherCamel, {
+        game.addObject(TYPES.missileLauncher, {
           x: missileX,
           isEnemy: true
         });
 
-        game.addObject(TYPES.missileLauncherCamel, {
+        game.addObject(TYPES.missileLauncher, {
           x: missileX + 64,
           isEnemy: true
         });
@@ -388,7 +388,7 @@ const Tutorial = () => {
 
       animate() {
 
-        return (countSides('missileLaunchers').enemy === 0 && countSides('smartMissiles').enemy === 0);
+        return (countSides(TYPES.missileLauncher).enemy === 0 && countSides(TYPES.smartMissile).enemy === 0);
 
       },
 
@@ -406,10 +406,12 @@ const Tutorial = () => {
 
       animate() {
 
+          const t = game.objects[TYPES.turret][0].data;
+
         return (
-          !game.objects.turrets[0].data.isEnemy
-          && !game.objects.turrets[0].data.dead
-          && game.objects.turrets[0].data.energy === game.objects.turrets[0].data.energyMax
+          !t.isEnemy
+          && !t.dead
+          && t.energy === t.energyMax
         );
 
       },
@@ -430,7 +432,7 @@ const Tutorial = () => {
 
         let turrets, engineer, complete;
 
-        turrets = game.objects.turrets;
+        turrets = game.objects[TYPES.turret];
         engineer = null;
         complete = true;
 
@@ -442,7 +444,9 @@ const Tutorial = () => {
 
       animate() {
 
-        return (!game.objects.turrets[1].data.isEnemy || game.objects.turrets[1].data.dead || !game.objects.turrets[2].data.isEnemy || game.objects.turrets[2].data.dead);
+        const turrets = game.objects[TYPES.turret];
+
+        return (!turrets[1].data.isEnemy || turrets[1].data.dead || !turrets[2].data.isEnemy || turrets[2].data.dead);
 
       },
 
@@ -460,7 +464,7 @@ const Tutorial = () => {
 
       animate() {
 
-        return (game.objects.endBunkers[0].data.funds >= 50);
+        return (game.objects[TYPES.endBunker][0].data.funds >= 50);
 
       },
 

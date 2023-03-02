@@ -3,7 +3,7 @@ import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { rad2Deg, plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/global.js';
+import { rad2Deg, plusMinus, rnd, rndInt, worldHeight, TYPES, getTypes } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
@@ -337,9 +337,17 @@ const Bomb = (options = {}) => {
     o: null
   };
 
+  exports = {
+    animate,
+    data,
+    die,
+    dom,
+    init: initBomb
+  };
+
   collision = {
     options: {
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       hit(target) {
         // special case: bomb being hit, eventually shot down by gunfire
@@ -354,18 +362,8 @@ const Bomb = (options = {}) => {
         bombHitTarget(target);
       }
     },
-    items: ['superBunkers', 'bunkers', 'tanks', 'helicopters', 'balloons', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'turrets', 'smartMissiles'].concat(gameType === 'extreme' ? ['gunfire'] : [])
+    items: getTypes('superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile', { exports }).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
   };
-
-  exports = {
-    animate,
-    data,
-    die,
-    dom,
-    initDOM
-  };
-
-  initBomb();
 
   return exports;
 

@@ -100,10 +100,8 @@ const Cloud = (options = {}) => {
     animate,
     data,
     dom,
-    initDOM
+    init: initCloud
   };
-
-  initCloud();
 
   return exports;
 

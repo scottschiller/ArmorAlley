@@ -82,7 +82,7 @@ const View = () => {
       data.topBar.height = dom.topBar.offsetHeight;
     }
 
-    // common.isOnScreen() references this a lot.
+    // sprites.isOnScreen() references this a lot.
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
     if (dom.stars) {
@@ -91,8 +91,8 @@ const View = () => {
     }
 
     // helicopters need to know stuff, too.
-    game.objects.helicopters[0]?.refreshCoords();
-    game.objects.helicopters[1]?.refreshCoords();
+    game.objects.helicopter[0]?.refreshCoords();
+    game.objects.helicopter[1]?.refreshCoords();
 
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
     if (game.objects.radar) game.objects.radar.setStale(true);
@@ -218,8 +218,10 @@ const View = () => {
 
     let scrollAmount, mouseDelta;
 
+    if (!game.objects.helicopter[0]) return;
+
     // don't scroll if helicopter is respawning, or not moving.
-    if (!game.objects.helicopters[0].data.respawning && game.objects.helicopters[0].data.vX !== 0) {
+    if (!game.objects.helicopter[0].data.respawning && game.objects.helicopter[0].data.vX !== 0) {
 
       // is the mouse to the right, or left?
       mouseDelta = (data.mouse.x - data.browser.halfWidth);
@@ -239,7 +241,7 @@ const View = () => {
   function updateFundsUI() {
 
     // based on funds, update "affordability" bits of UI.
-    const playerFunds = game.objects.endBunkers[0].data.funds;
+    const playerFunds = game.objects[TYPES.endBunker][0].data.funds;
 
     const nodes = [
       document.getElementById('player-status-bar')
@@ -560,13 +562,14 @@ const View = () => {
 
   function initDOM() {
 
-    dom.worldWrapper = common.getWithStyle('world-wrapper');
-    dom.battleField = common.getWithStyle('battlefield');
-    dom.stars = common.getWithStyle('stars');
-    dom.topBar = common.getWithStyle('top-bar');
-    dom.gameTips = common.getWithStyle('game-tips');
-    dom.gameTipsList = common.getWithStyle('game-tips-list');
-    dom.gameAnnouncements = common.getWithStyle('game-announcements');
+    dom.worldWrapper = sprites.getWithStyle('world-wrapper');
+    dom.battleField = sprites.getWithStyle('battlefield');
+    dom.logo = document.getElementById('logo');
+    dom.stars = sprites.getWithStyle('stars');
+    dom.topBar = sprites.getWithStyle('top-bar');
+    dom.gameTips = sprites.getWithStyle('game-tips');
+    dom.gameTipsList = sprites.getWithStyle('game-tips-list');
+    dom.gameAnnouncements = sprites.getWithStyle('game-announcements');
 
   }
 

@@ -219,10 +219,8 @@ const Chain = (options = {}) => {
     data,
     dom,
     die,
-    applyHeight
+    init: initChain,
   };
-
-  initChain();
 
   return exports;
 

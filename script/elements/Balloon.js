@@ -356,22 +356,16 @@ const Balloon = (options = {}) => {
     o: null
   };
 
-  objects = {
-    bunker: options.bunker || null
-  };
-
   exports = {
     animate,
     data,
     detach,
     die,
     dom,
-    initDOM,
+    init: initBalloon,
     reset,
     setEnemy
   };
-
-  initBalloon();
 
   return exports;
 

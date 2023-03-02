@@ -6,7 +6,7 @@ import { gameType } from '../aa.js';
 import { utils } from './utils.js';
 import { common } from './common.js';
 import { game } from './Game.js';
-import { COSTS, TYPES, worldWidth } from './global.js';
+import { COSTS, getTypes, TYPES, worldWidth } from './global.js';
 import { sprites } from './sprites.js';
 
 function collisionCheck(rect1, rect2, rect1XLookAhead) {

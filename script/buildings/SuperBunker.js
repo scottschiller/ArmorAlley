@@ -1,10 +1,9 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { TYPES, FPS } from '../core/global.js';
+import { TYPES, FPS, getTypes } from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
-import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 
@@ -73,8 +72,6 @@ const SuperBunker = (options = {}) => {
     // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
     if (data.energy) return;
 
-    if (!attacker || attacker.data.type !== TYPES.gunfire || !attacker.data?.parentType !== TYPES.tank) return;
-
     // we have a tank, after all
     if (attacker.data.isEnemy) {
       game.objects.notifications.addNoRepeat('An enemy tank disarmed a super bunker 🚩');
@@ -135,7 +132,7 @@ const SuperBunker = (options = {}) => {
       vY: 0
     };
 
-    game.objects.gunfire.push(GunFire(fireOptions));
+    game.addObject(TYPES.gunfire, fireOptions);
 
     // other side
     fireOptions.x = (data.x - 1);
@@ -143,7 +140,7 @@ const SuperBunker = (options = {}) => {
     // and reverse direction
     fireOptions.vX *= -1;
 
-    game.objects.gunfire.push(GunFire(fireOptions));
+    game.addObject(TYPES.gunfire, fireOptions);
 
     if (sounds.genericGunFire) {
       playSound(sounds.genericGunFire, exports);
@@ -167,9 +164,16 @@ const SuperBunker = (options = {}) => {
 
   }
 
+  function refreshNearbyItems() {
+
+    // set on init, updated with `zones.changeOwnership()` as targets change sides
+    nearby.items = getTypes('infantry, engineer, missileLauncher, helicopter', { group: 'enemy', exports })
+
+  }
+
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
@@ -179,6 +183,8 @@ const SuperBunker = (options = {}) => {
   }
 
   function initSuperBunker() {
+
+    refreshNearbyItems();
 
     initDOM();
 
@@ -241,15 +247,16 @@ const SuperBunker = (options = {}) => {
     die,
     dom,
     hit,
-    initDOM,
-    updateHealth
+    init: initSuperBunker,
+    updateHealth,
+    refreshNearbyItems
   };
 
   nearby = {
 
     options: {
 
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       useLookAhead: true,
 
@@ -360,12 +367,10 @@ const SuperBunker = (options = {}) => {
     },
 
     // who gets fired at?
-    items: [TYPES.infantry, 'engineers', 'missileLaunchers', 'vans', 'helicopters'],
+    items: null,
     targets: []
 
   };
-
-  initSuperBunker();
 
   return exports;
 

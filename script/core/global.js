@@ -2,57 +2,6 @@
 
 const DEFAULT_FUNDS = window.location.toString().match(/FUNDS/i) ? 999 : 32;
 
-const TYPES = {
-  bomb: 'bomb',
-  balloon: 'balloon',
-  cloud: 'cloud',
-  helicopter: 'helicopter',
-  tank: 'tank',
-  gunfire: 'gunfire',
-  turret: 'turret',
-  infantry: 'infantry',
-  parachuteInfantry: 'parachute-infantry',
-  'parachute-infantry': 'parachuteInfrantry',
-  parachuteInfantryCamel: 'parachuteInfantry',
-  engineer: 'engineer',
-  bunker: 'bunker',
-  endBunker: 'end-bunker',
-  endBunkerCamel: 'endBunker',
-  superBunker: 'super-bunker',
-  superBunkerCamel: 'superBunker',
-  missileLauncher: 'missile-launcher',
-  'missile-launcher': 'missileLauncher',
-  missileLauncherCamel: 'missileLauncher',
-  smartMissile: 'smart-missile',
-  shrapnel: 'shrapnel',
-  van: 'van'
-};
-
-const COSTS = {
-  missileLauncher: {
-    funds: 3,
-    css: 'can-not-order-missile-launcher'
-  },
-  tank: {
-    funds: 4,
-    css: 'can-not-order-tank'
-  },
-  van: {
-    funds: 2,
-    css: 'can-not-order-van',
-  },
-  infantry: {
-    funds: 5,
-    count: 5,
-    css: 'can-not-order-infantry',
-  },
-  engineer: {
-    funds: 5,
-    count: 2,
-    css: 'can-not-order-engineer'
-  }
-};
-
 const winloc = window.location.href.toString();
 
 const ua = navigator.userAgent;
@@ -123,9 +72,163 @@ function rndInt(number) {
   return parseInt(rnd(number), 10);
 }
 
-function plusMinus() {
-  return Math.random() >= 0.5 ? 1 : -1;
+function plusMinus(number = 1) {
+  return Math.random() >= 0.5 ? number : -number;
 }
+
+function oneOf(array) {
+  if (!array?.length) return;
+  return array[rndInt(array.length)];
+}
+
+/**
+ * Type table, supporting both camelCase and dash-type lookups
+ * e.g., { parachuteInfantry : 'parachute-infantry' }
+ * and { 'parachute-infantry': 'parachute-infantry' }
+ * Dash-case is used mostly for DOM / CSS, camelCase for JS
+ */
+const TYPES = (() => {
+
+  // assign 1:1 key / value strings in a DRY fashion
+  const types = 'base, bomb, balloon, bunker, chain, cloud, cornholio, engineer, gunfire, helicopter, infantry, end-bunker, landing-pad, missile-launcher, parachute-infantry, smart-missile, smoke, shrapnel, super-bunker, tank, turret, terrain-item, van';
+  const result = {};
+
+  types.split(', ').forEach((type) => {
+
+    // { bunker: 'bunker' }
+    result[type] = type;
+
+    // dash-case to camelCase
+    if (type.indexOf('-') !== -1) {
+
+      // missile-launcher -> ['missile', 'launcher']
+      const a = type.split('-');
+
+      // launcher -> Launcher
+      a[1] = a[1].charAt(0).toUpperCase() + a[1].slice(1);
+
+      // { missileLauncher: 'missile-launcher' }
+      result[a.join('')] = type;
+
+    }
+
+  });
+
+  return result;
+
+})();
+
+function getTypes(typeString, options = { group: 'enemy', exports: null }) {
+
+  /**
+   * Used for collision and nearby checks, e.g., ground units that tanks look out for
+   * typeString: String to array, e.g., 'tank, van, infantry' mapped to TYPES
+   * options object: group = all, friendly, or enemy - reducing # of objects to check.
+   */
+
+  if (!typeString?.split) return [];
+
+  let { exports, group } = options;
+
+  // if exports but no group, assume enemy.
+  if (!group) {
+    group = 'enemy';
+  }
+
+  // if NOT looking for all, determine the appropriate group.
+  if (group !== 'all') {
+    group = determineGroup(group, exports);
+  }
+
+  // normalize delimiters, get array.
+  return parseTypeString(typeString).map((item) => {
+
+    // "tank:friendly", per-type override
+    if (item.indexOf(':') !== -1) {
+      const typeAndGroup = item.split(':');
+      return {
+        type: TYPES[typeAndGroup[0]],
+        group: determineGroup(typeAndGroup[1], exports)
+      };
+    }
+
+    // just "tank", use function signature group
+    return { type: TYPES[item], group };
+
+  });
+
+}
+
+function determineGroup(group = 'all', exports) {
+
+  // if the default, no additional work required.
+  if (group === 'all') return group;
+
+  if (!exports) {
+    console.warn(`determineGroup(${group}): missing exports required to determine target`, arguments);
+    return;
+  }
+
+  if (exports.data.isEnemy || exports.data.hostile) {
+    // "bad guy" - whatever they're looking for, maps to the opposite array in-game.
+    // e.g., enemy tank seeking an enemy = lookups in "friendly" game object array.
+    group = enemyGroupMap[group];
+  }
+
+  return group;
+
+}
+
+function parseTypeString(typeString) {
+
+  // helper method
+  if (!typeString?.replace) return [];
+
+  // 'tank, van, infantry' -> ['tank', 'van', 'infantry']
+  return typeString.replace(/[\s|,]+/g, ' ').split(' ');
+
+}
+
+// normalize delimiters -> array; no "group" handling, here.
+const parseTypes = (typeString) => parseTypeString(typeString).map((item) => TYPES[item]);
+
+const enemyGroupMap = {
+  /**
+   * The game stores enemy objects in enemy arrays, and friendly -> friendly.
+   * Ergo, when enemies are looking for friendly, they get the enemy array
+   * and vice-versa. This is due to legacy names, and could be improved.
+   */
+  friendly: 'enemy',
+  enemy: 'friendly'
+};
+
+const COSTS = {
+  [TYPES.missileLauncher]: {
+    funds: 3,
+    count: 1,
+    css: 'can-not-order-missile-launcher'
+  },
+  [TYPES.tank]: {
+    funds: 4,
+    count: 1,
+    css: 'can-not-order-tank'
+  },
+  [TYPES.van]: {
+    funds: 2,
+    count: 1,
+    css: 'can-not-order-van',
+  },
+  [TYPES.infantry]: {
+    funds: 5,
+    count: 5,
+    css: 'can-not-order-infantry',
+  },
+  [TYPES.engineer]: {
+    funds: 5,
+    count: 2,
+    css: 'can-not-order-engineer'
+  }
+};
 
 export {
   DEFAULT_FUNDS,
@@ -136,6 +239,8 @@ export {
   FPS,
   FRAMERATE,
   unlimitedFrameRate,
+  getTypes,
+  parseTypes,
   isWebkit,
   isChrome,
   isFirefox,

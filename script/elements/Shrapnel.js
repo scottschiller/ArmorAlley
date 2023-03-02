@@ -2,7 +2,7 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
+import { getTypes, plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
@@ -99,7 +99,14 @@ const Shrapnel = (options = {}) => {
     targetType = target.data.type;
 
     if (targetType === TYPES.helicopter) {
+
       playSound(sounds.boloTank, exports);
+
+      // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
+      if (data.isEnemy && target === game.objects[TYPES.helicopter][0] && target.data.isOnScreen) {
+        target.reactToDamage(exports);
+      }
+
     } else if (targetType === TYPES.tank || targetType === TYPES.superBunker) {
       // shrapnel -> [tank | superbunker]: no damage.
       damageTarget = false;
@@ -297,7 +304,8 @@ const Shrapnel = (options = {}) => {
     animate,
     data,
     dom,
-    die
+    die,
+    init: initShrapnel
   };
 
   collision = {
@@ -308,10 +316,8 @@ const Shrapnel = (options = {}) => {
         hitAndDie(target);
       }
     },
-    items: ['superBunkers', 'bunkers', 'helicopters', 'balloons', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'smartMissiles', 'turrets']
+    items: getTypes('superBunker, bunker, helicopter, balloon, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, smartMissile, turret', { group: 'all' })
   };
-
-  initShrapnel();
 
   return exports;
 

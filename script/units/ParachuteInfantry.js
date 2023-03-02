@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { rnd, rndInt, worldHeight, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
-import { Infantry } from './Infantry.js';
+import { rnd, rndInt, worldHeight, tutorialMode, TYPES } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
@@ -272,10 +272,8 @@ const ParachuteInfantry = (options = {}) => {
     dom,
     die,
     hit,
-    initDOM
+    init: initParachuteInfantry
   };
-
-  initParachuteInfantry();
 
   return exports;
 

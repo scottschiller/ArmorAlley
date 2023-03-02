@@ -1,6 +1,6 @@
 import { game } from './Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug } from '../core/global.js';
+import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -27,15 +27,6 @@ const GameLoop = () => {
 
     // view will have jumped to player or enemy base.
     // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.
-
-    if (data.gameStopped) {
-      // end game, all units updated, subsequent frames: only animate shrapnel and smoke.
-      gameObjects = {
-        shrapnel: game.objects.shrapnel,
-        smoke: game.objects.smoke,
-        queue: game.objects.queue
-      }
-    }
 
     for (item in gameObjects) {
 
@@ -84,6 +75,14 @@ const GameLoop = () => {
     if (isGameOver() && !data.gameStopped) {
       if (data.battleOverFrameCount++ > 1) {
         data.gameStopped = true;
+        // end game, all units updated, subsequent frames: only animate shrapnel and smoke.
+        gameObjects = {
+          gunfire: game.objects.gunfire,
+          shrapnel: game.objects.shrapnel,
+          smoke: game.objects.smoke,
+          domFetti: game.objects.domFetti,
+          queue: game.objects.queue
+        }
       }
     }
 

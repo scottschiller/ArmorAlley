@@ -1,6 +1,7 @@
-import { prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, rnd, rndInt, TYPES, tutorialMode, winloc, worldWidth, worldHeight } from './global.js';
+import { keyboardMonitor, prefsManager } from '../aa.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rnd, rndInt, TYPES, tutorialMode, setTutorialMode, winloc, worldWidth, worldHeight, parseTypes } from './global.js';
 import { utils } from './utils.js';
+import { zones } from './zones.js';
 import { common } from './common.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
 import { orientationChange } from '../UI/mobile.js';
@@ -18,6 +19,7 @@ import { Funds } from '../UI/Funds.js';
 import { Tank } from '../units/Tank.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Bunker } from '../buildings/Bunker.js';
+import { Chain } from '../elements/Chain.js';
 import { MissileLauncher } from '../units/MissileLauncher.js';
 import { EndBunker } from '../buildings/EndBunker.js';
 import { SuperBunker } from '../buildings/SuperBunker.js';
@@ -29,6 +31,11 @@ import { Infantry } from '../units/Infantry.js';
 import { Engineer } from '../units/Engineer.js';
 import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
+import { Bomb } from '../munitions/Bomb.js';
+import { GunFire } from '../munitions/GunFire.js';
+import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
+import { SmartMissile } from '../munitions/SmartMissile.js';
+import { Shrapnel } from '../elements/Shrapnel.js';
 import { sprites } from './sprites.js';
 
 // very commonly-accessed attributes to be exported
@@ -37,7 +44,7 @@ let screenScale = 1;
 
 const game = (() => {
 
-  let data, dom, layoutCache = {}, objects, objectConstructors, exports;
+  let data, dom, layoutCache = {}, objects, objectsById, objectConstructors, exports;
 
   function addItem(className, x, extraTransforms) {
 
@@ -80,6 +87,7 @@ const game = (() => {
     
     data = {
       type: className,
+      isTerrainItem: true,
       x,
       y: 0,
       // dirty: force layout, read from CSS, and cache below
@@ -107,11 +115,12 @@ const game = (() => {
     exports = {
       data,
       dom: _dom,
-      initDOM
     };
 
     // these will be tracked only for on-screen / off-screen purposes.
-    game.objects.terrainItems.push(exports);
+    game.objects[TYPES.terrainItem].push(exports);
+
+    return exports;
 
   }
 
@@ -121,8 +130,16 @@ const game = (() => {
 
     let object, objectArray;
 
-    // TYPES.van -> game.objects['vans'], etc.
-    objectArray = game.objects[type + (type === TYPES.infantry ? '' : 's')];
+    const upper = /[A-Z]/g;
+
+    if (upper.test(type)) {
+      console.warn(`addObject(): legacy CamelCase type ${type} -> ${type.replace(upper, "-$&").toLowerCase()}`);
+      // RIP this syntax. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
+      type = type.replace(upper, "-$&").toLowerCase();
+    }
+    
+    // TYPES.van -> game.objects['van'], etc.
+    objectArray = objects[type];
 
     // create and push an instance object onto its relevant array by type (e.g., TYPES.van -> game.objects['vans'])
     if (objectConstructors[type]) {
@@ -131,7 +148,28 @@ const game = (() => {
       console.warn(`No constructor of type ${type}`);
     }
 
-    objectArray.push(object);
+    // add the object to game arrays, before firing init method (DOM I/O etc.)
+    // hackish: `noInit` applies for inventory ordering purposes, should be refactored.
+
+    if (!options.noInit) {
+
+      objectArray.push(object);
+  
+      if (!objectsById[object.data.id]) {
+        objectsById[object.data.id] = object;
+      } else {
+        // this shouldn't happen.
+        console.warn('objectsById: already assigned?', object.data.id);
+      }
+
+      object?.init?.();
+
+      // and caculate the zone, which will further map things.
+      zones.refreshZone(object);
+
+    }
+
+    return object;
 
   }
 
@@ -194,27 +232,27 @@ const game = (() => {
 
     // player's landing pad
 
-    addObject('landingPad', {
+    addObject(TYPES.landingPad, {
       name: 'THE LANDING PAD',
       x: 300
     });
 
     addItem('right-arrow-sign', -48);
 
-    addObject('base', {
+    addObject(TYPES.base, {
       x: 160
     });
 
-    addObject('base', {
+    addObject(TYPES.base, {
       x: 8000,
       isEnemy: true
     });
 
     // local, and enemy base end bunkers
 
-    addObject('endBunker');
+    addObject(TYPES.endBunker);
 
-    addObject('endBunker', {
+    addObject(TYPES.endBunker, {
       isEnemy: true
     });
 
@@ -224,12 +262,12 @@ const game = (() => {
 
       // mid and end-level landing pad. create up-front, since vans rely on it for xGameOver.
 
-      addObject('landingPad', {
+      addObject(TYPES.landingPad, {
         name: 'THE MIDWAY',
         x: 3944
       });
 
-      addObject('landingPad', {
+      addObject(TYPES.landingPad, {
         name: 'THE DANGER ZONE',
         x: 7800
       });
@@ -335,7 +373,7 @@ const game = (() => {
 
       x += 110;
 
-      addObject(TYPES.superBunkerCamel, {
+      addObject(TYPES.superBunker, {
         x,
         isEnemy: true,
         energy: 5
@@ -560,7 +598,7 @@ const game = (() => {
 
       x += 60;
 
-      addObject(TYPES.superBunkerCamel, {
+      addObject(TYPES.superBunker, {
         x,
         isEnemy: true,
         energy: 5
@@ -636,12 +674,12 @@ const game = (() => {
 
       // mid and end-level landing pads (affects van objects' xGameOver property, so create this ahead of vans.)
 
-      addObject('landingPad', {
+      addObject(TYPES.landingPad, {
         name: 'THE MIDWAY',
         x: 4096 - 290
       });
 
-      addObject('landingPad', {
+      addObject(TYPES.landingPad, {
         name: 'THE DANGER ZONE',
         isKennyLoggins: true,
         x: 7800
@@ -771,7 +809,7 @@ const game = (() => {
 
       // more mid-level stuff
 
-      addObject(TYPES.superBunkerCamel, {
+      addObject(TYPES.superBunker, {
         x: 4096 - 640 - 128,
         isEnemy: true,
         energy: 5
@@ -867,23 +905,23 @@ const game = (() => {
 
     // happy little clouds!
 
-    addObject('cloud', {
+    addObject(TYPES.cloud, {
       x: 512
     });
 
-    addObject('cloud', {
+    addObject(TYPES.cloud, {
       x: 4096 - 256
     });
 
-    addObject('cloud', {
+    addObject(TYPES.cloud, {
       x: 4096 + 256
     });
 
-    addObject('cloud', {
+    addObject(TYPES.cloud, {
       x: 4096 + 512
     });
 
-    addObject('cloud', {
+    addObject(TYPES.cloud, {
       x: 4096 + 768
     });
 
@@ -1028,7 +1066,7 @@ const game = (() => {
     (() => {
 
       // basic enemy ordering pattern
-      const enemyOrders = [TYPES.missileLauncherCamel, TYPES.tank, TYPES.van, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.infantry, TYPES.engineer, TYPES.engineer];
+      const enemyOrders = parseTypes('missileLauncher, tank, van, infantry, infantry, infantry, infantry, infantry, engineer, engineer');
       const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
       let i = 0;
 
@@ -1057,7 +1095,7 @@ const game = (() => {
           };
 
           if (!data.productionHalted) {
-            game.objects.inventory.createObject(game.objects.inventory.data.types[enemyOrders[i]], options);
+            addObject(enemyOrders[i], options);
           }
 
           common.setFrameTimeout(orderNextItem, enemyDelays[i] * 1000);
@@ -1330,28 +1368,33 @@ const game = (() => {
   objects = {
     gameLoop: null,
     view: null,
-    chains: [],
-    balloons: [],
-    bunkers: [],
-    endBunkers: [],
-    engineers: [],
-    flyingAces: [],
+    chain: [],
+    balloon: [],
+    bomb: [],
+    bunker: [],
+    cornholio: [],
+    domFetti: [],
+    ephemeralExplosion: [],
+    'end-bunker': [],
+    endBunker: [],
+    engineer: [],
+    flyingAce: [],
     gunfire: [],
     infantry: [],
-    parachuteInfantry: [],
-    missileLaunchers: [],
-    superBunkers: [],
-    tanks: [],
-    vans: [],
-    helicopters: [],
-    smartMissiles: [],
-    bases: [],
-    clouds: [],
-    landingPads: [],
-    turrets: [],
+    'parachute-infantry': [],
+    'missile-launcher': [],
+    'super-bunker': [],
+    tank: [],
+    van: [],
+    helicopter: [],
+    'smart-missile': [],
+    base: [],
+    cloud: [],
+    'landing-pad': [],
+    turret: [],
     shrapnel: [],
     smoke: [],
-    terrainItems: [],
+    'terrain-item': [],
     radar: null,
     inventory: null,
     tutorial: null,
@@ -1361,31 +1404,42 @@ const game = (() => {
     stats: null
   };
 
+  objectsById = {};
+
   objectConstructors = {
     balloon: Balloon,
     base: Base,
+    bomb: Bomb,
     bunker: Bunker,
+    chain: Chain,
     cloud: Cloud,
-    endBunker: EndBunker,
+    cornholio: Cornholio,
+    'end-bunker': EndBunker,
     engineer: Engineer,
     // flyingAce: FlyingAce,
+    gunfire: GunFire,
     helicopter: Helicopter,
     infantry: Infantry,
-    landingPad: LandingPad,
-    missileLauncher: MissileLauncher,
-    superBunker: SuperBunker,
+    'landing-pad': LandingPad,
+    'missile-launcher': MissileLauncher,
+    'parachute-infantry': ParachuteInfantry,
+    shrapnel: Shrapnel,
+    'smart-missile': SmartMissile,
+    'super-bunker': SuperBunker,
     turret: Turret,
     tank: Tank,
     van: Van
   };
 
   exports = {
+    addItem,
     addObject,
     data,
     dom,
     init,
     initArmorAlley,
     objects,
+    objectsById,
     pause,
     resume,
     togglePause

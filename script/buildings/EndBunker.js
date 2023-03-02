@@ -1,5 +1,5 @@
 import { game } from '../core/Game.js';
-import { DEFAULT_FUNDS, TYPES, tutorialMode, debug, worldWidth, FPS } from '../core/global.js';
+import { DEFAULT_FUNDS, TYPES, tutorialMode, debug, worldWidth, FPS, getTypes } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -47,7 +47,7 @@ const EndBunker = (options = {}) => {
       vY: 0
     };
 
-    game.objects.gunfire.push(GunFire(fireOptions));
+    game.addObject(TYPES.gunfire, fireOptions);
 
     // other side
     fireOptions.x = (data.x - 1);
@@ -55,7 +55,7 @@ const EndBunker = (options = {}) => {
     // and reverse direction
     fireOptions.vX = -2;
 
-    game.objects.gunfire.push(GunFire(fireOptions));
+    game.addObject(TYPES.gunfire, fireOptions);
 
     if (sounds.genericGunFire) {
       playSound(sounds.genericGunFire, exports);
@@ -97,11 +97,11 @@ const EndBunker = (options = {}) => {
     // who gets the loot?
     if (data.isEnemy) {
       // local player
-      game.objects.endBunkers[0].data.funds += capturedFunds;
+      game.objects[TYPES.endBunker][0].data.funds += capturedFunds;
       game.objects.view.updateFundsUI();
     } else {
       // CPU
-      game.objects.endBunkers[1].data.funds += capturedFunds;
+      game.objects[TYPES.endBunker][1].data.funds += capturedFunds;
     }
 
     data.funds -= capturedFunds;
@@ -113,7 +113,7 @@ const EndBunker = (options = {}) => {
 
     // force update of the local helicopter
     // TODO: yeah, this is a bit hackish.
-    game.objects.helicopters[0].updateStatusUI({ funds: true});
+    game.objects.helicopter[0].updateStatusUI({ funds: true});
 
   }
 
@@ -133,7 +133,7 @@ const EndBunker = (options = {}) => {
     if (data.frameCount % data.fundsModulus !== 0) return;
 
     if (!objects.helicopter) {
-      objects.helicopter = game.objects.helicopters[(data.isEnemy ? 1 : 0)];
+      objects.helicopter = game.objects.helicopter[(data.isEnemy ? 1 : 0)];
     }
 
     // edge case: tutorial mode, and no enemy chopper present yet
@@ -288,11 +288,9 @@ const EndBunker = (options = {}) => {
       }
     },
     // who gets fired at?
-    items: [TYPES.infantry, 'engineers', 'helicopters'],
+    items: getTypes('infantry, engineers, helicopters', { exports }),
     targets: []
   };
-
-  initEndBunker();
 
   return exports;
 

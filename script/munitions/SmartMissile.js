@@ -3,8 +3,8 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest, getNearestObject } from '../core/logic.js';
-import { rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
+import { getTypes, rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -320,7 +320,7 @@ const SmartMissile = (options = {}) => {
     }
 
     // if targeting the player, ensure the expiry warning sound is stopped.
-    if (objects?.target === game.objects.helicopters[0]) {
+    if (objects?.target === game.objects.helicopter[0]) {
       stopSound(sounds.missileWarningExpiry);
     }
 
@@ -748,29 +748,27 @@ const SmartMissile = (options = {}) => {
     target: options.target
   };
 
-  collision = {
-    options: {
-      source: exports, // initially undefined
-      targets: undefined,
-      hit(target) {
-        sparkAndDie(target);
-      }
-    },
-    items: ['superBunkers', 'helicopters', 'tanks', 'vans', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'bunkers', 'balloons', 'smartMissiles', 'turrets']
-  };
-
   exports = {
     animate,
     data,
     dom,
     die,
-    initDOM,
+    init: initSmartMissile,
     isOnScreenChange,
     maybeTargetDecoy,
     objects
   };
 
-  initSmartMissle();
+  collision = {
+    options: {
+      source: exports,
+      targets: undefined,
+      hit(target) {
+        sparkAndDie(target);
+      }
+    },
+    items: getTypes('superBunker, helicopter, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, bunker, balloon, smartMissile, turret', { exports })
+  };
 
   return exports;
 

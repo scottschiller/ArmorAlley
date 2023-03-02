@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gameType } from '../aa.js';
-import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth } from '../core/global.js';
+import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth, TYPES } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
@@ -21,7 +21,7 @@ const Base = (options = {}) => {
 
     if (!targetHelicopter) return;
 
-    game.objects.smartMissiles.push(SmartMissile({
+    game.addObject(TYPES.smartMissile, {
       parentType: data.type,
       isEnemy: data.isEnemy,
       isBanana: gamePrefs.enemy_missile_match_type && data.missileMode === bananaMode,
@@ -51,7 +51,7 @@ const Base = (options = {}) => {
 
         common.setFrameTimeout(fire, 250 + rnd(250));
       }
-    }));
+    });
 
   }
 
@@ -109,7 +109,7 @@ const Base = (options = {}) => {
 
     function boom() {
 
-      const endBunker = game.objects.endBunkers[data.isEnemy ? 1 : 0];
+      const endBunker = game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0];
 
       // smaller explosions on both end bunker, and base (array offset)
       smallBoom(endBunker);
@@ -182,7 +182,7 @@ const Base = (options = {}) => {
             dom.o.style.visibility = 'hidden';
 
             // end bunker, too.
-            game.objects.endBunkers[data.isEnemy ? 1 : 0].dom.o.style.visibility = 'hidden';
+            game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].dom.o.style.visibility = 'hidden';
 
           }, 25);
 
@@ -291,10 +291,9 @@ const Base = (options = {}) => {
     data,
     dom,
     die,
+    init: initBase,
     isOnScreenChange
   };
-
-  initBase();
 
   return exports;
 
