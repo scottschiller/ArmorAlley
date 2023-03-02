@@ -1,6 +1,7 @@
 // phones, tablets and non-desktop-type devices
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
+import { TYPES } from '../core/global.js';
 
 function getLandscapeLayout() {
 
@@ -57,8 +58,12 @@ function orientationChange() {
   }
 
   // helicopters need to know stuff, too.
-  game.objects?.helicopters[0]?.refreshCoords(true);
-  game.objects?.helicopters[1]?.refreshCoords();
+  const helicopter = game.objects[TYPES.helicopter];
+
+  if (helicopter?.length) {
+    helicopter[0]?.refreshCoords(true);
+    helicopter[1]?.refreshCoords();
+  }
 
 }
 
