@@ -74,9 +74,9 @@ const SuperBunker = (options = {}) => {
 
     // we have a tank, after all
     if (attacker.data.isEnemy) {
-      game.objects.notifications.addNoRepeat('An enemy tank disarmed a super bunker 🚩');
+      game.objects.notifications.addNoRepeat('The enemy disarmed a super bunker 🚩');
     } else {
-      game.objects.notifications.addNoRepeat('A friendly tank disarmed a super bunker ⛳');
+      game.objects.notifications.addNoRepeat('You disarmed a super bunker ⛳');
     }
 
     // disarmed super bunkers are dangerous to both sides.
@@ -97,9 +97,13 @@ const SuperBunker = (options = {}) => {
 
     if (data.dead) return;
 
+    // un-manned, but dangerous to helicopters on both sides.
+    data.hostile = true;
+
     // gunfire from both sides should now hit this element.
 
     data.energy = 0;
+
     updateFireModulus();
 
     // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
@@ -123,6 +127,7 @@ const SuperBunker = (options = {}) => {
     if (!data.firing || !data.energy || data.frameCount % data.fireModulus !== 0) return;
 
     fireOptions = {
+      parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       collisionItems: nearby.items,
@@ -155,7 +160,7 @@ const SuperBunker = (options = {}) => {
     data.frameCount++;
 
     // start, or stop firing?
-    nearbyTest(nearby);
+    nearbyTest(nearby, exports);
 
     fire();
 
@@ -207,7 +212,7 @@ const SuperBunker = (options = {}) => {
     energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
     energyLineScale: 0.95,
     centerEnergyLine: true,
-    isEnemy: (options.isEnemy || false),
+    isEnemy: !!options.isEnemy,
     width: 66,
     halfWidth: 33,
     doorWidth: 6,
@@ -269,15 +274,15 @@ const SuperBunker = (options = {}) => {
           setFiring(true);
         }
 
-        // only infantry (and engineer sub-types) are involved, beyond this point
-        if (target.data.type !== TYPES.infantry) return;
+        // only infantry (excluding engineers by role=1) are involved, beyond this point
+        if (target.data.type !== TYPES.infantry || target.data.role) return;
 
         // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
         if (data.energy < data.energyMax || !isFriendly) {
 
           // infantry at door? contribute to capture, or arm base, depending.
 
-          if (collisionCheckMidPoint(exports, target)) {
+          if (collisionCheckMidPoint(target, exports)) {
 
             // claim infantry, change "alignment" depending on friendliness.
 
@@ -318,12 +323,18 @@ const SuperBunker = (options = {}) => {
               }
 
             } else if (!target.data.isEnemy) {
+
               // player-owned...
               if (data.energy) game.objects.notifications.add('You reinforced a super bunker 💪');
+
               data.energy++;
+              setFriendly(true);
+
             } else {
+
               if (data.energy > 1) game.objects.notifications.add('The enemy weakened a super bunker ⚔️');
               data.energy--;
+
             }
 
             // limit to +/- range.
@@ -350,7 +361,7 @@ const SuperBunker = (options = {}) => {
             // "claim" the infantry, kill if enemy and man the bunker if friendly.
             target.die({ silent: true });
 
-            playSound(sounds.doorClose, target.data.exports);
+            playSound(sounds.doorClose, exports);
 
             sprites.updateEnergy(exports);
 
