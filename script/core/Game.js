@@ -38,9 +38,14 @@ import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
 import { sprites } from './sprites.js';
 
+const DEFAULT_GAME_TYPE = 'tutorial';
+
 // very commonly-accessed attributes to be exported
 let gameType;
 let screenScale = 1;
+let started;
+let gameMenuActive;
+
 
 const game = (() => {
 
@@ -175,8 +180,6 @@ const game = (() => {
 
   function createObjects() {
 
-    let i, x;
-
     objects.stats = Stats();
 
     objects.gameLoop = GameLoop();
@@ -192,27 +195,15 @@ const game = (() => {
     // hackish: now, assign the thing being exported from this module to everywhere else via `aa.js`
     screenScale = objects.view.data.screenScale;
 
-    // allow joystick if in debug mode (i.e., testing on desktop)
-    if (isMobile || debug) {
-
-      objects.joystick = Joystick();
-
-      objects.joystick.onSetDirection = (directionX, directionY) => {
-        // percentage to pixels (circle coordinates)
-        objects.view.data.mouse.x = ((directionX / 100) * objects.view.data.browser.width);
-        objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
-      };
-
-    } else {
-
-      document.getElementById('mobile-controls').remove();
-      document.getElementById('pointer').remove();
-
-    }
-
     objects.radar = Radar();
 
     objects.inventory = Inventory();
+
+  }
+
+  function populateTerrain() {
+
+    let i, x;
 
     // tutorial?
 
@@ -229,6 +220,10 @@ const game = (() => {
       document.getElementById('tutorial').remove();
 
     }
+
+    // testing
+
+    zones.initDebug();
 
     // player's landing pad
 
@@ -979,7 +974,10 @@ const game = (() => {
 
   }
 
-  function pause() {
+  function pause(options) {
+
+    const silent = options?.noMute !== true;
+    const keepColor = options?.keepColor || false;
 
     if (data.paused) return;
 
@@ -990,7 +988,9 @@ const game = (() => {
 
     objects.gameLoop.stop();
 
-    if (gamePrefs.sound && window.soundManager) {
+    objects.joystick?.end();
+
+    if (silent && gamePrefs.sound && window.soundManager) {
       window.soundManager.mute();
     }
 
@@ -1002,7 +1002,8 @@ const game = (() => {
       prompts[i].style.display = (i === rnd ? 'inline-block' : 'none');
     }
 
-    let css = ['game-paused'];
+    // "keep color" applies when the game starts and the menu is showing.
+    let css = keepColor ? [] : ['game-paused'];
     
     // don't show paused status / tips in certain cases
 
@@ -1010,7 +1011,7 @@ const game = (() => {
       css.push('prefs-modal-open');
     }
 
-    if (!gameType) {
+    if (!data.started) {
       css.push('game-menu-open');
     }
 
@@ -1042,11 +1043,34 @@ const game = (() => {
   // when the player has chosen a game type - tutorial, easy/hard/extreme.
   function init() {
 
+    document.getElementById('help').style.display = 'block';
+
+    data.started = true;
+
+    keyboardMonitor.init();
+
+    // allow joystick if in debug mode (i.e., testing on desktop)
+    if (isMobile || debug) {
+
+      objects.joystick = Joystick();
+
+      objects.joystick.onSetDirection = (directionX, directionY) => {
+        // percentage to pixels (circle coordinates)
+        objects.view.data.mouse.x = ((directionX / 100) * objects.view.data.browser.width);
+        objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
+      };
+
+    } else {
+
+      document.getElementById('pointer').remove();
+
+    }
+
     data.convoyDelay = gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60);
 
-    createObjects();
+    zones.init();
 
-    objects.gameLoop.init();
+    populateTerrain();
 
     function startEngine() {
 
@@ -1279,9 +1303,8 @@ const game = (() => {
     dom.world = document.getElementById('world');
     dom.battlefield = document.getElementById('battlefield');
 
-    // should we show the menu?
-  
-    gameType = (winloc.match(/easy|hard|extreme|tutorial/i) || utils.storage.get(prefs.gameType));
+    // NOTE: default game type is set here
+    gameType = utils.storage.get(prefs.gameType) || winloc.match(/easy|hard|extreme|tutorial/i) || DEFAULT_GAME_TYPE;
   
     if (gameType instanceof Array) {
       gameType = gameType[0];
@@ -1291,63 +1314,36 @@ const game = (() => {
     if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
       gameType = null;
     }
-  
-    if (!gameType) {
-     
-      menu = document.getElementById('game-menu');
- 
-      if (menu) {
 
-        utils.css.add(dom.world, 'blurred');
-  
-        utils.css.add(menu, 'visible');
-  
-        utils.events.add(menu, 'click', menuClick);
-  
-        utils.events.add(menu, 'mouseover', menuUpdate);
-  
-        utils.events.add(menu, 'mouseout', menuUpdate);
-  
-      }
-  
-    } else {
-  
-      // preference set or game type in URL - start immediately.
-  
-      if (gameType.match(/easy|hard|extreme/i)) {
-        utils.css.add(dom.world, 'regular-mode');
-      }
-  
-      if (gameType) {
+    menu = document.getElementById('game-menu');
+    form = document.getElementById('game-menu-form');
+    optionsButton = document.getElementById('game-options-button');
 
-        // copy emoji to "exit" link
-        const exitEmoji = document.getElementById('exit-emoji');
+    utils.css.add(dom.world, 'blurred');
 
-        let emojiReference = document.getElementById('game-menu').getElementsByClassName(`emoji-${gameType}`);
-        emojiReference = emojiReference && emojiReference[0];
+    utils.css.add(menu, 'visible');
 
-        if (exitEmoji && emojiReference) {
-          exitEmoji.innerHTML = emojiReference.innerHTML;
-        }
+    utils.events.add(form, 'input', formInput);
+    utils.events.add(form, 'submit', formSubmit);
 
-        // and show "exit"
-        const exit = document.getElementById('exit');
+    utils.events.add(optionsButton, 'click', () => prefsManager.show());
+    utils.events.add(menu, 'mouseover', menuUpdate);
+    utils.events.add(menu, 'mouseout', menuUpdate);
 
-        if (exit) {
-          exit.className = 'visible';
-        }
-        
-        // hackish: remove green overlay
-        document.getElementById('world-overlay').style.background = 'transparent';
+    createObjects();
+
+    // game loop can be kicked off right away, for sound playback purposes.
+    objects.gameLoop.init();
+
+
+    // hackish: force the prefs manager to read from LS right now - it hasn't yet.
+    const storedPrefs = prefsManager.readPrefsFromStorage();
+
 
       }
-  
-      data.canHideLogo = true;
-  
-    }
-  
-    game.init();
-  
+
+    });
+    
     prefsManager.init();
   
   }
@@ -1442,6 +1438,7 @@ const game = (() => {
     objectsById,
     pause,
     resume,
+    started,
     togglePause
   };
 

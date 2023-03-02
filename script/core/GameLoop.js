@@ -160,22 +160,14 @@ const GameLoop = () => {
 
   function start() {
 
+    if (data.timer) return;
+
     if (!dom.fpsCount) {
       dom.fpsCount = document.getElementById('fps-count');
     }
 
-    if (data.timer) return;
-
-    if (window.requestAnimationFrame) {
-
-      data.timer = true;
-      animateRAF();
-
-    } else {
-
-      data.timer = window.setInterval(animate, FRAMERATE);
-
-    }
+    data.timer = true;
+    animateRAF();
 
   }
 
