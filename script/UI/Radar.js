@@ -48,17 +48,13 @@ const Radar = () => {
 
   function getLayout(itemObject) {
 
-    let rect, result, type;
-
-    type = itemObject.data.parentType;
+    let type = itemObject.data.parentType;
 
     // cache hit, based on "type"
-    if (layoutCache[type]) {
-      return layoutCache[type];
-    }
+    if (layoutCache[type]) return layoutCache[type];
 
     // data to merge with itemObject
-    result = {
+    let result = {
       layout: {
         width: 0,
         height: 0,
@@ -78,8 +74,8 @@ const Radar = () => {
     // read from DOM ($$$) and cache
     // note: offsetWidth + offsetHeight return integers, and without padding.
 
-    // this is $$$ - do away with it.
-    rect = itemObject.dom.o.getBoundingClientRect();
+    // performance note: this is $$$ - do away with it.
+    let rect = itemObject.dom.o.getBoundingClientRect();
 
     // NOTE screenScale, important for positioning
     result.layout.width = rect.width;
