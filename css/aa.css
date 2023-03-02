@@ -3291,6 +3291,8 @@ body.is-mobile.game-over #mobile-controls {
 }
 
 body.game-paused #world-wrapper {
+body.game-paused #world-wrapper,
+body.game-paused #domfetti-overlay {
   /* side note: applying this to body throws off positioning in Firefox. */
   filter: grayscale(100%);
 }
@@ -3974,4 +3976,19 @@ body.is_safari #game-prefs-modal .label-text {
   background-size: contain;
   background-position: 50% 100%;
   background-repeat: no-repeat;
+}
+
+/* "DOMFetti" - DOM confetti effect */
+
+#domfetti-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* initially hidden, shown only with active explosions */
+  display: none;
+  pointer-events: none;
+  filter: none;
 }
