@@ -7,6 +7,7 @@ import { utils } from './utils.js';
 import { common } from './common.js';
 import { game } from './Game.js';
 import { COSTS, getTypes, TYPES, worldWidth } from './global.js';
+import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 
 function collisionCheck(rect1, rect2, rect1XLookAhead) {
@@ -32,12 +33,12 @@ function collisionCheck(rect1, rect2, rect1XLookAhead) {
 
 }
 
-function collisionCheckArray(options) {
+function collisionCheckObject(options) {
 
   /**
    * options = {
-   *   source: object (eg., game.objects.gunfire[0]);
-   *   targets: array (eg., game.objects.tanks)
+   *   source: object - eg., gunfire[0]
+   *   targets: array - eg., zones.objectsByZone[zoneNumber]['enemy'][tank objects]
    * }
    */
 
@@ -72,41 +73,51 @@ function collisionCheckArray(options) {
 
   }
 
-  for (let i = 0, j = options.targets.length; i < j; i++) {
+  let target, id, sData, tData;
+
+  for (id in options.targets) {
+
+    target = options.targets[id];
+
+    // DRY
+    sData = options.source.data;
+    tData = target?.data;
 
     // non-standard formatting, lengthy logic check here...
     if (
 
       // don't compare the object against itself
-      options.targets[i] && options.targets[i].data.id !== options.source.data.id
+      target && tData.id !== sData.id
 
       // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
       && (
-        !options.targets[i].data.dead
-        || (options.targets[i].data.type === TYPES.turret && options.source.data.type === TYPES.infantry && options.source.data.role)
+        !tData.dead
+        || (tData.type === TYPES.turret && sData.type === TYPES.infantry && sData.role)
       )
 
       // more non-standard formatting....
       && (
 
-        // don't check against friendly units by default, UNLESS looking only for friendly.
-        ((options.friendlyOnly && options.targets[i].data.isEnemy === options.source.data.isEnemy) || (!options.friendlyOnly && options.targets[i].data.isEnemy !== options.source.data.isEnemy))
+        // most common case: enemy vs. non-enemy. Otherwise, don't check friendly units by default UNLESS looking only for friendly.
+        ((tData.isEnemy !== sData.isEnemy && !options.friendlyOnly) || (options.friendlyOnly && tData.isEnemy === sData.isEnemy))
 
         // specific friendly cases: infantry vs. bunker, end-bunker, super-bunker or helicopter
-        || (options.source.data.type === TYPES.infantry && options.targets[i].data.type === TYPES.bunker)
+        || (sData.type === TYPES.infantry && tData.type === TYPES.bunker)
 
-        || (options.targets[i].data.type === TYPES.infantry && (
-          (options.source.data.type === TYPES.endBunker && !options.targets[i].data.role)
-          || (options.source.data.type === TYPES.superBunker && !options.targets[i].data.role)
-          || (options.source.data.type === TYPES.helicopter)
-        ))
+        || (tData.type === TYPES.infantry
+          && (
+            (sData.type === TYPES.endBunker && !tData.role)
+            || (sData.type === TYPES.superBunker && !tData.role)
+            || (sData.type === TYPES.helicopter)
+          )
+        )
 
         // OR engineer vs. turret
-        || (options.source.data.type === TYPES.infantry && options.source.data.role && options.targets[i].data.type === TYPES.turret)
+        || (sData.type === TYPES.infantry && sData.role && tData.type === TYPES.turret)
 
         // OR we're dealing with a hostile or neutral object
-        || (options.source.data.hostile || options.targets[i].data.hostile)
-        || (options.source.data.isNeutral || options.targets[i].data.isNeutral)
+        || (sData.hostile || tData.hostile)
+        || (sData.isNeutral || tData.isNeutral)
 
       )
 
@@ -114,8 +125,8 @@ function collisionCheckArray(options) {
 
       // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
       if (
-        collisionCheck(options.source.data, options.targets[i].data, xLookAhead)
-        || (options.targets[i].data.type === TYPES.helicopter && collisionCheck(options.source.data, options.targets[i].data, -xLookAhead))
+        collisionCheck(sData, tData, xLookAhead)
+        || (tData.type === TYPES.helicopter && sData.type === TYPES.superBunker && collisionCheck(sData, tData, -xLookAhead))
       ) {
 
         foundHit = true;
@@ -123,7 +134,7 @@ function collisionCheckArray(options) {
         if (options.hit) {
           
           // provide target, "no specific points", source.
-          options.hit(options.targets[i], null, options.source);
+          options.hit(target, null, options.source);
 
           // update energy?
           sprites.updateEnergy(target);
@@ -141,6 +152,8 @@ function collisionCheckArray(options) {
 
 function collisionTest(collision, exports) {
 
+  if (exports.data.frontZone === null || exports.data.rearZone === null) return;
+
   // don't do collision detection during game-over sequence.
   if (game.data.battleOver) {
     // restore to original state
@@ -148,33 +161,48 @@ function collisionTest(collision, exports) {
     return;
   }
 
-  let i, j;
-
+  // TODO: review, confirm and remove - no longer needed
   // hack: first-time run fix, as exports is initially undefined
   if (!collision.options.source) {
     collision.options.source = exports;
   }
 
-  // loop through relevant game object arrays
-  for (i = 0, j = collision.items.length; i < j; i++) {
+  collisionCheckZone(collision, exports.data.frontZone);
 
-    // assign current targets...
-    collision.options.targets = game.objects[collision.items[i]];
-
-    // ... and check them
-    collisionCheckArray(collision.options);
-
+  // also check the neighbouring / overlapping zone, as applicable
+  if (exports.data.multiZone) {
+    collisionCheckZone(collision, exports.data.rearZone);
   }
-
+ 
   // restore to original state
   collision.targets = null;
 
 }
 
-function collisionCheckMidPoint(obj1, obj2) {
+function collisionCheckZone(collision, zone) {
+
+  const zoneObjects = zones.objectsByZone[zone];
+
+  // loop through relevant game object arrays
+  for (let i = 0, j = collision.items.length; i < j; i++) {
+
+    // collision.items: [ { type: 'tank', group: 'all' }, ... ]
+    // assign current targets, filtered by group + type
+    collision.options.targets = zoneObjects[collision.items[i].group][collision.items[i].type];
+
+    // ... and check them IF there are items; there may be none e.g., no eligible balloons in the zone.
+    if (collision.options.targets) {
+      collisionCheckObject(collision.options);
+    }
+
+  }
+  
+}
+
+function collisionCheckMidPoint(obj1, obj2, rect1XLookAhead = 0) {
 
   // infantry-at-midpoint (bunker or helicopter) case
-  return collisionCheck(obj1.data.midPoint, obj2.data, 0);
+  return collisionCheck(obj1.data, obj2.data.midPoint, rect1XLookAhead);
 
 }
 
@@ -217,13 +245,14 @@ function getNearestObject(source, options = {}) {
   useInFront = !!options.useInFront;
 
   // should a smart missile be able to target another smart missile? ... why not.
-  items = (options.items || ['tanks', 'vans', 'missileLaunchers', 'helicopters', 'bunkers', 'balloons', 'smartMissiles', 'turrets']);
+  items = (options.items || getTypes('tank, van, missileLauncher, helicopter, bunker, balloon, smartMissile, turret', { exports: source }));
 
   localObjects = [];
 
   for (i = 0, j = items.length; i < j; i++) {
 
-    itemArray = game.objects[items[i]];
+    // TODO: optimize using ranges.
+    itemArray = game.objects[items[i].type];
 
     for (k = 0, l = itemArray.length; k < l; k++) {
 
@@ -289,7 +318,7 @@ function objectInView(data, options = {}) {
   options.triggerDistance = options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
   options.friendlyOnly = !!options.friendlyOnly;
 
-  items = game.objects[(options.items || 'helicopters')];
+  items = game.objects[(options.items || TYPES.helicopter)];
 
   for (i = 0, j = items.length; i < j; i++) {
     if (
@@ -307,21 +336,29 @@ function objectInView(data, options = {}) {
 
 }
 
-function nearbyTest(nearby) {
+function checkNearbyItems(nearby, zone) {
 
   let i, j, foundHit;
+
+  // [zone = 24][group = 'enemy'][type = 'tank']
+  const zoneObjects = zones.objectsByZone[zone];
+
+  if (!zoneObjects) return;
 
   // loop through relevant game object arrays
   // TODO: revisit for object creation / garbage collection improvements
   for (i = 0, j = nearby.items.length; i < j; i++) {
 
-    // assign current targets...
-    nearby.options.targets = game.objects[nearby.items[i]];
+    // nearby.items: [ { type: 'tank', group: 'all' }, ... ]
+    // assign current targets, filtered by group + type
+    nearby.options.targets = zoneObjects[nearby.items[i].group][nearby.items[i].type];
 
-    // ... and check them
-    if (collisionCheckArray(nearby.options)) {
-      foundHit = true;
-      break;
+    if (nearby.options.targets) {
+      // ...check them
+      if (collisionCheckObject(nearby.options)) {
+        foundHit = true;
+        break;
+      }
     }
 
   }
@@ -329,14 +366,34 @@ function nearbyTest(nearby) {
   // reset
   nearby.options.targets = null;
 
+  return foundHit;
+
+}
+
+function nearbyTest(nearby, source) {
+
+  if (!source) return;
+
+  // if this isn't set, something is wrong.
+  if (source.data.frontZone === null) return;
+
+  let foundHit = checkNearbyItems(nearby, source.data.frontZone);
+
+  // nothing, yet; check the overlapping zone, if set.
+  if (!foundHit && source.data.multiZone) {
+    foundHit = checkNearbyItems(nearby, source.data.rearZone);
+  }
+
   // callback for no-hit case, too
   if (!foundHit && nearby.options.miss) {
-    nearby.options.miss(nearby.options.source);
+    nearby.options.miss(source);
   }
 
 }
 
 function enemyNearby(data, targets, triggerDistance) {
+
+  // TODO: optimize this using zones.
 
   let i, j, k, l, targetData, results;
 
@@ -346,14 +403,14 @@ function enemyNearby(data, targets, triggerDistance) {
 
   for (i = 0, j = targets.length; i < j; i++) {
 
-    for (k = 0, l = game.objects[targets[i]].length; k < l; k++) {
+    for (k = 0, l = game.objects[targets[i].type].length; k < l; k++) {
 
-      targetData = game.objects[targets[i]][k].data;
+      targetData = game.objects[targets[i].type][k].data;
 
       // non-friendly, not dead, and nearby?
       if (targetData.isEnemy !== data.isEnemy && !targetData.dead) {
         if (Math.abs(targetData.x - data.x) < triggerDistance) {
-          results.push(game.objects[targets[i]][k]);
+          results.push(game.objects[targets[i].type][k]);
           // 12/2021: take first result, and exit.
           return results;
         }
@@ -371,17 +428,19 @@ function enemyHelicopterNearby(data, triggerDistance) {
 
   let i, j, result;
 
+  const helicopter = game.objects[TYPES.helicopter];
+
   // by default
   triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
-  for (i = 0, j = game.objects.helicopters.length; i < j; i++) {
+  for (i = 0, j = helicopter.length; i < j; i++) {
 
     // not cloaked, not dead, and an enemy?
-    if (!game.objects.helicopters[i].data.cloaked && !game.objects.helicopters[i].data.dead && data.isEnemy !== game.objects.helicopters[i].data.isEnemy) {
+    if (!helicopter[i].data.cloaked && !helicopter[i].data.dead && data.isEnemy !== helicopter[i].data.isEnemy) {
 
       // how far away is the target?
-      if (Math.abs(game.objects.helicopters[i].data.x - data.x) < triggerDistance) {
-        result = game.objects.helicopters[i];
+      if (Math.abs(helicopter[i].data.x - data.x) < triggerDistance) {
+        result = helicopter[i];
         break;
       }
 
@@ -439,12 +498,12 @@ function recycleTest(obj) {
     // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
     refund = (costObj.funds / (costObj.count || 1) * 2);
 
-    game.objects.endBunkers[isEnemy ? 1 : 0].data.funds += refund;
+    game.objects[TYPES.endBunker][isEnemy ? 1 : 0].data.funds += refund;
     
     if (!isEnemy) {
       // notify player that a unit has been recycled?
       game.objects.notifications.add(`+${refund} 💰: recycled ${type} ♻️`);
-      game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
+      game.objects.funds.setFunds(game.objects[TYPES.endBunker][0].data.funds);
       game.objects.view.updateFundsUI();
     }
 
@@ -493,8 +552,8 @@ function playerOwnsBunkers() {
   // has the player captured (or destroyed) all bunkers? this may affect enemy convoy production.
   let owned, total, includeDead = true;
 
-  owned = countFriendly('bunkers', includeDead) + countFriendly('superBunkers', includeDead);
-  total = game.objects.bunkers.length + game.objects.superBunkers.length;
+  owned = countFriendly(TYPES.bunker, includeDead) + countFriendly(TYPES.superBunker, includeDead);
+  total = game.objects[TYPES.bunker].length + game.objects[TYPES.superBunker].length;
 
   return (owned >= total);
 
