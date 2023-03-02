@@ -363,11 +363,11 @@ const Turret = (options = {} )=> {
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    dom.oSubSprite = common.makeSubSprite();
+    dom.oSubSprite = sprites.makeSubSprite();
     dom.o.appendChild(dom.oSubSprite);
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
-    
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+
   }
 
   function initTurret() {

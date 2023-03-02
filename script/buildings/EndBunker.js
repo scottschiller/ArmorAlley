@@ -275,7 +275,7 @@ const EndBunker = (options = {}) => {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
-            common.updateEnergy(exports);
+            sprites.updateEnergy(exports);
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);

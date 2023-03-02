@@ -206,7 +206,7 @@ const Base = (options = {}) => {
 
     if (data.dead) return;
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
     if (data.frameCount % data.fireModulus === 0) {
       fire();
