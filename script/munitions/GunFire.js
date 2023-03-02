@@ -1,6 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
+import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
 import { rndInt, plusMinus, rnd, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -30,18 +31,17 @@ const GunFire = (options = {}) => {
       }
 
       if (data.isOnScreen) {
-        common.applyRandomRotation(dom.o);
+        sprites.applyRandomRotation(dom.o);
       }
 
     }
 
-    function die() {
+    function die(force) {
 
       // aieee!
 
       if (!dom.o) return;
 
-      common.removeNodes(dom);
 
       data.dead = true;
 
@@ -152,6 +152,12 @@ const GunFire = (options = {}) => {
 
       }
 
+      // steal node from pool, not to be recycled because we're changing dimensions and mutating it.
+      if (data.domPool && (canSpark || canDie)) {
+        dom = Object.assign(dom, data.domPool.steal().dom);
+        data.domPool = null;
+      }
+
       if (canSpark) spark();
 
       if (canDie) {
@@ -223,9 +229,10 @@ const GunFire = (options = {}) => {
 
     function initDOM() {
 
-      dom.o = common.makeSprite({
-        className: css.className
-      });
+      data.domPool = poolBoy.request({ className: css.className });
+
+      // merge domPool dom o + transform nodes
+      Object.assign(dom, data.domPool.dom);
       
     }
 
@@ -274,6 +281,7 @@ const GunFire = (options = {}) => {
       ricochetSoundThrottle: (options?.parentType === TYPES.infantry ? 250 : 100),
       target: null,
       vyMax: 32
+      domPool: null
     }, options);
 
     dom = {

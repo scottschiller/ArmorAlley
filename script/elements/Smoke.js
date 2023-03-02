@@ -1,5 +1,6 @@
 import { rnd, rndInt, plusMinus } from '../core/global.js';
 import { common } from '../core/common.js';
+import { poolBoy } from '../core/poolboy.js';
 import { sprites } from '../core/sprites.js';
 
 const Smoke = (options = {}) => {
@@ -10,7 +11,9 @@ const Smoke = (options = {}) => {
 
     if (data.dead) return;
 
-    common.removeNodes(dom);
+    data?.domPool?.release();
+    data.domPool = null;
+
     sprites.nullify(dom);
 
     data.dead = true;
@@ -33,6 +36,7 @@ const Smoke = (options = {}) => {
         if (options.increaseDeceleration !== undefined) {
           options.deceleration *= options.increaseDeceleration;
         }
+      }
 
       // scale applied if also fading out
       if (data.isFading) {
@@ -92,19 +96,18 @@ const Smoke = (options = {}) => {
 
   function initSmoke() {
 
-    // TODO: use a pool of smoke nodes?
-    dom.o = common.makeSprite({
-      className: css.className
-    });
+    data.domPool = poolBoy.request({ className: css.className }, { transformSprite: true });
 
-    dom.oTransformSprite = common.makeTransformSprite();
+    // merge domPool dom o + transform nodes
+    Object.assign(dom, data.domPool.dom);
 
-    dom.o.appendChild(dom.oTransformSprite);
-
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    // realistically, some smoke should be behind objects
+    dom.o.style.zIndex = (Math.random() >= 0.5) ? 0 : 4;
 
     // keep things centered when scaling
     dom.o._style.setProperty('transform-origin', '50% 50%');
+
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y-100}px`);
 
   }
 
@@ -133,11 +136,12 @@ const Smoke = (options = {}) => {
     // hackish: use provided, or default values.
     vX: options.vX || (3 * Math.random()) * plusMinus(),
     vY: options.vY || -(3 * Math.random()),
+    domPool: null
   }, options);
 
   dom = {
     o: null,
-    oTransformSprite: null,
+    oTransformSprite: null
   };
 
   exports = {
