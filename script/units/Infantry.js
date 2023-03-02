@@ -184,7 +184,7 @@ const Infantry = (options = {}) => {
     collisionTest(collision, exports);
 
     // start, or stop firing?
-    nearbyTest(nearby);
+    nearbyTest(nearby, exports);
 
     recycleTest(exports);
 
@@ -253,6 +253,7 @@ const Infantry = (options = {}) => {
     vXFrames: [0.5, 0.75, 1, 1.25, 1.5, 1.5, 1.25, 1, 0.75, 0.5],
     vXFrameOffset: 0,
     xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
+    xLookAheadBunker: options.xLookAheadBunker || null,
     unassisted: (options.unassisted !== undefined ? options.unassisted : true),
     inventory: {
       frameCount: 12,

@@ -121,6 +121,7 @@ const MissileLauncher = (options = {}) => {
     die();
 
     game.addObject(TYPES.smartMissile, {
+      parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       isBanana: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === bananaMode,
@@ -189,7 +190,7 @@ const MissileLauncher = (options = {}) => {
     fire();
 
     if (gamePrefs.ground_unit_traffic_control) {
-      nearbyTest(friendlyNearby);
+      nearbyTest(friendlyNearby, exports);
     }
 
     return (data.dead && !dom.o);

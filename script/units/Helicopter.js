@@ -1239,6 +1239,7 @@ const Helicopter = (options = {}) => {
         tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
 
         game.addObject(TYPES.gunfire, {
+          parent: exports,
           parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
@@ -1279,6 +1280,7 @@ const Helicopter = (options = {}) => {
       if (data.bombs > 0) {
 
         game.addObject(TYPES.bomb, {
+          parent: exports,
           parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
@@ -1320,6 +1322,7 @@ const Helicopter = (options = {}) => {
         if (missileTarget && !missileTarget.data.cloaked) {
 
           game.addObject(TYPES.smartMissile, {
+            parent: exports,
             parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + (data.rotated ? 0 : data.width) - 8,
@@ -2493,7 +2496,7 @@ const Helicopter = (options = {}) => {
           // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
           if (data.landed && !data.onLandingPad && data.parachutes < data.maxParachutes && target.data.isEnemy === data.isEnemy) {
             // check if it's at the helicopter "door".
-            if (collisionCheckMidPoint(exports, target)) {
+            if (collisionCheckMidPoint(target, exports)) {
               // pick up infantry (silently)
               target.die({ silent: true });
               playSound(sounds.popSound, exports);

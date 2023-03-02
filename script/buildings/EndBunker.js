@@ -38,6 +38,7 @@ const EndBunker = (options = {}) => {
     if (!data.firing || !data.energy || data.frameCount % data.fireModulus !== 0) return;
 
     fireOptions = {
+      parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       collisionItems: nearby.items,
@@ -125,7 +126,7 @@ const EndBunker = (options = {}) => {
 
     data.frameCount++;
 
-    nearbyTest(nearby);
+    nearbyTest(nearby, exports);
 
     fire();
 
@@ -252,7 +253,7 @@ const EndBunker = (options = {}) => {
 
   nearby = {
     options: {
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       useLookAhead: true,
       // TODO: rename to something generic?
@@ -268,10 +269,10 @@ const EndBunker = (options = {}) => {
         if (target.data.type === TYPES.infantry) {
           if (!isFriendly) {
             // funds to steal, "at the door", AND, infantry - OR, an engineer who can rob the bank
-            if (data.funds && collisionCheckMidPoint(exports, target) && (!target.data.role || gamePrefs.engineers_rob_the_bank)) {
+            if (data.funds && collisionCheckMidPoint(target, exports) && (!target.data.role || gamePrefs.engineers_rob_the_bank)) {
               captureFunds(target);
             }
-          } else if (!target.data.role && !data.energy && isFriendly && collisionCheckMidPoint(exports, target)) {
+          } else if (!target.data.role && !data.energy && isFriendly && collisionCheckMidPoint(target, exports)) {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;

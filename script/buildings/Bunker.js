@@ -245,7 +245,7 @@ const Bunker = (options = {}) => {
       // a friendly passer-by.
       repair();
 
-    } else if (collisionCheckMidPoint(exports, target)) {
+    } else if (collisionCheckMidPoint(target, exports)) {
 
       // non-friendly, kill the infantry - but let them capture the bunker first.
       capture(target.data.isEnemy);

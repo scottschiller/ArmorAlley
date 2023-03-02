@@ -22,6 +22,7 @@ const Base = (options = {}) => {
     if (!targetHelicopter) return;
 
     game.addObject(TYPES.smartMissile, {
+      parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       isBanana: gamePrefs.enemy_missile_match_type && data.missileMode === bananaMode,
