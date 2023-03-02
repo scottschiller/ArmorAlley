@@ -26,8 +26,13 @@ const isWebkit = ua.match(/webkit/i);
 const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = ua.match(/firefox/i);
 const isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
-const isMobile = ua.match(/mobile/i); // should get iOS.
+
+// iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. desktop) - OR, if "touch support" exists(?)
+const isMobile = ua.match(/mobile|iphone|ipad/i) || navigator?.maxTouchPoints > 0;
 const isiPhone = ua.match(/iphone/i);
+
+// bare-bones "request mobile website" iOS detection
+const isMobileIOS = ua.match(/iphone|ipad/i);
 
 // whether off-screen elements are forcefully removed from the DOM.
 // may be expensive up front, and/or cause style recalcs while
@@ -51,7 +56,12 @@ const worldHeight = 380;
 
 const forceZoom = !!(winloc.match(/forceZoom/i));
 const forceTransform = !!(winloc.match(/forceTransform/i));
-const tutorialMode = !!(winloc.match(/tutorial/i));
+
+let tutorialMode = !!(winloc.match(/tutorial/i));
+
+function setTutorialMode(state) {
+  tutorialMode = state;
+}
 
 // classic missile style
 const defaultMissileMode = null;
@@ -247,6 +257,7 @@ export {
   isSafari,
   isMobile,
   isiPhone,
+  isMobileIOS,
   useDOMPruning,
   trackEnemy,
   debug,
@@ -261,7 +272,9 @@ export {
   defaultMissileMode,
   rubberChickenMode,
   bananaMode,
+  oneOf,
   rnd,
   rndInt,
-  plusMinus
+  plusMinus,
+  setTutorialMode
 };
