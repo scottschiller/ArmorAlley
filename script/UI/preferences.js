@@ -371,12 +371,12 @@ function PrefsManager() {
       show_health_status: (newValue) => {
 
         // hackish: iterate over most objects, and force a redraw of health bars
-        let targets = ['tanks', 'vans', 'bunkers', 'missileLaunchers', 'infantry', 'parachuteInfantry', 'engineers', 'helicopters', 'balloons', 'smartMissiles', 'endBunkers', 'superBunkers', 'turrets'];
+        let targets = getTypes('tank, van, bunker, missileLauncher, infantry, parachuteInfantry, engineer, helicopter, balloon, smartMissile, endBunker, superBunker, turret', { group: 'all' });
         let forceUpdate = true;
 
-        targets.forEach((type) => {
+        targets.forEach((target) => {
 
-          game.objects[type].forEach((obj) => {
+          game.objects[target.type].forEach((obj) => {
 
             // exit if unset or zero
             if (!obj?.data?.lastEnergy) return;
