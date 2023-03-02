@@ -11,15 +11,13 @@ import { effects } from '../core/effects.js';
 
 const Turret = (options = {}) => {
 
-  let css, data, dom, height, radarItem, collisionItems, targets, exports;
+  let css, data, dom, objects, height, radarItem, collisionItems, targets, exports;
 
   function okToMove() {
 
     // guns scan and fire 100% of the time, OR a random percent bias based on the amount of damage they've sustained. No less than 25% of the time.
 
-    if (data.energy === 0) {
-      return false;
-    }
+    if (data.energy === 0) return false;
 
     return (data.energy === data.energyMax || (1 - Math.random() < (Math.max(0.25, data.energy / data.energyMax))));
 
@@ -63,10 +61,7 @@ const Turret = (options = {}) => {
 
     // target has been lost (or died, etc.)
     if (!target && data.firing) {
-      data.firing = false;
-      data.fireCount = 0;
-      resetAngle();
-      utils.css.remove(dom.o, css.firing);
+      setFiring(false);
     }
 
     if (!target) return;
@@ -74,8 +69,7 @@ const Turret = (options = {}) => {
     // we have a live one.
 
     if (!data.firing) {
-      utils.css.add(dom.o, css.firing);
-      data.firing = true;
+      setFiring(true);
     }
 
     deltaX = target.data.x - data.x;
@@ -101,6 +95,7 @@ const Turret = (options = {}) => {
       data.fireCount++;
 
       game.addObject(TYPES.gunfire, {
+        parent: exports,
         parentType: data.type,
         isEnemy: data.isEnemy,
         // turret gunfire mostly hits airborne things.
@@ -133,7 +128,28 @@ const Turret = (options = {}) => {
 
   }
 
-  function die(options) {
+  function setFiring(isFiring) {
+
+    if (data.firing === isFiring) return;
+
+    data.firing = isFiring;
+
+    utils.css.addOrRemove(dom.o, data.firing, css.firing);
+
+    if (isFiring) {
+
+
+    } else {
+
+      data.fireCount = 0;
+      resetAngle();
+
+    }
+
+
+  }
+
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
@@ -141,8 +157,18 @@ const Turret = (options = {}) => {
     data.angle = 0;
     setAngle(0);
 
+    effects.ephemeralExplosion(exports);
+
+    data.energy = 0;
+    data.restoring = false;
+    data.dead = true;
+
+
+    // hackish: ensure firing is reset.
+    setFiring(false);
+
     // special case: when turret is initially rendered as dead, don't explode etc.
-    if (!options?.silent) {
+    if (!dieOptions.silent) {
 
       if (!data.isOnScreen) {
         if (!data.isEnemy) {
@@ -170,14 +196,13 @@ const Turret = (options = {}) => {
 
       playSound(sounds.metalHitBreak, exports);
       playSound(sounds.genericExplosion, exports);
+
     }
 
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
 
-    data.energy = 0;
-    data.restoring = false;
-    data.dead = true;
+    utils.css.remove(dom.o, css.firing);
 
     sprites.updateEnergy(exports);
 
@@ -200,7 +225,7 @@ const Turret = (options = {}) => {
       game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');
     } else {
       game.objects.notifications.addNoRepeat('You started rebuilding a turret 🛠️');
-    }
+   }
 
     playSound(sounds.turretEnabled, exports);
 
@@ -236,7 +261,7 @@ const Turret = (options = {}) => {
           }
         }
 
-        common.updateEnergy(exports);
+        sprites.updateEnergy(exports);
 
       }
 
@@ -247,6 +272,21 @@ const Turret = (options = {}) => {
       // only stop sound once, when repair finishes
       if (sounds.tinkerWrench && sounds.tinkerWrench.sound) {
         stopSound(sounds.tinkerWrench);
+      }
+
+      if (data.restoring) {
+
+        if (data.isEnemy) {
+
+          game.objects.notifications.add('The enemy finished rebuilding a turret 🛠️');
+
+        } else {
+
+          game.objects.notifications.add('You finished rebuilding a turret 🛠️');
+
+
+        }
+
       }
 
       data.lastEnergy = data.energy;
@@ -274,7 +314,11 @@ const Turret = (options = {}) => {
 
   }
 
-  function claim(isEnemy) {
+  function claim(engineer) {
+
+    if (!engineer?.data) return;
+
+    const { isEnemy } = engineer?.data;
 
     if (data.frameCount % data.claimModulus !== 0) return;
 
@@ -294,24 +338,25 @@ const Turret = (options = {}) => {
     }
 
     setEnemy(isEnemy);
+    
     data.claimPoints = 0;
 
   }
 
-  function engineerHit(target) {
+  function engineerHit(engineer) {
 
     // target is an engineer; either repairing, or claiming.
 
     data.engineerInteracting = true;
 
-    if (data.isEnemy !== target.data.isEnemy) {
+    if (data.isEnemy !== engineer.data.isEnemy) {
 
       // gradual take-over.
-      claim(target.data.isEnemy);
+      claim(engineer);
 
     } else {
 
-      repair(target);
+      repair(engineer);
 
     }
 
@@ -439,7 +484,7 @@ const Turret = (options = {}) => {
     lastEnergy: 50,
     firing: false,
     fireCount: 0,
-    frameCount: 2 * game.objects.turrets.length, // stagger so sound effects interleave nicely
+    frameCount: 2 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely
     fireModulus: (tutorialMode ? 12 : (gameType === 'extreme' ? 2 : (gameType === 'hard' ? 3 : 6))), // a little easier in tutorial mode vs. hard vs. easy modes
     scanModulus: 1,
     claimModulus: 8,
@@ -459,6 +504,13 @@ const Turret = (options = {}) => {
     y: game.objects.view.data.world.height - height - 2,
     // logical vs. sprite offset
     yOffset: 3
+    yOffset: 3,
+    domFetti: {
+      colorType: 'grey',
+      elementCount: 20 + rndInt(20),
+      startVelocity: 8 + rndInt(8),
+      spread: 90
+    }
   }, options);
 
   dom = {
