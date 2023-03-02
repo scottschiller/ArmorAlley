@@ -74,8 +74,8 @@ const MissileLauncher = (options = {}) => {
     // we have a possible target. any missiles already chasing it?
     similarMissileCount = 0;
 
-    for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
-      if (game.objects.smartMissiles[i].objects.target === targetHelicopter) {
+    for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
+      if (game.objects[TYPES.smartMissile][i].objects.target === targetHelicopter) {
         similarMissileCount++;
       }
     }
@@ -93,7 +93,7 @@ const MissileLauncher = (options = {}) => {
 
       // friendly turret
       if (objectInView(data, {
-        items: 'turrets',
+        items: TYPES.turret,
         friendlyOnly: true
       })) {
         return;
@@ -101,9 +101,9 @@ const MissileLauncher = (options = {}) => {
 
       // friendly helicopter, and armed with at least one missile
       if (objectInView(data, {
-        items: 'helicopters',
+        items: TYPES.helicopter,
         friendlyOnly: true
-      }) && game.objects.helicopters[0].data.smartMissiles > 0) {
+      }) && game.objects.helicopter[0].data.smartMissiles > 0) {
         return;
       }
 
@@ -112,7 +112,7 @@ const MissileLauncher = (options = {}) => {
     // self-destruct, FIRE ZE MISSILE
     die();
 
-    game.objects.smartMissiles.push(SmartMissile({
+    game.addObject(TYPES.smartMissile, {
       parentType: data.type,
       isEnemy: data.isEnemy,
       isBanana: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === bananaMode,
@@ -120,7 +120,7 @@ const MissileLauncher = (options = {}) => {
       x: data.x + (data.width / 2),
       y: data.y,
       target: targetHelicopter
-    }));
+    });
 
   }
 
@@ -201,6 +201,8 @@ const MissileLauncher = (options = {}) => {
 
   function initMissileLauncher() {
     
+    if (options.noInit) return;
+
     initDOM();
 
     common.initNearby(friendlyNearby, exports);

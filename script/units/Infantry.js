@@ -7,10 +7,11 @@ import { getTypes, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Infantry = (options = {}) => {
 
-  let css, dom, data, height, radarItem, nearby, collision, exports;
+  let css, dom, data, defaultItems, height, radarItem, nearby, collision, exports;
 
   function fire() {
 
@@ -39,15 +40,16 @@ const Infantry = (options = {}) => {
     // only fire every so often
     if (data.frameCount % data.fireModulus !== 0) return;
 
-    game.objects.gunfire.push(GunFire({
+    game.addObject(TYPES.gunfire, {
       parentType: data.type,
       isEnemy: data.isEnemy,
-      collisionItems: nearby.items.concat('bunkers'), // special case: infantry + engineers don't stop to shoot bunkers, but their gunfire can damage them.
+      // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.
+      collisionItems: (gamePrefs.tank_gunfire_miss_bunkers ? defaultItems : nearby.items),
       x: data.x + ((data.width + 1) * (data.isEnemy ? 0 : 1)),
       y: data.y + data.halfHeight,
       vX: data.vX, // same velocity
       vY: 0
-    }));
+    });
 
     if (sounds.infantryGunFire) {
       playSound(sounds.infantryGunFire, exports);
@@ -63,6 +65,7 @@ const Infantry = (options = {}) => {
       zones.refreshZone(exports);
 
       sprites.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`);
+
   }
 
   function stop(noFire) {
@@ -132,7 +135,7 @@ const Infantry = (options = {}) => {
 
     data.dead = true;
 
-    radarItem.die({ silent: (options && options.silent) });
+    radarItem?.die({ silent: (options && options.silent) });
 
   }
 
@@ -205,6 +208,8 @@ const Infantry = (options = {}) => {
   }
 
   function initInfantry() {
+
+    if (options.noInit) return;
 
     // infantry, or engineer?
     setRole(data.role, true);
