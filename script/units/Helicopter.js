@@ -315,22 +315,23 @@ const Helicopter = (options = {}) => {
 
     if (isMobile) {
       mobileControls = document.getElementById('mobile-controls');
-      mobileControlItems = mobileControls.querySelectorAll('.mobile-controls-right li');
+      mobileControlItems = mobileControls.querySelectorAll('.mobile-controls-weapons li');
     }
 
     if (force || updated.parachutes) {
       modify(dom.statusBar.infantryCountLI, data.parachutes);
       if (isMobile) modify(mobileControlItems[0], data.parachutes);
+
     }
 
     if (force || updated.smartMissiles) {
       modify(dom.statusBar.missileCountLI, data.smartMissiles);
-      if (isMobile) modify(mobileControlItems[1], data.smartMissiles);
+      if (isMobile) modify(mobileControlItems[2], data.smartMissiles);
     }
 
     if (force || updated.ammo) {
       modify(dom.statusBar.ammoCountLI, data.ammo);
-      if (isMobile) modify(mobileControlItems[2], data.ammo);
+      if (isMobile) modify(mobileControlItems[1], data.ammo);
     }
 
     if (force || updated.bombs) {
