@@ -155,6 +155,10 @@ const Radar = () => {
 
   }
 
+  function enemyVansOnScreen() {
+    return game.objects[TYPES.van].filter((van) => van.data.isEnemy && van.data.isOnScreen).length;
+  }
+
   function startJamming() {
 
     // [ obligatory Bob Marley reference goes here ]
@@ -162,6 +166,9 @@ const Radar = () => {
     if (noJamming) return;
 
     data.isJammed = true;
+
+    updateOverlay();
+
     utils.css.add(game.objects.view.dom.worldWrapper, css.jammed);
 
     if (!gamePrefs.sound) return;
@@ -178,15 +185,55 @@ const Radar = () => {
     // i.e., you lose visibility.
     // if (gameType === 'extreme') setIncomingMissile(false);
 
+  function updateOverlay() {
+
+    const id = 'radar-jammed-overlay';
+    let o = document.getElementById(id);
+
+    if (!data.isJammed) {
+      if (o) {
+        o.className = '';
+        common.setFrameTimeout(() => {
+          o.remove();
+          o = null;
+        }, 1024);
+      }
+      return;
+    }
+
+    if (!o) {
+
+      o = document.createElement('div');
+      o.id = id;
+      o.innerHTML = '<div class="noise"></div>';
+
+      document.body.appendChild(o);
+
+      common.setFrameTimeout(() => {
+        if (!o) return;
+        o.className = 'active';
+        o = null;
+      }, 128);
+
+    }
+
   }
 
   function stopJamming() {
 
     data.isJammed = false;
+
+    updateOverlay(data.isJammed);
+
     utils.css.remove(game.objects.view.dom.worldWrapper, css.jammed);
 
     if (sounds.radarJamming) {
       stopSound(sounds.radarJamming);
+    }
+
+    if (data.jamCount < 3) {
+      game.objects.notifications.add('Radar has been restored 📡');
+      data.jamCount++;
     }
 
   }
@@ -358,6 +405,7 @@ const Radar = () => {
     height: 0,
     isJammed: false,
     isStale: false,
+    jamCount: 0,
     lastMissileCount: 0,
     incomingMissile: false,
     // additional transform properties applied during radar item animation
