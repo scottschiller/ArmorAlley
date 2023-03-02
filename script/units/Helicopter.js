@@ -18,6 +18,7 @@ import {
   winloc,
   worldWidth,
   worldHeight
+  getTypes
 } from '../core/global.js';
 
 import {
@@ -42,11 +43,10 @@ import {
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { getLandscapeLayout } from '../UI/mobile.js';
-import { SmartMissile } from '../munitions/SmartMissile.js';
-import { ParachuteInfantry } from './ParachuteInfantry.js';
-import { Infantry } from './Infantry.js';
-import { GunFire } from '../munitions/GunFire.js';
-import { Bomb } from '../munitions/Bomb.js';
+import { domFettiBoom } from '../UI/DomFetti.js';
+import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Helicopter = (options = {}) => {
 
@@ -93,7 +93,7 @@ const Helicopter = (options = {}) => {
     // hack: center on enemy helicopter at all times.
     if (!trackEnemy) return;
 
-    common.setTransformXY(undefined, game.objects.view.dom.battleField, `${(data.x - game.objects.view.data.browser.halfWidth) * -1}px`, '0px');
+    sprites.setTransformXY(undefined, game.objects.view.dom.battleField, `${(data.x - game.objects.view.data.browser.halfWidth) * -1}px`, '0px');
 
   }
 
@@ -101,7 +101,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isEnemy) return;
 
-    common.setTransformXY(undefined, dom.fuelLine, `${-100 + data.fuel}%`, '0px');
+    sprites.setTransformXY(undefined, dom.fuelLine, `${-100 + data.fuel}%`, '0px');
 
     if (data.repairing || tutorialMode) return;
 
@@ -341,7 +341,7 @@ const Helicopter = (options = {}) => {
     // hackish, fix endBunkers reference
     if (force || updated.funds) {
       // update the funds UI
-      game.objects.funds.setFunds(game.objects.endBunkers[0].data.funds);
+      game.objects.funds.setFunds(game.objects[TYPES.endBunker][0].data.funds);
     }
 
   }
@@ -615,7 +615,7 @@ const Helicopter = (options = {}) => {
 
     updateFuelUI();
     updateStatusUI(updated);
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
   }
 
@@ -678,7 +678,7 @@ const Helicopter = (options = {}) => {
         // hackish: force enemy helicopter to be on-screen when respawning
         // this helps ensure it animates up from the landing pad properly
 
-        common.updateIsOnScreen(exports, force);
+        sprites.updateIsOnScreen(exports, force);
 
       } else {
 
@@ -692,7 +692,7 @@ const Helicopter = (options = {}) => {
         // "get to the choppa!" (center the view on it, that is.)
         game.objects.view.setLeftScrollToPlayer(exports);
 
-        common.moveWithScrollOffset(exports);
+        sprites.moveWithScrollOffset(exports);
 
         // good time to do some DOM pruning, etc.
         if (game.objects.queue) {
@@ -700,6 +700,9 @@ const Helicopter = (options = {}) => {
         }
 
       }
+
+      // hackish: force-refresh, so helicopter can be hit while respawning.
+      zones.refreshZone(exports);
       
       utils.css.add(dom.o, css.respawning);
 
@@ -909,8 +912,10 @@ const Helicopter = (options = {}) => {
     }
       
     applyTilt();
-      
-    common.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
+
+    zones.refreshZone(exports);
+
+    sprites.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
 
   }
 
@@ -979,27 +984,42 @@ const Helicopter = (options = {}) => {
      * the enemy chopper can respawn each time a tank is over it. :(
      */
 
-    objects = Array.prototype.concat(game.objects.missileLaunchers, game.objects.tanks, game.objects.vans, game.objects.infantry);
+    types = getTypes('missileLauncher, tank, van, infantry', { exports });
     xLookAhead = 0;
 
-    // is there a "foreign" object on, or over the base?
-    for (i = 0, j = objects.length; i < j; i++) {
+    // is there a "foreign" object on, or over the base that would kill the chopper?
+    for (i = 0, j = types.length; i < j; i++) {
       // enemy chopper is vulnerable if local player is at their base, and vice-versa.
-      if (objects[i].data.isEnemy !== data.isEnemy && objects[i].data && collisionCheck(objects[i].data, landingPad.data, xLookAhead)) {
-        foundObject = objects[i];
-        break;
+      items = game.objects[types[i].type];
+      for (k = 0, l = items.length; k < l; k++) {
+        if (items[k].data.isEnemy !== data.isEnemy && collisionCheck(items[k].data, landingPad.data, xLookAhead)) {
+          foundObject = items[k];
+          break;
+        }
       }
     }
 
     // something is covering the landing pad - retry shortly.
     if (foundObject) {
+
       if (!data.isEnemy) {
         noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
         game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed. Waiting for clearance. ${noEntry}`);
       }
+
       common.setFrameTimeout(reset, 500);
+
       return;
+
+    } else {
+
+      resetAndRespawn();
+
     }
+
+  }
+
+  function resetAndRespawn() {
 
     data.fuel = data.maxFuel;
     data.energy = data.energyMax;
@@ -1058,7 +1078,7 @@ const Helicopter = (options = {}) => {
     applyTilt();
 
     // move to landing pad
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
     // look ma, no longer dead!
     data.dead = false;
@@ -1069,9 +1089,10 @@ const Helicopter = (options = {}) => {
     // reset everything.
     updateStatusUI({ force: true });
 
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
     setRespawning(true);
+
   }
 
   function respawn() {
@@ -1129,7 +1150,7 @@ const Helicopter = (options = {}) => {
       )
     ) {
       // hit by other helicopter, missile, or turret gunfire? special (big) smoke ring.
-      common.smokeRing(exports, {
+      effects.smokeRing(exports, {
         count: 20,
         velocityMax: 20,
         offsetY: data.height - 2,
@@ -1139,7 +1160,7 @@ const Helicopter = (options = {}) => {
       });
     }
 
-    common.shrapnelExplosion(data, {
+    effects.shrapnelExplosion(data, {
       count: 20,
       velocity: 6,
       vX: data.vX,
@@ -1148,9 +1169,9 @@ const Helicopter = (options = {}) => {
       noInitialSmoke: true
     });
 
-    common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+    effects.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
 
-    common.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
+    effects.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
     // roll the dice: drop a parachute infantry (pilot ejects safely)
     if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
@@ -1173,12 +1194,13 @@ const Helicopter = (options = {}) => {
     data.energy = 0;
 
     // ensure any health bar is updated and hidden ASAP
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
     hideTrailers(true /* reset x + y history */);
 
     data.dead = true;
 
+    effects.domFetti(exports, attacker);
     radarItem.die();
 
     if (sounds.explosionLarge) {
@@ -1215,17 +1237,14 @@ const Helicopter = (options = {}) => {
         // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
         tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
 
-        /*eslint-disable no-mixed-operators */
-        game.objects.gunfire.push(GunFire({
+        game.addObject(TYPES.gunfire, {
           parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
           vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
           vY: data.vY + tiltOffset
-          // vY: (data.y > data.yMin ? data.vY : 0) + tiltOffset
-        }));
-        /*eslint-enable no-mixed-operators */
+        });
 
         startSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire);
 
@@ -1258,14 +1277,14 @@ const Helicopter = (options = {}) => {
 
       if (data.bombs > 0) {
 
-        objects.bombs.push(Bomb({
+        game.addObject(TYPES.bomb, {
           parentType: data.type,
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: (data.y + data.height) - 6,
           vX: data.vX,
           vY: data.vY
-        }));
+        });
 
         if (sounds.bombHatch) {
           playSound(sounds.bombHatch, exports);
@@ -1299,8 +1318,7 @@ const Helicopter = (options = {}) => {
 
         if (missileTarget && !missileTarget.data.cloaked) {
 
-          /*eslint-disable no-mixed-operators */
-          objects.smartMissiles.push(SmartMissile({
+          game.addObject(TYPES.smartMissile, {
             parentType: data.type,
             isEnemy: data.isEnemy,
             x: data.x + (data.rotated ? 0 : data.width) - 8,
@@ -1309,8 +1327,7 @@ const Helicopter = (options = {}) => {
             // special variants of the smart missile. ;)
             isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && !data.isEnemy,
             isBanana: game.objects.view.data.missileMode === bananaMode && !data.isEnemy
-          }));
-          /*eslint-enable no-mixed-operators */
+          });
 
           data.smartMissiles = Math.max(0, data.smartMissiles - 1);
 
@@ -1342,14 +1359,14 @@ const Helicopter = (options = {}) => {
         // helicopter landed? Just create an infantry.
         if (data.landed) {
 
-          game.objects.infantry.push(Infantry({
+          game.addObject(TYPES.infantry, {
             isEnemy: data.isEnemy,
             // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
             x: data.x + (data.width * 0.75),
             y: (data.y + data.height) - 11,
             // exclude from recycle "refund" / reward case
             unassisted: false
-          }));
+          });
 
         } else {
 
@@ -1403,14 +1420,12 @@ const Helicopter = (options = {}) => {
 
     /**
      * mid-air deployment: check and possibly become the chaff / decoy target for "vulnerable"
-     * smart missles that have just launched, and have not yet locked onto their intended target.
+     * smart missiles that have just launched, and have not yet locked onto their intended target.
      * in the original game, the enemy helicopter would use this trick to distract your missiles.
      */
 
-    const pi = ParachuteInfantry(options);
+    const pi = game.addObject(TYPES.parachuteInfantry, options);
     
-    game.objects.parachuteInfantry.push(pi);
-
     // now, maybe confuse any nearby smart missiles.
     checkSmartMissileDecoy(pi);
 
@@ -1418,8 +1433,8 @@ const Helicopter = (options = {}) => {
 
   function checkSmartMissileDecoy(parachuteInfantry) {
 
-    // given the current helicopter, find missles targeting it and possibly distract them.
-    game.objects.smartMissiles.forEach((missile) => missile.maybeTargetDecoy(parachuteInfantry));
+    // given the current helicopter, find missiles targeting it and possibly distract them.
+    game.objects[TYPES.smartMissile].forEach((missile) => missile.maybeTargetDecoy(parachuteInfantry));
 
   }
 
@@ -1455,7 +1470,9 @@ const Helicopter = (options = {}) => {
        * you're going to find yourself in trouble. ;)
        */
 
-      target = game.objects.landingPads[game.objects.landingPads.length - (data.x > 6144 ? 1 : 2)];
+      const pads = game.objects[TYPES.landingPad];
+
+      target = pads[pads.length - (data.x > 6144 ? 1 : 2)];
 
       checkFacingTarget(target);
 
@@ -1544,7 +1561,7 @@ const Helicopter = (options = {}) => {
 
       if (data.targeting.clouds) {
 
-        lastTarget = objectInView(data, { items: 'clouds' });
+        lastTarget = objectInView(data, { items: TYPES.cloud });
 
         // hack: only go after clouds in the player's half of the field.
         if (lastTarget && lastTarget.data.x > 4096) {
@@ -1554,15 +1571,15 @@ const Helicopter = (options = {}) => {
       }
 
       if (!lastTarget && data.targeting.balloons && data.ammo) {
-        lastTarget = objectInView(data, { items: 'balloons' });
+        lastTarget = objectInView(data, { items: TYPES.balloon });
       }
 
       if (!lastTarget && data.targeting.tanks && data.bombs) {
-        lastTarget = objectInView(data, { items: 'tanks' });
+        lastTarget = objectInView(data, { items: TYPES.tank });
       }
 
       if (!lastTarget && data.targeting.helicopters && data.ammo) {
-        lastTarget = objectInView(data, { items: 'helicopters' });
+        lastTarget = objectInView(data, { items: TYPES.helicopter });
       }
 
       // is the new target too low?
@@ -1580,21 +1597,21 @@ const Helicopter = (options = {}) => {
       // we already have a target - can we get a more interesting one?
       if (data.targeting.balloons && data.ammo) {
         altTarget = objectInView(data, {
-          items: 'balloons',
+          items: TYPES.balloon,
           triggerDistance: game.objects.view.data.browser.halfWidth
         });
       }
 
       if (!altTarget && data.targeting.tanks && data.bombs) {
         altTarget = objectInView(data, {
-          items: ['tanks'],
+          items: TYPES.tank,
           triggerDistance: game.objects.view.data.browser.width
         });
       }
 
       if (!altTarget && data.targeting.helicopters && data.ammo) {
         altTarget = objectInView(data, {
-          items: ['helicopters'],
+          items: TYPES.helicopter,
           triggerDistance: game.objects.view.data.browser.width
         });
       }
@@ -1631,7 +1648,7 @@ const Helicopter = (options = {}) => {
 
     if (!lastTarget && !data.targeting.clouds) {
 
-      lastTarget = objectInView(data, { items: 'clouds' });
+      lastTarget = objectInView(data, { items: TYPES.cloud });
 
       // hack: only go after clouds in the player's half of the field, plus one screen width
       if (lastTarget && lastTarget.data.x > 4096 + game.objects.view.data.browser.width) {
@@ -1654,7 +1671,7 @@ const Helicopter = (options = {}) => {
 
       if (target.data.type !== TYPES.balloon) {
 
-        if (target.data.type === 'landing-pad') {
+        if (target.data.type === TYPES.landingPad) {
           result.deltaY = 0;
         }
 
@@ -1797,7 +1814,7 @@ const Helicopter = (options = {}) => {
       // is a tank very close by?
 
       altTarget = objectInView(data, {
-        items: ['tanks'],
+        items: TYPES.tank,
         triggerDistance: game.objects.view.data.browser.fractionWidth
       });
 
@@ -1826,12 +1843,12 @@ const Helicopter = (options = {}) => {
     }
 
     // sanity check
-    if (!lastTarget || lastTarget.data.dead || lastTarget.data.type === 'cloud' || lastTarget.data.type === 'landing-pad') {
+    if (!lastTarget || lastTarget.data.dead || lastTarget.data.type === TYPES.cloud || lastTarget.data.type === TYPES.landingPad) {
       // no need to be firing...
       setFiring(false);
     }
 
-    if (data.vY > 0 && data.y > maxY && (!lastTarget || lastTarget.data.type !== 'landing-pad')) {
+    if (data.vY > 0 && data.y > maxY && (!lastTarget || lastTarget.data.type !== TYPES.landingPad)) {
       // hack: flying too low. limit.
       data.y = maxY;
       data.vY -= 0.25;
@@ -1865,7 +1882,7 @@ const Helicopter = (options = {}) => {
   function animate() {
 
     if (data.respawning) {
-      common.moveWithScrollOffset(exports);
+      sprites.moveWithScrollOffset(exports);
       return;
     }
 
@@ -2029,7 +2046,7 @@ const Helicopter = (options = {}) => {
         repair();
       }
 
-      common.smokeRelativeToDamage(exports);
+      effects.smokeRelativeToDamage(exports);
 
     }
 
@@ -2060,10 +2077,12 @@ const Helicopter = (options = {}) => {
 
     if (!data.dead && !data.isEnemy) {
 
-      // any enemy vans that are jamming our radar?
-      for (i = 0, j = game.objects.vans.length; i < j; i++) {
+      const vans = game.objects[TYPES.van];
 
-        if (!game.objects.vans[i].data.dead && game.objects.vans[i].data.isEnemy !== data.isEnemy && game.objects.vans[i].data.jamming) {
+      // any enemy vans that are jamming our radar?
+      for (i = 0, j = vans.length; i < j; i++) {
+
+        if (!vans[i].data.dead && vans[i].data.isEnemy !== data.isEnemy && vans[i].data.jamming) {
 
           jamming++;
 
@@ -2161,7 +2180,7 @@ const Helicopter = (options = {}) => {
     };
 
     for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(common.makeSprite(trailerConfig));
+      dom.trailers.push(sprites.create(trailerConfig));
       fragment.appendChild(dom.trailers[i]);
     }
 
@@ -2176,24 +2195,23 @@ const Helicopter = (options = {}) => {
       data.frameCount = Math.floor(data.fireModulus / 2);
     }
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
     });
 
-    dom.o.appendChild(common.makeTransformSprite());
-    dom.o.appendChild(common.makeSubSprite());
+    dom.o.appendChild(sprites.makeTransformSprite());
 
-    dom.fuelLine = common.getWithStyle('fuel-line');
+    dom.fuelLine = sprites.getWithStyle('fuel-line');
 
     // if not specified (e.g., 0), assign landing pad position.
     if (!data.x) {
       data.x = common.getLandingPadOffsetX(exports);
     }
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
     // for human player: append immediately, so initial game start / respawn animation works nicely
-    common.updateIsOnScreen(exports);
+    sprites.updateIsOnScreen(exports);
 
     setRespawning(true);
 
@@ -2401,12 +2419,10 @@ const Helicopter = (options = {}) => {
 
         playSound(sounds.genericExplosion, exports);
 
-        for (let i = 0; i < 2; i++) {
-          common.smokeRing({ data: args }, {
-            velocityMax: 15,
-            count: 5 + rndInt(5)
-          });
-        }
+        effects.smokeRing({ data: args }, {
+          velocityMax: 8,
+          count: 4 + rndInt(4)
+        });
 
       }
     },
