@@ -10,7 +10,7 @@ const FPS = 30;
 const FRAMERATE = 1000 / FPS;
 
 // skip frame(s) as needed, prevent the game from running too fast.
-const FRAME_MIN_TIME = FRAMERATE * 0.95;
+const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * 0.5;
 
 const unlimitedFrameRate = winloc.match(/frameRate=\*/i);
 
