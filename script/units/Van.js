@@ -164,7 +164,7 @@ const Van = (options = {}) => {
     }
 
     if (gamePrefs.ground_unit_traffic_control) {
-      nearbyTest(friendlyNearby);
+      nearbyTest(friendlyNearby, exports);
     }
 
     data.frameCount++;
@@ -245,7 +245,7 @@ const Van = (options = {}) => {
     bottomAligned: true,
     deadTimer: null,
     frameCount: 0,
-    radarJammerModulus: 50,
+    radarJammerModulus: 30,
     jamming: false,
     energy: 2,
     energyMax: 2,
@@ -266,7 +266,7 @@ const Van = (options = {}) => {
     // if the van reaches the enemy base (near the landing pad), it's game over.
     xGameOver: (options.isEnemy ? pads[0].data.x + 88 : pads[pads.length - 1].data.x - 44),
     x: options.x || 0,
-    y: game.objects.view.data.world.height - height - 2
+    y: game.objects.view.data.world.height - height - 2,
     domFetti: {
       colorType: options.isEnemy ? 'grey' : 'green',
       elementCount: 5 + rndInt(5),
