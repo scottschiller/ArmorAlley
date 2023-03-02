@@ -68,7 +68,7 @@ const ParachuteInfantry = (options = {}) => {
       return false;
     }
 
-    return common.hit(exports, hitPoints);
+    return common.hit(exports, hitPoints, target);
 
   }
 
@@ -159,12 +159,12 @@ const ParachuteInfantry = (options = {}) => {
       // touchdown! die "quietly", and transition into new infantry.
       die({ silent: true });
 
-      game.objects.infantry.push(Infantry({
+      game.addObject(TYPES.infantry, {
         x: data.x,
         isEnemy: data.isEnemy,
         // exclude from recycle "refund" / reward case
         unassisted: false
-      }));
+      });
 
     } else if (!data.parachuteOpen) {
 
