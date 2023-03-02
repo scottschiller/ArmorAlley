@@ -5,6 +5,7 @@ import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { GunFire } from '../munitions/GunFire.js';
+import { sprites } from '../core/sprites.js';
 
 const EndBunker = (options = {}) => {
 
@@ -25,7 +26,7 @@ const EndBunker = (options = {}) => {
     // only tank gunfire counts against end bunkers.
     if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
       data.energy = Math.max(0, data.energy - points);
-      common.updateEnergy(exports);
+      sprites.updateEnergy(exports);
     }
 
   }
@@ -120,7 +121,7 @@ const EndBunker = (options = {}) => {
 
     let offset, earnedFunds;
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
     data.frameCount++;
 
@@ -190,12 +191,12 @@ const EndBunker = (options = {}) => {
 
   function initEndBunker() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     game.objects.radar.addItem(exports, dom.o.className);
 

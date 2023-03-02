@@ -4,6 +4,7 @@ import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug } from '../core/gl
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
+import { sprites } from './sprites.js';
 
 const GameLoop = () => {
 
@@ -46,10 +47,11 @@ const GameLoop = () => {
 
           for (i = gameObjects[item].length - 1; i >= 0; i--) {
 
-            common.updateIsOnScreen(gameObjects[item][i]);
+            sprites.updateIsOnScreen(gameObjects[item][i]);
 
             if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
               // object is dead - take it out.
+              common.unlinkObject(gameObjects[item][i]);
               spliceArgs[0] = i;
               Array.prototype.splice.apply(gameObjects[item], spliceArgs);
             }
@@ -60,10 +62,11 @@ const GameLoop = () => {
 
           // single object case
 
-          common.updateIsOnScreen(gameObjects[item]);
+          sprites.updateIsOnScreen(gameObjects[item]);
 
           if (gameObjects[item].animate && gameObjects[item].animate()) {
             // object is dead - take it out.
+            common.unlinkObject(gameObjects[item]);
             gameObjects[item] = undefined;
           }
 
@@ -74,8 +77,8 @@ const GameLoop = () => {
     }
 
     // move static terrain items, too, given we're scrolling.
-    for (i = 0, j = game.objects.terrainItems.length; i < j; i++) {
-      common.moveWithScrollOffset(game.objects.terrainItems[i]);
+    for (i = 0, j = game.objects[TYPES.terrainItem].length; i < j; i++) {
+      sprites.moveWithScrollOffset(game.objects[TYPES.terrainItem][i]);
     }
 
     if (isGameOver() && !data.gameStopped) {

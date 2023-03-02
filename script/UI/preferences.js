@@ -2,6 +2,7 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { isSafari, tutorialMode } from '../core/global.js';
+import { sprites } from '../core/sprites.js';
 
 const prefs = {
   // legacy: game type, etc.
@@ -382,7 +383,7 @@ function PrefsManager() {
 
             // update immediately if pref is now "always" show, OR, "sometimes/never" and we have an energy DOM node present.
             if (newValue === PREFS.SHOW_HEALTH_ALWAYS || obj?.dom?.oEnergy) {
-              common.updateEnergy(obj, forceUpdate);
+              sprites.updateEnergy(obj, forceUpdate);
             }
 
           });

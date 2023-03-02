@@ -6,6 +6,8 @@ import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Base = (options = {}) => {
 
@@ -79,14 +81,18 @@ const Base = (options = {}) => {
 
     function smallBoom(exports) {
 
-      common.shrapnelExplosion(exports.data, {
-        count: 5 + rndInt(5),
+      if (rnd(1) >= 0.75) {
+        effects.domFetti(exports);
+      }
+
+      effects.shrapnelExplosion(exports.data, {
+        count: 4 + rndInt(4),
         velocity: 5 + rndInt(10),
         // don't create identical "clouds" of smoke *at* base.
         noInitialSmoke: true
       });
 
-      common.smokeRing(exports, {
+      effects.smokeRing(exports, {
         offsetX: (exports.data.width * 0.33) + rnd(exports.data.width * 0.33),
         offsetY: rnd(exports.data.height / 4),
         count: 5 + rndInt(5),
@@ -94,6 +100,10 @@ const Base = (options = {}) => {
         isGroundUnit: true,
         increaseDeceleration: (Math.random() >= 0.5 ? 1 : undefined)
       });
+
+      if (Math.random() >= 0.75) {
+        effects.inertGunfireExplosion({ exports, vX: 8, vY: 8 });
+      }
       
     }
 
@@ -138,8 +148,8 @@ const Base = (options = {}) => {
             iteration = 0;
 
             for (i = 0; i < 7; i++) {
-              common.shrapnelExplosion(data, {
-                count: rndInt(36) + rndInt(36),
+              effects.shrapnelExplosion(data, {
+                count: rndInt(64),
                 velocity: 8 + rnd(8),
                 // don't create identical "clouds" of smoke *at* base.
                 noInitialSmoke: true
@@ -151,7 +161,7 @@ const Base = (options = {}) => {
                 // first one is always big.
                 const isBigBoom = (!iteration || rnd(0.75));
 
-                common.smokeRing(exports, {
+                effects.smokeRing(exports, {
                   velocityMax: 64,
                   count: (isBigBoom ? 24 : 16),
                   offsetX: (data.width * 0.33) + rnd(data.width * 0.33),
@@ -162,6 +172,9 @@ const Base = (options = {}) => {
 
               }, 10 * i);
             }
+
+            effects.inertGunfireExplosion({ exports, count: 32 + rndInt(32), vX: 2, vY: 2 });
+            effects.inertGunfireExplosion({ exports: endBunker, count: 32 + rndInt(32), vX: 2, vY: 2 });
 
             smallBoom(endBunker);
 
@@ -229,14 +242,14 @@ const Base = (options = {}) => {
 
   function initBase() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    dom.o.appendChild(common.makeTransformSprite());
+    dom.o.appendChild(sprites.makeTransformSprite());
 
     game.objects.radar.addItem(exports, dom.o.className);
 

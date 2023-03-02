@@ -6,6 +6,7 @@ import { common } from '../core/common.js';
 import { checkProduction, collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
 
 const SuperBunker = (options = {}) => {
 
@@ -91,7 +92,7 @@ const SuperBunker = (options = {}) => {
     if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
       data.energy = Math.max(0, data.energy - points);
       updateFireModulus();
-      common.updateEnergy(exports);
+      sprites.updateEnergy(exports);
     }
   }
 
@@ -111,7 +112,7 @@ const SuperBunker = (options = {}) => {
 
     setFriendly(false);
 
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
     // check if enemy convoy production should stop or start
     checkProduction();
@@ -152,7 +153,7 @@ const SuperBunker = (options = {}) => {
 
   function animate() {
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
     data.frameCount++;
 
@@ -173,7 +174,7 @@ const SuperBunker = (options = {}) => {
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
 
@@ -344,7 +345,7 @@ const SuperBunker = (options = {}) => {
 
             playSound(sounds.doorClose, target.data.exports);
 
-            common.updateEnergy(exports);
+            sprites.updateEnergy(exports);
 
           }
 

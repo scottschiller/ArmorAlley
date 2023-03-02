@@ -3,6 +3,7 @@ import { game } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
+import { sprites } from './sprites.js';
 
 let soundIDs = 0;
 let soundIDsToPlay = {};
@@ -155,7 +156,7 @@ function playSound(soundReference, target, soundOptions) {
   if (!gamePrefs.sound) return soundObject.sound;
 
   // TODO: revisit on-screen logic, drop the function call
-  onScreen = (!target || common.isOnScreen(target));
+  onScreen = (!target || sprites.isOnScreen(target));
   // onScreen = (target && target.data && target.data.isOnScreen);
 
   // old: determine volume based on on/off-screen status

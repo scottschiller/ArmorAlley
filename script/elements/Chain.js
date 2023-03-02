@@ -1,6 +1,7 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
 
 const Chain = (options = {}) => {
 
@@ -15,7 +16,7 @@ const Chain = (options = {}) => {
 
     if (data.dead) return;
 
-    common.removeNodes(dom);
+    sprites.removeNodesAndUnlink(exports);
 
     data.energy = 0;
 
@@ -149,7 +150,7 @@ const Chain = (options = {}) => {
 
     }
     
-    common.moveTo(exports, x, y);
+    sprites.moveTo(exports, x, y);
 
     if (height !== undefined && data.height !== height) {
       // don't update DOM - $$$ paint even when GPU compositing,
@@ -164,11 +165,11 @@ const Chain = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
     
   }
 

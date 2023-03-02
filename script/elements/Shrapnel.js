@@ -5,6 +5,7 @@ import { collisionTest } from '../core/logic.js';
 import { plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
+import { sprites } from '../core/sprites.js';
 
 const Shrapnel = (options = {}) => {
 
@@ -25,7 +26,7 @@ const Shrapnel = (options = {}) => {
     data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
 
     // move, and retain 3d scaling (via extraTransforms)
-    common.moveTo(exports, x, y);
+    sprites.moveTo(exports, x, y);
 
   }
 
@@ -64,7 +65,7 @@ const Shrapnel = (options = {}) => {
     utils.css.add(dom.o, css.stopped);
 
     data.deadTimer = common.setFrameTimeout(() => {
-      common.removeNodes(dom);
+      sprites.removeNodes(dom);
       data.deadTimer = null;
     }, delay + 50);
 
@@ -121,7 +122,7 @@ const Shrapnel = (options = {}) => {
     }
 
     // "embed", so this object moves relative to the target it hit
-    common.attachToTarget(exports, target);
+    sprites.attachToTarget(exports, target);
 
     die();
 
@@ -171,7 +172,7 @@ const Shrapnel = (options = {}) => {
     if (data.dead) {
 
       // keep moving with scroll, while visible
-      common.moveWithScrollOffset(exports);
+      sprites.moveWithScrollOffset(exports);
 
       return (!data.deadTimer && !dom.o);
 
@@ -216,14 +217,14 @@ const Shrapnel = (options = {}) => {
 
   function initShrapnel() {
 
-    dom.o = common.makeSprite({
-      className: css.className + (Math.random() > 0.5 ? ` ${css.reverse}` : '')
+    dom.o = sprites.create({
+      className: css.className
     });
 
-    dom.oTransformSprite = common.makeTransformSprite();
+    dom.oTransformSprite = sprites.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
     dom.oTransformSprite._style.setProperty('background-position', `${data.spriteType * -data.width * 1 / data.scale}px 0px`);

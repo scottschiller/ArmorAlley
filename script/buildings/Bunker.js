@@ -7,6 +7,8 @@ import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';
 import { Chain } from '../elements/Chain.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Bunker = (options = {}) => {
 
@@ -99,7 +101,7 @@ const Bunker = (options = {}) => {
       engineer.resume();
     }
 
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
   }
 
@@ -151,9 +153,11 @@ const Bunker = (options = {}) => {
 
     utils.css.add(dom.o, css.exploding);
 
-    common.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
+    effects.damageExplosion(exports);
 
-    common.smokeRing(exports, {
+    effects.domFetti(exports, dieOptions.attacker);
+
+    effects.smokeRing(exports, {
       count: 24,
       velocityMax: 16,
       offsetY: data.height - 2,
@@ -162,15 +166,31 @@ const Bunker = (options = {}) => {
 
     detachBalloon();
 
-    common.shrapnelExplosion(data, { velocity: rnd(-10) });
+    const rndXY = 1 + rnd(1);
+
+    effects.shrapnelExplosion(data, { count: 16 + rndInt(24), velocity: (3 + rnd(3)), bottomAligned: true });
+    effects.inertGunfireExplosion({ exports, count: 16 + rndInt(8), vX: rndXY, vY: rndXY });
+
+    /**
+     * ******* T R O G D O R ! ! ! *******
+     * --------------- 💪🐉 ---------------
+     * Burninating the countryside
+     * Burninating the peasants
+     * Burninating all the peoples
+     * And their thatched-roof cottages!
+     * Thatched-roof cottages!
+     * http://www.hrwiki.org/wiki/Trogdor_(song)
+     */
+    data.burninating = true;
 
     common.setFrameTimeout(() => {
 
       utils.css.swap(dom.o, css.exploding, css.burning);
 
       common.setFrameTimeout(() => {
+        data.burninating = false;
         utils.css.swap(dom.o, css.burning, css.dead);
-      }, 10000);
+      }, burninatingTime);
 
     }, 1200);
 
@@ -192,7 +212,20 @@ const Bunker = (options = {}) => {
 
   function animate() {
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
+
+    if (!data.dead) {
+
+      effects.smokeRelativeToDamage(exports);
+
+    } else if (data.burninating) {
+
+      if (data.burnFramesLeft) {
+        effects.smokeRelativeToDamage(exports, data.burnFramesLeft / data.burnFramesMax);
+        data.burnFramesLeft--;
+      }
+
+    }
 
   }
 
@@ -225,18 +258,19 @@ const Bunker = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    dom.o.appendChild(common.makeSubSprite());
-    dom.o.appendChild(common.makeSubSprite(css.arrow));
+    dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+    dom.o.appendChild(sprites.makeSubSprite(css.rubble));
+    dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
 
     data.oClassName = dom.o.className;
 
     // note hackish Y-offset, sprite position vs. collision detection
-    common.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
+    sprites.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
 
   }
 
@@ -258,6 +292,10 @@ const Bunker = (options = {}) => {
     arrow: 'arrow',
     burning: 'burning'
   });
+
+  // how long bunkers take to "burn out"
+  const burninatingTime = 10000;
+  const burnFrames = (burninatingTime / 1000) * FPS;
 
   data = common.inheritData({
     type: TYPES.bunker,

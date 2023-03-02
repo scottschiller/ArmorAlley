@@ -5,6 +5,8 @@ import { gameType } from '../aa.js';
 import { rndInt, plusMinus, worldWidth, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Balloon = (options = {}) => {
 
@@ -76,12 +78,14 @@ const Balloon = (options = {}) => {
       playSound(sounds.balloonExplosion, exports);
     }
 
-    common.inertGunfireExplosion({ exports });
+    effects.inertGunfireExplosion({ exports });
 
-    common.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+    effects.domFetti(exports, dieOptions.attacker);
+
+    effects.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
 
     if (gameType === 'hard' || gameType === 'extreme') {
-      common.shrapnelExplosion(data, {
+      effects.shrapnelExplosion(data, {
         count: 3 + rndInt(3),
         velocity: rndInt(4)
       });
@@ -144,7 +148,7 @@ const Balloon = (options = {}) => {
 
       // explosion underway: move, accounting for scroll
       if (data.deadTimer) {
-        common.moveWithScrollOffset(exports);
+        sprites.moveWithScrollOffset(exports);
       }
 
       checkRespawn();
@@ -236,7 +240,7 @@ const Balloon = (options = {}) => {
 
     }
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
   }
 
@@ -272,7 +276,7 @@ const Balloon = (options = {}) => {
     utils.css.remove(dom.o, css.exploding);
     utils.css.remove(dom.o, css.dead);
 
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
     // presumably, triggered by an infantry.
     if (sounds.chainRepair) {
@@ -283,7 +287,7 @@ const Balloon = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
@@ -291,7 +295,7 @@ const Balloon = (options = {}) => {
     // TODO: remove?
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
-    common.moveTo(exports);
+    sprites.moveTo(exports);
 
   }
 

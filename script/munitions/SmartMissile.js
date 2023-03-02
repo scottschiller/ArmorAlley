@@ -6,6 +6,8 @@ import { collisionTest, getNearestObject } from '../core/logic.js';
 import { rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const SmartMissile = (options = {}) => {
 
@@ -48,7 +50,7 @@ const SmartMissile = (options = {}) => {
 
     data.extraTransforms = `rotate3d(0, 0, 1, ${data.angle}deg)`;
 
-    common.moveTo(exports, x, y);
+    sprites.moveTo(exports, x, y);
 
     // push x/y to history arrays, maintain size
 
@@ -75,7 +77,7 @@ const SmartMissile = (options = {}) => {
 
       // if previous X value exists, apply it
       if (data.xHistory[i]) {
-        common.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i] + xOffset}px`, `${data.yHistory[i] + yOffset}px`);
+        sprites.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i] + xOffset}px`, `${data.yHistory[i] + yOffset}px`);
         dom.trailers[i]._style.setProperty('opacity', Math.max(0.25, (i+1) / j));
       }
 
@@ -98,7 +100,7 @@ const SmartMissile = (options = {}) => {
   function spark() {
 
     utils.css.add(dom.o, css.spark);
-    common.applyRandomRotation(dom.o);
+    sprites.applyRandomRotation(dom.o);
 
   }
 
@@ -233,16 +235,20 @@ const SmartMissile = (options = {}) => {
 
     utils.css.add(dom.o, css.spark);
 
-    common.applyRandomRotation(dom.o);
+    sprites.applyRandomRotation(dom.o);
 
-    common.inertGunfireExplosion({ exports });
+    effects.inertGunfireExplosion({ exports });
 
     if (data.armed) {
 
-      common.shrapnelExplosion(data, {
+      effects.shrapnelExplosion(data, {
         count: 3 + rndInt(3),
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
       });
+
+      if (attacker?.data?.type !== TYPES.infantry) {
+        effects.domFetti(exports);
+      }
 
       // special-case: shot down by gunfire, vs. generic "boom"
       if (data?.attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
@@ -260,11 +266,11 @@ const SmartMissile = (options = {}) => {
     hideTrailers();
 
     data.deadTimer = common.setFrameTimeout(() => {
-      common.removeNodes(dom);
       // removeNodes on trailers???
     }, 500);
 
     data.energy = 0;
+      sprites.removeNodesAndUnlink(exports);
 
     // stop tracking the target.
     setTargetTracking();
@@ -380,7 +386,7 @@ const SmartMissile = (options = {}) => {
 
     // notify caller if now dead and can be removed.
     if (data.dead) {
-      common.moveWithScrollOffset(exports);
+      sprites.moveWithScrollOffset(exports);
       return (data.dead && !dom.o);
     }
 
@@ -586,7 +592,7 @@ const SmartMissile = (options = {}) => {
 
     // missiles are animated by their parent - e.g., helicopters,
     // and not the main game loop. so, on-screen status is checked manually here.
-    common.updateIsOnScreen(exports);
+    sprites.updateIsOnScreen(exports);
 
     collisionTest(collision, exports);
 
@@ -605,7 +611,7 @@ const SmartMissile = (options = {}) => {
 
     fragment = document.createDocumentFragment();
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
@@ -615,10 +621,10 @@ const SmartMissile = (options = {}) => {
     };
 
     // initial placement
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
 
     for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(common.makeSprite(trailerConfig));
+      dom.trailers.push(sprites.create(trailerConfig));
       fragment.appendChild(dom.trailers[i]);
     }
 

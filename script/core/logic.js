@@ -7,6 +7,7 @@ import { utils } from './utils.js';
 import { common } from './common.js';
 import { game } from './Game.js';
 import { COSTS, TYPES, worldWidth } from './global.js';
+import { sprites } from './sprites.js';
 
 function collisionCheck(rect1, rect2, rect1XLookAhead) {
 
@@ -125,7 +126,7 @@ function collisionCheckArray(options) {
           options.hit(options.targets[i], null, options.source);
 
           // update energy?
-          common.updateEnergy(options.targets[i]);
+          sprites.updateEnergy(target);
         }
 
       }

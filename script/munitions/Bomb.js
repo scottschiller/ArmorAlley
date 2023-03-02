@@ -6,6 +6,8 @@ import { collisionTest } from '../core/logic.js';
 import { rad2Deg, plusMinus, rnd, rndInt, worldHeight, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Bomb = (options = {}) => {
 
@@ -30,7 +32,7 @@ const Bomb = (options = {}) => {
 
     data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`;
 
-    common.moveTo(exports, x, y);
+    sprites.moveTo(exports, x, y);
 
   }
 
@@ -107,7 +109,7 @@ const Bomb = (options = {}) => {
       }
 
       // "embed", so this object moves relative to the target it hit
-      common.attachToTarget(exports, dieOptions.target);
+      sprites.attachToTarget(exports, dieOptions.target);
 
     }
 
@@ -116,7 +118,7 @@ const Bomb = (options = {}) => {
       utils.css.add(dom.o, className);
 
       data.deadTimer = common.setFrameTimeout(() => {
-        common.removeNodes(dom);
+        sprites.removeNodesAndUnlink(exports);
         data.deadTimer = null;
       }, 600);
 
@@ -134,6 +136,8 @@ const Bomb = (options = {}) => {
         }));
       }
     }
+
+    effects.domFetti(exports, dieOptions.target);
 
     data.dead = true;
 
@@ -246,7 +250,7 @@ const Bomb = (options = {}) => {
     if (data.dead) {
 
       if (dom.o) {
-        common.moveWithScrollOffset(exports);
+        sprites.moveWithScrollOffset(exports);
       }
 
       return (!data.deadTimer && !dom.o);
@@ -269,7 +273,7 @@ const Bomb = (options = {}) => {
 
     // bombs are animated by their parent - e.g., helicopters,
     // and not the main game loop. so, on-screen status is checked manually here.
-    common.updateIsOnScreen(exports);
+    sprites.updateIsOnScreen(exports);
 
     // notify caller if dead, and node has been removed.
     return (data.dead && !data.deadTimer && !dom.o);
@@ -278,14 +282,14 @@ const Bomb = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className
     });
 
     // parent gets transform position, subsprite gets rotation animation
-    dom.o.appendChild(common.makeSubSprite());
+    dom.o.appendChild(sprites.makeSubSprite());
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
     
   }
 
@@ -342,7 +346,9 @@ const Bomb = (options = {}) => {
         if (target.data.type === TYPES.gunfire && data.energy) {
           data.energy = Math.max(0, data.energy - target.data.damagePoints);
           playSound(sounds.metalHit, exports);
-          common.inertGunfireExplosion({ exports, count: 2 + rndInt(2) });
+          if (!data.hidden) {
+            effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
+          }
           return;
         }
         bombHitTarget(target);

@@ -4,6 +4,8 @@ import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import { rndInt, plusMinus, rnd, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const GunFire = (options = {}) => {
 
@@ -43,6 +45,8 @@ const GunFire = (options = {}) => {
 
       data.dead = true;
 
+      sprites.removeNodesAndUnlink(exports);
+
       if (radarItem) {
         radarItem.die({
           silent: true
@@ -77,6 +81,8 @@ const GunFire = (options = {}) => {
         if (target.data.type === TYPES.helicopter) {
 
           playSound(sounds.boloTank, exports);
+
+          effects.domFetti(exports, target);
 
         } else if (
 
@@ -151,7 +157,7 @@ const GunFire = (options = {}) => {
       if (canDie) {
 
         // "embed", so this object moves relative to the target it hit
-        common.attachToTarget(exports, target);
+        sprites.attachToTarget(exports, target);
 
         utils.css.add(dom.o, css.dead);
 
@@ -161,6 +167,9 @@ const GunFire = (options = {}) => {
           frameTimeout = null;
         }, 250);
 
+        if (target.data.type !== TYPES.infantry) {
+          effects.domFetti(exports, target);
+        }
       }
 
     }
@@ -170,7 +179,7 @@ const GunFire = (options = {}) => {
       // pending die()
       if (frameTimeout) {
         // keep moving with scroll, while visible
-        common.moveWithScrollOffset(exports);
+        sprites.moveWithScrollOffset(exports);
         return false;
       }
 
@@ -186,7 +195,7 @@ const GunFire = (options = {}) => {
         data.gravity *= data.gravityRate;
       }
 
-      common.moveTo(exports, data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
+      sprites.moveTo(exports, data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
 
       data.frameCount++;
 
@@ -228,7 +237,7 @@ const GunFire = (options = {}) => {
       data.x += plusMinus();
       data.y += plusMinus();
 
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
       if (!data.isInert) {
 

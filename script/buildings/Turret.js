@@ -7,6 +7,8 @@ import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Turret = (options = {} )=> {
 
@@ -27,7 +29,6 @@ const Turret = (options = {} )=> {
   function setAngle(angle) {
 
     // TODO: CSS animation for this?
-    // common.updateIsOnScreen(exports); from within animate() ?
     if (data.isOnScreen) {
       dom.oSubSprite._style.setProperty('transform', `rotate3d(0, 0, 1, ${angle}deg)`);
     }
@@ -158,9 +159,15 @@ const Turret = (options = {} )=> {
         utils.css.remove(dom.o, css.exploding);
       }, 1200);
 
-      common.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
+      effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
-      common.smokeRing(exports, { isGroundUnit: true });
+      effects.shrapnelExplosion(data, { count: 3 + rndInt(3), velocity: 2 + rndInt(2) });
+
+      effects.damageExplosion(exports);
+
+      effects.domFetti(exports, dieOptions?.attacker);
+
+      effects.smokeRing(exports, { isGroundUnit: true });
 
       playSound(sounds.metalHitBreak, exports);
       playSound(sounds.genericExplosion, exports);
@@ -173,7 +180,7 @@ const Turret = (options = {} )=> {
     data.restoring = false;
     data.dead = true;
 
-    common.updateEnergy(exports);
+    sprites.updateEnergy(exports);
 
   }
 
@@ -325,7 +332,7 @@ const Turret = (options = {} )=> {
 
   function animate() {
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
     data.frameCount++;
 
@@ -334,7 +341,7 @@ const Turret = (options = {} )=> {
     }
 
     if (!data.dead && data.energy > 0) {
-      common.smokeRelativeToDamage(exports);
+      effects.smokeRelativeToDamage(exports);
     }
 
     if (!data.dead && data.energy > 0 && data.frameCount % data.repairModulus === 0) {

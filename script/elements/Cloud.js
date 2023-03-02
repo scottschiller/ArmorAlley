@@ -1,6 +1,7 @@
 import { rndInt, worldWidth, worldHeight } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
 
 const Cloud = (options = {}) => {
 
@@ -45,11 +46,13 @@ const Cloud = (options = {}) => {
 
     zones.refreshZone(exports);
 
+    sprites.moveWithScrollOffset(exports);
+
   }
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className
     });
 
@@ -59,7 +62,7 @@ const Cloud = (options = {}) => {
 
     initDOM();
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
 

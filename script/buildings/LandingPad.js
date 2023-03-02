@@ -1,6 +1,7 @@
 import { rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
+import { sprites } from '../core/sprites.js';
 
 const LandingPad = (options = {}) => {
 
@@ -8,7 +9,7 @@ const LandingPad = (options = {}) => {
 
   function animate() {
 
-    common.moveWithScrollOffset(exports);
+    sprites.moveWithScrollOffset(exports);
 
     collisionTest(collision, exports);
 
@@ -35,13 +36,13 @@ const LandingPad = (options = {}) => {
 
   function initLandingPad() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className
     });
 
-    dom.o.appendChild(common.makeTransformSprite());
+    dom.o.appendChild(sprites.makeTransformSprite());
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     setWelcomeMessage();
   }

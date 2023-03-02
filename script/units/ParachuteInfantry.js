@@ -4,6 +4,8 @@ import { common } from '../core/common.js';
 import { rnd, rndInt, worldHeight, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Infantry } from './Infantry.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const ParachuteInfantry = (options = {}) => {
 
@@ -43,13 +45,13 @@ const ParachuteInfantry = (options = {}) => {
 
     if (!options?.silent) {
 
-      common.inertGunfireExplosion({ exports });
+      effects.inertGunfireExplosion({ exports });
 
       playSound(sounds.scream, exports);
 
     }
     
-    common.removeNodes(dom);
+    sprites.removeNodesAndUnlink(exports);
 
     data.energy = 0;
 
@@ -78,7 +80,7 @@ const ParachuteInfantry = (options = {}) => {
 
     // falling?
 
-    common.moveTo(exports, data.x + data.vX, data.y + data.vY);
+    sprites.moveTo(exports, data.x + data.vX, data.y + data.vY);
 
     if (!data.parachuteOpen) {
 
@@ -187,7 +189,7 @@ const ParachuteInfantry = (options = {}) => {
         data.didHitGround = true;
 
         // reposition, first
-        common.moveTo(exports, data.x, data.maxY);
+        sprites.moveTo(exports, data.x, data.maxY);
 
         // balloon-on-skin "splat" sound
         if (sounds.splat) {
@@ -206,16 +208,16 @@ const ParachuteInfantry = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     // CSS animation (rotation) gets applied to this element
-    dom.oTransformSprite = common.makeTransformSprite();
+    dom.oTransformSprite = sprites.makeTransformSprite();
     dom.o.appendChild(dom.oTransformSprite);
 
-    common.moveTo(exports);
+    sprites.moveTo(exports);
 
   }
 

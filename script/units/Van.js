@@ -5,6 +5,8 @@ import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
 import { TYPES, winloc, FPS, tutorialMode } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const Van = (options = {}) => {
 
@@ -38,12 +40,16 @@ const Van = (options = {}) => {
     // revert to CSS rules, prevent first frame of explosion from sticking
     dom.o._style.setProperty('background-position', '0px -384px');
 
-    common.shrapnelExplosion(data, { centerX: true, velocity: 6 });
+    effects.shrapnelExplosion(data, { centerX: true, velocity: 3 + rndInt(3) });
 
-    common.inertGunfireExplosion({ exports });
+    effects.domFetti(exports, dieOptions.attacker);
+
+    effects.inertGunfireExplosion({ exports });
+
+    effects.damageExplosion(exports);
 
     data.deadTimer = common.setFrameTimeout(() => {
-      common.removeNodes(dom);
+      sprites.removeNodesAndUnlink(exports);
       data.deadTimer = null;
     }, 1000);
 
@@ -70,10 +76,10 @@ const Van = (options = {}) => {
     let enemyHelicopter;
 
     if (!data.stopped) {
-      common.moveTo(exports, data.x + data.vX, data.y);
+      sprites.moveTo(exports, data.x + data.vX, data.y);
     } else {
       // if stopped, just take scroll into effect
-      common.moveWithScrollOffset(exports);
+      sprites.moveWithScrollOffset(exports);
     }
 
     if (data.dead) return !data.deadTimer;
@@ -200,12 +206,12 @@ const Van = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
 

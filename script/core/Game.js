@@ -29,6 +29,7 @@ import { Infantry } from '../units/Infantry.js';
 import { Engineer } from '../units/Engineer.js';
 import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
+import { sprites } from './sprites.js';
 
 // very commonly-accessed attributes to be exported
 let gameType;
@@ -44,7 +45,7 @@ const game = (() => {
 
     function initDOM() {
 
-      _dom.o = common.makeSprite({
+      _dom.o = sprites.create({
         className: `${className} terrain-item`
       });
 

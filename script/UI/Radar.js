@@ -6,6 +6,7 @@ import { gamePrefs } from './preferences.js';
 import { isFirefox, isSafari, TYPES, winloc, worldWidth } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { RadarItem } from './RadarItem.js';
+import { sprites } from '../core/sprites.js';
 
 const Radar = () => {
 
@@ -126,7 +127,7 @@ const Radar = () => {
     }
 
     itemObject = RadarItem({
-      o: common.withStyle(document.createElement('div')),
+      o: sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
       className,
       oParent: item,
@@ -196,7 +197,7 @@ const Radar = () => {
 
   function _removeRadarItem(offset) {
 
-    common.removeNodes(objects.items[offset].dom);
+    sprites.removeNodes(objects.items[offset].dom);
     // faster splice - doesn't create new array object (IIRC.)
     spliceArgs[0] = offset;
     Array.prototype.splice.apply(objects.items, spliceArgs);
@@ -303,7 +304,7 @@ const Radar = () => {
         top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - (objects.items[i]?.layout?.height || 0);
 
         // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-        common.setTransformXY(objects.items[i], objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
+        sprites.setTransformXY(objects.items[i], objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
 
       }
 

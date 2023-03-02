@@ -7,6 +7,7 @@ import { TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
 
 const Infantry = (options = {}) => {
 
@@ -60,9 +61,9 @@ const Infantry = (options = {}) => {
       data.x = x;
       data.y = y;
 
-      common.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`);
       zones.refreshZone(exports);
 
+      sprites.setTransformXY(exports, dom.o, `${x}px`, `${data.y - data.yOffset}px`);
   }
 
   function stop(noFire) {
@@ -123,7 +124,7 @@ const Infantry = (options = {}) => {
 
     }
 
-    common.removeNodes(dom);
+    sprites.removeNodesAndUnlink(exports);
 
     data.energy = 0;
 
@@ -141,7 +142,7 @@ const Infantry = (options = {}) => {
     if (data.dead) {
 
       // keep in sync with battlefield
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
       return !dom.o;
 
@@ -166,7 +167,7 @@ const Infantry = (options = {}) => {
 
     } else {
 
-      common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
       if (!data.noFire) {
 
@@ -193,14 +194,14 @@ const Infantry = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    dom.o.appendChild(common.makeTransformSprite());
+    dom.o.appendChild(sprites.makeTransformSprite());
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
 
   }
 

@@ -5,7 +5,8 @@ import { FPS, bananaMode, rubberChickenMode } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
-import { SmartMissile } from '../munitions/SmartMissile.js';
+import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const MissileLauncher = (options = {}) => {
 
@@ -35,15 +36,15 @@ const MissileLauncher = (options = {}) => {
         playSound(sounds.genericExplosion, exports);
       }
 
-      common.inertGunfireExplosion({ exports });
+      effects.inertGunfireExplosion({ exports });
 
       common.setFrameTimeout(() => {
-        common.removeNodes(dom);
+        sprites.removeNodesAndUnlink(exports);
       }, 1000);
 
     } else {
 
-      common.removeNodes(dom);
+      sprites.removeNodesAndUnlink(exports);
 
     }
 
@@ -129,13 +130,13 @@ const MissileLauncher = (options = {}) => {
     if (data.dead) return !dom.o;
 
     if (!data.stopped) {
-      common.moveTo(exports, data.x + data.vX, data.y);
+      sprites.moveTo(exports, data.x + data.vX, data.y);
     } else {
       // if stopped, just take scroll into effect
-      common.moveWithScrollOffset(exports);
+      sprites.moveWithScrollOffset(exports);
     }
 
-    common.smokeRelativeToDamage(exports);
+    effects.smokeRelativeToDamage(exports);
 
     if (data.orderComplete && !data.stopped) {
 
@@ -188,12 +189,12 @@ const MissileLauncher = (options = {}) => {
 
   function initDOM() {
 
-    dom.o = common.makeSprite({
+    dom.o = sprites.create({
       className: css.className,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    common.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
 

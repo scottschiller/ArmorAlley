@@ -3,6 +3,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { screenScale } from '../core/Game.js';
 import { DEFAULT_FUNDS, isChrome, isFirefox } from '../core/global.js';
 import { common } from '../core/common.js';
+import { sprites } from '../core/sprites.js';
 
 const Funds = () => {
 
@@ -167,7 +168,7 @@ const Funds = () => {
     // this will then be used to do offsets for animating numbers
     if (!dom.digits.length) return;
 
-    const funds = common.getWithStyle('funds');
+    const funds = sprites.getWithStyle('funds');
 
     // first, offset zoom scaling.
     funds._style.setProperty('zoom', screenScale);
