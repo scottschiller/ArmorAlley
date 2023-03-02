@@ -9,7 +9,7 @@ const Queue = () => {
     processInterval: FPS * 3,
     queue: [],
     nextFrameQueue: [],
-    queueMax: 512
+    queueMax: 128
   };
 
   function process() {
