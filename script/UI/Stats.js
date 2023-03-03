@@ -1,10 +1,28 @@
 import { TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
+import { gameEvents, EVENTS } from '../core/GameEvents.js';
+import { common } from '../core/common.js';
+
 const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
 function Stats() {
 
   let data, exports;
+
+  // tracking for "GOURANGA!"
+  const youKilledTypes = {
+    [TYPES.missileLauncher]: true,
+    [TYPES.tank]: true,
+    [TYPES.van]: true,
+    [TYPES.infantry]: true,
+    [TYPES.engineer]: true,
+    // extra types which don't have a cost, but do have "value"
+    [TYPES.balloon]: true,
+    [TYPES.bunker]: true,
+    [TYPES.helicopter]: true,
+    [TYPES.turret]: true,
+    [TYPES.smartMissile]: true
+  };
 
   function statsStructure() {
     return {
@@ -63,6 +81,11 @@ function Stats() {
 
     // notify when something was destroyed, if not a "silent" death
     if (!(options?.silent)) maybeNotify(type, obj);
+
+    // note when player destroys MTVIE
+    if (obj.data.isEnemy && obj?.data?.attacker?.data?.parentType === TYPES.helicopter && youKilledTypes[type]) {
+      gameEvents.fire(EVENTS.youKilledSomething, 'type', type);
+    }
 
     // increment the relevant stat
     dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
