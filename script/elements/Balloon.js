@@ -92,6 +92,9 @@ const Balloon = (options = {}) => {
 
     if (sounds.balloonExplosion) {
       playSound(sounds.balloonExplosion, exports);
+      if (data.isOnScreen) {
+        playSound(sounds.bnb.beavisPoop, exports);
+      }
     }
 
     effects.inertGunfireExplosion({ exports });
