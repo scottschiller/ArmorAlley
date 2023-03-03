@@ -260,8 +260,6 @@
 const prefsManager = PrefsManager();
 
 const keyboardMonitor = KeyboardMonitor();
-    
-keyboardMonitor.init();
 
 let stats;
 
@@ -288,26 +286,10 @@ window.aa = {
 // OGG is available, so MP3 is not required.
 soundManager.audioFormats.mp3.required = false;
 
-if (isSafari) {
-  // Safari 7+ engine freezes when multiple Audio() objects play simultaneously, making gameplay unacceptable.
-  // https://bugs.webkit.org/show_bug.cgi?id=116145
-  // try html5audio=1 in URL to override/test.
-  const matches = navigator.userAgent.match(/Version\/([0-9]+)/i);
-  // last item should be the version number.
-  const majorVersion = matches && matches.pop && parseInt(matches.pop(), 10);
-  if (majorVersion && majorVersion >= 7) {
-    console.log('Safari 7-15 (and maybe newer) rendering engine stutters when multiple Audio() objects play simultaneously, possibly due to trackbar. https://bugs.webkit.org/show_bug.cgi?id=116145');
-    if (!winloc.match(/html5audio/i)) {
-      console.log('Audio is disabled by default. You can try forcing audio by adding html5audio=1 to the URL.');
-      soundManager.disable();
-    }
-  }
-}
-
 soundManager.setup({
   debugMode: false,
   // Audio in Firefox starts breaking up at some number of active sounds, if this is enabled. :/
-  usePlaybackRate: !isFirefox || winloc.match(/forcePlaybackRate/i),
+  usePlaybackRate: true,
   defaultOptions: {
     volume: DEFAULT_VOLUME,
     multiShotEvents: true
@@ -322,7 +304,7 @@ window.addEventListener('DOMContentLoaded', game.initArmorAlley);
 
 // --- THE END ---
 
-import { winloc, isFirefox, isSafari, DEFAULT_VOLUME } from './core/global.js';
+import { winloc, DEFAULT_VOLUME } from './core/global.js';
 
 import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
