@@ -96,17 +96,6 @@ function PrefsManager() {
     // now assign the natural content height
     body.style.setProperty('height', height + 'px');
 
-    // one more thing: audio is force-disabled in Safari.
-    // handle exceptions here.
-    if (!window?.soundManager?.ok()) {
-      document.getElementById('cb_sound').setAttribute('disabled', true);
-      document.getElementById('cb_sound_description').innerHTML = [
-        'HTML5 Audio() disabled, sorry.',
-        (isSafari ? ' <a href="https://bugs.webkit.org/show_bug.cgi?id=116145">Webkit #116145</a>.' : ''),
-        ' <a href="?html5audio=1">Try it</a> at your own risk.'
-      ].join('');
-    }
-
     // Remove the menu entirely from the DOM, set it up to append only when active.
     dom.o.remove();
 
