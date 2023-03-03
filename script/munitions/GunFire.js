@@ -18,6 +18,8 @@ const GunFire = (options = {}) => {
 
     function spark() {
 
+      if (!dom.o) return;
+
       utils.css.add(dom.o, css.spark);
 
       // randomize a little
@@ -40,8 +42,7 @@ const GunFire = (options = {}) => {
 
       // aieee!
 
-      if (!dom.o) return;
-
+      if (data.dead && !force) return;
 
       data.dead = true;
 
@@ -56,6 +57,9 @@ const GunFire = (options = {}) => {
     }
 
     function sparkAndDie(target) {
+
+      // hackish: bail if spark -> die already scheduled.
+      if (frameTimeout) return;
 
       let now;
       let canSpark = true;
@@ -81,6 +85,8 @@ const GunFire = (options = {}) => {
         if (target.data.type === TYPES.helicopter) {
 
           playSound(sounds.boloTank, exports);
+
+          data.domFetti.startVelocity = (Math.abs(data.vX) + Math.abs(data.vY));
 
           effects.domFetti(exports, target);
 
@@ -167,15 +173,31 @@ const GunFire = (options = {}) => {
 
         utils.css.add(dom.o, css.dead);
 
+        // immediately mark as dead, prevent any more collisions.
+        data.dead = true;
+
         // and cleanup shortly.
         frameTimeout = common.setFrameTimeout(() => {
-          die();
+          // use the force, indeed.
+          const force = true;
+          die(force);
           frameTimeout = null;
         }, 250);
 
         if (target.data.type !== TYPES.infantry) {
+
+          // hackish: override for special case
+          data.domFetti = {
+            colorType: 'grey',
+            elementCount: 1 + rndInt(1),
+            startVelocity: (Math.abs(data.vX) + Math.abs(data.vY)),
+            angle: 0
+          };
+
           effects.domFetti(exports, target);
+
         }
+
       }
 
     }
@@ -190,6 +212,12 @@ const GunFire = (options = {}) => {
       }
 
       if (data.dead) return true;
+
+      // disappear if created on-screen, but has become off-screen.
+      if (data.isInert && !data.isOnScreen) {
+        die();
+        return;
+      }
 
       if (!data.isInert && !data.expired && data.frameCount > data.expireFrameCount) {
         utils.css.add(dom.o, css.expired);
@@ -223,7 +251,7 @@ const GunFire = (options = {}) => {
       }
 
       // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o);
+      return (data.dead && !dom.o && !dom.domPool);
 
     }
 
@@ -266,6 +294,7 @@ const GunFire = (options = {}) => {
 
     data = common.inheritData({
       type: 'gunfire',
+      parent: options.parent || null,
       parentType: options.parentType || null,
       isInert: !!options.isInert,
       isEnemy: options.isEnemy,
@@ -280,9 +309,18 @@ const GunFire = (options = {}) => {
       damagePoints: options.damagePoints || 1,
       ricochetSoundThrottle: (options?.parentType === TYPES.infantry ? 250 : 100),
       target: null,
-      vyMax: 32
+      vyMax: 32,
+      domFetti: {
+        elementCount: 1 + rndInt(1),
+        startVelocity: 2 + rndInt(10),
+        spread: 360,
+        decay: 0.935
+      },
       domPool: null
     }, options);
+
+    // hackish
+    data.domFetti.startVelocity = data.vX;
 
     dom = {
       o: null
