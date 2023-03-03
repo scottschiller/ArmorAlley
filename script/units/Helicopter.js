@@ -1594,7 +1594,20 @@ const Helicopter = (options = {}) => {
         playSound(sounds.popSound2, exports);
 
       } else if (!data.isEnemy && sounds.inventory.denied) {
-        playSound(sounds.inventory.denied);
+        if (game.data.isBeavis || game.data.isButthead) {
+          if (!data.bnbNoParachutes) {
+            data.bnbNoParachutes = true;
+            const { isBeavis } = game.data;
+            const playbackRate = isBeavis ? 1 : 0.85 + (Math.random() * 0.3);
+            playSound(isBeavis ? sounds.bnb.beavisGrunt : sounds.bnb.buttheadBelch, null, {
+              playbackRate,
+              onfinish: () => data.bnbNoParachutes = false
+            });
+          }
+        } else {
+          // no more infantry to deploy.
+          playSound(sounds.inventory.denied);
+        }
       }
 
     }
@@ -1620,6 +1633,8 @@ const Helicopter = (options = {}) => {
       }
 
       data.pilot = false;
+
+      playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
 
     }
 
@@ -2558,6 +2573,7 @@ const Helicopter = (options = {}) => {
     commentaryTimer: null,
     commentaryLastExec: 0,
     commentaryThrottle: 30000,
+    pickupSound: null,
     tiltOffset: 0,
     shakeOffset: 0,
     shakeOffsetMax: 6,
@@ -2622,6 +2638,7 @@ const Helicopter = (options = {}) => {
     maxBombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
     parachutes: 1,
     maxParachutes: 5,
+    bnbNoParachutes: false,
     smartMissiles: 2,
     maxSmartMissiles: 2,
     midPoint: null,
@@ -2788,6 +2805,9 @@ const Helicopter = (options = {}) => {
               // pick up infantry (silently)
               target.die({ silent: true });
               playSound(sounds.popSound, exports);
+              const pickupSound = sounds.bnb[game.data.isBeavis ? 'beavisInfantryPickup' : 'buttheadInfantryPickup'];
+              // only play if not already active, and delay before clearing.
+              if (!data.pickupSound) data.pickupSound = playSound(pickupSound, exports, { onfinish: () => common.setFrameTimeout(() => data.pickupSound = null, 500) });
               data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
               updateStatusUI({ parachutes: true });
             }
