@@ -1,3 +1,7 @@
 *.DS_Store
+.com.apple.timemachine.supported
+*.sh
 misc
 node_modules
+*copy*
+bnb
