@@ -440,6 +440,20 @@ function PrefsManager() {
 
       },
 
+      weather: (type) => {
+
+        const { snowStorm } = window;
+
+        if (!snowStorm) return;
+
+        if (type && !snowStorm.active) {
+          snowStorm.start();
+          // hackish: kick off gameLoop, too, which is responsible for animation.
+          game.objects.gameLoop.start();
+        }
+
+        effects.updateStormStyle(type);
+
         // update battlefield sprites
         if (game.objects.view) {
           utils.css.addOrRemove(game.objects.view.dom.battleField, type === 'snow', 'snow');
