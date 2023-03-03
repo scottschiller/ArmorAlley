@@ -201,6 +201,11 @@ const Infantry = (options = {}) => {
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
+    // BNB
+    if (!data.isEnemy && data.role) {
+      utils.css.add(dom.o, data.isBeavis ? css.beavis : css.butthead);
+    }
+
     dom.o.appendChild(sprites.makeTransformSprite());
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - data.yOffset}px`);
@@ -222,11 +227,38 @@ const Infantry = (options = {}) => {
 
   }
 
+  function refreshMeasurements() {
 
-  height = 11;
+    // hackish: make butthead stop to the left, and beavis stop to the right of (e.g.) a turret.
+    if (gamePrefs.bnb && !data.isEnemy) {
+      data.xLookAhead = options.isButthead ? -28 : 8;
+    } else {
+      data.xLookAhead = options.xLookAhead || 16;
+    }
+
+    data.halfHeight = data.height / 2;
+    data.y = game.objects.view.data.world.height - data.height - 1;
+
+  }
+
+  function refreshHeight() {
+
+    // special case: BnB pref change / init logic
+    if (options.isEnemy || !gamePrefs.bnb) {
+      data.height = 11;
+    } else {
+      // if role (engineer), then BnB now
+      data.height = options.role ? 30.66 : 11;
+    }
+
+    refreshMeasurements();
+    
+  }
 
   css = common.inheritCSS({
     className: null,
+    beavis: 'beavis',
+    butthead: 'butthead',
     infantry: TYPES.infantry,
     engineer: TYPES.engineer,
     stopped: 'stopped'
@@ -240,6 +272,8 @@ const Infantry = (options = {}) => {
     energyMax: 2,
     role: options.role || 0,
     roles: [TYPES.infantry, TYPES.engineer],
+    isBeavis: !options.isEnemy && !!options.isBeavis,
+    isButthead: !options.isEnemy && !!options.isButthead,
     stopped: false,
     noFire: false,
     direction: 0,
@@ -267,6 +301,8 @@ const Infantry = (options = {}) => {
     // slight offset for sprite vs. logical position
     yOffset: 1
   }, options);
+
+  refreshHeight();
 
   dom = {
     o: null

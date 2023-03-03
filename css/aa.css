@@ -1302,6 +1302,87 @@ ul.stats-bar .bombs em {
   animation: animate-transform-sprite-engineer 400ms steps(5) infinite;
 }
 
+.sprite.engineer:not(.enemy).building {
+  margin-top: 23px;
+}
+
+body.bnb .engineer:not(.enemy).beavis,
+body.bnb .engineer:not(.enemy).butthead {
+  height: 30.66px;
+}
+
+body.bnb .engineer:not(.enemy).beavis .transform-sprite {
+  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
+  background-image: url(../image/beavis-walking.png);
+  animation: animate-transform-sprite-engineer-bnb 800ms steps(10) infinite;
+}
+
+body.bnb .engineer:not(.enemy).butthead .transform-sprite {
+  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
+  background-image: url(../image/butthead-walking.png);
+  animation: animate-transform-sprite-engineer-bnb 800ms steps(10) infinite;
+}
+
+@keyframes animate-transform-sprite-engineer-bnb {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-143.33px, 0px, 0px);
+  }
+}
+
+body.bnb .engineer:not(.enemy).beavis .transform-sprite,
+body.bnb .engineer:not(.enemy).butthead .transform-sprite {
+  width: 143.33px;
+  height: 30.66px;
+  background-size: 143.33px;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+body.bnb.is_safari .engineer:not(.enemy).beavis .transform-sprite,
+body.bnb.is_safari .engineer:not(.enemy).butthead .transform-sprite {
+  /* Safari does better with this here, ironically, vs. optimize-contrast */
+  image-rendering: optimizeQuality;
+}
+
+body.bnb .engineer:not(.enemy).beavis.stopped,
+body.bnb .engineer:not(.enemy).butthead.stopped {
+  /* "whilst headbanging" */
+  width: 18.25px;
+  height: 32px;
+  /* correction for positioning */
+  margin-top: -1.5px;
+}
+
+body.bnb .engineer:not(.enemy).beavis.stopped .transform-sprite {
+  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
+  background-image: url(../image/beavis-headbang.png);
+}
+
+body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
+  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
+  background-image: url(../image/butthead-headbang.png);
+}
+
+body.bnb .engineer:not(.enemy).beavis.stopped .transform-sprite,
+body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
+  background-size: 73px 32px;
+  width: 73px;
+  height: 32px;
+  animation: animate-transform-sprite-engineer-headbang-bnb 400ms steps(4) infinite;
+}
+
+@keyframes animate-transform-sprite-engineer-headbang-bnb {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-73px, 0px, 0px);
+  }
+}
+
 .engineer.stopped {
   background-image: none;
 }
@@ -2483,6 +2564,11 @@ body.is_safari .cornholio .sub-sprite {
 .sprite.infantry.building,
 .sprite.engineer.building {
   margin-top: 11px;
+}
+
+body.bnb .sprite.engineer.beavis.building,
+body.bnb .sprite.engineer.butthead.building {
+  margin-top: 31px;
 }
 
 .sprite.ordering {
