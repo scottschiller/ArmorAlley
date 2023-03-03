@@ -514,6 +514,10 @@ body.is-mobile #game-status li:last-of-type {
   */
 }
 
+body.is-mobile #funds-count {
+  margin-top: 1.25px;
+}
+
 #funds-count .digit {
   position: relative;
   display: inline-block;
@@ -1192,6 +1196,15 @@ ul.stats-bar .bombs em {
   will-change: transform;
 }
 
+.radar-item:not(.radar-item--animated) {
+  /* terrain items, bunkers, etc., on radar don't move. */
+  will-change: unset;
+}
+
+.smoke {
+  will-change: transform, opacity;
+}
+
 /*
 .chain,
 #fuel-line,
@@ -1616,6 +1629,14 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   z-index: 4;
 }
 
+.sprite:not(.balloon).exploding.smart-missile-tracking:not(.radar-item)::after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(.radar-item)::after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(.radar-item)::after {
+  top: auto;
+  /* reposition so tracking dot stays in the right place - bunker is normally 25px in height */
+  bottom: 0px;
+}
+
 .smart-missile-tracking::after {
   animation: drop-in 0.33s ease-in-out;
 }
@@ -1743,12 +1764,19 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   transition: opacity 0.25s ease-in-out;
 }
 
+.helicopter.respawning.first-time {
+  margin-top: -1px;
+}
+
 .helicopter.respawning .transform-sprite {
   top: 15px;
 }
 
-.helicopter.respawning-active .transform-sprite {
-  transition: top 1.5s ease-in-out;
+.helicopter.respawning-active .transform-sprite,
+#world.blurred.no-blur .helicopter.respawning-active .transform-sprite {
+  transition: all 1.5s ease-in-out !important;
+  /* filter: blur() may be applied during game start */
+  transition-property: top, filter !important;
   top: 0px;
 }
 
@@ -2759,7 +2787,7 @@ body.bnb .sprite.engineer.butthead.building {
 
 #game-fps {
   position: absolute;
-  right: 0.33rem;
+  right: 3px;
   top: 0px;
   font-size: 75%;
   text-align: right;
@@ -2781,16 +2809,9 @@ body.bnb .sprite.engineer.butthead.building {
   /* background-image: url(../image/shrapnel.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMBAMAAADWlCNiAAAAElBMVEVVVQGqqqqrAgH/qgH///8OqgK+qm9ZAAAAAXRSTlMAQObYZgAAAHBJREFUGBkFwQFxw0AQBDD5QuCdEljvF0AmRpBOAZQ/mkoAAADwLBggAB4JtGAEYL/vxuyCHRCcXym93+ABx1icz2K+P2VmF6snmsHs32LehWtB4fi5i76wXC9okDbMBNYGC1xl8AcJHCBhAgAAAIB/0M0J+ZocFDIAAAAASUVORK5CYII=);
   background-position: 0px 0px;
-  animation: spinning3d 0.5s linear infinite;
-}
-
-.shrapnel.reverse .transform-sprite {
-  /* opposite spin direction */
-  animation-direction: reverse;
 }
 
 .shrapnel.stopped .transform-sprite {
-  animation: none;
   transition: opacity 0.75s ease-in-out;
   opacity: 0;
 }
@@ -3057,17 +3078,16 @@ body.is-mobile #game-tips #game-announcements {
   width: 100%;
 }
 
+#game-tips.has-announcement .tips-container {
+  overflow: visible;
+}
+
 #game-tips.has-announcement #game-tips-list {
   opacity: 0;
 }
 
 #game-tips.has-announcement #game-announcements {
   opacity: 1;
-}
-
-#world.tutorial-mode #game-tips.has-announcement #game-announcements {
-  position: relative;
-  margin-top: -1rem;
 }
 
 @keyframes bomb {
@@ -3116,6 +3136,13 @@ body.is-mobile #game-tips #game-announcements {
   50% {
     opacity: 0.65;
     transform: scale3d(1.1, 1.1, 1.1);
+  }
+}
+
+@keyframes sorta-blink-alt {
+  50% {
+    opacity: 0.65;
+    transform: scale3d(0.9, 0.9, 0.9);
   }
 }
 
@@ -3301,6 +3328,7 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #help {
+  display: none;
   float: right;
   margin-left: 1em;
   margin-right: 1em;
@@ -3335,7 +3363,7 @@ body.is-mobile #help {
 }
 
 #help {
-  font-size: 1em;
+  font-size: 0.5rem;
 }
 
 /* "Green line" mode */
@@ -3895,7 +3923,6 @@ body.is-mobile.game-over #mobile-controls {
   display: none !important;
 }
 
-body.game-paused #world-wrapper {
 body.game-paused #world-wrapper,
 body.game-paused #domfetti-overlay {
   /* side note: applying this to body throws off positioning in Firefox. */
@@ -3956,9 +3983,10 @@ body.game-paused .sprite {
   position: absolute;
   width: 13px;
   height: 13px;
-  top: 50%;
-  left: 50%;
+  top: 0px;
+  left: 0px;
   margin: -6.5px 0px 0px -6.5px;
+  margin: 0px;
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=);
   background-size: contain;
   background-position: 50% 50%;
@@ -4013,11 +4041,10 @@ body:not(.is-mobile) .mobile-only {
 
 #notification-toasts {
   position: absolute;
-  top: 0px;
+  top: 104px;
   right: 8px;
   width: 12rem;
-  height: 67%;
-  margin-top: 104px;
+  height: 256px;
   overflow: hidden;
 }
 
