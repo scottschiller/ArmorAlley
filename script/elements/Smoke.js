@@ -90,7 +90,7 @@ const Smoke = (options = {}) => {
 
     data.frameCount++;
 
-    return (data.dead && !dom.o);
+    return (data.dead && !dom.o && !data.domPool);
 
   }
 
@@ -120,22 +120,22 @@ const Smoke = (options = {}) => {
     frameCount: 0,
     animateModulus: 1,
     spriteFrameModulus: (options.spriteFrameModulus || 2),
-    spriteFrame: rndInt(4),
+    spriteFrame: (options.spriteFrame !== undefined ? options.spriteFrame : rndInt(4)),
     spriteFrames: 10,
     isFading: false,
     fadeFrame: 0,
     fadeFrames: 8,
     direction: 0,
     width: 9,
-    height: 10,
+    height: 9,
     gravity: options.gravity !== undefined ? options.gravity : 0.5,
     rotation: rnd(360),
     rotationAmount: rnd(5) * plusMinus(),
     // by default, allow some randomness
     baseScale: options.baseScale || (0.65 + rnd(0.35)),
     // hackish: use provided, or default values.
-    vX: options.vX || (3 * Math.random()) * plusMinus(),
-    vY: options.vY || -(3 * Math.random()),
+    vX: options.vX !== undefined ? options.vX : (3 * Math.random()) * plusMinus(),
+    vY: options.vY !== undefined ? options.vY : -(3 * Math.random()),
     domPool: null
   }, options);
 
