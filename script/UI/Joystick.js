@@ -7,6 +7,7 @@ function Joystick(options) {
   let css, data, dom, exports;
 
   css = {
+    enabled: 'enabled',
     joystick: 'joystick',
     joystickPoint: 'joystick-point',
     active: 'joystick-active'
@@ -23,9 +24,9 @@ function Joystick(options) {
       x: null,
       y: null
     },
-    move: {
-      x: null,
-      y: null,
+    lastMove: {
+      clientX: 0,
+      clientY: 0
     },
     inertia: {
       vX: 0,
@@ -67,6 +68,9 @@ function Joystick(options) {
   }
 
   function start(e) {
+
+    if (data.active) return;
+
     data.active = true;
 
     const evt = getEvent(e);
@@ -84,7 +88,8 @@ function Joystick(options) {
     utils.css.add(dom.oJoystick, css.active);
 
     // stop touch from causing scroll, too?
-    e.preventDefault();
+    if (e.preventDefault) e.preventDefault();
+    if (evt.preventDefault) evt.preventDefault();
 
   }
 
@@ -188,6 +193,7 @@ function Joystick(options) {
   }
 
   function move(e) {
+
     // ignore if joystick isn't being dragged.
     if (!data.active) return;
 
@@ -195,6 +201,9 @@ function Joystick(options) {
     if (data.respawning) return;
 
     const evt = getEvent(e);
+
+    data.lastMove.clientX = evt.clientX;
+    data.lastMove.clientY = evt.clientY;
 
     const halfWidth = data.oJoystickWidth / 2;
     const halfHeight = data.oJoystickHeight / 2;
@@ -210,6 +219,11 @@ function Joystick(options) {
 
     // set relative velocities based on square.
     setDirection(relativeX, relativeY);
+
+    // snowstorm? send over "mouse move" equivalent
+    if (window?.snowStorm.active) {
+      window.snowStorm.mouseMove(evt);
+    }
 
   }
 
@@ -246,6 +260,7 @@ function Joystick(options) {
     dom.o = (options && options.o) || document.body;
 
     dom.oPointer = document.getElementById('pointer');
+    utils.css.add(dom.oPointer, css.enabled);
 
     const oJoystick = document.createElement('div');
     oJoystick.className = css.joystick;
@@ -262,6 +277,16 @@ function Joystick(options) {
 
   }
 
+  function setInitialPosition() {
+
+    // update inner state
+    data.pointer.x = game.objects.view.data.browser.width * 0.5;
+    data.pointer.y = game.objects.view.data.browser.height * 0.5;
+
+    dom.oPointer.style.transform = `translate3d(${data.pointer.x}px, ${data.pointer.y}px, 0px)`;
+    
+  }
+
   function animate() {
 
     // only move if joystick is active.
@@ -272,8 +297,7 @@ function Joystick(options) {
 
     if (!frame) return;
 
-    dom.oPointer.style.setProperty('left', `${frame.x}px`);
-    dom.oPointer.style.setProperty('top', `${frame.y}px`);
+    dom.oPointer.style.transform = `translate3d(${frame.x}px, ${frame.y}px, 0px)`;
 
     // update inner state
     data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
@@ -293,12 +317,14 @@ function Joystick(options) {
     addEvents();
     // get initial coords
     refresh();
+    setInitialPosition();
   }
 
   init();
 
   exports = {
     animate,
+    data,
     start,
     move,
     end
