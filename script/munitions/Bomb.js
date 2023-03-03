@@ -46,7 +46,7 @@ const Bomb = (options = {}) => {
 
     // possible hit, blowing something up.
     // special case: don't play "generic boom" if we hit a balloon
-    if (!dieOptions.omitSound && sounds.bombExplosion && dieOptions?.type !== TYPES.balloon) {
+    if (!dieOptions.omitSound && !dieOptions.hidden && sounds.bombExplosion && dieOptions?.type !== TYPES.balloon) {
       playSound(sounds.bombExplosion, exports);
     }
 
@@ -70,7 +70,10 @@ const Bomb = (options = {}) => {
 
       // assign new dimensions for explosion
       data.width = data.explosionWidth;
+      data.halfWidth = data.explosionWidth / 2;
+
       data.height = data.explosionHeight;
+      data.halfHeight = data.explosionheight / 2;
 
       // bottom-align
       // TODO: review why 17, still. :P
@@ -120,7 +123,7 @@ const Bomb = (options = {}) => {
       data.deadTimer = common.setFrameTimeout(() => {
         sprites.removeNodesAndUnlink(exports);
         data.deadTimer = null;
-      }, 600);
+      }, 1000);
 
     }
 
@@ -185,9 +188,11 @@ const Bomb = (options = {}) => {
       spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile|gunfire/i);
 
       // hide bomb sprite entirely on collision with these items...
-      hidden = target.data.type.match(/balloon|helicopter/i);
+      hidden = data.hidden || target.data.type.match(/balloon|helicopter/i);
 
       bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire) || target.data.type === TYPES.infantry;
+
+      data.bottomAlign = bottomAlign;
 
       die({
         type: target.data.type,
@@ -201,9 +206,15 @@ const Bomb = (options = {}) => {
 
     }
 
-    // special cases for bomb -> target interactions
-    if (target.data.type) {
+    // if specified, take exact damage.
+    if (options.damagePoints) {
 
+      damagePoints = options.damagePoints;
+
+    } else if (target.data.type) {
+ 
+      // special cases for bomb -> target interactions
+ 
       if (target.data.type === TYPES.helicopter) {
 
         // one bomb kills a helicopter.
@@ -265,6 +276,7 @@ const Bomb = (options = {}) => {
     if (data.y - data.height > game.objects.view.data.battleField.height) {
       data.hasHitGround = true;
       die({
+        hidden: data.hidden,
         bottomAlign: true
       });
     }
@@ -297,6 +309,8 @@ const Bomb = (options = {}) => {
 
     initDOM();
 
+    if (data.hidden) return;
+
     // TODO: don't create radar items for bombs from enemy helicopter when cloaked
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -314,14 +328,18 @@ const Bomb = (options = {}) => {
 
   data = common.inheritData({
     type: 'bomb',
+    parent: options.parent || null,
     parentType: options.parentType || null,
     deadTimer: null,
     extraTransforms: null,
     hasHitGround: false,
+    hidden: !!options.hidden,
     isMuted: false,
     groundCollisionTest: false,
     width: 13,
     height: 12,
+    halfWidth: 6.5,
+    halfHeight: 6,
     explosionWidth: 51,
     explosionHeight: 22,
     gravity: 1,
@@ -330,7 +348,13 @@ const Bomb = (options = {}) => {
     damagePointsOnGround: 2,
     target: null,
     vX: (options.vX || 0),
-    vYMax: 32
+    vYMax: 32,
+    bottomAlign: false,
+    domFetti: {
+      colorType: 'bomb',
+      elementCount: 3 + rndInt(3),
+      startVelocity: 5 + rndInt(5)
+    }
   }, options);
 
   dom = {

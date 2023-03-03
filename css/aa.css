@@ -1898,14 +1898,27 @@ ul.stats-bar .bombs em {
   height: 22px;
   margin-left: 0px;
   background: none;
+  margin-top: -28px;
 }
 
 .bomb.explosion-large .sub-sprite {
-  animation: largeexplosion 0.5s steps(5);
-  /* background-image: url(../image/explosion-large.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAABuBAMAAAB4nzYwAAAAD1BMVEUAAACrAgH/qgH///9VVQEPaMayAAAAAXRSTlMAQObYZgAAAjZJREFUeAHt00HOGzcMxfE/pR7gkbqAyFxglBO0979UK3gEDPzBQYCmmyK/xQj2mydyYfNL/WbGJ+Kz9oNkGh+Uf7i1WerPPz5sWOF8EPXXh8wsGr/9JwwDufjK54VVLr6w+hYRVSF9iTKrKqrKebMbVSO/Z+qt5LuSo0Ylb0Z88/LvFfV11qoVe1o479zrH76W+Mp94/9E3UCYYQDiECCBqtJd9gw1PJBVRGUuup8M87VcqqxtxLxOSTa+VZrViHCvXBVpvPjKTK/M1xlZQ3c2onbj9dPIfaaf1v6mMrO2HdXZwqJGlEeke5TvXNxWZeR+VHnlvsJPbb+acY/az3Ruu5Ird2HvXpnjbsl8xBhRW46oHBzC3L3Cq0JrpdR5sh3nwgbGvyRe3CVAPEUX5pXlDcC4CS+BVxtaYsLFYYOOFdDa7N1Ef/7FaZMLmFAOR0zgMqADveU4o6y6cUtBKz97Wonb7A5knllecGpXYr2l0Bl1nBvFJmIYR2/q6Ezop2WG0YRaOp0tBFwgCUpcnBaBAGTJvhCu9BPNs6FgCVryYg2wedGB5mDN7wS7DAY7Y8GrKYCOAK/GhO1yMG4XmFelBHAfD+5i6/xaE3gyGhMaW3tsB1Pw1DnEbRpw2dv180fDDVpjM27G9nbL5KyHg3mC8WTn5RQXPGKdT80k9nlWbwLMwEgXPKnBNqdP0GOGOAw7+1l/RNfkeJTEcbo60XNfRwiOBogJx+SnCMCmMRudNx0Exs/5GzzTOTP5KQ0MAAAAAElFTkSuQmCC);
+  animation: largeexplosion 0.66s steps(10);
+  /**
+   * "Dirt Explosion" by SrGrafo on DeviantArt
+   * https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
+   */
+  background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.png);
+  background-size: 512px 51px;
   /* default state */
-  background-position: 0px -110px;
+  background-position: -512px 0px;
+  /* bottom-align */
+  transform-origin: 50% 100%;
+  transform: scale3d(0.75, 0.75, 1);
+}
+
+.bomb.explosion-large {
+  height: 56px;
+  width: 51px;
 }
 
 #world-wrapper.jammed #radar {
@@ -2698,7 +2711,7 @@ body.is-mobile #game-tips #game-announcements {
     background-position: 0px 0px;
   }
   to {
-    background-position: 0px -110px;
+    background-position: -512px 0px;
   }
 }
 
