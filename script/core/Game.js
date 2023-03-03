@@ -31,6 +31,7 @@ import { Infantry } from '../units/Infantry.js';
 import { Engineer } from '../units/Engineer.js';
 import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
+import { Cornholio } from '../units/Cornholio.js';
 import { Bomb } from '../munitions/Bomb.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
@@ -339,6 +340,11 @@ const game = (() => {
       if (!sounds.helicopter.engine) return;
 
       playSound(sounds.helicopter.engine);
+
+      if (gamePrefs.bnb) {
+        playSound(oneOf([sounds.bnb.letsKickALittleAss, sounds.bnb.heresACoolGame]));
+      }
+
       utils.events.remove(document, 'click', startEngine);
 
     }
@@ -441,7 +447,6 @@ const game = (() => {
          * Mark Nolton on SO - orientation change.
          * https://stackoverflow.com/a/47226825
          */
-        console.log('watching orientation for possible iPhone X Notch handling.');
         window.addEventListener('orientationchange', orientationChange);
         // and get the current layout.
         orientationChange();
@@ -484,7 +489,12 @@ const game = (() => {
     battleOver: false,
     convoyDelay: 60,
     paused: false,
-    productionHalted: false
+    productionHalted: false,
+    dieCount: 0,
+    // uh-huh huh huh huh huh. uh-huh huh. heh heh. m-heh.
+    isBeavis: false,
+    isButthead: false,
+    engineerSwitch: false
   };
 
   dom = {
