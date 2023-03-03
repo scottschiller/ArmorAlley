@@ -855,14 +855,17 @@ const Helicopter = (options = {}) => {
 
     }
 
+    // hackish: include a pixel offset when the game is starting, so helicopter rises correctly from landing pad.
+    const respawningActiveCSS = !data.dieCount ? [css.respawningActive, css.respawningFirstTime] : [css.respawningActive];
+
     // transition, helicopter rises from landing pad
     common.setFrameTimeout(() => {
       if (state) {
-        utils.css.add(dom.o, css.respawningActive);
+        utils.css.add(dom.o, ...respawningActiveCSS);
       } else {
-        utils.css.remove(dom.o, css.respawningActive);
+        utils.css.remove(dom.o, ...respawningActiveCSS);
       }
-    }, 30);
+    }, 128);
 
     // player: restore trailers that may have been removed on die()
     if (!data.isEnemy) {
@@ -871,14 +874,27 @@ const Helicopter = (options = {}) => {
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
-      common.setFrameTimeout(() => {
-        setRespawning(false);
-        if (data.isEnemy) {
-          data.vY = -1;
-        }
-      }, data.respawningDelay);
+      // hackish: only do transitionend for human player.
+      if (!data.isEnemy) {
+        dom.o.addEventListener('transitionend', respawnComplete);
+      } else {
+        common.setFrameTimeout(respawnComplete, 1500);
+      }
     }
 
+  }
+
+  function respawnComplete() {
+
+    if (!data.isEnemy) {
+      dom.o.removeEventListener('transitionend', respawnComplete);
+    }
+
+    setRespawning(false);
+
+    if (data.isEnemy) {
+      data.vY = -1;
+    }
   }
 
   function rotate(force) {
@@ -1344,6 +1360,9 @@ const Helicopter = (options = {}) => {
     data.dead = true;
 
     effects.domFetti(exports, attacker);
+
+    data.dieCount++;
+
     radarItem.die();
 
     if (sounds.explosionLarge) {
@@ -2400,6 +2419,7 @@ const Helicopter = (options = {}) => {
     tilt: 'tilt',
     repairing: 'repairing',
     respawning: 'respawning',
+    respawningFirstTime: 'first-time',
     respawningActive: 'respawning-active',
     inventory: {
       frameCount: 0,
@@ -2419,7 +2439,7 @@ const Helicopter = (options = {}) => {
     bombing: false,
     firing: false,
     respawning: false,
-    respawningDelay: 1750,
+    respawningDelay: 1600,
     missileLaunching: false,
     parachuting: false,
     ignoreMouseEvents: false,
@@ -2445,6 +2465,7 @@ const Helicopter = (options = {}) => {
     autoRotate: (options.isEnemy || false),
     repairing: false,
     repairFrames: 0,
+    dieCount: 0,
     energy: 10,
     energyMax: 10,
     energyLineScale: 0.25,
