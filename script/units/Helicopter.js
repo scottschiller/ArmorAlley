@@ -1108,6 +1108,7 @@ const Helicopter = (options = {}) => {
     if (data.removeTrailerTimer) return;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
+      dom.trailers[i]._style.setProperty('transition', 'opacity 0.5s ease-in-out');
       dom.trailers[i]._style.setProperty('opacity', 0);
     }
 
