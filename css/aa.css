@@ -130,30 +130,81 @@ body {
 }
 
 #world-overlay.fade-out {
-  transition: all 0.66s ease-in-out;
-  transition-property: opacity, transform;
+  transition: all 2s ease-in-out;
+  transition-property: background-image, opacity, transform;
   opacity: 0;
   transform: scale3d(1.2,1.2,0);
 }
 
-#logo {
+#mtv-bnb-in {
   position: absolute;
-  top: 36%;
-  left: 50%;
-  width: 391px;
-  height: 67px;
-  margin: -33.5px 0px 0px -195.5px;
-  background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYcAAABDBAMAAACFPtRbAAAAGFBMVEUAAAD/qgH///+qqqoAAAAOqgKrVaoFVQESGVkpAAAAAXRSTlMAQObYZgAAAw1JREFUeAHtWgGO1DAMNCPgHVZfwNN4Ck/jBZW1zwDJQrC5Xs/b2bqXOhSJke5OTjJxxnF8iXalBh/eyfuP6Q/0bmBqZmtYt7XRdyx9UOFU5mYK0zAbrRVLP9o0+O1IoJBHrJeuSxsdCL3/MCoB4jTRpsvSNwMmFYR5IzDJDqDtd5oKOQlubrkJNdcP5dRSmCVEINkN3lcK3/ZjIZ7rNuXRVkIl8OAv2hyR0Bcsa3z3grg7j20E9umIbSzWhMpggRNtqkb8ZbybzOIGvqR8rEwsz+YDWeTnB3cBeEa3xzZs0b80g1AJnO9IgG01OBFB3OheqL5zasWh0KgMtMjnE8OjQwboGXKKS7lKEYwL4yLy5WlkjPy5Fz0UbWVrRNVO+XM34FYdcELeWt984KEthnUHxa5zspWLqEfBIf+0EnFLs9ER7rSb/Mvs5yICYw4oegPvJL+QTurpxGWqJPD5dXggQHujAxmEH2vDvHNJ3n/+uuH2Jom8M64qowGJmDcGaBNajBPd2JZK32e49jrrzy7nd7arQw/mG/pvpRkqvp5aDnFuhdEk9du4W7Fe7pFnVARyxFunT5TXYBcGT4YjRfVKEdb3jshSreaZDZLLxdCSdOq7vVLqGCC/FLf293IqEPe2rtJq2U0Ycn1YToSLWHFh4m76gb7/JRFWsdF+VAT22ZbZKT8YO2jGJvg4tIxwN5qyCTDsbKN26n++QOHIBdU673C3ohqLLnaEv5eKp7Y76tLJx2cTE6EjrrEFbmKJ9TmWv5L3BXejCZsD1elz/ept3B4JZBYAjYcnDWhGJ3I2PxPoeEx6NDkVeQfE5gBpoPBzri44N500Kl1MkO+fIcaHUWOHEh1I2dw1smK3x1q0OOqySYD40lbBBllXtr4K89agLdPA/G640fDZ6J4dXKd3wvN3Ik6tBzSGH6I0a/1tqzZNQNPHi9Gjm8NlNbheAZ1XDU88ZsuBzOo9pc/y1LEiPN/grKMesBa21WJstY5ZROaXXt/6KvEcPmiO1Dse3VDRxI6uTwYmTCp/Eb8Azq7u6tP90iYAAAAASUVORK5CYII=);
-  z-index: 11;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 75%;
+  background: url(../image/virtual_stupidity_overlay.png);
+  background-position: 0px 0px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 10;
+  transform: translate3d(-9.75%, -50%, 0);
+  opacity: 0;
+  transition: opacity 0.25s ease-in;
+}
+
+body.bnb #mtv-bnb-in {
+  transform: translate3d(-9.75%, -50%, 0);
+  opacity: 0.9;
+}
+
+#bnb-vs {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 85%;
+  /* https://www.steamgriddb.com/game/5248723 */
+  background: url(../image/virtual_stupidity_steamgriddb.png);
+  background-position: 100% 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 10;
+  transform: translate3d(9.75%, 0%, 0);
+  opacity: 0;
+  transition: opacity 0.25s ease-in;
+}
+
+body.bnb #bnb-vs {
+  transform: translate3d(9.75%, 0%, 0);
   opacity: 1;
 }
 
-@media screen and (orientation: portrait) {
-  #logo {
-    /* hack! fit within iPhone X portrait dimensions. */
-    transform: scale(0.57);
-  }
+#mtv-bnb-in,
+#bnb-vs {
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+body.is_safari #mtv-bnb-in,
+body.is_safari #bnb-vs {
+  /* Safari does better with this here, ironically, vs. optimize-contrast */
+  image-rendering: optimizeQuality;
+}
+
+#logo {
+  position: absolute;
+  top: 32%;
+  left: 50%;
+  width: 391px;
+  height: 67px;
+  /* -ve margins for centering; will scale */
+  margin-left: -195.5px;
+  margin-top: -33.5px;
+  background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYcAAABDAQAAAABfa/TFAAAAAnRSTlMAAHaTzTgAAAKqSURBVHgBvdIhrB1FFAbgb04m7QqSt0GhyNabSoKADQpZr+oVsoKUadWTaBReVWAhq8Aiq2BxKLIhJGzCdoekeWTzNndywfAlv7mTmTn/3PW/uKkl1X2W6qZW6bWH9a8CH+9u6naXP+sPdftiff59QPC+AOXBAx3PAL24C50o2QeBEWkCvJcKHoLkzFcCYAAMnkLR8DoAesCoh1HDErCj2wUU3YoBWOxvAygb4b4XXmWcLViBgIpcQWBDD6y2t2GDaf31w8AAQOVZAFAAVm9sdghQFEpCJu12gO3uFhTMCwGYAuxA1cFhwy7MxGmtqxuAAYcJEDgrLplhIgMkE4fMWQXCAMBLeowX71pIEOi1jO4bCsEhM2grIE7VaO1aURD+i4osA/Aph3O/zwBhbHVNcNhMdgS605G9S41uMSDaY5zsExAA9TzDWS2zDcFh0JagR3ipITpnK8IG7Lrz2uK+RY9wHQiAQD5/rxKgByCft9oA6LBcvaw4EC5ZQU6AVXYwk10UKrBgB2DC5pKwArMDyvknbCAQWrp2cx47YNISAO8IG8cBLRGAOM+jO5cAwnVgBwhLgXJexnftHpBUgBXZSQUIJEywUkAFZKRyBMJN0fARiPEI5Kyld1H4t1ZAWACUpf2/UwABmB0WCgAZGd80ppq0zIDoUFwyEM4Iv4ycRwNegO4IiOsTXXnd+S5twQw8/cRBKijQHwHRA3wJFkyI0QgMR0DACJiQskNyRgwDSkKZk4CQoRQy4z+RdQgAKcGK4kA5AmLsB48oQglpc1uzQDIWtx7q7qKTEYDFQgEwmTRE6UbvMsoeZ557sncSwiOecDxtLxAAZlDZQNEQgNUEFCvm6tqODRUmCxbaPdbJb3z75nPTRvnR16v6x+92P/OK44TFDmfpJ9D2N8kq2vjbUKO3AAAAAElFTkSuQmCC);
+  z-index: 11;
+  opacity: 1;
+  filter: drop-shadow(0px 0px 1px #000);
 }
 
 #logo h1 {
@@ -163,8 +214,14 @@ body {
   overflow: hidden;
 }
 
-#world.tutorial-mode #logo {
-  top: 56%;
+#world.blurred .sprite,
+#world.blurred #mobile-controls {
+  opacity: 0;
+}
+
+#world.no-blur .sprite,
+#world.no-blur #mobile-controls {
+  opacity: 1;
 }
 
 #world.blurred .sprite,
@@ -173,7 +230,8 @@ body {
 #world.blurred #mobile-controls,
 #world.blurred #pointer {
   filter: blur(2px);
-  transition: filter 0.5s ease-in-out;
+  transition: all 1.5s ease-in-out;
+  transition-property: filter, opacity;
 }
 
 #world.blurred.no-blur .sprite,
@@ -181,7 +239,7 @@ body {
 #world.blurred.no-blur #top-bar,
 #world.blurred.no-blur #mobile-controls,
 #world.blurred.no-blur #pointer {
-  filter: unset;
+  filter: none;
 }
 
 #game-menu {
@@ -409,17 +467,17 @@ body.is-mobile #game-status li:last-of-type {
 @media screen and (orientation: portrait) {
   /* remove for portrait mode. */
   body.is-mobile #game-status li:first-of-type {
-    margin-left: 0.25rem;
+    margin-left: 0px;
   }
   body.is-mobile #game-status li:last-of-type {
-    margin-right: 0.25rem;
+    margin-right: 0px;
   }
 }
 
 #game-status {
   position: absolute;
-  top: 6px;
-  left: 0px;
+  top: 4px;
+  left: 1px;
   width: 100%;
   height: 11px;
   overflow: hidden;
@@ -442,7 +500,7 @@ body.is-mobile #game-status li:last-of-type {
   position: relative;
   display: inline-block;
   margin-left: -0.15rem;
-  margin-top: 0.25px;
+  margin-top: 0.5px;
   font-size: 0px;
   min-width: 10px;
   transform: scale(0.85);
@@ -626,7 +684,9 @@ body.is-mobile #game-status li:last-of-type {
   width: 100%;
   overflow: hidden;
   transition: filter 0.75s ease-in-out;
-  filter: unset;
+  filter: none;
+}
+
 #radar-jammed-overlay {
   position: absolute;
   top: 0px;
@@ -667,6 +727,14 @@ body.bnb .tv-noise-overlay {
   opacity: 1;
 }
 
+body.bnb .tv-noise-overlay {
+  filter: blur(0.25px);
+  background-size: 100px 100px;
+  /* faster */
+  animation-duration: 0.5s;
+  opacity: 0.4;
+}
+
 #radar-jammed-overlay.active .noise {
   opacity: 0.65;
 }
@@ -675,6 +743,20 @@ body.game-paused #radar-jammed-overlay.active .noise,
 body.game-paused .tv-noise-overlay {
   animation: none;
 }
+
+.tv-screen-container {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+  right: 50px;
+  bottom: 70px;
+  overflow: hidden;
+}
+
+body.bnb .tv-screen-container {
+  background: #000;
+}
+
 @keyframes noise {
   0% {
     transform: translate3d(0px, 0px, 0px);
@@ -684,6 +766,83 @@ body.game-paused .tv-noise-overlay {
     transform: translate3d(500px, 0px, 0px);
   }
 }
+
+#tv-display {
+  display: none;
+}
+
+body.bnb #tv-display {
+  display: block;
+}
+
+#tv-display,
+.tv-display-title-screen {
+  position: absolute;
+  /* top: 35px; */
+  top: 55%;
+  left: 50%;
+  width: 409px;
+  height: 320px;
+  /* center, and slightly smaller */
+  transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s ease-in;
+  transition-property: transform, opacity, filter, position;
+}
+
+.tv-display-title-screen {
+  top: 50.5%;
+  transform: translate(-50%, -50%) scale3d(1.2, 1.2, 1.2);
+  opacity: 1;
+  z-index: 11;
+  overflow: hidden;
+}
+
+body.bnb #tv-display.active {
+  transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
+  opacity: 1;
+}
+
+#tv-display #tv,
+.tv-display-title-screen .tv {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 409px;
+  height: 320px;
+  /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
+  background: transparent url(../image/pngtree.com_color_tv.png);
+  background-size: contain;
+}
+
+.tv-display-title-screen .tv,
+.tv-display-title-screen .tv-noise-overlay {
+  opacity: 1;
+  transition: opacity 0.175s ease-out;
+  transform: scale3d(1.0, 1.0, 1.0);
+  transition-property: opacity, transform;
+}
+
+body:not(.bnb) .tv-display-title-screen .tv,
+body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
+  opacity: 0;
+  transform: scale3d(0.98, 0.98, 0.98);
+}
+
+#tv-display video,
+.tv-display-title-screen video {
+  position: absolute;
+  top: 34px;
+  left: 60px;
+  width: 288px;
+  height: 212px;
+}
+
+.tv-display-title-screen video {
+  left: 30px;
+  width: 350px;
+  height: 71%;
 }
 
 #world-wrapper.incoming-smart-missile {
@@ -713,6 +872,8 @@ body.game-paused .tv-noise-overlay {
 
 #top-bar li {
   display: inline-block;
+  /* in case there's overflow, hide the wrapped items */
+  min-height: 32px;
 }
 
 #fuel-bar,
@@ -797,11 +958,6 @@ ul.stats-bar li.stats-item:not(:last-of-type) {
 body.is-mobile ul.stats-bar li {
   /* bigger! mobile controls are moved to sides, so we have way more room. */
   min-width: 10%;
-}
-
-body.is-mobile #player-status-bar .spacer {
-  /* hide entirely on mobile? */
-  display: none;
 }
 
 ul.stats-bar li.stats-item .weapon-count {
@@ -909,6 +1065,9 @@ ul.stats-bar .missiles em,
   background-repeat: no-repeat;
   background-position: 50% 50%;
   background-size: 75%;
+}
+
+ul.stats-bar .missiles em {
   transform: rotate(-5deg);
 }
 
@@ -956,7 +1115,6 @@ ul.stats-bar .bombs em {
   width: 100%;
   height: 88px;
   overflow: hidden;
-  background: #000;
 }
 
 #world {
@@ -977,7 +1135,7 @@ ul.stats-bar .bombs em {
    * no need for a real layer that large, just for positioning.
    * and a transform offset for terrain elements.
    */
-  width: 0px;
+  width: 100%;
   height: 100%;
 }
 
@@ -2536,19 +2694,6 @@ body.is_safari .cornholio .sub-sprite {
   color: #666;
 }
 
-#bottom .rotate-hint {
-  display: none;
-}
-
-#bottom.rotate-hint .rotate-hint {
-  display: inline;
-}
-
-#bottom.rotate-hint .rotate-hint .text {
-  color: #fff;
-  font-weight: bold;
-}
-
 .sprite.missile-launcher.building {
   margin-top: 18px;
 }
@@ -3193,7 +3338,13 @@ body.is-mobile #help {
 }
 
 #player-status-bar .spacer {
-  min-width: 5%;
+  position: relative;
+  /* previously */
+  /* min-width: 5% */
+  width: 32px;
+  /* centering / sizing shenanigans */
+  left: -4px;
+  padding-right: 5px;
 }
 
 body.is-mobile #bottom .toggle-sound,body.is-mobile #player-status-bar .inventory-item,body.is-mobile #player-status-bar .spacer {
@@ -3201,6 +3352,67 @@ body.is-mobile #bottom .toggle-sound,body.is-mobile #player-status-bar .inventor
   display: none;
 }
 
+/* except when BnB, and landscape? */
+@media screen and (orientation: landscape) {
+  body.is-mobile #player-status-bar .spacer {
+    display: inline-block;
+  }
+}
+
+#bnb-now-playing {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 72%; /* cheap vertical alignment */
+  /* note: nested opacity, individual images fade. */
+  opacity: 0.75;
+  display: none;
+}
+
+body.bnb #bnb-now-playing {
+  display: block;
+}
+
+#bnb-now-playing .pow {
+  /* cartoon "pow" outline */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale3d(1.2,1.2,0);
+  transition: all 0.5s ease-in-out;
+  transition-property: transform, opacity;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+body.is_safari #bnb-now-playing .pow {
+  image-rendering: optimizeQuality;
+}
+
+#bnb-now-playing .beavis {
+  background: transparent url(../image/pow-beavis.png) 50% 50% no-repeat;
+  background-size: 75%;
+}
+
+#bnb-now-playing .butthead {
+  background: transparent url(../image/pow-butthead.png) 50% 50% no-repeat;
+  background-size: 100%;
+}
+
+body.is-mobile #bnb-now-playing .beavis,
+body.is-mobile #bnb-now-playing .butthead {
+  background-size: contain;
+}
+
+#bnb-now-playing.beavis .beavis,
+#bnb-now-playing.butthead .butthead {
+  opacity: 1;
+  transform: scale3d(1,1,1);
+}
 body.is-mobile #player-status-bar .stats-item {
   /* less items, so center-align. */
   text-align: center;
@@ -3329,7 +3541,7 @@ body.is-mobile #player-status-bar .inventory-item:active {
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 290px;
+  height: 300px;
   margin-top: 64px;
   /* offset for top bar, etc. */
   display: none;

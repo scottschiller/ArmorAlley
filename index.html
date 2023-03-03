@@ -85,22 +85,74 @@
 
     <div id="world">
 
+      <div id="stars"></div>
+
       <div id="world-overlay">
 
+       <div class="tv-display-title-screen">
+        <div class="tv-screen-container">
+          <div class="tv-noise-overlay"></div>
+        </div>
+        <div class="tv"></div>
+       </div>
+
        <div id="logo">
+
+        <div id="mtv-bnb-in"></div>
+
+        <div id="bnb-vs"></div>
 
         <h1>Armor Alley</h1>
 
         <div id="game-menu">
          <h2>A browser-based interpretation of the classic 1990 MS-DOS game.</h2>
-         <a href="#tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-large">Tutorial <span class="emoji emoji-tutorial">📖</span></a>
-         <a href="#easy" title="Get a van to the enemy base! (Easy mode.)" class="cta">Easy <span class="emoji emoji-easy">😁</span></a>
-         <a href="#hard" title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets fire faster, and can harm more units." class="cta">Hard <span class="emoji emoji-hard">😰</span></a>
-         <a href="#extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Aggressive turrets fire at ground vehicles &amp; missiles, and can hit infantry and engineers. Owning all bunkers no longer stops enemy production." class="cta">Extreme <span class="emoji emoji-extreme">😱</span></a>
+
+         <form id="game-menu-form" action="." method="get" onsubmit="return false">
+
+          <label for="checkbox-vs" title="Play the game &quot;with&quot; two unruly, unlicensed teenagers." class="cta cta-checkbox">
+           <span class="checkbox-wrapper">
+            <input id="checkbox-vs" name="vs" type="checkbox" value="vs" data-title="Play the game &quot;with&quot; two unruly, unlicensed teenagers." />
+           </span>
+           Virtual Stupidity 🎸🤘
+          </label>
+
+          <div>
+
+           <label id="tutorial-label" for="radio-tutorial" title="Guided tutorial: Learn basic game rules, mechanics and strategy." class="cta cta-radio">
+             <input type="radio" id="radio-tutorial" name="game_type" value="tutorial" checked />
+             Tutorial <span class="emoji">📖</span>
+           </label>
+
+           <label id="easy-label" for="radio-easy" title="Get a van to the enemy base! (Easy mode.)" class="cta cta-radio">
+             <input type="radio" id="radio-easy" name="game_type" value="easy" />
+             Easy <span class="emoji">😁</span>
+           </label>
+
+           <label id="hard-label" for="radio-hard" title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets fire faster, and can harm more units." class="cta cta-radio">
+             <input type="radio" id="radio-hard" name="game_type" value="hard" />
+             Hard <span class="emoji">😰</span>
+           </label>
+
+           <label id="extreme-label" for="radio-extreme" title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Aggressive turrets fire at ground vehicles &amp; missiles, and can hit infantry and engineers. Owning all bunkers no longer stops enemy production." class="cta cta-radio">
+             <input type="radio" id="radio-extreme" name="game_type" value="extreme" />
+             Extreme <span class="emoji">😱</span>
+           </label>
+
+          </div>
+
+          <div style="margin-top:1em">
+            <button type="button" id="game-options-button" data-title="Access menu in-game via ESC or options link." class="large">Options</button>
+            <button type="submit" id="start-game" class="large">START 🚁 <span id="start-emoji">📖</span></button>
+          </div>
+
+        </form>
+        </p>
+
          <p id="game-description">Choose your level of comfort.</p>
+
         </div>
 
-        <p id="mobile-landscape-tip">This game is best enjoyed in landscape view.</p>
+        <p id="mobile-tip">This game is optimized for larger desktop screens.</p>
 
        </div>
 
@@ -161,7 +213,12 @@
           <span class="letter-block">E</span> <a href="#" onclick="return false" oncontextmenu="return false" onclick="return false" data-keyMap="engineer" title="Engineers (5 funds)" class="engineer"></a>
          </li>
 
-         <li class="spacer"></li>
+         <li class="spacer">
+          <div id="bnb-now-playing">
+            <div class="pow beavis"></div>
+            <div class="pow butthead"></div>
+          </div>
+         </li>
         
          <!-- not implemented. -->
          <!--
@@ -206,23 +263,7 @@
 
       </div>
 
-      <div id="stars"></div>
-
       <div id="game-tips">
-
-       <div id="game-paused">
-        <p class="hide-on-mobile">
-          <span class="resume-prompt">Game paused while in background</span>
-          <span class="resume-prompt">Aww, you were just about to win!</span>
-          <span class="resume-prompt">Work can wait. This battle needs to be won.</span>
-          <span class="resume-prompt">Stop reading, and start playing!</span>
-          <span class="resume-prompt">Hey, where'd you go!?</span>
-          <span class="resume-prompt">For a good time, click here.</span>
-          <span class="resume-prompt">Aww, the fun part was just about to happen.</span>
-          <span class="resume-prompt">What's going to happen next!? Click here to find out!</span>
-        </p>
-        <p class="mobile-only">[ Game paused, tap or rotate to resume ]</p>
-       </div>
 
        <div class="tips-container">
 
@@ -344,9 +385,28 @@
 
        </div>
 
+       <div id="game-paused">
+        <p class="hide-on-mobile">
+          <span class="resume-prompt">Game paused while in background</span>
+          <span class="resume-prompt">Aww, you were just about to win!</span>
+          <span class="resume-prompt">Work can wait. This battle needs to be won.</span>
+          <span class="resume-prompt">Stop reading, and start playing!</span>
+          <span class="resume-prompt">Hey, where'd you go!?</span>
+          <span class="resume-prompt">For a good time, click here.</span>
+          <span class="resume-prompt">Aww, the fun part was just about to happen.</span>
+          <span class="resume-prompt">What's going to happen next!? Click here to find out!</span>
+        </p>
+        <p class="mobile-only">[ Tap to resume ]</p>
+       </div>
+
       </div>
 
       <div id="notification-toasts"></div>
+
+      <div id="tv-display">
+        <div class="tv-screen-container"></div>
+        <div id="tv"></div>
+      </div>
 
       <div id="battlefield">
        <!-- world with terrain elements, vehicles, etc., lives here. -->
