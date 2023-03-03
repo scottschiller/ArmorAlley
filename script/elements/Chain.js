@@ -8,8 +8,25 @@ const Chain = (options = {}) => {
   let css, data, dom, objects, exports, defaultHeight;
 
   function applyHeight() {
+
     dom.o._style.setProperty('height', (`${data.height}px`));
+
     data.appliedHeight = parseInt(data.height, 10);
+
+  }
+
+  function attachBalloon(balloon = null) {
+
+    objects.balloon = balloon;
+
+  }
+
+  function detachFromBunker() {
+
+    objects.bunker = null;
+
+  }
+
   }
 
   function die() {
@@ -24,7 +41,7 @@ const Chain = (options = {}) => {
 
     // detach balloon, if applicable
     if (objects.balloon) {
-      objects.balloon.detach();
+      objects.balloon.detachFromBunker();
       objects.balloon = null;
     }
 
@@ -190,7 +207,7 @@ const Chain = (options = {}) => {
   data = common.inheritData({
     type: 'chain',
     energy: 1,
-    hostile: false, // applies when detached from base or balloon
+    hostile: !!options.hostile, // applies when detached from base or balloon
     width: 1,
     /**
      * slightly complex: element height is basically fixed, moved via transforms,
@@ -216,7 +233,10 @@ const Chain = (options = {}) => {
 
   exports = {
     animate,
+    applyHeight,
+    attachBalloon,
     data,
+    detachFromBunker,
     dom,
     die,
     init: initChain,

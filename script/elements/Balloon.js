@@ -15,7 +15,7 @@ const Balloon = (options = {}) => {
   function checkRespawn() {
 
     // odd edge case - data not always defined if destroyed at the right time?
-    if (data?.canRespawn && data?.dead && !objects?.bunker?.data?.dead) {
+    if (data?.canRespawn && data?.dead && !objects.bunker?.data?.dead) {
       reset();
     }
 
@@ -23,7 +23,11 @@ const Balloon = (options = {}) => {
 
   function setEnemy(isEnemy) {
 
+    if (data.isEnemy === isEnemy) return;
+
     data.isEnemy = isEnemy;
+
+    zones.changeOwnership(exports);
 
     if (isEnemy) {
       utils.css.remove(dom.o, css.friendly);
@@ -46,7 +50,15 @@ const Balloon = (options = {}) => {
 
   }
 
-  function detach() {
+  function attachChain(chain = null) {
+
+    // a "circular" loop that's actually a chain. ;)
+    objects.chain = chain;
+    objects.chain?.attachBalloon(exports);
+
+  }
+
+  function detachFromBunker() {
 
     if (data.detached) return;
 
@@ -61,13 +73,17 @@ const Balloon = (options = {}) => {
 
     // disconnect bunker <-> balloon references
     if (objects.bunker) {
+      // the balloon will now "own" the chain.
       objects.bunker.nullifyBalloon();
       objects.bunker = null;
+    } else {
+      // if no bunker to detach, there should be no chain, either.
+      attachChain();
     }
 
   }
 
-  function die() {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
@@ -146,20 +162,22 @@ const Balloon = (options = {}) => {
 
     if (data.dead) {
 
+      checkRespawn();
+
       // explosion underway: move, accounting for scroll
       if (data.deadTimer) {
         sprites.moveWithScrollOffset(exports);
+        return;
       }
 
-      checkRespawn();
-
-      return;
+      // allow balloon to be "GCed" only when free-floating, separated from bunker
+      return data.dead && !data.deadTimer && (!objects.bunker || objects.bunker?.data?.dead);
 
     }
 
     // not dead...
 
-    common.smokeRelativeToDamage(exports, 0.25);
+    effects.smokeRelativeToDamage(exports);
 
     if (!data.detached) {
 
@@ -297,6 +315,7 @@ const Balloon = (options = {}) => {
 
     sprites.moveTo(exports);
 
+
   }
 
   function initBalloon() {
@@ -304,7 +323,9 @@ const Balloon = (options = {}) => {
     initDOM();
 
     if (!objects.bunker) {
-      detach();
+      // ensure we're free of chain + bunker
+      attachChain();
+      detachFromBunker();
     }
 
     // TODO: review hacky "can respawn" parameter
@@ -313,6 +334,11 @@ const Balloon = (options = {}) => {
   }
 
   height = 16;
+
+  objects = {
+    bunker: options.bunker || null,
+    chain: null
+  };
 
   css = common.inheritCSS({
     className: TYPES.balloon,
@@ -333,7 +359,7 @@ const Balloon = (options = {}) => {
     energyMax: 3,
     direction: 0,
     detached: false,
-    hostile: false, // dangerous when detached
+    hostile: !objects.bunker, // dangerous when detached
     verticalDirection: plusMinus(1),
     verticalDirectionDefault: 1,
     leftMargin: options.leftMargin || 0,
@@ -346,7 +372,13 @@ const Balloon = (options = {}) => {
     maxX: worldWidth,
     minY: 48,
     // don't allow balloons to fly into ground units, generally speaking
-    maxY: game.objects.view.data.world.height - height - 32
+    maxY: game.objects.view.data.world.height - height - 32,
+    domFetti: {
+      colorType: 'yellow',
+      elementCount: 20 + rndInt(40),
+      startVelocity: 10 + rndInt(15),
+      spread: 360
+    }
   }, options);
 
   // random Y start position, unless specified
@@ -358,11 +390,13 @@ const Balloon = (options = {}) => {
 
   exports = {
     animate,
+    attachChain,
     data,
-    detach,
+    detachFromBunker,
     die,
     dom,
     init: initBalloon,
+    isOnScreenChange,
     reset,
     setEnemy
   };
