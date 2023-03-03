@@ -30,7 +30,11 @@ const Bomb = (options = {}) => {
 
     rad = Math.atan2(deltaY, deltaX);
 
-    data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : (rad * rad2Deg)}deg`;
+    if (deltaX || deltaY) {
+      data.lastAngle = rad * rad2Deg;
+    }
+
+    data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : data.lastAngle}deg`;
 
     sprites.moveTo(exports, x, y);
 
@@ -39,7 +43,6 @@ const Bomb = (options = {}) => {
   function die(dieOptions = {}) {
 
     // aieee!
-
     let className;
     
     if (data.dead || data.groundCollisionTest) return;
@@ -52,6 +55,12 @@ const Bomb = (options = {}) => {
 
     if (dieOptions.spark) {
       data.extraTransforms = `rotate3d(0, 0, 1, ${rnd(15) * plusMinus()}deg)`;
+    } else {
+      // hackish: offset rotation so explosion points upward.
+      data.lastAngle -= 90;
+      // limit rotation, as well.
+      data.lastAngle *= 0.5;
+      data.extraTransforms = `rotate3d(0, 0, 1, ${data.lastAngle}deg)`;
     }
 
     // bombs blow up big on the ground, and "spark" on other things.
@@ -185,12 +194,12 @@ const Bomb = (options = {}) => {
     } else {
 
       // certain targets should get a spark vs. a large explosion
-      spark = target.data.type?.match(/tank|parachute-infantry|bunker|turret|smart-missile|gunfire/i);
+      spark = target.data.type?.match(/tank|parachute-infantry|turret|smart-missile|gunfire/i);
 
       // hide bomb sprite entirely on collision with these items...
       hidden = data.hidden || target.data.type.match(/balloon|helicopter/i);
 
-      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire) || target.data.type === TYPES.infantry;
+      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire && target.data.type !== TYPES.bunker) || target.data.type === TYPES.infantry;
 
       data.bottomAlign = bottomAlign;
 
@@ -350,6 +359,7 @@ const Bomb = (options = {}) => {
     vX: (options.vX || 0),
     vYMax: 32,
     bottomAlign: false,
+    lastAngle: 0,
     domFetti: {
       colorType: 'bomb',
       elementCount: 3 + rndInt(3),
