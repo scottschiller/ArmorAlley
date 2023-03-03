@@ -1,9 +1,9 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rnd, rndInt, worldHeight, tutorialMode } from '../core/global.js';
-import { playSound, sounds } from '../core/sound.js';
 import { rnd, rndInt, worldHeight, tutorialMode, TYPES } from '../core/global.js';
+import { skipSound, playSound, sounds } from '../core/sound.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
@@ -47,7 +47,19 @@ const ParachuteInfantry = (options = {}) => {
 
       effects.inertGunfireExplosion({ exports });
 
-      playSound(sounds.scream, exports);
+      if (gamePrefs.bnb) {
+
+        if (data.isEnemy) {
+          playSound(sounds.bnb.dvdPrincipalScream, exports);
+        } else {
+          playSound(sounds.bnb.screamShort, exports);
+        }
+
+      } else {
+
+        playSound(sounds.scream, exports);
+
+      }
 
     }
     
@@ -156,6 +168,8 @@ const ParachuteInfantry = (options = {}) => {
 
     if (data.parachuteOpen && data.y >= data.maxYParachute) {
 
+      data.landed = true;
+
       // touchdown! die "quietly", and transition into new infantry.
       die({ silent: true });
 
@@ -168,15 +182,29 @@ const ParachuteInfantry = (options = {}) => {
 
     } else if (!data.parachuteOpen) {
 
-      if (data.y > data.maxYPanic && !data.didScream) {
+      if (data.y > (data.maxYPanic / 2) && !data.didScream) {
 
-        // It's not looking good for our friend. Call up our buddy Wilhem.
-        // http://archive.org/details/WilhelmScreamSample
+        if (gamePrefs.bnb) {
 
-        if (sounds.wilhemScream) {
-          playSound(sounds.wilhemScream, exports);
+          if (data.isEnemy) {
+            playSound(sounds.bnb.dvdPrincipalScream, exports);
+          } else {
+            playSound(sounds.bnb.screamPlusSit, exports, {
+              onplay: (sound) => {
+                // too late if off-screen, parachute open, dead, or landed (in which case, died silently)
+                if (!data.isOnScreen || data.parachuteOpen || data.landed || data.dead) {
+                  skipSound(sound);
+                }
+              }
+            });
+          }
+  
+        } else {
+  
+          playSound(sounds.scream, exports);
+  
         }
-
+  
         data.didScream = true;
 
       }
@@ -254,6 +282,7 @@ const ParachuteInfantry = (options = {}) => {
     ignoreShrapnel: options.ignoreShrapnel || false,
     didScream: false,
     didHitGround: false,
+    landed: false,
     vX: 0, // wind
     vY: 2 + Math.random() + Math.random(),
     maxY: worldHeight + 3,

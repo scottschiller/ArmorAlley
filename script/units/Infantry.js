@@ -41,6 +41,7 @@ const Infantry = (options = {}) => {
     if (data.frameCount % data.fireModulus !== 0) return;
 
     game.addObject(TYPES.gunfire, {
+      parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.
@@ -120,9 +121,30 @@ const Infantry = (options = {}) => {
     if (!options?.silent) {
 
       playSound(sounds.genericSplat, exports);
-      playSound(sounds.scream, exports);
 
-      common.inertGunfireExplosion({ exports });
+      if (gamePrefs.bnb) {
+
+        if (data.isEnemy) {
+          playSound(sounds.bnb.dvdPrincipalScream, exports);
+        } else if (data.role) {
+          // engineer case
+          if (data.isBeavis) {
+            playSound(sounds.bnb.beavisScreamShort, exports);  
+          } else {
+            playSound(sounds.bnb.buttheadScreamShort, exports);  
+          }
+        } else {
+          // friendly infantry
+          playSound(sounds.bnb.screamShort, exports);
+        }
+
+      } else {
+
+        playSound(sounds.scream, exports);
+
+      }
+
+      effects.inertGunfireExplosion({ exports });
 
     }
 
