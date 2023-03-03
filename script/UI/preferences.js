@@ -1,6 +1,8 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { getTypes, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
+import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
+import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
@@ -21,6 +23,8 @@ const PREFS = {
 const defaultPrefs = {
   game_type: '',
   sound: true,
+  bnb: false,
+  bnb_tv: true,
   weather: '', // [none|rain|hail|snow|turd]
   domfetti: true,
   show_inventory: true,
@@ -132,7 +136,34 @@ function PrefsManager() {
 
     document.body.appendChild(dom.o);
 
-    game.pause();
+    const now = Date.now();
+
+    if (now - data.lastMenuOpen > data.lastMenuOpenThrottle) {
+
+      data.lastMenuOpen = now;
+
+      window.setTimeout(() => {
+
+        if (!data.active) return;
+
+        playSequence(oneOf([sounds.bnb.menuOpenV1, sounds.bnb.menuOpenV2, sounds.bnb.menuOpenV3]), null, () => data.active);
+
+        // hackish BnB case: ensure what we may have just queued gets heard.
+        playQueuedSounds();
+
+      }, 500);
+
+    } else {
+
+      playSound(sounds.bnb.beavisPoop);
+
+    }
+
+    // hackish BnB case: ensure what we may have just queued gets heard.
+    playQueuedSounds();
+
+    game.pause({ noMute: true });
+
   }
 
   function hide() {
