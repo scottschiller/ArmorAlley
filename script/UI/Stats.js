@@ -2,6 +2,7 @@ import { TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { common } from '../core/common.js';
+import { gamePrefs } from './preferences.js';
 
 const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
@@ -363,6 +364,11 @@ function Stats() {
       // hackish: replace helicopter reference
       // TODO: fix this up so the enemy chopper is properly normalized.
       text = text.replace('a helicopter', 'the enemy helicopter');
+
+      // hackish
+      if (gamePrefs.bnb) {
+        text = text.replace('your turret', (Math.random() >= 0.5 ? 'THE GREAT CORNHOLIO' : 'THE ALMIGHTY BUNGHOLE'));
+      }
 
     }
 
