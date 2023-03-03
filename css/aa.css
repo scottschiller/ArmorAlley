@@ -4777,3 +4777,40 @@ button.primary:active {
   pointer-events: none;
   filter: none;
 }
+
+.zone-post {
+  width: 2px;
+  margin-left: -1px;
+  margin-bottom: -1px;
+  height: 6px;
+  border-radius: 1px;
+  z-index: 4;
+  bottom: 0px;
+  background: rgb(135,84,0);
+  overflow: visible !important;
+  contain: layout !important;
+}
+
+.zone-flag {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 4;
+  font-size: 4px;
+  line-height: 4px;
+  vertical-align: middle;
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 1px;
+  padding: 1px;
+  text-align: center;
+  background: rgba(0,192,0,0.75);
+}
+
+.zone-post .zone-flag {
+  top: 0px;
+  left: 50%;
+  font-size: 6px;
+  line-height: 6px;
+  padding: 1px 3px;
+  transform: translate3d(-50%, -100%, 0);
+}
