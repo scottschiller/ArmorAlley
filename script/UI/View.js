@@ -76,6 +76,66 @@ const View = () => {
     data.world.x = 0;
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
+    if (dom.logo) {
+
+      // hackish: if showing menu, ensure it is scaled to fit screen width - leaving vertical, for description text.
+      let logoScale = data.screenScale * 0.85;
+
+      // note: offsetWidth read
+      const renderedWidth = (dom.logo.offsetWidth * logoScale) + 16;
+
+      // avoid vertical clipping post-adjustment, too. NOTE: account for zoom or transform before applying.
+      // hackish: fixed offset of height for buttons and descriptive text and whatnot.
+      const renderedHeight = (dom.logo.offsetHeight * logoScale) + 96;
+
+      let widthConstrained;
+
+      if (renderedWidth >= data.browser.width) {
+        // scale to width, not height - avoid horizontal clipping.
+        // need to scale down to prevent horizontal clip
+        const proportion = (data.browser.width - renderedWidth) / data.browser.width;
+        logoScale -= Math.abs(proportion);
+        widthConstrained = true;
+      }
+
+      const maxHeightRatio = 1;
+
+      const heightRatio = renderedHeight / data.browser.height;
+
+      if (heightRatio >= maxHeightRatio) {
+
+        // height constraint
+        logoScale -= (heightRatio - maxHeightRatio);
+
+      } else if (!widthConstrained) {
+
+        // room to grow, vertically - e.g., iPhone in landscape view
+        const widthRoom = renderedWidth / data.browser.width;
+        const heightRoom = renderedHeight / data.browser.height;
+
+        // scale up by the lesser of the two.
+        logoScale += Math.min(widthRoom, heightRoom);
+
+      }
+
+      // don't ever get smaller than ...
+      logoScale = Math.max(0.5, logoScale);
+
+      // and no bigger than ...
+      logoScale = Math.min(0.85, logoScale);
+
+      // hackish: account for the "TV."
+      const isLandscape = window?.matchMedia('(orientation: landscape)')?.matches;
+
+      // don't resize on mobile in portrait mode.
+      if (!isMobile || isLandscape) {
+        logoScale -= 0.12;
+      }
+
+      dom.logo.style.transform = `scale3d(${logoScale}, ${logoScale}, 1)`;
+
+    }
+
     if (!data.battleField.width) {
       // dimensions assumed to be static, can be grabbed once
       // hard-code `battleField` width, instead of measuring.
