@@ -4,14 +4,15 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheck, nearbyTest, recycleTest } from '../core/logic.js';
-import { playSound, sounds } from '../core/sound.js';
 import { TYPES, FPS, rndInt, oneOf, getTypes } from '../core/global.js';
+import { addSequence, playSound, playSoundWithDelay, skipSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const Tank = (options = {}) => {
 
+  let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight, fireRates;
 
   function fire() {
 
@@ -141,11 +142,50 @@ const Tank = (options = {}) => {
         data.deadTimer = null;
       }, 1500);
 
+      // special case: you destroyed a tank, and didn't crash into one.
+      if (data.isEnemy && attackerType !== TYPES.helicopter) {
+
+        // helicopter bombed / shot / missiled tank
+        if (data.isOnScreen && data?.attacker?.data?.parentType === TYPES.helicopter && Math.random() > 0.75) {
+
+          if (game.data.isBeavis) {
+            playSound(addSequence(sounds.bnb.buttheadDirectHitBeavis, sounds.bnb.beavisThanks), exports);
+          } else {
+            playSound(sounds.bnb.beavisBattleship, exports);
+          }
+
+        } else {
+
+          // generic
+          playSoundWithDelay(oneOf([sounds.bnb.beavisYes, sounds.bnb.buttheadWhoaCool]), 250);
+
+        }
 
       }
 
+      // other special case: beavis saw an on-screen tank get taken out while butt-head is playing.
+      if (!data.isEnemy) {
+        
+        if (game.data.isButthead && sounds.bnb.beavisCmonButthead && isAttackerValid()) {
 
+          // basically, just long enough for three tanks to duke it out.
+          // your first one gets shot, then your second takes the enemy one out.
+          // if the enemy lives through this common sequence, then have Beavis comment.
+          const delay = 1500;
 
+          playSoundWithDelay(sounds.bnb.beavisCmonButthead, exports, { onplay: (sound) => { if (!isAttackerValid()) skipSound(sound); }}, delay);
+
+        } else {
+
+          // generic commentary for failure
+          playSoundWithDelay(sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']);
+
+          // generic notification
+          if (!data.isOnScreen && attackerType !== TYPES.smartMissile) {
+            game.objects.notifications.add('You lost a tank 💥');
+          }
+          
+        }
 
       }
 
