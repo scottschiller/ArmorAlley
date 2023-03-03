@@ -255,13 +255,11 @@ const View = () => {
     const toRemove = [];
 
     for (const item in COSTS) {
-      if (Object.prototype.hasOwnProperty.call(COSTS, item)) {
-        // mark as "can not afford".
-        if (playerFunds < COSTS[item].funds) {
-          toAdd.push(COSTS[item].css);
-        } else {
-          toRemove.push(COSTS[item].css);
-        }
+      // mark as "can not afford".
+      if (playerFunds < COSTS[item].funds) {
+        toAdd.push(COSTS[item].css);
+      } else {
+        toRemove.push(COSTS[item].css);
       }
     }
 
