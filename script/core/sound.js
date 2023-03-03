@@ -906,12 +906,6 @@ window.soundManager.onready(() => {
       url: 'generic-explosion-2',
       volume: 24
     }),
-    /*
-    add({
-      url: 'generic-explosion-3',
-      volume: 24
-    }),
-    */
     add({
       url: 'explosion2',
       volume: 33
