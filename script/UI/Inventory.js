@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { TYPES } from '../core/global.js';
-import { playSound, sounds } from '../core/sound.js';
+import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { collisionCheck, isGameOver } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
@@ -193,6 +193,9 @@ const Inventory = () => {
     // live `data.queue` is modified via `shift()` as it's processed.
     data.queueCopy.push(newOrder);
 
+    if (sounds.bnb.tv && isOrderingTV()) {
+      playSoundWithDelay(sounds.bnb.tv);
+    }
 
     // update the UI
     utils.css.add(dom.gameStatusBar, css.building);
