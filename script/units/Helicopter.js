@@ -19,7 +19,8 @@ import {
   TYPES,
   winloc,
   worldWidth,
-  worldHeight
+  worldHeight,
+  oneOf,
   getTypes
 } from '../core/global.js';
 
@@ -1366,9 +1367,11 @@ const Helicopter = (options = {}) => {
 
     effects.shrapnelExplosion(data, {
       count: 20,
-      velocity: 6,
+      velocity: 4 + rndInt(4),
       vX: data.vX,
       vY: data.vY,
+      parentVX: data.vX,
+      parentVY: data.vY,
       // first burst always looks too similar, here.
       noInitialSmoke: true
     });
@@ -2292,7 +2295,7 @@ const Helicopter = (options = {}) => {
     // trailer history
     // push x/y to trailer history arrays, maintain size
 
-    if (data.isOnScreen && game.objects.gameLoop.data.frameCount % data.trailerModulus === 0) {
+    if (data.isOnScreen) {
 
       data.xHistory.push(data.x);
       data.yHistory.push(data.y);
@@ -2621,6 +2624,14 @@ const Helicopter = (options = {}) => {
     },
     y: game.objects.view.data.world.height - 20,
     muchaMuchacha: false,
+    cloakedCommentary: false,
+    domFetti: {
+      colorType: options.isEnemy ? 'grey' : 'green',
+      elementCount: 100 + rndInt(100),
+      startVelocity: 15 + rndInt(15),
+      spread: 360,
+      decay: 0.94
+    }
   }, options);
 
   data.midPoint = {
@@ -2672,8 +2683,8 @@ const Helicopter = (options = {}) => {
         args = {
           x: e.clientX * (1 / screenScale) + game.objects.view.data.battleField.scrollLeft,
           y: e.clientY * (1 / screenScale),
-          vX: rndInt(10),
-          vY: -rndInt(12),
+          vX: 1 + rndInt(8),
+          vY: -rndInt(10),
           width: 1,
           height: 1,
           halfWidth: 1,
@@ -2681,14 +2692,20 @@ const Helicopter = (options = {}) => {
           isOnScreen: true
         };
 
-        // TODO: special case - clean this up
-        common.shrapnelExplosion(args, {
-          count: rndInt(8) + rndInt(8),
-          // don't create identical "clouds" of smoke *at* base.
-          noInitialSmoke: true
-        });
+        playSound(sounds.balloonExplosion, exports);
 
-        playSound(sounds.genericExplosion, exports);
+        const options = {
+          data: {
+            domFetti: {
+              colorType: oneOf(['default', 'green', 'yellow', 'grey']),
+              elementCount: 35 + rndInt(65),
+              spread: 360,
+              startVelocity: 20 + rndInt(20)
+            }
+          }
+        };
+
+        game.objects.domFetti.push(domFettiBoom(options, null, args.x, args.y));
 
         effects.smokeRing({ data: args }, {
           velocityMax: 8,
@@ -2741,7 +2758,7 @@ const Helicopter = (options = {}) => {
 
   collision = {
     options: {
-      source: exports, // initially undefined
+      source: exports,
       targets: undefined,
       hit(target) {
         if (target.data.type === 'chain') {
