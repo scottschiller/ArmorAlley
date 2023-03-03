@@ -1022,6 +1022,7 @@ ul.stats-bar .bombs em {
 .sprite.terrain-item,
 .smoke .transform-sprite,
 .sprite.shrapnel,
+.cornholio,
 .turret .sub-sprite,
 #radar .radar-item--animated {
   /**
@@ -2332,6 +2333,51 @@ ul.stats-bar .bombs em {
   left: auto;
   right: 0px;
 }
+.cornholio {
+  /* I am the great Cornholio! */
+  width: 12px;
+  height: 33.6px;
+  /* show in front of bunkers */
+  z-index: 1;
+  /* hide until visible */
+  margin-top: 33.6px;
+  transition: margin-top 1s ease-in-out;
+}
+
+body.bnb .cornholio.visible {
+  display: block;
+  margin-top: 0px;
+}
+
+.cornholio .sub-sprite {
+  /* https://www.spriters-resource.com/fullview/44963/ */
+  background-image: url(../image/beavis-cornholio.png);
+  /* original dimensions / 2.5 */
+  width: 36px;
+  height: 33.6px;
+  background-size: auto 33.6px;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+body.is_safari .cornholio .sub-sprite {
+  image-rendering: optimizeQuality;
+}
+
+.cornholio.bow-down .sub-sprite {
+  /* You must bow down to the almighty bunghole! */
+  transform: translate3d(-12px, 0px, 0px);
+}
+
+.cornholio.threatening .sub-sprite {
+  /* Are you threatening me!? */
+  transform: translate3d(-24px, 0px, 0px);
+}
+
+.cornholio.hidden .sub-sprite {
+  animation: none;
+}
+
 .bunker.burning {
   background-image: none;
 }
