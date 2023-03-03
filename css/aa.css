@@ -1146,11 +1146,12 @@ ul.stats-bar .bombs em {
 #stars {
   /* GPU parallax, where possible */
   position: absolute;
-  top: 64px;
+  top: 34px;
   left: 0px;
-  /* will be adjusted according to browser width + 10% of battlefield width. */
-  width: 100%;
-  height: 320px;
+  /* will be adjusted according to browser width + a percentage of battlefield width. */
+  width: 110%;
+  left: -10%;
+  height: 352px; /* 320 (battlefield height) + top offset */
   /* background: transparent url(../image/star-background.png); */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgMAAAEQBAMAAADfX2rMAAAAJ1BMVEUAAACqqgIFVQH///+rVaqqqqqqqlX/qgGrAgGqVQFVVQFVVVUOqgKHPpTkAAAAAXRSTlMAQObYZgAAAMpJREFUeAHt3csRglAQBMDxz8GDIRgSIRAKIRiCIRiid476hBW6Y6CoerWzO4F12AUAAGhgn40BDlkbADgGAAAAAAAAAEy6CwL6tAJ2bRnSDgAAAMAlCwGALjU8AgAAs3jKq1HPKcC3RkFPAFjaKwA/GmUCgGIhAAAAABCAAgDGQEm3APChc/ijOhqwpwEAAEDn9jwAFHYNAAAAAGC7mhmKmQAA7gEAph0GAAC4wwGA5AH44AH/AAAAgN67CgAAwK1yqGmQtxU5ZkPekqAIhV0w0YcAAAAASUVORK5CYII=);
   background-size: 256px 136px;
