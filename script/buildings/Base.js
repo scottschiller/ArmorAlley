@@ -2,6 +2,7 @@ import { game } from '../core/Game.js';
 import { gameType } from '../aa.js';
 import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth, TYPES } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
+import { playSequence } from '../core/sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
@@ -74,6 +75,8 @@ const Base = (options = {}) => {
       leftOffset = -(game.objects.view.data.browser.width * 0.1);
     }
 
+    common.setFrameTimeout(() => playSound(data.isEnemy ? sounds.bnb.singing : sounds.bnb.beavisNoNoNoNooo, null, { volume: 85 }), 128);
+
     game.objects.view.setLeftScroll(leftOffset, overrideMax);
 
     // disable view + helicopter events?
@@ -125,6 +128,8 @@ const Base = (options = {}) => {
 
       if (counter >= counterMax) {
 
+        playSequence(data.isEnemy ? sounds.bnb.gameOverWin : sounds.bnb.gameOverLose);
+    
         // HUGE boom, why not.
         common.setFrameTimeout(() => {
 
