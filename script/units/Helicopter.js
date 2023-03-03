@@ -2746,7 +2746,7 @@ const Helicopter = (options = {}) => {
       hit(target) {
         if (target.data.type === 'chain') {
           // special case: chains do damage, but don't kill.
-          common.hit(exports, target.data.damagePoints);
+          common.hit(exports, target.data.damagePoints, target);
           // and make noise.
           if (sounds.chainSnapping) {
             playSound(sounds.chainSnapping, target);
