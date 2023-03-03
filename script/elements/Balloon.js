@@ -161,6 +161,16 @@ const Balloon = (options = {}) => {
 
   }
 
+  function isOnScreenChange(/*isOnScreen*/) {
+
+    // ignore if still tethered
+    if (!data.detached) return;
+
+    // chains don't get `isOnScreenChange()`, typically connected to bunkers or balloons
+    objects.chain?.isJerking(data.isOnScreen);
+
+  }
+
   function animate() {
 
     if (data.dead) {

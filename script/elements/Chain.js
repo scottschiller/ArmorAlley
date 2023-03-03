@@ -1,5 +1,8 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
+import { utils } from '../core/utils.js';
+import { playSound, skipSound, sounds } from '../core/sound.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 
@@ -26,6 +29,40 @@ const Chain = (options = {}) => {
     objects.bunker = null;
 
   }
+
+  function jerkCheck(sound) {
+
+    // can't be jerking your chain if there's no balloon, and/or the chain is dead.
+    if (!objects.balloon || data.dead) skipSound(sound);
+
+  }
+
+  function isJerking(intent) {
+
+    // "Check it out, Beavis... I'm jerking my chain." ⛓️✊🤣
+
+    // only comment if separated from the bunker, alive, and attached to a balloon
+    if (objects.bunker || !objects.balloon || data.dead) return;
+
+    // "visual effect" 🤣 - method will return result, i.e., bottom of chain is not off-screen
+    const isJerking = updateIsJerking(intent);
+
+    if (!isJerking) return;
+
+    playSound(sounds.bnb.buttheadJerkingMyChain, null, { onplay: jerkCheck });
+
+  }
+
+  function updateIsJerking(intent) {
+
+    if (intent && !gamePrefs.bnb) return;
+
+    // only start "visual effect" if end of chain is in view, and likely to stay in view.
+    const isJerkingNow = intent && (data.y + data.height) < data.adjustedWorldHeight;
+
+    utils.css.addOrRemove(dom.o, isJerkingNow, css.jerking);
+
+    return isJerkingNow;
 
   }
 
@@ -199,7 +236,8 @@ const Chain = (options = {}) => {
   }
 
   css = common.inheritCSS({
-    className: 'chain'
+    className: 'chain',
+    jerking: 'jerking'
   });
 
   defaultHeight = game.objects.view.data.world.height + 5;
@@ -214,6 +252,7 @@ const Chain = (options = {}) => {
      * set at init, zeroed when chain drops and reset if balloon respawns.
      */
     height: defaultHeight,
+    adjustedWorldHeight: game.objects.view.data.world.height - 16,
     // tracks what's actually on the DOM
     appliedHeight: 0,
     damagePoints: 6,
@@ -240,6 +279,7 @@ const Chain = (options = {}) => {
     dom,
     die,
     init: initChain,
+    isJerking
   };
 
   return exports;

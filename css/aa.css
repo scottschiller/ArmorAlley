@@ -1341,6 +1341,11 @@ ul.stats-bar .bombs em {
   top: 0px;
 }
 
+.chain.jerking {
+  /* "Check it out, Beavis... I'm jerking my chain." ⛓️✊🤣 uh-huh huh huh. */
+  animation: jerkingmychain 0.69s alternate infinite;
+}
+
 .missile-launcher {
   /* background-image: url(../image/missile-launcher.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAABICAMAAACKs/ZeAAAAHlBMVEUAAAAAAAC0tLQJtAACYABgYACzAAD/tACqqqpVVQGXdNyGAAAAAXRSTlMAQObYZgAAATtJREFUeNrt1uFuwyAQA+CYgy57/xeebxa7U1Ah+dthRUhQvkIrWe1xN4gcD4LG1GZmKwdPsPpVazU0urlprxfHYO7gbmla6czI6DAyKMmUAmjdT2PEcP3Yr5YNJyLUZn+nGYaLMWF4mL7CUshcVWOQWQNwPacAwVzJZcbXsuGSHydGyN2JQRFQYqnQ+Xp2YrqDyCxU3YlZT1XyNK8gHBlQkRMuYGfaoK/E2Xme0DiJQTuqmM++Odd4vAuZdjBacKNnxfKOfMkJG3bAo3G3e7f7X7Sbp+Z2+1TjJK6aOzFoqnFa099N0W5N+SyY7tMX8iUnDMqx273b/YntVgMe/XYLqKZv0/s2thvLdreh3cua2uWNBVYdxNB/ePY/893uD2h3XO1Bu1U/4Wft1tMetVvvInm33XIe4Vvt/gGcuBozuCjCbAAAAABJRU5ErkJggg==);
@@ -3138,6 +3143,15 @@ body.is-mobile #game-tips #game-announcements {
   }
   to {
     transform: rotate(90deg);
+  }
+}
+
+@keyframes jerkingmychain {
+  from {
+    margin-top: 0px;
+  }
+  to {
+    margin-top: -16px;
   }
 }
 
