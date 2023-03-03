@@ -1,4 +1,5 @@
 import { game } from '../core/Game.js';
+import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { utils } from '../core/utils.js';
 import { gameType, keyboardMonitor, screenScale } from '../aa.js';
 
@@ -1302,6 +1303,10 @@ const Helicopter = (options = {}) => {
     utils.css.add(dom.o, css.exploding);
 
     const attacker = dieOptions?.attacker;
+
+    if (!data.isEnemy) {
+      reactToDamage(attacker);
+    }
     
     if (attacker
       && (
@@ -1309,6 +1314,7 @@ const Helicopter = (options = {}) => {
         || (attacker.data.type === TYPES.gunfire && attacker.data.parentType === TYPES.turret)
       )
     ) {
+
       // hit by other helicopter, missile, or turret gunfire? special (big) smoke ring.
       effects.smokeRing(exports, {
         count: 20,
@@ -1318,6 +1324,43 @@ const Helicopter = (options = {}) => {
         parentVX: data.vX,
         parentVY: data.vY
       });
+
+      // special check: friendly turret shot down enemy helicopter
+      if (data.isEnemy && attacker.data?.parentType === TYPES.turret && sounds?.bnb?.cornholioAttack) {
+        common.setFrameTimeout(() => {
+          if (data.dead) return;
+          playSound(sounds.bnb.cornholioAttack, attacker, { onplay: () => game.objects.notifications.add(`The enemy was shot down by ${Math.random() >= 0.5 ? 'THE GREAT CORNHOLIO.' : 'THE ALMIGHTY BUNGHOLE.'}`, { noRepeat: true }) });
+        }, 1000);
+      }
+
+    }
+
+    // extra-special case: player + CPU helicopters collided.
+    if (attacker) {
+
+      if (attacker.data.type === TYPES.helicopter) {
+
+        if (!attacker?.data.isEnemy) gameEvents.fire(EVENTS.helicopterCollision);
+
+      } else if (data.isEnemy && attacker.data) {
+
+        // celebrate the win if you, or certain actors take out the enemy chopper while on-screen.
+        if (data.isOnScreen && (attacker.data.parentType === TYPES.helicopter || attacker.data.type === TYPES.smartMissile || attacker.data.type === TYPES.balloon)) {
+          gameEvents.fire(EVENTS.enemyDied);
+        }
+
+      } else {
+
+        // local player, generic: "you died"
+        gameEvents.fire(EVENTS.youDied, 'attacker', attacker);
+
+      }
+
+    } else {
+
+      // local player, generic: "you died" - no attacker
+      gameEvents.fire(EVENTS.youDied);
+      
     }
 
     effects.shrapnelExplosion(data, {
