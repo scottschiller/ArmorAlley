@@ -137,11 +137,13 @@ const SmartMissile = (options = {}) => {
     objects.target = decoyTarget;
 
     if (launchSound) {
+
       launchSound.stop();
       launchSound.play({
         playbackRate: data.playbackRate,
         onplay: (sound) => launchSound = sound
       });
+
     }
 
     // and start tracking.
@@ -227,9 +229,18 @@ const SmartMissile = (options = {}) => {
 
   }
 
-  function die() {
+  function die(dieOptions = {}) {
 
-    if (data.deadTimer) return;
+    if (data.deadTimer || data.dead) return;
+
+    let { attacker } = dieOptions;
+
+    // slightly hackish: may be passed, or assigned
+    attacker = attacker || data.attacker;
+
+    data.energy = 0;
+
+    data.dead = true;
 
     let dieSound;
 
@@ -243,7 +254,9 @@ const SmartMissile = (options = {}) => {
 
       effects.shrapnelExplosion(data, {
         count: 3 + rndInt(3),
-        velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2
+        velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2,
+        parentVX: data.vX * 2,
+        parentVY: data.vY
       });
 
       if (attacker?.data?.type !== TYPES.infantry) {
@@ -251,7 +264,7 @@ const SmartMissile = (options = {}) => {
       }
 
       // special-case: shot down by gunfire, vs. generic "boom"
-      if (data?.attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
+      if (attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
         playSound(sounds.metalClang, exports);
       } else if (sounds.genericBoom) {
         playSound(sounds.genericBoom, exports);
@@ -266,16 +279,13 @@ const SmartMissile = (options = {}) => {
     hideTrailers();
 
     data.deadTimer = common.setFrameTimeout(() => {
-      // removeNodes on trailers???
-    }, 500);
-
-    data.energy = 0;
       sprites.removeNodesAndUnlink(exports);
+    }, 1000);
 
     // stop tracking the target.
     setTargetTracking();
 
-    radarItem.die();
+    radarItem?.die();
 
     if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.die) {
 
@@ -286,14 +296,17 @@ const SmartMissile = (options = {}) => {
           // "mute" and forget; the sound will finish playing, and will be destroyed / freed up.
           launchSound.mute();
           launchSound = null;
+
         }
 
         // play only if "armed", as an audible hint that it was capable of doing damage.
         if (data.armed) {
+
           playSound(sounds.rubberChicken.die, exports, {
             onplay: (sound) => dieSound = sound,
             playbackRate: data.playbackRate
           });
+
         }
 
       }
@@ -307,6 +320,10 @@ const SmartMissile = (options = {}) => {
           // hackish: apply launch sound volume to die sound
           dieSound.setVolume(launchSound.volume);
         }
+
+      }
+
+    }
 
       }
 
@@ -327,56 +344,95 @@ const SmartMissile = (options = {}) => {
     // optional callback
     if (data.onDie) data.onDie();
 
-    data.dead = true;
-
   }
 
   function sparkAndDie(target) {
 
-    spark();
+    // if we don't have a target, something is very wrong.
+    if (!target) return;
 
-    if (target) {
+    // special case: take a slight hit and "slice through" ground-based infantry and engineers
+    const { bottomAligned, type } = target.data;
 
-      common.hit(target, (data.armed ? data.damagePoints : 1), exports);
+    // engineers are an infantry sub-type
+    if (type == TYPES.infantry && bottomAligned && data.energy > 0) {
 
-      // "embed", so this object moves relative to the target it hit
-      common.attachToTarget(exports, target);
+      // take a hit
+      data.energy -= data.infantryEnergyCost;
 
-      // bonus "hit" sounds for certain targets
-      if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
-        playSound(sounds.metalHit, exports);
-      } else if (target.data.type === TYPES.bunker) {
-        playSound(sounds.concreteHit, exports);
-      }
+      // give a hit
+      common.hit(target, target.data.energy, exports);
 
-      if (data.isBanana || !data.armed) {
-        common.smokeRing(exports, {
-          count: data.armed ? 16 : 8,
-          velocityMax: data.armed ? 24 : 12,
-          offsetX: target.data.width / 2,
-          offsetY: data.height - 2,
-          isGroundUnit: target.data.bottomAligned,
-          parentVX: data.vX,
-          parentVY: data.vY
-        });
-      }
+      // keep on truckin', unless the missile has been killed off.
+      if (data.energy > 0) return;
 
-      // notify if the missile hit something (wasn't shot down), and was unarmed.
-      // a missile could hit e.g., three infantry at once - so, prevent dupes.
-      if (!data.didNotify && !data.armed && !data?.attacker?.type !== TYPES.gunfire && !data?.attacker?.type !== TYPES.bomb) {
+    } else {
 
-        const whose = (data.isEnemy ? 'An enemy' : (data?.parentType === TYPES.helicopter ? 'Your' : 'A friendly'));
+      // regular hit
+      common.hit(target, (data.armed ? data.damagePoints * data.energy : 1), exports);
+
+      if (!target.data.dead && data.armed) {
+
+        // a missile hit something, but the target didn't die.
+
+        const isWeakened = (data.energy < data.energyMax);
+        const weakened = isWeakened ? ' weakened' : '';
+        const whose = (data.isEnemy ? (isWeakened ? `A${weakened} enemy` : 'An enemy') : (data?.parentType === TYPES.helicopter ? `Your${weakened}` : `A friendly${weakened}`));
         const missileType = game.objects.stats.formatForDisplay(data.type, exports);
+        const verb = (target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged');
+        const targetType = game.objects.stats.formatForDisplay(type, target);
+        const health = (target.data.energy !== target.data.energyMax ? ` (${Math.floor((target.data.energy / target.data.energyMax) * 100)}%)` : '');
+        const aOrAn = target.data.type === TYPES.infantry ? 'an' : 'a';
+  
+        const text = common.tweakEmojiSpacing(`${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`);
 
-        game.objects.notifications.add(`${whose} ${missileType} died before arming itself.`);
-
-        data.didNotify = true;
-
+        game.objects.notifications.add(text);
+        
       }
 
     }
 
-    die();
+    spark();
+
+    // "embed", so this object moves relative to the target it hit
+    sprites.attachToTarget(exports, target);
+
+    // bonus "hit" sounds for certain targets
+    if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
+      playSound(sounds.metalHit, exports);
+    } else if (target.data.type === TYPES.bunker) {
+      playSound(sounds.concreteHit, exports);
+    }
+
+    if (data.isBanana || !data.armed) {
+      effects.smokeRing(exports, {
+        count: data.armed ? 16 : 8,
+        velocityMax: data.armed ? 24 : 12,
+        offsetX: target.data.width / 2,
+        offsetY: data.height - 2,
+        isGroundUnit: target.data.bottomAligned,
+        parentVX: data.vX,
+        parentVY: data.vY
+      });
+    }
+
+    // notify if the missile hit something (wasn't shot down), and was unarmed.
+    // a missile could hit e.g., three infantry at once - so, prevent dupes.
+
+    const aType = data?.attacker?.data?.type;
+
+    if (!data.didNotify && !data.armed && aType !== TYPES.gunfire && aType !== TYPES.bomb && aType !== TYPES.smartMissile) {
+
+      const whose = (data.isEnemy ? 'An enemy' : (data?.parentType === TYPES.helicopter ? 'Your' : 'A friendly'));
+      const missileType = game.objects.stats.formatForDisplay(data.type, exports);
+
+      game.objects.notifications.add(`${whose} ${missileType} died before arming itself.`);
+
+      data.didNotify = true;
+
+    }
+
+    die({ attacker: target });
 
   }
 
@@ -413,10 +469,10 @@ const SmartMissile = (options = {}) => {
      * 
      * if retargeting finds nothing at the moment the original is lost, the missile will die.
      */
-    if (!data.expired && (!objects.target || objects.target.data.dead)) {
+    if (!data.expired && (!objects.target || objects.target.data.dead || objects.target.data.isEnemy === data.isEnemy)) {
 
       // stop tracking the old one, as applicable.
-      if (objects.target.data.dead) {
+      if (objects.target.data.dead || objects.target.data.isEnemy === data.isEnemy) {
         setTargetTracking();
       }
 
@@ -429,8 +485,9 @@ const SmartMissile = (options = {}) => {
         if (launchSound) {
           launchSound.stop();
           launchSound.play({
+            volume: launchSound.volume,
             playbackRate: data.playbackRate,
-            onplay: (sound) => launchSound = sound
+            onplay: (sound) => launchSound = sound 
           });
         }
 
@@ -513,14 +570,14 @@ const SmartMissile = (options = {}) => {
 
     const progress = data.frameCount / data.expireFrameCount;
 
-    // smoke increases as missle nears expiry
+    // smoke increases as missile nears expiry
     const smokeThreshold = 1.25 - (Math.min(1, progress));
 
     if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
       data.nearExpiry = true;
 
       // if targeting the player, start expiry warning sound
-      if (objects?.target === game.objects.helicopters[0]) {
+      if (objects?.target === game.objects.helicopter[0]) {
         playSound(sounds.missileWarningExpiry, exports);
         stopSound(sounds.missileWarning);
       }
@@ -582,10 +639,10 @@ const SmartMissile = (options = {}) => {
     // hit bottom?
     if (data.y > game.objects.view.data.battleField.height - 3) {
       data.y = game.objects.view.data.battleField.height - 3;
-      die({ silent: true });
+      die();
 
       // if targeting the player, stop expiry sound
-      if (objects?.target === game.objects.helicopters[0]) {
+      if (objects?.target === game.objects.helicopter[0]) {
         stopSound(sounds.missileWarningExpiry);
       }
     }
@@ -633,7 +690,7 @@ const SmartMissile = (options = {}) => {
 
   }
 
-  function initSmartMissle() {
+  function initSmartMissile() {
 
     initDOM();
 
@@ -696,11 +753,15 @@ const SmartMissile = (options = {}) => {
     css.className += ` ${css.banana}`;
   }
 
+  const width = (options.isRubberChicken ? 24 : 14);
+
   data = common.inheritData({
     type: 'smart-missile',
+    parent: options.parent || null,
     parentType: options.parentType || null,
-    energy: 1,
-    energyMax: 1,
+    energy: 2,
+    energyMax: 2,
+    infantryEnergyCost: 0.5,
     armed: false,
     didNotify: false,
     expired: false,
@@ -709,19 +770,21 @@ const SmartMissile = (options = {}) => {
     nearExpiryThreshold: 0.88,
     frameCount: 0,
     foundDecoy: false,
-    decoyItemTypes: ['parachuteInfantry'],
+    decoyItemTypes: getTypes('parachuteInfantry', { exports: { data: { isEnemy: options.isEnemy } } }),
     decoyFrameCount: 11,
     ramiusFrameCount: 15,
     expireFrameCount: options.expireFrameCount || 256,
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
-    width: (options.isRubberChicken ? 24 : 14),
+    width,
+    halfWidth: width / 2,
     height: 15,
     gravity: 1,
-    damagePoints: 25,
-    isRubberChicken: !!options.isRubberChicken,
+    damagePoints: 12.5,
     isBanana: !!options.isBanana,
+    isRubberChicken: !!options.isRubberChicken,
+    isSmartMissile: !!options.isSmartMissile,
     onDie: options.onDie || null,
-    playbackRate: 0.95 + (Math.random() * 0.1),
+    playbackRate: 0.9 + (Math.random() * 0.2),
     target: null,
     vX: 1 + Math.random(),
     vY: 1 + Math.random(),
@@ -736,7 +799,14 @@ const SmartMissile = (options = {}) => {
     yMax: null,
     angle: options.isEnemy ? 180 : 0,
     angleIncrement: 45,
-    noEnergyStatus: true
+    noEnergyStatus: true,
+    domFetti: {
+      // may be overridden
+      colorType: (options.isRubberChicken || options.isBanana ? 'default' : undefined),
+      elementCount: 10 + rndInt(10),
+      startVelocity: 10 + rndInt(10),
+      spread: 360
+    }
   }, options);
 
   dom = {
