@@ -25,14 +25,16 @@ const Radar = () => {
     data.isStale = isStale;
   }
 
-  function setIncomingMissile(incoming) {
+  function setIncomingMissile(incoming, newestMissile) {
 
     if (data.incomingMissile === incoming) return;
 
     utils.css[incoming ? 'add' : 'remove'](game.objects.view.dom.worldWrapper, css.incomingSmartMissile);
+
     data.incomingMissile = incoming;
 
     if (incoming) {
+
       /*
       // don't warn player in extreme mode, when radar is jammed.
       if (data.isJammed && gameType === 'extreme') {
@@ -41,12 +43,21 @@ const Radar = () => {
       */
 
       playSound(sounds.missileWarning);
+
+      if (data.missileWarningCount < 3) {
+        game.objects.notifications.add('⚠️ Incoming smart missile! 😰');
+        data.missileWarningCount++;
+      }
+
       common.setFrameTimeout(() => {
         if (!data.incomingMissile) return;
         playSound(sounds.bnb[newestMissile.data.isRubberChicken ? 'incomingSmartMissilePlusCock' : 'incomingSmartMissile']);
       }, 1000);
+
     } else if (sounds.missileWarning?.sound) {
+
       stopSound(sounds.missileWarning);
+
     }
 
   }
@@ -186,6 +197,11 @@ const Radar = () => {
       playSound(sounds.radarJamming);
     }
 
+    // we may be dead; ignore if so.
+    if (game.objects.helicopter[0].data.dead) return;
+
+    const dieCount = parseInt(game.data.dieCount, 10);
+
     function onPlayCheck(sound) {
       // make sure this happens only if still jammed, AND, there aren't several sounds queued up.
       if (!data.isJammed || game.data.dieCount > dieCount || soundsToPlayBNB.length > 2 || !enemyVansOnScreen()) {
@@ -204,9 +220,17 @@ const Radar = () => {
       playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'radarJammedBeavis' : 'radarJammedButthead'], null, { onplay: onPlayCheck, onfinish: onFinishCheck }, 2000);
     }
 
+
+    if (data.jamCount < 3) {
+      game.objects.notifications.add('🚚 An enemy van is jamming your radar 📡 🚫');
+    }
+
     // extreme mode: don't warn player about incoming missiles when radar is jammed, either.
     // i.e., you lose visibility.
     // if (gameType === 'extreme') setIncomingMissile(false);
+
+
+  }
 
   function updateOverlay() {
 
@@ -285,7 +309,7 @@ const Radar = () => {
 
   function animate() {
 
-    let i, j, left, top, hasEnemyMissile, isInterval;
+    let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
 
     hasEnemyMissile = false;
 
@@ -298,24 +322,26 @@ const Radar = () => {
 
     /*
     // even if jammed, missile count needs checking.
-    // otherwise, "incoming misile" UI / state could get stuck
+    // otherwise, "incoming missile" UI / state could get stuck
     // when a missile is destroyed while the radar is jammed.
     */
-    if (game.objects.smartMissiles.length !== data.lastMissileCount) {
+    if (game.objects[TYPES.smartMissile].length !== data.lastMissileCount) {
 
       // change state?
 
-      for (i = 0, j = game.objects.smartMissiles.length; i < j; i++) {
+      for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
 
         // is this missile not dead, not expired/hostile, and an enemy?
 
         if (
-          !game.objects.smartMissiles[i].data.dead
-          && !game.objects.smartMissiles[i].data.hostile
-          && game.objects.smartMissiles[i].data.isEnemy !== game.objects.helicopters[0].data.isEnemy
+          !game.objects[TYPES.smartMissile][i].data.dead
+          && !game.objects[TYPES.smartMissile][i].data.hostile
+          && game.objects[TYPES.smartMissile][i].data.isEnemy !== game.objects.helicopter[0].data.isEnemy
         ) {
 
           hasEnemyMissile = true;
+
+          newestMissile = game.objects[TYPES.smartMissile][i];
 
           break;
 
@@ -323,9 +349,9 @@ const Radar = () => {
 
       }
 
-      data.lastMissileCount = game.objects.smartMissiles.length;
+      data.lastMissileCount = game.objects[TYPES.smartMissile].length;
 
-      setIncomingMissile(hasEnemyMissile);
+      setIncomingMissile(hasEnemyMissile, newestMissile);
 
     }
 
@@ -429,6 +455,7 @@ const Radar = () => {
     isJammed: false,
     isStale: false,
     jamCount: 0,
+    missileWarningCount: 0,
     lastMissileCount: 0,
     incomingMissile: false,
     // additional transform properties applied during radar item animation
