@@ -6,6 +6,7 @@ import { gameType, keyboardMonitor, screenScale } from '../aa.js';
 import {
   trackEnemy,
   bananaMode,
+  defaultMissileMode,
   rubberChickenMode,
   debug,
   FPS,
@@ -1534,8 +1535,9 @@ const Helicopter = (options = {}) => {
             y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
             target: missileTarget,
             // special variants of the smart missile. ;)
+            isBanana: game.objects.view.data.missileMode === bananaMode && !data.isEnemy,
             isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && !data.isEnemy,
-            isBanana: game.objects.view.data.missileMode === bananaMode && !data.isEnemy
+            isSmartMissile: game.objects.view.data.missileMode === defaultMissileMode && !data.isEnemy
           });
 
           data.smartMissiles = Math.max(0, data.smartMissiles - 1);
@@ -2595,7 +2597,6 @@ const Helicopter = (options = {}) => {
     missileModulus: 12,
     parachuteModulus: 4,
     repairModulus: 2,
-    trailerModulus: 2,
     radarJamming: 0,
     repairComplete: false,
     landed: true,
