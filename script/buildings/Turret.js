@@ -1,10 +1,11 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds } from '../core/sound.js';
 import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode, getTypes } from '../core/global.js';
+import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds, skipSound } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -138,6 +139,9 @@ const Turret = (options = {}) => {
 
     if (isFiring) {
 
+      if (!data.isEnemy && gamePrefs.bnb && sounds.bnb.cornholioAttack) {
+        playSound(sounds.bnb.cornholioAttack, exports);
+      }
 
     } else {
 
@@ -146,6 +150,9 @@ const Turret = (options = {}) => {
 
     }
 
+    if (!data.isEnemy) {
+      objects.cornholio?.setSpeaking(data.firing);
+    }
 
   }
 
@@ -163,6 +170,7 @@ const Turret = (options = {}) => {
     data.restoring = false;
     data.dead = true;
 
+    objects.cornholio?.hide();
 
     // hackish: ensure firing is reset.
     setFiring(false);
@@ -176,6 +184,31 @@ const Turret = (options = {}) => {
         } else {
           game.objects.notifications.add('You disabled a turret 💥');
         }
+      }
+
+      if (gamePrefs.bnb) {
+
+        if (!data.isEnemy) {
+
+          playSoundWithDelay(sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']);
+
+        } else {
+
+          const attacker = dieOptions.attacker?.data;
+
+          // infantry - specifically, dropped or released from helicopter
+          const infantryAttacker = attacker?.parentType === TYPES.infantry && attacker.parent.data.unassisted === false;
+
+          // likewise, from helicopter
+          const smartMissileAttacker = attacker.type === TYPES.smartMissile && attacker.parentType === TYPES.helicopter;
+
+          // on-screen, or helicopter-initiated things
+          if (gamePrefs.bnb && (data.isOnScreen || infantryAttacker || smartMissileAttacker)) {
+            playSoundWithDelay(sounds.bnb.bungholeAndSimilar, exports, 750);
+          }
+
+        }
+
       }
 
       utils.css.add(dom.o, css.exploding);
@@ -261,6 +294,30 @@ const Turret = (options = {}) => {
           }
         }
 
+        // only when engineer is restoring a dead turret...
+        if (gamePrefs.bnb && !data.isEnemy && data.engineerInteracting && engineer?.data) {
+
+          if (data.restoring) {
+
+            // only play / queue once
+            if (!data.queuedSound) {
+
+              data.queuedSound = true;
+
+              playSound(sounds.bnb.cornholioRepair, exports, {
+                onfinish: function() {
+                  window.soundManager.destroySound(this.id);
+                  // allow this to be played again
+                  data.queuedSound = false;
+                }
+              });
+
+            }
+
+          }
+
+        }
+
         sprites.updateEnergy(exports);
 
       }
@@ -284,6 +341,35 @@ const Turret = (options = {}) => {
 
           game.objects.notifications.add('You finished rebuilding a turret 🛠️');
 
+          if (gamePrefs.bnb && sounds.bnb.cornholioAnnounce) {
+
+            // skip existing, if any
+            if (data.queuedSound?.sound) {
+              skipSound(data.queuedSound.sound);
+            }
+
+            data.queuedSound = null;
+
+            objects.cornholio?.show();
+            objects.cornholio?.setSpeaking(true);
+
+            if (!data.firing) {
+              playSound(sounds.bnb.cornholioAnnounce, exports, {
+                onplay: (sound) => {
+                  objects.cornholio?.setActiveSound(sound);
+                  game.objects.notifications.add(data.bnbAnnounceText);
+                },
+                onfinish: () => {
+                  // stop speaking when "announcement" has finished, and not actively firing.
+                  objects.cornholio?.setActiveSound(null, data.firing);
+                  objects.cornholio?.setSpeaking(data.firing);
+                }
+              });
+            } else {
+              game.objects.notifications.add(data.bnbAnnounceText);
+            }
+
+          }
 
         }
 
@@ -293,6 +379,10 @@ const Turret = (options = {}) => {
 
       // reset, since work is commplete
       data.restoring = false;
+
+      data.hasBeavis = false;
+      data.hasButthead = false;
+      data.isSinging = false;
 
     }
 
@@ -332,8 +422,21 @@ const Turret = (options = {}) => {
       // otherwise, it'll be neutralized and then rebuilt.
       if (isEnemy) {
         game.objects.notifications.add('The enemy captured a turret 🚩');
+        objects.cornholio?.hide();
       } else {
         game.objects.notifications.add('You captured a turret ⛳');
+        if (sounds.bnb.cornholioAnnounce) {
+          playSound(sounds.bnb.cornholioAnnounce, exports, {
+            onplay: (sound) => {
+              game.objects.notifications.add(data.bnbAnnounceText);
+              objects.cornholio?.setActiveSound(sound);
+            },
+            onfinish: () => {
+              objects.cornholio?.setActiveSound(null);
+            }
+          });
+          objects.cornholio?.show();
+        }
       }
     }
 
@@ -348,6 +451,8 @@ const Turret = (options = {}) => {
     // target is an engineer; either repairing, or claiming.
 
     data.engineerInteracting = true;
+
+    if (gamePrefs.bnb) bnbInteract(engineer);
 
     if (data.isEnemy !== engineer.data.isEnemy) {
 
@@ -364,6 +469,33 @@ const Turret = (options = {}) => {
     playRepairingWrench(isEngineerInteracting, exports);
 
     playTinkerWrench(isEngineerInteracting, exports);
+
+  }
+
+  function bnbInteract(engineer) {
+
+    if (!data.dead) return;
+
+    // only when friendly engineer is capturing / restoring a dead turret...
+    if (engineer.isEnemy || !data.engineerInteracting || !engineer.data) return;
+
+    if (!data.hasBeavis && engineer.data.isBeavis) {
+      data.hasBeavis = true;
+    }
+
+    // don't do this while the chopper is landed, music might be playing.
+    const helicopterOK = !game.objects.helicopter[0].data.onLandingPad;
+
+    if (!data.hasButthead && engineer.data.isButthead) {
+      data.hasButthead = true;
+      if (helicopterOK) playSound(sounds.bnb.bhLetsRock, exports);
+    }
+
+    if (data.hasBeavis && data.hasButthead && !data.isSinging) {
+      data.isSinging = true;
+      // omit "take that, you commie butthole!" unless on-screen.
+      if (helicopterOK) playSound(data.isOnScreen ? sounds.bnb.singing : sounds.bnb.singingShort, exports);
+    }
 
   }
 
@@ -486,6 +618,9 @@ const Turret = (options = {}) => {
     fireCount: 0,
     frameCount: 2 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely
     fireModulus: (tutorialMode ? 12 : (gameType === 'extreme' ? 2 : (gameType === 'hard' ? 3 : 6))), // a little easier in tutorial mode vs. hard vs. easy modes
+    hasBeavis: false,
+    hasButthead: false,
+    isSinging: false,
     scanModulus: 1,
     claimModulus: 8,
     repairModulus: FPS,
@@ -503,8 +638,9 @@ const Turret = (options = {}) => {
     x: options.x || 0,
     y: game.objects.view.data.world.height - height - 2,
     // logical vs. sprite offset
-    yOffset: 3
     yOffset: 3,
+    cornholioOffsetX: 12,
+    bnbAnnounceText: Math.random() >= 0.5 ? 'THE GREAT CORNHOLIO has been awakened. 👐' : 'THE ALMIGHTY BUNGHOLE has been summoned. 👐',
     domFetti: {
       colorType: 'grey',
       elementCount: 20 + rndInt(20),
@@ -516,6 +652,10 @@ const Turret = (options = {}) => {
   dom = {
     o: null,
     oSubSprite: null
+  };
+
+  objects = {
+    cornholio: null
   };
 
   exports = {
