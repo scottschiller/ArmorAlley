@@ -220,6 +220,7 @@ const EndBunker = (options = {}) => {
     width: 39,
     halfWidth: 19,
     height,
+    halfHeight: height / 2,
     funds: (!options.isEnemy ? DEFAULT_FUNDS : 0),
     firing: false,
     gunYOffset: 10,
@@ -248,6 +249,7 @@ const EndBunker = (options = {}) => {
     data,
     dom,
     hit,
+    init: initEndBunker,
     updateHealth
   };
 
