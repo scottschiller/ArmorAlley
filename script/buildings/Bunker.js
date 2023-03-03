@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rndInt, rnd, TYPES } from '../core/global.js';
+import { rndInt, rnd, TYPES, FPS } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { Balloon } from '../elements/Balloon.js';
@@ -140,15 +140,31 @@ const Bunker = (options = {}) => {
     objects?.chain?.applyHeight();
 
     if (objects.balloon) {
-      objects.balloon.detach();
+      objects.balloon.attachChain(objects.chain);
+      objects.balloon.detachFromBunker();
+      objects.chain?.detachFromBunker();
       nullifyBalloon();
     }
 
   }
 
-  function die() {
+  function removeNukeSprite() {
+
+    if (!dom?.oSubSpriteNuke) return;
+
+    dom.oSubSpriteNuke.remove();
+    dom.oSubSpriteNuke = null;
+
+  }
+
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
+
+    // if off-screen, just avoid the nuke entirely.
+    if (!data.isOnScreen) {
+      removeNukeSprite();
+    }
 
     utils.css.add(dom.o, css.exploding);
 
@@ -182,16 +198,52 @@ const Bunker = (options = {}) => {
      */
     data.burninating = true;
 
+    // create and append rubbleContainer -> rubble nodes
+    let rubbleContainer = sprites.makeSubSprite(css.rubbleContainer);
+    let rubble = sprites.makeSubSprite(css.rubble);
+
+    rubbleContainer.appendChild(rubble);
+    dom.o.appendChild(rubbleContainer);
+
+    // no longer needed. ;)
+    dom.oArrow.remove();
+    dom.oArrow = null;
+
     common.setFrameTimeout(() => {
 
+      // slight delay before swapping in burning animation
       utils.css.swap(dom.o, css.exploding, css.burning);
 
+      // start "burning out"...
       common.setFrameTimeout(() => {
-        data.burninating = false;
-        utils.css.swap(dom.o, css.burning, css.dead);
+
+        // match transition to timer...
+        rubble.style.transitionDuration = ((burninatingTime * burnOutFade) / 1000) + 's';
+
+        utils.css.add(dom.o, css.burningOut);
+
+        // and eventually exinguish.
+        common.setFrameTimeout(() => {
+
+          data.burninating = false;
+
+          utils.css.swap(dom.o, css.burning, css.dead);
+          utils.css.swap(dom.o, css.burningOut, css.dead);
+
+          // drop nodes
+          rubbleContainer.remove();
+          rubble = null;
+          rubbleContainer = null;
+
+        }, burninatingTime * burnOutFade);
+
       }, burninatingTime);
 
     }, 1200);
+
+    // prevent this animation from re-appearing once played,
+    // e.g., if bunker goes off / on-screen.
+    common.setFrameTimeout(removeNukeSprite, 2000);
 
     data.energy = 0;
 
@@ -200,6 +252,7 @@ const Bunker = (options = {}) => {
     if (sounds.explosionLarge) {
       playSound(sounds.crashAndGlass, exports);
       playSound(sounds.explosionLarge, exports);
+      playSound(sounds.nuke, exports);
     }
 
     // check if enemy convoy production should stop or start
@@ -219,9 +272,9 @@ const Bunker = (options = {}) => {
 
     } else if (data.burninating) {
 
-      if (data.burnFramesLeft) {
-        effects.smokeRelativeToDamage(exports, data.burnFramesLeft / data.burnFramesMax);
-        data.burnFramesLeft--;
+      if (data.smokeFramesLeft) {
+        effects.smokeRelativeToDamage(exports, data.smokeFramesLeft / data.smokeFramesMax);
+        data.smokeFramesLeft--;
       }
 
     }
@@ -262,8 +315,8 @@ const Bunker = (options = {}) => {
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
-    dom.o.appendChild(sprites.makeSubSprite(css.arrow));
-    dom.o.appendChild(sprites.makeSubSprite(css.rubble));
+    dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+    
     dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
 
     data.oClassName = dom.o.className;
@@ -289,16 +342,24 @@ const Bunker = (options = {}) => {
   css = common.inheritCSS({
     className: TYPES.bunker,
     arrow: 'arrow',
-    burning: 'burning'
+    burning: 'burning',
+    burningOut: 'burning-out',
+    rubbleContainer: 'rubble-container',
+    rubble: 'rubble',
+    nuke: 'nuke'
   });
 
   // how long bunkers take to "burn out"
   const burninatingTime = 10000;
-  const burnFrames = (burninatingTime / 1000) * FPS;
+  const burnOutFade = 0.5;
+
+  const smokeFrames = ((burninatingTime + (burninatingTime * burnOutFade * 0.85)) / 1000) * FPS;
 
   data = common.inheritData({
     type: TYPES.bunker,
     y: (game.objects.view.data.world.height - 25) - 2, // override to fix helicopter / bunker vertical crash case
+    smokeFramesLeft: parseInt(smokeFrames, 10),
+    smokeFramesMax: smokeFrames,
     energy: 50,
     energyMax: 50,
     energyLineScale: 0.95,
@@ -308,11 +369,20 @@ const Bunker = (options = {}) => {
     halfWidth: 25,
     height: 25,
     halfHeight: 12.5,
-    midPoint: null
+    midPoint: null,
+    domFetti: {
+      colorType: 'yellow',
+      elementCount: 100 + rndInt(100),
+      startVelocity: 15 + rndInt(15),
+      spread: 180,
+      decay: 0.94
+    }
   }, options);
 
   dom = {
-    o: null
+    o: null,
+    oArrow: null,
+    oSubSpriteNuke: null
   };
 
   objects = {

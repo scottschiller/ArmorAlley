@@ -2119,9 +2119,54 @@ ul.stats-bar .bombs em {
 }
 
 .bunker.exploding {
+  /* special case */
+  background-image: none;
+  animation: none;
+}
+
+.bunker.exploding,
+.bunker.burning {
   /* bunker is normally 52px */
-  margin-left: -14px;
-  margin-top: -7px;
+  margin-left: -30px;
+  margin-top: -87px;
+}
+
+/* special case */
+.bunker.exploding,
+.bunker.burning {
+  /* width: 96px;
+  height: 71px; */
+  width: 112px;
+  height: 112px;
+  z-index: 5; /* let nuke show on top of smoke */
+  /* outline: 1px solid #ff33ff; */
+  /* background-color: #999; */
+}
+
+.bunker .sub-sprite.nuke {
+  /**
+   * Commercial, licensed asset - $1.99 USD.
+   * https://infectedtribe.itch.io/pixel-explosion
+   * 96 x 71 x 16 frames, 100 ms per frame. spritesheet dimensions: 1536 x 71
+   * https://graphicriver.net/item/pixel-explosion-set/15457666
+   */
+  background-image: url(../image/infectedtribe_itch_io-pixel_explosion.png);
+  background-size: 2352px 112px;
+  background-position: 112px 0px;
+  background-repeat: no-repeat;
+  transform-origin: 50% 100%;
+  transform: scale3d(0.88, 0.88, 1);
+  margin-top: -2px;
+  visibility: hidden;
+  z-index: 3;
+}
+
+.bunker.exploding .sub-sprite.nuke,
+.bunker.burning .sub-sprite.nuke {
+  /* go go go! */
+  animation: nuke 1.5s steps(21);
+  animation-fill-mode: forwards;
+  visibility: visible;
 }
 
 .turret.exploding {
@@ -2174,35 +2219,65 @@ ul.stats-bar .bombs em {
   left: auto;
   right: 0px;
 }
-
-.sprite .sub-sprite {
-  /* explosion / burning overlays */
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-}
-
 .bunker.burning {
   background-image: none;
 }
 
-.bunker.exploding .sub-sprite,
-.bunker.burning .sub-sprite {
-  /* background-image: url(../image/bunker-burning.gif); */
-  background-image: url(data:image/gif;base64,R0lGODlhNAAJAKEDAAAAAKpVAaqqAv///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJGQADACwAAAAANAAJAAACVZyPqcvtKZ6cLSAR7dI7cRcxWfCFlPOdquk9aYRZmJCmRv2RB/uSAkAKAH62Q44T1DECsx0w+RwqfAgmZkAC/njYoLQrzHqtI8wwJARIhbNz1/xkBwoAIfkECRkAAwAsAAAAADQACQAAAlOcj6nL7SmePGFGJmJVe/qnBZ0xJmVzDunHpedqRFmVCaVrwiYkCoAYAPhgIxEF+CLVDkPkL3hB9KRL0c8XVT2tF+Bze82oAhlhF4DWmLGhMthWAAAh+QQJGQADACwAAAAANAAJAAACU5yPqcvtKd4KUFoRKdKKv1g5WeBZn4mmpRlhFCaUYFKSTA2RAkAGwI4zeGzC3uoQgB2ARp5vhkxulCTeDkppgnpOpy+JGeiuW4A588OkxWAzN1YAADs=);
-  background-position: 50% 100%;
-  background-repeat: no-repeat;
+.bunker.exploding .sub-sprite.rubble-container,
+.bunker.burning .sub-sprite.rubble-container {
+  top: auto;
+  left: 50%;
+  bottom: 0px;
+  height: 8px;
+  /* always stay centered relative to bunker (larger when exploding etc.) */
+  width: 52px;
+  margin-left: -26px;
+  overflow: hidden;
 }
 
+.bunker.exploding .sub-sprite.rubble,
+.bunker.burning .sub-sprite.rubble {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  /* 52px * 3 frames */
+  width: 156px;
+  height: 8px;
+  /* background-image: url(../image/bunker-burning-sprite-horizontal.gif); */
+  background-image: url(data:image/gif;base64,R0lGODlhnAAIAPEDAAAAAKpVAaqqAv///yH5BAUZAAMALAAAAACcAAgAQALZnG+Cy+0PU5wnUPUwrUvvowiCJY6LxaCVOgSqx0oiOZ9N7G7xEJpl7OEgcjcbROFiBT+pD5IoLFJ2LceTyuxMBICkqxsALF2wUisc4MLOXw3Xiw6P00PzNy0egtug/V2eQldhh6Y2xAYYxYPkgFV1uJXB2JRViSDyqAgZqWUZsWTgGOoJAbWpScokakW2J9b1wAIFF2uW0Jr06iirQmuUhnmLl/tmlHm2klQbnPtXiEmmhhEGkCcnIvaE7TrSHPesLR1abZ0tHl1N7AXmChyePV6NZA6Pzh1QAAA7);
+  background-position: 0px 0px;
+  background-repeat: no-repeat;
+  animation: burninating 0.66s steps(3) infinite;
+  /* transition duration set via JS */
+  transition: opacity;
+}
+
+.bunker.burning-out .sub-sprite.rubble {
+  /* gradually hide the burning bits */
+  opacity: 0;
+}
+
+@keyframes burninating {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-156px, 0px, 0px);
+  }
+}
+
+.bunker.burning,
 .bunker.dead {
   display: block;
   width: 52px;
-  height: 4px;
-  margin-top: 21px; /* to get 25px height, align with bottom */
+  /* room for burning animation */
+  height: 8px;
+  /* to get 25px height, align with bottom */
+  margin-top: 17px;
+  margin-left: 0px;
   /* background-image: url(../image/bunker-dead.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAEAgMAAAC8bPTVAAAADFBMVEUAAAAAAACqVQGqqgKrKM85AAAAAXRSTlMAQObYZgAAAD1JREFUCB1j4v35jwEImBqAmIFJ9+F8EKNOq4GB8wPTnwtnHJg2cBZ9/MAxv4Gp+I+tzdozUg1PeJZv0AMA4/wUXgTuWxIAAAAASUVORK5CYII=);
+  background-position: 50% 100%;
 }
 
 .tank.exploding {
@@ -2795,21 +2870,21 @@ body.is-mobile #game-tips #game-announcements {
   }
 }
 
-@keyframes spinning3d {
-  from {
-    transform: rotate3d(1, 1, 1, 0deg);
-  }
-  to {
-    transform: rotate3d(1, 1, 1, 360deg);
-  }
-}
-
 @keyframes pulse {
   from {
     transform: scale3d(0.66, 0.66, 1);
   }
   to {
     transform: scale3d(0.33, 0.33, 1);
+  }
+}
+
+@keyframes nuke {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: -2352px 0px;
   }
 }
 
