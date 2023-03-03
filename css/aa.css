@@ -2761,6 +2761,7 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 .sprite.ordering {
+  contain: layout;
   transition: margin 2s;
   /* TODO: remove margin-bottom once all bottom-aligned things are out */
   margin-bottom: 0px !important;
