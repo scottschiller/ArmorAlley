@@ -186,6 +186,24 @@ const Radar = () => {
       playSound(sounds.radarJamming);
     }
 
+    function onPlayCheck(sound) {
+      // make sure this happens only if still jammed, AND, there aren't several sounds queued up.
+      if (!data.isJammed || game.data.dieCount > dieCount || soundsToPlayBNB.length > 2 || !enemyVansOnScreen()) {
+        skipSound(sound);
+      }
+    }
+
+    function onFinishCheck() {
+      // note: scoped to SMSound instance
+      if (this.skipped || game.data.isBeavis || Math.random() <= 0.5) return;
+      playSoundWithDelay(oneOf([sounds.bnb.tryAndPayAttention, sounds.bnb.beavisOhYeah]), null, { onplay: onPlayCheck });
+    }
+
+    // half the time, commentary.
+    if (Math.random() >= 0.5) {
+      playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'radarJammedBeavis' : 'radarJammedButthead'], null, { onplay: onPlayCheck, onfinish: onFinishCheck }, 2000);
+    }
+
     // extreme mode: don't warn player about incoming missiles when radar is jammed, either.
     // i.e., you lose visibility.
     // if (gameType === 'extreme') setIncomingMissile(false);
