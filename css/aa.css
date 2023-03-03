@@ -52,9 +52,12 @@ body {
   padding: 0px;
 }
 
-body {
+body, input {
   /* Classic Mac OS-style "chicago" by default, with an array of safe fallbacks. */
   font-family: 'FA Sysfont C', 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
+}
+
+body {
   background: #111;
   color: #fff;
   /**
@@ -76,7 +79,12 @@ body {
   -webkit-font-smoothing: antialiased;
   /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
   user-select: none;
+  /* prevent pinch-to-zoom and scroll */
+  touch-action: none;
+  /* more scroll aversion */
+  overflow: hidden;
 }
 
 #aa {

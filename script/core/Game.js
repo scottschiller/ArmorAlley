@@ -410,7 +410,11 @@ const game = (() => {
 
     // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
-    if (isSafari) utils.css.add(document.body, 'is_safari');
+    if (isSafari) { 
+      utils.css.add(document.body, 'is_safari');
+      // progressive web-type app, "installed on home screen" (iOS Safari)
+      if (navigator.standalone) utils.css.add(document.body, 'is_standalone');
+    }
   
     if (isMobile) {
   

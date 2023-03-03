@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <head>
-<title>Armor Alley (Web Prototype)</title>
- <meta name="description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Macintosh and MS-DOS computers. Written for fun as a prototype / demo of JavaScript and browser capabilities." />
+ <title>Armor Alley (Web Prototype)</title>
+ <meta charset="UTF-8" />
+ <meta name="description" content="A playable HTML + CSS + JavaScript web browser game based on the real-time strategy &quot;Armor Alley&quot; game, originally released for the Macintosh and MS-DOS computers in 1991." />
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, animation, CSS3, arcade, retro, browser game" />
  <meta name="author" content="Scott Schiller" />
- <meta charset="UTF-8" />
+ 
  <link rel="shortcut icon" href="./favicon/favicon.ico" />
  <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72x72.png" />
  <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
  <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png" />
- <link rel="manifest" href="./favicon/site.webmanifest" />
+ <link rel="manifest" href="./manifest.json" />
  <link rel="mask-icon" href="./favicon/safari-pinned-tab.svg" color="#5bbad5" />
- <meta name="msapplication-TileColor" content="#da532c" />
- <meta name="theme-color" content="#ffffff" />
- <!-- the special snowflake that is iOS -->
- <!-- TODO: scaling doesn't work on orientation change here when added to home screen. -->
- <!-- <meta name="apple-mobile-web-app-capable" content="yes" /> -->
- <!-- iPhone X and friends (and some scaling crap) - CSS will handle the notch. -->
- <meta name="viewport" content="initial-scale=1, viewport-fit=cover, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+ <meta name="msapplication-TileColor" content="#000000" />
+ <meta name="theme-color" content="#000000" />
+ <meta name="application-name" content="Armor Alley" />
+ <meta property="og:title" content="Armor Alley (Web Prototype)" />
+ <meta property="og:url" content="http://schillmania.com/armor-alley" />
+ <meta property="og:description" content="A playable HTML + CSS + JavaScript prototype based on the real-time strategy &quot;Armor Alley&quot; game originally released for the Macintosh and MS-DOS computers." />
+ <meta property="og:image" content="image/armor-alley_game_image_1920x1080.png" />
+ <meta property="twitter:card" content="summary_large_image" />
+ <meta property="twitter:domain" content="schillmania.com" />
+
+ <!-- full-bleed in iOS landscape view, including the notch -->
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+ <!-- required for iOS Safari full-screen, "add to home screen" (hiding URL bar etc.) -->
+ <!-- https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html -->
+ <meta name="apple-mobile-web-app-capable" content="yes" />
+
  <meta name="apple-mobile-web-app-title" content="Armor Alley" />
+
  <!-- all kinds of icons -->
  <link rel="apple-touch-icon" sizes="76x76" href="./image/apple-touch-icon-76x76.png?v=1" />
  <link rel="apple-touch-icon" sizes="120x120" href="./image/apple-touch-icon-120x120.png?v=1" />
