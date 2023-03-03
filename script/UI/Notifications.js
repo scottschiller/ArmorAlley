@@ -14,25 +14,26 @@ const Notifications = () => {
     };
 
     return add(text, options);
+
   }
 
-    /* options = { noRepeat, onRender, onComplete, type } */
   function add(text, options = {}) {
+    /* options = { noDuplicate, noRepeat, onRender, onComplete, type } */
 
     let i, j, item, isDuplicate, replacementItem, renderedText;
 
     if (!data.items) data.items = [];
 
     // account for duplicate / repeated items
-    for (i = Math.max(0, data.items.length - 1), j = data.items.length; i < j; i++) {
+    for (i = 0, j = data.items.length; i < j; i++) {
 
       item = data.items[i];
 
       // hackish: update item / node of same text, or matching type
       if (item && item.node && (item.text === text || (item.type && item.type === options.type))) {
         
-        // ignore if newest (last) item is about to be repeated, and shouldn't be
-        if (i === j - 1 && options.noRepeat) {
+        // ignore if no duplicates at all, OR newest (last) item is about to be repeated, and shouldn't be
+        if (options.noDuplicate || (i === j - 1 && options.noRepeat)) {
           isDuplicate = true;
           break;
         }
@@ -47,7 +48,7 @@ const Notifications = () => {
         // provided text, or, custom render function
         // if options.onRender(), that function gets called to do the work.
         // otherwise, plain text - and if options.noRepeat, don't show multiplier.
-        item.node.innerHTML = `<span>${options.onRender ? renderedText : ( item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
+        item.node.innerHTML = `<span>${options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
 
         // clear, start new timer
         if (item.timer) {
@@ -63,7 +64,7 @@ const Notifications = () => {
 
     }
 
-    // the last item was going to be repeated
+    // ignore
     if (isDuplicate) return;
 
     if (replacementItem) return replacementItem;
