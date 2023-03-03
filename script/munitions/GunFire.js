@@ -125,8 +125,13 @@ const GunFire = (options = {}) => {
             canDie = false;
 
             // bounce! reverse, and maybe flip on vertical.
-            data.vX *= -rnd(1);
-            data.vY *= rnd(1) * plusMinus();
+            // hackish: if gunfire *originated* "above", consider this a vertical bounce.
+            if (options.y < 358) {
+              data.vY *= -1;
+            } else {
+              data.vX *= -rnd(1);
+              data.vY *= rnd(1) * plusMinus();
+            }
 
             // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
             data.x += data.vX;
