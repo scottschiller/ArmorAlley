@@ -3,8 +3,9 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest, getNearestObject } from '../core/logic.js';
-import { playSound, stopSound, sounds } from '../core/sound.js';
 import { getTypes, rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
+import { playSound, playSoundWithDelay, skipSound, stopSound, sounds } from '../core/sound.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -293,8 +294,8 @@ const SmartMissile = (options = {}) => {
       if (!data.expired) {
 
         if (launchSound) {
-          // "mute" and forget; the sound will finish playing, and will be destroyed / freed up.
-          launchSound.mute();
+
+          skipSound(launchSound);
           launchSound = null;
 
         }
@@ -313,13 +314,13 @@ const SmartMissile = (options = {}) => {
 
       if (launchSound) {
 
-        launchSound.mute();
-        launchSound = null;
-
         if (!data.expired && dieSound) {
           // hackish: apply launch sound volume to die sound
           dieSound.setVolume(launchSound.volume);
         }
+
+        skipSound(launchSound);
+        launchSound = null;
 
       }
 
@@ -354,7 +355,7 @@ const SmartMissile = (options = {}) => {
 
     if (data.isBanana && launchSound) {
 
-      launchSound.mute();
+      skipSound(launchSound);
       launchSound = null;
 
     }
@@ -728,6 +729,21 @@ const SmartMissile = (options = {}) => {
 
     if (data.isBanana && sounds.banana.launch) {
 
+      // hackish: need to know on-screen right now.
+      sprites.updateIsOnScreen(exports);
+
+      // on-screen, OR, targeting the player chopper
+      if (sounds.bnb.boioioing && (data.isOnScreen || (data.isEnemy && objects.target.data.type === TYPES.helicopter))) {
+        playSound(sounds.bnb.boioioing, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+          onplay: (sound) => {
+            // cancel if no longer active
+            if (data.dead) {
+              skipSound(sound);
+            }
+          }
+        });
+      }
+
       // special case: enemy missile launchers should always play at full volume - they're close enough.
       playSound(sounds.banana.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
         onplay: (sound) => launchSound = sound,
@@ -742,12 +758,25 @@ const SmartMissile = (options = {}) => {
         playbackRate: data.playbackRate
       });
 
+      // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
+      if (Math.abs(objects.target.data.x - data.x) >= 666 && !data.isEnemy && (data.parentType === TYPES.helicopter || data.isOnScreen) && Math.random() >= 0.5) {
+        playSoundWithDelay(sounds.bnb.cock);
+      }
+
     } else if (sounds.missileLaunch) {
 
       launchSound = playSound(sounds.missileLaunch, exports, {
         onplay: (sound) => launchSound = sound,
         playbackRate: data.playbackRate
       });
+
+      // human helicopter, firing smart missile
+      if (!data.isEnemy && data.parentType === TYPES.helicopter && sounds.bnb.beavisYeahGo) {
+        // hackish: only play if this is the first active missile.
+        if (!game.objects.helicopter[0].objects.smartMissiles.length) {
+          playSound(sounds.bnb.beavisYeahGo);
+        }
+      }
 
     }
 
