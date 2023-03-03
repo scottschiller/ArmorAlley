@@ -2325,6 +2325,84 @@ const Helicopter = (options = {}) => {
 
   }
 
+  function reactToDamage(attacker) {
+
+    // extra special case: BnB, and helicopter being hit by shrapnel or enemy gunfire.
+
+    // make a racket, depending
+    if (!data.lastReactionSound) {
+
+      data.lastReactionSound = true;
+
+      playSound(sounds.bnb[game.data.isBeavis ? 'beavisScreamShort' : 'buttheadScreamShort'], exports, {
+        onfinish: (sound) => {
+          data.lastReactionSound = null;
+          // call the "main" onfinish, which will hit onAASoundEnd() and destroy things cleanly.
+          // hackish: ensure that sound has not already been destroyed, prevent infinite loop.
+          // NOTE: I dislike this pattern and wish to do away with it. ;)
+          if (!sound.disabled) {
+            sound.options.onfinish(sound);
+          }
+        }
+      });
+
+    }
+
+    // next section: butthead only
+    if (!game.data.isButthead) return;
+
+    // just in case
+    if (!attacker) return;
+
+    // already queued?
+    if (data.commentaryTimer) return;
+    
+    data.commentaryTimer = common.setFrameTimeout(() => {
+
+      // don't run too often
+      const now = Date.now();
+      data.commentaryTimer = null;
+      if (now - data.commentaryLastExec < data.commentaryThrottle) return;
+
+      // "still fighting"?
+      if (!isAttackerValid(attacker)) return;
+
+      function onplay(sound) {
+        // attacker may have died between queue and playback start
+        if (!isAttackerValid(attacker)) skipSound(sound);
+      }
+
+      // finally!
+      playSound(sounds.bnb.beavisCmonButthead, null, {
+        onplay,
+        onfinish: function(sound) {
+          if (sound.skipped || !isAttackerValid(attacker)) return;
+          // "you missed, butt-head."
+          common.setFrameTimeout(() => {
+            playSound(sounds.bnb.beavisYouMissed, null, {
+              onplay,
+              onfinish: (sound2) => {
+                if (sound2.skipped) return;
+                playSoundWithDelay(sounds.bnb.beavisYouMissedResponse, null, { onplay }, 1000);
+              }
+            });
+          }, 5000 + rndInt(2000));
+        }
+      });
+
+      data.commentaryLastExec = now;
+
+    }, 2000 + rndInt(2000));
+
+  }
+
+  function isAttackerValid(attacker) {
+
+    // "still fighting and in view"
+    return !data.dead && !attacker.data.dead && attacker.data.isOnScreen;
+
+  }
+
   function initTrailers() {
 
     let i, trailerConfig, fragment;
@@ -2432,6 +2510,10 @@ const Helicopter = (options = {}) => {
   data = common.inheritData({
     type: TYPES.helicopter,
     angle: 0,
+    lastReactionSound: null,
+    commentaryTimer: null,
+    commentaryLastExec: 0,
+    commentaryThrottle: 30000,
     tiltOffset: 0,
     shakeOffset: 0,
     shakeOffsetMax: 6,
@@ -2630,6 +2712,7 @@ const Helicopter = (options = {}) => {
     isOnScreenChange,
     objects,
     onLandingPad,
+    reactToDamage,
     startRepairing,
     reset,
     refreshCoords,
@@ -2654,6 +2737,9 @@ const Helicopter = (options = {}) => {
           // and make noise.
           if (sounds.chainSnapping) {
             playSound(sounds.chainSnapping, target);
+          }
+          if (!data.isEnemy) {
+            reactToDamage(target);
           }
           // should the target die, too? ... probably so.
           common.hit(target, 999, exports);
