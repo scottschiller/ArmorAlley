@@ -366,6 +366,8 @@ function Stats() {
 
     }
 
+    text = common.tweakEmojiSpacing(text);
+
     // don't show if on-screen, *unless* it's the helicopter.
     // TODO: improve target vs. attacker helicopter logic, work onScreen check into notification preferences.
     if (target.data.isOnScreen && (!isHelicopter && attacker.type !== TYPES.helicopter)) return;
