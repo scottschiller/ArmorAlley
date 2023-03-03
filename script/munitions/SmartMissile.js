@@ -782,6 +782,17 @@ const SmartMissile = (options = {}) => {
 
   }
 
+  function getRandomMissileMode() {
+
+    // 20% chance of default, 40% chance of chickens or bananas
+    const rnd = Math.random();
+
+    return {
+      isRubberChicken: rnd >= 0.2 && rnd < 0.6,
+      isBanana: rnd >= 0.6
+    };
+
+  }
 
   css = common.inheritCSS({
     className: 'smart-missile',
@@ -796,7 +807,12 @@ const SmartMissile = (options = {}) => {
     spark: 'spark'
   });
 
-  // special case
+  // if game preferences allow AND no default specified, then pick at random.
+  if (gamePrefs.enemy_missile_match_type && !options.isRubberChicken && !options.isBanana && !options.isSmartMissile) {
+    options = common.mixin(options, getRandomMissileMode());
+  }
+
+  // CSS extensions
   if (options.isRubberChicken) {
     css.className += ` ${css.rubberChicken}`;
   }
