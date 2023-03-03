@@ -5,7 +5,7 @@ import { playSound, stopSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
-import { SmartMissile } from '../munitions/SmartMissile.js';
+import { screenBoom } from '../UI/DomFetti.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
@@ -96,7 +96,7 @@ const Base = (options = {}) => {
       effects.smokeRing(exports, {
         offsetX: (exports.data.width * 0.33) + rnd(exports.data.width * 0.33),
         offsetY: rnd(exports.data.height / 4),
-        count: 5 + rndInt(5),
+        count: 3 + rndInt(3),
         velocityMax: 6 + rndInt(6),
         isGroundUnit: true,
         increaseDeceleration: (Math.random() >= 0.5 ? 1 : undefined)
@@ -148,6 +148,9 @@ const Base = (options = {}) => {
             let i, iteration;
             iteration = 0;
 
+            // domFetti feature
+            screenBoom();
+
             for (i = 0; i < 7; i++) {
               effects.shrapnelExplosion(data, {
                 count: rndInt(64),
@@ -164,7 +167,7 @@ const Base = (options = {}) => {
 
                 effects.smokeRing(exports, {
                   velocityMax: 64,
-                  count: (isBigBoom ? 24 : 16),
+                  count: (isBigBoom ? 8 : 2),
                   offsetX: (data.width * 0.33) + rnd(data.width * 0.33),
                   offsetY: data.height,
                   isGroundUnit: true
@@ -201,6 +204,7 @@ const Base = (options = {}) => {
     document.getElementById('game-tips-list').innerHTML = '';
 
     boom();
+
   }
 
   function animate() {
