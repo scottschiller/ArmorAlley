@@ -3,8 +3,9 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-import { isFirefox, isSafari, TYPES, winloc, worldWidth } from '../core/global.js';
-import { playSound, stopSound, sounds } from '../core/sound.js';
+import { isFirefox, isSafari, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
+import { playSound, skipSound, stopSound, sounds, playSoundWithDelay } from '../core/sound.js';
+import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
 
@@ -40,6 +41,10 @@ const Radar = () => {
       */
 
       playSound(sounds.missileWarning);
+      common.setFrameTimeout(() => {
+        if (!data.incomingMissile) return;
+        playSound(sounds.bnb[newestMissile.data.isRubberChicken ? 'incomingSmartMissilePlusCock' : 'incomingSmartMissile']);
+      }, 1000);
     } else if (sounds.missileWarning?.sound) {
       stopSound(sounds.missileWarning);
     }
