@@ -960,6 +960,15 @@ const Helicopter = (options = {}) => {
 
   function onLandingPad(state) {
 
+    if (data.dead) {
+     
+      // ensure repair is canceled, if underway
+      if (data.repairing) stopRepairing();
+
+      return;
+
+    }
+
     // our work may already be done.
     if (data.onLandingPad === state && data.landed === state) return;
 
@@ -2174,7 +2183,7 @@ const Helicopter = (options = {}) => {
 
       data.landed = true;
 
-    } else if (data.vY < 0 && (data.landed || data.onLandingPad)) {
+    } else if (data.dead || (data.vY < 0 && (data.landed || data.onLandingPad))) {
 
       // once landed, only leave once we're moving upward.
 
