@@ -16,6 +16,7 @@ const { shuffle } = utils.array;
 
 function getSound(soundReference) {
 
+  // TODO: review, see if an early exit is still useful.
   if (!gamePrefs.sound) return;
 
   // the princess is in another castle!
@@ -667,616 +668,623 @@ window.soundManager.onready(() => {
 
   initSoundTypes();
 
-  sounds.machineGunFire = addSound({
-    url: getURL('machinegun'),
+  sounds.machineGunFire = add({
+    url: 'machinegun',
     volume: 25
   });
-
-  sounds.machineGunFireEnemy = addSound({
+  
+  sounds.machineGunFireEnemy = add({
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
-    url: getURL('Gun_AR15_Machine_Gun_3_Single_Shot_edit')
+    url: 'Gun_AR15_Machine_Gun_3_Single_Shot_edit'
   });
-
-  sounds.bulletGroundHit = utils.array.shuffle([
+  
+  sounds.bulletGroundHit = shuffle([
     // https://freesound.org/people/mlsulli/sounds/234853/
-    addSound({ url: getURL('234853__mlsulli__body-hits-concrete_1'), volume: 10 }),
-    addSound({ url: getURL('234853__mlsulli__body-hits-concrete_2'), volume: 10 }),
-    addSound({ url: getURL('234853__mlsulli__body-hits-concrete_3'), volume: 10 }),
-    addSound({ url: getURL('234853__mlsulli__body-hits-concrete_4'), volume: 10 }),
-    addSound({ url: getURL('234853__mlsulli__body-hits-concrete_5'), volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_1', volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_2', volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_3', volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_4', volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_5', volume: 10 }),
   ]);
-
-  sounds.bulletShellCasing = utils.array.shuffle([
+  
+  sounds.bulletShellCasing = shuffle([
     // https://freesound.org/search/?g=1&q=shell%20hitting%20ground&f=%20username:%22filmmakersmanual%22
-    addSound({ url: getURL('522290__filmmakersmanual__shell-hitting-ground-12'), volume: 50 }),
-    addSound({ url: getURL('522294__filmmakersmanual__shell-hitting-ground-16'), volume: 50 }),
-    addSound({ url: getURL('522391__filmmakersmanual__shells-hitting-ground-2'), volume: 50 }),
-    addSound({ url: getURL('522394__filmmakersmanual__shell-hitting-ground-36'), volume: 50 }),
-    addSound({ url: getURL('522395__filmmakersmanual__shell-hitting-ground-3'), volume: 50 }),
-    addSound({ url: getURL('522399__filmmakersmanual__shell-hitting-ground-37'), volume: 50 }),
+    add({ url: '522290__filmmakersmanual__shell-hitting-ground-12', volume: 50 }),
+    add({ url: '522294__filmmakersmanual__shell-hitting-ground-16', volume: 50 }),
+    add({ url: '522391__filmmakersmanual__shells-hitting-ground-2', volume: 50 }),
+    add({ url: '522394__filmmakersmanual__shell-hitting-ground-36', volume: 50 }),
+    add({ url: '522395__filmmakersmanual__shell-hitting-ground-3', volume: 50 }),
+    add({ url: '522399__filmmakersmanual__shell-hitting-ground-37', volume: 50 }),
   ]);
-
-  sounds.bombHatch = addSound({
+  
+  sounds.bombHatch = add({
     // hat tip to the Death Adder for this one. ;)
     // https://youtu.be/PAER-rSS8Jk
-    url: getURL('ga-typewriter'),
+    url: 'ga-typewriter',
     volume: 33
     /*
       // different sound for enemy?
-      url: getURL('ta-bombrel'),
+      url: 'ta-bombrel',
       volume: 33
     */
   });
-
+  
   sounds.impactWrench = [
-    addSound({
+    add({
       // http://freesound.org/people/andrewgnau2/sounds/71534/
-      url: getURL('impact-wrench-1'),
+      url: 'impact-wrench-1',
       volume: 10
     }),
-
-    addSound({
-      url: getURL('impact-wrench-2'),
+  
+    add({
+      url: 'impact-wrench-2',
       volume: 10
     }),
-
-    addSound({
-      url: getURL('impact-wrench-3'),
+  
+    add({
+      url: 'impact-wrench-3',
       volume: 10
     })
   ];
-
+  
   // https://freesound.org/people/jorickhoofd/sounds/160048/
-  sounds.chainRepair = addSound({
-    url: getURL('heavy-mechanics'),
+  sounds.chainRepair = add({
+    url: 'heavy-mechanics',
     volume: 25
   });
-
+  
   sounds.repairingWrench = [
     // http://freesound.org/people/TheGertz/sounds/131200/
-    addSound({
-      url: getURL('socket-wrench-1'),
+    add({
+      url: 'socket-wrench-1',
       volume: 10
     }),
-
+  
     // http://freesound.org/people/xxqmanxx/sounds/147018/
-    addSound({
-      url: getURL('socket-wrench-2'),
+    add({
+      url: 'socket-wrench-2',
       volume: 10
     }),
-
-    addSound({
-      url: getURL('socket-wrench-3'),
+  
+    add({
+      url: 'socket-wrench-3',
       volume: 10
     })
   ];
-
-  sounds.tinkerWrench = addSound({
+  
+  sounds.tinkerWrench = add({
     // http://freesound.org/people/klankbeeld/sounds/198299/
-    url: getURL('tinker-wrench'),
+    url: 'tinker-wrench',
     multiShot: false,
     volume: 20
   });
-
-  sounds.friendlyClaim = addSound({
+  
+  sounds.friendlyClaim = add({
     // http://freesound.org/people/Carlos_Vaquero/sounds/153616/
-    url: getURL('violin-c5-pizzicato-non-vibrato'),
+    url: 'violin-c5-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
   });
-
-  sounds.enemyClaim = addSound({
+  
+  sounds.enemyClaim = add({
     // http://freesound.org/people/Carlos_Vaquero/sounds/153611/
-    url: getURL('violin-g4-pizzicato-non-vibrato'),
+    url: 'violin-g4-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
   });
-
-  sounds.turretEnabled = addSound({
+  
+  sounds.turretEnabled = add({
     // used when picking up infantry + engineers
     // hat tip: "tower turn" sound from TA, guns like the Guardian - a personal favourite.
-    url: getURL('ta-twrturn3'),
+    url: 'ta-twrturn3',
     fixedPlaybackRate,
     volume: 25
   });
-
-  sounds.popSound = addSound({
+  
+  sounds.popSound = add({
     // used when picking up infantry + engineers
     // http://freesound.org/people/SunnySideSound/sounds/67095/
-    // url: getURL('ta-loadair'),
-    url: getURL('ga-234_pickup'),
+    // url: 'ta-loadair',
+    url: 'ga-234_pickup',
     fixedPlaybackRate,
     volume: 25
   });
-
-  sounds.popSound2 = addSound({
+  
+  sounds.popSound2 = add({
     // used when deploying parachute infantry
     // http://freesound.org/people/runirasmussen/sounds/178446/
-    url: getURL('popsound2'),
+    url: 'popsound2',
     volume: 10
   });
-
-  sounds.crashAndGlass = addSound({
+  
+  sounds.crashAndGlass = add({
     // http://freesound.org/people/Rock%20Savage/sounds/59263/
-    url: getURL('crash-glass')
+    url: 'crash-glass'
   });
-
-  sounds.balloonExplosion = addSound({
-    url: getURL('balloon-explosion'),
-    volume: 20
+  
+  sounds.balloonExplosion = add({
+    url: 'balloon-explosion',
+    volume: 20,
+    fixedPlaybackRate: false
   });
-
-  sounds.baseExplosion = addSound({
+  
+  sounds.baseExplosion = add({
     // two sounds, edited and mixed together
     // https://freesound.org/people/FxKid2/sounds/367622/
     // https://freesound.org/people/Quaker540/sounds/245372/
-    url: getURL('hq-explosion-with-debris')
+    url: 'hq-explosion-with-debris',
+    volume: 75
   });
-
+  
   sounds.genericSplat = [];
-
+  
   // http://freesound.org/people/FreqMan/sounds/42962/
   sounds.genericSplat = [
-    addSound({
-      url: getURL('splat1'),
+    add({
+      url: 'splat1',
       volume: 15
     }),
-    addSound({
-      url: getURL('splat2'),
+    add({
+      url: 'splat2',
       volume: 15
     }),
-    addSound({
-      url: getURL('splat3'),
+    add({
+      url: 'splat3',
       volume: 15
     })
   ];
-
-  sounds.genericSplat = utils.array.shuffle(sounds.genericSplat);
-
-  sounds.scream = utils.array.shuffle([
-    addSound({
-      url: getURL('scream1'),
+  
+  sounds.genericSplat = shuffle(sounds.genericSplat);
+  
+  sounds.scream = shuffle([
+    add({
+      url: 'scream1',
       volume: 9
     }),
-    addSound({
-      url: getURL('scream2'),
+    add({
+      url: 'scream2',
       volume: 9
     }),
-    addSound({
-      url: getURL('scream3'),
+    add({
+      url: 'scream3',
       volume: 9
     }),
-    addSound({
-      url: getURL('scream4'),
+    add({
+      url: 'scream4',
       volume: 9
     }),
-    addSound({
-      url: getURL('scream5'),
+    add({
+      url: 'scream5',
       volume: 9
     }),
-    addSound({
-      url: getURL('ga-191_ouch'),
+    add({
+      url: 'ga-191_ouch',
       volume: 40
     }),
-    addSound({
-      url: getURL('ga-237_ouch2'),
+    add({
+      url: 'ga-237_ouch2',
       volume: 40
     }),
+    add({
+      url: 'ga-156_scream',
+      volume: 40
+    }),
+    add({
+      // http://archive.org/details/WilhelmScreamSample
+      url: 'wilhem-scream',
+      volume: 15
+    })
   ]);
-
+  
   sounds.bombExplosion = [
-    addSound({
-      url: getURL('ga-219_bomb'),
+    add({
+      url: 'ga-219_bomb',
       volume: 50
     }),
-    addSound({
-      url: getURL('ga-220_bomb'),
+    add({
+      url: 'ga-220_bomb',
       volume: 50
     }),
-    addSound({
-      url: getURL('explosion'),
+    add({
+      url: 'explosion',
       volume: 45
     })
   ];
-
-  sounds.genericBoom = addSound({
-    url: getURL('explosion'),
+  
+  sounds.genericBoom = add({
+    url: 'explosion',
     volume: 45
   });
-
+  
   sounds.genericExplosion = [
-    addSound({
-      url: getURL('generic-explosion'),
+    add({
+      url: 'generic-explosion',
       volume: 24
     }),
-    addSound({
-      url: getURL('generic-explosion-2'),
+    add({
+      url: 'generic-explosion-2',
       volume: 24
     }),
-    addSound({
-      url: getURL('generic-explosion-3'),
+    /*
+    add({
+      url: 'generic-explosion-3',
       volume: 24
     }),
-    addSound({
-      url: getURL('explosion2'),
+    */
+    add({
+      url: 'explosion2',
       volume: 33
     })
   ];
-
-  sounds.genericGunFire = addSound({
-    url: getURL('generic-gunfire')
+  
+  sounds.nuke = add({
+    url: 'huge-explosion-part-3-long-crash_nuke_edit',
+    volume: 50
   });
-
-  sounds.infantryGunFire = addSound({
+  
+  sounds.genericGunFire = add({
+    url: 'generic-gunfire'
+  });
+  
+  sounds.infantryGunFire = add({
     // http://creativesounddesign.com/the-recordist-free-sound-effects/
-    url: getURL('Gun_Machine_Gun_M60E_Burst_1_edit')
+    url: 'Gun_Machine_Gun_M60E_Burst_1_edit'
   });
-
-  sounds.turretGunFire = addSound({
+  
+  sounds.turretGunFire = add({
     // https://freesound.org/people/CGEffex/sounds/101961/
-    url: getURL('101961__cgeffex__heavy-machine-gun_edit'),
+    url: '101961__cgeffex__heavy-machine-gun_edit',
     volume: 40
   });
-
+  
   // http://freesound.org/people/ceberation/sounds/235513/
-  sounds.doorClose = addSound({
-    url: getURL('door-closing'),
+  sounds.doorClose = add({
+    url: 'door-closing',
     volume: 12
   });
-
-  sounds.metalClang = utils.array.shuffle([
+  
+  sounds.metalClang = shuffle([
     // http://freesound.org/people/Tiger_v15/sounds/211015/
-    addSound({
-      url: getURL('metal-hit-1'),
+    add({
+      url: 'metal-hit-1',
       volume: 10
     }),
-
-    addSound({
-      url: getURL('metal-hit-2'),
+  
+    add({
+      url: 'metal-hit-2',
       volume: 10
     }),
-
-    addSound({
-      url: getURL('metal-hit-3'),
+  
+    add({
+      url: 'metal-hit-3',
       volume: 10
     })
   ]);
-
-  sounds.metalHitBreak = addSound({
+  
+  sounds.metalHitBreak = add({
     // https://freesound.org/people/issalcake/sounds/115919/
-    url: getURL('115919__issalcake__chairs-break-crash-pieces-move'),
+    url: '115919__issalcake__chairs-break-crash-pieces-move',
     volume: 40
   });
-
+  
   // Bolo "hit tank self" sound, Copyright (C) Steuart Cheshire 1993.
   // A subtle tribute to my favourite Mac game of all-time, hands down. <3
   // https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
   // http://bolo.net/
   // https://github.com/stephank/orona/
   // http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
-  sounds.boloTank = addSound({
-    url: getURL('bolo-hit-tank-self'),
+  sounds.boloTank = add({
+    url: 'bolo-hit-tank-self',
     volume: 25
   });
-
+  
   // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
   // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
-  sounds.tankGunFire = addSound({
-    url: getURL('tank-gunfire'),
+  sounds.tankGunFire = add({
+    url: 'tank-gunfire',
     volume: 15
-  });
-
-  sounds.metalHit = utils.array.shuffle([
-    // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
-    addSound({
-      url: getURL('522506__filmmakersmanual__bullet-metal-hit-2_edit'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('522507__filmmakersmanual__bullet-metal-hit-3_edit'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('522508__filmmakersmanual__bullet-metal-hit-4_edit'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('522509__filmmakersmanual__bullet-metal-hit-4_edit'),
-      volume: 25
-    })
-  ]);
-
-  // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
-  sounds.concreteHit = utils.array.shuffle([
-    addSound({
-      url: getURL('522403__filmmakersmanual__bullet-concrete-hit-2_edit')
-    }),
-    addSound({
-      url: getURL('522402__filmmakersmanual__bullet-concrete-hit-3_edit')
-    }),
-    addSound({
-      url: getURL('522401__filmmakersmanual__bullet-concrete-hit-4_edit')
-    })
-  ]);
-
-  // https://freesound.org/people/rakurka/sounds/109957/
-  sounds.ricochet = utils.array.shuffle([
-    addSound({
-      url: getURL('109957__rakurka__incoming-ricochets-2_1'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('109957__rakurka__incoming-ricochets-2_2'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('109957__rakurka__incoming-ricochets-2_3'),
-      volume: 25
-    }),
-
-    addSound({
-      url: getURL('109957__rakurka__incoming-ricochets-2_4'),
-      volume: 25
-    }),
-
-    // https://freesound.org/people/Timbre/sounds/486343/
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_2'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_3'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_4'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_5'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_6'),
-      volume: 4
-    }),
-
-    addSound({
-      url: getURL('486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_7'),
-      volume: 4
-    }),
-
-  ]);
-
-  sounds.balloonHit = addSound({
-    // https://freesound.org/people/citeyo1/sounds/430302/
-    url: getURL('430302__citeyo1__aparicion_edit')
   });
   
-  sounds.explosionLarge = utils.array.shuffle([
-    addSound({
-      url: getURL('explosion-large'),
+  sounds.metalHit = shuffle([
+    // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
+    add({
+      url: '522506__filmmakersmanual__bullet-metal-hit-2_edit',
+      volume: 25
+    }),
+  
+    add({
+      url: '522507__filmmakersmanual__bullet-metal-hit-3_edit',
+      volume: 25
+    }),
+  
+    add({
+      url: '522508__filmmakersmanual__bullet-metal-hit-4_edit',
+      volume: 25
+    }),
+  
+    add({
+      url: '522509__filmmakersmanual__bullet-metal-hit-4_edit',
+      volume: 25
+    })
+  ]);
+  
+  // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
+  sounds.concreteHit = shuffle([
+    add({
+      url: '522403__filmmakersmanual__bullet-concrete-hit-2_edit'
+    }),
+    add({
+      url: '522402__filmmakersmanual__bullet-concrete-hit-3_edit'
+    }),
+    add({
+      url: '522401__filmmakersmanual__bullet-concrete-hit-4_edit'
+    })
+  ]);
+  
+  // https://freesound.org/people/rakurka/sounds/109957/
+  sounds.ricochet = shuffle([
+    add({
+      url: '109957__rakurka__incoming-ricochets-2_1',
+      volume: 25
+    }),
+  
+    add({
+      url: '109957__rakurka__incoming-ricochets-2_2',
+      volume: 25
+    }),
+  
+    add({
+      url: '109957__rakurka__incoming-ricochets-2_3',
+      volume: 25
+    }),
+  
+    add({
+      url: '109957__rakurka__incoming-ricochets-2_4',
+      volume: 25
+    }),
+  
+    // https://freesound.org/people/Timbre/sounds/486343/
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_2',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_3',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_4',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_5',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_6',
+      volume: 4
+    }),
+  
+    add({
+      url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_7',
+      volume: 4
+    }),
+  
+  ]);
+  
+  sounds.balloonHit = add({
+    // https://freesound.org/people/citeyo1/sounds/430302/
+    url: '430302__citeyo1__aparicion_edit'
+  });
+  
+  sounds.explosionLarge = shuffle([
+    add({
+      url: 'explosion-large',
       volume: 60
     }),
-    addSound({
+    add({
       // https://freesound.org/people/Quaker540/sounds/245372/
-      url: getURL('245372__quaker540__hq-explosion'),
+      url: '245372__quaker540__hq-explosion',
       volume: 50
     }),
-    addSound({
+    add({
       // https://freesound.org/people/Bykgames/sounds/414345/
-      url: getURL('414345__bykgames__explosion-near'),
+      url: '414345__bykgames__explosion-near',
       volume: 50
     }),
   ]);
-
-  sounds.chainSnapping = addSound({
-    url: getURL('chain-snapping'),
+  
+  sounds.chainSnapping = add({
+    url: 'chain-snapping',
     volume: 15
   });
-
-  sounds.wilhemScream = utils.array.shuffle([
-    addSound({
-      url: getURL('wilhem-scream'),
-      volume: 20
-    }),
-    addSound({
-      url: getURL('ga-156_scream'),
-      volume: 40
-    }),
-  ]);
-
-  sounds.helicopter.engine = addSound({
-    url: getURL('helicopter-engine'),
+  
+  sounds.helicopter.engine = add({
+    url: 'helicopter-engine',
     fixedPlaybackRate,
     volume: 50,
     loops: 999
   });
-
-  sounds.helicopter.rotate = addSound({
-    url: getURL('helicopter-rotate'),
+  
+  sounds.helicopter.rotate = add({
+    url: 'helicopter-rotate',
     fixedPlaybackRate,
     volume: 10
   });
-
-  sounds.inventory.denied = addSound({
-    url: getURL('order-denied'),
+  
+  sounds.inventory.denied = add({
+    url: 'order-denied',
     fixedPlaybackRate,
   });
-
-  sounds.inventory.begin = addSound({
-    url: getURL('order-start'),
+  
+  sounds.inventory.begin = add({
+    url: 'order-start',
     fixedPlaybackRate,
     volume: 30
   });
-
-  sounds.inventory.debit = addSound({
-    url: getURL('funds-debit'),
+  
+  sounds.inventory.debit = add({
+    url: 'funds-debit',
     fixedPlaybackRate,
     volume: 50
   });
-
-  sounds.inventory.credit = addSound({
-    url: getURL('funds-credit'),
+  
+  sounds.inventory.credit = add({
+    url: 'funds-credit',
     fixedPlaybackRate,
     volume: 60
   });
-
-  sounds.inventory.end = addSound({
-    url: getURL('order-complete'),
+  
+  sounds.inventory.end = add({
+    url: 'order-complete',
     fixedPlaybackRate,
     volume: 10
   });
-
-  sounds.missileLaunch = addSound({
-    url: getURL('ga-217_missile_launch'),
+  
+  sounds.missileLaunch = add({
+    url: 'ga-217_missile_launch',
     volume: 25
   });
-
-  sounds.missileWarning = addSound({
+  
+  sounds.missileWarning = add({
     // http://soundbible.com/1766-Fire-Pager.html
     // public domain
-    url: getURL('fire_pager-jason-1283464858_edit'),
+    url: 'fire_pager-jason-1283464858_edit',
     fixedPlaybackRate,
     loops: 999,
     volume: 3
   });
-
-  sounds.missileWarningExpiry = addSound({
+  
+  sounds.missileWarningExpiry = add({
     // http://soundbible.com/1766-Fire-Pager.html
     // public domain
-    url: getURL('fire_pager-jason-1283464858_edit_long'),
+    url: 'fire_pager-jason-1283464858_edit_long',
     fixedPlaybackRate,
     volume: 2
   })
-
-  sounds.parachuteOpen = addSound({
-    url: getURL('parachute-open'),
+  
+  sounds.parachuteOpen = add({
+    url: 'parachute-open',
     volume: 25
   });
-
-  sounds.shrapnel.hit0 = addSound({
-    url: getURL('shrapnel-hit'),
+  
+  sounds.shrapnel.hit0 = add({
+    url: 'shrapnel-hit',
     volume: 7
   });
-
-  sounds.shrapnel.hit1 = addSound({
-    url: getURL('shrapnel-hit-2'),
+  
+  sounds.shrapnel.hit1 = add({
+    url: 'shrapnel-hit-2',
     volume: 7
   });
-
-  sounds.shrapnel.hit2 = addSound({
-    url: getURL('shrapnel-hit-3'),
+  
+  sounds.shrapnel.hit2 = add({
+    url: 'shrapnel-hit-3',
     volume: 7
   });
-
-  sounds.shrapnel.hit3 = addSound({
-    url: getURL('shrapnel-hit-4'),
+  
+  sounds.shrapnel.hit3 = add({
+    url: 'shrapnel-hit-4',
     volume: 7
   });
-
-  sounds.splat = addSound({
-    url: getURL('splat'),
+  
+  sounds.splat = add({
+    url: 'splat',
     volume: 25
   });
-
-  sounds.radarStatic = addSound({
-    url: getURL('radar-static'),
+  
+  sounds.radarStatic = add({
+    url: 'radar-static',
     fixedPlaybackRate,
     volume: 40
   });
-
-  sounds.radarJamming = addSound({
-    url: getURL('radar-jamming'),
+  
+  sounds.radarJamming = add({
+    url: 'radar-jamming',
     fixedPlaybackRate,
     volume: 33,
     loops: 999
   });
-
-  sounds.repairing = addSound({
-    url: getURL('repairing'),
+  
+  sounds.repairing = add({
+    url: 'repairing',
     volume: 15,
     loops: 999
   });
-
-  sounds.ipanemaMuzak = addSound({
+  
+  sounds.ipanemaMuzak = add({
     // hat tip to Mike Russell for the "vintage radio" / elevator muzak EQ effect: https://youtu.be/ko9hRYx1lF4
-    url: getURL('ipanema-elevator'),
+    url: 'ipanema-elevator',
     fixedPlaybackRate,
     volume: 5,
     loops: 999
   })
-
-  sounds.dangerZone = addSound({
+  
+  sounds.dangerZone = add({
     // hat tip:【MIDI】Top Gun | Kenny Loggins - Danger Zone | DOOM-Styled - https://youtu.be/4awuwMHtn54
     // Soundfont: Roland Sound Canvas VA SC-55 VSTi
-    url: getURL('danger_zone_midi_doom_style'),
+    url: 'danger_zone_midi_doom_style',
     fixedPlaybackRate,
     volume: 33,
     loops: 999
   })
-
-  sounds.rubberChicken.launch = utils.array.shuffle([
-    addSound({
-      url: getURL('rubber-chicken-launch-1'),
+  
+  sounds.rubberChicken.launch = shuffle([
+    add({
+      url: 'rubber-chicken-launch-1',
+      volume: 20,
+    }),
+    add({
+      url: 'rubber-chicken-launch-2',
       volume: 20
     }),
-    addSound({
-      url: getURL('rubber-chicken-launch-2'),
-      volume: 20
-    }),
-    addSound({
-      url: getURL('rubber-chicken-launch-3'),
+    add({
+      url: 'rubber-chicken-launch-3',
       volume: 20
     })
   ]);
-
-  sounds.rubberChicken.expire = addSound({
-    url: getURL('rubber-chicken-expire'),
+  
+  sounds.rubberChicken.expire = add({
+    url: 'rubber-chicken-expire',
     volume: 30
   });
-
-  sounds.rubberChicken.die = utils.array.shuffle([
-    addSound({
-      url: getURL('rubber-chicken-hit-1'),
+  
+  sounds.rubberChicken.die = shuffle([
+    add({
+      url: 'rubber-chicken-hit-1',
       volume: 20
     }),
-    addSound({
-      url: getURL('rubber-chicken-hit-2'),
+    add({
+      url: 'rubber-chicken-hit-2',
       volume: 20
     }),
-    addSound({
-      url: getURL('rubber-chicken-hit-3'),
+    add({
+      url: 'rubber-chicken-hit-3',
       volume: 20
     }),
-    addSound({
-      url: getURL('rubber-chicken-hit-4'),
+    add({
+      url: 'rubber-chicken-hit-4',
       volume: 20
     })
   ]);
-
+  
   // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
-  sounds.banana.launch = addSound({
-    url: getURL('173948__johnsonbrandediting__musical-saw-ascending-ufo'),
+  sounds.banana.launch = add({
+    url: '173948__johnsonbrandediting__musical-saw-ascending-ufo',
     volume: 50
   });
-
-  sounds.banana.expire = addSound({
-    url: getURL('ufo-expire'),
+  
+  sounds.banana.expire = add({
+    url: 'ufo-expire',
     volume: 75
   });
   
