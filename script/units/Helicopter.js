@@ -1131,13 +1131,11 @@ const Helicopter = (options = {}) => {
 
   function reset() {
 
-    let i, j, objects, xLookAhead, foundObject, landingPad, noEntry;
+    let i, j, k, l, items, xLookAhead, foundObject, types, landingPad, noEntry;
 
-    if (data.isEnemy) {
-      landingPad = game.objects.landingPads[game.objects.landingPads.length - 1];
-    } else {
-      landingPad = game.objects.landingPads[0];
-    }
+    const pads = game.objects[TYPES.landingPad];
+
+    landingPad = pads[data.isEnemy ? pads.length - 1 : 0];
 
     /**
      * determine if there is an enemy on, or about to be on the landing pad.
