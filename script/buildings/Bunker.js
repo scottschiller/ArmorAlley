@@ -4,8 +4,6 @@ import { common } from '../core/common.js';
 import { rndInt, rnd, TYPES, FPS } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
-import { Balloon } from '../elements/Balloon.js';
-import { Chain } from '../elements/Chain.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -71,7 +69,7 @@ const Bunker = (options = {}) => {
         game.objects.notifications.add('You recaptured a bunker ⛳');
       }
 
-      playSoundWithDelay(sounds.friendlyClaim, exports, 500);
+      playSoundWithDelay(sounds.friendlyClaim, exports);
 
     }
 
