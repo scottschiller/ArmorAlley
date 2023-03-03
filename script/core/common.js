@@ -237,6 +237,50 @@ const common = {
     // replace emoji + space character with emoji + half-width space, splitting the emoji from the match and including a partial space character: ` `
     return text?.replace(/<a?:.+?:\d{18}>|\p{Extended_Pictographic}\s/gu, (match/*, offset, string*/) => `${match.substr(0, match.length - 1)} `);
 
+  },
+
+  setVideo(fileName = '', playbackRate, offsetMsec = 0) {
+
+    const o = document.getElementById('tv');
+
+    const disabled = (!gamePrefs.bnb || !gamePrefs.bnb_tv);
+
+    if (disabled) {
+      if (!o) return;
+      // ensure node is cleared / removed, if active
+      fileName = '';
+    }
+
+    const container = document.getElementById('tv-display');
+
+    const timeOffset = parseFloat(offsetMsec / 1000, 2);
+
+    const startTime = timeOffset ? `#t=${timeOffset}` : '';
+
+    if (!fileName || o) {
+      // empty / reset
+      if (o) o.innerHTML = '';
+      container.className = '';
+      if (!fileName) return;
+    }
+
+    o.innerHTML = [
+     '<video id="tv-video" muted autoplay playsinline>',
+      `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
+      `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
+     '</video>',
+    ].join('');
+
+    container.className = 'active';
+
+    const video = o.childNodes[0];
+
+    if (playbackRate) {
+      video.playbackRate = playbackRate;
+    }
+
+    video.onended = () => common.setVideo('');
+
   }
 
 };
