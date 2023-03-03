@@ -27,7 +27,9 @@ import {
   getSound,
   sounds,
   playImpactWrench,
-  playRepairingWrench
+  playRepairingWrench,
+  skipSound,
+  playSoundWithDelay
 } from '../core/sound.js';
 
 import {
@@ -60,7 +62,29 @@ const Helicopter = (options = {}) => {
       utils.css.add(radarItem.dom.o, css.cloaked);
 
       if (!data.isEnemy && sounds.helicopter.engine) {
+
+        // additional commentary, once fully-cloaked
+        common.setFrameTimeout(function() {
+
+          if (!data.cloaked) return;
+
+          const cloakSound = sounds.bnb[(game.data.isBeavis ?'beavisICantSeeAnything' : 'beavisComeOn')];
+
+          playSound(cloakSound, null, {
+            onplay: (sound) => {
+              if (!data.cloaked) skipSound(sound);
+            },
+            onfinish: (sound) => {
+              if (sound.skipped || !data.cloaked) return;
+              // allow "peek-a-boo!"
+              data.cloakedCommentary = true;
+            }
+          });
+
+        }, 2000);
+
         if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
+
       }
 
     }
@@ -78,11 +102,16 @@ const Helicopter = (options = {}) => {
       utils.css.remove(dom.o, css.cloaked);
       utils.css.remove(radarItem.dom.o, css.cloaked);
 
+      if (!data.isEnemy && data.cloakedCommentary && !data.dead) {
+        playSoundWithDelay(sounds.bnb.beavisPeekaboo, 250);
+      }
+
       if (!data.isEnemy && sounds.helicopter.engine) {
         if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
       }
 
       data.cloaked = false;
+      data.cloakedCommentary = false;
 
     }
 
