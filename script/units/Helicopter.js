@@ -190,6 +190,40 @@ const Helicopter = (options = {}) => {
     return (data.repairing && !data.repairComplete);
   }
 
+  function iGotYouBabe() {
+
+    if (!gamePrefs.sound) return;
+
+    const { iGotYouBabe } = sounds.bnb;
+
+    // determine our start point
+    const offsets = [
+      0,
+      27850, // flute-ish melody: "duh duh, duh duh"
+      39899, // guitar riff, "yes! rock!" 🎸🤘
+    ];
+
+    const from = offsets[iGotYouBabe.playCount] || 0;
+
+    const options = { from };
+
+    playSound(sounds.bnb.iGotYouBabe, null, options);
+
+    if (++iGotYouBabe.playCount >= offsets.length) {
+      iGotYouBabe.playCount = 0;
+    }
+
+    /**
+     * https://www.youtube.com/watch?v=jyncsw3yq-k
+     * ffmpeg -i cher.mp4 -ss 25 -t 73.5 -filter:v "crop=1420:1080:250:0,scale=352:-1" -c:v libx264 -an igotyoubabe.mp4
+     * ffmpeg -i cher.mp4 -ss 25 -t 73.5 -filter:v "crop=1420:1080:250:0,scale=352:-1" -c:v libvpx-vp9 -an igotyoubabe.webm
+     */
+    common.setVideo('igotyoubabe', 1, from);
+
+    game.objects.notifications.add('🎵 Now playing: “I Got You Babe” 🎸🤘', { noDuplicate: true });
+
+  }
+
   function startRepairing(landingPad) {
 
     if (data.repairing) return;
@@ -216,26 +250,50 @@ const Helicopter = (options = {}) => {
 
         } else {
 
-          // hit the chorus, if we'll be "a while."
-          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+          if (gamePrefs.bnb) {
+
+            if (landingPad.data.isMidway) {
+              if (game.data.isBeavis) {
+                data.muchaMuchacha = true;
+                if (gamePrefs.sound) {
+                  game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
+                  playSound(sounds.bnb.muchaMuchacha, null);
+                  common.setVideo('camper', 1.05);
+                  utils.css.add(dom.o, css.muchaMuchacha);
+                }
+              } else {
+                iGotYouBabe();
+              }
+            } else {
+              playSound(sounds.bnb.theme, null);
+            }
+
+          } else {
+
+            // hit the chorus, if we'll be "a while."
+
+            playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+            game.objects.notifications.add('🎵 Now playing: “The Girl From Ipanema” 🎸🤘', { noDuplicate: true });
+
+          }
 
         }
 
-        game.objects.notifications.addNoRepeat(welcomeMessage, { doubleHeight: true });
+        game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true, doubleHeight: true });
+
+      } else if (landingPad.data.isKennyLoggins) {
+
+        // welcome to *** THE DANGER ZONE! ***
+        playSound(sounds.dangerZone, null);
+
+      } else if (gamePrefs.bnb) {
+
+        playSound(sounds.bnb.theme, null);
 
       } else {
 
-        if (landingPad.data.isKennyLoggins) {
-
-          // welcome to *** THE DANGER ZONE! ***
-          playSound(sounds.dangerZone, null);
-
-        } else {
-
-          // start from the beginning, if a shorter visit.
-          playSound(sounds.ipanemaMuzak, null, { position: 0 });
-
-        }
+        // start from the beginning, if a shorter visit.
+        playSound(sounds.ipanemaMuzak, null, { position: 0 });
 
       }
 
@@ -292,6 +350,24 @@ const Helicopter = (options = {}) => {
     if (sounds.dangerZone) {
       stopSound(sounds.dangerZone);
     }
+
+    if (sounds.bnb.theme) {
+      stopSound(sounds.bnb.theme);
+    }
+
+    if (sounds.bnb.muchaMuchacha) {
+      data.muchaMuchacha = false;
+      // hackish: ensure we reset any horizontal travel.
+      dom.o.style.left = '0px';
+      stopSound(sounds.bnb.muchaMuchacha)
+      utils.css.remove(dom.o, css.muchaMuchacha);
+    }
+
+    if (sounds.bnb.iGotYouBabe) {
+      stopSound(sounds.bnb.iGotYouBabe);
+    }
+
+    common.setVideo();
 
     if (data.repairComplete) {
       document.getElementById('repair-complete').style.display = 'none';
@@ -423,6 +499,14 @@ const Helicopter = (options = {}) => {
 
         if (sounds.dangerZone) {
           stopSound(sounds.dangerZone);
+        }
+
+        if (sounds.bnb.theme) {
+          stopSound(sounds.bnb.theme);
+        }
+
+        if (sounds.bnb.beavisThankYouDriveThrough) {
+          playSound(sounds.bnb.beavisThankYouDriveThrough);
         }
 
         if (sounds.inventory.end) {
@@ -647,6 +731,35 @@ const Helicopter = (options = {}) => {
     updateStatusUI(updated);
     sprites.updateEnergy(exports);
 
+    if (data.muchaMuchacha && data.repairFrames % 5 === 0) {
+      if (rnd(1) < 0.25) return;
+
+      const { sound } = sounds.bnb.muchaMuchacha;
+
+      if (!sound) return;
+      
+      // hack: get position and whatnot
+      // TODO: fix this
+      sound._onTimer();
+
+      // no motion, at first; "ramp up" the action at some point, and stop when finished.
+      const offset = sound.position / sound.duration;
+
+      const progress = !sound.playState || offset < 0.25 || offset > 0.9 ? 0 : Math.min(1, sound.position / (sound.duration * 0.66)); 
+
+      data.tiltOffset = plusMinus(rnd(10 * progress));
+
+      if (progress && Math.abs(data.tiltOffset) >= 2) {
+        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1), vY: 3 + rndInt(2) });
+      }
+
+      // hackish: horizontal travel.
+      dom.o.style.left = (progress === 0 || Math.random() < 0.66 ? 0 : plusMinus(rnd(1))) + 'px';
+
+      // hackish: force update.
+      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.tiltOffset}deg)`);
+    }
+
   }
 
   function checkFacingTarget(target) {
@@ -667,7 +780,7 @@ const Helicopter = (options = {}) => {
 
   function setFiring(state) {
 
-    if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
+    if (state !== undefined && ((!data.onLandingPad || isMobile) || (!state && data.isEnemy))) {
       data.firing = state;
     }
 
@@ -2281,6 +2394,7 @@ const Helicopter = (options = {}) => {
     rotatedLeft: 'rotated-left',
     rotatedRight: 'rotated-right',
     cloaked: 'cloaked',
+    muchaMuchacha: 'mucha-muchacha',
     movingLeft: 'moving-left',
     movingRight: 'moving-right',
     tilt: 'tilt',
@@ -2383,6 +2497,7 @@ const Helicopter = (options = {}) => {
     },
     y: game.objects.view.data.world.height - 20,
     logoHidden: false
+    muchaMuchacha: false,
   }, options);
 
   data.midPoint = {
