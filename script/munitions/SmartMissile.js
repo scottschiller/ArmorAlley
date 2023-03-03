@@ -325,6 +325,29 @@ const SmartMissile = (options = {}) => {
 
     }
 
+    // special case: added sound for first hit of a bunker (or turret), but not the (nuclear) explosion sequence.
+    if (
+      sounds.bnb.beavisYes
+      && data.armed && !data.expired && !data.isEnemy
+      && data.parentType === TYPES.helicopter
+      && ((objects.target.data.type !== TYPES.bunker && objects?.target.data.type !== TYPES.turret) || !objects?.target.data.dead)
+    ) {
+
+      if (attacker.data.type === TYPES.superBunker) {
+
+        // "this sucks"
+        playSoundWithDelay(sounds.bnb.beavisLostUnit);
+
+      } else {
+
+        playSound(sounds.bnb.beavisYes, null, {
+          onfinish: () => {
+            if (Math.random() >= 0.5) {
+              playSoundWithDelay(sounds.bnb.buttheadWhoaCool);
+            }
+          }
+        });
+
       }
 
     }
