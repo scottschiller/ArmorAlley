@@ -3361,7 +3361,9 @@ body.is-mobile #help {
   padding-right: 5px;
 }
 
-body.is-mobile #bottom .toggle-sound,body.is-mobile #player-status-bar .inventory-item,body.is-mobile #player-status-bar .spacer {
+body.is-mobile #bottom .toggle-sound,
+body.is-mobile #player-status-bar .inventory-item,
+body.is-mobile #player-status-bar .spacer {
   /* hide outright */
   display: none;
 }
@@ -3904,14 +3906,14 @@ body.game-paused .sprite {
   animation: none !important;
 }
 
-.joystick,.joystick-point {
+.joystick,
+.joystick-point {
   position: absolute;
   /**
    * hide for now. safari has some sort of redraw bug
    * on desktop + iOS, the outer border gets gaps
    * when the inner joystick nub is moving around.
    */
-  /* border: 1px dotted rgba(255,255,255,0.33); */
   border-radius: 100%;
   /* prevent other events on the joystick itself? */
   pointer-events: none;
@@ -3924,7 +3926,7 @@ body.game-paused .sprite {
   width: 100px;
   height: 100px;
   opacity: 0;
-  background-color: rgba(27,107,27,0.25);
+  border: 1px dotted #333;
   transform: scale(0.125);
   transform-origin: 50% 50%;
   transition: all 0.15s ease-in-out;
@@ -3944,7 +3946,7 @@ body.game-paused .sprite {
   top: 50%;
   left: 50%;
   margin: -25% 0px 0px -25%;
-  background-color: rgba(27,107,27,0.45);
+  border: 1px dotted #333;
   /* image/checkerboard-black-mask-75percent.png */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlO/ABXOf08AAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
 }

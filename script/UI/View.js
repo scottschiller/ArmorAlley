@@ -1,9 +1,8 @@
-import { keyboardMonitor, prefsManager } from '../aa.js';
+import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
+import { oneOf, TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { getLandscapeLayout } from '../UI/mobile.js';
 import { common } from '../core/common.js';
-
 import {
   COSTS,
   forceZoom,
@@ -19,6 +18,9 @@ import {
   rubberChickenMode,
   bananaMode
 } from '../core/global.js';
+import { isGameOver } from '../core/logic.js';
+import { sprites } from '../core/sprites.js';
+import { gameMenu } from './game-menu.js';
 
 const View = () => {
 
@@ -283,12 +285,7 @@ const View = () => {
     // keep track of a touch event, and its type.
     const id = touchEvent.identifier;
 
-    data.touchEvents[id] = {
-      /*
-        type,
-        target
-      */
-    };
+    data.touchEvents[id] = { /* type, target */ };
 
     // Object.assign()-like copying of properties.
     for (const option in options) {
@@ -299,7 +296,74 @@ const View = () => {
 
     // special case for UI on buttons.
     if (target && target.nodeName === 'A') {
-      utils.css.add(target, 'active');
+
+      utils.css.add(target, css.buttonActive);
+
+      // hackish: mobile inventory controls
+      if (target.id === 'mobile-show-inventory') {
+        toggleMobileInventory();
+      }
+
+      // data-keyMap values of interest
+      const keyMapLabel = target.getAttribute('data-keyMap');
+      const inventoryTypes = ['tank', 'missileLauncher', 'van', 'infantry', 'engineer'];
+
+      if (inventoryTypes.includes(keyMapLabel)) {
+        // keep inventory showing for a few seconds
+        setMobileInventoryTimer();
+      }
+
+    }
+
+  }
+
+  function setMobileInventoryTimer() {
+
+    clearMobileInventoryTimer();
+
+    data.mobileInventoryTimer = common.setFrameTimeout(hideMobileInventory, 2000);
+
+  }
+
+  function hideMobileInventory() {
+
+    data.mobileInventoryActive = false;
+
+    updateMobileInventory();
+
+    clearMobileInventoryTimer();
+    
+  }
+
+  function clearMobileInventoryTimer() {
+
+    if (!data.mobileInventoryTimer) return;
+
+    data.mobileInventoryTimer.reset();
+    data.mobileInventoryTimer = null;
+
+  }
+
+  function updateMobileInventory() {
+
+    utils.css.addOrRemove(dom.mobileControls, data.mobileInventoryActive, css.inventoryActive);
+
+    // weapons are on when inventory is off, etc.
+    utils.css.addOrRemove(dom.mobileControls, !data.mobileInventoryActive, css.weaponsActive);
+
+  }
+
+  function toggleMobileInventory() {
+
+    data.mobileInventoryActive = !data.mobileInventoryActive;
+
+    updateMobileInventory();
+
+    // if showing, plan to hide it
+    if (data.mobileInventoryActive) {
+      setMobileInventoryTimer();
+    } else {
+      clearMobileInventoryTimer();
     }
 
   }
@@ -308,78 +372,134 @@ const View = () => {
 
     if (!touchEvent || !touchEvent.identifier) return;
 
-    const target = data.touchEvents[touchEvent.identifier].target;
+    const target = data.touchEvents[touchEvent.identifier]?.target;
 
     // special case for UI on buttons.
-    if (target && target.nodeName === 'A') {
-      utils.css.remove(target, 'active');
+    if (target?.nodeName === 'A') {
+      utils.css.remove(target, css.buttonActive);
     }
 
     data.touchEvents[touchEvent.identifier] = null;
 
   }
 
-  function handleTouchStart(targetTouch) {
+  function handleTouchStart(targetTouch, e) {
+   
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = targetTouch && targetTouch.target;
 
+    // ignore if prefs menu up
+    if (prefsManager.isActive()) return true;
+
+    e.preventDefault();
+
+    // explicit "ignore touch" case
+    if (target.getAttribute('data-ignore-touch')) return true;
+
     // touch should always have a target, but just in case...
     if (target && target.nodeName === 'A') {
+
       // it's a link; treat as a button. ignore subsequent move events.
       registerTouchEvent(targetTouch, {
         type: 'press',
         target
       });
+
     } else {
-      // allow touchmove() for this one.
-      registerTouchEvent(targetTouch, {
-        type: 'joystick'
-      });
-      game.objects.joystick.start(targetTouch);
-      // and exit.
-      return false;
+
+      // ignore if the joystick is already active.
+      if (!game.objects.joystick.data.active) {
+
+        registerTouchEvent(targetTouch, {
+          type: 'joystick'
+        });
+
+        game.objects.joystick.start(targetTouch);
+
+        // and exit.
+        return false;
+
+      }
+
     }
 
     // some sort of button - inventory, or helicopter controls.
-    let keyMapLabel;
+    let keyMapValue;
     let keyCode;
 
-    keyMapLabel = target.getAttribute('data-keyMap');
-    keyCode = keyboardMonitor.keyMap[keyMapLabel];
+    keyMapValue = target.getAttribute('data-keyMap');
 
-    if (keyCode) {
-      keyboardMonitor.keydown({
-        keyCode
-      });
-      return true;
+    // if no keyMap, just let it continue.
+    if (!keyMapValue) return true;
+
+    // if a comma-delimited list (e.g., smart missile types), split into an array and pick one.
+    if (keyMapValue.indexOf(',') !== -1) {
+      keyMapValue = oneOf(keyMapValue.split(','));
     }
-    return false;
+
+    // hackish: store the active value for when the event ends.
+    target.setAttribute('data-activeKeyMap', keyMapValue);
+
+    keyCode = keyboardMonitor.keyMap[keyMapValue];
+
+    if (!keyCode) return false;
+
+    keyboardMonitor.keydown({ keyCode });
+
+    return true;
+
   }
 
-  function handleTouchEnd(touchEvent) {
+  function handleTouchEnd(touchEvent, e) {
+
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = touchEvent?.target;
 
+    // pass-thru if prefs screen is up
+    if (prefsManager.isActive()) return true;
+
+    if (target?.getAttribute('data-ignore-touch')) {
+      // easy | hard | extreme link? require two taps, i.e., focus and then click.
+      if (utils.css.has(target, 'cta')) {
+        if (document.activeElement !== target) {
+          // hackish: manually set focus for next time.
+          target.focus();
+          gameMenu.menuUpdate(touchEvent);
+          e.preventDefault();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // always ignore?
+    e.preventDefault();
+
+    if (!gameType) {
+      // game menu should be showing; maybe reset the description text.
+      gameMenu.menuUpdate(touchEvent);
+    }
+
     // was this a "move" (joystick) event? end if so.
     const registeredEvent = getTouchEvent(touchEvent);
+
     if (registeredEvent?.type === 'joystick') {
       game.objects.joystick.end(touchEvent);
     }
 
-    clearTouchEvent(touchEvent);
+    clearTouchEvent(touchEvent, target);
+
     if (!target) return false;
 
-    let keyMapLabel;
+    let activeKeyMap;
     let keyCode;
 
     // release applicable key.
-    keyMapLabel = target.getAttribute('data-keyMap');
-    keyCode = keyboardMonitor.keyMap[keyMapLabel];
+    activeKeyMap = target.getAttribute('data-activeKeyMap');
+    keyCode = keyboardMonitor.keyMap[activeKeyMap];
 
     if (keyCode) {
-      keyboardMonitor.keyup({
-        keyCode
-      });
+      keyboardMonitor.keyup({ keyCode });
       return true;
     }
 
@@ -392,51 +512,7 @@ const View = () => {
   
     const innerHeight = window.innerHeight;
   
-    let offset = 0;
     let localWorldHeight = 410;
-  
-    // TODO: clean this up.
-    if (isMobile) {
-  
-      const id = 'body-height-element';
-      let div = document.getElementById(id);
-  
-      const bottom = document.getElementById('bottom');
-  
-      // make and append once, as necessary.
-      if (!div) {
-        div = document.createElement('div');
-        div.id = id;
-        document.body.appendChild(div);
-      }
-  
-      // measure.
-      offset = parseInt(div.offsetHeight, 10) || 0;
-  
-      // take the smaller one, in any case.
-      if (innerHeight < offset) {
-  
-        // Safari URL / address bar is showing. hack around it.
-        // TODO: ignore touch, make user scroll window first?
-        console.log('scaling world down slightly because of Safari URL / address bar.');
-        // 50 (~pixel height of URL bar) * 2, so world is centered nicely. I think. :D
-        localWorldHeight += 100;
-  
-        utils.css.add(bottom, 'rotate-hint');
-  
-      } else {
-  
-        utils.css.remove(bottom, 'rotate-hint');
-  
-        // if we were paused, but rotated and now full-screen
-        // (i.e., landscape and no address bar), resume automagically.
-        if (game.data.paused && getLandscapeLayout()) {
-          game.resume();
-        }
-  
-      }
-  
-    }
   
     // for testing game without any scaling applied
     if (disableScaling) {
@@ -547,12 +623,18 @@ const View = () => {
 
   function addEvents() {
 
+    // avoid "synthetic" mouse events from mobile, since we have touch covered.
+    if (!isMobile) {
+      utils.events.add(document, 'mousemove', events.mousemove);
+      utils.events.add(document, 'mousedown', events.touchstart);
+    } else {
+      utils.events.add(document, 'touchstart', events.touchstart);
+      utils.events.add(document, 'touchmove', events.touchmove);
+      utils.events.add(document, 'touchend', events.touchend);
+      utils.events.add(document, 'touchcancel', events.touchend);
+    }
+
     utils.events.add(window, 'resize', events.resize);
-    utils.events.add(document, 'mousemove', events.mousemove);
-    utils.events.add(document, 'mousedown', events.touchstart);
-    utils.events.add(document, 'touchstart', events.touchstart);
-    utils.events.add(document, 'touchmove', events.touchmove);
-    utils.events.add(document, 'touchend', events.touchend);
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
@@ -568,6 +650,16 @@ const View = () => {
     dom.gameTips = sprites.getWithStyle('game-tips');
     dom.gameTipsList = sprites.getWithStyle('game-tips-list');
     dom.gameAnnouncements = sprites.getWithStyle('game-announcements');
+    dom.mobileControls = document.getElementById('mobile-controls');
+
+    // TODO: improve and clean up.
+    // maybe remove nodes if not on mobile.
+    if (isMobile) {
+      updateMobileInventory();
+    } else {
+      dom.mobileControls.remove();
+      dom.mobileControls = null;
+    }
 
   }
 
@@ -589,7 +681,10 @@ const View = () => {
     gameTips: {
       active: 'active',
       hasAnnouncement: 'has-announcement'
-    }
+    },
+    buttonActive: 'active',
+    inventoryActive: 'inventory_active',
+    weaponsActive: 'weapons_active'
   };
 
   data = {
@@ -604,6 +699,8 @@ const View = () => {
       height: 0
     },
     mouse: {
+      clientX: 0,
+      clientY: 0,
       x: 0,
       y: 0
     },
@@ -643,17 +740,21 @@ const View = () => {
     missileMode: null,
     screenScale: 1,
     usingZoom: null,
+    mobileInventoryActive: false,
+    mobileInventoryTimer: null
   };
 
   dom = {
     battleField: null,
+    logo: null,
     stars: null,
     topBar: null,
     gameTips: null,
     gameTipsList: null,
     gameTipNodes: null,
     animationNode: null,
-    gameAnnouncements: null
+    gameAnnouncements: null,
+    mobileControls: null
   };
 
   events = {
@@ -664,6 +765,9 @@ const View = () => {
 
       game.pause();
 
+      // hackish: reset any lingering touch state.
+      data.touchEvents = [];
+
     },
 
     focus() {
@@ -673,39 +777,43 @@ const View = () => {
     },
 
     mousemove(e) {
-      if (!data.ignoreMouseEvents) {
-        data.mouse.x = e.clientX / data.screenScale;
-        data.mouse.y = e.clientY / data.screenScale;
-      }
+
+      if (data.ignoreMouseEvents) return;
+
+      data.mouse.clientX = e.clientX;
+      data.mouse.clientY = e.clientY;
+
+      data.mouse.x = e.clientX / data.screenScale;
+      data.mouse.y = e.clientY / data.screenScale;
+
     },
 
     touchstart(e) {
+
       // if the paused screen is showing, resume the game.
-      if (game.data.paused) {
-        game.resume();
-      }
-      const touch = e.touches?.[0];
+      if (game.data.paused) game.resume();
+
+      if (isGameOver()) return;
+
+      // pass-thru if game menu is showing
+      if (!game.data.started) return true;
+
       let i, j;
       const targetTouches = e.targetTouches;
-      let result;
-      let handledResult;
+
       if (targetTouches) {
         for (i = 0, j = targetTouches.length; i < j; i++) {
-          result = handleTouchStart(targetTouches[i], e);
-          if (result) {
-            handledResult = true;
-            e.preventDefault();
-          }
+          handleTouchStart(targetTouches[i], e);
         }
       }
-      // mouse equivalent - set only if a button wasn't hit.
-      if (!handledResult && touch && !data.ignoreMouseEvents) {
-        data.touch.x = touch.clientX;
-        data.touch.y = touch.clientY;
-      }
+
+      // always prevent default tap-and-hold, selection and whatnot.
+      e.preventDefault();
+
     },
 
     touchmove(e) {
+
       // primitive handling: take the first event.
       const touch = e.changedTouches?.[0];
 
@@ -715,9 +823,7 @@ const View = () => {
       // if this event was registered at touchstart() as not a "move", ignore.
       const registeredEvent = getTouchEvent(touch);
 
-      if (registeredEvent?.type !== 'joystick') {
-        return false;
-      }
+      if (registeredEvent?.type !== 'joystick') return false;
 
       if (!data.ignoreMouseEvents) {
         // relative to coordinates of origin
@@ -729,19 +835,32 @@ const View = () => {
     },
 
     touchend(e) {
+
+      // pass-thru if game menu is showing
+      if (!game.data.started) return true;
+
       let i, j;
       const changed = e.changedTouches;
+
       if (changed) {
         for (i = 0, j = changed.length; i < j; i++) {
           handleTouchEnd(changed[i], e);
         }
       }
+
     },
 
     resize() {
-      // throttle?
+
       refreshCoords();
+
+      // hackish: iOS Safari (possibly "home screen app" only?) needs an additional delay for layout, perhaps due to screen rotation animation(?)
+      if (isMobile/* && navigator.standalone*/) {
+        window.setTimeout(refreshCoords, 500);
+      }
+
       game.objects.gameLoop.resetFPS();
+
     }
 
   };
