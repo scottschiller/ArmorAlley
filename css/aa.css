@@ -2565,6 +2565,34 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   margin-left: -28px;
 }
 
+/* new "generic" explosion */
+.ephemeral-explosion {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 0px;
+  left: 0px;
+  background-image: url(../image/explosion_by_tungkann_dam5o19.png);
+  background-size: 1400px 100px;
+  background-position: 0px 0px;
+  /* default state */
+  background-repeat: no-repeat;
+  animation: ephemeralexplosion 0.75s steps(14);
+  animation-fill-mode: forwards; /* Stay on last frame when finished */
+  transform-origin: 50% 100%; /* bottom-align */
+  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
+  z-index: 3;
+}
+
+@keyframes ephemeralexplosion {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: -1400px 0px;
+  }
+}
+
 .sprite .energy-status {
   position: absolute;
   bottom: 0.1px; /* hackish, rounding fix */
