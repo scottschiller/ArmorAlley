@@ -1,4 +1,5 @@
 import { game } from './Game.js';
+import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
@@ -97,6 +98,9 @@ const GameLoop = () => {
 
     if (!data.fpsTimer) data.fpsTimer = ts;
 
+    // time since last 30FPS frame
+    data.elapsed = ts - data.lastExec;
+
     /**
      * first things first: always request the next frame right away.
      * if expensive work is done here, at least the browser can plan accordingly
@@ -105,8 +109,6 @@ const GameLoop = () => {
      * https://www.html5rocks.com/en/tutorials/speed/rendering/
      */
     window.requestAnimationFrame(animateRAF);
-
-    data.elapsed = (ts - data.lastExec) || 0;
 
     /**
      * frame-rate limiting: exit if it isn't approximately time to render the next frame.
@@ -133,6 +135,11 @@ const GameLoop = () => {
 
     animate();
 
+    // snow - if by prefs, or "automatically" activated
+    if ((gamePrefs.snow || window.snowStorm?.active) && window.snowStorm?.snow) {
+      window.snowStorm.snow();
+    }
+
     data.frames++;
 
     // every interval, update framerate.
@@ -149,11 +156,6 @@ const GameLoop = () => {
       // update / restart 1-second timer
       data.fpsTimer = ts;
 
-    }
-
-    // snow?
-    if (gamePrefs.snow && window.snowStorm?.snow) {
-      window.snowStorm.snow();
     }
 
   }
@@ -202,11 +204,13 @@ const GameLoop = () => {
 
     start();
 
+    gameEvents.start();
+
   }
 
   dom = {
-    fpsCount: null,
-  }
+    fpsCount: null
+  };
 
   data = {
     battleOverFrameCount: 0,
