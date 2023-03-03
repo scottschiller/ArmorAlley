@@ -1450,7 +1450,7 @@ const Helicopter = (options = {}) => {
           x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
           y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
           vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
-          vY: data.vY + tiltOffset
+          vY: data.vY + (data.isEnemy ? 0 : tiltOffset) // CPU doesn't know how to account for tilt
         });
 
         startSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire);
