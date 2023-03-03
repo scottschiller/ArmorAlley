@@ -5,6 +5,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
 import { TYPES, winloc, FPS, tutorialMode, rndInt, getTypes } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
+import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
@@ -169,6 +170,13 @@ const Van = (options = {}) => {
 
     data.frameCount++;
 
+    // is van within 1/X of the battlefield away from a landing / base?
+    const distance = data.isEnemy ? data.x - pads[0].data.x : pads[pads.length - 1].data.x - data.x;
+    
+    if (distance < data.approachingBase) {
+      gameEvents.fire(EVENTS.vanApproaching, 'isEnemy', data.isEnemy);
+    }
+
     return (data.dead && !data.deadTimer);
 
   }
@@ -250,6 +258,7 @@ const Van = (options = {}) => {
     energy: 2,
     energyMax: 2,
     direction: 0,
+    approachingBase: 768,
     vX: (options.isEnemy ? -1 : 1),
     width: 38,
     halfWidth: 19,
