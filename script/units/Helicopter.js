@@ -942,8 +942,10 @@ const Helicopter = (options = {}) => {
     // L -> R / R -> L + forward / backward
 
     // auto-rotate feature
-    if (data.autoRotate && ((data.vX > 0 && data.lastVX < 0) || (data.vX < 0 && data.lastVX > 0))) {
-      rotate();
+    if ((data.autoRotate || (!data.isEnemy && isMobile))) {
+      if ((data.vX > 0 && data.lastVX < 0 && data.rotated) || (data.vX < 0 && data.lastVX > 0 && !data.rotated)) {
+        rotate();
+      }
     }
 
     data.tiltOffset = (data.dead || data.respawning || data.landed || data.onLandingPad ? 0 : ((data.vX / data.vXMax) * 12.5) + data.shakeOffset);
@@ -2544,7 +2546,7 @@ const Helicopter = (options = {}) => {
     cloaked: false,
     rotated: false,
     rotateTimer: null,
-    autoRotate: (options.isEnemy || false),
+    autoRotate: (options.isEnemy || isMobile),
     repairing: false,
     repairFrames: 0,
     dieCount: 0,
@@ -2681,16 +2683,9 @@ const Helicopter = (options = {}) => {
     dblclick(e) {
       if (e.button !== 0 || data.ignoreMouseEvents || data.isEnemy || !data.fuel) return;
 
-      if (isMobile) {
-        // only rotate on mobile.
-        rotate();
-        // and stop zoom, etc., from happening.
-        e.preventDefault();
-      }
       // revert to normal setting
-      if (data.rotated) {
-        rotate();
-      }
+      if (data.rotated) rotate();
+
       // toggle auto-rotate
       data.autoRotate = !data.autoRotate;
     }
