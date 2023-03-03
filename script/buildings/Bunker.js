@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import { rndInt, rnd, TYPES, FPS } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -54,7 +55,13 @@ const Bunker = (options = {}) => {
 
       game.objects.notifications.add('The enemy captured a bunker 🚩');
 
-      playSoundWithDelay(sounds.enemyClaim, exports, 500);
+      playSoundWithDelay(sounds.enemyClaim, exports);
+
+      if (game.data.isBeavis) {
+        playSoundWithDelay(sounds.bnb.beavisLostBunker);
+      } else {
+        playSoundWithDelay(sounds.bnb.buttheadLostBunker);
+      }
 
     } else {
 
@@ -70,6 +77,8 @@ const Bunker = (options = {}) => {
       }
 
       playSoundWithDelay(sounds.friendlyClaim, exports);
+
+      playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'beavisCapturedBunker' : 'buttheadCapturedBunker'], null);
 
     }
 
@@ -87,15 +96,42 @@ const Bunker = (options = {}) => {
 
   }
 
+  function bnbRepair(engineer) {
+
+    if (!data.hasBeavis && engineer.data.isBeavis) {
+      data.hasBeavis = true;
+    }
+
+    if (!data.hasButthead && engineer.data.isButthead) {
+      data.hasButthead = true;
+      if (data.isOnScreen && !game.objects.helicopter[0].data.onLandingPad) playSound(sounds.bnb.bhLetsRock, exports);
+    }
+
+    // only "sing" the repair if damage >= 50%.
+    if (data.hasBeavis && data.hasButthead && data.energy < data.energyHalf && !data.isSinging) {
+      data.isSinging = true;
+      playSound(sounds.bnb.singingShort, exports);
+    }
+
+  }
+
   function engineerRepair(engineer) {
 
     if (data.energy < data.energyMax) {
       // stop, and don't fire
       engineer.stop(true);
       data.energy = Math.min(data.energy + 0.05, data.energyMax);
+      if (!engineer.data.isEnemy) {
+        bnbRepair(engineer);
+      }
     } else {
       // repair complete - keep moving
       engineer.resume();
+      if (!engineer.data.isEnemy) {
+        data.hasBeavis = false;
+        data.hasButthead = false;
+        data.isSinging = false;
+      }
     }
 
     sprites.updateEnergy(exports);
@@ -281,8 +317,14 @@ const Bunker = (options = {}) => {
 
   function engineerHit(target) {
 
+    if (target.data.isEnemy !== data.isEnemy) return;
+
+    // special BnB case
+    const tData = target.data;
+    let xLookAhead = !tData.isEnemy && gamePrefs.bnb ? tData.xLookAheadBunker[tData.isBeavis ? 'beavis' : 'butthead'] : 0;
+
     // a friendly engineer unit has made contact with a bunker. repair damage when at the door, if any.
-    if (target.data.isEnemy === data.isEnemy && collisionCheckMidPoint(exports, target)) {
+    if (collisionCheckMidPoint(target, exports, xLookAhead)) {
       engineerRepair(target);
     }
    
@@ -359,10 +401,14 @@ const Bunker = (options = {}) => {
     smokeFramesLeft: parseInt(smokeFrames, 10),
     smokeFramesMax: smokeFrames,
     energy: 50,
+    energyHalf: 25,
     energyMax: 50,
     energyLineScale: 0.95,
     centerEnergyLine: true,
+    hasBeavis: false,
+    hasButthead: false,
     isRecapture: false,
+    isSinging: false,
     width: 51,
     halfWidth: 25,
     height: 25,
