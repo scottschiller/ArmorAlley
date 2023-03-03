@@ -1,15 +1,12 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { common } from '../core/common.js';
-import { isSafari, tutorialMode } from '../core/global.js';
+import { getTypes, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
+import { effects } from '../core/effects.js';
 
 const prefs = {
-  // legacy: game type, etc.
-  gameType: 'gameType',
-  noScaling: 'noScaling',
-  noSound: 'noSound',
-}
+  gameType: 'game_type'
+};
 
 // for non-boolean form values; set by form, referenced by game
 const PREFS = {
@@ -22,20 +19,44 @@ const PREFS = {
 
 // game defaults
 const defaultPrefs = {
+  game_type: '',
   sound: true,
-  snow: false,
+  weather: '', // [none|rain|hail|snow|turd]
+  domfetti: true,
   show_inventory: true,
   show_weapons_status: true,
   show_keyboard_labels: true,
   show_game_tips: true,
   show_health_status: PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
-  notifications_location: PREFS.NOTIFICATIONS_LOCATION_RIGHT, // left | right
+  // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
+  notifications_location: (isMobile ? PREFS.NOTIFICATIONS_LOCATION_LEFT : PREFS.NOTIFICATIONS_LOCATION_RIGHT), // left | right
   enemy_missile_match_type: true,
   engineers_repair_bunkers: true,
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,
   ground_unit_traffic_control: true
 };
+
+// allow URL-based overrides of prefs
+let prefsByURL = {};
+
+function normalizePrefValue(val) {
+  // string / number to boolean, etc.
+  if (val === 'true' || val == 1) return true;
+  if (val === 'false' || val == 0) return false;
+  return val;
+}
+
+const { hash } = window.location;
+const hashParams = hash?.substr(hash.indexOf('#') === 0 ? 1 : 0)
+const searchParams = new URLSearchParams(window.location.search || hashParams);
+
+for (const p of searchParams) {
+  // p = [name, value]
+  if (defaultPrefs[p[0]] !== undefined) {
+    prefsByURL[p[0]] = normalizePrefValue(p[1]);
+  }
+}
 
 // initially, the game inherits the defaults
 let gamePrefs = {
@@ -92,7 +113,13 @@ function PrefsManager() {
     // reset opacity
     dom.o.style.setProperty('opacity', null);
 
-    getPrefsFromStorage();
+    readAndApplyPrefsFromStorage();
+
+    // hackish / special-case: force-update notification toast location IF it's on the left.
+    // page HTML + CSS defaults to the right.
+    if (gamePrefs.notifications_location === PREFS.NOTIFICATIONS_LOCATION_LEFT) {
+      events.onPrefChange['notifications_location'](gamePrefs.notifications_location);
+    }
 
   }
 
@@ -218,7 +245,7 @@ function PrefsManager() {
 
     let prefChanges = [];
 
-    // queue data for onChange() calls,as applicable
+    // queue data for onChange() calls, as applicable
     // e.g., game needs to handle enabling or disabling snow or health bars
     for (let key in newGamePrefs) {
       if (events.onPrefChange[key] && gamePrefs[key] !== newGamePrefs[key]) {
@@ -246,18 +273,20 @@ function PrefsManager() {
 
       let value = boolToInt(gamePrefs[key]);
 
-      // find the matching input based on name, and update it.
-      let input = dom.oForm.querySelector(`input[name="${key}"]`);
+      // find the matching input(s) based on name, and update it.
+      let inputs = dom.oForm.querySelectorAll(`input[name="${key}"]`);
 
       // just in case...
-      if (!input) return;
+      if (!inputs?.forEach) return;
 
-      // NOTE: intentional non-strict comparison here, string vs. int.
-      if (input.value == value) {
-        input.setAttribute('checked', true);
-      } else {
-        input.removeAttribute('checked');
-      }
+      inputs.forEach((input) => {
+        // NOTE: intentional non-strict comparison here, string vs. int.
+        if (input.value == value) {
+          input.setAttribute('checked', true);
+        } else {
+          input.removeAttribute('checked');
+        }
+      });
 
     });
 
@@ -292,7 +321,7 @@ function PrefsManager() {
     
   }
 
-  function getPrefsFromStorage() {
+  function readPrefsFromStorage() {
 
     let prefsFromStorage = {};
 
@@ -304,14 +333,38 @@ function PrefsManager() {
       }
     });
 
-    applyNewPrefs(prefsFromStorage);
+    // if set, URL prefs override storage
+    if (Object.keys(prefsByURL).length) {
+      prefsFromStorage = {
+        ...prefsFromStorage,
+        ...prefsByURL
+      };
+      applyNewPrefs(prefsFromStorage);
+    }
+
+    return prefsFromStorage;
+    
+  }
+
+  function readAndApplyPrefsFromStorage() {
+
+    let prefs = readPrefsFromStorage();
+
+    applyNewPrefs(prefs);
 
     updateForm();
 
   }
 
+  function ignoreURLParams() {
+    // edge case: if e.g., #bnb=0 or ?bnb=0 specified, start ignoring once the user clicks and overrides.
+    prefsByURL = {};
+  }
+
   data = {
-    active: false
+    active: false,
+    lastMenuOpen: 0,
+    lastMenuOpenThrottle: 30000
   };
 
   dom = {
@@ -347,10 +400,10 @@ function PrefsManager() {
 
       sound: (isActive) => window.soundManager[isActive ? 'mute' : 'unmute'](),
 
-      snow: (isActive) => {
-        window?.snowStorm?.toggleSnow();
         // update battlefield sprites
-        utils.css.addOrRemove(game.objects.view.dom.battleField, isActive, 'snow');
+        if (game.objects.view) {
+          utils.css.addOrRemove(game.objects.view.dom.battleField, type === 'snow', 'snow');
+        }
       },
 
       show_inventory: (show) => utils.css.addOrRemove(dom.oStatsBar, !show, 'hide-inventory'),
@@ -412,10 +465,17 @@ function PrefsManager() {
   };
 
   return {
+    applyNewPrefs,
     init,
+    ignoreURLParams,
     isActive,
     toggleDisplay,
-    updateScreenScale: events.updateScreenScale
+    readPrefsFromStorage,
+    readAndApplyPrefsFromStorage,
+    show,
+    updateForm,
+    updateScreenScale: events.updateScreenScale,
+    writePrefsToStorage
   };
 
 }

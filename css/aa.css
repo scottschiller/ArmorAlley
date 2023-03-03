@@ -3923,11 +3923,14 @@ body.is-mobile #game-prefs-modal {
 
 #game-prefs-modal {
   width: 228px;
+  /* sight centering tweak */
+  margin-top: -15px;
 }
 
 #game-prefs-modal .body {
   /* border all the way around */
   border: 0.5px solid #000;
+  box-sizing: border-box;
 }
 
 #game-prefs-modal textarea {
@@ -3938,6 +3941,109 @@ body.is-mobile #game-prefs-modal {
   color: #000;
   transform: scale3d(0.33, 0.33, 1);
   transform-origin: 0px 0px;
+}
+
+#game-prefs-modal .fieldset-container {
+  position: relative;
+  /**
+   * Scrollbar shenanigans
+   * Render small so the scrollbar size is right,
+   * then zoom up the inner contents.
+   */
+  zoom: 0.4;
+  max-height: 800px;
+  overflow-y: auto;
+  /**
+   * best we can do for Firefox, which doesn't support zoom
+   * and thus scrollbars are larger due to transforms - long story.
+   */
+  scrollbar-width: thin;
+}
+
+body.is_firefox #game-prefs-modal .fieldset-container {
+  /* zoom does not work in Firefox. native scrollbar will be large. */
+  max-height: 320px;
+}
+
+#game-prefs-modal .fieldset-container fieldset {
+  /* offset the above zoom, to get back to relative scale of 1 */
+  zoom: 2.5;
+}
+
+/**
+ * System 7-style scrollbars
+ * Hat tip: https://github.com/sakofchit/system.css/ (MIT)
+ * https://github.com/sakofchit/system.css/blob/main/LICENSE
+ */
+
+::-webkit-scrollbar {
+  width: 22px;
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-track {
+  /* black checkerboard pattern */
+  background: #fff url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
+  background-size: 4px 4px;
+  width: 10px;
+  border-left: 3px solid #000;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 20px;
+  box-sizing: content-box;
+  background-color: #fff;
+  border: 2px solid #000;
+  border-right: none;
+}
+
+::-webkit-scrollbar-button:horizontal:start:decrement,
+::-webkit-scrollbar-button:horizontal:end:increment,
+::-webkit-scrollbar-button:vertical:start:decrement,
+::-webkit-scrollbar-button:vertical:end:increment {
+  display: block;
+}
+
+::-webkit-scrollbar-button:vertical:start {
+  background-repeat: no-repeat;
+  height: 23.38px;
+  background-image: url(../image/icon/scrollbar-up.svg);
+}
+::-webkit-scrollbar-button:vertical:start:active {
+  background-repeat: no-repeat;
+  height: 23.38px;
+  background-image: url(../image/icon/scrollbar-up-active.svg);
+}
+::-webkit-scrollbar-button:vertical:end {
+  height: 23.38px;
+  background-image: url(../image/icon/scrollbar-down.svg);
+}
+::-webkit-scrollbar-button:vertical:end:active {
+  background-repeat: no-repeat;
+  height: 23.38px;
+  background-image: url(../image/icon/scrollbar-down-active.svg);
+}
+
+#game-prefs-modal .fieldset-container::-webkit-scrollbar {
+  width: 22px;
+  background-color: #fff;
+}
+
+#game-prefs-modal a {
+  color: #000;
+  border-radius: 1px;
+}
+
+#game-prefs-modal a:hover {
+  background-color: #000;
+  padding: 0.25px 1px;
+  margin: -0.25px -1px;
+  color: #fff;
+}
+
+#game-prefs-modal fieldset:first-of-type {
+  margin-top: 1px;
 }
 
 #game-prefs-modal fieldset {
@@ -3964,6 +4070,10 @@ body.is-mobile #game-prefs-modal {
 #game-prefs-modal fieldset ul li {
   margin-top: 1px;
   margin-bottom: 4px;
+}
+
+#game-prefs-modal fieldset ul li fn {
+  font-size: 4px;
 }
 
 #game-prefs-modal ul.less-bottom-spacing li {
@@ -3995,6 +4105,11 @@ body.is-mobile #game-prefs-modal {
   margin-bottom: 0px !important;
   padding-top: 0px !important;
   padding-bottom: 0px !important;
+}
+
+#game-prefs-modal li.inline-option {
+  display: inline-block;
+  margin-right: 3px;
 }
 
 #game-prefs-modal fieldset ul li p {
@@ -4065,6 +4180,7 @@ body.is-mobile #game-prefs-modal {
   line-height: 7px;
   border-radius: 50%;
   transform: scale(0.66);
+  transform-origin: 50% 50%;
   visibility: hidden;
   background: #000;
 }
@@ -4082,8 +4198,13 @@ body.is-mobile #game-prefs-modal {
   border-radius: 0px;
 }
 
+body.is-mobile.is_safari #game-prefs-modal input[type="checkbox"]::before {
+  margin-top: -1.25px;
+  margin-left: -1.25px;
+}
+
 body.is_firefox #game-prefs-modal input[type="checkbox"]::before {
-  margin-top: -2px;
+  margin-top: -1.8px;
 }
 
 #game-prefs-modal input[type="radio"]:checked::before,
@@ -4099,6 +4220,11 @@ body.is_firefox #game-prefs-modal input[type="checkbox"]::before {
   transform: scale(0.5);
   opacity: 0.5;
   visibility: visible;
+}
+
+body.is_firefox #game-prefs-modal input[type="checkbox"]:active::before {
+  margin-left: -0.35px;
+  margin-top: -1.75px;
 }
 
 #game-prefs-modal input[type="checkbox"]:active,
@@ -4131,7 +4257,13 @@ body.is_firefox #game-prefs-modal input[type="checkbox"]::before {
   font-weight: bold;
 }
 
-body.is_safari #game-prefs-modal .label-text {
+body.is_firefox #game-prefs-modal .label-text,
+body.is_firefox #game-prefs-modal .options-heading {
+  letter-spacing: -0.125px;
+}
+
+body.is_safari #game-prefs-modal .label-text,
+body.is_safari #game-prefs-modal .options-heading {
   letter-spacing: -0.25px; /* :shake_fist: */
 }
 
@@ -4144,7 +4276,7 @@ body.is_safari #game-prefs-modal .label-text {
   margin-right: 0.25rem;
 }
 
-#game-prefs-modal button {
+button {
   position: relative;
   font-family: Chicago, "FA Sysfont C", courier, sans-serif;
   font-size: 7px;
@@ -4160,7 +4292,7 @@ body.is_safari #game-prefs-modal .label-text {
   cursor: pointer;
 }
 
-#game-prefs-modal button.primary {
+button.primary {
   /**
    * Most, but not all browsers can do a double-border this way,
    * where the outline follows border-radius styling as well.
@@ -4170,7 +4302,7 @@ body.is_safari #game-prefs-modal .label-text {
   outline-offset: 0.5px;
 }
 
-#game-prefs-modal button.primary {
+button.primary {
   /**
    * IRONY: Safari doesn't apply border-radius to outlines, but
    * everyone else does; and this is for the 68K classic mac UI.
@@ -4190,7 +4322,8 @@ body.is_safari #game-prefs-modal .label-text {
   padding: 0.5px 10px;
 }
 
-#game-prefs-modal button:active {
+button:active,
+button.primary:active {
   background: #000;
   color: #fff;
 }
