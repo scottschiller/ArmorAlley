@@ -2297,6 +2297,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 #world-wrapper.jammed #radar {
   visibility: hidden;
+  display: none; /* better? */
 }
 
 #world.tutorial-mode #world-wrapper.jammed #radar {
