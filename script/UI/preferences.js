@@ -418,7 +418,27 @@ function PrefsManager() {
 
     onPrefChange: {
 
-      sound: (isActive) => window.soundManager[isActive ? 'mute' : 'unmute'](),
+      sound: (isActive) => window.soundManager[isActive ? 'unmute' : 'mute'](),
+
+      bnb: (isActive) => {
+
+        // numerous UI updates
+        utils.css.addOrRemove(document.body, isActive, 'bnb');
+
+        // sprite coords may need updating
+        [...game.objects.infantry, ...game.objects.engineer].forEach((ie) => ie.refreshHeight());
+
+        if (!isActive) resetBNBSoundQueue();
+
+        // before game start, user might open options menu and flip the pref.
+        // update the game menu (start screen) UI if so.
+        if (!game.started && data.active) {
+          const vsCheckbox = document.getElementById('checkbox-vs');
+          if (!vsCheckbox) return;
+          vsCheckbox.checked = isActive;
+        }
+
+      },
 
         // update battlefield sprites
         if (game.objects.view) {
