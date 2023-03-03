@@ -187,10 +187,10 @@ body {
 #game-menu {
   margin-top: 60px;
   display: none;
-  /* left alignment tweak */
-  margin-left: -12px;
   text-align: center;
   color: #999;
+  /* don't exceed the screen width (e.g., mobile phones in portrait mode.) */
+  width: 100%;
 }
 
 #game-menu.visible {
@@ -201,28 +201,126 @@ body {
   font-weight: normal;
   font-size: 1.1em;
   line-height: 1.5em;
+  color: #ccc;
 }
 
 #game-menu .cta {
   display: inline-block;
-  width: 22%;
+  width: 23%;
   box-sizing: border-box;
-  color: #00cc00;
+  color:#33cc33;
   border: 1px solid green;
-  font-size: 1.33em;
-  line-height: 1.33em;
-  padding: 0.25em 0.5em;
-  text-align: center;
+  font-size: 1em;
+  line-height: 1.5em;
+  padding: 4px 0px;
+  /* text-align: center; */
   text-decoration: none;
   background-color: #003300;
   background-color: rgba(0,102,0,0.5);
   margin-left: 1%;
+  cursor: pointer;
 }
 
-#game-menu .cta:hover {
+#game-menu .cta-radio:first-of-type {
+  margin-left: 0%;
+}
+
+#game-menu .cta:hover,
+#game-menu .cta:focus {
   background-color: #006600;
   background-color: rgba(0,153,0,0.75);
   color: #fff;
+  outline: none;
+}
+
+#game-menu form,
+#game-menu form label {
+ display: block;
+ width: 100%;
+}
+
+#game-menu form label {
+  padding: 3px 10px;
+}
+
+#game-menu form input {
+  cursor: pointer;
+}
+
+#game-menu form input[type="radio"] {
+  position: relative;
+  top: 0.5px;
+  margin: 0px;
+  padding: 0px;
+  transform: scale(0.8);
+  transform-origin: top;
+  vertical-align: middle;
+  /* remove standard background appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* create custom radiobutton appearance */
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  padding: 2px;
+  /* background-color only for content */
+  background-clip: content-box;
+  border: 1px solid #33cc33;
+  background-color: transparent;
+  border-radius: 50%;
+}
+
+#game-menu form input[type="radio"]:checked {
+  background-color: #fff;
+}
+
+#game-menu .cta-checkbox {
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+#game-menu .checkbox-wrapper {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 0.125em;
+}
+
+#game-menu .cta-checkbox input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  display: grid;
+  place-content: center;
+  font: inherit;
+  color: currentColor;
+  width: 1.1em;
+  height: 1.1em;
+  border: 0.1em solid currentColor;
+  border-radius: 0.1em;
+  transform: translateY(0.2em);
+  cursor: pointer;
+}
+
+#game-menu .cta-checkbox input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  visibility: hidden;
+  box-shadow: inset 1em 1em #fff;
+  /* check mark */
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+#game-menu .cta-checkbox input[type="checkbox"]:checked::before {
+  visibility: visible;
+}
+
+#game-menu .cta-checkbox:hover {
+  animation: none;
+  background: transparent;
 }
 
 #game-menu .cta:first-of-type {
@@ -230,9 +328,10 @@ body {
 }
 
 #game-menu .cta .emoji {
-  display: block;
-  font-size: 1.1rem;
-  filter: grayscale(0.5);
+  display: inline-block;
+  font-size: 1.25em;
+  line-height: 1.25em;
+  vertical-align: bottom;
   pointer-events: none;
 }
 
@@ -244,13 +343,6 @@ body {
   display: inline;
 }
 
-#exit-emoji {
-  font-size: 0.5rem;
-  filter: grayscale(1);
-  opacity: 0.75;
-}
-
-#exit:hover #exit-emoji,
 #game-menu .cta:hover .emoji {
   filter: grayscale(0);
   opacity: 1;
@@ -259,7 +351,7 @@ body {
 #game-description {
   margin-top: 0.75em;
   font-size: 1em;
-  color: #009900;
+  color: #33cc33;
 }
 
 #world-wrapper {
@@ -4101,6 +4193,26 @@ body.is_safari #game-prefs-modal .label-text {
 #game-prefs-modal button:active {
   background: #000;
   color: #fff;
+}
+
+/* game menu screen */
+
+#game-menu button.large {
+  background: #ddd;
+  font-size: 10px;
+  line-height: 10px;
+  padding: 4px 10px;
+  vertical-align: middle;
+  transition: transform 0.1s;
+}
+
+#game-menu button.large:hover {
+  background: #fff;
+}
+
+#game-menu button.large:active {
+  background: #339933;
+  transform: scale3d(0.9, 0.9, 1);
 }
 
 /* outer -> inner */
