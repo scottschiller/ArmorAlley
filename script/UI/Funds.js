@@ -1,7 +1,7 @@
 import { utils } from '../core/utils.js';
 import { playSound, sounds } from '../core/sound.js';
 import { screenScale } from '../core/Game.js';
-import { DEFAULT_FUNDS, isChrome, isFirefox } from '../core/global.js';
+import { DEFAULT_FUNDS, isFirefox, isSafari } from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
@@ -24,9 +24,10 @@ const Funds = () => {
     frameCount: 0,
     fontSize: 10,
     offsetType: 'px',
-    pixelShift: isChrome ? -0.1825 * 0.5 : 0,
+    pixelShift: 0, // isChrome ? -0.1825 * 0.5 : 0,
     // sometimes, things don't line up exactly perfectly.
-    pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
+    // pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
+    pixelOffsets: [0,0,0,0,0,0,0,0,0,0],
     digitCount: 3,
     // state for each digit  
     offsetTop: [],
@@ -94,7 +95,9 @@ const Funds = () => {
   }
 
   function updateDOM() {
+
     let i, j;
+
     // raw string, and array of integers
     let digits = data.displayValue.toString();
     const digitInts = [];
@@ -105,7 +108,6 @@ const Funds = () => {
       // TODO: move to ES6 .repeat()
       digits = new Array(data.digitCount - digits.length + 1).join('0') + digits;
       // digits = '0'.repeat(data.digitCount - digits.length) + digits;
-
     }
 
     if (!dom.digits) dom.digits = document.querySelectorAll('#funds-count .digit-wrapper');
@@ -156,13 +158,15 @@ const Funds = () => {
       tensOffset = (data.offsetTop[i-1] || 0) * 10;
 
       dom.digits[i].style.setProperty('background-position', `0px ${(((data.offsetTop[i] + 1 + tensOffset) * data.fontSize) + (i === digitCountMinusOne ? 0 : data.pixelShift)) + data.pixelOffsets[digits[i]]}${data.offsetType}`);
+      
     }
  
   }
 
   function updateScale() {
+
     // transforms are exempt, only apply to zoom
-    if (isFirefox) return;
+    if (isFirefox || isSafari) return;
 
     // read the actual rendered height from the DOM
     // this will then be used to do offsets for animating numbers
@@ -178,10 +182,10 @@ const Funds = () => {
     // now, transform back so things look right, without throwing off background positioning on digits.
     funds._style.setProperty('transform', `scale3d(${[adjustedScale, adjustedScale, 1].join(',')})`);
     funds._style.setProperty('transform-origin', '0px 0px');
+
   }
 
   function updateSound() {
-
     // "... Press debit or credit" 🤣 -- Maria Bamford
     // https://www.youtube.com/watch?v=hi8UURLK6FM
     if (data.displayValue <= data.value) {
