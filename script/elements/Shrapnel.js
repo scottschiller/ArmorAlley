@@ -16,14 +16,15 @@ const Shrapnel = (options = {}) => {
     let relativeScale;
 
     // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
-    relativeScale = Math.min(1, y / (worldHeight * 0.9));
+    relativeScale = Math.min(1, y / (worldHeight * 0.95));
 
     // allow slightly larger, and a fair bit smaller
-    relativeScale = 1.1 - (relativeScale * data.scaleRange);
+    relativeScale = 1.05 - (relativeScale * data.scaleRange);
 
     data.relativeScale = relativeScale;
 
-    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')})`
+    // scale, 3d rotate, and spin
+    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')}) rotate3d(1, 1, 1, ${data.rotate3DAngle}deg) rotate3d(0, 0, 1, ${data.spinAngle}deg)`;
 
     // move, and retain 3d scaling (via extraTransforms)
     sprites.moveTo(exports, x, y);
@@ -52,10 +53,14 @@ const Shrapnel = (options = {}) => {
 
     if (data.dead) return;
 
+    data.energy = 0;
+
+    data.dead = true;
+
     shrapnelNoise();
 
     // random fade duration
-    const delay = 750 + rnd(750);
+    const delay = 1000 + rnd(1500);
 
     // this shouldn't be needed, but CSS seems to be applying "all" or ignoring the property.
     dom.o.style.setProperty('transition-property', 'opacity');
@@ -68,10 +73,6 @@ const Shrapnel = (options = {}) => {
       sprites.removeNodes(dom);
       data.deadTimer = null;
     }, delay + 50);
-
-    data.energy = 0;
-
-    data.dead = true;
 
     if (radarItem) {
       radarItem.die({
@@ -118,9 +119,9 @@ const Shrapnel = (options = {}) => {
         // bail early, don't die
         return;
       }
-    } else if (utils.array.includes(sounds.types.metalHit, targetType)) {
+    } else if (sounds.types.metalHit.includes(targetType)) {
       playSound(sounds.metalHit, exports);
-    } else if (utils.array.includes(sounds.types.genericSplat, targetType)) {
+    } else if (sounds.types.genericSplat.includes(targetType)) {
       playSound(sounds.genericSplat, exports);
     }
 
@@ -185,6 +186,9 @@ const Shrapnel = (options = {}) => {
 
     }
 
+    data.rotate3DAngle += data.rotate3DAngleIncrement;
+    data.spinAngle += data.spinAngleIncrement;
+
     moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
 
     // random: smoke while moving?
@@ -195,7 +199,7 @@ const Shrapnel = (options = {}) => {
     // did we hit the ground?
     if (data.y - data.height >= worldHeight) {
       // align w/ground, slightly lower
-      moveTo(data.x, worldHeight - (12 * data.relativeScale) + 4);
+      moveTo(data.x, worldHeight - (12 * data.relativeScale) + 3);
       die();
     }
 
@@ -203,8 +207,6 @@ const Shrapnel = (options = {}) => {
     collisionTest(collision, exports);
 
     data.gravity *= data.gravityRate;
-
-    data.frameCount++;
 
     return (data.dead && !data.deadTimer && !dom.o);
 
@@ -236,13 +238,6 @@ const Shrapnel = (options = {}) => {
     // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
     dom.oTransformSprite._style.setProperty('background-position', `${data.spriteType * -data.width * 1 / data.scale}px 0px`);
 
-    // spinning animation duration?
-    dom.oTransformSprite._style.setProperty('animation-duration', `${0.2 + Math.random()}s`);
-
-    if (Math.random() >= 0.5) {
-      dom.oTransformSprite._style.setProperty('animation-direction', 'reverse');
-    }
-
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     if (data.isEnemy) {
@@ -258,20 +253,21 @@ const Shrapnel = (options = {}) => {
 
   }
 
+  function rndAngle() {
+    return plusMinus(rnd(35));
+  }
 
   // default
   scale = options.scale || (0.8 + rnd(0.15));
 
   css = common.inheritCSS({
     className: 'shrapnel',
-    reverse: 'reverse',
     stopped: 'stopped'
   });
 
   data = common.inheritData({
     type: 'shrapnel',
     parentType: (options.type || null),
-    frameCount: 0,
     spriteType: rndInt(4),
     direction: 0,
     // sometimes zero / non-moving?
@@ -285,8 +281,12 @@ const Shrapnel = (options = {}) => {
     width: 12 * scale,
     height: 12 * scale,
     scale,
-    scaleRange: 0.4 + rnd(0.2),
-    extraTransforms: `scale3d(${[scale, scale, 1].join(',')})`,
+    scaleRange: 0.4 + rnd(0.25),
+    rotate3DAngle: rndAngle(),
+    rotate3DAngleIncrement: rndAngle(),
+    spinAngle: rndAngle(),
+    spinAngleIncrement: rndAngle(),
+    extraTransforms: '',
     hostile: true,
     damagePoints: 0.5,
     hasSound: !!options.hasSound,
