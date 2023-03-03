@@ -1,24 +1,31 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { gamePrefs } from '../UI/preferences.js';
 import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from './sprites.js';
 
 let soundIDs = 0;
-let soundIDsToPlay = {};
+
 const soundsToPlay = [];
 const fixedPlaybackRate = true;
+
+const lastPlayedByURL = {};
+
+const { shuffle } = utils.array;
 
 function getSound(soundReference) {
 
   if (!gamePrefs.sound) return;
 
+  // the princess is in another castle!
+  if (soundReference.isSequence) return soundReference;
+
   // common sound wrapper, options for positioning and muting etc.
   let soundObject;
 
   // multiple sound case
-  if (soundReference instanceof Array) {
+  if (soundReference.length) {
 
     // tack on a counter for multiple sounds
     if (soundReference.soundOffset === undefined) {
@@ -28,15 +35,46 @@ function getSound(soundReference) {
     // mark this object
     soundObject = soundReference[soundReference.soundOffset];
 
+    // hackish: exclude throttling on sound objects that are in arrays,
+    // unless the object is explicitly specified to be throttled.
+    // we don't know if they're in an array until we get to this point.
+    if (!soundReference.throttle) {
+      soundObject.excludeThrottling = true;
+    }
+
+    // similarly, for delays.
+    if (soundReference.excludeDelay) {
+      soundObject.excludeDelay = true;
+    }
+
+    // and, maximum delay.
+    if (soundReference.maxDelay) {
+      soundObject.maxDelay = soundReference.maxDelay;
+    }
+
+    // and, delay before playing.
+    if (soundReference.delay) {
+      soundObject.delay = soundReference.delay;
+    }
+
     // increase, and reset the counter as necessary
     soundReference.soundOffset++;
 
     if (soundReference.soundOffset >= soundReference.length) {
 
       // re-shuffle the array, randomize a little
-      soundReference = utils.array.shuffle(soundReference);
+      if (!soundReference.excludeshuffle && soundReference.length > 2) {
+        soundReference = shuffle(soundReference);
+      }
+
       soundReference.soundOffset = 0;
 
+      soundReference.lastItem = true;
+
+    } else {
+
+      soundReference.lastItem = false;
+      
     }
 
   } else {
@@ -45,12 +83,29 @@ function getSound(soundReference) {
 
   }
 
+  // TODO: this could probably be eliminated by recursion.
+
+  // check for sequences, again
+  if (soundObject.isSequence) return soundObject;
+
+  // overloading case: if a function, call and expect a proper sound.
+  if (soundObject instanceof Function) {
+    do {
+      soundObject = soundObject();
+    } while (soundObject instanceof Function);
+    // check again for other types
+    if (soundObject.length) return soundObject;
+  }
+
+  // if we have length, then arr, recurse again - she be an array, matey.
+  if (soundObject.length) return getSound(soundObject);
+
+  // if BnB sound but feature disabled, ignore.
+  if (!gamePrefs.bnb && soundObject?.options?.url && soundObject.options.url.indexOf('bnb') !== -1) return;
+
   /**
    * hackish: create and destroy SMSound instances once they finish playing,
-   * unless they have an `onfinish()` provided. this is to avoid hitting
-   * a very reasonable Chrome restriction on the maximum number of active
-   * audio decoders, as they're relatively $$$ and browsers may now block.
-   * https://bugs.chromium.org/p/chromium/issues/detail?id=1144736#c27
+   * unless they have an `onfinish()` provided.
    */
   if (soundObject && !soundObject.sound) {
 
@@ -60,15 +115,25 @@ function getSound(soundReference) {
 
     let _onfinish;
 
-    soundObject.onAASoundEnd = () => {
+    soundObject.onAASoundEnd = (sound) => {
 
-      // call the original, if specified
-      if (_onfinish) _onfinish();
+      // to avoid recursion, one must avoid recursion.
+      // TODO: this is an absolute mess and needs a re-think.
+      soundObject.onAASoundEnd = () => null;
 
-      // just to be sure
-      window.soundManager.destroySound(soundObject.options.id);
+      if (!sound) return;
 
-      soundObject.sound = null;
+      // call the original, if specified, ensuring proper scope and params
+      if (_onfinish) _onfinish.apply(soundObject.sound, [soundObject.sound]);
+
+      if (soundObject?.sound?.options) {
+        soundObject.sound.options.onAASoundEnd = null;
+      }
+
+      if (soundObject.sound) {
+        soundObject.sound.destruct();
+        soundObject.sound = null;
+      }
 
     }
 
@@ -78,8 +143,16 @@ function getSound(soundReference) {
     }
 
     soundObject.options.onfinish = soundObject.onAASoundEnd;
-  
+
     soundObject.sound = window.soundManager.createSound(soundObject.options);
+
+    // HACKISH: a reference from sound back to the parent
+    // useful for SMSound events, e.g., onfinish()
+    soundObject.sound.parentSoundObject = soundObject;
+
+    // hackish: tack on one more reference, on the sound object itself
+    soundObject.sound.options.onAASoundEnd = soundObject.onAASoundEnd;
+
   }
 
   return soundObject;
@@ -88,7 +161,10 @@ function getSound(soundReference) {
 
 function playQueuedSounds() {
 
-  if (!soundsToPlay.length) return;
+  var now = Date.now();
+
+  // DRY: soundObject
+  let sO;
 
   // empty queue
   for (let i = 0, j = soundsToPlay.length; i < j; i++) {
@@ -96,14 +172,42 @@ function playQueuedSounds() {
     // guard
     if (!soundsToPlay[i]?.soundObject?.sound) continue;
 
-    // play() may result in a new SM2 object being created, given cloning for the `multiShot` case.
-    soundsToPlay[i].soundObject.sound.play(soundsToPlay[i].localOptions);
+    // DRY
+    sO = soundsToPlay[i].soundObject;
+
+    // was throttling specified?
+    if (sO.skip || (
+      !sO.excludeThrottling
+      && sO.lastPlayed
+      && sO.throttle
+      && now - (lastPlayedByURL[sO.options.url] || 0) < sO.options.throttle)
+    ) {
+
+      // special case: fire onfinish() immediately, if specified.
+      if (soundsToPlay[i]?.localOptions?.onfinish) {
+        soundsToPlay[i].localOptions.onfinish(soundsToPlay[i]);
+      }
+
+    } else {
+
+      // catch all sounds sharing the same URL
+      lastPlayedByURL[sO.options.url] = now;
+
+      sO.lastPlayed = sO.excludeThrottling ? 0 : now;
+
+      // play() may result in a new SM2 object being created, given cloning for the `multiShot` case.
+      sO.sound.play(soundsToPlay[i].localOptions);
+
+    }
 
   }
 
-  // reset, instead of creating a new array object
-  soundsToPlay.length = 0;
-  soundIDsToPlay = {};
+  // reset, vs. creating a new array object
+  if (soundsToPlay.length) {
+    soundsToPlay.length = 0;
+  }
+
+  playQueuedBNBSounds();
 
 }
 
@@ -146,17 +250,44 @@ function getPanFromLocation(source, chopper) {
 
 function playSound(soundReference, target, soundOptions) {
 
+  if (!soundReference) {
+    // this is bad.
+    console.warn('playSound: WTF no soundReference??', soundReference);
+    if (window.location.hostname.indexOf('schillmania') === -1) debugger;
+    return;
+  }
+
+  // if soundReference is a (BnB) sequence, go there right away.
+  if (soundReference.isSequence) {
+    // NOTE: this will return null.
+    playSequence(soundReference, target, soundOptions);
+    return;
+  }
+
   const soundObject = getSound(soundReference);
+
+  // just in case - soundReference -> soundObject
+  // this may happen if e.g., sound is disabled.
+  if (!soundObject) return;
+
   let localOptions;
   let onScreen;
 
-  // just in case
-  if (!soundObject || !soundObject.sound) return null;
+  /**
+   * special case: the reference result may be a (BnB) sequence.
+   * play "through" provided no sounds were skipped.
+   */
+  if (soundObject.isSequence) {
+    playSequence(soundObject, target, soundOptions);
+    return;
+  }
 
-  if (!gamePrefs.sound) return soundObject.sound;
+  // one more guard
+  if (!soundObject.sound) return;
 
   // TODO: revisit on-screen logic, drop the function call
   onScreen = (!target || sprites.isOnScreen(target));
+  
   // onScreen = (target && target.data && target.data.isOnScreen);
 
   // old: determine volume based on on/off-screen status
@@ -165,14 +296,16 @@ function playSound(soundReference, target, soundOptions) {
   // new: calculate volume as range based on distance
   if (onScreen) {
 
-    localOptions = soundObject.soundOptions.onScreen;
+    localOptions = {
+      ...soundObject.soundOptions.onScreen
+    };
 
   } else {
 
     // determine volume based on distance
     localOptions = {
-      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects.helicopters[0]),
-      pan: getPanFromLocation(target, game.objects.helicopters[0])
+      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects[TYPES.helicopter][0]),
+      pan: getPanFromLocation(target, game.objects[TYPES.helicopter][0])
     };
 
   }
@@ -186,30 +319,69 @@ function playSound(soundReference, target, soundOptions) {
     localOptions.playbackRate = target?.data.playbackRate || (0.95 + (Math.random() * 0.1));
   }
 
+  // HACK: need to fix and normalize sound options.
+  if (soundObject?.options?.onstop && !localOptions.onstop) {
+    localOptions.onstop = soundObject.options.onstop;
+  }
+
   // 01/2021: push sound calls off to next frame to be played in a batch,
   // trade-off of slight async vs. blocking(?) current frame
   // 01/2022: only play if not already queued.
 
-  if (!soundIDsToPlay[soundObject.sound.id]) {
+  // hackish: certain BnB sounds may be queued to play one-at-a-time, so "commentary" doesn't overlap.
+  // queue regularly if `playImmediately` is set - on an array, or an individual sound.
 
-    soundIDsToPlay[soundObject.sound.id] = true;
+  if (soundObject.sound.url.match(/bnb/i) && (onScreen || !soundReference.regularQueueIfOffscreen)) {
+    
+    // allow immediate per reference, unless individual sound says no.
+    const immediate = soundObject.playImmediately || (soundObject.playImmediately !== false && soundReference.playImmediately);
 
-    soundsToPlay.push({
-      soundObject,
-      localOptions
-    });
+    if (!immediate) {
+
+      // we're in no rush; push on the BnB queue, and exit
+      queueBNBSound({
+        soundObject,
+        localOptions,
+        queued: Date.now(),
+        throttle: soundReference.throttle      
+      });
+
+      // ensure we keep processing sounds.
+      if (game.data.paused) {
+        // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
+        // TODO: clean this crap up.
+        if (!game.data.hackTimer) {
+          game.data.hackTimer = window.setTimeout(() => {
+            game.data.hackTimer = null;
+            playQueuedSounds();
+          }, 250);
+        }
+      }
+
+      return soundObject.sound;
+
+    }
 
   }
+
+  // regular queue case
+
+  soundsToPlay.push({
+    soundObject,
+    localOptions,
+    // special attribute pass-thru for BnB sounds that take priority
+    playImmediately: soundReference.playImmediately
+  });
 
   return soundObject.sound;
 
 }
 
-function playSoundWithDelay() {
+function playSoundWithDelay(...params) {
 
   let args, delay;
 
-  args = Array.prototype.slice.call(arguments);
+  args = [...params];
 
   // modify args, and store last argument if it looks like a number.
   if (!isNaN(args[args.length - 1])) {
@@ -220,17 +392,18 @@ function playSoundWithDelay() {
     delay = 500;
   }
 
-  common.setFrameTimeout(() => {
-    playSound.apply(this, args);
-  }, delay);
+  // return the timer, so it can be canceled
+  return common.setFrameTimeout(() => playSound(...args), delay);
 
 }
 
 function stopSound(sound) {
 
-  const soundObject = sound && getSound(sound);
+  if (!sound) return;
 
-  if (!soundObject) return;
+  const soundObject = getSound(sound);
+
+  if (!soundObject?.sound) return;
 
   soundObject.sound.stop();
 
@@ -246,11 +419,33 @@ function destroySound(sound) {
   if (!sound) return;
 
   // AA sound object case
-  if (sound.onAASoundEnd) return sound.onAASoundEnd();
+  if (sound.onAASoundEnd) {
+    return sound.onAASoundEnd(sound);
+  }
 
   // SMSound instance, an actual SM2 sound object
   if (sound.id) {
+    sound.parentSoundObject = null;
     window.soundManager.destroySound(sound.id);
+  }
+
+}
+
+function skipSound(sound) {
+
+  // hackish: silence and cause a sound to naturally end,
+  // firing its `onfinish()` method etc.
+  if (!sound) return;
+
+  // a sound may be playing, or not loaded yet.
+
+  // mark as "skipped"
+  sound.skipped = true;
+
+  // actively "skip" as need be and allow natural onfinish -> destruct.
+  if (sound.playState) {
+    sound.mute();
+    sound.setPosition(sound.duration - 1);
   }
 
 }
@@ -270,7 +465,7 @@ function playRepairingWrench(isRepairing, exports) {
 
   playSound(sounds.repairingWrench, exports, {
     onplay: (sound) => repairingWrench = sound,
-    onstop: (sound) => sound.destruct(),
+    onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(repairingWrench);
       exports.repairingWrenchTimer = common.setFrameTimeout(function() {
@@ -300,7 +495,7 @@ function playImpactWrench(isRepairing, exports) {
 
   playSound(sounds.impactWrench, exports, {
     onplay: (sound) => impactWrench = sound,
-    onstop: (sound) => sound.destruct(),
+    onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(impactWrench);
       exports.impactWrenchTimer = common.setFrameTimeout(function() {
@@ -328,7 +523,7 @@ function playTinkerWrench(isRepairing, exports) {
 
   playSound(sounds.tinkerWrench, exports, {
     onplay: (sound) => tinkerWrench = sound,
-    onstop: (sound) => sound.destruct(),
+    onstop: (sound) => destroySound(sound),
     position: rndInt(8000),
     onfinish() {
       destroySound(tinkerWrench);
@@ -382,7 +577,8 @@ let sounds = {
     expire: null,
   },
   machineGunFire: null,
-  machineGunFireEnemy: null
+  machineGunFireEnemy: null,
+  bnb: {}
   // numerous others will be assigned at init time.
 };
 
@@ -398,6 +594,8 @@ function initSoundTypes() {
 
 function getURL(file) {
 
+  if (document.domain === 'localhost') return `audio/wav/${file}.wav`;
+
   // SM2 will determine the appropriate format to play, based on client support.
   // URL pattern -> array of .ogg and .mp3 URLs
   return [
@@ -407,6 +605,9 @@ function getURL(file) {
   ];
 
 }
+
+// short-hand for addSound, with getURL()
+const add = (options = {}) => addSound({ ...options, url: getURL(options.url) });
 
 function addSound(options) {
 
@@ -422,14 +623,45 @@ function addSound(options) {
       offScreen: {
         // off-screen sounds are more quiet.
         volume: parseInt((options.volume || DEFAULT_VOLUME) / 4, 10)
-      }
-    }
+      },
+    },
+    throttle: options.throttle || 0,
+    lastPlayed: 0
   };
 
 }
 
+function addSequence(...args) {
+
+  // e.g., [s1, s2, s3].isSequence = true;
+  const sequence = [...args];
+
+  sequence.forEach((item, index) => {
+    if (item === undefined) {
+      console.warn('addSequence: WTF, undefined item?', sequence);
+    }
+
+    // only mark follow-up sounds for exclusion.
+    // first sound can still be throttled or skipped.
+    if (!index) return;
+
+    // ignore function methods.
+    // TODO: sort out a way to include these, too.
+    if (sequence[index] instanceof Function) return;
+
+    // could be an array at this point, too.
+    sequence[index].excludeDelay = true;
+    sequence[index].excludeThrottling = true;
+  });
+
+  sequence.isSequence = true;
+
+  return sequence;
+
+}
+
 // if SM2 is disabled or fails, still complete the sound config.
-window.soundManager.ontimeout(initSoundTypes);
+// window.soundManager.ontimeout(initSoundTypes);
 
 window.soundManager.onready(() => {
 
@@ -1051,12 +1283,15 @@ window.soundManager.onready(() => {
 });
 
 export {
+  addSequence,
+  addSound,
   destroySound,
   getSound,
   playQueuedSounds,
   playSound,
   getVolumeFromDistance,
   playSoundWithDelay,
+  skipSound,
   stopSound,
   playRepairingWrench,
   playImpactWrench,
