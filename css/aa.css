@@ -2730,10 +2730,11 @@ body.is_safari .cornholio .sub-sprite {
   position: absolute;
   bottom: 0px;
   left: 0px;
+  box-sizing: border-box;
   width: 100%;
-  margin-bottom: -2.5em;
+  margin-bottom: -2.35em;
   font-size: 0.65em;
-  /* fit at 1024px width */
+  padding: 0px;
   color: #666;
 }
 
