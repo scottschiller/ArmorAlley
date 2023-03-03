@@ -66,25 +66,29 @@ const EndBunker = (options = {}) => {
 
   function captureFunds(target) {
 
-    let maxFunds, capturedFunds, allFunds;
+    let maxFunds, capturedFunds, allFunds, actor;
 
     // infantry only get to steal so much at a time.
     // because they're special, engineers get to rob the bank! 💰
     allFunds = !!target.data.role;
-    maxFunds = allFunds ? game.objects.endBunkers[data.isEnemy ? 1 : 0].data.funds : 20;
+    maxFunds = allFunds ? game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds : 20;
 
     capturedFunds = Math.min(data.funds, maxFunds);
+
+    // engineer + BnB case, vs. 
+    actor = gamePrefs.bnb && target.data.role ? (target.data.isBeavis ? 'Beavis' : 'Butt-Head') : 'Your engineer';
 
     if (!tutorialMode) {
       if (data.isEnemy) {
         if (!capturedFunds) {
-          game.objects.notifications.add('🏦 🏴‍☠️ 🤷 Your engineer captured 0 enemy funds. 😒 Good effort, though.');
+          game.objects.notifications.add(`🏦 🏴‍☠️ 🤷 ${actor} captured 0 enemy funds. 😒 Good effort, though.`);
         } else {
           if (allFunds) {
-            game.objects.notifications.add(`🏦 🏴‍☠️ 💰 Your engineer captured all ${capturedFunds}${capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'}`);
+            game.objects.notifications.add(`🏦 🏴‍☠️ 💰 ${actor} captured all ${capturedFunds}${capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'}`);
           } else {
             game.objects.notifications.add(`🏦 🏴‍☠️ 💸 ${capturedFunds} enemy ${capturedFunds > 1 ? ' funds' : ' fund'} captured! 💰`);
           }
+          playSound(sounds.bnb.money);
         }
       } else {
         if (allFunds) {
