@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
-import { rndInt, plusMinus, rnd, TYPES, getTypes } from '../core/global.js';
+import { rndInt, plusMinus, TYPES, getTypes, rng } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -129,8 +129,8 @@ const GunFire = (options = {}) => {
             if (options.y < 358) {
               data.vY *= -1;
             } else {
-              data.vX *= -rnd(1);
-              data.vY *= rnd(1) * plusMinus();
+              data.vX *= -rng(1);
+              data.vY *= rng(1) * plusMinus();
             }
 
             // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.

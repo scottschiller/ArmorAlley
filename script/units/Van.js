@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, isGameOver, nearbyTest } from '../core/logic.js';
-import { TYPES, winloc, FPS, tutorialMode, rndInt, getTypes } from '../core/global.js';
+import { TYPES, winloc, FPS, tutorialMode, rndInt, getTypes, rngInt } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
@@ -47,7 +47,7 @@ const Van = (options = {}) => {
     // revert to CSS rules, prevent first frame of explosion from sticking
     dom.o._style.setProperty('background-position', '0px -384px');
 
-    effects.shrapnelExplosion(data, { centerX: true, velocity: 3 + rndInt(3) });
+    effects.shrapnelExplosion(data, { centerX: true, velocity: 3 + rngInt(3) });
 
     effects.domFetti(exports, dieOptions.attacker);
 
@@ -269,7 +269,7 @@ const Van = (options = {}) => {
     stateModulus: 30,
     stopped: false,
     inventory: {
-      frameCount: 60,
+      frameCount: 15,
       cost: 2
     },
     // if the van reaches the enemy base (near the landing pad), it's game over.

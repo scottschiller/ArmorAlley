@@ -1,7 +1,6 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { FPS, bananaMode, rubberChickenMode } from '../core/global.js';
 import { FPS, getTypes, rndInt, TYPES } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '../core/logic.js';

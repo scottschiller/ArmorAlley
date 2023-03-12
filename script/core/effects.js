@@ -1,4 +1,4 @@
-import { worldHeight } from '../core/global.js';
+import { rng, worldHeight } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js'
 import { gamePrefs } from '../UI/preferences.js';
@@ -323,7 +323,7 @@ const effects = {
     if (shrapnelOptions.centerX) {
       localOptions.x += halfWidth;
     } else {
-      localOptions.x += rnd(localOptions.width);
+      localOptions.x += rng(localOptions.width);
     }
 
     // silly, but copy right over.
@@ -349,8 +349,8 @@ const effects = {
 
     for (i = 0; i < shrapnelCount; i++) {
 
-      explosionVelocity1 = rnd(explosionVelocityMax + vX);
-      explosionVelocity2 = rnd(explosionVelocityMax + vY);
+      explosionVelocity1 = rng(explosionVelocityMax + vX);
+      explosionVelocity2 = rng(explosionVelocityMax + vY);
 
       vectorX = -explosionVelocity1 * Math.cos(angle * rad2Deg);
       vectorY = -explosionVelocity2 * Math.sin(angle * rad2Deg);

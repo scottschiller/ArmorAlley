@@ -3,7 +3,7 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest, getNearestObject } from '../core/logic.js';
-import { getTypes, rad2Deg, rnd, rndInt, TYPES } from '../core/global.js';
+import { getTypes, rad2Deg, rndInt, rng, rngInt, TYPES } from '../core/global.js';
 import { playSound, playSoundWithDelay, skipSound, stopSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -254,7 +254,7 @@ const SmartMissile = (options = {}) => {
     if (data.armed) {
 
       effects.shrapnelExplosion(data, {
-        count: 3 + rndInt(3),
+        count: 3 + rngInt(3),
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2,
         parentVX: data.vX * 2,
         parentVY: data.vY
@@ -785,7 +785,7 @@ const SmartMissile = (options = {}) => {
   function getRandomMissileMode() {
 
     // 20% chance of default, 40% chance of chickens or bananas
-    const rnd = Math.random();
+    const rnd = rng();
 
     return {
       isRubberChicken: rnd >= 0.2 && rnd < 0.6,
@@ -856,10 +856,10 @@ const SmartMissile = (options = {}) => {
     target: null,
     vX: 1 + Math.random(),
     vY: 1 + Math.random(),
-    vXMax: 12 + rnd(6) + (options.vXMax || 0),
-    vYMax: 12 + rnd(6) + (options.vYMax || 0),
+    vXMax: 12 + rng(6) + (options.vXMax || 0),
+    vYMax: 12 + rng(6) + (options.vYMax || 0),
     vYMaxExpired: 36,
-    thrust: 0.5 + rnd(0.5),
+    thrust: 0.5 + rng(0.5),
     deadTimer: null,
     trailerCount: 16,
     xHistory: [],

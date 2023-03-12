@@ -2,7 +2,7 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { getTypes, plusMinus, rnd, rndInt, TYPES, worldHeight } from '../core/global.js';
+import { getTypes, plusMinus, rnd, rndInt, rng, rngInt, TYPES, worldHeight } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
@@ -258,7 +258,7 @@ const Shrapnel = (options = {}) => {
   }
 
   // default
-  scale = options.scale || (0.8 + rnd(0.15));
+  scale = options.scale || (0.8 + rng(0.15));
 
   css = common.inheritCSS({
     className: 'shrapnel',
@@ -268,7 +268,7 @@ const Shrapnel = (options = {}) => {
   data = common.inheritData({
     type: 'shrapnel',
     parentType: (options.type || null),
-    spriteType: rndInt(4),
+    spriteType: rngInt(4),
     direction: 0,
     // sometimes zero / non-moving?
     vX: options.vX || 0,
@@ -277,11 +277,11 @@ const Shrapnel = (options = {}) => {
     maxVY: 32,
     gravity: 1,
     // randomize fall rate
-    gravityRate: 1.05 + rnd(.065),
+    gravityRate: 1.05 + rng(.065),
     width: 12 * scale,
     height: 12 * scale,
     scale,
-    scaleRange: 0.4 + rnd(0.25),
+    scaleRange: 0.4 + rng(0.25),
     rotate3DAngle: rndAngle(),
     rotate3DAngleIncrement: rndAngle(),
     spinAngle: rndAngle(),
@@ -290,7 +290,7 @@ const Shrapnel = (options = {}) => {
     hostile: true,
     damagePoints: 0.5,
     hasSound: !!options.hasSound,
-    rndRicochetAmount: 0.5 + Math.random(),
+    rndRicochetAmount: 0.5 + rng(),
     // let shrapnel that originates "higher up in the sky" from the following types, bounce off tanks and super bunkers
     ricochetTypes: [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile],
   }, options);

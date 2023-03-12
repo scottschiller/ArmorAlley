@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode, getTypes } from '../core/global.js';
+import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode, getTypes, rngInt } from '../core/global.js';
 import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds, skipSound } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
@@ -219,7 +219,7 @@ const Turret = (options = {}) => {
 
       effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
-      effects.shrapnelExplosion(data, { count: 3 + rndInt(3), velocity: 2 + rndInt(2) });
+      effects.shrapnelExplosion(data, { count: 3 + rngInt(3), velocity: 2 + rngInt(2) });
 
       effects.damageExplosion(exports);
 

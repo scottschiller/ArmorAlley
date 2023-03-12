@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rnd, rndInt, worldHeight, tutorialMode, TYPES } from '../core/global.js';
+import { rnd, rndInt, worldHeight, tutorialMode, TYPES, rng, rngInt } from '../core/global.js';
 import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
@@ -25,10 +25,10 @@ const ParachuteInfantry = (options = {}) => {
     data.halfHeight = data.height / 2;
 
     // randomize the animation a little
-    dom.oTransformSprite._style.setProperty('animation-duration', `${0.75 + rnd(0.75)}s`);
+    dom.oTransformSprite._style.setProperty('animation-duration', `${0.75 + rng(0.75)}s`);
 
     // and parachute speed, too.
-    data.vY = 0.3 + rnd(0.3);
+    data.vY = 0.3 + rng(0.3);
 
     // make the noise
     if (sounds.parachuteOpen) {
@@ -119,10 +119,10 @@ const ParachuteInfantry = (options = {}) => {
       if (data.frameCount % data.windModulus === 0) {
 
         // choose a random direction?
-        if (Math.random() > 0.5) {
+        if (rng() > 0.5) {
 
           // -1, 0, 1
-          randomWind = rndInt(3) - 1;
+          randomWind = rngInt(3) - 1;
 
           data.vX = randomWind * 0.25;
 
@@ -264,15 +264,15 @@ const ParachuteInfantry = (options = {}) => {
 
   data = common.inheritData({
     type: 'parachute-infantry',
-    frameCount: rndInt(3),
+    frameCount: rngInt(3),
     panicModulus: 3,
-    windModulus: 32 + rndInt(32),
-    panicFrame: rndInt(3),
+    windModulus: 32 + rngInt(32),
+    panicFrame: rngInt(3),
     energy: 2,
     energyMax: 2,
     parachuteOpen: false,
     // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-    parachuteOpensAtY: options.y + (rnd(370 - options.y)) + (!tutorialMode && Math.random() > 0.9 ? 999 : 0),
+    parachuteOpensAtY: options.y + (rng(370 - options.y)) + (!tutorialMode && rng() > 0.9 ? 999 : 0),
     direction: 0,
     width: 10,
     halfWidth: 5,
@@ -284,7 +284,7 @@ const ParachuteInfantry = (options = {}) => {
     didHitGround: false,
     landed: false,
     vX: 0, // wind
-    vY: 2 + Math.random() + Math.random(),
+    vY: 2 + rng() + rng(),
     maxY: worldHeight + 3,
     maxYPanic: 300,
     maxYParachute: worldHeight - 13,

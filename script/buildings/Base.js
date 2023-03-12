@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gameType } from '../aa.js';
-import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth, TYPES } from '../core/global.js';
+import { bananaMode, rubberChickenMode, defaultMissileMode, FPS, rnd, rndInt, tutorialMode, worldWidth, TYPES, rng } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { playSequence } from '../core/sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -51,7 +51,7 @@ const Base = (options = {}) => {
         // re-load and fire ze missles, now more aggressive!
         missileVMax = Math.min(data.missileVMax, missileVMax + 1);
 
-        common.setFrameTimeout(fire, 250 + rnd(250));
+        common.setFrameTimeout(fire, 250 + rng(250));
       }
     });
 

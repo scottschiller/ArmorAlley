@@ -4,7 +4,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheck, nearbyTest, recycleTest } from '../core/logic.js';
-import { TYPES, FPS, rndInt, oneOf, getTypes } from '../core/global.js';
+import { TYPES, FPS, rndInt, oneOf, getTypes, rngInt } from '../core/global.js';
 import { addSequence, playSound, playSoundWithDelay, skipSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -129,7 +129,7 @@ const Tank = (options = {}) => {
 
       effects.damageExplosion(exports);
 
-      effects.shrapnelExplosion(data, { velocity: 4 + rndInt(4) });
+      effects.shrapnelExplosion(data, { velocity: 4 + rngInt(4) });
 
       effects.inertGunfireExplosion({ exports });
 

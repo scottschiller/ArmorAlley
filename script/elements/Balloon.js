@@ -2,7 +2,7 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
-import { rndInt, plusMinus, worldWidth, TYPES } from '../core/global.js';
+import { rndInt, plusMinus, worldWidth, TYPES, rngInt } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -105,8 +105,8 @@ const Balloon = (options = {}) => {
 
     if (gameType === 'hard' || gameType === 'extreme') {
       effects.shrapnelExplosion(data, {
-        count: 3 + rndInt(3),
-        velocity: rndInt(4)
+        count: 3 + rngInt(3),
+        velocity: rngInt(4)
       });
     }
 
@@ -395,7 +395,7 @@ const Balloon = (options = {}) => {
   }, options);
 
   // random Y start position, unless specified
-  data.y = data.y || rndInt(data.maxY);
+  data.y = data.y || rngInt(data.maxY);
 
   dom = {
     o: null

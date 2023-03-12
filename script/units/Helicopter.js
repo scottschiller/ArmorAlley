@@ -21,7 +21,8 @@ import {
   worldWidth,
   worldHeight,
   oneOf,
-  getTypes
+  getTypes,
+  rngInt
 } from '../core/global.js';
 
 import {
@@ -1376,7 +1377,7 @@ const Helicopter = (options = {}) => {
 
     effects.shrapnelExplosion(data, {
       count: 20,
-      velocity: 4 + rndInt(4),
+      velocity: 4 + rngInt(4),
       vX: data.vX,
       vY: data.vY,
       parentVX: data.vX,

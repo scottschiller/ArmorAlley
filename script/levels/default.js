@@ -1,5 +1,5 @@
 import { game, gameType } from '../core/Game.js';
-import { rnd, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
+import { rnd, rng, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -710,22 +710,22 @@ function addWorldObjects() {
 
   addObject(TYPES.balloon, {
     x: 4096 - 256,
-    y: rnd(worldHeight)
+    y: rng(worldHeight)
   });
 
   addObject(TYPES.balloon, {
     x: 4096 + 256,
-    y: rnd(worldHeight)
+    y: rng(worldHeight)
   });
 
   addObject(TYPES.balloon, {
     x: 4096 + 512,
-    y: rnd(worldHeight)
+    y: rng(worldHeight)
   });
 
   addObject(TYPES.balloon, {
     x: 4096 + 768,
-    y: rnd(worldHeight)
+    y: rng(worldHeight)
   });
 
   // enemy base signs (flipped via `extraTransform`)

@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rndInt, rnd, TYPES, FPS } from '../core/global.js';
+import { rndInt, rnd, TYPES, FPS, rng, rngInt } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -217,7 +217,7 @@ const Bunker = (options = {}) => {
 
     const rndXY = 1 + rnd(1);
 
-    effects.shrapnelExplosion(data, { count: 16 + rndInt(24), velocity: (3 + rnd(3)), bottomAligned: true });
+    effects.shrapnelExplosion(data, { count: 16 + rngInt(24), velocity: (3 + rng(3)), bottomAligned: true });
     effects.inertGunfireExplosion({ exports, count: 16 + rndInt(8), vX: rndXY, vY: rndXY });
 
     /**
