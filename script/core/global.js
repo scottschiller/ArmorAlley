@@ -74,8 +74,23 @@ const bananaMode = 'banana-mode';
 
 // methods which prefer brevity, vs. being tacked onto `common` or `utils`
 
+let seed = Math.floor(Math.random() * 0xFFFFFFFF);
+
+// rng: random number *generator*.
+// hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm#L176
+function rng(number = 1) {
+  var t = seed += 0x6D2B79F5;
+  t = Math.imul(t ^ t >>> 15, t | 1);
+  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+  return number * (((t ^ t >>> 14) >>> 0) / 4294967296);
+}
+
 function rnd(number) {
   return Math.random() * number;
+}
+
+function rngInt(number) {
+  return parseInt(rng(number), 10);
 }
 
 function rndInt(number) {
@@ -274,7 +289,9 @@ export {
   bananaMode,
   oneOf,
   rnd,
+  rng,
   rndInt,
+  rngInt,
   plusMinus,
   setTutorialMode
 };
