@@ -7,6 +7,7 @@ import { rndInt, plusMinus, TYPES, getTypes, rnd } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const GunFire = (options = {}) => {
 
@@ -128,9 +129,11 @@ const GunFire = (options = {}) => {
             // hackish: if gunfire *originated* "above", consider this a vertical bounce.
             if (options.y < 358) {
               data.vY *= -1;
+            } else if (net.active) {
+              data.vX *= -1;
             } else {
-              data.vX *= -rng(1);
-              data.vY *= rng(1) * plusMinus();
+              data.vX *= -rnd(1);
+              data.vY *= rnd(1) * plusMinus();
             }
 
             // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
@@ -274,8 +277,10 @@ const GunFire = (options = {}) => {
       initDOM();
 
       // randomize a little: ±1 pixel.
-      data.x += plusMinus();
-      data.y += plusMinus();
+      if (!net.active) {
+        data.x += plusMinus();
+        data.y += plusMinus();
+      }
 
       sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
