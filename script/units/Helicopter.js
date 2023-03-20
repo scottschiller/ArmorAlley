@@ -2487,6 +2487,9 @@ const Helicopter = (options = {}) => {
       data.x = common.getLandingPadOffsetX(exports);
     }
 
+    // sign up with the local "bank."
+    game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].registerHelicopter(exports);
+
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
 
     // for human player: append immediately, so initial game start / respawn animation works nicely

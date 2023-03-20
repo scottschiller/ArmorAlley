@@ -99,15 +99,10 @@ const EndBunker = (options = {}) => {
       }
     }
 
-    // who gets the loot?
-    if (data.isEnemy) {
-      // local player
-      game.objects[TYPES.endBunker][0].data.funds += capturedFunds;
-      game.objects.view.updateFundsUI();
-    } else {
-      // CPU
-      game.objects[TYPES.endBunker][1].data.funds += capturedFunds;
-    }
+    // who gets the loot? 
+    game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1].data.funds += capturedFunds;
+
+    game.objects.view.updateFundsUI();
 
     data.funds -= capturedFunds;
 
@@ -122,9 +117,57 @@ const EndBunker = (options = {}) => {
 
   }
 
-  function animate() {
+  function registerHelicopter(helicopter) {
+
+    if (!objects.helicopters.includes(helicopter)) {
+      objects.helicopters.push(helicopter);
+    }
+    
+  }
+
+  function distributeFunds() {
 
     let offset, earnedFunds;
+
+    // note: end bunkers never die
+    if (data.frameCount % data.fundsModulus !== 0) return;
+
+    // edge case: tutorial mode, and no enemy chopper present yet
+    if (!objects.helicopters.length) return;
+
+    objects.helicopters.forEach((helicopter) => {
+    
+      // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
+      if (data.isEnemy) {
+        offset = 1 - (helicopter.data.x / helicopter.data.x);
+      } else {
+        offset = helicopter.data.x / game.objects.view.data.battleField.width;
+      }
+
+      if (offset < 0.33) {
+        earnedFunds = 1;
+      } else if (offset >= 0.33 && offset < 0.66) {
+        earnedFunds = 2;
+      } else {
+        earnedFunds = 3;
+      }
+
+      data.funds += earnedFunds;
+
+      if (helicopter.data.isLocal) {
+
+        game.objects.notifications.add(`+${earnedFunds === 1 ? '💰' : `${earnedFunds} 💰`}`);
+        game.objects.view.updateFundsUI();
+
+        helicopter.updateStatusUI({ funds: true });
+        
+      }
+
+    });
+    
+  }
+
+  function animate() {
 
     sprites.moveWithScrollOffset(exports);
 
@@ -134,44 +177,7 @@ const EndBunker = (options = {}) => {
 
     fire();
 
-    // note: end bunkers never die
-    if (data.frameCount % data.fundsModulus !== 0) return;
-
-    if (!objects.helicopter) {
-      objects.helicopter = game.objects.helicopter[(data.isEnemy ? 1 : 0)];
-    }
-
-    // edge case: tutorial mode, and no enemy chopper present yet
-    if (!objects.helicopter) {
-      return false;
-    }
-
-    // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
-    offset = objects.helicopter.data.x / game.objects.view.data.battleField.width;
-
-    if (data.isEnemy) {
-      offset = 1 - (objects.helicopter.data.x / objects.helicopter.data.x);
-    }
-
-    if (offset < 0.33) {
-      earnedFunds = 1;
-    } else if (offset >= 0.33 && offset < 0.66) {
-      earnedFunds = 2;
-    } else {
-      earnedFunds = 3;
-    }
-
-    data.funds += earnedFunds;
-
-    if (data.isEnemy) {
-      if (debug) console.log(`the enemy now has ${data.funds} funds.`);
-    } else {
-
-      game.objects.notifications.add(`+${earnedFunds === 1 ? '💰' : `${earnedFunds} 💰`}`);
-      game.objects.view.updateFundsUI();
-    }
-
-    objects.helicopter.updateStatusUI({ funds: true });
+    distributeFunds();
 
     // note: end bunkers never die, but leaving this in anyway.
     return (data.dead && !dom.o);
@@ -225,7 +231,7 @@ const EndBunker = (options = {}) => {
     halfWidth: 19,
     height,
     halfHeight: height / 2,
-    funds: (!options.isEnemy ? DEFAULT_FUNDS : 0),
+    funds: DEFAULT_FUNDS,
     firing: false,
     gunYOffset: 10,
     fireModulus: 4,
@@ -245,7 +251,7 @@ const EndBunker = (options = {}) => {
   };
 
   objects = {
-    helicopter: null
+    helicopters: []
   };
 
   exports = {
@@ -254,6 +260,7 @@ const EndBunker = (options = {}) => {
     dom,
     hit,
     init: initEndBunker,
+    registerHelicopter,
     updateHealth
   };
 
