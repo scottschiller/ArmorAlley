@@ -226,23 +226,23 @@ function getVolumeFromDistance(source, chopper) {
 
 }
 
-function getPanFromLocation(source, chopper) {
+function getPanFromLocation(source, player) {
 
-  // rough panning based on distance from chopper, relative to world width
-  if (!source || !chopper) return 0;
+  // rough panning based on distance from player, relative to world width
+  if (!source || !player) return 0;
 
   let delta; 
   let pan = 0;
 
   // don't allow 100% L/R pan, exactly
 
-  if (source.data.x < chopper.data.x) {
+  if (source.data.x < player.data.x) {
     // target is to the left
-    delta = chopper.data.x - source.data.x;
+    delta = player.data.x - source.data.x;
     pan = -(delta / worldWidth) * 0.75;
   } else {
     // to the right
-    delta = source.data.x - chopper.data.x;
+    delta = source.data.x - player.data.x;
     pan = (delta / worldWidth) * 0.75;
   }
 
@@ -287,14 +287,9 @@ function playSound(soundReference, target, soundOptions) {
   // one more guard
   if (!soundObject.sound) return;
 
-  // TODO: revisit on-screen logic, drop the function call
-  onScreen = (!target || sprites.isOnScreen(target));
+  // default: 100% volume if no target, OR, local player and on-screen.
+  onScreen = !target || (target === game.players.local && target.data.isOnScreen);
   
-  // onScreen = (target && target.data && target.data.isOnScreen);
-
-  // old: determine volume based on on/off-screen status
-  // localOptions = soundObject.soundOptions[onScreen ? 'onScreen' : 'offScreen'];
-
   // new: calculate volume as range based on distance
   if (onScreen) {
 
@@ -306,8 +301,8 @@ function playSound(soundReference, target, soundOptions) {
 
     // determine volume based on distance
     localOptions = {
-      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.objects[TYPES.helicopter][0]),
-      pan: getPanFromLocation(target, game.objects[TYPES.helicopter][0])
+      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.players.local),
+      pan: getPanFromLocation(target, game.players.local)
     };
 
   }
@@ -1296,6 +1291,7 @@ export {
   addSequence,
   addSound,
   destroySound,
+  getPanFromLocation,
   getSound,
   playQueuedSounds,
   playSound,
