@@ -40,6 +40,7 @@ import { Shrapnel } from '../elements/Shrapnel.js';
 import { sprites } from './sprites.js';
 import { addWorldObjects } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
+import { net } from './network.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -224,6 +225,139 @@ const game = (() => {
 
     addWorldObjects();
 
+    // player + enemy helicopters
+
+    let playAsEnemy = !!(window.location.href.match(/playAsEnemy/i));
+
+    let enemyCPU = !!(window.location.href.match(/enemyCPU|remoteCPU/i));
+
+    if (!tutorialMode && playAsEnemy) {
+
+      addObject(TYPES.helicopter, {
+        isEnemy: true,
+        attachEvents: true,
+        isLocal: true
+      });
+
+      addObject(TYPES.helicopter, {
+        isEnemy: false,
+        isCPU: true
+      });
+
+    } else {
+
+      if (net.active) {
+
+        console.log('NETWORK GAME');
+
+        // which one you are, depends on who's hosting.
+
+        // TODO: support 3+ players, two human and 1-2 CPUs.
+        let cooperative = window.location.href.match(/coop/i);
+
+        if (cooperative) {
+
+          if (net.isHost) {
+
+            console.log('you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy.');
+
+            addObject(TYPES.helicopter, {
+              attachEvents: true,
+              isLocal: true
+            });
+
+            addObject(TYPES.helicopter, {
+              isRemote: true
+            });
+
+          } else {
+
+            console.log('you are hosting: you are helicopters[1], you and your friend are playing cooperatively against an enemy.');
+
+            addObject(TYPES.helicopter, {
+              isRemote: true
+            });
+
+            addObject(TYPES.helicopter, {
+              attachEvents: true,
+              isLocal: true
+            });
+
+          }
+
+          // "the bad guys" - yes, two, indeed.
+          // note that these run independently on each client, and it's critical they stay in sync.
+
+          addObject(TYPES.helicopter, {
+            isEnemy: true,
+            isCPU: true
+          });
+
+          addObject(TYPES.helicopter, {
+            isEnemy: true,
+            isCPU: true
+          });
+
+        } else {
+
+          // Player vs. player
+
+          if (net.isHost) {
+
+            console.log('you are hosting: you are helicopters[0], and take the friendly base');
+
+            addObject(TYPES.helicopter, {
+              attachEvents: true,
+              isLocal: true
+            });
+
+            addObject(TYPES.helicopter, {
+              isEnemy: true,
+              isRemote: true
+            });
+
+          } else {
+
+            console.log('you are a guest: you are helicopters[1], and take the enemy base');
+
+            addObject(TYPES.helicopter, {
+              isRemote: true
+            });
+
+            // hackish: allow CPU override for testing
+            addObject(TYPES.helicopter, {
+              isLocal: true,
+              isEnemy: true,
+              attachEvents: !enemyCPU,
+              isCPU: enemyCPU
+            });
+
+          }
+
+        }
+    
+      } else {
+
+        // regular game
+
+        addObject(TYPES.helicopter, {
+          attachEvents: true,
+          isLocal: true
+        });
+  
+        if (!tutorialMode) {
+    
+          addObject(TYPES.helicopter, {
+            isEnemy: true,
+            isCPU: true
+          });
+        
+        }
+
+      }
+
+    }
+
   }
 
   function togglePause() {
@@ -237,6 +371,9 @@ const game = (() => {
   }
 
   function pause(options) {
+
+    // ignore if we're in a network game.
+    if (net.active) return;
 
     const silent = options?.noMute !== true;
     const keepColor = options?.keepColor || false;
@@ -328,11 +465,13 @@ const game = (() => {
 
     }
 
-    data.convoyDelay = gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60);
-
     zones.init();
 
     populateTerrain();
+
+    if (game.players.cpu.length && !tutorialMode) {
+      game.objects.inventory.startEnemyOrdering();
+    }
 
     function startEngine() {
 
@@ -353,60 +492,6 @@ const game = (() => {
       // wait for click or keypress, "user interaction"
       utils.events.add(document, 'click', startEngine);
     }
-
-    (() => {
-
-      // basic enemy ordering pattern
-      const enemyOrders = parseTypes('missileLauncher, tank, van, infantry, infantry, infantry, infantry, infantry, engineer, engineer');
-      const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
-      let i = 0;
-
-      if (gameType === 'extreme') {
-
-        // one more tank to round out the bunch, and (possibly) further complicate things :D
-        enemyOrders.push(TYPES.tank);
-
-        // matching delay, too
-        enemyDelays.push(4);
-
-      }
-
-      // after ordering, wait a certain amount before the next convoy
-      enemyDelays.push(data.convoyDelay);
-
-      function orderNextItem() {
-
-        let options;
-
-        if (!data.battleOver && !data.paused) {
-
-          options = {
-            isEnemy: true,
-            x: worldWidth + 64
-          };
-
-          if (!data.productionHalted) {
-            addObject(enemyOrders[i], options);
-          }
-
-          common.setFrameTimeout(orderNextItem, enemyDelays[i] * 1000);
-
-          i++;
-
-          if (i >= enemyOrders.length) {
-            i = 0;
-          }
-
-        }
-
-      }
-
-      // and begin
-      if (!tutorialMode) {
-        common.setFrameTimeout(orderNextItem, 5000);
-      }
-
-    })();
 
   }
 

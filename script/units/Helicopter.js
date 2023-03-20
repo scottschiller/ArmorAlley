@@ -2825,6 +2825,16 @@ const Helicopter = (options = {}) => {
     items: getTypes('helicopter, superBunker, bunker, balloon, tank, van, missileLauncher, chain, infantry:friendly, engineer:friendly, cloud:all', { exports })
   };
 
+  // hackish: assign to globals before init
+  if (data.isLocal) {
+    game.players.local = exports;
+  } else if (data.isRemote) {
+    game.players.remote.push(exports);
+  }
+  if (data.isCPU) {
+    // note: not mutually exlusive, can be local (for testing purposes) or remote
+    game.players.cpu.push(exports);
+  }
   return exports;
 
 };

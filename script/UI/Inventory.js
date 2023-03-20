@@ -342,6 +342,74 @@ const Inventory = () => {
     }
   }
 
+  function startEnemyOrdering() {
+
+    // basic enemy ordering pattern
+    const enemyOrders = parseTypes('missileLauncher, tank, van, infantry, infantry, infantry, infantry, infantry, engineer, engineer');
+    const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
+    let orderOffset = 0;
+
+    if (gameType === 'extreme') {
+
+      // one more tank to round out the bunch, and (possibly) further complicate things :D
+      enemyOrders.push(TYPES.tank);
+
+      // matching delay, too
+      enemyDelays.push(4);
+
+    }
+
+    // the more CPUs, the faster the convoys! :D
+    const convoyDelay = (gameType === 'extreme' ? 20 : (gameType === 'hard' ? 30 : 60)) / game.players.cpu.length;
+
+    // after ordering, wait a certain amount before the next convoy
+    enemyDelays.push(convoyDelay);
+
+    function orderNextItem() {
+
+      let options;
+
+      if (!game.data.battleOver && !game.data.paused) {
+
+        options = {
+          isEnemy: true,
+          x: worldWidth + 64
+        };
+
+        if (!game.data.productionHalted) {
+
+          let obj = game.addObject(enemyOrders[orderOffset], options);
+
+          // special case: if testing human vs. remote CPU and over network, send these over to the other side as well.
+          if (net.active && !net.isHost) {
+            net.sendMessage({
+              type: 'ADD_OBJECT',
+              objectType: obj.data.type,
+              params: {
+                ...options,
+                id: obj.data.id
+              }
+            });
+          }
+
+        }
+
+        common.setFrameTimeout(orderNextItem, enemyDelays[orderOffset] * 1000);
+
+        orderOffset++;
+
+        if (orderOffset >= enemyOrders.length) {
+          orderOffset = 0;
+        }
+
+      }
+
+    }
+
+    common.setFrameTimeout(orderNextItem, data.enemyOrderDelay);
+
+  }
+
   css = {
     building: 'building',
     ordering: 'ordering'
@@ -349,6 +417,7 @@ const Inventory = () => {
 
   data = {
     frameCount: 0,
+    enemyOrderDelay: 5000,
     building: false,
     queue: [],
     queueCopy: [],
@@ -369,7 +438,8 @@ const Inventory = () => {
     animate,
     data,
     dom,
-    order
+    order,
+    startEnemyOrdering
   };
 
   initStatusBar();
