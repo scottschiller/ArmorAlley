@@ -1,11 +1,18 @@
 import { game, gameType } from '../core/Game.js';
-import { rnd, rng, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
+import { rng, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
 function addWorldObjects() {
 
-  const { addItem, addObject } = game;
+  const { addItem } = game;
+
+  function addObject(type, options) {
+    game.addObject(type, {
+      ...options,
+      staticID: true
+    });
+  }
 
   let i, x;
 
@@ -466,11 +473,6 @@ function addWorldObjects() {
       x: 7800
     });
 
-    addObject(TYPES.turret, {
-      x: 475,
-      DOA: true
-    });
-
     addObject(TYPES.bunker, {
       x: 1024,
       isEnemy: true
@@ -728,25 +730,12 @@ function addWorldObjects() {
     y: rng(worldHeight)
   });
 
+
   // enemy base signs (flipped via `extraTransform`)
 
   addItem('left-arrow-sign', 7700, 'scaleX(-1)');
 
   addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
-
-  // player + enemy helicopters
-
-  addObject(TYPES.helicopter, {
-    attachEvents: true
-  });
-
-  if (!tutorialMode) {
-
-    addObject(TYPES.helicopter, {
-      isEnemy: true
-    });
-
-  }
 
 }
 
