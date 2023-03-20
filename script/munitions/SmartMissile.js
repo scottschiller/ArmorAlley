@@ -266,14 +266,14 @@ const SmartMissile = (options = {}) => {
 
       // special-case: shot down by gunfire, vs. generic "boom"
       if (attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
-        playSound(sounds.metalClang, exports);
+        playSound(sounds.metalClang, game.players.local);
       } else if (sounds.genericBoom) {
-        playSound(sounds.genericBoom, exports);
+        playSound(sounds.genericBoom, game.players.local);
       }
 
     } else if (sounds.metalClang) {
 
-      playSound(sounds.metalClang, exports);
+      playSound(sounds.metalClang, game.players.local);
 
     }
 
@@ -303,7 +303,7 @@ const SmartMissile = (options = {}) => {
         // play only if "armed", as an audible hint that it was capable of doing damage.
         if (data.armed) {
 
-          playSound(sounds.rubberChicken.die, exports, {
+          playSound(sounds.rubberChicken.die, game.players.local, {
             onplay: (sound) => dieSound = sound,
             playbackRate: data.playbackRate
           });
@@ -361,7 +361,7 @@ const SmartMissile = (options = {}) => {
     }
 
     // if targeting the player, ensure the expiry warning sound is stopped.
-    if (objects?.target === game.objects.helicopter[0]) {
+    if (objects?.target === game.players.local) {
       stopSound(sounds.missileWarningExpiry);
     }
 
