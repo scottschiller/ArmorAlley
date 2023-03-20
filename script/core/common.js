@@ -65,6 +65,14 @@ const common = {
   
     game.objectsById[obj.data.id] = null;
     delete game.objectsById[obj.data.id];
+
+    // off to the boneyard, ye scalleywag. ☠️
+    if (net.active) {
+      game.boneyard[obj.data.id] = {
+        ts: performance.now(),
+        attacker: obj?.data?.attacker?.id || 'unknown'
+      };
+    }
   
   },
 
