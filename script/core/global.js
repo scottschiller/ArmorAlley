@@ -1,6 +1,8 @@
 // oft-referenced constants, and a few simple methods.
 
-const DEFAULT_FUNDS = window.location.toString().match(/FUNDS/i) ? 999 : 32;
+const searchParams = new URLSearchParams(window.location.search);
+
+const DEFAULT_FUNDS = searchParams.get('FUNDS') ? 999 : 32;
 
 const winloc = window.location.href.toString();
 
@@ -12,7 +14,7 @@ const FRAMERATE = 1000 / FPS;
 // skip frame(s) as needed, prevent the game from running too fast.
 const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * 0.5;
 
-const unlimitedFrameRate = winloc.match(/frameRate=\*/i);
+const unlimitedFrameRate = searchParams.get('frameRate=*');
 
 /**
  * Evil tricks needed because Safari 6 (and Webkit nightly)
@@ -37,14 +39,14 @@ const isMobileIOS = ua.match(/iphone|ipad/i);
 // whether off-screen elements are forcefully removed from the DOM.
 // may be expensive up front, and/or cause style recalcs while
 // scrolling the world. the fastest nodes are the ones that aren't there.
-const useDOMPruning = !winloc.match(/noDomPruning/i);
+const useDOMPruning = !searchParams.get('noDomPruning');
 
-const trackEnemy = winloc.match(/trackEnemy/i);
+const trackEnemy = searchParams.get('trackEnemy') || searchParams.get('enemyCPU');
 
-const debug = winloc.match(/debug/i);
+const debug = searchParams.get('debug');
 
 // TODO: get rid of this.
-const debugType = winloc.match(/debugType/i);
+const debugType = searchParams.get('debugType');
 
 const DEFAULT_VOLUME = 25;
 
@@ -54,10 +56,10 @@ const rad2Deg = 180 / Math.PI;
 const worldWidth = 8192;
 const worldHeight = 380;
 
-const forceZoom = !!(winloc.match(/forceZoom/i));
-const forceTransform = !!(winloc.match(/forceTransform/i));
+const forceZoom = !!(searchParams.get('forceZoom'));
+const forceTransform = !!(searchParams.get('forceTransform'));
 
-let tutorialMode = !!(winloc.match(/tutorial/i));
+let tutorialMode = !!(searchParams.get('tutorial'));
 
 function setTutorialMode(state) {
   tutorialMode = state;
