@@ -76,11 +76,11 @@ const utils = {
 
   events: {
 
-    add: (o, evtName, evtHandler) => o.addEventListener(evtName, evtHandler, false),
+    add: (o, evtName, evtHandler) => o?.addEventListener(evtName, evtHandler, false),
 
-    remove: (o, evtName, evtHandler) => o.removeEventListener(evtName, evtHandler, false),
+    remove: (o, evtName, evtHandler) => o?.removeEventListener(evtName, evtHandler, false),
 
-    preventDefault: e => e.preventDefault()
+    preventDefault: e => e?.preventDefault()
 
   },
 
