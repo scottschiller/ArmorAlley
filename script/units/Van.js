@@ -47,7 +47,7 @@ const Van = (options = {}) => {
     // revert to CSS rules, prevent first frame of explosion from sticking
     dom.o._style.setProperty('background-position', '0px -384px');
 
-    effects.shrapnelExplosion(data, { centerX: true, velocity: 3 + rngInt(3) });
+    effects.shrapnelExplosion(data, { centerX: true, velocity: 3 + rngInt(3, TYPES.shrapnel) });
 
     effects.domFetti(exports, dieOptions.attacker);
 

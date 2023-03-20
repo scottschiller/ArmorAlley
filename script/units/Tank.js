@@ -129,7 +129,7 @@ const Tank = (options = {}) => {
 
       effects.damageExplosion(exports);
 
-      effects.shrapnelExplosion(data, { velocity: 4 + rngInt(4) });
+      effects.shrapnelExplosion(data, { velocity: 4 + rngInt(4, TYPES.shrapnel) });
 
       effects.inertGunfireExplosion({ exports });
 
