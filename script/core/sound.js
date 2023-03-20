@@ -20,6 +20,9 @@ function getSound(soundReference) {
   // TODO: review, see if an early exit is still useful.
   if (!gamePrefs.sound) return;
 
+  // hackish: only BnB presently uses sequences. bail if not enabled in prefs.
+  if (soundReference.isSequence && !gamePrefs.bnb) return;
+
   // the princess is in another castle!
   if (soundReference.isSequence) return soundReference;
 
@@ -333,6 +336,9 @@ function playSound(soundReference, target, soundOptions) {
   // queue regularly if `playImmediately` is set - on an array, or an individual sound.
 
   if (soundObject.sound.url.match(/bnb/i) && (onScreen || !soundReference.regularQueueIfOffscreen)) {
+
+    // hackish: bail if feature-disabled
+    if (!gamePrefs.bnb) return;
     
     // allow immediate per reference, unless individual sound says no.
     const immediate = soundObject.playImmediately || (soundObject.playImmediately !== false && soundReference.playImmediately);
