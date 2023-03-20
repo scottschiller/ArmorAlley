@@ -213,16 +213,20 @@ function playQueuedSounds() {
 
 }
 
-function getVolumeFromDistance(source, chopper) {
+function getVolumeFromDistance(source, player, worldWidthScale = 1) {
 
   // based on two objects' distance from each other, return volume -
-  // e.g., things far away are quiet, things close-up are loud
-  if (!source || !chopper) return 100;
+  // e.g., things far away are quiet, things close-up are loud.
+  // `worldWidthScale` e.g., 0.5 = half the world distance.
+  if (!source || !player) return 100;
 
-  const delta = Math.abs(source.data.x - chopper.data.x);
+  const scaledWorld = worldWidth * worldWidthScale;
 
-  // volume range: 5-30%?
-  return (0.05 + (0.25 * ((worldWidth - delta) / worldWidth)));
+  // limit to within the specified scaled range
+  const delta = Math.min(Math.abs(source.data.x - player.data.x), scaledWorld);
+
+  // volume range: 5-90%?
+  return (0.05 + (0.85 * ((scaledWorld - delta) / scaledWorld)));
 
 }
 
