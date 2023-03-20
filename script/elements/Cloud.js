@@ -1,4 +1,4 @@
-import { rngInt, worldWidth, worldHeight, rng, TYPES } from '../core/global.js';
+import { rndInt, worldWidth, worldHeight, rng, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
