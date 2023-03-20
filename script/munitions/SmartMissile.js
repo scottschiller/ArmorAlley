@@ -254,7 +254,7 @@ const SmartMissile = (options = {}) => {
     if (data.armed) {
 
       effects.shrapnelExplosion(data, {
-        count: 3 + rngInt(3),
+        count: 3 + rngInt(3, TYPES.shrapnel),
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2,
         parentVX: data.vX * 2,
         parentVY: data.vY
@@ -783,7 +783,7 @@ const SmartMissile = (options = {}) => {
   function getRandomMissileMode() {
 
     // 20% chance of default, 40% chance of chickens or bananas
-    const rnd = rng();
+    const rnd = rng(1, TYPES.smartMissile);
 
     return {
       isRubberChicken: rnd >= 0.2 && rnd < 0.6,
@@ -821,8 +821,10 @@ const SmartMissile = (options = {}) => {
 
   const width = (options.isRubberChicken ? 24 : 14);
 
+  let type = TYPES.smartMissile;
+
   data = common.inheritData({
-    type: 'smart-missile',
+    type,
     parent: options.parent || null,
     parentType: options.parentType || null,
     energy: 2,
