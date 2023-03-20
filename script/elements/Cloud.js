@@ -1,4 +1,4 @@
-import { rndInt, worldWidth, worldHeight } from '../core/global.js';
+import { rngInt, worldWidth, worldHeight, rng, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -6,6 +6,7 @@ import { sprites } from '../core/sprites.js';
 const Cloud = (options = {}) => {
 
   let cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
+  let type = TYPES.cloud;
 
   function animate() {
 
@@ -15,11 +16,11 @@ const Cloud = (options = {}) => {
 
       // TODO: improve, limit on axes
 
-      data.windOffsetX += (data.x < 0 || Math.random() > 0.5 ? 0.25 : -0.25);
+      data.windOffsetX += (data.x < 0 || rng(1, type) > 0.5 ? 0.25 : -0.25);
 
       data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
-      data.windOffsetY += (data.y < 72 || Math.random() > 0.5 ? 0.1 : -0.1);
+      data.windOffsetY += (data.y < 72 || rng(1, type) > 0.5 ? 0.1 : -0.1);
 
       data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
@@ -66,7 +67,7 @@ const Cloud = (options = {}) => {
 
   }
 
-  cloudType = (Math.random() > 0.5 ? 2 : 1);
+  cloudType = (rng(1, TYPES.cloud) > 0.5 ? 2 : 1);
 
   cloudWidth = (cloudType === 2 ? 125 : 102);
   cloudHeight = (cloudType === 2 ? 34 : 29);
@@ -76,7 +77,7 @@ const Cloud = (options = {}) => {
   });
 
   data = common.inheritData({
-    type: 'cloud',
+    type,
     isNeutral: true,
     frameCount: 0,
     windModulus: 16,
@@ -84,7 +85,7 @@ const Cloud = (options = {}) => {
     windOffsetY: 0,
     verticalDirection: 0.33,
     verticalDirectionDefault: 0.33,
-    y: options.y || (96 + parseInt((worldHeight - 96 - 128) * Math.random(), 10)),
+    y: options.y || (96 + parseInt((worldHeight - 96 - 128) * rng(1, type), 10)),
     width: cloudWidth,
     halfWidth: parseInt(cloudWidth / 2, 10),
     height: cloudHeight,

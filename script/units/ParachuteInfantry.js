@@ -25,10 +25,10 @@ const ParachuteInfantry = (options = {}) => {
     data.halfHeight = data.height / 2;
 
     // randomize the animation a little
-    dom.oTransformSprite._style.setProperty('animation-duration', `${0.75 + rng(0.75)}s`);
+    dom.oTransformSprite._style.setProperty('animation-duration', `${0.75 + rng(0.75, data.type)}s`);
 
     // and parachute speed, too.
-    data.vY = 0.3 + rng(0.3);
+    data.vY = 0.3 + rng(0.3, data.type);
 
     // make the noise
     if (sounds.parachuteOpen) {
@@ -119,10 +119,10 @@ const ParachuteInfantry = (options = {}) => {
       if (data.frameCount % data.windModulus === 0) {
 
         // choose a random direction?
-        if (rng() > 0.5) {
+        if (rng(1, data.type) > 0.5) {
 
           // -1, 0, 1
-          randomWind = rngInt(3) - 1;
+          randomWind = rngInt(3, data.type) - 1;
 
           data.vX = randomWind * 0.25;
 
@@ -263,16 +263,16 @@ const ParachuteInfantry = (options = {}) => {
   });
 
   data = common.inheritData({
-    type: 'parachute-infantry',
-    frameCount: rngInt(3),
+    type,
+    frameCount: rngInt(3, type),
     panicModulus: 3,
-    windModulus: 32 + rngInt(32),
-    panicFrame: rngInt(3),
+    windModulus: 32 + rngInt(32, type),
+    panicFrame: rngInt(3, type),
     energy: 2,
     energyMax: 2,
     parachuteOpen: false,
     // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-    parachuteOpensAtY: options.y + (rng(370 - options.y)) + (!tutorialMode && rng() > 0.9 ? 999 : 0),
+    parachuteOpensAtY: options.y + (rng(370 - options.y, type)) + (!tutorialMode && rng(1, type) > 0.9 ? 999 : 0),
     direction: 0,
     width: 10,
     halfWidth: 5,
@@ -284,7 +284,7 @@ const ParachuteInfantry = (options = {}) => {
     didHitGround: false,
     landed: false,
     vX: 0, // wind
-    vY: 2 + rng() + rng(),
+    vY: 2 + rng(1, type) + rng(1, type),
     maxY: worldHeight + 3,
     maxYPanic: 300,
     maxYParachute: worldHeight - 13,

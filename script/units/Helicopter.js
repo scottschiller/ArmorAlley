@@ -22,7 +22,8 @@ import {
   worldHeight,
   oneOf,
   getTypes,
-  rngInt
+  rngInt,
+  rng
 } from '../core/global.js';
 
 import {
@@ -56,7 +57,9 @@ import { effects } from '../core/effects.js';
 
 const Helicopter = (options = {}) => {
 
-  let css, data, dom, events, objects, collision, radarItem, exports, lastTarget, statsBar;
+  let css, data, dom, events, exports, objects, collision, radarItem, rngID, lastTarget, statsBar;
+
+  const aiRNG = (number) => rng(number, null, aiSeedOffset);
 
   function cloak() {
 
@@ -2012,7 +2015,7 @@ const Helicopter = (options = {}) => {
 
         // targeting a tank? randomize bombing depending on game difficulty.
         // default to 10% chance if no specific gameType match.
-        if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3 && Math.random() > (data.bombingThreshold[gameType] || 0.9)) {
+        if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3 && aiRNG() > (data.bombingThreshold[gameType] || 0.9)) {
           setBombing(true);
         } else {
           setBombing(false);
@@ -2330,12 +2333,12 @@ const Helicopter = (options = {}) => {
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
 
         // should we target tanks?
-        data.targeting.tanks = (Math.random() > 0.65);
+        data.targeting.tanks = (aiRNG() > 0.65);
 
         // should we target clouds?
-        data.targeting.clouds = (Math.random() > 0.5);
+        data.targeting.clouds = (aiRNG() > 0.5);
 
-        data.targeting.helicopters = (Math.random() > 0.25 || tutorialMode);
+        data.targeting.helicopters = (aiRNG() > 0.25 || tutorialMode);
 
         if (winloc.match(/clouds/i)) {
           // hack/testing: cloud-only targeting mode
@@ -2652,6 +2655,9 @@ const Helicopter = (options = {}) => {
   };
 
   statsBar = document.getElementById('stats-bar');
+  rngID = `${data.type}_${data.id}`;
+  // so each helicopter gets a unique seed.
+  const aiSeedOffset = (data.id.split('_')[1] || 0);
 
   dom = {
     o: null,

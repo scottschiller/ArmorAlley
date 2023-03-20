@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
-import { rndInt, plusMinus, TYPES, getTypes, rng } from '../core/global.js';
+import { rndInt, plusMinus, TYPES, getTypes, rnd } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';

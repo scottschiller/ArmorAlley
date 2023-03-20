@@ -217,7 +217,7 @@ const Bunker = (options = {}) => {
 
     const rndXY = 1 + rnd(1);
 
-    effects.shrapnelExplosion(data, { count: 16 + rngInt(24), velocity: (3 + rng(3)), bottomAligned: true });
+    effects.shrapnelExplosion(data, { count: 16 + rngInt(24, data.type), velocity: (3 + rng(3, data.type)), bottomAligned: true });
     effects.inertGunfireExplosion({ exports, count: 16 + rndInt(8), vX: rndXY, vY: rndXY });
 
     /**

@@ -9,7 +9,7 @@ import { sprites } from '../core/sprites.js';
 
 const Shrapnel = (options = {}) => {
 
-  let css, dom, data, collision, radarItem, scale, exports;
+  let css, dom, data, collision, radarItem, scale, exports, type = TYPES.shrapnel;
 
   function moveTo(x, y) {
 
@@ -266,9 +266,9 @@ const Shrapnel = (options = {}) => {
   });
 
   data = common.inheritData({
-    type: 'shrapnel',
+    type,
     parentType: (options.type || null),
-    spriteType: rngInt(4),
+    spriteType: rngInt(4, type),
     direction: 0,
     // sometimes zero / non-moving?
     vX: options.vX || 0,
@@ -277,11 +277,11 @@ const Shrapnel = (options = {}) => {
     maxVY: 32,
     gravity: 1,
     // randomize fall rate
-    gravityRate: 1.05 + rng(.065),
+    gravityRate: 1.05 + rng(.065, type),
     width: 12 * scale,
     height: 12 * scale,
     scale,
-    scaleRange: 0.4 + rng(0.25),
+    scaleRange: 0.4 + rng(0.25, type),
     rotate3DAngle: rndAngle(),
     rotate3DAngleIncrement: rndAngle(),
     spinAngle: rndAngle(),
@@ -290,7 +290,7 @@ const Shrapnel = (options = {}) => {
     hostile: true,
     damagePoints: 0.5,
     hasSound: !!options.hasSound,
-    rndRicochetAmount: 0.5 + rng(),
+    rndRicochetAmount: 0.5 + rng(1, type),
     // let shrapnel that originates "higher up in the sky" from the following types, bounce off tanks and super bunkers
     ricochetTypes: [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile],
   }, options);

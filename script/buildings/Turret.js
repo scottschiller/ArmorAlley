@@ -219,7 +219,7 @@ const Turret = (options = {}) => {
 
       effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
-      effects.shrapnelExplosion(data, { count: 3 + rngInt(3), velocity: 2 + rngInt(2) });
+      effects.shrapnelExplosion(data, { count: 3 + rngInt(3, data.type), velocity: 2 + rngInt(2, data.type) });
 
       effects.damageExplosion(exports);
 

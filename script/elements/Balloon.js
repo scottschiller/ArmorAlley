@@ -105,8 +105,8 @@ const Balloon = (options = {}) => {
 
     if (gameType === 'hard' || gameType === 'extreme') {
       effects.shrapnelExplosion(data, {
-        count: 3 + rngInt(3),
-        velocity: rngInt(4)
+        count: 3 + rngInt(3, TYPES.shrapnel),
+        velocity: rngInt(4, TYPES.shrapnel)
       });
     }
 
@@ -210,7 +210,7 @@ const Balloon = (options = {}) => {
 
       if (data.frameCount % data.windModulus === 0) {
 
-        data.windOffsetX += (plusMinus() * 0.25);
+        data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
 
         data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
@@ -236,12 +236,14 @@ const Balloon = (options = {}) => {
 
         }
 
-        data.windOffsetY += (plusMinus() * 0.05);
+        data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
 
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
-        data.windModulus = 32 + rndInt(32);
+        if (!net.active) {
+          data.windModulus = 32 + rndInt(32);
+        }
 
       }
 
@@ -373,7 +375,7 @@ const Balloon = (options = {}) => {
     direction: 0,
     detached: false,
     hostile: !objects.bunker, // dangerous when detached
-    verticalDirection: plusMinus(1),
+    verticalDirection: rngPlusMinus(1, TYPES.balloon),
     verticalDirectionDefault: 1,
     leftMargin: options.leftMargin || 0,
     width: 38,
@@ -395,7 +397,7 @@ const Balloon = (options = {}) => {
   }, options);
 
   // random Y start position, unless specified
-  data.y = data.y || rngInt(data.maxY);
+  data.y = data.y || rngInt(data.maxY, data.type);
 
   dom = {
     o: null
