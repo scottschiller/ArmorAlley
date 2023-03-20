@@ -1,8 +1,7 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc, worldWidth, parseTypes } from './global.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
-import { common } from './common.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
 import { orientationChange } from '../UI/mobile.js';
 import { playSound, sounds } from './sound.js';
