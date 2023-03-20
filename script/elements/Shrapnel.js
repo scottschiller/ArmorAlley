@@ -258,7 +258,7 @@ const Shrapnel = (options = {}) => {
   }
 
   // default
-  scale = options.scale || (0.8 + rng(0.15));
+  scale = options.scale || (0.8 + rng(0.15, type));
 
   css = common.inheritCSS({
     className: 'shrapnel',
