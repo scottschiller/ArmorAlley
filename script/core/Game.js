@@ -502,6 +502,12 @@ const game = (() => {
     world: null
   };
 
+  players = {
+    local: null,
+    remote: [],
+    cpu: []
+  };
+
   objects = {
     gameLoop: null,
     view: null,
@@ -577,6 +583,7 @@ const game = (() => {
     initArmorAlley,
     objects,
     objectsById,
+    players,
     pause,
     resume,
     setGameType,
