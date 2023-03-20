@@ -2,6 +2,7 @@ import { rngInt, worldWidth, worldHeight, rng, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
+import { net } from '../core/network.js';
 
 const Cloud = (options = {}) => {
 
@@ -25,7 +26,9 @@ const Cloud = (options = {}) => {
       data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
       // and randomize
-      data.windModulus = 16 + rndInt(16);
+      if (!net.active) {
+        data.windModulus = 16 + rndInt(16);
+      }
 
     }
 
