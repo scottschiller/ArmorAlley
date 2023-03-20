@@ -3,6 +3,7 @@ import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
+import { game } from '../core/Game.js';
 
 const Cloud = (options = {}) => {
 
@@ -67,6 +68,11 @@ const Cloud = (options = {}) => {
     initDOM();
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+    // cloud debugging mode
+    if (window.location.href.match(/cloud/i)) {
+      game.objects.radar.addItem(exports, dom.o.className);
+    }
 
   }
 
