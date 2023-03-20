@@ -286,7 +286,7 @@ const effects = {
 
     if (!exports.data.isOnScreen) {
       // ignore if too far away
-      if (Math.abs(game.objects.helicopter[0].data.x - exports.data.x) > game.objects.view.data.browser.twoThirdsWidth) return;
+      if (Math.abs(game.players.local.data.x - exports.data.x) > game.objects.view.data.browser.twoThirdsWidth) return;
     }
 
     let widthOffset, heightOffset;

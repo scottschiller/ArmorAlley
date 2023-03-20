@@ -104,7 +104,7 @@ const Bunker = (options = {}) => {
 
     if (!data.hasButthead && engineer.data.isButthead) {
       data.hasButthead = true;
-      if (data.isOnScreen && !game.objects.helicopter[0].data.onLandingPad) playSound(sounds.bnb.bhLetsRock, exports);
+      if (data.isOnScreen && !game.players.local.data.onLandingPad) playSound(sounds.bnb.bhLetsRock, exports);
     }
 
     // only "sing" the repair if damage >= 50%.

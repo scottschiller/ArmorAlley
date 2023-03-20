@@ -118,7 +118,7 @@ const EndBunker = (options = {}) => {
 
     // force update of the local helicopter
     // TODO: yeah, this is a bit hackish.
-    game.objects.helicopter[0].updateStatusUI({ funds: true});
+    game.players.local.updateStatusUI({ funds: true});
 
   }
 

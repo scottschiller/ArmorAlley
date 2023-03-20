@@ -1341,7 +1341,7 @@ const Helicopter = (options = {}) => {
       });
 
       // special check: friendly turret shot down enemy helicopter
-      if (data.isEnemy && attacker.data?.parentType === TYPES.turret && sounds?.bnb?.cornholioAttack) {
+      if (gamePrefs.bnb && data.isEnemy !== game.players.local.data.isEnemy && attacker.data?.parentType === TYPES.turret && sounds?.bnb?.cornholioAttack) {
         common.setFrameTimeout(() => {
           if (data.dead) return;
           playSound(sounds.bnb.cornholioAttack, attacker, { onplay: () => game.objects.notifications.add(`The enemy was shot down by ${Math.random() >= 0.5 ? 'THE GREAT CORNHOLIO.' : 'THE ALMIGHTY BUNGHOLE.'}`, { noRepeat: true }) });

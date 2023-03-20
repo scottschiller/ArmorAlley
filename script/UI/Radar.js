@@ -198,7 +198,7 @@ const Radar = () => {
     }
 
     // we may be dead; ignore if so.
-    if (game.objects.helicopter[0].data.dead) return;
+    if (game.players.local.data.dead) return;
 
     const dieCount = parseInt(game.data.dieCount, 10);
 
@@ -336,7 +336,7 @@ const Radar = () => {
         if (
           !game.objects[TYPES.smartMissile][i].data.dead
           && !game.objects[TYPES.smartMissile][i].data.hostile
-          && game.objects[TYPES.smartMissile][i].data.isEnemy !== game.objects.helicopter[0].data.isEnemy
+          && game.objects[TYPES.smartMissile][i].data.isEnemy !== game.players.local.data.isEnemy
         ) {
 
           hasEnemyMissile = true;

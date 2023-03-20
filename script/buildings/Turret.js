@@ -484,7 +484,7 @@ const Turret = (options = {}) => {
     }
 
     // don't do this while the chopper is landed, music might be playing.
-    const helicopterOK = !game.objects.helicopter[0].data.onLandingPad;
+    const helicopterOK = !game.players.local.data.onLandingPad;
 
     if (!data.hasButthead && engineer.data.isButthead) {
       data.hasButthead = true;

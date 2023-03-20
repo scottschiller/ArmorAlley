@@ -69,7 +69,7 @@ const Inventory = () => {
         }
 
         // clear the queue that just finished.
-        game.objects[TYPES.helicopter][0].updateInventoryQueue();
+        game.players.local.updateInventoryQueue();
 
         // clear the copy of the queue used for notifications.
         data.queueCopy = [];
@@ -137,7 +137,7 @@ const Inventory = () => {
       }
 
       // player may now be able to order things.
-      game.objects[TYPES.helicopter][0].updateStatusUI({ funds: true });
+      game.players.local.updateStatusUI({ funds: true });
 
     } else {
 
@@ -206,7 +206,7 @@ const Inventory = () => {
     }
 
     // callback to update queue UI when the build actually begins
-    queueEvents = game.objects[TYPES.helicopter][0].updateInventoryQueue(newOrder);
+    queueEvents = game.players.local.updateInventoryQueue(newOrder);
 
     newOrder.onOrderStart = queueEvents.onOrderStart;
     newOrder.onOrderComplete = queueEvents.onOrderComplete;

@@ -104,7 +104,7 @@ const Shrapnel = (options = {}) => {
       playSound(sounds.boloTank, exports);
 
       // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
-      if (data.isEnemy && target === game.objects[TYPES.helicopter][0] && target.data.isOnScreen) {
+      if (data.isEnemy && target === game.players.local && target.data.isOnScreen) {
         target.reactToDamage(exports);
       }
 

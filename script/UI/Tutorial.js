@@ -75,7 +75,7 @@ const Tutorial = () => {
       animate() {
 
         // the player's helicopter.
-        const chopper = game.objects.helicopter[0], chopperData = chopper.data;
+        const chopper = game.players.local, chopperData = chopper.data;
 
         // condition for completion
         return (
@@ -99,7 +99,7 @@ const Tutorial = () => {
 
       animate() {
 
-        let chopper = game.objects.helicopter[0];
+        let chopper = game.players.local;
 
         // player either landed and refueled, or died. ;)
         return chopper.data.repairComplete;
@@ -164,7 +164,7 @@ const Tutorial = () => {
 
       animate() {
 
-        return (game.objects.helicopter[0].data.parachutes >= game.objects.helicopter[0].data.maxParachutes);
+        return (game.players.local.data.parachutes >= game.players.local.data.maxParachutes);
 
       },
 
@@ -334,9 +334,10 @@ const Tutorial = () => {
 
           // two screenfuls away, OR end of battlefield - whichever is less
           game.addObject(TYPES.helicopter, {
-            x: Math.min(game.objects.helicopter[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
-            y: 72,
             isEnemy: true,
+            isCPU: true,
+            x: Math.min(game.players.local.data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64),
+            y: 72,
             // give the player a serious advantage, here.
             fireModulus: FPS / 3,
             vX: 0
@@ -371,7 +372,7 @@ const Tutorial = () => {
         // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
         game.objects.superBunker[0].data.energy = 0;
 
-        missileX = Math.min(game.objects.helicopter[0].data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
+        missileX = Math.min(game.players.local.data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
 
         // make ze missile launcher
         game.addObject(TYPES.missileLauncher, {

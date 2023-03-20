@@ -423,9 +423,9 @@ const SmartMissile = (options = {}) => {
 
     // bonus "hit" sounds for certain targets
     if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
-      playSound(sounds.metalHit, exports);
+      playSound(sounds.metalHit, game.players.local);
     } else if (target.data.type === TYPES.bunker) {
-      playSound(sounds.concreteHit, exports);
+      playSound(sounds.concreteHit, game.players.local);
     }
 
     if (data.isBanana || !data.armed) {
@@ -532,7 +532,7 @@ const SmartMissile = (options = {}) => {
 
       if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.expire) {
         
-        playSound(sounds.rubberChicken.expire, exports, {
+        playSound(sounds.rubberChicken.expire, game.players.local, {
           playbackRate: data.playbackRate,
           volume: launchSound?.volume
         });
@@ -541,7 +541,7 @@ const SmartMissile = (options = {}) => {
 
       if (data.isBanana && sounds.banana.expire) {
 
-        playSound(sounds.banana.expire, exports, {
+        playSound(sounds.banana.expire, game.players.local, {
           playbackRate: data.playbackRate,
           volume: launchSound?.volume
         });
@@ -601,7 +601,7 @@ const SmartMissile = (options = {}) => {
       data.nearExpiry = true;
 
       // if targeting the player, start expiry warning sound
-      if (objects?.target === game.objects.helicopter[0]) {
+      if (objects?.target === game.players.local) {
         playSound(sounds.missileWarningExpiry, exports);
         stopSound(sounds.missileWarning);
       }
@@ -666,7 +666,7 @@ const SmartMissile = (options = {}) => {
       die();
 
       // if targeting the player, stop expiry sound
-      if (objects?.target === game.objects.helicopter[0]) {
+      if (objects?.target === game.players.local) {
         stopSound(sounds.missileWarningExpiry);
       }
     }
@@ -744,16 +744,14 @@ const SmartMissile = (options = {}) => {
         });
       }
 
-      // special case: enemy missile launchers should always play at full volume - they're close enough.
-      playSound(sounds.banana.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+      playSound(sounds.banana.launch, game.players.local, {
         onplay: (sound) => launchSound = sound,
         playbackRate: data.playbackRate
       });
 
     } else if (data.isRubberChicken && sounds.rubberChicken.launch) {
 
-      // special case: enemy missile launchers should always play at full volume - they're close enough.
-      playSound(sounds.rubberChicken.launch, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+      playSound(sounds.rubberChicken.launch, game.players.local, {
         onplay: (sound) => launchSound = sound,
         playbackRate: data.playbackRate
       });
@@ -765,7 +763,7 @@ const SmartMissile = (options = {}) => {
 
     } else if (sounds.missileLaunch) {
 
-      launchSound = playSound(sounds.missileLaunch, exports, {
+      launchSound = playSound(sounds.missileLaunch, game.players.local, {
         onplay: (sound) => launchSound = sound,
         playbackRate: data.playbackRate
       });
@@ -773,7 +771,7 @@ const SmartMissile = (options = {}) => {
       // human helicopter, firing smart missile
       if (!data.isEnemy && data.parentType === TYPES.helicopter && sounds.bnb.beavisYeahGo) {
         // hackish: only play if this is the first active missile.
-        if (!game.objects.helicopter[0].objects.smartMissiles.length) {
+        if (!game.players.local.objects.smartMissiles.length) {
           playSound(sounds.bnb.beavisYeahGo);
         }
       }

@@ -110,7 +110,7 @@ const MissileLauncher = (options = {}) => {
       if (objectInView(data, {
         items: TYPES.helicopter,
         friendlyOnly: true
-      }) && game.objects.helicopter[0].data.smartMissiles > 0) {
+      }) && game.players.local.data.smartMissiles > 0) {
         return;
       }
 

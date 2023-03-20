@@ -153,7 +153,7 @@ const View = () => {
     }
 
     // helicopters need to know stuff, too.
-    game.objects.helicopter[0]?.refreshCoords();
+    game.players.local?.refreshCoords();
     game.objects.helicopter[1]?.refreshCoords();
 
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
@@ -280,10 +280,10 @@ const View = () => {
 
     let scrollAmount, mouseDelta;
 
-    if (!game.objects.helicopter[0]) return;
+    if (!game.players.local) return;
 
     // don't scroll if helicopter is respawning, or not moving.
-    if (!game.objects.helicopter[0].data.respawning && game.objects.helicopter[0].data.vX !== 0) {
+    if (!game.players.local.data.respawning && game.players.local.data.vX !== 0) {
 
       // is the mouse to the right, or left?
       mouseDelta = (data.mouse.x - data.browser.halfWidth);

@@ -502,7 +502,7 @@ function GameEvents() {
           
             const target = null;
 
-            const helicopterCheck = () => !game.objects.helicopter[0].data.dead;
+            const helicopterCheck = () => !game.players.local.data.dead;
 
             playSound(commentary, target, {
               playNextCondition: helicopterCheck,
