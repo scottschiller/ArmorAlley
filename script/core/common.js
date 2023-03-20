@@ -4,9 +4,44 @@ import { FRAMERATE, TYPES } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
+import { net } from './network.js';
 
 // unique IDs for quick object equality checks
 let guid = 0;
+
+// per-type counters, more deterministic
+let guidByType = {};
+
+// TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
+for (let type in TYPES) {
+  if (!type.match(/[A-Z]/)) {
+    guidByType[type] = 0;
+  }
+}
+
+// for network: certain items need to be not prefixed.
+// basically, all "static" / shared terrain items generated at game start - and helicopters.
+const staticIDTypes = {
+  [TYPES.helicopter]: true,
+  [TYPES.bunker]: true,
+  [TYPES.cornholio]: true,
+  [TYPES.chain]: true,
+  [TYPES.balloon]: true,
+  [TYPES.base]: true,
+  [TYPES.endBunker]: true,
+  [TYPES.superBunker]: true,
+  [TYPES.turret]: true,
+  [TYPES.terrainItem]: true
+};
+
+// noisy, and hopefully, deterministic events that can be ignored.
+const excludeFromNetworkTypes = {
+  // [TYPES.gunfire]: true,
+  [TYPES.shrapnel]: true
+}
+
+const PREFIX_HOST = 'host_';
+const PREFIX_GUEST = 'guest_';
 
 const defaultCSS = {
   animating: 'animating',
@@ -87,8 +122,26 @@ const common = {
 
     // mix in defaults and common options
   
+    let id = options.id || `obj_${guidByType[data.type]++}_${data.type}`;
+
+    /**
+     * Note: if prefixID, then prepend `host_` or `guest_`, if not already prefixed.
+     * Things that are already prefixed are going to be remote objects.
+     * This avoids collisions with other objects that might take the same number otherwise... hopefully. :P
+     * Ground items e.g., base, bunker etc., use "static" IDs that do not need prefixing by design,
+     * since they are created on both sides and their IDs need to match.
+     */
+    
+    // TODO: maybe use `fromNetworkEvent` instead of matching host|guest
+    if (net.active && !options.staticID && !staticIDTypes[data.type] && !options.fromNetworkEvent) {
+      id = `${net.isHost ? PREFIX_HOST : PREFIX_GUEST}${id}`;
+    }
+
+
     const defaults = {
-      id: (options.id || `obj_${guid++}_${data.type}`),
+      id,
+      guid: (options.id || `obj_${guid++}_${data.type}`),
+      fromNetworkEvent: options.fromNetworkEvent,
       isOnScreen: null,
       isEnemy: !!options.isEnemy,
       bottomY: options.bottomY || 0,
@@ -100,7 +153,7 @@ const common = {
       fireModulus: options.fireModulus,
       frontZone: null,
       rearZone: null
-    }
+    };
 
     let key;
 
