@@ -76,38 +76,6 @@ const bananaMode = 'banana-mode';
 
 // methods which prefer brevity, vs. being tacked onto `common` or `utils`
 
-let seed = Math.floor(Math.random() * 0xFFFFFFFF);
-
-// rng: random number *generator*.
-// hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm#L176
-function rng(number = 1) {
-  var t = seed += 0x6D2B79F5;
-  t = Math.imul(t ^ t >>> 15, t | 1);
-  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-  return number * (((t ^ t >>> 14) >>> 0) / 4294967296);
-}
-
-function rnd(number) {
-  return Math.random() * number;
-}
-
-function rngInt(number) {
-  return parseInt(rng(number), 10);
-}
-
-function rndInt(number) {
-  return parseInt(rnd(number), 10);
-}
-
-function plusMinus(number = 1) {
-  return Math.random() >= 0.5 ? number : -number;
-}
-
-function oneOf(array) {
-  if (!array?.length) return;
-  return array[rndInt(array.length)];
-}
-
 /**
  * Type table, supporting both camelCase and dash-type lookups
  * e.g., { parachuteInfantry : 'parachute-infantry' }
@@ -144,6 +112,90 @@ const TYPES = (() => {
   return result;
 
 })();
+
+// set, and updated as applicable via network
+
+let defaultSeeds = [];
+
+for (let i = 0; i < 8; i++) {
+  defaultSeeds.push(Math.floor(Math.random() * 0xFFFFFFFF));
+}
+
+let defaultSeed = defaultSeeds[0];
+
+let seed = Math.floor(defaultSeed);
+
+let seedsByType = {};
+
+function setSeedsByType() {
+
+  // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
+  for (let type in TYPES) {
+    if (!type.match(/[A-Z]/)) {
+      seedsByType[type] = Math.floor(defaultSeed);
+    }
+  }
+
+}
+
+// start with the default, until (and if) updated via network.
+setSeedsByType();
+
+function setDefaultSeed(newDefaultSeed, newDefaultSeeds) {
+
+  defaultSeed = newDefaultSeed;
+  defaultSeeds = newDefaultSeeds;
+
+  seed = Math.floor(defaultSeed);
+
+  setSeedsByType();
+
+}
+
+// rng: random number *generator*. Tweaked to allow usage of a range of seeds.
+// hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm#L176
+function rng(number = 1, type, seedOffset) {
+
+  let t;
+
+  if (type && seedsByType[type]) {
+    t = seedsByType[type] += 0x6D2B79F5;
+  } else if (seedOffset >= 0 && defaultSeeds[seedOffset]) {
+    t = defaultSeeds[seedOffset] += 0x6D2B79F5;
+  } else {
+    t = seed += 0x6D2B79F5;
+  }
+
+  t = Math.imul(t ^ t >>> 15, t | 1);
+  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+
+  return number * (((t ^ t >>> 14) >>> 0) / 4294967296);
+}
+
+function rnd(number) {
+  return Math.random() * number;
+}
+
+function rngInt(number, type) {
+  return parseInt(rng(number, type), 10);
+}
+
+function rndInt(number) {
+  return parseInt(rnd(number), 10);
+}
+
+function rngPlusMinus(number = 1, type) {
+  return rng(number, type) >= 0.5 ? number : -number;
+}
+
+function plusMinus(number = 1) {
+  return Math.random() >= 0.5 ? number : -number;
+}
+
+function oneOf(array) {
+  if (!array?.length) return;
+  return array[rndInt(array.length)];
+}
 
 function getTypes(typeString, options = { group: 'enemy', exports: null }) {
 
@@ -266,6 +318,8 @@ export {
   FPS,
   FRAMERATE,
   unlimitedFrameRate,
+  defaultSeed,
+  defaultSeeds,
   getTypes,
   parseTypes,
   isWebkit,
@@ -295,5 +349,6 @@ export {
   rndInt,
   rngInt,
   plusMinus,
+  rngPlusMinus,
   setTutorialMode
 };
