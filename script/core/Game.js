@@ -51,7 +51,7 @@ let started;
 
 const game = (() => {
 
-  let data, dom, layoutCache = {}, objects, objectsById, objectConstructors, exports;
+  let data, dom, layoutCache = {}, boneyard, objects, objectsById, objectConstructors, players, exports;
 
   function addItem(className, x, extraTransforms) {
 
@@ -161,7 +161,7 @@ const game = (() => {
     if (!options.noInit) {
 
       objectArray.push(object);
-  
+
       if (!objectsById[object.data.id]) {
         objectsById[object.data.id] = object;
       } else {
@@ -634,6 +634,9 @@ const game = (() => {
 
   objectsById = {};
 
+  // a place for all the deceased. 😇☠️😂
+  boneyard = {};
+
   objectConstructors = {
     balloon: Balloon,
     base: Base,
@@ -662,6 +665,7 @@ const game = (() => {
   exports = {
     addItem,
     addObject,
+    boneyard,
     data,
     dom,
     init,
