@@ -5,6 +5,7 @@ import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { collisionCheck, isGameOver } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
+import { net } from '../core/network.js';
 
 const Inventory = () => {
 
@@ -62,7 +63,8 @@ const Inventory = () => {
 
       data.building = false;
 
-      if (!objects.order.options.isEnemy) {
+      // CPU vs non-CPU
+      if (!objects.order.options.isCPU) {
 
         if (sounds.inventory.end) {
           playSound(sounds.inventory.end);
@@ -90,7 +92,7 @@ const Inventory = () => {
 
   }
 
-  function order(type, options = {}) {
+  function order(type, options = {}, player) {
 
     // this should be called only by the human player, not the CPU
 
@@ -102,6 +104,16 @@ const Inventory = () => {
 
     // default off-screen setting
     options.x = -72;
+
+    if (player.data.isCPU) {
+      options.isCPU = true;
+    }
+
+    // TODO: review CPU check - may not be needed.
+    if (player.data.isEnemy && !player.data.isCPU) {
+      options.isEnemy = true;
+      options.x = worldWidth + 64;
+    }
 
     // let's build something - provided you're good for the $$$, that is.
 
@@ -118,16 +130,19 @@ const Inventory = () => {
     }
 
     // Hack: make a temporary object, so we can get the relevant data for the actual order.
-    if (!options.isEnemy) options.noInit = true;
-
-    orderObject = game.addObject(type, options);
+    orderObject = game.addObject(type, {
+      ...options,
+      noInit: true
+    });
 
     // do we have enough funds for this?
     cost = orderObject.data.inventory.cost;
 
-    if (game.objects[TYPES.endBunker][0].data.funds >= cost) {
+    const bunkerOffset = player.data.isEnemy ? 1 : 0;
 
-      game.objects[TYPES.endBunker][0].data.funds -= cost;
+    if (game.objects[TYPES.endBunker][bunkerOffset].data.funds >= cost) {
+
+      game.objects[TYPES.endBunker][bunkerOffset].data.funds -= cost;
 
       game.objects.view.updateFundsUI();
 
@@ -266,7 +281,7 @@ const Inventory = () => {
         objects.order.onOrderStart();
       }
 
-      if (!objects.order.options.isEnemy) {
+      if (!objects.order.options.isCPU) {
         objects.lastObject = newObject;
       }
 
@@ -281,7 +296,7 @@ const Inventory = () => {
 
       // "Construction complete."
 
-      if (!objects.order.options.isEnemy) {
+      if (!objects.order.options.isCPU) {
 
         data.waiting = false;
 
