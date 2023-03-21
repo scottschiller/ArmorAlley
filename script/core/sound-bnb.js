@@ -1784,7 +1784,7 @@ const tvArgs = [
   {
     onplay: function(sound) {
       if (!game.objects.radar.data.isJammed) return skipSound(sound);
-      if (!sound.skipped && game.objects[TYPES.helicopter][0].data.landed) common.setVideo('tv_noise');
+      if (!sound.skipped && game.players.local.data.landed) common.setVideo('tv_noise');
     }
   }
 ];
