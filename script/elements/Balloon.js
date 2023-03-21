@@ -2,11 +2,13 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
-import { rndInt, plusMinus, worldWidth, TYPES, rngInt } from '../core/global.js';
+import { rndInt, worldWidth, TYPES, rngInt, rngPlusMinus } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
+import { prefs } from '../UI/preferences.js';
 
 const Balloon = (options = {}) => {
 
@@ -329,7 +331,6 @@ const Balloon = (options = {}) => {
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
     sprites.moveTo(exports);
-
 
   }
 
