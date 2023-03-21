@@ -346,7 +346,7 @@ const Tank = (options = {}) => {
     frameCount: 0,
     repairModulus: 30,
     // enemy tanks shoot a little faster, depending on the game difficulty
-    fireModulus: fireRates[(options.isEnemy ? gameType : 'default')],
+    fireModulus: fireRates[(options.isEnemy && game.players.cpu.length ? gameType : 'default')],
     vX: (options.isEnemy ? -1 : 1),
     vXDefault: (options.isEnemy ? -1 : 1),
     width: 58,
