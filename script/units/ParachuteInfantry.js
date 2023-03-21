@@ -249,11 +249,20 @@ const ParachuteInfantry = (options = {}) => {
 
   }
 
+  function checkSmartMissileDecoy() {
+  
+    // given the current helicopter, find missiles targeting it and possibly distract them.
+    game.objects[TYPES.smartMissile].forEach((missile) => missile.maybeTargetDecoy(data.parent));
+  
+  }
+
   function initParachuteInfantry() {
 
     initDOM();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    checkSmartMissileDecoy();
 
   }
 
