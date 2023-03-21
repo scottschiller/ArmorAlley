@@ -176,6 +176,8 @@ const GameLoop = () => {
 
     }
 
+    if (net.active) net.updateUI();
+
     if (net.active && game.players.local) {
 
       // Lock-step network play: don't do anything until we've received data from the remote.
