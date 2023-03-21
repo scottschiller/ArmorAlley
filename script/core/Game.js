@@ -179,6 +179,32 @@ const game = (() => {
 
   }
 
+  function findObjectById(id, ...consoleInfoArgs) {
+
+    /**
+     * Helper method for remote object network calls.
+     * If an ID is not found in `objectsById`, it may be in the "boneyard."
+     * This can happen when an object dies locally, then a network request comes in for it.
+     */
+  
+    if (!id) return;
+  
+    const obj = objectsById[id];
+
+    if (obj) return obj;
+  
+    const by = game.boneyard[id];
+  
+    let byDetails = '';
+  
+    if (by) {
+      byDetails = ` found in boneyard ☠️ (died ${parseInt(performance.now() - by.ts, 10)} msec ago${by.attacker ? ', attacker: ' + by.attacker : ''})`;
+    }
+  
+    if (net.debugNetwork) console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
+  
+  }
+
   function createObjects() {
 
     objects.stats = Stats();
@@ -667,6 +693,7 @@ const game = (() => {
     boneyard,
     data,
     dom,
+    findObjectById,
     init,
     initArmorAlley,
     objects,
