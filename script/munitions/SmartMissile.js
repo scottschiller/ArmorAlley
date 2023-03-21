@@ -368,6 +368,8 @@ const SmartMissile = (options = {}) => {
     // optional callback
     if (data.onDie) data.onDie();
 
+    common.onDie(exports);
+
   }
 
   function sparkAndDie(target) {

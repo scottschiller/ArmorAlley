@@ -71,6 +71,8 @@ const ParachuteInfantry = (options = {}) => {
 
     radarItem.die(options);
 
+    common.onDie(exports);
+
   }
 
   function hit(hitPoints, target) {

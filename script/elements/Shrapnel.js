@@ -80,6 +80,8 @@ const Shrapnel = (options = {}) => {
       });
     }
 
+    common.onDie(exports);
+
   }
 
   function hitAndDie(target) {

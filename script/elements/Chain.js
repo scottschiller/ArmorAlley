@@ -88,6 +88,8 @@ const Chain = (options = {}) => {
       objects.bunker = null;
     }
 
+    common.onDie(exports);
+
   }
 
   function animate() {

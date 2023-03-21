@@ -136,6 +136,8 @@ const Balloon = (options = {}) => {
 
     data.dead = true;
 
+    common.onDie(exports);
+
   }
 
   function applyAnimatingTransition() {

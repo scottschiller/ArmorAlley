@@ -118,6 +118,8 @@ const SuperBunker = (options = {}) => {
     // check if enemy convoy production should stop or start
     checkProduction();
 
+    common.onDie(exports);
+
   }
 
   function fire() {

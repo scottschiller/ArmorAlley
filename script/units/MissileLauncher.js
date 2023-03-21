@@ -65,6 +65,8 @@ const MissileLauncher = (options = {}) => {
 
     radarItem.die({ silent: !!dieOptions.silent });
 
+    common.onDie(exports);
+
   }
 
   function fire() {

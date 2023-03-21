@@ -55,6 +55,8 @@ const GunFire = (options = {}) => {
         });
       }
 
+      common.onDie(exports);
+
     }
 
     function sparkAndDie(target) {

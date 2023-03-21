@@ -159,6 +159,9 @@ const Infantry = (options = {}) => {
 
     radarItem?.die({ silent: (options && options.silent) });
 
+
+    common.onDie(exports);
+
   }
 
   function animate() {

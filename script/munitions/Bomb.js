@@ -159,6 +159,8 @@ const Bomb = (options = {}) => {
       });
     }
 
+    common.onDie(exports);
+
   }
 
   function bombHitTarget(target) {

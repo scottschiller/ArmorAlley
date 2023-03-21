@@ -242,6 +242,35 @@ const common = {
 
   },
 
+  onDie(target, attacker = target?.data?.attacker) {
+
+    if (!net.active) return;
+
+    // a generic catch-all for battlefield item `die()` events.
+    // NOTE: attacker may not always be defined.
+
+    // ignore certain things - they're noisy, should be deterministic, and will just generate a bunch of excess traffic.
+    if (excludeFromNetworkTypes[target.data.type]) return;
+
+    // we already killed something via GAME_EVENT, from the remote client; don't send one back, redundant.
+    if (target.data.dieViaGameEvent) {
+      // reset this flag, though, for things that can die multiple times - notably, helicopters and turrets
+      if (target.data.type === TYPES.helicopter || target.data.type === TYPES.turret || target.data.type === TYPES.bunker) {
+        // console.log('common.onDie(): resetting dieViaGameEvent on ' + target.data.id);
+        target.data.dieViaGameEvent = undefined;
+      }
+      return;
+    }
+
+    const attackerId = attacker?.data?.id;
+    const attackerParentId = attacker?.data?.parent?.data?.id;
+
+    // notify the remote: take something out.
+    // by the time this lands, the thing may have already died and be in the "boneyard" - that's fine.
+    net.sendDelayedMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params: { attackerId, attackerParentId, fromNetworkEvent: true }});
+
+  },
+
   // height offsets for certain common ground units
   // TODO: reference constants or similar
   ricochetBoundaries: {

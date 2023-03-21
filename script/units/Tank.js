@@ -202,6 +202,8 @@ const Tank = (options = {}) => {
 
     radarItem.die();
 
+    common.onDie(exports);
+
   }
 
   function shouldFireAtTarget(target) {
