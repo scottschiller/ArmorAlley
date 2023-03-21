@@ -109,7 +109,7 @@ const GameLoop = () => {
      * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
      * https://www.html5rocks.com/en/tutorials/speed/rendering/
      */
-    window.requestAnimationFrame(animateRAF);
+     window.requestAnimationFrame(animateRAF);
 
     /**
      * frame-rate limiting: exit if it isn't approximately time to render the next frame.
