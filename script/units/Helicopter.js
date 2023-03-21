@@ -57,9 +57,9 @@ import { effects } from '../core/effects.js';
 
 const Helicopter = (options = {}) => {
 
-  let css, data, dom, events, exports, objects, collision, radarItem, rngID, lastTarget, statsBar;
+  let css, data, dom, events, exports, objects, collision, radarItem, lastTarget, statsBar;
 
-  const aiRNG = (number) => rng(number, null, aiSeedOffset);
+  const aiRNG = (number, type = null) => rng(number, type, aiSeedOffset);
 
   function cloak() {
 
