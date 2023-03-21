@@ -127,6 +127,14 @@ const TYPES = (() => {
 
 })();
 
+const PRETTY_TYPES = {
+  [TYPES.tank]: 'Tank',
+  [TYPES.missileLauncher]: 'Missile Launcher',
+  [TYPES.van]: 'Van',
+  [TYPES.infantry]: 'Infantry',
+  [TYPES.engineer]: 'Engineer'
+}
+
 // set, and updated as applicable via network
 
 let defaultSeeds = [];
@@ -326,6 +334,7 @@ const COSTS = {
 export {
   DEFAULT_FUNDS,
   TYPES,
+  PRETTY_TYPES,
   COSTS,
   winloc,
   FRAME_MIN_TIME,

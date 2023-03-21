@@ -1,6 +1,6 @@
-import { game } from '../core/Game.js';
+import { game, gameType } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { TYPES } from '../core/global.js';
+import { parseTypes, PRETTY_TYPES, TYPES, worldWidth } from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { collisionCheck, isGameOver } from '../core/logic.js';
@@ -138,6 +138,16 @@ const Inventory = () => {
     // do we have enough funds for this?
     cost = orderObject.data.inventory.cost;
 
+    let remote;
+
+    // network co-op case: if the remote player is on the same team and ordering, add to the local queue.
+    if (net.active && !player.data.isLocal && player.data.isEnemy === game.players.local.data.isEnemy) {
+      remote = true;
+      // This has been "paid for" by the remote player.
+      // Thusly, make the local cost here zero until we have a joint banking feature. :D
+      cost = 0;
+    }
+
     const bunkerOffset = player.data.isEnemy ? 1 : 0;
 
     if (game.objects[TYPES.endBunker][bunkerOffset].data.funds >= cost) {
@@ -148,7 +158,7 @@ const Inventory = () => {
 
       // hackish: this will be executed below.
       pendingNotification = () => {
-        game.objects.notifications.add(`Order: %s ${isOrderingTV() ? '📺' : '🛠️'}`, orderNotificationOptions);
+        game.objects.notifications.add(`📦 %s ${isOrderingTV() ? '📺' : '🛠️'}${remote ? ' 📡' : ''}`, orderNotificationOptions);
       }
 
       // player may now be able to order things.
@@ -180,6 +190,34 @@ const Inventory = () => {
       });
 
       return;
+
+    }
+
+    // Network co-op: We have a remote friendly player...
+    if (net.active && player.data.isLocal && player.data.isEnemy === game.players.remote[0].data.isEnemy) {
+
+      if (net.isHost) {
+
+        // ... and we are the host: Notify the remote of what we're ordering.
+        net.sendMessage({ type: 'NOTIFICATION', html: `${PRETTY_TYPES[type]}`, notificationType: 'remoteOrder' });
+
+      } else {
+
+        /**
+         * Network co-op case: Remote friendly player, NOT the host: just send order details.
+         * The host will receive and process the order as though it had been made locally.
+         * This will result in adding objects (e.g., tanks) to the battlefield, which will
+         * be sent back to the guest via ADD_OBJECT.
+         * 
+         * TODO: for multi-player, identify host as e.g., `game.players.host` vs remote[0].
+         */
+        net.sendMessage({ type: 'REMOTE_ORDER', orderType: type, options, id: player.data.id });
+
+        game.objects.notifications.add(`📦 ${PRETTY_TYPES[type]} 🛠️`);
+
+        return;
+
+      }
 
     }
 
@@ -232,7 +270,6 @@ const Inventory = () => {
     }
 
     // only start processing if queue length is 1 - i.e., first item just added.
-
     if (!data.building) {
       processNextOrder();
     }
@@ -249,12 +286,31 @@ const Inventory = () => {
 
     if (objects.order.size) {
 
+      const sendToRemote = !!net.active;
+
+      // hackish: modify options, if we're ordering the real thing.
+      if (!objects.order.options.noInit) {
+        objects.order.options.prefixID = !!sendToRemote;
+      }
+
       // start building.
       newObject = game.addObject(objects.order.type, objects.order.options);
 
       // ignore if this is the stub object case
       if (!objects.order.options.noInit) {
 
+        // mirror this on the other side, if a network game.
+        if (sendToRemote) {
+          net.sendMessage({
+            type: 'ADD_OBJECT',
+            objectType: newObject.data.type,
+            params: {
+              ...objects.order.options,
+              id: newObject.data.id
+            }
+          });
+        }
+  
         // force-append this thing, if it's on-screen right now
         sprites.updateIsOnScreen(newObject);
 
