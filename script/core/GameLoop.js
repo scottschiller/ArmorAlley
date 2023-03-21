@@ -216,12 +216,24 @@ const GameLoop = () => {
 
     data.frames++;
 
+    // skip a frame, if behind.
+    if (net.active && game.players.local && data.frameCount < data.remoteFrameCount) {
+      console.log(`🐌 gameLoop.animate(): behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
+      animate();
+    }
+
     // every interval, update framerate.
     if (!unlimitedFrameRate && ts - data.fpsTimer >= data.fpsTimerInterval) {
 
       if (dom.fpsCount && data.frames !== data.lastFrames) {
         dom.fpsCount.innerText = data.frames;
         data.lastFrames = data.frames;
+      }
+
+      if (net.active) {
+        // network: how many frames ahead (or behind) we are vs. the remote, dictated by ping time / latency.
+        // worth noting - the remote tries to match us, but latency means they may appear to be behind.
+        dom.networkInfo.innerText = `Δ ${data.frameCount - data.remoteFrameCount} | ${net.halfTrip.toFixed(1)} ms | `;
       }
 
       data.frames = 0;
@@ -286,6 +298,8 @@ const GameLoop = () => {
 
   function initGameLoop() {
 
+    dom.networkInfo = document.getElementById('network-info');
+
     start();
 
     gameEvents.start();
@@ -293,13 +307,15 @@ const GameLoop = () => {
   }
 
   dom = {
-    fpsCount: null
+    fpsCount: null,
+    networkInfo: null
   };
 
   data = {
     battleOverFrameCount: 0,
     gameStopped: false,
     frameCount: 0,
+    remoteFrameCount: 0,
     lastExec: 0,
     elapsed: 0,
     elapsedTime: 0,
