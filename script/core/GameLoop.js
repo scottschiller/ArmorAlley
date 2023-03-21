@@ -24,6 +24,16 @@ const GameLoop = () => {
     // loop through all objects, animate.
     data.frameCount++;
 
+    if (net.active) {
+
+      // process incoming network messages
+      net.processRXQueue(data.frameCount);
+
+      // handle delayed mouse input
+      game.objects.view.bufferMouseInput();
+
+    }
+
     // there may be sounds from the last frame, ready to go.
     playQueuedSounds();
 
