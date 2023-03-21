@@ -1,5 +1,5 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
-import { oneOf, TYPES } from '../core/global.js';
+import { FRAMERATE, oneOf, TYPES, USE_LOCK_STEP } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
@@ -21,6 +21,9 @@ import {
 import { isGameOver } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { gameMenu } from './game-menu.js';
+import { net } from '../core/network.js';
+
+const noDelayedInput = winloc.match(/noDelayedInput/i);
 
 const View = () => {
 
@@ -276,6 +279,89 @@ const View = () => {
 
   }
 
+  // a buffer for local input delay.
+  let mouseHistorySize = 32;
+  let mouseHistory = new Array(mouseHistorySize);
+  
+  function bufferMouseInput() {
+
+    // tack the latest onto the end of the buffer.
+    mouseHistory.push({
+      x: data.mouse.delayedInputX,
+      y: data.mouse.delayedInputY
+    });
+
+    // drop the first.
+    mouseHistory.shift();
+
+    // assign half-trip "delayed" value to local mouse object.
+    const frameDelay = Math.ceil(net.halfTrip / FRAMERATE);
+
+    // if not overridden, apply the frame delay and "pull back" within the input buffer.
+    // prevent delay from escaping array boundaries, too.
+    const offset = Math.max(0, mouseHistorySize - 1 - (noDelayedInput || game?.players?.local?.data?.isCPU ? 0 : frameDelay));
+
+    // start from the end, delay / latency pushes us backward.
+    const obj = mouseHistory[offset];
+    if (obj) {
+      data.mouse.x = obj.x;
+      data.mouse.y = obj.y;
+    }
+
+    // get the helicopter data over to the other side.
+    sendLocalPlayerCoordinates();
+
+  }
+
+  function sendLocalPlayerCoordinates() {
+
+    if (!net.active) return;
+
+    /**
+     * Send pending "delayed" local input, immediately over network.
+     * Will be applied locally based on `net.halfTrip` timing.
+     */
+
+    // this may fire early.
+    if (!game.players?.local) return;
+
+    // special case: remote CPU chopper.
+    if (game.players.local.data.isCPU) {
+
+    // hackish: exclude scroll bizness for remote CPU.
+      net.sendMessage({
+        type: 'RAW_COORDS',
+        id: game.players.local.data.id,
+        x: game.players.local.data.x,
+        y: game.players.local.data.y,
+        // needed by remote helicopter.animate()
+        scrollLeft: 0,
+        scrollLeftVX: 0
+      });
+
+      return;
+
+    }
+
+    // only send if both are non-zero values.
+    if (!data.mouse.delayedInputX && !data.mouse.delayedInputY && USE_LOCK_STEP) {
+      // in lieu of coords data, used as a lock-step heartbeat of sorts, send a ping.
+      net.sendMessage({ type: 'PING' });
+      return;
+    }
+
+    net.sendMessage({
+      type: 'RAW_COORDS',
+      id: game.players.local.data.id,
+      x: data.mouse.delayedInputX,
+      y: data.mouse.delayedInputY,
+      // needed by remote helicopter.animate()
+      scrollLeft: data.battleField.scrollLeft,
+      scrollLeftVX: data.battleField.scrollLeftVX
+    });
+
+  }
+
   function animate() {
 
     let scrollAmount, mouseDelta;
@@ -468,7 +554,7 @@ const View = () => {
     } else {
 
       // ignore if the joystick is already active.
-      if (!game.objects.joystick.data.active) {
+      if (game.objects.joystick && !game.objects.joystick.data.active) {
 
         registerTouchEvent(targetTouch, {
           type: 'joystick'
@@ -761,6 +847,8 @@ const View = () => {
     mouse: {
       clientX: 0,
       clientY: 0,
+      delayedInputX: 0,
+      delayedInputY: 0,
       x: 0,
       y: 0
     },
@@ -838,13 +926,20 @@ const View = () => {
 
     mousemove(e) {
 
-      if (data.ignoreMouseEvents) return;
+      if (data.ignoreMouseEvents || game.players?.local?.data?.isCPU) return;
 
-      data.mouse.clientX = e.clientX;
-      data.mouse.clientY = e.clientY;
+      if (!net.active) {
 
-      data.mouse.x = e.clientX / data.screenScale;
-      data.mouse.y = e.clientY / data.screenScale;
+        data.mouse.x = e.clientX / data.screenScale;
+        data.mouse.y = e.clientY / data.screenScale;
+
+      } else {
+
+        // record here; this gets processed within the game loop and put into a buffer.
+        data.mouse.delayedInputX = e.clientX / data.screenScale;
+        data.mouse.delayedInputY = e.clientY / data.screenScale;
+        
+      }
 
     },
 
@@ -930,9 +1025,11 @@ const View = () => {
   exports = {
     animate,
     applyScreenScale,
+    bufferMouseInput,
     data,
     dom,
     events,
+    sendLocalPlayerCoordinates,
     setAnnouncement,
     setLeftScroll,
     setLeftScrollToPlayer,
