@@ -432,7 +432,7 @@ function PrefsManager() {
 
         // before game start, user might open options menu and flip the pref.
         // update the game menu (start screen) UI if so.
-        if (!game.started && data.active) {
+        if (!game.data.started && data.active) {
           const vsCheckbox = document.getElementById('checkbox-vs');
           if (!vsCheckbox) return;
           vsCheckbox.checked = isActive;
