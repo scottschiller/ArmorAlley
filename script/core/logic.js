@@ -260,7 +260,7 @@ function getNearestObject(source, options = {}) {
       if (itemArray[k].data.dead || itemArray[k].data.isEnemy === source.data.isEnemy) continue;
       
       // is the target in front of the source?
-      isInFront = (itemArray[k].data.x >= source.data.x);
+      isInFront = source.data.isEnemy ? (itemArray[k].data.x < source.data.x) : (itemArray[k].data.x >= source.data.x);
 
       // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
       if (!useInFront || (useInFront && ((!source.data.rotated && isInFront) || (source.data.rotated && !isInFront)))) {
