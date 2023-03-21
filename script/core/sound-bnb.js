@@ -1,5 +1,5 @@
 import { gameEvents, EVENTS } from './GameEvents.js';
-import { oneOf, TYPES, winloc } from './global.js';
+import { oneOf, winloc } from './global.js';
 import { utils } from '../core/utils.js';
 import { addSequence, addSound, getSound, playSound, skipSound } from './sound.js';
 import { game } from './Game.js';
@@ -566,9 +566,13 @@ bnb.beavisLightsOut = (() => {
   let phase = 0;
   const phases = ['default', 'lightsOut', 'lightsOn', 'end'];
 
-  let { body } = document;
+  let body;
 
   function whileplaying() {
+
+    if (!body) {
+      body = document.body;
+    }
 
     const { position } = this;
 
@@ -605,8 +609,10 @@ bnb.beavisLightsOut = (() => {
 
   function onfinish() {
 
-    body.style.opacity = 1;
-    body = null;
+    if (body) {
+      body.style.opacity = 1;
+      body = null;
+    }
 
   }
 
@@ -800,14 +806,6 @@ bnb.buttheadIdle = add('vs_butthead_was_i_supposed_to_be_doing_something');
 bnb.beavisIdle = addSequence(
   add('butthead_whats_taking_you_so_damn_long'),
   bnb.beavisRetorts
-);
-
-bnb[EVENTS.boring] = shuffle(
-  addSequence(
-    addVL('bh_this_is_boring_b_yeah_really'),
-    () => Math.random() >= 0.5 && addVL('bh_boring_before_cool')
-  ),
-  () => game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle
 );
 
 bnb.buttheadComplaints = shuffle([
@@ -1955,6 +1953,14 @@ function initBNBSound() {
     'bh_uh_hello_person_playing'
   ]);
   bnb[EVENTS.helicopterCollision].maxDelay = 5000;
+
+  bnb[EVENTS.boring] = shuffle(
+    addSequence(
+      addVL('bh_this_is_boring_b_yeah_really'),
+      () => Math.random() >= 0.5 && addVL('bh_boring_before_cool')
+    ),
+    () => game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle
+  );
 
   return bnb;
 
