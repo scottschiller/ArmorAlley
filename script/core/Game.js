@@ -479,14 +479,23 @@ const game = (() => {
       objects.joystick = Joystick();
 
       objects.joystick.onSetDirection = (directionX, directionY) => {
+        // TODO: have this call game.objects.view.mousemove(); ?
+        // OR, just call network methods directly.
         // percentage to pixels (circle coordinates)
-        objects.view.data.mouse.x = ((directionX / 100) * objects.view.data.browser.width);
-        objects.view.data.mouse.y = ((directionY / 100) * objects.view.data.browser.height);
+        const x = ((directionX / 100) * objects.view.data.browser.width);
+        const y = ((directionY / 100) * objects.view.data.browser.height);
+        if (net.active) {
+          objects.view.data.mouse.delayedInputX = x;
+          objects.view.data.mouse.delayedInputY = y;
+        } else {
+          objects.view.data.mouse.x = x;
+          objects.view.data.mouse.y = y;
+        }
       };
 
     } else {
 
-      document.getElementById('pointer').remove();
+      document.getElementById('pointer')?.remove();
 
     }
 
