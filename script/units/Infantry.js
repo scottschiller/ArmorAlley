@@ -114,7 +114,7 @@ const Infantry = (options = {}) => {
 
   }
 
-  function die(options) {
+  function die(options = {}) {
 
     if (data.dead) return;
 
@@ -159,6 +159,9 @@ const Infantry = (options = {}) => {
 
     radarItem?.die({ silent: (options && options.silent) });
 
+    if (options.attacker) {
+      data.attacker = options.attacker;
+    }
 
     common.onDie(exports);
 
