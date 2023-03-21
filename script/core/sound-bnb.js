@@ -1844,7 +1844,7 @@ bnb.beavisPeekaboo.maxDelay = 250;
 // "add game menu sequence" - only play subsequent sound(s) before game start, and while the menu is still up.
 function addGMS(...params) {
   // decorate each sequence object with a particular "play next" check.
-  return Object.assign(addSequence(...params), { playNextCondition: () => !game.started });
+  return Object.assign(addSequence(...params), { playNextCondition: () => !game.data.started });
 }
 
 function addIGMS(...params) {
