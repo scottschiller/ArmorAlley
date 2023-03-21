@@ -240,93 +240,91 @@ const Helicopter = (options = {}) => {
     // reset "counter" for missiles, etc.
     data.repairFrames = 0;
 
-    if (!data.isEnemy) {
+    if (!data.isLocal) return;
 
-      document.getElementById('spinner').style.display = 'block';
+    document.getElementById('spinner').style.display = 'block';
 
-      const welcomeMessage = landingPad.data.welcomeMessage;
+    const welcomeMessage = landingPad.data.welcomeMessage;
 
-      playSound(sounds.repairing);
+    playSound(sounds.repairing);
 
-      if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
+    if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
 
-        if (landingPad.data.isKennyLoggins) {
-
-          // welcome to *** THE DANGER ZONE! ***
-          playSound(sounds.dangerZone, null);
-
-        } else {
-
-          if (gamePrefs.bnb) {
-
-            if (landingPad.data.isMidway) {
-              if (game.data.isBeavis) {
-                data.muchaMuchacha = true;
-                if (gamePrefs.sound) {
-                  game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
-                  playSound(sounds.bnb.muchaMuchacha, null);
-                  common.setVideo('camper', 1.05);
-                  utils.css.add(dom.o, css.muchaMuchacha);
-                }
-              } else {
-                iGotYouBabe();
-              }
-            } else {
-              playSound(sounds.bnb.theme, null);
-            }
-
-          } else {
-
-            // hit the chorus, if we'll be "a while."
-
-            playSound(sounds.ipanemaMuzak, null, { position: 13700 });
-            game.objects.notifications.add('🎵 Now playing: “The Girl From Ipanema” 🎸🤘', { noDuplicate: true });
-
-          }
-
-        }
-
-        game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true, doubleHeight: true });
-
-      } else if (landingPad.data.isKennyLoggins) {
+      if (landingPad.data.isKennyLoggins) {
 
         // welcome to *** THE DANGER ZONE! ***
         playSound(sounds.dangerZone, null);
 
-      } else if (gamePrefs.bnb) {
-
-        playSound(sounds.bnb.theme, null);
-
       } else {
 
-        // start from the beginning, if a shorter visit.
-        playSound(sounds.ipanemaMuzak, null, { position: 0 });
+        if (gamePrefs.bnb) {
+
+          if (landingPad.data.isMidway) {
+            if (game.data.isBeavis) {
+              data.muchaMuchacha = true;
+              if (gamePrefs.sound) {
+                game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
+                playSound(sounds.bnb.muchaMuchacha, null);
+                common.setVideo('camper', 1.05);
+                utils.css.add(dom.o, css.muchaMuchacha);
+              }
+            } else {
+              iGotYouBabe();
+            }
+          } else {
+            playSound(sounds.bnb.theme, null);
+          }
+
+        } else {
+
+          // hit the chorus, if we'll be "a while."
+
+          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+          game.objects.notifications.add('🎵 Now playing: “The Girl From Ipanema” 🎸🤘', { noDuplicate: true });
+
+        }
 
       }
 
-      // start blinking certain things
+      game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true, doubleHeight: true });
 
-      if (data.smartMissiles < data.maxSmartMissiles) {
-        utils.css.add(dom.statusBar.missileCountLI, css.repairing);
-      }
+    } else if (landingPad.data.isKennyLoggins) {
 
-      if (data.ammo < data.maxAmmo) {
-        utils.css.add(dom.statusBar.ammoCountLI, css.repairing);
-      }
+      // welcome to *** THE DANGER ZONE! ***
+      playSound(sounds.dangerZone, null);
 
-      if (data.bombs < data.maxBombs) {
-        utils.css.add(dom.statusBar.bombCountLI, css.repairing);
-      }
+    } else if (gamePrefs.bnb) {
 
-      common.setFrameTimeout(() => {
-        playRepairingWrench(repairInProgress, exports);
-      }, 500 + rndInt(1500));
+      playSound(sounds.bnb.theme, null);
 
-      common.setFrameTimeout(() => {
-        playImpactWrench(repairInProgress, exports);
-      }, 500 + rndInt(1500));
+    } else {
+
+      // start from the beginning, if a shorter visit.
+      playSound(sounds.ipanemaMuzak, null, { position: 0 });
 
     }
+
+    // start blinking certain things
+
+    if (data.smartMissiles < data.maxSmartMissiles) {
+      utils.css.add(dom.statusBar.missileCountLI, css.repairing);
+    }
+
+    if (data.ammo < data.maxAmmo) {
+      utils.css.add(dom.statusBar.ammoCountLI, css.repairing);
+    }
+
+    if (data.bombs < data.maxBombs) {
+      utils.css.add(dom.statusBar.bombCountLI, css.repairing);
+    }
+
+    common.setFrameTimeout(() => {
+      playRepairingWrench(repairInProgress, exports);
+    }, 500 + rndInt(1500));
+
+    common.setFrameTimeout(() => {
+      playImpactWrench(repairInProgress, exports);
+    }, 500 + rndInt(1500));
 
   }
 
