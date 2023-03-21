@@ -503,7 +503,7 @@ function recycleTest(obj) {
     if (game.players.local.data.isEnemy === isEnemy) {
       // notify player that a unit has been recycled?
       game.objects.notifications.add(`+${refund} 💰: recycled ${type} ♻️`);
-      game.objects.funds.setFunds(game.objects[TYPES.endBunker][0].data.funds);
+      game.objects.funds.setFunds(game.objects[TYPES.endBunker][obj.data.isEnemy ? 1 : 0].data.funds);
       game.objects.view.updateFundsUI();
     }
 
