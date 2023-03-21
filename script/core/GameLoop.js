@@ -126,7 +126,56 @@ const GameLoop = () => {
      * this still counts as a frame render - we just got here early. Good!
      * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
      */
-    if (!unlimitedFrameRate && data.elapsed < FRAME_MIN_TIME) return;
+    if (!unlimitedFrameRate && data.elapsed < FRAME_MIN_TIME) {
+      
+      // the below applies only to the network case.
+      if (!net.active) return;
+
+      // accommodate for a number of frames' difference.
+      const frameLagBetweenPeers = Math.ceil(net.halfTrip / FRAMERATE);
+
+      // holy hack, batman! take advantage of the in-between time to update.
+      if (game.players.local && data.frameCount < data.remoteFrameCount - frameLagBetweenPeers) {
+
+        console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
+
+        // animate AGAIN, and send updates
+        let behind = data.remoteFrameCount - data.frameCount;
+
+        if (behind > 8) {
+
+          // attempt to fast-forward through all the missing frames at once.
+          console.log(`🏃💨 FAST FORWARD: ${behind} frames behind. Engaging warp speed.`);
+
+          // loop through all this, then final frame / update below.
+          behind--;
+
+          // try hiding everything, so renders are as fast as possible.
+          game.dom.world.style.display = 'none';
+
+          // also, prevent an explosion of sounds.
+          let soundWasEnabled = gamePrefs.sound;
+
+          if (gamePrefs.sound) gamePrefs.sound = false;
+
+          for (var i = 0; i < behind; i++) {
+            animate();
+          }
+
+          game.dom.world.style.display = 'block';
+
+          if (soundWasEnabled) gamePrefs.sound = true;
+
+        }
+
+        animate();
+        
+      }
+
+      return;
+
+    }
+
     if (net.active && game.players.local) {
 
       // Lock-step network play: don't do anything until we've received data from the remote.
