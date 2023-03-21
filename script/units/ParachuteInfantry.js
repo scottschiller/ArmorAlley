@@ -271,6 +271,8 @@ const ParachuteInfantry = (options = {}) => {
     parachuteOpen: 'parachute-open'
   });
 
+  let type = TYPES.parachuteInfantry;
+
   data = common.inheritData({
     type,
     frameCount: rngInt(3, type),
