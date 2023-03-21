@@ -68,27 +68,31 @@ const Helicopter = (options = {}) => {
       utils.css.add(dom.o, css.cloaked);
       utils.css.add(radarItem.dom.o, css.cloaked);
 
-      if (!data.isEnemy && sounds.helicopter.engine) {
+      if (data.isLocal && sounds.helicopter.engine) {
 
-        // additional commentary, once fully-cloaked
-        common.setFrameTimeout(function() {
+        if (gamePrefs.bnb) {
 
-          if (!data.cloaked) return;
+          // additional commentary, once fully-cloaked
+          common.setFrameTimeout(function() {
 
-          const cloakSound = sounds.bnb[(game.data.isBeavis ?'beavisICantSeeAnything' : 'beavisComeOn')];
+            if (!data.cloaked) return;
 
-          playSound(cloakSound, null, {
-            onplay: (sound) => {
-              if (!data.cloaked) skipSound(sound);
-            },
-            onfinish: (sound) => {
-              if (sound.skipped || !data.cloaked) return;
-              // allow "peek-a-boo!"
-              data.cloakedCommentary = true;
-            }
-          });
+            const cloakSound = sounds.bnb[(game.data.isBeavis ?'beavisICantSeeAnything' : 'beavisComeOn')];
 
-        }, 2000);
+            playSound(cloakSound, null, {
+              onplay: (sound) => {
+                if (!data.cloaked) skipSound(sound);
+              },
+              onfinish: (sound) => {
+                if (sound.skipped || !data.cloaked) return;
+                // allow "peek-a-boo!"
+                data.cloakedCommentary = true;
+              }
+            });
+
+          }, 2000);
+
+        }
 
         if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
 
@@ -109,11 +113,11 @@ const Helicopter = (options = {}) => {
       utils.css.remove(dom.o, css.cloaked);
       utils.css.remove(radarItem.dom.o, css.cloaked);
 
-      if (!data.isEnemy && data.cloakedCommentary && !data.dead) {
+      if (gamePrefs.bnb && data.isLocal && data.cloakedCommentary && !data.dead) {
         playSoundWithDelay(sounds.bnb.beavisPeekaboo, 250);
       }
 
-      if (!data.isEnemy && sounds.helicopter.engine) {
+      if (data.isLocal && sounds.helicopter.engine) {
         if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
       }
 
@@ -127,15 +131,18 @@ const Helicopter = (options = {}) => {
   function centerView() {
 
     // hack: center on enemy helicopter at all times.
-    if (!trackEnemy) return;
+    if (!trackEnemy || !data.isLocal) return;
 
-    sprites.setTransformXY(undefined, game.objects.view.dom.battleField, `${(data.x - game.objects.view.data.browser.halfWidth) * -1}px`, '0px');
+    // "get to the choppa!" (center the view on it, that is.)
+    game.objects.view.setLeftScrollToPlayer(exports);
+
+    sprites.moveWithScrollOffset(exports);
 
   }
 
   function updateFuelUI() {
 
-    if (data.isEnemy) return;
+    if (!data.isLocal) return;
 
     sprites.setTransformXY(undefined, dom.fuelLine, `${-100 + data.fuel}%`, '0px');
 
@@ -330,7 +337,7 @@ const Helicopter = (options = {}) => {
 
   function stopRepairing() {
 
-    if (!data.repairing || data.isEnemy) {
+    if (!data.repairing || !data.isLocal) {
       // force-reset "complete" flag at this point, regardless
       data.repairing = false;
       data.repairComplete = false;
@@ -461,7 +468,7 @@ const Helicopter = (options = {}) => {
 
     // ignore enemy repair / updates, but apply player's changes
     if (
-      !data.isEnemy
+      data.isLocal
       && (
         updated.funds
         || updated.force
@@ -489,7 +496,7 @@ const Helicopter = (options = {}) => {
 
       data.repairComplete = true;
 
-      if (!data.isEnemy) {
+      if (data.isLocal) {
 
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('repair-complete').style.display = 'block';
@@ -531,6 +538,7 @@ const Helicopter = (options = {}) => {
   }
 
   function updateInventoryQueue(item) {
+
     // TODO: this queue and X-of-Y built logic could use a refactoring.
     let dataBuilt, dataCount, dataCountOriginal, dataType, element, type, typeFromElement, isDuplicate, o, oCounter, oLastChild, queue, count;
 
@@ -544,17 +552,21 @@ const Helicopter = (options = {}) => {
     count = 0;
 
     function updateBuilt() {
+
       let built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
       built++;
       element.setAttribute(dataBuilt, built);
+
     }
 
     function updateCount() {
+
       let built, originalCount;
       originalCount = element.getAttribute(dataCountOriginal);
       built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
       const adjustedCount = Math.min(built, originalCount);
       oCounter.innerHTML = `<span class="fraction-wrapper"><sup>${adjustedCount}</sup><em class="fraction">&frasl;</em><sub>${originalCount}</sub></span>`;
+
     }
 
     // FIFO-based queue: `item` is provided when something is being queued.
@@ -732,11 +744,15 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    updateFuelUI();
-    updateStatusUI(updated);
     sprites.updateEnergy(exports);
 
+    if (!data.isLocal) return;
+
+    updateFuelUI();
+    updateStatusUI(updated);
+
     if (data.muchaMuchacha && data.repairFrames % 5 === 0) {
+
       if (rnd(1) < 0.25) return;
 
       const { sound } = sounds.bnb.muchaMuchacha;
@@ -763,6 +779,7 @@ const Helicopter = (options = {}) => {
 
       // hackish: force update.
       sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.tiltOffset}deg)`);
+
     }
 
   }
@@ -785,17 +802,21 @@ const Helicopter = (options = {}) => {
 
   function setFiring(state) {
 
-    if (state !== undefined && ((!data.onLandingPad || isMobile) || (!state && data.isEnemy))) {
+    if (state !== undefined && ((!data.onLandingPad || isMobile) || (!state && data.isCPU))) {
+
       data.firing = state;
+      
     }
 
   }
 
   function setBombing(state) {
 
-    if (state !== undefined && (!data.onLandingPad || (!state && data.isEnemy))) {
+    if (state !== undefined && (!data.onLandingPad || (!state && data.isCPU))) {
+
       data.bombing = state;
-      if (!data.isEnemy) {
+
+      if (data.isLocal) {
         // start or stop immediately, too.
         // TODO: setting this breaks enemy helicopter bombing.
         data.bombFrameCount = parseInt(data.bombModulus / 2, 10);
@@ -805,11 +826,15 @@ const Helicopter = (options = {}) => {
   }
 
   function setMissileLaunching(state) {
+
     data.missileLaunching = state;
+
   }
 
   function setParachuting(state) {
+
     data.parachuting = state;
+
   }
 
   function setRespawning(state) {
@@ -821,14 +846,7 @@ const Helicopter = (options = {}) => {
     // initial respawning CSS
     if (state) {
 
-      if (data.isEnemy) {
-
-        // hackish: force enemy helicopter to be on-screen when respawning
-        // this helps ensure it animates up from the landing pad properly
-
-        sprites.updateIsOnScreen(exports, force);
-
-      } else {
+      if (data.isLocal) {
 
         // local player? move the view back to zero.
 
@@ -846,6 +864,13 @@ const Helicopter = (options = {}) => {
         if (game.objects.queue) {
           game.objects.queue.process();
         }
+
+      } else {
+
+        // hackish: force enemy helicopter to be on-screen when respawning
+        // this helps ensure it animates up from the landing pad properly
+
+        sprites.updateIsOnScreen(exports, force);
 
       }
 
@@ -873,31 +898,29 @@ const Helicopter = (options = {}) => {
     }, 128);
 
     // player: restore trailers that may have been removed on die()
-    if (!data.isEnemy) {
+    // TODO: bug where if CPU dies, trailers don't move?
+    if (!data.isCPU) {
       initTrailers();
     }
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
-      // hackish: only do transitionend for human player.
-      if (!data.isEnemy) {
-        dom.o.addEventListener('transitionend', respawnComplete);
-      } else {
-        common.setFrameTimeout(respawnComplete, 1500);
-      }
+      // hackish: apply transition *and* timer, the former seems to be inconsistent.
+      dom.o.addEventListener('transitionend', respawnComplete);
+      common.setFrameTimeout(respawnComplete, 1550);
     }
 
   }
 
   function respawnComplete() {
 
-    if (!data.isEnemy) {
+    if (data.isLocal) {
       dom.o.removeEventListener('transitionend', respawnComplete);
     }
 
     setRespawning(false);
 
-    if (data.isEnemy) {
+    if (data.isCPU) {
       data.vY = -1;
     }
   }
@@ -930,7 +953,7 @@ const Helicopter = (options = {}) => {
       }, 333);
     }
 
-    if (!data.isEnemy && !data.autoRotate && sounds.helicopter.rotate) {
+    if (data.isLocal && !data.autoRotate && sounds.helicopter.rotate) {
       playSound(sounds.helicopter.rotate);
     }
 
@@ -947,9 +970,15 @@ const Helicopter = (options = {}) => {
     // L -> R / R -> L + forward / backward
 
     // auto-rotate feature
-    if ((data.autoRotate || (!data.isEnemy && isMobile))) {
-      if ((data.vX > 0 && data.lastVX < 0 && data.rotated) || (data.vX < 0 && data.lastVX > 0 && !data.rotated)) {
-        rotate();
+    if ((data.autoRotate || (!data.isCPU && isMobile))) {
+      if (!data.isEnemy) {
+        if ((data.vX > 0 && data.lastVX < 0 && data.rotated) || (data.vX < 0 && data.lastVX > 0 && !data.rotated)) {
+          rotate();
+        }
+      } else {
+        if ((data.vX > 0 && data.lastVX < 0 && !data.rotated) || (data.vX < 0 && data.lastVX > 0 && data.rotated)) {
+          rotate();
+        }
       }
     }
 
@@ -1060,7 +1089,7 @@ const Helicopter = (options = {}) => {
     const yMax = (data.yMax - (data.repairing ? 3 : 0));
 
     // Hack: limit enemy helicopter to visible screen
-    if (data.isEnemy) {
+    if (data.isCPU) {
       x = Math.min(worldWidth, Math.max(0, x));
     }
 
@@ -1176,7 +1205,7 @@ const Helicopter = (options = {}) => {
     // something is covering the landing pad - retry shortly.
     if (foundObject) {
 
-      if (!data.isEnemy) {
+      if (data.isLocal) {
         noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
         game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed. Waiting for clearance. ${noEntry}`);
       }
@@ -1211,7 +1240,7 @@ const Helicopter = (options = {}) => {
     data.vY = 0;
     data.lastVX = 0;
 
-    if (!data.isEnemy) {
+    if (!data.isCPU) {
 
       data.vX = 0;
       data.lastVX = 0;
@@ -1317,7 +1346,7 @@ const Helicopter = (options = {}) => {
 
     const attacker = dieOptions?.attacker;
 
-    if (!data.isEnemy) {
+    if (!data.isCPU) {
       reactToDamage(attacker);
     }
     
@@ -1348,7 +1377,7 @@ const Helicopter = (options = {}) => {
 
     }
 
-    // extra-special case: player + CPU helicopters collided.
+    // extra-special case: player + enemy helicopters collided.
     if (attacker) {
 
       if (attacker.data.type === TYPES.helicopter) {
@@ -1392,7 +1421,7 @@ const Helicopter = (options = {}) => {
     effects.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
     // roll the dice: drop a parachute infantry (pilot ejects safely)
-    if ((data.isEnemy && (gameType === 'hard' || gameType === 'extreme' ? Math.random() > 0.5 : Math.random() > 0.25)) || Math.random() > 0.66) {
+    if ((data.isCPU && (gameType === 'hard' || gameType === 'extreme' ? aiRNG() > 0.5 : aiRNG() > 0.25)) || (data.isLocal && rng(data.type) > 0.66)) {
       deployParachuteInfantry({
         isEnemy: data.isEnemy,
         x: data.x + data.halfWidth,
@@ -1429,13 +1458,13 @@ const Helicopter = (options = {}) => {
       if (sounds.genericExplosion) playSound(sounds.genericExplosion, exports);
     }
 
-    if (!data.isEnemy && sounds.helicopter.engine) {
+    if (data.isLocal && sounds.helicopter.engine) {
       if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(0);
     }
 
-    // don't respawn the enemy chopper during tutorial mode.
-    if (!data.isEnemy || !tutorialMode) {
-      common.setFrameTimeout(respawn, (data.isEnemy ? 8000 : 3000));
+    // don't respawn the enemy (CPU) chopper during tutorial mode.
+    if (!tutorialMode) {
+      common.setFrameTimeout(respawn, (data.isCPU ? 8000 : 3000));
     }
 
   }
@@ -1475,13 +1504,13 @@ const Helicopter = (options = {}) => {
 
         data.ammo = Math.max(0, data.ammo - 1);
 
-        if (!data.isEnemy) {
+        if (data.isLocal) {
 
           updated.ammo = true;
 
         }
 
-      } else if (!data.isEnemy && sounds.inventory.denied) {
+      } else if (data.isLocal && sounds.inventory.denied) {
 
         // player is out of ammo.
         playSound(sounds.inventory.denied);
@@ -1489,7 +1518,7 @@ const Helicopter = (options = {}) => {
       }
 
       // SHIFT key still down?
-      if (!data.isEnemy && !keyboardMonitor.isDown('shift')) {
+      if (data.isLocal && !keyboardMonitor.isDown('shift')) {
         data.firing = false;
       }
 
@@ -1515,17 +1544,17 @@ const Helicopter = (options = {}) => {
 
         data.bombs = Math.max(0, data.bombs - 1);
 
-        if (!data.isEnemy) {
+        if (data.isLocal) {
           updated.bombs = true;
         }
 
-      } else if (!data.isEnemy && sounds.inventory.denied) {
+      } else if (data.isLocal && sounds.inventory.denied) {
         // player is out of ammo.
         playSound(sounds.inventory.denied);
       }
 
       // CTRL key still down?
-      if (!data.isEnemy && !keyboardMonitor.isDown('ctrl')) {
+      if (data.isLocal && !keyboardMonitor.isDown('ctrl')) {
         data.bombing = false;
       }
 
@@ -1562,7 +1591,7 @@ const Helicopter = (options = {}) => {
 
       }
 
-      if (!data.isEnemy && (!data.smartMissiles || !missileTarget)) {
+      if (data.isLocal && (!data.smartMissiles || !missileTarget)) {
 
         // out of ammo / no available targets
         if (sounds.inventory.denied) {
@@ -1609,8 +1638,8 @@ const Helicopter = (options = {}) => {
 
         playSound(sounds.popSound2, exports);
 
-      } else if (!data.isEnemy && sounds.inventory.denied) {
-        if (game.data.isBeavis || game.data.isButthead) {
+      } else if (data.isLocal && sounds.inventory.denied) {
+        if (gamePrefs.bnb && (game.data.isBeavis || game.data.isButthead)) {
           if (!data.bnbNoParachutes) {
             data.bnbNoParachutes = true;
             const { isBeavis } = game.data;
@@ -1638,19 +1667,30 @@ const Helicopter = (options = {}) => {
     // bail!
     if (!data.dead && data.pilot) {
 
-      deployParachuteInfantry({
-        x: data.x + data.halfWidth,
-        y: (data.y + data.height) - 11
-      });
+      // local game (no network), OR: CPU OR current player (where network is involved)
+      if (!net.active || data.isCPU || data.isLocal) {
+        deployParachuteInfantry({
+          isEnemy: data.isEnemy,
+          parent: exports,
+          x: data.x + data.halfWidth,
+          y: (data.y + data.height) - 11
+        });
+      }
 
-      if (!tutorialMode) {
-        game.objects.view.setAnnouncement('No pilot');
-        game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
+      if (data.isLocal) {
+
+        if (!tutorialMode) {
+          game.objects.view.setAnnouncement('No pilot');
+          game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
+        }
+
       }
 
       data.pilot = false;
 
-      playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
+      if (gamePrefs.bnb) {
+        playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
+      }
 
     }
 
@@ -2113,7 +2153,7 @@ const Helicopter = (options = {}) => {
     if (isOnScreen) {
       // make sure trailers are present, if not already
       initTrailers();
-    } else if (data.isEnemy) {
+    } else if (data.isCPU) {
       // helicopter might leave trailers when it dies while on-screen.
       hideTrailers();
     }
@@ -2176,7 +2216,7 @@ const Helicopter = (options = {}) => {
       data.y = maxY + 1;
 
       // only "reset" for human player
-      if (!data.isEnemy) {
+      if (!data.isCPU) {
         data.vX = 0;
         data.vY = 0;
       }
@@ -2199,7 +2239,7 @@ const Helicopter = (options = {}) => {
 
     }
 
-    if (data.landed && !data.isEnemy) {
+    if (data.landed && !data.isCPU) {
       // don't throw bullets with vY, if landed
       data.vY = 0;
     }
@@ -2232,7 +2272,7 @@ const Helicopter = (options = {}) => {
 
       // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
-      if (!data.isEnemy) {
+      if (data.isLocal) {
         newX = Math.max(view.data.battleField.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
       }
 
@@ -2274,7 +2314,7 @@ const Helicopter = (options = {}) => {
       fire();
     }
 
-    if (!data.dead && !data.isEnemy) {
+    if (!data.dead && data.isLocal) {
 
       const vans = game.objects[TYPES.van];
 
@@ -2322,9 +2362,7 @@ const Helicopter = (options = {}) => {
 
     burnFuel();
 
-    // TODO: isCPU
-
-    if (data.isEnemy) {
+    if (data.isCPU) {
 
       ai();
 
@@ -2467,7 +2505,7 @@ const Helicopter = (options = {}) => {
 
   function initHelicopter() {
 
-    if (data.isEnemy) {
+    if (data.isCPU || data.isRemote) {
       // offset fire modulus by half, to offset sound
       data.frameCount = Math.floor(data.fireModulus / 2);
     }
@@ -2512,7 +2550,7 @@ const Helicopter = (options = {}) => {
     refreshCoords();
 
     // if not enemy, force-update status bar UI
-    if (!data.isEnemy) {
+    if (data.isLocal) {
       updateStatusUI({ force: true });
     }
 
@@ -2544,8 +2582,15 @@ const Helicopter = (options = {}) => {
     trailer: 'helicopter-trailer'
   });
 
+  // computer player
+  let isCPU = !!options.isCPU;
+
   data = common.inheritData({
     type: TYPES.helicopter,
+    isCPU,
+    isLocal: !!options.isLocal,
+    isRemote: !!options.isRemote,
+    attachEvents: !!options.attachEvents,
     angle: 0,
     lastReactionSound: null,
     commentaryTimer: null,
@@ -2581,7 +2626,7 @@ const Helicopter = (options = {}) => {
     cloaked: false,
     rotated: false,
     rotateTimer: null,
-    autoRotate: (options.isEnemy || isMobile),
+    autoRotate: (isCPU || isMobile),
     repairing: false,
     repairFrames: 0,
     dieCount: 0,
@@ -2596,8 +2641,8 @@ const Helicopter = (options = {}) => {
     yMin: 0,
     yMax: null,
     vX: 0,
-    vXMax: (options.isEnemy ? 8 : 12),
-    vYMax: (options.isEnemy ? 8 : 10),
+    vXMax: (isCPU ? 8 : 12),
+    vYMax: (isCPU ? 8 : 10),
     lastVX: 0,
     vY: 0,
     vyMin: 0,
@@ -2609,10 +2654,10 @@ const Helicopter = (options = {}) => {
     tilt: null,
     lastTiltCSS: null,
     tiltYOffset: 0.25,
-    ammo: (tutorialMode && !options.isEnemy) ? 128 : 64,
-    maxAmmo: (tutorialMode && !options.isEnemy) ? 128 : 64,
-    bombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
-    maxBombs: (tutorialMode && !options.isEnemy) ? 30 : 10,
+    ammo: tutorialMode ? 128 : 64,
+    maxAmmo: tutorialMode ? 128 : 64,
+    bombs: tutorialMode ? 30 : 10,
+    maxBombs: tutorialMode ? 30 : 10,
     parachutes: 1,
     maxParachutes: 5,
     bnbNoParachutes: false,
@@ -2655,26 +2700,31 @@ const Helicopter = (options = {}) => {
     height: data.height
   };
 
-  statsBar = document.getElementById('stats-bar');
-  rngID = `${data.type}_${data.id}`;
   // so each helicopter gets a unique seed.
   const aiSeedOffset = (data.id.split('_')[1] || 0);
+
+  if (data.isLocal) {
+    statsBar = document.getElementById('stats-bar');
+  }
 
   dom = {
     o: null,
     fuelLine: null,
     statsBar,
     // hackish
-    statusBar: {
-      infantryCount: document.getElementById('infantry-count'),
-      infantryCountLI: statsBar.querySelectorAll('li.infantry-count')[0],
-      ammoCount: document.getElementById('ammo-count'),
-      ammoCountLI: statsBar.querySelectorAll('li.ammo')[0],
-      bombCount: document.getElementById('bomb-count'),
-      bombCountLI: statsBar.querySelectorAll('li.bombs')[0],
-      missileCount: document.getElementById('missile-count'),
-      missileCountLI: statsBar.querySelectorAll('li.missiles')[0],
-    },
+    statusBar: (() => {
+      if (!statsBar) return;
+      return {
+        infantryCount: document.getElementById('infantry-count'),
+        infantryCountLI: statsBar?.querySelectorAll('li.infantry-count')[0],
+        ammoCount: document?.getElementById('ammo-count'),
+        ammoCountLI: statsBar?.querySelectorAll('li.ammo')[0],
+        bombCount: document.getElementById('bomb-count'),
+        bombCountLI: statsBar.querySelectorAll('li.bombs')[0],
+        missileCount: document.getElementById('missile-count'),
+        missileCountLI: statsBar.querySelectorAll('li.missiles')[0]
+      };
+    })(),
     trailers: []
   };
 
@@ -2687,7 +2737,7 @@ const Helicopter = (options = {}) => {
     mousedown(e) {
       let args;
 
-      if (e.button !== 0 || isMobile || data.isEnemy || !data.fuel) return;
+      if (e.button !== 0 || isMobile || data.isCPU || !data.fuel) return;
 
       if (!isGameOver()) {
 
@@ -2733,7 +2783,7 @@ const Helicopter = (options = {}) => {
     },
 
     dblclick(e) {
-      if (e.button !== 0 || data.ignoreMouseEvents || data.isEnemy || !data.fuel) return;
+      if (e.button !== 0 || data.ignoreMouseEvents || data.isCPU || !data.fuel) return;
 
       // revert to normal setting
       if (data.rotated) rotate();
@@ -2785,7 +2835,7 @@ const Helicopter = (options = {}) => {
           if (sounds.chainSnapping) {
             playSound(sounds.chainSnapping, target);
           }
-          if (!data.isEnemy) {
+          if (data.isLocal) {
             reactToDamage(target);
           }
           // should the target die, too? ... probably so.
