@@ -1,11 +1,12 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { FRAMERATE, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES } from '../core/global.js';
+import { unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
 import { sprites } from './sprites.js';
+import { net } from './network.js';
 
 const GameLoop = () => {
 
@@ -116,6 +117,20 @@ const GameLoop = () => {
      * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
      */
     if (!unlimitedFrameRate && data.elapsed < FRAME_MIN_TIME) return;
+    if (net.active && game.players.local) {
+
+      // Lock-step network play: don't do anything until we've received data from the remote.
+      // Here be dragons. Probably. 🐉
+      if (data.frameCount && !net.newPacketCount && USE_LOCK_STEP) {
+        // console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
+        // net.sendMessage({ type: 'PING' });
+        return;
+      }
+
+      // allow clients to update
+      net.newPacketCount = 0;
+
+    }
 
     // performance debugging: number of style changes (transform) for this frame.
     if (debug) {
@@ -156,6 +171,16 @@ const GameLoop = () => {
       // update / restart 1-second timer
       data.fpsTimer = ts;
 
+    }
+
+    // if we haven't yet, ensure we've sent at least one packet to keep lock-step going.
+    if (net.active) {
+      if (!net.sentPacketCount && USE_LOCK_STEP) {
+        // console.log(`No outgoing packets for frame ${data.frameCount}, sending ping`);
+        // net.sendMessage({ type: 'PING' });
+      } else {
+        net.sentPacketCount = 0;
+      }
     }
 
   }
