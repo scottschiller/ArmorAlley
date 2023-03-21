@@ -84,7 +84,7 @@ function KeyboardMonitor() {
 
     // NOTE: Each function gets an (e) event argument.
 
-    // shift
+    // return / enter
     13: {
 
       allowEvent: true, // don't use stopEvent()
