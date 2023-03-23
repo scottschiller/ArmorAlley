@@ -152,7 +152,14 @@ const EndBunker = (options = {}) => {
         earnedFunds = 3;
       }
 
-      data.funds += earnedFunds;
+      /**
+       * TODO: co-op "joint banking" option.
+       * Until then, only local players contribute funds.
+       * Otherwise, you'd earn double on each human player's side.
+       */
+      if (helicopter.data.isLocal) {
+        data.funds += earnedFunds;
+      }
 
       if (helicopter.data.isLocal) {
 
