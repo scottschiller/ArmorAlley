@@ -55,8 +55,6 @@ const isMobileIOS = ua.match(/iphone|ipad/i);
 // scrolling the world. the fastest nodes are the ones that aren't there.
 const useDOMPruning = !searchParams.get('noDomPruning');
 
-const trackEnemy = searchParams.get('trackEnemy') || searchParams.get('enemyCPU');
-
 const debug = searchParams.get('debug');
 
 // TODO: get rid of this.
@@ -356,7 +354,6 @@ export {
   isiPhone,
   isMobileIOS,
   useDOMPruning,
-  trackEnemy,
   debug,
   debugCollision,
   debugType,

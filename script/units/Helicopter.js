@@ -4,7 +4,6 @@ import { utils } from '../core/utils.js';
 import { gameType, keyboardMonitor, screenScale } from '../aa.js';
 
 import {
-  trackEnemy,
   bananaMode,
   defaultMissileMode,
   rubberChickenMode,
@@ -130,8 +129,8 @@ const Helicopter = (options = {}) => {
 
   function centerView() {
 
-    // hack: center on enemy helicopter at all times.
-    if (!trackEnemy || !data.isLocal) return;
+    // don't let errant calls center the view on remote / CPU choppers.
+    if (!data.isLocal) return;
 
     // "get to the choppa!" (center the view on it, that is.)
     game.objects.view.setLeftScrollToPlayer(exports);
