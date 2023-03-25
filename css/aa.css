@@ -4929,4 +4929,9 @@ button .network-icon {
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAKCAYAAAAEqljUAAAAeUlEQVR4Ad2SgQbAQAxD++n9tPuz7EYQFBLgunk7wmvPpPTpbrgs8X35nPPLWOEnMv8envcZOGh98Lpf/FjogAU+wwt4ljDk8wX6Ap6BP+/XucZ+y2cIociczxeQN/IhzHO9/YbvN0DlrAHqGw0w9ht+IWSBnw9Z4395RB/JtOP6CAAAAABJRU5ErkJggg==);
   will-change: transform;
 }
+
+.debug-rect:hover {
+  outline: 1px solid #fff;
+  background: rgba(0,0,0,0.75);
+  z-index: 10;
 }
