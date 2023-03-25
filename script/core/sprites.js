@@ -116,10 +116,7 @@ const sprites = {
 
     // ignore if off-screen
     if (exports && !exports.data.isOnScreen) {
-      if (!exports) {
-        console.warn('setTransformXY(): WTF no exports?', exports, o, x, y, extraTransforms);
-        debugger;
-      } else if (debug) {
+      if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
       }
@@ -162,6 +159,7 @@ const sprites = {
 
     }
 
+    // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
       console.warn('setTransformXY(): WTF no o._style?', o);
       return;
