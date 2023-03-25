@@ -1772,16 +1772,14 @@ const Helicopter = (options = {}) => {
         });
       }
 
-      if (data.isLocal) {
-
-        if (!tutorialMode) {
-          game.objects.view.setAnnouncement('No pilot');
-          game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
-        }
-
-      }
-
       data.pilot = false;
+
+      if (!data.isLocal) return;
+
+      if (!tutorialMode) {
+        game.objects.view.setAnnouncement('No pilot');
+        game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
+      }
 
       if (gamePrefs.bnb) {
         playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
