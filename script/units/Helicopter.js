@@ -811,10 +811,19 @@ const Helicopter = (options = {}) => {
 
   function setBombing(state) {
 
+    // TODO: review forcing of false when `.onLandingPad` vs. next block, DRY etc.
+
+    // no matter what, bail if on a landing pad.
+    if (data.onLandingPad) {
+      data.bombing = false;
+      data.bombFrameCount = parseInt(data.bombModulus / 2, 10);
+      return;
+    }
+
     if (state !== undefined && (!data.onLandingPad || (!state && data.isCPU))) {
 
-      data.bombing = state;
-
+      data.bombing = !!state;
+      
       if (data.isLocal) {
         // start or stop immediately, too.
         // TODO: setting this breaks enemy helicopter bombing.
