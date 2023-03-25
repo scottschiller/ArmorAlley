@@ -53,6 +53,7 @@ import { domFettiBoom } from '../UI/DomFetti.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const Helicopter = (options = {}) => {
 
@@ -2714,7 +2715,24 @@ const Helicopter = (options = {}) => {
     // for human player: append immediately, so initial game start / respawn animation works nicely
     sprites.updateIsOnScreen(exports);
 
-    setRespawning(true);
+    if (net.active) {
+
+      if (!data.isCPU) {
+        // regular local case
+        callAction('setRespawning', true);
+      } else {
+        // randomize start times a bit
+        common.setFrameTimeout(() => {
+          callAction('setRespawning', true);
+        }, 1000 + aiRNG(2000));
+      }
+
+    } else {
+
+      // non-network, local player(s)
+      setRespawning(true);
+
+    }
 
     // attach events?
 
