@@ -38,7 +38,8 @@ const staticIDTypes = {
 const excludeFromNetworkTypes = {
   // [TYPES.gunfire]: true,
   [TYPES.shrapnel]: true,
-  [TYPES.bomb]: true
+  [TYPES.bomb]: true,
+  [TYPES.superBunker]: true
 }
 
 const PREFIX_HOST = 'host_';
