@@ -234,7 +234,11 @@ const SmartMissile = (options = {}) => {
 
     if (data.deadTimer || data.dead) return;
 
-    let { attacker } = dieOptions;
+    let attacker = dieOptions?.attacker;
+
+    if (attacker && !data.attacker) {
+      data.attacker = attacker;
+    }
 
     // slightly hackish: may be passed, or assigned
     attacker = attacker || data.attacker;
