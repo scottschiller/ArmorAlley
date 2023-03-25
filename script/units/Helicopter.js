@@ -28,7 +28,6 @@ import {
 import {
   playSound,
   stopSound,
-  getSound,
   sounds,
   playImpactWrench,
   playRepairingWrench,
@@ -1342,33 +1341,6 @@ const Helicopter = (options = {}) => {
 
     // helicopter died. move view, and reset.
     reset();
-
-  }
-
-  function startSound(sound) {
-
-    let soundObject;
-
-    if (!gamePrefs.sound || !sound) return;
-
-    soundObject = getSound(sound);
-
-    if (!soundObject) return;
-
-    if (!data.isEnemy) {
-
-      soundObject.sound.play({
-        // TODO: volume is now driven by distance. confirm and clean up.
-        // volume: soundObject.options.volume * (soundObject.soundOptions[data.cloaked ? 'offScreen' : 'onScreen'].volume / 100),
-        playbackRate: 0.75 + (Math.random() * 0.25)
-      });
-
-    } else if (!soundObject.playState) {
-
-      // play with volume based on visibility.
-      playSound(sound, exports);
-
-    }
 
   }
 
