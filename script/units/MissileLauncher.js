@@ -7,6 +7,7 @@ import { enemyHelicopterNearby, nearbyTest, objectInView, recycleTest } from '..
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const MissileLauncher = (options = {}) => {
 
@@ -121,7 +122,9 @@ const MissileLauncher = (options = {}) => {
     // self-destruct, FIRE ZE MISSILE
     die();
 
-    game.addObject(TYPES.smartMissile, {
+    const params = {
+      id: `${data.id}_missile`,
+      staticID: true,
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
@@ -130,7 +133,35 @@ const MissileLauncher = (options = {}) => {
       x: data.x + (data.width / 2),
       y: data.y,
       target: targetHelicopter
-    });
+    };
+
+    const missile = game.addObject(TYPES.smartMissile, params);
+
+    /**
+     * For consistency, ensure a missile exists on both sides.
+     * 
+     * It's possible, given lag(?), that one missile launcher may have been blown up
+     * on the other side by something else before it had a chance to launch.
+     * 
+     * This is bad as it could mean your helicopter mysteriously gets hit, when
+     * the active missile on the other side hits it.
+     */
+    if (net.active) {
+
+      net.sendMessage({
+        type: 'ADD_OBJECT',
+        objectType: missile.data.type,
+        params: {
+          ...params,
+          id: params.id,
+          parent: exports.data.id,
+          target: targetHelicopter.data.id,
+          isBanana: params.isBanana,
+          isRubberChicken: params.isRubberChicken
+        }
+      });
+        
+    }
 
   }
 
