@@ -1503,6 +1503,51 @@ const Helicopter = (options = {}) => {
       common.setFrameTimeout(respawn, (data.isCPU ? 8000 : 3000));
     }
 
+  function getBombParams() {
+
+    return {
+      parent: exports,
+      parentType: data.type,
+      isEnemy: data.isEnemy,
+      x: data.x + data.halfWidth,
+      y: (data.y + data.height) - 6,
+      vX: data.vX,
+      vY: data.vY
+    };
+    
+  }
+
+  function getGunfireParams() {
+
+    let tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
+
+    return {
+      parent: exports,
+      parentType: data.type,
+      isEnemy: data.isEnemy,
+      x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
+      y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0) + (data.isEnemy ? 2 : 0),
+      vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
+      vY: data.vY + (data.isCPU ? 0 : tiltOffset * (!data.isCPU && data.isEnemy ? -1 : 1)) // CPU doesn't know how to account for tilt
+    };
+    
+  }
+
+  function getSmartMissileParams(missileTarget) {
+
+    return {
+      parent: exports,
+      parentType: data.type,
+      isEnemy: data.isEnemy,
+      x: data.x + (data.rotated ? 0 : data.width) - 8,
+      y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
+      target: missileTarget,
+      // special variants of the smart missile. ;)
+      isBanana: game.objects.view.data.missileMode === bananaMode && data.isLocal,
+      isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && data.isLocal,
+      isSmartMissile: game.objects.view.data.missileMode === defaultMissileMode && data.isLocal
+    }
+    
   }
 
   function fire() {
@@ -1520,21 +1565,29 @@ const Helicopter = (options = {}) => {
 
       if (data.ammo > 0) {
 
+        let params = getGunfireParams();
         // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
-        tiltOffset = (data.tiltOffset !== 0 ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1) : 0);
 
-        game.addObject(TYPES.gunfire, {
-          parent: exports,
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          x: data.x + ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated) ? 0 : data.width - 8),
-          y: data.y + data.halfHeight + (data.tilt !== null ? tiltOffset + 2 : 0),
-          vX: data.vX + (8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1)),
-          vY: data.vY + (data.isEnemy ? 0 : tiltOffset) // CPU doesn't know how to account for tilt
-        });
+        game.addObject(TYPES.gunfire, params);
 
-        startSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire);
+        /*
+        const obj = game.addObject(TYPES.gunfire, params);
 
+        // local human player, and CPU being "hosted" on this side
+        if (net.active && !data.isRemote) {
+          net.sendMessage({
+            type: 'ADD_OBJECT',
+            objectType: obj.data.type,
+            params: {
+              ...params,
+              id: obj.data.id,
+              parent: exports.data.id // local player here = remote player there
+            }
+          });
+        }
+        */
+        
+        playSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire, exports);
 
         // TODO: CPU
 
@@ -1564,15 +1617,27 @@ const Helicopter = (options = {}) => {
 
       if (data.bombs > 0) {
 
-        game.addObject(TYPES.bomb, {
-          parent: exports,
-          parentType: data.type,
-          isEnemy: data.isEnemy,
-          x: data.x + data.halfWidth,
-          y: (data.y + data.height) - 6,
-          vX: data.vX,
-          vY: data.vY
-        });
+        let params = getBombParams();
+
+        game.addObject(TYPES.bomb, params);
+
+        /*
+
+        let bomb = game.addObject(TYPES.bomb, params);
+
+        if (net.active && !data.isRemote) {
+          net.sendMessage({
+            type: 'ADD_OBJECT',
+            objectType: bomb.data.type,
+            params: {
+              ...params,
+              id: bomb.data.id,
+              // redefine `parent` as an ID for lookup on the other side
+              parent: exports.data.id // local player here = remote player there
+            }
+          });
+        }
+        */
 
         if (sounds.bombHatch) {
           playSound(sounds.bombHatch, exports);
@@ -1606,18 +1671,26 @@ const Helicopter = (options = {}) => {
 
         if (missileTarget && !missileTarget.data.cloaked) {
 
-          game.addObject(TYPES.smartMissile, {
-            parent: exports,
-            parentType: data.type,
-            isEnemy: data.isEnemy,
-            x: data.x + (data.rotated ? 0 : data.width) - 8,
-            y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
-            target: missileTarget,
-            // special variants of the smart missile. ;)
-            isBanana: game.objects.view.data.missileMode === bananaMode && !data.isEnemy,
-            isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && !data.isEnemy,
-            isSmartMissile: game.objects.view.data.missileMode === defaultMissileMode && !data.isEnemy
-          });
+          const params = getSmartMissileParams(missileTarget);
+
+          game.addObject(TYPES.smartMissile, params);
+
+          /*
+          const obj = game.addObject(TYPES.smartMissile, params);
+
+          if (net.active && !data.isRemote) {
+            net.sendMessage({
+              type: 'ADD_OBJECT',
+              objectType: obj.data.type,
+              params: {
+                ...params,
+                id: obj.data.id,
+                parent: data.id,
+                target: missileTarget.data.id,
+              }
+            });
+          }
+          */
 
           data.smartMissiles = Math.max(0, data.smartMissiles - 1);
 
@@ -1649,18 +1722,33 @@ const Helicopter = (options = {}) => {
         // helicopter landed? Just create an infantry.
         if (data.landed) {
 
-          game.addObject(TYPES.infantry, {
+          const params = {
             isEnemy: data.isEnemy,
             // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
             x: data.x + (data.width * 0.75),
             y: (data.y + data.height) - 11,
             // exclude from recycle "refund" / reward case
             unassisted: false
-          });
+          };
+
+          let obj = game.addObject(TYPES.infantry, params);
+
+          if (net.active && !data.isRemote) {
+            net.sendMessage({
+              type: 'ADD_OBJECT',
+              objectType: obj.data.type,
+              params: {
+                ...params,
+                id: obj.data.id,
+                parent: data.id
+              }
+            });
+          }
 
         } else {
 
           deployParachuteInfantry({
+            parent: exports,
             isEnemy: data.isEnemy,
             x: data.x + data.halfWidth,
             y: (data.y + data.height) - 11
@@ -1704,7 +1792,7 @@ const Helicopter = (options = {}) => {
     if (!data.dead && data.pilot) {
 
       // local game (no network), OR: CPU OR current player (where network is involved)
-      if (!net.active || data.isCPU || data.isLocal) {
+      if (!net.active || data.isLocal) {
         deployParachuteInfantry({
           isEnemy: data.isEnemy,
           parent: exports,
@@ -1740,17 +1828,26 @@ const Helicopter = (options = {}) => {
      * in the original game, the enemy helicopter would use this trick to distract your missiles.
      */
 
+    const sendToRemote = net.active && !data.isRemote;
+
     const pi = game.addObject(TYPES.parachuteInfantry, options);
-    
-    // now, maybe confuse any nearby smart missiles.
-    checkSmartMissileDecoy(pi);
 
-  }
+    if (sendToRemote) {
+      net.sendMessage({
+        type: 'ADD_OBJECT',
+        objectType: pi.data.type,
+        params: {
+          ...options,
+          id: pi.data.id,
+          parent: options.parent.data.id,
+          // certain params we want to duplicate
+          parachuteOpensAtY: pi.data.parachuteOpensAtY,
+          windModulus: pi.data.windModulus,
+          vY: pi.data.vY
 
-  function checkSmartMissileDecoy(parachuteInfantry) {
-
-    // given the current helicopter, find missiles targeting it and possibly distract them.
-    game.objects[TYPES.smartMissile].forEach((missile) => missile.maybeTargetDecoy(parachuteInfantry));
+        }
+      });      
+    }
 
   }
 
@@ -2839,6 +2936,9 @@ const Helicopter = (options = {}) => {
     die,
     eject,
     fire,
+    getBombParams,
+    getGunfireParams,
+    getSmartMissileParams,
     init: initHelicopter,
     isOnScreenChange,
     objects,
