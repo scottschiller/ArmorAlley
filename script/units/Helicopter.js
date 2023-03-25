@@ -1531,7 +1531,7 @@ const Helicopter = (options = {}) => {
     }
 
     // don't respawn the enemy (CPU) chopper during tutorial mode.
-    if (!tutorialMode) {
+    if (!tutorialMode || !data.isEnemy) {
       common.setFrameTimeout(respawn, (data.isCPU ? 8000 : 3000));
     }
 
