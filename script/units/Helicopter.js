@@ -2584,6 +2584,7 @@ const Helicopter = (options = {}) => {
   function reactToDamage(attacker) {
 
     // extra special case: BnB, and helicopter being hit by shrapnel or enemy gunfire.
+    if (!gamePrefs.bnb) return;
 
     // make a racket, depending
     if (!data.lastReactionSound) {
