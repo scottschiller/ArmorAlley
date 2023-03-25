@@ -94,7 +94,7 @@ const showLocalMessage = (html) => console.log(html);
 function sendDelayedMessage(obj, callback) {
 
   /**
-   * Wait "at least one frame", plus half ping time, then send message to remote.
+   * Send in "time to get there" (half-trip = half-pingtime), plus a few frames.
    * This should help keep objects consistent on both sides, i.e., a balloon dies,
    * but has time to kill the helicopter that ran into it before dying itself.
    */
@@ -102,22 +102,24 @@ function sendDelayedMessage(obj, callback) {
   // current difference in frame count implies lag, in FRAME_LENGTH msec per frame
   const delta = Math.max(1, game.objects.gameLoop.data.frameCount - game.objects.gameLoop.data.remoteFrameCount);
 
-  // if we're ahead of the remote, send almost immediately. Otherwise, "time to get there" or two frames; whichever is lesser, but never less than two.
-  const delay = !delta ? FRAME_LENGTH : Math.max(FRAME_LENGTH * 2, Math.min(net.halfTrip, (delta + 1) * FRAME_LENGTH));
+  /**
+   * If playing on LAN / via wifi etc., half-trip might be a few miliseconds.
+   * We want to ensure this message arrives "late", to avoid killing something early.
+   */
+  const MIN_FRAME_DELAY = 3 * FRAME_LENGTH;
 
-  if (debugNetwork) console.log(`sendDelayedMessage(): sending in ${delay.toFixed(2)} msec, Δ = ${delta}, ${(delta * FRAME_LENGTH).toFixed(2)} msec?`, obj);
+  // Take the greater of half-trip vs. computed delta in frames between clients, vs. MIN_FRAME_DELAY.
+  const delay = Math.max(MIN_FRAME_DELAY, Math.max((delta + 1) * FRAME_LENGTH, net.halfTrip));
 
-  if (!delay) {
-    sendMessage(obj, callback);
-  } else {
-    common.setFrameTimeout(() => sendMessage(obj, callback), delay);
-  }
+  if (debugNetwork) console.log(`💌 sendDelayedMessage(): sending in ${delay.toFixed(2)} msec. Network Δ = ${delta}, ${(delta * FRAME_LENGTH).toFixed(2)} msec`, obj);
+
+  common.setFrameTimeout(() => sendMessage(obj, callback), delay);
 
 }
 
 function sendMessage(obj, callback, delay) {
 
-  if (debugNetwork) console.log('sendMessage', game.objects.gameLoop.data.frameCount);
+  if (debugNetwork) console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
 
   // decorate with timing information
   // hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm
