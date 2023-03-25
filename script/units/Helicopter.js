@@ -2344,24 +2344,38 @@ const Helicopter = (options = {}) => {
 
     view = game.objects.view;
 
-    if (!data.isEnemy && (data.pilot && data.fuel > 0)) {
+    if (data.pilot && data.fuel > 0) {
 
-      mouse = view.data.mouse;
+      /**
+       * Mouse data can come from a few sources. TODO: refactor.
+       * All these should probably just live on the helicopter objects.
+       */
+      mouse = data.mouse;
 
-      // only allow X-axis if not on ground...
-      if (mouse.x) {
-        // accelerate scroll vX, so chopper nearly matches mouse when scrolling
-        data.lastVX = parseFloat(data.vX);
-        // eslint-disable-next-line no-mixed-operators
-        data.vX = (view.data.battleField.scrollLeft + (view.data.battleField.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
-        // and limit
-        data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      }
+      if (!data.isCPU) {
 
-      if (mouse.y) {
-        data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
-        // and limit
-        data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+        // only allow X-axis if not on ground...
+        if (mouse.x) {
+
+          // accelerate scroll vX, so chopper nearly matches mouse when scrolling
+          data.lastVX = parseFloat(data.vX);
+
+          data.vX = (data.scrollLeft + (data.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
+
+          // and limit
+          data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+
+        }
+
+        if (mouse.y) {
+
+          data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
+
+          // and limit
+          data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+
+        }
+
       }
 
     }
@@ -2403,7 +2417,7 @@ const Helicopter = (options = {}) => {
     } else if (data.onLandingPad) {
 
       // ensure the helicopter stays aligned with the landing pad.
-      data.y = maxY - yOffset;
+      data.y = maxY - yOffset + (data.isEnemy ? 3 : 0);
 
     }
 
@@ -2441,7 +2455,7 @@ const Helicopter = (options = {}) => {
       // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
       if (data.isLocal) {
-        newX = Math.max(view.data.battleField.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + view.data.battleField.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
+        newX = Math.max(game.players.local.data.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + game.players.local.data.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
       }
 
       moveTo(newX, data.y + data.vY);
