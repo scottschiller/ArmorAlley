@@ -2544,19 +2544,21 @@ const Helicopter = (options = {}) => {
 
     burnFuel();
 
-    if (data.isCPU) {
+    if (data.isCPU && !data.isRemote) {
 
       ai();
 
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
 
+        const rng = aiRNG();
+
         // should we target tanks?
-        data.targeting.tanks = (aiRNG() > 0.65);
+        data.targeting.tanks = (rng > 0.65);
 
         // should we target clouds?
-        data.targeting.clouds = (aiRNG() > 0.5);
+        data.targeting.clouds = (rng > 0.5);
 
-        data.targeting.helicopters = (aiRNG() > 0.25 || tutorialMode);
+        data.targeting.helicopters = (rng > 0.25 || tutorialMode);
 
         if (winloc.match(/clouds/i)) {
           // hack/testing: cloud-only targeting mode
