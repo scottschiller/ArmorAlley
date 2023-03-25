@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { FRAMERATE, TYPES } from '../core/global.js';
+import { debugCollision, FRAMERATE, TYPES } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -52,7 +52,107 @@ const defaultCSS = {
 
 const defaultCSSKeys = Object.keys(defaultCSS);
 
+const debugRects = [];
+
+function makeDebugRect(obj, viaNetwork) {
+
+  if (!obj?.data) return;
+
+  const { data } = obj;
+
+  let { x, y } = data;
+
+  function update() {
+    if (!o?.style) return;
+    o.style.transform = `translate3d(${x - game.objects.view.data.battleField.scrollLeft}px, ${y}px, 0px)`;
+  }
+
+  const o = document.createElement('div');
+  o.className = 'debug-rect';
+
+  Object.assign(o.style, {
+    position: 'absolute',
+    top: '0px',
+    left: '0px',
+    width: `${data.width}px`,
+    height: `${data.height}px`,
+    border: `1px ${viaNetwork ? 'dotted' : 'solid'} ${data.isEnemy ? '#990000' : '#009900'}`,
+    color: '#fff',
+    'font-size': '4px'
+  });
+
+  update();
+
+  // text inside element
+  const span = document.createElement('span');
+  const style = {};
+
+  if (viaNetwork) {
+    style.right = '1px';
+    style.bottom = '1px';
+  } else {
+    style.left = '1px';
+    style.top = '1px';
+  }
+
+  Object.assign(span.style, style);
+
+  span.innerHTML = data.id + (data.parent ? data.parent?.data.id : '') + (viaNetwork ? ' 📡' : '');
+  o.appendChild(span);
+
+  game.dom.battlefield.appendChild(o);
+
+  debugRects.push(update);
+
+  if (!viaNetwork) {
+    // push the same remotely
+    const basicData = {
+      id: data.id,
+      x: data.x,
+      y: data.y,
+      width: data.width,
+      height: data.height,
+      isEnemy: data.isEnemy
+    };
+
+    if (data.parent?.data.id) {
+      basicData.parent = {
+        data: {
+          id: data.parent.data.id
+        }
+      }
+    }
+
+    const viaNetwork = true;
+    net.sendMessage({ type: 'MAKE_DEBUG_RECT', params: [ basicData, viaNetwork ] });
+  }
+
+  return {
+    update,
+    o
+  }
+
+}
+
+function debugObj(label = 'unknown', obj = {}) {
+
+  const { data } = obj;
+  if (!data) return;
+
+  console.log(label, data.id, data.x, data.y, data.width, data.height, data.vX, data.vY, data.parent?.data?.id, data.parent ? console.log(debugObj(label + '-parent', data.parent)) : '(no data.parent)');
+
+}
+
 const common = {
+
+  animateDebugRects: () => {
+    if (!debugRects.length) return;
+    for (let i = 0, j = debugRects.length; i < j; i++) {
+      debugRects[i]();
+    }
+  },
+
+  makeDebugRect,
 
   unlinkObject: (obj) => {
 
@@ -249,7 +349,38 @@ const common = {
     // a generic catch-all for battlefield item `die()` events.
     // NOTE: attacker may not always be defined.
 
-    // ignore certain things - they're noisy, should be deterministic, and will just generate a bunch of excess traffic.
+    if (target.data.type === TYPES.helicopter && !target.data.isEnemy && target.data.isLocal) {
+      console.log('Local player was target, killed by something', target, attacker);
+      debugObj('local player target', target);
+      debugObj('attacker', attacker);
+    }
+
+    if (attacker && attacker.data.type === TYPES.helicopter && !attacker.data.isEnemy && attacker.data.isLocal) {
+      console.log('Local player was attacker, killed by something', attacker, target);
+      debugObj('local player attacker', attacker);
+      debugObj('target', target);
+    }
+
+    if (target.data.type === TYPES.helicopter && !target.data.isEnemy && target.data.isRemote) {
+      console.log('Remote friendly player was target, killed by something', target, attacker);
+      debugObj('remote friendly player target', target);
+      debugObj('attacker', attacker);
+    }
+
+    if (attacker && attacker.data.type === TYPES.helicopter && !attacker.data.isEnemy && attacker.data.isRemote) {
+      console.log('Remote friendly player was attacker, killed by something', attacker, target);
+      debugObj('remote friendly player attacker', attacker);
+      debugObj('target', target);
+    }
+
+    if (debugCollision) {
+      if (attacker && attacker.data.type === TYPES.helicopter) makeDebugRect(attacker);
+      if (target && target.data.type === TYPES.helicopter) makeDebugRect(target);
+    }
+
+    if (!net.active) return;
+
+    // ignore certain things - they're noisy or safer to leave locally, should be deterministic, and will generate additional traffic.
     if (excludeFromNetworkTypes[target.data.type]) return;
 
     // we already killed something via GAME_EVENT, from the remote client; don't send one back, redundant.

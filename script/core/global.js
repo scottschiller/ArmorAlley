@@ -62,6 +62,8 @@ const debug = searchParams.get('debug');
 // TODO: get rid of this.
 const debugType = searchParams.get('debugType');
 
+const debugCollision = searchParams.get('debugCollision');
+
 const DEFAULT_VOLUME = 25;
 
 const rad2Deg = 180 / Math.PI;
@@ -356,6 +358,7 @@ export {
   useDOMPruning,
   trackEnemy,
   debug,
+  debugCollision,
   debugType,
   DEFAULT_VOLUME,
   rad2Deg,
