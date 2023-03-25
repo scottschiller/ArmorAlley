@@ -4892,3 +4892,41 @@ button.primary:active {
   padding: 1px 3px;
   transform: translate3d(-50%, -100%, 0);
 }
+
+button .network-icon {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-bottom: -2px;
+  /* background: transparent url(../image/win95-networking-icon.png); */
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4UlEQVR4AeWWgQrDIAxE8+n5tP5ZRuHArFO8xrMMmvEA0Lmn0WN2LXePCqaoc6HjOG4DgVj+8Uq5u1aAPfKzsHu9gJlNeEQgRjwoEK8XsPcKzMHcEpIgkqfmnQW3pCYGKOSpWekjm5pTgcpx/gi4j6AF2N6DjkDEuoDhMxLAFzcKuJ1QJyFtQQWZACp49M9wFEqYuJ6acoHVGE4idQGMRaV91/V5AYytkk8Du8kLW6ZZA0F93wXs1FqfDNOaQBurpWaiexkjPcWOQKOSmleY1xAd+NQkoJ/jhgso+Q8ZIv6jPmAALj/Y4/eCAAAAAElFTkSuQmCC);
+  background-size: contain;
+}
+
+#network-status {
+  display: none;
+}
+
+#lights {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+#lights .sub-sprite {
+  position: absolute;
+  display: block;
+  top: 0px;
+  left: 0px;
+  width: 64px;
+  height: 10px;
+  opacity: 0.75;
+  /* background: transparent url(../image/lights.exe.png); */
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAKCAYAAAAEqljUAAAAeUlEQVR4Ad2SgQbAQAxD++n9tPuz7EYQFBLgunk7wmvPpPTpbrgs8X35nPPLWOEnMv8envcZOGh98Lpf/FjogAU+wwt4ljDk8wX6Ap6BP+/XucZ+y2cIociczxeQN/IhzHO9/YbvN0DlrAHqGw0w9ht+IWSBnw9Z4395RB/JtOP6CAAAAABJRU5ErkJggg==);
+  will-change: transform;
+}
+}
