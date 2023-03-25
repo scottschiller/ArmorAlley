@@ -1416,9 +1416,7 @@ const Helicopter = (options = {}) => {
 
     effects.shrapnelExplosion(data, {
       count: 20,
-      velocity: 4 + rngInt(4),
-      vX: data.vX,
-      vY: data.vY,
+      velocity: 4 + rngInt(4, TYPES.shrapnel),
       parentVX: data.vX,
       parentVY: data.vY,
       // first burst always looks too similar, here.
