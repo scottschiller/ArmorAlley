@@ -2772,7 +2772,7 @@ const Helicopter = (options = {}) => {
     shakeThreshold: 7,
     bombing: false,
     firing: false,
-    respawning: false,
+    respawning: undefined,
     respawningDelay: 1600,
     missileLaunching: false,
     parachuting: false,
@@ -2795,7 +2795,7 @@ const Helicopter = (options = {}) => {
     cloaked: false,
     rotated: false,
     rotateTimer: null,
-    autoRotate: (isCPU || isMobile),
+    autoRotate: (isCPU || isMobile) && !options.isRemote,
     repairing: false,
     repairFrames: 0,
     dieCount: 0,
@@ -2816,7 +2816,7 @@ const Helicopter = (options = {}) => {
     vY: 0,
     vyMin: 0,
     width: 48,
-    height: 15,
+    height: options.isEnemy ? 18 : 15,
     halfWidth: 24,
     halfHeight: 7,
     halfHeightAdjusted: 5,
@@ -2850,7 +2850,8 @@ const Helicopter = (options = {}) => {
       'hard': 0.85,
       'extreme': 0.75,
     },
-    y: game.objects.view.data.world.height - 20,
+    x: options.x || 0,
+    y: options.y || game.objects.view.data.world.height - 20,
     muchaMuchacha: false,
     cloakedCommentary: false,
     domFetti: {
@@ -2859,7 +2860,18 @@ const Helicopter = (options = {}) => {
       startVelocity: 15 + rndInt(15),
       spread: 360,
       decay: 0.94
-    }
+    },
+    // things originally stored on the view
+    mouse: {
+      x: 0,
+      y: 0,
+      vX: 0,
+      vY: 0
+    },
+    scrollLeft: 0,
+    scrollLeftVX: 0,
+    // a buffer for local input delay.
+    mouseHistory: new Array(32)
   }, options);
 
   data.midPoint = {
