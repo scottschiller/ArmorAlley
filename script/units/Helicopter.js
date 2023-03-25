@@ -3123,9 +3123,11 @@ const Helicopter = (options = {}) => {
               // pick up infantry (silently)
               target.die({ silent: true });
               playSound(sounds.popSound, exports);
-              const pickupSound = sounds.bnb[game.data.isBeavis ? 'beavisInfantryPickup' : 'buttheadInfantryPickup'];
-              // only play if not already active, and delay before clearing.
-              if (!data.pickupSound) data.pickupSound = playSound(pickupSound, exports, { onfinish: () => common.setFrameTimeout(() => data.pickupSound = null, 500) });
+              if (gamePrefs.bnb) {
+                const pickupSound = sounds.bnb[game.data.isBeavis ? 'beavisInfantryPickup' : 'buttheadInfantryPickup'];
+                // only play if not already active, and delay before clearing.
+                if (!data.pickupSound) data.pickupSound = playSound(pickupSound, exports, { onfinish: () => common.setFrameTimeout(() => data.pickupSound = null, 500) });
+              }
               data.parachutes = Math.min(data.maxParachutes, data.parachutes + 1);
               updateStatusUI({ parachutes: true });
             }
