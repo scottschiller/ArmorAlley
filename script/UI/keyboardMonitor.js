@@ -80,6 +80,9 @@ function KeyboardMonitor() {
 
   };
 
+
+  const processInput = (player, method, params) => player.callAction(method, params);
+
   keys = {
 
     // NOTE: Each function gets an (e) event argument.
@@ -91,7 +94,7 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.players.local.eject();
+        processInput(game.players.local, 'eject');
 
       }
 
@@ -104,8 +107,14 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.players.local.setFiring(true);
+        processInput(game.players.local, 'setFiring', true);
 
+      },
+
+      up() {
+
+        processInput(game.players.local, 'setFiring', false);
+        
       }
 
     },
@@ -117,8 +126,14 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.players.local.setBombing(true);
+        processInput(game.players.local, 'setBombing', true);
 
+      },
+
+      up() {
+
+        processInput(game.players.local, 'setBombing', false);
+        
       }
 
     },
@@ -128,13 +143,13 @@ function KeyboardMonitor() {
 
       down() {
 
-        game.players.local.setParachuting(true);
+        processInput(game.players.local, 'setParachuting', true);
 
       },
 
       up() {
 
-        game.players.local.setParachuting(false);
+        processInput(game.players.local, 'setParachuting', false);
 
       }
 
@@ -180,13 +195,13 @@ function KeyboardMonitor() {
         // heat-seeking banana
         game.objects.view.setMissileMode(bananaMode);
 
-        game.players.local.setMissileLaunching(true);
+        processInput(game.players.local, 'setMissileLaunching', true);
 
       },
 
       up() {
 
-        game.players.local.setMissileLaunching(false);
+        processInput(game.players.local, 'setMissileLaunching', false);
 
       }
 
@@ -200,13 +215,13 @@ function KeyboardMonitor() {
         // heat-seeking rubber chicken
         game.objects.view.setMissileMode(rubberChickenMode);
 
-        game.players.local.setMissileLaunching(true);
+        processInput(game.players.local, 'setMissileLaunching', true);
 
       },
 
       up() {
 
-        game.players.local.setMissileLaunching(false);
+        processInput(game.players.local, 'setMissileLaunching', false);
 
       }
 
@@ -220,13 +235,13 @@ function KeyboardMonitor() {
         // standard heat-seeking missile
         game.objects.view.setMissileMode(defaultMissileMode);
 
-        game.players.local.setMissileLaunching(true);
+        processInput(game.players.local, 'setMissileLaunching', true);
 
       },
 
       up() {
 
-        game.players.local.setMissileLaunching(false);
+        processInput(game.players.local, 'setMissileLaunching', false);
 
       }
 

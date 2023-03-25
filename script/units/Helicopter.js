@@ -930,7 +930,7 @@ const Helicopter = (options = {}) => {
       dom.o.removeEventListener('transitionend', respawnComplete);
     }
 
-    setRespawning(false);
+    callAction('setRespawning', false);
 
     if (data.isCPU) {
       data.vY = -1;
@@ -1053,8 +1053,8 @@ const Helicopter = (options = {}) => {
       moveTo(data.x, data.y);
 
       // edge case: stop firing, etc.
-      setFiring(false);
-      setBombing(false);
+      callAction('setFiring', false);
+      callAction('setBombing', false);
 
       startRepairing(state);
 
@@ -1330,7 +1330,7 @@ const Helicopter = (options = {}) => {
 
     sprites.updateEnergy(exports);
 
-    setRespawning(true);
+    callAction('setRespawning', true);
 
   }
 
@@ -1872,8 +1872,8 @@ const Helicopter = (options = {}) => {
 
     if ((data.fuel < 30 || data.energy < 2 || (!data.ammo && !data.bombs)) && data.energy > 0 && !data.landed && !data.repairing) {
 
-      setFiring(false);
-      setBombing(false);
+      if (data.firing) callAction('setFiring', false);
+      if (data.bombing) callAction('setBombing', false);
 
       /**
        * fly toward closest landing pad.
@@ -2097,7 +2097,7 @@ const Helicopter = (options = {}) => {
 
       } else {
 
-        setBombing(false);
+        if (data.bombing) callAction('setBombing', false);
 
       }
 
@@ -2148,9 +2148,9 @@ const Helicopter = (options = {}) => {
         if (target.data.type === TYPES.balloon) {
 
           if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
-            setFiring(true);
+            if (!data.firing) callAction('setFiring', true);
           } else {
-            setFiring(false);
+            if (data.firing) callAction('setFiring', false);
           }
 
         } else if (Math.abs(result.deltaX) < 100) {
@@ -2159,22 +2159,22 @@ const Helicopter = (options = {}) => {
 
           if (Math.abs(result.deltaY) < 48) {
 
-            setFiring(true);
-            setBombing(false);
+            if (!data.firing) callAction('setFiring', true);
+            if (data.bombing) callAction('setBombing', false);
 
           } else {
 
-            setFiring(false);
+            if (data.firing) callAction('setFiring', false);
 
             // bomb the player?
             // TODO: verify that deltaY is not negative.
             if (Math.abs(result.deltaX) < 50 && result.deltaY > 48) {
 
-              setBombing(true);
+              if (!data.bombing) callAction('setBombing', true);
 
             } else {
 
-              setBombing(false);
+              if (data.bombing) callAction('setBombing', false);
 
             }
 
@@ -2187,16 +2187,16 @@ const Helicopter = (options = {}) => {
         // targeting a tank? randomize bombing depending on game difficulty.
         // default to 10% chance if no specific gameType match.
         if (Math.abs(result.deltaX) < target.data.halfWidth && Math.abs(data.vX) < 3 && aiRNG() > (data.bombingThreshold[gameType] || 0.9)) {
-          setBombing(true);
+          if (!data.bombing) callAction('setBombing', true);
         } else {
-          setBombing(false);
+          if (data.bombing) callAction('setBombing', false);
         }
 
       } else {
 
         // safety case: don't fire or bomb.
-        setFiring(false);
-        setBombing(false);
+        if (data.firing) callAction('setFiring', false);
+        if (data.bombing) callAction('setBombing', false);
 
       }
 
@@ -2239,17 +2239,17 @@ const Helicopter = (options = {}) => {
 
           // RELEASE ZE BOMBS
 
-          setBombing(true);
+          if (!data.bombing) callAction('setBombing', true);
 
         } else {
 
-          setBombing(false);
+          if (data.bombing) callAction('setBombing', false);
 
         }
 
       } else {
 
-        setBombing(false);
+        if (data.bombing) callAction('setBombing', false);
 
       }
 
@@ -2258,7 +2258,7 @@ const Helicopter = (options = {}) => {
     // sanity check
     if (!lastTarget || lastTarget.data.dead || lastTarget.data.type === TYPES.cloud || lastTarget.data.type === TYPES.landingPad) {
       // no need to be firing...
-      setFiring(false);
+      if (data.firing) callAction('setFiring', false);
     }
 
     if (data.vY > 0 && data.y > maxY && (!lastTarget || lastTarget.data.type !== TYPES.landingPad)) {
@@ -2608,6 +2608,56 @@ const Helicopter = (options = {}) => {
 
   }
 
+  function callMethod(method, params) {
+
+    // no arguments.
+    if (params === undefined) return exports[method]();
+
+    // array? spread as arguments.
+    if (params.length) return exports[method](...params);
+
+    // single value.
+    return exports[method](params);
+
+  }
+
+  const pendingActions = {};
+
+  function callAction(method, value) {
+  
+    /**
+     * Local keyboard input handler.
+     * May act immediately, or send via network and delay somewhat.
+     */
+
+    if (!exports[method]) {
+      console.warn('callAction: WTF no method by this name?', method, value);
+      return;
+    }
+
+    // if not a network game, OR a remote object taking calls, just do the thing right away.
+    if (!net.active || data.isRemote) return callMethod(method, value);
+
+    // presently, `value` is only boolean.
+    // if this changes, this will break and will need refactoring. :P
+    // this throttles repeat calls with the same value, while the change is pending e.g., setFiring(true);
+    const pendingId = `${method}_${value ? 'true' : 'false'}`;
+
+    // we're already doing this.
+    if (pendingActions[pendingId]) return;
+
+    // otherwise, delay; send the thing, then do the thing.
+    net.sendMessage({ type: 'GAME_EVENT', id: data.id, method, value });
+
+    // set the timer, and clear when it fires.
+    pendingActions[pendingId] = common.setFrameTimeout(() => {
+      pendingActions[pendingId] = null;
+      delete pendingActions[pendingId];
+      callMethod(method, value);
+    }, net.halfTrip);
+
+  }
+
   function initTrailers() {
 
     let i, trailerConfig, fragment;
@@ -2931,6 +2981,7 @@ const Helicopter = (options = {}) => {
 
   exports = {
     animate,
+    callAction,
     data,
     dom,
     die,
