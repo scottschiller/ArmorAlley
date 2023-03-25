@@ -159,16 +159,19 @@ const game = (() => {
 
     if (!options.noInit) {
 
-      objectArray.push(object);
-
       if (!objectsById[object.data.id]) {
         objectsById[object.data.id] = object;
       } else {
         // this shouldn't happen.
-        console.warn('objectsById: already assigned?', object.data.id);
+        console.warn('objectsById: already assigned. Ignoring duplicate, returning original.', object.data.id);
+        return objectsById[object.data.id];
       }
 
-      object?.init?.();
+      objectArray.push(object);
+
+      if (!options.skipInit) {
+        object?.init?.();
+      }
 
       // and caculate the zone, which will further map things.
       zones.refreshZone(object);
@@ -248,8 +251,6 @@ const game = (() => {
 
     zones.initDebug();
 
-    addWorldObjects();
-
     // player + enemy helicopters
 
     let playAsEnemy = !!(window.location.href.match(/playAsEnemy/i));
@@ -259,12 +260,14 @@ const game = (() => {
     if (!tutorialMode && playAsEnemy) {
 
       addObject(TYPES.helicopter, {
+        skipInit: true,
         isEnemy: true,
         attachEvents: true,
         isLocal: true
       });
 
       addObject(TYPES.helicopter, {
+        skipInit: true,
         isEnemy: false,
         isCPU: true
       });
@@ -286,12 +289,31 @@ const game = (() => {
 
             console.log('you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy.');
 
+            // human player 1 (local)
             addObject(TYPES.helicopter, {
+              skipInit: true,
               attachEvents: true,
               isLocal: true
             });
 
+            // human player 2 (remote)
             addObject(TYPES.helicopter, {
+              skipInit: true,
+              isRemote: true
+            });
+
+            // CPU player 1 (AI running locally)
+            addObject(TYPES.helicopter, {
+              skipInit: true,
+              isEnemy: true,
+              isCPU: true
+            });
+
+            // CPU player 2 (AI running remotely)
+            addObject(TYPES.helicopter, {
+              skipInit: true,
+              isEnemy: true,
+              isCPU: true,
               isRemote: true
             });
 
@@ -299,29 +321,36 @@ const game = (() => {
 
             console.log('you are hosting: you are helicopters[1], you and your friend are playing cooperatively against an enemy.');
 
+            // human player 1 (remote)
             addObject(TYPES.helicopter, {
+              skipInit: true,
               isRemote: true
             });
 
+            // human player 2 (local)
             addObject(TYPES.helicopter, {
+              skipInit: true,
               attachEvents: true,
               isLocal: true
             });
 
+            // CPU player 1 (AI running remotely)
+            addObject(TYPES.helicopter, {
+              skipInit: true,
+              isEnemy: true,
+              isCPU: true,
+              isRemote: true
+            });
+
+            // CPU player 2 (AI running locally)
+            addObject(TYPES.helicopter, {
+              skipInit: true,
+              isEnemy: true,
+              isCPU: true
+              // isRemote: true
+            });
+
           }
-
-          // "the bad guys" - yes, two, indeed.
-          // note that these run independently on each client, and it's critical they stay in sync.
-
-          addObject(TYPES.helicopter, {
-            isEnemy: true,
-            isCPU: true
-          });
-
-          addObject(TYPES.helicopter, {
-            isEnemy: true,
-            isCPU: true
-          });
 
         } else {
 
@@ -332,13 +361,16 @@ const game = (() => {
             console.log('you are hosting: you are helicopters[0], and take the friendly base');
 
             addObject(TYPES.helicopter, {
+              skipInit: true,
               attachEvents: true,
               isLocal: true
             });
 
             addObject(TYPES.helicopter, {
+              skipInit: true,
               isEnemy: true,
-              isRemote: true
+              isRemote: true,
+              isCPU: enemyCPU
             });
 
           } else {
@@ -346,11 +378,13 @@ const game = (() => {
             console.log('you are a guest: you are helicopters[1], and take the enemy base');
 
             addObject(TYPES.helicopter, {
+              skipInit: true,
               isRemote: true
             });
 
             // hackish: allow CPU override for testing
             addObject(TYPES.helicopter, {
+              skipInit: true,
               isLocal: true,
               isEnemy: true,
               attachEvents: !enemyCPU,
@@ -366,6 +400,7 @@ const game = (() => {
         // regular game
 
         addObject(TYPES.helicopter, {
+          skipInit: true,
           attachEvents: true,
           isLocal: true
         });
@@ -373,6 +408,7 @@ const game = (() => {
         if (!tutorialMode) {
     
           addObject(TYPES.helicopter, {
+            skipInit: true,
             isEnemy: true,
             isCPU: true
           });
@@ -382,6 +418,11 @@ const game = (() => {
       }
 
     }
+
+    addWorldObjects();
+
+    // finally, start the helicopter engines. ;)
+    game.objects.helicopter.forEach((helicopter) => helicopter.init());
 
   }
 
@@ -503,7 +544,8 @@ const game = (() => {
 
     populateTerrain();
 
-    if (game.players.cpu.length && !tutorialMode) {
+    // if a network game, let the host handle enemy ordering; objects will be replicated remotely.
+    if (game.players.cpu.length && !tutorialMode && (!net.active || (net.active && net.isHost))) {
       game.objects.inventory.startEnemyOrdering();
     }
 
