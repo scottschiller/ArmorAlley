@@ -1472,8 +1472,9 @@ const Helicopter = (options = {}) => {
     effects.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
     // roll the dice: drop a parachute infantry (pilot ejects safely)
-    if ((data.isCPU && (gameType === 'hard' || gameType === 'extreme' ? aiRNG() > 0.5 : aiRNG() > 0.25)) || (data.isLocal && rng(data.type) > 0.66)) {
+    if ((data.isCPU && !data.isRemote &&(gameType === 'hard' || gameType === 'extreme' ? aiRNG() > 0.5 : aiRNG() > 0.25)) || (data.isLocal && rng(data.type) > 0.66)) {
       deployParachuteInfantry({
+        parent: exports,
         isEnemy: data.isEnemy,
         x: data.x + data.halfWidth,
         y: (data.y + data.height) - 11,
