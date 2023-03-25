@@ -805,6 +805,10 @@ const Helicopter = (options = {}) => {
 
       data.firing = state;
       
+    } else {
+
+      data.firing = false;
+      
     }
 
   }
