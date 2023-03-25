@@ -416,14 +416,11 @@ const messageActions = {
         obj[data.method](data.value);
       }
       
-    } else if (data.params) {
+    } else if (data.params !== undefined) {
 
       // arguments as object
 
       if (data.method === 'die') {
-
-        // hackish: mark the object so we don't send a redundant GAME_EVENT back, when it dies.
-        obj.data.dieViaGameEvent = true;
 
         const attacker = game.findObjectById(data.params.attackerId, 'GAME_EVENT: Could not find attacker by ID, may have died.');
 
@@ -443,8 +440,17 @@ const messageActions = {
 
       } else {
 
-        // with params
-        obj[data.method]({ ...data.params });
+        // spread array as arguments, or pass directly.
+        if (data.params === undefined) {
+          // no arguments
+          obj[data.method]();
+        } else if (data.params?.length) {
+          // spread array
+          obj[data.method](...data.params);  
+        } else {
+          // single value
+          obj[data.method](data.params);
+        }
 
       }
      

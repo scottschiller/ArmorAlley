@@ -388,16 +388,6 @@ const common = {
     // ignore certain things - they're noisy or safer to leave locally, should be deterministic, and will generate additional traffic.
     if (excludeFromNetworkTypes[target.data.type]) return;
 
-    // we already killed something via GAME_EVENT, from the remote client; don't send one back, redundant.
-    if (target.data.dieViaGameEvent) {
-      // reset this flag, though, for things that can die multiple times - notably, helicopters and turrets
-      if (target.data.type === TYPES.helicopter || target.data.type === TYPES.turret || target.data.type === TYPES.bunker) {
-        // console.log('common.onDie(): resetting dieViaGameEvent on ' + target.data.id);
-        target.data.dieViaGameEvent = undefined;
-      }
-      return;
-    }
-
     const attackerId = attacker?.data?.id;
     const attackerParentId = attacker?.data?.parent?.data?.id;
 
