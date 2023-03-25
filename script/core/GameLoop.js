@@ -1,7 +1,7 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP } from '../core/global.js';
+import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -375,6 +375,11 @@ const GameLoop = () => {
         spliceArgs[0] = instances.indexOf(completed[i]);
         Array.prototype.splice.apply(instances, spliceArgs);
       }
+    }
+
+    // debug stuff
+    if (debugCollision) {
+      common.animateDebugRects();
     }
     
   }
