@@ -1497,9 +1497,21 @@ const Helicopter = (options = {}) => {
 
     hideTrailers(true /* reset x + y history */);
 
-    data.dead = true;
-
     effects.domFetti(exports, attacker);
+
+    // move sprite once explosion stuff has completed
+    common.setFrameTimeout(() => {
+
+      // reposition on appropriate landing pad
+      data.x = common.getLandingPadOffsetX(exports);
+      data.y = worldHeight - data.height;
+
+      // move to landing pad
+      moveToForReal(data.x, data.y);
+
+    }, 2000);
+
+    data.dead = true;
 
     data.dieCount++;
 
@@ -1518,6 +1530,10 @@ const Helicopter = (options = {}) => {
     if (!tutorialMode) {
       common.setFrameTimeout(respawn, (data.isCPU ? 8000 : 3000));
     }
+
+    common.onDie(exports);
+
+  }
 
   function getBombParams() {
 
