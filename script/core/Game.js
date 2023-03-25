@@ -528,6 +528,10 @@ const game = (() => {
         if (net.active) {
           objects.view.data.mouse.delayedInputX = x;
           objects.view.data.mouse.delayedInputY = y;
+          if (game.players.local) {
+            game.players.local.data.mouse.delayedInputX = x;
+            game.players.local.data.mouse.delayedInputY = y;
+          }
         } else {
           objects.view.data.mouse.x = x;
           objects.view.data.mouse.y = y;
