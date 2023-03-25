@@ -2,6 +2,7 @@ import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game, gameType } from '../core/Game.js';
 import { isMobile, isSafari, setTutorialMode } from '../core/global.js';
+import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
 import { prefs } from './preferences.js';
@@ -97,6 +98,14 @@ function init() {
     formInput();
   }
 
+  // if we have a gameStyle, just get right to it.
+  const searchParams = new URLSearchParams(window.location.search);
+
+  let gameStyle = searchParams.get('game_style');
+  if (gameStyle === 'network') {
+    startGame(gameStyle);
+  }
+
 }
 
 function introBNBSound(e) {
@@ -138,15 +147,22 @@ function introBNBSound(e) {
 }
 
 function resetMenu() {
+
   if (lastHTML !== defaultDescription) {
     description.innerHTML = defaultDescription;
     lastHTML = defaultDescription;
   }
+
 }
 
 function menuUpdate(e) {
 
   let { target } = e, title;
+
+  // might be an emoji or icon nested inside a <button>.
+  if (target?.nodeName === 'SPAN') {
+    target = target.parentNode;
+  }
 
   // normalize to <a>
   if (target && (target.nodeName === 'INPUT' || utils.css.has(target, 'emoji'))) {
@@ -204,19 +220,38 @@ function formInput() {
   const data = readFormData();
   // update the default description
 
-  if (!data.gameType) return;
+  if (!data.game_type) return;
 
-  let label = document.getElementById(`${data.gameType}-label`);
+  // TODO: clean up DOM references
+
+  let label = document.getElementById(`${data.game_type}-label`);
   let labelEmoji = label.getElementsByClassName('emoji')[0];
 
   let startEmoji = document.getElementById('start-emoji');
+  let startEmojiNetwork = document.getElementById('start-emoji-network');
 
   defaultDescription = label.getAttribute('data-title');
   startEmoji.innerText = labelEmoji.innerText;
+  startEmojiNetwork.innerText = labelEmoji.innerText;
 
   // thou shall not leak
-  label = labelEmoji = startEmoji = null;
+  label = labelEmoji = startEmoji = startEmojiNetwork = null;
 
+}
+
+function formCleanup() {
+
+  // cleanup
+  utils.events.remove(form, 'input', formInput);
+  utils.events.remove(form, 'submit', formSubmit);
+  utils.events.remove(menu, 'mouseover', menuUpdate);
+  utils.events.remove(menu, 'mouseout', menuUpdate);
+
+  menu = null;
+  form = null;
+  optionsButton = null;
+  description = null;
+  
 }
 
 function formSubmit(e) {
@@ -233,52 +268,121 @@ function formSubmit(e) {
   // remember for next time
   utils.storage.set(prefs.gameType, gameType);
 
-  // cleanup
-  utils.events.remove(form, 'input', formInput);
-  utils.events.remove(form, 'submit', formSubmit);
-  utils.events.remove(menu, 'mouseover', menuUpdate);
-  utils.events.remove(menu, 'mouseout', menuUpdate);
-
-  menu = null;
-  form = null;
-  optionsButton = null;
-  description = null;
-
   setTutorialMode(gameType === 'tutorial');
 
-  // go go go!
-  game.init();
-  
-  hideTitleScreen();
+  const gameStyle = e.submitter.value;
 
-  showExitType();
+  if (gameStyle === 'local') {
+
+    startGame(gameStyle);
+
+    return false;
+
+  } else if (gameStyle === 'network') {
+
+    console.log('Let\'s play a network game, shall we?');
+
+    startGame(gameStyle);
+
+  }
 
   return false;
   
 }
 
-function hideTitleScreen(delay = 128) {
+function startGame(gameStyle) {
 
-  game.data.started = true;
+  formCleanup();
+
+  if (gameStyle === 'network') {
+
+    showExitType();
+
+    // start the transition, then ping test, and finally, start game loop.
+    hideTitleScreen(() => {
+
+      // do ping test, and then start.
+      net.init((id) => {
+
+        const wl = window.location;
+
+        let params = [`id=${id}&game_type=${gameType}&game_style=network`];
+  
+        // add existing query params to array, too.
+        if (window.location.search.length) {
+          params = params.concat(window.location.search.substring(1).split('&'));
+        }
+  
+        const link = document.createElement('a');
+        link.id = 'network-share-message';
+        link.className = 'message';
+  
+        Object.assign(link.style, {
+          position: 'absolute',
+          display: 'inline-block',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          border: '1px solid #fff',
+          padding: '6px 10px',
+          'border-radius': '3px',
+          background: '#fff',
+          color: '#000',
+        });
+
+        link.href = `${wl.origin}${wl.pathname}?${params.join('&')}`;
+        link.innerHTML = 'Send this link to a friend';
+  
+        document.body.appendChild(link);
+  
+        
+      }, () => {
+
+        document.getElementById('network-share-message')?.remove();
+
+        console.log('Connected + ping test, ready to start');
+
+        // don't pause for a network game.
+        game.objects.view.data.noPause = true;
+
+        game.objects.gameLoop.resetFPS();
+
+        // hackish: reset
+        game.objects.gameLoop.data.frameCount = 0;
+
+        game.init();
+
+      });
+
+    });
+
+  } else {
+
+    // go go go!
+    game.init();
+
+    window.requestAnimationFrame(() => {
+      showExitType();
+      hideTitleScreen();
+    }, 128);
+
+  }
+  
+}
+
+function hideTitleScreen(callback) {
 
   common.setVideo('vr-goggles-menu');
   
-  common.setFrameTimeout(() => {
+  let overlay = document.getElementById('world-overlay');
+  const world = document.getElementById('world');
 
-    let overlay = document.getElementById('world-overlay');
-    const world = document.getElementById('world');
+  const blurred = 'blurred';
+  const noBlur = 'no-blur';
 
-    const blurred = 'blurred';
-    const noBlur = 'no-blur';
+  function hideTitleScreenFinished(e) {
 
-    utils.css.add(world, noBlur);
-
-    utils.css.add(overlay, 'fade-out');
-
-    game.objects.notifications.welcome();
-
-    // remove from the DOM eventually
-    common.setFrameTimeout(() => {
+    if (e.target === overlay && e.propertyName === 'opacity') {
 
       /**
        * hackish: removing this element seems to break active
@@ -310,9 +414,23 @@ function hideTitleScreen(delay = 128) {
       game.objects.view.dom.logo.remove();
       game.objects.view.dom.logo = null;
 
-    }, 2250);
+      game.data.started = true;
+      overlay?.removeEventListener('transitionend', hideTitleScreenFinished);
+
+      callback?.();
+
+    }
+  
+  }
+
+  utils.css.add(world, noBlur);
+
+  utils.css.add(overlay, 'fade-out');
+
+  overlay.addEventListener('transitionend', hideTitleScreenFinished);
 
   }, delay);
+  game.objects.notifications.welcome();
   
 }
 
