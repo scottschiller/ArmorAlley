@@ -233,8 +233,11 @@ const Van = (options = {}) => {
 
     common.initNearby(friendlyNearby, exports);
 
-    // enemy vans are so sneaky, they don't even appear on the radar.
-    if (tutorialMode || !options.isEnemy) {
+    /**
+     * Enemy vans are so sneaky, they don't even appear on the radar.
+     * Only show if you're on the same team, or in tutorial mode.
+     */
+    if (tutorialMode || options.isEnemy === game.players.local.data.isEnemy) {
       radarItem = game.objects.radar.addItem(exports, dom.o.className);
     } else {
       game.objects.stats.create(exports);
