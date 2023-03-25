@@ -4,7 +4,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest, getNearestObject } from '../core/logic.js';
 import { getTypes, rad2Deg, rndInt, rng, rngInt, TYPES } from '../core/global.js';
-import { playSound, playSoundWithDelay, skipSound, stopSound, sounds } from '../core/sound.js';
+import { playSound, playSoundWithDelay, skipSound, stopSound, sounds, getVolumeFromDistance, getPanFromLocation } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
@@ -525,6 +525,16 @@ const SmartMissile = (options = {}) => {
         setTargetTracking(true);
       }
 
+    }
+
+    // volume vs. distance
+    if ((data.isBanana || data.isRubberChicken) && launchSound && !data.expired && objects.target && !objects.target.data.dead) {
+
+      // launchSound.setVolume((launchSound.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(objects.target, game.players.local));
+      // hackish: bananas are 50%, default chicken volume is 20%.
+      launchSound.setVolume((data.isBanana ? 50 : 20) * getVolumeFromDistance(exports, game.players.local, 0.5));
+      launchSound.setPan(getPanFromLocation(exports, game.players.local));
+  
     }
 
     // "out of gas" -> dangerous to both sides -> fall to ground
