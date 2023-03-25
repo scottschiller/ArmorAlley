@@ -77,6 +77,8 @@ function collisionCheckObject(options) {
 
   for (id in options.targets) {
 
+    if (!options?.targets) return;
+
     target = options.targets[id];
 
     // DRY
