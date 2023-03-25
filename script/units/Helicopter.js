@@ -1584,7 +1584,6 @@ const Helicopter = (options = {}) => {
 
   function fire() {
 
-    let tiltOffset;
     let frameCount;
     let missileTarget;
     const updated = {};
@@ -1895,8 +1894,8 @@ const Helicopter = (options = {}) => {
 
     let deltaX, deltaY, target, result, altTarget, desiredVX, desiredVY, deltaVX, deltaVY, maxY;
 
-    // wait until fully-respawned.
-    if (data.respawning) return;
+    // wait until fully-respawned, including initial undefined / not-yet-initialized case.
+    if (data.respawning || data.respawning === undefined) return;
 
     // ignore if on empty.
     if (data.fuel <= 0) return;
@@ -1947,7 +1946,6 @@ const Helicopter = (options = {}) => {
 
       }
 
-      // only for #trackEnemy case
       centerView();
 
       return;
@@ -2444,8 +2442,10 @@ const Helicopter = (options = {}) => {
 
     // safety valve: don't move if ignoreMouseEvents
     if (data.ignoreMouseEvents) {
+
       data.vX = 0;
       data.vY = 0;
+
     }
 
     if (!data.dead) {
@@ -2530,7 +2530,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isOnScreen) {
 
-      data.xHistory.push(data.x);
+      data.xHistory.push(data.x + data.halfWidth);
       data.yHistory.push(data.y);
 
       if (data.xHistory.length > data.trailerCount + 1) {
