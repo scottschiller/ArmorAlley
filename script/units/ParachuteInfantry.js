@@ -1,11 +1,12 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rnd, rndInt, worldHeight, tutorialMode, TYPES, rng, rngInt } from '../core/global.js';
+import { rndInt, worldHeight, tutorialMode, TYPES, rng, rngInt } from '../core/global.js';
 import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const ParachuteInfantry = (options = {}) => {
 
@@ -173,14 +174,29 @@ const ParachuteInfantry = (options = {}) => {
       data.landed = true;
 
       // touchdown! die "quietly", and transition into new infantry.
+      // in the network case, this will kill the remote.
       die({ silent: true });
 
-      game.addObject(TYPES.infantry, {
+      const params = {
         x: data.x,
         isEnemy: data.isEnemy,
         // exclude from recycle "refund" / reward case
         unassisted: false
-      });
+      };
+
+      const obj = game.addObject(TYPES.infantry, params);
+
+      // create the new object on the other side, too.
+      if (net.active) {
+        net.sendMessage({
+          type: 'ADD_OBJECT',
+          objectType: obj.data.type,
+          params: {
+            ...params,
+            id: obj.data.id
+          }
+        });
+      }
 
     } else if (!data.parachuteOpen) {
 
@@ -279,13 +295,13 @@ const ParachuteInfantry = (options = {}) => {
     type,
     frameCount: rngInt(3, type),
     panicModulus: 3,
-    windModulus: 32 + rngInt(32, type),
+    windModulus: options.windModulus || 32 + rngInt(32, type),
     panicFrame: rngInt(3, type),
     energy: 2,
     energyMax: 2,
     parachuteOpen: false,
     // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
-    parachuteOpensAtY: options.y + (rng(370 - options.y, type)) + (!tutorialMode && rng(1, type) > 0.9 ? 999 : 0),
+    parachuteOpensAtY: options.parachugeOpensAtY || (options.y + (rng(370 - options.y, type)) + (!tutorialMode && rng(1, type) > 0.9 ? 999 : 0)),
     direction: 0,
     width: 10,
     halfWidth: 5,
@@ -297,7 +313,7 @@ const ParachuteInfantry = (options = {}) => {
     didHitGround: false,
     landed: false,
     vX: 0, // wind
-    vY: 2 + rng(1, type) + rng(1, type),
+    vY: options.vY || 2 + rng(1, type) + rng(1, type),
     maxY: worldHeight + 3,
     maxYPanic: 300,
     maxYParachute: worldHeight - 13,
