@@ -1785,6 +1785,11 @@ const Helicopter = (options = {}) => {
         playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
       }
 
+      if (net.active) {
+        // tell the remote.
+        net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'eject' });
+      }
+
     }
 
   }
