@@ -46,19 +46,33 @@ const View = () => {
     x = helicopter.data.x + (helicopter.data.width * (1 / data.screenScale)) - data.browser.halfWidth;
 
     setLeftScroll(x, allowOverride);
+
   }
 
   function setLeftScroll(x, allowOverride) {
 
+    // slightly hackish: apply scroll offsets to both game view, and local player.
+
     if (allowOverride) {
+
       data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
+
+      game.players.local.data.scrollLeftVX = 0;
+      game.players.local.data.scrollLeft = x;
+
     } else {
+
       // scroll the battlefield by relative amount.
-      data.battleField.scrollLeftVX = x;
+
+      game.players.local.data.scrollLeftVX = 0;
+      game.players.local.data.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
+
       data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
+      data.battleField.scrollLeftVX = x;
+
     }
-    
+   
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
     // Parallax star effect.
@@ -154,7 +168,6 @@ const View = () => {
       data.topBar.height = dom.topBar.offsetHeight;
     }
 
-    // sprites.isOnScreen() references this a lot.
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
     if (dom.stars) {
