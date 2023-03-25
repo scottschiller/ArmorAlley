@@ -969,6 +969,30 @@ const Helicopter = (options = {}) => {
       playSound(sounds.helicopter.rotate);
     }
 
+    /**
+     * Only send rotate events when invoked manually by user.
+     * If auto-rotate (or mobile where always enabled), N/A
+     * because clients will apply the rotate automatically.
+     */
+    if (net.active && data.isLocal && !isMobile && !data.autoRotate) {
+      net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'rotate' });
+    }
+
+  }
+
+  function toggleAutoRotate() {
+
+    // revert to normal setting
+    if (data.rotated) rotate();
+
+    // toggle auto-rotate
+    data.autoRotate = !data.autoRotate;
+
+    // network: simulate this on the other end.
+    if (net.active && data.isLocal && !isMobile) {
+      net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'toggleAutoRotate' });
+    }
+
   }
 
   function applyTilt() {
@@ -2795,13 +2819,11 @@ const Helicopter = (options = {}) => {
     },
 
     dblclick(e) {
+
       if (e.button !== 0 || data.ignoreMouseEvents || data.isCPU || !data.fuel) return;
 
-      // revert to normal setting
-      if (data.rotated) rotate();
+      toggleAutoRotate();
 
-      // toggle auto-rotate
-      data.autoRotate = !data.autoRotate;
     }
   };
 
@@ -2831,6 +2853,7 @@ const Helicopter = (options = {}) => {
     setMissileLaunching,
     setParachuting,
     setRespawning,
+    toggleAutoRotate,
     updateStatusUI,
     updateInventoryQueue
   };
