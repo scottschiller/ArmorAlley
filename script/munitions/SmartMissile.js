@@ -334,7 +334,7 @@ const SmartMissile = (options = {}) => {
       && ((objects.target.data.type !== TYPES.bunker && objects?.target.data.type !== TYPES.turret) || !objects?.target.data.dead)
     ) {
 
-      if (attacker.data.type === TYPES.superBunker) {
+      if (attacker?.data?.type === TYPES.superBunker) {
 
         // "this sucks"
         playSoundWithDelay(sounds.bnb.beavisLostUnit);
