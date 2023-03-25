@@ -37,7 +37,8 @@ const staticIDTypes = {
 // noisy, and hopefully, deterministic events that can be ignored.
 const excludeFromNetworkTypes = {
   // [TYPES.gunfire]: true,
-  [TYPES.shrapnel]: true
+  [TYPES.shrapnel]: true,
+  [TYPES.bomb]: true
 }
 
 const PREFIX_HOST = 'host_';
