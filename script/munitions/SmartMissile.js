@@ -9,6 +9,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const SmartMissile = (options = {}) => {
 
@@ -870,12 +871,12 @@ const SmartMissile = (options = {}) => {
     onDie: options.onDie || null,
     playbackRate: 0.9 + (Math.random() * 0.2),
     target: null,
-    vX: 1 + Math.random(),
-    vY: 1 + Math.random(),
-    vXMax: 12 + rng(6, type) + (options.vXMax || 0),
-    vYMax: 12 + rng(6, type) + (options.vYMax || 0),
+    vX: net.active ? 1 : 1 + Math.random(),
+    vY: net.active ? 1 : 1 + Math.random(),
+    vXMax: (net.active ? 12 : 12 + rng(6, type) + (options.vXMax || 0)),
+    vYMax: (net.active ? 12 : 12 + rng(6, type) + (options.vYMax || 0)),
     vYMaxExpired: 36,
-    thrust: 0.5 + rng(0.5, type),
+    thrust: (net.active ? 0.5 : 0.5 + rng(0.5, type)),
     deadTimer: null,
     trailerCount: 16,
     xHistory: [],
