@@ -172,37 +172,41 @@ const messageActions = {
 
     // mouse and viewport coordinates, "by id."
 
-    // create + init, if needed
-    let obj;
+    let helicopter = game.objectsById[data.id];
 
-    if (!game.objects.view.data.remoteMouse[data.id]) {
-      game.objects.view.data.remoteMouse[data.id] = {};
+    if (!data?.id || !helicopter) {
+      console.warn(`RAW_COORDS: No helicopter by ID ${data.id}?`);
+      return;
     }
 
-    // mouse
-    obj = game.objects.view.data.remoteMouse[data.id];
-
-    obj.x = data.x;
-    obj.y = data.y;
-
-    // remote CPU only, special case
-    if (game.objectsById[data.id].data.isCPU) {
-      obj.vX = data.vX;
-      obj.vY = data.vY;
+    if (!helicopter.data.isRemote) {
+      console.warn('RAW_COORDS: WTF, incoming data for local helicopter? Bad logic / ID mis-match??', helicopter.data.id, data);
+      return;
     }
 
-    // view
-    game.objects.view.data.remoteView[data.id] = {
-      data: {
-        battleField: {
-          scrollLeft: data.scrollLeft,
-          scrollLeftVX: data.scrollLeftVX
-        }
-      }
-    };
+    if (helicopter.data.isCPU) {
+
+      // *** CPU PLAYER ***
+      if (data.x !== null) helicopter.data.x = data.x;
+      if (data.y !== null) helicopter.data.y = data.y;
+
+      helicopter.data.vX = data.vX;
+      helicopter.data.vY = data.vY;
+
+    } else {
+
+      // *** HUMAN PLAYER ***
+      helicopter.data.mouse.x = (data.x || 0);
+      helicopter.data.mouse.y = (data.y || 0);
+
+      // view
+      helicopter.data.scrollLeft = data.scrollLeft;
+      helicopter.data.scrollLeftVX = data.scrollLeftVX;
+      
+    }
 
     if (debugNetwork) {
-      console.log('RX: RAW_MOUSE_COORDS + view -> game.objects.view.data.remoteMouse/remoteView', data);
+      console.log('RX: RAW_MOUSE_COORDS + view -> helicopter.data', data);
     }
 
   },
