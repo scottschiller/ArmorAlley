@@ -286,8 +286,6 @@ function formSubmit(e) {
 
   }
 
-  return false;
-  
 }
 
 function startGame(gameStyle) {
@@ -429,7 +427,6 @@ function hideTitleScreen(callback) {
 
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
 
-  }, delay);
   game.objects.notifications.welcome();
   
 }
