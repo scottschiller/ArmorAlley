@@ -1344,7 +1344,7 @@ const Helicopter = (options = {}) => {
 
   }
 
-  function die(dieOptions) {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
@@ -1353,7 +1353,7 @@ const Helicopter = (options = {}) => {
 
     utils.css.add(dom.o, css.exploding);
 
-    const attacker = dieOptions?.attacker;
+    const { attacker } = dieOptions;
 
     if (!data.isCPU) {
       reactToDamage(attacker);
