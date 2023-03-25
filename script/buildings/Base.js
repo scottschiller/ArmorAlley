@@ -9,6 +9,7 @@ import { enemyHelicopterNearby } from '../core/logic.js';
 import { screenBoom } from '../UI/DomFetti.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const Base = (options = {}) => {
 
@@ -22,7 +23,16 @@ const Base = (options = {}) => {
 
     if (!targetHelicopter) return;
 
-    game.addObject(TYPES.smartMissile, {
+    /**
+     * Network shenanigans:
+     * Only create these on the "local" target player's client, and send them to the remote.
+     * This means one unique missile that is copied, vs. the base creating random different ones.
+     * This also avoids lag / delay and keeps the game fair for the target helicopter.
+     */
+
+    const isLocalTarget = (targetHelicopter.data.isLocal);
+    
+    const params = {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
@@ -35,26 +45,60 @@ const Base = (options = {}) => {
       vXMax: missileVMax,
       vYMax: missileVMax,
       target: targetHelicopter,
-      onDie() {
-        // extreme mode, human player at enemy base: spawn another immediately on die().
-        if (gameType !== 'extreme') return;
+      onDie: onSmartMissileDie
+    };
 
-        // check again, within a screen's distance.
-        targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
-        
-        // if not within range, reset vX + vY max for next time
-        if (!targetHelicopter) {
-          missileVMax = 0;
-          return;
+    if (!net.active) {
+
+      // offline game, usual things
+
+      game.addObject(TYPES.smartMissile, params);
+  
+    } else if (isLocalTarget) {
+
+      // only create one missile on the "target" helicopter's side, and send it to the remote.
+      
+      const obj = game.addObject(TYPES.smartMissile, params);
+  
+      // note that this nullifies onDie(), intentionally.
+      // local base will run logic, and whether more missiles are fired.
+      net.sendMessage({
+        type: 'ADD_OBJECT',
+        objectType: obj.data.type,
+        params: {
+          ...params,
+          id: obj.data.id,
+          parent: data.id,
+          target: targetHelicopter.data.id,
+          onDie: null,
+          isBanana: params.isBanana,
+          isRubberChicken: params.isRubberChicken
         }
+      });
+      
+    }
 
-        // re-load and fire ze missles, now more aggressive!
-        missileVMax = Math.min(data.missileVMax, missileVMax + 1);
+  }
 
-        common.setFrameTimeout(fire, 250 + rng(250));
-      }
-    });
+  function onSmartMissileDie() {
+  
+    // extreme mode, human player at enemy base: spawn another immediately on die().
+    if (gameType !== 'extreme') return;
 
+    // check again, within a screen's distance.
+    const targetHelicopter = enemyHelicopterNearby(data, game.objects.view.data.browser.width);
+    
+    // if not within range, reset vX + vY max for next time
+    if (!targetHelicopter) {
+      missileVMax = 0;
+      return;
+    }
+
+    // re-load and fire ze missles, now more aggressive!
+    missileVMax = Math.min(data.missileVMax, missileVMax + 1);
+
+    common.setFrameTimeout(fire, 250 + rng(250, data.type));
+  
   }
 
   function die() {
