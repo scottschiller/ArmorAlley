@@ -459,7 +459,7 @@ const Helicopter = (options = {}) => {
     // hackish, fix endBunkers reference
     if (force || updated.funds) {
       // update the funds UI
-      game.objects.funds.setFunds(game.objects[TYPES.endBunker][0].data.funds);
+      game.objects.funds.setFunds(game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds);
     }
 
   }
