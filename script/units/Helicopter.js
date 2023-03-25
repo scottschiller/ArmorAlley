@@ -2753,10 +2753,18 @@ const Helicopter = (options = {}) => {
 
     dom.fuelLine = sprites.getWithStyle('fuel-line');
 
+    // before we move, or anything else - determine xMax + yMax.
+    refreshCoords();
+
+    // set some scroll stuff, initial positioning.
+    data.scrollLeft = common.getLandingPadOffsetX(exports);
+
     // if not specified (e.g., 0), assign landing pad position.
     if (!data.x) {
       data.x = common.getLandingPadOffsetX(exports);
     }
+
+    centerView();
 
     // sign up with the local "bank."
     game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].registerHelicopter(exports);
@@ -2798,8 +2806,6 @@ const Helicopter = (options = {}) => {
         return false;
       });
     }
-
-    refreshCoords();
 
     // if not enemy, force-update status bar UI
     if (data.isLocal) {
@@ -2964,8 +2970,11 @@ const Helicopter = (options = {}) => {
     height: data.height
   };
 
-  // so each helicopter gets a unique seed.
+  // each helicopter gets a unique random number generator seed.
   const aiSeedOffset = (data.id.split('_')[1] || 0);
+
+  // randomize "AI" timing a bit
+  data.targetingModulus += Math.floor(aiRNG(15));
 
   if (data.isLocal) {
     statsBar = document.getElementById('stats-bar');
