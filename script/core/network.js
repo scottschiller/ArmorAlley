@@ -382,6 +382,11 @@ const messageActions = {
 
   },
 
+  'MAKE_DEBUG_RECT': (data) => {
+    // net.sendMessage({ type: 'MAKE_DEBUG_RECT', params: [ basicData, viaNetwork ] });
+    common.makeDebugRect(...data.params);
+  },
+
   'GAME_EVENT': (data) => {
 
     /**
