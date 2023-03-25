@@ -29,10 +29,10 @@ const GameLoop = () => {
       // process incoming network messages
       net.processRXQueue(data.frameCount);
 
-      // handle delayed mouse input
-      game.objects.view.bufferMouseInput();
-
     }
+
+    // get mouse input for local player - delayed as applicable, in network case
+    game.objects.view.bufferMouseInput(game.players.local);
 
     // there may be sounds from the last frame, ready to go.
     playQueuedSounds();
