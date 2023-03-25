@@ -30,7 +30,7 @@ const View = () => {
   let css, data, dom, events, exports;
 
   const disableScaling = winloc.match(/noscal/i);
-  const noPause = winloc.match(/noPause/i);
+  let noPause = winloc.match(/noPause/i);
 
   function setLeftScrollToPlayer(helicopter) {
    
@@ -299,41 +299,64 @@ const View = () => {
 
   }
 
-  // a buffer for local input delay.
-  let mouseHistorySize = 32;
-  let mouseHistory = new Array(mouseHistorySize);
+  function assignMouseInput(player, x, y) {
+
+    // assign to the appropriate helicopter, where it will be picked up.
+    player.data.mouse.x = x;
+    player.data.mouse.y = y;
+
+  }
   
-  function bufferMouseInput() {
+  function bufferMouseInput(player) {
+
+    // game must be started.
+    if (!game.data.started) return;
+
+    // we must have a local player.
+    if (!game.players?.local) return;
+
+    // no input delay - assign latest value immediately.
+    if (!net.active) {
+      assignMouseInput(game.players.local, data.mouse.x, data.mouse.y);
+      return;
+    }
+
+    if (!player?.data) {
+      console.warn('bufferMouseInput(): WTF no player.data?', player);
+      return;
+    }
 
     // tack the latest onto the end of the buffer.
-    mouseHistory.push({
-      x: data.mouse.delayedInputX,
-      y: data.mouse.delayedInputY
+    player.data.mouseHistory.push({
+      x: player.data.mouse.delayedInputX,
+      y: player.data.mouse.delayedInputY
     });
 
     // drop the first.
-    mouseHistory.shift();
+    player.data.mouseHistory.shift();
 
     // assign half-trip "delayed" value to local mouse object.
     const frameDelay = Math.ceil(net.halfTrip / FRAMERATE);
 
     // if not overridden, apply the frame delay and "pull back" within the input buffer.
     // prevent delay from escaping array boundaries, too.
-    const offset = Math.max(0, mouseHistorySize - 1 - (noDelayedInput || game?.players?.local?.data?.isCPU ? 0 : frameDelay));
+    const offset = Math.max(0, player.data.mouseHistory.length - 1 - (noDelayedInput ? 0 : frameDelay));
 
     // start from the end, delay / latency pushes us backward.
-    const obj = mouseHistory[offset];
+    const obj = player.data.mouseHistory[offset];
+
     if (obj) {
-      data.mouse.x = obj.x;
-      data.mouse.y = obj.y;
+      assignMouseInput(player, obj.x, obj.y);
     }
 
     // get the helicopter data over to the other side.
-    sendLocalPlayerCoordinates();
+    sendPlayerCoordinates(player);
 
   }
 
-  function sendLocalPlayerCoordinates() {
+  function sendPlayerCoordinates(player) {
+
+    // TODO: separate for human vs. CPUs?
 
     if (!net.active) return;
 
@@ -343,20 +366,26 @@ const View = () => {
      */
 
     // this may fire early.
-    if (!game.players?.local) return;
+    if (!player) return;
+
+    // this shouldn't happen, but guard: "remote" players receive, not send coordinates.
+    if (player.data.isRemote) {
+      console.warn('sendPlayerCoordinates(): WTF remote player?', player);
+      return;
+    }
 
     // special case: remote CPU chopper.
-    if (game.players.local.data.isCPU) {
+    if (player.data.isCPU) {
 
-    // hackish: exclude scroll bizness for remote CPU.
+      // hackish: exclude scroll bizness for remote CPU.
       net.sendMessage({
         type: 'RAW_COORDS',
-        id: game.players.local.data.id,
-        x: game.players.local.data.x,
-        y: game.players.local.data.y,
-        // needed by remote helicopter.animate()
-        scrollLeft: 0,
-        scrollLeftVX: 0
+        id: player.data.id,
+        x: player.data.x,
+        y: player.data.y,
+        // for remote CPU helicopters
+        vX: player.data.vX,
+        vY: player.data.vY
       });
 
       return;
@@ -364,20 +393,21 @@ const View = () => {
     }
 
     // only send if both are non-zero values.
-    if (!data.mouse.delayedInputX && !data.mouse.delayedInputY && USE_LOCK_STEP) {
+    if (!player.data.mouse.delayedInputX && !player.data.mouse.delayedInputY && USE_LOCK_STEP) {
       // in lieu of coords data, used as a lock-step heartbeat of sorts, send a ping.
       net.sendMessage({ type: 'PING' });
       return;
     }
 
+    // send latest x/y to remote
     net.sendMessage({
       type: 'RAW_COORDS',
-      id: game.players.local.data.id,
-      x: data.mouse.delayedInputX,
-      y: data.mouse.delayedInputY,
+      id: player.data.id,
+      x: player.data.mouse.delayedInputX,
+      y: player.data.mouse.delayedInputY,
       // needed by remote helicopter.animate()
-      scrollLeft: data.battleField.scrollLeft,
-      scrollLeftVX: data.battleField.scrollLeftVX
+      scrollLeft: player.data.scrollLeft,
+      scrollLeftVX: player.data.scrollLeftVX
     });
 
   }
@@ -391,8 +421,11 @@ const View = () => {
     // don't scroll if helicopter is respawning, or not moving.
     if (!game.players.local.data.respawning && game.players.local.data.vX !== 0) {
 
+      // TODO: review. This is likely always true for a remote CPU player, playing "locally" via &remoteCPU=1.
+      if (game.players.local.data.mouse.x === undefined) return;
+
       // is the mouse to the right, or left?
-      mouseDelta = (data.mouse.x - data.browser.halfWidth);
+      mouseDelta = (game.players.local.data.mouse.x - data.browser.halfWidth);
 
       // how much...
       scrollAmount = mouseDelta / data.browser.halfWidth;
@@ -401,8 +434,6 @@ const View = () => {
       setLeftScroll(scrollAmount * data.maxScroll);
 
     }
-
-    data.frameCount++;
 
   }
 
@@ -854,7 +885,7 @@ const View = () => {
   };
 
   data = {
-    frameCount: 0,
+    noPause,
     ignoreMouseEvents: false,
     browser: {
       width: 0,
@@ -929,7 +960,7 @@ const View = () => {
 
     blur() {
 
-      if (noPause) return;
+      if (data.noPause || net.active || net.remoteID || (net.connected && net.isHost)) return;
 
       game.pause();
 
@@ -958,6 +989,11 @@ const View = () => {
         // record here; this gets processed within the game loop and put into a buffer.
         data.mouse.delayedInputX = e.clientX / data.screenScale;
         data.mouse.delayedInputY = e.clientY / data.screenScale;
+
+        if (game.players.local) {
+          game.players.local.data.mouse.delayedInputX = data.mouse.delayedInputX;
+          game.players.local.data.mouse.delayedInputY = data.mouse.delayedInputY;
+        }
         
       }
 
@@ -1049,7 +1085,7 @@ const View = () => {
     data,
     dom,
     events,
-    sendLocalPlayerCoordinates,
+    sendPlayerCoordinates,
     setAnnouncement,
     setLeftScroll,
     setLeftScrollToPlayer,
