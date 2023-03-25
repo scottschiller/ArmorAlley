@@ -1120,7 +1120,7 @@ const Helicopter = (options = {}) => {
 
   }
 
-  function moveTo(x, y) {
+  function moveToForReal(x, y) {
 
     const yMax = (data.yMax - (data.repairing ? 3 : 0));
 
@@ -1156,6 +1156,50 @@ const Helicopter = (options = {}) => {
     zones.refreshZone(exports);
 
     sprites.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
+    
+  }
+
+  function moveTo(x, y) {
+
+    // Note: this updates data.x + data.y.
+    moveToForReal(x, y);
+
+    // Note: CPU may also be local, which is why we don't exit early above.
+    if (data.isCPU && !data.isRemote) {
+
+      // immediately send our data abroad...
+      game.objects.view.sendPlayerCoordinates(exports);
+
+    }
+
+    // TODO: Fix the delayed stuff.
+    return;
+
+    /**
+     * If not a network game, OR, a remote or local human, just do the thing right away.
+     * Local human players already have delayed input, so it'd be redundant here.
+     * Only CPU players need to delay stuff beyond this point.
+     */
+    if (!net.active || data.isRemote || (data.isLocal && !data.isCPU)) return moveToForReal(x, y);
+
+    // TODO: buffer this like mouse input, delayed etc.
+
+    // CPU player? Send to the remote.
+    // A CPU can also be the local player, when testing via &remoteCPU=1.
+    if (data.isCPU && !data.isRemote) {
+
+      // immediately send our data abroad...
+      // game.objects.view.sendPlayerCoordinates(exports);
+
+      // and in a moment, apply that input locally.
+      common.setFrameTimeout(() => {
+        if (data.isEnemy) {
+          console.log('timeout -> moveToForReal');
+        }
+        moveToForReal(x, y);
+      }, net.halfTrip);
+
+    }
 
   }
 
@@ -1317,7 +1361,7 @@ const Helicopter = (options = {}) => {
     applyTilt();
 
     // move to landing pad
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.angle);
+    moveToForReal(data.x, data.y);
 
     // look ma, no longer dead!
     data.dead = false;
