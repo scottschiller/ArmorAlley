@@ -3163,6 +3163,13 @@ const Helicopter = (options = {}) => {
     // note: not mutually exlusive, can be local (for testing purposes) or remote
     game.players.cpu.push(exports);
   }
+
+  // ensure the UI shows the appropriate unit colours
+  if (data.isLocal && data.isEnemy) {
+    utils.css.add(document.getElementById('player-status-bar'), 'enemy');
+    utils.css.add(document.getElementById('mobile-controls'), 'enemy');
+  }
+
   return exports;
 
 };

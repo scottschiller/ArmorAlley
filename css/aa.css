@@ -1031,6 +1031,17 @@ ul.stats-bar .infantry-count em,
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAATCAYAAACgADyUAAAAd0lEQVR4Aa3R0QqAIAyFYRW67e18yfWQxrkZsvqdQYMDCn65ZQk1khQEVPSBsVszHJ+hkiO+NZsHIQD+cQ6VGVLijK/4alVZoogf0MwABXxa84NHr9tIhxWtlQRPaLVGGG72/RJCu/C+3C60+TfsvSoOw55hEq8bvTGFPiUQnUIAAAAASUVORK5CYII=);
 }
 
+#player-status-bar.enemy .infantry-count em,
+#mobile-controls.enemy li.weapons-item a.parachute-infantry {
+  background: transparent url(../image/parachute-infantry-enemy-static.png) no-repeat 0px 0px;
+  background-size: contain;
+}
+
+#mobile-controls.enemy li.weapons-item a.parachute-infantry {
+  background-size: 28%;
+  background-position: 50% 50%;
+}
+
 ul.stats-bar .infantry-count em {
   /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
@@ -3550,6 +3561,11 @@ body.is-mobile #player-status-bar .inventory-item:active {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAASCAMAAAAnpt3PAAAAHlBMVEUAAQAAAABgYAACYAAJtAD/tACzAAC0tLSqqqpVVQEP4VSqAAAAAXRSTlMAQObYZgAAAMBJREFUeNqN0IEKwzAIBNBetDX7/x/eiWZKYWmPElB8mOZ4G1RYvWeDkaGqTw6eYnKKiGLQ7c24Lp7F3MHdoxm2mJKdxVqQKWMGZJ/bmGC4//Y1umERhFr1t01xvxjTjBniCc3IXIky6IxjuO8xoBjVcp2ZdcMWmQUj5HRjyDjIVMvovF8uWV7dyT5U6ZLpikR62TsoRwYIesoVXCwG4kmczTkR5yaaExLMqw/rOI9/geYEEw038T2xPtEvuWFt4gvAPggZ6Ysf1AAAAABJRU5ErkJggg==);
 }
 
+#player-status-bar.enemy .inventory-item a.missile-launcher,
+#mobile-controls.enemy li.inventory-item a.missile-launcher {
+  background-image: url(../image/missile-launcher-enemy-static.png);
+}
+
 #player-status-bar .inventory-item a.missile-launcher {
   background-size: contain;
   background-position: 50% 50%;
@@ -3561,6 +3577,11 @@ body.is-mobile #player-status-bar .inventory-item:active {
 #player-status-bar .inventory-item a.tank {
   /* background-image: url(../image/tank-static.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAASCAMAAAA9mj1BAAAAGFBMVEVhcAAAAAAFVQFVVQFVVVUOqgKqqqr/qgGVIxTWAAAAAXRSTlMAQObYZgAAAMFJREFUeNqV0IEOgzAIBNCVQvn/P16PnVI0TbqLscPdi8TPJm3NprNTvXfrZiJixxhKus34hKA28aGM9mTulHuLhd4S1EFpX4m6pw2Z1DkwtuRHYVulcr2VvzdvhXXOoFe9yAQZ9nPPOIIGrCkWLmWEpMSY8k3/i9lKRxvHF7JI0Xuhx35lccU4JkwqqhpdZVEJlVJxQ+tJh86gjf+ygzkMT0XMWqFyydIRzutzG6PQ1oT76rJZnOU59qdMe/x9K/wCOlII8vghfyEAAAAASUVORK5CYII=);
+}
+
+#mobile-controls.enemy li.inventory-item a.tank,
+#player-status-bar.enemy .inventory-item a.tank {
+  background-image: url(../image/tank-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.tank {
@@ -3575,6 +3596,11 @@ body.is-mobile #player-status-bar .inventory-item:active {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAgBAMAAABKj4M5AAAAFVBMVEVhcAAAAABVVQEFVQEOqgL/qgGqqqooo0ftAAAAAXRSTlMAQObYZgAAAKFJREFUeF6VzsERAyEMQ1FaUAtqwS24hW2B/ksIjjY4HJJZ/RMj3gyMFf411GMGsApGBJmrqPId4DCpuum7hoScwcjIw13bEXIOCzFV7Gom57HTXdsRciaLbLiYXO8wmFDDUsWUzZL8freUnHaDAUxKbBY3++wGI5mahSsd924xVLhtu0D3mFVzTpyh91E9YWopLje6Y/cZfjD4rL/a9e6wF9MGwLd0KLg4AAAAAElFTkSuQmCC);
 }
 
+#player-status-bar.enemy .inventory-item a.van,
+#mobile-controls.enemy li.inventory-item a.van {
+  background-image: url(../image/van-enemy-static.png);
+}
+
 #player-status-bar .inventory-item a.van {
   background-size: contain;
   width: 22px;
@@ -3585,6 +3611,11 @@ body.is-mobile #player-status-bar .inventory-item:active {
 #mobile-controls li.inventory-item a.infantry {
   /* background-image: url(../image/infantry-static.gif); */
   background-image: url(data:image/gif;base64,R0lGODlhCgALAMIFAAAAAAVVAVVVAQ6qAqsCAf///////////yH5BAEIAAcALAAAAAAKAAsAAAMmeAoM+gcQ4mCc9bHQ2BoBGHAfB5gf2CyA6EUtNwxe3KiRIDS6kwAAOw==);
+}
+
+#player-status-bar.enemy .inventory-item a.infantry,
+#mobile-controls.enemy li.inventory-item a.infantry {
+  background-image: url(../image/infantry-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.infantry {
@@ -3598,6 +3629,11 @@ body.is-mobile #player-status-bar .inventory-item:active {
   background-size: contain;
   width: 8px;
   height: 9px;
+}
+
+#player-status-bar.enemy .inventory-item a.engineer,
+#player-status-bar.enemy .inventory-item a.engineer {
+  background-image: url(../image/engineer-enemy-static.png);
 }
 
 #player-status-bar a {
