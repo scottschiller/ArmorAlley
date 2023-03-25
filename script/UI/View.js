@@ -33,6 +33,13 @@ const View = () => {
   const noPause = winloc.match(/noPause/i);
 
   function setLeftScrollToPlayer(helicopter) {
+   
+    // just to be safe - only local.
+    if (!helicopter.data.isLocal) {
+      console.warn('setLeftScrollToPlayer(): IGNORING non-local helicopter', helicopter);
+      return;
+    }
+
     const allowOverride = true;
     let x;
 
