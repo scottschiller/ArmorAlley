@@ -43,7 +43,7 @@ const View = () => {
     const allowOverride = true;
     let x;
 
-    x = helicopter.data.x + (helicopter.data.width * (1 / data.screenScale)) - game.objects.view.data.browser.halfWidth;
+    x = helicopter.data.x + (helicopter.data.width * (1 / data.screenScale)) - data.browser.halfWidth;
 
     setLeftScroll(x, allowOverride);
   }
