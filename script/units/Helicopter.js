@@ -1395,7 +1395,7 @@ const Helicopter = (options = {}) => {
 
       } else if (data.isEnemy && attacker.data) {
 
-        // celebrate the win if you, or certain actors take out the enemy chopper while on-screen.
+        // celebrate the win if you, or certain actors take out an enemy chopper while on-screen.
         if (data.isOnScreen && (attacker.data.parentType === TYPES.helicopter || attacker.data.type === TYPES.smartMissile || attacker.data.type === TYPES.balloon)) {
           gameEvents.fire(EVENTS.enemyDied);
         }
