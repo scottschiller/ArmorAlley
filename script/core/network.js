@@ -368,10 +368,13 @@ const messageActions = {
       fromNetworkEvent: true
     });
 
-    if (syncAndFastForward) {
+    if (newObject && syncAndFastForward) {
       // this thing has been re-synced to the helicopter position, after delivery.
       // console.log('fast-forwarding new object');
-      const frameLagBetweenPeers = Math.ceil(net.halfTrip / FRAMERATE);
+      // we know precisely how many frames behind (or ahead) the remote is, because we have their frame count here vs. ours.
+      // notwithstanding, try to round down to nearest 1-frame delay.
+      const frameLagBetweenPeers = Math.max(0, Math.min(game.objects.gameLoop.data.frameCount - data.frameCount, Math.floor(net.halfTrip / FRAMERATE)));
+      console.log('fast-forward object, lag between peers - based on packet.frameCount:', game.objects.gameLoop.data.frameCount - data.frameCount, 'vs. halfTrip / FRAMERATE:', (net.halfTrip / FRAMERATE), 'result:', frameLagBetweenPeers);
       for (let i = 0; i < frameLagBetweenPeers; i++) {
         newObject.animate();
       }
