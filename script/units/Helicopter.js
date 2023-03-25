@@ -974,11 +974,10 @@ const Helicopter = (options = {}) => {
     }
 
     /**
-     * Only send rotate events when invoked manually by user.
-     * If auto-rotate (or mobile where always enabled), N/A
-     * because clients will apply the rotate automatically.
+     * Mobile clients auto-rotate the local player, but should send
+     * these events to the remote (e.g., a desktop) for consistency.
      */
-    if (net.active && data.isLocal && !isMobile && !data.autoRotate) {
+    if (net.active && data.isLocal) {
       net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'rotate' });
     }
 
@@ -1010,7 +1009,7 @@ const Helicopter = (options = {}) => {
     // L -> R / R -> L + forward / backward
 
     // auto-rotate feature
-    if ((data.autoRotate || (!data.isCPU && isMobile))) {
+    if ((data.autoRotate || (!data.isCPU && isMobile && !data.isRemote))) {
       if (!data.isEnemy) {
         if ((data.vX > 0 && data.lastVX < 0 && data.rotated) || (data.vX < 0 && data.lastVX > 0 && !data.rotated)) {
           rotate();
