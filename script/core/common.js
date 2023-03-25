@@ -242,10 +242,19 @@ const common = {
      */
     
     // TODO: maybe use `fromNetworkEvent` instead of matching host|guest
-    if (net.active && !options.staticID && !staticIDTypes[data.type] && !options.fromNetworkEvent) {
+    // NOTE: no prefix if `options.id` was specified.
+    if (net.active && !options.id && !options.staticID && !staticIDTypes[data.type] && !options.fromNetworkEvent) {
       id = `${net.isHost ? PREFIX_HOST : PREFIX_GUEST}${id}`;
     }
 
+    // sanity check
+    if (id.indexOf(PREFIX_HOST) !== -1 && id.indexOf(PREFIX_GUEST) !== -1) {
+      // missile launcher missiles may include this because the ID is prefixed.
+      // fix by dropping the first one.
+      console.warn('bad ID, has both HOST and GUEST?', id);
+      // id = id.split('_').slice(2).join('_');
+      // debugger;
+    }
 
     const defaults = {
       id,
