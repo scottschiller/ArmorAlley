@@ -206,7 +206,7 @@ const Helicopter = (options = {}) => {
 
   function iGotYouBabe() {
 
-    if (!gamePrefs.sound) return;
+    if (!gamePrefs.sound || !gamePrefs.bnb) return;
 
     const { iGotYouBabe } = sounds.bnb;
 
