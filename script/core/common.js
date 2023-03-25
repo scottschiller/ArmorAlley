@@ -344,9 +344,14 @@ const common = {
 
   onDie(target, attacker = target?.data?.attacker) {
 
+    /**
+     * A generic catch-all for battlefield item `die()` events.
+     * This was added specifically for the network game case,
+     * but may be refactored in future as needed.
+    */
+
     if (!net.active) return;
 
-    // a generic catch-all for battlefield item `die()` events.
     // NOTE: attacker may not always be defined.
 
     if (target.data.type === TYPES.helicopter && !target.data.isEnemy && target.data.isLocal) {
