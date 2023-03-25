@@ -1642,7 +1642,9 @@ const Helicopter = (options = {}) => {
 
       // SHIFT key still down?
       if (data.isLocal && !keyboardMonitor.isDown('shift')) {
-        data.firing = false;
+       
+        if (data.firing) callAction('setFiring', false);
+
       }
 
     }
