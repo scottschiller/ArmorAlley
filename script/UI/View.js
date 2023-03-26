@@ -1053,7 +1053,7 @@ const View = () => {
         net.sendMessage({ type: 'CHAT', text });
         // you only send love letters to your partner, of course.
         const emoji = net.coop ? '💌' : '📮';
-        game.objects.notifications.add(`${emoji} ${text}`);
+        game.objects.notifications.add(`${emoji} ${common.basicEscape(text)}`);
         input.value = '';
       }
 

@@ -49,7 +49,7 @@ const Notifications = () => {
         // provided text, or, custom render function
         // if options.onRender(), that function gets called to do the work.
         // otherwise, plain text - and if options.noRepeat, don't show multiplier.
-        item.node.innerHTML = `<span>${basicEscape(options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`)))}</span>`;
+        item.node.innerHTML = `<span>${options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
 
         // clear, start new timer
         if (item.timer) {
@@ -109,16 +109,6 @@ const Notifications = () => {
 
   }
 
-  function basicEscape(str) {
-    return str?.replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    // convenience
-    .replace('\n', '<br>');
-  }
-
   function showItem(item) {
 
     let oToast;
@@ -129,7 +119,7 @@ const Notifications = () => {
 
     if (item.doubleHeight) utils.css.add(oToast, css.doubleHeight);
 
-    oToast.innerHTML = `<span>${basicEscape(item.onRender ? item.onRender(item.text) : item.text)}</span>`;
+    oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
 
     dom.oToasts.appendChild(oToast);
 
@@ -199,7 +189,7 @@ const Notifications = () => {
 
     const playingMessage = gameTypes[gameType] || gameTypes.other;
 
-    add(`Welcome to ARMOR ALLEY 🚁\n${playingMessage}`);
+    add(`Welcome to ARMOR ALLEY 🚁<br />${playingMessage}`);
 
     common.setFrameTimeout(() => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'), 2000);
 

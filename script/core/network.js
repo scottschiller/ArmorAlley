@@ -218,7 +218,7 @@ const messageActions = {
 
     // A form of notification, really.
     if (data.text) {
-      game.objects.notifications.add(`${data.text} 💬`);
+      game.objects.notifications.add(`${common.basicEscape(data.text)} 💬`);
     }
 
   },
