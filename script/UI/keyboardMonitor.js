@@ -30,11 +30,19 @@ function KeyboardMonitor() {
     infantry: 73,
     engineer: 69,
     pause_p: 80,
-    esc: 27
+    esc: 27,
+    enter: 13,
+    delete_1: 8,
+    delete_2: 46
   };
 
   const allowedInPause = {
     [keyMap.pause_p]: true,
+    [keyMap.esc]: true
+  };
+
+  const allowedInChatInput = {
+    [keyMap.enter]: true,
     [keyMap.esc]: true
   };
 
@@ -44,7 +52,7 @@ function KeyboardMonitor() {
 
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
-      // console.log(e.keyCode);
+      if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode]) return;
 
       if (!e.metaKey && keys[e.keyCode]?.down) {
         if (!downKeys[e.keyCode]) {
@@ -63,6 +71,8 @@ function KeyboardMonitor() {
     keyup(e) {
 
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
+
+      if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode]) return;
 
       if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
         downKeys[e.keyCode] = null;
@@ -87,14 +97,36 @@ function KeyboardMonitor() {
 
     // NOTE: Each function gets an (e) event argument.
 
-    // return / enter
-    13: {
-
-      allowEvent: true, // don't use stopEvent()
+    // delete
+    [keyMap.delete_1]: {
 
       down() {
 
         processInput(game.players.local, 'eject');
+
+      }
+
+    },
+
+    // same as above (TODO: DRY)
+    [keyMap.delete_2]: {
+
+      down() {
+
+        processInput(game.players.local, 'eject');
+
+      }
+
+    },
+
+    // return / enter
+    13: {
+
+      down(e) {
+
+        if (game.data.started) {
+          game.objects.view.handleChatInput(e);
+        }
 
       }
 
@@ -271,9 +303,13 @@ function KeyboardMonitor() {
 
     27: {
 
-      down() {
+      down(e) {
 
-        prefsManager.toggleDisplay();
+        if (game.objects.view.data.chatVisible) {
+          game.objects.view.handleChatInput(e);
+        } else {
+          prefsManager.toggleDisplay();
+        }
 
       }
 
