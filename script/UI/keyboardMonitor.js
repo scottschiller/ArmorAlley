@@ -119,8 +119,7 @@ function KeyboardMonitor() {
 
     },
 
-    // return / enter
-    13: {
+    [keyMap.enter]: {
 
       down(e) {
 
@@ -132,8 +131,7 @@ function KeyboardMonitor() {
 
     },
 
-    // shift
-    16: {
+    [keyMap.shift]: {
 
       allowEvent: true,
 
@@ -151,8 +149,7 @@ function KeyboardMonitor() {
 
     },
 
-    // ctrl
-    17: {
+    [keyMap.ctrl]: {
 
       allowEvent: true,
 
@@ -170,8 +167,7 @@ function KeyboardMonitor() {
 
     },
 
-    // space bar
-    32: {
+    [keyMap.space]: {
 
       down() {
 
@@ -187,8 +183,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "m"
-    77: {
+    [keyMap.missileLauncher]: {
 
       down() {
 
@@ -198,8 +193,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "t"
-    84: {
+    [keyMap.tank]: {
 
       down() {
 
@@ -209,8 +203,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "v"
-    86: {
+    [keyMap.van]: {
 
       down() {
 
@@ -220,8 +213,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "b" (banana)
-    66: {
+    [keyMap.banana]: {
       down() {
 
         // heat-seeking banana
@@ -239,8 +231,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "c" (rubber chicken)
-    67: {
+    [keyMap.rubber_chicken]: {
 
       down() {
 
@@ -259,8 +250,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "x"
-    88: {
+    [keyMap.smart_missile]: {
 
       down() {
 
@@ -279,8 +269,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "e"
-    69: {
+    [keyMap.engineer]: {
 
       down() {
 
@@ -290,8 +279,7 @@ function KeyboardMonitor() {
 
     },
 
-    // "i"
-    73: {
+    [keyMap.infantry]: {
 
       down() {
 
@@ -301,7 +289,7 @@ function KeyboardMonitor() {
 
     },
 
-    27: {
+    [keyMap.esc]: {
 
       down(e) {
 
@@ -315,7 +303,7 @@ function KeyboardMonitor() {
 
     },
 
-    80: {
+    [keyMap.pause_p]: {
 
       down() {
 
