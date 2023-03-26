@@ -18,6 +18,9 @@ const getIdFromURL = () => searchParams.get('id');
 // were we given an ID from a friend to connect to?
 const remoteID = getIdFromURL();
 
+// Cooperative option. TODO: support 3+ players, two human and 1-2 CPUs.
+const coop = searchParams.get('coop');
+
 // PeerJS option: ordered, guaranteed delivery ("file transfer") vs. not ("gaming")
 let reliable = !searchParams.get('unreliable');
 
@@ -692,6 +695,8 @@ function updateUI() {
 let rxQueue = [];
 
 const net = {
+
+  coop,
 
   debugNetwork,
   connected: false,

@@ -280,10 +280,7 @@ const game = (() => {
 
         // which one you are, depends on who's hosting.
 
-        // TODO: support 3+ players, two human and 1-2 CPUs.
-        let cooperative = window.location.href.match(/coop/i);
-
-        if (cooperative) {
+        if (net.coop) {
 
           if (net.isHost) {
 
