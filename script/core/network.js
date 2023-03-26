@@ -211,6 +211,15 @@ const messageActions = {
 
   },
 
+  'CHAT': (data) => {
+
+    // A form of notification, really.
+    if (data.text) {
+      game.objects.notifications.add(`${data.text} 💬`);
+    }
+
+  },
+
   'REMOTE_ORDER': (data) => {
 
     // net.sendMessage({ type: 'REMOTE_ORDER', orderType: type, options, id: player.data.id });
