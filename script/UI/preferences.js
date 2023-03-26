@@ -132,6 +132,8 @@ function PrefsManager() {
 
     data.active = true;
 
+    game.objects.view.data.ignoreMouseEvents = true;
+
     events.updateScreenScale();
 
     document.body.appendChild(dom.o);
@@ -172,6 +174,8 @@ function PrefsManager() {
 
     dom.o.remove();
     data.active = false;
+
+    game.objects.view.data.ignoreMouseEvents = false;
 
     game.resume();
 
