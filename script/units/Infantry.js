@@ -11,7 +11,7 @@ import { effects } from '../core/effects.js';
 
 const Infantry = (options = {}) => {
 
-  let css, dom, data, defaultItems, height, radarItem, nearby, collision, exports;
+  let css, dom, data, defaultLookAhead, defaultItems, height, radarItem, nearby, collision, exports;
 
   function fire() {
 
@@ -259,9 +259,9 @@ const Infantry = (options = {}) => {
 
     // hackish: make butthead stop to the left, and beavis stop to the right of (e.g.) a turret.
     if (gamePrefs.bnb && !data.isEnemy) {
-      data.xLookAhead = options.isButthead ? -28 : 8;
+      data.xLookAhead = options.isButthead ? -28 : defaultLookAhead;
     } else {
-      data.xLookAhead = options.xLookAhead || 16;
+      data.xLookAhead = options.xLookAhead || defaultLookAhead;
     }
 
     data.halfHeight = data.height / 2;
@@ -282,6 +282,8 @@ const Infantry = (options = {}) => {
     refreshMeasurements();
     
   }
+
+  defaultLookAhead = 8;
 
   css = common.inheritCSS({
     className: null,
@@ -314,7 +316,7 @@ const Infantry = (options = {}) => {
     // how fast the infantry "walk", taking relative paces / steps so they still move 10 pixels in 10 frames
     vXFrames: [0.5, 0.75, 1, 1.25, 1.5, 1.5, 1.25, 1, 0.75, 0.5],
     vXFrameOffset: 0,
-    xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : 16),
+    xLookAhead: (options.xLookAhead !== undefined ? options.xLookAhead : defaultLookAhead),
     xLookAheadBunker: options.xLookAheadBunker || null,
     unassisted: (options.unassisted !== undefined ? options.unassisted : true),
     inventory: {
