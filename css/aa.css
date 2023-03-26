@@ -3381,10 +3381,12 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #help {
+  position: relative;
   display: none;
   float: right;
   margin-left: 1em;
   margin-right: 1em;
+  top: 0.75px;
 }
 
 body.is-mobile #help {
@@ -4934,4 +4936,38 @@ button .network-icon {
   outline: 1px solid #fff;
   background: rgba(0,0,0,0.75);
   z-index: 10;
+}
+
+#message-box {
+  position: absolute;
+  display: none;
+  bottom: 0px;
+  left: 25%;
+  height: 13px;
+  margin-bottom: -2px;
+  text-align: center;
+  width: 50%;
+  z-index: 2;
+}
+
+#message-form {
+  display: inline-block;
+  width: 50%;
+}
+
+#message-form-input {
+  display: block;
+  width: 100%;
+  margin: 0px;
+  padding: 2px;
+  background: rgba(0,0,0,0.9);
+  border: 0.5px solid #393;
+  font-size: 7px;
+  color: #fff;
+  text-align: center;
+}
+
+#message-form-input:focus {
+  outline: none;
+  background-color: #006600;
 }

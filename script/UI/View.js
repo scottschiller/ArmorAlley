@@ -818,6 +818,45 @@ const View = () => {
 
   }
 
+  function handleChatInput(e) {
+
+    // chat feature requires networking.
+    if (!net.active) return;
+
+    if (!data.chatVisible) {
+
+      showChatInput();
+
+    } else {
+
+      // special case: visible, but ESC pressed - bail.
+      if (e.keyCode === 27) {
+        hideChatInput();
+        return;
+      }
+
+      events.sendChatMessage();
+
+    }
+
+  }
+
+  function showChatInput() {
+
+    dom.messageBox.style.display = 'block';
+    dom.messageInput.focus();
+    data.chatVisible = true;
+
+  }
+
+  function hideChatInput() {
+
+    dom.messageInput.blur();
+    dom.messageBox.style.display = 'none';
+    data.chatVisible = false;
+
+  }
+
   function addEvents() {
 
     // avoid "synthetic" mouse events from mobile, since we have touch covered.
@@ -835,6 +874,8 @@ const View = () => {
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
+    utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
+
   }
 
   function initDOM() {
@@ -848,6 +889,9 @@ const View = () => {
     dom.gameTipsList = sprites.getWithStyle('game-tips-list');
     dom.gameAnnouncements = sprites.getWithStyle('game-announcements');
     dom.mobileControls = document.getElementById('mobile-controls');
+    dom.messageBox = document.getElementById('message-box');
+    dom.messageForm = document.getElementById('message-form');
+    dom.messageInput = document.getElementById('message-form-input');
 
     // TODO: improve and clean up.
     // maybe remove nodes if not on mobile.
@@ -895,6 +939,7 @@ const View = () => {
       twoThirdsWidth: 0,
       height: 0
     },
+    chatVisible: false,
     mouse: {
       clientX: 0,
       clientY: 0,
@@ -999,6 +1044,23 @@ const View = () => {
 
     },
 
+    sendChatMessage() {
+
+      const input = dom.messageInput;
+      const text = input.value.trim();
+
+      if (text.length) {
+        net.sendMessage({ type: 'CHAT', text });
+        game.objects.notifications.add(`💌 ${text}`);
+        input.value = '';
+      }
+
+      hideChatInput();
+
+      return false;
+
+    },
+
     touchstart(e) {
 
       // if the paused screen is showing, resume the game.
@@ -1085,6 +1147,7 @@ const View = () => {
     data,
     dom,
     events,
+    handleChatInput,
     sendPlayerCoordinates,
     setAnnouncement,
     setLeftScroll,
