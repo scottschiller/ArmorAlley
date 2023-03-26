@@ -49,7 +49,7 @@ const Notifications = () => {
         // provided text, or, custom render function
         // if options.onRender(), that function gets called to do the work.
         // otherwise, plain text - and if options.noRepeat, don't show multiplier.
-        item.node.innerHTML = `<span>${options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
+        item.node.innerHTML = `<span>${basicEscape(options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`)))}</span>`;
 
         // clear, start new timer
         if (item.timer) {
@@ -90,23 +90,33 @@ const Notifications = () => {
   function calcDelay(text) {
 
     // number of words / letters? let's say 240 WPM, 4 words per second as an optimum.
-    let delay, defaultDelay, delayPerWord, maxDelay;
+    let delay, minDelay, delayPerWord, maxDelay;
 
-    defaultDelay = 2500;
+    minDelay = 2500;
     delayPerWord = 500;
-    maxDelay = 4000;
+    maxDelay = 5000;
 
     // just in case
-    if (!text || !text.length || text.indexOf(' ') === -1) return defaultDelay;
+    if (!text || !text.length || text.indexOf(' ') === -1) return minDelay;
 
     // hackish: if "NSF", return special delay
     if (text.match(/nsf/i)) return maxDelay / 2;
 
     // e.g., `this is a test` = 4 * delayPerWord - stripping HTML, also.
-    delay = Math.min(text.replace('/<(.|\n)*?>/', '').split(' ').length * delayPerWord, maxDelay);
+    delay = Math.max(minDelay, Math.min(text.replace('/<(.|\n)*?>/', '').split(' ').length * delayPerWord, maxDelay));
 
     return delay;
 
+  }
+
+  function basicEscape(str) {
+    return str?.replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // convenience
+    .replace('\n', '<br>');
   }
 
   function showItem(item) {
@@ -119,7 +129,7 @@ const Notifications = () => {
 
     if (item.doubleHeight) utils.css.add(oToast, css.doubleHeight);
 
-    oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
+    oToast.innerHTML = `<span>${basicEscape(item.onRender ? item.onRender(item.text) : item.text)}</span>`;
 
     dom.oToasts.appendChild(oToast);
 
@@ -189,7 +199,7 @@ const Notifications = () => {
 
     const playingMessage = gameTypes[gameType] || gameTypes.other;
 
-    add(`Welcome to ARMOR ALLEY 🚁<br />${playingMessage}`);
+    add(`Welcome to ARMOR ALLEY 🚁\n${playingMessage}`);
 
     common.setFrameTimeout(() => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'), 2000);
 

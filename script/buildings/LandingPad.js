@@ -30,7 +30,7 @@ const LandingPad = (options = {}) => {
     eat = data.edible[rndInt(data.edible.length)];
     drink = data.drinkable[rndInt(data.drinkable.length)];
 
-    data.welcomeMessage = `-* 🚁 Welcome to ${data.name}${' ⛽🛠️ *-<br>Today\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat)}`;
+    data.welcomeMessage = `-* 🚁 Welcome to ${data.name}${' ⛽🛠️ *-\nToday\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat)}`;
 
   }
 
