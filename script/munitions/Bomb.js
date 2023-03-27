@@ -159,7 +159,7 @@ const Bomb = (options = {}) => {
       });
     }
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

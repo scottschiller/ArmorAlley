@@ -202,7 +202,7 @@ const Tank = (options = {}) => {
 
     radarItem.die();
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

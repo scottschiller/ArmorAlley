@@ -40,11 +40,11 @@ const ParachuteInfantry = (options = {}) => {
 
   }
 
-  function die(options) {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
-    if (!options?.silent) {
+    if (!dieOptions?.silent) {
 
       effects.inertGunfireExplosion({ exports });
 
@@ -70,9 +70,9 @@ const ParachuteInfantry = (options = {}) => {
 
     data.dead = true;
 
-    radarItem.die(options);
+    radarItem.die(dieOptions);
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

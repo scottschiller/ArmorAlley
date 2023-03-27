@@ -136,7 +136,7 @@ const Balloon = (options = {}) => {
 
     data.dead = true;
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

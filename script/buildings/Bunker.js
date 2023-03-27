@@ -299,7 +299,7 @@ const Bunker = (options = {}) => {
     // check if enemy convoy production should stop or start
     checkProduction();
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
     radarItem.die();
 

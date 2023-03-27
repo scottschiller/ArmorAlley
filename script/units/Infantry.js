@@ -114,11 +114,11 @@ const Infantry = (options = {}) => {
 
   }
 
-  function die(options = {}) {
+  function die(dieOptions = {}) {
 
     if (data.dead) return;
 
-    if (!options?.silent) {
+    if (!dieOptions?.silent) {
 
       playSound(sounds.genericSplat, exports);
 
@@ -157,13 +157,13 @@ const Infantry = (options = {}) => {
 
     data.dead = true;
 
-    radarItem?.die({ silent: (options && options.silent) });
+    radarItem?.die({ silent: dieOptions?.silent });
 
-    if (options.attacker) {
-      data.attacker = options.attacker;
+    if (dieOptions.attacker) {
+      data.attacker = dieOptions.attacker;
     }
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

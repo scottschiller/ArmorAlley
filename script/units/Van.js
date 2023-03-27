@@ -70,7 +70,7 @@ const Van = (options = {}) => {
       playSound(sounds.genericExplosion, exports);
     }
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

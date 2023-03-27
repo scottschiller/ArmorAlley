@@ -239,7 +239,7 @@ const Turret = (options = {}) => {
 
     sprites.updateEnergy(exports);
 
-    common.onDie(exports);
+    common.onDie(exports, dieOptions);
 
   }
 

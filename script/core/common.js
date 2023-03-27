@@ -353,7 +353,7 @@ const common = {
 
   },
 
-  onDie(target, attacker = target?.data?.attacker) {
+  onDie(target, dieOptions = {}) {
 
     /**
      * A generic catch-all for battlefield item `die()` events.
@@ -388,6 +388,7 @@ const common = {
       debugObj('remote friendly player attacker', attacker);
       debugObj('target', target);
     }
+    const attacker = dieOptions.attacker || target?.data?.attacker;
 
     if (debugCollision) {
       if (attacker && attacker.data.type === TYPES.helicopter) makeDebugRect(attacker);
