@@ -740,7 +740,6 @@ const SmartMissile = (options = {}) => {
     // mark the target.
     setTargetTracking(true);
 
-
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     if (data.isBanana && sounds.banana.launch) {
@@ -749,7 +748,7 @@ const SmartMissile = (options = {}) => {
       sprites.updateIsOnScreen(exports);
 
       // on-screen, OR, targeting the player chopper
-      if (sounds.bnb.boioioing && (data.isOnScreen || (data.isEnemy && objects.target.data.type === TYPES.helicopter))) {
+      if (sounds.bnb.boioioing && (data.isOnScreen || (data.isEnemy && objects?.target?.data?.type === TYPES.helicopter))) {
         playSound(sounds.bnb.boioioing, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
           onplay: (sound) => {
             // cancel if no longer active
@@ -773,7 +772,7 @@ const SmartMissile = (options = {}) => {
       });
 
       // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
-      if (Math.abs(objects.target.data.x - data.x) >= 666 && !data.isEnemy && (data.parentType === TYPES.helicopter || data.isOnScreen) && Math.random() >= 0.5) {
+      if (Math.abs(objects?.target?.data?.x - data.x) >= 666 && !data.isEnemy && (data.parentType === TYPES.helicopter || data.isOnScreen) && Math.random() >= 0.5) {
         playSoundWithDelay(sounds.bnb.cock);
       }
 
