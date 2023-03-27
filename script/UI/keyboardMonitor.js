@@ -15,7 +15,7 @@ function KeyboardMonitor() {
   // meaningful labels for key values
   const keyMap = {
     banana: 66,
-    rubber_chicken: 67,
+    rubberChicken: 67,
     shift: 16,
     ctrl: 17,
     space: 32,
@@ -26,7 +26,7 @@ function KeyboardMonitor() {
     missileLauncher: 77,
     tank: 84,
     van: 86,
-    smart_missile: 88,
+    smartMissile: 88,
     infantry: 73,
     engineer: 69,
     pause_p: 80,
@@ -45,6 +45,9 @@ function KeyboardMonitor() {
     [keyMap.enter]: true,
     [keyMap.esc]: true
   };
+
+  // call out to the helicopter, e.g., ('setMissileLaunching', true)
+  const processInput = (player, method, params) => player.callAction(method, params);
 
   events = {
 
@@ -89,9 +92,6 @@ function KeyboardMonitor() {
     }
 
   };
-
-
-  const processInput = (player, method, params) => player.callAction(method, params);
 
   keys = {
 
@@ -231,7 +231,7 @@ function KeyboardMonitor() {
 
     },
 
-    [keyMap.rubber_chicken]: {
+    [keyMap.rubberChicken]: {
 
       down() {
 
@@ -250,7 +250,7 @@ function KeyboardMonitor() {
 
     },
 
-    [keyMap.smart_missile]: {
+    [keyMap.smartMissile]: {
 
       down() {
 
