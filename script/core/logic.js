@@ -9,6 +9,9 @@ import { game } from './Game.js';
 import { COSTS, getTypes, TYPES, worldWidth } from './global.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
+import { net } from './network.js';
+
+const NET_TRIGGER_DISTANCE = 256;
 
 function collisionCheck(rect1, rect2, rect1XLookAhead) {
 
@@ -316,8 +319,8 @@ function objectInView(data, options = {}) {
 
   let i, j, items, result;
 
-  // defaults
-  options.triggerDistance = options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+    // defaults
+  options.triggerDistance = net.active ? NET_TRIGGER_DISTANCE : options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
   options.friendlyOnly = !!options.friendlyOnly;
 
   items = game.objects[(options.items || TYPES.helicopter)];
@@ -403,6 +406,8 @@ function enemyNearby(data, targets, triggerDistance) {
 
   // "targets" is an array of class types, e.g., tank, missileLauncher etc.
 
+  if (net.active) triggerDistance = NET_TRIGGER_DISTANCE;
+
   for (i = 0, j = targets.length; i < j; i++) {
 
     for (k = 0, l = game.objects[targets[i].type].length; k < l; k++) {
@@ -433,7 +438,7 @@ function enemyHelicopterNearby(data, triggerDistance) {
   const helicopter = game.objects[TYPES.helicopter];
 
   // by default
-  triggerDistance = triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+  triggerDistance = net.active ? NET_TRIGGER_DISTANCE : triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
   for (i = 0, j = helicopter.length; i < j; i++) {
 
