@@ -584,6 +584,11 @@ const game = (() => {
       if (navigator.standalone) utils.css.add(document.body, 'is_standalone');
     }
   
+    // Very limited CSS stuff, here, to hide keyboard controls.
+    if (isiPhone) {
+      utils.css.add(document.body, 'is-iphone');
+    }
+
     if (isMobile) {
   
       utils.css.add(document.body, 'is-mobile');
