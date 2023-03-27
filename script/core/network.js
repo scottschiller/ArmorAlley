@@ -15,6 +15,9 @@ const debugNetworkStats = searchParams.get('debugNetworkStats');
 
 const getIdFromURL = () => searchParams.get('id');
 
+// object properties that point to live objects, e.g., a helicopter.
+const OBJ_REFERENCES = ['target', 'attacker', 'parent'];
+
 // were we given an ID from a friend to connect to?
 const remoteID = getIdFromURL();
 
@@ -120,9 +123,49 @@ function sendDelayedMessage(obj, callback) {
 
 }
 
+function serializeObjectReferences(obj = {}) {
+
+  // replace attacker / target / parent objects with their IDs,
+  // so they can be looked up and reconnected on the remote.
+  // e.g., obj.target = obj.target.data.id;
+
+  OBJ_REFERENCES.forEach((item) => {
+    if (typeof obj[item] === 'object') {
+      obj[item] = obj[item]?.data?.id;
+    }
+  });
+
+  return obj;
+
+}
+
+function unSerializeObjectReferences(obj = {}) {
+
+  // string ID-to-object logic.
+
+  OBJ_REFERENCES.forEach((item) => {
+    if (typeof obj[item] === 'string') {
+      obj[item] = game.findObjectById(obj[item], `network lookup: no live ${item}?`, obj[item]); 
+    }
+  });
+
+  return obj;
+
+}
+
 function sendMessage(obj, callback, delay) {
 
   if (debugNetwork) console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
+
+
+  // TODO: recurse over properties and serialize accordingly?
+  // for now, it's only the top-level and possibly params.
+
+  obj = serializeObjectReferences(obj);
+
+  if (obj.params) {
+    obj.params = serializeObjectReferences(obj.params);
+  }
 
   // decorate with timing information
   // hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm
@@ -432,6 +475,7 @@ const messageActions = {
 
       // arguments as object
 
+      data.params = unSerializeObjectReferences(data.params);
       if (data.method === 'die') {
 
         const attacker = game.findObjectById(data.params.attackerId, 'GAME_EVENT: Could not find attacker by ID, may have died.');
