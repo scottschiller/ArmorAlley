@@ -740,7 +740,6 @@ const SmartMissile = (options = {}) => {
     // mark the target.
     setTargetTracking(true);
 
-    // findTarget();
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 

@@ -80,7 +80,7 @@ function setTutorialMode(state) {
 }
 
 // classic missile style
-const defaultMissileMode = null;
+const defaultMissileMode = 'default-missile-mode';
 
 // can also be enabled by pressing "C".
 const rubberChickenMode = 'rubber-chicken-mode';

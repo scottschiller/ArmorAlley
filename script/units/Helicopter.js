@@ -837,7 +837,12 @@ const Helicopter = (options = {}) => {
 
   }
 
-  function setMissileLaunching(state) {
+  function setMissileLaunching(state, missileModeFromNetwork) {
+
+    // special override from remote, so we can fire the same type
+    if (missileModeFromNetwork) {
+      data.missileMode = missileModeFromNetwork;
+    }
 
     data.missileLaunching = state;
 
@@ -1570,6 +1575,9 @@ const Helicopter = (options = {}) => {
 
   function getSmartMissileParams(missileTarget) {
 
+    // remote helicopters have missile mode set via network.
+    const missileModeSource = (data.isRemote ? data.missileMode : game.objects.view.data.missileMode) || defaultMissileMode;
+
     return {
       parent: exports,
       parentType: data.type,
@@ -1578,10 +1586,10 @@ const Helicopter = (options = {}) => {
       y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
       target: missileTarget,
       // special variants of the smart missile. ;)
-      isBanana: game.objects.view.data.missileMode === bananaMode && data.isLocal,
-      isRubberChicken: game.objects.view.data.missileMode === rubberChickenMode && data.isLocal,
-      isSmartMissile: game.objects.view.data.missileMode === defaultMissileMode && data.isLocal
-    }
+      isBanana: missileModeSource === bananaMode,
+      isRubberChicken: missileModeSource === rubberChickenMode,
+      isSmartMissile: missileModeSource === defaultMissileMode
+    };
     
   }
 
@@ -2703,8 +2711,17 @@ const Helicopter = (options = {}) => {
     // we're already doing this.
     if (pendingActions[pendingId]) return;
 
-    // otherwise, delay; send the thing, then do the thing.
-    net.sendMessage({ type: 'GAME_EVENT', id: data.id, method, value });
+    const params = [ value ];
+
+    // special case: for smart missiles, also pass over the missile type -
+    // e.g., `setMissileLaunching(true, 'rubber-chicken-mode')`
+    // this ensures consistency on both sides.
+    if (method === 'setMissileLaunching') {
+      params.push(game.objects.view.data.missileMode);
+    }
+
+    // delay; send the thing, then do the thing.
+    net.sendMessage({ type: 'GAME_EVENT', id: data.id, method, params });
 
     // set the timer, and clear when it fires.
     pendingActions[pendingId] = common.setFrameTimeout(() => {
@@ -2965,7 +2982,8 @@ const Helicopter = (options = {}) => {
     scrollLeft: 0,
     scrollLeftVX: 0,
     // a buffer for local input delay.
-    mouseHistory: new Array(32)
+    mouseHistory: new Array(32),
+    missileMode: null
   }, options);
 
   data.midPoint = {
