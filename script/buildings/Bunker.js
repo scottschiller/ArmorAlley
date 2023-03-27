@@ -86,7 +86,8 @@ const Bunker = (options = {}) => {
 
     zones.changeOwnership(exports);
 
-    // and the balloon, too.
+    // and the attached objects, too.
+    objects?.chain?.setEnemy(isEnemy);
     objects?.balloon?.setEnemy(isEnemy);
 
     playSound(sounds.doorClose, exports);

@@ -92,6 +92,16 @@ const Chain = (options = {}) => {
 
   }
 
+  function setEnemy(isEnemy) {
+
+    if (data.isEnemy === isEnemy) return;
+
+    data.isEnemy = isEnemy;
+
+    zones.changeOwnership(exports);
+
+  }
+
   function animate() {
 
     let x, y, height;
@@ -101,10 +111,6 @@ const Chain = (options = {}) => {
     // move if attached, fall if not
 
     if (objects.bunker && !objects.bunker.data.dead) {
-
-      // bunker
-
-      data.isEnemy = objects.bunker.data.isEnemy;
 
       if (objects.balloon) {
 
@@ -281,7 +287,8 @@ const Chain = (options = {}) => {
     dom,
     die,
     init: initChain,
-    isJerking
+    isJerking,
+    setEnemy
   };
 
   return exports;
