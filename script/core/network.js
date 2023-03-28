@@ -412,6 +412,9 @@ const messageActions = {
           return;
         }
 
+        // mutate: indicate that this thing was killed "via network", to avoid redundant remote messages.
+        // this will be reset in `common.onDie()` when it fires after this method.
+        obj.data.killedViaNetwork = true;
 
         if (attacker) {
 
