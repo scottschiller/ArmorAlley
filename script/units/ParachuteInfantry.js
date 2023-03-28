@@ -186,20 +186,6 @@ const ParachuteInfantry = (options = {}) => {
 
       game.addObject(TYPES.infantry, params);
 
-      /*
-      // create the new object on the other side, too.
-      if (net.active) {
-        net.sendMessage({
-          type: 'ADD_OBJECT',
-          objectType: obj.data.type,
-          params: {
-            ...params,
-            id: obj.data.id
-          }
-        });
-      }
-      */
-
     } else if (!data.parachuteOpen) {
 
       if (data.y > (data.maxYPanic / 2) && !data.didScream) {
