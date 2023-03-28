@@ -404,6 +404,13 @@ const messageActions = {
 
         const attacker = data.params.attacker;
 
+        // it's possible something could have just died, and the next animation frame hasn't fired yet -
+        // so the local object hasn't been unlinked and moved to the boneyard. this is fine, just ignore
+        // and don't mark as being killed "via network."
+        if (obj.data.dead) {
+          if (debugNetwork) console.log('RX: GAME_EVENT, DIE: already dead, but not yet in boneyard');
+          return;
+        }
 
 
         if (attacker) {
