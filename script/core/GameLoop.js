@@ -10,6 +10,9 @@ import { net } from './network.js';
 
 const GameLoop = () => {
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const debugGameLoop = searchParams.get('debugGameLoop');
+
   let data;
   let dom;
   let exports;
@@ -134,15 +137,14 @@ const GameLoop = () => {
       // accommodate for a number of frames' difference.
       const frameLagBetweenPeers = Math.ceil(net.halfTrip / FRAMERATE);
 
-      // holy hack, batman! take advantage of the in-between time to update.
+      // Frame / clock sync: Only "fast forward" if we're far behind the remote
       if (game.players.local && data.frameCount < data.remoteFrameCount - frameLagBetweenPeers) {
 
-        console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
-
-        // animate AGAIN, and send updates
         let behind = data.remoteFrameCount - data.frameCount;
 
         if (behind > 8) {
+
+          // if "far" behind, the window was minimized, tab backgrounded / rAF() loop was frozen, etc.
 
           // attempt to fast-forward through all the missing frames at once.
           console.log(`🏃💨 FAST FORWARD: ${behind} frames behind. Engaging warp speed.`);
@@ -166,9 +168,13 @@ const GameLoop = () => {
 
           if (soundWasEnabled) gamePrefs.sound = true;
 
-        }
+        } else {
 
-        animate();
+          // catch-up: skip ahead one frame.
+          if (debugGameLoop) console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
+          animate();
+          
+        }
         
       }
 
@@ -183,7 +189,7 @@ const GameLoop = () => {
       // Lock-step network play: don't do anything until we've received data from the remote.
       // Here be dragons. Probably. 🐉
       if (data.frameCount && !net.newPacketCount && USE_LOCK_STEP) {
-        // console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
+        if (debugGameLoop) console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
         // net.sendMessage({ type: 'PING' });
         return;
       }
