@@ -18,6 +18,12 @@ const getIdFromURL = () => searchParams.get('id');
 // object properties that point to live objects, e.g., a helicopter.
 const OBJ_REFERENCES = ['target', 'attacker', 'parent'];
 
+const SYNC_FFWD_TYPES = {
+  [TYPES.gunfire]: true,
+  [TYPES.smartMissile]: true,
+  [TYPES.bomb]: true
+};
+
 // were we given an ID from a friend to connect to?
 const remoteID = getIdFromURL();
 
@@ -163,6 +169,7 @@ function sendMessage(obj, callback, delay) {
 
   obj = serializeObjectReferences(obj);
 
+  // replace any attacker / target / parent references with their IDs.
   if (obj.params) {
     obj.params = serializeObjectReferences(obj.params);
   }
@@ -321,100 +328,19 @@ const messageActions = {
     */
 
     if (debugNetwork) {
-
       console.log('RX: ADD_OBJECT', data);
-
       if (!window.addObjectsRx) window.addObjectsRx = [];
-
       window.addObjectsRx.push(data);
-
     }
 
-    // TODO: DRY as with params.parent
-    if (data.params?.target) {
-
-      const obj = game.findObjectById(data.params.target, 'ADD_OBJECT: no target?', data.params.target);
-      if (!obj) return;
-
-      // re-assign to the live object, as it was intended.
-      data.params.target = obj;
-
-    }
-
-    // this should be something created by the "remote" player / helicopter.
-
-    // TODO: refactor proper key input delays, so this isn't entirely needed.
+    // These should be objects created by the "remote" player / helicopter.
+    // TODO: review and see if this is necessary now that we have input delay.
     let syncAndFastForward;
 
-    // if params.parent specified, it's an ID; do a look-up.
-    // this should simply be the "remote" helicopter, here.
-    // TODO: make this ID -> object lookup business a nice utility method.
-    if (data.params?.parent) {
-
-      if (typeof data.params.parent !== 'string') {
-        // TODO: maybe leave this and do the ID swap here.
-        console.warn('ADD_OBJECT: parent is an object, not an ID string?', data.params.parent.data.id);
-        return;
-      }
-
-      const obj = game.findObjectById(data.params.parent, 'ADD_OBJECT: no parent?', data.params.parent);
-      if (!obj) return;
-
-      // re-assign to the live object, as it was intended.
-      data.params.parent = obj;
-
-      // HACK: until input delay for gunfire, smart missiles and bombs, let's try this.
-      // SPECIAL HANDLING: if the parent is a remote helicopter, "re-sync" coordinates and try fast-forwarding by the delta of frames.
-      if (data.params.parent.data.type === TYPES.helicopter) {
-
-        // console.log('type for re-sync', data.objectType);
-
-        if (data.objectType === TYPES.gunfire) {
-
-          syncAndFastForward = true;
-
-          // console.log('RE-SYNCING remote gunfire', data);
-
-          // get params based on the current state, then fast-forward
-          let newParams = data.params.parent.getGunfireParams();
-
-          data.params.x = newParams.x;
-          data.params.y = newParams.y;
- 
-          data.params.vX = newParams.vX;
-          data.params.vY = newParams.vY;
-
-        } else if (data.objectType === TYPES.smartMissile) {
-
-          syncAndFastForward = true;
-
-          // console.log('RE-SYNCING remote smart missile', data);
-
-          // get params based on the current state, then fast-forward
-          let newParams = data.params.parent.getSmartMissileParams();
-
-          data.params.x = newParams.x;
-          data.params.y = newParams.y;
-            
-        } else if (data.objectType === TYPES.bomb) {
-
-          syncAndFastForward = true;
-
-          // console.log('RE-SYNCING remote bomb', data);
-
-          // get params based on the current state, then fast-forward
-          let newParams = data.params.parent.getBombParams();
-
-          data.params.x = newParams.x;
-          data.params.y = newParams.y;
-
-          data.params.vX = newParams.vX;
-          data.params.vY = newParams.vY;
-          
-        }
-        
-      }
-
+    // HACK: even with dalyed input for gunfire, smart missiles and bombs, let's try this.
+    // SPECIAL HANDLING: if the parent is a remote helicopter, try fast-forwarding by the delta of frames.
+    if (data.params?.parent?.data?.type === TYPES.helicopter) {
+      syncAndFastForward = !!(SYNC_FFWD_TYPES[data.objectType]);
     }
 
     // flag as "from the network", to help avoid confusion.
@@ -423,7 +349,7 @@ const messageActions = {
       fromNetworkEvent: true
     });
 
-    if (newObject && syncAndFastForward) {
+    if (syncAndFastForward) {
       // this thing has been re-synced to the helicopter position, after delivery.
       // console.log('fast-forwarding new object');
       // we know precisely how many frames behind (or ahead) the remote is, because we have their frame count here vs. ours.
@@ -445,13 +371,14 @@ const messageActions = {
   'GAME_EVENT': (data) => {
 
     /**
-     * An RPC of sorts. Can take an object of params: {}, OR, a value.
-     * net.sendMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params: { attackerId: attacker.data.id }});
-     * net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'capture', value: isEnemy });
-     * data = { id, method, params = [] }
+     * data = { id, method, params = {} }
+     * An RPC of sorts. Can take a params object to be passed, or an array to be spread as arguments.
+     * net.sendMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params: { attacker: attacker.data.id }});
+     * net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'setMissileLaunching', params: [ true, 'rubber-chicken-mode' ] });
      */
 
     const obj = game.findObjectById(data.id, 'GAME_EVENT: data.id');
+
     if (!obj) return;
 
     if (!obj[data.method]) {
@@ -459,21 +386,19 @@ const messageActions = {
       return;
     }
 
-    if (data.value !== undefined) {
+    if (data.params === undefined) {
 
-      // arguments as single value / array
+      // no arguments
+      obj[data.method]();
 
-      if (debugNetwork) console.log('GAME_EVENT: calling method', obj.data.id, obj[data.method], data.value);
+    } else {
 
-      if (data.value instanceof Array) {
-        obj[data.method](...data.value);  
-      } else {
-        obj[data.method](data.value);
-      }
-      
-    } else if (data.params !== undefined) {
+      // params = {} or []
+    
+      // special case handling - TODO: move this somewhere outside.
+      if (data.method === 'die') {
 
-      // arguments as object
+        const attacker = data.params.attacker;
 
       data.params = unSerializeObjectReferences(data.params);
       if (data.method === 'die') {
@@ -485,36 +410,18 @@ const messageActions = {
           // HACKISH: if die(), do what common does and mutate the target.
           obj.data.attacker = attacker;
 
-          obj[data.method]({ attacker });
-
-        } else {
-
-          // method, sans-attacker
-          obj[data.method]();
-
-        }
-
-      } else {
-
-        // spread array as arguments, or pass directly.
-        if (data.params === undefined) {
-          // no arguments
-          obj[data.method]();
-        } else if (data.params?.length) {
-          // spread array
-          obj[data.method](...data.params);  
-        } else {
-          // single value
-          obj[data.method](data.params);
         }
 
       }
+
+      if (data.params?.length) {
+        // spread array
+        obj[data.method](...data.params);  
+      } else {
+        // pass directly
+        obj[data.method](data.params);
+      }
      
-    } else {
-
-      // no arguments
-      obj[data.method]();
-
     }
 
   },
@@ -627,15 +534,8 @@ function processData(data) {
 
   // special case: run things like ping test and ping/pong immediately, no queueing.
   if (processImmediateTypes[data.type]) {
-
-    if (messageActions[data.type]) {
-      messageActions[data.type](data);
-    } else {
-      console.warn('💌 net::processData(): unknown message type?', data.type);
-    }
-
+    processMessage(data);
     return;
-
   }
 
   // messages will be processed within the game loop.
@@ -648,6 +548,11 @@ function processMessage(data) {
   if (!data?.type) {
     console.warn('💌 net::processMessage(): WTF no data or type?', data);
     return;
+  }
+
+  // re-connect any target/attacker/parent references
+  if (data.params) {
+    data.params = unSerializeObjectReferences(data.params);
   }
 
   if (messageActions[data.type]) {

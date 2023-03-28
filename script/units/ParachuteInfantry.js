@@ -184,8 +184,9 @@ const ParachuteInfantry = (options = {}) => {
         unassisted: false
       };
 
-      const obj = game.addObject(TYPES.infantry, params);
+      game.addObject(TYPES.infantry, params);
 
+      /*
       // create the new object on the other side, too.
       if (net.active) {
         net.sendMessage({
@@ -197,6 +198,7 @@ const ParachuteInfantry = (options = {}) => {
           }
         });
       }
+      */
 
     } else if (!data.parachuteOpen) {
 
