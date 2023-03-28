@@ -364,29 +364,6 @@ const common = {
 
     // NOTE: attacker may not always be defined.
 
-    if (target.data.type === TYPES.helicopter && !target.data.isEnemy && target.data.isLocal) {
-      console.log('Local player was target, killed by something', target, attacker);
-      debugObj('local player target', target);
-      debugObj('attacker', attacker);
-    }
-
-    if (attacker && attacker.data.type === TYPES.helicopter && !attacker.data.isEnemy && attacker.data.isLocal) {
-      console.log('Local player was attacker, killed by something', attacker, target);
-      debugObj('local player attacker', attacker);
-      debugObj('target', target);
-    }
-
-    if (target.data.type === TYPES.helicopter && !target.data.isEnemy && target.data.isRemote) {
-      console.log('Remote friendly player was target, killed by something', target, attacker);
-      debugObj('remote friendly player target', target);
-      debugObj('attacker', attacker);
-    }
-
-    if (attacker && attacker.data.type === TYPES.helicopter && !attacker.data.isEnemy && attacker.data.isRemote) {
-      console.log('Remote friendly player was attacker, killed by something', attacker, target);
-      debugObj('remote friendly player attacker', attacker);
-      debugObj('target', target);
-    }
     const attacker = dieOptions.attacker || target?.data?.attacker;
 
     if (debugCollision) {
