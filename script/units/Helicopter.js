@@ -1612,23 +1612,6 @@ const Helicopter = (options = {}) => {
 
         game.addObject(TYPES.gunfire, params);
 
-        /*
-        const obj = game.addObject(TYPES.gunfire, params);
-
-        // local human player, and CPU being "hosted" on this side
-        if (net.active && !data.isRemote) {
-          net.sendMessage({
-            type: 'ADD_OBJECT',
-            objectType: obj.data.type,
-            params: {
-              ...params,
-              id: obj.data.id,
-              parent: exports.data.id // local player here = remote player there
-            }
-          });
-        }
-        */
-        
         playSound(data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire, exports);
 
         // TODO: CPU
@@ -1664,24 +1647,6 @@ const Helicopter = (options = {}) => {
         let params = getBombParams();
 
         game.addObject(TYPES.bomb, params);
-
-        /*
-
-        let bomb = game.addObject(TYPES.bomb, params);
-
-        if (net.active && !data.isRemote) {
-          net.sendMessage({
-            type: 'ADD_OBJECT',
-            objectType: bomb.data.type,
-            params: {
-              ...params,
-              id: bomb.data.id,
-              // redefine `parent` as an ID for lookup on the other side
-              parent: exports.data.id // local player here = remote player there
-            }
-          });
-        }
-        */
 
         if (sounds.bombHatch) {
           playSound(sounds.bombHatch, exports);
@@ -1719,23 +1684,6 @@ const Helicopter = (options = {}) => {
 
           game.addObject(TYPES.smartMissile, params);
 
-          /*
-          const obj = game.addObject(TYPES.smartMissile, params);
-
-          if (net.active && !data.isRemote) {
-            net.sendMessage({
-              type: 'ADD_OBJECT',
-              objectType: obj.data.type,
-              params: {
-                ...params,
-                id: obj.data.id,
-                parent: data.id,
-                target: missileTarget.data.id,
-              }
-            });
-          }
-          */
-
           data.smartMissiles = Math.max(0, data.smartMissiles - 1);
 
           updated.smartMissiles = true;
@@ -1766,28 +1714,14 @@ const Helicopter = (options = {}) => {
         // helicopter landed? Just create an infantry.
         if (data.landed) {
 
-          const params = {
+          game.addObject(TYPES.infantry, {
             isEnemy: data.isEnemy,
             // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
             x: data.x + (data.width * 0.75),
             y: (data.y + data.height) - 11,
             // exclude from recycle "refund" / reward case
             unassisted: false
-          };
-
-          let obj = game.addObject(TYPES.infantry, params);
-
-          if (net.active && !data.isRemote) {
-            net.sendMessage({
-              type: 'ADD_OBJECT',
-              objectType: obj.data.type,
-              params: {
-                ...params,
-                id: obj.data.id,
-                parent: data.id
-              }
-            });
-          }
+          });
 
         } else {
 
@@ -1835,15 +1769,12 @@ const Helicopter = (options = {}) => {
     // bail!
     if (!data.dead && data.pilot) {
 
-      // local game (no network), OR: CPU OR current player (where network is involved)
-      if (!net.active || data.isLocal) {
-        deployParachuteInfantry({
-          isEnemy: data.isEnemy,
-          parent: exports,
-          x: data.x + data.halfWidth,
-          y: (data.y + data.height) - 11
-        });
-      }
+      deployParachuteInfantry({
+        isEnemy: data.isEnemy,
+        parent: exports,
+        x: data.x + data.halfWidth,
+        y: (data.y + data.height) - 11
+      });
 
       data.pilot = false;
 
@@ -1875,26 +1806,7 @@ const Helicopter = (options = {}) => {
      * in the original game, the enemy helicopter would use this trick to distract your missiles.
      */
 
-    const sendToRemote = net.active && !data.isRemote;
-
-    const pi = game.addObject(TYPES.parachuteInfantry, options);
-
-    if (sendToRemote) {
-      net.sendMessage({
-        type: 'ADD_OBJECT',
-        objectType: pi.data.type,
-        params: {
-          ...options,
-          id: pi.data.id,
-          parent: options.parent.data.id,
-          // certain params we want to duplicate
-          parachuteOpensAtY: pi.data.parachuteOpensAtY,
-          windModulus: pi.data.windModulus,
-          vY: pi.data.vY
-
-        }
-      });      
-    }
+    game.addObject(TYPES.parachuteInfantry, options);
 
   }
 
