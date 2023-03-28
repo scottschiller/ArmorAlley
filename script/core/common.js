@@ -408,9 +408,15 @@ const common = {
       return;
     }
 
+    const params = {
+      attacker,
+      x: target.data.x,
+      y: target.data.y
+    };
+
     // notify the remote: take something out.
-    // by the time this lands, the thing may have already died and be in the "boneyard" - that's fine.
-    net.sendDelayedMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params: { attackerId, attackerParentId, fromNetworkEvent: true }});
+    // by the time this lands, the remote object may have already died, been removed and be in the "boneyard" - that's fine.
+    net.sendDelayedMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params });
 
   },
 
