@@ -1,9 +1,11 @@
 import { common } from './common.js';
 import { game } from './Game.js';
-import { defaultSeed, defaultSeeds, FRAMERATE, setDefaultSeed, TYPES } from './global.js';
+import { defaultSeed, defaultSeeds, FPS, FRAMERATE, setDefaultSeed, TYPES } from './global.js';
 import { playSound, sounds } from './sound.js';
 
 const FRAME_LENGTH = FRAMERATE;
+
+const OLD_FRAME_CUTOFF = FPS;
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -164,10 +166,12 @@ function sendMessage(obj, callback, delay) {
   if (debugNetwork) console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
 
 
-  // TODO: recurse over properties and serialize accordingly?
-  // for now, it's only the top-level and possibly params.
-
-  obj = serializeObjectReferences(obj);
+  const goLd = game.objects.gameLoop.data;
+  if (game.players.local && goLd.remoteFrameCount - goLd.frameCount > OLD_FRAME_CUTOFF) {
+    // skip "old" outgoing messages. in the fast-forward case, this saves unnecessary traffic and possible side-effects.
+    if (debugNetwork) console.info(`💌 sendMessage: Dropping, too far behind remote. ${goLd.frameCount}/${goLd.remoteFrameCount}, Δ ${goLd.remoteFrameCount - goLd.frameCount} > ${OLD_FRAME_CUTOFF}`);
+    return;
+  }
 
   // replace any attacker / target / parent references with their IDs.
   if (obj.params) {
