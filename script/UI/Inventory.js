@@ -451,8 +451,8 @@ const Inventory = () => {
 
           let obj = game.addObject(enemyOrders[orderOffset], options);
 
-          // special case: if testing human vs. remote CPU and over network, send these over to the other side as well.
-          if (net.active && !net.isHost) {
+          // ensure this order shows up on the remote
+          if (net.active) {
             net.sendMessage({
               type: 'ADD_OBJECT',
               objectType: obj.data.type,
