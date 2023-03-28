@@ -402,6 +402,11 @@ const common = {
     // otherwise, it's good to have a bomb that hit (e.g.) a balloon also explode in the air and not appear to fall through.
     if (target.data.type === TYPES.bomb && target.data.hasHitGround) return;
 
+    // if killed via network, don't send a die() back to the remote.
+    if (target.data.killedViaNetwork) {
+      target.data.killedViaNetwork = undefined;
+      return;
+    }
 
     // notify the remote: take something out.
     // by the time this lands, the thing may have already died and be in the "boneyard" - that's fine.
