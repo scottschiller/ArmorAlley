@@ -47,6 +47,10 @@ const Bomb = (options = {}) => {
     
     if (data.dead || data.groundCollisionTest) return;
 
+    if (dieOptions.attacker) {
+      data.attacker = dieOptions.attacker;
+    }
+
     // possible hit, blowing something up.
     // special case: don't play "generic boom" if we hit a balloon
     if (!dieOptions.omitSound && !dieOptions.hidden && sounds.bombExplosion && dieOptions?.type !== TYPES.balloon) {
