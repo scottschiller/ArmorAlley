@@ -404,10 +404,7 @@ const messageActions = {
 
         const attacker = data.params.attacker;
 
-      data.params = unSerializeObjectReferences(data.params);
-      if (data.method === 'die') {
 
-        const attacker = game.findObjectById(data.params.attackerId, 'GAME_EVENT: Could not find attacker by ID, may have died.');
 
         if (attacker) {
 
