@@ -154,8 +154,6 @@ const MissileLauncher = (options = {}) => {
         params: {
           ...params,
           id: params.id,
-          parent: exports.data.id,
-          target: targetHelicopter.data.id,
           isBanana: params.isBanana,
           isRubberChicken: params.isRubberChicken
         }
