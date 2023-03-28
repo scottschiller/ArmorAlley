@@ -780,6 +780,11 @@ const net = {
         net.connected = false;
 
         showLocalMessage(msg);
+      
+        game.objects.notifications.add(msg);
+  
+        common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
+  
 
       });
 
@@ -835,6 +840,10 @@ const net = {
  
       showLocalMessage(msg);
       
+      game.objects.notifications.add(msg);
+
+      common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
+
     });
   
   },
