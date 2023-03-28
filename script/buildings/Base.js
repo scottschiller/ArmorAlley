@@ -68,8 +68,6 @@ const Base = (options = {}) => {
         params: {
           ...params,
           id: obj.data.id,
-          parent: data.id,
-          target: targetHelicopter.data.id,
           onDie: null,
           isBanana: params.isBanana,
           isRubberChicken: params.isRubberChicken
