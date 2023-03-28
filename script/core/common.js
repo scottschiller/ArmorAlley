@@ -38,7 +38,6 @@ const staticIDTypes = {
 const excludeFromNetworkTypes = {
   // [TYPES.gunfire]: true,
   [TYPES.shrapnel]: true,
-  [TYPES.bomb]: true,
   [TYPES.superBunker]: true
 }
 
@@ -395,13 +394,14 @@ const common = {
       if (target && target.data.type === TYPES.helicopter) makeDebugRect(target);
     }
 
-    if (!net.active) return;
-
     // ignore certain things - they're noisy or safer to leave locally, should be deterministic, and will generate additional traffic.
     if (excludeFromNetworkTypes[target.data.type]) return;
 
-    const attackerId = attacker?.data?.id;
-    const attackerParentId = attacker?.data?.parent?.data?.id;
+    // special case: ignore bombs that have died, *if* they have hit the ground.
+    // this avoids having a bomb that's slightly behind on the remote, exploding in mid-air.
+    // otherwise, it's good to have a bomb that hit (e.g.) a balloon also explode in the air and not appear to fall through.
+    if (target.data.type === TYPES.bomb && target.data.hasHitGround) return;
+
 
     // notify the remote: take something out.
     // by the time this lands, the thing may have already died and be in the "boneyard" - that's fine.
