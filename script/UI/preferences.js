@@ -516,6 +516,12 @@ function PrefsManager() {
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
       let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
 
+      // hackish: compromise for lack of `zoom: 2` on mobile - but only specifically iPhone?
+      // TODO: review and figure out. iPad seems to render without scaling, just fine.
+      if (isiPhone) {
+        scale *= 1.85;
+      }
+
       dom.o.style.setProperty('transform', `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`);
 
     }
