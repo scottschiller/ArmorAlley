@@ -570,8 +570,9 @@
      <div id="queue"></div>
 
      <div id="message-box">
-      <form id="message-form" action="." method="get" onsubmit="return false">
-        <input id="message-form-input" name="message_text" type="text" placeholder="ENTER to chat, ESC to exit." />
+      <form id="message-form" action="." method="get" autocomplete="off">
+        <!-- note: data-gramm is for Grammarly. -->
+        <input id="message-form-input" name="message_text" type="text" placeholder="ENTER to chat, ESC to exit." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" />
       </form>
      </div>
 
