@@ -3534,11 +3534,6 @@ body.is-mobile #player-status-bar .stats-item {
   /* align with nearby text, e.g., bomb count */
 }
 
-body.is-iphone #player-status-bar span.letter-block {
-  /* on iPhone, presume screens are too small and an attached keyboard is highlly unlikely. */
-  display: none;
-}
-
 body.is-mobile div#player-status-bar {
   z-index: 4;
 }

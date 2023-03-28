@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { getTypes, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
+import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
@@ -29,7 +29,7 @@ const defaultPrefs = {
   domfetti: true,
   show_inventory: true,
   show_weapons_status: true,
-  show_keyboard_labels: true,
+  show_keyboard_labels: !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
   show_game_tips: true,
   show_health_status: PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
   // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
