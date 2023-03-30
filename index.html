@@ -579,7 +579,7 @@
      <div id="help">
       <span id="network-status">
         <span id="network-info"></span><span id="lights"><span class="sub-sprite"></span></span>
-        |
+        <span class="pipe">|</span>
       </span>
       <span>
        <a id="game-options-link" href="#" data-ignore-touch="true">options</a>
@@ -674,16 +674,112 @@
             <!-- TODO: more terrible things; move to external CSS, etc. -->
             <div style="text-align: center">
               <div style="position:relative;display:inline-block;margin:0px auto;padding-top:5px">
-                <button type="submit" class="primary" style="position:relative;float:right;margin-top:6px">OK</button>
+                <button id="game-prefs-submit" type="submit" class="primary">OK</button>
                 <img src="image/aa_logo_wordmark.png" alt="Armor Alley&trade; wordmark and helicopter image" style="float:left;width:161.5px;height:25px;margin-right:8px" />
               </div>
             </div>
 
-            <div class="fieldset-container">
+            <div id="form-scroller" class="fieldset-container">
+
+              <fieldset id="network-options-status" class="network">
+
+                <legend id="network-options-status-label">Network Status</legend>
+               
+                <div id="network-options-invite-container">
+
+                  <p class="non-indented">The game can start once you connect and agree on shared options. <span class="network-icon network-icon-inline"></span><br />You can also set some general / UI options for yourself.</p>
+
+                  <p class="non-indented show-to-host">
+                    <button id="network-options-invite-link" type="button" disabled>Invite a friend</button>
+                  </p>
+
+                </div>
+
+                <div id="network-options-link">
+                  
+                </div>
+
+              </fieldset>
+
+              <fieldset id="network-options-chat" class="network">
+
+                <legend>Network Chat</legend>
+
+                <ul>
+
+                  <li>
+
+                    <div id="network-options-chat-box">
+                      <div id="network-options-chat-scroll">
+                        <div id="network-options-chat-ui">
+                          <!-- network chat messages go here. -->
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <input id="network-chat-input" name="network_chat_text" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" disabled />
+                    </div>
+
+                  </li>
+
+                </ul>
+
+              </fieldset>
+
+              <fieldset id="network-options" class="network">
+
+                <legend>Network Options<span class="network-icon"></span></legend>
+
+                <ul>
+
+                  <li>
+                    <p class="compact options-heading"><b>Game Style</b></p>
+                    <p class="non-indented">
+                      Play cooperatively with your best friend, or battle against your greatest foe.
+                    </p>
+                    <ul class="less-bottom-spacing">
+                      <li style="min-width: 15em;margin-bottom:1px">
+                        <input type="radio" id="radio_net_game_style_pvp" name="net_game_style" value="pvp" checked /> <label for="radio_net_game_style_pvp">Player vs. player (PvP)</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="radio_net_game_style_pvp_cpu" name="net_game_style" value="pvp_cpu" /> <label for="radio_net_game_style_pvp_cpu">PvP + 1 friendly CPU each</label>
+                      </li>
+                      <li style="min-width: 15em;margin-bottom:1px">
+                        <input type="radio" id="radio_net_game_style_coop_2v1" name="net_game_style" value="coop_2v1" /> <label for="radio_net_game_style_coop_2v1">Co-op: 2 humans vs. 1 CPU</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="radio_net_game_style_coop_2v2" name="net_game_style" value="coop_2v2" /> <label for="radio_net_game_style_coop_2v2">Co-op: 2 humans vs. 2 CPUs</label>
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li>
+                    <p class="compact options-heading"><b>Game Type</b></p>
+                    <p class="non-indented">
+                      Choose your level of difficulty - affecting terrain layout, turret targeting etc.</i>
+                    </p>
+                    <ul class="less-bottom-spacing">
+                      <li>
+                        <input type="radio" id="radio_net_game_type_easy" name="net_game_type" value="easy" checked /> <label for="radio_net_game_type_easy">Easy</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="radio_net_game_type_hard" name="net_game_type" value="hard" /> <label for="radio_net_game_type_hard">Hard</label>
+                      </li>
+                      <li>
+                        <input type="radio" id="radio_net_game_type_extreme" name="net_game_type" value="extreme" /> <label for="radio_net_game_type_extreme">Extreme</label>
+                      </li>
+                    </ul>
+                  </li>
+
+                </ul>
+
+              </fieldset>
 
               <fieldset>
 
                 <legend>General / UI Options</legend>
+
+                <p class="noindent network">These options are your own, separate from the other player.</p>
 
                 <ul>
 
@@ -793,7 +889,9 @@
                       </li>
     
                     </ul>
-    
+
+                    <p class="non-indented"><sup>*</sup><i>Note: Might impact game performance.</i></p>
+                    
                     </fieldset>      
 
                   </li>
@@ -811,7 +909,7 @@
                   <li>
 
                     <label for="cb_bnb">
-                      <input type="checkbox" id="cb_bnb" name="bnb" value="1" checked /> <span class="label-text">Beavis and Butt-Head in “Armor Alley”</span>
+                      <input type="checkbox" id="cb_bnb" name="bnb" value="1" /> <span class="label-text">Beavis and Butt-Head in “Armor Alley”</span>
                       <p>Play the game &quot;with&quot; two unruly, unlicensed* teenagers.</p>
                       <p><fn id="footnote-disclaimer">* <i>Mike Judge's “Beavis and Butt-Head” are copyright of their respective owners.</i></fn></p>
                     </label>
@@ -831,9 +929,9 @@
               
               </fieldset>
 
-              <fieldset>
+              <fieldset id="gameplay-options">
 
-                <legend>Gameplay Options</legend>
+                <legend>Gameplay Options<span class="network-icon"></span></legend>
 
                 <ul>
 
@@ -869,9 +967,9 @@
 
               </fieldset>
 
-              <fieldset>
+              <fieldset id="traffic-control">
 
-                <legend>Ground Vehicle "Traffic Control"</legend>
+                <legend>Ground Vehicle "Traffic Control"<span class="network-icon"></span></legend>
 
                 <ul>
 
@@ -897,7 +995,7 @@
 
               </fieldset>
 
-              <fieldset>
+              <fieldset id="external-links" class="hide-if-network">
 
                 <legend>External Links</legend>
 
@@ -911,8 +1009,6 @@
                 </ul>
 
               </fieldset>
-
-              <p><sup>*</sup><i>Note: Might impact game performance.</p>
 
             </div>
 

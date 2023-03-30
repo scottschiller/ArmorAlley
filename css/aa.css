@@ -3389,6 +3389,15 @@ body.is-mobile #game-tips #game-announcements {
   top: 0.75px;
 }
 
+body.network #help {
+  display: block;
+}
+
+body.network:not(.game-started) #help .pipe,
+body.network:not(.game-started) #help #game-options-link {
+  display: none;
+}
+
 body.is-mobile #help {
   margin-left: 2em;
 }
@@ -4282,6 +4291,12 @@ body.is-mobile #game-prefs-modal {
   }
 }
 
+#game-prefs-submit {
+  position: relative;
+  float: right;
+  margin-top: 6px;
+}
+
 /* prototype stuff, not presently in use */
 /*
 
@@ -4739,6 +4754,61 @@ body.is_safari #game-prefs-modal .options-heading {
   margin-right: 0.25rem;
 }
 
+#game-prefs-modal.is-host .show-to-guest,
+#game-prefs-modal.is-guest .show-to-host {
+  /* selective hiding */
+  display: none;
+}
+
+#game-prefs-modal .network {
+  /* hide by default */
+  display: none;
+}
+
+#game-prefs-modal.is-network .network {
+  display: block;
+}
+
+/* make room for mac icons */
+#game-prefs-modal.is-network #network-options,
+#game-prefs-modal.is-network #gameplay-options,
+#game-prefs-modal.is-network #traffic-control {
+  margin-top: 5px;
+}
+
+#game-prefs-modal.is-network .network-icon {
+  position: absolute;
+  display: inline-block;
+  vertical-align: top;
+  width: 8px;
+  height: 8px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4UlEQVR4AeWWgQrDIAxE8+n5tP5ZRuHArFO8xrMMmvEA0Lmn0WN2LXePCqaoc6HjOG4DgVj+8Uq5u1aAPfKzsHu9gJlNeEQgRjwoEK8XsPcKzMHcEpIgkqfmnQW3pCYGKOSpWekjm5pTgcpx/gi4j6AF2N6DjkDEuoDhMxLAFzcKuJ1QJyFtQQWZACp49M9wFEqYuJ6acoHVGE4idQGMRaV91/V5AYytkk8Du8kLW6ZZA0F93wXs1FqfDNOaQBurpWaiexkjPcWOQKOSmleY1xAd+NQkoJ/jhgso+Q8ZIv6jPmAALj/Y4/eCAAAAAElFTkSuQmCC);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 2px 0px;
+  /* shenanigans to hide the through-line */
+  padding-left: 3px;
+  padding-right: 2px;
+  /* match #game-prefs-modal .body */
+  background-color: rgb(243,243,243);
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+#game-prefs-modal.is-network .network-icon-inline {
+  position: relative;
+  background-size: 6px 6px;
+  background-position: 0px 0px;
+  padding: 0px;
+  background-color: transparent;
+  vertical-align: middle;
+  margin-bottom: -2px; /* avoid messing up the line height */
+}
+
+#game-prefs-modal.is-network .hide-if-network {
+  display: none;
+}
+
 button {
   position: relative;
   font-family: Chicago, "FA Sysfont C", courier, sans-serif;
@@ -4966,4 +5036,21 @@ button .network-icon {
 #message-form-input:focus {
   outline: none;
   background-color: #006600;
+#network-options-chat-box {
+  border: 0.5px solid #999;
+  border-bottom: none;
+}
+
+#network-options-chat-scroll {
+  position: relative;
+  padding: 3px;
+  max-height: 10em;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  border-color: #999;
+}
+
+#game-prefs-modal #network-chat-input {
+  border-color: #999;
+  border-radius: 0px;
 }
