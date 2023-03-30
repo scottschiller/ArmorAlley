@@ -69,8 +69,9 @@ const Base = (options = {}) => {
           ...params,
           id: obj.data.id,
           onDie: null,
-          isBanana: params.isBanana,
-          isRubberChicken: params.isRubberChicken
+          isBanana: obj.data.isBanana,
+          isRubberChicken: obj.data.isRubberChicken,
+          isSmartMissile: obj.data.isSmartMissile
         }
       });
       
