@@ -482,6 +482,20 @@ function PrefsManager() {
     prefsByURL = {};
   }
 
+  function resetPlayerNames() {
+
+    // assign defaults
+
+    // the host can keep and re-send its name on re-connect.
+    if (!gamePrefs.net_player_name) {
+      gamePrefs.net_player_name = (net.isHost ? 'host' : 'guest');
+    }
+
+    // if/when the remote disconnects, always reset this value.
+    gamePrefs.net_remote_player_name = (net.isHost ? 'guest' : 'host');
+    
+  }
+
   data = {
     active: false,
     network: false,
