@@ -5002,6 +5002,10 @@ button.attention:not(:active) {
   background: rgba(0,192,0,0.75);
 }
 
+.sprite.infantry .zone-flag {
+  font-size: 3px;
+}
+
 .zone-post .zone-flag {
   top: 0px;
   left: 50%;
