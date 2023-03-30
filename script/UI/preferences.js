@@ -490,6 +490,23 @@ function PrefsManager() {
     prefsByURL = {};
   }
 
+  function disableNetworkOptions() {
+
+    // certain parts of the options menu can be "locked down", now that a game is underway.
+    const ids = ['#network-options', '#gameplay-options', '#traffic-control'];
+    document.querySelectorAll(ids).forEach((node) => node.style.opacity = 0.67);
+
+    const selector = ids.join(' input, ') + ' input';
+
+    document.querySelectorAll(selector).forEach((input) => {
+      if (input.type === 'radio' || input.type === 'checkbox') input.disabled = true;
+    });
+
+    // hide some sections outright, too.
+    document.querySelectorAll('#network-options-status, #network-options-chat').forEach((node) => node.style.display = 'none');
+
+  }
+
   function resetPlayerNames() {
 
     // assign defaults
