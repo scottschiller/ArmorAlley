@@ -182,6 +182,35 @@ const slashCommands = {
 
 const common = {
 
+  getRenameString,
+
+  parseSlashCommand: (msg, fromNetwork = true) => {
+
+    /**
+     * given a text message, parse and return a function that will execute it.
+     * e.g., "/name scott"
+     */
+
+    if (!msg?.length) return;
+
+    if (msg.charAt(0) !== '/') return;
+
+    const bits = msg.trim().split(' ');
+    const cmd = bits[0].toLowerCase();
+
+    // TODO: complain if slash command unknown?
+    if (!slashCommands[cmd]) return;
+
+    // TODO: multiple param support?
+    const param = bits.splice(1).filter((item) => item.length).join(' ');
+
+    if (!param.length) return;
+
+    // note: returning a function.
+    return () => slashCommands[cmd](param, fromNetwork);
+
+  },
+
   animateDebugRects: () => {
     if (!debugRects.length) return;
     for (let i = 0, j = debugRects.length; i < j; i++) {
