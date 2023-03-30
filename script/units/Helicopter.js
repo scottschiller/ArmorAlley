@@ -1361,7 +1361,7 @@ const Helicopter = (options = {}) => {
     applyTilt();
 
     // move to landing pad
-    moveToForReal(data.x, data.y);
+    moveTo(data.x, data.y);
 
     // look ma, no longer dead!
     data.dead = false;
@@ -1506,8 +1506,13 @@ const Helicopter = (options = {}) => {
       data.x = common.getLandingPadOffsetX(exports);
       data.y = worldHeight - data.height;
 
-      // move to landing pad
-      moveToForReal(data.x, data.y);
+      // move to landing pad before respawn
+      moveTo(data.x, data.y);
+
+      // important: make sure the remote gets this before respawn, too.
+      if (net.active && data.isLocal) {
+        game.objects.view.sendPlayerCoordinates(exports);
+      }
 
     }, 2000);
 
@@ -1531,7 +1536,14 @@ const Helicopter = (options = {}) => {
       common.setFrameTimeout(respawn, (data.isCPU ? 8000 : 3000));
     }
 
-    common.onDie(exports);
+    // ensure we aren't doing anywhere.
+    data.vX = 0;
+    data.vY = 0;
+
+    data.scrollLeft = 0;
+    data.scrollLeftVX = 0;
+
+    common.onDie(exports, dieOptions);
 
   }
 
