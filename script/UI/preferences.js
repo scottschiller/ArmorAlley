@@ -449,6 +449,34 @@ function PrefsManager() {
 
     },
 
+    onChat: (text, playerName) => {
+
+      const item = document.createElement('p');
+
+      Object.assign(item.style, {
+        margin: '0px',
+        padding: '0px'
+      });
+
+      // host or guest player name, if specified
+      if (playerName !== undefined) {
+        text = `${playerName}: ${text}`
+      }
+
+      item.innerText = text;
+
+      dom.oChatUI?.appendChild(item);
+
+      const scroller = document.getElementById('network-options-chat-scroll');
+
+      const { scrollHeight } = scroller;
+
+      if (scrollHeight) {
+        scroller.scrollTop = scrollHeight;
+      }
+
+    },
+
     onFormSubmit: (e) => {
 
       updatePrefs();
