@@ -1847,7 +1847,7 @@ function addGMS(...params) {
 
 function addIGMS(...params) {
   // in-game menu sequence
-  return Object.assign(addSequence(...params), { playNextCondition: () => game.data.paused });
+  return Object.assign(addSequence(...params), { playNextCondition: () => !net.connected && (!game.data.started || game.data.paused) });
 }
 
 bnb.menuOpenV1 = addIGMS(
