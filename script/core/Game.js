@@ -1,5 +1,5 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc } from './global.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc, setTutorialMode } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
@@ -485,6 +485,8 @@ const game = (() => {
 
   function togglePause() {
 
+    if (!data.started) return;
+
     if (data.paused) {
       resume();
     } else {
@@ -497,6 +499,9 @@ const game = (() => {
 
     // ignore if we're in a network game.
     if (net.active) return;
+
+    // ignore if the game hasn't started yet., e.g. main menu or network screen up.
+    if (!data.started) return;
 
     const silent = options?.noMute !== true;
     const keepColor = options?.keepColor || false;
@@ -569,6 +574,8 @@ const game = (() => {
 
     data.started = true;
 
+    utils.css.add(document.body, 'game-started');
+
     keyboardMonitor.init();
 
     // allow joystick if in debug mode (i.e., testing on desktop)
@@ -638,6 +645,7 @@ const game = (() => {
 
     // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
+
     if (isSafari) { 
       utils.css.add(document.body, 'is_safari');
       // progressive web-type app, "installed on home screen" (iOS Safari)
@@ -686,18 +694,6 @@ const game = (() => {
     dom.world = document.getElementById('world');
     dom.battlefield = document.getElementById('battlefield');
 
-    // NOTE: default game type is set here
-    gameType = utils.storage.get(prefs.gameType) || winloc.match(/easy|hard|extreme|tutorial/i) || DEFAULT_GAME_TYPE;
-  
-    if (gameType instanceof Array) {
-      gameType = gameType[0];
-    }
-  
-    // safety check
-    if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
-      gameType = null;
-    }
-
     createObjects();
 
     // game loop can be kicked off right away, for sound playback purposes.
@@ -709,7 +705,33 @@ const game = (() => {
   }
 
   function setGameType(type = null) {
-    gameType = type;
+    gameType = type || DEFAULT_GAME_TYPE;
+    setTutorialMode(gameType === 'tutorial');
+  }
+
+  function start() {
+
+    // NOTE: default game type is set here
+
+    if (net.active && net.connected) {
+
+      // do nothing, already set.
+
+    } else {
+
+      gameType = utils.storage.get(prefs.gameType) || winloc.match(/easy|hard|extreme|tutorial/i) || DEFAULT_GAME_TYPE;
+    
+      if (gameType instanceof Array) {
+        gameType = gameType[0];
+      }
+    
+      // safety check
+      if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
+        gameType = null;
+      }
+
+    }
+    
   }
 
   data = {
@@ -819,6 +841,7 @@ const game = (() => {
     pause,
     resume,
     setGameType,
+    start,
     started,
     togglePause
   };
