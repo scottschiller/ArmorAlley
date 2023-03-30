@@ -136,6 +136,11 @@ function PrefsManager() {
 
   }
 
+  const copyToClipboard = (str, callback) => {
+    if (!navigator?.clipboard?.writeText) return callback(false);
+    return navigator.clipboard.writeText(str).then(() => callback(true), () => callback(false));
+  };
+
   function show(options = {}) {
 
     /*
