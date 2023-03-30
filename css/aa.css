@@ -4395,7 +4395,7 @@ body.is-mobile #game-prefs-modal {
   font-size: 5px;
   color: #000;
   overflow: auto;
-  /* Firefox may show scaled-up scrollbars - this corrects it. */
+  /* Firefox may show scaled-up scrollbars - this helps a bit. */
   scrollbar-width: thin;
 }
 
@@ -4454,12 +4454,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
  * https://github.com/sakofchit/system.css/blob/main/LICENSE
  */
 
-::-webkit-scrollbar {
+ #game-prefs-modal .fieldset-container::-webkit-scrollbar {
   width: 22px;
   background-color: #fff;
 }
 
-::-webkit-scrollbar-track {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-track {
   /* black checkerboard pattern */
   background: #fff url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
   background-size: 4px 4px;
@@ -4468,7 +4468,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   image-rendering: -webkit-optimize-contrast;
 }
 
-::-webkit-scrollbar-thumb {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-thumb {
   width: 20px;
   box-sizing: content-box;
   background-color: #fff;
@@ -4476,28 +4476,28 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-right: none;
 }
 
-::-webkit-scrollbar-button:horizontal:start:decrement,
-::-webkit-scrollbar-button:horizontal:end:increment,
-::-webkit-scrollbar-button:vertical:start:decrement,
-::-webkit-scrollbar-button:vertical:end:increment {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:horizontal:start:decrement,
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:horizontal:end:increment,
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:start:decrement,
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end:increment {
   display: block;
 }
 
-::-webkit-scrollbar-button:vertical:start {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:start {
   background-repeat: no-repeat;
   height: 23.38px;
   background-image: url(../image/icon/scrollbar-up.svg);
 }
-::-webkit-scrollbar-button:vertical:start:active {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:start:active {
   background-repeat: no-repeat;
   height: 23.38px;
   background-image: url(../image/icon/scrollbar-up-active.svg);
 }
-::-webkit-scrollbar-button:vertical:end {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end {
   height: 23.38px;
   background-image: url(../image/icon/scrollbar-down.svg);
 }
-::-webkit-scrollbar-button:vertical:end:active {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end:active {
   background-repeat: no-repeat;
   height: 23.38px;
   background-image: url(../image/icon/scrollbar-down-active.svg);
@@ -4513,7 +4513,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-radius: 1px;
 }
 
-#game-prefs-modal a:hover {
+#game-prefs-modal a:not(.no-hover):hover {
   background-color: #000;
   padding: 0.25px 1px;
   margin: -0.25px -1px;
@@ -4592,7 +4592,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 #game-prefs-modal fieldset ul li p {
   margin-bottom: 0px;
-  padding-bottom: 0px;
+  padding-bottom: 1px;
   margin-left: 9px;
 }
 
@@ -4614,7 +4614,21 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   vertical-align: middle;
 }
 
-#game-prefs-modal input {
+#game-prefs-modal input[type="text"] {
+  font-size: 6px;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0.5px solid #000;
+  padding: 2px;
+}
+
+#game-prefs-modal input[type="text"]:focus {
+  outline: none;
+}
+
+#game-prefs-modal input[type="checkbox"],
+#game-prefs-modal input[type="radio"] {
   margin: 0px;
   padding: 0px;
   width: 7px;
@@ -4720,6 +4734,7 @@ body.is_firefox #game-prefs-modal input[type="checkbox"]:active::before {
   animation: pulse 0.5s ease-in-out infinite alternate-reverse;
 }
 
+#game-prefs-modal button:disabled,
 #game-prefs-modal input[type="radio"]:disabled,
 #game-prefs-modal input[type="checkbox"]:disabled {
   opacity: 0.33;
@@ -4855,10 +4870,42 @@ button.primary {
   padding: 0.5px 10px;
 }
 
-button:active,
-button.primary:active {
-  background: #000;
+button:not(:disabled):active,
+button.primary:not(:disabled):active {
+  background-color: #000;
   color: #fff;
+}
+
+button.attention:not(:active) {
+  animation: text-blink 1s steps(2) infinite;
+}
+
+@keyframes text-blink {
+  /**
+   * This is generally considered bad form, evil UX/UI,
+   * and you should never do it.
+   * ...Except in this one specific case, of course. 😇
+   */
+  from {
+    color: #000;
+  }
+  to {
+    color: #fff;
+  }
+}
+
+.mac-system-waiting {
+  /* hat tip: https://impossiblue.github.io/log/150406/index.html */
+  /* image/apple-watch.gif */
+  display: inline-block;
+  width: 5.5px;
+  height: 8px;
+  background-image: url(data:image/gif;base64,R0lGODlhCwAQAPECAP///wAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFDAACACwAAAAACwAQAEACJpSCaQeQ7QKDTa6k1sF20uB4VGhwXclpG3aNkAR+FeJWpXuaqm4UACH5BAUMAAIALAYABgACAAMAAAIDhBFRACH5BAUMAAIALAYACAACAAIAAAIDBAIFACH5BAUMAAIALAUACQACAAIAAAICDFwAIfkEBQwAAgAsAwAJAAMAAgAAAgNEDFAAIfkEBQwAAgAsAgAIAAMAAwAAAgOMgVkAIfkEBQwAAgAsAgAGAAMAAwAAAgREgBdRACH5BAUMAAIALAMABQADAAMAAAIEBGJ4BQA7);
+  background-size: 5.5px 8px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  margin-bottom: -1.75px;
+  padding-left: 1px;
 }
 
 /* game menu screen */
@@ -4897,7 +4944,6 @@ button.primary:active {
   border-bottom-color: rgb(218,218,255);
   border-right-color: rgb(218,218,255);
 }
-
 
 .flying-ace {
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
@@ -5027,7 +5073,7 @@ button .network-icon {
   margin: 0px;
   padding: 2px;
   background: rgba(0,0,0,0.9);
-  border: 0.5px solid #393;
+  border: 0.5px solid #339933;
   font-size: 7px;
   color: #33cc33;
   text-align: center;
