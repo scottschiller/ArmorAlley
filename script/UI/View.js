@@ -326,6 +326,9 @@ const View = () => {
       return;
     }
 
+    // ignore while player is dead.
+    if (player.data.dead || player.data.respawning) return;
+
     // tack the latest onto the end of the buffer.
     player.data.mouseHistory.push({
       x: player.data.mouse.delayedInputX,
@@ -373,6 +376,9 @@ const View = () => {
       console.warn('sendPlayerCoordinates(): WTF remote player?', player);
       return;
     }
+
+    // don't send coordinates while dead or respawning, possible false collision.
+    if (player.data.dead || player.data.respawning) return;
 
     // special case: remote CPU chopper.
     if (player.data.isCPU) {
