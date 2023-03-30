@@ -2256,10 +2256,19 @@ const Helicopter = (options = {}) => {
     if (target) {
       checkFacingTarget(target);
     } else {
-      if (data.vX < 0 && data.rotated) {
-        rotate();
-      } else if (data.vX > 0 && !data.rotated) {
-        rotate();
+      // TODO: DRY
+      if (data.isEnemy) {
+        if (data.vX < 0 && data.rotated) {
+          rotate();
+        } else if (data.vX > 0 && !data.rotated) {
+          rotate();
+        }
+      } else {
+        if (data.vX < 0 && !data.rotated) {
+          rotate();
+        } else if (data.vX > 0 && data.rotated) {
+          rotate();
+        }
       }
     }
 
