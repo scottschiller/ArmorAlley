@@ -77,14 +77,17 @@ body {
   /* font trickery */
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
+  /* more scroll aversion */
+  overflow: hidden;
+}
+
+body.game-started {
   /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   user-select: none;
   /* prevent pinch-to-zoom and scroll */
   touch-action: none;
-  /* more scroll aversion */
-  overflow: hidden;
 }
 
 #aa {
