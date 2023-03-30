@@ -792,10 +792,19 @@ const Helicopter = (options = {}) => {
     // ignore direction and prevent excessive flipping when bombing tanks, or if hidden within a cloud
     if (data.bombing || data.cloaked) return;
 
-    if ((target.data.x + target.data.width) < data.x && data.rotated) {
-      rotate();
-    } else if ((target.data.x + target.data.width) > data.x && !data.rotated) {
-      rotate();
+    // TODO: revisit and DRY
+    if (data.isEnemy) {
+      if ((target.data.x + target.data.width) < data.x && data.rotated) {
+        rotate();
+      } else if ((target.data.x + target.data.width) > data.x && !data.rotated) {
+        rotate();
+      }
+    } else {
+      if ((target.data.x + target.data.width) < data.x && !data.rotated) {
+        rotate();
+      } else if ((target.data.x + target.data.width) > data.x && data.rotated) {
+        rotate();
+      }
     }
 
   }
