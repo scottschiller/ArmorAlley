@@ -30,6 +30,7 @@ const defaultPrefs = {
   net_player_name: '',
   net_remote_player_name: '',
   sound: true,
+  muzak: true,
   bnb: false,
   bnb_tv: true,
   weather: '', // [none|rain|hail|snow|turd]

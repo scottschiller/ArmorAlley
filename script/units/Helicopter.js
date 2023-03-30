@@ -205,7 +205,7 @@ const Helicopter = (options = {}) => {
 
   function iGotYouBabe() {
 
-    if (!gamePrefs.sound || !gamePrefs.bnb) return;
+    if (!gamePrefs.muzak || !gamePrefs.sound || !gamePrefs.bnb) return;
 
     const { iGotYouBabe } = sounds.bnb;
 
@@ -259,11 +259,11 @@ const Helicopter = (options = {}) => {
       if (landingPad.data.isKennyLoggins) {
 
         // welcome to *** THE DANGER ZONE! ***
-        if (!net.active) {
+        if (!net.active && gamePrefs.muzak) {
           playSound(sounds.dangerZone, null);
         }
 
-      } else {
+      } else if (gamePrefs.muzak) {
 
         if (gamePrefs.bnb) {
 
@@ -283,7 +283,7 @@ const Helicopter = (options = {}) => {
             playSound(sounds.bnb.theme, null);
           }
 
-        } else {
+        } else if (gamePrefs.muzak) {
 
           // hit the chorus, if we'll be "a while."
 
@@ -296,21 +296,23 @@ const Helicopter = (options = {}) => {
 
       game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true, doubleHeight: true });
 
-    } else if (landingPad.data.isKennyLoggins) {
+    } else if (gamePrefs.muzak) {
+      
+      if (landingPad.data.isKennyLoggins && !net.active) {
 
-      // welcome to *** THE DANGER ZONE! ***
-      if (!net.active) {
+        // welcome to *** THE DANGER ZONE! ***
         playSound(sounds.dangerZone, null);
+
+      } else if (gamePrefs.bnb) {
+
+        playSound(sounds.bnb.theme, null);
+
+      } else {
+
+        // start from the beginning, if a shorter visit.
+        playSound(sounds.ipanemaMuzak, null, { position: 0 });
+
       }
-
-    } else if (gamePrefs.bnb) {
-
-      playSound(sounds.bnb.theme, null);
-
-    } else {
-
-      // start from the beginning, if a shorter visit.
-      playSound(sounds.ipanemaMuzak, null, { position: 0 });
 
     }
 
