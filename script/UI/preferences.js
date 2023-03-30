@@ -411,6 +411,18 @@ function PrefsManager() {
 
   events = {
 
+    onConnect: () => {
+
+      if (!data.active) return;
+
+      events.onChat('Network connected. Testing ping...');
+
+      updateNetworkStatus('Connected');
+
+      dom.oFormSubmit.disabled = false;
+
+    },
+
     onFormSubmit: (e) => {
 
       updatePrefs();
