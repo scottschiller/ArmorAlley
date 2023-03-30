@@ -844,6 +844,8 @@ const net = {
 
         net.connected = true;
 
+        prefsManager.onConnect();
+
         conn.on('data', (data) => processData(data));
 
         if (debugNetwork) console.log('starting ping test');
@@ -861,6 +863,10 @@ const net = {
         game.objects.notifications.add(msg);
 
         net.connected = false;
+
+        net.reset();
+
+        prefsManager.onDisconnect();
 
         showLocalMessage(msg);
       
@@ -897,15 +903,15 @@ const net = {
 
     connection.on('open', () => {
   
-      // connection opened to PeerServer
-  
-      if (debugNetwork) console.log('connection opened to PeerServer');
-  
+      if (debugNetwork) console.log('GUEST: connection opened');
+      
       net.connected = true;
   
       peerConnection = connection;
 
       net.active = true;
+
+      prefsManager.onConnect();
 
       startDebugNetworkStats();
 
@@ -922,6 +928,9 @@ const net = {
       net.connected = false;
  
       net.reset();
+
+      prefsManager.onDisconnect();
+
       showLocalMessage(msg);
       
       game.objects.notifications.add(msg);
