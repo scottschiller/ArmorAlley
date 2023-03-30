@@ -316,6 +316,22 @@ const messageActions = {
 
   },
 
+  'REMOTE_PLAYER_NAME': (data) => {
+
+    // ignore if already up-to-date, etc.
+    if (!data.newName) return;
+    if (gamePrefs.net_remote_player_name === data.newName) return;
+
+    // this can happen during a live game
+    if (game.data.started) {
+      game.objects.notifications.add(common.getRenameString(gamePrefs.net_remote_player_name, data.newName));
+    }
+
+    // update the underlying pref
+    gamePrefs.net_remote_player_name = data.newName;
+    
+  },
+
   },
 
   'REMOTE_ORDER': (data) => {
