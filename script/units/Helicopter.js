@@ -1952,8 +1952,12 @@ const Helicopter = (options = {}) => {
         lastTarget = objectInView(data, { items: TYPES.cloud });
 
         // hack: only go after clouds in the player's half of the field.
-        if (lastTarget && lastTarget.data.x > 4096) {
-          lastTarget = null;
+        if (lastTarget) {
+          if (data.isEnemy && lastTarget.data.x > 4096) {
+            lastTarget = null;
+          } else if (!data.isEnemy && lastTarget.data.x < 4096) {
+            lastTarget = null;
+          }
         }
 
       }
