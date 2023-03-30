@@ -4286,10 +4286,10 @@ body.is-mobile #game-prefs-modal {
 
 /* iOS Safari hacks */
 @media screen and (orientation: portrait) {
-  body #game-prefs-modal {
+  body.is_iphone #game-prefs-modal {
     zoom: 1.85;
   }
-  body.is_standalone #game-prefs-modal {
+  body.is_iphone.is_standalone #game-prefs-modal {
     /* "home screen"-specific version */
     zoom: 1.75;
   }
