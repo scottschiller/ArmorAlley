@@ -1159,6 +1159,8 @@ const Helicopter = (options = {}) => {
 
   function moveTo(x, y) {
 
+    if (data.isRemote && data.dead) return;
+
     // Note: this updates data.x + data.y.
     moveToForReal(x, y);
 
