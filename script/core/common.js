@@ -5,6 +5,7 @@ import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
+import { prefsManager } from '../aa.js';
 
 // unique IDs for quick object equality checks
 let guid = 0;
@@ -135,14 +136,49 @@ function makeDebugRect(obj, viaNetwork) {
 
 }
 
-function debugObj(label = 'unknown', obj = {}) {
+function getRenameString(oldName, newName) {
 
-  const { data } = obj;
-  if (!data) return;
+  const strings = [
+    '%1 is now %2.',
+    '%1 has handed the reins over to %2.',
+    '%1 has given control to %2.',
+    'The artist formerly known as %1 is now known as %2.',
+    'Forget everything you knew about %1, they are now %2.'
+  ];
 
-  console.log(label, data.id, data.x, data.y, data.width, data.height, data.vX, data.vY, data.parent?.data?.id, data.parent ? console.log(debugObj(label + '-parent', data.parent)) : '(no data.parent)');
+  const str = strings[parseInt(Math.random() * strings.length, 10)];
+
+  return str.replace('%1', oldName).replace('%2', newName);
 
 }
+
+const slashCommands = {
+
+  '/name': (newName, fromNetworkEvent) => {
+
+    // hackish: "from network event" means the remote changed names.
+    const playerName = fromNetworkEvent ? gamePrefs.net_remote_player_name : gamePrefs.net_player_name;
+
+    // name must change, and must be unique.
+    if (newName === gamePrefs.net_remote_player_name || newName === gamePrefs.net_player_name) return;
+
+    const msg = getRenameString(playerName, newName);
+
+    if (game.data.started) {
+      game.objects.notifications.add(msg);
+    } else {
+      prefsManager.onChat(msg);
+    }
+
+    if (!fromNetworkEvent) {
+      // update locally, and send
+      gamePrefs.net_player_name = newName;
+      net.sendMessage({ type: 'REMOTE_PLAYER_NAME', newName });
+    }
+
+  }
+
+};
 
 const common = {
 
