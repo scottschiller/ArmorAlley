@@ -1183,35 +1183,6 @@ const Helicopter = (options = {}) => {
 
     }
 
-    // TODO: Fix the delayed stuff.
-    return;
-
-    /**
-     * If not a network game, OR, a remote or local human, just do the thing right away.
-     * Local human players already have delayed input, so it'd be redundant here.
-     * Only CPU players need to delay stuff beyond this point.
-     */
-    if (!net.active || data.isRemote || (data.isLocal && !data.isCPU)) return moveToForReal(x, y);
-
-    // TODO: buffer this like mouse input, delayed etc.
-
-    // CPU player? Send to the remote.
-    // A CPU can also be the local player, when testing via &remoteCPU=1.
-    if (data.isCPU && !data.isRemote) {
-
-      // immediately send our data abroad...
-      // game.objects.view.sendPlayerCoordinates(exports);
-
-      // and in a moment, apply that input locally.
-      common.setFrameTimeout(() => {
-        if (data.isEnemy) {
-          console.log('timeout -> moveToForReal');
-        }
-        moveToForReal(x, y);
-      }, net.halfTrip);
-
-    }
-
   }
 
   function moveTrailers() {
