@@ -521,6 +521,12 @@ function PrefsManager() {
     
   }
 
+  function startGame() {
+
+    gameMenu.startGame(gamePrefs.net_game_type, gamePrefs.net_game_type);
+
+  }
+
   data = {
     active: false,
     network: false,
