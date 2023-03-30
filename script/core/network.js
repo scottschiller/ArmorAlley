@@ -543,9 +543,7 @@ const messageActions = {
 
   },
 
-  'ACK': (data) => {
-
-    console.log('Got ACK: starting game', data);
+  'ACK': (/*data*/) => {
 
     prefsManager.onChat(`Ping: ${avg(pingStack).toFixed(1)}ms`);
 
