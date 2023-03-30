@@ -511,6 +511,18 @@ function processData(data) {
 
   net.newPacketCount++;
 
+  /**
+   * Firstly, look at the frame count - and ignore or discard if considered too old.
+   * Let's consider two seconds behind, too old.
+   */
+
+  if (game.data.started && game.objects.gameLoop.data.frameCount - data.frameCount > OLD_FRAME_CUTOFF) {
+    // drop "old" incoming messages, which may be received in error - or from a remote client fast-forwarding.
+    // guards are in place on the transmitting side, as well.
+    if (debugNetwork) console.info(`💌 RX: Dropping message, too old. ${data.frameCount}/${game.objects.gameLoop.data.frameCount}, Δ ${game.objects.gameLoop.data.frameCount - data.frameCount} > ${OLD_FRAME_CUTOFF}`);
+    return;
+  }
+
   // firstly, process roundtrip / half-trip, ping time data.
   let ping, recTime = performance.now();
 
