@@ -280,11 +280,12 @@ const game = (() => {
 
         // which one you are, depends on who's hosting.
 
-        if (net.coop) {
+        // pvp|pvp_cpu|coop_2v1|coop_2v2
+        if (gamePrefs.net_game_style.match(/coop/i)) {
 
           if (net.isHost) {
 
-            console.log('you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy.');
+            console.log('you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy or two.');
 
             // human player 1 (local)
             addObject(TYPES.helicopter, {
@@ -306,17 +307,23 @@ const game = (() => {
               isCPU: true
             });
 
-            // CPU player 2 (AI running remotely)
-            addObject(TYPES.helicopter, {
-              skipInit: true,
-              isEnemy: true,
-              isCPU: true,
-              isRemote: true
-            });
+            if (gamePrefs.net_game_style === 'coop_2v2') {
+
+              console.log('2v2: adding second enemy');
+
+              // CPU player 2 (AI running remotely)
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isEnemy: true,
+                isCPU: true,
+                isRemote: true
+              });
+
+            }
 
           } else {
 
-            console.log('you are hosting: you are helicopters[1], you and your friend are playing cooperatively against an enemy.');
+            console.log('you are a guest: you are helicopters[1], you and your friend are playing cooperatively against an enemy or two.');
 
             // human player 1 (remote)
             addObject(TYPES.helicopter, {
@@ -339,19 +346,30 @@ const game = (() => {
               isRemote: true
             });
 
-            // CPU player 2 (AI running locally)
-            addObject(TYPES.helicopter, {
-              skipInit: true,
-              isEnemy: true,
-              isCPU: true
-              // isRemote: true
-            });
+            if (gamePrefs.net_game_style === 'coop_2v2') {
+
+              console.log('2v2: adding second enemy');
+
+              // CPU player 2 (AI running locally)
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isEnemy: true,
+                isCPU: true
+                // isRemote: true
+              });
+
+            }
 
           }
 
         } else {
 
           // Player vs. player
+          // pvp|pvp_cpu|coop_2v1|coop_2v2
+
+          console.log('player vs player');
+
+          // pvp|pvp_cpu|coop_2v1|coop_2v2
 
           if (net.isHost) {
 
@@ -370,6 +388,27 @@ const game = (() => {
               isCPU: enemyCPU
             });
 
+            if (gamePrefs.net_game_style === 'pvp_cpu') {
+
+              // helper CPUs, one for each player
+
+              console.log('pvp_cpu: adding helper helicopters');
+
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isRemote: false,
+                isCPU: true
+              });
+              
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isEnemy: true,
+                isRemote: true,
+                isCPU: true
+              });
+
+            }
+
           } else {
 
             console.log('you are a guest: you are helicopters[1], and take the enemy base');
@@ -387,6 +426,27 @@ const game = (() => {
               attachEvents: !enemyCPU,
               isCPU: enemyCPU
             });
+
+            if (gamePrefs.net_game_style === 'pvp_cpu') {
+
+              // helper CPUs, one for each player
+
+              console.log('pvp_cpu: adding helper helicopters');
+
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isRemote: true,
+                isCPU: true
+              });
+
+              addObject(TYPES.helicopter, {
+                skipInit: true,
+                isEnemy: true,
+                isRemote: false,
+                isCPU: true
+              });
+              
+            }
 
           }
 
