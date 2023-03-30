@@ -141,6 +141,14 @@ function PrefsManager() {
     return navigator.clipboard.writeText(str).then(() => callback(true), () => callback(false));
   };
 
+  function updateNetworkStatus(status) {
+
+    const statusHTML = 'Network Status';
+
+    dom.oNetStatusLabel.innerHTML = `${statusHTML}: ${status}`;
+
+  }
+
   function doHostSetup(id) {
 
     const wl = window.location;
