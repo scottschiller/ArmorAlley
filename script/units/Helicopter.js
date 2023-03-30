@@ -2308,8 +2308,7 @@ const Helicopter = (options = {}) => {
     if (data.pilot && data.fuel > 0) {
 
       /**
-       * Mouse data can come from a few sources. TODO: refactor.
-       * All these should probably just live on the helicopter objects.
+       * Mouse data can come from a few sources.
        */
       mouse = data.mouse;
 
