@@ -440,6 +440,15 @@ function PrefsManager() {
 
     },
 
+    onNetworkError: (text) => {
+
+      if (!data.active) return;
+
+      events.onChat(`Unable to start network: ${text}`);
+      updateNetworkStatus('Error');
+
+    },
+
     onFormSubmit: (e) => {
 
       updatePrefs();
