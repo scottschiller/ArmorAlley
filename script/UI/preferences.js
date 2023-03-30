@@ -521,6 +521,27 @@ function PrefsManager() {
     
   }
 
+  function updateReadyUI() {
+
+    dom.oFormSubmit.innerHTML = data.remoteReadyToStart ? 'START' : 'READY';
+
+    // highlight local button if remote is ready, or reset if not.
+    utils.css.addOrRemove(dom.oFormSubmit, data.remoteReadyToStart, 'attention');
+
+    let html;
+    if (data.remoteReadyToStart) {
+      html = 'Ready to start game';
+    } else if (data.readyToStart) {
+      html = `Waiting for ${net.isHost ? 'guest' : 'host'}... <span class="mac-system-waiting"></span>`;
+    } else {
+      // hopefully, still connected.
+      html = net.connected ? 'Connected' : 'Disconnected';
+    }
+
+    updateNetworkStatus(html);
+    
+  }
+
   function startGame() {
 
     gameMenu.startGame(gamePrefs.net_game_type, gamePrefs.net_game_type);
