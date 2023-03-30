@@ -311,8 +311,6 @@ const common = {
 
     let newEnergy, energyChanged;
 
-    if (target.data.dead) return;
-
     /**
      * special case: super-bunkers can only be damaged by tank gunfire.
      * other things can hit super-bunkers, but we don't want damage done in this case.
