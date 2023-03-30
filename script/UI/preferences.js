@@ -548,6 +548,33 @@ function PrefsManager() {
 
   }
 
+  function checkGameStart(options = {}) {
+
+    if (data.readyToStart && data.remoteReadyToStart) {
+
+      events.onChat('STARTING GAME...');
+
+      disableNetworkOptions();
+
+      hide();
+
+      // depending on who is ready, delay or not.
+      if (options.local) {
+        console.log('local is ready; delaying, then starting game', net.halfTrip);
+        window.setTimeout(startGame, net.halfTrip);
+      } else {
+        console.log('remote ready; starting game immediately');
+        startGame();
+      }
+
+    } else {
+
+      updateReadyUI();
+
+    }
+
+  }
+
   data = {
     active: false,
     network: false,
