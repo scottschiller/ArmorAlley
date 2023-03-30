@@ -519,7 +519,7 @@ const SmartMissile = (options = {}) => {
             volume: launchSound.volume,
             playbackRate: data.playbackRate,
             onplay: (sound) => launchSound = sound 
-          });
+          }, game.players.local);
         }
 
         // and start tracking.
