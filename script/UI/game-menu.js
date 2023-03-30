@@ -217,14 +217,12 @@ function formInput() {
   let labelEmoji = label.getElementsByClassName('emoji')[0];
 
   let startEmoji = document.getElementById('start-emoji');
-  let startEmojiNetwork = document.getElementById('start-emoji-network');
-
+  
   defaultDescription = label.getAttribute('data-title');
   startEmoji.innerText = labelEmoji.innerText;
-  startEmojiNetwork.innerText = labelEmoji.innerText;
-
+  
   // thou shall not leak
-  label = labelEmoji = startEmoji = startEmojiNetwork = null;
+  label = labelEmoji = startEmoji = null;
 
 }
 
