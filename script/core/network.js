@@ -248,6 +248,10 @@ const messageActions = {
       return;
     }
 
+    // if dead, just ignore these values.
+    // this may be what gets us into trouble with false collisions after a die().
+    if (helicopter.data.dead) return;
+
     if (helicopter.data.isCPU) {
 
       // *** CPU PLAYER ***
