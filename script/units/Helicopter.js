@@ -3033,6 +3033,7 @@ const Helicopter = (options = {}) => {
     setMissileLaunching,
     setParachuting,
     setRespawning,
+    toggleAutoRotate,
     updateStatusUI,
     updateInventoryQueue
   };
