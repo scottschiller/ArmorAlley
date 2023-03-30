@@ -255,8 +255,10 @@ const messageActions = {
     if (helicopter.data.isCPU) {
 
       // *** CPU PLAYER ***
-      if (data.x !== null) helicopter.data.x = data.x;
-      if (data.y !== null) helicopter.data.y = data.y;
+      // HACKS: subtract vX/vY before `animate()`, because that will be re-applied when animated locally.
+      // I suspect this is the source of an annoying off-by-one-frame collision issue.
+      if (data.x !== null) helicopter.data.x = data.x - data.vX;
+      if (data.y !== null) helicopter.data.y = data.y - data.vY;
 
       helicopter.data.vX = data.vX;
       helicopter.data.vY = data.vY;
