@@ -1,3 +1,5 @@
+import { prefsManager } from '../aa.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { common } from './common.js';
 import { game } from './Game.js';
 import { defaultSeed, defaultSeeds, FPS, FRAMERATE, setDefaultSeed, TYPES } from './global.js';
@@ -283,10 +285,29 @@ const messageActions = {
 
   'CHAT': (data) => {
 
+    /**
+     * data = {
+     *   params: [text, player_name], OR
+     *   text: 'hello'
+     * }
+     */
+
+    const slashCommand = common.parseSlashCommand(data.params?.[0] || data.text);
+
     // A form of notification, really.
-    if (data.text) {
+    if (game.data.started && data.text && !slashCommand) {
       game.objects.notifications.add(`${common.basicEscape(data.text)} 💬`);
+    } else {
+      // for this variant, we expect a spreadable array.
+      // also of note, slash commands are sent along for others to see and learn.
+      const args = data.params || [ data.text ];
+      prefsManager.onChat(...args);
     }
+
+    // now, run if found.
+    slashCommand?.();
+
+  },
 
   },
 
