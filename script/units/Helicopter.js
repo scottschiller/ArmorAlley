@@ -2183,8 +2183,12 @@ const Helicopter = (options = {}) => {
 
     } else {
 
-      // default: go left
-      data.vX -= 0.25;
+      // default: go "toward the other guys"
+      if (data.isEnemy) {
+        data.vX -= 0.25;
+      } else {
+        data.vX += 0.25;
+      }
 
       // and up
       data.vY -= 0.1;
