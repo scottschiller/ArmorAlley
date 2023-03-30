@@ -78,7 +78,10 @@ function PrefsManager() {
   function init() {
 
     dom.o = document.getElementById('game-prefs-modal');
+    dom.oChatUI = document.getElementById('network-options-chat-ui');
     dom.oForm = document.getElementById('game-prefs-form');
+    dom.oFormSubmit = document.getElementById('game-prefs-submit');
+    dom.oNetStatusLabel = document.getElementById('network-options-status-label');
     dom.optionsLink = document.getElementById('game-options-link');
     dom.oStatsBar = document.getElementById('stats-bar');
     dom.oGameTips = document.getElementById('game-tips');
