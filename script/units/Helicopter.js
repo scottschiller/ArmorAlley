@@ -1849,7 +1849,7 @@ const Helicopter = (options = {}) => {
 
       /**
        * fly toward closest landing pad.
-       * rightmost 25% of the battlefield? use own base.
+       * use own base if within 25% of respective end of battlefield.
        * otherwise, use "neutral" mid-level base.
        * if you're there and the enemy decides to land,
        * you're going to find yourself in trouble. ;)
@@ -1857,7 +1857,11 @@ const Helicopter = (options = {}) => {
 
       const pads = game.objects[TYPES.landingPad];
 
-      target = pads[pads.length - (data.x > 6144 ? 1 : 2)];
+      if (data.isEnemy) {
+        target = pads[pads.length - (data.x > 6144 ? 1 : 2)];
+      } else {
+        target = pads[data.x < 2048 ? 0 : 1];
+      }
 
       checkFacingTarget(target);
 
