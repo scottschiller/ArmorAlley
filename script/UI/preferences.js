@@ -5,6 +5,9 @@ import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
+import { common } from '../core/common.js';
+import { gameMenu } from './game-menu.js';
 
 const prefs = {
   gameType: 'game_type'
