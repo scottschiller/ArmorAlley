@@ -259,7 +259,9 @@ const Helicopter = (options = {}) => {
       if (landingPad.data.isKennyLoggins) {
 
         // welcome to *** THE DANGER ZONE! ***
-        playSound(sounds.dangerZone, null);
+        if (!net.active) {
+          playSound(sounds.dangerZone, null);
+        }
 
       } else {
 
@@ -297,7 +299,9 @@ const Helicopter = (options = {}) => {
     } else if (landingPad.data.isKennyLoggins) {
 
       // welcome to *** THE DANGER ZONE! ***
-      playSound(sounds.dangerZone, null);
+      if (!net.active) {
+        playSound(sounds.dangerZone, null);
+      }
 
     } else if (gamePrefs.bnb) {
 
