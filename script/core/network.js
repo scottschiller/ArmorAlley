@@ -73,7 +73,10 @@ function startDebugNetworkStats() {
   if (!debugNetworkStats) return;
 
   window.setInterval(() => {
-    if (net.connected) console.log(statsByType);
+    if (net.connected) {
+      console.log(statsByType);
+      console.log(`rxQueue.length: ${rxQueue.length}`);
+    }
   }, 10000);
   
 }
@@ -165,6 +168,10 @@ function sendMessage(obj, callback, delay) {
 
   if (debugNetwork) console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
 
+  if (!net.connected && debugNetwork) {
+    console.warn('net.sendMessage(): network not connected.', obj);
+    return;
+  }
 
   const goLd = game.objects.gameLoop.data;
   if (game.players.local && goLd.remoteFrameCount - goLd.frameCount > OLD_FRAME_CUTOFF) {
