@@ -136,17 +136,61 @@ function PrefsManager() {
 
   }
 
-  function show() {
+  function show(options = {}) {
+
+    /*
+    const options = {
+      network: true,
+      // expect game_type to be one of easy / hard / extreme
+      onStart: (networkGameType) => startGame(networkGameType)
+    };
+    */
 
     if (data.active || !dom.o) return;
 
     data.active = true;
+
+    data.network = !!options.network;
 
     game.objects.view.data.ignoreMouseEvents = true;
 
     events.updateScreenScale();
 
     document.body.appendChild(dom.o);
+
+    // only do the network connect flow once, of course.
+    if (data.network && !data.connected) {
+
+      // browsers may remember scroll offset through reloads; ensure it resets.
+      document.getElementById('form-scroller').scrollTop = 0;
+
+      utils.css.add(document.body, 'network');
+
+      // network LIGHTS.EXE requires the game loop; so be it.
+      game.objects.gameLoop.start();
+
+      document.getElementById('game-menu-form').style.display = data.network ? 'none' : 'block';
+
+      utils.css.addOrRemove(dom.o, data.network, 'is-network');
+      utils.css.addOrRemove(dom.o, data.network && net.isGuest, 'is-guest');
+      utils.css.addOrRemove(dom.o, data.network && net.isHost, 'is-host');
+
+      dom.oFormSubmit.innerHTML = net.isGuest ? 'READY' : 'READY';
+
+      // manually disable button, until the network is connected.
+      // this is separate from the "ready to start" logic.
+      dom.oFormSubmit.disabled = true;
+
+      startNetwork();
+
+    } else {
+
+      dom.oFormSubmit.innerHTML = 'OK';
+
+      // ensure this is active - may have been disabled during network flow
+      dom.oFormSubmit.disabled = false;
+      
+    }
 
     const now = Date.now();
 
