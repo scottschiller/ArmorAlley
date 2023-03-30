@@ -1056,11 +1056,28 @@ const View = () => {
       const text = input.value.trim();
 
       if (text.length) {
-        net.sendMessage({ type: 'CHAT', text });
-        // you only send love letters to your partner, of course.
-        const emoji = net.coop ? '💌' : '📮';
-        game.objects.notifications.add(`${emoji} ${common.basicEscape(text)}`);
+
+        // slash command?
+        // NOTE: explicit pass of false, so we send a chat message with this local command call.
+        const fromNetwork = false;
+        const slashCommand = common.parseSlashCommand(text, fromNetwork);
+
+        if (slashCommand) {
+
+          slashCommand();
+
+        } else {
+
+          net.sendMessage({ type: 'CHAT', text });
+
+          // you only send love letters to your partner, of course.
+          const emoji = net.coop ? '💌' : '📮';
+          game.objects.notifications.add(`${emoji} ${common.basicEscape(text)}`);
+
+        }
+
         input.value = '';
+
       }
 
       hideChatInput();
