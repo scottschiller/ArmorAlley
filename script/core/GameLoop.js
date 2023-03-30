@@ -25,7 +25,9 @@ const GameLoop = () => {
   function animate() {
 
     // loop through all objects, animate.
-    data.frameCount++;
+    if (game.data.started) {
+      data.frameCount++;
+    }
 
     if (net.active) {
 
