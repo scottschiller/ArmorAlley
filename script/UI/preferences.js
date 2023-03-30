@@ -141,6 +141,41 @@ function PrefsManager() {
     return navigator.clipboard.writeText(str).then(() => callback(true), () => callback(false));
   };
 
+  function doHostSetup(id) {
+
+    const wl = window.location;
+
+    let params = [`id=${id}&game_style=network`];
+
+    // add existing query params to array, too.
+    if (window.location.search.length) {
+      params = params.concat(window.location.search.substring(1).split('&'));
+    }
+
+    updateNetworkStatus('Ready');
+
+    // TODO: filter URL params, drop ones that are prefs?
+    const inviteURL = `${wl.origin}${wl.pathname}?${params.join('&')}`;
+    const inviteContainer = document.getElementById('network-options-invite-container');
+    const inviteButton = document.getElementById('network-options-invite-link');
+
+    inviteButton.disabled = '';
+
+    const linkDetail = document.getElementById('network-options-link');
+
+    inviteButton.onclick = () => {
+      copyToClipboard(inviteURL, (ok) => {
+        inviteContainer.remove();
+        linkDetail.innerHTML = [
+         `<p>Send this link to a friend:</p>`,
+         `<a href="${inviteURL}" onclick="return false" class="no-hover">${inviteURL}</a>`,
+         ok ? `<p>The link has been copied to your clipboard.</p>` : `<p>(Couldn't be copied to your clipboard, sorry.)</p>`
+        ].join('\n');
+      });
+    }
+
+  }
+
   function show(options = {}) {
 
     /*
