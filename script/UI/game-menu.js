@@ -1,11 +1,11 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game, gameType } from '../core/Game.js';
-import { isMobile, isSafari, setTutorialMode } from '../core/global.js';
+import { isMobile, isSafari } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { prefs } from './preferences.js';
+import { gamePrefs, prefs } from './preferences.js';
 
 // game menu / home screen
 
@@ -20,7 +20,6 @@ let optionsButton;
 
 let didBNBIntro;
 let gameMenuActive;
-let prefetchedPrefs;
 
 function init() {
 
@@ -66,9 +65,6 @@ function init() {
     // hackish: ensure the in-game menu updates.
     prefsManager.readAndApplyPrefsFromStorage();
 
-    // ensure the local prefetched version is up to date
-    prefetchedPrefs.bnb = bnb;
-
     if (!bnb) {
       // reset, if needed
       didBNBIntro = false;
@@ -83,7 +79,6 @@ function init() {
 
   // game menu / intro screen
 
-  utils.events.add(document, 'mousemove', introBNBSound);
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
   if (isMobile) {
@@ -102,13 +97,16 @@ function init() {
   const searchParams = new URLSearchParams(window.location.search);
 
   let gameStyle = searchParams.get('game_style');
+
   if (gameStyle === 'network') {
-    startGame(gameStyle);
+    configureNetworkGame();
   }
 
 }
 
 function introBNBSound(e) {
+
+  if (!gamePrefs.bnb) return;
 
   // bail if not ready yet - and ignore clicks on #game-options-link which play other sound.
   if (!sounds.bnb.gameMenu || didBNBIntro || (e?.target?.id === 'game-options-link')) return;
@@ -118,14 +116,6 @@ function introBNBSound(e) {
 
   // ensure window isn't blurred, game isn't paused
   if (game.data.paused) return;
-
-  // make sure we are allowed to play this.
-  // hackish: read here because prefs init may not have fired yet.
-  if (!prefetchedPrefs) {
-    prefetchedPrefs = prefsManager.readPrefsFromStorage();
-  }
-
-  if (!prefetchedPrefs.bnb) return;
 
   didBNBIntro = true;
 
@@ -138,7 +128,6 @@ function introBNBSound(e) {
   playQueuedSounds();
 
   utils.events.remove(window, 'keydown', introBNBSound);
-  utils.events.remove(document, 'mousemove', introBNBSound);
   utils.events.remove(document, 'mousedown', introBNBSound);
   if (isMobile) {
     utils.events.remove(document, 'touchstart', introBNBSound);
@@ -268,89 +257,57 @@ function formSubmit(e) {
   // remember for next time
   utils.storage.set(prefs.gameType, gameType);
 
-  setTutorialMode(gameType === 'tutorial');
-
   const gameStyle = e.submitter.value;
 
   if (gameStyle === 'local') {
 
-    startGame(gameStyle);
+    startGame();
 
     return false;
 
   } else if (gameStyle === 'network') {
 
-    console.log('Let\'s play a network game, shall we?');
-
-    startGame(gameStyle);
+    configureNetworkGame();
 
   }
 
 }
 
-function startGame(gameStyle) {
+function configureNetworkGame() {
+
+  const options = {
+    network: true,
+    onStart: startGame
+  };
+
+  prefsManager.show(options);
+  
+}
+
+function startGame() {
 
   formCleanup();
 
-  if (gameStyle === 'network') {
+  if (net.connected) {
+
+    game.setGameType(gamePrefs.net_game_type);
 
     showExitType();
 
     // start the transition, then ping test, and finally, start game loop.
     hideTitleScreen(() => {
 
-      // do ping test, and then start.
-      net.init((id) => {
+      // don't pause for a network game.
+      game.objects.view.data.noPause = true;
 
-        const wl = window.location;
+      game.objects.gameLoop.resetFPS();
 
-        let params = [`id=${id}&game_type=${gameType}&game_style=network`];
-  
-        // add existing query params to array, too.
-        if (window.location.search.length) {
-          params = params.concat(window.location.search.substring(1).split('&'));
-        }
-  
-        const link = document.createElement('a');
-        link.id = 'network-share-message';
-        link.className = 'message';
-  
-        Object.assign(link.style, {
-          position: 'absolute',
-          display: 'inline-block',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          border: '1px solid #fff',
-          padding: '6px 10px',
-          'border-radius': '3px',
-          background: '#fff',
-          color: '#000',
-        });
+      // hackish: reset
+      game.objects.gameLoop.data.frameCount = 0;
 
-        link.href = `${wl.origin}${wl.pathname}?${params.join('&')}`;
-        link.innerHTML = 'Send this link to a friend';
-  
-        document.body.appendChild(link);
-  
-        
-      }, () => {
+      game.start();
 
-        document.getElementById('network-share-message')?.remove();
-
-        console.log('Connected + ping test, ready to start');
-
-        // don't pause for a network game.
-        game.objects.view.data.noPause = true;
-
-        game.objects.gameLoop.resetFPS();
-
-        // hackish: reset
-        game.objects.gameLoop.data.frameCount = 0;
-
-        game.init();
-
-      });
+      game.init();
 
     });
 
@@ -433,7 +390,8 @@ function hideTitleScreen(callback) {
 
 const gameMenu = {
   init,
-  menuUpdate
+  menuUpdate,
+  startGame
 };
 
 export { gameMenu };
