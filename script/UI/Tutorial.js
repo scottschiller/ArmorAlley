@@ -239,7 +239,7 @@ const Tutorial = () => {
 
       activate() {
 
-        let targetSuperBunker = game.objects.superBunker[0];
+        let targetSuperBunker = game.objects[TYPES.superBunker][0];
 
         if (targetSuperBunker) {
 
@@ -370,7 +370,7 @@ const Tutorial = () => {
         let missileX;
 
         // dis-arm superBunker so it doesn't kill incoming missile launchers, etc.
-        game.objects.superBunker[0].data.energy = 0;
+        game.objects[TYPES.superBunker][0].data.energy = 0;
 
         missileX = Math.min(game.players.local.data.x + (game.objects.view.data.browser.width * 2), game.objects.view.data.battleField.width - 64);
 

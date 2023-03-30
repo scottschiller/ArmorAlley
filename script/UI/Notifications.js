@@ -2,6 +2,8 @@ import { gameType } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
+import { gamePrefs } from './preferences.js';
+import { net } from '../core/network.js';
 
 const Notifications = () => {
 
@@ -182,12 +184,34 @@ const Notifications = () => {
 
   function welcome() {
 
+    // pvp|pvp_cpu|coop_2v1|coop_2v2
+    const styleLabels = {
+      pvp: 'Player vs. player',
+      pvp_cpu: 'Player vs. player, 1 CPU ea.',
+      coop_2v1: 'Co-operative, 2 humans vs. 1 CPU',
+      coop_2v2: 'Co-operative, 2 humans vs. 2 CPUs'
+    };
+
+    const emoji = {
+      easy: '😁',
+      hard: '😰',
+      extreme: '😱'
+    };
+
     const gameTypes = {
-      tutorial: 'This is the tutorial mode.',
-      other: `You are playing ${gameType.toUpperCase()} mode.`
+      tutorial: 'This is the tutorial mode. 📖',
+      other: `You are playing ${gameType.toUpperCase()} mode. ${emoji[gameType]}`
     }
 
-    const playingMessage = gameTypes[gameType] || gameTypes.other;
+    let playingMessage;
+
+    const netGameStyle = gamePrefs.net_game_style;
+
+    if (net.connected && styleLabels[netGameStyle]) {
+      playingMessage = `You are playing ${styleLabels[netGameStyle]}, ${gameType.toUpperCase()} mode.`
+    } else {
+      playingMessage = gameTypes[gameType] || gameTypes.other;
+    }
 
     add(`Welcome to ARMOR ALLEY 🚁<br />${playingMessage}`);
 

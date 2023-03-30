@@ -473,6 +473,12 @@ function addWorldObjects() {
       x: 7800
     });
 
+    // this turret is used in the tutorial, rebuilt by engineers - and a handy defense in the real games. ;)
+    addObject(TYPES.turret, {
+      x: 475,
+      DOA: true
+    });
+
     addObject(TYPES.bunker, {
       x: 1024,
       isEnemy: true
