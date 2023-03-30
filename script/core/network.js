@@ -332,6 +332,11 @@ const messageActions = {
     
   },
 
+  'UPDATE_PREFS': (data) => {
+
+    // data.params = [{ name, value }, { name, value }] etc.
+    prefsManager.onUpdatePrefs(data.params);
+
   },
 
   'REMOTE_ORDER': (data) => {
