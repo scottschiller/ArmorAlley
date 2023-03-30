@@ -4011,7 +4011,8 @@ body.is-mobile.game-over #mobile-controls {
   display: none !important;
 }
 
-body.game-paused #world-wrapper,
+body.game-paused:not(.game-started) #world,
+body.game-paused.game-started #world-overlay,
 body.game-paused #domfetti-overlay {
   /* side note: applying this to body throws off positioning in Firefox. */
   filter: grayscale(100%);
