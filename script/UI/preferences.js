@@ -390,13 +390,19 @@ function PrefsManager() {
 
   data = {
     active: false,
+    network: false,
     lastMenuOpen: 0,
-    lastMenuOpenThrottle: 30000
+    lastMenuOpenThrottle: 30000,
+    readyToStart: false,
+    remoteReadyToStart: false
   };
 
   dom = {
     o: null,
+    oChatUI: null,
     oForm: null,
+    oFormSubmit: null,
+    oNetStatusLabel: null,
     optionsLink: null,
     oStatsBar: null,
     oGameTips: null,
