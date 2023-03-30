@@ -21,7 +21,11 @@ const PREFS = {
 
 // game defaults
 const defaultPrefs = {
-  game_type: '',
+  game_type: '', // [easy|hard|extreme]
+  net_game_type: 'easy', // non-network default is tutorial, need to be explicit.
+  net_game_style: 'pvp', // [pvp|pvp_cpu|coop_2v1|coop_2v2]
+  net_player_name: '',
+  net_remote_player_name: '',
   sound: true,
   bnb: false,
   bnb_tv: true,
