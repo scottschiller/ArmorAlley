@@ -1900,7 +1900,7 @@ const Helicopter = (options = {}) => {
 
         // repair has completed. go go go!
         data.vY = -4;
-        data.vX = -data.vXMax;
+        data.vX = data.vXMax * data.isEnemy ? -1 : 1;
 
         // reset target, too
         lastTarget = null;
