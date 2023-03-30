@@ -340,52 +340,49 @@ const Helicopter = (options = {}) => {
 
   function stopRepairing() {
 
-    if (!data.repairing || !data.isLocal) {
-      // force-reset "complete" flag at this point, regardless
-      data.repairing = false;
-      data.repairComplete = false;
-      return;
-    }
-
     // ensure counters aren't blinking
-    utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
-    utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
-    utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
+    if (data.isLocal) {
 
-    document.getElementById('spinner').style.display = 'none';
+      utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
+      utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
+      utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
 
-    if (sounds.repairing) {
-      stopSound(sounds.repairing);
-    }
+      document.getElementById('spinner').style.display = 'none';
 
-    if (sounds.ipanemaMuzak) {
-      stopSound(sounds.ipanemaMuzak);
-    }
+      if (sounds.repairing) {
+        stopSound(sounds.repairing);
+      }
 
-    if (sounds.dangerZone) {
-      stopSound(sounds.dangerZone);
-    }
+      if (sounds.ipanemaMuzak) {
+        stopSound(sounds.ipanemaMuzak);
+      }
 
-    if (sounds.bnb.theme) {
-      stopSound(sounds.bnb.theme);
-    }
+      if (sounds.dangerZone) {
+        stopSound(sounds.dangerZone);
+      }
 
-    if (sounds.bnb.muchaMuchacha) {
-      data.muchaMuchacha = false;
-      // hackish: ensure we reset any horizontal travel.
-      dom.o.style.left = '0px';
-      stopSound(sounds.bnb.muchaMuchacha)
-      utils.css.remove(dom.o, css.muchaMuchacha);
-    }
+      if (sounds.bnb.theme) {
+        stopSound(sounds.bnb.theme);
+      }
 
-    if (sounds.bnb.iGotYouBabe) {
-      stopSound(sounds.bnb.iGotYouBabe);
-    }
+      if (sounds.bnb.muchaMuchacha) {
+        data.muchaMuchacha = false;
+        // hackish: ensure we reset any horizontal travel.
+        dom.o.style.left = '0px';
+        stopSound(sounds.bnb.muchaMuchacha)
+        utils.css.remove(dom.o, css.muchaMuchacha);
+      }
 
-    common.setVideo();
+      if (sounds.bnb.iGotYouBabe) {
+        stopSound(sounds.bnb.iGotYouBabe);
+      }
 
-    if (data.repairComplete) {
-      document.getElementById('repair-complete').style.display = 'none';
+      common.setVideo();
+
+      if (data.repairComplete) {
+        document.getElementById('repair-complete').style.display = 'none';
+      }
+
     }
 
     data.repairing = false;
