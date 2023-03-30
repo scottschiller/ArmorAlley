@@ -423,6 +423,23 @@ function PrefsManager() {
 
     },
 
+    onDisconnect: () => {
+
+      if (!data.active) return;
+
+      events.onChat('Network connection closed.');
+
+      updateNetworkStatus('Disconnected');
+
+      events.onRemoteReady({ ready: false });
+
+      // reset local state. TODO: preserve and re-send on reconnect?
+      events.onReadyState(false);
+
+      resetPlayerNames();
+
+    },
+
     onFormSubmit: (e) => {
 
       updatePrefs();
