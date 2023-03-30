@@ -1,5 +1,5 @@
 import { utils } from '../core/utils.js';
-import { game } from '../core/Game.js';
+import { game, gameType } from '../core/Game.js';
 import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -358,6 +358,12 @@ function PrefsManager() {
 
     // only do the network connect flow once, of course.
     if (data.network && !data.connected) {
+
+      // apply home screen game type to network, if not the default tutorial.
+      if (gameType !== 'tutorial') {
+        gamePrefs.net_game_type = gameType;
+        updateForm();
+      }
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
