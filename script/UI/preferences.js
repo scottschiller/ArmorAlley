@@ -184,6 +184,155 @@ function PrefsManager() {
 
   }
 
+  function startNetwork() {
+
+    updateNetworkStatus('Connecting...');
+
+    resetPlayerNames();    
+
+    events.onChat('Welcome to network chat!');
+
+    if (net.isHost) {
+
+      events.onChat('Waiting for the guest to join...');
+
+    } else {
+
+      events.onChat('Connecting...');
+
+      window.setTimeout(() => {
+      
+        if (net.connected) return;
+        events.onChat('Still connecting...');
+
+        window.setTimeout(() => {
+          updateNetworkStatus('Connection trouble');
+          events.onChat('Unable to connect; apologies. Try getting a new invite link.');
+          events.onChat('This peer-to-peer connection may not work with a double NAT configuration, when both peers are behind certain routers or firewalls. :(');
+        }, 5000);
+
+      }, 5000);
+
+    }
+
+    net.init((id) => {
+
+      if (net.isHost) {
+        doHostSetup(id);
+      }
+
+      // handlers for radio buttons + checkboxes, keeping things in sync
+
+      function handleInputChange(e) {
+
+        let { name, value } = e?.target;
+
+        if (e.target.type === 'checkbox') {
+          // NOTE: assuming 0/1 values here, no "true" strings etc. for checkboxes.
+          if (value != 0 && value != 1) {
+            console.warn('handleInputChange(): WTF, checkbox has value other than 0|1?', e.target);
+            return;
+          }
+          value = (e.target.checked ? value : (value == 1 ? 0 : 1));
+        }
+
+        if (!name) return;
+
+        // note: convert form string to boolean for game prefs object
+        value = normalizePrefValue(value);
+
+        gamePrefs[name] = value;
+
+        if (net.connected) {
+          net.sendMessage({ type: 'UPDATE_PREFS', params: [{ name, value }] });
+        }
+
+        // if we were "ready" to start, we changed our mind - so, reset accordingly.
+        events.onReadyState(false);
+
+      }
+
+      // change events on prefs "panels" that need syncing with remote
+      ['network-options', 'gameplay-options', 'traffic-control'].forEach((id) => document.getElementById(id).addEventListener('change', handleInputChange));
+
+      const chatInput = document.getElementById('network-chat-input');
+
+      function changeHandler(e) {
+
+        if (!net.connected) return;
+
+        const text = chatInput.value;
+
+        const params = [ text, gamePrefs.net_player_name ];
+
+        // show the same locally,
+        events.onChat(...params);
+
+        // send...
+        net.sendMessage({ type: 'CHAT', params });
+
+        // and clear.
+        chatInput.value = '';
+
+        // slash command?
+        // NOTE: explicit pass of false, so we send a chat message with this local command call.
+        const fromNetwork = false;
+        common.parseSlashCommand(text, fromNetwork)?.();
+
+        e.preventDefault();
+        return false;
+
+      }
+
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') return changeHandler(e);
+      });
+
+      // just in case - iOS and others.
+      chatInput.addEventListener('change', changeHandler);
+
+
+    }, () => {
+
+      if (net.isHost) {
+
+        events.onChat('Your guest has connected.');
+
+        // if we have a name set, send it over.
+        net.sendMessage({ type: 'REMOTE_PLAYER_NAME', newName: gamePrefs.net_player_name });
+
+        // send host game preferences over.
+        const prefsToSend = [
+          'net_game_type',
+          'net_game_style',
+          'enemy_missile_match_type',
+          'engineers_repair_bunkers',
+          'engineers_rob_the_bank',
+          'tank_gunfire_miss_bunkers',
+          'ground_unit_traffic_control'
+        ];
+     
+        const params = prefsToSend.map((key) => ({ name: key, value: gamePrefs[key] }));
+
+        net.sendMessage({ type: 'UPDATE_PREFS', params });
+
+      } else {
+
+        events.onChat('Connection established with host.');
+
+      }
+
+      events.onChat('Identify yourself: /name [your name here]');
+
+      const chatInput = document.getElementById('network-chat-input');
+
+      chatInput.placeholder = 'Type a message, enter/return to send';
+      chatInput.disabled = false;
+
+    });
+    
+  }
+
   function show(options = {}) {
 
     /*
