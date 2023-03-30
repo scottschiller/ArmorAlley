@@ -625,7 +625,8 @@ function processData(data) {
   }
 
   // special case: run things like ping test and ping/pong immediately, no queueing.
-  if (processImmediateTypes[data.type]) {
+  // likewise, for chat messages etc. prior to the game starting.
+  if (!game.data.started || processImmediateTypes[data.type]) {
     processMessage(data);
     return;
   }
