@@ -508,8 +508,8 @@ const messageActions = {
 
     sendMessage({ type: 'SYNACK' });
 
-    if (pingStack.length && pingStack.length < stackSize) {
-      showLocalMessage(`${connectionText}<br />Ping: ${avg(pingStack).toFixed(1)}ms`);
+    if (pingStack.length && pingStack.length <= stackSize) {
+      showLocalMessage(`${connectionText}<br />Ping ${pingStack.length}/${stackSize}: ${avg(pingStack).toFixed(1)}ms`);
     }
 
   },
