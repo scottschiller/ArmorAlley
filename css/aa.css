@@ -5036,6 +5036,13 @@ button .network-icon {
 #message-form-input:focus {
   outline: none;
   background-color: #006600;
+}
+
+#message-form-input::placeholder {
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/::placeholder */
+  color: #009900;
+}
+
 #network-options-chat-box {
   border: 0.5px solid #999;
   border-bottom: none;
