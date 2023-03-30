@@ -53,7 +53,7 @@ let timePair = {
   t2: null
 };
 
-const statsByType = {};
+let statsByType = {};
 
 function updateStatsByType(type, direction) {
   
@@ -915,6 +915,7 @@ const net = {
   
       net.connected = false;
  
+      net.reset();
       showLocalMessage(msg);
       
       game.objects.notifications.add(msg);
@@ -925,7 +926,16 @@ const net = {
   
   },
 
-  remoteID
+  remoteID,
+
+  reset: () => {
+
+    timePair.t1 = null;
+    timePair.t2 = null;
+    pingStack = [];
+    statsByType = {};
+    
+  }
 
 };
 
