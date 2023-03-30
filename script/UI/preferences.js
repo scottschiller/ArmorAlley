@@ -477,6 +477,63 @@ function PrefsManager() {
 
     },
 
+    onUpdatePrefs: (prefs) => {
+
+      if (!dom.o) return;
+
+      if (!data.active) return;
+
+      if (!prefs?.length) return;
+
+      const isBatch = prefs.length > 1;
+
+      prefs.forEach((pref) => {
+
+        // note, value is boolean.
+        let { name, value } = pref;
+
+        // update the local model with the boolean.
+        gamePrefs[name] = value;
+
+        // stringify for the form.
+        const formValue = boolToInt(value);
+
+        // find all input(s) (radio + checkbox) with the given name, then check the value.
+        // qSA() doesn't return a full array, rather a note list; hence, the spread.
+        [...dom.oForm.querySelectorAll(`input[name="${name}"]`)].forEach((input) => {
+          input.checked = input.value == formValue;
+        });
+
+        if (!isBatch) {
+          events.onChat(`${gamePrefs.net_remote_player_name} changed ${name} to ${formValue}`);
+          // if we were "ready" to start, we changed our mind - so, reset accordingly.
+          events.onReadyState(false);
+        }
+
+      });
+
+      if (isBatch) {
+        let name = gamePrefs.net_remote_player_name;
+        events.onChat(`Received game preferences from ${name}`);
+      }
+
+    },
+
+    onReadyState: (newState) => {
+
+      if (!net.connected) return;
+
+      if (newState === data.readyToStart) return;
+
+      data.readyToStart = newState;
+      dom.oFormSubmit.disabled = newState;
+
+      net.sendMessage({ type: 'REMOTE_READY', params: { ready: data.readyToStart }});
+      
+      checkGameStart({ local: true });
+
+    },
+
     onFormSubmit: (e) => {
 
       updatePrefs();
