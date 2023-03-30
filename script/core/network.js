@@ -765,7 +765,7 @@ const net = {
 
     if (!window.Peer) {
 
-      // go get it.
+      // go get it, then call this method again.
       if (debugNetwork) console.log('Loading PeerJS...');
 
       var script = document.createElement('script');
@@ -773,8 +773,13 @@ const net = {
       script.onload = () => net.init(onInitCallback, startGameCallback);
 
       // TODO: show in the UI.
-      script.onerror = (e) => console.log('Error loading PeerJS', e);
-      script.src = 'script/peerjs@1.4.7.js';
+      script.onerror = (e) => {
+        console.log('Error loading PeerJS', e);
+        prefsManager.onNetworkError(`Error loading PeerJS script "${'script/peerjs@1.4.7.js'}": ${e.message}`);
+      }
+
+      const src = 'script/peerjs@1.4.7.js'
+      script.src = src;
 
       document.head.appendChild(script);
 
