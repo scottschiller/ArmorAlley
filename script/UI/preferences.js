@@ -188,11 +188,7 @@ function PrefsManager() {
 
   }
 
-  function isActive() {
-
-    return data.active;
-
-  }
+  const isActive = () => data.active;
 
   function getEmptyCheckboxData() {
 
