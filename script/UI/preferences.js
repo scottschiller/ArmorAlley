@@ -391,6 +391,13 @@ function PrefsManager() {
 
   function writePrefsToStorage() {
 
+    // don't do this in the network game case, if we are the guest.
+    // we'll inherit prefs from the host, and don't want ours to get clobbered.
+    if (net.active && net.isGuest) {
+      console.warn('writePrefsToStorage(): NOT storing because we are the guest.');
+      return;
+    }
+
     Object.keys(gamePrefs).forEach((key) => utils.storage.set(key, gamePrefs[key]));
     
   }
