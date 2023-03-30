@@ -922,18 +922,12 @@ const Helicopter = (options = {}) => {
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
-      // hackish: apply transition *and* timer, the former seems to be inconsistent.
-      dom.o.addEventListener('transitionend', respawnComplete);
       common.setFrameTimeout(respawnComplete, 1550);
     }
 
   }
 
   function respawnComplete() {
-
-    if (data.isLocal) {
-      dom.o.removeEventListener('transitionend', respawnComplete);
-    }
 
     callAction('setRespawning', false);
 
