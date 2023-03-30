@@ -1860,8 +1860,8 @@ const Helicopter = (options = {}) => {
       data.vX = deltaX;
       data.vY = deltaY;
 
-      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
 
       data.lastVX = data.vX;
       data.lastVY = data.vY;
@@ -2101,8 +2101,8 @@ const Helicopter = (options = {}) => {
 
       // throttle
 
-      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
 
       // within firing range?
       if (target.data.type === TYPES.balloon || target.data.type === TYPES.helicopter) {
@@ -2171,8 +2171,8 @@ const Helicopter = (options = {}) => {
       data.vY -= 0.1;
 
       // and throttle
-      data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
+      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
 
     }
 
@@ -2290,7 +2290,7 @@ const Helicopter = (options = {}) => {
           data.vX = (data.scrollLeft + (data.scrollLeftVX * 9.5) + mouse.x - data.x - data.halfWidth) * 0.1;
 
           // and limit
-          data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
+          data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
 
         }
 
@@ -2299,7 +2299,7 @@ const Helicopter = (options = {}) => {
           data.vY = (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
 
           // and limit
-          data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+          data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
 
         }
 
