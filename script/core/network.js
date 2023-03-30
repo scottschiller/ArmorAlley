@@ -697,6 +697,7 @@ const net = {
 
   active: false,
   isHost: !remoteID,
+  isGuest: !!remoteID,
 
   processRXQueue,
   updateUI,
@@ -750,17 +751,12 @@ const net = {
 
       if (!remoteID) {
 
-        // you're going to be the host.
-        net.isHost = true;
-
         // provide the ID to the host for display; otherwise, ignore.
         onInitCallback?.(id);
 
       } else {
 
         // you are the guest, connecting to the host.
-        net.isHost = false;
-
         if (debugNetwork) console.log('Connecting...');
 
         net.connect(remoteID, onInitCallback);
