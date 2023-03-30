@@ -881,9 +881,45 @@ function PrefsManager() {
 
     onFormSubmit: (e) => {
 
-      updatePrefs();
-      writePrefsToStorage();
-      hide();
+      // network case
+      if (net.connected) {
+
+        // ensure we apply prefs, whether started already or not.
+        updatePrefs();
+
+        // if the game is live, just dismiss.
+        if (game.data.started) {
+
+          hide();
+
+        } else {
+
+          let text;
+
+          if (!data.remoteReadyToStart) {
+            text = `${gamePrefs.net_player_name} is ready to start! Waiting on ${gamePrefs.net_remote_player_name}...`;
+          } else {
+            text = `${gamePrefs.net_player_name} is ready to start!`;
+          }
+
+          events.onChat(text);
+
+          const params = [ text ];
+
+          net.sendMessage({ type: 'CHAT', params });
+
+          events.onReadyState(true);
+
+        }
+
+      } else {
+
+        updatePrefs();
+        writePrefsToStorage();
+        hide();
+
+      }
+
       e.preventDefault();
       return false;
 
