@@ -309,6 +309,13 @@ const messageActions = {
 
   },
 
+  'REMOTE_READY': (data) => {
+
+    // signal: ready to start playing.
+    prefsManager.onRemoteReady(data.params);
+
+  },
+
   },
 
   'REMOTE_ORDER': (data) => {
