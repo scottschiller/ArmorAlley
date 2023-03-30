@@ -355,6 +355,10 @@ const GunFire = (options = {}) => {
           if (!data.isInert && !(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
             sparkAndDie(target);
           }
+          // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
+          if (data.isEnemy && target === game.players.local && target.data.isOnScreen) {
+            target.reactToDamage(data.parent);
+          }
         }
       },
       // if unspecified, use default list of items which bullets can hit.
