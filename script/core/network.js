@@ -534,6 +534,8 @@ const messageActions = {
 
     console.log(`half-roundtrip, time to reach remote: ${halfTrip}ms`);
 
+    prefsManager.onChat(`Ping: ${avg(pingStack).toFixed(1)}ms`);
+
     sendMessage({ type: 'ACK' });
 
     // wait for half the roundtrip time before starting the first frame
@@ -542,8 +544,13 @@ const messageActions = {
   },
 
   'ACK': (data) => {
+
     console.log('Got ACK: starting game', data);
+
+    prefsManager.onChat(`Ping: ${avg(pingStack).toFixed(1)}ms`);
+
     net.startGame?.();
+
   },
 
   'PING': (data) => {
