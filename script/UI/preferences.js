@@ -519,6 +519,15 @@ function PrefsManager() {
 
     },
 
+    onRemoteReady: (params) => {
+
+      data.remoteReadyToStart = params.ready;
+
+      // if they're ready and we're ready, then rock and roll; the game can start. 🎸🤘
+      checkGameStart({ local: false });
+     
+    },
+
     onReadyState: (newState) => {
 
       if (!net.connected) return;
