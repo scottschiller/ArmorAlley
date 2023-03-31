@@ -199,7 +199,7 @@ const EndBunker = (options = {}) => {
     if (!attacker || attacker.data.type !== TYPES.gunfire || attacker.data?.parentType !== TYPES.tank) return;
 
     // we have a tank, after all
-    if (attacker.data.isEnemy) {
+    if (attacker.data.isEnemy !== game.players.local.data.isEnemy) {
       game.objects.notifications.addNoRepeat('The enemy neutralized your end bunker 🚩');
     } else {
       game.objects.notifications.addNoRepeat('You neutralized the enemy\'s end bunker ⛳');
