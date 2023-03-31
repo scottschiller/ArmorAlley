@@ -873,11 +873,17 @@ const net = {
 
         showLocalMessage(msg);
       
-        game.objects.notifications.add(msg);
-  
-        common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
-  
+        // only kill the game if it has started; guest may have reloaded
+        // during network set-up, and that is recoverable.
 
+        if (game.data.started) {
+
+          game.objects.notifications.add(msg);
+  
+          common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
+
+        }
+  
       });
 
     });
