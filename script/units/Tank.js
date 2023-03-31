@@ -9,6 +9,7 @@ import { addSequence, playSound, playSoundWithDelay, skipSound, sounds } from '.
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const Tank = (options = {}) => {
 
@@ -181,7 +182,7 @@ const Tank = (options = {}) => {
           playSoundWithDelay(sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']);
 
           // generic notification
-          if (!data.isOnScreen && attackerType !== TYPES.smartMissile) {
+          if (!net.connected && !data.isOnScreen && attackerType !== TYPES.smartMissile) {
             game.objects.notifications.add('You lost a tank 💥');
           }
           
