@@ -141,7 +141,7 @@ const GameLoop = () => {
 
         let behind = data.remoteFrameCount - data.frameCount;
 
-        if (behind > 8) {
+        if (behind >= FPS) {
 
           // if "far" behind, the window was minimized, tab backgrounded / rAF() loop was frozen, etc.
 
