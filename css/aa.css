@@ -4303,8 +4303,15 @@ body.is-mobile #game-prefs-modal {
 
 #game-prefs-submit {
   position: relative;
-  float: right;
-  margin-top: 6px;
+}
+
+#game-prefs-cancel {
+  margin-top: 5px;
+  display: none;
+}
+
+#game-prefs-modal.is-network #game-prefs-cancel {
+  display: inline-block;
 }
 
 /* prototype stuff, not presently in use */
@@ -4413,6 +4420,29 @@ body.is-mobile #game-prefs-modal {
   width: 228px;
   /* sight centering tweak */
   margin-top: -15px;
+}
+
+#game-prefs-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+#game-prefs-header .aa-logo {
+  width: 161.5px;
+  height: 25px;
+  margin-right: 8px;
+  margin-top: 3px;
+}
+
+#game-prefs-header .column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-self: center;
 }
 
 #game-prefs-modal .body {

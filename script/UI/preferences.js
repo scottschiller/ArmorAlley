@@ -1,5 +1,5 @@
 import { utils } from '../core/utils.js';
-import { game, gameType } from '../core/Game.js';
+import { game } from '../core/Game.js';
 import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -85,6 +85,7 @@ function PrefsManager() {
     dom.oChatUI = document.getElementById('network-options-chat-ui');
     dom.oForm = document.getElementById('game-prefs-form');
     dom.oFormSubmit = document.getElementById('game-prefs-submit');
+    dom.oFormCancel = document.getElementById('game-prefs-cancel');
     dom.oNetStatusLabel = document.getElementById('network-options-status-label');
     dom.optionsLink = document.getElementById('game-options-link');
     dom.oStatsBar = document.getElementById('stats-bar');
@@ -95,7 +96,9 @@ function PrefsManager() {
     if (!dom.o || !dom.oForm || !dom.optionsLink) return;
 
     // delightfully old-skool.
+
     dom.oForm.onsubmit = events.onFormSubmit;
+    dom.oForm.onreset = events.onFormReset;
     dom.optionsLink.onclick = events.optionsLinkOnClick;
 
     // hackish: adjust dialog body to "natural" height, prevent scrollbars.
@@ -373,11 +376,8 @@ function PrefsManager() {
     // only do the network connect flow once, of course.
     if (data.network && !data.connected) {
 
-      // apply home screen game type to network, if not the default tutorial.
-      if (gameType !== 'tutorial') {
-        gamePrefs.net_game_type = gameType;
-        updateForm();
-      }
+      // ensure the form matches the JS state.
+      updateForm();
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
@@ -386,8 +386,6 @@ function PrefsManager() {
 
       // network LIGHTS.EXE requires the game loop; so be it.
       game.objects.gameLoop.start();
-
-      document.getElementById('game-menu-form').style.display = data.network ? 'none' : 'block';
 
       utils.css.addOrRemove(dom.o, data.network, 'is-network');
       utils.css.addOrRemove(dom.o, data.network && net.isGuest, 'is-guest');
@@ -758,6 +756,7 @@ function PrefsManager() {
     o: null,
     oChatUI: null,
     oForm: null,
+    oFormCancel: null,
     oFormSubmit: null,
     oNetStatusLabel: null,
     optionsLink: null,
@@ -897,6 +896,21 @@ function PrefsManager() {
       net.sendMessage({ type: 'REMOTE_READY', params: { ready: data.readyToStart }});
       
       checkGameStart({ local: true });
+
+    },
+
+    onFormReset: (e) => {
+
+      if (net.isGuest) {
+        // hackish: reload, sans URL parameters because state is corrupted.
+        window.location = `//${window.location.host}${window.location.pathname}`;
+        return;
+      }
+
+      hide();
+
+      e.preventDefault();
+      return false;
 
     },
 

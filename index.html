@@ -666,11 +666,13 @@
 
           <form id="game-prefs-form" name="prefs_form" method="get" autocomplete="off" novalidate onsubmit="return false">
 
-            <!-- TODO: more terrible things; move to external CSS, etc. -->
-            <div style="text-align: center">
-              <div style="position:relative;display:inline-block;margin:0px auto;padding-top:5px">
+            <div id="game-prefs-header">
+              <div class="column">
+                <img src="image/aa_logo_wordmark.png" alt="Armor Alley&trade; wordmark and helicopter image" class="aa-logo" />
+              </div>
+              <div class="column">
                 <button id="game-prefs-submit" type="submit" class="primary">OK</button>
-                <img src="image/aa_logo_wordmark.png" alt="Armor Alley&trade; wordmark and helicopter image" style="float:left;width:161.5px;height:25px;margin-right:8px" />
+                <button id="game-prefs-cancel" type="reset">CANCEL</button>
               </div>
             </div>
 
