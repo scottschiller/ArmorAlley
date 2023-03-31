@@ -916,18 +916,16 @@ function PrefsManager() {
 
     },
 
-    onFormReset: (e) => {
+    onFormReset: () => {
 
       if (net.isGuest) {
         // hackish: reload, sans URL parameters because state is corrupted.
         window.location = `//${window.location.host}${window.location.pathname}`;
-        return;
+      } else {
+        // reload for host as well, because network has already initialized,
+        // the host peerJS state may be unknown and there could be connection trouble.
+        window.location.reload();
       }
-
-      hide();
-
-      e.preventDefault();
-      return false;
 
     },
 
