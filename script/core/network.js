@@ -301,7 +301,12 @@ const messageActions = {
       // for this variant, we expect a spreadable array.
       // also of note, slash commands are sent along for others to see and learn.
       const args = data.params || [ data.text ];
-      prefsManager.onChat(...args);
+
+      // don't show raw text, if there was a slash command.
+      if (!slashCommand) {
+        prefsManager.onChat(...args);
+      }
+
     }
 
     // now, run if found.

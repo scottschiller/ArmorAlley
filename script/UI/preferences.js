@@ -266,19 +266,33 @@ function PrefsManager() {
 
         const params = [ text, gamePrefs.net_player_name ];
 
-        // show the same locally,
-        events.onChat(...params);
+        // ignore if empty
+        if (!text.length) {
+          e.preventDefault();
+          return;
+        }
 
-        // send...
+        // send to remote, before anything else.
         net.sendMessage({ type: 'CHAT', params });
+
+        // check for slash command.
+        // NOTE: explicit pass of false, so we send a chat message with this local command call.
+        const fromNetwork = false;
+        const slashCommand = common.parseSlashCommand(text, fromNetwork);
+
+        if (slashCommand) {
+
+          slashCommand();
+
+        } else {
+
+          // show the message locally
+          events.onChat(...params);
+
+        }
 
         // and clear.
         chatInput.value = '';
-
-        // slash command?
-        // NOTE: explicit pass of false, so we send a chat message with this local command call.
-        const fromNetwork = false;
-        common.parseSlashCommand(text, fromNetwork)?.();
 
         e.preventDefault();
         return false;
