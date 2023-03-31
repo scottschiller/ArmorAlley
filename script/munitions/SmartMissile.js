@@ -408,7 +408,7 @@ const SmartMissile = (options = {}) => {
 
         const isWeakened = (data.energy < data.energyMax);
         const weakened = isWeakened ? ' weakened' : '';
-        const whose = (data.isEnemy ? (isWeakened ? `A${weakened} enemy` : 'An enemy') : (data?.parentType === TYPES.helicopter ? `Your${weakened}` : `A friendly${weakened}`));
+        const whose = (data.isEnemy !== game.players.local.data.isEnemy ? (isWeakened ? `A${weakened} enemy` : 'An enemy') : (data?.parent?.data?.id === game.players.local.data.id ? `Your${weakened}` : `A friendly${weakened}`));
         const missileType = game.objects.stats.formatForDisplay(data.type, exports);
         const verb = (target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged');
         const targetType = game.objects.stats.formatForDisplay(type, target);
