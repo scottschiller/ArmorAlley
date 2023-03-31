@@ -190,7 +190,7 @@ function PrefsManager() {
 
   function startNetwork() {
 
-    updateNetworkStatus('Connecting...');
+    updateNetworkStatus('Initializing...');
 
     resetPlayerNames();    
 
