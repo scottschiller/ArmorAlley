@@ -204,15 +204,27 @@ function PrefsManager() {
 
       events.onChat('Connecting...');
 
+      const appleWatch = '<span class="mac-system-waiting"></span>';
+
+      window.setTimeout(() => {
+
+        if (net.connected) return;
+
+        updateNetworkStatus(`Connecting... ${appleWatch}`);
+
+      }, 1000);
+
       window.setTimeout(() => {
       
         if (net.connected) return;
+
+        updateNetworkStatus(`Still connecting... ${appleWatch}`);
         events.onChat('Still connecting...');
 
         window.setTimeout(() => {
           updateNetworkStatus('Connection trouble');
           events.onChat('Unable to connect; apologies. Try getting a new invite link.');
-          events.onChat('This peer-to-peer connection may not work with a double NAT configuration, when both peers are behind certain routers or firewalls. :(');
+          events.onChat('This peer-to-peer connection uses PeerJS and WebRTC. This may not work with a double NAT configuration, when both peers are behind certain routers or firewalls. :(');
         }, 5000);
 
       }, 5000);
@@ -793,7 +805,7 @@ function PrefsManager() {
       events.onReadyState(false);
 
       resetPlayerNames();
-
+      
     },
 
     onNetworkError: (text) => {
