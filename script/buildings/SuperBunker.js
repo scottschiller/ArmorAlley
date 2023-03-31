@@ -20,25 +20,33 @@ const SuperBunker = (options = {}) => {
 
   function capture(isEnemy) {
 
-    if (isEnemy && !data.isEnemy) {
+    let isFriendlyCapture = (isEnemy === game.players.local.data.isEnemy);
+
+    if (!data.isEnemy && isEnemy) {
 
       data.isEnemy = true;
 
-      setFriendly(false);
+      setFriendly(isFriendlyCapture);
 
-      game.objects.notifications.add('The enemy captured a super bunker 🚩');
-
-      playSoundWithDelay(sounds.enemyClaim, exports, 500);
-
-    } else if (!isEnemy && data.isEnemy) {
+    } else if (data.isEnemy && !isEnemy) {
 
       data.isEnemy = false;
 
-      setFriendly(true);
+      setFriendly(isFriendlyCapture);
 
-      game.objects.notifications.add('You captured a super bunker ⛳');
+    }
+
+    if (isFriendlyCapture) {
+
+      game.objects.notifications.add('You captured and armed a super bunker ⛳');
 
       playSoundWithDelay(sounds.friendlyClaim, exports, 500);
+
+    } else {
+
+      game.objects.notifications.add('The enemy captured and armed a super bunker 🚩');
+
+      playSoundWithDelay(sounds.enemyClaim, exports, 500);
 
     }
 
@@ -72,11 +80,13 @@ const SuperBunker = (options = {}) => {
     // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
     if (data.energy) return;
 
+    const isFriendly = (attacker.data.isEnemy === game.players.local.data.isEnemy);
+
     // we have a tank, after all
-    if (attacker.data.isEnemy) {
-      game.objects.notifications.addNoRepeat('The enemy disarmed a super bunker 🚩');
-    } else {
+    if (isFriendly) {
       game.objects.notifications.addNoRepeat('You disarmed a super bunker ⛳');
+    } else {
+      game.objects.notifications.addNoRepeat('The enemy disarmed a super bunker 🚩');
     }
 
     // disarmed super bunkers are dangerous to both sides.
@@ -174,7 +184,7 @@ const SuperBunker = (options = {}) => {
   function refreshNearbyItems() {
 
     // set on init, updated with `zones.changeOwnership()` as targets change sides
-    nearby.items = getTypes('infantry, engineer, missileLauncher, helicopter', { group: 'enemy', exports })
+    nearby.items = getTypes('infantry:all, engineer, missileLauncher, helicopter', { group: 'enemy', exports })
 
   }
 
@@ -269,7 +279,9 @@ const SuperBunker = (options = {}) => {
 
       hit(target) {
 
-        const isFriendly = (target.data.isEnemy === data.isEnemy);
+        let isFriendly = (target.data.isEnemy === data.isEnemy);
+
+        const isTargetFriendlyToPlayer = (target.data.isEnemy === game.players.local.data.isEnemy);
 
         if (!isFriendly && data.energy > 0) {
           // nearby enemy, and defenses activated? let 'em have it.
@@ -307,34 +319,46 @@ const SuperBunker = (options = {}) => {
 
               }
 
+              // update, now that capture has happened.
+              isFriendly = (target.data.isEnemy === data.isEnemy)
+
             }
 
             // add or subtract energy, depending on alignment.
-            // explicitly-verbose check, for legibility.
 
-            if (data.isEnemy) {
+            // passing infantry on same team?
+            if (isFriendly) {
 
-              // enemy-owned....
-              if (target.data.isEnemy) {
-                // friendly passer-by.
-                if (data.energy) game.objects.notifications.add('The enemy reinforced a super bunker 💪');
-                data.energy++;
-              } else {
-                if (data.energy > 1) game.objects.notifications.add('You weakened a super bunker ⚔️');
-                data.energy--;
-              }
-
-            } else if (!target.data.isEnemy) {
-
-              // player-owned...
-              if (data.energy) game.objects.notifications.add('You reinforced a super bunker 💪');
-
+              // friendly passer-by, relative to the super bunker.
               data.energy++;
-              setFriendly(true);
+
+              // switch over the first time energy goes up
+              if (data.energy === 1) {
+                
+                // setFriendly(isFriendly);
+
+              } else {
+
+                // "one of ours?"
+                if (isTargetFriendlyToPlayer) {
+                  game.objects.notifications.add('You reinforced a super bunker 💪');  
+                } else {
+                  game.objects.notifications.add('The enemy reinforced a super bunker 💪');
+                }
+
+              }
 
             } else {
 
-              if (data.energy > 1) game.objects.notifications.add('The enemy weakened a super bunker ⚔️');
+              // enemy infantry hit.
+
+              // "one of ours?"
+              if (isTargetFriendlyToPlayer) {
+                if (data.energy > 1) game.objects.notifications.add('You weakened a super bunker ⚔️');
+              } else {
+                if (data.energy > 1) game.objects.notifications.add('The enemy weakened a super bunker ⚔️');
+              }
+
               data.energy--;
 
             }
@@ -350,10 +374,10 @@ const SuperBunker = (options = {}) => {
               // un-manned, but dangerous to helicopters on both sides.
               data.hostile = true;
 
-              if (target.data.isEnemy) {
-                game.objects.notifications.add('Enemy infantry neutralized a super bunker ⚔️');
-              } else {
+              if (isTargetFriendlyToPlayer) {
                 game.objects.notifications.add('Your infantry neutralized a super bunker ⛳');
+              } else {
+                game.objects.notifications.add('Enemy infantry neutralized a super bunker ⚔️');
               }
 
               setFriendly(false);
