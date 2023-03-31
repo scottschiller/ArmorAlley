@@ -754,6 +754,7 @@ const game = (() => {
   players = {
     local: null,
     remote: [],
+    remoteHuman: null,
     cpu: []
   };
 

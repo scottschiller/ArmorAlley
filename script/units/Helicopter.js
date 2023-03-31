@@ -3101,9 +3101,22 @@ const Helicopter = (options = {}) => {
 
   // hackish: assign to globals before init
   if (data.isLocal) {
+
     game.players.local = exports;
+
   } else if (data.isRemote) {
+
     game.players.remote.push(exports);
+
+    if (!data.isCPU) {
+
+      // just in case...
+      if (game.players.remoteHuman) console.warn('WTF game.players.remoteHuman already defined???');
+
+      game.players.remoteHuman = exports;
+
+    }
+
   }
   if (data.isCPU) {
     // note: not mutually exlusive, can be local (for testing purposes) or remote
