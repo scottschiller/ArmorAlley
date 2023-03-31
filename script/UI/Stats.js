@@ -3,6 +3,7 @@ import { game } from '../core/Game.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
+import { net } from '../core/network.js';
 
 const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
@@ -216,6 +217,38 @@ function Stats() {
 
   }
 
+  function getHelicopterLabel(helicopter) {
+
+    if (!helicopter?.data) return;
+
+    const { data } = helicopter;
+
+    const localIsEnemy = game.players.local.data.isEnemy;
+
+    if (net.active && data.isRemote && !data.isCPU) {
+
+      let name = gamePrefs.net_remote_player_name;
+
+      // ignore if the default
+      if (name === 'guest' || name === 'host') {
+        return data.isEnemy === localIsEnemy ? 'your friend' : 'your opponent';
+      }
+
+      // e.g., 'The Old Tanker'
+      return gamePrefs.net_remote_player_name;
+
+    }
+
+    if (data.isEnemy === game.players.local.data.isEnemy) {
+      return `a friendly helicopter`;
+    } else {
+      if (!net.active) return `the enemy helicopter`;
+      // generic
+      return `an enemy ${helicopter}`
+    }
+
+  }
+
   function getNormalizedAttackerString(attacker) {
 
     // common string building: "somebody did something."
@@ -233,13 +266,20 @@ function Stats() {
     // treat helicopters as the actor for gunfire, and bombs (e.g., "you bombed a tank") - but not smart missiles, nor shrapnel - e.g., when you died.
     const isHelicopter = (aData?.parentType === TYPES.helicopter || aData.type === TYPES.helicopter) && aData.type !== TYPES.shrapnel && aData.type !== TYPES.smartMissile;
 
-    // build out string, based on friendliness.
+    // build out string, based on enemy/non-enemy and local player.
 
-    // enemy case: "the enemy helicopter" vs. "an enemy tank"
-    if (aData.isEnemy) return isHelicopter ? `the enemy ${normalizedType}`: `an enemy ${normalizedType}`;
+    // local player, vs. a different helicopter.
+    const isYou = aData.id === game.players.local.data.id;
 
-    // it's you.
-    if (isHelicopter) return 'you';
+    if (isYou) return 'you';
+
+    // some other helicopter? friend or foe, with or without a name etc.
+    if (isHelicopter) {
+      return getHelicopterLabel(attacker);
+    }
+
+    // enemy case, e.g., "an enemy tank"
+    if (aData.isEnemy !== game.players.local.data.isEnemy) return `an enemy ${normalizedType}`;
 
     // everything else: "your infantry"
     return `your ${normalizedType}`;
@@ -269,7 +309,7 @@ function Stats() {
 
     // special case: parachute infantry hit the ground, the parachute didn't open in time.
     if (target.data.didHitGround) {
-      game.objects.notifications.add(`${target.data.isEnemy ? 'An enemy' : 'Your'} infantry’s parachute failed to open. ☠️`);
+      game.objects.notifications.add(`${target.data.isEnemy !== game.players.local.data.isEnemy? 'An enemy' : 'Your'} infantry’s parachute failed to open. ☠️`);
       return;
     }
 
@@ -330,6 +370,10 @@ function Stats() {
 
     }
 
+    // special case: "your opponent hit a smart missile", just ignore.
+    // the reverse is covered, e.g., "you were smoked by an enemy smart missile."
+    if (target.data.type === TYPES.smartMissile && attacker.type === TYPES.helicopter) return;
+    
     // if (e.g.) two tanks fought, determine who won. "your" or "their" (attacking) tank "took out one of theirs / yours."
     let didYoursWin = isSameType && !attacker.isEnemy;
 
@@ -338,7 +382,7 @@ function Stats() {
     let theyWonText = 'one of yours';
 
     // special case: when player's helicopter dies, use special verbiage. "You (were) X by a Y"
-    if (!isSameType && isHelicopter && attacker.isEnemy) {
+    if (!isSameType && isHelicopter && target.data.id === game.players.local.data.id) {
 
       // hacks
       if (attacker.type === TYPES.chain) {
