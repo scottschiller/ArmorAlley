@@ -1,7 +1,7 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP } from '../core/global.js';
+import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP, FPS } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -186,18 +186,35 @@ const GameLoop = () => {
 
     if (net.active) net.updateUI();
 
-    if (net.active && game.players.local) {
+    if (USE_LOCK_STEP && net.active && game.data.started) {
 
       // Lock-step network play: don't do anything until we've received data from the remote.
       // Here be dragons. Probably. 🐉
-      if (data.frameCount && !net.newPacketCount && USE_LOCK_STEP) {
-        if (debugGameLoop) console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
-        // net.sendMessage({ type: 'PING' });
-        return;
-      }
+      if (data.frameCount && !net.newPacketCount) {
 
-      // allow clients to update
-      net.newPacketCount = 0;
+        if (debugGameLoop) console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
+
+        // don't flood the remote with packets, but poke them a bit. :D
+        if (!data.packetWaitCounter || data.packetWaitCounter % (FPS / 2) === 0) {
+
+          if (debugGameLoop) console.log('gameLoop.animate(): sending ping', data.packetWaitCounter);
+
+          net.sendMessage({ type: 'PING' });
+
+        }
+
+        data.packetWaitCounter++;
+
+        return;
+
+      } else {
+
+        // allow clients to update
+        data.packetWaitCounter = 0;
+
+        net.newPacketCount = 0;
+
+      }
 
     }
 
@@ -247,7 +264,6 @@ const GameLoop = () => {
       }
 
       data.frames = 0;
-      data.elapsedTime = 0;
 
       // update / restart 1-second timer
       data.fpsTimer = ts;
@@ -327,8 +343,7 @@ const GameLoop = () => {
     frameCount: 0,
     remoteFrameCount: 0,
     lastExec: 0,
-    elapsed: 0,
-    elapsedTime: 0,
+    packetWaitCounter: 0,
     frames: 0,
     lastFrames: 0,
     timer: null,
