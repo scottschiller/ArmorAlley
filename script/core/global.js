@@ -11,8 +11,20 @@ const ua = navigator.userAgent;
 const FPS = 30;
 const FRAMERATE = 1000 / FPS;
 
-// skip frame(s) as needed, prevent the game from running too fast.
-const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * 0.5;
+/**
+ * Skip frame(s) as needed, prevent the game from running too fast.
+ * 
+ * Note: 144 hz monitors (maybe on Windows?) may need 0.33 or less,
+ * or else the loop may run at 35+ FPS. This may be a 144 hz
+ * monitor thing, not necessarily tied to Windows. TBD.
+ * 
+ * It may be this value needs to be made dynamic, starting at 0.5
+ * and trickling down to 0.33 or so if the frame rate is > 30FPS.
+ * 
+ */
+const frameOffset = parseFloat(searchParams.get('frameOffset')) || 0.33;
+
+const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 
 /**
  * 
