@@ -1216,6 +1216,12 @@ ul.stats-bar .bombs em {
   will-change: unset;
 }
 
+/* firefox complains if we have too many elements using will-change. */
+body.is_firefox .sprite.shrapnel,
+body.is_firefox #radar .radar-item--animated {
+  will-change: unset;
+}
+
 .smoke {
   will-change: transform, opacity;
 }
