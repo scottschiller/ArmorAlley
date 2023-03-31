@@ -48,25 +48,9 @@ const Bunker = (options = {}) => {
 
   function capture(isEnemy) {
 
-    if (isEnemy) {
+    const friendlyCapture = (isEnemy === game.players.local.data.isEnemy);
 
-      utils.css.add(dom.o, css.enemy);
-      utils.css.add(radarItem.dom.o, css.enemy);
-
-      game.objects.notifications.add('The enemy captured a bunker 🚩');
-
-      playSoundWithDelay(sounds.enemyClaim, exports);
-
-      if (game.data.isBeavis) {
-        playSoundWithDelay(sounds.bnb.beavisLostBunker);
-      } else {
-        playSoundWithDelay(sounds.bnb.buttheadLostBunker);
-      }
-
-    } else {
-
-      utils.css.remove(dom.o, css.enemy);
-      utils.css.remove(radarItem.dom.o, css.enemy);
+    if (friendlyCapture) {
 
       // first time capture (of original bunker state) vs. taking back from the enemy
       if (!data.isRecapture) {
@@ -80,7 +64,22 @@ const Bunker = (options = {}) => {
 
       playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'beavisCapturedBunker' : 'buttheadCapturedBunker'], null);
 
+    } else {
+
+      game.objects.notifications.add('The enemy captured a bunker 🚩');
+
+      playSoundWithDelay(sounds.enemyClaim, exports);
+
+      if (game.data.isBeavis) {
+        playSoundWithDelay(sounds.bnb.beavisLostBunker);
+      } else {
+        playSoundWithDelay(sounds.bnb.buttheadLostBunker);
+      }
+      
     }
+
+    utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
+    utils.css.addOrRemove(radarItem.dom.o, isEnemy, css.enemy);
 
     data.isEnemy = isEnemy;
 
@@ -293,7 +292,7 @@ const Bunker = (options = {}) => {
     if (data.isOnScreen) {
       if (gamePrefs.bnb) playSound(sounds.bnb.bunkerExplosion, null);
     } else {
-      game.objects.notifications.add(data.isEnemy ? 'An enemy bunker was destroyed 💥' : 'A friendly bunker was destroyed 💥');
+      game.objects.notifications.add(data.isEnemy === game.players.local.data.isEnemy ? 'A friendly bunker was destroyed 💥' : 'An enemy bunker was destroyed 💥');
     }
 
     // check if enemy convoy production should stop or start
