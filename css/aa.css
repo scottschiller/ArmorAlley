@@ -4918,7 +4918,7 @@ button.primary:not(:disabled):active {
 }
 
 button.attention:not(:active) {
-  animation: text-blink 1s steps(2) infinite;
+  animation: button-blink 1s steps(2) infinite;
 }
 
 @keyframes text-blink {
