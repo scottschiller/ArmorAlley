@@ -5,7 +5,7 @@ import { isMobile, isSafari } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { gamePrefs, prefs } from './preferences.js';
+import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
 
@@ -37,8 +37,7 @@ function init() {
 
   utils.css.add(menu, 'visible');
 
-  utils.events.add(form, 'input', formInput);
-  utils.events.add(form, 'submit', formSubmit);
+  utils.events.add(form, 'click', formClick);
 
   utils.events.add(optionsButton, 'click', () => prefsManager.show());
   utils.events.add(menu, 'mouseover', menuUpdate);
@@ -83,14 +82,6 @@ function init() {
   utils.events.add(window, 'keydown', introBNBSound);
   if (isMobile) {
     utils.events.add(document, 'touchstart', introBNBSound);
-  }
-
-  // if stored, apply the user-set game type now
-  if (gameType) {
-    document.getElementById(`radio-${gameType}`).setAttribute('checked', true);
-    // kick off UI updates
-    lastHTML = null;
-    formInput();
   }
 
   // if we have a gameStyle, just get right to it.
@@ -197,77 +188,34 @@ function showExitType() {
 
 }
 
-function readFormData() {
+function formClick(e) {
 
-  // form fields -> nice object
-  return Object.fromEntries(new FormData(form).entries());
+  const { target } = e;
 
-}
+  if (target.href && utils.css.has(target, 'cta')) {
 
-function formInput() {
+    game.setGameType(target.href.substr(target.href.lastIndexOf('#') + 1));
 
-  const data = readFormData();
-  // update the default description
+    formCleanup();
 
-  if (!data.game_type) return;
+    // go go go!
+    startGame();
 
-  // TODO: clean up DOM references
+    e.preventDefault();
+    return false;
 
-  let label = document.getElementById(`${data.game_type}-label`);
-  let labelEmoji = label.getElementsByClassName('emoji')[0];
+  }
 
-  let startEmoji = document.getElementById('start-emoji');
+  if (target.id === 'start-network-game') {
+    configureNetworkGame();
+  }
   
-  defaultDescription = label.getAttribute('data-title');
-  startEmoji.innerText = labelEmoji.innerText;
-  
-  // thou shall not leak
-  label = labelEmoji = startEmoji = null;
-
 }
 
 function formCleanup() {
 
-  // cleanup
-  utils.events.remove(form, 'input', formInput);
-  utils.events.remove(form, 'submit', formSubmit);
-  utils.events.remove(menu, 'mouseover', menuUpdate);
-  utils.events.remove(menu, 'mouseout', menuUpdate);
-
-  menu = null;
+  utils.events.remove(form, 'click', formClick);
   form = null;
-  optionsButton = null;
-  description = null;
-  
-}
-
-function formSubmit(e) {
-
-  const data = readFormData();
-
-  utils.events.preventDefault(e);
-
-  if (!data.game_type) return;
-
-  // write this back to global
-  game.setGameType(data.game_type);
-
-  // remember for next time
-  utils.storage.set(prefs.gameType, gameType);
-
-  const gameStyle = e.submitter.value;
-
-  if (gameStyle === 'local') {
-
-    startGame();
-
-    return false;
-
-  } else if (gameStyle === 'network') {
-
-    configureNetworkGame();
-
-  }
 
 }
 
