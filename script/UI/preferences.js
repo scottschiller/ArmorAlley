@@ -898,14 +898,19 @@ function PrefsManager() {
 
     onReadyState: (newState) => {
 
-      if (!net.connected) return;
+      if (!net.connected) {
+        dom.oFormSubmit.disabled = true;  
+      } else {
+        dom.oFormSubmit.disabled = newState;
+      }
 
       if (newState === data.readyToStart) return;
 
       data.readyToStart = newState;
-      dom.oFormSubmit.disabled = newState;
 
-      net.sendMessage({ type: 'REMOTE_READY', params: { ready: data.readyToStart }});
+      if (net.connected) {
+        net.sendMessage({ type: 'REMOTE_READY', params: { ready: data.readyToStart }});
+      }
       
       checkGameStart({ local: true });
 
