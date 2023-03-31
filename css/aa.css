@@ -202,10 +202,12 @@ body.is_safari #bnb-vs {
   /* -ve margins for centering; will scale */
   margin-left: -195.5px;
   margin-top: -33.5px;
-  background: transparent url(../image/aa-logo.png) no-repeat 0px 0px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYcAAABDAQAAAABfa/TFAAAAAnRSTlMAAHaTzTgAAAKqSURBVHgBvdIhrB1FFAbgb04m7QqSt0GhyNabSoKADQpZr+oVsoKUadWTaBReVWAhq8Aiq2BxKLIhJGzCdoekeWTzNndywfAlv7mTmTn/3PW/uKkl1X2W6qZW6bWH9a8CH+9u6naXP+sPdftiff59QPC+AOXBAx3PAL24C50o2QeBEWkCvJcKHoLkzFcCYAAMnkLR8DoAesCoh1HDErCj2wUU3YoBWOxvAygb4b4XXmWcLViBgIpcQWBDD6y2t2GDaf31w8AAQOVZAFAAVm9sdghQFEpCJu12gO3uFhTMCwGYAuxA1cFhwy7MxGmtqxuAAYcJEDgrLplhIgMkE4fMWQXCAMBLeowX71pIEOi1jO4bCsEhM2grIE7VaO1aURD+i4osA/Aph3O/zwBhbHVNcNhMdgS605G9S41uMSDaY5zsExAA9TzDWS2zDcFh0JagR3ipITpnK8IG7Lrz2uK+RY9wHQiAQD5/rxKgByCft9oA6LBcvaw4EC5ZQU6AVXYwk10UKrBgB2DC5pKwArMDyvknbCAQWrp2cx47YNISAO8IG8cBLRGAOM+jO5cAwnVgBwhLgXJexnftHpBUgBXZSQUIJEywUkAFZKRyBMJN0fARiPEI5Kyld1H4t1ZAWACUpf2/UwABmB0WCgAZGd80ppq0zIDoUFwyEM4Iv4ycRwNegO4IiOsTXXnd+S5twQw8/cRBKijQHwHRA3wJFkyI0QgMR0DACJiQskNyRgwDSkKZk4CQoRQy4z+RdQgAKcGK4kA5AmLsB48oQglpc1uzQDIWtx7q7qKTEYDFQgEwmTRE6UbvMsoeZ557sncSwiOecDxtLxAAZlDZQNEQgNUEFCvm6tqODRUmCxbaPdbJb3z75nPTRvnR16v6x+92P/OK44TFDmfpJ9D2N8kq2vjbUKO3AAAAAElFTkSuQmCC);
+  /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
+  background: transparent url(../image/armor-alley-logo-print.webp) no-repeat 50% 0px;
+  background-size: contain;
   z-index: 11;
-  opacity: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
   filter: drop-shadow(0px 0px 1px #000);
 }
 

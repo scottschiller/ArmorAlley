@@ -922,6 +922,9 @@ const View = () => {
 
     setTipsActive(true);
 
+    // bring the logo up.
+    dom.logo.style.opacity = 1;
+
   }
 
   css = {
