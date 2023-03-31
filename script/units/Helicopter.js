@@ -1302,6 +1302,8 @@ const Helicopter = (options = {}) => {
     data.vY = 0;
     data.lastVX = 0;
 
+    data.attacker = undefined;
+
     if (!data.isCPU) {
 
       data.vX = 0;
