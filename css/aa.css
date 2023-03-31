@@ -4921,17 +4921,15 @@ button.attention:not(:active) {
   animation: button-blink 1s steps(2) infinite;
 }
 
-@keyframes text-blink {
+@keyframes button-blink {
   /**
    * This is generally considered bad form, evil UX/UI,
    * and you should never do it.
    * ...Except in this one specific case, of course. 😇
    */
-  from {
-    color: #000;
-  }
   to {
-    color: #fff;
+    box-shadow: none;
+    outline: none;
   }
 }
 
