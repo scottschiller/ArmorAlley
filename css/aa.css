@@ -4926,6 +4926,10 @@ button.attention:not(:active) {
   line-height: 10px;
   padding: 4px 10px;
   vertical-align: middle;
+}
+
+#game-menu button.large,
+#game-menu .cta:not(label) {
   transition: transform 0.1s;
 }
 
@@ -4935,6 +4939,10 @@ button.attention:not(:active) {
 
 #game-menu button.large:active {
   background: #339933;
+}
+
+#game-menu button.large:active,
+#game-menu .cta:not(label):active {
   transform: scale3d(0.9, 0.9, 1);
 }
 
