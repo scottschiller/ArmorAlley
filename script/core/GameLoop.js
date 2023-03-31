@@ -170,7 +170,7 @@ const GameLoop = () => {
         } else {
 
           // catch-up: skip ahead one frame.
-          if (debugGameLoop) console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
+          if (debugGameLoop) console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount} - skipping one ahead`);
           animate();
           
         }
