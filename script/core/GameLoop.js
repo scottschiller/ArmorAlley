@@ -114,9 +114,6 @@ const GameLoop = () => {
 
     if (!data.fpsTimer) data.fpsTimer = ts;
 
-    // time since last 30FPS frame
-    data.elapsed = ts - data.lastExec;
-
     /**
      * first things first: always request the next frame right away.
      * if expensive work is done here, at least the browser can plan accordingly
@@ -131,7 +128,7 @@ const GameLoop = () => {
      * this still counts as a frame render - we just got here early. Good!
      * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
      */
-    if (!unlimitedFrameRate && data.elapsed < FRAME_MIN_TIME) {
+    if (!unlimitedFrameRate && ts - data.lastExec <= FRAME_MIN_TIME) {
       
       // the below applies only to the network case.
       if (!net.active) return;
@@ -223,14 +220,7 @@ const GameLoop = () => {
       console.log(`transform (style/recalc) count: ${data.transformCount} / ${data.excludeTransformCount} (incl./excl)`);
       data.transformCount = 0;
       data.excludeTransformCount = 0;
-      if (data.elapsed > 34 && window.console) {
-        const slowString = `slow frame (${Math.floor(data.elapsed)}ms)`;
-        console.log(slowString);
-        if (console.timeStamp) console.timeStamp(slowString);
-      }
     }
-
-    data.elapsedTime += data.elapsed;
 
     data.lastExec = ts;
 
