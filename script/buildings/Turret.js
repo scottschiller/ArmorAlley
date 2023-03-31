@@ -179,10 +179,10 @@ const Turret = (options = {}) => {
     if (!dieOptions.silent) {
 
       if (!data.isOnScreen) {
-        if (!data.isEnemy) {
-          game.objects.notifications.add('The enemy disabled a turret 💥');
-        } else {
+        if (data.isEnemy !== game.players.local.data.isEnemy) {
           game.objects.notifications.add('You disabled a turret 💥');
+        } else {
+          game.objects.notifications.add('The enemy disabled a turret 💥');
         }
       }
 
@@ -243,7 +243,7 @@ const Turret = (options = {}) => {
 
   }
 
-  function restore() {
+  function restore(engineer) {
 
     // restore visual, but don't re-activate gun yet
     if (!data.dead && data.energy !== 0) return;
@@ -256,10 +256,10 @@ const Turret = (options = {}) => {
     utils.css.remove(dom.o, css.destroyed);
     utils.css.remove(radarItem.dom.o, css.destroyed);
 
-    if (data.isEnemy) {
-      game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');
-    } else {
+    if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
       game.objects.notifications.addNoRepeat('You started rebuilding a turret 🛠️');
+    } else {
+      game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');      
    }
 
     playSound(sounds.turretEnabled, exports);
@@ -280,7 +280,7 @@ const Turret = (options = {}) => {
 
       if (data.frameCount % data.repairModulus === 0 || complete) {
 
-        restore();
+        restore(engineer);
 
         data.lastEnergy = data.energy;
 
@@ -289,10 +289,10 @@ const Turret = (options = {}) => {
         if (data.dead && data.energy > (data.energyMax * 0.25)) {
           // restore to life at 25%
           data.dead = false;
-          if (data.isEnemy) {
-            game.objects.notifications.add('The enemy re-enabled a turret 🛠️');
-          } else {
+          if (data.isEnemy === game.players.local.data.isEnemy) {
             game.objects.notifications.add('You re-enabled a turret 🛠️');
+          } else {
+            game.objects.notifications.add('The enemy re-enabled a turret 🛠️');
           }
         }
 
@@ -335,7 +335,7 @@ const Turret = (options = {}) => {
 
       if (data.restoring) {
 
-        if (data.isEnemy) {
+        if (data.isEnemy !== game.players.local.data.isEnemy) {
 
           game.objects.notifications.add('The enemy finished rebuilding a turret 🛠️');
 
@@ -422,7 +422,7 @@ const Turret = (options = {}) => {
     if (!data.dead) {
       // notify only if engineer is capturing a live turret.
       // otherwise, it'll be neutralized and then rebuilt.
-      if (isEnemy) {
+      if (data.isEnemy !== game.players.local.data.isEnemy) {
         game.objects.notifications.add('The enemy captured a turret 🚩');
         objects.cornholio?.hide();
       } else {
