@@ -148,6 +148,12 @@ function getRenameString(oldName, newName) {
 
   const str = strings[parseInt(Math.random() * strings.length, 10)];
 
+  // hackish: ignore default "guest" and "host" if game has started, use nicer context-appropriate wording.
+  if (game.data.started && (oldName === 'guest' || oldName === 'host')) {
+    // naming depends on the player's friendliness.
+    oldName = (game.players.remoteHuman.data.isEnemy === game.players.local.data.isEnemy ? 'your friend' : 'your opponent');
+  }
+
   return str.replace('%1', oldName).replace('%2', newName);
 
 }
