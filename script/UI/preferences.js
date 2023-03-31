@@ -181,7 +181,7 @@ function PrefsManager() {
         linkDetail.innerHTML = [
          `<p>Send this link to a friend:</p>`,
          `<a href="${inviteURL}" onclick="return false" class="no-hover">${inviteURL}</a>`,
-         ok ? `<p>The link has been copied to your clipboard.</p>` : `<p>(Couldn't be copied to your clipboard, sorry.)</p>`
+         ok ? `<p>The link has been copied to your clipboard.</p>` : ``
         ].join('\n');
       });
     }
