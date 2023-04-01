@@ -4315,6 +4315,41 @@ body.is-mobile #game-prefs-modal {
   display: inline-block;
 }
 
+/* volume control */
+
+#game-prefs-modal .range-slider {
+  appearance: none;
+  width: 50px;
+  height: 6px;
+  background: transparent;
+  border: 0.5px solid #000;
+  border-radius: 6px;
+  padding: 0px 0.5px;
+  outline: none;
+  margin-top: -0.5px;
+  margin-bottom: 0px;
+}
+
+#game-prefs-modal .range-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 5px;
+  height: 5px;
+  background: #000;
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+#game-prefs-modal .range-slider::-moz-range-thumb {
+  appearance: none;
+  width: 5px;
+  height: 5px;
+  background: #000;
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
 /* prototype stuff, not presently in use */
 /*
 

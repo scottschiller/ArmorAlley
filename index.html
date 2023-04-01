@@ -789,8 +789,14 @@
                   <li>
                     <label for="cb_sound">
                       <input type="checkbox" id="cb_sound" name="sound" value="1" checked /> <span class="label-text">Sound</span>
-                      <p class="non-indented">Ambience &amp; audible hints - e.g., when building convoys, or distant gunfire.</p>
                     </label>
+                    <label for="main_volume">
+                      <span class="label-text"> / Volume</span>
+                      <!-- min-width allows for 100% without content shift -->
+                      <span id="volume-value" style="display:inline-block;min-width:19px"><!-- "(70%)" rendered here --></span>
+                      <input type="range" id="main_volume" name="volume" list="markers" min="0" max="10" value="7" step="1" class="range-slider" />
+                    </label>
+                    <p class="non-indented">Ambience &amp; audible hints - e.g., when building convoys, or distant gunfire.</p>
                   </li>
 
                   <li>
@@ -1020,6 +1026,7 @@
                   </li>
                   <li>
                     <a href="https://github.com/scottschiller/ArmorAlley" title="Armor Alley (Web Version) on GitHub" data-ignore-touch="true" target="_blank">"Armor Alley" on GitHub</a> - source code and revision history.
+                  </li>
                 </ul>
 
               </fieldset>
