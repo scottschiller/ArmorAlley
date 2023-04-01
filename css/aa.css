@@ -940,10 +940,19 @@ ul.stats-bar li.stats-item:not(:last-of-type) {
   padding-right: 8px !important;
 }
 
+body.is_iphone #stats-bar .letter-block,
+body.is_iphone #status-bar .letter-block {
+  /* NOTE: #stats-bar and #status-bar are both valid. :P */
+  /* dammit. */
+  display: none;
+}
+
 #stats-bar.hide-inventory li.inventory-item,
 #stats-bar.hide-weapons-status .stats-item,
-#stats-bar.hide-keyboard-labels .letter-block {
+#stats-bar.hide-keyboard-labels .letter-block,
+#status-bar.hide-keyboard-labels .letter-block {
   /* user has chosen to hide via game prefs */
+  /* NOTE: #stats-bar and #status-bar are both valid. :P */
   display: none;
 }
 
