@@ -7,6 +7,7 @@ import { common } from './common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { isGameOver } from './logic.js';
 import { effects } from './effects.js';
+import { net } from './network.js';
 
 const bnb = {};
 const playImmediately = { playImmediately: true };
