@@ -370,13 +370,13 @@ function PrefsManager() {
 
   function show(options = {}) {
 
-    /*
-    const options = {
-      network: true,
-      // expect game_type to be one of easy / hard / extreme
-      onStart: (networkGameType) => startGame(networkGameType)
-    };
-    */
+    /**
+     * options = {
+     *   network: true,
+     *   // expect game_type to be one of easy / hard / extreme
+     *   onStart: (networkGameType) => startGame(networkGameType)
+     * };
+     */
 
     if (data.active || !dom.o) return;
 
