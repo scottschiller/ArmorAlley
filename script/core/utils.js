@@ -86,7 +86,7 @@ const utils = {
 
   storage: (() => {
 
-    let data = {}, localStorage;
+    let data = {}, localStorage, unavailable;
 
     // try ... catch because even referencing localStorage can cause a security exception.
     // this handles cases like incognito windows, privacy stuff, and "cookies disabled" in Firefox.
@@ -149,12 +149,14 @@ const utils = {
     } catch (e) {
       console.log('localStorage read test failed. Disabling.');
       localStorage = null;
+      unavailable = true;
     }
 
     return {
       get,
       remove,
-      set
+      set,
+      unavailable
     };
 
   })()
