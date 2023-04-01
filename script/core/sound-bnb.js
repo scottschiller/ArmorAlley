@@ -1074,6 +1074,30 @@ bnb.buttheadWatchTheMaster = shuffle([
 ]);
 bnb.buttheadWatchTheMaster.excludeDelay = true;
 
+bnb.volumeTestSounds = [
+  shuffle([
+    add('beavis_grunt_3'),
+    add('beavis_grunt_4')
+  ]),
+  add('beavis_xscream_1'),
+  add('b_butthole'),
+  add('beavis_dammit'),
+  add('bh_hit'),
+  add('bh_buttmunch')
+];
+
+bnb.volumeTestSounds.forEach((sound) => {
+  sound.playImmediately = true;
+  sound.excludeThrottling = true;
+});
+
+bnb.beavisPoopShort = shuffle([
+  add('vs_beavis_poop'),
+  add('b_poop_short'),
+  add('b_stools_poop', 30)
+]);
+bnb.beavisPoopShort.playImmediately = true;
+
 bnb.beavisPoop = shuffle([
   add('vs_beavis_poop'),
   add('b_poop_short'),
