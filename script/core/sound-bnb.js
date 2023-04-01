@@ -1346,7 +1346,10 @@ bnb.beavisGrunt = shuffle([
 bnb.beavisGrunt.excludeThrottling = true;
 bnb.beavisGrunt.playImmediately = true;
 
-bnb.buttheadBelch = add('butthead_belch');
+bnb.buttheadBelch = addSound({
+  url: bnbURL('butthead_belch'),
+  volume: 50
+});
 bnb.buttheadBelch.excludeThrottling = true;
 bnb.buttheadBelch.playImmediately = true;
 
