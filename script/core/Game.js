@@ -654,7 +654,7 @@ const game = (() => {
   
     // Very limited CSS stuff, here, to hide keyboard controls.
     if (isiPhone) {
-      utils.css.add(document.body, 'is-iphone');
+      utils.css.add(document.body, 'is_iphone');
     }
 
     if (isMobile) {
