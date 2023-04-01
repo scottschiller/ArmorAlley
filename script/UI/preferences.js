@@ -662,9 +662,13 @@ function PrefsManager() {
 
   function readAndApplyPrefsFromStorage() {
 
-    let prefs = readPrefsFromStorage();
+    if (!utils.storage.unavailable) {
 
-    applyNewPrefs(prefs);
+      let prefs = readPrefsFromStorage();
+
+      applyNewPrefs(prefs);
+
+    }
 
     updateForm();
 
