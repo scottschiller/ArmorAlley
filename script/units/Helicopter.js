@@ -2264,9 +2264,12 @@ const Helicopter = (options = {}) => {
 
   function animate() {
 
-    // network lock-step case: if local and dead, send a packet over to keep things going.
-    // this is done because coordinates are not sent while dead.
-    if (USE_LOCK_STEP && net.active && (data.dead || data.respawning) && data.isLocal) {
+    /**
+     * If local and dead or respawning, send a packet over to keep things going.
+     * This is done because coordinates aren't sent while dead, and packets include frame counts.
+     * In the case of lock step, this could mean the remote client could freeze while waiting.
+     */
+    if (net.active && data.isLocal && (data.dead || data.respawning)) {
       net.sendMessage({ type: 'PING' });
     }
 
