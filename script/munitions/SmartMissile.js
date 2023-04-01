@@ -144,7 +144,7 @@ const SmartMissile = (options = {}) => {
       launchSound.play({
         playbackRate: data.playbackRate,
         onplay: (sound) => launchSound = sound
-      });
+      }, game.players.local);
 
     }
 
@@ -346,7 +346,7 @@ const SmartMissile = (options = {}) => {
 
       } else {
 
-        playSound(sounds.bnb.beavisYes, null, {
+        playSound(sounds.bnb.beavisYes, game.players.local, {
           onfinish: () => {
             if (Math.random() >= 0.5) {
               playSoundWithDelay(sounds.bnb.buttheadWhoaCool);
@@ -533,7 +533,7 @@ const SmartMissile = (options = {}) => {
 
       // launchSound.setVolume((launchSound.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(objects.target, game.players.local));
       // hackish: bananas are 50%, default chicken volume is 20%.
-      launchSound.setVolume((data.isBanana ? 50 : 20) * getVolumeFromDistance(exports, game.players.local, 0.5));
+      launchSound.setVolume((data.isBanana ? 50 : 20) * getVolumeFromDistance(exports, game.players.local, 0.5) * Math.max(0.01, gamePrefs.volume));
       launchSound.setPan(getPanFromLocation(exports, game.players.local));
   
     }
@@ -749,7 +749,7 @@ const SmartMissile = (options = {}) => {
 
       // on-screen, OR, targeting the player chopper
       if (sounds.bnb.boioioing && (data.isOnScreen || (data.isEnemy && objects?.target?.data?.type === TYPES.helicopter))) {
-        playSound(sounds.bnb.boioioing, (data.parentType === 'missile-launcher' && data.isEnemy ? null : exports), {
+        playSound(sounds.bnb.boioioing, game.players.local, {
           onplay: (sound) => {
             // cancel if no longer active
             if (data.dead) {
@@ -773,7 +773,7 @@ const SmartMissile = (options = {}) => {
 
       // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
       if (Math.abs(objects?.target?.data?.x - data.x) >= 666 && !data.isEnemy && (data.parentType === TYPES.helicopter || data.isOnScreen) && Math.random() >= 0.5) {
-        playSoundWithDelay(sounds.bnb.cock);
+        playSoundWithDelay(sounds.bnb.cock, game.players.local);
       }
 
     } else if (sounds.missileLaunch) {
@@ -787,7 +787,7 @@ const SmartMissile = (options = {}) => {
       if (!data.isEnemy && data.parentType === TYPES.helicopter && sounds.bnb.beavisYeahGo) {
         // hackish: only play if this is the first active missile.
         if (!game.players.local.objects.smartMissiles.length) {
-          playSound(sounds.bnb.beavisYeahGo);
+          playSound(sounds.bnb.beavisYeahGo, game.players.local);
         }
       }
 
