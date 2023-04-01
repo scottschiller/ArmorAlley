@@ -342,11 +342,15 @@ function playAndThen(soundReference, callback, delay = 0) {
   }
 
   function play() {
+    
+    // Note: firing this event counts toward *prevents* the "this is boring" commentary.
     gameEvents.fire(EVENTS.boring);
+
     sound.play({
       ...soundReference.localOptions,
       onfinish: newOnFinish
     });
+
   }
 
   if (delay) {
@@ -1667,7 +1671,7 @@ bnb.bhPrettyCoolSometimesBeavis = addVL('bh_youre_pretty_cool_sometimes_b');
 
 bnb.beavisThanks = shuffle([
   add('beavis_i_feel_pretty_good_right_about_now', 65),
-  add('b_thanks_butthead', 65),
+  add('b_thanks_butthead', 50),
   add('b_sometimes_i_just_cant_help_myself', 40),
   addVL('b_cool_im_a_lot_smarter_than_i_thought'),
   addVL('b_academy_thank_you_drive_through_speech'),
