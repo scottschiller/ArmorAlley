@@ -22,6 +22,8 @@ const PREFS = {
   NOTIFICATIONS_LOCATION_RIGHT: 'right'
 };
 
+const DEFAULT_VOLUME_MULTIPLIER = 0.7;
+
 // game defaults
 const defaultPrefs = {
   game_type: '', // [easy|hard|extreme]
@@ -30,6 +32,7 @@ const defaultPrefs = {
   net_player_name: '',
   net_remote_player_name: '',
   sound: true,
+  volume: DEFAULT_VOLUME_MULTIPLIER, // 0-1
   muzak: true,
   bnb: false,
   bnb_tv: true,
@@ -82,11 +85,13 @@ function PrefsManager() {
   function init() {
 
     dom.o = document.getElementById('game-prefs-modal');
+    dom.oBnB = document.getElementById('cb_bnb');
     dom.oChatUI = document.getElementById('network-options-chat-ui');
     dom.oForm = document.getElementById('game-prefs-form');
     dom.oFormSubmit = document.getElementById('game-prefs-submit');
     dom.oFormCancel = document.getElementById('game-prefs-cancel');
     dom.oNetStatusLabel = document.getElementById('network-options-status-label');
+    dom.oVolumeSlider = document.getElementById('main_volume');
     dom.optionsLink = document.getElementById('game-options-link');
     dom.oStatsBar = document.getElementById('stats-bar');
     dom.oGameTips = document.getElementById('game-tips');
@@ -766,11 +771,13 @@ function PrefsManager() {
 
   dom = {
     o: null,
+    oBnB: null,
     oChatUI: null,
     oForm: null,
     oFormCancel: null,
     oFormSubmit: null,
     oNetStatusLabel: null,
+    oVolumeSlider: null,
     optionsLink: null,
     oStatsBar: null,
     oGameTips: null,
