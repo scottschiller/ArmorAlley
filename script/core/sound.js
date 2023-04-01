@@ -328,6 +328,18 @@ function playSound(soundReference, target, soundOptions) {
     localOptions.onstop = soundObject.options.onstop;
   }
 
+  // long, hackish story: don't actually play volume: 0, but volume: 0.01 to effectively be silent.
+  const adjustedPrefsVolume = Math.max(0.01, gamePrefs.volume);
+
+  // after mixing options, one last volume thing: "scale" relative to the user's desired level.
+  if (localOptions.volume) {
+    localOptions.volume *= adjustedPrefsVolume;
+  } else {
+    // if not specified, make this the default.
+    // worth noting, this is very hackish and should be put into a standardized method.
+    localOptions.volume = adjustedPrefsVolume === 0.01 ? 0.01 : adjustedPrefsVolume * 10;
+  }
+
   // 01/2021: push sound calls off to next frame to be played in a batch,
   // trade-off of slight async vs. blocking(?) current frame
   // 01/2022: only play if not already queued.
