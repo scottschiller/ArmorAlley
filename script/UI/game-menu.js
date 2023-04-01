@@ -102,9 +102,6 @@ function introBNBSound(e) {
   // bail if not ready yet - and ignore clicks on #game-options-link which play other sound.
   if (!sounds.bnb.gameMenu || didBNBIntro || (e?.target?.id === 'game-options-link')) return;
 
-  // likewise, if preferences modal is up and user is clicking around.
-  if (prefsManager.isActive()) return;
-
   // ensure window isn't blurred, game isn't paused
   if (game.data.paused) return;
 
