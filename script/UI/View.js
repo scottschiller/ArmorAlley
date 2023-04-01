@@ -1092,7 +1092,7 @@ const View = () => {
     touchstart(e) {
 
       // if the paused screen is showing, resume the game.
-      if (game.data.paused) game.resume();
+      if (game.data.paused) return game.resume();
 
       if (isGameOver()) return;
 
