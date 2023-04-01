@@ -101,7 +101,6 @@ function PrefsManager() {
     if (!dom.o || !dom.oForm || !dom.optionsLink) return;
 
     // delightfully old-skool.
-
     dom.oForm.onsubmit = events.onFormSubmit;
     dom.oForm.onreset = events.onFormReset;
     dom.optionsLink.onclick = events.optionsLinkOnClick;
@@ -132,6 +131,55 @@ function PrefsManager() {
     if (gamePrefs.notifications_location === PREFS.NOTIFICATIONS_LOCATION_LEFT) {
       events.onPrefChange['notifications_location'](gamePrefs.notifications_location);
     }
+
+    // special case: apply BnB "VS" immediately.
+    dom.oBnB.addEventListener('change', (e) => {
+
+      events.onPrefChange['bnb'](!gamePrefs.bnb);
+
+      // update the main screen, too. this is responsible for the game menu sound sequences.
+      const vs = document.getElementById('checkbox-vs');
+      // vs.checked = gamePrefs.bnb;
+
+      // ensure that element does the work it normally does when clicked manually.
+      vs.dispatchEvent(new Event('change'));
+
+    });
+    
+    dom.oVolumeSlider.addEventListener('change', () => {
+
+      // randomize, keep it fun.
+      data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
+
+    });
+
+    // watch for and apply volume updates
+    dom.oVolumeSlider.addEventListener('input', () => {
+
+      // stored in model as 0-1, but form values are 0-10.
+
+      // don't bother doing any SM2 work like mute() etc., just set the "volume scale."
+      gamePrefs.volume = getVolumeFromSlider();
+
+      renderVolumeSlider();
+
+      // play a sound, too.
+      playSound(gamePrefs.bnb ? data.bnbVolumeTestSound : sounds.inventory.begin, null);
+
+    });
+
+  }
+
+  function renderVolumeSlider() {
+
+    document.getElementById('volume-value').innerText = `(${parseInt(gamePrefs.volume * 100, 10)}%)`;
+    
+  }
+
+  function getVolumeFromSlider() {
+
+    // volume slider goes from 0-10; we store values in JS as 0-1 as a volume "scale."
+    return parseFloat((dom.oVolumeSlider.value * 0.1).toFixed(2));
 
   }
 
@@ -390,11 +438,19 @@ function PrefsManager() {
 
     document.body.appendChild(dom.o);
 
+    // ensure the form matches the JS state.
+    updateForm();
+
+    // ensure the volume slider is up-to-date.
+    dom.oVolumeSlider.value = gamePrefs.volume * 10;
+
+    // heh.
+    data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
+
+    renderVolumeSlider();
+
     // only do the network connect flow once, of course.
     if (data.network && !data.connected) {
-
-      // ensure the form matches the JS state.
-      updateForm();
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
@@ -506,6 +562,9 @@ function PrefsManager() {
       data[key] = isNaN(number) ? value : number;
     });
 
+    // special case: volume slider.
+    data[dom.oVolumeSlider.name] = getVolumeFromSlider();
+
     // mixin of e.g., sound=0 where checkboxes are unchecked, and remainder of form data
     let prefs = {
       ...getEmptyCheckboxData(),
@@ -529,7 +588,7 @@ function PrefsManager() {
       // NOTE: form uses numbers, but game state tracks booleans.
       // key -> value: 0/1 to boolean; otherwise, keep as string.
       value = prefs[key];
-      result[key] = isNaN(value) ? value : !!value;
+      result[key] = isNaN(value) || key === 'volume' ? value : !!value;
     }
 
     return result;
@@ -587,11 +646,13 @@ function PrefsManager() {
       if (!inputs?.forEach) return;
 
       inputs.forEach((input) => {
-        // NOTE: intentional non-strict comparison here, string vs. int.
-        if (input.value == value) {
-          input.setAttribute('checked', true);
+        if (input.type === 'range') {
+          // volume: nevermind boolean - convert back from model to form input.
+          input.value = gamePrefs[key] * 10;
         } else {
-          input.removeAttribute('checked');
+          // NOTE: intentional non-strict comparison here, string vs. int.
+          // ALSO important: `checked` needs very much to be a boolean, or else all hell breaks loose.
+          input.checked = !!(input.value == value);
         }
       });
 
@@ -642,7 +703,10 @@ function PrefsManager() {
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
-      if (value) {
+      // special case
+      if (key === 'volume') {
+        prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
+      } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
     });
@@ -770,7 +834,8 @@ function PrefsManager() {
     lastMenuOpen: 0,
     lastMenuOpenThrottle: 30000,
     readyToStart: false,
-    remoteReadyToStart: false
+    remoteReadyToStart: false,
+    bnbVolumeTestSound: null
   };
 
   dom = {
