@@ -4,7 +4,6 @@ import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
 import { initBNBSound, playQueuedBNBSounds, playSequence, queueBNBSound } from './sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { sprites } from './sprites.js';
 
 let soundIDs = 0;
 
