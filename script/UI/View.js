@@ -790,7 +790,7 @@ const View = () => {
   
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
-      document.getElementById('aa').style.zoom = `${data.screenScale * 100}%`;
+      dom.aa.style.zoom = `${data.screenScale * 100}%`;
   
     }
   
@@ -888,6 +888,7 @@ const View = () => {
   function initDOM() {
 
     dom.worldWrapper = sprites.getWithStyle('world-wrapper');
+    dom.aa = document.getElementById('aa');
     dom.battleField = sprites.getWithStyle('battlefield');
     dom.logo = document.getElementById('logo');
     dom.stars = sprites.getWithStyle('stars');
@@ -999,6 +1000,7 @@ const View = () => {
   };
 
   dom = {
+    aa: null,
     battleField: null,
     logo: null,
     stars: null,
