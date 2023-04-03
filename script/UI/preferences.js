@@ -744,14 +744,21 @@ function PrefsManager() {
 
   function disableNetworkOptions() {
 
-    // certain parts of the options menu can be "locked down", now that a game is underway.
-    const ids = ['#network-options', '#gameplay-options', '#traffic-control'];
-    document.querySelectorAll(ids).forEach((node) => node.style.opacity = 0.67);
+    const rootSelector = '.sync-over-network';
 
-    const selector = ids.join(' input, ') + ' input';
+    dom.oForm.querySelectorAll(`${rootSelector} input:not([data-allow-in-game-updates])`).forEach((input) => {
+      if ((input.type === 'radio' || input.type === 'checkbox')) input.disabled = true;
+    });
 
-    document.querySelectorAll(selector).forEach((input) => {
-      if (input.type === 'radio' || input.type === 'checkbox') input.disabled = true;
+    // network-shared / synced menu sections can be "locked down", now that a game is underway.
+    // if any were left non-disabled because of the above, then only fade the child nodes.
+    dom.oForm.querySelectorAll('.sync-over-network').forEach((node) => {
+      // don't "fade" sections that have inputs which are still active.
+      utils.css.add(node, 'faded');
+      if (node.querySelectorAll('input:not([disabled])').length) {
+        // exclude the legend from the fade.
+        utils.css.add(node, 'faded-exclude-legend');
+      }
     });
 
     // hide some sections outright, too.

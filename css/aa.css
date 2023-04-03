@@ -5202,3 +5202,14 @@ button .network-icon {
   border-color: #999;
   border-radius: 0px;
 }
+
+/* grey out everything that isn't "exempt" and still available in-game within a shared network fieldset. */
+#game-prefs-modal fieldset.sync-over-network.faded legend,
+#game-prefs-modal fieldset.sync-over-network.faded > ul > li:not(.allow-in-game-updates) {
+  opacity: 0.67;
+}
+
+#game-prefs-modal fieldset.sync-over-network.faded-exclude-legend legend,
+#game-prefs-modal fieldset.sync-over-network.faded > ul > li.allow-in-game-updates {
+  opacity: 1;
+}
