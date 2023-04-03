@@ -339,6 +339,8 @@ const Tank = (options = {}) => {
     stopped: 'stopped'
   });
 
+  const width = 58;
+
   data = common.inheritData({
     type: TYPES.tank,
     bottomAligned: true,
@@ -352,7 +354,7 @@ const Tank = (options = {}) => {
     fireModulus: fireRates[(options.isEnemy && game.players.cpu.length ? gameType : 'default')],
     vX: (options.isEnemy ? -1 : 1),
     vXDefault: (options.isEnemy ? -1 : 1),
-    width: 58,
+    width,
     height: tankHeight,
     halfWidth: 28,
     halfHeight: tankHeight / 2,
@@ -366,6 +368,7 @@ const Tank = (options = {}) => {
     y: game.objects.view.data.world.height - tankHeight - 1,
     // hackish: logical vs. sprite alignment offset
     yOffset: 2,
+    xLookAhead: width / 3,
     domFetti: {
       colorType: options.isEnemy ? 'grey' : 'green',
       elementCount: 20 + rndInt(20),
