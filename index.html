@@ -705,7 +705,7 @@
 
               </fieldset>
 
-              <fieldset id="network-options-chat" class="network">
+              <fieldset id="network-options-chat" class="network sync-over-network">
 
                 <legend>Network Chat</legend>
 
@@ -730,7 +730,7 @@
 
               </fieldset>
 
-              <fieldset id="network-options" class="network">
+              <fieldset id="network-options" class="network sync-over-network">
 
                 <legend>Network Options<span class="network-icon"></span></legend>
 
@@ -773,6 +773,19 @@
                         <input type="radio" id="radio_net_game_type_extreme" name="net_game_type" value="extreme" /> <label for="radio_net_game_type_extreme">Extreme</label>
                       </li>
                     </ul>
+                  </li>
+
+                  <li class="allow-in-game-updates">
+
+                    <ul class="less-bottom-spacing">
+                      <li>
+                        <label for="cb_lock_step">
+                          <input type="checkbox" id="cb_lock_step" name="lock_step" value="1" data-allow-in-game-updates="1" /> <span class="label-text">"Lock Step" Game Sync</span>
+                          <p class="non-indented">Trade-off: Clients slow down together, instead of one side skipping frames <br />to stay in sync. Try this option if the game feels unstable or janky.</p>
+                        </label>
+                      </li>
+                    </ul>
+
                   </li>
 
                 </ul>
@@ -948,7 +961,7 @@
               
               </fieldset>
 
-              <fieldset id="gameplay-options">
+              <fieldset id="gameplay-options" class="sync-over-network">
 
                 <legend>Gameplay Options<span class="network-icon"></span></legend>
 
@@ -986,7 +999,7 @@
 
               </fieldset>
 
-              <fieldset id="traffic-control">
+              <fieldset id="traffic-control" class="sync-over-network">
 
                 <legend>Ground Vehicle "Traffic Control"<span class="network-icon"></span></legend>
 
