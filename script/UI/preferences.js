@@ -87,6 +87,7 @@ function PrefsManager() {
 
     dom.o = document.getElementById('game-prefs-modal');
     dom.oBnB = document.getElementById('cb_bnb');
+    dom.oChatScroll = document.getElementById('network-options-chat-scroll');
     dom.oChatUI = document.getElementById('network-options-chat-ui');
     dom.oForm = document.getElementById('game-prefs-form');
     dom.oFormSubmit = document.getElementById('game-prefs-submit');
@@ -312,6 +313,15 @@ function PrefsManager() {
         value = normalizePrefValue(value);
 
         gamePrefs[name] = value;
+
+        // special case: show toast for local user.
+        if (game.data.started && name === 'lock_step') {
+          game.objects.notifications.add(`You have ${value ? 'enabled' : 'disabled'} "lock step" game sync.`);
+          if (!value) {
+            // if disabling, ensure the spinner gets turned off.
+            game.objects.gameLoop.setWaiting(false);
+          }
+        }
 
         if (net.connected) {
           net.sendMessage({ type: 'UPDATE_PREFS', params: [{ name, value }] });
@@ -780,7 +790,19 @@ function PrefsManager() {
     
   }
 
+  function resetReadyUI() {
+
+    dom.oFormSubmit.innerHTML = 'OK';
+    utils.css.remove(dom.oFormSubmit, 'attention');
+
+  }
+
   function updateReadyUI() {
+
+    if (game.data.started) {
+      updateNetworkStatus(net.connected ? 'Connected' : 'Disconnected');
+      return;
+    }
 
     dom.oFormSubmit.innerHTML = data.remoteReadyToStart ? 'START' : 'READY';
 
@@ -804,6 +826,8 @@ function PrefsManager() {
   function startGame() {
 
     gameMenu.startGame(gamePrefs.net_game_type, gamePrefs.net_game_type);
+
+    resetReadyUI();
 
   }
 
@@ -847,6 +871,7 @@ function PrefsManager() {
   dom = {
     o: null,
     oBnB: null,
+    oChatScroll: null,
     oChatUI: null,
     oForm: null,
     oFormCancel: null,
@@ -917,7 +942,7 @@ function PrefsManager() {
 
       dom.oChatUI?.appendChild(item);
 
-      const scroller = document.getElementById('network-options-chat-scroll');
+      const scroller = dom.oChatScroll;
 
       const { scrollHeight } = scroller;
 
@@ -929,9 +954,7 @@ function PrefsManager() {
 
     onUpdatePrefs: (prefs) => {
 
-      if (!dom.o) return;
-
-      if (!data.active) return;
+      if (!dom.oForm) return;
 
       if (!prefs?.length) return;
 
@@ -955,9 +978,22 @@ function PrefsManager() {
         });
 
         if (!isBatch) {
+
           events.onChat(`${gamePrefs.net_remote_player_name} changed ${name} to ${formValue}`);
+
           // if we were "ready" to start, we changed our mind - so, reset accordingly.
           events.onReadyState(false);
+
+          if (game.data.started) {
+            if (name === 'lock_step') {
+              game.objects.notifications.add(`${gamePrefs.net_remote_player_name} ${formValue ? 'enabled' : 'disabled'} "lock step" game sync.`);
+              // if disabled, ensure we aren't showing the spinner.
+              if (!formValue) {
+                game.objects.gameLoop.setWaiting(false);
+              }
+            }
+          }
+
         }
 
       });
@@ -979,6 +1015,8 @@ function PrefsManager() {
     },
 
     onReadyState: (newState) => {
+
+      if (game.data.started) return;
 
       if (!net.connected) {
         dom.oFormSubmit.disabled = true;  
