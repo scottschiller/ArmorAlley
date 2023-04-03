@@ -259,7 +259,7 @@ const Infantry = (options = {}) => {
 
     // hackish: make butthead stop to the left, and beavis stop to the right of (e.g.) a turret.
     if (gamePrefs.bnb && !data.isEnemy) {
-      data.xLookAhead = options.isButthead ? -28 : defaultLookAhead;
+      data.xLookAhead = options.isButthead ? -28 : 8;
     } else {
       data.xLookAhead = options.xLookAhead || defaultLookAhead;
     }
@@ -283,7 +283,7 @@ const Infantry = (options = {}) => {
     
   }
 
-  defaultLookAhead = 8;
+  defaultLookAhead = 16;
 
   css = common.inheritCSS({
     className: null,
