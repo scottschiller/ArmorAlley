@@ -4324,6 +4324,11 @@ body.is-mobile #game-prefs-modal {
   display: inline-block;
 }
 
+/* hide once the game has started. */
+body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
+  display: none;
+}
+
 /* volume control */
 
 #game-prefs-modal .range-slider {
@@ -4470,7 +4475,7 @@ body.is-mobile #game-prefs-modal {
 #game-prefs-header {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   width: 100%;
   padding: 5px;
   box-sizing: border-box;
@@ -4479,8 +4484,8 @@ body.is-mobile #game-prefs-modal {
 #game-prefs-header .aa-logo {
   width: 161.5px;
   height: 25px;
-  margin-right: 8px;
   margin-top: 3px;
+  margin-right: 6px;
 }
 
 #game-prefs-header .column {
@@ -4488,6 +4493,10 @@ body.is-mobile #game-prefs-modal {
   flex-direction: column;
   flex: 1;
   align-self: center;
+}
+
+#game-prefs-header .column:last-of-type {
+  margin-right: 2px;
 }
 
 #game-prefs-modal .body {
@@ -4949,7 +4958,7 @@ button.primary {
   /* inner white, followed by outer black borders */
   box-shadow:
     0 0 0 0.5px #fff,
-    0 0 0 1.5px #000;
+    0 0 0 2px #000;
 
   /* Safari collapses buttons more than the others. :/ */
   padding: 0.5px 10px;
@@ -4971,14 +4980,21 @@ button.attention:not(:active) {
    * and you should never do it.
    * ...Except in this one specific case, of course. 😇
    */
+  from {
+    box-shadow:
+    0 0 0 0.5px #fff,
+    0 0 0 2px #000;
+  }
   to {
-    box-shadow: none;
-    outline: none;
+    box-shadow: 0 0 0 4px rgb(243,243,243), 0 0 0 2px rgb(243,243,243);
+    border-color: transparent;
   }
 }
 
 .mac-system-waiting {
-  /* hat tip: https://impossiblue.github.io/log/150406/index.html */
+  /**
+   * Hat tip: https://impossiblue.github.io/log/150406/index.html
+   */
   /* image/apple-watch.gif */
   display: inline-block;
   width: 5.5px;
