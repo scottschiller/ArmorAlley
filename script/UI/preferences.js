@@ -385,17 +385,15 @@ function PrefsManager() {
         // if we have a name set, send it over.
         net.sendMessage({ type: 'REMOTE_PLAYER_NAME', newName: gamePrefs.net_player_name });
 
-        // send host game preferences over.
-        const prefsToSend = [
-          'net_game_type',
-          'net_game_style',
-          'enemy_missile_match_type',
-          'engineers_repair_bunkers',
-          'engineers_rob_the_bank',
-          'tank_gunfire_miss_bunkers',
-          'ground_unit_traffic_control'
-        ];
-     
+        // grab groups of inputs, grouped by `<legend>` for shared "sync over network" sections.
+        // radio buttons share the same name, so we'll have duplicates that need filtering.
+        // hackish: assign all to an object, then return the keys.
+        let sharedPrefNames = {};
+
+        dom.oForm.querySelectorAll('.sync-over-network input').forEach((input) => sharedPrefNames[input.name] = true);
+
+        const prefsToSend = Object.keys(sharedPrefNames);
+
         const params = prefsToSend.map((key) => ({ name: key, value: gamePrefs[key] }));
 
         net.sendMessage({ type: 'UPDATE_PREFS', params });
