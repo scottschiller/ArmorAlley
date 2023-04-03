@@ -9,6 +9,12 @@ const objectsByZone = [];
 
 const zoneDebugging = window.location.toString().match(/zone/i);
 
+const useLookAheadTypes = {
+  'tank': true,
+  'infantry': true,
+  'engineer': true
+};
+
 function init() {
 
   for (let i = 0; i <= ZONE_COUNT; i++) {
@@ -50,11 +56,36 @@ function calcZone(obj) {
   // front edge of e.g., a tank
   let front, rear;
 
+  /**
+   * 
+   * Take look-ahead into account for certain types, where some objects
+   * interact with a turret that's right near the edge of a zone.
+   * 
+   * This means the object enters the zone on its front edge a bit earlier,
+   * where it will pick up on things right at the edge of the zone that it
+   * previously may have missed.
+   * 
+   * It may be safest to work look-ahead in for all objects, but TBD.
+   * 
+   */
+  let xLookAhead = 0;
+
+  // special-case a few
+  if (useLookAheadTypes[obj.data.type] && obj.data.xLookAhead) {
+    if (Math.min(16, obj.data.xLookAhead || obj.data.widthOneThird) !== xLookAhead) {
+      if (!obj.data.xLookAheadForZones) {
+        obj.data.xLookAheadForZones = Math.min(16, obj.data.xLookAhead || obj.data.widthOneThird);
+      }
+    }
+    xLookAhead = obj.data.xLookAheadForZones;
+    if (obj.data.isEnemy) xLookAhead *= -1;
+  }
+
   if (obj.data.isEnemy) {
-    front = obj.data.x;
+    front = obj.data.x - xLookAhead;
     rear = obj.data.x + (obj.data.width || 0);
   } else {
-    front = obj.data.x + (obj.data.width || 0);
+    front = obj.data.x + (obj.data.width || 0) + xLookAhead;
     rear = obj.data.x;
   }
 
