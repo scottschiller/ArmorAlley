@@ -4991,6 +4991,22 @@ button.attention:not(:active) {
   padding-left: 1px;
 }
 
+.mac-system-spinner {
+  /* Hat tip: https://apple.stackexchange.com/questions/407893/where-are-are-the-counting-hand-cursors-used-in-macos */
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-bottom: -1px;
+  margin-right: 1px;
+  background-image: url(../image/mac-system-spinner.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#lock-step-indicator {
+  display: none;
+}
+
 /* game menu screen */
 
 #game-menu button.large {
