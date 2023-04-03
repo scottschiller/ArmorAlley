@@ -136,7 +136,7 @@ function makeDebugRect(obj, viaNetwork) {
 
 }
 
-function getRenameString(oldName, newName) {
+function getRenameString(oldName, newName, fromNetworkEvent) {
 
   const strings = [
     '%1 is now %2.',
@@ -149,9 +149,20 @@ function getRenameString(oldName, newName) {
   const str = strings[parseInt(Math.random() * strings.length, 10)];
 
   // hackish: ignore default "guest" and "host" if game has started, use nicer context-appropriate wording.
-  if (game.data.started && (oldName === 'guest' || oldName === 'host')) {
+
+  const isGuest = (oldName === 'guest');
+  const isHost = (oldName === 'host');
+
+  if (isGuest || isHost) {
+
     // naming depends on the player's friendliness.
-    oldName = (game.players.remoteHuman.data.isEnemy === game.players.local.data.isEnemy ? 'your friend' : 'your opponent');
+    if (fromNetworkEvent) {
+      oldName = (game.players.remoteHuman.data.isEnemy === game.players.local.data.isEnemy ? 'your friend' : 'your opponent');
+    } else {
+      if (isGuest) oldName = 'the guest';
+      if (isHost) oldName = 'the host';
+    }
+
   }
 
   return str.replace('%1', oldName).replace('%2', newName);
@@ -168,7 +179,7 @@ const slashCommands = {
     // name must change, and must be unique.
     if (newName === gamePrefs.net_remote_player_name || newName === gamePrefs.net_player_name) return;
 
-    const msg = getRenameString(playerName, newName);
+    const msg = getRenameString(playerName, newName, fromNetworkEvent);
 
     if (game.data.started) {
       game.objects.notifications.add(msg);
