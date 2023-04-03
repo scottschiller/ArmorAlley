@@ -38,15 +38,15 @@ const unlimitedFrameRate = searchParams.get('frameRate=*');
 
 const isWebkit = ua.match(/webkit/i);
 const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
-const isFirefox = ua.match(/firefox/i);
-const isSafari = (isWebkit && !isChrome && ua.match(/safari/i));
+const isFirefox = !!ua.match(/firefox/i);
+const isSafari = (isWebkit && !isChrome && !!ua.match(/safari/i));
 
 // iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. desktop) - OR, if "touch support" exists(?)
-const isMobile = ua.match(/mobile|iphone|ipad/i) || navigator?.maxTouchPoints > 0;
-const isiPhone = ua.match(/iphone/i);
+const isMobile = !!ua.match(/mobile|iphone|ipad/i) || navigator?.maxTouchPoints > 0;
+const isiPhone = !!ua.match(/iphone/i);
 
 // bare-bones "request mobile website" iOS detection
-const isMobileIOS = ua.match(/iphone|ipad/i);
+const isMobileIOS = !!ua.match(/iphone|ipad/i);
 
 // whether off-screen elements are forcefully removed from the DOM.
 // may be expensive up front, and/or cause style recalcs while
