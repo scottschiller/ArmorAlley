@@ -1,5 +1,5 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
-import { FRAMERATE, oneOf, TYPES, USE_LOCK_STEP } from '../core/global.js';
+import { FRAMERATE, oneOf, TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
@@ -22,6 +22,7 @@ import { isGameOver } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { gameMenu } from './game-menu.js';
 import { net } from '../core/network.js';
+import { gamePrefs } from './preferences.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 
@@ -399,7 +400,7 @@ const View = () => {
     }
 
     // only send if both are non-zero values.
-    if (!player.data.mouse.delayedInputX && !player.data.mouse.delayedInputY && USE_LOCK_STEP) {
+    if (!player.data.mouse.delayedInputX && !player.data.mouse.delayedInputY && gamePrefs.lock_step) {
       // in lieu of coords data, used as a lock-step heartbeat of sorts, send a ping.
       net.sendMessage({ type: 'PING' });
       return;

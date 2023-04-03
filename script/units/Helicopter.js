@@ -22,8 +22,7 @@ import {
   oneOf,
   getTypes,
   rngInt,
-  rng,
-  USE_LOCK_STEP
+  rng
 } from '../core/global.js';
 
 import {

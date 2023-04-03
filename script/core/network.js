@@ -197,10 +197,16 @@ function sendMessage(obj, callback, delay) {
     tSend: performance.now()
   });
 
-  net.sentPacketCount++;
+  // net.sentPacketCount++;
 
-  // only certain messages cause "modem lights" to blink.
-  if (!blinkingLightsExempt[obj.type]) net.outgoingLEDCount++;
+  /**
+   * Only certain messages cause "modem lights" to blink,
+   * unless lock-step is active and we're waiting for the remote.
+   * 
+   * In that case, showing ping/pong is handy.
+   */
+
+  if (!blinkingLightsExempt[obj.type] || game.objects.gameLoop.data.waiting) net.outgoingLEDCount++;
 
   updateStatsByType(obj.type, 'tx');
 
@@ -749,7 +755,6 @@ const net = {
 
   // referenced by game loop for lock-step
   newPacketCount: 0,
-  sentPacketCount: 0,
 
   // all others - for blinking lights
   incomingLEDCount: 0,

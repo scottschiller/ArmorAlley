@@ -1,7 +1,7 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, USE_LOCK_STEP, FPS } from '../core/global.js';
+import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, FPS } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -183,7 +183,7 @@ const GameLoop = () => {
 
     if (net.active) net.updateUI();
 
-    if (USE_LOCK_STEP && net.active && game.data.started) {
+    if (gamePrefs.lock_step && net.active && game.data.started) {
 
       // Lock-step network play: don't do anything until we've received data from the remote.
       // Here be dragons. Probably. 🐉
@@ -193,6 +193,11 @@ const GameLoop = () => {
 
         // don't flood the remote with packets, but poke them a bit. :D
         if (!data.packetWaitCounter || data.packetWaitCounter % (FPS / 2) === 0) {
+
+          if (data.packetWaitCounter > 30) {
+            // only show the spinner if the wait is obvious.
+            setWaiting(true);
+          }
 
           if (debugGameLoop) console.log('gameLoop.animate(): sending ping', data.packetWaitCounter);
 
@@ -206,8 +211,14 @@ const GameLoop = () => {
 
       } else {
 
-        // allow clients to update
-        data.packetWaitCounter = 0;
+        if (data.packetWaitCounter) {
+
+          setWaiting(false);
+
+          // allow clients to update
+          data.packetWaitCounter = 0;
+
+        }
 
         net.newPacketCount = 0;
 
@@ -260,25 +271,11 @@ const GameLoop = () => {
 
     }
 
-    // if we haven't yet, ensure we've sent at least one packet to keep lock-step going.
-    if (net.active) {
-      if (!net.sentPacketCount && USE_LOCK_STEP) {
-        // console.log(`No outgoing packets for frame ${data.frameCount}, sending ping`);
-        // net.sendMessage({ type: 'PING' });
-      } else {
-        net.sentPacketCount = 0;
-      }
-    }
-
   }
 
   function start() {
 
     if (data.timer) return;
-
-    if (!dom.fpsCount) {
-      dom.fpsCount = document.getElementById('fps-count');
-    }
 
     data.timer = true;
     animateRAF();
@@ -312,8 +309,28 @@ const GameLoop = () => {
 
   }
 
+  function setWaiting(isWaiting) {
+
+    if (data.waiting === isWaiting) return;
+
+    data.waiting = isWaiting;
+
+    dom.lockStepIndicator.style.display = isWaiting ? 'inline-block' : 'none';
+
+    const now = performance.now();
+
+    // occasionally notify
+    if (now - data.lastWaitNotified > 10000 && data.packetWaitCounter > 30) {
+      data.lastWaitNotified = now;
+      game.objects.notifications.add(`Lock step: Waiting for ${gamePrefs.net_remote_player_name}...`);
+    }
+
+  }
+
   function initGameLoop() {
 
+    dom.fpsCount = document.getElementById('fps-count');
+    dom.lockStepIndicator = document.getElementById('lock-step-indicator');
     dom.networkInfo = document.getElementById('network-info');
 
     start();
@@ -324,6 +341,7 @@ const GameLoop = () => {
 
   dom = {
     fpsCount: null,
+    lockStepIndicator: null,
     networkInfo: null
   };
 
@@ -340,7 +358,9 @@ const GameLoop = () => {
     fpsTimer: null,
     fpsTimerInterval: 1000,
     transformCount: 0,
-    excludeTransformCount: 0
+    excludeTransformCount: 0,
+    waiting: false,
+    lastWaitNotified: 0
   };
 
   exports = {
@@ -348,6 +368,7 @@ const GameLoop = () => {
     incrementTransformCount,
     init: initGameLoop,
     resetFPS,
+    setWaiting,
     stop,
     start
   };

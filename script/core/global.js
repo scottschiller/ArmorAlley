@@ -26,20 +26,6 @@ const frameOffset = parseFloat(searchParams.get('frameOffset')) || 0.33;
 
 const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 
-/**
- * 
- * Network: Whether to wait (or not) for remote client to
- * send frame data over, i.e., animating in lock-step style.
- * 
- * With this off, a client will skip or "fast-forward" thru
- * frames in order to catch up.
- * 
- * I wouldn't recommend lock step unless the game is slow
- * for both of you, and/or you want to be kind to your peer.
- * 
- */
-const USE_LOCK_STEP = !!searchParams.get('lockStep');
-
 const unlimitedFrameRate = searchParams.get('frameRate=*');
 
 /**
@@ -352,7 +338,6 @@ export {
   FRAME_MIN_TIME,
   FPS,
   FRAMERATE,
-  USE_LOCK_STEP,
   unlimitedFrameRate,
   defaultSeed,
   defaultSeeds,
