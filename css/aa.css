@@ -2088,8 +2088,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .landing-pad .transform-sprite {
-  /* background-image: url(../image/landing-pad-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUQAAAAHCAYAAABwUTSwAAAAtUlEQVR4Ae3WgQYCQRRG4ZX0dvuS04Nu242D2/Y3AMb5ObACn5nRdu54VxuP6vOtcqw8MDqHk4bTw+l5v1U4ZV/mwlnLvnPTcAPPCz39GGJ2havh1GNIwVfDZpjua/at3L/7CtxPZNcvazIjDfuwuyj6asjS2Yu+GrJ4X3kxxxhU36yVnTTUUMMFDPd9P1r8iMiuvDTUUMMlDPmHWGVca3CkoYYaLmPIvjB5TS3jaaihhksYvgDWFPBi+PT8mgAAAABJRU5ErkJggg==);
+  background-image: url(../image/landing-pad-sprite-horizontal.png);
   width: 324px;
   height: 7px;
   animation: animate-transform-sprite-landing-pad 1000ms steps(4) infinite;
