@@ -3317,6 +3317,15 @@ body.is-mobile #game-tips #game-announcements {
     transform: translate3d(0px, 0px, 0px);
   }
   to {
+    transform: translate3d(-520px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-base-snow {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
     transform: translate3d(-510px, 0px, 0px);
   }
 }
