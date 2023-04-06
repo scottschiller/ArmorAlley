@@ -1390,16 +1390,15 @@ body.is_firefox #radar .radar-item--animated {
 }
 
 .missile-launcher {
-  /* background-image: url(../image/missile-launcher.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAABICAMAAACKs/ZeAAAAHlBMVEUAAAAAAAC0tLQJtAACYABgYACzAAD/tACqqqpVVQGXdNyGAAAAAXRSTlMAQObYZgAAATtJREFUeNrt1uFuwyAQA+CYgy57/xeebxa7U1Ah+dthRUhQvkIrWe1xN4gcD4LG1GZmKwdPsPpVazU0urlprxfHYO7gbmla6czI6DAyKMmUAmjdT2PEcP3Yr5YNJyLUZn+nGYaLMWF4mL7CUshcVWOQWQNwPacAwVzJZcbXsuGSHydGyN2JQRFQYqnQ+Xp2YrqDyCxU3YlZT1XyNK8gHBlQkRMuYGfaoK/E2Xme0DiJQTuqmM++Odd4vAuZdjBacKNnxfKOfMkJG3bAo3G3e7f7X7Sbp+Z2+1TjJK6aOzFoqnFa099N0W5N+SyY7tMX8iUnDMqx273b/YntVgMe/XYLqKZv0/s2thvLdreh3cua2uWNBVYdxNB/ePY/893uD2h3XO1Bu1U/4Wft1tMetVvvInm33XIe4Vvt/gGcuBozuCjCbAAAAABJRU5ErkJggg==);
+  background-image: url(../image/missile-launcher.png);
+  background-size: container;
   width: 54px;
   height: 18px;
   z-index: 2;
 }
 
 .missile-launcher.enemy {
-  /* background-image: url(../image/missile-launcher-enemy.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAABICAMAAACKs/ZeAAAAHlBMVEUAAAAAAACqqqqqVQFVVVW0tLT///9VVQGrAgH/qgG2BlWyAAAAAXRSTlMAQObYZgAAATtJREFUeNrtldEOgjAMRek2Cvz/D9ubptxJZGNvGnezVCk7FAknLhZhlucRUdWkySJDVJJUSjkKsf5oUAKKmCH7riC72FFjuvVIcexwDEEv5xzkmeuwmIYvmsWz1aTqvl8wSRb8NmCaN9svi42rScQHchooJLANA/N1JnofMfsEBAzDsIckWh8wUjiNJWdyhK1FSBnXjT8Iw/SkBAXdSELY4YFgWhEkMEKkpA6OgAFBkftgR9SCJ+M9tePG+x87rII+m9LFuKIZt9DAqpskxtxyiNdp97T7i+1e13XcbqMUnDSCC3t1u71nq6WpX9gr7fartDEudj0NjDc57Z52/+F/dxjwbnf4dpsQlHaz+UBT2s1m6mlKu9nsvO/IkN3MtHva/ft204CndhNwTcfsVnd0yO4AMPO53dwRm14j2RxBKB7MLwAAAABJRU5ErkJggg==);
+  background-image: url(../image/missile-launcher-enemy.png);
 }
 
 .tank,
@@ -3593,8 +3592,7 @@ body.is-mobile #player-status-bar .inventory-item:active {
 
 #player-status-bar .inventory-item a.missile-launcher,
 #mobile-controls li.inventory-item a.missile-launcher {
-  /* background-image: url(../image/missile-launcher-static.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAASCAMAAAAnpt3PAAAAHlBMVEUAAQAAAABgYAACYAAJtAD/tACzAAC0tLSqqqpVVQEP4VSqAAAAAXRSTlMAQObYZgAAAMBJREFUeNqN0IEKwzAIBNBetDX7/x/eiWZKYWmPElB8mOZ4G1RYvWeDkaGqTw6eYnKKiGLQ7c24Lp7F3MHdoxm2mJKdxVqQKWMGZJ/bmGC4//Y1umERhFr1t01xvxjTjBniCc3IXIky6IxjuO8xoBjVcp2ZdcMWmQUj5HRjyDjIVMvovF8uWV7dyT5U6ZLpikR62TsoRwYIesoVXCwG4kmczTkR5yaaExLMqw/rOI9/geYEEw038T2xPtEvuWFt4gvAPggZ6Ysf1AAAAABJRU5ErkJggg==);
+  background-image: url(../image/missile-launcher-static.png);
 }
 
 #player-status-bar.enemy .inventory-item a.missile-launcher,
