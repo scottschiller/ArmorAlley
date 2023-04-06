@@ -3609,9 +3609,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 
 #mobile-controls li.inventory-item a.tank,
 #player-status-bar .inventory-item a.tank {
-  background-image: url(../image/tank-static.png);
   /* TODO: replace with new asset */
-  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAASCAMAAAA9mj1BAAAAGFBMVEVhcAAAAAAFVQFVVQFVVVUOqgKqqqr/qgGVIxTWAAAAAXRSTlMAQObYZgAAAMFJREFUeNqV0IEOgzAIBNCVQvn/P16PnVI0TbqLscPdi8TPJm3NprNTvXfrZiJixxhKus34hKA28aGM9mTulHuLhd4S1EFpX4m6pw2Z1DkwtuRHYVulcr2VvzdvhXXOoFe9yAQZ9nPPOIIGrCkWLmWEpMSY8k3/i9lKRxvHF7JI0Xuhx35lccU4JkwqqhpdZVEJlVJxQ+tJh86gjf+ygzkMT0XMWqFyydIRzutzG6PQ1oT76rJZnOU59qdMe/x9K/wCOlII8vghfyEAAAAASUVORK5CYII=); */
+  background-image: url(../image/tank-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.tank,
