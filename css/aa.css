@@ -1040,8 +1040,7 @@ ul.stats-bar .infantry-count {
 
 ul.stats-bar .infantry-count em,
 #mobile-controls li.weapons-item a.parachute-infantry {
-  /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAATCAYAAACgADyUAAAAd0lEQVR4Aa3R0QqAIAyFYRW67e18yfWQxrkZsvqdQYMDCn65ZQk1khQEVPSBsVszHJ+hkiO+NZsHIQD+cQ6VGVLijK/4alVZoogf0MwABXxa84NHr9tIhxWtlQRPaLVGGG72/RJCu/C+3C60+TfsvSoOw55hEq8bvTGFPiUQnUIAAAAASUVORK5CYII=);
+  background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px;
 }
 
 #player-status-bar.enemy .infantry-count em,
@@ -1463,16 +1462,14 @@ body.is_firefox #radar .radar-item--animated {
   position: absolute;
   width: 55px;
   height: 11px;
-  /* background-image: url(../image/infantry-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAAAWBAMAAADTBLRkAAAAElBMVEUAAAAAAAAFVQEOqgKrAgFVVQGRaOXhAAAAAXRSTlMAQObYZgAAAHNJREFUeF7Vy7ENw0AMQ9Gs8FfgClzBK2j/VRLC5+Aqw4IqqxBf8z+/A8h2OOqOgwbf1oHIdTjqLEuiwWkHggZnnSwW/ZCzTr5oiWAnIeycdCBLd50ti5Vhw6QLqv4dVxefqlrOEE+6REAYn9gNLGfyBt0XHmBSe855D0sAAAAASUVORK5CYII=);
+  background-image: url(../image/infantry-sprite-horizontal.png);
   background-size: 55px 11px;
   /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
   animation: animate-transform-sprite-infantry 400ms steps(5) infinite reverse;
 }
 
 .infantry.enemy .transform-sprite {
-  /* background-image: url(../image/infantry-enemy-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAAAWBAMAAADTBLRkAAAAElBMVEUAAAAAAACrAgGqqqpVVVVVVQF94vfuAAAAAXRSTlMAQObYZgAAAHFJREFUeAHVy0ENRCEMAFEsjIVvoRawgH8r20kvbPbU7ek3pLwQZuUAePc46J6HBt/V4QR0OOrCCRqcdQToBifdQm4anHUrvTd8UUtxEznrpIf6EMmf7n5MMuqEq8w5qqykLp2jJ52sVYZUuXAb0P93H1CLWeswBFA1AAAAAElFTkSuQmCC);
+  background-image: url(../image/infantry-enemy-sprite-horizontal.png);
   /* proper L -> R order, in this case. */
   animation: animate-transform-sprite-infantry 400ms steps(5) infinite;
 }
@@ -1613,15 +1610,13 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .parachute-infantry .transform-sprite {
-  /* background-image: url(../image/parachute-infantry.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAADIBAMAAAAJjJyeAAAAGFBMVEUAAAAAAAD///8OqgIFVQGrAgFVVQGqqqqdrCCEAAAAAXRSTlMAQObYZgAAANZJREFUeF7t1NENgzAMBFBWuBW6glfIClkhK3T9nsiprmwHtVL7UziB5MdHBOKSjYHCMZG47QFQkFAy8UpESnJJMCsSeptMkDMcIqd7nwqUyTsVKBvQqEipNTM5ktJVEySw4FwLKKi1tNLnHAO8V1Qyj/O/vdIQualHUiJNSoHeIyrzqpXnjOeVn1Bb4BcPrKtZeKakzZ9gC7Yj6gtaQZlAolv4iJKZnKmfgDUxRs19AlDTJ+eZA+aAva8JEkj89eZWFZzvb27V26iKY4BsCzL7s4pXtzwPguvJ4SThr2sAAAAASUVORK5CYII=);
+  background-image: url(../image/parachute-infantry.png);
   background-size: 14px 100px;
   background-position: 0px -60px;
 }
 
 .parachute-infantry.enemy .transform-sprite {
-  /* background-image: url(../image/parachute-infantry-enemy.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAADIBAMAAAAJjJyeAAAAGFBMVEUAAAAAAAD///+qqqpVVVVVVQCqAACrAgE5Mgm0AAAAAXRSTlMAQObYZgAAANtJREFUeF7t1dENgzAMBNCucCt0Ba+QFbJCVmD9nmuEq14MaqX+FE4g+fERIXQJNwZrOAqJ+zMAlI41SrwSQiI9JZiKxPo2SpCME8LwGCGh22mUkvaxUcJQa2ZhIRVXQThRMNYClB4KsdIX7B28K0aER/nfXsUgvDmXBSEl7XQJs0eU8qpV5oznVVSJpN6YVTIorwMreRxsmdLiN2EF2x5pv5twMwFh2vERU2ZuZX5X1ETvBX0CMGdOyTMHzA7HqAknhL/e3GsVhEebO+ttIWHvIFtBxp9NeXUr8wDswsnh3MFmywAAAABJRU5ErkJggg==);
+  background-image: url(../image/parachute-infantry-enemy.png);
 }
 
 .parachute-infantry.parachute-open,
@@ -3653,7 +3648,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 #player-status-bar .inventory-item a.infantry,
 #mobile-controls li.inventory-item a.infantry {
   /* background-image: url(../image/infantry-static.gif); */
-  background-image: url(data:image/gif;base64,R0lGODlhCgALAMIFAAAAAAVVAVVVAQ6qAqsCAf///////////yH5BAEIAAcALAAAAAAKAAsAAAMmeAoM+gcQ4mCc9bHQ2BoBGHAfB5gf2CyA6EUtNwxe3KiRIDS6kwAAOw==);
+  /* TODO: see if a GIF version is smaller. */
+  background-image: url(../image/infantry-static.png);
 }
 
 #player-status-bar.enemy .inventory-item a.infantry,
