@@ -1859,8 +1859,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .helicopter.enemy .transform-sprite {
-  /* background-image: url(../image/helicopter-enemy-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbgAAAAkBAMAAAAJNzIMAAAAD1BMVEUAAACqqqoAAABVVVX///8gusNdAAAAAXRSTlMAQObYZgAAAPpJREFUeF7t2cGNgCAQhWFamBb+FmyB/mtakNW3IjGS7GUY30Vi5gt5hzmRbqElvQiPmRN9/uO2aOVytmy8HG2porBLeCFE+jB/21cODIDpnbP5nRPrM3lb4HLy2fYAD0MuWJhy1VS0/WYs9xp4YOuXk7JT2R4YM8MBC1IOKKZwqSEEq8EBi1EOckHVZSkN9JsCHliAcoClxuTa2nKNtThhS5fTChxLILe1nKfzJ3hgC5cT01zPRqfNCVu+XM/GTt7AA4tTTkpM89JuWIByPLiDoDhhAcolAC0iu4KtG1ZcsPXLibaY6YMGfLB45fQA8jdO2FfuHg8sbLkf0X1rKV2d4aIAAAAASUVORK5CYII=);
+  background-image: url(../image/helicopter-enemy-sprite-horizontal.png);
   width: 220px;
   height: 18px;
   background-size: 220px 18px;
@@ -1868,8 +1867,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .helicopter.enemy.facing-left .transform-sprite {
-  /* background-image: url(../image/helicopter-enemy-sprite-horizontal-facing-right.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAASCAQAAACasXjOAAABHElEQVRYw+3Z6w7CIAwF4L6kL8lLYuZuBbpS3IFfh0aNhvWDjJuZSLTkFzE7/xt3Rd/G2wAsOTmxlXS86hK9cWk4MsJd0bdgG04DfOOeIy2dcV0NOuMgfQv7aSDrf004GD0uQ5mooTTRlQeoTxX3suKS1FCalPc5hOnx0ZLJI6mhNH1xAMzWRn6DeyWVLVObpOkEvckpzvlrw/LF7e/G2KOG0toU/imqnMo2d4K/z5qkhtL0BumtuNYWWtcvR4o5WqihtA20E0V/6zWn7h41kHauzm3lEa4LUkNr5cZqTet+wueFweCooTQRbwu1qDHOOoFRg2gPxT0Rlf9F7GXiuobaSs1vRJGu+iYQiBpUE/dByISHE9RwXCioTdO+GVvwDqsWiS4AAAAASUVORK5CYII=);
+  /* updated sprite */
+  background-image: url(../image/helicopter-enemy-sprite-horizontal-facing-right.png);
 }
 
 .helicopter.dead {
@@ -2209,17 +2208,18 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .helicopter .transform-sprite {
-  width: 192px;
+  width: 200px;
   height: 15px;
-  /* background-image: url(../image/helicopter-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAAeBAMAAADX8tQLAAAAElBMVEVvcm0AAAALogUFTQKioqJNTU2sj7QCAAAAAXRSTlMAQObYZgAAARVJREFUeF7dl9EJAzEMQ7OCVvAKXkErdP9Vit2LuEBbTCGQ+vUn0Cdxoh/pDWCMAWAE4BdCCaDTCmTd+LUfLPL/A4jgSmMFxB0N0PHO4g/xYz/Ee1/8/wAQ9PWRpk2jmbm7hTgB6KHX/O39DQaA7o4F0hlekN/RoETV393fY4ACboms5PLDAXVV1P3d/X0GvPV08DT1q5F1f3d/jwHAy7wFFDZFlDjL7zGAkYDwNaybg2ZaUPd39zcYsPzZyjimhklGkrTCxqj5m/tbDNALx2QmQDpDMg8U0BtNxd/X32WAWBPp4RGf8GdCVweq/ub+dgOUsOTylDjQbzdACZjEmUVwmt9zAD5iOMzvOoAkjSYEcJjfYcATY786BTZOd+0AAAAASUVORK5CYII=);
-  background-size: 192px 15px;
-  animation: animate-transform-sprite-helicopter 360ms steps(4) infinite;
+  background-image: url(../image/helicopter-sprite-horizontal.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAAeBAMAAADX8tQLAAAAElBMVEVvcm0AAAALogUFTQKioqJNTU2sj7QCAAAAAXRSTlMAQObYZgAAARVJREFUeF7dl9EJAzEMQ7OCVvAKXkErdP9Vit2LuEBbTCGQ+vUn0Cdxoh/pDWCMAWAE4BdCCaDTCmTd+LUfLPL/A4jgSmMFxB0N0PHO4g/xYz/Ee1/8/wAQ9PWRpk2jmbm7hTgB6KHX/O39DQaA7o4F0hlekN/RoETV393fY4ACboms5PLDAXVV1P3d/X0GvPV08DT1q5F1f3d/jwHAy7wFFDZFlDjL7zGAkYDwNaybg2ZaUPd39zcYsPzZyjimhklGkrTCxqj5m/tbDNALx2QmQDpDMg8U0BtNxd/X32WAWBPp4RGf8GdCVweq/ub+dgOUsOTylDjQbzdACZjEmUVwmt9zAD5iOMzvOoAkjSYEcJjfYcATY786BTZOd+0AAAAASUVORK5CYII=); */
+  background-size: 200px 15px;
+  animation: animate-transform-sprite-helicopter 520ms steps(4) infinite;
 }
 
 .helicopter.facing-left .transform-sprite {
-  /* background-image: url(../image/helicopter-sprite-horizontal-facing-left.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAPCAMAAACFvDBUAAAAFVBMVEVvcm1vcm0AAAALogUFTQKioqJNTU0oMm20AAAAAXRSTlMAQObYZgAAAOJJREFUeNrVldGKhDAQBIea9P7/J5+boeVC9m6zgrKWoINWN+QhMbQIEYgoeGNuAP0eI1iZONrPhHhJgIjif78U1cfYGfyYOd7vTLbWMlMpZ8b+Jlj2QZsvrutPAT2Rz6SaY2Z7+bnPNf1AzVSidZxNDw6s+5f1Zx+h7YGXSUmf+VzZj/UsaQzUA77Tz5T3jCVPYI744vz+YF9cYhwAfp9yxLLvY+70fgdqmc+573f7039m1Qf6/fz+gPIr8ehXT9ofIou+ObXfgH0ns3Mfn3HD18hd/CD5kzv4ATmj1Abf7/8A7KIYvrBb3MYAAAAASUVORK5CYII=);
+  /* new sprite */
+  background-image: url(../image/helicopter-sprite-horizontal-facing-left.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAPCAMAAACFvDBUAAAAFVBMVEVvcm1vcm0AAAALogUFTQKioqJNTU0oMm20AAAAAXRSTlMAQObYZgAAAOJJREFUeNrVldGKhDAQBIea9P7/J5+boeVC9m6zgrKWoINWN+QhMbQIEYgoeGNuAP0eI1iZONrPhHhJgIjif78U1cfYGfyYOd7vTLbWMlMpZ8b+Jlj2QZsvrutPAT2Rz6SaY2Z7+bnPNf1AzVSidZxNDw6s+5f1Zx+h7YGXSUmf+VzZj/UsaQzUA77Tz5T3jCVPYI744vz+YF9cYhwAfp9yxLLvY+70fgdqmc+573f7039m1Qf6/fz+gPIr8ehXT9ofIou+ObXfgH0ns3Mfn3HD18hd/CD5kzv4ATmj1Abf7/8A7KIYvrBb3MYAAAAASUVORK5CYII=); */
 }
 
 .turret,
