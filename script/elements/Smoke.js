@@ -62,10 +62,10 @@ const Smoke = (options = {}) => {
     if (data.frameCount % data.spriteFrameModulus === 0) {
 
       // first, animate through sprite. then, fade opacity.
-      if (data.spriteFrame < data.spriteFrames - 1) {
-        // advance smoke sprite, 0% -> -100% (L-R)
+      if (data.spriteFrame < data.spriteFrames) {
+        // advance smoke sprite, 0% -> -100% (top-to-bottom)
         if (data.isOnScreen) {
-          sprites.setTransformXY(exports, dom.oTransformSprite, `${-((data.spriteFrame / (data.spriteFrames - 1)) * 100)}%`, '0%');
+          sprites.setTransformXY(exports, dom.oTransformSprite, `0%`, `${-data.spriteFrame * data.spriteOffsetPerFrame}px`);
         }
         data.spriteFrame++;
       } else {
@@ -120,8 +120,10 @@ const Smoke = (options = {}) => {
     frameCount: 0,
     animateModulus: 1,
     spriteFrameModulus: (options.spriteFrameModulus || 2),
-    spriteFrame: (options.spriteFrame !== undefined ? options.spriteFrame : rndInt(4)),
-    spriteFrames: 10,
+    spriteFrame: (options.spriteFrame !== undefined ? options.spriteFrame : rndInt(6)),
+    spriteFrames: 12,
+    spritePixelHeight: 108, // real sprite is 216, but we render half-size.
+    spriteOffsetPerFrame: 108 / 12,
     isFading: false,
     fadeFrame: 0,
     fadeFrames: 8,
@@ -130,12 +132,12 @@ const Smoke = (options = {}) => {
     height: 9,
     gravity: options.gravity !== undefined ? options.gravity : 0.5,
     rotation: rnd(360),
-    rotationAmount: rnd(5) * plusMinus(),
+    rotationAmount: plusMinus(rnd(5)),
     // by default, allow some randomness
     baseScale: options.baseScale || (0.65 + rnd(0.35)),
     // hackish: use provided, or default values.
-    vX: options.vX !== undefined ? options.vX : (3 * Math.random()) * plusMinus(),
-    vY: options.vY !== undefined ? options.vY : -(3 * Math.random()),
+    vX: options.vX !== undefined ? options.vX : plusMinus(rnd(3)),
+    vY: options.vY !== undefined ? options.vY : -rnd(3),
     domPool: null
   }, options);
 
