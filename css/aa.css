@@ -2020,10 +2020,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .end-bunker {
-  /* background-image: url(../image/end-bunker.png); */
+  background-image: url(../image/end-bunker.png);
   width: 41px;
   height: 19px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFIAAAAmBAMAAAClsdF/AAAAElBMVEUAQAgAAACqqqoFVQEOqgJVVVUcH7oQAAAAAXRSTlMAQObYZgAAAQVJREFUeAGd1IGNgzAUg2GyAV7hrfBW+Fe4/Ve5w7KCQOJKarUoenxyaEvZkqGn7Ns1ek7EbKwj3QVVHOm/AFxb9a/UtRHagekav/ps1UepVNrlZGhP6WVK9VmmVBVwl/jtLMoReaFZZPNcqF5JZfOAkHPRgfCtvF2CD1l/KTsbVhHW0ctyqJpQQ5Im2Ptr3/RSalM5+UwUPzpSzK+tioIlqfasTKn8cAdtDH2UtnGXvhnGTXqq856DYt6K5L9RPqNtTUJn+7s0pJtViWXolEAgzbKUTKCKU3pdPnaeOOOV3OcTkaQjxYzc6IxPMo2pnTBy0vuj9pR7BiQZzGjmaXCWJvvT4BcztvltvcMAngAAAABJRU5ErkJggg==);
   background-size: contain;
 }
 
@@ -2034,8 +2033,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .end-bunker.enemy {
-  /* background-image: url(../image/end-bunker-enemy.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFIAAAAmBAMAAAClsdF/AAAAD1BMVEU2NjYAAACqqqpVVVWSkpIPhYBJAAAAAXRSTlMAQObYZgAAAQJJREFUeAGd1IetAzEMg2F7g+MKWoEr/Puv9IpA2OnlmGYoH6TrI5l6lmNcR8+zTDrWf+yCKv5j2wDXXfVS6rojuAPLmX57d9VbqbRsR6QDI+llmuq9TFNVwK2kP50v5Yy8ollkeDZUH0lleEDIXjgQzsqbTeivrE9KZ2AVYY7+Wk6VCW1IYhpnvo6hD6WGqpN9orD+U6zDVkXBV1LuWjWlcuL+qWnY39KYt7Ivhnkju6p9zUGxLkVyb1T/o/GdBGf8rWyIzbeSlqFLAoGYr6XUBKrYstddsfPEmR/JYz0RSRwpVtQdO/OdTMe0XTBy0dtH7ZZHCiQprGjlWWE3TY5nhV91M/kpnmFxRQAAAABJRU5ErkJggg==);
+  background-image: url(../image/end-bunker-enemy.png);
 }
 
 #battlefield.snow .end-bunker.enemy {
@@ -2044,8 +2042,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .super-bunker {
   /* background-image: url(../image/super-bunker.png); */
-  /* background-image: url(../image/super-bunker-mac.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAAA4BAMAAADOYk2aAAAAFVBMVEUAAACHVAAAAACzhwCzh1SWlpZUVFQSSjN3AAAAAXRSTlMAQObYZgAAAXBJREFUeF611tGRwyAMRVHGHbwOMmpBLbwW1ML2X8J6gwYJL/4x8v2M4zMoJDitd8iDPi0nj0rAIWJUVfzFv1SZwjcFtAd+y+uQp4TEIsxIzYbqCnECcINjGfKckLEIMqYcb+UUYgwvLUN2COlECEpgTaQtQTYKCR0BYdAV4rZSggHkbR1EwH415ELCfnoGmJG3gpcMFhGHbPZpsl0TMxg2KiLyR7X8QfXXpkvkuFRDwBsEE+FxpB4dqSK2q/hqtSZ7W9rqiOmzIq9H0GI/vGIijNAgHmaCLxGAC8kAREgQEMGMvEaEEYed0Oe4EHyDuC2I2+oI+0Yzng+CfKAEcV4wsxgFHoqIQ8TmEyUMwSBiH/LTk/DnyB4hTWhXgmeXQSwRzARZQ/ggYXBBwOl5EPZBjj3Cz04uCM47Yoh/zkkgpLUiYh7Ercsg6LcxGzyrI7hsGgTAIMaOvk8A/wn4jY4VE7K8fyYiEgihE8cO8WntFyRzVk/TGxMdAAAAAElFTkSuQmCC);
+  background-image: url(../image/super-bunker-mac.png);
   width: 66px;
   height: 28px;
   background-size: contain;
