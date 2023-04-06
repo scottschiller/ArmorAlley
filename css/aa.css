@@ -2275,9 +2275,10 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .bomb .sub-sprite {
-  /* background-image: url(../image/bomb.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAkCAMAAABllkCwAAAAD1BMVEX7BwAAAACrAgGqqqr///+eN7uQAAAAAXRSTlMAQObYZgAAAFJJREFUeNqlzkEKwCAQQ1FjvP+ZG6JMaKG24N89hoG0XXClQRIr3aQ+k0bJt9QO8ntAs8aYUQhRO0L0ovqibJXxa+ltHPiYGpHvtzUkaueCFU5dNPkBHwXKHSEAAAAASUVORK5CYII=);
+  background-image: url(../image/bomb.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAkCAMAAABllkCwAAAAD1BMVEX7BwAAAACrAgGqqqr///+eN7uQAAAAAXRSTlMAQObYZgAAAFJJREFUeNqlzkEKwCAQQ1FjvP+ZG6JMaKG24N89hoG0XXClQRIr3aQ+k0bJt9QO8ntAs8aYUQhRO0L0ovqibJXxa+ltHPiYGpHvtzUkaueCFU5dNPkBHwXKHSEAAAAASUVORK5CYII=); */
   background-position: 0px 0px;
+  background-size: 14px 6px;
 }
 
 .bomb.spark .sub-sprite,
