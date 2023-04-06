@@ -1,13 +1,33 @@
-import { rndInt, worldWidth, worldHeight, rng, TYPES } from '../core/global.js';
+import { rndInt, worldWidth, worldHeight, rng, TYPES, rngInt } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 import { game } from '../core/Game.js';
 
+const cloudTypes = [
+  {
+    className: 'cloud1',
+    width: 102,
+    height: 29
+  }, {
+    className: 'cloud2',
+    width: 116,
+    height: 28
+  }, {
+    className: 'cloud3',
+    width: 125,
+    height: 34
+  }
+];
+
 const Cloud = (options = {}) => {
 
-  let cloudType, cloudWidth, cloudHeight, css, dom, data, exports;
+  const cloudData = cloudTypes[rngInt(cloudTypes.length, TYPES.cloud)];
+
+  const { className, width, height } = cloudData;
+
+  let css, dom, data, exports;
   let type = TYPES.cloud;
 
   function animate() {
@@ -76,14 +96,7 @@ const Cloud = (options = {}) => {
 
   }
 
-  cloudType = (rng(1, TYPES.cloud) > 0.5 ? 2 : 1);
-
-  cloudWidth = (cloudType === 2 ? 125 : 102);
-  cloudHeight = (cloudType === 2 ? 34 : 29);
-
-  css = common.inheritCSS({
-    className: `cloud${cloudType}`
-  });
+  css = common.inheritCSS({ className });
 
   data = common.inheritData({
     type,
@@ -95,10 +108,10 @@ const Cloud = (options = {}) => {
     verticalDirection: 0.33,
     verticalDirectionDefault: 0.33,
     y: options.y || (96 + parseInt((worldHeight - 96 - 128) * rng(1, type), 10)),
-    width: cloudWidth,
-    halfWidth: parseInt(cloudWidth / 2, 10),
-    height: cloudHeight,
-    halfHeight: parseInt(cloudHeight / 2, 10),
+    width,
+    halfWidth: width / 2,
+    height,
+    halfHeight: height / 2,
     noEnergyStatus: true
   }, options);
 
