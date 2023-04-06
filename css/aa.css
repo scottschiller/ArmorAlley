@@ -1900,10 +1900,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .smart-missile {
   position: absolute;
-  width: 16px;
-  height: 15px;
-  /* background-image: url(../image/smart-missile.png); */
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAK0lEQVR4AWOgHhgF/wlgwgaAwSrG/6uZUDGxhv/HMIQwxnDdf/LwwINRAADw7UafvPxRawAAAABJRU5ErkJggg==) no-repeat 0px 0px;
+  width: 15px;
+  height: 4px;
+  background-image: url(../image/smart-missile.png);
+  background-size: 15px 4px;
+  /* background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAK0lEQVR4AWOgHhgF/wlgwgaAwSrG/6uZUDGxhv/HMIQwxnDdf/LwwINRAADw7UafvPxRawAAAABJRU5ErkJggg==) no-repeat 0px 0px; */
   /* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
   transition: transform 0.2s ease-none;
   opacity: 1;
