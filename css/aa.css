@@ -1999,20 +1999,23 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .base .transform-sprite {
-  width: 510px;
-  height: 25px;
-  /* background-image: url(../image/base-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAAZCAMAAADnh7yZAAAAG1BMVEUAAAAFVQEOqgJVVQEAAAD/qgGrAgGqqqr////9eV1TAAAAAXRSTlMAQObYZgAAAfFJREFUeNrt14FuwyAMBFBzEIf//+JZXpJrhpJtGu5KxVVVi93wlBZRIb8IJDBE3ic6vsEAeBvkOfeh8Yhqt28M32LxCiokUiGiMQoJVRIhClCLpQJ9mOU01AbDUxTV/soFEqigFq1AqIItIn2Yk4OvVlEVjVYMCb8XPEGBIbUCwQqBHszSMoSKXu9nqrmHIqZUlkZW4AlWCPxFIbNc3Uy52/y1as5rB4VMtGJMkEKE4xCFg3uly1ouwIVVVQ3popCJVQSWeIUJUIh0UNr/mCQMysXvsoiqmpGlj4Jiz2CFQqwiYyhk5MzwDYDiUsMsakYp69pLSU9QRKZyeb7UhkmwR2mZvC5meNbfKvKfikzlngHSHuyvnn2ULbCwboWpDKuQwXlC5M88Vo/C4e/FPJUBFTJAOjn5UjkW4Kbtn5vKYAqZZAgdUMlUvIgv2xAOxTKVkRQyvnIKkx7TNK5bUxlHIQO/YnlIYprGXWsqoyhkUgIXWbOamsZtaypjKYLUNVMZSpGUckbCt8kZP8pUBlNSBhIDD0s8WrjFuuPU99JUhlFgCI+MFl7mJ0cypzlZpcoKpjKCAiC5Q8TCachYXNmdo9QqW6by0grc8BaJYxbOSwZ5C/vtTnQqTeV1FUd8lW0ztooXOXiIlxqk2XOm8prKBwo1M21YfofeAAAAAElFTkSuQmCC);
+  width: 520px;
+  height: 26px;
+  background-image: url(../image/base-sprite-horizontal.png);
+  background-size: 520px 26px;
   animation: animate-transform-sprite-base 1000ms steps(5) alternate infinite;
 }
 
 #battlefield.snow .base .transform-sprite {
+  width: 510px;
+  height: 25px;
   background-image: url(../image/base-sprite-horizontal-snow.png);
+  background-size: 510px 25px;
+  animation: animate-transform-sprite-base-snow 1000ms steps(5) alternate infinite;
 }
 
 .base.enemy .transform-sprite {
-  /* background-image: url(../image/base-enemy-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAAZCAMAAADnh7yZAAAAGFBMVEXqAf9VVVWqqqpVVQEAAAD/qgGrAgH////ZlLQxAAAAAXRSTlMAQObYZgAAAeZJREFUeNrt191uqzAQRlFmj7Hf/40Pv/kgwqdVYaq48r5KcDIrxAQpw89jCE3M3yn/HQcYVLOMnN/ZFsIhIOdwRkDoz5ZCuJLFhCiCcqYQq0BJUwWi94X/3XJGHvm+ohUx4QqUnAoximIrUMlDzgne3JPy1MakX1KIVqCUBIQp6hnFc67fxXISIkbKyI8VRUlCWlfWQhVR9xXcc6lCFEi1kxmnuKkIiVKEhCpKTIiibpyLYoZyqS2S7l/LUupItMIsRCuiwhR1T1EOE5SHsbIziUHZcHJ4QIGUCFRUqKKaUiAlhzyOl0YC1uli5PCIYrGKhnblYoeXnBG/2BjDsDdG0ZIydOWUuxtrZgA+ZUs6voTtwYnpSpuKL+3zzOT4kfE1TrgoutKiAoe3w+tSqjp+UmyH6Ep7Cno/vN1C2EfaxsgBKYYtk7rSnGJTSdlbSdUXMGNmutKiMh5Kpi6W6gtMTFcaVCypi2tJ1RcwzAa60pjyaHSlKYVv5c6XGe5mXWlNsSnNcwDbA3f9zVRsmQI3N+tKM8o62I4dj0g+vc6dlyMdM3yG6EoLCsC1A3qIz62HxGjdj9D8GAO68tHKaaifIQSBb4EUqfocvi+uHkBXPldRgF9By0D1ovXk6Oy2z8YGdeUzlX/BTTI+8hNXigAAAABJRU5ErkJggg==);
+  background-image: url(../image/base-enemy-sprite-horizontal.png);
 }
 
 #battlefield.snow .base.enemy .transform-sprite {
