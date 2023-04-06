@@ -1989,10 +1989,13 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smoke .transform-sprite {
-  width: 90px;
-  height: 9px;
+  width: 9px;
+  height: 108px;
   /* background: transparent url(../image/smoke-sprite.png) no-repeat 0px 0px; */
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAAAJBAMAAABAnCZoAAAAD1BMVEUAAAAAAACioqJNTU3////HZUzpAAAAAXRSTlMAQObYZgAAAJtJREFUeAGFyrFNwDAYROF3XiB3pgecUdhfYhNwJjC/FYkiBVzx6RWHktyU5p/l7KN4GZTh7zVdxuIohE1iNmjzfK/DAlIcElJVNk7xfIMm6gvcXNRQenEXFOamifkGi4XmKjIBvsrMiW3woEjR4PVifbcLMpmsd1hg1mdMG4CuzS4yzuGcRVXYoJse+jD0jyK7UJJf/CQBdqAAP+1FI9VBsdXAAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+  /* background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAAAJBAMAAABAnCZoAAAAD1BMVEUAAAAAAACioqJNTU3////HZUzpAAAAAXRSTlMAQObYZgAAAJtJREFUeAGFyrFNwDAYROF3XiB3pgecUdhfYhNwJjC/FYkiBVzx6RWHktyU5p/l7KN4GZTh7zVdxuIohE1iNmjzfK/DAlIcElJVNk7xfIMm6gvcXNRQenEXFOamifkGi4XmKjIBvsrMiW3woEjR4PVifbcLMpmsd1hg1mdMG4CuzS4yzuGcRVXYoJse+jD0jyK7UJJf/CQBdqAAP+1FI9VBsdXAAAAAAElFTkSuQmCC) no-repeat 0px 0px; */
+  /* new vertical sprite */
+  background: transparent url(../image/smoke-sprite.png) no-repeat 0px 0px;
+  background-size: 9px 108px;
 }
 
 .base {
