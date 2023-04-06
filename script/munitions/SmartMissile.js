@@ -11,6 +11,21 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
+const dimensions = {
+  rubberChicken: {
+    width: 24,
+    height: 12
+  },
+  banana: {
+    width: 12,
+    height: 15
+  },
+  smartMissile: {
+    width: 14,
+    height: 4
+  }
+};
+
 const SmartMissile = (options = {}) => {
 
   /**
@@ -72,7 +87,7 @@ const SmartMissile = (options = {}) => {
 
     if (!data.isOnScreen) return;
 
-    xOffset = data.width / 2;
+    xOffset = 0;
     yOffset = (data.height / 2) - 1;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
@@ -469,7 +484,7 @@ const SmartMissile = (options = {}) => {
 
   function animate() {
 
-    let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth, targetHeightOffset;
+    let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth;
 
     // notify caller if now dead and can be removed.
     if (data.dead) {
@@ -480,13 +495,12 @@ const SmartMissile = (options = {}) => {
     targetData = objects.target.data;
 
     targetHalfWidth = targetData.width / 2;
-    targetHeightOffset = (targetData.type === TYPES.balloon ? 0 : targetData.height / 2);
 
     // delta of x/y between this and target
     deltaX = (targetData.x + targetHalfWidth) - data.x;
 
-    // TODO: hack full height for balloon?
-    deltaY = (targetData.y + (targetData.bottomAligned ? targetHeightOffset : -targetHeightOffset)) - data.y;
+    // Always aim for "y", plus half height
+    deltaY = (targetData.y + (targetData.halfHeight || targetData.height / 2)) - data.y;
 
     /**
      * if original target has died OR has become friendly, try to find a new target.
@@ -735,7 +749,7 @@ const SmartMissile = (options = {}) => {
 
     initDOM();
 
-    data.yMax = (game.objects.view.data.battleField.height - data.height);
+    data.yMax = game.objects.view.data.battleField.height - data.height - 1;
 
     // mark the target.
     setTargetTracking(true);
@@ -834,9 +848,11 @@ const SmartMissile = (options = {}) => {
     css.className += ` ${css.banana}`;
   }
 
-  const width = (options.isRubberChicken ? 24 : 14);
-
   let type = TYPES.smartMissile;
+
+  let missileData = dimensions[(options.isRubberChicken ? 'rubberChicken' : (options.isBanana ? 'banana' : 'smartMissile'))];
+
+  const { width, height } = missileData;
 
   data = common.inheritData({
     type,
@@ -860,7 +876,7 @@ const SmartMissile = (options = {}) => {
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
     width,
     halfWidth: width / 2,
-    height: 15,
+    height,
     gravity: 1,
     damagePoints: 12.5,
     isBanana: !!options.isBanana,
