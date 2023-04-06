@@ -2102,17 +2102,17 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .sand-dune {
-  /* background-image: url(../image/sand-dune.png); */
-  background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAICAYAAABUHMdEAAAAiklEQVR4Ac2UUQoDIRBD1TvaS/aOSaWKxBIEh9IaeKiLH3k77KYvhgGuCZXc0OCZyTelrytXiFEh0eBSstak+7H2/eCvYhRmeUjZHTCiKoaPuzkiFRBoFCPgeZgJcS+2m1YkKgBTJsyRmEz0+MdB4TcC5rmRmkLwE3PIm4hK+GKhuyoEc3bfJIbkC4kCR2EUx824AAAAAElFTkSuQmCC);
   width: 51px;
   height: 8px;
+  background-image: url(../image/sand-dune.png);
+  background-size: contain;
 }
 
 .sand-dunes {
-  /* background-image: url(../image/sand-dunes.png); */
-  background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAALCAYAAAAz46C7AAAA4klEQVR4AeXV4QrCMAwE4LbPaPqSvmOqyE7qLVvD/ZDBCkd0Ck0/Ui0XXiOVuy0GGMPHz3rWKe1GaAwzgZiVb/WtIoACmr9zZayRyRrGATLXML5VQkOuMF37JnjxoSI0rCxMnz6z/esJq53t/f8rwSDUcHhovjYM9GCwBd5yb3269B9RHJQPt2gaCb/XQ7A8Tvys8Z4xmA5TMTEfEIbRG69LMKAxVBf2FqZrpKbm4AoJ0cH4+VFdxZN7MlplNLyZ/1LNdBTEdTDCOgPTJ4sq9dt40kryKulQ3YrS/ClYHksPoF5HN4gGUuXOkQAAAABJRU5ErkJggg==);
   width: 73px;
   height: 11px;
+  background-image: url(../image/sand-dunes.png);
+  background-size: contain;
 }
 
 .checkmark-grass {
