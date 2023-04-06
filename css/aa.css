@@ -2044,7 +2044,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .super-bunker {
   /* background-image: url(../image/super-bunker.png); */
-  background-image: url(../image/super-bunker-mac.png);
+  background-image: url(../image/super-bunker_mac.png);
   width: 66px;
   height: 28px;
   background-size: contain;
