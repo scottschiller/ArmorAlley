@@ -1390,16 +1390,18 @@ body.is_firefox #radar .radar-item--animated {
 }
 
 .missile-launcher {
-  background-image: url(../image/missile-launcher.png);
-  background-size: contain;
   width: 54px;
   height: 18px;
+  background-image: url(../image/missile-launcher.png);
+  background-size: 54px 72px;
+  background-repeat: no-repeat;
   z-index: 2;
 }
 
 .missile-launcher.enemy {
   background-image: url(../image/missile-launcher-enemy.png);
-  background-size: contain;
+  background-size: 54px 72px;
+  background-repeat: no-repeat;
 }
 
 .tank,
