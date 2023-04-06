@@ -2227,15 +2227,19 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .turret,
 .turret .sub-sprite {
   /* background: transparent url(../image/turret.png) 0px 0px no-repeat; */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAABACAYAAAAXiCerAAAAc0lEQVR4Ae2X4QbGMAxFv6/vuJfMS2YrZXMJcc30xzlcI/TMdCH5OQBArlT1viSO/3ze0VqFHqijLxAqQUMIu5ESXxQRV8YbouH/M4j6EhXNuFdvd7t+1maiGZHkx70GAAAAYJDPca8a/XqL3xLocNVZ/E5FZMmB/QqckgAAAABJRU5ErkJggg==);
-  width: 18px;
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAABACAYAAAAXiCerAAAAc0lEQVR4Ae2X4QbGMAxFv6/vuJfMS2YrZXMJcc30xzlcI/TMdCH5OQBArlT1viSO/3ze0VqFHqijLxAqQUMIu5ESXxQRV8YbouH/M4j6EhXNuFdvd7t+1maiGZHkx70GAAAAYJDPca8a/XqL3xLocNVZ/E5FZMmB/QqckgAAAABJRU5ErkJggg==); */
+  background: transparent url(../image/turret-sprite.png) 0px 0px no-repeat;
+  background-size: 18px 64px; /* ? */
+  background-position: 50% 0px;
+  width: 22px; /* 18 + a few pixels for turret rotation */
   height: 15px;
 }
 
 .turret.enemy,
 .turret.enemy .sub-sprite {
+  /* TODO: confirm image / colour for friendly vs. enemy */
   /* background-image: url(../image/turret-enemy.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAABACAQAAAC9ge8gAAAAYUlEQVR4Ae2VQQqAMAwE96v9WB7gJ0dEWlJSzEEPKpm9BDqnBLp6OwUizFFpCOEmT3+Yo1l0QhT/BGcSacNyyWgflBgSlwvIr489Jqkr3LtdTlEUBUcM9x2uStFGc2pRijsBNp8rNWub3gAAAABJRU5ErkJggg==);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAABACAQAAAC9ge8gAAAAYUlEQVR4Ae2VQQqAMAwE96v9WB7gJ0dEWlJSzEEPKpm9BDqnBLp6OwUizFFpCOEmT3+Yo1l0QhT/BGcSacNyyWgflBgSlwvIr489Jqkr3LtdTlEUBUcM9x2uStFGc2pRijsBNp8rNWub3gAAAABJRU5ErkJggg==); */
 }
 
 .turret .sub-sprite {
@@ -2265,8 +2269,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   bottom: initial;
   top: 0px;
   left: 0px;
-  width: 13px;
-  height: 12px;
+  width: 14px;
+  height: 6px;
   z-index: 2;
 }
 
