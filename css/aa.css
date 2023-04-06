@@ -1416,19 +1416,18 @@ body.is_firefox #radar .radar-item--animated {
 .tank .transform-sprite {
   width: 174px;
   /* 58px x 3 frames */
-  height: 19px;
-  top: 1px;
-  /* account for 1px bottom black border */
-  /* background-image: url(../image/tank-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAGFBMVEUAmCEAAABVVQEOqgIFVQH/qgGqqqpVVVUOlAyrAAAAAXRSTlMAQObYZgAAATRJREFUeAHV1YGJdCEQA+C/hbTwWkgLacEWbGHa/y/sIB6y8PQAmXDg+XY+DCD470sw59vQfVmubqrnefiQkjjwdVm/rpUe/qRRDkngvixfN6VkKLWW0va+LFoXwCplasu0Sy7JcnUbhv3IQVtuMpyCC7JkXVtMNIctlf9jzQVZsa6tsWOqQVdpkLkhy9VFzotOrnJawjnADVm4rt0knZWIGQA3ZNm6eyFxQRau29Ff/zm/5Aad5eaRVesCXTGu9XLLqZHwthseSRzLblm1riJCno0cjISRMuRERNK/y74lUbhuD0ekfxszlmGjXMMxPZVzXWxJw7J1NeQ8o9zP39k7TiWAQ9kr1wXkCdvpfn/W+TuDPvRILmf215JA2brO1nu4yt0HePMRNixd923OpeE5rVv3PyoJAr/dh+bcAAAAAElFTkSuQmCC);
-  background-size: contain;
+  height: 18px;
+  background-image: url(../image/tank-sprite-horizontal.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAGFBMVEUAmCEAAABVVQEOqgIFVQH/qgGqqqpVVVUOlAyrAAAAAXRSTlMAQObYZgAAATRJREFUeAHV1YGJdCEQA+C/hbTwWkgLacEWbGHa/y/sIB6y8PQAmXDg+XY+DCD470sw59vQfVmubqrnefiQkjjwdVm/rpUe/qRRDkngvixfN6VkKLWW0va+LFoXwCplasu0Sy7JcnUbhv3IQVtuMpyCC7JkXVtMNIctlf9jzQVZsa6tsWOqQVdpkLkhy9VFzotOrnJawjnADVm4rt0knZWIGQA3ZNm6eyFxQRau29Ff/zm/5Aad5eaRVesCXTGu9XLLqZHwthseSRzLblm1riJCno0cjISRMuRERNK/y74lUbhuD0ekfxszlmGjXMMxPZVzXWxJw7J1NeQ8o9zP39k7TiWAQ9kr1wXkCdvpfn/W+TuDPvRILmf215JA2brO1nu4yt0HePMRNixd923OpeE5rVv3PyoJAr/dh+bcAAAAAElFTkSuQmCC); */
+  background-size: 174px 18px;
   animation: animate-transform-sprite-tank 0.1s steps(3) infinite;
 }
 
 .tank.enemy .transform-sprite {
-  /* background-image: url(../image/tank-enemy-sprite-horizontal.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAFVBMVEVhcAAAAABVVVWqqqpVVQH/////qgH67CcrAAAAAXRSTlMAQObYZgAAATFJREFUeF7V1dENwjAMhGFWuBW8gle4FbpC9h8B3DgYAw81PEQ+IaUgfeovFam378PrboVtkN1yARyP6aG25HfL/rkGVWw6zNo1sFf2zw3pjTKGSNgNsnsu3udSTRrNdpkdsmPuYVNP9E07nC4bcmCDbJn7OcfrwUimMIkNsmNu7Kt1agd8Y5dsnAtg/vvFtsRYV+qHyirfIbvmnnBO3uaNYafeIPvmHoraNsi+uQDIwifJCsyyAGmyW25ofYzynK7J2vMrBQgMViT/kC1zg5LT0i0d0ylPSiYL/CxZkkDrXHJakip+arTYaQXn8KtESKAk2TgXoC5pxk9JLctKuikrMt20JLvmho0HMq3ItJJ+zxJARSZKvSyBnrn1F7HLoLxKswRKL/6WuaEv729Yl/1y72yC9hX9fglvAAAAAElFTkSuQmCC);
-  background-size: contain;
+  background-image: url(../image/tank-enemy-sprite-horizontal.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAFVBMVEVhcAAAAABVVVWqqqpVVQH/////qgH67CcrAAAAAXRSTlMAQObYZgAAATFJREFUeF7V1dENwjAMhGFWuBW8gle4FbpC9h8B3DgYAw81PEQ+IaUgfeovFam378PrboVtkN1yARyP6aG25HfL/rkGVWw6zNo1sFf2zw3pjTKGSNgNsnsu3udSTRrNdpkdsmPuYVNP9E07nC4bcmCDbJn7OcfrwUimMIkNsmNu7Kt1agd8Y5dsnAtg/vvFtsRYV+qHyirfIbvmnnBO3uaNYafeIPvmHoraNsi+uQDIwifJCsyyAGmyW25ofYzynK7J2vMrBQgMViT/kC1zg5LT0i0d0ylPSiYL/CxZkkDrXHJakip+arTYaQXn8KtESKAk2TgXoC5pxk9JLctKuikrMt20JLvmho0HMq3ItJJ+zxJARSZKvSyBnrn1F7HLoLxKswRKL/6WuaEv729Yl/1y72yC9hX9fglvAAAAAElFTkSuQmCC); */
+  /* reverse might cause flickering? */
+  animation: animate-transform-sprite-tank 0.1s steps(3) reverse infinite;
 }
 
 .tank.stopped .transform-sprite {
@@ -3618,8 +3617,9 @@ body.is-mobile #player-status-bar .inventory-item:active {
 
 #mobile-controls li.inventory-item a.tank,
 #player-status-bar .inventory-item a.tank {
-  /* background-image: url(../image/tank-static.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAASCAMAAAA9mj1BAAAAGFBMVEVhcAAAAAAFVQFVVQFVVVUOqgKqqqr/qgGVIxTWAAAAAXRSTlMAQObYZgAAAMFJREFUeNqV0IEOgzAIBNCVQvn/P16PnVI0TbqLscPdi8TPJm3NprNTvXfrZiJixxhKus34hKA28aGM9mTulHuLhd4S1EFpX4m6pw2Z1DkwtuRHYVulcr2VvzdvhXXOoFe9yAQZ9nPPOIIGrCkWLmWEpMSY8k3/i9lKRxvHF7JI0Xuhx35lccU4JkwqqhpdZVEJlVJxQ+tJh86gjf+ygzkMT0XMWqFyydIRzutzG6PQ1oT76rJZnOU59qdMe/x9K/wCOlII8vghfyEAAAAASUVORK5CYII=);
+  background-image: url(../image/tank-static.png);
+  /* TODO: replace with new asset */
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAASCAMAAAA9mj1BAAAAGFBMVEVhcAAAAAAFVQFVVQFVVVUOqgKqqqr/qgGVIxTWAAAAAXRSTlMAQObYZgAAAMFJREFUeNqV0IEOgzAIBNCVQvn/P16PnVI0TbqLscPdi8TPJm3NprNTvXfrZiJixxhKus34hKA28aGM9mTulHuLhd4S1EFpX4m6pw2Z1DkwtuRHYVulcr2VvzdvhXXOoFe9yAQZ9nPPOIIGrCkWLmWEpMSY8k3/i9lKRxvHF7JI0Xuhx35lccU4JkwqqhpdZVEJlVJxQ+tJh86gjf+ygzkMT0XMWqFyydIRzutzG6PQ1oT76rJZnOU59qdMe/x9K/wCOlII8vghfyEAAAAASUVORK5CYII=); */
 }
 
 #mobile-controls.enemy li.inventory-item a.tank,

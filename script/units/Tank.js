@@ -365,7 +365,7 @@ const Tank = (options = {}) => {
     },
     lastNearbyTarget: null,
     x: options.x || 0,
-    y: game.objects.view.data.world.height - tankHeight - 1,
+    y: game.objects.view.data.world.height - tankHeight,
     // hackish: logical vs. sprite alignment offset
     yOffset: 2,
     xLookAhead: width / 3,
