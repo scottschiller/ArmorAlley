@@ -2760,7 +2760,6 @@ const Helicopter = (options = {}) => {
       const world = document.getElementById('world');
       // TODO: static DOM reference.
       utils.events.add(world, 'mousedown', events.mousedown);
-      utils.events.add(world, 'dblclick', events.dblclick);
       utils.events.add(window, 'scroll', e => {
         // don't allow scrolling at all?
         e.preventDefault();
@@ -3015,15 +3014,8 @@ const Helicopter = (options = {}) => {
         });
 
       }
-    },
-
-    dblclick(e) {
-
-      if (e.button !== 0 || data.ignoreMouseEvents || data.isCPU || !data.fuel) return;
-
-      toggleAutoRotate();
-
     }
+
   };
 
   objects = {

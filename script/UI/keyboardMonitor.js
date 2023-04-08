@@ -30,6 +30,7 @@ function KeyboardMonitor() {
     infantry: 73,
     engineer: 69,
     pause_p: 80,
+    flipAutomatically: 70,
     esc: 27,
     enter: 13,
     delete_1: 8,
@@ -312,6 +313,16 @@ function KeyboardMonitor() {
       }
   
     },
+
+    [keyMap.flipAutomatically]: {
+
+      down() {
+        
+        game?.players?.local.toggleAutoRotate();
+  
+      }
+
+    }
 
   };
 
