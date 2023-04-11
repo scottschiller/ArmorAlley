@@ -314,11 +314,15 @@ function PrefsManager() {
         gamePrefs[name] = value;
 
         // special case: show toast for local user.
-        if (game.data.started && name === 'lock_step') {
-          game.objects.notifications.add(`You have ${value ? 'enabled' : 'disabled'} "lock step" game sync.`);
-          if (!value) {
-            // if disabling, ensure the spinner gets turned off.
-            game.objects.gameLoop.setWaiting(false);
+        if (game.data.started) {
+          if (name === 'lock_step') {
+            game.objects.notifications.add(`You have ${value ? 'enabled' : 'disabled'} "lock step" game sync.`);
+            if (!value) {
+              // if disabling, ensure the spinner gets turned off.
+              game.objects.gameLoop.setWaiting(false);
+            }
+          } else if (name === 'ground_unit_traffic_control') {
+            game.objects.notifications.add(`You have ${value ? 'enabled' : 'disabled'} Ground Vehicle "Traffic Control."`);
           }
         }
 
@@ -990,6 +994,8 @@ function PrefsManager() {
               if (!formValue) {
                 game.objects.gameLoop.setWaiting(false);
               }
+            } else if (name === 'ground_unit_traffic_control') {
+              game.objects.notifications.add(`${gamePrefs.net_remote_player_name} ${formValue ? 'enabled' : 'disabled'} Ground Vehicle "Traffic Control."`);
             }
           }
 

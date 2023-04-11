@@ -1006,7 +1006,7 @@
 
                 <ul>
 
-                  <li>
+                  <li class="allow-in-game-updates">
                     <label for="ground_unit_traffic_control_classic">
                       <input type="radio" id="ground_unit_traffic_control_classic" name="ground_unit_traffic_control" value="0" /> <span class="label-text">Allow overlapping (original game style)</span>
                       <p>
@@ -1015,9 +1015,9 @@
                     </label>
                   </li>
 
-                  <li>
+                  <li class="allow-in-game-updates">
                     <label for="ground_unit_traffic_control_enable">
-                      <input type="radio" id="ground_unit_traffic_control_enable" name="ground_unit_traffic_control" value="1" checked /> <span class="label-text">Reduce overlapping, "tanks first"</span>
+                      <input type="radio" id="ground_unit_traffic_control_enable" name="ground_unit_traffic_control" value="1" checked data-allow-in-game-updates="1" /> <span class="label-text">Reduce overlapping, "tanks first"</span>
                       <p>
                         Vehicles will "park" behind each other. Tanks stop only for other tanks, and will tend to head up convoys. Infantry and engineers don't wait for anyone.
                       </p>
