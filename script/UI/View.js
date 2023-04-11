@@ -882,6 +882,7 @@ const View = () => {
       utils.events.add(document, 'mousemove', events.mousemove);
       utils.events.add(document, 'mousedown', events.touchstart);
       utils.events.add(document, 'mouseup', events.mouseup);
+      utils.events.add(document, 'contextmenu', events.contextmenu);
     } else {
       utils.events.add(document, 'touchstart', events.touchstart);
       utils.events.add(document, 'touchmove', events.touchmove);
@@ -1113,6 +1114,17 @@ const View = () => {
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mouseup(e);
      
+    },
+
+    contextmenu(e) {
+
+      // try to prevent inadvertent context menu actions, e.g., ctrl + left-click.
+      // try to cancel / ignore, unless this is on a link.
+      if (e.target.nodeName !== 'A' && !e.button) {
+        e.preventDefault();
+        return false;
+      }
+
     },
 
     touchstart(e) {
