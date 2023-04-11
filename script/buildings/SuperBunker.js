@@ -220,7 +220,7 @@ const SuperBunker = (options = {}) => {
     type: TYPES.superBunker,
     bottomAligned: true,
     frameCount: 0,
-    energy: (options.energy || 0),
+    energy: (options.energy || 5),
     energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
     energyLineScale: 0.95,
     centerEnergyLine: true,
