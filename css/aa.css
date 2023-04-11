@@ -673,7 +673,8 @@ body.is-mobile #funds-count {
 }
 
 #radar-container,
-#radar {
+#radar,
+#radar-scrubber {
   height: 32px;
 }
 
@@ -685,6 +686,22 @@ body.is-mobile #funds-count {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
 }
 
+#radar-scrubber {
+  position: absolute;
+  top: 1px;
+  left: 0px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.25);
+  /* image/checkerboard-black-mask-50percent.png */
+  width: 32px;
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=); */
+  opacity: 0.5;
+  border: 0.5px solid #339933;
+  border-top: none;
+  border-bottom: none;
+  z-index: 99;
+  cursor: grab;
+}
 #radar {
   position: absolute;
   top: 0px;
@@ -5274,4 +5291,18 @@ button .network-icon {
 #game-prefs-modal fieldset.sync-over-network.faded-exclude-legend legend,
 #game-prefs-modal fieldset.sync-over-network.faded > ul > li.allow-in-game-updates {
   opacity: 1;
+}
+
+body.edit-mode #battlefield .sprite {
+  pointer-events: unset;
+}
+
+body.edit-mode #battlefield .sprite.tank {
+  /* fix annoying vertical mis-alignment */
+  margin-top: -2px;
+}
+
+body.edit-mode #battlefield .sprite:hover {
+  outline: 1px dotted #339933;
+}
 }
