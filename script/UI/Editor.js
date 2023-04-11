@@ -103,6 +103,11 @@ const Editor = () => {
 
       makeItemAtMouse(e);
 
+      if (e.target.tagName === 'DIV') {
+        e.preventDefault();
+        return;
+      }
+
     },
 
     mousemove(e) {
