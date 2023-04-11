@@ -59,18 +59,29 @@ const View = () => {
       data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
 
-      game.players.local.data.scrollLeftVX = 0;
-      game.players.local.data.scrollLeft = x;
+      if (game.players.local) {
+        game.players.local.data.scrollLeftVX = 0;
+        game.players.local.data.scrollLeft = x;
+      }
 
     } else {
 
-      // scroll the battlefield by relative amount.
+      // editor case...
+      if (game.objects.editor) {
 
-      game.players.local.data.scrollLeftVX = 0;
-      game.players.local.data.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
+        data.battleField.scrollLeft = x;
+        data.battleField.scrollLeftVX = 0;
 
-      data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
-      data.battleField.scrollLeftVX = x;
+      } else {
+
+        // scroll the battlefield by relative amount.
+        game.players.local.data.scrollLeftVX = 0;
+        game.players.local.data.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
+
+        data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
+        data.battleField.scrollLeftVX = x;
+
+      }
 
     }
    
@@ -870,6 +881,7 @@ const View = () => {
     if (!isMobile) {
       utils.events.add(document, 'mousemove', events.mousemove);
       utils.events.add(document, 'mousedown', events.touchstart);
+      utils.events.add(document, 'mouseup', events.mouseup);
     } else {
       utils.events.add(document, 'touchstart', events.touchstart);
       utils.events.add(document, 'touchmove', events.touchmove);
@@ -1041,6 +1053,10 @@ const View = () => {
         data.mouse.x = e.clientX / data.screenScale;
         data.mouse.y = e.clientY / data.screenScale;
 
+        if (game.objects.editor) {
+          game.objects.editor.events.mousemove(e);
+        }
+
       } else {
 
         // record here; this gets processed within the game loop and put into a buffer.
@@ -1092,7 +1108,17 @@ const View = () => {
 
     },
 
+    mouseup(e) {
+
+      // editor case
+      if (game.objects.editor) return game.objects.editor.events.mouseup(e);
+     
+    },
+
     touchstart(e) {
+
+      // editor case
+      if (game.objects.editor) return game.objects.editor.events.mousedown(e);
 
       // if the paused screen is showing, resume the game.
       if (game.data.paused) return game.resume();
@@ -1157,6 +1183,8 @@ const View = () => {
     resize() {
 
       refreshCoords();
+
+      if (game.objects.editor) game.objects.editor.events.resize();
 
       // hackish: iOS Safari (possibly "home screen app" only?) needs an additional delay for layout, perhaps due to screen rotation animation(?)
       if (isMobile/* && navigator.standalone*/) {

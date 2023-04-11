@@ -179,6 +179,8 @@ const Radar = () => {
 
     // [ obligatory Bob Marley reference goes here ]
 
+    if (game.objects.editor) return;
+
     if (noJamming) return;
 
     data.isJammed = true;
