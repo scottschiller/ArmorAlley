@@ -29,6 +29,7 @@ const Editor = () => {
   css = {
     active: 'active',
     editMode: 'edit-mode',
+    submerged: 'submerged'
   };
 
   data = {
@@ -82,6 +83,40 @@ const Editor = () => {
 
   }
 
+  function makeItemAtMouse(e) {
+
+    const items = [
+      'rock',
+      'rock2',
+      'gravestone',
+      'gravestone2',
+      'grave-cross',
+      'tumbleweed',
+      'checkmark-grass',
+      'barb-wire',
+      'flowers',
+      'flower',
+      'flower-bush',
+      'cactus2',
+      'cactus',
+      'palm-tree',
+      'tree',
+      'sand-dune',
+      'sand-dunes'
+    ];
+
+    const x = Math.floor(game.objects.view.data.battleField.scrollLeft + (e.clientX * (1 / game.objects.view.data.screenScale)));
+
+    // "painting"
+    if (e.type === 'mousemove' && x % 8 !== 0) return;
+
+    const itemType = `${oneOf(items)} ${css.submerged}`;
+
+    const item = game.addItem(itemType, x);
+
+    common.setFrameTimeout(() => utils.css.remove(item.dom.o, css.submerged), 88);
+
+  }
 
   events = {
 

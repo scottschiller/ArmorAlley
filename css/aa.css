@@ -5316,4 +5316,15 @@ body.edit-mode #battlefield .sprite.tank {
 body.edit-mode #battlefield .sprite:hover {
   outline: 1px dotted #339933;
 }
+
+body.edit-mode #battlefield .terrain-item {
+  transition: margin ease-out 0.25s;
+}
+
+body.edit-mode #battlefield .terrain-item.submerged {
+  margin-bottom: -27px;
+}
+
+body.edit-mode #battlefield .terrain-item {
+  margin-bottom: 0px;
 }
