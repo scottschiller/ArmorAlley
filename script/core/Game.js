@@ -40,6 +40,7 @@ import { sprites } from './sprites.js';
 import { addWorldObjects } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
+import { Editor } from '../UI/Editor.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -559,6 +560,23 @@ const game = (() => {
 
   }
 
+  function startEditor() {
+
+    // stop scrolling
+    utils.css.remove(document.getElementById('game-tips'), 'active');
+
+    game.objects.editor = Editor();
+
+    // get some stuff on the battlefield
+
+    zones.init();
+
+    populateTerrain();
+
+    game.objects.editor.init();
+
+  }
+
   // when the player has chosen a game type from the menu - tutorial, or easy/hard/extreme.
   function init() {
 
@@ -566,6 +584,11 @@ const game = (() => {
 
     data.started = true;
 
+    // game editor?
+    if (window.location.href.match(/editor/i)) {
+      return startEditor();
+    }
+    
     utils.css.add(document.body, 'game-started');
 
     keyboardMonitor.init();
@@ -751,6 +774,7 @@ const game = (() => {
   };
 
   objects = {
+    editor: null,
     gameLoop: null,
     view: null,
     chain: [],
