@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { worldWidth } from '../core/global.js';
+import { oneOf, worldWidth } from '../core/global.js';
 import { utils } from '../core/utils.js';
 
 const Editor = () => {
