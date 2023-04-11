@@ -2076,9 +2076,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .cactus2 {
-  /* background-image: url(../image/cactus2.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAAoUlEQVR4AaWTUQrDMAxDl/1sB0wuuRwyox8q+nhFMRGYUhc/JCd9BS2rujQ8RgZFwGe2q+oQAeRCEKh9J6ockSDgBCKuEEcDAPl5vxinByfeZOsckXeAcaz3nW+HsHXutcdl053QE8D23fqV49Q7O8kQLgHuOB2OEwchCjnJxXckuNj8AXEQIUFwWwG0K9gROMk6drKOnQjAEFbVSRbvJEP+nXp3mMre38sAAAAASUVORK5CYII=);
-  width: 17px;
+  width: 18px;
   height: 25px;
   background-image: url(../image/cactus2.png);
   /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAAoUlEQVR4AaWTUQrDMAxDl/1sB0wuuRwyox8q+nhFMRGYUhc/JCd9BS2rujQ8RgZFwGe2q+oQAeRCEKh9J6ockSDgBCKuEEcDAPl5vxinByfeZOsckXeAcaz3nW+HsHXutcdl053QE8D23fqV49Q7O8kQLgHuOB2OEwchCjnJxXckuNj8AXEQIUFwWwG0K9gROMk6drKOnQjAEFbVSRbvJEP+nXp3mMre38sAAAAASUVORK5CYII=); */
