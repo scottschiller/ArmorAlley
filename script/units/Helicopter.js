@@ -995,6 +995,8 @@ const Helicopter = (options = {}) => {
     // toggle auto-rotate
     data.autoRotate = !data.autoRotate;
 
+    game.objects.notifications.add(data.autoRotate ? 'Auto-rotate enabled' : 'Auto-rotate disabled', { noRepeat: true });
+
     // network: simulate this on the other end.
     if (net.active && data.isLocal && !isMobile) {
       net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'toggleAutoRotate' });
