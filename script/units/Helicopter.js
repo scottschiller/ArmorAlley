@@ -2263,6 +2263,8 @@ const Helicopter = (options = {}) => {
 
   function animate() {
 
+    if (game.objects.editor) return
+
     /**
      * If local and dead or respawning, send a packet over to keep things going.
      * This is done because coordinates aren't sent while dead, and packets include frame counts.
@@ -2825,7 +2827,7 @@ const Helicopter = (options = {}) => {
     respawningDelay: 1600,
     missileLaunching: false,
     parachuting: false,
-    ignoreMouseEvents: false,
+    ignoreMouseEvents: !!game.objects.editor,
     fuel: 100,
     maxFuel: 100,
     fireModulus: 2,

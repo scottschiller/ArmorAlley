@@ -284,7 +284,7 @@ const effects = {
 
     // target needs to be on-screen, or "nearby"
 
-    if (!exports.data.isOnScreen) {
+    if (!exports.data.isOnScreen && game.players.local) {
       // ignore if too far away
       if (Math.abs(game.players.local.data.x - exports.data.x) > game.objects.view.data.browser.twoThirdsWidth) return;
     }

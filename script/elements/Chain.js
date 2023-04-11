@@ -241,6 +241,11 @@ const Chain = (options = {}) => {
 
     applyHeight();
 
+    // hackish: do this once when in editing mode, just to draw correctly.
+    if (game.objects.editor) {
+      animate();
+    }
+
   }
 
   css = common.inheritCSS({

@@ -440,7 +440,7 @@ const Inventory = () => {
 
       let options;
 
-      if (!game.data.battleOver && !game.data.paused) {
+      if (!game.data.battleOver && !game.data.paused && !game.objects.editor) {
 
         options = {
           isEnemy: true,

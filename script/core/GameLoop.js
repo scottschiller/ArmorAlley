@@ -57,6 +57,13 @@ const GameLoop = () => {
 
             sprites.updateIsOnScreen(gameObjects[item][i]);
 
+            if (game.objects.editor) {
+              sprites.moveWithScrollOffset(gameObjects[item][i]);
+              // special case: infantry + engineers need constant updates, otherwise they lose positioning during scrolling.
+              if (gameObjects[item][i].data.type === TYPES.infantry && !gameObjects[item][i].data.movedOnce) gameObjects[item][i].moveTo();
+              continue;
+            }
+
             if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
               // object is dead - take it out.
               common.unlinkObject(gameObjects[item][i]);
@@ -68,14 +75,23 @@ const GameLoop = () => {
 
         } else {
 
-          // single object case
+          // single object case - radar, gameLoop etc.
 
           sprites.updateIsOnScreen(gameObjects[item]);
 
-          if (gameObjects[item].animate && gameObjects[item].animate()) {
-            // object is dead - take it out.
-            common.unlinkObject(gameObjects[item]);
-            gameObjects[item] = undefined;
+          if (gameObjects[item].animate) {
+
+            if (game.objects.editor && gameObjects[item]?.data?.type) {
+              sprites.moveWithScrollOffset(gameObjects[item]);
+              continue;
+            }
+            
+            if (gameObjects[item].animate()) {
+              // object is dead - take it out.
+              common.unlinkObject(gameObjects[item]);
+              gameObjects[item] = undefined;
+            }
+
           }
 
         }

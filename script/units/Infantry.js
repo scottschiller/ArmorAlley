@@ -58,7 +58,7 @@ const Infantry = (options = {}) => {
 
   }
 
-  function moveTo(x, y) {
+  function moveTo(x = data.x, y = data.y) {
 
       data.x = x;
       data.y = y;
@@ -253,6 +253,8 @@ const Infantry = (options = {}) => {
 
     common.initNearby(nearby, exports);
 
+    moveTo(data.x, data.y);
+
   }
 
   function refreshMeasurements() {
@@ -344,6 +346,7 @@ const Infantry = (options = {}) => {
     dom,
     die,
     init: initInfantry,
+    moveTo,
     refreshHeight,
     resume,
     stop

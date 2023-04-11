@@ -79,8 +79,10 @@ const sprites = {
 
   moveWithScrollOffset: (exports) => {
 
-    // ignore if not on-screen.
-    if (!exports?.data?.isOnScreen) {
+    if (!exports?.dom?.o) return;
+
+    // ignore if not on-screen, and editor is not active.
+    if (!exports?.data?.isOnScreen && !game.objects.editor) {
       if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
@@ -114,8 +116,8 @@ const sprites = {
      * battlefield scroll and "target" offset can also be included.
      */
 
-    // ignore if off-screen
-    if (exports && !exports.data.isOnScreen) {
+    // ignore if off-screen, or if editor is active
+    if (!exports?.data?.isOnScreen && !game.objects.editor) {
       if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
