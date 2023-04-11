@@ -702,6 +702,17 @@ body.is-mobile #funds-count {
   z-index: 99;
   cursor: grab;
 }
+
+#radar-scrubber.active {
+  /* background-image: none; */
+  /* background-color: rgba(0,0,0,0.25); */
+  opacity: 0.75;
+}
+
+#radar-scrubber.active {
+  cursor: grabbing;
+}
+
 #radar {
   position: absolute;
   top: 0px;
