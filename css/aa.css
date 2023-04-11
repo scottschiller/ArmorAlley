@@ -2060,18 +2060,19 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .barb-wire {
-  /* background-image: url(../image/barb-wire.png); */
   width: 18px;
   height: 11px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAWCAYAAACosj4+AAAAjklEQVR4AdXUCQqFMAyE4bn/AXrdkS2AYONPrF0GwtK853zgop/j2yyOO7O03JGZOH8AecgzQIojrbWnKeGMpg7iqKyoUgj+l4K8A4gX5sUUlu3ljUDSG4CCOewskEV/iM4BFICliSBRkOogfK58Px9E9sKgSPWWgb1OANVf5/oHc0dQJ+gC4yfPaFAEYy71t0ySwdyXYwAAAABJRU5ErkJggg==);
+  background-image: url(../image/barb-wire.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAWCAYAAACosj4+AAAAjklEQVR4AdXUCQqFMAyE4bn/AXrdkS2AYONPrF0GwtK853zgop/j2yyOO7O03JGZOH8AecgzQIojrbWnKeGMpg7iqKyoUgj+l4K8A4gX5sUUlu3ljUDSG4CCOewskEV/iM4BFICliSBRkOogfK58Px9E9sKgSPWWgb1OANVf5/oHc0dQJ+gC4yfPaFAEYy71t0ySwdyXYwAAAABJRU5ErkJggg==); */
   background-size: contain;
 }
 
 .cactus {
-  /* background-image: url(../image/cactus.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAQCAYAAAArij59AAAASUlEQVR42qWPMQoAIAwDq+Dq7/ykn6xkqhhCBgOZeknbuDV3z3hEwFgtLSBrMYRFiho4pRsY8A0IFlDmexjy6/xHZQb0UO39Bw4+dFDBHMZp3QAAAABJRU5ErkJggg==);
-  width: 8px;
-  height: 16px;
+  width: 12px;
+  height: 17px;
+  background-image: url(../image/cactus.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAQCAYAAAArij59AAAASUlEQVR42qWPMQoAIAwDq+Dq7/ykn6xkqhhCBgOZeknbuDV3z3hEwFgtLSBrMYRFiho4pRsY8A0IFlDmexjy6/xHZQb0UO39Bw4+dFDBHMZp3QAAAABJRU5ErkJggg==); */
+  background-size: contain;
 }
 
 .cactus2 {
@@ -2079,6 +2080,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAAoUlEQVR4AaWTUQrDMAxDl/1sB0wuuRwyox8q+nhFMRGYUhc/JCd9BS2rujQ8RgZFwGe2q+oQAeRCEKh9J6ockSDgBCKuEEcDAPl5vxinByfeZOsckXeAcaz3nW+HsHXutcdl053QE8D23fqV49Q7O8kQLgHuOB2OEwchCjnJxXckuNj8AXEQIUFwWwG0K9gROMk6drKOnQjAEFbVSRbvJEP+nXp3mMre38sAAAAASUVORK5CYII=);
   width: 17px;
   height: 25px;
+  background-image: url(../image/cactus2.png);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAAoUlEQVR4AaWTUQrDMAxDl/1sB0wuuRwyox8q+nhFMRGYUhc/JCd9BS2rujQ8RgZFwGe2q+oQAeRCEKh9J6ockSDgBCKuEEcDAPl5vxinByfeZOsckXeAcaz3nW+HsHXutcdl053QE8D23fqV49Q7O8kQLgHuOB2OEwchCjnJxXckuNj8AXEQIUFwWwG0K9gROMk6drKOnQjAEFbVSRbvJEP+nXp3mMre38sAAAAASUVORK5CYII=); */
+  background-size: contain;
 }
 
 .landing-pad {
@@ -2100,89 +2104,94 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 51px;
   height: 8px;
   background-image: url(../image/sand-dune.png);
-  background-size: contain;
 }
 
 .sand-dunes {
   width: 73px;
   height: 11px;
   background-image: url(../image/sand-dunes.png);
-  background-size: contain;
 }
 
 .checkmark-grass {
-  /* background-image: url(../image/checkmark-grass.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAKCAYAAABv7tTEAAAAUElEQVR42pXPUQoAIQiE4VbYI3pJO6Q9/jDLLBkEKX0OrptTVf37YcfTAqSO5iHQAGoDLVBIAvAL3rQTqXVHIA0SQxJrmAigAQS4HVdm9vQet1hn5UKvbV8AAAAASUVORK5CYII=);
-  width: 13px;
+  width: 15px;
   height: 10px;
+  background-image: url(../image/checkmark-grass.png);
 }
 
 .flower {
-  /* background-image: url(../image/flower.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAHCAYAAADam2dgAAAAOElEQVQYV2NgQAOrVjH9RxfDULCaifE/EQpX4VeAUxFrKON/EMamCF2OgQ/qDpgiPlzugkmgKwAAUjMg7e8i7PwAAAAASUVORK5CYII=);
-  width: 9px;
-  height: 7px;
+  width: 11px;
+  height: 8px;
+  background-image: url(../image/flower.png);
 }
 
 .flowers {
-  /* background-image: url(../image/flowers.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAa0lEQVR42qWPwQ3AMAgD2w7Q/WfIkrS/a2WJk4g/iTHGcHxR6yxY1OMdYRIg2nRBD7jXVb+eFzB0DaeevAnY0/1IH8CV6Fl3f9NjAfzR4eb3Iz1gX/clfQC1vF79vqQHJNDNLwtMkIFdj3kesSjNPyjXA1UAAAAASUVORK5CYII=);
-  width: 32px;
-  height: 10px;
+  width: 34px;
+  height: 11px;
+  background-image: url(../image/flowers.png);
+}
+
+.flower-bush {
+  width: 18px;
+  height: 13px;
+  background-image: url(../image/flower-bush.png);
 }
 
 .tree {
-  /* background-image: url(../image/tree.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA2BAMAAAB6nqfTAAAAElBMVEUAAMgAAAAFVQFVVQGqVQEOqgJc9w+XAAAAAXRSTlMAQObYZgAAAM5JREFUeF6109EJBCEMBuGkA6eFtLAtpIX038pxYQOiRu7l5m35+GURlDflbcgaFQsoRISFma07ZmLdWGXzjIWYRgVl1JCdasgMEQZmjJ5ypjPlAdRvciam8yJSKkZPiDAdNZFdSYmSlbhQfS7GDxS2dSc7E9yp6U5fOziIdjQkZ7AhIqI9CcCTW8MoSdIj1aNIy5LnN6Eb5ahmzuN+eH9adHi14N8gkCXtSXg840JjJ9xxQLb0pSF7SRT8nfxO/YGjJxKa+913FPXX67/QB9oNgTqA34bRAAAAAElFTkSuQmCC);
-  background-size: contain;
   width: 26px;
   height: 27px;
+  background-image: url(../image/tree.png);
+}
+
+.tumbleweed {
+  width: 18px;
+  height: 15px;
+  background-image: url(../image/tumbleweed.png);
 }
 
 #battlefield.snow .tree {
   background-image: url(../image/tree_snow.png);
-  background-size: contain;
 }
 
 .palm-tree {
-  /* background-image: url(../image/palm-tree.png); */
   width: 18px;
   height: 22px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAsBAMAAAD/fQfGAAAAElBMVEUAAAAAAAAFVQGqVQEOqgJVVQEksNGeAAAAAXRSTlMAQObYZgAAAKdJREFUeF6d0OEJxSAMhVGzQb4VXCErdIXuv8ozXlv6Iv3TW2jgmAtiGzEAn8ObwoyGxDiOfkCOtcaTWEs9M4fW+CeuJea31qhESwHQb/gLAdNjACruBKYyXdYMp9CIJCbCRnofI+WEBuspEOF5ePeAQKeV7CaypwYX+SBPMg06pp4iohJwPkj9SolBIQi8UO19JyMqIaq9jb5eK96oXsv3a1F7tVnpB0hEMc8NWqFUAAAAAElFTkSuQmCC);
-  background-size: contain;
+  background-image: url(../image/palm-tree.png);
 }
 
 .rock {
-  /* background-image: url(../image/rock.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAANCAQAAAAOR/aSAAAATklEQVR4AXXR0QmAAAgE0JZ0yZY0CHpkZ3fYTw+FOkZ69BNEFoico5gjSLB2BNrg38u6B6okWg/CchO0sPKEXgyu2DSZQTp+yfo5BVXkAnmjDK23drGwAAAAAElFTkSuQmCC);
   width: 18px;
   height: 13px;
+  background-image: url(../image/rock.png);
 }
 
 .rock2 {
-  /* background-image: url(../image/rock2.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAQAAAAOu8/qAAAAQUlEQVR4AW3OQQrAIBADwHzST/rJForTzUHDXjIETJLnkhzw9ncbpkqBfykLpjZoDakskM1tpXBFg+KHUAoOTsALvfW97SZUC7cAAAAASUVORK5CYII=);
   width: 13px;
   height: 11px;
+  background-image: url(../image/rock2.png);
 }
 
 .gravestone {
-  /* background-image: url(../image/gravestone.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAAXklEQVR42sWOQQrAMAgE20fmk37SsIchYhCKCBWGbIQdfD6MF7TGBWNmelpSZIgyLSmyip5Qbyj3hZSnL4xF8r8XOiAsMn+oRWu9QoWYgR3c0iwip30lIh9YDnCEk2xXYisI3YlXMQAAAABJRU5ErkJggg==);
   width: 20px;
-  height: 13px;
+  height: 12px;
+  background-image: url(../image/gravestone.png);
+}
+
+.gravestone2 {
+  width: 15px;
+  height: 12px;
+  background-image: url(../image/gravestone2.png);
 }
 
 .grave-cross {
-  /* background-image: url(../image/grave-cross.png); */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJCAYAAADkZNYtAAAALklEQVQY02NgwAJWrVr1n4FYQLRikEIYpq7JtFMcGsr4H4ZJUoShCVkROkZXAwCKlTQzKK8YLQAAAABJRU5ErkJggg==);
-  width: 11px;
-  height: 9px;
+  width: 13px;
+  height: 10px;
+  background-image: url(../image/grave-cross.png);
 }
 
 .terrain-item {
   /* all these things: rocks, graves, trees, barb wire etc. */
   z-index: 5;
+  background-size: contain;
 }
 
 .left-arrow-sign,
@@ -2191,7 +2200,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   height: 25px;
   z-index: 2; /* ground units go in front of these */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAyCAYAAAAJHRh4AAAAkUlEQVR4Ae3YAQbFMBCE4b19b5DD5TJbRGGs0iC64x9+gMQH70lDlh7VS7Nq3BijdRUyzYCSwOKKzgkU4LlyrgB2B64ANgZKALsDNYC7wJz/DCBARyC/ogD5owfIa4IHL8BeAXT+8Bu2QFm+VRx0pv37y3kAP00ueKaH7e/0/QABAgQIECBAgAABAgQIEKAB8AZSFQlSyJWxoAAAAABJRU5ErkJggg==);
-  background-size: contain;
 }
 
 #battlefield.snow .left-arrow-sign,
@@ -3299,7 +3307,7 @@ body.is-mobile #game-tips #game-announcements {
     transform: translate3d(0px, 0px, 0px);
   }
   to {
-    transform: translate3d(-192px, 0px, 0px);
+    transform: translate3d(-200px, 0px, 0px);
   }
 }
 
