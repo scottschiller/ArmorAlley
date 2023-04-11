@@ -335,7 +335,7 @@ const SuperBunker = (options = {}) => {
               // switch over the first time energy goes up
               if (data.energy === 1) {
                 
-                // setFriendly(isFriendly);
+                setFriendly(isFriendly);
 
               } else {
 
