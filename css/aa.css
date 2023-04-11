@@ -2294,6 +2294,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   /* background-image: url(../image/explosion-spark.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAHklEQVR4AWMAgtVMjHASB///KhgHyALygQjCQFcPAKZrC8ti0oamAAAAAElFTkSuQmCC);
   background-position: 0px 0px;
+  background-size: contain;
   width: 5px;
   height: 5px;
 }
@@ -2304,6 +2305,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   /* background-image: url(../image/explosion-spark.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAHklEQVR4AWMAgtVMjHASB///KhgHyALygQjCQFcPAKZrC8ti0oamAAAAAElFTkSuQmCC);
   background-position: 0px 0px;
+  background-size: contain;
   width: 5px;
   height: 5px;
   z-index: 5;
