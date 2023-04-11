@@ -135,14 +135,6 @@ const game = (() => {
     // given type of TYPES.van, create object and append to respective array.
 
     let object, objectArray;
-
-    const upper = /[A-Z]/g;
-
-    if (upper.test(type)) {
-      console.warn(`addObject(): legacy CamelCase type ${type} -> ${type.replace(upper, "-$&").toLowerCase()}`);
-      // RIP this syntax. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
-      type = type.replace(upper, "-$&").toLowerCase();
-    }
     
     // TYPES.van -> game.objects['van'], etc.
     objectArray = objects[type];
