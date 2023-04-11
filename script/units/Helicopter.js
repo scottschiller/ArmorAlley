@@ -832,7 +832,6 @@ const Helicopter = (options = {}) => {
     // no matter what, bail if on a landing pad.
     if (data.onLandingPad) {
       data.bombing = false;
-      data.bombFrameCount = parseInt(data.bombModulus / 2, 10);
       return;
     }
 
@@ -840,10 +839,9 @@ const Helicopter = (options = {}) => {
 
       data.bombing = !!state;
       
-      if (data.isLocal) {
+      if (!data.isCPU) {
         // start or stop immediately, too.
-        // TODO: setting this breaks enemy helicopter bombing.
-        data.bombFrameCount = parseInt(data.bombModulus / 2, 10);
+        data.bombFrameCount = parseInt(data.bombModulus, 10);
       }
     }
 
