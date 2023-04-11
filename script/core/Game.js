@@ -453,15 +453,15 @@ const game = (() => {
           attachEvents: true,
           isLocal: true
         });
-  
-        if (!tutorialMode) {
     
+        if (!tutorialMode) {
+      
           addObject(TYPES.helicopter, {
             skipInit: true,
             isEnemy: true,
             isCPU: true
           });
-        
+          
         }
 
       }
