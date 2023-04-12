@@ -310,7 +310,7 @@ const SuperBunker = (options = {}) => {
               }
 
               // update, now that capture has happened.
-              isFriendly = (target.data.isEnemy === data.isEnemy)
+              isFriendly = (target.data.isEnemy === data.isEnemy);
 
             }
 
