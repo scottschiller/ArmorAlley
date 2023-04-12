@@ -22,19 +22,9 @@ const SuperBunker = (options = {}) => {
 
     let isFriendlyCapture = (isEnemy === game.players.local.data.isEnemy);
 
-    if (!data.isEnemy && isEnemy) {
+    data.isEnemy = isEnemy;
 
-      data.isEnemy = true;
-
-      setFriendly(isFriendlyCapture);
-
-    } else if (data.isEnemy && !isEnemy) {
-
-      data.isEnemy = false;
-
-      setFriendly(isFriendlyCapture);
-
-    }
+    setFriendly(isFriendlyCapture);
 
     if (isFriendlyCapture) {
 
