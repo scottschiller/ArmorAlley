@@ -3,7 +3,7 @@ import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { collisionCheck, nearbyTest, recycleTest } from '../core/logic.js';
+import { nearbyTest, recycleTest } from '../core/logic.js';
 import { TYPES, FPS, rndInt, oneOf, getTypes, rngInt } from '../core/global.js';
 import { addSequence, playSound, playSoundWithDelay, skipSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -399,19 +399,9 @@ const Tank = (options = {}) => {
       useLookAhead: true,
       // stop moving if we roll up behind a friendly tank
       friendlyOnly: true,
-      hit(target) {
-        // TODO: data.halfWidth instead of 0, but be able to resume and separate tanks when there are no enemies nearby.
-        // for now: stop when we pull up immediately behind the next tank, vs. being "nearby."
-        if (collisionCheck(data, target.data, 0)) {
-          stop();
-        } else {
-          resume();
-        }
-      },
-      miss() {
-        // resume, if tank is not also firing
-        resume();
-      }
+      hit: (target) => common.friendlyNearbyHit(target, exports, { resume, stop }),
+      // resume, if tank is not also firing
+      miss: resume
     },
     // who are we looking for nearby?
     items: getTypes('tank:friendly', { exports }),

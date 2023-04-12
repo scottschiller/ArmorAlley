@@ -389,6 +389,46 @@ const common = {
 
   },
 
+  friendlyNearbyHit(target, source, hitOptions) {
+
+    // logic for missile launcher and tank overlap / spacing.
+
+    const { stop, resume } = hitOptions;
+
+    /**
+     * TODO: data.halfWidth instead of 0, but be able to resume and separate vehicles when there are no enemies nearby.
+     * For now: stop when we pull up immediately behind the next tank / vehicle, vs. being "nearby."
+     * Safeguard: wait only a certain amount of time before ignoring a nearby / overlapping unit, and continuing.
+     */
+
+    // if we are not a tank, but the target is, always wait for tanks to pass in front.
+    if (source.data.type !== TYPES.tank && target.data.type === TYPES.tank) {
+      stop();
+      return;
+    }
+
+    // If we are "ahead" of the overlapping unit, we may be at the front of a possible traffic pile-up - so, keep on truckin'.
+    if ((!source.data.isEnemy && source.data.x > target.data.x) || (source.data.isEnemy && source.data.x < target.data.x)) {
+      resume();
+      return;
+    }
+
+    // if we have an absolute match with another vehicle (and the same type), take the lower ID.
+    // this is intended to help prevent vehicles from getting "wedged" waiting for one another.
+    if (source.data.x === target.data.x && target.data.type === source.data.type) {
+      const sourceID = source.data.guid.split('_')[1];
+      const targetID = target.data.guid.split('_')[1];
+      if (sourceID < targetID) {
+        resume();
+        return;
+      }
+    }
+
+    // at this point, just stop.
+    stop();
+
+  },
+
   hit(target, hitPoints = 1, attacker) {
 
     let newEnergy, energyChanged;

@@ -311,7 +311,7 @@ const MissileLauncher = (options = {}) => {
       useLookAhead: true,
       // stop moving if we roll up behind a friendly vehicle
       friendlyOnly: true,
-      hit: stop,
+      hit: (target) => common.friendlyNearbyHit(target, exports, { resume, stop }),
       miss: resume
     },
     // who are we looking for nearby?
