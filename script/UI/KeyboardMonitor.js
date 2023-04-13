@@ -6,6 +6,7 @@ import { TYPES, defaultMissileMode, rubberChickenMode, bananaMode } from '../cor
 // recycled from survivor.js
 function KeyboardMonitor() {
 
+  let data;
   let keys;
   let events;
 
@@ -54,6 +55,9 @@ function KeyboardMonitor() {
 
     keydown(e) {
 
+      // let editor handle keys, unless method returns truthy
+      if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
+
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
       if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode]) return;
@@ -73,6 +77,9 @@ function KeyboardMonitor() {
     },
 
     keyup(e) {
+
+      // let editor handle keys, unless method returns truthy
+      if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
 
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
@@ -370,9 +377,17 @@ function KeyboardMonitor() {
 
   function initKeyboardMonitor() {
 
+    if (data.didInit) return;
+
+    data.didInit = true;
+
     attachEvents();
 
   }
+
+  data = {
+    didInit: false
+  };
 
   return {
 
