@@ -78,7 +78,8 @@ const Cloud = (options = {}) => {
   function initDOM() {
 
     dom.o = sprites.create({
-      className: css.className
+      className: css.className,
+      id: data.id
     });
 
   }

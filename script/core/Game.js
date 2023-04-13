@@ -55,12 +55,15 @@ const game = (() => {
 
   function addItem(className, x, extraTransforms) {
 
-    let data, _dom, width, height, inCache, exports;
+    let data, _dom, id, width, height, inCache, exports;
+
+    id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
 
     function initDOM() {
 
       _dom.o = sprites.create({
-        className: `${className} terrain-item`
+        className: `${className} terrain-item`,
+        id
       });
 
     }
@@ -94,6 +97,7 @@ const game = (() => {
     
     data = {
       type: className,
+      id,
       isTerrainItem: true,
       x,
       y: 0,
@@ -126,6 +130,7 @@ const game = (() => {
 
     // these will be tracked only for on-screen / off-screen purposes.
     game.objects[TYPES.terrainItem].push(exports);
+    game.objectsById[data.id] = exports;
 
     return exports;
 

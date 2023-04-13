@@ -228,7 +228,8 @@ const Chain = (options = {}) => {
   function initDOM() {
 
     dom.o = sprites.create({
-      className: css.className
+      className: css.className,
+      id: data.id
     });
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
@@ -293,6 +294,7 @@ const Chain = (options = {}) => {
     die,
     init: initChain,
     isJerking,
+    objects,
     setEnemy
   };
 

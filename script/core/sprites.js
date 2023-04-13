@@ -38,6 +38,11 @@ const sprites = {
     // note: `isEnemy` value may not be 'enemy', but 'facing-left' (e.g., for balloons.)
     o.className = `sprite ${options.className}${options.isEnemy ? ' ' + options.isEnemy : ''}`;
   
+    // editor case
+    if (game.objects.editor && options.id) {
+      o.dataset.id = options.id; // data-id = ...
+    }
+
     if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
       o._style.setProperty('top', '0px');
       o._style.setProperty('left', '0px');

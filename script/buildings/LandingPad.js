@@ -37,6 +37,7 @@ const LandingPad = (options = {}) => {
   function initLandingPad() {
 
     dom.o = sprites.create({
+      id: data.id,
       className: css.className
     });
 

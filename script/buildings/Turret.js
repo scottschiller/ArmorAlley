@@ -567,6 +567,7 @@ const Turret = (options = {}) => {
 
     dom.o = sprites.create({
       className: css.className,
+      id: data.id,
       isEnemy
     });
 

@@ -220,6 +220,7 @@ const Van = (options = {}) => {
 
     dom.o = sprites.create({
       className: css.className,
+      id: data.id,
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
