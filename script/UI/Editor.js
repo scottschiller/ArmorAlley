@@ -136,11 +136,25 @@ const Editor = () => {
 
     item.dataset.x = currentXY[0];
 
+    let airborne;
+
     // hackish: no repositioning tricks on floating items.
     if (item.className.match(/cloud/i)) {
+
+      airborne = true;
+
+    } else if (item.className.match(/balloon/i)) {
+
+      // allow Y movement if this isn't anchored to a bunker.
+      if (!getGameObject(item)?.objects?.bunker) airborne = true;
+
+    }
+
+    if (airborne) {
       utils.css.add(item, css.airborne);
       item.dataset.y = currentXY[1];
     }
+
 
   }
 
