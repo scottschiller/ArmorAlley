@@ -37,6 +37,8 @@ const Editor = () => {
 
     utils.css.add(document.body, css.editMode);
 
+    setCursor('grab');
+
     events.resize();
 
     keyboardMonitor.init();
@@ -57,6 +59,7 @@ const Editor = () => {
     levelData: null,
     mode: modes.DEFAULT,
     mouseDown: false,
+    mouseDownTarget: null,
     mouseDownX: 0,
     mouseDownY: 0,
     mouseOffsetX: 0,
@@ -368,6 +371,12 @@ const Editor = () => {
 
   }
 
+  function setCursor(cursor) {
+
+    game.objects.view.dom.battleField.style.cursor = cursor;
+
+  }
+
   events = {
 
     keydown(e) {
@@ -406,13 +415,19 @@ const Editor = () => {
     mousedown(e) {
 
       data.mouseDown = true;
-
+      data.mouseDownTarget = e.target;
       data.mouseDownX = e.clientX;
       data.mouseDownY = e.clientY;
 
+      setCursor('grabbing');
+
       const { clientX } = e;
 
-      if (e.target === dom.oRadarScrubber) {
+      const target = normalizeSprite(data.mouseDownTarget);
+
+      const isSprite = utils.css.has(target, 'sprite');
+
+      if (data.mouseDownTarget === dom.oRadarScrubber || !isSprite) {
 
         data.scrubberActive = true;
 
@@ -425,13 +440,11 @@ const Editor = () => {
 
       }
 
-      const target = normalizeSprite(e.target);
-
       // selection mode, and clicking on an item?
       
       if (data.mode === modes.SELECT) {
         
-        if (utils.css.has(target, 'sprite')) {
+        if (isSprite) {
 
           // it's a game sprite.
           // if shift key is NOT down, also clear selection.
@@ -477,7 +490,13 @@ const Editor = () => {
 
       if (data.scrubberActive) {
 
-        setLeftScroll(e.clientX);
+        // if scrubber is being dragged, move battlefield same direction.
+        if (data.mouseDownTarget === dom.oRadarScrubber) {
+          setLeftScroll(e.clientX);
+        } else {
+          // move opposite of mouse direction.
+          setLeftScroll(data.mouseDownX + (data.mouseDownX - e.clientX));
+        }
 
       } else {
 
@@ -507,6 +526,8 @@ const Editor = () => {
       data.selectedItems.forEach((item) => refreshItemCoords(item));
 
       data.mouseDown = false;
+
+      setCursor('grab');
 
     },
 

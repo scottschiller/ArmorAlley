@@ -5309,28 +5309,15 @@ body.edit-mode #battlefield .sprite:not(.sub-sprite):not(.transform-sprite):not(
   pointer-events: unset;
 }
 
-body.edit-mode #battlefield .sprite.tank {
-  /* fix annoying vertical mis-alignment */
-  margin-top: -2px;
-}
-
 /* ignore events on certain "non-moveable" sprites */
 body.edit-mode #battlefield .sprite:not(.end-bunker):not(.base):hover { 
   outline: 1px dotted #339933;
 }
 
 body.edit-mode #battlefield .sprite.selected {
-  outline: 1px solid #fff;
+  /* override :not(), ugh. */
+  outline: 1px solid #fff !important;
   /* background-color: #006600; */
-}
-
-body.edit-mode #battlefield .sprite.selected:not(.airborne) {
-  margin-top: -1px;
-}
-
-body.edit-mode #battlefield .tank.sprite.selected {
-  /* extra special case. :P */
-  margin-top: -4px;
 }
 
 body.edit-mode #battlefield .terrain-item {
@@ -5343,4 +5330,8 @@ body.edit-mode #battlefield .terrain-item.submerged {
 
 body.edit-mode #battlefield .terrain-item {
   margin-bottom: 0px;
+}
+
+body.edit-mode #battlefield {
+  cursor: grab;
 }
