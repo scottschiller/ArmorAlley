@@ -122,7 +122,7 @@ const sprites = {
      */
 
     // ignore if off-screen, or if editor is active
-    if (!exports?.data?.isOnScreen && !game.objects.editor) {
+    if (exports && !exports?.data?.isOnScreen && !game.objects.editor) {
       if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
