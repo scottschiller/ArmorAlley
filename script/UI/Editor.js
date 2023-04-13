@@ -59,6 +59,7 @@ const Editor = () => {
     levelData: null,
     mode: modes.DEFAULT,
     mouseDown: false,
+    mouseDownScrollLeft: 0,
     mouseDownTarget: null,
     mouseDownX: 0,
     mouseDownY: 0,
@@ -351,16 +352,18 @@ const Editor = () => {
 
   function getScrubberX(clientX) {
 
-    const maxOverflow = (game.objects.view.data.browser.fractionWidth / worldWidth);
+    const maxOverflow = (game.objects.view.data.browser.halfWidth / worldWidth);
 
     // move relative to where the slider was grabbed.
     clientX -= data.mouseOffsetX;
 
-    let xOffset = (clientX / game.objects.view.data.browser.width) * 1 / game.objects.view.data.screenScale;
+    let xOffset;
+
+    xOffset = (clientX / game.objects.view.data.browser.width) * 1 / game.objects.view.data.screenScale;
 
     xOffset = Math.min(1 - maxOverflow, Math.max(0 - maxOverflow, xOffset));
 
-    game.objects.view.setLeftScroll((xOffset * worldWidth));
+    game.objects.view.setLeftScroll(xOffset * worldWidth);
 
     const scrubberX = ((game.objects.view.data.browser.width) * xOffset);
 
@@ -371,9 +374,30 @@ const Editor = () => {
 
   function setLeftScroll(clientX) {
 
-    data.scrubberX = getScrubberX(clientX);
+    // dragging scrubber directly
+    if (data.mouseDownTarget === dom.oRadarScrubber) {
 
-    dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
+      data.scrubberX = getScrubberX(clientX);
+      dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
+
+    } else {
+
+      // dragging the battlefield. move relatively.
+      const maxOverflow = game.objects.view.data.browser.halfWidth;
+
+      let xOffset = data.mouseDownScrollLeft + ((clientX - data.mouseDownX) * 1 / game.objects.view.data.screenScale);
+
+      // limit range.
+      xOffset = Math.min(worldWidth - maxOverflow, Math.max(-maxOverflow, xOffset));
+
+      // pixels, up to world width.
+      game.objects.view.setLeftScroll(xOffset);
+
+      data.scrubberX = (xOffset / worldWidth) * game.objects.view.data.browser.width;
+
+      dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
+
+    }
 
   }
 
@@ -449,6 +473,8 @@ const Editor = () => {
 
         // move relative to "grab point"
         data.mouseOffsetX = clientX - (data.scrubberX * game.objects.view.data.screenScale);
+
+        data.mouseDownScrollLeft = parseFloat(game.objects.view.data.battleField.scrollLeft);
 
         return stopEvent(e);
 
