@@ -88,7 +88,7 @@ const View = () => {
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
     // Parallax star effect.
-    sprites.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, `${(game?.objects?.[TYPES.helicopter][0]?.data?.y / data.battleField.height) * -2 || -2}px`);
+    sprites.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, `${(game?.players.local?.data?.y / data.battleField.height) * -2 || -2}px`);
 
   }
 
