@@ -5304,7 +5304,8 @@ button .network-icon {
   opacity: 1;
 }
 
-body.edit-mode #battlefield .sprite {
+/* ignore events on sub/transform sprites, and explosions */
+body.edit-mode #battlefield .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(.shrapnel):not(.gunfire) {
   pointer-events: unset;
 }
 
@@ -5313,8 +5314,23 @@ body.edit-mode #battlefield .sprite.tank {
   margin-top: -2px;
 }
 
-body.edit-mode #battlefield .sprite:hover {
+/* ignore events on certain "non-moveable" sprites */
+body.edit-mode #battlefield .sprite:not(.end-bunker):not(.base):hover { 
   outline: 1px dotted #339933;
+}
+
+body.edit-mode #battlefield .sprite.selected {
+  outline: 1px solid #fff;
+  /* background-color: #006600; */
+}
+
+body.edit-mode #battlefield .sprite.selected:not(.airborne) {
+  margin-top: -1px;
+}
+
+body.edit-mode #battlefield .tank.sprite.selected {
+  /* extra special case. :P */
+  margin-top: -4px;
 }
 
 body.edit-mode #battlefield .terrain-item {
