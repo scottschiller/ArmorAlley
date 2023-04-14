@@ -26,6 +26,9 @@ const Editor = () => {
     oRadarScrubber.id = 'radar-scrubber';
 
     dom.oRadarScrubber = document.getElementById('battlefield').appendChild(oRadarScrubber);
+    const oMarquee = document.createElement('div');
+    oMarquee.id = 'marquee';
+    dom.oMarquee = battleField.appendChild(oMarquee);
 
   }
 
@@ -57,6 +60,12 @@ const Editor = () => {
     currentTool: null,
     levelDataSource: null,
     levelData: null,
+    marquee: {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0
+    },
     mode: modes.DEFAULT,
     mouseDown: false,
     mouseDownScrollLeft: 0,
@@ -73,6 +82,7 @@ const Editor = () => {
   };
 
   dom = {
+    oMarquee: null,
     oRadarScrubber: null
   };
 
@@ -159,7 +169,7 @@ const Editor = () => {
 
   }
 
-  function checkSubObject(objects, objectName) {
+  function checkLinkedObject(objects, objectName) {
 
     return objects[objectName]?.dom?.o;
 
@@ -188,7 +198,7 @@ const Editor = () => {
     // also, check for balloon <-> chain <-> bunker connections.
     if (gameObj.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
-        const obj = checkSubObject(gameObj.objects, type);
+        const obj = checkLinkedObject(gameObj.objects, type);
         if (obj) selectItem(obj);
       });
     }
@@ -224,7 +234,7 @@ const Editor = () => {
 
     if (gameObj.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
-        const obj = checkSubObject(gameObj.objects, type);
+        const obj = checkLinkedObject(gameObj.objects, type);
         if (obj) deSelectItem(obj);
       });
     }
@@ -266,7 +276,7 @@ const Editor = () => {
         // special case: kill the related ones, too.
         if (gameObject.objects) {
           ['balloon', 'bunker', 'chain'].forEach((type) => {
-            const obj = checkSubObject(gameObject.objects, type);
+            const obj = checkLinkedObject(gameObject.objects, type);
             if (obj) getGameObject(obj)?.die();
           });
         }
@@ -465,6 +475,41 @@ const Editor = () => {
 
       const isSprite = utils.css.has(target, 'sprite');
 
+      if (downKeys.meta) {
+
+        // if on a sprite, then toggle selection and exit.
+        if (isSprite) {
+          toggleSelectItem(target);
+          return stopEvent(e);
+        }
+
+        // clear unless also shift
+        if (!downKeys.shift) {
+          clearSelectedItems();
+        }
+
+        data.marqueeActive = true;
+
+        Object.assign(dom.oMarquee.style, {
+          width: '0px',
+          height: '0px',
+          left: '-2px',
+          top: '-2px',
+          opacity: 1
+        });
+
+        data.marquee = {
+          x: 0,
+          y: 0,
+          w: 0,
+          h: 0
+        };
+
+
+        return stopEvent(e);
+
+      }
+
       if (data.mouseDownTarget === dom.oRadarScrubber || !isSprite) {
 
         data.scrubberActive = true;
@@ -528,6 +573,36 @@ const Editor = () => {
 
       if (!data.mouseDown) return;
 
+      if (data.marqueeActive) {
+
+        const scale = (1 / game.objects.view.data.screenScale);
+
+        const deltaX = Math.abs(data.mouseX - data.mouseDownX);
+        const deltaY = Math.abs(data.mouseY - data.mouseDownY);
+
+        let startX, startY;
+
+        startX = data.mouseX < data.mouseDownX ? data.mouseX : data.mouseDownX;
+        startY = data.mouseY < data.mouseDownY ? data.mouseY : data.mouseDownY;
+
+        data.marquee = {
+          x: startX * scale,
+          y: startY * scale,
+          w: deltaX * scale,
+          h: deltaY * scale
+        };
+
+        dom.oMarquee.style.left = `${data.marquee.x}px`;
+        dom.oMarquee.style.top = `${data.marquee.y}px`;
+
+        dom.oMarquee.style.width = `${data.marquee.w}px`;
+        dom.oMarquee.style.height = `${data.marquee.h}px`;
+
+
+        return;
+
+      }
+
       if (data.scrubberActive) {
 
         // if scrubber is being dragged, move battlefield same direction.
@@ -562,6 +637,10 @@ const Editor = () => {
         data.scrubberActive = false;
       }
 
+      if (data.marqueeActive) {
+        dom.oMarquee.style.opacity = 0;
+        data.marqueeActive = false;
+      }
       // this ensures that everything is up to date, whether one item moved or the whole window was scrolled.
       data.selectedItems.forEach((item) => refreshItemCoords(item));
 

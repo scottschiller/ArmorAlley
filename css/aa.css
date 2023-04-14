@@ -5334,4 +5334,17 @@ body.edit-mode #battlefield .terrain-item {
 
 body.edit-mode #battlefield {
   cursor: grab;
+#marquee {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 0px;
+  height: 0px;
+  opacity: 0;
+  transition: opacity 0.125s ease-out;
+  /* TODO: GPU */
+  background: rgba(33, 99, 33, 0.25);
+  border: 1px solid #339933;
+  /* important: events need to fall through this, so JS sees clicks underneath. */
+  pointer-events: none;
 }
