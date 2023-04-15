@@ -8,6 +8,43 @@ import { zones } from '../core/zones.js';
 
 const Editor = () => {
 
+  const itemTypes = {
+    vehicles: [
+      TYPES.missileLauncher,
+      TYPES.tank,
+      TYPES.van,
+      TYPES.infantry,
+      TYPES.engineer
+    ],
+    terrain: {
+      rock: [ 'rock', 'rock2' ],
+      grave: [ 'gravestone', 'gravestone2', 'grave-cross' ],
+      tumbleweed: [ 'tumbleweed '],
+      grass: [ 'checkmark-grass' ],
+      barbWire: [ 'barb-wire' ],
+      flower: [ 'flower', 'flowers', 'flower-bush' ],
+      cactus: [ 'cactus', 'cactus2' ],
+      tree: [ 'tree', 'palm-tree' ],
+      dune: [ 'sand-dune', 'sand-dunes' ]
+    }
+  };
+
+  const itemTypesByKey = {
+    m: [ TYPES.missileLauncher ],
+    t: [ TYPES.tank ],
+    v: [ TYPES.van ],
+    i: [ TYPES.infantry ],
+    e: [ TYPES.engineer ],
+    // terrain items
+    b: itemTypes.terrain.barbWire,
+    c: itemTypes.terrain.cactus,
+    d: itemTypes.terrain.dune,
+    f: itemTypes.terrain.flower,
+    g: [ ...itemTypes.terrain.grass, ...itemTypes.terrain.grave ],
+    r: itemTypes.terrain.rock,
+    w: itemTypes.terrain.tree // categorized as "wood"
+  };
+
   let css, data, dom, downKeys, events, exports, keyMap, keysToMethods;
 
   // ESC = exit to default mode
@@ -31,7 +68,11 @@ const Editor = () => {
     dom.oRadarScrubber = document.getElementById('battlefield').appendChild(oRadarScrubber);
     const oMarquee = document.createElement('div');
     oMarquee.id = 'marquee';
+
+    const battleField = document.getElementById('battlefield');
+
     dom.oMarquee = battleField.appendChild(oMarquee);
+    dom.oRadarScrubber = battleField.appendChild(oRadarScrubber);
 
   }
 
@@ -60,7 +101,8 @@ const Editor = () => {
   };
 
   data = {
-    currentTool: null,
+    activeTool: null,
+    activeToolOffset: 0,
     levelDataSource: null,
     levelData: null,
     marquee: {
@@ -76,6 +118,7 @@ const Editor = () => {
     mouseDownTarget: null,
     mouseDownX: 0,
     mouseDownY: 0,
+    mouseMoveCount: 0,
     mouseOffsetX: 0,
     mouseX: 0,
     mouseY: 0,
@@ -96,23 +139,122 @@ const Editor = () => {
     // default / selection mode
     'escape': () => setMode(),
     'delete': () => deleteSelectedItems(),
-    'backspace': () => deleteSelectedItems()
-  }
+    'backspace': () => deleteSelectedItems(),
+    'arrowleft': () => moveSelectedItemsX(-1),
+    'arrowright': () => moveSelectedItemsX(1),
+    ',': () => setEnemyState(true), // <
+    '.': () => setEnemyState(false), // >
+    '[': () => modifyActiveTool(-1),
+    ']': () => modifyActiveTool(1)
+  };
+
+  // assign all the keys for various "tools", e.g., placing trees or rocks.
+  Object.keys(itemTypesByKey).forEach((key) => {
+    // hackish: self-referential.
+    itemTypesByKey[key].key = key;
+    keysToMethods[key] = () => setActiveTool(itemTypesByKey[key]);
+  });
 
   function setMode(mode) {
 
     if (data.mode === mode) return;
 
-    // update so the cursor changes, maybe.
     data.mode = modes[mode] || modes.DEFAULT;
 
-    if (data.mode !== modes.SELECT) {
-      // clear selection if leaving select mode.
+    if (!downKeys.shift && !downKeys.meta) {
+      // clear selection unless shift or meta has been held.
       clearSelectedItems();
     }
 
-    // update CSS?
+    if (mode !== 'ADD') {
+      // clear active tool?
+      clearActiveTool();
+    }
 
+    utils.css.addOrRemove(dom.oCutoffLine, mode === 'ADD', css.active);
+
+  }
+
+  // TODO: better name? the thing we'll be "painting" with.
+  function setActiveTool(item) {
+
+    // ensure we're in ADD mode, first
+    setMode('ADD');
+
+    if (data.activeTool !== item) {
+      data.activeTool = item;
+      data.activeToolOffset = 0;
+    } else {
+      data.activeToolOffset++;
+      if (data.activeToolOffset >= data.activeTool.length) {
+        data.activeToolOffset = 0;
+      }
+    }
+
+    updateActiveTool();
+
+  }
+
+  function clearActiveTool() {
+
+    data.activeTool = null;
+    data.activeToolOffset = 0;
+    updateActiveTool();
+
+  }
+
+  function modifyActiveTool(direction) {
+
+    // ±1
+    data.activeToolOffset += direction;
+    if (data.activeToolOffset >= data.activeTool.length) {
+      data.activeToolOffset = 0;
+    } else if (data.activeToolOffset < 0) {
+      data.activeToolOffset = data.activeTool.length - 1;
+    }
+
+    updateActiveTool();
+
+  }
+
+  function updateActiveTool() {
+
+    document.getElementById('editor-active').innerHTML = data.activeTool ? (data.activeTool[data.activeToolOffset] + (data.activeTool.length > 1 ? ' (' + (data.activeToolOffset + 1) + '/' + data.activeTool.length + ')' : '')) : '[none]';
+    
+  }
+
+  function addItemAtMouse(e) {
+
+    if (!data.activeTool) return;
+
+    const x = Math.floor(game.objects.view.data.battleField.scrollLeft + (e.clientX * (1 / game.objects.view.data.screenScale)));
+
+    const chosenItem = data.activeTool[data.activeToolOffset];
+
+    // vehicle?
+    const mtvie = data.activeTool.key.match(/[mtvie]/i);
+
+    // terrain, vehicle, or element?
+    let obj;
+
+    if (mtvie) {
+      obj = game.addObject(chosenItem, { isEnemy: data.isEnemy, x });
+      utils.css.add(obj.dom.o, css.newlyAddedSprite);
+    } else {
+      obj = game.addItem(chosenItem, x);
+    }
+
+    utils.css.add(obj.dom.o, css.submerged);
+
+    if (!downKeys.shift && !downKeys.meta) {
+      clearSelectedItems();
+    }
+
+    common.setFrameTimeout(() => {
+      utils.css.remove(obj.dom.o, css.submerged);
+      selectItem(obj.dom.o);
+    }, 88);
+    
   }
 
   function getGameObject(item) {
@@ -177,7 +319,6 @@ const Editor = () => {
       item.dataset.y = currentXY[1];
     }
 
-
   }
 
   function checkLinkedObject(objects, objectName) {
@@ -189,9 +330,6 @@ const Editor = () => {
   function selectItem(item) {
 
     if (!item) return;
-
-    // ensure mode, first
-    setMode(modes.SELECT);
 
     const gameObj = getGameObject(item);
 
@@ -274,9 +412,6 @@ const Editor = () => {
 
   function deleteItem(item) {
 
-    // remove this item from selection
-    deSelectItem(item);
-
     // remove something from the battlefield.
     const gameObject = getGameObject(item);
 
@@ -302,14 +437,18 @@ const Editor = () => {
         }
         
       } else {
+
         gameObject?.dom?.o?.remove();
+        deSelectItem(item);
         // null game.objectsById[] reference?
+
       }
 
     } else {
 
       // take out the raw node.
       item?.remove();
+      deSelectItem(item);
 
     }
    
@@ -467,8 +606,6 @@ const Editor = () => {
 
     keydown(e) {
 
-      console.log('keydown', e);
-
       const key = e.key?.toLowerCase();
 
       downKeys[key.keyCode] = true;
@@ -480,7 +617,8 @@ const Editor = () => {
       }
 
       if (e.keyCode === keyMap.esc) {
-        setMode(modes.DEFAULT);
+        setMode('DEFAULT');
+        clearSelectedItems();
       }
 
       // return true = allow game to handle key
@@ -504,6 +642,7 @@ const Editor = () => {
       data.mouseDownTarget = e.target;
       data.mouseDownX = e.clientX;
       data.mouseDownY = e.clientY;
+      data.mouseMoveCount = 0;
 
       setCursor('grabbing');
 
@@ -553,53 +692,58 @@ const Editor = () => {
 
         data.scrubberActive = true;
 
-        utils.css.add(dom.oRadarScrubber, css.active);
+        if (e.target !== dom.oCutoffLine) {
+          utils.css.add(dom.oRadarScrubber, css.active);
+        }
 
         // move relative to "grab point"
         data.mouseOffsetX = clientX - (data.scrubberX * game.objects.view.data.screenScale);
 
         data.mouseDownScrollLeft = parseFloat(game.objects.view.data.battleField.scrollLeft);
 
-        return stopEvent(e);
+        if (!data.activeTool) {
+          return stopEvent(e);
+        }
+
+      }
+
+      if (data.activeTool && e.target === dom.oCutoffLine) {
+
+        // assume we're adding something.
+        addItemAtMouse(e);
 
       }
 
       // selection mode, and clicking on an item?
       
-      if (data.mode === modes.SELECT) {
-        
-        if (isSprite) {
+      if (isSprite) {
 
-          // it's a game sprite.
-          // if shift key is NOT down, also clear selection.
+        // it's a game sprite.
+        // if meta key is NOT down, also clear selection.
 
-          if (!downKeys.shift) {
+        if (!downKeys.meta) {
 
-            // if not selected, clear all and select this one?
-            if (!isSelected(target)) {
-              clearSelectedItems();
-            }
-
-            selectItem(target);
-
-          } else {
-
-            toggleSelectItem(target);
-
+          // if not selected, clear all and select this one?
+          if (!isSelected(target)) {
+            clearSelectedItems();
           }
 
-          return stopEvent(e);
-        
+          selectItem(target);
+
         } else {
 
-          // there was a click somewhere else.
-          if (!downKeys.shift) clearSelectedItems();
+          toggleSelectItem(target);
 
         }
-        
-      }
 
-      // makeItemAtMouse(e);
+        return stopEvent(e);
+      
+      } else {
+
+        // there was a click somewhere else.
+        if (!downKeys.meta) clearSelectedItems();
+
+      }
 
       if (e.target.tagName === 'DIV') return stopEvent(e);
 
@@ -609,6 +753,8 @@ const Editor = () => {
 
       data.mouseX = e.clientX;
       data.mouseY = e.clientY;
+
+      data.mouseMoveCount++;
 
       if (!data.mouseDown) return;
 
@@ -683,16 +829,7 @@ const Editor = () => {
 
       } else {
 
-        // default mouse move mode
-
-        if (data.mode === modes.SELECT) {
-
-          // watch for clicks on items.
-          // if mouse is down, we may be dragging.
-
-          moveRelativeToMouse(e);
-
-        }
+        moveRelativeToMouse(e);
 
       }
 
@@ -715,6 +852,8 @@ const Editor = () => {
       data.mouseDown = false;
 
       setCursor('grab');
+
+      data.mouseMoveCount = 0;
 
     },
 
