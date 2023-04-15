@@ -269,6 +269,10 @@ const Bunker = (options = {}) => {
           rubble = null;
           rubbleContainer = null;
 
+          if (game.objects.editor) {
+            destroy();
+          }
+
         }, burninatingTime * burnOutFade);
 
       }, burninatingTime);
@@ -385,6 +389,13 @@ const Bunker = (options = {}) => {
     data.midPoint = common.getDoorCoords(exports);
 
     radarItem = game.objects.radar.addItem(exports, data.oClassName);
+
+  }
+
+  function destroy() {
+
+    radarItem?.die();
+    sprites.removeNodes(dom);
 
   }
 

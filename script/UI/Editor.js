@@ -434,13 +434,24 @@ const Editor = () => {
           });
         }
 
-        gameObject.die();
+        // if dead, then destroy and forcefully remove entirely.
+        if (gameObject.data.type === TYPES.turret && gameObject.data.dead) {
+          gameObject.destroy();
+        } else {
+          gameObject.die();
+        }
 
         // special super-bunker case: forcefully remove.
         // this should be cleaned up on the next `gameLoop.animate()`.
         if (gameObject.data.type === TYPES.superBunker) {
-          gameObject.dom.o.remove();
-          gameObject.dom.o = null;
+          gameObject.destroy();
+        }
+
+        // deselect if the DOM node has been removed.
+        // turrets can be "killed" first, then destroyed.
+        // bunkers can be blown up, and remain selected until they're removed.
+        if (!gameObject?.dom?.o) {
+          deSelectItem(item);
         }
         
       } else {

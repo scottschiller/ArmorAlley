@@ -200,6 +200,14 @@ const SuperBunker = (options = {}) => {
 
   }
 
+  function destroy() {
+
+    radarItem?.die();
+    sprites.removeNodes(dom);
+
+  }
+
+
   height = 28;
 
   css = common.inheritCSS({
@@ -252,6 +260,7 @@ const SuperBunker = (options = {}) => {
     animate,
     capture,
     data,
+    destroy,
     die,
     dom,
     hit,

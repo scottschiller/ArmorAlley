@@ -602,6 +602,13 @@ const Turret = (options = {}) => {
 
   }
 
+  function destroy() {
+
+    radarItem?.die();
+    sprites.removeNodes(dom);
+
+  }
+
   height = 15;
 
   css = common.inheritCSS({
@@ -664,6 +671,7 @@ const Turret = (options = {}) => {
   exports = {
     animate,
     data,
+    destroy,
     die,
     dom,
     engineerCanInteract,
