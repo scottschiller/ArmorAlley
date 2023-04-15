@@ -1,7 +1,10 @@
 import { keyboardMonitor } from '../aa.js';
 import { game } from '../core/Game.js';
-import { TYPES, worldWidth } from '../core/global.js';
+import { common } from '../core/common.js';
+import { TYPES, worldHeight, worldWidth } from '../core/global.js';
+import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
+import { zones } from '../core/zones.js';
 
 const Editor = () => {
 
@@ -66,6 +69,7 @@ const Editor = () => {
       w: 0,
       h: 0
     },
+    marqueeSelected: {},
     mode: modes.DEFAULT,
     mouseDown: false,
     mouseDownScrollLeft: 0,
@@ -425,6 +429,33 @@ const Editor = () => {
 
   }
 
+  function updateMarqueeSelection(id, isSelected) {
+
+    // in terms of selection, editor refers to items via the DOM.
+    const item = game.objectsById[id].dom.o;
+
+    // becoming selected
+    if (!data.marqueeSelected[id] && isSelected) {
+      data.marqueeSelected[id] = true;
+      if (downKeys.shift) {
+        toggleSelectItem(item);
+      } else {
+        selectItem(item);
+      }
+      return;
+    }
+
+    if (data.marqueeSelected[id] && !isSelected) {
+      data.marqueeSelected[id] = false;
+      if (downKeys.shift) {
+        toggleSelectItem(item);
+      } else {
+        deSelectItem(item);
+      }
+    }
+
+  }
+
   events = {
 
     keydown(e) {
@@ -505,6 +536,7 @@ const Editor = () => {
           h: 0
         };
 
+        data.marqueeSelected = {};
 
         return stopEvent(e);
 
@@ -598,6 +630,35 @@ const Editor = () => {
         dom.oMarquee.style.width = `${data.marquee.w}px`;
         dom.oMarquee.style.height = `${data.marquee.h}px`;
 
+        // for zones, need to align with battlefield.
+        const adjustedX = data.marquee.x + game.objects.view.data.battleField.scrollLeft;
+
+        // zones and collision stuff
+        const startZone = Math.floor(adjustedX / zones.ZONE_WIDTH);
+        const endZone = Math.floor((adjustedX + data.marquee.w) / zones.ZONE_WIDTH);
+
+        const marqueeRect = {
+          x: adjustedX,
+          y: data.marquee.y,
+          width: data.marquee.w,
+          height: data.marquee.h
+        };
+
+        let objects;
+
+        for (var i = startZone; i <= endZone; i++) {
+
+          objects = zones.objectsByZone[i]['all'];
+
+          for (let type in objects) {
+            // e.g., tanks within zone #i
+            for (let id in objects[type]) {
+              // mark as "in" or "out", accordingly.
+              updateMarqueeSelection(id, collisionCheck(marqueeRect, game.objectsById[id].data));
+            }
+          }
+
+        }
 
         return;
 
