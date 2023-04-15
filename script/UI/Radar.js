@@ -374,7 +374,7 @@ const Radar = () => {
 
       if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
         
-        if (!objects.items[i].isStatic
+        if (!game.objects.editor && !objects.items[i].isStatic
           && (
             objects.items[i].oParent.data.type === TYPES.turret
             || objects.items[i].oParent.data.type === TYPES.base

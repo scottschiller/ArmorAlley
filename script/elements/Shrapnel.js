@@ -318,7 +318,7 @@ const Shrapnel = (options = {}) => {
         hitAndDie(target);
       }
     },
-    items: getTypes('superBunker, bunker, helicopter, balloon, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, smartMissile, turret', { group: 'all' })
+    items: !game.objects.editor && getTypes('superBunker, bunker, helicopter, balloon, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, smartMissile, turret', { group: 'all' })
   };
 
   return exports;

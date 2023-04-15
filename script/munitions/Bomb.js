@@ -402,7 +402,7 @@ const Bomb = (options = {}) => {
         bombHitTarget(target);
       }
     },
-    items: getTypes('superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile', { exports }).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
+    items: !game.objects.editor && getTypes('superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile', { exports }).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
   };
 
   return exports;
