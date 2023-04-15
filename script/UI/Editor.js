@@ -93,6 +93,8 @@ const Editor = () => {
 
     keyboardMonitor.init();
 
+    document.getElementById('editor-window').style.display = 'block';
+
   }
 
   css = {

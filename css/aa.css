@@ -4425,31 +4425,40 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 }
 
 /* prototype stuff, not presently in use */
-/*
 
-.finder.modal {
-  display: none;
+.finder {
+  position: absolute;
+  top: 26%;
+  left: 10%;
+  border: 0.5px solid #000;
+  transform: scale(2);
+  filter: invert(1);
 }
 
 .finder .title-bar {
  position: relative;
+ height: 7px;
  overflow: hidden;
  background: rgb(243,243,243);
- border: 0.5px solid rgb(218,218,255);
- border-bottom-color: rgb(179,179,218);
- border-right-color: rgb(179,179,218);
+ border: 1px solid transparent;
+ border-left-width: 0px;
+ border-right-width: 0px;
  text-align: center;
 }
 
 .finder .title-bar-label {
-  position: relative;
+  position: absolute;
   display: inline-block;
+  top: 0px;
+  left: 50%;
+  transform: translate(-50%, 0px);
   background: rgb(243,243,243);
-  padding: 0px 4px;
-  margin-top: -0.75px;
+  padding: 0px 3px;
+  margin-top: -0.5px;
   text-align: center;
   font-family: Chicago, "FA Sysfont C", courier, sans-serif;
-  font-size: 7px;
+  font-size: 6.5px;
+  white-space: nowrap;
   font-weight: normal;
   color: #000;
 }
@@ -4459,59 +4468,78 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 100%;
+  height: 7px;
   box-sizing: border-box;
-  border: 1px solid rgb(243,243,243);
-  border-left: none;
-  border-right: none;
-  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAECAYAAADvRz3UAAAAH0lEQVR42uXOMREAAACCQPsHoK7GYJC73wlQkz9w3wBa+rBBgfHfewAAAABJRU5ErkJggg==);
-  background-size: 8px 1px;
+  border: 0.5px solid rgb(243,243,243);
+  border-left-width: 0.25px;
+  border-right-width: 0.25px;
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==);
+  background-size: 8.25px 1px;
 }
 
-.finder .close-button-wrapper {
+.close-button {
   position: absolute;
   z-index: 2;
-  top: 0.5px;
-  left: 3px;
+  top: 0.75px;
+  left: 3.75px;
   background: rgb(243,243,243);
-  width: 6.5px;
-  height: 6.5px;
+  width: 4.5px;
+  height: 4.5px;
+  border: 0.25px solid #000;
+  outline: 0.25px solid rgba(255,255,255,0.67);
+  border-radius: 0.25px;
 }
 
-.finder .close-button-outer,
-.finder .close-button-inner {
-  width: 5px;
-  height: 5px;
+.close-button:active {
+  background-image: url(../image/apple-close-asterisk.png);
+  background-size: contain;
+}
+
+.finder .body {
+  position: relative;
+  border-top: 0.5px solid #000;
+  background: rgba(243,243,243, 0.75);
+  padding: 1em;
+  font-family: geneva, verdana, arial, sans-serif;
+  font-size: 5px;
+  color: #000;
+  /* overflow: auto; */
+  overflow: hidden;
+  /* min-width: 16em; */
+  width: 23em;
+}
+
+.finder .body .grid p {
+  margin-bottom: 0.5em;
+}
+
+.finder .body ul.row {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+  font-size: 0px;
+}
+
+.finder .body ul.row li {
+  display: inline-block;
+  width: 20%;
   box-sizing: border-box;
+  padding: 1px;
+  border: 0.25px solid #999;
+  text-align: center;
+  font-size: 5px;
 }
 
-.finder .close-button-outer {
-  width: 5.5px;
-  height: 5.5px;
+.finder .body ul.row + ul.row li {
+  border-top: none;
 }
 
-.finder .close-button-outer,
-.finder .close-button-inner {
-  position: absolute;
-  top: 0.5px;
-  left: 0.5px;
-  background: rgb(192,192,192);
-  border: 0.5px solid rgb(84,84,135);
+.finder .body ul.row li:not(:last-of-type) {
+  border-right: none;
 }
-
-.finder .close-button-outer {
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-}
-
-.finder .close-button-inner {
-  margin-top: 0.5px;
-  margin-left: 0.5px;
-  background: transparent;
-  border-color: rgb(218,218,255);
-}
-
-*/
 
 #game-prefs-modal .body {
   position: relative;
@@ -5307,35 +5335,86 @@ button .network-icon {
 }
 
 /* ignore events on sub/transform sprites, and explosions */
-body.edit-mode #battlefield .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(.shrapnel):not(.gunfire) {
+body.edit-mode #battlefield .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(.shrapnel):not(.gunfire):not(.helicopter):not(.smoke) {
   pointer-events: unset;
 }
 
 /* ignore events on certain "non-moveable" sprites */
-body.edit-mode #battlefield .sprite:not(.end-bunker):not(.base):hover { 
-  outline: 1px dotted #339933;
+body.edit-mode #battlefield .sprite:not(.end-bunker):not(.base):not(.exploding):hover { 
+  outline: 1px solid #999;
+  border-radius: 3px;
 }
 
-body.edit-mode #battlefield .sprite.selected {
+body.edit-mode #battlefield .sprite.selected:not(.exploding) {
   /* override :not(), ugh. */
-  outline: 1px solid #fff !important;
+  outline: 1px solid #009900 !important;
   /* background-color: #006600; */
+  border-radius: 3px;
 }
 
 body.edit-mode #battlefield .terrain-item {
   transition: margin ease-out 0.25s;
 }
 
-body.edit-mode #battlefield .terrain-item.submerged {
-  margin-bottom: -27px;
+body.edit-mode #battlefield .sprite.tank,
+body.edit-mode #battlefield .sprite.newly-added-sprite.tank {
+  /* annoying pixel shift */
+  margin-top: -2px;
+}
+
+body.edit-mode #battlefield .sprite.newly-added-sprite {
+  margin-top: 0px;
 }
 
 body.edit-mode #battlefield .terrain-item {
   margin-bottom: 0px;
 }
 
+body.edit-mode #battlefield .sprite.submerged {
+  margin-top: 27px !important;
+}
+
+body.edit-mode #battlefield .terrain-item.submerged {
+  margin-bottom: -27px;
+}
+
 body.edit-mode #battlefield {
   cursor: grab;
+}
+
+#battlefield #cutoff-line {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 32px;
+  border-top: 1px dotted #333;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+#battlefield #cutoff-line.active {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+#editor-window {
+  display: none;
+}
+
+#editor-window ul.inline-list {
+  margin: 0px;
+  padding: 0px;
+  padding-bottom: 1em;
+}
+
+#editor-window ul.inline-list li {
+  display: inline-block;
+  min-width: 10em;
+  padding-right: 0.5em;
+}
+
 #marquee {
   position: absolute;
   top: 0px;
