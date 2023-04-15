@@ -163,9 +163,24 @@ const View = () => {
       // hackish: account for the "TV."
       const isLandscape = window?.matchMedia('(orientation: landscape)')?.matches;
 
-      // don't resize on mobile in portrait mode.
-      if (!isMobile || isLandscape) {
-        logoScale -= 0.12;
+      // special case: scale UP in some cases, and the TV image will scale to work decently as well.
+      if (isMobile) {
+
+        if (isLandscape) {
+          logoScale += 0.35;
+        }
+
+        const tvDisplay = document.getElementById('tv-title-screen');
+
+        if (isMobile && isLandscape) {
+          tvDisplay.style.zoom = 1.6;
+        }
+
+      } else {
+
+        // just slightly smaller on desktop.
+        logoScale -= 0.025;
+
       }
 
       dom.logo.style.transform = `scale3d(${logoScale}, ${logoScale}, 1)`;
