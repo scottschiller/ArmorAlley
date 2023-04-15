@@ -1,5 +1,5 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc, setTutorialMode } from './global.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc, setTutorialMode, worldHeight } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
@@ -95,15 +95,19 @@ const game = (() => {
 
     initItem();
     
+    width = width || _dom?.o?.offsetWidth;
+    height = height || _dom?.o?.offsetHeight;
+
     data = {
       type: className,
       id,
       isTerrainItem: true,
+      bottomAligned: true,
       x,
-      y: 0,
+      y: worldHeight - height + 4,
       // dirty: force layout, read from CSS, and cache below
-      width: width || _dom?.o?.offsetWidth,
-      height: height || _dom?.o?.offsetHeight,
+      width,
+      height,
       isOnScreen: null,
       extraTransforms
     };
@@ -131,6 +135,11 @@ const game = (() => {
     // these will be tracked only for on-screen / off-screen purposes.
     game.objects[TYPES.terrainItem].push(exports);
     game.objectsById[data.id] = exports;
+
+    // only track zones while editing.
+    if (game.objects.editor) {
+      zones.refreshZone(exports);
+    }
 
     return exports;
 

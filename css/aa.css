@@ -2216,6 +2216,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .terrain-item {
+  bottom: auto;
+  top: 0px;
   /* all these things: rocks, graves, trees, barb wire etc. */
   z-index: 5;
   background-size: contain;
