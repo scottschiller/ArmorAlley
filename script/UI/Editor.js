@@ -137,9 +137,14 @@ const Editor = () => {
   }
 
   function getXYFromTransform(item) {
+
     // hackish: split translate3d(x,y,z) into an array of [x,y]
-    const xy = item.style.transform.toString().match((/\((.+)\)/i))[1].split(',');
+    const xy = item.style.transform.toString().match((/\((.+)\)/i))?.[1]?.split(',');
+
+    if (!xy?.length) return;
+
     return xy.map((item) => parseFloat(item));
+
   }
 
   function refreshItemCoords(item) {
@@ -148,6 +153,8 @@ const Editor = () => {
 
     // the viewport may have moved since this was selected; keep its data up-to-date.
     const currentXY = getXYFromTransform(item); 
+
+    if (!currentXY) return;
 
     item.dataset.x = currentXY[0];
 
@@ -200,7 +207,7 @@ const Editor = () => {
     data.selectedItems.push(item);
 
     // also, check for balloon <-> chain <-> bunker connections.
-    if (gameObj.objects) {
+    if (gameObj?.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
         const obj = checkLinkedObject(gameObj.objects, type);
         if (obj) selectItem(obj);
@@ -236,7 +243,7 @@ const Editor = () => {
 
     const gameObj = getGameObject(item);
 
-    if (gameObj.objects) {
+    if (gameObj?.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
         const obj = checkLinkedObject(gameObj.objects, type);
         if (obj) deSelectItem(obj);
