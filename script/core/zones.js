@@ -118,7 +118,7 @@ function calcZone(obj) {
 function enterZone(zone, obj, group = 'all') {
 
   // Guard. #zones (debug signposts) will hit this case.
-  if (!obj?.data?.id) return;
+  if (!obj?.data?.id || obj.data.type == 'zone-post') return;
 
   if (!game.objectsById[obj.data.id]) {
     /**
@@ -389,7 +389,8 @@ const zones = {
   initDebug,
   leaveAllZones,
   refreshZone,
-  objectsByZone
+  objectsByZone,
+  ZONE_WIDTH
 };
 
 export { zones };
