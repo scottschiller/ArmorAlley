@@ -65,12 +65,15 @@ const Editor = () => {
     const oRadarScrubber = document.createElement('div');
     oRadarScrubber.id = 'radar-scrubber';
 
-    dom.oRadarScrubber = document.getElementById('battlefield').appendChild(oRadarScrubber);
+    const oCutoffLine = document.createElement('div');
+    oCutoffLine.id = 'cutoff-line';
+
     const oMarquee = document.createElement('div');
     oMarquee.id = 'marquee';
 
     const battleField = document.getElementById('battlefield');
 
+    dom.oCutoffLine = battleField.appendChild(oCutoffLine);
     dom.oMarquee = battleField.appendChild(oMarquee);
     dom.oRadarScrubber = battleField.appendChild(oRadarScrubber);
 
@@ -96,6 +99,8 @@ const Editor = () => {
     active: 'active',
     airborne: 'airborne',
     editMode: 'edit-mode',
+    enemy: 'enemy',
+    newlyAddedSprite: 'newly-added-sprite',
     selected: 'selected',
     submerged: 'submerged'
   };
@@ -105,6 +110,7 @@ const Editor = () => {
     activeToolOffset: 0,
     levelDataSource: null,
     levelData: null,
+    isEnemy: false,
     marquee: {
       x: 0,
       y: 0,
@@ -129,6 +135,7 @@ const Editor = () => {
   };
 
   dom = {
+    oCutoffLine: null,
     oMarquee: null,
     oRadarScrubber: null
   };
@@ -454,6 +461,63 @@ const Editor = () => {
    
   }
 
+  function moveSelectedItemsX(vX) {
+
+    data.selectedItems.forEach((item) => {
+
+      const newX = parseFloat(item.dataset.x) + vX;
+
+      // write the new value back to the DOM
+      // item.dataset.newX = newX;
+
+      // new offset, relative to viewport
+      const left = newX + game.objects.view.data.battleField.scrollLeft;
+
+      const gameObj = getGameObject(item);
+
+      if (!gameObj) return;
+  
+      item.dataset.x = newX;
+      gameObj.data.x = left;
+
+      zones.refreshZone(gameObj);
+      
+    });
+
+  }
+
+  function setItemIsEnemy(item, isEnemy) {
+
+    const gameObj = getGameObject(item);
+    if (!gameObj) return;
+
+    // certain types (e.g., terrain items) don't take sides.
+    if (gameObj.data.isTerrainItem) return;
+    if (gameObj.data.type === TYPES.cloud) return;
+    
+    gameObj.data.isEnemy = isEnemy;
+    utils.css.addOrRemove(gameObj.dom.o, isEnemy, css.enemy);
+
+    zones.changeOwnership(gameObj, isEnemy);
+
+    // also, check for balloon <-> chain <-> bunker connections.
+    if (gameObj?.objects) {
+      ['balloon', 'bunker', 'chain'].forEach((type) => {
+        const obj = checkLinkedObject(gameObj.objects, type);
+        if (obj && getGameObject(obj)?.data?.isEnemy !== isEnemy) setItemIsEnemy(obj, isEnemy);
+      });
+    }
+
+  }
+
+  function setEnemyState(isEnemy) {
+
+    data.isEnemy = isEnemy;
+
+    data.selectedItems.forEach((item) => setItemIsEnemy(item, isEnemy));
+    
+  }
+
   function moveItemRelativeToMouse(item, e = { clientX: data.mouseX, clientY: data.mouseY }) {
 
     if (!item) return;
@@ -480,16 +544,15 @@ const Editor = () => {
 
     const gameObj = getGameObject(item);
 
-    if (!gameObj) {
-      console.warn('WTF, no game object for ID?', item);
-      return;
-    }
+    if (!gameObj) return;
 
     gameObj.data.x = left;
 
     if (item.dataset.y) {
       gameObj.data.y = top;
     }
+
+    zones.refreshZone(gameObj);
 
   }
 
@@ -846,6 +909,14 @@ const Editor = () => {
         dom.oMarquee.style.opacity = 0;
         data.marqueeActive = false;
       }
+
+      const spriteClicked = utils.css.has(data.mouseDownTarget, 'sprite');
+      const justAddedSomething = (data.activeTool && data.mouseDownTarget === dom.oCutoffLine);
+      
+      if (!spriteClicked && !justAddedSomething && !downKeys.shift && !data.mouseMoveCount) {
+        clearSelectedItems();
+      }
+
       // this ensures that everything is up to date, whether one item moved or the whole window was scrolled.
       data.selectedItems.forEach((item) => refreshItemCoords(item));
 
