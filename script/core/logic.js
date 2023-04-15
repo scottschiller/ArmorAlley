@@ -13,7 +13,7 @@ import { net } from './network.js';
 
 const NET_TRIGGER_DISTANCE = 256;
 
-function collisionCheck(rect1, rect2, rect1XLookAhead) {
+function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
 
   /**
    * Given two rect objects with shape { x, y, width, height }, determine if there is overlap.
