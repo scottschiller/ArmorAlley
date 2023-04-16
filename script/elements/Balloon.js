@@ -8,7 +8,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
-import { prefs } from '../UI/preferences.js';
+import { gamePrefs, prefs } from '../UI/preferences.js';
 
 const Balloon = (options = {}) => {
 
@@ -94,7 +94,7 @@ const Balloon = (options = {}) => {
 
     if (sounds.balloonExplosion) {
       playSound(sounds.balloonExplosion, exports);
-      if (prefs.bnb && data.isOnScreen) {
+      if (gamePrefs.bnb && data.isOnScreen) {
         playSound(sounds.bnb.beavisPoop, exports);
       }
     }
