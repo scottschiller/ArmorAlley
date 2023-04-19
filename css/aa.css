@@ -5353,6 +5353,7 @@ body.edit-mode #battlefield .sprite.selected:not(.exploding) {
   border-radius: 3px;
 }
 
+body.edit-mode #battlefield .sprite.newly-added-sprite,
 body.edit-mode #battlefield .terrain-item {
   transition: margin ease-out 0.25s;
 }
