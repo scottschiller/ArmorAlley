@@ -337,6 +337,29 @@ const Editor = () => {
 
   }
 
+  function decorateItem(item) {
+
+    if (!item) return;
+
+    const gameObj = getGameObject(item);
+
+    if (!gameObj) return;
+
+    if (!gameObj?.dom?.o || gameObj.dom.oEditorFlag) return;
+
+    const o = document.createElement('div');
+    o.className = 'zone-flag';
+    o.style.top = o.style.right = '1px';
+    o.style.left = 'auto';
+
+    o.innerHTML = Math.floor(gameObj.data.x);
+
+    // zone debugging
+    gameObj.dom.oEditorFlag = o;
+    gameObj.dom.o.appendChild(gameObj.dom.oEditorFlag);
+    
+  }
+
   function selectItem(item) {
 
     if (!item) return;
@@ -351,6 +374,8 @@ const Editor = () => {
     utils.css.add(item, css.selected);
 
     refreshItemCoords(item);
+
+    decorateItem(item);
 
     data.selectedItems.push(item);
 
@@ -390,6 +415,11 @@ const Editor = () => {
     data.selectedItems[offset] = null;
 
     const gameObj = getGameObject(item);
+
+    if (gameObj?.dom?.oEditorFlag) {
+      gameObj.dom.oEditorFlag.remove();
+      gameObj.dom.oEditorFlag = null;
+    }
 
     if (gameObj?.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
@@ -494,6 +524,10 @@ const Editor = () => {
       item.dataset.x = newX;
       gameObj.data.x = left;
 
+      if (gameObj?.dom?.oEditorFlag) {
+        gameObj.dom.oEditorFlag.innerHTML = Math.floor(left);
+      }
+
       zones.refreshZone(gameObj);
       
     });
@@ -570,6 +604,10 @@ const Editor = () => {
 
     if (item.dataset.y) {
       gameObj.data.y = top;
+    }
+
+    if (gameObj?.dom?.oEditorFlag) {
+      gameObj.dom.oEditorFlag.innerHTML = Math.floor(left);
     }
 
     zones.refreshZone(gameObj);

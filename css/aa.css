@@ -5217,6 +5217,13 @@ button.attention:not(:active) {
   padding: 1px;
   text-align: center;
   background: rgba(0,192,0,0.75);
+  pointer-events: none;
+}
+
+body.edit-mode .sprite .zone-flag {
+  top: 1px;
+  left: 1px;
+  border-radius: 2px;
 }
 
 .sprite.infantry .zone-flag {
