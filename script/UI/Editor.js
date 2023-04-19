@@ -508,10 +508,15 @@ const Editor = () => {
     if (gameObj.data.isTerrainItem) return;
     if (gameObj.data.type === TYPES.cloud) return;
     
-    gameObj.data.isEnemy = isEnemy;
     utils.css.addOrRemove(gameObj.dom.o, isEnemy, css.enemy);
 
-    zones.changeOwnership(gameObj, isEnemy);
+    // if capture method exists, use that.
+    if (gameObj.capture) {
+      gameObj.capture(isEnemy);
+    } else {
+      gameObj.data.isEnemy = isEnemy;
+      zones.changeOwnership(gameObj, isEnemy);
+    }
 
     // also, check for balloon <-> chain <-> bunker connections.
     if (gameObj?.objects) {
