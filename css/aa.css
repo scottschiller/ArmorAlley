@@ -5202,6 +5202,7 @@ button.attention:not(:active) {
   background: rgb(135,84,0);
   overflow: visible !important;
   contain: layout !important;
+  pointer-events: none;
 }
 
 .zone-flag {
