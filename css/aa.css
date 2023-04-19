@@ -3961,8 +3961,9 @@ body.is-mobile.notch-at-right #notification-toasts {
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry {
-  /* background-image: url(../image/parachute-infantry-static.png); */
-  background-size: 18%;
+  background-image: url(../image/parachute-infantry-static.png);
+  background-size: 30% !important; /* argh */
+  background-position: 50% 50%;
 }
 
 #mobile-controls li.inventory-item a.tank {
