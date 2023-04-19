@@ -143,7 +143,7 @@ function PrefsManager() {
       const vs = document.getElementById('checkbox-vs');
 
       // ensure that element does the work it normally does when clicked manually.
-      vs.dispatchEvent(new Event('change'));
+      vs?.dispatchEvent(new Event('change'));
 
     });
     
