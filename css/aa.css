@@ -1068,7 +1068,8 @@ ul.stats-bar .infantry-count {
 }
 
 ul.stats-bar .infantry-count em,
-#mobile-controls li.weapons-item a.parachute-infantry {
+#mobile-controls li.weapons-item a.parachute-infantry,
+.static-sprite.parachute-infantry {
   background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px;
 }
 
@@ -3643,7 +3644,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 }
 
 #player-status-bar .inventory-item a.missile-launcher,
-#mobile-controls li.inventory-item a.missile-launcher {
+#mobile-controls li.inventory-item a.missile-launcher,
+.static-sprite.missile-launcher {
   background-image: url(../image/missile-launcher-static.png);
 }
 
@@ -3660,7 +3662,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 }
 
 #mobile-controls li.inventory-item a.tank,
-#player-status-bar .inventory-item a.tank {
+#player-status-bar .inventory-item a.tank,
+.static-sprite.tank {
   /* TODO: replace with new asset */
   background-image: url(../image/tank-static.png);
 }
@@ -3677,7 +3680,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 }
 
 #player-status-bar .inventory-item a.van,
-#mobile-controls li.inventory-item a.van {
+#mobile-controls li.inventory-item a.van,
+.static-sprite.van {
   /* background-image: url(../image/van-static.png); */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAgBAMAAABKj4M5AAAAFVBMVEVhcAAAAABVVQEFVQEOqgL/qgGqqqooo0ftAAAAAXRSTlMAQObYZgAAAKFJREFUeF6VzsERAyEMQ1FaUAtqwS24hW2B/ksIjjY4HJJZ/RMj3gyMFf411GMGsApGBJmrqPId4DCpuum7hoScwcjIw13bEXIOCzFV7Gom57HTXdsRciaLbLiYXO8wmFDDUsWUzZL8freUnHaDAUxKbBY3++wGI5mahSsd924xVLhtu0D3mFVzTpyh91E9YWopLje6Y/cZfjD4rL/a9e6wF9MGwLd0KLg4AAAAAElFTkSuQmCC);
 }
@@ -3694,7 +3698,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
 }
 
 #player-status-bar .inventory-item a.infantry,
-#mobile-controls li.inventory-item a.infantry {
+#mobile-controls li.inventory-item a.infantry,
+.static-sprite.infantry {
   /* background-image: url(../image/infantry-static.gif); */
   /* TODO: see if a GIF version is smaller. */
   background-image: url(../image/infantry-static.png);
@@ -3711,7 +3716,8 @@ body.is-mobile #player-status-bar .inventory-item:active {
   height: 9px;
 }
 
-#player-status-bar .inventory-item a.engineer {
+#player-status-bar .inventory-item a.engineer,
+.static-sprite.engineer {
   /* background-image: url(../image/engineer-static.gif); */
   background-size: contain;
   width: 8px;
@@ -3951,7 +3957,8 @@ body.is-mobile.notch-at-right #notification-toasts {
 }
 
 #mobile-controls li.inventory-item a.engineer,
-#player-status-bar .inventory-item a.engineer {
+#player-status-bar .inventory-item a.engineer,
+.static-sprite.engineer {
   /* background-image: url(../image/engineer-static.gif); */
   background-image: url(data:image/gif;base64,R0lGODlhCgALAMIFAFVVAQVVAQAAAA6qAqsCAf///6qqqv///yH5BAEIAAcALAAAAAAKAAsAAAMqeCosek0Q4lYpkj5RjAgR0w0BGYCcQTJoM6zMIpgxNINvfLsgBACNnyMBADs=);
 }
@@ -5432,4 +5439,18 @@ body.edit-mode #battlefield {
   border: 1px solid #339933;
   /* important: events need to fall through this, so JS sees clicks underneath. */
   pointer-events: none;
+}
+
+.static-sprite {
+  background-size: contain;
+  background-position: 0px 50%;
+  background-repeat: no-repeat;
+}
+
+#active-sprite {
+  position: relative;
+  display: inline-block;
+  filter: invert(1);
+  height: 12px;
+  width: 32px;
 }

@@ -229,7 +229,8 @@ const Editor = () => {
   function updateActiveTool() {
 
     document.getElementById('editor-active').innerHTML = data.activeTool ? (data.activeTool[data.activeToolOffset] + (data.activeTool.length > 1 ? ' (' + (data.activeToolOffset + 1) + '/' + data.activeTool.length + ')' : '')) : '[none]';
-    
+    document.getElementById('active-sprite').className = `static-sprite ${data.activeTool && data.activeTool[data.activeToolOffset]}`;
+
   }
 
   function addItemAtMouse(e) {
