@@ -362,6 +362,11 @@ function GameEvents() {
         // complain if it's been relatively quiet.
         if (game.data.started && !game.data.paused && state.bnbCommentaryCounter < state.BORING_THRESHOLD && !isGameOver()) {
 
+          // space out these events in editor mode, over time.
+          if (game.objects.editor) {
+            state.BORING_INTERVAL *= 2;
+          }
+
           playSound(sounds.bnb[state.name]);
 
         }
