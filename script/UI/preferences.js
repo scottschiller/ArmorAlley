@@ -135,9 +135,9 @@ function PrefsManager() {
     }
 
     // special case: apply BnB "VS" immediately.
-    dom.oBnB.addEventListener('change', () => {
+    dom.oBnB.addEventListener('change', (e) => {
 
-      events.onPrefChange['bnb'](!gamePrefs.bnb);
+      events.onPrefChange['bnb'](e.target.checked);
 
       // update the main screen, too. this is responsible for the game menu sound sequences.
       const vs = document.getElementById('checkbox-vs');
