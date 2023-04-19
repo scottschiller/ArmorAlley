@@ -1206,7 +1206,8 @@ function PrefsManager() {
 
       // hackish: compromise for lack of `zoom: 2` on mobile - but only specifically iPhone?
       // TODO: review and figure out. iPad seems to render without scaling, just fine.
-      if (isiPhone) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation
+      if (isMobile && screen.orientation.type.match(/landscape/i)) {
         scale *= 1.85;
       }
 
