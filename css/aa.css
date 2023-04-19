@@ -205,6 +205,7 @@ body.is_safari #bnb-vs {
   /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
   background: transparent url(../image/armor-alley-logo-print.webp) no-repeat 50% 0px;
   background-size: contain;
+  image-rendering: smooth;
   z-index: 11;
   opacity: 0;
   transition: opacity 0.2s ease-out;
@@ -4575,6 +4576,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   height: 25px;
   margin-top: 3px;
   margin-right: 6px;
+  image-rendering: smooth;
 }
 
 #game-prefs-header .column {
