@@ -156,7 +156,7 @@ body.game-started {
 }
 
 body.bnb #mtv-bnb-in {
-  transform: translate3d(-9.75%, -50%, 0);
+  transform: translate3d(-4%, -50%, 0);
   opacity: 0.9;
 }
 
