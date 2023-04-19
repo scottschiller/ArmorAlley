@@ -530,6 +530,7 @@ const Editor = () => {
 
   function setEnemyState(isEnemy) {
 
+    // local editor state, e.g., units added will be enemy if this is true
     data.isEnemy = isEnemy;
 
     data.selectedItems.forEach((item) => setItemIsEnemy(item, isEnemy));
