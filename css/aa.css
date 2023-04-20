@@ -5444,8 +5444,8 @@ body.edit-mode #battlefield {
 
 #editor-window ul.inline-list li {
   display: inline-block;
-  min-width: 10em;
-  padding-right: 0.5em;
+  min-width: 11em;
+  margin-bottom: 0px;
 }
 
 #marquee {
@@ -5465,14 +5465,23 @@ body.edit-mode #battlefield {
 
 .static-sprite {
   background-size: contain;
-  background-position: 0px 50%;
+  background-position: 100% 50%;
   background-repeat: no-repeat;
 }
 
 #active-sprite {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
   filter: invert(1);
   height: 12px;
   width: 32px;
+}
+
+#editor-clipboard {
+  display: none;
+}
+
+#editor-clipboard.active {
+  display: inline-block;
 }
