@@ -1,7 +1,7 @@
 import { keyboardMonitor } from '../aa.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { TYPES, worldHeight, worldWidth } from '../core/global.js';
+import { TYPES,  worldWidth } from '../core/global.js';
 import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
@@ -45,7 +45,7 @@ const Editor = () => {
     w: itemTypes.terrain.tree // categorized as "wood"
   };
 
-  let css, data, dom, downKeys, events, exports, keyMap, keysToMethods;
+  let css, data, dom, downKeys, events, exports, keyMap, keysToMethods, methods;
 
   // ESC = exit to default mode
   // other keys (or click?) = add mode, e.g., planting trees
@@ -59,6 +59,34 @@ const Editor = () => {
     e?.preventDefault();
     return false;
   }
+
+  const isChildOfClassName = ((node, className) => {
+
+    // go up the DOM tree, looking for the parent
+
+    if (utils.css.has(node, className)) return true;
+
+    while (!utils.css.has(node, className) && node.parentNode) {
+      node = node.parentNode;
+    }
+
+    return utils.css.has(node, className);
+
+  });
+
+  const isChildOf = ((node, parent) => {
+
+    // go up the DOM tree, looking for the parent
+
+    if (node === parent) return true;
+
+    while (node !== parent && node.parentNode) {
+      node = node.parentNode;
+    }
+
+    return (node === parent);
+
+  });
 
   function initDOM() {
 
@@ -74,8 +102,16 @@ const Editor = () => {
     const battleField = document.getElementById('battlefield');
 
     dom.oCutoffLine = battleField.appendChild(oCutoffLine);
+    dom.oFinder = document.getElementById('editor-window');
     dom.oMarquee = battleField.appendChild(oMarquee);
     dom.oRadarScrubber = battleField.appendChild(oRadarScrubber);
+
+    dom.oFinder.style.display = 'block';
+
+    const rect = dom.oFinder.getBoundingClientRect();
+
+    data.finderX = rect.left;
+    data.finderY = rect.top;
 
   }
 
@@ -93,8 +129,6 @@ const Editor = () => {
 
     keyboardMonitor.init();
 
-    document.getElementById('editor-window').style.display = 'block';
-
   }
 
   css = {
@@ -110,6 +144,7 @@ const Editor = () => {
   data = {
     activeTool: null,
     activeToolOffset: 0,
+    draggingFinder: false,
     levelDataSource: null,
     levelData: null,
     isEnemy: false,
@@ -119,6 +154,8 @@ const Editor = () => {
       w: 0,
       h: 0
     },
+    finderX: 0,
+    finderY: 0,
     marqueeSelected: {},
     mode: modes.DEFAULT,
     mouseDown: false,
@@ -137,6 +174,7 @@ const Editor = () => {
   };
 
   dom = {
+    oFinder: null,
     oCutoffLine: null,
     oMarquee: null,
     oRadarScrubber: null
@@ -163,6 +201,42 @@ const Editor = () => {
     itemTypesByKey[key].key = key;
     keysToMethods[key] = () => setActiveTool(itemTypesByKey[key]);
   });
+
+  methods = {
+    export: () => {
+
+      const data = game.getObjects();
+
+      let str = JSON.stringify(data);
+
+      // double -> single quotes, newlines
+      str = str.replace(/"/g, "'").replace(/],/g, '],\n');
+
+      // [' > [ ' and ], =>  ],
+      str = str.replace(/\['/g, "[ '").replace(/\],/g, ' ],');
+
+      // add space after closing quote + comma
+      str = str.replace(/',/g, "', ");
+
+      // drop quotes around left / neutral / right
+      str = str.replace(/'([lnr])'/g, "$1");
+
+      // start and end
+      str = str.replace('[[', "'Level Name': [\n[");
+      str = str.replace(']]', ' ]\n]');
+
+      function onCopy(ok) {
+        const cb = document.getElementById('editor-clipboard');
+        if (ok) {
+          utils.css.add(cb, css.active);
+          common.setFrameTimeout(() => utils.css.remove(cb, css.active), 1500);
+        }
+      }
+
+      if (!navigator?.clipboard?.writeText) return;
+      navigator.clipboard.writeText(str).then(() => onCopy(true), () => onCopy(false));
+    }
+  };
 
   function setMode(mode) {
 
@@ -759,6 +833,9 @@ const Editor = () => {
 
     mousedown(e) {
 
+      // ignore right clicks, no special treatment here.
+      if (e.button) return;
+
       data.mouseDown = true;
       data.mouseDownTarget = e.target;
       data.mouseDownX = e.clientX;
@@ -769,7 +846,27 @@ const Editor = () => {
 
       const { clientX } = e;
 
-      const target = normalizeSprite(data.mouseDownTarget);
+      const { method } = e.target.dataset;
+
+      // e.g., data-method="export"
+      if (method && methods[method]) {
+        methods[method]();
+        return;
+      }  
+
+      let target = normalizeSprite(data.mouseDownTarget);
+
+      if (isChildOfClassName(target, 'title-bar')) {
+        target = dom.oFinder;
+        utils.css.add(dom.oFinder, css.active);
+        data.draggingFinder = true;
+        return stopEvent(e);
+      }
+
+      if (isChildOf(target, dom.oFinder)) {
+        // don't interfere with clicks inside modal.
+        return;
+      }
 
       const isSprite = utils.css.has(target, 'sprite');
 
@@ -879,6 +976,18 @@ const Editor = () => {
 
       if (!data.mouseDown) return;
 
+      if (data.draggingFinder) {
+
+        const deltaX = Math.abs(data.mouseDownX - data.finderX);
+        const deltaY = Math.abs(data.mouseDownY - data.finderY);
+
+        dom.oFinder.style.top = (data.mouseY - deltaY) + 'px';
+        dom.oFinder.style.left = (data.mouseX - deltaX) + 'px';
+
+        return;
+
+      }
+
       if (data.marqueeActive) {
 
         const scale = (1 / game.objects.view.data.screenScale);
@@ -968,6 +1077,14 @@ const Editor = () => {
         data.marqueeActive = false;
       }
 
+      if (data.draggingFinder) {
+        utils.css.remove(dom.oFinder, css.active);
+        const rect = dom.oFinder.getBoundingClientRect();
+        data.finderX = rect.x;
+        data.finderY = rect.y;
+        data.draggingFinder = false;
+      }
+
       const spriteClicked = utils.css.has(data.mouseDownTarget, 'sprite');
       const justAddedSomething = (data.activeTool && data.mouseDownTarget === dom.oCutoffLine);
       
@@ -998,7 +1115,7 @@ const Editor = () => {
     }
 
   };
-
+  
   exports = {
     data,
     dom,

@@ -4437,10 +4437,11 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 .finder {
   position: absolute;
-  top: 26%;
-  left: 10%;
+  top: 160px;
+  left: 100px;
   border: 0.5px solid #000;
   transform: scale(2);
+  transform-origin: 0px 0px;
   filter: invert(1);
 }
 

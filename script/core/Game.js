@@ -41,6 +41,7 @@ import { addWorldObjects } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
+import { common } from './common.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -235,6 +236,59 @@ const game = (() => {
     objects.radar = Radar();
 
     objects.inventory = Inventory();
+
+  }
+
+  function getObjects() {
+
+    // build up a "save state"
+    const qualifiers = {
+      // only include detached / free-floating + hostile
+      balloon: (o) => !!o?.data?.hostile,
+    }
+
+    const items = {};
+
+    function addGameItem(type, item) {
+      if (!items[type]) {
+        items[type] = [];
+      }
+      items[type].push(item);
+    }
+
+    // string -> array
+    const saveItems = 'balloon base bunker cloud end-bunker engineer infantry landing-pad missile-launcher smart-missile super-bunker tank terrain-item turret van'.split(' ');
+
+    const objects = common.pick(game.objects, ...saveItems);
+
+    for (const item in objects) {
+      game.objects[item]?.forEach((obj) => {
+        const { type } = obj?.data;
+        if (type && qualifiers[type]) {
+          if (qualifiers[type](obj)) {
+            addGameItem(type, obj);
+          }
+        } else {
+          addGameItem(type, obj);
+        }
+      });
+    }
+    
+    // finally, distill to addObject() / addItem() calls.
+    // [ 'type', 'l|r|n', int ]
+
+    const gameData = [];
+
+    for (const type in items) {
+      items[type].forEach((item) => {
+        gameData.push([ item.data.type, item.data.isHostile ? 'n' : (item.data.isEnemy ? 'r' : 'l'), Math.floor(item.data.x) ]);
+      });
+    }
+
+    // sort the array based on the x value.
+    gameData.sort(utils.array.compare(2));
+
+    return gameData;
 
   }
 
@@ -799,9 +853,7 @@ const game = (() => {
     domFetti: [],
     ephemeralExplosion: [],
     'end-bunker': [],
-    endBunker: [],
     engineer: [],
-    flyingAce: [],
     gunfire: [],
     infantry: [],
     'parachute-infantry': [],
@@ -864,6 +916,7 @@ const game = (() => {
     data,
     dom,
     findObjectById,
+    getObjects,
     init,
     initArmorAlley,
     objects,

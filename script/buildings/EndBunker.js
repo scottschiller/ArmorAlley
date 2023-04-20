@@ -127,6 +127,8 @@ const EndBunker = (options = {}) => {
 
   function distributeFunds() {
 
+    if (game.objects.editor) return;
+
     let offset, earnedFunds;
 
     // note: end bunkers never die
