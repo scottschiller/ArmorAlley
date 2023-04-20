@@ -764,8 +764,8 @@ function addWorldObjects() {
   addItem('right-arrow-sign', 550);
 
   // right base area...
-  addItem('left-arrow-sign', 7700);
-  addItem('left-arrow-sign', 8192 + 16);
+  addItem('left-arrow-sign', 7700, 'scaleX(-1)');
+  addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
 
   // happy little clouds!
 
