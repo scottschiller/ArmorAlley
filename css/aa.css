@@ -4487,6 +4487,15 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   background-size: 8.25px 1px;
 }
 
+.finder .title-bar-label,
+.finder .title-bar-stripes {
+  pointer-events: none;
+}
+
+.finder.active {
+  outline: 0.5px solid #666;
+}
+
 .close-button {
   position: absolute;
   z-index: 2;
