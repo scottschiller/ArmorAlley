@@ -245,6 +245,7 @@ const game = (() => {
     const qualifiers = {
       // only include detached / free-floating + hostile
       balloon: (o) => !!o?.data?.hostile,
+      bunker: (o) => !o.data.dead && !o.data.burninating
     }
 
     const items = {};
