@@ -1748,12 +1748,28 @@ function addWorldObjects() {
 
   function addOriginalLevel(data) {
 
+    // if nothing is > 4096, then it's original game data; double all values.
+    let multiplier = 2;
+
     data.forEach((item) => {
-      addObject(item[0], {
-        isEnemy: item[1] === 'right',
-        hostile: item[1] === 'neutral',
-        x: item[2] * 2
-      });
+      if (item[item.length - 1] >= 4096) {
+        multiplier = 1;
+      }
+    });
+
+    console.log(`Adding level, using multiplier = ${multiplier}`);
+
+    data.forEach((item) => {
+      // terrain items only have two params.
+      if (item.length === 2) {
+        addItem(item[0], item[1]);
+      } else {
+        addObject(item[0], {
+          isEnemy: item[1] === 'right',
+          hostile: item[1] === 'neutral',
+          x: item[2] * multiplier
+        });
+      }
     });
     
   }
