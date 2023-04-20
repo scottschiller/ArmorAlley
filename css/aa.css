@@ -4722,101 +4722,103 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   color: #fff;
 }
 
-#game-prefs-modal fieldset:first-of-type {
+.mac-classic fieldset:first-of-type {
   margin-top: 1px;
 }
 
-#game-prefs-modal fieldset {
+.mac-classic fieldset {
   margin: 4px;
   border: 0.75px solid #000;
 }
 
-#game-prefs-modal fieldset legend {
+.mac-classic fieldset legend,
+.mac-classic h3 {
   font-family: Chicago, "FA Sysfont C", courier, sans-serif;
   font-size: 7px;
   vertical-align: middle;
 }
 
-#game-prefs-modal fieldset ul {
+.mac-classic h3 {
+  margin-top: 0px;
+  margin-bottom: 0.5em;
+}
+
+.mac-classic ul {
   list-style-type: none;
 }
 
-#game-prefs-modal fieldset ul,
-#game-prefs-modal fieldset ul li {
+.mac-classic ul,
+.mac-classic ul li {
   margin: 0px;
   padding: 0px;
 }
 
-#game-prefs-modal fieldset ul li {
+.mac-classic ul li {
   margin-top: 1px;
   margin-bottom: 4px;
 }
 
-#game-prefs-modal fieldset ul li fn {
-  font-size: 4px;
-}
-
-#game-prefs-modal ul.less-bottom-spacing li {
+.mac-classic ul.less-bottom-spacing li {
   margin-bottom: 0px;
 }
 
-#game-prefs-modal fieldset ul li:last-of-type {
+.mac-classic ul li:last-of-type {
   margin-bottom: 1px;
 }
 
-#game-prefs-modal fieldset ul li.less-bottom-spacing {
+.mac-classic ul li.less-bottom-spacing {
   margin-bottom: 3px;
 }
 
-#game-prefs-modal fieldset ul li ul li {
+.mac-classic ul li ul li {
   display: inline-block;
   margin-right: 2px;
 }
 
-#game-prefs-modal fieldset p {
+.mac-classic p {
   margin: 0px;
   padding-top: 1px;
   padding-bottom: 3px;
 }
 
-#game-prefs-modal .compact,
-#game-prefs-modal ul.compact li {
+.mac-classic .compact,
+.mac-classic ul.compact li {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
 
-#game-prefs-modal li.inline-option {
+.mac-classic li.inline-option {
   display: inline-block;
   margin-right: 3px;
 }
 
-#game-prefs-modal fieldset ul li p {
+.mac-classic ul li p {
   margin-bottom: 0px;
   padding-bottom: 1px;
   margin-left: 9px;
 }
 
-#game-prefs-modal fieldset ul li p,
-#game-prefs-modal .indented {
+.mac-classic ul li p,
+.mac-classic .indented {
   margin-left: 9px;
 }
 
-#game-prefs-modal .non-indented {
+.mac-classic .non-indented {
   margin-left: 0px;
 }
 
-#game-prefs-modal fieldset ul li p.options-heading {
+.mac-classic ul li p.options-heading {
   margin-left: 0px;
 }
 
-#game-prefs-modal input,
-#game-prefs-modal label {
+.mac-classic input,
+.mac-classic label {
   vertical-align: middle;
 }
 
-#game-prefs-modal input[type="text"] {
+.mac-classic input[type="text"] {
   font-size: 6px;
   display: block;
   box-sizing: border-box;
@@ -4825,12 +4827,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding: 2px;
 }
 
-#game-prefs-modal input[type="text"]:focus {
+.mac-classic input[type="text"]:focus {
   outline: none;
 }
 
-#game-prefs-modal input[type="checkbox"],
-#game-prefs-modal input[type="radio"] {
+.mac-classic input[type="checkbox"],
+.mac-classic input[type="radio"] {
   margin: 0px;
   padding: 0px;
   width: 7px;
@@ -4838,12 +4840,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   margin-top: -1px; /* vertical align w/text */
 }
 
-#game-prefs-modal input[type="checkbox"] {
+.mac-classic input[type="checkbox"] {
   margin-top: -2px;
 }
 
-#game-prefs-modal input[type="radio"],
-#game-prefs-modal input[type="checkbox"] {
+.mac-classic input[type="radio"],
+.mac-classic input[type="checkbox"] {
   position: relative;
   /* https://moderncss.dev/pure-css-custom-styled-radio-buttons/ */
   -webkit-appearance: none;
@@ -4859,12 +4861,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   transform: translateY(-0.5px);
 }
 
-#game-prefs-modal input[type="checkbox"] {
+.mac-classic input[type="checkbox"] {
   border-radius: 1px;
 }
 
-#game-prefs-modal input[type="checkbox"]::before,
-#game-prefs-modal input[type="radio"]::before {
+.mac-classic input[type="checkbox"]::before,
+.mac-classic input[type="radio"]::before {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -4879,7 +4881,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   background: #000;
 }
 
-#game-prefs-modal input[type="checkbox"]::before {
+.mac-classic input[type="checkbox"]::before {
   background: transparent;
   content: '×';
   text-align: center;
@@ -4892,77 +4894,77 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-radius: 0px;
 }
 
-body.is-mobile.is_safari #game-prefs-modal input[type="checkbox"]::before {
+body.is-mobile.is_safari .mac-classic input[type="checkbox"]::before {
   margin-top: -1.25px;
   margin-left: -1.25px;
 }
 
-body.is_firefox #game-prefs-modal input[type="checkbox"]::before {
+body.is_firefox .mac-classic input[type="checkbox"]::before {
   margin-top: -1.8px;
 }
 
-#game-prefs-modal input[type="radio"]:checked::before,
-#game-prefs-modal input[type="checkbox"]:checked::before {
+.mac-classic input[type="radio"]:checked::before,
+.mac-classic input[type="checkbox"]:checked::before {
   visibility: visible;
 }
 
-#game-prefs-modal input[type="checkbox"]:active {
+.mac-classic input[type="checkbox"]:active {
   opacity: 0.75;
 }
 
-#game-prefs-modal input[type="checkbox"]:active::before {
+.mac-classic input[type="checkbox"]:active::before {
   transform: scale(0.5);
   opacity: 0.5;
   visibility: visible;
 }
 
-body.is_firefox #game-prefs-modal input[type="checkbox"]:active::before {
+body.is_firefox .mac-classic input[type="checkbox"]:active::before {
   margin-left: -0.35px;
   margin-top: -1.75px;
 }
 
-#game-prefs-modal input[type="checkbox"]:active,
-#game-prefs-modal input[type="checkbox"]:focus {
+.mac-classic input[type="checkbox"]:active,
+.mac-classic input[type="checkbox"]:focus {
   background: #ccc;
 }
 
-#game-prefs-modal input[type="radio"]:active::before {
+.mac-classic input[type="radio"]:active::before {
   visibility: visible;
   transform: scale(0.4);
   transform-origin: 50%;
 }
 
-#game-prefs-modal input[type="radio"]:focus::before {
+.mac-classic input[type="radio"]:focus::before {
   animation: pulse 0.5s ease-in-out infinite alternate-reverse;
 }
 
-#game-prefs-modal button:disabled,
-#game-prefs-modal input[type="radio"]:disabled,
-#game-prefs-modal input[type="checkbox"]:disabled {
+.mac-classic button:disabled,
+.mac-classic input[type="radio"]:disabled,
+.mac-classic input[type="checkbox"]:disabled {
   opacity: 0.33;
 }
 
-#game-prefs-modal input[type="radio"]:focus-visible,
-#game-prefs-modal input[type="checkbox"]:focus-visible {
+.mac-classic input[type="radio"]:focus-visible,
+.mac-classic input[type="checkbox"]:focus-visible {
   /* hide outline, because we have the animation */
   outline: none;
 }
 
-#game-prefs-modal .label-text {
+.mac-classic .label-text {
   font-weight: bold;
 }
 
-body.is_firefox #game-prefs-modal .label-text,
-body.is_firefox #game-prefs-modal .options-heading {
+body.is_firefox .mac-classic .label-text,
+body.is_firefox .mac-classic .options-heading {
   letter-spacing: -0.125px;
 }
 
-body.is_safari #game-prefs-modal .label-text,
-body.is_safari #game-prefs-modal .options-heading {
+body.is_safari .mac-classic .label-text,
+body.is_safari .mac-classic .options-heading {
   letter-spacing: -0.25px; /* :shake_fist: */
 }
 
-#game-prefs-modal p {
+.mac-classic p {
   margin: 0px;
   padding: 0px;
   margin-top: 0.1rem;
@@ -5416,15 +5418,17 @@ body.edit-mode #battlefield {
   bottom: 0px;
   left: 0px;
   width: 100%;
-  height: 32px;
-  border-top: 1px dotted #333;
+  height: 0px;
+  margin-bottom: -1px;
+  border-top: 0.75px dotted #444;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease-out;
+  transition: height 0.25s ease-in-out;
+  transition-property: height, margin;
 }
 
 #battlefield #cutoff-line.active {
-  opacity: 1;
+  height: 32px;
+  margin-bottom: 0px;
   pointer-events: initial;
 }
 
