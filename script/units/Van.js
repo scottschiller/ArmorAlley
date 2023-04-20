@@ -76,6 +76,11 @@ const Van = (options = {}) => {
 
   function animate() {
 
+    // hackish: defer this until all objects are created, and the game has started etc.
+    if (!data.xGameOver && pads?.length) {
+      data.xGameOver = (data.isEnemy ? pads[0].data.x + 88 : pads[pads.length - 1].data.x - 44);
+    }
+
     let enemyHelicopter;
 
     if (!data.stopped) {
@@ -244,9 +249,9 @@ const Van = (options = {}) => {
       game.objects.stats.create(exports);
     }
 
-  }
+    pads = game.objects[TYPES.landingPad];
 
-  pads = game.objects[TYPES.landingPad];
+  }
 
   height = 16;
 
@@ -279,7 +284,7 @@ const Van = (options = {}) => {
       cost: 2
     },
     // if the van reaches the enemy base (near the landing pad), it's game over.
-    xGameOver: (options.isEnemy ? pads[0].data.x + 88 : pads[pads.length - 1].data.x - 44),
+    xGameOver: 0, // set at init
     x: options.x || 0,
     y: game.objects.view.data.world.height - height - 2,
     domFetti: {

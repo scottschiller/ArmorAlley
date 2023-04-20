@@ -524,6 +524,22 @@ const Editor = () => {
 
   }
 
+  function removeFromGameObjects(obj) {
+
+    if (!obj?.data?.id) return;
+
+    delete game.objectsById[obj.data.id];
+
+    const ref = obj.data.isTerrainItem ? 'terrain-item' : obj.data.type;
+    
+    const offset = game.objects[ref].indexOf(obj);
+
+    if (offset !== -1) {
+      game.objects[ref].splice(offset, 1);
+    }
+    
+  }
+
   function deleteItem(item) {
 
     // remove something from the battlefield.
@@ -544,8 +560,12 @@ const Editor = () => {
         // if dead, then destroy and forcefully remove entirely.
         if (gameObject.data.type === TYPES.turret && gameObject.data.dead) {
           gameObject.destroy();
+          removeFromGameObjects(gameObject);
         } else {
           gameObject.die();
+          if (gameObject.data.type !== TYPES.turret && gameObject.data.type !== TYPES.bunker) {
+            removeFromGameObjects(gameObject);
+          }
         }
 
         // special super-bunker case: forcefully remove.
@@ -565,7 +585,7 @@ const Editor = () => {
 
         gameObject?.dom?.o?.remove();
         deSelectItem(item);
-        // null game.objectsById[] reference?
+        removeFromGameObjects(gameObject);
 
       }
 
