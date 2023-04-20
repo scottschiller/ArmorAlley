@@ -793,7 +793,7 @@ const Editor = () => {
   function updateMarqueeSelection(id, isSelected) {
 
     // in terms of selection, editor refers to items via the DOM.
-    const item = game.objectsById[id].dom.o;
+    const item = game.objectsById[id]?.dom?.o;
 
     // becoming selected
     if (!data.marqueeSelected[id] && isSelected) {
@@ -1051,13 +1051,15 @@ const Editor = () => {
 
         for (var i = startZone; i <= endZone; i++) {
 
-          objects = zones.objectsByZone[i]['all'];
+          if (!zones.objectsByZone[i]?.all) continue;
+
+          objects = zones.objectsByZone[i].all;
 
           for (let type in objects) {
             // e.g., tanks within zone #i
             for (let id in objects[type]) {
               // mark as "in" or "out", accordingly.
-              updateMarqueeSelection(id, collisionCheck(marqueeRect, game.objectsById[id].data));
+              updateMarqueeSelection(id, game.objectsById[id]?.data && collisionCheck(marqueeRect, game.objectsById[id].data));
             }
           }
 
