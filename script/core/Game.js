@@ -280,12 +280,23 @@ const game = (() => {
     const gameData = [];
 
     for (const type in items) {
+
       items[type].forEach((item) => {
-        gameData.push([ item.data.type, item.data.isHostile ? 'n' : (item.data.isEnemy ? 'r' : 'l'), Math.floor(item.data.x) ]);
+
+        // 2 or 3 args, depending
+        const args = [ item.data.type, item.data.isHostile ? 'n' : (item.data.isEnemy ? 'r' : 'l'), Math.floor(item.data.x) ];
+
+        // drop l/r on terrain items
+        if (item.data.isTerrainItem) args.splice(1, 1);
+
+        gameData.push(args);
+
       });
+
     }
 
     // sort the array based on the x value.
+    // TODO: fix this, not always the second item.
     gameData.sort(utils.array.compare(2));
 
     return gameData;
