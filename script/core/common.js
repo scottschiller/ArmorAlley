@@ -199,6 +199,9 @@ const slashCommands = {
 
 const common = {
 
+  // given a list of keys, collect and return a new object of key/value pairs.
+  pick: (o, ...props) => Object.assign({}, ...props.map(prop => ({[prop]: o[prop]}))),
+
   getRenameString,
 
   parseSlashCommand: (msg, fromNetwork = true) => {
