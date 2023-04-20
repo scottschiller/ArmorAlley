@@ -982,7 +982,7 @@ function addWorldObjects() {
       [ 'landing-pad', l, 160 ],
       [ 'landing-pad', r, 3936 ],
       [ 'base', r, 4000 ],
-      [ 'end-bunker', 4084 ],
+      [ 'end-bunker', r, 4084 ],
       [ 'bunker', l, 512 ],
       [ 'turret', l, 768 ],
       [ 'bunker', l, 1024 ],
