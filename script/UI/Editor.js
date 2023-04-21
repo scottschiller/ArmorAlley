@@ -20,7 +20,7 @@ const Editor = () => {
       rock: [ 'rock', 'rock2' ],
       grave: [ 'gravestone', 'gravestone2', 'grave-cross' ],
       tumbleweed: [ 'tumbleweed '],
-      grass: [ 'checkmark-grass' ],
+      grass: [ 'checkmark-grass', 'grass' ],
       barbWire: [ 'barb-wire' ],
       flower: [ 'flower', 'flowers', 'flower-bush' ],
       cactus: [ 'cactus', 'cactus2' ],

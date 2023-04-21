@@ -2199,6 +2199,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-image: url(../image/rock2.png);
 }
 
+.grass {
+  width: 40px;
+  height: 9px;
+  background-image: url(../image/grass.png);
+}
+
 .gravestone {
   width: 20px;
   height: 12px;
