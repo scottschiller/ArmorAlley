@@ -324,13 +324,11 @@ const SuperBunker = (options = {}) => {
               // friendly passer-by, relative to the super bunker.
               data.energy++;
 
+              setFriendly(isTargetFriendlyToPlayer);
+
               // switch over the first time energy goes up
-              if (data.energy === 1) {
+              if (data.energy > 0) {
                 
-                setFriendly(isFriendly);
-
-              } else {
-
                 // "one of ours?"
                 if (isTargetFriendlyToPlayer) {
                   game.objects.notifications.add('You reinforced a super bunker 💪');  
