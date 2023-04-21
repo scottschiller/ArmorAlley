@@ -986,7 +986,7 @@ function addWorldObjects() {
       [ 'end-bunker', r, 8168 ],
       // [ 'right-arrow-sign', -16 ],
       // [ 'right-arrow-sign', 550 ],
-      [ 'tree', 505 ],
+      // [ 'tree', 505 ],
       [ 'tree', 2624 ],
       [ 'tree', 2976 ],
       [ 'tree', 4271 ],
@@ -1239,7 +1239,7 @@ function addWorldObjects() {
       [ 'right-arrow-sign', -16 ],
       [ 'right-arrow-sign', 550 ],
       */
-      [ 'tree', 505 ],
+      // [ 'tree', 505 ],
       /*
       [ 'left-arrow-sign', 7700 ],
       [ 'left-arrow-sign', 8208 ],
