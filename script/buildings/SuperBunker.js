@@ -309,15 +309,7 @@ const SuperBunker = (options = {}) => {
               data.dead = false;
 
               // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
-              if (target.data.isEnemy) {
-
-                capture(true);
-
-              } else {
-
-                capture(false);
-
-              }
+              capture(target.data.isEnemy);
 
               // update, now that capture has happened.
               isFriendly = (target.data.isEnemy === data.isEnemy);
