@@ -1339,7 +1339,7 @@ function addWorldObjects() {
       [ 'bunker', r, 1984 ],
       [ 'bunker', r, 2016 ],
       [ 'turret', r, 2048 ],
-      [' turret', r, 2064 ],
+      [ 'turret', r, 2064 ],
       [ 'bunker', r, 2112 ],
       [ 'bunker', r, 3072 ],
       [ 'bunker', r, 3104 ],
