@@ -5,6 +5,7 @@ import { isMobile, isSafari } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
+import { setLevel } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
@@ -20,6 +21,8 @@ let optionsButton;
 
 let didBNBIntro;
 let gameMenuActive;
+
+let originalSubTitle;
 
 function init() {
 
@@ -64,12 +67,24 @@ function init() {
     // hackish: ensure the in-game menu updates.
     prefsManager.readAndApplyPrefsFromStorage();
 
+    const subTitle = !game.data.started && document.getElementById('game-subtitle');
+
+    if (subTitle && !originalSubTitle) {
+      originalSubTitle = subTitle.innerHTML;
+    }
+
     if (!bnb) {
       // reset, if needed
       didBNBIntro = false;
+      if (subTitle) {
+        subTitle.innerHTML = originalSubTitle || '';
+      }
     } else {
       // we're in a click event, go now?
       introBNBSound();
+      if (subTitle) {
+        subTitle.innerHTML = subTitle.getAttribute('title-bnb');
+      }
     }
 
   });
@@ -146,13 +161,15 @@ function menuUpdate(e) {
     target = target.parentNode;
   }
 
-  if (target && (target.className.match(/cta/i) || target.nodeName === 'BUTTON')) {
+  const dataTitle = target?.getAttribute('data-title');
+
+  if (dataTitle || target?.title) {
     title = target.title;
     if (title) {
       target.setAttribute('data-title', title);
       target.title = '';
     } else {
-      title = target.getAttribute('data-title');
+      title = dataTitle;
     }
     if (lastHTML !== title) {
       description.innerHTML = title;
@@ -189,16 +206,80 @@ function formClick(e) {
 
   const { target } = e;
 
-  if (target.href && utils.css.has(target, 'cta')) {
+  // drop-down?
+  if (target.nodeName.toLowerCase() === 'option') {
+    // assume it's the game level
+    const level = target.value;
+    setLevel(level);
+    return;
+  }
 
-    game.setGameType(target.href.substr(target.href.lastIndexOf('#') + 1));
+  const action = target.getAttribute('data-action');
+
+  if (action === 'tutorial') {
+
+    game.setGameType(action);
 
     formCleanup();
 
     // go go go!
     startGame();
 
+    return false;
+    
+  }
+
+  if (action === 'start-game') {
+
+    // set level and game type, if not already
+
+    // get the current game type from the form.
+    const gameType = document.querySelectorAll('input[name="game_type"]:checked')[0].value;
+
+    const gameLevel = document.querySelectorAll('select[name="level"]')[0].value;
+
+    setLevel(gameLevel);
+
+    game.setGameType(gameType);
+
+    formCleanup();
+
+    // go go go!
+    startGame();
+
+    return;
+    
+  }
+
+  const { name } = target;
+
+  if (name === 'game_type') {
+    game.setGameType(target.value);
+    return;
+  }
+
+  if (target.href && utils.css.has(target, 'cta')) {
+
     e.preventDefault();
+
+    const { href } = target;
+    const hash = href.substr(href.lastIndexOf('#') + 1);
+
+    // #[easy|hard|extreme|tutorial]
+
+    if (hash === 'new-game') return;
+
+    if (hash === 'tutorial') {
+
+      game.setGameType(hash);
+
+      formCleanup();
+
+      // go go go!
+      startGame();
+
+    }
+
     return false;
 
   }
