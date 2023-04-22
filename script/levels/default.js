@@ -3,6 +3,16 @@ import { rng, searchParams, tutorialMode, TYPES, winloc, worldHeight } from '../
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
+let level = searchParams.get('level');
+let levelName;
+
+function setLevel(newLevelName) {
+
+  level = newLevelName;
+  levelName = newLevelName;
+
+}
+
 function addWorldObjects() {
 
   const { addItem } = game;
@@ -25,8 +35,6 @@ function addWorldObjects() {
   const env = !!(window.location.href.match(/schillmania|original/i));
 
   const defaultLevel = 'Midnight Oasis';
-
-  const level = searchParams.get('level');
 
   if ((env && !level) || tutorialMode) {
   
@@ -2803,4 +2811,4 @@ function addWorldObjects() {
 
 }
 
-export { addWorldObjects };
+export { addWorldObjects, levelName, setLevel };
