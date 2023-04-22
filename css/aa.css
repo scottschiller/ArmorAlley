@@ -150,29 +150,29 @@ body.game-started {
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 10;
-  transform: translate3d(-9.75%, -50%, 0);
+  transform: translate3d(-0.75%, -61.5%, 0);
   opacity: 0;
   transition: opacity 0.25s ease-in;
 }
 
 body.bnb #mtv-bnb-in {
-  transform: translate3d(-4%, -50%, 0);
-  opacity: 0.9;
+  opacity: 1;
 }
 
 #bnb-vs {
   position: absolute;
-  bottom: 1.5px;
+  bottom: -8px;
   left: 0px;
   width: 100%;
-  height: 79%;
+  height: 135%;
   /* https://www.steamgriddb.com/game/5248723 */
   background: url(../image/virtual_stupidity_steamgriddb.png);
   background-position: 100% 100%;
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 10;
-  transform: translate3d(3.75%, 0%, 0);
+  transform: translate3d(-35%, 0%, 0);
+  filter: drop-shadow(0px 1px 0.5px rgba(0,0,0,0.5));
   opacity: 0;
   transition: opacity 0.25s ease-in;
 }
@@ -203,13 +203,15 @@ body.is_safari #bnb-vs {
   margin-left: -195.5px;
   margin-top: -33.5px;
   /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
-  background: transparent url(../image/armor-alley-logo-print.webp) no-repeat 50% 0px;
+  background: transparent url(../image/armor-alley-logo-print.webp) no-repeat 50% 72%;
   background-size: contain;
   image-rendering: smooth;
   z-index: 11;
   opacity: 0;
   transition: opacity 0.2s ease-out;
   filter: drop-shadow(0px 0px 1px #000);
+  border-top: 12px solid #ccc;
+  padding-top: 20px;
 }
 
 #logo h1 {
@@ -251,9 +253,10 @@ body.is_safari #bnb-vs {
   margin-top: 60px;
   display: none;
   text-align: center;
-  color: #999;
+  color: #ccc;
   /* don't exceed the screen width (e.g., mobile phones in portrait mode.) */
   width: 100%;
+  font-size: 10px;
 }
 
 #game-menu.visible {
@@ -261,27 +264,53 @@ body.is_safari #bnb-vs {
 }
 
 #game-menu h2 {
+  position: relative;
+  /* ensure this clips the BnB overlay, when showing */
+  z-index: 10;
   font-weight: normal;
-  font-size: 1.1em;
-  line-height: 1.5em;
+  font-size: 10px;
   color: #ccc;
+  border-top: 0.5px solid #ccc;
+  padding-top: 0.5em;
+}
+
+#game-menu label {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+  border: 1px solid #666;
+  border-radius: 3px;
+  padding: 1.5px 4px;
+}
+
+body.is_safari #game-menu label,
+body.is_safari #game-menu select {
+  /* Safari shenanigans. :/ */
+  height: 20px;
+}
+
+#game-menu label:hover {
+  border-color: #fff;
 }
 
 #game-menu .cta {
   display: inline-block;
-  width: 23%;
   box-sizing: border-box;
-  color:#33cc33;
+  color:#ccc;
   border: 1px solid green;
   font-size: 1em;
   line-height: 1.5em;
-  padding: 4px 0px;
+  padding: 4px 6px;
   /* text-align: center; */
   text-decoration: none;
   background-color: #003300;
   background-color: rgba(0,102,0,0.5);
-  margin-left: 1%;
   cursor: pointer;
+}
+
+#game-menu .cta:last-of-type {
+  padding-right: 0px;
 }
 
 #game-menu .cta-radio:first-of-type {
@@ -290,20 +319,15 @@ body.is_safari #bnb-vs {
 
 #game-menu .cta:hover,
 #game-menu .cta:focus {
-  background-color: #006600;
+  background-color: #ccc;
   background-color: rgba(0,153,0,0.75);
   color: #fff;
   outline: none;
 }
 
-#game-menu form,
-#game-menu form label {
+#game-menu form {
  display: block;
  width: 100%;
-}
-
-#game-menu form label {
-  padding: 3px 10px;
 }
 
 #game-menu form input {
@@ -322,14 +346,14 @@ body.is_safari #bnb-vs {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  /* create custom radiobutton appearance */
+  /* create custom radio button appearance */
   display: inline-block;
   width: 1em;
   height: 1em;
   padding: 2px;
   /* background-color only for content */
   background-clip: content-box;
-  border: 1px solid #33cc33;
+  border: 1px solid #ccc;
   background-color: transparent;
   border-radius: 50%;
 }
@@ -339,10 +363,13 @@ body.is_safari #bnb-vs {
 }
 
 #game-menu .cta-checkbox {
-  width: 100%;
+  position: relative;
+  display: inline-block;
   border: none;
   background: transparent;
   cursor: pointer;
+  /* vertical align shenanigans */
+  margin-top: -2px;
 }
 
 #game-menu .checkbox-wrapper {
@@ -386,11 +413,7 @@ body.is_safari #bnb-vs {
   background: transparent;
 }
 
-#game-menu .cta:first-of-type {
-  margin-left: 0%;
-}
-
-#game-menu .cta .emoji {
+#game-menu .emoji {
   display: inline-block;
   font-size: 1.25em;
   line-height: 1.25em;
@@ -829,7 +852,7 @@ body.bnb #tv-display {
 }
 
 .tv-display-title-screen {
-  top: 50.5%;
+  top: 50.75%;
   transform: translate(-50%, -50%) scale3d(1.2, 1.2, 1.2);
   opacity: 1;
   z-index: 11;
@@ -4837,6 +4860,39 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   outline: none;
 }
 
+.mac-classic select {
+  font-family: Chicago, "FA Sysfont C", courier, sans-serif;
+  font-size: 10px;
+  font-weight: normal;
+  text-indent: 2px;
+  margin: 0px;
+  /* vertical align shenanigans */
+  margin-top: -2px;
+  margin-left: 2px;
+  padding: 0px;
+  padding-right: 2px;
+  vertical-align: middle;
+  /* look similar to buttons */
+  height: 19px;
+  border-style: solid;
+  border-radius: 2px;
+  background: transparent;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #666;
+  color: #ccc;
+}
+
+.mac-clssic option {
+  font-size: 20px;
+}
+
+.mac-classic select:hover,
+.mac-classic select:focus,
+.mac-classic select:active {
+  border-color: #fff;
+}
+
 .mac-classic input[type="checkbox"],
 .mac-classic input[type="radio"] {
   margin: 0px;
@@ -4970,12 +5026,11 @@ body.is_safari .mac-classic .options-heading {
   letter-spacing: -0.25px; /* :shake_fist: */
 }
 
-.mac-classic p {
+.finder.mac-classic p {
   margin: 0px;
   padding: 0px;
   margin-top: 0.1rem;
   margin-left: 0.25rem;
-  margin-bottom: 0.5rem;
   margin-right: 0.25rem;
 }
 
@@ -5045,7 +5100,7 @@ button {
   padding: 0.5px 5px;
   border: 0.25px solid #000;
   border-radius: 2px;
-  margin-right: 0.2rem;
+  margin-right: 0.25rem;
   min-width: 1.75rem;
   cursor: pointer;
 }
@@ -5142,29 +5197,56 @@ button.attention:not(:active) {
 /* game menu screen */
 
 #game-menu button.large {
-  background: #ddd;
+  background: #009900;
+  color: #fff;
+  background: #eee;
+  color: #333;
   font-size: 10px;
   line-height: 10px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   vertical-align: middle;
+  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
+}
+
+#game-menu button.game-start {
+  background: #009900;
+  color: #fff;
+  border-color: transparent;
+  text-shadow: 0.5px 0.5px rgba(0,0,0,0.25);
+}
+
+#game-menu button.large.game-start:hover {
+  color: #fff;
+  background-color: #00aa00;
+  filter: drop-shadow(0px 0px 3px #99ff99);
+}
+
+#game-menu button.large.game-start:active {
+  filter: drop-shadow(0px 0px 1.5px #99ff99);
+}
 }
 
 #game-menu button.large,
 #game-menu .cta:not(label) {
-  transition: transform 0.1s;
+  border: 1px solid transparent;
+  transition: transform 0.05s;
+  transition-property: background-color, color, filter, text-shadow, transform;
 }
 
 #game-menu button.large:hover {
+  filter: drop-shadow(0px 0px 3px #fff);
   background: #fff;
 }
 
 #game-menu button.large:active {
-  background: #339933;
+  background: #ddd;
+  filter: drop-shadow(0px 0px 1.5px #fff);
 }
 
 #game-menu button.large:active,
 #game-menu .cta:not(label):active {
   transform: scale3d(0.9, 0.9, 1);
+  transform-origin: 50% 50%;
 }
 
 /* outer -> inner */
@@ -5491,3 +5573,16 @@ body.edit-mode #battlefield {
 #editor-clipboard.active {
   display: inline-block;
 }
+
+#aa ul.inline-list {
+  display: inline-block;
+}
+
+#aa ul.inline-list li {
+  display: inline-block;
+}
+
+#aa ul.inline-list li:not(:first-of-type) {
+  margin-left: 0.5em;
+}
+
