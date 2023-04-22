@@ -868,7 +868,7 @@ const net = {
 
         const msg = '💥 Network connection has closed. ☠️';
 
-        game.objects.notifications.add(msg);
+        game.objects.notifications.addNoRepeat(msg);
 
         net.connected = false;
 
