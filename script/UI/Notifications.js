@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { gamePrefs } from './preferences.js';
 import { net } from '../core/network.js';
+import { levelName } from '../levels/default.js';
 
 const Notifications = () => {
 
@@ -200,7 +201,7 @@ const Notifications = () => {
 
     const gameTypes = {
       tutorial: 'This is the tutorial mode. 📖',
-      other: `You are playing ${gameType.toUpperCase()} mode. ${emoji[gameType]}`
+      other: `You are playing ${levelName}. ${emoji[gameType]}`
     }
 
     let playingMessage;
@@ -208,7 +209,7 @@ const Notifications = () => {
     const netGameStyle = gamePrefs.net_game_style;
 
     if (net.connected && styleLabels[netGameStyle]) {
-      playingMessage = `You are playing ${styleLabels[netGameStyle]}, ${gameType.toUpperCase()} mode.`
+      playingMessage = `You are playing ${styleLabels[netGameStyle]}, level ${levelName}.`
     } else {
       playingMessage = gameTypes[gameType] || gameTypes.other;
     }
