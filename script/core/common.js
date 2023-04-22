@@ -1,11 +1,12 @@
 import { game } from '../core/Game.js';
-import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, FRAMERATE, TYPES } from '../core/global.js';
+import { gamePrefs, prefs } from '../UI/preferences.js';
+import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { prefsManager } from '../aa.js';
+import { utils } from './utils.js';
 
 // unique IDs for quick object equality checks
 let guid = 0;
@@ -196,6 +197,100 @@ const slashCommands = {
   }
 
 };
+
+let gravestoneQueue = [];
+let gravestoneTimer;
+
+const smallDecor = [ 'checkmark-grass', 'flower', 'flower-bush', 'palm-tree', 'cactus' ];
+const largeDecor = [ 'flowers', 'grass', 'sand-dune', 'sand-dunes' ];
+const gravestoneTypes = [ 'gravestone', 'gravestone2', 'grave-cross' ];
+const maxGravestoneRange = 64;
+const maxQueueSize = 5;
+
+function queueGravestoneWork() {
+
+  // fire immediately, if queue is large enough.
+  if (gravestoneQueue.length >= maxQueueSize) {
+    processGravestoneQueue();
+  }
+
+  gravestoneTimer?.reset();
+
+  gravestoneTimer = common.setFrameTimeout(processGravestoneQueue, 750);
+
+}
+
+// hackish: rng() version of oneOf()
+function pickFrom(array) {
+  if (!net.active) return oneOf(array);
+  return array[rngInt(array.length, TYPES.terrainItem)];
+}
+
+function processGravestoneQueue() {
+
+  gravestoneTimer = null;
+
+  let clusters = [];
+  let clusterOffset = 0;
+
+  const extraCSS = 'dynamically-added submerged';
+
+  // split X coordinates into "clusters", where applicable.
+
+  if (gravestoneQueue.length >= 3) {
+
+    // array of coordinates
+    const xOffsets = gravestoneQueue.map((item) => item[0].data.x).sort();
+
+    // pre-populate the first cluster
+    clusters[0] = [xOffsets[0]];
+
+    // NOTE: loop starting at 1 intentionally.
+    for (let i = 1, j = xOffsets.length; i < j; i++) {
+      if (xOffsets[i] - clusters[clusterOffset][0] < maxGravestoneRange) {
+        // within range; push onto current cluster.
+        clusters[clusterOffset].push(xOffsets[i]);
+      } else {
+        // make a new cluster.
+        clusters.push([xOffsets[i]]);
+        clusterOffset++;
+      }
+    }
+
+    // decorate clusters
+    clusters.forEach((cluster) => {
+      cluster.forEach((x, i) => {
+        if ((i + 1) % 2 === 0) {
+          riseItemAfterDelay(game.addItem(`${pickFrom(smallDecor)} ${extraCSS}`, x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)), 33 + (33 * (i + 1)));
+        }
+      });
+      if (cluster.length > 2) {
+        const i = 1 + rngInt(cluster.length - 1, TYPES.terrainItem);
+        riseItemAfterDelay(game.addItem(`${pickFrom(largeDecor)} ${extraCSS}`, (cluster[i + 1] + cluster[i]) / 2), 33 + (33 * (i + 1)));
+      }
+    });
+
+  }
+
+  gravestoneQueue.forEach((item, i) => {
+
+    const exports = item[0];
+    const type = item[1] || pickFrom(gravestoneTypes);
+
+    // three or more in a row? add some grass and decor.
+    const stone = game.addItem(`${type} ${extraCSS}`, exports.data.x + exports.data.halfWidth);
+
+    // rise from the ... grave? ;) 
+    riseItemAfterDelay(stone, 33 + (66 * (i + 1)));
+
+  });
+
+  // reset
+  gravestoneQueue = [];
+
+}
+
+const riseItemAfterDelay = (exports, delay = 33) => common.setFrameTimeout(() => utils.css.remove(exports?.dom?.o, 'submerged'), delay);
 
 const common = {
 
@@ -630,6 +725,28 @@ const common = {
     .replace(/>/g, '&gt;')
     // convenience
     .replace('\n', '<br>');
+  },
+
+  addGravestone(exports, type) {
+
+    if (!gamePrefs.gravestones) return;
+    if (gamePrefs.gravestones === 'infantry' && exports.data.type !== TYPES.infantry) return;
+    if (gamePrefs.gravestones === 'helicopters' && exports.data.type !== TYPES.helicopter) return;
+
+    function r() {
+      return [ { data: { x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem), halfWidth: exports.data.halfWidth } }, pickFrom(smallDecor) ];
+    }
+
+    // if gravestone2 specified, it's the helicopter; add a few extra before the gravestone pops up.
+    if (type === 'gravestone2' && rng(1, TYPES.terrainItem) >= 0.5) {
+      gravestoneQueue.push(r());
+    }
+
+    // now add the thing we came here for.
+    gravestoneQueue.push([exports, type]);
+
+    queueGravestoneWork();
+
   }
 
 };

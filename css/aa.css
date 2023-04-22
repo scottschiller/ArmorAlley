@@ -5475,6 +5475,10 @@ body.edit-mode #battlefield .terrain-item {
   transition: margin ease-out 0.25s;
 }
 
+#battlefield .terrain-item.dynamically-added {
+  transition: margin ease-in-out 0.75s;
+}
+
 body.edit-mode #battlefield .sprite.tank,
 body.edit-mode #battlefield .sprite.newly-added-sprite.tank {
   /* annoying pixel shift */
@@ -5489,7 +5493,8 @@ body.edit-mode #battlefield .terrain-item {
   margin-bottom: 0px;
 }
 
-body.edit-mode #battlefield .sprite.submerged {
+body.edit-mode #battlefield .sprite.submerged,
+body:not(.edit-mode) #battlefield .terrain-item.submerged {
   margin-top: 27px !important;
 }
 
