@@ -801,6 +801,7 @@ const game = (() => {
 
   function setGameType(type = null) {
     gameType = type || DEFAULT_GAME_TYPE;
+    gamePrefs.net_game_type = gameType;
     setTutorialMode(gameType === 'tutorial');
   }
 
