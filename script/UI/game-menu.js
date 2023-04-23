@@ -236,12 +236,12 @@ function formClick(e) {
     // set level and game type, if not already
 
     // get the current game type from the form.
-    const gameType = document.querySelectorAll('input[name="game_type"]:checked')[0].value;
+    const oSelect = document.getElementById('game_level');
+    const gameType = document.querySelector('#game-type-list input[name="game_type"]:checked')?.value || 'easy';
 
-    const select = document.querySelectorAll('select[name="level"]')[0];
-    const selectedIndex = select.selectedIndex;
+    const selectedIndex = oSelect.selectedIndex;
 
-    setLevel(select.value, select[selectedIndex].textContent);
+    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
 
     game.setGameType(gameType);
 

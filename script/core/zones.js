@@ -168,7 +168,7 @@ function leaveZone(zone, obj, group = 'all') {
   // guard
   if (zone === null || zone === undefined) return;
 
-  // This may happen after an ownership change, i.e., a balloon becomes hostile.
+  // This may happen after an ownership change, i.e., a balloon or a super-bunker becomes hostile.
   if (!objectsByZone[zone][group][obj.data.type]) {
     console.warn('leaveZone: WTF no objects by zone for type?', zone, group, obj.data.type, obj.data.id, Object.keys(objectsByZone[zone][group]), objectsByZone[zone][group]);
     return;
@@ -290,8 +290,6 @@ function changeOwnership(obj) {
 
   // skip if zones haven't been applied (yet)
   if (obj.data.frontZone === null) return;
-
-  // leave as the old "is enemy" thing, and join as the new.
 
   if (obj.data.isEnemy || obj.data.hostile) {
     // friendly -> enemy / hostile
