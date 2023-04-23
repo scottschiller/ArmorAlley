@@ -3070,7 +3070,7 @@ const Helicopter = (options = {}) => {
       source: exports,
       targets: undefined,
       hit(target) {
-        if (target.data.type === 'chain') {
+        if (target.data.type === TYPES.chain) {
           // special case: chains do damage, but don't kill.
           common.hit(exports, target.data.damagePoints, target);
           // and make noise.
@@ -3099,7 +3099,7 @@ const Helicopter = (options = {}) => {
               updateStatusUI({ parachutes: true });
             }
           }
-        } else if (target.data.type === 'cloud') {
+        } else if (target.data.type === TYPES.cloud) {
           cloak();
         } else if (target.data.type === TYPES.superBunker && target.data.isEnemy === data.isEnemy) {
           // "protect" the helicopter if completely enveloped within the bounds of a friendly super-bunker.
