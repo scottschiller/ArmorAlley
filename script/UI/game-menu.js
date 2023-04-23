@@ -209,8 +209,10 @@ function formClick(e) {
   // drop-down?
   if (target.nodeName.toLowerCase() === 'option') {
     // assume it's the game level
-    const level = target.value;
-    setLevel(level);
+    // parent node shenanigans: option -> optgroup -> select
+    const parentNode = target.parentNode.parentNode;
+    const selectedIndex = parentNode.selectedIndex;
+    setLevel(target.value, parentNode[selectedIndex].textContent);
     return;
   }
 
@@ -236,9 +238,10 @@ function formClick(e) {
     // get the current game type from the form.
     const gameType = document.querySelectorAll('input[name="game_type"]:checked')[0].value;
 
-    const gameLevel = document.querySelectorAll('select[name="level"]')[0].value;
+    const select = document.querySelectorAll('select[name="level"]')[0];
+    const selectedIndex = select.selectedIndex;
 
-    setLevel(gameLevel);
+    setLevel(select.value, select[selectedIndex].textContent);
 
     game.setGameType(gameType);
 
