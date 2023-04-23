@@ -40,7 +40,7 @@ const defaultPrefs = {
   weather: '', // [none|rain|hail|snow|turd]
   domfetti: true,
   gravestones_helicopters: true,
-  gravestones_infantry: true,
+  gravestones_infantry: false,
   gravestones_vehicles: false,
   show_inventory: true,
   show_weapons_status: true,
