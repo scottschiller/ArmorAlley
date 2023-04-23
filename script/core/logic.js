@@ -106,7 +106,8 @@ function collisionCheckObject(options) {
         // most common case: enemy vs. non-enemy. Otherwise, don't check friendly units by default UNLESS looking only for friendly.
         ((tData.isEnemy !== sData.isEnemy && !options.friendlyOnly) || (options.friendlyOnly && tData.isEnemy === sData.isEnemy))
 
-        // specific friendly cases: infantry vs. bunker, end-bunker, super-bunker or helicopter
+        // specific friendly cases: helicopter vs. super-bunker, or infantry vs. bunker, end-bunker, super-bunker or helicopter
+        || (sData.type === TYPES.helicopter && tData.type === TYPES.superBunker)
         || (sData.type === TYPES.infantry && tData.type === TYPES.bunker)
 
         || (tData.type === TYPES.infantry
