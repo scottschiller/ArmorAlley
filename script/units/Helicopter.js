@@ -1351,6 +1351,7 @@ const Helicopter = (options = {}) => {
     data.dead = false;
     data.pilot = true;
     data.deployedParachute = false;
+    data.excludeFromCollision = false;
 
     radarItem.reset();
 
@@ -2824,6 +2825,7 @@ const Helicopter = (options = {}) => {
     commentaryTimer: null,
     commentaryLastExec: 0,
     commentaryThrottle: 30000,
+    excludeFromCollision: false,
     pickupSound: null,
     tiltOffset: 0,
     shakeOffset: 0,
@@ -3099,6 +3101,10 @@ const Helicopter = (options = {}) => {
           }
         } else if (target.data.type === 'cloud') {
           cloak();
+        } else if (target.data.type === TYPES.superBunker && target.data.isEnemy === data.isEnemy) {
+          // "protect" the helicopter if completely enveloped within the bounds of a friendly super-bunker.
+          // this check is added because sometimes the collision logic is imperfect, and fast-moving bombs or missiles might hit the "inner" chopper object. Oops. :D
+          data.excludeFromCollision = (data.y >= target.data.y && data.x >= target.data.x && data.x + data.width <= target.data.x + target.data.width);
         } else {
           // hit something else. boom!
           // special case: ensure we crash on the "roof" of a super-bunker.
@@ -3115,7 +3121,7 @@ const Helicopter = (options = {}) => {
         }
       }
     },
-    items: getTypes('helicopter, superBunker, bunker, balloon, tank, van, missileLauncher, chain, infantry:friendly, engineer:friendly, cloud:all', { exports })
+    items: getTypes('helicopter, superBunker:all, bunker, balloon, tank, van, missileLauncher, chain, infantry:friendly, engineer:friendly, cloud:all', { exports })
   };
 
   // hackish: assign to globals before init

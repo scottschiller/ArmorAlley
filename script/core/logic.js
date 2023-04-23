@@ -94,6 +94,9 @@ function collisionCheckObject(options) {
       // don't compare the object against itself
       target && tData.id !== sData.id
 
+      // hackish: ignore "excluded" objects (e.g., a helicopter hiding "inside" a super-bunker)
+      && !tData.excludeFromCollision
+
       // ignore dead options.targets (unless a turret, which can be reclaimed / repaired by engineers)
       && (
         !tData.dead
