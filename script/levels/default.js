@@ -6,9 +6,9 @@ import { rng, searchParams, tutorialMode, TYPES, winloc, worldHeight } from '../
 let level = searchParams.get('level');
 let levelName;
 
-function setLevel(newLevelName) {
+function setLevel(levelLabel, newLevelName) {
 
-  level = newLevelName;
+  level = levelLabel;
   levelName = newLevelName;
 
 }
@@ -34,7 +34,7 @@ function addWorldObjects() {
 
   const env = !!(window.location.href.match(/schillmania|original/i));
 
-  const defaultLevel = 'Midnight Oasis';
+  const defaultLevel = 'Cake Walk';
 
   if ((env && !level) || tutorialMode) {
   
