@@ -62,6 +62,8 @@ const ParachuteInfantry = (options = {}) => {
 
       }
 
+      common.addGravestone(exports);
+
     }
     
     sprites.removeNodesAndUnlink(exports);

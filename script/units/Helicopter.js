@@ -1350,6 +1350,7 @@ const Helicopter = (options = {}) => {
     // look ma, no longer dead!
     data.dead = false;
     data.pilot = true;
+    data.deployedParachute = false;
 
     radarItem.reset();
 
@@ -1457,6 +1458,7 @@ const Helicopter = (options = {}) => {
 
     // roll the dice: drop a parachute infantry (pilot ejects safely)
     if ((data.isCPU && !data.isRemote &&(gameType === 'hard' || gameType === 'extreme' ? aiRNG() > 0.5 : aiRNG() > 0.25)) || (data.isLocal && rng(data.type) > 0.66)) {
+      data.deployedParachute = true;
       deployParachuteInfantry({
         parent: exports,
         isEnemy: data.isEnemy,
@@ -1528,6 +1530,10 @@ const Helicopter = (options = {}) => {
     data.scrollLeftVX = 0;
 
     common.onDie(exports, dieOptions);
+
+    if (!data.deployedParachute) {
+      common.addGravestone(exports, 'gravestone2');
+    }
 
   }
 
@@ -1763,6 +1769,8 @@ const Helicopter = (options = {}) => {
         x: data.x + data.halfWidth,
         y: (data.y + data.height) - 11
       });
+
+      data.deployedParachute = true;
 
       data.pilot = false;
 

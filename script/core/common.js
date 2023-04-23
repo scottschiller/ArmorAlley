@@ -201,7 +201,7 @@ const slashCommands = {
 let gravestoneQueue = [];
 let gravestoneTimer;
 
-const smallDecor = [ 'checkmark-grass', 'flower', 'flower-bush', 'palm-tree', 'cactus' ];
+const smallDecor = [ 'barb-wire', 'checkmark-grass', 'flower', 'flower-bush', 'palm-tree', 'cactus' ];
 const largeDecor = [ 'flowers', 'grass', 'sand-dune', 'sand-dunes' ];
 const gravestoneTypes = [ 'gravestone', 'gravestone2', 'grave-cross' ];
 const maxGravestoneRange = 64;
@@ -277,8 +277,10 @@ function processGravestoneQueue() {
     const exports = item[0];
     const type = item[1] || pickFrom(gravestoneTypes);
 
-    // three or more in a row? add some grass and decor.
-    const stone = game.addItem(`${type} ${extraCSS}`, exports.data.x + exports.data.halfWidth);
+    // gravestones face the side from which they died, per se.
+    const flipX = exports.data?.isEnemy ? 'scaleX(-1)' : '';
+
+    const stone = game.addItem(`${type} ${extraCSS}`, exports.data.x + exports.data.halfWidth, flipX);
 
     // rise from the ... grave? ;) 
     riseItemAfterDelay(stone, 33 + (66 * (i + 1)));
@@ -729,16 +731,22 @@ const common = {
 
   addGravestone(exports, type) {
 
-    if (!gamePrefs.gravestones) return;
-    if (gamePrefs.gravestones === 'infantry' && exports.data.type !== TYPES.infantry) return;
-    if (gamePrefs.gravestones === 'helicopters' && exports.data.type !== TYPES.helicopter) return;
+    const dType = exports.data.type;
+
+    const isMatch = (
+      (gamePrefs.gravestones_infantry && (dType === TYPES.infantry || dType === TYPES.parachuteInfantry))
+      || (gamePrefs.gravestones_helicopters && dType === TYPES.helicopter)
+      || (gamePrefs.gravestones_vehicles && dType.match(/tank|van|launcher/i))
+    );
+
+    if (!isMatch) return;
 
     function r() {
       return [ { data: { x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem), halfWidth: exports.data.halfWidth } }, pickFrom(smallDecor) ];
     }
 
-    // if gravestone2 specified, it's the helicopter; add a few extra before the gravestone pops up.
-    if (type === 'gravestone2' && rng(1, TYPES.terrainItem) >= 0.5) {
+    // for non-infantry types, add a few extra before the gravestone pops up.
+    if (exports.data.type !== TYPES.infantry && rng(1, TYPES.terrainItem) >= 0.5) {
       gravestoneQueue.push(r());
     }
 

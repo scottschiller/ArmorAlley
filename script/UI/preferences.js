@@ -39,6 +39,9 @@ const defaultPrefs = {
   bnb_tv: true,
   weather: '', // [none|rain|hail|snow|turd]
   domfetti: true,
+  gravestones_helicopters: true,
+  gravestones_infantry: true,
+  gravestones_vehicles: false,
   show_inventory: true,
   show_weapons_status: true,
   show_keyboard_labels: !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.

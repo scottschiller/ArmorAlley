@@ -146,6 +146,8 @@ const Infantry = (options = {}) => {
 
       effects.inertGunfireExplosion({ exports });
 
+      common.addGravestone(exports);
+
     }
 
     sprites.removeNodesAndUnlink(exports);

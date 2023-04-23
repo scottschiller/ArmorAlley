@@ -51,6 +51,10 @@ const MissileLauncher = (options = {}) => {
         sprites.removeNodesAndUnlink(exports);
       }, 1000);
 
+      if (!dieOptions.firingMissile) {
+        common.addGravestone(exports);
+      }
+
     } else {
 
       sprites.removeNodesAndUnlink(exports);
@@ -120,7 +124,7 @@ const MissileLauncher = (options = {}) => {
     }
 
     // self-destruct, FIRE ZE MISSILE
-    die();
+    die({ firingMissile: true });
 
     const params = {
       id: `${data.id}_missile`,

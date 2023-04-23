@@ -72,6 +72,8 @@ const Van = (options = {}) => {
 
     common.onDie(exports, dieOptions);
 
+    common.addGravestone(exports);
+
   }
 
   function animate() {

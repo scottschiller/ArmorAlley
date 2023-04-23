@@ -190,6 +190,8 @@ const Tank = (options = {}) => {
 
       }
 
+      common.addGravestone(exports);
+
     } else {
 
       sprites.removeNodesAndUnlink(exports);
