@@ -239,34 +239,35 @@ function processGravestoneQueue() {
 
   if (gravestoneQueue.length >= 3) {
 
-    // array of coordinates
-    const xOffsets = gravestoneQueue.map((item) => item[0].data.x).sort();
+    // array of x coords, and "type" (based on thing that died)
+    const items = gravestoneQueue.map((item) => ({ x: item[0].data.x, typeCSS: item[2] })).sort(utils.array.compare('x'));
 
     // pre-populate the first cluster
-    clusters[0] = [xOffsets[0]];
+    clusters[0] = [items[0].x];
 
     // NOTE: loop starting at 1 intentionally.
-    for (let i = 1, j = xOffsets.length; i < j; i++) {
-      if (xOffsets[i] - clusters[clusterOffset][0] < maxGravestoneRange) {
+    for (let i = 1, j = items.length; i < j; i++) {
+      if (items[i].x - clusters[clusterOffset][0].x < maxGravestoneRange) {
         // within range; push onto current cluster.
-        clusters[clusterOffset].push(xOffsets[i]);
+        clusters[clusterOffset].push(items[i]);
       } else {
         // make a new cluster.
-        clusters.push([xOffsets[i]]);
+        clusters.push([items[i]]);
         clusterOffset++;
       }
     }
 
     // decorate clusters
     clusters.forEach((cluster) => {
-      cluster.forEach((x, i) => {
+      cluster.forEach((item, i) => {
+        const { x, typeCSS } = item;
         if ((i + 1) % 2 === 0) {
-          riseItemAfterDelay(game.addItem(`${pickFrom(smallDecor)} ${extraCSS}`, x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)), 33 + (33 * (i + 1)));
+          riseItemAfterDelay(game.addItem(`${pickFrom(smallDecor)} ${typeCSS} ${extraCSS}`, x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)), 33 + (33 * (i + 1)));
         }
       });
       if (cluster.length > 2) {
         const i = 1 + rngInt(cluster.length - 1, TYPES.terrainItem);
-        riseItemAfterDelay(game.addItem(`${pickFrom(largeDecor)} ${extraCSS}`, (cluster[i + 1] + cluster[i]) / 2), 33 + (33 * (i + 1)));
+        riseItemAfterDelay(game.addItem(`${pickFrom(largeDecor)} ${cluster[i].typeCSS} ${extraCSS}`, (cluster[i + 1] + cluster[i]) / 2), 33 + (33 * (i + 1)));
       }
     });
 
@@ -276,11 +277,12 @@ function processGravestoneQueue() {
 
     const exports = item[0];
     const type = item[1] || pickFrom(gravestoneTypes);
+    const typeCSS = item[2];
 
     // gravestones face the side from which they died, per se.
     const flipX = exports.data?.isEnemy ? 'scaleX(-1)' : '';
 
-    const stone = game.addItem(`${type} ${extraCSS}`, exports.data.x + exports.data.halfWidth, flipX);
+    const stone = game.addItem(`${type} ${typeCSS} ${extraCSS}`, exports.data.x + exports.data.halfWidth, flipX);
 
     // rise from the ... grave? ;) 
     riseItemAfterDelay(stone, 33 + (66 * (i + 1)));
@@ -733,16 +735,16 @@ const common = {
 
     const dType = exports.data.type;
 
-    const isMatch = (
-      (gamePrefs.gravestones_infantry && (dType === TYPES.infantry || dType === TYPES.parachuteInfantry))
-      || (gamePrefs.gravestones_helicopters && dType === TYPES.helicopter)
-      || (gamePrefs.gravestones_vehicles && dType.match(/tank|van|launcher/i))
-    );
+    const isInfantry = gamePrefs.gravestones_infantry && (dType === TYPES.infantry || dType === TYPES.parachuteInfantry);
+    const isHelicopter = gamePrefs.gravestones_helicopters && dType === TYPES.helicopter;
+    const isVehicle = gamePrefs.gravestones_vehicles && dType.match(/tank|van|launcher/i);
 
-    if (!isMatch) return;
+    if (!isInfantry && !isHelicopter && !isVehicle) return;
+
+    const typeCSS = isInfantry ? 'gs_infantry' : (isHelicopter ? 'gs_helicopter' : 'gs_vehicle');
 
     function r() {
-      return [ { data: { x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem), halfWidth: exports.data.halfWidth } }, pickFrom(smallDecor) ];
+      return [ { data: { x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem), halfWidth: exports.data.halfWidth } }, pickFrom(smallDecor), typeCSS ];
     }
 
     // for non-infantry types, add a few extra before the gravestone pops up.
@@ -751,7 +753,7 @@ const common = {
     }
 
     // now add the thing we came here for.
-    gravestoneQueue.push([exports, type]);
+    gravestoneQueue.push([exports, type, typeCSS]);
 
     queueGravestoneWork();
 

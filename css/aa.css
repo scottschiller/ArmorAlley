@@ -5494,7 +5494,10 @@ body.edit-mode #battlefield .terrain-item {
 }
 
 body.edit-mode #battlefield .sprite.submerged,
-body:not(.edit-mode) #battlefield .terrain-item.submerged {
+body:not(.edit-mode) #battlefield .terrain-item.submerged,
+body:not(.gravestones_helicopters) #battlefield .terrain-item.gs_helicopter,
+body:not(.gravestones_infantry) #battlefield .terrain-item.gs_infantry,
+body:not(.gravestones_vehicles) #battlefield .terrain-item.gs_vehicle {
   margin-top: 27px !important;
 }
 

@@ -137,6 +137,9 @@ function PrefsManager() {
       events.onPrefChange['notifications_location'](gamePrefs.notifications_location);
     }
 
+    // special case: apply gravestone prefs with current values.
+    ['gravestones_helicopters', 'gravestones_infantry', 'gravestones_vehicles'].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
+
     // special case: apply BnB "VS" immediately.
     dom.oBnB.addEventListener('change', (e) => {
 
@@ -1134,6 +1137,10 @@ function PrefsManager() {
         }
 
       },
+
+      gravestones_helicopters: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_helicopters'),
+      gravestones_infantry: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_infantry'),
+      gravestones_vehicles: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_vehicles'),
 
       weather: (type) => {
 
