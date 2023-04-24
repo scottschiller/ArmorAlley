@@ -2499,6 +2499,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
   border-left: 3px solid rgb(23,160,7);
+}
+
+#radar .sprite.helicopter.local-player {
   animation: blink 0.5s infinite;
 }
 
