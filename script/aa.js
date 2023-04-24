@@ -271,14 +271,6 @@ window.aa = {
     // delete stored preference
     utils.storage.remove(prefs.gameType);
 
-    window.location.hash = '';
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
-
-    return false;
-
   }
 
 };
