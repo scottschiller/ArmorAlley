@@ -147,7 +147,7 @@ function getRenameString(oldName, newName, fromNetworkEvent) {
     'Forget everything you knew about %1, they are now %2.'
   ];
 
-  const str = strings[parseInt(Math.random() * strings.length, 10)];
+  let str = strings[parseInt(Math.random() * strings.length, 10)];
 
   // hackish: ignore default "guest" and "host" if game has started, use nicer context-appropriate wording.
 
@@ -166,7 +166,9 @@ function getRenameString(oldName, newName, fromNetworkEvent) {
 
   }
 
-  return str.replace('%1', oldName).replace('%2', newName);
+  str = str.replace('%1', oldName).replace('%2', newName);
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
 
 }
 
