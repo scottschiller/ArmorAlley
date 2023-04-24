@@ -364,20 +364,20 @@ function playSound(soundReference, target, soundOptions) {
         throttle: soundReference.throttle      
       });
 
-      // ensure we keep processing sounds.
-      if (game.data.paused) {
-        // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
-        // TODO: clean this crap up.
-        if (!game.data.hackTimer) {
-          game.data.hackTimer = window.setTimeout(() => {
-            game.data.hackTimer = null;
-            playQueuedSounds();
-          }, 250);
-        }
-      }
-
       return soundObject.sound;
 
+    }
+
+    // ensure we keep processing sounds.
+    if (game.data.paused) {
+      // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
+      // TODO: clean this crap up.
+      if (!game.data.hackTimer) {
+        game.data.hackTimer = window.setTimeout(() => {
+          game.data.hackTimer = null;
+          playQueuedSounds();
+        }, 32);
+      }
     }
 
   }
