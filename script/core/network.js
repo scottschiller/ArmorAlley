@@ -866,7 +866,7 @@ const net = {
 
       conn.on('close', () => {
 
-        const msg = '💥 Network connection has closed. ☠️';
+        const msg = '💥 Network connection has closed. ❌👻';
 
         game.objects.notifications.addNoRepeat(msg);
 
@@ -937,7 +937,7 @@ const net = {
   
       if (debugNetwork) console.log('connection close!');
   
-      const msg = '💥 Connection has closed. ❌👻';
+      const msg = '💥 Network connection has closed. ❌👻';
   
       net.connected = false;
  
