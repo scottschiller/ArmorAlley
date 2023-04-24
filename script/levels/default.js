@@ -2829,19 +2829,40 @@ function addWorldObjects() {
       }
     });
 
-    console.log(`Adding level, using multiplier = ${multiplier}`);
+    const landingPadNames = {
+      left: 'THE LANDING PAD',
+      neutral: 'THE MIDWAY',
+      right: 'THE DANGER ZONE'
+    };
 
     data.forEach((item) => {
+
       // terrain items only have two params.
       if (item.length === 2) {
+
         addItem(item[0], item[1]);
+
       } else {
-        addObject(item[0], {
+
+        const args = {
           isEnemy: item[1] === 'right',
           hostile: item[1] === 'neutral',
           x: item[2] * multiplier
-        });
+        };
+
+        // special case
+        if (item[0] === 'landing-pad') {
+          args.name = landingPadNames[item[1]];
+          if (item[1] === 'neutral') {
+            delete args.hostile;
+            args.isMidway = true;
+          }
+        }
+
+        addObject(item[0], args);
+
       }
+
     });
     
   }
