@@ -950,10 +950,10 @@ function PrefsManager() {
 
       // host or guest player name, if specified
       if (playerName !== undefined) {
-        text = `${playerName}: ${text}`
+        text = `<b>${playerName}</b>: ${common.basicEscape(text)}`
       }
 
-      item.innerText = text;
+      item.innerHTML = text;
 
       dom.oChatUI?.appendChild(item);
 
