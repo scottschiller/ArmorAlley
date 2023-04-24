@@ -914,6 +914,7 @@ function addWorldObjects() {
     ],
 
     // Practice Battle #1
+    /*
     'Cake Walk': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -946,9 +947,23 @@ function addWorldObjects() {
       [ 'bunker', l, 2816 ],
       [ 'bunker', l, 3328 ]
     ],
+    */
 
-    // Based on PB #1: Boot Camp, Level 1
-    'Boot Camp, L1': [
+    // Based on PB #1: Boot Camp, Level 1 - Cake Walk
+    'Cake Walk': [
+      // testing
+      /*
+      [ 'super-bunker', l, 500 ],
+      [ 'super-bunker', r, 640 ],
+      ...(() => {
+        const items = [];
+        for (let i = 0; i < 10; i++) {
+          items.push([ 'infantry', r, 960 + (i * 20) ]);
+        }
+        return items;
+      })(),
+      */
+      // testing
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1041,6 +1056,7 @@ function addWorldObjects() {
       [ 'van', r, 1728 ]
     ],
 
+    /*
     // Practice Battle #2
     'One-Gun': [
       [ 'balloon', n, 1792 ],
@@ -1073,9 +1089,10 @@ function addWorldObjects() {
       [ 'bunker', r, 3584 ],
       [ 'bunker', r, 3712 ],
     ],
+    */
 
-    // Based On PB #2: Boot Camp, Level 2
-    'Boot Camp, L2': [
+    // Based On PB #2: Boot Camp, Level 2 - "One Gun"
+    'One Gun': [
       [ 'end-bunker', l, 24 ],
       [ 'missile-launcher', l, 64 ],
       [ 'base', l, 192 ],
@@ -1181,6 +1198,7 @@ function addWorldObjects() {
       [ 'turret', r, 4096 ]
     ],
 
+    /*
     // Practice Battle #3
     'Sucker Punch': [
       [ 'balloon', n, 1792 ],
@@ -1205,9 +1223,10 @@ function addWorldObjects() {
       [ 'turret', r, 3328 ],
       [ 'bunker', r, 3584 ]
     ],
+    */
 
-    // Based On PB #3: Boot Camp, Level 3
-    'Boot Camp, L3': [
+    // Based On PB #3: Boot Camp, Level 3 - "Sucker Punch"
+    'Sucker Punch': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1301,6 +1320,7 @@ function addWorldObjects() {
       [ 'turret', r, 6678 ]
     ],
 
+    /*
     // Practice Battle #4
     'Airborne': [
       [ 'balloon', n, 1792 ],
@@ -1326,9 +1346,10 @@ function addWorldObjects() {
       [ 'turret', r, 3328 ],
       [ 'bunker', r, 3584 ]
     ],
+    */
 
-    // Based On PB #4: Boot Camp, Level 4
-    'Boot Camp, L4': [
+    // Based On PB #4: Boot Camp, Level 4 - "Airborne"
+    'Airborne': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1420,6 +1441,7 @@ function addWorldObjects() {
       [ 'turret', r, 5517 ]
     ],
 
+    /*
     'Two-Gun': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -1463,8 +1485,10 @@ function addWorldObjects() {
       [ 'van', r, 3840 ],
       [ 'van', r, 3872 ]
     ],
+    */
 
-    'Boot Camp, L5': [
+    // "Two-Gun"
+    'Two-Gun': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1562,6 +1586,7 @@ function addWorldObjects() {
       [ 'van', r, 7744 ]
     ],
 
+    /*
     'Super Bunker': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -1615,8 +1640,10 @@ function addWorldObjects() {
       [ 'missile-launcher', r, 1648 ],
       [ 'missile-launcher', r, 2048 ]
     ],
+    */
 
-    'Boot Camp, L6': [
+    // "Super Bunker"
+    'Super Bunker': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1723,6 +1750,7 @@ function addWorldObjects() {
       [ 'turret', r, 6513 ]
     ],
 
+    /*
     'Scrapyard': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -1776,8 +1804,10 @@ function addWorldObjects() {
       [ 'missile-launcher', r, 1280 ],
       [ 'missile-launcher', r, 2048 ]
     ],
+    */
 
-    'Boot Camp, L7': [
+    // "Scrapyard"
+    'Scrapyard': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -1895,6 +1925,7 @@ function addWorldObjects() {
       [ 'van', r, 6594 ]
     ],
 
+    /*
     'Blind Spot': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -1948,8 +1979,10 @@ function addWorldObjects() {
       [ 'van', r, 3297 ],
       [ 'missile-launcher', r, 512 ]
     ],
+    */
 
-    'Boot Camp, L8': [
+    // "Blind Spot"
+    'Blind Spot': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -2053,6 +2086,7 @@ function addWorldObjects() {
       [ 'turret', r, 7175 ]
     ],
 
+    /*
     'Wasteland': [
       [ 'balloon', n, 1792 ],
       [ 'balloon', n, 2048 ],
@@ -2110,8 +2144,10 @@ function addWorldObjects() {
       // [ ??? (241), r, 993 ],
       [ 'van', r, 1073 ]
     ],
+    */
 
-    'Boot Camp, L9': [
+    // "Wasteland"
+    'Wasteland': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -2151,7 +2187,7 @@ function addWorldObjects() {
       [ 'infantry', r, 3904 ],
       [ 'bunker', r, 3968 ],
       [ 'missile-launcher', r, 3984 ],
-      [ 'landing-pad', l, 4092 ],
+      [ 'landing-pad', n, 4092 ],
       [ 'balloon', l, 4096 ],
       [ 'bunker', r, 4224 ],
       [ 'cloud', l, 4388 ],
@@ -2232,6 +2268,7 @@ function addWorldObjects() {
       [ 'turret', r, 6518 ]
     ],
 
+    /*
     'Midnight Oasis': [
       // this seems like a bug.
       // [ 'infantry', r, 21 ],
@@ -2307,8 +2344,10 @@ function addWorldObjects() {
       // [ '??? (241)', r, 2128 ],
       [ 'missile-launcher', r, 2208 ]
     ],
+    */
 
-    'Boot Camp, L10': [
+    // "Midnight Oasis"
+    'Midnight Oasis': [
       [ 'end-bunker', l, 24 ],
       [ 'base', l, 192 ],
       [ 'landing-pad', l, 320 ],
@@ -2349,7 +2388,7 @@ function addWorldObjects() {
       [ 'bunker', r, 4000 ],
       [ 'balloon', l, 4096 ],
       [ 'infantry', r, 4096 ],
-      [ 'landing-pad', l, 4096 ],
+      [ 'landing-pad', n, 4096 ],
       [ 'cloud', l, 4388 ],
       [ 'missile-launcher', r, 4416 ],
       [ 'balloon', l, 4608 ],
