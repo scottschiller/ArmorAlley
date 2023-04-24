@@ -46,6 +46,45 @@ function init() {
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
 
+  /** 
+   * Ridiculous Safari desktop hack: font-size vs. transform() shenanigans
+   * so select / option drop-down looks right, because Safari on OS X
+   * respects the font family and size on the rendered drop-down.
+   * Without this workaround, the drop-down renders with tiny text.
+   */
+
+  if (isSafari && !isMobile) {
+
+    const levelBox = document.getElementById('game-level-wrapper');
+
+    // prevent the resizing that's about to happen from affecting layout.
+    levelBox.style.position = 'relative';
+
+    // ugh.
+    levelBox.style.width = '103px';
+    levelBox.style.height = '11px';
+
+    const select = document.getElementById('game_level');
+    const computed = window.getComputedStyle(select);
+
+    const scale = 2;
+
+    // SHENANIGANS
+    Object.assign(select.style, {
+      position: 'absolute',
+      top: '-3px',
+      left: '0px',
+      // scale up the current font-size and height.
+      'font-size': (parseFloat(computed.getPropertyValue('font-size')) * scale) + 'px',
+      // original is 19, but Safari needs "more."
+      height: '50px',
+      // finally, transform-scale in half.
+      transform: `scale(${1 / scale})`,
+      'transform-origin': '0px 0px'
+    });
+
+  }
+
   // one-off: "VS" checkbox
   const vs = document.getElementById('checkbox-vs');
 
