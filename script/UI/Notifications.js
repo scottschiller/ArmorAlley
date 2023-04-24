@@ -95,9 +95,9 @@ const Notifications = () => {
     // number of words / letters? let's say 240 WPM, 4 words per second as an optimum.
     let delay, minDelay, delayPerWord, maxDelay;
 
-    minDelay = 2500;
-    delayPerWord = 500;
-    maxDelay = 5000;
+    minDelay = 2000;
+    delayPerWord = 600;
+    maxDelay = 6000;
 
     // just in case
     if (!text || !text.length || text.indexOf(' ') === -1) return minDelay;
