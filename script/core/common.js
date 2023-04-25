@@ -684,8 +684,6 @@ const common = {
 
   setVideo(fileName = '', playbackRate, offsetMsec = 0, muted = true) {
 
-    console.log('isMobile?', isMobile);
-
     const o = document.getElementById('tv');
 
     const disabled = (!gamePrefs.bnb || !gamePrefs.bnb_tv);
