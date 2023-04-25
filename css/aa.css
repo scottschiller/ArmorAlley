@@ -279,15 +279,29 @@ body.is_safari #bnb-vs {
   display: inline-block;
   cursor: pointer;
   vertical-align: middle;
-  border: 1px solid #666;
+  border: 0.5px solid #999;
   border-radius: 3px;
-  padding: 1.5px 4px;
+  padding: 2px 4px;
 }
 
 body.is_safari #game-menu label,
 body.is_safari #game-menu select {
   /* Safari shenanigans. :/ */
   height: 20px;
+}
+
+body:not(.is-mobile).is_safari #game-menu select {
+  /* Safari desktop-specific hacks to remove "gloss" */
+  /* https://stackoverflow.com/questions/7638677/how-can-i-remove-the-gloss-on-a-select-element-in-safari-on-mac/57510283#57510283 */
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+  background-size: 12px;
+  background-position: calc(100% - 16px) 60%;
+  background-repeat: no-repeat;
+  text-indent: 16px;
+  padding-right: 32px;
+  border-radius: 6px;
+  border-color: #fff;
 }
 
 #game-menu label:hover {
@@ -388,7 +402,7 @@ body.is_safari #game-menu select {
   color: currentColor;
   width: 1.1em;
   height: 1.1em;
-  border: 0.1em solid currentColor;
+  border: 0.5px solid #999;
   border-radius: 0.1em;
   transform: translateY(0.2em);
   cursor: pointer;
@@ -4880,14 +4894,24 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-style: solid;
   border-radius: 2px;
   background: transparent;
-  border-width: 1px;
+  border-width: 0.5px;
   border-style: solid;
-  border-color: #666;
+  border-color: #999;
   color: #ccc;
 }
 
-.mac-clssic option {
-  font-size: 20px;
+#game-prefs-modal select {
+  font-family: geneva, verdana, arial, sans-serif;
+  font-size: 10px;
+  color: #000;
+  border-color: #000;
+  margin-left: 0px;
+  margin-top: 1px;
+  /* hacks: scale down, after using the larger font size. */
+  transform: scale(0.5);
+  transform-origin: 0px 0px;
+  /* collapse the extra vertical space left, due to the transform */
+  margin-bottom: -10px;
 }
 
 .mac-classic select:hover,
