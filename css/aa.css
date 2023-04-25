@@ -2768,6 +2768,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .cornholio {
   /* I am the great Cornholio! */
+  display: none;
   width: 12px;
   height: 33.6px;
   /* show in front of bunkers */
@@ -2777,8 +2778,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   transition: margin-top 1s ease-in-out;
 }
 
-body.bnb .cornholio.visible {
+body.bnb .cornholio {
   display: block;
+}
+
+body.bnb .cornholio.visible {
   margin-top: 0px;
 }
 
