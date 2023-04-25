@@ -29,9 +29,7 @@ const Tutorial = () => {
 
     data.step = i;
 
-    game.objects.view.setAnnouncement();
-
-    game.objects.view.setAnnouncement(dom.lastItem.innerHTML, -1, true);
+    document.getElementById('tutorial-body').innerHTML = dom.lastItem.innerHTML;
 
     // animate immediately, twice; first to activate, second to check for completion. useful if this step has already been passed, etc.
     if (data.step > 0 && config.steps[data.step]) {
@@ -67,6 +65,8 @@ const Tutorial = () => {
     initDOM();
 
     utils.css.add(dom.o, css.active);
+
+    document.getElementById('tutorial-window').style.display = 'block';
 
     addStep({
 

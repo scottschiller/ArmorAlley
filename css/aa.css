@@ -5624,3 +5624,36 @@ body.edit-mode #battlefield {
   pointer-events: none;
 }
 
+#tutorial-window {
+  display: none;
+  transform: scale(1);
+  transform-origin: 0px 0px;
+  top: 102px;
+  left: 32px;
+}
+
+#tutorial-window .title-bar {
+  image-rendering: smooth;
+}
+
+#tutorial-window .body {
+  min-width: 25em;
+}
+
+#tutorial-window .body img {
+  filter: invert(1);
+  vertical-align: middle;
+}
+
+#tutorial-window .body h3 img {
+  vertical-align: top;
+}
+
+#tutorial-window .body p {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+#tutorial-window .body p:not(:last-of-type) {
+  margin-bottom: 3px;
+}

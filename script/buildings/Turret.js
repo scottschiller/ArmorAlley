@@ -256,11 +256,14 @@ const Turret = (options = {}) => {
     utils.css.remove(dom.o, css.destroyed);
     utils.css.remove(radarItem.dom.o, css.destroyed);
 
-    if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
-      game.objects.notifications.addNoRepeat('You started rebuilding a turret 🛠️');
-    } else {
-      game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');      
-   }
+    // may not be provided, as in tutorial - just restoring immediately etc.
+    if (engineer) {
+      if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
+        game.objects.notifications.addNoRepeat('You started rebuilding a turret 🛠️');
+      } else {
+        game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');      
+      }
+    }
 
     playSound(sounds.turretEnabled, exports);
 
