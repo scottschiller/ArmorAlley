@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
-import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile } from '../core/global.js';
+import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile, isSafari } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -684,6 +684,8 @@ const common = {
 
   setVideo(fileName = '', playbackRate, offsetMsec = 0, muted = true) {
 
+    console.log('isMobile?', isMobile);
+
     const o = document.getElementById('tv');
 
     const disabled = (!gamePrefs.bnb || !gamePrefs.bnb_tv);
@@ -720,10 +722,17 @@ const common = {
 
     const isWZ = (fileName.match(/wz/i));
 
-    o.innerHTML = [
-     `<video id="tv-video"${muted ? ' muted' : ''}${!isWZ ? ' autoplay' : ''} playsinline>`,
+    const sources = [
       `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
       `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
+    ];
+
+    // MP4 first, due to historical bias...
+    if (isSafari) sources.reverse();
+
+    o.innerHTML = [
+     `<video id="tv-video"${muted ? ' muted' : ''}${!isWZ ? ' autoplay' : ''} playsinline>`,
+      ...sources,
      '</video>',
     ].join('');
 
@@ -783,8 +792,7 @@ const common = {
 
       fs.innerHTML = [
        `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:100%;height:100%;transform:translate(-50%,0px)">`,
-        `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
-        `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
+       ...sources,
        '</video>'
       ].join('');
 

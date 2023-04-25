@@ -5634,6 +5634,7 @@ body.edit-mode #battlefield {
 
 #tutorial-window .title-bar {
   image-rendering: smooth;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 #tutorial-window .body {
