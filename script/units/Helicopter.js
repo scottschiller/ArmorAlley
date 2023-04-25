@@ -269,7 +269,7 @@ const Helicopter = (options = {}) => {
 
           if (landingPad.data.isMidway) {
             if (game.data.isBeavis) {
-              if (!Math.random() >= 0.5) {
+              if (Math.random() >= 0.25) {
                 data.muchaMuchacha = true;
                 if (gamePrefs.sound) {
                   game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
