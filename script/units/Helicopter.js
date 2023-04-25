@@ -254,7 +254,9 @@ const Helicopter = (options = {}) => {
 
     playSound(sounds.repairing);
 
-    if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33) {
+    const somethingIsEmpty = (!data.smartMissiles || !data.bombs || !data.ammo);
+
+    if (data.smartMissiles < data.maxSmartMissiles || data.fuel < 33 || somethingIsEmpty) {
 
       if (landingPad.data.isKennyLoggins) {
 
@@ -267,7 +269,7 @@ const Helicopter = (options = {}) => {
 
         if (gamePrefs.bnb) {
 
-          if (landingPad.data.isMidway) {
+          if (landingPad.data.isMidway || somethingIsEmpty) {
             if (game.data.isBeavis) {
               if (Math.random() >= 0.25) {
                 data.muchaMuchacha = true;
