@@ -269,12 +269,18 @@ const Helicopter = (options = {}) => {
 
           if (landingPad.data.isMidway) {
             if (game.data.isBeavis) {
-              data.muchaMuchacha = true;
-              if (gamePrefs.sound) {
-                game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
-                playSound(sounds.bnb.muchaMuchacha, null);
-                common.setVideo('camper', 1.05);
-                utils.css.add(dom.o, css.muchaMuchacha);
+              if (!Math.random() >= 0.5) {
+                data.muchaMuchacha = true;
+                if (gamePrefs.sound) {
+                  game.objects.notifications.add('🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆', { noDuplicate: true });
+                  playSound(sounds.bnb.muchaMuchacha, null);
+                  common.setVideo('camper', 1.05);
+                  utils.css.add(dom.o, css.muchaMuchacha);
+                }
+              } else {
+                game.objects.notifications.add('🎵 Now playing: “Ratfinks, Suicide Tanks And Cannibal Girls” 🎸🤘💥', { noDuplicate: true });
+                const muted = false;
+                common.setVideo('beavis-wz', 1, 1, muted);
               }
             } else {
               iGotYouBabe();

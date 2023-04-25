@@ -5620,4 +5620,7 @@ body.edit-mode #battlefield {
 #aa ul.inline-list li:not(:first-of-type) {
   margin-left: 0.5em;
 }
+#battlefield video {
+  pointer-events: none;
+}
 

@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
-import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng } from '../core/global.js';
+import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -199,6 +199,9 @@ const slashCommands = {
   }
 
 };
+
+let loadedWZ = false;
+let wzTimer;
 
 let gravestoneQueue = [];
 let gravestoneTimer;
@@ -679,7 +682,7 @@ const common = {
 
   },
 
-  setVideo(fileName = '', playbackRate, offsetMsec = 0) {
+  setVideo(fileName = '', playbackRate, offsetMsec = 0, muted = true) {
 
     const o = document.getElementById('tv');
 
@@ -697,19 +700,113 @@ const common = {
 
     const startTime = timeOffset ? `#t=${timeOffset}` : '';
 
+    wzTimer?.reset();
+
     if (!fileName || o) {
       // empty / reset
       if (o) o.innerHTML = '';
       container.className = '';
+      let fs = document.getElementById('fs');
+      if (fs) {
+        fs.style.transitionDuration = '0.5s';
+        fs.style.opacity = 0;
+        wzTimer = common.setFrameTimeout(() => {
+          wzTimer = null;
+          fs.remove();
+        }, 550);
+      }
       if (!fileName) return;
     }
 
+    const isWZ = (fileName.match(/wz/i));
+
     o.innerHTML = [
-     '<video id="tv-video" muted autoplay playsinline>',
+     `<video id="tv-video"${muted ? ' muted' : ''}${!isWZ ? ' autoplay' : ''} playsinline>`,
       `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
       `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
      '</video>',
     ].join('');
+
+    // special-case: 'WZ' "music video."
+    let fs;
+    let started;
+    let videos;
+    let readyCount;
+    let readyNeeded;
+
+    function onReadyStart() {
+      videos.forEach((video) => video.play());
+      common.setFrameTimeout(() => {
+        if (!fs) return;
+        fs.style.opacity = 0.5;
+        common.setFrameTimeout(() => {
+          if (!fs) return;
+          fs.style.transitionDuration = '1s';
+          fs.style.opacity = 1;
+        }, 12000);
+      }, 17000);
+    }
+
+    function touchStartVideo() {
+      document.removeEventListener('touchstart', touchStartVideo);
+      onReadyStart();
+    }
+
+    function ready() {
+      readyCount++;
+      if (loadedWZ || (!started && readyCount >= readyNeeded)) {
+        loadedWZ = true;
+        started = true;
+        if (isMobile) {
+          // video with sound needs user action to work.
+          document.addEventListener('touchstart', touchStartVideo);
+        } else {
+          onReadyStart();
+        }
+      }
+    }
+
+    if (fileName.match(/wz/i)) {
+      fs = document.createElement('div');
+      fs.id = 'fs';
+      Object.assign(fs.style, {
+        position: 'absolute',
+        top: '42px',
+        left: '0px',
+        height: `100%`,
+        width: '100%',
+        overflow: 'hidden',
+        'z-index': -1,
+        opacity: 0,
+        transition: 'opacity 5s'
+      });
+
+      fs.innerHTML = [
+       `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:100%;height:100%;transform:translate(-50%,0px)">`,
+        `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
+        `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
+       '</video>'
+      ].join('');
+
+      const bf = document.getElementById('battlefield');
+      bf.insertBefore(fs, bf.childNodes[0]);
+
+      videos = [ document.getElementById('tv-video'), document.getElementById('tv-video-larger') ];
+
+      if (!loadedWZ) {
+
+        readyCount = 0;
+        readyNeeded = videos.length;
+
+        videos.forEach((video) => video.addEventListener('canplaythrough', ready));
+
+      } else {
+
+        ready();
+        
+      }
+
+    }
 
     container.className = 'active';
 
