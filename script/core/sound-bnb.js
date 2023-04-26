@@ -1947,8 +1947,8 @@ bnb.helicopterDiedReactions = shuffle([
 bnb.helicopterDiedReactions.maxDelay = 3000;
 
 function initBNBSound() {
-
-  bnb.bunkerExplosion = shuffle([bnb.explosionFire, bnb.fire, bnb.kickedAss, bnb.beavisFire, { ...bnb.buttheadCoolestThingEver, delay: 5000 }]);
+  
+  bnb.bunkerExplosion = [bnb.explosionFire].concat(shuffle([bnb.fire, bnb.kickedAss, bnb.beavisFire, { ...bnb.buttheadCoolestThingEver, delay: 5000 }]));
   bnb.bunkerExplosion.maxDelay = 1000;
 
   bnb.beavisTurn = shuffle([bnb.beavisGonnaBeCool, bnb.howToTurnOn, bnb.rumble, bnb.poopQuestion, bnb.iHateThisStupidGame, bnb.beavisHereWeGo].concat(bnb.beavisMonologues));
