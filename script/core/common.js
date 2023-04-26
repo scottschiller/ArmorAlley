@@ -819,7 +819,7 @@ const common = {
       });
 
       fs.innerHTML = [
-       `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:100%;height:100%;transform:translate(-50%,0px)">`,
+       `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:auto;height:100%;transform:translate(-50%,0px)">`,
        ...sources,
        '</video>'
       ].join('');
