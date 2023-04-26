@@ -302,8 +302,11 @@ const messageActions = {
 
     // A form of notification, really.
     if (game.data.started && data.text && !slashCommand) {
-      game.objects.notifications.add(`${common.basicEscape(data.text)} 💬`);
+
+      game.objects.notifications.add(`<b>${gamePrefs.net_remote_player_name}</b>${common.basicEscape(data.text)} 💬`);
+
     } else {
+
       // for this variant, we expect a spreadable array.
       // also of note, slash commands are sent along for others to see and learn.
       const args = data.params || [ data.text ];
@@ -333,9 +336,13 @@ const messageActions = {
     if (!data.newName) return;
     if (gamePrefs.net_remote_player_name === data.newName) return;
 
+    const msg = common.getRenameString(gamePrefs.net_remote_player_name, data.newName);
+
     // this can happen during a live game
     if (game.data.started) {
-      game.objects.notifications.add(common.getRenameString(gamePrefs.net_remote_player_name, data.newName));
+      game.objects.notifications.add(msg);
+    } else {
+      prefsManager.onChat(msg);
     }
 
     // update the underlying pref
