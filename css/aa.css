@@ -4689,6 +4689,10 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   margin-top: -15px;
 }
 
+#game-prefs-modal p {
+  padding-top: 1px;
+}
+
 #game-prefs-header {
   display: flex;
   flex-direction: row;
@@ -4875,6 +4879,10 @@ body.is_safari:not(.is-mobile) .mac-classic b {
 .mac-classic ul li {
   margin-top: 1px;
   margin-bottom: 4px;
+}
+
+.mac-classic ul.partial-bottom-spacing li {
+  margin-bottom: 2px;
 }
 
 .mac-classic ul.less-bottom-spacing li {

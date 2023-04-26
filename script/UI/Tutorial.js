@@ -53,6 +53,8 @@ const Tutorial = () => {
 
   function updateHighlightControls(step, active) {
 
+    if (!config.steps[step]) return;
+
     // mobile-only: data-for="bombs" (e.g.) attributes of nodes to highlight to user
     const { highlightControls } = config.steps[step];
 
