@@ -5651,10 +5651,41 @@ body.edit-mode #battlefield {
 
 #tutorial-window {
   display: none;
-  transform: scale(1);
+  transform: scale(1) translate(-50%, 0px);
   transform-origin: 0px 0px;
   top: 102px;
-  left: 32px;
+  left: 50%;
+}
+
+#world.tutorial-mode #tutorial-window {
+  display: block;
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
+
+#world.tutorial-mode #tutorial-window.active {
+  opacity: 1;
+}
+
+body.game-paused #tutorial-window {
+  display: none !important;
+}
+
+@media screen and (orientation: landscape) {
+  /* scale up a bit; center of screen, avoid The Notch and such. */
+  body.is-mobile #tutorial-window {
+    left: 50%;
+    top: 140px;
+    transform: scale(1.5) translate(-50%, 0px);
+    transform-origin: 0px 0px;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  /* leave room for notifications. */
+  body.is-mobile #tutorial-window {
+    top: 150px;
+  }
 }
 
 #tutorial-window .title-bar {
@@ -5678,6 +5709,7 @@ body.edit-mode #battlefield {
 #tutorial-window .body p {
   margin-left: 0px;
   margin-right: 0px;
+  text-indent: -0.12px;
 }
 
 #tutorial-window .body p:not(:last-of-type) {
