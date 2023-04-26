@@ -532,6 +532,9 @@ const View = () => {
       // hackish: mobile inventory controls
       if (target.id === 'mobile-show-inventory') {
         toggleMobileInventory();
+      } else if (target.id === 'mobile-show-options') {
+        utils.css.remove(target, css.buttonActive);
+        prefsManager.toggleDisplay();
       }
 
       // data-keyMap values of interest
