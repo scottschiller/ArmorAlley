@@ -1015,6 +1015,11 @@ ul.stats-bar li {
   color: #ccc;
 }
 
+body.bnb:not(.is-mobile) #aa ul.stats-bar li.inventory-item:first-of-type {
+  /* centering shenanigans */
+  margin-left: 16px;
+}
+
 ul.stats-bar li.inventory-item:not(:last-of-type),
 ul.stats-bar li.stats-item:not(:last-of-type) {
   /* annoying, but need to override #aa rules */
@@ -2003,7 +2008,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-position: 50% 50%;
 }
 
-#world.rubber-chicken-mode ul.stats-bar .missiles em {
+#world.rubber-chicken-mode ul.stats-bar .missiles em,
+#world.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
   /* background: transparent url(../image/rubber-chicken-static.png) no-repeat 0px 0px; */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAJCAIAAADcu7ldAAAABnRSTlMA1wDXADj1tz/zAAABj0lEQVR4AWK4ft0CP1q/Un9Sj46dlRiQTQYiYAGAtXFYCDUAg+h/bds327Zt28ZDtMt4lPbZtm3b7qRd1odZzczx9pQAPdBiX4E1xZFmaWmJ1/cJAAcwP1Yr0AUxNv4wq/T184v7AliCPXiAO9iBLPwDHfYkmFFLSZA4G5GXfh4c/GVfVaVfEK4DMANHcAUnsAY9EAUZMARtpuWYlWPFqKJQsbFCg01ltiTZkGFFcnnkb4mZ8O3JlyOAsaS4yt+f3hqKJ6XSot+yskxzc0MgHAIhADzAHkyOe41AFwzAZW9M8oixrsymOmtyLMswI77c/Xt79P1O3qORWkFH45OQFepESjxJMaSGkRlBVizZMWDNsBJLKseNxqDLihLLaqzrgR6YgQ2bmot9IlPt4gtdBzOd2iZuoo8SKztKFUP9hBVkuKFB5K0tdyvR4Xqi9/lYj5XOltsCTFLCJOwsRQPceGf3yK2do7BxqfGHe7Z/nlv/fanz/53m6ysKz86rlqTjS7u2FpLQOCAVGWpzEq8YADuJD/9bkEwkAAAAAElFTkSuQmCC);
   background-position: 50% 33%;
@@ -2013,13 +2019,24 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smart-missile.banana,
-#world.banana-mode ul.stats-bar .missiles em {
+#world.banana-mode ul.stats-bar .missiles em,
+#world.banana-mode #mobile-controls li.weapons-item a.smart-missile {
   /* background: transparent url(../image/banana.png) 50% 0px no-repeat; */
   /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
   background-image: url(data:image/png;base64,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);
   background-position: 50% 0px;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+#world.banana-mode #mobile-controls li.weapons-item a.smart-missile {
+  background-position: 50%;
+  background-size: 42%;
+}
+
+#world.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
+  background-position: 50%;
+  background-size: 69%;
 }
 
 #world.banana-mode ul.stats-bar .missiles em {
@@ -3341,7 +3358,7 @@ body.is-mobile #game-tips #game-announcements {
 
 @keyframes sorta-blink-alt {
   50% {
-    opacity: 0.65;
+    background-color: rgba(27, 107, 27, 0.5);
     transform: scale3d(0.9, 0.9, 0.9);
   }
 }
@@ -3980,7 +3997,7 @@ body.is-mobile.notch-at-right #notification-toasts {
   box-sizing: border-box;
   line-height: 1rem;
   padding: 0px;
-  border: 1px dotted rgba(255,255,255,0.1);
+  border: 1px dotted rgba(255,255,255,0.15);
   /* border-bottom-color: transparent; */
   vertical-align: middle;
   text-align: center;
@@ -4027,7 +4044,7 @@ body.is-mobile.notch-at-right #notification-toasts {
 }
 
 #mobile-controls li a.active {
-  background-color: rgba(27, 107, 27, 0.45) !important;
+  background-color: rgba(27, 107, 27, 0.75) !important;
   /* immediately go light. fade on release. */
   transition-duration: 0ms !important;
 }
@@ -4056,43 +4073,43 @@ body.is-mobile.notch-at-right #notification-toasts {
 
 #mobile-controls li.inventory-item a.infantry,
 #mobile-controls li.inventory-item a.engineer {
-  background-size: 20%;
+  background-size: 33%;
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry {
   background-image: url(../image/parachute-infantry-static.png);
-  background-size: 30% !important; /* argh */
+  background-size: 39% !important; /* argh */
   background-position: 50% 50%;
 }
 
 #mobile-controls li.inventory-item a.tank {
-  background-size: 55%;
+  background-size: 85%;
 }
 
 #mobile-controls li.inventory-item a.missile-launcher {
-  background-size: 45%;
+  background-size: 80%;
 }
 
 #mobile-controls li.inventory-item a.van {
-  background-size: 40%;
+  background-size: 65%;
 }
 
 #mobile-controls li.weapons-item a.smart-missile {
   /* background-image: url(../image/status-missile.png); */
-  background-size: 20%;
+  background-size: 40%;
   background-position: 50% 50%;
 }
 
 #mobile-controls li.weapons-item a.ammo {
   /* background-image: url(../image/status-ammo.png); */
   background-position: 50% 50%;
-  background-size: 18%;
+  background-size: 42%;
 }
 
 #mobile-controls li.weapons-item a.bombs {
   /* background-image: url(../image/status-bombs.png); */
   background-position: 50% 50%;
-  background-size: 5%;
+  background-size: 10%;
 }
 
 @media screen and (orientation: portrait) {
@@ -4109,12 +4126,12 @@ body.is-mobile.notch-at-right #notification-toasts {
   /* smaller inventory sizes */
   #mobile-controls li.inventory-item a.tank,
   #mobile-controls li.inventory-item a.missile-launcher {
-    background-size: 66%;
+    background-size: 80%;
   }
 
   #mobile-controls li.inventory-item a.infantry,
   #mobile-controls li.inventory-item a.engineer {
-    background-size: 25%;
+    background-size: 33%;
   }
 
   /* helicopter weapons */
