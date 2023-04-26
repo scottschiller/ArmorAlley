@@ -551,7 +551,7 @@ const View = () => {
 
     clearMobileInventoryTimer();
 
-    data.mobileInventoryTimer = common.setFrameTimeout(hideMobileInventory, 2000);
+    data.mobileInventoryTimer = common.setFrameTimeout(hideMobileInventory, gameType === 'tutorial' ? 6000 : 3000);
 
   }
 
