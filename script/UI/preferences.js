@@ -1149,6 +1149,10 @@ function PrefsManager() {
           vsCheckbox.checked = isActive;
         }
 
+        if (isActive) {
+          common.preloadVideo('desert_explosion');
+        }
+
       },
 
       gravestones_helicopters: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_helicopters'),

@@ -683,6 +683,35 @@ const common = {
 
   },
 
+  preloadVideo(fileName) {
+
+    let video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+
+    const canplay = 'canplaythrough';
+
+    function preloadOK() {
+      if (!video) return;
+      video.removeEventListener(canplay, preloadOK);
+      video.remove();
+      video = null;
+    }
+
+    video.innerHTML = [
+      `<source src="image/bnb/${fileName}.webm" type="video/webm" />`,
+      `<source src="image/bnb/${fileName}.mp4" type="video/mp4" />`
+    ].join('');
+
+    video.addEventListener(canplay, preloadOK);
+
+    video.play();
+
+    window.setTimeout(preloadOK, 5000);
+
+  },
+
   setVideo(fileName = '', playbackRate, offsetMsec = 0, muted = true) {
 
     const o = document.getElementById('tv');
