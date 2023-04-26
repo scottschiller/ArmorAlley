@@ -200,7 +200,8 @@ const slashCommands = {
 
 };
 
-let loadedWZ = false;
+let loadedVideos = {};
+
 let wzTimer;
 
 let gravestoneQueue = [];
@@ -718,7 +719,8 @@ const common = {
       if (!fileName) return;
     }
 
-    const isWZ = (fileName.match(/wz/i));
+    const hasAudio = (fileName.match(/wz/i));
+    const isWZ = fileName.match(/wz/i);
 
     const sources = [
       `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
@@ -729,29 +731,31 @@ const common = {
     if (isSafari) sources.reverse();
 
     o.innerHTML = [
-     `<video id="tv-video"${muted ? ' muted' : ''}${!isWZ ? ' autoplay' : ''} playsinline>`,
+     `<video id="tv-video"${muted ? ' muted' : ''}${!hasAudio ? ' autoplay' : ''} playsinline>`,
       ...sources,
      '</video>',
     ].join('');
 
     // special-case: 'WZ' "music video."
     let fs;
-    let started;
     let videos;
-    let readyCount;
-    let readyNeeded;
 
     function onReadyStart() {
       videos.forEach((video) => video.play());
-      common.setFrameTimeout(() => {
-        if (!fs) return;
-        fs.style.opacity = 0.5;
+      if (isWZ) {
         common.setFrameTimeout(() => {
           if (!fs) return;
-          fs.style.transitionDuration = '1s';
-          fs.style.opacity = 1;
-        }, 12000);
-      }, 17000);
+          fs.style.opacity = 0.5;
+          common.setFrameTimeout(() => {
+            if (!fs) return;
+            fs.style.transitionDuration = '1s';
+            fs.style.opacity = 1;
+          }, 12000);
+        }, 17000);
+      } else {
+        fs.style.transitionDuration = '0.25s';
+        fs.style.opacity = 1;
+      }
     }
 
     function touchStartVideo() {
@@ -760,20 +764,17 @@ const common = {
     }
 
     function ready() {
-      readyCount++;
-      if (loadedWZ || (!started && readyCount >= readyNeeded)) {
-        loadedWZ = true;
-        started = true;
-        if (isMobile) {
-          // video with sound needs user action to work.
-          document.addEventListener('touchstart', touchStartVideo);
-        } else {
-          onReadyStart();
-        }
+      if (isMobile && !videos[0].muted) {
+        // video with sound needs user action to work.
+        document.addEventListener('touchstart', touchStartVideo);
+      } else {
+        onReadyStart();
       }
     }
 
-    if (fileName.match(/wz/i)) {
+    const useFS = fileName.match(/wz|desert/i);
+
+    if (useFS) {
       fs = document.createElement('div');
       fs.id = 'fs';
       Object.assign(fs.style, {
@@ -799,12 +800,13 @@ const common = {
 
       videos = [ document.getElementById('tv-video'), document.getElementById('tv-video-larger') ];
 
-      if (!loadedWZ) {
+      if (!loadedVideos[fileName]) {
 
-        readyCount = 0;
-        readyNeeded = videos.length;
-
-        videos.forEach((video) => video.addEventListener('canplaythrough', ready));
+        // videos.forEach((video) => video.addEventListener('canplaythrough', ready));
+        videos[0].addEventListener('canplaythrough', () => {
+          loadedVideos[fileName] = true;
+          ready();
+        });
 
       } else {
 
