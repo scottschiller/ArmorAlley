@@ -4577,6 +4577,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   text-align: center;
   font-family: Chicago, "FA Sysfont C", courier, sans-serif;
   font-size: 6.5px;
+  line-height: 8px;
   white-space: nowrap;
   font-weight: normal;
   color: #000;
@@ -4847,7 +4848,16 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   vertical-align: middle;
 }
 
+body.is_safari:not(.is-mobile) .mac-classic b {
+  letter-spacing: -0.5px;
+}
+
+.mac-classic b {
+  letter-spacing: 0px;
+}
+
 .mac-classic h3 {
+  font-weight: 300;
   margin-top: 0px;
   margin-bottom: 0.5em;
 }
