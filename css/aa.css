@@ -221,6 +221,10 @@ body.is_safari #bnb-vs {
   overflow: hidden;
 }
 
+body:not(.game-started) #mobile-controls {
+  visibility: hidden;
+}
+
 #world.blurred .sprite,
 #world.blurred #mobile-controls {
   opacity: 0;
