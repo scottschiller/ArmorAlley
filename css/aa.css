@@ -290,7 +290,7 @@ body.is_safari #game-menu select {
   height: 20px;
 }
 
-body:not(.is-mobile).is_safari #game-menu select {
+body.is_safari #game-menu select {
   /* Safari desktop-specific hacks to remove "gloss" */
   /* https://stackoverflow.com/questions/7638677/how-can-i-remove-the-gloss-on-a-select-element-in-safari-on-mac/57510283#57510283 */
   appearance: none;
@@ -302,6 +302,17 @@ body:not(.is-mobile).is_safari #game-menu select {
   padding-right: 32px;
   border-radius: 6px;
   border-color: #fff;
+}
+
+body.is-mobile.is_safari #game-menu select {
+  /* iOS-specific shenanigans */
+  background-size: 8px;
+  background-position: calc(100% - 10px) 65%;
+  text-indent: 8px;
+  border-radius: 3px;
+  top: 0.5px;
+  height: 24.5px;
+  padding-right: 24px;
 }
 
 #game-menu label:hover {
