@@ -201,7 +201,7 @@ const Notifications = () => {
 
     const gameTypes = {
       tutorial: 'This is the tutorial mode. 📖',
-      other: `You are playing ${levelName}. ${emoji[gameType]}`
+      other: `You are playing “${levelName}.” ${emoji[gameType]}`
     }
 
     let playingMessage;
@@ -209,7 +209,7 @@ const Notifications = () => {
     const netGameStyle = gamePrefs.net_game_style;
 
     if (net.connected && styleLabels[netGameStyle]) {
-      playingMessage = `You are playing ${styleLabels[netGameStyle]}, level ${levelName}.`
+      playingMessage = `You are playing ${styleLabels[netGameStyle]}, level “${levelName}.” ${emoji[gameType]}`;
     } else {
       playingMessage = gameTypes[gameType] || gameTypes.other;
     }

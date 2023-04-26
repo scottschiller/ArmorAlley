@@ -8,6 +8,7 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
+import { setLevel } from '../levels/default.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -320,6 +321,11 @@ function PrefsManager() {
 
         gamePrefs[name] = value;
 
+        // hackish: if level, update local model.
+        if (name === 'net_game_level') {
+          setLevel(value, value);
+        }
+
         // special case: show toast for local user.
         if (game.data.started) {
           if (name === 'lock_step') {
@@ -475,6 +481,9 @@ function PrefsManager() {
       const gameMenuLevel = document.getElementById('game_level');
       document.getElementById('select_net_game_level').selectedIndex = gameMenuLevel.selectedIndex;
       gamePrefs.net_game_level = gameMenuLevel.value;
+
+      // and, update local model.
+      setLevel(gameMenuLevel.value, gameMenuLevel.value);
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
@@ -996,7 +1005,13 @@ function PrefsManager() {
         [...dom.oForm.querySelectorAll(`select[name="${name}"]`)].forEach((select) => {
           // find the matching entry and set its `selected` property.
           const option = select.querySelector(`option[value="${value}"]`);
-          if (option) option.selected = true;
+          if (option) {
+            option.selected = true;
+            // hackish: update the local model, too.
+            if (name === 'net_game_level') {
+              setLevel(value, value);
+            }
+          }
         });
 
         if (!isBatch) {
