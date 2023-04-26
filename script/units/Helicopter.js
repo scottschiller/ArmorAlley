@@ -158,6 +158,10 @@ const Helicopter = (options = {}) => {
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
 
+      if (gamePrefs.bnb) {
+        playSound(game.data.isBeavis ? sounds.bnb.hurryUpButthead : sounds.bnb.uhOh, exports);
+      }
+
     } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
       text = 'Fuel critical ⛽ 🤏 😱';
@@ -165,12 +169,20 @@ const Helicopter = (options = {}) => {
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
 
+      if (gamePrefs.bnb) {
+        playSound(game.data.isBeavis ? sounds.bnb.beavisLostUnit : sounds.bnb.buttheadLostUnit, exports);
+      }
+
     } else if (data.fuel <= 0) {
 
       text = 'No fuel ☠️';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
+
+      if (gamePrefs.bnb) {
+        playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
+      }
 
     }
 
