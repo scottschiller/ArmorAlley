@@ -3175,18 +3175,33 @@ body.game-paused.prefs-modal-open #game-paused {
   transition: opacity 0.2s ease-in-out;
 }
 
-#game-tips.active .tips-container {
+body.game-started #game-tips.active .tips-container {
   display: block;
 }
 
 #game-tips .tips-container .tip,
 #game-tips .tips-container .animation-node {
-  font-size: 0.5rem;
-  line-height: 0.5rem;
-  animation: scrollText 12s linear;
+  font-size: 8px;
+  line-height: 8px;
+  animation: scrollText 16s linear;
   padding: 1px;
   /* "ticker-tape" style? */
   /* animation-timing-function: steps(100); */
+}
+
+body.is-mobile #game-tips .tips-container .tip,
+body.is-mobile #game-tips .tips-container .animation-node {
+  font-size: 6px;
+  line-height: 6px;
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-tips .tips-container .tip,
+  body.is-mobile #game-tips .tips-container .animation-node {
+    /* even smaller. */
+    font-size: 4px;
+    line-height: 4px;
+  }
 }
 
 #game-tips .tips-container .animation-node {
@@ -3222,11 +3237,6 @@ body.is-mobile #game-tips #game-announcements {
 #world.tutorial-mode #game-tips .tips-container h3 {
   font-size: 1em;
   color: #fff;
-}
-
-#world.tutorial-mode #game-tips .tips-container .tips-fader {
-  /* don't overlay when in tutorial mode. */
-  display: none;
 }
 
 #game-tips #game-announcements {
