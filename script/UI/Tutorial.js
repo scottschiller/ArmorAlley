@@ -33,6 +33,8 @@ const Tutorial = () => {
 
     document.getElementById('tutorial-body').innerHTML = dom.lastItem.innerHTML;
 
+    updateHighlightControls(data.step, true);
+
     // animate immediately, twice; first to activate, second to check for completion. useful if this step has already been passed, etc.
     if (data.step > 0 && config.steps[data.step]) {
       config.steps[data.step].animate();
@@ -43,8 +45,26 @@ const Tutorial = () => {
 
   function nextItem() {
 
+    updateHighlightControls(data.step, false);
+
     selectItem(data.step + 1);
 
+  }
+
+  function updateHighlightControls(step, active) {
+
+    // mobile-only: data-for="bombs" (e.g.) attributes of nodes to highlight to user
+    const { highlightControls } = config.steps[step];
+
+    if (!highlightControls) return;
+
+    const oControls = document.getElementById('mobile-controls');
+    if (!oControls) return;
+
+    const query = highlightControls.map((type) => `[data-for="${type}"]`).join(',');
+
+    oControls.querySelectorAll(query).forEach((node) => utils.css.addOrRemove(node, active, css.getUserAttention));
+    
   }
 
   function animate() {
@@ -73,6 +93,8 @@ const Tutorial = () => {
     addStep({
 
       // introduction
+
+      highlightControls: ['guns', 'bombs'],
 
       animate() {
 
@@ -164,6 +186,8 @@ const Tutorial = () => {
 
       // pick up a full load of infantry
 
+      highlightControls: ['inventory', 'infantry'],
+
       animate() {
 
         return (game.players.local.data.parachutes >= game.players.local.data.maxParachutes);
@@ -181,6 +205,8 @@ const Tutorial = () => {
     addStep({
 
       // claim a nearby enemy bunker
+
+      highlightControls: ['parachute-infantry'],
 
       activate() {
 
@@ -239,6 +265,8 @@ const Tutorial = () => {
 
       // claim a nearby enemy Super Bunker
 
+      highlightControls: ['parachute-infantry'],
+
       activate() {
 
         let targetSuperBunker = game.objects[TYPES.superBunker][0];
@@ -286,6 +314,8 @@ const Tutorial = () => {
     addStep({
 
       // order a Missile launcher, Tank, Van
+
+      highlightControls: ['inventory', 'missile-launcher', 'tank', 'van'],
 
       animate() {
 
@@ -407,6 +437,8 @@ const Tutorial = () => {
 
       // rebuild the first friendly, dead turret
 
+      highlightControls: ['inventory', 'engineer'],
+
       animate() {
 
           const t = game.objects[TYPES.turret][0].data;
@@ -489,7 +521,8 @@ const Tutorial = () => {
   };
 
   css = {
-    active: 'active'
+    active: 'active',
+    getUserAttention: 'get-user-attention'
   };
 
   data = {

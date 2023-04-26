@@ -3849,6 +3849,22 @@ body.is-mobile #mobile-controls {
   overflow: hidden;
 }
 
+#mobile-controls li.get-user-attention {
+  background-color: rgba(27, 107, 27, 0.45);
+  animation: sorta-blink-alt 0.5s ease-in-out alternate infinite;
+}
+
+#mobile-controls li.get-user-attention a {
+  animation: sorta-blink 0.5s ease-in-out alternate infinite;
+}
+
+/* only blink inventory control when requested, if weapons are showing. */
+#mobile-controls.inventory_active li.show_inventory_control.get-user-attention,
+#mobile-controls.inventory_active li.show_inventory_control.get-user-attention a {
+  background-color: inherit;
+  animation: none;
+}
+
 @media screen and (orientation: portrait) {
   /* mobile, portrait: smaller controls. */
   body.is-mobile #mobile-controls .mobile-controls-ordering,
@@ -4112,25 +4128,28 @@ body.is-mobile.notch-at-right #notification-toasts {
   }
 }
 
+#mobile-controls li span.letter-block.show_options,
 #mobile-controls li span.letter-block.show_inventory {
-  font-size: 9px;
-  font-weight: lighter;
-  top: 1px;
-  color: #666;
   display: block !important;
+  top: 0px;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  font-weight: lighter;
+  top: 0px;
+  color: #666;
   letter-spacing: 0px;
   text-indent: 0px;
 }
 
-@media screen and (orientation: landscape) {
-  #mobile-controls li span.letter-block.show_inventory {
-    top: 7px;
-  }
+#mobile-controls li span.letter-block.show_options {
+  font-size: 7px;
+  line-height: 25px;
 }
 
 @media screen and (orientation: portrait) {
   #mobile-controls li span.letter-block.show_inventory {
-    top: 4.85px;
+    line-height: 21px;
   }
 }
 
@@ -4154,8 +4173,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   /* always active / visible */
   opacity: 1 !important;
   pointer-events: unset !important;
-  /* TODO: only apply this when UI is on the right. */
-  float: right;
 }
 
 #mobile-inventory-controls li {

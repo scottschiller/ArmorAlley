@@ -31,7 +31,8 @@ const TutorialStep = (options = {}) => {
   }
 
   exports = {
-    animate
+    animate,
+    highlightControls: options.highlightControls
   };
 
   return exports;
