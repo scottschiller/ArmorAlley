@@ -4906,6 +4906,7 @@ body.is_safari:not(.is-mobile) .mac-classic b {
   margin: 0px;
   padding-top: 1px;
   padding-bottom: 3px;
+  letter-spacing: -0.12px;
 }
 
 .mac-classic .compact,
@@ -5765,7 +5766,6 @@ body.game-paused #tutorial-window {
 #tutorial-window .body p {
   margin-left: 0px;
   margin-right: 0px;
-  text-indent: -0.12px;
 }
 
 #tutorial-window .body p:not(:last-of-type) {
