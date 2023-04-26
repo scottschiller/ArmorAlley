@@ -3,6 +3,7 @@ import { utils } from '../core/utils.js';
 import { TYPES, FPS } from '../core/global.js';
 import { countFriendly, countSides } from '../core/logic.js';
 import { TutorialStep } from './TutorialStep.js';
+import { common } from '../core/common.js';
 
 const Tutorial = () => {
 
@@ -18,6 +19,7 @@ const Tutorial = () => {
 
     dom.o = document.getElementById('tutorial');
     dom.oList = document.getElementById('tutorial-list').getElementsByTagName('li');
+    dom.oTutorialWindow = document.getElementById('tutorial-window');
     data.steps = dom.oList.length;
     utils.css.add(game.dom.world, 'tutorial-mode');
 
@@ -66,7 +68,7 @@ const Tutorial = () => {
 
     utils.css.add(dom.o, css.active);
 
-    document.getElementById('tutorial-window').style.display = 'block';
+    common.setFrameTimeout(() => utils.css.add(dom.oTutorialWindow, css.active), 1000);
 
     addStep({
 
@@ -500,6 +502,7 @@ const Tutorial = () => {
   dom = {
     o: null,
     oList: null,
+    oTutorialWindow: null,
     lastItem: null
   };
 
