@@ -1936,6 +1936,22 @@ bnb.gameMenu = shuffle([
 ]);
 bnb.gameMenu.excludeThrottling = true;
 
+bnb.gameMenuHard = utils.array.shuffle([
+  bnb.boioioing,
+  add('vs_beavis_whoa_thats_hard'),
+  addVL('bh_hard_laugh'),
+  addVL('bh_i_think_this_game_is_too_hard_for_p2_hard'),
+  addGMS(
+    add('beavis_dammit_they_make_this_too_hard'),
+    addVL('bh_uh_does_that_remind_you_of_anything_beavis'),
+    addVL('bh_hard_laugh'),
+    bnb.lotsOfLaughs
+  ),
+  addVL('bh_boioioing_b_you_cant_really_do_that_butthead')
+]);
+bnb.gameMenuHard.excludeDelay = true;
+bnb.gameMenuHard.excludeThrottling = true;
+
 bnb.helicopterDiedReactions = shuffle([
   add('beavis_fire_fire_fire_fire'),
   addVL('b_die_die_die_vl'),

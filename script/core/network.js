@@ -954,7 +954,7 @@ const net = {
 
       showLocalMessage(msg);
       
-      game.objects.notifications.add(msg);
+      game.objects.notifications.addNoRepeat(msg);
 
       common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
 

@@ -128,12 +128,24 @@ function init() {
 
   });
 
+  // special case.
+  document.getElementById('radio_game_type_hard').addEventListener('change', () => {
+
+    // if BnB, react appropriately. 🤣
+    if (!gamePrefs.bnb || gameMenuActive) return;
+
+    gameMenuActive = true;
+    playSound(sounds.bnb.gameMenuHard, null, { onfinish: () => gameMenuActive = false });
+
+  });
+
   prefsManager.init();
 
   // game menu / intro screen
 
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
+
   if (isMobile) {
     utils.events.add(document, 'touchstart', introBNBSound);
   }
