@@ -808,7 +808,7 @@ const common = {
       fs.id = 'fs';
       Object.assign(fs.style, {
         position: 'absolute',
-        top: '42px',
+        top: '34px',
         left: '0px',
         height: `100%`,
         width: '100%',
