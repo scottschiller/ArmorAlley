@@ -280,6 +280,9 @@ function GameEvents() {
             // -> butthead
             playDelayedSound(oneOf([sounds.bnb.buttheadWatchTheMaster, sounds.bnb.takeSoLong, sounds.bnb.buttheadOKGetReadyDude]), andAnnounce);
 
+            // preload
+            common.preloadVideo('igotyoubabe');
+
           } else {
 
             // -> beavis

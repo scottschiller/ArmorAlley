@@ -685,6 +685,8 @@ const common = {
 
   preloadVideo(fileName) {
 
+    if (loadedVideos[fileName]) return;
+
     let video = document.createElement('video');
     video.muted = true;
     video.playsInline = true;
@@ -694,6 +696,7 @@ const common = {
 
     function preloadOK() {
       if (!video) return;
+      loadedVideos[fileName] = true;
       video.removeEventListener(canplay, preloadOK);
       video.remove();
       video = null;
