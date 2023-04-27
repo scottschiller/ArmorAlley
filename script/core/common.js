@@ -157,7 +157,7 @@ function getRenameString(oldName, newName, fromNetworkEvent) {
   if (isGuest || isHost) {
 
     // naming depends on the player's friendliness.
-    if (fromNetworkEvent) {
+    if (fromNetworkEvent && game.data.started) {
       oldName = (game.players.remoteHuman.data.isEnemy === game.players.local.data.isEnemy ? 'your friend' : 'your opponent');
     } else {
       if (isGuest) oldName = 'the guest';
