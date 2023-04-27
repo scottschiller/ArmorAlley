@@ -297,6 +297,8 @@ function GameEvents() {
               playDelayedSound(sounds.bnb.beavisMyTurn, andAnnounce);
             } else {
               playDelayedSound(sounds.bnb.beavisMyTurn, andAnnounce);
+              playDelayedSound(sounds.bnb.buttheadDammitBeavisIWasAboutToScore);
+              playDelayedSound(sounds.bnb.beavisNoWayItsMyTurn, andAnnounce);
             }
 
           }

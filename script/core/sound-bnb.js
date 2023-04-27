@@ -633,6 +633,7 @@ bnb.giganticSchlongConversation = addSequence(
 );
 
 bnb.beavisMonologues = shuffle([
+  add('b_were_gonna_score_slots'),
   addVL('b_are_we_gonna_be_bald_i_dunno'),
   bnb.beavisLightsOut,
   addSequence(
@@ -873,6 +874,7 @@ bnb.comeToBeavisToo = add('b_yeah_come_to_beavis_too_boioioing', 50);
 bnb.comeToBeavisToo.maxDelay = 1000;
 
 bnb.gonnaScore = shuffle([
+  add('bh_this_is_it_beavis_were_finally_going_to_score_thank_god'),
   add('bh_were_gonna_score', 40),
   add('b_were_gonna_score', 40),
   add('b_were_gonna_score_x2', 40)
@@ -1067,6 +1069,9 @@ bnb.beavisNoWayItsMyTurn = shuffle([
   add('b_shut_up_butthead2', 40)
 ]);
 bnb.beavisNoWayItsMyTurn.excludeDelay = true;
+
+bnb.buttheadDammitBeavisIWasAboutToScore = add('bh_dammit_beavis_i_was_about_to_score');
+bnb.buttheadDammitBeavisIWasAboutToScore.excludeDelay = true;
 
 bnb.thatsALoadOff = add('b_thats_a_load_off_my_mind', 40);
 
