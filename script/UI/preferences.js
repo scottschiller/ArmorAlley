@@ -433,6 +433,8 @@ function PrefsManager() {
 
       }
 
+      events.onChat('Discuss options amongst yourselves, and click "READY" to proceed.');
+
       events.onChat('Identify yourself: /name [your name here]');
 
       const chatInput = document.getElementById('network-chat-input');

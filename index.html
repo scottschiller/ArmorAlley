@@ -763,8 +763,8 @@
 
                   <p>
                     The game can start once you agree on shared options. <span class="network-icon network-icon-inline"></span><br />
-                    You can see each other's changes, and click “ready” to approve.<br />
-                    You can also set your own UI options.
+                    Once connected, you can discuss options and click “ready” to proceed.<br />
+                    Non-shared settings apply only to you.
                   </p>
 
                 </div>
@@ -907,15 +907,13 @@
 
               <fieldset>
 
-                <legend>General / UI Options</legend>
-
-                <p class="noindent network">These options are your own, separate from the other player.</p>
+                <legend>Audio</legend>
 
                 <ul>
 
                   <li>
                     <label for="cb_sound">
-                      <input type="checkbox" id="cb_sound" name="sound" value="1" checked /> <span class="label-text">Sound</span>
+                      <input type="checkbox" id="cb_sound" name="sound" value="1" checked /> <span class="label-text">Sound Effects</span>
                     </label>
                     <label for="main_volume">
                       <span class="label-text"> / Volume</span>
@@ -923,20 +921,30 @@
                       <span id="volume-value" style="display:inline-block;min-width:19px"><!-- "(70%)" rendered here --></span>
                       <input type="range" id="main_volume" name="volume" list="markers" min="0" max="10" value="7" step="1" class="range-slider" />
                     </label>
-                    <p class="non-indented">Ambience &amp; audible hints - e.g., when building convoys, or distant gunfire.</p>
+                    <p class="non-indented">Local ambience and audible hints - e.g., when building convoys, or distant gunfire.</p>
                   </li>
 
                   <li>
                     <label for="cb_muzak">
                       <input type="checkbox" id="cb_muzak" name="muzak" value="1" checked /> <span class="label-text">Muzak</span>
-                      <p class="non-indented">Easy-listening landing pad classics, such as “The Girl From Ipanema.”</p>
+                      <p class="non-indented">Enjoy easy-listening landing pad classics, such as <i>The Girl From Ipanema.</i></p>
                     </label>
                   </li>
+
+                </ul>
+              
+              </fieldset>
+
+              <fieldset>
+
+                <legend>Environment + Effects*</legend>
+
+                <ul>
 
                   <li style="margin-top:0px">
                     <p class="compact options-heading"><b>Weather</b></p>
                     <p style="padding-top:0px" class="non-indented">
-                      “It was a dark and stormy night.”<sup title="Note: Might impact game performance.">*</sup>
+                      “It was a dark and stormy night.”
                     </p>
                     <ul class="less-bottom-spacing">
                       <li>
@@ -962,7 +970,7 @@
                       </label>
                     </p>
                     <p class="non-indented">
-                      Confetti-style fragments from explosions and certain collisions.<sup title="Note: Might impact game performance.">*</sup></i>
+                      Confetti-style fragments from explosions and certain collisions.</i>
                     </p>
                   </li>
 
@@ -983,7 +991,18 @@
                         <input type="checkbox" id="cb_gravestones_vehicles" name="gravestones_vehicles" value="1" /> <label for="cb_gravestones_vehicles">Vehicles</label>
                       </li>
                     </ul>
+                    <p class="non-indented"><sup>*</sup><i>Might affect game performance; try disabling if slow.</i></p>
                   </li>
+
+                </ul>
+
+              </fieldset>
+
+              <fieldset>
+
+                <legend>UI / General</legend>
+ 
+                <ul>
 
                   <li style="margin-bottom:2px">
                     <label for="cb_game_tips">
@@ -1027,7 +1046,7 @@
                     </ul>
                   </li>
 
-                  <li>
+                  <li class="hide-on-mobile">
 
                     <p class="compact options-heading"><b>Notifications UI Location</b></p>
       
@@ -1049,10 +1068,6 @@
     
                     </ul>
 
-                    <p class="non-indented"><sup>*</sup><i>Note: Might impact game performance.</i></p>
-                    
-                    </fieldset>      
-
                   </li>
 
                 </ul>
@@ -1062,8 +1077,6 @@
               <fieldset>
 
                 <legend>"Virtual Stupidity" 🎸🤘</legend>
-
-                <p class="noindent network">These options are your own, separate from the other player.</p>
 
                 <ul>
 
@@ -1091,6 +1104,8 @@
               </fieldset>
 
               <fieldset id="gameplay-options" class="sync-over-network">
+
+                <p class="noindent network">These are shared network options.</p>
 
                 <legend>Gameplay Options<span class="network-icon"></span></legend>
 
@@ -1129,6 +1144,8 @@
               </fieldset>
 
               <fieldset id="traffic-control" class="sync-over-network">
+
+                <p class="noindent network">These are shared network options.</p>
 
                 <legend>Ground Vehicle "Traffic Control"<span class="network-icon"></span></legend>
 
