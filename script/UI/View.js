@@ -510,7 +510,7 @@ const View = () => {
 
   function registerTouchEvent(touchEvent, options) {
 
-    if (!touchEvent || !touchEvent.identifier) return;
+    if (!touchEvent || touchEvent.identifier === undefined) return;
 
     // keep track of a touch event, and its type.
     const id = touchEvent.identifier;
