@@ -1250,7 +1250,7 @@ function PrefsManager() {
       if (!screenScale || !data.active || !dom.o) return;
 
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
-      let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
+      let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : (isMobile ? 0.925 : 1));
 
       let body = dom.o.querySelector('.body');
 
@@ -1261,7 +1261,9 @@ function PrefsManager() {
         scale *= 1.85;
         // hackish: scale up even further so the modal is more wide than anything else, and set height to the natural viewport.
         // in landscape, the modal contents will scroll naturally.
-        scale *= 2;
+        if (isSafari) {
+          scale *= 2;
+        }
         body.style.setProperty('height', (worldHeight / 2) + 'px');
       } else {
         body.style.setProperty('height', data.originalHeight + 'px');
