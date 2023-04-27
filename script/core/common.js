@@ -186,8 +186,6 @@ const slashCommands = {
 
     if (game.data.started) {
       game.objects.notifications.add(msg);
-    } else {
-      prefsManager.onChat(msg);
     }
 
     if (!fromNetworkEvent) {
