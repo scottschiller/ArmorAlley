@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode } from '../core/global.js';
+import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode, worldHeight } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
@@ -121,6 +121,8 @@ function PrefsManager() {
     body.style.setProperty('height', 'auto');
 
     let height = body.offsetHeight;
+
+    data.originalHeight = height;
 
     // now assign the natural content height
     body.style.setProperty('height', height + 'px');
@@ -884,6 +886,7 @@ function PrefsManager() {
 
   data = {
     active: false,
+    originalHeight: 0,
     network: false,
     lastMenuOpen: 0,
     lastMenuOpenThrottle: 30000,
@@ -1246,11 +1249,19 @@ function PrefsManager() {
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
       let scale = screenScale * (game.objects.view.data.usingZoom || isSafari ? 0.5 : 1);
 
+      let body = dom.o.querySelector('.body');
+
       // hackish: compromise for lack of `zoom: 2` on mobile - but only specifically iPhone?
       // TODO: review and figure out. iPad seems to render without scaling, just fine.
       // https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation
       if (isMobile && screen.orientation.type.match(/landscape/i)) {
         scale *= 1.85;
+        // hackish: scale up even further so the modal is more wide than anything else, and set height to the natural viewport.
+        // in landscape, the modal contents will scroll naturally.
+        scale *= 2;
+        body.style.setProperty('height', (worldHeight / 2) + 'px');
+      } else {
+        body.style.setProperty('height', data.originalHeight + 'px');
       }
 
       dom.o.style.setProperty('transform', `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`);

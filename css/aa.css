@@ -4764,6 +4764,13 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   zoom: 2.5;
 }
 
+@media screen and (orientation: landscape) {
+  /* don't mess with scrollbars, just let the whole body scroll naturally. */
+  body.is-mobile #game-prefs-modal .fieldset-container {
+    max-height: unset;
+  }
+}
+
 /**
  * System 7-style scrollbars
  * Hat tip: https://github.com/sakofchit/system.css/ (MIT)
