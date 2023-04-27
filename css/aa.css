@@ -4777,7 +4777,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
  * https://github.com/sakofchit/system.css/blob/main/LICENSE
  */
 
- #game-prefs-modal .fieldset-container::-webkit-scrollbar {
+#game-prefs-modal .fieldset-container::-webkit-scrollbar {
   width: 22px;
   background-color: #fff;
 }
