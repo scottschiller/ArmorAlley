@@ -287,8 +287,9 @@ function PrefsManager() {
 
         window.setTimeout(() => {
           updateNetworkStatus('Connection trouble');
-          events.onChat('Unable to connect; apologies. Try getting a new invite link.');
-          events.onChat('This peer-to-peer connection uses PeerJS and WebRTC. This may not work with a double NAT configuration, when both peers are behind certain routers or firewalls. :(');
+          events.onChat('<b>Unable to connect; apologies.</b> Try reloading, then getting a new invite link.');
+          events.onChat('This game uses PeerJS to establish a peer-to-peer WebRTC session.');
+          events.onChat('This may fail in a "double NAT" scenario, when both peers are behind certain routers or firewalls - as often found at offices and schools. :/');
         }, 5000);
 
       }, 5000);
