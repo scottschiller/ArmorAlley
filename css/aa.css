@@ -4163,6 +4163,11 @@ body.is-mobile.notch-at-right #notification-toasts {
   text-indent: 0px;
 }
 
+body:not(.is-safari) #mobile-controls li span.letter-block.show_inventory {
+  /* Chrome on Android */
+  line-height: 20.5px;
+}
+
 #mobile-controls li span.letter-block.show_options {
   font-size: 7px;
   line-height: 25px;
