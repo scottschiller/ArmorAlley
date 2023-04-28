@@ -4739,6 +4739,12 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   margin-top: -15px;
 }
 
+#game-prefs-modal.is-network {
+  /* leave room for level preview in radar area */
+  margin-top: 0px;
+  top: 54%;
+}
+
 #game-prefs-modal p {
   padding-top: 1px;
 }
