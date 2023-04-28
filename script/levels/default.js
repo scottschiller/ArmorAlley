@@ -1,4 +1,5 @@
 import { game, gameType } from '../core/Game.js';
+import { common } from '../core/common.js';
 import { rng, searchParams, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
@@ -10,6 +11,92 @@ function setLevel(levelLabel, newLevelName) {
 
   level = levelLabel;
   levelName = newLevelName;
+
+}
+
+function previewLevel(levelName) {
+
+  // given level data, filter down and render at scale.
+
+  if (!levelName) return;
+
+  let data = originalLevels[levelName];
+
+  if (!data) return;
+
+  // if nothing is > 4096, then it's original game data; double all values.
+  let multiplier = 2;
+
+  data.forEach((item) => {
+    if (item[item.length - 1] >= 4096) {
+      multiplier = 1;
+    }
+  });
+
+  game.objects.radar.reset();
+
+  data = data.filter((item) => item?.[0]?.match(/^(bunker|super-bunker|chain|balloon|turret|tank|launcher|van|infantry|engineer)/i));
+
+  const initMethods = {
+    base: {
+      transformSprite: true
+    },
+    balloon: {
+      data: {
+        y: 32
+      }
+    }
+  };
+
+  const oPreview = document.createElement('div');
+
+  data.forEach((item) => {
+
+    const exports = {
+      data: common.inheritData({
+        type: item[0],
+        bottomAligned: item[0] !== 'balloon',
+        isOnScreen: true,
+        isEnemy: (item[1] === 'right'),
+        ...item[0].data,
+      }, {
+        x: item[2] * multiplier,
+        y: initMethods[item[0]]?.data?.y
+      }),
+    };
+
+    const radarItem = game.objects.radar.addItem(exports, `sprite ${item[0]}${(item[1] === 'right') ? ' enemy' : ''}`);
+
+    // pull vehicles behind bunkers, super-bunkers etc.
+    if (item[0].match(/tank|launcher|van|infantry|engineer/i)) {
+      radarItem.dom.o.style.zIndex = -1;
+    }
+
+    // if a bunker, also tweak opacity so overlapping units can be seen.
+    if (item[0].match(/base|bunker/i)) {
+      radarItem.dom.o.style.opacity = 0.9;
+    }
+
+    // if a bunker, also make a matching balloon.
+    if (item[0] === 'bunker') {
+      const balloonExports = {
+        data: common.inheritData({
+          type: 'balloon',
+          isOnScreen: true,
+          isEnemy: exports.data.isEnemy
+        }, {
+          x: exports.data.x,
+          y: initMethods.balloon.data.y
+        })
+      };
+      game.objects.radar.addItem(balloonExports, `sprite balloon${(item[1] === 'right') ? ' enemy' : ''}`);
+    }
+
+  });
+
+  const levelPreview = document.getElementById('level-preview');
+  levelPreview.innerHTML = '';
+  levelPreview.appendChild(oPreview);
 
 }
 

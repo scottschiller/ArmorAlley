@@ -309,6 +309,17 @@ const Radar = () => {
 
   }
 
+  function reset() {
+
+    // remove all
+    const dieOptions = { silent: true };
+
+    objects?.items?.forEach((item) => {
+      item.die(dieOptions);
+    })
+    
+  }
+
   function animate() {
 
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
@@ -479,6 +490,7 @@ const Radar = () => {
     data,
     dom,
     removeItem: removeRadarItem,
+    reset: reset,
     setStale,
     startJamming,
     stopJamming

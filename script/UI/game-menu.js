@@ -5,7 +5,7 @@ import { isMobile, isSafari } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { setLevel } from '../levels/default.js';
+import { previewLevel, setLevel } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
@@ -18,6 +18,7 @@ let lastHTML;
 let menu;
 let form;
 let optionsButton;
+let oSelect;
 
 let didBNBIntro;
 let gameMenuActive;
@@ -35,6 +36,7 @@ function init() {
   menu = document.getElementById('game-menu');
   form = document.getElementById('game-menu-form');
   optionsButton = document.getElementById('game-options-button');
+  oSelect = document.getElementById('game_level');
 
   utils.css.add(dom.world, 'blurred');
 
@@ -143,6 +145,14 @@ function init() {
 
   // game menu / intro screen
 
+  previewLevel(oSelect.value);
+
+  oSelect.addEventListener('change', () => {
+    const selectedIndex = oSelect.selectedIndex;
+    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
+    previewLevel(oSelect.value);
+  });
+  
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
 
@@ -257,16 +267,6 @@ function formClick(e) {
 
   const { target } = e;
 
-  // drop-down?
-  if (target.nodeName.toLowerCase() === 'option') {
-    // assume it's the game level
-    // parent node shenanigans: option -> optgroup -> select
-    const parentNode = target.parentNode.parentNode;
-    const selectedIndex = parentNode.selectedIndex;
-    setLevel(target.value, parentNode[selectedIndex].textContent);
-    return;
-  }
-
   const action = target.getAttribute('data-action');
 
   if (action === 'tutorial') {
@@ -287,7 +287,6 @@ function formClick(e) {
     // set level and game type, if not already
 
     // get the current game type from the form.
-    const oSelect = document.getElementById('game_level');
     const gameType = document.querySelector('#game-type-list input[name="game_type"]:checked')?.value || 'easy';
 
     const selectedIndex = oSelect.selectedIndex;
@@ -365,6 +364,10 @@ function configureNetworkGame() {
 function startGame() {
 
   formCleanup();
+
+  game.objects.radar.reset();
+
+  document.getElementById('level-preview')?.remove();
 
   if (net.connected) {
 
