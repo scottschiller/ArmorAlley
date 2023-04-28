@@ -2570,11 +2570,13 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   height: 0px;
   font-size: 0px;
   margin-left: 0.5px;
+  margin-bottom: -0.5px;
   background-color: transparent;
-  border-top: 3px solid transparent;
-  border-bottom: 3px solid transparent;
-  border-left: 3px solid rgb(23,160,7);
+  border-top: 2.5px solid transparent;
+  border-bottom: 2.5px solid transparent;
+  border-left: 2.5px solid rgb(23,160,7);
   outline: none;
+  filter: drop-shadow(0.5px 0.5px 0px #000);
 }
 
 #radar .sprite.helicopter.local-player {
@@ -3005,10 +3007,10 @@ body.bnb .sprite.engineer.butthead.building {
 
 #radar .sprite.helicopter.enemy {
   background-color: transparent;
-  border-top: 3px solid transparent;
-  border-bottom: 3px solid transparent;
-  border-left: 3px solid transparent;
-  border-right: 3px solid #ccc;
+  border-top: 2.5px solid transparent;
+  border-bottom: 2.5px solid transparent;
+  border-left: 2.5px solid transparent;
+  border-right: 2.5px solid #ccc;
 }
 
 #radar .sprite.turret {
