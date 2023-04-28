@@ -8,7 +8,7 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
-import { setLevel } from '../levels/default.js';
+import { previewLevel, setLevel } from '../levels/default.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -181,6 +181,16 @@ function PrefsManager() {
 
   }
 
+  function selectLevel(levelName) {
+
+    setLevel(levelName, levelName);
+
+    // if playing cooperative vs. CPU, then include CPU vehicles to start.
+    const excludeVehicles = !gamePrefs.net_game_style.match(/coop/);
+    previewLevel(levelName, excludeVehicles);
+    
+  }
+
   function renderVolumeSlider() {
 
     document.getElementById('volume-value').innerText = `(${parseInt(gamePrefs.volume * 100, 10)}%)`;
@@ -326,7 +336,12 @@ function PrefsManager() {
 
         // hackish: if level, update local model.
         if (name === 'net_game_level') {
-          setLevel(value, value);
+          selectLevel(value);
+        }
+
+        // game style now affects level preview, whether CPU vehicles are included or not.
+        if (name === 'net_game_style') {
+          selectLevel(gamePrefs.net_game_level);
         }
 
         // special case: show toast for local user.
@@ -488,7 +503,7 @@ function PrefsManager() {
       gamePrefs.net_game_level = gameMenuLevel.value;
 
       // and, update local model.
-      setLevel(gameMenuLevel.value, gameMenuLevel.value);
+      selectLevel(gameMenuLevel.value);
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
@@ -1015,10 +1030,15 @@ function PrefsManager() {
             option.selected = true;
             // hackish: update the local model, too.
             if (name === 'net_game_level') {
-              setLevel(value, value);
+              selectLevel(value);
             }
           }
         });
+
+        if (name === 'net_game_style') {
+          // re-render, as we may need to show or hide vehicles.
+          selectLevel(gamePrefs.net_game_level);
+        }
 
         if (!isBatch) {
 

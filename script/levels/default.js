@@ -1,6 +1,8 @@
+import { gamePrefs } from '../UI/preferences.js';
 import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { rng, searchParams, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
+import { net } from '../core/network.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -16,7 +18,7 @@ function setLevel(levelLabel, newLevelName) {
 
 }
 
-function previewLevel(levelName) {
+function previewLevel(levelName, excludeVehicles) {
 
   // given level data, filter down and render at scale.
 
@@ -37,7 +39,13 @@ function previewLevel(levelName) {
 
   game.objects.radar.reset();
 
-  data = data.filter((item) => item?.[0]?.match(/^(bunker|super-bunker|chain|balloon|turret|tank|launcher|van|infantry|engineer)/i));
+  if (excludeVehicles) {
+    // buildings only
+    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret/i));
+  } else {
+    // buildings + units
+    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|tank|launcher|van|infantry|engineer/i));
+  }
 
   const initMethods = {
     base: {
@@ -889,6 +897,8 @@ function addWorldObjects() {
       right: 'THE DANGER ZONE'
     };
 
+    const excludeVehicles = net.active && !gamePrefs.net_game_style.match(/coop/i);
+
     data.forEach((item) => {
 
       // terrain items only have two params.
@@ -912,6 +922,9 @@ function addWorldObjects() {
             args.isMidway = true;
           }
         }
+
+        // if a network game, only include CPU vehicles if playing co-op - i.e., vs. a CPU.
+        if (excludeVehicles && item[0].match(/missile|tank|van|infantry|engineer/i)) return;
 
         addObject(item[0], args);
 
