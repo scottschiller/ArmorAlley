@@ -5765,9 +5765,9 @@ body.edit-mode #battlefield {
 
 #tutorial-window {
   display: none;
-  transform: scale(1) translate(-50%, 0px);
+  transform: scale(1) translate(-50%, -50%);
   transform-origin: 0px 0px;
-  top: 102px;
+  top: 50%;
   left: 50%;
 }
 
