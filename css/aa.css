@@ -1466,7 +1466,6 @@ body.is_firefox #radar .radar-item--animated {
 .chain {
   /* slightly over 1px to "thicken up" when scaled */
   border-left: 1.02px dotted #999;
-  border-right: 1.02px dotted #999;
   width: 0.75px;
   /*
    * height will be set / reset by JS.
@@ -1475,6 +1474,7 @@ body.is_firefox #radar .radar-item--animated {
    */
   height: 0px;
   top: 0px;
+  margin-left: 1.2px;
 }
 
 .chain.jerking {
