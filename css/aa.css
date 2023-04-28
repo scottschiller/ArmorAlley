@@ -2481,6 +2481,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-color: rgb(23,160,7);
   content-visibility: auto;
   contain-intrinsic-size: 2px 2px;
+  outline: 0.5px solid #000;
+  border-radius: 0.5px 0.5px 0px 0px;
 }
 
 #radar .sprite.enemy {
@@ -2490,21 +2492,22 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 #radar .sprite.bunker,
 #radar .sprite.super-bunker {
   /* friendly */
-  width: 3px;
-  height: 1px;
-  margin-left: -1.5px;
+  width: 2px;
+  height: 3px;
+  margin-left: -1px;
   background-color: rgb(23,160,7);
-  border: 1px solid rgba(23,160,7,0.75);
+  padding: 0.5px;
+  border: 0.5px solid rgba(23,160,7,0.75);
   border-bottom-color: rgb(23,160,7);
+  outline: 0.5px solid #000;
   /* round corners */
   border-radius: 1px 1px 0px 0px;
 }
 
 #radar .sprite.super-bunker {
-  height: 1.25px;
-  width: 5px;
-  margin-left: -2.5px;
-  height: 1px;
+  width: 4.5px;
+  margin-left: -2.25px;
+  height: 1.33px;
 }
 
 #radar .sprite.balloon {
@@ -2523,6 +2526,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   /* yellow-ish tinge */
   background-color: rgb(156,159,9);
   border-color: rgb(156,159,9);
+}
+
+#radar .sprite.bunker.enemy,
+#radar .sprite.super-bunker.enemy {
+  border-color: rgba(156,159,9, 0.75);
+  border-bottom-color: rgb(156,159,9);
 }
 
 #radar .sprite.smart-missile {
@@ -2545,11 +2554,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 0px;
   height: 0px;
   font-size: 0px;
-  margin-left: -1.5px;
+  margin-left: 0.5px;
   background-color: transparent;
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
   border-left: 3px solid rgb(23,160,7);
+  outline: none;
 }
 
 #radar .sprite.helicopter.local-player {
@@ -2593,9 +2603,10 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 #radar .sprite.infantry,
 #radar .sprite.parachute-infantry,
 #radar .sprite.engineer {
-  width: 0.55px;
-  margin-left: -0.275px;
+  width: 1px;
+  margin-left: -0.5px;
   height: 2px;
+  outline-width: 0.25px;
 }
 
 #radar .sprite.engineer {
@@ -2612,6 +2623,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 2px;
   height: 2px;
   margin-left: -1px;
+  outline: none;
+}
+
+#radar .sprite.end-bunker {
+  border-radius: 1px;
 }
 
 #radar .sprite.base,
@@ -2619,6 +2635,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 3px;
   height: 2px;
   margin-left: -1.5px;
+  outline: 0.5px solid #000;
+}
+
+#radar .sprite.base {
+  border-radius: 0.5px 0.5px 0px 0px;
 }
 
 #radar .sprite.dying {
@@ -2979,6 +3000,8 @@ body.bnb .sprite.engineer.butthead.building {
   width: 1px;
   height: 2px;
   background-color: rgb(23,160,7);
+  margin-left: -0.5px;
+  outline: 0.5px solid #000;
 }
 
 #radar .sprite.turret.enemy {
