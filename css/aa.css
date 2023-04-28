@@ -561,6 +561,8 @@ body.is-mobile #game-status li:last-of-type {
   font-size: 0px;
   min-width: 10px;
   transform: scale(0.85);
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
   /* earlier "jetbrains mono" version */
   /*
   margin-left: -0.33rem;
