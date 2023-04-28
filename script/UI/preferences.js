@@ -177,6 +177,19 @@ function PrefsManager() {
       // play a sound, too.
       playSound(gamePrefs.bnb ? data.bnbVolumeTestSound : sounds.inventory.begin, null);
 
+      // ugh.
+      // ensure we keep processing sounds.
+      if (!gamePrefs.bnb && game.data.paused) {
+        // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
+        // TODO: clean this crap up.
+        if (!game.data.hackTimer) {
+          game.data.hackTimer = window.setTimeout(() => {
+            game.data.hackTimer = null;
+            playQueuedSounds();
+          }, 32);
+        }
+      }
+
     });
 
   }
