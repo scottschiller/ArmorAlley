@@ -137,6 +137,7 @@ body.game-started {
   transition-property: background-image, opacity, transform;
   opacity: 0;
   transform: scale3d(1.2,1.2,0);
+  transform-origin: 50% 50%;
 }
 
 #mtv-bnb-in {
