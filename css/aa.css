@@ -226,19 +226,18 @@ body:not(.game-started) #mobile-controls {
   visibility: hidden;
 }
 
-#world.blurred .sprite,
+#world.blurred #world .sprite,
 #world.blurred #mobile-controls {
   opacity: 0;
 }
 
-#world.no-blur .sprite,
+#world.no-blur #world .sprite,
 #world.no-blur #mobile-controls {
   opacity: 1;
 }
 
-#world.blurred .sprite,
-#world.blurred #game-tips .tips-container,
-#world.blurred #top-bar,
+#world.blurred #player-status-bar,
+#world.blurred #battlefield,
 #world.blurred #mobile-controls,
 #world.blurred #pointer {
   filter: blur(2px);
@@ -246,9 +245,8 @@ body:not(.game-started) #mobile-controls {
   transition-property: filter, opacity;
 }
 
-#world.blurred.no-blur .sprite,
-#world.blurred.no-blur #game-tips .tips-container,
-#world.blurred.no-blur #top-bar,
+#world.blurred.no-blur #player-status-bar,
+#world.blurred.no-blur #battlefield,
 #world.blurred.no-blur #mobile-controls,
 #world.blurred.no-blur #pointer {
   filter: none;
