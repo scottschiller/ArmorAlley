@@ -124,7 +124,8 @@ body.game-started {
   background-size: 64px;
   z-index: 10;
   transform: scale3d(1,1,1);
-  image-rendering: pixelated;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 #world.tutorial-mode #world-overlay,
@@ -736,6 +737,9 @@ body.is-mobile #funds-count {
   background: rgb(14,54,14);
   /* image/checkerboard-black-mask-50percent.png */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=);
+  background-size: 64px;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 #radar-scrubber {
@@ -976,8 +980,10 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   overflow: hidden;
   /* background-image: url(../image/fuel-bar-background.png); */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVQIW2NYzcT4nwEGQBwAHUEDW61K8xIAAAAASUVORK5CYII=);
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
   margin-top: 3px;
-  opacity: 0.75;
+  opacity: 0.9;
 }
 
 #fuel-line {
