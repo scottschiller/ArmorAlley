@@ -884,8 +884,9 @@ body.bnb #tv-display {
 }
 
 .tv-display-title-screen {
-  top: 50.75%;
-  transform: translate(-50%, -50%) scale3d(1.2, 1.2, 1.2);
+  top: 48%;
+  /* note: intentionally warping the TV a bit to fit the screen. */
+  transform: translate(-50%, -50%) scale3d(1.175, 1.15, 1.2);
   opacity: 1;
   z-index: 11;
   overflow: hidden;
@@ -906,6 +907,13 @@ body.bnb #tv-display.active {
   /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
   background: transparent url(../image/pngtree.com_color_tv.png);
   background-size: contain;
+}
+
+#tv-display.widescreen #tv {
+  background: transparent url(../image/pngtree.com_color_tv_widescreen.png);
+  background-size: contain;
+  background-position: 0px 21.5px;
+  background-repeat: no-repeat;
 }
 
 .tv-display-title-screen .tv,
@@ -929,6 +937,13 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   left: 60px;
   width: 288px;
   height: 212px;
+}
+
+#tv-display.widescreen video {
+  top: 32.5px;
+  left: 59.5px;
+  width: 290px;
+  height: 214px;
 }
 
 .tv-display-title-screen video {

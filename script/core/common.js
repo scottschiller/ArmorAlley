@@ -736,7 +736,7 @@ const common = {
     if (!fileName || o) {
       // empty / reset
       if (o) o.innerHTML = '';
-      container.className = '';
+      utils.css.remove(container, 'active');
       let fs = document.getElementById('fs');
       if (fs) {
         fs.style.transitionDuration = '0.5s';
@@ -748,6 +748,9 @@ const common = {
       }
       if (!fileName) return;
     }
+
+    // certain content is widescreen
+    utils.css.addOrRemove(container, fileName.match(/camper|desert|wz/i), 'widescreen');
 
     const hasAudio = (fileName.match(/wz/i));
     const isWZ = fileName.match(/wz/i);
@@ -846,7 +849,7 @@ const common = {
 
     }
 
-    container.className = 'active';
+    utils.css.add(container, 'active');
 
     const video = o.childNodes[0];
 
