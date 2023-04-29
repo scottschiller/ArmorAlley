@@ -243,6 +243,10 @@ function menuUpdate(e) {
     target = target.parentNode;
   }
 
+  if (target?.nodeName === 'SPAN') {
+    target = target.parentNode;
+  }
+
   const dataTitle = target?.getAttribute('data-title');
 
   if (dataTitle || target?.title) {
