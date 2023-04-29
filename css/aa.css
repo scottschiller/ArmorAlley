@@ -4594,12 +4594,11 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   cursor: pointer;
 }
 
-/* prototype stuff, not presently in use */
-
 .finder {
   position: absolute;
-  top: 160px;
-  left: 100px;
+  top: 80px;
+  top: 11%;
+  left: 20px;
   border: 0.5px solid #000;
   transform: scale(2.16);
   transform-origin: 0px 0px;
