@@ -244,17 +244,6 @@ function menuUpdate(e) {
 
 function showExitType() {
 
-  // copy emoji to "exit" link
-  const exitEmoji = document.getElementById('exit-emoji');
-
-  let emojiReference = document.getElementById('game-menu').getElementsByClassName(`emoji-${gameType}`);
-  emojiReference = emojiReference && emojiReference[0];
-
-  if (exitEmoji && emojiReference) {
-    exitEmoji.innerHTML = emojiReference.innerHTML;
-  }
-
-  // and show "exit"
   const exit = document.getElementById('exit');
 
   if (exit) {
@@ -269,17 +258,28 @@ function formClick(e) {
 
   const action = target.getAttribute('data-action');
 
-  if (action === 'tutorial') {
+  if (action === 'start-editor') {
 
-    game.setGameType(action);
+    const selectedIndex = oSelect.selectedIndex;
+
+    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
+
+    game.setGameType(gameType);
 
     formCleanup();
 
-    // go go go!
-    startGame();
+    game.objects.radar.reset();
+  
+    document.getElementById('level-preview')?.remove();
+  
+    hideTitleScreen();
 
-    return false;
-    
+    showExitType();
+
+    game.startEditor();
+
+    return;
+
   }
 
   if (action === 'start-game') {
@@ -307,8 +307,11 @@ function formClick(e) {
   const { name } = target;
 
   if (name === 'game_type') {
+
     game.setGameType(target.value);
+
     return;
+
   }
 
   if (target.href && utils.css.has(target, 'cta')) {
@@ -400,7 +403,7 @@ function startGame() {
     window.requestAnimationFrame(() => {
       showExitType();
       hideTitleScreen();
-    }, 128);
+    });
 
   }
   

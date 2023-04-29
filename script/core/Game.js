@@ -310,7 +310,9 @@ const game = (() => {
 
     if (tutorialMode) {
 
-      objects.tutorial = Tutorial();
+      if (!game.objects.editor) {
+        objects.tutorial = Tutorial();
+      }
 
       utils.css.add(document.getElementById('help'), 'active');
 
@@ -318,7 +320,7 @@ const game = (() => {
 
       utils.css.add(document.getElementById('help'), 'inactive');
 
-      document.getElementById('tutorial').remove();
+      document.getElementById('tutorial')?.remove();
 
     }
 
@@ -940,6 +942,7 @@ const game = (() => {
     setGameType,
     start,
     started,
+    startEditor,
     togglePause
   };
 

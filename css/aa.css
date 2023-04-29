@@ -3609,8 +3609,12 @@ body.is-mobile #game-tips #game-announcements {
   top: 0.75px;
 }
 
+#help.active {
+  display: inline-block;
+}
+
 body.network #help {
-  display: block;
+  display: inline-block;
 }
 
 body.network:not(.game-started) #help .pipe,
