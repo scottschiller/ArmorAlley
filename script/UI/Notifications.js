@@ -214,7 +214,7 @@ const Notifications = () => {
       playingMessage = gameTypes[gameType] || gameTypes.other;
     }
 
-    add(`Welcome to ARMOR ALLEY 🚁<br />${playingMessage}`);
+    add(`Welcome to ARMOR ALLEY. 🚁<br />${playingMessage}`);
 
     common.setFrameTimeout(() => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'), 2000);
 
