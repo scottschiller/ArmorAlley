@@ -4601,7 +4601,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   top: 160px;
   left: 100px;
   border: 0.5px solid #000;
-  transform: scale(2);
+  transform: scale(2.16);
   transform-origin: 0px 0px;
   filter: invert(1);
 }
@@ -4691,7 +4691,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 }
 
 .finder .body .grid p {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.75em;
 }
 
 .finder .body ul.row {
@@ -4998,6 +4998,7 @@ body.is_safari:not(.is-mobile) .mac-classic b {
   margin-left: 9px;
 }
 
+.finder.mac-classic p.non-indented,
 .mac-classic .non-indented {
   margin-left: 0px;
 }
@@ -5733,9 +5734,40 @@ body.edit-mode #battlefield {
   pointer-events: none;
 }
 
-.static-sprite {
+#editor-window .static-sprite {
   background-size: contain;
   background-position: 100% 50%;
+  background-repeat: no-repeat;
+}
+
+#editor-window .static-sprite.balloon {
+  width: 19px;
+  height: 8.5px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAiBAMAAAAHRyIyAAAAD1BMVEUAAAAAAADa2tqzh1SHVAC3ExoMAAAAAXRSTlMAQObYZgAAAKVJREFUeF6t1OEJxCAMQGGzQd4KrpAV3H+mM1BziJjLQd8/5SOUorZ3E9BtGW37ANsy2vd7R2MS2Dc8DQYx6WQsZubjZCOb1cWY/M54mCFg19DFSBnBLAutMZz9UmOUmRMyM5XRpMYapMxVLzOh39mIb6PG8h/iavYPu7jxGDOKTBsOAE7hxUFyhqRMz0MeYByH3LncmTozK11As/w6lx6H+lPzfh8GtaYB2nfp/AAAAABJRU5ErkJggg==);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#editor-window .static-sprite.cloud {
+  background-image: url(../image/cloud-1.png);
+  width: 34px;
+  height: 10px;
+}
+
+#editor-window .static-sprite.landing-pad {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAHCAYAAABwWKHcAAAAXklEQVR4Ae3QgQXAUAyE4X/IN1u26gJdJpXHVdS1FIAcH0LAD5Bl72QDmbVlUaMaIORRfoWcgGpG0fEecuYCdqhyRNwAb/hOa6180JMxXC9aZfvgDaDRTEzVH/EZ7wKYR/MjFUCThgAAAABJRU5ErkJggg==);
+  background-size: contain;  
+  width: 40.5px;
+  height: 3.5px;
+}
+
+#editor-window .static-sprite.turret {
+  /* width: 18px, height: 15px; */
+  width: 12px;
+  height: 10px;
+  background: url(data:image/png;base64,R0lGODlhEgAPAPIEAAAAAKpVAaqqAqqqqv///wAAAAAAAAAAACH5BAUKAAQALAAAAAASAA8AAAM0SLoEDixGMASUGIhw8dydt2ic+JXmCKaKA4YeFcxwttEsiZsP7YgOTu83Cc6OvhAAyTxeEgA7);
+  background-position: 50% 0px;
+  background-size: contain;
   background-repeat: no-repeat;
 }
 

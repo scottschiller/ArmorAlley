@@ -9,7 +9,17 @@ import { zones } from '../core/zones.js';
 const Editor = () => {
 
   const itemTypes = {
-    vehicles: [
+    airborne: [
+      TYPES.cloud,
+      TYPES.balloon
+    ],
+    structures: [
+      TYPES.bunker,
+      TYPES.superBunker,
+      TYPES.turret,
+      TYPES.landingPad
+    ],
+    units: [
       TYPES.missileLauncher,
       TYPES.tank,
       TYPES.van,
@@ -30,6 +40,9 @@ const Editor = () => {
   };
 
   const itemTypesByKey = {
+    a: itemTypes.airborne,
+    s: itemTypes.structures,
+    // units
     m: [ TYPES.missileLauncher ],
     t: [ TYPES.tank ],
     v: [ TYPES.van ],
@@ -189,8 +202,10 @@ const Editor = () => {
     'backspace': () => deleteSelectedItems(),
     'arrowleft': () => moveSelectedItemsX(-1),
     'arrowright': () => moveSelectedItemsX(1),
+    '<': () => setEnemyState(true), // <
     ',': () => setEnemyState(true), // <
     '.': () => setEnemyState(false), // >
+    '>': () => setEnemyState(false), // >
     '[': () => modifyActiveTool(-1),
     ']': () => modifyActiveTool(1)
   };
@@ -315,13 +330,16 @@ const Editor = () => {
 
     const chosenItem = data.activeTool[data.activeToolOffset];
 
-    // vehicle?
+    // ground unit?
     const mtvie = data.activeTool.key.match(/[mtvie]/i);
+
+    const airborne = data.activeTool.key === 'a';
+    const structure = data.activeTool.key === 's';
 
     // terrain, vehicle, or element?
     let obj;
 
-    if (mtvie) {
+    if (mtvie || airborne || structure) {
       obj = game.addObject(chosenItem, { isEnemy: data.isEnemy, x });
       utils.css.add(obj.dom.o, css.newlyAddedSprite);
     } else {
