@@ -151,7 +151,11 @@ function init() {
     const selectedIndex = oSelect.selectedIndex;
     setLevel(oSelect.value, oSelect[selectedIndex].textContent);
     previewLevel(oSelect.value);
+    updateGameTypeControls(oSelect.value);
   });
+
+  // ... and apply for current selection, too.
+  updateGameTypeControls(oSelect.value);
   
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
@@ -196,6 +200,23 @@ function introBNBSound(e) {
   if (isMobile) {
     utils.events.remove(document, 'touchstart', introBNBSound);
   }
+
+}
+
+function updateGameTypeControls(levelName) {
+
+  const isTutorial = !!levelName.match(/tutorial/i);
+
+  // enable or disable "game type" based on whether the tutorial is selected.
+  document.querySelectorAll('#game-type-list li').forEach((node) => node.style.opacity = isTutorial ? 0.5 : 1);
+
+  document.querySelectorAll('#game-type-list input').forEach((node) => {
+    if (isTutorial) {
+      node.setAttribute('disabled', true);
+    } else {
+      node.removeAttribute('disabled');
+    }
+  });
 
 }
 
