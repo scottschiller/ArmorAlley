@@ -872,7 +872,6 @@ body.bnb #tv-display {
 #tv-display,
 .tv-display-title-screen {
   position: absolute;
-  /* top: 35px; */
   top: 55%;
   left: 50%;
   width: 409px;
@@ -883,6 +882,11 @@ body.bnb #tv-display {
   opacity: 0;
   transition: all 0.25s ease-in;
   transition-property: transform, opacity, filter, position;
+}
+
+#tv-display.widescreen {
+  /* align better with tutorial mode window */
+  top: 53%;
 }
 
 .tv-display-title-screen {
@@ -942,7 +946,7 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
 }
 
 #tv-display.widescreen video {
-  top: 32.5px;
+  top: 33px;
   left: 59.5px;
   width: 290px;
   height: 214px;
