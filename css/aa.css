@@ -1544,9 +1544,7 @@ body.is_firefox #radar .radar-item--animated {
 
 .tank.enemy .transform-sprite {
   background-image: url(../image/tank-enemy-sprite-horizontal.png);
-  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAFVBMVEVhcAAAAABVVVWqqqpVVQH/////qgH67CcrAAAAAXRSTlMAQObYZgAAATFJREFUeF7V1dENwjAMhGFWuBW8gle4FbpC9h8B3DgYAw81PEQ+IaUgfeovFam378PrboVtkN1yARyP6aG25HfL/rkGVWw6zNo1sFf2zw3pjTKGSNgNsnsu3udSTRrNdpkdsmPuYVNP9E07nC4bcmCDbJn7OcfrwUimMIkNsmNu7Kt1agd8Y5dsnAtg/vvFtsRYV+qHyirfIbvmnnBO3uaNYafeIPvmHoraNsi+uQDIwifJCsyyAGmyW25ofYzynK7J2vMrBQgMViT/kC1zg5LT0i0d0ylPSiYL/CxZkkDrXHJakip+arTYaQXn8KtESKAk2TgXoC5pxk9JLctKuikrMt20JLvmho0HMq3ItJJ+zxJARSZKvSyBnrn1F7HLoLxKswRKL/6WuaEv729Yl/1y72yC9hX9fglvAAAAAElFTkSuQmCC); */
-  /* reverse might cause flickering? */
-  animation: animate-transform-sprite-tank 0.1s steps(3) reverse infinite;
+  animation: animate-transform-sprite-tank 0.1s steps(3) infinite;
 }
 
 .tank.stopped .transform-sprite {
