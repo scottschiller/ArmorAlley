@@ -298,8 +298,7 @@ const game = (() => {
     }
 
     // sort the array based on the x value.
-    // TODO: fix this, not always the second item.
-    gameData.sort(utils.array.compare(2));
+    gameData.sort(utils.array.compareByLastItem());
 
     return gameData;
 
