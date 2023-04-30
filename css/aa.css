@@ -208,7 +208,8 @@ body.is_safari #bnb-vs {
   /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
   background: transparent url(../image/armor-alley-logo-print.webp) no-repeat 50% 72%;
   background-size: contain;
-  image-rendering: smooth;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
   z-index: 11;
   opacity: 0;
   transition: opacity 0.2s ease-out;
