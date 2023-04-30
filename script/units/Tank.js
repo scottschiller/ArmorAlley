@@ -46,6 +46,29 @@ const Tank = (options = {}) => {
 
     }
 
+    if (data.lastNearbyTarget?.data.type.match(/infantry|engineer|super-bunker|end-bunker/i)) {
+      
+      game.addObject(TYPES.flame, {
+        parent: exports,
+        parentType: data.type,
+        isEnemy: data.isEnemy,
+        damagePoints: 2, // tanks fire at half-rate, so double damage.
+        collisionItems,
+        x: data.x + ((data.width) * (data.isEnemy ? 0 : 1)),
+        // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry
+        y: data.y - 2,
+        vX: 0,
+        vY: 0
+      });
+
+      if (sounds.tankGunFire) {
+        playSound(sounds.tankGunFire, exports);
+      }
+
+      return;
+
+    }
+
     game.addObject(TYPES.gunfire, {
       parent: exports,
       parentType: data.type,
