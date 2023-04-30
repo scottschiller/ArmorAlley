@@ -5723,6 +5723,10 @@ body.edit-mode #battlefield {
   display: none;
 }
 
+#editor-window .grid {
+  position: relative;
+}
+
 #editor-window ul.inline-list {
   margin: 0px;
   padding: 0px;
@@ -5751,6 +5755,8 @@ body.edit-mode #battlefield {
 }
 
 #editor-window .static-sprite {
+  width: 16px;
+  height: 16px;
   background-size: contain;
   background-position: 100% 50%;
   background-repeat: no-repeat;
