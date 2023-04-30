@@ -311,7 +311,7 @@ const EndBunker = (options = {}) => {
       }
     },
     // who gets fired at?
-    items: getTypes('infantry, engineers, helicopters', { exports }),
+    items: getTypes('infantry:all, engineers, helicopters', { exports }),
     targets: []
   };
 
