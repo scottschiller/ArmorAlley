@@ -1,3 +1,6 @@
+const LS_VERSION_KEY = 'AA';
+const LS_VERSION = '2023';
+
 const utils = {
 
   array: {
@@ -163,11 +166,21 @@ const utils = {
 
     // sanity check: try to read a value.
     try {
-      get('testLocalStorage');
+
+      let version = get(LS_VERSION_KEY) || '(none)';
+
+      if (version != LS_VERSION) {
+        console.log(`localStorage version ${version} != ${LS_VERSION}; clearing LS and resetting.`);
+        localStorage.clear();
+        set(LS_VERSION_KEY, LS_VERSION);
+      }
+      
     } catch (e) {
+
       console.log('localStorage read test failed. Disabling.');
       localStorage = null;
       unavailable = true;
+
     }
 
     return {
