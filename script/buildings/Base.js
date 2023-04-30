@@ -126,6 +126,19 @@ const Base = (options = {}) => {
     // TODO: make this a method; cleaner, etc.
     game.objects.view.data.ignoreMouseEvents = true;
 
+    // start destroying all the losing team's stuff
+    let delay = 0;
+    [ TYPES.bunker, TYPES.turret, TYPES.balloon, TYPES.tank, TYPES.missileLauncher, TYPES.van, TYPES.infantry, TYPES.engineer, TYPES.helicopter ].forEach((type) => {
+      if (game.objects[type]) {
+        game.objects[type].forEach((item) => {
+          if (item.data.isEnemy === data.isEnemy) {
+            delay += 333;
+            common.setFrameTimeout(() => item.die(), delay);
+          }
+        })
+      }
+    });
+
     function smallBoom(exports) {
 
       if (rnd(1) >= 0.75) {
