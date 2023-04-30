@@ -255,6 +255,7 @@ function PrefsManager() {
 
     // TODO: filter URL params, drop ones that are prefs?
     const inviteURL = `${wl.origin}${wl.pathname}?${params.join('&')}`;
+    const inviteURLDisplay = inviteURL.length > 120 ? inviteURL.slice(0, 120) + '...' : inviteURL;
     const inviteContainer = document.getElementById('network-options-invite-container');
     const inviteButton = document.getElementById('network-options-invite-link');
 
@@ -267,7 +268,7 @@ function PrefsManager() {
         inviteContainer.remove();
         linkDetail.innerHTML = [
          `<p>Send this link to a friend:</p>`,
-         `<a href="${inviteURL}" onclick="return false" class="no-hover">${inviteURL}</a>`,
+         `<a href="${inviteURL}" onclick="return false" class="no-hover">${inviteURLDisplay}</a>`,
          ok ? `<p>The link has been copied to your clipboard.</p>` : ``
         ].join('\n');
       });
