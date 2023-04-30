@@ -8,6 +8,8 @@ import { zones } from '../core/zones.js';
 
 const HELP_X_PREF = 'editor_help_x';
 
+const showPixelOffset = window.location.href.match(/showOffset/i);
+
 const Editor = () => {
 
   const itemTypes = {
@@ -460,6 +462,9 @@ const Editor = () => {
   }
 
   function decorateItem(item) {
+
+    // TODO: checkbox + pref
+    if (!showPixelOffset) return;
 
     if (!item) return;
 
