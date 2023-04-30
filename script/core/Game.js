@@ -32,6 +32,7 @@ import { Van } from '../units/Van.js';
 import { LandingPad } from '../buildings/LandingPad.js';
 import { Cornholio } from '../units/Cornholio.js';
 import { Bomb } from '../munitions/Bomb.js';
+import { Flame } from '../munitions/Flame.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
