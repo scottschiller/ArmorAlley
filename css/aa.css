@@ -5747,6 +5747,10 @@ body.edit-mode #battlefield {
   background-repeat: no-repeat;
 }
 
+#editor-window .static-sprite.default {
+ background-image: url(../image/icon_savegame.png);
+}
+
 #editor-window .static-sprite.balloon {
   width: 19px;
   height: 8.5px;
