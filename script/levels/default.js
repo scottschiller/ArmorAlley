@@ -934,13 +934,17 @@ function addWorldObjects() {
           x: item[2] * multiplier
         };
 
-        // special case
-        if (item[0] === 'landing-pad') {
+        // special cases
+        if (item[0] === TYPES.landingPad) {
           args.name = landingPadNames[item[1]];
           if (item[1] === 'neutral') {
             delete args.hostile;
             args.isMidway = true;
           }
+        } else if (item[0] === TYPES.turret && item[1] === 'neutral') {
+          // neutral turret = dead, DOA
+          delete args.hostile;
+          args.DOA = true;
         }
 
         // if a network game, only include CPU vehicles if playing co-op - i.e., vs. a CPU.
@@ -1031,9 +1035,9 @@ originalLevels = {
     [ 'grave-cross', 5275 ],
     [ 'left-arrow-sign', 7700 ],
     [ 'left-arrow-sign', 8208 ],
-    [ 'turret', l, 475 ],
-    [ 'turret', r, 3456 ],
-    [ 'turret', r, 4216 ]
+    [ 'turret', n, 475 ],
+    [ 'turret', n, 3456 ],
+    [ 'turret', n, 4216 ]
   ],
 
   'demo 1': [
