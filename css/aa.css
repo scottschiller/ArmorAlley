@@ -2974,6 +2974,14 @@ body.is_safari .cornholio .sub-sprite {
   color: #666;
 }
 
+.sprite.flame {
+  /* background-image: url(../image/tank_flame.png); */
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAASCAMAAAANFixgAAAAD1BMVEUAAAC1BwD/xQAAAAD////xz7/wAAAAAXRSTlMAQObYZgAAAJBJREFUeNplkQsOhDAQQgW5/5k3wnx0S1KtPoYSvT66R3k+GUp/lhcjCEBvy0CS4WRSmtecJIjmsVQVY7NHGK4OAUlJhmMTaJ4EgquatyuO20fkLZIj7xVHSiY8bWs/LR5HUthSptNiPgRB+eKlOSHqTwUwqxKKT4q2re9j2BQT82qw2i4IP3/6dtnp09Ea/gMASwNU7KO2mwAAAABJRU5ErkJggg==);
+  background-size: contain;
+  width: 32px;
+  height: 18px;
+}
+
 .sprite.missile-launcher.building {
   margin-top: 18px;
 }

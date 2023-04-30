@@ -85,8 +85,8 @@ const SuperBunker = (options = {}) => {
   }
 
   function hit(points, target) {
-    // only tank gunfire counts against super bunkers.
-    if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
+    // only tank flamethrowers - or, gunfire - counts against super bunkers.
+    if (target && (target.data.type === TYPES.flame || target.data.type === TYPES.gunfire) && target.data.parentType === TYPES.tank) {
       data.energy = Math.max(0, data.energy - points);
       updateFireModulus();
       sprites.updateEnergy(exports);
