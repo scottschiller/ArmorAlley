@@ -75,7 +75,7 @@ const Editor = () => {
 
   const isChildOfClassName = ((node, className) => {
 
-    // go up the DOM tree, looking for the parent
+    // go up the DOM tree, looking for the parent - and if found, return it.
 
     if (utils.css.has(node, className)) return true;
 
@@ -83,21 +83,7 @@ const Editor = () => {
       node = node.parentNode;
     }
 
-    return utils.css.has(node, className);
-
-  });
-
-  const isChildOf = ((node, parent) => {
-
-    // go up the DOM tree, looking for the parent
-
-    if (node === parent) return true;
-
-    while (node !== parent && node.parentNode) {
-      node = node.parentNode;
-    }
-
-    return (node === parent);
+    return utils.css.has(node, className) ? node : null;
 
   });
 
@@ -115,16 +101,17 @@ const Editor = () => {
     const battleField = document.getElementById('battlefield');
 
     dom.oCutoffLine = battleField.appendChild(oCutoffLine);
-    dom.oFinder = document.getElementById('editor-window');
     dom.oMarquee = battleField.appendChild(oMarquee);
     dom.oRadarScrubber = battleField.appendChild(oRadarScrubber);
 
+    dom.oFinder = document.getElementById('editor-window');
     dom.oFinder.style.display = 'block';
 
-    const rect = dom.oFinder.getBoundingClientRect();
+    dom.oHelp = document.getElementById('editor-window-help');
+    dom.oHelp.style.display = 'block';
 
-    data.finderX = rect.left;
-    data.finderY = rect.top;
+    dom.oShowHelp = document.getElementById('editor-show-help');
+    dom.oShowHelp.style.display = 'none';
 
   }
 
@@ -157,7 +144,7 @@ const Editor = () => {
   data = {
     activeTool: null,
     activeToolOffset: 0,
-    draggingFinder: false,
+    draggingWindow: false,
     isEnemy: false,
     marquee: {
       x: 0,
@@ -167,6 +154,10 @@ const Editor = () => {
     },
     finderX: 0,
     finderY: 0,
+    helpX: 0,
+    helpY: 0,
+    windowX: 0,
+    windowY: 0,
     marqueeSelected: {},
     mode: modes.DEFAULT,
     mouseDown: false,
@@ -186,6 +177,9 @@ const Editor = () => {
 
   dom = {
     oFinder: null,
+    oHelp: null,
+    oShowHelp: null,
+    oWindow: null,
     oCutoffLine: null,
     oMarquee: null,
     oRadarScrubber: null
@@ -254,6 +248,11 @@ const Editor = () => {
 
       console.log(str);
   
+    },
+
+    showHelp: () => {
+      dom.oHelp.style.display = 'block';
+      dom.oShowHelp.style.display = 'none';
     },
 
     play: () => {
@@ -901,6 +900,9 @@ const Editor = () => {
       // ignore right clicks, no special treatment here.
       if (e.button) return;
 
+      // finder window close button?
+      if (e.target.className === 'close-button') return;
+
       data.mouseDown = true;
       data.mouseDownTarget = e.target;
       data.mouseDownX = e.clientX;
@@ -922,13 +924,23 @@ const Editor = () => {
       let target = normalizeSprite(data.mouseDownTarget);
 
       if (isChildOfClassName(target, 'title-bar')) {
-        target = dom.oFinder;
-        utils.css.add(dom.oFinder, css.active);
-        data.draggingFinder = true;
+
+        target = isChildOfClassName(target, 'finder');
+
+        dom.oWindow = target;
+
+        utils.css.add(target, css.active);
+
+        data.draggingWindow = true;
+
+        const rect = dom.oWindow.getBoundingClientRect();
+        data.windowX = rect.x;
+        data.windowY = rect.y;
+        
         return stopEvent(e);
       }
 
-      if (isChildOf(target, dom.oFinder)) {
+      if (isChildOfClassName(target, 'finder')) {
         // don't interfere with clicks inside modal.
         return;
       }
@@ -1041,13 +1053,13 @@ const Editor = () => {
 
       if (!data.mouseDown) return;
 
-      if (data.draggingFinder) {
+      if (data.draggingWindow) {
 
-        const deltaX = Math.abs(data.mouseDownX - data.finderX);
-        const deltaY = Math.abs(data.mouseDownY - data.finderY);
+        const deltaX = Math.abs(data.mouseDownX - data.windowX);
+        const deltaY = Math.abs(data.mouseDownY - data.windowY);
 
-        dom.oFinder.style.top = (data.mouseY - deltaY) + 'px';
-        dom.oFinder.style.left = (data.mouseX - deltaX) + 'px';
+        dom.oWindow.style.top = (data.mouseY - deltaY) + 'px';
+        dom.oWindow.style.left = (data.mouseX - deltaX) + 'px';
 
         return;
 
@@ -1132,7 +1144,17 @@ const Editor = () => {
 
     },
 
-    mouseup() {
+    mouseup(e) {
+
+      // finder window close button?
+      if (e.target.className === 'close-button') {
+        const oWindow = isChildOfClassName(e.target, 'finder');
+        if (oWindow) {
+          oWindow.style.display = 'none';
+          dom.oShowHelp.style.display = 'inline';
+        }
+        return stopEvent(e);
+      }
 
       if (data.scrubberActive) {
         utils.css.remove(dom.oRadarScrubber, css.active);
@@ -1144,15 +1166,15 @@ const Editor = () => {
         data.marqueeActive = false;
       }
 
-      if (data.draggingFinder) {
-        utils.css.remove(dom.oFinder, css.active);
-        const rect = dom.oFinder.getBoundingClientRect();
-        data.finderX = rect.x;
-        data.finderY = rect.y;
-        data.draggingFinder = false;
+      if (data.draggingWindow) {
+        utils.css.remove(dom.oWindow, css.active);
+        const rect = dom.oWindow.getBoundingClientRect();
+        data.windowX = rect.x;
+        data.windowY = rect.y;
+        data.draggingWindow = false;
       }
 
-      const spriteClicked = utils.css.has(data.mouseDownTarget, 'sprite');
+      const spriteClicked = data.mouseDownTarget && utils.css.has(data.mouseDownTarget, 'sprite');
       const justAddedSomething = (data.activeTool && data.mouseDownTarget === dom.oCutoffLine);
       
       if (!spriteClicked && !justAddedSomething && !downKeys.shift && !data.mouseMoveCount) {

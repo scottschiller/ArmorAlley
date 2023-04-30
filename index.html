@@ -1223,23 +1223,6 @@
 
     <div class="grid">
 
-      <div id="editor-window-help">
-        <h3>How-To</h3>
-
-        <p>Click and drag the landscape, or use the "scrollbar" in the top radar area to navigate.</p>
-
-        <h3>Placing Items</h3>
-        <p>To place a Tank, press <b><u>T</u></b> (shift not required), then click near the ground.</p>
-        <p>Some elements are grouped by type. Press the relevant key, e.g. <b><u>S</u></b> for structures, <b><u>G</u></b> for grass / gravestones. Once active, press the same key or use <b>[</b> <b>]</b> to cycle through items.</p>
-        <p>Once there is an "active" type, click near the ground to place it.</p>
-
-        <h3>Selecting Items</h3>
-        <p>Click an item to select it. Arrow keys can move L/R one pixel at a time.</p>
-        <p>Click while pressing <b></b>CMD / windows / meta-key</b> to draw a selection marquee. <b>Shift</b> can be held to do multi-select / toggle selection.</p>
-        <p>Press <b>esc</b> to exit "placement" mode.</p>
-
-      </div>
-
       <h3>Controls</h3>
 
       <ul class="compact" style="margin-bottom:4px !important">
@@ -1289,11 +1272,48 @@
 
       <button id="editor-play" data-method="play" type="button">Play</button>
 
+      <button id="editor-show-help" data-method="showHelp" type="button">Help</button>
 
     </div>
 
     <p>
     </p>
+
+  </div>
+
+</div>
+
+<div id="editor-window-help" class="finder mac-classic dialog">
+
+  <div class="title-bar">
+    <div class="close-button"></div>
+    <div class="title-bar-stripes"></div>
+    <div class="title-bar-label">Armor Alley&trade; Editor :: Help</div>
+  </div>
+
+  <div class="body">
+
+    <div class="grid">
+
+      <h3>EXPERIMENTAL DISCLAIMER</h3>
+      <p>This level editor is a work in progress!</p>
+      <p>Think of it like a toolbox of brushes. You select a brush, and then "paint" the landscape with e.g., tanks or bunkers or flowers.</p>
+
+      <h3>How-To</h3>
+
+      <p>Click and drag the landscape, or use the "scrollbar" in the top radar area to navigate.</p>
+
+      <h3>Placing Items</h3>
+      <p>To place a Tank, press <b><u>T</u></b> (shift not required), then click near the ground. Use the <b>&lt;</b> <b>&gt;</b> keys to switch sides.</p>
+      <p>Some elements are grouped by type. Press the relevant key, e.g. <b><u>S</u></b> for structures, <b><u>G</u></b> for grass / gravestones. Once active, press the same key or use <b>[</b> <b>]</b> to cycle through items.</p>
+      <p>Once there is an "active" type, click near the ground to place it.</p>
+
+      <h3>Selecting Items</h3>
+      <p>Click an item to select it. Arrow keys can move L/R one pixel at a time.</p>
+      <p>Click while pressing <b></b>CMD / windows / meta-key</b> to draw a selection marquee. CMD-click on an item to toggle and do multi-selection. <b>Shift</b> can be held during marquee for multi-select / toggle.</p>
+      <p>Press <b>esc</b> to exit "placement" mode.</p>
+
+    </div>
 
   </div>
 
