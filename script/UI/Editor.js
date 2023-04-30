@@ -1,4 +1,4 @@
-import { keyboardMonitor } from '../aa.js';
+import { keyboardMonitor, prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { TYPES,  worldWidth } from '../core/global.js';
@@ -895,6 +895,8 @@ const Editor = () => {
     },
 
     mousedown(e) {
+
+      if (prefsManager.isActive()) return;
 
       // ignore right clicks, no special treatment here.
       if (e.button) return;
