@@ -188,7 +188,8 @@
           <div style="margin-top:0.75em">
             <button type="button" id="start-game-button" data-action="start-game" data-title="Play the original game, with a variety of levels and difficulties." class="game-start large">Start 🚁</button>
             <button type="button" id="game-options-button" data-title="General settings. Access in-game via ESC or options link." class="large">Options 🛠️</button>
-            <button type="button" id="start-network-game" data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Experimental." value="network" class="large network">Network* <span class="network-icon"></span></button>
+            <button type="button" id="start-editor-button" data-action="start-editor" data-title="Modify the currently-selected level.<br />*NOTE: Highly experimental." value="editor" class="large hide-on-mobile">Editor* <span class="editor-icon">✏️</span></button>
+            <button type="button" id="start-network-game" data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental." value="network" class="large network">Network* <span class="network-icon"></span></button>
           
           </div>
 
@@ -1282,9 +1283,11 @@
 
       <p class="non-indented"><b>Active: </b><span id="editor-active">[none]</span></p>
 
+      <!--
       <button id="editor-export" data-method="export" type="button">Export</button>
+      -->
 
-      <span id="editor-clipboard"> Copied to clipboard.</span>
+      <button id="editor-play" data-method="play" type="button">Play</button>
 
 
     </div>

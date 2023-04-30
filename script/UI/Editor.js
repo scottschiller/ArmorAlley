@@ -158,8 +158,6 @@ const Editor = () => {
     activeTool: null,
     activeToolOffset: 0,
     draggingFinder: false,
-    levelDataSource: null,
-    levelData: null,
     isEnemy: false,
     marquee: {
       x: 0,
@@ -218,9 +216,22 @@ const Editor = () => {
   });
 
   methods = {
+
     export: () => {
 
       const data = game.getObjects();
+
+      console.log(data);
+
+      const items = {};
+
+      data.forEach((item) => {
+        // e.g., 'bunker', 'right', '2048' -> [ 'bunker-right', 2048 ]
+        const key = item[0] + (item.length === 3 ? ':' + item[1] : '');
+        if (!items[key]) items[key] = [];
+        // push X offset onto array
+        items[key].push(item[item.length-1]);
+      });
 
       let str = JSON.stringify(data);
 
@@ -237,9 +248,15 @@ const Editor = () => {
       str = str.replace(/'([lnr])'/g, "$1");
 
       // start and end
-      str = str.replace('[[', "'Level Name': [\n[");
+      str = str.replace('[[', "'Custom Level': [\n[");
       str = str.replace(']]', ' ]\n]');
 
+      // testing: drop newlines
+      str = str.replace(/\/n/g, '');
+
+      console.log(str);
+
+      /*
       function onCopy(ok) {
         const cb = document.getElementById('editor-clipboard');
         if (ok) {
@@ -249,8 +266,32 @@ const Editor = () => {
       }
 
       if (!navigator?.clipboard?.writeText) return;
+  
       navigator.clipboard.writeText(str).then(() => onCopy(true), () => onCopy(false));
+      */
+  
+    },
+
+    play: () => {
+
+      const data = game.getObjects();
+
+      const items = {};
+
+      data.forEach((item) => {
+        // e.g., 'bunker', 'right', '2048' -> [ 'bunker-right', 2048 ]
+        const key = item[0] + (item.length === 3 ? ':' + item[1] : '');
+        if (!items[key]) items[key] = [];
+        // push X offset onto array
+        items[key].push(item[item.length-1]);
+      });
+
+      const urlData = JSON.stringify(items);
+
+      window.open('./?customLevel=' + urlData, '_aa_preview');
+
     }
+  
   };
 
   function setMode(mode) {

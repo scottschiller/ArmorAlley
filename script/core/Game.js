@@ -285,10 +285,10 @@ const game = (() => {
       items[type].forEach((item) => {
 
         // 2 or 3 args, depending
-        const args = [ item.data.type, item.data.isHostile ? 'n' : (item.data.isEnemy ? 'r' : 'l'), Math.floor(item.data.x) ];
+        const args = [ item.data.type, item.data.isHostile ? 'n' : (item.data.isEnemy ? 'r' : (item.data.isNeutral ? 'n' : 'l')), Math.floor(item.data.x) ];
 
-        // drop l/r on terrain items
-        if (item.data.isTerrainItem) args.splice(1, 1);
+        // drop l/r on terrain items, and clouds
+        if (item.data.isTerrainItem || item.data.type === TYPES.cloud) args.splice(1, 1);
 
         gameData.push(args);
 

@@ -1,11 +1,11 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
-import { game, gameType } from '../core/Game.js';
-import { isMobile, isSafari } from '../core/global.js';
+import { game } from '../core/Game.js';
+import { isMobile, isSafari, searchParams } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { previewLevel, setLevel } from '../levels/default.js';
+import { previewLevel, setCustomLevel, setLevel } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
@@ -24,6 +24,64 @@ let didBNBIntro;
 let gameMenuActive;
 
 let originalSubTitle;
+
+let customLevel = searchParams.get('customLevel');
+
+if (customLevel) {
+
+  try {
+
+    customLevel = JSON.parse(customLevel);
+
+    // iterate through keys, make proper arrays of data and assign to defaultLevels['Custom Level']
+    const newData = [];
+
+    const alignmentMap = {
+      l: 'left',
+      n: 'neutral',
+      r: 'right'
+    };
+
+    Object.keys(customLevel).forEach((item) => {
+
+      let type, alignment;
+
+      if (item.indexOf(':') !== -1) {
+        // e.g., `bunker:r`
+        [ type, alignment ] = item.split(':');
+      } else {
+        alignment = null;
+        type = item;
+      }
+
+      // e.g., ['bunker', 'r']
+      const entry = [type];
+
+      if (alignment) entry.push(alignmentMap[alignment]);
+
+      // add all the X offsets
+      // ['bunker', 'r', 2048]
+      customLevel[item].forEach((offset) => {
+        newData.push([
+         ...entry,
+         offset
+        ])
+      });
+
+      newData.sort(utils.array.compareByLastItem());
+
+      setCustomLevel(newData);
+
+    });
+
+  } catch(e) {
+
+    console.warn('Invalid custom level data?', e);
+    customLevel = null;
+
+  }
+
+}
 
 function init() {
 
@@ -144,6 +202,27 @@ function init() {
   prefsManager.init();
 
   // game menu / intro screen
+
+  if (customLevel) {
+
+    // <optgroup label="Network Game Levels">
+
+    const customGroup = document.createElement('optgroup');
+    customGroup.label = 'Custom Game Level';
+
+    const customOption = document.createElement('option');
+    customOption.innerHTML = 'Custom Level';
+    customOption.value = 'Custom Level';
+    customGroup.appendChild(customOption);
+
+    oSelect.appendChild(customGroup);
+    
+    oSelect.selectedIndex = oSelect.options.length - 1;
+
+    // do the same thing for the network modal
+    prefsManager.addGroupAndLevel(customGroup.cloneNode(true));
+
+  }
 
   previewLevel(oSelect.value);
 
@@ -289,6 +368,9 @@ function formClick(e) {
 
     setLevel(oSelect.value, oSelect[selectedIndex].textContent);
 
+    // get the current game type from the form.
+    const gameType = oSelect.value.match(/tutorial/i) ? 'tutorial' : (document.querySelector('#game-type-list input[name="game_type"]:checked')?.value || 'easy');
+    
     game.setGameType(gameType);
 
     formCleanup();

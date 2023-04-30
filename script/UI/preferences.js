@@ -675,6 +675,17 @@ function PrefsManager() {
 
   }
 
+  function addGroupAndLevel(oGroup) {
+
+    const oLevelSelect = dom.o.querySelector('[name="net_game_level"]');
+    if (!oLevelSelect) return;
+
+    oLevelSelect.appendChild(oGroup);
+
+    oLevelSelect.selectedIndex = oLevelSelect.options.length - 1;
+
+  }
+
   function applyNewPrefs(newGamePrefs) {
 
     let prefChanges = [];
@@ -1311,6 +1322,7 @@ function PrefsManager() {
   };
 
   return {
+    addGroupAndLevel,
     applyNewPrefs,
     init,
     ignoreURLParams,

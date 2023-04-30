@@ -2,6 +2,24 @@ const utils = {
 
   array: {
 
+    compareByLastItem: () => {
+
+      let result;
+
+      return (a, b) => {
+        const prop = a.length - 1;
+        if (a[prop] < b[prop]) {
+          result = -1;
+        } else if (a[prop] > b[prop]) {
+          result = 1;
+        } else {
+          result = 0;
+        }
+        return result;
+      };
+
+    },
+
     compare: (property) => {
 
       let result;
