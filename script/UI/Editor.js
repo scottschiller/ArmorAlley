@@ -221,8 +221,6 @@ const Editor = () => {
 
       const data = game.getObjects();
 
-      console.log(data);
-
       const items = {};
 
       data.forEach((item) => {
@@ -255,20 +253,6 @@ const Editor = () => {
       str = str.replace(/\/n/g, '');
 
       console.log(str);
-
-      /*
-      function onCopy(ok) {
-        const cb = document.getElementById('editor-clipboard');
-        if (ok) {
-          utils.css.add(cb, css.active);
-          common.setFrameTimeout(() => utils.css.remove(cb, css.active), 1500);
-        }
-      }
-
-      if (!navigator?.clipboard?.writeText) return;
-  
-      navigator.clipboard.writeText(str).then(() => onCopy(true), () => onCopy(false));
-      */
   
     },
 
