@@ -1004,6 +1004,7 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   overflow: hidden;
   /* background-image: url(../image/fuel-bar-background.png); */
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVQIW2NYzcT4nwEGQBwAHUEDW61K8xIAAAAASUVORK5CYII=);
+  background-size: 2px 2px;
   image-rendering: optimizeQuality;
   image-rendering: -webkit-optimize-contrast;
   margin-top: 3px;
