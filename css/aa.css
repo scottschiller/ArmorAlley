@@ -1537,7 +1537,6 @@ body.is_firefox #radar .radar-item--animated {
   /* 58px x 3 frames */
   height: 18px;
   background-image: url(../image/tank-sprite-horizontal.png);
-  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAAmBAMAAAB69j4MAAAAGFBMVEUAmCEAAABVVQEOqgIFVQH/qgGqqqpVVVUOlAyrAAAAAXRSTlMAQObYZgAAATRJREFUeAHV1YGJdCEQA+C/hbTwWkgLacEWbGHa/y/sIB6y8PQAmXDg+XY+DCD470sw59vQfVmubqrnefiQkjjwdVm/rpUe/qRRDkngvixfN6VkKLWW0va+LFoXwCplasu0Sy7JcnUbhv3IQVtuMpyCC7JkXVtMNIctlf9jzQVZsa6tsWOqQVdpkLkhy9VFzotOrnJawjnADVm4rt0knZWIGQA3ZNm6eyFxQRau29Ff/zm/5Aad5eaRVesCXTGu9XLLqZHwthseSRzLblm1riJCno0cjISRMuRERNK/y74lUbhuD0ekfxszlmGjXMMxPZVzXWxJw7J1NeQ8o9zP39k7TiWAQ9kr1wXkCdvpfn/W+TuDPvRILmf215JA2brO1nu4yt0HePMRNixd923OpeE5rVv3PyoJAr/dh+bcAAAAAElFTkSuQmCC); */
   background-size: 174px 18px;
   animation: animate-transform-sprite-tank 0.1s steps(3) infinite;
 }
