@@ -1,7 +1,7 @@
 import { gamePrefs } from '../UI/preferences.js';
-import { game, gameType } from '../core/Game.js';
+import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { rng, searchParams, tutorialMode, TYPES, winloc, worldHeight } from '../core/global.js';
+import { searchParams, TYPES } from '../core/global.js';
 import { net } from '../core/network.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
@@ -873,21 +873,29 @@ function addWorldObjects() {
    * Original game levels
    */
 
-  // left base area...
-  addItem('right-arrow-sign', -16);
-  addItem('tree', 505);
-  addItem('right-arrow-sign', 550);
+  if (levelName !== 'Custom Level' && !game.objects.editor) {
 
-  // right base area...
-  addItem('left-arrow-sign', 7700, 'scaleX(-1)');
-  addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
+    // left base area...
+    addItem('right-arrow-sign', -16);
+    addItem('tree', 505);
+    addItem('right-arrow-sign', 550);
 
-  // happy little clouds!
+    // right base area...
+    addItem('left-arrow-sign', 7700, 'scaleX(-1)');
+    addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
 
-  for (var i = 0; i < 8; i++) {
-    addObject(TYPES.cloud, {
-      x: 2048 + (4096 * (i / 7))
-    });
+    if (levelName === 'Tutorial') {
+
+      // happy little clouds!
+      // all other default levels should have a bunch.
+      for (var i = 0; i < 8; i++) {
+        addObject(TYPES.cloud, {
+          x: 2048 + (4096 * (i / 7))
+        });
+      }
+
+    }
+
   }
 
   function addOriginalLevel(data) {
