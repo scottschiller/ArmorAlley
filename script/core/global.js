@@ -356,6 +356,7 @@ export {
   debugType,
   DEFAULT_VOLUME,
   rad2Deg,
+  searchParams,
   worldWidth,
   worldHeight,
   forceZoom,
