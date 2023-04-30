@@ -108,18 +108,24 @@ const GameLoop = () => {
       sprites.moveWithScrollOffset(game.objects[TYPES.terrainItem][i]);
     }
 
-    if (isGameOver() && !data.gameStopped) {
-      if (data.battleOverFrameCount++ > 1) {
-        data.gameStopped = true;
-        // end game, all units updated, subsequent frames: only animate shrapnel and smoke.
+    if (isGameOver() && !data.gameStopped && data.battleOverFrameCount++ > 1) {
+
+      data.gameStopped = true;
+
+      // don't animate vans or helicopters, but allow everything else.
+      gameObjects.helicopter = [];
+      gameObjects.van = [];
+
+      // eventually, stop everything.
+      window.setTimeout(() => {
         gameObjects = {
           gunfire: game.objects.gunfire,
           shrapnel: game.objects.shrapnel,
           smoke: game.objects.smoke,
           domFetti: game.objects.domFetti,
           queue: game.objects.queue
-        }
-      }
+        };
+      }, 5000);
     }
 
     // update all setTimeout()-style FrameTimeout() instances.
