@@ -137,10 +137,11 @@ function addWorldObjects() {
   });
   */
 
-  const env = !!(window.location.href.match(/schillmania|original/i));
+  // const env = !!(window.location.href.match(/schillmania|original/i));
   
   const defaultLevel = 'Cake Walk';
 
+  /*
   if ((env && !level) || tutorialMode) {
     
     let i, x;
@@ -866,6 +867,7 @@ function addWorldObjects() {
     return;
 
   }
+  */
 
   /**
    * Original game levels
