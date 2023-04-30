@@ -5764,15 +5764,15 @@ body.edit-mode #battlefield {
 }
 
 #editor-window .static-sprite {
-  width: 16px;
-  height: 16px;
   background-size: contain;
   background-position: 100% 50%;
   background-repeat: no-repeat;
 }
 
 #editor-window .static-sprite.default {
- background-image: url(../image/icon_savegame.png);
+  width: 16px;
+  height: 16px;
+  background-image: url(../image/icon_savegame.png);
 }
 
 #editor-window .static-sprite.balloon {
@@ -5808,8 +5808,8 @@ body.edit-mode #battlefield {
 
 #active-sprite {
   position: absolute;
-  bottom: 4px;
-  right: 6px;
+  bottom: 0px;
+  right: 0px;
   filter: invert(1);
   height: 12px;
   width: 32px;
