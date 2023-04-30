@@ -241,7 +241,7 @@ const Radar = () => {
 
     if (!data.isJammed) {
       if (o) {
-        o.className = '';
+        utils.css.remove(o, 'active');
         common.setFrameTimeout(() => {
           o.remove();
           o = null;
@@ -260,7 +260,9 @@ const Radar = () => {
 
       common.setFrameTimeout(() => {
         if (!o) return;
-        o.className = 'active';
+        let css = ['active'];
+        if (window.location.href.match(/staticRadar/i)) css.push('static');
+        utils.css.add(o, ...css);
         o = null;
       }, 128);
 

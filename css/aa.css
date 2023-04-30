@@ -821,16 +821,17 @@ body.bnb .tv-noise-overlay {
   opacity: 1;
 }
 
+#radar-jammed-overlay.static .noise {
+  animation: none !important;
+  background: rgba(0,48,0,0.45) !important;
+}
+
 body.bnb .tv-noise-overlay {
   filter: blur(0.25px);
   background-size: 100px 100px;
   /* faster */
   animation-duration: 0.5s;
   opacity: 0.4;
-}
-
-#radar-jammed-overlay.active .noise {
-  opacity: 0.65;
 }
 
 body.game-paused #radar-jammed-overlay.active .noise,
