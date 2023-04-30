@@ -54,6 +54,8 @@ const View = () => {
 
     // slightly hackish: apply scroll offsets to both game view, and local player.
 
+    if (game.objects.gameLoop.data.gameStopped) return;
+
     if (allowOverride) {
 
       data.battleField.scrollLeftVX = 0;
