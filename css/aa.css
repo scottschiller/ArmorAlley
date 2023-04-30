@@ -139,6 +139,7 @@ body.game-started {
   opacity: 0;
   transform: scale3d(1.2,1.2,0);
   transform-origin: 50% 50%;
+  pointer-events: none;
 }
 
 #mtv-bnb-in {

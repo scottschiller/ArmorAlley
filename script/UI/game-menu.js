@@ -530,20 +530,7 @@ function hideTitleScreen(callback) {
 
     if (e.target === overlay && e.propertyName === 'opacity') {
 
-      /**
-       * hackish: removing this element seems to break active
-       * touchstart -> touchmove() events on iOS Safari,
-       * which breaks the joystick feature. un-style, instead.
-       */
-      if (!(isMobile && isSafari)) {
-        overlay?.remove();
-      } else if (overlay) {
-        overlay.style.display = 'none';
-        overlay.style.background = 'transparent';
-        overlay.style.transition = '';
-        overlay.style.transform = '';
-        overlay.style.zIndex = 0;
-      }
+      overlay?.remove();
 
       overlay = null;
 
