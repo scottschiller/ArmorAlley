@@ -6,6 +6,8 @@ import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
 
+const HELP_X_PREF = 'editor_help_x';
+
 const Editor = () => {
 
   const itemTypes = {
@@ -107,11 +109,14 @@ const Editor = () => {
     dom.oFinder = document.getElementById('editor-window');
     dom.oFinder.style.display = 'block';
 
+    // see if help was closed previously
+    const wasClosed = utils.storage.get(HELP_X_PREF);
+
     dom.oHelp = document.getElementById('editor-window-help');
-    dom.oHelp.style.display = 'block';
+    dom.oHelp.style.display = wasClosed ? 'none' : 'block';
 
     dom.oShowHelp = document.getElementById('editor-show-help');
-    dom.oShowHelp.style.display = 'none';
+    dom.oShowHelp.style.display = wasClosed ? 'inline' : 'none';
 
   }
 
@@ -253,6 +258,7 @@ const Editor = () => {
     showHelp: () => {
       dom.oHelp.style.display = 'block';
       dom.oShowHelp.style.display = 'none';
+      utils.storage.remove(HELP_X_PREF);
     },
 
     play: () => {
@@ -1152,6 +1158,7 @@ const Editor = () => {
         if (oWindow) {
           oWindow.style.display = 'none';
           dom.oShowHelp.style.display = 'inline';
+          utils.storage.set(HELP_X_PREF, true);
         }
         return stopEvent(e);
       }
