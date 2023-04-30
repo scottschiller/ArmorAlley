@@ -875,15 +875,6 @@ function addWorldObjects() {
 
   if (levelName !== 'Custom Level' && !game.objects.editor) {
 
-    // left base area...
-    addItem('right-arrow-sign', -16);
-    addItem('tree', 505);
-    addItem('right-arrow-sign', 550);
-
-    // right base area...
-    addItem('left-arrow-sign', 7700, 'scaleX(-1)');
-    addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
-
     if (levelName === 'Tutorial') {
 
       // happy little clouds!
@@ -893,6 +884,17 @@ function addWorldObjects() {
           x: 2048 + (4096 * (i / 7))
         });
       }
+
+    } else {
+
+      // left base area...
+      addItem('right-arrow-sign', -16);
+      addItem('tree', 505);
+      addItem('right-arrow-sign', 550);
+
+      // right base area...
+      addItem('left-arrow-sign', 7700, 'scaleX(-1)');
+      addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
 
     }
 
