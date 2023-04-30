@@ -1,10 +1,11 @@
-import { gameType } from '../core/Game.js';
+import { game, gameType } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { gamePrefs } from './preferences.js';
 import { net } from '../core/network.js';
 import { levelName } from '../levels/default.js';
+import { effects } from '../core/effects.js';
 
 const Notifications = () => {
 
@@ -215,6 +216,14 @@ const Notifications = () => {
     }
 
     add(`Welcome to ARMOR ALLEY. 🚁<br />${playingMessage}`);
+
+    // special case
+    if (levelName === 'Rainstorm') {
+      common.setFrameTimeout(() => {
+        effects.updateStormStyle('rain');
+        game.objects.notifications.add('☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)');
+      }, 5000);
+    }
 
     common.setFrameTimeout(() => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'), 2000);
 
