@@ -518,12 +518,12 @@ function PrefsManager() {
       // hackish: grab network level selection from home menu, and apply to prefs.
       const gameMenuLevel = document.getElementById('game_level');
       // NOTE: offset of -1 because home menu has tutorial entry.
-      // And, choose the first level if the home menu is on tutorial when the network modal opens.
-      document.getElementById('select_net_game_level').selectedIndex = Math.max(0, gameMenuLevel.selectedIndex - 1);
-      gamePrefs.net_game_level = gameMenuLevel.value;
+      const netGameLevel = document.getElementById('select_net_game_level');
+      netGameLevel.selectedIndex = Math.max(0, gameMenuLevel.selectedIndex - 1);
+      gamePrefs.net_game_level = netGameLevel.value;
 
       // and, update local model.
-      selectLevel(gameMenuLevel.value);
+      selectLevel(gamePrefs.net_game_level);
 
       // browsers may remember scroll offset through reloads; ensure it resets.
       document.getElementById('form-scroller').scrollTop = 0;
