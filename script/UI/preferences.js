@@ -223,6 +223,10 @@ function PrefsManager() {
       hide();
     } else {
       show();
+      if (isMobile) {
+        // shenanigans: always do this on mobile.
+        events.updateScreenScale();
+      }
     }
 
   }
