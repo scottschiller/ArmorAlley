@@ -5871,7 +5871,7 @@ body.game-paused #tutorial-window {
 @media screen and (orientation: portrait) {
   /* leave room for notifications. */
   body.is-mobile #tutorial-window {
-    top: 150px;
+    top: 180px;
   }
 }
 
