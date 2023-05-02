@@ -4788,6 +4788,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   margin-top: 3px;
   margin-right: 6px;
   image-rendering: smooth;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 #game-prefs-header .column {
