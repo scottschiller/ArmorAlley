@@ -820,7 +820,7 @@ body.bnb .tv-noise-overlay {
 #radar-jammed-overlay.active .noise,
 body.bnb .tv-noise-overlay {
   animation: noise 1s steps(8, end) infinite both;
-  opacity: 1;
+  opacity: 0.67;
 }
 
 #radar-jammed-overlay.static .noise {
