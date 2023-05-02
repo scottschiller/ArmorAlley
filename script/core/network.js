@@ -303,7 +303,7 @@ const messageActions = {
     // A form of notification, really.
     if (game.data.started && data.text && !slashCommand) {
 
-      game.objects.notifications.add(`<b>${gamePrefs.net_remote_player_name}</b>${common.basicEscape(data.text)} 💬`);
+      game.objects.notifications.add(`<b>${gamePrefs.net_remote_player_name}</b>: ${common.basicEscape(data.text)} 💬`);
 
     } else {
 
