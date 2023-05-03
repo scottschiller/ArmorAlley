@@ -1,25 +1,233 @@
-# Armor Alley: Web Prototype
+**Armor Alley: Remastered**
+---
+
+~~~
+                            ▄██▀      
+                          ▄█▀         
+          ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄
+                      ▄█████▄▄▄▄  ▀▀▀ 
+      ▄         ▄████████████████▄   
+      ██       ▀████████████████████▄
+      ▀███    ▄██████████████████████
+       ████▄▄███████████████████████▀ 
+      ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
+       ██▀              ██▘▘ ██▘▘
+
+ A R M O R  A L L E Y :: R E M A S T E R E D
+~~~
+
+A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
 
 Copyright (c) 2013, Scott Schiller
 
 http://www.schillmania.com/armor-alley/
 
-[Original article about building "V1.0"](http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
-
-Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
-
 Code provided under the [Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License](http://creativecommons.org/licenses/by-nc/3.0/)
+
+Original game Copyright (C) 1989 - 1991 Information Access Technologies.
+
+http://en.wikipedia.org/wiki/Armor_alley
 
 -----
 
-## Changelog / Revision History
+**Quick links**
+---
 
-Previous release: V1.5.20180201
+* 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
-Original release: V1.0.20131031
+* [Original article about building "V1.0"](http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
+
+* 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
+---
+
+**Changelog / Revision History**
+---
 
 
-### V1.6.20220101: Massive update for 2022, based on work from 2020 + 2021
+
+**V2.0.20230501: 10th Anniversary "Remastered" Edition**
+
+![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/armor-alley_game_image_1920x1080.jpg)
+
+Previous release: V1.5.20220201. Original release: V1.0.20131031.
+
+**Video overview**
+---
+• 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+
+**New features**
+---
+* **Mobile / touch screen support**. Updated UX / UI, better playability and feature parity vs. desktop. Portrait is playable, but landscape is preferable on smaller screens.
+
+* **Network multiplayer**, like the original game. PvP, or co-op. Can be played with or against CPU players, as well.
+
+* **22 game levels.** 10 original game "campaign" battles, plus 12 levels designed for network games.
+
+* **Level editor**. Create or modify existing levels. Data stored in URL at present - terrible, I know. Also compatible with network games.
+
+* Optional **"Virtual Stupidity"** theme pack. 🎸🤘
+
+## Performance improvements
+---
+
+• Reduced CPU load, in general, across the board between JavaScript execution, layout, and paint / compositing.
+
+• Game Loop: Adjustments to target 30FPS on 120 Hz monitors. [01f9f43](commit/01f9f435424c6b61f8765b13dd52504cd9b3d397)
+
+• Collision "zones", greatly reducing object comparison work and function calls. 20,000 collision checks per second, down to 500 or less. https://twitter.com/schill/status/1627725917345955840
+
+• DOM node pool / recycling: `poolBoy.js` - for things like gunfire and smoke. Less paint / repaint, more GPU compositing. https://twitter.com/schill/status/1628833430988554240
+
+• Reduced variable / object creation in game loop.
+
+• Battlefield DOM node no longer being transformed for scroll; now, only on-screen sprites.
+
+## Sound
+---
+
+• Even more sound effects.
+
+• Some sounds can use ±5% playback speed for a little variety.
+
+• Sounds can now be heard "in the distance," to the left and right.
+
+• "Virtual Stupidity": 500+ meticulously-picked samples. [21f7726](commit/21f7726acde0b03b251e589963e1dde556566a74)
+
+## UX / UI
+---
+• "Live Graveyard" feature: decorate the battlefield over time. [032f845](commit/032f8459321ea61a73421450be44d7c4340a9e66)
+
+• "Remastered" 8-bit sprite assets from Armor Alley V1.1 for Macintosh. The original 1.0 and PC-DOS version had up to 4-bit colour.
+
+• Nice home page logo, "scanned" from the combat handbook that came with the original boxed game.
+
+• Network games use Windows 95's `LIGHTS.EXE` taskbar UI showing tx/rx traffic, very important. ;) https://twitter.com/schill/status/1636449071140605958 [17c0a9b](commit/17c0a9b4a2deb1770281b84842ee1c4f56412bf6)
+
+• Four types of stormy weather: rain, hail, snow, and one other that's a surprise.
+
+• Radar jamming: New visual noise overlay.
+
+"Extra-fancy" bunker explosions, particles, burning, and smoke effects.
+
+• Nicer bomb explosion on ground. Hat tip: "Dirt Explosion" by SrGrafo on DeviantArt - https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
+
+• "DOMFetti" confetti explosions, colours based on the target being hit.
+
+• Notifications: Verbiage for different actions, e.g., "your tank steamrolled an infantry", or gunfire "popped a balloon" etc.
+
+## Bug fixes
+---
+
+• Refactor of Traffic Control, so vehicles are less likely to get "stuck" waiting for one another.
+
+• Helicopter bombs could be delayed after key press. They should now be consistent and fire on the next frame.
+
+• Super Bunkers would sometimes stay yellow, even when friendly.
+
+• Additional "arrow signs" on battlefield were missing from bases since 2013. Oops. ;)
+
+• Parachute infantry (dropped from helicopter) no longer get a recycle (reaching end of battlefield) reward.
+
+• Balloon respawning at top of screen: fixed.
+
+• Allow balloons to be moving up or down at init, previously always downward.
+
+• Fixed bomb spark / hidden / bottom-align logic.
+
+• Tighten up inventory ordering / queueing, consistent spacing + avoiding overlapping between sprites.
+
+## Gameplay
+---
+
+**Helicopters**
+
+• Only the local player's helicopter blinks on the radar; all others are solid, as in the original game.
+
+• Desktop: double-click no longer toggles helicopter auto-rotate feature.
+
+**Smart Missiles**
+
+• Notify user when trying to fire a smart missile, but no eligible targets nearby.
+
+• Smart missiles can now take damage, and plow through up to four infantry (ground units only) before dying.
+
+• Smart Missile targeting refactor. Removed former "missile facing target" requirement. Prefer shortest distance, unless just above ground. Hat tip: Pythagoras. :wink: :triangular_ruler:
+
+• Smart Missiles now target your vertical offset, plus half your height.
+
+• Smart Missiles now blink on launch, and take a moment (0.5 seconds) to arm themselves, and are not as dangerous (1 damage point) until then. This is implemented as the "Ramius frame count" (delay) [1d71faf](commit/1d71faf5dd66b38dad93e17aba9242a9b228a220) - as inspired by "The Hunt For Red October." https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
+
+• New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed parachute infantry when the initial target was the helicopter. [926b16f](commit/926b16f262a9a45a91e75a5dfebbdb73bb457b49)
+
+**Gunfire**
+
+• Gunfire can now collide with gunfire.
+
+• Turret gun firing rates have been reduced significantly for easy + hard levels.
+
+• Gunfire can now ricochet off the roof of a Super Bunker.
+
+• Desktop: Helicopter gunfire now stops when landing on, and cannot start while on a landing pad.
+
+**Bombs**
+
+• Bombs now "pass-thru" infantry, as opposed to dying 1:1.
+
+• Bomb explosions on the ground can now take out larger groups of infantry.
+
+• Bombs can be hit by gunfire in extreme mode.
+
+**Tanks**
+
+• Tanks have finally been given flamethrowsers (as in the original game,) which they use on infantry, engineers, super bunkers and end bunkers. [e3de57e](commit/e3de57e8c1aa009c09c0c67f424515a5f1e178e8)
+
+• Game preferences refactor. Volume control, UX/UI, and optional gameplay features.
+
+• Enemy tanks fire every 11 frames in "hard" mode, 12 in "easy" (and tutorial), and 10 in "extreme." Previously, all were 10.
+
+• Tanks now repair more incrementally, larger gains every 1 second.
+
+**Other**
+
+• Engineers start repairing bunkers (if enabled) at the doorway, "shielded" by bunker vs. previously standing outside.
+
+• Landing pads can be "The Danger Zone" if enabled in prefs. This was inspired by the 2022 Top Gun movie release. See also: "The Girl From Ipanema, "I Got You Babe," "Mucha Muchacha," and more.
+
+• Base explosions can now also damage units passing by.
+
+• Bases can fire rubber chickens + bananas if "match missile type" enabled in prefs.
+
+• "GOURANGA!" - inspired by the original Grand Theft Auto.
+
+• When the battle is over, the losing team's units all contribute to the explosion party.
+
+## Technical
+---
+
+• Codebase migration to ES6 modules, patterns and syntax.
+
+• SoundManager 2: hacked-together version of Web Audio API for playback, vs. HTML5. [a44bc81](commit/a44bc81b53dc5fd2b7f8219abec6278af05b746c)
+
+• Refactoring of game type and objects system; e.g., `tank` -> `TYPES.tank`, and `game.objects.tanks[]` -> `game.objects.tank[]` so look-ups and interating by type are logical.
+
+• `game.objects.players` now has local, remote, cpu etc., which point to helicopters. Previously, many assumptions were made about `game.objects.helicopters[0]` and `[1]`.
+
+• Network feature uses [PeerJS](https://peerjs.com/) (MIT license) for peer-to-peer communication via WebRTC.
+
+## Miscellaneous
+---
+
+• It turns out there are _three_ types of cloud sprites in the original game, not two. [4a561c4](commit/4a561c4fac6efb7f85b8831710b228bd1a750eaa)
+
+• 12 smoke frames in the original game too, vs. my 9. [53f08aa](commit/53f08aab45b76d4c4975e3d8c7c02d433eba7aeb)
+
+• Nicer ASCII block-character logo.
+
+• Updated favicon + related app / tile images.
+
+---
+**V1.6.20220101: Massive update for 2022, based on work from 2020 + 2021**
+---
 
 ![Armor Alley: Home Screen](https://user-images.githubusercontent.com/174437/148264540-d92c7440-8170-4413-b143-e113717ead8f.png)
 
@@ -27,7 +235,7 @@ Original release: V1.0.20131031
 
 **Video overview**
 
- • Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
+ * Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
 
 **Performance improvements**
 
@@ -315,6 +523,12 @@ Thanks go to numerous individuals for making their work available.
 The majority of these sounds have been published under a Creative Commons
 Attribution license, or other as specified. Details at each link.
 
+## Libraries, APIs, and Code
+
+[PeerJS](https://peerjs.com/) (MIT license): peer-to-peer communication via WebRTC.
+
+Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://github.com/sakofchit/system.css/) (MIT)
+
 ## Sounds
 
 [01587 helicopter.wav](http://freesound.org/people/Robinhood76/sounds/94867/) by Robinhood76
@@ -328,6 +542,8 @@ Attribution license, or other as specified. Details at each link.
 [Debris Sifting Dry.aif](http://freesound.org/people/kantouth/sounds/115113/) by kantouth
 
 [explosion.mp3](http://freesound.org/people/sarge4267/sounds/102719/) by sarge4267
+
+[Explosion2.wav](https://freesound.org/people/steveygos93/sounds/80401/) by steveygos93
 
 [explosion3.wav](http://freesound.org/people/sarge4267/sounds/102733/) by sarge4267
 
@@ -429,10 +645,18 @@ Attribution license, or other as specified. Details at each link.
 
 [Metal-Clanging.mp3](http://freesound.org/people/Tiger_v15/sounds/211015/) by Tiger_v15 (CC BY 4.0)
 
+[Huge Explosion Part 3 - Long Crash](https://freesound.org/people/bevibeldesign/sounds/366086/) by bevibeldesign (CC0)
+
 ## Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
 https://github.com/fabianalexisinostroza/Antu
+
+[Dirt Explosion](https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026) by SrGrafo on DeviantArt
+
+"Cornholio" and BnB sprites, Genesis 32X SCD. Hat tip: "aperson98" on [The Spriters Resource](https://www.spriters-resource.com/fullview/44963/)
+
+BnB "VS" banner image - https://www.steamgriddb.com/game/5248723
 
 ## Fonts ("Typefaces" :P)
 
