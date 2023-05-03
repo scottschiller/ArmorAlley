@@ -2,7 +2,7 @@
  * DHTML Snowstorm! JavaScript-based snow for web pages
  * Making it snow on the internets since 2003. You're welcome.
  * -----------------------------------------------------------
- * March 2023 edition: ES6-style, customized for Armor Alley.
+ * May 2023 edition: Partial ES6, customized for Armor Alley.
  * --- Previously... -----------------------------------------
  * Version 1.44.20131208 (Previous rev: 1.44.20131125)
  * Copyright (c) 2007, Scott Schiller. All rights reserved.
