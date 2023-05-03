@@ -43,8 +43,6 @@ http://en.wikipedia.org/wiki/Armor_alley
 **Changelog / Revision History**
 ---
 
-
-
 **V2.0.20230501: 10th Anniversary "Remastered" Edition**
 
 ![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/armor-alley_game_image_1920x1080.jpg)
@@ -53,7 +51,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 **Video overview**
 ---
-• 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+* 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
 **New features**
 ---
@@ -107,7 +105,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Radar jamming: New visual noise overlay.
 
-"Extra-fancy" bunker explosions, particles, burning, and smoke effects.
+• "Extra-fancy" bunker explosions, particles, burning, and smoke effects.
 
 • Nicer bomb explosion on ground. Hat tip: "Dirt Explosion" by SrGrafo on DeviantArt - https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
 
@@ -402,88 +400,11 @@ bullets hitting the ground, turret being disabled and enabled (restored.)
 
  • `aa.js` (core game code) is massive at ~450 KB, and seems like a good candidate to be broken up into ES6 modules. TBD.
 
-### V1.51.20181124
+-----
 
-**Performance tweaks**
+**Prior release notes**
 
- • More motion / animation is now on the GPU via `transform`, vs. `style.left` / `style.top`.
-
- • Main animation loop calls `requestAnimationFrame()` first, before anything else (like VSYNC.)
-
- • Drop legacy SM2 flash options.
-
- • Turret scan is now driven by CSS animation vs. JS setting an angle transform every frame.
-
-**Sound**
-
- • New base explosion, tweaked other explosion sound effects.
-
- • New "heavy mechanics" bunker chain (repair) sound.
-
-### V1.5.20180201
-
-**Big feature updates!**
-
- • Game "mostly" now works on mobile devices. Touch-based events for helicopter control, UI for helicopter weapons and inventory / ordering. Tested on iPhone X. Others should work reasonably-well. Hopefully.
-
- • Inventory order queueing! 🎉 (Finally.) e.g., 3 tanks in a row. Queueing deducts funds immediately. No added UI or cancel ability (yet.)
-
- • Battlefield view is now bigger on screen. Stats UI is dead, long live stats.
-  
- • Performance improvements. tl;dr: JavaScript tweaks, putting most all sprites onto the GPU. Replaced most common animated .GIF backgrounds with 3d-transform, GPU-accelerated CSS animation-driven sprites. 😅
-
-**Sound**
- 
- • No sound for any Safari (desktop or mobile) for now, including version 11.0. Multiple sounds kill performance on desktop, and "auto-play" is effectively blocked on mobile. https://bugs.webkit.org/show_bug.cgi?id=116145
-
- • New + improved helicopter machine gun sounds. 9 different samples, played at random.
-
- • New sound effects: "bomb hatch" (helicopter bomb release), tank gunfire, bunker chain/balloon repair, helicopter gunfire hit.
-
- • "Medals clanking" sound for bunker chain/balloon repair. (BY-NC 3.0.) https://freesound.org/people/Gareth_H/sounds/365799/
-
- • New tank gunfire sound: "Tank Fire Mixed.wav" by Cyberkineticfilms/freesound.org (CC0, "No Rights Reserved". 🙇)
-
- • Hat tip: "Bolo" "tank self hit" sound effect, Copyright (C) Steuart Cheshire 1993. My favourite Mac game of all time. ❤️
-
-**UX / UI**
-  
- • "Radar jammed" TV static-like overlay with transform sprite.
-
- • Parachute infantry swing in the air thanks to CSS animations, and move more smoothly when the wind picks up.
-
- • Jam radar all the time when an enemy van is within range on hard + extreme game types. (previously, jamming could switch on/off at random intervals.)
-
- • Slightly faster helicopter bombing rate - more responsive.
-  
- • Chain refactor. Use fixed height, animate via transform, fall with gravity when balloon and/or bunker are lost.
-
- • Balloons are yellow-ish on radar, and now transform-rotated to elliptical shapes. Bunkers / base color and border tweaks, friendly vs. enemy now look different.
-
- • Inventory and helicopter ammo, etc., become greyed out when unaffordable / unavailable.
-
- • Target / "tracking" animation on Smart Missile targets.
-
- • Smart Missiles can now re-target on the next frame after the original target dies. If a new target can not be immediately acquired, the Smart Missile dies as previously.
-
- • Radar items, clouds and some other sprites move more smoothly simply by dropping `parseInt()`.
-
- • "C" / rubber chicken use causes UI to switch to rubber chicken mode.
-
- • Possible bugfix: If paused and enemy order timer fires, re-start timer. This probably fixes enemy inventory building sometimes breaking.
-
-
-**Miscellany**
-
- • Note re: Firefox `will-change` memory consumption warning that might show in console.
-
- • URL feature flags: `noTranslate3d` and `noRadarGPU`. `frameRate=[60|*]` for testing of `requestAnimationFrame()` timing. camelCase others. Let Opera (now webkit-based) have transforms.
-
- • +`makeTransformSprite()`, a sort of sub-sprite for CSS transform-based animations (GPU-accelerated animated .GIF alternatives.)
-
- • `z-index: -1` can be harmful for performance / compositing.
-
- • iPhone X notch handling based on orientation and whatnot.
+For history back to V1.0, see the README equivalent in [aa.js](script/aa.js).
 
 -----
 
