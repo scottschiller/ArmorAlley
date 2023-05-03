@@ -1,19 +1,19 @@
 Armor Alley: Remastered
 
 Copyright (c) 2013, Scott Schiller
-http://www.schillmania.com/armor-alley/
-http://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
-http://github.com/scottschiller/ArmorAlley/
+https://www.schillmania.com/armor-alley/
+https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+https://github.com/scottschiller/ArmorAlley/
 
 Code provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
-http://creativecommons.org/licenses/by-nc/3.0/
+https://creativecommons.org/licenses/by-nc/3.0/
 
 --------------------------------------------------------------------------------------
 
 (ISC license applies to original game images and related assets, used with permission)
 
 Armor Alley (original MS-DOS version)
-http://en.wikipedia.org/wiki/Armor_alley
+https://en.wikipedia.org/wiki/Armor_alley
 
 Copyright (c) 1990, Information Access Technologies
 

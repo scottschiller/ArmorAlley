@@ -228,7 +228,7 @@ const Bunker = (options = {}) => {
      * Burninating all the peoples
      * And their thatched-roof cottages!
      * Thatched-roof cottages!
-     * http://www.hrwiki.org/wiki/Trogdor_(song)
+     * https://www.hrwiki.org/wiki/Trogdor_(song)
      */
     data.burninating = true;
 

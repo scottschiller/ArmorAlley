@@ -691,7 +691,7 @@ window.soundManager.onready(() => {
   });
   
   sounds.machineGunFireEnemy = add({
-    // http://creativesounddesign.com/the-recordist-free-sound-effects/
+    // https://creativesounddesign.com/the-recordist-free-sound-effects/
     url: 'Gun_AR15_Machine_Gun_3_Single_Shot_edit'
   });
   
@@ -728,7 +728,7 @@ window.soundManager.onready(() => {
   
   sounds.impactWrench = [
     add({
-      // http://freesound.org/people/andrewgnau2/sounds/71534/
+      // https://freesound.org/people/andrewgnau2/sounds/71534/
       url: 'impact-wrench-1',
       volume: 10
     }),
@@ -751,13 +751,13 @@ window.soundManager.onready(() => {
   });
   
   sounds.repairingWrench = [
-    // http://freesound.org/people/TheGertz/sounds/131200/
+    // https://freesound.org/people/TheGertz/sounds/131200/
     add({
       url: 'socket-wrench-1',
       volume: 10
     }),
   
-    // http://freesound.org/people/xxqmanxx/sounds/147018/
+    // https://freesound.org/people/xxqmanxx/sounds/147018/
     add({
       url: 'socket-wrench-2',
       volume: 10
@@ -770,21 +770,21 @@ window.soundManager.onready(() => {
   ];
   
   sounds.tinkerWrench = add({
-    // http://freesound.org/people/klankbeeld/sounds/198299/
+    // https://freesound.org/people/klankbeeld/sounds/198299/
     url: 'tinker-wrench',
     multiShot: false,
     volume: 20
   });
   
   sounds.friendlyClaim = add({
-    // http://freesound.org/people/Carlos_Vaquero/sounds/153616/
+    // https://freesound.org/people/Carlos_Vaquero/sounds/153616/
     url: 'violin-c5-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
   });
   
   sounds.enemyClaim = add({
-    // http://freesound.org/people/Carlos_Vaquero/sounds/153611/
+    // https://freesound.org/people/Carlos_Vaquero/sounds/153611/
     url: 'violin-g4-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
@@ -800,7 +800,7 @@ window.soundManager.onready(() => {
   
   sounds.popSound = add({
     // used when picking up infantry + engineers
-    // http://freesound.org/people/SunnySideSound/sounds/67095/
+    // https://freesound.org/people/SunnySideSound/sounds/67095/
     // url: 'ta-loadair',
     url: 'ga-234_pickup',
     fixedPlaybackRate,
@@ -809,13 +809,13 @@ window.soundManager.onready(() => {
   
   sounds.popSound2 = add({
     // used when deploying parachute infantry
-    // http://freesound.org/people/runirasmussen/sounds/178446/
+    // https://freesound.org/people/runirasmussen/sounds/178446/
     url: 'popsound2',
     volume: 10
   });
   
   sounds.crashAndGlass = add({
-    // http://freesound.org/people/Rock%20Savage/sounds/59263/
+    // https://freesound.org/people/Rock%20Savage/sounds/59263/
     url: 'crash-glass'
   });
   
@@ -835,7 +835,7 @@ window.soundManager.onready(() => {
   
   sounds.genericSplat = [];
   
-  // http://freesound.org/people/FreqMan/sounds/42962/
+  // https://freesound.org/people/FreqMan/sounds/42962/
   sounds.genericSplat = [
     add({
       url: 'splat1',
@@ -887,7 +887,7 @@ window.soundManager.onready(() => {
       volume: 40
     }),
     add({
-      // http://archive.org/details/WilhelmScreamSample
+      // https://archive.org/details/WilhelmScreamSample
       url: 'wilhem-scream',
       volume: 15
     })
@@ -942,7 +942,7 @@ window.soundManager.onready(() => {
   });
   
   sounds.infantryGunFire = add({
-    // http://creativesounddesign.com/the-recordist-free-sound-effects/
+    // https://creativesounddesign.com/the-recordist-free-sound-effects/
     url: 'Gun_Machine_Gun_M60E_Burst_1_edit'
   });
   
@@ -952,14 +952,14 @@ window.soundManager.onready(() => {
     volume: 40
   });
   
-  // http://freesound.org/people/ceberation/sounds/235513/
+  // https://freesound.org/people/ceberation/sounds/235513/
   sounds.doorClose = add({
     url: 'door-closing',
     volume: 12
   });
   
   sounds.metalClang = shuffle([
-    // http://freesound.org/people/Tiger_v15/sounds/211015/
+    // https://freesound.org/people/Tiger_v15/sounds/211015/
     add({
       url: 'metal-hit-1',
       volume: 10
@@ -985,9 +985,9 @@ window.soundManager.onready(() => {
   // Bolo "hit tank self" sound, Copyright (C) Steuart Cheshire 1993.
   // A subtle tribute to my favourite Mac game of all-time, hands down. <3
   // https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
-  // http://bolo.net/
+  // https://bolo.net/
   // https://github.com/stephank/orona/
-  // http://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
+  // https://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/
   sounds.boloTank = add({
     url: 'bolo-hit-tank-self',
     volume: 25
@@ -1171,7 +1171,7 @@ window.soundManager.onready(() => {
   });
   
   sounds.missileWarning = add({
-    // http://soundbible.com/1766-Fire-Pager.html
+    // https://soundbible.com/1766-Fire-Pager.html
     // public domain
     url: 'fire_pager-jason-1283464858_edit',
     fixedPlaybackRate,
@@ -1180,7 +1180,7 @@ window.soundManager.onready(() => {
   });
   
   sounds.missileWarningExpiry = add({
-    // http://soundbible.com/1766-Fire-Pager.html
+    // https://soundbible.com/1766-Fire-Pager.html
     // public domain
     url: 'fire_pager-jason-1283464858_edit_long',
     fixedPlaybackRate,
