@@ -229,7 +229,7 @@ const View = () => {
 
     strings = [];
 
-    elements = dom.gameTipsList.getElementsByTagName('span');
+    elements = dom.gameTipsList.getElementsByTagName('li');
 
     // read all the strings from the live DOM.
     for (i = 0, j = elements.length; i < j; i++) {
@@ -237,6 +237,17 @@ const View = () => {
     }
     
     data.gameTips.tips = utils.array.shuffle(strings);
+
+    // dirty, dirty tricks: #game-tips-list is a `<ul>` in static HTML, but we're not rendering that way.
+    const newListNode = document.createElement('div');
+    const newListId = dom.gameTipsList.id;
+
+    // ul -> div
+    dom.gameTipsList.parentNode.replaceChild(newListNode, dom.gameTipsList);
+
+    // re-assign id, and re-"get"
+    newListNode.id = newListId;
+    dom.gameTipsList = sprites.getWithStyle(newListNode.id);
 
     // replace the source material with placeholders for rendering, and an invisible element which drives the CSS animation loop.
     // CSS `onanimationend()` is used to show the next tip.
