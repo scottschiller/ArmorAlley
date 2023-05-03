@@ -1331,6 +1331,7 @@ ul.stats-bar .bombs em {
 .smoke .transform-sprite,
 .sprite.shrapnel,
 .cornholio,
+.gunfire,
 .turret .sub-sprite,
 #radar .radar-item--animated {
   /**
