@@ -66,7 +66,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 * Optional **"Virtual Stupidity"** theme pack. 🎸🤘
 
 ## Performance improvements
----
 
 • Reduced CPU load, in general, across the board between JavaScript execution, layout, and paint / compositing.
 
