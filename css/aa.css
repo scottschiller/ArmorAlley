@@ -1595,8 +1595,8 @@ body.is_firefox #radar .radar-item--animated {
 }
 
 .infantry.stopped {
-  /* note: 1x-scale image. */
-  background-image: url(data:image/gif;base64,R0lGODlhCgALAPIFAAAAAAVVAVVVAQ6qAqsCAQAAAAAAAAAAACH5BAUIAAUALAAAAAAKAAsAAAMmWAoM+gUQ4mCc9bHQ2BoBGHAfB5gf2CyA6EUtNwxe3KiRIDS6kwAAOw==);
+  background-image: url(data:image/gif;base64,R0lGODlhFAAYAMIGAAAAAJYAAM0AAABUAACHAIeHAP///////yH5BAEZAAcALAAAAAAUABgAAANseLoH/iyyR4GULujgbsxb5y2gIIhjA2gm6j3DUFEfLM8QCRBEzMfA22TXG/yCQt2REqMpi8ybZchbVjBEa25IDG65XaBTF3ZUCVuK9ew0QytWhbsJf8sBhXxB5NDvp316fHiCgDh3M2RfiQoJADs=);
+  background-size: 10px 12px;
   background-repeat: no-repeat;
 }
 
@@ -1606,8 +1606,8 @@ body.is_firefox #radar .radar-item--animated {
 }
 
 .infantry.enemy.stopped {
-  /* note: 1x-scale image. */
-  background-image: url(data:image/gif;base64,R0lGODlhCwALAPIFAAAAAFVVAVVVVaqqqqsCAQAAAAAAAAAAACH5BAUNAAUALAAAAAALAAsAAAMmWAoM+osQB+OEjQ32wPggVWjahpWCuHhCKmrp4C5yUy9B4AC5kwAAOw==);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAYCAYAAAD6S912AAAAdElEQVR42s3R0QlAIQiFYYdspzZwq2Y6F98E4x5NiIL/JeyjSMjCtsMF0hmovifBZb0AgqWqVupj0AAj6g5Uug3yp5VA6YJ/KIXGGFYKlD7I4QBFkKM4AFG9Gdnfo2iAEU0eIPANcE6fQ8jcHZCUnsug6bkPq8XvAm/qmUMAAAAASUVORK5CYII=);
+  background-size: 10px 12px;
   background-repeat: no-repeat;
 }
 
