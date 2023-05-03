@@ -689,8 +689,6 @@ body.is-mobile #funds-count {
 }
 
 #queue .queue-item.complete {
-  /* opacity: 0; */
-  /* filter: grayscale(0) blur(8px); */
   filter: grayscale(0);
   color: #999;
 }
@@ -2495,12 +2493,13 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   left: 0px;
   width: 3px;
   height: 3px;
-  background-color: #ccc;
+  background-color: rgb(23,160,7);
   border-color: #ccc;
   margin-left: -1.5px;
   /* avoid border color bleed */
   background-clip: padding-box;
-  /* align things like balloon + chain with bunkers. */
+  border-radius: 0.5px 0.5px 0px 0px;
+  contain: strict;
 }
 
 /* .friendly? */
@@ -2604,6 +2603,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 2px;
   height: 2px;
   margin-left: -1px;
+  border-radius: 0px 0px 2px 2px;
 }
 
 #radar .sprite.shrapnel,
@@ -2621,6 +2621,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   /* hackish repositioning fix */
   content-visibility: auto;
   contain-intrinsic-size: 1px 1px;
+  border-radius: 1px;
 }
 
 #radar .sprite.van,
