@@ -69,7 +69,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Reduced CPU load, in general, across the board between JavaScript execution, layout, and paint / compositing.
 
-• Game Loop: Adjustments to target 30FPS on 120 Hz monitors. [01f9f43](/commit/01f9f435424c6b61f8765b13dd52504cd9b3d397)
+• Game Loop: Adjustments to target 30FPS on 120 Hz monitors. [01f9f43](https://github.com/scottschiller/ArmorAlley/commit/01f9f435424c6b61f8765b13dd52504cd9b3d397)
 
 • Collision "zones", greatly reducing object comparison work and function calls. 20,000 collision checks per second, down to 500 or less. https://twitter.com/schill/status/1627725917345955840
 
@@ -87,16 +87,16 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Sounds can now be heard "in the distance," to the left and right.
 
-• "Virtual Stupidity": 500+ meticulously-picked samples. [21f7726](/commit/21f7726acde0b03b251e589963e1dde556566a74)
+• "Virtual Stupidity": 500+ meticulously-picked samples. [21f7726](https://github.com/scottschiller/ArmorAlley/commit/21f7726acde0b03b251e589963e1dde556566a74)
 
 ## UX / UI
-• "Live Graveyard" feature: decorate the battlefield over time. [032f845](/commit/032f8459321ea61a73421450be44d7c4340a9e66)
+• "Live Graveyard" feature: decorate the battlefield over time. [032f845](https://github.com/scottschiller/ArmorAlley/commit/032f8459321ea61a73421450be44d7c4340a9e66)
 
 • "Remastered" 8-bit sprite assets from Armor Alley V1.1 for Macintosh. The original 1.0 and PC-DOS version had up to 4-bit colour.
 
 • Nice home page logo, "scanned" from the combat handbook that came with the original boxed game.
 
-• Network games use Windows 95's `LIGHTS.EXE` taskbar UI showing tx/rx traffic, very important. ;) https://twitter.com/schill/status/1636449071140605958 [17c0a9b](/commit/17c0a9b4a2deb1770281b84842ee1c4f56412bf6)
+• Network games use Windows 95's `LIGHTS.EXE` taskbar UI showing tx/rx traffic, very important. ;) https://twitter.com/schill/status/1636449071140605958 [17c0a9b](https://github.com/scottschiller/ArmorAlley/commit/17c0a9b4a2deb1770281b84842ee1c4f56412bf6)
 
 • Four types of stormy weather: rain, hail, snow, and one other that's a surprise.
 
@@ -148,9 +148,9 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Smart Missiles now target your vertical offset, plus half your height.
 
-• Smart Missiles now blink on launch, and take a moment (0.5 seconds) to arm themselves, and are not as dangerous (1 damage point) until then. This is implemented as the "Ramius frame count" (delay) [1d71faf](/commit/1d71faf5dd66b38dad93e17aba9242a9b228a220) - as inspired by "The Hunt For Red October." https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
+• Smart Missiles now blink on launch, and take a moment (0.5 seconds) to arm themselves, and are not as dangerous (1 damage point) until then. This is implemented as the "Ramius frame count" (delay) [1d71faf](https://github.com/scottschiller/ArmorAlley/commit/1d71faf5dd66b38dad93e17aba9242a9b228a220) - as inspired by "The Hunt For Red October." https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
 
-• New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed parachute infantry when the initial target was the helicopter. [926b16f](/commit/926b16f262a9a45a91e75a5dfebbdb73bb457b49)
+• New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed parachute infantry when the initial target was the helicopter. [926b16f](https://github.com/scottschiller/ArmorAlley/commit/926b16f262a9a45a91e75a5dfebbdb73bb457b49)
 
 **Gunfire**
 
@@ -172,7 +172,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 **Tanks**
 
-• Tanks have finally been given flamethrowsers (as in the original game,) which they use on infantry, engineers, super bunkers and end bunkers. [e3de57e](/commit/e3de57e8c1aa009c09c0c67f424515a5f1e178e8)
+• Tanks have finally been given flamethrowsers (as in the original game,) which they use on infantry, engineers, super bunkers and end bunkers. [e3de57e](https://github.com/scottschiller/ArmorAlley/commit/e3de57e8c1aa009c09c0c67f424515a5f1e178e8)
 
 • Game preferences refactor. Volume control, UX/UI, and optional gameplay features.
 
@@ -198,7 +198,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Codebase migration to ES6 modules, patterns and syntax.
 
-• SoundManager 2: hacked-together version of Web Audio API for playback, vs. HTML5. [a44bc81](/commit/a44bc81b53dc5fd2b7f8219abec6278af05b746c)
+• SoundManager 2: hacked-together version of Web Audio API for playback, vs. HTML5. [a44bc81](https://github.com/scottschiller/ArmorAlley/commit/a44bc81b53dc5fd2b7f8219abec6278af05b746c)
 
 • Refactoring of game type and objects system; e.g., `tank` -> `TYPES.tank`, and `game.objects.tanks[]` -> `game.objects.tank[]` so look-ups and interating by type are logical.
 
@@ -208,9 +208,9 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 ## Miscellaneous
 
-• It turns out there are _three_ types of cloud sprites in the original game, not two. [4a561c4](/commit/4a561c4fac6efb7f85b8831710b228bd1a750eaa)
+• It turns out there are _three_ types of cloud sprites in the original game, not two. [4a561c4](https://github.com/scottschiller/ArmorAlley/commit/4a561c4fac6efb7f85b8831710b228bd1a750eaa)
 
-• 12 smoke frames in the original game too, vs. my 9. [53f08aa](/commit/53f08aab45b76d4c4975e3d8c7c02d433eba7aeb)
+• 12 smoke frames in the original game too, vs. my 9. [53f08aa](https://github.com/scottschiller/ArmorAlley/commit/53f08aab45b76d4c4975e3d8c7c02d433eba7aeb)
 
 • Nicer ASCII block-character logo.
 
