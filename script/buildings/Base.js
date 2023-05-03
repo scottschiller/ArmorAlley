@@ -132,7 +132,7 @@ const Base = (options = {}) => {
       if (game.objects[type]) {
         game.objects[type].forEach((item) => {
           if (item.data.isEnemy === data.isEnemy) {
-            delay += 333;
+            delay += 128;
             common.setFrameTimeout(() => item.die(), delay);
           }
         })
