@@ -1,5 +1,5 @@
 import { game } from '../core/Game.js';
-import { TYPES } from '../core/global.js';
+import { TYPES, isFirefox } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 
 // "DOMFetti" experiment - 09/2018
@@ -19,6 +19,10 @@ const COLORS = {
 const BACK_SIDE_OPACITY = 2/3;
 
 const useOpacity = true;
+
+// tl;dr, Firefox may complain about the will-change pixel budget.
+// this reduces paint in Chrome when opacity changes, however.
+const willChange = !isFirefox ? { 'will-change': 'opacity' } : undefined;
 
 let activeBooms = 0;
 
@@ -61,13 +65,13 @@ Object.assign(elementTemplate.style, {
   overflow: 'hidden',
   transform: 'translate3d(-12px, 0px, 0px)',
   /* maybe this helps performance, maybe not. */
-  contain: 'strict'
+  contain: 'strict',
   /**
    * Firefox may complain about `will-change` if there are enough elements, here:
    * > Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (1210308 px).
    * > Occurrences of will-change over the budget will be ignored.
    */
-  // 'will-change': 'transform, opacity'
+  ...willChange
 });
 
 const useUnlimited = window.location.href.match(/unlimited/i);
