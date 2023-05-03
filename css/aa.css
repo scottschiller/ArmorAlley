@@ -2480,12 +2480,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   display: none; /* better? */
 }
 
-#world.tutorial-mode #world-wrapper.jammed #radar {
-  /* don't fully hide in tutorial mode. */
-  opacity: 0.5;
-  visibility: visible;
-}
-
 #radar .sprite {
   position: absolute;
   background: none;
