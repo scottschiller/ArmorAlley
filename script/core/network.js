@@ -790,10 +790,10 @@ const net = {
       // TODO: show in the UI.
       script.onerror = (e) => {
         console.log('Error loading PeerJS', e);
-        prefsManager.onNetworkError(`Error loading PeerJS script "${'script/peerjs@1.4.7.js'}": ${e.message}`);
+        prefsManager.onNetworkError(`Error loading PeerJS script "${src}": ${e.message}`);
       }
 
-      const src = 'script/peerjs@1.4.7.js'
+      const src = 'script/lib/peerjs@1.4.7.js'
       script.src = src;
 
       document.head.appendChild(script);
