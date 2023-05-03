@@ -951,7 +951,7 @@ const Helicopter = (options = {}) => {
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
-      common.setFrameTimeout(respawnComplete, 1550);
+      common.setFrameTimeout(respawnComplete, 1500);
     }
 
   }
