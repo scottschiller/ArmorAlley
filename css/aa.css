@@ -3180,6 +3180,7 @@ body.bnb .sprite.engineer.butthead.building {
   text-shadow: 0px 1px 0px #000;
   overflow: hidden;
   display: none;
+  border-radius: 32px;
 }
 
 #world.tutorial-mode #game-tips .tips-container {
