@@ -49,7 +49,7 @@ http://en.wikipedia.org/wiki/Armor_alley
 
 ![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/armor-alley_game_image_1920x1080.jpg)
 
-Previous release: V1.5.20220201. Original release: V1.0.20131031.
+Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 **Video overview**
 ---
