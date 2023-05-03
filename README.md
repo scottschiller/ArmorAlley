@@ -81,7 +81,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • Battlefield DOM node no longer being transformed for scroll; now, only on-screen sprites.
 
 ## Sound
----
 
 • Even more sound effects.
 
@@ -92,7 +91,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • "Virtual Stupidity": 500+ meticulously-picked samples. [21f7726](/commit/21f7726acde0b03b251e589963e1dde556566a74)
 
 ## UX / UI
----
 • "Live Graveyard" feature: decorate the battlefield over time. [032f845](/commit/032f8459321ea61a73421450be44d7c4340a9e66)
 
 • "Remastered" 8-bit sprite assets from Armor Alley V1.1 for Macintosh. The original 1.0 and PC-DOS version had up to 4-bit colour.
@@ -114,7 +112,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • Notifications: Verbiage for different actions, e.g., "your tank steamrolled an infantry", or gunfire "popped a balloon" etc.
 
 ## Bug fixes
----
 
 • Refactor of Traffic Control, so vehicles are less likely to get "stuck" waiting for one another.
 
@@ -135,7 +132,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • Tighten up inventory ordering / queueing, consistent spacing + avoiding overlapping between sprites.
 
 ## Gameplay
----
 
 **Helicopters**
 
@@ -200,7 +196,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • When the battle is over, the losing team's units all contribute to the explosion party.
 
 ## Technical
----
 
 • Codebase migration to ES6 modules, patterns and syntax.
 
@@ -213,7 +208,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • Network feature uses [PeerJS](https://peerjs.com/) (MIT license) for peer-to-peer communication via WebRTC.
 
 ## Miscellaneous
----
 
 • It turns out there are _three_ types of cloud sprites in the original game, not two. [4a561c4](/commit/4a561c4fac6efb7f85b8831710b228bd1a750eaa)
 
@@ -225,7 +219,6 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 ---
 **V1.6.20220101: Massive update for 2022, based on work from 2020 + 2021**
----
 
 ![Armor Alley: Home Screen](https://user-images.githubusercontent.com/174437/148264540-d92c7440-8170-4413-b143-e113717ead8f.png)
 
