@@ -1003,11 +1003,6 @@
   
           s.position = (s._iO.position && !isNaN(s._iO.position) ? s._iO.position : 0);
   
-          if (s._iO.onplay && _updatePlayState) {
-            s._iO.onplay.apply(s, [s]);
-            onplay_called = true;
-          }
-  
           s.setVolume(s._iO.volume, true);
           s.setPan(s._iO.pan, true);
           s.setPlaybackRate(s._iO.playbackRate, true);
@@ -1032,6 +1027,11 @@
   
             // HTML5 multi-shot case
   
+            if (s._iO.onplay && _updatePlayState && !onplay_called) {
+              s._iO.onplay.apply(s, [s]);
+              onplay_called = true;
+            }
+
             // console.log(s.id + ': Cloning Audio() for instance #' + s.instanceCount + '...')
   
             if (sm2.debugMode) sm2._wD(s.id + ': Cloning Audio() for instance #' + s.instanceCount + '...');
@@ -1792,29 +1792,34 @@
         } else {
   
           setupBufferSource(s);
-  
+
           if (instanceOptions.autoLoad || instanceOptions.autoPlay) {
   
             // modern fetch and play
             loadWebAudioSound(s, instanceOptions.url, (buffer) => s._webAudioOnLoad(buffer));
-  
+
+            s._called_load = true;
+            
+          } else {
+    
+            s._called_load = false;
+
           }
-  
-          // assign local reference
-          a = s._a;
-  
-          s._called_load = false;
   
         }
   
         s.isHTML5 = true;
   
-        // store a ref on the track
-        s._a = a;
-  
-        // store a ref on the audio
-        a._s = s;
-  
+        if (a) {
+
+          // store a ref on the track
+          s._a = a;
+    
+          // store a ref on the audio
+          a._s = s;
+
+        }
+    
         if (instanceOptions.autoLoad || instanceOptions.autoPlay) {
   
           s.load();
@@ -1840,7 +1845,7 @@
   
         s.loaded = loadOK;
         s.readyState = (loadOK ? 3 : 2);
-  
+
         if (s._iO.onload) {
           s._iO.onload.apply(s, [loadOK]);
         }
@@ -2636,6 +2641,10 @@
       console.log('starting playback with when, offset, duration (to)', when, offset, duration);
     }
   
+    if (snd._iO.onplay) {
+      snd._iO.onplay.apply(snd, [snd]);
+    }
+
     const whilePlaying = snd._iO.whileplaying;
   
     // "register" as appropriate
