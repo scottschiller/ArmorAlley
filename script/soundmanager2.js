@@ -2625,18 +2625,13 @@
     if (snd._iO?.loops > 1) {
       source.loop = true;
     }
-  
-    // HACK: if marked as skipped, just start at the end - and don't loop.
-    if (snd.skipped) {
-      source.loop = false;
-    }
-  
+
     // TODO: is the sound paused, or should it start from a given offset?
     
     const when = 0;
-    const offset = snd.skipped ? snd.duration : ((snd._iO.from / msecScale) || 0);
+    const offset = ((snd._iO.from / msecScale) || 0);
     const duration = snd._iO.to ? snd.duration - (snd._iO.to / msecScale) : undefined;
-  
+ 
     if (when || offset || duration) {
       console.log('starting playback with when, offset, duration (to)', when, offset, duration);
     }
@@ -2647,7 +2642,11 @@
     if (whilePlaying) addWhilePlaying(snd);
   
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/start
-    source.start(when, offset, duration);
+    if (duration !== undefined && duration > 0) {
+      source.start(when, offset, duration);
+    } else {
+      source.start(when, offset);
+    }
   
     snd._startTime = audioContext.currentTime + when;
   
