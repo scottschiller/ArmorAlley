@@ -83,6 +83,11 @@ if (soundManager) {
 
 window.addEventListener('DOMContentLoaded', game.initArmorAlley);
 
+// we may be late to this event party.
+if (document.readyState?.match(/interactive|complete|loaded/i)) {
+  game.initArmorAlley();
+}
+
 // --- THE END ---
 
 import { winloc, DEFAULT_VOLUME } from './core/global.js';
