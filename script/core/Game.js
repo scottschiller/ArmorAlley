@@ -50,6 +50,7 @@ const DEFAULT_GAME_TYPE = 'tutorial';
 let gameType;
 let screenScale = 1;
 let started;
+let didInit;
 
 const game = (() => {
 
@@ -739,6 +740,13 @@ const game = (() => {
   // the home screen: choose a game type.
 
   function initArmorAlley() {
+
+    if (didInit) {
+      console.warn('initArmorAlley(): WTF, already did init?');
+      return;
+    }
+
+    didInit = true;
 
     // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
