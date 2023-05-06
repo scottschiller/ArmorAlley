@@ -396,7 +396,7 @@ bullets hitting the ground, turret being disabled and enabled (restored.)
 
 **Prior release notes**
 
-For history back to V1.0, see the README equivalent in [aa.js](script/aa.js).
+For history back to V1.0, see [CHANGELOG.txt](CHANGELOG.txt).
 
 -----
 
