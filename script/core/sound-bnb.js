@@ -292,7 +292,7 @@ function playQueuedBNBSounds() {
       }
 
       // fire the original onfinish, too.
-      if (item.soundObject.options.onfinish) {
+      if (item.soundObject.options.onfinish && item.soundObject.options.onfinish !== item.localOptions.onfinish) {
         item.soundObject.options.onfinish.apply(item.soundObject.sound, [{ ...item.soundObject.sound, skipped: true }]);
       }
 
