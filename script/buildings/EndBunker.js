@@ -1,10 +1,9 @@
 import { game } from '../core/Game.js';
-import { DEFAULT_FUNDS, TYPES, tutorialMode, debug, worldWidth, FPS, getTypes } from '../core/global.js';
+import { DEFAULT_FUNDS, TYPES, tutorialMode, worldWidth, FPS, getTypes } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
-import { GunFire } from '../munitions/GunFire.js';
 import { sprites } from '../core/sprites.js';
 
 const EndBunker = (options = {}) => {
