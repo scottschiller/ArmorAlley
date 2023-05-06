@@ -1,5 +1,4 @@
 'use strict';
-/* global soundManager */
 /*
 
                                          ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
@@ -59,21 +58,27 @@ window.aa = {
 
 };
 
-// OGG is available, so MP3 is not required.
-soundManager.audioFormats.mp3.required = false;
+const { soundManager } = window;
 
-soundManager.setup({
-  debugMode: false,
-  // Audio in Firefox starts breaking up at some number of active sounds, if this is enabled. :/
-  usePlaybackRate: true,
-  defaultOptions: {
-    volume: DEFAULT_VOLUME,
-    multiShotEvents: true
-  },
-});
+if (soundManager) {
 
-if (winloc.match(/mute/i)) {
-  soundManager.disable();
+  // OGG is available, so MP3 is not required.
+  soundManager.audioFormats.mp3.required = false;
+
+  soundManager.setup({
+    debugMode: false,
+    // Audio in Firefox starts breaking up at some number of active sounds, if this is enabled. :/
+    usePlaybackRate: true,
+    defaultOptions: {
+      volume: DEFAULT_VOLUME,
+      multiShotEvents: true
+    },
+  });
+
+  if (winloc.match(/mute/i)) {
+    soundManager.disable();
+  }
+
 }
 
 window.addEventListener('DOMContentLoaded', game.initArmorAlley);
