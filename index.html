@@ -5,7 +5,7 @@
  <meta name="description" content="A modern web browser version of the real-time strategy &quot;Armor Alley&quot; game, originally released for Macintosh and MS-DOS computers in 1991." />
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, multiplayer, network browser game, animation, CSS3, arcade, retro, browser game, MS-DOS, Macintosh Plus, Mac Classic" />
  <meta name="author" content="Scott Schiller" />
- 
+
  <link rel="shortcut icon" href="./favicon/favicon.ico" />
  <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72x72.png" />
  <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
@@ -23,25 +23,6 @@
  <meta property="og:image:height" content="1080" />
  <meta property="twitter:card" content="summary_large_image" />
  <meta property="twitter:domain" content="schillmania.com" />
-
- <!-- full-bleed in iOS landscape view, including the notch -->
- <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
- <!-- required for iOS Safari full-screen, "add to home screen" (hiding URL bar etc.) -->
- <!-- https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html -->
- <meta name="apple-mobile-web-app-capable" content="yes" />
-
- <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
-
- <!-- all kinds of icons -->
- <link rel="apple-touch-icon" sizes="76x76" href="./image/apple-touch-icon-76x76.png?v=1" />
- <link rel="apple-touch-icon" sizes="120x120" href="./image/apple-touch-icon-120x120.png?v=1" />
- <link rel="apple-touch-icon" sizes="152x152" href="./image/apple-touch-icon-152x152.png?v=1" />
- <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
- <link rel="stylesheet" media="screen" href="css/aa.css" />
- <script type="text/javascript" src="script/soundmanager2.js"></script>
- <script type="text/javascript" src="script/snowstorm.js"></script>
- <script type="module" src="script/aa.js"></script>
  <!--
 
                                          ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
@@ -62,15 +43,26 @@
 
   A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
 
+  Online game
+  https://www.schillmania.com/armor-alley/
+
+  Quick video overview (3m 45s)
+  https://youtu.be/oYUCUvg02rY
+
+  Source code
+  https://github.com/scottschiller/ArmorAlley/
+
+  Original development and history (2013)
+  https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+
   Original game Copyright (C) 1989 - 1991 Information Access Technologies.
   https://en.wikipedia.org/wiki/Armor_alley
 
   Images, text and other portions of the original game used with permission under an ISC license.
   Original sound effects could not be re-licensed; modern replacements used from freesound.org.
 
-  https://www.schillmania.com/armor-alley/
-  https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
-  https://github.com/scottschiller/ArmorAlley/
+  New game provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
+  https://creativecommons.org/licenses/by-nc/3.0/
 
   General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
@@ -81,6 +73,22 @@
   For revision history, see README.md and CHANGELOG.txt.
 
  -->
+
+ <!-- full-bleed in iOS landscape view, including the notch -->
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+ <!-- required for iOS Safari full-screen, "add to home screen" (hiding URL bar etc.) -->
+ <!-- https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html -->
+ <meta name="apple-mobile-web-app-capable" content="yes" />
+
+ <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
+
+ <!-- all kinds of icons -->
+ <link rel="apple-touch-icon" sizes="76x76" href="./image/apple-touch-icon-76x76.png?v=1" />
+ <link rel="apple-touch-icon" sizes="120x120" href="./image/apple-touch-icon-120x120.png?v=1" />
+ <link rel="apple-touch-icon" sizes="152x152" href="./image/apple-touch-icon-152x152.png?v=1" />
+ <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
+ <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css" />
 </head>
 <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
 <body>
