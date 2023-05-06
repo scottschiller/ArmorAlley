@@ -89,6 +89,77 @@
  <link rel="apple-touch-icon" sizes="152x152" href="./image/apple-touch-icon-152x152.png?v=1" />
  <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
  <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css" />
+ <script>
+  (() => {
+
+    /**
+     * ARMOR ALLEY: "Boot loader" - production vs. development, ES6 module codebase.
+     * Try ?dev=1 if you want to see the unminified, raw source JS + CSS.
+     * Also on GitHub: https://github.com/scottschiller/ArmorAlley
+     */
+
+    function loadScript(src, type = 'module') {
+      const s = document.createElement('script');
+      s.type = type;
+      s.src = src;
+      toAppend.push(s);
+    }
+
+    function loadCSS(src, onload) {
+      let link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.media = 'screen';
+      link.onload = () => {
+        onload?.();
+        link.onload = null;
+        link = null;
+      }
+      link.href = src;
+      document.getElementsByTagName('head')?.[0]?.appendChild(link);
+    }
+
+    function doAppend() {
+      const { documentElement } = document;
+      if (!toAppend || !documentElement) return;
+      try {
+        toAppend.forEach((s) => documentElement.appendChild(s));
+        document.onreadystatechange = null;
+        toAppend = null;
+      } catch(e) {
+        console.warn('script append failed? :/');
+      }
+    }
+
+    let toAppend = [];
+
+    const wl = window.location;
+    const sp = new URLSearchParams(wl.search);
+    const forceProd = sp.get('prod');
+    const dev = !forceProd && (sp.get('dev') || !wl.href.match(/schillmania/i));
+
+    console.log(`ARMOR ALLEY: using ${dev ? 'development JS.' : 'production JS build. Try ?dev=1 for the full source with comments.'}`);
+
+    if (dev) {
+      // load the unminified sources.
+      // TODO: snowstorm + SM2 should be modules, themselves.
+      loadScript('script/lib/snowstorm.js');
+      loadScript('script/lib/soundmanager2.js');
+      loadScript('script/aa.js');
+      // swap out traditional "static" minified CSS for unminified.
+      const css = document.getElementById('aa-css');
+      if (css) loadCSS('css/aa.css', () => css.remove());
+    } else {
+      loadScript('script/aa_main.js');
+    }
+
+    // go go go!
+    doAppend();
+
+    // just in case: fallback method
+    document.onreadystatechange = doAppend;
+
+  })();
+ </script>
 </head>
 <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
 <body>
