@@ -198,8 +198,8 @@ const slashCommands = {
 };
 
 let loadedVideos = {};
-
 let wzTimer;
+let videoActive;
 
 let gravestoneQueue = [];
 let gravestoneTimer;
@@ -718,6 +718,8 @@ const common = {
 
     const disabled = (!gamePrefs.bnb || !gamePrefs.bnb_tv);
 
+    videoActive = !!fileName;
+
     if (disabled) {
       if (!o) return;
       // ensure node is cleared / removed, if active
@@ -773,13 +775,14 @@ const common = {
     let videos;
 
     function onReadyStart() {
+      if (!videoActive) return;
       videos.forEach((video) => video.play());
       if (isWZ) {
         common.setFrameTimeout(() => {
-          if (!fs) return;
+          if (!fs || !videoActive) return;
           fs.style.opacity = 0.5;
           common.setFrameTimeout(() => {
-            if (!fs) return;
+            if (!fs || !videoActive) return;
             fs.style.transitionDuration = '1s';
             fs.style.opacity = 1;
           }, 12000);
