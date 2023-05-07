@@ -2303,14 +2303,6 @@ const Helicopter = (options = {}) => {
       net.sendMessage({ type: 'PING' });
     }
 
-    if (unlimited && data.isLocal) {
-      // UNLIMITED HACK
-      data.parachutes = 1;
-      data.smartMissiles = data.maxSmartMissiles;
-      data.ammo = data.maxAmmo;
-      data.bombs = data.maxBombs;
-    }
-
     if (data.respawning) {
       sprites.moveWithScrollOffset(exports);
       return;
