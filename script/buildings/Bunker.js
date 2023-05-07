@@ -104,13 +104,13 @@ const Bunker = (options = {}) => {
 
     if (!data.hasButthead && engineer.data.isButthead) {
       data.hasButthead = true;
-      if (data.isOnScreen && !game.players.local.data.onLandingPad) playSound(sounds.bnb.bhLetsRock, exports);
+      playSound(sounds.bnb.bhLetsRock, game.players.local);
     }
 
     // only "sing" the repair if damage >= 50%.
     if (data.hasBeavis && data.hasButthead && data.energy < data.energyHalf && !data.isSinging) {
       data.isSinging = true;
-      playSound(sounds.bnb.singingShort, exports);
+      playSound(sounds.bnb.singingShort, game.players.local);
     }
 
   }

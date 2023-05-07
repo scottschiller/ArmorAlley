@@ -499,7 +499,7 @@ const Turret = (options = {}) => {
     if (data.hasBeavis && data.hasButthead && !data.isSinging) {
       data.isSinging = true;
       // omit "take that, you commie butthole!" unless on-screen.
-      if (helicopterOK) playSound(data.isOnScreen ? sounds.bnb.singing : sounds.bnb.singingShort, exports);
+      if (helicopterOK) playSound(data.isOnScreen ? sounds.bnb.singing : sounds.bnb.singingShort, game.players.local);
     }
 
   }
