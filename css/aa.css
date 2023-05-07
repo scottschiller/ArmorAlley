@@ -165,7 +165,7 @@ body.game-started {
   left: 0px;
   width: 100%;
   height: 75%;
-  background: url(../image/virtual_stupidity_overlay.png);
+  background: url(../image/virtual_stupidity_overlay.webp);
   background-position: 0px 0px;
   background-size: contain;
   background-repeat: no-repeat;
@@ -186,7 +186,7 @@ body.bnb #mtv-bnb-in {
   width: 100%;
   height: 135%;
   /* https://www.steamgriddb.com/game/5248723 */
-  background: url(../image/virtual_stupidity_steamgriddb.png);
+  background: url(../image/virtual_stupidity_steamgriddb.webp);
   background-position: 100% 100%;
   background-size: contain;
   background-repeat: no-repeat;
@@ -929,12 +929,12 @@ body.bnb #tv-display.active {
   width: 409px;
   height: 320px;
   /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
-  background: transparent url(../image/pngtree.com_color_tv.png);
+  background: transparent url(../image/pngtree.com_color_tv.webp);
   background-size: contain;
 }
 
 #tv-display.widescreen #tv {
-  background: transparent url(../image/pngtree.com_color_tv_widescreen.png);
+  background: transparent url(../image/pngtree.com_color_tv_widescreen.webp);
   background-size: contain;
   background-position: 0px 21.5px;
   background-repeat: no-repeat;
@@ -2474,7 +2474,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
    * "Dirt Explosion" by SrGrafo on DeviantArt
    * https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
    */
-  background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.png);
+  background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.webp);
   background-size: 512px 51px;
   /* default state */
   background-position: -512px 0px;
@@ -3751,12 +3751,12 @@ body.is_safari #bnb-now-playing .pow {
 }
 
 #bnb-now-playing .beavis {
-  background: transparent url(../image/pow-beavis.png) 50% 50% no-repeat;
+  background: transparent url(../image/pow-beavis.webp) 50% 50% no-repeat;
   background-size: 75%;
 }
 
 #bnb-now-playing .butthead {
-  background: transparent url(../image/pow-butthead.png) 50% 50% no-repeat;
+  background: transparent url(../image/pow-butthead.webp) 50% 50% no-repeat;
   background-size: 100%;
 }
 
