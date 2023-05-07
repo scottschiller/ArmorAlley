@@ -1,11 +1,10 @@
 import { game } from '../core/Game.js';
-import { gamePrefs, prefs } from '../UI/preferences.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile, isSafari } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
-import { prefsManager } from '../aa.js';
 import { utils } from './utils.js';
 
 // unique IDs for quick object equality checks
