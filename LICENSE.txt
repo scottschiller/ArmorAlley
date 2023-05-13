@@ -1,7 +1,7 @@
 Armor Alley: Remastered
 
 Copyright (c) 2013, Scott Schiller
-https://www.schillmania.com/armor-alley/
+https://armor-alley.net/
 https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
 https://github.com/scottschiller/ArmorAlley/
 

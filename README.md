@@ -20,7 +20,7 @@ A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley
 
 Copyright (c) 2013, Scott Schiller
 
-https://www.schillmania.com/armor-alley/
+https://armor-alley.net/
 
 Code provided under the [Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License](https://creativecommons.org/licenses/by-nc/3.0/)
 
