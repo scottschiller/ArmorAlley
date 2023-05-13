@@ -588,15 +588,16 @@ bnb.beavisLightsOut = (() => {
     if (!phase && position > 256) {
 
       phase++;
-      body.style.opacity = 0.50;
+      if (body) body.style.opacity = 0.50;
 
     } else if (state === 'lightsOut' && position > 9100) {
 
       phase++;
-      body.style.opacity = 0.66;
+      if (body) body.style.opacity = 0.66;
 
       // start a long fade, soon.
       common.setFrameTimeout(() => {
+        if (!body) return;
         body.style.transition = 'opacity 15s linear';
         body.style.opacity = 1;
       }, 1000);
@@ -606,7 +607,7 @@ bnb.beavisLightsOut = (() => {
       phase++;
 
       // just in case this is $$$
-      body.style.transition = '';
+      if (body) body.style.transition = '';
 
     }
 
