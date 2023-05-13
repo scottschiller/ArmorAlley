@@ -266,8 +266,12 @@ const game = (() => {
 
     for (const item in objects) {
       game.objects[item]?.forEach((obj) => {
-        const { type } = obj?.data;
-        if (type && qualifiers[type]) {
+        let { type } = obj?.data;
+        // I forgot about this special case.
+        if (type === TYPES.infantry && obj.data.role) {
+          type = TYPES.engineer;
+        }
+        if (qualifiers[type]) {
           if (qualifiers[type](obj)) {
             addGameItem(type, obj);
           }
@@ -286,11 +290,15 @@ const game = (() => {
 
       items[type].forEach((item) => {
 
+        // engineers, again - special case
+        let { type } = item.data;
+        if (type === TYPES.infantry && item.data.role) type = TYPES.engineer;
+
         // 2 or 3 args, depending
-        const args = [ item.data.type, item.data.isHostile || (item.data.type === TYPES.turret && item.data.dead) ? 'n' : (item.data.isEnemy ? 'r' : (item.data.isNeutral ? 'n' : 'l')), Math.floor(item.data.x) ];
+        const args = [ type, item.data.isHostile || (type === TYPES.turret && item.data.dead) ? 'n' : (item.data.isEnemy ? 'r' : (item.data.isNeutral ? 'n' : 'l')), Math.floor(item.data.x) ];
 
         // drop l/r on terrain items, and clouds
-        if (item.data.isTerrainItem || item.data.type === TYPES.cloud) args.splice(1, 1);
+        if (item.data.isTerrainItem || type === TYPES.cloud) args.splice(1, 1);
 
         gameData.push(args);
 
