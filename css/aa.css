@@ -1934,9 +1934,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .helicopter.respawning-active .transform-sprite,
 #world.blurred.no-blur .helicopter.respawning-active .transform-sprite {
-  transition: all 1.5s ease-in-out !important;
+  transition: all 1.5s ease-in-out;
   /* filter: blur() may be applied during game start */
-  transition-property: top, filter !important;
+  transition-property: top, filter;
   top: 0px;
 }
 
