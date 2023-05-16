@@ -2637,7 +2637,7 @@ originalLevels = {
     [ 'cloud', 5558 ],
     [ 'cloud', 6144 ],
     [ 'super-bunker', r, 6400 ],
-    [ 'turret', r, 6512 ],
+    // [ 'turret', r, 6512 ],
     [ 'landing-pad', r, 7872 ],
     [ 'base', r, 8000 ],
     [ 'end-bunker', r, 8168 ],
@@ -2647,12 +2647,70 @@ originalLevels = {
     [ 'left-arrow-sign', 7700 ],
     [ 'left-arrow-sign', 8208 ],
     */
+   /*
     [ 'turret', 3280 ],
     [ 'turret', r, 1908 ],
     [ 'turret', r, 4256 ],
     [ 'turret', r, 4736 ],
     [ 'turret', r, 5269 ],
     [ 'turret', r, 5642 ],
+    */
+
+    // TODO: break these up for easy vs. hard vs. extreme.
+    // 1 for easy, 2 for hard, 3 for extreme.
+
+    // original coordinates
+    /*
+    [ 'turret', r, 944 ],
+    [ 'turret', r, 960 ],
+    [ 'turret', r, 976 ],
+
+    [ 'turret', r, 2112 ],
+    [ 'turret', r, 2128 ],
+    [ 'turret', r, 2144 ],
+
+    [ 'turret', r, 2352 ],
+    [ 'turret', r, 2368 ],
+    [ 'turret', r, 2384 ],
+
+    [ 'turret', r, 2624 ],
+    [ 'turret', r, 2640 ],
+    [ 'turret', r, 2656 ],
+
+    [ 'turrrt', r, 2816 ],
+    [ 'turret', r, 2832 ],
+    [ 'turret', r, 2848 ],
+
+    [ 'turret', r, 3248 ],
+    [ 'turret', r, 3264 ],
+    [ 'turret', r, 3280 ],
+    */
+
+    // 2x-scaled coordinates
+    ['turret', r, 1888],
+    ['turret', r, 1920],
+    ['turret', r, 1952],
+
+    ['turret', r, 4224],
+    ['turret', r, 4256],
+    ['turret', r, 4288],
+
+    ['turret', r, 4704],
+    ['turret', r, 4736],
+    ['turret', r, 4768],
+
+    ['turret', r, 5248],
+    ['turret', r, 5280],
+    ['turret', r, 5312],
+
+    ['turret', r, 5632],
+    ['turret', r, 5664],
+    ['turret', r, 5696],
+
+    ['turret', r, 6496],
+    ['turret', r, 6528],
+    ['turret', r, 6560],
+
     [ 'rock', 996 ],
     [ 'rock', 4182 ],
     [ 'rock', 4161 ],
