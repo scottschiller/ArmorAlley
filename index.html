@@ -3,27 +3,27 @@
 <head>
  <title>Armor Alley: Remastered</title>
  <meta charset="UTF-8" />
- <meta name="description" content="A modern web browser version of the real-time strategy &quot;Armor Alley&quot; game, originally released for Macintosh and MS-DOS computers in 1991." />
+ <meta name="description" content="&quot;Armor Alley: Remastered&quot; - a web browser version of the RTS-style &quot;Armor Alley&quot; game originally released for Macintosh and MS-DOS computers." />
  <meta name="keywords" content="Armor Alley, JavaScript, HTML, DHTML, multiplayer, network browser game, animation, CSS3, arcade, retro, browser game, MS-DOS, Macintosh Plus, Mac Classic" />
  <meta name="author" content="Scott Schiller" />
-
- <link rel="shortcut icon" href="./favicon/favicon.ico" />
- <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72x72.png" />
- <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
- <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png" />
- <link rel="manifest" href="./manifest.json" />
- <link rel="mask-icon" href="./favicon/safari-pinned-tab.svg" color="#5bbad5" />
+ <link rel="shortcut icon" href="image/app-icons/favicon.ico" />
+ <link rel="icon" type="image/png" sizes="32x32" href="image/app-icons/favicon-32x32.png" />
+ <link rel="icon" type="image/png" sizes="16x16" href="image/app-icons/favicon-16x16.png" />
+ <link rel="manifest" href="manifest.json" />
+ <link rel="mask-icon" href="image/app-icons/safari-pinned-tab.svg" color="#5bbad5" />
  <meta name="msapplication-TileColor" content="#000000" />
  <meta name="theme-color" content="#000000" />
- <meta name="application-name" content="Armor Alley" />
+ <meta name="application-name" content="Armor Alley: Remastered" />
+ <meta property="twitter:card" content="summary_large_image" />
+ <meta property="twitter:site" content="@schill" />
+ <meta property="twitter:creator" content="@schill" />
+ <meta property="twitter:domain" content="play.armor-alley.net" />
  <meta property="og:title" content="Armor Alley: Remastered" />
- <meta property="og:url" content="https://www.schillmania.com/armor-alley" />
- <meta property="og:description" content="A modern web browser version of the real-time strategy &quot;Armor Alley&quot; game originally released for Macintosh and MS-DOS computers." />
- <meta property="og:image" content="https://www.schillmania.com/armor-alley/image/armor-alley_game_image_1920x1080.jpg" />
+ <meta property="og:url" content="https://play.armor-alley.net" />
+ <meta property="og:description" content="An online version of the RTS-style &quot;Armor Alley&quot; game originally released for Macintosh and MS-DOS computers." />
+ <meta property="og:image" content="https://play.armor-alley.net/image/app-images/armor-alley_game_image_1920x1080.png" />
  <meta property="og:image:width" content="1920" />
  <meta property="og:image:height" content="1080" />
- <meta property="twitter:card" content="summary_large_image" />
- <meta property="twitter:domain" content="schillmania.com" />
  <!--
 
                                          ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
@@ -83,13 +83,22 @@
  <meta name="apple-mobile-web-app-capable" content="yes" />
 
  <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
-
+ <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+ <link rel="apple-touch-startup-image" href="image/app-images/armor_alley_game_image_512x512.png" />
+ 
  <!-- all kinds of icons -->
- <link rel="apple-touch-icon" sizes="76x76" href="./image/apple-touch-icon-76x76.png?v=1" />
- <link rel="apple-touch-icon" sizes="120x120" href="./image/apple-touch-icon-120x120.png?v=1" />
- <link rel="apple-touch-icon" sizes="152x152" href="./image/apple-touch-icon-152x152.png?v=1" />
- <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon-180x180.png?v=1" />
- <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css" />
+ <link rel="apple-touch-icon" sizes="72x72" href="image/app-icons/favicon-72x72.png" />
+ <link rel="apple-touch-icon" sizes="76x76" href="image/app-icons/apple-touch-icon-76x76.png" />
+ <link rel="apple-touch-icon" sizes="120x120" href="image/app-icons/apple-touch-icon-120x120.png" />
+ <link rel="apple-touch-icon" sizes="152x152" href="image/app-icons/apple-touch-icon-152x152.png" />
+ <link rel="apple-touch-icon" sizes="180x180" href="image/app-icons/apple-touch-icon-180x180.png" />
+
+ <link rel="preload" href="font/JetBrainsMono/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+ <link rel="preload" href="font/sysfont/sysfont.woff2" as="font" type="font/woff2" crossorigin />
+
+ <!-- tons of style -->
+ <!-- NOTE / hackish: the .VXXXXXXXX string here carries down to the "boot loader" below. -->
+ <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css.V20230515" />
  <script>
   (() => {
 
