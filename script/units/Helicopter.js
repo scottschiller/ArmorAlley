@@ -2505,7 +2505,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isOnScreen) {
 
-      data.xHistory.push(data.x + data.halfWidth);
+      data.xHistory.push(data.x + (data.isEnemy || data.rotated ? data.width : 0));
       data.yHistory.push(data.y);
 
       if (data.xHistory.length > data.trailerCount + 1) {
