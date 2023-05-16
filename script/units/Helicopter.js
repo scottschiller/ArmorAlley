@@ -2430,7 +2430,7 @@ const Helicopter = (options = {}) => {
       // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
       if (data.isLocal) {
-        newX = Math.max(game.players.local.data.scrollLeft + data.halfWidth + data.xMin, Math.min(((view.data.browser.width + game.players.local.data.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
+        newX = Math.max(game.players.local.data.scrollLeft + (view.data.browser.width * 0.05) + data.halfWidth + data.xMin, Math.min((((view.data.browser.width * 0.95) + game.players.local.data.scrollLeft) - data.xMaxOffset) - (data.width * 1.5), newX));
       }
 
       moveTo(newX, data.y + data.vY);
