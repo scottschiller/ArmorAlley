@@ -594,6 +594,8 @@ const Turret = (options = {}) => {
 
     if (options.DOA || data.isEnemy) {
       objects.cornholio.hide();
+    } else if (gamePrefs.bnb) {
+      objects.cornholio.show();
     }
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
