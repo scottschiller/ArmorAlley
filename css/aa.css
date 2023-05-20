@@ -228,7 +228,6 @@ body.is_safari #bnb-vs {
   background: transparent url(../image/armor-alley-wordmark-colour.webp) no-repeat 50% 72%;
   background-size: contain;
   image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
   z-index: 11;
   opacity: 0;
   transition: opacity 0.2s ease-out;
