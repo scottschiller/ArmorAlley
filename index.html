@@ -93,26 +93,52 @@
  <link rel="apple-touch-icon" sizes="152x152" href="image/app-icons/apple-touch-icon-152x152.png" />
  <link rel="apple-touch-icon" sizes="180x180" href="image/app-icons/apple-touch-icon-180x180.png" />
 
- <link rel="preload" href="font/JetBrainsMono/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
- <link rel="preload" href="font/sysfont/sysfont.woff2" as="font" type="font/woff2" crossorigin />
-
- <!-- tons of style -->
- <!-- NOTE / hackish: the .VXXXXXXXX string here carries down to the "boot loader" below. -->
- <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css.V20230515" />
+ <!--
+  * Tons of style. By default, fetch the versioned, minified CSS.
+  * Note: .V[number] is a versioning pattern also used by the "boot loader" below.
+ -->
+ <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css.V20230520" />
  <script>
   (() => {
 
     /**
-     * ARMOR ALLEY: "Boot loader" - production vs. development, ES6 module codebase.
+     * ARMOR ALLEY: "Boot loader" - production bundle vs. development source.
      * Try ?dev=1 if you want to see the unminified, raw source JS + CSS.
-     * Also on GitHub: https://github.com/scottschiller/ArmorAlley
+     * See README_DEVEL.md for more.
+     * https://github.com/scottschiller/ArmorAlley/
      */
 
-    function loadScript(src, type = 'module') {
-      const s = document.createElement('script');
-      s.type = type;
+    function loadScript(src, type = 'module', async = false) {
+      let s = document.createElement('script');
+      if (type) s.type = type;
+      if (async) s.async = true;
+      s.onerror = (e) => {
+        // ignore if not local
+        if (new URL(s.src).hostname !== wl.hostname) return;
+        console.warn(`loadScript(): ${src}${version} failed.${version ? ' Will retry, dropping version string.' : ''}`, e);
+        s.onerror = null;
+        s.remove();
+        s = null;
+        if (version) {
+          version = '';
+          loadScript(src, type, async);
+          // try the same for CSS.
+          swapCSS();
+        }
+      }
+      s.onload = () => {
+        console.log(`Loaded JS: ${src}${version}`);
+        s.onload = null;
+        s = null;
+      }
       s.src = `${src}${version}`;
-      toAppend.push(s);
+      if (toAppend) {
+        // document still loading
+        toAppend.push(s);
+      } else {
+        // retry case
+        document?.documentElement?.appendChild(s);
+      }
     }
 
     function loadCSS(src, onload) {
@@ -120,6 +146,7 @@
       link.rel = 'stylesheet';
       link.media = 'screen';
       link.onload = () => {
+        console.log(`Loaded CSS: ${src}${version}`);
         onload?.();
         link.onload = null;
         link = null;
@@ -140,31 +167,51 @@
       }
     }
 
-    let toAppend = [];
-
     const wl = window.location;
+
+    const isProdSite = !!wl.host.match(/armor-alley\.net/i);
+    const isLocalhost = !!wl.host.match(/localhost/i);
+    
     const sp = new URLSearchParams(wl.search);
     const forceProd = sp.get('prod');
-    const dev = !forceProd && (sp.get('dev') || !wl.href.match(/schillmania|armor-alley\.net/i));
+    const dev = !forceProd && (sp.get('dev') || !isProdSite);
+  
+    let css = document.getElementById('aa-css');
 
-    const css = document.getElementById('aa-css');
+    // e.g., ".V20230520"
+    let version = dev || isLocalhost ? '' : (css && css.href.toString().match(/\.V[0-9]+/i)?.[0]) || '';
 
-    // e.g., ".V20230510"
-    const version = dev ? '' : css.href.toString().match(/\.V[0-9]+/i)[0];
+    // JS + CSS nodes
+    let toAppend = [];
 
-    console.log('ARMOR ALLEY: using ' + (dev ? 'development JS.' : `production JS build, ${version.substr(1)}. Try ?dev=1 for the full source with comments.`));
+    console.log('ARMOR ALLEY: using ' + (dev ? 'development JS.' : `production JS build, ${version.length ? version.substr(1) : '[none]'}. Try ?dev=1 for the full source with comments.`));
+
+    function swapCSS() {
+      // swap out traditional "static" minified CSS for unminified - only once.
+      if (css) loadCSS('css/aa.css', () => { css.remove(); css = null });
+    }
+
+    function ga() {
+      // google analytics, only for armor-alley.net.
+      if (!wl.host.match(/armor-alley\.net/i)) return;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-XGW2TDDC6V');
+      let type = '', async = true;
+      loadScript('https://www.googletagmanager.com/gtag/js?id=G-XGW2TDDC6V', type, async);
+    }
 
     if (dev) {
       // load the unminified sources.
-      // TODO: snowstorm + SM2 should be modules, themselves.
-      loadScript('script/lib/snowstorm.js');
-      loadScript('script/lib/soundmanager2.js');
       loadScript('script/aa.js');
-      // swap out traditional "static" minified CSS for unminified.
-      if (css) loadCSS('css/aa.css', () => css.remove());
+      swapCSS();
     } else {
+      if (isLocalhost) swapCSS();
       loadScript('script/aa_main.js');
     }
+
+    ga();
 
     // go go go!
     doAppend();
