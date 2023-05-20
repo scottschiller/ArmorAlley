@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
-import { FPS, rad2Deg, rnd, rndInt, TYPES, tutorialMode, getTypes, rngInt } from '../core/global.js';
+import { FPS, getTypes, rad2Deg, rnd, rndInt, rngInt, soundManager, tutorialMode, TYPES } from '../core/global.js';
 import { playSound, stopSound, playSoundWithDelay, playRepairingWrench, playTinkerWrench, sounds, skipSound } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby, enemyNearby } from '../core/logic.js';
@@ -311,7 +311,7 @@ const Turret = (options = {}) => {
 
               playSound(sounds.bnb.cornholioRepair, exports, {
                 onfinish: function() {
-                  window.soundManager.destroySound(this.id);
+                  soundManager.destroySound(this.id);
                   // allow this to be played again
                   data.queuedSound = false;
                 }

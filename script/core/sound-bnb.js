@@ -1,5 +1,5 @@
 import { gameEvents, EVENTS } from './GameEvents.js';
-import { oneOf, winloc } from './global.js';
+import { oneOf, soundManager, winloc } from './global.js';
 import { utils } from '../core/utils.js';
 import { addSequence, addSound, getSound, playSound, skipSound } from './sound.js';
 import { game } from './Game.js';
@@ -8,6 +8,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { isGameOver } from './logic.js';
 import { effects } from './effects.js';
 import { net } from './network.js';
+import { snowStorm } from '../lib/snowstorm.js';
 
 const bnb = {};
 const playImmediately = { playImmediately: true };
@@ -221,7 +222,7 @@ function playQueuedBNBSounds() {
     console.warn(`Stuck or delayed sound queue? ${soundsToPlayBNB.processing ? 'Resetting "processing" flag' : ' processing = false'}`, soundsToPlayBNB.length, soundsToPlayBNB);
     console.warn('sounds in queue:', soundsToPlayBNB.map((bnbSound) => bnbSound));
     console.warn('sound that may have gotten stuck:', lastPlayedBnBSound);
-    console.warn('soundManager.soundIDs', window.soundManager.soundIDs.join(', '));
+    console.warn('soundManager.soundIDs', soundManager.soundIDs.join(', '));
     // soundsToPlayBNB.processing = false;
     // return;
   }
@@ -498,8 +499,6 @@ bnb.lotsOfLaughs = shuffle([
 ]);
 
 bnb.rainstormMonologue = (() => {
-
-  const { snowStorm } = window;
 
   let phase = 0;
   const phases = ['', 'rain', 'hail', 'turd'];

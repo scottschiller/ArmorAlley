@@ -1,3 +1,5 @@
+import { soundManager } from '../lib/soundmanager2.js';
+
 // oft-referenced constants, and a few simple methods.
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -372,6 +374,7 @@ export {
   rngInt,
   plusMinus,
   rngPlusMinus,
+  soundManager,
   setDefaultSeed,
   setTutorialMode
 };

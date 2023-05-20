@@ -1,5 +1,5 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, TYPES, tutorialMode, winloc, setTutorialMode, worldHeight } from './global.js';
+import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, setTutorialMode, soundManager, tutorialMode, TYPES, winloc, worldHeight } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
@@ -601,8 +601,8 @@ const game = (() => {
 
     objects.joystick?.end();
 
-    if (silent && gamePrefs.sound && window.soundManager) {
-      window.soundManager.mute();
+    if (silent && gamePrefs.sound && soundManager) {
+      soundManager.mute();
     }
 
     // shuffle "resume prompts" messages by hiding all except one; hopefully, they're considered humorous. ;)
@@ -641,8 +641,8 @@ const game = (() => {
 
     objects.gameLoop.start();
 
-    if (gamePrefs.sound && window.soundManager) {
-      window.soundManager.unmute();
+    if (gamePrefs.sound && soundManager) {
+      soundManager.unmute();
     }
 
     utils.css.remove(document.body, 'game-paused', 'prefs-modal-open', 'game-menu-open');

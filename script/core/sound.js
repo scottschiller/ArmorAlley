@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { rndInt, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
+import { rndInt, soundManager, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
 import { common } from './common.js';
 import { initBNBSound, playQueuedBNBSounds, playSequence, queueBNBSound } from './sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -148,7 +148,7 @@ function getSound(soundReference) {
 
     soundObject.options.onfinish = soundObject.onAASoundEnd;
 
-    soundObject.sound = window.soundManager.createSound(soundObject.options);
+    soundObject.sound = soundManager.createSound(soundObject.options);
 
     // HACKISH: a reference from sound back to the parent
     // useful for SMSound events, e.g., onfinish()
@@ -444,7 +444,7 @@ function destroySound(sound) {
   // SMSound instance, an actual SM2 sound object
   if (sound.id) {
     sound.parentSoundObject = null;
-    window.soundManager.destroySound(sound.id);
+    soundManager.destroySound(sound.id);
   }
 
 }
@@ -679,9 +679,9 @@ function addSequence(...args) {
 }
 
 // if SM2 is disabled or fails, still complete the sound config.
-// window.soundManager.ontimeout(initSoundTypes);
+// soundManager.ontimeout(initSoundTypes);
 
-window.soundManager.onready(() => {
+soundManager.onready(() => {
 
   initSoundTypes();
 
