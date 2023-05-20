@@ -1553,7 +1553,7 @@ const Helicopter = (options = {}) => {
     common.onDie(exports, dieOptions);
 
     if (!data.deployedParachute) {
-      common.addGravestone(exports, 'gravestone2');
+      common.addGravestone(exports);
     }
 
   }

@@ -279,8 +279,8 @@ function processGravestoneQueue() {
   gravestoneQueue.forEach((item, i) => {
 
     const exports = item[0];
-    const type = item[1] || pickFrom(gravestoneTypes);
-    const typeCSS = item[2];
+    const typeCSS = item[1];
+    const type = pickFrom(gravestoneTypes);
 
     // gravestones face the side from which they died, per se.
     const flipX = exports.data?.isEnemy ? 'scaleX(-1)' : '';
@@ -873,7 +873,7 @@ const common = {
     .replace('\n', '<br>');
   },
 
-  addGravestone(exports, type) {
+  addGravestone(exports) {
 
     const dType = exports.data.type;
 
@@ -895,7 +895,7 @@ const common = {
     }
 
     // now add the thing we came here for.
-    gravestoneQueue.push([exports, type, typeCSS]);
+    gravestoneQueue.push([exports, typeCSS]);
 
     queueGravestoneWork();
 
