@@ -1,4 +1,4 @@
-/** @license
+/** @license BSD
  *
  * SoundManager 2: JavaScript Sound for the Web
  * ----------------------------------------------

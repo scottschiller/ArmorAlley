@@ -1,4 +1,4 @@
-/** @license
+/** @license BSD
  * DHTML Snowstorm! JavaScript-based snow for web pages
  * Making it snow on the internets since 2003. You're welcome.
  * -----------------------------------------------------------
