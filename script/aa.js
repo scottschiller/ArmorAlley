@@ -23,7 +23,7 @@ import { prefs, PrefsManager } from './UI/preferences.js';
 
   A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
 
-  Online game
+  Game, overview, tutorials etc.
   https://armor-alley.net/
 
   Quick video overview (3m 45s)
@@ -35,7 +35,7 @@ import { prefs, PrefsManager } from './UI/preferences.js';
   Original development and history (2013)
   https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
 
-  Original game Copyright (C) 1989 - 1991 Information Access Technologies.
+  Original game Copyright (C) 1989 - 1991, Information Access Technologies.
   https://en.wikipedia.org/wiki/Armor_alley
 
   Images, text and other portions of the original game used with permission under an ISC license.
@@ -46,8 +46,8 @@ import { prefs, PrefsManager } from './UI/preferences.js';
 
   General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-  This release:     V2.0.20230501
-  Previous release: V1.6.20220201
+  This release:     V2.01.20230520
+  Previous release: V2.0.20230501
   Original release: V1.0.20131031
 
   For revision history, see README.md and CHANGELOG.txt.

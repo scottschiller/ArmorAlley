@@ -24,13 +24,13 @@ https://armor-alley.net/
 
 Code provided under the [Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License](https://creativecommons.org/licenses/by-nc/3.0/)
 
-Original game Copyright (C) 1989 - 1991 Information Access Technologies.
+Original game Copyright (C) 1989 - 1991, Information Access Technologies.
 
 https://en.wikipedia.org/wiki/Armor_alley
 
 -----
 
-**Quick links**
+**Quick Links**
 ---
 
 * 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
@@ -40,21 +40,73 @@ https://en.wikipedia.org/wiki/Armor_alley
 * 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
 ---
 
+**Developer Notes**
+---
+
+For running the game locally and JS + CSS build instructions, see [README_DEVEL.md](README_DEVEL.md).
+
+---
+
 **Changelog / Revision History**
 ---
 
-**V2.0.20230501: 10th Anniversary "Remastered" Edition**
-
-![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/armor-alley_game_image_1920x1080.jpg)
-
-Previous release: V1.6.20220201. Original release: V1.0.20131031.
-
-**Video overview**
+**V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
 ---
+
+Previous release: V2.0.20230501.
+
+![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/app-images/armor-alley_game_image_1920x1080.webp)
+
+## Video overview
+
 * 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
-**New features**
+* History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
+
+## Bug fixes of note
+
+* Don't let helicopter reach absolute edge of screen; buffer 5% on each side.
+
+* Mobile / touchscreen: Bananas weren't firing sometimes, due to incorrect keyboard mappings.
+
+* Sound: Always wait for sound load before firing `onplay()`.
+
+* Sound: Relative, in terms of distance to the helicopter.
+
+* Video: Ensure video is active when initial request / preload completes before playing.
+
+* Editor: Engineers were being output as infantry.
+
+* Update positioning of helicopter trailers for both sides, and when rotated.
+
+* BnB: Show existing "Cornholio" turrets at start of game.
+
+* "Midnight Oasis" network level: Added terrain decor - gravestones, trees etc.
+
+## Updates
+
+* Project now has its own site: https://armor-alley.net/
+
+* Nice progressive web app-style icon set.
+
+* Updated "Armor Alley" wordmark to resemble the original boxed software one, based on the "Stencil Compress D" font.
+
+## For developers
+
+* Added developer notes, `gulp-cli`-based build via `npm`: [README_DEVEL.md](README_DEVEL.md).
+
+* Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
+
+* SM2 + Snowstorm are now ES6 modules, included vs. concatenated into bundle.
+
 ---
+
+**V2.0.20230501: 10th Anniversary "Remastered" Edition**
+---
+Previous release: V1.6.20220201. Original release: V1.0.20131031.
+
+## New features
+
 * **Mobile / touch screen support**. Updated UX / UI, better playability and feature parity vs. desktop. Portrait is playable, but landscape is preferable on smaller screens.
 
 * **Network multiplayer**, like the original game. PvP, or co-op. Can be played with or against CPU players, as well.

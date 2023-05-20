@@ -2,9 +2,35 @@ ARMOR ALLEY: REMASTERED
 Changelog / Revision History
 ----------------------------
 
++ V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum
+
+  + 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+  + History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
+
+  + Bug fixes of note
+    • Don't let helicopter reach absolute edge of screen; buffer 5% on each side.
+    • Mobile / touchscreen: Bananas weren't firing sometimes, due to incorrect keyboard mappings.
+    • Sound: Always wait for sound load before firing `onplay()`.
+    • Sound: Relative, in terms of distance to the helicopter.
+    • Video: Ensure video is active when initial request / preload completes before playing.
+    • Editor: Engineers were being output as infantry.
+    • Update positioning of helicopter trailers for both sides, and when rotated.
+    • BnB: Show existing "Cornholio" turrets at start of game.
+    • "Midnight Oasis" network level: Added terrain decor - gravestones, trees etc.
+
+  + Miscellaneous
+    • Project now has its own site: https://armor-alley.net/
+    • Nice progressive web app-style icon set.
+    • Updated "Armor Alley" wordmark to resemble the original boxed software one, based on the "Stencil Compress D" font.
+
+  + For developers
+    • Added developer notes, `gulp-cli`-based build via `npm`: README_DEVEL.md.
+    • Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
+    • SM2 + Snowstorm are now ES6 modules, included vs. concatenated into bundle.
+
 + V2.0.20230501: 10th Anniversary "Remastered" Edition
 
-  + Quick video overview (3m 45s): https://youtu.be/oYUCUvg02rY
+  + 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
   + New features
     • Mobile / touch screen support. Updated UX / UI, better playability and feature parity vs. desktop. Portrait is playable, but landscape is preferable on smaller screens.
