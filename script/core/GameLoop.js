@@ -7,6 +7,7 @@ import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
+import { snowStorm } from '../lib/snowstorm.js';
 
 const GameLoop = () => {
 
@@ -263,8 +264,8 @@ const GameLoop = () => {
     animate();
 
     // snow - if by prefs, or "automatically" activated
-    if ((gamePrefs.snow || window.snowStorm?.active) && window.snowStorm?.snow) {
-      window.snowStorm.snow();
+    if ((gamePrefs.snow || snowStorm?.active) && snowStorm?.snow) {
+      snowStorm.snow();
     }
 
     data.frames++;

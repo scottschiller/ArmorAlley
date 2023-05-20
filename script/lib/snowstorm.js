@@ -790,5 +790,7 @@ function SnowStorm(window, document) {
 
   return this;
 }
-  
-window.snowStorm = new SnowStorm(window, document);
+
+const snowStorm = new SnowStorm(window, document);
+
+export { snowStorm };

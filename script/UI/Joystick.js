@@ -1,6 +1,7 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { debug } from '../core/global.js';
+import { snowStorm } from '../lib/snowstorm.js';
 
 function Joystick(options) {
 
@@ -221,8 +222,8 @@ function Joystick(options) {
     setDirection(relativeX, relativeY);
 
     // snowstorm? send over "mouse move" equivalent
-    if (window?.snowStorm.active) {
-      window.snowStorm.mouseMove(evt);
+    if (snowStorm.active) {
+      snowStorm.mouseMove(evt);
     }
 
   }

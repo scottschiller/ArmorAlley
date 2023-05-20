@@ -9,6 +9,7 @@ import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
 import { previewLevel, setLevel } from '../levels/default.js';
+import { snowStorm } from '../lib/snowstorm.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -1232,8 +1233,6 @@ function PrefsManager() {
       gravestones_vehicles: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_vehicles'),
 
       weather: (type) => {
-
-        const { snowStorm } = window;
 
         if (!snowStorm) return;
 

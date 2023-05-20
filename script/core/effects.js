@@ -7,6 +7,7 @@ import { Smoke } from '../elements/Smoke.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { sprites } from './sprites.js';
 import { common } from './common.js';
+import { snowStorm } from '../lib/snowstorm.js';
 
 let shrapnelToAdd = [];
 const MAX_SHRAPNEL_PER_FRAME = 128;
@@ -415,8 +416,6 @@ const effects = {
   },
 
   updateStormStyle: (style) => {
-
-    const { snowStorm } = window;
 
     if (!snowStorm) return;
 
