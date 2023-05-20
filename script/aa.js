@@ -1,4 +1,8 @@
-'use strict';
+import { winloc, DEFAULT_VOLUME, soundManager } from './core/global.js';
+import { utils } from './core/utils.js';
+import { game } from './core/Game.js';
+import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
+import { prefs, PrefsManager } from './UI/preferences.js';
 /*
 
                                          ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
@@ -68,8 +72,6 @@ window.aa = {
 
 };
 
-const { soundManager } = window;
-
 if (soundManager) {
 
   // OGG is available, so MP3 is not required.
@@ -98,16 +100,8 @@ if (document.readyState?.match(/interactive|complete|loaded/i)) {
   game.initArmorAlley();
 }
 
-// --- THE END ---
-
-import { winloc, DEFAULT_VOLUME } from './core/global.js';
-
-import { utils } from './core/utils.js';
-import { game } from './core/Game.js';
-import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
-import { prefs, PrefsManager } from './UI/preferences.js';
-
 // a few hot globals
 export { gameType, screenScale } from './core/Game.js';
-
 export { keyboardMonitor, prefsManager, stats };
+
+// --- THE END ---
