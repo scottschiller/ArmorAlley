@@ -4239,7 +4239,7 @@ body.is-mobile.notch-at-right #notification-toasts {
   text-indent: 0px;
 }
 
-body:not(.is-safari) #mobile-controls li span.letter-block.show_inventory {
+body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   /* Chrome on Android */
   line-height: 20.5px;
 }
@@ -4251,7 +4251,15 @@ body:not(.is-safari) #mobile-controls li span.letter-block.show_inventory {
 
 @media screen and (orientation: portrait) {
   #mobile-controls li span.letter-block.show_inventory {
-    line-height: 21px;
+    line-height: 23px;
+    top: 0.25px;
+    left: 0.25px;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  #mobile-controls li span.letter-block.show_inventory {
+    top: 1px;
   }
 }
 
