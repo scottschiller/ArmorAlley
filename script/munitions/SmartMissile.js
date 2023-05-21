@@ -871,7 +871,7 @@ const SmartMissile = (options = {}) => {
     foundDecoy: false,
     decoyItemTypes: getTypes('parachuteInfantry', { exports: { data: { isEnemy: options.isEnemy } } }),
     decoyFrameCount: 11,
-    ramiusFrameCount: 15,
+    ramiusFrameCount: 20,
     expireFrameCount: options.expireFrameCount || 256,
     dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
     width,
