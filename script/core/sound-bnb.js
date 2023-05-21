@@ -1598,7 +1598,7 @@ bnb.cornholioAnnounce = shuffle([
   addVL('i_am_the_great_cornholio_gringo_no_bunghole')
 ]);
 
-// bnb.cornholioAnnounce.regularQueueIfOffscreen = true;
+bnb.cornholioAnnounce.regularQueueAlways = true;
 
 bnb.cornholioAttack = shuffle([
   add('cornholio_my_bunghole_it_speaks_loud', 33),
@@ -1631,9 +1631,8 @@ bnb.cornholioAttack = shuffle([
   add('bunghole_x3'),
   add('cornholio_i_order_you_to_surrender_your_tp')
 ]);
-// TODO: review if boolean here is OK
-bnb.cornholioAttack.throttle = true;
-bnb.cornholioAttack.regularQueueIfOffscreen = true;
+bnb.cornholioAttack.throttle = 10000;
+bnb.cornholioAttack.regularQueueAlways = true;
 
 bnb.boioioing = shuffle([
   add('boing_a'),

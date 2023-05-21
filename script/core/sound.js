@@ -346,7 +346,7 @@ function playSound(soundReference, target, soundOptions) {
   // hackish: certain BnB sounds may be queued to play one-at-a-time, so "commentary" doesn't overlap.
   // queue regularly if `playImmediately` is set - on an array, or an individual sound.
 
-  if (soundObject.sound.url.match(/bnb/i) && (onScreen || !soundReference.regularQueueIfOffscreen)) {
+  if (soundObject.sound.url.match(/bnb/i) && !soundReference.regularQueueAlways && (onScreen || !soundReference.regularQueueIfOffscreen)) {
 
     // hackish: bail if feature-disabled
     if (!gamePrefs.bnb) return;
