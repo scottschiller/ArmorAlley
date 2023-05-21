@@ -25,6 +25,13 @@ const { rollup } = require('rollup');
 const cleanCSS = require('gulp-clean-css');
 const header = require('gulp-header');
 var concat = require('gulp-concat');
+const postcss = require('gulp-postcss');
+const imageInliner = require('postcss-image-inliner');
+
+const imageInlinerOpts = {
+  assetPaths: ['image'],
+  maxFileSize: 2048
+};
 
 // https://github.com/dtao/gulp-esprima
 const esprima = require('gulp-esprima');
@@ -83,6 +90,7 @@ function concatJS() {
 function minifyCSS() {
 
   return src(mainCSSFile)
+    .pipe(postcss([imageInliner(imageInlinerOpts)]))
     // https://github.com/clean-css/clean-css#constructor-options
     .pipe(cleanCSS({ level: 2 }))
     .pipe(header(fs.readFileSync(headerFile, 'utf8')))

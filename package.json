@@ -33,8 +33,10 @@
     "gulp-concat": "^2.6.1",
     "gulp-esprima": "^0.1.0",
     "gulp-header": "^2.0.9",
+    "gulp-postcss": "^9.0.1",
     "gulp-rename": "^2.0.0",
     "gulp-terser": "^2.1.0",
+    "postcss-image-inliner": "^6.1.0",
     "rollup": "^3.21.5"
   },
   "overrides": {
