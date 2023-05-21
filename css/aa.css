@@ -3673,7 +3673,7 @@ body.is-mobile #player-status-bar .spacer {
 
 /* except when BnB, and landscape? */
 @media screen and (orientation: landscape) {
-  body.is-mobile #player-status-bar .spacer {
+  body.bnb.is-mobile #player-status-bar .spacer {
     display: inline-block;
   }
 }
