@@ -140,7 +140,20 @@ const Turret = (options = {}) => {
     if (isFiring) {
 
       if (!data.isEnemy && gamePrefs.bnb && sounds.bnb.cornholioAttack) {
-        playSound(sounds.bnb.cornholioAttack, exports);
+
+        // hackish: check that no other turrets are also firing, preventing overlap of this sound.
+        let otherFriendlyTurretFiring = false;
+
+        game.objects[TYPES.turret].forEach((turret) => {
+          if (turret.data.firing && turret.data.isEnemy === data.isEnemy && turret.data.id !== data.id) {
+            otherFriendlyTurretFiring = true;
+          }
+        });
+
+        if (!otherFriendlyTurretFiring) {
+          playSound(sounds.bnb.cornholioAttack, exports);
+        }
+
       }
 
     } else {
