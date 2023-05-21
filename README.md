@@ -28,18 +28,18 @@ Original game Copyright (C) 1989 - 1991, Information Access Technologies.
 
 https://en.wikipedia.org/wiki/Armor_alley
 
----
 
 **Quick Links**
+---
 
 * 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
 * [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
 
 * 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
----
 
 **Developer Notes**
+---
 
 For running the game locally and JS + CSS build instructions, see [README_DEVEL.md](README_DEVEL.md).
 
