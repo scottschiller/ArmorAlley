@@ -3610,6 +3610,15 @@ body.is-mobile #help {
   }
 }
 
+body.is-mobile.notch-at-left #help {
+  /* "home screen" app, iOS Safari */
+  margin-right: calc(env(safe-area-inset-left) / 3);
+}
+
+body.is-mobile.notch-at-right #help {
+  margin-right: calc(env(safe-area-inset-right) / 3);
+}
+
 #help a {
   color: #009900;
   text-decoration: none;
@@ -3961,13 +3970,12 @@ body.is-mobile #mobile-controls {
   }
 
   body.is-mobile.notch-at-left #funds {
-    margin-left: 4px !important;
+    /* "home screen" app, iOS Safari */
+    margin-left: calc(env(safe-area-inset-left) / 3) !important;
   }
 
-  body.is_standalone.notch-at-left #funds,
-  body.is_standalone.notch-at-right #funds {
-    /* "home screen" app, iOS Safari */
-    margin-left: 24px !important;
+  body.is-mobile.notch-at-right #funds {
+    margin-left: calc(env(safe-area-inset-right) / 3) !important;
   }
 
   /* #game-fps positioning */
