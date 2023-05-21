@@ -19,12 +19,12 @@
 
 // npmjs.com/package/[name] unless otherwise specified
 const { gulp, src, dest, series } = require('gulp');
-var rename = require('gulp-rename');
+const rename = require('gulp-rename');
 const terser = require('gulp-terser');
 const { rollup } = require('rollup');
 const cleanCSS = require('gulp-clean-css');
 const header = require('gulp-header');
-var concat = require('gulp-concat');
+const concat = require('gulp-concat');
 const postcss = require('gulp-postcss');
 const imageInliner = require('postcss-image-inliner');
 
