@@ -30,7 +30,7 @@ https://en.wikipedia.org/wiki/Armor_alley
 ——///——
 
 ## Quick links
----
+
 * 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
 * 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
@@ -39,7 +39,6 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 
 ## Developer Notes
----
 
 **Requirements: Running "Armor Alley" locally**
 
@@ -129,4 +128,4 @@ RewriteRule (.*)\.(.*)\.[vV]\d+$ $1.$2 [L]
 ```
 You may notice a 404 when loading the development version, where a CSS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `css/aa_min.css.V20230520` will throw a 404 when the actual file on disk is `css/aa_min.css`.
 
-If you aren't using Apache in production, then asset versioning will fail and the game will not load. To disable it, remove the `.VXXXXXXXX` on the `<link>` to the CSS file in `index.html` and the boot loader will do the same for the JS.
+If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, remove the `.VXXXXXXXX` on the `<link>` to the CSS file in `index.html` and the boot loader will do the same for the JS.
