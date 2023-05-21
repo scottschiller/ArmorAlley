@@ -723,7 +723,8 @@ bnb.beavisRetorts = shuffle([
   addVL('b_i_think_i_might_start_crying_pretty_soon'),
   addSequence(
     addVL('b_im_gonna_go_to_the_kitchen'),
-    addVL('bh_you_mean_youre_gonna_go_polish_your_helmet_you_are_correct_sir')
+    addVL('bh_you_mean_youre_gonna_go_polish_your_helmet_you_are_correct_sir'),
+    addVL('bh_uh_you_can_play_by_yourself_then')
   ),
   addVL('b_oh_boy_this_sucks_disappointed'),
   addVL('b_oh_yeah_heh_heh'),
@@ -738,7 +739,10 @@ bnb.beavisRetorts = shuffle([
   addVL('b_thank_you_very_much_elvis_short'),
   addVL('b_that_was_pretty_good_heh'),
   addVL('b_the_amazing_butthead'),
-  addVL('b_well_im_gonna_go_spank_my_monkey'),
+  addSequence(
+    addVL('b_well_im_gonna_go_spank_my_monkey'),
+    addVL('bh_uh_you_can_play_by_yourself_then')
+  ),
   addVL('b_well_ok_maybe_youre_right'),
   addVL('b_what_bh_i_didnt_say_anything'),
   addVL('b_yeah_up_yours'),
@@ -782,7 +786,6 @@ bnb.buttheadInsultsArray = shuffle([
   addVL('bh_shut_up_beavis_huh'),
   addVL('bh_shut_up_beavis_laugh2'),
   addVL('bh_uh_huh_huh_huh_dumbass'),
-  addVL('bh_uh_you_can_play_by_yourself_then'),
   addVL('bh_uh_you_dumbass'),
   addVL('bh_uh_youre_never_gonna_score_beavis'),
   addVL('bh_uhh_that_was_dumb_b'),
@@ -1566,7 +1569,7 @@ bnb.buttheadJerkingMyChain = addSequence(
     addVL('b_whoa_what_is_that_thing_heh')
   ]),
   add('bh_jerking_my_chain', 40),
-  () => Math.random() >= 0.5 && bnb.whatKindOfMessage
+  () => Math.random() >= 0.25 && bnb.whatKindOfMessage
 );
 bnb.buttheadJerkingMyChain.throttle = 30000;
 bnb.buttheadJerkingMyChain.maxDelay = 5000;
