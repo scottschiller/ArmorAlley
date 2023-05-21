@@ -107,7 +107,7 @@ function playSequence(soundReference, exports, sequenceOptions = {}) {
       const { parentSoundObject } = sound;
 
       // bail if a sound didn't play, if the playNextCondition is false-y, or we're at the end.
-      if (sound.skipped || !playNextCondition()) {
+      if (sound.skipped || !playNextCondition(sound)) {
 
         // if a sequence, and this is the first, then drop all the others.
         if (parentSoundObject.sequenceOffset === 0) {
@@ -802,9 +802,14 @@ bnb.buttheadInsultsArray = shuffle([
   add('butthead_you_dumbass'),
 ]);
 
-bnb.buttheadInsults = addSequence(
-  bnb.buttheadInsultsArray,
-  bnb.beavisRetorts
+bnb.buttheadInsults = Object.assign(
+  addSequence(
+    bnb.buttheadInsultsArray,
+    bnb.beavisRetorts
+  ), {
+    // special case: beavis' retort is baked into this particular sound.
+    playNextCondition: (sound) => !sound?.url?.match(/phobic/i)
+  }
 );
 
 bnb.buttheadIdle = add('vs_butthead_was_i_supposed_to_be_doing_something');
