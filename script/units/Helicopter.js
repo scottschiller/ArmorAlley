@@ -1035,15 +1035,13 @@ const Helicopter = (options = {}) => {
     // L -> R / R -> L + forward / backward
 
     // auto-rotate feature
-    if ((data.autoRotate || (!data.isCPU && isMobile && !data.isRemote))) {
+    if (!data.landed && (data.autoRotate || (!data.isCPU && isMobile && !data.isRemote))) {
       if (!data.isEnemy) {
-        if ((data.vX > 0 && data.lastVX < 0 && data.rotated) || (data.vX < 0 && data.lastVX > 0 && !data.rotated)) {
+        if ((data.vX > 0 && data.rotated) || (data.vX < 0 && !data.rotated)) {
           rotate();
         }
-      } else {
-        if ((data.vX > 0 && data.lastVX < 0 && !data.rotated) || (data.vX < 0 && data.lastVX > 0 && data.rotated)) {
-          rotate();
-        }
+      } else if ((data.vX > 0 && !data.rotated) || (data.vX < 0 && data.rotated)) {
+        rotate();
       }
     }
 
