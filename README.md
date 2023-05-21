@@ -43,8 +43,6 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 For running the game locally and JS + CSS build instructions, see [README_DEVEL.md](README_DEVEL.md).
 
----
-
 **Changelog / Revision History**
 ---
 
