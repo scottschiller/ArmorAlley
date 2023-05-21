@@ -79,7 +79,6 @@ function minifyJS() {
 
 function concatJS() {
 
-  // TODO: make library scripts proper modules, and work them into the main bundle.
   return src(bundleFile)
     .pipe(concat(bundleFile))
     .pipe(header(fs.readFileSync(headerFile, 'utf8')))
