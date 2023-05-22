@@ -34,7 +34,7 @@ const Bomb = (options = {}) => {
       data.lastAngle = rad * rad2Deg;
     }
 
-    data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : data.lastAngle}deg`;
+    data.extraTransforms = `rotate3d(0, 0, 1, ${rotateAngle !== undefined ? rotateAngle : data.lastAngle}deg)` + (data.scale ?  ` scale3d(${data.scale}, ${data.scale}, 1)` : '');
 
     sprites.moveTo(exports, x, y);
 
@@ -64,7 +64,7 @@ const Bomb = (options = {}) => {
       data.lastAngle -= 90;
       // limit rotation, as well.
       data.lastAngle *= 0.5;
-      data.extraTransforms = `rotate3d(0, 0, 1, ${data.lastAngle}deg)`;
+      data.scale = 0.65;
     }
 
     // bombs blow up big on the ground, and "spark" on other things.
@@ -107,12 +107,21 @@ const Bomb = (options = {}) => {
       }
 
     } else {
-      
+
       // align to whatever we hit
+
+      // hacks: if scaling down, subtract full width.
+      // "this is in need of techical review." ;)
+      if (data.scale) {
+        data.x -= data.width;
+      }
+
       if (dieOptions.type && common.ricochetBoundaries[dieOptions.type]) {
 
+        let halfHeight = dieOptions.attacker?.data?.halfHeight || 3;
+
         // ensure that the bomb stays at or above the height of its target - e.g., bunker or tank.
-        data.y = Math.min(worldHeight - common.ricochetBoundaries[dieOptions.type], data.y);
+        data.y = Math.min(worldHeight - common.ricochetBoundaries[dieOptions.type], data.y) - (dieOptions.spark ? - (3 + rnd(halfHeight)) : (data.height * (data.scale || 1)));
 
         // go there immediately
         moveTo(data.x, data.y);
@@ -179,6 +188,7 @@ const Bomb = (options = {}) => {
     if (target.data.type === 'smart-missile') {
 
       die({
+        attacker: target,
         type: target.data.type,
         omitSound: true,
         spark: true,
@@ -205,11 +215,12 @@ const Bomb = (options = {}) => {
       // hide bomb sprite entirely on collision with these items...
       hidden = data.hidden || target.data.type.match(/balloon|helicopter/i);
 
-      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire && target.data.type !== TYPES.bunker) || target.data.type === TYPES.infantry;
+      bottomAlign = (!spark && !hidden && target.data.type !== TYPES.superBunker && target.data.type !== TYPES.balloon && target.data.type !== TYPES.gunfire && target.data.type !== TYPES.bunker) || target.data.type === TYPES.infantry;
 
       data.bottomAlign = bottomAlign;
 
       die({
+        attacker: target,
         type: target.data.type,
         spark,
         hidden,
@@ -366,6 +377,7 @@ const Bomb = (options = {}) => {
     vYMax: 32,
     bottomAlign: false,
     lastAngle: 0,
+    scale: null,
     domFetti: {
       colorType: 'bomb',
       elementCount: 3 + rndInt(3),
