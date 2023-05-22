@@ -2423,7 +2423,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   height: 22px;
   margin-left: 0px;
   background: none;
-  margin-top: -28px;
+  margin-top: -32px;
+  transform-origin: 50% 100%;
 }
 
 .bomb.explosion-large .sub-sprite {
@@ -2434,11 +2435,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
    */
   background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.webp);
   background-size: 512px 51px;
+  width: 512px;
+  height: 51px;
+  background-position: 0px 0px;
   /* default state */
-  background-position: -512px 0px;
-  /* bottom-align */
-  transform-origin: 50% 100%;
-  transform: scale3d(0.75, 0.75, 1);
+  transform: translate3d(-512px, 0px, 0px);
 }
 
 .bomb.explosion-large {
@@ -3352,10 +3353,10 @@ body.is-mobile #game-tips #game-announcements {
 
 @keyframes largeexplosion {
   from {
-    background-position: 0px 0px;
+    transform: translate3d(0px, 0px, 0px);
   }
   to {
-    background-position: -512px 0px;
+    transform: translate3d(-512px, 0px, 0px);
   }
 }
 
