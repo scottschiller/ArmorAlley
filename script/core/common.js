@@ -506,6 +506,25 @@ const common = {
      * Safeguard: wait only a certain amount of time before ignoring a nearby / overlapping unit, and continuing.
      */
 
+    /**
+     * Special case: two tanks roll up to the same enemy, and start firing.
+     * Without handling, the rear friendly tank would hang back to avoid overlap.
+     * In the original game, they would perfectly overlap when stopping to fire at the same position.
+     * Therefore: if both of us are tanks, and the target is firing and we are not, keep on truckin'.
+     */
+    if (source.data.type === TYPES.tank && target.data.type === TYPES.tank) {
+
+      // ignore if we're firing at a target, because we should also be stopped.
+      if (source.data.lastNearbyTarget) return;
+
+      // otherwise - if the target is firing and we aren't yet, keep on truckin' so we can join in.
+      if (target.data.lastNearbyTarget) {
+        resume();
+        return;
+      }
+
+    }
+
     // if we are not a tank, but the target is, always wait for tanks to pass in front.
     if (source.data.type !== TYPES.tank && target.data.type === TYPES.tank) {
       stop();
