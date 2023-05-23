@@ -1206,6 +1206,13 @@ function PrefsManager() {
 
       bnb: (isActive) => {
 
+        // hackish: un-hide specific DOM elements
+        // this is a workaround given "hidden by default" in HTML preventing a FOUC of sorts.
+        ['tv-title-screen', 'mtv-bnb-in', 'bnb-vs'].forEach((id) => {
+          const o = document.getElementById(id);
+          if (o) o.style.visibility = 'visible';
+        });
+
         // numerous UI updates
         utils.css.addOrRemove(document.body, isActive, 'bnb');
 
