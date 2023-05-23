@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode, worldHeight } from '../core/global.js';
+import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode, TYPES, worldHeight } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
@@ -1224,6 +1224,27 @@ function PrefsManager() {
 
         if (isActive) {
           common.preloadVideo('desert_explosion');
+        }
+
+      },
+
+      ground_unit_traffic_control: (isActive) => {
+
+        if (isActive) return;
+
+        // make sure game has started, too.
+        if (!game.data.started) return;
+
+        // when "traffic control" is disabled, try and make sure all affected vehicles resume immediately.
+        const types = common.pick(game.objects, TYPES.missileLauncher, TYPES.tank, TYPES.van);
+
+        for (const type in types) {
+          types[type].forEach((obj) => {
+            // skip over tanks that may be legitimately stopped.
+            if (obj.data.lastNearbyTarget) return;
+            // otherwise, resume.
+            if (obj.data.stopped) obj.data.stopped = false;
+          });
         }
 
       },
