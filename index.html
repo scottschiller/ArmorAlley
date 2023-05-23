@@ -92,14 +92,14 @@
  <link rel="apple-touch-icon" sizes="120x120" href="image/app-icons/apple-touch-icon-120x120.png" />
  <link rel="apple-touch-icon" sizes="152x152" href="image/app-icons/apple-touch-icon-152x152.png" />
  <link rel="apple-touch-icon" sizes="180x180" href="image/app-icons/apple-touch-icon-180x180.png" />
-
- <!--
-  * Tons of style. By default, fetch the versioned, minified CSS.
-  * Note: .V[number] is a versioning pattern also used by the "boot loader" below.
- -->
- <link id="aa-css" rel="stylesheet" media="screen" href="css/aa_min.css.V20230522" />
  <script>
   (() => {
+
+    let v;
+
+    // "version" string, for CSS + JS assets.
+    // comment out this line if you are getting 404s, etc.
+    v = '.V20230522';
 
     /**
      * ARMOR ALLEY: "Boot loader" - production bundle vs. development source.
@@ -123,7 +123,7 @@
           version = '';
           loadScript(src, type, async);
           // try the same for CSS.
-          swapCSS();
+          loadCSS(forceProd ? 'css/aa_min.css' : 'css/aa.css');
         }
       }
       s.onload = () => {
@@ -142,7 +142,10 @@
     }
 
     function loadCSS(src, onload) {
+      const id = 'aa-css';
+      document.getElementById(id)?.remove();
       let link = document.createElement('link');
+      link.id = id;
       link.rel = 'stylesheet';
       link.media = 'screen';
       link.onload = () => {
@@ -176,20 +179,13 @@
     const forceProd = sp.get('prod');
     const dev = !forceProd && (sp.get('dev') || !isProdSite);
 
-    let css = document.getElementById('aa-css');
-
     // e.g., ".V20230520"
-    let version = (dev || isLocalhost) && !forceProd ? '' : (css && css.href.toString().match(/\.V[0-9]+/i)?.[0]) || '';
+    let version = (dev || isLocalhost) && !forceProd ? '' : (v || '');
 
     // JS + CSS nodes
     let toAppend = [];
 
     console.log('ARMOR ALLEY: using ' + (dev ? 'development JS.' : `production JS build, ${version.length ? version.substr(1) : '[none]'}. Try ?dev=1 for the full source with comments.`));
-
-    function swapCSS() {
-      // swap out traditional "static" minified CSS for unminified - only once.
-      if (css) loadCSS(forceProd ? 'css/aa_min.css' : 'css/aa.css', () => { css.remove(); css = null });
-    }
 
     function ga() {
       // google analytics, only for armor-alley.net.
@@ -202,12 +198,12 @@
       loadScript('https://www.googletagmanager.com/gtag/js?id=G-XGW2TDDC6V', type, async);
     }
 
+    loadCSS(forceProd ? 'css/aa_min.css' : 'css/aa.css');
+
     if (dev) {
       // load the unminified sources.
       loadScript('script/aa.js');
-      swapCSS();
     } else {
-      if (isLocalhost) swapCSS();
       loadScript('script/aa_main.js');
     }
 

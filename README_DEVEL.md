@@ -126,6 +126,6 @@ The versioning pattern allows for a ".V" to be appended to a static file, so `aa
 ```
 RewriteRule (.*)\.(.*)\.[vV]\d+$ $1.$2 [L]
 ```
-You may notice a 404 when loading the development version, where a CSS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `css/aa_min.css.V20230520` will throw a 404 when the actual file on disk is `css/aa_min.css`.
+You may notice a 404 when loading the game, where a JS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `script/aa_min.js.V20230522` will throw a 404 when the actual file on disk is `script/aa_min.js`.
 
-If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, remove the `.VXXXXXXXX` on the `<link>` to the CSS file in `index.html` and the boot loader will do the same for the JS.
+If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line `v = '.V20230522'` `index.html`.
