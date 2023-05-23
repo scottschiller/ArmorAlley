@@ -13,6 +13,13 @@ const Inventory = () => {
 
   const STD_LOOK_AHEAD = 8;
 
+  function setWaiting(isWaiting) {
+
+    data.waiting = isWaiting;
+    data.waitingFrames = 0;
+    
+  }
+
   function processNextOrder() {
 
     // called each time an item is queued for building,
@@ -39,7 +46,7 @@ const Inventory = () => {
       } else if (!data.waiting) {
         objects.order = data.queue.shift();
         // wait if there are more in the queue
-        data.waiting = true;
+        setWaiting(true);
       }
 
       if (data.waiting && objects.lastObject) {
@@ -47,15 +54,20 @@ const Inventory = () => {
         // is there physical room for the next one?
         const nextOrder = objects.order;
 
-        // collision check: if this thing would overlap, don't add it just yet
-          if (collisionCheck(nextOrder.data, objects.lastObject.data, STD_LOOK_AHEAD)) {
+        /**
+         * Nearby check: if the new order would overlap, don't add it just yet -
+         * and make sure the last object is still alive. :X
+         * 
+         * Prior to the dead check, this was one cause of ordering getting stuck.
+         * `waitingFramesMax` is a release valve, in case something goes south.
+         */
+        if (!objects.lastObject.data.dead && collisionCheck(nextOrder.data, objects.lastObject.data, STD_LOOK_AHEAD) && data.waitingFrames++ < data.waitingFramesMax) {
           return;
         } else {
-          data.waiting = false;
+          setWaiting(false);
         }
   
       }
-  
 
     } else if (data.building && !data.queue.length) {
 
@@ -355,6 +367,7 @@ const Inventory = () => {
       if (!objects.order.options.isCPU) {
 
         data.waiting = false;
+        data.waitingFrames = 0;
 
         // drop the item that just finished building.
         objects.order?.onOrderComplete();
@@ -493,7 +506,9 @@ const Inventory = () => {
     queue: [],
     queueCopy: [],
     canShowNSF: false,
-    waiting: false
+    waiting: false,
+    waitingFrames: 0,
+    waitingFramesMax: 120
   };
 
   objects = {

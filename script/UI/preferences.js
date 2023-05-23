@@ -56,7 +56,7 @@ const defaultPrefs = {
   engineers_repair_bunkers: true,
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,
-  ground_unit_traffic_control: false
+  ground_unit_traffic_control: true
 };
 
 // allow URL-based overrides of prefs
