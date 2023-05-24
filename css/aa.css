@@ -203,6 +203,13 @@ body.game-started {
   image-rendering: optimizeSpeed;
 }
 
+@media screen and (orientation: landscape) {
+  body.is-mobile #world-overlay {
+    /* better vertical centering. */
+    top: 24px;
+  }
+}
+
 #world.tutorial-mode #world-overlay,
 #world.regular-mode #world-overlay {
   background: transparent;
