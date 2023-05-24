@@ -98,6 +98,9 @@ function init() {
 
   utils.css.add(dom.world, 'blurred');
 
+  // hackish: override inline HTML style
+  menu.style.visibility = 'unset';
+
   utils.css.add(menu, 'visible');
 
   utils.events.add(form, 'click', formClick);
