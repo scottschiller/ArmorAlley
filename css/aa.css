@@ -5975,8 +5975,8 @@ body.game-paused #tutorial-window {
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile #tutorial-window {
     left: 50%;
-    top: 140px;
-    transform: scale(1.5) translate(-50%, 0px);
+    top: 130px;
+    transform: scale3d(2, 2, 1) translate(-50%, 0px);
     transform-origin: 0px 0px;
   }
 }
