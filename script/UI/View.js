@@ -170,8 +170,6 @@ const View = () => {
 
         if (isLandscape) {
           logoScale += 0.35;
-        } else {
-          logoScale += 0.085;
         }
 
         const tvDisplay = document.getElementById('tv-title-screen');
