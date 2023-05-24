@@ -929,8 +929,25 @@ body.bnb .tv-noise-overlay {
 
 #radar-jammed-overlay.active .noise {
   opacity: 1;
-  /* lower "frame rate" to reduce full-screen compositing load */
+  /* lower "frame rate" on desktop reduce compositing work. */
   animation: noise 1.6s steps(8, end) infinite both;
+}
+
+/**
+ * iOS GPUs should be able to handle full-screen overlays,
+ * higher "frame rate", and filters for a more subtle effect.
+ */
+
+body.is-mobile #radar-jammed-overlay.active {
+  mix-blend-mode: soft-light;
+}
+
+body.is-mobile #radar-jammed-overlay .noise {
+  /* tint everything somewhat green. */
+  background-color: #006600;
+  background-image: url(../image/noise-tv.png);
+  background-size: 200px 200px;
+  animation: noise 1s steps(8, end) infinite both;
 }
 
 #radar-jammed-overlay.static .noise {
