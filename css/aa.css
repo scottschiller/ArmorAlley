@@ -363,10 +363,10 @@ body:not(.game-started) #mobile-controls {
   padding: 2px 4px;
 }
 
-body.is_safari #game-menu label,
-body.is_safari #game-menu select {
-  /* Safari shenanigans. :/ */
-  height: 20px;
+body.is_safari #game-menu label {
+  top: 0px;
+  padding-top: 1px;
+  padding-bottom: 2.5px;
 }
 
 body.is_safari #game-menu select {
@@ -374,13 +374,19 @@ body.is_safari #game-menu select {
   /* https://stackoverflow.com/questions/7638677/how-can-i-remove-the-gloss-on-a-select-element-in-safari-on-mac/57510283#57510283 */
   appearance: none;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
-  background-size: 12px;
-  background-position: calc(100% - 16px) 60%;
+  background-size: 8px;
+  background-position: calc(100% - 8px) 70%;
   background-repeat: no-repeat;
-  text-indent: 16px;
+  text-indent: 8px;
   padding-right: 32px;
-  border-radius: 6px;
+  border-radius: 3px;
   border-color: #fff;
+}
+
+body.is_safari #game-menu select:focus,
+body.is_safari #game-menu select:active {
+  /* evil, I know. */
+  outline: none;
 }
 
 body.is-mobile.is_safari #game-menu select {
@@ -5466,6 +5472,11 @@ button.attention:not(:active) {
   border: 1px solid transparent;
   transition: transform 0.05s;
   transition-property: background-color, color, filter, text-shadow, transform;
+}
+
+body.is_safari:not(.is-mobile) #game-menu button {
+  /* safari 2x zoom hacks: these are glitchy when combined with zoom, methinks. */
+  transition: none;
 }
 
 #game-menu button.large:hover {
