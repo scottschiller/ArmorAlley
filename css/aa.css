@@ -5186,6 +5186,7 @@ body.is_safari:not(.is-mobile) .mac-classic b {
   border-style: solid;
   border-color: #999;
   color: #ccc;
+  cursor: pointer;
 }
 
 #game-prefs-modal select {
