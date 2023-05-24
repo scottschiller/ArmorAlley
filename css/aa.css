@@ -100,6 +100,20 @@ body {
   overflow: hidden;
 }
 
+body.is_safari:not(.is-mobile) {
+  /**
+   * Safari seems to rasterize before transform()-based scaling of text and images,
+   * so things are soft and blurry. So be it; optimize image quality, vs. pixelated.
+   */
+   image-rendering: optimizeQuality;
+}
+
+body.is_safari:not(.is-mobile) .sprite,
+body.is_safari:not(.is-mobile) #player-status-bar {
+  /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
+  image-rendering: pixelated;
+}
+
 body.game-started {
   /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
   -webkit-user-select: none;
