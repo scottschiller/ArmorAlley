@@ -1338,6 +1338,7 @@ ul.stats-bar .bombs em {
   width: 100%;
   height: 88px;
   overflow: hidden;
+  contain: strict;
 }
 
 #world {
