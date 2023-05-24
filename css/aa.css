@@ -4121,6 +4121,22 @@ body.is-mobile.notch-at-right #notification-toasts {
   margin-right: env(safe-area-inset-right) !important;
 }
 
+/* go bigger on landscape. */
+@media screen and (orientation: landscape) {
+  body.is-mobile #notification-toasts {
+    transform: scale3d(2, 2, 1);
+    
+  }
+  /* account for toast location, and apply transform appropriately */
+  body.is-mobile #notification-toasts.left-aligned {
+    transform-origin: top left;
+  }
+  body.is-mobile #notification-toasts.right-aligned {
+    transform-origin: top right;
+  }
+}
+
+
 #mobile-controls .mobile-controls-weapons,
 #mobile-controls .mobile-controls-ordering {
   padding-left: 2px;
