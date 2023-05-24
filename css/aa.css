@@ -108,6 +108,51 @@ body.is_safari:not(.is-mobile) {
    image-rendering: optimizeQuality;
 }
 
+/**
+ * But wait! Not only do you get the Ginsu knife...
+ * Wanna see some tricks? Here are some incredible hacks in CSS.
+ * 2x parts of the document via zoom, then transform-scale down to 0.5 to keep things sharp.
+ */
+body.is_safari:not(.is-mobile) #top-bar {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 200%;
+  zoom: 2;
+  transform: scale3d(0.5, 0.5, 1);
+  transform-origin: 0px 0px;
+}
+
+body.is_safari:not(.is-mobile) #world-overlay {
+  zoom: 2;
+  width: 200%;
+  height: 200%;
+  top: 17px;
+  transform: scale3d(0.5, 0.5, 1);
+  transform-origin: 0px 0px;
+}
+
+body.is_safari:not(.is-mobile) #world.tutorial-mode #tutorial-window {
+  zoom: 2;
+  transform: scale3d(0.5, 0.5, 1) translate(-50%, -50%);
+  transform-origin: 0px 0px;
+}
+
+body.is_safari:not(.is-mobile).game-paused #game-paused {
+  /* render 3x text, then scale down. */
+  font-size: 3rem;
+  width: 100%;
+  transform: scale3d(0.33, 0.33, 1);
+}
+
+body.is_safari:not(.is-mobile) #help {
+  font-size: 2rem;
+  transform: scale3d(0.25, 0.25, 1);
+  transform-origin: 100% 100%;
+  margin-right: 0.25em;
+  top: 1px;
+}
+
 body.is_safari:not(.is-mobile) .sprite,
 body.is_safari:not(.is-mobile) #player-status-bar {
   /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
