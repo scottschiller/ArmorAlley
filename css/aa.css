@@ -3215,12 +3215,6 @@ body.bnb .sprite.engineer.butthead.building {
   height: 13px;
 }
 
-#world.tutorial-mode #game-tips {
-  /* more space needed for tutorial instructions */
-  top: 0px;
-  height: 100%;
-}
-
 #game-tips .tips-container {
   position: absolute;
   top: 23.5%;
@@ -3233,6 +3227,22 @@ body.bnb .sprite.engineer.butthead.building {
   overflow: hidden;
   display: none;
   border-radius: 32px;
+}
+
+body.is_safari:not(.is-mobile) #game-tips .tips-container {
+  /* safari 2x zoom shenanigans */
+  zoom: 2;
+  transform: scale3d(0.5, 0.5, 1) translate3d(-50%, 0px, 0px);
+  margin: 0px;
+  transform-origin: 0px 0px;
+  top: 11.75%;
+  left: 50%;
+  width: 500px;
+}
+
+body.is_safari:not(.is-mobile) #game-tips .tips-container .tip, #game-tips .tips-container .animation-node {
+  font-size: 16px;
+  line-height: 16px;
 }
 
 #world.tutorial-mode #game-tips .tips-container {
@@ -3327,6 +3337,12 @@ body.game-started #game-tips.active .tips-container {
   /* animation-timing-function: steps(100); */
 }
 
+body.is_safari:not(.is-mobile) #game-tips .tips-container .tip,
+body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
+  animation: scrollText-safari-scale 16s linear;
+  width: 64rem;
+}
+
 body.is-mobile #game-tips .tips-container .tip,
 body.is-mobile #game-tips .tips-container .animation-node {
   font-size: 6px;
@@ -3357,24 +3373,9 @@ body.is-mobile #game-tips .tips-container .animation-node {
   width: 32rem;
 }
 
-#world.tutorial-mode #game-tips .tips-container {
-  width: 30rem;
-  margin-left: -15rem;
-}
-
-body.is-mobile #world.tutorial-mode #game-tips .tips-container {
-  /* just a bit smaller. */
-  font-size: 1em;
-}
-
 body.is-mobile #game-tips #game-announcements {
   /* a bit smaller. */
   width: 75%;
-}
-
-#world.tutorial-mode #game-tips .tips-container h3 {
-  font-size: 1em;
-  color: #fff;
 }
 
 #game-tips #game-announcements {
