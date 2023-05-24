@@ -877,7 +877,6 @@ body.is-mobile #funds-count {
   height: 100%;
   z-index: 11;
   pointer-events: none;
-  /* mix-blend-mode: hard-light; */
 }
 
 #radar-jammed-overlay .noise,
@@ -899,7 +898,8 @@ body.bnb .tv-noise-overlay {
 }
 
 #radar-jammed-overlay .noise {
-  background-image: url(../image/noise-green-tint.png);
+  background-image: url(../image/noise-greyscale.png);
+  background-color: rgba(0,128,0,0.05);
   image-rendering: optimizeSpeed;
   background-size: 150px 150px;
 }
@@ -907,7 +907,12 @@ body.bnb .tv-noise-overlay {
 #radar-jammed-overlay.active .noise,
 body.bnb .tv-noise-overlay {
   animation: noise 1s steps(8, end) infinite both;
-  opacity: 0.67;
+}
+
+#radar-jammed-overlay.active .noise {
+  opacity: 1;
+  /* lower "frame rate" to reduce full-screen compositing load */
+  animation: noise 1.6s steps(8, end) infinite both;
 }
 
 #radar-jammed-overlay.static .noise {
