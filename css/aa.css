@@ -4525,6 +4525,11 @@ body.is_safari:not(.is-mobile) .notification-toast.toast-expired {
   top: -6px;
 }
 
+body.is-mobile .notification-toast.toast-expired {
+  margin-top: -1rem;
+  top: 0px;
+}
+
 .notification-toast.toast-expired {
   /* vertical collapse, works OK for two lines?? */
   margin-top: -1.3rem;
