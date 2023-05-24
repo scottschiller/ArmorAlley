@@ -811,7 +811,7 @@ body.bnb .tv-noise-overlay {
   position: absolute;
   top: 0px;
   right: 0px;
-  bottom: -500px;
+  bottom: 0px;
   left: -500px;
   background: transparent url(../image/noise-tv.png) 0px 0px;
   image-rendering: optimizeSpeed;
