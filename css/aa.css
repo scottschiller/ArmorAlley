@@ -4766,6 +4766,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   border-right-width: 0.25px;
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==);
   background-size: 8.25px 1px;
+  image-rendering: optimizeQuality;
 }
 
 .finder .title-bar-label,
