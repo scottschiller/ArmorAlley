@@ -3349,15 +3349,6 @@ body.is-mobile #game-tips .tips-container .animation-node {
   line-height: 6px;
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-tips .tips-container .tip,
-  body.is-mobile #game-tips .tips-container .animation-node {
-    /* even smaller. */
-    font-size: 4px;
-    line-height: 4px;
-  }
-}
-
 #game-tips .tips-container .animation-node {
   /* used to trigger `onanimationend()` events for tip display. */
   position: absolute;
