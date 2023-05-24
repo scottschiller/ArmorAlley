@@ -938,7 +938,7 @@ body.bnb .tv-noise-overlay {
  * higher "frame rate", and filters for a more subtle effect.
  */
 
-body.is-mobile #radar-jammed-overlay.active {
+body.is-mobile #radar-jammed-overlay {
   mix-blend-mode: soft-light;
 }
 
