@@ -815,7 +815,6 @@ const View = () => {
   
       data.usingZoom = false;
   
-      dom.worldWrapper._style.setProperty('margin-top', `${-((406 / 2) * data.screenScale)}px`);
       dom.worldWrapper._style.setProperty('width', `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / data.screenScale))}px`);
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
@@ -827,9 +826,7 @@ const View = () => {
       if (debug) console.log('using style.zoom-based scaling');
   
       data.usingZoom = true;
-  
-      dom.worldWrapper._style.setProperty('margin-top', `${-(406 / 2)}px`);
-  
+ 
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
       dom.aa.style.zoom = `${data.screenScale * 100}%`;
