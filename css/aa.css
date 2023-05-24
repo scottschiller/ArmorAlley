@@ -997,8 +997,6 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
 
 #top-bar li {
   display: inline-block;
-  /* in case there's overflow, hide the wrapped items */
-  min-height: 32px;
 }
 
 #fuel-bar,
