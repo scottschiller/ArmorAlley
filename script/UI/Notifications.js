@@ -121,7 +121,7 @@ const Notifications = () => {
     oToast = document.createElement('div');
     oToast.className = css.notificationToast;
 
-    if (item.doubleHeight) utils.css.add(oToast, css.doubleHeight);
+    if (item.doubleHeight || item.text.match(/\n|<br/i)) utils.css.add(oToast, css.doubleHeight);
 
     oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
 
