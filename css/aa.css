@@ -822,6 +822,7 @@ body.bnb .tv-noise-overlay {
 
 #radar-jammed-overlay .noise {
   background-image: url(../image/noise-green-tint.png);
+  image-rendering: optimizeSpeed;
   background-size: 150px 150px;
 }
 
