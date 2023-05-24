@@ -1177,7 +1177,18 @@ body.is_iphone #status-bar .letter-block {
 
 body.is-mobile ul.stats-bar li {
   /* bigger! mobile controls are moved to sides, so we have way more room. */
-  min-width: 10%;
+  min-width: 4%;
+}
+
+@media screen and (orientation: landscape) {
+  /* scale up a bit; center of screen, avoid The Notch and such. */
+  body.is-mobile ul.stats-bar {
+    /* scale up these controls. */
+    transform: scale3d(1.5, 1.5, 1);
+    transform-origin: 50% 0px;
+    /* prevent overlap with fuel bar */
+    padding-top: 3px;
+  }
 }
 
 ul.stats-bar li.stats-item .weapon-count {
@@ -3793,9 +3804,23 @@ body.is-mobile #player-status-bar .spacer {
 }
 
 /* except when BnB, and landscape? */
-@media screen and (orientation: landscape) {
-  body.bnb.is-mobile #player-status-bar .spacer {
-    display: inline-block;
+body.bnb.is-mobile #player-status-bar .spacer {
+  display: inline-block !important;
+  /* display shenanigans */
+  vertical-align: top;
+  min-height: 16px;
+  top: 2px;
+}
+
+body.bnb.is-mobile #bnb-now-playing {
+  height: 100%;
+  top: 1px;
+}
+
+@media screen and (orientation: portrait) {
+  body.bnb.is-mobile #bnb-now-playing {
+    /* More positioning hacks. Ugh. */
+    left: -1px;
   }
 }
 
