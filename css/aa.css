@@ -630,6 +630,24 @@ body.is-mobile #game-status li:last-of-type {
   color: #999;
 }
 
+@media screen and (orientation: landscape) {
+  body.is-mobile #game-status {
+    font-size: 120%;
+    height: 20px;
+  }
+  body.is-mobile #funds-count {
+    top: 1px;
+    transform: scale(1.5);
+    transform-origin: 50% 0px;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile #funds-count {
+    top: -0.5px;
+  }
+}
+
 #game-status li {
   text-indent: 0.33em;
   margin-right: 1em;
