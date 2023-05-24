@@ -128,6 +128,14 @@ const Bomb = (options = {}) => {
 
       } else {
 
+        if (dieOptions.target?.data?.type === TYPES.turret) {
+          // special case: align to turret, and randomize a bit.
+          const halfWidth = dieOptions.target.data.halfWidth || 3;
+          data.x = dieOptions.target.data.x + halfWidth + plusMinus(rnd(halfWidth));
+          data.y = dieOptions.target.data.y + rnd(dieOptions.target.data.height);
+          dieOptions.extraY = 0;
+        }
+
         // extraY: move bomb spark a few pixels down so it's in the body of the target. applies mostly to tanks.
         moveTo(data.x, data.y + (dieOptions.extraY || 0));
 
