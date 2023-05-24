@@ -4725,6 +4725,24 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   left: 312px;
 }
 
+/* safari desktop: zoom hacks */
+body.is_safari:not(.is-mobile).edit-mode #editor-window,
+body.is_safari:not(.is-mobile).edit-mode #editor-window-help {
+  zoom: 2;
+  /* note: half of "usual" value */
+  transform: scale3d(1.13, 1.13, 1);
+  transform-origin: 0px 0px;
+}
+
+body.is_safari:not(.is-mobile).edit-mode #editor-window-help {
+  /* safari scale shenanigans: roughly half */
+  left: 160px;
+}
+
+body.is_safari:not(.is-mobile).edit-mode #editor-window {
+  left: 10px;
+}
+
 .finder .title-bar {
  position: relative;
  height: 7px;

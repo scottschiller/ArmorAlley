@@ -1,7 +1,7 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { TYPES,  worldWidth } from '../core/global.js';
+import { TYPES,  isSafari,  worldWidth } from '../core/global.js';
 import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
@@ -9,6 +9,9 @@ import { zones } from '../core/zones.js';
 const HELP_X_PREF = 'editor_help_x';
 
 const showPixelOffset = window.location.href.match(/showOffset/i);
+
+// Desktop Safari scale hacks: needed for `getBoundingClientRect()` on draggable windows.
+const safariScaleOffset = isSafari ? 2 : 1;
 
 const Editor = () => {
 
@@ -914,15 +917,15 @@ const Editor = () => {
       // finder window close button?
       if (e.target.className === 'close-button') return;
 
+      let { clientX, clientY } = e;
+
       data.mouseDown = true;
       data.mouseDownTarget = e.target;
-      data.mouseDownX = e.clientX;
-      data.mouseDownY = e.clientY;
+      data.mouseDownX = clientX;
+      data.mouseDownY = clientY;
       data.mouseMoveCount = 0;
 
       setCursor('grabbing');
-
-      const { clientX } = e;
 
       const { method } = e.target.dataset;
 
@@ -945,8 +948,8 @@ const Editor = () => {
         data.draggingWindow = true;
 
         const rect = dom.oWindow.getBoundingClientRect();
-        data.windowX = rect.x;
-        data.windowY = rect.y;
+        data.windowX = rect.x * safariScaleOffset;
+        data.windowY = rect.y * safariScaleOffset;
         
         return stopEvent(e);
       }
@@ -1016,7 +1019,7 @@ const Editor = () => {
       if (data.activeTool && e.target === dom.oCutoffLine) {
 
         // assume we're adding something.
-        addItemAtMouse(e);
+        addItemAtMouse({ clientX, clientY });
 
       }
 
@@ -1057,8 +1060,10 @@ const Editor = () => {
 
     mousemove(e) {
 
-      data.mouseX = e.clientX;
-      data.mouseY = e.clientY;
+      let { clientX, clientY } = e;
+
+      data.mouseX = clientX;
+      data.mouseY = clientY;
 
       data.mouseMoveCount++;
 
@@ -1069,8 +1074,8 @@ const Editor = () => {
         const deltaX = Math.abs(data.mouseDownX - data.windowX);
         const deltaY = Math.abs(data.mouseDownY - data.windowY);
 
-        dom.oWindow.style.top = (data.mouseY - deltaY) + 'px';
-        dom.oWindow.style.left = (data.mouseX - deltaX) + 'px';
+        dom.oWindow.style.top = ((data.mouseY - deltaY) / safariScaleOffset) + 'px';
+        dom.oWindow.style.left = (((data.mouseX - deltaX) / safariScaleOffset)) + 'px';
 
         return;
 
@@ -1141,15 +1146,15 @@ const Editor = () => {
 
         // if scrubber is being dragged, move battlefield same direction.
         if (data.mouseDownTarget === dom.oRadarScrubber) {
-          setLeftScroll(e.clientX);
+          setLeftScroll(clientX);
         } else {
           // move opposite of mouse direction.
-          setLeftScroll(data.mouseDownX + (data.mouseDownX - e.clientX));
+          setLeftScroll(data.mouseDownX + (data.mouseDownX - clientX));
         }
 
       } else {
 
-        moveRelativeToMouse(e);
+        moveRelativeToMouse({ clientX, clientY });
 
       }
 
@@ -1181,8 +1186,8 @@ const Editor = () => {
       if (data.draggingWindow) {
         utils.css.remove(dom.oWindow, css.active);
         const rect = dom.oWindow.getBoundingClientRect();
-        data.windowX = rect.x;
-        data.windowY = rect.y;
+        data.windowX = rect.x * safariScaleOffset;
+        data.windowY = rect.y * safariScaleOffset;
         data.draggingWindow = false;
       }
 
