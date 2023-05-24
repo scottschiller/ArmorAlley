@@ -3796,7 +3796,6 @@ body.is-mobile.notch-at-right #help {
   padding-right: 5px;
 }
 
-body.is-mobile #bottom .toggle-sound,
 body.is-mobile #player-status-bar .inventory-item,
 body.is-mobile #player-status-bar .spacer {
   /* hide outright */
