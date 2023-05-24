@@ -314,7 +314,7 @@ const Helicopter = (options = {}) => {
 
       }
 
-      game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true, doubleHeight: true });
+      game.objects.notifications.add(welcomeMessage, { type: 'landingPad', noDuplicate: true });
 
     } else if (gamePrefs.muzak) {
       

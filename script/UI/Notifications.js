@@ -79,7 +79,6 @@ const Notifications = () => {
       count: 1,
       node: null,
       delay: calcDelay(text),
-      doubleHeight: options.doubleHeight,
       onComplete: options.onComplete,
       onRender: options.onRender,
       timer: null,
@@ -120,8 +119,6 @@ const Notifications = () => {
     // show, and queue the next check.
     oToast = document.createElement('div');
     oToast.className = css.notificationToast;
-
-    if (item.doubleHeight || item.text.match(/\n|<br/i)) utils.css.add(oToast, css.doubleHeight);
 
     oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
 
@@ -234,7 +231,6 @@ const Notifications = () => {
   }
 
   css = {
-    doubleHeight: 'double-height',
     notificationToast: 'notification-toast',
     toastActive: 'toast-active',
     toastExpiring: 'toast-expiring',
