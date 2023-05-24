@@ -6019,6 +6019,7 @@ body.game-paused #tutorial-window {
 #tutorial-window .body p {
   margin-left: 0px;
   margin-right: 0px;
+  line-height: 1.33em;
 }
 
 #tutorial-window .body p:not(:last-of-type) {
