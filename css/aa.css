@@ -653,6 +653,12 @@ body.is-mobile #game-status li:last-of-type {
   */
 }
 
+body.is_safari:not(.is-mobile) #funds-count {
+  /* safari 2x zoom hacks */
+  margin-top: 0px;
+  margin-left: -2px;
+}
+
 body.is-mobile #funds-count {
   margin-top: 1.25px;
 }
@@ -1169,6 +1175,14 @@ ul.stats-bar li.stats-item .weapon-count {
   margin-left: 0.075rem;
 }
 
+body.is_safari:not(.is-mobile) #ammo-count {
+  /* fix shifting on Safari, especially, with three digits in tutorial mode. */
+  min-width: 11px;
+}
+body.is_safari:not(.is-mobile) #bomb-count {
+  min-width: 9px;
+}
+
 ul.stats-bar li.stats-item .wrapper,
 #mobile-controls li.inventory-item {
   filter: grayscale(0);
@@ -1458,6 +1472,19 @@ body.is_firefox #radar .radar-item--animated {
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
 .sprite.exploding .transform-sprite {
   display: none;
+}
+
+/* hacks for radar items on desktop safari, where we apply body { zoom: 2 } shenanigans. */
+body.is_safari:not(.is-mobile) .radar-item {
+  margin-top: -1px;
+}
+
+body.is_safari:not(.is-mobile) .radar-item--animated {
+  margin-top: -1px;
+}
+
+body.is_safari:not(.is-mobile) .radar-item.bunker {
+  margin-top: -2px;
 }
 
 .bunker,
@@ -3002,6 +3029,8 @@ body.is_safari .cornholio .sub-sprite {
   font-size: 0.65em;
   padding: 0px;
   color: #666;
+  /* ensure this sits behind the battlefield. */
+  z-index: -1;
 }
 
 .sprite.flame {
@@ -4439,7 +4468,7 @@ body:not(.is-mobile) .mobile-only {
   position: absolute;
   top: 104px;
   right: 8px;
-  width: 12rem;
+  width: 14em;
   height: 256px;
   overflow: hidden;
 }
