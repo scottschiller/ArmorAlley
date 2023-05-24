@@ -1044,7 +1044,6 @@ ul.stats-bar {
 
 ul.stats-bar li {
   position: relative;
-  overflow: hidden;
   font-size: 7px;
   text-align: left;
   color: #ccc;
