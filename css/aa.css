@@ -3279,9 +3279,9 @@ body.game-over #game-tips .tips-container {
   top: 50%;
   left: 0px;
   width: 100%;
-  font-size: 1rem;
-  height: 1rem;
-  margin-top: -0.5rem;
+  font-size: 0.75rem;
+  height: 0.75rem;
+  margin-top: -0.375rem;
   text-align: center;
   color: #ccc;
   text-shadow: 0px 1px 0px #000;
