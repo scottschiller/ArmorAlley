@@ -4475,6 +4475,17 @@ body:not(.is-mobile) .mobile-only {
   overflow: hidden;
 }
 
+body.is_safari:not(.is-mobile) #notification-toasts {
+  /* desktop safari zoom hacks */
+  zoom: 2;
+  transform: scale3d(0.5, 0.5, 1);
+  transform-origin: top right;
+  /* note: half-scale of original */
+  top: 57px;
+  right: 4px;
+  height: 128px;
+}
+
 #notification-toasts.left-aligned {
   right: auto;
   left: 8px;
@@ -4516,9 +4527,20 @@ body:not(.is-mobile) .mobile-only {
   top: -3px;
 }
 
-.notification-toast.double-height.toast-expired {
+body.is_safari:not(.is-mobile) .notification-toast.toast-expired {
+  /* safari 2x zoom */
+  margin-top: -1.8rem;
+  top: -6px;
+}
+
+.notification-toast.toast-expired {
   /* vertical collapse, works OK for two lines?? */
   margin-top: -1.3rem;
+}
+
+body.is_safari:not(.is-mobile) .notification-toast.double-height.toast-expired {
+  /* safari 2x zoom */
+  margin-top: -2.6rem;
 }
 
 .notification-toast span {
