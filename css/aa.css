@@ -3786,6 +3786,7 @@ body.is-mobile #player-status-bar .spacer {
   /* note: nested opacity, individual images fade. */
   opacity: 0.75;
   display: none;
+  image-rendering: optimizeQuality;
 }
 
 body.bnb #bnb-now-playing {
