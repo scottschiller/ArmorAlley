@@ -5203,8 +5203,8 @@ body.is_safari:not(.is-mobile) .mac-classic b {
 }
 
 #game-prefs-modal select {
-  font-family: geneva, verdana, arial, sans-serif;
-  font-size: 10px;
+  font-family: Chicago, "FA Sysfont C", geneva, verdana, arial, sans-serif;
+  font-size: 11px;
   color: #000;
   border-color: #000;
   margin-left: 0px;
