@@ -154,9 +154,13 @@ const Notifications = () => {
 
     item = data.items.shift();
 
-    // slide contents out of view, to the right
+    // slide contents out of view
     // utils.css.remove(item.node, css.toastActive);
     utils.css.add(item.node, css.toastExpiring);
+
+    // yuck; read height from DOM.
+    const offsetHeight = item.node.offsetHeight;
+    item.node.style.marginTop = `-${offsetHeight}px`;
 
     if (item.onComplete) {
       item.onComplete();
