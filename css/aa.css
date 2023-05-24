@@ -141,8 +141,7 @@ body.game-started {
   background-size: 64px;
   z-index: 10;
   transform: scale3d(1,1,1);
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimizeSpeed;
 }
 
 #world.tutorial-mode #world-overlay,
