@@ -632,6 +632,8 @@ const game = (() => {
 
   }
 
+  window.pause = pause;
+
   function resume() {
 
     // exit if preferences menu is open; it will handle resume on close.

@@ -3441,9 +3441,12 @@ body.is-mobile #game-tips .tips-container .animation-node {
   width: 32rem;
 }
 
-body.is-mobile #game-tips #game-announcements {
-  /* a bit smaller. */
-  width: 75%;
+@media screen and (orientation: landscape) {
+  body.is-mobile #game-tips #game-announcements {
+    /* larger type, please. */
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+  }
 }
 
 #game-tips #game-announcements {
@@ -3463,8 +3466,7 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #world.tutorial-mode #game-tips #game-announcements {
-  /* this is nicer to read vs. huge blocks of chicago. */
-  font-family: 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
+  font-family: Chicago, "FA Sysfont C", courier, sans-serif;
 }
 
 #game-tips #game-announcements p {
