@@ -741,6 +741,11 @@ body.is-mobile #funds-count {
   left: 4px;
 }
 
+body.is_safari:not(.is-mobile) #queue {
+  /* WTF positioning */
+  top: 31px;
+}
+
 #queue .progress {
   position: absolute;
   bottom: -1px;
