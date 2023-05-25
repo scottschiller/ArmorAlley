@@ -5786,7 +5786,7 @@ button .network-icon {
 
 body.is_safari:not(.is-mobile) {
   #lights {
-    zoom: 3;
+    zoom: 4;
     image-rendering: pixelated;
   }
 }
