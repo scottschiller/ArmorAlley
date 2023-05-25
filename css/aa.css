@@ -3737,10 +3737,6 @@ body.is-mobile #game-tips .tips-container .animation-node {
   display: none;
 }
 
-#game-announcements .instructions {
-  margin: 0.75em 0px;
-}
-
 #help {
   position: relative;
   display: none;
