@@ -123,7 +123,7 @@
           version = '';
           loadScript(src, type, async);
           // try the same for CSS.
-          loadCSS(forceProd ? 'css/aa_min.css' : 'css/aa.css');
+          loadCSS();
         }
       }
       s.onload = () => {
@@ -141,7 +141,7 @@
       }
     }
 
-    function loadCSS(src, onload) {
+    function loadCSS(src = (isProdSite || forceProd ? 'css/aa_min.css' : 'css/aa.css'), onload) {
       const id = 'aa-css';
       document.getElementById(id)?.remove();
       let link = document.createElement('link');
@@ -198,7 +198,7 @@
       loadScript('https://www.googletagmanager.com/gtag/js?id=G-XGW2TDDC6V', type, async);
     }
 
-    loadCSS(forceProd ? 'css/aa_min.css' : 'css/aa.css');
+    loadCSS();
 
     if (dev) {
       // load the unminified sources.
