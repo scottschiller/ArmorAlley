@@ -3299,7 +3299,7 @@ body.bnb .sprite.engineer.butthead.building {
   text-shadow: 0px 1px 0px #000;
   overflow: hidden;
   display: none;
-  border-radius: 32px;
+  border-radius: 1em;
 }
 
 body.is_safari:not(.is-mobile) #game-tips .tips-container {
@@ -3444,6 +3444,29 @@ body.is-mobile #game-tips .tips-container .animation-node {
 #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
   display: inline-block;
   width: 32rem;
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-tips {
+    top: 82px;
+    height: 13px;
+  }
+  body.is-mobile #game-tips .tips-container {
+    /* take most of the screen real estate */
+    top: 0px;
+    width: 75%;
+    margin: 0px;
+    transform: translate3d(-50%, 0px, 0px);
+  }
+  body.is-mobile #game-tips .tips-container .tip,
+  body.is-mobile #game-tips .tips-container .animation-node {
+    width: 30rem;
+  }
+  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile),
+  body.is-mobile #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
+    width: 15rem;
+    animation: scrollText 10s linear;
+  }
 }
 
 @media screen and (orientation: landscape) {
