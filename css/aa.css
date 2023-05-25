@@ -947,7 +947,7 @@ body.is-mobile #radar-jammed-overlay .noise {
   background-color: #006600;
   background-image: url(../image/noise-tv.png);
   background-size: 200px 200px;
-  animation: noise 1s steps(8, end) infinite both;
+  animation: noise 0.5s steps(8, end) infinite both;
 }
 
 #radar-jammed-overlay.static .noise {
