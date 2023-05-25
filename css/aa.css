@@ -3772,6 +3772,7 @@ body.is-mobile #game-tips .tips-container .animation-node {
   margin-left: 1em;
   margin-right: 1em;
   top: 0.75px;
+  white-space: nowrap;
 }
 
 #help.active {
@@ -5781,6 +5782,13 @@ button .network-icon {
   height: 10px;
   overflow: hidden;
   vertical-align: middle;
+}
+
+body.is_safari:not(.is-mobile) {
+  #lights {
+    zoom: 3;
+    image-rendering: pixelated;
+  }
 }
 
 #lights .sub-sprite {
