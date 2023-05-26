@@ -837,6 +837,11 @@ const Helicopter = (options = {}) => {
 
       data.firing = state;
       
+      if (!data.isCPU) {
+        // start or stop immediately, too.
+        data.fireFrameCount = parseInt(data.fireModulus, 10);
+      }
+
     } else {
 
       data.firing = false;
@@ -1608,15 +1613,12 @@ const Helicopter = (options = {}) => {
 
   function fire() {
 
-    let frameCount;
     let missileTarget;
     const updated = {};
 
-    frameCount = game.objects.gameLoop.data.frameCount;
-
     if (!data.firing && !data.bombing && !data.missileLaunching && !data.parachuting) return;
 
-    if (data.firing && frameCount % data.fireModulus === 0) {
+    if (data.firing && data.fireFrameCount % data.fireModulus === 0) {
 
       if (data.ammo > 0) {
 
@@ -1652,6 +1654,8 @@ const Helicopter = (options = {}) => {
       }
 
     }
+
+    data.fireFrameCount++;
 
     if (data.bombing && data.bombFrameCount % data.bombModulus === 0) {
 
@@ -2843,6 +2847,7 @@ const Helicopter = (options = {}) => {
     shakeThreshold: 7,
     bombing: false,
     firing: false,
+    fireFrameCount: 0,
     respawning: undefined,
     respawningDelay: 1600,
     missileLaunching: false,
