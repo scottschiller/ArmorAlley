@@ -1622,6 +1622,14 @@ const Helicopter = (options = {}) => {
     
   }
 
+  function updateMissileUI(reloading) {
+
+    // Yuck. TODO: DRY.
+    utils.css.addOrRemove(dom.statusBar.missileCountLI, reloading, css.reloading);
+    utils.css.addOrRemove(document.querySelectorAll('#mobile-controls .mobile-controls-weapons li')[2], reloading, css.reloading);
+
+  }
+
   function fire() {
 
     let missileTarget;
@@ -1718,6 +1726,8 @@ const Helicopter = (options = {}) => {
           updated.smartMissiles = true;
 
           data.missileReloading = true;
+
+          updateMissileUI(data.missileReloading);
 
           // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
           data.missileReloadingTimer = common.setFrameTimeout(() => {
@@ -2855,6 +2865,7 @@ const Helicopter = (options = {}) => {
       cost: 20
     },
     unavailable: 'weapon-unavailable',
+    reloading: 'weapon-reloading',
     trailer: 'helicopter-trailer'
   });
 
