@@ -868,6 +868,7 @@ const Helicopter = (options = {}) => {
         // start or stop immediately, too.
         data.bombFrameCount = parseInt(data.bombModulus, 10);
       }
+
     }
 
   }
