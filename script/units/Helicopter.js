@@ -881,11 +881,21 @@ const Helicopter = (options = {}) => {
 
     data.missileLaunching = state;
 
+    if (!data.isCPU) {
+      // note the "time", for immediate "denied" sound feedback.
+      data.missileLaunchingFrameCount = parseInt(data.missileLaunchingModulus, 10);
+    }
+
   }
 
   function setParachuting(state) {
 
     data.parachuting = state;
+
+    if (!data.isCPU) {
+      // start or stop immediately, too.
+      data.parachuteFrameCount = parseInt(data.parachuteModulus, 10);
+    }
 
   }
 
@@ -1689,13 +1699,14 @@ const Helicopter = (options = {}) => {
 
     data.bombFrameCount++;
 
-    if (data.missileLaunching && frameCount % data.missileModulus === 0) {
+    if (data.missileLaunching) {
 
       if (data.smartMissiles > 0) {
 
+        // valid target?
         missileTarget = getNearestObject(exports, { useInFront: true });
 
-        if (missileTarget && !missileTarget.data.cloaked) {
+        if (!data.missileReloading && missileTarget && !missileTarget.data.cloaked) {
 
           const params = getSmartMissileParams(missileTarget);
 
@@ -1705,14 +1716,22 @@ const Helicopter = (options = {}) => {
 
           updated.smartMissiles = true;
 
+          data.missileReloading = true;
+
+          // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
+          data.missileReloadingTimer = common.setFrameTimeout(() => {
+            data.missileReloading = false;
+            updateMissileUI(data.missileReloading);
+          }, data.missileReloadingDelay);
+
         }
 
       }
 
-      if (data.isLocal && (!data.smartMissiles || !missileTarget)) {
+      if (!data.missileReloading && data.isLocal && (!data.smartMissiles || !missileTarget)) {
 
-        // out of ammo / no available targets
-        if (sounds.inventory.denied) {
+        // out of ammo / no available targets - and, it's been an interval OR the missile key / trigger was just pressed...
+        if (sounds.inventory.denied && (data.missileLaunchingFrameCount % data.missileLaunchingModulus === 0)) {
           playSound(sounds.inventory.denied);
         }
 
@@ -1724,9 +1743,18 @@ const Helicopter = (options = {}) => {
 
     }
 
-    if (data.parachuting && frameCount % data.parachuteModulus === 0) {
+    data.missileLaunchingFrameCount++;
 
-      if (data.parachutes > 0) {
+    if (data.parachuting) {
+
+      if (data.parachutes > 0 && !data.parachutingThrottle) {
+
+        data.parachutingThrottle = true;
+
+        // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
+        data.parachutingTimer = common.setFrameTimeout(() => {
+          data.parachutingThrottle = false;
+        }, data.parachutingDelay);
 
         // helicopter landed? Just create an infantry.
         if (data.landed) {
@@ -1757,7 +1785,8 @@ const Helicopter = (options = {}) => {
 
         playSound(sounds.popSound2, exports);
 
-      } else if (data.isLocal && sounds.inventory.denied) {
+      } else if (data.isLocal && !data.parachutingThrottle && data.parachuteFrameCount % data.parachuteModulus === 0 && sounds.inventory.denied) {
+
         if (gamePrefs.bnb && (game.data.isBeavis || game.data.isButthead)) {
           if (!data.bnbNoParachutes) {
             data.bnbNoParachutes = true;
@@ -1772,9 +1801,12 @@ const Helicopter = (options = {}) => {
           // no more infantry to deploy.
           playSound(sounds.inventory.denied);
         }
+
       }
 
     }
+
+    data.parachuteFrameCount++;
 
     if (updated.ammo || updated.bombs || updated.smartMissiles || updated.parachutes) {
       updateStatusUI(updated);
@@ -2851,7 +2883,15 @@ const Helicopter = (options = {}) => {
     respawning: undefined,
     respawningDelay: 1600,
     missileLaunching: false,
+    missileLaunchingFrameCount: 0,
+    missileLaunchingModulus: 5,
+    missileReloading: false,
+    missileReloadingTimer: null,
+    missileReloadingDelay: 500,
     parachuting: false,
+    parachutingThrottle: false,
+    parachutingTimer: null,
+    parachutingDelay: 150,
     ignoreMouseEvents: !!game.objects.editor,
     fuel: 100,
     maxFuel: 100,
@@ -2861,6 +2901,7 @@ const Helicopter = (options = {}) => {
     fuelModulus: (tutorialMode ? 24 : 8),
     fuelModulusFlying: (tutorialMode ? 9 : 3),
     missileModulus: 12,
+    parachuteFrameCount: 0,
     parachuteModulus: 4,
     repairModulus: 2,
     radarJamming: 0,
