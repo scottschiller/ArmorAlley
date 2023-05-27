@@ -2637,7 +2637,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 51px;
 }
 
-#world-wrapper.jammed #radar {
+body:not(.game-over) #world-wrapper.jammed #radar {
+  /* exception: allow the radar to show, even if jammed, when the game is over. */
   visibility: hidden;
   display: none; /* better? */
 }
