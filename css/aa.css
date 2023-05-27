@@ -4630,6 +4630,7 @@ body:not(.is-mobile) .mobile-only {
   width: 14em;
   height: 256px;
   overflow: hidden;
+  contain: strict;
 }
 
 body.is_safari:not(.is-mobile) #notification-toasts {
