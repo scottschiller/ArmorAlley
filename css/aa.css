@@ -99,7 +99,7 @@ body {
    * Chrome + Safari may be worse when using -webkit-optimize-contrast vs. default.
    * https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering
    */
-  image-rendering: optimizeQuality;
+  image-rendering: optimizeQuality; /* deprecated. */
   image-rendering: -webkit-optimize-contrast;
   /* non-standard, but quite nice under Firefox */
   image-rendering: -moz-crisp-edges;
@@ -304,7 +304,8 @@ body.is_safari #bnb-vs {
   /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
   background: transparent url(../image/armor-alley-wordmark-colour.webp) no-repeat 50% 72%;
   background-size: contain;
-  image-rendering: optimizeQuality;
+  /* Chrome prefers "auto" and renders more nicely this way. So be it. */
+  image-rendering: auto;
   z-index: 11;
   opacity: 0;
   transition: opacity 0.2s ease-out;
@@ -3943,6 +3944,7 @@ body.bnb #bnb-now-playing {
   transform: scale3d(1.2,1.2,0);
   transition: all 0.5s ease-in-out;
   transition-property: transform, opacity;
+  image-rendering: auto;
   image-rendering: optimizeQuality;
   image-rendering: -webkit-optimize-contrast;
 }
