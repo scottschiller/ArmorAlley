@@ -310,6 +310,8 @@ const View = () => {
 
   function setAnnouncement(text, delay) {
 
+    if (isGameOver()) return;
+
     // prevent `undefined` from being rendered. ;)
     text = text || '';
 
