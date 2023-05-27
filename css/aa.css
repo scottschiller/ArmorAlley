@@ -3311,7 +3311,7 @@ body.bnb .sprite.engineer.butthead.building {
 
 #game-tips {
   position: absolute;
-  top: 88px;
+  top: 90px;
   left: 0px;
   width: 100%;
   /* single line height */
@@ -3324,9 +3324,9 @@ body.bnb .sprite.engineer.butthead.building {
   position: absolute;
   top: 23.5%;
   left: 50%;
-  margin: -0.5em auto 0px -225px;
   padding: 0px;
-  width: 450px;
+  width: 65%;
+  transform: translate3d(-50%, -50%, 0px);
   color: #707070;
   text-shadow: 0px 1px 0px #000;
   overflow: hidden;
@@ -3335,19 +3335,22 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 body.is_safari:not(.is-mobile) #game-tips .tips-container {
-  /* safari 2x zoom shenanigans */
+   /* safari 2x zoom shenanigans */
   zoom: 2;
-  transform: scale3d(0.5, 0.5, 1) translate3d(-50%, 0px, 0px);
+  /* note, adjusted because of zoom. */
+  top: 4px;
+  height: 2em;
+  transform: scale3d(0.5, 0.5, 1) translate3d(-50%, -50%, 0px);
+  /* TODO: sort out container width vs. wrapping */
+  width: 400px;
   margin: 0px;
   transform-origin: 0px 0px;
-  top: 11.75%;
-  left: 50%;
-  width: 500px;
 }
 
-body.is_safari:not(.is-mobile) #game-tips .tips-container .tip, #game-tips .tips-container .animation-node {
-  font-size: 16px;
-  line-height: 16px;
+body.is_safari:not(.is-mobile) #game-tips .tips-container .tip,
+body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
+  font-size: 28px;
+  line-height: 20px;
 }
 
 #world.tutorial-mode #game-tips .tips-container {
@@ -3367,14 +3370,34 @@ body.game-over #game-tips .tips-container {
   top: 50%;
   left: 0px;
   width: 100%;
-  font-size: 0.75rem;
-  height: 0.75rem;
-  margin-top: -0.375rem;
+  font-size: 1rem;
+  height: 1rem;
+  margin-top: -0.5rem;
   text-align: center;
   color: #ccc;
+  font-weight: 300;
+  letter-spacing: -0.25em;
   text-shadow: 0px 1px 0px #000;
   z-index: 10;
   display: none;
+}
+
+body.is-mobile #game-paused {
+  letter-spacing: -0.25em;
+  font-size: 7vmin;
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-paused {
+    margin-top: 25vw;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile #game-paused {
+    margin-top: 10vw;
+    font-size: 15vmin;
+  }
 }
 
 #game-paused p {
@@ -3434,12 +3457,15 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips .tips-container .tip,
 #game-tips .tips-container .animation-node {
-  font-size: 8px;
-  line-height: 8px;
+  font-size: 16px;
+  line-height: 16px;
   animation: scrollText 16s linear;
+  letter-spacing: -0.25em;
+  text-rendering: optimizeSpeed;
+  font-weight: 300;
   padding: 1px;
   /* "ticker-tape" style? */
-  /* animation-timing-function: steps(100); */
+  /* animation-timing-function: steps(150); */
 }
 
 body.is_safari:not(.is-mobile) #game-tips .tips-container .tip,
@@ -3448,18 +3474,13 @@ body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
   width: 64rem;
 }
 
-body.is-mobile #game-tips .tips-container .tip,
-body.is-mobile #game-tips .tips-container .animation-node {
-  font-size: 6px;
-  line-height: 6px;
-}
-
 /* go bigger on landscape. */
 @media screen and (orientation: landscape) {
   body.is-mobile #game-tips .tips-container .tip,
   body.is-mobile #game-tips .tips-container .animation-node {
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 26px;
+    line-height: 20px;
+    width: 75%;
   }
 }
 
@@ -3475,7 +3496,9 @@ body.is-mobile #game-tips .tips-container .animation-node {
 #game-tips .tips-container .tip:not(.hide-on-mobile),
 #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
   display: inline-block;
-  width: 32rem;
+  /* each tip should roughly clear the screen before the next appears. */
+  width: 55%;
+  min-width: 32rem;
 }
 
 @media screen and (orientation: portrait) {
@@ -3483,29 +3506,30 @@ body.is-mobile #game-tips .tips-container .animation-node {
     top: 82px;
     height: 13px;
   }
+  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
+    top: 25vh;
+  }
   body.is-mobile #game-tips .tips-container {
     /* take most of the screen real estate */
     top: 0px;
-    width: 75%;
+    width: 95%;
     margin: 0px;
     transform: translate3d(-50%, 0px, 0px);
   }
   body.is-mobile #game-tips .tips-container .tip,
   body.is-mobile #game-tips .tips-container .animation-node {
-    width: 30rem;
+    min-width: 30rem;
   }
   body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile),
   body.is-mobile #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
-    width: 15rem;
-    animation: scrollText 10s linear;
+    width: 75%;
+    min-width: 15rem;
   }
 }
 
 @media screen and (orientation: landscape) {
-  body.is-mobile #game-tips #game-announcements {
-    /* larger type, please. */
-    font-size: 0.75rem;
-    line-height: 0.75rem;
+  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
+    top: 55vh;
   }
 }
 
@@ -3515,14 +3539,39 @@ body.is-mobile #game-tips .tips-container .animation-node {
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0px auto;
-  font-size: 0.45rem;
-  line-height: 0.45rem;
+  font-size: 1.5em;
+  line-height: 1em;
+  letter-spacing: -0.25em;
+  font-weight: 300;
   text-align: center;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
-  color: #999;
+  color: #bbb;
+}
+
+body.is-mobile #game-tips #game-announcements {
+  border-radius: 1em;
+  background: rgba(0,0,0,0.5);
+  padding: 4px;
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile #game-tips #game-announcements {
+    /* larger type, please. */
+    font-size: 2.75em;
+    line-height: 1em;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-tips #game-announcements {
+    /* smaller type, please. */
+    font-size: 1.25em;
+    line-height: 1.25em;
+    text-align: center;
+  }
 }
 
 #world.tutorial-mode #game-tips #game-announcements {
@@ -3547,7 +3596,8 @@ body.is-mobile #game-tips .tips-container .animation-node {
   overflow: visible;
 }
 
-#game-tips.has-announcement #game-tips-list {
+#game-tips.has-announcement #game-tips-list,
+#game-tips.has-announcement .tips-fader {
   opacity: 0;
 }
 
@@ -4619,9 +4669,6 @@ body:not(.is-mobile) .mobile-only {
 }
 
 @media screen and (orientation: portrait) {
-  #game-paused .mobile-only {
-    font-size: 0.75rem;
-  }
   body.game-paused #game-tips .tips-container,
   body.game-paused #mobile-controls,
   body.game-paused #notification-toasts {
