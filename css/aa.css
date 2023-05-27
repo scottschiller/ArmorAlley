@@ -780,7 +780,7 @@ body.is_safari:not(.is-mobile) #queue {
   filter: grayscale(1) blur(8px);
   opacity: 0;
   transition: all 0.25s ease-out;
-  transition-property: width, margin, opacity, filter, transform, font-weight;
+  transition-property: width, margin, opacity, filter, transform;
   /* small letter, e.g., "T" for "Tank" */
   width: 0.5rem;
   font-family: 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
@@ -809,7 +809,6 @@ body.is_safari:not(.is-mobile) #queue {
 
 #queue .queue-item.building {
   opacity: 1;
-  font-weight: bold;
   filter: grayscale(0) blur(0px);
 }
 
