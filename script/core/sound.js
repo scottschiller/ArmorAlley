@@ -1176,7 +1176,7 @@ soundManager.onready(() => {
     url: 'fire_pager-jason-1283464858_edit',
     fixedPlaybackRate,
     loops: 999,
-    volume: 3
+    volume: 2
   });
   
   sounds.missileWarningExpiry = add({
@@ -1184,7 +1184,7 @@ soundManager.onready(() => {
     // public domain
     url: 'fire_pager-jason-1283464858_edit_long',
     fixedPlaybackRate,
-    volume: 2
+    volume: 1.5
   })
   
   sounds.parachuteOpen = add({
