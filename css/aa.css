@@ -3925,7 +3925,13 @@ body.bnb.is-mobile #bnb-now-playing {
   /* note: nested opacity, individual images fade. */
   opacity: 0.75;
   display: none;
-  image-rendering: optimizeQuality;
+}
+
+body:not(.is-mobile) #bnb-now-playing {
+  /* ugly hacks, I broke something while making changes for mobile. */
+  top: -13px;
+  left: 1px;
+  height: 20px;
 }
 
 body.bnb #bnb-now-playing {
@@ -3954,16 +3960,11 @@ body.is_safari #bnb-now-playing .pow {
 
 #bnb-now-playing .beavis {
   background: transparent url(../image/pow-beavis.webp) 50% 50% no-repeat;
-  background-size: 75%;
+  background-size: contain;
 }
 
 #bnb-now-playing .butthead {
   background: transparent url(../image/pow-butthead.webp) 50% 50% no-repeat;
-  background-size: 100%;
-}
-
-body.is-mobile #bnb-now-playing .beavis,
-body.is-mobile #bnb-now-playing .butthead {
   background-size: contain;
 }
 
