@@ -3378,7 +3378,7 @@ body.game-over #game-tips .tips-container {
 
 #game-paused p {
   padding: 0.25rem 0.5rem;
-  margin-top: -0.25rem 0px 0px 0px;
+  margin-top: -0.25rem;
 }
 
 body.game-paused #game-tips .tips-container {
