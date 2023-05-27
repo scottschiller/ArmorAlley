@@ -341,8 +341,6 @@ function formClick(e) {
 
     game.objects.radar.reset();
   
-    document.getElementById('level-preview')?.remove();
-  
     hideTitleScreen();
 
     showExitType();
@@ -439,9 +437,10 @@ function startGame() {
 
   formCleanup();
 
-  game.objects.radar.reset();
+  // remove the editor nodes.
+  [ 'editor-window', 'editor-window-help' ].forEach((id) => document.getElementById(id)?.remove());
 
-  document.getElementById('level-preview')?.remove();
+  game.objects.radar.reset();
 
   if (net.connected) {
 
@@ -481,6 +480,8 @@ function startGame() {
 }
 
 function hideTitleScreen(callback) {
+
+  document.getElementById('level-preview')?.remove();
 
   common.setVideo('vr-goggles-menu');
   
