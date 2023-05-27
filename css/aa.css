@@ -3120,8 +3120,6 @@ body.is_safari .cornholio .sub-sprite {
   font-size: 0.65em;
   padding: 0px;
   color: #666;
-  /* ensure this sits behind the battlefield. */
-  z-index: -1;
 }
 
 .sprite.flame {
