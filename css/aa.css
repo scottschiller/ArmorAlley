@@ -4194,6 +4194,10 @@ body.is-mobile #mobile-controls {
   body.is-mobile #mobile-controls .mobile-controls-weapons {
     zoom: 2;
   }
+  body.is-mobile #mobile-controls li {
+    /* account for 2x border */
+    border-width: 0.5px;
+  }
   body.is-mobile.notch-at-right #mobile-controls .mobile-controls-ordering,
   body.is-mobile.notch-at-right #mobile-controls .mobile-controls-weapons {
     /* HACKISH: offset for zoom */
