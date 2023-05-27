@@ -4777,6 +4777,10 @@ body.is-mobile #game-prefs-modal {
   zoom: 1;
 }
 
+body.is-mobile #game-prefs-modal:not(.is-network) {
+  top: 54.5%;
+}
+
 /* TODO: move this into the prefs JS? */
 
 /* iOS Safari hacks */
@@ -5017,7 +5021,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 #game-prefs-modal.is-network {
   /* leave room for level preview in radar area */
   margin-top: 0px;
-  top: 54%;
+  top: 50.5%;
 }
 
 #game-prefs-modal p {
@@ -5078,12 +5082,20 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
    */
   zoom: 0.4;
   max-height: 800px;
+
+  /* auto may cause rendering to be cut short on mobile, we'll revert it below. */
   overflow-y: auto;
+
   /**
    * best we can do for Firefox, which doesn't support zoom
    * and thus scrollbars are larger due to transforms - long story.
    */
   scrollbar-width: thin;
+}
+
+body.is-mobile #game-prefs-modal .fieldset-container {
+  /* suspected cause of form truncation, especially in portrait. */
+  overflow-y: unset;
 }
 
 body.is_firefox #game-prefs-modal .fieldset-container {
@@ -5097,6 +5109,9 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 @media screen and (orientation: landscape) {
+  #game-prefs-modal.is-network {
+    top: 52%;
+  }
   /* don't mess with scrollbars, just let the whole body scroll naturally. */
   body.is-mobile #game-prefs-modal .fieldset-container {
     max-height: unset;

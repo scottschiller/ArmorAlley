@@ -922,6 +922,8 @@ const View = () => {
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
+    utils.events.add(screen?.orientation, 'change', events.orientationChange);
+
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
 
   }
@@ -1226,12 +1228,16 @@ const View = () => {
 
       if (game.objects.editor) game.objects.editor.events.resize();
 
-      // hackish: iOS Safari (possibly "home screen app" only?) needs an additional delay for layout, perhaps due to screen rotation animation(?)
-      if (isMobile/* && navigator.standalone*/) {
-        window.setTimeout(refreshCoords, 500);
-      }
-
       game.objects.gameLoop.resetFPS();
+
+    },
+
+    orientationChange() {
+
+      if (!isMobile) return;
+
+      // iOS Safari (possibly "home screen app" only?) needs an additional delay for layout, perhaps due to screen rotation animation.
+      refreshCoords();
 
     }
 
