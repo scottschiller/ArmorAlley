@@ -4295,6 +4295,7 @@ body.is-mobile.notch-at-right #notification-toasts {
   border-radius: 100%;
   /* microfiche, but OK on mobile. */
   background: transparent url(../image/checkerboard-black-mask-75percent.png);
+  background-size: 4px;
 }
 
 @media screen and (orientation: portrait) {
