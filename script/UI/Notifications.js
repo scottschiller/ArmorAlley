@@ -27,6 +27,10 @@ const Notifications = () => {
 
     let i, j, item, isDuplicate, replacementItem, renderedText;
 
+    if (!text?.replace) return;
+
+    text = text.replace(/\s&nbsp;\s/gi, ' ').replace(/\n/gi, '<br />');
+
     if (!data.items) data.items = [];
 
     // account for duplicate / repeated items

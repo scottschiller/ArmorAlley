@@ -45,7 +45,7 @@ const Radar = () => {
       playSound(sounds.missileWarning);
 
       if (data.missileWarningCount < 3) {
-        game.objects.notifications.add('⚠️ Incoming smart missile! 😰');
+        game.objects.notifications.add('🚀 Incoming smart missile! 😬');
         data.missileWarningCount++;
       }
 

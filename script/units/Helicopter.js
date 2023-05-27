@@ -153,7 +153,7 @@ const Helicopter = (options = {}) => {
 
     if (data.fuel < 33 && data.fuel > 32) {
 
-      text = 'Low fuel ⛽ 🤏 ⚠️';
+      text = 'Low fuel ⛽ &nbsp; 🤏 &nbsp; 😬';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -164,7 +164,7 @@ const Helicopter = (options = {}) => {
 
     } else if (data.fuel < 12.5 && data.fuel > 11.5) {
 
-      text = 'Fuel critical ⛽ 🤏 😱';
+      text = 'Fuel critical ⛽ &nbsp; 🤏 &nbsp; 😱';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -175,7 +175,7 @@ const Helicopter = (options = {}) => {
 
     } else if (data.fuel <= 0) {
 
-      text = 'No fuel ☠️';
+      text = 'No fuel &nbsp; ☠️';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -1302,8 +1302,8 @@ const Helicopter = (options = {}) => {
     if (foundObject) {
 
       if (data.isLocal) {
-        noEntry = '<b style="animation: blink 0.5s infinite">⛔</b>';
-        game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed. Waiting for clearance. ${noEntry}`);
+        noEntry = '<b style="animation: blink 0.5s infinite;font-size:75%;letter-spacing:0px;vertical-align:middle">⛔</b>';
+        game.objects.view.setAnnouncement(`${noEntry} Landing pad obstructed.\nWaiting for clearance. ${noEntry}`);
       }
 
       common.setFrameTimeout(reset, 500);
@@ -1844,7 +1844,7 @@ const Helicopter = (options = {}) => {
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement('No pilot');
-        game.objects.notifications.add('You found your helicopter’s “eject” button. 😱 ☠️');
+        game.objects.notifications.add('You found your helicopter’s “eject” button. &nbsp; 😱 &nbsp; ☠️');
       }
 
       if (gamePrefs.bnb) {

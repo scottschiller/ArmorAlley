@@ -108,7 +108,7 @@ const Van = (options = {}) => {
       // hack: clear any existing.
       game.objects.view.setAnnouncement();
 
-      game.objects.view.setAnnouncement('The enemy has won the battle. Better luck next time.', -1);
+      game.objects.view.setAnnouncement('The enemy has won the battle.\nBetter luck next time.', -1);
 
       gameOver(false);
 

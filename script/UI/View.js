@@ -319,6 +319,11 @@ const View = () => {
 
       utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
 
+      // if in portrait mode, use line breaks. otherwise, single-space.
+      const replacement = (window.matchMedia?.('(orientation: portrait)')?.matches) ? '<br />' : ' ';
+
+      text = text.replace(/\n/, replacement);
+
       dom.gameAnnouncements.innerHTML = text;
 
       data.gameTips.lastAnnouncement = text;

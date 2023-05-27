@@ -582,13 +582,13 @@ function checkProduction() {
   if (!game.data.productionHalted && bunkersOwned) {
 
     // player is doing well; reward them for their efforts.
-    announcement = '🎉 You control all bunkers. Enemy production is halted. 🚫';
+    announcement = '🎉 &nbsp; You control all bunkers.\nEnemy production is halted. &nbsp; 🚫';
     game.data.productionHalted = true;
 
   } else if (game.data.productionHalted && !bunkersOwned) {
 
     // CPU has regained control of a bunker.
-    announcement = '😰 You no longer control all bunkers. Enemy production is resuming. 🛠️';
+    announcement = '😰 &nbsp; You no longer control all bunkers.\nEnemy production is resuming. &nbsp; 🛠️';
     game.data.productionHalted = false;
 
   }
