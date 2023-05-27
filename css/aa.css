@@ -50,9 +50,23 @@
 */
 
 @font-face {
-  /* Credit and thank-you (Apache 2.0): https://www.jetbrains.com/lp/mono/ */
-  font-family: "JetBrains Mono";
+  /* https://www.jetbrains.com/lp/mono/ */
+  font-family: 'JetBrains Mono';
   src: url('../font/JetBrainsMono/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  /**
+   * font/DeValencia/README.txt
+   * https://www.behance.net/manuelfcg
+   */
+  font-family: 'de_valenciaregular';
+  src: url('../font/DeValencia/de_valencia.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -73,7 +87,7 @@ body {
 
 body, input {
   /* Classic Mac OS-style "chicago" by default, with an array of safe fallbacks. */
-  font-family: 'FA Sysfont C', 'JetBrains Mono', 'SF Mono', 'Lucida Console', 'Terminal', Monaco, monospace;
+  font-family: 'FA Sysfont C', 'JetBrains Mono', 'Menlo', Monaco, 'SF Mono', 'Lucida Console', 'Terminal', monospace;
 }
 
 body {
@@ -3300,6 +3314,8 @@ body.bnb .sprite.engineer.butthead.building {
   left: 0px;
   width: 100%;
   /* single line height */
+  font-family: 'de_valenciaregular', 'FA Sysfont C', 'JetBrains Mono', 'Menlo', Monaco, 'SF Mono', 'Lucida Console', 'Terminal', monospace;
+  font-weight: bold;
   height: 13px;
 }
 
