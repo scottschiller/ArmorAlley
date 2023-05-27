@@ -2946,7 +2946,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .sprite .energy-status {
   position: absolute;
-  bottom: 0.1px; /* hackish, rounding fix */
+  bottom: 0px;
   left: 0px;
   width: 100%;
   height: 1px;
@@ -2960,14 +2960,17 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   transition-property: width, height, left, background-color, opacity;
 }
 
+.sprite.tank .energy-status {
+  bottom: 1px;
+}
+
 .sprite.balloon .energy-status {
   /* pull down slightly, and make more visible */
   bottom: -1px;
   height: 1.5px;
 }
 
-.sprite.parachute-infantry .energy-status,
-.sprite.infantry .energy-status {
+.sprite.parachute-infantry .energy-status {
   height: 0.5px;
 }
 
