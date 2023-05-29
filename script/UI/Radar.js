@@ -466,12 +466,25 @@ const Radar = () => {
         // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
         sprites.setTransformXY(objects.items[i], objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
 
+        objects.items[i].data.left = left;
+
+        if (objects.items[i] === data.radarTarget) {
+          updateTargetMarker(objects.items[i]);
+        }
+
       }
 
     }
 
-    // reset, only do this once.
-    data.isStale = false;
+    if (data.isStale) {
+
+      // force-refresh
+      updateTargetMarker(data.radarTarget);
+
+      // only do this once.
+      data.isStale = false;
+
+    }
 
   }
 
