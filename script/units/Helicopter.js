@@ -1843,7 +1843,7 @@ const Helicopter = (options = {}) => {
       if (!data.isLocal) return;
 
       if (!tutorialMode) {
-        game.objects.view.setAnnouncement('No pilot');
+        game.objects.view.setAnnouncement('No pilot 😱');
         game.objects.notifications.add('You found your helicopter’s “eject” button. &nbsp; 😱 &nbsp; ☠️');
       }
 
