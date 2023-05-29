@@ -1136,6 +1136,10 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   display: inline-block;
 }
 
+body.is-mobile #top-bar #game-fps {
+  display: none;
+}
+
 #fuel-bar,
 #fuel-line {
   background-color: #161616;

@@ -1,7 +1,7 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, FPS } from '../core/global.js';
+import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, FPS, isMobile } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -279,7 +279,7 @@ const GameLoop = () => {
     // every interval, update framerate.
     if (!unlimitedFrameRate && ts - data.fpsTimer >= data.fpsTimerInterval) {
 
-      if (dom.fpsCount && data.frames !== data.lastFrames) {
+      if (!isMobile && dom.fpsCount && data.frames !== data.lastFrames) {
         dom.fpsCount.innerText = data.frames;
         data.lastFrames = data.frames;
       }
