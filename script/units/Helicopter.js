@@ -1619,8 +1619,27 @@ const Helicopter = (options = {}) => {
       // special variants of the smart missile. ;)
       isBanana: missileModeSource === bananaMode,
       isRubberChicken: missileModeSource === rubberChickenMode,
-      isSmartMissile: missileModeSource === defaultMissileMode
+      isSmartMissile: missileModeSource === defaultMissileMode,
+      onDie: maybeDisableTargetDot
     };
+    
+  }
+
+  function maybeDisableTargetDot() {
+
+    // this applies only to the local player.
+    if (!data.isLocal) return;
+
+    if (data.smartMissiles) return;
+
+    const activeMissiles = game.objects[TYPES.smartMissile].filter((m) => !m.data.dead && m.data.parent === game.players.local);
+
+    // bail if there are still missiles in the air.
+    if (activeMissiles.length) return;
+
+    utils.css.add(targetDot, css.disabled);
+
+    game.objects.radar.clearTarget();
     
   }
 
@@ -1630,7 +1649,7 @@ const Helicopter = (options = {}) => {
     if (!data.isLocal) return;
 
     // does the local player have any active missiles?
-    const activeMissiles = game.objects[TYPES.smartMissile].filter((m) => m.data.parent === game.players.local);
+    const activeMissiles = game.objects[TYPES.smartMissile].filter((m) => !m.data.dead && m.data.parent === game.players.local);
 
     if (!data.smartMissiles && !activeMissiles.length) return;
 
