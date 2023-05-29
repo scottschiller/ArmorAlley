@@ -3463,7 +3463,7 @@ body.game-started #game-tips.active .tips-container {
 #game-tips .tips-container .animation-node {
   font-size: 16px;
   line-height: 16px;
-  animation: scrollText 16s linear;
+  animation: scrollText 20s linear;
   letter-spacing: -0.25em;
   text-rendering: optimizeSpeed;
   font-weight: 300;
@@ -3501,7 +3501,7 @@ body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
 #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
   display: inline-block;
   /* each tip should roughly clear the screen before the next appears. */
-  width: 55%;
+  width: 75%;
   min-width: 32rem;
 }
 
