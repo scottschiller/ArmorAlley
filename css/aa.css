@@ -4269,22 +4269,19 @@ body.is-mobile #mobile-controls {
     right: auto;
   }
 
-  body.is-mobile.notch-at-left #funds {
-    /* "home screen" app, iOS Safari */
-    margin-left: calc(env(safe-area-inset-left) / 3) !important;
+  body.is-mobile #funds {
+    margin-top: 2px;
   }
 
+  body.is-mobile.notch-at-left #funds,
   body.is-mobile.notch-at-right #funds {
-    margin-left: calc(env(safe-area-inset-right) / 3) !important;
+    /* "home screen" app, iOS Safari */
+    margin-left: calc(env(safe-area-inset-left) / 1.5) !important;
   }
 
   /* #game-fps positioning */
   body.is-mobile #game-status li:last-of-type {
     right: 8px;
-  }
-
-  body.is_standalone #game-status li:last-of-type {
-    right: 18px;
   }
 
   /* bottom bar */
