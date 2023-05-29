@@ -8,7 +8,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
-import { gamePrefs, prefs } from '../UI/preferences.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const Balloon = (options = {}) => {
 
