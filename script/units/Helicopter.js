@@ -443,6 +443,7 @@ const Helicopter = (options = {}) => {
     }
 
     if (force || updated.smartMissiles) {
+      maybeUpdateTargetDot();
       dom.statusBar.missileCount.innerText = data.smartMissiles;
       if (updated.smartMissilesComplete) {
         utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
@@ -764,6 +765,7 @@ const Helicopter = (options = {}) => {
       if (data.smartMissiles >= data.maxSmartMissiles) {
         updated.smartMissilesComplete = true;
       }
+      maybeUpdateTargetDot();
     }
 
     sprites.updateEnergy(exports);
@@ -1622,6 +1624,66 @@ const Helicopter = (options = {}) => {
     
   }
 
+  function maybeUpdateTargetDot() {
+
+    // this applies only to the local player.
+    if (!data.isLocal) return;
+
+    // does the local player have any active missiles?
+    const activeMissiles = game.objects[TYPES.smartMissile].filter((m) => m.data.parent === game.players.local);
+
+    if (!data.smartMissiles && !activeMissiles.length) return;
+
+    utils.css.remove(targetDot, css.disabled);
+
+  }
+
+  function markTarget(target, active) {
+
+    if (!data.isLocal) return;
+
+    if (!target) return;
+
+    // new target
+    if (active && target?.dom?.o) {
+      target.dom.o.appendChild(targetDot);
+      utils.css.remove(targetDot, css.disabled);
+      game.objects.radar.markTarget(target.radarItem);
+    }
+
+    if (!active && targetDot) {
+      utils.css.add(targetDot, css.disabled);
+      game.objects.radar.clearTarget();
+    }
+
+  }
+
+  function scanRadar() {
+
+    // don't update if there are no missiles.
+    // this helps to preserve the last target if the last missile was just fired.
+    if (!data.smartMissiles) return;
+
+    const newTarget = getNearestObject(exports, { useInFront: true });
+
+    if (newTarget && newTarget !== lastMissileTarget) {
+
+      markTarget(lastMissileTarget, false);
+
+      markTarget(newTarget, true);
+
+      lastMissileTarget = newTarget;
+
+    } else if (!newTarget && lastMissileTarget) {
+
+      markTarget(lastMissileTarget, false);
+
+      lastMissileTarget = null;
+
+    }
+
+  }
+
   function updateMissileUI(reloading) {
 
     // Yuck. TODO: DRY.
@@ -1712,8 +1774,21 @@ const Helicopter = (options = {}) => {
 
       if (data.smartMissiles > 0) {
 
-        // valid target?
-        missileTarget = getNearestObject(exports, { useInFront: true });
+        // local chopper may use target from UI
+        if (data.isLocal && lastMissileTarget?.dom?.o && !lastMissileTarget?.data?.dead) {
+
+          missileTarget = lastMissileTarget;
+
+        } else {
+
+          missileTarget = getNearestObject(exports, { useInFront: true });
+
+          // sync the UI if local, too.
+          if (data.isLocal) {
+            maybeUpdateTargetDot();
+          }
+
+        }
 
         if (!data.missileReloading && missileTarget && !missileTarget.data.cloaked) {
 
@@ -2513,7 +2588,13 @@ const Helicopter = (options = {}) => {
     // should we be firing, also?
 
     if (!data.dead) {
+
+      if (data.isLocal && game.objects.gameLoop.data.frameCount % 10 === 0) {
+        scanRadar();
+      }
+
       fire();
+
     }
 
     if (!data.dead && data.isLocal) {

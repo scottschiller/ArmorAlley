@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-import { isFirefox, isSafari, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
+import { isFirefox, isMobile, isSafari, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
 import { playSound, skipSound, stopSound, sounds, playSoundWithDelay } from '../core/sound.js';
 import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
@@ -290,6 +290,58 @@ const Radar = () => {
 
   }
 
+  function clearTarget() {
+
+    data.radarTarget = null;
+    dom.targetMarker.style.visibility = 'hidden';
+
+  }
+
+  // pixel pushing for a few types, so the underlying "bar" lines up with the radar sprite.
+  const markerOffsets = {
+    [TYPES.bunker]: 2.75,
+    [TYPES.turret]: 6.5,
+    [TYPES.helicopter]: 24,
+    [TYPES.balloon]: 6
+  };
+
+  function updateTargetMarker(targetItem) {
+
+    // sanity check: ensure this object still exists.
+    if (!targetItem?.oParent?.dom?.o) return;
+
+    if (!targetItem.layout?.width) return;
+
+    const { width } = targetItem.layout;
+
+    if (width && data.radarTargetWidth !== width) {
+      // TODO: improve Safari layout.
+      dom.targetMarker.style.width = `${width + (!isMobile && isSafari ? screenScale / 2 : 0)}px`;
+      data.radarTargetWidth = width;
+    }
+
+    const offset = ((markerOffsets[targetItem?.oParent?.data.type] || 1) / screenScale * 0.5);
+
+    dom.targetMarker.style.transform = `translate3d(${targetItem.data.left + offset}px, 0px, 0px)`;
+
+  }
+
+  function markTarget(targetItem) {
+
+    if (!data.radarTarget && targetItem) {
+      dom.targetMarker.style.visibility = 'visible';
+      updateTargetMarker(targetItem);
+      if (targetItem.isStatic || targetItem.data.left) {
+        updateTargetMarker(targetItem);
+      }
+    } else if (data.radarTarget && !targetItem) {
+      dom.targetMarker.style.visibility = 'hidden';
+    }
+
+    data.radarTarget = targetItem;
+
+  }
+
   function _removeRadarItem(offset) {
 
     sprites.removeNodes(objects.items[offset].dom);
@@ -428,6 +480,11 @@ const Radar = () => {
     dom.radar = document.getElementById('radar');
     data.height = dom.radar.offsetHeight;
 
+    dom.targetMarker = document.createElement('div');
+    dom.targetMarker.style.visibility = 'hidden';
+    dom.targetMarker.className = `target-marker target-ui`;
+    document.getElementById('world-wrapper').appendChild(dom.targetMarker);
+
   }
 
   // width / height of rendered elements, based on class name
@@ -445,6 +502,8 @@ const Radar = () => {
 
   data = {
     frameCount: 0,
+    radarTarget: null,
+    radarTargetWidth: 0,
     animatedTypes: [
       TYPES.bomb,
       TYPES.balloon,
@@ -482,7 +541,8 @@ const Radar = () => {
 
   dom = {
     radar: null,
-    radarItem: null
+    radarItem: null,
+    targetMarker: null
   };
 
   initRadar();
@@ -490,8 +550,10 @@ const Radar = () => {
   exports = {
     addItem,
     animate,
+    clearTarget,
     data,
     dom,
+    markTarget,
     removeItem: removeRadarItem,
     reset: reset,
     setStale,
