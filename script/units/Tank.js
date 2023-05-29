@@ -413,8 +413,9 @@ const Tank = (options = {}) => {
     dom,
     die,
     init: initDOM,
-    stop,
+    radarItem,
     resume,
+    stop,
     updateHealth
   };
 

@@ -471,6 +471,7 @@ const Bunker = (options = {}) => {
     init: initBunker,
     nullifyChain,
     nullifyBalloon,
+    radarItem,
     repair
   };
 

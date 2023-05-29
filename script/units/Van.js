@@ -305,7 +305,8 @@ const Van = (options = {}) => {
     data,
     dom,
     die,
-    init: initVan
+    init: initVan,
+    radarItem
   };
 
   friendlyNearby = {

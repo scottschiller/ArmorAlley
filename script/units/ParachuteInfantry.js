@@ -322,7 +322,8 @@ const ParachuteInfantry = (options = {}) => {
     dom,
     die,
     hit,
-    init: initParachuteInfantry
+    init: initParachuteInfantry,
+    radarItem
   };
 
   return exports;

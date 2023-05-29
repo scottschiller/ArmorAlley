@@ -925,6 +925,7 @@ const SmartMissile = (options = {}) => {
     init: initSmartMissile,
     isOnScreenChange,
     maybeTargetDecoy,
+    radarItem,
     objects
   };
 
