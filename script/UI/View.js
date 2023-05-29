@@ -1243,8 +1243,10 @@ const View = () => {
 
       if (!isMobile) return;
 
-      // iOS Safari (possibly "home screen app" only?) needs an additional delay for layout, perhaps due to screen rotation animation.
       refreshCoords();
+
+      // iOS Safari (possibly "home screen app" especially?) needs an additional delay for layout, perhaps due to screen rotation animation.
+      window.setTimeout(refreshCoords, 250);
 
     }
 
