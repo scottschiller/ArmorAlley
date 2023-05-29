@@ -336,11 +336,11 @@ const Radar = () => {
       data.frameCount = 0;
     }
 
-    /*
-    // even if jammed, missile count needs checking.
-    // otherwise, "incoming missile" UI / state could get stuck
-    // when a missile is destroyed while the radar is jammed.
-    */
+    /**
+     * Even if jammed, missile count needs checking.
+     * Otherwise, "incoming missile" UI / state could get stuck
+     * when a missile is destroyed while the radar is jammed.
+     */
     if (game.objects[TYPES.smartMissile].length !== data.lastMissileCount) {
 
       // change state?
