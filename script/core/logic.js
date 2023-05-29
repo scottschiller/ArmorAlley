@@ -268,6 +268,9 @@ function getNearestObject(source, options = {}) {
       // potential target: not dead, and an enemy
       if (itemArray[k].data.dead || itemArray[k].data.isEnemy === source.data.isEnemy) continue;
       
+      // if a van, target only if it has a radar item OR is on-screen.
+      if (itemArray[k].data.type === TYPES.van && !itemArray[k].data.isOnScreen && !itemArray[k].radarItem) continue;
+
       // is the target in front of the source?
       isInFront = source.data.isEnemy ? (itemArray[k].data.x < source.data.x) : (itemArray[k].data.x >= source.data.x);
 
