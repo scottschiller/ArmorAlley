@@ -6242,3 +6242,38 @@ body.game-paused #tutorial-window {
   width: 100%;
   height: 100%;
 }
+
+.target-dot {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 2px;
+  height: 2px;
+  border: 0.5px solid #000;
+  border-radius: 2px;
+  background: #cc0000;
+}
+
+.tank .target-dot {
+  top: 1px;
+}
+
+.target-marker {
+  position: absolute;
+  top: 34px;
+  width: 3px;
+  height: 2px;
+  background: #cc0000;
+  margin-left: -1.5px;
+  border-bottom: 0px solid transparent;
+  border-bottom-left-radius: 0.5px;
+  border-bottom-right-radius: 0.5px;
+  will-change: transform;
+}
+
+#world-wrapper.jammed .target-marker,
+.sprite.exploding .target-ui,
+.sprite.dead .target-ui,
+.target-ui.disabled {
+  opacity: 0;
+}

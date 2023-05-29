@@ -2803,6 +2803,13 @@ const Helicopter = (options = {}) => {
     // for human player: append immediately, so initial game start / respawn animation works nicely
     sprites.updateIsOnScreen(exports);
 
+    if (data.isLocal) {
+
+      targetDot = document.createElement('div');
+      targetDot.className = 'target-dot target-ui';
+      
+    }
+
     if (net.active) {
 
       if (!data.isCPU) {
@@ -2847,6 +2854,7 @@ const Helicopter = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.helicopter,
+    disabled: 'disabled',
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
     rotatedLeft: 'rotated-left',
@@ -3020,6 +3028,10 @@ const Helicopter = (options = {}) => {
   if (data.isLocal) {
     statsBar = document.getElementById('stats-bar');
   }
+
+  // TODO: clean this up
+  let lastMissileTarget;
+  let targetDot;
 
   dom = {
     o: null,
