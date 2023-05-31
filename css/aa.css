@@ -217,13 +217,6 @@ body.game-started {
   image-rendering: optimizeSpeed;
 }
 
-@media screen and (orientation: landscape) {
-  body.is-mobile #world-overlay {
-    /* better vertical centering. */
-    top: 24px;
-  }
-}
-
 #world.tutorial-mode #world-overlay,
 #world.regular-mode #world-overlay {
   background: transparent;
@@ -623,16 +616,6 @@ body.is-mobile #game-status li:last-of-type {
   margin-right: 0.6rem;
 }
 
-@media screen and (orientation: portrait) {
-  /* remove for portrait mode. */
-  body.is-mobile #game-status li:first-of-type {
-    margin-left: 0px;
-  }
-  body.is-mobile #game-status li:last-of-type {
-    margin-right: 0px;
-  }
-}
-
 #game-status {
   position: absolute;
   top: 4px;
@@ -643,24 +626,6 @@ body.is-mobile #game-status li:last-of-type {
   z-index: 9;
   font-size: 65%;
   color: #999;
-}
-
-@media screen and (orientation: landscape) {
-  body.is-mobile #game-status {
-    font-size: 120%;
-    height: 20px;
-  }
-  body.is-mobile #funds-count {
-    top: 1px;
-    transform: scale(1.5);
-    transform-origin: 50% 0px;
-  }
-}
-
-@media screen and (orientation: portrait) {
-  body.is-mobile #funds-count {
-    top: -0.5px;
-  }
 }
 
 #game-status li {
@@ -1237,17 +1202,6 @@ body.is_iphone #status-bar .letter-block {
 body.is-mobile ul.stats-bar li {
   /* bigger! mobile controls are moved to sides, so we have way more room. */
   min-width: 4%;
-}
-
-@media screen and (orientation: landscape) {
-  /* scale up a bit; center of screen, avoid The Notch and such. */
-  body.is-mobile ul.stats-bar {
-    /* scale up these controls. */
-    transform: scale3d(1.5, 1.5, 1);
-    transform-origin: 50% 0px;
-    /* prevent overlap with fuel bar */
-    padding-top: 3px;
-  }
 }
 
 ul.stats-bar li.stats-item .weapon-count {
@@ -3369,19 +3323,6 @@ body.is-mobile #game-paused {
   font-size: 7vmin;
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-paused {
-    margin-top: 25vw;
-  }
-}
-
-@media screen and (orientation: landscape) {
-  body.is-mobile #game-paused {
-    margin-top: 10vw;
-    font-size: 15vmin;
-  }
-}
-
 #game-paused p {
   padding: 0.25rem 0.5rem;
   margin-top: -0.25rem;
@@ -3451,14 +3392,6 @@ body.game-started #game-tips.active .tips-container {
 }
 
 /* go bigger on landscape. */
-@media screen and (orientation: landscape) {
-  body.is-mobile #game-tips .tips-container .tip,
-  body.is-mobile #game-tips .tips-container .animation-node {
-    font-size: 26px;
-    line-height: 20px;
-    width: 75%;
-  }
-}
 
 #game-tips .tips-container .animation-node {
   /* used to trigger `onanimationend()` events for tip display. */
@@ -3475,38 +3408,6 @@ body.game-started #game-tips.active .tips-container {
   /* each tip should roughly clear the screen before the next appears. */
   width: 75%;
   min-width: 32rem;
-}
-
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-tips {
-    top: 82px;
-    height: 13px;
-  }
-  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 25vh;
-  }
-  body.is-mobile #game-tips .tips-container {
-    /* take most of the screen real estate */
-    top: 0px;
-    width: 95%;
-    margin: 0px;
-    transform: translate3d(-50%, 0px, 0px);
-  }
-  body.is-mobile #game-tips .tips-container .tip,
-  body.is-mobile #game-tips .tips-container .animation-node {
-    min-width: 30rem;
-  }
-  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile),
-  body.is-mobile #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
-    width: 75%;
-    min-width: 15rem;
-  }
-}
-
-@media screen and (orientation: landscape) {
-  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 55vh;
-  }
 }
 
 #game-tips #game-announcements {
@@ -3531,23 +3432,6 @@ body.is-mobile #game-tips #game-announcements {
   border-radius: 1em;
   background: rgba(0,0,0,0.5);
   padding: 4px;
-}
-
-@media screen and (orientation: landscape) {
-  body.is-mobile #game-tips #game-announcements {
-    /* larger type, please. */
-    font-size: 2.75em;
-    line-height: 1em;
-  }
-}
-
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-tips #game-announcements {
-    /* smaller type, please. */
-    font-size: 1.25em;
-    line-height: 1.25em;
-    text-align: center;
-  }
 }
 
 #world.tutorial-mode #game-tips #game-announcements {
@@ -3857,12 +3741,6 @@ body.is-mobile #game-options-link {
   display: none;
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #help {
-    margin-left: 0.25rem;
-  }
-}
-
 body.is-mobile.notch-at-left #help {
   /* "home screen" app, iOS Safari */
   margin-right: calc(env(safe-area-inset-left) / 3);
@@ -3924,13 +3802,6 @@ body.bnb.is-mobile #player-status-bar .spacer {
 body.bnb.is-mobile #bnb-now-playing {
   height: 100%;
   top: 1px;
-}
-
-@media screen and (orientation: portrait) {
-  body.bnb.is-mobile #bnb-now-playing {
-    /* More positioning hacks. Ugh. */
-    left: -1px;
-  }
 }
 
 #bnb-now-playing {
@@ -4182,78 +4053,7 @@ body.is-mobile #mobile-controls {
   animation: none;
 }
 
-@media screen and (orientation: portrait) {
-  /* mobile, portrait: smaller controls. */
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
-    width: 54px;
-    /* collapse bullshit whitespace */
-    font-size: 0px;
-    zoom: 1.25;
-    /* left side, by default */
-    right: auto;
-    left: 0px;
-  }
-}
-
 /* TODO: make this configurable. */
-
-@media screen and (orientation: portrait) {
-  /* giant hack, for now */
-}
-
-@media screen and (orientation: landscape) {
-  /* giant hack, for now */
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
-    zoom: 2;
-  }
-  body.is-mobile #mobile-controls li {
-    /* account for 2x border */
-    border-width: 0.5px;
-  }
-  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-ordering,
-  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-weapons {
-    /* HACKISH: offset for zoom */
-    margin-right: calc(env(safe-area-inset-right) / 2);
-    left: auto;
-    right: 0px;
-  }
-  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-ordering,
-  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-weapons {
-    /* HACKISH: offset for zoom */
-    margin-left: calc(env(safe-area-inset-left) / 2);
-    left: 0px;
-    right: auto;
-  }
-
-  body.is-mobile #funds {
-    margin-top: 2px;
-  }
-
-  body.is-mobile.notch-at-left #funds,
-  body.is-mobile.notch-at-right #funds {
-    /* "home screen" app, iOS Safari */
-    margin-left: calc(env(safe-area-inset-left) / 1.5) !important;
-  }
-
-  /* #game-fps positioning */
-  body.is-mobile #game-status li:last-of-type {
-    right: 8px;
-  }
-
-  /* bottom bar */
-  body.is-mobile.notch-at-left #bottom {
-    padding-right: 12px;
-  }
-  body.is-mobile.notch-at-right #bottom {
-    padding-right: 16px;
-  }
-  body.is-mobile #queue {
-    left: 28px;
-    top: 4px;
-  }
-}
 
 body.is-mobile.notch-at-left #notification-toasts {
   margin-left: env(safe-area-inset-left) !important;
@@ -4264,18 +4064,6 @@ body.is-mobile.notch-at-right #notification-toasts {
 }
 
 /* go bigger on landscape. */
-@media screen and (orientation: landscape) {
-  body.is-mobile #notification-toasts {
-    transform: scale3d(2, 2, 1);
-    /* note: half-size height, given transform. */
-    height: 128px;
-    transform-origin: top right;
-  }
-  /* account for toast location, and apply transform appropriately */
-  body.is-mobile #notification-toasts.left-aligned {
-    transform-origin: top left;
-  }
-}
 
 #mobile-controls .mobile-controls-ordering li,
 #mobile-controls .mobile-controls-weapons li {
@@ -4306,12 +4094,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   /* visibility: hidden; */
   opacity: 0;
   pointer-events: none;
-}
-
-@media screen and (orientation: portrait) {
-  #mobile-controls li {
-    height: 25px;
-  }
 }
 
 #mobile-controls li a {
@@ -4399,43 +4181,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   background-position: 50% 50%;
 }
 
-@media screen and (orientation: portrait) {
-  /* hide text when in portrait mode. */
-  /* only show if on a very wide device, e.g., ipad / tablet. */
-  body.is-mobile #player-status-bar span.letter-block {
-    display: none;
-  }
-
-  body.is-mobile #mobile-controls li span {
-    display: none;
-  }
-
-  /* smaller inventory sizes */
-  #mobile-controls li.inventory-item a.tank,
-  #mobile-controls li.inventory-item a.missile-launcher {
-    background-size: 80%;
-  }
-
-  #mobile-controls li.inventory-item a.infantry,
-  #mobile-controls li.inventory-item a.engineer {
-    background-size: 33%;
-  }
-
-  /* helicopter weapons */
-  #mobile-controls li.weapons-item a.parachute-infantry,
-  #mobile-controls li.inventory-item a.ammo {
-    background-size: 25%;
-  }
-
-  #mobile-controls li.inventory-item a.smart-missile {
-    background-size: 30%;
-  }
-
-  #mobile-controls li.inventory-item a.bombs {
-    background-size: 6.5%;
-  }
-}
-
 #mobile-controls li span.letter-block.show_options,
 #mobile-controls li span.letter-block.show_inventory {
   display: block !important;
@@ -4458,20 +4203,6 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 #mobile-controls li span.letter-block.show_options {
   font-size: 8px;
   line-height: 25px;
-}
-
-@media screen and (orientation: portrait) {
-  #mobile-controls li span.letter-block.show_inventory {
-    line-height: 23px;
-    top: 0.5px;
-    left: 0.25px;
-  }
-}
-
-@media screen and (orientation: landscape) {
-  #mobile-controls li span.letter-block.show_inventory {
-    top: 1.5px;
-  }
 }
 
 /* hide groups of controls until activated */
@@ -4595,23 +4326,9 @@ body.is-mobile #pointer {
   margin-top: -1.5rem;
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #mobile-landscape-tip {
-    display: block;
-  }
-}
-
 body.is-mobile .hide-on-mobile,
 body:not(.is-mobile) .mobile-only {
   display: none;
-}
-
-@media screen and (orientation: portrait) {
-  body.game-paused #game-tips .tips-container,
-  body.game-paused #mobile-controls,
-  body.game-paused #notification-toasts {
-    visibility: hidden;
-  }
 }
 
 #notification-toasts {
@@ -4778,15 +4495,6 @@ body.is-mobile #game-prefs-modal:not(.is-network) {
 /* TODO: move this into the prefs JS? */
 
 /* iOS Safari hacks */
-@media screen and (orientation: portrait) {
-  body.is_iphone #game-prefs-modal {
-    zoom: 1.85;
-  }
-  body.is_iphone.is_standalone #game-prefs-modal {
-    /* "home screen"-specific version */
-    zoom: 1.75;
-  }
-}
 
 #game-prefs-submit {
   position: relative;
@@ -5091,16 +4799,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 #game-prefs-modal .fieldset-container fieldset {
   /* offset the above zoom, to get back to relative scale of 1 */
   zoom: 2.5;
-}
-
-@media screen and (orientation: landscape) {
-  #game-prefs-modal.is-network {
-    top: 52%;
-  }
-  /* don't mess with scrollbars, just let the whole body scroll naturally. */
-  body.is-mobile #game-prefs-modal .fieldset-container {
-    max-height: unset;
-  }
 }
 
 /**
@@ -6104,23 +5802,6 @@ body.game-paused #tutorial-window {
   display: none !important;
 }
 
-@media screen and (orientation: landscape) {
-  /* scale up a bit; center of screen, avoid The Notch and such. */
-  body.is-mobile #tutorial-window {
-    left: 50%;
-    top: 130px;
-    transform: scale3d(2, 2, 1) translate(-50%, 0px);
-    transform-origin: 0px 0px;
-  }
-}
-
-@media screen and (orientation: portrait) {
-  /* leave room for notifications. */
-  body.is-mobile #tutorial-window {
-    top: 180px;
-  }
-}
-
 #tutorial-window .title-bar {
   image-rendering: smooth;
   image-rendering: -webkit-optimize-contrast;
@@ -6189,4 +5870,248 @@ body.game-paused #tutorial-window {
 .sprite.dead .target-ui,
 .target-ui.disabled {
   opacity: 0;
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile #world-overlay {
+    /* better vertical centering. */
+    top: 24px;
+  }
+  body.is-mobile #game-status {
+    font-size: 120%;
+    height: 20px;
+  }
+  body.is-mobile #funds-count {
+    top: 1px;
+    transform: scale(1.5);
+    transform-origin: 50% 0px;
+  }
+  /* scale up a bit; center of screen, avoid The Notch and such. */
+  body.is-mobile ul.stats-bar {
+    /* scale up these controls. */
+    transform: scale3d(1.5, 1.5, 1);
+    transform-origin: 50% 0px;
+    /* prevent overlap with fuel bar */
+    padding-top: 3px;
+  }
+  body.is-mobile #game-paused {
+    margin-top: 10vw;
+    font-size: 15vmin;
+  }
+  body.is-mobile #game-tips .tips-container .tip,
+  body.is-mobile #game-tips .tips-container .animation-node {
+    font-size: 26px;
+    line-height: 20px;
+    width: 75%;
+  }
+  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
+    top: 55vh;
+  }
+  body.is-mobile #game-tips #game-announcements {
+    /* larger type, please. */
+    font-size: 2.75em;
+    line-height: 1em;
+  }
+  /* giant hack, for now */
+  body.is-mobile #mobile-controls .mobile-controls-ordering,
+  body.is-mobile #mobile-controls .mobile-controls-weapons {
+    zoom: 2;
+  }
+  body.is-mobile #mobile-controls li {
+    /* account for 2x border */
+    border-width: 0.5px;
+  }
+  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-ordering,
+  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-weapons {
+    /* HACKISH: offset for zoom */
+    margin-right: calc(env(safe-area-inset-right) / 2);
+    left: auto;
+    right: 0px;
+  }
+  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-ordering,
+  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-weapons {
+    /* HACKISH: offset for zoom */
+    margin-left: calc(env(safe-area-inset-left) / 2);
+    left: 0px;
+    right: auto;
+  }
+
+  body.is-mobile #funds {
+    margin-top: 2px;
+  }
+
+  body.is-mobile.notch-at-left #funds,
+  body.is-mobile.notch-at-right #funds {
+    /* "home screen" app, iOS Safari */
+    margin-left: calc(env(safe-area-inset-left) / 1.5) !important;
+  }
+
+  /* #game-fps positioning */
+  body.is-mobile #game-status li:last-of-type {
+    right: 8px;
+  }
+
+  /* bottom bar */
+  body.is-mobile.notch-at-left #bottom {
+    padding-right: 12px;
+  }
+  body.is-mobile.notch-at-right #bottom {
+    padding-right: 16px;
+  }
+  body.is-mobile #queue {
+    left: 28px;
+    top: 4px;
+  }
+  body.is-mobile #notification-toasts {
+    transform: scale3d(2, 2, 1);
+    /* note: half-size height, given transform. */
+    height: 128px;
+    transform-origin: top right;
+  }
+  /* account for toast location, and apply transform appropriately */
+  body.is-mobile #notification-toasts.left-aligned {
+    transform-origin: top left;
+  }
+  #mobile-controls li span.letter-block.show_inventory {
+    top: 1.5px;
+  }
+  #game-prefs-modal.is-network {
+    top: 52%;
+  }
+  /* don't mess with scrollbars, just let the whole body scroll naturally. */
+  body.is-mobile #game-prefs-modal .fieldset-container {
+    max-height: unset;
+  }
+  /* scale up a bit; center of screen, avoid The Notch and such. */
+  body.is-mobile #tutorial-window {
+    left: 50%;
+    top: 130px;
+    transform: scale3d(2, 2, 1) translate(-50%, 0px);
+    transform-origin: 0px 0px;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  /* remove for portrait mode. */
+  body.is-mobile #game-status li:first-of-type {
+    margin-left: 0px;
+  }
+  body.is-mobile #game-status li:last-of-type {
+    margin-right: 0px;
+  }
+  body.is-mobile #funds-count {
+    top: -0.5px;
+  }
+  body.is-mobile #game-paused {
+    margin-top: 25vw;
+  }
+  body.is-mobile #game-tips {
+    top: 82px;
+    height: 13px;
+  }
+  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
+    top: 25vh;
+  }
+  body.is-mobile #game-tips .tips-container {
+    /* take most of the screen real estate */
+    top: 0px;
+    width: 95%;
+    margin: 0px;
+    transform: translate3d(-50%, 0px, 0px);
+  }
+  body.is-mobile #game-tips .tips-container .tip,
+  body.is-mobile #game-tips .tips-container .animation-node {
+    min-width: 30rem;
+  }
+  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile),
+  body.is-mobile #game-tips .tips-container .animation-node:not(.hide-on-mobile) {
+    width: 75%;
+    min-width: 15rem;
+  }
+  body.is-mobile #game-tips #game-announcements {
+    /* smaller type, please. */
+    font-size: 1.25em;
+    line-height: 1.25em;
+    text-align: center;
+  }
+  body.is-mobile #help {
+    margin-left: 0.25rem;
+  }
+  body.bnb.is-mobile #bnb-now-playing {
+    /* More positioning hacks. Ugh. */
+    left: -1px;
+  }
+  /* mobile, portrait: smaller controls. */
+  body.is-mobile #mobile-controls .mobile-controls-ordering,
+  body.is-mobile #mobile-controls .mobile-controls-weapons {
+    width: 54px;
+    /* collapse bullshit whitespace */
+    font-size: 0px;
+    zoom: 1.25;
+    /* left side, by default */
+    right: auto;
+    left: 0px;
+  }
+  /* giant hack, for now */
+  #mobile-controls li {
+    height: 25px;
+  }
+  /* hide text when in portrait mode. */
+  /* only show if on a very wide device, e.g., ipad / tablet. */
+  body.is-mobile #player-status-bar span.letter-block {
+    display: none;
+  }
+
+  body.is-mobile #mobile-controls li span {
+    display: none;
+  }
+
+  /* smaller inventory sizes */
+  #mobile-controls li.inventory-item a.tank,
+  #mobile-controls li.inventory-item a.missile-launcher {
+    background-size: 80%;
+  }
+
+  #mobile-controls li.inventory-item a.infantry,
+  #mobile-controls li.inventory-item a.engineer {
+    background-size: 33%;
+  }
+
+  /* helicopter weapons */
+  #mobile-controls li.weapons-item a.parachute-infantry,
+  #mobile-controls li.inventory-item a.ammo {
+    background-size: 25%;
+  }
+
+  #mobile-controls li.inventory-item a.smart-missile {
+    background-size: 30%;
+  }
+
+  #mobile-controls li.inventory-item a.bombs {
+    background-size: 6.5%;
+  }
+  #mobile-controls li span.letter-block.show_inventory {
+    line-height: 23px;
+    top: 0.5px;
+    left: 0.25px;
+  }
+  body.is-mobile #mobile-landscape-tip {
+    display: block;
+  }
+  body.game-paused #game-tips .tips-container,
+  body.game-paused #mobile-controls,
+  body.game-paused #notification-toasts {
+    visibility: hidden;
+  }
+  body.is_iphone #game-prefs-modal {
+    zoom: 1.85;
+  }
+  body.is_iphone.is_standalone #game-prefs-modal {
+    /* "home screen"-specific version */
+    zoom: 1.75;
+  }
+  /* leave room for notifications. */
+  body.is-mobile #tutorial-window {
+    top: 180px;
+  }
 }
