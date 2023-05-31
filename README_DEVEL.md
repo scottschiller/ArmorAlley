@@ -128,4 +128,4 @@ RewriteRule (.*)\.(.*)\.[vV]\d+$ $1.$2 [L]
 ```
 You may notice a 404 when loading the game, where a JS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `script/aa_min.js.V20230522` will throw a 404 when the actual file on disk is `script/aa_min.js`.
 
-If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line `v = '.V20230522'` `index.html`.
+If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line that assigns `v` the version string, e.g., `v = '.V20230529';` within `index.html`.
