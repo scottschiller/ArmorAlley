@@ -890,9 +890,6 @@ body.is_safari:not(.is-mobile) #queue {
   /* background-image: none; */
   /* background-color: rgba(0,0,0,0.25); */
   opacity: 0.75;
-}
-
-#radar-scrubber.active {
   cursor: grabbing;
 }
 
@@ -1120,6 +1117,10 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   top: 34px;
   left: 0px;
   width: 100%;
+  font-size: 55%;
+  color: #999;
+  text-shadow: 0px 1px 0px #000;
+  text-align: center;
 }
 
 #aa ul,
@@ -1369,6 +1370,7 @@ ul.stats-bar .missiles em {
   min-width: 16px; /* accommodate rubber chicken mode */
   width: 10px;
   height: 9px;
+  transform: rotate(-5deg);
 }
 
 #world ul.stats-bar .missiles span.divider {
@@ -1387,10 +1389,6 @@ ul.stats-bar .missiles em,
   background-size: 75%;
 }
 
-ul.stats-bar .missiles em {
-  transform: rotate(-5deg);
-}
-
 ul.stats-bar .ammo em,
 #mobile-controls li.weapons-item a.ammo {
   background-image: url(../image/status-ammo.png);
@@ -1401,6 +1399,9 @@ ul.stats-bar .ammo em,
 
 #mobile-controls li.weapons-item a.ammo {
   background-size: 14px 8px;
+  /* background-image: url(../image/status-ammo.png); */
+  background-position: 50% 50%;
+  background-size: 42%;
 }
 
 ul.stats-bar .ammo em {
@@ -1417,6 +1418,9 @@ ul.stats-bar .bombs em,
 
 #mobile-controls li.weapons-item a.bombs {
   background-size: 3px 11px;
+  /* background-image: url(../image/status-bombs.png); */
+  background-position: 50% 50%;
+  background-size: 10%;
 }
 
 ul.stats-bar .bombs em {
@@ -1527,6 +1531,15 @@ body.is_firefox #radar .radar-item--animated {
 
 .smoke {
   will-change: transform, opacity;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 9px;
+  height: 9px;
+  overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: 9px 9px;
+  z-index: 4;
 }
 
 /*
@@ -2217,6 +2230,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background: transparent url(../image/rubber-chicken.gif) no-repeat 0px 0px;
   background-size: contain;
   background-position: 50% 50%;
+  width: 24px;
+  height: 12px;
 }
 
 #world.rubber-chicken-mode ul.stats-bar .missiles em,
@@ -2253,11 +2268,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   margin-top: -2px; /* height align tweak */
 }
 
-.smart-missile.rubber-chicken {
-  width: 24px;
-  height: 12px;
-}
-
 .smart-missile.banana {
   width: 12px;
   height: 15px;
@@ -2279,18 +2289,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .helicopter-trailer {
   background-color: #666;
-}
-
-.smoke {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 9px;
-  height: 9px;
-  overflow: hidden;
-  content-visibility: auto;
-  contain-intrinsic-size: 9px 9px;
-  z-index: 4;
 }
 
 .smoke .transform-sprite {
@@ -2547,12 +2545,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   height: 15px;
 }
 
-.turret.enemy,
-.turret.enemy .sub-sprite {
-  /* TODO: confirm image / colour for friendly vs. enemy */
-  /* background-image: url(../image/turret-enemy.png); */
-}
-
 .turret .sub-sprite {
   background-position: 50% -16px;
   height: 31px !important;
@@ -2619,6 +2611,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background: none;
   margin-top: -32px;
   transform-origin: 50% 100%;
+  height: 56px;
+  width: 51px;
 }
 
 .bomb.explosion-large .sub-sprite {
@@ -2634,11 +2628,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-position: 0px 0px;
   /* default state */
   transform: translate3d(-512px, 0px, 0px);
-}
-
-.bomb.explosion-large {
-  height: 56px;
-  width: 51px;
 }
 
 body:not(.game-over) #world-wrapper.jammed #radar {
@@ -2732,6 +2721,10 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   margin-top: -0.5px;
   margin-left: -0.5px;
   border-radius: 100%;
+  width: 2px;
+  height: 2px;
+  margin-left: -1px;
+  outline: none;
 }
 
 #radar .sprite.smart-missile.enemy {
@@ -2810,13 +2803,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   /* hackish repositioning fix */
 }
 
-#radar .sprite.smart-missile {
-  width: 2px;
-  height: 2px;
-  margin-left: -1px;
-  outline: none;
-}
-
 #radar .sprite.end-bunker {
   border-radius: 1px;
 }
@@ -2864,6 +2850,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 .tank.exploding {
   /* align with where tank was */
   margin-top: -12px;
+  margin-left: -11px;
+  /* offset for 57-pixel-wide normal tank */
 }
 
 .helicopter.exploding,
@@ -2885,11 +2873,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   /* bunker is normally 52px */
   margin-left: -30px;
   margin-top: -87px;
-}
-
-/* special case */
-.bunker.exploding,
-.bunker.burning {
   /* width: 96px;
   height: 71px; */
   width: 112px;
@@ -2898,6 +2881,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   /* outline: 1px solid #ff33ff; */
   /* background-color: #999; */
 }
+
+/* special case */
 
 .bunker .sub-sprite.nuke {
   /**
@@ -3124,11 +3109,6 @@ body.is_safari .cornholio .sub-sprite {
   background-position: 50% 100%;
 }
 
-.tank.exploding {
-  margin-left: -11px;
-  /* offset for 57-pixel-wide normal tank */
-}
-
 #bottom {
   position: absolute;
   bottom: 0px;
@@ -3286,6 +3266,9 @@ body.bnb .sprite.engineer.butthead.building {
 #stats-endgame table th,
 #stats-endgame table td {
   background-color: rgba(0,153,0,0.25);
+  border-left: 1px solid #009900;
+  padding: 0.25em 0.33em;
+  min-width: 2em;
 }
 
 #stats-endgame table thead th {
@@ -3299,13 +3282,6 @@ body.bnb .sprite.engineer.butthead.building {
 
 #stats-endgame table td {
   border-top: 1px solid #009900;
-}
-
-#stats-endgame table th,
-#stats-endgame table td {
-  border-left: 1px solid #009900;
-  padding: 0.25em 0.33em;
-  min-width: 2em;
 }
 
 #stats-endgame table th:first-of-type,
@@ -3355,6 +3331,8 @@ body.is_safari:not(.is-mobile) #game-tips .tips-container .tip,
 body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
   font-size: 28px;
   line-height: 20px;
+  animation: scrollText-safari-scale 16s linear;
+  width: 64rem;
 }
 
 #world.tutorial-mode #game-tips .tips-container {
@@ -3470,12 +3448,6 @@ body.game-started #game-tips.active .tips-container {
   padding: 1px;
   /* "ticker-tape" style? */
   /* animation-timing-function: steps(150); */
-}
-
-body.is_safari:not(.is-mobile) #game-tips .tips-container .tip,
-body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node {
-  animation: scrollText-safari-scale 16s linear;
-  width: 64rem;
 }
 
 /* go bigger on landscape. */
@@ -3859,6 +3831,7 @@ body.is-mobile #game-tips #game-announcements {
   margin-right: 1em;
   top: 0.75px;
   white-space: nowrap;
+  font-size: 0.5rem;
 }
 
 #help.active {
@@ -3917,21 +3890,10 @@ body.is-mobile.notch-at-right #help {
   display: inline;
 }
 
-#help {
-  font-size: 0.5rem;
-}
-
 /* "Green line" mode */
 #world.x-ray .sprite {
   background: transparent !important;
   outline: 1px solid #339933;
-}
-
-#player-status-bar {
-  font-size: 55%;
-  color: #999;
-  text-shadow: 0px 1px 0px #000;
-  text-align: center;
 }
 
 #player-status-bar .spacer {
@@ -4199,6 +4161,9 @@ body.is-mobile #mobile-controls {
   vertical-align: bottom;
   width: 57px;
   overflow: hidden;
+  right: 0px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 #mobile-controls li.get-user-attention {
@@ -4224,24 +4189,17 @@ body.is-mobile #mobile-controls {
     width: 54px;
     /* collapse bullshit whitespace */
     font-size: 0px;
-  }
-}
-
-/* TODO: make this configurable. */
-#mobile-controls .mobile-controls-ordering,
-#mobile-controls .mobile-controls-weapons {
-  right: 0px;
-}
-
-@media screen and (orientation: portrait) {
-  /* giant hack, for now */
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
     zoom: 1.25;
     /* left side, by default */
     right: auto;
     left: 0px;
   }
+}
+
+/* TODO: make this configurable. */
+
+@media screen and (orientation: portrait) {
+  /* giant hack, for now */
 }
 
 @media screen and (orientation: landscape) {
@@ -4319,13 +4277,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   }
 }
 
-
-#mobile-controls .mobile-controls-weapons,
-#mobile-controls .mobile-controls-ordering {
-  padding-left: 2px;
-  padding-right: 2px;
-}
-
 #mobile-controls .mobile-controls-ordering li,
 #mobile-controls .mobile-controls-weapons li {
   margin: 0px;
@@ -4352,6 +4303,9 @@ body.is-mobile.notch-at-right #notification-toasts {
   /* microfiche, but OK on mobile. */
   background: transparent url(../image/checkerboard-black-mask-75percent.png);
   background-size: 4px;
+  /* visibility: hidden; */
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media screen and (orientation: portrait) {
@@ -4445,18 +4399,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   background-position: 50% 50%;
 }
 
-#mobile-controls li.weapons-item a.ammo {
-  /* background-image: url(../image/status-ammo.png); */
-  background-position: 50% 50%;
-  background-size: 42%;
-}
-
-#mobile-controls li.weapons-item a.bombs {
-  /* background-image: url(../image/status-bombs.png); */
-  background-position: 50% 50%;
-  background-size: 10%;
-}
-
 @media screen and (orientation: portrait) {
   /* hide text when in portrait mode. */
   /* only show if on a very wide device, e.g., ipad / tablet. */
@@ -4533,11 +4475,6 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 }
 
 /* hide groups of controls until activated */
-#mobile-controls li {
-  /* visibility: hidden; */
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* show items by category */
 #mobile-controls.inventory_active li.inventory-item,
@@ -4824,6 +4761,9 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   /* collapse */
   font-size: 0px;
   overflow: hidden;
+  width: 228px;
+  /* sight centering tweak */
+  margin-top: -15px;
 }
 
 body.is-mobile #game-prefs-modal {
@@ -5064,12 +5004,9 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   overflow: auto;
   /* Firefox may show scaled-up scrollbars - this helps a bit. */
   scrollbar-width: thin;
-}
-
-#game-prefs-modal {
-  width: 228px;
-  /* sight centering tweak */
-  margin-top: -15px;
+  /* border all the way around */
+  border: 0.5px solid #000;
+  box-sizing: border-box;
 }
 
 #game-prefs-modal.is-network {
@@ -5109,12 +5046,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 
 #game-prefs-header .column:last-of-type {
   margin-right: 2px;
-}
-
-#game-prefs-modal .body {
-  /* border all the way around */
-  border: 0.5px solid #000;
-  box-sizing: border-box;
 }
 
 #game-prefs-modal textarea {
@@ -5181,6 +5112,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 #game-prefs-modal .fieldset-container::-webkit-scrollbar {
   width: 22px;
   background-color: #fff;
+  width: 22px;
+  background-color: #fff;
 }
 
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-track {
@@ -5225,11 +5158,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   background-repeat: no-repeat;
   height: 23.38px;
   background-image: url(../image/icon/scrollbar-down-active.svg);
-}
-
-#game-prefs-modal .fieldset-container::-webkit-scrollbar {
-  width: 22px;
-  background-color: #fff;
 }
 
 #game-prefs-modal a {
@@ -5419,14 +5347,6 @@ body.is_safari:not(.is-mobile) .mac-classic b {
   width: 7px;
   height: 7px;
   margin-top: -1px; /* vertical align w/text */
-}
-
-.mac-classic input[type="checkbox"] {
-  margin-top: -2px;
-}
-
-.mac-classic input[type="radio"],
-.mac-classic input[type="checkbox"] {
   position: relative;
   /* https://moderncss.dev/pure-css-custom-styled-radio-buttons/ */
   -webkit-appearance: none;
@@ -5443,6 +5363,7 @@ body.is_safari:not(.is-mobile) .mac-classic b {
 }
 
 .mac-classic input[type="checkbox"] {
+  margin-top: -2px;
   border-radius: 1px;
 }
 
@@ -5632,9 +5553,6 @@ button.primary {
    */
   outline: 1px solid #000;
   outline-offset: 0.5px;
-}
-
-button.primary {
   /**
    * IRONY: Safari doesn't apply border-radius to outlines, but
    * everyone else does; and this is for the 68K classic mac UI.
@@ -5884,13 +5802,8 @@ button .network-icon {
   height: 10px;
   overflow: hidden;
   vertical-align: middle;
-}
-
-body.is_safari:not(.is-mobile) {
-  #lights {
     zoom: 4;
     image-rendering: pixelated;
-  }
 }
 
 #lights .sub-sprite {
