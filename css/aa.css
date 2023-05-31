@@ -962,16 +962,6 @@ body.bnb .tv-screen-container {
   background: #000;
 }
 
-@keyframes noise {
-  0% {
-    transform: translate3d(0px, 0px, 0px);
-    background-position: 0px 0px;
-  }
-  100% {
-    transform: translate3d(500px, 0px, 0px);
-  }
-}
-
 #tv-display {
   display: none;
 }
@@ -1788,15 +1778,6 @@ body.bnb .engineer:not(.enemy).butthead .transform-sprite {
   animation: animate-transform-sprite-engineer-bnb 800ms steps(10) infinite;
 }
 
-@keyframes animate-transform-sprite-engineer-bnb {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-143.33px, 0px, 0px);
-  }
-}
-
 body.bnb .engineer:not(.enemy).beavis .transform-sprite,
 body.bnb .engineer:not(.enemy).butthead .transform-sprite {
   width: 143.33px;
@@ -1837,15 +1818,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 73px;
   height: 32px;
   animation: animate-transform-sprite-engineer-headbang-bnb 400ms steps(4) infinite;
-}
-
-@keyframes animate-transform-sprite-engineer-headbang-bnb {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-73px, 0px, 0px);
-  }
 }
 
 .engineer.stopped {
@@ -1962,69 +1934,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .radar-item.helicopter.enemy.smart-missile-tracking-active {
   /* enemy helicopter */
   border-right-color: #ff0000 !important;
-}
-
-@keyframes drop-in {
-  from {
-    opacity: 0;
-    transform: translate3d(-50%, -50%, 0px) scale3d(1.75, 1.75, 1) rotate3d(0, 0, 1, 90deg);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1) rotate3d(0, 0, 1, 0deg);
-  }
-}
-
-@keyframes drop-in-small {
-  from {
-    opacity: 0;
-    transform: translate3d(-50%, -50%, 0px) scale3d(1, 1, 1) rotate3d(0, 0, 1, 90deg);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(-50%, -50%, 0px) scale3d(0.15, 0.15, 1) rotate3d(0, 0, 1, 0deg);
-  }
-}
-
-@keyframes tracking-active {
-  0% {
-    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
-  }
-  50% {
-    transform: translate3d(-50%, -50%, 0px) scale3d(0.33, 0.33, 1);
-  }
-  100% {
-    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
-  }
-}
-
-@keyframes parachute-swing {
-  from {
-    transform: rotate3d(0, 0, 1, -12.5deg);
-  }
-  to {
-    transform: rotate3d(0, 0, 1, 12.5deg);
-  }
-}
-
-@keyframes scrollText {
-  from {
-    transform: translate3d(0%, 0px, 0px);
-  }
-
-  to {
-    transform: translate3d(-100%, 0px, 0px);
-  }
-}
-
-@keyframes scrollText-safari-scale {
-  from {
-    transform: translate3d(0%, 0px, 0px) scale(0.5, 0.5);
-  }
-
-  to {
-    transform: translate3d(-100%, 0px, 0px) scale(0.5, 0.5);
-  }
 }
 
 .missile-launcher.enemy.exploding,
@@ -2893,15 +2802,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   z-index: 3;
 }
 
-@keyframes ephemeralexplosion {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: -1400px 0px;
-  }
-}
-
 .sprite .energy-status {
   position: absolute;
   bottom: 0px;
@@ -3039,15 +2939,6 @@ body.is_safari .cornholio .sub-sprite {
 .bunker.burning-out .sub-sprite.rubble {
   /* gradually hide the burning bits */
   opacity: 0;
-}
-
-@keyframes burninating {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-156px, 0px, 0px);
-  }
 }
 
 .bunker.burning,
@@ -3463,244 +3354,6 @@ body.is-mobile #game-tips #game-announcements {
 
 #game-tips.has-announcement #game-announcements {
   opacity: 1;
-}
-
-@keyframes bomb {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -33px;
-  }
-}
-
-@keyframes bomb-rotate {
-  from {
-    transform: rotate(-90deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-
-@keyframes largeexplosion {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-512px, 0px, 0px);
-  }
-}
-
-@keyframes explosionshrapnel2 {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -384px;
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-@keyframes sorta-blink {
-  50% {
-    opacity: 0.65;
-    transform: scale3d(1.1, 1.1, 1.1);
-  }
-}
-
-@keyframes sorta-blink-alt {
-  50% {
-    background-color: rgba(27, 107, 27, 0.5);
-    transform: scale3d(0.9, 0.9, 0.9);
-  }
-}
-
-@keyframes rotateleft {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -60px;
-  }
-}
-
-@keyframes rotateright {
-  from {
-    background-position: 0px -40px;
-  }
-  to {
-    background-position: 0px 20px;
-  }
-}
-
-@keyframes scan {
-  from {
-    transform: rotate(-90deg);
-  }
-  to {
-    transform: rotate(90deg);
-  }
-}
-
-@keyframes jerkingmychain {
-  from {
-    margin-top: 0px;
-  }
-  to {
-    margin-top: -16px;
-  }
-}
-
-@keyframes animate-transform-sprite-tank {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-174px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-infantry {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-55px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-engineer {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-50px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-helicopter {
-  /* is translate vs. translate3d() any better? */
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-200px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-helicopter-enemy {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-220px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-base {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-520px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-base-snow {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-510px, 0px, 0px);
-  }
-}
-
-@keyframes animate-transform-sprite-landing-pad {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(-324px, 0px, 0px);
-  }
-}
-
-@keyframes tv-static {
-  from {
-    transform: translate3d(0px, 0px, 0px);
-  }
-  to {
-    transform: translate3d(0px, -320px, 0px);
-  }
-}
-
-@keyframes genericexplosion {
-  from {
-   background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -250px;
-  }
-}
-
-/* small */
-@keyframes genericexplosionsmall {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -45px;
-  }
-}
-
-@keyframes balloonright {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: 0px -128px; /* original yellow version: 0px -135px */
-  }
-}
-
-@keyframes balloonleft {
-  from {
-    background-position: 0px -128px;  /* original yellow version: 0px -120px */
-  }
-  to {
-    background-position: 0px 0px;
-  }
-}
-
-@keyframes rotating3d {
-  from {
-    transform: rotate3d(0, 0, 1, 0deg);
-  }
-  to {
-    transform: rotate3d(0, 0, 1, 360deg);
-  }
-}
-
-@keyframes pulse {
-  from {
-    transform: scale3d(0.66, 0.66, 1);
-  }
-  to {
-    transform: scale3d(0.33, 0.33, 1);
-  }
-}
-
-@keyframes nuke {
-  from {
-    background-position: 0px 0px;
-  }
-  to {
-    background-position: -2352px 0px;
-  }
 }
 
 #tutorial {
@@ -5280,23 +4933,6 @@ button.attention:not(:active) {
   animation: button-blink 1s steps(2) infinite;
 }
 
-@keyframes button-blink {
-  /**
-   * This is generally considered bad form, evil UX/UI,
-   * and you should never do it.
-   * ...Except in this one specific case, of course. 😇
-   */
-  from {
-    box-shadow:
-    0 0 0 0.5px #fff,
-    0 0 0 2px #000;
-  }
-  to {
-    box-shadow: 0 0 0 4px rgb(243,243,243), 0 0 0 2px rgb(243,243,243);
-    border-color: transparent;
-  }
-}
-
 .mac-system-waiting {
   /**
    * Hat tip: https://impossiblue.github.io/log/150406/index.html
@@ -6113,5 +5749,370 @@ body.game-paused #tutorial-window {
   /* leave room for notifications. */
   body.is-mobile #tutorial-window {
     top: 180px;
+  }
+}
+
+@keyframes animate-transform-sprite-engineer-headbang-bnb {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-73px, 0px, 0px);
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0px) scale3d(1.75, 1.75, 1) rotate3d(0, 0, 1, 90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1) rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+@keyframes drop-in-small {
+  from {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0px) scale3d(1, 1, 1) rotate3d(0, 0, 1, 90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.15, 0.15, 1) rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+@keyframes tracking-active {
+  0% {
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
+  }
+  50% {
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.33, 0.33, 1);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0px) scale3d(0.75, 0.75, 1);
+  }
+}
+
+@keyframes parachute-swing {
+  from {
+    transform: rotate3d(0, 0, 1, -12.5deg);
+  }
+  to {
+    transform: rotate3d(0, 0, 1, 12.5deg);
+  }
+}
+
+@keyframes scrollText {
+  from {
+    transform: translate3d(0%, 0px, 0px);
+  }
+
+  to {
+    transform: translate3d(-100%, 0px, 0px);
+  }
+}
+
+@keyframes scrollText-safari-scale {
+  from {
+    transform: translate3d(0%, 0px, 0px) scale(0.5, 0.5);
+  }
+
+  to {
+    transform: translate3d(-100%, 0px, 0px) scale(0.5, 0.5);
+  }
+}
+
+@keyframes ephemeralexplosion {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: -1400px 0px;
+  }
+}
+
+
+@keyframes burninating {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-156px, 0px, 0px);
+  }
+}
+
+@keyframes bomb {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -33px;
+  }
+}
+
+@keyframes bomb-rotate {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes largeexplosion {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-512px, 0px, 0px);
+  }
+}
+
+@keyframes explosionshrapnel2 {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -384px;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes sorta-blink {
+  50% {
+    opacity: 0.65;
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+}
+
+@keyframes sorta-blink-alt {
+  50% {
+    background-color: rgba(27, 107, 27, 0.5);
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+}
+
+@keyframes rotateleft {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -60px;
+  }
+}
+
+@keyframes rotateright {
+  from {
+    background-position: 0px -40px;
+  }
+  to {
+    background-position: 0px 20px;
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes jerkingmychain {
+  from {
+    margin-top: 0px;
+  }
+  to {
+    margin-top: -16px;
+  }
+}
+
+@keyframes animate-transform-sprite-tank {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-174px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-infantry {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-55px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-engineer {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-50px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-helicopter {
+  /* is translate vs. translate3d() any better? */
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-200px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-helicopter-enemy {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-220px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-base {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-520px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-base-snow {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-510px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-landing-pad {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-324px, 0px, 0px);
+  }
+}
+
+@keyframes tv-static {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(0px, -320px, 0px);
+  }
+}
+
+@keyframes genericexplosion {
+  from {
+   background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -250px;
+  }
+}
+
+/* small */
+@keyframes genericexplosionsmall {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -45px;
+  }
+}
+
+@keyframes balloonright {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 0px -128px; /* original yellow version: 0px -135px */
+  }
+}
+
+@keyframes balloonleft {
+  from {
+    background-position: 0px -128px;  /* original yellow version: 0px -120px */
+  }
+  to {
+    background-position: 0px 0px;
+  }
+}
+
+@keyframes rotating3d {
+  from {
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  to {
+    transform: rotate3d(0, 0, 1, 360deg);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale3d(0.66, 0.66, 1);
+  }
+  to {
+    transform: scale3d(0.33, 0.33, 1);
+  }
+}
+
+@keyframes nuke {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: -2352px 0px;
+  }
+}
+
+@keyframes button-blink {
+  /**
+   * This is generally considered bad form, evil UX/UI,
+   * and you should never do it.
+   * ...Except in this one specific case, of course. 😇
+   */
+  from {
+    box-shadow:
+    0 0 0 0.5px #fff,
+    0 0 0 2px #000;
+  }
+  to {
+    box-shadow: 0 0 0 4px rgb(243,243,243), 0 0 0 2px rgb(243,243,243);
+    border-color: transparent;
+  }
+}
+
+@keyframes noise {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+    background-position: 0px 0px;
+  }
+  100% {
+    transform: translate3d(500px, 0px, 0px);
+  }
+}
+
+@keyframes animate-transform-sprite-engineer-bnb {
+  from {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  to {
+    transform: translate3d(-143.33px, 0px, 0px);
   }
 }
