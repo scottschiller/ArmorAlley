@@ -304,7 +304,11 @@ body.is_safari #mtv-bnb-in {
   padding-top: 20px;
   position: absolute;
   top: 27%;
-  transition: opacity 0.2s ease-out;
+  transition: all 0.5s ease-in-out;
+  /* hat tip: https://cubic-bezier.com/#.36,.12,.32,1.2 */
+  transition-timing-function: cubic-bezier(.36, .12, .32, 1.2);
+  transition-property: transform, scale, opacity;
+  transform: scale3d(0.75, 0.5, 1);
   width: 391px;
   z-index: 11;
 }
