@@ -89,6 +89,34 @@ function PrefsManager() {
 
   let data, dom, events;
 
+  function initLayout() {
+
+    if (data.originalHeight > 0) return;
+
+    // hackish: adjust dialog body to "natural" height, prevent scrollbars.
+    // display temporarily, read layout, adjust and then hide.
+    dom.o.style.setProperty('opacity', 0);
+    dom.o.style.setProperty('display', 'block');
+
+    let body = dom.o.querySelector('.body');
+    body.style.setProperty('height', 'auto');
+
+    // NOTE: This forces layout and is $$$
+    let height = body.offsetHeight;
+
+    data.originalHeight = height;
+
+    // now assign the natural content height
+    body.style.setProperty('height', height + 'px');
+
+    // Remove the menu entirely from the DOM, set it up to append only when active.
+    dom.o.remove();
+
+    // reset opacity
+    dom.o.style.setProperty('opacity', null);
+    
+  }
+
   function init() {
 
     dom.o = document.getElementById('game-prefs-modal');
@@ -112,27 +140,6 @@ function PrefsManager() {
     dom.oForm.onsubmit = events.onFormSubmit;
     dom.oForm.onreset = events.onFormReset;
     dom.optionsLink.onclick = events.optionsLinkOnClick;
-
-    // hackish: adjust dialog body to "natural" height, prevent scrollbars.
-    // display temporarily, read layout, adjust and then hide.
-    dom.o.style.setProperty('opacity', 0);
-    dom.o.style.setProperty('display', 'block');
-
-    let body = dom.o.querySelector('.body');
-    body.style.setProperty('height', 'auto');
-
-    let height = body.offsetHeight;
-
-    data.originalHeight = height;
-
-    // now assign the natural content height
-    body.style.setProperty('height', height + 'px');
-
-    // Remove the menu entirely from the DOM, set it up to append only when active.
-    dom.o.remove();
-
-    // reset opacity
-    dom.o.style.setProperty('opacity', null);
 
     readAndApplyPrefsFromStorage();
 
@@ -491,6 +498,8 @@ function PrefsManager() {
      */
 
     if (data.active || !dom.o) return;
+
+    initLayout();
 
     data.active = true;
 
