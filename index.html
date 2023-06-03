@@ -221,7 +221,8 @@
 <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
 <body style="background:#000;overflow:hidden">
 
-<div id="aa">
+<!-- To reduce "Cumulative Layout Shift", initially hide until first resize / scale / layout. -->
+<div id="aa" style="visibility:hidden">
 
   <div id="world-wrapper">
 
@@ -807,10 +808,6 @@
      </div>
 
    </div>
-
-    <noscript>
-      <p>This browser-based game requires JavaScript to run.</p>
-    </noscript>
 
     <div id="stats-endgame">
 
@@ -1463,6 +1460,10 @@
   </div>
 
 </div>
+
+<noscript>
+  <p>This browser-based game requires JavaScript to run.</p>
+</noscript>
 
 </body>
 </html>

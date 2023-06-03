@@ -975,6 +975,9 @@ const View = () => {
 
     setTipsActive(true);
 
+    // enable the whole UI, basically.
+    dom.aa.style.visibility = 'visible';
+
     // bring the logo up.
     dom.logo.style.opacity = 1;
 
