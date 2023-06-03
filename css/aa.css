@@ -5094,7 +5094,8 @@ button .network-icon {
   display: none;
 }
 
-body:not(.is-mobile) #lights {
+body.is_safari:not(.is-mobile) #lights {
+  /* zoom only for desktop Safari. */
   zoom: 4;
 }
 
