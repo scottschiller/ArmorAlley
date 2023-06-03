@@ -5090,8 +5090,11 @@ button .network-icon {
   display: none;
 }
 
-#lights {
+body:not(.is-mobile) #lights {
   zoom: 4;
+}
+
+#lights {
   display: inline-block;
   height: 10px;
   image-rendering: pixelated;
