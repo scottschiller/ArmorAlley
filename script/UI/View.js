@@ -13,6 +13,7 @@ import {
   isMobile,
   isFirefox,
   worldWidth,
+  worldOverflow,
   winloc,
   defaultMissileMode,
   rubberChickenMode,
@@ -78,9 +79,9 @@ const View = () => {
 
         // scroll the battlefield by relative amount.
         game.players.local.data.scrollLeftVX = 0;
-        game.players.local.data.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
+        game.players.local.data.scrollLeft = Math.max(-worldOverflow, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
 
-        data.battleField.scrollLeft = Math.max(-512, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
+        data.battleField.scrollLeft = Math.max(-worldOverflow, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
         data.battleField.scrollLeftVX = x;
 
       }

@@ -19,6 +19,7 @@ import {
   winloc,
   worldWidth,
   worldHeight,
+  worldOverflow,
   oneOf,
   getTypes,
   rngInt,
@@ -1124,8 +1125,12 @@ const Helicopter = (options = {}) => {
     const notchWidth = 50;
 
     // determine max X and Y coords
-    data.xMax = view.data.battleField.width - data.width;
-    data.yMax = view.data.world.height - data.height - 2; // including border
+
+    // "whole world", plus a bit; this allows the chopper to go a bit beyond the end bunker.
+    data.xMax = view.data.battleField.width + worldOverflow;
+
+    // including border
+    data.yMax = view.data.world.height - data.height - 2;
 
     // if mobile, set xMin and mobileControlsWidth (referenced in animate()) to prevent chopper flying over/under mobile controls.
     if (isMobile) {
@@ -1171,7 +1176,7 @@ const Helicopter = (options = {}) => {
 
     // Hack: limit enemy helicopter to visible screen
     if (data.isCPU) {
-      x = Math.min(worldWidth, Math.max(0, x));
+      x = Math.min(worldWidth + worldOverflow, Math.max(0, x));
     }
 
     if (x !== undefined) {
