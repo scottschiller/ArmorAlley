@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { getTypes, isiPhone, isMobile, isSafari, oneOf, tutorialMode, TYPES, worldHeight } from '../core/global.js';
+import { getTypes, isiPhone, isMobile, isSafari, oneOf, soundManager, tutorialMode, TYPES, worldHeight } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
@@ -1211,7 +1211,7 @@ function PrefsManager() {
 
     onPrefChange: {
 
-      sound: (isActive) => window.soundManager[isActive ? 'unmute' : 'mute'](),
+      sound: (isActive) => soundManager[isActive ? 'unmute' : 'mute'](),
 
       bnb: (isActive) => {
 
