@@ -132,8 +132,8 @@ const MissileLauncher = (options = {}) => {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      isBanana: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === bananaMode,
-      isRubberChicken: gamePrefs.enemy_missile_match_type && game.objects.view.data.missileMode === rubberChickenMode,
+      isBanana: gamePrefs.alt_smart_missiles && game.objects.view.data.missileMode === bananaMode,
+      isRubberChicken: gamePrefs.alt_smart_missiles && game.objects.view.data.missileMode === rubberChickenMode,
       x: data.x + (data.width / 2),
       y: data.y,
       target: targetHelicopter

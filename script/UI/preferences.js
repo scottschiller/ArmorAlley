@@ -52,7 +52,7 @@ const defaultPrefs = {
   show_health_status: PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
   // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
   notifications_location: (isMobile ? PREFS.NOTIFICATIONS_LOCATION_LEFT : PREFS.NOTIFICATIONS_LOCATION_RIGHT),
-  enemy_missile_match_type: true,
+  alt_smart_missiles: true,
   engineers_repair_bunkers: true,
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,

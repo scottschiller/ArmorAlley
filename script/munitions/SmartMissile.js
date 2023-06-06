@@ -835,7 +835,7 @@ const SmartMissile = (options = {}) => {
   });
 
   // if game preferences allow AND no default specified, then pick at random.
-  if (gamePrefs.enemy_missile_match_type && !options.isRubberChicken && !options.isBanana && !options.isSmartMissile) {
+  if (gamePrefs.alt_smart_missiles && !options.isRubberChicken && !options.isBanana && !options.isSmartMissile) {
     options = common.mixin(options, getRandomMissileMode());
   }
 

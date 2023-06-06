@@ -36,8 +36,8 @@ const Base = (options = {}) => {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      isBanana: gamePrefs.enemy_missile_match_type && data.missileMode === bananaMode,
-      isRubberChicken: gamePrefs.enemy_missile_match_type && data.missileMode === rubberChickenMode,
+      isBanana: gamePrefs.alt_smart_missiles && data.missileMode === bananaMode,
+      isRubberChicken: gamePrefs.alt_smart_missiles && data.missileMode === rubberChickenMode,
       // position roughly around "launcher" point of base
       x: data.x + (data.width * (data.isEnemy ? 1/4 : 3/4)),
       y: data.y,
@@ -299,8 +299,8 @@ const Base = (options = {}) => {
 
     if (!isOnScreen) return;
 
-    // allow base to switch up its defenses, if "matching" is enabled
-    if (!gamePrefs.enemy_missile_match_type) return;
+    // allow base to switch up its defenses, if alternates are enabled
+    if (!gamePrefs.alt_smart_missiles) return;
     
     data.missileMode = getRandomMissileMode();
 
