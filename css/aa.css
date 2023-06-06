@@ -5504,7 +5504,8 @@ body.game-paused #tutorial-window {
   body.is-mobile #funds-count {
     top: 1px;
     transform: scale(1.5);
-    transform-origin: 50% 0;
+    transform-origin: 0 0;
+    margin-left: -6px;
   }
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile ul.stats-bar {
