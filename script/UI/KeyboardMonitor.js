@@ -2,6 +2,7 @@ import { prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { TYPES, defaultMissileMode, rubberChickenMode, bananaMode } from '../core/global.js';
+import { gamePrefs } from './preferences.js';
 
 // recycled from survivor.js
 function KeyboardMonitor() {
@@ -48,6 +49,11 @@ function KeyboardMonitor() {
     [keyMap.esc]: true
   };
 
+  const altMissiles = {
+    [keyMap.banana]: true,
+    [keyMap.rubberChicken]: true
+  };
+
   // call out to the helicopter, e.g., ('setMissileLaunching', true)
   const processInput = (player, method, params) => player.callAction(method, params);
 
@@ -61,6 +67,8 @@ function KeyboardMonitor() {
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
       if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode]) return;
+
+      if (altMissiles[e.keyCode] && !gamePrefs.alt_smart_missiles) return;
 
       if (!e.metaKey && keys[e.keyCode]?.down) {
         if (!downKeys[e.keyCode]) {
@@ -84,6 +92,8 @@ function KeyboardMonitor() {
       if (game.data.paused && !allowedInPause[e.keyCode]) return;
 
       if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode]) return;
+
+      if (altMissiles[e.keyCode] && !gamePrefs.alt_smart_missiles) return;
 
       if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
         downKeys[e.keyCode] = null;
