@@ -2110,6 +2110,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   margin-top: -2px; /* height align tweak */
 }
 
+body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
+body.original_missile_mode ul.stats-bar .missiles .divider {
+  /* hide |C|B in UI when "alternate missiles" are disabled. */
+  display: none !important;
+}
+
 .smart-missile.banana {
   background-position: 50% 50%;
   height: 15px;

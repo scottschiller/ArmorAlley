@@ -1,6 +1,6 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { getTypes, isiPhone, isMobile, isSafari, oneOf, soundManager, tutorialMode, TYPES, worldHeight } from '../core/global.js';
+import { defaultMissileMode, getTypes, isiPhone, isMobile, isSafari, oneOf, soundManager, tutorialMode, TYPES, worldHeight } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
@@ -1241,6 +1241,16 @@ function PrefsManager() {
         if (isActive) {
           common.preloadVideo('desert_explosion');
         }
+
+      },
+
+      alt_smart_missiles: (isActive) => {
+
+        if (!isActive) {
+          game.objects.view.setMissileMode(defaultMissileMode);
+        }
+        
+        utils.css.addOrRemove(document.body, !isActive, 'original_missile_mode');
 
       },
 

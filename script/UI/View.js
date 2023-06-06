@@ -861,11 +861,12 @@ const View = () => {
 
     data.missileMode = mode;
 
-    // determine which letter to highlight
+    // determine which letter to highlight.
+    // TODO: this is ugly, non-DRY and yuck because it duplicates the markup in `index.html`.
     const html = [
-      renderMissileText('X', defaultMissileMode),
+      renderMissileText('X', defaultMissileMode) + '<span class="alternate-missiles">',
       renderMissileText('C', rubberChickenMode),
-      renderMissileText('B', bananaMode)
+      renderMissileText('B', bananaMode) + '</span>',
     ].join('<span class="divider">|</span>');
 
     document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
