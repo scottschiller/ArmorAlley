@@ -34,6 +34,8 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 * 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
++ History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
+
 * [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
 
 * 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
