@@ -455,8 +455,13 @@ const Radar = () => {
           objects.items[i].isStatic = true;
         }
 
-        // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
-        left = (Math.max(leftBoundary, Math.min(rightBoundary, (objects.items[i].oParent.data.x / worldWidth))) * (game.objects.view.data.browser.width - 5)) + 4;
+        // constrain helicopters only, so they don't fly out-of-bounds
+        if (objects.items[i].oParent.data.type === TYPES.helicopter) {
+          left = (Math.max(leftBoundary, Math.min(rightBoundary, (objects.items[i].oParent.data.x / worldWidth))) * (game.objects.view.data.browser.width - 5)) + 4;
+        } else {
+          // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
+          left = ((objects.items[i].oParent.data.x / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
+        }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
         if (!objects.items[i].layout) {
