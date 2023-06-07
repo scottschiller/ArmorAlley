@@ -4379,8 +4379,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 
 #game-prefs-header .aa-logo {
   height: 25px;
-  image-rendering: smooth;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
   margin-right: 6px;
   margin-top: 3px;
   width: 161.5px;
