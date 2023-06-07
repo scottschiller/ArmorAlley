@@ -24,6 +24,14 @@ const Radar = () => {
 
   const noJamming = winloc.match(/noJam/i);
 
+  const staticTypes = {
+    [TYPES.turret]: true,
+    [TYPES.base]: true,
+    [TYPES.bunker]: true,
+    [TYPES.endBunker]: true,
+    [TYPES.superBunker]: true
+  };
+
   function setStale(isStale) {
     data.isStale = isStale;
   }
@@ -443,15 +451,7 @@ const Radar = () => {
 
       if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
         
-        if (!game.objects.editor && !objects.items[i].isStatic
-          && (
-            objects.items[i].oParent.data.type === TYPES.turret
-            || objects.items[i].oParent.data.type === TYPES.base
-            || objects.items[i].oParent.data.type === TYPES.bunker
-            || objects.items[i].oParent.data.type === TYPES.endBunker
-            || objects.items[i].oParent.data.type === TYPES.superBunker
-          )
-        ) {
+        if (!game.objects.editor && !objects.items[i].isStatic && staticTypes[objects.items[i].oParent.data.type]) {
           objects.items[i].isStatic = true;
         }
 
