@@ -17,7 +17,10 @@ const Radar = () => {
   let exports;
   let layoutCache;
   let objects;
+
   const spliceArgs = [null, 1];
+  const leftBoundary = -0.0055;
+  const rightBoundary = 1 - 0.005;
 
   const noJamming = winloc.match(/noJam/i);
 
@@ -453,7 +456,7 @@ const Radar = () => {
         }
 
         // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
-        left = ((objects.items[i].oParent.data.x / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
+        left = (Math.max(leftBoundary, Math.min(rightBoundary, (objects.items[i].oParent.data.x / worldWidth))) * (game.objects.view.data.browser.width - 5)) + 4;
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
         if (!objects.items[i].layout) {
