@@ -3537,6 +3537,8 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   /* annoying vertical alignment fix */
   margin-top: -1px;
   vertical-align: middle;
+  /* these shouldn't be clickable, despite being a link. :X */
+  pointer-events: none;
 }
 
 #mobile-controls li.inventory-item a.missile-launcher,
