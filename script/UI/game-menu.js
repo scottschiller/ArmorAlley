@@ -440,6 +440,8 @@ function startGame() {
   // remove the editor nodes.
   [ 'editor-window', 'editor-window-help' ].forEach((id) => document.getElementById(id)?.remove());
 
+  game.objects.starController.init();
+
   game.objects.radar.reset();
 
   if (net.connected) {

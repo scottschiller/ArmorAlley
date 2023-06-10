@@ -1,5 +1,5 @@
 import { game } from './Game.js';
-import { worldWidth } from './global.js';
+import { TYPES, worldWidth } from './global.js';
 
 // split the world (8192 pixels) into an even number of slices, AKA "zones"
 const ZONE_COUNT = 64;
@@ -356,7 +356,8 @@ function debugZone(obj) {
 }
 
 const ignoreZoneTypes = {
-  cornholio: true
+  [TYPES.cornholio]: true,
+  [TYPES.star]: true
 };
 
 function refreshZone(obj) {

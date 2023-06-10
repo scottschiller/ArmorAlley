@@ -100,7 +100,7 @@ const bananaMode = 'banana-mode';
 const TYPES = (() => {
 
   // assign 1:1 key / value strings in a DRY fashion
-  const types = 'base, bomb, balloon, bunker, chain, cloud, cornholio, engineer, flame, gunfire, helicopter, infantry, end-bunker, landing-pad, missile-launcher, parachute-infantry, smart-missile, smoke, shrapnel, super-bunker, tank, turret, terrain-item, van';
+  const types = 'base, bomb, balloon, bunker, chain, cloud, cornholio, engineer, flame, gunfire, helicopter, infantry, end-bunker, landing-pad, missile-launcher, parachute-infantry, smart-missile, smoke, shrapnel, star, super-bunker, tank, turret, terrain-item, van';
   const result = {};
 
   types.split(', ').forEach((type) => {

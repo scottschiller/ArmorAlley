@@ -1003,7 +1003,9 @@ const View = () => {
       fractionWidth: 0,
       halfWidth: 0,
       twoThirdsWidth: 0,
-      height: 0
+      height: 0,
+      isPortrait: !!window.matchMedia?.('(orientation: portrait)')?.matches,
+      isLandscape: !!window.matchMedia?.('(orientation: landscape)')?.matches
     },
     chatVisible: false,
     mouse: {
@@ -1248,6 +1250,9 @@ const View = () => {
 
       if (!isMobile) return;
 
+      data.browser.isPortrait = !!window.matchMedia?.('(orientation: portrait)')?.matches,
+      data.browser.isLandscape = !!window.matchMedia?.('(orientation: landscape)')?.matches
+     
       refreshCoords();
 
       // iOS Safari (possibly "home screen app" especially?) needs an additional delay for layout, perhaps due to screen rotation animation.

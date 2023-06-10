@@ -43,6 +43,8 @@ import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
 import { common } from './common.js';
+import { StarController } from '../elements/StarController.js';
+import { Star } from '../elements/Star.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -238,6 +240,8 @@ const game = (() => {
     objects.radar = Radar();
 
     objects.inventory = Inventory();
+
+    objects.starController = StarController();
 
   }
 
@@ -649,6 +653,11 @@ const game = (() => {
 
     utils.css.remove(document.body, 'game-paused', 'prefs-modal-open', 'game-menu-open');
 
+    if (isMobile) {
+      // hackish: screen coordinates, etc., should have settled by this point following an orientation change.
+      game.objects.starController?.reset();
+    }
+
     data.paused = false;
 
   }
@@ -907,6 +916,8 @@ const game = (() => {
     smoke: [],
     'terrain-item': [],
     radar: null,
+    star: [],
+    starController: null,
     inventory: null,
     tutorial: null,
     queue: null,
@@ -941,6 +952,7 @@ const game = (() => {
     shrapnel: Shrapnel,
     'smart-missile': SmartMissile,
     'super-bunker': SuperBunker,
+    star: Star,
     turret: Turret,
     tank: Tank,
     van: Van
