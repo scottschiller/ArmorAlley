@@ -350,6 +350,7 @@ const GunFire = (options = {}) => {
       options: {
         source: exports,
         targets: undefined,
+        checkTweens: !data.isInert,
         hit(target) {
           // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
           if (!data.isInert && !(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {

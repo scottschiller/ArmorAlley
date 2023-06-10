@@ -36,6 +36,72 @@ function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
 
 }
 
+function collisionCheckWithOffsets(rect1, rect2, r1XOffset = 0, r1YOffset = 0) {
+
+  // Modified version of collisionCheck, with X and Y offset params.
+  // This may be premature optimization, but collision calls are very common - the intent is to reduce object creation.
+  return (
+    // rect 2 is to the right.
+    rect1.x + r1XOffset < rect2.x + rect2.width
+    // overlap on x axis.
+    && rect1.x + rect1.width + r1XOffset > rect2.x
+    // rect 1 is above rect 2.
+    && rect1.y + r1YOffset < rect2.y + rect2.height
+    // overlap on y axis.
+    && rect1.y + r1YOffset + rect1.height > rect2.y
+  );
+
+}
+
+function collisionCheckTweens(source, target) {
+
+  /**
+   * Given two objects with location and velocity coordinates,
+   * step through the movement and check collision "in between" frames.
+   * 
+   * Technically, we're stepping back from the new, current location -
+   * so, backtrack, and then step forward.
+   */
+
+  // special exemption: ignore expired, non-hostile objects - e.g., expired gunfire.
+  if ((source.data.expired && !source.data.hostile) || (target.data.expired && !target.data.hostile)) return;
+
+  let xOffset, yOffset;
+  
+  // somewhat-large assumption: all objects have and use vX / vY per frame. 😅
+  // start with the inverse offset, "rolling back", and working our way forward.
+  xOffset = -source.data.vX;
+  yOffset = -source.data.vY;
+
+  // how many in-between values to check
+  // [start] [ step ] [ step ] [end]
+  let minTweenSteps = 2;
+
+  // Rather than every pixel, take the greater velocity and cut it in half.
+  const tweenSteps = Math.max(minTweenSteps, parseInt(Math.max(Math.abs(source.data.vX), Math.abs(source.data.vY)), 10) / 2);
+
+  // amount to move, for each "in-between" position.
+  // note that for e.g., two steps, we divide by 3 because we don't check the start or end positions.
+  const tweenDivider = tweenSteps + 1;
+  const stepX = source.data.vX / tweenDivider;
+  const stepY = source.data.vY / tweenDivider;
+
+  // starting at the previous position: step, then check.
+  for (let i = 0; i < tweenSteps; i++) {
+    xOffset += stepX;
+    yOffset += stepY;
+    if (collisionCheckWithOffsets(source.data, target.data, xOffset, yOffset)) {
+      // we have a hit; reposition the source to the point of collision, and exit.
+      source.data.x += xOffset;
+      source.data.y += yOffset;
+      return true;
+    }
+  }
+
+  return false;
+
+}
+
 function collisionCheckObject(options) {
 
   /**
@@ -135,6 +201,7 @@ function collisionCheckObject(options) {
       // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
       if (
         collisionCheck(sData, tData, xLookAhead)
+        || (options.checkTweens && collisionCheckTweens(options.source, target))
         || (tData.type === TYPES.helicopter && sData.type === TYPES.superBunker && collisionCheck(sData, tData, -xLookAhead))
       ) {
 

@@ -409,6 +409,7 @@ const Bomb = (options = {}) => {
     options: {
       source: exports,
       targets: undefined,
+      checkTweens: true,
       hit(target) {
         // special case: bomb being hit, eventually shot down by gunfire
         if (target.data.type === TYPES.gunfire && data.energy) {

@@ -933,6 +933,7 @@ const SmartMissile = (options = {}) => {
     options: {
       source: exports,
       targets: undefined,
+      checkTweens: true,
       hit(target) {
         sparkAndDie(target);
       }
