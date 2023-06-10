@@ -120,7 +120,7 @@ function release(pool, item) {
 
 // for some reason, this makes me think of Adam Sandler.
 const poolBoy = {
-  request: (...args) => request(...args)
-}
+  request
+};
 
 export { poolBoy }
