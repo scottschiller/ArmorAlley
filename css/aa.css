@@ -1411,22 +1411,9 @@ ul.stats-bar .bombs em {
   width: 100%;
 }
 
-#battlefield,
-#stars {
+#battlefield {
   left: 0;
   position: absolute;
-}
-
-#stars {
-  /* background: transparent url(../image/star-background.png); */
-  background-image: url(../image/star-background.png);
-  background-size: 256px 136px;
-  height: 352px; /* 320 (battlefield height) + top offset */
-  left: -10%;
-  /* GPU parallax, where possible */
-  top: 34px;
-  /* will be adjusted according to browser width + a percentage of battlefield width. */
-  width: 110%;
 }
 
 .sprite {
@@ -1443,7 +1430,6 @@ ul.stats-bar .bombs em {
 /* bunkers go green when overlapping with ground units, i.e., tanks? */
 /* all terrain items need acceleration? */
 #radar .radar-item--animated,
-#stars,
 .cornholio,
 .gunfire,
 .smoke .transform-sprite,

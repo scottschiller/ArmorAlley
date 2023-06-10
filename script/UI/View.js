@@ -90,9 +90,6 @@ const View = () => {
    
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
-    // Parallax star effect.
-    sprites.setTransformXY(undefined, dom.stars, `${-data.battleField.scrollLeft * data.battleField.parallaxRate}px`, `${(game?.players.local?.data?.y / data.battleField.height) * -2 || -2}px`);
-
   }
 
   function refreshCoords() {
@@ -199,11 +196,6 @@ const View = () => {
     }
 
     data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
-
-    if (dom.stars) {
-      // GPU case: Be wide enough to cover parallax scroll effect. browser width + 10% of world width
-      dom.stars._style.setProperty('width', `${data.browser.width + (data.battleField.width * 0.1)}px`);
-    }
 
     // helicopters need to know stuff, too.
     game.players.local?.refreshCoords();
@@ -943,7 +935,6 @@ const View = () => {
     dom.aa = document.getElementById('aa');
     dom.battleField = sprites.getWithStyle('battlefield');
     dom.logo = document.getElementById('logo');
-    dom.stars = sprites.getWithStyle('stars');
     dom.topBar = sprites.getWithStyle('top-bar');
     dom.gameTips = sprites.getWithStyle('game-tips');
     dom.gameTipsList = sprites.getWithStyle('game-tips-list');
