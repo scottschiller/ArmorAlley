@@ -656,6 +656,11 @@ bnb.beavisMonologues = shuffle([
   bnb.rainstormMonologue
 ]);
 
+bnb.playByYourselfSequence = addSequence(
+  addVL('bh_uh_you_can_play_by_yourself_then'),
+  () => oneOf([bnb.youShouldHaveHeard, bnb.thatsPrettyFunnyButthead])
+);
+
 // hacks
 if (winloc.match(/rain/i)) {
   bnb.beavisMonologues = bnb.rainstormMonologue;
@@ -724,7 +729,7 @@ bnb.beavisRetorts = shuffle([
   addSequence(
     addVL('b_im_gonna_go_to_the_kitchen'),
     addVL('bh_you_mean_youre_gonna_go_polish_your_helmet_you_are_correct_sir'),
-    addVL('bh_uh_you_can_play_by_yourself_then')
+    bnb.playByYourselfSequence
   ),
   addVL('b_oh_boy_this_sucks_disappointed'),
   addVL('b_oh_yeah_heh_heh'),
@@ -741,7 +746,7 @@ bnb.beavisRetorts = shuffle([
   addVL('b_the_amazing_butthead'),
   addSequence(
     addVL('b_well_im_gonna_go_spank_my_monkey'),
-    addVL('bh_uh_you_can_play_by_yourself_then')
+    bnb.playByYourselfSequence
   ),
   addVL('b_well_ok_maybe_youre_right'),
   addVL('b_what_bh_i_didnt_say_anything'),
