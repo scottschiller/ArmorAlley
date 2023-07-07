@@ -8,17 +8,25 @@ import { net } from './network.js';
 import { utils } from './utils.js';
 
 // unique IDs for quick object equality checks
-let guid = 0;
+let guid;
 
 // per-type counters, more deterministic
 let guidByType = {};
 
-// TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
-for (let type in TYPES) {
-  if (!type.match(/[A-Z]/)) {
-    guidByType[type] = 0;
+function resetGUID() {
+
+  guid = 0;
+
+  // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
+  for (let type in TYPES) {
+    if (!type.match(/[A-Z]/)) {
+      guidByType[type] = 0;
+    }
   }
+
 }
+
+resetGUID();
 
 // for network: certain items need to be not prefixed.
 // basically, all "static" / shared terrain items generated at game start - and helicopters.
@@ -918,7 +926,9 @@ const common = {
 
     queueGravestoneWork();
 
-  }
+  },
+
+  resetGUID
 
 };
 
