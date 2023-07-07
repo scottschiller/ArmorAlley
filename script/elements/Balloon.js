@@ -216,8 +216,13 @@ const Balloon = (options = {}) => {
 
         // for network games, never change the wind.
         if (!net.active) {
+  
           data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
           data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+
+          data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
+          data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+  
         }
 
         if (data.windOffsetX > 0 && data.direction !== 1) {
@@ -242,16 +247,9 @@ const Balloon = (options = {}) => {
 
         }
 
-        if (!net.active) {
-          data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
-          data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
-        }
-
         // and randomize
-        if (!net.active) {
-          data.windModulus = 32 + rndInt(32);
-        }
-
+        data.windModulus = 32 + rndInt(32);
+  
       }
 
       // if at end of world, change the wind and prevent randomization until within world limits
