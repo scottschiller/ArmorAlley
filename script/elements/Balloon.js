@@ -2,7 +2,7 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
-import { rndInt, worldWidth, TYPES, rngInt, rngPlusMinus } from '../core/global.js';
+import { rndInt, worldWidth, TYPES, rngInt, rngPlusMinus, rng } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -214,9 +214,11 @@ const Balloon = (options = {}) => {
 
       if (data.frameCount % data.windModulus === 0) {
 
-        data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
-
-        data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+        // for network games, never change the wind.
+        if (!net.active) {
+          data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
+          data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+        }
 
         if (data.windOffsetX > 0 && data.direction !== 1) {
 
@@ -240,9 +242,10 @@ const Balloon = (options = {}) => {
 
         }
 
-        data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
-
-        data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+        if (!net.active) {
+          data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
+          data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+        }
 
         // and randomize
         if (!net.active) {
@@ -347,6 +350,12 @@ const Balloon = (options = {}) => {
       detachFromBunker();
     }
 
+    if (net.active) {
+      // network case: set random wind only once, reduce the chance of de-sync during game.
+      data.windOffsetX = rngPlusMinus(rng(3, data.type), data.type);
+      data.windOffsetY = rngPlusMinus(rng(0.5, data.type), data.type);
+    }
+    
     // TODO: review hacky "can respawn" parameter
     radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
 
