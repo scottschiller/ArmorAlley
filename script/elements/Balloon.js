@@ -268,7 +268,7 @@ const Balloon = (options = {}) => {
         data.windOffsetY -= 0.1;
       } else if (data.y + data.windOffsetY <= data.minY) {
         data.frameCount = 0;
-        data.windOffsetY += 0.1;
+        if (data.windOffsetY <= 0.5) data.windOffsetY += 0.1;
       }
 
       data.x += data.windOffsetX;
