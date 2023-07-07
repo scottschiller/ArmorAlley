@@ -175,6 +175,43 @@ const Balloon = (options = {}) => {
 
   }
 
+  function holdWind() {
+
+    // don't allow a change in wind / direction for 5-10 seconds.
+    data.windModulus = 150 + rndInt(150);
+    
+  }
+
+  function checkDirection() {
+
+    if (data.windOffsetX > 0 && data.direction !== 1) {
+
+      // heading right
+      utils.css.remove(dom.o, css.facingLeft);
+      utils.css.add(dom.o, css.facingRight);
+
+      applyAnimatingTransition();
+
+      data.direction = 1;
+
+      holdWind();
+
+    } else if (data.windOffsetX < 0 && data.direction !== -1) {
+
+      // heading left
+      utils.css.remove(dom.o, css.facingRight);
+      utils.css.add(dom.o, css.facingLeft);
+
+      applyAnimatingTransition();
+
+      data.direction = -1;
+
+      holdWind();
+
+    }
+
+  }
+
   function animate() {
 
     if (data.dead) {
@@ -212,45 +249,21 @@ const Balloon = (options = {}) => {
 
       data.frameCount++;
 
-      if (data.frameCount % data.windModulus === 0) {
+      // for network games, never change the wind.
+      if (!net.active && data.frameCount % data.windModulus === 0) {
+ 
+        data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
+        data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
-        // for network games, never change the wind.
-        if (!net.active) {
-  
-          data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
-          data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
-
-          data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
-          data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
-  
-        }
-
-        if (data.windOffsetX > 0 && data.direction !== 1) {
-
-          // heading right
-          utils.css.remove(dom.o, css.facingLeft);
-          utils.css.add(dom.o, css.facingRight);
-
-          applyAnimatingTransition();
-
-          data.direction = 1;
-
-        } else if (data.windOffsetX < 0 && data.direction !== -1) {
-
-          // heading left
-          utils.css.remove(dom.o, css.facingRight);
-          utils.css.add(dom.o, css.facingLeft);
-
-          applyAnimatingTransition();
-
-          data.direction = -1;
-
-        }
+        data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
+        data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
         data.windModulus = 32 + rndInt(32);
   
       }
+
+      checkDirection();
 
       // if at end of world, change the wind and prevent randomization until within world limits
       // this allows balloons to drift a little over, but they will return.
