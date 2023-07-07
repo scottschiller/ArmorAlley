@@ -68,6 +68,9 @@ function previewLevel(levelName, excludeVehicles) {
 
   const oPreview = document.createElement('div');
 
+  // ensure that GUIDs start from zero, so objects line up if we're playing a network game.
+  common.resetGUID();
+
   data.forEach((item) => {
 
     const exports = {
