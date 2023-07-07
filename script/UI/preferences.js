@@ -527,9 +527,15 @@ function PrefsManager() {
 
       // hackish: grab network level selection from home menu, and apply to prefs.
       const gameMenuLevel = document.getElementById('game_level');
-      // NOTE: offset of -1 because home menu has tutorial entry.
+
       const netGameLevel = document.getElementById('select_net_game_level');
-      netGameLevel.selectedIndex = Math.max(0, gameMenuLevel.selectedIndex - 1);
+
+      // find and select the matching item in the prefs modal list.
+      // the level ordering is different here, because we put the network levels first.
+      netGameLevel.querySelectorAll('option').forEach((option) => {
+        if (option.value === gameMenuLevel.value) option.selected = true;
+      });
+
       gamePrefs.net_game_level = netGameLevel.value;
 
       // and, update local model.
