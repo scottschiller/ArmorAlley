@@ -1716,7 +1716,10 @@ const Helicopter = (options = {}) => {
   function updateMissileUI(reloading) {
 
     // Yuck. TODO: DRY.
-    utils.css.addOrRemove(dom.statusBar.missileCountLI, reloading, css.reloading);
+    if (dom.statusBar?.missileCountLI) {
+      utils.css.addOrRemove(dom.statusBar.missileCountLI, reloading, css.reloading);
+    }
+
     utils.css.addOrRemove(document.querySelectorAll('#mobile-controls .mobile-controls-weapons li')[2], reloading, css.reloading);
 
   }
