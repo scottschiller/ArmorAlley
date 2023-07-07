@@ -351,7 +351,7 @@ const Balloon = (options = {}) => {
     if (net.active) {
       // network case: set random wind only once, reduce the chance of de-sync during game.
       data.windOffsetX = rngPlusMinus(rng(3, data.type), data.type);
-      data.windOffsetY = rngPlusMinus(rng(0.5, data.type), data.type);
+      data.windOffsetY = rngPlusMinus(rng(0.33, data.type), data.type);
     }
     
     // TODO: review hacky "can respawn" parameter
