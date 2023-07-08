@@ -1880,7 +1880,7 @@ const Helicopter = (options = {}) => {
           game.addObject(TYPES.infantry, {
             isEnemy: data.isEnemy,
             // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
-            x: data.x + (data.width * 0.75 * data.isEnemy ? -1 : 1),
+            x: data.x + (data.width * 0.75 * (data.isEnemy ? -1 : 1)),
             y: (data.y + data.height) - 11,
             // exclude from recycle "refund" / reward case
             unassisted: false
