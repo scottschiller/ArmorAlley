@@ -1432,6 +1432,7 @@ ul.stats-bar .bombs em {
 /* bunkers go green when overlapping with ground units, i.e., tanks? */
 /* all terrain items need acceleration? */
 #radar .radar-item--animated,
+#fuel-line,
 .cornholio,
 .gunfire,
 .smoke .transform-sprite,
