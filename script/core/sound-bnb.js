@@ -1638,7 +1638,6 @@ bnb.cornholioAttack = shuffle([
   add('cornholio_i_order_you_to_surrender_your_tp')
 ]);
 bnb.cornholioAttack.throttle = 10000;
-bnb.cornholioAttack.regularQueueAlways = true;
 
 bnb.boioioing = shuffle([
   add('boing_a'),
