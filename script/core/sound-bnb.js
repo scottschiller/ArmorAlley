@@ -1588,8 +1588,6 @@ bnb.cornholioRepair = shuffle([
   addVL('b_cornholio_coffee_2'),
 ]);
 
-// bnb.cornholioRepair.playImmediately = true;
-
 bnb.cornholioAnnounce = shuffle([
   add('beavis_i_am_cornholio_loud', 33),
   add('beavis_i_am_cornholio_movie', 65),
