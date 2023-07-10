@@ -5026,12 +5026,13 @@ body.is_safari:not(.is-mobile) #game-menu button {
   /* initially hidden, shown only with active explosions */
   display: none;
   filter: none;
-  height: 0px;
+  top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   pointer-events: none;
   position: absolute;
-  top: 0;
-  width: 0px;
 }
 
 .zone-post {
