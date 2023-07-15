@@ -972,6 +972,8 @@ body.bnb .tv-screen-container {
 
 #tv-display {
   display: none;
+  /* ensure this displays on top of stars */
+  z-index: 1;
 }
 
 body.bnb #tv-display {
