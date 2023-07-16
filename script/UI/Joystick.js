@@ -323,6 +323,17 @@ function Joystick(options) {
 
   }
 
+  function reset() {
+
+    if (exports.onSetDirection) {
+      exports.onSetDirection(data.pointer.x, data.pointer.y);
+    }
+
+    // update position of pointer, active or not.
+    dom.oPointer.style.transform = `translate3d(${game.objects.view.data.browser.width * (data.pointer.x / 100)}px, ${game.objects.view.data.browser.height * (data.pointer.y / 100)}px, 0px)`;
+
+  }
+
   function init() {
 
     initDOM();
@@ -341,7 +352,8 @@ function Joystick(options) {
     data,
     start,
     move,
-    end
+    end,
+    reset
   };
 
   return exports;

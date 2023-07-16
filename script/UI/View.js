@@ -204,6 +204,11 @@ const View = () => {
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
     if (game.objects.radar) game.objects.radar.setStale(true);
 
+    if (isMobile && game.objects.joystick) {
+      // attempt to reset and reposition.
+      game.objects.joystick.reset();
+    }
+
   }
 
   function setTipsActive(active) {
