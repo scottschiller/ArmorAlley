@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { oneOf, rnd } from '../core/global.js';
+import { isMobile, oneOf, rnd } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 
 const Star = (options = {}) => {
@@ -26,6 +26,7 @@ const Star = (options = {}) => {
         // fake the new "X" position
         data.x += (data.scrollDelta * data.parallax);
         
+        // very subtle sine-based "orbit" path, reduced when in portrait mode.
         var circleY = (game.objects.view.data.browser.isPortrait ? -5 : -16) * Math.sin(((scrollLeft - data.x) / game.objects.view.data.browser.width) * Math.PI);
 
         const chopperOffset = ((game.players.local.data.y / game.players.local.data.yMax) * 4);
@@ -51,14 +52,17 @@ const Star = (options = {}) => {
 
       // if going off-screen, then move to "the next screen" - 
       // defined as the current viewport width, in the current direction.
-      const buffer = rnd(game.objects.view.data.browser.width * 0.1);
+      const buffer = rnd(game.objects.view.data.browser.width * (game.objects.view.data.browser.isPortrait ? 1 : 0.1));
 
       data.originalX = parseInt(game.objects.view.data.battleField.scrollLeft, 10) + (data.direction === 1 ? game.objects.view.data.browser.width + buffer : -buffer);
 
-    }
+      data.x = data.originalX;
 
-    // either way, "reset."
-    data.x = data.originalX;
+    } else {
+
+      data.originalX = data.x;
+
+    }
 
   }
 
@@ -67,8 +71,6 @@ const Star = (options = {}) => {
     dom.o = sprites.create({
       className: css.className
     });
-
-    dom.o.style.transformOrigin = '50% 50%';
 
     // rather than assign opacity (maybe $$$, more compositing work?), set colors with baked-in "brightness" values.
     dom.o.style.backgroundColor = `rgb(${data.color.map((value) => value * data.opacity).join(',')})`;
@@ -82,8 +84,8 @@ const Star = (options = {}) => {
 
   function reset() {
 
-    data.lastScrollLeft = 0;
-    data.x = rnd(game.objects.view.data.browser.width);
+    data.lastScrollLeft = -1;
+    data.x = (isMobile ? game.objects.view.data.battleField.scrollLeft : 0) + rnd(game.objects.view.data.browser.width);
     data.originalX = data.x;
 
   }
@@ -94,8 +96,9 @@ const Star = (options = {}) => {
 
   data = common.inheritData({
     type: 'star',
-    width: 1,
-    height: 1,
+    // hackish: slightly larger coordinates for on/off-screen logic.
+    width: 4,
+    height: 4,
     color: oneOf([
       [255, 0, 0], // red
       [255, 165, 0], // orange
@@ -107,7 +110,7 @@ const Star = (options = {}) => {
     direction: 1,
     parallax: 0.65 + rnd(0.3),
     opacity: 0.15 + rnd(0.65),
-    lastScrollLeft: 0
+    lastScrollLeft: game.objects.view.data.battleField.scrollLeft
   }, options);
 
   dom = {

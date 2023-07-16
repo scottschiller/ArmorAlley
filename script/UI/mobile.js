@@ -65,6 +65,8 @@ function orientationChange() {
     helicopter[1]?.refreshCoords();
   }
 
+  game.objects.starController?.reset();
+
 }
 
 export {

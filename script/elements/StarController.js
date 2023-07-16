@@ -1,5 +1,5 @@
 import { game } from '../core/Game.js';
-import { TYPES, isMobile, rndInt, searchParams, worldHeight } from '../core/global.js';
+import { TYPES, rndInt, searchParams, worldHeight } from '../core/global.js';
 
 const StarController = () => {
 
@@ -7,7 +7,7 @@ const StarController = () => {
   let data, exports;
 
   data = {
-    starCount: parseInt(searchParams.get('stars'), 10) || (isMobile ? 384 : 256)
+    starCount: parseInt(searchParams.get('stars'), 10) || 256
   };
 
   function initStars() {
@@ -20,7 +20,7 @@ const StarController = () => {
 
     for (let i = 0, j = data.starCount; i < j; i++) {
       game.addObject(TYPES.star, {
-        x: rndInt(xMax),
+        x: game.objects.view.data.battleField.scrollLeft + rndInt(xMax),
         y: topOffset + rndInt(yMax - (topOffset * 2))
       });
     }
