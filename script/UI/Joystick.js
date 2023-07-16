@@ -291,10 +291,10 @@ function Joystick(options) {
   function setInitialPosition() {
 
     // update inner state
-    data.pointer.x = game.objects.view.data.browser.width * 0.5;
-    data.pointer.y = game.objects.view.data.browser.height * 0.5;
+    data.pointer.x = 50;
+    data.pointer.y = 50;
 
-    dom.oPointer.style.transform = `translate3d(${data.pointer.x}px, ${data.pointer.y}px, 0px)`;
+    dom.oPointer.style.transform = `translate3d(${game.objects.view.data.browser.width * (data.pointer.x / 100)}px, ${game.objects.view.data.browser.height * (data.pointer.y / 100)}px, 0px)`;
     
   }
 
