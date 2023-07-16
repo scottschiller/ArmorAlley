@@ -57,15 +57,19 @@ function Joystick(options) {
   };
 
   function moveContainerTo(x, y) {
+
     const targetX = x - (data.oJoystickWidth / 2);
     const targetY = y - (data.oJoystickHeight / 2);
     dom.oJoystick.style.setProperty('left', `${targetX}px`);
     dom.oJoystick.style.setProperty('top', `${targetY}px`);
+
   }
 
   function resetPoint() {
+
     dom.oPoint.style.setProperty('left', '50%');
     dom.oPoint.style.setProperty('top', '50%');
+
   }
 
   function start(e) {
@@ -122,32 +126,33 @@ function Joystick(options) {
   }
 
   function distance(p1, p2) {
+
     let x1, y1, x2, y2;
+
     x1 = p1[0];
     y1 = p1[1];
+
     x2 = p2[0];
     y2 = p2[1];
+
     // eslint recommends exponentation ** vs. Math.pow(), but ** is Chrome 52+ and not even in IE AFAIK. 😂
     // eslint-disable-next-line no-restricted-properties
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+
   }
 
   // circle math hat-tip: duopixel
   // https://stackoverflow.com/a/8528999
 
   function limit(x, y) {
+
     const halfWidth = data.oJoystickWidth / 2;
     const halfHeight = data.oJoystickHeight / 2;
     const radius = halfWidth;
     const center = [halfWidth, halfHeight];
     const dist = distance([x, y], center);
 
-    if (dist <= radius) {
-      return {
-        x,
-        y
-      };
-    }
+    if (dist <= radius) return { x, y };
 
     x -= center[0];
     y -= center[1];
@@ -162,8 +167,10 @@ function Joystick(options) {
   }
 
   function movePoint(x, y) {
+
     dom.oPoint.style.setProperty('left', `${x}%`);
     dom.oPoint.style.setProperty('top', `${y}%`);
+
   }
 
   function setDirection(x, y) {
@@ -203,6 +210,7 @@ function Joystick(options) {
 
     const evt = getEvent(e);
 
+    // referenced by Snowstorm
     data.lastMove.clientX = evt.clientX;
     data.lastMove.clientY = evt.clientY;
 
@@ -229,18 +237,23 @@ function Joystick(options) {
   }
 
   function end() {
-    if (data.active) {
-      utils.css.remove(dom.oJoystick, css.active);
-      data.tweenFrame = 0;
-      data.active = false;
-    }
+
+    if (!data.active) return;
+
+    utils.css.remove(dom.oJoystick, css.active);
+    data.tweenFrame = 0;
+    data.tweenFrames = [];
+    data.active = false;
+
   }
 
   function refresh() {
+
     data.oJoystickWidth = dom.oJoystick.offsetWidth;
     data.oJoystickHeight = dom.oJoystick.offsetHeight;
     data.oPointWidth = dom.oPoint.offsetWidth;
     data.oPointHeight = dom.oPoint.offsetHeight;
+
   }
 
   function addEvents() {
@@ -257,6 +270,7 @@ function Joystick(options) {
   }
 
   function initDOM() {
+
     // create joystick and inner point.
     dom.o = (options && options.o) || document.body;
 
@@ -314,11 +328,14 @@ function Joystick(options) {
   }
 
   function init() {
+
     initDOM();
     addEvents();
+
     // get initial coords
     refresh();
     setInitialPosition();
+
   }
 
   init();
