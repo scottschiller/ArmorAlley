@@ -61,7 +61,7 @@ function orientationChange() {
   const helicopter = game.objects[TYPES.helicopter];
 
   if (helicopter?.length) {
-    helicopter[0]?.refreshCoords(true);
+    helicopter[0]?.refreshCoords();
     helicopter[1]?.refreshCoords();
   }
 
