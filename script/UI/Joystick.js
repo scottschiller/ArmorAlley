@@ -29,10 +29,6 @@ function Joystick(options) {
       clientX: 0,
       clientY: 0
     },
-    inertia: {
-      vX: 0,
-      vY: 0,
-    },
     pointer: {
       // percentages
       x: 50,
