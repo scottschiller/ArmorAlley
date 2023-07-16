@@ -1492,7 +1492,6 @@ body.is_firefox .sprite.shrapnel {
   width: 0.75px;
   height: 0.75px;
   border-radius: 100%;
-  margin: -0.375px 0px 0px -0.375px;
   contain: strict;
 }
 
