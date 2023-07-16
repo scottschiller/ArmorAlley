@@ -754,6 +754,8 @@ const game = (() => {
       utils.events.add(document, 'click', startEngine);
     }
 
+    game.objects.starController?.init();
+
   }
 
   // the home screen: choose a game type.
