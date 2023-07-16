@@ -1115,7 +1115,7 @@ const Helicopter = (options = {}) => {
 
   }
 
-  function refreshCoords(fromOrientationEvent) {
+  function refreshCoords() {
 
     const view = game.objects.view;
     let controlsWidth;
@@ -1154,11 +1154,6 @@ const Helicopter = (options = {}) => {
         data.xMaxOffset = (-data.width * 0.5);
         data.xMin = (-data.width * 0.5);
 
-      }
-
-      if (fromOrientationEvent) {
-        // pause and see if that's what the user wanted, though.
-        game.pause();
       }
 
     }
