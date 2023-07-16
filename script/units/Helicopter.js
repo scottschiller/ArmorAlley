@@ -1396,12 +1396,12 @@ const Helicopter = (options = {}) => {
 
     sprites.updateEnergy(exports);
 
+    callAction('setRespawning', true);
+
     if (data.isLocal) {
       // stars, too.
       game.objects.starController?.reset();
     }
-
-    callAction('setRespawning', true);
 
   }
 
