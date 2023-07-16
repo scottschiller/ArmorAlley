@@ -3226,6 +3226,7 @@ const Helicopter = (options = {}) => {
   exports = {
     animate,
     callAction,
+    centerView,
     data,
     dom,
     die,

@@ -207,6 +207,7 @@ const View = () => {
     if (isMobile && game.objects.joystick) {
       // attempt to reset and reposition.
       game.objects.joystick.reset();
+      game.players.local.centerView();
     }
 
   }
