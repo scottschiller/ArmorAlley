@@ -3391,15 +3391,20 @@ originalLevels = {
   ],
 
   'Rainstorm': [
-    [ 'balloon', n, 1792 ],
-    [ 'balloon', n, 2048 ],
-    [ 'balloon', n, 2304 ],
-    [ 'end-bunker', l, 12 ],
-    [ 'base', l, 96 ],
-    [ 'landing-pad', l, 160 ],
-    [ 'landing-pad', r, 3936 ],
-    [ 'base', r, 4000 ],
-    [ 'end-bunker', r, 4084 ]
+    [ 'end-bunker', l, 24 ],
+    [ 'base', l, 192 ],
+    [ 'landing-pad', n, 320 ],
+    [ 'balloon', l, 3584 ],
+    [ 'balloon', l, 4096 ],
+    [ 'balloon', l, 4608 ],
+    [ 'landing-pad', r, 7872 ],
+    [ 'base', r, 8000 ],
+    [ 'end-bunker', r, 8168 ],
+    [ 'tree', 1299 ],
+    [ 'tree', 3941 ],
+    [ 'palm-tree', 4735 ],
+    [ 'tree', 6991 ],
+    [ 'tree', 7109 ]
   ]
 
 };
