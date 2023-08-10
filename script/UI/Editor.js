@@ -123,6 +123,10 @@ const Editor = () => {
     dom.oShowHelp = document.getElementById('editor-show-help');
     dom.oShowHelp.style.display = wasClosed ? 'inline' : 'none';
 
+    if (!window.location.hostname.match(/localhost/i)) {
+      document.getElementById('editor-export')?.remove();
+    }
+
   }
 
   function initEditor() {
