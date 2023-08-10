@@ -2394,6 +2394,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   background-size: 18px 64px;
   height: 15px;
   width: 22px; /* 18 + a few pixels for turret rotation */
+  z-index: 2; /* sit atop bunkers */
 }
 
 .turret .sub-sprite {
