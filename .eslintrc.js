@@ -2,7 +2,10 @@ module.exports = {
     "env": {
         "browser": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
     "parserOptions": {
         "ecmaVersion": 2020,
         "sourceType": "module"
