@@ -1704,7 +1704,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 .infantry.stopped {
-  background-image: url(../image/infantry-static.gif);
+  background-image: url(../image/infantry-static.png);
   background-repeat: no-repeat;
   background-size: 10px 12px;
 }
@@ -1715,7 +1715,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 .infantry.enemy.stopped {
-  background-image: url(../infantry-enemy-static.png);
+  background-image: url(../image/infantry-enemy-static.png);
   background-repeat: no-repeat;
   background-size: 10px 12px;
 }
