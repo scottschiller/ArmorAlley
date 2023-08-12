@@ -55,7 +55,12 @@
   font-family: JetBrains Mono;
   font-style: normal;
   font-weight: 400;
-  src: url(../font/JetBrainsMono/JetBrainsMono-Regular.woff2) format('woff2');
+  /**
+   * 50% file savings via character subsetting
+   * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
+   */
+  src: url(../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2) format('woff2');
+  unicode-range: U+21,U+22,U+25-5F,U+61-7D;
 }
 
 @font-face {
