@@ -2809,7 +2809,7 @@ originalLevels = {
       /* 36 - not 99 - more balloons needed; distribute evenly across middle 3/4 of battlefield. */
       let luftBalloons = new Array(39);
       for (let i = 0, j = luftBalloons.length; i < j; i++) {
-        luftBalloons[i] = ([ 'balloon', n, 1024 + parseInt(2048 * i / j, 10) ]);
+        luftBalloons[i] = ([ 'balloon', n, 3084 + parseInt(2048 * i / j, 10) ]);
       }
       return luftBalloons;
     })()
