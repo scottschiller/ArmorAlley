@@ -43,12 +43,11 @@ const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = !!ua.match(/firefox/i);
 const isSafari = (isWebkit && !isChrome && !!ua.match(/safari/i));
 
-// iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. desktop) - OR, if "touch support" exists(?)
-const isMobile = !!ua.match(/mobile|iphone|ipad/i) || navigator?.maxTouchPoints > 0;
-const isiPhone = !!ua.match(/iphone/i);
+// iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. "request desktop website")
+const isMobile = !!ua.match(/mobile|iphone|ipad/i);
 
-// bare-bones "request mobile website" iOS detection
-const isMobileIOS = !!ua.match(/iphone|ipad/i);
+// special cases: handling The Notch, etc.
+const isiPhone = !!ua.match(/iphone/i);
 
 // whether off-screen elements are forcefully removed from the DOM.
 // may be expensive up front, and/or cause style recalcs while
@@ -352,7 +351,6 @@ export {
   isSafari,
   isMobile,
   isiPhone,
-  isMobileIOS,
   useDOMPruning,
   debug,
   debugCollision,

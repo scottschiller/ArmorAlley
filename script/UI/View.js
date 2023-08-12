@@ -912,18 +912,27 @@ const View = () => {
 
   function addEvents() {
 
-    // avoid "synthetic" mouse events from mobile, since we have touch covered.
-    if (!isMobile) {
-      utils.events.add(document, 'mousemove', events.mousemove);
-      utils.events.add(document, 'mousedown', events.touchstart);
-      utils.events.add(document, 'mouseup', events.mouseup);
-      utils.events.add(document, 'contextmenu', events.contextmenu);
-    } else {
-      utils.events.add(document, 'touchstart', events.touchstart);
-      utils.events.add(document, 'touchmove', events.touchmove);
-      utils.events.add(document, 'touchend', events.touchend);
-      utils.events.add(document, 'touchcancel', events.touchend);
-    }
+    /**
+     * Mouse, touch, window event handlers.
+     * 
+     * NOTE: Touch events should not trigger "legacy" mouse events, provided
+     * that preventDefault() is called within the touch event handler.
+     * 
+     * Additionally: Touch events are not exclusive to mobile or tablets.
+     * e.g., Dell XPS 13 (laptop) also has a touch-capable screen.
+     * 
+     * tl;dr, attempting detection is unwise; listen for and handle all.
+     */
+
+    utils.events.add(document, 'mousemove', events.mousemove);
+    utils.events.add(document, 'mousedown', events.touchstart);
+    utils.events.add(document, 'mouseup', events.mouseup);
+    utils.events.add(document, 'contextmenu', events.contextmenu);
+
+    utils.events.add(document, 'touchstart', events.touchstart);
+    utils.events.add(document, 'touchmove', events.touchmove);
+    utils.events.add(document, 'touchend', events.touchend);
+    utils.events.add(document, 'touchcancel', events.touchend);
 
     utils.events.add(window, 'resize', events.resize);
     utils.events.add(window, 'focus', events.focus);
