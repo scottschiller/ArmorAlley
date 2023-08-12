@@ -1045,7 +1045,7 @@ body.bnb-preload .tv-display-title-screen .tv {
   background-image: url(../image/pngtree.com_color_tv.webp);
 }
 
-#tv-display.widescreen #tv {
+body.bnb #tv-display.widescreen #tv {
   background: transparent url(../image/pngtree.com_color_tv_widescreen.webp);
   background-position: 0 21.5px;
   background-repeat: no-repeat;
