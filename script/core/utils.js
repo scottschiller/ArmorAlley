@@ -105,6 +105,43 @@ const utils = {
 
   },
 
+  image: {
+
+    loadImage: (url, callback) => {
+
+      if (preloadedImageURLs[url]) return callback();
+
+      let img = new Image();
+
+      img.onload = () => {
+        preloadedImageURLs[url] = true;
+        img.onload = null;
+        img = null;
+        callback();
+      }
+
+      // note: prefixed path.
+      img.src = `image/${url}`;
+
+    },
+
+    preload: (urls, callback) => {
+
+      let loaded = 0;
+
+      function didLoad() {
+        loaded++;
+        if (loaded >= urls.length) callback();
+      }
+
+      urls.forEach((url) => {
+        utils.image.loadImage(url, didLoad);
+      });
+
+    }
+    
+  },
+
   storage: (() => {
 
     let data = {}, localStorage, unavailable;
@@ -193,5 +230,7 @@ const utils = {
   })()
 
 }
+
+const preloadedImageURLs = {};
 
 export { utils };
