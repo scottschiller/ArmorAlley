@@ -1228,6 +1228,27 @@ function PrefsManager() {
           if (o) o.style.visibility = 'visible';
         });
 
+        // first-time activation: preload background images for menu, then activate.
+        if (!game.data.started && !utils.css.has(document.body, 'bnb-preload')) {
+
+          // pre-fetch...
+          utils.image.preload([
+            'virtual_stupidity_steamgriddb.webp',
+            'virtual_stupidity_overlay.webp',
+            'pngtree.com_color_tv.webp'
+          ], () => {
+            // ...and call this method again, where we'll now pass-thru to the activation.
+            events.onPrefChange.bnb(isActive);
+          });
+
+          // apply background images via CSS, for pending transition
+          utils.css.add(document.body, 'bnb-preload');
+
+          // work is complete for now, just preload.
+          return;
+
+        }
+
         // numerous UI updates
         utils.css.addOrRemove(document.body, isActive, 'bnb');
 

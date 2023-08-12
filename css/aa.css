@@ -240,7 +240,6 @@ body.game-started {
 }
 
 #mtv-bnb-in {
-  background: url(../image/virtual_stupidity_overlay.webp);
   background-position: 0 0;
   background-repeat: no-repeat;
   background-size: contain;
@@ -261,7 +260,6 @@ body.bnb #mtv-bnb-in {
 
 #bnb-vs {
   /* https://www.steamgriddb.com/game/5248723 */
-  background: url(../image/virtual_stupidity_steamgriddb.webp);
   background-position: 100% 100%;
   background-repeat: no-repeat;
   background-size: contain;
@@ -277,8 +275,18 @@ body.bnb #mtv-bnb-in {
   z-index: 10;
 }
 
+body.bnb #bnb-vs,
+body.bnb-preload #bnb-vs {
+  background-image: url(../image/virtual_stupidity_steamgriddb.webp);
+}
+
 body.bnb #bnb-vs {
   opacity: 1;
+}
+
+body.bnb #mtv-bnb-in,
+body.bnb-preload #mtv-bnb-in {
+  background-image: url(../image/virtual_stupidity_overlay.webp);
 }
 
 #bnb-vs,
@@ -1022,13 +1030,19 @@ body.bnb #tv-display.active {
 #tv-display #tv,
 .tv-display-title-screen .tv {
   /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
-  background: transparent url(../image/pngtree.com_color_tv.webp);
   background-size: contain;
   height: 320px;
   left: 0;
   position: absolute;
   top: 0;
   width: 409px;
+}
+
+body.bnb #tv-display #tv,
+body.bnb .tv-display-title-screen .tv,
+body.bnb-preload #tv-display #tv,
+body.bnb-preload .tv-display-title-screen .tv {
+  background-image: url(../image/pngtree.com_color_tv.webp);
 }
 
 #tv-display.widescreen #tv {
