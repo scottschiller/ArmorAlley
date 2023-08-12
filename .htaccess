@@ -1,8 +1,23 @@
 Options -Indexes
-<FilesMatch ".*\.(ico|png|jpe?g|gif|bmp|svg|mov|mp4|webp|webm|mp3|wav|ogg|woff|woff2|js|css)$">
-  ExpiresActive On
+ExpiresActive On
+
+<FilesMatch "\.(ico|png|jpe?g|gif|bmp|svg|mov|mp4|webp|webm|mp3|wav|ogg|woff|woff2|js|css)$">
   ExpiresDefault "access plus 1 year"
 </FilesMatch>
+
+#
+# 08/12/2023: Explicit far future expires headers on some MIME types
+# because the above rule doesn't seem to catch everything... ¯\_(ツ)_/¯
+#
+
+# access + 1 year, in seconds
+ExpiresByType image/png A31536000
+ExpiresByType image/jpg A31536000
+ExpiresByType image/gif A31536000
+
+ExpiresByType application/javascript A31536000
+ExpiresByType text/css A31536000
+ExpiresByType image/svg+xml A31536000
 
 # allow cache-busting params for unique URLs that still hit the original asset on disk.
 # e.g., image.png.v2 -> image.png
