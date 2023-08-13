@@ -1970,10 +1970,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   width: 48px;
 }
 
-.helicopter.respawning.first-time {
-  margin-top: -1px;
-}
-
 .helicopter.respawning .transform-sprite {
   top: 15px;
 }

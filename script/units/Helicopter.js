@@ -950,16 +950,9 @@ const Helicopter = (options = {}) => {
 
     }
 
-    // hackish: include a pixel offset when the game is starting, so helicopter rises correctly from landing pad.
-    const respawningActiveCSS = !data.dieCount ? [css.respawningActive, css.respawningFirstTime] : [css.respawningActive];
-
     // transition, helicopter rises from landing pad
     common.setFrameTimeout(() => {
-      if (state) {
-        utils.css.add(dom.o, ...respawningActiveCSS);
-      } else {
-        utils.css.remove(dom.o, ...respawningActiveCSS);
-      }
+      utils.css.addOrRemove(dom.o, state, css.respawningActive);
     }, 128);
 
     // player: restore trailers that may have been removed on die()
@@ -2974,7 +2967,6 @@ const Helicopter = (options = {}) => {
     tilt: 'tilt',
     repairing: 'repairing',
     respawning: 'respawning',
-    respawningFirstTime: 'first-time',
     respawningActive: 'respawning-active',
     inventory: {
       frameCount: 0,
