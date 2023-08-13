@@ -275,8 +275,8 @@ const Shrapnel = (options = {}) => {
     // sometimes zero / non-moving?
     vX: options.vX || 0,
     vY: options.vY || 0,
-    maxVX: 36,
-    maxVY: 32,
+    maxVX: 64,
+    maxVY: 64,
     gravity: 1,
     // randomize fall rate
     gravityRate: 1.05 + rng(.065, type),
@@ -314,6 +314,7 @@ const Shrapnel = (options = {}) => {
     options: {
       source: exports,
       targets: undefined,
+      checkTweens: true,
       hit(target) {
         hitAndDie(target);
       }
