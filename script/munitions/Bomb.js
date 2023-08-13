@@ -382,7 +382,7 @@ const Bomb = (options = {}) => {
     damagePointsOnGround: 2,
     target: null,
     vX: (options.vX || 0),
-    vYMax: 32,
+    vYMax: 128,
     bottomAlign: false,
     lastAngle: 0,
     scale: null,
