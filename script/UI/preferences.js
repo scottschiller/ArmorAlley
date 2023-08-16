@@ -45,6 +45,7 @@ const defaultPrefs = {
   gravestones_helicopters: true,
   gravestones_infantry: false,
   gravestones_vehicles: false,
+  landing_pads_on_radar: true,
   show_inventory: true,
   show_weapons_status: true,
   show_keyboard_labels: !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
