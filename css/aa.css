@@ -1883,12 +1883,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   z-index: 4;
 }
 
-.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(
-    .radar-item
-  ):after,
-.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(
-    .radar-item
-  ):after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(.radar-item):after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(.radar-item):after,
 .sprite:not(.balloon).exploding.smart-missile-tracking:not(.radar-item):after {
   /* reposition so tracking dot stays in the right place - bunker is normally 25px in height */
   bottom: 0;
