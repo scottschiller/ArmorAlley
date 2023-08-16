@@ -62,6 +62,7 @@ const LandingPad = (options = {}) => {
     isKennyLoggins: options.isKennyLoggins,
     isMidway: options.isMidway,
     isNeutral: true,
+    isObscured: options.obscured,
     energy: 2,
     width: 81,
     height: 4,

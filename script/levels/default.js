@@ -73,6 +73,9 @@ function previewLevel(levelName, excludeVehicles) {
 
   data.forEach((item) => {
 
+    // don't show landing pads that are intentionally hidden by terrain decor
+    if (item[0] === TYPES.landingPad && item[3]?.obscured) return;
+
     const exports = {
       data: common.inheritData({
         type: item[0],
@@ -924,7 +927,7 @@ function addWorldObjects() {
 
     data.forEach((item) => {
 
-      // terrain items only have two params.
+      // hackish: terrain items only have two params.
       if (item.length === 2) {
 
         addItem(item[0], item[1]);
@@ -936,6 +939,9 @@ function addWorldObjects() {
           hostile: item[1] === 'neutral',
           x: item[2] * multiplier
         };
+
+        // additional arguments, e.g., `{ obscured: true }`
+        if (item[3]) Object.assign(args, item[3]);
 
         // special cases
         if (item[0] === TYPES.landingPad) {
@@ -2629,7 +2635,8 @@ originalLevels = {
     [ 'bunker', r, 4000 ],
     [ 'balloon', l, 4096 ],
     [ 'infantry', r, 4096 ],
-    [ 'landing-pad', n, 4096 ],
+    // obscured: hidden from radar by shrubbery and whatnot
+    [ 'landing-pad', n, 4096, { obscured: true } ],
     [ 'cloud', 4388 ],
     [ 'missile-launcher', r, 4416 ],
     [ 'balloon', l, 4608 ],

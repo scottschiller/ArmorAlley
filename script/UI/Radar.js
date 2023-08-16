@@ -149,6 +149,11 @@ const Radar = () => {
       className += ` ${css.radarItemAnimated}`;
     }
 
+    // special case
+    if (item.isObscured) {
+      utils.css.add(itemObject.dom.o, css.obscured);
+    }
+
     itemObject = RadarItem({
       o: sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
@@ -512,6 +517,7 @@ const Radar = () => {
   layoutCache = {};
 
   css = {
+    obscured: 'obscured',
     incomingSmartMissile: 'incoming-smart-missile',
     jammed: 'jammed',
     radarItemAnimated: 'radar-item--animated'
