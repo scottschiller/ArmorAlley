@@ -32,6 +32,10 @@ const Radar = () => {
     [TYPES.superBunker]: true
   };
 
+  const leftOffsetsByType = {
+    [TYPES.landingPad]: 26
+  };
+
   function setStale(isStale) {
     data.isStale = isStale;
   }
@@ -84,7 +88,7 @@ const Radar = () => {
     let result = {
       layout: {
         width: 0,
-        height: 0,
+        height: 0
       },
       bottomAlignedY: 0
     };
@@ -246,7 +250,6 @@ const Radar = () => {
     // extreme mode: don't warn player about incoming missiles when radar is jammed, either.
     // i.e., you lose visibility.
     // if (gameType === 'extreme') setIncomingMissile(false);
-
 
   }
 
@@ -465,7 +468,7 @@ const Radar = () => {
           left = (Math.max(leftBoundary, Math.min(rightBoundary, (objects.items[i].oParent.data.x / worldWidth))) * (game.objects.view.data.browser.width - 5)) + 4;
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
-          left = ((objects.items[i].oParent.data.x / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
+          left = (((objects.items[i].oParent.data.x + (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
