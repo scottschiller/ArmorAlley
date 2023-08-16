@@ -285,10 +285,10 @@ const Radar = () => {
 
       common.setFrameTimeout(() => {
         if (!o) return;
-        let css = ['active'];
+        let noiseCSS = ['active'];
         // useful for when screencasting / recording / streaming - this effect can kill framerate.
-        if (window.location.href.match(/staticRadar/i)) css.push('static');
-        utils.css.add(o, ...css);
+        if (window.location.href.match(/staticRadar/i)) noiseCSS.push('static');
+        utils.css.add(o, ...noiseCSS);
         o = null;
       }, 128);
 
