@@ -2577,6 +2577,15 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
 }
 
+#radar .sprite.landing-pad {
+  width: 4px;
+  height: 4px;
+  border-radius: 3px;
+  /* only show semi-circle */
+  top: 2px;
+  z-index: 0;
+}
+
 #radar .sprite.smart-missile {
   border-radius: 100%;
   bottom: auto;
@@ -2607,6 +2616,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   margin-left: 0.5px;
   outline: none;
   width: 0;
+  z-index: 5; /* show above landing pads, etc. */
 }
 
 #radar .sprite.helicopter.local-player {
