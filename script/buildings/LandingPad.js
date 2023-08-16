@@ -2,6 +2,7 @@ import { getTypes, rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
+import { game } from '../core/Game.js';
 
 const LandingPad = (options = {}) => {
 
@@ -45,6 +46,8 @@ const LandingPad = (options = {}) => {
     dom.o.appendChild(sprites.makeTransformSprite());
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+    game.objects.radar.addItem(exports, dom.o.className);
 
     setWelcomeMessage();
   }
