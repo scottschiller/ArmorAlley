@@ -1,10 +1,21 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
+import { TYPES } from '../core/global.js';
 
 function RadarItem(options) {
 
   let css, data, dom, oParent, exports;
+
+  function onHiddenChange(isVisible) {
+
+    if (data.parentType !== TYPES.landingPad) return;
+
+    if (!dom?.o) return;
+    dom.o.style.visibility = isVisible ? 'visible' : 'hidden';
+
+  }
+
 
   function dieComplete() {
 
@@ -68,9 +79,11 @@ function RadarItem(options) {
   }
 
   function initRadarItem() {
+
     // string -> array as params
     const classNames = options.className.split(' ');
     utils.css.add(dom.o, css.radarItem, ...classNames);
+
   }
 
   css = {
@@ -100,6 +113,7 @@ function RadarItem(options) {
     data,
     dom,
     die,
+    onHiddenChange,
     oParent,
     reset
   };
