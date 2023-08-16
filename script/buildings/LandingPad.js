@@ -38,7 +38,8 @@ const LandingPad = (options = {}) => {
 
     dom.o = sprites.create({
       id: data.id,
-      className: css.className
+      className: css.className,
+      isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
     dom.o.appendChild(sprites.makeTransformSprite());
