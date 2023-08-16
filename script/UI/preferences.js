@@ -1307,6 +1307,9 @@ function PrefsManager() {
       gravestones_infantry: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_infantry'),
       gravestones_vehicles: (isActive) => utils.css.addOrRemove(document.body, isActive, 'gravestones_vehicles'),
 
+      // hackish: iterate over radar objects vs. game items, because we may be previewing a level and haven't started a game yet.
+      landing_pads_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
+
       weather: (type) => {
 
         if (!snowStorm) return;

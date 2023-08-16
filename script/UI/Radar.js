@@ -171,6 +171,12 @@ const Radar = () => {
       bottomAlignedY: 0
     });
 
+    // special case: hide immediately if game pref says "nein"
+    if (item.data.type === TYPES.landingPad && !gamePrefs.landing_pads_on_radar) {
+      const show = false;
+      itemObject?.onHiddenChange(show);
+    }
+
     game.objects.queue.addNextFrame(() => {
       dom.radar.appendChild(itemObject.dom.o);
 
@@ -584,6 +590,7 @@ const Radar = () => {
     data,
     dom,
     markTarget,
+    objects,
     removeItem: removeRadarItem,
     reset: reset,
     setStale,
