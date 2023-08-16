@@ -49,10 +49,10 @@ function previewLevel(levelName, excludeVehicles) {
 
   if (excludeVehicles) {
     // buildings only
-    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret/i));
+    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|landing-pad/i));
   } else {
     // buildings + units
-    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|tank|launcher|van|infantry|engineer/i));
+    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i));
   }
 
   const initMethods = {
