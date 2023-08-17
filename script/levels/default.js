@@ -1001,7 +1001,7 @@ originalLevels = {
     [ 'bunker', r, 5120 ],
     [ 'bunker', r, 5632 ],
     [ 'bunker', r, 6656 ],
-    [ 'landing-pad', l, 7800 ],
+    [ 'landing-pad', r, 7800 ],
     [ 'base', r, 8000 ],
     [ 'end-bunker', r, 8144 ],
     [ 'right-arrow-sign', -48 ],
