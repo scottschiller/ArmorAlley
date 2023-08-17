@@ -2575,11 +2575,21 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 
 #radar .sprite.landing-pad {
   width: 4px;
-  height: 4px;
-  border-radius: 3px;
-  /* only show semi-circle */
-  top: 2px;
+  height: 2px;
+  /* green "U"-shape image */
+  background-color: transparent;
+  background-image: url(data:image/gif;base64,R0lGODlhBAACAIABABegBwAAACH5BAEKAAEALAAAAAAEAAIAAAIERAKZBQA7);
+  background-position: 0px 0px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  box-shadow: none;
+  filter: drop-shadow(0 0 0.5px #000);
   z-index: 0;
+}
+
+#radar .sprite.landing-pad.enemy {
+  /* #ccc "U"-shape image */
+  background: url(data:image/gif;base64,R0lGODlhBAACAIABAMzMzP///yH5BAEKAAEALAAAAAAEAAIAAAIERAKZBQA7);
 }
 
 #radar .sprite.smart-missile {
