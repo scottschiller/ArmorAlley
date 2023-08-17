@@ -47,7 +47,12 @@ const LandingPad = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    const radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    if (data.isObscured && radarItem.dom?.o) {
+      // prevent display, even if landing_pads_on_radar is true.
+      radarItem.dom.o.style.opacity = 0;
+    }
 
     setWelcomeMessage();
   }
