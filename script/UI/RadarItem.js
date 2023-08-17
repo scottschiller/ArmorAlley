@@ -16,7 +16,6 @@ function RadarItem(options) {
 
   }
 
-
   function dieComplete() {
 
     game.objects.radar.removeItem(exports);
