@@ -36,7 +36,8 @@ function KeyboardMonitor() {
     esc: 27,
     enter: 13,
     delete_1: 8,
-    delete_2: 46
+    delete_2: 46,
+    z: 90
   };
 
   const allowedInPause = {
@@ -167,7 +168,7 @@ function KeyboardMonitor() {
 
     },
 
-    [keyMap.ctrl]: {
+    [keyMap.z]: {
 
       allowEvent: true,
 
@@ -342,6 +343,13 @@ function KeyboardMonitor() {
     }
 
   };
+
+  /**
+   * The original game used Z for bombs.
+   * As a kid, for whatever reason, I would always remap Z to Ctrl.
+   * Pinky finger preference for bombing, perhaps. :P
+   */
+  keys[keyMap.ctrl] = keys[keyMap.z];
 
   function isDown(labelOrCode) {
 

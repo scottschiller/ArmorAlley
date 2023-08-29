@@ -1781,8 +1781,8 @@ const Helicopter = (options = {}) => {
         playSound(sounds.inventory.denied);
       }
 
-      // CTRL key still down?
-      if (data.isLocal && !keyboardMonitor.isDown('ctrl')) {
+      // "bombing" key still down?
+      if (data.isLocal && (!keyboardMonitor.isDown('ctrl') && !keyboardMonitor.isDown('z'))) {
         data.bombing = false;
       }
 
