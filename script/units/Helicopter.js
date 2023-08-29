@@ -23,7 +23,8 @@ import {
   oneOf,
   getTypes,
   rngInt,
-  rng
+  rng,
+  rngPlusMinus
 } from '../core/global.js';
 
 import {
@@ -1924,12 +1925,12 @@ const Helicopter = (options = {}) => {
     // bail!
     if (!data.dead && data.pilot) {
 
-      deployParachuteInfantry({
-        isEnemy: data.isEnemy,
-        parent: exports,
-        x: data.x + data.halfWidth,
-        y: (data.y + data.height) - 11
-      });
+      // pilot, plus any paratroopers
+      const parachutes = (parseInt(data.parachutes, 10) + 1) || 1;
+
+      for (let i = 0; i < parachutes; i++) {
+        common.setFrameTimeout(deployRandomParachuteInfantry, FPS * (i + 1) * 2);
+      }
 
       data.deployedParachute = true;
 
@@ -1952,6 +1953,18 @@ const Helicopter = (options = {}) => {
       }
 
     }
+
+  }
+
+  function deployRandomParachuteInfantry() {
+
+    deployParachuteInfantry({
+      isEnemy: data.isEnemy,
+      parent: exports,
+      // a little variety
+      x: data.x + data.halfWidth + rngPlusMinus(data.halfWidth / 2, data.type),
+      y: (data.y + data.height) - 11
+    });
 
   }
 
