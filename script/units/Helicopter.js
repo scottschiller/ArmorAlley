@@ -1940,8 +1940,13 @@ const Helicopter = (options = {}) => {
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement('No pilot 😱');
+      }
+
+      if (tutorialMode || !data.ejectCount) {
         game.objects.notifications.add('You found your helicopter’s “eject” button. &nbsp; 😱 &nbsp; ☠️');
       }
+
+      data.ejectCount++;
 
       if (gamePrefs.bnb) {
         playSound(game.data.isBeavis ? sounds.bnb.beavisEjectedHelicopter : sounds.bnb.buttheadEjectedHelicopter, exports);
@@ -3049,6 +3054,7 @@ const Helicopter = (options = {}) => {
     repairing: false,
     repairFrames: 0,
     dieCount: 0,
+    ejectCount: 0,
     energy: 10,
     energyMax: 10,
     energyLineScale: 0.25,
