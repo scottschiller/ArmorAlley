@@ -1922,6 +1922,12 @@ const Helicopter = (options = {}) => {
 
   function eject() {
 
+     if (data.landed) {
+      game.objects.notifications.addNoRepeat('You cannot eject while landed.');
+      playSound(sounds.inventory.denied);
+      return;
+     }
+
     // bail!
     if (!data.dead && data.pilot) {
 
