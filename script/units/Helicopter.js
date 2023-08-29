@@ -3011,7 +3011,7 @@ const Helicopter = (options = {}) => {
     parachuting: false,
     parachutingThrottle: false,
     parachutingTimer: null,
-    parachutingDelay: 150,
+    parachutingDelay: 120,
     ignoreMouseEvents: !!game.objects.editor,
     fuel: 100,
     maxFuel: 100,
