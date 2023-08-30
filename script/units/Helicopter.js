@@ -1969,6 +1969,10 @@ const Helicopter = (options = {}) => {
 
   function deployRandomParachuteInfantry() {
 
+    // only deploy if not already dead.
+    // e.g., helicopter could be ejected, then explode before all infantry have released.
+    if (data.dead) return;
+
     deployParachuteInfantry({
       isEnemy: data.isEnemy,
       parent: exports,
