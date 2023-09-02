@@ -11,7 +11,7 @@ import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 
-const NET_TRIGGER_DISTANCE = 256;
+const NET_TRIGGER_DISTANCE = 360;
 
 function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
 
