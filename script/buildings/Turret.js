@@ -554,9 +554,7 @@ const Turret = (options = {}) => {
 
     data.frameCount++;
 
-    if (data.frameCount % data.scanModulus === 0) {
-      if (!data.dead) fire();
-    }
+    if (!data.dead) fire();
 
     if (!data.dead && data.energy > 0) {
       effects.smokeRelativeToDamage(exports);
