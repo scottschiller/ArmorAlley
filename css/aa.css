@@ -1916,7 +1916,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   animation: blink 0.25s infinite;
 }
 
-.radar-item.smart-missile-tracking-active:not(.helicopter) {
+/* special case: avoid affecting display of child nodes */
+.radar-item.turret.smart-missile-tracking-active {
+  animation: blink-tracking-color 0.25s infinite;
+}
+
+.radar-item.smart-missile-tracking-active:not(.helicopter):not(.turret) {
   /* make the missile target obvious on the radar. */
   /* helicopters are a special border-only case. */
   background-color: red !important;
@@ -3032,7 +3037,7 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.turret {
-  background-color: #17a007;
+  background-color: rgb(23, 160, 7);
   height: 2px;
   margin-left: -0.5px;
   width: 1px;
@@ -5955,6 +5960,14 @@ body.game-paused #tutorial-window {
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes blink-tracking-color {
+  50% {
+    background-color: red;
+    border-color: red;
+    color: red;
   }
 }
 
