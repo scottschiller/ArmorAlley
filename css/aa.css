@@ -3099,8 +3099,28 @@ body.bnb .sprite.engineer.butthead.building {
   );
 }
 
+body:not(.game-started) #radar .sprite.turret .turret-scan-node {
+  /* no transitions while showing level previews */
+  transition-duration: 0ms;
+}
+
 #radar .sprite.turret.destroyed {
-  opacity: 0.5;
+  /* faded green */
+  background-color: rgba(23, 160, 7, 0.5);
+}
+
+#radar .sprite.turret.enemy.destroyed {
+  /* #ccc at 50% */
+  background-color: rgba(204, 204, 204, 0.5);
+}
+
+#radar .sprite.turret.destroyed .turret-scan-node {
+  border-width: 0px;
+  width: 0px;
+  height: 0px;
+  transition-duration: 1s;
+  /* "ease-in back. overshoots." */
+  transition-timing-function: cubic-bezier(0.6, -0.28, 0.735, 0.045);
 }
 
 #game-fps {
