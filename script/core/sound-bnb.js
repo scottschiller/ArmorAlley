@@ -1792,7 +1792,7 @@ bnb.bungholeAndSimilar = shuffle([
 bnb.beavisFire = add('beavis_fire_fire_fire_fire');
 
 bnb.explosionFire = {
-  ...add('desert_explosion_fire', 100, undefined, undefined, { onplay: function(sound) { if (!sound.skipped) common.setVideo('desert_explosion'); } }),
+  ...add('desert_explosion_fire', 85, undefined, undefined, { onplay: function(sound) { if (!sound.skipped) common.setVideo('desert_explosion'); } }),
   ...playImmediately
 };
 
