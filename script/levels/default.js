@@ -103,6 +103,7 @@ function previewLevel(levelName, excludeVehicles) {
 
     // if a bunker, also make a matching balloon.
     if (item[0] === 'bunker') {
+
       const balloonExports = {
         data: common.inheritData({
           type: 'balloon',
@@ -113,7 +114,14 @@ function previewLevel(levelName, excludeVehicles) {
           y: initMethods.balloon.data.y
         })
       };
+
       game.objects.radar.addItem(balloonExports, `sprite balloon${(item[1] === 'right') ? ' enemy' : ''}`);
+
+    } else if (item[0] === 'turret') {
+
+      // special case: turret radar items also get a "scan range" node.
+      radarItem.initScanNode();
+
     }
 
   });
