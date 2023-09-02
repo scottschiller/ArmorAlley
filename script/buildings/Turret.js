@@ -440,6 +440,7 @@ const Turret = (options = {}) => {
     zones.changeOwnership(exports);
 
     utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
+    utils.css.addOrRemove(radarItem?.dom?.o, isEnemy, css.enemy);
 
     playSoundWithDelay((isEnemy ? sounds.enemyClaim : sounds.friendlyClaim), exports, 500);
 
