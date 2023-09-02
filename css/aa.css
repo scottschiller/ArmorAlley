@@ -2518,6 +2518,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   position: absolute;
   top: 0;
   width: 3px;
+  z-index: 2;
 }
 
 /* .friendly? */
