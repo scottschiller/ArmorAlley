@@ -1,5 +1,5 @@
 import { gamePrefs } from '../UI/preferences.js';
-import { game } from '../core/Game.js';
+import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { searchParams, TYPES } from '../core/global.js';
 import { net } from '../core/network.js';
@@ -2407,7 +2407,8 @@ originalLevels = {
     [ 'base', l, 192 ],
     [ 'landing-pad', l, 320 ],
     [ 'bunker', r, 640 ],
-    [ 'bunker', r, 1152 ],
+    // special case: friendly bunker to the right of friendly turret - otherwise, it blows up the bunker trying to shoot tanks.
+    [ 'bunker', () => gameType === 'extreme' ? l : r, 1152 ],
     [ 'tank', r, 1280 ],
     [ 'infantry', r, 1360 ],
     [ 'tank', r, 1520 ],
