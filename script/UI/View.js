@@ -215,7 +215,7 @@ const View = () => {
   function setTipsActive(active) {
     if (data.gameTips.active !== active) {
       data.gameTips.active = active;
-      utils.css[active ? 'add' : 'remove'](dom.gameTips, css.gameTips.active);
+      utils.css.addOrRemove(dom.gameTips, active, css.gameTips.active);
       if (!data.gameTips.tipsOffset) {
         showNextTip();
       }
@@ -316,7 +316,7 @@ const View = () => {
 
     if (text !== data.gameTips.lastAnnouncement && ((!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text))) {
 
-      utils.css[text ? 'add' : 'remove'](dom.gameTips, css.gameTips.hasAnnouncement);
+      utils.css.addOrRemove(dom.gameTips, text, css.gameTips.hasAnnouncement);
 
       // if in portrait mode, use line breaks. otherwise, single-space.
       const replacement = (window.matchMedia?.('(orientation: portrait)')?.matches) ? '<br />' : ' ';

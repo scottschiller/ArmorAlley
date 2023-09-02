@@ -45,7 +45,7 @@ const Radar = () => {
 
     if (data.incomingMissile === incoming) return;
 
-    utils.css[incoming ? 'add' : 'remove'](game.objects.view.dom.worldWrapper, css.incomingSmartMissile);
+    utils.css.addOrRemove(game.objects.view.dom.worldWrapper, incoming, css.incomingSmartMissile);
 
     data.incomingMissile = incoming;
 

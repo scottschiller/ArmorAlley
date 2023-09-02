@@ -439,7 +439,7 @@ const Turret = (options = {}) => {
 
     zones.changeOwnership(exports);
 
-    utils.css[isEnemy ? 'add' : 'remove'](dom.o, css.enemy);
+    utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
 
     playSoundWithDelay((isEnemy ? sounds.enemyClaim : sounds.friendlyClaim), exports, 500);
 
