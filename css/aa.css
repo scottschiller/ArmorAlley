@@ -4412,7 +4412,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   background: hsla(0, 0%, 95%, 0.75);
   border-top: 0.5px solid #000;
   color: #000;
-  font-family: geneva, verdana, arial, sans-serif;
+  font-family: Geneva, verdana, arial, sans-serif;
   font-size: 5px;
   /* overflow: auto; */
   overflow: hidden;
@@ -4460,7 +4460,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border: 0.5px solid #000;
   box-sizing: border-box;
   color: #000;
-  font-family: geneva, verdana, arial, sans-serif;
+  font-family: Geneva, verdana, arial, sans-serif;
   font-size: 5px;
   height: 10rem;
   overflow: auto;
@@ -4640,10 +4640,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   font-family: Chicago, FA Sysfont C, courier, sans-serif;
   font-size: 7px;
   vertical-align: middle;
-}
-
-body.is_safari:not(.is-mobile) .mac-classic b {
-  letter-spacing: -0.5px;
 }
 
 .mac-classic b {
@@ -4894,7 +4890,7 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
 }
 
 .mac-classic .label-text {
-  font-weight: 700;
+  font-weight: bolder;
 }
 
 body.is_firefox .mac-classic .label-text,
@@ -4904,7 +4900,7 @@ body.is_firefox .mac-classic .options-heading {
 
 body.is_safari .mac-classic .label-text,
 body.is_safari .mac-classic .options-heading {
-  letter-spacing: -0.25px; /* :shake_fist: */
+  letter-spacing: -0.2px; /* :shake_fist: */
 }
 
 .finder.mac-classic p {
