@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { TYPES } from '../core/global.js';
+import { TYPES, worldWidth } from '../core/global.js';
 
 function RadarItem(options) {
 
@@ -85,10 +85,37 @@ function RadarItem(options) {
 
   }
 
+  function initScanNode() {
+
+    if (!dom?.o) return;
+
+    // special case: turret radar items also get a "scan range" node.
+    let scanNode = document.createElement('div');
+    scanNode.className = css.turretScanNode;
+
+    dom.o.appendChild(scanNode);
+    dom.oScanNode = scanNode;
+    scanNode = null;
+
+  }
+
+  function updateScanNode(diameter = 0) {
+
+    // special case: some radar items also get a "scan range" node.
+    let { oScanNode } = dom;
+
+    if (!oScanNode) return;
+
+    // size "scan radius" according to browser width, because vertical resizing does not affect spacing of radar layout.
+    oScanNode.style.width = oScanNode.style.height = `${((diameter / worldWidth) * game.objects.view.data.browser.width * 2)}px`;
+
+  }
+
   css = {
     radarItem: 'radar-item',
     dying: 'dying',
-    dead: 'dead'
+    dead: 'dead',
+    turretScanNode: 'turret-scan-node'
   };
 
   data = {
@@ -112,9 +139,11 @@ function RadarItem(options) {
     data,
     dom,
     die,
+    initScanNode,
     onHiddenChange,
     oParent,
-    reset
+    reset,
+    updateScanNode
   };
 
   return exports;

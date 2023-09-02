@@ -3036,10 +3036,62 @@ body.bnb .sprite.engineer.butthead.building {
   height: 2px;
   margin-left: -0.5px;
   width: 1px;
+  /* allow nested .turret-scan-mode to show */
+  contain: unset;
+  overflow: visible;
+  /* ensure everything sits on top of turrets' scan nodes */
+  z-index: 1;
 }
 
 #radar .sprite.turret.enemy {
   background-color: #ccc;
+}
+
+#radar .sprite.turret .turret-scan-node {
+  /* "turret visibility" on radar. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0px;
+  height: 0px;
+  transform: translate3d(-50%, -50%, 0);
+  /* account for border */
+  margin-left: -0.5px;
+  /**
+   * Numerous "steps", with zero transition between different colours.
+   * https://www.kirupa.com/animations/radial_gradient_stripes.htm
+   */
+  background-image: radial-gradient(circle,
+   rgba(0, 255, 0, 0.15) 0%,
+   rgba(0, 255, 0, 0.15) 25%,
+   rgba(0, 255, 0, 0.1) 25%,
+   rgba(0, 255, 0, 0.1) 50%,
+   rgba(0, 255, 0, 0.075) 50%,
+   rgba(0, 255, 0, 0.075) 75%,
+   rgba(0, 255, 0, 0.05) 75%,
+   rgba(0, 255, 0, 0.05) 100%
+  );
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 100%;
+  transition-duration: 2.5s;
+  /* "ease-out back. overshoots." */
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition-property: background-color, border-color, border-width, width, height;
+  z-index: -2;
+}
+
+#radar .sprite.turret.enemy .turret-scan-node {
+  border-color: rgba(255, 255, 255, 0.05);
+  background-image: radial-gradient(circle,
+   rgba(255, 255, 255, 0.15) 0%,
+   rgba(255, 255, 255, 0.15) 25%,
+   rgba(255, 255, 255, 0.1) 25%,
+   rgba(255, 255, 255, 0.1) 50%,
+   rgba(255, 255, 255, 0.075) 50%,
+   rgba(255, 255, 255, 0.075) 75%,
+   rgba(255, 255, 255, 0.05) 75%,
+   rgba(255, 255, 255, 0.05) 100%
+  );
 }
 
 #radar .sprite.turret.destroyed {
