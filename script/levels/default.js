@@ -89,7 +89,27 @@ function previewLevel(levelName, excludeVehicles) {
       }),
     };
 
-    const radarItem = game.objects.radar.addItem(exports, `sprite ${item[0]}${(item[1] === 'right') ? ' enemy' : ''}`);
+    const css = [
+      'sprite',
+      item[0]
+    ];
+
+    if (item[1] === 'right') {
+      css.push('enemy');
+    }
+
+    // neutral = dead turret
+    if (item[0] === TYPES.turret && item[1] === 'neutral') {
+
+      // show as grey (vs. green) on radar
+      css.push('enemy');
+
+      // and faded, etc.
+      css.push('destroyed');
+
+    }
+
+    const radarItem = game.objects.radar.addItem(exports, css.join(' '));
 
     // pull vehicles behind bunkers, super-bunkers etc.
     if (item[0].match(/tank|launcher|van|infantry|engineer/i)) {
