@@ -8,6 +8,7 @@ import { playSound, skipSound, stopSound, sounds, playSoundWithDelay } from '../
 import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
+import { TURRET_SCAN_DIAMETER } from '../buildings/Turret.js';
 
 const Radar = () => {
 
@@ -492,6 +493,15 @@ const Radar = () => {
 
         if (objects.items[i] === data.radarTarget) {
           updateTargetMarker(objects.items[i]);
+        }
+
+        if (objects.items[i].oParent.data.type === TYPES.turret) {
+          objects.items[i].oParent.resize?.();
+        }
+
+        // hack: resize manually for level previews
+        if (!game.data.started) {
+          objects.items[i].updateScanNode(TURRET_SCAN_DIAMETER);
         }
 
       }

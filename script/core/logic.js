@@ -415,6 +415,13 @@ function objectInView(data, options = {}) {
 
 }
 
+function isPointInCircle(pointX, pointY, circleX, circleY, circleRadius) {
+     
+  // https://www.geeksforgeeks.org/find-if-a-point-lies-inside-or-on-circle/
+  return ((pointX - circleX) * (pointX - circleX) + (pointY - circleY) * (pointY - circleY) <= circleRadius * circleRadius);
+
+}
+
 function checkNearbyItems(nearby, zone) {
 
   let i, j, foundHit;
@@ -505,7 +512,7 @@ function enemyNearby(data, targets, triggerDistance) {
 
 }
 
-function enemyHelicopterNearby(data, triggerDistance) {
+function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
 
   let i, j, result;
 
@@ -520,7 +527,12 @@ function enemyHelicopterNearby(data, triggerDistance) {
     if (!helicopter[i].data.cloaked && !helicopter[i].data.dead && data.isEnemy !== helicopter[i].data.isEnemy) {
 
       // how far away is the target?
-      if (Math.abs(helicopter[i].data.x - data.x) < triggerDistance) {
+      if (useCircleMath) {
+        if (isPointInCircle(helicopter[i].data.x + helicopter[i].data.halfWidth, helicopter[i].data.y + helicopter[i].data.halfHeight, data.x, data.y, triggerDistance)) {
+          result = helicopter[i];
+          break;
+        }
+      } else if (Math.abs(helicopter[i].data.x - data.x) < triggerDistance) {
         result = helicopter[i];
         break;
       }

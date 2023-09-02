@@ -10,6 +10,8 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
+const TURRET_SCAN_DIAMETER = 420;
+
 const Turret = (options = {}) => {
 
   let css, data, dom, objects, height, radarItem, collisionItems, targets, exports;
@@ -43,12 +45,12 @@ const Turret = (options = {}) => {
 
     let deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
 
-    target = enemyHelicopterNearby(data, game.objects.view.data.browser.fractionWidth);
+    target = enemyHelicopterNearby(data, data.scanDistance, data.useCircleMath);
 
     // alternate target(s) within range?
     if (!target && targets) {
 
-      otherTargets = enemyNearby(data, targets, game.objects.view.data.browser.fractionWidth);
+      otherTargets = enemyNearby(data, targets, data.scanDistance);
 
       if (otherTargets.length) {
 
@@ -169,6 +171,25 @@ const Turret = (options = {}) => {
 
   }
 
+  function resize() {
+
+    if (data.dead) return;
+
+    let { oScanNode } = radarItem?.dom;
+    
+    if (!oScanNode) return;
+
+    // hacks: disable transition during resize.
+    oScanNode.style.transition = 'none';
+
+    radarItem?.updateScanNode(data.scanDistance);
+    
+    common.setFrameTimeout(() => {
+      oScanNode.style.transition = '';
+    }, FPS * 10);
+
+  }
+
   function die(dieOptions = {}) {
 
     if (data.dead) return;
@@ -245,10 +266,11 @@ const Turret = (options = {}) => {
 
     }
 
+    utils.css.remove(dom.o, css.firing);
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
 
-    utils.css.remove(dom.o, css.firing);
+    radarItem?.updateScanNode(data.dead ? 0 : undefined);
 
     sprites.updateEnergy(exports);
 
@@ -305,6 +327,7 @@ const Turret = (options = {}) => {
         if (data.dead && data.energy > (data.energyMax * 0.25)) {
           // restore to life at 25%
           data.dead = false;
+          radarItem?.updateScanNode(data.scanDistance);
           if (data.isEnemy === game.players.local.data.isEnemy) {
             game.objects.notifications.add('You re-enabled a turret 🛠️');
           } else {
@@ -613,9 +636,14 @@ const Turret = (options = {}) => {
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+    // turrets also get a scan node.
+    radarItem.initScanNode();
+
     // "dead on arrival"
     if (options.DOA) {
       die({ silent: true });
+    } else {
+      radarItem.updateScanNode(data.scanDistance);
     }
 
   }
@@ -649,7 +677,8 @@ const Turret = (options = {}) => {
     hasBeavis: false,
     hasButthead: false,
     isSinging: false,
-    scanModulus: 1,
+    scanDistance: TURRET_SCAN_DIAMETER,
+    useCircleMath: true,
     claimModulus: 8,
     repairModulus: FPS,
     restoring: false,
@@ -697,6 +726,7 @@ const Turret = (options = {}) => {
     init: initTurret,
     radarItem,
     refreshCollisionItems,
+    resize,
     restore,
     repair
   };
@@ -705,4 +735,7 @@ const Turret = (options = {}) => {
 
 };
 
-export { Turret };
+export {
+  TURRET_SCAN_DIAMETER,
+  Turret
+};
