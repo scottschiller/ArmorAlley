@@ -405,9 +405,7 @@ body.is_safari #game-menu label {
   top: 0;
 }
 
-body.is_safari #game-menu select {
-  /* Safari desktop-specific hacks to remove "gloss" */
-  /* https://stackoverflow.com/questions/7638677/how-can-i-remove-the-gloss-on-a-select-element-in-safari-on-mac/57510283#57510283 */
+#game-menu select {
   appearance: none;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>")
     no-repeat;
@@ -417,6 +415,10 @@ body.is_safari #game-menu select {
   border-color: #fff;
   border-radius: 3px;
   padding-right: 32px;
+  text-indent: 4px;
+}
+
+body.is_safari #game-menu select {
   text-indent: 8px;
 }
 
@@ -4744,7 +4746,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic select {
-  background: transparent;
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23000000'><polygon points='0,0 100,0 50,50'/></svg>")
+    no-repeat;
+  background-position: calc(100% - 8px) 70%;
+  background-repeat: no-repeat;
+  background-size: 8px;
   border: 0.5px solid #999;
   border-radius: 2px;
   color: #ccc;
@@ -4759,6 +4766,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding: 0 2px 0 0;
   text-indent: 2px;
   vertical-align: middle;
+  padding-right: 32px;
+  text-indent: 4px;
 }
 
 #game-prefs-modal select {
@@ -4766,6 +4775,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   color: #000;
   font-family: Chicago, FA Sysfont C, geneva, verdana, arial, sans-serif;
   font-size: 11px;
+  border-width: 1px;
   /* collapse the extra vertical space left, due to the transform */
   margin-bottom: -10px;
   margin-left: 0;
