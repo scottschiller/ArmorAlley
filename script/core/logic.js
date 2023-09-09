@@ -519,7 +519,7 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
   const helicopter = game.objects[TYPES.helicopter];
 
   // by default
-  triggerDistance = net.active ? NET_TRIGGER_DISTANCE : triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+  triggerDistance = (net.active && !useCircleMath) ? NET_TRIGGER_DISTANCE : triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
   for (i = 0, j = helicopter.length; i < j; i++) {
 
