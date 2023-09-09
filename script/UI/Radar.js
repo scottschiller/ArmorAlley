@@ -9,6 +9,12 @@ import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
 import { TURRET_SCAN_DIAMETER } from '../buildings/Turret.js';
+import { MISSILE_LAUNCHER_SCAN_DIAMETER } from '../units/MissileLauncher.js';
+
+const scanNodeTypes = {
+  [TYPES.turret]: TURRET_SCAN_DIAMETER,
+  [TYPES.missileLauncher]: MISSILE_LAUNCHER_SCAN_DIAMETER
+};
 
 const Radar = () => {
 
@@ -499,9 +505,11 @@ const Radar = () => {
           objects.items[i].oParent.resize?.();
         }
 
-        // hack: resize manually for level previews
+        // hack: resize scan nodes manually for level previews
         if (!game.data.started) {
-          objects.items[i].updateScanNode(TURRET_SCAN_DIAMETER);
+          if (scanNodeTypes[objects.items[i].oParent.data.type]) {
+            objects.items[i].updateScanNode(scanNodeTypes[objects.items[i].oParent.data.type]);
+          }
         }
 
       }

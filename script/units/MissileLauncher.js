@@ -9,6 +9,9 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
+const MISSILE_LAUNCHER_SCAN_DIAMETER = 320;
+const MISSILE_LAUNCHER_SCAN_BUFFER = 16;
+
 const MissileLauncher = (options = {}) => {
 
   let css, data, dom, friendlyNearby, height, radarItem, exports;
@@ -68,6 +71,8 @@ const MissileLauncher = (options = {}) => {
 
     data.dead = true;
 
+    radarItem.updateScanNode();
+
     radarItem.die({ silent: !!dieOptions.silent });
 
     common.onDie(exports, dieOptions);
@@ -81,7 +86,7 @@ const MissileLauncher = (options = {}) => {
     if (data.frameCount % data.fireModulus !== 0) return;
 
     // is an enemy helicopter nearby?
-    targetHelicopter = enemyHelicopterNearby(data, 256);
+    targetHelicopter = enemyHelicopterNearby(data, data.scanDistance + MISSILE_LAUNCHER_SCAN_BUFFER, data.hasScanNode);
 
     if (!targetHelicopter) return;
 
@@ -107,6 +112,7 @@ const MissileLauncher = (options = {}) => {
 
       // friendly turret
       if (objectInView(data, {
+        triggerDistance: data.scanDistance,
         items: TYPES.turret,
         friendlyOnly: true
       })) {
@@ -115,6 +121,7 @@ const MissileLauncher = (options = {}) => {
 
       // friendly helicopter, and armed with at least one missile
       if (objectInView(data, {
+        triggerDistance: data.scanDistance,
         items: TYPES.helicopter,
         friendlyOnly: true
       }) && game.players.local.data.smartMissiles > 0) {
@@ -231,6 +238,25 @@ const MissileLauncher = (options = {}) => {
 
   }
 
+  function resize() {
+
+    if (data.dead) return;
+
+    let { oScanNode } = radarItem?.dom;
+    
+    if (!oScanNode) return;
+
+    // hacks: disable transition during resize.
+    oScanNode.style.transition = 'none';
+
+    radarItem?.updateScanNode(data.scanDistance);
+    
+    common.setFrameTimeout(() => {
+      oScanNode.style.transition = '';
+    }, FPS * 10);
+
+  }
+
   function initDOM() {
 
     dom.o = sprites.create({
@@ -258,6 +284,10 @@ const MissileLauncher = (options = {}) => {
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
+    // missile launchers also get a scan node.
+    radarItem.initScanNode();
+    radarItem.updateScanNode(data.scanDistance);
+
   }
 
   height = 18;
@@ -281,6 +311,7 @@ const MissileLauncher = (options = {}) => {
     height,
     halfHeight: height / 2,
     orderComplete: false,
+    scanDistance: MISSILE_LAUNCHER_SCAN_DIAMETER,
     state: 0,
     stateMax: 3,
     stateModulus: 38,
@@ -294,7 +325,8 @@ const MissileLauncher = (options = {}) => {
       colorType: options.isEnemy ? 'grey' : 'green',
       elementCount: 7 + rndInt(7),
       startVelocity: 10 + rndInt(10)
-    }
+    },
+    hasScanNode: true
   }, options);
 
   dom = {
@@ -306,7 +338,8 @@ const MissileLauncher = (options = {}) => {
     data,
     dom,
     die,
-    init: initMissileLauncher
+    init: initMissileLauncher,
+    resize
   };
 
   friendlyNearby = {
