@@ -89,9 +89,9 @@ function RadarItem(options) {
 
     if (!dom?.o) return;
 
-    // special case: turret radar items also get a "scan range" node.
+    // special case: certain radar items also get a "scan range" node.
     let scanNode = document.createElement('div');
-    scanNode.className = css.turretScanNode;
+    scanNode.className = css.scanNode;
 
     dom.o.appendChild(scanNode);
     dom.oScanNode = scanNode;
@@ -118,7 +118,7 @@ function RadarItem(options) {
     radarItem: 'radar-item',
     dying: 'dying',
     dead: 'dead',
-    turretScanNode: 'turret-scan-node'
+    scanNode: 'scan-node'
   };
 
   data = {
