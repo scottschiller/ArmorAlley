@@ -528,7 +528,7 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
 
       // how far away is the target?
       if (useCircleMath) {
-        if (isPointInCircle(helicopter[i].data.x + helicopter[i].data.halfWidth, helicopter[i].data.y + helicopter[i].data.halfHeight, data.x, data.y, triggerDistance)) {
+        if (isPointInCircle(helicopter[i].data.x + helicopter[i].data.halfWidth, helicopter[i].data.y + helicopter[i].data.height, data.x, data.y, triggerDistance)) {
           result = helicopter[i];
           break;
         }
