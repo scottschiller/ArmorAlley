@@ -620,4 +620,4 @@ const Radar = () => {
 
 };
 
-export { Radar };
+export { scanNodeTypes, Radar };

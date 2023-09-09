@@ -3,6 +3,7 @@ import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { searchParams, TYPES } from '../core/global.js';
 import { net } from '../core/network.js';
+import { scanNodeTypes } from '../UI/Radar.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -137,9 +138,9 @@ function previewLevel(levelName, excludeVehicles) {
 
       game.objects.radar.addItem(balloonExports, `sprite balloon${(item[1] === 'right') ? ' enemy' : ''}`);
 
-    } else if (item[0] === 'turret') {
+    } else if (scanNodeTypes[item[0]]) {
 
-      // special case: turret radar items also get a "scan range" node.
+      // special case: certain radar items also get a "scan range" node.
       radarItem.initScanNode();
 
     }
