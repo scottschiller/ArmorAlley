@@ -328,4 +328,4 @@ const MissileLauncher = (options = {}) => {
 
 };
 
-export { MissileLauncher };
+export { MISSILE_LAUNCHER_SCAN_DIAMETER, MissileLauncher };

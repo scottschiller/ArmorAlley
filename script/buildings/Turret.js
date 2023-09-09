@@ -45,7 +45,7 @@ const Turret = (options = {}) => {
 
     let deltaX, deltaY, deltaXGretzky, deltaYGretzky, angle, otherTargets, target, moveOK;
 
-    target = enemyHelicopterNearby(data, data.scanDistance, data.useCircleMath);
+    target = enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode);
 
     // alternate target(s) within range?
     if (!target && targets) {
@@ -677,7 +677,7 @@ const Turret = (options = {}) => {
     hasButthead: false,
     isSinging: false,
     scanDistance: TURRET_SCAN_DIAMETER,
-    useCircleMath: true,
+    hasScanNode: true,
     claimModulus: 8,
     repairModulus: FPS,
     restoring: false,
