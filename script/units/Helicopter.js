@@ -1861,7 +1861,7 @@ const Helicopter = (options = {}) => {
         // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
         data.parachutingTimer = common.setFrameTimeout(() => {
           data.parachutingThrottle = false;
-        }, data.parachutingDelay);
+        }, data.landed ? data.parachutingDelayLanded : data.parachutingDelayFlying);
 
         // helicopter landed? Just create an infantry.
         if (data.landed) {
@@ -3039,7 +3039,8 @@ const Helicopter = (options = {}) => {
     parachuting: false,
     parachutingThrottle: false,
     parachutingTimer: null,
-    parachutingDelay: 120,
+    parachutingDelayFlying: 120,
+    parachutingDelayLanded: 200,
     ignoreMouseEvents: !!game.objects.editor,
     fuel: 100,
     maxFuel: 100,
