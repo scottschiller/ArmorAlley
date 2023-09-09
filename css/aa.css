@@ -3044,19 +3044,25 @@ body.bnb .sprite.engineer.butthead.building {
   height: 2px;
   margin-left: -0.5px;
   width: 1px;
-  /* allow nested .turret-scan-mode to show */
-  contain: unset;
-  overflow: visible;
-  /* ensure everything sits on top of turrets' scan nodes */
-  z-index: 1;
 }
 
 #radar .sprite.turret.enemy {
   background-color: #ccc;
 }
 
-#radar .sprite.turret .turret-scan-node {
-  /* "turret visibility" on radar. */
+/* scan nodes */
+
+#radar .sprite.turret,
+#radar .sprite.missile-launcher {
+  /* allow nested .scan-mode to show */
+  contain: unset;
+  overflow: visible;
+  /* ensure everything sits on top of turrets' scan nodes */
+  z-index: 1;
+ }
+
+#radar .scan-node {
+  /* "scan visibility" on radar. */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -3079,7 +3085,8 @@ body.bnb .sprite.engineer.butthead.building {
    rgba(0, 255, 0, 0.05) 75%,
    rgba(0, 255, 0, 0.05) 100%
   );
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  background-size: 100% 100%;
+  border: 0.5px solid rgba(0, 255, 0, 0.075);
   border-radius: 100%;
   transition-duration: 2.5s;
   /* "ease-out back. overshoots." */
@@ -3088,7 +3095,7 @@ body.bnb .sprite.engineer.butthead.building {
   z-index: -2;
 }
 
-#radar .sprite.turret.enemy .turret-scan-node {
+#radar .sprite.enemy .scan-node {
   border-color: rgba(255, 255, 255, 0.05);
   background-image: radial-gradient(circle,
    rgba(255, 255, 255, 0.15) 0%,
@@ -3100,9 +3107,20 @@ body.bnb .sprite.engineer.butthead.building {
    rgba(255, 255, 255, 0.05) 75%,
    rgba(255, 255, 255, 0.05) 100%
   );
+  background-size: 100% 100%;
 }
 
-body:not(.game-started) #radar .sprite.turret .turret-scan-node {
+#radar .sprite.missile-launcher .scan-node {
+  background-image: none;
+  border: 0.5px dotted rgba(0, 255, 0, 0.25);
+}
+
+#radar .sprite.missile-launcher.enemy .scan-node {
+  background-image: none;
+  border: 0.5px dotted rgba(255, 255, 255, 0.25);
+}
+
+body:not(.game-started) .scan-node {
   /* no transitions while showing level previews */
   transition-duration: 0ms;
 }
@@ -3117,7 +3135,7 @@ body:not(.game-started) #radar .sprite.turret .turret-scan-node {
   background-color: rgba(204, 204, 204, 0.5);
 }
 
-#radar .sprite.turret.destroyed .turret-scan-node {
+#radar .sprite.destroyed .scan-node {
   border-width: 0px;
   width: 0px;
   height: 0px;
