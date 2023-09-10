@@ -3057,7 +3057,7 @@ body.bnb .sprite.engineer.butthead.building {
   /* allow nested .scan-mode to show */
   contain: unset;
   overflow: visible;
-  /* ensure everything sits on top of turrets' scan nodes */
+  /* ensure everything sits on top of scan nodes */
   z-index: 1;
  }
 
