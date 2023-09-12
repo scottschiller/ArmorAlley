@@ -956,10 +956,16 @@ function addWorldObjects() {
 
     data.forEach((item) => {
 
-      // hackish: terrain items only have two params.
+      // hackish: terrain items (and clouds) only have two params.
       if (item.length === 2) {
 
-        addItem(item[0], item[1]);
+        if (item[0] === TYPES.cloud) {
+          addObject(item[0], {
+            x: item[1] * multiplier
+          });
+        } else {
+          addItem(item[0], item[1]);
+        }
 
       } else {
 
