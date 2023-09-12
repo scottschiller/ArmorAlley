@@ -163,17 +163,7 @@ function addWorldObjects() {
       staticID: true
     });
   }
-
-  // prototype, maybe shows only around Thanksgiving
-  // when The Great Pumpkin is anticipated!
-  /*
-  addObject(TYPES.flyingAce, {
-    x: -192
-  });
-  */
-
-  // const env = !!(window.location.href.match(/schillmania|original/i));
-  
+ 
   const defaultLevel = 'Cake Walk';
 
   /*
@@ -958,7 +948,6 @@ function addWorldObjects() {
 
       // hackish: terrain items (and clouds) only have two params.
       if (item.length === 2) {
-
         if (item[0] === TYPES.cloud) {
           addObject(item[0], {
             x: item[1] * multiplier
@@ -966,37 +955,35 @@ function addWorldObjects() {
         } else {
           addItem(item[0], item[1]);
         }
-
-      } else {
-
-        const args = {
-          isEnemy: item[1] === 'right',
-          hostile: item[1] === 'neutral',
-          x: item[2] * multiplier
-        };
-
-        // additional arguments, e.g., `{ obscured: true }`
-        if (item[3]) Object.assign(args, item[3]);
-
-        // special cases
-        if (item[0] === TYPES.landingPad) {
-          args.name = landingPadNames[item[1]];
-          if (item[1] === 'neutral') {
-            delete args.hostile;
-            args.isMidway = true;
-          }
-        } else if (item[0] === TYPES.turret && item[1] === 'neutral') {
-          // neutral turret = dead, DOA
-          delete args.hostile;
-          args.DOA = true;
-        }
-
-        // if a network game, only include CPU vehicles if playing co-op - i.e., vs. a CPU.
-        if (excludeVehicles && item[0].match(/missile|tank|van|infantry|engineer/i)) return;
-
-        addObject(item[0], args);
-
+        return;
       }
+
+      const args = {
+        isEnemy: item[1] === 'right',
+        hostile: item[1] === 'neutral',
+        x: item[2] * multiplier
+      };
+
+      // additional arguments, e.g., `{ obscured: true }`
+      if (item[3]) Object.assign(args, item[3]);
+
+      // special cases
+      if (item[0] === TYPES.landingPad) {
+        args.name = landingPadNames[item[1]];
+        if (item[1] === 'neutral') {
+          delete args.hostile;
+          args.isMidway = true;
+        }
+      } else if (item[0] === TYPES.turret && item[1] === 'neutral') {
+        // neutral turret = dead, DOA
+        delete args.hostile;
+        args.DOA = true;
+      }
+
+      // if a network game, only include CPU vehicles if playing co-op - i.e., vs. a CPU.
+      if (excludeVehicles && item[0].match(/missile|tank|van|infantry|engineer/i)) return;
+
+      addObject(item[0], args);
 
     });
     
