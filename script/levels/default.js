@@ -297,7 +297,7 @@ function addWorldObjects() {
     
   }
 
-  addOriginalLevel(originalLevels[level] || originalLevels[defaultLevel]);
+  addOriginalLevel(normalizeLevelData(originalLevels[level] || originalLevels[defaultLevel]));
 
 }
 
