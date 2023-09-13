@@ -415,11 +415,8 @@ body.is_safari #game-menu label {
   border-color: #fff;
   border-radius: 3px;
   padding-right: 32px;
-  text-indent: 4px;
-}
-
-body.is_safari #game-menu select {
-  text-indent: 8px;
+  padding-left: 8px;
+  text-indent: 0px;
 }
 
 body.is_safari #game-menu select:active,
