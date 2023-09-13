@@ -154,17 +154,7 @@ function PrefsManager() {
     ['gravestones_helicopters', 'gravestones_infantry', 'gravestones_vehicles'].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
 
     // special case: apply BnB "VS" immediately.
-    dom.oBnB.addEventListener('change', (e) => {
-
-      events.onPrefChange['bnb'](e.target.checked);
-
-      // update the main screen, too. this is responsible for the game menu sound sequences.
-      const vs = document.getElementById('checkbox-vs');
-
-      // ensure that element does the work it normally does when clicked manually.
-      vs?.dispatchEvent(new Event('change'));
-
-    });
+    dom.oBnB.addEventListener('change', (e) => events.onPrefChange['bnb'](e.target.checked));
     
     dom.oVolumeSlider.addEventListener('change', () => {
 
