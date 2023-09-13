@@ -27,13 +27,47 @@ function setLevel(levelLabel, newLevelName) {
 
 }
 
+function dependsOnGameType(levelName) {
+
+  return originalLevels[levelName].filter((data) => data instanceof Function).length;
+
+}
+
+function normalizeLevelData(data) {
+
+  let items = [];
+
+  data?.forEach((item) => {
+
+    /**
+     * Special case: "dynamic" level data - where a function is run that returns results.
+     * e.g., groups of turrets range from one to three depending on game difficulty.
+     */
+
+    if (item instanceof Function) {
+
+      // append this array to the result.
+      items = items.concat(item());
+
+    } else {
+
+      items.push(item);
+
+    }
+
+  });
+
+  return items;
+  
+}
+
 function previewLevel(levelName, excludeVehicles) {
 
   // given level data, filter down and render at scale.
 
   if (!levelName) return;
 
-  let data = originalLevels[levelName];
+  let data = normalizeLevelData(originalLevels[levelName]);
 
   if (!data) return;
 
@@ -41,9 +75,11 @@ function previewLevel(levelName, excludeVehicles) {
   let multiplier = 2;
 
   data.forEach((item) => {
+
     if (item[item.length - 1] >= 4096) {
       multiplier = 1;
     }
+
   });
 
   game.objects.radar.reset();
@@ -262,6 +298,22 @@ function addWorldObjects() {
   }
 
   addOriginalLevel(originalLevels[level] || originalLevels[defaultLevel]);
+
+}
+
+function selectByDifficulty(optionsArray) {
+
+  /**
+   * Given optionsArray of [1, 2, 3], return the whole thing or a subset based on difficulty.
+   * e.g., groups of turrets in "Midnight Oasis", in easy / hard / extreme mode.
+   * This will be inconsistent if there are more than three options provided.
+   */
+
+  // note: always return an array with nested items.
+  if (!gameType || gameType === 'easy') return [optionsArray[0]];
+  if (gameType === 'hard') return optionsArray.slice(0, optionsArray.length - 1);
+
+  return optionsArray;
 
 }
 
@@ -1468,69 +1520,41 @@ originalLevels = {
     [ 'left-arrow-sign', 7700 ],
     [ 'left-arrow-sign', 8208 ],
     */
-   /*
-    [ 'turret', 3280 ],
-    [ 'turret', r, 1908 ],
-    [ 'turret', r, 4256 ],
-    [ 'turret', r, 4736 ],
-    [ 'turret', r, 5269 ],
-    [ 'turret', r, 5642 ],
-    */
 
-    // TODO: break these up for easy vs. hard vs. extreme.
-    // 1 for easy, 2 for hard, 3 for extreme.
-
-    // original coordinates
-    /*
-    [ 'turret', r, 944 ],
-    [ 'turret', r, 960 ],
-    [ 'turret', r, 976 ],
-
-    [ 'turret', r, 2112 ],
-    [ 'turret', r, 2128 ],
-    [ 'turret', r, 2144 ],
-
-    [ 'turret', r, 2352 ],
-    [ 'turret', r, 2368 ],
-    [ 'turret', r, 2384 ],
-
-    [ 'turret', r, 2624 ],
-    [ 'turret', r, 2640 ],
-    [ 'turret', r, 2656 ],
-
-    [ 'turrrt', r, 2816 ],
-    [ 'turret', r, 2832 ],
-    [ 'turret', r, 2848 ],
-
-    [ 'turret', r, 3248 ],
-    [ 'turret', r, 3264 ],
-    [ 'turret', r, 3280 ],
-    */
-
-    // 2x-scaled coordinates
-    ['turret', r, 1888],
-    ['turret', r, 1920],
-    ['turret', r, 1952],
-
-    ['turret', r, 4224],
-    ['turret', r, 4256],
-    ['turret', r, 4288],
-
-    ['turret', r, 4704],
-    ['turret', r, 4736],
-    ['turret', r, 4768],
-
-    ['turret', r, 5248],
-    ['turret', r, 5280],
-    ['turret', r, 5312],
-
-    ['turret', r, 5632],
-    ['turret', r, 5664],
-    ['turret', r, 5696],
-
-    ['turret', r, 6496],
-    ['turret', r, 6528],
-    ['turret', r, 6560],
+    /**
+     * Tie the number of turrets to the difficulty.
+     * 1 for easy, 2 for hard, 3 for extreme.
+     */
+    () => selectByDifficulty([
+      ['turret', r, 1888],
+      ['turret', r, 1920],
+      ['turret', r, 1952]
+    ]),
+    () => selectByDifficulty([
+      ['turret', r, 4224],
+      ['turret', r, 4256],
+      ['turret', r, 4288]
+    ]),
+    () => selectByDifficulty([
+      ['turret', r, 4704],
+      ['turret', r, 4736],
+      ['turret', r, 4768]
+    ]),
+    () => selectByDifficulty([
+      ['turret', r, 5248],
+      ['turret', r, 5280],
+      ['turret', r, 5312]
+    ]),
+    () => selectByDifficulty([
+      ['turret', r, 5632],
+      ['turret', r, 5664],
+      ['turret', r, 5696]
+    ]),
+    () => selectByDifficulty([
+      ['turret', r, 6496],
+      ['turret', r, 6528],
+      ['turret', r, 6560]
+    ]),
 
     [ 'rock', 996 ],
     [ 'rock', 4182 ],
@@ -1611,18 +1635,26 @@ originalLevels = {
     [ 'palm-tree', 6797 ],
     [ 'gravestone', 7134 ],
     [ 'grave-cross', 7138 ],
-    [ 'turret', l, 1024 ],
-    [ 'turret', l, 1088 ],
-    [ 'turret', l, 1152 ],
-    [ 'turret', l, 2048 ],
-    [ 'turret', l, 2112 ],
-    [ 'turret', l, 2176 ],
-    [ 'turret', r, 6016 ],
-    [ 'turret', r, 6080 ],
-    [ 'turret', r, 6144 ],
-    [ 'turret', r, 7040 ],
-    [ 'turret', r, 7104 ],
-    [ 'turret', r, 7168 ],
+    () => selectByDifficulty([
+      [ 'turret', l, 1088 ],
+      [ 'turret', l, 1024 ],
+      [ 'turret', l, 1152 ]
+    ]),
+    () => selectByDifficulty([
+      [ 'turret', l, 2112 ],
+      [ 'turret', l, 2048 ],
+      [ 'turret', l, 2176 ]
+    ]),
+    () => selectByDifficulty([
+      [ 'turret', r, 6080 ],
+      [ 'turret', r, 6016 ],
+      [ 'turret', r, 6144 ]
+    ]),
+    () => selectByDifficulty([
+      [ 'turret', r, 7104 ],
+      [ 'turret', r, 7040 ],
+      [ 'turret', r, 7168 ]
+    ]),
     ...(() => {
       /* 36 - not 99 - more balloons needed; distribute evenly across middle 3/4 of battlefield. */
       let luftBalloons = new Array(39);
@@ -1954,17 +1986,23 @@ originalLevels = {
     [ 'cactus2', 6289 ],
     [ 'palm-tree', 6822 ],
     [ 'gravestone', 7151 ],
-    [ 'turret', r, 1648 ],
-    [ 'turret', r, 1680 ],
-    [ 'turret', r, 1888 ],
-    [ 'turret', r, 1952 ],
+    () => selectByDifficulty([
+      [ 'turret', r, 1680 ],
+      [ 'turret', r, 1648 ],
+      [ 'turret', r, 1888 ]
+    ]),
     [ 'van', r, 1986 ],
-    [ 'turret', r, 4067 ],
-    [ 'turret', r, 4163 ],
+    () => selectByDifficulty([
+      [ 'turret', r, 1952 ],
+      [ 'turret', r, 4067 ],
+      [ 'turret', r, 4163 ],
+    ]),
     [ 'van', r, 5730 ],
-    [ 'turret', r, 6256 ],
-    [ 'turret', r, 6288 ],
-    [ 'turret', r, 6496 ],
+    () => selectByDifficulty([
+      [ 'turret', r, 6288 ],
+      [ 'turret', r, 6256 ],
+      [ 'turret', r, 6496 ]
+    ]),
     [ 'turret', r, 6560 ]
   ],
 
@@ -2229,22 +2267,30 @@ originalLevels = {
     [ 'palm-tree', 7734 ],
     [ 'turret', l, 571 ],
     [ 'turret', l, 572 ],
-    [ 'turret', l, 2048 ],
-    [ 'turret', l, 2080 ],
-    [ 'turret', l, 2112 ],
+    () => selectByDifficulty([
+      [ 'turret', l, 2080 ],
+      [ 'turret', l, 2048 ],
+      [ 'turret', l, 2112 ],
+    ]),
     [ 'turret', l, 2552 ],
     [ 'turret', l, 2611 ],
-    [ 'turret', r, 4080 ],
-    [ 'turret', l, 4100 ],
-    [ 'turret', r, 4112 ],
-    [ 'turret', l, 4132 ],
-    [ 'turret', r, 4144 ],
-    [ 'turret', l, 4164 ],
+    () => selectByDifficulty([
+      [ 'turret', l, 4132 ],
+      [ 'turret', l, 4100 ],
+      [ 'turret', l, 4164 ]
+    ]),
+    () => selectByDifficulty([
+      [ 'turret', r, 4080 ],
+      [ 'turret', r, 4112 ],
+      [ 'turret', r, 4144 ]
+    ]),
     [ 'turret', r, 5623 ],
     [ 'turret', r, 5684 ],
-    [ 'turret', r, 6144 ],
-    [ 'turret', r, 6176 ],
-    [ 'turret', r, 6208 ],
+    () => selectByDifficulty([
+      [ 'turret', r, 6176 ],
+      [ 'turret', r, 6144 ],
+      [ 'turret', r, 6208 ]
+    ]),
     [ 'turret', l, 7095 ],
     [ 'turret', r, 7096 ]
   ],
@@ -2405,6 +2451,7 @@ originalLevels = {
 
 export {
   addWorldObjects,
+  dependsOnGameType,
   levelName,
   previewLevel,
   setCustomLevel,
