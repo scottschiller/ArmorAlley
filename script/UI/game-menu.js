@@ -1,11 +1,11 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { isMobile, isSafari, searchParams } from '../core/global.js';
+import { isMobile, searchParams } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { previewLevel, setCustomLevel, setLevel } from '../levels/default.js';
+import { dependsOnGameType, previewLevel, setCustomLevel, setLevel } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
@@ -378,6 +378,13 @@ function formClick(e) {
   if (name === 'game_type') {
 
     game.setGameType(target.value);
+
+    const levelName = document.getElementById('game_level').value;
+
+    if (dependsOnGameType(levelName)) {
+      // maybe rebuild preview, depending
+      previewLevel(levelName);
+    }
 
     return;
 
