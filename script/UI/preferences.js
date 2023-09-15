@@ -57,7 +57,8 @@ const defaultPrefs = {
   engineers_repair_bunkers: true,
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,
-  ground_unit_traffic_control: true
+  ground_unit_traffic_control: true,
+  weapons_interval_classic: false
 };
 
 // allow URL-based overrides of prefs
@@ -1290,6 +1291,12 @@ function PrefsManager() {
             if (obj.data.stopped) obj.data.stopped = false;
           });
         }
+
+      },
+
+      weapons_interval_classic: () => {
+
+        game.objects.helicopter?.forEach((chopper) => chopper.updateFiringRates());
 
       },
 

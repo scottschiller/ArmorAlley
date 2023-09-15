@@ -48,7 +48,7 @@ import {
 } from '../core/logic.js';
 
 import { common } from '../core/common.js';
-import { gamePrefs } from '../UI/preferences.js';
+import { gamePrefs, prefs } from '../UI/preferences.js';
 import { getLandscapeLayout } from '../UI/mobile.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { zones } from '../core/zones.js';
@@ -2868,6 +2868,55 @@ const Helicopter = (options = {}) => {
 
   }
 
+  const firingRates = {
+    
+    // "modern" vs. classic firing intervals.
+
+    bombModulus: {
+      classic: 6,
+      modern: 5
+    },
+
+    fireModulus: {
+      classic: 3,
+      modern: 2
+    },
+
+    parachuteModulus: {
+      classic: 8,
+      modern: 4
+    },
+
+    parachutingDelayFlying: {
+      classic: 200,
+      modern: 125
+    },
+
+    parachutingDelayLanded: {
+      classic: 300,
+      modern: 200
+    }
+
+  };
+
+  function setFiringRate(type) {
+
+    // apply according to prefs.
+    const pref = gamePrefs.weapons_interval_classic ? 'classic' : 'modern';
+
+    return firingRates[type][pref];
+
+  }
+
+  function updateFiringRates() {
+
+    // get and assign each new value, e.g. data['fireModulus'] = ...
+    Object.keys(firingRates).forEach((key) => {
+      data[key] = setFiringRate(key);
+    });
+
+  }
+
   function initTrailers() {
 
     let i, trailerConfig, fragment;
@@ -3039,19 +3088,18 @@ const Helicopter = (options = {}) => {
     parachuting: false,
     parachutingThrottle: false,
     parachutingTimer: null,
-    parachutingDelayFlying: 120,
-    parachutingDelayLanded: 200,
+    parachutingDelayFlying: setFiringRate('parachutingDelayFlying'),
+    parachutingDelayLanded: setFiringRate('parachutingDelayLanded'),
     ignoreMouseEvents: !!game.objects.editor,
     fuel: 100,
     maxFuel: 100,
-    fireModulus: 2,
-    bombModulus: 5,
+    fireModulus: setFiringRate('fireModulus'),
+    bombModulus: setFiringRate('bombModulus'),
     bombFrameCount: 0,
     fuelModulus: (tutorialMode ? 24 : 8),
     fuelModulusFlying: (tutorialMode ? 9 : 3),
-    missileModulus: 12,
     parachuteFrameCount: 0,
-    parachuteModulus: 4,
+    parachuteModulus: setFiringRate('parachuteModulus'),
     repairModulus: 2,
     radarJamming: 0,
     repairComplete: false,
@@ -3272,6 +3320,7 @@ const Helicopter = (options = {}) => {
     setParachuting,
     setRespawning,
     toggleAutoRotate,
+    updateFiringRates,
     updateStatusUI,
     updateInventoryQueue
   };
