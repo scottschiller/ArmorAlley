@@ -3045,7 +3045,7 @@ const Helicopter = (options = {}) => {
     fuel: 100,
     maxFuel: 100,
     fireModulus: 2,
-    bombModulus: 4,
+    bombModulus: 5,
     bombFrameCount: 0,
     fuelModulus: (tutorialMode ? 24 : 8),
     fuelModulusFlying: (tutorialMode ? 9 : 3),
