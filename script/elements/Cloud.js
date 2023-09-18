@@ -90,10 +90,7 @@ const Cloud = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    // cloud debugging mode
-    if (window.location.href.match(/debugClouds/i)) {
-      game.objects.radar.addItem(exports, dom.o.className);
-    }
+    game.objects.radar.addItem(exports, dom.o.className);
 
   }
 

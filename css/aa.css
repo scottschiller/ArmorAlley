@@ -2578,6 +2578,37 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
 }
 
+#radar .sprite.cloud1,
+#radar .sprite.cloud2,
+#radar .sprite.cloud3 {
+  height: 2px;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(
+    -55deg,
+    transparent,
+    transparent 0.5px,
+    rgba(255,255,255,0.15) 0.5px,
+    rgba(255,255,255,0.15) 1px
+  );
+  border: 0.5px solid transparent;
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  box-shadow: none;
+  filter: none;
+}
+
+#radar .sprite.cloud1 {
+  width: 12px;
+}
+
+#radar .sprite.cloud2 {
+  width: 14px;
+}
+
+#radar .sprite.cloud3 {
+  width: 14px;
+}
+
 #radar .sprite.landing-pad {
   width: 4px;
   height: 2px;

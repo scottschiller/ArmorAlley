@@ -182,9 +182,13 @@ const Radar = () => {
     if (item.data.type === TYPES.landingPad && !gamePrefs.landing_pads_on_radar) {
       const show = false;
       itemObject?.onHiddenChange(show);
+    } else if (item.data.type === TYPES.cloud && !gamePrefs.clouds_on_radar) {
+      const show = false;
+      itemObject?.onHiddenChange(show);
     }
 
     game.objects.queue.addNextFrame(() => {
+
       dom.radar.appendChild(itemObject.dom.o);
 
       // attempt to read from layout cache, or live DOM if needed for item height / positioning

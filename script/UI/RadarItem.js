@@ -7,9 +7,15 @@ function RadarItem(options) {
 
   let css, data, dom, oParent, exports;
 
+  // certain items' visibility can be updated by user prefs.
+  const onHiddenEnabled = {
+    [TYPES.landingPad]: true,
+    [TYPES.cloud]: true
+  };
+
   function onHiddenChange(isVisible) {
 
-    if (data.parentType !== TYPES.landingPad) return;
+    if (!onHiddenEnabled[data.parentType]) return;
 
     if (!dom?.o) return;
     dom.o.style.visibility = isVisible ? 'visible' : 'hidden';

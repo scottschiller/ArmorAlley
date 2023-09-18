@@ -58,6 +58,7 @@ const defaultPrefs = {
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,
   ground_unit_traffic_control: true,
+  clouds_on_radar: true,
   weapons_interval_classic: false
 };
 
@@ -1306,6 +1307,8 @@ function PrefsManager() {
 
       // hackish: iterate over radar objects vs. game items, because we may be previewing a level and haven't started a game yet.
       landing_pads_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
+
+      clouds_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
 
       weather: (type) => {
 
