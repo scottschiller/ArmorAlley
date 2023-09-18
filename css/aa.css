@@ -3062,6 +3062,7 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.helicopter.enemy {
+  margin-left: -0.5px;
   background-color: transparent;
   border: 2.5px solid transparent;
   border-right-color: #ccc;
