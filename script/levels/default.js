@@ -2291,7 +2291,7 @@ originalLevels = {
       [ 'turret', r, 6144 ],
       [ 'turret', r, 6208 ]
     ]),
-    [ 'turret', l, 7095 ],
+    [ 'turret', r, 7095 ],
     [ 'turret', r, 7096 ]
   ],
 
