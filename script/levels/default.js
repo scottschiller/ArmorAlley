@@ -208,17 +208,7 @@ function addWorldObjects() {
 
   if (levelName !== 'Custom Level' && !game.objects.editor) {
 
-    if (levelName === 'Tutorial') {
-
-      // happy little clouds!
-      // all other default levels should have a bunch.
-      for (var i = 0; i < 8; i++) {
-        addObject(TYPES.cloud, {
-          x: 2048 + (4096 * (i / 7))
-        });
-      }
-
-    } else {
+    if (levelName !== 'Tutorial') {
 
       // left base area...
       addItem('right-arrow-sign', -16);
@@ -251,6 +241,20 @@ function addWorldObjects() {
     };
 
     const excludeVehicles = net.active && !gamePrefs.net_game_style.match(/coop/i);
+
+    const cloudCount = (data.filter((item) => item[0] === TYPES.cloud).length);
+
+    if (!cloudCount) {
+
+      // happy little clouds!
+      // all other default levels should have a bunch.
+      for (var i = 0; i < 8; i++) {
+        addObject(TYPES.cloud, {
+          x: 2048 + (4096 * (i / 7))
+        });
+      }
+
+    }
 
     data.forEach((item) => {
 
