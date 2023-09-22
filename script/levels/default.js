@@ -30,9 +30,7 @@ function setLevel(levelLabel, newLevelName) {
 function dependsOnGameType(levelName) {
 
   // if there's an inline function, there's dynamic data - assume it may reference gameType.
-  if (originalLevels[levelName].hasDynamicData) return true;
-
-  return originalLevels[levelName].filter((data) => data instanceof Function).length;
+  return !!originalLevels[levelName]?.hasDynamicData;
 
 }
 
@@ -48,6 +46,8 @@ function normalizeLevelData(data) {
      */
 
     if (item instanceof Function) {
+
+      data.hasDynamicData = true;
 
       // append this array to the result.
       items = items.concat(item());
