@@ -10,7 +10,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
-const TURRET_SCAN_DIAMETER = 420;
+const TURRET_SCAN_RADIUS = 334;
 
 const Turret = (options = {}) => {
 
@@ -676,7 +676,7 @@ const Turret = (options = {}) => {
     hasBeavis: false,
     hasButthead: false,
     isSinging: false,
-    scanDistance: TURRET_SCAN_DIAMETER,
+    scanDistance: TURRET_SCAN_RADIUS,
     hasScanNode: true,
     claimModulus: 8,
     repairModulus: FPS,
@@ -735,6 +735,6 @@ const Turret = (options = {}) => {
 };
 
 export {
-  TURRET_SCAN_DIAMETER,
+  TURRET_SCAN_RADIUS,
   Turret
 };

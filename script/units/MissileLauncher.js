@@ -9,7 +9,7 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
-const MISSILE_LAUNCHER_SCAN_DIAMETER = 320;
+const MISSILE_LAUNCHER_SCAN_RADIUS = 320;
 const MISSILE_LAUNCHER_SCAN_BUFFER = 16;
 
 const MissileLauncher = (options = {}) => {
@@ -311,7 +311,7 @@ const MissileLauncher = (options = {}) => {
     height,
     halfHeight: height / 2,
     orderComplete: false,
-    scanDistance: MISSILE_LAUNCHER_SCAN_DIAMETER,
+    scanDistance: MISSILE_LAUNCHER_SCAN_RADIUS,
     state: 0,
     stateMax: 3,
     stateModulus: 38,
@@ -361,4 +361,4 @@ const MissileLauncher = (options = {}) => {
 
 };
 
-export { MISSILE_LAUNCHER_SCAN_DIAMETER, MissileLauncher };
+export { MISSILE_LAUNCHER_SCAN_RADIUS, MissileLauncher };

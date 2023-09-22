@@ -8,12 +8,12 @@ import { playSound, skipSound, stopSound, sounds, playSoundWithDelay } from '../
 import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
-import { TURRET_SCAN_DIAMETER } from '../buildings/Turret.js';
-import { MISSILE_LAUNCHER_SCAN_DIAMETER } from '../units/MissileLauncher.js';
+import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
+import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
 
 const scanNodeTypes = {
-  [TYPES.turret]: TURRET_SCAN_DIAMETER,
-  [TYPES.missileLauncher]: MISSILE_LAUNCHER_SCAN_DIAMETER
+  [TYPES.turret]: TURRET_SCAN_RADIUS,
+  [TYPES.missileLauncher]: MISSILE_LAUNCHER_SCAN_RADIUS
 };
 
 const Radar = () => {
