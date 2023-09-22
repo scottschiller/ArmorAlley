@@ -2874,7 +2874,7 @@ const Helicopter = (options = {}) => {
 
     bombModulus: {
       classic: 6,
-      modern: 5
+      modern: 4
     },
 
     fireModulus: {
