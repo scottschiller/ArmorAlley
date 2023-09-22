@@ -50,9 +50,10 @@ const MissileLauncher = (options = {}) => {
         effects.damageExplosion(exports);
       }
 
+      // account for .scan-node transition time
       common.setFrameTimeout(() => {
         sprites.removeNodesAndUnlink(exports);
-      }, 1000);
+      }, 1100);
 
       if (!dieOptions.firingMissile) {
         common.addGravestone(exports);
