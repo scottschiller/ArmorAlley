@@ -29,6 +29,9 @@ function setLevel(levelLabel, newLevelName) {
 
 function dependsOnGameType(levelName) {
 
+  // if there's an inline function, there's dynamic data - assume it may reference gameType.
+  if (originalLevels[levelName].hasDynamicData) return true;
+
   return originalLevels[levelName].filter((data) => data instanceof Function).length;
 
 }
@@ -51,7 +54,20 @@ function normalizeLevelData(data) {
 
     } else {
 
-      items.push(item);
+      // check all items for "dynamic" level data via functions, too.
+      const parsed = item.map((element) => {
+
+        if (element instanceof Function) {
+          // flag this level, so changing game type causes a re-render
+          data.hasDynamicData = true;
+          return element();
+        }
+
+        return element;
+
+      });
+
+      items.push(parsed);
 
     }
 
