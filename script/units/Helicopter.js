@@ -48,7 +48,7 @@ import {
 } from '../core/logic.js';
 
 import { common } from '../core/common.js';
-import { gamePrefs, prefs } from '../UI/preferences.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { getLandscapeLayout } from '../UI/mobile.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { zones } from '../core/zones.js';
