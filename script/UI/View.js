@@ -738,6 +738,15 @@ const View = () => {
     if (registeredEvent?.type === 'joystick') {
       game.objects.joystick.end(touchEvent);
     }
+    
+    if (!data.ignoreMouseMove && navigator.standalone && registeredEvent?.type === 'press') {
+      /**
+       * Extra-special case: touching on gun or bomb controls, etc.,
+       * can fire a `mousemove()` on touch end on iOS 17 in a home screen app.
+       * If we get to this point, ignore traditional mouse events as a workaround.
+       */
+      data.ignoreMouseMove = true;
+    }
 
     clearTouchEvent(touchEvent, target);
 
@@ -1003,6 +1012,7 @@ const View = () => {
   data = {
     noPause,
     ignoreMouseEvents: false,
+    ignoreMouseMove: false,
     browser: {
       width: 0,
       eighthWidth: 0,
@@ -1097,7 +1107,7 @@ const View = () => {
 
     mousemove(e) {
 
-      if (data.ignoreMouseEvents || game.players?.local?.data?.isCPU) return;
+      if (data.ignoreMouseEvents || data.ignoreMouseMove || game.players?.local?.data?.isCPU) return;
 
       if (!net.active) {
 
