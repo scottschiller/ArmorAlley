@@ -314,7 +314,7 @@ const Turret = (options = {}) => {
         if (data.dead && data.energy > (data.energyMax * 0.25)) {
           // restore to life at 25%
           data.dead = false;
-          radarItem?.updateScanNode(data.scanDistance);
+          resize();
           if (data.isEnemy === game.players.local.data.isEnemy) {
             game.objects.notifications.add('You re-enabled a turret 🛠️');
           } else {
