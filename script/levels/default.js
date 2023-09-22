@@ -2269,7 +2269,8 @@ originalLevels = {
     [ 'palm-tree', 6706 ],
     [ 'sand-dunes', 7673 ],
     [ 'palm-tree', 7734 ],
-    [ 'turret', l, 571 ],
+    // NB: level editor suggests there were two.
+    // [ 'turret', l, 572 ],
     [ 'turret', l, 572 ],
     () => selectByDifficulty([
       [ 'turret', l, 2080 ],
@@ -2295,7 +2296,8 @@ originalLevels = {
       [ 'turret', r, 6144 ],
       [ 'turret', r, 6208 ]
     ]),
-    [ 'turret', r, 7095 ],
+    // NB: level editor suggests there were two.
+    // [ 'turret', r, 7096 ],
     [ 'turret', r, 7096 ]
   ],
 
