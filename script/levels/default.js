@@ -1360,8 +1360,7 @@ originalLevels = {
     [ 'base', l, 192 ],
     [ 'landing-pad', l, 320 ],
     [ 'bunker', r, 640 ],
-    // special case: friendly bunker to the right of friendly turret - otherwise, it blows up the bunker trying to shoot tanks.
-    [ 'bunker', () => gameType === 'extreme' ? l : r, 1152 ],
+    [ 'bunker', r, 1152 ],
     [ 'tank', r, 1280 ],
     [ 'infantry', r, 1360 ],
     [ 'tank', r, 1520 ],
@@ -1468,7 +1467,8 @@ originalLevels = {
     [ 'cactus', 4308 ],
     [ 'cactus', 7227 ],
     [ 'cactus', 1294 ],
-    [ 'turret', l, 967 ],
+    // Special case: in extreme mode, incoming enemy tanks would be shot by nearby opposing turret.
+    [ 'turret', () => gameType === 'extreme' ? r : l, 967 ],
     [ 'van', r, 1730 ],
     [ 'turret', r, 1897 ],
     [ 'turret', r, 1952 ],
