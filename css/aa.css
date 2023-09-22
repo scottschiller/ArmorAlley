@@ -2585,6 +2585,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {
   height: 2px;
+  /* hackish: position offset. */
+  top: 2px;
   background-color: transparent;
   background-image: repeating-linear-gradient(
     -55deg,
