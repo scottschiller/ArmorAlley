@@ -1154,7 +1154,7 @@ const Helicopter = (options = {}) => {
 
     // haaaack
     if (!data.yMin) {
-      data.yMin = document.getElementById('game-status-bar').offsetHeight;
+      data.yMin = document.getElementById('game-status-bar').offsetHeight + 8;
     }
 
   }

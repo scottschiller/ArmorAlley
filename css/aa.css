@@ -1134,7 +1134,7 @@ body.is-mobile #top-bar #game-fps {
   background-size: 2px 2px;
   image-rendering: optimizeQuality;
   image-rendering: -webkit-optimize-contrast;
-  margin-top: 3px;
+  margin-top: 2px;
   opacity: 0.9;
   position: relative;
 }
