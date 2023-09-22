@@ -2639,7 +2639,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   height: 2px;
   left: 0;
   margin-left: -1px;
-  margin-top: -0.5px;
+  margin-top: -1px;
   outline: none;
   position: absolute;
   top: auto;
