@@ -3112,7 +3112,7 @@ body.bnb .sprite.engineer.butthead.building {
   border-radius: 100%;
   transition-duration: 1s;
   transition-timing-function: ease-in-out;
-  transition-property: background-color, border-color, border-width, width, height;
+  transition-property: opacity, background-color, border-color, border-width, width, height;
   z-index: -2;
 }
 
@@ -5655,6 +5655,11 @@ body.game-paused #tutorial-window {
 .sprite.exploding .target-ui,
 .target-ui.disabled {
   opacity: 0;
+}
+
+#world-wrapper.jammed .scan-node {
+  /* fade out, relatively quickly */
+  transition-duration: 0.5s;
 }
 
 @media screen and (orientation: landscape) {
