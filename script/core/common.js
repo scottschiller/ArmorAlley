@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile, isSafari } from '../core/global.js';
+import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile, isSafari, FPS } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -928,7 +928,57 @@ const common = {
 
   },
 
-  resetGUID
+  resetGUID,
+
+  resizeScanNode(exports, radarItem) {
+
+    if (!exports) return;
+
+    const { dom, data } = exports;
+
+    const radarScanNode = radarItem?.dom?.oScanNode;
+
+    const scanNode = dom.oScanNode;
+    
+    const distance = data.dead ? 0 : data.scanDistance;
+
+    radarItem?.updateScanNode(distance);
+
+    common.updateScanNode(exports, distance);
+
+    // allow transition if launcher was just ordered, rising up from below.
+    if (!data.orderComplete) return;
+    
+    common.setFrameTimeout(() => {
+      if (scanNode) {
+        scanNode.style.transition = '';
+      }
+      if (radarScanNode) {
+        radarScanNode.style.transition = '';
+      }
+    }, FPS * 10);
+    
+  },
+
+  updateScanNode(exports, radius = 0) {
+
+    if (!exports) return;
+
+    const { data, dom } = exports;
+
+    if (!data || !dom) return;
+
+    // special case: some radar items also get a "scan range" node.
+    const { oScanNode } = dom;
+
+    if (!oScanNode) return;
+
+    data.logicalWidth = radius;
+
+    oScanNode.style.width = oScanNode.style.height = `${(radius * 2)}px`;
+
+  }
+
 
 };
 

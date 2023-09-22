@@ -71,7 +71,7 @@ const MissileLauncher = (options = {}) => {
 
     data.dead = true;
 
-    radarItem.updateScanNode();
+    resize();
 
     radarItem.die({ silent: !!dieOptions.silent });
 
@@ -240,20 +240,7 @@ const MissileLauncher = (options = {}) => {
 
   function resize() {
 
-    if (data.dead) return;
-
-    let { oScanNode } = radarItem?.dom;
-    
-    if (!oScanNode) return;
-
-    // hacks: disable transition during resize.
-    oScanNode.style.transition = 'none';
-
-    radarItem?.updateScanNode(data.scanDistance);
-    
-    common.setFrameTimeout(() => {
-      oScanNode.style.transition = '';
-    }, FPS * 10);
+    return common.resizeScanNode(exports, radarItem);
 
   }
 
@@ -265,6 +252,10 @@ const MissileLauncher = (options = {}) => {
       isEnemy: (data.isEnemy ? css.enemy : false)
     });
 
+    dom.oScanNode = document.createElement('div');
+    dom.oScanNode.className = css.scanNode;
+    dom.o.appendChild(dom.oScanNode);
+    
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   }
@@ -282,18 +273,23 @@ const MissileLauncher = (options = {}) => {
       data.frameTimeout = null;
     }, 2000);
 
+    common.setFrameTimeout(() => {
+      if (data.dead) return;
+      resize();
+    }, 150);
+
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     // missile launchers also get a scan node.
     radarItem.initScanNode();
-    radarItem.updateScanNode(data.scanDistance);
 
   }
 
   height = 18;
 
   css = common.inheritCSS({
-    className: 'missile-launcher'
+    className: 'missile-launcher',
+    scanNode: 'scan-node'
   });
 
   data = common.inheritData({

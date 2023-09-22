@@ -173,20 +173,7 @@ const Turret = (options = {}) => {
 
   function resize() {
 
-    if (data.dead) return;
-
-    let { oScanNode } = radarItem?.dom;
-    
-    if (!oScanNode) return;
-
-    // hacks: disable transition during resize.
-    oScanNode.style.transition = 'none';
-
-    radarItem?.updateScanNode(data.scanDistance);
-    
-    common.setFrameTimeout(() => {
-      oScanNode.style.transition = '';
-    }, FPS * 10);
+    return common.resizeScanNode(exports, radarItem);
 
   }
 
@@ -270,7 +257,7 @@ const Turret = (options = {}) => {
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
 
-    radarItem?.updateScanNode(data.dead ? 0 : undefined);
+    resize();
 
     sprites.updateEnergy(exports);
 
@@ -609,6 +596,10 @@ const Turret = (options = {}) => {
       isEnemy
     });
 
+    dom.oScanNode = document.createElement('div');
+    dom.oScanNode.className = css.scanNode;
+    dom.o.appendChild(dom.oScanNode);
+
     dom.oSubSprite = sprites.makeSubSprite();
     dom.o.appendChild(dom.oSubSprite);
 
@@ -642,7 +633,7 @@ const Turret = (options = {}) => {
     if (options.DOA) {
       die({ silent: true });
     } else {
-      radarItem.updateScanNode(data.scanDistance);
+      resize();
     }
 
   }
@@ -659,7 +650,8 @@ const Turret = (options = {}) => {
   css = common.inheritCSS({
     className: TYPES.turret,
     destroyed: 'destroyed',
-    firing: 'firing'
+    firing: 'firing',
+    scanNode: 'scan-node'
   });
 
   data = common.inheritData({
