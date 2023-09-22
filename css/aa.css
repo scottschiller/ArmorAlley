@@ -3111,9 +3111,8 @@ body.bnb .sprite.engineer.butthead.building {
   background-color: rgb(0, 255, 0, 0.025);
   border: 0.5px solid rgba(0, 255, 0, 0.075);
   border-radius: 100%;
-  transition-duration: 2.5s;
-  /* "ease-out back. overshoots." */
-  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition-duration: 1s;
+  transition-timing-function: ease-in-out;
   transition-property: background-color, border-color, border-width, width, height;
   z-index: -2;
 }
@@ -3154,7 +3153,7 @@ body.bnb .sprite.engineer.butthead.building {
 
 body:not(.game-started) .scan-node {
   /* no transitions while showing level previews */
-  transition-duration: 0ms;
+  transition-duration: 0ms !important;
 }
 
 #radar .sprite.turret.destroyed {
@@ -3167,13 +3166,13 @@ body:not(.game-started) .scan-node {
   background-color: rgba(204, 204, 204, 0.5);
 }
 
+#battlefield .sprite.destroyed .scan-node,
 #radar .sprite.destroyed .scan-node {
   border-width: 0px;
   width: 0px;
   height: 0px;
   transition-duration: 1s;
-  /* "ease-in back. overshoots." */
-  transition-timing-function: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  transition-timing-function: ease-in-out;
 }
 
 #game-fps {
