@@ -3086,7 +3086,9 @@ body.bnb .sprite.engineer.butthead.building {
 
 /* scan nodes */
 
+#battlefield .sprite.turret,
 #radar .sprite.turret,
+#battlefield .sprite.missile-launcher,
 #radar .sprite.missile-launcher {
   /* allow nested .scan-mode to show */
   contain: unset;
@@ -3095,8 +3097,9 @@ body.bnb .sprite.engineer.butthead.building {
   z-index: 1;
  }
 
+#battlefield .scan-node,
 #radar .scan-node {
-  /* "scan visibility" on radar. */
+  /* visual illustrations of "scanning range" for missile launchers + turrets. */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -3105,21 +3108,7 @@ body.bnb .sprite.engineer.butthead.building {
   transform: translate3d(-50%, -50%, 0);
   /* account for border */
   margin-left: -0.5px;
-  /**
-   * Numerous "steps", with zero transition between different colours.
-   * https://www.kirupa.com/animations/radial_gradient_stripes.htm
-   */
-  background-image: radial-gradient(circle,
-   rgba(0, 255, 0, 0.15) 0%,
-   rgba(0, 255, 0, 0.15) 25%,
-   rgba(0, 255, 0, 0.1) 25%,
-   rgba(0, 255, 0, 0.1) 50%,
-   rgba(0, 255, 0, 0.075) 50%,
-   rgba(0, 255, 0, 0.075) 75%,
-   rgba(0, 255, 0, 0.05) 75%,
-   rgba(0, 255, 0, 0.05) 100%
-  );
-  background-size: 100% 100%;
+  background-color: rgb(0, 255, 0, 0.025);
   border: 0.5px solid rgba(0, 255, 0, 0.075);
   border-radius: 100%;
   transition-duration: 2.5s;
@@ -3130,28 +3119,37 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.enemy .scan-node {
+  background-color: rgb(255, 255, 255, 0.025);
   border-color: rgba(255, 255, 255, 0.05);
+}
+
+#battlefield .scan-node {
+  border-style: dotted;
+}
+
+#battlefield .sprite .scan-node {
+  background-color: transparent;
+  border-color: rgba(0, 255, 0, 0.15);
   background-image: radial-gradient(circle,
-   rgba(255, 255, 255, 0.15) 0%,
-   rgba(255, 255, 255, 0.15) 25%,
-   rgba(255, 255, 255, 0.1) 25%,
-   rgba(255, 255, 255, 0.1) 50%,
-   rgba(255, 255, 255, 0.075) 50%,
-   rgba(255, 255, 255, 0.075) 75%,
-   rgba(255, 255, 255, 0.05) 75%,
-   rgba(255, 255, 255, 0.05) 100%
+   rgba(0, 255, 0, 0) 0%,
+   rgba(0, 255, 0, 0) 65%,
+   rgba(0, 255, 0, 0.15) 75%
   );
   background-size: 100% 100%;
 }
 
-#radar .sprite.missile-launcher .scan-node {
-  background-image: none;
-  border: 0.5px dotted rgba(0, 255, 0, 0.25);
-}
-
-#radar .sprite.missile-launcher.enemy .scan-node {
-  background-image: none;
-  border: 0.5px dotted rgba(255, 255, 255, 0.25);
+#battlefield .sprite.enemy .scan-node {
+  border: 0.5px dotted rgba(255, 255, 255, 0.15);
+  /**
+   * Numerous "steps", with zero transition between different colours.
+   * https://www.kirupa.com/animations/radial_gradient_stripes.htm
+   */
+   background-image: radial-gradient(circle,
+   rgba(255, 255, 255, 0) 0%,
+   rgba(255, 255, 255, 0) 65%,
+   rgba(255, 255, 255, 0.15) 75%
+  );
+  background-size: 100% 100%;
 }
 
 body:not(.game-started) .scan-node {
@@ -5654,6 +5652,7 @@ body.game-paused #tutorial-window {
 }
 
 #world-wrapper.jammed .target-marker,
+#world-wrapper.jammed .scan-node,
 .sprite.dead .target-ui,
 .sprite.exploding .target-ui,
 .target-ui.disabled {
