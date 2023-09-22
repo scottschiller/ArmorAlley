@@ -1,7 +1,7 @@
-import { game, screenScale } from '../core/Game.js';
+import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { TYPES, worldWidth } from '../core/global.js';
+import { TYPES, worldHeight, worldWidth } from '../core/global.js';
 
 function RadarItem(options) {
 
@@ -105,18 +105,18 @@ function RadarItem(options) {
 
   }
 
-  function updateScanNode(diameter = 0) {
+  function updateScanNode(radius = 0) {
 
     // special case: some radar items also get a "scan range" node.
-    let { oScanNode } = dom;
+    const { oScanNode } = dom;
 
     if (!oScanNode) return;
 
     // size "scan radius" according to browser width, because vertical resizing does not affect spacing of radar layout.
-    oScanNode.style.width = `${((diameter / worldWidth) * game.objects.view.data.browser.width * 2)}px`;
+    oScanNode.style.width = `${((radius / worldWidth) * game.objects.view.data.browser.width * 2)}px`;
 
     // height is always fixed.
-    oScanNode.style.height = `${diameter / screenScale / 2}px`;
+    oScanNode.style.height = `${(radius / worldHeight * 2) * game.objects.radar.data.height}px`;
 
   }
 
