@@ -267,6 +267,19 @@ const sprites = {
 
   isOnScreen: (target) => {
 
+    if (!target?.data) return;
+
+    /**
+     * Account for items like turrets which may have larger "scan nodes,"
+     * and are considered wider for display vs. logical, e.g., collision.
+     */
+    if (target.data.logicalWidth) {
+      return (
+        (target.data.x + target.data.logicalWidth) >= game.objects.view.data.battleField.scrollLeft
+        && (target.data.x - target.data.logicalWidth) < game.objects.view.data.battleField.scrollLeftWithBrowserWidth
+      );
+    }
+
     // is the target within the range of screen coordinates?
     return (
       target
