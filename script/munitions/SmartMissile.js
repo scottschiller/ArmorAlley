@@ -152,6 +152,7 @@ const SmartMissile = (options = {}) => {
 
     // we've got a live one!
     objects.target = decoyTarget;
+    objects.lastTarget = decoyTarget;
 
     if (launchSound) {
 
@@ -537,6 +538,7 @@ const SmartMissile = (options = {}) => {
 
         // we've got a live one!
         objects.target = newTarget;
+        objects.lastTarget = newTarget;
 
         if (launchSound) {
           launchSound.stop();
@@ -596,7 +598,7 @@ const SmartMissile = (options = {}) => {
 
     }
 
-    targetData = objects.target.data;
+    targetData = objects.target?.data || objects.lastTarget?.data;
 
     targetHalfWidth = targetData.width / 2;
 
@@ -936,7 +938,8 @@ const SmartMissile = (options = {}) => {
   };
 
   objects = {
-    target: options.target
+    target: options.target,
+    lastTarget: options.target
   };
 
   exports = {
