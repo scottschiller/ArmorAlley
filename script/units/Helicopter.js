@@ -78,58 +78,52 @@ const Helicopter = (options = {}) => {
     utils.css.add(dom.o, css.cloaked);
     utils.css.add(radarItem.dom.o, css.cloaked);
 
-    if (data.isLocal && sounds.helicopter.engine) {
+    if (!data.isLocal || !sounds.helicopter.engine) return;
 
-      if (gamePrefs.bnb) {
+    if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
 
-        // additional commentary, once fully-cloaked
-        common.setFrameTimeout(function() {
+    if (!gamePrefs.bnb) return;
 
-          if (!data.cloaked) return;
+    // additional commentary, once fully-cloaked
+    common.setFrameTimeout(function() {
 
-          const cloakSound = sounds.bnb[(game.data.isBeavis ? 'beavisICantSeeAnything' : 'beavisComeOn')];
+      if (!data.cloaked) return;
 
-          playSound(cloakSound, null, {
-            onplay: (sound) => {
-              if (!data.cloaked) skipSound(sound);
-            },
-            onfinish: (sound) => {
-              if (sound.skipped || !data.cloaked) return;
-              // allow "peek-a-boo!"
-              data.cloakedCommentary = true;
-            }
-          });
+      const cloakSound = sounds.bnb[(game.data.isBeavis ? 'beavisICantSeeAnything' : 'beavisComeOn')];
 
-        }, 2000);
+      playSound(cloakSound, null, {
+        onplay: (sound) => {
+          if (!data.cloaked) skipSound(sound);
+        },
+        onfinish: (sound) => {
+          if (sound.skipped || !data.cloaked) return;
+          // allow "peek-a-boo!"
+          data.cloakedCommentary = true;
+        }
+      });
 
-      }
-
-      if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
-
-    }
+    }, 2000);
 
   }
 
   function uncloak() {
 
-    // hackish: uncloak if a frame or more has passed and we aren't in a cloud.
-    if (data.cloaked && data.cloaked !== game.objects.gameLoop.data.frameCount) {
+    // uncloak if 1+ frame has passed, and we aren't in a cloud.
+    if (!data.cloaked || data.cloaked === game.objects.gameLoop.data.frameCount) return;
 
-      utils.css.remove(dom.o, css.cloaked);
-      utils.css.remove(radarItem.dom.o, css.cloaked);
+    utils.css.remove(dom.o, css.cloaked);
+    utils.css.remove(radarItem.dom.o, css.cloaked);
 
-      if (gamePrefs.bnb && data.isLocal && data.cloakedCommentary && !data.dead) {
-        playSoundWithDelay(sounds.bnb.beavisPeekaboo, 250);
-      }
-
-      if (data.isLocal && sounds.helicopter.engine) {
-        if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
-      }
-
-      data.cloaked = false;
-      data.cloakedCommentary = false;
-
+    if (gamePrefs.bnb && data.isLocal && data.cloakedCommentary && !data.dead) {
+      playSoundWithDelay(sounds.bnb.beavisPeekaboo, 250);
     }
+
+    if (data.isLocal && sounds.helicopter.engine) {
+      if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume);
+    }
+
+    data.cloaked = false;
+    data.cloakedCommentary = false;
 
   }
 
