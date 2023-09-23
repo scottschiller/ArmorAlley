@@ -60,10 +60,10 @@ const defaultPrefs = {
   ground_unit_traffic_control: true,
   clouds_on_radar: true,
   weapons_interval_classic: false,
-  scan_ui_battlefield: true,
-  scan_ui_enemy: true,
-  scan_ui_friendly: true,
-  scan_ui_radar: true
+  scan_ui_battlefield_enemy: true,
+  scan_ui_battlefield_friendly: true,
+  scan_ui_radar_enemy: true,
+  scan_ui_radar_friendly: true
 };
 
 // allow URL-based overrides of prefs
@@ -947,7 +947,7 @@ function PrefsManager() {
   }
 
   function handleScanUIPrefChange(value, pref) {
-    // toggle "disabled" CSS, e.g., scan_ui_battlefield_disabled
+    // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
     utils.css.addOrRemove(game.dom.world, !value, `${pref}_disabled`);
   }
 
@@ -1319,10 +1319,10 @@ function PrefsManager() {
 
       clouds_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
 
-      scan_ui_battlefield: handleScanUIPrefChange,
-      scan_ui_enemy: handleScanUIPrefChange,
-      scan_ui_friendly: handleScanUIPrefChange,
-      scan_ui_radar: handleScanUIPrefChange,
+      scan_ui_battlefield_enemy: handleScanUIPrefChange,
+      scan_ui_battlefield_friendly: handleScanUIPrefChange,
+      scan_ui_radar_enemy: handleScanUIPrefChange,
+      scan_ui_radar_friendly: handleScanUIPrefChange,
 
       weather: (type) => {
 
