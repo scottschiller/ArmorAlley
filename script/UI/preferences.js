@@ -59,7 +59,11 @@ const defaultPrefs = {
   tank_gunfire_miss_bunkers: true,
   ground_unit_traffic_control: true,
   clouds_on_radar: true,
-  weapons_interval_classic: false
+  weapons_interval_classic: false,
+  scan_ui_battlefield: true,
+  scan_ui_enemy: true,
+  scan_ui_friendly: true,
+  scan_ui_radar: true
 };
 
 // allow URL-based overrides of prefs
@@ -720,7 +724,7 @@ function PrefsManager() {
 
     // and now, fire all the pref change events.
     prefChanges.forEach((item) => {
-      events.onPrefChange[item.key](item.value);
+      events.onPrefChange[item.key](item.value, item.key);
     });
 
   }
@@ -940,6 +944,11 @@ function PrefsManager() {
 
     }
 
+  }
+
+  function handleScanUIPrefChange(value, pref) {
+    // toggle "disabled" CSS, e.g., scan_ui_battlefield_disabled
+    utils.css.addOrRemove(game.dom.world, !value, `${pref}_disabled`);
   }
 
   data = {
@@ -1309,6 +1318,11 @@ function PrefsManager() {
       landing_pads_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
 
       clouds_on_radar: (isActive) => game.objects.radar?.objects?.items?.forEach((radarItem) => radarItem?.onHiddenChange?.(isActive)),
+
+      scan_ui_battlefield: handleScanUIPrefChange,
+      scan_ui_enemy: handleScanUIPrefChange,
+      scan_ui_friendly: handleScanUIPrefChange,
+      scan_ui_radar: handleScanUIPrefChange,
 
       weather: (type) => {
 

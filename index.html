@@ -1740,6 +1740,7 @@
                   <legend>UI / General</legend>
 
                   <ul>
+
                     <li style="margin-bottom: 2px">
                       <label for="cb_game_tips">
                         <input
@@ -1875,6 +1876,70 @@
                         </li>
                       </ul>
                     </li>
+
+                    <li style="margin-bottom:2px">
+                      <p class="compact options-heading">
+                        <b>Radar scanning display</b>
+                      </p>
+                      <p class="non-indented">
+                        Visible “detection range” overlays for turrets and missile launchers.<br />
+                        Display does not affect unit targeting abilities.
+                      </p>
+                      <ul>
+                        <li>
+                          <input
+                            type="checkbox"
+                            id="cb_scan_ui_friendly"
+                            name="scan_ui_friendly"
+                            value="1"
+                            checked
+                          />
+                          <label for="cb_scan_ui_friendly">Friendly</label>
+                        </li>
+                        <li>
+                          <input
+                            type="checkbox"
+                            id="cb_scan_ui_enemy"
+                            name="scan_ui_enemy"
+                            value="1"
+                            checked
+                          />
+                          <label for="cb_scan_ui_enemy">Enemy</label>
+                        </li>
+                      </ul>
+                    </li>
+
+                    <li style="margin-bottom:-1px">
+                      <p class="compact options-heading">
+                        <b>Radar scanning locations</b>
+                      </p>
+                      <p class="non-indented">
+                        Scan range overlays can be shown on radar, and/or the battlefield.
+                      </p>
+                      <ul>
+                        <li>
+                          <input
+                            type="checkbox"
+                            id="cb_scan_ui_radar"
+                            name="scan_ui_radar"
+                            value="1"
+                            checked
+                          />
+                          <label for="cb_scan_ui_radar">Radar</label>
+                        </li>
+                        <li>
+                          <input
+                            type="checkbox"
+                            id="cb_scan_ui_battlefield"
+                            name="scan_ui_battlefield"
+                            value="1"
+                            checked
+                          />
+                          <label for="cb_scan_ui_battlefield">Battlefield</label>
+                        </li>
+                      </ul>
+                    </li>
+
                   </ul>
                 </fieldset>
 
