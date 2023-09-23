@@ -239,6 +239,7 @@ const EndBunker = (options = {}) => {
     halfWidth: 19,
     height,
     halfHeight: height / 2,
+    doorWidth: 5,
     funds: DEFAULT_FUNDS,
     firing: false,
     gunYOffset: 10,
@@ -248,7 +249,7 @@ const EndBunker = (options = {}) => {
   }, options);
 
   data.midPoint = {
-    x: data.x + data.halfWidth + 5,
+    x: data.x + data.halfWidth + ((data.doorWidth / 2) * (!data.isEnemy ? 1 : -1)),
     y: data.y,
     width: 5,
     height: data.height
