@@ -492,16 +492,6 @@ const SmartMissile = (options = {}) => {
       return (data.dead && !dom.o);
     }
 
-    targetData = objects.target.data;
-
-    targetHalfWidth = targetData.width / 2;
-
-    // delta of x/y between this and target
-    deltaX = (targetData.x + targetHalfWidth) - data.x;
-
-    // Always aim for "y", plus half height
-    deltaY = (targetData.y + (targetData.halfHeight || targetData.height / 2)) - data.y;
-
     /**
      * if original target has died OR has become friendly, try to find a new target.
      * e.g., enemy bunker that was originally targeted, is captured and became friendly -
@@ -514,16 +504,37 @@ const SmartMissile = (options = {}) => {
      * 
      * if retargeting finds nothing at the moment the original is lost, the missile will die.
      */
-    if (!data.expired && (!objects.target || objects.target.data.dead || objects.target.data.isEnemy === data.isEnemy)) {
+    if (!data.expired && (!objects.target || objects.target.data.dead || objects.target.data.wentIntoHiding || objects.target.data.isEnemy === data.isEnemy)) {
+
+      const whose = (data.isEnemy !== game.players.local.data.isEnemy ? ('An enemy') : (data?.parent?.data?.id === game.players.local.data.id ? `Your` : `A friendly`));
+      const missileType = game.objects.stats.formatForDisplay(data.type, exports);
 
       // stop tracking the old one, as applicable.
-      if (objects.target.data.dead || objects.target.data.isEnemy === data.isEnemy) {
+      if (objects.target.data.dead || objects.target.data.wentIntoHiding || objects.target.data.isEnemy === data.isEnemy) {
+
+        // notify if a helicopter evaded a smart missile by hiding in a cloud.
+        if (objects.target.data.wentIntoHiding && objects.target.data.type === TYPES.helicopter) {
+
+          const text = common.tweakEmojiSpacing(`${whose} ${missileType} lost track of its target.`);
+          game.objects.notifications.addNoRepeat(text);
+
+        }
+
         setTargetTracking();
+
+        objects.target = null;
+
       }
 
       newTarget = getNearestObject(exports);
 
-      if (newTarget && !newTarget.data.cloaked && !newTarget.data.dead) {
+      if (newTarget && !newTarget.data.cloaked && !newTarget.data.wentIntoHiding && !newTarget.data.dead) {
+
+        const targetType = game.objects.stats.formatForDisplay(newTarget.data.type, newTarget);
+        const text = common.tweakEmojiSpacing(`${whose} ${missileType} found a nearby ${targetType}.`);
+
+        game.objects.notifications.addNoRepeat(text);
+
         // we've got a live one!
         objects.target = newTarget;
 
@@ -538,6 +549,7 @@ const SmartMissile = (options = {}) => {
 
         // and start tracking.
         setTargetTracking(true);
+
       }
 
     }
@@ -583,6 +595,16 @@ const SmartMissile = (options = {}) => {
       setTargetTracking();
 
     }
+
+    targetData = objects.target.data;
+
+    targetHalfWidth = targetData.width / 2;
+
+    // delta of x/y between this and target
+    deltaX = (targetData.x + targetHalfWidth) - data.x;
+
+    // Always aim for "y", plus half height
+    deltaY = (targetData.y + (targetData.halfHeight || targetData.height / 2)) - data.y;
 
     if (data.expired) {
 

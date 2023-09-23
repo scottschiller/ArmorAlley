@@ -78,6 +78,9 @@ const Helicopter = (options = {}) => {
     utils.css.add(dom.o, css.cloaked);
     utils.css.add(radarItem.dom.o, css.cloaked);
 
+    // mark the frame this began
+    data.cloakedFrameStart = game.objects.gameLoop.data.frameCount;
+
     if (!data.isLocal || !sounds.helicopter.engine) return;
 
     if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
@@ -106,6 +109,13 @@ const Helicopter = (options = {}) => {
 
   }
 
+  function updateCloakState() {
+
+    // a helicopter could be targeted by a smart missile, and become cloaked long enough to confuse tracking.
+    data.wentIntoHiding = data.cloaked && (data.cloakedFrameStart > 0) && ((game.objects.gameLoop.data.frameCount - data.cloakedFrameStart) >= (FPS * data.wentIntoHidingSeconds));
+
+  }
+
   function uncloak() {
 
     // uncloak if 1+ frame has passed, and we aren't in a cloud.
@@ -123,6 +133,8 @@ const Helicopter = (options = {}) => {
     }
 
     data.cloaked = false;
+    data.cloakedFrameStart = 0;
+    data.wentIntoHiding = false;
     data.cloakedCommentary = false;
 
   }
@@ -2723,6 +2735,8 @@ const Helicopter = (options = {}) => {
 
     }
 
+    updateCloakState();
+
     // uncloak if not in a cloud?
     uncloak();
 
@@ -3105,6 +3119,9 @@ const Helicopter = (options = {}) => {
     onLandingPad: true,
     hasLiftOff: false,
     cloaked: false,
+    cloakedFrameStart: 0,
+    wentIntoHiding: false,
+    wentIntoHidingSeconds: 1.5,
     rotated: false,
     rotateTimer: null,
     autoRotate: (isCPU || isMobile) && !options.isRemote,
