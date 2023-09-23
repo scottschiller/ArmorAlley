@@ -65,44 +65,48 @@ const Helicopter = (options = {}) => {
   function cloak() {
 
     if (!data.cloaked) {
-
-      utils.css.add(dom.o, css.cloaked);
-      utils.css.add(radarItem.dom.o, css.cloaked);
-
-      if (data.isLocal && sounds.helicopter.engine) {
-
-        if (gamePrefs.bnb) {
-
-          // additional commentary, once fully-cloaked
-          common.setFrameTimeout(function() {
-
-            if (!data.cloaked) return;
-
-            const cloakSound = sounds.bnb[(game.data.isBeavis ?'beavisICantSeeAnything' : 'beavisComeOn')];
-
-            playSound(cloakSound, null, {
-              onplay: (sound) => {
-                if (!data.cloaked) skipSound(sound);
-              },
-              onfinish: (sound) => {
-                if (sound.skipped || !data.cloaked) return;
-                // allow "peek-a-boo!"
-                data.cloakedCommentary = true;
-              }
-            });
-
-          }, 2000);
-
-        }
-
-        if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
-
-      }
-
+      doCloak();
     }
 
     // hackish: mark and/or update the current frame when this happened.
     data.cloaked = game.objects.gameLoop.data.frameCount;
+
+  }
+
+  function doCloak() {
+
+    utils.css.add(dom.o, css.cloaked);
+    utils.css.add(radarItem.dom.o, css.cloaked);
+
+    if (data.isLocal && sounds.helicopter.engine) {
+
+      if (gamePrefs.bnb) {
+
+        // additional commentary, once fully-cloaked
+        common.setFrameTimeout(function() {
+
+          if (!data.cloaked) return;
+
+          const cloakSound = sounds.bnb[(game.data.isBeavis ? 'beavisICantSeeAnything' : 'beavisComeOn')];
+
+          playSound(cloakSound, null, {
+            onplay: (sound) => {
+              if (!data.cloaked) skipSound(sound);
+            },
+            onfinish: (sound) => {
+              if (sound.skipped || !data.cloaked) return;
+              // allow "peek-a-boo!"
+              data.cloakedCommentary = true;
+            }
+          });
+
+        }, 2000);
+
+      }
+
+      if (sounds.helicopter.engine.sound) sounds.helicopter.engine.sound.setVolume(sounds.helicopter.engineVolume / 2.5);
+
+    }
 
   }
 
