@@ -532,7 +532,7 @@ const SmartMissile = (options = {}) => {
       if (newTarget && !newTarget.data.cloaked && !newTarget.data.wentIntoHiding && !newTarget.data.dead) {
 
         const targetType = game.objects.stats.formatForDisplay(newTarget.data.type, newTarget);
-        const text = common.tweakEmojiSpacing(`${whose} ${missileType} found a nearby ${targetType}.`);
+        const text = common.tweakEmojiSpacing(`${whose} ${missileType} detected a nearby ${targetType}.`);
 
         game.objects.notifications.addNoRepeat(text);
 
