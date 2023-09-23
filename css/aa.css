@@ -2591,8 +2591,10 @@ body:not(.game-over) #world-wrapper.jammed #radar {
     -55deg,
     rgba(255,255,255,0),
     rgba(255,255,255,0) 0.5px,
-    rgba(255,255,255,0.15) 0.5px,
-    rgba(255,255,255,0.15) 1px
+    rgba(255,255,255,0.2) 0.5px,
+    rgba(255,255,255,0.2) 0.75px,
+    rgba(255,255,255,0.2) 0.75px,
+    rgba(255,255,255,0.0) 1px
   );
   border: 0.5px solid transparent;
   border: 0.5px solid rgba(255, 255, 255, 0.15);
