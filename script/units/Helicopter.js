@@ -2470,7 +2470,7 @@ const Helicopter = (options = {}) => {
 
   function animate() {
 
-    if (game.objects.editor) return
+    if (game.objects.editor) return;
 
     /**
      * If local and dead or respawning, send a packet over to keep things going.
