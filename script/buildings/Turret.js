@@ -663,7 +663,7 @@ const Turret = (options = {}) => {
     lastEnergy: 50,
     firing: false,
     fireCount: 0,
-    frameCount: 2 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely
+    frameCount: 3 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely
     fireModulus: (tutorialMode ? 12 : (gameType === 'extreme' ? 2 : (gameType === 'hard' ? 6 : 12))), // a little easier in tutorial mode vs. hard vs. easy modes
     hasBeavis: false,
     hasButthead: false,
