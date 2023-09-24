@@ -346,7 +346,7 @@ function Stats() {
     const verb = attackerItem[`verb_${type}`] || attackerItem.verb || UNKNOWN_VERB;
 
     if (verb === UNKNOWN_VERB) {
-      console.warn(`${UNKNOWN_VERB} for type / target`, type, target);
+      console.warn(`${UNKNOWN_VERB} for type / target`, type, target.data, attacker?.type, attacker, attackerItem);
       return;
     }
 
