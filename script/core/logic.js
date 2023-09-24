@@ -523,8 +523,17 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
 
   for (i = 0, j = helicopter.length; i < j; i++) {
 
-    // not cloaked, not dead, and an enemy?
-    if (!helicopter[i].data.cloaked && !helicopter[i].data.dead && data.isEnemy !== helicopter[i].data.isEnemy) {
+    /**
+     * Not cloaked, not dead, an enemy, and has respawned and lifted off landing pad?
+     * The latter is an edge case: turrets may be close enough to a base, to fire at the chopper while respawning.
+     * If the chopper launches a smart missile or drops an infantry while landed, then it can be considered fair game as well.
+     */
+    if (
+      !helicopter[i].data.cloaked
+      && !helicopter[i].data.dead
+      && data.isEnemy !== helicopter[i].data.isEnemy
+      && (helicopter[i].data.hasLiftOff || helicopter[i].data.smartMissiles < helicopter[i].data.maxSmartMissiles || !helicopter[i].data.parachutes)
+    ) {
 
       // how far away is the target?
       if (useCircleMath) {
