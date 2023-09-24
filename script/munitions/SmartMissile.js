@@ -534,7 +534,14 @@ const SmartMissile = (options = {}) => {
         const targetType = game.objects.stats.formatForDisplay(newTarget.data.type, newTarget);
         const text = common.tweakEmojiSpacing(`${whose} ${missileType} detected a nearby ${targetType}.`);
 
-        game.objects.notifications.addNoRepeat(text);
+        /**
+         * Notify only if the target type is "new" - e.g,. two missiles fired at two tanks.
+         * The first missile and tank will take each other out, and the second missile will
+         * re-target the second tank. Notifying here feels redundant.
+         */
+        if (newTarget.data.type !== objects.lastTarget?.data?.type) {
+          game.objects.notifications.addNoRepeat(text);
+        }
 
         // we've got a live one!
         objects.target = newTarget;
