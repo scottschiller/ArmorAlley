@@ -3120,6 +3120,7 @@ body.bnb .sprite.engineer.butthead.building {
   transition-timing-function: ease-in-out;
   transition-property: opacity, background-color, border-color, border-width, width, height;
   z-index: -2;
+  pointer-events: none;
 }
 
 #radar .sprite.enemy .scan-node {
