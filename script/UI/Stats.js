@@ -11,6 +11,12 @@ function Stats() {
 
   let data, exports;
 
+  const emoji = {
+    flame: '🔥',
+    skull: '☠️',
+    default: '💥'
+  };
+
   // tracking for "GOURANGA!"
   const youKilledTypes = {
     [TYPES.missileLauncher]: true,
@@ -117,23 +123,29 @@ function Stats() {
       'verb_smart-missile': UNKNOWN_VERB
     },
     van: true,
+    flame: {
+      verb: 'roasted',
+      emoji: emoji.flame
+    },
     infantry: {
-      showSkull: true,
-      isAn: true
+      emoji: emoji.skull,
+      isAn: true,
+      verb: 'shot'
     },
     'parachute-infantry': {
-      showSkull: true
+      emoji: emoji.skull
     },
     engineer: {
-      showSkull: true,
-      isAn: true
+      emoji: emoji.skull,
+      isAn: true,
+      verb: 'shot'
     },
     balloon: true,
     bunker: {
       exclude: true
     },
     helicopter: {
-      showSkull: true,
+      emoji: emoji.skull,
       verb: 'crashed into',
       'verb_smart-missile': 'hit'
     },
@@ -167,6 +179,8 @@ function Stats() {
       verb_bunker: 'destroyed',
       verb_infantry: 'killed',
       verb_engineer: 'killed',
+      'verb_parachute-infantry': 'eviscerated',
+      verb_van: 'trashed',
       'verb_smart-missile': 'took out'
     },
     'super-bunker': {
@@ -386,9 +400,9 @@ function Stats() {
 
       // hacks
       if (attacker.type === TYPES.chain) {
-        text = `You ${verb} ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`
+        text = `You ${verb} ${getNormalizedAttackerString(target.data.attacker)}`
       } else {
-        text = `You were ${verb} by ${getNormalizedAttackerString(target.data.attacker)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+        text = `You were ${verb} by ${getNormalizedAttackerString(target.data.attacker)}`;
       }
 
     } else if (isHelicopter) {
@@ -403,7 +417,7 @@ function Stats() {
     if (!text) {
 
       // "something" [shot/bombed/killed] [one of yours|an|a] "something", including same-type and hostile-killed-[enemy|friendly] cases
-      text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${isSameType ? (didYoursWin ? youWonText : theyWonText) : (attacker.hostile ? (target.data.isEnemy ? 'an enemy ' : 'a friendly ') : (notifyItem.isAn ? 'an ' : 'a ')) + getNormalizedUnitName(target)} ${notifyItem.showSkull ? '☠️' : '💥'}`;
+      text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${isSameType ? (didYoursWin ? youWonText : theyWonText) : (attacker.hostile ? (target.data.isEnemy ? 'an enemy ' : 'a friendly ') : (notifyItem.isAn ? 'an ' : 'a ')) + getNormalizedUnitName(target)}`;
 
       // hackish: replace helicopter reference
       // TODO: fix this up so the enemy chopper is properly normalized.
@@ -414,6 +428,12 @@ function Stats() {
         text = text.replace('your turret', (Math.random() >= 0.5 ? 'THE GREAT CORNHOLIO' : 'THE ALMIGHTY BUNGHOLE'));
       }
 
+    }
+
+    // take attacker first, then notifyItem?
+    const emo = attackerItem?.emoji || notifyItem?.emoji;
+    if (emo) {
+      text += ` ${emo}`;
     }
 
     text = common.tweakEmojiSpacing(text);
