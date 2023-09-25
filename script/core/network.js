@@ -793,7 +793,7 @@ const net = {
         prefsManager.onNetworkError(`Error loading PeerJS script "${src}": ${e.message}`);
       }
 
-      const src = 'script/lib/peerjs@1.4.7.js'
+      const src = 'script/lib/peerjs@1.5.0.js'
       script.src = src;
 
       document.head.appendChild(script);
