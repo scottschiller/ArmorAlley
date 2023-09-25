@@ -12,8 +12,12 @@ function Stats() {
   let data, exports;
 
   const emoji = {
+    banana: '🍌',
+    balloon: '🎈',
+    chicken: '🐓',
     flame: '🔥',
     skull: '☠️',
+    missile: '🚀',
     default: '💥'
   };
 
@@ -195,19 +199,25 @@ function Stats() {
   function formatForDisplay(type, item) {
 
       // hackish: fixes for display to user
-      type = type.replace('missileLauncher', 'missile launcher');
-      type = type.replace('smartMissile', 'smart missile');
+      type = type.replace('missileLauncher', emoji.missileLauncher);
+      type = type.replace('smartMissile', emoji.missile);
 
       // e.g., parachute-infantry
       type = type.replace('-', ' ');
 
       // special missile check: handle variant types, too. ;)
       if (item.data.type === TYPES.smartMissile) {
+        const str = 'smart missile';
         if (item.data.isBanana) {
-          type = type.replace('smart missile', '🍌');
+          type = type.replace(str, emoji.banana);
         } else if (item.data.isRubberChicken) {
-          type = type.replace('smart missile', '🐓');
+          type = type.replace(str, emoji.chicken);
+        } else {
+          type = type.replace(str, emoji.missile);
         }
+      } else if (emoji[item.data.type]) {
+        // generic text-to-emoji match
+        type = type.replace(item.data.type, emoji[item.data.type]);
       }
 
       return type;
