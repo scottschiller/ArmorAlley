@@ -275,9 +275,6 @@ const Turret = (options = {}) => {
 
     data.restoring = true;      
 
-    utils.css.remove(dom.o, css.destroyed);
-    utils.css.remove(radarItem.dom.o, css.destroyed);
-
     // may not be provided, as in tutorial - just restoring immediately etc.
     if (engineer) {
       if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
@@ -286,8 +283,6 @@ const Turret = (options = {}) => {
         game.objects.notifications.addNoRepeat('The enemy started rebuilding a turret 🛠️');      
       }
     }
-
-    playSound(sounds.turretEnabled, exports);
 
   }
 
@@ -312,14 +307,22 @@ const Turret = (options = {}) => {
         data.energy = (complete ? data.energyMax : Math.min(data.energyMax, data.energy + 1));
 
         if (data.dead && data.energy > (data.energyMax * 0.25)) {
+
           // restore to life at 25%
           data.dead = false;
+
+          utils.css.remove(dom.o, css.destroyed);
+          utils.css.remove(radarItem.dom.o, css.destroyed);
+      
+          playSound(sounds.turretEnabled, exports);
+
           resize();
           if (data.isEnemy === game.players.local.data.isEnemy) {
             game.objects.notifications.add('You re-enabled a turret 🛠️');
           } else {
             game.objects.notifications.add('The enemy re-enabled a turret 🛠️');
           }
+
         }
 
         // only when engineer is restoring a dead turret...
