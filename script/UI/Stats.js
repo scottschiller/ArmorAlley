@@ -130,7 +130,9 @@ function Stats() {
     infantry: {
       emoji: emoji.skull,
       isAn: true,
-      verb: 'shot'
+      verb: 'shot',
+      // hackish: ignore when an infantry "shoots" a smart missile
+      'verb_smart-missile': UNKNOWN_VERB
     },
     'parachute-infantry': {
       emoji: emoji.skull
@@ -138,7 +140,9 @@ function Stats() {
     engineer: {
       emoji: emoji.skull,
       isAn: true,
-      verb: 'shot'
+      verb: 'shot',
+      // hackish: ignore when an engineer "shoots" a smart missile
+      'verb_smart-missile': UNKNOWN_VERB
     },
     balloon: true,
     bunker: {
