@@ -3118,7 +3118,7 @@ body.bnb .sprite.engineer.butthead.building {
   border-radius: 100%;
   transition-duration: 1s;
   transition-timing-function: ease-in-out;
-  transition-property: opacity, background-color, border-color, border-width, width, height;
+  transition-property: opacity, background-color, border-color, width, height;
   z-index: -2;
   pointer-events: none;
 }
