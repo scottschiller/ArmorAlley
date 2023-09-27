@@ -864,7 +864,6 @@ const common = {
 
       if (!loadedVideos[fileName]) {
 
-        // videos.forEach((video) => video.addEventListener('canplaythrough', ready));
         videos[0].addEventListener('canplaythrough', () => {
           loadedVideos[fileName] = true;
           ready();
