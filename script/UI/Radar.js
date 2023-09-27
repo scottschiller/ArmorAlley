@@ -506,7 +506,7 @@ const Radar = () => {
         }
 
         // resize scan node, if one exists.
-        if (objects.items[i].oParent?.dom?.oScanNode) {
+        if (data.isStale && objects.items[i].oParent?.dom?.oScanNode) {
           objects.items[i].oParent.resize?.();
         }
 
