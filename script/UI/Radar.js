@@ -505,7 +505,8 @@ const Radar = () => {
           updateTargetMarker(objects.items[i]);
         }
 
-        if (objects.items[i].oParent.data.type === TYPES.turret) {
+        // resize scan node, if one exists.
+        if (objects.items[i].oParent?.dom?.oScanNode) {
           objects.items[i].oParent.resize?.();
         }
 
