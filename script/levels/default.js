@@ -13,25 +13,19 @@ let level = searchParams.get('level');
 let levelName;
 
 function setCustomLevel(levelData) {
-
   originalLevels['Custom Level'] = levelData;
 
   setLevel('Custom Level', 'Custom Level');
-  
 }
 
 function setLevel(levelLabel, newLevelName) {
-
   level = levelLabel;
   levelName = newLevelName;
-
 }
 
 function dependsOnGameType(levelName) {
-
   // if there's an inline function, there's dynamic data - assume it may reference gameType.
   return !!originalLevels[levelName]?.hasDynamicData;
-
 }
 
 function normalizeLevelData(data) {
@@ -129,7 +123,6 @@ function normalizeLevelData(data) {
 }
 
 function previewLevel(levelName, excludeVehicles) {
-
   // given level data, filter down and render at scale.
 
   if (!levelName) return;
@@ -142,21 +135,27 @@ function previewLevel(levelName, excludeVehicles) {
   let multiplier = 2;
 
   data.forEach((item) => {
-
     if (item[item.length - 1] >= 4096) {
       multiplier = 1;
     }
-
   });
 
   game.objects.radar.reset();
 
   if (excludeVehicles) {
     // buildings only
-    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|landing-pad/i));
+    data = data.filter((item) =>
+      item?.[0]?.match(
+        /base|bunker|super-bunker|chain|balloon|turret|landing-pad/i
+      )
+    );
   } else {
     // buildings + units
-    data = data.filter((item) => item?.[0]?.match(/base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i));
+    data = data.filter((item) =>
+      item?.[0]?.match(
+        /base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i
+      )
+    );
   }
 
   const initMethods = {
@@ -176,27 +175,26 @@ function previewLevel(levelName, excludeVehicles) {
   common.resetGUID();
 
   data.forEach((item) => {
-
     // don't show landing pads that are intentionally hidden by terrain decor
     if (item[0] === TYPES.landingPad && item[3]?.obscured) return;
 
     const exports = {
-      data: common.inheritData({
-        type: item[0],
-        bottomAligned: item[0] !== 'balloon',
-        isOnScreen: true,
-        isEnemy: (item[1] === 'right'),
-        ...item[0].data,
-      }, {
-        x: item[2] * multiplier,
-        y: initMethods[item[0]]?.data?.y
-      }),
+      data: common.inheritData(
+        {
+          type: item[0],
+          bottomAligned: item[0] !== 'balloon',
+          isOnScreen: true,
+          isEnemy: item[1] === 'right',
+          ...item[0].data
+        },
+        {
+          x: item[2] * multiplier,
+          y: initMethods[item[0]]?.data?.y
+        }
+      )
     };
 
-    const css = [
-      'sprite',
-      item[0]
-    ];
+    const css = ['sprite', item[0]];
 
     if (item[1] === 'right') {
       css.push('enemy');
@@ -204,13 +202,11 @@ function previewLevel(levelName, excludeVehicles) {
 
     // neutral = dead turret
     if (item[0] === TYPES.turret && item[1] === 'neutral') {
-
       // show as grey (vs. green) on radar
       css.push('enemy');
 
       // and faded, etc.
       css.push('destroyed');
-
     }
 
     const radarItem = game.objects.radar.addItem(exports, css.join(' '));
@@ -227,37 +223,36 @@ function previewLevel(levelName, excludeVehicles) {
 
     // if a bunker, also make a matching balloon.
     if (item[0] === 'bunker') {
-
       const balloonExports = {
-        data: common.inheritData({
-          type: 'balloon',
-          isOnScreen: true,
-          isEnemy: exports.data.isEnemy
-        }, {
-          x: exports.data.x,
-          y: initMethods.balloon.data.y
-        })
+        data: common.inheritData(
+          {
+            type: 'balloon',
+            isOnScreen: true,
+            isEnemy: exports.data.isEnemy
+          },
+          {
+            x: exports.data.x,
+            y: initMethods.balloon.data.y
+          }
+        )
       };
 
-      game.objects.radar.addItem(balloonExports, `sprite balloon${(item[1] === 'right') ? ' enemy' : ''}`);
-
+      game.objects.radar.addItem(
+        balloonExports,
+        `sprite balloon${item[1] === 'right' ? ' enemy' : ''}`
+      );
     } else if (scanNodeTypes[item[0]]) {
-
       // special case: certain radar items also get a "scan range" node.
       radarItem.initScanNode();
-
     }
-
   });
 
   const levelPreview = document.getElementById('level-preview');
   levelPreview.innerHTML = '';
   levelPreview.appendChild(oPreview);
-
 }
 
 function addWorldObjects() {
-
   const { addItem } = game;
 
   function addObject(type, options) {
@@ -266,7 +261,7 @@ function addWorldObjects() {
       staticID: true
     });
   }
- 
+
   const defaultLevel = 'Cake Walk';
 
   /**
@@ -274,9 +269,7 @@ function addWorldObjects() {
    */
 
   if (levelName !== 'Custom Level' && !game.objects.editor) {
-
     if (levelName !== 'Tutorial') {
-
       // left base area...
       addItem('right-arrow-sign', -16);
       addItem('tree', 505);
@@ -285,13 +278,10 @@ function addWorldObjects() {
       // right base area...
       addItem('left-arrow-sign', 7700, 'scaleX(-1)');
       addItem('left-arrow-sign', 8192 + 16, 'scaleX(-1)');
-
     }
-
   }
 
   function addOriginalLevel(data) {
-
     // if nothing is > 4096, then it's original game data; double all values.
     let multiplier = 2;
 
@@ -307,24 +297,22 @@ function addWorldObjects() {
       right: 'THE DANGER ZONE'
     };
 
-    const excludeVehicles = net.active && !gamePrefs.net_game_style.match(/coop/i);
+    const excludeVehicles =
+      net.active && !gamePrefs.net_game_style.match(/coop/i);
 
-    const cloudCount = (data.filter((item) => item[0] === TYPES.cloud).length);
+    const cloudCount = data.filter((item) => item[0] === TYPES.cloud).length;
 
     if (!cloudCount) {
-
       // happy little clouds!
       // all other default levels should have a bunch.
       for (var i = 0; i < 8; i++) {
         addObject(TYPES.cloud, {
-          x: 2048 + (4096 * (i / 7))
+          x: 2048 + 4096 * (i / 7)
         });
       }
-
     }
 
     data.forEach((item) => {
-
       // hackish: terrain items (and clouds) only have two params.
       if (item.length === 2) {
         if (item[0] === TYPES.cloud) {
@@ -360,20 +348,22 @@ function addWorldObjects() {
       }
 
       // if a network game, only include CPU vehicles if playing co-op - i.e., vs. a CPU.
-      if (excludeVehicles && item[0].match(/missile|tank|van|infantry|engineer/i)) return;
+      if (
+        excludeVehicles &&
+        item[0].match(/missile|tank|van|infantry|engineer/i)
+      )
+        return;
 
       addObject(item[0], args);
-
     });
-    
   }
 
-  addOriginalLevel(normalizeLevelData(originalLevels[level] || originalLevels[defaultLevel]));
-
+  addOriginalLevel(
+    normalizeLevelData(originalLevels[level] || originalLevels[defaultLevel])
+  );
 }
 
 function selectByDifficulty(optionsArray) {
-
   /**
    * Given optionsArray of [1, 2, 3], return the whole thing or a subset based on difficulty.
    * e.g., groups of turrets in "Midnight Oasis", in easy / hard / extreme mode.
@@ -382,10 +372,10 @@ function selectByDifficulty(optionsArray) {
 
   // note: always return an array with nested items.
   if (!gameType || gameType === 'easy') return [optionsArray[0]];
-  if (gameType === 'hard') return optionsArray.slice(0, optionsArray.length - 1);
+  if (gameType === 'hard')
+    return optionsArray.slice(0, optionsArray.length - 1);
 
   return optionsArray;
-
 }
 
 // a few local shortcuts
