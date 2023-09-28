@@ -62,21 +62,21 @@ const GunFire = (options = {}) => {
     let canSpark = true;
     let canDie = true;
 
+    const tType = target?.data?.type;
+    const pType = data.parentType;
+
     if (target) {
       // special case: tanks hit turrets for a lot of damage.
-      if (data.parentType === TYPES.tank && target.data.type === TYPES.turret) {
+      if (pType === TYPES.tank && tType === TYPES.turret) {
         data.damagePoints = 8;
       }
 
       // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
       if (
+        !(pType === TYPES.infantry && tType === TYPES.tank) &&
         !(
-          data.parentType === TYPES.infantry && target.data.type === TYPES.tank
-        ) &&
-        !(
-          data.parentType === TYPES.helicopter &&
-          (target.data.type === TYPES.endBunker ||
-            target.data.type === TYPES.superBunker)
+          pType === TYPES.helicopter &&
+          (tType === TYPES.endBunker || tType === TYPES.superBunker)
         )
       ) {
         common.hit(target, data.damagePoints, exports);
@@ -84,32 +84,29 @@ const GunFire = (options = {}) => {
 
       // play a sound for certain targets and source -> target combinations
 
-      if (target.data.type === TYPES.helicopter) {
+      if (tType === TYPES.helicopter) {
         playSound(sounds.boloTank, exports);
 
         data.domFetti.startVelocity = Math.abs(data.vX) + Math.abs(data.vY);
 
         effects.domFetti(exports, target);
       } else if (
-        target.data.type === TYPES.tank ||
-        target.data.type === TYPES.helicopter ||
-        target.data.type === TYPES.van ||
-        target.data.type === TYPES.bunker ||
-        target.data.type === TYPES.endBunker ||
-        target.data.type === TYPES.superBunker ||
+        tType === TYPES.tank ||
+        tType === TYPES.helicopter ||
+        tType === TYPES.van ||
+        tType === TYPES.bunker ||
+        tType === TYPES.endBunker ||
+        tType === TYPES.superBunker ||
         // helicopter -> turret
-        (data.parentType === TYPES.helicopter &&
-          target.data.type === TYPES.turret)
+        (pType === TYPES.helicopter && tType === TYPES.turret)
       ) {
         // impervious to gunfire?
         if (
           // infantry -> tank = ricochet.
-          (data.parentType === TYPES.infantry &&
-            target.data.type === TYPES.tank) ||
+          (pType === TYPES.infantry && tType === TYPES.tank) ||
           // nothing can hit end or super bunkers, except tanks.
-          ((target.data.type === TYPES.endBunker ||
-            target.data.type === TYPES.superBunker) &&
-            data.parentType !== TYPES.tank)
+          ((tType === TYPES.endBunker || tType === TYPES.superBunker) &&
+            pType !== TYPES.tank)
         ) {
           // up to five infantry may be firing at the tank.
           // prevent the sounds from piling up.
@@ -139,17 +136,17 @@ const GunFire = (options = {}) => {
           data.y += data.vY;
         } else {
           // otherwise, it "sounds" like a hit.
-          if (target.data.type === TYPES.bunker) {
+          if (tType === TYPES.bunker) {
             playSound(sounds.concreteHit, exports);
           } else {
             playSound(sounds.metalHit, exports);
           }
         }
-      } else if (target.data.type === TYPES.balloon && sounds.balloonHit) {
+      } else if (tType === TYPES.balloon && sounds.balloonHit) {
         playSound(sounds.balloonHit, exports);
-      } else if (target.data.type === TYPES.turret) {
+      } else if (tType === TYPES.turret) {
         playSound(sounds.metalHit, exports);
-      } else if (target.data.type === TYPES.gunfire) {
+      } else if (tType === TYPES.gunfire) {
         // gunfire hit gunfire!
         playSound(sounds.ricochet, exports);
         playSound(sounds.metalHit, exports);
@@ -181,7 +178,7 @@ const GunFire = (options = {}) => {
         frameTimeout = null;
       }, 250);
 
-      if (target.data.type !== TYPES.infantry) {
+      if (tType !== TYPES.infantry) {
         // hackish: override for special case
         data.domFetti = {
           colorType: 'grey',

@@ -142,8 +142,6 @@ const effects = {
   ) => {
     if (!exports || !exports.data || !exports.dom) return;
 
-    // const data = exports.data;
-
     const { data } = exports;
 
     if (!data.isOnScreen) return;
@@ -325,10 +323,12 @@ const effects = {
 
     // target needs to be on-screen, or "nearby"
 
-    if (!exports.data.isOnScreen && game.players.local) {
+    const eData = exports.data;
+
+    if (!eData.isOnScreen && game.players.local) {
       // ignore if too far away
       if (
-        Math.abs(game.players.local.data.x - exports.data.x) >
+        Math.abs(game.players.local.data.x - eData.x) >
         game.objects.view.data.browser.twoThirdsWidth
       )
         return;
@@ -337,16 +337,17 @@ const effects = {
     let widthOffset, heightOffset;
 
     // hackish: for bomb explosions
-    if (exports.data.explosionWidth && exports.data.bottomAlign) {
-      widthOffset = exports.data.explosionWidth / 2;
-      heightOffset = exports.data.explosionHeight;
+
+    if (eData.explosionWidth && eData.bottomAlign) {
+      widthOffset = eData.explosionWidth / 2;
+      heightOffset = eData.explosionHeight;
     } else {
-      widthOffset = exports.data.halfWidth || 0;
-      heightOffset = exports.data.halfHeight || 0;
+      widthOffset = eData.halfWidth || 0;
+      heightOffset = eData.halfHeight || 0;
     }
 
-    const x = exports.data.x + widthOffset;
-    const y = exports.data.y + heightOffset;
+    const x = eData.x + widthOffset;
+    const y = eData.y + heightOffset;
 
     game.objects.domFetti.push(domFettiBoom(exports, target, x, y));
   },

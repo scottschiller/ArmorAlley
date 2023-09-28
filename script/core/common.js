@@ -542,6 +542,9 @@ const common = {
 
     const { stop, resume } = hitOptions;
 
+    const sData = source.data;
+    const tData = target.data;
+
     /**
      * TODO: data.halfWidth instead of 0, but be able to resume and separate vehicles when there are no enemies nearby.
      * For now: stop when we pull up immediately behind the next tank / vehicle, vs. being "nearby."
@@ -554,27 +557,27 @@ const common = {
      * In the original game, they would perfectly overlap when stopping to fire at the same position.
      * Therefore: if both of us are tanks, and the target is firing and we are not, keep on truckin'.
      */
-    if (source.data.type === TYPES.tank && target.data.type === TYPES.tank) {
+    if (sData.type === TYPES.tank && tData.type === TYPES.tank) {
       // ignore if we're firing at a target, because we should also be stopped.
-      if (source.data.lastNearbyTarget) return;
+      if (sData.lastNearbyTarget) return;
 
       // otherwise - if the target is firing and we aren't yet, keep on truckin' so we can join in.
-      if (target.data.lastNearbyTarget) {
+      if (tData.lastNearbyTarget) {
         resume();
         return;
       }
     }
 
     // if we are not a tank, but the target is, always wait for tanks to pass in front.
-    if (source.data.type !== TYPES.tank && target.data.type === TYPES.tank) {
+    if (sData.type !== TYPES.tank && tData.type === TYPES.tank) {
       stop();
       return;
     }
 
     // If we are "ahead" of the overlapping unit, we may be at the front of a possible traffic pile-up - so, keep on truckin'.
     if (
-      (!source.data.isEnemy && source.data.x > target.data.x) ||
-      (source.data.isEnemy && source.data.x < target.data.x)
+      (!sData.isEnemy && sData.x > tData.x) ||
+      (sData.isEnemy && sData.x < tData.x)
     ) {
       resume();
       return;
@@ -582,12 +585,9 @@ const common = {
 
     // if we have an absolute match with another vehicle (and the same type), take the lower ID.
     // this is intended to help prevent vehicles from getting "wedged" waiting for one another.
-    if (
-      source.data.x === target.data.x &&
-      target.data.type === source.data.type
-    ) {
-      const sourceID = source.data.guid.split('_')[1];
-      const targetID = target.data.guid.split('_')[1];
+    if (sData.x === tData.x && tData.type === sData.type) {
+      const sourceID = sData.guid.split('_')[1];
+      const targetID = tData.guid.split('_')[1];
       if (sourceID < targetID) {
         resume();
         return;
@@ -606,25 +606,27 @@ const common = {
      * other things can hit super-bunkers, but we don't want damage done in this case.
      */
 
+    const tData = target.data;
+
     // non-tank gunfire will ricochet off of super bunkers.
     if (
-      target.data.type === TYPES.superBunker &&
+      tData.type === TYPES.superBunker &&
       !(attacker?.data?.parentType === TYPES.tank)
     )
       return;
 
-    if (target.data.type === TYPES.tank) {
+    if (tData.type === TYPES.tank) {
       // tanks shouldn't be damaged by shrapnel - but, let the shrapnel die.
       if (attacker?.data?.parentType === TYPES.shrapnel) {
         hitPoints = 0;
       }
     }
 
-    newEnergy = Math.max(0, target.data.energy - hitPoints);
+    newEnergy = Math.max(0, tData.energy - hitPoints);
 
-    energyChanged = target.data.energy !== newEnergy;
+    energyChanged = tData.energy !== newEnergy;
 
-    target.data.energy = newEnergy;
+    tData.energy = newEnergy;
 
     // special cases for updating state
     if (energyChanged && target.updateHealth) {
@@ -633,9 +635,9 @@ const common = {
 
     sprites.updateEnergy(target);
 
-    if (!target.data.energy && target.die) {
+    if (!tData.energy && target.die) {
       // mutate the object: assign its attacker.
-      target.data.attacker = attacker;
+      tData.attacker = attacker;
 
       target.die({ attacker });
     }

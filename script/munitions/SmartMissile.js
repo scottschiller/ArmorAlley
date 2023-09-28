@@ -512,12 +512,14 @@ const SmartMissile = (options = {}) => {
      *
      * if retargeting finds nothing at the moment the original is lost, the missile will die.
      */
+    const tData = objects?.target?.data;
+
     if (
       !data.expired &&
       (!objects.target ||
-        objects.target.data.dead ||
-        objects.target.data.wentIntoHiding ||
-        objects.target.data.isEnemy === data.isEnemy)
+        tData.dead ||
+        tData.wentIntoHiding ||
+        tData.isEnemy === data.isEnemy)
     ) {
       const whose =
         data.isEnemy !== game.players.local.data.isEnemy
@@ -532,15 +534,12 @@ const SmartMissile = (options = {}) => {
 
       // stop tracking the old one, as applicable.
       if (
-        objects.target.data.dead ||
-        objects.target.data.wentIntoHiding ||
-        objects.target.data.isEnemy === data.isEnemy
+        tData.dead ||
+        tData.wentIntoHiding ||
+        tData.isEnemy === data.isEnemy
       ) {
         // notify if a helicopter evaded a smart missile by hiding in a cloud.
-        if (
-          objects.target.data.wentIntoHiding &&
-          objects.target.data.type === TYPES.helicopter
-        ) {
+        if (tData.wentIntoHiding && tData.type === TYPES.helicopter) {
           const text = common.tweakEmojiSpacing(
             `${whose} ${missileType} lost track of its target.`
           );
@@ -554,14 +553,11 @@ const SmartMissile = (options = {}) => {
 
       newTarget = getNearestObject(exports);
 
-      if (
-        newTarget &&
-        !newTarget.data.cloaked &&
-        !newTarget.data.wentIntoHiding &&
-        !newTarget.data.dead
-      ) {
+      const newTD = newTarget?.data;
+
+      if (newTarget && !newTD.cloaked && !newTD.wentIntoHiding && !newTD.dead) {
         const targetType = game.objects.stats.formatForDisplay(
-          newTarget.data.type,
+          newTD.type,
           newTarget
         );
         const text = common.tweakEmojiSpacing(
@@ -573,7 +569,7 @@ const SmartMissile = (options = {}) => {
          * The first missile and tank will take each other out, and the second missile will
          * re-target the second tank. Notifying here feels redundant.
          */
-        if (newTarget.data.type !== objects.lastTarget?.data?.type) {
+        if (newTD.type !== objects.lastTarget?.data?.type) {
           game.objects.notifications.addNoRepeat(text);
         }
 

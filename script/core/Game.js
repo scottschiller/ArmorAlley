@@ -303,24 +303,25 @@ const game = (() => {
     for (const type in items) {
       items[type].forEach((item) => {
         // engineers, again - special case
-        let { type } = item.data;
-        if (type === TYPES.infantry && item.data.role) type = TYPES.engineer;
+        const iData = item.data;
+        let { type } = iData;
+        if (type === TYPES.infantry && iData.role) type = TYPES.engineer;
 
         // 2 or 3 args, depending
         const args = [
           type,
-          item.data.isHostile || (type === TYPES.turret && item.data.dead)
+          iData.isHostile || (type === TYPES.turret && iData.dead)
             ? 'n'
-            : item.data.isEnemy
+            : iData.isEnemy
             ? 'r'
-            : item.data.isNeutral
+            : iData.isNeutral
             ? 'n'
             : 'l',
-          Math.floor(item.data.x)
+          Math.floor(iData.x)
         ];
 
         // drop l/r on terrain items, and clouds
-        if (item.data.isTerrainItem || type === TYPES.cloud) args.splice(1, 1);
+        if (iData.isTerrainItem || type === TYPES.cloud) args.splice(1, 1);
 
         gameData.push(args);
       });
@@ -686,18 +687,19 @@ const game = (() => {
         // TODO: have this call game.objects.view.mousemove(); ?
         // OR, just call network methods directly.
         // percentage to pixels (circle coordinates)
-        const x = (directionX / 100) * objects.view.data.browser.width;
-        const y = (directionY / 100) * objects.view.data.browser.height;
+        const vData = objects.view.data;
+        const x = (directionX / 100) * vData.browser.width;
+        const y = (directionY / 100) * vData.browser.height;
         if (net.active) {
-          objects.view.data.mouse.delayedInputX = x;
-          objects.view.data.mouse.delayedInputY = y;
+          vData.mouse.delayedInputX = x;
+          vData.mouse.delayedInputY = y;
           if (game.players.local) {
             game.players.local.data.mouse.delayedInputX = x;
             game.players.local.data.mouse.delayedInputY = y;
           }
         } else {
-          objects.view.data.mouse.x = x;
-          objects.view.data.mouse.y = y;
+          vData.mouse.x = x;
+          vData.mouse.y = y;
         }
       };
     } else {

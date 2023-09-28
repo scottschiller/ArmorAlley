@@ -58,23 +58,23 @@ function collisionCheckTweens(source, target) {
    * so, backtrack, and then step forward.
    */
 
+  const sData = source.data,
+    tData = target.data;
+
   if (!source || !target) {
     console.warn('collisionCheckTweens(): WTF no source or target?');
   }
 
   // special exemption: ignore expired, non-hostile objects - e.g., expired gunfire.
-  if (
-    (source.data.expired && !source.data.hostile) ||
-    (target.data.expired && !target.data.hostile)
-  )
+  if ((sData.expired && !sData.hostile) || (tData.expired && !tData.hostile))
     return;
 
   let xOffset, yOffset;
 
   // somewhat-large assumption: all objects have and use vX / vY per frame. 😅
   // start with the inverse offset, "rolling back", and working our way forward.
-  xOffset = -source.data.vX;
-  yOffset = -source.data.vY;
+  xOffset = -sData.vX;
+  yOffset = -sData.vY;
 
   // how many in-between values to check
   // [start] [ step ] [ step ] [end]
@@ -83,24 +83,23 @@ function collisionCheckTweens(source, target) {
   // Rather than every pixel, take the greater velocity and cut it in half.
   const tweenSteps = Math.max(
     minTweenSteps,
-    parseInt(Math.max(Math.abs(source.data.vX), Math.abs(source.data.vY)), 10) /
-      2
+    parseInt(Math.max(Math.abs(sData.vX), Math.abs(sData.vY)), 10) / 2
   );
 
   // amount to move, for each "in-between" position.
   // note that for e.g., two steps, we divide by 3 because we don't check the start or end positions.
   const tweenDivider = tweenSteps + 1;
-  const stepX = source.data.vX / tweenDivider;
-  const stepY = source.data.vY / tweenDivider;
+  const stepX = sData.vX / tweenDivider;
+  const stepY = sData.vY / tweenDivider;
 
   // starting at the previous position: step, then check.
   for (let i = 0; i < tweenSteps; i++) {
     xOffset += stepX;
     yOffset += stepY;
-    if (collisionCheckWithOffsets(source.data, target.data, xOffset, yOffset)) {
+    if (collisionCheckWithOffsets(sData, tData, xOffset, yOffset)) {
       // we have a hit; reposition the source to the point of collision, and exit.
-      source.data.x += xOffset;
-      source.data.y += yOffset;
+      sData.x += xOffset;
+      sData.y += yOffset;
       return true;
     }
   }
@@ -120,12 +119,10 @@ function collisionCheckObject(options) {
     return false;
   }
 
+  const sData = options.source.data;
+
   // don't check if the object is dead or inert. If expired, only allow the object if it's also "hostile" (can still hit things)
-  if (
-    options.source.data.dead ||
-    options.source.data.isInert ||
-    (options.source.data.expired && !options.source.data.hostile)
-  ) {
+  if (sData.dead || sData.isInert || (sData.expired && !sData.hostile)) {
     return false;
   }
 
@@ -137,31 +134,23 @@ function collisionCheckObject(options) {
     // friendly things move further right, enemies move further left.
 
     // hackish: define "one-third width" only once.
-    if (
-      options.source.data.xLookAhead === undefined &&
-      options.source.data.widthOneThird === undefined
-    ) {
-      options.source.data.widthOneThird = options.source.data.width * 0.33;
+    if (sData.xLookAhead === undefined && sData.widthOneThird === undefined) {
+      sData.widthOneThird = sData.width * 0.33;
     }
 
-    xLookAhead = Math.min(
-      16,
-      options.source.data.xLookAhead || options.source.data.widthOneThird
-    );
-    if (options.source.data.isEnemy) xLookAhead *= -1;
+    xLookAhead = Math.min(16, sData.xLookAhead || sData.widthOneThird);
+    if (sData.isEnemy) xLookAhead *= -1;
   } else {
     xLookAhead = 0;
   }
 
-  let target, id, sData, tData;
+  let target, id, tData;
 
   for (id in options.targets) {
     if (!options?.targets) return;
 
     target = options.targets[id];
 
-    // DRY
-    sData = options.source.data;
     tData = target?.data;
 
     // non-standard formatting, lengthy logic check here...
@@ -275,22 +264,18 @@ function trackObject(source, target) {
 
   let deltaX, deltaY;
 
-  deltaX =
-    target.data.x +
-    target.data.halfWidth -
-    (source.data.x + source.data.halfWidth);
+  const sData = source.data,
+    tData = target.data;
+
+  deltaX = tData.x + tData.halfWidth - (sData.x + sData.halfWidth);
 
   // by default, offset target to one side of a balloon.
 
-  if (target.data.type === TYPES.tank) {
+  if (tData.type === TYPES.tank) {
     // hack: bomb from high up.
-    deltaY =
-      40 + target.data.halfHeight - (source.data.y + source.data.halfHeight);
+    deltaY = 40 + tData.halfHeight - (sData.y + sData.halfHeight);
   } else {
-    deltaY =
-      target.data.y +
-      target.data.halfHeight -
-      (source.data.y + source.data.halfHeight);
+    deltaY = tData.y + tData.halfHeight - (sData.y + sData.halfHeight);
   }
 
   return {
@@ -309,13 +294,15 @@ function getNearestObject(source, options = {}) {
     itemArray,
     items,
     localObjects,
-    targetData,
+    tData,
     isInFront,
     useInFront,
     distanceX,
     distanceY;
 
-  const isNearGround = source.data.y >= 340 && !options?.ignoreNearGround;
+  const sData = source.data;
+
+  const isNearGround = sData.y >= 340 && !options?.ignoreNearGround;
 
   useInFront = !!options.useInFront;
 
@@ -335,38 +322,30 @@ function getNearestObject(source, options = {}) {
 
     for (k = 0, l = itemArray.length; k < l; k++) {
       // potential target must be an enemy, not dead nor cloaked.
-      if (
-        itemArray[k].data.isEnemy === source.data.isEnemy ||
-        itemArray[k].data.dead ||
-        itemArray[k].data.cloaked
-      )
+      tData = itemArray[k].data;
+      if (tData.isEnemy === sData.isEnemy || tData.dead || tData.cloaked)
         continue;
 
       // if a van, target only if it has a radar item OR is on-screen.
       if (
-        itemArray[k].data.type === TYPES.van &&
-        !itemArray[k].data.isOnScreen &&
+        tData.type === TYPES.van &&
+        !tData.isOnScreen &&
         !itemArray[k].radarItem
       )
         continue;
 
       // is the target in front of the source?
-      isInFront = source.data.isEnemy
-        ? itemArray[k].data.x < source.data.x
-        : itemArray[k].data.x >= source.data.x;
+      isInFront = sData.isEnemy ? tData.x < sData.x : tData.x >= sData.x;
 
       // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
       if (
         !useInFront ||
         (useInFront &&
-          ((!source.data.rotated && isInFront) ||
-            (source.data.rotated && !isInFront)))
+          ((!sData.rotated && isInFront) || (sData.rotated && !isInFront)))
       ) {
-        targetData = itemArray[k].data;
-
         // how far to the target?
-        distanceX = Math.abs(Math.abs(targetData.x) - Math.abs(source.data.x));
-        distanceY = Math.abs(Math.abs(targetData.y) - Math.abs(source.data.y));
+        distanceX = Math.abs(Math.abs(tData.x) - Math.abs(sData.x));
+        distanceY = Math.abs(Math.abs(tData.y) - Math.abs(sData.y));
 
         // too far away for a missile to reach?
         if (distanceX > 3072) continue;
@@ -391,7 +370,7 @@ function getNearestObject(source, options = {}) {
   localObjects.sort(utils.array.compare('totalDistance'));
 
   // enemy helicopter: reverse the array.
-  if (source.data.type === TYPES.helicopter && source.data.isEnemy) {
+  if (sData.type === TYPES.helicopter && sData.isEnemy) {
     localObjects.reverse();
   }
 
@@ -406,7 +385,7 @@ function objectInView(data, options = {}) {
   // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen),
   // alive, either enemy or friendly (depending on option), not cloaked, and within range.
 
-  let i, j, items, result;
+  let i, j, iData, items, result;
 
   // defaults
   options.triggerDistance = net.active
@@ -417,13 +396,14 @@ function objectInView(data, options = {}) {
   items = game.objects[options.items || TYPES.helicopter];
 
   for (i = 0, j = items.length; i < j; i++) {
+    iData = items[i].data;
     if (
-      !items[i].data.dead &&
-      !items[i].data.cloaked &&
+      !iData.dead &&
+      !iData.cloaked &&
       (options.friendlyOnly
-        ? data.isEnemy === items[i].data.isEnemy
-        : data.isEnemy !== items[i].data.isEnemy || items[i].data.isNeutral) &&
-      Math.abs(items[i].data.x - data.x) < options.triggerDistance
+        ? data.isEnemy === iData.isEnemy
+        : data.isEnemy !== iData.isEnemy || iData.isNeutral) &&
+      Math.abs(iData.x - data.x) < options.triggerDistance
     ) {
       result = items[i];
       break;
@@ -525,6 +505,7 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
   let i, j, result;
 
   const helicopter = game.objects[TYPES.helicopter];
+  let hData;
 
   // by default
   triggerDistance =
@@ -538,21 +519,21 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
      * The latter is an edge case: turrets may be close enough to a base, to fire at the chopper while respawning.
      * If the chopper launches a smart missile or drops an infantry while landed, then it can be considered fair game as well.
      */
+    hData = helicopter[i].data;
     if (
-      !helicopter[i].data.cloaked &&
-      !helicopter[i].data.dead &&
-      data.isEnemy !== helicopter[i].data.isEnemy &&
-      (helicopter[i].data.hasLiftOff ||
-        helicopter[i].data.smartMissiles <
-          helicopter[i].data.maxSmartMissiles ||
-        !helicopter[i].data.parachutes)
+      !hData.cloaked &&
+      !hData.dead &&
+      data.isEnemy !== hData.isEnemy &&
+      (hData.hasLiftOff ||
+        hData.smartMissiles < hData.maxSmartMissiles ||
+        !hData.parachutes)
     ) {
       // how far away is the target?
       if (useCircleMath) {
         if (
           isPointInCircle(
-            helicopter[i].data.x + helicopter[i].data.halfWidth,
-            helicopter[i].data.y + helicopter[i].data.height,
+            hData.x + hData.halfWidth,
+            hData.y + hData.height,
             data.x,
             data.y,
             triggerDistance
@@ -561,7 +542,7 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
           result = helicopter[i];
           break;
         }
-      } else if (Math.abs(helicopter[i].data.x - data.x) < triggerDistance) {
+      } else if (Math.abs(hData.x - data.x) < triggerDistance) {
         result = helicopter[i];
         break;
       }
@@ -574,20 +555,21 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
 function recycleTest(obj) {
   // did a unit reach the other side? destroy the unit, and reward the player with credits.
   let isEnemy, costObj, refund, type;
+  const oData = obj.data;
 
-  isEnemy = obj.data.isEnemy;
+  isEnemy = oData.isEnemy;
 
-  if (!obj || obj.data.dead || obj.data.isRecycling) return;
+  if (!obj || oData.dead || oData.isRecycling) return;
 
   if (isEnemy) {
     // recycle point: slightly left of player's base
-    if (obj.data.x > -48) return;
+    if (oData.x > -48) return;
   } else {
     // recycle point: end of world
-    if (obj.data.x < worldWidth) return;
+    if (oData.x < worldWidth) return;
   }
 
-  obj.data.isRecycling = true;
+  oData.isRecycling = true;
 
   // animate down, back into the depths from whence it came
   utils.css.remove(obj.dom.o, 'ordering');
@@ -603,12 +585,12 @@ function recycleTest(obj) {
     obj.die({ silent: true });
 
     // tank, infantry etc., or special-case: engineer.
-    type = obj.data.role ? obj.data.roles[obj.data.role] : obj.data.type;
+    type = oData.role ? oData.roles[oData.role] : oData.type;
 
     // special case: infantry may have been dropped by player, or when helicopter exploded.
     // exclude those from being "refunded" at all, given player was involved in their move.
     // minor: players could collect and drop infantry near enemy base, and collect refunds.
-    if (type === TYPES.infantry && !obj.data.unassisted) return;
+    if (type === TYPES.infantry && !oData.unassisted) return;
 
     costObj = COSTS[TYPES[type]];
 
@@ -622,7 +604,7 @@ function recycleTest(obj) {
       // notify player that a unit has been recycled?
       game.objects.notifications.add(`+${refund} 💰: recycled ${type} ♻️`);
       game.objects.funds.setFunds(
-        game.objects[TYPES.endBunker][obj.data.isEnemy ? 1 : 0].data.funds
+        game.objects[TYPES.endBunker][oData.isEnemy ? 1 : 0].data.funds
       );
       game.objects.view.updateFundsUI();
     }
@@ -682,21 +664,23 @@ function playerOwnsBunkers() {
 function checkProduction() {
   let bunkersOwned, announcement;
 
+  const gData = game.data;
+
   // playing extreme mode? this benefit would practically be cheating! ;)
   if (gameType === 'extreme') return;
 
   bunkersOwned = playerOwnsBunkers();
 
-  if (!game.data.productionHalted && bunkersOwned) {
+  if (!gData.productionHalted && bunkersOwned) {
     // player is doing well; reward them for their efforts.
     announcement =
       '🎉 &nbsp; You control all bunkers.\nEnemy production is halted. &nbsp; 🚫';
-    game.data.productionHalted = true;
-  } else if (game.data.productionHalted && !bunkersOwned) {
+    gData.productionHalted = true;
+  } else if (gData.productionHalted && !bunkersOwned) {
     // CPU has regained control of a bunker.
     announcement =
       '😰 &nbsp; You no longer control all bunkers.\nEnemy production is resuming. &nbsp; 🛠️';
-    game.data.productionHalted = false;
+    gData.productionHalted = false;
   }
 
   if (announcement) {
