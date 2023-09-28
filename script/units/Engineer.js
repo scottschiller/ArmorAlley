@@ -3,7 +3,6 @@ import { game } from '../core/Game.js';
 import { getTypes } from '../core/global.js';
 
 const Engineer = (options = {}) => {
-
   // flag as an engineer
   options.role = 1;
 
@@ -15,7 +14,7 @@ const Engineer = (options = {}) => {
   }
 
   // hack: -ve lookahead offset allowing engineers to be basically atop turrets
-  options.xLookAhead = (options.isEnemy ? 4 : -8);
+  options.xLookAhead = options.isEnemy ? 4 : -8;
 
   // special case
   options.xLookAheadBunker = {
@@ -28,18 +27,20 @@ const Engineer = (options = {}) => {
    * Infantry can interact with both friendly and enemy bunkers.
    * Engineers can interact with both friendly and enemy turrets.
    */
-   
+
   // Ahead-of-time data for `getTypes()`
   const fakeExports = {
     data: {
       isEnemy: options.isEnemy
     }
-  }
-  
-  options.nearbyItems = getTypes('tank, van, missileLauncher, infantry, engineer, helicopter, turret:all, bunker:friendly', { group: 'enemy', exports: fakeExports });
+  };
+
+  options.nearbyItems = getTypes(
+    'tank, van, missileLauncher, infantry, engineer, helicopter, turret:all, bunker:friendly',
+    { group: 'enemy', exports: fakeExports }
+  );
 
   return Infantry(options);
-
 };
 
 export { Engineer };

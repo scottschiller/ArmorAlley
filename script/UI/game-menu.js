@@ -5,7 +5,12 @@ import { isMobile, searchParams } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
-import { dependsOnGameType, previewLevel, setCustomLevel, setLevel } from '../levels/default.js';
+import {
+  dependsOnGameType,
+  previewLevel,
+  setCustomLevel,
+  setLevel
+} from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
@@ -28,9 +33,7 @@ let originalSubTitle;
 let customLevel = searchParams.get('customLevel');
 
 if (customLevel) {
-
   try {
-
     customLevel = JSON.parse(customLevel);
 
     // iterate through keys, make proper arrays of data and assign to defaultLevels['Custom Level']
@@ -43,12 +46,11 @@ if (customLevel) {
     };
 
     Object.keys(customLevel).forEach((item) => {
-
       let type, alignment;
 
       if (item.indexOf(':') !== -1) {
         // e.g., `bunker:r`
-        [ type, alignment ] = item.split(':');
+        [type, alignment] = item.split(':');
       } else {
         alignment = null;
         type = item;
@@ -62,29 +64,20 @@ if (customLevel) {
       // add all the X offsets
       // ['bunker', 'r', [1024, 2048, 4096]]
       customLevel[item].forEach((offset) => {
-        newData.push([
-         ...entry,
-         offset
-        ])
+        newData.push([...entry, offset]);
       });
 
       newData.sort(utils.array.compareByLastItem());
 
       setCustomLevel(newData);
-
     });
-
-  } catch(e) {
-
+  } catch (e) {
     console.warn('Invalid custom level data?', e);
     customLevel = null;
-
   }
-
 }
 
 function init() {
-
   const { dom } = game;
 
   description = document.getElementById('game-description');
@@ -120,7 +113,6 @@ function init() {
 
   // update VS pref
   utils.events.add(vs, 'change', () => {
-
     const bnb = !!vs.checked;
 
     prefsManager.ignoreURLParams();
@@ -130,7 +122,8 @@ function init() {
     // hackish: ensure the in-game menu updates.
     prefsManager.readAndApplyPrefsFromStorage();
 
-    const subTitle = !game.data.started && document.getElementById('game-subtitle');
+    const subTitle =
+      !game.data.started && document.getElementById('game-subtitle');
 
     if (subTitle && !originalSubTitle) {
       originalSubTitle = subTitle.innerHTML;
@@ -149,26 +142,26 @@ function init() {
         subTitle.innerHTML = subTitle.getAttribute('title-bnb');
       }
     }
-
   });
 
   // special case.
-  document.getElementById('radio_game_type_hard').addEventListener('change', () => {
+  document
+    .getElementById('radio_game_type_hard')
+    .addEventListener('change', () => {
+      // if BnB, react appropriately. 🤣
+      if (!gamePrefs.bnb || gameMenuActive) return;
 
-    // if BnB, react appropriately. 🤣
-    if (!gamePrefs.bnb || gameMenuActive) return;
-
-    gameMenuActive = true;
-    playSound(sounds.bnb.gameMenuHard, null, { onfinish: () => gameMenuActive = false });
-
-  });
+      gameMenuActive = true;
+      playSound(sounds.bnb.gameMenuHard, null, {
+        onfinish: () => (gameMenuActive = false)
+      });
+    });
 
   prefsManager.init();
 
   // game menu / intro screen
 
   if (customLevel) {
-
     // <optgroup label="Network Game Levels">
 
     const customGroup = document.createElement('optgroup');
@@ -180,12 +173,11 @@ function init() {
     customGroup.appendChild(customOption);
 
     oSelect.appendChild(customGroup);
-    
+
     oSelect.selectedIndex = oSelect.options.length - 1;
 
     // do the same thing for the network modal
     prefsManager.addGroupAndLevel(customGroup.cloneNode(true));
-
   }
 
   previewLevel(oSelect.value);
@@ -199,7 +191,7 @@ function init() {
 
   // ... and apply for current selection, too.
   updateGameTypeControls(oSelect.value);
-  
+
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
 
@@ -215,15 +207,18 @@ function init() {
   if (gameStyle === 'network') {
     configureNetworkGame();
   }
-
 }
 
 function introBNBSound(e) {
-
   if (!gamePrefs.bnb) return;
 
   // bail if not ready yet - and ignore clicks on #game-options-link which play other sound.
-  if (!sounds.bnb.gameMenu || didBNBIntro || (e?.target?.id === 'game-options-link')) return;
+  if (
+    !sounds.bnb.gameMenu ||
+    didBNBIntro ||
+    e?.target?.id === 'game-options-link'
+  )
+    return;
 
   // ensure window isn't blurred, game isn't paused
   if (game.data.paused) return;
@@ -232,7 +227,9 @@ function introBNBSound(e) {
 
   if (!gameMenuActive) {
     gameMenuActive = true;
-    playSound(sounds.bnb.gameMenu, null, { onfinish: () => gameMenuActive = false });
+    playSound(sounds.bnb.gameMenu, null, {
+      onfinish: () => (gameMenuActive = false)
+    });
   }
 
   // the game is likely paused; ensure that this sound gets played.
@@ -243,15 +240,15 @@ function introBNBSound(e) {
   if (isMobile) {
     utils.events.remove(document, 'touchstart', introBNBSound);
   }
-
 }
 
 function updateGameTypeControls(levelName) {
-
   const isTutorial = !!levelName.match(/tutorial/i);
 
   // enable or disable "game type" based on whether the tutorial is selected.
-  document.querySelectorAll('#game-type-list li').forEach((node) => node.style.opacity = isTutorial ? 0.5 : 1);
+  document
+    .querySelectorAll('#game-type-list li')
+    .forEach((node) => (node.style.opacity = isTutorial ? 0.5 : 1));
 
   document.querySelectorAll('#game-type-list input').forEach((node) => {
     if (isTutorial) {
@@ -260,21 +257,18 @@ function updateGameTypeControls(levelName) {
       node.removeAttribute('disabled');
     }
   });
-
 }
 
 function resetMenu() {
-
   if (lastHTML !== defaultDescription) {
     description.innerHTML = defaultDescription;
     lastHTML = defaultDescription;
   }
-
 }
 
 function menuUpdate(e) {
-
-  let { target } = e, title;
+  let { target } = e,
+    title;
 
   // might be an emoji or icon nested inside a <button>.
   if (target?.nodeName === 'SPAN') {
@@ -282,7 +276,10 @@ function menuUpdate(e) {
   }
 
   // normalize to <a>
-  if (target && (target.nodeName === 'INPUT' || utils.css.has(target, 'emoji'))) {
+  if (
+    target &&
+    (target.nodeName === 'INPUT' || utils.css.has(target, 'emoji'))
+  ) {
     target = target.parentNode;
   }
 
@@ -307,40 +304,39 @@ function menuUpdate(e) {
   } else {
     resetMenu();
   }
-
 }
 
 function showExitType() {
-
   const exit = document.getElementById('exit');
 
   if (exit) {
     exit.className = 'visible';
   }
-
 }
 
 function formClick(e) {
-
   const { target } = e;
 
   const action = target.getAttribute('data-action');
 
   if (action === 'start-editor') {
-
     const selectedIndex = oSelect.selectedIndex;
 
     setLevel(oSelect.value, oSelect[selectedIndex].textContent);
 
     // get the current game type from the form.
-    const gameType = oSelect.value.match(/tutorial/i) ? 'tutorial' : (document.querySelector('#game-type-list input[name="game_type"]:checked')?.value || 'easy');
-    
+    const gameType = oSelect.value.match(/tutorial/i)
+      ? 'tutorial'
+      : document.querySelector(
+          '#game-type-list input[name="game_type"]:checked'
+        )?.value || 'easy';
+
     game.setGameType(gameType);
 
     formCleanup();
 
     game.objects.radar.reset();
-  
+
     hideTitleScreen();
 
     showExitType();
@@ -348,15 +344,17 @@ function formClick(e) {
     game.startEditor();
 
     return;
-
   }
 
   if (action === 'start-game') {
-
     // set level and game type, if not already
 
     // get the current game type from the form.
-    const gameType = oSelect.value.match(/tutorial/i) ? 'tutorial' : (document.querySelector('#game-type-list input[name="game_type"]:checked')?.value || 'easy');
+    const gameType = oSelect.value.match(/tutorial/i)
+      ? 'tutorial'
+      : document.querySelector(
+          '#game-type-list input[name="game_type"]:checked'
+        )?.value || 'easy';
 
     const selectedIndex = oSelect.selectedIndex;
 
@@ -370,13 +368,11 @@ function formClick(e) {
     startGame();
 
     return;
-    
   }
 
   const { name } = target;
 
   if (name === 'game_type') {
-
     game.setGameType(target.value);
 
     const levelName = document.getElementById('game_level').value;
@@ -387,11 +383,9 @@ function formClick(e) {
     }
 
     return;
-
   }
 
   if (target.href && utils.css.has(target, 'cta')) {
-
     e.preventDefault();
 
     const { href } = target;
@@ -402,62 +396,53 @@ function formClick(e) {
     if (hash === 'new-game') return;
 
     if (hash === 'tutorial') {
-
       game.setGameType(hash);
 
       formCleanup();
 
       // go go go!
       startGame();
-
     }
 
     return false;
-
   }
 
   if (target.id === 'start-network-game') {
     configureNetworkGame();
   }
-  
 }
 
 function formCleanup() {
-
   utils.events.remove(form, 'click', formClick);
   form = null;
-
 }
 
 function configureNetworkGame() {
-
   const options = {
     network: true,
     onStart: startGame
   };
 
   prefsManager.show(options);
-  
 }
 
 function startGame() {
-
   formCleanup();
 
   // remove the editor nodes.
-  [ 'editor-window', 'editor-window-help' ].forEach((id) => document.getElementById(id)?.remove());
+  ['editor-window', 'editor-window-help'].forEach((id) =>
+    document.getElementById(id)?.remove()
+  );
 
   game.objects.radar.reset();
 
   if (net.connected) {
-
     game.setGameType(gamePrefs.net_game_type);
 
     showExitType();
 
     // start the transition, then ping test, and finally, start game loop.
     hideTitleScreen(() => {
-
       // don't pause for a network game.
       game.objects.view.data.noPause = true;
 
@@ -469,11 +454,8 @@ function startGame() {
       game.start();
 
       game.init();
-
     });
-
   } else {
-
     // go go go!
     game.init();
 
@@ -481,17 +463,14 @@ function startGame() {
       showExitType();
       hideTitleScreen();
     });
-
   }
-  
 }
 
 function hideTitleScreen(callback) {
-
   document.getElementById('level-preview')?.remove();
 
   common.setVideo('vr-goggles-menu');
-  
+
   let overlay = document.getElementById('world-overlay');
   const world = document.getElementById('world');
 
@@ -499,9 +478,7 @@ function hideTitleScreen(callback) {
   const noBlur = 'no-blur';
 
   function hideTitleScreenFinished(e) {
-
     if (e.target === overlay && e.propertyName === 'opacity') {
-
       overlay?.remove();
 
       overlay = null;
@@ -523,9 +500,7 @@ function hideTitleScreen(callback) {
       overlay?.removeEventListener('transitionend', hideTitleScreenFinished);
 
       callback?.();
-
     }
-  
   }
 
   utils.css.add(world, noBlur);
@@ -535,7 +510,6 @@ function hideTitleScreen(callback) {
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
 
   game.objects.notifications.welcome();
-  
 }
 
 const gameMenu = {

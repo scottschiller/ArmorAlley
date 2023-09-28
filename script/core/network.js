@@ -2,7 +2,14 @@ import { prefsManager } from '../aa.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from './common.js';
 import { game } from './Game.js';
-import { defaultSeed, defaultSeeds, FPS, FRAMERATE, setDefaultSeed, TYPES } from './global.js';
+import {
+  defaultSeed,
+  defaultSeeds,
+  FPS,
+  FRAMERATE,
+  setDefaultSeed,
+  TYPES
+} from './global.js';
 import { playSound, sounds } from './sound.js';
 
 const FRAME_LENGTH = FRAMERATE;
@@ -40,7 +47,7 @@ let reliable = !searchParams.get('unreliable');
 let peer;
 let peerConnection;
 
-const avg = (a) => a.reduce((x,y) => x + y) / a.length;
+const avg = (a) => a.reduce((x, y) => x + y) / a.length;
 
 let pingStack = [];
 
@@ -56,22 +63,19 @@ let timePair = {
 let statsByType = {};
 
 function updateStatsByType(type, direction) {
-  
   // e.g., type = 'PING', direction = 'tx'
 
   if (!statsByType[type]) {
     statsByType[type] = {
       tx: 0,
       rx: 0
-    }
+    };
   }
 
   statsByType[type][direction]++;
-
 }
 
 function startDebugNetworkStats() {
-
   if (!debugNetworkStats) return;
 
   window.setInterval(() => {
@@ -80,7 +84,6 @@ function startDebugNetworkStats() {
       console.log(`rxQueue.length: ${rxQueue.length}`);
     }
   }, 10000);
-  
 }
 
 // filter certain message types, so lights blink mostly with user actions vs. all the time
@@ -106,12 +109,13 @@ const processImmediateTypes = {
   ACK: true
 };
 
-const connectionText = `Connecting, “${reliable ? 'reliable' : 'fast'}” delivery...`;
+const connectionText = `Connecting, “${
+  reliable ? 'reliable' : 'fast'
+}” delivery...`;
 
 const showLocalMessage = (html) => console.log(html);
 
 function sendDelayedMessage(obj, callback) {
-
   /**
    * Send in "time to get there" (half-trip = half-pingtime), plus a few frames.
    * This should help keep objects consistent on both sides, i.e., a balloon dies,
@@ -119,7 +123,11 @@ function sendDelayedMessage(obj, callback) {
    */
 
   // current difference in frame count implies lag, in FRAME_LENGTH msec per frame
-  const delta = Math.max(1, game.objects.gameLoop.data.frameCount - game.objects.gameLoop.data.remoteFrameCount);
+  const delta = Math.max(
+    1,
+    game.objects.gameLoop.data.frameCount -
+      game.objects.gameLoop.data.remoteFrameCount
+  );
 
   /**
    * If playing on LAN / via wifi etc., half-trip might be a few miliseconds.
@@ -128,16 +136,23 @@ function sendDelayedMessage(obj, callback) {
   const MIN_FRAME_DELAY = 3 * FRAME_LENGTH;
 
   // Take the greater of half-trip vs. computed delta in frames between clients, vs. MIN_FRAME_DELAY.
-  const delay = Math.max(MIN_FRAME_DELAY, Math.max((delta + 1) * FRAME_LENGTH, net.halfTrip));
+  const delay = Math.max(
+    MIN_FRAME_DELAY,
+    Math.max((delta + 1) * FRAME_LENGTH, net.halfTrip)
+  );
 
-  if (debugNetwork) console.log(`💌 sendDelayedMessage(): sending in ${delay.toFixed(2)} msec. Network Δ = ${delta}, ${(delta * FRAME_LENGTH).toFixed(2)} msec`, obj);
+  if (debugNetwork)
+    console.log(
+      `💌 sendDelayedMessage(): sending in ${delay.toFixed(
+        2
+      )} msec. Network Δ = ${delta}, ${(delta * FRAME_LENGTH).toFixed(2)} msec`,
+      obj
+    );
 
   common.setFrameTimeout(() => sendMessage(obj, callback), delay);
-
 }
 
 function serializeObjectReferences(obj = {}) {
-
   // replace attacker / target / parent objects with their IDs,
   // so they can be looked up and reconnected on the remote.
   // e.g., obj.target = obj.target.data.id;
@@ -149,26 +164,27 @@ function serializeObjectReferences(obj = {}) {
   });
 
   return obj;
-
 }
 
 function unSerializeObjectReferences(obj = {}) {
-
   // string ID-to-object logic.
 
   OBJ_REFERENCES.forEach((item) => {
     if (typeof obj[item] === 'string') {
-      obj[item] = game.findObjectById(obj[item], `network lookup: no live ${item}?`, obj[item]); 
+      obj[item] = game.findObjectById(
+        obj[item],
+        `network lookup: no live ${item}?`,
+        obj[item]
+      );
     }
   });
 
   return obj;
-
 }
 
 function sendMessage(obj, callback, delay) {
-
-  if (debugNetwork) console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
+  if (debugNetwork)
+    console.log('💌 sendMessage', game.objects.gameLoop.data.frameCount);
 
   if (!net.connected && debugNetwork) {
     console.warn('net.sendMessage(): network not connected.', obj);
@@ -176,9 +192,17 @@ function sendMessage(obj, callback, delay) {
   }
 
   const goLd = game.objects.gameLoop.data;
-  if (game.players.local && goLd.remoteFrameCount - goLd.frameCount > OLD_FRAME_CUTOFF) {
+  if (
+    game.players.local &&
+    goLd.remoteFrameCount - goLd.frameCount > OLD_FRAME_CUTOFF
+  ) {
     // skip "old" outgoing messages. in the fast-forward case, this saves unnecessary traffic and possible side-effects.
-    if (debugNetwork) console.info(`💌 sendMessage: Dropping, too far behind remote. ${goLd.frameCount}/${goLd.remoteFrameCount}, Δ ${goLd.remoteFrameCount - goLd.frameCount} > ${OLD_FRAME_CUTOFF}`);
+    if (debugNetwork)
+      console.info(
+        `💌 sendMessage: Dropping, too far behind remote. ${goLd.frameCount}/${
+          goLd.remoteFrameCount
+        }, Δ ${goLd.remoteFrameCount - goLd.frameCount} > ${OLD_FRAME_CUTOFF}`
+      );
     return;
   }
 
@@ -202,11 +226,12 @@ function sendMessage(obj, callback, delay) {
   /**
    * Only certain messages cause "modem lights" to blink,
    * unless lock-step is active and we're waiting for the remote.
-   * 
+   *
    * In that case, showing ping/pong is handy.
    */
 
-  if (!blinkingLightsExempt[obj.type] || game.objects.gameLoop.data.waiting) net.outgoingLEDCount++;
+  if (!blinkingLightsExempt[obj.type] || game.objects.gameLoop.data.waiting)
+    net.outgoingLEDCount++;
 
   updateStatsByType(obj.type, 'tx');
 
@@ -229,19 +254,14 @@ function sendMessage(obj, callback, delay) {
   // execute this locally after a (default) half-ping-time delay.
 
   setTimeout(callback, delay);
-
 }
 
 function pingTest() {
-
   sendMessage({ type: 'SYN', seed: defaultSeed, seeds: defaultSeeds });
-
 }
 
 const messageActions = {
-
-  'RAW_COORDS': (data) => {
-
+  RAW_COORDS: (data) => {
     // mouse and viewport coordinates, "by id."
 
     let helicopter = game.objectsById[data.id];
@@ -252,7 +272,11 @@ const messageActions = {
     }
 
     if (!helicopter.data.isRemote) {
-      console.warn('RAW_COORDS: WTF, incoming data for local helicopter? Bad logic / ID mis-match??', helicopter.data.id, data);
+      console.warn(
+        'RAW_COORDS: WTF, incoming data for local helicopter? Bad logic / ID mis-match??',
+        helicopter.data.id,
+        data
+      );
       return;
     }
 
@@ -261,7 +285,6 @@ const messageActions = {
     if (helicopter.data.dead) return;
 
     if (helicopter.data.isCPU) {
-
       // *** CPU PLAYER ***
       // HACKS: subtract vX/vY before `animate()`, because that will be re-applied when animated locally.
       // I suspect this is the source of an annoying off-by-one-frame collision issue.
@@ -270,27 +293,22 @@ const messageActions = {
 
       helicopter.data.vX = data.vX;
       helicopter.data.vY = data.vY;
-
     } else {
-
       // *** HUMAN PLAYER ***
-      helicopter.data.mouse.x = (data.x || 0);
-      helicopter.data.mouse.y = (data.y || 0);
+      helicopter.data.mouse.x = data.x || 0;
+      helicopter.data.mouse.y = data.y || 0;
 
       // view
       helicopter.data.scrollLeft = data.scrollLeft;
       helicopter.data.scrollLeftVX = data.scrollLeftVX;
-      
     }
 
     if (debugNetwork) {
       console.log('RX: RAW_MOUSE_COORDS + view -> helicopter.data', data);
     }
-
   },
 
-  'CHAT': (data) => {
-
+  CHAT: (data) => {
     /**
      * data = {
      *   params: [text, player_name], OR
@@ -298,45 +316,46 @@ const messageActions = {
      * }
      */
 
-    const slashCommand = common.parseSlashCommand(data.params?.[0] || data.text);
+    const slashCommand = common.parseSlashCommand(
+      data.params?.[0] || data.text
+    );
 
     // A form of notification, really.
     if (game.data.started && data.text && !slashCommand) {
-
-      game.objects.notifications.add(`<b>${gamePrefs.net_remote_player_name}</b>: ${common.basicEscape(data.text)} 💬`);
-
+      game.objects.notifications.add(
+        `<b>${gamePrefs.net_remote_player_name}</b>: ${common.basicEscape(
+          data.text
+        )} 💬`
+      );
     } else {
-
       // for this variant, we expect a spreadable array.
       // also of note, slash commands are sent along for others to see and learn.
-      const args = data.params || [ data.text ];
+      const args = data.params || [data.text];
 
       // don't show raw text, if there was a slash command.
       if (!slashCommand) {
         prefsManager.onChat(...args);
       }
-
     }
 
     // now, run if found.
     slashCommand?.();
-
   },
 
-  'REMOTE_READY': (data) => {
-
+  REMOTE_READY: (data) => {
     // signal: ready to start playing.
     prefsManager.onRemoteReady(data.params);
-
   },
 
-  'REMOTE_PLAYER_NAME': (data) => {
-
+  REMOTE_PLAYER_NAME: (data) => {
     // ignore if already up-to-date, etc.
     if (!data.newName) return;
     if (gamePrefs.net_remote_player_name === data.newName) return;
 
-    const msg = common.getRenameString(gamePrefs.net_remote_player_name, data.newName);
+    const msg = common.getRenameString(
+      gamePrefs.net_remote_player_name,
+      data.newName
+    );
 
     // this can happen during a live game
     if (game.data.started) {
@@ -347,32 +366,33 @@ const messageActions = {
 
     // update the underlying pref
     gamePrefs.net_remote_player_name = data.newName;
-    
   },
 
-  'UPDATE_PREFS': (data) => {
-
+  UPDATE_PREFS: (data) => {
     // data.params = [{ name, value }, { name, value }] etc.
     prefsManager.onUpdatePrefs(data.params);
-
   },
 
-  'REMOTE_ORDER': (data) => {
-
+  REMOTE_ORDER: (data) => {
     // net.sendMessage({ type: 'REMOTE_ORDER', orderType: type, options, id: player.data.id });
     if (debugNetwork) console.log('RX: REMOTE_ORDER', data);
 
     if (debugNetwork && !game.objectsById[data.id]) {
-      console.warn('REMOTE_ORDER: WTF, no objectsById for data.id (remote friendly helicopter, co-op?', data.id);
+      console.warn(
+        'REMOTE_ORDER: WTF, no objectsById for data.id (remote friendly helicopter, co-op?',
+        data.id
+      );
     }
 
     // assume remote is a friendly player, at this point...
-    game.objects.inventory.order(data.orderType, data.options, game.objectsById[data.id]);
-
+    game.objects.inventory.order(
+      data.orderType,
+      data.options,
+      game.objectsById[data.id]
+    );
   },
 
-  'NOTIFICATION': (data) => {
-
+  NOTIFICATION: (data) => {
     // TODO: move this into inventory
 
     if (debugNetwork) console.log('RX: NOTIFICATION', data);
@@ -393,11 +413,9 @@ const messageActions = {
     if (sounds.inventory.begin) {
       playSound(sounds.inventory.begin);
     }
-
   },
 
-  'ADD_OBJECT': (data) => {
-
+  ADD_OBJECT: (data) => {
     // e.g.
     /*
     net.sendMessage({
@@ -424,7 +442,7 @@ const messageActions = {
     // HACK: even with dalyed input for gunfire, smart missiles and bombs, let's try this.
     // SPECIAL HANDLING: if the parent is a remote helicopter, try fast-forwarding by the delta of frames.
     if (data.params?.parent?.data?.type === TYPES.helicopter) {
-      syncAndFastForward = !!(SYNC_FFWD_TYPES[data.objectType]);
+      syncAndFastForward = !!SYNC_FFWD_TYPES[data.objectType];
     }
 
     // flag as "from the network", to help avoid confusion.
@@ -438,22 +456,33 @@ const messageActions = {
       // console.log('fast-forwarding new object');
       // we know precisely how many frames behind (or ahead) the remote is, because we have their frame count here vs. ours.
       // notwithstanding, try to round down to nearest 1-frame delay.
-      const frameLagBetweenPeers = Math.max(0, Math.min(game.objects.gameLoop.data.frameCount - data.frameCount, Math.floor(net.halfTrip / FRAMERATE)));
-      console.log('fast-forward object, lag between peers - based on packet.frameCount:', game.objects.gameLoop.data.frameCount - data.frameCount, 'vs. halfTrip / FRAMERATE:', (net.halfTrip / FRAMERATE), 'result:', frameLagBetweenPeers);
+      const frameLagBetweenPeers = Math.max(
+        0,
+        Math.min(
+          game.objects.gameLoop.data.frameCount - data.frameCount,
+          Math.floor(net.halfTrip / FRAMERATE)
+        )
+      );
+      console.log(
+        'fast-forward object, lag between peers - based on packet.frameCount:',
+        game.objects.gameLoop.data.frameCount - data.frameCount,
+        'vs. halfTrip / FRAMERATE:',
+        net.halfTrip / FRAMERATE,
+        'result:',
+        frameLagBetweenPeers
+      );
       for (let i = 0; i < frameLagBetweenPeers; i++) {
         newObject.animate();
       }
     }
-
   },
 
-  'MAKE_DEBUG_RECT': (data) => {
+  MAKE_DEBUG_RECT: (data) => {
     // net.sendMessage({ type: 'MAKE_DEBUG_RECT', params: [ basicData, viaNetwork ] });
     common.makeDebugRect(...data.params);
   },
 
-  'GAME_EVENT': (data) => {
-
+  GAME_EVENT: (data) => {
     /**
      * data = { id, method, params = {} }
      * An RPC of sorts. Can take a params object to be passed, or an array to be spread as arguments.
@@ -466,29 +495,31 @@ const messageActions = {
     if (!obj) return;
 
     if (!obj[data.method]) {
-      console.warn(`GAME_EVENT: WTF no method ${data.method} on data.id ${data.id}?`, data.method);
+      console.warn(
+        `GAME_EVENT: WTF no method ${data.method} on data.id ${data.id}?`,
+        data.method
+      );
       return;
     }
 
     if (data.params === undefined) {
-
       // no arguments
       obj[data.method]();
-
     } else {
-
       // params = {} or []
-    
+
       // special case handling - TODO: move this somewhere outside.
       if (data.method === 'die') {
-
         const attacker = data.params.attacker;
 
         // it's possible something could have just died, and the next animation frame hasn't fired yet -
         // so the local object hasn't been unlinked and moved to the boneyard. this is fine, just ignore
         // and don't mark as being killed "via network."
         if (obj.data.dead) {
-          if (debugNetwork) console.log('RX: GAME_EVENT, DIE: already dead, but not yet in boneyard');
+          if (debugNetwork)
+            console.log(
+              'RX: GAME_EVENT, DIE: already dead, but not yet in boneyard'
+            );
           return;
         }
 
@@ -497,28 +528,22 @@ const messageActions = {
         obj.data.killedViaNetwork = true;
 
         if (attacker) {
-
           // HACKISH: if die(), do what common does and mutate the target.
           obj.data.attacker = attacker;
-
         }
-
       }
 
       if (data.params?.length) {
         // spread array
-        obj[data.method](...data.params);  
+        obj[data.method](...data.params);
       } else {
         // pass directly
         obj[data.method](data.params);
       }
-     
     }
-
   },
 
-  'SYN': (data) => {
-
+  SYN: (data) => {
     if (data.seed !== undefined) {
       if (debugNetwork) console.log('network SYN: received seed', data);
       setDefaultSeed(data.seed, data.seeds);
@@ -527,22 +552,24 @@ const messageActions = {
     sendMessage({ type: 'SYNACK' });
 
     if (pingStack.length && pingStack.length <= stackSize) {
-      showLocalMessage(`${connectionText}<br />Ping ${pingStack.length}/${stackSize}: ${avg(pingStack).toFixed(1)}ms`);
+      showLocalMessage(
+        `${connectionText}<br />Ping ${pingStack.length}/${stackSize}: ${avg(
+          pingStack
+        ).toFixed(1)}ms`
+      );
     }
-
   },
 
-  'SYNACK': (/*data*/) => {
-
+  SYNACK: (/*data*/) => {
     if (pingStack.length < stackSize) {
-
-      showLocalMessage(`Ping ${pingStack.length}/${stackSize}: ${avg(pingStack).toFixed(1)}ms`);
+      showLocalMessage(
+        `Ping ${pingStack.length}/${stackSize}: ${avg(pingStack).toFixed(1)}ms`
+      );
 
       // do more SYN -> ACK until we fill the stack
       sendMessage({ type: 'SYN' });
 
       return;
-
     }
 
     // "The first is usually unrepresentative, throw away"
@@ -557,32 +584,28 @@ const messageActions = {
     sendMessage({ type: 'ACK' });
 
     // wait for half the roundtrip time before starting the first frame
-    setTimeout(() => { net.startGame?.() }, halfTrip);
-
+    setTimeout(() => {
+      net.startGame?.();
+    }, halfTrip);
   },
 
-  'ACK': (/*data*/) => {
-
+  ACK: (/*data*/) => {
     prefsManager.onChat(`Ping: ${avg(pingStack).toFixed(1)}ms`);
 
     net.startGame?.();
-
   },
 
-  'PING': (data) => {
+  PING: (data) => {
     if (debugPingPong) console.log('RX: PING', data);
     net.sendMessage({ type: 'PONG' });
   },
 
-  'PONG': (data) => {
+  PONG: (data) => {
     if (debugPingPong) console.log('RX: PONG', data);
-  },
-
-
+  }
 };
 
 function processData(data) {
-
   // somebody loves us; we have a message. 💌
 
   if (debugNetwork) console.log('💌 RX: processData', data);
@@ -594,27 +617,37 @@ function processData(data) {
    * Let's consider two seconds behind, too old.
    */
 
-  if (game.data.started && game.objects.gameLoop.data.frameCount - data.frameCount > OLD_FRAME_CUTOFF) {
+  if (
+    game.data.started &&
+    game.objects.gameLoop.data.frameCount - data.frameCount > OLD_FRAME_CUTOFF
+  ) {
     // drop "old" incoming messages, which may be received in error - or from a remote client fast-forwarding.
     // guards are in place on the transmitting side, as well.
-    if (debugNetwork) console.info(`💌 RX: Dropping message, too old. ${data.frameCount}/${game.objects.gameLoop.data.frameCount}, Δ ${game.objects.gameLoop.data.frameCount - data.frameCount} > ${OLD_FRAME_CUTOFF}`);
+    if (debugNetwork)
+      console.info(
+        `💌 RX: Dropping message, too old. ${data.frameCount}/${
+          game.objects.gameLoop.data.frameCount
+        }, Δ ${
+          game.objects.gameLoop.data.frameCount - data.frameCount
+        } > ${OLD_FRAME_CUTOFF}`
+      );
     return;
   }
 
   // firstly, process roundtrip / half-trip, ping time data.
-  let ping, recTime = performance.now();
+  let ping,
+    recTime = performance.now();
 
   // update with the latest
   timePair.t1 = data.tSend;
   timePair.t2 = recTime;
 
   if (data.t1) {
-
     // calculate roundtrip /\/\/ -> half-trip, time to reach remote - delay / latency.
     let t1 = data.t1,
-       t2 = data.t2,
-       t3 = data.tSend,
-       t4 = recTime;
+      t2 = data.t2,
+      t3 = data.tSend,
+      t4 = recTime;
 
     ping = t4 - t1 - (t3 - t2);
 
@@ -625,7 +658,6 @@ function processData(data) {
     }
 
     net.halfTrip = avg(pingStack) / 2;
-
   }
 
   if (!data?.type) {
@@ -649,11 +681,9 @@ function processData(data) {
 
   // messages will be processed within the game loop.
   rxQueue.push(data);
-
 }
 
 function processMessage(data) {
-
   if (!data?.type) {
     console.warn('💌 net::processMessage(): WTF no data or type?', data);
     return;
@@ -669,21 +699,22 @@ function processMessage(data) {
   } else {
     console.warn('💌 net::processMessage(): unknown message type?', data.type);
   }
-
 }
 
-function processRXQueue(localFrameCount = game.objects.gameLoop.data.frameCount) {
-
+function processRXQueue(
+  localFrameCount = game.objects.gameLoop.data.frameCount
+) {
   /**
    * Given a frame count, find and process all network messages received up to that frame count.
-   * 
+   *
    * The remote frame count is the latest-received / newest message in the queue.
    * We'll use this to "fast-forward" and catch up to the remote, if our window was in the background etc.
    * TODO: break this number out into per-client-ID objects, if and when multiplayer is implemented.
    */
 
   if (rxQueue.length) {
-    game.objects.gameLoop.data.remoteFrameCount = rxQueue[rxQueue.length - 1].frameCount;
+    game.objects.gameLoop.data.remoteFrameCount =
+      rxQueue[rxQueue.length - 1].frameCount;
   }
 
   let remaining = [];
@@ -700,15 +731,13 @@ function processRXQueue(localFrameCount = game.objects.gameLoop.data.frameCount)
   }
 
   rxQueue = remaining;
-
 }
 
 function updateUI() {
-
   /**
    * LED lights, shamelessly stolen from Windows 9x/XP's `lights.exe`,
    * which showed modem lights in the taskbar.
-   * 
+   *
    * Tangengially-related YouTube throwbacks to HyperTerminal and dial-up:
    * https://www.youtube.com/shorts/ObpkS96EksM
    * https://www.youtube.com/shorts/W4XM5-HFzhY
@@ -716,12 +745,12 @@ function updateUI() {
 
   // tick-style values for packets, so they stay lit for a few frames.
   if (net.outgoingLEDCount) {
-    outgoingOffset += (net.outgoingLEDCount * 3);
+    outgoingOffset += net.outgoingLEDCount * 3;
     net.outgoingLEDCount = 0;
   }
 
   if (net.incomingLEDCount) {
-    incomingOffset += (net.incomingLEDCount * 3);
+    incomingOffset += net.incomingLEDCount * 3;
     net.incomingLEDCount = 0;
   }
 
@@ -729,13 +758,16 @@ function updateUI() {
 
   // which lights go green?
   if (outgoingOffset) {
-    offset = (incomingOffset ? 3 : 1);
+    offset = incomingOffset ? 3 : 1;
   } else if (incomingOffset) {
     offset = 2;
   }
 
   // reverse pattern, making lights blink after the first frame.
-  if ((outgoingOffset && outgoingOffset % 3 !== 0) || (incomingOffset && incomingOffset % 3 !== 0)) {
+  if (
+    (outgoingOffset && outgoingOffset % 3 !== 0) ||
+    (incomingOffset && incomingOffset % 3 !== 0)
+  ) {
     offset = 3 - offset;
   }
 
@@ -744,16 +776,17 @@ function updateUI() {
 
   if (offset !== lastLEDOffset) {
     lastLEDOffset = offset;
-    oLightsSubSprite.style.setProperty('transform', `translate(${-16 * offset}px, 0px`);
+    oLightsSubSprite.style.setProperty(
+      'transform',
+      `translate(${-16 * offset}px, 0px`
+    );
   }
-
 }
 
 // received messages, queued and processed per-frame
 let rxQueue = [];
 
 const net = {
-
   coop,
 
   debugNetwork,
@@ -777,9 +810,7 @@ const net = {
   sendMessage,
 
   init: (onInitCallback, startGameCallback) => {
-
     if (!window.Peer) {
-
       // go get it, then call this method again.
       if (debugNetwork) console.log('Loading PeerJS...');
 
@@ -790,16 +821,17 @@ const net = {
       // TODO: show in the UI.
       script.onerror = (e) => {
         console.log('Error loading PeerJS', e);
-        prefsManager.onNetworkError(`Error loading PeerJS script "${src}": ${e.message}`);
-      }
+        prefsManager.onNetworkError(
+          `Error loading PeerJS script "${src}": ${e.message}`
+        );
+      };
 
-      const src = 'script/lib/peerjs@1.5.0.js'
+      const src = 'script/lib/peerjs@1.5.0.js';
       script.src = src;
 
       document.head.appendChild(script);
 
       return;
-
     }
 
     oLights = document.getElementById('lights');
@@ -813,7 +845,7 @@ const net = {
     const debugConfig = {
       // debug: 3
     };
-    
+
     peer = new window.Peer(null, debugConfig);
 
     if (debugNetwork) console.log('net.init()', peer);
@@ -822,28 +854,21 @@ const net = {
     net.startGame = () => startGameCallback?.();
 
     peer.on('open', (id) => {
-      
       // show a link to send to a friend
       if (debugNetwork) console.log('got ID', id);
 
       if (!remoteID) {
-
         // provide the ID to the host for display; otherwise, ignore.
         onInitCallback?.(id);
-
       } else {
-
         // you are the guest, connecting to the host.
         if (debugNetwork) console.log('Connecting...');
 
         net.connect(remoteID, onInitCallback);
-
       }
-
     });
 
     peer.on('connection', (conn) => {
-
       // "SERVER" (host) - incoming connection
 
       peerConnection = conn;
@@ -851,10 +876,10 @@ const net = {
       net.active = true;
 
       // Client has connected to us
-      if (debugNetwork) console.log('HOST: Connection received from remote client', conn);
+      if (debugNetwork)
+        console.log('HOST: Connection received from remote client', conn);
 
       conn.on('open', () => {
-
         if (debugNetwork) console.log('HOST: connection opened');
 
         net.connected = true;
@@ -868,11 +893,9 @@ const net = {
         pingTest();
 
         startDebugNetworkStats();
-
       });
 
       conn.on('close', () => {
-
         const msg = '💥 Network connection has closed. ❌👻';
 
         game.objects.notifications.addNoRepeat(msg);
@@ -884,50 +907,43 @@ const net = {
         prefsManager.onDisconnect();
 
         showLocalMessage(msg);
-      
+
         // only kill the game if it has started; guest may have reloaded
         // during network set-up, and that is recoverable.
 
         if (game.data.started) {
-
           game.objects.notifications.add(msg);
-  
+
           common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
-
         }
-  
       });
-
     });
-
   },
 
   connect: (peerID, callback) => {
-
     // CLIENT / GUEST: connecting to host / server
-  
+
     if (!peerID) {
       console.warn('connect: need peerID');
       return;
     }
-  
+
     // "reliable" or "fast" delivery options - PeerJS makes fast the default.
     const options = {
       reliable
     };
-  
+
     showLocalMessage(connectionText);
-  
+
     const connection = peer.connect(peerID, options);
- 
+
     connection.on('data', (data) => processData(data));
 
     connection.on('open', () => {
-  
       if (debugNetwork) console.log('GUEST: connection opened');
-      
+
       net.connected = true;
-  
+
       peerConnection = connection;
 
       net.active = true;
@@ -937,42 +953,35 @@ const net = {
       startDebugNetworkStats();
 
       callback?.();
-    
     });
-  
+
     connection.on('close', () => {
-  
       if (debugNetwork) console.log('connection close!');
-  
+
       const msg = '💥 Network connection has closed. ❌👻';
-  
+
       net.connected = false;
- 
+
       net.reset();
 
       prefsManager.onDisconnect();
 
       showLocalMessage(msg);
-      
+
       game.objects.notifications.addNoRepeat(msg);
 
       common.setFrameTimeout(game.objects.gameLoop.stop, 1000);
-
     });
-  
   },
 
   remoteID,
 
   reset: () => {
-
     timePair.t1 = null;
     timePair.t2 = null;
     pingStack = [];
     statsByType = {};
-    
   }
-
 };
 
 export { net };

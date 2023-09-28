@@ -1,7 +1,16 @@
 import { game } from './Game.js';
 import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, unlimitedFrameRate, FRAME_MIN_TIME, debug, TYPES, FRAMERATE, FPS, isMobile } from '../core/global.js';
+import {
+  debugCollision,
+  unlimitedFrameRate,
+  FRAME_MIN_TIME,
+  debug,
+  TYPES,
+  FRAMERATE,
+  FPS,
+  isMobile
+} from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
 import { isGameOver } from '../core/logic.js';
@@ -10,7 +19,6 @@ import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
 
 const GameLoop = () => {
-
   const searchParams = new URLSearchParams(window.location.search);
   const debugGameLoop = searchParams.get('debugGameLoop');
 
@@ -19,22 +27,22 @@ const GameLoop = () => {
   let exports;
 
   // high-use local variables
-  let item, i, j, gameObjects = game.objects;
+  let item,
+    i,
+    j,
+    gameObjects = game.objects;
 
   const spliceArgs = [null, 1];
 
   function animate() {
-
     // loop through all objects, animate.
     if (game.data.started) {
       data.frameCount++;
     }
 
     if (net.active) {
-
       // process incoming network messages
       net.processRXQueue(data.frameCount);
-
     }
 
     // get mouse input for local player - delayed as applicable, in network case
@@ -47,61 +55,61 @@ const GameLoop = () => {
     // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.
 
     for (item in gameObjects) {
-
       if (gameObjects[item]) {
-
         // array of objects
 
         if (gameObjects[item].length) {
-
           for (i = gameObjects[item].length - 1; i >= 0; i--) {
-
             sprites.updateIsOnScreen(gameObjects[item][i]);
 
             if (game.objects.editor) {
               sprites.moveWithScrollOffset(gameObjects[item][i]);
               // special case: infantry + engineers need constant updates, otherwise they lose positioning during scrolling.
               // check for data.type, because this could include e.g., domFetti objects and such.
-              if (gameObjects[item][i]?.data?.type === TYPES.infantry && !gameObjects[item][i].data.movedOnce) gameObjects[item][i].moveTo();
+              if (
+                gameObjects[item][i]?.data?.type === TYPES.infantry &&
+                !gameObjects[item][i].data.movedOnce
+              )
+                gameObjects[item][i].moveTo();
 
               // don't animate certain things.
-              if (gameObjects[item][i]?.data?.type.match(/missile-launcher|tank|van|infantry|engineer|balloon|cloud/i)) continue;
+              if (
+                gameObjects[item][i]?.data?.type.match(
+                  /missile-launcher|tank|van|infantry|engineer|balloon|cloud/i
+                )
+              )
+                continue;
             }
 
-            if (gameObjects[item][i].animate && gameObjects[item][i].animate()) {
+            if (
+              gameObjects[item][i].animate &&
+              gameObjects[item][i].animate()
+            ) {
               // object is dead - take it out.
               common.unlinkObject(gameObjects[item][i]);
               spliceArgs[0] = i;
               Array.prototype.splice.apply(gameObjects[item], spliceArgs);
             }
-
           }
-
         } else {
-
           // single object case - radar, gameLoop etc.
 
           sprites.updateIsOnScreen(gameObjects[item]);
 
           if (gameObjects[item].animate) {
-
             if (game.objects.editor && gameObjects[item]?.data?.type) {
               sprites.moveWithScrollOffset(gameObjects[item]);
               continue;
             }
-            
+
             if (gameObjects[item].animate()) {
               // object is dead - take it out.
               common.unlinkObject(gameObjects[item]);
               gameObjects[item] = undefined;
             }
-
           }
-
         }
-
       }
-
     }
 
     // move static terrain items, too, given we're scrolling.
@@ -110,7 +118,6 @@ const GameLoop = () => {
     }
 
     if (isGameOver() && !data.gameStopped && data.battleOverFrameCount++ > 1) {
-
       data.gameStopped = true;
 
       // don't animate vans or helicopters, but allow everything else.
@@ -131,11 +138,9 @@ const GameLoop = () => {
 
     // update all setTimeout()-style FrameTimeout() instances.
     frameTimeoutManager.animate();
-
   }
 
   function animateRAF(ts) {
-
     if (!data.timer) return;
 
     if (!data.fpsTimer) data.fpsTimer = ts;
@@ -147,7 +152,7 @@ const GameLoop = () => {
      * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
      * https://www.html5rocks.com/en/tutorials/speed/rendering/
      */
-     window.requestAnimationFrame(animateRAF);
+    window.requestAnimationFrame(animateRAF);
 
     /**
      * frame-rate limiting: exit if it isn't approximately time to render the next frame.
@@ -155,7 +160,6 @@ const GameLoop = () => {
      * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
      */
     if (!unlimitedFrameRate && ts - data.lastExec <= FRAME_MIN_TIME) {
-      
       // the below applies only to the network case.
       if (!net.active) return;
 
@@ -163,16 +167,19 @@ const GameLoop = () => {
       const frameLagBetweenPeers = Math.ceil(net.halfTrip / FRAMERATE);
 
       // Frame / clock sync: Only "fast forward" if we're far behind the remote
-      if (game.players.local && data.frameCount < data.remoteFrameCount - frameLagBetweenPeers) {
-
+      if (
+        game.players.local &&
+        data.frameCount < data.remoteFrameCount - frameLagBetweenPeers
+      ) {
         let behind = data.remoteFrameCount - data.frameCount;
 
         if (behind >= FPS) {
-
           // if "far" behind, the window was minimized, tab backgrounded / rAF() loop was frozen, etc.
 
           // attempt to fast-forward through all the missing frames at once.
-          console.log(`🏃💨 FAST FORWARD: ${behind} frames behind. Engaging warp speed.`);
+          console.log(
+            `🏃💨 FAST FORWARD: ${behind} frames behind. Engaging warp speed.`
+          );
 
           // loop through all this, then final frame / update below.
           behind--;
@@ -192,69 +199,71 @@ const GameLoop = () => {
           game.dom.world.style.display = 'block';
 
           if (soundWasEnabled) gamePrefs.sound = true;
-
         } else {
-
           // catch-up: skip ahead one frame.
-          if (debugGameLoop) console.log(`🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount} - skipping one ahead`);
+          if (debugGameLoop)
+            console.log(
+              `🐌 gameLoop: behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount} - skipping one ahead`
+            );
           animate();
-          
         }
-        
       }
 
       return;
-
     }
 
     if (net.active) net.updateUI();
 
     if (gamePrefs.lock_step && net.active && game.data.started) {
-
       // Lock-step network play: don't do anything until we've received data from the remote.
       // Here be dragons. Probably. 🐉
       if (data.frameCount && !net.newPacketCount) {
-
-        if (debugGameLoop) console.log('gameLoop.animate(): waiting on packet...', data.frameCount, data.remoteFrameCount);
+        if (debugGameLoop)
+          console.log(
+            'gameLoop.animate(): waiting on packet...',
+            data.frameCount,
+            data.remoteFrameCount
+          );
 
         // don't flood the remote with packets, but poke them a bit. :D
-        if (!data.packetWaitCounter || data.packetWaitCounter % (FPS / 2) === 0) {
-
+        if (
+          !data.packetWaitCounter ||
+          data.packetWaitCounter % (FPS / 2) === 0
+        ) {
           if (data.packetWaitCounter > 30) {
             // only show the spinner if the wait is obvious.
             setWaiting(true);
           }
 
-          if (debugGameLoop) console.log('gameLoop.animate(): sending ping', data.packetWaitCounter);
+          if (debugGameLoop)
+            console.log(
+              'gameLoop.animate(): sending ping',
+              data.packetWaitCounter
+            );
 
           net.sendMessage({ type: 'PING' });
-
         }
 
         data.packetWaitCounter++;
 
         return;
-
       } else {
-
         if (data.packetWaitCounter) {
-
           setWaiting(false);
 
           // allow clients to update
           data.packetWaitCounter = 0;
-
         }
 
         net.newPacketCount = 0;
-
       }
-
     }
 
     // performance debugging: number of style changes (transform) for this frame.
     if (debug) {
-      console.log(`transform (style/recalc) count: ${data.transformCount} / ${data.excludeTransformCount} (incl./excl)`);
+      console.log(
+        `transform (style/recalc) count: ${data.transformCount} / ${data.excludeTransformCount} (incl./excl)`
+      );
       data.transformCount = 0;
       data.excludeTransformCount = 0;
     }
@@ -271,14 +280,19 @@ const GameLoop = () => {
     data.frames++;
 
     // skip a frame, if behind.
-    if (net.active && game.players.local && data.frameCount < data.remoteFrameCount) {
-      console.log(`🐌 gameLoop.animate(): behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`);
+    if (
+      net.active &&
+      game.players.local &&
+      data.frameCount < data.remoteFrameCount
+    ) {
+      console.log(
+        `🐌 gameLoop.animate(): behind on frames, ${data.frameCount} vs. ${data.remoteFrameCount}`
+      );
       animate();
     }
 
     // every interval, update framerate.
     if (!unlimitedFrameRate && ts - data.fpsTimer >= data.fpsTimerInterval) {
-
       if (!isMobile && dom.fpsCount && data.frames !== data.lastFrames) {
         dom.fpsCount.innerText = data.frames;
         data.lastFrames = data.frames;
@@ -287,56 +301,47 @@ const GameLoop = () => {
       if (net.active) {
         // network: how many frames ahead (or behind) we are vs. the remote, dictated by ping time / latency.
         // worth noting - the remote tries to match us, but latency means they may appear to be behind.
-        dom.networkInfo.innerText = `Δ ${data.frameCount - data.remoteFrameCount} | ${net.halfTrip.toFixed(1)} ms | `;
+        dom.networkInfo.innerText = `Δ ${
+          data.frameCount - data.remoteFrameCount
+        } | ${net.halfTrip.toFixed(1)} ms | `;
       }
 
       data.frames = 0;
 
       // update / restart 1-second timer
       data.fpsTimer = ts;
-
     }
-
   }
 
   function start() {
-
     if (data.timer) return;
 
     data.timer = true;
     animateRAF();
-
   }
 
   function stop() {
-
     if (!data.timer) return;
 
     data.timer = null;
     data.lastExec = 0;
-
   }
 
   function resetFPS() {
-
     // re-measure FPS timings.
     data.lastExec = 0;
     data.frames = 0;
-
   }
 
   function incrementTransformCount(isExclude) {
-
     if (isExclude) {
       data.excludeTransformCount++;
     } else {
       data.transformCount++;
     }
-
   }
 
   function setWaiting(isWaiting) {
-
     if (data.waiting === isWaiting) return;
 
     data.waiting = isWaiting;
@@ -348,13 +353,13 @@ const GameLoop = () => {
     // occasionally notify
     if (now - data.lastWaitNotified > 10000 && data.packetWaitCounter > 30) {
       data.lastWaitNotified = now;
-      game.objects.notifications.add(`Lock step: Waiting for ${gamePrefs.net_remote_player_name}...`);
+      game.objects.notifications.add(
+        `Lock step: Waiting for ${gamePrefs.net_remote_player_name}...`
+      );
     }
-
   }
 
   function initGameLoop() {
-
     dom.fpsCount = document.getElementById('fps-count');
     dom.lockStepIndicator = document.getElementById('lock-step-indicator');
     dom.networkInfo = document.getElementById('network-info');
@@ -362,7 +367,6 @@ const GameLoop = () => {
     start();
 
     gameEvents.start();
-
   }
 
   dom = {
@@ -400,15 +404,13 @@ const GameLoop = () => {
   };
 
   return exports;
-
 };
 
 /**
  * hooks into main game requestAnimationFrame() loop.
  * calls animate() methods on active FrameTimeout() instances.
  */
- const frameTimeoutManager = (() => {
-
+const frameTimeoutManager = (() => {
   let exports;
   const instances = [];
   const spliceArgs = [null, 1];
@@ -418,7 +420,6 @@ const GameLoop = () => {
   }
 
   function animate() {
-
     if (!instances?.length) return;
 
     const completed = [];
@@ -441,7 +442,6 @@ const GameLoop = () => {
     if (debugCollision) {
       common.animateDebugRects();
     }
-    
   }
 
   exports = {
@@ -450,10 +450,6 @@ const GameLoop = () => {
   };
 
   return exports;
-
 })();
 
-export {
-  GameLoop,
-  frameTimeoutManager
-};
+export { GameLoop, frameTimeoutManager };

@@ -2,7 +2,12 @@ import { COSTS, oneOf, TYPES } from './global.js';
 import { game } from './Game.js';
 import { common } from '../core/common.js';
 import { isGameOver } from '../core/logic.js';
-import { addSequence, playSound, playSoundWithDelay, sounds } from '../core/sound.js';
+import {
+  addSequence,
+  playSound,
+  playSoundWithDelay,
+  sounds
+} from '../core/sound.js';
 import { playSequence } from './sound-bnb.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
 
@@ -29,7 +34,6 @@ function playDelayedSound(sound, options, delay) {
 }
 
 function GameEvents() {
-
   let data, exports;
 
   const events = {};
@@ -37,7 +41,6 @@ function GameEvents() {
 
   // given an event, call its given method.
   function fireEvent(name, method = 'fire', ...args) {
-
     // console.warn(`No ${name} event registered (yet?)`);
     if (!events[name]) return;
 
@@ -47,7 +50,6 @@ function GameEvents() {
     } else {
       throw new Error(`WTF no method ${method} for event ${name}?`);
     }
-
   }
 
   // short-hand for the inner 'fire' method
@@ -56,38 +58,29 @@ function GameEvents() {
   }
 
   function addEvent(name, options) {
-
     const state = {
       completed: false,
       name
     };
 
     events[name] = {
-
       getState: () => state,
 
       init: () => {
-
         if (options.onInit) options.onInit(state);
-
       },
 
       reset: () => {
-
         state.completed = false;
         if (options.onReset) options.onReset(state);
-
       },
 
       complete: () => {
-
         state.completed = true;
         if (options.onComplete) options.onComplete(state);
-
       },
 
       animate: () => {
-
         if (state.completed) return;
 
         // once this goes truthy, this item is considered "complete."
@@ -98,38 +91,28 @@ function GameEvents() {
         if (!state.completed && didComplete) {
           fireEvent(state.name, 'complete');
         }
-
       },
 
       fire: (state, property, value) => {
-
         if (property) state[property] = value;
 
         if (options.onFire) options.onFire(state);
-
       },
 
       ...options
-
     };
 
     eventNames = Object.keys(events);
 
     fireEvent(name, 'init');
-
   }
 
   function init() {
-
     addEvent(EVENTS.enemyDied, {
-
       onFire: () => {
-        
         // you took out the enemy helicopter.
         playSoundWithDelay(sounds.bnb.helicopterDiedReactions, 1000);
-
       }
-
     });
 
     //
@@ -137,23 +120,17 @@ function GameEvents() {
     //
 
     addEvent(EVENTS.youDied, {
-
       onInit: (state) => {
-
         state.dieCount = 0;
         state.delay = 1000;
         state.dieTimer = Date.now();
-
       },
 
       reset: (state) => {
-
         fireEvent(state.name, 'onInit');
-
       },
 
       onFire: (state) => {
-
         state.dieCount++;
 
         // hackish: increase global stat, too.
@@ -175,44 +152,63 @@ function GameEvents() {
             if (state.dieCount >= 3) {
               fireEvent(EVENTS.switchPlayers);
               state.dieCount = 0;
-            } else if (state.dieCount && state.dieTimer > DIE_MONOLOGUE_MINUTES * 60000) {
+            } else if (
+              state.dieCount &&
+              state.dieTimer > DIE_MONOLOGUE_MINUTES * 60000
+            ) {
               // player lived long enough, add some more commentary.
-              playSound(sounds.bnb[game.data.isBeavis ? 'beavisMonologues' : 'buttheadMonologues'], null);
+              playSound(
+                sounds.bnb[
+                  game.data.isBeavis ? 'beavisMonologues' : 'buttheadMonologues'
+                ],
+                null
+              );
             }
           }
         };
 
         // play a quick reaction, immediately.
         const reaction = [
-          ...sounds.bnb[game.data.isBeavis ? 'beavisScreamShort' : 'buttheadScreamShort']
+          ...sounds.bnb[
+            game.data.isBeavis ? 'beavisScreamShort' : 'buttheadScreamShort'
+          ]
         ];
         reaction.playImmediately = true;
 
         playSound(reaction, null);
 
         // "you died" - bring the commentary.
-        playDelayedSound(sounds.bnb[game.data.isBeavis ? 'beavisLostHelicopter' : 'buttheadLostHelicopter'], options, state.delay);
-
+        playDelayedSound(
+          sounds.bnb[
+            game.data.isBeavis
+              ? 'beavisLostHelicopter'
+              : 'buttheadLostHelicopter'
+          ],
+          options,
+          state.delay
+        );
       }
-
     });
 
     addEvent(EVENTS.switchPlayers, {
-
       onInit: (state) => {
-
-        const isBeavis = (window.location.href.match(/beavis/i) || (Math.random() >= 0.5 && !window.location.href.match(/butthead/i)));
+        const isBeavis =
+          window.location.href.match(/beavis/i) ||
+          (Math.random() >= 0.5 && !window.location.href.match(/butthead/i));
         const isButthead = !isBeavis;
 
         // roll the dice, determine who's playing.
         fireEvent(state.name, 'updatePlayers', isBeavis, isButthead);
-
       },
 
       updatePlayers(state, beavis, butthead) {
-
         // beavis -> butthead (and not first player case): *sometimes*, add an extra complaint.
-        if (gamePrefs.bnb && state.isBeavis && butthead && Math.random() >= 0.5) {
+        if (
+          gamePrefs.bnb &&
+          state.isBeavis &&
+          butthead &&
+          Math.random() >= 0.5
+        ) {
           playDelayedSound(sounds.bnb.thoughtWeWereGonnaScore);
         }
 
@@ -222,25 +218,17 @@ function GameEvents() {
         // hackish: same for game global.
         game.data.isBeavis = state.isBeavis;
         game.data.isButthead = state.isButthead;
-
       },
 
       announcePlayer: (state) => {
-
         if (gamePrefs.bnb) {
-
           if (state.isBeavis) {
-
             game.objects.notifications.add(`NOW PLAYING: BEAVIS 🤘`);
             playDelayedSound(sounds.bnb.beavisTurn);
-
           } else {
-
             game.objects.notifications.add(`NOW PLAYING: BUTT-HEAD 🤘`);
             playDelayedSound(sounds.bnb.buttheadTurn);
-
           }
-
         }
 
         const nowPlaying = document.getElementById('bnb-now-playing');
@@ -251,40 +239,48 @@ function GameEvents() {
           nowPlaying.className = nextClass;
         } else {
           nowPlaying.className = '';
-          common.setFrameTimeout(() => nowPlaying.className = nextClass, 500);
+          common.setFrameTimeout(() => (nowPlaying.className = nextClass), 500);
         }
 
         // reset the auto-timer, finally
         fireEvent(EVENTS.autoSwitchPlayers, 'start');
-
       },
 
       onFire: (state, withMonologue = false) => {
-
         // play sounds, then switch.
         if (isGameOver()) return;
 
         if (gamePrefs.bnb) {
-
           const andAnnounce = {
             onfinish: () => {
               fireEvent(state.name, 'announcePlayer');
               if (withMonologue) {
-                playSound(sounds.bnb[game.data.isBeavis ? 'beavisMonologues' : 'buttheadMonologues'], null);
+                playSound(
+                  sounds.bnb[
+                    game.data.isBeavis
+                      ? 'beavisMonologues'
+                      : 'buttheadMonologues'
+                  ],
+                  null
+                );
               }
             }
           };
 
           if (state.isBeavis) {
-
             // -> butthead
-            playDelayedSound(oneOf([sounds.bnb.buttheadWatchTheMaster, sounds.bnb.takeSoLong, sounds.bnb.buttheadOKGetReadyDude]), andAnnounce);
+            playDelayedSound(
+              oneOf([
+                sounds.bnb.buttheadWatchTheMaster,
+                sounds.bnb.takeSoLong,
+                sounds.bnb.buttheadOKGetReadyDude
+              ]),
+              andAnnounce
+            );
 
             // preload
             common.preloadVideo('igotyoubabe');
-
           } else {
-
             // -> beavis
             const rnd = Math.random();
 
@@ -300,144 +296,150 @@ function GameEvents() {
               playDelayedSound(sounds.bnb.buttheadDammitBeavisIWasAboutToScore);
               playDelayedSound(sounds.bnb.beavisNoWayItsMyTurn, andAnnounce);
             }
-
           }
-
         }
 
         // flip state
-        fireEvent(state.name, 'updatePlayers', !state.isBeavis, !state.isButthead);
-
+        fireEvent(
+          state.name,
+          'updatePlayers',
+          !state.isBeavis,
+          !state.isButthead
+        );
       }
-
     });
 
     addEvent(EVENTS.autoSwitchPlayers, {
-
       onInit: (state) => {
-
         // every N minutes, BnB take turns at the controls (if you haven't died.)
         state.switchInterval = 1000 * 60 * AUTO_SWITCH_MINUTES;
 
         state.timer = null;
-       
       },
 
       fire: () => {
-
         // player has lived enough without dying, switch virtual players
         const withMonologue = true;
         fire(EVENTS.switchPlayers, withMonologue);
-      
+
         // reset the "3 lives = switch" counter
         fireEvent(EVENTS.youDied, 'reset');
-
       },
 
       reset: (state) => {
-
         state?.timer?.reset();
         state.timer = null;
-
       },
 
       start: (state) => {
-
         fireEvent(state.name, 'reset');
 
-        state.timer = common.setFrameTimeout(() => fireEvent(state.name), state.switchInterval);
-
-      },
-
+        state.timer = common.setFrameTimeout(
+          () => fireEvent(state.name),
+          state.switchInterval
+        );
+      }
     });
 
     addEvent(EVENTS.boring, {
-
       onInit: (state) => {
-
         state.BORING_THRESHOLD = 3;
         state.BORING_INTERVAL = 30000;
 
         fireEvent(state.name, 'reset');
-        
       },
 
       checkForBoredom: (state) => {
-
         // complain if it's been relatively quiet.
-        if (game.data.started && !game.data.paused && state.bnbCommentaryCounter < state.BORING_THRESHOLD && !isGameOver()) {
-
+        if (
+          game.data.started &&
+          !game.data.paused &&
+          state.bnbCommentaryCounter < state.BORING_THRESHOLD &&
+          !isGameOver()
+        ) {
           // space out these events in editor mode, over time.
           if (game.objects.editor) {
             state.BORING_INTERVAL *= 2;
           }
 
           playSound(sounds.bnb[state.name]);
-
         }
-        
+
         fireEvent(state.name, 'reset');
-        
       },
 
       onFire: (state) => {
-
         state.bnbCommentaryCounter++;
-
       },
 
       reset: (state) => {
-
         state.bnbCommentaryCounter = 0;
 
-        common.setFrameTimeout(() => fireEvent(state.name, 'checkForBoredom'), state.BORING_INTERVAL);
-       
+        common.setFrameTimeout(
+          () => fireEvent(state.name, 'checkForBoredom'),
+          state.BORING_INTERVAL
+        );
       }
-
     });
 
     addEvent(EVENTS.vanApproaching, {
-
       // a van is nearing a base. notify, with throttling.
 
       animate: () => {},
 
       onInit: (state) => {
-
         state.lastNotifyYours = 0;
         state.lastNotifyTheirs = 0;
         state.notifyThrottle = 30000;
-
       },
 
       onFire: (state) => {
-
         const now = Date.now();
 
-        if (state.isEnemy && (now - state.lastNotifyYours) >= state.notifyThrottle) {
-
+        if (
+          state.isEnemy &&
+          now - state.lastNotifyYours >= state.notifyThrottle
+        ) {
           state.lastNotifyYours = now;
-          game.objects.notifications.add('🚚 An enemy van is approaching your base 😨🤏💥');
+          game.objects.notifications.add(
+            '🚚 An enemy van is approaching your base 😨🤏💥'
+          );
           if (prefs.bnb && sounds.bnb.uhOh) {
-            playSequence(addSequence(sounds.bnb.uhOh, () => sounds.bnb[game.data.isBeavis ? 'beavisBeerAndScore' : 'hurryUpButthead']));
+            playSequence(
+              addSequence(
+                sounds.bnb.uhOh,
+                () =>
+                  sounds.bnb[
+                    game.data.isBeavis
+                      ? 'beavisBeerAndScore'
+                      : 'hurryUpButthead'
+                  ]
+              )
+            );
           }
-
-        } else if (!state.isEnemy && (now - state.lastNotifyTheirs) >= state.notifyThrottle) {
-
+        } else if (
+          !state.isEnemy &&
+          now - state.lastNotifyTheirs >= state.notifyThrottle
+        ) {
           state.lastNotifyTheirs = Date.now();
-          game.objects.notifications.add('🚚 Your van is approaching the enemy base 🤏💥');
+          game.objects.notifications.add(
+            '🚚 Your van is approaching the enemy base 🤏💥'
+          );
           if (prefs.bnb && sounds.bnb.almostThere) {
-            playSequence(addSequence(sounds.bnb.almostThere, sounds.bnb[game.data.isBeavis ? 'beavisReallyGonnaScore' : 'gonnaScore']));
+            playSequence(
+              addSequence(
+                sounds.bnb.almostThere,
+                sounds.bnb[
+                  game.data.isBeavis ? 'beavisReallyGonnaScore' : 'gonnaScore'
+                ]
+              )
+            );
           }
-
         }
-
       }
-
     });
 
     addEvent(EVENTS.youKilledSomething, {
-
       // compliment the player if they effectively hit an equivalent of “GOURANGA!”
       // e.g., 25 credits' worth of inventory within a given time period.
       // https://youtu.be/FEWbI9G8r10
@@ -445,7 +447,6 @@ function GameEvents() {
       animate: () => {},
 
       onInit: (state) => {
-
         // hackish: the type of the thing most recently taken out
         state.type = null;
 
@@ -454,11 +455,9 @@ function GameEvents() {
         state.interval = 10000;
 
         fireEvent(state.name, 'reset');
-
       },
 
       reset: (state) => {
-
         state.killCredits = 0;
         state.ts = 0;
 
@@ -466,17 +465,15 @@ function GameEvents() {
           state.timer.reset();
           state.timer = null;
         }
-        
       },
 
       onFire: (state) => {
-
         const item = COSTS[state.type];
 
         // bunkers, etc., don't have a cost.
         if (!item?.funds) return;
 
-        state.killCredits += ((item.funds / item.count) || 1);
+        state.killCredits += item.funds / item.count || 1;
 
         const now = Date.now();
 
@@ -484,7 +481,7 @@ function GameEvents() {
         if (!state.ts) state.ts = now;
 
         const hasGouranga = state.killCredits >= state.killCreditsGouranga;
-        const hasTime = (now - state.ts) < state.interval;
+        const hasTime = now - state.ts < state.interval;
 
         // window has closed; reset state, and repeat.
         if (!hasTime) {
@@ -493,7 +490,6 @@ function GameEvents() {
         }
 
         if (hasGouranga && hasTime) {
-
           // GOURANGA!
           if (state.timer) state.timer.reset();
 
@@ -501,15 +497,18 @@ function GameEvents() {
 
           // only queue this once.
           if (!state.timer) {
-            game.objects.notifications.add('💥 GOURANGA! 💥', { noRepeat: true });
+            game.objects.notifications.add('💥 GOURANGA! 💥', {
+              noRepeat: true
+            });
           }
 
           state.timer = common.setFrameTimeout(() => {
-
             const { bnb } = sounds;
-            
-            const commentary = game.data.isBeavis ? bnb.beavisGouranga : bnb.buttheadGouranga;
-          
+
+            const commentary = game.data.isBeavis
+              ? bnb.beavisGouranga
+              : bnb.buttheadGouranga;
+
             const target = null;
 
             const helicopterCheck = () => !game.players.local.data.dead;
@@ -518,37 +517,26 @@ function GameEvents() {
               playNextCondition: helicopterCheck,
               onplay: helicopterCheck,
               onfinish: () => fireEvent(state.name, 'reset')
-            })
-
+            });
           }, 2000);
-
         }
-
       }
-
     });
 
     addEvent(EVENTS.helicopterCollision, {
-
       onFire: (state) => playSoundWithDelay(sounds.bnb[state.name])
-
     });
-
   }
 
   // called at an interval
   function animate() {
-
     eventNames.forEach((name) => events[name].animate());
     common.setFrameTimeout(animate, 500);
-
   }
 
   function start() {
-
     init();
     animate();
-
   }
 
   data = {
@@ -566,7 +554,6 @@ function GameEvents() {
   };
 
   return exports;
-
 }
 
 const gameEvents = GameEvents();

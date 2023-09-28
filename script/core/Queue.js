@@ -1,7 +1,6 @@
 import { FPS, debug } from '../core/global.js';
 
 const Queue = () => {
-
   let data, exports;
 
   data = {
@@ -13,9 +12,10 @@ const Queue = () => {
   };
 
   function process() {
-
     if (debug) {
-      console.log(`processing queue of ${data.queue.length} items at frameCount = ${data.frameCount}`);
+      console.log(
+        `processing queue of ${data.queue.length} items at frameCount = ${data.frameCount}`
+      );
     }
 
     // process all items in queue
@@ -28,14 +28,12 @@ const Queue = () => {
     // reset the queue + counter
     data.queue = [];
     data.frameCount = 0;
-
   }
 
   function processNextFrame() {
-
     // process all items in queue
     let i, queueLength;
-    
+
     queueLength = data.nextFrameQueue.length;
 
     if (!queueLength) return;
@@ -45,11 +43,9 @@ const Queue = () => {
     }
 
     data.nextFrameQueue = [];
-
   }
 
   function add(callback) {
-
     // reset frameCount on add?
     data.frameCount = 0;
     data.queue.push(callback);
@@ -58,17 +54,13 @@ const Queue = () => {
       // flush the queue
       process();
     }
-
   }
 
   function addNextFrame(callback) {
-
     data.nextFrameQueue.push(callback);
-
   }
 
   function animate() {
-
     data.frameCount++;
 
     processNextFrame();
@@ -76,7 +68,6 @@ const Queue = () => {
     if (data.frameCount % data.processInterval === 0) {
       process();
     }
-
   }
 
   exports = {
@@ -87,7 +78,6 @@ const Queue = () => {
   };
 
   return exports;
-
 };
 
 export { Queue };

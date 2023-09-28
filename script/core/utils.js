@@ -2,11 +2,8 @@ const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
 
 const utils = {
-
   array: {
-
     compareByLastItem: () => {
-
       let result;
 
       return (a, b) => {
@@ -20,11 +17,9 @@ const utils = {
         }
         return result;
       };
-
     },
 
     compare: (property) => {
-
       let result;
 
       return (a, b) => {
@@ -37,11 +32,9 @@ const utils = {
         }
         return result;
       };
-
     },
 
     shuffle: (array) => {
-
       // Fisher-Yates shuffle algo
 
       // guard / avoid redundant work
@@ -60,22 +53,19 @@ const utils = {
       if (array.length === 2) array.excludeShuffle = true;
 
       return array;
-
     }
-
   },
 
   css: {
-
     has: (o, cStr) => {
-
       // modern
       if (o?.classList) {
         return o.classList.contains(cStr);
       }
       // legacy
-      return o.className !== undefined ? new RegExp(`(^|\\s)${cStr}(\\s|$)`).test(o.className) : false;
-
+      return o.className !== undefined
+        ? new RegExp(`(^|\\s)${cStr}(\\s|$)`).test(o.className)
+        : false;
     },
 
     add: (o, ...toAdd) => o?.classList?.add(...toAdd),
@@ -83,32 +73,27 @@ const utils = {
     remove: (o, ...toRemove) => o?.classList?.remove(...toRemove),
 
     addOrRemove: (o, conditionToAdd, ...classNames) => {
-        utils.css[conditionToAdd ? 'add' : 'remove'](o, ...classNames);
+      utils.css[conditionToAdd ? 'add' : 'remove'](o, ...classNames);
     },
 
     swap: (o, c1, c2) => {
-
       o?.classList?.remove(c1);
       o?.classList?.add(c2);
-
     }
-
   },
 
   events: {
+    add: (o, evtName, evtHandler) =>
+      o?.addEventListener(evtName, evtHandler, false),
 
-    add: (o, evtName, evtHandler) => o?.addEventListener(evtName, evtHandler, false),
+    remove: (o, evtName, evtHandler) =>
+      o?.removeEventListener(evtName, evtHandler, false),
 
-    remove: (o, evtName, evtHandler) => o?.removeEventListener(evtName, evtHandler, false),
-
-    preventDefault: e => e?.preventDefault()
-
+    preventDefault: (e) => e?.preventDefault()
   },
 
   image: {
-
     loadImage: (url, callback) => {
-
       if (preloadedImageURLs[url]) return callback();
 
       let img = new Image();
@@ -118,15 +103,13 @@ const utils = {
         img.onload = null;
         img = null;
         callback();
-      }
+      };
 
       // note: prefixed path.
       img.src = `image/${url}`;
-
     },
 
     preload: (urls, callback) => {
-
       let loaded = 0;
 
       function didLoad() {
@@ -137,14 +120,13 @@ const utils = {
       urls.forEach((url) => {
         utils.image.loadImage(url, didLoad);
       });
-
     }
-    
   },
 
   storage: (() => {
-
-    let data = {}, localStorage, unavailable;
+    let data = {},
+      localStorage,
+      unavailable;
 
     // try ... catch because even referencing localStorage can cause a security exception.
     // this handles cases like incognito windows, privacy stuff, and "cookies disabled" in Firefox.
@@ -152,12 +134,13 @@ const utils = {
     try {
       localStorage = window.localStorage || null;
     } catch (e) {
-      console.info('localStorage not available, likely "cookies blocked." Game options will not be saved.');
+      console.info(
+        'localStorage not available, likely "cookies blocked." Game options will not be saved.'
+      );
       localStorage = null;
     }
 
     function get(name) {
-
       if (!localStorage) return undefined;
 
       try {
@@ -167,11 +150,9 @@ const utils = {
       }
 
       return data[name];
-
     }
 
     function set(name, value) {
-
       data[name] = value;
 
       if (!localStorage) return undefined;
@@ -184,11 +165,9 @@ const utils = {
       }
 
       return true;
-
     }
 
     function remove(name) {
-
       data[name] = null;
 
       if (localStorage) {
@@ -198,26 +177,23 @@ const utils = {
           // oh well
         }
       }
-
     }
 
     // sanity check: try to read a value.
     try {
-
       let version = get(LS_VERSION_KEY) || '(none)';
 
       if (version != LS_VERSION) {
-        console.log(`localStorage version ${version} != ${LS_VERSION}; clearing LS and resetting.`);
+        console.log(
+          `localStorage version ${version} != ${LS_VERSION}; clearing LS and resetting.`
+        );
         localStorage.clear();
         set(LS_VERSION_KEY, LS_VERSION);
       }
-      
     } catch (e) {
-
       console.log('localStorage read test failed. Disabling.');
       localStorage = null;
       unavailable = true;
-
     }
 
     return {
@@ -226,10 +202,8 @@ const utils = {
       set,
       unavailable
     };
-
   })()
-
-}
+};
 
 const preloadedImageURLs = {};
 

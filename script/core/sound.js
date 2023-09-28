@@ -1,8 +1,19 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
-import { rndInt, soundManager, TYPES, worldWidth, DEFAULT_VOLUME } from './global.js';
+import {
+  rndInt,
+  soundManager,
+  TYPES,
+  worldWidth,
+  DEFAULT_VOLUME
+} from './global.js';
 import { common } from './common.js';
-import { initBNBSound, playQueuedBNBSounds, playSequence, queueBNBSound } from './sound-bnb.js';
+import {
+  initBNBSound,
+  playQueuedBNBSounds,
+  playSequence,
+  queueBNBSound
+} from './sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 let soundIDs = 0;
@@ -15,7 +26,6 @@ const lastPlayedByURL = {};
 const { shuffle } = utils.array;
 
 function getSound(soundReference) {
-
   // TODO: review, see if an early exit is still useful.
   if (!gamePrefs.sound) return;
 
@@ -30,7 +40,6 @@ function getSound(soundReference) {
 
   // multiple sound case
   if (soundReference.length) {
-
     // tack on a counter for multiple sounds
     if (soundReference.soundOffset === undefined) {
       soundReference.soundOffset = 0;
@@ -65,7 +74,6 @@ function getSound(soundReference) {
     soundReference.soundOffset++;
 
     if (soundReference.soundOffset >= soundReference.length) {
-
       // re-shuffle the array, randomize a little
       if (!soundReference.excludeshuffle && soundReference.length > 2) {
         soundReference = shuffle(soundReference);
@@ -74,17 +82,11 @@ function getSound(soundReference) {
       soundReference.soundOffset = 0;
 
       soundReference.lastItem = true;
-
     } else {
-
       soundReference.lastItem = false;
-      
     }
-
   } else {
-
     soundObject = soundReference;
-
   }
 
   // TODO: this could probably be eliminated by recursion.
@@ -105,14 +107,18 @@ function getSound(soundReference) {
   if (soundObject.length) return getSound(soundObject);
 
   // if BnB sound but feature disabled, ignore.
-  if (!gamePrefs.bnb && soundObject?.options?.url && soundObject.options.url.indexOf('bnb') !== -1) return;
+  if (
+    !gamePrefs.bnb &&
+    soundObject?.options?.url &&
+    soundObject.options.url.indexOf('bnb') !== -1
+  )
+    return;
 
   /**
    * hackish: create and destroy SMSound instances once they finish playing,
    * unless they have an `onfinish()` provided.
    */
   if (soundObject && !soundObject.sound) {
-
     // make it happen! if not needed, throw away when finished.
     soundObject.options.id = `s${soundIDs}_${soundObject.options.url}`;
     soundIDs++;
@@ -120,7 +126,6 @@ function getSound(soundReference) {
     let _onfinish;
 
     soundObject.onAASoundEnd = (sound) => {
-
       // to avoid recursion, one must avoid recursion.
       // TODO: this is an absolute mess and needs a re-think.
       soundObject.onAASoundEnd = () => null;
@@ -138,8 +143,7 @@ function getSound(soundReference) {
         soundObject.sound.destruct();
         soundObject.sound = null;
       }
-
-    }
+    };
 
     if (soundObject.options.onfinish) {
       // local copy, before overwriting
@@ -156,15 +160,12 @@ function getSound(soundReference) {
 
     // hackish: tack on one more reference, on the sound object itself
     soundObject.sound.options.onAASoundEnd = soundObject.onAASoundEnd;
-
   }
 
   return soundObject;
-
 }
 
 function playQueuedSounds() {
-
   var now = Date.now();
 
   // DRY: soundObject
@@ -172,7 +173,6 @@ function playQueuedSounds() {
 
   // empty queue
   for (let i = 0, j = soundsToPlay.length; i < j; i++) {
-
     // guard
     if (!soundsToPlay[i]?.soundObject?.sound) continue;
 
@@ -180,20 +180,18 @@ function playQueuedSounds() {
     sO = soundsToPlay[i].soundObject;
 
     // was throttling specified?
-    if (sO.skip || (
-      !sO.excludeThrottling
-      && sO.lastPlayed
-      && sO.throttle
-      && now - (lastPlayedByURL[sO.options.url] || 0) < sO.options.throttle)
+    if (
+      sO.skip ||
+      (!sO.excludeThrottling &&
+        sO.lastPlayed &&
+        sO.throttle &&
+        now - (lastPlayedByURL[sO.options.url] || 0) < sO.options.throttle)
     ) {
-
       // special case: fire onfinish() immediately, if specified.
       if (soundsToPlay[i]?.localOptions?.onfinish) {
         soundsToPlay[i].localOptions.onfinish(soundsToPlay[i]);
       }
-
     } else {
-
       // catch all sounds sharing the same URL
       lastPlayedByURL[sO.options.url] = now;
 
@@ -201,9 +199,7 @@ function playQueuedSounds() {
 
       // play() may result in a new SM2 object being created, given cloning for the `multiShot` case.
       sO.sound.play(soundsToPlay[i].localOptions);
-
     }
-
   }
 
   // reset, vs. creating a new array object
@@ -212,11 +208,9 @@ function playQueuedSounds() {
   }
 
   playQueuedBNBSounds();
-
 }
 
 function getVolumeFromDistance(source, player, worldWidthScale = 1) {
-
   // based on two objects' distance from each other, return volume -
   // e.g., things far away are quiet, things close-up are loud.
   // `worldWidthScale` e.g., 0.5 = half the world distance.
@@ -228,16 +222,14 @@ function getVolumeFromDistance(source, player, worldWidthScale = 1) {
   const delta = Math.min(Math.abs(source.data.x - player.data.x), scaledWorld);
 
   // volume range: 5-90%?
-  return (0.05 + (0.85 * ((scaledWorld - delta) / scaledWorld)));
-
+  return 0.05 + 0.85 * ((scaledWorld - delta) / scaledWorld);
 }
 
 function getPanFromLocation(source, player) {
-
   // rough panning based on distance from player, relative to world width
   if (!source || !player) return 0;
 
-  let delta; 
+  let delta;
   let pan = 0;
 
   // don't allow 100% L/R pan, exactly
@@ -253,11 +245,9 @@ function getPanFromLocation(source, player) {
   }
 
   return pan;
-
 }
 
 function playSound(soundReference, target, soundOptions) {
-
   if (!soundReference) {
     // this is bad.
     console.warn('playSound: WTF no soundReference??', soundReference);
@@ -294,23 +284,22 @@ function playSound(soundReference, target, soundOptions) {
   if (!soundObject.sound) return;
 
   // default: 100% volume if no target, OR, local player and on-screen.
-  onScreen = !target || (target === game.players.local && target.data.isOnScreen);
-  
+  onScreen =
+    !target || (target === game.players.local && target.data.isOnScreen);
+
   // new: calculate volume as range based on distance
   if (onScreen) {
-
     localOptions = {
       ...soundObject.soundOptions.onScreen
     };
-
   } else {
-
     // determine volume based on distance
     localOptions = {
-      volume: (soundObject.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(target, game.players.local),
+      volume:
+        (soundObject.soundOptions.onScreen.volume || 100) *
+        getVolumeFromDistance(target, game.players.local),
       pan: getPanFromLocation(target, game.players.local)
     };
-
   }
 
   if (soundOptions) {
@@ -319,7 +308,8 @@ function playSound(soundReference, target, soundOptions) {
 
   // playback speed based on object's `playbackRate`, OR, ±5% on playback speed, for variety
   if (!soundObject?.options?.fixedPlaybackRate) {
-    localOptions.playbackRate = target?.data.playbackRate || (0.95 + (Math.random() * 0.1));
+    localOptions.playbackRate =
+      target?.data.playbackRate || 0.95 + Math.random() * 0.1;
   }
 
   // HACK: need to fix and normalize sound options.
@@ -336,7 +326,8 @@ function playSound(soundReference, target, soundOptions) {
   } else {
     // if not specified, make this the default.
     // worth noting, this is very hackish and should be put into a standardized method.
-    localOptions.volume = adjustedPrefsVolume === 0.01 ? 0.01 : adjustedPrefsVolume * 10;
+    localOptions.volume =
+      adjustedPrefsVolume === 0.01 ? 0.01 : adjustedPrefsVolume * 10;
   }
 
   // 01/2021: push sound calls off to next frame to be played in a batch,
@@ -346,26 +337,29 @@ function playSound(soundReference, target, soundOptions) {
   // hackish: certain BnB sounds may be queued to play one-at-a-time, so "commentary" doesn't overlap.
   // queue regularly if `playImmediately` is set - on an array, or an individual sound.
 
-  if (soundObject.sound.url.match(/bnb/i) && !soundReference.regularQueueAlways && (onScreen || !soundReference.regularQueueIfOffscreen)) {
-
+  if (
+    soundObject.sound.url.match(/bnb/i) &&
+    !soundReference.regularQueueAlways &&
+    (onScreen || !soundReference.regularQueueIfOffscreen)
+  ) {
     // hackish: bail if feature-disabled
     if (!gamePrefs.bnb) return;
-    
+
     // allow immediate per reference, unless individual sound says no.
-    const immediate = soundObject.playImmediately || (soundObject.playImmediately !== false && soundReference.playImmediately);
+    const immediate =
+      soundObject.playImmediately ||
+      (soundObject.playImmediately !== false && soundReference.playImmediately);
 
     if (!immediate) {
-
       // we're in no rush; push on the BnB queue, and exit
       queueBNBSound({
         soundObject,
         localOptions,
         queued: Date.now(),
-        throttle: soundReference.throttle      
+        throttle: soundReference.throttle
       });
 
       return soundObject.sound;
-
     }
 
     // ensure we keep processing sounds.
@@ -379,7 +373,6 @@ function playSound(soundReference, target, soundOptions) {
         }, 32);
       }
     }
-
   }
 
   // regular queue case
@@ -392,11 +385,9 @@ function playSound(soundReference, target, soundOptions) {
   });
 
   return soundObject.sound;
-
 }
 
 function playSoundWithDelay(...params) {
-
   let args, delay;
 
   args = [...params];
@@ -412,11 +403,9 @@ function playSoundWithDelay(...params) {
 
   // return the timer, so it can be canceled
   return common.setFrameTimeout(() => playSound(...args), delay);
-
 }
 
 function stopSound(sound) {
-
   if (!sound) return;
 
   const soundObject = getSound(sound);
@@ -429,11 +418,9 @@ function stopSound(sound) {
   destroySound(soundObject);
 
   soundObject.sound = null;
-
 }
 
 function destroySound(sound) {
-
   if (!sound) return;
 
   // AA sound object case
@@ -446,11 +433,9 @@ function destroySound(sound) {
     sound.parentSoundObject = null;
     soundManager.destroySound(sound.id);
   }
-
 }
 
 function skipSound(sound) {
-
   // hackish: silence and cause a sound to naturally end,
   // firing its `onfinish()` method etc.
   if (!sound) return;
@@ -465,11 +450,9 @@ function skipSound(sound) {
     sound.mute();
     sound.setPosition(sound.duration - 1);
   }
-
 }
 
 function playRepairingWrench(isRepairing, exports) {
-
   const args = arguments;
 
   if (!isRepairing()) return;
@@ -482,11 +465,11 @@ function playRepairingWrench(isRepairing, exports) {
   let repairingWrench;
 
   playSound(sounds.repairingWrench, exports, {
-    onplay: (sound) => repairingWrench = sound,
+    onplay: (sound) => (repairingWrench = sound),
     onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(repairingWrench);
-      exports.repairingWrenchTimer = common.setFrameTimeout(function() {
+      exports.repairingWrenchTimer = common.setFrameTimeout(function () {
         exports.repairingWrenchTimer = null;
         if (isRepairing()) {
           playRepairingWrench.apply(this, args);
@@ -494,11 +477,9 @@ function playRepairingWrench(isRepairing, exports) {
       }, 1000 + rndInt(2000));
     }
   });
-
 }
 
 function playImpactWrench(isRepairing, exports) {
-
   const args = arguments;
 
   if (!isRepairing()) return;
@@ -512,11 +493,11 @@ function playImpactWrench(isRepairing, exports) {
   let impactWrench;
 
   playSound(sounds.impactWrench, exports, {
-    onplay: (sound) => impactWrench = sound,
+    onplay: (sound) => (impactWrench = sound),
     onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(impactWrench);
-      exports.impactWrenchTimer = common.setFrameTimeout(function() {
+      exports.impactWrenchTimer = common.setFrameTimeout(function () {
         exports.impactWrenchTimer = null;
         if (isRepairing()) {
           playImpactWrench.apply(this, args);
@@ -524,11 +505,9 @@ function playImpactWrench(isRepairing, exports) {
       }, 500 + rndInt(2000));
     }
   });
-
 }
 
 function playTinkerWrench(isRepairing, exports) {
-
   const args = arguments;
 
   // slightly hackish: dynamic property on exports.
@@ -540,7 +519,7 @@ function playTinkerWrench(isRepairing, exports) {
   let tinkerWrench;
 
   playSound(sounds.tinkerWrench, exports, {
-    onplay: (sound) => tinkerWrench = sound,
+    onplay: (sound) => (tinkerWrench = sound),
     onstop: (sound) => destroySound(sound),
     position: rndInt(8000),
     onfinish() {
@@ -551,7 +530,6 @@ function playTinkerWrench(isRepairing, exports) {
       }
     }
   });
-
 }
 
 /**
@@ -575,7 +553,7 @@ let sounds = {
     begin: null,
     credit: null,
     debit: null,
-    end: null,
+    end: null
   },
   shrapnel: {
     counter: 0,
@@ -592,7 +570,7 @@ let sounds = {
   },
   banana: {
     launch: null,
-    expire: null,
+    expire: null
   },
   machineGunFire: null,
   machineGunFireEnemy: null,
@@ -601,17 +579,21 @@ let sounds = {
 };
 
 function initSoundTypes() {
-
   sounds.types = {
     // associate certain sounds with inventory / object types
-    metalHit: [TYPES.tank, TYPES.van, TYPES.missileLauncher, TYPES.bunker, TYPES.superBunker, TYPES.turret],
-    genericSplat: [TYPES.engineer,TYPES.infantry,TYPES.parachuteInfantry],
-  }
-
+    metalHit: [
+      TYPES.tank,
+      TYPES.van,
+      TYPES.missileLauncher,
+      TYPES.bunker,
+      TYPES.superBunker,
+      TYPES.turret
+    ],
+    genericSplat: [TYPES.engineer, TYPES.infantry, TYPES.parachuteInfantry]
+  };
 }
 
 function getURL(file) {
-
   if (document.domain === 'localhost') return `audio/wav/${file}.wav`;
 
   // SM2 will determine the appropriate format to play, based on client support.
@@ -621,14 +603,13 @@ function getURL(file) {
     `audio/ogg/${file}.ogg`,
     `audio/wav/${file}.wav`
   ];
-
 }
 
 // short-hand for addSound, with getURL()
-const add = (options = {}) => addSound({ ...options, url: getURL(options.url) });
+const add = (options = {}) =>
+  addSound({ ...options, url: getURL(options.url) });
 
 function addSound(options) {
-
   return {
     // sound object is now deferred until play(), which itself is now queued.
     sound: null,
@@ -641,16 +622,14 @@ function addSound(options) {
       offScreen: {
         // off-screen sounds are more quiet.
         volume: parseInt((options.volume || DEFAULT_VOLUME) / 4, 10)
-      },
+      }
     },
     throttle: options.throttle || 0,
     lastPlayed: 0
   };
-
 }
 
 function addSequence(...args) {
-
   // e.g., [s1, s2, s3].isSequence = true;
   const sequence = [...args];
 
@@ -675,45 +654,61 @@ function addSequence(...args) {
   sequence.isSequence = true;
 
   return sequence;
-
 }
 
 // if SM2 is disabled or fails, still complete the sound config.
 // soundManager.ontimeout(initSoundTypes);
 
 soundManager.onready(() => {
-
   initSoundTypes();
 
   sounds.machineGunFire = add({
     url: 'machinegun',
     volume: 25
   });
-  
+
   sounds.machineGunFireEnemy = add({
     // https://creativesounddesign.com/the-recordist-free-sound-effects/
     url: 'Gun_AR15_Machine_Gun_3_Single_Shot_edit'
   });
-  
+
   sounds.bulletGroundHit = shuffle([
     // https://freesound.org/people/mlsulli/sounds/234853/
     add({ url: '234853__mlsulli__body-hits-concrete_1', volume: 10 }),
     add({ url: '234853__mlsulli__body-hits-concrete_2', volume: 10 }),
     add({ url: '234853__mlsulli__body-hits-concrete_3', volume: 10 }),
     add({ url: '234853__mlsulli__body-hits-concrete_4', volume: 10 }),
-    add({ url: '234853__mlsulli__body-hits-concrete_5', volume: 10 }),
+    add({ url: '234853__mlsulli__body-hits-concrete_5', volume: 10 })
   ]);
-  
+
   sounds.bulletShellCasing = shuffle([
     // https://freesound.org/search/?g=1&q=shell%20hitting%20ground&f=%20username:%22filmmakersmanual%22
-    add({ url: '522290__filmmakersmanual__shell-hitting-ground-12', volume: 50 }),
-    add({ url: '522294__filmmakersmanual__shell-hitting-ground-16', volume: 50 }),
-    add({ url: '522391__filmmakersmanual__shells-hitting-ground-2', volume: 50 }),
-    add({ url: '522394__filmmakersmanual__shell-hitting-ground-36', volume: 50 }),
-    add({ url: '522395__filmmakersmanual__shell-hitting-ground-3', volume: 50 }),
-    add({ url: '522399__filmmakersmanual__shell-hitting-ground-37', volume: 50 }),
+    add({
+      url: '522290__filmmakersmanual__shell-hitting-ground-12',
+      volume: 50
+    }),
+    add({
+      url: '522294__filmmakersmanual__shell-hitting-ground-16',
+      volume: 50
+    }),
+    add({
+      url: '522391__filmmakersmanual__shells-hitting-ground-2',
+      volume: 50
+    }),
+    add({
+      url: '522394__filmmakersmanual__shell-hitting-ground-36',
+      volume: 50
+    }),
+    add({
+      url: '522395__filmmakersmanual__shell-hitting-ground-3',
+      volume: 50
+    }),
+    add({
+      url: '522399__filmmakersmanual__shell-hitting-ground-37',
+      volume: 50
+    })
   ]);
-  
+
   sounds.bombHatch = add({
     // hat tip to the Death Adder for this one. ;)
     // https://youtu.be/PAER-rSS8Jk
@@ -725,71 +720,71 @@ soundManager.onready(() => {
       volume: 33
     */
   });
-  
+
   sounds.impactWrench = [
     add({
       // https://freesound.org/people/andrewgnau2/sounds/71534/
       url: 'impact-wrench-1',
       volume: 10
     }),
-  
+
     add({
       url: 'impact-wrench-2',
       volume: 10
     }),
-  
+
     add({
       url: 'impact-wrench-3',
       volume: 10
     })
   ];
-  
+
   // https://freesound.org/people/jorickhoofd/sounds/160048/
   sounds.chainRepair = add({
     url: 'heavy-mechanics',
     volume: 25
   });
-  
+
   sounds.repairingWrench = [
     // https://freesound.org/people/TheGertz/sounds/131200/
     add({
       url: 'socket-wrench-1',
       volume: 10
     }),
-  
+
     // https://freesound.org/people/xxqmanxx/sounds/147018/
     add({
       url: 'socket-wrench-2',
       volume: 10
     }),
-  
+
     add({
       url: 'socket-wrench-3',
       volume: 10
     })
   ];
-  
+
   sounds.tinkerWrench = add({
     // https://freesound.org/people/klankbeeld/sounds/198299/
     url: 'tinker-wrench',
     multiShot: false,
     volume: 20
   });
-  
+
   sounds.friendlyClaim = add({
     // https://freesound.org/people/Carlos_Vaquero/sounds/153616/
     url: 'violin-c5-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
   });
-  
+
   sounds.enemyClaim = add({
     // https://freesound.org/people/Carlos_Vaquero/sounds/153611/
     url: 'violin-g4-pizzicato-non-vibrato',
     fixedPlaybackRate,
     volume: 8
   });
-  
+
   sounds.turretEnabled = add({
     // used when picking up infantry + engineers
     // hat tip: "tower turn" sound from TA, guns like the Guardian - a personal favourite.
@@ -797,7 +792,7 @@ soundManager.onready(() => {
     fixedPlaybackRate,
     volume: 25
   });
-  
+
   sounds.popSound = add({
     // used when picking up infantry + engineers
     // https://freesound.org/people/SunnySideSound/sounds/67095/
@@ -806,25 +801,25 @@ soundManager.onready(() => {
     fixedPlaybackRate,
     volume: 25
   });
-  
+
   sounds.popSound2 = add({
     // used when deploying parachute infantry
     // https://freesound.org/people/runirasmussen/sounds/178446/
     url: 'popsound2',
     volume: 10
   });
-  
+
   sounds.crashAndGlass = add({
     // https://freesound.org/people/Rock%20Savage/sounds/59263/
     url: 'crash-glass'
   });
-  
+
   sounds.balloonExplosion = add({
     url: 'balloon-explosion',
     volume: 20,
     fixedPlaybackRate: false
   });
-  
+
   sounds.baseExplosion = add({
     // two sounds, edited and mixed together
     // https://freesound.org/people/FxKid2/sounds/367622/
@@ -832,9 +827,9 @@ soundManager.onready(() => {
     url: 'hq-explosion-with-debris',
     volume: 75
   });
-  
+
   sounds.genericSplat = [];
-  
+
   // https://freesound.org/people/FreqMan/sounds/42962/
   sounds.genericSplat = [
     add({
@@ -850,9 +845,9 @@ soundManager.onready(() => {
       volume: 15
     })
   ];
-  
+
   sounds.genericSplat = shuffle(sounds.genericSplat);
-  
+
   sounds.scream = shuffle([
     add({
       url: 'scream1',
@@ -892,7 +887,7 @@ soundManager.onready(() => {
       volume: 5
     })
   ]);
-  
+
   sounds.bombExplosion = [
     add({
       url: 'ga-219_bomb',
@@ -907,12 +902,12 @@ soundManager.onready(() => {
       volume: 45
     })
   ];
-  
+
   sounds.genericBoom = add({
     url: 'explosion',
     volume: 45
   });
-  
+
   sounds.genericExplosion = [
     add({
       url: 'generic-explosion',
@@ -931,57 +926,57 @@ soundManager.onready(() => {
       volume: 33
     })
   ];
-  
+
   sounds.nuke = add({
     url: 'huge-explosion-part-3-long-crash_nuke_edit',
     volume: 50
   });
-  
+
   sounds.genericGunFire = add({
     url: 'generic-gunfire'
   });
-  
+
   sounds.infantryGunFire = add({
     // https://creativesounddesign.com/the-recordist-free-sound-effects/
     url: 'Gun_Machine_Gun_M60E_Burst_1_edit'
   });
-  
+
   sounds.turretGunFire = add({
     // https://freesound.org/people/CGEffex/sounds/101961/
     url: '101961__cgeffex__heavy-machine-gun_edit',
     volume: 40
   });
-  
+
   // https://freesound.org/people/ceberation/sounds/235513/
   sounds.doorClose = add({
     url: 'door-closing',
     volume: 12
   });
-  
+
   sounds.metalClang = shuffle([
     // https://freesound.org/people/Tiger_v15/sounds/211015/
     add({
       url: 'metal-hit-1',
       volume: 10
     }),
-  
+
     add({
       url: 'metal-hit-2',
       volume: 10
     }),
-  
+
     add({
       url: 'metal-hit-3',
       volume: 10
     })
   ]);
-  
+
   sounds.metalHitBreak = add({
     // https://freesound.org/people/issalcake/sounds/115919/
     url: '115919__issalcake__chairs-break-crash-pieces-move',
     volume: 40
   });
-  
+
   // Bolo "hit tank self" sound, Copyright (C) Steuart Cheshire 1993.
   // A subtle tribute to my favourite Mac game of all-time, hands down. <3
   // https://en.wikipedia.org/wiki/Bolo_(1987_video_game)
@@ -992,37 +987,37 @@ soundManager.onready(() => {
     url: 'bolo-hit-tank-self',
     volume: 25
   });
-  
+
   // "Tank fire Mixed.wav" by Cyberkineticfilms (CC0 License, “No Rights Reserved”)
   // https://freesound.org/people/Cyberkineticfilms/sounds/127845/
   sounds.tankGunFire = add({
     url: 'tank-gunfire',
     volume: 15
   });
-  
+
   sounds.metalHit = shuffle([
     // https://freesound.org/search/?g=1&q=bullet%20metal%20hit&f=%20username:%22filmmakersmanual%22
     add({
       url: '522506__filmmakersmanual__bullet-metal-hit-2_edit',
       volume: 25
     }),
-  
+
     add({
       url: '522507__filmmakersmanual__bullet-metal-hit-3_edit',
       volume: 25
     }),
-  
+
     add({
       url: '522508__filmmakersmanual__bullet-metal-hit-4_edit',
       volume: 25
     }),
-  
+
     add({
       url: '522509__filmmakersmanual__bullet-metal-hit-4_edit',
       volume: 25
     })
   ]);
-  
+
   // https://freesound.org/search/?q=bullet+concrete+hit&f=username%3A%22filmmakersmanual%22
   sounds.concreteHit = shuffle([
     add({
@@ -1035,72 +1030,71 @@ soundManager.onready(() => {
       url: '522401__filmmakersmanual__bullet-concrete-hit-4_edit'
     })
   ]);
-  
+
   // https://freesound.org/people/rakurka/sounds/109957/
   sounds.ricochet = shuffle([
     add({
       url: '109957__rakurka__incoming-ricochets-2_1',
       volume: 25
     }),
-  
+
     add({
       url: '109957__rakurka__incoming-ricochets-2_2',
       volume: 25
     }),
-  
+
     add({
       url: '109957__rakurka__incoming-ricochets-2_3',
       volume: 25
     }),
-  
+
     add({
       url: '109957__rakurka__incoming-ricochets-2_4',
       volume: 25
     }),
-  
+
     // https://freesound.org/people/Timbre/sounds/486343/
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_1',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_2',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_3',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_4',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_5',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_6',
       volume: 4
     }),
-  
+
     add({
       url: '486343__timbre__selected-ricochets-no-bang-from-craigsmith-s-freesound-486071_7',
       volume: 4
-    }),
-  
+    })
   ]);
-  
+
   sounds.balloonHit = add({
     // https://freesound.org/people/citeyo1/sounds/430302/
     url: '430302__citeyo1__aparicion_edit'
   });
-  
+
   sounds.explosionLarge = shuffle([
     add({
       url: 'explosion-large',
@@ -1115,61 +1109,61 @@ soundManager.onready(() => {
       // https://freesound.org/people/Bykgames/sounds/414345/
       url: '414345__bykgames__explosion-near',
       volume: 50
-    }),
+    })
   ]);
-  
+
   sounds.chainSnapping = add({
     url: 'chain-snapping',
     volume: 15
   });
-  
+
   sounds.helicopter.engine = add({
     url: 'helicopter-engine',
     fixedPlaybackRate,
     volume: 50,
     loops: 999
   });
-  
+
   sounds.helicopter.rotate = add({
     url: 'helicopter-rotate',
     fixedPlaybackRate,
     volume: 10
   });
-  
+
   sounds.inventory.denied = add({
     url: 'order-denied',
-    fixedPlaybackRate,
+    fixedPlaybackRate
   });
-  
+
   sounds.inventory.begin = add({
     url: 'order-start',
     fixedPlaybackRate,
     volume: 30
   });
-  
+
   sounds.inventory.debit = add({
     url: 'funds-debit',
     fixedPlaybackRate,
     volume: 50
   });
-  
+
   sounds.inventory.credit = add({
     url: 'funds-credit',
     fixedPlaybackRate,
     volume: 60
   });
-  
+
   sounds.inventory.end = add({
     url: 'order-complete',
     fixedPlaybackRate,
     volume: 10
   });
-  
+
   sounds.missileLaunch = add({
     url: 'ga-217_missile_launch',
     volume: 25
   });
-  
+
   sounds.missileWarning = add({
     // https://soundbible.com/1766-Fire-Pager.html
     // public domain
@@ -1178,72 +1172,72 @@ soundManager.onready(() => {
     loops: 999,
     volume: 2
   });
-  
+
   sounds.missileWarningExpiry = add({
     // https://soundbible.com/1766-Fire-Pager.html
     // public domain
     url: 'fire_pager-jason-1283464858_edit_long',
     fixedPlaybackRate,
     volume: 1.5
-  })
-  
+  });
+
   sounds.parachuteOpen = add({
     url: 'parachute-open',
     volume: 25
   });
-  
+
   sounds.shrapnel.hit0 = add({
     url: 'shrapnel-hit',
     volume: 7
   });
-  
+
   sounds.shrapnel.hit1 = add({
     url: 'shrapnel-hit-2',
     volume: 7
   });
-  
+
   sounds.shrapnel.hit2 = add({
     url: 'shrapnel-hit-3',
     volume: 7
   });
-  
+
   sounds.shrapnel.hit3 = add({
     url: 'shrapnel-hit-4',
     volume: 7
   });
-  
+
   sounds.splat = add({
     url: 'splat',
     volume: 25
   });
-  
+
   sounds.radarStatic = add({
     url: 'radar-static',
     fixedPlaybackRate,
     volume: 40
   });
-  
+
   sounds.radarJamming = add({
     url: 'radar-jamming',
     fixedPlaybackRate,
     volume: 33,
     loops: 999
   });
-  
+
   sounds.repairing = add({
     url: 'repairing',
     volume: 15,
     loops: 999
   });
-  
+
   sounds.ipanemaMuzak = add({
     // hat tip to Mike Russell for the "vintage radio" / elevator muzak EQ effect: https://youtu.be/ko9hRYx1lF4
     url: 'ipanema-elevator',
     fixedPlaybackRate,
     volume: 5,
     loops: 999
-  })
-  
+  });
+
   sounds.dangerZone = add({
     // hat tip:【MIDI】Top Gun | Kenny Loggins - Danger Zone | DOOM-Styled - https://youtu.be/4awuwMHtn54
     // Soundfont: Roland Sound Canvas VA SC-55 VSTi
@@ -1251,12 +1245,12 @@ soundManager.onready(() => {
     fixedPlaybackRate,
     volume: 33,
     loops: 999
-  })
-  
+  });
+
   sounds.rubberChicken.launch = shuffle([
     add({
       url: 'rubber-chicken-launch-1',
-      volume: 20,
+      volume: 20
     }),
     add({
       url: 'rubber-chicken-launch-2',
@@ -1267,12 +1261,12 @@ soundManager.onready(() => {
       volume: 20
     })
   ]);
-  
+
   sounds.rubberChicken.expire = add({
     url: 'rubber-chicken-expire',
     volume: 30
   });
-  
+
   sounds.rubberChicken.die = shuffle([
     add({
       url: 'rubber-chicken-hit-1',
@@ -1291,13 +1285,13 @@ soundManager.onready(() => {
       volume: 20
     })
   ]);
-  
+
   // https://freesound.org/people/JohnsonBrandEditing/sounds/173948/
   sounds.banana.launch = add({
     url: '173948__johnsonbrandediting__musical-saw-ascending-ufo',
     volume: 50
   });
-  
+
   sounds.banana.expire = add({
     url: 'ufo-expire',
     volume: 75
@@ -1305,7 +1299,6 @@ soundManager.onready(() => {
 
   // uh-huh huh huh. heh heh, m-heh.
   sounds.bnb = initBNBSound();
-  
 });
 
 export {

@@ -3,8 +3,23 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest, getNearestObject } from '../core/logic.js';
-import { getTypes, rad2Deg, rndInt, rng, rngInt, TYPES } from '../core/global.js';
-import { playSound, playSoundWithDelay, skipSound, stopSound, sounds, getVolumeFromDistance, getPanFromLocation } from '../core/sound.js';
+import {
+  getTypes,
+  rad2Deg,
+  rndInt,
+  rng,
+  rngInt,
+  TYPES
+} from '../core/global.js';
+import {
+  playSound,
+  playSoundWithDelay,
+  skipSound,
+  stopSound,
+  sounds,
+  getVolumeFromDistance,
+  getPanFromLocation
+} from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
@@ -27,7 +42,6 @@ const dimensions = {
 };
 
 const SmartMissile = (options = {}) => {
-
   /**
    * I am so smart!
    * I am so smart!
@@ -39,7 +53,6 @@ const SmartMissile = (options = {}) => {
   let css, dom, data, radarItem, objects, collision, launchSound, exports;
 
   function moveTo(x, y, angle) {
-
     // prevent from "crashing" into terrain, only if not expiring and target is still alive
     if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
       y = data.yMax;
@@ -47,7 +60,6 @@ const SmartMissile = (options = {}) => {
 
     // determine angle
     if (data.isBanana) {
-
       data.angle += data.angleIncrement;
 
       if (data.angle >= 360) {
@@ -58,11 +70,8 @@ const SmartMissile = (options = {}) => {
       if (data.expired) {
         data.angleIncrement *= 0.97;
       }
-
     } else {
-
       data.angle = angle;
-
     }
 
     data.extraTransforms = `rotate3d(0, 0, 1, ${data.angle}deg)`;
@@ -78,32 +87,34 @@ const SmartMissile = (options = {}) => {
       data.xHistory.shift();
       data.yHistory.shift();
     }
-
   }
 
   function moveTrailers() {
-
     let i, j, xOffset, yOffset;
 
     if (!data.isOnScreen) return;
 
     xOffset = 0;
-    yOffset = (data.height / 2) - 1;
+    yOffset = data.height / 2 - 1;
 
     for (i = 0, j = data.trailerCount; i < j; i++) {
-
       // if previous X value exists, apply it
       if (data.xHistory[i]) {
-        sprites.setTransformXY(exports, dom.trailers[i], `${data.xHistory[i] + xOffset}px`, `${data.yHistory[i] + yOffset}px`);
-        dom.trailers[i]._style.setProperty('opacity', Math.max(0.25, (i+1) / j));
+        sprites.setTransformXY(
+          exports,
+          dom.trailers[i],
+          `${data.xHistory[i] + xOffset}px`,
+          `${data.yHistory[i] + yOffset}px`
+        );
+        dom.trailers[i]._style.setProperty(
+          'opacity',
+          Math.max(0.25, (i + 1) / j)
+        );
       }
-
     }
-
   }
 
   function hideTrailers() {
-
     let i, j;
 
     if (!dom.trailers?.length) return;
@@ -111,25 +122,19 @@ const SmartMissile = (options = {}) => {
     for (i = 0, j = data.trailerCount; i < j; i++) {
       dom.trailers[i]._style.setProperty('opacity', 0);
     }
-
   }
 
   function spark() {
-
     utils.css.add(dom.o, css.spark);
     sprites.applyRandomRotation(dom.o);
-
   }
 
   function makeTimeout(callback) {
-
     objects?._timeout?.reset();
     objects._timeout = common.setFrameTimeout(callback, 350);
-
   }
 
   function maybeTargetDecoy(decoyTarget) {
-
     // missile must be targeting a chopper.
     if (objects.target?.data?.type !== TYPES.helicopter) return;
 
@@ -137,10 +142,20 @@ const SmartMissile = (options = {}) => {
     if (!decoyTarget?.data || data.isEnemy === decoyTarget.data.isEnemy) return;
 
     // missile must be live, not already distracted, and "fresh"; potential decoy must be live.
-    if (data.expired || data.foundDecoy || decoyTarget.data.dead || data.frameCount >= data.decoyFrameCount) return;
+    if (
+      data.expired ||
+      data.foundDecoy ||
+      decoyTarget.data.dead ||
+      data.frameCount >= data.decoyFrameCount
+    )
+      return;
 
     // crucially: is it within range?
-    const nearby = getNearestObject(exports, { items: data.decoyItemTypes, ignoreNearGround: true, getAll: true });
+    const nearby = getNearestObject(exports, {
+      items: data.decoyItemTypes,
+      ignoreNearGround: true,
+      getAll: true
+    });
 
     // too far away
     if (!nearby?.includes(decoyTarget)) return;
@@ -155,48 +170,41 @@ const SmartMissile = (options = {}) => {
     objects.lastTarget = decoyTarget;
 
     if (launchSound) {
-
       launchSound.stop();
-      launchSound.play({
-        playbackRate: data.playbackRate,
-        onplay: (sound) => launchSound = sound
-      }, game.players.local);
-
+      launchSound.play(
+        {
+          playbackRate: data.playbackRate,
+          onplay: (sound) => (launchSound = sound)
+        },
+        game.players.local
+      );
     }
 
     // and start tracking.
     setTargetTracking(true);
-
   }
 
   function addTracking(targetNode, radarNode) {
-
     if (targetNode) {
-
       utils.css.add(targetNode, css.tracking);
 
       makeTimeout(() => {
-
         // this animation needs to run possibly after the object has died.
         if (targetNode) utils.css.add(targetNode, css.trackingActive);
 
         // prevent leaks?
         targetNode = null;
         radarNode = null;
-
       });
-
     }
 
     if (radarNode) {
       // radar goes immediately to "active" state, no transition.
       utils.css.add(radarNode, css.trackingActive);
     }
-
   }
 
   function removeTrackingFromNode(node) {
-
     if (!node) return;
 
     // remove tracking animation
@@ -205,17 +213,14 @@ const SmartMissile = (options = {}) => {
 
     // start fading/zooming out
     utils.css.add(node, css.trackingRemoval);
-
   }
 
   function removeTracking(targetNode, radarNode) {
-
     removeTrackingFromNode(targetNode);
     removeTrackingFromNode(radarNode);
 
     // one timer for both.
     makeTimeout(() => {
-
       if (targetNode) {
         utils.css.remove(targetNode, css.trackingRemoval);
       }
@@ -227,13 +232,10 @@ const SmartMissile = (options = {}) => {
       // prevent leaks?
       targetNode = null;
       radarNode = null;
-
     });
-
   }
 
   function setTargetTracking(tracking) {
-
     if (!objects.target) return;
 
     const targetNode = objects.target.dom.o;
@@ -244,11 +246,9 @@ const SmartMissile = (options = {}) => {
     } else {
       removeTracking(targetNode, radarNode);
     }
-
   }
 
   function die(dieOptions = {}) {
-
     if (data.deadTimer || data.dead) return;
 
     let attacker = dieOptions?.attacker;
@@ -273,7 +273,6 @@ const SmartMissile = (options = {}) => {
     effects.inertGunfireExplosion({ exports });
 
     if (data.armed) {
-
       effects.shrapnelExplosion(data, {
         count: 3 + rngInt(3, TYPES.shrapnel),
         velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2,
@@ -291,11 +290,8 @@ const SmartMissile = (options = {}) => {
       } else if (sounds.genericBoom) {
         playSound(sounds.genericBoom, game.players.local);
       }
-
     } else if (sounds.metalClang) {
-
       playSound(sounds.metalClang, game.players.local);
-
     }
 
     hideTrailers();
@@ -310,31 +306,23 @@ const SmartMissile = (options = {}) => {
     radarItem?.die();
 
     if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.die) {
-
       // don't "die" again if the chicken has already moaned, i.e., from expiring.
       if (!data.expired) {
-
         if (launchSound) {
-
           skipSound(launchSound);
           launchSound = null;
-
         }
 
         // play only if "armed", as an audible hint that it was capable of doing damage.
         if (data.armed) {
-
           playSound(sounds.rubberChicken.die, game.players.local, {
-            onplay: (sound) => dieSound = sound,
+            onplay: (sound) => (dieSound = sound),
             playbackRate: data.playbackRate
           });
-
         }
-
       }
 
       if (launchSound) {
-
         if (!data.expired && dieSound) {
           // hackish: apply launch sound volume to die sound
           dieSound.setVolume(launchSound.volume);
@@ -342,26 +330,24 @@ const SmartMissile = (options = {}) => {
 
         skipSound(launchSound);
         launchSound = null;
-
       }
-
     }
 
     // special case: added sound for first hit of a bunker (or turret), but not the (nuclear) explosion sequence.
     if (
-      sounds.bnb.beavisYes
-      && data.armed && !data.expired && !data.isEnemy
-      && data.parentType === TYPES.helicopter
-      && ((objects.target.data.type !== TYPES.bunker && objects?.target.data.type !== TYPES.turret) || !objects?.target.data.dead)
+      sounds.bnb.beavisYes &&
+      data.armed &&
+      !data.expired &&
+      !data.isEnemy &&
+      data.parentType === TYPES.helicopter &&
+      ((objects.target.data.type !== TYPES.bunker &&
+        objects?.target.data.type !== TYPES.turret) ||
+        !objects?.target.data.dead)
     ) {
-
       if (attacker?.data?.type === TYPES.superBunker) {
-
         // "this sucks"
         playSoundWithDelay(sounds.bnb.beavisLostUnit);
-
       } else {
-
         playSound(sounds.bnb.beavisYes, game.players.local, {
           onfinish: () => {
             if (Math.random() >= 0.5) {
@@ -369,16 +355,12 @@ const SmartMissile = (options = {}) => {
             }
           }
         });
-
       }
-
     }
 
     if (data.isBanana && launchSound) {
-
       skipSound(launchSound);
       launchSound = null;
-
     }
 
     // if targeting the player, ensure the expiry warning sound is stopped.
@@ -390,11 +372,9 @@ const SmartMissile = (options = {}) => {
     if (data.onDie) data.onDie();
 
     common.onDie(exports, dieOptions);
-
   }
 
   function sparkAndDie(target) {
-
     // if we don't have a target, something is very wrong.
     if (!target) return;
 
@@ -403,7 +383,6 @@ const SmartMissile = (options = {}) => {
 
     // engineers are an infantry sub-type
     if (type == TYPES.infantry && bottomAligned && data.energy > 0) {
-
       // take a hit
       data.energy -= data.infantryEnergyCost;
 
@@ -412,31 +391,48 @@ const SmartMissile = (options = {}) => {
 
       // keep on truckin', unless the missile has been killed off.
       if (data.energy > 0) return;
-
     } else {
-
       // regular hit
-      common.hit(target, (data.armed ? data.damagePoints * data.energy : 1), exports);
+      common.hit(
+        target,
+        data.armed ? data.damagePoints * data.energy : 1,
+        exports
+      );
 
       if (!target.data.dead && data.armed) {
-
         // a missile hit something, but the target didn't die.
 
-        const isWeakened = (data.energy < data.energyMax);
+        const isWeakened = data.energy < data.energyMax;
         const weakened = isWeakened ? ' weakened' : '';
-        const whose = (data.isEnemy !== game.players.local.data.isEnemy ? (isWeakened ? `A${weakened} enemy` : 'An enemy') : (data?.parent?.data?.id === game.players.local.data.id ? `Your${weakened}` : `A friendly${weakened}`));
-        const missileType = game.objects.stats.formatForDisplay(data.type, exports);
-        const verb = (target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged');
+        const whose =
+          data.isEnemy !== game.players.local.data.isEnemy
+            ? isWeakened
+              ? `A${weakened} enemy`
+              : 'An enemy'
+            : data?.parent?.data?.id === game.players.local.data.id
+            ? `Your${weakened}`
+            : `A friendly${weakened}`;
+        const missileType = game.objects.stats.formatForDisplay(
+          data.type,
+          exports
+        );
+        const verb =
+          target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged';
         const targetType = game.objects.stats.formatForDisplay(type, target);
-        const health = (target.data.energy !== target.data.energyMax ? ` (${Math.floor((target.data.energy / target.data.energyMax) * 100)}%)` : '');
+        const health =
+          target.data.energy !== target.data.energyMax
+            ? ` (${Math.floor(
+                (target.data.energy / target.data.energyMax) * 100
+              )}%)`
+            : '';
         const aOrAn = target.data.type === TYPES.infantry ? 'an' : 'a';
-  
-        const text = common.tweakEmojiSpacing(`${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`);
+
+        const text = common.tweakEmojiSpacing(
+          `${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`
+        );
 
         game.objects.notifications.add(text);
-        
       }
-
     }
 
     spark();
@@ -468,71 +464,109 @@ const SmartMissile = (options = {}) => {
 
     const aType = data?.attacker?.data?.type;
 
-    if (!data.didNotify && !data.armed && aType !== TYPES.gunfire && aType !== TYPES.bomb && aType !== TYPES.smartMissile) {
+    if (
+      !data.didNotify &&
+      !data.armed &&
+      aType !== TYPES.gunfire &&
+      aType !== TYPES.bomb &&
+      aType !== TYPES.smartMissile
+    ) {
+      const whose = data.isEnemy
+        ? 'An enemy'
+        : data?.parentType === TYPES.helicopter
+        ? 'Your'
+        : 'A friendly';
+      const missileType = game.objects.stats.formatForDisplay(
+        data.type,
+        exports
+      );
 
-      const whose = (data.isEnemy ? 'An enemy' : (data?.parentType === TYPES.helicopter ? 'Your' : 'A friendly'));
-      const missileType = game.objects.stats.formatForDisplay(data.type, exports);
-
-      game.objects.notifications.add(`${whose} ${missileType} died before arming itself.`);
+      game.objects.notifications.add(
+        `${whose} ${missileType} died before arming itself.`
+      );
 
       data.didNotify = true;
-
     }
 
     die({ attacker: target });
-
   }
 
   function animate() {
-
     let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth;
 
     // notify caller if now dead and can be removed.
     if (data.dead) {
       sprites.moveWithScrollOffset(exports);
-      return (data.dead && !dom.o);
+      return data.dead && !dom.o;
     }
 
     /**
      * if original target has died OR has become friendly, try to find a new target.
      * e.g., enemy bunker that was originally targeted, is captured and became friendly -
      * or, two missiles fired at enemy helicopter, but the first one hits and kills it.
-     * 
+     *
      * in the original game, missiles would die when the original target died -
      * but, missiles are rare (you get two per chopper) and take time to re-arm,
      * and they're "smart" - so in my version, missiles get retargeting capability
      * for at least one animation frame after the original target is lost.
-     * 
+     *
      * if retargeting finds nothing at the moment the original is lost, the missile will die.
      */
-    if (!data.expired && (!objects.target || objects.target.data.dead || objects.target.data.wentIntoHiding || objects.target.data.isEnemy === data.isEnemy)) {
-
-      const whose = (data.isEnemy !== game.players.local.data.isEnemy ? ('An enemy') : (data?.parent?.data?.id === game.players.local.data.id ? `Your` : `A friendly`));
-      const missileType = game.objects.stats.formatForDisplay(data.type, exports);
+    if (
+      !data.expired &&
+      (!objects.target ||
+        objects.target.data.dead ||
+        objects.target.data.wentIntoHiding ||
+        objects.target.data.isEnemy === data.isEnemy)
+    ) {
+      const whose =
+        data.isEnemy !== game.players.local.data.isEnemy
+          ? 'An enemy'
+          : data?.parent?.data?.id === game.players.local.data.id
+          ? `Your`
+          : `A friendly`;
+      const missileType = game.objects.stats.formatForDisplay(
+        data.type,
+        exports
+      );
 
       // stop tracking the old one, as applicable.
-      if (objects.target.data.dead || objects.target.data.wentIntoHiding || objects.target.data.isEnemy === data.isEnemy) {
-
+      if (
+        objects.target.data.dead ||
+        objects.target.data.wentIntoHiding ||
+        objects.target.data.isEnemy === data.isEnemy
+      ) {
         // notify if a helicopter evaded a smart missile by hiding in a cloud.
-        if (objects.target.data.wentIntoHiding && objects.target.data.type === TYPES.helicopter) {
-
-          const text = common.tweakEmojiSpacing(`${whose} ${missileType} lost track of its target.`);
+        if (
+          objects.target.data.wentIntoHiding &&
+          objects.target.data.type === TYPES.helicopter
+        ) {
+          const text = common.tweakEmojiSpacing(
+            `${whose} ${missileType} lost track of its target.`
+          );
           game.objects.notifications.addNoRepeat(text);
-
         }
 
         setTargetTracking();
 
         objects.target = null;
-
       }
 
       newTarget = getNearestObject(exports);
 
-      if (newTarget && !newTarget.data.cloaked && !newTarget.data.wentIntoHiding && !newTarget.data.dead) {
-
-        const targetType = game.objects.stats.formatForDisplay(newTarget.data.type, newTarget);
-        const text = common.tweakEmojiSpacing(`${whose} ${missileType} detected a nearby ${targetType}.`);
+      if (
+        newTarget &&
+        !newTarget.data.cloaked &&
+        !newTarget.data.wentIntoHiding &&
+        !newTarget.data.dead
+      ) {
+        const targetType = game.objects.stats.formatForDisplay(
+          newTarget.data.type,
+          newTarget
+        );
+        const text = common.tweakEmojiSpacing(
+          `${whose} ${missileType} detected a nearby ${targetType}.`
+        );
 
         /**
          * Notify only if the target type is "new" - e.g,. two missiles fired at two tanks.
@@ -549,60 +583,72 @@ const SmartMissile = (options = {}) => {
 
         if (launchSound) {
           launchSound.stop();
-          launchSound.play({
-            volume: launchSound.volume,
-            playbackRate: data.playbackRate,
-            onplay: (sound) => launchSound = sound 
-          }, game.players.local);
+          launchSound.play(
+            {
+              volume: launchSound.volume,
+              playbackRate: data.playbackRate,
+              onplay: (sound) => (launchSound = sound)
+            },
+            game.players.local
+          );
         }
 
         // and start tracking.
         setTargetTracking(true);
-
       }
-
     }
 
     // volume vs. distance
-    if ((data.isBanana || data.isRubberChicken) && launchSound && !data.expired && objects.target && !objects.target.data.dead) {
-
+    if (
+      (data.isBanana || data.isRubberChicken) &&
+      launchSound &&
+      !data.expired &&
+      objects.target &&
+      !objects.target.data.dead
+    ) {
       // launchSound.setVolume((launchSound.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(objects.target, game.players.local));
       // hackish: bananas are 50%, default chicken volume is 20%.
-      launchSound.setVolume((data.isBanana ? 50 : 20) * getVolumeFromDistance(exports, game.players.local, 0.5) * Math.max(0.01, gamePrefs.volume));
+      launchSound.setVolume(
+        (data.isBanana ? 50 : 20) *
+          getVolumeFromDistance(exports, game.players.local, 0.5) *
+          Math.max(0.01, gamePrefs.volume)
+      );
       launchSound.setPan(getPanFromLocation(exports, game.players.local));
-  
     }
 
     // "out of gas" -> dangerous to both sides -> fall to ground
-    if (!data.expired && (data.frameCount > data.expireFrameCount || (!objects.target || objects.target.data.dead))) {
-
+    if (
+      !data.expired &&
+      (data.frameCount > data.expireFrameCount ||
+        !objects.target ||
+        objects.target.data.dead)
+    ) {
       utils.css.add(dom.o, css.expired);
       utils.css.add(radarItem.dom.o, css.expired);
 
       data.expired = true;
       data.hostile = true;
 
-      if (data.isRubberChicken && !data.isBanana && sounds.rubberChicken.expire) {
-        
+      if (
+        data.isRubberChicken &&
+        !data.isBanana &&
+        sounds.rubberChicken.expire
+      ) {
         playSound(sounds.rubberChicken.expire, game.players.local, {
           playbackRate: data.playbackRate,
           volume: launchSound?.volume
         });
-
       }
 
       if (data.isBanana && sounds.banana.expire) {
-
         playSound(sounds.banana.expire, game.players.local, {
           playbackRate: data.playbackRate,
           volume: launchSound?.volume
         });
-
       }
 
       // if still tracking something, un-mark it.
       setTargetTracking();
-
     }
 
     targetData = objects.target?.data || objects.lastTarget?.data;
@@ -610,21 +656,19 @@ const SmartMissile = (options = {}) => {
     targetHalfWidth = targetData.width / 2;
 
     // delta of x/y between this and target
-    deltaX = (targetData.x + targetHalfWidth) - data.x;
+    deltaX = targetData.x + targetHalfWidth - data.x;
 
     // Always aim for "y", plus half height
-    deltaY = (targetData.y + (targetData.halfHeight || targetData.height / 2)) - data.y;
+    deltaY =
+      targetData.y + (targetData.halfHeight || targetData.height / 2) - data.y;
 
     if (data.expired) {
-
       // fall...
       data.gravity *= 1.085;
 
       // ... and decelerate on X-axis.
       data.vX *= 0.95;
-
     } else {
-
       // x-axis
 
       // if changing directions, cut in half.
@@ -633,7 +677,6 @@ const SmartMissile = (options = {}) => {
       // y-axis
 
       if (deltaY <= targetData.height && deltaY >= -targetData.height) {
-
         // lock on target.
 
         if (data.vY >= 0 && data.vY >= 0.25) {
@@ -641,13 +684,9 @@ const SmartMissile = (options = {}) => {
         } else if (data.vY <= 0 && data.vY < -0.25) {
           data.vY *= 0.8;
         }
-
       } else {
-
-        data.vY += (deltaY >= 0 ? data.thrust : -data.thrust);
-
+        data.vY += deltaY >= 0 ? data.thrust : -data.thrust;
       }
-
     }
 
     // and throttle
@@ -657,7 +696,7 @@ const SmartMissile = (options = {}) => {
     const progress = data.frameCount / data.expireFrameCount;
 
     // smoke increases as missile nears expiry
-    const smokeThreshold = 1.25 - (Math.min(1, progress));
+    const smokeThreshold = 1.25 - Math.min(1, progress);
 
     if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
       data.nearExpiry = true;
@@ -675,21 +714,26 @@ const SmartMissile = (options = {}) => {
     }
 
     if (
-      data.isOnScreen && (
-        data.expired
-        || progress >= data.nearExpiryThreshold
-        || (progress >= 0.05 && Math.random() >= smokeThreshold)
-      )
+      data.isOnScreen &&
+      (data.expired ||
+        progress >= data.nearExpiryThreshold ||
+        (progress >= 0.05 && Math.random() >= smokeThreshold))
     ) {
-      game.objects.smoke.push(Smoke({
-        x: data.x + (data.vX < 0 ? data.width - 2: 0),
-        y: data.y + 3,
-        spriteFrame: 3
-      }));
+      game.objects.smoke.push(
+        Smoke({
+          x: data.x + (data.vX < 0 ? data.width - 2 : 0),
+          y: data.y + 3,
+          spriteFrame: 3
+        })
+      );
     }
 
     newX = data.x + data.vX;
-    newY = data.y + (!data.expired ? data.vY : (Math.min(data.vY + data.gravity, data.vYMaxExpired)));
+    newY =
+      data.y +
+      (!data.expired
+        ? data.vY
+        : Math.min(data.vY + data.gravity, data.vYMaxExpired));
 
     // determine angle of missile (pointing at target, not necessarily always heading that way)
     rad = Math.atan2(deltaY, deltaX);
@@ -738,7 +782,6 @@ const SmartMissile = (options = {}) => {
     sprites.updateIsOnScreen(exports);
 
     collisionTest(collision, exports);
-
   }
 
   function isOnScreenChange(isOnScreen) {
@@ -749,14 +792,13 @@ const SmartMissile = (options = {}) => {
   }
 
   function initDOM() {
-
     let i, trailerConfig, fragment;
 
     fragment = document.createDocumentFragment();
 
     dom.o = sprites.create({
       className: css.className,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy: data.isEnemy ? css.enemy : false
     });
 
     trailerConfig = {
@@ -764,7 +806,13 @@ const SmartMissile = (options = {}) => {
     };
 
     // initial placement
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, `rotate3d(0, 0, 1, ${data.angle}deg)`);
+    sprites.setTransformXY(
+      exports,
+      dom.o,
+      `${data.x}px`,
+      `${data.y}px`,
+      `rotate3d(0, 0, 1, ${data.angle}deg)`
+    );
 
     for (i = 0; i < data.trailerCount; i++) {
       dom.trailers.push(sprites.create(trailerConfig));
@@ -773,11 +821,9 @@ const SmartMissile = (options = {}) => {
 
     // TODO: review and see if trailer fragment can be dynamically-appended when on-screen, too
     game.dom.world.appendChild(fragment);
-
   }
 
   function initSmartMissile() {
-
     initDOM();
 
     data.yMax = game.objects.view.data.battleField.height - data.height - 1;
@@ -788,12 +834,15 @@ const SmartMissile = (options = {}) => {
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     if (data.isBanana && sounds.banana.launch) {
-
       // hackish: need to know on-screen right now.
       sprites.updateIsOnScreen(exports);
 
       // on-screen, OR, targeting the player chopper
-      if (sounds.bnb.boioioing && (data.isOnScreen || (data.isEnemy && objects?.target?.data?.type === TYPES.helicopter))) {
+      if (
+        sounds.bnb.boioioing &&
+        (data.isOnScreen ||
+          (data.isEnemy && objects?.target?.data?.type === TYPES.helicopter))
+      ) {
         playSound(sounds.bnb.boioioing, game.players.local, {
           onplay: (sound) => {
             // cancel if no longer active
@@ -805,43 +854,45 @@ const SmartMissile = (options = {}) => {
       }
 
       playSound(sounds.banana.launch, game.players.local, {
-        onplay: (sound) => launchSound = sound,
+        onplay: (sound) => (launchSound = sound),
         playbackRate: data.playbackRate
       });
-
     } else if (data.isRubberChicken && sounds.rubberChicken.launch) {
-
       playSound(sounds.rubberChicken.launch, game.players.local, {
-        onplay: (sound) => launchSound = sound,
+        onplay: (sound) => (launchSound = sound),
         playbackRate: data.playbackRate
       });
 
       // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
-      if (Math.abs(objects?.target?.data?.x - data.x) >= 666 && !data.isEnemy && (data.parentType === TYPES.helicopter || data.isOnScreen) && Math.random() >= 0.5) {
+      if (
+        Math.abs(objects?.target?.data?.x - data.x) >= 666 &&
+        !data.isEnemy &&
+        (data.parentType === TYPES.helicopter || data.isOnScreen) &&
+        Math.random() >= 0.5
+      ) {
         playSoundWithDelay(sounds.bnb.cock, game.players.local);
       }
-
     } else if (sounds.missileLaunch) {
-
       launchSound = playSound(sounds.missileLaunch, game.players.local, {
-        onplay: (sound) => launchSound = sound,
+        onplay: (sound) => (launchSound = sound),
         playbackRate: data.playbackRate
       });
 
       // human helicopter, firing smart missile
-      if (!data.isEnemy && data.parentType === TYPES.helicopter && sounds.bnb.beavisYeahGo) {
+      if (
+        !data.isEnemy &&
+        data.parentType === TYPES.helicopter &&
+        sounds.bnb.beavisYeahGo
+      ) {
         // hackish: only play if this is the first active missile.
         if (!game.players.local.objects.smartMissiles.length) {
           playSound(sounds.bnb.beavisYeahGo, game.players.local);
         }
       }
-
     }
-
   }
 
   function getRandomMissileMode() {
-
     // 20% chance of default, 40% chance of chickens or bananas
     const rnd = rng(1, TYPES.smartMissile);
 
@@ -849,7 +900,6 @@ const SmartMissile = (options = {}) => {
       isRubberChicken: rnd >= 0.2 && rnd < 0.6,
       isBanana: rnd >= 0.6
     };
-
   }
 
   css = common.inheritCSS({
@@ -866,7 +916,12 @@ const SmartMissile = (options = {}) => {
   });
 
   // if game preferences allow AND no default specified, then pick at random.
-  if (gamePrefs.alt_smart_missiles && !options.isRubberChicken && !options.isBanana && !options.isSmartMissile) {
+  if (
+    gamePrefs.alt_smart_missiles &&
+    !options.isRubberChicken &&
+    !options.isBanana &&
+    !options.isSmartMissile
+  ) {
     options = common.mixin(options, getRandomMissileMode());
   }
 
@@ -881,63 +936,76 @@ const SmartMissile = (options = {}) => {
 
   let type = TYPES.smartMissile;
 
-  let missileData = dimensions[(options.isRubberChicken ? 'rubberChicken' : (options.isBanana ? 'banana' : 'smartMissile'))];
+  let missileData =
+    dimensions[
+      options.isRubberChicken
+        ? 'rubberChicken'
+        : options.isBanana
+        ? 'banana'
+        : 'smartMissile'
+    ];
 
   const { width, height } = missileData;
 
-  data = common.inheritData({
-    type,
-    parent: options.parent || null,
-    parentType: options.parentType || null,
-    energy: 2,
-    energyMax: 2,
-    infantryEnergyCost: 0.5,
-    armed: false,
-    didNotify: false,
-    expired: false,
-    hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
-    nearExpiry: false,
-    nearExpiryThreshold: 0.88,
-    frameCount: 0,
-    foundDecoy: false,
-    decoyItemTypes: getTypes('parachuteInfantry', { exports: { data: { isEnemy: options.isEnemy } } }),
-    decoyFrameCount: 11,
-    ramiusFrameCount: 20,
-    expireFrameCount: options.expireFrameCount || 256,
-    dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
-    width,
-    halfWidth: width / 2,
-    height,
-    gravity: 1,
-    damagePoints: 12.5,
-    isBanana: !!options.isBanana,
-    isRubberChicken: !!options.isRubberChicken,
-    isSmartMissile: !!options.isSmartMissile,
-    onDie: options.onDie || null,
-    playbackRate: 0.9 + (Math.random() * 0.2),
-    target: null,
-    vX: net.active ? 1 : 1 + Math.random(),
-    vY: net.active ? 1 : 1 + Math.random(),
-    vXMax: (net.active ? 12 : 12 + rng(6, type) + (options.vXMax || 0)),
-    vYMax: (net.active ? 12 : 12 + rng(6, type) + (options.vYMax || 0)),
-    vYMaxExpired: 36,
-    thrust: (net.active ? 0.5 : 0.5 + rng(0.5, type)),
-    deadTimer: null,
-    trailerCount: 16,
-    xHistory: [],
-    yHistory: [],
-    yMax: null,
-    angle: options.isEnemy ? 180 : 0,
-    angleIncrement: 45,
-    noEnergyStatus: true,
-    domFetti: {
-      // may be overridden
-      colorType: (options.isRubberChicken || options.isBanana ? 'default' : undefined),
-      elementCount: 10 + rndInt(10),
-      startVelocity: 10 + rndInt(10),
-      spread: 360
-    }
-  }, options);
+  data = common.inheritData(
+    {
+      type,
+      parent: options.parent || null,
+      parentType: options.parentType || null,
+      energy: 2,
+      energyMax: 2,
+      infantryEnergyCost: 0.5,
+      armed: false,
+      didNotify: false,
+      expired: false,
+      hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
+      nearExpiry: false,
+      nearExpiryThreshold: 0.88,
+      frameCount: 0,
+      foundDecoy: false,
+      decoyItemTypes: getTypes('parachuteInfantry', {
+        exports: { data: { isEnemy: options.isEnemy } }
+      }),
+      decoyFrameCount: 11,
+      ramiusFrameCount: 20,
+      expireFrameCount: options.expireFrameCount || 256,
+      dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
+      width,
+      halfWidth: width / 2,
+      height,
+      gravity: 1,
+      damagePoints: 12.5,
+      isBanana: !!options.isBanana,
+      isRubberChicken: !!options.isRubberChicken,
+      isSmartMissile: !!options.isSmartMissile,
+      onDie: options.onDie || null,
+      playbackRate: 0.9 + Math.random() * 0.2,
+      target: null,
+      vX: net.active ? 1 : 1 + Math.random(),
+      vY: net.active ? 1 : 1 + Math.random(),
+      vXMax: net.active ? 12 : 12 + rng(6, type) + (options.vXMax || 0),
+      vYMax: net.active ? 12 : 12 + rng(6, type) + (options.vYMax || 0),
+      vYMaxExpired: 36,
+      thrust: net.active ? 0.5 : 0.5 + rng(0.5, type),
+      deadTimer: null,
+      trailerCount: 16,
+      xHistory: [],
+      yHistory: [],
+      yMax: null,
+      angle: options.isEnemy ? 180 : 0,
+      angleIncrement: 45,
+      noEnergyStatus: true,
+      domFetti: {
+        // may be overridden
+        colorType:
+          options.isRubberChicken || options.isBanana ? 'default' : undefined,
+        elementCount: 10 + rndInt(10),
+        startVelocity: 10 + rndInt(10),
+        spread: 360
+      }
+    },
+    options
+  );
 
   dom = {
     o: null,
@@ -970,11 +1038,13 @@ const SmartMissile = (options = {}) => {
         sparkAndDie(target);
       }
     },
-    items: getTypes('superBunker, helicopter, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, bunker, balloon, smartMissile, turret', { exports })
+    items: getTypes(
+      'superBunker, helicopter, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, bunker, balloon, smartMissile, turret',
+      { exports }
+    )
   };
 
   return exports;
-
 };
 
 export { SmartMissile };

@@ -1,6 +1,17 @@
 import { game } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { debugCollision, FRAMERATE, oneOf, rngPlusMinus, rngInt, TYPES, rng, isMobile, isSafari, FPS } from '../core/global.js';
+import {
+  debugCollision,
+  FRAMERATE,
+  oneOf,
+  rngPlusMinus,
+  rngInt,
+  TYPES,
+  rng,
+  isMobile,
+  isSafari,
+  FPS
+} from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -14,7 +25,6 @@ let guid;
 let guidByType = {};
 
 function resetGUID() {
-
   guid = 0;
 
   // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
@@ -23,7 +33,6 @@ function resetGUID() {
       guidByType[type] = 0;
     }
   }
-
 }
 
 resetGUID();
@@ -48,7 +57,7 @@ const excludeFromNetworkTypes = {
   // [TYPES.gunfire]: true,
   [TYPES.shrapnel]: true,
   [TYPES.superBunker]: true
-}
+};
 
 const PREFIX_HOST = 'host_';
 const PREFIX_GUEST = 'guest_';
@@ -65,7 +74,6 @@ const defaultCSSKeys = Object.keys(defaultCSS);
 const debugRects = [];
 
 function makeDebugRect(obj, viaNetwork) {
-
   if (!obj?.data) return;
 
   const { data } = obj;
@@ -74,20 +82,24 @@ function makeDebugRect(obj, viaNetwork) {
 
   function update() {
     if (!o?.style) return;
-    o.style.transform = `translate3d(${x - game.objects.view.data.battleField.scrollLeft}px, ${y}px, 0px)`;
+    o.style.transform = `translate3d(${
+      x - game.objects.view.data.battleField.scrollLeft
+    }px, ${y}px, 0px)`;
   }
 
   const o = document.createElement('div');
   o.className = 'debug-rect';
 
   Object.assign(o.style, {
-    position: 'absolute',
-    top: '0px',
-    left: '0px',
-    width: `${data.width}px`,
-    height: `${data.height}px`,
-    border: `1px ${viaNetwork ? 'dotted' : 'solid'} ${data.isEnemy ? '#990000' : '#009900'}`,
-    color: '#fff',
+    'position': 'absolute',
+    'top': '0px',
+    'left': '0px',
+    'width': `${data.width}px`,
+    'height': `${data.height}px`,
+    'border': `1px ${viaNetwork ? 'dotted' : 'solid'} ${
+      data.isEnemy ? '#990000' : '#009900'
+    }`,
+    'color': '#fff',
     'font-size': '4px'
   });
 
@@ -107,7 +119,10 @@ function makeDebugRect(obj, viaNetwork) {
 
   Object.assign(span.style, style);
 
-  span.innerHTML = data.id + (data.parent ? data.parent?.data.id : '') + (viaNetwork ? ' 📡' : '');
+  span.innerHTML =
+    data.id +
+    (data.parent ? data.parent?.data.id : '') +
+    (viaNetwork ? ' 📡' : '');
   o.appendChild(span);
 
   game.dom.battlefield.appendChild(o);
@@ -130,22 +145,23 @@ function makeDebugRect(obj, viaNetwork) {
         data: {
           id: data.parent.data.id
         }
-      }
+      };
     }
 
     const viaNetwork = true;
-    net.sendMessage({ type: 'MAKE_DEBUG_RECT', params: [ basicData, viaNetwork ] });
+    net.sendMessage({
+      type: 'MAKE_DEBUG_RECT',
+      params: [basicData, viaNetwork]
+    });
   }
 
   return {
     update,
     o
-  }
-
+  };
 }
 
 function getRenameString(oldName, newName, fromNetworkEvent) {
-
   const strings = [
     '%1 is now %2.',
     '%1 has handed the reins over to %2.',
@@ -158,36 +174,41 @@ function getRenameString(oldName, newName, fromNetworkEvent) {
 
   // hackish: ignore default "guest" and "host" if game has started, use nicer context-appropriate wording.
 
-  const isGuest = (oldName === 'guest');
-  const isHost = (oldName === 'host');
+  const isGuest = oldName === 'guest';
+  const isHost = oldName === 'host';
 
   if (isGuest || isHost) {
-
     // naming depends on the player's friendliness.
     if (fromNetworkEvent && game.data.started) {
-      oldName = (game.players.remoteHuman.data.isEnemy === game.players.local.data.isEnemy ? 'your friend' : 'your opponent');
+      oldName =
+        game.players.remoteHuman.data.isEnemy ===
+        game.players.local.data.isEnemy
+          ? 'your friend'
+          : 'your opponent';
     } else {
       if (isGuest) oldName = 'the guest';
       if (isHost) oldName = 'the host';
     }
-
   }
 
   str = str.replace('%1', oldName).replace('%2', newName);
 
   return str.charAt(0).toUpperCase() + str.slice(1);
-
 }
 
 const slashCommands = {
-
   '/name': (newName, fromNetworkEvent) => {
-
     // hackish: "from network event" means the remote changed names.
-    const playerName = fromNetworkEvent ? gamePrefs.net_remote_player_name : gamePrefs.net_player_name;
+    const playerName = fromNetworkEvent
+      ? gamePrefs.net_remote_player_name
+      : gamePrefs.net_player_name;
 
     // name must change, and must be unique.
-    if (newName === gamePrefs.net_remote_player_name || newName === gamePrefs.net_player_name) return;
+    if (
+      newName === gamePrefs.net_remote_player_name ||
+      newName === gamePrefs.net_player_name
+    )
+      return;
 
     const msg = getRenameString(playerName, newName, fromNetworkEvent);
 
@@ -200,9 +221,7 @@ const slashCommands = {
       gamePrefs.net_player_name = newName;
       net.sendMessage({ type: 'REMOTE_PLAYER_NAME', newName });
     }
-
   }
-
 };
 
 let loadedVideos = {};
@@ -212,14 +231,20 @@ let videoActive;
 let gravestoneQueue = [];
 let gravestoneTimer;
 
-const smallDecor = [ 'barb-wire', 'checkmark-grass', 'flower', 'flower-bush', 'palm-tree', 'cactus' ];
-const largeDecor = [ 'flowers', 'grass', 'sand-dune', 'sand-dunes' ];
-const gravestoneTypes = [ 'gravestone', 'gravestone2', 'grave-cross' ];
+const smallDecor = [
+  'barb-wire',
+  'checkmark-grass',
+  'flower',
+  'flower-bush',
+  'palm-tree',
+  'cactus'
+];
+const largeDecor = ['flowers', 'grass', 'sand-dune', 'sand-dunes'];
+const gravestoneTypes = ['gravestone', 'gravestone2', 'grave-cross'];
 const maxGravestoneRange = 64;
 const maxQueueSize = 5;
 
 function queueGravestoneWork() {
-
   // fire immediately, if queue is large enough.
   if (gravestoneQueue.length >= maxQueueSize) {
     processGravestoneQueue();
@@ -228,7 +253,6 @@ function queueGravestoneWork() {
   gravestoneTimer?.reset();
 
   gravestoneTimer = common.setFrameTimeout(processGravestoneQueue, 750);
-
 }
 
 // hackish: rng() version of oneOf()
@@ -238,7 +262,6 @@ function pickFrom(array) {
 }
 
 function processGravestoneQueue() {
-
   gravestoneTimer = null;
 
   let clusters = [];
@@ -249,9 +272,10 @@ function processGravestoneQueue() {
   // split X coordinates into "clusters", where applicable.
 
   if (gravestoneQueue.length >= 3) {
-
     // array of x coords, and "type" (based on thing that died)
-    const items = gravestoneQueue.map((item) => ({ x: item[0].data.x, typeCSS: item[2] })).sort(utils.array.compare('x'));
+    const items = gravestoneQueue
+      .map((item) => ({ x: item[0].data.x, typeCSS: item[2] }))
+      .sort(utils.array.compare('x'));
 
     // pre-populate the first cluster
     clusters[0] = [items[0].x];
@@ -273,19 +297,29 @@ function processGravestoneQueue() {
       cluster.forEach((item, i) => {
         const { x, typeCSS } = item;
         if ((i + 1) % 2 === 0) {
-          riseItemAfterDelay(game.addItem(`${pickFrom(smallDecor)} ${typeCSS} ${extraCSS}`, x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)), 33 + (33 * (i + 1)));
+          riseItemAfterDelay(
+            game.addItem(
+              `${pickFrom(smallDecor)} ${typeCSS} ${extraCSS}`,
+              x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)
+            ),
+            33 + 33 * (i + 1)
+          );
         }
       });
       if (cluster.length > 2) {
         const i = 1 + rngInt(cluster.length - 1, TYPES.terrainItem);
-        riseItemAfterDelay(game.addItem(`${pickFrom(largeDecor)} ${cluster[i].typeCSS} ${extraCSS}`, (cluster[i + 1] + cluster[i]) / 2), 33 + (33 * (i + 1)));
+        riseItemAfterDelay(
+          game.addItem(
+            `${pickFrom(largeDecor)} ${cluster[i].typeCSS} ${extraCSS}`,
+            (cluster[i + 1] + cluster[i]) / 2
+          ),
+          33 + 33 * (i + 1)
+        );
       }
     });
-
   }
 
   gravestoneQueue.forEach((item, i) => {
-
     const exports = item[0];
     const typeCSS = item[1];
     const type = pickFrom(gravestoneTypes);
@@ -293,29 +327,34 @@ function processGravestoneQueue() {
     // gravestones face the side from which they died, per se.
     const flipX = exports.data?.isEnemy ? 'scaleX(-1)' : '';
 
-    const stone = game.addItem(`${type} ${typeCSS} ${extraCSS}`, exports.data.x + exports.data.halfWidth, flipX);
+    const stone = game.addItem(
+      `${type} ${typeCSS} ${extraCSS}`,
+      exports.data.x + exports.data.halfWidth,
+      flipX
+    );
 
-    // rise from the ... grave? ;) 
-    riseItemAfterDelay(stone, 33 + (66 * (i + 1)));
-
+    // rise from the ... grave? ;)
+    riseItemAfterDelay(stone, 33 + 66 * (i + 1));
   });
 
   // reset
   gravestoneQueue = [];
-
 }
 
-const riseItemAfterDelay = (exports, delay = 33) => common.setFrameTimeout(() => utils.css.remove(exports?.dom?.o, 'submerged'), delay);
+const riseItemAfterDelay = (exports, delay = 33) =>
+  common.setFrameTimeout(
+    () => utils.css.remove(exports?.dom?.o, 'submerged'),
+    delay
+  );
 
 const common = {
-
   // given a list of keys, collect and return a new object of key/value pairs.
-  pick: (o, ...props) => Object.assign({}, ...props.map(prop => ({[prop]: o[prop]}))),
+  pick: (o, ...props) =>
+    Object.assign({}, ...props.map((prop) => ({ [prop]: o[prop] }))),
 
   getRenameString,
 
   parseSlashCommand: (msg, fromNetwork = true) => {
-
     /**
      * given a text message, parse and return a function that will execute it.
      * e.g., "/name scott"
@@ -332,13 +371,15 @@ const common = {
     if (!slashCommands[cmd]) return;
 
     // TODO: multiple param support?
-    const param = bits.splice(1).filter((item) => item.length).join(' ');
+    const param = bits
+      .splice(1)
+      .filter((item) => item.length)
+      .join(' ');
 
     if (!param.length) return;
 
     // note: returning a function.
     return () => slashCommands[cmd](param, fromNetwork);
-
   },
 
   animateDebugRects: () => {
@@ -351,14 +392,13 @@ const common = {
   makeDebugRect,
 
   unlinkObject: (obj) => {
-
     // drop "links" from zones, and objects by ID.
     if (!obj?.data?.id) return;
-  
+
     if (obj.data.frontZone !== null || obj.data.rearZone !== null) {
       zones.leaveAllZones(obj);
     }
-  
+
     game.objectsById[obj.data.id] = null;
     delete game.objectsById[obj.data.id];
 
@@ -369,63 +409,57 @@ const common = {
         attacker: obj?.data?.attacker?.id || 'unknown'
       };
     }
-  
   },
 
   setFrameTimeout: (callback, delayMsec) => {
-
     /**
      * a frame-counting-based setTimeout() implementation.
      * millisecond value (parameter) is converted to a frame count.
      */
-  
+
     let data, exports;
-  
+
     data = {
       frameCount: 0,
       frameInterval: parseInt(delayMsec / FRAMERATE, 10), // e.g., msec = 1000 -> frameInterval = 60
       callbackFired: false,
-      didReset: false,
+      didReset: false
     };
-  
+
     function animate() {
-  
       // if reset() was called, exit early
-      if (data.didReset) return true; 
-  
+      if (data.didReset) return true;
+
       data.frameCount++;
-  
+
       if (!data.callbackFired && data.frameCount >= data.frameInterval) {
         callback();
         data.callbackFired = true;
         return true;
       }
-  
+
       return false;
-  
     }
-  
+
     function reset() {
       // similar to clearTimeout()
       data.didReset = true;
     }
-  
+
     exports = {
       animate,
       data,
       reset
     };
-  
+
     frameTimeoutManager.addInstance(exports);
-  
+
     return exports;
-  
   },
 
   inheritData(data, options = {}) {
-
     // mix in defaults and common options
-  
+
     let id = options.id || `obj_${guidByType[data.type]++}_${data.type}`;
 
     /**
@@ -435,10 +469,16 @@ const common = {
      * Ground items e.g., base, bunker etc., use "static" IDs that do not need prefixing by design,
      * since they are created on both sides and their IDs need to match.
      */
-    
+
     // TODO: maybe use `fromNetworkEvent` instead of matching host|guest
     // NOTE: no prefix if `options.id` was specified.
-    if (net.active && !options.id && !options.staticID && !staticIDTypes[data.type] && !options.fromNetworkEvent) {
+    if (
+      net.active &&
+      !options.id &&
+      !options.staticID &&
+      !staticIDTypes[data.type] &&
+      !options.fromNetworkEvent
+    ) {
       id = `${net.isHost ? PREFIX_HOST : PREFIX_GUEST}${id}`;
     }
 
@@ -453,7 +493,7 @@ const common = {
 
     const defaults = {
       id,
-      guid: (options.id || `obj_${guid++}_${data.type}`),
+      guid: options.id || `obj_${guid++}_${data.type}`,
       fromNetworkEvent: options.fromNetworkEvent,
       isOnScreen: null,
       isEnemy: !!options.isEnemy,
@@ -474,36 +514,30 @@ const common = {
     for (key in defaults) {
       if (data[key] === undefined) data[key] = defaults[key];
     }
-  
+
     return data;
-  
   },
 
   inheritCSS(options = {}) {
-
     defaultCSSKeys.forEach((key) => {
       if (options[key] === undefined) {
         options[key] = defaultCSS[key];
       }
     });
-  
+
     return options;
-  
   },
 
   mixin(oMain, oAdd) {
-
     // edge case: if nothing to add, return "as-is"
     // if otherwise unspecified, `oAdd` is the default options object
     if (oAdd === undefined) return oMain;
 
     // the modern way
     return Object.assign(oMain, oAdd);
-
   },
 
   friendlyNearbyHit(target, source, hitOptions) {
-
     // logic for missile launcher and tank overlap / spacing.
 
     const { stop, resume } = hitOptions;
@@ -521,7 +555,6 @@ const common = {
      * Therefore: if both of us are tanks, and the target is firing and we are not, keep on truckin'.
      */
     if (source.data.type === TYPES.tank && target.data.type === TYPES.tank) {
-
       // ignore if we're firing at a target, because we should also be stopped.
       if (source.data.lastNearbyTarget) return;
 
@@ -530,7 +563,6 @@ const common = {
         resume();
         return;
       }
-
     }
 
     // if we are not a tank, but the target is, always wait for tanks to pass in front.
@@ -540,14 +572,20 @@ const common = {
     }
 
     // If we are "ahead" of the overlapping unit, we may be at the front of a possible traffic pile-up - so, keep on truckin'.
-    if ((!source.data.isEnemy && source.data.x > target.data.x) || (source.data.isEnemy && source.data.x < target.data.x)) {
+    if (
+      (!source.data.isEnemy && source.data.x > target.data.x) ||
+      (source.data.isEnemy && source.data.x < target.data.x)
+    ) {
       resume();
       return;
     }
 
     // if we have an absolute match with another vehicle (and the same type), take the lower ID.
     // this is intended to help prevent vehicles from getting "wedged" waiting for one another.
-    if (source.data.x === target.data.x && target.data.type === source.data.type) {
+    if (
+      source.data.x === target.data.x &&
+      target.data.type === source.data.type
+    ) {
       const sourceID = source.data.guid.split('_')[1];
       const targetID = target.data.guid.split('_')[1];
       if (sourceID < targetID) {
@@ -558,11 +596,9 @@ const common = {
 
     // at this point, just stop.
     stop();
-
   },
 
   hit(target, hitPoints = 1, attacker) {
-
     let newEnergy, energyChanged;
 
     /**
@@ -571,7 +607,11 @@ const common = {
      */
 
     // non-tank gunfire will ricochet off of super bunkers.
-    if (target.data.type === TYPES.superBunker && !(attacker?.data?.parentType === TYPES.tank)) return;
+    if (
+      target.data.type === TYPES.superBunker &&
+      !(attacker?.data?.parentType === TYPES.tank)
+    )
+      return;
 
     if (target.data.type === TYPES.tank) {
       // tanks shouldn't be damaged by shrapnel - but, let the shrapnel die.
@@ -594,23 +634,19 @@ const common = {
     sprites.updateEnergy(target);
 
     if (!target.data.energy && target.die) {
-
       // mutate the object: assign its attacker.
       target.data.attacker = attacker;
 
       target.die({ attacker });
-
     }
-
   },
 
   onDie(target, dieOptions = {}) {
-
     /**
      * A generic catch-all for battlefield item `die()` events.
      * This was added specifically for the network game case,
      * but may be refactored in future as needed.
-    */
+     */
 
     if (!net.active) return;
 
@@ -619,8 +655,10 @@ const common = {
     const attacker = dieOptions.attacker || target?.data?.attacker;
 
     if (debugCollision) {
-      if (attacker && attacker.data.type === TYPES.helicopter) makeDebugRect(attacker);
-      if (target && target.data.type === TYPES.helicopter) makeDebugRect(target);
+      if (attacker && attacker.data.type === TYPES.helicopter)
+        makeDebugRect(attacker);
+      if (target && target.data.type === TYPES.helicopter)
+        makeDebugRect(target);
     }
 
     // ignore certain things - they're noisy or safer to leave locally, should be deterministic, and will generate additional traffic.
@@ -645,8 +683,12 @@ const common = {
 
     // notify the remote: take something out.
     // by the time this lands, the remote object may have already died, been removed and be in the "boneyard" - that's fine.
-    net.sendDelayedMessage({ type: 'GAME_EVENT', id: target.data.id, method: 'die', params });
-
+    net.sendDelayedMessage({
+      type: 'GAME_EVENT',
+      id: target.data.id,
+      method: 'die',
+      params
+    });
   },
 
   // height offsets for certain common ground units
@@ -662,53 +704,49 @@ const common = {
   getLandingPadOffsetX(helicopter) {
     const pads = game.objects[TYPES.landingPad];
     const landingPad = pads[helicopter.data.isEnemy ? pads.length - 1 : 0];
-    return landingPad.data.x + (landingPad.data.width / 2) - helicopter.data.halfWidth;
+    return (
+      landingPad.data.x + landingPad.data.width / 2 - helicopter.data.halfWidth
+    );
   },
 
   bottomAlignedY(y) {
-
     // correct bottom-aligned Y value
     return 370 - 2 - (y || 0);
-  
   },
 
   getDoorCoords(obj) {
-
     // for special collision check case with bunkers
-  
+
     const door = {
       width: 5,
       height: obj.data.height, // HACK: should be ~9px, figure out why true height does not work.
       halfWidth: 2.5
     };
-  
-    return ({
+
+    return {
       width: door.width,
       height: door.height,
       // slight offset on X, don't subtract door half-width
       x: parseInt(obj.data.x + obj.data.halfWidth + door.halfWidth + 2, 10),
-      y: parseInt((obj.data.y + obj.data.height) - door.height, 10)
-    });
-  
+      y: parseInt(obj.data.y + obj.data.height - door.height, 10)
+    };
   },
 
   initNearby(nearby, exports) {
-
     // map options.source -> exports
     nearby.options.source = exports;
-  
   },
 
   tweakEmojiSpacing(text) {
-
     // https://www.freecodecamp.org/news/how-to-use-regex-to-match-emoji-including-discord-emotes/
     // replace emoji + space character with emoji + half-width space, splitting the emoji from the match and including a partial space character: ` `
-    return text?.replace(/<a?:.+?:\d{18}>|\p{Extended_Pictographic}\s/gu, (match/*, offset, string*/) => `${match.substr(0, match.length - 1)} `);
-
+    return text?.replace(
+      /<a?:.+?:\d{18}>|\p{Extended_Pictographic}\s/gu,
+      (match /*, offset, string*/) => `${match.substr(0, match.length - 1)} `
+    );
   },
 
   preloadVideo(fileName) {
-
     if (loadedVideos[fileName]) return;
 
     let video = document.createElement('video');
@@ -736,14 +774,12 @@ const common = {
     video.play();
 
     window.setTimeout(preloadOK, 5000);
-
   },
 
   setVideo(fileName = '', playbackRate, offsetMsec = 0, muted = true) {
-
     const o = document.getElementById('tv');
 
-    const disabled = (!gamePrefs.bnb || !gamePrefs.bnb_tv);
+    const disabled = !gamePrefs.bnb || !gamePrefs.bnb_tv;
 
     videoActive = !!fileName;
 
@@ -778,23 +814,29 @@ const common = {
     }
 
     // certain content is widescreen
-    utils.css.addOrRemove(container, fileName.match(/camper|desert|wz/i), 'widescreen');
+    utils.css.addOrRemove(
+      container,
+      fileName.match(/camper|desert|wz/i),
+      'widescreen'
+    );
 
-    const hasAudio = (fileName.match(/wz/i));
+    const hasAudio = fileName.match(/wz/i);
     const isWZ = fileName.match(/wz/i);
 
     const sources = [
       `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
-      `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`,
+      `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`
     ];
 
     // MP4 first, due to historical bias...
     if (isSafari) sources.reverse();
 
     o.innerHTML = [
-     `<video id="tv-video"${muted ? ' muted' : ''}${!hasAudio ? ' autoplay' : ''} playsinline>`,
+      `<video id="tv-video"${muted ? ' muted' : ''}${
+        !hasAudio ? ' autoplay' : ''
+      } playsinline>`,
       ...sources,
-     '</video>',
+      '</video>'
     ].join('');
 
     // special-case: 'WZ' "music video."
@@ -840,41 +882,39 @@ const common = {
       fs = document.createElement('div');
       fs.id = 'fs';
       Object.assign(fs.style, {
-        position: 'absolute',
-        top: '34px',
-        left: '0px',
-        height: `100%`,
-        width: '100%',
-        overflow: 'hidden',
+        'position': 'absolute',
+        'top': '34px',
+        'left': '0px',
+        'height': `100%`,
+        'width': '100%',
+        'overflow': 'hidden',
         'z-index': -1,
-        opacity: 0,
-        transition: 'opacity 5s'
+        'opacity': 0,
+        'transition': 'opacity 5s'
       });
 
       fs.innerHTML = [
-       `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:auto;height:100%;transform:translate(-50%,0px)">`,
-       ...sources,
-       '</video>'
+        `<video id="tv-video-larger" muted playsinline style="position:absolute;bottom:0px;left:50%;width:auto;height:100%;transform:translate(-50%,0px)">`,
+        ...sources,
+        '</video>'
       ].join('');
 
       const bf = document.getElementById('battlefield');
       bf.insertBefore(fs, bf.childNodes[0]);
 
-      videos = [ document.getElementById('tv-video'), document.getElementById('tv-video-larger') ];
+      videos = [
+        document.getElementById('tv-video'),
+        document.getElementById('tv-video-larger')
+      ];
 
       if (!loadedVideos[fileName]) {
-
         videos[0].addEventListener('canplaythrough', () => {
           loadedVideos[fileName] = true;
           ready();
         });
-
       } else {
-
         ready();
-        
       }
-
     }
 
     utils.css.add(container, 'active');
@@ -886,37 +926,58 @@ const common = {
     }
 
     video.onended = () => common.setVideo('');
-
   },
 
   basicEscape(str) {
-    return str?.replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    // convenience
-    .replace('\n', '<br>');
+    return (
+      str
+        ?.replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        // convenience
+        .replace('\n', '<br>')
+    );
   },
 
   addGravestone(exports) {
-
     const dType = exports.data.type;
 
-    const isInfantry = gamePrefs.gravestones_infantry && (dType === TYPES.infantry || dType === TYPES.parachuteInfantry);
-    const isHelicopter = gamePrefs.gravestones_helicopters && dType === TYPES.helicopter;
-    const isVehicle = gamePrefs.gravestones_vehicles && dType.match(/tank|van|launcher/i);
+    const isInfantry =
+      gamePrefs.gravestones_infantry &&
+      (dType === TYPES.infantry || dType === TYPES.parachuteInfantry);
+    const isHelicopter =
+      gamePrefs.gravestones_helicopters && dType === TYPES.helicopter;
+    const isVehicle =
+      gamePrefs.gravestones_vehicles && dType.match(/tank|van|launcher/i);
 
     if (!isInfantry && !isHelicopter && !isVehicle) return;
 
-    const typeCSS = isInfantry ? 'gs_infantry' : (isHelicopter ? 'gs_helicopter' : 'gs_vehicle');
+    const typeCSS = isInfantry
+      ? 'gs_infantry'
+      : isHelicopter
+      ? 'gs_helicopter'
+      : 'gs_vehicle';
 
     function r() {
-      return [ { data: { x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem), halfWidth: exports.data.halfWidth } }, pickFrom(smallDecor), typeCSS ];
+      return [
+        {
+          data: {
+            x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem),
+            halfWidth: exports.data.halfWidth
+          }
+        },
+        pickFrom(smallDecor),
+        typeCSS
+      ];
     }
 
     // for non-infantry types, add a few extra before the gravestone pops up.
-    if (exports.data.type !== TYPES.infantry && rng(1, TYPES.terrainItem) >= 0.5) {
+    if (
+      exports.data.type !== TYPES.infantry &&
+      rng(1, TYPES.terrainItem) >= 0.5
+    ) {
       gravestoneQueue.push(r());
     }
 
@@ -924,13 +985,11 @@ const common = {
     gravestoneQueue.push([exports, typeCSS]);
 
     queueGravestoneWork();
-
   },
 
   resetGUID,
 
   resizeScanNode(exports, radarItem) {
-
     if (!exports) return;
 
     const { dom, data } = exports;
@@ -938,7 +997,7 @@ const common = {
     const radarScanNode = radarItem?.dom?.oScanNode;
 
     const scanNode = dom.oScanNode;
-    
+
     const distance = data.dead ? 0 : data.scanDistance;
 
     radarItem?.updateScanNode(distance);
@@ -947,7 +1006,7 @@ const common = {
 
     // allow transition if launcher was just ordered, rising up from below.
     if (!data.orderComplete) return;
-    
+
     common.setFrameTimeout(() => {
       if (scanNode) {
         scanNode.style.transition = '';
@@ -956,11 +1015,9 @@ const common = {
         radarScanNode.style.transition = '';
       }
     }, FPS * 10);
-    
   },
 
   updateScanNode(exports, radius = 0) {
-
     if (!exports) return;
 
     const { data, dom } = exports;
@@ -974,11 +1031,8 @@ const common = {
 
     data.logicalWidth = radius;
 
-    oScanNode.style.width = oScanNode.style.height = `${(radius * 2)}px`;
-
+    oScanNode.style.width = oScanNode.style.height = `${radius * 2}px`;
   }
-
-
 };
 
 export { common };

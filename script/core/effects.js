@@ -1,6 +1,6 @@
 import { rng, worldHeight } from '../core/global.js';
 import { game } from '../core/Game.js';
-import { domFettiBoom } from '../UI/DomFetti.js'
+import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { rnd, rndInt, plusMinus, rad2Deg, TYPES } from '../core/global.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -13,7 +13,6 @@ let shrapnelToAdd = [];
 const MAX_SHRAPNEL_PER_FRAME = 128;
 
 function nextShrapnel() {
-
   if (!shrapnelToAdd.length) return;
 
   // no more than X at a time
@@ -27,39 +26,49 @@ function nextShrapnel() {
   }
 
   game.objects.queue.addNextFrame(nextShrapnel);
-
 }
 
 const effects = {
-
   smokeRing: (item, smokeOptions) => {
-
     // don't create if not visible
     if (!item.data.isOnScreen) return;
 
     smokeOptions = smokeOptions || {};
-    
-    let angle, smokeArgs, angleIncrement, count, i, radians, velocityMax, vX, vY, vectorX, vectorY;
+
+    let angle,
+      smokeArgs,
+      angleIncrement,
+      count,
+      i,
+      radians,
+      velocityMax,
+      vX,
+      vY,
+      vectorX,
+      vectorY;
 
     angle = 0;
 
     // some sort of min / max
-    velocityMax = smokeOptions.velocityMax || (3 + rnd(4));
+    velocityMax = smokeOptions.velocityMax || 3 + rnd(4);
 
     // # of smoke elements
-    count = parseInt((smokeOptions.count ? smokeOptions.count / 2 : 5) + rndInt(smokeOptions.count || 11), 10);
+    count = parseInt(
+      (smokeOptions.count ? smokeOptions.count / 2 : 5) +
+        rndInt(smokeOptions.count || 11),
+      10
+    );
 
     angleIncrement = 180 / count;
 
     // random: 50% to 100% of range
-    vX = vY = (velocityMax / 2) + rnd(velocityMax / 2);
+    vX = vY = velocityMax / 2 + rnd(velocityMax / 2);
 
     for (i = 0; i < count; i++) {
-
-      angle += (angleIncrement + plusMinus(rnd(angleIncrement * 0.25)));
+      angle += angleIncrement + plusMinus(rnd(angleIncrement * 0.25));
 
       // calculate vectors for each element
-      radians = angle * Math.PI / 90;
+      radians = (angle * Math.PI) / 90;
 
       vectorX = vX * Math.cos(radians);
       vectorY = vY * Math.sin(radians);
@@ -72,11 +81,14 @@ const effects = {
 
       smokeArgs = {
         // fixedSpeed: true, // don't randomize vX / vY each time
-        x: item.data.x + ((smokeOptions.offsetX || 0) || (item.data.halfWidth || 0)),
-        y: item.data.y + ((smokeOptions.offsetY || 0) || (item.data.halfHeight || 0)),
+        x:
+          item.data.x + (smokeOptions.offsetX || 0 || item.data.halfWidth || 0),
+        y:
+          item.data.y +
+          (smokeOptions.offsetY || 0 || item.data.halfHeight || 0),
         // account for some of parent object's motion, e.g., helicopter was moving when it blew up
-        vX: (vectorX + ((smokeOptions.parentVX || 0) / 3)) * (1 + rnd(0.25)),
-        vY: (vectorY + ((smokeOptions.parentVY || 0) / 3)) * (1 + rnd(0.25)),
+        vX: (vectorX + (smokeOptions.parentVX || 0) / 3) * (1 + rnd(0.25)),
+        vY: (vectorY + (smokeOptions.parentVY || 0) / 3) * (1 + rnd(0.25)),
         // spriteFrame: (Math.random() > 0.5 ? 0 : rndInt(5)),
         spriteFrameModulus: smokeOptions.spriteFrameModulus || 3,
         gravity: 0.25,
@@ -88,36 +100,46 @@ const effects = {
 
       // past a certain amount, create inner "rings"
       if (count >= 20 || velocityMax > 15) {
-
         // second inner ring
         if (i % 2 === 0) {
-          game.objects.smoke.push(Smoke(
-            common.mixin(smokeArgs, { vX: vectorX * 0.75, vY: vectorY * 0.75})
-          ));
+          game.objects.smoke.push(
+            Smoke(
+              common.mixin(smokeArgs, {
+                vX: vectorX * 0.75,
+                vY: vectorY * 0.75
+              })
+            )
+          );
         }
 
         // third inner ring
         if (i % 3 === 0) {
-          game.objects.smoke.push(Smoke(
-            common.mixin(smokeArgs, { vX: vectorX * 0.66, vY: vectorY * 0.66})
-          ));
+          game.objects.smoke.push(
+            Smoke(
+              common.mixin(smokeArgs, {
+                vX: vectorX * 0.66,
+                vY: vectorY * 0.66
+              })
+            )
+          );
         }
 
         // fourth inner ring
         if (i % 4 === 0) {
-          game.objects.smoke.push(Smoke(
-            common.mixin(smokeArgs, { vX: vectorX * 0.50, vY: vectorY * 0.50})
-          ));
+          game.objects.smoke.push(
+            Smoke(
+              common.mixin(smokeArgs, { vX: vectorX * 0.5, vY: vectorY * 0.5 })
+            )
+          );
         }
-
       }
-
     }
-
   },
 
-  smokeRelativeToDamage: (exports, chance = 1 - (exports?.data?.energy / exports?.data?.energyMax)) => {
-    
+  smokeRelativeToDamage: (
+    exports,
+    chance = 1 - exports?.data?.energy / exports?.data?.energyMax
+  ) => {
     if (!exports || !exports.data || !exports.dom) return;
 
     // const data = exports.data;
@@ -128,30 +150,54 @@ const effects = {
 
     // first off: certain chance of no smoke, regardless of status
     if (Math.random() >= (chance || 0.66)) return;
-    
-    // a proper roll of the dice: smoke at random. higher damage = greater chance of smoke
-    if (Math.random() < 1 - ((data.energyMax -data.energy) / data.energyMax)) return;
 
-    const isBunker = (data.type == TYPES.bunker);
-    const isTurret = (data.type === TYPES.turret);
+    // a proper roll of the dice: smoke at random. higher damage = greater chance of smoke
+    if (Math.random() < 1 - (data.energyMax - data.energy) / data.energyMax)
+      return;
+
+    const isBunker = data.type == TYPES.bunker;
+    const isTurret = data.type === TYPES.turret;
 
     // bunkers can smoke across the whole thing
     const fractionWidth = isBunker ? data.halfWidth : data.halfWidth * 0.5;
 
     // TODO: clean this up. yuck.
-    game.objects.smoke.push(Smoke({
-      x: data.x + data.halfWidth + (parseInt(rnd(fractionWidth) * plusMinus(), 10)),
-      y: data.y + data.halfHeight + (parseInt(rnd(data.halfHeight) * (isBunker ? 0.5 : 0.25) * (data.vY <= 0 ? -1 : 1), 10)),
-      // if undefined or zero, allow smoke to go left or right
-      // special handling for helicopters and turrets. this should be moved into config options.
-      vX: (data.type === TYPES.helicopter ? rnd(1.5) * plusMinus() : (isBunker || isTurret) ? plusMinus(0.5 * chance) : (-(data.vX || 0) + rnd(1.5) * (data.vX === undefined || data.vX === 0 ? plusMinus() : 1))),
-      vY: (isBunker || isTurret ? -rnd(5 * chance) : (data.type === TYPES.helicopter ? -rnd(3 * chance) : -(data.vY || 0.25) + rnd(-2)))
-    }));
-
+    game.objects.smoke.push(
+      Smoke({
+        x:
+          data.x +
+          data.halfWidth +
+          parseInt(rnd(fractionWidth) * plusMinus(), 10),
+        y:
+          data.y +
+          data.halfHeight +
+          parseInt(
+            rnd(data.halfHeight) *
+              (isBunker ? 0.5 : 0.25) *
+              (data.vY <= 0 ? -1 : 1),
+            10
+          ),
+        // if undefined or zero, allow smoke to go left or right
+        // special handling for helicopters and turrets. this should be moved into config options.
+        vX:
+          data.type === TYPES.helicopter
+            ? rnd(1.5) * plusMinus()
+            : isBunker || isTurret
+            ? plusMinus(0.5 * chance)
+            : -(data.vX || 0) +
+              rnd(1.5) *
+                (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
+        vY:
+          isBunker || isTurret
+            ? -rnd(5 * chance)
+            : data.type === TYPES.helicopter
+            ? -rnd(3 * chance)
+            : -(data.vY || 0.25) + rnd(-2)
+      })
+    );
   },
 
   ephemeralExplosion: (options = {}) => {
-
     if (!options?.data) return;
 
     const oData = options.data;
@@ -186,19 +232,22 @@ const effects = {
     };
 
     function animate() {
+      sprites.setTransformXY(
+        exports,
+        dom.o,
+        `${data.x}px`,
+        `${data.y}px`,
+        data.extraTransform
+      );
 
-      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`, data.extraTransform);
-
-      const finished = (++data.frameCount >= data.frameCountMax);
+      const finished = ++data.frameCount >= data.frameCountMax;
 
       if (finished) sprites.removeNodes(dom);
 
       return finished;
-
     }
 
     function doLayout() {
-
       const adjustedWidth = Math.max(24, oData.width);
 
       // prevent extra-small sprite sizes, and possible vertical clipping
@@ -208,7 +257,7 @@ const effects = {
       data.scale = adjustedWidth / sprite_square_size;
 
       // account for bottom-alignment
-      data.x = oData.x + (adjustedWidth / 2);
+      data.x = oData.x + adjustedWidth / 2;
       data.y = oData.y - adjustedHeight;
 
       // for game engine positioning
@@ -216,17 +265,14 @@ const effects = {
       data.height = data.width; // square
 
       data.extraTransform = `translate3d(-50%, -50%, 0) scale3d(${data.scale},${data.scale},1)`;
-
     }
 
     function initDOM() {
-
       dom.o = sprites.create({
         className: css.className
       });
 
       doLayout();
-
     }
 
     initDOM();
@@ -241,24 +287,21 @@ const effects = {
     game.objects.ephemeralExplosion.push(exports);
 
     return exports;
-
   },
 
   inertGunfireExplosion: (options = {}) => {
-
     if (!options?.exports?.data) return;
 
     const { data } = options.exports;
 
     if (!data.isOnScreen) return;
 
-    const vX = options.vX || (1.5 + rnd(1));
-    const vY = options.vY || (1.5 + rnd(1));
+    const vX = options.vX || 1.5 + rnd(1);
+    const vY = options.vY || 1.5 + rnd(1);
     let gunfire;
 
     // create some inert (harmless) gunfire, as decorative shrapnel.
-    for (let i = 0, j = options.count || (3 + rndInt(2)); i < j; i++) {
-
+    for (let i = 0, j = options.count || 3 + rndInt(2); i < j; i++) {
       gunfire = GunFire({
         parentType: data.type,
         isInert: true,
@@ -274,20 +317,21 @@ const effects = {
       gunfire.init();
 
       game.objects.gunfire.push(gunfire);
-
     }
-
   },
 
   domFetti: (exports = {}, target = {}) => {
-
     if (!gamePrefs.domfetti) return;
 
     // target needs to be on-screen, or "nearby"
 
     if (!exports.data.isOnScreen && game.players.local) {
       // ignore if too far away
-      if (Math.abs(game.players.local.data.x - exports.data.x) > game.objects.view.data.browser.twoThirdsWidth) return;
+      if (
+        Math.abs(game.players.local.data.x - exports.data.x) >
+        game.objects.view.data.browser.twoThirdsWidth
+      )
+        return;
     }
 
     let widthOffset, heightOffset;
@@ -305,14 +349,22 @@ const effects = {
     const y = exports.data.y + heightOffset;
 
     game.objects.domFetti.push(domFettiBoom(exports, target, x, y));
-
   },
 
   shrapnelExplosion: (options = {}, shrapnelOptions = {}) => {
-
     let localOptions, halfWidth;
 
-    let vX, vY, vectorX, vectorY, i, angle, shrapnelCount, angleIncrement, explosionVelocity1, explosionVelocity2, explosionVelocityMax;
+    let vX,
+      vY,
+      vectorX,
+      vectorY,
+      i,
+      angle,
+      shrapnelCount,
+      angleIncrement,
+      explosionVelocity1,
+      explosionVelocity2,
+      explosionVelocityMax;
 
     // important: make sure we delete the parent object's unique ID.
     localOptions = { ...options };
@@ -336,8 +388,14 @@ const effects = {
     const parentVY = (options.parentVY || 0) + (shrapnelOptions.parentVY || 0);
 
     // note: "in addition to" velocity option.
-    vX = (options.velocity || 0) + (shrapnelOptions.velocity || 0) + (shrapnelOptions.vX || 0);
-    vY = (options.velocity || 0) + (shrapnelOptions.velocity || 0) + (shrapnelOptions.vY || 0);
+    vX =
+      (options.velocity || 0) +
+      (shrapnelOptions.velocity || 0) +
+      (shrapnelOptions.vX || 0);
+    vY =
+      (options.velocity || 0) +
+      (shrapnelOptions.velocity || 0) +
+      (shrapnelOptions.vY || 0);
 
     angle = 0;
 
@@ -349,27 +407,30 @@ const effects = {
     angleIncrement = 180 / (shrapnelCount - 1);
 
     for (i = 0; i < shrapnelCount; i++) {
-
       explosionVelocity1 = rng(explosionVelocityMax + vX, TYPES.shrapnel);
       explosionVelocity2 = rng(explosionVelocityMax + vY, TYPES.shrapnel);
 
       vectorX = -explosionVelocity1 * Math.cos(angle * rad2Deg);
       vectorY = -explosionVelocity2 * Math.sin(angle * rad2Deg);
 
-      localOptions.vX = (localOptions.vX * 0.5) + vectorX;
+      localOptions.vX = localOptions.vX * 0.5 + vectorX;
       localOptions.vY += vectorY;
 
       // bottom-aligned object? explode "up".
-      if (localOptions.vY > 0 && (options.bottomAligned || shrapnelOptions.bottomAligned)) {
+      if (
+        localOptions.vY > 0 &&
+        (options.bottomAligned || shrapnelOptions.bottomAligned)
+      ) {
         localOptions.vY *= -1;
       }
 
       // include parent velocity, too.
-      localOptions.vX += (parentVX / 8);
-      localOptions.vY += (parentVY / 10);
+      localOptions.vX += parentVX / 8;
+      localOptions.vY += parentVY / 10;
 
       // have first and last make noise
-      localOptions.hasSound = (i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1));
+      localOptions.hasSound =
+        i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1);
 
       shrapnelToAdd.push({ ...localOptions });
 
@@ -378,13 +439,10 @@ const effects = {
       }
 
       angle += angleIncrement;
-
     }
-
   },
 
   damageExplosion: (exports) => {
-
     // given an object, create a bomb explosion there and make it dangerous to the object.
     // this rewards the player for - e.g., blowing up a bunker while a tank is passing by.
 
@@ -412,14 +470,12 @@ const effects = {
     if (data.type !== TYPES.bunker) {
       effects.ephemeralExplosion(exports);
     }
-
   },
 
   updateStormStyle: (style) => {
-
     if (!snowStorm) return;
 
-    const defaultChar = '&bull;'
+    const defaultChar = '&bull;';
 
     let char = snowStorm.snowCharacter;
 
@@ -427,25 +483,20 @@ const effects = {
     snowStorm.snowStick = false;
 
     if (style === 'rain') {
-
       char = '/';
       snowStorm.flakesMax = 256;
       snowStorm.flakesMaxActive = 256;
       snowStorm.vMaxX = 1;
       snowStorm.vMinY = 8;
       snowStorm.vMaxY = 20;
-
     } else if (style === 'hail') {
-
       char = '*';
       snowStorm.flakesMax = 128;
       snowStorm.flakesMaxActive = 128;
       // snowStorm.vMaxX = 1;
       snowStorm.vMinY = 4;
       snowStorm.vMaxY = 10;
-
     } else if (style === 'turd') {
-
       char = '💩';
 
       snowStorm.flakesMax = 96;
@@ -453,15 +504,11 @@ const effects = {
       // snowStorm.vMaxX = 0;
       snowStorm.vMinY = 2;
       snowStorm.vMaxY = 5;
-
     } else if (!style) {
-
       // none
       snowStorm.flakesMax = 0;
       snowStorm.flakesMaxActive = 0;
-
     } else {
-
       // snow case
 
       char = defaultChar;
@@ -472,7 +519,6 @@ const effects = {
       snowStorm.vMinY = 0.5;
       snowStorm.vMaxY = 2.5;
       snowStorm.snowStick = true;
-
     }
 
     // so all newly-created snow looks right...
@@ -482,16 +528,16 @@ const effects = {
     snowStorm.start();
 
     // simulate event w/last recorded one
-    const source = game.isMobile ? game.objects?.joystick?.data?.lastMove : game.objects?.view?.data?.mouse;
+    const source = game.isMobile
+      ? game.objects?.joystick?.data?.lastMove
+      : game.objects?.view?.data?.mouse;
 
     if (!source) return;
 
     const { clientX, clientY } = source;
 
-    snowStorm.mouseMove({ clientX, clientY })
-
+    snowStorm.mouseMove({ clientX, clientY });
   }
+};
 
-}
-
-export { effects }
+export { effects };

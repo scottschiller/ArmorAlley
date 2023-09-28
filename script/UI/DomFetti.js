@@ -9,14 +9,40 @@ const RENDER_AT_60FPS = false;
 
 const COLORS = {
   default: ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a'],
-  green: ['#003300', '#006600', '#339933', '#66cc66', '#99ff99', '#99cc99', '#666666', '#cccccc', '#ccffcc'],
+  green: [
+    '#003300',
+    '#006600',
+    '#339933',
+    '#66cc66',
+    '#99ff99',
+    '#99cc99',
+    '#666666',
+    '#cccccc',
+    '#ccffcc'
+  ],
   yellow: ['#684f32', '#896842', '#b38754', '#c79862', '#f1b673', '#ffc076'],
-  grey: ['#222222', '#444444', '#666666', '#888888', '#aaaaaa', '#cccccc', '#ffffff'],
-  bomb: ['#330000', '#660000', '#663333', '#996666', '#666666', '#999999', '#cccccc']
-}
+  grey: [
+    '#222222',
+    '#444444',
+    '#666666',
+    '#888888',
+    '#aaaaaa',
+    '#cccccc',
+    '#ffffff'
+  ],
+  bomb: [
+    '#330000',
+    '#660000',
+    '#663333',
+    '#996666',
+    '#666666',
+    '#999999',
+    '#cccccc'
+  ]
+};
 
 // opacity is GPU-accelerated, faster than changing background-color
-const BACK_SIDE_OPACITY = 2/3;
+const BACK_SIDE_OPACITY = 2 / 3;
 
 const useOpacity = true;
 
@@ -31,11 +57,11 @@ const int = (number, base = 10) => parseInt(number, base);
 function calcFractionalColors(colors = COLORS.default) {
   return colors.map((color) => {
     const rgb = hexToRgb(color);
-    const fraction = 2/3;
+    const fraction = 2 / 3;
     return rgbToHex(
       int(rgb.r * fraction),
       int(rgb.g * fraction),
-      int(rgb.b * fraction),
+      int(rgb.b * fraction)
     );
   });
 }
@@ -43,7 +69,7 @@ function calcFractionalColors(colors = COLORS.default) {
 const fractionalColors = calcFractionalColors();
 
 function configureColors(colors = COLORS.default) {
-  // called by gunfire, etc., to set e.g., helicopter colors for "explosions" 
+  // called by gunfire, etc., to set e.g., helicopter colors for "explosions"
   return {
     colors,
     backColors: !useOpacity && calcFractionalColors(colors)
@@ -99,7 +125,7 @@ function hexToRgb(hex) {
     r: int(result[1], 16),
     g: int(result[2], 16),
     b: int(result[3], 16)
-  }
+  };
 }
 
 function rnd(range = 1) {
@@ -107,31 +133,34 @@ function rnd(range = 1) {
 }
 
 function createElements(root, elementCount, frontColors, backColors) {
-
-  return Array
-    .from({ length: elementCount })
-    .map(() => {
-      const element = sprites.withStyle(elementTemplate.cloneNode(true));
-      const rndColor = int(rnd() * frontColors.length);
-      const frontColor = frontColors[rndColor];
-      const backColor = backColors[rndColor];
-      element._style.setProperty('background-color', frontColor);
-      // initially, hide
-      element._style.setProperty('transform', 'scale3d(0, 0, 1)');
-      root.appendChild(element);
-      return {
-        colors: {
-          frontColor,
-          backColor,
-        },
-        element
-      };
-    });
-
+  return Array.from({ length: elementCount }).map(() => {
+    const element = sprites.withStyle(elementTemplate.cloneNode(true));
+    const rndColor = int(rnd() * frontColors.length);
+    const frontColor = frontColors[rndColor];
+    const backColor = backColors[rndColor];
+    element._style.setProperty('background-color', frontColor);
+    // initially, hide
+    element._style.setProperty('transform', 'scale3d(0, 0, 1)');
+    root.appendChild(element);
+    return {
+      colors: {
+        frontColor,
+        backColor
+      },
+      element
+    };
+  });
 }
 
-function randomPhysics(angle, spread, startVelocity, scrollLeft, originX, originY, vY) {
-
+function randomPhysics(
+  angle,
+  spread,
+  startVelocity,
+  scrollLeft,
+  originX,
+  originY,
+  vY
+) {
   const radAngle = angle * (Math.PI / 180);
   const radSpread = spread * (Math.PI / 180);
 
@@ -149,9 +178,9 @@ function randomPhysics(angle, spread, startVelocity, scrollLeft, originX, origin
     originY,
     scrollLeft,
     wobble: rnd(10),
-    velocity: ((startVelocity * 0.5) + rnd(startVelocity)) * (screenScale * 0.5),
-    angle2D: -radAngle + (0.5 * radSpread) - rnd(radSpread),
-    angle3D: -(Math.PI / 4) + (rnd() * (Math.PI / 2)),
+    velocity: (startVelocity * 0.5 + rnd(startVelocity)) * (screenScale * 0.5),
+    angle2D: -radAngle + 0.5 * radSpread - rnd(radSpread),
+    angle3D: -(Math.PI / 4) + rnd() * (Math.PI / 2),
     tiltAngleX: rnd(360),
     tiltAngleY: rnd(360),
     rotateAngle: rnd(360),
@@ -167,14 +196,12 @@ function randomPhysics(angle, spread, startVelocity, scrollLeft, originX, origin
     wobbleMultiplier2: 10 + rnd(10),
     baseScale: 0.75 + rnd(0.25)
   };
-
 }
 
 function updateFetti(fetti, progress, decay, frameCount) {
-
   if (!fetti?.physics) return;
 
-  const styleThisFrame = RENDER_AT_60FPS || (frameCount % 2 === 0);
+  const styleThisFrame = RENDER_AT_60FPS || frameCount % 2 === 0;
 
   // DRY
   const fp = fetti.physics;
@@ -189,23 +216,38 @@ function updateFetti(fetti, progress, decay, frameCount) {
 
   fp.y += 1;
 
-  fp.tiltAngleX += (fp.xIncrement * (1 - progress));
-  fp.tiltAngleY += (fp.yIncrement * (1 - progress));
+  fp.tiltAngleX += fp.xIncrement * (1 - progress);
+  fp.tiltAngleY += fp.yIncrement * (1 - progress);
   fp.rotateAngle += fp.zIncrement;
 
-  const { x, scrollLeft, y, originX, originY, tiltAngleX, tiltAngleY, rotateAngle, wobble } = fp;
+  const {
+    x,
+    scrollLeft,
+    y,
+    originX,
+    originY,
+    tiltAngleX,
+    tiltAngleY,
+    rotateAngle,
+    wobble
+  } = fp;
 
-  const wobbleX = (originX + x) + ((scrollLeft - (game.objects.view.data.battleField.scrollLeft || 0)) * game.objects.view.data.screenScale) + (fp.wobbleMultiplier1 * Math.cos(wobble));
-  const wobbleY = (originY + y) + (fp.wobbleMultiplier2 * Math.sin(wobble));
+  const wobbleX =
+    originX +
+    x +
+    (scrollLeft - (game.objects.view.data.battleField.scrollLeft || 0)) *
+      game.objects.view.data.screenScale +
+    fp.wobbleMultiplier1 * Math.cos(wobble);
+  const wobbleY = originY + y + fp.wobbleMultiplier2 * Math.sin(wobble);
 
   // scale relative to viewport (game) scale
-  const baseScale = (fp.baseScale * game.objects.view.data.screenScale * 0.5);
+  const baseScale = fp.baseScale * game.objects.view.data.screenScale * 0.5;
 
-  let scale = baseScale - (progress * baseScale);
+  let scale = baseScale - progress * baseScale;
 
   // extra big at first
   if (progress < scaleMagnifier) {
-    scale += (baseScale * 2.75 * (scaleMagnifier - progress));
+    scale += baseScale * 2.75 * (scaleMagnifier - progress);
   }
 
   if (fp.tiltAngleX >= 360) {
@@ -223,12 +265,18 @@ function updateFetti(fetti, progress, decay, frameCount) {
   if (fp.rotateAngle >= 360) fp.rotateAngle -= 360;
 
   if (styleThisFrame) {
-    fetti.element._style.setProperty('transform', `translate3d(${wobbleX}px, ${wobbleY}px, 0) rotateX(${tiltAngleX}deg) rotateY(${tiltAngleY}deg) rotateZ(${rotateAngle}deg) scale3d(${scale}, ${scale}, ${scale})`);
+    fetti.element._style.setProperty(
+      'transform',
+      `translate3d(${wobbleX}px, ${wobbleY}px, 0) rotateX(${tiltAngleX}deg) rotateY(${tiltAngleY}deg) rotateZ(${rotateAngle}deg) scale3d(${scale}, ${scale}, ${scale})`
+    );
   }
 
   // first frame?
   if (frameCount === 0) {
-    fetti.element._style.setProperty('transform-origin', `${fp.transformOrigin1}, ${fp.transformOrigin2}`);
+    fetti.element._style.setProperty(
+      'transform-origin',
+      `${fp.transformOrigin1}, ${fp.transformOrigin2}`
+    );
   }
 
   // which side is showing?
@@ -237,11 +285,17 @@ function updateFetti(fetti, progress, decay, frameCount) {
   const angleX = fp.tiltAngleX;
   const angleY = fp.tiltAngleY;
 
-  if ((angleX >= boundary1 && angleX <= boundary2) || (angleX < -boundary1 && angleX > -boundary2)) {
+  if (
+    (angleX >= boundary1 && angleX <= boundary2) ||
+    (angleX < -boundary1 && angleX > -boundary2)
+  ) {
     flippedOnX = true;
   }
 
-  if ((angleY >= boundary1 && angleY <= boundary2) || (angleY < -boundary1 && angleY > -boundary2)) {
+  if (
+    (angleY >= boundary1 && angleY <= boundary2) ||
+    (angleY < -boundary1 && angleY > -boundary2)
+  ) {
     flippedOnY = true;
   }
 
@@ -252,38 +306,39 @@ function updateFetti(fetti, progress, decay, frameCount) {
   }
 
   if (fp.isFlippedOnX !== flippedOnX || fp.isFlippedOnY !== flippedOnY) {
-
     // something changed.
     if (flippedOnX || flippedOnY) {
       if (useOpacity) {
         fetti.element._style.setProperty('opacity', BACK_SIDE_OPACITY);
       } else {
-        fetti.element._style.setProperty('background-color', fetti.colors.backColor);
+        fetti.element._style.setProperty(
+          'background-color',
+          fetti.colors.backColor
+        );
       }
     } else {
       if (useOpacity) {
         fetti.element._style.setProperty('opacity', 1);
       } else {
-        fetti.element._style.setProperty('background-color', fetti.colors.frontColor);
+        fetti.element._style.setProperty(
+          'background-color',
+          fetti.colors.frontColor
+        );
       }
     }
 
     // update state.
     fp.isFlippedOnX = flippedOnX;
     fp.isFlippedOnY = flippedOnY;
-
   }
-
 }
 
 function animateFetti(root, fettis, decay, callback) {
-
   // basic lifecycle / active count management
 
   let tick = 0;
 
   function animate() {
-
     let result = update();
     if (RENDER_AT_60FPS) return result;
 
@@ -292,12 +347,12 @@ function animateFetti(root, fettis, decay, callback) {
      * running the math twice but updating CSS only once.
      */
     return update();
-
   }
 
   function update() {
-
-    fettis.forEach((fetti) => updateFetti(fetti, tick / totalTicks, decay, tick));
+    fettis.forEach((fetti) =>
+      updateFetti(fetti, tick / totalTicks, decay, tick)
+    );
 
     tick += 1;
 
@@ -319,27 +374,28 @@ function animateFetti(root, fettis, decay, callback) {
     }
 
     return true;
-
   }
 
   return { animate };
-
 }
 
-function confetti(root, {
-  originX = 0,
-  originY = 0,
-  angle = 90,
-  decay = 0.92,
-  spread = 35,
-  startVelocity = 45,
-  elementCount = 50,
-  scrollLeft = 0,
-  colors = COLORS.default,
-  backColors = fractionalColors,
-  vY = 1 + rnd()
-} = {}, callback) {
-
+function confetti(
+  root,
+  {
+    originX = 0,
+    originY = 0,
+    angle = 90,
+    decay = 0.92,
+    spread = 35,
+    startVelocity = 45,
+    elementCount = 50,
+    scrollLeft = 0,
+    colors = COLORS.default,
+    backColors = fractionalColors,
+    vY = 1 + rnd()
+  } = {},
+  callback
+) {
   if (activeCount + elementCount > maxActiveCount) {
     // "throttling": you only get a few.
     elementCount = Math.max(0, Math.min(5, maxActiveCount - elementCount));
@@ -347,15 +403,24 @@ function confetti(root, {
     activeCount += elementCount;
   }
 
-  const fettis = createElements(root, elementCount, colors, backColors).map((o) => ({
-    element: o.element,
-    colors: o.colors,
-    physics: randomPhysics(angle, spread, startVelocity, scrollLeft, originX, originY, vY)
-  }));
+  const fettis = createElements(root, elementCount, colors, backColors).map(
+    (o) => ({
+      element: o.element,
+      colors: o.colors,
+      physics: randomPhysics(
+        angle,
+        spread,
+        startVelocity,
+        scrollLeft,
+        originX,
+        originY,
+        vY
+      )
+    })
+  );
 
   // { animate }
   return animateFetti(root, fettis, decay, callback);
-
 }
 
 const munitionTypes = {
@@ -365,7 +430,6 @@ const munitionTypes = {
 };
 
 function domFettiBoom(source, target, x, y) {
-
   if (!source?.data) return;
 
   if (!targetNode) targetNode = document.getElementById('domfetti-overlay');
@@ -379,7 +443,7 @@ function domFettiBoom(source, target, x, y) {
   let colorType;
 
   let sourceType = source?.data?.domFetti?.colorType;
-  let targetType = target?.data?.domFetti?.colorType
+  let targetType = target?.data?.domFetti?.colorType;
 
   /**
    * Hackish: if source is a munition - gunfire, bomb or smart missile - have it inherit the target's colour.
@@ -394,9 +458,12 @@ function domFettiBoom(source, target, x, y) {
 
   // special case: certain smart missiles cause more colourful target explosions.
   if (source?.data?.type) {
-    if (source.data.type === TYPES.smartMissile && (source.data.isRubberChicken || source.data.isBanana)) {
+    if (
+      source.data.type === TYPES.smartMissile &&
+      (source.data.isRubberChicken || source.data.isBanana)
+    ) {
       colorType = source.data.domFetti?.colorType;
-    } else if ((source.data.type === TYPES.helicopter && source.data.dead)) {
+    } else if (source.data.type === TYPES.helicopter && source.data.dead) {
       // a helicopter just died.
       colorType = 'default';
     }
@@ -410,7 +477,7 @@ function domFettiBoom(source, target, x, y) {
 
   const extraParams = {
     angle: undefined,
-    decay: bottomAligned ? 0.935 : (0.8 + rnd(0.15)),
+    decay: bottomAligned ? 0.935 : 0.8 + rnd(0.15),
     // sprite X is 0 - 8192px, based on battlefield and scroll.
     // confetti is shown as a full-screen overlay, not scaled; so, account for scroll and scale so things line up.
     originX: (x - game.objects.view.data.battleField.scrollLeft) * screenScale,
@@ -425,7 +492,9 @@ function domFettiBoom(source, target, x, y) {
     ...colorConfig
   };
 
-  const boom = confetti(targetNode, extraParams, () => boomComplete(targetNode));
+  const boom = confetti(targetNode, extraParams, () =>
+    boomComplete(targetNode)
+  );
 
   // ensure the target (container node) is visible.
   if (!activeBooms && targetNode) {
@@ -435,37 +504,37 @@ function domFettiBoom(source, target, x, y) {
   activeBooms++;
 
   return boom;
-
 }
 
 function boomComplete(rootNode) {
-
   activeBooms = Math.max(0, activeBooms - 1);
 
   if (!activeBooms && rootNode) {
     rootNode.style.display = 'none';
   }
-
 }
 
 function screenBoom() {
-
   const { scrollLeft } = game.objects.view.data.battleField;
   const { browser } = game.objects.view.data;
   const height = 180;
   const { fractionWidth } = browser;
 
   // middle, left, right
-  const sequence = [{
-    x: scrollLeft + (fractionWidth * 2 * 3/4),
-    y: height
-  }, {
-    x: scrollLeft + (fractionWidth * 3/4),
-    y: height
-  }, {
-    x: scrollLeft + (fractionWidth * 3 * 3/4),
-    y: height
-  }];
+  const sequence = [
+    {
+      x: scrollLeft + (fractionWidth * 2 * 3) / 4,
+      y: height
+    },
+    {
+      x: scrollLeft + (fractionWidth * 3) / 4,
+      y: height
+    },
+    {
+      x: scrollLeft + (fractionWidth * 3 * 3) / 4,
+      y: height
+    }
+  ];
 
   // exports-style object structure
   const options = {
@@ -482,11 +551,6 @@ function screenBoom() {
   sequence.forEach((item) => {
     game.objects.domFetti.push(domFettiBoom(options, null, item.x, item.y));
   });
-
 }
 
-export {
-  configureColors,
-  domFettiBoom,
-  screenBoom
-};
+export { configureColors, domFettiBoom, screenBoom };

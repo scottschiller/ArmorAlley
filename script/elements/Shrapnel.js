@@ -2,42 +2,59 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
-import { getTypes, plusMinus, rnd, rndInt, rng, rngInt, TYPES, worldHeight } from '../core/global.js';
+import {
+  getTypes,
+  plusMinus,
+  rnd,
+  rndInt,
+  rng,
+  rngInt,
+  TYPES,
+  worldHeight
+} from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
 
 const Shrapnel = (options = {}) => {
-
-  let css, dom, data, collision, radarItem, scale, exports, type = TYPES.shrapnel;
+  let css,
+    dom,
+    data,
+    collision,
+    radarItem,
+    scale,
+    exports,
+    type = TYPES.shrapnel;
 
   function moveTo(x, y) {
-
     let relativeScale;
 
     // shrapnel is magnified somewhat when higher on the screen, "vaguely" 3D
     relativeScale = Math.min(1, y / (worldHeight * 0.95));
 
     // allow slightly larger, and a fair bit smaller
-    relativeScale = 1.05 - (relativeScale * data.scaleRange);
+    relativeScale = 1.05 - relativeScale * data.scaleRange;
 
     data.relativeScale = relativeScale;
 
     // scale, 3d rotate, and spin
-    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(',')}) rotate3d(1, 1, 1, ${data.rotate3DAngle}deg) rotate3d(0, 0, 1, ${data.spinAngle}deg)`;
+    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(
+      ','
+    )}) rotate3d(1, 1, 1, ${data.rotate3DAngle}deg) rotate3d(0, 0, 1, ${
+      data.spinAngle
+    }deg)`;
 
     // move, and retain 3d scaling (via extraTransforms)
     sprites.moveTo(exports, x, y);
-
   }
 
   function shrapnelNoise() {
-
     if (!data.hasSound) return;
 
     const i = `hit${sounds.shrapnel.counter}`;
 
-    sounds.shrapnel.counter += (sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1);
+    sounds.shrapnel.counter +=
+      sounds.shrapnel.counter === 0 && Math.random() > 0.5 ? 2 : 1;
 
     if (sounds.shrapnel.counter >= sounds.shrapnel.counterMax) {
       sounds.shrapnel.counter = 0;
@@ -46,11 +63,9 @@ const Shrapnel = (options = {}) => {
     if (sounds.shrapnel[i]) {
       playSound(sounds.shrapnel[i], exports);
     }
-
   }
 
   function die() {
-
     if (data.dead) return;
 
     data.energy = 0;
@@ -81,12 +96,11 @@ const Shrapnel = (options = {}) => {
     }
 
     common.onDie(exports);
-
   }
 
   function hitAndDie(target) {
-
-    let targetType, damageTarget = true;
+    let targetType,
+      damageTarget = true;
 
     if (!target) {
       die();
@@ -102,14 +116,16 @@ const Shrapnel = (options = {}) => {
     targetType = target.data.type;
 
     if (targetType === TYPES.helicopter) {
-
       playSound(sounds.boloTank, exports);
 
       // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
-      if (data.isEnemy && target === game.players.local && target.data.isOnScreen) {
+      if (
+        data.isEnemy &&
+        target === game.players.local &&
+        target.data.isOnScreen
+      ) {
         target.reactToDamage(exports);
       }
-
     } else if (targetType === TYPES.tank || targetType === TYPES.superBunker) {
       // shrapnel -> [tank | superbunker]: no damage.
       damageTarget = false;
@@ -135,13 +151,11 @@ const Shrapnel = (options = {}) => {
     sprites.attachToTarget(exports, target);
 
     die();
-
   }
 
   function ricochet(targetType) {
-
     // bounce upward if ultimately heading down
-    if ((data.vY + data.gravity) <= 0) return;
+    if (data.vY + data.gravity <= 0) return;
 
     // at least...
     data.vY = Math.max(data.vY, data.maxVY / 6);
@@ -154,11 +168,14 @@ const Shrapnel = (options = {}) => {
 
     // sanity check: don't get stuck "inside" tank or super bunker sprites.
     // ensure that the shrapnel stays at or above the height of both.
-    data.y = Math.min(worldHeight - ((common.ricochetBoundaries[targetType]) || 16), data.y);
+    data.y = Math.min(
+      worldHeight - (common.ricochetBoundaries[targetType] || 16),
+      data.y
+    );
 
     // randomize vX strength, and randomly reverse direction.
     data.vX += Math.random();
-    data.vX *= (Math.random() > 0.75 ? -1 : 1);
+    data.vX *= Math.random() > 0.75 ? -1 : 1;
 
     // and, throttle
     if (data.vX > 0) {
@@ -171,27 +188,29 @@ const Shrapnel = (options = {}) => {
     data.gravity = data.gravityRate;
 
     // data.y may have been "corrected" - move again, just to be safe.
-    moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
+    moveTo(
+      data.x + data.vX,
+      data.y + Math.min(data.maxVY, data.vY + data.gravity)
+    );
 
     playSound(sounds.ricochet, exports);
-
   }
 
   function animate() {
-
     if (data.dead) {
-
       // keep moving with scroll, while visible
       sprites.moveWithScrollOffset(exports);
 
-      return (!data.deadTimer && !dom.o);
-
+      return !data.deadTimer && !dom.o;
     }
 
     data.rotate3DAngle += data.rotate3DAngleIncrement;
     data.spinAngle += data.spinAngleIncrement;
 
-    moveTo(data.x + data.vX, data.y + (Math.min(data.maxVY, data.vY + data.gravity)));
+    moveTo(
+      data.x + data.vX,
+      data.y + Math.min(data.maxVY, data.vY + data.gravity)
+    );
 
     // random: smoke while moving?
     if (data.isOnScreen && Math.random() >= 0.99) {
@@ -201,7 +220,7 @@ const Shrapnel = (options = {}) => {
     // did we hit the ground?
     if (data.y - data.height >= worldHeight) {
       // align w/ground, slightly lower
-      moveTo(data.x, worldHeight - (12 * data.relativeScale) + 3);
+      moveTo(data.x, worldHeight - 12 * data.relativeScale + 3);
       die();
     }
 
@@ -210,24 +229,22 @@ const Shrapnel = (options = {}) => {
 
     data.gravity *= data.gravityRate;
 
-    return (data.dead && !data.deadTimer && !dom.o);
-
+    return data.dead && !data.deadTimer && !dom.o;
   }
 
   function makeSmoke() {
-
-    game.objects.smoke.push(Smoke({
-      x: data.x + 6 + rnd(6) * 0.33 * plusMinus(),
-      y: data.y + 6 + rnd(6) * 0.33 * plusMinus(),
-      vX: rnd(6) * plusMinus(),
-      vY: rnd(-5),
-      spriteFrame: rndInt(5)
-    }));
-
+    game.objects.smoke.push(
+      Smoke({
+        x: data.x + 6 + rnd(6) * 0.33 * plusMinus(),
+        y: data.y + 6 + rnd(6) * 0.33 * plusMinus(),
+        vX: rnd(6) * plusMinus(),
+        vY: rnd(-5),
+        spriteFrame: rndInt(5)
+      })
+    );
   }
 
   function initShrapnel() {
-
     dom.o = sprites.create({
       className: css.className
     });
@@ -238,7 +255,10 @@ const Shrapnel = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
-    dom.oTransformSprite._style.setProperty('background-position', `${data.spriteType * -data.width * 1 / data.scale}px 0px`);
+    dom.oTransformSprite._style.setProperty(
+      'background-position',
+      `${(data.spriteType * -data.width * 1) / data.scale}px 0px`
+    );
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -252,7 +272,6 @@ const Shrapnel = (options = {}) => {
     }
 
     shrapnelNoise();
-
   }
 
   function rndAngle() {
@@ -260,46 +279,49 @@ const Shrapnel = (options = {}) => {
   }
 
   // default
-  scale = options.scale || (0.8 + rng(0.15, type));
+  scale = options.scale || 0.8 + rng(0.15, type);
 
   css = common.inheritCSS({
     className: 'shrapnel',
     stopped: 'stopped'
   });
 
-  data = common.inheritData({
-    type,
-    parentType: (options.type || null),
-    spriteType: rngInt(4, type),
-    direction: 0,
-    // sometimes zero / non-moving?
-    vX: options.vX || 0,
-    vY: options.vY || 0,
-    maxVX: 64,
-    maxVY: 64,
-    gravity: 1,
-    // randomize fall rate
-    gravityRate: 1.05 + rng(.033, type),
-    width: 12 * scale,
-    height: 12 * scale,
-    scale,
-    scaleRange: 0.4 + rng(0.25, type),
-    rotate3DAngle: rndAngle(),
-    rotate3DAngleIncrement: rndAngle(),
-    spinAngle: rndAngle(),
-    spinAngleIncrement: rndAngle(),
-    extraTransforms: '',
-    hostile: true,
-    damagePoints: 0.5,
-    hasSound: !!options.hasSound,
-    rndRicochetAmount: 0.5 + rng(1, type),
-    // let shrapnel that originates "higher up in the sky" from the following types, bounce off tanks and super bunkers
-    ricochetTypes: [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile],
-  }, options);
+  data = common.inheritData(
+    {
+      type,
+      parentType: options.type || null,
+      spriteType: rngInt(4, type),
+      direction: 0,
+      // sometimes zero / non-moving?
+      vX: options.vX || 0,
+      vY: options.vY || 0,
+      maxVX: 64,
+      maxVY: 64,
+      gravity: 1,
+      // randomize fall rate
+      gravityRate: 1.05 + rng(0.033, type),
+      width: 12 * scale,
+      height: 12 * scale,
+      scale,
+      scaleRange: 0.4 + rng(0.25, type),
+      rotate3DAngle: rndAngle(),
+      rotate3DAngleIncrement: rndAngle(),
+      spinAngle: rndAngle(),
+      spinAngleIncrement: rndAngle(),
+      extraTransforms: '',
+      hostile: true,
+      damagePoints: 0.5,
+      hasSound: !!options.hasSound,
+      rndRicochetAmount: 0.5 + rng(1, type),
+      // let shrapnel that originates "higher up in the sky" from the following types, bounce off tanks and super bunkers
+      ricochetTypes: [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile]
+    },
+    options
+  );
 
   dom = {
     o: null,
-    oTransformSprite: null,
+    oTransformSprite: null
   };
 
   exports = {
@@ -319,11 +341,15 @@ const Shrapnel = (options = {}) => {
         hitAndDie(target);
       }
     },
-    items: !game.objects.editor && getTypes('superBunker, bunker, helicopter, balloon, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, smartMissile, turret', { group: 'all' })
+    items:
+      !game.objects.editor &&
+      getTypes(
+        'superBunker, bunker, helicopter, balloon, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, smartMissile, turret',
+        { group: 'all' }
+      )
   };
 
   return exports;
-
 };
 
 export { Shrapnel };

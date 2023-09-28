@@ -2,7 +2,14 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
-import { rndInt, worldWidth, TYPES, rngInt, rngPlusMinus, rng } from '../core/global.js';
+import {
+  rndInt,
+  worldWidth,
+  TYPES,
+  rngInt,
+  rngPlusMinus,
+  rng
+} from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -11,20 +18,16 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const Balloon = (options = {}) => {
-
   let css, data, dom, height, objects, radarItem, reset, exports;
 
   function checkRespawn() {
-
     // odd edge case - data not always defined if destroyed at the right time?
     if (data?.canRespawn && data?.dead && !objects.bunker?.data?.dead) {
       reset();
     }
-
   }
 
   function setEnemy(isEnemy) {
-
     if (data.isEnemy === isEnemy) return;
 
     data.isEnemy = isEnemy;
@@ -49,19 +52,15 @@ const Balloon = (options = {}) => {
       utils.css.remove(dom.o, css.animating);
       data.frameTimeout = null;
     }, 1200);
-
   }
 
   function attachChain(chain = null) {
-
     // a "circular" loop that's actually a chain. ;)
     objects.chain = chain;
     objects.chain?.attachBalloon(exports);
-
   }
 
   function detachFromBunker() {
-
     if (data.detached) return;
 
     data.detached = true;
@@ -82,11 +81,9 @@ const Balloon = (options = {}) => {
       // if no bunker to detach, there should be no chain, either.
       attachChain();
     }
-
   }
 
   function die(dieOptions = {}) {
-
     if (data.dead) return;
 
     // pop!
@@ -137,11 +134,9 @@ const Balloon = (options = {}) => {
     data.dead = true;
 
     common.onDie(exports, dieOptions);
-
   }
 
   function applyAnimatingTransition() {
-
     // balloons might be off-screen, then return on-screen
     // and will not animate unless explicitly enabled.
     // this adds the animation class temporarily.
@@ -162,30 +157,23 @@ const Balloon = (options = {}) => {
       utils.css.remove(dom.o, css.animating);
       data.frameTimeout = null;
     }, 1200);
-
   }
 
   function isOnScreenChange(/*isOnScreen*/) {
-
     // ignore if still tethered
     if (!data.detached) return;
 
     // chains don't get `isOnScreenChange()`, typically connected to bunkers or balloons
     objects.chain?.isJerking(data.isOnScreen);
-
   }
 
   function holdWind() {
-
     // don't allow a change in wind / direction for 5-10 seconds.
     data.windModulus = 150 + rndInt(150);
-    
   }
 
   function checkDirection() {
-
     if (data.windOffsetX > 0 && data.direction !== 1) {
-
       // heading right
       utils.css.remove(dom.o, css.facingLeft);
       utils.css.add(dom.o, css.facingRight);
@@ -195,9 +183,7 @@ const Balloon = (options = {}) => {
       data.direction = 1;
 
       holdWind();
-
     } else if (data.windOffsetX < 0 && data.direction !== -1) {
-
       // heading left
       utils.css.remove(dom.o, css.facingRight);
       utils.css.add(dom.o, css.facingLeft);
@@ -207,15 +193,11 @@ const Balloon = (options = {}) => {
       data.direction = -1;
 
       holdWind();
-
     }
-
   }
 
   function animate() {
-
     if (data.dead) {
-
       checkRespawn();
 
       // explosion underway: move, accounting for scroll
@@ -225,8 +207,11 @@ const Balloon = (options = {}) => {
       }
 
       // allow balloon to be "GCed" only when free-floating, separated from bunker
-      return data.dead && !data.deadTimer && (!objects.bunker || objects.bunker?.data?.dead);
-
+      return (
+        data.dead &&
+        !data.deadTimer &&
+        (!objects.bunker || objects.bunker?.data?.dead)
+      );
     }
 
     // not dead...
@@ -234,33 +219,31 @@ const Balloon = (options = {}) => {
     effects.smokeRelativeToDamage(exports);
 
     if (!data.detached) {
-
       // move relative to bunker
 
-      if ((data.y >= data.maxY && data.verticalDirection > 0) || (data.y <= data.minY && data.verticalDirection < 0)) {
+      if (
+        (data.y >= data.maxY && data.verticalDirection > 0) ||
+        (data.y <= data.minY && data.verticalDirection < 0)
+      ) {
         data.verticalDirection *= -1;
       }
 
       data.y += data.verticalDirection;
-
     } else {
-
       // free-floating balloon
 
       data.frameCount++;
 
       // for network games, never change the wind.
       if (!net.active && data.frameCount % data.windModulus === 0) {
- 
-        data.windOffsetX += (rngPlusMinus(1, data.type) * 0.25);
+        data.windOffsetX += rngPlusMinus(1, data.type) * 0.25;
         data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
 
-        data.windOffsetY += (rngPlusMinus(1, data.type) * 0.05);
+        data.windOffsetY += rngPlusMinus(1, data.type) * 0.05;
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
         data.windModulus = 32 + rndInt(32);
-  
       }
 
       checkDirection();
@@ -288,15 +271,12 @@ const Balloon = (options = {}) => {
       data.y += data.windOffsetY;
 
       zones.refreshZone(exports);
-
     }
 
     sprites.moveWithScrollOffset(exports);
-
   }
 
   reset = () => {
-
     // respawn can actually happen now
 
     data.energy = data.energyMax;
@@ -333,26 +313,22 @@ const Balloon = (options = {}) => {
     if (sounds.chainRepair) {
       playSound(sounds.chainRepair, exports);
     }
-
   };
 
   function initDOM() {
-
     dom.o = sprites.create({
       className: css.className,
       id: data.id,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy: data.isEnemy ? css.enemy : false
     });
 
     // TODO: remove?
     dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
 
     sprites.moveTo(exports);
-
   }
 
   function initBalloon() {
-
     initDOM();
 
     if (!objects.bunker) {
@@ -366,10 +342,9 @@ const Balloon = (options = {}) => {
       data.windOffsetX = rngPlusMinus(rng(3, data.type), data.type);
       data.windOffsetY = rngPlusMinus(rng(0.33, data.type), data.type);
     }
-    
+
     // TODO: review hacky "can respawn" parameter
     radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
-
   }
 
   height = 16;
@@ -387,38 +362,41 @@ const Balloon = (options = {}) => {
     facingRight: 'facing-right'
   });
 
-  data = common.inheritData({
-    type: TYPES.balloon,
-    canRespawn: false,
-    frameCount: 0,
-    windModulus: 16,
-    windOffsetX: 0,
-    windOffsetY: 0,
-    energy: 3,
-    energyMax: 3,
-    direction: 0,
-    detached: false,
-    hostile: !objects.bunker, // dangerous when detached
-    verticalDirection: rngPlusMinus(1, TYPES.balloon),
-    verticalDirectionDefault: 1,
-    leftMargin: options.leftMargin || 0,
-    width: 38,
-    height,
-    halfWidth: 19,
-    halfHeight: height / 2,
-    deadTimer: null,
-    minX: 0,
-    maxX: worldWidth,
-    minY: 48,
-    // don't allow balloons to fly into ground units, generally speaking
-    maxY: game.objects.view.data.world.height - height - 32,
-    domFetti: {
-      colorType: 'yellow',
-      elementCount: 20 + rndInt(40),
-      startVelocity: 10 + rndInt(15),
-      spread: 360
-    }
-  }, options);
+  data = common.inheritData(
+    {
+      type: TYPES.balloon,
+      canRespawn: false,
+      frameCount: 0,
+      windModulus: 16,
+      windOffsetX: 0,
+      windOffsetY: 0,
+      energy: 3,
+      energyMax: 3,
+      direction: 0,
+      detached: false,
+      hostile: !objects.bunker, // dangerous when detached
+      verticalDirection: rngPlusMinus(1, TYPES.balloon),
+      verticalDirectionDefault: 1,
+      leftMargin: options.leftMargin || 0,
+      width: 38,
+      height,
+      halfWidth: 19,
+      halfHeight: height / 2,
+      deadTimer: null,
+      minX: 0,
+      maxX: worldWidth,
+      minY: 48,
+      // don't allow balloons to fly into ground units, generally speaking
+      maxY: game.objects.view.data.world.height - height - 32,
+      domFetti: {
+        colorType: 'yellow',
+        elementCount: 20 + rndInt(40),
+        startVelocity: 10 + rndInt(15),
+        spread: 360
+      }
+    },
+    options
+  );
 
   // random Y start position, unless specified
   data.y = data.y || rngInt(data.maxY, data.type);
@@ -442,7 +420,6 @@ const Balloon = (options = {}) => {
   };
 
   return exports;
-
 };
 
 export { Balloon };

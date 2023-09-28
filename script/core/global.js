@@ -15,14 +15,14 @@ const FRAMERATE = 1000 / FPS;
 
 /**
  * Skip frame(s) as needed, prevent the game from running too fast.
- * 
+ *
  * Note: 144 hz monitors (maybe on Windows?) may need 0.33 or less,
  * or else the loop may run at 35+ FPS. This may be a 144 hz
  * monitor thing, not necessarily tied to Windows. TBD.
- * 
+ *
  * It may be this value needs to be made dynamic, starting at 0.5
  * and trickling down to 0.33 or so if the frame rate is > 30FPS.
- * 
+ *
  */
 const frameOffset = parseFloat(searchParams.get('frameOffset')) || 0.33;
 
@@ -41,7 +41,7 @@ const unlimitedFrameRate = searchParams.get('frameRate=*');
 const isWebkit = ua.match(/webkit/i);
 const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = !!ua.match(/firefox/i);
-const isSafari = (isWebkit && !isChrome && !!ua.match(/safari/i));
+const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
 
 // iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. "request desktop website")
 const isMobile = !!ua.match(/mobile|iphone|ipad/i);
@@ -70,10 +70,10 @@ const worldWidth = 8192;
 const worldHeight = 380;
 const worldOverflow = 256;
 
-const forceZoom = !!(searchParams.get('forceZoom'));
-const forceTransform = !!(searchParams.get('forceTransform'));
+const forceZoom = !!searchParams.get('forceZoom');
+const forceTransform = !!searchParams.get('forceTransform');
 
-let tutorialMode = !!(searchParams.get('tutorial'));
+let tutorialMode = !!searchParams.get('tutorial');
 
 function setTutorialMode(state) {
   tutorialMode = state;
@@ -97,19 +97,17 @@ const bananaMode = 'banana-mode';
  * Dash-case is used mostly for DOM / CSS, camelCase for JS
  */
 const TYPES = (() => {
-
   // assign 1:1 key / value strings in a DRY fashion
-  const types = 'base, bomb, balloon, bunker, chain, cloud, cornholio, engineer, flame, gunfire, helicopter, infantry, end-bunker, landing-pad, missile-launcher, parachute-infantry, smart-missile, smoke, shrapnel, star, super-bunker, tank, turret, terrain-item, van';
+  const types =
+    'base, bomb, balloon, bunker, chain, cloud, cornholio, engineer, flame, gunfire, helicopter, infantry, end-bunker, landing-pad, missile-launcher, parachute-infantry, smart-missile, smoke, shrapnel, star, super-bunker, tank, turret, terrain-item, van';
   const result = {};
 
   types.split(', ').forEach((type) => {
-
     // { bunker: 'bunker' }
     result[type] = type;
 
     // dash-case to camelCase
     if (type.indexOf('-') !== -1) {
-
       // missile-launcher -> ['missile', 'launcher']
       const a = type.split('-');
 
@@ -118,13 +116,10 @@ const TYPES = (() => {
 
       // { missileLauncher: 'missile-launcher' }
       result[a.join('')] = type;
-
     }
-
   });
 
   return result;
-
 })();
 
 const PRETTY_TYPES = {
@@ -133,14 +128,14 @@ const PRETTY_TYPES = {
   [TYPES.van]: 'Van',
   [TYPES.infantry]: 'Infantry',
   [TYPES.engineer]: 'Engineer'
-}
+};
 
 // set, and updated as applicable via network
 
 let defaultSeeds = [];
 
 for (let i = 0; i < 8; i++) {
-  defaultSeeds.push(Math.floor(Math.random() * 0xFFFFFFFF));
+  defaultSeeds.push(Math.floor(Math.random() * 0xffffffff));
 }
 
 let defaultSeed = defaultSeeds[0];
@@ -150,48 +145,43 @@ let seed = Math.floor(defaultSeed);
 let seedsByType = {};
 
 function setSeedsByType() {
-
   // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
   for (let type in TYPES) {
     if (!type.match(/[A-Z]/)) {
       seedsByType[type] = Math.floor(defaultSeed);
     }
   }
-
 }
 
 // start with the default, until (and if) updated via network.
 setSeedsByType();
 
 function setDefaultSeed(newDefaultSeed, newDefaultSeeds) {
-
   defaultSeed = newDefaultSeed;
   defaultSeeds = newDefaultSeeds;
 
   seed = Math.floor(defaultSeed);
 
   setSeedsByType();
-
 }
 
 // rng: random number *generator*. Tweaked to allow usage of a range of seeds.
 // hat tip: https://github.com/mitxela/webrtc-pong/blob/master/pong.htm#L176
 function rng(number = 1, type, seedOffset) {
-
   let t;
 
   if (type && seedsByType[type]) {
-    t = seedsByType[type] += 0x6D2B79F5;
+    t = seedsByType[type] += 0x6d2b79f5;
   } else if (seedOffset >= 0 && defaultSeeds[seedOffset]) {
-    t = defaultSeeds[seedOffset] += 0x6D2B79F5;
+    t = defaultSeeds[seedOffset] += 0x6d2b79f5;
   } else {
-    t = seed += 0x6D2B79F5;
+    t = seed += 0x6d2b79f5;
   }
 
-  t = Math.imul(t ^ t >>> 15, t | 1);
-  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
 
-  return number * (((t ^ t >>> 14) >>> 0) / 4294967296);
+  return number * (((t ^ (t >>> 14)) >>> 0) / 4294967296);
 }
 
 function rnd(number) {
@@ -220,7 +210,6 @@ function oneOf(array) {
 }
 
 function getTypes(typeString, options = { group: 'enemy', exports: null }) {
-
   /**
    * Used for collision and nearby checks, e.g., ground units that tanks look out for
    * typeString: String to array, e.g., 'tank, van, infantry' mapped to TYPES
@@ -243,7 +232,6 @@ function getTypes(typeString, options = { group: 'enemy', exports: null }) {
 
   // normalize delimiters, get array.
   return parseTypeString(typeString).map((item) => {
-
     // "tank:friendly", per-type override
     if (item.indexOf(':') !== -1) {
       const typeAndGroup = item.split(':');
@@ -255,18 +243,18 @@ function getTypes(typeString, options = { group: 'enemy', exports: null }) {
 
     // just "tank", use function signature group
     return { type: TYPES[item], group };
-
   });
-
 }
 
 function determineGroup(group = 'all', exports) {
-
   // if the default, no additional work required.
   if (group === 'all') return group;
 
   if (!exports) {
-    console.warn(`determineGroup(${group}): missing exports required to determine target`, arguments);
+    console.warn(
+      `determineGroup(${group}): missing exports required to determine target`,
+      arguments
+    );
     return;
   }
 
@@ -277,21 +265,19 @@ function determineGroup(group = 'all', exports) {
   }
 
   return group;
-
 }
 
 function parseTypeString(typeString) {
-
   // helper method
   if (!typeString?.replace) return [];
 
   // 'tank, van, infantry' -> ['tank', 'van', 'infantry']
   return typeString.replace(/[\s|,]+/g, ' ').split(' ');
-
 }
 
 // normalize delimiters -> array; no "group" handling, here.
-const parseTypes = (typeString) => parseTypeString(typeString).map((item) => TYPES[item]);
+const parseTypes = (typeString) =>
+  parseTypeString(typeString).map((item) => TYPES[item]);
 
 const enemyGroupMap = {
   /**
@@ -317,12 +303,12 @@ const COSTS = {
   [TYPES.van]: {
     funds: 2,
     count: 1,
-    css: 'can-not-order-van',
+    css: 'can-not-order-van'
   },
   [TYPES.infantry]: {
     funds: 5,
     count: 5,
-    css: 'can-not-order-infantry',
+    css: 'can-not-order-infantry'
   },
   [TYPES.engineer]: {
     funds: 5,

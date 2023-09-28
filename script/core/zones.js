@@ -10,13 +10,12 @@ const objectsByZone = [];
 const zoneDebugging = window.location.toString().match(/zone/i);
 
 const useLookAheadTypes = {
-  'tank': true,
-  'infantry': true,
-  'engineer': true
+  tank: true,
+  infantry: true,
+  engineer: true
 };
 
 function init() {
-
   for (let i = 0; i <= ZONE_COUNT; i++) {
     objectsByZone[i] = {
       all: {},
@@ -31,11 +30,9 @@ function init() {
   }
 
   return objectsByZone;
-
 }
 
 function initDebug() {
-
   if (!zoneDebugging) return;
 
   const zoneWidth = worldWidth / ZONE_COUNT;
@@ -45,11 +42,9 @@ function initDebug() {
     zoneItem = game.addItem('zone-post', zoneWidth * i);
     refreshZone(zoneItem);
   }
-  
 }
 
 function calcZone(obj) {
-
   // guard / this shouldn't happen
   if (obj?.data?.x === undefined) return;
 
@@ -57,24 +52,29 @@ function calcZone(obj) {
   let front, rear;
 
   /**
-   * 
+   *
    * Take look-ahead into account for certain types, where some objects
    * interact with a turret that's right near the edge of a zone.
-   * 
+   *
    * This means the object enters the zone on its front edge a bit earlier,
    * where it will pick up on things right at the edge of the zone that it
    * previously may have missed.
-   * 
+   *
    * It may be safest to work look-ahead in for all objects, but TBD.
-   * 
+   *
    */
   let xLookAhead = 0;
 
   // special-case a few
   if (useLookAheadTypes[obj.data.type] && obj.data.xLookAhead) {
-    if (Math.min(16, obj.data.xLookAhead || obj.data.widthOneThird) !== xLookAhead) {
+    if (
+      Math.min(16, obj.data.xLookAhead || obj.data.widthOneThird) !== xLookAhead
+    ) {
       if (!obj.data.xLookAheadForZones) {
-        obj.data.xLookAheadForZones = Math.min(16, obj.data.xLookAhead || obj.data.widthOneThird);
+        obj.data.xLookAheadForZones = Math.min(
+          16,
+          obj.data.xLookAhead || obj.data.widthOneThird
+        );
       }
     }
     xLookAhead = obj.data.xLookAheadForZones;
@@ -98,7 +98,7 @@ function calcZone(obj) {
    * Nit: the following is hopefully more performant vs. Math.max(0, Math.min(...)) twice every time,
    * as objects will only hit "overflow" zones when being ordered or recycled at the enemy base.
    */
-  
+
   if (frontZone < 0) {
     frontZone = 0;
   } else if (frontZone > ZONE_COUNT) {
@@ -112,11 +112,9 @@ function calcZone(obj) {
   }
 
   return [frontZone, rearZone];
-
 }
 
 function enterZone(zone, obj, group = 'all') {
-
   // Guard. #zones (debug signposts) will hit this case.
   if (!obj?.data?.id || obj.data.type == 'zone-post') return;
 
@@ -125,7 +123,10 @@ function enterZone(zone, obj, group = 'all') {
      * Timing issue / bug: Some elements move immediately when created, and that causes a zone update.
      * They should have been initialized by now - but if not in `objectsById[]`, do so and complain.
      */
-    console.warn(`enterZone(${zone}): objectsById[] entry not yet defined; adding`, obj.data.id);
+    console.warn(
+      `enterZone(${zone}): objectsById[] entry not yet defined; adding`,
+      obj.data.id
+    );
     game.objectsById[obj.data.id] = obj;
   }
 
@@ -140,10 +141,10 @@ function enterZone(zone, obj, group = 'all') {
   }
 
   // add this to its respective object collection, e.g., tanks in zone 5 by ID
-  objectsByZone[zone][group][obj.data.type][obj.data.id] = game.objectsById[obj.data.id];
+  objectsByZone[zone][group][obj.data.type][obj.data.id] =
+    game.objectsById[obj.data.id];
 
   if (group === 'all') {
-
     /**
      * Hackish: if adding to all, also add to enemy / friendly groups.
      * "Hostile" always go in both, because they need to be able to hit both human and CPU.
@@ -151,8 +152,11 @@ function enterZone(zone, obj, group = 'all') {
      * This introduces some level of ambiguity, but it's based on legacy naming and could be improved.
      */
 
-    enterZone(zone, obj, obj.data.isEnemy || obj.data.hostile ? 'enemy' : 'friendly');
-
+    enterZone(
+      zone,
+      obj,
+      obj.data.isEnemy || obj.data.hostile ? 'enemy' : 'friendly'
+    );
   }
 
   // special case: hostile objects are dangerous to all sides.
@@ -160,17 +164,23 @@ function enterZone(zone, obj, group = 'all') {
   if (obj.data.hostile) {
     enterZone(zone, obj, 'friendly');
   }
-
 }
 
 function leaveZone(zone, obj, group = 'all') {
-
   // guard
   if (zone === null || zone === undefined) return;
 
   // This may happen after an ownership change, i.e., a balloon or a super-bunker becomes hostile.
   if (!objectsByZone[zone][group][obj.data.type]) {
-    console.warn('leaveZone: WTF no objects by zone for type?', zone, group, obj.data.type, obj.data.id, Object.keys(objectsByZone[zone][group]), objectsByZone[zone][group]);
+    console.warn(
+      'leaveZone: WTF no objects by zone for type?',
+      zone,
+      group,
+      obj.data.type,
+      obj.data.id,
+      Object.keys(objectsByZone[zone][group]),
+      objectsByZone[zone][group]
+    );
     return;
   }
 
@@ -190,14 +200,16 @@ function leaveZone(zone, obj, group = 'all') {
 
   if (group === 'all') {
     // hackish: "and one more time, in French." Remove the enemy/friendly one, too.
-    leaveZone(zone, obj, obj.data.isEnemy || obj.data.hostile ? 'enemy' : 'friendly');
+    leaveZone(
+      zone,
+      obj,
+      obj.data.isEnemy || obj.data.hostile ? 'enemy' : 'friendly'
+    );
     if (obj.data.hostile) leaveZone(zone, obj, 'friendly');
   }
-  
 }
 
 function leaveAllZones(obj) {
-
   // given an object, ensure we leave all the places it was.
   if (!obj?.data) {
     console.warn('leaveAllZones(): WTF no obj?', obj);
@@ -213,11 +225,9 @@ function leaveAllZones(obj) {
   obj.data.frontZone = null;
   obj.data.rearZone = null;
   obj.data.multiZone = false;
-  
 }
 
 function applyZone(obj, zones) {
-
   if (!obj?.data) return;
 
   obj.data.zones = zones;
@@ -225,7 +235,6 @@ function applyZone(obj, zones) {
   // something changed.
 
   if (obj.data.frontZone !== zones[0]) {
-
     // register the new one.
     enterZone(zones[0], obj);
 
@@ -234,25 +243,24 @@ function applyZone(obj, zones) {
      * Leave current assigned front zone if rear is not in the same.
      */
     if (obj.data.rearZone !== obj.data.frontZone && obj.data.frontZone >= 0) {
-
-      // both front and rear zones have updated, old front can be left. 
+      // both front and rear zones have updated, old front can be left.
       leaveZone(obj.data.frontZone, obj);
-
     }
 
     // update zone
     obj.data.frontZone = zones[0];
-
   }
 
   if (obj.data.rearZone !== zones[1]) {
-
     /**
      * Leave current rear zone, and assume we're already in the new one -
      * unless a helicopter is flying backwards, and then we keep it.
      * Assuming orientation is a mistake.
      */
-    if (obj.data.rearZone !== undefined && obj.data.rearZone !== obj.data.frontZone) {
+    if (
+      obj.data.rearZone !== undefined &&
+      obj.data.rearZone !== obj.data.frontZone
+    ) {
       leaveZone(obj.data.rearZone, obj);
     }
 
@@ -266,20 +274,17 @@ function applyZone(obj, zones) {
 
     // update zone
     obj.data.rearZone = zones[1];
-    
   }
 
   // are we multi-zone, "straddling" two?
-  obj.data.multiZone = (obj.data.frontZone !== obj.data.rearZone);
+  obj.data.multiZone = obj.data.frontZone !== obj.data.rearZone;
 
   if (obj.data.isOnScreen) {
     debugZone(obj);
   }
-
 }
 
 function changeOwnership(obj) {
-
   /**
    * Handle e.g., a bunker, super-bunker or turret being claimed; move the object
    * between respective objectsByZone arrays (collision) by changing its group.
@@ -309,29 +314,25 @@ function changeOwnership(obj) {
   // turrets and super-bunkers can be claimed, and need to update their targets.
   obj.refreshCollisionItems?.();
   obj.refreshNearbyItems?.();
-
 }
 
 function leaveFrontAndRear(obj, group) {
-
   if (!obj.data) return;
 
   if (obj.data.rearZone !== null) leaveZone(obj.data.rearZone, obj, group);
-  if (obj.data.frontZone !== obj.data.rearZone) leaveZone(obj.data.frontZone, obj, group);
-
+  if (obj.data.frontZone !== obj.data.rearZone)
+    leaveZone(obj.data.frontZone, obj, group);
 }
 
 function enterFrontAndRear(obj, group) {
-
   if (!obj.data) return;
 
   if (obj.data.rearZone !== null) enterZone(obj.data.rearZone, obj, group);
-  if (obj.data.frontZone !== obj.data.rearZone) enterZone(obj.data.frontZone, obj, group);
-
+  if (obj.data.frontZone !== obj.data.rearZone)
+    enterZone(obj.data.frontZone, obj, group);
 }
 
 function debugZone(obj) {
-
   if (!zoneDebugging) return;
 
   // null if "not yet set", undefined if "doesn't apply to this object ever."
@@ -348,11 +349,12 @@ function debugZone(obj) {
     const { zones } = obj.data;
     const id = obj.data.guid ? obj.data.guid.split('_')[1] + '&nbsp;' : '';
     // L->R ordering for multi-zone. if enemy, show "front" side first, then rear. friendly shows rear first, then front.
-    const mzString = obj.data.isEnemy ? `${zones[0]}/${zones[1]}` : `${zones[1]}/${zones[0]}`;
+    const mzString = obj.data.isEnemy
+      ? `${zones[0]}/${zones[1]}`
+      : `${zones[1]}/${zones[0]}`;
     const zz = id && obj.data.multiZone ? mzString : zones[0];
     obj.dom.oDebug.innerHTML = id ? `${id}<sup>${zz}</sup>` : zones[0];
   }
-
 }
 
 const ignoreZoneTypes = {
@@ -361,7 +363,6 @@ const ignoreZoneTypes = {
 };
 
 function refreshZone(obj) {
-
   if (!obj?.data) return;
 
   // inert gunfire particles can be ignored.
@@ -378,7 +379,6 @@ function refreshZone(obj) {
   if (obj.data.frontZone !== zones[0] || obj.data.rearZone !== zones[1]) {
     applyZone(obj, zones);
   }
-
 }
 
 const zones = {

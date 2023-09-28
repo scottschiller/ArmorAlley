@@ -46,7 +46,7 @@ import { prefs, PrefsManager } from './UI/preferences.js';
 
   General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
 
-  This release:     V2.01.20230520
+  This release:     V2.01.20230926
   Previous release: V2.0.20230501
   Original release: V1.0.20131031
 
@@ -62,18 +62,13 @@ let stats;
 
 // used by the "exit [game type]" link
 window.aa = {
-
   exit() {
-
     // delete stored preference
     utils.storage.remove(prefs.gameType);
-
   }
-
 };
 
 if (soundManager) {
-
   // OGG is available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
@@ -84,13 +79,12 @@ if (soundManager) {
     defaultOptions: {
       volume: DEFAULT_VOLUME,
       multiShotEvents: true
-    },
+    }
   });
 
   if (winloc.match(/mute/i)) {
     soundManager.disable();
   }
-
 }
 
 window.addEventListener('DOMContentLoaded', game.initArmorAlley);

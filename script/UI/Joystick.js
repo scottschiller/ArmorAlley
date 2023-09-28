@@ -4,7 +4,6 @@ import { debug } from '../core/global.js';
 import { snowStorm } from '../lib/snowstorm.js';
 
 function Joystick(options) {
-
   let css, data, dom, exports;
 
   css = {
@@ -32,44 +31,40 @@ function Joystick(options) {
     pointer: {
       // percentages
       x: 50,
-      y: 50,
+      y: 50
     },
     // linear acceleration / deceleration
     easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
     tweenFrame: 0,
-    tweenFrames: [],
+    tweenFrames: []
   };
 
   dom = {
     o: null,
     oJoystick: null,
-    oPoint: null,
+    oPoint: null
   };
 
-  const getEvent = e => {
+  const getEvent = (e) => {
     // TODO: improve normalization of touch events.
-    const evt = (e.changedTouches && e.changedTouches[e.changedTouches.length - 1]) || e;
+    const evt =
+      (e.changedTouches && e.changedTouches[e.changedTouches.length - 1]) || e;
     return evt;
   };
 
   function moveContainerTo(x, y) {
-
-    const targetX = x - (data.oJoystickWidth / 2);
-    const targetY = y - (data.oJoystickHeight / 2);
+    const targetX = x - data.oJoystickWidth / 2;
+    const targetY = y - data.oJoystickHeight / 2;
     dom.oJoystick.style.setProperty('left', `${targetX}px`);
     dom.oJoystick.style.setProperty('top', `${targetY}px`);
-
   }
 
   function resetPoint() {
-
     dom.oPoint.style.setProperty('left', '50%');
     dom.oPoint.style.setProperty('top', '50%');
-
   }
 
   function start(e) {
-
     if (data.active) return;
 
     data.active = true;
@@ -91,11 +86,9 @@ function Joystick(options) {
     // stop touch from causing scroll, too?
     if (e.preventDefault) e.preventDefault();
     if (evt.preventDefault) evt.preventDefault();
-
   }
 
   function makeTweenFrames(from, to) {
-
     const frames = [];
 
     // distance to move in total
@@ -109,8 +102,8 @@ function Joystick(options) {
     // create array of x/y coordinates
     for (let i = 0, j = data.easing.length; i < j; i++) {
       // move % of total distance
-      x += (deltaX * data.easing[i] * 0.01);
-      y += (deltaY * data.easing[i] * 0.01);
+      x += deltaX * data.easing[i] * 0.01;
+      y += deltaY * data.easing[i] * 0.01;
       frames[i] = {
         x,
         y
@@ -118,11 +111,9 @@ function Joystick(options) {
     }
 
     return frames;
-
   }
 
   function distance(p1, p2) {
-
     let x1, y1, x2, y2;
 
     x1 = p1[0];
@@ -134,14 +125,12 @@ function Joystick(options) {
     // eslint recommends exponentation ** vs. Math.pow(), but ** is Chrome 52+ and not even in IE AFAIK. 😂
     // eslint-disable-next-line no-restricted-properties
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-
   }
 
   // circle math hat-tip: duopixel
   // https://stackoverflow.com/a/8528999
 
   function limit(x, y) {
-
     const halfWidth = data.oJoystickWidth / 2;
     const halfHeight = data.oJoystickHeight / 2;
     const radius = halfWidth;
@@ -156,21 +145,17 @@ function Joystick(options) {
     const radians = Math.atan2(y, x);
 
     return {
-      x: (Math.cos(radians) * radius) + center[0],
-      y: (Math.sin(radians) * radius) + center[1]
+      x: Math.cos(radians) * radius + center[0],
+      y: Math.sin(radians) * radius + center[1]
     };
-
   }
 
   function movePoint(x, y) {
-
     dom.oPoint.style.setProperty('left', `${x}%`);
     dom.oPoint.style.setProperty('top', `${y}%`);
-
   }
 
   function setDirection(x, y) {
-
     const from = {
       x: (data.pointer.x / 100) * game.objects.view.data.browser.width,
       y: (data.pointer.y / 100) * game.objects.view.data.browser.height
@@ -193,11 +178,9 @@ function Joystick(options) {
       // this keeps motion relatively fast during repeated touchmove() events.
       data.tweenFrame--;
     }
-
   }
 
   function move(e) {
-
     // ignore if joystick isn't being dragged.
     if (!data.active) return;
 
@@ -214,8 +197,14 @@ function Joystick(options) {
     const halfHeight = data.oJoystickHeight / 2;
 
     // calculate, limit between 0 and width/height.
-    const relativeX = Math.max(0, Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth));
-    const relativeY = Math.max(0, Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight));
+    const relativeX = Math.max(
+      0,
+      Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth)
+    );
+    const relativeY = Math.max(
+      0,
+      Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight)
+    );
 
     const coords = limit(relativeX, relativeY);
 
@@ -229,31 +218,25 @@ function Joystick(options) {
     if (snowStorm.active) {
       snowStorm.mouseMove(evt);
     }
-
   }
 
   function end() {
-
     if (!data.active) return;
 
     utils.css.remove(dom.oJoystick, css.active);
     data.tweenFrame = 0;
     data.tweenFrames = [];
     data.active = false;
-
   }
 
   function refresh() {
-
     data.oJoystickWidth = dom.oJoystick.offsetWidth;
     data.oJoystickHeight = dom.oJoystick.offsetHeight;
     data.oPointWidth = dom.oPoint.offsetWidth;
     data.oPointHeight = dom.oPoint.offsetHeight;
-
   }
 
   function addEvents() {
-
     // for testing from desktop
     if (debug) {
       utils.events.add(document, 'mousedown', start);
@@ -262,11 +245,9 @@ function Joystick(options) {
     }
 
     utils.events.add(window, 'resize', refresh);
-
   }
 
   function initDOM() {
-
     // create joystick and inner point.
     dom.o = (options && options.o) || document.body;
 
@@ -285,21 +266,21 @@ function Joystick(options) {
 
     dom.oJoystick = oJoystick;
     dom.oPoint = oPoint;
-
   }
 
   function setInitialPosition() {
-
     // update inner state
     data.pointer.x = 50;
     data.pointer.y = 50;
 
-    dom.oPointer.style.transform = `translate3d(${game.objects.view.data.browser.width * (data.pointer.x / 100)}px, ${game.objects.view.data.browser.height * (data.pointer.y / 100)}px, 0px)`;
-    
+    dom.oPointer.style.transform = `translate3d(${
+      game.objects.view.data.browser.width * (data.pointer.x / 100)
+    }px, ${
+      game.objects.view.data.browser.height * (data.pointer.y / 100)
+    }px, 0px)`;
   }
 
   function animate() {
-
     // only move if joystick is active.
     // i.e., stop any animation on release.
     if (!data.active) return;
@@ -320,29 +301,28 @@ function Joystick(options) {
     if (exports.onSetDirection) {
       exports.onSetDirection(data.pointer.x, data.pointer.y);
     }
-
   }
 
   function reset() {
-
     if (exports.onSetDirection) {
       exports.onSetDirection(data.pointer.x, data.pointer.y);
     }
 
     // update position of pointer, active or not.
-    dom.oPointer.style.transform = `translate3d(${game.objects.view.data.browser.width * (data.pointer.x / 100)}px, ${game.objects.view.data.browser.height * (data.pointer.y / 100)}px, 0px)`;
-
+    dom.oPointer.style.transform = `translate3d(${
+      game.objects.view.data.browser.width * (data.pointer.x / 100)
+    }px, ${
+      game.objects.view.data.browser.height * (data.pointer.y / 100)
+    }px, 0px)`;
   }
 
   function init() {
-
     initDOM();
     addEvents();
 
     // get initial coords
     refresh();
     setInitialPosition();
-
   }
 
   init();
@@ -357,7 +337,6 @@ function Joystick(options) {
   };
 
   return exports;
-
 }
 
-export { Joystick }
+export { Joystick };

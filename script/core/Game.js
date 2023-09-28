@@ -1,12 +1,26 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
-import { debug, isFirefox, isSafari, isMobile, isiPhone, oneOf, rndInt, setTutorialMode, soundManager, tutorialMode, TYPES, winloc, worldHeight } from './global.js';
+import {
+  debug,
+  isFirefox,
+  isSafari,
+  isMobile,
+  isiPhone,
+  oneOf,
+  rndInt,
+  setTutorialMode,
+  soundManager,
+  tutorialMode,
+  TYPES,
+  winloc,
+  worldHeight
+} from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
 import { orientationChange } from '../UI/mobile.js';
 import { playSound, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
-import { Joystick} from '../UI/Joystick.js';
+import { Joystick } from '../UI/Joystick.js';
 import { View } from '../UI/View.js';
 import { Inventory } from '../UI/Inventory.js';
 import { Radar } from '../UI/Radar.js';
@@ -55,41 +69,39 @@ let started;
 let didInit;
 
 const game = (() => {
-
-  let data, dom, layoutCache = {}, boneyard, objects, objectsById, objectConstructors, players, exports;
+  let data,
+    dom,
+    layoutCache = {},
+    boneyard,
+    objects,
+    objectsById,
+    objectConstructors,
+    players,
+    exports;
 
   function addItem(className, x, extraTransforms) {
-
     let data, _dom, id, width, height, inCache, exports;
 
     id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
 
     function initDOM() {
-
       _dom.o = sprites.create({
         className: `${className} terrain-item`,
         id
       });
-
     }
-    
-    function initItem() {
 
+    function initItem() {
       initDOM();
 
       if (layoutCache[className]) {
-
         inCache = true;
         width = layoutCache[className].width;
         height = layoutCache[className].height;
-  
       } else {
-  
         // append to get layout (based on CSS)
         dom.battlefield.appendChild(_dom.o);
-  
       }
-
     }
 
     // prefixed to avoid name conflict with parent game namespace
@@ -99,7 +111,7 @@ const game = (() => {
     };
 
     initItem();
-    
+
     width = width || _dom?.o?.offsetWidth;
     height = height || _dom?.o?.offsetHeight;
 
@@ -118,7 +130,6 @@ const game = (() => {
     };
 
     if (!inCache) {
-
       // store
       layoutCache[className] = {
         width: data.width,
@@ -128,13 +139,12 @@ const game = (() => {
       // remove the node, now that we have its layout.
       // this will be re-appended when on-screen.
       _dom.o.remove();
-
     }
 
     // basic structure for a terrain item
     exports = {
       data,
-      dom: _dom,
+      dom: _dom
     };
 
     // these will be tracked only for on-screen / off-screen purposes.
@@ -147,15 +157,13 @@ const game = (() => {
     }
 
     return exports;
-
   }
 
   function addObject(type, options = {}) {
-
     // given type of TYPES.van, create object and append to respective array.
 
     let object, objectArray;
-    
+
     // TYPES.van -> game.objects['van'], etc.
     objectArray = objects[type];
 
@@ -170,12 +178,14 @@ const game = (() => {
     // hackish: `noInit` applies for inventory ordering purposes, should be refactored.
 
     if (!options.noInit) {
-
       if (!objectsById[object.data.id]) {
         objectsById[object.data.id] = object;
       } else {
         // this shouldn't happen.
-        console.warn('objectsById: already assigned. Ignoring duplicate, returning original.', object.data.id);
+        console.warn(
+          'objectsById: already assigned. Ignoring duplicate, returning original.',
+          object.data.id
+        );
         return objectsById[object.data.id];
       }
 
@@ -187,41 +197,40 @@ const game = (() => {
 
       // and caculate the zone, which will further map things.
       zones.refreshZone(object);
-
     }
 
     return object;
-
   }
 
   function findObjectById(id, ...consoleInfoArgs) {
-
     /**
      * Helper method for remote object network calls.
      * If an ID is not found in `objectsById`, it may be in the "boneyard."
      * This can happen when an object dies locally, then a network request comes in for it.
      */
-  
+
     if (!id) return;
-  
+
     const obj = objectsById[id];
 
     if (obj) return obj;
-  
+
     const by = game.boneyard[id];
-  
+
     let byDetails = '';
-  
+
     if (by) {
-      byDetails = ` found in boneyard ☠️ (died ${parseInt(performance.now() - by.ts, 10)} msec ago${by.attacker ? ', attacker: ' + by.attacker : ''})`;
+      byDetails = ` found in boneyard ☠️ (died ${parseInt(
+        performance.now() - by.ts,
+        10
+      )} msec ago${by.attacker ? ', attacker: ' + by.attacker : ''})`;
     }
-  
-    if (net.debugNetwork) console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
-  
+
+    if (net.debugNetwork)
+      console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
   }
 
   function createObjects() {
-
     objects.stats = Stats();
 
     objects.gameLoop = GameLoop();
@@ -242,17 +251,15 @@ const game = (() => {
     objects.inventory = Inventory();
 
     objects.starController = StarController();
-
   }
 
   function getObjects() {
-
     // build up a "save state"
     const qualifiers = {
       // only include detached / free-floating + hostile
       balloon: (o) => !!o?.data?.hostile,
       bunker: (o) => !o.data.dead && !o.data.burninating
-    }
+    };
 
     const items = {};
 
@@ -264,7 +271,10 @@ const game = (() => {
     }
 
     // string -> array
-    const saveItems = 'balloon base bunker cloud end-bunker engineer infantry landing-pad missile-launcher smart-missile super-bunker tank terrain-item turret van'.split(' ');
+    const saveItems =
+      'balloon base bunker cloud end-bunker engineer infantry landing-pad missile-launcher smart-missile super-bunker tank terrain-item turret van'.split(
+        ' '
+      );
 
     const objects = common.pick(game.objects, ...saveItems);
 
@@ -284,69 +294,68 @@ const game = (() => {
         }
       });
     }
-    
+
     // finally, distill to addObject() / addItem() calls.
     // [ 'type', 'l|r|n', int ]
 
     const gameData = [];
 
     for (const type in items) {
-
       items[type].forEach((item) => {
-
         // engineers, again - special case
         let { type } = item.data;
         if (type === TYPES.infantry && item.data.role) type = TYPES.engineer;
 
         // 2 or 3 args, depending
-        const args = [ type, item.data.isHostile || (type === TYPES.turret && item.data.dead) ? 'n' : (item.data.isEnemy ? 'r' : (item.data.isNeutral ? 'n' : 'l')), Math.floor(item.data.x) ];
+        const args = [
+          type,
+          item.data.isHostile || (type === TYPES.turret && item.data.dead)
+            ? 'n'
+            : item.data.isEnemy
+            ? 'r'
+            : item.data.isNeutral
+            ? 'n'
+            : 'l',
+          Math.floor(item.data.x)
+        ];
 
         // drop l/r on terrain items, and clouds
         if (item.data.isTerrainItem || type === TYPES.cloud) args.splice(1, 1);
 
         gameData.push(args);
-
       });
-
     }
 
     // sort the array based on the x value.
     gameData.sort(utils.array.compareByLastItem());
 
     return gameData;
-
   }
 
   function populateTerrain() {
-
     // tutorial?
 
     if (tutorialMode) {
-
       if (!game.objects.editor) {
         objects.tutorial = Tutorial();
       }
 
       utils.css.add(document.getElementById('help'), 'active');
-
     } else {
-
       utils.css.add(document.getElementById('help'), 'inactive');
 
       document.getElementById('tutorial')?.remove();
-
     }
 
     zones.initDebug();
 
     // player + enemy helicopters
 
-    let playAsEnemy = !!(window.location.href.match(/playAsEnemy/i));
+    let playAsEnemy = !!window.location.href.match(/playAsEnemy/i);
 
-    let enemyCPU = !!(window.location.href.match(/enemyCPU|remoteCPU/i));
+    let enemyCPU = !!window.location.href.match(/enemyCPU|remoteCPU/i);
 
     if (!tutorialMode && playAsEnemy) {
-
       addObject(TYPES.helicopter, {
         skipInit: true,
         isEnemy: true,
@@ -359,21 +368,18 @@ const game = (() => {
         isEnemy: false,
         isCPU: true
       });
-
     } else {
-
       if (net.active) {
-
         console.log('NETWORK GAME');
 
         // which one you are, depends on who's hosting.
 
         // pvp|pvp_cpu|coop_2v1|coop_2v2
         if (gamePrefs.net_game_style.match(/coop/i)) {
-
           if (net.isHost) {
-
-            console.log('you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy or two.');
+            console.log(
+              'you are hosting: you are helicopters[0], you and your friend are playing cooperatively against an enemy or two.'
+            );
 
             // human player 1 (local)
             addObject(TYPES.helicopter, {
@@ -396,7 +402,6 @@ const game = (() => {
             });
 
             if (gamePrefs.net_game_style === 'coop_2v2') {
-
               console.log('2v2: adding second enemy');
 
               // CPU player 2 (AI running remotely)
@@ -406,12 +411,11 @@ const game = (() => {
                 isCPU: true,
                 isRemote: true
               });
-
             }
-
           } else {
-
-            console.log('you are a guest: you are helicopters[1], you and your friend are playing cooperatively against an enemy or two.');
+            console.log(
+              'you are a guest: you are helicopters[1], you and your friend are playing cooperatively against an enemy or two.'
+            );
 
             // human player 1 (remote)
             addObject(TYPES.helicopter, {
@@ -435,7 +439,6 @@ const game = (() => {
             });
 
             if (gamePrefs.net_game_style === 'coop_2v2') {
-
               console.log('2v2: adding second enemy');
 
               // CPU player 2 (AI running locally)
@@ -445,13 +448,9 @@ const game = (() => {
                 isCPU: true
                 // isRemote: true
               });
-
             }
-
           }
-
         } else {
-
           // Player vs. player
           // pvp|pvp_cpu|coop_2v1|coop_2v2
 
@@ -460,8 +459,9 @@ const game = (() => {
           // pvp|pvp_cpu|coop_2v1|coop_2v2
 
           if (net.isHost) {
-
-            console.log('you are hosting: you are helicopters[0], and take the friendly base');
+            console.log(
+              'you are hosting: you are helicopters[0], and take the friendly base'
+            );
 
             addObject(TYPES.helicopter, {
               skipInit: true,
@@ -477,7 +477,6 @@ const game = (() => {
             });
 
             if (gamePrefs.net_game_style === 'pvp_cpu') {
-
               // helper CPUs, one for each player
 
               console.log('pvp_cpu: adding helper helicopters');
@@ -487,19 +486,18 @@ const game = (() => {
                 isRemote: false,
                 isCPU: true
               });
-              
+
               addObject(TYPES.helicopter, {
                 skipInit: true,
                 isEnemy: true,
                 isRemote: true,
                 isCPU: true
               });
-
             }
-
           } else {
-
-            console.log('you are a guest: you are helicopters[1], and take the enemy base');
+            console.log(
+              'you are a guest: you are helicopters[1], and take the enemy base'
+            );
 
             addObject(TYPES.helicopter, {
               skipInit: true,
@@ -516,7 +514,6 @@ const game = (() => {
             });
 
             if (gamePrefs.net_game_style === 'pvp_cpu') {
-
               // helper CPUs, one for each player
 
               console.log('pvp_cpu: adding helper helicopters');
@@ -533,15 +530,10 @@ const game = (() => {
                 isRemote: false,
                 isCPU: true
               });
-              
             }
-
           }
-
         }
-    
       } else {
-
         // regular game
 
         addObject(TYPES.helicopter, {
@@ -549,30 +541,24 @@ const game = (() => {
           attachEvents: true,
           isLocal: true
         });
-    
+
         if (!tutorialMode) {
-      
           addObject(TYPES.helicopter, {
             skipInit: true,
             isEnemy: true,
             isCPU: true
           });
-          
         }
-
       }
-
     }
 
     addWorldObjects();
 
     // finally, start the helicopter engines. ;)
     game.objects.helicopter.forEach((helicopter) => helicopter.init());
-
   }
 
   function togglePause() {
-
     if (!data.started) return;
 
     if (data.paused) {
@@ -580,11 +566,9 @@ const game = (() => {
     } else {
       pause();
     }
-
   }
 
   function pause(options) {
-
     // ignore if we're in a network game.
     if (net.active) return;
 
@@ -614,12 +598,12 @@ const game = (() => {
     let rnd = rndInt(prompts.length);
 
     for (let i = 0; i < prompts.length; i++) {
-      prompts[i].style.display = (i === rnd ? 'inline-block' : 'none');
+      prompts[i].style.display = i === rnd ? 'inline-block' : 'none';
     }
 
     // "keep color" applies when the game starts and the menu is showing.
     let css = keepColor ? [] : ['game-paused'];
-    
+
     // don't show paused status / tips in certain cases
 
     if (prefsManager.isActive()) {
@@ -633,13 +617,11 @@ const game = (() => {
     utils.css.add(document.body, ...css);
 
     data.paused = true;
-
   }
 
   window.pause = pause;
 
   function resume() {
-
     // exit if preferences menu is open; it will handle resume on close.
     if (prefsManager.isActive()) return;
 
@@ -651,7 +633,12 @@ const game = (() => {
       soundManager.unmute();
     }
 
-    utils.css.remove(document.body, 'game-paused', 'prefs-modal-open', 'game-menu-open');
+    utils.css.remove(
+      document.body,
+      'game-paused',
+      'prefs-modal-open',
+      'game-menu-open'
+    );
 
     if (isMobile) {
       // hackish: screen coordinates, etc., should have settled by this point following an orientation change.
@@ -659,11 +646,9 @@ const game = (() => {
     }
 
     data.paused = false;
-
   }
 
   function startEditor() {
-
     // stop scrolling
     utils.css.remove(document.getElementById('game-tips'), 'active');
 
@@ -676,12 +661,10 @@ const game = (() => {
     populateTerrain();
 
     game.objects.editor.init();
-
   }
 
   // when the player has chosen a game type from the menu - tutorial, or easy/hard/extreme.
   function init() {
-
     document.getElementById('help').style.display = 'block';
 
     data.started = true;
@@ -690,22 +673,21 @@ const game = (() => {
     if (window.location.href.match(/editor/i)) {
       return startEditor();
     }
-    
+
     utils.css.add(document.body, 'game-started');
 
     keyboardMonitor.init();
 
     // allow joystick if in debug mode (i.e., testing on desktop)
     if (isMobile || debug) {
-
       objects.joystick = Joystick();
 
       objects.joystick.onSetDirection = (directionX, directionY) => {
         // TODO: have this call game.objects.view.mousemove(); ?
         // OR, just call network methods directly.
         // percentage to pixels (circle coordinates)
-        const x = ((directionX / 100) * objects.view.data.browser.width);
-        const y = ((directionY / 100) * objects.view.data.browser.height);
+        const x = (directionX / 100) * objects.view.data.browser.width;
+        const y = (directionY / 100) * objects.view.data.browser.height;
         if (net.active) {
           objects.view.data.mouse.delayedInputX = x;
           objects.view.data.mouse.delayedInputY = y;
@@ -718,11 +700,8 @@ const game = (() => {
           objects.view.data.mouse.y = y;
         }
       };
-
     } else {
-
       document.getElementById('pointer')?.remove();
-
     }
 
     zones.init();
@@ -730,23 +709,27 @@ const game = (() => {
     populateTerrain();
 
     // if a network game, let the host handle enemy ordering; objects will be replicated remotely.
-    if (game.players.cpu.length && !tutorialMode && (!net.active || (net.active && net.isHost))) {
+    if (
+      game.players.cpu.length &&
+      !tutorialMode &&
+      (!net.active || (net.active && net.isHost))
+    ) {
       game.objects.inventory.startEnemyOrdering();
     }
 
     function startEngine() {
-
       // wait until available
       if (!sounds.helicopter.engine) return;
 
       playSound(sounds.helicopter.engine);
 
       if (gamePrefs.bnb) {
-        playSound(oneOf([sounds.bnb.letsKickALittleAss, sounds.bnb.heresACoolGame]));
+        playSound(
+          oneOf([sounds.bnb.letsKickALittleAss, sounds.bnb.heresACoolGame])
+        );
       }
 
       utils.events.remove(document, 'click', startEngine);
-
     }
 
     if (gamePrefs.sound) {
@@ -755,13 +738,11 @@ const game = (() => {
     }
 
     game.objects.starController?.init();
-
   }
 
   // the home screen: choose a game type.
 
   function initArmorAlley() {
-
     if (didInit) {
       console.warn('initArmorAlley(): WTF, already did init?');
       return;
@@ -772,29 +753,28 @@ const game = (() => {
     // A few specific CSS tweaks - regrettably - are required.
     if (isFirefox) utils.css.add(document.body, 'is_firefox');
 
-    if (isSafari) { 
+    if (isSafari) {
       utils.css.add(document.body, 'is_safari');
       // progressive web-type app, "installed on home screen" (iOS Safari)
       if (navigator.standalone) utils.css.add(document.body, 'is_standalone');
     }
-  
+
     // Very limited CSS stuff, here, to hide keyboard controls.
     if (isiPhone) {
       utils.css.add(document.body, 'is_iphone');
     }
 
     if (isMobile) {
-  
       utils.css.add(document.body, 'is-mobile');
-  
+
       // prevent context menu on links.
       // this is dirty, but it works (supposedly) for Android.
-      window.oncontextmenu = e => {
+      window.oncontextmenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
         return false;
       };
-  
+
       // if iPads etc. get The Notch, this will need updating. as of 01/2018, this is fine.
       if (isiPhone) {
         /**
@@ -812,11 +792,10 @@ const game = (() => {
         // and get the current layout.
         orientationChange();
       }
-  
     }
 
     // TODO: DOM init method or similar, ideally
-    
+
     dom.world = document.getElementById('world');
     dom.battlefield = document.getElementById('battlefield');
 
@@ -827,40 +806,34 @@ const game = (() => {
 
     // start menu?
     gameMenu.init();
-
   }
 
   function setGameType(type = null) {
-
     gameType = type || DEFAULT_GAME_TYPE;
     gamePrefs.net_game_type = gameType;
     setTutorialMode(gameType === 'tutorial');
-
   }
 
   function start() {
-
     // NOTE: default game type is set here
 
     if (net.active && net.connected) {
-
       // do nothing, already set.
-
     } else {
+      gameType =
+        utils.storage.get(prefs.gameType) ||
+        winloc.match(/easy|hard|extreme|tutorial/i) ||
+        DEFAULT_GAME_TYPE;
 
-      gameType = utils.storage.get(prefs.gameType) || winloc.match(/easy|hard|extreme|tutorial/i) || DEFAULT_GAME_TYPE;
-    
       if (gameType instanceof Array) {
         gameType = gameType[0];
       }
-    
+
       // safety check
       if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
         gameType = null;
       }
-
     }
-    
   }
 
   data = {
@@ -888,44 +861,44 @@ const game = (() => {
   };
 
   objects = {
-    editor: null,
-    gameLoop: null,
-    view: null,
-    chain: [],
-    balloon: [],
-    bomb: [],
-    bunker: [],
-    cornholio: [],
-    domFetti: [],
-    ephemeralExplosion: [],
+    'editor': null,
+    'gameLoop': null,
+    'view': null,
+    'chain': [],
+    'balloon': [],
+    'bomb': [],
+    'bunker': [],
+    'cornholio': [],
+    'domFetti': [],
+    'ephemeralExplosion': [],
     'end-bunker': [],
-    engineer: [],
-    flame: [],
-    gunfire: [],
-    infantry: [],
+    'engineer': [],
+    'flame': [],
+    'gunfire': [],
+    'infantry': [],
     'parachute-infantry': [],
     'missile-launcher': [],
     'super-bunker': [],
-    tank: [],
-    van: [],
-    helicopter: [],
+    'tank': [],
+    'van': [],
+    'helicopter': [],
     'smart-missile': [],
-    base: [],
-    cloud: [],
+    'base': [],
+    'cloud': [],
     'landing-pad': [],
-    turret: [],
-    shrapnel: [],
-    smoke: [],
+    'turret': [],
+    'shrapnel': [],
+    'smoke': [],
     'terrain-item': [],
-    radar: null,
-    star: [],
-    starController: null,
-    inventory: null,
-    tutorial: null,
-    queue: null,
-    funds: null,
-    notifications: null,
-    stats: null
+    'radar': null,
+    'star': [],
+    'starController': null,
+    'inventory': null,
+    'tutorial': null,
+    'queue': null,
+    'funds': null,
+    'notifications': null,
+    'stats': null
   };
 
   objectsById = {};
@@ -934,30 +907,30 @@ const game = (() => {
   boneyard = {};
 
   objectConstructors = {
-    balloon: Balloon,
-    base: Base,
-    bomb: Bomb,
-    bunker: Bunker,
-    chain: Chain,
-    cloud: Cloud,
-    cornholio: Cornholio,
+    'balloon': Balloon,
+    'base': Base,
+    'bomb': Bomb,
+    'bunker': Bunker,
+    'chain': Chain,
+    'cloud': Cloud,
+    'cornholio': Cornholio,
     'end-bunker': EndBunker,
-    engineer: Engineer,
+    'engineer': Engineer,
     // flyingAce: FlyingAce,
-    flame: Flame,
-    gunfire: GunFire,
-    helicopter: Helicopter,
-    infantry: Infantry,
+    'flame': Flame,
+    'gunfire': GunFire,
+    'helicopter': Helicopter,
+    'infantry': Infantry,
     'landing-pad': LandingPad,
     'missile-launcher': MissileLauncher,
     'parachute-infantry': ParachuteInfantry,
-    shrapnel: Shrapnel,
+    'shrapnel': Shrapnel,
     'smart-missile': SmartMissile,
     'super-bunker': SuperBunker,
-    star: Star,
-    turret: Turret,
-    tank: Tank,
-    van: Van
+    'star': Star,
+    'turret': Turret,
+    'tank': Tank,
+    'van': Van
   };
 
   exports = {
@@ -983,7 +956,6 @@ const game = (() => {
   };
 
   return exports;
-
 })();
 
 export { game, gameType, screenScale };

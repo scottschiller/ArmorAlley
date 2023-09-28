@@ -5,42 +5,38 @@ import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
 
 const LandingPad = (options = {}) => {
-
   let css, dom, data, collision, exports;
 
   function animate() {
-
     sprites.moveWithScrollOffset(exports);
 
     collisionTest(collision, exports);
-
   }
 
   function isOnScreenChange(isOnScreen) {
-
     if (!isOnScreen) return;
 
     setWelcomeMessage();
-
   }
 
   function setWelcomeMessage() {
-
     let eat, drink;
 
     eat = data.edible[rndInt(data.edible.length)];
     drink = data.drinkable[rndInt(data.drinkable.length)];
 
-    data.welcomeMessage = `-* 🚁 Welcome to ${data.name}${' ⛽🛠️ *-<br />Today\'s feature: %s1 %s2 &middot; Enjoy your stay.'.replace('%s1', drink).replace('%s2', eat)}`;
-
+    data.welcomeMessage = `-* 🚁 Welcome to ${
+      data.name
+    }${" ⛽🛠️ *-<br />Today's feature: %s1 %s2 &middot; Enjoy your stay."
+      .replace('%s1', drink)
+      .replace('%s2', eat)}`;
   }
 
   function initLandingPad() {
-
     dom.o = sprites.create({
       id: data.id,
       className: css.className,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy: data.isEnemy ? css.enemy : false
     });
 
     dom.o.appendChild(sprites.makeTransformSprite());
@@ -61,20 +57,40 @@ const LandingPad = (options = {}) => {
     className: 'landing-pad'
   });
 
-  data = common.inheritData({
-    type: 'landing-pad',
-    name: options.name,
-    isKennyLoggins: options.isKennyLoggins,
-    isMidway: options.isMidway,
-    isNeutral: true,
-    isObscured: options.obscured,
-    energy: 2,
-    width: 81,
-    height: 4,
-    y: worldHeight - 3,
-    edible: ['🍔', '🍑', '🍒', '🍆', '🥑', '🍄', '🍖', '🍟', '🌭', '🌮', '🌯', '🍲', '🍿', '🍣', '🐟', '🥡'],
-    drinkable: ['🍺', '🍻', '🍹', '☕', '🍾', '🍷', '🍸', '🥂', '🥃']
-  }, options);
+  data = common.inheritData(
+    {
+      type: 'landing-pad',
+      name: options.name,
+      isKennyLoggins: options.isKennyLoggins,
+      isMidway: options.isMidway,
+      isNeutral: true,
+      isObscured: options.obscured,
+      energy: 2,
+      width: 81,
+      height: 4,
+      y: worldHeight - 3,
+      edible: [
+        '🍔',
+        '🍑',
+        '🍒',
+        '🍆',
+        '🥑',
+        '🍄',
+        '🍖',
+        '🍟',
+        '🌭',
+        '🌮',
+        '🌯',
+        '🍲',
+        '🍿',
+        '🍣',
+        '🐟',
+        '🥡'
+      ],
+      drinkable: ['🍺', '🍻', '🍹', '☕', '🍾', '🍷', '🍸', '🥂', '🥃']
+    },
+    options
+  );
 
   dom = {
     o: null
@@ -97,7 +113,7 @@ const LandingPad = (options = {}) => {
         /**
          * slightly hackish: landing pad shape doesn't take full height of bounding box.
          * once a "hit", measure so that helicopter aligns with bottom of world.
-         * 
+         *
          * additionally: only consider a "hit" IF the helicopter is moving down, e.g., data.vY > 0.
          * otherwise, ignore this event and allow helicopter to leave.
          */
@@ -111,13 +127,12 @@ const LandingPad = (options = {}) => {
           // "friendly landing pad MISS"
           target.onLandingPad(false);
         }
-      },
+      }
     },
     items: getTypes('helicopter:all', { exports })
   };
 
   return exports;
-
 };
 
 export { LandingPad };

@@ -1,5 +1,4 @@
 const TutorialStep = (options = {}) => {
-
   let data, exports;
 
   data = {
@@ -8,26 +7,20 @@ const TutorialStep = (options = {}) => {
   };
 
   function animate() {
-
     if (!data.activated) {
-
       if (options.activate) {
         options.activate();
       }
 
       data.activated = true;
-
     } else if (!data.completed) {
-
       if (options.animate()) {
         if (options.complete) {
           options.complete();
         }
         data.completed = true;
       }
-
     }
-
   }
 
   exports = {
@@ -36,7 +29,6 @@ const TutorialStep = (options = {}) => {
   };
 
   return exports;
-
 };
 
 export { TutorialStep };

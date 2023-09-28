@@ -10,301 +10,285 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
 const GunFire = (options = {}) => {
+  let css, data, dom, collision, exports, frameTimeout, radarItem;
 
-    let css, data, dom, collision, exports, frameTimeout, radarItem;
+  function randomDistance() {
+    return `${rndInt(10) * plusMinus()}px`;
+  }
 
-    function randomDistance() {
-      return `${rndInt(10) * plusMinus()}px`;
+  function spark() {
+    if (!dom.o) return;
+
+    utils.css.add(dom.o, css.spark);
+
+    // randomize a little
+
+    if (Math.random() > 0.5) {
+      dom.o._style.setProperty('margin-left', randomDistance());
     }
 
-    function spark() {
-
-      if (!dom.o) return;
-
-      utils.css.add(dom.o, css.spark);
-
-      // randomize a little
-
-      if (Math.random() > 0.5) {
-        dom.o._style.setProperty('margin-left', randomDistance());
-      }
-
-      if (Math.random() > 0.5) {
-        dom.o._style.setProperty('margin-top', randomDistance());
-      }
-
-      if (data.isOnScreen) {
-        sprites.applyRandomRotation(dom.o);
-      }
-
+    if (Math.random() > 0.5) {
+      dom.o._style.setProperty('margin-top', randomDistance());
     }
 
-    function die(force) {
+    if (data.isOnScreen) {
+      sprites.applyRandomRotation(dom.o);
+    }
+  }
 
-      // aieee!
+  function die(force) {
+    // aieee!
 
-      if (data.dead && !force) return;
+    if (data.dead && !force) return;
 
-      data.dead = true;
+    data.dead = true;
 
-      sprites.removeNodesAndUnlink(exports);
+    sprites.removeNodesAndUnlink(exports);
 
-      if (radarItem) {
-        radarItem.die({
-          silent: true
-        });
-      }
-
-      common.onDie(exports);
-
+    if (radarItem) {
+      radarItem.die({
+        silent: true
+      });
     }
 
-    function sparkAndDie(target) {
+    common.onDie(exports);
+  }
 
-      // hackish: bail if spark -> die already scheduled.
-      if (frameTimeout) return;
+  function sparkAndDie(target) {
+    // hackish: bail if spark -> die already scheduled.
+    if (frameTimeout) return;
 
-      let now;
-      let canSpark = true;
-      let canDie = true;
+    let now;
+    let canSpark = true;
+    let canDie = true;
 
-      if (target) {
+    if (target) {
+      // special case: tanks hit turrets for a lot of damage.
+      if (data.parentType === TYPES.tank && target.data.type === TYPES.turret) {
+        data.damagePoints = 8;
+      }
 
-        // special case: tanks hit turrets for a lot of damage.
-        if (data.parentType === TYPES.tank && target.data.type === TYPES.turret) {
-          data.damagePoints = 8;
-        }
+      // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
+      if (
+        !(
+          data.parentType === TYPES.infantry && target.data.type === TYPES.tank
+        ) &&
+        !(
+          data.parentType === TYPES.helicopter &&
+          (target.data.type === TYPES.endBunker ||
+            target.data.type === TYPES.superBunker)
+        )
+      ) {
+        common.hit(target, data.damagePoints, exports);
+      }
 
-        // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
+      // play a sound for certain targets and source -> target combinations
+
+      if (target.data.type === TYPES.helicopter) {
+        playSound(sounds.boloTank, exports);
+
+        data.domFetti.startVelocity = Math.abs(data.vX) + Math.abs(data.vY);
+
+        effects.domFetti(exports, target);
+      } else if (
+        target.data.type === TYPES.tank ||
+        target.data.type === TYPES.helicopter ||
+        target.data.type === TYPES.van ||
+        target.data.type === TYPES.bunker ||
+        target.data.type === TYPES.endBunker ||
+        target.data.type === TYPES.superBunker ||
+        // helicopter -> turret
+        (data.parentType === TYPES.helicopter &&
+          target.data.type === TYPES.turret)
+      ) {
+        // impervious to gunfire?
         if (
-          !(data.parentType === TYPES.infantry && target.data.type === TYPES.tank)
-          && !(data.parentType === TYPES.helicopter && (target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker))
+          // infantry -> tank = ricochet.
+          (data.parentType === TYPES.infantry &&
+            target.data.type === TYPES.tank) ||
+          // nothing can hit end or super bunkers, except tanks.
+          ((target.data.type === TYPES.endBunker ||
+            target.data.type === TYPES.superBunker) &&
+            data.parentType !== TYPES.tank)
         ) {
-          common.hit(target, data.damagePoints, exports);
-        }
+          // up to five infantry may be firing at the tank.
+          // prevent the sounds from piling up.
+          now = performance.now();
 
-        // play a sound for certain targets and source -> target combinations
-
-        if (target.data.type === TYPES.helicopter) {
-
-          playSound(sounds.boloTank, exports);
-
-          data.domFetti.startVelocity = (Math.abs(data.vX) + Math.abs(data.vY));
-
-          effects.domFetti(exports, target);
-
-        } else if (
-
-          target.data.type === TYPES.tank
-          || target.data.type === TYPES.helicopter
-          || target.data.type === TYPES.van
-          || target.data.type === TYPES.bunker
-          || target.data.type === TYPES.endBunker
-          || target.data.type === TYPES.superBunker
-          // helicopter -> turret
-          || (data.parentType === TYPES.helicopter && target.data.type === TYPES.turret)
-
-        ) {
-
-          // impervious to gunfire?
-          if (
-            // infantry -> tank = ricochet.
-            data.parentType === TYPES.infantry && target.data.type === TYPES.tank
-
-            // nothing can hit end or super bunkers, except tanks.
-            || ((target.data.type === TYPES.endBunker || target.data.type === TYPES.superBunker) && data.parentType !== TYPES.tank)
-          ) {
-
-            // up to five infantry may be firing at the tank.
-            // prevent the sounds from piling up.
-            now = performance.now();
-
-            if (now - common.lastInfantryRicochet > data.ricochetSoundThrottle) {
-              playSound(sounds.ricochet, exports);
-              common.lastInfantryRicochet = now;
-            }
-            
-            canSpark = false;
-            canDie = false;
-
-            // bounce! reverse, and maybe flip on vertical.
-            // hackish: if gunfire *originated* "above", consider this a vertical bounce.
-            if (options.y < 358) {
-              data.vY *= -1;
-            } else if (net.active) {
-              data.vX *= -1;
-            } else {
-              data.vX *= -rnd(1);
-              data.vY *= rnd(1) * plusMinus();
-            }
-
-            // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
-            data.x += data.vX;
-            data.y += data.vY;
-          } else {
-            // otherwise, it "sounds" like a hit.
-            if (target.data.type === TYPES.bunker) {
-              playSound(sounds.concreteHit, exports);
-            } else {
-              playSound(sounds.metalHit, exports);
-            }
+          if (now - common.lastInfantryRicochet > data.ricochetSoundThrottle) {
+            playSound(sounds.ricochet, exports);
+            common.lastInfantryRicochet = now;
           }
 
-        } else if (target.data.type === TYPES.balloon && sounds.balloonHit) {
+          canSpark = false;
+          canDie = false;
 
-          playSound(sounds.balloonHit, exports);
+          // bounce! reverse, and maybe flip on vertical.
+          // hackish: if gunfire *originated* "above", consider this a vertical bounce.
+          if (options.y < 358) {
+            data.vY *= -1;
+          } else if (net.active) {
+            data.vX *= -1;
+          } else {
+            data.vX *= -rnd(1);
+            data.vY *= rnd(1) * plusMinus();
+          }
 
-        } else if (target.data.type === TYPES.turret) {
-
-          playSound(sounds.metalHit, exports);
-
-        } else if (target.data.type === TYPES.gunfire) {
-
-          // gunfire hit gunfire!
-          playSound(sounds.ricochet, exports);
-          playSound(sounds.metalHit, exports);
-
+          // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
+          data.x += data.vX;
+          data.y += data.vY;
+        } else {
+          // otherwise, it "sounds" like a hit.
+          if (target.data.type === TYPES.bunker) {
+            playSound(sounds.concreteHit, exports);
+          } else {
+            playSound(sounds.metalHit, exports);
+          }
         }
-
+      } else if (target.data.type === TYPES.balloon && sounds.balloonHit) {
+        playSound(sounds.balloonHit, exports);
+      } else if (target.data.type === TYPES.turret) {
+        playSound(sounds.metalHit, exports);
+      } else if (target.data.type === TYPES.gunfire) {
+        // gunfire hit gunfire!
+        playSound(sounds.ricochet, exports);
+        playSound(sounds.metalHit, exports);
       }
-
-      // steal node from pool, not to be recycled because we're changing dimensions and mutating it.
-      if (data.domPool && (canSpark || canDie)) {
-        dom = Object.assign(dom, data.domPool.steal().dom);
-        data.domPool = null;
-      }
-
-      if (canSpark) spark();
-
-      if (canDie) {
-
-        // "embed", so this object moves relative to the target it hit
-        sprites.attachToTarget(exports, target);
-
-        utils.css.add(dom.o, css.dead);
-
-        // immediately mark as dead, prevent any more collisions.
-        data.dead = true;
-
-        // and cleanup shortly.
-        frameTimeout = common.setFrameTimeout(() => {
-          // use the force, indeed.
-          const force = true;
-          die(force);
-          frameTimeout = null;
-        }, 250);
-
-        if (target.data.type !== TYPES.infantry) {
-
-          // hackish: override for special case
-          data.domFetti = {
-            colorType: 'grey',
-            elementCount: 1 + rndInt(1),
-            startVelocity: (Math.abs(data.vX) + Math.abs(data.vY)),
-            angle: 0
-          };
-
-          effects.domFetti(exports, target);
-
-        }
-
-      }
-
     }
 
-    function animate() {
+    // steal node from pool, not to be recycled because we're changing dimensions and mutating it.
+    if (data.domPool && (canSpark || canDie)) {
+      dom = Object.assign(dom, data.domPool.steal().dom);
+      data.domPool = null;
+    }
 
-      // pending die()
-      if (frameTimeout) {
-        // keep moving with scroll, while visible
-        sprites.moveWithScrollOffset(exports);
-        return false;
+    if (canSpark) spark();
+
+    if (canDie) {
+      // "embed", so this object moves relative to the target it hit
+      sprites.attachToTarget(exports, target);
+
+      utils.css.add(dom.o, css.dead);
+
+      // immediately mark as dead, prevent any more collisions.
+      data.dead = true;
+
+      // and cleanup shortly.
+      frameTimeout = common.setFrameTimeout(() => {
+        // use the force, indeed.
+        const force = true;
+        die(force);
+        frameTimeout = null;
+      }, 250);
+
+      if (target.data.type !== TYPES.infantry) {
+        // hackish: override for special case
+        data.domFetti = {
+          colorType: 'grey',
+          elementCount: 1 + rndInt(1),
+          startVelocity: Math.abs(data.vX) + Math.abs(data.vY),
+          angle: 0
+        };
+
+        effects.domFetti(exports, target);
       }
+    }
+  }
 
-      if (data.dead) return true;
+  function animate() {
+    // pending die()
+    if (frameTimeout) {
+      // keep moving with scroll, while visible
+      sprites.moveWithScrollOffset(exports);
+      return false;
+    }
 
-      // disappear if created on-screen, but has become off-screen.
-      if (data.isInert && !data.isOnScreen) {
-        die();
-        return;
-      }
+    if (data.dead) return true;
 
-      if (!data.isInert && !data.expired && data.frameCount > data.expireFrameCount) {
-        utils.css.add(dom.o, css.expired);
-        if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
-        data.expired = true;
-      }
+    // disappear if created on-screen, but has become off-screen.
+    if (data.isInert && !data.isOnScreen) {
+      die();
+      return;
+    }
 
-      if (data.isInert || data.expired) {
-        data.gravity *= data.gravityRate;
-      }
+    if (
+      !data.isInert &&
+      !data.expired &&
+      data.frameCount > data.expireFrameCount
+    ) {
+      utils.css.add(dom.o, css.expired);
+      if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
+      data.expired = true;
+    }
 
-      sprites.moveTo(exports, data.x + data.vX, data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0));
+    if (data.isInert || data.expired) {
+      data.gravity *= data.gravityRate;
+    }
 
-      data.frameCount++;
+    sprites.moveTo(
+      exports,
+      data.x + data.vX,
+      data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0)
+    );
 
-      // inert "gunfire" animates until it hits the ground.
-      if (!data.isInert && data.frameCount >= data.dieFrameCount) {
-        die();
-      }
+    data.frameCount++;
 
-      // bottom?
-      if (data.y > game.objects.view.data.battleField.height) {
-        if (!data.isInert) {
-          playSound(sounds.bulletGroundHit, exports);
-        }
-        die();
-      }
+    // inert "gunfire" animates until it hits the ground.
+    if (!data.isInert && data.frameCount >= data.dieFrameCount) {
+      die();
+    }
 
+    // bottom?
+    if (data.y > game.objects.view.data.battleField.height) {
       if (!data.isInert) {
-        collisionTest(collision, exports);
+        playSound(sounds.bulletGroundHit, exports);
       }
-
-      // notify caller if now dead and can be removed.
-      return (data.dead && !dom.o && !dom.domPool);
-
+      die();
     }
 
-    function initDOM() {
-
-      data.domPool = poolBoy.request({ className: css.className });
-
-      // merge domPool dom o + transform nodes
-      Object.assign(dom, data.domPool.dom);
-      
+    if (!data.isInert) {
+      collisionTest(collision, exports);
     }
 
-    function initGunFire() {
+    // notify caller if now dead and can be removed.
+    return data.dead && !dom.o && !dom.domPool;
+  }
 
-      initDOM();
+  function initDOM() {
+    data.domPool = poolBoy.request({ className: css.className });
 
-      // randomize a little: ±1 pixel.
-      if (!net.active) {
-        data.x += plusMinus();
-        data.y += plusMinus();
-      }
+    // merge domPool dom o + transform nodes
+    Object.assign(dom, data.domPool.dom);
+  }
 
-      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+  function initGunFire() {
+    initDOM();
 
-      if (!data.isInert) {
-
-        radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
-        if (data.isEnemy) {
-          utils.css.add(radarItem.dom.o, css.enemy);
-        }
-
-      }
-
+    // randomize a little: ±1 pixel.
+    if (!net.active) {
+      data.x += plusMinus();
+      data.y += plusMinus();
     }
 
-    css = common.inheritCSS({
-      className: 'gunfire',
-      expired: 'expired',
-      spark: 'spark'
-    });
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    data = common.inheritData({
+    if (!data.isInert) {
+      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+      if (data.isEnemy) {
+        utils.css.add(radarItem.dom.o, css.enemy);
+      }
+    }
+  }
+
+  css = common.inheritCSS({
+    className: 'gunfire',
+    expired: 'expired',
+    spark: 'spark'
+  });
+
+  data = common.inheritData(
+    {
       type: 'gunfire',
       parent: options.parent || null,
       parentType: options.parentType || null,
@@ -316,10 +300,10 @@ const GunFire = (options = {}) => {
       dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
       width: 2,
       height: 1,
-      gravity: (options.isInert ? 0.25 : 1),
-      gravityRate: (options.isInert ? 1.09 : 1.1) + (Math.random() * 0.025),
+      gravity: options.isInert ? 0.25 : 1,
+      gravityRate: (options.isInert ? 1.09 : 1.1) + Math.random() * 0.025,
       damagePoints: options.damagePoints || 1,
-      ricochetSoundThrottle: (options?.parentType === TYPES.infantry ? 250 : 100),
+      ricochetSoundThrottle: options?.parentType === TYPES.infantry ? 250 : 100,
       target: null,
       vyMax: 32,
       domFetti: {
@@ -329,45 +313,62 @@ const GunFire = (options = {}) => {
         decay: 0.935
       },
       domPool: null
-    }, options);
+    },
+    options
+  );
 
-    // hackish
-    data.domFetti.startVelocity = data.vX;
+  // hackish
+  data.domFetti.startVelocity = data.vX;
 
-    dom = {
-      o: null
-    };
-
-    exports = {
-      animate,
-      data,
-      dom,
-      die,
-      init: initGunFire
-    };
-
-    collision = {
-      options: {
-        source: exports,
-        targets: undefined,
-        checkTweens: !data.isInert,
-        hit(target) {
-          // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
-          if (!data.isInert && !(data.parentType === TYPES.tank && target.data.type === TYPES.endBunker && (target.data.energy === 0 || target.data.isEnemy === data.isEnemy))) {
-            sparkAndDie(target);
-          }
-          // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
-          if (data.isEnemy && target === game.players.local && target.data.isOnScreen) {
-            target.reactToDamage(data.parent);
-          }
-        }
-      },
-      // if unspecified, use default list of items which bullets can hit.
-      items: options.collisionItems || getTypes('tank, van, bunker, missileLauncher, infantry, parachuteInfantry, engineer, helicopter, balloon, smartMissile, endBunker, superBunker, turret, gunfire', { exports })
-    };
-
-    return exports;
-
+  dom = {
+    o: null
   };
 
-  export { GunFire }
+  exports = {
+    animate,
+    data,
+    dom,
+    die,
+    init: initGunFire
+  };
+
+  collision = {
+    options: {
+      source: exports,
+      targets: undefined,
+      checkTweens: !data.isInert,
+      hit(target) {
+        // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
+        if (
+          !data.isInert &&
+          !(
+            data.parentType === TYPES.tank &&
+            target.data.type === TYPES.endBunker &&
+            (target.data.energy === 0 || target.data.isEnemy === data.isEnemy)
+          )
+        ) {
+          sparkAndDie(target);
+        }
+        // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
+        if (
+          data.isEnemy &&
+          target === game.players.local &&
+          target.data.isOnScreen
+        ) {
+          target.reactToDamage(data.parent);
+        }
+      }
+    },
+    // if unspecified, use default list of items which bullets can hit.
+    items:
+      options.collisionItems ||
+      getTypes(
+        'tank, van, bunker, missileLauncher, infantry, parachuteInfantry, engineer, helicopter, balloon, smartMissile, endBunker, superBunker, turret, gunfire',
+        { exports }
+      )
+  };
+
+  return exports;
+};
+
+export { GunFire };

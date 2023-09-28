@@ -1,7 +1,7 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { TYPES,  isSafari,  worldWidth } from '../core/global.js';
+import { TYPES, isSafari, worldWidth } from '../core/global.js';
 import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
@@ -14,12 +14,8 @@ const showPixelOffset = window.location.href.match(/showOffset/i);
 const safariScaleOffset = isSafari ? 2 : 1;
 
 const Editor = () => {
-
   const itemTypes = {
-    airborne: [
-      TYPES.cloud,
-      TYPES.balloon
-    ],
+    airborne: [TYPES.cloud, TYPES.balloon],
     structures: [
       TYPES.bunker,
       TYPES.superBunker,
@@ -34,15 +30,15 @@ const Editor = () => {
       TYPES.engineer
     ],
     terrain: {
-      rock: [ 'rock', 'rock2' ],
-      grave: [ 'gravestone', 'gravestone2', 'grave-cross' ],
-      tumbleweed: [ 'tumbleweed '],
-      grass: [ 'checkmark-grass', 'grass' ],
-      barbWire: [ 'barb-wire' ],
-      flower: [ 'flower', 'flowers', 'flower-bush' ],
-      cactus: [ 'cactus', 'cactus2' ],
-      tree: [ 'tree', 'palm-tree' ],
-      dune: [ 'sand-dune', 'sand-dunes' ]
+      rock: ['rock', 'rock2'],
+      grave: ['gravestone', 'gravestone2', 'grave-cross'],
+      tumbleweed: ['tumbleweed '],
+      grass: ['checkmark-grass', 'grass'],
+      barbWire: ['barb-wire'],
+      flower: ['flower', 'flowers', 'flower-bush'],
+      cactus: ['cactus', 'cactus2'],
+      tree: ['tree', 'palm-tree'],
+      dune: ['sand-dune', 'sand-dunes']
     }
   };
 
@@ -50,17 +46,17 @@ const Editor = () => {
     a: itemTypes.airborne,
     s: itemTypes.structures,
     // units
-    m: [ TYPES.missileLauncher ],
-    t: [ TYPES.tank ],
-    v: [ TYPES.van ],
-    i: [ TYPES.infantry ],
-    e: [ TYPES.engineer ],
+    m: [TYPES.missileLauncher],
+    t: [TYPES.tank],
+    v: [TYPES.van],
+    i: [TYPES.infantry],
+    e: [TYPES.engineer],
     // terrain items
     b: itemTypes.terrain.barbWire,
     c: itemTypes.terrain.cactus,
     d: itemTypes.terrain.dune,
     f: itemTypes.terrain.flower,
-    g: [ ...itemTypes.terrain.grass, ...itemTypes.terrain.grave ],
+    g: [...itemTypes.terrain.grass, ...itemTypes.terrain.grave],
     r: itemTypes.terrain.rock,
     w: itemTypes.terrain.tree // categorized as "wood"
   };
@@ -80,8 +76,7 @@ const Editor = () => {
     return false;
   }
 
-  const isChildOfClassName = ((node, className) => {
-
+  const isChildOfClassName = (node, className) => {
     // go up the DOM tree, looking for the parent - and if found, return it.
 
     if (utils.css.has(node, className)) return true;
@@ -91,11 +86,9 @@ const Editor = () => {
     }
 
     return utils.css.has(node, className) ? node : null;
-
-  });
+  };
 
   function initDOM() {
-
     const oRadarScrubber = document.createElement('div');
     oRadarScrubber.id = 'radar-scrubber';
 
@@ -126,11 +119,9 @@ const Editor = () => {
     if (!window.location.hostname.match(/localhost/i)) {
       document.getElementById('editor-export')?.remove();
     }
-
   }
 
   function initEditor() {
-
     keyMap = keyboardMonitor.keyMap;
 
     initDOM();
@@ -142,7 +133,6 @@ const Editor = () => {
     events.resize();
 
     keyboardMonitor.init();
-
   }
 
   css = {
@@ -224,9 +214,7 @@ const Editor = () => {
   });
 
   methods = {
-
     export: () => {
-
       const data = game.getObjects();
 
       const items = {};
@@ -236,7 +224,7 @@ const Editor = () => {
         const key = item[0] + (item.length === 3 ? ':' + item[1] : '');
         if (!items[key]) items[key] = [];
         // push X offset onto array
-        items[key].push(item[item.length-1]);
+        items[key].push(item[item.length - 1]);
       });
 
       let str = JSON.stringify(data);
@@ -251,7 +239,7 @@ const Editor = () => {
       str = str.replace(/',/g, "', ");
 
       // drop quotes around left / neutral / right
-      str = str.replace(/'([lnr])'/g, "$1");
+      str = str.replace(/'([lnr])'/g, '$1');
 
       // start and end
       str = str.replace('[[', "'Custom Level': [\n[");
@@ -261,7 +249,6 @@ const Editor = () => {
       str = str.replace(/\/n/g, '');
 
       console.log(str);
-  
     },
 
     showHelp: () => {
@@ -271,7 +258,6 @@ const Editor = () => {
     },
 
     play: () => {
-
       const data = game.getObjects();
 
       const items = {};
@@ -281,19 +267,16 @@ const Editor = () => {
         const key = item[0] + (item.length === 3 ? ':' + item[1] : '');
         if (!items[key]) items[key] = [];
         // push X offset onto array
-        items[key].push(item[item.length-1]);
+        items[key].push(item[item.length - 1]);
       });
 
       const urlData = JSON.stringify(items);
 
       window.open('./?customLevel=' + urlData, '_aa_preview');
-
     }
-  
   };
 
   function setMode(mode) {
-
     if (data.mode === mode) return;
 
     data.mode = modes[mode] || modes.DEFAULT;
@@ -309,12 +292,10 @@ const Editor = () => {
     }
 
     utils.css.addOrRemove(dom.oCutoffLine, mode === 'ADD', css.active);
-
   }
 
   // TODO: better name? the thing we'll be "painting" with.
   function setActiveTool(item) {
-
     // ensure we're in ADD mode, first
     setMode('ADD');
 
@@ -329,19 +310,15 @@ const Editor = () => {
     }
 
     updateActiveTool();
-
   }
 
   function clearActiveTool() {
-
     data.activeTool = null;
     data.activeToolOffset = 0;
     updateActiveTool();
-
   }
 
   function modifyActiveTool(direction) {
-
     // ±1
     data.activeToolOffset += direction;
     if (data.activeToolOffset >= data.activeTool.length) {
@@ -351,21 +328,31 @@ const Editor = () => {
     }
 
     updateActiveTool();
-
   }
 
   function updateActiveTool() {
-
-    document.getElementById('editor-active').innerHTML = data.activeTool ? (data.activeTool[data.activeToolOffset] + (data.activeTool.length > 1 ? ' (' + (data.activeToolOffset + 1) + '/' + data.activeTool.length + ')' : '')) : '[none]';
-    document.getElementById('active-sprite').className = `static-sprite ${data.activeTool && data.activeTool[data.activeToolOffset] || 'default'}`;
-
+    document.getElementById('editor-active').innerHTML = data.activeTool
+      ? data.activeTool[data.activeToolOffset] +
+        (data.activeTool.length > 1
+          ? ' (' +
+            (data.activeToolOffset + 1) +
+            '/' +
+            data.activeTool.length +
+            ')'
+          : '')
+      : '[none]';
+    document.getElementById('active-sprite').className = `static-sprite ${
+      (data.activeTool && data.activeTool[data.activeToolOffset]) || 'default'
+    }`;
   }
 
   function addItemAtMouse(e) {
-
     if (!data.activeTool) return;
 
-    const x = Math.floor(game.objects.view.data.battleField.scrollLeft + (e.clientX * (1 / game.objects.view.data.screenScale)));
+    const x = Math.floor(
+      game.objects.view.data.battleField.scrollLeft +
+        e.clientX * (1 / game.objects.view.data.screenScale)
+    );
 
     const chosenItem = data.activeTool[data.activeToolOffset];
 
@@ -395,11 +382,9 @@ const Editor = () => {
       utils.css.remove(obj.dom.o, css.submerged);
       selectItem(obj.dom.o);
     }, 88);
-    
   }
 
   function getGameObject(item) {
-
     // given an item with an ID, return the game object.
 
     if (!item) return;
@@ -416,26 +401,25 @@ const Editor = () => {
     }
 
     return game.objectsById[id];
-
   }
 
   function getXYFromTransform(item) {
-
     // hackish: split translate3d(x,y,z) into an array of [x,y]
-    const xy = item.style.transform.toString().match((/\((.+)\)/i))?.[1]?.split(',');
+    const xy = item.style.transform
+      .toString()
+      .match(/\((.+)\)/i)?.[1]
+      ?.split(',');
 
     if (!xy?.length) return;
 
     return xy.map((item) => parseFloat(item));
-
   }
 
   function refreshItemCoords(item) {
-
     if (!item) return;
 
     // the viewport may have moved since this was selected; keep its data up-to-date.
-    const currentXY = getXYFromTransform(item); 
+    const currentXY = getXYFromTransform(item);
 
     if (!currentXY) return;
 
@@ -445,31 +429,23 @@ const Editor = () => {
 
     // hackish: no repositioning tricks on floating items.
     if (item.className.match(/cloud/i)) {
-
       airborne = true;
-
     } else if (item.className.match(/balloon/i)) {
-
       // allow Y movement if this isn't anchored to a bunker.
       if (!getGameObject(item)?.objects?.bunker) airborne = true;
-
     }
 
     if (airborne) {
       utils.css.add(item, css.airborne);
       item.dataset.y = currentXY[1];
     }
-
   }
 
   function checkLinkedObject(objects, objectName) {
-
     return objects[objectName]?.dom?.o;
-
   }
 
   function decorateItem(item) {
-
     // TODO: checkbox + pref
     if (!showPixelOffset) return;
 
@@ -491,11 +467,9 @@ const Editor = () => {
     // zone debugging
     gameObj.dom.oEditorFlag = o;
     gameObj.dom.o.appendChild(gameObj.dom.oEditorFlag);
-    
   }
 
   function selectItem(item) {
-
     if (!item) return;
 
     const gameObj = getGameObject(item);
@@ -520,23 +494,19 @@ const Editor = () => {
         if (obj) selectItem(obj);
       });
     }
-
   }
 
   function toggleSelectItem(item) {
-
     if (data.selectedItems.includes(item)) {
       deSelectItem(item);
       // now, recycle the empties.
-      data.selectedItems = data.selectedItems.filter((item => item !== null));
+      data.selectedItems = data.selectedItems.filter((item) => item !== null);
     } else {
       selectItem(item);
     }
-
   }
 
   function deSelectItem(item) {
-
     if (!item) return;
 
     const offset = data.selectedItems.indexOf(item);
@@ -561,54 +531,42 @@ const Editor = () => {
         if (obj) deSelectItem(obj);
       });
     }
-
   }
 
   function clearSelectedItems() {
-
     data.selectedItems.forEach((item) => deSelectItem(item));
     data.selectedItems = [];
-
   }
 
   function isSelected(item) {
-
-    return (data.selectedItems.indexOf(item) !== -1);
-    
+    return data.selectedItems.indexOf(item) !== -1;
   }
 
   function deleteSelectedItems() {
-
     // delete / backspace keys
     data.selectedItems.forEach((item) => deleteItem(item));
-
   }
 
   function removeFromGameObjects(obj) {
-
     if (!obj?.data?.id) return;
 
     delete game.objectsById[obj.data.id];
 
     const ref = obj.data.isTerrainItem ? 'terrain-item' : obj.data.type;
-    
+
     const offset = game.objects[ref].indexOf(obj);
 
     if (offset !== -1) {
       game.objects[ref].splice(offset, 1);
     }
-    
   }
 
   function deleteItem(item) {
-
     // remove something from the battlefield.
     const gameObject = getGameObject(item);
 
     if (gameObject) {
-
       if (gameObject.die) {
-
         // special case: kill the related ones, too.
         if (gameObject.objects) {
           ['balloon', 'bunker', 'chain'].forEach((type) => {
@@ -623,7 +581,10 @@ const Editor = () => {
           removeFromGameObjects(gameObject);
         } else {
           gameObject.die();
-          if (gameObject.data.type !== TYPES.turret && gameObject.data.type !== TYPES.bunker) {
+          if (
+            gameObject.data.type !== TYPES.turret &&
+            gameObject.data.type !== TYPES.bunker
+          ) {
             removeFromGameObjects(gameObject);
           }
         }
@@ -640,29 +601,20 @@ const Editor = () => {
         if (!gameObject?.dom?.o) {
           deSelectItem(item);
         }
-        
       } else {
-
         gameObject?.dom?.o?.remove();
         deSelectItem(item);
         removeFromGameObjects(gameObject);
-
       }
-
     } else {
-
       // take out the raw node.
       item?.remove();
       deSelectItem(item);
-
     }
-   
   }
 
   function moveSelectedItemsX(vX) {
-
     data.selectedItems.forEach((item) => {
-
       const newX = parseFloat(item.dataset.x) + vX;
 
       // write the new value back to the DOM
@@ -674,7 +626,7 @@ const Editor = () => {
       const gameObj = getGameObject(item);
 
       if (!gameObj) return;
-  
+
       item.dataset.x = newX;
       gameObj.data.x = left;
 
@@ -683,20 +635,17 @@ const Editor = () => {
       }
 
       zones.refreshZone(gameObj);
-      
     });
-
   }
 
   function setItemIsEnemy(item, isEnemy) {
-
     const gameObj = getGameObject(item);
     if (!gameObj) return;
 
     // certain types (e.g., terrain items) don't take sides.
     if (gameObj.data.isTerrainItem) return;
     if (gameObj.data.type === TYPES.cloud) return;
-    
+
     utils.css.addOrRemove(gameObj.dom.o, isEnemy, css.enemy);
 
     // if capture method exists, use that.
@@ -711,29 +660,30 @@ const Editor = () => {
     if (gameObj?.objects) {
       ['balloon', 'bunker', 'chain'].forEach((type) => {
         const obj = checkLinkedObject(gameObj.objects, type);
-        if (obj && getGameObject(obj)?.data?.isEnemy !== isEnemy) setItemIsEnemy(obj, isEnemy);
+        if (obj && getGameObject(obj)?.data?.isEnemy !== isEnemy)
+          setItemIsEnemy(obj, isEnemy);
       });
     }
-
   }
 
   function setEnemyState(isEnemy) {
-
     // local editor state, e.g., units added will be enemy if this is true
     data.isEnemy = isEnemy;
 
     data.selectedItems.forEach((item) => setItemIsEnemy(item, isEnemy));
-    
   }
 
-  function moveItemRelativeToMouse(item, e = { clientX: data.mouseX, clientY: data.mouseY }) {
-
+  function moveItemRelativeToMouse(
+    item,
+    e = { clientX: data.mouseX, clientY: data.mouseY }
+  ) {
     if (!item) return;
 
     const scale = 1 / game.objects.view.data.screenScale;
 
     // move logical offset a relative amount
-    const newX = parseFloat(item.dataset.x) + ((e.clientX - data.mouseDownX) * scale);
+    const newX =
+      parseFloat(item.dataset.x) + (e.clientX - data.mouseDownX) * scale;
 
     // write the new value back to the DOM
     item.dataset.newX = newX;
@@ -744,7 +694,7 @@ const Editor = () => {
     let top;
 
     if (item.dataset.y) {
-      top = parseFloat(item.dataset.y) + ((e.clientY - data.mouseDownY) * scale);
+      top = parseFloat(item.dataset.y) + (e.clientY - data.mouseDownY) * scale;
       item.dataset.newY = top;
     }
 
@@ -765,93 +715,83 @@ const Editor = () => {
     }
 
     zones.refreshZone(gameObj);
-
   }
 
   function moveRelativeToMouse(e) {
-
     data.selectedItems.forEach((item) => moveItemRelativeToMouse(item, e));
-
   }
 
   function scaleScrubber() {
-
     // match the viewport width, relative to the world width.
-    const relativeWidth = (game.objects.view.data.browser.width / worldWidth);
+    const relativeWidth = game.objects.view.data.browser.width / worldWidth;
 
     data.scrubberWidth = relativeWidth * game.objects.view.data.browser.width;
 
     dom.oRadarScrubber.style.width = `${data.scrubberWidth}px`;
-    
   }
 
   function getScrubberX(clientX) {
-
-    const maxOverflow = (game.objects.view.data.browser.halfWidth / worldWidth);
+    const maxOverflow = game.objects.view.data.browser.halfWidth / worldWidth;
 
     // move relative to where the slider was grabbed.
     clientX -= data.mouseOffsetX;
 
     let xOffset;
 
-    xOffset = (clientX / game.objects.view.data.browser.width) * 1 / game.objects.view.data.screenScale;
+    xOffset =
+      ((clientX / game.objects.view.data.browser.width) * 1) /
+      game.objects.view.data.screenScale;
 
     xOffset = Math.min(1 - maxOverflow, Math.max(0 - maxOverflow, xOffset));
 
     game.objects.view.setLeftScroll(xOffset * worldWidth);
 
-    const scrubberX = ((game.objects.view.data.browser.width) * xOffset);
+    const scrubberX = game.objects.view.data.browser.width * xOffset;
 
     // position, centered, 0-100%.
     return scrubberX;
-    
   }
 
   function setLeftScroll(clientX) {
-
     // dragging scrubber directly
     if (data.mouseDownTarget === dom.oRadarScrubber) {
-
       data.scrubberX = getScrubberX(clientX);
       dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
-
     } else {
-
       // dragging the battlefield. move relatively.
       const maxOverflow = game.objects.view.data.browser.halfWidth;
 
-      let xOffset = data.mouseDownScrollLeft + ((clientX - data.mouseDownX) * 1 / game.objects.view.data.screenScale);
+      let xOffset =
+        data.mouseDownScrollLeft +
+        ((clientX - data.mouseDownX) * 1) / game.objects.view.data.screenScale;
 
       // limit range.
-      xOffset = Math.min(worldWidth - maxOverflow, Math.max(-maxOverflow, xOffset));
+      xOffset = Math.min(
+        worldWidth - maxOverflow,
+        Math.max(-maxOverflow, xOffset)
+      );
 
       // pixels, up to world width.
       game.objects.view.setLeftScroll(xOffset);
 
-      data.scrubberX = (xOffset / worldWidth) * game.objects.view.data.browser.width;
+      data.scrubberX =
+        (xOffset / worldWidth) * game.objects.view.data.browser.width;
 
       dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
-
     }
-
   }
 
   function normalizeSprite(node) {
-
     // a nested `.transform-sprite` node may be present; return the parent, if so.
     if (utils.css.has(node, 'transform-sprite')) return node.parentNode;
     return node;
-
   }
 
   function setCursor(cursor) {
-
     game.objects.view.dom.battleField.style.cursor = cursor;
-
   }
 
   function updateMarqueeSelection(id, isSelected) {
-
     // in terms of selection, editor refers to items via the DOM.
     const item = game.objectsById[id]?.dom?.o;
 
@@ -874,13 +814,10 @@ const Editor = () => {
         deSelectItem(item);
       }
     }
-
   }
 
   events = {
-
     keydown(e) {
-
       const key = e.key?.toLowerCase();
 
       downKeys[key.keyCode] = true;
@@ -897,22 +834,18 @@ const Editor = () => {
       }
 
       // return true = allow game to handle key
-
     },
 
     keyup(e) {
-
       downKeys[e.keyCode] = false;
 
       const key = e.key?.toLowerCase();
       downKeys[key] = false;
 
       // return true = allow game to handle key
-
     },
 
     mousedown(e) {
-
       if (prefsManager.isActive()) return;
 
       // ignore right clicks, no special treatment here.
@@ -937,12 +870,11 @@ const Editor = () => {
       if (method && methods[method]) {
         methods[method]();
         return;
-      }  
+      }
 
       let target = normalizeSprite(data.mouseDownTarget);
 
       if (isChildOfClassName(target, 'title-bar')) {
-
         target = isChildOfClassName(target, 'finder');
 
         dom.oWindow = target;
@@ -954,7 +886,7 @@ const Editor = () => {
         const rect = dom.oWindow.getBoundingClientRect();
         data.windowX = rect.x * safariScaleOffset;
         data.windowY = rect.y * safariScaleOffset;
-        
+
         return stopEvent(e);
       }
 
@@ -966,7 +898,6 @@ const Editor = () => {
       const isSprite = utils.css.has(target, 'sprite');
 
       if (downKeys.meta) {
-
         // if on a sprite, then toggle selection and exit.
         if (isSprite) {
           toggleSelectItem(target);
@@ -998,11 +929,9 @@ const Editor = () => {
         data.marqueeSelected = {};
 
         return stopEvent(e);
-
       }
 
       if (data.mouseDownTarget === dom.oRadarScrubber || !isSprite) {
-
         data.scrubberActive = true;
 
         if (e.target !== dom.oCutoffLine) {
@@ -1010,60 +939,50 @@ const Editor = () => {
         }
 
         // move relative to "grab point"
-        data.mouseOffsetX = clientX - (data.scrubberX * game.objects.view.data.screenScale);
+        data.mouseOffsetX =
+          clientX - data.scrubberX * game.objects.view.data.screenScale;
 
-        data.mouseDownScrollLeft = parseFloat(game.objects.view.data.battleField.scrollLeft);
+        data.mouseDownScrollLeft = parseFloat(
+          game.objects.view.data.battleField.scrollLeft
+        );
 
         if (!data.activeTool) {
           return stopEvent(e);
         }
-
       }
 
       if (data.activeTool && e.target === dom.oCutoffLine) {
-
         // assume we're adding something.
         addItemAtMouse({ clientX, clientY });
-
       }
 
       // selection mode, and clicking on an item?
-      
-      if (isSprite) {
 
+      if (isSprite) {
         // it's a game sprite.
         // if meta key is NOT down, also clear selection.
 
         if (!downKeys.meta) {
-
           // if not selected, clear all and select this one?
           if (!isSelected(target)) {
             clearSelectedItems();
           }
 
           selectItem(target);
-
         } else {
-
           toggleSelectItem(target);
-
         }
 
         return stopEvent(e);
-      
       } else {
-
         // there was a click somewhere else.
         if (!downKeys.meta) clearSelectedItems();
-
       }
 
       if (e.target.tagName === 'DIV') return stopEvent(e);
-
     },
 
     mousemove(e) {
-
       let { clientX, clientY } = e;
 
       data.mouseX = clientX;
@@ -1074,20 +993,19 @@ const Editor = () => {
       if (!data.mouseDown) return;
 
       if (data.draggingWindow) {
-
         const deltaX = Math.abs(data.mouseDownX - data.windowX);
         const deltaY = Math.abs(data.mouseDownY - data.windowY);
 
-        dom.oWindow.style.top = ((data.mouseY - deltaY) / safariScaleOffset) + 'px';
-        dom.oWindow.style.left = (((data.mouseX - deltaX) / safariScaleOffset)) + 'px';
+        dom.oWindow.style.top =
+          (data.mouseY - deltaY) / safariScaleOffset + 'px';
+        dom.oWindow.style.left =
+          (data.mouseX - deltaX) / safariScaleOffset + 'px';
 
         return;
-
       }
 
       if (data.marqueeActive) {
-
-        const scale = (1 / game.objects.view.data.screenScale);
+        const scale = 1 / game.objects.view.data.screenScale;
 
         const deltaX = Math.abs(data.mouseX - data.mouseDownX);
         const deltaY = Math.abs(data.mouseY - data.mouseDownY);
@@ -1111,11 +1029,14 @@ const Editor = () => {
         dom.oMarquee.style.height = `${data.marquee.h}px`;
 
         // for zones, need to align with battlefield.
-        const adjustedX = data.marquee.x + game.objects.view.data.battleField.scrollLeft;
+        const adjustedX =
+          data.marquee.x + game.objects.view.data.battleField.scrollLeft;
 
         // zones and collision stuff
         const startZone = Math.floor(adjustedX / zones.ZONE_WIDTH);
-        const endZone = Math.floor((adjustedX + data.marquee.w) / zones.ZONE_WIDTH);
+        const endZone = Math.floor(
+          (adjustedX + data.marquee.w) / zones.ZONE_WIDTH
+        );
 
         const marqueeRect = {
           x: adjustedX,
@@ -1127,7 +1048,6 @@ const Editor = () => {
         let objects;
 
         for (var i = startZone; i <= endZone; i++) {
-
           if (!zones.objectsByZone[i]?.all) continue;
 
           objects = zones.objectsByZone[i].all;
@@ -1136,18 +1056,19 @@ const Editor = () => {
             // e.g., tanks within zone #i
             for (let id in objects[type]) {
               // mark as "in" or "out", accordingly.
-              updateMarqueeSelection(id, game.objectsById[id]?.data && collisionCheck(marqueeRect, game.objectsById[id].data));
+              updateMarqueeSelection(
+                id,
+                game.objectsById[id]?.data &&
+                  collisionCheck(marqueeRect, game.objectsById[id].data)
+              );
             }
           }
-
         }
 
         return;
-
       }
 
       if (data.scrubberActive) {
-
         // if scrubber is being dragged, move battlefield same direction.
         if (data.mouseDownTarget === dom.oRadarScrubber) {
           setLeftScroll(clientX);
@@ -1155,17 +1076,12 @@ const Editor = () => {
           // move opposite of mouse direction.
           setLeftScroll(data.mouseDownX + (data.mouseDownX - clientX));
         }
-
       } else {
-
         moveRelativeToMouse({ clientX, clientY });
-
       }
-
     },
 
     mouseup(e) {
-
       // finder window close button?
       if (e.target.className === 'close-button') {
         const oWindow = isChildOfClassName(e.target, 'finder');
@@ -1195,10 +1111,17 @@ const Editor = () => {
         data.draggingWindow = false;
       }
 
-      const spriteClicked = data.mouseDownTarget && utils.css.has(data.mouseDownTarget, 'sprite');
-      const justAddedSomething = (data.activeTool && data.mouseDownTarget === dom.oCutoffLine);
-      
-      if (!spriteClicked && !justAddedSomething && !downKeys.shift && !data.mouseMoveCount) {
+      const spriteClicked =
+        data.mouseDownTarget && utils.css.has(data.mouseDownTarget, 'sprite');
+      const justAddedSomething =
+        data.activeTool && data.mouseDownTarget === dom.oCutoffLine;
+
+      if (
+        !spriteClicked &&
+        !justAddedSomething &&
+        !downKeys.shift &&
+        !data.mouseMoveCount
+      ) {
         clearSelectedItems();
       }
 
@@ -1210,22 +1133,20 @@ const Editor = () => {
       setCursor('grab');
 
       data.mouseMoveCount = 0;
-
     },
 
     resize() {
-      
       scaleScrubber();
 
       // move to where the view is now at.
       // TODO: ensure this value stays in sync with the scroll width calculations.
-      data.scrubberX = (game.objects.view.data.battleField.scrollLeft / worldWidth) * game.objects.view.data.browser.width;
+      data.scrubberX =
+        (game.objects.view.data.battleField.scrollLeft / worldWidth) *
+        game.objects.view.data.browser.width;
       dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
-
     }
-
   };
-  
+
   exports = {
     data,
     dom,
@@ -1234,7 +1155,6 @@ const Editor = () => {
   };
 
   return exports;
-
 };
 
 export { Editor };

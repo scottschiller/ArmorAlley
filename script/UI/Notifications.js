@@ -8,18 +8,15 @@ import { levelName } from '../levels/default.js';
 import { effects } from '../core/effects.js';
 
 const Notifications = () => {
-
   let css, data, dom, exports;
 
   function addNoRepeat(text, options = {}) {
-
     options = {
       ...options,
       noRepeat: true
     };
 
     return add(text, options);
-
   }
 
   function add(text, options = {}) {
@@ -35,12 +32,14 @@ const Notifications = () => {
 
     // account for duplicate / repeated items
     for (i = 0, j = data.items.length; i < j; i++) {
-
       item = data.items[i];
 
       // hackish: update item / node of same text, or matching type
-      if (item && item.node && (item.text === text || (item.type && item.type === options.type))) {
-        
+      if (
+        item &&
+        item.node &&
+        (item.text === text || (item.type && item.type === options.type))
+      ) {
         // ignore if no duplicates at all, OR newest (last) item is about to be repeated, and shouldn't be
         if (options.noDuplicate || (i === j - 1 && options.noRepeat)) {
           isDuplicate = true;
@@ -57,7 +56,11 @@ const Notifications = () => {
         // provided text, or, custom render function
         // if options.onRender(), that function gets called to do the work.
         // otherwise, plain text - and if options.noRepeat, don't show multiplier.
-        item.node.innerHTML = `<span>${options.onRender ? renderedText : (item.text + (options.noRepeat ? '' : ` × ${item.count}`))}</span>`;
+        item.node.innerHTML = `<span>${
+          options.onRender
+            ? renderedText
+            : item.text + (options.noRepeat ? '' : ` × ${item.count}`)
+        }</span>`;
 
         // clear, start new timer
         if (item.timer) {
@@ -68,9 +71,7 @@ const Notifications = () => {
         replacementItem = item;
 
         break;
-
       }
-
     }
 
     // ignore
@@ -85,17 +86,15 @@ const Notifications = () => {
       delay: calcDelay(text),
       onComplete: options.onComplete,
       onRender: options.onRender,
-      timer: null,
+      timer: null
     };
 
     data.items.push(item);
 
     showItem(item);
-
   }
 
   function calcDelay(text) {
-
     // number of words / letters? let's say 240 WPM, 4 words per second as an optimum.
     let delay, minDelay, delayPerWord, maxDelay;
 
@@ -110,21 +109,27 @@ const Notifications = () => {
     if (text.match(/nsf/i)) return maxDelay / 2;
 
     // e.g., `this is a test` = 4 * delayPerWord - stripping HTML, also.
-    delay = Math.max(minDelay, Math.min(text.replace('/<(.|\n)*?>/', '').split(' ').length * delayPerWord, maxDelay));
+    delay = Math.max(
+      minDelay,
+      Math.min(
+        text.replace('/<(.|\n)*?>/', '').split(' ').length * delayPerWord,
+        maxDelay
+      )
+    );
 
     return delay;
-
   }
 
   function showItem(item) {
-
     let oToast;
 
     // show, and queue the next check.
     oToast = document.createElement('div');
     oToast.className = css.notificationToast;
 
-    oToast.innerHTML = `<span>${item.onRender ? item.onRender(item.text) : item.text}</span>`;
+    oToast.innerHTML = `<span>${
+      item.onRender ? item.onRender(item.text) : item.text
+    }</span>`;
 
     dom.oToasts.appendChild(oToast);
 
@@ -141,11 +146,9 @@ const Notifications = () => {
       data.isDisplaying = true;
       item.timer = common.setFrameTimeout(displayItemComplete, item.delay);
     }
-
   }
 
   function displayItemComplete() {
-
     let item;
 
     if (!data.items.length) {
@@ -180,9 +183,12 @@ const Notifications = () => {
       data.isDisplaying = false;
     } else {
       // we're onto the next one. queue its removal, and start running faster as the queue grows in size.
-      common.setFrameTimeout(displayItemComplete, data.items[0].delay * (data.items.length > 5 ? (5 / data.items.length) : 1));
+      common.setFrameTimeout(
+        displayItemComplete,
+        data.items[0].delay *
+          (data.items.length > 5 ? 5 / data.items.length : 1)
+      );
     }
-
   }
 
   function initDOM() {
@@ -190,7 +196,6 @@ const Notifications = () => {
   }
 
   function welcome() {
-
     // pvp|pvp_cpu|coop_2v1|coop_2v2
     const styleLabels = {
       pvp: 'Player vs. player',
@@ -208,7 +213,7 @@ const Notifications = () => {
     const gameTypes = {
       tutorial: 'This is the tutorial mode. 📖',
       other: `You are playing “${levelName}.” ${emoji[gameType]}`
-    }
+    };
 
     let playingMessage;
 
@@ -226,12 +231,16 @@ const Notifications = () => {
     if (levelName === 'Rainstorm') {
       common.setFrameTimeout(() => {
         effects.updateStormStyle('rain');
-        game.objects.notifications.add('☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)');
+        game.objects.notifications.add(
+          '☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)'
+        );
       }, 5000);
     }
 
-    common.setFrameTimeout(() => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'), 2000);
-
+    common.setFrameTimeout(
+      () => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'),
+      2000
+    );
   }
 
   css = {
@@ -248,7 +257,7 @@ const Notifications = () => {
 
   dom = {
     oToasts: null
-  }
+  };
 
   initDOM();
 
@@ -259,7 +268,6 @@ const Notifications = () => {
   };
 
   return exports;
-  
-}
+};
 
 export { Notifications };

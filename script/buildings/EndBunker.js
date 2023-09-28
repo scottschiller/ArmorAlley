@@ -1,5 +1,12 @@
 import { game } from '../core/Game.js';
-import { DEFAULT_FUNDS, TYPES, tutorialMode, worldWidth, FPS, getTypes } from '../core/global.js';
+import {
+  DEFAULT_FUNDS,
+  TYPES,
+  tutorialMode,
+  worldWidth,
+  FPS,
+  getTypes
+} from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -7,34 +14,37 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
 const EndBunker = (options = {}) => {
-
   let css, dom, data, height, objects, nearby, exports;
 
   function setFiring(state) {
-
     if (state && data.energy) {
       data.firing = state;
     } else {
       data.firing = false;
     }
-
   }
 
   function hit(points, target) {
-
     // only tank gunfire counts against end bunkers.
-    if (target && target.data.type === 'gunfire' && target.data?.parentType === TYPES.tank) {
+    if (
+      target &&
+      target.data.type === 'gunfire' &&
+      target.data?.parentType === TYPES.tank
+    ) {
       data.energy = Math.max(0, data.energy - points);
       sprites.updateEnergy(exports);
     }
-
   }
 
   function fire() {
-
     let fireOptions;
 
-    if (!data.firing || !data.energy || data.frameCount % data.fireModulus !== 0) return;
+    if (
+      !data.firing ||
+      !data.energy ||
+      data.frameCount % data.fireModulus !== 0
+    )
+      return;
 
     fireOptions = {
       parent: exports,
@@ -50,7 +60,7 @@ const EndBunker = (options = {}) => {
     game.addObject(TYPES.gunfire, fireOptions);
 
     // other side
-    fireOptions.x = (data.x - 1);
+    fireOptions.x = data.x - 1;
 
     // and reverse direction
     fireOptions.vX = -2;
@@ -60,46 +70,66 @@ const EndBunker = (options = {}) => {
     if (sounds.genericGunFire) {
       playSound(sounds.genericGunFire, exports);
     }
-
   }
 
   function captureFunds(target) {
-
     let maxFunds, capturedFunds, allFunds, actor;
 
     // infantry only get to steal so much at a time.
     // because they're special, engineers get to rob the bank! 💰
     allFunds = !!target.data.role;
-    maxFunds = allFunds ? game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds : 20;
+    maxFunds = allFunds
+      ? game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds
+      : 20;
 
     capturedFunds = Math.min(data.funds, maxFunds);
 
-    // engineer + BnB case, vs. 
-    actor = gamePrefs.bnb && target.data.role ? (target.data.isBeavis ? 'Beavis' : 'Butt-Head') : 'Your engineer';
+    // engineer + BnB case, vs.
+    actor =
+      gamePrefs.bnb && target.data.role
+        ? target.data.isBeavis
+          ? 'Beavis'
+          : 'Butt-Head'
+        : 'Your engineer';
 
     if (!tutorialMode) {
       if (data.isEnemy) {
         if (!capturedFunds) {
-          game.objects.notifications.add(`🏦 🏴‍☠️ 🤷 ${actor} captured 0 enemy funds. 😒 Good effort, though.`);
+          game.objects.notifications.add(
+            `🏦 🏴‍☠️ 🤷 ${actor} captured 0 enemy funds. 😒 Good effort, though.`
+          );
         } else {
           if (allFunds) {
-            game.objects.notifications.add(`🏦 🏴‍☠️ 💰 ${actor} captured all ${capturedFunds}${capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'}`);
+            game.objects.notifications.add(
+              `🏦 🏴‍☠️ 💰 ${actor} captured all ${capturedFunds}${
+                capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'
+              }`
+            );
           } else {
-            game.objects.notifications.add(`🏦 🏴‍☠️ 💸 ${capturedFunds} enemy ${capturedFunds > 1 ? ' funds' : ' fund'} captured! 💰`);
+            game.objects.notifications.add(
+              `🏦 🏴‍☠️ 💸 ${capturedFunds} enemy ${
+                capturedFunds > 1 ? ' funds' : ' fund'
+              } captured! 💰`
+            );
           }
           playSound(sounds.bnb.money);
         }
       } else {
         if (allFunds) {
-          game.objects.notifications.add('🏦 🏴‍☠️ 💸 The enemy\'s engineer captured all of your funds. 😱');
+          game.objects.notifications.add(
+            "🏦 🏴‍☠️ 💸 The enemy's engineer captured all of your funds. 😱"
+          );
         } else {
-          game.objects.notifications.add(`🏦 🏴‍☠️ 💸 The enemy captured ${capturedFunds} of your funds. 😨`);
+          game.objects.notifications.add(
+            `🏦 🏴‍☠️ 💸 The enemy captured ${capturedFunds} of your funds. 😨`
+          );
         }
       }
     }
 
-    // who gets the loot? 
-    game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1].data.funds += capturedFunds;
+    // who gets the loot?
+    game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1].data.funds +=
+      capturedFunds;
 
     game.objects.view.updateFundsUI();
 
@@ -112,20 +142,16 @@ const EndBunker = (options = {}) => {
 
     // force update of the local helicopter
     // TODO: yeah, this is a bit hackish.
-    game.players.local.updateStatusUI({ funds: true});
-
+    game.players.local.updateStatusUI({ funds: true });
   }
 
   function registerHelicopter(helicopter) {
-
     if (!objects.helicopters.includes(helicopter)) {
       objects.helicopters.push(helicopter);
     }
-    
   }
 
   function distributeFunds() {
-
     if (game.objects.editor) return;
 
     let offset, earnedFunds;
@@ -137,10 +163,9 @@ const EndBunker = (options = {}) => {
     if (!objects.helicopters.length) return;
 
     objects.helicopters.forEach((helicopter) => {
-    
       // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
       if (data.isEnemy) {
-        offset = 1 - (helicopter.data.x / helicopter.data.x);
+        offset = 1 - helicopter.data.x / helicopter.data.x;
       } else {
         offset = helicopter.data.x / game.objects.view.data.battleField.width;
       }
@@ -163,20 +188,17 @@ const EndBunker = (options = {}) => {
       }
 
       if (helicopter.data.isLocal) {
-
-        game.objects.notifications.add(`+${earnedFunds === 1 ? '💰' : `${earnedFunds} 💰`}`);
+        game.objects.notifications.add(
+          `+${earnedFunds === 1 ? '💰' : `${earnedFunds} 💰`}`
+        );
         game.objects.view.updateFundsUI();
 
         helicopter.updateStatusUI({ funds: true });
-        
       }
-
     });
-    
   }
 
   function animate() {
-
     sprites.moveWithScrollOffset(exports);
 
     data.frameCount++;
@@ -188,37 +210,41 @@ const EndBunker = (options = {}) => {
     distributeFunds();
 
     // note: end bunkers never die, but leaving this in anyway.
-    return (data.dead && !dom.o);
-
+    return data.dead && !dom.o;
   }
 
   function updateHealth(attacker) {
-
     // notify if just neutralized by tank gunfire
     if (data.energy) return;
 
-    if (!attacker || attacker.data.type !== TYPES.gunfire || attacker.data?.parentType !== TYPES.tank) return;
+    if (
+      !attacker ||
+      attacker.data.type !== TYPES.gunfire ||
+      attacker.data?.parentType !== TYPES.tank
+    )
+      return;
 
     // we have a tank, after all
     if (attacker.data.isEnemy !== game.players.local.data.isEnemy) {
-      game.objects.notifications.addNoRepeat('The enemy neutralized your end bunker 🚩');
+      game.objects.notifications.addNoRepeat(
+        'The enemy neutralized your end bunker 🚩'
+      );
     } else {
-      game.objects.notifications.addNoRepeat('You neutralized the enemy\'s end bunker ⛳');
+      game.objects.notifications.addNoRepeat(
+        "You neutralized the enemy's end bunker ⛳"
+      );
     }
-
   }
 
   function initEndBunker() {
-
     dom.o = sprites.create({
       className: css.className,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy: data.isEnemy ? css.enemy : false
     });
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     game.objects.radar.addItem(exports, dom.o.className);
-
   }
 
   height = 19;
@@ -227,29 +253,33 @@ const EndBunker = (options = {}) => {
     className: TYPES.endBunker
   });
 
-  data = common.inheritData({
-    type: TYPES.endBunker,
-    bottomAligned: true,
-    frameCount: 0,
-    energy: 0,
-    energyMax: 10,
-    x: (options.x || (options.isEnemy ? worldWidth - 48 : 8)),
-    y: game.objects.view.data.world.height - height - 2,
-    width: 39,
-    halfWidth: 19,
-    height,
-    halfHeight: height / 2,
-    doorWidth: 5,
-    funds: DEFAULT_FUNDS,
-    firing: false,
-    gunYOffset: 10,
-    fireModulus: 4,
-    fundsModulus: FPS * 10,
-    midPoint: null
-  }, options);
+  data = common.inheritData(
+    {
+      type: TYPES.endBunker,
+      bottomAligned: true,
+      frameCount: 0,
+      energy: 0,
+      energyMax: 10,
+      x: options.x || (options.isEnemy ? worldWidth - 48 : 8),
+      y: game.objects.view.data.world.height - height - 2,
+      width: 39,
+      halfWidth: 19,
+      height,
+      halfHeight: height / 2,
+      doorWidth: 5,
+      funds: DEFAULT_FUNDS,
+      firing: false,
+      gunYOffset: 10,
+      fireModulus: 4,
+      fundsModulus: FPS * 10,
+      midPoint: null
+    },
+    options
+  );
 
   data.midPoint = {
-    x: data.x + data.halfWidth + ((data.doorWidth / 2) * (!data.isEnemy ? 1 : -1)),
+    x:
+      data.x + data.halfWidth + (data.doorWidth / 2) * (!data.isEnemy ? 1 : -1),
     y: data.y,
     width: 5,
     height: data.height
@@ -280,7 +310,7 @@ const EndBunker = (options = {}) => {
       useLookAhead: true,
       // TODO: rename to something generic?
       hit(target) {
-        const isFriendly = (target.data.isEnemy === data.isEnemy);
+        const isFriendly = target.data.isEnemy === data.isEnemy;
 
         if (!isFriendly && data.energy) {
           // nearby enemy, and defenses activated? let 'em have it.
@@ -291,10 +321,19 @@ const EndBunker = (options = {}) => {
         if (target.data.type === TYPES.infantry) {
           if (!isFriendly) {
             // funds to steal, "at the door", AND, infantry - OR, an engineer who can rob the bank
-            if (data.funds && collisionCheckMidPoint(target, exports) && (!target.data.role || gamePrefs.engineers_rob_the_bank)) {
+            if (
+              data.funds &&
+              collisionCheckMidPoint(target, exports) &&
+              (!target.data.role || gamePrefs.engineers_rob_the_bank)
+            ) {
               captureFunds(target);
             }
-          } else if (!target.data.role && !data.energy && isFriendly && collisionCheckMidPoint(target, exports)) {
+          } else if (
+            !target.data.role &&
+            !data.energy &&
+            isFriendly &&
+            collisionCheckMidPoint(target, exports)
+          ) {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
@@ -304,7 +343,6 @@ const EndBunker = (options = {}) => {
             playSound(sounds.doorClose, exports);
           }
         }
-
       },
       miss() {
         setFiring(false);
@@ -316,7 +354,6 @@ const EndBunker = (options = {}) => {
   };
 
   return exports;
-
 };
 
 export { EndBunker };

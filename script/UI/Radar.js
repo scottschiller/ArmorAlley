@@ -3,8 +3,22 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-import { isFirefox, isMobile, isSafari, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
-import { playSound, skipSound, stopSound, sounds, playSoundWithDelay } from '../core/sound.js';
+import {
+  isFirefox,
+  isMobile,
+  isSafari,
+  oneOf,
+  TYPES,
+  winloc,
+  worldWidth
+} from '../core/global.js';
+import {
+  playSound,
+  skipSound,
+  stopSound,
+  sounds,
+  playSoundWithDelay
+} from '../core/sound.js';
 import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
@@ -17,7 +31,6 @@ const scanNodeTypes = {
 };
 
 const Radar = () => {
-
   let data;
   let css;
   let dom;
@@ -48,15 +61,17 @@ const Radar = () => {
   }
 
   function setIncomingMissile(incoming, newestMissile) {
-
     if (data.incomingMissile === incoming) return;
 
-    utils.css.addOrRemove(game.objects.view.dom.worldWrapper, incoming, css.incomingSmartMissile);
+    utils.css.addOrRemove(
+      game.objects.view.dom.worldWrapper,
+      incoming,
+      css.incomingSmartMissile
+    );
 
     data.incomingMissile = incoming;
 
     if (incoming) {
-
       /*
       // don't warn player in extreme mode, when radar is jammed.
       if (data.isJammed && gameType === 'extreme') {
@@ -73,19 +88,20 @@ const Radar = () => {
 
       common.setFrameTimeout(() => {
         if (!data.incomingMissile) return;
-        playSound(sounds.bnb[newestMissile.data.isRubberChicken ? 'incomingSmartMissilePlusCock' : 'incomingSmartMissile']);
+        playSound(
+          sounds.bnb[
+            newestMissile.data.isRubberChicken
+              ? 'incomingSmartMissilePlusCock'
+              : 'incomingSmartMissile'
+          ]
+        );
       }, 1000);
-
     } else if (sounds.missileWarning?.sound) {
-
       stopSound(sounds.missileWarning);
-
     }
-
   }
 
   function getLayout(itemObject) {
-
     let type = itemObject.data.parentType;
 
     // cache hit, based on "type"
@@ -102,7 +118,10 @@ const Radar = () => {
 
     // if we hit this, something is wrong.
     if (!itemObject?.dom?.o) {
-      console.warn('getLayout: something is wrong, returning empty result.', itemObject);
+      console.warn(
+        'getLayout: something is wrong, returning empty result.',
+        itemObject
+      );
       return result;
     }
 
@@ -148,11 +167,9 @@ const Radar = () => {
     layoutCache[type] = result;
 
     return result;
-
   }
 
   function addItem(item, className, canRespawn) {
-
     let itemObject;
 
     // for GPU acceleration: note if this is an "animated" type.
@@ -170,7 +187,7 @@ const Radar = () => {
       parentType: item.data.type,
       className,
       oParent: item,
-      canRespawn: (canRespawn || false),
+      canRespawn: canRespawn || false,
       isStatic: false,
       // width + height, determined after append
       layout: null,
@@ -179,7 +196,10 @@ const Radar = () => {
     });
 
     // special case: hide immediately if game pref says "nein"
-    if (item.data.type === TYPES.landingPad && !gamePrefs.landing_pads_on_radar) {
+    if (
+      item.data.type === TYPES.landingPad &&
+      !gamePrefs.landing_pads_on_radar
+    ) {
       const show = false;
       itemObject?.onHiddenChange(show);
     } else if (item.data.type === TYPES.cloud && !gamePrefs.clouds_on_radar) {
@@ -188,14 +208,12 @@ const Radar = () => {
     }
 
     game.objects.queue.addNextFrame(() => {
-
       dom.radar.appendChild(itemObject.dom.o);
 
       // attempt to read from layout cache, or live DOM if needed for item height / positioning
       itemObject = common.mixin(itemObject, getLayout(itemObject));
 
       objects.items.push(itemObject);
-
     });
 
     // Slightly hackish: tack radarItem on to exports.
@@ -205,15 +223,15 @@ const Radar = () => {
     game.objects.stats.create(item);
 
     return itemObject;
-
   }
 
   function enemyVansOnScreen() {
-    return game.objects[TYPES.van].filter((van) => van.data.isEnemy && van.data.isOnScreen).length;
+    return game.objects[TYPES.van].filter(
+      (van) => van.data.isEnemy && van.data.isOnScreen
+    ).length;
   }
 
   function startJamming() {
-
     // [ obligatory Bob Marley reference goes here ]
 
     if (game.objects.editor) return;
@@ -243,7 +261,12 @@ const Radar = () => {
 
     function onPlayCheck(sound) {
       // make sure this happens only if still jammed, AND, there aren't several sounds queued up.
-      if (!data.isJammed || game.data.dieCount > dieCount || soundsToPlayBNB.length > 2 || !enemyVansOnScreen()) {
+      if (
+        !data.isJammed ||
+        game.data.dieCount > dieCount ||
+        soundsToPlayBNB.length > 2 ||
+        !enemyVansOnScreen()
+      ) {
         skipSound(sound);
       }
     }
@@ -251,27 +274,37 @@ const Radar = () => {
     function onFinishCheck() {
       // note: scoped to SMSound instance
       if (this.skipped || game.data.isBeavis || Math.random() <= 0.5) return;
-      playSoundWithDelay(oneOf([sounds.bnb.tryAndPayAttention, sounds.bnb.beavisOhYeah]), null, { onplay: onPlayCheck });
+      playSoundWithDelay(
+        oneOf([sounds.bnb.tryAndPayAttention, sounds.bnb.beavisOhYeah]),
+        null,
+        { onplay: onPlayCheck }
+      );
     }
 
     // half the time, commentary.
     if (Math.random() >= 0.5) {
-      playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'radarJammedBeavis' : 'radarJammedButthead'], null, { onplay: onPlayCheck, onfinish: onFinishCheck }, 2000);
+      playSoundWithDelay(
+        sounds.bnb[
+          game.data.isBeavis ? 'radarJammedBeavis' : 'radarJammedButthead'
+        ],
+        null,
+        { onplay: onPlayCheck, onfinish: onFinishCheck },
+        2000
+      );
     }
 
-
     if (data.jamCount < 3) {
-      game.objects.notifications.add('🚚 An enemy van is jamming your radar 📡 🚫');
+      game.objects.notifications.add(
+        '🚚 An enemy van is jamming your radar 📡 🚫'
+      );
     }
 
     // extreme mode: don't warn player about incoming missiles when radar is jammed, either.
     // i.e., you lose visibility.
     // if (gameType === 'extreme') setIncomingMissile(false);
-
   }
 
   function updateOverlay() {
-
     const id = 'radar-jammed-overlay';
     let o = document.getElementById(id);
 
@@ -287,7 +320,6 @@ const Radar = () => {
     }
 
     if (!o) {
-
       o = document.createElement('div');
       o.id = id;
       o.innerHTML = '<div class="noise"></div>';
@@ -302,13 +334,10 @@ const Radar = () => {
         utils.css.add(o, ...noiseCSS);
         o = null;
       }, 128);
-
     }
-
   }
 
   function stopJamming() {
-
     data.isJammed = false;
 
     updateOverlay(data.isJammed);
@@ -323,14 +352,11 @@ const Radar = () => {
       game.objects.notifications.add('Radar has been restored 📡');
       data.jamCount++;
     }
-
   }
 
   function clearTarget() {
-
     data.radarTarget = null;
     dom.targetMarker.style.visibility = 'hidden';
-
   }
 
   // pixel pushing for a few types, so the underlying "bar" lines up with the radar sprite.
@@ -342,7 +368,6 @@ const Radar = () => {
   };
 
   function updateTargetMarker(targetItem) {
-
     // sanity check: ensure this object still exists.
     if (!targetItem?.oParent?.dom?.o) return;
 
@@ -352,18 +377,22 @@ const Radar = () => {
 
     if (width && data.radarTargetWidth !== width) {
       // TODO: improve Safari layout.
-      dom.targetMarker.style.width = `${width + (!isMobile && isSafari ? screenScale / 2 : 0)}px`;
+      dom.targetMarker.style.width = `${
+        width + (!isMobile && isSafari ? screenScale / 2 : 0)
+      }px`;
       data.radarTargetWidth = width;
     }
 
-    const offset = ((markerOffsets[targetItem?.oParent?.data.type] || 1) / screenScale * 0.5);
+    const offset =
+      ((markerOffsets[targetItem?.oParent?.data.type] || 1) / screenScale) *
+      0.5;
 
-    dom.targetMarker.style.transform = `translate3d(${targetItem.data.left + offset}px, 0px, 0px)`;
-
+    dom.targetMarker.style.transform = `translate3d(${
+      targetItem.data.left + offset
+    }px, 0px, 0px)`;
   }
 
   function markTarget(targetItem) {
-
     if (!data.radarTarget && targetItem) {
       dom.targetMarker.style.visibility = 'visible';
       updateTargetMarker(targetItem);
@@ -375,20 +404,16 @@ const Radar = () => {
     }
 
     data.radarTarget = targetItem;
-
   }
 
   function _removeRadarItem(offset) {
-
     sprites.removeNodes(objects.items[offset].dom);
     // faster splice - doesn't create new array object (IIRC.)
     spliceArgs[0] = offset;
     Array.prototype.splice.apply(objects.items, spliceArgs);
-
   }
 
   function removeRadarItem(item) {
-
     // find and remove from DOM + array
     const offset = objects?.items?.indexOf(item);
 
@@ -397,28 +422,24 @@ const Radar = () => {
       _removeRadarItem(offset);
       return;
     }
-
   }
 
   function reset() {
-
     // remove all
     const dieOptions = { silent: true };
 
     objects?.items?.forEach((item) => {
       item.die(dieOptions);
-    })
-    
+    });
   }
 
   function animate() {
-
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
 
     hasEnemyMissile = false;
 
     // update some items every frame, most items can be throttled.
-    isInterval = (data.frameCount++ >= data.animateInterval);
+    isInterval = data.frameCount++ >= data.animateInterval;
 
     if (isInterval) {
       data.frameCount = 0;
@@ -430,33 +451,28 @@ const Radar = () => {
      * when a missile is destroyed while the radar is jammed.
      */
     if (game.objects[TYPES.smartMissile].length !== data.lastMissileCount) {
-
       // change state?
 
       for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
-
         // is this missile not dead, not expired/hostile, and an enemy?
 
         if (
-          !game.objects[TYPES.smartMissile][i].data.dead
-          && !game.objects[TYPES.smartMissile][i].data.hostile
-          && game.objects[TYPES.smartMissile][i].data.isEnemy !== game.players.local.data.isEnemy
+          !game.objects[TYPES.smartMissile][i].data.dead &&
+          !game.objects[TYPES.smartMissile][i].data.hostile &&
+          game.objects[TYPES.smartMissile][i].data.isEnemy !==
+            game.players.local.data.isEnemy
         ) {
-
           hasEnemyMissile = true;
 
           newestMissile = game.objects[TYPES.smartMissile][i];
 
           break;
-
         }
-
       }
 
       data.lastMissileCount = game.objects[TYPES.smartMissile].length;
 
       setIncomingMissile(hasEnemyMissile, newestMissile);
-
     }
 
     // don't animate when radar is jammed.
@@ -466,7 +482,6 @@ const Radar = () => {
     // move all radar items
 
     for (i = 0, j = objects.items.length; i < j; i++) {
-
       // just in case: ensure the object still has a DOM node.
       if (!objects.items[i]?.dom?.o) continue;
 
@@ -474,30 +489,68 @@ const Radar = () => {
       // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
       // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
 
-      if (data.isStale || (!objects.items[i].isStatic && (isInterval || data.animateEveryFrameTypes.includes(objects.items[i].oParent.data.type)))) {
-        
-        if (!game.objects.editor && !objects.items[i].isStatic && staticTypes[objects.items[i].oParent.data.type]) {
+      if (
+        data.isStale ||
+        (!objects.items[i].isStatic &&
+          (isInterval ||
+            data.animateEveryFrameTypes.includes(
+              objects.items[i].oParent.data.type
+            )))
+      ) {
+        if (
+          !game.objects.editor &&
+          !objects.items[i].isStatic &&
+          staticTypes[objects.items[i].oParent.data.type]
+        ) {
           objects.items[i].isStatic = true;
         }
 
         // constrain helicopters only, so they don't fly out-of-bounds
         if (objects.items[i].oParent.data.type === TYPES.helicopter) {
-          left = (Math.max(leftBoundary, Math.min(rightBoundary, (objects.items[i].oParent.data.x / worldWidth))) * (game.objects.view.data.browser.width - 5)) + 4;
+          left =
+            Math.max(
+              leftBoundary,
+              Math.min(
+                rightBoundary,
+                objects.items[i].oParent.data.x / worldWidth
+              )
+            ) *
+              (game.objects.view.data.browser.width - 5) +
+            4;
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
-          left = (((objects.items[i].oParent.data.x + (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) / worldWidth) * (game.objects.view.data.browser.width - 5)) + 4;
+          left =
+            ((objects.items[i].oParent.data.x +
+              (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) /
+              worldWidth) *
+              (game.objects.view.data.browser.width - 5) +
+            4;
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
         if (!objects.items[i].layout) {
-          objects.items[i] = common.mixin(objects.items[i], getLayout(objects.items[i]));
+          objects.items[i] = common.mixin(
+            objects.items[i],
+            getLayout(objects.items[i])
+          );
         }
 
         // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
-        top = objects.items[i].bottomAlignedY || (objects.items[i].oParent.data.y / game.objects.view.data.battleField.height) * data.height - (objects.items[i]?.layout?.height || 0);
+        top =
+          objects.items[i].bottomAlignedY ||
+          (objects.items[i].oParent.data.y /
+            game.objects.view.data.battleField.height) *
+            data.height -
+            (objects.items[i]?.layout?.height || 0);
 
         // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
-        sprites.setTransformXY(objects.items[i], objects.items[i].dom.o, `${left}px`, `${top}px`, data.extraTransforms[objects.items[i].oParent.data.type]);
+        sprites.setTransformXY(
+          objects.items[i],
+          objects.items[i].dom.o,
+          `${left}px`,
+          `${top}px`,
+          data.extraTransforms[objects.items[i].oParent.data.type]
+        );
 
         objects.items[i].data.left = left;
 
@@ -513,28 +566,24 @@ const Radar = () => {
         // hack: resize scan nodes manually for level previews
         if (!game.data.started) {
           if (scanNodeTypes[objects.items[i].oParent.data.type]) {
-            objects.items[i].updateScanNode(scanNodeTypes[objects.items[i].oParent.data.type]);
+            objects.items[i].updateScanNode(
+              scanNodeTypes[objects.items[i].oParent.data.type]
+            );
           }
         }
-
       }
-
     }
 
     if (data.isStale) {
-
       // force-refresh
       updateTargetMarker(data.radarTarget);
 
       // only do this once.
       data.isStale = false;
-
     }
-
   }
 
   function initRadar() {
-
     dom.radar = document.getElementById('radar');
     data.height = dom.radar.offsetHeight;
 
@@ -542,7 +591,6 @@ const Radar = () => {
     dom.targetMarker.style.visibility = 'hidden';
     dom.targetMarker.className = `target-marker target-ui`;
     document.getElementById('world-wrapper').appendChild(dom.targetMarker);
-
   }
 
   // width / height of rendered elements, based on class name
@@ -622,7 +670,6 @@ const Radar = () => {
   };
 
   return exports;
-
 };
 
 export { scanNodeTypes, Radar };

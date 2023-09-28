@@ -10,25 +10,20 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const Bunker = (options = {}) => {
-
   let css, data, dom, objects, radarItem, exports;
 
   function createBalloon(useRandomY) {
-
     if (!objects.balloon) {
-
       objects.balloon = game.addObject(TYPES.balloon, {
         bunker: exports,
         leftMargin: 8,
         isEnemy: data.isEnemy,
         x: data.x,
-        y: (useRandomY ? undefined : common.bottomAlignedY(-data.height))
+        y: useRandomY ? undefined : common.bottomAlignedY(-data.height)
       });
-
     }
 
     if (!objects.chain) {
-
       // create a chain, linking the base and the balloon
       objects.chain = game.addObject(TYPES.chain, {
         isEnemy: data.isEnemy,
@@ -41,17 +36,13 @@ const Bunker = (options = {}) => {
 
       // balloon <-> chain
       objects?.balloon?.attachChain(objects.chain);
-
     }
-
   }
 
   function capture(isEnemy) {
-
-    const friendlyCapture = (isEnemy === game.players.local.data.isEnemy);
+    const friendlyCapture = isEnemy === game.players.local.data.isEnemy;
 
     if (friendlyCapture) {
-
       // first time capture (of original bunker state) vs. taking back from the enemy
       if (!data.isRecapture) {
         game.objects.notifications.add('You captured a bunker ⛳');
@@ -62,10 +53,13 @@ const Bunker = (options = {}) => {
 
       playSoundWithDelay(sounds.friendlyClaim, exports);
 
-      playSoundWithDelay(sounds.bnb[game.data.isBeavis ? 'beavisCapturedBunker' : 'buttheadCapturedBunker'], null);
-
+      playSoundWithDelay(
+        sounds.bnb[
+          game.data.isBeavis ? 'beavisCapturedBunker' : 'buttheadCapturedBunker'
+        ],
+        null
+      );
     } else {
-
       game.objects.notifications.add('The enemy captured a bunker 🚩');
 
       playSoundWithDelay(sounds.enemyClaim, exports);
@@ -75,7 +69,6 @@ const Bunker = (options = {}) => {
       } else {
         playSoundWithDelay(sounds.bnb.buttheadLostBunker);
       }
-      
     }
 
     utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
@@ -93,11 +86,9 @@ const Bunker = (options = {}) => {
 
     // check if enemy convoy production should stop or start
     checkProduction();
-
   }
 
   function bnbRepair(engineer) {
-
     if (!data.hasBeavis && engineer.data.isBeavis) {
       data.hasBeavis = true;
     }
@@ -110,17 +101,20 @@ const Bunker = (options = {}) => {
     }
 
     // only "sing" the repair if damage >= 50%.
-    if (data.hasBeavis && data.hasButthead && data.energy < data.energyHalf && !data.isSinging) {
+    if (
+      data.hasBeavis &&
+      data.hasButthead &&
+      data.energy < data.energyHalf &&
+      !data.isSinging
+    ) {
       data.isSinging = true;
       if (data.isOnScreen) {
         playSound(sounds.bnb.singingShort, game.players.local);
       }
     }
-
   }
 
   function engineerRepair(engineer) {
-
     if (data.energy < data.energyMax) {
       // stop, and don't fire
       engineer.stop(true);
@@ -139,25 +133,18 @@ const Bunker = (options = {}) => {
     }
 
     sprites.updateEnergy(exports);
-
   }
 
   function repair() {
-
     // fix the balloon, if it's broken - or, rather, flag it for respawn.
     if (objects.balloon) {
-
       if (objects.balloon.data.dead) {
         objects.balloon.data.canRespawn = true;
       }
-
     } else {
-
       // make a new one
       createBalloon();
-
     }
-
   }
 
   function nullifyChain() {
@@ -169,7 +156,6 @@ const Bunker = (options = {}) => {
   }
 
   function detachBalloon() {
-
     // update height of chain in the DOM, assuming it's
     // attached to the balloon now free from the base.
     // once height is assigned, the chain will either
@@ -183,20 +169,16 @@ const Bunker = (options = {}) => {
       objects.chain?.detachFromBunker();
       nullifyBalloon();
     }
-
   }
 
   function removeNukeSprite() {
-
     if (!dom?.oSubSpriteNuke) return;
 
     dom.oSubSpriteNuke.remove();
     dom.oSubSpriteNuke = null;
-
   }
 
   function die(dieOptions = {}) {
-
     if (data.dead) return;
 
     // if off-screen, just avoid the nuke entirely.
@@ -221,8 +203,17 @@ const Bunker = (options = {}) => {
 
     const rndXY = 1 + rnd(1);
 
-    effects.shrapnelExplosion(data, { count: 16 + rngInt(24, data.type), velocity: (3 + rng(3, data.type)), bottomAligned: true });
-    effects.inertGunfireExplosion({ exports, count: 16 + rndInt(8), vX: rndXY, vY: rndXY });
+    effects.shrapnelExplosion(data, {
+      count: 16 + rngInt(24, data.type),
+      velocity: 3 + rng(3, data.type),
+      bottomAligned: true
+    });
+    effects.inertGunfireExplosion({
+      exports,
+      count: 16 + rndInt(8),
+      vX: rndXY,
+      vY: rndXY
+    });
 
     /**
      * ******* T R O G D O R ! ! ! *******
@@ -248,21 +239,19 @@ const Bunker = (options = {}) => {
     dom.oArrow = null;
 
     common.setFrameTimeout(() => {
-
       // slight delay before swapping in burning animation
       utils.css.swap(dom.o, css.exploding, css.burning);
 
       // start "burning out"...
       common.setFrameTimeout(() => {
-
         // match transition to timer...
-        rubble.style.transitionDuration = ((burninatingTime * burnOutFade) / 1000) + 's';
+        rubble.style.transitionDuration =
+          (burninatingTime * burnOutFade) / 1000 + 's';
 
         utils.css.add(dom.o, css.burningOut);
 
         // and eventually exinguish.
         common.setFrameTimeout(() => {
-
           data.burninating = false;
 
           utils.css.swap(dom.o, css.burning, css.dead);
@@ -276,11 +265,8 @@ const Bunker = (options = {}) => {
           if (game.objects.editor) {
             destroy();
           }
-
         }, burninatingTime * burnOutFade);
-
       }, burninatingTime);
-
     }, 1200);
 
     // prevent this animation from re-appearing once played,
@@ -300,7 +286,11 @@ const Bunker = (options = {}) => {
     if (data.isOnScreen) {
       if (gamePrefs.bnb) playSound(sounds.bnb.bunkerExplosion, null);
     } else {
-      game.objects.notifications.add(data.isEnemy === game.players.local.data.isEnemy ? 'A friendly bunker was destroyed 💥' : 'An enemy bunker was destroyed 💥');
+      game.objects.notifications.add(
+        data.isEnemy === game.players.local.data.isEnemy
+          ? 'A friendly bunker was destroyed 💥'
+          : 'An enemy bunker was destroyed 💥'
+      );
     }
 
     // check if enemy convoy production should stop or start
@@ -309,82 +299,75 @@ const Bunker = (options = {}) => {
     common.onDie(exports, dieOptions);
 
     radarItem.die();
-
   }
 
   function animate() {
-
     sprites.moveWithScrollOffset(exports);
 
     if (!data.dead) {
-
       effects.smokeRelativeToDamage(exports);
-
     } else if (data.burninating) {
-
       if (data.smokeFramesLeft) {
-        effects.smokeRelativeToDamage(exports, data.smokeFramesLeft / data.smokeFramesMax);
+        effects.smokeRelativeToDamage(
+          exports,
+          data.smokeFramesLeft / data.smokeFramesMax
+        );
         data.smokeFramesLeft--;
       }
-
     }
-
   }
 
   function engineerHit(target) {
-
     if (target.data.isEnemy !== data.isEnemy) return;
 
     // special BnB case
     const tData = target.data;
-    let xLookAhead = !tData.isEnemy && gamePrefs.bnb ? tData.xLookAheadBunker[tData.isBeavis ? 'beavis' : 'butthead'] : 0;
+    let xLookAhead =
+      !tData.isEnemy && gamePrefs.bnb
+        ? tData.xLookAheadBunker[tData.isBeavis ? 'beavis' : 'butthead']
+        : 0;
 
     // a friendly engineer unit has made contact with a bunker. repair damage when at the door, if any.
     if (collisionCheckMidPoint(target, exports, xLookAhead)) {
       engineerRepair(target);
     }
-   
   }
 
   function infantryHit(target) {
-
     // an infantry unit has made contact with a bunker.
     if (target.data.isEnemy === data.isEnemy) {
-
       // a friendly passer-by.
       repair();
-
     } else if (collisionCheckMidPoint(target, exports)) {
-
       // non-friendly, kill the infantry - but let them capture the bunker first.
       capture(target.data.isEnemy);
       target.die({ silent: true });
-
     }
-
   }
 
   function initDOM() {
-
     dom.o = sprites.create({
       className: css.className,
       id: data.id,
-      isEnemy: (data.isEnemy ? css.enemy : false)
+      isEnemy: data.isEnemy ? css.enemy : false
     });
 
     dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
-    
+
     dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
 
     data.oClassName = dom.o.className;
 
     // note hackish Y-offset, sprite position vs. collision detection
-    sprites.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y - 3}px`);
-
+    sprites.setTransformXY(
+      exports,
+      exports.dom.o,
+      `${data.x}px`,
+      `${data.y - 3}px`
+    );
   }
 
   function initBunker() {
-
     initDOM();
 
     // first time, create at random Y location.
@@ -393,14 +376,11 @@ const Bunker = (options = {}) => {
     data.midPoint = common.getDoorCoords(exports);
 
     radarItem = game.objects.radar.addItem(exports, data.oClassName);
-
   }
 
   function destroy() {
-
     radarItem?.die();
     sprites.removeNodes(dom);
-
   }
 
   css = common.inheritCSS({
@@ -417,35 +397,39 @@ const Bunker = (options = {}) => {
   const burninatingTime = 10000;
   const burnOutFade = 0.5;
 
-  const smokeFrames = ((burninatingTime + (burninatingTime * burnOutFade * 0.85)) / 1000) * FPS;
+  const smokeFrames =
+    ((burninatingTime + burninatingTime * burnOutFade * 0.85) / 1000) * FPS;
 
-  data = common.inheritData({
-    type: TYPES.bunker,
-    y: (game.objects.view.data.world.height - 25) - 2, // override to fix helicopter / bunker vertical crash case
-    smokeFramesLeft: parseInt(smokeFrames, 10),
-    smokeFramesMax: smokeFrames,
-    energy: 50,
-    energyHalf: 25,
-    energyMax: 50,
-    energyLineScale: 0.95,
-    centerEnergyLine: true,
-    hasBeavis: false,
-    hasButthead: false,
-    isRecapture: false,
-    isSinging: false,
-    width: 51,
-    halfWidth: 25,
-    height: 25,
-    halfHeight: 12.5,
-    midPoint: null,
-    domFetti: {
-      colorType: 'yellow',
-      elementCount: 100 + rndInt(100),
-      startVelocity: 15 + rndInt(15),
-      spread: 180,
-      decay: 0.94
-    }
-  }, options);
+  data = common.inheritData(
+    {
+      type: TYPES.bunker,
+      y: game.objects.view.data.world.height - 25 - 2, // override to fix helicopter / bunker vertical crash case
+      smokeFramesLeft: parseInt(smokeFrames, 10),
+      smokeFramesMax: smokeFrames,
+      energy: 50,
+      energyHalf: 25,
+      energyMax: 50,
+      energyLineScale: 0.95,
+      centerEnergyLine: true,
+      hasBeavis: false,
+      hasButthead: false,
+      isRecapture: false,
+      isSinging: false,
+      width: 51,
+      halfWidth: 25,
+      height: 25,
+      halfHeight: 12.5,
+      midPoint: null,
+      domFetti: {
+        colorType: 'yellow',
+        elementCount: 100 + rndInt(100),
+        startVelocity: 15 + rndInt(15),
+        spread: 180,
+        decay: 0.94
+      }
+    },
+    options
+  );
 
   dom = {
     o: null,
@@ -476,7 +460,6 @@ const Bunker = (options = {}) => {
   };
 
   return exports;
-
 };
 
 export { Bunker };

@@ -1,7 +1,13 @@
 import { gameEvents, EVENTS } from './GameEvents.js';
 import { oneOf, soundManager, winloc } from './global.js';
 import { utils } from '../core/utils.js';
-import { addSequence, addSound, getSound, playSound, skipSound } from './sound.js';
+import {
+  addSequence,
+  addSound,
+  getSound,
+  playSound,
+  skipSound
+} from './sound.js';
 import { game } from './Game.js';
 import { common } from './common.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -38,30 +44,27 @@ const queueBNBSound = (obj = {}) => soundsToPlayBNB.push(obj);
  */
 
 function getBnBSound(ref) {
-
   if (!gamePrefs.bnb) return;
 
   if (!ref) return;
 
   if (ref.isSequence) return getBnBSound(getSoundFromSequence(ref));
 
-  if (ref.length && !ref.isSoundArray) return getBnBSound(getSoundFromArray(ref));
+  if (ref.length && !ref.isSoundArray)
+    return getBnBSound(getSoundFromArray(ref));
 
   if (ref instanceof Function) return getBnBSound(ref());
 
   return ref;
-
 }
 
 function getSoundFromSequence(ref) {
-
   if (!ref?.forEach) return;
 
   let result = [];
   let soundItem;
 
   ref.forEach((item) => {
-
     if (!item) {
       console.warn('getSoundFromSequence: WTF no item?', ref, item);
       return;
@@ -71,49 +74,59 @@ function getSoundFromSequence(ref) {
 
     // guard
     if (soundItem === undefined) {
-      console.warn('getSoundFromSequence - missing sound?', ref, item, soundItem);
+      console.warn(
+        'getSoundFromSequence - missing sound?',
+        ref,
+        item,
+        soundItem
+      );
       return;
     }
 
     if (soundItem === false) {
-      console.warn('getSoundFromSequence: boolean false - ignoring', ref, item, soundItem);
+      console.warn(
+        'getSoundFromSequence: boolean false - ignoring',
+        ref,
+        item,
+        soundItem
+      );
       return;
     }
 
     result.push(soundItem);
-
   });
 
   // prevent recursion through this result
   result.isSoundArray = true;
 
   return result;
-
 }
 
 function playSequence(soundReference, exports, sequenceOptions = {}) {
-
   // single sound, sequence, or nested variant
   let sounds = getBnBSound(soundReference);
 
   if (!sounds) return;
 
   // only skip a sequence if this sequenceOptions method is provided, and returns false-y.
-  const playNextCondition = soundReference.playNextCondition || sequenceOptions.playNextCondition || (() => true);
+  const playNextCondition =
+    soundReference.playNextCondition ||
+    sequenceOptions.playNextCondition ||
+    (() => true);
 
   const soundOptions = {
-    onfinish: function(sound) {
-
+    onfinish: function (sound) {
       const { parentSoundObject } = sound;
 
       // bail if a sound didn't play, if the playNextCondition is false-y, or we're at the end.
       if (sound.skipped || !playNextCondition(sound)) {
-
         // if a sequence, and this is the first, then drop all the others.
         if (parentSoundObject.sequenceOffset === 0) {
-
           // note length - 1, we have already processed the first sound in the sequence.
-          const removed = soundsToPlayBNB.splice(0, parentSoundObject.sequenceLength);
+          const removed = soundsToPlayBNB.splice(
+            0,
+            parentSoundObject.sequenceLength
+          );
 
           // ensure those objects are destroyed, too.
           removed.forEach((removedItem) => {
@@ -123,32 +136,31 @@ function playSequence(soundReference, exports, sequenceOptions = {}) {
               removedItem.soundObject.sound = null;
             }
           });
-
         }
 
         sequenceOptions?.onfinish?.apply(sound, [sound]);
 
         return;
-        
       }
 
       // last sound? fire onfinish if specified.
       // be liberal: allow for "missing" sounds, too. Derrrr.
-      if (parentSoundObject.sequenceOffset >= parentSoundObject.sequenceLength - 1) {
+      if (
+        parentSoundObject.sequenceOffset >=
+        parentSoundObject.sequenceLength - 1
+      ) {
         sequenceOptions?.onfinish?.apply(sound, [sound]);
       }
 
       nextBNBSoundIfPaused();
-
     }
-  }
+  };
 
   // filter out false boolean results, given () => logic.
-  sounds = sounds.filter((sound => sound !== false));
+  sounds = sounds.filter((sound) => sound !== false);
 
   // note: sequenceOffset is provided to each.
   sounds.forEach((sound, index) => {
-
     // sequence -> sound objects for max delay
     if (soundReference.maxDelay) {
       sound.maxDelay = soundReference.maxDelay;
@@ -161,19 +173,16 @@ function playSequence(soundReference, exports, sequenceOptions = {}) {
     // by default, subsequent sounds are allowed to take as long as they need to play.
     // if the first sound is skipped, then subsequent ones will be removed entirely.
     // if already true, let it be.
-    sound.excludeDelay = sound.excludeDelay || (index > 0);
+    sound.excludeDelay = sound.excludeDelay || index > 0;
 
     playSound(sound, exports, {
       ...soundOptions,
       maxDelay: soundReference.maxDelay
     });
-
   });
-
 }
 
 function nextBNBSoundIfPaused() {
-
   if (!gamePrefs.bnb || !soundsToPlayBNB.processing) return;
 
   // if the game is paused, setFrameTimeout()-based callbacks may not be happening.
@@ -185,42 +194,52 @@ function nextBNBSoundIfPaused() {
       playQueuedBNBSounds();
     }, 500);
   }
-
 }
 
 function nextBNBSound() {
-
   if (!soundsToPlayBNB.processing) return;
 
   nextBNBSoundIfPaused();
- 
+
   // guard
   if (nextBNBTimer) return;
-  
+
   // slight delay between sounds, when processing queue
   nextBNBTimer = common.setFrameTimeout(() => {
     nextBNBTimer = null;
     // a sound has finished, or is being skipped (because it was throttled etc.)
     soundsToPlayBNB.processing = false;
   }, 250);
-
 }
 
 function resetBNBSoundQueue() {
-
   soundsToPlayBNB = [];
   soundsToPlayBNB.processing = false;
-
 }
 
 function playQueuedBNBSounds() {
-
   var now = Date.now();
 
   // sound playback failed / onfinish callback was missed, or game was paused / window was blurred, computer went to sleep etc.
-  if (soundsToPlayBNB.processing && soundsToPlayBNB.length && now - soundsToPlayBNB[0].queued > 66666 && !isGameOver()) {
-    console.warn(`Stuck or delayed sound queue? ${soundsToPlayBNB.processing ? 'Resetting "processing" flag' : ' processing = false'}`, soundsToPlayBNB.length, soundsToPlayBNB);
-    console.warn('sounds in queue:', soundsToPlayBNB.map((bnbSound) => bnbSound));
+  if (
+    soundsToPlayBNB.processing &&
+    soundsToPlayBNB.length &&
+    now - soundsToPlayBNB[0].queued > 66666 &&
+    !isGameOver()
+  ) {
+    console.warn(
+      `Stuck or delayed sound queue? ${
+        soundsToPlayBNB.processing
+          ? 'Resetting "processing" flag'
+          : ' processing = false'
+      }`,
+      soundsToPlayBNB.length,
+      soundsToPlayBNB
+    );
+    console.warn(
+      'sounds in queue:',
+      soundsToPlayBNB.map((bnbSound) => bnbSound)
+    );
     console.warn('sound that may have gotten stuck:', lastPlayedBnBSound);
     console.warn('soundManager.soundIDs', soundManager.soundIDs.join(', '));
     // soundsToPlayBNB.processing = false;
@@ -228,7 +247,6 @@ function playQueuedBNBSounds() {
   }
 
   if (soundsToPlayBNB.length && !soundsToPlayBNB.processing) {
-
     soundsToPlayBNB.processing = true;
 
     // take the first one.
@@ -242,21 +260,26 @@ function playQueuedBNBSounds() {
     const options = item.soundObject.soundOptions;
 
     // TODO: verify the source of `throttle`.
-    const throttle = item.throttle || options.throttle || item.soundObject.throttle || 0;
+    const throttle =
+      item.throttle || options.throttle || item.soundObject.throttle || 0;
 
     const lastPlayed = item.soundObject.lastPlayed || 0;
 
-    let delay = (now - item.queued);
+    let delay = now - item.queued;
 
     // if unspecified, go with a huge delay.
     const maxDelay = item.soundObject.maxDelay || item.maxDelay || 99999;
 
-    const delayed = (delay >= maxDelay && !item.soundObject.excludeDelay);
+    const delayed = delay >= maxDelay && !item.soundObject.excludeDelay;
 
-    const throttled = (!item.soundObject.excludeThrottling && lastPlayed && throttle && (now - lastPlayed < throttle));
+    const throttled =
+      !item.soundObject.excludeThrottling &&
+      lastPlayed &&
+      throttle &&
+      now - lastPlayed < throttle;
 
     // if this sound is the second (or greater) in a sequence, never skip.
-    const isContinuingSequenceSound = (item.soundObject.sequenceOffset > 0);
+    const isContinuingSequenceSound = item.soundObject.sequenceOffset > 0;
 
     // skip if a BnB sound is queued, but pref was disabled in the meantime
     if (!gamePrefs.bnb) {
@@ -264,9 +287,13 @@ function playQueuedBNBSounds() {
     }
 
     // too late to play, OR, too fast to replay
-    if ((delayed || throttled || item.soundObject.skip) && !isContinuingSequenceSound) {
-
-      const url = item.soundObject.options.url.substr(item.soundObject.options.url.lastIndexOf('/') + 1);
+    if (
+      (delayed || throttled || item.soundObject.skip) &&
+      !isContinuingSequenceSound
+    ) {
+      const url = item.soundObject.options.url.substr(
+        item.soundObject.options.url.lastIndexOf('/') + 1
+      );
 
       if (delayed) {
         console.log(`Delayed (${delay} > ${maxDelay} msec)`, url, item);
@@ -289,33 +316,41 @@ function playQueuedBNBSounds() {
 
       // special case: fire onfinish() immediately, if specified.
       if (item.localOptions.onfinish) {
-        item.localOptions.onfinish.apply(item.soundObject.sound, [{ ...item.soundObject.sound, skipped: true }]);
+        item.localOptions.onfinish.apply(item.soundObject.sound, [
+          { ...item.soundObject.sound, skipped: true }
+        ]);
       }
 
       // fire the original onfinish, too.
-      if (item.soundObject.options.onfinish && item.soundObject.options.onfinish !== item.localOptions.onfinish) {
-        item.soundObject.options.onfinish.apply(item.soundObject.sound, [{ ...item.soundObject.sound, skipped: true }]);
+      if (
+        item.soundObject.options.onfinish &&
+        item.soundObject.options.onfinish !== item.localOptions.onfinish
+      ) {
+        item.soundObject.options.onfinish.apply(item.soundObject.sound, [
+          { ...item.soundObject.sound, skipped: true }
+        ]);
       }
 
       return nextBNBSound();
-
     }
 
-    const playDelay = item.soundObject.delay || (isContinuingSequenceSound ? 500 : 0);
+    const playDelay =
+      item.soundObject.delay || (isContinuingSequenceSound ? 500 : 0);
 
     item.soundObject.lastPlayed = now + playDelay;
 
     playAndThen(item, nextBNBSound, playDelay);
-
   }
-
 }
 
 function playAndThen(soundReference, callback, delay = 0) {
-
   // given a sound reference, play it "and then" fire a custom callback.
   if (!soundReference?.soundObject || !callback) {
-    console.warn('WTF no soundObject or missing callback?', soundReference, callback);
+    console.warn(
+      'WTF no soundObject or missing callback?',
+      soundReference,
+      callback
+    );
     return;
   }
 
@@ -324,10 +359,13 @@ function playAndThen(soundReference, callback, delay = 0) {
 
   const { sound } = soundReference.soundObject;
 
-  const newOnFinish = function() {
-
+  const newOnFinish = function () {
     // hackish: avoid recursion
-    if (soundReference.localOptions.onfinish && soundReference.localOptions.onfinish !== newOnFinish) soundReference.localOptions.onfinish.apply(sound, [sound]);
+    if (
+      soundReference.localOptions.onfinish &&
+      soundReference.localOptions.onfinish !== newOnFinish
+    )
+      soundReference.localOptions.onfinish.apply(sound, [sound]);
 
     // fire the original, if specified
     if (_onfinish) _onfinish.apply(sound, [sound]);
@@ -340,11 +378,9 @@ function playAndThen(soundReference, callback, delay = 0) {
 
     // now, the local callback.
     callback();
-
-  }
+  };
 
   function play() {
-    
     // Note: firing this event counts toward *prevents* the "this is boring" commentary.
     gameEvents.fire(EVENTS.boring);
 
@@ -352,7 +388,6 @@ function playAndThen(soundReference, callback, delay = 0) {
       ...soundReference.localOptions,
       onfinish: newOnFinish
     });
-
   }
 
   if (delay) {
@@ -364,11 +399,9 @@ function playAndThen(soundReference, callback, delay = 0) {
   } else {
     play();
   }
-
 }
 
 function getSoundFromArray(ref) {
-
   if (!ref?.length) return;
 
   if (!ref.soundIndex) ref.soundIndex = 0;
@@ -387,7 +420,6 @@ function getSoundFromArray(ref) {
   }
 
   return arrayItem;
-
 }
 
 // --- BnB sound config ---
@@ -409,7 +441,6 @@ function bnbURL(file) {
 const soundCache = {};
 
 function add(url, volume = 50, throttle = 5000, onfinish, extraOptions = null) {
-  
   let cacheable = !onfinish && !extraOptions;
 
   const cacheKey = `${url}_${volume}_${throttle}`;
@@ -418,19 +449,21 @@ function add(url, volume = 50, throttle = 5000, onfinish, extraOptions = null) {
   if (soundCache[cacheKey] && cacheable) return soundCache[cacheKey];
 
   const sound = addSound(
-    Object.assign({
-      fixedPlaybackRate,
-      url: bnbURL(url),
-      volume,
-      onfinish,
-      throttle
-    }, extraOptions)
+    Object.assign(
+      {
+        fixedPlaybackRate,
+        url: bnbURL(url),
+        volume,
+        onfinish,
+        throttle
+      },
+      extraOptions
+    )
   );
 
   if (cacheable) soundCache[cacheKey] = sound;
 
   return sound;
-
 }
 
 // volume for "very loud" (compressed) sounds
@@ -441,21 +474,21 @@ function addVL(url, ...rest) {
 }
 
 function addBnBEvent(key, soundURLs) {
-
   const newSounds = [];
 
   soundURLs = shuffle(soundURLs);
 
   soundURLs.forEach((url) => {
-    newSounds.push(addSound({
-      url: bnbURL(url),
-      volume: 50,
-      fixedPlaybackRate
-    }));
+    newSounds.push(
+      addSound({
+        url: bnbURL(url),
+        volume: 50,
+        fixedPlaybackRate
+      })
+    );
   });
 
   bnb[key] = shuffle(newSounds);
-
 }
 
 bnb.bnbYes = add('bnb_yes');
@@ -499,12 +532,10 @@ bnb.lotsOfLaughs = shuffle([
 ]);
 
 bnb.rainstormMonologue = (() => {
-
   let phase = 0;
   const phases = ['', 'rain', 'hail', 'turd'];
 
   function whileplaying() {
-
     const { position } = this;
 
     if (!position) phase = 0;
@@ -523,20 +554,14 @@ bnb.rainstormMonologue = (() => {
     }
 
     if (!phase && position > 3000) {
-
       nextPhase();
 
       game.objects.notifications.add('☂️ Weather update: rainstorm 🌧️');
-     
-
     } else if (state === 'rain' && position > 9500) {
-
       nextPhase();
 
       game.objects.notifications.add('☂️ Weather update: hailstorm 🌨️');
-
     } else if (state === 'hail' && position > 14000) {
-
       nextPhase();
 
       game.objects.notifications.add('☂️ Weather update: TURD STORM 💩😱');
@@ -545,35 +570,34 @@ bnb.rainstormMonologue = (() => {
         // back to regular snow
         phase = 0;
         updateStormStyle('snow');
-        game.objects.notifications.add('☂️ Note: Snow can be enabled in game options. 🌨️');
+        game.objects.notifications.add(
+          '☂️ Note: Snow can be enabled in game options. 🌨️'
+        );
       }, 15000);
 
       // eventually, stop snowing.
       common.setFrameTimeout(() => updateStormStyle(''), 15000);
-
     }
-
   }
 
   return addSequence(
-    addVL('b_you_know_whatd_be_cool_rain_hailstorm', undefined, undefined, { whileplaying }),
+    addVL('b_you_know_whatd_be_cool_rain_hailstorm', undefined, undefined, {
+      whileplaying
+    }),
     addVL('b_whoa_check_it_out_bh'),
     bnb.buttheadCoolestThingEver,
     addVL('b_whoa_thats_right_youre_right_again_bh'),
     bnb.lotsOfLaughs
   );
-
 })();
 
 bnb.beavisLightsOut = (() => {
-
   let phase = 0;
   const phases = ['default', 'lightsOut', 'lightsOn', 'end'];
 
   let body;
 
   function whileplaying() {
-
     if (!body) {
       body = document.body;
     }
@@ -585,12 +609,9 @@ bnb.beavisLightsOut = (() => {
     const state = phases[phase];
 
     if (!phase && position > 256) {
-
       phase++;
-      if (body) body.style.opacity = 0.50;
-
+      if (body) body.style.opacity = 0.5;
     } else if (state === 'lightsOut' && position > 9100) {
-
       phase++;
       if (body) body.style.opacity = 0.66;
 
@@ -600,29 +621,27 @@ bnb.beavisLightsOut = (() => {
         body.style.transition = 'opacity 15s linear';
         body.style.opacity = 1;
       }, 1000);
-      
     } else if (state === 'lightsOn' && position > 27000) {
-
       phase++;
 
       // just in case this is $$$
       if (body) body.style.transition = '';
-
     }
-
   }
 
   function onfinish() {
-
     if (body) {
       body.style.opacity = 1;
       body = null;
     }
-
   }
 
-  return addVL('b_bh_lights_out_dark_lets_go_to_stewarts', undefined, undefined, { whileplaying, onfinish });
-
+  return addVL(
+    'b_bh_lights_out_dark_lets_go_to_stewarts',
+    undefined,
+    undefined,
+    { whileplaying, onfinish }
+  );
 })();
 
 bnb.giganticSchlongConversation = addSequence(
@@ -636,18 +655,12 @@ bnb.beavisMonologues = shuffle([
   add('b_were_gonna_score_slots'),
   addVL('b_are_we_gonna_be_bald_i_dunno'),
   bnb.beavisLightsOut,
-  addSequence(
-    addVL('b_big_wiener_question'),
-    bnb.giganticSchlongConversation
-  ),
+  addSequence(addVL('b_big_wiener_question'), bnb.giganticSchlongConversation),
   addVL('b_have_you_been_getting_any'),
   addVL('b_here_i_sit_toilet_monologue'),
   addVL('b_knock_knock_joke'),
   addVL('b_one_of_these_things_song'),
-  addSequence(
-    add('b_pet_snake_joke'),
-    bnb.giganticSchlongConversation
-  ),
+  addSequence(add('b_pet_snake_joke'), bnb.giganticSchlongConversation),
   addSequence(
     add('b_sailboat_question_talking_sense', 40),
     () => bnb.beavisRetorts
@@ -694,14 +707,14 @@ bnb.p1InsultsBeavis = shuffle([
 
 bnb.p1InsultsButthead = shuffle([
   addVL('bh_p1_is_a_dumbass'),
-  addVL('bh_p1_scores_about_as_much_as_you_b'),
+  addVL('bh_p1_scores_about_as_much_as_you_b')
 ]);
 
 bnb.p2InsultsBeavis = addVL('b_p2_is_sucking');
 
 bnb.p2InsultsButthead = shuffle([
   addVL('bh_i_think_this_game_is_too_hard_for_p2_hard'),
-  addVL('bh_p2_sucks_loser'),
+  addVL('bh_p2_sucks_loser')
 ]);
 
 bnb.p1ComplimentsButthead = addVL('bh_uh_p1_is_kicking_ass');
@@ -762,7 +775,9 @@ bnb.bGoodQuestionResponse = addSequence(
 
 bnb.beavisTry = addVL('b_at_least_i_try_heh');
 
-bnb.takeSoLong = add('bh_dammit_beavis_arent_you_done_yet_how_come_you_always_take_so_long');
+bnb.takeSoLong = add(
+  'bh_dammit_beavis_arent_you_done_yet_how_come_you_always_take_so_long'
+);
 
 bnb.buttheadInsultsArray = shuffle([
   addVL('bh_b_how_come_youre_such_a_weirdo'),
@@ -777,10 +792,7 @@ bnb.buttheadInsultsArray = shuffle([
     add('b_is_this_a_god_dam')
   ),
   addVL('bh_dammit_beavis_shut_up_angry'),
-  addSequence(
-    addVL('bh_dammit_beavis_stop_it'),
-    add('b_is_this_a_god_dam')
-  ),
+  addSequence(addVL('bh_dammit_beavis_stop_it'), add('b_is_this_a_god_dam')),
   addSequence(
     addVL('bh_dammit_beavis_you_always_ruin_everything'),
     () => Math.random() >= 0.5 && bnb.beavisTry
@@ -807,14 +819,12 @@ bnb.buttheadInsultsArray = shuffle([
   bnb.takeSoLong,
   add('butthead_whats_your_problem_dumbass'),
   add('butthead_you_dork'),
-  add('butthead_you_dumbass'),
+  add('butthead_you_dumbass')
 ]);
 
 bnb.buttheadInsults = Object.assign(
-  addSequence(
-    bnb.buttheadInsultsArray,
-    bnb.beavisRetorts
-  ), {
+  addSequence(bnb.buttheadInsultsArray, bnb.beavisRetorts),
+  {
     // special case: beavis' retort is baked into this particular sound.
     playNextCondition: (sound) => !sound?.url?.match(/phobic/i)
   }
@@ -835,10 +845,7 @@ bnb.buttheadComplaints = shuffle([
   add('butthead_this_sucks'),
   bnb.buttheadIdle,
   addVL('bh_this_sucks_actually_all_the_time_mean_it'),
-  addSequence(
-    add('whoa_i_just_figured_this_sucks'),
-    () => bnb.beavisOhYeah
-  ),
+  addSequence(add('whoa_i_just_figured_this_sucks'), () => bnb.beavisOhYeah),
   add('bh_this_sucks_more_than_ever_da', 40),
   add('bh_this_sucks_bh_yeah_it_really_sucks_da', 40)
 ]);
@@ -850,7 +857,10 @@ bnb.hurryUpButthead = addSequence(
   () => Math.random() >= 0.5 && add('bh_beavis_fatherly')
 );
 
-bnb.thoughtWeWereGonnaScore = add('b_dammit_butthead_i_thought_we_were_gonna_score_today', 75);
+bnb.thoughtWeWereGonnaScore = add(
+  'b_dammit_butthead_i_thought_we_were_gonna_score_today',
+  75
+);
 bnb.thoughtWeWereGonnaScore.throttle = 60000;
 
 bnb.beavisBeerAndScore = addSequence(
@@ -893,12 +903,12 @@ bnb.gonnaScore = shuffle([
   add('b_were_gonna_score_x2', 40)
 ]);
 
-bnb.beavisReallyGonnaScore = add('b_cool_im_gonna_score_really_gonna_happen', 40);
+bnb.beavisReallyGonnaScore = add(
+  'b_cool_im_gonna_score_really_gonna_happen',
+  40
+);
 
-bnb.beavisReally = shuffle([
-  add('beavis_no_way_really'),
-  add('b_really_cool')
-]);
+bnb.beavisReally = shuffle([add('beavis_no_way_really'), add('b_really_cool')]);
 
 bnb.mightNeedThatSomeday = add('b_thats_mine_might_need_that_someday');
 
@@ -1054,10 +1064,7 @@ bnb.buttheadDirectHitBeavis.throttle = 60000;
 
 bnb.sixty = add('vs_beavis_60');
 bnb.sixtyEight = add('vs_butthead_68');
-bnb.sixtyNine = addSequence(
-  add('vs_butthead_69'),
-  bnb.lotsOfLaughs
-);
+bnb.sixtyNine = addSequence(add('vs_butthead_69'), bnb.lotsOfLaughs);
 bnb.seventy = add('vs_bnb_70');
 
 bnb.cockaDoodleDoo = addSequence(
@@ -1083,25 +1090,21 @@ bnb.beavisNoWayItsMyTurn = shuffle([
 ]);
 bnb.beavisNoWayItsMyTurn.excludeDelay = true;
 
-bnb.buttheadDammitBeavisIWasAboutToScore = add('bh_dammit_beavis_i_was_about_to_score');
+bnb.buttheadDammitBeavisIWasAboutToScore = add(
+  'bh_dammit_beavis_i_was_about_to_score'
+);
 bnb.buttheadDammitBeavisIWasAboutToScore.excludeDelay = true;
 
 bnb.thatsALoadOff = add('b_thats_a_load_off_my_mind', 40);
 
 bnb.buttheadWatchTheMaster = shuffle([
-  addSequence(
-    add('butthead_watch_the_master', 50),
-    bnb.thatsALoadOff
-  ),
+  addSequence(add('butthead_watch_the_master', 50), bnb.thatsALoadOff),
   add('butthead_watch_the_master_long')
 ]);
 bnb.buttheadWatchTheMaster.excludeDelay = true;
 
 bnb.volumeTestSounds = [
-  shuffle([
-    add('beavis_grunt_3'),
-    add('beavis_grunt_4')
-  ]),
+  shuffle([add('beavis_grunt_3'), add('beavis_grunt_4')]),
   add('beavis_xscream_1'),
   add('b_butthole'),
   add('beavis_dammit'),
@@ -1132,10 +1135,7 @@ bnb.beavisPoop.playImmediately = true;
 
 const incomingSMCommon = [
   add('beavis_hey_wait_a_minute_whats_going_on'),
-  addSequence(
-    add('bh_whats_going_on_here', 40),
-    bnb.bGoodQuestionResponse
-  ),
+  addSequence(add('bh_whats_going_on_here', 40), bnb.bGoodQuestionResponse),
   add('beavis_wait_a_minute'),
   add('butthead_uh_oh'),
   add('butthead_uhh_wait_a_minute'),
@@ -1174,10 +1174,7 @@ bnb.notOffToAGoodStartResponse = shuffle([
   ...bnb.beavisOhYeah,
   bnb.beavisGetOffMyCaseHippie,
   bnb.buttheadUhOK,
-  addSequence(
-    add('b_mr_dvd'),
-    add('bh_pretty_smart_b_thanks_bh_dumbass')
-  )
+  addSequence(add('b_mr_dvd'), add('bh_pretty_smart_b_thanks_bh_dumbass'))
 ]);
 
 bnb.notOffToAGoodStart = addSequence(
@@ -1206,13 +1203,10 @@ bnb.beavisLostHelicopter = shuffle([
   add('beavis_dammit_i_wanna_score_whatever_buttmunch'),
   addSequence(
     add('bh_beavis_fatherly'),
-    () => Math.random() >= 0.5 && add('b_dammit', 40),
+    () => Math.random() >= 0.5 && add('b_dammit', 40)
   ),
   add('b_this_sucks_how_do_they_do_it_in_the_army'),
-  addSequence(
-    add('beavis_dammit_i_wanna_score', 50),
-    () => bnb.neverScored
-  ),
+  addSequence(add('beavis_dammit_i_wanna_score', 50), () => bnb.neverScored),
   bnb.bhWhatsTakingYouSoDamnLong,
   bnb.buttheadInsults,
   ...bnb.p1InsultsButthead,
@@ -1230,7 +1224,7 @@ bnb.beavisEjectedHelicopter = shuffle([
   add('butthead_you_dumbass'),
   addSequence(
     add('bh_beavis_fatherly'),
-    () => Math.random() >= 0.5 && add('b_dammit', 40),
+    () => Math.random() >= 0.5 && add('b_dammit', 40)
   )
 ]);
 
@@ -1274,10 +1268,7 @@ bnb.buttheadLostHelicopter = shuffle([
   ),
   ...bnb.buttheadComplaints,
   bnb.notOffToAGoodStart,
-  addSequence(
-    bnb.p1InsultsBeavis,
-    bnb.buttheadInsultsArray
-  ),
+  addSequence(bnb.p1InsultsBeavis, bnb.buttheadInsultsArray),
   bnb.p2InsultsBeavis
 ]);
 bnb.buttheadLostHelicopter.maxDelay = 3000;
@@ -1309,7 +1300,11 @@ bnb.buttheadInfantryPickup = shuffle([
 ]);
 bnb.buttheadInfantryPickup.maxDelay = 500;
 
-bnb.tv = add('da_motel_tv', undefined, undefined, undefined, { onplay: function(sound) { if (!sound.skipped) common.setVideo('whoa_tv'); } });
+bnb.tv = add('da_motel_tv', undefined, undefined, undefined, {
+  onplay: function (sound) {
+    if (!sound.skipped) common.setVideo('whoa_tv');
+  }
+});
 
 bnb.letsKickALittleAss = add('butthead_lets_kick_a_little_ass', 60);
 bnb.letsKickALittleAss.excludeDelay = true;
@@ -1413,15 +1408,18 @@ bnb.screamShort.playImmediately = true;
 
 bnb.beavisCutItOutBunghole = add('b_cut_it_out_bunghole', 40);
 
-bnb.beavisScreamPlusCutItOut = Object.assign(addSound({
-  url: bnbURL('beavis_aahhhh'),
-  fixedPlaybackRate,
-  volume: 15,
-  onfinish: function(sound) {
-    if (!sound || sound.skipped) return;
-    playSound(bnb.beavisCutItOutBunghole);
-  }
-}), { maxDelay: 500, excludeDelay: false, playImmediately: false });
+bnb.beavisScreamPlusCutItOut = Object.assign(
+  addSound({
+    url: bnbURL('beavis_aahhhh'),
+    fixedPlaybackRate,
+    volume: 15,
+    onfinish: function (sound) {
+      if (!sound || sound.skipped) return;
+      playSound(bnb.beavisCutItOutBunghole);
+    }
+  }),
+  { maxDelay: 500, excludeDelay: false, playImmediately: false }
+);
 
 bnb.scream = shuffle([
   ...bnb.screamShort,
@@ -1432,7 +1430,7 @@ bnb.scream.maxDelay = 500;
 
 bnb.screamPlusSit = shuffle([
   ...bnb.scream,
-  add('beavis_sit_or_ill_kick_your_ass'),
+  add('beavis_sit_or_ill_kick_your_ass')
 ]);
 bnb.screamPlusSit.playImmediately = false;
 bnb.screamPlusSit.pauseBNBQueue = true;
@@ -1447,7 +1445,7 @@ bnb.buttheadScreamShort = shuffle([
   add('bh_hit_a'),
   add('bh_hit_b'),
   add('bh_hit_c'),
-  add('bh_ugh'),
+  add('bh_ugh')
 ]);
 bnb.buttheadScreamShort.playImmediately = true;
 
@@ -1522,8 +1520,17 @@ bnb.beavisDontBeStupid = addSequence(
 );
 
 bnb.fullOfCrap = addSequence(
-  shuffle([add('bh_beavis_youre_full_of_crap'), add('bh_beavis_youre_full_of_crap2')]),
-  shuffle([bnb.iAmFullOfCrap, bnb.prettyBad, bnb.iKnowShutUp, bnb.thatsPrettyFunnyButthead, bnb.youShouldHaveHeard])
+  shuffle([
+    add('bh_beavis_youre_full_of_crap'),
+    add('bh_beavis_youre_full_of_crap2')
+  ]),
+  shuffle([
+    bnb.iAmFullOfCrap,
+    bnb.prettyBad,
+    bnb.iKnowShutUp,
+    bnb.thatsPrettyFunnyButthead,
+    bnb.youShouldHaveHeard
+  ])
 );
 
 bnb.lyingSack = addSequence(
@@ -1544,7 +1551,11 @@ bnb.money = shuffle([
 ]);
 bnb.money.excludeDelay = true;
 
-bnb.beavisCmonButthead = add('vs_cmon_butthead_hit_that_fartknocker', 40, 30000);
+bnb.beavisCmonButthead = add(
+  'vs_cmon_butthead_hit_that_fartknocker',
+  40,
+  30000
+);
 
 bnb.beavisYouMissed = shuffle([
   add('b_are_you_supposed_to_miss_bh'),
@@ -1562,7 +1573,10 @@ bnb.beavisYouMissedResponse = shuffle([
 ]);
 bnb.beavisYouMissedResponse.excludeDelay = true;
 
-bnb.whatKindOfMessage = addSequence(addVL('b_what_kind_of_message_is_that_sending'), bnb.buttheadIDunno);
+bnb.whatKindOfMessage = addSequence(
+  addVL('b_what_kind_of_message_is_that_sending'),
+  bnb.buttheadIDunno
+);
 
 bnb.buttheadJerkingMyChain = addSequence(
   shuffle([
@@ -1585,7 +1599,7 @@ bnb.cornholioRepair = shuffle([
   add('b_eating_cornholio_transition_sound_1'),
   addVL('b_cornholio_eating'),
   addVL('b_cornholio_coffee'),
-  addVL('b_cornholio_coffee_2'),
+  addVL('b_cornholio_coffee_2')
 ]);
 
 bnb.cornholioAnnounce = shuffle([
@@ -1649,7 +1663,9 @@ bnb.boioioing = shuffle([
   // TODO: DRY
   Object.assign(addVL('b_boioioing_long'), { playImmediately: false }),
   Object.assign(addVL('b_boioioioioing2'), { playImmediately: false }),
-  Object.assign(addVL('bh_boioioing_b_you_cant_really_do_that_butthead'), { playImmediately: false })
+  Object.assign(addVL('bh_boioioing_b_you_cant_really_do_that_butthead'), {
+    playImmediately: false
+  })
 ]);
 
 bnb.boioioing.excludeDelay = true;
@@ -1658,7 +1674,10 @@ bnb.boioioing.playImmediately = true;
 
 bnb.gameOverLose = addSequence(
   add('b_its_all_over_never_gonna_score', 75),
-  () => (game.data.isBeavis ? addVL('bh_uhh_yeah_you_lost_the_game_is_over') : add('vs_butthead_game_over_dude', 75)),
+  () =>
+    game.data.isBeavis
+      ? addVL('bh_uhh_yeah_you_lost_the_game_is_over')
+      : add('vs_butthead_game_over_dude', 75),
   bnb.thoughtWeWereGonnaScore,
   add('bh_uh_hello_person_playing'),
   add('beavis_glad_its_finally_over', 75)
@@ -1673,14 +1692,19 @@ bnb.gameOverWin = addSequence(
   add('butthead_we_have_a_winner', 85),
   add('beavis_we_did_it_we_got_em_all_score_naked_chicks', 40),
   // all except "b" work for the end of the game.
-  oneOf(bnb.boioioing.filter((boing) => boing.options.url.indexOf('boing_b') === -1)),
+  oneOf(
+    bnb.boioioing.filter((boing) => boing.options.url.indexOf('boing_b') === -1)
+  ),
   add('bh_that_was_stupid_beavis_but_it_was_pretty_cool_too'),
   add('beavis_i_scored', 75)
 );
 bnb.gameOverWin.excludeDelay = true;
 bnb.gameOverWin.playImmediately = false;
 
-bnb.beavisWhoElseWantsSome = add('b_whoa_yeah_who_else_wants_some_cmon_bunghole', 40);
+bnb.beavisWhoElseWantsSome = add(
+  'b_whoa_yeah_who_else_wants_some_cmon_bunghole',
+  40
+);
 
 bnb.bhPrettyCoolSometimesBeavis = addVL('bh_youre_pretty_cool_sometimes_b');
 
@@ -1699,10 +1723,7 @@ bnb.beavisThanks.maxDelay = 3000;
 
 bnb.buttheadCompliment = shuffle([
   add('bh_laugh_do_that_again_b'),
-  addSequence(
-    bnb.bhPrettyCoolSometimesBeavis,
-    bnb.beavisThanks
-  ),
+  addSequence(bnb.bhPrettyCoolSometimesBeavis, bnb.beavisThanks),
   addSequence(
     add('vs_butthead_youre_like_an_expert_marksmith_beavis', 40),
     bnb.beavisThanks
@@ -1735,10 +1756,7 @@ bnb.beavisCompliment = shuffle([
   ...bnb.p2ComplimentsButthead
 ]);
 
-bnb.buttheadGouranga = addSequence(
-  bnb.buttheadWhoaCool,
-  bnb.beavisCompliment
-);
+bnb.buttheadGouranga = addSequence(bnb.buttheadWhoaCool, bnb.beavisCompliment);
 
 bnb.beavisYeahGo = Object.assign(
   shuffle([
@@ -1792,7 +1810,11 @@ bnb.bungholeAndSimilar = shuffle([
 bnb.beavisFire = add('beavis_fire_fire_fire_fire');
 
 bnb.explosionFire = {
-  ...add('desert_explosion_fire', 85, undefined, undefined, { onplay: function(sound) { if (!sound.skipped) common.setVideo('desert_explosion'); } }),
+  ...add('desert_explosion_fire', 85, undefined, undefined, {
+    onplay: function (sound) {
+      if (!sound.skipped) common.setVideo('desert_explosion');
+    }
+  }),
   ...playImmediately
 };
 
@@ -1826,9 +1848,10 @@ const tvArgs = [
   undefined,
   undefined,
   {
-    onplay: function(sound) {
+    onplay: function (sound) {
       if (!game.objects.radar.data.isJammed) return skipSound(sound);
-      if (!sound.skipped && game.players.local.data.landed) common.setVideo('tv_noise');
+      if (!sound.skipped && game.players.local.data.landed)
+        common.setVideo('tv_noise');
     }
   }
 ];
@@ -1842,10 +1865,13 @@ bnb.radarJammedBeavis = shuffle([
     add('beavis_whats_wrong_with_the_tv', 65, ...tvArgs),
     bnb.buttheadIDunno
   ),
-  
+
   addVL('b_ahh_change_it_bh', ...tvArgs),
   addSequence(
-    addVL('b_hey_butthead_you_didnt_put_one_of_those_chips_on_the_tv_that_blocks_the_cool_stuff', ...tvArgs),
+    addVL(
+      'b_hey_butthead_you_didnt_put_one_of_those_chips_on_the_tv_that_blocks_the_cool_stuff',
+      ...tvArgs
+    ),
     bnb.buttheadIDunno,
     bnb.dammitItsBroken
   ),
@@ -1859,15 +1885,20 @@ bnb.radarJammedBeavis.throttle = 120000;
 bnb.radarJammedButthead = add('bh_ugh_i_cant_see');
 bnb.radarJammedButthead.throttle = 120000;
 
-bnb.beavisNeverScoredRetorts = shuffle([bnb.schlong, bnb.gonnaKickYourAss, bnb.youSuckButthead, bnb.iKnowShutUp, ...bnb.shutUpButthead].concat(bnb.beavisOhYeah));
+bnb.beavisNeverScoredRetorts = shuffle(
+  [
+    bnb.schlong,
+    bnb.gonnaKickYourAss,
+    bnb.youSuckButthead,
+    bnb.iKnowShutUp,
+    ...bnb.shutUpButthead
+  ].concat(bnb.beavisOhYeah)
+);
 bnb.beavisNeverScoredRetorts.delay = 1000;
 
 bnb.neverScored = addSequence(
   add('butthead_you_never_scored_never_will_score', 66),
-  shuffle([
-    ...bnb.beavisNeverScoredRetorts,
-    ...bnb.beavisRetorts
-  ])
+  shuffle([...bnb.beavisNeverScoredRetorts, ...bnb.beavisRetorts])
 );
 bnb.neverScored.excludeDelay = true;
 
@@ -1888,12 +1919,17 @@ bnb.beavisPeekaboo.maxDelay = 250;
 // "add game menu sequence" - only play subsequent sound(s) before game start, and while the menu is still up.
 function addGMS(...params) {
   // decorate each sequence object with a particular "play next" check.
-  return Object.assign(addSequence(...params), { playNextCondition: () => !game.data.started });
+  return Object.assign(addSequence(...params), {
+    playNextCondition: () => !game.data.started
+  });
 }
 
 function addIGMS(...params) {
   // in-game menu sequence
-  return Object.assign(addSequence(...params), { playNextCondition: () => !net.connected && (!game.data.started || game.data.paused) });
+  return Object.assign(addSequence(...params), {
+    playNextCondition: () =>
+      !net.connected && (!game.data.started || game.data.paused)
+  });
 }
 
 bnb.menuOpenV1 = addIGMS(
@@ -1920,22 +1956,19 @@ bnb.menuOpenV3 = addIGMS(
 bnb.menuOpenV3.playImmediately = true;
 bnb.menuOpenV3.excludeShuffle = true;
 
-bnb.coolerThanIThought = addVL('b_oh_yeah_this_game_is_gonna_be_cooler_than_i_thought');
+bnb.coolerThanIThought = addVL(
+  'b_oh_yeah_this_game_is_gonna_be_cooler_than_i_thought'
+);
 
 bnb.gameMenu = shuffle([
   addGMS(
     add('beavis_whats_this_butthead_something_cool'),
     bnb.coolerThanIThought
   ),
-  addGMS(
-    add('b_what_the_hell_is_this_crap', 40),
-    addVL('bh_worst_crap_ever'),
-  ),
+  addGMS(add('b_what_the_hell_is_this_crap', 40), addVL('bh_worst_crap_ever')),
   addVL('beavis_whoa_look_a_human_butt'),
   add('b_here_we_go_again_this_sucks_mockery', 40),
-  addGMS(
-    addVL('bh_i_think_were_in_for_something_special')
-  ),
+  addGMS(addVL('bh_i_think_were_in_for_something_special')),
   addGMS(
     add('b_what_the_hell_is_this_crap', 40),
     add('bh_its_like_a_menu_or_something', 60),
@@ -1977,14 +2010,36 @@ bnb.helicopterDiedReactions = shuffle([
 bnb.helicopterDiedReactions.maxDelay = 3000;
 
 function initBNBSound() {
-  
-  bnb.bunkerExplosion = [bnb.explosionFire].concat(shuffle([bnb.fire, bnb.kickedAss, bnb.beavisFire, { ...bnb.buttheadCoolestThingEver, delay: 5000 }]));
+  bnb.bunkerExplosion = [bnb.explosionFire].concat(
+    shuffle([
+      bnb.fire,
+      bnb.kickedAss,
+      bnb.beavisFire,
+      { ...bnb.buttheadCoolestThingEver, delay: 5000 }
+    ])
+  );
   bnb.bunkerExplosion.maxDelay = 1000;
 
-  bnb.beavisTurn = shuffle([bnb.beavisGonnaBeCool, bnb.howToTurnOn, bnb.rumble, bnb.poopQuestion, bnb.iHateThisStupidGame, bnb.beavisHereWeGo].concat(bnb.beavisMonologues));
+  bnb.beavisTurn = shuffle(
+    [
+      bnb.beavisGonnaBeCool,
+      bnb.howToTurnOn,
+      bnb.rumble,
+      bnb.poopQuestion,
+      bnb.iHateThisStupidGame,
+      bnb.beavisHereWeGo
+    ].concat(bnb.beavisMonologues)
+  );
   bnb.beavisTurn.excludeDelay = true;
 
-  bnb.buttheadTurn = shuffle([bnb.buttheadGonnaBeCool, bnb.buttheadLetsFinishThis, bnb.buttheadOKGetReadyDude, bnb.comeToButthead].concat(bnb.buttheadMonologues));
+  bnb.buttheadTurn = shuffle(
+    [
+      bnb.buttheadGonnaBeCool,
+      bnb.buttheadLetsFinishThis,
+      bnb.buttheadOKGetReadyDude,
+      bnb.comeToButthead
+    ].concat(bnb.buttheadMonologues)
+  );
   bnb.buttheadTurn.excludeDelay = true;
 
   // player + CPU helicopters crashed
@@ -2021,11 +2076,10 @@ function initBNBSound() {
       addVL('bh_this_is_boring_b_yeah_really'),
       () => Math.random() >= 0.5 && addVL('bh_boring_before_cool')
     ),
-    () => game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle
+    () => (game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle)
   );
 
   return bnb;
-
 }
 
 export {

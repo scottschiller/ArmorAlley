@@ -28,37 +28,38 @@ import { gamePrefs } from './preferences.js';
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 
 const View = () => {
-
   let css, data, dom, events, exports;
 
   const disableScaling = winloc.match(/noscal/i);
   let noPause = winloc.match(/noPause/i);
 
   function setLeftScrollToPlayer(helicopter) {
-   
     // just to be safe - only local.
     if (!helicopter.data.isLocal) {
-      console.warn('setLeftScrollToPlayer(): IGNORING non-local helicopter', helicopter);
+      console.warn(
+        'setLeftScrollToPlayer(): IGNORING non-local helicopter',
+        helicopter
+      );
       return;
     }
 
     const allowOverride = true;
     let x;
 
-    x = helicopter.data.x + (helicopter.data.width * (1 / data.screenScale)) - data.browser.halfWidth;
+    x =
+      helicopter.data.x +
+      helicopter.data.width * (1 / data.screenScale) -
+      data.browser.halfWidth;
 
     setLeftScroll(x, allowOverride);
-
   }
 
   function setLeftScroll(x, allowOverride) {
-
     // slightly hackish: apply scroll offsets to both game view, and local player.
 
     if (game.objects.gameLoop.data.gameStopped) return;
 
     if (allowOverride) {
-
       data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
 
@@ -66,40 +67,46 @@ const View = () => {
         game.players.local.data.scrollLeftVX = 0;
         game.players.local.data.scrollLeft = x;
       }
-
     } else {
-
       // editor case...
       if (game.objects.editor) {
-
         data.battleField.scrollLeft = x;
         data.battleField.scrollLeftVX = 0;
-
       } else {
-
         // scroll the battlefield by relative amount.
         game.players.local.data.scrollLeftVX = 0;
-        game.players.local.data.scrollLeft = Math.max(-worldOverflow, Math.min(data.battleField.width - data.browser.halfWidth, game.players.local.data.scrollLeft + x));
+        game.players.local.data.scrollLeft = Math.max(
+          -worldOverflow,
+          Math.min(
+            data.battleField.width - data.browser.halfWidth,
+            game.players.local.data.scrollLeft + x
+          )
+        );
 
-        data.battleField.scrollLeft = Math.max(-worldOverflow, Math.min(data.battleField.width - data.browser.halfWidth, data.battleField.scrollLeft + x));
+        data.battleField.scrollLeft = Math.max(
+          -worldOverflow,
+          Math.min(
+            data.battleField.width - data.browser.halfWidth,
+            data.battleField.scrollLeft + x
+          )
+        );
         data.battleField.scrollLeftVX = x;
-
       }
-
     }
-   
-    data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
 
+    data.battleField.scrollLeftWithBrowserWidth =
+      data.battleField.scrollLeft + data.browser.width;
   }
 
   function refreshCoords() {
-
     updateScreenScale();
 
     applyScreenScale();
 
-    data.browser.width = (window.innerWidth || document.body.clientWidth) / data.screenScale;
-    data.browser.height = (window.innerHeight || document.body.clientHeight) / data.screenScale;
+    data.browser.width =
+      (window.innerWidth || document.body.clientWidth) / data.screenScale;
+    data.browser.height =
+      (window.innerHeight || document.body.clientHeight) / data.screenScale;
 
     data.browser.eighthWidth = data.browser.width / 8;
     data.browser.fractionWidth = data.browser.width / 3;
@@ -113,23 +120,23 @@ const View = () => {
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
     if (dom.logo) {
-
       // hackish: if showing menu, ensure it is scaled to fit screen width - leaving vertical, for description text.
       let logoScale = data.screenScale * 0.85;
 
       // note: offsetWidth read
-      const renderedWidth = (dom.logo.offsetWidth * logoScale) + 16;
+      const renderedWidth = dom.logo.offsetWidth * logoScale + 16;
 
       // avoid vertical clipping post-adjustment, too. NOTE: account for zoom or transform before applying.
       // hackish: fixed offset of height for buttons and descriptive text and whatnot.
-      const renderedHeight = (dom.logo.offsetHeight * logoScale) + 96;
+      const renderedHeight = dom.logo.offsetHeight * logoScale + 96;
 
       let widthConstrained;
 
       if (renderedWidth >= data.browser.width) {
         // scale to width, not height - avoid horizontal clipping.
         // need to scale down to prevent horizontal clip
-        const proportion = (data.browser.width - renderedWidth) / data.browser.width;
+        const proportion =
+          (data.browser.width - renderedWidth) / data.browser.width;
         logoScale -= Math.abs(proportion);
         widthConstrained = true;
       }
@@ -139,19 +146,15 @@ const View = () => {
       const heightRatio = renderedHeight / data.browser.height;
 
       if (heightRatio >= maxHeightRatio) {
-
         // height constraint
-        logoScale -= (heightRatio - maxHeightRatio);
-
+        logoScale -= heightRatio - maxHeightRatio;
       } else if (!widthConstrained) {
-
         // room to grow, vertically - e.g., iPhone in landscape view
         const widthRoom = renderedWidth / data.browser.width;
         const heightRoom = renderedHeight / data.browser.height;
 
         // scale up by the lesser of the two.
         logoScale += Math.min(widthRoom, heightRoom);
-
       }
 
       // don't ever get smaller than ...
@@ -161,11 +164,12 @@ const View = () => {
       logoScale = Math.min(0.85, logoScale);
 
       // hackish: account for the "TV."
-      const isLandscape = window?.matchMedia('(orientation: landscape)')?.matches;
+      const isLandscape = window?.matchMedia(
+        '(orientation: landscape)'
+      )?.matches;
 
       // special case: scale UP in some cases, and the TV image will scale to work decently as well.
       if (isMobile) {
-
         if (isLandscape) {
           logoScale += 0.35;
         }
@@ -175,16 +179,12 @@ const View = () => {
         if (isMobile && isLandscape) {
           tvDisplay.style.zoom = 1.6;
         }
-
       } else {
-
         // just slightly smaller on desktop.
         logoScale -= 0.025;
-
       }
 
       dom.logo.style.transform = `scale3d(${logoScale}, ${logoScale}, 1)`;
-
     }
 
     if (!data.battleField.width) {
@@ -195,7 +195,8 @@ const View = () => {
       data.topBar.height = dom.topBar.offsetHeight;
     }
 
-    data.battleField.scrollLeftWithBrowserWidth = data.battleField.scrollLeft + data.browser.width;
+    data.battleField.scrollLeftWithBrowserWidth =
+      data.battleField.scrollLeft + data.browser.width;
 
     // helicopters need to know stuff, too.
     game.players.local?.refreshCoords();
@@ -209,7 +210,6 @@ const View = () => {
       game.objects.joystick.reset();
       game.players.local.centerView();
     }
-
   }
 
   function setTipsActive(active) {
@@ -223,7 +223,6 @@ const View = () => {
   }
 
   function shuffleTips() {
-
     let i, j, elements, strings;
 
     strings = [];
@@ -234,7 +233,7 @@ const View = () => {
     for (i = 0, j = elements.length; i < j; i++) {
       strings[i] = elements[i].innerText;
     }
-    
+
     data.gameTips.tips = utils.array.shuffle(strings);
 
     // dirty, dirty tricks: #game-tips-list is a `<ul>` in static HTML, but we're not rendering that way.
@@ -257,22 +256,21 @@ const View = () => {
     ].join('');
 
     refreshTipDOM();
-
   }
 
   function refreshTipDOM() {
-
     dom.gameTipNodes = dom.gameTipsList.getElementsByClassName('tip');
-    dom.animationNode = dom.gameTipsList.getElementsByClassName('animation-node')[0];
-
+    dom.animationNode =
+      dom.gameTipsList.getElementsByClassName('animation-node')[0];
   }
 
   function showNextTip() {
-
     const tips = dom.gameTipNodes;
 
     // tip 1: initially empty, then the "previous" tip for all subsequent iterations.
-    tips[0].innerHTML = !data.gameTips.tipsOffset ? '&nbsp' : data.gameTips.tips[Math.max(0, data.gameTips.tipsOffset - 1)];
+    tips[0].innerHTML = !data.gameTips.tipsOffset
+      ? '&nbsp'
+      : data.gameTips.tips[Math.max(0, data.gameTips.tipsOffset - 1)];
 
     // last tip will be undefined (one beyond .length), render empty if so.
     tips[1].innerHTML = data.gameTips.tips[data.gameTips.tipsOffset] || '&nbsp';
@@ -282,7 +280,10 @@ const View = () => {
     dom.gameTipsList.replaceChild(tips[1].cloneNode(true), tips[1]);
 
     // and the animation node, too
-    dom.gameTipsList.replaceChild(dom.animationNode.cloneNode(true), dom.animationNode);
+    dom.gameTipsList.replaceChild(
+      dom.animationNode.cloneNode(true),
+      dom.animationNode
+    );
 
     // re-fetch everything we just replaced
     refreshTipDOM();
@@ -294,7 +295,6 @@ const View = () => {
 
     // animation event: a tip has scrolled by.
     dom.animationNode.onanimationend = () => {
-
       // move first tip node (which just scrolled off to the left) to the end (to the right.)
       // it will then scroll R->L into view as the new tip.
       dom.gameTipsList.appendChild(dom.gameTipNodes[0]);
@@ -302,24 +302,27 @@ const View = () => {
 
       data.gameTips.tipsOffset++;
       showNextTip();
-
-    }
-
+    };
   }
 
   function setAnnouncement(text, delay) {
-
     if (isGameOver()) return;
 
     // prevent `undefined` from being rendered. ;)
     text = text || '';
 
-    if (text !== data.gameTips.lastAnnouncement && ((!data.gameTips.hasAnnouncement && text) || (data.gameTips.hasAnnouncement && !text))) {
-
+    if (
+      text !== data.gameTips.lastAnnouncement &&
+      ((!data.gameTips.hasAnnouncement && text) ||
+        (data.gameTips.hasAnnouncement && !text))
+    ) {
       utils.css.addOrRemove(dom.gameTips, text, css.gameTips.hasAnnouncement);
 
       // if in portrait mode, use line breaks. otherwise, single-space.
-      const replacement = (window.matchMedia?.('(orientation: portrait)')?.matches) ? '<br />' : ' ';
+      const replacement = window.matchMedia?.('(orientation: portrait)')
+        ?.matches
+        ? '<br />'
+        : ' ';
 
       text = text.replace(/\n/, replacement);
 
@@ -334,27 +337,25 @@ const View = () => {
 
       if (text) {
         // clear after an amount of time, if not -1
-        if ((delay === undefined || delay !== -1)) {
-          data.gameTips.announcementTimer = common.setFrameTimeout(setAnnouncement, delay || 5000);
+        if (delay === undefined || delay !== -1) {
+          data.gameTips.announcementTimer = common.setFrameTimeout(
+            setAnnouncement,
+            delay || 5000
+          );
         }
       }
 
       data.gameTips.hasAnnouncement = !!text;
-
     }
-
   }
 
   function assignMouseInput(player, x, y) {
-
     // assign to the appropriate helicopter, where it will be picked up.
     player.data.mouse.x = x;
     player.data.mouse.y = y;
-
   }
-  
-  function bufferMouseInput(player) {
 
+  function bufferMouseInput(player) {
     // game must be started.
     if (!game.data.started) return;
 
@@ -389,7 +390,10 @@ const View = () => {
 
     // if not overridden, apply the frame delay and "pull back" within the input buffer.
     // prevent delay from escaping array boundaries, too.
-    const offset = Math.max(0, player.data.mouseHistory.length - 1 - (noDelayedInput ? 0 : frameDelay));
+    const offset = Math.max(
+      0,
+      player.data.mouseHistory.length - 1 - (noDelayedInput ? 0 : frameDelay)
+    );
 
     // start from the end, delay / latency pushes us backward.
     const obj = player.data.mouseHistory[offset];
@@ -400,11 +404,9 @@ const View = () => {
 
     // get the helicopter data over to the other side.
     sendPlayerCoordinates(player);
-
   }
 
   function sendPlayerCoordinates(player) {
-
     // TODO: separate for human vs. CPUs?
 
     if (!net.active) return;
@@ -428,7 +430,6 @@ const View = () => {
 
     // special case: remote CPU chopper.
     if (player.data.isCPU) {
-
       // hackish: exclude scroll bizness for remote CPU.
       net.sendMessage({
         type: 'RAW_COORDS',
@@ -441,11 +442,14 @@ const View = () => {
       });
 
       return;
-
     }
 
     // only send if both are non-zero values.
-    if (!player.data.mouse.delayedInputX && !player.data.mouse.delayedInputY && gamePrefs.lock_step) {
+    if (
+      !player.data.mouse.delayedInputX &&
+      !player.data.mouse.delayedInputY &&
+      gamePrefs.lock_step
+    ) {
       // in lieu of coords data, used as a lock-step heartbeat of sorts, send a ping.
       net.sendMessage({ type: 'PING' });
       return;
@@ -461,42 +465,37 @@ const View = () => {
       scrollLeft: player.data.scrollLeft,
       scrollLeftVX: player.data.scrollLeftVX
     });
-
   }
 
   function animate() {
-
     let scrollAmount, mouseDelta;
 
     if (!game.players.local) return;
 
     // don't scroll if helicopter is respawning, or not moving.
-    if (!game.players.local.data.respawning && game.players.local.data.vX !== 0) {
-
+    if (
+      !game.players.local.data.respawning &&
+      game.players.local.data.vX !== 0
+    ) {
       // TODO: review. This is likely always true for a remote CPU player, playing "locally" via &remoteCPU=1.
       if (game.players.local.data.mouse.x === undefined) return;
 
       // is the mouse to the right, or left?
-      mouseDelta = (game.players.local.data.mouse.x - data.browser.halfWidth);
+      mouseDelta = game.players.local.data.mouse.x - data.browser.halfWidth;
 
       // how much...
       scrollAmount = mouseDelta / data.browser.halfWidth;
 
       // and scale
       setLeftScroll(scrollAmount * data.maxScroll);
-
     }
-
   }
 
   function updateFundsUI() {
-
     // based on funds, update "affordability" bits of UI.
     const playerFunds = game.objects[TYPES.endBunker][0].data.funds;
 
-    const nodes = [
-      document.getElementById('player-status-bar')
-    ];
+    const nodes = [document.getElementById('player-status-bar')];
 
     if (isMobile) {
       nodes.push(document.getElementById('mobile-controls'));
@@ -514,13 +513,10 @@ const View = () => {
       }
     }
 
-    nodes.forEach(o => {
-
+    nodes.forEach((o) => {
       if (toAdd.length) utils.css.add(o, ...toAdd);
       if (toRemove.length) utils.css.remove(o, ...toRemove);
-
     });
-
   }
 
   function getTouchEvent(touchEvent) {
@@ -528,13 +524,14 @@ const View = () => {
   }
 
   function registerTouchEvent(touchEvent, options) {
-
     if (!touchEvent || touchEvent.identifier === undefined) return;
 
     // keep track of a touch event, and its type.
     const id = touchEvent.identifier;
 
-    data.touchEvents[id] = { /* type, target */ };
+    data.touchEvents[id] = {
+      /* type, target */
+    };
 
     // Object.assign()-like copying of properties.
     for (const option in options) {
@@ -545,7 +542,6 @@ const View = () => {
 
     // special case for UI on buttons.
     if (target && target.nodeName === 'A') {
-
       utils.css.add(target, css.buttonActive);
 
       // hackish: mobile inventory controls
@@ -558,55 +554,61 @@ const View = () => {
 
       // data-keyMap values of interest
       const keyMapLabel = target.getAttribute('data-keyMap');
-      const inventoryTypes = ['tank', 'missileLauncher', 'van', 'infantry', 'engineer'];
+      const inventoryTypes = [
+        'tank',
+        'missileLauncher',
+        'van',
+        'infantry',
+        'engineer'
+      ];
 
       if (inventoryTypes.includes(keyMapLabel)) {
         // keep inventory showing for a few seconds
         setMobileInventoryTimer();
       }
-
     }
-
   }
 
   function setMobileInventoryTimer() {
-
     clearMobileInventoryTimer();
 
-    data.mobileInventoryTimer = common.setFrameTimeout(hideMobileInventory, gameType === 'tutorial' ? 6000 : 3000);
-
+    data.mobileInventoryTimer = common.setFrameTimeout(
+      hideMobileInventory,
+      gameType === 'tutorial' ? 6000 : 3000
+    );
   }
 
   function hideMobileInventory() {
-
     data.mobileInventoryActive = false;
 
     updateMobileInventory();
 
     clearMobileInventoryTimer();
-    
   }
 
   function clearMobileInventoryTimer() {
-
     if (!data.mobileInventoryTimer) return;
 
     data.mobileInventoryTimer.reset();
     data.mobileInventoryTimer = null;
-
   }
 
   function updateMobileInventory() {
-
-    utils.css.addOrRemove(dom.mobileControls, data.mobileInventoryActive, css.inventoryActive);
+    utils.css.addOrRemove(
+      dom.mobileControls,
+      data.mobileInventoryActive,
+      css.inventoryActive
+    );
 
     // weapons are on when inventory is off, etc.
-    utils.css.addOrRemove(dom.mobileControls, !data.mobileInventoryActive, css.weaponsActive);
-
+    utils.css.addOrRemove(
+      dom.mobileControls,
+      !data.mobileInventoryActive,
+      css.weaponsActive
+    );
   }
 
   function toggleMobileInventory() {
-
     data.mobileInventoryActive = !data.mobileInventoryActive;
 
     updateMobileInventory();
@@ -617,11 +619,9 @@ const View = () => {
     } else {
       clearMobileInventoryTimer();
     }
-
   }
 
   function clearTouchEvent(touchEvent) {
-
     if (!touchEvent || !touchEvent.identifier) return;
 
     const target = data.touchEvents[touchEvent.identifier]?.target;
@@ -632,11 +632,9 @@ const View = () => {
     }
 
     data.touchEvents[touchEvent.identifier] = null;
-
   }
 
   function handleTouchStart(targetTouch, e) {
-   
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = targetTouch && targetTouch.target;
 
@@ -650,18 +648,14 @@ const View = () => {
 
     // touch should always have a target, but just in case...
     if (target && target.nodeName === 'A') {
-
       // it's a link; treat as a button. ignore subsequent move events.
       registerTouchEvent(targetTouch, {
         type: 'press',
         target
       });
-
     } else {
-
       // ignore if the joystick is already active.
       if (game.objects.joystick && !game.objects.joystick.data.active) {
-
         registerTouchEvent(targetTouch, {
           type: 'joystick'
         });
@@ -670,9 +664,7 @@ const View = () => {
 
         // and exit.
         return false;
-
       }
-
     }
 
     // some sort of button - inventory, or helicopter controls.
@@ -699,11 +691,9 @@ const View = () => {
     keyboardMonitor.keydown({ keyCode });
 
     return true;
-
   }
 
   function handleTouchEnd(touchEvent, e) {
-
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = touchEvent?.target;
 
@@ -738,8 +728,12 @@ const View = () => {
     if (registeredEvent?.type === 'joystick') {
       game.objects.joystick.end(touchEvent);
     }
-    
-    if (!data.ignoreMouseMove && navigator.standalone && registeredEvent?.type === 'press') {
+
+    if (
+      !data.ignoreMouseMove &&
+      navigator.standalone &&
+      registeredEvent?.type === 'press'
+    ) {
       /**
        * Extra-special case: touching on gun or bomb controls, etc.,
        * can fire a `mousemove()` on touch end on iOS 17 in a home screen app.
@@ -768,101 +762,93 @@ const View = () => {
   }
 
   function updateScreenScale() {
-
     if (disableScaling) return;
-  
+
     const innerHeight = window.innerHeight;
-  
+
     let localWorldHeight = 410;
-  
+
     // for testing game without any scaling applied
     if (disableScaling) {
-  
       data.screenScale = 1;
-  
     } else {
-  
-      data.screenScale = (innerHeight / localWorldHeight);
-  
+      data.screenScale = innerHeight / localWorldHeight;
     }
-  
+
     prefsManager.updateScreenScale();
-  
   }
-  
+
   function applyScreenScale() {
-  
     if (disableScaling) return;
-  
+
     /**
      * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
      * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
      * Safari 15 still scales and has "fuzzy" text via scale3d(), but style.zoom is slower.
-     * 
+     *
      * 04/2020: It seems `style.zoom` is the way to go for performance, overall.
      * Browsers seem to understand that this means "just magnify everything" in an efficient way.
-     * 
+     *
      * 10/2013: Safari 6.0.5 scales text after rasterizing via transform: scale3d(), thus it looks crap.
      * Using document[element].zoom is OK, however.
-     * 
+     *
      * TESTING
      * Force transform-based scaling with #forceTransform=1
      * Force zoom-based scaling with #forceZoom=1
      */
-  
+
     // Pardon the non-standard formatting in exchange for legibility.
-    if (!forceZoom && (
+    if (
+      !forceZoom &&
       // URL param: prefer transform-based scaling
-      forceTransform
-  
-      // Firefox clips some of the world when using style.zoom.
-      || isFirefox
-    
-      // Chrome can do zoom, but mentions Safari in its userAgent.
-      // Safari does not do well with zoom.
-      || (!isChrome && isSafari)
-  
-      // Assume that on mobile, transform (GPU) is the way to go
-      || isMobile
-    )) {
-  
+      (forceTransform ||
+        // Firefox clips some of the world when using style.zoom.
+        isFirefox ||
+        // Chrome can do zoom, but mentions Safari in its userAgent.
+        // Safari does not do well with zoom.
+        (!isChrome && isSafari) ||
+        // Assume that on mobile, transform (GPU) is the way to go
+        isMobile)
+    ) {
       if (debug) console.log('using transform-based scaling');
-  
+
       data.usingZoom = false;
-  
-      dom.worldWrapper._style.setProperty('width', `${Math.floor((window.innerWidth || document.body.clientWidth) * (1 / data.screenScale))}px`);
+
+      dom.worldWrapper._style.setProperty(
+        'width',
+        `${Math.floor(
+          (window.innerWidth || document.body.clientWidth) *
+            (1 / data.screenScale)
+        )}px`
+      );
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
-      dom.worldWrapper._style.setProperty('transform', `scale3d(${data.screenScale}, ${data.screenScale}, 1)`);
+      dom.worldWrapper._style.setProperty(
+        'transform',
+        `scale3d(${data.screenScale}, ${data.screenScale}, 1)`
+      );
       dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
-  
     } else {
-  
       if (debug) console.log('using style.zoom-based scaling');
-  
+
       data.usingZoom = true;
- 
+
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
       dom.aa.style.zoom = `${data.screenScale * 100}%`;
-  
     }
-  
+
     game.objects.funds.updateScale();
-  
   }
 
   function renderMissileText(character, mode) {
-
     if (mode === data.missileMode) return character;
     return `<span style="opacity:0.5">${character}</span>`;
-
   }
 
   function setMissileMode(mode) {
-
     if (data.missileMode === mode) return;
-    
+
     // swap in new class, removing old one
     utils.css.swap(document.getElementById('world'), data.missileMode, mode);
 
@@ -871,26 +857,23 @@ const View = () => {
     // determine which letter to highlight.
     // TODO: this is ugly, non-DRY and yuck because it duplicates the markup in `index.html`.
     const html = [
-      renderMissileText('X', defaultMissileMode) + '<span class="alternate-missiles">',
+      renderMissileText('X', defaultMissileMode) +
+        '<span class="alternate-missiles">',
       renderMissileText('C', rubberChickenMode),
-      renderMissileText('B', bananaMode) + '</span>',
+      renderMissileText('B', bananaMode) + '</span>'
     ].join('<span class="divider">|</span>');
 
-    document.querySelector('#stats-bar .missiles .letter-block').innerHTML = html;
-
+    document.querySelector('#stats-bar .missiles .letter-block').innerHTML =
+      html;
   }
 
   function handleChatInput(e) {
-
     // chat feature requires networking.
     if (!net.active) return;
 
     if (!data.chatVisible) {
-
       showChatInput();
-
     } else {
-
       // special case: visible, but ESC pressed - bail.
       if (e.keyCode === 27) {
         hideChatInput();
@@ -898,38 +881,31 @@ const View = () => {
       }
 
       events.sendChatMessage();
-
     }
-
   }
 
   function showChatInput() {
-
     dom.messageBox.style.display = 'block';
     dom.messageInput.focus();
     data.chatVisible = true;
-
   }
 
   function hideChatInput() {
-
     dom.messageInput.blur();
     dom.messageBox.style.display = 'none';
     data.chatVisible = false;
-
   }
 
   function addEvents() {
-
     /**
      * Mouse, touch, window event handlers.
-     * 
+     *
      * NOTE: Touch events should not trigger "legacy" mouse events, provided
      * that preventDefault() is called within the touch event handler.
-     * 
+     *
      * Additionally: Touch events are not exclusive to mobile or tablets.
      * e.g., Dell XPS 13 (laptop) also has a touch-capable screen.
-     * 
+     *
      * tl;dr, attempting detection is unwise; listen for and handle all.
      */
 
@@ -950,11 +926,9 @@ const View = () => {
     utils.events.add(screen?.orientation, 'change', events.orientationChange);
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
-
   }
 
   function initDOM() {
-
     dom.worldWrapper = sprites.getWithStyle('world-wrapper');
     dom.aa = document.getElementById('aa');
     dom.battleField = sprites.getWithStyle('battlefield');
@@ -976,11 +950,9 @@ const View = () => {
       dom.mobileControls.remove();
       dom.mobileControls = null;
     }
-
   }
 
   function initView() {
-
     initDOM();
 
     addEvents();
@@ -996,7 +968,6 @@ const View = () => {
 
     // bring the logo up.
     dom.logo.style.opacity = 1;
-
   }
 
   css = {
@@ -1034,7 +1005,7 @@ const View = () => {
     },
     touch: {
       x: 0,
-      y: 0,
+      y: 0
     },
     touchEvents: {},
     world: {
@@ -1087,108 +1058,99 @@ const View = () => {
   };
 
   events = {
-
     blur() {
-
-      if (data.noPause || net.active || net.remoteID || (net.connected && net.isHost)) return;
+      if (
+        data.noPause ||
+        net.active ||
+        net.remoteID ||
+        (net.connected && net.isHost)
+      )
+        return;
 
       game.pause();
 
       // hackish: reset any lingering touch state.
       data.touchEvents = [];
-
     },
 
     focus() {
-
       game.resume();
-
     },
 
     mousemove(e) {
-
-      if (data.ignoreMouseEvents || data.ignoreMouseMove || game.players?.local?.data?.isCPU) return;
+      if (
+        data.ignoreMouseEvents ||
+        data.ignoreMouseMove ||
+        game.players?.local?.data?.isCPU
+      )
+        return;
 
       if (!net.active) {
-
         data.mouse.x = e.clientX / data.screenScale;
         data.mouse.y = e.clientY / data.screenScale;
 
         if (game.objects.editor) {
           game.objects.editor.events.mousemove(e);
         }
-
       } else {
-
         // record here; this gets processed within the game loop and put into a buffer.
         data.mouse.delayedInputX = e.clientX / data.screenScale;
         data.mouse.delayedInputY = e.clientY / data.screenScale;
 
         if (game.players.local) {
-          game.players.local.data.mouse.delayedInputX = data.mouse.delayedInputX;
-          game.players.local.data.mouse.delayedInputY = data.mouse.delayedInputY;
+          game.players.local.data.mouse.delayedInputX =
+            data.mouse.delayedInputX;
+          game.players.local.data.mouse.delayedInputY =
+            data.mouse.delayedInputY;
         }
-        
       }
-
     },
 
     sendChatMessage() {
-
       const input = dom.messageInput;
       const text = input.value.trim();
 
       if (text.length) {
-
         // slash command?
         // NOTE: explicit pass of false, so we send a chat message with this local command call.
         const fromNetwork = false;
         const slashCommand = common.parseSlashCommand(text, fromNetwork);
 
         if (slashCommand) {
-
           slashCommand();
-
         } else {
-
           net.sendMessage({ type: 'CHAT', text });
 
           // you only send love letters to your partner, of course.
           const emoji = net.coop ? '💌' : '📮';
-          game.objects.notifications.add(`${emoji} ${common.basicEscape(text)}`);
-
+          game.objects.notifications.add(
+            `${emoji} ${common.basicEscape(text)}`
+          );
         }
 
         input.value = '';
-
       }
 
       hideChatInput();
 
       return false;
-
     },
 
     mouseup(e) {
-
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mouseup(e);
-     
     },
 
     contextmenu(e) {
-
       // try to prevent inadvertent context menu actions, e.g., ctrl + left-click.
       // try to cancel / ignore, unless this is on a link.
       if (e.target.nodeName !== 'A' && !e.button) {
         e.preventDefault();
         return false;
       }
-
     },
 
     touchstart(e) {
-
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mousedown(e);
 
@@ -1211,11 +1173,9 @@ const View = () => {
 
       // always prevent default tap-and-hold, selection and whatnot.
       e.preventDefault();
-
     },
 
     touchmove(e) {
-
       // primitive handling: take the first event.
       const touch = e.changedTouches?.[0];
 
@@ -1237,7 +1197,6 @@ const View = () => {
     },
 
     touchend(e) {
-
       // pass-thru if game menu is showing
       if (!game.data.started) return true;
 
@@ -1249,33 +1208,31 @@ const View = () => {
           handleTouchEnd(changed[i], e);
         }
       }
-
     },
 
     resize() {
-
       refreshCoords();
 
       if (game.objects.editor) game.objects.editor.events.resize();
 
       game.objects.gameLoop.resetFPS();
-
     },
 
     orientationChange() {
-
       if (!isMobile) return;
 
-      data.browser.isPortrait = !!window.matchMedia?.('(orientation: portrait)')?.matches,
-      data.browser.isLandscape = !!window.matchMedia?.('(orientation: landscape)')?.matches
-     
+      (data.browser.isPortrait = !!window.matchMedia?.(
+        '(orientation: portrait)'
+      )?.matches),
+        (data.browser.isLandscape = !!window.matchMedia?.(
+          '(orientation: landscape)'
+        )?.matches);
+
       refreshCoords();
 
       // iOS Safari (possibly "home screen app" especially?) needs an additional delay for layout, perhaps due to screen rotation animation.
       window.setTimeout(refreshCoords, 250);
-
     }
-
   };
 
   initView();
@@ -1298,7 +1255,6 @@ const View = () => {
   };
 
   return exports;
-
 };
 
 export { View };
