@@ -1,3 +1,7 @@
 {
-  "singleQuote": true
+  "singleQuote": true,
+  "trailingComma": "none",
+  "quoteProps": "consistent",
+  "bracketSameLine": true,
+  "bracketSpacing": true
 }

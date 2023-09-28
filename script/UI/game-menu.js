@@ -60,7 +60,7 @@ if (customLevel) {
       if (alignment) entry.push(alignmentMap[alignment]);
 
       // add all the X offsets
-      // ['bunker', 'r', 2048]
+      // ['bunker', 'r', [1024, 2048, 4096]]
       customLevel[item].forEach((offset) => {
         newData.push([
          ...entry,

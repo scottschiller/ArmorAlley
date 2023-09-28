@@ -35,28 +35,83 @@ function dependsOnGameType(levelName) {
 }
 
 function normalizeLevelData(data) {
+  let results = [];
 
-  let items = [];
+  // new "version 3" parsing has an array of { objects }, not an array of arrays.
+  if (!data[0].length) {
+    const groupMap = {
+      l: 'left',
+      n: 'neutral',
+      r: 'right',
+      s: 'static', // terrain items
+      d: 'dynamic', // inline function
+      o: 'obscured' // some landing pads
+    };
 
+    // special case
+    const extraParams = {
+      obscured: { obscured: true }
+    };
+
+    data.forEach((entry) => {
+      Object.keys(entry).forEach((group) => {
+        // skip over the type itself
+        if (group === 't') return;
+
+        entry[group].forEach((item) => {
+          /**
+           * Special case: "dynamic" level data - where a function is run that returns results.
+           * e.g., groups of turrets range from one to three depending on game difficulty.
+           */
+          if (item instanceof Function) {
+            // flag the original level, so re-renders occur on game difficulty change
+            data.hasDynamicData = true;
+            item = item();
+            // at this point, item is a nested array.
+            // hackish: replace item[n][1], typically l|r|n etc., with full string
+            item.forEach((n) => {
+              if (groupMap[n[1]]) {
+                n[1] = groupMap[n[1]];
+              }
+            });
+            results = results.concat(item);
+            return;
+          }
+
+          if (group === 's') {
+            // static items (e.g., terrain): only two args.
+            results.push([entry.t, item]);
+          } else {
+            const kind = groupMap[group];
+            const args = [entry.t, kind, item];
+            // e.g., obscured landing pad
+            if (extraParams[kind]) {
+              args.push(extraParams[kind]);
+            }
+            results.push(args);
+          }
+        });
+      });
+    });
+
+    return results;
+  }
+
+  // "V2" level data - e,g., from level editor
   data?.forEach((item) => {
-
     /**
      * Special case: "dynamic" level data - where a function is run that returns results.
      * e.g., groups of turrets range from one to three depending on game difficulty.
      */
 
     if (item instanceof Function) {
-
       data.hasDynamicData = true;
 
       // append this array to the result.
-      items = items.concat(item());
-
+      results = results.concat(item());
     } else {
-
       // check all items for "dynamic" level data via functions, too.
       const parsed = item.map((element) => {
-
         if (element instanceof Function) {
           // flag this level, so changing game type causes a re-render
           data.hasDynamicData = true;
@@ -64,17 +119,13 @@ function normalizeLevelData(data) {
         }
 
         return element;
-
       });
 
-      items.push(parsed);
-
+      results.push(parsed);
     }
-
   });
 
-  return items;
-  
+  return results;
 }
 
 function previewLevel(levelName, excludeVehicles) {
@@ -337,2130 +388,2134 @@ function selectByDifficulty(optionsArray) {
 
 }
 
-const n = 'neutral',
-l = 'left',
-r = 'right';
+// a few local shortcuts
+const n = 'n',
+  l = 'l',
+  r = 'r';
 
 originalLevels = {
-
   'Tutorial': [
-    [ 'end-bunker', l, 8 ],
-    [ 'base', l, 160 ],
-    [ 'landing-pad', l, 300 ],
-    [ 'cloud', 512 ],
-    [ 'bunker', r, 1024 ],
-    [ 'bunker', l, 1536 ],
-    [ 'bunker', l, 2048 ],
-    [ 'bunker', l, 2560 ],
-    [ 'bunker', l, 3072 ],
-    [ 'super-bunker', r, 3328 ],
-    [ 'landing-pad', l, 3806 ],
-    [ 'balloon', l, 3840 ],
-    [ 'cloud', 3840 ],
-    [ 'balloon', l, 4352 ],
-    [ 'cloud', 4352 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 4608 ],
-    [ 'cloud', 4608 ],
-    [ 'balloon', l, 4864 ],
-    [ 'cloud', 4864 ],
-    [ 'bunker', r, 5120 ],
-    [ 'bunker', r, 5632 ],
-    [ 'bunker', r, 6656 ],
-    [ 'landing-pad', r, 7800 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8144 ],
-    [ 'right-arrow-sign', -48 ],
-    [ 'tree', 660 ],
-    [ 'tree', 2110 ],
-    [ 'tree', 2460 ],
-    [ 'tree', 2700 ],
-    [ 'tree', 4608 ],
-    [ 'tree', 4820 ],
-    [ 'tree', 5110 ],
-    [ 'tree', 4017 ],
-    [ 'tree', 4337 ],
-    [ 'tree', 6736 ],
-    [ 'tree', 6800 ],
-    [ 'tree', 7070 ],
-    [ 'tree', 7325 ],
-    [ 'palm-tree', 860 ],
-    [ 'palm-tree', 1120 ],
-    [ 'palm-tree', 1390 ],
-    [ 'palm-tree', 1565 ],
-    [ 'palm-tree', 2260 ],
-    [ 'palm-tree', 3400 ],
-    [ 'palm-tree', 3490 ],
-    [ 'palm-tree', 4550 ],
-    [ 'palm-tree', 4850 ],
-    [ 'palm-tree', 3964 ],
-    [ 'palm-tree', 4247 ],
-    [ 'palm-tree', 6888 ],
-    [ 'palm-tree', 7310 ],
-    [ 'barb-wire', 918 ],
-    [ 'barb-wire', 5200 ],
-    [ 'rock2', 1280 ],
-    [ 'flower', 1850 ],
-    [ 'flower', 7500 ],
-    [ 'gravestone', 2150 ],
-    [ 'gravestone', 7038 ],
-    [ 'gravestone', 7160 ],
-    [ 'checkmark-grass', 4120 ],
-    [ 'grave-cross', 4970 ],
-    [ 'grave-cross', 5275 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    [ 'turret', n, 475 ],
-    [ 'turret', n, 3456 ],
-    [ 'turret', n, 4216 ]
+    {
+      t: 'balloon',
+      l: [3840, 4352, 4608, 4864]
+    },
+    {
+      t: 'barb-wire',
+      s: [918, 5200]
+    },
+    {
+      t: 'base',
+      l: [160],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1024, 4608, 5120, 5632, 6656],
+      l: [1536, 2048, 2560, 3072]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [4120]
+    },
+    {
+      t: 'cloud',
+      s: [512, 3840, 4352, 4608, 4864]
+    },
+    {
+      t: 'end-bunker',
+      l: [8],
+      r: [8144]
+    },
+    {
+      t: 'flower',
+      s: [1850, 7500]
+    },
+    {
+      t: 'grave-cross',
+      s: [4970, 5275]
+    },
+    {
+      t: 'gravestone',
+      s: [2150, 7038, 7160]
+    },
+    {
+      t: 'landing-pad',
+      l: [300, 3806],
+      r: [7800]
+    },
+    {
+      t: 'left-arrow-sign',
+      s: [7700, 8208]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        860, 1120, 1390, 1565, 2260, 3400, 3490, 4550, 4850, 3964, 4247, 6888,
+        7310
+      ]
+    },
+    {
+      t: 'right-arrow-sign',
+      s: [-48]
+    },
+    {
+      t: 'rock2',
+      s: [1280]
+    },
+    {
+      t: 'super-bunker',
+      r: [3328]
+    },
+    {
+      t: 'tree',
+      s: [
+        660, 2110, 2460, 2700, 4608, 4820, 5110, 4017, 4337, 6736, 6800, 7070,
+        7325
+      ]
+    },
+    {
+      t: 'turret',
+      n: [475, 3456, 4216]
+    }
   ],
 
   'demo 1': [
-    [ 'balloon', n, 1792 ],
-    [ 'balloon', n, 2048 ],
-    [ 'balloon', n, 2304 ],
-    [ 'end-bunker', l, 12 ],
-    [ 'base', l, 96 ],
-    [ 'landing-pad', l, 160 ],
-    [ 'landing-pad', r, 4000 ],
-    [ 'base', r, 4084 ],
-    [ 'end-bunker', r, 4084 ],
-    [ 'bunker', l, 512 ],
-    [ 'turret', l, 768 ],
-    [ 'bunker', l, 1024 ],
-    [ 'turret', l, 1280 ],
-    [ 'bunker', l, 1536 ],
-    [ 'super-bunker', r, 2048 ],
-    [ 'bunker', r, 2240 ],
-    [ 'turret', r, 2560 ],
-    [ 'bunker', r, 2816 ],
-    [ 'bunker', r, 3072 ],
-    [ 'turret', r, 3328 ]
+    {
+      t: 'balloon',
+      n: [1792, 2048, 2304]
+    },
+    {
+      t: 'base',
+      l: [96],
+      r: [4084]
+    },
+    {
+      t: 'bunker',
+      l: [512, 1024, 1536],
+      r: [2240, 2816, 3072]
+    },
+    {
+      t: 'end-bunker',
+      l: [12],
+      r: [4084]
+    },
+    {
+      t: 'landing-pad',
+      l: [160],
+      r: [4000]
+    },
+    {
+      t: 'super-bunker',
+      r: [2048]
+    },
+    {
+      t: 'turret',
+      l: [768, 1280],
+      r: [2560, 3328]
+    }
   ],
 
   'demo 2': [
-    [ 'balloon', n, 1792 ],
-    [ 'balloon', n, 2048 ],
-    [ 'balloon', n, 2304 ],
-    [ 'end-bunker', l, 12 ],
-    [ 'base', l, 96 ],
-    [ 'landing-pad', l, 160 ],
-    [ 'landing-pad', r, 3936 ],
-    [ 'base', r, 4000 ],
-    [ 'end-bunker', r, 4084 ],
-    [ 'landing-pad', n, 2048 ],
-    [ 'bunker', r, 994 ],
-    [ 'super-bunker', r, 1024 ],
-    [ 'bunker', r, 1054 ],
-    [ 'turret', r, 984 ],
-    [ 'turret', r, 1084 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 1792 ],
-    [ 'bunker', l, 1984 ],
-    [ 'bunker', l, 1856 ],
-    [ 'bunker', r, 2112 ],
-    [ 'bunker', r, 2176 ],
-    [ 'turret', r, 2304 ],
-    [ 'turret', r, 2560 ],
-    [ 'bunker', r, 3042 ],
-    [ 'super-bunker', r, 3072 ],
-    [ 'bunker', r, 3102 ],
-    [ 'turret', r, 3032 ],
-    [ 'turret', r, 3132 ]
+    {
+      t: 'balloon',
+      n: [1792, 2048, 2304]
+    },
+    {
+      t: 'base',
+      l: [96],
+      r: [4000]
+    },
+    {
+      t: 'bunker',
+      r: [994, 1054, 2112, 2176, 3042, 3102],
+      l: [1984, 1856]
+    },
+    {
+      t: 'end-bunker',
+      l: [12],
+      r: [4084]
+    },
+    {
+      t: 'landing-pad',
+      l: [160],
+      r: [3936],
+      n: [2048]
+    },
+    {
+      t: 'super-bunker',
+      r: [1024, 3072]
+    },
+    {
+      t: 'turret',
+      r: [984, 1084, 2304, 2560, 3032, 3132],
+      l: [1536, 1792]
+    }
   ],
 
   'demo 3': [
-    [ 'balloon', n, 1792 ],
-    [ 'balloon', n, 2048 ],
-    [ 'balloon', n, 2304 ],
-    [ 'end-bunker', l, 12 ],
-    [ 'base', l, 96 ],
-    [ 'landing-pad', l, 160 ],
-    [ 'landing-pad', r, 3936 ],
-    [ 'base', r, 4000 ],
-    [ 'end-bunker', r, 4084 ],
-    [ 'turret', l, 256 ],
-    [ 'turret', l, 512 ],
-    [ 'turret', l, 768 ],
-    [ 'super-bunker', l, 1024 ],
-    [ 'turret', l, 1104 ],
-    [ 'turret', l, 1136 ],
-    [ 'bunker', l, 1536 ],
-    [ 'bunker', l, 1792 ],
-    [ 'turret', l, 2048 ],
-    [ 'turret', l, 2016 ],
-    [ 'turret', r, 2048 ],
-    [ 'turret', r, 2080 ],
-    [ 'super-bunker', r, 2304 ],
-    [ 'super-bunker', r, 2384 ],
-    [ 'bunker', r, 2560 ],
-    [ 'bunker', r, 2816 ],
-    [ 'super-bunker', r, 3072 ],
-    [ 'turret', r, 2992 ],
-    [ 'turret', r, 2960 ],
-    [ 'turret', r, 3328 ],
-    [ 'turret', r, 3584 ],
-    [ 'turret', r, 3840 ]
+    {
+      t: 'balloon',
+      n: [1792, 2048, 2304]
+    },
+    {
+      t: 'base',
+      l: [96],
+      r: [4000]
+    },
+    {
+      t: 'bunker',
+      l: [1536, 1792],
+      r: [2560, 2816]
+    },
+    {
+      t: 'end-bunker',
+      l: [12],
+      r: [4084]
+    },
+    {
+      t: 'landing-pad',
+      l: [160],
+      r: [3936]
+    },
+    {
+      t: 'super-bunker',
+      l: [1024],
+      r: [2304, 2384, 3072]
+    },
+    {
+      t: 'turret',
+      l: [256, 512, 768, 1104, 1136, 2048, 2016],
+      r: [2048, 2080, 2992, 2960, 3328, 3584, 3840]
+    }
   ],
 
   'demo 4': [
-    [ 'balloon', n, 1792 ],
-    [ 'balloon', n, 2048 ],
-    [ 'balloon', n, 2304 ],
-    [ 'end-bunker', l, 12 ],
-    [ 'base', l, 96 ],
-    [ 'landing-pad', l, 160 ],
-    [ 'landing-pad', r, 3936 ],
-    [ 'base', r, 4000 ],
-    [ 'end-bunker', r, 4084 ],
-    [ 'bunker', l, 512 ],
-    [ 'turret', l, 576 ],
-    [ 'bunker', l, 640 ],
-    [ 'turret', l, 1024 ],
-    [ 'turret', l, 1040 ],
-    [ 'bunker', l, 1280 ],
-    [ 'turret', l, 1344 ],
-    [ 'bunker', l, 1408 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 1552 ],
-    [ 'bunker', l, 1760 ],
-    [ 'bunker', l, 1792 ],
-    [ 'bunker', r, 2304 ],
-    [ 'bunker', r, 2336 ],
-    [ 'turret', r, 2544 ],
-    [ 'turret', r, 2560 ],
-    [ 'bunker', r, 2688 ],
-    [ 'turret', r, 2752 ],
-    [ 'bunker', r, 2816 ],
-    [ 'turret', r, 3312 ],
-    [ 'turret', r, 3328 ],
-    [ 'bunker', r, 3456 ],
-    [ 'turret', r, 3520 ],
-    [ 'bunker', r, 3584 ]
+    {
+      t: 'balloon',
+      n: [1792, 2048, 2304]
+    },
+    {
+      t: 'base',
+      l: [96],
+      r: [4000]
+    },
+    {
+      t: 'bunker',
+      l: [512, 640, 1280, 1408, 1760, 1792],
+      r: [2304, 2336, 2688, 2816, 3456, 3584]
+    },
+    {
+      t: 'end-bunker',
+      l: [12],
+      r: [4084]
+    },
+    {
+      t: 'landing-pad',
+      l: [160],
+      r: [3936]
+    },
+    {
+      t: 'turret',
+      l: [576, 1024, 1040, 1344, 1536, 1552],
+      r: [2544, 2560, 2752, 3312, 3328, 3520]
+    }
   ],
 
   // Based on Practice Battle #1: Boot Camp, Level 1
   'Cake Walk': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'infantry', l, 448 ],
-    [ 'tank', l, 576 ],
-    [ 'tank', l, 640 ],
-    [ 'bunker', r, 1536 ],
-    [ 'tank', r, 1536 ],
-    [ 'tank', r, 1600 ],
-    [ 'tank', r, 1664 ],
-    [ 'bunker', l, 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'bunker', l, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'tank', r, 2688 ],
-    [ 'bunker', l, 3072 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'balloon', l, 4096 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 4608 ],
-    [ 'tank', r, 4736 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', l, 5120 ],
-    [ 'infantry', r, 5120 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', l, 5632 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'bunker', l, 6656 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    // [ 'right-arrow-sign', -16 ],
-    // [ 'right-arrow-sign', 550 ],
-    // [ 'tree', 505 ],
-    [ 'tree', 2624 ],
-    [ 'tree', 2976 ],
-    [ 'tree', 4271 ],
-    [ 'tree', 4607 ],
-    [ 'tree', 4813 ],
-    [ 'tree', 5110 ],
-    [ 'tree', 6015 ],
-    [ 'tree', 6332 ],
-    [ 'tree', 6734 ],
-    [ 'tree', 6796 ],
-    [ 'tree', 7060 ],
-    [ 'tree', 7348 ],
-    // [ 'left-arrow-sign', 7700 ],
-    // [ 'left-arrow-sign', 8208 ],
-    [ 'palm-tree', 705 ],
-    [ 'palm-tree', 1634 ],
-    [ 'palm-tree', 1883 ],
-    [ 'palm-tree', 2076 ],
-    [ 'palm-tree', 2084 ],
-    [ 'palm-tree', 2792 ],
-    [ 'palm-tree', 3219 ],
-    [ 'palm-tree', 3879 ],
-    [ 'palm-tree', 3929 ],
-    [ 'palm-tree', 4375 ],
-    [ 'palm-tree', 4482 ],
-    [ 'palm-tree', 4851 ],
-    [ 'palm-tree', 5931 ],
-    [ 'palm-tree', 6246 ],
-    [ 'palm-tree', 6884 ],
-    [ 'palm-tree', 7335 ],
-    [ 'checkmark-grass', 1200 ],
-    [ 'checkmark-grass', 4205 ],
-    [ 'flowers', 1426 ],
-    [ 'rock2', 1774 ],
-    [ 'flower', 2361 ],
-    [ 'gravestone', 2663 ],
-    [ 'gravestone', 7029 ],
-    [ 'gravestone', 7150 ],
-    [ 'grave-cross', 4971 ],
-    [ 'grave-cross', 5282 ],
-    [ 'barb-wire', 5208 ],
-    [ 'van', l, 160 ],
-    [ 'van', l, 512 ],
-    [ 'van', r, 1728 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [5208]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1536, 4608],
+      l: [2048, 2560, 3072, 3584, 5120, 5632, 6656]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [1200, 4205]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
+        5558, 5558, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [2361]
+    },
+    {
+      t: 'flowers',
+      s: [1426]
+    },
+    {
+      t: 'grave-cross',
+      s: [4971, 5282]
+    },
+    {
+      t: 'gravestone',
+      s: [2663, 7029, 7150]
+    },
+    {
+      t: 'infantry',
+      l: [448],
+      r: [5120]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        705, 1634, 1883, 2076, 2084, 2792, 3219, 3879, 3929, 4375, 4482, 4851,
+        5931, 6246, 6884, 7335
+      ]
+    },
+    {
+      t: 'rock2',
+      s: [1774]
+    },
+    {
+      t: 'tank',
+      l: [576, 640],
+      r: [1536, 1600, 1664, 2688, 4736]
+    },
+    {
+      t: 'tree',
+      s: [
+        2624, 2976, 4271, 4607, 4813, 5110, 6015, 6332, 6734, 6796, 7060, 7348
+      ]
+    },
+    {
+      t: 'van',
+      l: [160, 512],
+      r: [1728]
+    }
   ],
 
   // Based On Practice Battle #2: Boot Camp, Level 2
   'One Gun': [
-    [ 'end-bunker', l, 24 ],
-    [ 'missile-launcher', l, 64 ],
-    [ 'base', l, 192 ],
-    [ 'infantry', l, 256 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'tank', l, 512 ],
-    [ 'tank', l, 640 ],
-    [ 'bunker', l, 768 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'bunker', l, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'bunker', l, 3072 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3584 ],
-    [ 'bunker', l, 3712 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'balloon', l, 4096 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'bunker', r, 4480 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5120 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', r, 5632 ],
-    [ 'bunker', r, 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'bunker', r, 7168 ],
-    [ 'bunker', r, 7424 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'tree', 3493 ],
-    [ 'tree', 3550 ],
-    [ 'tree', 3643 ],
-    [ 'tree', 3705 ],
-    [ 'tree', 3710 ],
-    [ 'tree', 3729 ],
-    [ 'tree', 3873 ],
-    [ 'tree', 4395 ],
-    [ 'tree', 4614 ],
-    [ 'tree', 4655 ],
-    [ 'tree', 4739 ],
-    [ 'tree', 4797 ],
-    [ 'tree', 5189 ],
-    [ 'tree', 5264 ],
-    [ 'tree', 5771 ],
-    [ 'tree', 6522 ],
-    [ 'tree', 6722 ],
-    [ 'palm-tree', 490 ],
-    [ 'palm-tree', 1918 ],
-    [ 'palm-tree', 2960 ],
-    [ 'palm-tree', 3015 ],
-    [ 'palm-tree', 3139 ],
-    [ 'palm-tree', 3187 ],
-    [ 'palm-tree', 3194 ],
-    [ 'palm-tree', 3789 ],
-    [ 'palm-tree', 3965 ],
-    [ 'palm-tree', 4135 ],
-    [ 'palm-tree', 4149 ],
-    [ 'palm-tree', 4211 ],
-    [ 'palm-tree', 4328 ],
-    [ 'palm-tree', 4387 ],
-    [ 'palm-tree', 4872 ],
-    [ 'palm-tree', 4918 ],
-    [ 'palm-tree', 5106 ],
-    [ 'palm-tree', 5190 ],
-    [ 'palm-tree', 5231 ],
-    [ 'palm-tree', 5264 ],
-    [ 'barb-wire', 1129 ],
-    [ 'barb-wire', 4824 ],
-    [ 'checkmark-grass', 2537 ],
-    [ 'sand-dunes', 2924 ],
-    [ 'sand-dune', 2961 ],
-    [ 'cactus', 4454 ],
-    [ 'cactus2', 6793 ],
-    [ 'van', l, 128 ],
-    [ 'turret', r, 4096 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [1129, 4824]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [768, 1024, 2048, 2560, 3072, 3584, 3712],
+      r: [4480, 4608, 5120, 5632, 6144, 7168, 7424]
+    },
+    {
+      t: 'cactus',
+      s: [4454]
+    },
+    {
+      t: 'cactus2',
+      s: [6793]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [2537]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2048, 2633, 2633, 2633, 3218, 3218, 3218, 3803, 3803, 3803,
+        4388, 4388, 4388, 4973, 4973, 4973, 5558, 5558, 5558, 6144, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'infantry',
+      l: [256]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      l: [64]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        490, 1918, 2960, 3015, 3139, 3187, 3194, 3789, 3965, 4135, 4149, 4211,
+        4328, 4387, 4872, 4918, 5106, 5190, 5231, 5264
+      ]
+    },
+    {
+      t: 'sand-dune',
+      s: [2961]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2924]
+    },
+    {
+      t: 'tank',
+      l: [512, 640]
+    },
+    {
+      t: 'tree',
+      s: [
+        3493, 3550, 3643, 3705, 3710, 3729, 3873, 4395, 4614, 4655, 4739, 4797,
+        5189, 5264, 5771, 6522, 6722
+      ]
+    },
+    {
+      t: 'turret',
+      r: [4096]
+    },
+    {
+      t: 'van',
+      l: [128]
+    }
   ],
 
   // Based On Practice Battle #3: Boot Camp, Level 3
   'Sucker Punch': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'bunker', l, 3072 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'bunker', l, 3840 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4352 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5120 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', r, 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    */
-    // [ 'tree', 505 ],
-    /*
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'sand-dunes', 601 ],
-    [ 'sand-dunes', 816 ],
-    [ 'sand-dunes', 1048 ],
-    [ 'sand-dunes', 3789 ],
-    [ 'sand-dunes', 4267 ],
-    [ 'sand-dunes', 4533 ],
-    [ 'sand-dunes', 4690 ],
-    [ 'sand-dunes', 4906 ],
-    [ 'sand-dunes', 5160 ],
-    [ 'sand-dunes', 5754 ],
-    [ 'cactus2', 636 ],
-    [ 'cactus2', 1892 ],
-    [ 'cactus2', 1951 ],
-    [ 'cactus2', 2286 ],
-    [ 'cactus2', 2481 ],
-    [ 'cactus2', 6187 ],
-    [ 'cactus2', 6670 ],
-    [ 'sand-dune', 1413 ],
-    [ 'sand-dune', 2243 ],
-    [ 'sand-dune', 4236 ],
-    [ 'sand-dune', 4423 ],
-    [ 'sand-dune', 5002 ],
-    [ 'sand-dune', 5476 ],
-    [ 'sand-dune', 6487 ],
-    [ 'sand-dune', 6596 ],
-    [ 'sand-dune', 6985 ],
-    [ 'sand-dune', 7054 ],
-    [ 'cactus', 1750 ],
-    [ 'cactus', 6063 ],
-    [ 'cactus', 6457 ],
-    [ 'gravestone', 3761 ],
-    [ 'gravestone', 3905 ],
-    [ 'gravestone', 4062 ],
-    [ 'gravestone', 4139 ],
-    [ 'gravestone', 4197 ],
-    [ 'grave-cross', 4043 ],
-    [ 'grave-cross', 4088 ],
-    [ 'grave-cross', 4354 ],
-    [ 'grave-cross', 4395 ],
-    [ 'grave-cross', 4487 ],
-    [ 'barb-wire', 6066 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 2560 ],
-    [ 'turret', r, 5632 ],
-    [ 'turret', r, 6678 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [6066]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [1024, 2048, 3072, 3840],
+      r: [4352, 5120, 6144, 7168]
+    },
+    {
+      t: 'cactus',
+      s: [1750, 6063, 6457]
+    },
+    {
+      t: 'cactus2',
+      s: [636, 1892, 1951, 2286, 2481, 6187, 6670]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
+        5558, 5558, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [4043, 4088, 4354, 4395, 4487]
+    },
+    {
+      t: 'gravestone',
+      s: [3761, 3905, 4062, 4139, 4197]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'sand-dune',
+      s: [1413, 2243, 4236, 4423, 5002, 5476, 6487, 6596, 6985, 7054]
+    },
+    {
+      t: 'sand-dunes',
+      s: [601, 816, 1048, 3789, 4267, 4533, 4690, 4906, 5160, 5754]
+    },
+    {
+      t: 'turret',
+      l: [1536, 2560],
+      r: [5632, 6678]
+    }
   ],
 
   // Based On Practice Battle #4: Boot Camp, Level 4
   'Airborne': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 1920 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'bunker', l, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'bunker', l, 2816 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'balloon', l, 4096 ],
-    [ 'super-bunker', l, 4096 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5376 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', r, 5632 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'bunker', r, 6272 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    */
-    // [ 'tree', 505 ],
-    [ 'tree', 561 ],
-    [ 'tree', 1265 ],
-    [ 'tree', 2260 ],
-    [ 'tree', 3199 ],
-    [ 'tree', 3288 ],
-    [ 'tree', 4144 ],
-    [ 'tree', 5074 ],
-    [ 'tree', 6550 ],
-    [ 'tree', 7732 ],
-    /*
-    [ 'left-arrow-sign', 7661 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'palm-tree', 744 ],
-    [ 'palm-tree', 853 ],
-    [ 'palm-tree', 1658 ],
-    [ 'palm-tree', 1673 ],
-    [ 'palm-tree', 2018 ],
-    [ 'palm-tree', 2700 ],
-    [ 'palm-tree', 2823 ],
-    [ 'palm-tree', 2992 ],
-    [ 'palm-tree', 4003 ],
-    [ 'palm-tree', 4530 ],
-    [ 'palm-tree', 5082 ],
-    [ 'palm-tree', 5238 ],
-    [ 'palm-tree', 6307 ],
-    [ 'palm-tree', 6496 ],
-    [ 'palm-tree', 6590 ],
-    [ 'palm-tree', 7420 ],
-    [ 'palm-tree', 7432 ],
-    [ 'palm-tree', 7604 ],
-    [ 'palm-tree', 7625 ],
-    [ 'palm-tree', 6967 ],
-    [ 'palm-tree', 7046 ],
-    [ 'flower', 1117 ],
-    [ 'flower-bush', 1869 ],
-    [ 'flower-bush', 2517 ],
-    [ 'grave-cross', 2672 ],
-    [ 'grave-cross', 3480 ],
-    [ 'grave-cross', 6195 ],
-    [ 'checkmark-grass', 4335 ],
-    [ 'barb-wire', 4405 ],
-    [ 'barb-wire', 5814 ],
-    [ 'gravestone', 5828 ],
-    [ 'gravestone', 7159 ],
-    [ 'grass', 1918 ],
-    [ 'grass', 2884 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 2688 ],
-    [ 'turret', r, 5517 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [4405, 5814]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [1024, 1920, 2560, 2816],
+      r: [5376, 5632, 6272, 7168]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [4335]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
+        5558, 5558, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [1117]
+    },
+    {
+      t: 'flower-bush',
+      s: [1869, 2517]
+    },
+    {
+      t: 'grass',
+      s: [1918, 2884]
+    },
+    {
+      t: 'grave-cross',
+      s: [2672, 3480, 6195]
+    },
+    {
+      t: 'gravestone',
+      s: [5828, 7159]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        744, 853, 1658, 1673, 2018, 2700, 2823, 2992, 4003, 4530, 5082, 5238,
+        6307, 6496, 6590, 7420, 7432, 7604, 7625, 6967, 7046
+      ]
+    },
+    {
+      t: 'super-bunker',
+      l: [4096]
+    },
+    {
+      t: 'tree',
+      s: [561, 1265, 2260, 3199, 3288, 4144, 5074, 6550, 7732]
+    },
+    {
+      t: 'turret',
+      l: [1536, 2688],
+      r: [5517]
+    }
   ],
 
   'Two-Gun': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'bunker', l, 640 ],
-    [ 'bunker', l, 1152 ],
-    [ 'bunker', l, 1280 ],
-    [ 'super-bunker', r, 1744 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'bunker', r, 3968 ],
-    [ 'bunker', r, 4032 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4224 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'tank', r, 4736 ],
-    [ 'infantry', r, 4816 ],
-    [ 'cloud', 4973 ],
-    [ 'tank', r, 4976 ],
-    [ 'infantry', r, 5056 ],
-    [ 'tank', r, 5136 ],
-    [ 'tank', r, 5216 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', r, 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'bunker', r, 6208 ],
-    [ 'super-bunker', r, 6352 ],
-    [ 'tank', r, 6784 ],
-    [ 'infantry', r, 6864 ],
-    [ 'tank', r, 7024 ],
-    [ 'bunker', r, 7040 ],
-    [ 'infantry', r, 7104 ],
-    [ 'missile-launcher', r, 7184 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 568 ],
-    [ 'left-arrow-sign', 7669 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'palm-tree', 751 ],
-    [ 'palm-tree', 3799 ],
-    [ 'palm-tree', 3827 ],
-    [ 'palm-tree', 5295 ],
-    [ 'cactus2', 776 ],
-    [ 'cactus2', 2614 ],
-    [ 'cactus2', 6617 ],
-    [ 'cactus2', 7304 ],
-    [ 'cactus2', 7512 ],
-    [ 'checkmark-grass', 749 ],
-    [ 'checkmark-grass', 1934 ],
-    [ 'checkmark-grass', 4555 ],
-    [ 'cactus', 989 ],
-    [ 'cactus', 1698 ],
-    [ 'cactus', 2143 ],
-    [ 'cactus', 3876 ],
-    [ 'cactus', 3984 ],
-    [ 'cactus', 4478 ],
-    [ 'flower-bush', 1314 ],
-    [ 'tree', 1456 ],
-    [ 'tree', 4107 ],
-    [ 'tree', 4776 ],
-    [ 'tree', 5459 ],
-    [ 'tree', 6108 ],
-    [ 'tree', 7170 ],
-    [ 'tree', 7669 ],
-    [ 'grave-cross', 1526 ],
-    [ 'grave-cross', 5776 ],
-    [ 'grave-cross', 6120 ],
-    [ 'grave-cross', 6568 ],
-    [ 'sand-dunes', 1745 ],
-    [ 'sand-dunes', 4555 ],
-    [ 'sand-dunes', 6273 ],
-    [ 'sand-dune', 2343 ],
-    [ 'sand-dune', 4776 ],
-    [ 'sand-dune', 5447 ],
-    [ 'sand-dune', 6323 ],
-    [ 'sand-dune', 6347 ],
-    [ 'gravestone', 2680 ],
-    [ 'barb-wire', 4892 ],
-    [ 'grass', 6041 ],
-    [ 'flowers', 6162 ],
-    [ 'flower', 7049 ],
-    [ 'turret', l, 534 ],
-    [ 'turret', r, 1857 ],
-    [ 'turret', r, 4108 ],
-    [ 'turret', r, 6466 ],
-    [ 'van', r, 7234 ],
-    [ 'van', r, 7680 ],
-    [ 'van', r, 7744 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [4892]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [640, 1152, 1280],
+      r: [3968, 4032, 4224, 6144, 6208, 7040]
+    },
+    {
+      t: 'cactus',
+      s: [989, 1698, 2143, 3876, 3984, 4478]
+    },
+    {
+      t: 'cactus2',
+      s: [776, 2614, 6617, 7304, 7512]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [749, 1934, 4555]
+    },
+    {
+      t: 'cloud',
+      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [7049]
+    },
+    {
+      t: 'flower-bush',
+      s: [1314]
+    },
+    {
+      t: 'flowers',
+      s: [6162]
+    },
+    {
+      t: 'grass',
+      s: [6041]
+    },
+    {
+      t: 'grave-cross',
+      s: [1526, 5776, 6120, 6568]
+    },
+    {
+      t: 'gravestone',
+      s: [2680]
+    },
+    {
+      t: 'infantry',
+      r: [4816, 5056, 6864, 7104]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [7184]
+    },
+    {
+      t: 'palm-tree',
+      s: [751, 3799, 3827, 5295]
+    },
+    {
+      t: 'sand-dune',
+      s: [2343, 4776, 5447, 6323, 6347]
+    },
+    {
+      t: 'sand-dunes',
+      s: [1745, 4555, 6273]
+    },
+    {
+      t: 'super-bunker',
+      r: [1744, 6352]
+    },
+    {
+      t: 'tank',
+      r: [4736, 4976, 5136, 5216, 6784, 7024]
+    },
+    {
+      t: 'tree',
+      s: [1456, 4107, 4776, 5459, 6108, 7170, 7669]
+    },
+    {
+      t: 'turret',
+      l: [534],
+      r: [1857, 4108, 6466]
+    },
+    {
+      t: 'van',
+      r: [7234, 7680, 7744]
+    }
   ],
 
   'Super Bunker': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'bunker', r, 1024 ],
-    [ 'tank', r, 1536 ],
-    [ 'infantry', r, 1616 ],
-    [ 'tank', r, 1776 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'infantry', r, 1856 ],
-    [ 'missile-launcher', r, 1936 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 3218 ],
-    [ 'missile-launcher', r, 3296 ],
-    [ 'balloon', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'bunker', r, 3968 ],
-    [ 'balloon', l, 4096 ],
-    [ 'missile-launcher', r, 4096 ],
-    [ 'super-bunker', r, 4096 ],
-    [ 'tank', r, 4096 ],
-    [ 'infantry', r, 4176 ],
-    [ 'bunker', r, 4224 ],
-    [ 'tank', r, 4336 ],
-    [ 'cloud', 4388 ],
-    [ 'infantry', r, 4416 ],
-    [ 'tank', r, 4496 ],
-    [ 'tank', r, 4576 ],
-    [ 'balloon', l, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'tank', r, 5120 ],
-    [ 'infantry', r, 5200 ],
-    [ 'infantry', r, 5360 ],
-    [ 'missile-launcher', r, 5520 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 6144 ],
-    [ 'super-bunker', r, 6400 ],
-    [ 'infantry', r, 6656 ],
-    [ 'infantry', r, 6656 ],
-    [ 'missile-launcher', r, 6976 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 566 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'palm-tree', 1760 ],
-    [ 'palm-tree', 3862 ],
-    [ 'palm-tree', 3892 ],
-    [ 'palm-tree', 3961 ],
-    [ 'palm-tree', 4356 ],
-    [ 'palm-tree', 4531 ],
-    [ 'palm-tree', 4551 ],
-    [ 'palm-tree', 3453 ],
-    [ 'palm-tree', 3398 ],
-    [ 'palm-tree', 3327 ],
-    [ 'palm-tree', 3405 ],
-    [ 'palm-tree', 3073 ],
-    [ 'palm-tree', 4820 ],
-    [ 'palm-tree', 4825 ],
-    [ 'palm-tree', 4855 ],
-    [ 'palm-tree', 4900 ],
-    [ 'palm-tree', 4927 ],
-    [ 'palm-tree', 5074 ],
-    [ 'palm-tree', 5232 ],
-    [ 'palm-tree', 5303 ],
-    [ 'cactus', 2074 ],
-    [ 'cactus', 2995 ],
-    [ 'cactus', 7066 ],
-    [ 'grass', 2205 ],
-    [ 'tree', 4074 ],
-    [ 'tree', 4650 ],
-    [ 'tree', 4657 ],
-    [ 'tree', 3681 ],
-    [ 'tree', 3391 ],
-    [ 'tree', 3379 ],
-    [ 'tree', 3336 ],
-    [ 'tree', 3268 ],
-    [ 'tree', 3227 ],
-    [ 'tree', 3237 ],
-    [ 'tree', 3116 ],
-    [ 'tree', 4695 ],
-    [ 'tree', 4733 ],
-    [ 'tree', 4776 ],
-    [ 'tree', 4871 ],
-    [ 'tree', 4958 ],
-    [ 'tree', 5023 ],
-    [ 'tree', 5224 ],
-    [ 'tree', 5260 ],
-    [ 'tree', 5974 ],
-    [ 'tree', 6782 ],
-    [ 'gravestone', 4783 ],
-    [ 'checkmark-grass', 5982 ],
-    [ 'turret', r, 1667 ],
-    [ 'turret', r, 1897 ],
-    [ 'van', r, 1986 ],
-    [ 'turret', r, 4165 ],
-    [ 'van', r, 5730 ],
-    [ 'turret', r, 6288 ],
-    [ 'turret', r, 6513 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1024, 3968, 4224, 7168]
+    },
+    {
+      t: 'cactus',
+      s: [2074, 2995, 7066]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [5982]
+    },
+    {
+      t: 'cloud',
+      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grass',
+      s: [2205]
+    },
+    {
+      t: 'gravestone',
+      s: [4783]
+    },
+    {
+      t: 'infantry',
+      r: [1616, 1856, 4176, 4416, 5200, 5360, 6656, 6656]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1936, 3296, 4096, 5520, 6976]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        1760, 3862, 3892, 3961, 4356, 4531, 4551, 3453, 3398, 3327, 3405, 3073,
+        4820, 4825, 4855, 4900, 4927, 5074, 5232, 5303
+      ]
+    },
+    {
+      t: 'super-bunker',
+      r: [1792, 4096, 6400]
+    },
+    {
+      t: 'tank',
+      r: [1536, 1776, 4096, 4336, 4496, 4576, 5120]
+    },
+    {
+      t: 'tree',
+      s: [
+        4074, 4650, 4657, 3681, 3391, 3379, 3336, 3268, 3227, 3237, 3116, 4695,
+        4733, 4776, 4871, 4958, 5023, 5224, 5260, 5974, 6782
+      ]
+    },
+    {
+      t: 'turret',
+      r: [1667, 1897, 4165, 6288, 6513]
+    },
+    {
+      t: 'van',
+      r: [1986, 5730]
+    }
   ],
 
   'Scrapyard': [
-    [ 'base', l, 192 ],
-    [ 'tank', r, 768 ],
-    [ 'tank', r, 1008 ],
-    [ 'bunker', r, 1024 ],
-    [ 'tank', r, 1168 ],
-    [ 'tank', r, 1248 ],
-    [ 'bunker', r, 1536 ],
-    [ 'bunker', r, 2048 ],
-    [ 'bunker', r, 3072 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', r, 4032 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4160 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 5120 ],
-    [ 'bunker', r, 6144 ],
-    [ 'tank', r, 6144 ],
-    [ 'tank', r, 6384 ],
-    [ 'super-bunker', r, 6400 ],
-    [ 'bunker', r, 7168 ],
-    [ 'base', r, 8000 ],
-    [ 'sand-dunes', 1063 ],
-    [ 'sand-dunes', 1615 ],
-    [ 'sand-dunes', 1643 ],
-    [ 'cactus2', 1678 ],
-    [ 'sand-dunes', 1686 ],
-    [ 'cactus', 1945 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'sand-dune', 2087 ],
-    [ 'sand-dunes', 2108 ],
-    [ 'cactus', 2457 ],
-    [ 'cactus2', 2530 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'sand-dune', 2810 ],
-    [ 'sand-dunes', 2913 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'tree', 3518 ],
-    [ 'sand-dunes', 3796 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'grave-cross', 3829 ],
-    [ 'gravestone', 3858 ],
-    [ 'grave-cross', 3909 ],
-    [ 'grave-cross', 3958 ],
-    [ 'sand-dunes', 3960 ],
-    [ 'gravestone', 4022 ],
-    [ 'gravestone', 4175 ],
-    [ 'grave-cross', 4289 ],
-    [ 'gravestone', 4294 ],
-    [ 'gravestone', 4321 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'grave-cross', 4508 ],
-    [ 'sand-dune', 4747 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'sand-dune', 5297 ],
-    [ 'sand-dunes', 5379 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'sand-dune', 5582 ],
-    [ 'sand-dunes', 5672 ],
-    [ 'cactus', 5793 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'end-bunker', l, 24 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'infantry', r, 848 ],
-    [ 'missile-launcher', r, 1024 ],
-    [ 'infantry', r, 1088 ],
-    [ 'missile-launcher', r, 1536 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'missile-launcher', r, 2048 ],
-    [ 'infantry', r, 2560 ],
-    [ 'missile-launcher', r, 2560 ],
-    [ 'missile-launcher', r, 2880 ],
-    [ 'missile-launcher', r, 4096 ],
-    [ 'infantry', r, 6224 ],
-    [ 'infantry', r, 6464 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'cactus2', 6334 ],
-    [ 'cactus', 6415 ],
-    [ 'sand-dunes', 6508 ],
-    [ 'cactus2', 6612 ],
-    [ 'cactus2', 6699 ],
-    [ 'cactus', 7023 ],
-    [ 'sand-dune', 7504 ],
-    [ 'sand-dune', 7518 ],
-    [ 'sand-dunes', 7526 ],
-    [ 'van', r, 958 ],
-    [ 'van', r, 1123 ],
-    [ 'turret', r, 1913 ],
-    [ 'turret', r, 3210 ],
-    [ 'turret', r, 5802 ],
-    [ 'van', r, 6594 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1024, 1536, 2048, 3072, 4032, 4160, 5120, 6144, 7168]
+    },
+    {
+      t: 'cactus',
+      s: [1945, 2457, 5793, 6415, 7023]
+    },
+    {
+      t: 'cactus2',
+      s: [1678, 2530, 6334, 6612, 6699]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2048, 2633, 2633, 2633, 3218, 3218, 3218, 3803, 3803, 3803,
+        4388, 4388, 4388, 4973, 4973, 4973, 5558, 5558, 5558, 6144, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [3829, 3909, 3958, 4289, 4508]
+    },
+    {
+      t: 'gravestone',
+      s: [3858, 4022, 4175, 4294, 4321]
+    },
+    {
+      t: 'infantry',
+      r: [848, 1088, 2560, 6224, 6464]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1024, 1536, 2048, 2560, 2880, 4096]
+    },
+    {
+      t: 'sand-dune',
+      s: [2087, 2810, 4747, 5297, 5582, 7504, 7518]
+    },
+    {
+      t: 'sand-dunes',
+      s: [
+        1063, 1615, 1643, 1686, 2108, 2913, 3796, 3960, 5379, 5672, 6508, 7526
+      ]
+    },
+    {
+      t: 'super-bunker',
+      r: [6400, 1792]
+    },
+    {
+      t: 'tank',
+      r: [768, 1008, 1168, 1248, 6144, 6384]
+    },
+    {
+      t: 'tree',
+      s: [3518]
+    },
+    {
+      t: 'turret',
+      r: [1913, 3210, 5802]
+    },
+    {
+      t: 'van',
+      r: [958, 1123, 6594]
+    }
   ],
 
   'Blind Spot': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'missile-launcher', r, 1024 ],
-    [ 'tank', r, 1024 ],
-    [ 'infantry', r, 1104 ],
-    [ 'infantry', r, 1264 ],
-    [ 'missile-launcher', r, 1424 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'cloud', 2048 ],
-    [ 'infantry', r, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'missile-launcher', r, 2880 ],
-    [ 'cloud', 3218 ],
-    [ 'bunker', r, 3520 ],
-    [ 'balloon', l, 3584 ],
-    [ 'cloud', 3803 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4352 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5312 ],
-    [ 'cloud', 5558 ],
-    [ 'bunker', r, 5632 ],
-    [ 'bunker', r, 5696 ],
-    [ 'cloud', 6144 ],
-    [ 'tank', r, 6144 ],
-    [ 'infantry', r, 6224 ],
-    [ 'tank', r, 6384 ],
-    [ 'super-bunker', r, 6400 ],
-    [ 'infantry', r, 6464 ],
-    [ 'bunker', r, 6528 ],
-    [ 'missile-launcher', r, 6544 ],
-    [ 'bunker', r, 6656 ],
-    [ 'infantry', r, 6656 ],
-    [ 'tank', r, 7171 ],
-    [ 'infantry', r, 7248 ],
-    [ 'tank', r, 7408 ],
-    [ 'infantry', r, 7488 ],
-    [ 'tank', r, 7568 ],
-    [ 'tank', r, 7648 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    [ 'left-arrow-sign', 7651 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'palm-tree', 734 ],
-    [ 'palm-tree', 976 ],
-    [ 'palm-tree', 2452 ],
-    [ 'palm-tree', 3016 ],
-    [ 'palm-tree', 3106 ],
-    [ 'palm-tree', 3504 ],
-    [ 'palm-tree', 4072 ],
-    [ 'palm-tree', 4106 ],
-    [ 'palm-tree', 4842 ],
-    [ 'palm-tree', 5506 ],
-    [ 'palm-tree', 5697 ],
-    [ 'palm-tree', 6182 ],
-    [ 'palm-tree', 6413 ],
-    [ 'palm-tree', 6872 ],
-    [ 'palm-tree', 7308 ],
-    [ 'palm-tree', 7599 ],
-    [ 'flower-bush', 1031 ],
-    [ 'flower-bush', 1828 ],
-    [ 'flower-bush', 3921 ],
-    [ 'grave-cross', 1235 ],
-    [ 'grave-cross', 6191 ],
-    [ 'grave-cross', 6462 ],
-    [ 'grave-cross', 6574 ],
-    [ 'tree', 1606 ],
-    [ 'tree', 1590 ],
-    [ 'tree', 2060 ],
-    [ 'tree', 2733 ],
-    [ 'tree', 3301 ],
-    [ 'tree', 3689 ],
-    [ 'tree', 4073 ],
-    [ 'tree', 4729 ],
-    [ 'tree', 4846 ],
-    [ 'tree', 5029 ],
-    [ 'tree', 5075 ],
-    [ 'tree', 5443 ],
-    [ 'tree', 6111 ],
-    [ 'flower', 3604 ],
-    [ 'barb-wire', 3697 ],
-    [ 'barb-wire', 6518 ],
-    [ 'checkmark-grass', 3788 ],
-    [ 'gravestone', 4976 ],
-    [ 'rock', 6933 ],
-    [ 'van', r, 1634 ],
-    [ 'turret', r, 1908 ],
-    [ 'turret', r, 3600 ],
-    [ 'turret', r, 5392 ],
-    [ 'turret', r, 6510 ],
-    [ 'van', r, 6594 ],
-    [ 'turret', r, 6608 ],
-    [ 'turret', r, 7175 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [3697, 6518]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [3520, 4352, 5312, 5632, 5696, 6528, 6656]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [3788]
+    },
+    {
+      t: 'cloud',
+      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [3604]
+    },
+    {
+      t: 'flower-bush',
+      s: [1031, 1828, 3921]
+    },
+    {
+      t: 'grave-cross',
+      s: [1235, 6191, 6462, 6574]
+    },
+    {
+      t: 'gravestone',
+      s: [4976]
+    },
+    {
+      t: 'infantry',
+      r: [1104, 1264, 2560, 6224, 6464, 6656, 7248, 7488]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1024, 1424, 2880, 6544]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        734, 976, 2452, 3016, 3106, 3504, 4072, 4106, 4842, 5506, 5697, 6182,
+        6413, 6872, 7308, 7599
+      ]
+    },
+    {
+      t: 'rock',
+      s: [6933]
+    },
+    {
+      t: 'super-bunker',
+      r: [1792, 6400]
+    },
+    {
+      t: 'tank',
+      r: [1024, 6144, 6384, 7171, 7408, 7568, 7648]
+    },
+    {
+      t: 'tree',
+      s: [
+        1606, 1590, 2060, 2733, 3301, 3689, 4073, 4729, 4846, 5029, 5075, 5443,
+        6111
+      ]
+    },
+    {
+      t: 'turret',
+      r: [1908, 3600, 5392, 6510, 6608, 7175]
+    },
+    {
+      t: 'van',
+      r: [1634, 6594]
+    }
   ],
 
   'Wasteland': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'bunker', r, 640 ],
-    [ 'bunker', r, 1152 ],
-    [ 'tank', r, 1280 ],
-    [ 'infantry', r, 1360 ],
-    [ 'tank', r, 1520 ],
-    [ 'tank', r, 1536 ],
-    [ 'infantry', r, 1600 ],
-    [ 'infantry', r, 1616 ],
-    [ 'missile-launcher', r, 1680 ],
-    [ 'infantry', r, 1776 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'missile-launcher', r, 1936 ],
-    [ 'cloud', 2048 ],
-    [ 'cloud', 2048 ],
-    [ 'infantry', r, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'cloud', 2633 ],
-    [ 'tank', r, 2720 ],
-    [ 'infantry', r, 2800 ],
-    [ 'missile-launcher', r, 2880 ],
-    [ 'tank', r, 2960 ],
-    [ 'infantry', r, 3040 ],
-    [ 'tank', r, 3120 ],
-    [ 'bunker', r, 3200 ],
-    [ 'tank', r, 3200 ],
-    [ 'cloud', 3218 ],
-    [ 'cloud', 3218 ],
-    [ 'balloon', l, 3584 ],
-    [ 'tank', r, 3584 ],
-    [ 'infantry', r, 3663 ],
-    [ 'cloud', 3803 ],
-    [ 'cloud', 3803 ],
-    [ 'tank', r, 3824 ],
-    [ 'infantry', r, 3904 ],
-    [ 'bunker', r, 3968 ],
-    [ 'missile-launcher', r, 3984 ],
-    [ 'landing-pad', n, 4092 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4224 ],
-    [ 'cloud', 4388 ],
-    [ 'cloud', 4388 ],
-    [ 'balloon', l, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5248 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 6144 ],
-    [ 'cloud', 6144 ],
-    [ 'super-bunker', r, 6400 ],
-    [ 'bunker', r, 6656 ],
-    [ 'bunker', r, 6784 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 550 ],
-    [ 'tree', 505 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    [ 'left-arrow-sign', 7654 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-    [ 'sand-dunes', 2618 ],
-    [ 'sand-dunes', 3814 ],
-    [ 'sand-dunes', 6126 ],
-    [ 'gravestone', 2542 ],
-    [ 'gravestone', 1676 ],
-    [ 'gravestone', 3345 ],
-    [ 'gravestone', 4191 ],
-    [ 'gravestone', 4611 ],
-    [ 'gravestone', 5011 ],
-    [ 'gravestone', 5150 ],
-    [ 'gravestone', 5250 ],
-    [ 'gravestone', 5335 ],
-    [ 'gravestone', 5530 ],
-    [ 'gravestone', 5620 ],
-    [ 'gravestone', 5819 ],
-    [ 'gravestone', 6085 ],
-    [ 'gravestone', 6915 ],
-    [ 'gravestone', 7115 ],
-    [ 'gravestone', 7524 ],
-    [ 'cactus2', 3371 ],
-    [ 'cactus2', 5068 ],
-    [ 'cactus2', 6338 ],
-    [ 'cactus2', 6862 ],
-    [ 'cactus2', 7416 ],
-    [ 'cactus2', 7427 ],
-    [ 'cactus2', 883 ],
-    [ 'grave-cross', 3662 ],
-    [ 'grave-cross', 4178 ],
-    [ 'grave-cross', 4643 ],
-    [ 'grave-cross', 4836 ],
-    [ 'grave-cross', 5172 ],
-    [ 'grave-cross', 5763 ],
-    [ 'grave-cross', 6803 ],
-    [ 'grave-cross', 7270 ],
-    [ 'grave-cross', 7663 ],
-    [ 'grave-cross', 871 ],
-    [ 'grave-cross', 1254 ],
-    [ 'sand-dune', 3629 ],
-    [ 'sand-dune', 4178 ],
-    [ 'sand-dune', 4715 ],
-    [ 'checkmark-grass', 4219 ],
-    [ 'cactus', 4308 ],
-    [ 'cactus', 7227 ],
-    [ 'cactus', 1294 ],
-    // Special case: in extreme mode, incoming enemy tanks would be shot by nearby opposing turret.
-    [ 'turret', () => gameType === 'extreme' ? r : l, 967 ],
-    [ 'van', r, 1730 ],
-    [ 'turret', r, 1897 ],
-    [ 'turret', r, 1952 ],
-    [ 'van', r, 2146 ],
-    [ 'van', r, 4034 ],
-    [ 'turret', r, 6518 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [640, 1152, 3200, 3968, 4224, 5248, 6656, 6784]
+    },
+    {
+      t: 'cactus',
+      s: [4308, 7227, 1294]
+    },
+    {
+      t: 'cactus2',
+      s: [3371, 5068, 6338, 6862, 7416, 7427, 883]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [4219]
+    },
+    {
+      t: 'cloud',
+      s: [
+        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
+        5558, 5558, 6144, 6144
+      ]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [3662, 4178, 4643, 4836, 5172, 5763, 6803, 7270, 7663, 871, 1254]
+    },
+    {
+      t: 'gravestone',
+      s: [
+        2542, 1676, 3345, 4191, 4611, 5011, 5150, 5250, 5335, 5530, 5620, 5819,
+        6085, 6915, 7115, 7524
+      ]
+    },
+    {
+      t: 'infantry',
+      r: [1360, 1600, 1616, 1776, 2560, 2800, 3040, 3663, 3904]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      n: [4092],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1680, 1936, 2880, 3984]
+    },
+    {
+      t: 'sand-dune',
+      s: [3629, 4178, 4715]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2618, 3814, 6126]
+    },
+    {
+      t: 'super-bunker',
+      r: [1792, 6400]
+    },
+    {
+      t: 'tank',
+      r: [1280, 1520, 1536, 2720, 2960, 3120, 3200, 3584, 3824]
+    },
+    {
+      t: 'turret',
+      d: [
+        [
+          // Special case: in extreme mode, incoming enemy tanks would be shot by nearby opposing turret.
+          () => (gameType === 'extreme' ? r : l),
+          967
+        ]
+      ],
+      r: [1897, 1952, 6518]
+    },
+    {
+      t: 'van',
+      r: [1730, 2146, 4034]
+    }
   ],
 
   'Midnight Oasis': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', l, 320 ],
-    [ 'tank', r, 704 ],
-    [ 'tank', r, 768 ],
-    [ 'infantry', r, 784 ],
-    [ 'infantry', r, 848 ],
-    [ 'tank', r, 944 ],
-    [ 'tank', r, 1008 ],
-    [ 'infantry', r, 1024 ],
-    [ 'infantry', r, 1088 ],
-    [ 'tank', r, 1104 ],
-    [ 'missile-launcher', r, 1168 ],
-    [ 'tank', r, 1184 ],
-    [ 'tank', r, 1536 ],
-    [ 'infantry', r, 1616 ],
-    [ 'infantry', r, 1776 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'missile-launcher', r, 1936 ],
-    [ 'cloud', 2048 ],
-    [ 'infantry', r, 2560 ],
-    [ 'cloud', 2633 ],
-    [ 'bunker', r, 2688 ],
-    [ 'tank', r, 2720 ],
-    [ 'infantry', r, 2800 ],
-    [ 'tank', r, 2960 ],
-    [ 'infantry', r, 3040 ],
-    [ 'tank', r, 3120 ],
-    [ 'tank', r, 3200 ],
-    [ 'cloud', 3218 ],
-    [ 'bunker', r, 3328 ],
-    [ 'balloon', l, 3584 ],
-    [ 'tank', r, 3584 ],
-    [ 'tank', r, 3664 ],
-    [ 'cloud', 3803 ],
-    [ 'infantry', r, 3904 ],
-    [ 'missile-launcher', r, 3984 ],
-    [ 'bunker', r, 4000 ],
-    [ 'balloon', l, 4096 ],
-    [ 'infantry', r, 4096 ],
-    // obscured: hidden from radar by shrubbery and whatnot
-    [ 'landing-pad', n, 4096, { obscured: true } ],
-    [ 'cloud', 4388 ],
-    [ 'missile-launcher', r, 4416 ],
-    [ 'balloon', l, 4608 ],
-    [ 'super-bunker', r, 4608 ],
-    [ 'cloud', 4973 ],
-    [ 'bunker', r, 5120 ],
-    [ 'bunker', r, 5504 ],
-    [ 'cloud', 5558 ],
-    [ 'cloud', 6144 ],
-    [ 'super-bunker', r, 6400 ],
-    // [ 'turret', r, 6512 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    /*
-    [ 'right-arrow-sign', -16 ],
-    [ 'right-arrow-sign', 570 ],
-    [ 'left-arrow-sign', 7700 ],
-    [ 'left-arrow-sign', 8208 ],
-    */
-
-    /**
-     * Tie the number of turrets to the difficulty.
-     * 1 for easy, 2 for hard, 3 for extreme.
-     */
-    () => selectByDifficulty([
-      ['turret', r, 1888],
-      ['turret', r, 1920],
-      ['turret', r, 1952]
-    ]),
-    () => selectByDifficulty([
-      ['turret', r, 4224],
-      ['turret', r, 4256],
-      ['turret', r, 4288]
-    ]),
-    () => selectByDifficulty([
-      ['turret', r, 4704],
-      ['turret', r, 4736],
-      ['turret', r, 4768]
-    ]),
-    () => selectByDifficulty([
-      ['turret', r, 5248],
-      ['turret', r, 5280],
-      ['turret', r, 5312]
-    ]),
-    () => selectByDifficulty([
-      ['turret', r, 5632],
-      ['turret', r, 5664],
-      ['turret', r, 5696]
-    ]),
-    () => selectByDifficulty([
-      ['turret', r, 6496],
-      ['turret', r, 6528],
-      ['turret', r, 6560]
-    ]),
-
-    [ 'rock', 996 ],
-    [ 'rock', 4182 ],
-    [ 'rock', 4161 ],
-    [ 'flower', 2984 ],
-    [ 'flower-bush', 4082 ],
-    [ 'flower-bush', 4128 ],
-    [ 'flower-bush', 6608 ],
-    [ 'grass', 4103 ],
-    [ 'tree', 4206 ],
-    [ 'tree', 5144 ],
-    [ 'rock2', 4153 ],
-    [ 'flowers', 4095 ],
-    [ 'grave-cross', 5219 ],
-    [ 'palm-tree', 6702 ],
-    [ 'palm-tree', 7695 ],
-    [ 'sand-dunes', 7635 ],
-    [ 'van', r, 1218 ],
-    [ 'van', r, 2146 ],
-    [ 'van', r, 4034 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [2688, 3328, 4000, 5120, 5504]
+    },
+    {
+      t: 'cloud',
+      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [2984]
+    },
+    {
+      t: 'flower-bush',
+      s: [4082, 4128, 6608]
+    },
+    {
+      t: 'flowers',
+      s: [4095]
+    },
+    {
+      t: 'grass',
+      s: [4103]
+    },
+    {
+      t: 'grave-cross',
+      s: [5219]
+    },
+    {
+      t: 'infantry',
+      r: [784, 848, 1024, 1088, 1616, 1776, 2560, 2800, 3040, 3904, 4096]
+    },
+    {
+      t: 'landing-pad',
+      l: [320],
+      // o = obscured: hidden from radar by shrubbery and whatnot
+      o: [4096],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1168, 1936, 3984, 4416]
+    },
+    {
+      t: 'palm-tree',
+      s: [6702, 7695]
+    },
+    {
+      t: 'rock',
+      s: [996, 4182, 4161]
+    },
+    {
+      t: 'rock2',
+      s: [4153]
+    },
+    {
+      t: 'sand-dunes',
+      s: [7635]
+    },
+    {
+      t: 'super-bunker',
+      r: [1792, 4608, 6400]
+    },
+    {
+      t: 'tank',
+      r: [
+        704, 768, 944, 1008, 1104, 1184, 1536, 2720, 2960, 3120, 3200, 3584,
+        3664
+      ]
+    },
+    {
+      t: 'tree',
+      s: [4206, 5144]
+    },
+    {
+      t: 'turret',
+      d: [
+        /**
+         * Tie the number of turrets to the difficulty.
+         * 1 for easy, 2 for hard, 3 for extreme.
+         */
+        () =>
+          selectByDifficulty([
+            ['turret', r, 1888],
+            ['turret', r, 1920],
+            ['turret', r, 1952]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 4224],
+            ['turret', r, 4256],
+            ['turret', r, 4288]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 4704],
+            ['turret', r, 4736],
+            ['turret', r, 4768]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 5248],
+            ['turret', r, 5280],
+            ['turret', r, 5312]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 5632],
+            ['turret', r, 5664],
+            ['turret', r, 5696]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 6496],
+            ['turret', r, 6528],
+            ['turret', r, 6560]
+          ])
+      ]
+    },
+    {
+      t: 'van',
+      r: [1218, 2146, 4034]
+    }
   ],
 
   'Balloon Fun': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'super-bunker', l, 3968 ],
-    [ 'super-bunker', r, 4224 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 1223 ],
-    [ 'grass', 1523 ],
-    [ 'sand-dunes', 2621 ],
-    [ 'tree', 2919 ],
-    [ 'tree', 2959 ],
-    [ 'palm-tree', 3118 ],
-    [ 'palm-tree', 3197 ],
-    [ 'palm-tree', 3486 ],
-    [ 'tree', 3573 ],
-    [ 'palm-tree', 3682 ],
-    [ 'palm-tree', 3833 ],
-    [ 'palm-tree', 3863 ],
-    [ 'palm-tree', 3885 ],
-    [ 'tree', 3914 ],
-    [ 'sand-dune', 3920 ],
-    [ 'palm-tree', 3931 ],
-    [ 'palm-tree', 4057 ],
-    [ 'tree', 4196 ],
-    [ 'tree', 4210 ],
-    [ 'tree', 4279 ],
-    [ 'palm-tree', 4311 ],
-    [ 'tree', 4320 ],
-    [ 'palm-tree', 4374 ],
-    [ 'tree', 4382 ],
-    [ 'palm-tree', 4472 ],
-    [ 'palm-tree', 4489 ],
-    [ 'palm-tree', 4510 ],
-    [ 'palm-tree', 4520 ],
-    [ 'sand-dunes', 4615 ],
-    [ 'tree', 4618 ],
-    [ 'tree', 4648 ],
-    [ 'tree', 4778 ],
-    [ 'tree', 4816 ],
-    [ 'palm-tree', 4853 ],
-    [ 'grass', 4890 ],
-    [ 'palm-tree', 4917 ],
-    [ 'sand-dunes', 4918 ],
-    [ 'tree', 4934 ],
-    [ 'tree', 5054 ],
-    [ 'tree', 5110 ],
-    [ 'tree', 5116 ],
-    [ 'tree', 5151 ],
-    [ 'palm-tree', 5216 ],
-    [ 'checkmark-grass', 5758 ],
-    [ 'cactus2', 6288 ],
-    [ 'grave-cross', 6412 ],
-    [ 'palm-tree', 6797 ],
-    [ 'gravestone', 7134 ],
-    [ 'grave-cross', 7138 ],
-    () => selectByDifficulty([
-      [ 'turret', l, 1088 ],
-      [ 'turret', l, 1024 ],
-      [ 'turret', l, 1152 ]
-    ]),
-    () => selectByDifficulty([
-      [ 'turret', l, 2112 ],
-      [ 'turret', l, 2048 ],
-      [ 'turret', l, 2176 ]
-    ]),
-    () => selectByDifficulty([
-      [ 'turret', r, 6080 ],
-      [ 'turret', r, 6016 ],
-      [ 'turret', r, 6144 ]
-    ]),
-    () => selectByDifficulty([
-      [ 'turret', r, 7104 ],
-      [ 'turret', r, 7040 ],
-      [ 'turret', r, 7168 ]
-    ]),
-    ...(() => {
-      /* 36 - not 99 - more balloons needed; distribute evenly across middle 3/4 of battlefield. */
-      let luftBalloons = new Array(39);
-      for (let i = 0, j = luftBalloons.length; i < j; i++) {
-        luftBalloons[i] = ([ 'balloon', n, 3084 + parseInt(2048 * i / j, 10) ]);
-      }
-      return luftBalloons;
-    })()
+    {
+      t: 'balloon',
+      n: [
+        3084, 3136, 3189, 3241, 3294, 3346, 3399, 3451, 3504, 3556, 3609, 3661,
+        3714, 3766, 3819, 3871, 3924, 3976, 4029, 4081, 4134, 4186, 4239, 4291,
+        4344, 4396, 4449, 4501, 4554, 4606, 4659, 4711, 4764, 4816, 4869, 4921,
+        4974, 5026, 5079
+      ]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'cactus2',
+      s: [6288]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [5758]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grass',
+      s: [1523, 4890]
+    },
+    {
+      t: 'grave-cross',
+      s: [6412, 7138]
+    },
+    {
+      t: 'gravestone',
+      s: [7134]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        1223, 3118, 3197, 3486, 3682, 3833, 3863, 3885, 3931, 4057, 4311, 4374,
+        4472, 4489, 4510, 4520, 4853, 4917, 5216, 6797
+      ]
+    },
+    {
+      t: 'sand-dune',
+      s: [3920]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2621, 4615, 4918]
+    },
+    {
+      t: 'super-bunker',
+      l: [3968],
+      r: [4224]
+    },
+    {
+      t: 'tree',
+      s: [
+        2919, 2959, 3573, 3914, 4196, 4210, 4279, 4320, 4382, 4618, 4648, 4778,
+        4816, 4934, 5054, 5110, 5116, 5151
+      ]
+    },
+    {
+      t: 'turret',
+      d: [
+        () =>
+          selectByDifficulty([
+            ['turret', l, 1088],
+            ['turret', l, 1024],
+            ['turret', l, 1152]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', l, 2112],
+            ['turret', l, 2048],
+            ['turret', l, 2176]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 6080],
+            ['turret', r, 6016],
+            ['turret', r, 6144]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 7104],
+            ['turret', r, 7040],
+            ['turret', r, 7168]
+          ])
+      ]
+    },
+    {
+      t: 'balloon',
+      d: [
+        ...(() => {
+          /* 36 - not 99 - more balloons needed; distribute evenly across middle 3/4 of battlefield. */
+          let luftBalloons = new Array(39);
+          for (let i = 0, j = luftBalloons.length; i < j; i++) {
+            luftBalloons[i] = [
+              'balloon',
+              n,
+              3084 + parseInt((2048 * i) / j, 10)
+            ];
+          }
+          return luftBalloons;
+        })()
+      ]
+    }
   ],
 
   'Cavern Cobra': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 1280 ],
-    [ 'bunker', l, 2560 ],
-    [ 'bunker', l, 2816 ],
-    [ 'bunker', l, 3520 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3584 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 4608 ],
-    [ 'bunker', r, 4672 ],
-    [ 'bunker', r, 5376 ],
-    [ 'bunker', r, 5632 ],
-    [ 'bunker', r, 6912 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 1238 ],
-    [ 'grass', 1535 ],
-    [ 'sand-dunes', 2631 ],
-    [ 'tree', 2931 ],
-    [ 'tree', 2972 ],
-    [ 'palm-tree', 3121 ],
-    [ 'palm-tree', 3192 ],
-    [ 'palm-tree', 3507 ],
-    [ 'tree', 3591 ],
-    [ 'palm-tree', 3708 ],
-    [ 'palm-tree', 3833 ],
-    [ 'palm-tree', 3868 ],
-    [ 'palm-tree', 3889 ],
-    [ 'tree', 3931 ],
-    [ 'sand-dune', 3940 ],
-    [ 'palm-tree', 3950 ],
-    [ 'palm-tree', 4061 ],
-    [ 'tree', 4185 ],
-    [ 'tree', 4201 ],
-    [ 'tree', 4269 ],
-    [ 'palm-tree', 4305 ],
-    [ 'tree', 4312 ],
-    [ 'palm-tree', 4369 ],
-    [ 'tree', 4375 ],
-    [ 'palm-tree', 4454 ],
-    [ 'palm-tree', 4470 ],
-    [ 'palm-tree', 4490 ],
-    [ 'palm-tree', 4497 ],
-    [ 'tree', 4604 ],
-    [ 'sand-dunes', 4607 ],
-    [ 'tree', 4769 ],
-    [ 'tree', 4810 ],
-    [ 'palm-tree', 4845 ],
-    [ 'grass', 4875 ],
-    [ 'sand-dunes', 4901 ],
-    [ 'palm-tree', 4902 ],
-    [ 'tree', 4917 ],
-    [ 'tree', 5018 ],
-    [ 'tree', 5077 ],
-    [ 'tree', 5083 ],
-    [ 'tree', 5125 ],
-    [ 'palm-tree', 5189 ],
-    [ 'checkmark-grass', 5771 ],
-    [ 'cactus2', 6291 ],
-    [ 'grave-cross', 6415 ],
-    [ 'palm-tree', 6814 ],
-    [ 'gravestone', 7155 ],
-    [ 'turret', l, 1152 ],
-    [ 'turret', l, 2048 ],
-    [ 'turret', l, 2080 ],
-    [ 'turret', l, 2688 ],
-    [ 'turret', l, 3072 ],
-    [ 'turret', l, 3104 ],
-    [ 'turret', r, 5088 ],
-    [ 'turret', r, 5120 ],
-    [ 'turret', r, 5504 ],
-    [ 'turret', r, 6624 ],
-    [ 'turret', r, 6656 ],
-    [ 'turret', r, 7040 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [1024, 1280, 2560, 2816, 3520, 3584],
+      r: [4608, 4672, 5376, 5632, 6912, 7168]
+    },
+    {
+      t: 'cactus2',
+      s: [6291]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [5771]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grass',
+      s: [1535, 4875]
+    },
+    {
+      t: 'grave-cross',
+      s: [6415]
+    },
+    {
+      t: 'gravestone',
+      s: [7155]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        1238, 3121, 3192, 3507, 3708, 3833, 3868, 3889, 3950, 4061, 4305, 4369,
+        4454, 4470, 4490, 4497, 4845, 4902, 5189, 6814
+      ]
+    },
+    {
+      t: 'sand-dune',
+      s: [3940]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2631, 4607, 4901]
+    },
+    {
+      t: 'tree',
+      s: [
+        2931, 2972, 3591, 3931, 4185, 4201, 4269, 4312, 4375, 4604, 4769, 4810,
+        4917, 5018, 5077, 5083, 5125
+      ]
+    },
+    {
+      t: 'turret',
+      l: [1152, 2048, 2080, 2688, 3072, 3104],
+      r: [5088, 5120, 5504, 6624, 6656, 7040]
+    }
   ],
 
   'Desert Sortie': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 2048 ],
-    [ 'bunker', l, 3072 ],
-    [ 'balloon', l, 3584 ],
-    [ 'balloon', l, 4096 ],
-    [ 'super-bunker', r, 4096 ],
-    [ 'bunker', r, 4480 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 5632 ],
-    [ 'bunker', r, 6144 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'sand-dunes', 498 ],
-    [ 'sand-dune', 709 ],
-    [ 'sand-dune', 1604 ],
-    [ 'cactus', 1716 ],
-    [ 'cactus', 1778 ],
-    [ 'cactus2', 1815 ],
-    [ 'sand-dune', 1867 ],
-    [ 'sand-dune', 2070 ],
-    [ 'cactus', 2092 ],
-    [ 'sand-dunes', 2584 ],
-    [ 'sand-dune', 2750 ],
-    [ 'sand-dune', 3198 ],
-    [ 'gravestone', 3754 ],
-    [ 'grave-cross', 3758 ],
-    [ 'grave-cross', 3783 ],
-    [ 'grave-cross', 3815 ],
-    [ 'sand-dune', 3927 ],
-    [ 'gravestone', 4206 ],
-    [ 'tree', 4212 ],
-    [ 'grave-cross', 4263 ],
-    [ 'gravestone', 4343 ],
-    [ 'grave-cross', 4347 ],
-    [ 'sand-dune', 4364 ],
-    [ 'gravestone', 4385 ],
-    [ 'grave-cross', 4389 ],
-    [ 'grave-cross', 4403 ],
-    [ 'gravestone', 4440 ],
-    [ 'grave-cross', 4445 ],
-    [ 'grave-cross', 4461 ],
-    [ 'sand-dunes', 4590 ],
-    [ 'sand-dunes', 4793 ],
-    [ 'sand-dune', 4838 ],
-    [ 'sand-dunes', 4921 ],
-    [ 'sand-dune', 5920 ],
-    [ 'cactus', 5991 ],
-    [ 'cactus2', 6030 ],
-    [ 'cactus2', 6307 ],
-    [ 'cactus2', 6319 ],
-    [ 'cactus2', 6437 ],
-    [ 'sand-dunes', 6708 ],
-    [ 'sand-dune', 6872 ],
-    [ 'sand-dunes', 7038 ],
-    [ 'gravestone', 7155 ],
-    [ 'sand-dune', 7322 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 2560 ],
-    [ 'turret', r, 5120 ],
-    [ 'turret', r, 6656 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [1024, 2048, 3072],
+      r: [4480, 5632, 6144]
+    },
+    {
+      t: 'cactus',
+      s: [1716, 1778, 2092, 5991]
+    },
+    {
+      t: 'cactus2',
+      s: [1815, 6030, 6307, 6319, 6437]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [3758, 3783, 3815, 4263, 4347, 4389, 4403, 4445, 4461]
+    },
+    {
+      t: 'gravestone',
+      s: [3754, 4206, 4343, 4385, 4440, 7155]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'sand-dune',
+      s: [709, 1604, 1867, 2070, 2750, 3198, 3927, 4364, 4838, 5920, 6872, 7322]
+    },
+    {
+      t: 'sand-dunes',
+      s: [498, 2584, 4590, 4793, 4921, 6708, 7038]
+    },
+    {
+      t: 'super-bunker',
+      r: [4096]
+    },
+    {
+      t: 'tree',
+      s: [4212]
+    },
+    {
+      t: 'turret',
+      l: [1536, 2560],
+      r: [5120, 6656]
+    }
   ],
 
   'First Blood': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', l, 640 ],
-    [ 'bunker', l, 1152 ],
-    [ 'bunker', l, 1280 ],
-    [ 'super-bunker', r, 1744 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', r, 3968 ],
-    [ 'bunker', r, 4032 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4224 ],
-    [ 'balloon', l, 4608 ],
-    [ 'tank', r, 4736 ],
-    [ 'infantry', r, 4816 ],
-    [ 'tank', r, 4976 ],
-    [ 'infantry', r, 5056 ],
-    [ 'tank', r, 5136 ],
-    [ 'tank', r, 5216 ],
-    [ 'bunker', r, 6144 ],
-    [ 'bunker', r, 6208 ],
-    [ 'super-bunker', r, 6352 ],
-    [ 'tank', r, 6784 ],
-    [ 'infantry', r, 6864 ],
-    [ 'tank', r, 7024 ],
-    [ 'bunker', r, 7040 ],
-    [ 'infantry', r, 7104 ],
-    [ 'missile-launcher', r, 7184 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'tree', 498 ],
-    [ 'palm-tree', 719 ],
-    [ 'checkmark-grass', 1207 ],
-    [ 'rock', 1283 ],
-    [ 'flowers', 1427 ],
-    [ 'palm-tree', 1633 ],
-    [ 'rock2', 1783 ],
-    [ 'palm-tree', 1868 ],
-    [ 'palm-tree', 2088 ],
-    [ 'palm-tree', 2099 ],
-    [ 'flower', 2371 ],
-    [ 'tree', 2636 ],
-    [ 'gravestone', 2681 ],
-    [ 'grave-cross', 2685 ],
-    [ 'palm-tree', 2795 ],
-    [ 'tree', 2983 ],
-    [ 'palm-tree', 3219 ],
-    [ 'palm-tree', 3872 ],
-    [ 'palm-tree', 3919 ],
-    [ 'checkmark-grass', 4200 ],
-    [ 'tree', 4270 ],
-    [ 'palm-tree', 4377 ],
-    [ 'palm-tree', 4497 ],
-    [ 'tree', 4614 ],
-    [ 'tree', 4816 ],
-    [ 'palm-tree', 4855 ],
-    [ 'grave-cross', 4971 ],
-    [ 'tree', 5108 ],
-    [ 'tree', 5141 ],
-    [ 'barb-wire', 5207 ],
-    [ 'grave-cross', 5282 ],
-    [ 'palm-tree', 5942 ],
-    [ 'tree', 6022 ],
-    [ 'palm-tree', 6245 ],
-    [ 'tree', 6340 ],
-    [ 'tree', 6738 ],
-    [ 'tree', 6800 ],
-    [ 'palm-tree', 6884 ],
-    [ 'gravestone', 7031 ],
-    [ 'grave-cross', 7034 ],
-    [ 'gravestone', 7145 ],
-    [ 'grave-cross', 7149 ],
-    [ 'palm-tree', 7347 ],
-    [ 'tree', 7359 ],
-    [ 'flower', 7549 ],
-    [ 'turret', l, 512 ],
-    [ 'turret', r, 1840 ],
-    [ 'turret', r, 1904 ],
-    [ 'turret', r, 4096 ],
-    [ 'turret', r, 4128 ],
-    [ 'turret', r, 6448 ],
-    [ 'turret', r, 6512 ],
-    [ 'van', r, 7234 ],
-    [ 'van', r, 7680 ],
-    [ 'van', r, 7744 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [5207]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [640, 1152, 1280],
+      r: [3968, 4032, 4224, 6144, 6208, 7040]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [1207, 4200]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [2371, 7549]
+    },
+    {
+      t: 'flowers',
+      s: [1427]
+    },
+    {
+      t: 'grave-cross',
+      s: [2685, 4971, 5282, 7034, 7149]
+    },
+    {
+      t: 'gravestone',
+      s: [2681, 7031, 7145]
+    },
+    {
+      t: 'infantry',
+      r: [4816, 5056, 6864, 7104]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [7184]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        719, 1633, 1868, 2088, 2099, 2795, 3219, 3872, 3919, 4377, 4497, 4855,
+        5942, 6245, 6884, 7347
+      ]
+    },
+    {
+      t: 'rock',
+      s: [1283]
+    },
+    {
+      t: 'rock2',
+      s: [1783]
+    },
+    {
+      t: 'super-bunker',
+      r: [1744, 6352]
+    },
+    {
+      t: 'tank',
+      r: [4736, 4976, 5136, 5216, 6784, 7024]
+    },
+    {
+      t: 'tree',
+      s: [
+        498, 2636, 2983, 4270, 4614, 4816, 5108, 5141, 6022, 6340, 6738, 6800,
+        7359
+      ]
+    },
+    {
+      t: 'turret',
+      l: [512],
+      r: [1840, 1904, 4096, 4128, 6448, 6512]
+    },
+    {
+      t: 'van',
+      r: [7234, 7680, 7744]
+    }
   ],
 
   'Network Mania': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', r, 1024 ],
-    [ 'tank', r, 1536 ],
-    [ 'infantry', r, 1616 ],
-    [ 'tank', r, 1776 ],
-    [ 'super-bunker', r, 1792 ],
-    [ 'infantry', r, 1856 ],
-    [ 'missile-launcher', r, 1936 ],
-    [ 'missile-launcher', r, 3296 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', r, 3968 ],
-    [ 'balloon', l, 4096 ],
-    [ 'missile-launcher', r, 4096 ],
-    [ 'super-bunker', r, 4096 ],
-    [ 'tank', r, 4096 ],
-    [ 'infantry', r, 4176 ],
-    [ 'bunker', r, 4224 ],
-    [ 'tank', r, 4336 ],
-    [ 'infantry', r, 4416 ],
-    [ 'tank', r, 4496 ],
-    [ 'tank', r, 4576 ],
-    [ 'balloon', l, 4608 ],
-    [ 'tank', r, 5120 ],
-    [ 'infantry', r, 5200 ],
-    [ 'infantry', r, 5360 ],
-    [ 'missile-launcher', r, 5520 ],
-    [ 'super-bunker', r, 6400 ],
-    [ 'infantry', r, 6656 ],
-    [ 'infantry', r, 6656 ],
-    [ 'missile-launcher', r, 6976 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 1244 ],
-    [ 'grass', 1542 ],
-    [ 'sand-dunes', 2588 ],
-    [ 'tree', 2892 ],
-    [ 'tree', 2934 ],
-    [ 'palm-tree', 3091 ],
-    [ 'palm-tree', 3177 ],
-    [ 'palm-tree', 3479 ],
-    [ 'tree', 3567 ],
-    [ 'palm-tree', 3689 ],
-    [ 'palm-tree', 3813 ],
-    [ 'palm-tree', 3850 ],
-    [ 'palm-tree', 3880 ],
-    [ 'tree', 3908 ],
-    [ 'sand-dune', 3912 ],
-    [ 'palm-tree', 3928 ],
-    [ 'palm-tree', 4054 ],
-    [ 'tree', 4185 ],
-    [ 'tree', 4199 ],
-    [ 'tree', 4268 ],
-    [ 'palm-tree', 4315 ],
-    [ 'tree', 4322 ],
-    [ 'palm-tree', 4467 ],
-    [ 'palm-tree', 4483 ],
-    [ 'palm-tree', 4502 ],
-    [ 'palm-tree', 4515 ],
-    [ 'tree', 4605 ],
-    [ 'sand-dunes', 4607 ],
-    [ 'tree', 4637 ],
-    [ 'tree', 4774 ],
-    [ 'tree', 4819 ],
-    [ 'palm-tree', 4865 ],
-    [ 'grass', 4893 ],
-    [ 'palm-tree', 4922 ],
-    [ 'sand-dunes', 4922 ],
-    [ 'tree', 4936 ],
-    [ 'tree', 5063 ],
-    [ 'tree', 5125 ],
-    [ 'tree', 5132 ],
-    [ 'tree', 5173 ],
-    [ 'palm-tree', 5225 ],
-    [ 'checkmark-grass', 5770 ],
-    [ 'cactus2', 6289 ],
-    [ 'palm-tree', 6822 ],
-    [ 'gravestone', 7151 ],
-    () => selectByDifficulty([
-      [ 'turret', r, 1680 ],
-      [ 'turret', r, 1648 ],
-      [ 'turret', r, 1888 ]
-    ]),
-    [ 'van', r, 1986 ],
-    () => selectByDifficulty([
-      [ 'turret', r, 1952 ],
-      [ 'turret', r, 4067 ],
-      [ 'turret', r, 4163 ],
-    ]),
-    [ 'van', r, 5730 ],
-    () => selectByDifficulty([
-      [ 'turret', r, 6288 ],
-      [ 'turret', r, 6256 ],
-      [ 'turret', r, 6496 ]
-    ]),
-    [ 'turret', r, 6560 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1024, 3968, 4224, 7168]
+    },
+    {
+      t: 'cactus2',
+      s: [6289]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [5770]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grass',
+      s: [1542, 4893]
+    },
+    {
+      t: 'gravestone',
+      s: [7151]
+    },
+    {
+      t: 'infantry',
+      r: [1616, 1856, 4176, 4416, 5200, 5360, 6656, 6656]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'missile-launcher',
+      r: [1936, 3296, 4096, 5520, 6976]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        1244, 3091, 3177, 3479, 3689, 3813, 3850, 3880, 3928, 4054, 4315, 4467,
+        4483, 4502, 4515, 4865, 4922, 5225, 6822
+      ]
+    },
+    {
+      t: 'sand-dune',
+      s: [3912]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2588, 4607, 4922]
+    },
+    {
+      t: 'super-bunker',
+      r: [1792, 4096, 6400]
+    },
+    {
+      t: 'tank',
+      r: [1536, 1776, 4096, 4336, 4496, 4576, 5120]
+    },
+    {
+      t: 'tree',
+      s: [
+        2892, 2934, 3567, 3908, 4185, 4199, 4268, 4322, 4605, 4637, 4774, 4819,
+        4936, 5063, 5125, 5132, 5173
+      ]
+    },
+    {
+      t: 'turret',
+      r: [6560],
+      d: [
+        () =>
+          selectByDifficulty([
+            ['turret', r, 1680],
+            ['turret', r, 1648],
+            ['turret', r, 1888]
+          ]),
+        ['van', r, 1986],
+        () =>
+          selectByDifficulty([
+            ['turret', r, 1952],
+            ['turret', r, 4067],
+            ['turret', r, 4163]
+          ]),
+        ['van', r, 5730],
+        () =>
+          selectByDifficulty([
+            ['turret', r, 6288],
+            ['turret', r, 6256],
+            ['turret', r, 6496]
+          ])
+      ]
+    },
+    {
+      t: 'van',
+      r: [1986, 5730]
+    }
   ],
 
   'Rescue Raiders': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'super-bunker', l, 2048 ],
-    [ 'bunker', l, 3072 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3584 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4608 ],
-    [ 'super-bunker', r, 4608 ],
-    [ 'super-bunker', r, 4768 ],
-    [ 'bunker', r, 5120 ],
-    [ 'bunker', r, 5632 ],
-    [ 'super-bunker', r, 6144 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'gravestone', 501 ],
-    [ 'grave-cross', 506 ],
-    [ 'grave-cross', 699 ],
-    [ 'cactus', 1026 ],
-    [ 'grave-cross', 1115 ],
-    [ 'grave-cross', 1892 ],
-    [ 'cactus2', 1932 ],
-    [ 'cactus2', 1946 ],
-    [ 'grave-cross', 2087 ],
-    [ 'grave-cross', 2097 ],
-    [ 'gravestone', 2616 ],
-    [ 'grave-cross', 2619 ],
-    [ 'cactus', 2655 ],
-    [ 'cactus2', 2719 ],
-    [ 'grave-cross', 2784 ],
-    [ 'gravestone', 2991 ],
-    [ 'grave-cross', 2994 ],
-    [ 'sand-dune', 3083 ],
-    [ 'grave-cross', 3228 ],
-    [ 'sand-dune', 3242 ],
-    [ 'sand-dunes', 3559 ],
-    [ 'grave-cross', 3888 ],
-    [ 'grave-cross', 3936 ],
-    [ 'sand-dunes', 4150 ],
-    [ 'grave-cross', 4248 ],
-    [ 'gravestone', 4290 ],
-    [ 'grave-cross', 4294 ],
-    [ 'grave-cross', 4294 ],
-    [ 'grave-cross', 4314 ],
-    [ 'grave-cross', 4413 ],
-    [ 'grave-cross', 4527 ],
-    [ 'gravestone', 4618 ],
-    [ 'grave-cross', 4623 ],
-    [ 'gravestone', 4825 ],
-    [ 'grave-cross', 4829 ],
-    [ 'grave-cross', 4864 ],
-    [ 'cactus2', 4971 ],
-    [ 'gravestone', 5116 ],
-    [ 'grave-cross', 5120 ],
-    [ 'cactus2', 5288 ],
-    [ 'sand-dunes', 5685 ],
-    [ 'grave-cross', 5918 ],
-    [ 'gravestone', 6011 ],
-    [ 'grave-cross', 6014 ],
-    [ 'grave-cross', 6267 ],
-    [ 'gravestone', 6366 ],
-    [ 'grave-cross', 6370 ],
-    [ 'gravestone', 6735 ],
-    [ 'grave-cross', 6740 ],
-    [ 'gravestone', 6803 ],
-    [ 'grave-cross', 6807 ],
-    [ 'grave-cross', 6884 ],
-    [ 'cactus', 6997 ],
-    [ 'gravestone', 7027 ],
-    [ 'grave-cross', 7031 ],
-    [ 'cactus', 7136 ],
-    [ 'grave-cross', 7315 ],
-    [ 'gravestone', 7330 ],
-    [ 'grave-cross', 7334 ],
-    [ 'cactus2', 7569 ],
-    [ 'turret', l, 512 ],
-    [ 'turret', l, 1024 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 2208 ],
-    [ 'turret', l, 2272 ],
-    [ 'turret', l, 4064 ],
-    [ 'turret', r, 4119 ],
-    [ 'turret', l, 4120 ],
-    [ 'turret', r, 4182 ],
-    [ 'turret', r, 5920 ],
-    [ 'turret', r, 5984 ],
-    [ 'turret', r, 6656 ],
-    [ 'turret', r, 7168 ],
-    [ 'turret', r, 7680 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [3072, 3584],
+      r: [5120, 5632]
+    },
+    {
+      t: 'cactus',
+      s: [1026, 2655, 6997, 7136]
+    },
+    {
+      t: 'cactus2',
+      s: [1932, 1946, 2719, 4971, 5288, 7569]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [
+        506, 699, 1115, 1892, 2087, 2097, 2619, 2784, 2994, 3228, 3888, 3936,
+        4248, 4294, 4294, 4314, 4413, 4527, 4623, 4829, 4864, 5120, 5918, 6014,
+        6267, 6370, 6740, 6807, 6884, 7031, 7315, 7334
+      ]
+    },
+    {
+      t: 'gravestone',
+      s: [
+        501, 2616, 2991, 4290, 4618, 4825, 5116, 6011, 6366, 6735, 6803, 7027,
+        7330
+      ]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'sand-dune',
+      s: [3083, 3242]
+    },
+    {
+      t: 'sand-dunes',
+      s: [3559, 4150, 5685]
+    },
+    {
+      t: 'super-bunker',
+      l: [2048],
+      r: [4608, 4768, 6144]
+    },
+    {
+      t: 'turret',
+      l: [512, 1024, 1536, 2208, 2272, 4064, 4120],
+      r: [4119, 4182, 5920, 5984, 6656, 7168, 7680]
+    }
   ],
 
   'Midpoint': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'super-bunker', r, 2560 ],
-    [ 'bunker', l, 2720 ],
-    [ 'balloon', l, 3584 ],
-    [ 'landing-pad', n, 4066 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', l, 5472 ],
-    [ 'super-bunker', r, 5632 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 1726 ],
-    [ 'grass', 2028 ],
-    [ 'sand-dunes', 2636 ],
-    [ 'tree', 2937 ],
-    [ 'tree', 2977 ],
-    [ 'palm-tree', 3116 ],
-    [ 'palm-tree', 3205 ],
-    [ 'palm-tree', 3516 ],
-    [ 'tree', 3611 ],
-    [ 'palm-tree', 3725 ],
-    [ 'palm-tree', 3818 ],
-    [ 'palm-tree', 3856 ],
-    [ 'palm-tree', 3882 ],
-    [ 'tree', 3912 ],
-    [ 'sand-dune', 3918 ],
-    [ 'palm-tree', 3929 ],
-    [ 'palm-tree', 4037 ],
-    [ 'tree', 4169 ],
-    [ 'tree', 4187 ],
-    [ 'tree', 4249 ],
-    [ 'palm-tree', 4292 ],
-    [ 'tree', 4300 ],
-    [ 'palm-tree', 4346 ],
-    [ 'tree', 4355 ],
-    [ 'palm-tree', 4432 ],
-    [ 'palm-tree', 4451 ],
-    [ 'palm-tree', 4471 ],
-    [ 'palm-tree', 4478 ],
-    [ 'tree', 4590 ],
-    [ 'sand-dunes', 4594 ],
-    [ 'tree', 4626 ],
-    [ 'tree', 4756 ],
-    [ 'tree', 4795 ],
-    [ 'palm-tree', 4831 ],
-    [ 'grass', 4885 ],
-    [ 'sand-dunes', 4917 ],
-    [ 'palm-tree', 4919 ],
-    [ 'tree', 4932 ],
-    [ 'tree', 5032 ],
-    [ 'tree', 5084 ],
-    [ 'tree', 5091 ],
-    [ 'tree', 5128 ],
-    [ 'palm-tree', 5196 ],
-    [ 'checkmark-grass', 5779 ],
-    [ 'cactus2', 6296 ],
-    [ 'grave-cross', 6425 ],
-    [ 'palm-tree', 6807 ],
-    [ 'gravestone', 7137 ],
-    [ 'grave-cross', 7141 ],
-    [ 'turret', l, 512 ],
-    [ 'turret', l, 576 ],
-    [ 'turret', r, 3072 ],
-    [ 'turret', r, 3136 ],
-    [ 'turret', r, 4000 ],
-    [ 'turret', r, 4032 ],
-    [ 'turret', l, 4160 ],
-    [ 'turret', l, 4192 ],
-    [ 'turret', r, 5056 ],
-    [ 'turret', r, 5120 ],
-    [ 'turret', r, 7616 ],
-    [ 'turret', r, 7680 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [2720, 5472]
+    },
+    {
+      t: 'cactus2',
+      s: [6296]
+    },
+    {
+      t: 'checkmark-grass',
+      s: [5779]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grass',
+      s: [2028, 4885]
+    },
+    {
+      t: 'grave-cross',
+      s: [6425, 7141]
+    },
+    {
+      t: 'gravestone',
+      s: [7137]
+    },
+    {
+      t: 'landing-pad',
+      n: [320, 4066],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [
+        1726, 3116, 3205, 3516, 3725, 3818, 3856, 3882, 3929, 4037, 4292, 4346,
+        4432, 4451, 4471, 4478, 4831, 4919, 5196, 6807
+      ]
+    },
+    {
+      t: 'sand-dune',
+      s: [3918]
+    },
+    {
+      t: 'sand-dunes',
+      s: [2636, 4594, 4917]
+    },
+    {
+      t: 'super-bunker',
+      r: [2560, 5632]
+    },
+    {
+      t: 'tree',
+      s: [
+        2937, 2977, 3611, 3912, 4169, 4187, 4249, 4300, 4355, 4590, 4626, 4756,
+        4795, 4932, 5032, 5084, 5091, 5128
+      ]
+    },
+    {
+      t: 'turret',
+      l: [512, 576, 4160, 4192],
+      r: [3072, 3136, 4000, 4032, 5056, 5120, 7616, 7680]
+    }
   ],
 
   'Slithy Toves': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', l, 1024 ],
-    [ 'bunker', l, 2048 ],
-    [ 'bunker', l, 3072 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', r, 3840 ],
-    [ 'balloon', l, 4096 ],
-    [ 'bunker', r, 4352 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 5120 ],
-    [ 'bunker', r, 6144 ],
-    [ 'bunker', r, 7168 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 907 ],
-    [ 'rock', 973 ],
-    [ 'flower', 1955 ],
-    [ 'grass', 3551 ],
-    [ 'flower', 3554 ],
-    [ 'flowers', 3564 ],
-    [ 'flower-bush', 3595 ],
-    [ 'rock2', 3636 ],
-    [ 'rock', 3644 ],
-    [ 'rock', 3664 ],
-    [ 'tree', 3687 ],
-    [ 'tree', 4377 ],
-    [ 'grave-cross', 4443 ],
-    [ 'tree', 5144 ],
-    [ 'grave-cross', 5213 ],
-    [ 'flower-bush', 6602 ],
-    [ 'palm-tree', 6706 ],
-    [ 'sand-dunes', 7599 ],
-    [ 'palm-tree', 7657 ],
-    [ 'turret', l, 1536 ],
-    [ 'turret', l, 2560 ],
-    [ 'turret', r, 5632 ],
-    [ 'turret', r, 6656 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [1024, 2048, 3072],
+      r: [3840, 4352, 5120, 6144, 7168]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [1955, 3554]
+    },
+    {
+      t: 'flower-bush',
+      s: [3595, 6602]
+    },
+    {
+      t: 'flowers',
+      s: [3564]
+    },
+    {
+      t: 'grass',
+      s: [3551]
+    },
+    {
+      t: 'grave-cross',
+      s: [4443, 5213]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [907, 6706, 7657]
+    },
+    {
+      t: 'rock',
+      s: [973, 3644, 3664]
+    },
+    {
+      t: 'rock2',
+      s: [3636]
+    },
+    {
+      t: 'sand-dunes',
+      s: [7599]
+    },
+    {
+      t: 'tree',
+      s: [3687, 4377, 5144]
+    },
+    {
+      t: 'turret',
+      l: [1536, 2560],
+      r: [5632, 6656]
+    }
   ],
 
-  'Tanker\'s Demise': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'super-bunker', l, 512 ],
-    [ 'super-bunker', l, 588 ],
-    [ 'super-bunker', l, 2560 ],
-    [ 'balloon', l, 3584 ],
-    [ 'balloon', l, 3584 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3584 ],
-    [ 'bunker', l, 3712 ],
-    [ 'super-bunker', l, 4000 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4096 ],
-    [ 'super-bunker', r, 4200 ],
-    [ 'bunker', r, 4544 ],
-    [ 'balloon', l, 4608 ],
-    [ 'balloon', l, 4608 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 4608 ],
-    [ 'super-bunker', r, 5632 ],
-    [ 'super-bunker', r, 7034 ],
-    [ 'super-bunker', r, 7114 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'palm-tree', 914 ],
-    [ 'rock', 995 ],
-    [ 'flower', 2981 ],
-    [ 'grass', 4079 ],
-    [ 'flower', 4086 ],
-    [ 'flowers', 4096 ],
-    [ 'grass', 4106 ],
-    [ 'flower-bush', 4130 ],
-    [ 'rock2', 4156 ],
-    [ 'rock', 4164 ],
-    [ 'rock', 4185 ],
-    [ 'tree', 4205 ],
-    [ 'flower-bush', 6603 ],
-    [ 'palm-tree', 6706 ],
-    [ 'sand-dunes', 7673 ],
-    [ 'palm-tree', 7734 ],
-    // NB: level editor suggests there were two.
-    // [ 'turret', l, 572 ],
-    [ 'turret', l, 572 ],
-    () => selectByDifficulty([
-      [ 'turret', l, 2080 ],
-      [ 'turret', l, 2048 ],
-      [ 'turret', l, 2112 ],
-    ]),
-    [ 'turret', l, 2552 ],
-    [ 'turret', l, 2611 ],
-    () => selectByDifficulty([
-      [ 'turret', l, 4132 ],
-      [ 'turret', l, 4100 ],
-      [ 'turret', l, 4164 ]
-    ]),
-    () => selectByDifficulty([
-      [ 'turret', r, 4080 ],
-      [ 'turret', r, 4112 ],
-      [ 'turret', r, 4144 ]
-    ]),
-    [ 'turret', r, 5623 ],
-    [ 'turret', r, 5684 ],
-    () => selectByDifficulty([
-      [ 'turret', r, 6176 ],
-      [ 'turret', r, 6144 ],
-      [ 'turret', r, 6208 ]
-    ]),
-    // NB: level editor suggests there were two.
-    // [ 'turret', r, 7096 ],
-    [ 'turret', r, 7096 ]
+  "Tanker's Demise": [
+    {
+      t: 'balloon',
+      l: [3584, 3584, 3584, 4096, 4096, 4096, 4608, 4608, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      l: [3584, 3712],
+      r: [4544, 4608]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [2981, 4086]
+    },
+    {
+      t: 'flower-bush',
+      s: [4130, 6603]
+    },
+    {
+      t: 'flowers',
+      s: [4096]
+    },
+    {
+      t: 'grass',
+      s: [4079, 4106]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [914, 6706, 7734]
+    },
+    {
+      t: 'rock',
+      s: [995, 4164, 4185]
+    },
+    {
+      t: 'rock2',
+      s: [4156]
+    },
+    {
+      t: 'sand-dunes',
+      s: [7673]
+    },
+    {
+      t: 'super-bunker',
+      l: [512, 588, 2560, 4000],
+      r: [4200, 5632, 7034, 7114]
+    },
+    {
+      t: 'tree',
+      s: [4205]
+    },
+    {
+      t: 'turret',
+      // NB: original level editor suggests there were two turrets @ 572 and 7096.
+      l: [572, 2552, 2611],
+      r: [5623, 5684, 7096],
+      d: [
+        () =>
+          selectByDifficulty([
+            ['turret', l, 2080],
+            ['turret', l, 2048],
+            ['turret', l, 2112]
+          ]),
+        ['turret', l, 2552],
+        ['turret', l, 2611],
+        () =>
+          selectByDifficulty([
+            ['turret', l, 4132],
+            ['turret', l, 4100],
+            ['turret', l, 4164]
+          ]),
+        () =>
+          selectByDifficulty([
+            ['turret', r, 4080],
+            ['turret', r, 4112],
+            ['turret', r, 4144]
+          ]),
+        ['turret', r, 5623],
+        ['turret', r, 5684],
+        () =>
+          selectByDifficulty([
+            ['turret', r, 6176],
+            ['turret', r, 6144],
+            ['turret', r, 6208]
+          ])
+      ]
+    }
   ],
 
   'WindStalker': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'bunker', r, 1992 ],
-    [ 'super-bunker', r, 2048 ],
-    [ 'bunker', r, 2118 ],
-    [ 'balloon', l, 3584 ],
-    [ 'bunker', l, 3688 ],
-    [ 'bunker', l, 3968 ],
-    [ 'balloon', l, 4096 ],
-    [ 'landing-pad', n, 4096 ],
-    [ 'bunker', r, 4224 ],
-    [ 'bunker', r, 4352 ],
-    [ 'balloon', l, 4608 ],
-    [ 'bunker', r, 6090 ],
-    [ 'super-bunker', r, 6144 ],
-    [ 'bunker', r, 6212 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'barb-wire', 575 ],
-    [ 'cactus', 638 ],
-    [ 'gravestone', 820 ],
-    [ 'grave-cross', 824 ],
-    [ 'palm-tree', 1183 ],
-    [ 'tree', 1293 ],
-    [ 'palm-tree', 1318 ],
-    [ 'palm-tree', 1645 ],
-    [ 'gravestone', 2098 ],
-    [ 'grave-cross', 2103 ],
-    [ 'palm-tree', 2721 ],
-    [ 'cactus2', 2783 ],
-    [ 'tree', 2844 ],
-    [ 'cactus2', 2865 ],
-    [ 'flower', 2978 ],
-    [ 'rock2', 3117 ],
-    [ 'barb-wire', 3398 ],
-    [ 'sand-dune', 3786 ],
-    [ 'barb-wire', 4195 ],
-    [ 'grave-cross', 4242 ],
-    [ 'grave-cross', 4297 ],
-    [ 'cactus2', 4583 ],
-    [ 'sand-dune', 4765 ],
-    [ 'tree', 4824 ],
-    [ 'cactus2', 4866 ],
-    [ 'barb-wire', 4906 ],
-    [ 'palm-tree', 4943 ],
-    [ 'tree', 5336 ],
-    [ 'cactus2', 5354 ],
-    [ 'cactus2', 5683 ],
-    [ 'cactus2', 5924 ],
-    [ 'palm-tree', 6253 ],
-    [ 'cactus', 6281 ],
-    [ 'flower', 6329 ],
-    [ 'tree', 6737 ],
-    [ 'flower-bush', 6806 ],
-    [ 'grave-cross', 6888 ],
-    [ 'flower-bush', 7012 ],
-    [ 'cactus', 7047 ],
-    [ 'rock2', 7549 ],
-    [ 'sand-dune', 7562 ],
-    [ 'palm-tree', 7595 ],
-    [ 'tree', 7602 ],
-    [ 'turret', r, 1986 ],
-    [ 'turret', r, 2189 ],
-    [ 'turret', l, 3072 ],
-    [ 'turret', l, 3584 ],
-    [ 'turret', r, 4608 ],
-    [ 'turret', r, 5120 ],
-    [ 'turret', r, 6085 ],
-    [ 'turret', r, 6291 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'barb-wire',
+      s: [575, 3398, 4195, 4906]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'bunker',
+      r: [1992, 2118, 4224, 4352, 6090, 6212],
+      l: [3688, 3968]
+    },
+    {
+      t: 'cactus',
+      s: [638, 6281, 7047]
+    },
+    {
+      t: 'cactus2',
+      s: [2783, 2865, 4583, 4866, 5354, 5683, 5924]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'flower',
+      s: [2978, 6329]
+    },
+    {
+      t: 'flower-bush',
+      s: [6806, 7012]
+    },
+    {
+      t: 'grave-cross',
+      s: [824, 2103, 4242, 4297, 6888]
+    },
+    {
+      t: 'gravestone',
+      s: [820, 2098]
+    },
+    {
+      t: 'landing-pad',
+      n: [320, 4096],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [1183, 1318, 1645, 2721, 4943, 6253, 7595]
+    },
+    {
+      t: 'rock2',
+      s: [3117, 7549]
+    },
+    {
+      t: 'sand-dune',
+      s: [3786, 4765, 7562]
+    },
+    {
+      t: 'super-bunker',
+      r: [2048, 6144]
+    },
+    {
+      t: 'tree',
+      s: [1293, 2844, 4824, 5336, 6737, 7602]
+    },
+    {
+      t: 'turret',
+      r: [1986, 2189, 4608, 5120, 6085, 6291],
+      l: [3072, 3584]
+    }
   ],
 
   'Sandstorm': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'balloon', l, 3584 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4608 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'sand-dunes', 491 ],
-    [ 'sand-dune', 712 ],
-    [ 'cactus2', 1262 ],
-    [ 'cactus2', 1424 ],
-    [ 'gravestone', 1530 ],
-    [ 'grave-cross', 1533 ],
-    [ 'sand-dune', 1589 ],
-    [ 'cactus', 1752 ],
-    [ 'sand-dune', 1836 ],
-    [ 'grave-cross', 1890 ],
-    [ 'grave-cross', 1904 ],
-    [ 'sand-dune', 2051 ],
-    [ 'cactus2', 2057 ],
-    [ 'cactus', 2347 ],
-    [ 'sand-dunes', 2578 ],
-    [ 'gravestone', 2650 ],
-    [ 'grave-cross', 2654 ],
-    [ 'grave-cross', 2720 ],
-    [ 'sand-dune', 2752 ],
-    [ 'cactus', 2974 ],
-    [ 'sand-dune', 3182 ],
-    [ 'cactus2', 3722 ],
-    [ 'sand-dune', 3753 ],
-    [ 'cactus', 4128 ],
-    [ 'sand-dune', 4199 ],
-    [ 'cactus2', 4338 ],
-    [ 'sand-dunes', 4439 ],
-    [ 'sand-dunes', 4656 ],
-    [ 'sand-dune', 4702 ],
-    [ 'grave-cross', 4826 ],
-    [ 'sand-dunes', 4943 ],
-    [ 'sand-dune', 4991 ],
-    [ 'grave-cross', 5140 ],
-    [ 'sand-dune', 5459 ],
-    [ 'cactus', 5582 ],
-    [ 'cactus2', 5805 ],
-    [ 'cactus', 5891 ],
-    [ 'sand-dunes', 6269 ],
-    [ 'cactus', 6360 ],
-    [ 'sand-dune', 6438 ],
-    [ 'gravestone', 6590 ],
-    [ 'grave-cross', 6594 ],
-    [ 'sand-dunes', 6604 ],
-    [ 'gravestone', 6713 ],
-    [ 'grave-cross', 6717 ],
-    [ 'sand-dune', 6892 ],
-    [ 'cactus', 6928 ],
-    [ 'cactus', 7114 ],
-    [ 'grave-cross', 7164 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'cactus',
+      s: [1752, 2347, 2974, 4128, 5582, 5891, 6360, 6928, 7114]
+    },
+    {
+      t: 'cactus2',
+      s: [1262, 1424, 2057, 3722, 4338, 5805]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'grave-cross',
+      s: [1533, 1890, 1904, 2654, 2720, 4826, 5140, 6594, 6717, 7164]
+    },
+    {
+      t: 'gravestone',
+      s: [1530, 2650, 6590, 6713]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'sand-dune',
+      s: [
+        712, 1589, 1836, 2051, 2752, 3182, 3753, 4199, 4702, 4991, 5459, 6438,
+        6892
+      ]
+    },
+    {
+      t: 'sand-dunes',
+      s: [491, 2578, 4439, 4656, 4943, 6269, 6604]
+    }
   ],
 
   'Rainstorm': [
-    [ 'end-bunker', l, 24 ],
-    [ 'base', l, 192 ],
-    [ 'landing-pad', n, 320 ],
-    [ 'balloon', l, 3584 ],
-    [ 'balloon', l, 4096 ],
-    [ 'balloon', l, 4608 ],
-    [ 'landing-pad', r, 7872 ],
-    [ 'base', r, 8000 ],
-    [ 'end-bunker', r, 8168 ],
-    [ 'tree', 1299 ],
-    [ 'tree', 3941 ],
-    [ 'palm-tree', 4735 ],
-    [ 'tree', 6991 ],
-    [ 'tree', 7109 ]
+    {
+      t: 'balloon',
+      l: [3584, 4096, 4608]
+    },
+    {
+      t: 'base',
+      l: [192],
+      r: [8000]
+    },
+    {
+      t: 'end-bunker',
+      l: [24],
+      r: [8168]
+    },
+    {
+      t: 'landing-pad',
+      n: [320],
+      r: [7872]
+    },
+    {
+      t: 'palm-tree',
+      s: [4735]
+    },
+    {
+      t: 'tree',
+      s: [1299, 3941, 6991, 7109]
+    }
   ]
-
 };
 
 export {
