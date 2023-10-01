@@ -407,10 +407,6 @@ const Tank = (options = {}) => {
       halfWidth: 28,
       halfHeight: tankHeight / 2,
       stopped: false,
-      inventory: {
-        frameCount: 30,
-        cost: 4
-      },
       lastNearbyTarget: null,
       x: options.x || 0,
       y: game.objects.view.data.world.height - tankHeight,

@@ -362,8 +362,9 @@ const Infantry = (options = {}) => {
       targets: undefined,
       useLookAhead: true,
       hit(target) {
+        const tData = target.data;
         // engineer + turret case? reclaim or repair.
-        if (data.role && target.data.type === TYPES.turret) {
+        if (data.role && tData.type === TYPES.turret) {
           // is there work to do?
           if (target.engineerCanInteract(data.isEnemy)) {
             stop(true);
@@ -375,18 +376,18 @@ const Infantry = (options = {}) => {
         } else if (
           gamePrefs.engineers_repair_bunkers &&
           data.role &&
-          target.data.type === TYPES.bunker &&
-          data.isEnemy === target.data.isEnemy &&
+          tData.type === TYPES.bunker &&
+          data.isEnemy === tData.isEnemy &&
           target.engineerHit
         ) {
           // engineer + friendly bunker: repair, as needed
           target.engineerHit(exports);
-        } else if (target.data.isEnemy !== data.isEnemy) {
+        } else if (tData.isEnemy !== data.isEnemy) {
           // stop moving, start firing if not a friendly unit
 
           // BUT, ignore if it's an infantry/engineer -> enemy bunker case.
           // we don't want either types firing at bunkers.
-          if (target.data.type === TYPES.bunker) {
+          if (tData.type === TYPES.bunker) {
             // ensure we're moving, in case we were stopped
             resume();
             return;
@@ -395,8 +396,8 @@ const Infantry = (options = {}) => {
           // fire at a non-friendly unit, IF it's actually in front of us.
           // nearby also includes a certain lookAhead amount behind.
           if (
-            (data.isEnemy && target.data.x < data.x) ||
-            (!data.isEnemy && data.x < target.data.x)
+            (data.isEnemy && tData.x < data.x) ||
+            (!data.isEnemy && data.x < tData.x)
           ) {
             stop();
           } else {
