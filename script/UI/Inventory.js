@@ -403,11 +403,12 @@ const Inventory = () => {
 
       if (!objects.order.options.isCPU) {
         // artificial delay only if the original queue size is 1, e.g., a single tank.
-        // this hack applies only because there is no collision check otherwise to say, "wait until there's room.""
+        // this hack applies only because there is no collision check otherwise to say, "wait until there's room."
         if (data.queueCopy.length === 1 && data.orderCompleteDelayFrames) {
           data.orderCompleteDelayFrames--;
           return;
         }
+
         data.waiting = false;
         data.waitingFrames = 0;
 
