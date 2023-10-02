@@ -2005,14 +2005,12 @@ originalLevels = {
             ['turret', r, 1648],
             ['turret', r, 1888]
           ]),
-        ['van', r, 1986],
         () =>
           selectByDifficulty([
             ['turret', r, 1952],
             ['turret', r, 4067],
             ['turret', r, 4163]
           ]),
-        ['van', r, 5730],
         () =>
           selectByDifficulty([
             ['turret', r, 6288],
@@ -2322,8 +2320,6 @@ originalLevels = {
             ['turret', l, 2048],
             ['turret', l, 2112]
           ]),
-        ['turret', l, 2552],
-        ['turret', l, 2611],
         () =>
           selectByDifficulty([
             ['turret', l, 4132],
@@ -2336,8 +2332,6 @@ originalLevels = {
             ['turret', r, 4112],
             ['turret', r, 4144]
           ]),
-        ['turret', r, 5623],
-        ['turret', r, 5684],
         () =>
           selectByDifficulty([
             ['turret', r, 6176],
