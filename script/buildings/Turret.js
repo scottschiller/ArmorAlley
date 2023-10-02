@@ -339,9 +339,9 @@ const Turret = (options = {}) => {
 
           resize();
           if (data.isEnemy === game.players.local.data.isEnemy) {
-            game.objects.notifications.add('You re-enabled a turret 🛠️');
+            game.objects.notifications.add('You re-enabled a turret 📡');
           } else {
-            game.objects.notifications.add('The enemy re-enabled a turret 🛠️');
+            game.objects.notifications.add('The enemy re-enabled a turret 📡');
           }
         }
 
