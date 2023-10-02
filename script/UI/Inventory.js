@@ -575,7 +575,7 @@ const Inventory = () => {
       oCounter.innerHTML = `<span class="fraction-wrapper"><sup>${adjustedCount}</sup><em class="fraction">&frasl;</em><sub>${originalCount}</sub></span>`;
       // hackish: two tanks ordered, just started ordering #2, then one or more added while display is still active; ensure UI looks right.
       utils.css.remove(element, 'complete');
-      utils.css.add(element, 'building');
+      utils.css.add(element, css.building);
     }
 
     // FIFO-based queue: `item` is provided when something is being queued.
@@ -643,8 +643,8 @@ const Inventory = () => {
       }
 
       if (
-        utils.css.has(element, 'building') ||
-        utils.css.has(element, 'complete')
+        utils.css.has(element, css.building) ||
+        utils.css.has(element, css.complete)
       ) {
         updateCount();
       } else {
@@ -655,17 +655,13 @@ const Inventory = () => {
         // transition in
         utils.css.add(o, 'queued');
         // show or hide
-        if (count > 1) {
-          utils.css.add(element, 'has-counter');
-        } else {
-          utils.css.remove(element, 'has-counter');
-        }
+        utils.css.addOrRemove(element, count > 1, css.hasCounter);
       }, 128);
 
       // return callbacks for when building starts and finishes.
       return {
         onOrderStart() {
-          utils.css.add(o, 'building');
+          utils.css.add(o, css.building);
           count = parseInt(element.getAttribute(dataCount), 10) || 1;
 
           // first unit being built?
@@ -692,11 +688,11 @@ const Inventory = () => {
           // show the raw digit
           oCounter.innerHTML = element.getAttribute(dataCountOriginal);
 
-          utils.css.remove(element, 'building');
-          utils.css.add(element, 'complete');
+          utils.css.remove(element, css.building);
+          utils.css.add(element, css.complete);
 
           // hackish: ensure it was queued also, in case this was completed too quickly.
-          utils.css.add(element, 'queued');
+          utils.css.add(element, css.queued);
 
           // prevent element leaks
           oCounter = null;
@@ -725,6 +721,9 @@ const Inventory = () => {
 
   css = {
     building: 'building',
+    complete: 'complete',
+    hasCounter: 'has-counter',
+    queued: 'queued',
     ordering: 'ordering'
   };
 
