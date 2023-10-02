@@ -59,8 +59,9 @@
    * 50% file savings via character subsetting
    * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
    */
-  src: url(../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2) format('woff2');
-  unicode-range: U+21,U+22,U+25-5F,U+61-7D;
+  src: url(../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
+    format('woff2');
+  unicode-range: U+21, U+22, U+25-5F, U+61-7D;
 }
 
 @font-face {
@@ -326,7 +327,7 @@ body.is_safari #mtv-bnb-in {
   top: 27%;
   transition: all 0.5s ease-in-out;
   /* hat tip: https://cubic-bezier.com/#.36,.12,.32,1.2 */
-  transition-timing-function: cubic-bezier(.36, .12, .32, 1.2);
+  transition-timing-function: cubic-bezier(0.36, 0.12, 0.32, 1.2);
   transition-property: transform, scale, opacity;
   transform: scale3d(0.75, 0.5, 1);
   width: 391px;
@@ -1890,8 +1891,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   z-index: 4;
 }
 
-.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(.radar-item):after,
-.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(.radar-item):after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(
+    .radar-item
+  ):after,
+.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(
+    .radar-item
+  ):after,
 .sprite:not(.balloon).exploding.smart-missile-tracking:not(.radar-item):after {
   /* reposition so tracking dot stays in the right place - bunker is normally 25px in height */
   bottom: 0;
@@ -2595,12 +2600,12 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   background-color: transparent;
   background-image: repeating-linear-gradient(
     -55deg,
-    rgba(255,255,255,0),
-    rgba(255,255,255,0) 0.5px,
-    rgba(255,255,255,0.2) 0.5px,
-    rgba(255,255,255,0.2) 0.75px,
-    rgba(255,255,255,0.2) 0.75px,
-    rgba(255,255,255,0.0) 1px
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 0.5px,
+    rgba(255, 255, 255, 0.2) 0.5px,
+    rgba(255, 255, 255, 0.2) 0.75px,
+    rgba(255, 255, 255, 0.2) 0.75px,
+    rgba(255, 255, 255, 0) 1px
   );
   border: 0.5px solid transparent;
   border: 0.5px solid rgba(255, 255, 255, 0.15);
@@ -3100,12 +3105,12 @@ body.bnb .sprite.engineer.butthead.building {
   /* allow nested .scan-mode to show */
   contain: unset;
   overflow: visible;
- }
+}
 
 #radar .sprite.turret,
 #radar .sprite.missile-launcher {
- /* ensure everything sits on top of scan nodes */
- z-index: 1;
+  /* ensure everything sits on top of scan nodes */
+  z-index: 1;
 }
 
 #battlefield .scan-node,
@@ -3141,10 +3146,11 @@ body.bnb .sprite.engineer.butthead.building {
 #battlefield .sprite .scan-node {
   background-color: transparent;
   border-color: rgba(0, 255, 0, 0.15);
-  background-image: radial-gradient(circle,
-   rgba(0, 255, 0, 0) 0%,
-   rgba(0, 255, 0, 0) 65%,
-   rgba(0, 255, 0, 0.15) 75%
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 255, 0, 0) 0%,
+    rgba(0, 255, 0, 0) 65%,
+    rgba(0, 255, 0, 0.15) 75%
   );
   background-size: 100% 100%;
 }
@@ -3155,10 +3161,11 @@ body.bnb .sprite.engineer.butthead.building {
    * Numerous "steps", with zero transition between different colours.
    * https://www.kirupa.com/animations/radial_gradient_stripes.htm
    */
-   background-image: radial-gradient(circle,
-   rgba(255, 255, 255, 0) 0%,
-   rgba(255, 255, 255, 0) 65%,
-   rgba(255, 255, 255, 0.15) 75%
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 65%,
+    rgba(255, 255, 255, 0.15) 75%
   );
   background-size: 100% 100%;
 }
@@ -5677,7 +5684,10 @@ body.game-paused #tutorial-window {
 
 /* various cases for disabling scan range UI */
 #world.scan_ui_battlefield_enemy_disabled #battlefield .sprite.enemy .scan-node,
-#world.scan_ui_battlefield_friendly_disabled #battlefield .sprite:not(.enemy) .scan-node,
+#world.scan_ui_battlefield_friendly_disabled
+  #battlefield
+  .sprite:not(.enemy)
+  .scan-node,
 #world.scan_ui_radar_enemy_disabled #radar .sprite.enemy .scan-node,
 #world.scan_ui_radar_friendly_disabled #radar .sprite:not(.enemy) .scan-node {
   display: none;
