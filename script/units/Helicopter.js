@@ -1993,6 +1993,7 @@ const Helicopter = (options = {}) => {
       // pilot, plus any paratroopers
       const parachutes = parseInt(data.parachutes, 10) + 1 || 1;
 
+      // note that chopper could be dead, or parachutes could be deployed by the time this fires.
       for (let i = 0; i < parachutes; i++) {
         common.setFrameTimeout(
           deployRandomParachuteInfantry,
@@ -2039,6 +2040,9 @@ const Helicopter = (options = {}) => {
     // e.g., helicopter could be ejected, then explode before all infantry have released.
     if (data.dead) return;
 
+    // guard against parachutes being released before ejection, too.
+    if (!data.parachutes) return;
+
     deployParachuteInfantry({
       isEnemy: data.isEnemy,
       parent: exports,
@@ -2046,6 +2050,8 @@ const Helicopter = (options = {}) => {
       x: data.x + data.halfWidth + rngPlusMinus(data.halfWidth / 2, data.type),
       y: data.y + data.height - 11
     });
+
+    data.parachutes = Math.max(0, data.parachutes - 1);
   }
 
   function deployParachuteInfantry(options) {
