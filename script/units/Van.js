@@ -279,10 +279,6 @@ const Van = (options = {}) => {
       stateMax: 2,
       stateModulus: 30,
       stopped: false,
-      inventory: {
-        frameCount: 15,
-        cost: 2
-      },
       // if the van reaches the enemy base (near the landing pad), it's game over.
       xGameOver: 0, // set at init
       x: options.x || 0,

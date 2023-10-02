@@ -1,6 +1,13 @@
 import { game, gameType } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { parseTypes, PRETTY_TYPES, TYPES, worldWidth } from '../core/global.js';
+import {
+  COSTS,
+  FPS,
+  parseTypes,
+  PRETTY_TYPES,
+  TYPES,
+  worldWidth
+} from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { collisionCheck, isGameOver } from '../core/logic.js';
@@ -11,6 +18,12 @@ const Inventory = () => {
   let css, data, dom, objects, orderNotificationOptions, exports;
 
   const STD_LOOK_AHEAD = 8;
+
+  // extra spacing between infantry and engineers
+  const SIZE_DELAY_FRAMES = 10;
+
+  // minimum delay time for e.g., a single tank to "build."
+  const ORDER_COMPLETE_DELAY_FRAMES = FPS * 2;
 
   function setWaiting(isWaiting) {
     data.waiting = isWaiting;
@@ -54,20 +67,35 @@ const Inventory = () => {
          * `waitingFramesMax` is a release valve, in case something goes south.
          */
         if (
+          !data.nextTimer &&
           !objects.lastObject.data.dead &&
           collisionCheck(
             nextOrder.data,
             objects.lastObject.data,
-            STD_LOOK_AHEAD
+            STD_LOOK_AHEAD * nextOrder.data.isEnemy ? -1 : 1
           ) &&
           data.waitingFrames++ < data.waitingFramesMax
         ) {
+          // wait...
           return;
         } else {
-          setWaiting(false);
+          if (!data.nextTimer) {
+            // delay, then next order.
+            data.waitingFrames = 0;
+            data.nextTimer = common.setFrameTimeout(() => {
+              data.nextTimer = null;
+              setWaiting(false);
+            }, data.nextOrderDelay);
+          }
         }
       }
     } else if (data.building && !data.queue.length) {
+      // delay a bit before the "all-clear" after an order has finished.
+      if (data.orderCompleteDelayFrames) {
+        data.orderCompleteDelayFrames--;
+        return;
+      }
+
       utils.css.remove(dom.gameStatusBar, css.building);
 
       data.building = false;
@@ -84,7 +112,7 @@ const Inventory = () => {
         // clear the copy of the queue used for notifications.
         data.queueCopy = [];
 
-        game.objects.notifications.add('Order complete 🛠️');
+        game.objects.notifications.add('Order complete 🚚✨');
       }
     }
   }
@@ -104,8 +132,6 @@ const Inventory = () => {
 
     if (isGameOver()) return;
 
-    orderSize = 1;
-
     // default off-screen setting
     options.x = -72;
 
@@ -119,24 +145,17 @@ const Inventory = () => {
       options.x = worldWidth + 64;
     }
 
-    // let's build something - provided you're good for the $$$, that is.
-
-    // infantry or engineer? handle those specially.
-
-    if (type === TYPES.infantry) {
-      orderSize = 5;
-    } else if (type === TYPES.engineer) {
-      orderSize = 2;
-    }
-
     // Hack: make a temporary object, so we can get the relevant data for the actual order.
     orderObject = game.addObject(type, {
       ...options,
       noInit: true
     });
 
+    // let's build something - provided you're good for the $$$, that is.
+    orderSize = COSTS[type].count;
+
     // do we have enough funds for this?
-    cost = orderObject.data.inventory.cost;
+    cost = COSTS[orderObject.data.type]?.funds;
 
     let remote;
 
@@ -243,8 +262,6 @@ const Inventory = () => {
     // create and push onto the queue.
     const newOrder = {
       data: orderObject.data,
-      // how long to wait after last item before "complete" (for buffering space)
-      completeDelay: orderObject.data.inventory.orderCompleteDelay || 0,
       type,
       options,
       size: orderSize,
@@ -261,6 +278,9 @@ const Inventory = () => {
     // preserve original list for display of notifications.
     // live `data.queue` is modified via `shift()` as it's processed.
     data.queueCopy.push(newOrder);
+
+    // set the delay for when the build completes.
+    data.orderCompleteDelayFrames = ORDER_COMPLETE_DELAY_FRAMES;
 
     if (sounds.bnb.tv && isOrderingTV()) {
       playSoundWithDelay(sounds.bnb.tv);
@@ -294,15 +314,33 @@ const Inventory = () => {
   function animate() {
     let newObject;
 
-    if (
-      !data.building ||
-      data.frameCount++ % objects.order.data.inventory.frameCount !== 0
-    )
-      return;
+    if (!data.building) return;
 
     if (data.waiting) return processNextOrder();
 
     if (objects.order.size) {
+      if (
+        objects.lastObject &&
+        !objects.lastObject.data.dead &&
+        collisionCheck(
+          objects.order.data,
+          objects.lastObject.data,
+          STD_LOOK_AHEAD * objects.order.options.isEnemy ? -1 : 1
+        ) &&
+        data.waitingFrames++ < data.waitingFramesMax
+      ) {
+        // wait for space to create next infantry / engineer
+        return;
+      }
+
+      // hackish: additional delay / spacing between infantry and engineers
+      if (data.sizeDelayFrames) {
+        data.sizeDelayFrames--;
+        return;
+      }
+
+      data.waitingFrames = 0;
+
       const sendToRemote = !!net.active;
 
       // hackish: modify options, if we're ordering the real thing.
@@ -357,13 +395,19 @@ const Inventory = () => {
       }
 
       objects.order.size--;
-    } else if (objects.order.completeDelay) {
-      // wait some amount of time after build completion? (fix spacing when infantry / engineers ordered, followed by a tank.)
-      objects.order.completeDelay--;
+
+      // re-apply the delay for the next item.
+      data.sizeDelayFrames = SIZE_DELAY_FRAMES;
     } else {
       // "Construction complete."
 
       if (!objects.order.options.isCPU) {
+        // artificial delay only if the original queue size is 1, e.g., a single tank.
+        // this hack applies only because there is no collision check otherwise to say, "wait until there's room.""
+        if (data.queueCopy.length === 1 && data.orderCompleteDelayFrames) {
+          data.orderCompleteDelayFrames--;
+          return;
+        }
         data.waiting = false;
         data.waitingFrames = 0;
 
@@ -503,6 +547,10 @@ const Inventory = () => {
     queue: [],
     queueCopy: [],
     canShowNSF: false,
+    nextOrderDelay: 250,
+    nextTimer: null,
+    sizeDelayFrames: 0,
+    orderCompleteDelayFrames: 0,
     waiting: false,
     waitingFrames: 0,
     waitingFramesMax: 120

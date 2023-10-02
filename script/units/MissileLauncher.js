@@ -312,10 +312,6 @@ const MissileLauncher = (options = {}) => {
       state: 0,
       stateMax: 3,
       stateModulus: 38,
-      inventory: {
-        frameCount: 60,
-        cost: 3
-      },
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
       domFetti: {

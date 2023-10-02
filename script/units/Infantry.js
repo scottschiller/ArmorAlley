@@ -318,11 +318,6 @@ const Infantry = (options = {}) => {
           : defaultLookAhead,
       xLookAheadBunker: options.xLookAheadBunker || null,
       unassisted: options.unassisted !== undefined ? options.unassisted : true,
-      inventory: {
-        frameCount: 12,
-        cost: 5,
-        orderCompleteDelay: 5 // last-item-in-order delay (decrements every frameCount animation loop), so tank doesn't overlap if ordered immediately afterward.
-      },
       extraTransforms: null,
       x: options.x || 0,
       // one more pixel, making a "headshot" look more accurate

@@ -3096,10 +3096,6 @@ const Helicopter = (options = {}) => {
     repairing: 'repairing',
     respawning: 'respawning',
     respawningActive: 'respawning-active',
-    inventory: {
-      frameCount: 0,
-      cost: 20
-    },
     unavailable: 'weapon-unavailable',
     reloading: 'weapon-reloading',
     trailer: 'helicopter-trailer'
