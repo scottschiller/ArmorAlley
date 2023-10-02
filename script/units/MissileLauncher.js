@@ -25,7 +25,7 @@ const MISSILE_LAUNCHER_SCAN_RADIUS = 320;
 const MISSILE_LAUNCHER_SCAN_BUFFER = 16;
 
 const MissileLauncher = (options = {}) => {
-  let css, data, dom, friendlyNearby, height, radarItem, exports;
+  let css, data, dom, friendlyNearby, height, width, radarItem, exports;
 
   function stop() {
     data.stopped = true;
@@ -285,6 +285,7 @@ const MissileLauncher = (options = {}) => {
     radarItem.initScanNode();
   }
 
+  width = 54;
   height = 18;
 
   css = common.inheritCSS({
@@ -303,8 +304,8 @@ const MissileLauncher = (options = {}) => {
       frameCount: 0,
       frameTimeout: null,
       fireModulus: FPS, // check every second or so
-      width: 54,
-      halfWidth: 27,
+      width,
+      halfWidth: width / 2,
       height,
       halfHeight: height / 2,
       orderComplete: false,

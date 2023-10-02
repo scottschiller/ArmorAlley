@@ -15,11 +15,15 @@ const Infantry = (options = {}) => {
     data,
     defaultLookAhead,
     defaultItems,
+    width,
     height,
     radarItem,
     nearby,
     collision,
     exports;
+
+  const DEFAULT_HEIGHT = 11;
+  const BNB_HEIGHT = 30.66;
 
   function fire() {
     if (data.noFire) return;
@@ -269,11 +273,13 @@ const Infantry = (options = {}) => {
   function refreshHeight() {
     // special case: BnB pref change / init logic
     if (options.isEnemy || !gamePrefs.bnb) {
-      data.height = 11;
+      height = DEFAULT_HEIGHT;
     } else {
       // if role (engineer), then BnB now
-      data.height = options.role ? 30.66 : 11;
+      height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
     }
+
+    data.height = height;
 
     refreshMeasurements();
   }
@@ -289,6 +295,9 @@ const Infantry = (options = {}) => {
     stopped: 'stopped'
   });
 
+  width = 10;
+  height = DEFAULT_HEIGHT;
+
   data = common.inheritData(
     {
       type: TYPES.infantry,
@@ -303,8 +312,8 @@ const Infantry = (options = {}) => {
       stopped: false,
       noFire: false,
       direction: 0,
-      width: 10,
-      halfWidth: 5,
+      width,
+      halfWidth: width / 2,
       height,
       halfHeight: height / 2,
       fireModulus: 10,
