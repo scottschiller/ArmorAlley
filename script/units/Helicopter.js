@@ -600,15 +600,15 @@ const Helicopter = (options = {}) => {
     count = 0;
 
     function updateBuilt() {
-      let built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
+      let built = parseInt(element?.getAttribute(dataBuilt), 10) || 1;
       built++;
-      element.setAttribute(dataBuilt, built);
+      element?.setAttribute(dataBuilt, built);
     }
 
     function updateCount() {
       let built, originalCount;
-      originalCount = element.getAttribute(dataCountOriginal);
-      built = parseInt(element.getAttribute(dataBuilt), 10) || 1;
+      originalCount = element?.getAttribute(dataCountOriginal) || 0;
+      built = parseInt(element?.getAttribute(dataBuilt), 10) || 1;
       const adjustedCount = Math.min(built, originalCount);
       oCounter.innerHTML = `<span class="fraction-wrapper"><sup>${adjustedCount}</sup><em class="fraction">&frasl;</em><sub>${originalCount}</sub></span>`;
     }
@@ -716,6 +716,8 @@ const Helicopter = (options = {}) => {
         onOrderComplete() {
           // mark as complete once all have been built.
           updateBuilt();
+
+          if (!element) return;
 
           // not "complete" until count is 0
           count = (parseInt(element.getAttribute(dataCount), 10) || 1) - 1;
