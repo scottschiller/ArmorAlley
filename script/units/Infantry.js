@@ -318,8 +318,12 @@ const Infantry = (options = {}) => {
       halfHeight: height / 2,
       fireModulus: 10,
       vX: options.isEnemy ? -1 : 1,
-      // how fast the infantry "walk", taking relative paces / steps so they still move 10 pixels in 10 frames
-      vXFrames: [0.5, 0.75, 1, 1.25, 1.5, 1.5, 1.25, 1, 0.75, 0.5],
+      // infantry "pacing" as they walk: 30 pixels in 30 frames.
+      vXFrames: [
+        0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 1, 1, 1, 1.25, 1.25, 1.25, 1.5, 1.5,
+        1.5, 1.5, 1.5, 1.5, 1.25, 1.25, 1.25, 1, 1, 1, 0.75, 0.75, 0.75, 0.5,
+        0.5, 0.5
+      ],
       vXFrameOffset: 0,
       xLookAhead:
         options.xLookAhead !== undefined
