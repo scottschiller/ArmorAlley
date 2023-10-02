@@ -211,6 +211,12 @@ body.game-started {
   contain: strict;
 }
 
+#battlefield > .sprite,
+#radar > .sprite {
+  /* hide all first-level sprites (but not sub-sprites) until first transform / position is set, prevent flicker at 0px/0px. */
+  transform: translate(-100%, -100%);
+}
+
 #world-overlay {
   background: rgba(27, 107, 27, 0.45);
   background-image: url(../image/checkerboard-black-mask-50percent.png);
