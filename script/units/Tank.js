@@ -44,10 +44,8 @@ const Tank = (options = {}) => {
      */
 
     if (
-      data.lastNearbyTarget &&
-      data.lastNearbyTarget.data.type &&
-      (data.lastNearbyTarget.data.type === TYPES.helicopter ||
-        data.lastNearbyTarget.data.type === TYPES.tank)
+      data.lastNearbyTarget?.data?.type === TYPES.helicopter ||
+      data.lastNearbyTarget?.data?.type === TYPES.tank
     ) {
       // allow bullets to hit bunkers when firing at a helicopter or tank
       collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
