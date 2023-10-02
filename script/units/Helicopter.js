@@ -611,6 +611,9 @@ const Helicopter = (options = {}) => {
       built = parseInt(element?.getAttribute(dataBuilt), 10) || 1;
       const adjustedCount = Math.min(built, originalCount);
       oCounter.innerHTML = `<span class="fraction-wrapper"><sup>${adjustedCount}</sup><em class="fraction">&frasl;</em><sub>${originalCount}</sub></span>`;
+      // hackish: two tanks ordered, just started ordering #2, then one or more added while display is still active; ensure UI looks right.
+      utils.css.remove(element, 'complete');
+      utils.css.add(element, 'building');
     }
 
     // FIFO-based queue: `item` is provided when something is being queued.
@@ -619,7 +622,9 @@ const Helicopter = (options = {}) => {
       // tank, infantry, or special-case: engineer.
       type = item.data.role ? item.data.roles[item.data.role] : item.data.type;
 
-      oLastChild = queue.childNodes[queue.childNodes.length - 1];
+      if (queue.childNodes.length) {
+        oLastChild = queue.childNodes[queue.childNodes.length - 1];
+      }
 
       // are we appending a duplicate, e.g., two tanks in a row?
       if (oLastChild) {
@@ -675,13 +680,12 @@ const Helicopter = (options = {}) => {
         utils.css.add(element, 'over-ten');
       }
 
-      // TODO: fix logic for when to display number vs. fraction, based on `isBuilding`
-      // and counting logic - e.g., building tanks, 2/3, and you order another tank. should be 2/4.
-      if (utils.css.has(element, 'building')) {
-        // show the fraction
+      if (
+        utils.css.has(element, 'building') ||
+        utils.css.has(element, 'complete')
+      ) {
         updateCount();
       } else {
-        // show the number to build
         oCounter.innerHTML = count;
       }
 
@@ -728,6 +732,9 @@ const Helicopter = (options = {}) => {
 
           utils.css.remove(element, 'building');
           utils.css.add(element, 'complete');
+
+          // hackish: ensure it was queued also, in case this was completed too quickly.
+          utils.css.add(element, 'queued');
 
           // prevent element leaks
           oCounter = null;
