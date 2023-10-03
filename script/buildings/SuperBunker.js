@@ -339,9 +339,7 @@ const SuperBunker = (options = {}) => {
           // "one of ours?"
           if (isTargetFriendlyToPlayer) {
             if (data.energy > 1)
-              game.objects.notifications.add(
-                'You weakened a super bunker ⚔️'
-              );
+              game.objects.notifications.add('You weakened a super bunker ⚔️');
           } else {
             if (data.energy > 1)
               game.objects.notifications.add(
