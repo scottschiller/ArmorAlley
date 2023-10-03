@@ -246,7 +246,7 @@ const SuperBunker = (options = {}) => {
 
   // coordinates of the doorway
   data.midPoint = {
-    x: data.x + data.halfWidth - data.doorWidth / 2,
+    x: data.x + data.halfWidth,
     y: data.y,
     // hackish: make the collision point the center, not the actual width
     width: 1,
