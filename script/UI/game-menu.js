@@ -207,6 +207,20 @@ function init() {
   if (gameStyle === 'network') {
     configureNetworkGame();
   }
+
+  // get and apply game type from HTML; browser may have remembered form selection through reload.
+  const defaultGameType =
+    document.querySelector('#game-type-list input[name="game_type"]:checked')
+      ?.value || 'easy';
+
+  game.setGameType(defaultGameType);
+
+  const levelName = document.getElementById('game_level').value;
+
+  if (dependsOnGameType(levelName)) {
+    // maybe rebuild preview, depending
+    previewLevel(levelName);
+  }
 }
 
 function introBNBSound(e) {
