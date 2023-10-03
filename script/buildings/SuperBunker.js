@@ -5,6 +5,7 @@ import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import {
   checkProduction,
+  collisionCheck,
   collisionCheckMidPoint,
   nearbyTest
 } from '../core/logic.js';
@@ -283,8 +284,14 @@ const SuperBunker = (options = {}) => {
           target.data.isEnemy === game.players.local.data.isEnemy;
 
         if (!isFriendly && data.energy > 0) {
-          // nearby enemy, and defenses activated? let 'em have it.
-          setFiring(true);
+          // enemy might be inside the bunker bounding box, e.g., parachuted in from above. Consider a miss, if so.
+          if (collisionCheck(target.data, exports.data)) {
+            setFiring(false);
+            // don't exit - may need to check for doorway.
+          } else {
+            // nearby enemy, and defenses activated? let 'em have it.
+            setFiring(true);
+          }
         }
 
         // only infantry (excluding engineers by role=1) are involved, beyond this point
