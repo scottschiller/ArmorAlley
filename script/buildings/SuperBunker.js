@@ -12,11 +12,13 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 
 const SuperBunker = (options = {}) => {
-  let css, dom, data, height, nearby, radarItem, exports;
+  let css, dom, data, width, height, nearby, radarItem, exports;
+
+  const FIRE_MODULUS = 6;
 
   function updateFireModulus() {
     // firing speed increases with # of infantry
-    data.fireModulus = 8 - data.energy;
+    data.fireModulus = FIRE_MODULUS - data.energy;
   }
 
   function capture(isEnemy) {
@@ -202,6 +204,7 @@ const SuperBunker = (options = {}) => {
     sprites.removeNodes(dom);
   }
 
+  width = 66;
   height = 28;
 
   css = common.inheritCSS({
@@ -219,17 +222,18 @@ const SuperBunker = (options = {}) => {
       energyLineScale: 0.95,
       centerEnergyLine: true,
       isEnemy: !!options.isEnemy,
-      width: 66,
-      halfWidth: 33,
+      width,
+      halfWidth: width / 2,
       doorWidth: 6,
       height,
       firing: false,
       gunYOffset: 20.5,
       // fire speed relative to # of infantry arming it
-      fireModulus: 8 - (options.energy || 0),
+      fireModulus: FIRE_MODULUS - (options.energy || 0),
       fundsModulus: FPS * 10,
       hostile: false,
       midPoint: null,
+      xLookAhead: width / 2,
       y: game.objects.view.data.world.height - height
     },
     options
