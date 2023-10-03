@@ -39,7 +39,7 @@ const Infantry = (options = {}) => {
     // hackish: undo the change `moveTo()` just applied to `data.x` so we don't actually change collision / position logic.
     data.x += offset * -1;
 
-    data.vXFrameOffset++;
+    data.vXFrameOffset += 2;
 
     if (data.vXFrameOffset >= data.vXFrames.length) {
       // reverse direction!
