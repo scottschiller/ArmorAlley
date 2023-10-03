@@ -291,7 +291,7 @@ const SuperBunker = (options = {}) => {
         if (target.data.type !== TYPES.infantry || target.data.role) return;
 
         // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
-        if (data.energy === data.energyMax || isFriendly) return;
+        if (isFriendly && data.energy === data.energyMax) return;
 
         // infantry at door? contribute to capture, or arm base, depending.
         if (!collisionCheckMidPoint(target, exports)) return;

@@ -176,7 +176,7 @@ const GunFire = (options = {}) => {
         const force = true;
         die(force);
         frameTimeout = null;
-      }, 250);
+      }, canSpark ? 500 : 250);
 
       if (tType !== TYPES.infantry) {
         // hackish: override for special case
