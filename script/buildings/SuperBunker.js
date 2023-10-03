@@ -291,98 +291,96 @@ const SuperBunker = (options = {}) => {
         if (target.data.type !== TYPES.infantry || target.data.role) return;
 
         // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
-        if (data.energy < data.energyMax || !isFriendly) {
-          // infantry at door? contribute to capture, or arm base, depending.
+        if (data.energy === data.energyMax || isFriendly) return;
 
-          if (collisionCheckMidPoint(target, exports)) {
-            // claim infantry, change "alignment" depending on friendliness.
+        // infantry at door? contribute to capture, or arm base, depending.
+        if (!collisionCheckMidPoint(target, exports)) return;
 
-            if (data.energy === 0) {
-              // claimed by infantry, switching sides from neutral/hostile.
-              data.hostile = false;
+        // claim infantry, change "alignment" depending on friendliness.
+        if (data.energy === 0) {
+          // claimed by infantry, switching sides from neutral/hostile.
+          data.hostile = false;
 
-              // ensure that if we were dead, we aren't any more.
-              data.dead = false;
+          // ensure that if we were dead, we aren't any more.
+          data.dead = false;
 
-              // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
-              capture(target.data.isEnemy);
+          // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
+          capture(target.data.isEnemy);
 
-              // update, now that capture has happened.
-              isFriendly = target.data.isEnemy === data.isEnemy;
-            }
-
-            // add or subtract energy, depending on alignment.
-
-            // passing infantry on same team?
-            if (isFriendly) {
-              // friendly passer-by, relative to the super bunker.
-              data.energy++;
-
-              setFriendly(isTargetFriendlyToPlayer);
-
-              // switch over the first time energy goes up
-              if (data.energy > 0) {
-                // "one of ours?"
-                if (isTargetFriendlyToPlayer) {
-                  game.objects.notifications.add(
-                    'You reinforced a super bunker 💪'
-                  );
-                } else {
-                  game.objects.notifications.add(
-                    'The enemy reinforced a super bunker 💪'
-                  );
-                }
-              }
-            } else {
-              // enemy infantry hit.
-
-              // "one of ours?"
-              if (isTargetFriendlyToPlayer) {
-                if (data.energy > 1)
-                  game.objects.notifications.add(
-                    'You weakened a super bunker ⚔️'
-                  );
-              } else {
-                if (data.energy > 1)
-                  game.objects.notifications.add(
-                    'The enemy weakened a super bunker ⚔️'
-                  );
-              }
-
-              data.energy--;
-            }
-
-            // limit to +/- range.
-            data.energy = Math.min(data.energyMax, data.energy);
-
-            // small detail: firing speed relative to # of infantry
-            updateFireModulus();
-
-            if (data.energy === 0) {
-              // un-manned, but dangerous to helicopters on both sides.
-              data.hostile = true;
-
-              if (isTargetFriendlyToPlayer) {
-                game.objects.notifications.add(
-                  'Your infantry neutralized a super bunker ⛳'
-                );
-              } else {
-                game.objects.notifications.add(
-                  'Enemy infantry neutralized a super bunker ⚔️'
-                );
-              }
-
-              setFriendly(false);
-            }
-
-            // "claim" the infantry, kill if enemy and man the bunker if friendly.
-            target.die({ silent: true });
-
-            playSound(sounds.doorClose, exports);
-
-            sprites.updateEnergy(exports);
-          }
+          // update, now that capture has happened.
+          isFriendly = target.data.isEnemy === data.isEnemy;
         }
+
+        // add or subtract energy, depending on alignment.
+
+        // passing infantry on same team?
+        if (isFriendly) {
+          // friendly passer-by, relative to the super bunker.
+          data.energy++;
+
+          setFriendly(isTargetFriendlyToPlayer);
+
+          // switch over the first time energy goes up
+          if (data.energy > 0) {
+            // "one of ours?"
+            if (isTargetFriendlyToPlayer) {
+              game.objects.notifications.add(
+                'You reinforced a super bunker 💪'
+              );
+            } else {
+              game.objects.notifications.add(
+                'The enemy reinforced a super bunker 💪'
+              );
+            }
+          }
+        } else {
+          // enemy infantry hit.
+
+          // "one of ours?"
+          if (isTargetFriendlyToPlayer) {
+            if (data.energy > 1)
+              game.objects.notifications.add(
+                'You weakened a super bunker ⚔️'
+              );
+          } else {
+            if (data.energy > 1)
+              game.objects.notifications.add(
+                'The enemy weakened a super bunker ⚔️'
+              );
+          }
+
+          data.energy--;
+        }
+
+        // limit to +/- range.
+        data.energy = Math.min(data.energyMax, data.energy);
+
+        // firing speed relative to # of infantry.
+        updateFireModulus();
+
+        if (data.energy === 0) {
+          // un-manned, but dangerous to helicopters on both sides.
+          data.hostile = true;
+
+          if (isTargetFriendlyToPlayer) {
+            game.objects.notifications.add(
+              'Your infantry neutralized a super bunker ⛳'
+            );
+          } else {
+            game.objects.notifications.add(
+              'Enemy infantry neutralized a super bunker ⚔️'
+            );
+          }
+
+          setFriendly(false);
+        }
+
+        // "claim" the infantry, kill if enemy and man the bunker if friendly.
+        target.die({ silent: true });
+
+        playSound(sounds.doorClose, exports);
+
+        sprites.updateEnergy(exports);
       },
 
       miss() {
