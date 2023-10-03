@@ -138,7 +138,8 @@ function collisionCheckObject(options) {
       sData.widthOneThird = sData.width * 0.33;
     }
 
-    xLookAhead = Math.min(16, sData.xLookAhead || sData.widthOneThird);
+    // note: default if `useLookAhead`, but no specific value provided.
+    xLookAhead = sData.xLookAhead || sData.widthOneThird || 16;
     if (sData.isEnemy) xLookAhead *= -1;
   } else {
     xLookAhead = 0;
