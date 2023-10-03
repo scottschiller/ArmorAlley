@@ -176,7 +176,7 @@ const SuperBunker = (options = {}) => {
   function refreshNearbyItems() {
     // set on init, updated with `zones.changeOwnership()` as targets change sides
     nearby.items = getTypes(
-      'infantry:all, engineer, missileLauncher, helicopter',
+      'infantry:all, engineer, missileLauncher, van, helicopter',
       { group: 'enemy', exports }
     );
   }
