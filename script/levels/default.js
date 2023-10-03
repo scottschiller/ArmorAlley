@@ -75,6 +75,19 @@ function normalizeLevelData(data) {
           if (group === 's') {
             // static items (e.g., terrain): only two args.
             results.push([entry.t, item]);
+          } else if (group === 'd') {
+            data.hasDynamicData = true;
+            const args = item.map((groupItem) => {
+              // method, l/n/r, or X offset
+              if (groupItem instanceof Function) {
+                const result = groupItem();
+                // might be l/n/r, or some other value
+                return groupMap[result] || result;
+              }
+              if (groupMap[groupItem]) return groupMap[groupItem];
+              return groupItem;
+            });
+            results.push(args);
           } else {
             const kind = groupMap[group];
             const args = [entry.t, kind, item];
@@ -1408,6 +1421,7 @@ originalLevels = {
       t: 'turret',
       d: [
         [
+          'turret',
           // Special case: in extreme mode, incoming enemy tanks would be shot by nearby opposing turret.
           () => (gameType === 'extreme' ? r : l),
           967
