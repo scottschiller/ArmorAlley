@@ -233,7 +233,7 @@ const SuperBunker = (options = {}) => {
       fundsModulus: FPS * 10,
       hostile: false,
       midPoint: null,
-      xLookAhead: width / 2,
+      xLookAhead: width / 3,
       y: game.objects.view.data.world.height - height
     },
     options
