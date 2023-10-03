@@ -297,7 +297,7 @@ const GunFire = (options = {}) => {
       dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
       width: 2,
       height: 1,
-      gravity: options.isInert ? 0.25 : 1,
+      gravity: 0.25,
       gravityRate: (options.isInert ? 1.09 : 1.1) + Math.random() * 0.025,
       damagePoints: options.damagePoints || 1,
       ricochetSoundThrottle: options?.parentType === TYPES.infantry ? 250 : 100,
