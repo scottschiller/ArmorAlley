@@ -156,8 +156,7 @@ function Stats() {
     },
     'helicopter': {
       'emoji': emoji.skull,
-      'verb': 'crashed into',
-      'verb_smart-missile': 'hit'
+      'verb': 'hit'
     },
     'bomb': {
       exclude: true,
