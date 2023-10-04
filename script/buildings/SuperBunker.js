@@ -58,11 +58,8 @@ const SuperBunker = (options = {}) => {
   }
 
   function setFiring(state) {
-    if (state && data.energy) {
-      data.firing = state;
-    } else {
-      data.firing = false;
-    }
+    // firing only works, of course, when there is also energy.
+    data.firing = !!(state && data.energy);
   }
 
   function updateHealth(attacker) {
