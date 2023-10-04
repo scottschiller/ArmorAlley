@@ -166,7 +166,6 @@ const SuperBunker = (options = {}) => {
 
     data.frameCount++;
 
-    // start, or stop firing?
     nearbyTest(nearby, exports);
 
     fire();
@@ -278,23 +277,31 @@ const SuperBunker = (options = {}) => {
     options: {
       source: exports,
       targets: undefined,
+      fireTargetCount: 0,
       useLookAhead: true,
-
+      hitAll: true,
+      before() {
+        // reset before test
+        nearby.options.fireTargetCount = 0;
+      },
+      after() {
+        // hits may have been counted
+        setFiring(nearby.options.fireTargetCount > 0);
+      },
       hit(target) {
         let isFriendly = target.data.isEnemy === data.isEnemy;
 
         const isTargetFriendlyToPlayer =
           target.data.isEnemy === game.players.local.data.isEnemy;
 
-        if (!isFriendly && data.energy > 0) {
-          // enemy might be inside the bunker bounding box, e.g., parachuted in from above. Consider a miss, if so.
-          if (collisionCheck(target.data, exports.data)) {
-            setFiring(false);
-            // don't exit - may need to check for doorway.
-          } else {
-            // nearby enemy, and defenses activated? let 'em have it.
-            setFiring(true);
-          }
+        // enemy might be inside the bunker bounding box, e.g., parachuted in from above. Consider a miss, if so.
+        if (
+          !isFriendly &&
+          data.energy > 0 &&
+          !collisionCheck(target.data, exports.data)
+        ) {
+          // nearby enemy, and defenses activated? let 'em have it.
+          nearby.options.fireTargetCount++;
         }
 
         // only infantry (excluding engineers by role=1) are involved, beyond this point
