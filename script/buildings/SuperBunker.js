@@ -234,7 +234,7 @@ const SuperBunker = (options = {}) => {
       firing: false,
       gunYOffset: 20.5,
       // fire speed relative to # of infantry arming it
-      fireModulus: FIRE_MODULUS - (options.energy || 0),
+      fireModulus: FIRE_MODULUS,
       fundsModulus: FPS * 10,
       hostile: false,
       midPoint: null,
@@ -243,6 +243,8 @@ const SuperBunker = (options = {}) => {
     },
     options
   );
+
+  updateFireModulus();
 
   if (data.energy === 0) {
     // initially neutral/hostile only if 0 energy
