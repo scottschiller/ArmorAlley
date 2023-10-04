@@ -2606,15 +2606,10 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   background-color: transparent;
   border-color: rgba(255, 255, 255, 0.35);
   border-bottom-color: transparent;
-  background-image: repeating-linear-gradient(
-    -55deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 0.5px,
-    rgba(255, 255, 255, 0.4) 0.5px,
-    rgba(255, 255, 255, 0.4) 0.75px,
-    rgba(255, 255, 255, 0.4) 0.75px,
-    rgba(255, 255, 255, 0) 1px
-  );
+  background-image: url(../image/checkerboard-white-mask-50percent.png);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  background-size: 32px 32px;
   /* hackish: push the border down further */
   padding-bottom: 1px;
 }
