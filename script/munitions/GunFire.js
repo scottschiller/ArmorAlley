@@ -69,6 +69,7 @@ const GunFire = (options = {}) => {
       // special case: tanks hit turrets for a lot of damage.
       if (pType === TYPES.tank && tType === TYPES.turret) {
         data.damagePoints = 8;
+        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
       }
 
       // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
@@ -80,6 +81,11 @@ const GunFire = (options = {}) => {
         )
       ) {
         common.hit(target, data.damagePoints, exports);
+      }
+
+      // additional bits of shrapnel
+      if (pType === TYPES.helicopter && (tType === TYPES.tank || tType === TYPES.missileLauncher)) {
+        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1), vX: data.vX * rnd(1) });
       }
 
       // play a sound for certain targets and source -> target combinations
@@ -146,6 +152,7 @@ const GunFire = (options = {}) => {
         playSound(sounds.balloonHit, exports);
       } else if (tType === TYPES.turret) {
         playSound(sounds.metalHit, exports);
+        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1) });
       } else if (tType === TYPES.gunfire) {
         // gunfire hit gunfire!
         playSound(sounds.ricochet, exports);
