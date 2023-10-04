@@ -2602,6 +2602,23 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
 }
 
+#radar .sprite.super-bunker.hostile {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  border-bottom-color: transparent;
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 0.5px,
+    rgba(255, 255, 255, 0.4) 0.5px,
+    rgba(255, 255, 255, 0.4) 0.75px,
+    rgba(255, 255, 255, 0.4) 0.75px,
+    rgba(255, 255, 255, 0) 1px
+  );
+  /* hackish: push the border down further */
+  padding-bottom: 1px;
+}
+
 #radar .sprite.cloud1,
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {

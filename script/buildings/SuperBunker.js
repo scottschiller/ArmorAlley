@@ -52,6 +52,11 @@ const SuperBunker = (options = {}) => {
   function setHostile(isHostile) {
     data.hostile = isHostile;
     utils.css.addOrRemove(dom.o, isHostile, css.hostile);
+    utils.css.addOrRemove(
+      radarItem.dom.o,
+      gamePrefs.super_bunker_arrows && isHostile,
+      css.hostile
+    );
 
     zones.changeOwnership(exports);
   }
@@ -196,6 +201,11 @@ const SuperBunker = (options = {}) => {
   function onArrowHiddenChange(isVisible) {
     if (!dom?.oArrow) return;
     dom.oArrow.style.visibility = isVisible ? 'visible' : 'hidden';
+    utils.css.addOrRemove(
+      radarItem?.dom?.o,
+      data.hostile && isVisible,
+      css.hostile
+    );
   }
 
   function initDOM() {
