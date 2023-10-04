@@ -13,7 +13,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 
 const SuperBunker = (options = {}) => {
-  let css, dom, data, width, height, nearby, radarItem, exports;
+  let css, dom, data, width, height, lastFriendly, nearby, radarItem, exports;
 
   const FIRE_MODULUS = 7;
 
@@ -48,6 +48,9 @@ const SuperBunker = (options = {}) => {
   }
 
   function setFriendly(isFriendly) {
+    if (lastFriendly === isFriendly) return;
+    lastFriendly = isFriendly;
+
     utils.css.addOrRemove(radarItem.dom.o, isFriendly, css.friendly);
     utils.css.addOrRemove(radarItem.dom.o, !isFriendly, css.enemy);
 
