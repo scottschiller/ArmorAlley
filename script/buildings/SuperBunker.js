@@ -141,6 +141,7 @@ const SuperBunker = (options = {}) => {
       collisionItems: nearby.items,
       x: data.x + (data.width + 1),
       y: data.y + data.gunYOffset, // position of bunker gun
+      fixedXY: true,
       vX: 2,
       vY: 0
     };

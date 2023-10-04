@@ -262,7 +262,7 @@ const GunFire = (options = {}) => {
     initDOM();
 
     // randomize a little: ±1 pixel.
-    if (!net.active) {
+    if (!net.active && !options?.fixedXY) {
       data.x += plusMinus();
       data.y += plusMinus();
     }
