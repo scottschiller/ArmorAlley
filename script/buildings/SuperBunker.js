@@ -15,11 +15,11 @@ import { sprites } from '../core/sprites.js';
 const SuperBunker = (options = {}) => {
   let css, dom, data, width, height, nearby, radarItem, exports;
 
-  const FIRE_MODULUS = 6;
+  const FIRE_MODULUS = 7;
 
   function updateFireModulus() {
     // firing speed increases with # of infantry
-    data.fireModulus = FIRE_MODULUS - data.energy;
+    data.fireModulus = Math.max(1, FIRE_MODULUS - data.energy);
   }
 
   function capture(isEnemy) {
