@@ -1552,7 +1552,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   background-size: contain;
 }
 
-.bunker .sub-sprite.arrow {
+.bunker .sub-sprite.arrow,
+.super-bunker .sub-sprite.arrow {
   background-image: url(../image/arrow-right.png);
   height: 10px;
   left: 38px;
@@ -1562,8 +1563,18 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   width: 6px;
 }
 
-.bunker.enemy .sub-sprite.arrow {
+.super-bunker .sub-sprite.arrow {
+  top: 6px;
+  left: 50px;
+}
+
+.bunker.enemy .sub-sprite.arrow,
+.super-bunker.enemy .sub-sprite.arrow {
   transform: rotate3d(0, 0, 1, -180deg);
+}
+
+.super-bunker.hostile .sub-sprite.arrow {
+  transform: rotate3d(0, 0, 1, -90deg);
 }
 
 .bunker.burning .sub-sprite.arrow,
