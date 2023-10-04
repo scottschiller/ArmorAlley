@@ -220,8 +220,15 @@ body.game-started {
 
 #world-overlay {
   background: rgba(27, 107, 27, 0.45);
-  background-image: url(../image/checkerboard-black-mask-50percent.png);
-  background-size: 64px;
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 0.5px,
+    rgba(0, 0, 0, 0.5) 0.5px,
+    rgba(0, 0, 0, 0.5) 0.75px,
+    rgba(0, 0, 0, 0.5) 0.75px,
+    rgba(0, 0, 0, 0) 1px
+  );
   height: 100%;
   image-rendering: optimizeSpeed;
   left: 0;
@@ -854,12 +861,19 @@ body.is_safari:not(.is-mobile) #queue {
 
 #radar-container {
   background: #0e360e;
-  background-image: url(../image/checkerboard-black-mask-50percent.png);
-  background-size: 64px;
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
   overflow: hidden;
   position: relative;
+  background-image: repeating-linear-gradient(
+    55deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 0.5px,
+    rgba(0, 0, 0, 0.5) 0.5px,
+    rgba(0, 0, 0, 0.5) 0.75px,
+    rgba(0, 0, 0, 0.5) 0.75px,
+    rgba(0, 0, 0, 0) 1px
+  );
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 #radar-scrubber {
@@ -2630,6 +2644,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
     rgba(255, 255, 255, 0.2) 0.75px,
     rgba(255, 255, 255, 0) 1px
   );
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
   border: 0.5px solid transparent;
   border: 0.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 2px;
