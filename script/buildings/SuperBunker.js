@@ -11,6 +11,7 @@ import {
 } from '../core/logic.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const SuperBunker = (options = {}) => {
   let css, dom, data, width, height, lastFriendly, nearby, radarItem, exports;
@@ -27,6 +28,7 @@ const SuperBunker = (options = {}) => {
 
     data.isEnemy = isEnemy;
 
+    setHostile(false);
     setFriendly(isFriendlyCapture);
 
     if (isFriendlyCapture) {
@@ -47,9 +49,21 @@ const SuperBunker = (options = {}) => {
     checkProduction();
   }
 
+  function setHostile(isHostile) {
+    data.hostile = isHostile;
+    utils.css.addOrRemove(dom.o, isHostile, css.hostile);
+
+    zones.changeOwnership(exports);
+  }
+
   function setFriendly(isFriendly) {
     if (lastFriendly === isFriendly) return;
     lastFriendly = isFriendly;
+
+    setHostile(false);
+
+    utils.css.addOrRemove(dom.o, isFriendly, css.friendly);
+    utils.css.addOrRemove(dom.o, !isFriendly, css.enemy);
 
     utils.css.addOrRemove(radarItem.dom.o, isFriendly, css.friendly);
     utils.css.addOrRemove(radarItem.dom.o, !isFriendly, css.enemy);
@@ -81,6 +95,7 @@ const SuperBunker = (options = {}) => {
 
     // disarmed super bunkers are dangerous to both sides.
     setFriendly(false);
+    setHostile(true);
   }
 
   function hit(points, target) {
@@ -99,10 +114,6 @@ const SuperBunker = (options = {}) => {
 
   function die() {
     if (data.dead) return;
-
-    // un-manned, but dangerous to helicopters on both sides.
-    data.hostile = true;
-
     // gunfire from both sides should now hit this element.
 
     data.energy = 0;
@@ -112,9 +123,9 @@ const SuperBunker = (options = {}) => {
     // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
     data.dead = false;
 
-    data.hostile = true;
-
+    // un-manned, but dangerous to helicopters on both sides.
     setFriendly(false);
+    setHostile(true);
 
     sprites.updateEnergy(exports);
 
@@ -189,6 +200,10 @@ const SuperBunker = (options = {}) => {
       isEnemy: data.isEnemy ? css.enemy : false
     });
 
+    dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+
+    onArrowHiddenChange(gamePrefs.super_bunker_arrows);
+
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
 
@@ -210,7 +225,9 @@ const SuperBunker = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.superBunker,
-    friendly: 'friendly'
+    arrow: 'arrow',
+    friendly: 'friendly',
+    hostile: 'hostile'
   });
 
   data = common.inheritData(
@@ -244,7 +261,7 @@ const SuperBunker = (options = {}) => {
 
   if (data.energy === 0) {
     // initially neutral/hostile only if 0 energy
-    data.hostile = true;
+    setHostile(true);
   }
 
   // coordinates of the doorway
@@ -257,7 +274,8 @@ const SuperBunker = (options = {}) => {
   };
 
   dom = {
-    o: null
+    o: null,
+    oArrow: null
   };
 
   exports = {
@@ -316,7 +334,7 @@ const SuperBunker = (options = {}) => {
         // claim infantry, change "alignment" depending on friendliness.
         if (data.energy === 0) {
           // claimed by infantry, switching sides from neutral/hostile.
-          data.hostile = false;
+          setHostile(false);
 
           // ensure that if we were dead, we aren't any more.
           data.dead = false;
@@ -375,7 +393,8 @@ const SuperBunker = (options = {}) => {
 
         if (data.energy === 0) {
           // un-manned, but dangerous to helicopters on both sides.
-          data.hostile = true;
+          setFriendly(false);
+          setHostile(true);
 
           if (isTargetFriendlyToPlayer) {
             game.objects.notifications.add(
@@ -386,8 +405,6 @@ const SuperBunker = (options = {}) => {
               'Enemy infantry neutralized a super bunker ⚔️'
             );
           }
-
-          setFriendly(false);
         }
 
         // "claim" the infantry, kill if enemy and man the bunker if friendly.
