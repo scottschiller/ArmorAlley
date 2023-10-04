@@ -148,8 +148,6 @@ function collisionCheckObject(options) {
   let target, id, tData;
 
   for (id in options.targets) {
-    if (!options?.targets) return;
-
     target = options.targets[id];
 
     tData = target?.data;
