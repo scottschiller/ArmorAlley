@@ -115,7 +115,7 @@ function collisionCheckObject(options) {
    * }
    */
 
-  if (!options || !options.targets) {
+  if (!options?.targets) {
     return false;
   }
 
