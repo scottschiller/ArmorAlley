@@ -139,7 +139,7 @@ const SuperBunker = (options = {}) => {
       parentType: data.type,
       isEnemy: data.isEnemy,
       collisionItems: nearby.items,
-      x: data.x + (data.width + 1),
+      x: data.x + data.width - 2,
       y: data.y + data.gunYOffset, // position of bunker gun
       fixedXY: true,
       vX: 2,
@@ -149,7 +149,7 @@ const SuperBunker = (options = {}) => {
     game.addObject(TYPES.gunfire, fireOptions);
 
     // other side
-    fireOptions.x = data.x - 1;
+    fireOptions.x = data.x;
 
     // and reverse direction
     fireOptions.vX *= -1;
@@ -229,7 +229,7 @@ const SuperBunker = (options = {}) => {
       doorWidth: 6,
       height,
       firing: false,
-      gunYOffset: 20.5,
+      gunYOffset: 20.75,
       // fire speed relative to # of infantry arming it
       fireModulus: FIRE_MODULUS,
       fundsModulus: FPS * 10,
