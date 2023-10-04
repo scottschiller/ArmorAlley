@@ -57,6 +57,7 @@ const defaultPrefs = {
   gravestones_infantry: false,
   gravestones_vehicles: false,
   landing_pads_on_radar: true,
+  super_bunker_arrows: true,
   show_inventory: true,
   show_weapons_status: true,
   show_keyboard_labels: !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
@@ -1325,6 +1326,11 @@ function PrefsManager() {
       clouds_on_radar: (isActive) =>
         game.objects.radar?.objects?.items?.forEach((radarItem) =>
           radarItem?.onHiddenChange?.(isActive)
+        ),
+
+      super_bunker_arrows: (isActive) =>
+        game.objects[TYPES.superBunker].forEach((superBunker) =>
+          superBunker?.onArrowHiddenChange?.(isActive)
         ),
 
       scan_ui_battlefield_enemy: handleScanUIPrefChange,

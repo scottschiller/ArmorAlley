@@ -193,6 +193,11 @@ const SuperBunker = (options = {}) => {
     );
   }
 
+  function onArrowHiddenChange(isVisible) {
+    if (!dom?.oArrow) return;
+    dom.oArrow.style.visibility = isVisible ? 'visible' : 'hidden';
+  }
+
   function initDOM() {
     dom.o = sprites.create({
       className: css.className,
@@ -287,6 +292,7 @@ const SuperBunker = (options = {}) => {
     dom,
     hit,
     init: initSuperBunker,
+    onArrowHiddenChange,
     updateHealth,
     refreshNearbyItems
   };
