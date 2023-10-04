@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import { getTypes, TYPES } from '../core/global.js';
+import { getTypes, rngInt, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -49,7 +49,8 @@ const Infantry = (options = {}) => {
     }
 
     // only fire every so often
-    if (data.frameCount % data.fireModulus !== 0) return;
+    if ((data.frameCount + data.fireModulusOffset) % data.fireModulus !== 0)
+      return;
 
     game.addObject(TYPES.gunfire, {
       parent: exports,
@@ -317,6 +318,7 @@ const Infantry = (options = {}) => {
       height,
       halfHeight: height / 2,
       fireModulus: 10,
+      fireModulusOffset: rngInt(9, TYPES.infantry),
       vX: options.isEnemy ? -1 : 1,
       // infantry "pacing" as they walk: 30 pixels in 30 frames.
       vXFrames: [
