@@ -441,7 +441,8 @@ function checkNearbyItems(nearby, zone) {
       // ...check them
       if (collisionCheckObject(nearby.options)) {
         foundHit = true;
-        break;
+        // exit on the first, unless we want all to register
+        if (!nearby.options.hitAll) break;
       }
     }
   }
@@ -458,17 +459,25 @@ function nearbyTest(nearby, source) {
   // if this isn't set, something is wrong.
   if (source.data.frontZone === null) return;
 
-  let foundHit = checkNearbyItems(nearby, source.data.frontZone);
+  // "pre-test" logic
+  nearby.options.before?.();
+
+  let front, rear;
+
+  front = checkNearbyItems(nearby, source.data.frontZone);
 
   // nothing, yet; check the overlapping zone, if set.
-  if (!foundHit && source.data.multiZone) {
-    foundHit = checkNearbyItems(nearby, source.data.rearZone);
+  if ((!front || nearby.options.hitAll) && source.data.multiZone) {
+    rear = checkNearbyItems(nearby, source.data.rearZone);
   }
 
   // callback for no-hit case, too
-  if (!foundHit && nearby.options.miss) {
+  if (!front && !rear && nearby.options.miss) {
     nearby.options.miss(source);
   }
+
+  // "post-test" logic
+  nearby.options.after?.();
 }
 
 function enemyNearby(data, targets, triggerDistance) {
