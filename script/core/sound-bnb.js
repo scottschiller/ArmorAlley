@@ -2037,7 +2037,9 @@ function initBNBSound() {
       bnb.buttheadGonnaBeCool,
       bnb.buttheadLetsFinishThis,
       bnb.buttheadOKGetReadyDude,
-      bnb.comeToButthead
+      bnb.comeToButthead,
+      bnb.buttheadWatchTheMaster,
+      bnb.takeSoLong,
     ].concat(bnb.buttheadMonologues)
   );
   bnb.buttheadTurn.excludeDelay = true;

@@ -270,11 +270,7 @@ function GameEvents() {
           if (state.isBeavis) {
             // -> butthead
             playDelayedSound(
-              oneOf([
-                sounds.bnb.buttheadWatchTheMaster,
-                sounds.bnb.takeSoLong,
-                sounds.bnb.buttheadOKGetReadyDude
-              ]),
+              sounds.bnb.buttheadTurn,
               andAnnounce
             );
 
