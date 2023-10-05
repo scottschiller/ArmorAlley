@@ -167,7 +167,7 @@ const Helicopter = (options = {}) => {
     sprites.setTransformXY(
       undefined,
       dom.fuelLine,
-      `${-100 + data.fuel}%`,
+      `${100 - (100 -data.fuel)}%`,
       '0px'
     );
 

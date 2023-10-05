@@ -1144,30 +1144,36 @@ body.is-mobile #top-bar #game-fps {
   display: none;
 }
 
-#fuel-bar,
+#fuel-bar {
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 0.5px,
+    rgba(255, 255, 255, 0.2) 0.5px,
+    rgba(255, 255, 255, 0.2) 0.75px,
+    rgba(255, 255, 255, 0.2) 0.75px,
+    rgba(255, 255, 255, 0) 1px
+  );
+}
+
 #fuel-line {
   background-color: #161616;
-}
-
-#fuel-bar {
   background-image: url(../image/fuel-bar-background.png);
-  background-size: 2px 2px;
+  background-size: 1.5px;
   image-rendering: optimizeQuality;
+  image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
-  margin-top: 2px;
-  opacity: 0.9;
-  position: relative;
+  /* hide at first */
+  transform: translate3d(-100%, 0%, 0);
 }
 
 #fuel-bar,
 #fuel-line {
+  position: absolute;
+  top: 2px;
   height: 5px;
   overflow: hidden;
   width: 100%;
-}
-
-#fuel-line {
-  top: 0;
 }
 
 #fuel-line,
@@ -1183,6 +1189,12 @@ body.is-mobile #top-bar #game-fps {
   top: 35px;
   width: 100%;
   z-index: 1;
+}
+
+#stats-bar {
+  position: relative;
+  /* account for absolutely-positioned fuel line + bar */
+  top: 4px;
 }
 
 ul.stats-bar {
