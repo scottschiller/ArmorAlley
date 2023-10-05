@@ -15,6 +15,8 @@ import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
 
+const welcome = 'welcome';
+
 let description;
 let defaultDescription;
 let lastHTML;
@@ -89,7 +91,7 @@ function init() {
   optionsButton = document.getElementById('game-options-button');
   oSelect = document.getElementById('game_level');
 
-  utils.css.add(dom.world, 'blurred');
+  utils.css.add(dom.world, welcome);
 
   // hackish: override inline HTML style
   menu.style.visibility = 'unset';
@@ -488,18 +490,14 @@ function hideTitleScreen(callback) {
   let overlay = document.getElementById('world-overlay');
   const world = document.getElementById('world');
 
-  const blurred = 'blurred';
-  const noBlur = 'no-blur';
+  // remove overlay effects
+  utils.css.remove(world, welcome);
 
   function hideTitleScreenFinished(e) {
     if (e.target === overlay && e.propertyName === 'opacity') {
       overlay?.remove();
 
       overlay = null;
-
-      // remove blur / no-blur entirely.
-      utils.css.remove(world, blurred);
-      utils.css.remove(world, noBlur);
 
       // and transition, too.
       game.objects.view.dom.worldWrapper.style.transition = '';
@@ -516,8 +514,6 @@ function hideTitleScreen(callback) {
       callback?.();
     }
   }
-
-  utils.css.add(world, noBlur);
 
   utils.css.add(overlay, 'fade-out');
 

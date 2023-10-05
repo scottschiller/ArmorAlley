@@ -247,10 +247,11 @@ body.game-started {
 #world-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
-  transform: scale3d(1.2, 1.2, 0);
+  filter: blur(3px);
+  transform: scale3d(1.1, 1.1, 0);
   transform-origin: 50% 50%;
-  transition: all 2s ease-in-out;
-  transition-property: background-image, opacity, transform;
+  transition: all 1.25s ease-in-out;
+  transition-property: filter, background-image, opacity, transform;
 }
 
 #mtv-bnb-in {
@@ -352,30 +353,27 @@ body:not(.game-started) #mobile-controls {
   visibility: hidden;
 }
 
-#world.blurred #mobile-controls,
-#world.blurred #world .sprite {
+#world.welcome #mobile-controls {
   opacity: 0;
 }
 
-#world.no-blur #mobile-controls,
-#world.no-blur #world .sprite {
-  opacity: 1;
+#world.welcome #battlefield {
+  opacity: 0;
+  filter: blur(8px);
 }
 
-#world.blurred #battlefield,
-#world.blurred #mobile-controls,
-#world.blurred #player-status-bar,
-#world.blurred #pointer {
-  filter: blur(2px);
-  transition: all 1.5s ease-in-out;
-  transition-property: filter, opacity;
+#world.welcome #mobile-controls,
+#world.welcome #player-status-bar,
+#world.welcome #pointer {
+  filter: grayscale(1);
 }
 
-#world.blurred.no-blur #battlefield,
-#world.blurred.no-blur #mobile-controls,
-#world.blurred.no-blur #player-status-bar,
-#world.blurred.no-blur #pointer {
-  filter: none;
+#battlefield,
+#mobile-controls,
+#player-status-bar,
+#pointer {
+  transition: all 1s ease-in-out;
+  transition-property: filter, opacity, transform;
 }
 
 #game-menu {
@@ -2024,7 +2022,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   top: 15px;
 }
 
-#world.blurred.no-blur .helicopter.respawning-active .transform-sprite,
+#world.welcome .helicopter.respawning-active .transform-sprite,
 .helicopter.respawning-active .transform-sprite {
   top: 0;
   transition: all 1.5s ease-in-out;
