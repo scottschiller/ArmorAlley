@@ -116,6 +116,7 @@ const Star = (options = {}) => {
       direction: 1,
       parallax: 0.65 + rnd(0.3),
       opacity: 0.15 + rnd(0.65),
+      originalX: null,
       lastScrollLeft: null
     },
     options
