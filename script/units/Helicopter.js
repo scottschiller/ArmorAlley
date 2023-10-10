@@ -1807,7 +1807,17 @@ const Helicopter = (options = {}) => {
 
     // bail!
     if (!data.dead && data.pilot) {
-      // pilot, plus any paratroopers
+      // always deploy the pilot...
+      deployParachuteInfantry({
+        isEnemy: data.isEnemy,
+        parent: exports,
+        // a little variety
+        x:
+          data.x + data.halfWidth + rngPlusMinus(data.halfWidth / 2, data.type),
+        y: data.y + data.height - 11
+      });
+
+      // ...plus, any paratroopers
       const parachutes = parseInt(data.parachutes, 10) + 1 || 1;
 
       // note that chopper could be dead, or parachutes could be deployed by the time this fires.
