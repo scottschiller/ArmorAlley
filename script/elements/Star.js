@@ -83,7 +83,6 @@ const Star = (options = {}) => {
       .join(',')})`;
 
     data.originalX = data.x;
-    data.originaY = data.y;
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
