@@ -1840,7 +1840,7 @@ const Helicopter = (options = {}) => {
 
       if (tutorialMode || !data.ejectCount) {
         game.objects.notifications.add(
-          'You found your helicopter’s “eject” button. &nbsp; 😱 &nbsp; ☠️'
+          'You found the “eject” button. &nbsp; 😱 &nbsp; ☠️'
         );
       }
 
