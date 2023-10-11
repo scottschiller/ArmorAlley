@@ -94,8 +94,10 @@ const EndBunker = (options = {}) => {
           : 'Butt-Head'
         : 'Your engineer';
 
+    const isYourCapture = data.isEnemy !== game.players.local.data.isEnemy;
+
     if (!tutorialMode) {
-      if (data.isEnemy) {
+      if (isYourCapture) {
         if (!capturedFunds) {
           game.objects.notifications.add(
             `🏦 🏴‍☠️ 🤷 ${actor} captured 0 enemy funds. 😒 Good effort, though.`
