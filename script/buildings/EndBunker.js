@@ -217,12 +217,7 @@ const EndBunker = (options = {}) => {
     // notify if just neutralized by tank gunfire
     if (data.energy) return;
 
-    if (
-      !attacker ||
-      attacker.data.type !== TYPES.gunfire ||
-      attacker.data?.parentType !== TYPES.tank
-    )
-      return;
+    if (attacker?.data?.parentType !== TYPES.tank) return;
 
     // we have a tank, after all
     if (attacker.data.isEnemy !== game.players.local.data.isEnemy) {
