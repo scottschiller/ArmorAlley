@@ -211,7 +211,7 @@ const Notifications = () => {
     };
 
     const gameTypes = {
-      tutorial: 'This is the tutorial mode. 📖',
+      tutorial: 'This is the tutorial. &nbsp;📖',
       other: `You are playing “${levelName}.” ${emoji[gameType]}`
     };
 
@@ -225,7 +225,13 @@ const Notifications = () => {
       playingMessage = gameTypes[gameType] || gameTypes.other;
     }
 
-    add(`Welcome to ARMOR ALLEY. 🚁<br />${playingMessage}`);
+    const welcome = 'Welcome to ARMOR ALLEY. &nbsp;🚁<br />';
+
+    const msg = `${welcome}${playingMessage}`;
+
+    add(msg);
+
+    game.objects.view.setAnnouncement(msg);
 
     // special case
     if (levelName === 'Rainstorm') {
