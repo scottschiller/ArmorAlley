@@ -254,6 +254,10 @@ body.game-started {
   transition-property: filter, background-image, opacity, transform;
 }
 
+body.auto-start #world-overlay.fade-out {
+  transition-duration: 2.25s;
+}
+
 #mtv-bnb-in {
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -333,11 +337,11 @@ body.is_safari #mtv-bnb-in {
   padding-top: 20px;
   position: absolute;
   top: 27%;
-  transition: all 0.5s ease-in-out;
-  /* hat tip: https://cubic-bezier.com/#.36,.12,.32,1.2 */
-  transition-timing-function: cubic-bezier(0.36, 0.12, 0.32, 1.2);
+  transition: all 0.75s ease-in-out;
+  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  transition-timing-function: cubic-bezier(0.57, 0.18, 0.3, 1.15);
   transition-property: transform, scale, opacity;
-  transform: scale3d(0.75, 0.5, 1);
+  transform: scale3d(0.125, 0.125, 1);
   width: 391px;
   z-index: 11;
 }
@@ -388,6 +392,21 @@ body:not(.game-started) #mobile-controls {
 
 #game-menu.visible {
   display: block;
+}
+
+body.auto-start #logo {
+  top: 37.5%;
+}
+
+body.auto-start #logo #game-menu-form,
+body.auto-start #logo #game-description {
+  /* used when "auto-start" is specified, i.e., user playing campaign mode */
+  display: none;
+}
+
+body.auto-start #logo #game-subtitle {
+  /* hackish: hide the text because it fades out rather quickly. */
+  color: transparent;
 }
 
 #game-menu h2 {
@@ -906,7 +925,9 @@ body.is_safari:not(.is-mobile) #queue {
 #radar {
   filter: none;
   overflow: hidden;
-  transition: filter 0.75s ease-in-out;
+  transition: filter 0.75s ease-in-out, opacity 0.5s ease-in-out;
+  opacity: 0;
+  visibility: hidden; /* initially hide, to prevent visible opacity flash */
 }
 
 #radar,

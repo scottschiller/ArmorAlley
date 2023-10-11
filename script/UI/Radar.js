@@ -433,6 +433,12 @@ const Radar = () => {
     });
   }
 
+  function show() {
+    if (!dom?.radar) return;
+    dom.radar.style.visibility = 'visible';
+    dom.radar.style.opacity = 1;
+  }
+
   function animate() {
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
 
@@ -664,6 +670,7 @@ const Radar = () => {
     objects,
     removeItem: removeRadarItem,
     reset: reset,
+    show: show,
     setStale,
     startJamming,
     stopJamming

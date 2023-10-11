@@ -32,6 +32,10 @@ let gameMenuActive;
 
 let originalSubTitle;
 
+const battle = searchParams.get('battle');
+const autoStart = searchParams.get('start');
+const gameTypeParam = searchParams.get('gameType');
+
 let customLevel = searchParams.get('customLevel');
 
 if (customLevel) {
@@ -92,6 +96,11 @@ function init() {
   oSelect = document.getElementById('game_level');
 
   utils.css.add(dom.world, welcome);
+
+  if (battle && autoStart) {
+    // "campaign mode" - hide the menu, minimal logo on start.
+    utils.css.add(document.body, 'auto-start');
+  }
 
   // hackish: override inline HTML style
   menu.style.visibility = 'unset';
@@ -180,6 +189,11 @@ function init() {
 
     // do the same thing for the network modal
     prefsManager.addGroupAndLevel(customGroup.cloneNode(true));
+  } else if (battle) {
+    // "campaign" mode - find and select the provided battle.
+    Object.values(oSelect.options).forEach(
+      (option) => (option.selected = option.value === battle)
+    );
   }
 
   previewLevel(oSelect.value);
@@ -210,6 +224,16 @@ function init() {
     configureNetworkGame();
   }
 
+  if (battle && autoStart) {
+    // was a game type specified?
+    if (gameTypeParam) {
+      const checkbox = document.getElementById(
+        `radio_game_type_${gameTypeParam}`
+      );
+      if (checkbox) checkbox.checked = true;
+    }
+  }
+
   // get and apply game type from HTML; browser may have remembered form selection through reload.
   const defaultGameType =
     document.querySelector('#game-type-list input[name="game_type"]:checked')
@@ -222,6 +246,19 @@ function init() {
   if (dependsOnGameType(levelName)) {
     // maybe rebuild preview, depending
     previewLevel(levelName);
+  }
+
+  if (battle && autoStart) {
+    common.setFrameTimeout(() => {
+      formClick({
+        target: {
+          action: 'start-game'
+        }
+      });
+      game.objects.radar.show();
+    }, 1000);
+  } else {
+    game.objects.radar.show();
   }
 }
 
