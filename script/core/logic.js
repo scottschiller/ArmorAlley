@@ -10,6 +10,7 @@ import { COSTS, getTypes, TYPES, worldWidth } from './global.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const NET_TRIGGER_DISTANCE = 360;
 
@@ -676,6 +677,14 @@ function checkProduction() {
 
   // playing extreme mode? this benefit would practically be cheating! ;)
   if (gameType === 'extreme') return;
+
+  // network game? only show if playing co-op, humans vs. one or two CPUs.
+  if (
+    net.active &&
+    gamePrefs.net_game_style !== 'coop_2v1' &&
+    gamePrefs.net_game_style !== 'coop_2v2'
+  )
+    return;
 
   bunkersOwned = playerOwnsBunkers();
 
