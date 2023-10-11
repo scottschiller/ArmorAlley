@@ -190,7 +190,11 @@ const Van = (options = {}) => {
       : pads[pads.length - 1].data.x - data.x;
 
     if (distance < data.approachingBase) {
-      gameEvents.fire(EVENTS.vanApproaching, 'isEnemy', data.isEnemy);
+      gameEvents.fire(
+        EVENTS.vanApproaching,
+        'isEnemy',
+        data.isEnemy !== game.players.local.data.isEnemy
+      );
     }
 
     return data.dead && !data.deadTimer;
