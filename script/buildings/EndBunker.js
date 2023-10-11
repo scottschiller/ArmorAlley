@@ -12,9 +12,10 @@ import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
 import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
+import { utils } from '../core/utils.js';
 
 const EndBunker = (options = {}) => {
-  let css, dom, data, height, objects, nearby, exports;
+  let css, dom, data, exports, height, nearby, objects, radarItem;
 
   function setFiring(state) {
     if (state && data.energy) {
@@ -33,6 +34,7 @@ const EndBunker = (options = {}) => {
     ) {
       data.energy = Math.max(0, data.energy - points);
       sprites.updateEnergy(exports);
+      onEnergyUpdate();
     }
   }
 
@@ -215,6 +217,7 @@ const EndBunker = (options = {}) => {
 
   function updateHealth(attacker) {
     // notify if just neutralized by tank gunfire
+    onEnergyUpdate();
     if (data.energy) return;
 
     if (attacker?.data?.parentType !== TYPES.tank) return;
@@ -231,6 +234,18 @@ const EndBunker = (options = {}) => {
     }
   }
 
+  function onEnergyUpdate() {
+    utils.css.addOrRemove(radarItem?.dom?.o, !data.energy, css.neutral);
+  }
+
+  function onNeutralHiddenChange(isVisible) {
+    utils.css.addOrRemove(
+      radarItem?.dom?.o,
+      !data.energy && isVisible,
+      css.neutral
+    );
+  }
+
   function initEndBunker() {
     dom.o = sprites.create({
       className: css.className,
@@ -239,13 +254,16 @@ const EndBunker = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    onEnergyUpdate();
   }
 
   height = 19;
 
   css = common.inheritCSS({
-    className: TYPES.endBunker
+    className: TYPES.endBunker,
+    neutral: 'neutral'
   });
 
   data = common.inheritData(
@@ -294,6 +312,7 @@ const EndBunker = (options = {}) => {
     dom,
     hit,
     init: initEndBunker,
+    onNeutralHiddenChange,
     registerHelicopter,
     updateHealth
   };

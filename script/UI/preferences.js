@@ -1328,10 +1328,14 @@ function PrefsManager() {
           radarItem?.onHiddenChange?.(isActive)
         ),
 
-      super_bunker_arrows: (isActive) =>
+      super_bunker_arrows: (isActive) => {
         game.objects[TYPES.superBunker].forEach((superBunker) =>
-          superBunker?.onArrowHiddenChange?.(isActive)
-        ),
+          superBunker.onArrowHiddenChange?.(isActive)
+        );
+        game.objects[TYPES.endBunker].forEach((endBunker) => {
+          endBunker.onNeutralHiddenChange?.(isActive);
+        });
+      },
 
       scan_ui_battlefield_enemy: handleScanUIPrefChange,
       scan_ui_battlefield_friendly: handleScanUIPrefChange,

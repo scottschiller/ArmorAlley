@@ -2631,7 +2631,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
 }
 
-#radar .sprite.super-bunker.hostile {
+#radar .sprite.super-bunker.hostile,
+#radar .sprite.end-bunker.neutral {
   background-color: transparent;
   border-color: rgba(255, 255, 255, 0.35);
   border-bottom-color: transparent;
