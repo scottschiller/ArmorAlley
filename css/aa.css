@@ -5679,6 +5679,11 @@ body.edit-mode #battlefield {
   transform-origin: 0 0;
 }
 
+body:not(.is-mobile) #tutorial-window {
+  /* slightly larger on desktop */
+  transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
+}
+
 #world.tutorial-mode #tutorial-window {
   display: block;
   opacity: 0;
