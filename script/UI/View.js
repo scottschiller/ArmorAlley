@@ -308,9 +308,6 @@ const View = () => {
   function setAnnouncement(text = '', delay = 5000) {
     if (isGameOver()) return;
 
-    // prevent `undefined` from being rendered. ;)
-    text = text || '';
-
     if (
       text !== data.gameTips.lastAnnouncement &&
       ((!data.gameTips.hasAnnouncement && text) ||
