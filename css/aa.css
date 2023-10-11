@@ -3578,10 +3578,6 @@ body.is-mobile #game-tips #game-announcements {
   padding: 4px;
 }
 
-#world.tutorial-mode #game-tips #game-announcements {
-  font-family: Chicago, FA Sysfont C, courier, sans-serif;
-}
-
 #game-tips #game-announcements p {
   overflow: visible;
   white-space: normal;
