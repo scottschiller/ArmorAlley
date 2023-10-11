@@ -305,7 +305,7 @@ const View = () => {
     };
   }
 
-  function setAnnouncement(text, delay) {
+  function setAnnouncement(text = '', delay = 5000) {
     if (isGameOver()) return;
 
     // prevent `undefined` from being rendered. ;)
@@ -337,10 +337,10 @@ const View = () => {
 
       if (text) {
         // clear after an amount of time, if not -1
-        if (delay === undefined || delay !== -1) {
+        if (delay !== -1) {
           data.gameTips.announcementTimer = common.setFrameTimeout(
             setAnnouncement,
-            delay || 5000
+            delay
           );
         }
       }
