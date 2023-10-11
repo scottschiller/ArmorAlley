@@ -716,7 +716,7 @@ originalLevels = {
   ],
 
   // Based On Practice Battle #2: Boot Camp, Level 2
-  'One Gun': [
+  'One-Gun': [
     {
       t: 'balloon',
       l: [3584, 4096, 4608]
