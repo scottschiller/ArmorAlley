@@ -126,10 +126,14 @@ const Base = (options = {}) => {
       leftOffset = -(game.objects.view.data.browser.width * 0.1);
     }
 
+    const localPlayer = game.players.local;
+
     common.setFrameTimeout(
       () =>
         playSound(
-          data.isEnemy ? sounds.bnb.singing : sounds.bnb.beavisNoNoNoNooo,
+          localPlayer.data.isEnemy !== data.isEnemy
+            ? sounds.bnb.singing
+            : sounds.bnb.beavisNoNoNoNooo,
           null,
           { volume: 85 }
         ),
@@ -207,7 +211,9 @@ const Base = (options = {}) => {
 
       if (counter >= counterMax) {
         playSequence(
-          data.isEnemy ? sounds.bnb.gameOverWin : sounds.bnb.gameOverLose
+          localPlayer.data.isEnemy !== data.isEnemy
+            ? sounds.bnb.gameOverWin
+            : sounds.bnb.gameOverLose
         );
 
         // HUGE boom, why not.
