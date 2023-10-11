@@ -252,7 +252,7 @@ function previewLevel(levelName, excludeVehicles) {
 
       game.objects.radar.addItem(
         balloonExports,
-        `sprite balloon${item[1] === 'right' ? ' enemy' : ''}`
+        `sprite balloon${item[1] === 'left' ? ' friendly' : ' enemy'}`
       );
     } else if (scanNodeTypes[item[0]]) {
       // special case: certain radar items also get a "scan range" node.
