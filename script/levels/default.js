@@ -12,6 +12,20 @@ let originalLevels;
 let level = searchParams.get('level');
 let levelName;
 
+// The original 10 game battles, in order.
+const campaignBattles = [
+  'Cake Walk',
+  'One-Gun',
+  'Sucker Punch',
+  'Airborne',
+  'Two-Gun',
+  'Super Bunker',
+  'Scrapyard',
+  'Blind Spot',
+  'Wasteland',
+  'Midnight Oasis'
+];
+
 function setCustomLevel(levelData) {
   originalLevels['Custom Level'] = levelData;
 
@@ -2518,6 +2532,7 @@ originalLevels = {
 
 export {
   addWorldObjects,
+  campaignBattles,
   dependsOnGameType,
   levelName,
   previewLevel,

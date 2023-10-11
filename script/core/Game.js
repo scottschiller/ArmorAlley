@@ -52,13 +52,14 @@ import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
 import { sprites } from './sprites.js';
-import { addWorldObjects } from '../levels/default.js';
+import { addWorldObjects, levelName } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
 import { common } from './common.js';
 import { StarController } from '../elements/StarController.js';
 import { Star } from '../elements/Star.js';
+import { Envelope } from '../UI/Envelope.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -251,6 +252,8 @@ const game = (() => {
     objects.inventory = Inventory();
 
     objects.starController = StarController();
+
+    objects.envelope = Envelope();
   }
 
   function getObjects() {
@@ -675,6 +678,8 @@ const game = (() => {
       return startEditor();
     }
 
+    objects.envelope.setLevel(levelName);
+
     utils.css.add(document.body, 'game-started');
 
     keyboardMonitor.init();
@@ -864,6 +869,7 @@ const game = (() => {
 
   objects = {
     'editor': null,
+    'envelope': null,
     'gameLoop': null,
     'view': null,
     'chain': [],

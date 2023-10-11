@@ -1169,6 +1169,9 @@ const View = () => {
         for (i = 0, j = targetTouches.length; i < j; i++) {
           handleTouchStart(targetTouches[i], e);
         }
+      } else if (e.target?.getAttribute('data-ignore-touch')) {
+        // explicit "ignore touch" case
+        return true;
       }
 
       // always prevent default tap-and-hold, selection and whatnot.

@@ -21,6 +21,7 @@ import { screenBoom } from '../UI/DomFetti.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { campaignBattles, levelName } from '../levels/default.js';
 
 const Base = (options = {}) => {
   let css, data, dom, exports, height, missileVMax;
@@ -215,6 +216,14 @@ const Base = (options = {}) => {
             ? sounds.bnb.gameOverWin
             : sounds.bnb.gameOverLose
         );
+
+        if (campaignBattles.includes(levelName) && !net.active) {
+          common.setFrameTimeout(() => {
+            // as applicable, show a letter from "the old tanker."
+            const didWin = localPlayer.data.isEnemy !== data.isEnemy;
+            game.objects.envelope.show(didWin);
+          }, 1500);
+        }
 
         // HUGE boom, why not.
         common.setFrameTimeout(() => {
