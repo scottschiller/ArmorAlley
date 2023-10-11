@@ -471,11 +471,12 @@ const SmartMissile = (options = {}) => {
       aType !== TYPES.bomb &&
       aType !== TYPES.smartMissile
     ) {
-      const whose = data.isEnemy
-        ? 'An enemy'
-        : data?.parentType === TYPES.helicopter
-        ? 'Your'
-        : 'A friendly';
+      const whose =
+        data.isEnemy !== game.players.local.data.isEnemy
+          ? 'An enemy'
+          : data?.parentType === TYPES.helicopter
+          ? 'Your'
+          : 'A friendly';
       const missileType = game.objects.stats.formatForDisplay(
         data.type,
         exports
