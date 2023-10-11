@@ -650,9 +650,7 @@ function countSides(objectType, includeDead) {
   return result;
 }
 
-function countFriendly(objectType, includeDead) {
-  includeDead = includeDead || false;
-
+function countFriendly(objectType, includeDead = false) {
   return countSides(objectType, includeDead).friendly;
 }
 
