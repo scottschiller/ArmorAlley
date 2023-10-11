@@ -84,6 +84,18 @@ const Van = (options = {}) => {
     common.addGravestone(exports);
   }
 
+  function onOurSide() {
+    return (
+      (youWin && !theyWin) || game.players.local.data.isEnemy === data.isEnemy
+    );
+  }
+
+  function getGameOverAnnouncement() {
+    return (youWin || onOurSide()) && !theyWin
+      ? 'Congratulations! You have won the battle.'
+      : 'The enemy has won the battle.\nBetter luck next time.';
+  }
+
   function animate() {
     // hackish: defer this until all objects are created, and the game has started etc.
     if (!data.xGameOver && pads?.length) {
@@ -111,31 +123,21 @@ const Van = (options = {}) => {
     if (theyWin || (data.isEnemy && data.x <= data.xGameOver)) {
       stop();
 
-      // Game over, man, game over! (Enemy wins.)
-
       // hack: clear any existing.
       game.objects.view.setAnnouncement();
 
-      game.objects.view.setAnnouncement(
-        'The enemy has won the battle.\nBetter luck next time.',
-        -1
-      );
+      game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 
-      gameOver(false);
+      gameOver(onOurSide());
     } else if (youWin || (!data.isEnemy && data.x >= data.xGameOver)) {
       stop();
 
-      // player wins
-
       // hack: clear any existing.
       game.objects.view.setAnnouncement();
 
-      game.objects.view.setAnnouncement(
-        'Congratulations! You have won the battle.',
-        -1
-      );
+      game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 
-      gameOver(true);
+      gameOver(onOurSide());
     } else {
       // bounce wheels after the first few seconds
 
