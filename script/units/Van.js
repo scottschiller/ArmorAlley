@@ -203,21 +203,28 @@ const Van = (options = {}) => {
   function gameOver(youWon) {
     // somebody's base is about to get blown up.
 
-    let yourBase, enemyBase;
+    let yourBase, otherBase;
 
     // just in case
     if (isGameOver()) return;
 
     const bases = game.objects[TYPES.base];
 
-    yourBase = bases[0];
-    enemyBase = bases[1];
+    const { isEnemy } = game.players.local.data;
+
+    if (isEnemy) {
+      yourBase = bases[1];
+      otherBase = bases[0];
+    } else {
+      yourBase = bases[0];
+      otherBase = bases[1];
+    }
 
     if (!youWon) {
       // sorry, better luck next time.
       yourBase.die();
     } else {
-      enemyBase.die();
+      otherBase.die();
     }
 
     game.data.battleOver = true;
