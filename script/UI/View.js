@@ -323,6 +323,9 @@ const View = () => {
 
       text = text.replace(/\n/, replacement);
 
+      // drop smart quotes, they render funny with Da Valencia.
+      text = text.replace(/[“”]/g, '"');
+
       dom.gameAnnouncements.innerHTML = text;
 
       data.gameTips.lastAnnouncement = text;
