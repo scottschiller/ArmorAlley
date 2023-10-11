@@ -3532,7 +3532,7 @@ body.game-started #game-tips.active .tips-container {
   font-weight: 300;
   left: 0;
   letter-spacing: -0.25em;
-  line-height: 1em;
+  line-height: 1.15em;
   margin: 0 auto;
   min-height: 100%;
   opacity: 0;
