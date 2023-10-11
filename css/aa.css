@@ -2621,6 +2621,11 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: #9c9f09;
 }
 
+#radar .sprite.balloon.friendly {
+  background-color: #17a007;
+  border-color: rgba(23, 160, 7, 0.75);
+}
+
 #radar .sprite.bunker.enemy,
 #radar .sprite.super-bunker.enemy {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;

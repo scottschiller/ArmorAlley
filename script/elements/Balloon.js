@@ -34,13 +34,11 @@ const Balloon = (options = {}) => {
 
     zones.changeOwnership(exports);
 
-    if (isEnemy) {
-      utils.css.remove(dom.o, css.friendly);
-      utils.css.add(dom.o, css.enemy);
-    } else {
-      utils.css.remove(dom.o, css.enemy);
-      utils.css.add(dom.o, css.friendly);
-    }
+    const playerIsEnemy = game.players.local.data.isEnemy;
+    const isFriendly = playerIsEnemy === isEnemy && !data.hostile;
+
+    utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
+    utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
 
     // apply CSS animation effect, and stop/remove in one second.
     // this prevents the animation from replaying when switching
@@ -52,6 +50,12 @@ const Balloon = (options = {}) => {
       utils.css.remove(dom.o, css.animating);
       data.frameTimeout = null;
     }, 1200);
+
+    utils.css.addOrRemove(
+      radarItem.dom.o,
+      isFriendly && !data.hostile,
+      css.friendly
+    );
   }
 
   function attachChain(chain = null) {
@@ -319,7 +323,10 @@ const Balloon = (options = {}) => {
     dom.o = sprites.create({
       className: css.className,
       id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
+      isEnemy:
+        game.players.local.data.isEnemy === data.isEnemy
+          ? css.facingRight
+          : css.facingLeft
     });
 
     // TODO: remove?
@@ -345,6 +352,12 @@ const Balloon = (options = {}) => {
 
     // TODO: review hacky "can respawn" parameter
     radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
+
+    utils.css.addOrRemove(
+      radarItem.dom.o,
+      game.players.local.data.isEnemy === data.isEnemy && !data.hostile,
+      css.friendly
+    );
   }
 
   height = 16;
@@ -356,8 +369,8 @@ const Balloon = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.balloon,
-    friendly: 'facing-right',
-    enemy: 'facing-left',
+    friendly: 'friendly',
+    enemy: 'enemy',
     facingLeft: 'facing-left',
     facingRight: 'facing-right'
   });
