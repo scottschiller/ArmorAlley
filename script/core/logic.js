@@ -632,7 +632,9 @@ function countSides(objectType, includeDead) {
   for (i = 0, j = game.objects[objectType].length; i < j; i++) {
     if (!game.objects[objectType][i].data.dead) {
       if (
-        game.objects[objectType][i].data.isEnemy ||
+        // "on the other side"
+        game.objects[objectType][i].data.isEnemy !==
+          game.players.local.data.isEnemy ||
         game.objects[objectType][i].data.hostile
       ) {
         result.enemy++;
