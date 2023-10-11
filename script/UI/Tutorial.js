@@ -27,6 +27,14 @@ const Tutorial = () => {
 
     data.step = i;
 
+    if (!dom.lastItem) {
+      // tutorial complete!
+      utils.css.remove(dom.o, css.active);
+      utils.css.remove(dom.oTutorialWindow, css.active);
+      game.objects.envelope.show(true);
+      return;
+    }
+
     document.getElementById('tutorial-body').innerHTML = dom.lastItem.innerHTML;
 
     updateHighlightControls(data.step, true);
