@@ -352,6 +352,7 @@ const EndBunker = (options = {}) => {
             // claim infantry, enable guns.
             data.energy = data.energyMax;
             sprites.updateEnergy(exports);
+            onEnergyUpdate();
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);
