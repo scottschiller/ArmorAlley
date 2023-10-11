@@ -451,7 +451,9 @@ body.is-mobile.is_safari #game-menu select {
   border-color: #fff;
 }
 
-#game-menu .cta {
+#game-menu .cta,
+.generic-cta {
+  display: inline-block;
   background-color: #030;
   background-color: rgba(0, 102, 0, 0.5);
   border: 1px solid green;
@@ -466,6 +468,10 @@ body.is-mobile.is_safari #game-menu select {
   text-decoration: none;
 }
 
+.generic-cta {
+  border-radius: 2px;
+}
+
 #game-menu .cta:last-of-type {
   padding-right: 0;
 }
@@ -475,8 +481,9 @@ body.is-mobile.is_safari #game-menu select {
 }
 
 #game-menu .cta:focus,
-#game-menu .cta:hover {
-  background-color: #ccc;
+#game-menu .cta:hover,
+.generic-cta:focus,
+.generic-cta:hover {
   background-color: rgba(0, 153, 0, 0.75);
   color: #fff;
   outline: none;
@@ -5132,7 +5139,7 @@ button.primary {
 }
 
 button.primary:not(:disabled):active,
-button:not(:disabled):active {
+button:not(.generic-cta):not(:disabled):active {
   background-color: #000;
   color: #fff;
 }
@@ -5176,8 +5183,8 @@ button.attention:not(:active) {
 
 /* game menu screen */
 
-#game-menu button.large {
-  background: #090;
+#game-menu button.large,
+.generic-cta {
   background: #eee;
   color: #fff;
   color: #333;
@@ -5188,25 +5195,34 @@ button.attention:not(:active) {
   vertical-align: middle;
 }
 
-#game-menu button.game-start {
+.generic-cta {
+  font-size: 8px;
+  padding: 2px 8px;
+}
+
+#game-menu button.game-start,
+.generic-cta {
   background: #090;
   border-color: transparent;
   color: #fff;
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
 }
 
-#game-menu button.large.game-start:hover {
+#game-menu button.large.game-start:hover,
+.generic-cta:hover {
   background-color: #0a0;
   color: #fff;
   filter: drop-shadow(0 0 3px #99ff99);
 }
 
-#game-menu button.large.game-start:active {
+#game-menu button.large.game-start:active,
+.generic-cta:active {
   filter: drop-shadow(0 0 1.5px #99ff99);
 }
 
 #game-menu .cta:not(label),
-#game-menu button.large {
+#game-menu button.large,
+.generic-cta.large {
   border: 1px solid transparent;
   transition: transform 0.05s;
   transition-property: background-color, color, filter, text-shadow, transform;
@@ -5228,7 +5244,8 @@ body.is_safari:not(.is-mobile) #game-menu button {
 }
 
 #game-menu .cta:not(label):active,
-#game-menu button.large:active {
+#game-menu button.large:active,
+.generic-cta:active {
   transform: scale3d(0.9, 0.9, 1);
   transform-origin: 50% 50%;
 }
@@ -5992,6 +6009,265 @@ body.game-paused #tutorial-window {
   body.is-mobile #tutorial-window {
     top: 180px;
   }
+}
+
+#letters-from-the-old-tanker {
+  display: none;
+}
+
+#battle-over-letter {
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 150px;
+  transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
+  filter: blur(3px);
+  transition: 0.5s ease-in-out;
+  opacity: 0;
+  transition-property: transform, filter, opacity;
+  /* sit on top of announcements, etc. */
+  z-index: 10;
+}
+
+#battle-over-letter.active {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  transition-timing-function: cubic-bezier(0.45, 0.48, 0.28, 1.4);
+  transition-duration: 1.25s;
+  filter: none;
+}
+
+#battle-over-letter.mousedown {
+  transform: translate3d(-50%, -50%, 0) scale3d(0.975, 0.975, 1);
+  transition-duration: 0.33s;
+}
+
+#battle-over-letter .letter-content {
+  position: relative;
+  z-index: 2;
+  max-width: 12.5rem;
+  margin: 0px auto;
+  padding: 8px 12px;
+  height: 100%;
+}
+
+#battle-over-letter .letter-content h1 {
+  color: #000;
+  font-family: de_valenciaregular, FA Sysfont C, JetBrains Mono, Menlo, Monaco,
+    SF Mono, Lucida Console, Terminal, monospace;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1em;
+  letter-spacing: -0.3em;
+  text-indent: -1px;
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+#battle-over-letter .letter-content p {
+  color: #666;
+  font-family: Geneva, verdana, arial, sans-serif;
+  font-size: 5px;
+  font-style: italic;
+}
+
+.letter-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 150px;
+  transform: translate3d(-50%, -50%, 0);
+  cursor: pointer;
+}
+
+body.is_safari:not(.is-mobile) .letter-image {
+  zoom: 2;
+  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
+}
+
+body.is_safari .animated-mail .body,
+body.is_safari .animated-mail .top-fold,
+body.is_safari .animated-mail .left-fold,
+body.is_safari .animated-mail .back-fold,
+body.is_safari .animated-mail .letter-buttons {
+  /* Safari has rendering / compositing issues without additional transforms. */
+  transform: translate3d(0px, 0px, 0);
+}
+
+.animated-mail {
+  /**
+   * Hat tip: https://bbbootstrap.com/snippets/opening-envelope-css-html-91462710 
+   */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: 1s;
+  transition-property: transform, z-index;
+}
+
+.animated-mail .wax-seal {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: 32px;
+  height: 31.25px;
+  /**
+   * Hat tip: "Golden Wax Seal" via pngtree.com
+   * https://pngtree.com/freepng/golden-wax-seal_2079672.html
+   */
+  background: url(../image/pngtree-wax-seal.webp);
+  background-size: contain;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  transition: filter 0.25s, transform 0.25s;
+  transition-timing-function: ease-in-out;
+  image-rendering: optimizeQuality;
+  image-rendering: crisp-edges;
+}
+
+#battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
+  filter: drop-shadow(0px 0px 3px rgba(0, 255, 0, 0.75));
+}
+
+#battle-over-letter:not(.open).mousedown .animated-mail .wax-seal,
+#battle-over-letter:not(.open) .animated-mail .wax-seal:active {
+  transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
+  filter: drop-shadow(0px 0px 2px rgba(0, 255, 0, 0.5));
+  transition-duration: 0.125s;
+}
+
+.animated-mail .body {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 100px 200px;
+  border-color: transparent transparent #228822 transparent;
+  z-index: 2;
+}
+
+.animated-mail .top-fold {
+  position: absolute;
+  top: 50px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  /* note: 51px to address border bleed / see-through */
+  border-width: 51px 100px 0 100px;
+  transform-origin: 50% 0%;
+  transition: transform 0.8s 0.5s, z-index 0.5s 0.65s;
+  border-color: #006600 transparent transparent transparent;
+  z-index: 4;
+}
+
+.animated-mail .back-fold {
+  position: absolute;
+  bottom: 0;
+  width: 200px;
+  height: 100px;
+  background-color: #005a00;
+  z-index: 0;
+}
+
+.animated-mail .left-fold,
+.animated-mail .right-fold {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 50px 0 50px 100px;
+  border-color: transparent transparent transparent #117711;
+  z-index: 2;
+}
+
+.animated-mail .right-fold {
+  /* lazy mirroring */
+  right: 0;
+  transform: translate3d(0px, 0px, 0) scaleX(-1);
+}
+
+.animated-mail .letter-wrapper {
+  position: absolute;
+  bottom: 1px;
+  left: 0px;
+  width: 100%;
+  height: 100vh; /* always make sure there's tons of room. */
+  overflow: hidden;
+}
+
+.animated-mail .letter {
+  left: 20px;
+  bottom: 0px;
+  position: absolute;
+  width: 160px;
+  transform: translate3d(0px, calc(100% - 60px), 0);
+  will-change: transform;
+  /**
+   * Image by kues1 on Freepik
+   * https://www.freepik.com/free-photo/white-empty-canvas_1038705.htm#from_view=detail_alsolike#position=4
+   */
+  background: #fff url(../image/white-empty-canvas-texture.webp);
+  background-size: 128px;
+  z-index: 1;
+  overflow: hidden;
+  transition: 1s 0s;
+  transition-timing-function: ease-in-out;
+}
+
+.animated-mail .letter .letter-border {
+  height: 10px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    #cb5a5e,
+    #cb5a5e 8px,
+    transparent 8px,
+    transparent 18px
+  );
+}
+
+.animated-mail .letter .letter-context-body {
+  margin: 5px 10px;
+}
+
+.animated-mail .letter-buttons {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  margin-bottom: 3px;
+  padding: 6px;
+  box-sizing: border-box;
+  z-index: 2;
+  text-align: center;
+}
+
+#battle-over-letter.open .animated-mail {
+  transform: translateY(40px);
+  transition-timing-function: ease-in-out;
+}
+
+#battle-over-letter.open .animated-mail .top-fold {
+  transition: transform 0.95s, z-index 0.5s;
+  transform: rotateX(180deg);
+  z-index: 0;
+}
+
+#battle-over-letter.open .animated-mail .letter {
+  /* bring the letter up, compensating for the overlapping part of the envelope. */
+  transform: translate3d(0px, 0px, 0);
+  padding-bottom: 84px;
+}
+
+#battle-over-letter hr {
+  border: none;
+  border-top: 0.5px dashed #999;
 }
 
 @keyframes animate-transform-sprite-engineer-headbang-bnb {
