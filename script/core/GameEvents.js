@@ -1,4 +1,4 @@
-import { COSTS, oneOf, TYPES } from './global.js';
+import { COSTS, TYPES } from './global.js';
 import { game } from './Game.js';
 import { common } from '../core/common.js';
 import { isGameOver } from '../core/logic.js';
@@ -269,10 +269,7 @@ function GameEvents() {
 
           if (state.isBeavis) {
             // -> butthead
-            playDelayedSound(
-              sounds.bnb.buttheadTurn,
-              andAnnounce
-            );
+            playDelayedSound(sounds.bnb.buttheadTurn, andAnnounce);
 
             // preload
             common.preloadVideo('igotyoubabe');

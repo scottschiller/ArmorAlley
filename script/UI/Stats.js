@@ -155,8 +155,8 @@ function Stats() {
       exclude: true
     },
     'helicopter': {
-      'emoji': emoji.skull,
-      'verb': 'hit'
+      emoji: emoji.skull,
+      verb: 'hit'
     },
     'bomb': {
       exclude: true,

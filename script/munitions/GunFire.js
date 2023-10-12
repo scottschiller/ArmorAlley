@@ -84,8 +84,15 @@ const GunFire = (options = {}) => {
       }
 
       // additional bits of shrapnel
-      if (pType === TYPES.helicopter && (tType === TYPES.tank || tType === TYPES.missileLauncher)) {
-        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1), vX: data.vX * rnd(1) });
+      if (
+        pType === TYPES.helicopter &&
+        (tType === TYPES.tank || tType === TYPES.missileLauncher)
+      ) {
+        effects.inertGunfireExplosion({
+          exports,
+          count: 1 + rndInt(1),
+          vX: data.vX * rnd(1)
+        });
       }
 
       // play a sound for certain targets and source -> target combinations
@@ -178,12 +185,15 @@ const GunFire = (options = {}) => {
       data.dead = true;
 
       // and cleanup shortly.
-      frameTimeout = common.setFrameTimeout(() => {
-        // use the force, indeed.
-        const force = true;
-        die(force);
-        frameTimeout = null;
-      }, canSpark ? 500 : 250);
+      frameTimeout = common.setFrameTimeout(
+        () => {
+          // use the force, indeed.
+          const force = true;
+          die(force);
+          frameTimeout = null;
+        },
+        canSpark ? 500 : 250
+      );
 
       if (tType !== TYPES.infantry) {
         // hackish: override for special case
