@@ -108,7 +108,6 @@ function init() {
   utils.css.add(menu, 'visible');
 
   utils.events.add(form, 'click', formClick);
-
   utils.events.add(optionsButton, 'click', () => prefsManager.show());
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
@@ -370,7 +369,7 @@ function showExitType() {
 function formClick(e) {
   const { target } = e;
 
-  const action = target.getAttribute('data-action');
+  const action = target.action || target.getAttribute('data-action');
 
   if (action === 'start-editor') {
     const selectedIndex = oSelect.selectedIndex;
