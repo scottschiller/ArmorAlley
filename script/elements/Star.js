@@ -9,7 +9,9 @@ const Star = (options = {}) => {
   function animate() {
     data.hasAnimated = true;
 
-    const { scrollLeft } = game.objects.view.data.battleField;
+    // hackish, mobile + portrait: take one screen's worth off - so at the beginning of the battlefield, we have a screen of stars.
+    // the scroll logic could use a refactor.
+    const scrollLeft = game.objects.view.data.battleField.scrollLeft - (isMobile && game.objects.view.data.browser.isPortrait ? game.objects.view.data.browser.width : 0);
 
     // note: "tracked" value is not the same as rendered x value.
     if (data.lastScrollLeft !== scrollLeft) {
