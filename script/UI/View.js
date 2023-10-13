@@ -27,6 +27,8 @@ import { gamePrefs } from './preferences.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 
+let orientationTimer;
+
 const View = () => {
   let css, data, dom, events, exports;
 
@@ -923,7 +925,11 @@ const View = () => {
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
-    utils.events.add(screen?.orientation, 'change', events.orientationChange);
+    utils.events.add(
+      screen?.orientation,
+      'change',
+      events.orientationChangeWithDelay
+    );
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
   }
@@ -1221,6 +1227,15 @@ const View = () => {
       game.objects.gameLoop.resetFPS();
     },
 
+    orientationChangeWithDelay(e) {
+      // iOS safari seems to require a delay for device rotation before coordinates actually update.
+      if (orientationTimer) return;
+      orientationTimer = window.setTimeout(() => {
+        events.orientationChange(e);
+        orientationTimer = null;
+      }, 500);
+    },
+
     orientationChange() {
       if (!isMobile) return;
 
@@ -1232,9 +1247,6 @@ const View = () => {
         )?.matches);
 
       refreshCoords();
-
-      // iOS Safari (possibly "home screen app" especially?) needs an additional delay for layout, perhaps due to screen rotation animation.
-      window.setTimeout(refreshCoords, 250);
     }
   };
 
