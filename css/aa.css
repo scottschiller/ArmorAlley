@@ -6275,6 +6275,20 @@ body.is_safari .animated-mail .letter-buttons {
   text-align: center;
 }
 
+.landscape-space-portrait-line-break {
+  /* hackish: override regular announcement span rules */
+  width: 0.25em !important;
+  display: inline-block !important;
+}
+
+@media screen and (orientation: portrait) {
+  .landscape-space-portrait-line-break {
+    display: block !important;
+    font-size: 0px !important;
+    width: 0px !important;
+  }  
+}
+
 #battle-over-letter.open .animated-mail {
   transform: translateY(40px);
   transition-timing-function: ease-in-out;

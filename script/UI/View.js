@@ -317,11 +317,8 @@ const View = () => {
     ) {
       utils.css.addOrRemove(dom.gameTips, text, css.gameTips.hasAnnouncement);
 
-      // if in portrait mode, use line breaks. otherwise, single-space.
-      const replacement = window.matchMedia?.('(orientation: portrait)')
-        ?.matches
-        ? '<br />'
-        : ' ';
+      // line break on mobile, portrait; otherwise, space.
+      const replacement = '<span class="landscape-space-portrait-line-break"></span>';
 
       text = text.replace(/\n/, replacement);
 
