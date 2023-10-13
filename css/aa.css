@@ -5050,6 +5050,12 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
   font-weight: bolder;
 }
 
+body.is_safari:not(.is-mobile) .mac-classic b,
+body.is_safari:not(.is-mobile) .mac-classic .label-text {
+  /* hack around font weights, desktop Safari. `bold` is too heavy, here. */
+  font-weight: normal;
+}
+
 body.is_firefox .mac-classic .label-text,
 body.is_firefox .mac-classic .options-heading {
   letter-spacing: -0.125px;
