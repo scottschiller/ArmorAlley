@@ -979,6 +979,11 @@ body.bnb .tv-noise-overlay {
   opacity: 1;
 }
 
+/* once game is over, unsure jamming effect is disabled for legibility. */
+body.game-over #radar-jammed-overlay .noise {
+  opacity: 0;
+}
+
 /**
  * iOS GPUs should be able to handle full-screen overlays,
  * higher "frame rate", and filters for a more subtle effect.

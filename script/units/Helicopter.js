@@ -2543,8 +2543,7 @@ const Helicopter = (options = {}) => {
         if (
           !vans[i].data.dead &&
           vans[i].data.isEnemy !== data.isEnemy &&
-          vans[i].data.jamming &&
-          !game.data.battleOver
+          vans[i].data.jamming
         ) {
           jamming++;
         }
