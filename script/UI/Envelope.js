@@ -73,7 +73,9 @@ function Envelope() {
     }
   }
 
-  function openOrClose() {
+  function openOrClose(e) {
+    // special case: ignore "next" link, don't toggle envelope.
+    if (e?.target?.id === 'next-battle') return;
     if (data.open) return close();
     open();
   }
