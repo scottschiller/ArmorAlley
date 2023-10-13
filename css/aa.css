@@ -374,8 +374,7 @@ body:not(.game-started) #mobile-controls {
 
 #battlefield,
 #mobile-controls,
-#player-status-bar,
-#pointer {
+#player-status-bar {
   transition: all 1s ease-in-out;
   transition-property: filter, opacity, transform;
 }
