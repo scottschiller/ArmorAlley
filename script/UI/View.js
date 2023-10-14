@@ -26,6 +26,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
+const ignoreTouch = 'data-ignore-touch';
 
 let orientationTimer;
 
@@ -633,6 +634,20 @@ const View = () => {
     data.touchEvents[touchEvent.identifier] = null;
   }
 
+  function hasIgnoreTouch(node) {
+    if (!node?.getAttribute) return;
+
+    if (node.getAttribute(ignoreTouch)) return true;
+
+    let hasIgnore;
+    do {
+      node = node.parentNode;
+      hasIgnore = node.getAttribute('data-ignore-touch');
+    } while (node.parentNode && !hasIgnore);
+
+    return hasIgnore;
+  }
+
   function handleTouchStart(targetTouch, e) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = targetTouch && targetTouch.target;
@@ -640,10 +655,18 @@ const View = () => {
     // ignore if prefs menu up
     if (prefsManager.isActive()) return true;
 
-    e.preventDefault();
-
     // explicit "ignore touch" case
     if (target.getAttribute('data-ignore-touch')) return true;
+
+    // sub-par: check all parent nodes in the tree, too.
+    // NOTE: this presently applies only when the game is over.
+    if (game.data.battleOver && target.parentNode) {
+      const hasIgnore = hasIgnoreTouch(target);
+      if (hasIgnore) return true;
+    }
+
+    // if not "ignore", then prevent default.
+    e.preventDefault();
 
     // touch should always have a target, but just in case...
     if (target && target.nodeName === 'A') {
@@ -711,6 +734,13 @@ const View = () => {
         }
       }
       return true;
+    }
+
+    // sub-par: check all parent nodes in the tree, too.
+    // NOTE: this presently applies only when the game is over.
+    if (game.data.battleOver && target.parentNode) {
+      const hasIgnore = hasIgnoreTouch(target);
+      if (hasIgnore) return true;
     }
 
     // always ignore?
