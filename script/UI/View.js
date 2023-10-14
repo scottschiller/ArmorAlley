@@ -319,7 +319,8 @@ const View = () => {
       utils.css.addOrRemove(dom.gameTips, text, css.gameTips.hasAnnouncement);
 
       // line break on mobile, portrait; otherwise, space.
-      const replacement = '<span class="landscape-space-portrait-line-break"></span>';
+      const replacement =
+        '<span class="landscape-space-portrait-line-break"></span>';
 
       text = text.replace(/\n/, replacement);
 
