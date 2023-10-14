@@ -5941,7 +5941,7 @@ body.game-paused #tutorial-window {
     top: 82px;
   }
   body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 9vh;
+    top: 8vh;
   }
   body.is-mobile #game-tips .tips-container {
     margin: 0;
