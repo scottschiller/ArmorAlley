@@ -5831,7 +5831,7 @@ body.game-paused #tutorial-window {
     width: 75%;
   }
   body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 55vh;
+    top: 21vh;
   }
   body.is-mobile #game-tips #game-announcements {
     /* larger type, please. */
@@ -5936,7 +5936,7 @@ body.game-paused #tutorial-window {
     top: 82px;
   }
   body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 25vh;
+    top: 9vh;
   }
   body.is-mobile #game-tips .tips-container {
     margin: 0;
