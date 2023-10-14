@@ -1160,8 +1160,6 @@ const View = () => {
       // if the paused screen is showing, resume the game.
       if (game.data.paused) return game.resume();
 
-      if (isGameOver()) return;
-
       // pass-thru if game menu is showing
       if (!game.data.started) return true;
 
