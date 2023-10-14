@@ -229,6 +229,9 @@ const Van = (options = {}) => {
 
     game.data.battleOver = true;
 
+    // ensure joystick UI is hidden
+    game.objects.joystick.end();
+
     utils.css.add(document.body, 'game-over');
 
     game.objects.stats.displayEndGameStats();
