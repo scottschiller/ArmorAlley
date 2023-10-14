@@ -6071,6 +6071,13 @@ body.game-paused #tutorial-window {
   filter: none;
 }
 
+@media screen and (orientation: portrait) {
+  /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
+  body.is-mobile #battle-over-letter.active {
+    transform: translate3d(-50%, -25%, 0) scale3d(1, 1, 1);
+  }
+}
+
 #battle-over-letter.mousedown {
   transform: translate3d(-50%, -50%, 0) scale3d(0.975, 0.975, 1);
   transition-duration: 0.33s;
@@ -6278,6 +6285,27 @@ body.is_safari .animated-mail .letter-buttons {
   box-sizing: border-box;
   z-index: 2;
   text-align: center;
+}
+
+@media screen and (orientation: landscape) {
+  /* on short screens, accommodate the fact that letters won't fit when open. */
+  body.is-mobile #battle-over-letter {
+    transform: translate3d(-50%, -50%, 0) scale3d(1.85, 1.85, 1);
+  }
+  body.is-mobile #battle-over-letter.open {
+    transform: translate3d(-50%, 25%, 0) scale3d(2.5, 2.5, 1);
+  }
+  body.is-mobile .animated-mail .letter-wrapper {
+    /* size to near-top of screen */
+    height: 60vh;
+    overflow: auto;
+  }
+  body.is-mobile #battle-over-letter.open .animated-mail .letter {
+    /* TODO: investigate brief positioning / clipping in animation due to loss of transform. */
+    transform: none;
+    bottom: auto;
+    padding-bottom: 90px;
+  }
 }
 
 .landscape-space-portrait-line-break {
