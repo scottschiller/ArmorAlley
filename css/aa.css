@@ -4509,7 +4509,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   background: #f3f3f3;
   color: #000;
   display: inline-block;
-  font-family: Chicago, FA Sysfont C, courier, sans-serif;
+  font-family: FA Sysfont C, courier, sans-serif;
   font-size: 6.5px;
   font-weight: 400;
   left: 50%;
@@ -4795,7 +4795,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic fieldset legend,
 .mac-classic h3 {
-  font-family: Chicago, FA Sysfont C, courier, sans-serif;
+  font-family: FA Sysfont C, courier, sans-serif;
   font-size: 7px;
   vertical-align: middle;
 }
@@ -4912,7 +4912,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-radius: 2px;
   color: #ccc;
   cursor: pointer;
-  font-family: Chicago, FA Sysfont C, courier, sans-serif;
+  font-family: FA Sysfont C, courier, sans-serif;
   font-size: 10px;
   font-weight: 400;
   /* look similar to buttons */
@@ -4929,7 +4929,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 #game-prefs-modal select {
   border-color: #000;
   color: #000;
-  font-family: Chicago, FA Sysfont C, geneva, verdana, arial, sans-serif;
+  font-family: FA Sysfont C, geneva, verdana, arial, sans-serif;
   font-size: 11px;
   border-width: 1px;
   /* collapse the extra vertical space left, due to the transform */
@@ -5137,7 +5137,7 @@ button {
   border-radius: 2px;
   color: #000;
   cursor: pointer;
-  font-family: Chicago, FA Sysfont C, courier, sans-serif;
+  font-family: FA Sysfont C, courier, sans-serif;
   font-size: 7px;
   font-weight: 400;
   margin: 0 0.25rem 0 0;
