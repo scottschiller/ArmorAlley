@@ -749,8 +749,6 @@ const common = {
   },
 
   wrapEmoji(text) {
-    // https://www.freecodecamp.org/news/how-to-use-regex-to-match-emoji-including-discord-emotes/
-    // replace emoji + space character with emoji + half-width space, splitting the emoji from the match and including a partial space character: ` `
     if (!text?.replace) return text;
     return common.tweakEmojiSpacing(text);
   },
