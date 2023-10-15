@@ -5783,7 +5783,8 @@ body.game-paused #tutorial-window {
 #world-wrapper.jammed .scan-node,
 .sprite.dead .target-ui,
 .sprite.exploding .target-ui,
-.target-ui.disabled {
+.target-ui.disabled,
+body.game-over .target-ui {
   opacity: 0;
 }
 
