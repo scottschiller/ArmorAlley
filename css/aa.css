@@ -4192,7 +4192,8 @@ body.game-paused .sprite {
 }
 
 body.game-over .joystick,
-body.game-over .joystick-point {
+body.game-over .joystick-point,
+body.game-over #pointer {
   opacity: 0;
 }
 
