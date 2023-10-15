@@ -6096,9 +6096,6 @@ body.game-over .target-ui {
 #battle-over-letter .letter-content {
   position: relative;
   z-index: 2;
-  max-width: 12.5rem;
-  margin: 0px auto;
-  padding: 8px 12px;
   height: 100%;
 }
 
