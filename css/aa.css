@@ -6077,8 +6077,11 @@ body.game-paused #tutorial-window {
 }
 
 @media screen and (orientation: portrait) {
-  /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
   body.is-mobile #battle-over-letter.active {
+    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  }
+  /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
+  body.is-mobile #battle-over-letter.open {
     transform: translate3d(-50%, -25%, 0) scale3d(1, 1, 1);
   }
 }

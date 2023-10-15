@@ -15,7 +15,7 @@ function Stats() {
     balloon: '🎈',
     chicken: '🐓',
     flame: '🔥',
-    skull: '☠️',
+    skull: '💀',
     missile: '🚀',
     default: '💥'
   };
@@ -478,8 +478,6 @@ function Stats() {
     if (emo) {
       text += ` ${emo}`;
     }
-
-    text = common.tweakEmojiSpacing(text);
 
     // don't show if on-screen, *unless* it's the helicopter.
     // TODO: improve target vs. attacker helicopter logic, work onScreen check into notification preferences.

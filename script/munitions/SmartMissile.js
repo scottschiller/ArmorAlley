@@ -427,9 +427,7 @@ const SmartMissile = (options = {}) => {
             : '';
         const aOrAn = target.data.type === TYPES.infantry ? 'an' : 'a';
 
-        const text = common.tweakEmojiSpacing(
-          `${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`
-        );
+        const text = `${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`;
 
         game.objects.notifications.add(text);
       }
@@ -541,9 +539,7 @@ const SmartMissile = (options = {}) => {
       ) {
         // notify if a helicopter evaded a smart missile by hiding in a cloud.
         if (tData.wentIntoHiding && tData.type === TYPES.helicopter) {
-          const text = common.tweakEmojiSpacing(
-            `${whose} ${missileType} lost track of its target.`
-          );
+          const text = `${whose} ${missileType} lost track of its target.`;
           game.objects.notifications.addNoRepeat(text);
         }
 

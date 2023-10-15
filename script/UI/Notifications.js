@@ -28,6 +28,8 @@ const Notifications = () => {
 
     text = text.replace(/\s&nbsp;\s/gi, ' ').replace(/\n/gi, '<br />');
 
+    text = common.wrapEmoji(text);
+
     if (!data.items) data.items = [];
 
     // account for duplicate / repeated items
