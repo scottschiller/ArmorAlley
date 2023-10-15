@@ -223,10 +223,10 @@ function GameEvents() {
       announcePlayer: (state) => {
         if (gamePrefs.bnb) {
           if (state.isBeavis) {
-            game.objects.notifications.add(`NOW PLAYING: BEAVIS 🤘`);
+            game.objects.notifications.addNoRepeat(`NOW PLAYING: BEAVIS 🤘`);
             playDelayedSound(sounds.bnb.beavisTurn);
           } else {
-            game.objects.notifications.add(`NOW PLAYING: BUTT-HEAD 🤘`);
+            game.objects.notifications.addNoRepeat(`NOW PLAYING: BUTT-HEAD 🤘`);
             playDelayedSound(sounds.bnb.buttheadTurn);
           }
         }
