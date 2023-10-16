@@ -336,7 +336,7 @@ function Stats() {
           target.data.isEnemy !== game.players.local.data.isEnemy
             ? 'An enemy'
             : 'Your'
-        } infantry’s parachute failed to open. ☠️`
+        } infantry’s parachute failed to open. ${emoji.skull}`
       );
       return;
     }

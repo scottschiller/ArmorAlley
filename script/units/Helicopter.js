@@ -204,7 +204,7 @@ const Helicopter = (options = {}) => {
         );
       }
     } else if (data.fuel <= 0) {
-      text = 'No fuel &nbsp; ☠️';
+      text = 'No fuel &nbsp; 💀';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -1840,7 +1840,7 @@ const Helicopter = (options = {}) => {
 
       if (tutorialMode || !data.ejectCount) {
         game.objects.notifications.add(
-          'You found the “eject” button. &nbsp; 😱 &nbsp; ☠️'
+          'You found the “eject” button. &nbsp; 😱 &nbsp; 💀'
         );
       }
 
