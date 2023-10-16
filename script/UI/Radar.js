@@ -393,6 +393,10 @@ const Radar = () => {
   }
 
   function markTarget(targetItem) {
+    // hackish: disable if pref is off.
+    if (!gamePrefs.modern_smart_missiles) {
+      targetItem = null;
+    }
     if (!data.radarTarget && targetItem) {
       dom.targetMarker.style.visibility = 'visible';
       updateTargetMarker(targetItem);

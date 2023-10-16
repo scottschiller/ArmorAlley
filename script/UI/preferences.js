@@ -68,6 +68,7 @@ const defaultPrefs = {
     ? PREFS.NOTIFICATIONS_LOCATION_LEFT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
   alt_smart_missiles: true,
+  modern_smart_missiles: true,
   engineers_repair_bunkers: true,
   engineers_rob_the_bank: true,
   tank_gunfire_miss_bunkers: true,

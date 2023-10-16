@@ -4867,14 +4867,23 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   margin-right: 3px;
 }
 
-.mac-classic ul li p {
+.mac-classic ul ul.real-list {
+  list-style-type: disc;
+}
+
+.mac-classic ul li p,
+.mac-classic ul ul.real-list li {
   margin-bottom: 0;
   margin-left: 9px;
   padding-bottom: 1px;
 }
 
-.mac-classic .indented,
-.mac-classic ul li p {
+.mac-classic ul ul.real-list li {
+  display: list-item;
+  margin-left: 15px;
+}
+
+.mac-classic .indented {
   margin-left: 9px;
 }
 

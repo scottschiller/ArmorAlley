@@ -1526,6 +1526,11 @@ const Helicopter = (options = {}) => {
 
     if (!target) return;
 
+    // hackish: force-disable if pref is off.
+    if (!gamePrefs.modern_smart_missiles) {
+      active = false;
+    }
+
     // new target
     if (active && target?.dom?.o) {
       target.dom.o.appendChild(targetDot);
