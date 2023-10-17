@@ -743,7 +743,11 @@ const SmartMissile = (options = {}) => {
 
     data.frameCount++;
 
-    if (!data.armed && (!gamePrefs.modern_smart_missiles || data.frameCount >= data.ramiusFrameCount)) {
+    if (
+      !data.armed &&
+      (!gamePrefs.modern_smart_missiles ||
+        data.frameCount >= data.ramiusFrameCount)
+    ) {
       // become dangerous at this point.
       // obligatory: https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
       data.armed = true;
