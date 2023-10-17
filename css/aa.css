@@ -4268,6 +4268,15 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   right: auto;
 }
 
+#notification-toasts.bottom-up {
+  /* note: positioning shenanigans */
+  margin-top: -16px;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  justify-content: end;
+}
+
 .notification-toast {
   color: #999;
   left: 100%;
@@ -4278,6 +4287,13 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   transition: all 0.33s ease-in-out;
   transition-property: margin, opacity;
   will-change: transform;
+}
+
+#notification-toasts.bottom-up .notification-toast {
+  /* height wil be set dynamically by JS, in this case. :X */
+  transition-property: height, margin, opacity;
+  overflow-y: hidden;
+  height: 0px;
 }
 
 #notification-toasts.left-aligned .notification-toast {

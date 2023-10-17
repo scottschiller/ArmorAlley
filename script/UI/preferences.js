@@ -67,6 +67,7 @@ const defaultPrefs = {
   notifications_location: isMobile
     ? PREFS.NOTIFICATIONS_LOCATION_LEFT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
+  notifications_order_bottom_up: false,
   alt_smart_missiles: true,
   modern_smart_missiles: true,
   engineers_repair_bunkers: true,
@@ -170,6 +171,13 @@ function PrefsManager() {
     ) {
       events.onPrefChange['notifications_location'](
         gamePrefs.notifications_location
+      );
+    }
+
+    // similar for bottom-up toasts.
+    if (gamePrefs.notifications_order_bottom_up) {
+      events.onPrefChange['notifications_order_bottom_up'](
+        gamePrefs.notifications_order_bottom_up
       );
     }
 
@@ -1406,7 +1414,10 @@ function PrefsManager() {
           dom.oToasts,
           newValue === PREFS.NOTIFICATIONS_LOCATION_LEFT,
           'left-aligned'
-        )
+        ),
+
+      notifications_order_bottom_up: (newValue) =>
+        utils.css.addOrRemove(dom.oToasts, newValue, 'bottom-up')
     },
 
     updateScreenScale: () => {

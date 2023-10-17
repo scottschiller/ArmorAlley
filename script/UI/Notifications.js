@@ -138,6 +138,10 @@ const Notifications = () => {
     // delay required for transition to work
     common.setFrameTimeout(() => {
       utils.css.add(oToast, css.toastActive);
+      if (gamePrefs.notifications_order_bottom_up) {
+        // hackish: assign computed height for transition.
+        oToast.style.height = `${oToast.scrollHeight}px`;
+      }
     }, 96);
 
     // assign for later node removal
