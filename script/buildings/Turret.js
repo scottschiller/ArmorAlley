@@ -461,7 +461,7 @@ const Turret = (options = {}) => {
     if (!data.dead) {
       // notify only if engineer is capturing a live turret.
       // otherwise, it'll be neutralized and then rebuilt.
-      if (data.isEnemy !== game.players.local.data.isEnemy) {
+      if (data.isEnemy === game.players.local.data.isEnemy) {
         game.objects.notifications.add('The enemy captured a turret 🚩');
         objects.cornholio?.hide();
       } else {
