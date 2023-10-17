@@ -135,9 +135,6 @@ const SmartMissile = (options = {}) => {
   }
 
   function maybeTargetDecoy(decoyTarget) {
-    // missile must be targeting a chopper.
-    if (objects.target?.data?.type !== TYPES.helicopter) return;
-
     // guard, and ensure this is a "vs" situation.
     if (!decoyTarget?.data || data.isEnemy === decoyTarget.data.isEnemy) return;
 
@@ -960,7 +957,7 @@ const SmartMissile = (options = {}) => {
       decoyItemTypes: getTypes('parachuteInfantry', {
         exports: { data: { isEnemy: options.isEnemy } }
       }),
-      decoyFrameCount: 11,
+      decoyFrameCount: 15,
       ramiusFrameCount: 20,
       expireFrameCount: options.expireFrameCount || 256,
       dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
