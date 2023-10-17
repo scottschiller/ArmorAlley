@@ -256,6 +256,8 @@ const GunFire = (options = {}) => {
     if (data.y > game.objects.view.data.battleField.height) {
       if (!data.isInert) {
         playSound(sounds.bulletGroundHit, exports);
+      } else if (options.className) {
+        utils.css.remove(dom.o, options.className);
       }
       die();
     }
@@ -292,6 +294,10 @@ const GunFire = (options = {}) => {
       if (data.isEnemy) {
         utils.css.add(radarItem.dom.o, css.enemy);
       }
+    }
+
+    if (options.className) {
+      utils.css.add(dom.o, options.className);
     }
   }
 

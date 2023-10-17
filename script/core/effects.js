@@ -294,6 +294,7 @@ const effects = {
 
     if (!data.isOnScreen) return;
 
+    const className = options.className || '';
     const vX = options.vX || 1.5 + rnd(1);
     const vY = options.vY || 1.5 + rnd(1);
     let gunfire;
@@ -301,6 +302,7 @@ const effects = {
     // create some inert (harmless) gunfire, as decorative shrapnel.
     for (let i = 0, j = options.count || 3 + rndInt(2); i < j; i++) {
       gunfire = GunFire({
+        className,
         parentType: data.type,
         isInert: true,
         // empty array may prevent collision, but `isInert` is provided explicitly for this purpose

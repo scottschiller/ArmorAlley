@@ -2142,6 +2142,10 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   background-color: #555;
 }
 
+.gunfire.welding-spark {
+  background-color: #cc9900;
+}
+
 .smart-missile {
   background-image: url(../image/smart-missile.png);
   background-position: 0 0;
@@ -2500,6 +2504,10 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 
 .turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
   animation: scan 2s linear infinite alternate;
+}
+
+.turret:not(.firing):not(.exploding).engineer-interacting {
+  animation: sorta-blink-subtle 1s steps(8) infinite;
 }
 
 .turret.destroyed {
@@ -6540,6 +6548,13 @@ span.no-emoji-substitution {
   50% {
     background-color: rgba(27, 107, 27, 0.5);
     transform: scale3d(0.9, 0.9, 0.9);
+  }
+}
+
+@keyframes sorta-blink-subtle {
+  50% {
+    opacity: 0.5;
+    filter: grayscale(1);
   }
 }
 

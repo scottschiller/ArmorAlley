@@ -288,7 +288,7 @@ const Turret = (options = {}) => {
     common.onDie(exports, dieOptions);
   }
 
-  function restore(engineer) {
+  function restore() {
     // restore visual, but don't re-activate gun yet
     if (!data.dead && data.energy !== 0) return;
 
@@ -296,19 +296,6 @@ const Turret = (options = {}) => {
     if (data.restoring) return;
 
     data.restoring = true;
-
-    // may not be provided, as in tutorial - just restoring immediately etc.
-    if (engineer) {
-      if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
-        game.objects.notifications.addNoRepeat(
-          'You started rebuilding a turret 🛠️'
-        );
-      } else {
-        game.objects.notifications.addNoRepeat(
-          'The enemy started rebuilding a turret 🛠️'
-        );
-      }
-    }
   }
 
   function isEngineerInteracting() {
@@ -320,6 +307,8 @@ const Turret = (options = {}) => {
 
     if (data.energy < data.energyMax) {
       if (data.frameCount % data.repairModulus === 0 || complete) {
+        createSparks(3);
+
         restore(engineer);
 
         data.lastEnergy = data.energy;
@@ -453,6 +442,8 @@ const Turret = (options = {}) => {
 
     if (data.frameCount % data.claimModulus !== 0) return;
 
+    createSparks(2);
+
     data.claimPoints++;
 
     if (data.claimPoints < data.claimPointsMax) return;
@@ -489,7 +480,26 @@ const Turret = (options = {}) => {
   function engineerHit(engineer) {
     // target is an engineer; either repairing, or claiming.
 
-    data.engineerInteracting = true;
+    // "we've got one!"
+    data.engineerHitCount++;
+
+    if (!data.engineerInteracting) {
+      data.engineerInteracting = true;
+      utils.css.add(dom.o, css.engineerInteracting);
+
+      // may not be provided, as in tutorial - just restoring immediately etc.
+      if (engineer) {
+        if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
+          game.objects.notifications.addNoRepeat(
+            'You started rebuilding a turret 🛠️'
+          );
+        } else {
+          game.objects.notifications.addNoRepeat(
+            'The enemy started rebuilding a turret 🛠️'
+          );
+        }
+      }
+    }
 
     if (gamePrefs.bnb) bnbInteract(engineer);
 
@@ -561,9 +571,13 @@ const Turret = (options = {}) => {
     }
 
     // engineer interaction flag
-    if (data.engineerInteracting) {
+    if (data.engineerInteracting && !data.engineerHitCount) {
       data.engineerInteracting = false;
+      utils.css.remove(dom.o, css.engineerInteracting);
     }
+
+    // always reset
+    data.engineerHitCount = 0;
   }
 
   function refreshCollisionItems() {
@@ -598,6 +612,28 @@ const Turret = (options = {}) => {
         getTypes('engineer, smartMissile', { exports })
       );
     }
+  }
+
+  function createSparks(count = 1) {
+    if (!data.engineerInteracting) return;
+
+    effects.inertGunfireExplosion({
+      // options
+      count,
+      vX: 1,
+      vY: 1,
+      css: 'welding-spark',
+      // object in question
+      exports: {
+        data: {
+          type: data.type,
+          x: data.x + 3,
+          y: data.y + 10,
+          halfWidth: data.halfWidth,
+          isOnScreen: data.isOnScreen
+        }
+      }
+    });
   }
 
   function initDOM() {
@@ -663,6 +699,7 @@ const Turret = (options = {}) => {
   css = common.inheritCSS({
     className: TYPES.turret,
     destroyed: 'destroyed',
+    engineerInteracting: 'engineer-interacting',
     firing: 'firing',
     scanNode: 'scan-node'
   });
@@ -690,13 +727,14 @@ const Turret = (options = {}) => {
       isSinging: false,
       scanDistance: TURRET_SCAN_RADIUS,
       hasScanNode: true,
-      claimModulus: 8,
+      claimModulus: 16,
       repairModulus: FPS,
       restoring: false,
       shellCasingInterval: tutorialMode || gameType === 'easy' ? 1 : 2,
       claimPoints: 0,
-      claimPointsMax: 50,
+      claimPointsMax: 25,
       engineerInteracting: false,
+      engineerHitCount: 0,
       width: 10,
       height,
       halfWidth: 5,
@@ -743,7 +781,6 @@ const Turret = (options = {}) => {
     radarItem,
     refreshCollisionItems,
     resize,
-    restore,
     repair
   };
 
