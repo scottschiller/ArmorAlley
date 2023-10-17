@@ -6107,7 +6107,7 @@ body.game-over .target-ui {
 #battle-over-letter.active {
   opacity: 1;
   transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
-  transition-timing-function: cubic-bezier(0.45, 0.48, 0.28, 1.4);
+  transition-timing-function: cubic-bezier(0.45, 0.48, 0.44, 1.11);
   transition-duration: 1.25s;
   filter: none;
 }
