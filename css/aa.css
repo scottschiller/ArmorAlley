@@ -5927,7 +5927,7 @@ body.game-over .target-ui {
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile #tutorial-window {
     left: 50%;
-    top: 130px;
+    top: 144px;
     transform: scale3d(2, 2, 1) translate(-50%, 0);
     transform-origin: 0 0;
   }
