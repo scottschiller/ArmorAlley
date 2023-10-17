@@ -555,9 +555,8 @@ const SmartMissile = (options = {}) => {
           newTD.type,
           newTarget
         );
-        const text = common.tweakEmojiSpacing(
-          `${whose} ${missileType} detected a nearby ${targetType}.`
-        );
+
+        const text = `${whose} ${missileType} detected a nearby ${targetType}.`;
 
         /**
          * Notify only if the target type is "new" - e.g,. two missiles fired at two tanks.

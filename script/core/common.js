@@ -739,20 +739,6 @@ const common = {
     nearby.options.source = exports;
   },
 
-  tweakEmojiSpacing(text) {
-    // https://www.freecodecamp.org/news/how-to-use-regex-to-match-emoji-including-discord-emotes/
-    // replace emoji + space character with emoji + half-width space, splitting the emoji from the match and including a partial space character: ` `
-    return text?.replace(
-      /<a?:.+?:\d{18}>|\p{Extended_Pictographic}\s/gu,
-      (match /*, offset, string*/) => `${match.substr(0, match.length - 1)} `
-    );
-  },
-
-  wrapEmoji(text) {
-    if (!text?.replace) return text;
-    return common.tweakEmojiSpacing(text);
-  },
-
   preloadVideo(fileName) {
     if (loadedVideos[fileName]) return;
 

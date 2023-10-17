@@ -15,7 +15,7 @@ function Stats() {
     balloon: '🎈',
     chicken: '🐓',
     flame: '🔥',
-    skull: '💀',
+    skull: '<span class="no-emoji-substitution">☠️</span>',
     missile: '🚀',
     default: '💥'
   };
