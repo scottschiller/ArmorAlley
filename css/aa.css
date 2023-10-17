@@ -6360,7 +6360,7 @@ body.is_safari .animated-mail .letter-buttons {
     display: block !important;
     font-size: 0px !important;
     width: 0px !important;
-  }  
+  }
 }
 
 #battle-over-letter.open .animated-mail {
@@ -6388,7 +6388,8 @@ body.is_safari .animated-mail .letter-buttons {
 span.no-emoji-substitution {
   /* discourage browsers from substituting emoji / ASCII characters, and vice-versa. */
   display: inline;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   border-left: none;
   border-right: none;
 }
