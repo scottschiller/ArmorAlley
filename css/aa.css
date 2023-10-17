@@ -4297,6 +4297,7 @@ body.is_safari:not(.is-mobile) #notification-toasts {
 }
 
 #notification-toasts.left-aligned .notification-toast {
+  width: 100%;
   text-align: left;
 }
 
