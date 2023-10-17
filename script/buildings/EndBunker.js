@@ -121,7 +121,7 @@ const EndBunker = (options = {}) => {
       } else {
         if (allFunds) {
           game.objects.notifications.add(
-            "🏦 🏴‍☠️ 💸 The enemy's engineer captured all of your funds. 😱"
+            '🏦 🏴‍☠️ 💸 An enemy engineer captured all your funds. 😱'
           );
         } else {
           game.objects.notifications.add(
