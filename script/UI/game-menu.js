@@ -33,6 +33,8 @@ let gameMenuActive;
 let originalSubTitle;
 
 const battle = searchParams.get('battle');
+let lastBattle;
+
 const autoStart = searchParams.get('start');
 const gameTypeParam = searchParams.get('gameType');
 
@@ -169,6 +171,12 @@ function init() {
 
   prefsManager.init();
 
+  // we should have game prefs, now.
+  lastBattle = gamePrefs.last_battle;
+
+  // user-saved "last battle", or campaign mode via URL; find and select, if valid.
+  const thisBattle = battle || lastBattle;
+
   // game menu / intro screen
 
   if (customLevel) {
@@ -188,10 +196,10 @@ function init() {
 
     // do the same thing for the network modal
     prefsManager.addGroupAndLevel(customGroup.cloneNode(true));
-  } else if (battle) {
-    // "campaign" mode - find and select the provided battle.
+  } else if (thisBattle) {
+    // a battle has been specified.
     Object.values(oSelect.options).forEach(
-      (option) => (option.selected = option.value === battle)
+      (option) => (option.selected = option.value === thisBattle)
     );
   }
 
@@ -233,10 +241,23 @@ function init() {
     }
   }
 
+  const gameTypeFromPrefs = gamePrefs.game_type;
+
   // get and apply game type from HTML; browser may have remembered form selection through reload.
   const defaultGameType =
+    gameTypeFromPrefs ||
     document.querySelector('#game-type-list input[name="game_type"]:checked')
-      ?.value || 'easy';
+      ?.value ||
+    'easy';
+
+  // ensure the right radio is checked at this point.
+  const gameTypeRadio = document.querySelector(
+    `#game-type-list input[value="${defaultGameType}"]`
+  );
+
+  if (gameTypeRadio) {
+    gameTypeRadio.checked = true;
+  }
 
   game.setGameType(defaultGameType);
 

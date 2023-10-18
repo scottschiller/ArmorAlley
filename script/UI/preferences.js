@@ -57,6 +57,7 @@ const defaultPrefs = {
   gravestones_infantry: false,
   gravestones_vehicles: false,
   landing_pads_on_radar: true,
+  last_battle: null,
   super_bunker_arrows: true,
   show_inventory: true,
   show_weapons_status: true,

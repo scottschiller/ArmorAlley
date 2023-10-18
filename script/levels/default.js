@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import { searchParams, TYPES } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
+import { prefsManager } from '../aa.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -28,13 +29,16 @@ const campaignBattles = [
 
 function setCustomLevel(levelData) {
   originalLevels['Custom Level'] = levelData;
-
   setLevel('Custom Level', 'Custom Level');
 }
 
 function setLevel(levelLabel, newLevelName) {
   level = levelLabel;
   levelName = newLevelName;
+  if (level !== 'Custom Level') {
+    gamePrefs.last_battle = level;
+    prefsManager.writePrefsToStorage();
+  }
 }
 
 function dependsOnGameType(levelName) {
