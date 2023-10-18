@@ -3132,42 +3132,68 @@ const Helicopter = (options = {}) => {
           rotate();
         }
       } else {
-        args = {
-          x:
+        // battle over; determine confetti vs. shrapnel.
+
+        // if clicking a button, don't do anything.
+        if (e.target.tagName.match(/a|button/i)) return;
+
+        if (game.data.theyWon) {
+          // dirty, dirty tricks: overwrite helicopter coordinates.
+          data.x =
             e.clientX * (1 / screenScale) +
-            game.objects.view.data.battleField.scrollLeft,
-          y: e.clientY * (1 / screenScale),
-          vX: 1 + rndInt(8),
-          vY: -rndInt(10),
-          width: 1,
-          height: 1,
-          halfWidth: 1,
-          halfHeight: 1,
-          isOnScreen: true
-        };
+            game.objects.view.data.battleField.scrollLeft;
+          data.y = e.clientY * (1 / screenScale);
 
-        playSound(sounds.balloonExplosion, exports);
+          effects.shrapnelExplosion(data, {
+            count: 8 + rndInt(8),
+            velocity: 4 + rngInt(4, TYPES.shrapnel),
+            // first burst always looks too similar, here.
+            noInitialSmoke: true
+          });
 
-        const options = {
-          data: {
-            domFetti: {
-              colorType: oneOf(['default', 'green', 'yellow', 'grey']),
-              elementCount: 35 + rndInt(65),
-              spread: 360,
-              startVelocity: 20 + rndInt(20)
+          effects.smokeRing(exports);
+
+          effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
+        } else {
+          args = {
+            x:
+              e.clientX * (1 / screenScale) +
+              game.objects.view.data.battleField.scrollLeft,
+            y: e.clientY * (1 / screenScale),
+            vX: 1 + rndInt(8),
+            vY: -rndInt(10),
+            width: 1,
+            height: 1,
+            halfWidth: 1,
+            halfHeight: 1,
+            isOnScreen: true
+          };
+
+          playSound(sounds.balloonExplosion, exports);
+
+          const options = {
+            data: {
+              domFetti: {
+                colorType: oneOf(['default', 'green', 'yellow', 'grey']),
+                elementCount: 35 + rndInt(65),
+                spread: 360,
+                startVelocity: 20 + rndInt(20)
+              }
             }
-          }
-        };
+          };
 
-        game.objects.domFetti.push(domFettiBoom(options, null, args.x, args.y));
+          game.objects.domFetti.push(
+            domFettiBoom(options, null, args.x, args.y)
+          );
 
-        effects.smokeRing(
-          { data: args },
-          {
-            velocityMax: 8,
-            count: 4 + rndInt(4)
-          }
-        );
+          effects.smokeRing(
+            { data: args },
+            {
+              velocityMax: 8,
+              count: 4 + rndInt(4)
+            }
+          );
+        }
       }
     }
   };
