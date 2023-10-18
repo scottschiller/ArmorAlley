@@ -243,8 +243,9 @@ function init() {
 
   const gameTypeFromPrefs = gamePrefs.game_type;
 
-  // get and apply game type from HTML; browser may have remembered form selection through reload.
+  // cascade of priority: URL param, prefs, browser remembering form value, OR default.
   const defaultGameType =
+    gameTypeParam ||
     gameTypeFromPrefs ||
     document.querySelector('#game-type-list input[name="game_type"]:checked')
       ?.value ||
