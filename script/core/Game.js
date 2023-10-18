@@ -847,6 +847,8 @@ const game = (() => {
 
   data = {
     battleOver: false,
+    youWon: false,
+    theyWon: false,
     convoyDelay: 60,
     paused: false,
     productionHalted: false,
