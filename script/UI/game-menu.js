@@ -578,6 +578,20 @@ function hideTitleScreen(callback) {
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
 
   game.objects.notifications.welcome();
+
+  // testing
+  const winloc = window.location.toString();
+  const theyWin = winloc.match(/theyWin/i);
+  const youWin = winloc.match(/youWin/i);
+
+  if (theyWin || youWin) {
+    window.setTimeout(() => {
+      game.addObject('van', {
+        isEnemy: !!theyWin,
+        x: youWin ? 8088 : 88
+      });
+    }, 2000);
+  }
 }
 
 const gameMenu = {

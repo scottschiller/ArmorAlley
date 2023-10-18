@@ -9,7 +9,6 @@ import {
 } from '../core/logic.js';
 import {
   TYPES,
-  winloc,
   FPS,
   tutorialMode,
   rndInt,
@@ -23,10 +22,6 @@ import { effects } from '../core/effects.js';
 
 const Van = (options = {}) => {
   let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
-
-  // for testing end sequence
-  const theyWin = winloc.match(/theyWin/i);
-  const youWin = winloc.match(/youWin/i);
 
   function stop() {
     data.stopped = true;
@@ -85,13 +80,11 @@ const Van = (options = {}) => {
   }
 
   function onOurSide() {
-    return (
-      (youWin && !theyWin) || game.players.local.data.isEnemy === data.isEnemy
-    );
+    return game.players.local.data.isEnemy === data.isEnemy;
   }
 
   function getGameOverAnnouncement() {
-    return (youWin || onOurSide()) && !theyWin
+    return onOurSide()
       ? 'Congratulations! You have won the battle.'
       : 'The enemy has won the battle.\nBetter luck next time.';
   }
@@ -120,7 +113,7 @@ const Van = (options = {}) => {
     // just in case: prevent any multiple "game over" actions via animation
     if (isGameOver()) return;
 
-    if (theyWin || (data.isEnemy && data.x <= data.xGameOver)) {
+    if (data.isEnemy && data.x <= data.xGameOver) {
       stop();
 
       // hack: clear any existing.
@@ -129,7 +122,7 @@ const Van = (options = {}) => {
       game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 
       gameOver(onOurSide());
-    } else if (youWin || (!data.isEnemy && data.x >= data.xGameOver)) {
+    } else if (!data.isEnemy && data.x >= data.xGameOver) {
       stop();
 
       // hack: clear any existing.
