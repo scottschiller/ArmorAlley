@@ -22,6 +22,8 @@ const Notifications = () => {
   function add(text, options = {}) {
     /* options = { noDuplicate, noRepeat, onRender, onComplete, type } */
 
+    if (game.data.battleOver) return;
+
     let i, j, item, isDuplicate, replacementItem, renderedText;
 
     if (!text?.replace) return;
