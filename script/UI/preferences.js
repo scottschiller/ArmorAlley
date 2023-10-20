@@ -3,6 +3,7 @@ import { game } from '../core/Game.js';
 import {
   defaultMissileMode,
   getTypes,
+  isFirefox,
   isiPhone,
   isMobile,
   isSafari,
@@ -112,6 +113,8 @@ let gamePrefs = {
 function PrefsManager() {
   let data, dom, events;
 
+  let firefoxZoomHack;
+
   function initLayout() {
     if (data.originalHeight > 0) return;
 
@@ -123,8 +126,25 @@ function PrefsManager() {
     let body = dom.o.querySelector('.body');
     body.style.setProperty('height', 'auto');
 
+    /**
+     * 20231020: HACK: Firefox CSS zoom / double scrollbar issue
+     * ---
+     * Firefox 120.0a1 seems to add support for zoom in CSS + JS,
+     * so we apply zoom: 1 in CSS and check for that value here.
+     * ---
+     * If found, we double the height of the window in JS and
+     * hack `#form-scroller` max height to prevent double scrollbars.
+     */
+    const cssZoom = window.getComputedStyle(dom.o).getPropertyValue('zoom');
+
+    firefoxZoomHack = isFirefox && cssZoom == 1;
+
+    if (firefoxZoomHack) {
+      console.warn('PrefsManager: applying "Firefox 120.0a1 (≥?) Zoom Hack"');
+    }
+
     // NOTE: This forces layout and is $$$
-    let height = body.offsetHeight;
+    let height = body.offsetHeight * (firefoxZoomHack ? 2 : 1);
 
     data.originalHeight = height;
 
@@ -546,6 +566,11 @@ function PrefsManager() {
     events.updateScreenScale();
 
     document.body.appendChild(dom.o);
+
+    if (firefoxZoomHack) {
+      // HACK: avoid double-scrollbars in Firefox Nightly 120.0a1?
+      document.getElementById('form-scroller').style.maxHeight = '737px';
+    }
 
     // ensure the form matches the JS state.
     updateForm();
@@ -1449,6 +1474,11 @@ function PrefsManager() {
         }
         body.style.setProperty('height', worldHeight / 2 + 'px');
       } else {
+        body.style.setProperty('height', data.originalHeight + 'px');
+      }
+
+      if (firefoxZoomHack) {
+        // similar shenanigans now for scroller, desktop Firefox 120.0a1.
         body.style.setProperty('height', data.originalHeight + 'px');
       }
 

@@ -4419,8 +4419,10 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   z-index: 11;
 }
 
-body.is-mobile #game-prefs-modal {
+body.is-mobile #game-prefs-modal,
+body.is_firefox #game-prefs-modal {
   /* don't do this on mobile, at least iPads if we can tell. */
+  /* 10/2023: nor on Firefox Nightly as of V120.0a1? :X */
   zoom: 1;
 }
 
