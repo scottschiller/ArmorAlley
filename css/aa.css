@@ -1937,24 +1937,18 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .smart-missile-tracking-active:not(.radar-item):after,
 .smart-missile-tracking-removal:not(.radar-item):after,
 .smart-missile-tracking:not(.radar-item):after {
-  background: red;
-  border-radius: 100%;
-  color: #fff;
-  content: '⦿';
-  font-family: Arial, sans-serif;
-  font-size: 13px;
-  height: 13px;
-  left: 50%;
-  line-height: 12px;
+  /* similar to .target-dot */
+  content: '';
+  font-size: 0px;
   opacity: 1;
-  overflow: hidden;
   position: absolute;
-  text-align: center;
-  top: 50%;
-  transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
-  transition: transform, opacity 0.33s ease-in-out;
-  vertical-align: top;
-  width: 13px;
+  background: #c00;
+  border: 0.5px solid #000;
+  border-radius: 3px;
+  width: 3px;
+  height: 3px;
+  top: 0px;
+  right: 0px;
   z-index: 4;
 }
 
@@ -1970,12 +1964,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   top: auto;
 }
 
-.smart-missile-tracking:after {
-  animation: drop-in 0.33s ease-in-out;
+.smart-missile-tracking {
+  filter: drop-shadow(0 0 4px #ff3333);
 }
 
 .smart-missile-tracking-active:after {
-  animation: blink 0.25s ease-in-out infinite;
+  animation: blink 0.33s ease-in-out alternate infinite;
 }
 
 .smart-missile-tracking-removal:after,
@@ -1987,8 +1981,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .smart-missile.smart-missile-tracking:after {
   animation: drop-in-small 0.25s ease-out;
-  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1)
-    rotate3d(0, 0, 1, 0deg);
+  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
 }
 
 .radar-item.smart-missile-tracking-active {
@@ -6408,26 +6401,22 @@ span.no-emoji-substitution {
 @keyframes drop-in {
   0% {
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale3d(1.75, 1.75, 1)
-      rotate3d(0, 0, 1, 90deg);
+    transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1);
   }
   to {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1)
-      rotate3d(0, 0, 1, 0deg);
+    transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
   }
 }
 
 @keyframes drop-in-small {
   0% {
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1)
-      rotate3d(0, 0, 1, 90deg);
+    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
   }
   to {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale3d(0.15, 0.15, 1)
-      rotate3d(0, 0, 1, 0deg);
+    transform: translate3d(-50%, -50%, 0) scale3d(0.15, 0.15, 1);
   }
 }
 
