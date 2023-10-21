@@ -4822,7 +4822,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic b {
-  letter-spacing: 0;
+  /* slightly redundant: ensure consistent formatting */
+  font-weight: bold;
 }
 
 .mac-classic h3 {
@@ -4868,7 +4869,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic p {
-  letter-spacing: -0.12px;
   margin: 0;
   padding-bottom: 3px;
   padding-top: 1px;
@@ -4891,11 +4891,17 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   list-style-type: disc;
 }
 
+.mac-classic p,
 .mac-classic ul li p,
 .mac-classic ul ul.real-list li {
   margin-bottom: 0;
   margin-left: 9px;
   padding-bottom: 1px;
+}
+
+.mac-classic p,
+.mac-classic li {
+  letter-spacing: -0.15px;
 }
 
 .mac-classic ul ul.real-list li {
@@ -4995,9 +5001,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   width: 7px;
 }
 
+body.is_firefox .mac-classic input[type='checkbox'] {
+  position: relative;
+}
+
 .mac-classic input[type='checkbox'] {
   border-radius: 1px;
-  margin-top: -2px;
 }
 
 .mac-classic input[type='checkbox']:before,
@@ -5035,7 +5044,15 @@ body.is-mobile.is_safari .mac-classic input[type='checkbox']:before {
 }
 
 body.is_firefox .mac-classic input[type='checkbox']:before {
-  margin-top: -1.8px;
+  margin-top: -1.65px;
+  /* different approach entirely, for Firefox. */
+  /*
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-60%, -60%, 0) scale3d(0.66, 0.66, 1);
+  margin: 0px;
+  */
 }
 
 .mac-classic input[type='checkbox']:checked:before,
@@ -5085,24 +5102,12 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
   outline: none;
 }
 
-.mac-classic .label-text {
-  font-weight: bolder;
-}
-
-body.is_safari:not(.is-mobile) .mac-classic b,
-body.is_safari:not(.is-mobile) .mac-classic .label-text {
-  /* hack around font weights, desktop Safari. `bold` is too heavy, here. */
-  font-weight: normal;
-}
-
-body.is_firefox .mac-classic .label-text,
-body.is_firefox .mac-classic .options-heading {
-  letter-spacing: -0.125px;
-}
-
-body.is_safari .mac-classic .label-text,
-body.is_safari .mac-classic .options-heading {
-  letter-spacing: -0.2px; /* :shake_fist: */
+.mac-classic .label-text,
+.mac-classic .options-heading {
+  /* letter-spacing: -0.25px; */
+  /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
+  font-family: Helvetica Neue, Helvetica, -apple-system, system-ui, sans-serif;
+  font-weight: bold;
 }
 
 .finder.mac-classic p {

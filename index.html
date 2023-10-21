@@ -1131,6 +1131,17 @@
             </div>
           </div>
 
+          <!--
+          <div id="medals">
+            <div class="medal medal-1"></div>
+            <div class="medal medal-2"></div>
+            <div class="medal medal-3"></div>
+            <div class="medal medal-4"></div>
+            <div class="medal medal-5"></div>
+            <div class="medal medal-6"></div>
+          </div>
+          -->
+
           <div id="letters-from-the-old-tanker">
             <h1>Battles</h1>
 
@@ -2182,7 +2193,7 @@
                             name="show_inventory"
                             value="1"
                             checked />
-                          <span class="label-text">Inventory</span>
+                          <span>Inventory</span>
                         </label>
                       </li>
 
@@ -2194,7 +2205,7 @@
                             name="show_weapons_status"
                             value="1"
                             checked />
-                          <span class="label-text">Weapons</span>
+                          <span>Weapons</span>
                         </label>
                       </li>
 
@@ -2206,7 +2217,7 @@
                             name="show_keyboard_labels"
                             value="1"
                             checked />
-                          <span class="label-text">Keyboard labels</span>
+                          <span>Keyboard labels</span>
                         </label>
                       </li>
 
@@ -2253,14 +2264,15 @@
 
                       <li>
                         <p class="compact options-heading">
-                          <b>Notifications UI Location</b>
+                          <b>Notifications UI</b>
                         </p>
 
                         <p class="non-indented">
-                          Where would you like your toast?
+                          Where<span class="hide-on-mobile">, and how,</span>
+                          would you like your toast?
                         </p>
 
-                        <ul>
+                        <ul style="margin-bottom: -3px">
                           <li class="compact">
                             <label for="notifications_location_left">
                               <input
@@ -2285,17 +2297,17 @@
                           </li>
 
                           <li class="hide-on-mobile">
-                            |&nbsp;
+                            +&thinsp;
                             <label for="notifications_order_bottom_up">
                               <input
                                 type="radio"
                                 id="notifications_order_bottom_up"
                                 name="notifications_order_bottom_up"
                                 value="1" />
-                              Bottom-up
+                              Bottom-up <b>↑</b>
                             </label>
                           </li>
-                          <li class="hide-on-mobile">
+                          <li>
                             <label for="notifications_order_top_down">
                               <input
                                 type="radio"
@@ -2303,7 +2315,7 @@
                                 name="notifications_order_bottom_up"
                                 value="0"
                                 checked />
-                              Top-down
+                              Top-down <b>↓</b>
                             </label>
                           </li>
                         </ul>
@@ -2466,8 +2478,9 @@
                           <span class="label-text">Smart Missile upgrades</span>
                           <ul class="real-list">
                             <li>
-                              Targeting UI: know before firing. Red line on
-                              radar, dot on live items.
+                              Targeting UI: know before firing. Red underline on
+                              radar, red dot on targets in view, halo and
+                              blinking dot on active target.
                             </li>
                             <li>
                               Retargeting ability: find a new target if original
@@ -2477,8 +2490,8 @@
                                 style="cursor: help"
                                 >☁️</span
                               >
-                              Missiles would previously always "expire" and
-                              fall, dangerous to both sides.
+                              Missiles would previously "expire," become hostile
+                              and fall.
                             </li>
                             <li>
                               Decoy risk: within 0.5s of launch, missiles can be
