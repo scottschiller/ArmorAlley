@@ -5045,14 +5045,6 @@ body.is-mobile.is_safari .mac-classic input[type='checkbox']:before {
 
 body.is_firefox .mac-classic input[type='checkbox']:before {
   margin-top: -1.65px;
-  /* different approach entirely, for Firefox. */
-  /*
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate3d(-60%, -60%, 0) scale3d(0.66, 0.66, 1);
-  margin: 0px;
-  */
 }
 
 .mac-classic input[type='checkbox']:checked:before,
