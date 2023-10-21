@@ -182,6 +182,8 @@ const SmartMissile = (options = {}) => {
   }
 
   function addTracking(targetNode, radarNode) {
+    if (!gamePrefs.modern_smart_missiles) return;
+
     if (targetNode) {
       utils.css.add(targetNode, css.tracking);
 
