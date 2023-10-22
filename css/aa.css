@@ -5044,7 +5044,7 @@ body.is-mobile.is_safari .mac-classic input[type='checkbox']:before {
 }
 
 body.is_firefox .mac-classic input[type='checkbox']:before {
-  margin-top: -1.65px;
+  margin-top: -1.85px;
 }
 
 .mac-classic input[type='checkbox']:checked:before,
@@ -5105,6 +5105,11 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
 .finder.mac-classic p {
   margin: 0.1rem 0.25rem 0;
   padding: 0;
+}
+
+.mac-classic fn.disclaimer {
+  font-size: 4.5px;
+  vertical-align: top;
 }
 
 #game-prefs-modal .network,

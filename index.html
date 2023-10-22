@@ -2118,7 +2118,7 @@
                           Switch off if the battlefield becomes crowded during
                           gameplay.
                         </p>
-                        <ul>
+                        <ul class="less-bottom-spacing">
                           <li>
                             <input
                               type="checkbox"
@@ -2152,11 +2152,13 @@
                           </li>
                         </ul>
                         <p class="non-indented">
-                          <sup>*</sup
-                          ><i
-                            >Might affect game performance; try disabling if
-                            slow.</i
-                          >
+                          <fn class="disclaimer"
+                            ><sup>*</sup
+                            ><i
+                              >Might affect game performance; try disabling if
+                              slow.</i
+                            >
+                          </fn>
                         </p>
                       </li>
                     </ul>
@@ -2183,47 +2185,53 @@
                       </li>
 
                       <li class="inline-option">
-                        <p class="options-heading" style="padding-bottom: 1px">
-                          <b>Status Bar</b>
+                        <p class="compact options-heading">
+                          <b>Status Bar / HUD</b>
                         </p>
-                        <label for="cb_inventory">
-                          <input
-                            type="checkbox"
-                            id="cb_inventory"
-                            name="show_inventory"
-                            value="1"
-                            checked />
-                          <span>Inventory</span>
-                        </label>
-                      </li>
-
-                      <li class="inline-option">
-                        <label for="cb_weapons_status">
-                          <input
-                            type="checkbox"
-                            id="cb_weapons_status"
-                            name="show_weapons_status"
-                            value="1"
-                            checked />
-                          <span>Weapons</span>
-                        </label>
-                      </li>
-
-                      <li class="inline-option">
-                        <label for="cb_keyboard_labels">
-                          <input
-                            type="checkbox"
-                            id="cb_keyboard_labels"
-                            name="show_keyboard_labels"
-                            value="1"
-                            checked />
-                          <span>Keyboard labels</span>
-                        </label>
+                        <p class="non-indented">
+                          Inventory availability, key controls, and weapons
+                          status.
+                        </p>
+                        <ul class="less-bottom-spacing">
+                          <li>
+                            <label for="cb_inventory">
+                              <input
+                                type="checkbox"
+                                id="cb_inventory"
+                                name="show_inventory"
+                                value="1"
+                                checked />
+                              <span>Inventory</span>
+                            </label>
+                          </li>
+                          <li>
+                            <label for="cb_weapons_status">
+                              <input
+                                type="checkbox"
+                                id="cb_weapons_status"
+                                name="show_weapons_status"
+                                value="1"
+                                checked />
+                              <span>Weapons</span>
+                            </label>
+                          </li>
+                          <li>
+                            <label for="cb_keyboard_labels">
+                              <input
+                                type="checkbox"
+                                id="cb_keyboard_labels"
+                                name="show_keyboard_labels"
+                                value="1"
+                                checked />
+                              <span>Keyboard labels</span>
+                            </label>
+                          </li>
+                        </ul>
                       </li>
 
                       <li>
                         <p class="compact options-heading">
-                          <b>Unit Energy / Damage</b>
+                          <b>Unit Energy / Health Bar</b>
                         </p>
                         <p class="non-indented">
                           By default, shown briefly when a unit is hit or
@@ -2481,8 +2489,8 @@
                             Play the game &quot;with&quot; two unruly,
                             unlicensed* teenagers.
                           </p>
-                          <p>
-                            <fn
+                          <p class="compact">
+                            <fn class="disclaimer"
                               >*<i
                                 >Mike Judge's “Beavis and Butt-Head” are
                                 copyright of their respective owners.</i
@@ -2605,8 +2613,8 @@
                             upward arrow. ▲<br />
                             On radar, a diagonal pinstripe pattern is shown. ▨
                           </p>
-                          <p>
-                            <fn>
+                          <p class="compact">
+                            <fn class="disclaimer">
                               *<i
                                 >End Bunkers will show neutral status on radar,
                                 too.</i
@@ -2631,8 +2639,8 @@
                             Some battles have an open landing pad at the
                             mid-point.
                           </p>
-                          <p>
-                            <fn
+                          <p class="compact">
+                            <fn class="disclaimer"
                               >*<i
                                 >Shrubbery sometimes obscures landing pads,
                                 making them invisible to radar.</i
