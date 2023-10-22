@@ -446,10 +446,17 @@ const common = {
       data.didReset = true;
     }
 
+    function restart() {
+      // effectively, "rewind timer"
+      data.frameCount = 0;
+      data.didReset = false;
+    }
+
     exports = {
       animate,
       data,
-      reset
+      reset,
+      restart
     };
 
     frameTimeoutManager.addInstance(exports);
