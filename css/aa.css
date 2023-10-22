@@ -2900,8 +2900,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   height: 71px; */
   width: 112px;
   z-index: 5; /* let nuke show on top of smoke */
-  /* outline: 1px solid #ff33ff; */
-  /* background-color: #999; */
 }
 
 /* special case */
