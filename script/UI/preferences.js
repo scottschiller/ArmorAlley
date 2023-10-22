@@ -70,6 +70,12 @@ const defaultPrefs = {
     ? PREFS.NOTIFICATIONS_LOCATION_LEFT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
   notifications_order_bottom_up: false,
+  notify_engineer: true,
+  notify_infantry: true,
+  'notify_missile-launcher': true,
+  'notify_smart-missile': true,
+  notify_tank: true,
+  notify_van: true,
   alt_smart_missiles: true,
   modern_smart_missiles: true,
   engineers_repair_bunkers: true,
