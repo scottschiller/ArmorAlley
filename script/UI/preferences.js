@@ -40,54 +40,54 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 
 // game defaults
 const defaultPrefs = {
-  game_type: '', // [easy|hard|extreme]
-  net_game_level: '',
-  net_game_type: 'easy', // non-network default is tutorial, need to be explicit.
-  net_game_style: 'pvp', // [pvp|pvp_cpu|coop_2v1|coop_2v2]
-  lock_step: false,
-  net_player_name: '',
-  net_remote_player_name: '',
-  sound: true,
-  volume: DEFAULT_VOLUME_MULTIPLIER, // 0-1
-  muzak: true,
-  bnb: false,
-  bnb_tv: true,
-  weather: '', // [none|rain|hail|snow|turd]
-  domfetti: true,
-  gravestones_helicopters: true,
-  gravestones_infantry: false,
-  gravestones_vehicles: false,
-  landing_pads_on_radar: true,
-  last_battle: null,
-  super_bunker_arrows: true,
-  show_inventory: true,
-  show_weapons_status: true,
-  show_keyboard_labels: !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
-  show_game_tips: true,
-  show_health_status: PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
+  'game_type': '', // [easy|hard|extreme]
+  'net_game_level': '',
+  'net_game_type': 'easy', // non-network default is tutorial, need to be explicit.
+  'net_game_style': 'pvp', // [pvp|pvp_cpu|coop_2v1|coop_2v2]
+  'lock_step': false,
+  'net_player_name': '',
+  'net_remote_player_name': '',
+  'sound': true,
+  'volume': DEFAULT_VOLUME_MULTIPLIER, // 0-1
+  'muzak': true,
+  'bnb': false,
+  'bnb_tv': true,
+  'weather': '', // [none|rain|hail|snow|turd]
+  'domfetti': true,
+  'gravestones_helicopters': true,
+  'gravestones_infantry': false,
+  'gravestones_vehicles': false,
+  'landing_pads_on_radar': true,
+  'last_battle': null,
+  'super_bunker_arrows': true,
+  'show_inventory': true,
+  'show_weapons_status': true,
+  'show_keyboard_labels': !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
+  'show_game_tips': true,
+  'show_health_status': PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
   // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
-  notifications_location: isMobile
+  'notifications_location': isMobile
     ? PREFS.NOTIFICATIONS_LOCATION_LEFT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
-  notifications_order_bottom_up: false,
-  notify_engineer: true,
-  notify_infantry: true,
+  'notifications_order_bottom_up': false,
+  'notify_engineer': true,
+  'notify_infantry': true,
   'notify_missile-launcher': true,
   'notify_smart-missile': true,
-  notify_tank: true,
-  notify_van: true,
-  alt_smart_missiles: true,
-  modern_smart_missiles: true,
-  engineers_repair_bunkers: true,
-  engineers_rob_the_bank: true,
-  tank_gunfire_miss_bunkers: true,
-  ground_unit_traffic_control: true,
-  clouds_on_radar: true,
-  weapons_interval_classic: false,
-  scan_ui_battlefield_enemy: true,
-  scan_ui_battlefield_friendly: true,
-  scan_ui_radar_enemy: true,
-  scan_ui_radar_friendly: true
+  'notify_tank': true,
+  'notify_van': true,
+  'alt_smart_missiles': true,
+  'modern_smart_missiles': true,
+  'engineers_repair_bunkers': true,
+  'engineers_rob_the_bank': true,
+  'tank_gunfire_miss_bunkers': true,
+  'ground_unit_traffic_control': true,
+  'clouds_on_radar': true,
+  'weapons_interval_classic': false,
+  'scan_ui_battlefield_enemy': true,
+  'scan_ui_battlefield_friendly': true,
+  'scan_ui_radar_enemy': true,
+  'scan_ui_radar_friendly': true
 };
 
 // allow URL-based overrides of prefs
