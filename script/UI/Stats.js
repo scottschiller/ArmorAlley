@@ -14,6 +14,7 @@ function Stats() {
   const emoji = {
     banana: '🍌',
     balloon: '🎈',
+    bomb: '💣',
     chicken: '🐓',
     flame: '🔥',
     skull: '<span class="no-emoji-substitution">☠️</span>',
@@ -163,7 +164,8 @@ function Stats() {
       exclude: true,
       verb: 'bombed',
       verb_infantry: 'nuked',
-      verb_engineer: 'annihilated'
+      verb_engineer: 'annihilated',
+      emoji: emoji.bomb
     },
     'gunfire': {
       'exclude': true,
