@@ -397,7 +397,9 @@ function Stats() {
       if (isHelicopter) {
         // extra-special case: player + CPU helicopters collided.
         if (attacker.type === TYPES.helicopter) {
-          game.objects.notifications.add(`You collided with the enemy. ${emoji.skull}${emoji.skull}`);
+          game.objects.notifications.add(
+            `You collided with the enemy. ${emoji.skull}${emoji.skull}`
+          );
           return;
         }
 
