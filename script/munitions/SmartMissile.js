@@ -2,7 +2,7 @@ import { gameType } from '../aa.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { collisionTest, getNearestObject } from '../core/logic.js';
+import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
 import {
   getTypes,
   rad2Deg,
@@ -428,7 +428,9 @@ const SmartMissile = (options = {}) => {
 
         const text = `${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`;
 
-        game.objects.notifications.add(text);
+        if (canNotify(target.data.type, data.type)) {
+          game.objects.notifications.add(text);
+        }
       }
     }
 
@@ -479,9 +481,11 @@ const SmartMissile = (options = {}) => {
         exports
       );
 
-      game.objects.notifications.add(
-        `${whose} ${missileType} died before arming itself.`
-      );
+      if (gamePrefs[`notify_${data.type}`]) {
+        game.objects.notifications.add(
+          `${whose} ${missileType} died before arming itself.`
+        );
+      }
 
       data.didNotify = true;
     }
@@ -538,7 +542,11 @@ const SmartMissile = (options = {}) => {
         tData.isEnemy === data.isEnemy
       ) {
         // notify if a helicopter evaded a smart missile by hiding in a cloud.
-        if (tData.wentIntoHiding && tData.type === TYPES.helicopter) {
+        if (
+          tData.wentIntoHiding &&
+          tData.type === TYPES.helicopter &&
+          gamePrefs[`notify_${data.type}`]
+        ) {
           const text = `${whose} ${missileType} lost track of its target.`;
           game.objects.notifications.addNoRepeat(text);
         }
@@ -565,7 +573,10 @@ const SmartMissile = (options = {}) => {
          * The first missile and tank will take each other out, and the second missile will
          * re-target the second tank. Notifying here feels redundant.
          */
-        if (newTD.type !== objects.lastTarget?.data?.type) {
+        if (
+          newTD.type !== objects.lastTarget?.data?.type &&
+          gamePrefs[`notify_${data.type}`]
+        ) {
           game.objects.notifications.addNoRepeat(text);
         }
 

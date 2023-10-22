@@ -227,21 +227,21 @@ const Tank = (options = {}) => {
           playSoundWithDelay(
             sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']
           );
-
-          // generic notification
-          if (
-            !net.connected &&
-            !data.isOnScreen &&
-            attackerType !== TYPES.smartMissile
-          ) {
-            game.objects.notifications.add('You lost a tank 💥');
-          }
         }
       }
-
       common.addGravestone(exports);
     } else {
       sprites.removeNodesAndUnlink(exports);
+    }
+
+    if (
+      !net.connected &&
+      data.isEnemy === game.players.local.data.isEnemy &&
+      gamePrefs[`notify_${data.type}`] &&
+      !data.isOnScreen &&
+      attackerType !== TYPES.smartMissile
+    ) {
+      game.objects.notifications.add('You lost a tank 💥');
     }
 
     // stop moving while exploding

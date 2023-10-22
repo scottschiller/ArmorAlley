@@ -4,6 +4,7 @@ import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
 import { net } from '../core/network.js';
+import { canNotify } from '../core/logic.js';
 
 const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
@@ -331,13 +332,15 @@ function Stats() {
 
     // special case: parachute infantry hit the ground, the parachute didn't open in time.
     if (target.data.didHitGround) {
-      game.objects.notifications.add(
-        `${
-          target.data.isEnemy !== game.players.local.data.isEnemy
-            ? 'An enemy'
-            : 'Your'
-        } infantry’s parachute failed to open. ${emoji.skull}`
-      );
+      if (gamePrefs[`notify_${data.type}`]) {
+        game.objects.notifications.add(
+          `${
+            target.data.isEnemy !== game.players.local.data.isEnemy
+              ? 'An enemy'
+              : 'Your'
+          } infantry’s parachute failed to open. ${emoji.skull}`
+        );
+      }
       return;
     }
 
@@ -349,6 +352,9 @@ function Stats() {
 
     // certain targets can be ignored, too. i.e., bunkers don't kill missiles.
     if (notifyTypes[attacker.type]?.exclude) return;
+
+    // user might have turned off notifications for these types
+    if (!canNotify(type, attacker.type)) return;
 
     // did a helicopter die?
     const isHelicopter = type === TYPES.helicopter;

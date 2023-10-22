@@ -19,6 +19,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const Van = (options = {}) => {
   let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
@@ -77,6 +78,18 @@ const Van = (options = {}) => {
     common.onDie(exports, dieOptions);
 
     common.addGravestone(exports);
+
+    const attackerType = dieOptions.attacker?.data.type;
+
+    if (
+      !net.connected &&
+      onOurSide() &&
+      gamePrefs[`notify_${data.type}`] &&
+      !data.isOnScreen &&
+      attackerType !== TYPES.smartMissile
+    ) {
+      game.objects.notifications.add('You lost a van 💥');
+    }
   }
 
   function onOurSide() {

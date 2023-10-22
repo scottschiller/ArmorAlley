@@ -62,6 +62,16 @@ const MissileLauncher = (options = {}) => {
 
       if (!dieOptions.firingMissile) {
         common.addGravestone(exports);
+        const attackerType = dieOptions.attacker?.data?.type;
+        if (
+          !net.connected &&
+          game.players.local.data.isEnemy === data.isEnemy &&
+          gamePrefs.notify_missile_launcher &&
+          !data.isOnScreen &&
+          attackerType !== TYPES.smartMissile
+        ) {
+          game.objects.notifications.add('You lost a missile launcher 💥');
+        }
       }
     } else {
       sprites.removeNodesAndUnlink(exports);

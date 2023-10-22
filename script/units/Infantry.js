@@ -8,6 +8,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const Infantry = (options = {}) => {
   let css,
@@ -149,6 +150,27 @@ const Infantry = (options = {}) => {
       }
 
       effects.inertGunfireExplosion({ exports });
+
+      const isInfantry = data.roles[data.role] === TYPES.infantry;
+      const isEngineer = data.roles[data.role] === TYPES.engineer;
+
+      const attacker = dieOptions?.attacker?.data;
+
+      // generic notification
+      if (
+        !net.connected &&
+        game.players.local.data.isEnemy === data.isEnemy &&
+        !data.isOnScreen &&
+        // special case: tanks "roasting" infantry / engineers are handled separately.
+        attacker?.type !== TYPES.tank && attacker?.type !== TYPES.flame && attacker?.parentType !== TYPES.tank
+      ) {
+        const str = 'You lost an %s <span class="no-emoji-substitution">☠️</span>';
+        if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
+          game.objects.notifications.add(str.replace('%s', 'infantry'));
+        } else if (isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
+          game.objects.notifications.add(str.replace('%s', 'engineer'));
+        }
+      }
 
       common.addGravestone(exports);
     }
