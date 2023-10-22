@@ -478,7 +478,7 @@ const Infantry = (options = {}) => {
         ) {
           // probably a tank.
           data.attacker = target;
-          die();
+          die({ attacker: target });
         }
       }
     },
