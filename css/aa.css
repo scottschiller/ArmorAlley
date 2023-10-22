@@ -3571,7 +3571,7 @@ body.game-started #game-tips.active .tips-container {
   position: absolute;
   text-align: center;
   top: 0;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
   width: 100%;
 }
 
@@ -3606,6 +3606,10 @@ body.is-mobile #game-tips #game-announcements {
 
 #game-tips.has-announcement #game-announcements {
   opacity: 1;
+}
+
+body.game-paused #game-announcements {
+  visibility: hidden;
 }
 
 #help,
