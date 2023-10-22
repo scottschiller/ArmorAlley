@@ -294,7 +294,7 @@ const Radar = () => {
     }
 
     if (data.jamCount < 3) {
-      game.objects.notifications.add(
+      game.objects.notifications.addNoRepeat(
         '🚚 An enemy van is jamming your radar 📡 🚫'
       );
     }
@@ -349,7 +349,7 @@ const Radar = () => {
     }
 
     if (data.jamCount < 3) {
-      game.objects.notifications.add('Radar has been restored 📡');
+      game.objects.notifications.addNoRepeat('Radar has been restored 📡');
       data.jamCount++;
     }
   }
