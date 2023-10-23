@@ -575,6 +575,7 @@ const SmartMissile = (options = {}) => {
          */
         if (
           newTD.type !== objects.lastTarget?.data?.type &&
+          !newTarget.data.isOnScreen &&
           gamePrefs[`notify_${data.type}`]
         ) {
           game.objects.notifications.addNoRepeat(text);
