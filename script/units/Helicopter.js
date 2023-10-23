@@ -1148,7 +1148,7 @@ const Helicopter = (options = {}) => {
     if (foundObject) {
       if (data.isLocal) {
         noEntry =
-          '<b style="animation: blink 0.5s infinite;font-size:75%;letter-spacing:0px;vertical-align:middle">⛔</b>';
+          '<b style="animation: blink 0.5s infinite;font-size: 75%;letter-spacing: 0px;vertical-align: top">⛔</b>';
         game.objects.view.setAnnouncement(
           `${noEntry} Landing pad obstructed.\nWaiting for clearance. ${noEntry}`
         );
