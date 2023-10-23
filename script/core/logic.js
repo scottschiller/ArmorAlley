@@ -630,6 +630,9 @@ function recycleTest(obj) {
   }, 16);
 
   common.setFrameTimeout(() => {
+    // if object was killed at the last second, no refund! ;)
+    if (oData.dead) return;
+
     // die silently, and go away.
     obj.die({ silent: true });
 
