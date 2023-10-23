@@ -494,7 +494,7 @@ function Stats() {
     if (
       target.data.isOnScreen &&
       !isHelicopter &&
-      attacker.type !== TYPES.helicopter
+      (attacker.type !== TYPES.helicopter && attacker.type !== TYPES.smartMissile)
     )
       return;
 
