@@ -129,17 +129,11 @@ const Van = (options = {}) => {
     if (data.isEnemy && data.x <= data.xGameOver) {
       stop();
 
-      // hack: clear any existing.
-      game.objects.view.setAnnouncement();
-
       game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 
       gameOver(onOurSide());
     } else if (!data.isEnemy && data.x >= data.xGameOver) {
       stop();
-
-      // hack: clear any existing.
-      game.objects.view.setAnnouncement();
 
       game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 

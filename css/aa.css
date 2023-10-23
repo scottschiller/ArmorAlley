@@ -3571,7 +3571,11 @@ body.game-started #game-tips.active .tips-container {
   position: absolute;
   text-align: center;
   top: 0;
-  transition: opacity 0.5s ease-in-out;
+  filter: blur(3px);
+  transform: scale3d(1.2, 1.2, 1);
+  transform-origin: 50% 50%;
+  transition: all 0.5s ease-in-out;
+  transition-property: filter, opacity, transform;
   width: 100%;
 }
 
@@ -3605,7 +3609,10 @@ body.is-mobile #game-tips #game-announcements {
 }
 
 #game-tips.has-announcement #game-announcements {
+  transition-delay: 667ms;
   opacity: 1;
+  transform: scale3d(1, 1, 1);
+  filter: none;
 }
 
 body.game-paused #game-announcements {

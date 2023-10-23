@@ -311,43 +311,60 @@ const View = () => {
   function setAnnouncement(text = '', delay = 5000) {
     if (isGameOver()) return;
 
+    if (!text) return;
+
     if (
-      text !== data.gameTips.lastAnnouncement &&
-      ((!data.gameTips.hasAnnouncement && text) ||
-        (data.gameTips.hasAnnouncement && !text))
+      text === data.gameTips.lastAnnouncement &&
+      data.gameTips.hasAnnouncement
     ) {
-      utils.css.addOrRemove(dom.gameTips, text, css.gameTips.hasAnnouncement);
-
-      // line break on mobile, portrait; otherwise, space.
-      const replacement =
-        '<span class="landscape-space-portrait-line-break"></span>';
-
-      text = text.replace(/\n/, replacement);
-
-      // drop smart quotes, they render funny with Da Valencia.
-      text = text.replace(/[“”]/g, '"');
-
-      dom.gameAnnouncements.innerHTML = text;
-
-      data.gameTips.lastAnnouncement = text;
-
-      if (data.gameTips.announcementTimer) {
-        data.gameTips.announcementTimer.reset();
-        data.gameTips.announcementTimer = null;
-      }
-
-      if (text) {
-        // clear after an amount of time, if not -1
-        if (delay !== -1) {
-          data.gameTips.announcementTimer = common.setFrameTimeout(
-            setAnnouncement,
-            delay
-          );
-        }
-      }
-
-      data.gameTips.hasAnnouncement = !!text;
+      // we've been given the same text as previously; delay, by resetting the timer counter.
+      data.gameTips.announcementTimer?.restart();
+      return;
     }
+
+    // line break on mobile, portrait; otherwise, space.
+    const replacement =
+      '<span class="landscape-space-portrait-line-break"></span>';
+
+    text = text.replace(/\n/, replacement);
+
+    // drop smart quotes, they render funny with Da Valencia.
+    text = text.replace(/[“”]/g, '"');
+
+    data.gameTips.hasAnnouncement = true;
+
+    dom.gameAnnouncements.innerHTML = text;
+    data.gameTips.lastAnnouncement = text;
+
+    if (data.gameTips.announcementTimer) {
+      data.gameTips.announcementTimer.reset();
+      data.gameTips.announcementTimer = null;
+    } else {
+      common.setFrameTimeout(() => {
+        utils.css.add(dom.gameTips, css.gameTips.hasAnnouncement);
+      }, 50);
+    }
+
+    if (text) {
+      // clear after an amount of time, if not -1
+      if (delay !== -1) {
+        data.gameTips.announcementTimer = common.setFrameTimeout(
+          clearAnnouncement,
+          delay
+        );
+      }
+    }
+  }
+
+  function clearAnnouncement() {
+    if (!data.gameTips.hasAnnouncement || !data.gameTips.announcementTimer)
+      return;
+
+    data.gameTips.hasAnnouncement = false;
+    data.gameTips.announcementTimer = null;
+    data.gameTips.lastAnnouncement = null;
+
+    utils.css.remove(dom.gameTips, css.gameTips.hasAnnouncement);
   }
 
   function assignMouseInput(player, x, y) {
@@ -1282,6 +1299,7 @@ const View = () => {
     animate,
     applyScreenScale,
     bufferMouseInput,
+    clearAnnouncement,
     data,
     dom,
     events,

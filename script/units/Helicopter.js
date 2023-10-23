@@ -1186,7 +1186,7 @@ const Helicopter = (options = {}) => {
       data.lastVX = 0;
 
       if (!tutorialMode) {
-        game.objects.view.setAnnouncement();
+        game.objects.view.clearAnnouncement();
       }
 
       if (sounds.helicopter.engine?.sound)

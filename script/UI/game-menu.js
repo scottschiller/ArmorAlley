@@ -510,6 +510,8 @@ function startGame() {
 
   game.objects.radar.reset();
 
+  game.objects.notifications.welcome();
+
   if (net.connected) {
     game.setGameType(gamePrefs.net_game_type);
 
@@ -576,8 +578,6 @@ function hideTitleScreen(callback) {
   utils.css.add(overlay, 'fade-out');
 
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
-
-  game.objects.notifications.welcome();
 
   // testing
   const winloc = window.location.toString();
