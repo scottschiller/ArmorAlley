@@ -236,12 +236,21 @@ const Tank = (options = {}) => {
 
     if (
       !net.connected &&
-      data.isEnemy === game.players.local.data.isEnemy &&
       gamePrefs[`notify_${data.type}`] &&
       !data.isOnScreen &&
       attackerType !== TYPES.smartMissile
     ) {
-      game.objects.notifications.add('You lost a tank 💥');
+      if (data.isEnemy === game.players.local.data.isEnemy) {
+        // ignore if attacker is the enemy helicopter, i.e., it bombed our tank - that's reported elsewhere.
+        if (
+          attackerType !== TYPES.helicopter &&
+          data?.attacker?.data?.parentType !== TYPES.helicopter
+        ) {
+          game.objects.notifications.add('You lost a tank 💥');
+        }
+      } else {
+        game.objects.notifications.add('You destroyed a tank 💥');
+      }
     }
 
     // stop moving while exploding
