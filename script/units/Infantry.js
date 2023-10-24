@@ -159,16 +159,40 @@ const Infantry = (options = {}) => {
       // generic notification
       if (
         !net.connected &&
-        game.players.local.data.isEnemy === data.isEnemy &&
         !data.isOnScreen &&
-        // special case: tanks "roasting" infantry / engineers are handled separately.
-        attacker?.type !== TYPES.tank && attacker?.type !== TYPES.flame && attacker?.parentType !== TYPES.tank
+        // special case: certain attackers are handled separately.
+        attacker?.type !== TYPES.tank &&
+        attacker?.type !== TYPES.flame &&
+        attacker?.type !== TYPES.smartMissile &&
+        attacker?.type !== TYPES.helicopter &&
+        attacker?.parentType !== TYPES.tank &&
+        attacker?.parentType !== TYPES.infantry &&
+        attacker?.parentType !== TYPES.superBunker &&
+        attacker?.parentType !== TYPES.helicopter
       ) {
-        const str = 'You lost an %s <span class="no-emoji-substitution">☠️</span>';
+        // infantry / engineer lost
+        const contexts = {
+          [TYPES.shrapnel]: 'Shrapnel ',
+          [TYPES.gunfire]: 'Gunfire ',
+          [TYPES.bomb]: 'A bomb '
+        };
+        const context = contexts[attacker?.type] || '';
+        const isOpponent = game.players.local.data.isEnemy !== data.isEnemy;
+        const emoji = '<span class="no-emoji-substitution">☠️</span>';
+        const str = context
+          ? `${context} killed %s ${emoji}`
+          : isOpponent
+          ? `You killed %s ${emoji}`
+          : `You lost %s ${emoji}`;
+        const maybeEnemy = isOpponent ? 'an enemy ' : 'an ';
         if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
-          game.objects.notifications.add(str.replace('%s', 'infantry'));
+          game.objects.notifications.add(
+            str.replace('%s', `${maybeEnemy}infantry`)
+          );
         } else if (isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
-          game.objects.notifications.add(str.replace('%s', 'engineer'));
+          game.objects.notifications.add(
+            str.replace('%s', `${maybeEnemy}engineer`)
+          );
         }
       }
 
