@@ -13,6 +13,8 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { gamePrefs } from '../UI/preferences.js';
 
+const crossedSwords = '<span class="no-emoji-substitution">⚔️</span>';
+
 const SuperBunker = (options = {}) => {
   let css, dom, data, width, height, lastFriendly, nearby, radarItem, exports;
 
@@ -376,11 +378,11 @@ const SuperBunker = (options = {}) => {
             // "one of ours?"
             if (isTargetFriendlyToPlayer) {
               game.objects.notifications.add(
-                'You reinforced a super bunker 💪'
+                'You reinforced a super bunker 🛡️'
               );
             } else {
               game.objects.notifications.add(
-                'The enemy reinforced a super bunker 💪'
+                'The enemy reinforced a super bunker 🛡️'
               );
             }
           }
@@ -390,11 +392,11 @@ const SuperBunker = (options = {}) => {
           // "one of ours?"
           if (isTargetFriendlyToPlayer) {
             if (data.energy > 1)
-              game.objects.notifications.add('You weakened a super bunker ⚔️');
+              game.objects.notifications.add(`You weakened a super bunker ${crossedSwords}`);
           } else {
             if (data.energy > 1)
               game.objects.notifications.add(
-                'The enemy weakened a super bunker ⚔️'
+                `The enemy weakened a super bunker ${crossedSwords}`
               );
           }
 
@@ -418,7 +420,7 @@ const SuperBunker = (options = {}) => {
             );
           } else {
             game.objects.notifications.add(
-              'Enemy infantry neutralized a super bunker ⚔️'
+              `Enemy infantry neutralized a super bunker ${crossedSwords}`
             );
           }
         }
