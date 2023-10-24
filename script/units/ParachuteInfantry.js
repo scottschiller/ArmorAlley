@@ -13,7 +13,6 @@ import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
-import { net } from '../core/network.js';
 
 const ParachuteInfantry = (options = {}) => {
   let css, dom, data, radarItem, exports;
