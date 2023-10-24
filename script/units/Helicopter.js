@@ -537,33 +537,33 @@ const Helicopter = (options = {}) => {
     ) {
       data.repairComplete = true;
 
-      if (data.isLocal) {
-        document.getElementById('spinner').style.display = 'none';
-        document.getElementById('repair-complete').style.display = 'block';
+      if (!data.isLocal) return;
 
-        if (sounds.repairing) {
-          stopSound(sounds.repairing);
-        }
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('repair-complete').style.display = 'block';
 
-        if (sounds.ipanemaMuzak) {
-          stopSound(sounds.ipanemaMuzak);
-        }
+      if (sounds.repairing) {
+        stopSound(sounds.repairing);
+      }
 
-        if (sounds.dangerZone) {
-          stopSound(sounds.dangerZone);
-        }
+      if (sounds.ipanemaMuzak) {
+        stopSound(sounds.ipanemaMuzak);
+      }
 
-        if (sounds.bnb.theme) {
-          stopSound(sounds.bnb.theme);
-        }
+      if (sounds.dangerZone) {
+        stopSound(sounds.dangerZone);
+      }
 
-        if (sounds.bnb.beavisThankYouDriveThrough) {
-          playSound(sounds.bnb.beavisThankYouDriveThrough);
-        }
+      if (sounds.bnb.theme) {
+        stopSound(sounds.bnb.theme);
+      }
 
-        if (sounds.inventory.end) {
-          playSound(sounds.inventory.end);
-        }
+      if (sounds.bnb.beavisThankYouDriveThrough) {
+        playSound(sounds.bnb.beavisThankYouDriveThrough);
+      }
+
+      if (sounds.inventory.end) {
+        playSound(sounds.inventory.end);
       }
     }
   }
