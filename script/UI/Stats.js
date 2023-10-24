@@ -17,6 +17,7 @@ function Stats() {
     bomb: '💣',
     chicken: '🐓',
     flame: '🔥',
+    helicopter: '🚁',
     skull: '<span class="no-emoji-substitution">☠️</span>',
     missile: '🚀',
     default: '💥'
@@ -473,6 +474,13 @@ function Stats() {
       // hackish: replace helicopter reference
       // TODO: fix this up so the enemy chopper is properly normalized.
       text = text.replace('a helicopter', 'the enemy helicopter');
+      text = text.replace(
+        `a ${emoji.helicopter}`,
+        `the enemy ${emoji.helicopter}`
+      );
+
+      // one more emoji search-and-replace.
+      text = text.replace('helicopter', emoji.helicopter);
 
       // hackish
       if (gamePrefs.bnb) {
