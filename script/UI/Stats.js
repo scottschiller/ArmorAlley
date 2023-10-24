@@ -125,11 +125,12 @@ function Stats() {
     // they typically die with silent: true, when self-destructing in order to launch a missile.
     'missile-launcher': true,
     'tank': {
-      'verb': 'blasted',
+      'verb': 'destroyed',
       'verb_engineer': 'steamrolled',
       'verb_infantry': 'steamrolled',
       // hackish: ignore when a tank "hits" a smart missile
-      'verb_smart-missile': UNKNOWN_VERB
+      'verb_smart-missile': UNKNOWN_VERB,
+      'emoji': emoji.default
     },
     'van': true,
     'flame': {
@@ -162,7 +163,7 @@ function Stats() {
       verb: 'hit'
     },
     'bomb': {
-      exclude: true,
+      offScreenOnly: true,
       verb: 'bombed',
       verb_infantry: 'nuked',
       verb_engineer: 'annihilated',
@@ -197,7 +198,8 @@ function Stats() {
       'verb_smart-missile': 'took out'
     },
     'super-bunker': {
-      exclude: true
+      verb: 'shot',
+      emoji: emoji.default
     }
   };
 
@@ -266,6 +268,8 @@ function Stats() {
     }
 
     if (data.isEnemy === game.players.local.data.isEnemy) {
+      // yourself, or your friend in humans_vs_cpu[s]?
+      if (data.id === game.players.local.data.id) return `you`;
       return `a friendly helicopter`;
     } else {
       if (!net.active) return `the enemy helicopter`;
@@ -295,16 +299,11 @@ function Stats() {
       aData.type !== TYPES.shrapnel &&
       aData.type !== TYPES.smartMissile;
 
-    // build out string, based on enemy/non-enemy and local player.
-
-    // local player, vs. a different helicopter.
-    const isYou = aData.id === game.players.local.data.id;
-
-    if (isYou) return 'you';
-
-    // some other helicopter? friend or foe, with or without a name etc.
+    // build out string, based on enemy/non-enemy, local vs. remote player.
     if (isHelicopter) {
-      return getHelicopterLabel(attacker);
+      return getHelicopterLabel(
+        aData?.parentType === TYPES.helicopter ? aData.parent : attacker
+      );
     }
 
     // enemy case, e.g., "an enemy tank"
@@ -348,16 +347,41 @@ function Stats() {
     }
 
     // the object responsible for killing the target
-    const attacker = target.data?.attacker?.data;
+    let attacker = target.data?.attacker?.data;
 
     // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
     if (!attacker) return;
 
     // certain targets can be ignored, too. i.e., bunkers don't kill missiles.
-    if (notifyTypes[attacker.type]?.exclude) return;
+    if (notifyTypes[attacker.type]?.exclude) {
+      // what about the parent - e.g., is this gunfire from an infantry?
+      // don't notify if the parent is a helicopter, though - we have those covered separately.
+      if (
+        attacker.parent &&
+        attacker.parent.data.type !== TYPES.helicopter &&
+        attacker.parent.data.type !== TYPES.turret &&
+        notifyTypes[attacker.parent.data.type] &&
+        !notifyTypes[attacker.parent.data.type].exclude
+      ) {
+        attacker = attacker.parent.data;
+      } else if (
+        // special case: allow "raw" off-screen shrapnel that kills stuff to be reported.
+        !(attacker.type === TYPES.shrapnel && !target.data?.isOnScreen)
+      ) {
+        return;
+      }
+    }
+
+    // vans may explode with an invisible "bomb" that can kill infantry, but don't report them.
+    if (attacker.type === TYPES.van) return;
 
     // user might have turned off notifications for these types
     if (!canNotify(type, attacker.type)) return;
+
+    // certain things can be ignored if in view, i.e., you bomb an on-screen tank.
+    // if you throw a bomb off-screen and it hits something, then it makes sense to notify.
+    if (target.data.isOnScreen && notifyTypes[attacker.type]?.offScreenOnly)
+      return;
 
     // did a helicopter die?
     const isHelicopter = type === TYPES.helicopter;
@@ -427,9 +451,12 @@ function Stats() {
     // if (e.g.) two tanks fought, determine who won. "your" or "their" (attacking) tank "took out one of theirs / yours."
     let didYoursWin = isSameType && !attacker.isEnemy;
 
+    // if two tanks, ignore becuse tanks handle that themselves.
+    if (isSameType && type === TYPES.tank) return;
+
     let text;
-    let youWonText = 'one of theirs';
-    let theyWonText = 'one of yours';
+    let youWonText = 'an enemy';
+    let theyWonText = 'your';
 
     // special case: when player's helicopter dies, use special verbiage. "You (were) X by a Y"
     if (
@@ -454,7 +481,6 @@ function Stats() {
     }
 
     // if not already set via special case, assign now.
-
     if (!text) {
       // "something" [shot/bombed/killed] [one of yours|an|a] "something", including same-type and hostile-killed-[enemy|friendly] cases
       text = `${getNormalizedAttackerString(target.data.attacker)} ${verb} ${
@@ -465,14 +491,29 @@ function Stats() {
           : (attacker.hostile
               ? target.data.isEnemy
                 ? 'an enemy '
-                : 'a friendly '
+                : 'your '
               : notifyItem.isAn
               ? 'an '
               : 'a ') + getNormalizedUnitName(target)
       }`;
 
-      // hackish: replace helicopter reference
-      // TODO: fix this up so the enemy chopper is properly normalized.
+      /**
+       * Hacks to fix edge cases...
+       * e.g., "your van nuked an infantry" - some units explode as a bomb, which can kill nearby / overlapping units.
+       * "nuke" is the key verb for bombs.
+       * Bunkers can also mistakenly "bomb" tanks.
+       */
+      text = text.replace(
+        /bunker (bombed|annihilated)/g,
+        'bunker exploded, killing'
+      );
+      text = text.replace(
+        /turret (bombed|annihilated)/g,
+        'turret exploded, killing'
+      );
+      text = text.replace(/van nuked/g, 'van exploded, killing');
+      text = text.replace(/tank nuked/g, 'tank exploded, killing');
+
       text = text.replace('a helicopter', 'the enemy helicopter');
       text = text.replace(
         `a ${emoji.helicopter}`,
@@ -482,7 +523,6 @@ function Stats() {
       // one more emoji search-and-replace.
       text = text.replace('helicopter', emoji.helicopter);
 
-      // hackish
       if (gamePrefs.bnb) {
         text = text.replace(
           'your turret',
@@ -497,12 +537,13 @@ function Stats() {
       text += ` ${emo}`;
     }
 
-    // don't show if on-screen, *unless* it's the helicopter.
+    // don't notify if on-screen, *unless* it's the helicopter or gunfire / bombs / smart missiles.
     // TODO: improve target vs. attacker helicopter logic, work onScreen check into notification preferences.
     if (
       target.data.isOnScreen &&
       !isHelicopter &&
-      (attacker.type !== TYPES.helicopter && attacker.type !== TYPES.smartMissile)
+      attacker.type !== TYPES.helicopter &&
+      attacker?.parentType !== TYPES.helicopter
     )
       return;
 
