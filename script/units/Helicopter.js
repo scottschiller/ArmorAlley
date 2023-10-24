@@ -611,10 +611,10 @@ const Helicopter = (options = {}) => {
 
     sprites.updateEnergy(exports);
 
-    if (!data.isLocal) return;
-
     updateFuelUI();
     updateStatusUI(updated);
+
+    if (!data.isLocal) return;
 
     if (data.muchaMuchacha && data.repairFrames % 5 === 0) {
       if (rnd(1) < 0.25) return;
@@ -1981,9 +1981,9 @@ const Helicopter = (options = {}) => {
     }
 
     if (data.onLandingPad) {
-      if (data.repairComplete) {
-        // repair has completed. go go go!
-        data.vY = -4;
+      if (!data.repairing || data.repairComplete) {
+        // repair didn't start, or has completed. go go go!
+        data.vY = -1;
         data.vX = data.vXMax * data.isEnemy ? -1 : 1;
 
         // reset target, too
