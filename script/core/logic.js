@@ -27,31 +27,23 @@ const NET_TRIGGER_DISTANCE = 360;
 function canNotify(targetType, attackerType) {
   /**
    * Has the user chosen to ignore updates for the involved units?
-   * Only exit if both sides can be filtered, and both are turned off.
-   * e.g,. you might have disabled infantry notifications, but a tank
-   * killed an infantry - and you're interested in tank updates.
+   * Exit if the target has been filtered out.
    */
 
-  // "eligible" type filters apply primarily to MTVIE.
-  let typeEligible = 0;
-  let typeEnabled = 0;
-
   // note mapping of (target) type to pref, e.g., `notify_tank`
-  if (notificationFilterTypes[targetType]) {
-    typeEligible++;
-    if (gamePrefs[`notify_${targetType}`]) typeEnabled++;
-  }
+  // if there is a pref available, and it's off, then bail.
+  if (notificationFilterTypes[targetType] && !gamePrefs[`notify_${targetType}`])
+    return;
 
   // e.g., a tank: check and count the user pref if enabled.
-  if (notificationFilterTypes[attackerType]) {
-    typeEligible++;
-    if (gamePrefs[`notify_${attackerType}`]) typeEnabled++;
-  }
+  if (
+    notificationFilterTypes[attackerType] &&
+    !gamePrefs[`notify_${attackerType}`]
+  )
+    return;
 
-  const isExcluded = typeEligible && !typeEnabled;
-
-  // allowed to show, if not filtered out.
-  return !isExcluded;
+  // finally, allowed.
+  return true;
 }
 
 function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
