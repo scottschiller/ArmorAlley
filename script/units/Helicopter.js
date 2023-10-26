@@ -24,7 +24,8 @@ import {
   getTypes,
   rngInt,
   rng,
-  rngPlusMinus
+  rngPlusMinus,
+  GAME_SPEED
 } from '../core/global.js';
 
 import {
@@ -232,7 +233,7 @@ const Helicopter = (options = {}) => {
 
     if (frameCount % modulus === 0 && data.fuel > 0) {
       // burn!
-      data.fuel = Math.max(0, data.fuel - 0.1);
+      data.fuel = Math.max(0, data.fuel - 0.1 * GAME_SPEED);
 
       // update UI
       updateFuelUI();
@@ -385,6 +386,11 @@ const Helicopter = (options = {}) => {
   }
 
   function stopRepairing() {
+    // GAME_SPEED: ensure we don't have any remaining fractional values
+    data.ammo = Math.floor(data.ammo);
+    data.bombs = Math.floor(data.bombs);
+    data.smartMissiles = Math.floor(data.smartMissiles);
+
     // ensure counters aren't blinking
     if (data.isLocal) {
       utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
@@ -442,21 +448,21 @@ const Helicopter = (options = {}) => {
   }
 
   function applyStatusUI(updated) {
-    const force = updated.force;
+    const { force } = updated;
 
     if (force || updated.parachutes) {
       dom.statusBar.infantryCount.innerText = data.parachutes;
     }
 
     if (force || updated.ammo) {
-      dom.statusBar.ammoCount.innerText = data.ammo;
+      dom.statusBar.ammoCount.innerText = Math.floor(data.ammo);
       if (updated.ammoComplete) {
         utils.css.remove(dom.statusBar.ammoCountLI, css.repairing);
       }
     }
 
     if (force || updated.bombs) {
-      dom.statusBar.bombCount.innerText = data.bombs;
+      dom.statusBar.bombCount.innerText = Math.floor(data.bombs);
       if (updated.bombsComplete) {
         utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
       }
@@ -464,7 +470,7 @@ const Helicopter = (options = {}) => {
 
     if (force || updated.smartMissiles) {
       maybeUpdateTargetDot();
-      dom.statusBar.missileCount.innerText = data.smartMissiles;
+      dom.statusBar.missileCount.innerText = Math.floor(data.smartMissiles);
       if (updated.smartMissilesComplete) {
         utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
       }
@@ -576,7 +582,7 @@ const Helicopter = (options = {}) => {
     data.fuel = Math.min(data.maxFuel, data.fuel + 0.4);
 
     if (data.ammo < data.maxAmmo && data.repairFrames % 2 === 0) {
-      data.ammo++;
+      data.ammo = Math.min(data.maxAmmo, data.ammo + 1 * GAME_SPEED);
       updated.ammo = true;
       if (data.ammo >= data.maxAmmo) {
         // stop blinking
@@ -586,11 +592,11 @@ const Helicopter = (options = {}) => {
 
     if (data.repairFrames % 5 === 0) {
       // fix damage (no UI for this)
-      data.energy = Math.min(data.energyMax, data.energy + 1);
+      data.energy = Math.min(data.energyMax, data.energy + 1 * GAME_SPEED);
     }
 
     if (data.bombs < data.maxBombs && data.repairFrames % 10 === 0) {
-      data.bombs++;
+      data.bombs = Math.min(data.maxBombs, data.bombs + 1 * GAME_SPEED);
       updated.bombs = true;
       if (data.bombs >= data.maxBombs) {
         updated.bombsComplete = true;
@@ -601,7 +607,10 @@ const Helicopter = (options = {}) => {
       data.smartMissiles < data.maxSmartMissiles &&
       data.repairFrames % 200 === 0
     ) {
-      data.smartMissiles++;
+      data.smartMissiles = Math.min(
+        data.maxSmartMissiles,
+        data.smartMissiles + 1 * GAME_SPEED
+      );
       updated.smartMissiles = true;
       if (data.smartMissiles >= data.maxSmartMissiles) {
         updated.smartMissilesComplete = true;
@@ -2180,9 +2189,9 @@ const Helicopter = (options = {}) => {
 
       if (Math.abs(deltaVX) > 1) {
         if (data.vX < desiredVX) {
-          data.vX += 1;
+          data.vX += 1 * GAME_SPEED;
         } else {
-          data.vX -= 1;
+          data.vX -= 1 * GAME_SPEED;
         }
       } else {
         data.vX = 0;
@@ -2251,9 +2260,9 @@ const Helicopter = (options = {}) => {
     } else {
       // default: go "toward the other guys"
       if (data.isEnemy) {
-        data.vX -= 0.25;
+        data.vX -= 0.25 * GAME_SPEED;
       } else {
-        data.vX += 0.25;
+        data.vX += 0.25 * GAME_SPEED;
       }
 
       // and up
@@ -2462,9 +2471,9 @@ const Helicopter = (options = {}) => {
     if (data.fuel <= 0 || !data.pilot) {
       // gravity until dead.
       if (data.vY < 0.5) {
-        data.vY += 0.5;
+        data.vY += 0.5 * GAME_SPEED;
       } else {
-        data.vY *= 1.1;
+        data.vY *= 1 + 0.1 * GAME_SPEED;
       }
 
       if (data.landed) {
@@ -2478,8 +2487,11 @@ const Helicopter = (options = {}) => {
       data.vY = 0;
     }
 
+    // take the difference between the game speed and real-time, if less than real-time.
+    const RELATIVE_GAME_SPEED = GAME_SPEED; // (GAME_SPEED < 1 ? (1 - (GAME_SPEED / 2)) : GAME_SPEED);
+
     if (!data.dead) {
-      newX = data.x + data.vX;
+      newX = data.x + data.vX * RELATIVE_GAME_SPEED;
 
       // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
 
@@ -2499,7 +2511,7 @@ const Helicopter = (options = {}) => {
         );
       }
 
-      moveTo(newX, data.y + data.vY);
+      moveTo(newX, data.y + data.vY * RELATIVE_GAME_SPEED);
 
       collisionTest(collision, exports);
 
@@ -2788,7 +2800,7 @@ const Helicopter = (options = {}) => {
     // apply according to prefs.
     const pref = gamePrefs.weapons_interval_classic ? 'classic' : 'modern';
 
-    return firingRates[type][pref];
+    return parseInt(firingRates[type][pref] * (1 / GAME_SPEED), 10);
   }
 
   function updateFiringRates() {
