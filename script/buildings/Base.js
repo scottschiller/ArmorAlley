@@ -362,13 +362,17 @@ const Base = (options = {}) => {
     className: 'base'
   });
 
+  const fireModulus = tutorialMode ? FPS * 5 : FPS * 2;
+
   data = common.inheritData(
     {
       type: 'base',
       bottomAligned: true,
       dead: false,
       frameCount: 0,
-      fireModulus: tutorialMode ? FPS * 5 : FPS * 2,
+      fireModulus,
+      fireModulus1X: fireModulus,
+      gameSpeedProps: ['fireModulus'],
       missileMode: defaultMissileMode,
       // left side, or right side (roughly)
       x: options.x || (options.isEnemy ? worldWidth - 192 : 64),

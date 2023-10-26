@@ -265,7 +265,8 @@ const SuperBunker = (options = {}) => {
       gunYOffset: 20.75,
       // fire speed relative to # of infantry arming it
       fireModulus: FIRE_MODULUS,
-      fundsModulus: FPS * 10,
+      fireModulus1X: FIRE_MODULUS,
+      gameSpeedProps: ['fireModulus'],
       hostile: false,
       midPoint: null,
       xLookAhead: width / 3,

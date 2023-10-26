@@ -3,6 +3,7 @@ import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
 import {
   FPS,
+  GAME_SPEED,
   getTypes,
   rad2Deg,
   rnd,
@@ -704,6 +705,16 @@ const Turret = (options = {}) => {
     scanNode: 'scan-node'
   });
 
+  const fireModulus = tutorialMode
+    ? 12
+    : gameType === 'extreme'
+    ? 2
+    : gameType === 'hard'
+    ? 6
+    : 12; // a little easier in tutorial mode vs. hard vs. easy modes
+
+  const claimModulus = 16;
+
   data = common.inheritData(
     {
       type: TYPES.turret,
@@ -715,20 +726,18 @@ const Turret = (options = {}) => {
       firing: false,
       fireCount: 0,
       frameCount: 3 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely
-      fireModulus: tutorialMode
-        ? 12
-        : gameType === 'extreme'
-        ? 2
-        : gameType === 'hard'
-        ? 6
-        : 12, // a little easier in tutorial mode vs. hard vs. easy modes
+      fireModulus,
+      fireModulus1X: fireModulus,
+      gameSpeedProps: ['claimModulus', 'fireModulus', 'repairModulus'],
       hasBeavis: false,
       hasButthead: false,
       isSinging: false,
       scanDistance: TURRET_SCAN_RADIUS,
       hasScanNode: true,
-      claimModulus: 16,
+      claimModulus,
+      claimModulus1X: claimModulus,
       repairModulus: FPS,
+      repairModulus1X: FPS,
       restoring: false,
       shellCasingInterval: tutorialMode || gameType === 'easy' ? 1 : 2,
       claimPoints: 0,

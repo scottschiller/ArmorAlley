@@ -10,13 +10,16 @@ import {
   rng,
   isMobile,
   isSafari,
-  FPS
+  FPS,
+  GAME_SPEED,
+  updateGameSpeed
 } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { utils } from './utils.js';
+import { playSound, sounds } from './sound.js';
 
 // unique IDs for quick object equality checks
 let guid;
@@ -348,6 +351,57 @@ const riseItemAfterDelay = (exports, delay = 33) =>
   );
 
 const common = {
+  setGameSpeed: (gameSpeed) => {
+    // note: this updates GAME_SPEED
+    const newGameSpeed = updateGameSpeed(gameSpeed);
+
+    common.applyGameSpeedToAll();
+
+    game.objects.notifications.add('Game speed: %s', {
+      type: 'gameSpeed',
+      onRender(input) {
+        return input.replace('%s', `${Math.floor(newGameSpeed * 100)}%`);
+      }
+    });
+
+    playSound(sounds?.inventory?.begin);
+  },
+
+  applyCSSGameSpeed: () => {
+    const root = document.querySelector(':root');
+
+    if (!root?.style) return;
+
+    root.style.setProperty('--game-speed', GAME_SPEED);
+  },
+
+  applyGameSpeedToAll: () => {
+    // update all relevant objects
+    for (const item in game.objects) {
+      if (item?.data?.gameSpeedProps) {
+        common.applyGameSpeed(item);
+      }
+    }
+
+    common.applyCSSGameSpeed();
+
+    game.objects.helicopter?.forEach((chopper) => chopper.updateFiringRates());
+  },
+
+  applyGameSpeed: (obj) => {
+    // update "game speed" on a particular object, or *all* eligible objects.
+
+    const { gameSpeedProps } = obj?.data;
+
+    if (!gameSpeedProps?.forEach) return;
+
+    // recalculate the new value, based on the original "1X" one - e.g., data['fireModulus'] => ['fireModulus1X'] * ...
+    gameSpeedProps.forEach((prop) => {
+      obj.data[prop] =
+        (parseInt(obj.data[`${prop}1X`] || 1) * (1 / GAME_SPEED), 10);
+    });
+  },
+
   // given a list of keys, collect and return a new object of key/value pairs.
   pick: (o, ...props) =>
     Object.assign({}, ...props.map((prop) => ({ [prop]: o[prop] }))),

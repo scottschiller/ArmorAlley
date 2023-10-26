@@ -283,7 +283,8 @@ const Van = (options = {}) => {
       bottomAligned: true,
       deadTimer: null,
       frameCount: 0,
-      radarJammerModulus: 30,
+      radarJammerModulus: FPS,
+      radarJammerModulus1X: FPS,
       jamming: false,
       energy: 2,
       energyMax: 2,
@@ -296,7 +297,9 @@ const Van = (options = {}) => {
       halfHeight: height / 2,
       state: 0,
       stateMax: 2,
-      stateModulus: 30,
+      stateModulus: FPS,
+      stateModulus1X: FPS,
+      gameSpeedProps: ['radarJammerModulus', 'stateModulus'],
       stopped: false,
       // if the van reaches the enemy base (near the landing pad), it's game over.
       xGameOver: 0, // set at init
