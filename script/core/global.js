@@ -13,6 +13,24 @@ const ua = navigator.userAgent;
 const FPS = 30;
 const FRAMERATE = 1000 / FPS;
 
+let GAME_SPEED;
+const GAME_SPEED_MIN = 0.25;
+const GAME_SPEED_MAX = 2;
+const GAME_SPEED_INCREMENT = 0.05;
+
+function updateGameSpeed(gameSpeed = 1) {
+  gameSpeed = Math.max(
+    GAME_SPEED_MIN,
+    Math.min(GAME_SPEED_MAX, parseFloat(gameSpeed).toFixed(2))
+  );
+
+  GAME_SPEED = gameSpeed;
+
+  return gameSpeed;
+}
+
+GAME_SPEED = updateGameSpeed(searchParams.get('gameSpeed') || 1);
+
 /**
  * Skip frame(s) as needed, prevent the game from running too fast.
  *
@@ -319,6 +337,7 @@ const COSTS = {
 
 export {
   DEFAULT_FUNDS,
+  GAME_SPEED,
   TYPES,
   PRETTY_TYPES,
   COSTS,
