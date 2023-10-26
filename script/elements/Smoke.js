@@ -1,4 +1,4 @@
-import { rnd, rndInt, plusMinus } from '../core/global.js';
+import { rnd, rndInt, plusMinus, GAME_SPEED } from '../core/global.js';
 import { common } from '../core/common.js';
 import { poolBoy } from '../core/poolboy.js';
 import { sprites } from '../core/sprites.js';
@@ -23,16 +23,20 @@ const Smoke = (options = {}) => {
     // move?
     if (data.vX !== null && data.vY !== null) {
       data.x +=
-        data.vX * (options.fixedSpeed ? 1 : Math.max(0.9, Math.random()));
+        data.vX *
+        (options.fixedSpeed ? 1 : Math.max(0.9, Math.random())) *
+        GAME_SPEED;
       data.y +=
-        data.vY * (options.fixedSpeed ? 1 : Math.max(0.9, Math.random())) +
-        data.gravity;
+        (data.vY * (options.fixedSpeed ? 1 : Math.max(0.9, Math.random())) +
+          data.gravity) *
+        GAME_SPEED;
 
       if (options.deceleration) {
-        data.vX *= options.deceleration;
-        data.vY *= options.deceleration;
+        data.vX *= 1 - (1 - options.deceleration) * GAME_SPEED;
+        data.vY *= 1 - (1 - options.deceleration) * GAME_SPEED;
         if (options.increaseDeceleration !== undefined) {
-          options.deceleration *= options.increaseDeceleration;
+          options.deceleration *=
+            1 - (1 - options.increaseDeceleration) * GAME_SPEED;
         }
       }
 
@@ -83,7 +87,7 @@ const Smoke = (options = {}) => {
 
     // if fading, animate every frame.
     if (data.isFading) {
-      data.fadeFrame++;
+      data.fadeFrame += GAME_SPEED;
 
       if (data.fadeFrame < data.fadeFrames && data.isOnScreen) {
         dom.o._style.setProperty(
@@ -129,8 +133,10 @@ const Smoke = (options = {}) => {
     {
       type: 'smoke',
       frameCount: 0,
-      animateModulus: 1,
-      spriteFrameModulus: options.spriteFrameModulus || 2,
+      spriteFrameModulus: parseInt(
+        (options.spriteFrameModulus || 2) * (1 / GAME_SPEED),
+        10
+      ),
       spriteFrame:
         options.spriteFrame !== undefined ? options.spriteFrame : rndInt(6),
       spriteFrames: 12,

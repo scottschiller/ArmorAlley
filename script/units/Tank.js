@@ -4,7 +4,15 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { nearbyTest, recycleTest } from '../core/logic.js';
-import { TYPES, FPS, rndInt, oneOf, getTypes, rngInt } from '../core/global.js';
+import {
+  TYPES,
+  FPS,
+  rndInt,
+  oneOf,
+  getTypes,
+  rngInt,
+  GAME_SPEED
+} from '../core/global.js';
 import {
   addSequence,
   playSound,
@@ -300,7 +308,7 @@ const Tank = (options = {}) => {
     effects.smokeRelativeToDamage(exports);
 
     if (!data.stopped) {
-      moveTo(data.x + data.vX, data.y);
+      moveTo(data.x + data.vX * GAME_SPEED, data.y);
     } else {
       sprites.setTransformXY(
         exports,
@@ -316,7 +324,7 @@ const Tank = (options = {}) => {
           // run "moving" animation for a few frames
           utils.css.remove(dom.o, css.stopped);
 
-          moveTo(data.x + (data.isEnemy ? -1 : 1), data.y);
+          moveTo(data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED, data.y);
 
           // and then stop again if we haven't resumed for real by that time.
           common.setFrameTimeout(() => {

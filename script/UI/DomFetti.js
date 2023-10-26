@@ -1,5 +1,5 @@
 import { game } from '../core/Game.js';
-import { TYPES, isFirefox } from '../core/global.js';
+import { GAME_SPEED, TYPES, isFirefox } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 
 // "DOMFetti" experiment - 09/2018
@@ -105,7 +105,8 @@ const useUnlimited = window.location.href.match(/unlimited/i);
 let maxActiveCount = useUnlimited ? Math.Infinity : 1000;
 let activeCount = 0;
 
-const totalTicks = 250;
+const TOTAL_TICKS = 250;
+let totalTicks; // TBD by GAME_SPEED
 
 const boundary1 = 90;
 const boundary2 = 270;
@@ -206,19 +207,19 @@ function updateFetti(fetti, progress, decay, frameCount) {
   // DRY
   const fp = fetti.physics;
 
-  fp.x += Math.cos(fp.angle2D) * fp.velocity;
-  fp.y += Math.sin(fp.angle2D) * fp.velocity;
-  fp.z += Math.sin(fp.angle3D) * fp.velocity;
+  fp.x += Math.cos(fp.angle2D) * fp.velocity * GAME_SPEED;
+  fp.y += Math.sin(fp.angle2D) * fp.velocity * GAME_SPEED;
+  fp.z += Math.sin(fp.angle3D) * fp.velocity * GAME_SPEED;
 
-  fp.wobble += rnd(0.1) * (fp.coinToss ? 1 : -1);
+  fp.wobble += rnd(0.1) * (fp.coinToss ? 1 : -1) * GAME_SPEED;
 
-  fp.velocity *= decay;
+  fp.velocity *= 1 - (1 - decay) * GAME_SPEED;
 
-  fp.y += 1;
+  fp.y += 1 * GAME_SPEED;
 
-  fp.tiltAngleX += fp.xIncrement * (1 - progress);
-  fp.tiltAngleY += fp.yIncrement * (1 - progress);
-  fp.rotateAngle += fp.zIncrement;
+  fp.tiltAngleX += fp.xIncrement * (1 - progress) * GAME_SPEED;
+  fp.tiltAngleY += fp.yIncrement * (1 - progress) * GAME_SPEED;
+  fp.rotateAngle += fp.zIncrement * GAME_SPEED;
 
   const {
     x,
@@ -396,6 +397,8 @@ function confetti(
   } = {},
   callback
 ) {
+  // hackish: set based on current
+  totalTicks = TOTAL_TICKS * (1 / GAME_SPEED);
   if (activeCount + elementCount > maxActiveCount) {
     // "throttling": you only get a few.
     elementCount = Math.max(0, Math.min(5, maxActiveCount - elementCount));

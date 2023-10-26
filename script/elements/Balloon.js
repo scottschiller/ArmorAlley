@@ -8,7 +8,8 @@ import {
   TYPES,
   rngInt,
   rngPlusMinus,
-  rng
+  rng,
+  GAME_SPEED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -232,7 +233,7 @@ const Balloon = (options = {}) => {
         data.verticalDirection *= -1;
       }
 
-      data.y += data.verticalDirection;
+      data.y += data.verticalDirection * GAME_SPEED;
     } else {
       // free-floating balloon
 
@@ -271,8 +272,8 @@ const Balloon = (options = {}) => {
         if (data.windOffsetY <= 0.5) data.windOffsetY += 0.1;
       }
 
-      data.x += data.windOffsetX;
-      data.y += data.windOffsetY;
+      data.x += data.windOffsetX * GAME_SPEED;
+      data.y += data.windOffsetY * GAME_SPEED;
 
       zones.refreshZone(exports);
     }

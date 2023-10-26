@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import {
   bananaMode,
   FPS,
+  GAME_SPEED,
   getTypes,
   rndInt,
   rubberChickenMode,
@@ -201,7 +202,7 @@ const MissileLauncher = (options = {}) => {
     if (data.dead) return !dom.o;
 
     if (!data.stopped) {
-      sprites.moveTo(exports, data.x + data.vX, data.y);
+      sprites.moveTo(exports, data.x + data.vX * GAME_SPEED, data.y);
     } else {
       // if stopped, just take scroll into effect
       sprites.moveWithScrollOffset(exports);

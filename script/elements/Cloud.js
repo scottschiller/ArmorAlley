@@ -4,7 +4,8 @@ import {
   worldHeight,
   rng,
   TYPES,
-  rngInt
+  rngInt,
+  GAME_SPEED
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
@@ -74,8 +75,8 @@ const Cloud = (options = {}) => {
       data.windOffsetY *= -1;
     }
 
-    data.x += data.windOffsetX;
-    data.y += data.windOffsetY;
+    data.x += data.windOffsetX * GAME_SPEED;
+    data.y += data.windOffsetY * GAME_SPEED;
 
     zones.refreshZone(exports);
 

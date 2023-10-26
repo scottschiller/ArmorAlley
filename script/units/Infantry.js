@@ -3,7 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import { getTypes, rngInt, TYPES } from '../core/global.js';
+import { GAME_SPEED, getTypes, rngInt, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -33,7 +33,7 @@ const Infantry = (options = {}) => {
     // always do positioning work, and maybe fire
 
     // only infantry: move back and forth a bit, and flip animation, while firing - like original game
-    const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
+    const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4 * GAME_SPEED;
 
     moveTo(data.x + offset, data.y);
 
@@ -233,13 +233,16 @@ const Infantry = (options = {}) => {
     if (!data.stopped) {
       if (data.roles[data.role] === TYPES.infantry) {
         // infantry walking "pace" varies slightly, similar to original game
-        moveTo(data.x + data.vX * data.vXFrames[data.vXFrameOffset], data.y);
+        moveTo(
+          data.x + data.vX * GAME_SPEED * data.vXFrames[data.vXFrameOffset],
+          data.y
+        );
 
         data.vXFrameOffset++;
         if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
       } else {
         // engineers always move one pixel at a time; let's say it's because of the backpacks.
-        moveTo(data.x + data.vX, data.y);
+        moveTo(data.x + data.vX * GAME_SPEED, data.y);
       }
     } else {
       sprites.setTransformXY(

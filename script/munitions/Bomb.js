@@ -10,7 +10,8 @@ import {
   rndInt,
   worldHeight,
   TYPES,
-  getTypes
+  getTypes,
+  GAME_SPEED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -312,11 +313,12 @@ const Bomb = (options = {}) => {
       return !data.deadTimer && !dom.o;
     }
 
-    data.gravity *= 1.1;
+    data.gravity *= 1 + 0.1 * GAME_SPEED;
 
     moveTo(
-      data.x + data.vX,
-      data.y + Math.min(data.vY + data.gravity, data.vYMax)
+      data.x + data.vX * GAME_SPEED,
+      data.y +
+        Math.min(data.vY * GAME_SPEED + data.gravity * GAME_SPEED, data.vYMax)
     );
 
     // hit bottom?

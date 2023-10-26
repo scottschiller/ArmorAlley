@@ -4,6 +4,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
 import {
+  GAME_SPEED,
   getTypes,
   rad2Deg,
   rndInt,
@@ -736,12 +737,13 @@ const SmartMissile = (options = {}) => {
       );
     }
 
-    newX = data.x + data.vX;
+    newX = data.x + data.vX * GAME_SPEED;
     newY =
       data.y +
       (!data.expired
         ? data.vY
-        : Math.min(data.vY + data.gravity, data.vYMaxExpired));
+        : Math.min(data.vY + data.gravity, data.vYMaxExpired)) *
+        GAME_SPEED;
 
     // determine angle of missile (pointing at target, not necessarily always heading that way)
     rad = Math.atan2(deltaY, deltaX);
@@ -980,8 +982,8 @@ const SmartMissile = (options = {}) => {
       }),
       decoyFrameCount: 15,
       ramiusFrameCount: 20,
-      expireFrameCount: options.expireFrameCount || 256,
-      dieFrameCount: options.dieFrameCount || 640, // 640 frames ought to be enough for anybody.
+      expireFrameCount: parseInt((options.expireFrameCount || 256) * (1 / GAME_SPEED), 10),
+      dieFrameCount: parseInt((options.dieFrameCount || 640) * (1 / GAME_SPEED), 10), // 640 frames ought to be enough for anybody.
       width,
       halfWidth: width / 2,
       height,

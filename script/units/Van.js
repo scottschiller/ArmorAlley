@@ -8,6 +8,7 @@ import {
   nearbyTest
 } from '../core/logic.js';
 import {
+  GAME_SPEED,
   TYPES,
   FPS,
   tutorialMode,
@@ -113,7 +114,7 @@ const Van = (options = {}) => {
     let enemyHelicopter;
 
     if (!data.stopped) {
-      sprites.moveTo(exports, data.x + data.vX, data.y);
+      sprites.moveTo(exports, data.x + data.vX * GAME_SPEED, data.y);
     } else {
       // if stopped, just take scroll into effect
       sprites.moveWithScrollOffset(exports);

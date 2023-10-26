@@ -3,7 +3,14 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
-import { rndInt, plusMinus, TYPES, getTypes, rnd } from '../core/global.js';
+import {
+  rndInt,
+  plusMinus,
+  TYPES,
+  getTypes,
+  rnd,
+  GAME_SPEED
+} from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -236,13 +243,15 @@ const GunFire = (options = {}) => {
     }
 
     if (data.isInert || data.expired) {
-      data.gravity *= data.gravityRate;
+      data.gravity *= 1 + (data.gravityRate - 1) * GAME_SPEED;
     }
 
     sprites.moveTo(
       exports,
-      data.x + data.vX,
-      data.y + data.vY + (data.isInert || data.expired ? data.gravity : 0)
+      data.x + data.vX * GAME_SPEED,
+      data.y +
+        data.vY * GAME_SPEED +
+        (data.isInert || data.expired ? data.gravity : 0)
     );
 
     data.frameCount++;
@@ -316,8 +325,14 @@ const GunFire = (options = {}) => {
       isEnemy: options.isEnemy,
       expired: false,
       frameCount: 0,
-      expireFrameCount: options.expireFrameCount || 25,
-      dieFrameCount: options.dieFrameCount || 75, // live up to N frames, then die?
+      expireFrameCount: parseInt(
+        ((options.expireFrameCount || 25) * 1) / GAME_SPEED,
+        10
+      ),
+      dieFrameCount: parseInt(
+        ((options.dieFrameCount || 75) * 1) / GAME_SPEED,
+        10
+      ), // live up to N frames, then die?
       width: 2,
       height: 1,
       gravity: 0.25,
