@@ -1,5 +1,5 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
-import { FRAMERATE, oneOf, TYPES } from '../core/global.js';
+import { FRAMERATE, GAME_SPEED, oneOf, TYPES } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
@@ -61,6 +61,9 @@ const View = () => {
     // slightly hackish: apply scroll offsets to both game view, and local player.
 
     if (game.objects.gameLoop.data.gameStopped) return;
+
+    // is it really this simple? scale based on game speed. :P
+    x *= GAME_SPEED;
 
     if (allowOverride) {
       data.battleField.scrollLeftVX = 0;
