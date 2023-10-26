@@ -49,6 +49,12 @@
 
 */
 
+:root {
+  /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
+  --game-speed: 1;
+  --gs-frac: calc(1 / var(--game-speed));
+}
+
 @font-face {
   font-display: swap;
   /* https://www.jetbrains.com/lp/mono/ */
@@ -761,7 +767,7 @@ body.is-mobile #funds-count {
   position: absolute;
   top: 0;
   /* "rotating" number */
-  transition: all 0.25s ease-in-out;
+  transition: all calc(0.25s * var(--gs-frac)) ease-in-out;
   transition-property: margin, background-position;
   width: 100%;
 }
@@ -1663,7 +1669,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .balloon.animating,
 .balloon.facing-right.animating {
-  animation: balloonright 0.8s steps(8);
+  animation: balloonright calc(0.8s * var(--gs-frac)) steps(8);
 }
 
 .balloon.enemy,
@@ -1674,12 +1680,12 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .balloon.enemy.animating,
 .balloon.facing-left.animating {
-  animation: balloonleft 0.8s steps(8);
+  animation: balloonleft calc(0.8s * var(--gs-frac)) steps(8);
 }
 
 .balloon.exploding {
   /* default when animation finishes */
-  animation: genericexplosionsmall 0.45s steps(3);
+  animation: genericexplosionsmall calc(0.45s * var(--gs-frac)) steps(3);
   background-image: url(../image/generic-explosion.png);
   background-position: 0 -30px;
   background-size: auto;
@@ -1709,7 +1715,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .chain.jerking {
   /* "Check it out, Beavis... I'm jerking my chain." ⛓️✊🤣 uh-huh huh huh. */
-  animation: jerkingmychain 0.69s infinite alternate;
+  animation: jerkingmychain calc(0.69s * var(--gs-frac)) infinite alternate;
 }
 
 .missile-launcher {
@@ -1747,7 +1753,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .tank .transform-sprite,
 .tank.enemy .transform-sprite {
-  animation: animate-transform-sprite-tank 0.1s steps(3) infinite;
+  animation: animate-transform-sprite-tank calc(0.1s * var(--gs-frac)) steps(3)
+    infinite;
 }
 
 .tank.enemy .transform-sprite {
@@ -1783,7 +1790,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .infantry .transform-sprite {
   /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
-  animation: animate-transform-sprite-infantry 0.4s steps(5) infinite reverse;
+  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
+    steps(5) infinite reverse;
   background-image: url(../image/infantry-sprite-horizontal.png);
   background-size: 55px 11px;
   height: 11px;
@@ -1793,7 +1801,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .infantry.enemy .transform-sprite {
   /* proper L -> R order, in this case. */
-  animation: animate-transform-sprite-infantry 0.4s steps(5) infinite;
+  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
+    steps(5) infinite;
   background-image: url(../image/infantry-enemy-sprite-horizontal.png);
 }
 
@@ -1820,7 +1829,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 .engineer .transform-sprite {
-  animation: animate-transform-sprite-engineer 0.4s steps(5) infinite;
+  animation: animate-transform-sprite-engineer calc(0.4s * var(--gs-frac))
+    steps(5) infinite;
   background-image: url(../image/engineer-sprite-horizontal.png);
   background-size: 50px 11px;
   height: 11px;
@@ -1837,13 +1847,15 @@ body.bnb .engineer:not(.enemy).butthead {
 }
 
 body.bnb .engineer:not(.enemy).beavis .transform-sprite {
-  animation: animate-transform-sprite-engineer-bnb 0.8s steps(10) infinite;
+  animation: animate-transform-sprite-engineer-bnb calc(0.8s * var(--gs-frac))
+    steps(10) infinite;
   /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
   background-image: url(../image/beavis-walking.png);
 }
 
 body.bnb .engineer:not(.enemy).butthead .transform-sprite {
-  animation: animate-transform-sprite-engineer-bnb 0.8s steps(10) infinite;
+  animation: animate-transform-sprite-engineer-bnb calc(0.8s * var(--gs-frac))
+    steps(10) infinite;
   /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
   background-image: url(../image/butthead-walking.png);
 }
@@ -1884,8 +1896,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 body.bnb .engineer:not(.enemy).beavis.stopped .transform-sprite,
 body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
-  animation: animate-transform-sprite-engineer-headbang-bnb 0.4s steps(4)
-    infinite;
+  animation: animate-transform-sprite-engineer-headbang-bnb
+    calc(0.4s * var(--gs-frac)) steps(4) infinite;
   background-size: 73px 32px;
   height: 32px;
   width: 73px;
@@ -1929,7 +1941,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .parachute-infantry.parachute-open .transform-sprite {
-  animation: parachute-swing 1s ease-in-out infinite alternate;
+  animation: parachute-swing calc(1s * var(--gs-frac)) ease-in-out infinite
+    alternate;
   background-position: 0 0;
 }
 
@@ -1969,28 +1982,28 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smart-missile-tracking-active:after {
-  animation: blink 0.33s ease-in-out alternate infinite;
+  animation: blink calc(0.33s * var(--gs-frac)) ease-in-out alternate infinite;
 }
 
 .smart-missile-tracking-removal:after,
 .smart-missile-tracking-removal:not(.radar-item):after {
-  animation: drop-in 0.33s ease-in-out reverse;
+  animation: drop-in calc(0.33s * var(--gs-frac)) ease-in-out reverse;
   /* final state once animation finishes */
   opacity: 0;
 }
 
 .smart-missile.smart-missile-tracking:after {
-  animation: drop-in-small 0.25s ease-out;
+  animation: drop-in-small calc(0.25s * var(--gs-frac)) ease-out;
   transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
 }
 
 .radar-item.smart-missile-tracking-active {
-  animation: blink 0.25s infinite;
+  animation: blink calc(0.25s * var(--gs-frac)) infinite;
 }
 
 /* special case: avoid affecting display of child nodes */
 .radar-item.turret.smart-missile-tracking-active {
-  animation: blink-tracking-color 0.25s infinite;
+  animation: blink-tracking-color calc(0.25s * var(--gs-frac)) infinite;
 }
 
 .radar-item.smart-missile-tracking-active:not(.helicopter):not(.turret) {
@@ -2050,14 +2063,14 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 #world.welcome .helicopter.respawning-active .transform-sprite,
 .helicopter.respawning-active .transform-sprite {
   top: 0;
-  transition: all 1.5s ease-in-out;
+  transition: all calc(1.5s * var(--gs-frac)) ease-in-out;
   /* filter: blur() may be applied during game start */
   transition-property: top, filter;
 }
 
 .helicopter.rotated-left,
 .helicopter.rotated-right {
-  animation: rotateleft 0.33s steps(3);
+  animation: rotateleft calc(0.33s * var(--gs-frac)) steps(3);
   background-image: url(../image/helicopter-rotating.png) !important;
   height: 20px;
   width: 50px;
@@ -2078,12 +2091,12 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .helicopter.rotated-left.enemy,
 .helicopter.rotated-right {
   /* backwards */
-  animation: rotateright 0.33s steps(3);
+  animation: rotateright calc(0.33s * var(--gs-frac)) steps(3);
 }
 
 .helicopter.rotated-right.enemy {
   /* backwards */
-  animation: rotateleft 0.33s steps(3);
+  animation: rotateleft calc(0.33s * var(--gs-frac)) steps(3);
 }
 
 .helicopter.cloaked {
@@ -2103,7 +2116,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .helicopter.enemy .transform-sprite {
-  animation: animate-transform-sprite-helicopter-enemy 0.52s steps(4) infinite;
+  animation: animate-transform-sprite-helicopter-enemy
+    calc(0.52s * var(--gs-frac)) steps(4) infinite;
   background-image: url(../image/helicopter-enemy-sprite-horizontal.png);
   background-size: 220px 18px;
   height: 18px;
@@ -2154,7 +2168,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 #battlefield .smart-missile:not(.armed),
 .smart-missile.expired {
-  animation: blink 0.125s infinite;
+  animation: blink calc(0.125s * var(--gs-frac)) infinite;
   /* blink initially, until armed - and when expired */
   transition-property: transform, opacity;
 }
@@ -2245,7 +2259,8 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .base .transform-sprite {
-  animation: animate-transform-sprite-base 1s steps(5) infinite alternate;
+  animation: animate-transform-sprite-base calc(1s * var(--gs-frac)) steps(5)
+    infinite alternate;
   background-image: url(../image/base-sprite-horizontal.png);
   background-size: 520px 26px;
   height: 26px;
@@ -2253,7 +2268,8 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 #battlefield.snow .base .transform-sprite {
-  animation: animate-transform-sprite-base-snow 1s steps(5) infinite alternate;
+  animation: animate-transform-sprite-base-snow calc(1s * var(--gs-frac))
+    steps(5) infinite alternate;
   background-image: url(../image/base-sprite-horizontal-snow.png);
   background-size: 510px 25px;
   height: 25px;
@@ -2336,7 +2352,8 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .landing-pad .transform-sprite {
-  animation: animate-transform-sprite-landing-pad 1s steps(4) infinite;
+  animation: animate-transform-sprite-landing-pad calc(1s * var(--gs-frac))
+    steps(4) infinite;
   background-image: url(../image/landing-pad-sprite-horizontal.png);
   height: 7px;
   width: 324px;
@@ -2467,7 +2484,8 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .helicopter .transform-sprite {
-  animation: animate-transform-sprite-helicopter 0.52s steps(4) infinite;
+  animation: animate-transform-sprite-helicopter calc(0.52s * var(--gs-frac))
+    steps(4) infinite;
   background-image: url(../image/helicopter-sprite-horizontal.png);
   background-size: 200px 15px;
   height: 15px;
@@ -2496,11 +2514,11 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
-  animation: scan 2s linear infinite alternate;
+  animation: scan calc(2s * var(--gs-frac)) linear infinite alternate;
 }
 
 .turret:not(.firing):not(.exploding).engineer-interacting {
-  animation: sorta-blink-subtle 1s steps(8) infinite;
+  animation: sorta-blink-subtle calc(1s * var(--gs-frac)) steps(8) infinite;
 }
 
 .turret.destroyed {
@@ -2564,7 +2582,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .bomb.explosion-large .sub-sprite {
-  animation: largeexplosion 0.66s steps(10);
+  animation: largeexplosion calc(0.66s * var(--gs-frac)) steps(10);
   /**
    * "Dirt Explosion" by SrGrafo on DeviantArt
    * https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
@@ -2767,7 +2785,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 }
 
 #radar .sprite.helicopter.local-player {
-  animation: blink 0.5s infinite;
+  animation: blink calc(0.5s * var(--gs-frac)) infinite;
 }
 
 #radar .sprite.expired {
@@ -2841,7 +2859,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 }
 
 #radar .sprite.dying {
-  animation: blink 0.25s infinite;
+  animation: blink calc(0.25s * var(--gs-frac)) infinite;
 }
 
 #radar .sprite.dead {
@@ -2858,7 +2876,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 .tank.exploding,
 .turret.exploding,
 .van.exploding {
-  animation: explosionshrapnel2 1s steps(12);
+  animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
   animation-fill-mode: forwards; /* Stay on last frame when finished */
   background-image: url(../image/explosion-shrapnel-2.png);
   background-position: 0 -384px;
@@ -2925,7 +2943,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 .bunker.burning .sub-sprite.nuke,
 .bunker.exploding .sub-sprite.nuke {
   /* go go go! */
-  animation: nuke 1.5s steps(21);
+  animation: nuke calc(1.5s * var(--gs-frac)) steps(21);
   animation-fill-mode: forwards;
   visibility: visible;
 }
@@ -2942,7 +2960,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 
 /* new "generic" explosion */
 .ephemeral-explosion {
-  animation: ephemeralexplosion 0.75s steps(14);
+  animation: ephemeralexplosion calc(0.75s * var(--gs-frac)) steps(14);
   animation-fill-mode: forwards; /* Stay on last frame when finished */
   background-image: url(../image/explosion_by_tungkann_dam5o19.png);
   background-position: 0 0;
@@ -2969,7 +2987,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   left: 0;
   opacity: 0;
   position: absolute;
-  transition: all 0.2s ease-out;
+  transition: all calc(0.2s * var(--gs-frac)) ease-out;
   transition-property: width, height, left, background-color, opacity;
   width: 100%;
   z-index: 2;
@@ -3079,7 +3097,7 @@ body.is_safari .cornholio .sub-sprite {
 
 .bunker.burning .sub-sprite.rubble,
 .bunker.exploding .sub-sprite.rubble {
-  animation: burninating 0.66s steps(3) infinite;
+  animation: burninating calc(0.66s * var(--gs-frac)) steps(3) infinite;
   background-image: url(../image/bunker-burning-sprite-horizontal.gif);
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -3213,7 +3231,7 @@ body.bnb .sprite.engineer.butthead.building {
   background-color: rgb(0, 255, 0, 0.025);
   border: 0.5px solid rgba(0, 255, 0, 0.075);
   border-radius: 100%;
-  transition-duration: 1s;
+  transition-duration: calc(1s * var(--gs-frac));
   transition-timing-function: ease-in-out;
   transition-property: opacity, background-color, border-color, width, height;
   z-index: -2;
@@ -3276,7 +3294,7 @@ body:not(.game-started) .scan-node {
   border-width: 0px;
   width: 0px;
   height: 0px;
-  transition-duration: 1s;
+  transition-duration: calc(1s * var(--gs-frac));
   transition-timing-function: ease-in-out;
 }
 
@@ -3309,7 +3327,7 @@ body:not(.game-started) .scan-node {
 
 .shrapnel.stopped .transform-sprite {
   opacity: 0;
-  transition: opacity 0.75s ease-in-out;
+  transition: opacity calc(0.75s * var(--gs-frac)) ease-in-out;
 }
 
 .cloud1,
@@ -3424,7 +3442,7 @@ body.is_safari:not(.is-mobile) #game-tips .tips-container {
 
 body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node,
 body.is_safari:not(.is-mobile) #game-tips .tips-container .tip {
-  animation: scrollText-safari-scale 16s linear;
+  animation: scrollText-safari-scale calc(16s * var(--gs-frac)) linear;
   font-size: 28px;
   line-height: 20px;
   width: 64rem;
@@ -3527,7 +3545,7 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips .tips-container .animation-node,
 #game-tips .tips-container .tip {
-  animation: scrollText 20s linear;
+  animation: scrollText calc(20s * var(--gs-frac)) linear;
   font-size: 16px;
   font-weight: 300;
   letter-spacing: -0.25em;
@@ -3574,7 +3592,7 @@ body.game-started #game-tips.active .tips-container {
   filter: blur(3px);
   transform: scale3d(1.2, 1.2, 1);
   transform-origin: 50% 50%;
-  transition: all 0.5s ease-in-out;
+  transition: all calc(0.5s * var(--gs-frac)) ease-in-out;
   transition-property: filter, opacity, transform;
   width: 100%;
 }
@@ -3750,7 +3768,7 @@ body.bnb #bnb-now-playing {
   position: absolute;
   top: 0;
   transform: scale3d(1.2, 1.2, 0);
-  transition: all 0.5s ease-in-out;
+  transition: calc(0.5s * var(--gs-frac)) ease-in-out;
   transition-property: transform, opacity;
   width: 100%;
 }
