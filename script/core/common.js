@@ -421,7 +421,7 @@ const common = {
 
     data = {
       frameCount: 0,
-      frameInterval: parseInt(delayMsec / FRAMERATE, 10), // e.g., msec = 1000 -> frameInterval = 60
+      frameInterval: parseInt((delayMsec / FRAMERATE) * (1 / GAME_SPEED), 10), // e.g., msec = 1000 -> frameInterval = 60
       callbackFired: false,
       didReset: false
     };

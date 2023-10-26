@@ -315,6 +315,7 @@ const MissileLauncher = (options = {}) => {
       frameCount: 0,
       frameTimeout: null,
       fireModulus: FPS, // check every second or so
+      fireModulus1X: FPS,
       width,
       halfWidth: width / 2,
       height,
@@ -324,6 +325,8 @@ const MissileLauncher = (options = {}) => {
       state: 0,
       stateMax: 3,
       stateModulus: 38,
+      stateModulus1X: 38,
+      gameSpeedProps: ['fireModulus', 'stateModulus'],
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
       domFetti: {

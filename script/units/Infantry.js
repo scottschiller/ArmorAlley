@@ -367,7 +367,9 @@ const Infantry = (options = {}) => {
       height,
       halfHeight: height / 2,
       fireModulus: 10,
+      fireModulus1X: 10,
       fireModulusOffset: rngInt(9, TYPES.infantry),
+      gameSpeedProps: ['fireModulus'],
       vX: options.isEnemy ? -1 : 1,
       // infantry "pacing" as they walk: 30 pixels in 30 frames.
       vXFrames: [

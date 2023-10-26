@@ -400,6 +400,11 @@ const Tank = (options = {}) => {
 
   const width = 58;
 
+  const fireModulus =
+    fireRates[
+      options.isEnemy && game.players.cpu.length ? gameType : 'default'
+    ];
+
   data = common.inheritData(
     {
       type: TYPES.tank,
@@ -409,12 +414,12 @@ const Tank = (options = {}) => {
       energyMax: 8,
       energyLineScale: 0.8,
       frameCount: 0,
-      repairModulus: 30,
+      repairModulus: FPS,
+      repairModulus1X: FPS,
       // enemy tanks shoot a little faster, depending on the game difficulty
-      fireModulus:
-        fireRates[
-          options.isEnemy && game.players.cpu.length ? gameType : 'default'
-        ],
+      fireModulus,
+      fireModulus1X: fireModulus,
+      gameSpeedProps: ['fireModulus', 'repairModulus'],
       vX: options.isEnemy ? -1 : 1,
       vXDefault: options.isEnemy ? -1 : 1,
       width,
