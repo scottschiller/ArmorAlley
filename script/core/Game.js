@@ -175,6 +175,9 @@ const game = (() => {
       console.warn(`No constructor of type ${type}`);
     }
 
+    // post-init, do the speed thingy.
+    common.applyGameSpeed(object);
+
     // add the object to game arrays, before firing init method (DOM I/O etc.)
     // hackish: `noInit` applies for inventory ordering purposes, should be refactored.
 

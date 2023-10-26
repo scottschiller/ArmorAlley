@@ -5,9 +5,13 @@ import {
   TYPES,
   defaultMissileMode,
   rubberChickenMode,
-  bananaMode
+  bananaMode,
+  GAME_SPEED,
+  GAME_SPEED_INCREMENT
 } from '../core/global.js';
 import { gamePrefs } from './preferences.js';
+import { net } from '../core/network.js';
+import { common } from '../core/common.js';
 
 // recycled from survivor.js
 function KeyboardMonitor() {
@@ -29,6 +33,10 @@ function KeyboardMonitor() {
     up: 38,
     right: 39,
     down: 40,
+    minus: '-',
+    minus_1: '_',
+    plus: '=',
+    plus_1: '+',
     missileLauncher: 77,
     tank: 84,
     van: 86,
@@ -63,53 +71,76 @@ function KeyboardMonitor() {
   const processInput = (player, method, params) =>
     player.callAction(method, params);
 
+  function handleKeyDown(e, codeOrChar) {
+    // let editor handle keys, unless method returns truthy
+    if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
+
+    if (!e.metaKey && keys[codeOrChar]?.down) {
+      if (!downKeys[codeOrChar]) {
+        downKeys[codeOrChar] = true;
+        keys[codeOrChar].down(e);
+      }
+      if (keys[codeOrChar].allowEvent === undefined) {
+        return stopEvent(e);
+      }
+    }
+
+    return true;
+  }
+
+  function handleKeyUp(e, codeOrChar) {
+    // let editor handle keys, unless method returns truthy
+    if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
+
+    if (!e.metaKey && downKeys[codeOrChar] && keys[codeOrChar]) {
+      downKeys[codeOrChar] = null;
+      if (keys[codeOrChar].up) {
+        keys[codeOrChar].up(e);
+      }
+      if (keys[codeOrChar].allowEvent === undefined) {
+        return stopEvent(e);
+      }
+    }
+
+    return true;
+  }
+
+  function preFlightCheck(codeOrChar) {
+    if (game.data.paused && !allowedInPause[codeOrChar]) return;
+
+    if (game.objects.view.data.chatVisible && !allowedInChatInput[codeOrChar])
+      return;
+
+    if (altMissiles[codeOrChar] && !gamePrefs.alt_smart_missiles) return;
+
+    return true;
+  }
+
   events = {
     keydown(e) {
-      // let editor handle keys, unless method returns truthy
-      if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
-
-      if (game.data.paused && !allowedInPause[e.keyCode]) return;
-
-      if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode])
-        return;
-
-      if (altMissiles[e.keyCode] && !gamePrefs.alt_smart_missiles) return;
-
-      if (!e.metaKey && keys[e.keyCode]?.down) {
-        if (!downKeys[e.keyCode]) {
-          downKeys[e.keyCode] = true;
-          keys[e.keyCode].down(e);
-        }
-        if (keys[e.keyCode].allowEvent === undefined) {
-          return stopEvent(e);
+      if (keys[e.keyCode]) {
+        if (!preFlightCheck(e.keyCode)) return;
+        handleKeyDown(e, e.keyCode);
+      } else {
+        const char = e.key;
+        if (keys[char]) {
+          if (!preFlightCheck(char)) return;
+          handleKeyDown(e, char);
         }
       }
-
-      return true;
     },
 
     keyup(e) {
-      // let editor handle keys, unless method returns truthy
-      if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
-
-      if (game.data.paused && !allowedInPause[e.keyCode]) return;
-
-      if (game.objects.view.data.chatVisible && !allowedInChatInput[e.keyCode])
-        return;
-
-      if (altMissiles[e.keyCode] && !gamePrefs.alt_smart_missiles) return;
-
-      if (!e.metaKey && downKeys[e.keyCode] && keys[e.keyCode]) {
-        downKeys[e.keyCode] = null;
-        if (keys[e.keyCode].up) {
-          keys[e.keyCode].up(e);
-        }
-        if (keys[e.keyCode].allowEvent === undefined) {
-          return stopEvent(e);
+      if (keys[e.keyCode]) {
+        if (!preFlightCheck(e.keyCode)) return;
+        handleKeyUp(e, e.keyCode);
+      } else {
+        const char = e.key;
+        if (keys[char]) {
+          if (!preFlightCheck(char)) return;
+          handleKeyUp(e, char);
         }
       }
-
-      return true;
     }
   };
 
@@ -273,8 +304,25 @@ function KeyboardMonitor() {
       down() {
         game?.players?.local.toggleAutoRotate();
       }
+    },
+
+    [keyMap.minus]: {
+      down() {
+        if (net.active) return;
+        common.setGameSpeed(GAME_SPEED - GAME_SPEED_INCREMENT);
+      }
+    },
+
+    [keyMap.plus]: {
+      down() {
+        if (net.active) return;
+        common.setGameSpeed(GAME_SPEED + GAME_SPEED_INCREMENT);
+      }
     }
   };
+
+  keys[keyMap.minus_1] = keys[keyMap.minus];
+  keys[keyMap.plus_1] = keys[keyMap.plus];
 
   /**
    * The original game used Z for bombs.

@@ -1,7 +1,7 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { isMobile, searchParams } from '../core/global.js';
+import { GAME_SPEED, isMobile, searchParams } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
@@ -533,6 +533,10 @@ function startGame() {
     });
   } else {
     // go go go!
+    if (GAME_SPEED !== 1) {
+      common.applyGameSpeedToAll();
+    }
+
     game.init();
 
     window.requestAnimationFrame(() => {

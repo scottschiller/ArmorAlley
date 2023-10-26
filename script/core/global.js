@@ -338,6 +338,7 @@ const COSTS = {
 export {
   DEFAULT_FUNDS,
   GAME_SPEED,
+  GAME_SPEED_INCREMENT,
   TYPES,
   PRETTY_TYPES,
   COSTS,
@@ -381,5 +382,6 @@ export {
   rngPlusMinus,
   soundManager,
   setDefaultSeed,
-  setTutorialMode
+  setTutorialMode,
+  updateGameSpeed
 };
