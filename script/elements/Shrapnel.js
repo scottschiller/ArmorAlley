@@ -3,12 +3,14 @@ import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
+  GAME_SPEED,
   getTypes,
   plusMinus,
   rnd,
   rndInt,
   rng,
   rngInt,
+  rngPlusMinus,
   TYPES,
   worldHeight
 } from '../core/global.js';
@@ -157,6 +159,11 @@ const Shrapnel = (options = {}) => {
     // bounce upward if ultimately heading down
     if (data.vY + data.gravity <= 0) return;
 
+    // expired; you only get so many. ;)
+    if (data.ricochetCount >= data.ricochetCountMax) return;
+
+    data.ricochetCount++;
+
     // at least...
     data.vY = Math.max(data.vY, data.maxVY / 6);
 
@@ -174,8 +181,8 @@ const Shrapnel = (options = {}) => {
     );
 
     // randomize vX strength, and randomly reverse direction.
-    data.vX += Math.random();
-    data.vX *= Math.random() > 0.75 ? -1 : 1;
+    data.vX += rng(1, data.type);
+    data.vX *= rngPlusMinus(1, data.type);
 
     // and, throttle
     if (data.vX > 0) {
@@ -184,13 +191,17 @@ const Shrapnel = (options = {}) => {
       data.vX = Math.max(data.vX, data.maxVX * -1);
     }
 
+    // everything becomes slightly "heavier" on bounce. ;)
+    data.gravityBase += 0.01;
+
     // reset "gravity" effect, too.
-    data.gravity = data.gravityRate;
+    data.gravity = 1 + data.gravityBase + data.gravityRate;
 
     // data.y may have been "corrected" - move again, just to be safe.
     moveTo(
-      data.x + data.vX,
-      data.y + Math.min(data.maxVY, data.vY + data.gravity)
+      data.x + data.vX * GAME_SPEED,
+      data.y +
+        Math.min(data.maxVY, data.vY * GAME_SPEED + data.gravity * GAME_SPEED)
     );
 
     playSound(sounds.ricochet, exports);
@@ -208,8 +219,9 @@ const Shrapnel = (options = {}) => {
     data.spinAngle += data.spinAngleIncrement;
 
     moveTo(
-      data.x + data.vX,
-      data.y + Math.min(data.maxVY, data.vY + data.gravity)
+      data.x + data.vX * GAME_SPEED,
+      data.y +
+        Math.min(data.maxVY, data.vY * GAME_SPEED + data.gravity * GAME_SPEED)
     );
 
     // random: smoke while moving?
@@ -222,12 +234,12 @@ const Shrapnel = (options = {}) => {
       // align w/ground, slightly lower
       moveTo(data.x, worldHeight - 12 * data.relativeScale + 3);
       die();
+    } else {
+      data.gravity *= 1 + (data.gravityBase + data.gravityRate) * GAME_SPEED;
+
+      // collision check
+      collisionTest(collision, exports);
     }
-
-    // collision check
-    collisionTest(collision, exports);
-
-    data.gravity *= data.gravityRate;
 
     return data.dead && !data.deadTimer && !dom.o;
   }
@@ -299,7 +311,8 @@ const Shrapnel = (options = {}) => {
       maxVY: 64,
       gravity: 1,
       // randomize fall rate
-      gravityRate: 1.05 + rng(0.033, type),
+      gravityBase: 0.08,
+      gravityRate: rng(0.05, type),
       width: 12 * scale,
       height: 12 * scale,
       scale,
@@ -312,7 +325,9 @@ const Shrapnel = (options = {}) => {
       hostile: true,
       damagePoints: 0.5,
       hasSound: !!options.hasSound,
-      rndRicochetAmount: 0.5 + rng(1, type),
+      rndRicochetAmount: 0.5 + rng(0.75, type),
+      ricochetCount: 0,
+      ricochetCountMax: 8,
       // let shrapnel that originates "higher up in the sky" from the following types, bounce off tanks and super bunkers
       ricochetTypes: [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile]
     },
@@ -337,6 +352,13 @@ const Shrapnel = (options = {}) => {
       source: exports,
       targets: undefined,
       checkTweens: true,
+      /**
+       * Hackish: prevent this method from repositioning the shrapnel.
+       * It may be a ricochet case, where the shrapnel is moving out of the body of a tank.
+       * Repeated hits may occur, but we'll exit because the ricochet is still active etc.
+       * TODO: consider returning the adjusted hit coords in future use cases.
+       */
+      checkTweensRepositionOnHit: false,
       hit(target) {
         hitAndDie(target);
       }

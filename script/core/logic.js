@@ -82,7 +82,7 @@ function collisionCheckWithOffsets(rect1, rect2, r1XOffset = 0, r1YOffset = 0) {
   );
 }
 
-function collisionCheckTweens(source, target) {
+function collisionCheckTweens(source, target, repositionOnHit = true) {
   /**
    * Given two objects with location and velocity coordinates,
    * step through the movement and check collision "in between" frames.
@@ -131,8 +131,10 @@ function collisionCheckTweens(source, target) {
     yOffset += stepY;
     if (collisionCheckWithOffsets(sData, tData, xOffset, yOffset)) {
       // we have a hit; reposition the source to the point of collision, and exit.
-      sData.x += xOffset;
-      sData.y += yOffset;
+      if (repositionOnHit) {
+        sData.x += xOffset;
+        sData.y += yOffset;
+      }
       return true;
     }
   }
@@ -221,7 +223,12 @@ function collisionCheckObject(options) {
       // note special Super Bunker "negative look-ahead" case - detects helicopter on both sides.
       if (
         collisionCheck(sData, tData, xLookAhead) ||
-        (options.checkTweens && collisionCheckTweens(options.source, target)) ||
+        (options.checkTweens &&
+          collisionCheckTweens(
+            options.source,
+            target,
+            options.checkTweensRepositionOnHit
+          )) ||
         (tData.type === TYPES.helicopter &&
           sData.type === TYPES.superBunker &&
           collisionCheck(sData, tData, -xLookAhead))
