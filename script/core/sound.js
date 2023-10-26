@@ -5,7 +5,8 @@ import {
   soundManager,
   TYPES,
   worldWidth,
-  DEFAULT_VOLUME
+  DEFAULT_VOLUME,
+  GAME_SPEED
 } from './global.js';
 import { common } from './common.js';
 import {
@@ -309,7 +310,9 @@ function playSound(soundReference, target, soundOptions) {
   // playback speed based on object's `playbackRate`, OR, ±5% on playback speed, for variety
   if (!soundObject?.options?.fixedPlaybackRate) {
     localOptions.playbackRate =
-      target?.data.playbackRate || 0.95 + Math.random() * 0.1;
+      (target?.data.playbackRate || 0.95 + Math.random() * 0.1) * GAME_SPEED;
+  } else if (GAME_SPEED !== 1) {
+    localOptions.playbackRate = (target?.data.playbackRate || 1) * GAME_SPEED;
   }
 
   // HACK: need to fix and normalize sound options.
