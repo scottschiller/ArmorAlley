@@ -72,9 +72,6 @@ function KeyboardMonitor() {
     player.callAction(method, params);
 
   function handleKeyDown(e, codeOrChar) {
-    // let editor handle keys, unless method returns truthy
-    if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
-
     if (!e.metaKey && keys[codeOrChar]?.down) {
       if (!downKeys[codeOrChar]) {
         downKeys[codeOrChar] = true;
@@ -89,9 +86,6 @@ function KeyboardMonitor() {
   }
 
   function handleKeyUp(e, codeOrChar) {
-    // let editor handle keys, unless method returns truthy
-    if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
-
     if (!e.metaKey && downKeys[codeOrChar] && keys[codeOrChar]) {
       downKeys[codeOrChar] = null;
       if (keys[codeOrChar].up) {
@@ -118,29 +112,21 @@ function KeyboardMonitor() {
 
   events = {
     keydown(e) {
-      if (keys[e.keyCode]) {
-        if (!preFlightCheck(e.keyCode)) return;
-        handleKeyDown(e, e.keyCode);
-      } else {
-        const char = e.key;
-        if (keys[char]) {
-          if (!preFlightCheck(char)) return;
-          handleKeyDown(e, char);
-        }
-      }
+      // let editor handle keys, unless method returns truthy
+      if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
+
+      [e.keyCode, e.key].forEach((item) => {
+        if (preFlightCheck(item)) handleKeyDown(e, item);
+      });
     },
 
     keyup(e) {
-      if (keys[e.keyCode]) {
-        if (!preFlightCheck(e.keyCode)) return;
-        handleKeyUp(e, e.keyCode);
-      } else {
-        const char = e.key;
-        if (keys[char]) {
-          if (!preFlightCheck(char)) return;
-          handleKeyUp(e, char);
-        }
-      }
+      // let editor handle keys, unless method returns truthy
+      if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
+
+      [e.keyCode, e.key].forEach((item) => {
+        if (preFlightCheck(item)) handleKeyUp(e, item);
+      });
     }
   };
 
