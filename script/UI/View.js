@@ -62,9 +62,6 @@ const View = () => {
 
     if (game.objects.gameLoop.data.gameStopped) return;
 
-    // is it really this simple? scale based on game speed. :P
-    x *= GAME_SPEED;
-
     if (allowOverride) {
       data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
@@ -508,7 +505,7 @@ const View = () => {
       scrollAmount = mouseDelta / data.browser.halfWidth;
 
       // and scale
-      setLeftScroll(scrollAmount * data.maxScroll);
+      setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED);
     }
   }
 
