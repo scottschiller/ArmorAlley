@@ -32,12 +32,13 @@ const cloudTypes = [
 ];
 
 const Cloud = (options = {}) => {
-  const cloudData = cloudTypes[rngInt(cloudTypes.length, TYPES.cloud)];
+  let type = TYPES.cloud;
+
+  const cloudData = cloudTypes[rngInt(cloudTypes.length, type)];
 
   const { className, width, height } = cloudData;
 
   let css, dom, data, exports;
-  let type = TYPES.cloud;
 
   function animate() {
     data.frameCount++;
