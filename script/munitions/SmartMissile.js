@@ -988,8 +988,14 @@ const SmartMissile = (options = {}) => {
       }),
       decoyFrameCount: 15,
       ramiusFrameCount: 20,
-      expireFrameCount: parseInt((options.expireFrameCount || 256) * (1 / GAME_SPEED), 10),
-      dieFrameCount: parseInt((options.dieFrameCount || 640) * (1 / GAME_SPEED), 10), // 640 frames ought to be enough for anybody.
+      expireFrameCount: parseInt(
+        (options.expireFrameCount || 256) * (1 / GAME_SPEED),
+        10
+      ),
+      dieFrameCount: parseInt(
+        (options.dieFrameCount || 640) * (1 / GAME_SPEED),
+        10
+      ), // 640 frames ought to be enough for anybody.
       width,
       halfWidth: width / 2,
       height,
