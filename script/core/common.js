@@ -393,6 +393,9 @@ const common = {
       });
     }
 
+    // special case: helicopters have their own method for numerous actions.
+    game.objects.helicopter?.forEach((chopper) => chopper.updateFiringRates());
+
     common.applyCSSGameSpeed();
   },
 
