@@ -1997,29 +1997,27 @@
                             name="sound"
                             value="1"
                             checked />
-                          <span class="label-text">Sound Effects</span>
+                          <span class="label-text">Sound Effects + Volume</span>
                         </label>
-                        <label for="main_volume">
-                          <span class="label-text"> + Volume</span>
-                          <!-- min-width allows for 100% without content shift -->
-                          <span
-                            id="volume-value"
-                            style="display: inline-block; min-width: 19px">
-                            <!-- "(70%)" rendered here -->
-                          </span>
-                          <input
-                            type="range"
-                            id="main_volume"
-                            name="volume"
-                            list="markers"
-                            min="0"
-                            max="10"
-                            value="7"
-                            step="1"
-                            class="range-slider" />
-                        </label>
+                        <div>
+                          <label for="main_volume">
+                            <span class="label-text"></span>
+                            <input
+                              type="range"
+                              id="main_volume"
+                              name="volume"
+                              min="0"
+                              max="10"
+                              value="7"
+                              step="1"
+                              class="range-slider" />
+                            <span id="volume-value">
+                              <!-- "(70%)" rendered here -->
+                            </span>
+                          </label>
+                        </div>
                         <p class="non-indented">
-                          Local ambience and audible hints - e.g., when building
+                          Local ambiance and audible hints - e.g., when building
                           convoys, or distant gunfire.
                         </p>
                       </li>
@@ -2575,7 +2573,7 @@
                   </fieldset>
 
                   <fieldset id="gameplay-options" class="sync-over-network">
-                    <p class="noindent network">
+                    <p class="non-indented network">
                       These are shared network options.
                     </p>
 
@@ -2798,7 +2796,7 @@
                   </fieldset>
 
                   <fieldset id="traffic-control" class="sync-over-network">
-                    <p class="noindent network">
+                    <p class="non-indented network">
                       These are shared network options.
                     </p>
 
