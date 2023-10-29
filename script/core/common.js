@@ -20,6 +20,7 @@ import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { utils } from './utils.js';
 import { playSound, sounds } from './sound.js';
+import { prefsManager } from '../aa.js';
 
 // unique IDs for quick object equality checks
 let guid;
@@ -355,16 +356,23 @@ const common = {
     // note: this updates GAME_SPEED
     const newGameSpeed = updateGameSpeed(gameSpeed);
 
+    // slightly redundant: update the live pref, to match the global
+    gamePrefs.game_speed = newGameSpeed;
+
     common.applyGameSpeedToAll();
 
-    game.objects.notifications.add('Game speed: %s', {
-      type: 'gameSpeed',
-      onRender(input) {
-        return input.replace('%s', `${Math.floor(newGameSpeed * 100)}%`);
-      }
-    });
+    if (game.data.started) {
+      game.objects.notifications.add('Game speed: %s', {
+        type: 'gameSpeed',
+        onRender(input) {
+          return input.replace('%s', `${Math.floor(newGameSpeed * 100)}%`);
+        }
+      });
+    }
 
-    playSound(sounds?.inventory?.begin);
+    if (game.data.started || prefsManager.isActive()) {
+      playSound(sounds?.inventory?.begin);
+    }
   },
 
   applyCSSGameSpeed: () => {
