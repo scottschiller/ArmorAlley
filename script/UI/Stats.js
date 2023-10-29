@@ -198,8 +198,10 @@ function Stats() {
       'verb_smart-missile': 'took out'
     },
     'super-bunker': {
-      verb: 'shot',
-      emoji: emoji.default
+      'verb': 'shot',
+      // hackish: ignore when a super bunker "shoots" a smart missile
+      'verb_smart-missile': UNKNOWN_VERB,
+      'emoji': emoji.default
     }
   };
 
