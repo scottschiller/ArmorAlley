@@ -4472,7 +4472,16 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   display: none;
 }
 
-/* volume control */
+#volume-value {
+  display: inline-block;
+  min-width: 19px;
+  vertical-align: middle;
+}
+
+#game_speed-value {
+  vertical-align: middle;
+}
+
 #game-prefs-modal .game-speed-icons {
   position: relative;
   font-size: 8px;
@@ -4505,37 +4514,49 @@ body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
   transform: scaleX(-1);
 }
 
+/* volume and game speed controls */
+
 #game-prefs-modal .range-slider {
+  display: inline-block;
   appearance: none;
   background: transparent;
   border: 0.5px solid #000;
-  border-radius: 6px;
-  height: 6px;
-  margin-bottom: 0;
-  margin-top: -0.5px;
+  border-radius: 8px;
+  height: 8px;
+  margin: 1px 0px 0px 0px;
   outline: none;
   padding: 0 0.5px;
-  width: 50px;
+  padding-left: 1px;
+  padding-right: 1px;
+  width: 100px;
+  background: transparent url(../image/checkerboard-black-mask-50percent.png);
+  background-size: auto;
+  image-rendering: pixelated;
+  background: #eee
+    url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
+  background-size: 1.5px;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 #game-prefs-modal .range-slider::-webkit-slider-thumb {
   appearance: none;
-  background: #000;
-  border: none;
-  border-radius: 100%;
+  background: #eee;
+  border: 0.5px solid #000;
+  border-radius: 5px;
   cursor: pointer;
-  height: 5px;
-  width: 5px;
+  height: 6px;
+  width: 10px;
 }
 
 #game-prefs-modal .range-slider::-moz-range-thumb {
   appearance: none;
-  background: #000;
-  border: none;
-  border-radius: 100%;
+  background: #eee;
+  border: 0.5px solid #000;
+  border-radius: 5px;
   cursor: pointer;
   height: 5px;
-  width: 5px;
+  width: 10px;
 }
 
 .finder {
