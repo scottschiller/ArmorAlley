@@ -99,8 +99,15 @@ const defaultPrefs = {
 // allow URL-based overrides of prefs
 let prefsByURL = {};
 
-function normalizePrefValue(val) {
+function normalizePrefValue(name, val) {
   // string / number to boolean, etc.
+
+  // not a true/false string, but a floating-point number
+  if (!isNaN(val) && !Number.isInteger(val)) return val;
+
+  // special case - game speed can be 1, but needs to remain a number.
+  if (name === 'game_speed') return val;
+
   if (val === 'true' || val == 1) return true;
   if (val === 'false' || val == 0) return false;
   return val;
@@ -113,7 +120,7 @@ const searchParams = new URLSearchParams(window.location.search || hashParams);
 for (const p of searchParams) {
   // p = [name, value]
   if (defaultPrefs[p[0]] !== undefined) {
-    prefsByURL[p[0]] = normalizePrefValue(p[1]);
+    prefsByURL[p[0]] = normalizePrefValue(p[0], p[1]);
   }
 }
 
@@ -178,6 +185,7 @@ function PrefsManager() {
     dom.oForm = document.getElementById('game-prefs-form');
     dom.oFormSubmit = document.getElementById('game-prefs-submit');
     dom.oFormCancel = document.getElementById('game-prefs-cancel');
+    dom.oGameSpeedSlider = document.getElementById('input_game_speed');
     dom.oNetStatusLabel = document.getElementById(
       'network-options-status-label'
     );
@@ -194,6 +202,11 @@ function PrefsManager() {
     dom.oForm.onsubmit = events.onFormSubmit;
     dom.oForm.onreset = events.onFormReset;
     dom.optionsLink.onclick = events.optionsLinkOnClick;
+
+    // Configure game speed slider, based on JS values
+    dom.oGameSpeedSlider.min = GAME_SPEED_MIN;
+    dom.oGameSpeedSlider.max = GAME_SPEED_MAX;
+    dom.oGameSpeedSlider.step = GAME_SPEED_INCREMENT;
 
     readAndApplyPrefsFromStorage();
 
@@ -226,6 +239,14 @@ function PrefsManager() {
       events.onPrefChange['bnb'](e.target.checked)
     );
 
+    // watch for and apply volume updates
+    dom.oGameSpeedSlider.addEventListener('input', () => {
+      gamePrefs.game_speed = getGameSpeedFromSlider();
+      common.setGameSpeed(gamePrefs.game_speed);
+      renderGameSpeedSlider();
+      queuedSoundHack();
+    });
+
     dom.oVolumeSlider.addEventListener('change', () => {
       // randomize, keep it fun.
       data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
@@ -246,19 +267,21 @@ function PrefsManager() {
         null
       );
 
-      // ugh.
-      // ensure we keep processing sounds.
-      if (!gamePrefs.bnb && game.data.paused) {
-        // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
-        // TODO: clean this crap up.
-        if (!game.data.hackTimer) {
-          game.data.hackTimer = window.setTimeout(() => {
-            game.data.hackTimer = null;
-            playQueuedSounds();
-          }, 32);
-        }
-      }
+      queuedSoundHack();
     });
+  }
+
+  function queuedSoundHack() {
+    // ugh. ensure we keep processing sounds.
+    if (!gamePrefs.bnb && game.data.paused) {
+      // hack: use classic timer, since the DIY setFrameTimeout() won't work when paused.
+      if (!game.data.hackTimer) {
+        game.data.hackTimer = window.setTimeout(() => {
+          game.data.hackTimer = null;
+          playQueuedSounds();
+        }, 32);
+      }
+    }
   }
 
   function selectLevel(levelName) {
@@ -269,16 +292,27 @@ function PrefsManager() {
     previewLevel(levelName, excludeVehicles);
   }
 
+  function renderGameSpeedSlider() {
+    document.getElementById('game_speed-value').innerText = `${Math.ceil(
+      gamePrefs.game_speed * 100
+    )}%`;
+  }
+
   function renderVolumeSlider() {
-    document.getElementById('volume-value').innerText = `(${parseInt(
+    document.getElementById('volume-value').innerText = `${parseInt(
       gamePrefs.volume * 100,
       10
-    )}%)`;
+    )}%`;
   }
 
   function getVolumeFromSlider() {
     // volume slider goes from 0-10; we store values in JS as 0-1 as a volume "scale."
     return parseFloat((dom.oVolumeSlider.value * 0.1).toFixed(2));
+  }
+
+  function getGameSpeedFromSlider() {
+    // game speed slider goes from 0-10; we store values in JS as 0.25 - 2.
+    return dom.oGameSpeedSlider.value;
   }
 
   function toggleDisplay() {
@@ -411,7 +445,7 @@ function PrefsManager() {
           if (!name) return;
 
           // note: convert form string to boolean for game prefs object
-          value = normalizePrefValue(value);
+          value = normalizePrefValue(name, value);
 
           gamePrefs[name] = value;
 
@@ -457,12 +491,16 @@ function PrefsManager() {
           events.onReadyState(false);
         }
 
-        // change events on prefs "panels" that need syncing with remote
-        ['network-options', 'gameplay-options', 'traffic-control'].forEach(
-          (id) =>
-            document
-              .getElementById(id)
-              .addEventListener('change', handleInputChange)
+        // change events on prefs "panels" and specific ID(s) that need syncing with remote
+        [
+          'network-options',
+          'input_game_speed',
+          'gameplay-options',
+          'traffic-control'
+        ].forEach((id) =>
+          document
+            .getElementById(id)
+            .addEventListener('change', handleInputChange)
         );
 
         const chatInput = document.getElementById('network-chat-input');
@@ -718,8 +756,10 @@ function PrefsManager() {
       data[key] = isNaN(number) ? value : number;
     });
 
-    // special case: volume slider.
+    // special case: sliders.
+    // TODO: DRY + fix this anti-pattern.
     data[dom.oVolumeSlider.name] = getVolumeFromSlider();
+    data[dom.oGameSpeedSlider.name] = getGameSpeedFromSlider();
 
     // mixin of e.g., sound=0 where checkboxes are unchecked, and remainder of form data
     let prefs = {
@@ -742,7 +782,10 @@ function PrefsManager() {
       // NOTE: form uses numbers, but game state tracks booleans.
       // key -> value: 0/1 to boolean; otherwise, keep as string.
       value = prefs[key];
-      result[key] = isNaN(value) || key === 'volume' ? value : !!value;
+      result[key] =
+        isNaN(value) || key === 'volume' || key === 'game_speed'
+          ? value
+          : !!value;
     }
 
     return result;
@@ -812,6 +855,9 @@ function PrefsManager() {
         }
       });
     });
+
+    dom.oGameSpeedSlider.value = gamePrefs.game_speed;
+    renderGameSpeedSlider();
   }
 
   function boolToInt(value) {
@@ -856,9 +902,11 @@ function PrefsManager() {
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
-      // special case
+      // special cases
       if (key === 'volume') {
         prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
+      } else if (key === 'game_speed') {
+        prefsFromStorage[key] = value || 1;
       } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
@@ -1021,6 +1069,7 @@ function PrefsManager() {
     oForm: null,
     oFormCancel: null,
     oFormSubmit: null,
+    oGameSpeedSlider: null,
     oNetStatusLabel: null,
     oVolumeSlider: null,
     optionsLink: null,
@@ -1109,7 +1158,16 @@ function PrefsManager() {
         // qSA() doesn't return a full array, rather a note list; hence, the spread.
         [...dom.oForm.querySelectorAll(`input[name="${name}"]`)].forEach(
           (input) => {
-            input.checked = input.value == formValue;
+            if (input.type === 'range') {
+              input.value = formValue;
+              // haaaack: update the local model, too.
+              if (input.name === 'game_speed') {
+                common.setGameSpeed(gamePrefs.game_speed);
+                renderGameSpeedSlider();
+              }
+            } else {
+              input.checked = input.value == formValue;
+            }
           }
         );
 
@@ -1321,6 +1379,11 @@ function PrefsManager() {
           !isActive,
           'original_missile_mode'
         );
+      },
+
+      game_speed: (newGameSpeed) => {
+        if (GAME_SPEED === newGameSpeed) return;
+        common.setGameSpeed(newGameSpeed);
       },
 
       ground_unit_traffic_control: (isActive) => {
