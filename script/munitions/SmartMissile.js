@@ -667,7 +667,7 @@ const SmartMissile = (options = {}) => {
     deltaY =
       targetData.y +
       (targetData.type === TYPES.balloon
-        ? 0
+        ? data.vY
         : targetData.halfHeight || targetData.height / 2) -
       data.y;
 
