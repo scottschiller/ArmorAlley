@@ -171,7 +171,7 @@ const SmartMissile = (options = {}) => {
       launchSound.stop();
       launchSound.play(
         {
-          playbackRate: data.playbackRate,
+          playbackRate: getPlaybackRate(),
           onplay: (sound) => (launchSound = sound)
         },
         game.players.local
@@ -317,7 +317,7 @@ const SmartMissile = (options = {}) => {
         if (data.armed) {
           playSound(sounds.rubberChicken.die, game.players.local, {
             onplay: (sound) => (dieSound = sound),
-            playbackRate: data.playbackRate
+            playbackRate: getPlaybackRate()
           });
         }
       }
@@ -591,7 +591,7 @@ const SmartMissile = (options = {}) => {
           launchSound.play(
             {
               volume: launchSound.volume,
-              playbackRate: data.playbackRate,
+              playbackRate: getPlaybackRate(),
               onplay: (sound) => (launchSound = sound)
             },
             game.players.local
@@ -640,14 +640,14 @@ const SmartMissile = (options = {}) => {
         sounds.rubberChicken.expire
       ) {
         playSound(sounds.rubberChicken.expire, game.players.local, {
-          playbackRate: data.playbackRate,
+          playbackRate: getPlaybackRate(),
           volume: launchSound?.volume
         });
       }
 
       if (data.isBanana && sounds.banana.expire) {
         playSound(sounds.banana.expire, game.players.local, {
-          playbackRate: data.playbackRate,
+          playbackRate: getPlaybackRate(),
           volume: launchSound?.volume
         });
       }
@@ -845,6 +845,8 @@ const SmartMissile = (options = {}) => {
     // mark the target.
     setTargetTracking(true);
 
+    const playbackRate = getPlaybackRate();
+
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
     if (data.isBanana && sounds.banana.launch) {
@@ -869,12 +871,12 @@ const SmartMissile = (options = {}) => {
 
       playSound(sounds.banana.launch, game.players.local, {
         onplay: (sound) => (launchSound = sound),
-        playbackRate: data.playbackRate
+        playbackRate
       });
     } else if (data.isRubberChicken && sounds.rubberChicken.launch) {
       playSound(sounds.rubberChicken.launch, game.players.local, {
         onplay: (sound) => (launchSound = sound),
-        playbackRate: data.playbackRate
+        playbackRate
       });
 
       // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
@@ -889,7 +891,7 @@ const SmartMissile = (options = {}) => {
     } else if (sounds.missileLaunch) {
       launchSound = playSound(sounds.missileLaunch, game.players.local, {
         onplay: (sound) => (launchSound = sound),
-        playbackRate: data.playbackRate
+        playbackRate
       });
 
       // human helicopter, firing smart missile
@@ -914,6 +916,10 @@ const SmartMissile = (options = {}) => {
       isRubberChicken: rnd >= 0.2 && rnd < 0.6,
       isBanana: rnd >= 0.6
     };
+  }
+
+  function getPlaybackRate() {
+    return data.playbackRate * (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
   }
 
   css = common.inheritCSS({
