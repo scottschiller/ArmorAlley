@@ -2,6 +2,10 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
   defaultMissileMode,
+  GAME_SPEED,
+  GAME_SPEED_INCREMENT,
+  GAME_SPEED_MAX,
+  GAME_SPEED_MIN,
   getTypes,
   isFirefox,
   isiPhone,
@@ -40,6 +44,8 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 
 // game defaults
 const defaultPrefs = {
+  'game_speed': 1,
+  'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
   'net_game_level': '',
   'net_game_type': 'easy', // non-network default is tutorial, need to be explicit.
