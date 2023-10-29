@@ -2042,6 +2042,64 @@
                     </ul>
                   </fieldset>
 
+                  <fieldset id="game-speed" class="sync-over-network">
+                    <legend>
+                      Game Speed<span class="network-icon"></span>
+                    </legend>
+                    <p class="non-indented network">
+                      The game speed setting applies to all players.<br />
+                      <span class="no-emoji-substitution">⚠️</span> This feature
+                      is highly experimental in network games.
+                    </p>
+
+                    <ul>
+                      <li>
+                        <label for="game_speed">
+                          <div class="game-speed-icons">
+                            <div class="emoji-turtle">🐢</div>
+                            <div class="emoji-human">🧑</div>
+                            <div class="emoji-rabbit">🐇</div>
+                          </div>
+                          <input
+                            type="range"
+                            id="input_game_speed"
+                            name="game_speed"
+                            min="0.25"
+                            max="2"
+                            value="1"
+                            step="0.05"
+                            class="range-slider" />
+                          <span id="game_speed-value">100% </span>
+                        </label>
+                        <p class="non-indented">
+                          Play the game from 25%, to 200% speed.
+                          <span class="hide-on-mobile"
+                            ><br />In-game, use - and + keys to adjust
+                            speed.</span
+                          >
+                        </p>
+                      </li>
+
+                      <li>
+                        <label for="cb_game_speed_pitch">
+                          <input
+                            type="checkbox"
+                            id="cb_game_speed_pitch"
+                            name="game_speed_pitch"
+                            value="1" />
+                          <span class="label-text">Audio Speed</span>
+                          <p class="non-indented">
+                            Play sounds at game speed. Sense of humour
+                            recommended. ;)
+                          </p>
+                          <p class="non-indented compact network">
+                            This setting applies only to you.
+                          </p>
+                        </label>
+                      </li>
+                    </ul>
+                  </fieldset>
+
                   <fieldset>
                     <legend>Environment + Effects*</legend>
 

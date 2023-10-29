@@ -4473,6 +4473,37 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 }
 
 /* volume control */
+#game-prefs-modal .game-speed-icons {
+  position: relative;
+  font-size: 8px;
+  line-height: 9px;
+  height: 9px;
+  -webkit-user-select: none;
+  user-select: none;
+  /* match .range-slider */
+  width: 100px;
+}
+
+#game-prefs-modal .emoji-turtle {
+  position: absolute;
+  left: 1px;
+  transform: scaleX(-1);
+}
+
+#game-prefs-modal .emoji-human {
+  position: absolute;
+  left: 41.25px;
+}
+
+body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
+  left: 40px;
+}
+
+#game-prefs-modal .emoji-rabbit {
+  position: absolute;
+  right: -1px;
+  transform: scaleX(-1);
+}
 
 #game-prefs-modal .range-slider {
   appearance: none;
