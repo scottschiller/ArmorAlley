@@ -384,16 +384,16 @@ const common = {
   },
 
   applyGameSpeedToAll: () => {
-    // update all relevant objects
+    // TODO: use a static list, known items of interest?
     for (const item in game.objects) {
-      if (item?.data?.gameSpeedProps) {
-        common.applyGameSpeed(item);
-      }
+      game.objects[item]?.forEach?.((obj) => {
+        if (obj?.data?.gameSpeedProps) {
+          common.applyGameSpeed(obj);
+        }
+      });
     }
 
     common.applyCSSGameSpeed();
-
-    game.objects.helicopter?.forEach((chopper) => chopper.updateFiringRates());
   },
 
   applyGameSpeed: (obj) => {
@@ -405,8 +405,10 @@ const common = {
 
     // recalculate the new value, based on the original "1X" one - e.g., data['fireModulus'] => ['fireModulus1X'] * ...
     gameSpeedProps.forEach((prop) => {
-      obj.data[prop] =
-        (parseInt(obj.data[`${prop}1X`] || 1) * (1 / GAME_SPEED), 10);
+      obj.data[prop] = parseInt(
+        (obj.data[`${prop}1X`] || 1) * (1 / GAME_SPEED),
+        10
+      );
     });
   },
 
