@@ -310,9 +310,12 @@ function playSound(soundReference, target, soundOptions) {
   // playback speed based on object's `playbackRate`, OR, ±5% on playback speed, for variety
   if (!soundObject?.options?.fixedPlaybackRate) {
     localOptions.playbackRate =
-      (target?.data.playbackRate || 0.95 + Math.random() * 0.1) * GAME_SPEED;
-  } else if (GAME_SPEED !== 1) {
-    localOptions.playbackRate = (target?.data.playbackRate || 1) * GAME_SPEED;
+      (target?.data.playbackRate || 0.95 + Math.random() * 0.1) *
+      (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
+  } else {
+    localOptions.playbackRate =
+      (target?.data.playbackRate || 1) *
+      (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
   }
 
   // HACK: need to fix and normalize sound options.
