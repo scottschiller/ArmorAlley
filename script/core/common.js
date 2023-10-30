@@ -353,6 +353,8 @@ const riseItemAfterDelay = (exports, delay = 33) =>
 
 const common = {
   setGameSpeed: (gameSpeed) => {
+    if (gameSpeed == GAME_SPEED) return;
+
     // note: this updates GAME_SPEED
     const newGameSpeed = updateGameSpeed(gameSpeed);
 
