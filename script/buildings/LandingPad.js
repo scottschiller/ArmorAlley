@@ -87,7 +87,7 @@ const LandingPad = (options = {}) => {
         '🐟',
         '🥡'
       ],
-      drinkable: ['🍺', '🍻', '🍹', '☕', '🍾', '🍷', '🍸', '🥂', '🥃']
+      drinkable: ['🍺', '🍻', '🍹', '<span class="no-emoji-substitution">☕</span>', '🍾', '🍷', '🍸', '🥂', '🥃']
     },
     options
   );
