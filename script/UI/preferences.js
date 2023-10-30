@@ -44,6 +44,7 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 
 // game defaults
 const defaultPrefs = {
+  'auto_flip': true,
   'game_speed': 1,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
@@ -1381,6 +1382,15 @@ function PrefsManager() {
           !isActive,
           'original_missile_mode'
         );
+      },
+
+      auto_flip: (newAutoFlip) => {
+        // only apply to local player if active, and updated
+        const { local } = game.players;
+        if (!local) return;
+        if (local.data.autoFlip !== newAutoFlip) {
+          local.toggleAutoFlip();
+        }
       },
 
       game_speed: (newGameSpeed) => {
