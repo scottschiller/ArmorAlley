@@ -296,6 +296,8 @@ function KeyboardMonitor() {
       down() {
         if (net.active) return;
         common.setGameSpeed(GAME_SPEED - GAME_SPEED_INCREMENT);
+        // hackish
+        utils.storage.set('game_speed', GAME_SPEED);
       }
     },
 
@@ -303,6 +305,7 @@ function KeyboardMonitor() {
       down() {
         if (net.active) return;
         common.setGameSpeed(GAME_SPEED + GAME_SPEED_INCREMENT);
+        utils.storage.set('game_speed', GAME_SPEED);
       }
     }
   };
