@@ -846,6 +846,9 @@ const Helicopter = (options = {}) => {
 
     data.rotated = !data.rotated;
 
+    // immediately re-scan for new missile targets.
+    scanRadar();
+
     utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
 
     if (!data.rotateTimer) {
