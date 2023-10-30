@@ -680,16 +680,16 @@ const Helicopter = (options = {}) => {
 
     // TODO: revisit and DRY
     if (data.isEnemy) {
-      if (tData.x + tData.width < data.x && data.rotated) {
-        rotate();
-      } else if (tData.x + tData.width > data.x && !data.rotated) {
-        rotate();
+      if (tData.x + tData.width < data.x && data.flipped) {
+        flip();
+      } else if (tData.x + tData.width > data.x && !data.flipped) {
+        flip();
       }
     } else {
-      if (tData.x + tData.width < data.x && !data.rotated) {
-        rotate();
-      } else if (tData.x + tData.width > data.x && data.rotated) {
-        rotate();
+      if (tData.x + tData.width < data.x && !data.flipped) {
+        flip();
+      } else if (tData.x + tData.width > data.x && data.flipped) {
+        flip();
       }
     }
   }
@@ -821,7 +821,7 @@ const Helicopter = (options = {}) => {
     }
   }
 
-  function rotate(force) {
+  function flip(force) {
     // flip the helicopter so it's pointing R-L instead of the default R/L (toggle behaviour)
 
     // if not dead or landed, that is.
@@ -835,55 +835,55 @@ const Helicopter = (options = {}) => {
     )
       return;
 
-    if (data.rotated) {
+    if (data.flipped) {
       // going back to L->R
       utils.css.remove(dom.o, css.facingLeft);
-      utils.css.remove(dom.o, css.rotatedLeft);
+      utils.css.remove(dom.o, css.flippedLeft);
     } else {
       utils.css.remove(dom.o, css.facingRight);
-      utils.css.remove(dom.o, css.rotatedRight);
+      utils.css.remove(dom.o, css.flippedRight);
     }
 
-    data.rotated = !data.rotated;
+    data.flipped = !data.flipped;
 
     // immediately re-scan for new missile targets.
     scanRadar();
 
-    utils.css.add(dom.o, data.rotated ? css.rotatedLeft : css.rotatedRight);
+    utils.css.add(dom.o, data.flipped ? css.flippedLeft : css.flippedRight);
 
-    if (!data.rotateTimer) {
-      data.rotateTimer = common.setFrameTimeout(() => {
+    if (!data.flipTimer) {
+      data.flipTimer = common.setFrameTimeout(() => {
         utils.css.remove(
           dom.o,
-          data.rotated ? css.rotatedLeft : css.rotatedRight
+          data.flipped ? css.flippedLeft : css.flippedRight
         );
-        utils.css.add(dom.o, data.rotated ? css.facingLeft : css.facingRight);
-        data.rotateTimer = null;
+        utils.css.add(dom.o, data.flipped ? css.facingLeft : css.facingRight);
+        data.flipTimer = null;
       }, 333);
     }
 
-    if (data.isLocal && !data.autoRotate && sounds.helicopter.rotate) {
-      playSound(sounds.helicopter.rotate);
+    if (data.isLocal && !data.autoFlip && sounds.helicopter.flip) {
+      playSound(sounds.helicopter.flip);
     }
 
     /**
-     * Mobile clients auto-rotate the local player, but should send
+     * Mobile clients auto-flip the local player, but should send
      * these events to the remote (e.g., a desktop) for consistency.
      */
     if (net.active && data.isLocal) {
-      net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'rotate' });
+      net.sendMessage({ type: 'GAME_EVENT', id: data.id, method: 'flip' });
     }
   }
 
-  function toggleAutoRotate() {
+  function toggleAutoFlip() {
     // revert to normal setting
-    if (data.rotated) rotate();
+    if (data.flipped) flip();
 
-    // toggle auto-rotate
-    data.autoRotate = !data.autoRotate;
+    // toggle auto-flip
+    data.autoFlip = !data.autoFlip;
 
     game.objects.notifications.add(
-      data.autoRotate ? 'Auto-rotate enabled' : 'Auto-rotate disabled',
+      data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled',
       { noRepeat: true }
     );
 
@@ -892,7 +892,7 @@ const Helicopter = (options = {}) => {
       net.sendMessage({
         type: 'GAME_EVENT',
         id: data.id,
-        method: 'toggleAutoRotate'
+        method: 'toggleAutoFlip'
       });
     }
   }
@@ -910,20 +910,17 @@ const Helicopter = (options = {}) => {
 
     // L -> R / R -> L + forward / backward
 
-    // auto-rotate feature
-    if (
-      !data.landed &&
-      (data.autoRotate || (!data.isCPU && isMobile && !data.isRemote))
-    ) {
+    // auto-flip (rotate) feature
+    if (!data.landed && data.autoFlip) {
       if (!data.isEnemy) {
-        if ((data.vX > 0 && data.rotated) || (data.vX < 0 && !data.rotated)) {
-          rotate();
+        if ((data.vX > 0 && data.flipped) || (data.vX < 0 && !data.flipped)) {
+          flip();
         }
       } else if (
-        (data.vX > 0 && !data.rotated) ||
-        (data.vX < 0 && data.rotated)
+        (data.vX > 0 && !data.flipped) ||
+        (data.vX < 0 && data.flipped)
       ) {
-        rotate();
+        flip();
       }
     }
 
@@ -1210,8 +1207,8 @@ const Helicopter = (options = {}) => {
 
       data.vX = -8;
 
-      if (data.rotated) {
-        rotate();
+      if (data.flipped) {
+        flip();
       }
     }
 
@@ -1376,9 +1373,9 @@ const Helicopter = (options = {}) => {
 
     common.setFrameTimeout(() => {
       utils.css.add(dom.o, css.dead);
-      // undo rotate
-      if (data.rotated) {
-        rotate(true);
+      // undo flip
+      if (data.flipped) {
+        flip(true);
       }
     }, 1500);
 
@@ -1456,7 +1453,7 @@ const Helicopter = (options = {}) => {
   function getGunfireParams() {
     let tiltOffset =
       data.tiltOffset !== 0
-        ? data.tiltOffset * data.tiltYOffset * (data.rotated ? -1 : 1)
+        ? data.tiltOffset * data.tiltYOffset * (data.flipped ? -1 : 1)
         : 0;
 
     return {
@@ -1465,7 +1462,7 @@ const Helicopter = (options = {}) => {
       isEnemy: data.isEnemy,
       x:
         data.x +
-        ((!data.isEnemy && data.rotated) || (data.isEnemy && !data.rotated)
+        ((!data.isEnemy && data.flipped) || (data.isEnemy && !data.flipped)
           ? 0
           : data.width - 8),
       y:
@@ -1473,7 +1470,7 @@ const Helicopter = (options = {}) => {
         data.halfHeight +
         (data.tilt !== null ? tiltOffset + 2 : 0) +
         (data.isEnemy ? 2 : 0),
-      vX: data.vX + 8 * (data.rotated ? -1 : 1) * (data.isEnemy ? -1 : 1),
+      vX: data.vX + 8 * (data.flipped ? -1 : 1) * (data.isEnemy ? -1 : 1),
       vY:
         data.vY +
         (data.isCPU ? 0 : tiltOffset * (!data.isCPU && data.isEnemy ? -1 : 1)) // CPU doesn't know how to account for tilt
@@ -1490,7 +1487,7 @@ const Helicopter = (options = {}) => {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      x: data.x + (data.rotated ? 0 : data.width) - 8,
+      x: data.x + (data.flipped ? 0 : data.width) - 8,
       y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
       target: missileTarget,
       // special variants of the smart missile. ;)
@@ -2339,16 +2336,16 @@ const Helicopter = (options = {}) => {
     } else {
       // TODO: DRY
       if (data.isEnemy) {
-        if (data.vX < 0 && data.rotated) {
-          rotate();
-        } else if (data.vX > 0 && !data.rotated) {
-          rotate();
+        if (data.vX < 0 && data.flipped) {
+          flip();
+        } else if (data.vX > 0 && !data.flipped) {
+          flip();
         }
       } else {
-        if (data.vX < 0 && !data.rotated) {
-          rotate();
-        } else if (data.vX > 0 && data.rotated) {
-          rotate();
+        if (data.vX < 0 && !data.flipped) {
+          flip();
+        } else if (data.vX > 0 && data.flipped) {
+          flip();
         }
       }
     }
@@ -2583,7 +2580,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isOnScreen) {
       data.xHistory.push(
-        data.x + (data.isEnemy || data.rotated ? data.width : 0)
+        data.x + (data.isEnemy || data.flipped ? data.width : 0)
       );
       data.yHistory.push(data.y);
 
@@ -2933,8 +2930,8 @@ const Helicopter = (options = {}) => {
     disabled: 'disabled',
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
-    rotatedLeft: 'rotated-left',
-    rotatedRight: 'rotated-right',
+    flippedLeft: 'flipped-left',
+    flippedRight: 'flipped-right',
     cloaked: 'cloaked',
     muchaMuchacha: 'mucha-muchacha',
     movingLeft: 'moving-left',
@@ -3005,9 +3002,10 @@ const Helicopter = (options = {}) => {
       cloakedFrameStart: 0,
       wentIntoHiding: false,
       wentIntoHidingSeconds: 1.5,
-      rotated: false,
-      rotateTimer: null,
-      autoRotate: (isCPU || isMobile) && !options.isRemote,
+      flipped: false,
+      flipTimer: null,
+      // if player is remote (via network,) then flip events are sent via network.
+      autoFlip: options.isRemote ? false : (isCPU || gamePrefs.auto_flip),
       repairing: false,
       repairFrames: 0,
       dieCount: 0,
@@ -3143,8 +3141,8 @@ const Helicopter = (options = {}) => {
       if (e.button !== 0 || isMobile || data.isCPU || !data.fuel) return;
 
       if (!isGameOver()) {
-        if (!data.autoRotate) {
-          rotate();
+        if (!data.autoFlip) {
+          flip();
         }
       } else {
         // battle over; determine confetti vs. shrapnel.
@@ -3238,13 +3236,13 @@ const Helicopter = (options = {}) => {
     startRepairing,
     reset,
     refreshCoords,
-    rotate,
+    flip,
     setBombing,
     setFiring,
     setMissileLaunching,
     setParachuting,
     setRespawning,
-    toggleAutoRotate,
+    toggleAutoFlip,
     updateFiringRates,
     updateStatusUI
   };

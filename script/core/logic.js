@@ -380,7 +380,7 @@ function getNearestObject(source, options = {}) {
       if (
         !useInFront ||
         (useInFront &&
-          ((!sData.rotated && isInFront) || (sData.rotated && !isInFront)))
+          ((!sData.flipped && isInFront) || (sData.flipped && !isInFront)))
       ) {
         // how far to the target?
         distanceX = Math.abs(Math.abs(tData.x) - Math.abs(sData.x));

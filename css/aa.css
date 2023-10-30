@@ -2068,35 +2068,35 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   transition-property: top, filter;
 }
 
-.helicopter.rotated-left,
-.helicopter.rotated-right {
-  animation: rotateleft calc(0.33s * var(--gs-frac)) steps(3);
+.helicopter.flipped-left,
+.helicopter.flipped-right {
+  animation: flipleft calc(0.33s * var(--gs-frac)) steps(3);
   background-image: url(../image/helicopter-rotating.png) !important;
   height: 20px;
   width: 50px;
 }
 
-.helicopter.rotated-left .transform-sprite,
-.helicopter.rotated-right .transform-sprite {
+.helicopter.flipped-left .transform-sprite,
+.helicopter.flipped-right .transform-sprite {
   /* hide while rotating */
   display: none;
 }
 
-.helicopter.rotated-left.enemy,
-.helicopter.rotated-right.enemy {
+.helicopter.flipped-left.enemy,
+.helicopter.flipped-right.enemy {
   /* hack for enemy case */
   background-image: url(../image/helicopter-rotating-enemy.png) !important;
 }
 
-.helicopter.rotated-left.enemy,
-.helicopter.rotated-right {
+.helicopter.flipped-left.enemy,
+.helicopter.flipped-right {
   /* backwards */
-  animation: rotateright calc(0.33s * var(--gs-frac)) steps(3);
+  animation: flipright calc(0.33s * var(--gs-frac)) steps(3);
 }
 
-.helicopter.rotated-right.enemy {
+.helicopter.flipped-right.enemy {
   /* backwards */
-  animation: rotateleft calc(0.33s * var(--gs-frac)) steps(3);
+  animation: flipleft calc(0.33s * var(--gs-frac)) steps(3);
 }
 
 .helicopter.cloaked {
@@ -6635,7 +6635,7 @@ span.no-emoji-substitution {
   }
 }
 
-@keyframes rotateleft {
+@keyframes flipleft {
   0% {
     background-position: 0 0;
   }
@@ -6644,7 +6644,7 @@ span.no-emoji-substitution {
   }
 }
 
-@keyframes rotateright {
+@keyframes flipright {
   0% {
     background-position: 0 -40px;
   }

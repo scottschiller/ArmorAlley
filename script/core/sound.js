@@ -553,7 +553,7 @@ let sounds = {
     bomb: null,
     engine: null,
     engineVolume: 25,
-    rotate: null
+    flip: null
   },
   inventory: {
     begin: null,
@@ -1130,7 +1130,7 @@ soundManager.onready(() => {
     loops: 999
   });
 
-  sounds.helicopter.rotate = add({
+  sounds.helicopter.flip = add({
     url: 'helicopter-rotate',
     fixedPlaybackRate,
     volume: 10

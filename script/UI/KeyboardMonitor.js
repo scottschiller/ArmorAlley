@@ -23,6 +23,7 @@ function KeyboardMonitor() {
   const downKeys = {};
 
   // meaningful labels for key values
+  // NOTE: ASCII values are for upper-case characters, as applicable
   const keyMap = {
     banana: 66,
     rubberChicken: 67,
@@ -288,7 +289,7 @@ function KeyboardMonitor() {
 
     [keyMap.flipAutomatically]: {
       down() {
-        game?.players?.local.toggleAutoRotate();
+        game?.players?.local.toggleAutoFlip();
       }
     },
 
