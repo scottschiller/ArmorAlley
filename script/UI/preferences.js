@@ -293,7 +293,7 @@ function PrefsManager() {
   }
 
   function renderGameSpeedSlider() {
-    document.getElementById('game_speed-value').innerText = `${Math.ceil(
+    document.getElementById('game_speed-value').innerText = `${Math.round(
       gamePrefs.game_speed * 100
     )}%`;
   }
