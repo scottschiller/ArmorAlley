@@ -28,6 +28,19 @@ import { gamePrefs } from './preferences.js';
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
 
+const DBL_TOUCH_MIN_TIME = 16;
+const DBL_TOUCH_MAX_TIME = 333;
+const DBL_TOUCH_MAX_DELTA = 16;
+
+function isFastEnough(t1, t2) {
+  return (
+    t1 &&
+    t2 &&
+    Math.abs(t1.screenX - t2.screenX) <= DBL_TOUCH_MAX_DELTA &&
+    Math.abs(t1.screenY - t2.screenY) < DBL_TOUCH_MAX_DELTA
+  );
+}
+
 let orientationTimer;
 
 const View = () => {
@@ -955,7 +968,6 @@ const View = () => {
      *
      * tl;dr, attempting detection is unwise; listen for and handle all.
      */
-
     utils.events.add(document, 'mousemove', events.mousemove);
     utils.events.add(document, 'mousedown', events.touchstart);
     utils.events.add(document, 'mouseup', events.mouseup);
@@ -1058,6 +1070,7 @@ const View = () => {
       x: 0,
       y: 0
     },
+    touchHistory: [],
     touchEvents: {},
     world: {
       width: 0,
@@ -1210,6 +1223,71 @@ const View = () => {
 
       // pass-thru if game menu is showing
       if (!game.data.started) return true;
+
+      // double and triple-tap "emulation": mobile "helicopter flip" function
+      if (e?.changedTouches?.[0]) {
+        const touch = e.changedTouches[0];
+        const now = Date.now();
+
+        let h = data.touchHistory;
+        let lastTouch = h?.length && h[h.length - 1];
+
+        let isValidDouble, isValidTriple;
+
+        if (lastTouch) {
+          const last = lastTouch.touch;
+          let delta = now - lastTouch.ts;
+
+          // current target
+          let t = touch;
+
+          // we're only interested in double-tap on "open space", at present.
+          const ids = /mobile-controls|battlefield/i;
+
+          // restrict touch to IDs, time, and distance.
+          if (delta >= DBL_TOUCH_MIN_TIME && delta <= DBL_TOUCH_MAX_TIME) {
+            if (
+              ids.test(t?.target?.id) &&
+              ids.test(last?.target?.id) &&
+              isFastEnough(t, last)
+            ) {
+              // valid double-tap
+              isValidDouble = true;
+
+              // now, check triple-tap case
+              let lastTouch2 = h?.length >= 2 && h[h.length - 2];
+              if (lastTouch2) {
+                delta = lastTouch.ts - lastTouch2.ts;
+                // allow slightly longer MAX_TIME for third tap
+                if (delta < DBL_TOUCH_MAX_TIME * 1.5) {
+                  t = lastTouch2.touch;
+                  if (isFastEnough(t, last)) {
+                    isValidTriple = true;
+                  }
+                }
+              }
+            }
+
+            // toggle feature on triple-tap; otherwise, if auto-flip is *off*, then flip manually.
+            if (isValidTriple) {
+              game?.players?.local?.toggleAutoFlip();
+            } else if (isValidDouble && !gamePrefs.auto_flip) {
+              game?.players?.local?.flip();
+            }
+          }
+        }
+
+        // always track
+        data.touchHistory.push({
+          ts: now,
+          touch
+        });
+
+        // and, constrain history to three items.
+        if (data.touchHistory.length > 3) {
+          data.touchHistory.shift();
+        }
+      }
 
       let i, j;
       const targetTouches = e.targetTouches;

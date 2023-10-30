@@ -887,8 +887,17 @@ const Helicopter = (options = {}) => {
       { noRepeat: true }
     );
 
-    // network: simulate this on the other end.
-    if (net.active && data.isLocal && !isMobile) {
+    // TODO: better "confirmation" sound
+    if (sounds.inventory.begin) {
+      playSound(sounds.inventory.begin);
+    }
+
+    // update the pref, and store.
+    gamePrefs.auto_flip = data.autoFlip;
+    utils.storage.set('auto_flip', data.autoFlip ? 1 : 0);
+
+    // network: replicate this on the other end.
+    if (net.active && data.isLocal) {
       net.sendMessage({
         type: 'GAME_EVENT',
         id: data.id,
