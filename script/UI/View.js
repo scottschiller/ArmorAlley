@@ -982,6 +982,10 @@ const View = () => {
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
+    utils.events.add(document, 'dblclick', () => {
+      game?.players?.local?.toggleAutoFlip();
+    });
+
     utils.events.add(
       screen?.orientation,
       'change',

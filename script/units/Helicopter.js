@@ -883,8 +883,7 @@ const Helicopter = (options = {}) => {
     data.autoFlip = !data.autoFlip;
 
     game.objects.notifications.add(
-      data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled',
-      { noRepeat: true }
+      data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled'
     );
 
     // TODO: better "confirmation" sound
