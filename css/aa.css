@@ -53,6 +53,8 @@
   /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
   --game-speed: 1;
   --gs-frac: calc(1 / var(--game-speed));
+  --screen-scale: 1;
+  --ss-frac: calc(1 / var(--screen-scale));
 }
 
 @font-face {
@@ -4485,9 +4487,9 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal .game-speed-icons {
   position: relative;
-  font-size: 8px;
-  line-height: 9px;
-  height: 9px;
+  font-size: calc(8px * var(--screen-scale));
+  line-height: 8px;
+  height: 8px;
   -webkit-user-select: none;
   user-select: none;
   /* match .range-slider */
@@ -4672,13 +4674,22 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border-top: 0.5px solid #000;
   color: #000;
   font-family: Geneva, verdana, arial, sans-serif;
-  font-size: 5px;
   /* overflow: auto; */
   overflow: hidden;
   padding: 1em;
   position: relative;
   /* min-width: 16em; */
   width: 23em;
+}
+
+#game-prefs-modal .body {
+  font-size: calc(5px * var(--screen-scale));
+}
+
+.finder .body,
+.finder .body ul.row li {
+  /* tutorial window */
+  font-size: 5px;
 }
 
 .finder .body .grid p {
@@ -4699,7 +4710,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border: 0.25px solid #999;
   box-sizing: border-box;
   display: inline-block;
-  font-size: 5px;
   padding: 1px;
   text-align: center;
   width: 20%;
@@ -4720,7 +4730,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   box-sizing: border-box;
   color: #000;
   font-family: Geneva, verdana, arial, sans-serif;
-  font-size: 5px;
   height: 10rem;
   overflow: auto;
   position: relative;
@@ -4895,10 +4904,16 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic fieldset legend,
-.mac-classic h3 {
+.mac-classic h3,
+#game-prefs-modal button {
   font-family: FA Sysfont C, courier, sans-serif;
   font-size: 7px;
   vertical-align: middle;
+}
+
+#game-prefs-modal legend,
+#game-prefs-modal button {
+  font-size: calc(7px * var(--screen-scale));
 }
 
 .mac-classic b {
@@ -5188,7 +5203,7 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
 }
 
 .mac-classic fn.disclaimer {
-  font-size: 4.5px;
+  font-size: calc(4.5px * var(--screen-scale));
   vertical-align: top;
 }
 
