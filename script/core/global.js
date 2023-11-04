@@ -43,8 +43,39 @@ const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = !!ua.match(/firefox/i);
 const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
 
+/**
+ * 11/2023: Experimental iPad hack (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
+ * Test for Safari, `TouchEvent`, and `navigator.maxTouchPoints`.
+ * Reported issue: iPad Pro wasn't showing mobile controls. iPad defaults to "desktop" UA,
+ * but doesn't quite render correctly. iPad treated as "mobile" works much more as expected.
+ */
+let forceAppleMobile;
+
+if (isSafari) {
+  let maybeHasTouch;
+  try {
+    // on non-touch devices, this may throw "DOMException: Operation is not supported"
+    document.createEvent('TouchEvent');
+    maybeHasTouch = true;
+  } catch (e) {
+    // oh well
+  }
+  forceAppleMobile = !!(
+    maybeHasTouch &&
+    navigator.maxTouchPoints > 0 &&
+    !searchParams.get('desktop')
+  );
+  if (forceAppleMobile) {
+    console.log(
+      'Safari with touch support detected? Inferring a phone or tablet, rendering mobile version with touch controls.'
+    );
+    console.log('Try https://play.armor-alley.net/?desktop=1 to override.');
+  }
+}
+
 // iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. "request desktop website")
-const isMobile = !!ua.match(/mobile|iphone|ipad/i);
+const isMobile = !!ua.match(/mobile|iphone|ipad/i) || forceAppleMobile;
+
 // "inferences" about client capabilities, based on live events
 let clientFeatures = {
   touch: forceAppleMobile ? true : null,
@@ -384,6 +415,7 @@ export {
   clientFeatures,
   defaultSeed,
   defaultSeeds,
+  forceAppleMobile,
   getTypes,
   parseTypes,
   isWebkit,
