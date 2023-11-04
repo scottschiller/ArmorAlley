@@ -321,13 +321,18 @@ const Balloon = (options = {}) => {
   };
 
   function initDOM() {
+    let extraCSS;
+
+    if (data.isEnemy) {
+      extraCSS = css.facingLeft;
+    } else {
+      extraCSS = css.facingRight;
+    }
+
     dom.o = sprites.create({
       className: css.className,
       id: data.id,
-      isEnemy:
-        game.players.local.data.isEnemy === data.isEnemy
-          ? css.facingRight
-          : css.facingLeft
+      isEnemy: extraCSS
     });
 
     // TODO: remove?
