@@ -4531,7 +4531,7 @@ body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
   background: #eee
     url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
   background-size: 1.25px;
-  image-rendering: crisp-edges;
+  image-rendering: smooth;
   image-rendering: -webkit-optimize-contrast;
 }
 
