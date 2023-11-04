@@ -5960,9 +5960,6 @@ body.game-over .target-ui {
     line-height: 20px;
     width: 75%;
   }
-  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 21vh;
-  }
   body.is-mobile #game-tips #game-announcements {
     /* larger type, please. */
     font-size: 2.75em;
@@ -6065,8 +6062,8 @@ body.game-over .target-ui {
     height: 13px;
     top: 82px;
   }
-  body.is-mobile:not(.game-paused) #game-tips.has-announcement {
-    top: 8vh;
+  body.is-mobile:not(.game-paused) #game-tips {
+    top: 64px;
   }
   body.is-mobile #game-tips .tips-container {
     margin: 0;
