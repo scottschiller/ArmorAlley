@@ -1614,6 +1614,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   background-size: contain;
 }
 
+/* default / .bunker.facing-right case */
 .bunker .sub-sprite.arrow,
 .super-bunker .sub-sprite.arrow {
   background-image: url(../image/arrow-right.png);
@@ -1630,8 +1631,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   left: 50px;
 }
 
-.bunker.enemy .sub-sprite.arrow,
-.super-bunker.enemy .sub-sprite.arrow {
+.bunker.facing-left .sub-sprite.arrow,
+.super-bunker.facing-left .sub-sprite.arrow {
   transform: rotate3d(0, 0, 1, -180deg);
 }
 
