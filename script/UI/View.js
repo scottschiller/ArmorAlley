@@ -174,7 +174,7 @@ const View = () => {
       }
 
       // don't ever get smaller than ...
-      logoScale = Math.max(0.5, logoScale);
+      logoScale = Math.max(isiPhone ? 0.5 : 0.65, logoScale);
 
       // and no bigger than ...
       logoScale = Math.min(0.85, logoScale);
