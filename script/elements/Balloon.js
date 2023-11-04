@@ -35,8 +35,7 @@ const Balloon = (options = {}) => {
 
     zones.changeOwnership(exports);
 
-    const playerIsEnemy = game.players.local.data.isEnemy;
-    const isFriendly = playerIsEnemy === isEnemy && !data.hostile;
+    const isFriendly = data.isEnemy === game.players.local.data.isEnemy;
 
     utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
     utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
