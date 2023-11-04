@@ -71,8 +71,9 @@ const Bunker = (options = {}) => {
       }
     }
 
-    utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
-    utils.css.addOrRemove(radarItem.dom.o, isEnemy, css.enemy);
+    // note: "enemy" is relative to the player, here. e.g., right-side will get a friendly CSS class (green) if the bunker is now an enemy unit.
+    utils.css.addOrRemove(dom.o, !friendlyCapture, css.enemy);
+    utils.css.addOrRemove(radarItem.dom.o, !friendlyCapture, css.enemy);
 
     data.isEnemy = isEnemy;
 
@@ -81,6 +82,10 @@ const Bunker = (options = {}) => {
     // and the attached objects, too.
     objects?.chain?.setEnemy(isEnemy);
     objects?.balloon?.setEnemy(isEnemy);
+
+    // arrow state
+    utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
+    utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
 
     playSound(sounds.doorClose, exports);
 
@@ -346,10 +351,16 @@ const Bunker = (options = {}) => {
   }
 
   function initDOM() {
+    const extraCSS = [data.isEnemy ? css.facingLeft : css.facingRight];
+
+    // on our side?
+    if (data.isEnemy !== game.players.local.data.isEnemy)
+      extraCSS.push(css.enemy);
+
     dom.o = sprites.create({
       className: css.className,
       id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
+      isEnemy: extraCSS.join(' ')
     });
 
     dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
@@ -388,6 +399,8 @@ const Bunker = (options = {}) => {
     arrow: 'arrow',
     burning: 'burning',
     burningOut: 'burning-out',
+    facingLeft: 'facing-left',
+    facingRight: 'facing-right',
     rubbleContainer: 'rubble-container',
     rubble: 'rubble',
     nuke: 'nuke'
