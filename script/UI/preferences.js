@@ -3,6 +3,7 @@ import { game } from '../core/Game.js';
 import {
   clientFeatures,
   defaultMissileMode,
+  forceAppleMobile,
   GAME_SPEED,
   GAME_SPEED_INCREMENT,
   GAME_SPEED_MAX,
@@ -1558,6 +1559,8 @@ function PrefsManager() {
 
       if (!screenScale || !data.active || !dom.o) return;
 
+      // HACKS: this is a mess. TODO: refactor entirely to eliminate scale shenanigans.
+
       // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
       let scale =
         screenScale *
@@ -1576,10 +1579,41 @@ function PrefsManager() {
         scale *= 1.85;
         // hackish: scale up even further so the modal is more wide than anything else, and set height to the natural viewport.
         // in landscape, the modal contents will scroll naturally.
-        if (isSafari) {
+        // don't do this for iPads, either.
+        if (isSafari && isiPhone) {
           scale *= 2;
         }
         body.style.setProperty('height', worldHeight / 2 + 'px');
+      } else {
+        if (
+          isMobile &&
+          !isiPhone &&
+          forceAppleMobile &&
+          screen.orientation.type.match(/portrait/i)
+        ) {
+          scale *= 2;
+        }
+      }
+
+      // more ugly mobile vs. desktop vs. iPad hacks
+      if (isSafari && clientFeatures.touch) {
+        if (isiPhone) {
+          // argh - prevent overflow.
+          body.style.setProperty(
+            'height',
+            data.originalHeight * (1 / scale) * 0.9 + 'px'
+          );
+        } else {
+          // iPads. :X
+          const extraScale = screen.orientation.type.match(/landscape/i)
+            ? 1.5
+            : 1;
+          scale *= extraScale;
+          body.style.setProperty(
+            'height',
+            worldHeight * (1 / extraScale) + 'px'
+          );
+        }
       } else {
         body.style.setProperty('height', data.originalHeight + 'px');
       }
@@ -1589,10 +1623,16 @@ function PrefsManager() {
         body.style.setProperty('height', data.originalHeight + 'px');
       }
 
-      dom.o.style.setProperty(
-        'transform',
-        `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`
-      );
+      if (isSafari && !isiPhone && clientFeatures.touch) {
+        // iPads: avoid using transforms for scale, ugly rasterized text.
+        // font-size will be scaled up in CSS, instead.
+        dom.o.style.zoom = scale;
+      } else {
+        dom.o.style.setProperty(
+          'transform',
+          `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`
+        );
+      }
     }
   };
 
