@@ -44,8 +44,8 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 
 // game defaults
 const defaultPrefs = {
-  'auto_flip': true,
   'game_speed': 1,
+  'auto_flip': !!isMobile,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
   'net_game_level': '',

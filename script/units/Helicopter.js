@@ -884,18 +884,20 @@ const Helicopter = (options = {}) => {
     // toggle auto-flip
     data.autoFlip = !data.autoFlip;
 
-    game.objects.notifications.add(
-      data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled'
-    );
+    if (data.isLocal) {
+      game.objects.notifications.add(
+        data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled'
+      );
 
-    // TODO: better "confirmation" sound
-    if (sounds.inventory.begin) {
-      playSound(sounds.inventory.begin);
+      // TODO: better "confirmation" sound
+      if (sounds.inventory.begin) {
+        playSound(sounds.inventory.begin);
+      }
+
+      // update the pref, and store.
+      gamePrefs.auto_flip = data.autoFlip;
+      utils.storage.set('auto_flip', data.autoFlip ? 1 : 0);
     }
-
-    // update the pref, and store.
-    gamePrefs.auto_flip = data.autoFlip;
-    utils.storage.set('auto_flip', data.autoFlip ? 1 : 0);
 
     // network: replicate this on the other end.
     if (net.active && data.isLocal) {
@@ -3015,7 +3017,7 @@ const Helicopter = (options = {}) => {
       flipped: false,
       flipTimer: null,
       // if player is remote (via network,) then flip events are sent via network.
-      autoFlip: options.isRemote ? false : (isCPU || gamePrefs.auto_flip),
+      autoFlip: options.isRemote ? false : isCPU || gamePrefs.auto_flip,
       repairing: false,
       repairFrames: 0,
       dieCount: 0,
