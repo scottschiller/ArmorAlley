@@ -4496,11 +4496,12 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal .emoji-human {
   position: absolute;
-  left: 41.25px;
+  left: 50%;
+  margin-left: -0.25em;
 }
 
 body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
-  left: 40px;
+  margin-left: -0.4em;
 }
 
 #game-prefs-modal .emoji-rabbit {
