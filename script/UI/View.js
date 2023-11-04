@@ -673,7 +673,7 @@ const View = () => {
     let hasIgnore;
     do {
       node = node.parentNode;
-      hasIgnore = node.getAttribute('data-ignore-touch');
+      hasIgnore = node?.getAttribute?.('data-ignore-touch');
     } while (node.parentNode && !hasIgnore);
 
     return hasIgnore;
