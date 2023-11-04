@@ -190,10 +190,9 @@ const View = () => {
           logoScale += 0.35;
         }
 
-        const tvDisplay = document.getElementById('tv-title-screen');
-
-        if (isMobile && isLandscape) {
-          tvDisplay.style.zoom = 1.6;
+        if (isMobile) {
+          const tvDisplay = document.getElementById('tv-title-screen');
+          tvDisplay.style.zoom = isLandscape ? 1.6 : 1;
         }
       } else {
         // just slightly smaller on desktop.
