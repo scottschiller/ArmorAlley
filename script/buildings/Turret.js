@@ -3,7 +3,6 @@ import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
 import {
   FPS,
-  GAME_SPEED,
   getTypes,
   rad2Deg,
   rnd,
