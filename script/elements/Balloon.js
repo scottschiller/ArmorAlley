@@ -35,8 +35,6 @@ const Balloon = (options = {}) => {
 
     zones.changeOwnership(exports);
 
-    const isFriendly = data.isEnemy === game.players.local.data.isEnemy;
-
     utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
     utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
 
@@ -53,7 +51,7 @@ const Balloon = (options = {}) => {
 
     utils.css.addOrRemove(
       radarItem.dom.o,
-      isFriendly && !data.hostile,
+      !data.isEnemy && !data.hostile,
       css.friendly
     );
   }
@@ -360,7 +358,7 @@ const Balloon = (options = {}) => {
 
     utils.css.addOrRemove(
       radarItem.dom.o,
-      game.players.local.data.isEnemy === data.isEnemy && !data.hostile,
+      !data.isEnemy && !data.hostile,
       css.friendly
     );
   }

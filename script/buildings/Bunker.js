@@ -72,8 +72,8 @@ const Bunker = (options = {}) => {
     }
 
     // note: "enemy" is relative to the player, here. e.g., right-side will get a friendly CSS class (green) if the bunker is now an enemy unit.
-    utils.css.addOrRemove(dom.o, !friendlyCapture, css.enemy);
-    utils.css.addOrRemove(radarItem.dom.o, !friendlyCapture, css.enemy);
+    utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
+    utils.css.addOrRemove(radarItem.dom.o, isEnemy, css.enemy);
 
     data.isEnemy = isEnemy;
 
@@ -353,9 +353,7 @@ const Bunker = (options = {}) => {
   function initDOM() {
     const extraCSS = [data.isEnemy ? css.facingLeft : css.facingRight];
 
-    // on our side?
-    if (data.isEnemy !== game.players.local.data.isEnemy)
-      extraCSS.push(css.enemy);
+    if (data.isEnemy) extraCSS.push(css.enemy);
 
     dom.o = sprites.create({
       className: css.className,
