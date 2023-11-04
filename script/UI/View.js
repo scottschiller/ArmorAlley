@@ -1228,6 +1228,14 @@ const View = () => {
       // pass-thru if game menu is showing
       if (!game.data.started) return true;
 
+      if (e?.changedTouches && !clientFeatures.touch) {
+        /**
+         * "Detecting" touch support appears to be fraught with danger; here be dragons, etc.
+         * Thusly, infer from a real event: this is likely a touch event, and not from a mouse.
+         */
+        updateClientFeatures({ touch: true });
+      }
+
       // double and triple-tap "emulation": mobile "helicopter flip" function
       if (e?.changedTouches?.[0]) {
         const touch = e.changedTouches[0];
