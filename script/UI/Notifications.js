@@ -67,7 +67,10 @@ const Notifications = () => {
         // clear, start new timer
         if (item.timer) {
           item.timer.reset();
-          item.timer = common.setFrameTimeout(displayItemComplete, item.delay);
+          item.timer = common.setFixedFrameTimeout(
+            displayItemComplete,
+            item.delay
+          );
         }
 
         replacementItem = item;
@@ -136,7 +139,7 @@ const Notifications = () => {
     dom.oToasts.appendChild(oToast);
 
     // delay required for transition to work
-    common.setFrameTimeout(() => {
+    common.setFixedFrameTimeout(() => {
       utils.css.add(oToast, css.toastActive);
       if (gamePrefs.notifications_order_bottom_up) {
         // hackish: assign computed height for transition.
@@ -150,7 +153,7 @@ const Notifications = () => {
     // these can pile up. display immediately but process one at a time, FIFO.
     if (!data.isDisplaying) {
       data.isDisplaying = true;
-      item.timer = common.setFrameTimeout(displayItemComplete, item.delay);
+      item.timer = common.setFixedFrameTimeout(displayItemComplete, item.delay);
     }
   }
 
@@ -177,9 +180,9 @@ const Notifications = () => {
     }
 
     // collapse height, and then disappear.
-    common.setFrameTimeout(() => {
+    common.setFixedFrameTimeout(() => {
       utils.css.add(item.node, css.toastExpired);
-      common.setFrameTimeout(() => {
+      common.setFixedFrameTimeout(() => {
         item?.node?.remove();
       }, 500);
     }, 500);
@@ -189,7 +192,7 @@ const Notifications = () => {
       data.isDisplaying = false;
     } else {
       // we're onto the next one. queue its removal, and start running faster as the queue grows in size.
-      common.setFrameTimeout(
+      common.setFixedFrameTimeout(
         displayItemComplete,
         data.items[0].delay *
           (data.items.length > 5 ? 5 / data.items.length : 1)
@@ -248,7 +251,7 @@ const Notifications = () => {
 
     // special case
     if (levelName === 'Rainstorm') {
-      common.setFrameTimeout(() => {
+      common.setFixedFrameTimeout(() => {
         effects.updateStormStyle('rain');
         game.objects.notifications.add(
           '☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)'
@@ -256,7 +259,7 @@ const Notifications = () => {
       }, 5000);
     }
 
-    common.setFrameTimeout(
+    common.setFixedFrameTimeout(
       () => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'),
       2000
     );

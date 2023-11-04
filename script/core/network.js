@@ -149,7 +149,8 @@ function sendDelayedMessage(obj, callback) {
       obj
     );
 
-  common.setFrameTimeout(() => sendMessage(obj, callback), delay);
+  // important: prevent GAME_SPEED from affecting this frame-based timeout.
+  common.setFixedFrameTimeout(() => sendMessage(obj, callback), delay);
 }
 
 function serializeObjectReferences(obj = {}) {
