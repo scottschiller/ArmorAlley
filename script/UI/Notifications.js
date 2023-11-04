@@ -239,9 +239,9 @@ const Notifications = () => {
 
     // notify user of their game speed, if non-default.
     const gs = gamePrefs.game_speed;
-    if (gs != 1) {
+    if (gs != 1 && gs != 0) {
       const emoji = gs < 1 ? '🐢' : '🐇';
-      add(`Game speed: ${parseInt(gs * 100, 10)}% ${emoji}`);
+      add(`Game speed: ${Math.round(gs * 100)}% ${emoji}`);
     }
 
     game.objects.view.setAnnouncement(msg);
