@@ -713,14 +713,6 @@ body.is-mobile #game-status li:last-of-type {
   min-width: 10px;
   position: relative;
   transform: scale(0.85);
-  /* earlier "jetbrains mono" version */
-  /*
-  margin-left: -0.33rem;
-  margin-top: 0.5px;
-  font-size: 0px;
-  min-width: 10px;
-  transform: scale(0.9)
-  */
 }
 
 body.is_safari:not(.is-mobile) #funds-count {
