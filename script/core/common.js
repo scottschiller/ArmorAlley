@@ -480,7 +480,7 @@ const common = {
     }
   },
 
-  setFrameTimeout: (callback, delayMsec) => {
+  setFrameTimeout: (callback, delayMsec, useGameSpeed = true) => {
     /**
      * a frame-counting-based setTimeout() implementation.
      * millisecond value (parameter) is converted to a frame count.
@@ -490,8 +490,12 @@ const common = {
 
     data = {
       frameCount: 0,
-      frameInterval: parseInt((delayMsec / FRAMERATE) * (1 / GAME_SPEED), 10), // e.g., msec = 1000 -> frameInterval = 60
+      frameInterval: parseInt(
+        (delayMsec / FRAMERATE) * (useGameSpeed ? 1 / GAME_SPEED : 1),
+        10
+      ), // e.g., msec = 1000 -> frameInterval = 60
       callbackFired: false,
+      useGameSpeed,
       didReset: false
     };
 
@@ -532,6 +536,9 @@ const common = {
 
     return exports;
   },
+
+  setFixedFrameTimeout: (callback, delayMsec, useGameSpeed = false) =>
+    common.setFrameTimeout(callback, delayMsec, useGameSpeed),
 
   inheritData(data, options = {}) {
     // mix in defaults and common options
