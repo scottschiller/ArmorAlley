@@ -5942,25 +5942,25 @@ body.game-over .target-ui {
     /* better vertical centering. */
     top: 24px;
   }
-  body.is-mobile #game-status {
+  body.is_iphone #game-status {
     font-size: 120%;
     height: 20px;
   }
-  body.is-mobile #funds-count {
+  body.is_iphone #funds-count {
     top: 1px;
     transform: scale(1.5);
     transform-origin: 0 0;
     margin-left: -6px;
   }
   /* scale up a bit; center of screen, avoid The Notch and such. */
-  body.is-mobile ul.stats-bar {
+  body.is_iphone ul.stats-bar {
     /* prevent overlap with fuel bar */
     padding-top: 3px;
     /* scale up these controls. */
     transform: scale3d(1.5, 1.5, 1);
     transform-origin: 50% 0;
   }
-  body.is-mobile #game-paused {
+  body.is_iphone #game-paused {
     font-size: 15vmin;
     margin-top: 10vw;
   }
@@ -5975,11 +5975,13 @@ body.game-over .target-ui {
     font-size: 2.75em;
     line-height: 1em;
   }
-  /* giant hack, for now */
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
+
+  /* giant hack, for now - iPhone only, not iPads. */
+  body.is-mobile.is_iphone #mobile-controls .mobile-controls-ordering,
+  body.is-mobile.is_iphone #mobile-controls .mobile-controls-weapons {
     zoom: 2;
   }
+
   body.is-mobile #mobile-controls li {
     /* account for 2x border */
     border-width: 0.5px;
@@ -6028,6 +6030,8 @@ body.game-over .target-ui {
   body.is-mobile #notification-toasts {
     /* note: half-size height, given transform. */
     height: 128px;
+  }
+  body.is_iphone #notification-toasts {
     transform: scale3d(2, 2, 1);
     transform-origin: top right;
   }
@@ -6048,9 +6052,12 @@ body.game-over .target-ui {
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile #tutorial-window {
     left: 50%;
-    top: 144px;
-    transform: scale3d(2, 2, 1) translate(-50%, 0);
+    top: 170px;
+    transform: scale3d(1.5, 1.5, 1) translate3d(-50%, 0px, 0);
     transform-origin: 0 0;
+  }
+  body.is_iphone #tutorial-window {
+    transform: scale3d(2, 2, 1) translate3d(-50%, 0px, 0);
   }
 }
 
@@ -6108,9 +6115,12 @@ body.game-over .target-ui {
     left: -1px;
   }
   /* mobile, portrait: smaller controls. */
+  body.is_iphone #mobile-controls .mobile-controls-ordering,
+  body.is_iphone #mobile-controls .mobile-controls-weapons {
+    zoom: 1.25;
+  }
   body.is-mobile #mobile-controls .mobile-controls-ordering,
   body.is-mobile #mobile-controls .mobile-controls-weapons {
-    zoom: 1.25;
     /* collapse bullshit whitespace */
     font-size: 0;
     left: 0;
@@ -6426,18 +6436,21 @@ body.is_safari .animated-mail .letter-buttons {
 
 @media screen and (orientation: landscape) {
   /* on short screens, accommodate the fact that letters won't fit when open. */
-  body.is-mobile #battle-over-letter {
+  body.is-mobile.is_iphone #battle-over-letter {
     transform: translate3d(-50%, -50%, 0) scale3d(1.85, 1.85, 1);
   }
   body.is-mobile #battle-over-letter.open {
+    transform: translate3d(-50%, -25%, 0);
+  }
+  body.is-mobile.is_iphone #battle-over-letter.open {
     transform: translate3d(-50%, 25%, 0) scale3d(2.5, 2.5, 1);
   }
-  body.is-mobile .animated-mail .letter-wrapper {
+  body.is-mobile.is_iphone .animated-mail .letter-wrapper {
     /* size to near-top of screen */
     height: 60vh;
     overflow: auto;
   }
-  body.is-mobile #battle-over-letter.open .animated-mail .letter {
+  body.is-mobile.is_iphone #battle-over-letter.open .animated-mail .letter {
     /* TODO: investigate brief positioning / clipping in animation due to loss of transform. */
     transform: none;
     bottom: auto;
