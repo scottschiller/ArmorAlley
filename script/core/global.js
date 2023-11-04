@@ -13,24 +13,6 @@ const ua = navigator.userAgent;
 const FPS = 30;
 const FRAMERATE = 1000 / FPS;
 
-let GAME_SPEED;
-const GAME_SPEED_MIN = 0.25;
-const GAME_SPEED_MAX = 2;
-const GAME_SPEED_INCREMENT = 0.05;
-
-function updateGameSpeed(gameSpeed = 1) {
-  gameSpeed = Math.max(
-    GAME_SPEED_MIN,
-    Math.min(GAME_SPEED_MAX, parseFloat(gameSpeed).toFixed(2))
-  );
-
-  GAME_SPEED = gameSpeed;
-
-  return gameSpeed;
-}
-
-GAME_SPEED = updateGameSpeed(searchParams.get('gameSpeed') || 1);
-
 /**
  * Skip frame(s) as needed, prevent the game from running too fast.
  *
@@ -63,6 +45,56 @@ const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
 
 // iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. "request desktop website")
 const isMobile = !!ua.match(/mobile|iphone|ipad/i);
+// "inferences" about client capabilities, based on live events
+let clientFeatures = {
+  touch: forceAppleMobile ? true : null,
+  keyboard: null
+};
+
+function updateClientFeatures(data) {
+  clientFeatures = Object.assign(clientFeatures, data);
+}
+
+/**
+ * Game Speed - defaults + settings config
+ */
+
+const GAME_SPEED_MIN = 0.1;
+const GAME_SPEED_DEFAULT_DESKTOP = 1;
+const GAME_SPEED_DEFAULT_MOBILE = 0.85;
+const GAME_SPEED_MAX = 2;
+const GAME_SPEED_INCREMENT = 0.05;
+const GAME_SPEED_PARAM = searchParams.get('gameSpeed');
+
+function getDefaultGameSpeed() {
+  return isMobile || clientFeatures.touch
+    ? GAME_SPEED_DEFAULT_MOBILE
+    : GAME_SPEED_DEFAULT_DESKTOP;
+}
+
+let GAME_SPEED = getDefaultGameSpeed();
+
+function updateGameSpeed(gameSpeed = getDefaultGameSpeed()) {
+  gameSpeed = Math.max(
+    GAME_SPEED_MIN,
+    Math.min(GAME_SPEED_MAX, parseFloat(gameSpeed).toFixed(2))
+  );
+
+  if (isNaN(gameSpeed)) {
+    // well, something didn't work.
+    gameSpeed = getDefaultGameSpeed();
+  }
+
+  GAME_SPEED = gameSpeed;
+
+  return gameSpeed;
+}
+
+// only assign a value "immediately" if provided via URL.
+// otherwise, wait as it may be dependent on device and/or prefs.
+if (GAME_SPEED_PARAM) {
+  updateGameSpeed(GAME_SPEED_PARAM);
+}
 
 // special cases: handling The Notch, etc.
 const isiPhone = !!ua.match(/iphone/i);
@@ -338,6 +370,7 @@ const COSTS = {
 export {
   DEFAULT_FUNDS,
   GAME_SPEED,
+  GAME_SPEED_DEFAULT_DESKTOP,
   GAME_SPEED_MIN,
   GAME_SPEED_INCREMENT,
   GAME_SPEED_MAX,
@@ -348,7 +381,7 @@ export {
   FRAME_MIN_TIME,
   FPS,
   FRAMERATE,
-  unlimitedFrameRate,
+  clientFeatures,
   defaultSeed,
   defaultSeeds,
   getTypes,
@@ -366,6 +399,7 @@ export {
   DEFAULT_VOLUME,
   rad2Deg,
   searchParams,
+  unlimitedFrameRate,
   worldWidth,
   worldHeight,
   worldOverflow,
@@ -385,5 +419,6 @@ export {
   soundManager,
   setDefaultSeed,
   setTutorialMode,
+  updateClientFeatures,
   updateGameSpeed
 };

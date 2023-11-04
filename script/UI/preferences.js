@@ -1,6 +1,7 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
+  clientFeatures,
   defaultMissileMode,
   GAME_SPEED,
   GAME_SPEED_INCREMENT,
@@ -15,6 +16,7 @@ import {
   soundManager,
   tutorialMode,
   TYPES,
+  updateGameSpeed,
   worldHeight
 } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
@@ -44,8 +46,8 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 
 // game defaults
 const defaultPrefs = {
-  'game_speed': 1,
   'auto_flip': !!isMobile,
+  'game_speed': 0,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
   'net_game_level': '',
@@ -204,8 +206,9 @@ function PrefsManager() {
     dom.oForm.onreset = events.onFormReset;
     dom.optionsLink.onclick = events.optionsLinkOnClick;
 
-    // Configure game speed slider, based on JS values
-    dom.oGameSpeedSlider.min = GAME_SPEED_MIN;
+    // Configure game speed slider, based on JS values.
+    // Slider goes down to 0 for consistency, but limit the math to GAME_SPEED_MIN.
+    dom.oGameSpeedSlider.min = 0;
     dom.oGameSpeedSlider.max = GAME_SPEED_MAX;
     dom.oGameSpeedSlider.step = GAME_SPEED_INCREMENT;
 
@@ -597,6 +600,17 @@ function PrefsManager() {
     );
   }
 
+  function maybeUpdateGameSpeed() {
+    /**
+     * tl;dr: we may not yet have established a default game speed yet.
+     * It's possible gamePrefs.game_speed is 0/false, but we don't want to assume 1.
+     * For mobile / touch devices, we may have a slightly lower default speed.
+     */
+    if (!gamePrefs.game_speed) {
+      gamePrefs.game_speed = updateGameSpeed();
+    }
+  }
+
   function show(options = {}) {
     /**
      * options = {
@@ -624,6 +638,8 @@ function PrefsManager() {
       // HACK: avoid double-scrollbars in Firefox Nightly 120.0a1?
       document.getElementById('form-scroller').style.maxHeight = '737px';
     }
+
+    maybeUpdateGameSpeed();
 
     // ensure the form matches the JS state.
     updateForm();
@@ -909,7 +925,8 @@ function PrefsManager() {
       if (key === 'volume') {
         prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
       } else if (key === 'game_speed') {
-        prefsFromStorage[key] = value || 1;
+        // note: default is 0
+        prefsFromStorage[key] = value;
       } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
@@ -1394,6 +1411,9 @@ function PrefsManager() {
       },
 
       game_speed: (newGameSpeed) => {
+        // slider can go down to 0 (or as converted, false), but ignore those values.
+        if (!newGameSpeed) return;
+        newGameSpeed = Math.max(GAME_SPEED_MIN, newGameSpeed);
         if (GAME_SPEED === newGameSpeed) return;
         common.setGameSpeed(newGameSpeed);
       },

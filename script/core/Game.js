@@ -12,7 +12,9 @@ import {
   tutorialMode,
   TYPES,
   winloc,
-  worldHeight
+  worldHeight,
+  clientFeatures,
+  updateClientFeatures
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
@@ -803,6 +805,20 @@ const game = (() => {
         orientationChange();
       }
     }
+
+    function markClientTouch(e) {
+      if (e?.changedTouches && !clientFeatures.touch) {
+        /**
+         * "Detecting" touch support appears to be fraught with danger; here be dragons, etc.
+         * Thusly, infer from a real event: this is likely a touch event, and not from a mouse.
+         */
+        updateClientFeatures({ touch: true });
+      }
+      utils.events.remove(document, 'touchstart', markClientTouch);
+    }
+
+    // touch event support may inform certain game features, UX / UI
+    utils.events.add(document, 'touchstart', markClientTouch);
 
     // TODO: DOM init method or similar, ideally
 
