@@ -5211,6 +5211,16 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
   display: block;
 }
 
+/* block-level display shenanigans */
+body.is-mobile #game-prefs-modal .mobile-only-block {
+  display: block;
+}
+
+body.is-mobile #game-prefs-modal .mobile-only.network {
+  /* hackish: override display when combined with non-network game, .network-only case */
+  display: initial;
+}
+
 /* make room for mac icons */
 #game-prefs-modal.is-network #gameplay-options,
 #game-prefs-modal.is-network #network-options,
