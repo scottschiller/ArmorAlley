@@ -847,7 +847,9 @@ const Helicopter = (options = {}) => {
     data.flipped = !data.flipped;
 
     // immediately re-scan for new missile targets.
-    scanRadar();
+    if (data.isLocal) {
+      scanRadar();
+    }
 
     utils.css.add(dom.o, data.flipped ? css.flippedLeft : css.flippedRight);
 
