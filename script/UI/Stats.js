@@ -493,7 +493,7 @@ function Stats() {
           : (attacker.hostile
               ? target.data.isEnemy
                 ? 'an enemy '
-                : 'your '
+                : 'yours '
               : notifyItem.isAn
               ? 'an '
               : 'a ') + getNormalizedUnitName(target)
