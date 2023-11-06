@@ -89,7 +89,7 @@ const Van = (options = {}) => {
       !data.isOnScreen &&
       attackerType !== TYPES.smartMissile
     ) {
-      game.objects.notifications.add('You lost a van 💥');
+      game.objects.notifications.add('TO REMOVE(?): You lost a van 💥');
     }
   }
 
