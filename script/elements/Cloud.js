@@ -31,6 +31,7 @@ const cloudTypes = [
   }
 ];
 
+const MAX_SPEED = 3;
 const Cloud = (options = {}) => {
   let type = TYPES.cloud;
 
@@ -63,9 +64,9 @@ const Cloud = (options = {}) => {
     // prevent clouds drifting out of the world, by shifting the wind
     // (previously: hard bounce / reverse, didn't look right.)
     if (data.x + data.width > worldWidth) {
-      data.windOffsetX = Math.max(data.windOffsetX - 0.05, -3);
+      data.windOffsetX = Math.max(data.windOffsetX - 0.01, -MAX_SPEED);
     } else if (data.x < 0) {
-      data.windOffsetX = Math.min(data.windOffsetX + 0.05, 3);
+      data.windOffsetX = Math.min(data.windOffsetX + 0.01, MAX_SPEED);
     }
 
     if (data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) {
