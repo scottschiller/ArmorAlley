@@ -68,12 +68,12 @@ const Cloud = (options = {}) => {
       data.windOffsetX = Math.min(data.windOffsetX + 0.05, 3);
     }
 
-    if (
-      (data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) ||
-      (data.windOffsetY < 0 && data.y < 64)
-    ) {
-      // reverse gears
-      data.windOffsetY *= -1;
+    if (data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) {
+      // low-hanging cloud
+      data.windOffsetY -= 0.01;
+    } else if (data.windOffsetY < 0 && data.y < 64) {
+      // near top of world
+      data.windOffsetY += 0.01;
     }
 
     data.x += data.windOffsetX * GAME_SPEED;
