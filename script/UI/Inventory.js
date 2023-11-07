@@ -311,6 +311,26 @@ const Inventory = () => {
     }
   }
 
+  function applyRiseTransition(newObject) {
+    if (!newObject?.dom?.o) return;
+
+    // force-append this thing, if it's on-screen right now
+    sprites.updateIsOnScreen(newObject);
+
+    utils.css.add(newObject.dom.o, css.building);
+
+    // and start the "rise" animation
+    window.requestAnimationFrame(() => {
+      utils.css.add(newObject.dom.o, css.ordering);
+
+      common.setFrameTimeout(() => {
+        if (!newObject.dom?.o) return;
+        utils.css.remove(newObject.dom.o, css.ordering);
+        utils.css.remove(newObject.dom.o, css.building);
+      }, 2200);
+    });
+  }
+
   function animate() {
     let newObject;
 
@@ -365,21 +385,7 @@ const Inventory = () => {
           });
         }
 
-        // force-append this thing, if it's on-screen right now
-        sprites.updateIsOnScreen(newObject);
-
-        utils.css.add(newObject.dom.o, css.building);
-
-        // and start the "rise" animation
-        window.requestAnimationFrame(() => {
-          utils.css.add(newObject.dom.o, css.ordering);
-
-          common.setFrameTimeout(() => {
-            if (!newObject.dom?.o) return;
-            utils.css.remove(newObject.dom.o, css.ordering);
-            utils.css.remove(newObject.dom.o, css.building);
-          }, 2200);
-        });
+        applyRiseTransition(newObject);
       }
 
       // only fire "order start" once, whether a single tank or the first of five infantry.
@@ -508,16 +514,18 @@ const Inventory = () => {
         };
 
         if (!game.data.productionHalted) {
-          let obj = game.addObject(enemyOrders[orderOffset], options);
+          const newObject = game.addObject(enemyOrders[orderOffset], options);
+
+          applyRiseTransition(newObject);
 
           // ensure this order shows up on the remote
           if (net.active) {
             net.sendMessage({
               type: 'ADD_OBJECT',
-              objectType: obj.data.type,
+              objectType: newObject.data.type,
               params: {
                 ...options,
-                id: obj.data.id
+                id: newObject.data.id
               }
             });
           }
