@@ -32,6 +32,8 @@ const cloudTypes = [
 ];
 
 const MAX_SPEED = 3;
+const NEAR_END_DISTANCE = 128;
+
 const Cloud = (options = {}) => {
   let type = TYPES.cloud;
 
@@ -47,42 +49,81 @@ const Cloud = (options = {}) => {
     if (data.frameCount % data.windModulus === 0) {
       // TODO: improve, limit on axes
 
-      data.windOffsetX += data.x < 0 || rng(1, type) > 0.5 ? 0.25 : -0.25;
-
-      data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
-
-      data.windOffsetY += data.y < 72 || rng(1, type) > 0.5 ? 0.1 : -0.1;
-
-      data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
-
-      // and randomize
-      if (!net.active) {
-        data.windModulus = 16 + rndInt(16);
+      // apply "regular" wind if we aren't drifting with a helicopter.
+      if (!data.driftCount) {
+        data.windOffsetX += data.x < 0 || rng(1, type) > 0.5 ? 0.125 : -0.125;
       }
+
+      data.windOffsetX = Math.max(
+        -MAX_SPEED,
+        Math.min(MAX_SPEED, data.windOffsetX)
+      );
+
+      data.windOffsetY += data.y < 72 || rng(1, type) > 0.5 ? 0.05 : -0.05;
+      data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
     }
 
-    // prevent clouds drifting out of the world, by shifting the wind
-    // (previously: hard bounce / reverse, didn't look right.)
+    // don't drift off the ends of the battlefield...
     if (data.x + data.width > worldWidth) {
       data.windOffsetX = Math.max(data.windOffsetX - 0.01, -MAX_SPEED);
     } else if (data.x < 0) {
       data.windOffsetX = Math.min(data.windOffsetX + 0.01, MAX_SPEED);
     }
 
+    // ...nor the bottom, or top.
     if (data.windOffsetY > 0 && worldHeight - data.y - 32 < 64) {
-      // low-hanging cloud
       data.windOffsetY -= 0.01;
     } else if (data.windOffsetY < 0 && data.y < 64) {
-      // near top of world
       data.windOffsetY += 0.01;
     }
 
     data.x += data.windOffsetX * GAME_SPEED;
     data.y += data.windOffsetY * GAME_SPEED;
 
+    // reset drift "flag"
+    data.driftCount = 0;
+
     zones.refreshZone(exports);
 
     sprites.moveWithScrollOffset(exports);
+  }
+
+  function startDrift() {
+    /**
+     * Called by helicopter(s) when they enter a cloud.
+     * To keep things interesting, set a new random max drift speed -
+     * no slower than present wind speed, or 0.5.
+     *
+     * TODO: test this in network games; feels like a de-sync risk.
+     */
+    if (net.active) return;
+
+    const minSpeed = 0.5;
+    data.driftXMax = Math.max(
+      minSpeed,
+      Math.max(Math.abs(data.windOffsetX), rng(MAX_SPEED, data.type))
+    );
+  }
+
+  function drift(isEnemy) {
+    /**
+     * "Set adrift on memory bliss of you" -PM Dawn ☁️
+     * Given a helicopter, have the wind pick up and move toward the opposing base.
+     * This is a key strategy for defeating groups of turrets, e.g., Midnight Oasis in Extreme mode.
+     */
+
+    // hackish: flag that drift is happening, so regular drift doesn't apply.
+    // edge case: 2+ helicopters in a single cloud.
+    data.driftCount++;
+
+    // avoid any changes when near ends of battlefield.
+    if (data.x > NEAR_END_DISTANCE && data.x < worldWidth - NEAR_END_DISTANCE) {
+      data.windOffsetX += isEnemy ? -0.01 : 0.01;
+      data.windOffsetX = Math.max(
+        -data.driftXMax,
+        Math.min(data.driftXMax, data.windOffsetX)
+      );
+    }
   }
 
   function initDOM() {
@@ -110,6 +151,7 @@ const Cloud = (options = {}) => {
       windModulus: 16,
       windOffsetX: 0,
       windOffsetY: 0,
+      driftXMax: MAX_SPEED,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
       y:
@@ -130,8 +172,10 @@ const Cloud = (options = {}) => {
   exports = {
     animate,
     data,
+    drift,
     dom,
-    init: initCloud
+    init: initCloud,
+    startDrift
   };
 
   return exports;
