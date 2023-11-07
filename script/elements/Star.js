@@ -6,12 +6,16 @@ import { sprites } from '../core/sprites.js';
 const Star = (options = {}) => {
   let css, dom, data, exports;
 
+  function getScrollLeft() {
+    return game.objects.view.data.battleField.scrollLeft - (isMobile && game.objects.view.data.browser.isPortrait ? game.objects.view.data.browser.width : 0);
+  }
+
   function animate() {
     data.hasAnimated = true;
 
     // hackish, mobile + portrait: take one screen's worth off - so at the beginning of the battlefield, we have a screen of stars.
     // the scroll logic could use a refactor.
-    const scrollLeft = game.objects.view.data.battleField.scrollLeft - (isMobile && game.objects.view.data.browser.isPortrait ? game.objects.view.data.browser.width : 0);
+    const scrollLeft = getScrollLeft();
 
     // note: "tracked" value is not the same as rendered x value.
     if (data.lastScrollLeft !== scrollLeft) {
@@ -119,7 +123,8 @@ const Star = (options = {}) => {
       parallax: 0.65 + rnd(0.3),
       opacity: 0.15 + rnd(0.65),
       originalX: null,
-      lastScrollLeft: null
+      // minimize original shift
+      lastScrollLeft: getScrollLeft() + 1
     },
     options
   );
