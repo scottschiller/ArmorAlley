@@ -71,13 +71,17 @@ const Helicopter = (options = {}) => {
 
   const aiRNG = (number, type = null) => rng(number, type, aiSeedOffset);
 
-  function cloak() {
+  function cloak(cloud) {
     if (!data.cloaked) {
       doCloak();
+      cloud?.startDrift();
     }
 
     // hackish: mark and/or update the current frame when this happened.
     data.cloaked = game.objects.gameLoop.data.frameCount;
+
+    // Tough times with turrets? “The answer, my friend, is blowing in the wind.” 🌬️🚁
+    cloud?.drift(data.isEnemy);
   }
 
   function doCloak() {
@@ -3315,7 +3319,7 @@ const Helicopter = (options = {}) => {
             }
           }
         } else if (tData.type === TYPES.cloud) {
-          cloak();
+          cloak(target);
         } else if (
           tData.type === TYPES.superBunker &&
           tData.isEnemy === data.isEnemy
