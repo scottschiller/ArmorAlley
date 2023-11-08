@@ -4790,12 +4790,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   /* auto may cause rendering to be cut short on mobile, we'll revert it below. */
   overflow-y: auto;
   position: relative;
-
-  /**
-   * best we can do for Firefox, which doesn't support zoom
-   * and thus scrollbars are larger due to transforms - long story.
-   */
-  scrollbar-width: thin;
 }
 
 body.is-mobile #game-prefs-modal .fieldset-container {
@@ -4806,6 +4800,13 @@ body.is-mobile #game-prefs-modal .fieldset-container {
 body.is_firefox #game-prefs-modal .fieldset-container {
   /* zoom does not work in Firefox. native scrollbar will be large. */
   max-height: 320px;
+  /**
+   * best we can do for Firefox, which doesn't support zoom
+   * and thus scrollbars are larger due to transforms - long story.
+   * 11/2023: specific to firefox, because Chrome Canary started
+   * ignoring custom scrollbars if `scrollbar-width` was set.
+   */
+   scrollbar-width: thin;
 }
 
 #game-prefs-modal .fieldset-container fieldset {
