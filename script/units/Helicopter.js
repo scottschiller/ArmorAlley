@@ -766,7 +766,7 @@ const Helicopter = (options = {}) => {
 
     const respawnY = data.yMax - 4;
 
-    // initial respawning CSS
+    // initial respawning
     if (state) {
       // hackish: hard reset battlefield scroll
       data.scrollLeft = data.isEnemy
@@ -797,6 +797,21 @@ const Helicopter = (options = {}) => {
 
       // hackish: force-refresh, so helicopter can be hit while respawning.
       zones.refreshZone(exports);
+
+      // look ma, no longer dead!
+      data.dead = false;
+      data.pilot = true;
+      data.deployedParachute = false;
+      data.excludeFromCollision = false;
+
+      radarItem?.reset();
+
+      if (data.isLocal) {
+        // reset everything.
+        updateStatusUI({ force: true });
+      }
+
+      sprites.updateEnergy(exports);
 
       utils.css.add(dom.o, css.respawning);
     } else {
@@ -1251,18 +1266,7 @@ const Helicopter = (options = {}) => {
     // move to landing pad
     moveTo(data.x, data.y);
 
-    // look ma, no longer dead!
-    data.dead = false;
-    data.pilot = true;
-    data.deployedParachute = false;
-    data.excludeFromCollision = false;
-
-    radarItem.reset();
-
-    // reset everything.
-    updateStatusUI({ force: true });
-
-    sprites.updateEnergy(exports);
+    // data.dead and other bits will be set with respawn action
 
     callAction('setRespawning', true);
   }
@@ -2926,7 +2930,6 @@ const Helicopter = (options = {}) => {
       });
     }
 
-    // if not enemy, force-update status bar UI
     if (data.isLocal) {
       updateStatusUI({ force: true });
     }
