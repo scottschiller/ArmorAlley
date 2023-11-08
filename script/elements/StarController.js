@@ -24,8 +24,8 @@ const StarController = () => {
     }
   }
 
-  function resetStars() {
-    game.objects.star.forEach((star) => star.reset());
+  function resetStars(isEnemyView) {
+    game.objects.star.forEach((star) => star.reset(isEnemyView));
   }
 
   exports = {

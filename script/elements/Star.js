@@ -1,13 +1,18 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { isMobile, oneOf, rnd } from '../core/global.js';
+import { isMobile, oneOf, rnd, worldWidth } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 
 const Star = (options = {}) => {
   let css, dom, data, exports;
 
   function getScrollLeft() {
-    return game.objects.view.data.battleField.scrollLeft - (isMobile && game.objects.view.data.browser.isPortrait ? game.objects.view.data.browser.width : 0);
+    return (
+      game.objects.view.data.battleField.scrollLeft -
+      (isMobile && game.objects.view.data.browser.isPortrait
+        ? game.objects.view.data.browser.width
+        : 0)
+    );
   }
 
   function animate() {
@@ -93,12 +98,15 @@ const Star = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
 
-  function reset() {
-    data.lastScrollLeft = -1;
+  function reset(isEnemyView) {
+    // start at one end or the other
     data.x =
       (isMobile ? game.objects.view.data.battleField.scrollLeft : 0) +
+      (isEnemyView ? worldWidth - game.objects.view.data.browser.width : 0) +
       rnd(game.objects.view.data.browser.width);
     data.originalX = data.x;
+    // minimize the jump on next frame
+    data.lastScrollLeft = game.objects.view.data.battleField.scrollLeft - 1;
   }
 
   css = common.inheritCSS({

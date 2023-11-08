@@ -783,6 +783,9 @@ const Helicopter = (options = {}) => {
 
         sprites.moveWithScrollOffset(exports);
 
+        // stars, too.
+        game.objects.starController?.reset(data.isEnemy);
+
         // good time to do some DOM pruning, etc.
         if (game.objects.queue) {
           game.objects.queue.process();
@@ -1262,11 +1265,6 @@ const Helicopter = (options = {}) => {
     sprites.updateEnergy(exports);
 
     callAction('setRespawning', true);
-
-    if (data.isLocal) {
-      // stars, too.
-      game.objects.starController?.reset();
-    }
   }
 
   function respawn() {
