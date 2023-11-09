@@ -98,18 +98,18 @@ const Cloud = (options = {}) => {
     /**
      * Called by helicopter(s) when they enter a cloud.
      * To keep things interesting, set a new random max drift speed -
-     * no slower than present wind speed, or 0.5.
-     *
-     * TODO: test this in network games; feels like a de-sync risk.
+     * no slower than present wind speed, or MIN_SPEED.
      */
+
+    const minSpeed = MIN_SPEED;
+
     // de-sync risk in network games.
     // TODO: revisit.
     if (net.active) return;
 
-    const minSpeed = 0.5;
     data.driftXMax = Math.max(
       minSpeed,
-      Math.max(Math.abs(data.windOffsetX), rng(MAX_SPEED, data.type))
+      Math.max(Math.abs(data.windOffsetX), rng(MAX_VX, type))
     );
   }
 
