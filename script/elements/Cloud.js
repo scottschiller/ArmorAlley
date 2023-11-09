@@ -32,6 +32,8 @@ const cloudTypes = [
 ];
 
 const MAX_SPEED = 3;
+const MAX_VX = 3;
+const MAX_VY = 0.5;
 const NEAR_END_DISTANCE = 128;
 
 const Cloud = (options = {}) => {
@@ -149,9 +151,9 @@ const Cloud = (options = {}) => {
       isNeutral: true,
       frameCount: 0,
       windModulus: 16,
-      windOffsetX: 0,
-      windOffsetY: 0,
       driftXMax: MAX_SPEED,
+      windOffsetX: rngPlusMinus(rng(MAX_VX), type),
+      windOffsetY: rngPlusMinus(rng(MAX_VY), type),
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
       y:

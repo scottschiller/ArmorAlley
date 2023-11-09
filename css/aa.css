@@ -53,8 +53,8 @@
   /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
   --game-speed: 1;
   --gs-frac: calc(1 / var(--game-speed));
-  --screen-scale: 1;
-  --ss-frac: calc(1 / var(--screen-scale));
+  --font-scale: 1.1;
+  --ss-frac: calc(1 / var(--font-scale));
 }
 
 @font-face {
@@ -4417,37 +4417,29 @@ body.is_safari:not(.is-mobile) #notification-toasts {
 /* prefs + modal stuff - based on original 68K Macintosh UI */
 
 #game-prefs-modal {
-  zoom: 2; /* zoom up, and then scale down looks better where supported (Chrome + Safari) */
-  border: 0.5px solid #000;
+  border: 1px solid #000;
   display: none;
   /* collapse */
   font-size: 0;
   left: 50%;
-  /* sight centering tweak */
-  margin-top: -15px;
-  overflow: hidden;
   position: absolute;
   top: 50%;
   transform: translate3d(-50%, -50%, 0); /* scale3d() will be updated via JS */
-  width: 20rem; /* 224px; */
-  width: 228px;
+  width: 540px;
+  max-width: 99vw;
   z-index: 11;
 }
 
-body.is-mobile #game-prefs-modal,
-body.is_firefox #game-prefs-modal {
-  /* don't do this on mobile, at least iPads if we can tell. */
-  /* 10/2023: nor on Firefox Nightly as of V120.0a1? :X */
-  zoom: 1;
+#game-prefs-modal,
+#game-prefs-form {
+  height: 95vh;
 }
 
-body.is-mobile #game-prefs-modal:not(.is-network) {
-  top: 54.5%;
+/* leave room for address bar UI. */
+body.is_iphone #game-prefs-modal,
+body.is_iphone #game-prefs-form {
+  height: 85vh;
 }
-
-/* TODO: move this into the prefs JS? */
-
-/* iOS Safari hacks */
 
 #game-prefs-submit {
   position: relative;
@@ -4479,18 +4471,19 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal .game-speed-icons {
   position: relative;
-  font-size: calc(8px * var(--screen-scale));
-  line-height: 8px;
-  height: 8px;
+  font-size: calc(16px * var(--font-scale));
+  line-height: 16px;
+  height: 16px;
+  padding-bottom: 1px;
   -webkit-user-select: none;
   user-select: none;
   /* match .range-slider */
-  width: 100px;
+  width: 200px;
 }
 
 #game-prefs-modal .emoji-turtle {
   position: absolute;
-  left: 1px;
+  left: 4px;
   transform: scaleX(-1);
 }
 
@@ -4500,13 +4493,13 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   margin-left: -0.25em;
 }
 
-body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
+body.is_safari #game-prefs-modal .emoji-human {
   margin-left: -0.4em;
 }
 
 #game-prefs-modal .emoji-rabbit {
   position: absolute;
-  right: -1px;
+  right: -2px;
   transform: scaleX(-1);
 }
 
@@ -4516,21 +4509,21 @@ body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
   display: inline-block;
   appearance: none;
   background: transparent;
-  border: 0.5px solid #000;
-  border-radius: 8px;
-  height: 8px;
-  margin: 1px 0px 0px 0px;
+  border: 1px solid #000;
+  border-radius: 16px;
+  height: 16px;
+  margin: 2px 0px 0px 0px;
   outline: none;
-  padding: 0 0.5px;
-  padding-left: 1px;
-  padding-right: 1px;
-  width: 100px;
+  padding: 0 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+  width: 200px;
   background: transparent url(../image/checkerboard-black-mask-50percent.png);
   background-size: auto;
   image-rendering: pixelated;
   background: #eee
     url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
-  background-size: 1.25px;
+  background-size: 1.5px;
   image-rendering: smooth;
   image-rendering: -webkit-optimize-contrast;
 }
@@ -4538,21 +4531,21 @@ body.is_safari:not(.is-mobile) #game-prefs-modal .emoji-human {
 #game-prefs-modal .range-slider::-webkit-slider-thumb {
   appearance: none;
   background: #eee;
-  border: 0.5px solid #000;
-  border-radius: 5px;
+  border: 1px solid #000;
+  border-radius: 10px;
   cursor: pointer;
-  height: 6px;
-  width: 10px;
+  height: 12px;
+  width: 20px;
 }
 
 #game-prefs-modal .range-slider::-moz-range-thumb {
   appearance: none;
   background: #eee;
-  border: 0.5px solid #000;
-  border-radius: 5px;
+  border: 1px solid #000;
+  border-radius: 10px;
   cursor: pointer;
-  height: 5px;
-  width: 10px;
+  height: 10px;
+  width: 20px;
 }
 
 .finder {
@@ -4676,7 +4669,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 }
 
 #game-prefs-modal .body {
-  font-size: calc(5px * var(--screen-scale));
+  font-size: calc(11px * var(--font-scale));
 }
 
 .finder .body,
@@ -4723,7 +4716,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   box-sizing: border-box;
   color: #000;
   font-family: Geneva, verdana, arial, sans-serif;
-  height: 10rem;
+  /* height: 10rem; */
   overflow: auto;
   position: relative;
   /* Firefox may show scaled-up scrollbars - this helps a bit. */
@@ -4737,7 +4730,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 }
 
 #game-prefs-modal p {
-  padding-top: 1px;
+  padding-top: 3px;
 }
 
 #game-prefs-header {
@@ -4745,16 +4738,18 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  padding: 5px;
+  padding: 10px;
   width: 100%;
 }
 
 #game-prefs-header .aa-logo {
-  height: 25px;
-  image-rendering: pixelated;
-  margin-right: 6px;
-  margin-top: 3px;
-  width: 161.5px;
+  display: inline-block;
+  image-rendering: auto;
+  margin-right: 15px;
+  margin-top: 7.5px;
+  width: 404px;
+  max-width: 50vw;
+  height: auto;
 }
 
 #game-prefs-header .column {
@@ -4778,40 +4773,24 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   width: 23rem;
 }
 
-#game-prefs-modal .fieldset-container {
-  /**
-   * Scrollbar shenanigans
-   * Render small so the scrollbar size is right,
-   * then zoom up the inner contents.
-   */
-  zoom: 0.4;
-  max-height: 800px;
-
-  /* auto may cause rendering to be cut short on mobile, we'll revert it below. */
-  overflow-y: auto;
-  position: relative;
+#game-prefs-modal #form-scroller-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
 }
 
-body.is-mobile #game-prefs-modal .fieldset-container {
-  /* suspected cause of form truncation, especially in portrait. */
-  overflow-y: unset;
+#game-prefs-modal #form-scroller {
+  overflow-y: scroll;
 }
 
 body.is_firefox #game-prefs-modal .fieldset-container {
-  /* zoom does not work in Firefox. native scrollbar will be large. */
-  max-height: 320px;
   /**
    * best we can do for Firefox, which doesn't support zoom
    * and thus scrollbars are larger due to transforms - long story.
    * 11/2023: specific to firefox, because Chrome Canary started
    * ignoring custom scrollbars if `scrollbar-width` was set.
    */
-   scrollbar-width: thin;
-}
-
-#game-prefs-modal .fieldset-container fieldset {
-  /* offset the above zoom, to get back to relative scale of 1 */
-  zoom: 2.5;
+  scrollbar-width: thin;
 }
 
 /**
@@ -4829,17 +4808,19 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   /* black checkerboard pattern */
   background: #fff
     url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
-  background-size: 4px 4px;
-  border-left: 3px solid #000;
+  background-size: 3px 3px;
+  border-left: 2px solid #000;
   image-rendering: -webkit-optimize-contrast;
   width: 10px;
 }
 
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-thumb {
   background-color: #fff;
-  border: 2px solid #000;
-  border-right: none;
+  border-left: 2px solid #000;
+  border-right: 0.5px solid #000;
   box-sizing: content-box;
+  /* two shadows, which are hidden when at the top and bottom */
+  box-shadow: 0px 2px 0px #000, 0px -2px 0px #000;
   width: 20px;
 }
 
@@ -4889,12 +4870,13 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic fieldset:first-of-type {
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .mac-classic fieldset {
-  border: 0.75px solid #000;
-  margin: 4px;
+  border: 1px solid #000;
+  margin: 10px;
+  padding: 6px 12px;
 }
 
 .mac-classic fieldset legend,
@@ -4905,9 +4887,41 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   vertical-align: middle;
 }
 
-#game-prefs-modal legend,
+#game-prefs-modal legend {
+  font-size: calc(16px * var(--font-scale));
+}
+
 #game-prefs-modal button {
-  font-size: calc(7px * var(--screen-scale));
+  /* hacks / here be dragons: use a combination of 8px font size, + 2x zoom so buttons still look nice */
+  font-size: calc(8px * var(--font-scale));
+  zoom: 2;
+  border: 0.75px solid #000;
+}
+
+body.is-mobile.is_safari #game-prefs-modal button {
+  /* more hacks: zoom doesn't affect font size on iPads, but does on iPhones? */
+  font-size: calc(16px * var(--font-scale));
+}
+
+body.is-mobile.is_safari #game-prefs-modal button {
+  /* Safari *does* do Zoom, apparently. */
+  zoom: 2;
+  font-size: calc(8px * var(--font-scale));
+}
+
+/* but not iPads, ha ha! :X */
+@media screen and (orientation: landscape) and (min-width: 1024px) {
+  body.is-mobile.is_safari #game-prefs-modal button {
+    /* scale back up for iPad. */
+    font-size: calc(16px * var(--font-scale));
+  }
+}
+
+@media screen and (orientation: portrait) and (min-width: 640px) {
+  body.is-mobile.is_safari #game-prefs-modal button {
+    /* scale back up for iPad. */
+    font-size: calc(16px * var(--font-scale));
+  }
 }
 
 .mac-classic b {
@@ -4932,12 +4946,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic ul li {
-  margin-bottom: 4px;
-  margin-top: 1px;
+  margin-bottom: 8px;
+  margin-top: 2px;
 }
 
 .mac-classic ul.partial-bottom-spacing li {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .mac-classic ul.less-bottom-spacing li {
@@ -4945,11 +4959,11 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic ul li:last-of-type {
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .mac-classic ul li.less-bottom-spacing {
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 }
 
 .mac-classic ul li ul li {
@@ -4959,8 +4973,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic p {
   margin: 0;
-  padding-bottom: 3px;
-  padding-top: 1px;
+  padding-bottom: 6px;
+  padding-top: 2px;
 }
 
 .mac-classic .compact,
@@ -4984,18 +4998,18 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 .mac-classic ul li p,
 .mac-classic ul ul.real-list li {
   margin-bottom: 0;
-  margin-left: 9px;
-  padding-bottom: 1px;
+  margin-left: 18px;
+  padding-bottom: 2px;
 }
 
 .mac-classic p,
 .mac-classic li {
-  letter-spacing: -0.15px;
+  letter-spacing: -0.25px;
 }
 
 .mac-classic ul ul.real-list li {
   display: list-item;
-  margin-left: 15px;
+  margin-left: 19px;
 }
 
 .mac-classic .indented {
@@ -5049,21 +5063,20 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   vertical-align: middle;
   padding-right: 32px;
   text-indent: 4px;
+  scrollbar-width: thin;
 }
 
 #game-prefs-modal select {
   border-color: #000;
   color: #000;
   font-family: FA Sysfont C, geneva, verdana, arial, sans-serif;
-  font-size: 11px;
+  font-size: calc(12px * var(--font-scale));
   border-width: 1px;
-  /* collapse the extra vertical space left, due to the transform */
-  margin-bottom: -10px;
   margin-left: 0;
   margin-top: 1px;
-  /* hacks: scale down, after using the larger font size. */
-  transform: scale(0.5);
-  transform-origin: 0 0;
+  height: calc(25px * var(--font-scale));
+  background-size: 10px;
+  min-width: 11em; /* room for "Tanker's Demise" */
 }
 
 .mac-classic select:active,
@@ -5077,17 +5090,18 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   /* https://moderncss.dev/pure-css-custom-styled-radio-buttons/ */
   -webkit-appearance: none;
   appearance: none;
-  border: 1px solid;
+  border: 2px solid;
   border-radius: 50%;
   color: currentColor;
   font: inherit;
-  height: 7px;
+  height: 15px;
   /* Not removed via appearance */
   margin: 0;
   padding: 0; /* vertical align w/text */
+  margin-top: -0.5px;
   position: relative;
   transform: translateY(-0.5px);
-  width: 7px;
+  width: 15px;
 }
 
 body.is_firefox .mac-classic input[type='checkbox'] {
@@ -5095,6 +5109,9 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 }
 
 .mac-classic input[type='checkbox'] {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
   border-radius: 1px;
 }
 
@@ -5105,35 +5122,31 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   content: '';
   height: 100%;
   left: 0;
-  line-height: 7px;
+  line-height: 0px;
   position: absolute;
   top: 0;
-  transform: scale(0.66);
-  transform-origin: 50% 50%;
   visibility: hidden;
   width: 100%;
 }
 
+.mac-classic input[type='radio']:before {
+  /* center the dot */
+  transform: scale3d(0.67, 0.67, 1);
+  transform-origin: 50% 50%;
+}
+
 .mac-classic input[type='checkbox']:before {
-  background: transparent;
-  border-radius: 0;
-  content: '×';
-  font-size: 10px;
-  font-weight: 700;
-  height: 7px;
-  line-height: 7px;
-  margin: -1.5px 0 0 -0.5px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-body.is-mobile.is_safari .mac-classic input[type='checkbox']:before {
-  margin-left: -1.25px;
-  margin-top: -1.25px;
-}
-
-body.is_firefox .mac-classic input[type='checkbox']:before {
-  margin-top: -1.85px;
+  position: absolute;
+  top: -0.5px;
+  left: -0.5px;
+  width: 12px;
+  height: 12px;
+  background: transparent url(../image/x.png);
+  background-size: 250%;
+  background-position: 50% 50%;
+  filter: drop-shadow(0px 0px 0.5px #000);
+  image-rendering: auto;
+  content: ' ';
 }
 
 .mac-classic input[type='checkbox']:checked:before,
@@ -5146,19 +5159,18 @@ body.is_firefox .mac-classic input[type='checkbox']:before {
 }
 
 .mac-classic input[type='checkbox']:active:before {
-  opacity: 0.5;
   transform: scale(0.5);
+  transform-origin: 50% 50%;
   visibility: visible;
-}
-
-body.is_firefox .mac-classic input[type='checkbox']:active:before {
-  margin-left: -0.35px;
-  margin-top: -1.75px;
 }
 
 .mac-classic input[type='checkbox']:active,
 .mac-classic input[type='checkbox']:focus {
-  background: #ccc;
+  background: #e0e0e0;
+}
+
+.mac-classic input[type='checkbox']:focus {
+  animation: blink-bg 1s steps(1) infinite;
 }
 
 .mac-classic input[type='radio']:active:before {
@@ -5197,8 +5209,19 @@ body.is_firefox .mac-classic input[type='checkbox']:active:before {
 }
 
 .mac-classic fn.disclaimer {
-  font-size: calc(4.5px * var(--screen-scale));
+  font-size: calc(10px * var(--font-scale));
   vertical-align: top;
+}
+
+#game-prefs-form {
+  /* one column, two rows. */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+#game-prefs-modal fieldset {
+  position: relative;
 }
 
 #game-prefs-modal .network,
@@ -5233,25 +5256,25 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   /* match #game-prefs-modal .body */
   background-color: #f3f3f3;
   background-image: url(../image/win95-networking-icon.png);
-  background-position: 2px 0;
+  background-position: 4px 0;
   background-repeat: no-repeat;
   background-size: contain;
   display: inline-block;
-  height: 8px;
+  width: 16px;
+  height: 16px;
   image-rendering: optimizeQuality;
   image-rendering: -webkit-optimize-contrast;
   /* shenanigans to hide the through-line */
-  padding-left: 3px;
-  padding-right: 2px;
+  padding-left: 6px;
+  padding-right: 4px;
   position: absolute;
   vertical-align: top;
-  width: 8px;
 }
 
 #game-prefs-modal.is-network .network-icon-inline {
   background-color: transparent;
   background-position: 0 0;
-  background-size: 6px 6px;
+  background-size: 12px 12px;
   margin-bottom: -2px; /* avoid messing up the line height */
   padding: 0;
   position: relative;
@@ -5417,17 +5440,17 @@ body.is_safari:not(.is-mobile) #game-menu button {
 #game-prefs-modal .border-3 {
   border-color: #dadaff #8787b3 #8787b3 #dadaff;
   border-style: solid;
-  border-width: 0.5px;
+  border-width: 1px;
 }
 
 #game-prefs-modal .border-2 {
-  border: 0.5px solid #cdcdcd;
+  border: 1px solid #cdcdcd;
 }
 
 #game-prefs-modal .border-1 {
   border-color: #8787b3 #dadaff #dadaff #8787b3;
   border-style: solid;
-  border-width: 0.5px;
+  border-width: 1px;
 }
 
 .flying-ace {
@@ -6178,13 +6201,6 @@ body.game-over .target-ui {
   body.game-paused #notification-toasts {
     visibility: hidden;
   }
-  body.is_iphone #game-prefs-modal {
-    zoom: 1.85;
-  }
-  body.is_iphone.is_standalone #game-prefs-modal {
-    /* "home screen"-specific version */
-    zoom: 1.75;
-  }
   /* leave room for notifications. */
   body.is-mobile #tutorial-window {
     top: 180px;
@@ -6633,6 +6649,13 @@ span.no-emoji-substitution {
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes blink-bg {
+  50% {
+    background-color: #fff;
+    opacity: 0.75;
   }
 }
 
