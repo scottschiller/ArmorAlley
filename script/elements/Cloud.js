@@ -66,11 +66,14 @@ const Cloud = (options = {}) => {
       data.windOffsetY = Math.max(-MAX_VY, Math.min(MAX_VY, data.windOffsetY));
     }
 
+    // minimize chance of de-sync in network case... ?
+    const drift = net.active ? 0.05 : 0.01;
+
     // don't drift off the ends of the battlefield...
     if (data.x + data.width > worldWidth) {
-      data.windOffsetX = Math.max(data.windOffsetX - 0.01, -MAX_SPEED);
+      data.windOffsetX = Math.max(data.windOffsetX - drift, -MAX_VX);
     } else if (data.x < 0) {
-      data.windOffsetX = Math.min(data.windOffsetX + 0.01, MAX_SPEED);
+      data.windOffsetX = Math.min(data.windOffsetX + drift, MAX_VX);
     }
 
     // ...nor the bottom, or top.
