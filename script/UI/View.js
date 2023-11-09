@@ -1375,7 +1375,7 @@ const View = () => {
       orientationTimer = window.setTimeout(() => {
         events.orientationChange(e);
         orientationTimer = null;
-      }, 500);
+      }, 750);
     },
 
     orientationChange() {
