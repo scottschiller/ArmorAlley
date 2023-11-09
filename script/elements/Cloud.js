@@ -1,11 +1,11 @@
 import {
-  rndInt,
   worldWidth,
   worldHeight,
   rng,
   TYPES,
   rngInt,
-  GAME_SPEED
+  GAME_SPEED,
+  rngPlusMinus
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
@@ -31,9 +31,9 @@ const cloudTypes = [
   }
 ];
 
-const MAX_SPEED = 3;
 const MAX_VX = 3;
 const MAX_VY = 0.5;
+const MIN_SPEED = 0.5;
 const NEAR_END_DISTANCE = 128;
 
 const Cloud = (options = {}) => {
@@ -53,16 +53,17 @@ const Cloud = (options = {}) => {
 
       // apply "regular" wind if we aren't drifting with a helicopter.
       if (!data.driftCount) {
-        data.windOffsetX += data.x < 0 || rng(1, type) > 0.5 ? 0.125 : -0.125;
+        const xOffset = net.active ? 0 : 0.125;
+        data.windOffsetX +=
+          data.x < 0 || rng(1, type) > MIN_SPEED ? xOffset : -xOffset;
       }
 
-      data.windOffsetX = Math.max(
-        -MAX_SPEED,
-        Math.min(MAX_SPEED, data.windOffsetX)
-      );
+      data.windOffsetX = Math.max(-MAX_VX, Math.min(MAX_VX, data.windOffsetX));
 
-      data.windOffsetY += data.y < 72 || rng(1, type) > 0.5 ? 0.05 : -0.05;
-      data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
+      const yOffset = net.active ? 0.05 : 0.05;
+      data.windOffsetY +=
+        data.y < 72 || rng(1, type) > MAX_VY ? yOffset : -yOffset;
+      data.windOffsetY = Math.max(-MAX_VY, Math.min(MAX_VY, data.windOffsetY));
     }
 
     // don't drift off the ends of the battlefield...
@@ -157,9 +158,9 @@ const Cloud = (options = {}) => {
       isNeutral: true,
       frameCount: 0,
       windModulus: 16,
-      driftXMax: MAX_SPEED,
       windOffsetX: rngPlusMinus(rng(MAX_VX), type),
       windOffsetY: rngPlusMinus(rng(MAX_VY), type),
+      driftXMax: MAX_VX,
       verticalDirection: 0.33,
       verticalDirectionDefault: 0.33,
       y:
