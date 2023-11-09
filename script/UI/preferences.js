@@ -293,7 +293,9 @@ function PrefsManager() {
     setLevel(levelName, levelName);
 
     // if playing cooperative vs. CPU, then include CPU vehicles to start.
-    const excludeVehicles = !gamePrefs.net_game_style.match(/coop/);
+    // also, let custom levels include any provided vehicles.
+    const excludeVehicles =
+      !gamePrefs.net_game_style.match(/coop/) && levelName != 'Custom Level';
     previewLevel(levelName, excludeVehicles);
   }
 

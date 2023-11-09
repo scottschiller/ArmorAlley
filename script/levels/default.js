@@ -328,8 +328,12 @@ function addWorldObjects() {
       right: 'THE DANGER ZONE'
     };
 
+    // if playing cooperative vs. CPU, then include CPU vehicles to start.
+    // also, let custom levels include any provided vehicles.
     const excludeVehicles =
-      net.active && !gamePrefs.net_game_style.match(/coop/i);
+      net.active &&
+      !gamePrefs.net_game_style.match(/coop/) &&
+      levelName != 'Custom Level';
 
     const cloudCount = data.filter((item) => item[0] === TYPES.cloud).length;
 
