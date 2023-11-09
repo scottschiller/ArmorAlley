@@ -813,6 +813,7 @@ const game = (() => {
          * Thusly, infer from a real event: this is likely a touch event, and not from a mouse.
          */
         updateClientFeatures({ touch: true });
+        utils.css.add(document.body, 'has_touch');
       }
       utils.events.remove(document, 'touchstart', markClientTouch);
     }
