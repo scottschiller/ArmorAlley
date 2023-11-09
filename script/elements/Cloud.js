@@ -98,6 +98,8 @@ const Cloud = (options = {}) => {
      *
      * TODO: test this in network games; feels like a de-sync risk.
      */
+    // de-sync risk in network games.
+    // TODO: revisit.
     if (net.active) return;
 
     const minSpeed = 0.5;
@@ -113,6 +115,10 @@ const Cloud = (options = {}) => {
      * Given a helicopter, have the wind pick up and move toward the opposing base.
      * This is a key strategy for defeating groups of turrets, e.g., Midnight Oasis in Extreme mode.
      */
+
+    // de-sync risk in network games.
+    // TODO: revisit.
+    if (net.active) return;
 
     // hackish: flag that drift is happening, so regular drift doesn't apply.
     // edge case: 2+ helicopters in a single cloud.
