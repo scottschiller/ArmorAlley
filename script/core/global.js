@@ -92,7 +92,7 @@ function updateClientFeatures(data) {
 
 const GAME_SPEED_MIN = 0.1;
 const GAME_SPEED_DEFAULT_DESKTOP = 1;
-const GAME_SPEED_DEFAULT_MOBILE = 0.85;
+const GAME_SPEED_DEFAULT_MOBILE = 0.8;
 const GAME_SPEED_MAX = 2;
 const GAME_SPEED_INCREMENT = 0.05;
 const GAME_SPEED_PARAM = searchParams.get('gameSpeed');
