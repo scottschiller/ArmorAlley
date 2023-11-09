@@ -1,5 +1,13 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
-import { FRAMERATE, GAME_SPEED, oneOf, TYPES } from '../core/global.js';
+import {
+  clientFeatures,
+  FRAMERATE,
+  GAME_SPEED,
+  isiPhone,
+  oneOf,
+  TYPES,
+  updateClientFeatures
+} from '../core/global.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
