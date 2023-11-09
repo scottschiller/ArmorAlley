@@ -4424,15 +4424,16 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   left: 50%;
   position: absolute;
   top: 50%;
-  transform: translate3d(-50%, -50%, 0); /* scale3d() will be updated via JS */
+  transform: translate3d(-50%, -50%, 0);
   width: 540px;
+  /* ensure this fits on small screens, e.g., mobile + portrait. */
   max-width: 99vw;
   z-index: 11;
 }
 
 #game-prefs-modal,
 #game-prefs-form {
-  height: 95vh;
+  height: 92vh;
 }
 
 /* leave room for address bar UI. */
@@ -4451,7 +4452,10 @@ body.is_iphone #game-prefs-form {
 }
 
 #game-prefs-modal.is-network #game-prefs-cancel {
-  display: inline-block;
+  display: block;
+  /* positioning shenanigans. */
+  margin-top: 9px;
+  margin-bottom: -6px;
 }
 
 /* hide once the game has started. */
@@ -4512,25 +4516,29 @@ body.is_safari #game-prefs-modal .emoji-human {
   border: 1px solid #000;
   border-radius: 16px;
   height: 16px;
-  margin: 2px 0px 0px 0px;
+  margin: 4px 0px 0px 0px;
   outline: none;
   padding: 0 1px;
   padding-left: 2px;
   padding-right: 2px;
   width: 200px;
   background: transparent url(../image/checkerboard-black-mask-50percent.png);
-  background-size: auto;
-  image-rendering: pixelated;
   background: #eee
     url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
-  background-size: 1.5px;
+  background-size: 3px;
   image-rendering: smooth;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
+  /* this looks nicer in desktop Safari. */
+  background-size: 2px;
 }
 
 #game-prefs-modal .range-slider::-webkit-slider-thumb {
   appearance: none;
   background: #eee;
+  box-shadow: none;
   border: 1px solid #000;
   border-radius: 10px;
   cursor: pointer;
@@ -4747,7 +4755,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   image-rendering: auto;
   margin-right: 15px;
   margin-top: 7.5px;
-  width: 404px;
+  width: 390px;
   max-width: 50vw;
   height: auto;
 }
@@ -4759,8 +4767,9 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   flex-direction: column;
 }
 
-#game-prefs-header .column:last-of-type {
-  margin-right: 2px;
+#game-prefs-modal.is-network .column:last-of-type {
+  /* hack: scrollbar clipping on right side */
+  margin-right: -4px;
 }
 
 #game-prefs-modal textarea {
@@ -4808,7 +4817,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   /* black checkerboard pattern */
   background: #fff
     url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
-  background-size: 3px 3px;
+  background-size: 3px;
   border-left: 2px solid #000;
   image-rendering: -webkit-optimize-contrast;
   width: 10px;
@@ -4875,7 +4884,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic fieldset {
   border: 1px solid #000;
-  margin: 10px;
+  margin: 12px;
   padding: 6px 12px;
 }
 
@@ -4887,41 +4896,9 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   vertical-align: middle;
 }
 
+#game-prefs-modal button,
 #game-prefs-modal legend {
-  font-size: calc(16px * var(--font-scale));
-}
-
-#game-prefs-modal button {
-  /* hacks / here be dragons: use a combination of 8px font size, + 2x zoom so buttons still look nice */
-  font-size: calc(8px * var(--font-scale));
-  zoom: 2;
-  border: 0.75px solid #000;
-}
-
-body.is-mobile.is_safari #game-prefs-modal button {
-  /* more hacks: zoom doesn't affect font size on iPads, but does on iPhones? */
-  font-size: calc(16px * var(--font-scale));
-}
-
-body.is-mobile.is_safari #game-prefs-modal button {
-  /* Safari *does* do Zoom, apparently. */
-  zoom: 2;
-  font-size: calc(8px * var(--font-scale));
-}
-
-/* but not iPads, ha ha! :X */
-@media screen and (orientation: landscape) and (min-width: 1024px) {
-  body.is-mobile.is_safari #game-prefs-modal button {
-    /* scale back up for iPad. */
-    font-size: calc(16px * var(--font-scale));
-  }
-}
-
-@media screen and (orientation: portrait) and (min-width: 640px) {
-  body.is-mobile.is_safari #game-prefs-modal button {
-    /* scale back up for iPad. */
-    font-size: calc(16px * var(--font-scale));
-  }
+  font-size: calc(15px * var(--font-scale));
 }
 
 .mac-classic b {
@@ -5028,11 +5005,11 @@ body.is-mobile.is_safari #game-prefs-modal button {
 }
 
 .mac-classic input[type='text'] {
-  border: 0.5px solid #000;
+  border: 1px solid #000;
   box-sizing: border-box;
   display: block;
-  font-size: 6px;
-  padding: 2px;
+  font-size: calc(12px * var(--font-scale));
+  padding: 4px;
   width: 100%;
 }
 
@@ -5131,7 +5108,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 
 .mac-classic input[type='radio']:before {
   /* center the dot */
-  transform: scale3d(0.67, 0.67, 1);
+  transform: scale3d(0.66, 0.66, 1);
   transform-origin: 50% 50%;
 }
 
@@ -5324,8 +5301,34 @@ button.primary {
   padding: 0.5px 10px;
 }
 
+/* Redefine for prefs modal, which is not scaled up. */
+
+#game-prefs-modal button {
+  border-width: 1.5px;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  min-width: 3.5rem;
+  padding: 1px 10px;
+}
+
+#game-prefs-modal button.primary {
+  /* inner white, followed by outer black borders */
+  box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+  outline-offset: 1px;
+
+  /* Safari collapses buttons more than the others. :/ */
+  padding: 1px 20px;
+}
+
+#game-prefs-modal button.primary {
+  /* Modal-specific: extra right spacing. */
+  margin-right: 10px;
+}
+
 button.primary:not(:disabled):active,
-button:not(.generic-cta):not(:disabled):active {
+#game-prefs-modal button.primary:not(:disabled):active,
+button:not(.generic-cta):not(:disabled):active,
+#game-prefs-modal button:not(.generic-cta):not(:disabled):active {
   background-color: #000;
   color: #fff;
 }
@@ -5334,24 +5337,28 @@ button.attention:not(:active) {
   animation: button-blink 1s steps(2) infinite;
 }
 
+#game-prefs-modal button.attention:not(:active) {
+  animation: button-blink-larger 1s steps(2) infinite;
+}
+
 .mac-system-waiting {
-  background-image: url(../image/apple-watch.gif);
-  background-position: 50% 50%;
-  background-size: 5.5px 8px;
-  margin-bottom: -1.75px;
-  padding-left: 1px;
   /**
    * Hat tip: https://impossiblue.github.io/log/150406/index.html
    */
-  /* image/apple-watch.gif */
-  width: 5.5px;
+  background-image: url(../image/apple-watch.gif);
+  background-position: 50% 50%;
+  background-size: 11px 16px;
+  margin-bottom: -2.75px;
+  padding-left: 1px;
+  width: 11px;
+  padding-right: 1px;
 }
 
 .mac-system-spinner,
 .mac-system-waiting {
   background-repeat: no-repeat;
   display: inline-block;
-  height: 8px;
+  height: 16px;
 }
 
 .mac-system-spinner {
@@ -5360,7 +5367,7 @@ button.attention:not(:active) {
   margin-bottom: -1px;
   margin-right: 1px;
   /* Hat tip: https://apple.stackexchange.com/questions/407893/where-are-are-the-counting-hand-cursors-used-in-macos */
-  width: 8px;
+  width: 16px;
 }
 
 #lock-step-indicator {
@@ -6065,13 +6072,6 @@ body.game-over .target-ui {
   }
   #mobile-controls li span.letter-block.show_inventory {
     top: 1.5px;
-  }
-  #game-prefs-modal.is-network {
-    top: 52%;
-  }
-  /* don't mess with scrollbars, just let the whole body scroll naturally. */
-  body.is-mobile #game-prefs-modal .fieldset-container {
-    max-height: unset;
   }
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile #tutorial-window {
@@ -6882,6 +6882,17 @@ span.no-emoji-substitution {
   to {
     border-color: transparent;
     box-shadow: 0 0 0 4px #f3f3f3, 0 0 0 2px #f3f3f3;
+  }
+}
+
+@keyframes button-blink-larger {
+  /* See above. :D */
+  0% {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+  }
+  to {
+    border-color: transparent;
+    box-shadow: 0 0 0 8px #f3f3f3, 0 0 0 4px #f3f3f3;
   }
 }
 
