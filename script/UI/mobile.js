@@ -51,12 +51,9 @@ function orientationChange() {
   }
 
   // helicopters need to know stuff, too.
-  const helicopter = game.objects[TYPES.helicopter];
+  const helicopters = game.objects[TYPES.helicopter];
 
-  if (helicopter?.length) {
-    helicopter[0]?.refreshCoords();
-    helicopter[1]?.refreshCoords();
-  }
+  helicopters?.forEach?.((helicopter) => helicopter.refreshCoords());
 
   game.objects.starController?.reset();
 }
