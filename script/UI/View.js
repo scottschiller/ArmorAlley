@@ -833,18 +833,6 @@ const View = () => {
     } else {
       data.screenScale = innerHeight / localWorldHeight;
     }
-
-    const root = document.querySelector(':root');
-
-    if (isSafari && !isiPhone && clientFeatures.touch) {
-      // hack: scale up font-size for ipads, to work around using transform and getting ugly rasterized text.
-      root?.style?.setProperty(
-        '--screen-scale',
-        data.screenScale * (data.browser.isLandscape ? 1.33 : 0.975)
-      );
-    }
-
-    prefsManager.updateScreenScale();
   }
 
   function applyScreenScale() {
