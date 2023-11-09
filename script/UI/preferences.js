@@ -1,24 +1,19 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
-  clientFeatures,
   defaultMissileMode,
-  forceAppleMobile,
   GAME_SPEED,
   GAME_SPEED_INCREMENT,
   GAME_SPEED_MAX,
   GAME_SPEED_MIN,
   getTypes,
-  isFirefox,
   isiPhone,
   isMobile,
-  isSafari,
   oneOf,
   soundManager,
   tutorialMode,
   TYPES,
-  updateGameSpeed,
-  worldHeight
+  updateGameSpeed
 } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -135,51 +130,6 @@ let gamePrefs = {
 
 function PrefsManager() {
   let data, dom, events;
-
-  let firefoxZoomHack;
-
-  function initLayout() {
-    if (data.originalHeight > 0) return;
-
-    // hackish: adjust dialog body to "natural" height, prevent scrollbars.
-    // display temporarily, read layout, adjust and then hide.
-    dom.o.style.setProperty('opacity', 0);
-    dom.o.style.setProperty('display', 'block');
-
-    let body = dom.o.querySelector('.body');
-    body.style.setProperty('height', 'auto');
-
-    /**
-     * 20231020: HACK: Firefox CSS zoom / double scrollbar issue
-     * ---
-     * Firefox 120.0a1 seems to add support for zoom in CSS + JS,
-     * so we apply zoom: 1 in CSS and check for that value here.
-     * ---
-     * If found, we double the height of the window in JS and
-     * hack `#form-scroller` max height to prevent double scrollbars.
-     */
-    const cssZoom = window.getComputedStyle(dom.o).getPropertyValue('zoom');
-
-    firefoxZoomHack = isFirefox && cssZoom == 1;
-
-    if (firefoxZoomHack) {
-      console.warn('PrefsManager: applying "Firefox 120.0a1 (≥?) Zoom Hack"');
-    }
-
-    // NOTE: This forces layout and is $$$
-    let height = body.offsetHeight * (firefoxZoomHack ? 2 : 1);
-
-    data.originalHeight = height;
-
-    // now assign the natural content height
-    body.style.setProperty('height', height + 'px');
-
-    // Remove the menu entirely from the DOM, set it up to append only when active.
-    dom.o.remove();
-
-    // reset opacity
-    dom.o.style.setProperty('opacity', null);
-  }
 
   function init() {
     dom.o = document.getElementById('game-prefs-modal');
@@ -327,10 +277,6 @@ function PrefsManager() {
       hide();
     } else {
       show();
-      if (isMobile) {
-        // shenanigans: always do this on mobile.
-        events.updateScreenScale();
-      }
     }
   }
 
@@ -625,22 +571,15 @@ function PrefsManager() {
 
     if (data.active || !dom.o) return;
 
-    initLayout();
-
     data.active = true;
 
     data.network = !!options.network;
 
     game.objects.view.data.ignoreMouseEvents = true;
 
-    events.updateScreenScale();
-
     document.body.appendChild(dom.o);
 
-    if (firefoxZoomHack) {
-      // HACK: avoid double-scrollbars in Firefox Nightly 120.0a1?
-      document.getElementById('form-scroller').style.maxHeight = '737px';
-    }
+    dom.o.style.display = 'block';
 
     maybeUpdateGameSpeed();
 
@@ -1554,87 +1493,6 @@ function PrefsManager() {
 
       notifications_order_bottom_up: (newValue) =>
         utils.css.addOrRemove(dom.oToasts, newValue, 'bottom-up')
-    },
-
-    updateScreenScale: () => {
-      const screenScale = game?.objects?.view?.data?.screenScale;
-
-      if (!screenScale || !data.active || !dom.o) return;
-
-      // HACKS: this is a mess. TODO: refactor entirely to eliminate scale shenanigans.
-
-      // CSS shenanigans: `zoom: 2` applied, so we offset that here where supported.
-      let scale =
-        screenScale *
-        (game.objects.view.data.usingZoom || isSafari
-          ? 0.5
-          : isMobile
-          ? 0.925
-          : 1);
-
-      let body = dom.o.querySelector('.body');
-
-      // hackish: compromise for lack of `zoom: 2` on mobile - but only specifically iPhone?
-      // TODO: review and figure out. iPad seems to render without scaling, just fine.
-      // https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation
-      if (isMobile && screen.orientation.type.match(/landscape/i)) {
-        scale *= 1.85;
-        // hackish: scale up even further so the modal is more wide than anything else, and set height to the natural viewport.
-        // in landscape, the modal contents will scroll naturally.
-        // don't do this for iPads, either.
-        if (isSafari && isiPhone) {
-          scale *= 2;
-        }
-        body.style.setProperty('height', worldHeight / 2 + 'px');
-      } else {
-        if (
-          isMobile &&
-          !isiPhone &&
-          forceAppleMobile &&
-          screen.orientation.type.match(/portrait/i)
-        ) {
-          scale *= 2;
-        }
-      }
-
-      // more ugly mobile vs. desktop vs. iPad hacks
-      if (isSafari && clientFeatures.touch) {
-        if (isiPhone) {
-          // argh - prevent overflow.
-          body.style.setProperty(
-            'height',
-            data.originalHeight * (1 / scale) * 0.9 + 'px'
-          );
-        } else {
-          // iPads. :X
-          const extraScale = screen.orientation.type.match(/landscape/i)
-            ? 1.5
-            : 1;
-          scale *= extraScale;
-          body.style.setProperty(
-            'height',
-            worldHeight * (1 / extraScale) + 'px'
-          );
-        }
-      } else {
-        body.style.setProperty('height', data.originalHeight + 'px');
-      }
-
-      if (firefoxZoomHack) {
-        // similar shenanigans now for scroller, desktop Firefox 120.0a1.
-        body.style.setProperty('height', data.originalHeight + 'px');
-      }
-
-      if (isSafari && !isiPhone && clientFeatures.touch) {
-        // iPads: avoid using transforms for scale, ugly rasterized text.
-        // font-size will be scaled up in CSS, instead.
-        dom.o.style.zoom = scale;
-      } else {
-        dom.o.style.setProperty(
-          'transform',
-          `translate3d(-50%, -50%, 0px) scale3d(${scale},${scale},1)`
-        );
-      }
     }
   };
 
@@ -1655,7 +1513,6 @@ function PrefsManager() {
     readAndApplyPrefsFromStorage,
     show,
     updateForm,
-    updateScreenScale: events.updateScreenScale,
     writePrefsToStorage
   };
 }
