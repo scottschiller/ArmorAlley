@@ -452,17 +452,17 @@ body:not(.game-started) #mobile-controls {
   display: block;
 }
 
-body.auto-start #logo {
-  top: 37.5%;
+body.auto-start #game-menu {
+  display: none;
 }
 
-body.auto-start #logo #game-menu-form,
-body.auto-start #logo #game-description {
+body.auto-start #game-menu-form,
+body.auto-start #game-description {
   /* used when "auto-start" is specified, i.e., user playing campaign mode */
   display: none;
 }
 
-body.auto-start #logo #game-subtitle {
+body.auto-start #game-subtitle {
   /* hackish: hide the text because it fades out rather quickly. */
   color: transparent;
 }
