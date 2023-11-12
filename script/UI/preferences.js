@@ -254,9 +254,7 @@ function PrefsManager() {
   function renderGameSpeedSlider() {
     let slider = document.getElementById('game_speed-value');
     if (!slider) return;
-    slider.innerText = `${Math.round(
-      gamePrefs.game_speed * 100
-    )}%`;
+    slider.innerText = `${Math.round(gamePrefs.game_speed * 100)}%`;
     slider = null;
   }
 

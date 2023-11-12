@@ -1867,7 +1867,9 @@ const Helicopter = (options = {}) => {
       if (!data.isLocal) return;
 
       if (!tutorialMode) {
-        game.objects.view.setAnnouncement('No pilot <span class="inline-emoji">😱</span>');
+        game.objects.view.setAnnouncement(
+          'No pilot <span class="inline-emoji">😱</span>'
+        );
       }
 
       if (tutorialMode || !data.ejectCount) {
