@@ -479,8 +479,8 @@ body.auto-start #game-subtitle {
 #game-menu label {
   cursor: pointer;
   display: inline-block;
-  padding: calc(2px * var(--menu-scale));
-  padding-left: calc(3px * var(--menu-scale));
+  padding: calc(4px * var(--menu-scale));
+  padding-left: calc(5px * var(--menu-scale));
   padding-right: calc(5px * var(--menu-scale));
   border-left: 0.5px solid #ccc;
   border-right: 0.5px solid #ccc;
