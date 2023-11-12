@@ -6046,13 +6046,13 @@ body.edit-mode #battlefield {
   display: none;
 }
 
-#aa ul.inline-list,
-#aa ul.inline-list li,
+ul.inline-list,
+ul.inline-list li,
 #editor-clipboard.active {
   display: inline-block;
 }
 
-#aa ul.inline-list li:not(:first-of-type) {
+ul.inline-list li:not(:first-of-type) {
   margin-left: 0.5em;
 }
 #battlefield video {
