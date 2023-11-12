@@ -391,9 +391,14 @@ function showExitType() {
 }
 
 function formClick(e) {
-  const { target } = e;
+  let { target } = e;
 
   const action = target.action || target.getAttribute('data-action');
+
+  // hackish: if an emoji (without "action") is clicked, find its sibling radio input. :X
+  if (!action && utils.css.has(target, 'emoji-text')) {
+    target = target.parentNode.querySelector('input');
+  }
 
   if (action === 'start-editor') {
     const selectedIndex = oSelect.selectedIndex;
