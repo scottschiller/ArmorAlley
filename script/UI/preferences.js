@@ -194,7 +194,6 @@ function PrefsManager() {
       events.onPrefChange['bnb'](e.target.checked)
     );
 
-    // watch for and apply volume updates
     dom.oGameSpeedSlider.addEventListener('input', () => {
       gamePrefs.game_speed = getGameSpeedFromSlider();
       common.setGameSpeed(gamePrefs.game_speed);
@@ -213,6 +212,9 @@ function PrefsManager() {
 
       // don't bother doing any SM2 work like mute() etc., just set the "volume scale."
       gamePrefs.volume = getVolumeFromSlider();
+
+      // hackish: apply immediately.
+      events.onPrefChange['volume']?.(gamePrefs.volume);
 
       renderVolumeSlider();
 
@@ -1495,7 +1497,14 @@ function PrefsManager() {
         ),
 
       notifications_order_bottom_up: (newValue) =>
-        utils.css.addOrRemove(dom.oToasts, newValue, 'bottom-up')
+        utils.css.addOrRemove(dom.oToasts, newValue, 'bottom-up'),
+
+      volume: (newValue) => {
+        if (!sounds.helicopter?.engine?.sound) return;
+        sounds.helicopter.engine.sound.setVolume(
+          sounds.helicopter.engineVolume * gamePrefs.volume * newValue
+        );
+      }
     }
   };
 
