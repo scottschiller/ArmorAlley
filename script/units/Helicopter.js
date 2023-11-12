@@ -95,7 +95,7 @@ const Helicopter = (options = {}) => {
 
     if (sounds.helicopter.engine.sound)
       sounds.helicopter.engine.sound.setVolume(
-        sounds.helicopter.engineVolume / 2.5
+        (sounds.helicopter.engineVolume * gamePrefs.volume) / 2.5
       );
 
     if (!gamePrefs.bnb) return;
@@ -146,7 +146,7 @@ const Helicopter = (options = {}) => {
     if (data.isLocal && sounds.helicopter.engine) {
       if (sounds.helicopter.engine.sound)
         sounds.helicopter.engine.sound.setVolume(
-          sounds.helicopter.engineVolume
+          sounds.helicopter.engineVolume * gamePrefs.volume
         );
     }
 
@@ -1234,7 +1234,7 @@ const Helicopter = (options = {}) => {
 
       if (sounds.helicopter.engine?.sound)
         sounds.helicopter.engine.sound.setVolume(
-          sounds.helicopter.engineVolume
+          sounds.helicopter.engineVolume * gamePrefs.volume
         );
     } else {
       lastTarget = null;
