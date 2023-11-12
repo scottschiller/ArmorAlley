@@ -48,7 +48,6 @@
   For revision history, see README.md and CHANGELOG.txt.
 
 */
-
 :root {
   /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
   --game-speed: 1;
@@ -97,7 +96,7 @@
 @font-face {
   font-family: 'War Wound';
   src: url('../font/war-wound/WarWound-subset.woff2') format('woff2');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -106,7 +105,7 @@
   font-family: 'Cheddar Gothic Stencil';
   src: url('../font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
     format('woff2');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -138,7 +137,8 @@ body {
    * Chrome + Safari may be worse when using -webkit-optimize-contrast vs. default.
    * https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering
    */
-  image-rendering: optimizeQuality; /* deprecated. */
+  image-rendering: optimizeQuality;
+  /* deprecated. */
   image-rendering: -webkit-optimize-contrast;
   /* non-standard, but quite nice under Firefox */
   image-rendering: -moz-crisp-edges;
@@ -187,7 +187,6 @@ body.is_safari:not(.is-mobile).game-paused #game-paused {
 body.is_safari:not(.is-mobile) #help {
   font-size: 2rem;
   top: 1px;
-  margin-right: 0.25em;
   margin-right: 8px;
   transform: scale3d(0.25, 0.25, 1);
   transform-origin: 100% 0;
@@ -256,17 +255,17 @@ body.game-started {
 
 #world.regular-mode #world-overlay,
 #world.tutorial-mode #world-overlay {
-  background: transparent;
+  background: 0 0;
 }
 
-#world-overlay.fade-out,
-#game-menu-wrapper.fade-out {
+#game-menu-wrapper.fade-out,
+#world-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
   filter: blur(8px);
   transform: scale3d(1.1, 1.1, 1);
   transform-origin: 50% 50%;
-  transition: all 0.75s ease-in-out;
+  transition: 0.75s ease-in-out;
   transition-property: filter, background-image, opacity, transform;
 }
 
@@ -305,7 +304,7 @@ body.bnb #mtv-bnb-in {
   bottom: -1px;
   filter: drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.5));
   height: 98%;
-  left: 0%;
+  left: 0;
   opacity: 0;
   transition: opacity 0.25s ease-in;
   width: 100%;
@@ -344,7 +343,7 @@ body.is_safari #mtv-bnb-in {
   width: 100%;
   height: 100%;
   /* this will be overridden for mobile, landscape */
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   max-width: 1024px;
   max-height: 100vh;
   transform: translate3d(-50%, -50%, 0);
@@ -354,29 +353,25 @@ body.is_safari #mtv-bnb-in {
   padding-left: 8px;
   padding-right: 8px;
   box-sizing: border-box;
+  transition: scale 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15),
+    opacity 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15); /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
 }
 
 @media screen and (orientation: landscape) {
   body.is-mobile #game-menu-wrapper {
     height: auto;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16/9;
     max-width: 100vw;
     /* leave room for address bar UI, etc. */
     max-height: 80vh;
   }
+
 }
 
-body.is-mobile #game-subtitle,
-body.is-mobile #game-description {
+body.is-mobile #game-description,
+body.is-mobile #game-subtitle {
   font-size: calc(4px * var(--menu-scale));
-}
-
-#game-menu-wrapper {
-  transition: all 0.75s ease-in-out;
-  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
-  transition-timing-function: cubic-bezier(0.57, 0.18, 0.3, 1.15);
-  transition-property: scale, opacity;
 }
 
 #logo-image {
@@ -396,9 +391,8 @@ body.is-mobile #game-description {
   /* Chrome prefers "auto" and renders more nicely this way. So be it. */
   opacity: 0;
   padding-top: 2.5vh;
-  transition: all 0.75s ease-in-out;
+  transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
-  transition-timing-function: cubic-bezier(0.57, 0.18, 0.3, 1.15);
   transition-property: transform, scale, opacity;
   z-index: 11;
   padding-bottom: 4vh;
@@ -434,7 +428,7 @@ body:not(.game-started) #mobile-controls {
 #battlefield,
 #mobile-controls,
 #player-status-bar {
-  transition: all 1s ease-in-out;
+  transition: 1s ease-in-out;
   transition-property: filter, opacity, transform;
 }
 
@@ -456,8 +450,8 @@ body.auto-start #game-menu {
   display: none;
 }
 
-body.auto-start #game-menu-form,
-body.auto-start #game-description {
+body.auto-start #game-description,
+body.auto-start #game-menu-form {
   /* used when "auto-start" is specified, i.e., user playing campaign mode */
   display: none;
 }
@@ -503,9 +497,9 @@ body.auto-start #game-subtitle {
   border-right: none;
 }
 
+#checkbox-vs:hover,
 #game-menu label:hover,
-#game_level:hover,
-#checkbox-vs:hover {
+#game_level:hover {
   background-color: rgba(0, 128, 0, 0.5);
   color: #fff !important;
 }
@@ -513,10 +507,6 @@ body.auto-start #game-subtitle {
 #game-type-list:hover,
 #game-type-list:hover input[type='radio'] {
   color: #fff !important;
-}
-
-#game-type-list label:hover {
-  background-color: rgba(0, 128, 0, 0.5);
 }
 
 body.is_safari #game-menu label {
@@ -527,22 +517,17 @@ body.is_safari #game-menu label {
   --bg-size: calc(8px * var(--menu-scale));
   appearance: none;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>")
-    no-repeat;
+    no-repeat padding-box;
   background-position: calc(100% - var(--bg-size)) 70%;
-  background-repeat: no-repeat;
   background-size: var(--bg-size);
-  border-color: #ccc;
   border-radius: calc(2px * var(--menu-scale));
-  background-clip: padding-box;
-  padding-right: 32px;
-  padding-left: 8px;
   text-indent: calc(4px * var(--menu-scale));
 }
 
 body.is_safari #game-menu select:active,
 body.is_safari #game-menu select:focus {
   /* evil, I know. */
-  outline: none;
+  outline: 0;
 }
 
 #game-menu label:hover {
@@ -551,8 +536,6 @@ body.is_safari #game-menu select:focus {
 
 #game-menu .cta,
 .generic-cta {
-  display: inline-block;
-  background-color: #030;
   background-color: rgba(0, 102, 0, 0.5);
   border: 1px solid green;
   box-sizing: border-box;
@@ -562,7 +545,7 @@ body.is_safari #game-menu select:focus {
   font-size: 1em;
   line-height: 1.5em;
   padding-top: 4px;
-  padding-left: 0px;
+  padding-left: 0;
   text-decoration: none;
 }
 
@@ -584,7 +567,7 @@ body.is_safari #game-menu select:focus {
 .generic-cta:hover {
   background-color: rgba(0, 153, 0, 0.75);
   color: #fff;
-  outline: none;
+  outline: 0;
 }
 
 #game-menu form {
@@ -638,7 +621,7 @@ body.is_safari.is-mobile #game-menu form label {
 }
 
 #game-menu .cta-checkbox {
-  background: transparent;
+  background: 0 0;
   border: none;
   cursor: pointer;
   display: inline-block;
@@ -649,7 +632,7 @@ body.is_safari.is-mobile #game-menu form label {
 #game-menu .checkbox-wrapper {
   display: inline-block;
   margin-right: 0.125em;
-  margin-left: 0px;
+  margin-left: 0;
   vertical-align: top;
 }
 
@@ -685,7 +668,7 @@ body.is_safari.is-mobile #game-menu form label {
 
 #game-menu .cta-checkbox:hover {
   animation: none;
-  background: transparent;
+  background: 0 0;
 }
 
 #game-menu .emoji {
@@ -711,7 +694,7 @@ body.is_safari.is-mobile #game-menu form label {
 #game-description {
   color: #ccc;
   font-size: calc(5px * var(--menu-scale));
-  margin: 0px auto;
+  margin: 0 auto;
   margin-top: calc(3px * var(--menu-scale));
   /* reserve at least two lines */
   min-height: 2.65em;
@@ -745,12 +728,10 @@ body.is_safari.is-mobile #game-menu form label {
 
 /* nested in #player-status-bar */
 #spinner {
-  animation: rotating3d 2s linear infinite;
+  animation: 2s linear infinite rotating3d;
   /* Gear SVG (gear.svg) by Fabián Alexis - https: //github.com/fabianalexisinostroza/Antu, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470 */
-  background: transparent
-    url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTE4LjkyMSA5LjYzYS4zMjcuMzI3IDAgMCAwLS4yMTgtLjEzbC0xLjkwNy0uMjkyYTYuMjg0IDYuMjg0IDAgMCAwLS40MjctMS4wMmMuMTI1LS4xNzQuMzEyLS40MTkuNTYyLS43MzUuMjUtLjMxNi40MjctLjU0Ny41MzItLjY5M2EuNDAxLjQwMSAwIDAgMCAuMDgzLS4yNC4zMzYuMzM2IDAgMCAwLS4wNzMtLjIyOGMtLjI1LS4zNTUtLjgyMy0uOTQ1LTEuNzE5LTEuNzcxYS40MDIuNDAyIDAgMCAwLS4yNi0uMTA0LjMzOC4zMzggMCAwIDAtLjI1LjA5M2wtMS40OCAxLjExNWE2LjUxNCA2LjUxNCAwIDAgMC0uOTM3LS4zODZsLS4yOTEtMS45MTdhLjMwOS4zMDkgMCAwIDAtLjEyLS4yMjQuMzkzLjM5MyAwIDAgMC0uMjU2LS4wODhIOS44NDdjLS4yIDAtLjMyNi4wOTctLjM3NS4yOTEtLjA5LjM0Ny0uMTkuOTkzLS4zMDIgMS45MzdhNS45ODIgNS45ODIgMCAwIDAtLjk0OC4zOTZMNi43ODUgNC41MmEuNDQzLjQ0MyAwIDAgMC0uMjcxLS4xMDRjLS4xNTMgMC0uNDguMjQ4LS45ODQuNzQ0LS41MDQuNDk3LS44NDYuODctMS4wMjcgMS4xMmEuNDM5LjQzOSAwIDAgMC0uMDk0LjI0YzAgLjA4My4wMzUuMTY2LjEwNC4yNS40NjYuNTYyLjgzNyAxLjA0MSAxLjExNSAxLjQzN2E1LjE0IDUuMTQgMCAwIDAtLjQwNi45NTlsLTEuOTM3LjI5MWEuMzE0LjMxNCAwIDAgMC0uMTk4LjEzNi40MDEuNDAxIDAgMCAwLS4wODQuMjR2Mi4zMTJjMCAuMDkuMDI4LjE3Mi4wODQuMjQ1YS4zMjcuMzI3IDAgMCAwIC4yMTguMTNsMS45MDcuMjgyYy4wOTcuMzQuMjQuNjg0LjQyNyAxLjAzYTIxLjk4IDIxLjk4IDAgMCAxLS41NjMuNzM1Yy0uMjUuMzE2LS40MjcuNTQ3LS41My42OTJhLjQwMi40MDIgMCAwIDAtLjAxMS40OGMuMjcuMzc1Ljg0My45NTggMS43MTkgMS43NWEuMzU5LjM1OSAwIDAgMCAuMjYuMTE0LjM3NS4zNzUgMCAwIDAgLjI2LS4wOTNsMS40Ny0xLjExNWMuMjg0LjE0Ni41OTcuMjc0LjkzNy4zODZsLjI5MiAxLjkxN2EuMzEuMzEgMCAwIDAgLjEyLjIyNC4zOS4zOSAwIDAgMCAuMjU1LjA4OGgyLjMxM2MuMjAxIDAgLjMyNi0uMDk3LjM3NS0uMjkyLjA5LS4zNDcuMTktLjk5My4zMDItMS45MzdhNS45MiA1LjkyIDAgMCAwIC45NDgtLjM5NmwxLjQzNyAxLjEyNmEuNTEuNTEgMCAwIDAgLjI3MS4wOTNjLjE1MyAwIC40OC0uMjQ2Ljk4LS43NC41LS40OTIuODQzLS44NjggMS4wMy0xLjEyNWEuMzQ3LjM0NyAwIDAgMCAuMDk0LS4yMzkuNDAyLjQwMiAwIDAgMC0uMTA1LS4yNmMtLjUtLjYxMi0uODcxLTEuMDktMS4xMTQtMS40MzhhNi42OCA2LjY4IDAgMCAwIC40MDYtLjk0OGwxLjkyNy0uMjkxYS4zMTguMzE4IDAgMCAwIC4yMDgtLjEzNi40MDIuNDAyIDAgMCAwIC4wODMtLjI0VjkuODc0YS4zOTMuMzkzIDAgMCAwLS4wODMtLjI0NG0tNi4wMzEgMy4yNjVhMi41NyAyLjU3IDAgMCAxLTEuODg2Ljc4MiAyLjU3IDIuNTcgMCAwIDEtMS44ODUtLjc4MiAyLjU3IDIuNTcgMCAwIDEtLjc4MS0xLjg4NWMwLS43MzYuMjYtMS4zNjUuNzgtMS44ODZhMi41NyAyLjU3IDAgMCAxIDEuODg2LS43ODFjLjczNyAwIDEuMzY1LjI2IDEuODg2Ljc4MS41Mi41MjEuNzgxIDEuMTUuNzgxIDEuODg2YTIuNTcgMi41NyAwIDAgMS0uNzgxIDEuODg1Ii8+PC9zdmc+)
-    no-repeat 0 0;
-  background-size: contain;
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTE4LjkyMSA5LjYzYS4zMjcuMzI3IDAgMCAwLS4yMTgtLjEzbC0xLjkwNy0uMjkyYTYuMjg0IDYuMjg0IDAgMCAwLS40MjctMS4wMmMuMTI1LS4xNzQuMzEyLS40MTkuNTYyLS43MzUuMjUtLjMxNi40MjctLjU0Ny41MzItLjY5M2EuNDAxLjQwMSAwIDAgMCAuMDgzLS4yNC4zMzYuMzM2IDAgMCAwLS4wNzMtLjIyOGMtLjI1LS4zNTUtLjgyMy0uOTQ1LTEuNzE5LTEuNzcxYS40MDIuNDAyIDAgMCAwLS4yNi0uMTA0LjMzOC4zMzggMCAwIDAtLjI1LjA5M2wtMS40OCAxLjExNWE2LjUxNCA2LjUxNCAwIDAgMC0uOTM3LS4zODZsLS4yOTEtMS45MTdhLjMwOS4zMDkgMCAwIDAtLjEyLS4yMjQuMzkzLjM5MyAwIDAgMC0uMjU2LS4wODhIOS44NDdjLS4yIDAtLjMyNi4wOTctLjM3NS4yOTEtLjA5LjM0Ny0uMTkuOTkzLS4zMDIgMS45MzdhNS45ODIgNS45ODIgMCAwIDAtLjk0OC4zOTZMNi43ODUgNC41MmEuNDQzLjQ0MyAwIDAgMC0uMjcxLS4xMDRjLS4xNTMgMC0uNDguMjQ4LS45ODQuNzQ0LS41MDQuNDk3LS44NDYuODctMS4wMjcgMS4xMmEuNDM5LjQzOSAwIDAgMC0uMDk0LjI0YzAgLjA4My4wMzUuMTY2LjEwNC4yNS40NjYuNTYyLjgzNyAxLjA0MSAxLjExNSAxLjQzN2E1LjE0IDUuMTQgMCAwIDAtLjQwNi45NTlsLTEuOTM3LjI5MWEuMzE0LjMxNCAwIDAgMC0uMTk4LjEzNi40MDEuNDAxIDAgMCAwLS4wODQuMjR2Mi4zMTJjMCAuMDkuMDI4LjE3Mi4wODQuMjQ1YS4zMjcuMzI3IDAgMCAwIC4yMTguMTNsMS45MDcuMjgyYy4wOTcuMzQuMjQuNjg0LjQyNyAxLjAzYTIxLjk4IDIxLjk4IDAgMCAxLS41NjMuNzM1Yy0uMjUuMzE2LS40MjcuNTQ3LS41My42OTJhLjQwMi40MDIgMCAwIDAtLjAxMS40OGMuMjcuMzc1Ljg0My45NTggMS43MTkgMS43NWEuMzU5LjM1OSAwIDAgMCAuMjYuMTE0LjM3NS4zNzUgMCAwIDAgLjI2LS4wOTNsMS40Ny0xLjExNWMuMjg0LjE0Ni41OTcuMjc0LjkzNy4zODZsLjI5MiAxLjkxN2EuMzEuMzEgMCAwIDAgLjEyLjIyNC4zOS4zOSAwIDAgMCAuMjU1LjA4OGgyLjMxM2MuMjAxIDAgLjMyNi0uMDk3LjM3NS0uMjkyLjA5LS4zNDcuMTktLjk5My4zMDItMS45MzdhNS45MiA1LjkyIDAgMCAwIC45NDgtLjM5NmwxLjQzNyAxLjEyNmEuNTEuNTEgMCAwIDAgLjI3MS4wOTNjLjE1MyAwIC40OC0uMjQ2Ljk4LS43NC41LS40OTIuODQzLS44NjggMS4wMy0xLjEyNWEuMzQ3LjM0NyAwIDAgMCAuMDk0LS4yMzkuNDAyLjQwMiAwIDAgMC0uMTA1LS4yNmMtLjUtLjYxMi0uODcxLTEuMDktMS4xMTQtMS40MzhhNi42OCA2LjY4IDAgMCAwIC40MDYtLjk0OGwxLjkyNy0uMjkxYS4zMTguMzE4IDAgMCAwIC4yMDgtLjEzNi40MDIuNDAyIDAgMCAwIC4wODMtLjI0VjkuODc0YS4zOTMuMzkzIDAgMCAwLS4wODMtLjI0NG0tNi4wMzEgMy4yNjVhMi41NyAyLjU3IDAgMCAxLTEuODg2Ljc4MiAyLjU3IDIuNTcgMCAwIDEtMS44ODUtLjc4MiAyLjU3IDIuNTcgMCAwIDEtLjc4MS0xLjg4NWMwLS43MzYuMjYtMS4zNjUuNzgtMS44ODZhMi41NyAyLjU3IDAgMCAxIDEuODg2LS43ODFjLjczNyAwIDEuMzY1LjI2IDEuODg2Ljc4MS41Mi41MjEuNzgxIDEuMTUuNzgxIDEuODg2YTIuNTcgMi41NyAwIDAgMS0uNzgxIDEuODg1Ii8+PC9zdmc+)
+    0 0 / contain no-repeat;
   display: none;
   height: 12px;
   opacity: 0.67;
@@ -840,9 +821,8 @@ body.is-mobile #funds-count {
 }
 
 #funds-count .digit-wrapper {
-  background: transparent url(../image/number-strip-chicago.svg);
-  background-position: 0 0;
-  background-size: 100% 1000%; /* height ~10 pixels? */
+  background: url(../image/number-strip-chicago.svg) 0 0/100% 1000%;
+  /* height ~10 pixels? */
   display: inline-block;
   height: 100%;
   left: 0;
@@ -880,7 +860,7 @@ body.is_safari:not(.is-mobile) #queue {
 }
 
 #queue .queue-item {
-  background: none;
+  background: 0 0;
   color: #ccc;
   display: inline-block;
   filter: grayscale(1) blur(8px);
@@ -893,7 +873,7 @@ body.is_safari:not(.is-mobile) #queue {
   opacity: 0;
   padding-right: 1px;
   position: relative;
-  transition: all 0.25s ease-out;
+  transition: 0.25s ease-out;
   transition-property: width, margin, opacity, filter, transform;
   vertical-align: top;
   /* small letter, e.g., "T" for "Tank" */
@@ -952,8 +932,7 @@ body.is_safari:not(.is-mobile) #queue {
   text-shadow: 0 1px 0 #000;
   top: 0;
   transform: scale(1);
-  transition: all 0.175s ease-in-out;
-  transition-property: opacity, filter;
+  transition: opacity 175ms ease-in-out, filter 175ms ease-in-out;
   vertical-align: middle;
 }
 
@@ -1034,8 +1013,7 @@ body.is_safari:not(.is-mobile) #queue {
 
 #radar-jammed-overlay .noise,
 body.bnb .tv-noise-overlay {
-  background: transparent url(../image/noise-tv.png) 0 0;
-  background-size: 250px 250px;
+  background: url(../image/noise-tv.png) 0 0/250px 250px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -1059,12 +1037,12 @@ body.bnb .tv-noise-overlay {
 
 #radar-jammed-overlay.active .noise,
 body.bnb .tv-noise-overlay {
-  animation: noise 1s steps(8) infinite both;
+  animation: 1s steps(8) infinite both noise;
 }
 
 #radar-jammed-overlay.active .noise {
   /* lower "frame rate" on desktop reduce compositing work. */
-  animation: noise 1.6s steps(8) infinite both;
+  animation: 1.6s steps(8) infinite both noise;
   opacity: 1;
 }
 
@@ -1077,13 +1055,12 @@ body.game-over #radar-jammed-overlay .noise {
  * iOS GPUs should be able to handle full-screen overlays,
  * higher "frame rate", and filters for a more subtle effect.
  */
-
 body.is-mobile #radar-jammed-overlay {
   mix-blend-mode: soft-light;
 }
 
 body.is-mobile #radar-jammed-overlay .noise {
-  animation: noise 0.5s steps(8) infinite both;
+  animation: 0.5s steps(8) infinite both noise;
   /* tint everything somewhat green. */
   background-color: #060;
   background-image: url(../image/noise-tv.png);
@@ -1117,7 +1094,7 @@ body.game-paused .tv-noise-overlay {
   height: 100%;
   max-width: 100vw;
   max-height: 100vh;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16/9;
   transform: translate3d(-50%, -50%, 0);
 }
 
@@ -1125,13 +1102,6 @@ body.game-paused .tv-noise-overlay {
   display: none;
   /* ensure this displays on top of stars */
   z-index: 1;
-}
-
-body.bnb #tv-display {
-  display: block;
-}
-
-#tv-display {
   height: 320px;
   left: 50%;
   opacity: 0;
@@ -1140,9 +1110,13 @@ body.bnb #tv-display {
   top: 57.5%;
   /* center, and slightly smaller */
   transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
-  transition: all 0.25s ease-in;
+  transition: 0.25s ease-in;
   transition-property: transform, opacity, filter, position;
   width: 409px;
+}
+
+body.bnb #tv-display {
+  display: block;
 }
 
 #tv-display.widescreen {
@@ -1171,10 +1145,8 @@ body.bnb-preload #tv-display #tv {
 }
 
 body.bnb #tv-display.widescreen #tv {
-  background: transparent url(../image/pngtree.com_color_tv_widescreen.webp);
-  background-position: 0 21.5px;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background: url(../image/pngtree.com_color_tv_widescreen.webp) 0 21.5px /
+    contain no-repeat;
 }
 
 #tv-display video {
@@ -1212,8 +1184,8 @@ body.bnb #tv-display.widescreen #tv {
 }
 
 #aa li,
-#game-menu li,
 #aa ul,
+#game-menu li,
 #game-menu ul {
   margin: 0;
   padding: 0;
@@ -1252,7 +1224,7 @@ body.is-mobile #top-bar #game-fps {
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   /* hide at first */
-  transform: translate3d(-100%, 0%, 0);
+  transform: translate3d(-100%, 0, 0);
 }
 
 #fuel-bar,
@@ -1271,7 +1243,7 @@ body.is-mobile #top-bar #game-fps {
 }
 
 #repair-complete {
-  background: transparent url(../image/status-repair-complete.png) repeat-x 0 0;
+  background: url(../image/status-repair-complete.png) repeat-x;
   display: none;
   height: 13px;
   top: 35px;
@@ -1351,6 +1323,7 @@ body.is_safari:not(.is-mobile) #ammo-count {
   /* fix shifting on Safari, especially, with three digits in tutorial mode. */
   min-width: 11px;
 }
+
 body.is_safari:not(.is-mobile) #bomb-count {
   min-width: 9px;
 }
@@ -1359,8 +1332,7 @@ body.is_safari:not(.is-mobile) #bomb-count {
 #mobile-controls li.weapons-item,
 ul.stats-bar li.stats-item .wrapper {
   filter: grayscale(0);
-  transition: filter 0.33s ease-out;
-  transition-property: filter, opacity;
+  transition: filter 0.33s ease-out, opacity 0.33s ease-out;
 }
 
 #mobile-controls li.inventory-item,
@@ -1394,12 +1366,11 @@ ul.stats-bar li.stats-item.weapon-reloading:not(.repairing) em {
 
 ul.stats-bar li .double-wide {
   display: inline-block;
-  min-width: 0.825rem;
-  /* prevent 3 to 2 characters from causing UI shift. */
+  min-width: 0.825rem; /* prevent 3 to 2 characters from causing UI shift. */
 }
 
 ul.stats-bar li.repairing em {
-  animation: sorta-blink 0.5s ease-in-out infinite alternate;
+  animation: 0.5s ease-in-out infinite alternate sorta-blink;
 }
 
 ul.stats-bar em {
@@ -1412,28 +1383,26 @@ ul.stats-bar em {
 }
 
 ul.stats-bar .lives em {
-  background: transparent url(../image/status-helicopter.png) no-repeat 0 0;
+  background: url(../image/status-helicopter.png) no-repeat;
   height: 7px;
   margin-left: 0.5em;
   width: 15px;
 }
 
 ul.stats-bar .infantry-count {
-  background: transparent !important;
+  background: 0 0 !important;
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry,
 .static-sprite.parachute-infantry,
 ul.stats-bar .infantry-count em {
-  background: transparent url(../image/parachute-infantry-static.png) no-repeat
-    0 0;
+  background: url(../image/parachute-infantry-static.png) no-repeat;
 }
 
 #mobile-controls.enemy li.weapons-item a.parachute-infantry,
 #player-status-bar.enemy .infantry-count em {
-  background: transparent url(../image/parachute-infantry-enemy-static.png)
-    no-repeat 0 0;
-  background-size: contain;
+  background: url(../image/parachute-infantry-enemy-static.png) 0 0 / contain
+    no-repeat;
 }
 
 #mobile-controls.enemy li.weapons-item a.parachute-infantry {
@@ -1460,7 +1429,8 @@ ul.stats-bar .infantry-count em {
 
 ul.stats-bar .missiles em {
   height: 9px;
-  min-width: 16px; /* accommodate rubber chicken mode */
+  min-width: 16px;
+  /* accommodate rubber chicken mode */
   transform: rotate(-5deg);
   width: 10px;
 }
@@ -1492,7 +1462,6 @@ ul.stats-bar .ammo em {
 #mobile-controls li.weapons-item a.ammo {
   /* background-image: url(../image/status-ammo.png); */
   background-position: 50% 50%;
-  background-size: 14px 8px;
   background-size: 42%;
 }
 
@@ -1503,15 +1472,12 @@ ul.stats-bar .ammo em {
 
 #mobile-controls li.weapons-item a.bombs,
 ul.stats-bar .bombs em {
-  background: transparent url(../image/status-bombs.png) no-repeat 0 0;
-  background-position: 50% 1px;
-  background-size: 75%;
+  background: url(../image/status-bombs.png) 50% 1px/75% no-repeat;
 }
 
 #mobile-controls li.weapons-item a.bombs {
   /* background-image: url(../image/status-bombs.png); */
   background-position: 50% 50%;
-  background-size: 3px 11px;
   background-size: 10%;
 }
 
@@ -1551,9 +1517,6 @@ ul.stats-bar .bombs em {
    * and a transform offset for terrain elements.
    */
   width: 100%;
-}
-
-#battlefield {
   left: 0;
   position: absolute;
 }
@@ -1571,8 +1534,11 @@ ul.stats-bar .bombs em {
 
 /* bunkers go green when overlapping with ground units, i.e., tanks? */
 /* all terrain items need acceleration? */
-#radar .radar-item--animated,
 #fuel-line,
+#radar .radar-item--animated,
+#radar .sprite.cloud1,
+#radar .sprite.cloud2,
+#radar .sprite.cloud3,
 .cornholio,
 .gunfire,
 .smoke .transform-sprite,
@@ -1582,9 +1548,6 @@ ul.stats-bar .bombs em {
 .sprite.cloud1,
 .sprite.cloud2,
 .sprite.cloud3,
-#radar .sprite.cloud1,
-#radar .sprite.cloud2,
-#radar .sprite.cloud3,
 .sprite.end-bunker,
 .sprite.gunfire,
 .sprite.missile-launcher,
@@ -1642,7 +1605,6 @@ body.is_firefox .sprite.shrapnel {
 }
 
 /* hacks for radar items on desktop safari, where we apply body { zoom: 2 } shenanigans. */
-
 body.is_safari:not(.is-mobile) .radar-item,
 body.is_safari:not(.is-mobile) .radar-item--animated {
   margin-top: -1px;
@@ -1701,8 +1663,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 .balloon.enemy {
   background-image: url(../image/balloon_mac.png);
   /* initially, show neutral */
-  background-position: 0 -60px;
-  background-size: 38px 144px; /* 76 x 288 source image */
+  background-size: 38px 144px;
+  /* 76 x 288 source image */
   height: 16px;
   margin-right: 0;
   /* allow status bar to hang out a bit */
@@ -1727,8 +1689,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 .balloon.enemy,
 .balloon.facing-left {
-  background-position: 0 0;
-  /* default when animation finishes */
+  background-position: 0 0; /* default when animation finishes */
 }
 
 .balloon.enemy.animating,
@@ -1755,7 +1716,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 .chain {
   /* slightly over 1px to "thicken up" when scaled */
   border-left: 1.02px dotted #999;
-  /*
+  /**
    * height will be set / reset by JS.
    * element is moved via transform and is effectively fixed-height when active.
    * height is only zeroed when chain is at bottom - detached from balloon and/or bunker.
@@ -1822,7 +1783,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 .van,
 .van.enemy {
   background-image: url(../image/van.png);
-  background-size: 38px 48px; /* retina sprite, 76 x 96 -> 36 x (16px * 3) - vertical sprite */
+  background-size: 38px 48px;
+  /* retina sprite, 76 x 96 -> 36 x (16px * 3) - vertical sprite */
   height: 16px;
   width: 38px;
   z-index: 2;
@@ -1837,8 +1799,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   height: 11px;
   overflow: hidden;
   width: 11px;
-  z-index: 3;
-  /* on top of helicopter, bunkers etc. */
+  z-index: 3; /* on top of helicopter, bunkers etc. */
 }
 
 .infantry .transform-sprite {
@@ -1877,8 +1838,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 .engineer {
-  width: 10px;
-  /* slightly smaller than infantry. */
+  width: 10px; /* slightly smaller than infantry. */
 }
 
 .engineer .transform-sprite {
@@ -2013,8 +1973,8 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   border-radius: 3px;
   width: 3px;
   height: 3px;
-  top: 0px;
-  right: 0px;
+  top: 0;
+  right: 0;
   z-index: 4;
 }
 
@@ -2101,12 +2061,10 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .helicopter {
-  height: 15px;
   /* cloaking opacity effect */
   opacity: 1;
   top: 0;
   transition: opacity 0.25s ease-in-out;
-  width: 48px;
 }
 
 .helicopter.respawning .transform-sprite {
@@ -2187,7 +2145,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .gunfire {
-  background-color: #ccc;
   background-color: #9c9f08;
   border-radius: 100%;
   height: 1.5px;
@@ -2203,7 +2160,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .gunfire.welding-spark {
-  background-color: #cc9900;
+  background-color: #c90;
 }
 
 .smart-missile {
@@ -2215,7 +2172,6 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   opacity: 1;
   position: absolute;
   /* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
-  transition: transform ease-none 0.2s;
   width: 15px;
 }
 
@@ -2228,30 +2184,22 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .smart-missile.rubber-chicken {
   /* heh */
-  background: transparent url(../image/rubber-chicken.gif) no-repeat 0 0;
-  background-position: 50% 50%;
-  background-size: contain;
+  background: url(../image/rubber-chicken.gif) 50% 50% / contain no-repeat;
   height: 12px;
   width: 24px;
 }
 
 #world.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 #world.rubber-chicken-mode ul.stats-bar .missiles em {
-  background: transparent url(../image/rubber-chicken-static.png) no-repeat 0 0;
-  background-position: 50% 33%;
-  background-repeat: no-repeat;
-  background-size: 16px 4.5px;
+  background: url(../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
+    no-repeat;
   min-width: 16px;
 }
 
 #world.banana-mode #mobile-controls li.weapons-item a.smart-missile,
 #world.banana-mode ul.stats-bar .missiles em,
 .smart-missile.banana {
-  background: transparent url(../image/banana.png) 50% 0 no-repeat;
-  /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
-  background-position: 50% 0;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background: url(../image/banana.png) 50% 0 / contain no-repeat; /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
 }
 
 #world.banana-mode #mobile-controls li.weapons-item a.smart-missile {
@@ -2299,8 +2247,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .smoke .transform-sprite {
-  background: transparent url(../image/smoke-sprite.png) no-repeat 0 0;
-  background-size: 9px 108px;
+  background: url(../image/smoke-sprite.png) 0 0/9px 108px no-repeat;
   height: 108px;
   width: 9px;
 }
@@ -2552,11 +2499,10 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 
 .turret,
 .turret .sub-sprite {
-  background: transparent url(../image/turret-sprite.png) 0 0 no-repeat;
-  background-position: 50% 0;
-  background-size: 18px 64px;
+  background: url(../image/turret-sprite.png) 50% 0/18px 64px no-repeat;
   height: 15px;
-  width: 22px; /* 18 + a few pixels for turret rotation */
+  width: 22px;
+  /* 18 + a few pixels for turret rotation */
   z-index: 2; /* sit atop bunkers */
 }
 
@@ -2575,7 +2521,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .turret.destroyed {
-  background: transparent;
+  background: 0 0;
 }
 
 .turret.destroyed .sub-sprite {
@@ -2625,8 +2571,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 .bomb.explosion-large {
-  background: none;
-  height: 22px;
+  background: 0 0;
   height: 56px;
   margin-left: 0;
   margin-top: -32px;
@@ -2650,16 +2595,15 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 body:not(.game-over) #world-wrapper.jammed #radar {
-  display: none; /* better? */
+  display: none;
+  /* better? */
   /* exception: allow the radar to show, even if jammed, when the game is over. */
   visibility: hidden;
 }
 
 #radar .sprite {
-  background: none;
+  background: padding-box #17a007;
   /* avoid border color bleed */
-  background-clip: padding-box;
-  background-color: #17a007;
   border-color: #ccc;
   border-radius: 0.5px 0.5px 0 0;
   contain: strict;
@@ -2708,10 +2652,9 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 }
 
 #radar .sprite.balloon {
-  background-color: #fff;
   border: 1px solid #fff;
   /* ever-so-slightly elliptical. */
-  border-radius: 0 3px 0 3px;
+  border-radius: 0 3px;
   height: 1px;
   margin-left: -0.5px;
   width: 1px;
@@ -2735,8 +2678,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
 }
 
-#radar .sprite.super-bunker.hostile,
-#radar .sprite.end-bunker.neutral {
+#radar .sprite.end-bunker.neutral,
+#radar .sprite.super-bunker.hostile {
   background-color: transparent;
   border-color: rgba(255, 255, 255, 0.35);
   border-bottom-color: transparent;
@@ -2766,7 +2709,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   );
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  border: 0.5px solid transparent;
   border: 0.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 2px;
   box-shadow: none;
@@ -2777,10 +2719,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   width: 12px;
 }
 
-#radar .sprite.cloud2 {
-  width: 14px;
-}
-
+#radar .sprite.cloud2,
 #radar .sprite.cloud3 {
   width: 14px;
 }
@@ -2791,7 +2730,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   /* green "U"-shape image */
   background-color: transparent;
   background-image: url(data:image/gif;base64,R0lGODlhBAACAIABABegBwAAACH5BAEKAAEALAAAAAAEAAIAAAIERAKZBQA7);
-  background-position: 0px 0px;
+  background-position: 0 0;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   box-shadow: none;
@@ -2807,15 +2746,13 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 #radar .sprite.smart-missile {
   border-radius: 100%;
   bottom: auto;
-  height: 1px;
   height: 2px;
   left: 0;
   margin-left: -1px;
   margin-top: -1px;
-  outline: none;
+  outline: 0;
   position: absolute;
   top: auto;
-  width: 1px;
   width: 2px;
 }
 
@@ -2832,7 +2769,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   height: 0;
   margin-bottom: -0.5px;
   margin-left: 0.5px;
-  outline: none;
+  outline: 0;
   width: 0;
   z-index: 5; /* show above landing pads, etc. */
 }
@@ -2892,8 +2829,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 }
 
 #radar .sprite.parachute-infantry {
-  margin-top: 1px;
-  /* hackish repositioning fix */
+  margin-top: 1px; /* hackish repositioning fix */
 }
 
 #radar .sprite.end-bunker {
@@ -2930,7 +2866,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 .turret.exploding,
 .van.exploding {
   animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
-  animation-fill-mode: forwards; /* Stay on last frame when finished */
+  animation-fill-mode: forwards;
+  /* Stay on last frame when finished */
   background-image: url(../image/explosion-shrapnel-2.png);
   background-position: 0 -384px;
   /* default state */
@@ -2943,8 +2880,7 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 .tank.exploding {
   margin-left: -11px;
   /* align with where tank was */
-  margin-top: -12px;
-  /* offset for 57-pixel-wide normal tank */
+  margin-top: -12px; /* offset for 57-pixel-wide normal tank */
 }
 
 .helicopter.exploding,
@@ -2974,7 +2910,6 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 }
 
 /* special case */
-
 .bunker .sub-sprite.nuke {
   /**
    * Commercial, licensed asset - $1.99 USD.
@@ -3014,7 +2949,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
 /* new "generic" explosion */
 .ephemeral-explosion {
   animation: ephemeralexplosion calc(0.75s * var(--gs-frac)) steps(14);
-  animation-fill-mode: forwards; /* Stay on last frame when finished */
+  animation-fill-mode: forwards;
+  /* Stay on last frame when finished */
   background-image: url(../image/explosion_by_tungkann_dam5o19.png);
   background-position: 0 0;
   /* default state */
@@ -3025,7 +2961,8 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   position: absolute;
   top: 0;
   transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
-  transform-origin: 50% 100%; /* bottom-align */
+  transform-origin: 50% 100%;
+  /* bottom-align */
   width: 100px;
   z-index: 3;
 }
@@ -3132,10 +3069,6 @@ body.is_safari .cornholio .sub-sprite {
   animation: none;
 }
 
-.bunker.burning {
-  background-image: none;
-}
-
 .bunker.burning .sub-sprite.rubble-container,
 .bunker.exploding .sub-sprite.rubble-container {
   bottom: 0;
@@ -3225,8 +3158,7 @@ body.bnb .sprite.engineer.butthead.building {
   /* TODO: remove margin-bottom once all bottom-aligned things are out */
   margin-bottom: 0 !important;
   margin-top: 0 !important;
-  transition: margin 2s;
-  /* override .building rules */
+  transition: margin 2s; /* override .building rules */
 }
 
 .sprite.recycling {
@@ -3243,7 +3175,7 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.turret {
-  background-color: rgb(23, 160, 7);
+  background-color: #17a007;
   height: 2px;
   margin-left: -0.5px;
   width: 1px;
@@ -3254,18 +3186,17 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 /* scan nodes */
-
-#battlefield .sprite.turret,
-#radar .sprite.turret,
 #battlefield .sprite.missile-launcher,
-#radar .sprite.missile-launcher {
+#battlefield .sprite.turret,
+#radar .sprite.missile-launcher,
+#radar .sprite.turret {
   /* allow nested .scan-mode to show */
   contain: unset;
   overflow: visible;
 }
 
-#radar .sprite.turret,
-#radar .sprite.missile-launcher {
+#radar .sprite.missile-launcher,
+#radar .sprite.turret {
   /* ensure everything sits on top of scan nodes */
   z-index: 1;
 }
@@ -3276,8 +3207,8 @@ body.bnb .sprite.engineer.butthead.building {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
   transform: translate3d(-50%, -50%, 0);
   /* account for border */
   margin-left: -0.5px;
@@ -3305,7 +3236,7 @@ body.bnb .sprite.engineer.butthead.building {
   border-color: rgba(0, 255, 0, 0.15);
   background-image: radial-gradient(
     circle,
-    rgba(0, 255, 0, 0) 0%,
+    rgba(0, 255, 0, 0) 0,
     rgba(0, 255, 0, 0) 65%,
     rgba(0, 255, 0, 0.15) 75%
   );
@@ -3320,7 +3251,7 @@ body.bnb .sprite.engineer.butthead.building {
    */
   background-image: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 0,
     rgba(255, 255, 255, 0) 65%,
     rgba(255, 255, 255, 0.15) 75%
   );
@@ -3329,7 +3260,7 @@ body.bnb .sprite.engineer.butthead.building {
 
 body:not(.game-started) .scan-node {
   /* no transitions while showing level previews */
-  transition-duration: 0ms !important;
+  transition-duration: 0s !important;
 }
 
 #radar .sprite.turret.destroyed {
@@ -3344,9 +3275,9 @@ body:not(.game-started) .scan-node {
 
 #battlefield .sprite.destroyed .scan-node,
 #radar .sprite.destroyed .scan-node {
-  border-width: 0px;
-  width: 0px;
-  height: 0px;
+  border-width: 0;
+  width: 0;
+  height: 0;
   transition-duration: calc(1s * var(--gs-frac));
   transition-timing-function: ease-in-out;
 }
@@ -3456,10 +3387,8 @@ body:not(.game-started) .scan-node {
 
 #game-tips {
   /* single line height */
-  font-family: FA Sysfont C, JetBrains Mono, Menlo, Monaco, SF Mono,
-    Lucida Console, Terminal, monospace;
   font-family: 'Cheddar Gothic Stencil';
-  font-weight: normal;
+  font-weight: 400;
   height: 13px;
   left: 0;
   position: absolute;
@@ -3602,13 +3531,11 @@ body.game-started #game-tips.active .tips-container {
   font-weight: 300;
   line-height: 16px;
   padding: 1px;
-  text-rendering: optimizeSpeed;
-  /* "ticker-tape" style? */
+  text-rendering: optimizeSpeed; /* "ticker-tape" style? */
   /* animation-timing-function: steps(150); */
 }
 
 /* go bigger on landscape. */
-
 #game-tips .tips-container .animation-node {
   height: 0;
   left: 0;
@@ -3753,8 +3680,8 @@ body.is-mobile.notch-at-right #help {
 
 /* "Green line" mode */
 #world.x-ray .sprite {
-  background: transparent !important;
-  outline: 1px solid #393;
+  background: 0 0 !important;
+  outline: #393 solid 1px;
 }
 
 #player-status-bar .spacer {
@@ -3789,7 +3716,8 @@ body.bnb.is-mobile #bnb-now-playing {
 
 #bnb-now-playing {
   display: none;
-  height: 72%; /* cheap vertical alignment */
+  height: 72%;
+  /* cheap vertical alignment */
   left: 0;
   /* note: nested opacity, individual images fade. */
   opacity: 0.75;
@@ -3830,13 +3758,11 @@ body.is_safari #bnb-now-playing .pow {
 }
 
 #bnb-now-playing .beavis {
-  background: transparent url(../image/pow-beavis.webp) 50% 50% no-repeat;
-  background-size: contain;
+  background: url(../image/pow-beavis.webp) 50% 50% / contain no-repeat;
 }
 
 #bnb-now-playing .butthead {
-  background: transparent url(../image/pow-butthead.webp) 50% 50% no-repeat;
-  background-size: contain;
+  background: url(../image/pow-butthead.webp) 50% 50% / contain no-repeat;
 }
 
 #bnb-now-playing.beavis .beavis,
@@ -3844,6 +3770,7 @@ body.is_safari #bnb-now-playing .pow {
   opacity: 1;
   transform: scale3d(1, 1, 1);
 }
+
 body.is-mobile #player-status-bar .stats-item {
   /* less items, so center-align. */
   text-align: center;
@@ -3862,8 +3789,7 @@ body.is-mobile #player-status-bar .stats-item {
   min-width: 6px;
   padding: 0 3px;
   text-align: center;
-  vertical-align: middle;
-  /* align with nearby text, e.g., bomb count */
+  vertical-align: middle; /* align with nearby text, e.g., bomb count */
 }
 
 body.is-mobile div#player-status-bar {
@@ -3959,7 +3885,6 @@ body.is-mobile #player-status-bar .inventory-item:hover {
 
 #player-status-bar .inventory-item a.engineer,
 .static-sprite.engineer {
-  background-image: url(../image/engineer-static.png);
   background-size: contain;
   height: 9px;
   width: 8px;
@@ -3972,8 +3897,7 @@ body.is-mobile #player-status-bar .inventory-item:hover {
 #player-status-bar a {
   /* inventory ordering */
   filter: grayscale(0);
-  transition: filter 0.33s ease-out;
-  transition-property: filter, opacity;
+  transition: filter 0.33s ease-out, opacity 0.33s ease-out;
 }
 
 /* grey out items when ordering is not possible. */
@@ -4000,8 +3924,7 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 6;
-  /* sit atop clouds */
+  z-index: 6; /* sit atop clouds */
 }
 
 body.is-mobile #mobile-controls {
@@ -4022,12 +3945,12 @@ body.is-mobile #mobile-controls {
 }
 
 #mobile-controls li.get-user-attention {
-  animation: sorta-blink-alt 0.5s ease-in-out infinite alternate;
+  animation: 0.5s ease-in-out infinite alternate sorta-blink-alt;
   background-color: rgba(27, 107, 27, 0.45);
 }
 
 #mobile-controls li.get-user-attention a {
-  animation: sorta-blink 0.5s ease-in-out infinite alternate;
+  animation: 0.5s ease-in-out infinite alternate sorta-blink;
 }
 
 /* only blink inventory control when requested, if weapons are showing. */
@@ -4040,7 +3963,6 @@ body.is-mobile #mobile-controls {
 }
 
 /* TODO: make this configurable. */
-
 body.is-mobile.notch-at-left #notification-toasts {
   margin-left: env(safe-area-inset-left) !important;
 }
@@ -4050,7 +3972,6 @@ body.is-mobile.notch-at-right #notification-toasts {
 }
 
 /* go bigger on landscape. */
-
 #mobile-controls .mobile-controls-ordering li,
 #mobile-controls .mobile-controls-weapons li {
   margin: 0 2px 2px 0;
@@ -4060,8 +3981,7 @@ body.is-mobile.notch-at-right #notification-toasts {
 
 #mobile-controls li {
   /* microfiche, but OK on mobile. */
-  background: transparent url(../image/checkerboard-black-mask-75percent.png);
-  background-size: 4px;
+  background: url(../image/checkerboard-black-mask-75percent.png) 0 0/4px;
   border: 1px dotted hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
@@ -4073,7 +3993,6 @@ body.is-mobile.notch-at-right #notification-toasts {
   padding: 0;
   pointer-events: none;
   text-align: center;
-  vertical-align: top;
   /* border-bottom-color: transparent; */
   vertical-align: middle;
 }
@@ -4106,15 +4025,15 @@ body.is-mobile.notch-at-right #notification-toasts {
   line-height: 1.5rem;
   position: absolute;
   top: 0;
-  transition: background-color 0.33s ease-out;
-  transition-property: background-color, filter, opacity;
+  transition: background-color 0.33s ease-out, filter 0.33s ease-out,
+    opacity 0.33s ease-out;
   width: 100%;
 }
 
 #mobile-controls li a.active {
   background-color: rgba(27, 107, 27, 0.75) !important;
   /* immediately go light. fade on release. */
-  transition-duration: 0ms !important;
+  transition-duration: 0s !important;
 }
 
 #mobile-controls li span {
@@ -4191,7 +4110,6 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 }
 
 /* hide groups of controls until activated */
-
 /* show items by category */
 #mobile-controls.inventory_active li.inventory-item,
 #mobile-controls.weapons_active li.weapons-item {
@@ -4248,8 +4166,7 @@ body.game-paused .sprite {
   opacity: 0;
   transform: scale(0.125);
   transform-origin: 50% 50%;
-  transition: all 0.15s ease-in-out;
-  transition-property: opacity, transform;
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
   /* TODO: fix dimension -> scale calculations.: D */
   width: 100px;
 }
@@ -4271,20 +4188,17 @@ body.game-paused .sprite {
   width: 50%;
 }
 
+body.game-over #pointer,
 body.game-over .joystick,
-body.game-over .joystick-point,
-body.game-over #pointer {
+body.game-over .joystick-point {
   opacity: 0;
 }
 
 /* for mobile. */
 #pointer {
   /* cross image */
-  background: transparent
-    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=);
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=)
+    50% 50% / contain no-repeat;
   display: none;
   height: 13px;
   left: 0;
@@ -4364,8 +4278,7 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   position: relative;
   text-align: right;
   top: 0;
-  transition: all 0.33s ease-in-out;
-  transition-property: margin, opacity;
+  transition: margin 0.33s ease-in-out, opacity 0.33s ease-in-out;
   will-change: transform;
 }
 
@@ -4373,7 +4286,7 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   /* height wil be set dynamically by JS, in this case. :X */
   transition-property: height, margin, opacity;
   overflow-y: hidden;
-  height: 0px;
+  height: 0;
 }
 
 #notification-toasts.left-aligned .notification-toast {
@@ -4472,7 +4385,6 @@ body.is_safari:not(.is-mobile) #notification-toasts {
 }
 
 /* prefs + modal stuff - based on original 68K Macintosh UI */
-
 #game-prefs-modal {
   border: 1px solid #000;
   display: none;
@@ -4488,14 +4400,14 @@ body.is_safari:not(.is-mobile) #notification-toasts {
   z-index: 11;
 }
 
-#game-prefs-modal,
-#game-prefs-form {
+#game-prefs-form,
+#game-prefs-modal {
   height: 92vh;
 }
 
 /* leave room for address bar UI. */
-body.is_iphone #game-prefs-modal,
-body.is_iphone #game-prefs-form {
+body.is_iphone #game-prefs-form,
+body.is_iphone #game-prefs-modal {
   height: 85vh;
 }
 
@@ -4565,23 +4477,18 @@ body.is_safari #game-prefs-modal .emoji-human {
 }
 
 /* volume and game speed controls */
-
 #game-prefs-modal .range-slider {
   display: inline-block;
   appearance: none;
-  background: transparent;
+  background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
+    #eee;
   border: 1px solid #000;
   border-radius: 16px;
   height: 16px;
-  margin: 4px 0px 0px 0px;
-  outline: none;
-  padding: 0 1px;
-  padding-left: 2px;
-  padding-right: 2px;
+  margin: 4px 0 0;
+  outline: 0;
+  padding: 0 2px;
   width: 200px;
-  background: transparent url(../image/checkerboard-black-mask-50percent.png);
-  background: #eee
-    url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
   background-size: 3px;
   image-rendering: smooth;
   image-rendering: crisp-edges;
@@ -4618,7 +4525,6 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   filter: invert(1);
   left: 20px;
   position: absolute;
-  top: 80px;
   top: 17%;
   transform: scale(2.16);
   transform-origin: 0 0;
@@ -4678,9 +4584,8 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 }
 
 .finder .title-bar-stripes {
-  background: transparent
-    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==);
-  background-size: 8.25px 1px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==)
+    0 0/8.25px 1px;
   border-color: #f3f3f3;
   border-style: solid;
   border-width: 0.5px 0.25px;
@@ -4699,7 +4604,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 }
 
 .finder.active {
-  outline: 0.5px solid #666;
+  outline: #666 solid 0.5px;
 }
 
 .close-button {
@@ -4708,7 +4613,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border-radius: 0.25px;
   height: 4.5px;
   left: 3.75px;
-  outline: 0.25px solid hsla(0, 0%, 100%, 0.67);
+  outline: hsla(0, 0%, 100%, 0.67) solid 0.25px;
   position: absolute;
   top: 0.75px;
   width: 4.5px;
@@ -4735,6 +4640,17 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 
 #game-prefs-modal .body {
   font-size: calc(11px * var(--prefs-font-scale));
+  background: #f3f3f3;
+  /* border all the way around */
+  border: 0.5px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  font-family: Geneva, verdana, arial, sans-serif;
+  /* height: 10rem; */
+  overflow: auto;
+  position: relative;
+  /* Firefox may show scaled-up scrollbars - this helps a bit. */
+  scrollbar-width: thin;
 }
 
 .finder .body,
@@ -4772,20 +4688,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 
 .finder .body ul.row li:not(:last-of-type) {
   border-right: none;
-}
-
-#game-prefs-modal .body {
-  background: #f3f3f3;
-  /* border all the way around */
-  border: 0.5px solid #000;
-  box-sizing: border-box;
-  color: #000;
-  font-family: Geneva, verdana, arial, sans-serif;
-  /* height: 10rem; */
-  overflow: auto;
-  position: relative;
-  /* Firefox may show scaled-up scrollbars - this helps a bit. */
-  scrollbar-width: thin;
 }
 
 #game-prefs-modal.is-network {
@@ -4864,7 +4766,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
  * Hat tip: https://github.com/sakofchit/system.css/ (MIT)
  * https://github.com/sakofchit/system.css/blob/main/LICENSE
  */
-
 #game-prefs-modal .fieldset-container::-webkit-scrollbar {
   background-color: #fff;
   width: 22px;
@@ -4872,9 +4773,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-track {
   /* black checkerboard pattern */
-  background: #fff
-    url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=);
-  background-size: 3px;
+  background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
+    0 0/3px #fff;
   border-left: 2px solid #000;
   image-rendering: -webkit-optimize-contrast;
   width: 10px;
@@ -4886,7 +4786,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-right: 0.5px solid #000;
   box-sizing: content-box;
   /* two shadows, which are hidden when at the top and bottom */
-  box-shadow: 0px 2px 0px #000, 0px -2px 0px #000;
+  box-shadow: 0 2px 0 #000, 0 -2px 0 #000;
   width: 20px;
 }
 
@@ -4906,16 +4806,19 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   background-repeat: no-repeat;
   height: 23.38px;
 }
+
 #game-prefs-modal
   .fieldset-container::-webkit-scrollbar-button:vertical:start:active {
   background-image: url(../image/icon/scrollbar-up-active.svg);
   background-repeat: no-repeat;
   height: 23.38px;
 }
+
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end {
   background-image: url(../image/icon/scrollbar-down.svg);
   height: 23.38px;
 }
+
 #game-prefs-modal
   .fieldset-container::-webkit-scrollbar-button:vertical:end:active {
   background-image: url(../image/icon/scrollbar-down-active.svg);
@@ -4945,9 +4848,9 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding: 6px 12px;
 }
 
+#game-prefs-modal button,
 .mac-classic fieldset legend,
-.mac-classic h3,
-#game-prefs-modal button {
+.mac-classic h3 {
   font-family: FA Sysfont C, courier, sans-serif;
   font-size: 7px;
   vertical-align: middle;
@@ -4960,7 +4863,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic b {
   /* slightly redundant: ensure consistent formatting */
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .mac-classic h3 {
@@ -5007,7 +4910,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic p {
   margin: 0;
-  padding-bottom: 6px;
   padding-top: 2px;
 }
 
@@ -5036,8 +4938,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding-bottom: 2px;
 }
 
-.mac-classic p,
-.mac-classic li {
+.mac-classic li,
+.mac-classic p {
   letter-spacing: -0.25px;
 }
 
@@ -5071,7 +4973,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 .mac-classic input[type='text']:focus {
-  outline: none;
+  outline: 0;
 }
 
 #game-menu select {
@@ -5087,16 +4989,14 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   height: calc(18.25px * var(--menu-scale));
   /* vertical align shenanigans */
   text-indent: var(--text-indent);
-  color: #eee;
-}
-
-#game-menu select {
+  /*#game-menu button.large { */
   /* new ish */
   font-family: 'Cheddar Gothic Stencil';
   font-size: calc(12px * var(--menu-scale));
   height: calc(18px * var(--menu-scale));
   text-indent: var(--text-indent);
-  padding: 0px;
+  /* padding-top: 1px; */
+  padding: 0;
 }
 
 body:not(.is_safari):not(.is_firefox) #game-menu select:active {
@@ -5106,6 +5006,7 @@ body:not(.is_safari):not(.is_firefox) #game-menu select:active {
 
 body.is_safari.is_iphone #game-menu select {
   /* stubborn iOS Safari */
+  /* height: calc(20.5px * var(--menu-scale)); */
   height: calc(18.33px * var(--menu-scale));
 }
 
@@ -5133,7 +5034,6 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23000000'><polygon points='0,0 100,0 50,50'/></svg>")
     no-repeat;
   background-position: calc(100% - 8px) 70%;
-  background-repeat: no-repeat;
   background-size: calc(var(--bg-size));
   border: 0.5px solid #999;
   border-radius: 2px;
@@ -5146,9 +5046,8 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   height: calc(18.25px * var(--menu-scale));
   /* vertical align shenanigans */
   margin: -2px 0 0 2px;
-  padding: 0 2px 0 0;
+  padding: 0 32px 0 0;
   vertical-align: middle;
-  padding-right: 32px;
   text-indent: calc(4px * var(--menu-scale));
   scrollbar-width: thin;
 }
@@ -5163,7 +5062,8 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   margin-top: 1px;
   height: calc(25px * var(--prefs-font-scale));
   background-size: 10px;
-  min-width: 11em; /* room for "Tanker's Demise" */
+  min-width: 11em;
+  /* room for "Tanker's Demise" */
   text-indent: 8px;
 }
 
@@ -5184,9 +5084,9 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   font: inherit;
   height: 15px;
   /* Not removed via appearance */
-  margin: 0;
-  padding: 0; /* vertical align w/text */
-  margin-top: -0.5px;
+  margin: -0.5px 0 0;
+  padding: 0;
+  /* vertical align w/text */
   position: relative;
   transform: translateY(-0.5px);
   width: 15px;
@@ -5210,7 +5110,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   content: '';
   height: 100%;
   left: 0;
-  line-height: 0px;
+  line-height: 0;
   position: absolute;
   top: 0;
   visibility: hidden;
@@ -5229,9 +5129,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   left: -0.5px;
   width: 12px;
   height: 12px;
-  background: transparent url(../image/x.png);
-  background-size: 250%;
-  background-position: 50% 50%;
+  background: url(../image/x.png) 50% 50%/250%;
   filter: drop-shadow(0px 0px 0.5px #000);
   image-rendering: auto;
   content: ' ';
@@ -5258,7 +5156,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 }
 
 .mac-classic input[type='checkbox']:focus {
-  animation: blink-bg 1s steps(1) infinite;
+  animation: 1s steps(1) infinite blink-bg;
 }
 
 .mac-classic input[type='radio']:active:before {
@@ -5268,7 +5166,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 }
 
 .mac-classic input[type='radio']:focus:before {
-  animation: pulse 0.5s ease-in-out infinite alternate-reverse;
+  animation: 0.5s ease-in-out infinite alternate-reverse pulse;
 }
 
 .mac-classic button:disabled,
@@ -5280,7 +5178,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 .mac-classic input[type='checkbox']:focus-visible,
 .mac-classic input[type='radio']:focus-visible {
   /* hide outline, because we have the animation */
-  outline: none;
+  outline: 0;
 }
 
 .mac-classic .label-text,
@@ -5288,7 +5186,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   /* letter-spacing: -0.25px; */
   /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
   font-family: Helvetica Neue, Helvetica, -apple-system, system-ui, sans-serif;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .finder.mac-classic p {
@@ -5363,7 +5261,8 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   background-color: transparent;
   background-position: 0 0;
   background-size: 12px 12px;
-  margin-bottom: -2px; /* avoid messing up the line height */
+  margin-bottom: -2px;
+  /* avoid messing up the line height */
   padding: 0;
   position: relative;
   vertical-align: middle;
@@ -5391,7 +5290,6 @@ button {
 button.primary {
   /* original button border, a little bigger */
   border-width: 0.5px;
-
   /* inner white, followed by outer black borders */
   box-shadow: 0 0 0 0.5px #fff, 0 0 0 2px #000;
   /**
@@ -5399,21 +5297,18 @@ button.primary {
    * where the outline follows border-radius styling as well.
    * Guess who the exception is ... :D ... see the next rule.
    */
-  outline: 1px solid #000;
+  outline: 0;
   /**
    * IRONY: Safari doesn't apply border-radius to outlines, but
    * everyone else does; and this is for the 68K classic mac UI.
    * So, we'll use box-shadow shenanigans. :P
    */
-  outline: none;
   outline-offset: 0.5px;
-
   /* Safari collapses buttons more than the others. :/ */
   padding: 0.5px 10px;
 }
 
 /* Redefine for prefs modal, which is not scaled up. */
-
 #game-prefs-modal button {
   border-width: 1.5px;
   border-radius: 4px;
@@ -5426,30 +5321,26 @@ button.primary {
   /* inner white, followed by outer black borders */
   box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
   outline-offset: 1px;
-
   /* Safari collapses buttons more than the others. :/ */
   padding: 1px 20px;
-}
-
-#game-prefs-modal button.primary {
   /* Modal-specific: extra right spacing. */
   margin-right: 10px;
 }
 
-button.primary:not(:disabled):active,
 #game-prefs-modal button.primary:not(:disabled):active,
-button:not(.generic-cta):not(:disabled):active,
-#game-prefs-modal button:not(.generic-cta):not(:disabled):active {
+#game-prefs-modal button:not(.generic-cta):not(:disabled):active,
+button.primary:not(:disabled):active,
+button:not(.generic-cta):not(:disabled):active {
   background-color: #000;
   color: #fff;
 }
 
 button.attention:not(:active) {
-  animation: button-blink 1s steps(2) infinite;
+  animation: 1s steps(2) infinite button-blink;
 }
 
 #game-prefs-modal button.attention:not(:active) {
-  animation: button-blink-larger 1s steps(2) infinite;
+  animation: 1s steps(2) infinite button-blink-larger;
 }
 
 .mac-system-waiting {
@@ -5486,9 +5377,9 @@ button.attention:not(:active) {
 }
 
 /* game menu screen */
+#checkbox-vs,
 #game-menu select,
-#game-type-list,
-#checkbox-vs {
+#game-type-list {
   background-color: rgba(0, 255, 0, 0.125);
   border: none;
 }
@@ -5561,7 +5452,6 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
 #game-menu button.large,
 .generic-cta {
   background: #eee;
-  color: #fff;
   color: #333;
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
   font-size: calc(9px * var(--menu-scale));
@@ -5575,8 +5465,8 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
   padding-top: calc(4px * var(--menu-scale));
 }
 
-#game-menu select,
-#game-menu button.large {
+#game-menu button.large,
+#game-menu select {
   color: #eee;
   background-color: rgba(0, 128, 0, 0.25);
 }
@@ -5584,10 +5474,12 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
 #game-menu button.large:hover {
   background-color: rgba(0, 255, 0, 0.5);
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+  background-color: (0, 255, 0, 0.5);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
-#game-type-list label:hover,
-#game-menu select:hover {
+#game-menu select:hover,
+#game-type-list label:hover {
   background-color: rgba(0, 255, 0, 0.25);
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
 }
@@ -5622,18 +5514,13 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
 #game-menu button.large,
 .generic-cta.large {
   border: 1px solid transparent;
-  transition: transform 0.05s;
-  transition-property: background-color, color, filter, text-shadow, transform;
+  transition: background-color 50ms, color 50ms, filter 50ms, text-shadow 50ms,
+    transform 50ms;
 }
 
 body.is_safari:not(.is-mobile) #game-menu button {
   /* safari 2x zoom hacks: these are glitchy when combined with zoom, methinks. */
   transition: none;
-}
-
-#game-menu button.large:hover {
-  background-color: (0, 255, 0, 0.5);
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 #game-menu button.large:active {
@@ -5666,17 +5553,13 @@ body.is_safari:not(.is-mobile) #game-menu button {
 }
 
 .flying-ace {
-  background: url(../image/flying_ace.png);
-  background-position: 50% 100%;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background: url(../image/flying_ace.png) 50% 100% / contain no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
   width: 25px;
 }
 
 /* "DOMFetti" - DOM confetti effect */
-
 #domfetti-overlay {
   /* initially hidden, shown only with active explosions */
   display: none;
@@ -5743,9 +5626,7 @@ body.edit-mode .sprite .zone-flag {
 
 button .network-icon {
   position: relative;
-  background: transparent url(../image/win95-networking-icon.png);
-  background-size: contain;
-  background-repeat: no-repeat;
+  background: url(../image/win95-networking-icon.png) 0 0 / contain no-repeat;
   display: inline-block;
   /* positioning tricks */
   top: 5px;
@@ -5778,7 +5659,7 @@ body.is_safari:not(.is-mobile) #lights {
 }
 
 #lights .sub-sprite {
-  background: transparent url(../image/lights.exe.png);
+  background: url(../image/lights.exe.png);
   display: block;
   height: 10px;
   left: 0;
@@ -5791,7 +5672,7 @@ body.is_safari:not(.is-mobile) #lights {
 
 .debug-rect:hover {
   background: rgba(0, 0, 0, 0.75);
-  outline: 1px solid #fff;
+  outline: #fff solid 1px;
   z-index: 10;
 }
 
@@ -5825,7 +5706,7 @@ body.is_safari:not(.is-mobile) #lights {
 
 #message-form-input:focus {
   background-color: #060;
-  outline: none;
+  outline: 0;
 }
 
 #message-form-input::placeholder {
@@ -5855,19 +5736,19 @@ body.is_safari:not(.is-mobile) #lights {
 /* grey out everything that isn't "exempt" and still available in-game within a shared network fieldset. */
 #game-prefs-modal
   fieldset.sync-over-network.faded
-  legend:not(.allow-in-game-updates),
+  > ul
+  > li:not(.allow-in-game-updates),
 #game-prefs-modal
   fieldset.sync-over-network.faded
-  > ul
-  > li:not(.allow-in-game-updates) {
+  legend:not(.allow-in-game-updates) {
   opacity: 0.67;
 }
 
-#game-prefs-modal fieldset.sync-over-network.faded-exclude-legend legend,
 #game-prefs-modal
   fieldset.sync-over-network.faded
   > ul
-  > li.allow-in-game-updates {
+  > li.allow-in-game-updates,
+#game-prefs-modal fieldset.sync-over-network.faded-exclude-legend legend {
   opacity: 1;
 }
 
@@ -5885,14 +5766,14 @@ body.edit-mode
   #battlefield
   .sprite:not(.end-bunker):not(.base):not(.exploding):hover {
   border-radius: 3px;
-  outline: 1px solid #999;
+  outline: #999 solid 1px;
 }
 
 body.edit-mode #battlefield .sprite.selected:not(.exploding) {
   /* background-color: #006600; */
   border-radius: 3px;
   /* override :not(), ugh. */
-  outline: 1px solid #090 !important;
+  outline: #090 solid 1px !important;
 }
 
 body.edit-mode #battlefield .sprite.newly-added-sprite,
@@ -5942,8 +5823,7 @@ body.edit-mode #battlefield {
   margin-bottom: -1px;
   pointer-events: none;
   position: absolute;
-  transition: height 0.25s ease-in-out;
-  transition-property: height, margin;
+  transition: height 0.25s ease-in-out, margin 0.25s ease-in-out;
   width: 100%;
 }
 
@@ -5983,7 +5863,7 @@ body.edit-mode #battlefield {
   pointer-events: none;
   position: absolute;
   top: 0;
-  transition: opacity 0.125s ease-out;
+  transition: opacity 125ms ease-out;
   width: 0;
 }
 
@@ -6016,18 +5896,16 @@ body.edit-mode #battlefield {
 
 #editor-window .static-sprite.landing-pad {
   /* TODO: landing-pad-static.png? */
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAHCAYAAABwWKHcAAAAXklEQVR4Ae3QgQXAUAyE4X/IN1u26gJdJpXHVdS1FIAcH0LAD5Bl72QDmbVlUaMaIORRfoWcgGpG0fEecuYCdqhyRNwAb/hOa6180JMxXC9aZfvgDaDRTEzVH/EZ7wKYR/MjFUCThgAAAABJRU5ErkJggg==);
-  background-size: contain;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAHCAYAAABwWKHcAAAAXklEQVR4Ae3QgQXAUAyE4X/IN1u26gJdJpXHVdS1FIAcH0LAD5Bl72QDmbVlUaMaIORRfoWcgGpG0fEecuYCdqhyRNwAb/hOa6180JMxXC9aZfvgDaDRTEzVH/EZ7wKYR/MjFUCThgAAAABJRU5ErkJggg==)
+    0 0 / contain;
   height: 3.5px;
   width: 40.5px;
 }
 
 #editor-window .static-sprite.turret {
   /* TODO: turret-static.png? */
-  background: url(data:image/png;base64,R0lGODlhEgAPAPIEAAAAAKpVAaqqAqqqqv///wAAAAAAAAAAACH5BAUKAAQALAAAAAASAA8AAAM0SLoEDixGMASUGIhw8dydt2ic+JXmCKaKA4YeFcxwttEsiZsP7YgOTu83Cc6OvhAAyTxeEgA7);
-  background-position: 50% 0;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background: url(data:image/png;base64,R0lGODlhEgAPAPIEAAAAAKpVAaqqAqqqqv///wAAAAAAAAAAACH5BAUKAAQALAAAAAASAA8AAAM0SLoEDixGMASUGIhw8dydt2ic+JXmCKaKA4YeFcxwttEsiZsP7YgOTu83Cc6OvhAAyTxeEgA7)
+    50% 0 / contain no-repeat;
   height: 10px;
   /* width: 18px, height: 15px; */
   width: 12px;
@@ -6046,15 +5924,16 @@ body.edit-mode #battlefield {
   display: none;
 }
 
+#editor-clipboard.active,
 ul.inline-list,
-ul.inline-list li,
-#editor-clipboard.active {
+ul.inline-list li {
   display: inline-block;
 }
 
 ul.inline-list li:not(:first-of-type) {
   margin-left: 0.5em;
 }
+
 #battlefield video {
   pointer-events: none;
 }
@@ -6151,8 +6030,8 @@ body.game-paused #tutorial-window {
   will-change: transform;
 }
 
-#world-wrapper.jammed .target-marker,
 #world-wrapper.jammed .scan-node,
+#world-wrapper.jammed .target-marker,
 .sprite.dead .target-ui,
 .sprite.exploding .target-ui,
 .target-ui.disabled,
@@ -6181,12 +6060,14 @@ body.game-over .target-ui {
     font-size: 120%;
     height: 20px;
   }
+
   body.is_iphone #funds-count {
     top: 1px;
     transform: scale(1.5);
     transform-origin: 0 0;
     margin-left: -6px;
   }
+
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is_iphone ul.stats-bar {
     /* prevent overlap with fuel bar */
@@ -6195,16 +6076,19 @@ body.game-over .target-ui {
     transform: scale3d(1.5, 1.5, 1);
     transform-origin: 50% 0;
   }
+
   body.is_iphone #game-paused {
     font-size: 15vmin;
     margin-top: 10vw;
   }
+
   body.is-mobile #game-tips .tips-container .animation-node,
   body.is-mobile #game-tips .tips-container .tip {
     font-size: 26px;
     line-height: 20px;
     width: 75%;
   }
+
   body.is-mobile #game-tips #game-announcements {
     /* larger type, please. */
     font-size: 2.5em;
@@ -6223,6 +6107,7 @@ body.game-over .target-ui {
     /* account for 2x border */
     border-width: 0.5px;
   }
+
   body.is-mobile.notch-at-right #mobile-controls .mobile-controls-ordering,
   body.is-mobile.notch-at-right #mobile-controls .mobile-controls-weapons {
     left: auto;
@@ -6230,6 +6115,7 @@ body.game-over .target-ui {
     margin-right: calc(env(safe-area-inset-right) / 2);
     right: 0;
   }
+
   body.is-mobile.notch-at-left #mobile-controls .mobile-controls-ordering,
   body.is-mobile.notch-at-left #mobile-controls .mobile-controls-weapons {
     left: 0;
@@ -6257,161 +6143,48 @@ body.game-over .target-ui {
   body.is-mobile.notch-at-left #bottom {
     padding-right: 12px;
   }
+
   body.is-mobile.notch-at-right #bottom {
     padding-right: 16px;
   }
+
   body.is-mobile #queue {
     left: 28px;
     top: 4px;
   }
+
   body.is-mobile #notification-toasts {
     /* note: half-size height, given transform. */
     height: 128px;
   }
+
   body.is_iphone #notification-toasts {
     transform: scale3d(2, 2, 1);
     transform-origin: top right;
   }
+
   /* account for toast location, and apply transform appropriately */
   body.is-mobile #notification-toasts.left-aligned {
     transform-origin: top left;
   }
+
   #mobile-controls li span.letter-block.show_inventory {
     top: 1.5px;
   }
+
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is-mobile #tutorial-window {
     left: 50%;
     top: 170px;
-    transform: scale3d(1.5, 1.5, 1) translate3d(-50%, 0px, 0);
+    transform: scale3d(1.5, 1.5, 1) translate3d(-50%, 0, 0);
     transform-origin: 0 0;
   }
+
   body.is_iphone #tutorial-window {
     /* position nicely and overlay BnB "TV", as applicable. */
     transform: scale3d(1.5, 1.5, 1) translate3d(-50%, -18%, 0);
   }
-}
 
-@media screen and (orientation: portrait) {
-  /* remove for portrait mode. */
-  body.is-mobile #game-status li:first-of-type {
-    margin-left: 0;
-  }
-  body.is-mobile #game-status li:last-of-type {
-    margin-right: 0;
-  }
-  body.is-mobile #funds-count {
-    top: -0.5px;
-  }
-  body.is-mobile #game-paused {
-    margin-top: 25vw;
-  }
-  body.is-mobile #game-tips {
-    height: 13px;
-    top: 82px;
-  }
-  body.is-mobile:not(.game-paused) #game-tips {
-    top: 64px;
-  }
-  body.is-mobile #game-tips .tips-container {
-    margin: 0;
-    /* take most of the screen real estate */
-    top: 0;
-    transform: translate3d(-50%, 0, 0);
-    width: 95%;
-  }
-  body.is-mobile #game-tips .tips-container .animation-node,
-  body.is-mobile #game-tips .tips-container .tip {
-    min-width: 30rem;
-  }
-  body.is-mobile
-    #game-tips
-    .tips-container
-    .animation-node:not(.hide-on-mobile),
-  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile) {
-    min-width: 15rem;
-    width: 75%;
-  }
-  body.is-mobile #game-tips #game-announcements {
-    /* smaller type, please. */
-    font-size: 1.25em;
-    line-height: 1.25em;
-    text-align: center;
-  }
-  body.is-mobile #help {
-    margin-left: 0.25rem;
-  }
-  body.bnb.is-mobile #bnb-now-playing {
-    /* More positioning hacks. Ugh. */
-    left: -1px;
-  }
-  /* mobile, portrait: smaller controls. */
-  body.is_iphone #mobile-controls .mobile-controls-ordering,
-  body.is_iphone #mobile-controls .mobile-controls-weapons {
-    zoom: 1.25;
-  }
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
-    /* collapse bullshit whitespace */
-    font-size: 0;
-    left: 0;
-    /* left side, by default */
-    right: auto;
-    width: 54px;
-  }
-  /* giant hack, for now */
-  #mobile-controls li {
-    height: 25px;
-  }
-  /* hide text when in portrait mode. */
-  /* only show if on a very wide device, e.g., ipad / tablet. */
-
-  body.is-mobile #mobile-controls li span,
-  body.is-mobile #player-status-bar span.letter-block {
-    display: none;
-  }
-
-  /* smaller inventory sizes */
-  #mobile-controls li.inventory-item a.missile-launcher,
-  #mobile-controls li.inventory-item a.tank {
-    background-size: 80%;
-  }
-
-  #mobile-controls li.inventory-item a.engineer,
-  #mobile-controls li.inventory-item a.infantry {
-    background-size: 33%;
-  }
-
-  /* helicopter weapons */
-  #mobile-controls li.inventory-item a.ammo,
-  #mobile-controls li.weapons-item a.parachute-infantry {
-    background-size: 25%;
-  }
-
-  #mobile-controls li.inventory-item a.smart-missile {
-    background-size: 30%;
-  }
-
-  #mobile-controls li.inventory-item a.bombs {
-    background-size: 6.5%;
-  }
-  #mobile-controls li span.letter-block.show_inventory {
-    left: 0.25px;
-    line-height: 23px;
-    top: 0.5px;
-  }
-  body.is-mobile #mobile-landscape-tip {
-    display: block;
-  }
-  body.game-paused #game-tips .tips-container,
-  body.game-paused #mobile-controls,
-  body.game-paused #notification-toasts {
-    visibility: hidden;
-  }
-  /* leave room for notifications. */
-  body.is-mobile #tutorial-window {
-    transform: scale3d(1.1, 1.1, 1) translate3d(-50%, -35%, 0);
-  }
 }
 
 #letters-from-the-old-tanker {
@@ -6443,13 +6216,153 @@ body.game-over .target-ui {
 }
 
 @media screen and (orientation: portrait) {
+  /* remove for portrait mode. */
+  body.is-mobile #game-status li:first-of-type {
+    margin-left: 0;
+  }
+
+  body.is-mobile #game-status li:last-of-type {
+    margin-right: 0;
+  }
+
+  body.is-mobile #funds-count {
+    top: -0.5px;
+  }
+
+  body.is-mobile #game-paused {
+    margin-top: 25vw;
+  }
+
+  body.is-mobile #game-tips {
+    height: 13px;
+    top: 82px;
+  }
+
+  body.is-mobile:not(.game-paused) #game-tips {
+    top: 64px;
+  }
+
+  body.is-mobile #game-tips .tips-container {
+    margin: 0;
+    /* take most of the screen real estate */
+    top: 0;
+    transform: translate3d(-50%, 0, 0);
+    width: 95%;
+  }
+
+  body.is-mobile #game-tips .tips-container .animation-node,
+  body.is-mobile #game-tips .tips-container .tip {
+    min-width: 30rem;
+  }
+
+  body.is-mobile
+    #game-tips
+    .tips-container
+    .animation-node:not(.hide-on-mobile),
+  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile) {
+    min-width: 15rem;
+    width: 75%;
+  }
+
+  body.is-mobile #game-tips #game-announcements {
+    /* smaller type, please. */
+    font-size: 1.25em;
+    line-height: 1.25em;
+    text-align: center;
+  }
+
+  body.is-mobile #help {
+    margin-left: 0.25rem;
+  }
+
+  body.bnb.is-mobile #bnb-now-playing {
+    /* More positioning hacks. Ugh. */
+    left: -1px;
+  }
+
+  /* mobile, portrait: smaller controls. */
+  body.is_iphone #mobile-controls .mobile-controls-ordering,
+  body.is_iphone #mobile-controls .mobile-controls-weapons {
+    zoom: 1.25;
+  }
+
+  body.is-mobile #mobile-controls .mobile-controls-ordering,
+  body.is-mobile #mobile-controls .mobile-controls-weapons {
+    /* collapse bullshit whitespace */
+    font-size: 0;
+    left: 0;
+    /* left side, by default */
+    right: auto;
+    width: 54px;
+  }
+
+  /* giant hack, for now */
+  #mobile-controls li {
+    height: 25px;
+  }
+
+  /* hide text when in portrait mode. */
+  /* only show if on a very wide device, e.g., ipad / tablet. */
+  body.is-mobile #mobile-controls li span,
+  body.is-mobile #player-status-bar span.letter-block {
+    display: none;
+  }
+
+  /* smaller inventory sizes */
+  #mobile-controls li.inventory-item a.missile-launcher,
+  #mobile-controls li.inventory-item a.tank {
+    background-size: 80%;
+  }
+
+  #mobile-controls li.inventory-item a.engineer,
+  #mobile-controls li.inventory-item a.infantry {
+    background-size: 33%;
+  }
+
+  /* helicopter weapons */
+  #mobile-controls li.inventory-item a.ammo,
+  #mobile-controls li.weapons-item a.parachute-infantry {
+    background-size: 25%;
+  }
+
+  #mobile-controls li.inventory-item a.smart-missile {
+    background-size: 30%;
+  }
+
+  #mobile-controls li.inventory-item a.bombs {
+    background-size: 6.5%;
+  }
+
+  #mobile-controls li span.letter-block.show_inventory {
+    left: 0.25px;
+    line-height: 23px;
+    top: 0.5px;
+  }
+
+  body.is-mobile #mobile-landscape-tip {
+    display: block;
+  }
+
+  body.game-paused #game-tips .tips-container,
+  body.game-paused #mobile-controls,
+  body.game-paused #notification-toasts {
+    visibility: hidden;
+  }
+
+  /* leave room for notifications. */
+  body.is-mobile #tutorial-window {
+    transform: scale3d(1.1, 1.1, 1) translate3d(-50%, -35%, 0);
+  }
+
   body.is-mobile #battle-over-letter.active {
     transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
   }
+
   /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
   body.is-mobile #battle-over-letter.open {
     transform: translate3d(-50%, -25%, 0) scale3d(1, 1, 1);
   }
+
 }
 
 #battle-over-letter.mousedown {
@@ -6465,14 +6378,14 @@ body.game-over .target-ui {
 
 #battle-over-letter .letter-content h1 {
   color: #9b1a1e;
-  font-family: 'War Wound', 'Stencil', 'Stencil Std', 'Stencil Compress D',
+  font-family: 'War Wound', Stencil, 'Stencil Std', 'Stencil Compress D',
     'Stencil Becker Compress', FA Sysfont C, Menlo, Monaco, SF Mono, Geneva,
     verdana, arial, sans-serif;
-  font-weight: normal;
+  font-weight: 400;
   font-size: 19px;
   line-height: 1em;
   margin-top: 4px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 #battle-over-letter .letter-content p {
@@ -6497,13 +6410,13 @@ body.is_safari:not(.is-mobile) .letter-image {
   transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
 }
 
-body.is_safari .animated-mail .body,
-body.is_safari .animated-mail .top-fold,
-body.is_safari .animated-mail .left-fold,
 body.is_safari .animated-mail .back-fold,
-body.is_safari .animated-mail .letter-buttons {
+body.is_safari .animated-mail .body,
+body.is_safari .animated-mail .left-fold,
+body.is_safari .animated-mail .letter-buttons,
+body.is_safari .animated-mail .top-fold {
   /* Safari has rendering / compositing issues without additional transforms. */
-  transform: translate3d(0px, 0px, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .animated-mail {
@@ -6513,8 +6426,7 @@ body.is_safari .animated-mail .letter-buttons {
   position: absolute;
   width: 100%;
   height: 100%;
-  transition: 1s;
-  transition-property: transform, z-index;
+  transition: transform 1s, z-index 1s;
 }
 
 .animated-mail .wax-seal {
@@ -6528,12 +6440,8 @@ body.is_safari .animated-mail .letter-buttons {
    * Hat tip: "Golden Wax Seal" via pngtree.com
    * https://pngtree.com/freepng/golden-wax-seal_2079672.html
    */
-  background: url(../image/pngtree-wax-seal.webp);
-  background-size: contain;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  transition: filter 0.25s, transform 0.25s;
-  transition-timing-function: ease-in-out;
+  background: url(../image/pngtree-wax-seal.webp) 50% 50% / contain no-repeat;
+  transition: filter 0.25s ease-in-out, transform 0.25s ease-in-out;
   image-rendering: optimizeQuality;
   image-rendering: crisp-edges;
 }
@@ -6542,11 +6450,11 @@ body.is_safari .animated-mail .letter-buttons {
   filter: drop-shadow(0px 0px 3px rgba(0, 255, 0, 0.75));
 }
 
-#battle-over-letter:not(.open).mousedown .animated-mail .wax-seal,
-#battle-over-letter:not(.open) .animated-mail .wax-seal:active {
+#battle-over-letter:not(.open) .animated-mail .wax-seal:active,
+#battle-over-letter:not(.open).mousedown .animated-mail .wax-seal {
   transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
   filter: drop-shadow(0px 0px 2px rgba(0, 255, 0, 0.5));
-  transition-duration: 0.125s;
+  transition-duration: 125ms;
 }
 
 .animated-mail .body {
@@ -6556,7 +6464,7 @@ body.is_safari .animated-mail .letter-buttons {
   height: 0;
   border-style: solid;
   border-width: 0 0 100px 200px;
-  border-color: transparent transparent #228822 transparent;
+  border-color: transparent transparent #282;
   z-index: 2;
 }
 
@@ -6567,10 +6475,10 @@ body.is_safari .animated-mail .letter-buttons {
   height: 0;
   border-style: solid;
   /* note: 51px to address border bleed / see-through */
-  border-width: 51px 100px 0 100px;
+  border-width: 51px 100px 0;
   transform-origin: 50% 0%;
   transition: transform 0.8s 0.5s, z-index 0.5s 0.65s;
-  border-color: #006600 transparent transparent transparent;
+  border-color: #060 transparent transparent;
   z-index: 4;
 }
 
@@ -6591,42 +6499,41 @@ body.is_safari .animated-mail .letter-buttons {
   height: 0;
   border-style: solid;
   border-width: 50px 0 50px 100px;
-  border-color: transparent transparent transparent #117711;
+  border-color: transparent transparent transparent #171;
   z-index: 2;
 }
 
 .animated-mail .right-fold {
   /* lazy mirroring */
   right: 0;
-  transform: translate3d(0px, 0px, 0) scaleX(-1);
+  transform: translate3d(0, 0, 0) scaleX(-1);
 }
 
 .animated-mail .letter-wrapper {
   position: absolute;
   bottom: 1px;
-  left: 0px;
+  left: 0;
   width: 100%;
-  height: 100vh; /* always make sure there's tons of room. */
+  height: 100vh;
+  /* always make sure there's tons of room. */
   overflow: hidden;
 }
 
 .animated-mail .letter {
   left: 20px;
-  bottom: 0px;
+  bottom: 0;
   position: absolute;
   width: 160px;
-  transform: translate3d(0px, calc(100% - 60px), 0);
+  transform: translate3d(0, calc(100% - 60px), 0);
   will-change: transform;
   /**
    * Image by kues1 on Freepik
    * https://www.freepik.com/free-photo/white-empty-canvas_1038705.htm#from_view=detail_alsolike#position=4
    */
-  background: #fff url(../image/white-empty-canvas-texture.webp);
-  background-size: 128px;
+  background: url(../image/white-empty-canvas-texture.webp) 0 0/128px #fff;
   z-index: 1;
   overflow: hidden;
-  transition: 1s 0s;
-  transition-timing-function: ease-in-out;
+  transition: 1s ease-in-out;
 }
 
 .animated-mail .letter .letter-border {
@@ -6647,8 +6554,8 @@ body.is_safari .animated-mail .letter-buttons {
 
 .animated-mail .letter-buttons {
   position: absolute;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   width: 100%;
   margin-bottom: 3px;
   padding: 6px;
@@ -6662,23 +6569,28 @@ body.is_safari .animated-mail .letter-buttons {
   body.is-mobile.is_iphone #battle-over-letter {
     transform: translate3d(-50%, -50%, 0) scale3d(1.85, 1.85, 1);
   }
+
   body.is-mobile #battle-over-letter.open {
     transform: translate3d(-50%, -25%, 0);
   }
+
   body.is-mobile.is_iphone #battle-over-letter.open {
     transform: translate3d(-50%, 25%, 0) scale3d(2.5, 2.5, 1);
   }
+
   body.is-mobile.is_iphone .animated-mail .letter-wrapper {
     /* size to near-top of screen */
     height: 60vh;
     overflow: auto;
   }
+
   body.is-mobile.is_iphone #battle-over-letter.open .animated-mail .letter {
     /* TODO: investigate brief positioning / clipping in animation due to loss of transform. */
     transform: none;
     bottom: auto;
     padding-bottom: 90px;
   }
+
 }
 
 .landscape-space-portrait-line-break {
@@ -6691,8 +6603,9 @@ body.is_safari .animated-mail .letter-buttons {
   .landscape-space-portrait-line-break {
     display: block !important;
     font-size: 0px !important;
-    width: 0px !important;
+    width: 0 !important;
   }
+
 }
 
 #battle-over-letter.open .animated-mail {
@@ -6708,7 +6621,7 @@ body.is_safari .animated-mail .letter-buttons {
 
 #battle-over-letter.open .animated-mail .letter {
   /* bring the letter up, compensating for the overlapping part of the envelope. */
-  transform: translate3d(0px, 0px, 0);
+  transform: translate3d(0, 0, 0);
   padding-bottom: 84px;
 }
 
@@ -6730,9 +6643,11 @@ span.no-emoji-substitution {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-73px, 0, 0);
   }
+
 }
 
 @keyframes drop-in {
@@ -6740,10 +6655,12 @@ span.no-emoji-substitution {
     opacity: 0;
     transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1);
   }
+
   to {
     opacity: 1;
     transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
   }
+
 }
 
 @keyframes drop-in-small {
@@ -6751,31 +6668,35 @@ span.no-emoji-substitution {
     opacity: 0;
     transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
   }
+
   to {
     opacity: 1;
     transform: translate3d(-50%, -50%, 0) scale3d(0.15, 0.15, 1);
   }
+
 }
 
 @keyframes tracking-active {
-  0% {
-    transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
-  }
-  50% {
-    transform: translate3d(-50%, -50%, 0) scale3d(0.33, 0.33, 1);
-  }
+  0%,
   to {
     transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
   }
+
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale3d(0.33, 0.33, 1);
+  }
+
 }
 
 @keyframes parachute-swing {
   0% {
     transform: rotate3d(0, 0, 1, -12.5deg);
   }
+
   to {
     transform: rotate3d(0, 0, 1, 12.5deg);
   }
+
 }
 
 @keyframes scrollText {
@@ -6786,6 +6707,7 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-100%, 0, 0);
   }
+
 }
 
 @keyframes scrollText-safari-scale {
@@ -6796,66 +6718,80 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-100%, 0, 0) scale(0.5, 0.5);
   }
+
 }
 
 @keyframes ephemeralexplosion {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: -1400px 0;
   }
+
 }
 
 @keyframes burninating {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-156px, 0, 0);
   }
+
 }
 
 @keyframes bomb {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -33px;
   }
+
 }
 
 @keyframes bomb-rotate {
   0% {
     transform: rotate(-90deg);
   }
+
   to {
-    transform: rotate(0deg);
+    transform: rotate(0);
   }
+
 }
 
 @keyframes largeexplosion {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-512px, 0, 0);
   }
+
 }
 
 @keyframes explosionshrapnel2 {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -384px;
   }
+
 }
 
 @keyframes blink {
   50% {
     opacity: 0;
   }
+
 }
 
 @keyframes blink-bg {
@@ -6863,6 +6799,7 @@ span.no-emoji-substitution {
     background-color: #fff;
     opacity: 0.75;
   }
+
 }
 
 @keyframes blink-tracking-color {
@@ -6871,6 +6808,7 @@ span.no-emoji-substitution {
     border-color: red;
     color: red;
   }
+
 }
 
 @keyframes sorta-blink {
@@ -6878,6 +6816,7 @@ span.no-emoji-substitution {
     opacity: 0.65;
     transform: scale3d(1.1, 1.1, 1.1);
   }
+
 }
 
 @keyframes sorta-blink-alt {
@@ -6885,6 +6824,7 @@ span.no-emoji-substitution {
     background-color: rgba(27, 107, 27, 0.5);
     transform: scale3d(0.9, 0.9, 0.9);
   }
+
 }
 
 @keyframes sorta-blink-subtle {
@@ -6892,69 +6832,84 @@ span.no-emoji-substitution {
     opacity: 0.5;
     filter: grayscale(1);
   }
+
 }
 
 @keyframes flipleft {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -60px;
   }
+
 }
 
 @keyframes flipright {
   0% {
     background-position: 0 -40px;
   }
+
   to {
     background-position: 0 20px;
   }
+
 }
 
 @keyframes scan {
   0% {
     transform: rotate(-90deg);
   }
+
   to {
     transform: rotate(90deg);
   }
+
 }
 
 @keyframes jerkingmychain {
   0% {
     margin-top: 0;
   }
+
   to {
     margin-top: -16px;
   }
+
 }
 
 @keyframes animate-transform-sprite-tank {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-174px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-infantry {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-55px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-engineer {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-50px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-helicopter {
@@ -6962,63 +6917,77 @@ span.no-emoji-substitution {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-200px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-helicopter-enemy {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-220px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-base {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-520px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-base-snow {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-510px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-landing-pad {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-324px, 0, 0);
   }
+
 }
 
 @keyframes tv-static {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(0, -320px, 0);
   }
+
 }
 
 @keyframes genericexplosion {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -250px;
   }
+
 }
 
 /* small */
@@ -7026,54 +6995,66 @@ span.no-emoji-substitution {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -45px;
   }
+
 }
 
 @keyframes balloonright {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 -128px; /* original yellow version: 0px -135px */
   }
+
 }
 
 @keyframes balloonleft {
   0% {
     background-position: 0 -128px; /* original yellow version: 0px -120px */
   }
+
   to {
     background-position: 0 0;
   }
+
 }
 
 @keyframes rotating3d {
   0% {
     transform: rotate3d(0, 0, 1, 0deg);
   }
+
   to {
     transform: rotate3d(0, 0, 1, 1turn);
   }
+
 }
 
 @keyframes pulse {
   0% {
     transform: scale3d(0.66, 0.66, 1);
   }
+
   to {
     transform: scale3d(0.33, 0.33, 1);
   }
+
 }
 
 @keyframes nuke {
   0% {
     background-position: 0 0;
   }
+
   to {
     background-position: -2352px 0;
   }
+
 }
 
 @keyframes button-blink {
@@ -7085,10 +7066,12 @@ span.no-emoji-substitution {
   0% {
     box-shadow: 0 0 0 0.5px #fff, 0 0 0 2px #000;
   }
+
   to {
     border-color: transparent;
     box-shadow: 0 0 0 4px #f3f3f3, 0 0 0 2px #f3f3f3;
   }
+
 }
 
 @keyframes button-blink-larger {
@@ -7096,10 +7079,12 @@ span.no-emoji-substitution {
   0% {
     box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
   }
+
   to {
     border-color: transparent;
     box-shadow: 0 0 0 8px #f3f3f3, 0 0 0 4px #f3f3f3;
   }
+
 }
 
 @keyframes noise {
@@ -7107,16 +7092,20 @@ span.no-emoji-substitution {
     background-position: 0 0;
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(500px, 0, 0);
   }
+
 }
 
 @keyframes animate-transform-sprite-engineer-bnb {
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-143.33px, 0, 0);
   }
+
 }
