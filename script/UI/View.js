@@ -48,8 +48,6 @@ function isFastEnough(t1, t2) {
   );
 }
 
-let orientationTimer;
-
 const View = () => {
   let css, data, dom, events, exports;
 
@@ -122,7 +120,10 @@ const View = () => {
   }
 
   function refreshCoords() {
-    updateScreenScale();
+    const hasNewScale = updateScreenScale();
+
+    // avoid redundant work.
+    if (!hasNewScale) return;
 
     applyScreenScale();
 
@@ -799,12 +800,19 @@ const View = () => {
 
     let localWorldHeight = 410;
 
+    let newScale;
+
     // for testing game without any scaling applied
     if (disableScaling) {
-      data.screenScale = 1;
+      newScale = 1;
     } else {
-      data.screenScale = innerHeight / localWorldHeight;
+      newScale = innerHeight / localWorldHeight;
     }
+
+    if (data.screenScale === newScale) return false;
+
+    data.screenScale = newScale;
+    return true;
   }
 
   function applyScreenScale() {
@@ -955,11 +963,11 @@ const View = () => {
       game?.players?.local?.toggleAutoFlip();
     });
 
-    utils.events.add(
-      screen?.orientation,
-      'change',
-      events.orientationChangeWithDelay
-    );
+    utils.events.add(screen?.orientation, 'change', (e) => {
+      // mark that we got one of these events
+      data.browser.hasOrientationChange = true;
+      events.orientationChange(e);
+    });
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
   }
@@ -1027,6 +1035,7 @@ const View = () => {
       halfWidth: 0,
       twoThirdsWidth: 0,
       height: 0,
+      hasOrientationChange: false,
       isPortrait: !!window.matchMedia?.('(orientation: portrait)')?.matches,
       isLandscape: !!window.matchMedia?.('(orientation: landscape)')?.matches
     },
@@ -1324,29 +1333,41 @@ const View = () => {
     resize() {
       refreshCoords();
 
+      /**
+       * Bug mitigation: it seems iOS Safari may need a delay for proper window coordinates to hit.
+       * Ergo: if we have an orientation change, try optimistically: next frame + longer delay.
+       * It's possible we don't have an orientation change event before game start -
+       * so, the first rotate could be risky.
+       */
+      if (data.browser.hasOrientationChange) {
+        window.requestAnimationFrame(refreshCoords);
+        window.setTimeout(refreshCoords, 500);
+      }
+
       if (game.objects.editor) game.objects.editor.events.resize();
 
       game.objects.gameLoop.resetFPS();
     },
 
-    orientationChangeWithDelay(e) {
-      // iOS safari seems to require a delay for device rotation before coordinates actually update.
-      if (orientationTimer) return;
-      orientationTimer = window.setTimeout(() => {
-        events.orientationChange(e);
-        orientationTimer = null;
-      }, 750);
-    },
-
     orientationChange() {
       if (!isMobile) return;
 
-      (data.browser.isPortrait = !!window.matchMedia?.(
-        '(orientation: portrait)'
-      )?.matches),
-        (data.browser.isLandscape = !!window.matchMedia?.(
-          '(orientation: landscape)'
-        )?.matches);
+      // check each independently - don't assume one based on the other.
+      const isPortrait = !!window.matchMedia?.('(orientation: portrait)')
+        ?.matches;
+
+      const isLandscape = !!window.matchMedia?.('(orientation: landscape)')
+        ?.matches;
+
+      // bail if no change.
+      if (
+        data.browser.isPortrait === isPortrait &&
+        data.browser.isLandscape === isLandscape
+      )
+        return;
+
+      data.browser.isPortrait = isPortrait;
+      data.browser.isLandscape = isLandscape;
 
       refreshCoords();
     }
