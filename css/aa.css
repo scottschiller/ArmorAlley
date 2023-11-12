@@ -366,7 +366,6 @@ body.is_safari #mtv-bnb-in {
     /* leave room for address bar UI, etc. */
     max-height: 80vh;
   }
-
 }
 
 body.is-mobile #game-description,
@@ -6184,7 +6183,6 @@ body.game-over .target-ui {
     /* position nicely and overlay BnB "TV", as applicable. */
     transform: scale3d(1.5, 1.5, 1) translate3d(-50%, -18%, 0);
   }
-
 }
 
 #letters-from-the-old-tanker {
@@ -6362,7 +6360,6 @@ body.game-over .target-ui {
   body.is-mobile #battle-over-letter.open {
     transform: translate3d(-50%, -25%, 0) scale3d(1, 1, 1);
   }
-
 }
 
 #battle-over-letter.mousedown {
@@ -6590,7 +6587,6 @@ body.is_safari .animated-mail .top-fold {
     bottom: auto;
     padding-bottom: 90px;
   }
-
 }
 
 .landscape-space-portrait-line-break {
@@ -6605,7 +6601,6 @@ body.is_safari .animated-mail .top-fold {
     font-size: 0px !important;
     width: 0 !important;
   }
-
 }
 
 #battle-over-letter.open .animated-mail {
@@ -6647,7 +6642,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-73px, 0, 0);
   }
-
 }
 
 @keyframes drop-in {
@@ -6660,7 +6654,6 @@ span.no-emoji-substitution {
     opacity: 1;
     transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
   }
-
 }
 
 @keyframes drop-in-small {
@@ -6673,7 +6666,6 @@ span.no-emoji-substitution {
     opacity: 1;
     transform: translate3d(-50%, -50%, 0) scale3d(0.15, 0.15, 1);
   }
-
 }
 
 @keyframes tracking-active {
@@ -6685,7 +6677,6 @@ span.no-emoji-substitution {
   50% {
     transform: translate3d(-50%, -50%, 0) scale3d(0.33, 0.33, 1);
   }
-
 }
 
 @keyframes parachute-swing {
@@ -6696,7 +6687,6 @@ span.no-emoji-substitution {
   to {
     transform: rotate3d(0, 0, 1, 12.5deg);
   }
-
 }
 
 @keyframes scrollText {
@@ -6707,7 +6697,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-100%, 0, 0);
   }
-
 }
 
 @keyframes scrollText-safari-scale {
@@ -6718,7 +6707,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-100%, 0, 0) scale(0.5, 0.5);
   }
-
 }
 
 @keyframes ephemeralexplosion {
@@ -6729,7 +6717,6 @@ span.no-emoji-substitution {
   to {
     background-position: -1400px 0;
   }
-
 }
 
 @keyframes burninating {
@@ -6740,7 +6727,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-156px, 0, 0);
   }
-
 }
 
 @keyframes bomb {
@@ -6751,7 +6737,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -33px;
   }
-
 }
 
 @keyframes bomb-rotate {
@@ -6762,7 +6747,6 @@ span.no-emoji-substitution {
   to {
     transform: rotate(0);
   }
-
 }
 
 @keyframes largeexplosion {
@@ -6773,7 +6757,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-512px, 0, 0);
   }
-
 }
 
 @keyframes explosionshrapnel2 {
@@ -6784,14 +6767,12 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -384px;
   }
-
 }
 
 @keyframes blink {
   50% {
     opacity: 0;
   }
-
 }
 
 @keyframes blink-bg {
@@ -6799,7 +6780,6 @@ span.no-emoji-substitution {
     background-color: #fff;
     opacity: 0.75;
   }
-
 }
 
 @keyframes blink-tracking-color {
@@ -6808,7 +6788,6 @@ span.no-emoji-substitution {
     border-color: red;
     color: red;
   }
-
 }
 
 @keyframes sorta-blink {
@@ -6816,7 +6795,6 @@ span.no-emoji-substitution {
     opacity: 0.65;
     transform: scale3d(1.1, 1.1, 1.1);
   }
-
 }
 
 @keyframes sorta-blink-alt {
@@ -6824,7 +6802,6 @@ span.no-emoji-substitution {
     background-color: rgba(27, 107, 27, 0.5);
     transform: scale3d(0.9, 0.9, 0.9);
   }
-
 }
 
 @keyframes sorta-blink-subtle {
@@ -6832,7 +6809,6 @@ span.no-emoji-substitution {
     opacity: 0.5;
     filter: grayscale(1);
   }
-
 }
 
 @keyframes flipleft {
@@ -6843,7 +6819,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -60px;
   }
-
 }
 
 @keyframes flipright {
@@ -6854,7 +6829,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 20px;
   }
-
 }
 
 @keyframes scan {
@@ -6865,7 +6839,6 @@ span.no-emoji-substitution {
   to {
     transform: rotate(90deg);
   }
-
 }
 
 @keyframes jerkingmychain {
@@ -6876,7 +6849,6 @@ span.no-emoji-substitution {
   to {
     margin-top: -16px;
   }
-
 }
 
 @keyframes animate-transform-sprite-tank {
@@ -6887,7 +6859,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-174px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-infantry {
@@ -6898,7 +6869,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-55px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-engineer {
@@ -6909,7 +6879,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-50px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-helicopter {
@@ -6921,7 +6890,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-200px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-helicopter-enemy {
@@ -6932,7 +6900,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-220px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-base {
@@ -6943,7 +6910,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-520px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-base-snow {
@@ -6954,7 +6920,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-510px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-landing-pad {
@@ -6965,7 +6930,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-324px, 0, 0);
   }
-
 }
 
 @keyframes tv-static {
@@ -6976,7 +6940,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(0, -320px, 0);
   }
-
 }
 
 @keyframes genericexplosion {
@@ -6987,7 +6950,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -250px;
   }
-
 }
 
 /* small */
@@ -6999,7 +6961,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -45px;
   }
-
 }
 
 @keyframes balloonright {
@@ -7010,7 +6971,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 -128px; /* original yellow version: 0px -135px */
   }
-
 }
 
 @keyframes balloonleft {
@@ -7021,7 +6981,6 @@ span.no-emoji-substitution {
   to {
     background-position: 0 0;
   }
-
 }
 
 @keyframes rotating3d {
@@ -7032,7 +6991,6 @@ span.no-emoji-substitution {
   to {
     transform: rotate3d(0, 0, 1, 1turn);
   }
-
 }
 
 @keyframes pulse {
@@ -7043,7 +7001,6 @@ span.no-emoji-substitution {
   to {
     transform: scale3d(0.33, 0.33, 1);
   }
-
 }
 
 @keyframes nuke {
@@ -7054,7 +7011,6 @@ span.no-emoji-substitution {
   to {
     background-position: -2352px 0;
   }
-
 }
 
 @keyframes button-blink {
@@ -7071,7 +7027,6 @@ span.no-emoji-substitution {
     border-color: transparent;
     box-shadow: 0 0 0 4px #f3f3f3, 0 0 0 2px #f3f3f3;
   }
-
 }
 
 @keyframes button-blink-larger {
@@ -7084,7 +7039,6 @@ span.no-emoji-substitution {
     border-color: transparent;
     box-shadow: 0 0 0 8px #f3f3f3, 0 0 0 4px #f3f3f3;
   }
-
 }
 
 @keyframes noise {
@@ -7096,7 +7050,6 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(500px, 0, 0);
   }
-
 }
 
 @keyframes animate-transform-sprite-engineer-bnb {
@@ -7107,5 +7060,4 @@ span.no-emoji-substitution {
   to {
     transform: translate3d(-143.33px, 0, 0);
   }
-
 }
