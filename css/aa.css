@@ -5564,9 +5564,9 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
   color: #fff;
   color: #333;
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-  font-size: 10px;
-  line-height: 10px;
-  padding: 4px 8px;
+  font-size: calc(9px * var(--menu-scale));
+  line-height: calc(9px * var(--menu-scale));
+  padding: calc(4px * var(--menu-scale)) calc(8px * var(--menu-scale));
   vertical-align: middle;
 }
 
