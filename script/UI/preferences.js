@@ -250,9 +250,12 @@ function PrefsManager() {
   }
 
   function renderGameSpeedSlider() {
-    document.getElementById('game_speed-value').innerText = `${Math.round(
+    let slider = document.getElementById('game_speed-value');
+    if (!slider) return;
+    slider.innerText = `${Math.round(
       gamePrefs.game_speed * 100
     )}%`;
+    slider = null;
   }
 
   function renderVolumeSlider() {
