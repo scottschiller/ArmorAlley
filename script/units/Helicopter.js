@@ -183,7 +183,7 @@ const Helicopter = (options = {}) => {
     let text;
 
     if (data.fuel < 33 && data.fuel > 32) {
-      text = 'Low fuel ⛽ &nbsp; 🤏 &nbsp; 😬';
+      text = 'Low fuel ⛽ 🤏 😬';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -195,7 +195,7 @@ const Helicopter = (options = {}) => {
         );
       }
     } else if (data.fuel < 12.5 && data.fuel > 11.5) {
-      text = 'Fuel critical ⛽ &nbsp; 🤏 &nbsp; 😱';
+      text = 'Fuel critical ⛽ 🤏 😱';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -209,7 +209,7 @@ const Helicopter = (options = {}) => {
         );
       }
     } else if (data.fuel <= 0) {
-      text = 'No fuel &nbsp; 💀';
+      text = 'No fuel 💀';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
