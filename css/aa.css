@@ -366,11 +366,19 @@ body.is_safari #mtv-bnb-in {
     /* leave room for address bar UI, etc. */
     max-height: 80vh;
   }
+  body.is-mobile #game-description {
+    font-size: calc(3.25px * var(--menu-scale));
+  }
 }
 
-body.is-mobile #game-description,
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-description {
+    font-size: calc(4px * var(--menu-scale));
+  }
+}
+
 body.is-mobile #game-subtitle {
-  font-size: calc(4px * var(--menu-scale));
+  font-size: calc(5px * var(--menu-scale));
 }
 
 #logo-image {
@@ -696,8 +704,7 @@ body.is_firefox #game-type-list label {
   margin: 0 auto;
   margin-top: calc(3px * var(--menu-scale));
   /* reserve at least two lines */
-  min-height: 2.65em;
-  max-width: 35em;
+  min-height: 3rem;
 }
 
 #world-wrapper {
