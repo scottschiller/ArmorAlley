@@ -279,192 +279,6 @@
         <div id="level-preview"></div>
 
         <div id="world">
-          <div id="world-overlay">
-            <div
-              id="tv-title-screen"
-              class="tv-display-title-screen"
-              style="visibility: hidden">
-              <div class="tv-screen-container">
-                <div class="tv-noise-overlay"></div>
-              </div>
-              <div class="tv"></div>
-            </div>
-
-            <div id="logo">
-              <div id="mtv-bnb-in" style="visibility: hidden"></div>
-              <div id="bnb-vs" style="visibility: hidden"></div>
-
-              <h1>Armor Alley</h1>
-
-              <div id="game-menu" style="visibility: hidden">
-                <h2
-                  id="game-subtitle"
-                  title-bnb='Uh-huh huh huh huh... "Hard." Uh-huh huh huh huh. Heh heh, m-heh. Boioioioiiiiinnnngg.'>
-                  A modern remake of the classic 1990 Mac + PC game.
-                </h2>
-
-                <form
-                  id="game-menu-form"
-                  action="."
-                  method="get"
-                  onsubmit="return false">
-                  <div
-                    id="game-level-wrapper"
-                    style="display: inline-block"
-                    class="mac-classic">
-                    <!-- <span>Level: </span> -->
-                    <select id="game_level" name="level">
-                      <optgroup label="New? Start here. 👇">
-                        <option value="Tutorial">Tutorial</option>
-                      </optgroup>
-                      <optgroup label="Original Campaign Battles">
-                        <option value="Cake Walk">Cake Walk</option>
-                        <option value="One-Gun">One-Gun</option>
-                        <option value="Sucker Punch">Sucker Punch</option>
-                        <option value="Airborne">Airborne</option>
-                        <option value="Two-Gun">Two-Gun</option>
-                        <option value="Super Bunker">Super Bunker</option>
-                        <option value="Scrapyard">Scrapyard</option>
-                        <option value="Blind Spot">Blind Spot</option>
-                        <option value="Wasteland">Wasteland</option>
-                        <option value="Midnight Oasis">Midnight Oasis</option>
-                      </optgroup>
-                      <optgroup label="Network Game Battles">
-                        <option value="Cavern Cobra">Cavern Cobra</option>
-                        <option value="Desert Sortie">Desert Sortie</option>
-                        <option value="First Blood">First Blood</option>
-                        <option value="Network Mania">Network Mania</option>
-                        <option value="Rescue Raiders">Rescue Raiders</option>
-                        <option value="Midpoint">Midpoint</option>
-                        <option value="Slithy Toves">Slithy Toves</option>
-                        <option value="Tanker's Demise">Tanker's Demise</option>
-                        <option value="WindStalker">WindStalker</option>
-                        <option value="Sandstorm">Sandstorm</option>
-                        <option value="Rainstorm">Rainstorm</option>
-                        <option value="Balloon Fun">Balloon Fun</option>
-                      </optgroup>
-                      <!--
-                      <optgroup label="Practice Battles">
-                        <option value="Demo 1">Demo 1</option>
-                        <option value="Demo 2">Demo 2</option>
-                        <option value="Demo 3">Demo 3</option>
-                        <option value="Demo 4">Demo 4</option>
-                      </optgroup>
-                    --></select>
-                  </div>
-
-                  <div
-                    style="
-                      position: relative;
-                      display: inline-block;
-                      margin-left: 0.5em;
-                      top: -1px;
-                    ">
-                    <!-- <span>Difficulty: </span> -->
-                    <ul
-                      id="game-type-list"
-                      class="inline-list less-bottom-spacing">
-                      <li>
-                        <label
-                          for="radio_game_type_easy"
-                          title="Get a van to the enemy base! (Easy mode.)">
-                          <input
-                            type="radio"
-                            id="radio_game_type_easy"
-                            name="game_type"
-                            value="easy"
-                            checked />
-                          Easy 😁
-                        </label>
-                      </li>
-                      <li>
-                        <label
-                          for="radio_game_type_hard"
-                          title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets fire faster, and can harm more units.">
-                          <input
-                            type="radio"
-                            id="radio_game_type_hard"
-                            name="game_type"
-                            value="hard" />
-                          Hard 😰
-                        </label>
-                      </li>
-                      <li>
-                        <label
-                          for="radio_game_type_extreme"
-                          title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Aggressive turrets fire at many ground units and missiles, and can hit infantry. Owning all bunkers no longer stops enemy production.">
-                          <input
-                            type="radio"
-                            id="radio_game_type_extreme"
-                            name="game_type"
-                            value="extreme" />
-                          Extreme 😱
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <label
-                    for="checkbox-vs"
-                    title='Virtual Stupidity: Play the game "with" two unruly, unlicensed teenagers.'
-                    class="cta cta-checkbox">
-                    <span class="checkbox-wrapper">
-                      <input
-                        id="checkbox-vs"
-                        name="bnb"
-                        type="checkbox"
-                        value="1" />
-                    </span>
-                    🎸🤘
-                  </label>
-
-                  <div style="margin-top: 0.75em">
-                    <button
-                      type="button"
-                      id="start-game-button"
-                      data-action="start-game"
-                      data-title="Play the original game, with a variety of battles and difficulties."
-                      class="game-start large">
-                      Start 🚁
-                    </button>
-                    <button
-                      type="button"
-                      id="game-options-button"
-                      data-title="General settings. Access in-game via ESC or options link."
-                      class="large">
-                      Options 🛠️
-                    </button>
-                    <button
-                      type="button"
-                      id="start-editor-button"
-                      data-action="start-editor"
-                      data-title="Modify the currently-selected battle.<br />*NOTE: Highly experimental."
-                      value="editor"
-                      class="large hide-on-mobile">
-                      Editor* <span class="button-icon">✏️</span>
-                    </button>
-                    <button
-                      type="button"
-                      id="start-network-game"
-                      data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
-                      value="network"
-                      class="large network">
-                      Network* <span class="button-icon network-icon"></span>
-                    </button>
-                  </div>
-                </form>
-
-                <p id="game-description">
-                  Start the tutorial, or choose a battle and difficulty.
-                </p>
-              </div>
-
-              <p id="mobile-tip">
-                This game works best on landscape / widescreen displays.
-              </p>
-            </div>
-          </div>
-
           <div id="top-bar">
             <div id="game-status-bar">
               <div id="radar-container">
@@ -1875,6 +1689,175 @@
           </p>
           <p>Press <b>esc</b> to exit "placement" mode.</p>
         </div>
+      </div>
+    </div>
+
+    <div id="world-overlay"></div>
+
+    <div id="game-menu-wrapper">
+      <div id="logo">
+        <div id="mtv-bnb-in" style="visibility: hidden"></div>
+        <div id="bnb-vs" style="visibility: hidden"></div>
+        <h1>Armor Alley</h1>
+        <img
+          id="logo-image"
+          src="image/armor-alley-wordmark-colour.webp"
+          alt="Armor Alley" />
+      </div>
+
+      <div id="game-menu" style="visibility: hidden">
+        <h2
+          id="game-subtitle"
+          title-bnb='Uh-huh huh huh huh... "Hard." Uh-huh huh huh huh. Heh heh, m-heh. Boioioioiiinngg.'>
+          A modern remake of the classic 1990 Mac + PC game.
+        </h2>
+        <form
+          id="game-menu-form"
+          action="."
+          method="get"
+          onsubmit="return false">
+          <div
+            id="game-level-wrapper"
+            style="display: inline-block"
+            class="mac-classic">
+            <!-- <p style="text-align:left">Battle</p> -->
+            <!-- <span>Level: </span> -->
+            <select id="game_level" name="level">
+              <optgroup label="New? Start here. 👇">
+                <option value="Tutorial">Tutorial</option>
+              </optgroup>
+              <optgroup label="Original Campaign Battles">
+                <option value="Cake Walk">Cake Walk</option>
+                <option value="One-Gun">One-Gun</option>
+                <option value="Sucker Punch">Sucker Punch</option>
+                <option value="Airborne">Airborne</option>
+                <option value="Two-Gun">Two-Gun</option>
+                <option value="Super Bunker">Super Bunker</option>
+                <option value="Scrapyard">Scrapyard</option>
+                <option value="Blind Spot">Blind Spot</option>
+                <option value="Wasteland">Wasteland</option>
+                <option value="Midnight Oasis">Midnight Oasis</option>
+              </optgroup>
+              <optgroup label="Network Game Battles">
+                <option value="Cavern Cobra">Cavern Cobra</option>
+                <option value="Desert Sortie">Desert Sortie</option>
+                <option value="First Blood">First Blood</option>
+                <option value="Network Mania">Network Mania</option>
+                <option value="Rescue Raiders">Rescue Raiders</option>
+                <option value="Midpoint">Midpoint</option>
+                <option value="Slithy Toves">Slithy Toves</option>
+                <option value="Tanker's Demise">Tanker's Demise</option>
+                <option value="WindStalker">WindStalker</option>
+                <option value="Sandstorm">Sandstorm</option>
+                <option value="Rainstorm">Rainstorm</option>
+                <option value="Balloon Fun">Balloon Fun</option>
+              </optgroup>
+              <!--
+              <optgroup label="Practice Battles">
+                <option value="Demo 1">Demo 1</option>
+                <option value="Demo 2">Demo 2</option>
+                <option value="Demo 3">Demo 3</option>
+                <option value="Demo 4">Demo 4</option>
+              </optgroup>
+            --></select>
+          </div>
+
+          <div id="game-type-list-wrapper">
+            <!-- <span>Difficulty: </span> -->
+            <!-- <p style="margin:0px;text-align:left">Difficulty</p> -->
+            <ul id="game-type-list" class="inline-list less-bottom-spacing">
+              <li>
+                <label
+                  for="radio_game_type_easy"
+                  title="Get a van to the enemy base! (Easy mode.)">
+                  <input
+                    type="radio"
+                    id="radio_game_type_easy"
+                    name="game_type"
+                    value="easy"
+                    checked />
+                  <span class="emoji-text">😁</span>
+                </label>
+              </li>
+              <li>
+                <label
+                  for="radio_game_type_hard"
+                  title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets are faster, more dangerous.">
+                  <input
+                    type="radio"
+                    id="radio_game_type_hard"
+                    name="game_type"
+                    value="hard" />
+                  <span class="emoji-text">😰</span>
+                </label>
+              </li>
+              <li>
+                <label
+                  for="radio_game_type_extreme"
+                  title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Turrets now target tanks. Owning all bunkers is no longer beneficial.">
+                  <input
+                    type="radio"
+                    id="radio_game_type_extreme"
+                    name="game_type"
+                    value="extreme" />
+                  <span class="emoji-text">😱</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div id="game-buttons">
+            <button
+              type="button"
+              id="start-game-button"
+              data-action="start-game"
+              data-title="Play the original game, with a variety of battles and difficulties."
+              class="game-start large">
+              <span data-action="start-game" class="emoji-text">🚁</span>
+            </button>
+            <button
+              type="button"
+              id="game-options-button"
+              data-title="General settings. Access in-game via ESC or options link."
+              class="large">
+              🛠️
+            </button>
+            <button
+              type="button"
+              id="start-editor-button"
+              data-action="start-editor"
+              data-title="Modify the currently-selected battle.<br />*NOTE: Highly experimental."
+              value="editor"
+              class="large hide-on-mobile">
+              <span class="button-icon">✏️</span>
+            </button>
+            <button
+              type="button"
+              id="start-network-game"
+              data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
+              value="network"
+              class="large network">
+              <span class="button-icon network-icon"></span>
+            </button>
+            <label
+              for="checkbox-vs"
+              title='Virtual Stupidity: Play the game "with" two unruly, unlicensed teenagers.'
+              class="cta cta-checkbox">
+              <span class="checkbox-wrapper">
+                <input id="checkbox-vs" name="bnb" type="checkbox" value="1" />
+              </span>
+              🎸🤘
+            </label>
+          </div>
+        </form>
+
+        <p id="game-description">
+          Start the tutorial, or choose a battle and difficulty.
+        </p>
+
+        <p id="mobile-tip">
+          This game works best on landscape / widescreen displays.
+        </p>
       </div>
     </div>
 

@@ -53,8 +53,9 @@
   /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
   --game-speed: 1;
   --gs-frac: calc(1 / var(--game-speed));
-  --font-scale: 1.1;
-  --ss-frac: calc(1 / var(--font-scale));
+  --prefs-font-scale: 1.1;
+  /* TODO: coordinate with view.js */
+  --menu-scale: 2.75;
 }
 
 @font-face {
@@ -170,15 +171,6 @@ body.is_safari:not(.is-mobile) #top-bar {
   width: 200%;
 }
 
-body.is_safari:not(.is-mobile) #world-overlay {
-  zoom: 2;
-  height: 200%;
-  top: 17px;
-  transform: scale3d(0.5, 0.5, 1);
-  transform-origin: 0 0;
-  width: 200%;
-}
-
 body.is_safari:not(.is-mobile) #world.tutorial-mode #tutorial-window {
   zoom: 2;
   transform: scale3d(0.5, 0.5, 1) translate(-50%, -50%);
@@ -244,24 +236,22 @@ body.game-started {
 }
 
 #world-overlay {
-  background: rgba(27, 107, 27, 0.45);
+  background: rgba(27, 107, 27, 0.25);
   background-image: repeating-linear-gradient(
     -55deg,
     rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 0.5px,
-    rgba(0, 0, 0, 0.5) 0.5px,
-    rgba(0, 0, 0, 0.5) 0.75px,
-    rgba(0, 0, 0, 0.5) 0.75px,
-    rgba(0, 0, 0, 0) 1px
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0.5) 1px,
+    rgba(0, 0, 0, 0.5) 1.5px,
+    rgba(0, 0, 0, 0.5) 1.5px,
+    rgba(0, 0, 0, 0) 2px
   );
   height: 100%;
+  width: 100%;
   image-rendering: optimizeSpeed;
   left: 0;
   position: absolute;
-  top: 34px;
-  transform: scale3d(1, 1, 1);
-  width: 100%;
-  z-index: 10;
+  top: 0;
 }
 
 #world.regular-mode #world-overlay,
@@ -269,14 +259,19 @@ body.game-started {
   background: transparent;
 }
 
-#world-overlay.fade-out {
+#world-overlay.fade-out,
+#game-menu-wrapper.fade-out {
   opacity: 0;
   pointer-events: none;
-  filter: blur(3px);
-  transform: scale3d(1.1, 1.1, 0);
+  filter: blur(8px);
+  transform: scale3d(1.1, 1.1, 1);
   transform-origin: 50% 50%;
-  transition: all 1.25s ease-in-out;
+  transition: all 0.75s ease-in-out;
   transition-property: filter, background-image, opacity, transform;
+}
+
+#game-menu-wrapper.fade-out {
+  transform: translate3d(-50%, -50%, 0) scale3d(1.1, 1.1, 1);
 }
 
 body.auto-start #world-overlay.fade-out {
@@ -287,36 +282,33 @@ body.auto-start #world-overlay.fade-out {
   background-position: 0 0;
   background-repeat: no-repeat;
   background-size: contain;
-  height: 75%;
-  left: 0;
+  width: 25%;
+  height: 46%;
+  top: -13%;
+  left: 0.5%;
   opacity: 0;
   position: absolute;
-  top: -10.5px;
-  transform: translate3d(-0.75%, -61.5%, 0);
   transition: opacity 0.25s ease-in;
-  width: 100%;
   z-index: 10;
 }
 
 body.bnb #mtv-bnb-in {
-  opacity: 1;
+  opacity: 0.9;
 }
 
 #bnb-vs {
   /* https://www.steamgriddb.com/game/5248723 */
-  background-position: 100% 100%;
+  background-position: 50% 100%;
   background-repeat: no-repeat;
   background-size: contain;
-  bottom: -8px;
-  filter: drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.5));
-  height: 135%;
-  left: 0;
-  opacity: 0;
   position: absolute;
-  transform: translate3d(-35%, 0, 0);
+  bottom: -1px;
+  filter: drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.5));
+  height: 98%;
+  left: 0%;
+  opacity: 0;
   transition: opacity 0.25s ease-in;
   width: 100%;
-  z-index: 10;
 }
 
 body.bnb #bnb-vs,
@@ -345,36 +337,78 @@ body.is_safari #mtv-bnb-in {
   image-rendering: optimizeQuality;
 }
 
-#logo {
-  /* background: transparent url(../image/aa-logo.png) no-repeat 0px 0px; */
-  background: transparent url(../image/armor-alley-wordmark-colour.webp)
-    no-repeat 50% 72%;
-  background-size: contain;
-  border-top: 12px solid #444;
-  height: 67px;
-  /* Chrome prefers "auto" and renders more nicely this way. So be it. */
-  image-rendering: auto;
-  left: 50%;
-  /* -ve margins for centering; will scale */
-  margin-left: -195.5px;
-  margin-top: -33.5px;
-  opacity: 0;
-  padding-top: 20px;
+#game-menu-wrapper {
   position: absolute;
-  top: 27%;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  /* this will be overridden for mobile, landscape */
+  aspect-ratio: 1 / 1;
+  max-width: 1024px;
+  max-height: 100vh;
+  transform: translate3d(-50%, -50%, 0);
+  display: grid;
+  align-content: center;
+  /* always leave a little room */
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile #game-menu-wrapper {
+    height: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-width: 100vw;
+    /* leave room for address bar UI, etc. */
+    max-height: 80vh;
+  }
+}
+
+body.is-mobile #game-subtitle,
+body.is-mobile #game-description {
+  font-size: calc(4px * var(--menu-scale));
+}
+
+#game-menu-wrapper {
+  transition: all 0.75s ease-in-out;
+  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  transition-timing-function: cubic-bezier(0.57, 0.18, 0.3, 1.15);
+  transition-property: scale, opacity;
+}
+
+#logo-image {
+  display: block;
+  width: 100%;
+  image-rendering: auto;
+  padding-top: 1vh;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+#logo {
+  position: relative;
+  /* margin-top: 16vh; */
+  border-top: 2.75vh solid #444;
+  /* Chrome prefers "auto" and renders more nicely this way. So be it. */
+  opacity: 0;
+  padding-top: 2.5vh;
   transition: all 0.75s ease-in-out;
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
   transition-timing-function: cubic-bezier(0.57, 0.18, 0.3, 1.15);
   transition-property: transform, scale, opacity;
-  transform: scale3d(0.125, 0.125, 1);
-  width: 391px;
   z-index: 11;
+  padding-bottom: 4vh;
+  border-bottom: 1px solid #be7832;
 }
 
 #logo h1 {
-  height: 0;
-  overflow: hidden;
-  width: 0;
+  /* hackish: hide text */
+  font-size: 0px;
+  color: transparent;
 }
 
 #logo h1,
@@ -405,10 +439,10 @@ body:not(.game-started) #mobile-controls {
 }
 
 #game-menu {
+  position: relative;
   color: #ccc;
   display: none;
-  font-size: 10px;
-  margin-top: 60px;
+  font-size: calc(10px * var(--menu-scale));
   text-align: center;
   /* don't exceed the screen width (e.g., mobile phones in portrait mode.) */
   width: 100%;
@@ -433,61 +467,82 @@ body.auto-start #logo #game-subtitle {
   color: transparent;
 }
 
+#game-menu button {
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
+}
+
 #game-menu h2 {
-  border-top: 0.5px solid #be7832;
-  color: #e19632;
-  font-size: 10px;
-  font-weight: 400;
-  padding-top: 0.5em;
   position: relative;
+  width: 100%;
+  color: #e19632;
+  font-size: calc(6px * var(--menu-scale));
+  font-weight: 400;
+  text-overflow: ellipsis;
   /* ensure this clips the BnB overlay, when showing */
   z-index: 10;
 }
 
 #game-menu label {
-  border: 0.5px solid #999;
-  border-radius: 3px;
   cursor: pointer;
   display: inline-block;
-  padding: 2px 4px;
+  padding: calc(2px * var(--menu-scale));
+  padding-left: calc(3px * var(--menu-scale));
+  padding-right: calc(5px * var(--menu-scale));
+  border-left: 0.5px solid #ccc;
+  border-right: 0.5px solid #ccc;
   position: relative;
   vertical-align: middle;
 }
 
+#game-menu label:first-of-type {
+  border-left: none;
+}
+
+#game-menu label:last-of-type {
+  border-right: none;
+}
+
+#game-menu label:hover,
+#game_level:hover,
+#checkbox-vs:hover {
+  background-color: rgba(0, 128, 0, 0.5);
+  color: #fff !important;
+}
+
+#game-type-list:hover,
+#game-type-list:hover input[type='radio'] {
+  color: #fff !important;
+}
+
+#game-type-list label:hover {
+  background-color: rgba(0, 128, 0, 0.5);
+}
+
 body.is_safari #game-menu label {
-  padding-bottom: 2.5px;
-  padding-top: 1px;
   top: 0;
 }
 
 #game-menu select {
+  --bg-size: calc(8px * var(--menu-scale));
   appearance: none;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>")
     no-repeat;
-  background-position: calc(100% - 8px) 70%;
+  background-position: calc(100% - var(--bg-size)) 70%;
   background-repeat: no-repeat;
-  background-size: 8px;
-  border-color: #fff;
-  border-radius: 3px;
+  background-size: var(--bg-size);
+  border-color: #ccc;
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
   padding-right: 32px;
   padding-left: 8px;
-  text-indent: 0px;
+  text-indent: calc(4px * var(--menu-scale));
 }
 
 body.is_safari #game-menu select:active,
 body.is_safari #game-menu select:focus {
   /* evil, I know. */
   outline: none;
-}
-
-body.is-mobile.is_safari #game-menu select {
-  background-position: calc(100% - 10px) 65%;
-  /* iOS-specific shenanigans */
-  background-size: 8px;
-  border-radius: 3px;
-  height: 24.5px;
-  padding-right: 24px;
-  top: 0.5px;
 }
 
 #game-menu label:hover {
@@ -506,8 +561,8 @@ body.is-mobile.is_safari #game-menu select {
   display: inline-block;
   font-size: 1em;
   line-height: 1.5em;
-  padding: 4px 6px;
-  /* text-align: center; */
+  padding-top: 4px;
+  padding-left: 0px;
   text-decoration: none;
 }
 
@@ -535,6 +590,8 @@ body.is-mobile.is_safari #game-menu select {
 #game-menu form {
   display: block;
   width: 100%;
+  /* collapse whitespace */
+  font-size: 0px;
 }
 
 #game-menu form input {
@@ -549,19 +606,31 @@ body.is-mobile.is_safari #game-menu select {
   /* background-color only for content */
   background-clip: content-box;
   background-color: transparent;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ccc;
   border-radius: 50%;
   /* create custom radio button appearance */
   display: inline-block;
-  height: 1em;
+  width: calc(14px * var(--menu-scale));
+  height: calc(14px * var(--menu-scale));
   margin: 0;
-  padding: 2px;
+  padding: calc(2.5px * var(--menu-scale));
   position: relative;
-  top: 0.5px;
-  transform: scale(0.8);
-  transform-origin: top;
+  transform: scale(0.65);
+  transform-origin: 50% 50%;
+  vertical-align: bottom;
+}
+
+body.is_firefox #game-menu form input[type='radio'] {
+  top: -1px;
+}
+
+body.is_safari.is-mobile #game-menu form input[type='radio'] {
   vertical-align: middle;
-  width: 1em;
+  margin-top: -1.5px;
+}
+
+body.is_safari.is-mobile #game-menu form label {
+  top: -1px;
 }
 
 #game-menu form input[type='radio']:checked {
@@ -573,22 +642,22 @@ body.is-mobile.is_safari #game-menu select {
   border: none;
   cursor: pointer;
   display: inline-block;
-  /* vertical align shenanigans */
-  margin-top: -2px;
   position: relative;
+  font-size: calc(10px * var(--menu-scale));
 }
 
 #game-menu .checkbox-wrapper {
   display: inline-block;
   margin-right: 0.125em;
+  margin-left: 0px;
   vertical-align: top;
 }
 
 #game-menu .cta-checkbox input[type='checkbox'] {
   -webkit-appearance: none;
   appearance: none;
-  border: 0.5px solid #999;
-  border-radius: 0.1em;
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
   color: currentColor;
   cursor: pointer;
   display: grid;
@@ -623,7 +692,6 @@ body.is-mobile.is_safari #game-menu select {
   display: inline-block;
   font-size: 1.25em;
   line-height: 1.25em;
-  pointer-events: none;
   vertical-align: bottom;
 }
 
@@ -642,8 +710,12 @@ body.is-mobile.is_safari #game-menu select {
 
 #game-description {
   color: #ccc;
-  font-size: 1em;
-  margin-top: 0.75em;
+  font-size: calc(5px * var(--menu-scale));
+  margin: 0px auto;
+  margin-top: calc(3px * var(--menu-scale));
+  /* reserve at least two lines */
+  min-height: 2.65em;
+  max-width: 35em;
 }
 
 #world-wrapper {
@@ -1037,16 +1109,16 @@ body.game-paused .tv-noise-overlay {
 }
 
 .tv-screen-container {
-  bottom: 70px;
-  left: 50px;
-  overflow: hidden;
   position: absolute;
-  right: 50px;
-  top: 30px;
-}
-
-body.bnb .tv-screen-container {
-  background: #000;
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  aspect-ratio: 16 / 9;
+  transform: translate3d(-50%, -50%, 0);
 }
 
 #tv-display {
@@ -1059,14 +1131,13 @@ body.bnb #tv-display {
   display: block;
 }
 
-#tv-display,
-.tv-display-title-screen {
+#tv-display {
   height: 320px;
   left: 50%;
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 55%;
+  top: 57.5%;
   /* center, and slightly smaller */
   transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
   transition: all 0.25s ease-in;
@@ -1079,22 +1150,12 @@ body.bnb #tv-display {
   top: 53%;
 }
 
-.tv-display-title-screen {
-  opacity: 1;
-  overflow: hidden;
-  top: 48%;
-  /* note: intentionally warping the TV a bit to fit the screen. */
-  transform: translate(-50%, -50%) scale3d(1.175, 1.15, 1.2);
-  z-index: 11;
-}
-
 body.bnb #tv-display.active {
   opacity: 1;
   transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
 }
 
-#tv-display #tv,
-.tv-display-title-screen .tv {
+#tv-display #tv {
   /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
   background-size: contain;
   height: 320px;
@@ -1105,9 +1166,7 @@ body.bnb #tv-display.active {
 }
 
 body.bnb #tv-display #tv,
-body.bnb .tv-display-title-screen .tv,
-body.bnb-preload #tv-display #tv,
-body.bnb-preload .tv-display-title-screen .tv {
+body.bnb-preload #tv-display #tv {
   background-image: url(../image/pngtree.com_color_tv.webp);
 }
 
@@ -1118,22 +1177,7 @@ body.bnb #tv-display.widescreen #tv {
   background-size: contain;
 }
 
-.tv-display-title-screen .tv,
-.tv-display-title-screen .tv-noise-overlay {
-  opacity: 1;
-  transform: scale3d(1, 1, 1);
-  transition: opacity 0.175s ease-out;
-  transition-property: opacity, transform;
-}
-
-body:not(.bnb) .tv-display-title-screen .tv,
-body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
-  opacity: 0;
-  transform: scale3d(0.98, 0.98, 0.98);
-}
-
-#tv-display video,
-.tv-display-title-screen video {
+#tv-display video {
   height: 212px;
   left: 60px;
   position: absolute;
@@ -1146,12 +1190,6 @@ body:not(.bnb) .tv-display-title-screen .tv-noise-overlay {
   left: 59.5px;
   top: 33px;
   width: 290px;
-}
-
-.tv-display-title-screen video {
-  height: 71%;
-  left: 30px;
-  width: 350px;
 }
 
 #world-wrapper.incoming-smart-missile {
@@ -5034,29 +5072,82 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   outline: none;
 }
 
+#game-menu select {
+  --bg-size: calc(6px * var(--menu-scale));
+  --text-indent: calc(3px * var(--menu-scale));
+  background-position: calc(100% - var(--text-indent) * 1.65) 65%;
+  background-size: calc(var(--bg-size));
+  border-radius: calc(2px * var(--menu-scale));
+  width: 7em;
+  font-size: calc(10px * var(--menu-scale));
+  font-weight: 400;
+  /* look similar to buttons */
+  height: calc(18.25px * var(--menu-scale));
+  /* vertical align shenanigans */
+  text-indent: var(--text-indent);
+  color: #eee;
+}
+
+#game-menu select {
+  /* new ish */
+  font-family: 'Cheddar Gothic Stencil';
+  font-size: calc(12px * var(--menu-scale));
+  height: calc(18px * var(--menu-scale));
+  text-indent: var(--text-indent);
+  padding: 0px;
+}
+
+body:not(.is_safari):not(.is_firefox) #game-menu select:active {
+  /* WHAT A HACK. Prevent massive text size in Chrome. */
+  zoom: 0.33;
+}
+
+body.is_safari.is_iphone #game-menu select {
+  /* stubborn iOS Safari */
+  height: calc(18.33px * var(--menu-scale));
+}
+
+body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
+  /* Safari-specific: adjust zoom, but retain sizing of element. */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    sans-serif;
+  --zoom: 0.5;
+  zoom: var(--zoom);
+  width: calc(7em * 1 / var(--zoom) + 1px);
+  height: calc(36px * var(--menu-scale));
+  /* hide text */
+  color: rgba(255, 255, 255, 0);
+  background-image: none !important;
+}
+
+#game-menu select optgroup {
+  /* This works in Firefox: Reset drop-down size. */
+  font-size: 13px;
+}
+
 .mac-classic select {
+  --bg-size: calc(8px * var(--menu-scale));
   appearance: none;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23000000'><polygon points='0,0 100,0 50,50'/></svg>")
     no-repeat;
   background-position: calc(100% - 8px) 70%;
   background-repeat: no-repeat;
-  background-size: 8px;
+  background-size: calc(var(--bg-size));
   border: 0.5px solid #999;
   border-radius: 2px;
   color: #ccc;
   cursor: pointer;
   font-family: FA Sysfont C, courier, sans-serif;
-  font-size: 10px;
+  font-size: calc(10px * var(--menu-scale));
   font-weight: 400;
   /* look similar to buttons */
-  height: 19px;
+  height: calc(18.25px * var(--menu-scale));
   /* vertical align shenanigans */
   margin: -2px 0 0 2px;
   padding: 0 2px 0 0;
-  text-indent: 2px;
   vertical-align: middle;
   padding-right: 32px;
-  text-indent: 4px;
+  text-indent: calc(4px * var(--menu-scale));
   scrollbar-width: thin;
 }
 
@@ -5064,13 +5155,14 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-color: #000;
   color: #000;
   font-family: FA Sysfont C, geneva, verdana, arial, sans-serif;
-  font-size: calc(12px * var(--font-scale));
+  font-size: calc(12px * var(--prefs-font-scale));
   border-width: 1px;
   margin-left: 0;
   margin-top: 1px;
-  height: calc(25px * var(--font-scale));
+  height: calc(25px * var(--prefs-font-scale));
   background-size: 10px;
   min-width: 11em; /* room for "Tanker's Demise" */
+  text-indent: 8px;
 }
 
 .mac-classic select:active,
@@ -5392,6 +5484,77 @@ button.attention:not(:active) {
 }
 
 /* game menu screen */
+#game-menu select,
+#game-type-list,
+#checkbox-vs {
+  background-color: rgba(0, 255, 0, 0.125);
+  border: none;
+}
+
+#game-level-wrapper,
+#game-type-list-wrapper {
+  margin-bottom: calc(4px * var(--menu-scale));
+}
+
+#game-type-list-wrapper {
+  position: relative;
+  /* collapse whitespace */
+  font-size: 0px;
+  display: inline-block;
+  margin-left: calc(0.25em * var(--menu-scale));
+  vertical-align: bottom;
+  top: -0.5px;
+  margin-left: calc(4px * var(--menu-scale));
+  margin-right: calc(4px * var(--menu-scale));
+}
+
+#game-type-list {
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+#game-type-list.disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+#game-type-list li:not(:last-of-type) label {
+  padding-left: calc(5px * var(--menu-scale));
+  padding-right: calc(5px * var(--menu-scale));
+}
+
+#game-type-list li:not(:first-of-type):not(:last-of-type) label {
+  border-left: 1px solid rgba(0, 0, 0, 0.5);
+  border-right: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+#game-type-list label {
+  font-size: calc(10px * var(--menu-scale));
+}
+
+#game-type-list .emoji-text {
+  position: relative;
+  /* vertical align tweaks */
+  top: calc(-0.35px * var(--menu-scale));
+}
+
+#game-buttons {
+  position: relative;
+}
+
+#game-buttons button {
+  margin-right: calc(4px * var(--menu-scale));
+}
+
+body.is_safari.is-mobile #game-type-list .emoji-text {
+  top: 1.5px;
+}
+
+body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
+  position: relative;
+  top: -1.5px;
+}
 
 #game-menu button.large,
 .generic-cta {
@@ -5405,14 +5568,37 @@ button.attention:not(:active) {
   vertical-align: middle;
 }
 
+#game-menu button.game-start {
+  font-size: calc(14px * var(--menu-scale));
+  padding-top: calc(4px * var(--menu-scale));
+}
+
+#game-menu select,
+#game-menu button.large {
+  color: #eee;
+  background-color: rgba(0, 128, 0, 0.25);
+}
+
+#game-menu button.large:hover {
+  background-color: rgba(0, 255, 0, 0.5);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
+#game-type-list label:hover,
+#game-menu select:hover {
+  background-color: rgba(0, 255, 0, 0.25);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
 .generic-cta {
   font-size: 8px;
   padding: 2px 8px;
+  line-height: 10px;
 }
 
 #game-menu button.game-start,
 .generic-cta {
-  background: #090;
+  background: rgba(0, 255, 0, 0.5);
   border-color: transparent;
   color: #fff;
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
@@ -5444,13 +5630,13 @@ body.is_safari:not(.is-mobile) #game-menu button {
 }
 
 #game-menu button.large:hover {
-  background: #fff;
-  filter: drop-shadow(0 0 3px #fff);
+  background-color: (0, 255, 0, 0.5);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 #game-menu button.large:active {
-  background: #ddd;
-  filter: drop-shadow(0 0 1.5px #fff);
+  background-color: (0, 192, 0, 0.25);
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.5));
 }
 
 #game-menu .cta:not(label):active,
@@ -5554,13 +5740,16 @@ body.edit-mode .sprite .zone-flag {
 }
 
 button .network-icon {
+  position: relative;
   background: transparent url(../image/win95-networking-icon.png);
   background-size: contain;
+  background-repeat: no-repeat;
   display: inline-block;
-  height: 10px;
-  margin-bottom: -2px;
-  position: relative;
-  width: 10px;
+  /* positioning tricks */
+  top: 5px;
+  margin-top: -10px;
+  width: calc(10px * var(--menu-scale));
+  height: calc(10px * var(--menu-scale));
 }
 
 button .button-icon {
@@ -5986,10 +6175,6 @@ body.game-over .target-ui {
 }
 
 @media screen and (orientation: landscape) {
-  body.is-mobile #world-overlay {
-    /* better vertical centering. */
-    top: 24px;
-  }
   body.is_iphone #game-status {
     font-size: 120%;
     height: 20px;
