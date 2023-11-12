@@ -800,8 +800,7 @@ const game = (() => {
          * Mark Nolton on SO - orientation change.
          * https://stackoverflow.com/a/47226825
          */
-        window.addEventListener('orientationchange', orientationChange);
-        // and get the current layout.
+        // get the current layout.
         orientationChange();
       }
     }
