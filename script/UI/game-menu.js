@@ -89,7 +89,7 @@ function init() {
   const { dom } = game;
 
   description = document.getElementById('game-description');
-  defaultDescription = description.innerHTML;
+  defaultDescription = description.innerText;
   lastHTML = defaultDescription;
 
   menu = document.getElementById('game-menu');
