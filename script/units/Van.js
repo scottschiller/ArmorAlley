@@ -89,7 +89,8 @@ const Van = (options = {}) => {
       !data.isOnScreen &&
       attackerType !== TYPES.smartMissile
     ) {
-      game.objects.notifications.add('TO REMOVE(?): You lost a van 💥');
+      // TODO: review and remove? May be covered in most cases.
+      game.objects.notifications.add('You lost a van 💥');
     }
   }
 
