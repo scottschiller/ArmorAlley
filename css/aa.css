@@ -4997,7 +4997,9 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 body:not(.is_safari):not(.is_firefox) #game-menu select:active {
   /* WHAT A HACK. Prevent massive text size in Chrome. */
-  zoom: 0.33;
+  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
+  --scale: calc(1.5 * (1 / var(--menu-scale)));
+  zoom: var(--scale);
 }
 
 body.is_safari.is_iphone #game-menu select {
