@@ -3,7 +3,6 @@ import {
   clientFeatures,
   FRAMERATE,
   GAME_SPEED,
-  isiPhone,
   oneOf,
   TYPES,
   updateClientFeatures
@@ -127,8 +126,9 @@ const View = () => {
 
     applyScreenScale();
 
-    data.browser.width =
-      (window.innerWidth || document.body.clientWidth) / data.screenScale;
+    const width = window.innerWidth || document.body.clientWidth;
+
+    data.browser.width = width / data.screenScale;
     data.browser.height =
       (window.innerHeight || document.body.clientHeight) / data.screenScale;
 
@@ -144,70 +144,34 @@ const View = () => {
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
     if (dom.logo) {
-      // hackish: if showing menu, ensure it is scaled to fit screen width - leaving vertical, for description text.
-      let logoScale = data.screenScale * 0.85;
+      // $$$
+      // TODO: DRY + review optimize
 
-      // note: offsetWidth read
-      const renderedWidth = dom.logo.offsetWidth * logoScale + 16;
+      const root = document.querySelector(':root');
 
-      // avoid vertical clipping post-adjustment, too. NOTE: account for zoom or transform before applying.
-      // hackish: fixed offset of height for buttons and descriptive text and whatnot.
-      const renderedHeight = dom.logo.offsetHeight * logoScale + 96;
+      const wrapperWidth =
+        document.getElementById('game-menu-wrapper').offsetWidth;
 
-      let widthConstrained;
+      const minWidth = 1400;
 
-      if (renderedWidth >= data.browser.width) {
-        // scale to width, not height - avoid horizontal clipping.
-        // need to scale down to prevent horizontal clip
-        const proportion =
-          (data.browser.width - renderedWidth) / data.browser.width;
-        logoScale -= Math.abs(proportion);
-        widthConstrained = true;
-      }
+      // no smaller than this
+      const minScale = 0.25;
 
-      const maxHeightRatio = 1;
+      let newScale = 1;
 
-      const heightRatio = renderedHeight / data.browser.height;
-
-      if (heightRatio >= maxHeightRatio) {
-        // height constraint
-        logoScale -= heightRatio - maxHeightRatio;
-      } else if (!widthConstrained) {
-        // room to grow, vertically - e.g., iPhone in landscape view
-        const widthRoom = renderedWidth / data.browser.width;
-        const heightRoom = renderedHeight / data.browser.height;
-
-        // scale up by the lesser of the two.
-        logoScale += Math.min(widthRoom, heightRoom);
-      }
-
-      // don't ever get smaller than ...
-      logoScale = Math.max(isiPhone ? 0.5 : 0.65, logoScale);
-
-      // and no bigger than ...
-      logoScale = Math.min(0.85, logoScale);
-
-      // hackish: account for the "TV."
-      const isLandscape = window?.matchMedia(
-        '(orientation: landscape)'
-      )?.matches;
-
-      // special case: scale UP in some cases, and the TV image will scale to work decently as well.
-      if (isMobile) {
-        if (isLandscape) {
-          logoScale += 0.35;
-        }
-
-        if (isMobile) {
-          const tvDisplay = document.getElementById('tv-title-screen');
-          tvDisplay.style.zoom = isLandscape ? 1.6 : 1;
-        }
+      // portrait?
+      if (data.browser.isPortrait && wrapperWidth < 640) {
+        // "tiny screen case"
+        newScale = 0.475;
       } else {
-        // just slightly smaller on desktop.
-        logoScale -= 0.025;
+        newScale =
+          wrapperWidth >= minWidth
+            ? 1
+            : Math.max(minScale, wrapperWidth / minWidth);
       }
 
-      dom.logo.style.transform = `scale3d(${logoScale}, ${logoScale}, 1)`;
+      // this applies to `#game-menu`.
+      root?.style?.setProperty('--menu-scale', 6 * newScale);
     }
 
     if (!data.battleField.width) {
