@@ -1099,8 +1099,8 @@ body.bnb .tv-noise-overlay {
   /* faster */
   animation-duration: 0.5s;
   background-size: 100px 100px;
-  filter: blur(0.25px);
-  opacity: 0.4;
+  filter: blur(0.4px);
+  opacity: 0.2;
 }
 
 body.game-paused #radar-jammed-overlay.active .noise,
