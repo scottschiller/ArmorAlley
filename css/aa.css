@@ -3456,9 +3456,10 @@ body:not(.game-started) .scan-node {
 
 #game-tips {
   /* single line height */
-  font-family: de_valenciaregular, FA Sysfont C, JetBrains Mono, Menlo, Monaco,
-    SF Mono, Lucida Console, Terminal, monospace;
-  font-weight: 700;
+  font-family: FA Sysfont C, JetBrains Mono, Menlo, Monaco, SF Mono,
+    Lucida Console, Terminal, monospace;
+  font-family: 'Cheddar Gothic Stencil';
+  font-weight: normal;
   height: 13px;
   left: 0;
   position: absolute;
@@ -3520,7 +3521,6 @@ body.game-over #game-tips .tips-container {
   font-weight: 300;
   height: 1rem;
   left: 0;
-  letter-spacing: -0.25em;
   margin-top: -0.5rem;
   position: absolute;
   text-align: center;
@@ -3532,7 +3532,6 @@ body.game-over #game-tips .tips-container {
 
 body.is-mobile #game-paused {
   font-size: 7vmin;
-  letter-spacing: -0.25em;
 }
 
 #game-paused p {
@@ -3601,7 +3600,6 @@ body.game-started #game-tips.active .tips-container {
   animation: scrollText calc(20s * var(--gs-frac)) linear;
   font-size: 16px;
   font-weight: 300;
-  letter-spacing: -0.25em;
   line-height: 16px;
   padding: 1px;
   text-rendering: optimizeSpeed;
@@ -3633,7 +3631,6 @@ body.game-started #game-tips.active .tips-container {
   font-size: 1.5em;
   font-weight: 300;
   left: 0;
-  letter-spacing: -0.25em;
   line-height: 1.25em;
   margin: 0 auto;
   min-height: 100%;
@@ -3648,6 +3645,8 @@ body.game-started #game-tips.active .tips-container {
   transition: all calc(0.5s * var(--gs-frac)) ease-in-out;
   transition-property: filter, opacity, transform;
   width: 100%;
+  /* display on top of "TV." */
+  z-index: 2;
 }
 
 body.is-mobile #game-tips #game-announcements {
