@@ -122,8 +122,8 @@ const View = () => {
   function refreshCoords() {
     const hasNewScale = updateScreenScale();
 
-    // avoid redundant work.
-    if (!hasNewScale) return;
+    // avoid redundant work during gameplay.
+    if (game.started && !hasNewScale) return;
 
     applyScreenScale();
 
