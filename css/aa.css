@@ -6463,14 +6463,13 @@ body.game-over .target-ui {
 }
 
 #battle-over-letter .letter-content h1 {
-  color: #000;
-  font-family: de_valenciaregular, FA Sysfont C, JetBrains Mono, Menlo, Monaco,
-    SF Mono, Lucida Console, Terminal, monospace;
-  font-weight: 300;
-  font-size: 14px;
+  color: #9b1a1e;
+  font-family: 'War Wound', 'Stencil', 'Stencil Std', 'Stencil Compress D',
+    'Stencil Becker Compress', FA Sysfont C, Menlo, Monaco, SF Mono, Geneva,
+    verdana, arial, sans-serif;
+  font-weight: normal;
+  font-size: 19px;
   line-height: 1em;
-  letter-spacing: -0.3em;
-  text-indent: -1px;
   margin-top: 4px;
   margin-bottom: 0px;
 }
@@ -6696,7 +6695,7 @@ body.is_safari .animated-mail .letter-buttons {
 }
 
 #battle-over-letter.open .animated-mail {
-  transform: translateY(40px);
+  transform: translateY(60px);
   transition-timing-function: ease-in-out;
 }
 
