@@ -187,8 +187,9 @@ const View = () => {
       data.battleField.scrollLeft + data.browser.width;
 
     // helicopters need to know stuff, too.
-    game.players.local?.refreshCoords();
-    game.objects.helicopter[1]?.refreshCoords();
+    game.players.helicopter?.forEach?.((helicopter) =>
+      helicopter.refreshCoords()
+    );
 
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
     if (game.objects.radar) game.objects.radar.setStale(true);
