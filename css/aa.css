@@ -6358,7 +6358,7 @@ body.game-over .target-ui {
 
   /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
   body.is-mobile #battle-over-letter.open {
-    transform: translate3d(-50%, -25%, 0) scale3d(1, 1, 1);
+    transform: translate3d(-50%, -20%, 0) scale3d(1, 1, 1);
   }
 }
 
@@ -6568,11 +6568,11 @@ body.is_safari .animated-mail .top-fold {
   }
 
   body.is-mobile #battle-over-letter.open {
-    transform: translate3d(-50%, -25%, 0);
+    transform: translate3d(-50%, -20%, 0);
   }
 
   body.is-mobile.is_iphone #battle-over-letter.open {
-    transform: translate3d(-50%, 25%, 0) scale3d(2.5, 2.5, 1);
+    transform: translate3d(-50%, 0%, 0) scale3d(2.5, 2.5, 1);
   }
 
   body.is-mobile.is_iphone .animated-mail .letter-wrapper {
