@@ -4532,7 +4532,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal .game-speed-icons {
   position: relative;
-  font-size: calc(16px * var(--font-scale));
+  font-size: calc(16px * var(--prefs-font-scale));
   line-height: 16px;
   height: 16px;
   padding-bottom: 1px;
@@ -4734,7 +4734,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 }
 
 #game-prefs-modal .body {
-  font-size: calc(11px * var(--font-scale));
+  font-size: calc(11px * var(--prefs-font-scale));
 }
 
 .finder .body,
@@ -4955,7 +4955,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 #game-prefs-modal button,
 #game-prefs-modal legend {
-  font-size: calc(15px * var(--font-scale));
+  font-size: calc(15px * var(--prefs-font-scale));
 }
 
 .mac-classic b {
@@ -5065,7 +5065,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border: 1px solid #000;
   box-sizing: border-box;
   display: block;
-  font-size: calc(12px * var(--font-scale));
+  font-size: calc(12px * var(--prefs-font-scale));
   padding: 4px;
   width: 100%;
 }
@@ -5297,7 +5297,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 }
 
 .mac-classic fn.disclaimer {
-  font-size: calc(10px * var(--font-scale));
+  font-size: calc(10px * var(--prefs-font-scale));
   vertical-align: top;
 }
 
