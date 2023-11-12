@@ -320,9 +320,11 @@ function updateGameTypeControls(levelName) {
   const isTutorial = !!levelName.match(/tutorial/i);
 
   // enable or disable "game type" based on whether the tutorial is selected.
-  document
-    .querySelectorAll('#game-type-list li')
-    .forEach((node) => (node.style.opacity = isTutorial ? 0.5 : 1));
+  utils.css.addOrRemove(
+    document.getElementById('game-type-list'),
+    isTutorial,
+    'disabled'
+  );
 
   document.querySelectorAll('#game-type-list input').forEach((node) => {
     if (isTutorial) {
