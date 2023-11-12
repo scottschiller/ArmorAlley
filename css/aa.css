@@ -6207,8 +6207,10 @@ body.game-over .target-ui {
   }
   body.is-mobile #game-tips #game-announcements {
     /* larger type, please. */
-    font-size: 2.75em;
+    font-size: 2.5em;
     line-height: 1em;
+    /* slightly higher up on screen, too. */
+    margin-top: -0.65em;
   }
 
   /* giant hack, for now - iPhone only, not iPads. */
