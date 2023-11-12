@@ -6287,7 +6287,8 @@ body.game-over .target-ui {
     transform-origin: 0 0;
   }
   body.is_iphone #tutorial-window {
-    transform: scale3d(2, 2, 1) translate3d(-50%, 0px, 0);
+    /* position nicely and overlay BnB "TV", as applicable. */
+    transform: scale3d(1.5, 1.5, 1) translate3d(-50%, -18%, 0);
   }
 }
 
@@ -6409,7 +6410,7 @@ body.game-over .target-ui {
   }
   /* leave room for notifications. */
   body.is-mobile #tutorial-window {
-    top: 180px;
+    transform: scale3d(1.1, 1.1, 1) translate3d(-50%, -35%, 0);
   }
 }
 
