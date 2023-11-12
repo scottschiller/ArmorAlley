@@ -93,6 +93,23 @@
   src: url(../font/sysfont/sysfont.woff2) format('woff2');
 }
 
+@font-face {
+  font-family: 'War Wound';
+  src: url('../font/war-wound/WarWound-subset.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cheddar Gothic Stencil';
+  src: url('../font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
+    format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body,
 html {
   margin: 0;
