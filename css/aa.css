@@ -1212,12 +1212,15 @@ body.bnb #tv-display.widescreen #tv {
 }
 
 #aa li,
-#aa ul {
+#game-menu li,
+#aa ul,
+#game-menu ul {
   margin: 0;
   padding: 0;
 }
 
-#aa ul {
+#aa ul,
+#game-menu ul {
   list-style-type: none;
 }
 
