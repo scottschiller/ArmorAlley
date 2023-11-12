@@ -508,10 +508,6 @@ body.auto-start #game-subtitle {
   color: #fff !important;
 }
 
-body.is_safari #game-menu label {
-  top: 0;
-}
-
 #game-menu select {
   --bg-size: calc(8px * var(--menu-scale));
   appearance: none;
@@ -588,31 +584,34 @@ body.is_safari #game-menu select:focus {
   /* background-color only for content */
   background-clip: content-box;
   background-color: transparent;
-  border: 1.5px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 50%;
   /* create custom radio button appearance */
   display: inline-block;
-  width: calc(14px * var(--menu-scale));
-  height: calc(14px * var(--menu-scale));
+  width: calc(9px * var(--menu-scale));
+  height: calc(9px * var(--menu-scale));
   margin: 0;
-  padding: calc(2.5px * var(--menu-scale));
+  padding: calc(1.5px * var(--menu-scale));
   position: relative;
-  transform: scale(0.65);
-  transform-origin: 50% 50%;
-  vertical-align: bottom;
-}
-
-body.is_firefox #game-menu form input[type='radio'] {
-  top: -1px;
-}
-
-body.is_safari.is-mobile #game-menu form input[type='radio'] {
   vertical-align: middle;
-  margin-top: -1.5px;
+  /* offset border, and/or padding for centering? :X */
+  margin-top: calc(-1px * var(--menu-scale));
 }
 
-body.is_safari.is-mobile #game-menu form label {
-  top: -1px;
+body:not(.is-mobile) #game-type-list .emoji-text {
+  position: relative;
+  top: calc(0.35px * var(--menu-scale));
+}
+
+body.is_firefox #game-type-list .emoji-text {
+  /* hack: push emoji down. */
+  top: calc(0.7px * var(--menu-scale));
+}
+
+body.is_firefox #game-type-list label {
+  /* hack: pull entire label up, vertical center. */
+  position: relative;
+  top: calc(-0.35px * var(--menu-scale));
 }
 
 #game-menu form input[type='radio']:checked {
@@ -626,6 +625,7 @@ body.is_safari.is-mobile #game-menu form label {
   display: inline-block;
   position: relative;
   font-size: calc(10px * var(--menu-scale));
+  vertical-align: top;
 }
 
 #game-menu .checkbox-wrapper {
@@ -4981,20 +4981,17 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   background-position: calc(100% - var(--text-indent) * 1.65) 65%;
   background-size: calc(var(--bg-size));
   border-radius: calc(2px * var(--menu-scale));
-  width: 7em;
-  font-size: calc(10px * var(--menu-scale));
+  min-width: 7em;
+  font-size: calc(11px * var(--menu-scale));
   font-weight: 400;
   /* look similar to buttons */
-  height: calc(18.25px * var(--menu-scale));
+  min-height: calc(18px * var(--menu-scale));
   /* vertical align shenanigans */
   text-indent: var(--text-indent);
-  /*#game-menu button.large { */
   /* new ish */
   font-family: 'Cheddar Gothic Stencil';
-  font-size: calc(12px * var(--menu-scale));
   height: calc(18px * var(--menu-scale));
   text-indent: var(--text-indent);
-  /* padding-top: 1px; */
   padding: 0;
 }
 
@@ -5011,11 +5008,11 @@ body.is_safari.is_iphone #game-menu select {
 
 body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   /* Safari-specific: adjust zoom, but retain sizing of element. */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
-    sans-serif;
-  --zoom: 0.5;
-  zoom: var(--zoom);
-  width: calc(7em * 1 / var(--zoom) + 1px);
+  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
+  --scale: calc(1.75 * (1 / var(--menu-scale)));
+  zoom: var(--scale);
+  font-family: FA Sysfont C, courier, sans-serif;
+  width: calc(7em * 1 / var(--scale) + 1px);
   height: calc(36px * var(--menu-scale));
   /* hide text */
   color: rgba(255, 255, 255, 0);
@@ -5423,12 +5420,7 @@ button.attention:not(:active) {
 
 #game-type-list label {
   font-size: calc(10px * var(--menu-scale));
-}
-
-#game-type-list .emoji-text {
-  position: relative;
-  /* vertical align tweaks */
-  top: calc(-0.35px * var(--menu-scale));
+  line-height: calc(10px * var(--menu-scale));
 }
 
 #game-buttons {
@@ -5437,15 +5429,6 @@ button.attention:not(:active) {
 
 #game-buttons button {
   margin-right: calc(4px * var(--menu-scale));
-}
-
-body.is_safari.is-mobile #game-type-list .emoji-text {
-  top: 1.5px;
-}
-
-body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
-  position: relative;
-  top: -1.5px;
 }
 
 #game-menu button.large,
