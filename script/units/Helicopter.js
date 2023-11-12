@@ -183,7 +183,7 @@ const Helicopter = (options = {}) => {
     let text;
 
     if (data.fuel < 33 && data.fuel > 32) {
-      text = 'Low fuel ⛽ 🤏 😬';
+      text = 'Low fuel <span class="inline-emoji">⛽ 🤏 😬</span>';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -195,7 +195,7 @@ const Helicopter = (options = {}) => {
         );
       }
     } else if (data.fuel < 12.5 && data.fuel > 11.5) {
-      text = 'Fuel critical ⛽ 🤏 😱';
+      text = 'Fuel critical <span class="inline-emoji">⛽ 🤏 😱</span>';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -209,7 +209,7 @@ const Helicopter = (options = {}) => {
         );
       }
     } else if (data.fuel <= 0) {
-      text = 'No fuel 💀';
+      text = 'No fuel <span class="inline-emoji">💀</span>';
 
       game.objects.view.setAnnouncement(text);
       game.objects.notifications.addNoRepeat(text);
@@ -1191,7 +1191,7 @@ const Helicopter = (options = {}) => {
     if (foundObject) {
       if (data.isLocal) {
         noEntry =
-          '<b style="animation: blink 0.5s infinite;font-size: 75%;letter-spacing: 0px;vertical-align: top">⛔</b>';
+          '<span class="inline-emoji" style="animation: blink 0.5s infinite">⛔</span>';
         game.objects.view.setAnnouncement(
           `${noEntry} Landing pad obstructed.\nWaiting for clearance. ${noEntry}`
         );
@@ -1867,12 +1867,12 @@ const Helicopter = (options = {}) => {
       if (!data.isLocal) return;
 
       if (!tutorialMode) {
-        game.objects.view.setAnnouncement('No pilot 😱');
+        game.objects.view.setAnnouncement('No pilot <span class="inline-emoji">😱</span>');
       }
 
       if (tutorialMode || !data.ejectCount) {
         game.objects.notifications.add(
-          'You found the “eject” button. &nbsp; 😱 &nbsp; 💀'
+          'You found the “eject” button. <span class="inline-emoji">😱 💀</span>'
         );
       }
 
