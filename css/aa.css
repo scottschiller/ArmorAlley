@@ -3611,6 +3611,13 @@ body.is-mobile #game-tips #game-announcements {
   vertical-align: middle;
 }
 
+/* ugh, Firefox. */
+body.is_firefox #game-tips #game-announcements .inline-emoji {
+  position: relative;
+  vertical-align: baseline;
+  top: -0.05em;
+}
+
 #game-tips.has-announcement .tips-container {
   overflow: visible;
 }
