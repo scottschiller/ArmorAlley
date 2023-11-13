@@ -5484,8 +5484,19 @@ button.attention:not(:active) {
 }
 
 #game-menu button.game-start {
-  font-size: calc(14px * var(--menu-scale));
-  padding-top: calc(4px * var(--menu-scale));
+  font-family: 'Cheddar Gothic Stencil';
+  font-size: calc(13.75px * var(--menu-scale));
+  padding: calc(4px * var(--menu-scale));
+}
+
+#game-menu button.game-start .emoji-text {
+  position: relative;
+  top: -0.1em;
+}
+
+body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
+  /* ugh. */
+  vertical-align: bottom;
 }
 
 #game-menu button.large,
