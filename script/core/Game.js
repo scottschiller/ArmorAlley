@@ -19,7 +19,7 @@ import {
 import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
-import { orientationChange } from '../UI/mobile.js';
+import { handleOrientationChange } from '../UI/mobile.js';
 import { playSound, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
 import { Joystick } from '../UI/Joystick.js';
@@ -801,7 +801,7 @@ const game = (() => {
          * https://stackoverflow.com/a/47226825
          */
         // get the current layout.
-        orientationChange();
+        handleOrientationChange();
       }
     }
 

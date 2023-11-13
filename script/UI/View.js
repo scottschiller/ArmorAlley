@@ -31,6 +31,7 @@ import { sprites } from '../core/sprites.js';
 import { gameMenu } from './game-menu.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
+import { handleOrientationChange } from './mobile.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -968,6 +969,9 @@ const View = () => {
       // mark that we got one of these events
       data.browser.hasOrientationChange = true;
       events.orientationChange(e);
+
+      // iPhone-specific: handling "the notch"
+      handleOrientationChange();
     });
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
@@ -1039,8 +1043,8 @@ const View = () => {
       twoThirdsWidth: 0,
       height: 0,
       hasOrientationChange: false,
-      isPortrait: !!window.matchMedia?.('(orientation: portrait)')?.matches,
-      isLandscape: !!window.matchMedia?.('(orientation: landscape)')?.matches
+      isPortrait: null,
+      isLandscape: null
     },
     chatVisible: false,
     mouse: {
@@ -1353,15 +1357,14 @@ const View = () => {
       game.objects.gameLoop.resetFPS();
     },
 
-    orientationChange() {
+    orientationChange(e) {
       if (!isMobile) return;
 
-      // check each independently - don't assume one based on the other.
-      const isPortrait = !!window.matchMedia?.('(orientation: portrait)')
-        ?.matches;
+      const { type } = e.target;
 
-      const isLandscape = !!window.matchMedia?.('(orientation: landscape)')
-        ?.matches;
+      // check each independently - don't assume one based on the other.
+      const isPortrait = !!type?.match(/portrait/i);
+      const isLandscape = !!type?.match(/landscape/i);
 
       // bail if no change.
       if (

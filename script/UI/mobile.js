@@ -7,26 +7,20 @@ function getLandscapeLayout() {
   // notch position guesses, as well as general orientation.
   let notchPosition;
 
-  if ('orientation' in window) {
-    // Mobile
-    if (window.orientation === 90) {
-      notchPosition = 'left';
-    } else if (window.orientation === -90) {
-      notchPosition = 'right';
-    }
-  } else if ('orientation' in window.screen) {
-    // Webkit
-    if (window.screen.orientation.type === 'landscape-primary') {
-      notchPosition = 'left';
-    } else if (window.screen.orientation.type === 'landscape-secondary') {
-      notchPosition = 'right';
-    }
+  if (!window.screen.orientation) return;
+
+  const { type } = window.screen.orientation;
+
+  if (type === 'landscape-primary') {
+    notchPosition = 'left';
+  } else if (type === 'landscape-secondary') {
+    notchPosition = 'right';
   }
 
   return notchPosition;
 }
 
-function orientationChange() {
+function handleOrientationChange() {
   // primarily for handling iPhone X, and position of The Notch.
   // apply CSS to <body> per orientation, and iPhone-specific CSS will handle the padding.
 
@@ -58,4 +52,4 @@ function orientationChange() {
   game.objects.starController?.reset();
 }
 
-export { getLandscapeLayout, orientationChange };
+export { getLandscapeLayout, handleOrientationChange };
