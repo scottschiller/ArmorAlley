@@ -5031,6 +5031,8 @@ body:not(.is_safari):not(.is_firefox) #game-menu select:active {
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.5 * (1 / var(--menu-scale)));
   zoom: var(--scale);
+  /* in case browsers use the color for the drop-down, make it black to be safe. */
+  color: #000;
 }
 
 body.is_safari.is_iphone #game-menu select {
@@ -5055,6 +5057,12 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
 #game-menu select optgroup {
   /* This works in Firefox: Reset drop-down size. */
   font-size: 13px;
+}
+
+#game-menu select optgroup,
+#game-menu select option {
+  /* some browsers might render the list in white, poorly, against a light background? */
+  color: #000;
 }
 
 .mac-classic select {
