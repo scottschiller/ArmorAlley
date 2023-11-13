@@ -1043,8 +1043,8 @@ const View = () => {
       twoThirdsWidth: 0,
       height: 0,
       hasOrientationChange: false,
-      isPortrait: null,
-      isLandscape: null
+      isPortrait: !!window.screen?.orientation?.type?.match(/portrait/i),
+      isLandscape: !!window.screen?.orientation?.type?.match(/landscape/i)
     },
     chatVisible: false,
     mouse: {
