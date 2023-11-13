@@ -5026,8 +5026,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding: 0;
 }
 
-body:not(.is_safari):not(.is_firefox) #game-menu select:active {
-  /* WHAT A HACK. Prevent massive text size in Chrome. */
+body.is_mac:not(.is_safari):not(.is_firefox) #game-menu select:active {
+  /* WHAT A HACK. Prevent massive text size in Chrome on macOS. */
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.5 * (1 / var(--menu-scale)));
   zoom: var(--scale);
@@ -5048,21 +5048,22 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   zoom: var(--scale);
   font-family: FA Sysfont C, courier, sans-serif;
   width: calc(7em * 1 / var(--scale) + 1px);
-  height: calc(36px * var(--menu-scale));
-  /* hide text */
-  color: rgba(255, 255, 255, 0);
+  height: calc(0.925em * var(--menu-scale));
+  /* hide UI */
+  text-indent: -100%;
   background-image: none !important;
 }
 
-#game-menu select optgroup {
-  /* This works in Firefox: Reset drop-down size. */
-  font-size: 13px;
-}
-
 #game-menu select optgroup,
-#game-menu select option {
+#game-menu select option,
+#game-menu select:focus option,
+#game-menu select:active option {
+  /* Font sizing (if not more) works in Firefox on Mac and Windows, and maybe also Edge and Chrome on Windows: Reset drop-down size. */
+  font-family: FA Sysfont C, courier, sans-serif;
+  font-size: 13px;
   /* some browsers might render the list in white, poorly, against a light background? */
   color: #000;
+  background-color: #fff;
 }
 
 .mac-classic select {

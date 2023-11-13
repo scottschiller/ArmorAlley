@@ -14,7 +14,9 @@ import {
   winloc,
   worldHeight,
   clientFeatures,
-  updateClientFeatures
+  updateClientFeatures,
+  isMac,
+  isWindows
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
@@ -803,6 +805,14 @@ const game = (() => {
         // get the current layout.
         handleOrientationChange();
       }
+    }
+
+    if (isMac) {
+      utils.css.add(document.body, 'is_mac');
+    }
+
+    if (isWindows) {
+      utils.css.add(document.body, 'is_windows');
     }
 
     function markClientTouch(e) {

@@ -42,6 +42,8 @@ const isWebkit = ua.match(/webkit/i);
 const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = !!ua.match(/firefox/i);
 const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
+const isWindows = !!ua.match(/win/i); // typically, 'win32'
+const isMac = !!ua.match(/mac/i) && !isWindows; // note: macIntel reported even on Apple M2 silicon as of 11/2023.
 
 /**
  * 11/2023: Experimental iPad hack (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
@@ -424,6 +426,8 @@ export {
   isSafari,
   isMobile,
   isiPhone,
+  isMac,
+  isWindows,
   useDOMPruning,
   debug,
   debugCollision,
