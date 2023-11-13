@@ -704,7 +704,7 @@ body.is_firefox #game-type-list label {
   margin: 0 auto;
   margin-top: calc(3px * var(--menu-scale));
   /* reserve at least two lines */
-  min-height: 3rem;
+  min-height: 3.5rem;
 }
 
 #world-wrapper {
