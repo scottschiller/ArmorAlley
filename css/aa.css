@@ -239,11 +239,11 @@ body.game-started {
   background-image: repeating-linear-gradient(
     -55deg,
     rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 1px,
-    rgba(0, 0, 0, 0.5) 1px,
+    rgba(0, 0, 0, 0) 1.5px,
     rgba(0, 0, 0, 0.5) 1.5px,
-    rgba(0, 0, 0, 0.5) 1.5px,
-    rgba(0, 0, 0, 0) 2px
+    rgba(0, 0, 0, 0.5) 2.25px,
+    rgba(0, 0, 0, 0.5) 2.25px,
+    rgba(0, 0, 0, 0) 3px
   );
   height: 100%;
   width: 100%;
