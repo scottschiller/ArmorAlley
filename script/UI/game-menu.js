@@ -558,7 +558,6 @@ function hideTitleScreen(callback) {
 
   common.setVideo('vr-goggles-menu');
 
-  let wrapper = document.getElementById('game-menu-wrapper');
   let overlay = document.getElementById('world-overlay');
   const world = document.getElementById('world');
 
@@ -568,7 +567,6 @@ function hideTitleScreen(callback) {
   function hideTitleScreenFinished(e) {
     if (e.target === overlay && e.propertyName === 'opacity') {
       overlay?.remove();
-      wrapper?.remove();
 
       // and transition, too.
       game.objects.view.dom.worldWrapper.style.transition = '';
@@ -579,18 +577,20 @@ function hideTitleScreen(callback) {
       game.objects.view.dom.logo.remove();
       game.objects.view.dom.logo = null;
 
+      game.objects.view.dom.gameMenu.remove();
+      game.objects.view.dom.gameMenu = null;
+
       game.data.started = true;
       overlay?.removeEventListener('transitionend', hideTitleScreenFinished);
 
       overlay = null;
-      wrapper = null;
 
       callback?.();
     }
   }
 
   utils.css.add(overlay, 'fade-out');
-  utils.css.add(wrapper, 'fade-out');
+  utils.css.add(game.objects.view.dom.gameMenu, 'fade-out');
 
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
 

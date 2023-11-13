@@ -258,7 +258,7 @@ body.game-started {
   background: 0 0;
 }
 
-#game-menu-wrapper.fade-out,
+#game-menu-wrapper.active.fade-out,
 #world-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
@@ -269,8 +269,9 @@ body.game-started {
   transition-property: filter, background-image, opacity, transform;
 }
 
-#game-menu-wrapper.fade-out {
+#game-menu-wrapper.active.fade-out {
   transform: translate3d(-50%, -50%, 0) scale3d(1.1, 1.1, 1);
+  opacity: 0;
 }
 
 body.auto-start #world-overlay.fade-out {
@@ -346,15 +347,25 @@ body.is_safari #mtv-bnb-in {
   aspect-ratio: 1/1;
   max-width: 1024px;
   max-height: 100vh;
-  transform: translate3d(-50%, -50%, 0);
   display: grid;
   align-content: center;
   /* always leave a little room */
   padding-left: 8px;
   padding-right: 8px;
   box-sizing: border-box;
-  transition: scale 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15),
-    opacity 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15); /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  /* initial state */
+  transform: translate3d(-50%, -50%, 0) scale3d(0.8, 0.8, 1);
+  filter: blur(8px);
+  opacity: 0;
+}
+
+#game-menu-wrapper.active {
+  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  transition: all 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
+  transition-property: transform, opacity, filter;
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  filter: blur(0px);
+  opacity: 1;
 }
 
 @media screen and (orientation: landscape) {
@@ -393,10 +404,7 @@ body.is-mobile #game-subtitle {
 
 #logo {
   position: relative;
-  /* margin-top: 16vh; */
   border-top: 2.75vh solid #444;
-  /* Chrome prefers "auto" and renders more nicely this way. So be it. */
-  opacity: 0;
   padding-top: 2.5vh;
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */

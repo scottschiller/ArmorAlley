@@ -977,6 +977,7 @@ const View = () => {
     dom.worldWrapper = sprites.getWithStyle('world-wrapper');
     dom.aa = document.getElementById('aa');
     dom.battleField = sprites.getWithStyle('battlefield');
+    dom.gameMenu = document.getElementById('game-menu-wrapper');
     dom.logo = document.getElementById('logo');
     dom.topBar = sprites.getWithStyle('top-bar');
     dom.gameTips = sprites.getWithStyle('game-tips');
@@ -1011,11 +1012,12 @@ const View = () => {
     // enable the whole UI, basically.
     dom.aa.style.visibility = 'visible';
 
-    // bring the logo up.
-    dom.logo.style.opacity = 1;
+    // bring the menu up.
+    utils.css.add(dom.gameMenu, css.active);
   }
 
   css = {
+    active: 'active',
     gameTips: {
       active: 'active',
       hasAnnouncement: 'has-announcement'
@@ -1092,16 +1094,17 @@ const View = () => {
 
   dom = {
     aa: null,
+    animationNode: null,
     battleField: null,
-    logo: null,
-    stars: null,
-    topBar: null,
+    gameAnnouncements: null,
+    gameMenu: null,
     gameTips: null,
     gameTipsList: null,
     gameTipNodes: null,
-    animationNode: null,
-    gameAnnouncements: null,
-    mobileControls: null
+    logo: null,
+    mobileControls: null,
+    stars: null,
+    topBar: null
   };
 
   events = {
