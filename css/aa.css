@@ -425,7 +425,8 @@ body:not(.game-started) #mobile-controls {
   visibility: hidden;
 }
 
-#world.welcome #mobile-controls {
+#world.welcome #mobile-controls,
+#world.welcome #player-status-bar {
   opacity: 0;
 }
 
@@ -441,8 +442,8 @@ body:not(.game-started) #mobile-controls {
 }
 
 #battlefield,
-#mobile-controls,
-#player-status-bar {
+#world.active #mobile-controls,
+#world.active #player-status-bar {
   transition: 1s ease-in-out;
   transition-property: filter, opacity, transform;
 }

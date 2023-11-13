@@ -14,9 +14,6 @@ import {
 import { gamePrefs } from './preferences.js';
 
 // game menu / home screen
-
-const welcome = 'welcome';
-
 let description;
 let defaultDescription;
 let lastHTML;
@@ -86,8 +83,6 @@ if (customLevel) {
 }
 
 function init() {
-  const { dom } = game;
-
   description = document.getElementById('game-description');
   defaultDescription = description.innerText;
   lastHTML = defaultDescription;
@@ -96,8 +91,6 @@ function init() {
   form = document.getElementById('game-menu-form');
   optionsButton = document.getElementById('game-options-button');
   oSelect = document.getElementById('game_level');
-
-  utils.css.add(dom.world, welcome);
 
   if (battle && autoStart) {
     // "campaign mode" - hide the menu, minimal logo on start.
@@ -559,10 +552,10 @@ function hideTitleScreen(callback) {
   common.setVideo('vr-goggles-menu');
 
   let overlay = document.getElementById('world-overlay');
-  const world = document.getElementById('world');
-
+  
   // remove overlay effects
-  utils.css.remove(world, welcome);
+  utils.css.add(game.dom.world, 'active');
+  utils.css.remove(game.dom.world, 'welcome');
 
   function hideTitleScreenFinished(e) {
     if (e.target === overlay && e.propertyName === 'opacity') {
