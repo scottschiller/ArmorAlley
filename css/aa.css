@@ -565,8 +565,12 @@ body.is_safari #game-menu select:focus {
   border-radius: 2px;
 }
 
-#game-menu .cta:last-of-type {
+#game-menu label.cta[for='checkbox-vs'] {
+  /* BnB-specific: vertical alignment */
   padding-right: 0;
+  top: calc(2px * var(--menu-scale));
+  /* prevent top shift from pushing row down */
+  padding-bottom: 0px;
 }
 
 #game-menu .cta-radio:first-of-type {
