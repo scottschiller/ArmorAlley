@@ -5058,7 +5058,8 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   --scale: calc(1.75 * (1 / var(--menu-scale)));
   zoom: var(--scale);
   font-family: FA Sysfont C, courier, sans-serif;
-  width: calc(7em * 1 / var(--scale) + 1px);
+  /* note slight padding on width. */
+  min-width: calc(7em * 1 / var(--scale) + 3px);
   height: calc(0.925em * var(--menu-scale));
   /* hide UI */
   text-indent: -100%;
