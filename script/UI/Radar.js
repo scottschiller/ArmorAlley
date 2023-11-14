@@ -568,9 +568,9 @@ const Radar = () => {
           updateTargetMarker(objects.items[i]);
         }
 
-        // resize scan node, if one exists.
-        if (data.isStale && objects.items[i].oParent?.dom?.oScanNode) {
-          objects.items[i].oParent.resize?.();
+        // resize, if method is present: currently, scan nodes and clouds.
+        if (data.isStale && objects.items[i].oParent?.resize) {
+          objects.items[i].oParent.resize();
         }
 
         // hack: resize scan nodes manually for level previews

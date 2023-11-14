@@ -43,7 +43,7 @@ const Cloud = (options = {}) => {
 
   const { className, width, height } = cloudData;
 
-  let css, dom, data, exports;
+  let css, dom, data, exports, radarItem;
 
   function animate() {
     data.frameCount++;
@@ -138,6 +138,10 @@ const Cloud = (options = {}) => {
     }
   }
 
+  function resize() {
+    radarItem?.resizeWidth(exports);
+  }
+
   function initDOM() {
     dom.o = sprites.create({
       className: css.className,
@@ -150,7 +154,7 @@ const Cloud = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, dom.o.className);
   }
 
   css = common.inheritCSS({ className });
@@ -187,6 +191,7 @@ const Cloud = (options = {}) => {
     drift,
     dom,
     init: initCloud,
+    resize,
     startDrift
   };
 
