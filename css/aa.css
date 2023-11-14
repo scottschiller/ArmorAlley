@@ -664,22 +664,28 @@ body.is_firefox #game-type-list label {
   color: currentColor;
   cursor: pointer;
   display: grid;
-  font: inherit;
-  height: 1.1em;
   margin: 0;
   place-content: center;
-  transform: translateY(0.2em);
-  width: 1.1em;
+  width: calc(13px * var(--menu-scale));
+  height: calc(13px * var(--menu-scale));
 }
 
 #game-menu .cta-checkbox input[type='checkbox']:before {
-  box-shadow: inset 1em 1em #fff;
-  /* check mark */
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0, 43% 62%);
-  content: '';
-  height: 0.65em;
+  position: absolute;
+  top: calc(-0.67px * var(--menu-scale));
+  left: calc(-0.55px * var(--menu-scale));
+  background: transparent;
+  content: '🤘';
+  height: 1em;
+  width: 1em;
   visibility: hidden;
-  width: 0.65em;
+  font-size: calc(7px * var(--menu-scale));
+  transform: translate3d(50%, 50%, 0);
+}
+
+body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
+  /* Slightly smaller on iPhone. */
+  font-size: calc(6px * var(--menu-scale));
 }
 
 #game-menu .cta-checkbox input[type='checkbox']:checked:before {
