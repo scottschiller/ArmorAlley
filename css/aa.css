@@ -5486,12 +5486,12 @@ button.attention:not(:active) {
 
 #game-menu button.large,
 .generic-cta {
-  background: #eee;
+  background-color: #eee;
   color: #333;
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-  font-size: calc(9px * var(--menu-scale));
-  line-height: calc(9px * var(--menu-scale));
-  padding: calc(4px * var(--menu-scale)) calc(8px * var(--menu-scale));
+  font-size: calc(11px * var(--menu-scale));
+  line-height: calc(11px * var(--menu-scale));
+  padding: calc(4px * var(--menu-scale)) calc(6px * var(--menu-scale));
   vertical-align: middle;
 }
 
@@ -5586,6 +5586,18 @@ body.is_safari:not(.is-mobile) #game-menu button {
   /* prefs panel option: hide until deemed relevant. */
   display: none;
 }
+
+#game-options-button .emoji-text {
+  position: relative;
+  /* ugh, more emoji tweaks. */
+  top: calc(1px * var(--menu-scale));
+}
+
+#game-buttons .this-rocks {
+  position: relative;
+  top: -2px;
+}
+
 @media screen and (max-width: 900px) and (orientation: portrait) {
   /**
   * Special case: On smaller screens, simplify UI.
