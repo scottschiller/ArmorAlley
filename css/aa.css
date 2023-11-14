@@ -6503,6 +6503,16 @@ body.game-over .target-ui {
   margin-bottom: 0;
 }
 
+/* special case: smaller headers in tutorial, because there are two. */
+body.tutorial-mode #battle-over-letter .letter-content h1 {
+  font-size: 13px;
+}
+
+body.tutorial-mode #battle-over-letter .letter-content h1 ~ h1 {
+  /* secondary header */
+  font-size: 12px;
+}
+
 #battle-over-letter .letter-content p {
   color: #666;
   font-family: Geneva, verdana, arial, sans-serif;
