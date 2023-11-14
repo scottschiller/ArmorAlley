@@ -4694,6 +4694,11 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   scrollbar-width: thin;
 }
 
+#game-prefs-modal .body,
+#game-prefs-modal .body legend {
+  background: #f3f3f3;
+}
+
 .finder .body,
 .finder .body ul.row li {
   /* tutorial window */
