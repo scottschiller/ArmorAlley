@@ -326,7 +326,7 @@ function PrefsManager() {
       copyToClipboard(inviteURL, (ok) => {
         inviteContainer.remove();
         linkDetail.innerHTML = [
-          `<p class="non-indented"Send this link to a friend:</p>`,
+          `<p class="non-indented">Send this link to a friend:</p>`,
           `<a href="${inviteURL}" onclick="return false" class="no-hover">${inviteURLDisplay}</a>`,
           ok
             ? `<p class="non-indented">The link has been copied to your clipboard.</p>`
