@@ -19,7 +19,7 @@ const Tutorial = () => {
       .getElementsByTagName('li');
     dom.oTutorialWindow = document.getElementById('tutorial-window');
     data.steps = dom.oList.length;
-    utils.css.add(game.dom.world, 'tutorial-mode');
+    utils.css.add(document.body, 'tutorial-mode');
   }
 
   function selectItem(i) {

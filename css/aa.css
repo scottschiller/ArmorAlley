@@ -171,7 +171,7 @@ body.is_safari:not(.is-mobile) #top-bar {
   width: 200%;
 }
 
-body.is_safari:not(.is-mobile) #world.tutorial-mode #tutorial-window {
+body.is_safari:not(.is-mobile).tutorial-mode #tutorial-window {
   zoom: 2;
   transform: scale3d(0.5, 0.5, 1) translate(-50%, -50%);
   transform-origin: 0 0;
@@ -253,8 +253,7 @@ body.game-started {
   top: 0;
 }
 
-#world.regular-mode #world-overlay,
-#world.tutorial-mode #world-overlay {
+body.tutorial-mode #world-overlay {
   background: 0 0;
 }
 
@@ -3460,11 +3459,11 @@ body.is_safari:not(.is-mobile) #game-tips .tips-container .tip {
   width: 64rem;
 }
 
-#world.tutorial-mode #game-tips .tips-container {
+body.tutorial-mode #game-tips .tips-container {
   color: #999;
 }
 
-#world.tutorial-mode #game-tips .tips-container b {
+body.tutorial-mode #game-tips .tips-container b {
   color: #fff;
 }
 
@@ -6069,13 +6068,13 @@ body:not(.is-mobile) #tutorial-window {
   transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
 }
 
-#world.tutorial-mode #tutorial-window {
+body.tutorial-mode #tutorial-window {
   display: block;
   opacity: 0;
   transition: opacity 1s ease-in;
 }
 
-#world.tutorial-mode #tutorial-window.active {
+body.tutorial-mode #tutorial-window.active {
   opacity: 1;
 }
 
