@@ -489,13 +489,19 @@ const Turret = (options = {}) => {
 
       // may not be provided, as in tutorial - just restoring immediately etc.
       if (engineer) {
+        const isCapture = data.isEnemy !== engineer.data.isEnemy;
+        // one of yours?
         if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
           game.objects.notifications.addNoRepeat(
-            'You started rebuilding a turret 🛠️'
+            isCapture
+              ? 'You stated capturing a turret ⛳'
+              : 'You started rebuilding a turret 🛠️'
           );
         } else {
           game.objects.notifications.addNoRepeat(
-            'The enemy started rebuilding a turret 🛠️'
+            isCapture
+              ? 'The enemy started capturing a turret 🚩'
+              : 'The enemy started rebuilding a turret 🛠️'
           );
         }
       }

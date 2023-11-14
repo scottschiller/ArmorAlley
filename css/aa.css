@@ -739,7 +739,8 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
   width: 100%;
 }
 
-body.game-started #world-wrapper {
+body.game-started #world-wrapper,
+body.edit-mode #world-wrapper {
   border-bottom-color: #875400;
 }
 
