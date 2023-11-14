@@ -735,7 +735,7 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
   top: 0;
   /* for initial game fade */
   transition: filter 0.5s ease-in;
-  transition-property: filter, border;
+  transition-property: filter, border-color;
   width: 100%;
 }
 
