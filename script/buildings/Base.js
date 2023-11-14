@@ -217,7 +217,7 @@ const Base = (options = {}) => {
             : sounds.bnb.gameOverLose
         );
 
-        if (campaignBattles.includes(levelName) && !net.active) {
+        if ((tutorialMode || campaignBattles.includes(levelName)) && !net.active) {
           common.setFrameTimeout(() => {
             // as applicable, show a letter from "the old tanker."
             const didWin = localPlayer.data.isEnemy !== data.isEnemy;
