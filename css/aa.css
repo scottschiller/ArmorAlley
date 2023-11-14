@@ -651,7 +651,6 @@ body.is_firefox #game-type-list label {
 
 #game-menu .checkbox-wrapper {
   display: inline-block;
-  margin-right: 0.125em;
   margin-left: 0;
   vertical-align: top;
 }
