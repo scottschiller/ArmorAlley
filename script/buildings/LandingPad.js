@@ -26,7 +26,7 @@ const LandingPad = (options = {}) => {
     drink = data.drinkable[rndInt(data.drinkable.length)];
 
     data.welcomeMessage = `-* 🚁 Welcome to ${
-      data.name
+      data.name || 'THE MIDWAY'
     }${" ⛽🛠️ *-<br />Today's feature: %s1 %s2 &middot; Enjoy your stay."
       .replace('%s1', drink)
       .replace('%s2', eat)}`;
