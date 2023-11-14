@@ -155,6 +155,9 @@ const Cloud = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
+
+    // and, adjust scale.
+    resize();
   }
 
   css = common.inheritCSS({ className });
