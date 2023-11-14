@@ -4761,7 +4761,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   margin-right: 15px;
   margin-top: 7.5px;
   width: 390px;
-  max-width: 50vw;
+  max-width: 65vw;
   height: auto;
 }
 
