@@ -420,7 +420,7 @@ const SmartMissile = (options = {}) => {
           target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged';
         const targetType = game.objects.stats.formatForDisplay(type, target);
         const health =
-          target.data.energy !== target.data.energyMax
+          target.data.energy && target.data.energy !== target.data.energyMax
             ? ` (${Math.floor(
                 (target.data.energy / target.data.energyMax) * 100
               )}%)`
