@@ -4681,7 +4681,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 
 #game-prefs-modal .body {
   font-size: calc(11px * var(--prefs-font-scale));
-  background: #f3f3f3;
   /* border all the way around */
   border: 0.5px solid #000;
   box-sizing: border-box;
