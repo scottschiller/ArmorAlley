@@ -5571,6 +5571,56 @@ body.is_safari:not(.is-mobile) #game-menu button {
   transform-origin: 50% 50%;
 }
 
+#network-pipe,
+#network-prompt {
+  /* prefs panel option: hide until deemed relevant. */
+  display: none;
+}
+@media screen and (max-width: 900px) and (orientation: portrait) {
+  /**
+  * Special case: On smaller screens, simplify UI.
+  * Hide standalone network button, move into settings.
+  */
+  body.bnb.is-mobile #game-subtitle {
+    /* game sub-title - iPhone, in particular */
+    font-size: calc(3.5px * var(--menu-scale));
+    line-height: 1.5rem;
+  }
+  #start-network-game {
+    /* home screen network menu icon */
+    display: none;
+  }
+  #network-pipe {
+    display: inline-block;
+    opacity: 0.5;
+    color: #000;
+  }
+  #game-options-button {
+    /* throw a network icon on here. */
+    background-image: url(../image/win95-networking-icon.png);
+    background-position: 86% 50%;
+    background-size: calc(8px * var(--menu-scale));
+    background-repeat: no-repeat;
+    /* make room for icon */
+    padding-left: calc(4px * var(--menu-scale)) !important;
+    padding-right: calc(12px * var(--menu-scale)) !important;
+  }
+  #game-buttons .this-rocks {
+    /* Reduce the size of 🎸🤘 */
+    font-size: calc(7.5px * var(--menu-scale));
+    vertical-align: bottom;
+  }
+  body:not(.game-started) #network-prompt {
+    /* show the network option in the prefs panel. */
+    display: block;
+  }
+}
+
+body.game-started #network-prompt {
+  /* always hide this prefs panel option, once game has begun. */
+  display: none;
+}
+
 /* outer -> inner */
 #game-prefs-modal .border-3 {
   border-color: #dadaff #8787b3 #8787b3 #dadaff;
@@ -5664,11 +5714,12 @@ button .network-icon {
   position: relative;
   background: url(../image/win95-networking-icon.png) 0 0 / contain no-repeat;
   display: inline-block;
-  /* positioning tricks */
-  top: 5px;
-  margin-top: -10px;
   width: calc(10px * var(--menu-scale));
   height: calc(10px * var(--menu-scale));
+  /* positioning tricks */
+  top: calc(1px * var(--menu-scale));
+  padding: 3px;
+  margin: -6px 0px;
 }
 
 button .button-icon {
