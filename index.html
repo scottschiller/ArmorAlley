@@ -1822,7 +1822,16 @@
               id="game-options-button"
               data-title="General settings. Access in-game via ESC or options link."
               class="large">
-              🛠️
+              <span class="emoji-text">🛠️</span><span id="network-pipe">|</span>
+            </button>
+            <button
+              type="button"
+              id="start-network-game"
+              data-action="start-network-game"
+              data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
+              value="network"
+              class="large network">
+              <span class="button-icon network-icon"></span>
             </button>
             <button
               type="button"
@@ -1832,14 +1841,6 @@
               value="editor"
               class="large hide-on-mobile">
               <span class="button-icon">✏️</span>
-            </button>
-            <button
-              type="button"
-              id="start-network-game"
-              data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
-              value="network"
-              class="large network">
-              <span class="button-icon network-icon"></span>
             </button>
             <label
               for="checkbox-vs"
