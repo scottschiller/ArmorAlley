@@ -20,7 +20,6 @@ let lastHTML;
 
 // TODO: clean up this mess. :P
 let menu;
-let form;
 let optionsButton;
 let oSelect;
 
@@ -88,7 +87,6 @@ function init() {
   lastHTML = defaultDescription;
 
   menu = document.getElementById('game-menu');
-  form = document.getElementById('game-menu-form');
   optionsButton = document.getElementById('game-options-button');
   oSelect = document.getElementById('game_level');
 
@@ -102,7 +100,7 @@ function init() {
 
   utils.css.add(menu, 'visible');
 
-  utils.events.add(form, 'click', formClick);
+  utils.events.add(document, 'click', formClick);
   utils.events.add(optionsButton, 'click', () => prefsManager.show());
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
@@ -386,6 +384,8 @@ function showExitType() {
 function formClick(e) {
   let { target } = e;
 
+  // note: this can run when the prefs modal is up, too - just looking for actions e.g., start network game.
+
   const action = target.action || target.getAttribute('data-action');
 
   // hackish: if an emoji (without "action") is clicked, find its sibling radio input. :X
@@ -444,6 +444,10 @@ function formClick(e) {
     return;
   }
 
+  if (action === 'start-network-game') {
+    configureNetworkGame();
+  }
+
   const { name } = target;
 
   if (name === 'game_type') {
@@ -480,15 +484,10 @@ function formClick(e) {
 
     return false;
   }
-
-  if (target.id === 'start-network-game') {
-    configureNetworkGame();
-  }
 }
 
 function formCleanup() {
-  utils.events.remove(form, 'click', formClick);
-  form = null;
+  utils.events.remove(document, 'click', formClick);
 }
 
 function configureNetworkGame() {
@@ -496,6 +495,11 @@ function configureNetworkGame() {
     network: true,
     onStart: startGame
   };
+
+  // prefs might be open, we could be switching to the network version.
+  if (prefsManager.isActive) {
+    prefsManager.hide();
+  }
 
   prefsManager.show(options);
 }
@@ -552,7 +556,7 @@ function hideTitleScreen(callback) {
   common.setVideo('vr-goggles-menu');
 
   let overlay = document.getElementById('world-overlay');
-  
+
   // remove overlay effects
   utils.css.add(game.dom.world, 'active');
   utils.css.remove(game.dom.world, 'welcome');

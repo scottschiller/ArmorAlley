@@ -1509,6 +1509,7 @@ function PrefsManager() {
   return {
     addGroupAndLevel,
     applyNewPrefs,
+    hide,
     init,
     ignoreURLParams,
     isActive,
