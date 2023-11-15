@@ -63,6 +63,7 @@ const defaultPrefs = {
   'gravestones_infantry': false,
   'gravestones_vehicles': false,
   'landing_pads_on_radar': true,
+  'radar_enhanced_fx': false,
   'last_battle': null,
   'super_bunker_arrows': true,
   'show_inventory': true,
@@ -1414,6 +1415,10 @@ function PrefsManager() {
         game.objects.radar?.objects?.items?.forEach((radarItem) =>
           radarItem?.onHiddenChange?.(isActive)
         ),
+
+      radar_enhanced_fx: (isActive) => {
+        utils.css.addOrRemove(document.body, isActive, 'radar_enhanced_fx');
+      },
 
       super_bunker_arrows: (isActive) => {
         game.objects[TYPES.superBunker].forEach((superBunker) =>
