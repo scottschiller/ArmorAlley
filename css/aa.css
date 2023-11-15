@@ -380,6 +380,8 @@ body.is_safari #mtv-bnb-in {
     max-width: 100vw;
     /* leave room for address bar UI, etc. */
     max-height: 80vh;
+    /* avoid overlapping radar area, whether the address bar is showing or not. */
+    margin-top: 3%;
   }
   body.is-mobile #game-description {
     font-size: calc(3.25px * var(--menu-scale));
