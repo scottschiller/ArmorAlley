@@ -1644,6 +1644,23 @@ body.is_firefox .sprite.shrapnel {
   top: 0;
 }
 
+.sprite.balloon,
+.sprite.bunker,
+.sprite.chain,
+.sprite.engineer,
+.sprite.helicopter,
+.sprite.infantry,
+.sprite.missile-launcher,
+/* note: only apply to armed smart missiles - otherwise, positioning gets messed up. */
+.sprite.smart-missile.armed,
+.sprite.super-bunker,
+.sprite.tank,
+.sprite.van,
+.turret .sub-sprite {
+  /* for .smart-missile-tracking filter */
+  transition: filter 0.25s ease-in-out;
+}
+
 .star {
   width: 0.75px;
   height: 0.75px;
@@ -2231,7 +2248,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .smart-missile.expired {
   animation: blink calc(0.125s * var(--gs-frac)) infinite;
   /* blink initially, until armed - and when expired */
-  transition-property: transform, opacity;
+  transition-property: filter, transform, opacity;
 }
 
 .smart-missile.rubber-chicken {
