@@ -2572,7 +2572,7 @@ const Helicopter = (options = {}) => {
       fire();
     }
 
-    if (!data.dead && data.isLocal) {
+    if (data.isLocal) {
       const vans = game.objects[TYPES.van];
 
       // any enemy vans that are jamming our radar?
