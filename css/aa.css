@@ -250,9 +250,12 @@ body.game-started {
   height: 100%;
   width: 100%;
   image-rendering: optimizeSpeed;
-  left: 0;
   position: absolute;
-  top: 0;
+  /* sit just under radar */
+  top: 8%;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 body.tutorial-mode #world-overlay {
