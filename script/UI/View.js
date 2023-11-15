@@ -147,9 +147,7 @@ const View = () => {
 
     if (dom.logo) {
       // $$$
-      // TODO: DRY + review optimize
-
-      const root = document.querySelector(':root');
+      // TODO: DRY + review, optimize
 
       const wrapperWidth =
         document.getElementById('game-menu-wrapper').offsetWidth;
@@ -173,7 +171,7 @@ const View = () => {
       }
 
       // this applies to `#game-menu`.
-      root?.style?.setProperty('--menu-scale', 6 * newScale);
+      dom.root?.style?.setProperty('--menu-scale', 6 * newScale);
     }
 
     if (!data.battleField.width) {
@@ -860,12 +858,16 @@ const View = () => {
             (1 / data.screenScale)
         )}px`
       );
+
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
       // and will need more refactoring to make that work the same.
       dom.worldWrapper._style.setProperty(
         'transform',
         `scale3d(${data.screenScale}, ${data.screenScale}, 1)`
       );
+
+      dom.root?.style?.setProperty('--game-scale-transform', data.screenScale);
+
       dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
     } else {
       if (debug) console.log('using style.zoom-based scaling');
@@ -875,6 +877,8 @@ const View = () => {
       // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
       // Additional note: this won't work in Firefox.
       dom.aa.style.zoom = `${data.screenScale * 100}%`;
+
+      dom.root?.style?.setProperty('--game-scale-zoom', data.screenScale);
     }
 
     game.objects.funds.updateScale();
@@ -991,6 +995,7 @@ const View = () => {
     dom.messageBox = document.getElementById('message-box');
     dom.messageForm = document.getElementById('message-form');
     dom.messageInput = document.getElementById('message-form-input');
+    dom.root = document.querySelector(':root');
 
     // TODO: improve and clean up.
     // maybe remove nodes if not on mobile.
@@ -1107,6 +1112,7 @@ const View = () => {
     gameTipNodes: null,
     logo: null,
     mobileControls: null,
+    root: null,
     stars: null,
     topBar: null
   };
