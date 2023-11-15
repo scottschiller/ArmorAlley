@@ -3534,7 +3534,7 @@ body.game-over #game-tips .tips-container {
 }
 
 body.is-mobile #game-paused {
-  font-size: 7vmin;
+  font-size: 3.5vmin;
 }
 
 #game-paused p {
@@ -6389,10 +6389,6 @@ body.game-over .target-ui {
 
   body.is-mobile #funds-count {
     top: -0.5px;
-  }
-
-  body.is-mobile #game-paused {
-    margin-top: 25vw;
   }
 
   body.is-mobile #game-tips {
