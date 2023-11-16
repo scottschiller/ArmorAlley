@@ -1658,7 +1658,8 @@ body.is_firefox .sprite.shrapnel {
 .sprite.van,
 .turret .sub-sprite {
   /* for .smart-missile-tracking filter */
-  transition: filter 0.25s ease-in-out;
+  transition: filter 1s ease-in-out;
+  transition-timing-function: cubic-bezier(.45, .48, .25, 1.57);
 }
 
 .star {
