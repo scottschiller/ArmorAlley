@@ -3016,6 +3016,8 @@ body:not(.game-over).is_safari.is-mobile #world-wrapper.jammed #battlefield {
   height: 71px; */
   width: 112px;
   z-index: 5; /* let nuke show on top of smoke */
+  /* a little "nuclear" glow, why not. */
+  filter: drop-shadow(0 0 5px #999);
 }
 
 /* special case */
