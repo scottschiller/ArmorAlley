@@ -1687,8 +1687,8 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 .bunker.enemy {
   background-image: url(../image/bunker_mac.png);
   background-size: contain;
-  height: 25px;
-  width: 51px;
+  height: 25.5px;
+  width: 52px;
   z-index: 1; /* sit on top of chains. */
 }
 
