@@ -2043,9 +2043,14 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   border-radius: 3px;
   width: 3px;
   height: 3px;
-  top: 0;
-  right: 0;
+  top: -0.5px;
+  right: -0.5px;
   z-index: 4;
+}
+
+.smart-missile-tracking .target-dot {
+  /* hide larger dot while the other is actively blinking. */
+  visibility: hidden;
 }
 
 .sprite:not(.balloon).exploding.smart-missile-tracking-active:not(
@@ -2065,7 +2070,7 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smart-missile-tracking-active:after {
-  animation: blink calc(0.33s * var(--gs-frac)) ease-in-out alternate infinite;
+  animation: blink calc(0.33s * var(--gs-frac)) none infinite;
 }
 
 .smart-missile-tracking-removal:after,
