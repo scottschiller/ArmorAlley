@@ -67,6 +67,7 @@ const Helicopter = (options = {}) => {
     collision,
     radarItem,
     lastTarget,
+    nextMissileTarget,
     statsBar;
 
   const aiRNG = (number, type = null) => rng(number, type, aiSeedOffset);
@@ -1290,7 +1291,8 @@ const Helicopter = (options = {}) => {
     const { attacker } = dieOptions;
     const aData = attacker?.data;
 
-    if (!data.isCPU) {
+    if (data.isLocal) {
+      dropMissileTargets();
       reactToDamage(attacker);
     }
 
@@ -1548,6 +1550,23 @@ const Helicopter = (options = {}) => {
     utils.css.remove(targetDot, css.disabled);
   }
 
+  function dropMissileTargets() {
+    dropNextTarget();
+    if (nextMissileTarget) {
+      markTarget(nextMissileTarget);
+    }
+    if (lastMissileTarget) {
+      markTarget(lastMissileTarget);
+    }
+    game.objects.radar.clearTarget();
+  }
+
+  function dropNextTarget() {
+    if (!nextMissileTarget) return;
+    utils.css.remove(nextMissileTarget?.dom?.o, css.nextMissileTarget);
+    nextMissileTarget = null;
+  }
+
   function markTarget(target, active) {
     if (!data.isLocal) return;
 
@@ -1558,23 +1577,36 @@ const Helicopter = (options = {}) => {
       active = false;
     }
 
+    dropNextTarget();
+
     // new target
     if (active && target?.dom?.o) {
       target.dom.o.appendChild(targetDot);
+      utils.css.add(target.dom.o, css.nextMissileTarget);
+      nextMissileTarget = target;
       utils.css.remove(targetDot, css.disabled);
       game.objects.radar.markTarget(target.radarItem);
     }
 
-    if (!active && targetDot) {
-      utils.css.add(targetDot, css.disabled);
-      game.objects.radar.clearTarget();
+    if (!active) {
+      nextMissileTarget = null;
+      if (targetDot) {
+        utils.css.add(targetDot, css.disabled);
+        if (target?.dom?.o) {
+          utils.css.remove(target.dom.o, css.nextMissileTarget);
+        }
+        game.objects.radar.clearTarget();
+      }
     }
   }
 
   function scanRadar() {
     // don't update if there are no missiles.
     // this helps to preserve the last target if the last missile was just fired.
-    if (!data.smartMissiles) return;
+    if (!data.smartMissiles) {
+      dropNextTarget();
+      return;
+    }
 
     const newTarget = getNearestObject(exports, { useInFront: true });
 
@@ -2955,6 +2987,7 @@ const Helicopter = (options = {}) => {
     muchaMuchacha: 'mucha-muchacha',
     movingLeft: 'moving-left',
     movingRight: 'moving-right',
+    nextMissileTarget: 'next-missile-target',
     tilt: 'tilt',
     repairing: 'repairing',
     respawning: 'respawning',

@@ -2065,6 +2065,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
   top: auto;
 }
 
+.next-missile-target {
+  /* halo around potential targets */
+  filter: drop-shadow(0 0 5px #999);
+}
+
 .smart-missile-tracking {
   /* turn "hot" fast */
   transition-duration: 0.25s;
