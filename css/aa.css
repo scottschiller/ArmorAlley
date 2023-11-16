@@ -1055,6 +1055,7 @@ body.is_safari:not(.is-mobile) #queue {
 }
 
 #radar-jammed-overlay .noise,
+#world-noise-overlay .noise,
 body.bnb .tv-noise-overlay {
   background: url(../image/noise-tv.png) 0 0/250px 250px;
   bottom: 0;
@@ -1071,8 +1072,9 @@ body.bnb .tv-noise-overlay {
   transition: opacity 0.25s ease-in;
 }
 
-#radar-jammed-overlay .noise {
-  background-color: rgba(0, 255, 0, 0.5);
+#radar-jammed-overlay .noise,
+#world-noise-overlay .noise {
+  background-color: rgba(255, 255, 255, 0.25);
   background-image: url(../image/noise-greyscale.png);
   background-size: 150px 150px;
   image-rendering: optimizeSpeed;
@@ -1083,13 +1085,16 @@ body.bnb .tv-noise-overlay {
 }
 
 #radar-jammed-overlay.active .noise {
-  /* default: lower "frame rate" on desktop reduce compositing work. */
+  /* default: lower "frame rate" on desktop; reduce compositing work. */
   animation: 1.6s steps(8) infinite both noise;
   opacity: 0.15;
 }
 
+/* note: radar jammed, plus game screen overlays */
 body.is-mobile #radar-jammed-overlay.active .noise,
-body.radar_enhanced_fx #radar-jammed-overlay.active .noise {
+body.radar_enhanced_fx #radar-jammed-overlay.active .noise,
+body.is-mobile #world-noise-overlay .noise,
+body.radar_enhanced_fx #world-noise-overlay .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
   background-color: rgba(0, 0, 0, 0.25);
   animation: 1s steps(15) infinite both noise;
@@ -1120,6 +1125,7 @@ body.is_safari.game-paused.radar_enhanced_fx #radar-jammed-overlay {
   mix-blend-mode: multiply !important;
 }
 
+#world-noise-overlay .noise,
 #radar-jammed-overlay .noise {
   background-image: url(../image/noise-tv.png);
   background-size: 200px 200px;
@@ -1141,6 +1147,32 @@ body.bnb .tv-noise-overlay {
 body.game-paused #radar-jammed-overlay.active .noise,
 body.game-paused .tv-noise-overlay {
   animation: none;
+}
+
+#world-noise-overlay {
+  position: absolute;
+  top: 8%;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 11;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* special case: home screen, game menu. */
+body.is-mobile #world-noise-overlay,
+body.radar_enhanced_fx #world-noise-overlay {
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+}
+
+body.is-mobile.game-started #world-noise-overlay,
+body.is-mobile.edit-mode #world-noise-overlay,
+body.radar_enhanced_fx.game-started #world-noise-overlay,
+body.radar_enhanced_fx.edit-mode #world-noise-overlay {
+  transition: opacity 0.75s ease-in-out;
+  opacity: 0;
 }
 
 .tv-screen-container {

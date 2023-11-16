@@ -581,6 +581,8 @@ function hideTitleScreen(callback) {
       game.objects.view.dom.gameMenu.remove();
       game.objects.view.dom.gameMenu = null;
 
+      document.getElementById('world-noise-overlay').remove();
+
       game.data.started = true;
       overlay?.removeEventListener('transitionend', hideTitleScreenFinished);
 
