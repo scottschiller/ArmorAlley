@@ -384,6 +384,8 @@ function showExitType() {
 function formClick(e) {
   let { target } = e;
 
+  if (!target) return;
+
   // note: this can run when the prefs modal is up, too - just looking for actions e.g., start network game.
 
   const action = target.action || target.getAttribute('data-action');
