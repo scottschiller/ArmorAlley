@@ -209,6 +209,12 @@ body.game-started {
   user-select: none;
 }
 
+body.prefs-modal-open #aa,
+body.prefs-modal-open #game-menu-wrapper {
+  /* prevent clicks on the battlefield and/or game menu. */
+  pointer-events: none;
+}
+
 #aa {
   cursor: crosshair;
   cursor: url(../image/cursor-cross.png), crosshair;

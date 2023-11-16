@@ -617,10 +617,6 @@ const game = (() => {
 
     // don't show paused status / tips in certain cases
 
-    if (prefsManager.isActive()) {
-      css.push('prefs-modal-open');
-    }
-
     if (!data.started) {
       css.push('game-menu-open');
     }

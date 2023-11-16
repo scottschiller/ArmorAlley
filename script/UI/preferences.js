@@ -589,6 +589,8 @@ function PrefsManager() {
 
     document.body.appendChild(dom.o);
 
+    utils.css.add(document.body, 'prefs-modal-open');
+
     dom.o.style.display = 'block';
 
     maybeUpdateGameSpeed();
@@ -684,6 +686,8 @@ function PrefsManager() {
 
     dom.o.remove();
     data.active = false;
+
+    utils.css.remove(document.body, 'prefs-modal-open');
 
     game.objects.view.data.ignoreMouseEvents = false;
 
