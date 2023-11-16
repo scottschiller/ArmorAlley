@@ -2066,7 +2066,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smart-missile-tracking {
-  filter: drop-shadow(0 0 4px #ff3333);
+  /* turn "hot" fast */
+  transition-duration: 0.25s;
+  filter: drop-shadow(0 0 5px #ff3333);
 }
 
 .smart-missile-tracking-active:after {
