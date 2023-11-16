@@ -393,6 +393,8 @@ function formClick(e) {
   // hackish: if an emoji (without "action") is clicked, find its sibling radio input. :X
   if (!action && utils.css.has(target, 'emoji-text')) {
     target = target.parentNode.querySelector('input');
+    // there may not be an associated input - and if so, bail.
+    if (!target) return;
   }
 
   if (action === 'start-editor') {
