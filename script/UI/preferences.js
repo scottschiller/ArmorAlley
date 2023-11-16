@@ -190,6 +190,12 @@ function PrefsManager() {
       'gravestones_vehicles'
     ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
 
+    // ...and, enhanced FX.
+    // TODO: one method for all this stuff.
+    if (gamePrefs.radar_enhanced_fx) {
+      events.onPrefChange['radar_enhanced_fx'](gamePrefs.radar_enhanced_fx);
+    }
+
     // special case: apply BnB "VS" immediately.
     dom.oBnB.addEventListener('change', (e) =>
       events.onPrefChange['bnb'](e.target.checked)
