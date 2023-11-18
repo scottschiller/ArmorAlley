@@ -494,7 +494,7 @@ const Turret = (options = {}) => {
         if (engineer.data.isEnemy === game.players.local.data.isEnemy) {
           game.objects.notifications.addNoRepeat(
             isCapture
-              ? 'You stated capturing a turret ⛳'
+              ? 'You started capturing a turret ⛳'
               : 'You started rebuilding a turret 🛠️'
           );
         } else {
