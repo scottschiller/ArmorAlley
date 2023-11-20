@@ -750,6 +750,7 @@ const Turret = (options = {}) => {
       engineerInteracting: false,
       engineerHitCount: 0,
       width: 10,
+      logicalWidth: TURRET_SCAN_RADIUS,
       height,
       halfWidth: 5,
       halfHeight: height / 2,

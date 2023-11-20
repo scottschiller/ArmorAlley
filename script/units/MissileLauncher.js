@@ -317,6 +317,7 @@ const MissileLauncher = (options = {}) => {
       fireModulus: FPS, // check every second or so
       fireModulus1X: FPS,
       width,
+      logicalWidth: MISSILE_LAUNCHER_SCAN_RADIUS,
       halfWidth: width / 2,
       height,
       halfHeight: height / 2,
