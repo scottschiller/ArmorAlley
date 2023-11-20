@@ -559,15 +559,16 @@ function hideTitleScreen(callback) {
 
   common.setVideo('vr-goggles-menu');
 
-  let overlay = document.getElementById('world-overlay');
-
   // remove overlay effects
   utils.css.add(game.dom.world, 'active');
   utils.css.remove(game.dom.world, 'welcome');
 
   function hideTitleScreenFinished(e) {
-    if (e.target === overlay && e.propertyName === 'opacity') {
-      overlay?.remove();
+    // wait for the fade to finish, specifically.
+    if (
+      e.target === game.objects.view.dom.gameMenu &&
+      e.propertyName === 'opacity'
+    ) {
 
       // and transition, too.
       game.objects.view.dom.worldWrapper.style.transition = '';
@@ -578,24 +579,34 @@ function hideTitleScreen(callback) {
       game.objects.view.dom.logo.remove();
       game.objects.view.dom.logo = null;
 
+      game.objects.view.dom.gameMenu.removeEventListener(
+        'transitionend',
+        hideTitleScreenFinished
+      );
       game.objects.view.dom.gameMenu.remove();
       game.objects.view.dom.gameMenu = null;
 
-      document.getElementById('world-noise-overlay').remove();
+      if (videoInterval) {
+        clearInterval(videoInterval);
+        videoInterval = null;
+        if (video) {
+          video.remove();
+          video = null;
+        }
+      }
+
+      document.getElementById('home-video-wrapper')?.remove();
+      document.getElementById('world-noise-overlay')?.remove();
 
       game.data.started = true;
-      overlay?.removeEventListener('transitionend', hideTitleScreenFinished);
-
-      overlay = null;
 
       callback?.();
     }
   }
 
-  utils.css.add(overlay, 'fade-out');
-  utils.css.add(game.objects.view.dom.gameMenu, 'fade-out');
 
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
+  game.objects.view.dom.gameMenu.addEventListener(
 
   // testing
   const winloc = window.location.toString();
