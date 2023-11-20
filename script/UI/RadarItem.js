@@ -95,10 +95,11 @@ function RadarItem(options) {
       (radius / worldWidth) * game.objects.view.data.browser.width * 2
     }px`;
 
+    const height = (radius / worldHeight) * game.objects.radar.data.height;
     // height is always fixed.
-    oScanNode.style.height = `${
-      (radius / worldHeight) * 2 * game.objects.radar.data.height
-    }px`;
+    oScanNode.style.height = `${height}px`;
+
+    oScanNode.style.borderRadius = `${height}px ${height}px 0 0`;
   }
 
   function resizeWidth(obj) {
