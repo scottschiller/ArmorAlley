@@ -1070,6 +1070,9 @@ const common = {
 
     const { dom, data } = exports;
 
+    // don't resize to 0x0; handled by CSS.
+    if (data.dead) return;
+
     const radarScanNode = radarItem?.dom?.oScanNode;
 
     const scanNode = dom.oScanNode;
@@ -1105,9 +1108,13 @@ const common = {
 
     if (!oScanNode) return;
 
-    data.logicalWidth = radius;
+    exports.data.logicalWidth = radius;
 
-    oScanNode.style.width = oScanNode.style.height = `${radius * 2}px`;
+    oScanNode.style.width = `${radius * 2}px`;
+    oScanNode.style.height = `${radius}px`;
+
+    // border radius shenanigans
+    oScanNode.style.borderRadius = `${radius}px ${radius}px 0 0`;
   }
 };
 
