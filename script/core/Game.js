@@ -62,7 +62,6 @@ import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
 import { common } from './common.js';
 import { StarController } from '../elements/StarController.js';
-import { Star } from '../elements/Star.js';
 import { Envelope } from '../UI/Envelope.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
@@ -928,7 +927,6 @@ const game = (() => {
     'smoke': [],
     'terrain-item': [],
     'radar': null,
-    'star': [],
     'starController': null,
     'inventory': null,
     'tutorial': null,
@@ -964,7 +962,6 @@ const game = (() => {
     'shrapnel': Shrapnel,
     'smart-missile': SmartMissile,
     'super-bunker': SuperBunker,
-    'star': Star,
     'turret': Turret,
     'tank': Tank,
     'van': Van

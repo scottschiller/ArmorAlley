@@ -198,6 +198,8 @@ const View = () => {
       game.objects.joystick.reset();
       game.players.local.centerView();
     }
+
+    game.objects.starController?.resize();
   }
 
   function setTipsActive(active) {

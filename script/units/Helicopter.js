@@ -785,7 +785,7 @@ const Helicopter = (options = {}) => {
         sprites.moveWithScrollOffset(exports);
 
         // stars, too.
-        game.objects.starController?.reset(data.isEnemy);
+        game.objects.starController?.reset();
 
         // good time to do some DOM pruning, etc.
         if (game.objects.queue) {

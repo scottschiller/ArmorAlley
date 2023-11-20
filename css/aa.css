@@ -6879,6 +6879,25 @@ span.no-emoji-substitution {
   border-right: none;
 }
 
+#stars {
+  position: absolute;
+  /* offset for radar */
+  top: 8%;
+  left: 0;
+  width: 100%;
+  /* stretch down to bottom bar */
+  height: 85.5%;
+  opacity: 0;
+}
+
+body.loaded #stars {
+  transition: opacity 0.75s ease-in-out;
+}
+
+body.loaded #stars.fade-in {
+  opacity: 1;
+}
+
 @keyframes animate-transform-sprite-engineer-headbang-bnb {
   0% {
     transform: translate3d(0, 0, 0);
