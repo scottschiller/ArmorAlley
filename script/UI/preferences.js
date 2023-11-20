@@ -64,7 +64,7 @@ const defaultPrefs = {
   'gravestones_infantry': demo || false,
   'gravestones_vehicles': demo || false,
   'landing_pads_on_radar': true,
-  'radar_enhanced_fx': false,
+  'radar_enhanced_fx': demo || isMobile || false,
   'last_battle': null,
   'super_bunker_arrows': true,
   'show_inventory': true,
