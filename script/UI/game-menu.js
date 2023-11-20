@@ -1,7 +1,7 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { GAME_SPEED, isMobile, searchParams } from '../core/global.js';
+import { demo, GAME_SPEED, isMobile, searchParams } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
@@ -13,6 +13,8 @@ import {
 } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
+let video;
+
 // game menu / home screen
 let description;
 let defaultDescription;
@@ -22,16 +24,18 @@ let lastHTML;
 let menu;
 let optionsButton;
 let oSelect;
+let videoInterval;
 
 let didBNBIntro;
 let gameMenuActive;
 
 let originalSubTitle;
-
-const battle = searchParams.get('battle');
 let lastBattle;
 
+const battle = searchParams.get('battle');
+
 const autoStart = searchParams.get('start');
+
 const gameTypeParam = searchParams.get('gameType');
 
 let customLevel = searchParams.get('customLevel');
@@ -94,6 +98,20 @@ function init() {
     // "campaign mode" - hide the menu, minimal logo on start.
     utils.css.add(document.body, 'auto-start');
   }
+
+  if (demo) {
+    // special mode for making demo videos of UI
+    utils.css.add(document.body, 'demo');
+  }
+
+  if (autoStart || demo) {
+    // hackish: don't show the intro video at all.
+    document.getElementById('home-video-wrapper').remove();
+  } else {
+    video = document.getElementById('home-menu-video');
+  }
+
+  utils.css.add(document.body, 'loaded');
 
   // hackish: override inline HTML style
   menu.style.visibility = 'unset';
@@ -386,6 +404,42 @@ function formClick(e) {
 
   if (!target) return;
 
+  // home-screen video
+  // TODO: DRY
+  if (video && target.tagName === 'DIV') {
+    // reinforce auto-loop
+    if (videoInterval) clearInterval(videoInterval);
+    if (video.muted) {
+      video.muted = false;
+      video.volume = 0;
+      // fade volume in
+      const targetVolume = gamePrefs.volume || 1;
+      videoInterval = setInterval(() => {
+        video.volume = Math.min(targetVolume, video.volume + 0.03);
+        if (video.volume >= targetVolume) {
+          clearInterval(videoInterval);
+          videoInterval = null;
+        }
+      }, 20);
+    } else {
+      if (videoInterval) clearInterval(videoInterval);
+      videoInterval = setInterval(() => {
+        video.volume = Math.max(0, video.volume - 0.03);
+        if (video.volume <= 0) {
+          clearInterval(videoInterval);
+          videoInterval = null;
+          video.muted = true;
+        }
+      }, 20);
+    }
+    if (video.paused) {
+      video.play();
+      video.addEventListener('ended', (e) => {
+        e.target.currentTime = 0;
+      });
+    }
+  }
+
   // note: this can run when the prefs modal is up, too - just looking for actions e.g., start network game.
 
   const action = target.action || target.getAttribute('data-action');
@@ -604,6 +658,18 @@ function hideTitleScreen(callback) {
     }
   }
 
+  // fade video volume, if it was playing.
+  // TODO: DRY
+  if (video && !video.muted) {
+    if (videoInterval) clearInterval(videoInterval);
+    videoInterval = setInterval(() => {
+      video.volume = Math.max(0, video.volume - 0.03);
+      if (video.volume <= 0) {
+        clearInterval(videoInterval);
+        videoInterval = null;
+      }
+    }, 20);
+  }
 
   overlay.addEventListener('transitionend', hideTitleScreenFinished);
   game.objects.view.dom.gameMenu.addEventListener(

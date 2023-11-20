@@ -1254,6 +1254,44 @@ body.bnb #tv-display.widescreen #tv {
   width: 290px;
 }
 
+#home-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  /* hide, for now. */
+  opacity: 0;
+}
+
+body.loaded #home-video-wrapper {
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+}
+
+body.game-started #home-video-wrapper,
+body.edit-mode #home-video-wrapper {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+
+#home-menu-video {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: auto;
+  /* slightly over, vertical align tweak */
+  height: 100.15%;
+  aspect-ratio: 16 / 9;
+  transform: translate3d(-50%, -100%, 0);
+}
+
+#home-menu-video video {
+  /* prevent controls, hover + pop-out etc. */
+  pointer-events: none;
+}
+
 #world-wrapper.incoming-smart-missile {
   border-color: #fff;
 }

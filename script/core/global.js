@@ -45,6 +45,9 @@ const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
 const isWindows = !!ua.match(/win/i); // typically, 'win32'
 const isMac = !!ua.match(/mac/i) && !isWindows; // note: macIntel reported even on Apple M2 silicon as of 11/2023.
 
+// special use, for recording screencasts
+const demo = searchParams.get('demo');
+
 /**
  * 11/2023: Experimental iPad hack (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
  * Test for Safari, `TouchEvent`, and `navigator.maxTouchPoints`.
@@ -417,6 +420,7 @@ export {
   clientFeatures,
   defaultSeed,
   defaultSeeds,
+  demo,
   forceAppleMobile,
   getTypes,
   parseTypes,

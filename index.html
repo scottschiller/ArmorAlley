@@ -272,6 +272,14 @@
   <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
   <body style="background: #000; overflow: hidden">
     <canvas id="stars"></canvas>
+
+    <div id="home-video-wrapper">
+      <video id="home-menu-video" autoplay muted loop playsinline width="100vw">
+        <source src="video/aa_preview_1920x1080.mp4" type="video/mp4" />
+        <source src="video/aa_preview_1920x1080.webm" type="video/webm" />
+      </video>
+    </div>
+
     <!-- To reduce "Cumulative Layout Shift", initially hide until first resize / scale / layout. -->
     <div id="aa" style="visibility: hidden">
       <div id="world-wrapper">
