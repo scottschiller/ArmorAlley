@@ -96,7 +96,7 @@ const Tutorial = () => {
 
     common.setFrameTimeout(
       () => utils.css.add(dom.oTutorialWindow, css.active),
-      1000
+      5000
     );
 
     addStep({
