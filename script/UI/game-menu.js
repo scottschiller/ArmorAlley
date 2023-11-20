@@ -671,8 +671,13 @@ function hideTitleScreen(callback) {
     }, 20);
   }
 
-  overlay.addEventListener('transitionend', hideTitleScreenFinished);
   game.objects.view.dom.gameMenu.addEventListener(
+    'transitionend',
+    hideTitleScreenFinished
+  );
+
+  utils.css.add(game.objects.view.dom.gameMenu, 'fade-out');
+  utils.css.add(document.getElementById('stars'), 'fade-in');
 
   // testing
   const winloc = window.location.toString();
