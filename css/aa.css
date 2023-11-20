@@ -1008,6 +1008,11 @@ body.is_safari:not(.is-mobile) #queue {
   visibility: hidden; /* initially hide, to prevent visible opacity flash */
 }
 
+body.loaded #radar {
+  opacity: 1;
+  visibility: visible;
+}
+
 #radar,
 #radar-jammed-overlay {
   left: 0;
@@ -2792,10 +2797,10 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 body:not(.game-over) #world-wrapper.jammed #radar {
-  display: none;
-  /* better? */
+  /* TODO: review, $$$? */
   /* exception: allow the radar to show, even if jammed, when the game is over. */
-  visibility: hidden;
+  /* opacity should be fast, performance-wise, and smooth. */
+  opacity: 0;
 }
 
 body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield,
