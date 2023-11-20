@@ -457,7 +457,7 @@ const Turret = (options = {}) => {
         objects.cornholio?.hide();
       } else {
         game.objects.notifications.add('You captured a turret ⛳');
-        if (sounds.bnb.cornholioAnnounce) {
+        if (gamePrefs.bnb && sounds.bnb.cornholioAnnounce) {
           playSound(sounds.bnb.cornholioAnnounce, exports, {
             onplay: (sound) => {
               game.objects.notifications.add(data.bnbAnnounceText);
