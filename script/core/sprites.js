@@ -271,9 +271,9 @@ const sprites = {
      */
     if (target.data.logicalWidth) {
       return (
-        target.data.x + target.data.logicalWidth >=
+        target.data.x + target.data.width + target.data.logicalWidth >=
           game.objects.view.data.battleField.scrollLeft &&
-        target.data.x - target.data.logicalWidth <
+        target.data.x - target.data.width - target.data.logicalWidth <
           game.objects.view.data.battleField.scrollLeftWithBrowserWidth
       );
     }
@@ -328,9 +328,7 @@ const sprites = {
       }
 
       // callback, if defined
-      if (o.isOnScreenChange) {
-        o.isOnScreenChange(o.data.isOnScreen);
-      }
+      o.isOnScreenChange?.(o.data.isOnScreen);
     } else if (o.data.isOnScreen || o.data.isOnScreen === null) {
       o.data.isOnScreen = false;
 
