@@ -708,7 +708,6 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
 }
 
 #world-wrapper {
-  background: #000;
   /* mac style - and hide until game start */
   border-bottom: 2px solid #875400;
   font-size: 11px;
@@ -723,6 +722,7 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
 
 body.game-started #world-wrapper,
 body.edit-mode #world-wrapper {
+  transition-property: filter;
   border-bottom-color: #875400;
 }
 
