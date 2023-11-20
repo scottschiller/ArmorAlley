@@ -1020,6 +1020,9 @@ body.is_safari:not(.is-mobile) #queue {
   height: 100%;
   pointer-events: none;
   z-index: 11;
+}
+
+body.radar_enhanced_fx #radar-jammed-overlay {
   transition: mix-blend-mode 0.5s ease-in-out;
 }
 
@@ -1038,12 +1041,15 @@ body.bnb .tv-noise-overlay {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+body.loaded #radar-jammed-overlay .noise,
+body.loaded #world-noise-overlay .noise {
   transition: opacity 0.25s ease-in;
 }
 
 #radar-jammed-overlay .noise,
 #world-noise-overlay .noise {
-  background-color: rgba(255, 255, 255, 0.25);
   background-image: url(../image/noise-greyscale.png);
   background-size: 150px 150px;
   image-rendering: optimizeSpeed;
@@ -1060,9 +1066,15 @@ body.bnb .tv-noise-overlay {
 }
 
 /* note: radar jammed, plus game screen overlays */
-body.is-mobile #radar-jammed-overlay.active .noise,
+body.demo.radar_enhanced_fx #radar-jammed-overlay.active .noise,
+body.demo.radar_enhanced_fx #world-noise-overlay .noise {
+  /* always run, reduce hit on jam start? */
+  background-color: rgba(0, 0, 0, 0.25);
+  animation: 1s steps(15) infinite both noise;
+}
+
+/* note: radar jammed, plus game screen overlays */
 body.radar_enhanced_fx #radar-jammed-overlay.active .noise,
-body.is-mobile #world-noise-overlay .noise,
 body.radar_enhanced_fx #world-noise-overlay .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
   background-color: rgba(0, 0, 0, 0.25);
@@ -1070,16 +1082,20 @@ body.radar_enhanced_fx #world-noise-overlay .noise {
   opacity: 1;
 }
 
-/* once game is over, unsure jamming effect is disabled for legibility. */
-body.game-over #radar-jammed-overlay .noise {
-  opacity: 0;
+body.game-over.radar_enhanced_fx #radar-jammed-overlay .noise {
+  opacity: 0.25;
+}
+
+body.is_safari.game-over.is-mobile #radar-jammed-overlay {
+  /* Safari may fail to render the overlay w/mix-blend-mode at game over. */
+  mix-blend-mode: normal !important;
+  opacity: 0.5;
 }
 
 /**
  * iOS GPUs should be able to handle full-screen overlays,
  * higher "frame rate", and filters for a more subtle effect.
  */
-body.is-mobile #radar-jammed-overlay,
 body.radar_enhanced_fx #radar-jammed-overlay {
   mix-blend-mode: soft-light;
 }
@@ -1120,6 +1136,7 @@ body.game-paused .tv-noise-overlay {
 
 #world-noise-overlay {
   position: absolute;
+  /* radar offset */
   top: 8%;
   bottom: 0px;
   left: 0px;
@@ -1130,14 +1147,11 @@ body.game-paused .tv-noise-overlay {
 }
 
 /* special case: home screen, game menu. */
-body.is-mobile #world-noise-overlay,
 body.radar_enhanced_fx #world-noise-overlay {
-  opacity: 0.5;
+  opacity: 0.35;
   mix-blend-mode: soft-light;
 }
 
-body.is-mobile.game-started #world-noise-overlay,
-body.is-mobile.edit-mode #world-noise-overlay,
 body.radar_enhanced_fx.game-started #world-noise-overlay,
 body.radar_enhanced_fx.edit-mode #world-noise-overlay {
   transition: opacity 0.75s ease-in-out;
@@ -1263,6 +1277,16 @@ body.edit-mode #home-video-wrapper {
 
 #world-wrapper.incoming-smart-missile {
   border-color: #fff;
+}
+
+body.demo #radar-jammed-overlay {
+  /* don't animate in radar area, waste of video bitrate :P */
+  top: 8%;
+}
+
+body.demo #world-noise-overlay {
+  /* smoother transition, maybe? */
+  will-change: opacity;
 }
 
 #player-status-bar {

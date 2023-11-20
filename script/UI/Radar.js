@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
 import {
+  demo,
   isFirefox,
   isMobile,
   isSafari,
@@ -125,6 +126,7 @@ const Radar = () => {
       return result;
     }
 
+    // TODO: review.
     // if radar is jammed, items will be display: none and layout can't be read. bail.
     if (data.isJammed) return itemObject;
 
@@ -242,6 +244,7 @@ const Radar = () => {
 
     updateOverlay();
 
+    // $$$ - watch performance.
     utils.css.add(game.objects.view.dom.worldWrapper, css.jammed);
 
     if (!gamePrefs.sound) return;
@@ -310,11 +313,15 @@ const Radar = () => {
 
     if (!data.isJammed) {
       if (o) {
+        // $$$
         utils.css.remove(o, 'active');
-        common.setFrameTimeout(() => {
-          o.remove();
-          o = null;
-        }, 1024);
+        // reduce layer cost?
+        if (!gamePrefs.radar_enhanced_fx) {
+          common.setFrameTimeout(() => {
+            o.remove();
+            o = null;
+          }, 1024);
+        }
       }
       return;
     }
@@ -323,18 +330,17 @@ const Radar = () => {
       o = document.createElement('div');
       o.id = id;
       o.innerHTML = '<div class="noise"></div>';
-
       document.body.appendChild(o);
-
-      common.setFrameTimeout(() => {
-        if (!o) return;
-        let noiseCSS = ['active'];
-        // useful for when screencasting / recording / streaming - this effect can kill framerate.
-        if (window.location.href.match(/staticRadar/i)) noiseCSS.push('static');
-        utils.css.add(o, ...noiseCSS);
-        o = null;
-      }, 128);
     }
+
+    common.setFrameTimeout(() => {
+      if (!o) return;
+      let noiseCSS = ['active'];
+      // useful for when screencasting / recording / streaming - this effect can kill framerate.
+      if (window.location.href.match(/staticRadar/i)) noiseCSS.push('static');
+      utils.css.add(o, ...noiseCSS);
+      o = null;
+    }, 128);
   }
 
   function stopJamming() {
@@ -342,6 +348,7 @@ const Radar = () => {
 
     updateOverlay(data.isJammed);
 
+    // $$$
     utils.css.remove(game.objects.view.dom.worldWrapper, css.jammed);
 
     if (sounds.radarJamming) {
@@ -478,6 +485,9 @@ const Radar = () => {
 
       setIncomingMissile(hasEnemyMissile, newestMissile);
     }
+
+    // bail early, no radar UI in demo mode.
+    if (demo) return;
 
     // don't animate when radar is jammed.
     // avoid lots of redundant style recalculations.
@@ -668,7 +678,6 @@ const Radar = () => {
     objects,
     removeItem: removeRadarItem,
     reset: reset,
-    show: show,
     setStale,
     startJamming,
     stopJamming
