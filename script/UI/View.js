@@ -128,11 +128,22 @@ const View = () => {
 
     applyScreenScale();
 
-    const width = window.innerWidth || document.body.clientWidth;
+    /**
+     * Conservative window coordinate checks.
+     * iOS Safari is the one to watch out for,
+     * following an orientation change event.
+     */
+    const width =
+      document.documentElement.clientWidth ||
+      window.innerWidth ||
+      document.body.clientWidth;
+    const height =
+      document.documentElement.clientHeight ||
+      window.innerHeight ||
+      document.body.clientHeight;
 
     data.browser.width = width / data.screenScale;
-    data.browser.height =
-      (window.innerHeight || document.body.clientHeight) / data.screenScale;
+    data.browser.height = height / data.screenScale;
 
     data.browser.eighthWidth = data.browser.width / 8;
     data.browser.fractionWidth = data.browser.width / 3;
@@ -1349,18 +1360,7 @@ const View = () => {
     resize() {
       refreshCoords();
 
-      /**
-       * Bug mitigation: it seems iOS Safari may need a delay for proper window coordinates to hit.
-       * Ergo: if we have an orientation change, try optimistically: next frame + longer delay.
-       * It's possible we don't have an orientation change event before game start -
-       * so, the first rotate could be risky.
-       */
-      if (data.browser.hasOrientationChange) {
-        window.requestAnimationFrame(refreshCoords);
-        window.setTimeout(refreshCoords, 500);
-      }
-
-      if (game.objects.editor) game.objects.editor.events.resize();
+      game.objects.editor?.events?.resize();
 
       game.objects.gameLoop.resetFPS();
     },
