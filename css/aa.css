@@ -2803,14 +2803,18 @@ body:not(.game-over) #world-wrapper.jammed #radar {
   opacity: 0;
 }
 
-body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield,
-body:not(.game-over).is-mobile #world-wrapper.jammed #battlefield {
+body:not(.game-over).radar_enhanced_fx #world-wrapper #battlefield {
+  /* optimization? */
+  will-change: filter;
+  filter: blur(0px);
+}
+
+body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield {
   /* first, assign a "safe" default - likely to be overridden. */
   filter: blur(0.33px);
 }
 
-body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield,
-body:not(.game-over).is-mobile #world-wrapper.jammed #battlefield {
+body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield {
   /**
    * This number is affected by transforms, but not zoom-based scaling.
    * Therefore, offset this filter using the transform scale (if set.)
@@ -2826,8 +2830,10 @@ body:not(.game-over).is_safari.radar_enhanced_fx
 }
 
 /* Finally, Safari *mobile* seems to need a larger value. */
-body:not(.game-over).is_safari.is-mobile #world-wrapper.jammed #battlefield {
-  filter: blur(calc(1px * (1 / var(--game-scale-transform))));
+body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
+  #world-wrapper.jammed
+  #battlefield {
+  filter: blur(calc(0.5px * (1 / var(--game-scale-transform))));
 }
 
 #radar .sprite {
