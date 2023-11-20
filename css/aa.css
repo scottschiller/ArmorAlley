@@ -700,6 +700,7 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
 #game-description {
   color: #ccc;
   font-size: calc(5px * var(--menu-scale));
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
   margin: 0 auto;
   margin-top: calc(3px * var(--menu-scale));
   /* reserve at least two lines */
