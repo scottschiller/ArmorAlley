@@ -1312,6 +1312,17 @@ body.edit-mode #home-video-wrapper {
   border-color: #fff;
 }
 
+body.demo #home-video-wrapper,
+body.demo #notification-toasts,
+body.demo #stats-bar,
+body.demo #game-tips,
+body.demo #help,
+body.demo #logo,
+body.demo #radar,
+body.demo #queue {
+  display: none !important;
+}
+
 body.demo #radar-jammed-overlay {
   /* don't animate in radar area, waste of video bitrate :P */
   top: 8%;
@@ -1320,6 +1331,10 @@ body.demo #radar-jammed-overlay {
 body.demo #world-noise-overlay {
   /* smoother transition, maybe? */
   will-change: opacity;
+}
+
+body.demo #aa {
+  cursor: none !important;
 }
 
 #player-status-bar {
