@@ -3818,7 +3818,6 @@ body.game-started #game-tips.active .tips-container {
 }
 
 body.is-mobile #game-tips #game-announcements {
-  background: rgba(0, 0, 0, 0.5);
   border-radius: 1em;
   padding: 4px;
 }
