@@ -1248,6 +1248,38 @@ body.bnb #tv-display.widescreen #tv {
   opacity: 0;
 }
 
+#battlefield-overlay-left,
+#battlefield-overlay-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5%;
+}
+
+#battlefield-overlay-left,
+#battlefield-overlay-right {
+  /* sit underneath fuel bar */
+  top: 11%;
+  width: 2%;
+  z-index: 10;
+  /* a rare occurrence - for iOS Safari so these render correctly on top. */
+  transform: scale3d(1, 1, 1);
+}
+
+/* don't show these on realy small portrait displays. */
+
+@media screen and (min-width: 640px) {
+  body.game-started #battlefield-overlay-left {
+    left: -1px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0));
+  }
+
+  body.game-started #battlefield-overlay-right {
+    right: -1px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.95));
+  }
+}
+
 body.loaded #home-video-wrapper {
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
