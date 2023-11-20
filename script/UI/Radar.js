@@ -437,12 +437,6 @@ const Radar = () => {
     });
   }
 
-  function show() {
-    if (!dom?.radar) return;
-    dom.radar.style.visibility = 'visible';
-    dom.radar.style.opacity = 1;
-  }
-
   function animate() {
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
 

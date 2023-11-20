@@ -285,10 +285,7 @@ function init() {
           action: 'start-game'
         }
       });
-      game.objects.radar.show();
     }, 1000);
-  } else {
-    game.objects.radar.show();
   }
 }
 
