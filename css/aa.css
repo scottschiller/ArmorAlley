@@ -2682,7 +2682,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   height: 15px;
   overflow: hidden;
   width: 48px;
-  z-index: 4; /* show on top of landing pad */
+  z-index: 11; /* show on top of notifications, and landing pad - but not clouds. */
 }
 
 .helicopter .transform-sprite {
@@ -3564,7 +3564,7 @@ body:not(.game-started) .scan-node {
   left: 0;
   top: 0;
   /* clouds hide helicopters. */
-  z-index: 5;
+  z-index: 12;
 }
 
 .cloud1 {
@@ -4180,7 +4180,7 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 6; /* sit atop clouds */
+  z-index: 11; /* sit atop clouds */
 }
 
 body.is-mobile #mobile-controls {
@@ -4499,6 +4499,8 @@ body:not(.is-mobile) .mobile-only {
   right: 8px;
   top: 112px;
   width: 14em;
+  /* sit on top of L/R screen gradients */
+  z-index: 11;
 }
 
 body.is_safari:not(.is-mobile) #notification-toasts {
@@ -6532,7 +6534,7 @@ body.game-over .target-ui {
   opacity: 0;
   transition-property: transform, filter, opacity;
   /* sit on top of announcements, etc. */
-  z-index: 10;
+  z-index: 11;
 }
 
 #battle-over-letter.active {
