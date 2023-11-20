@@ -2179,9 +2179,16 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 }
 
 .smart-missile-tracking {
-  /* turn "hot" fast */
-  transition-duration: 0.25s;
   filter: drop-shadow(0 0 5px #ff3333);
+}
+
+.smart-missile-tracking:not(.turret):not(.parachute-infantry) {
+  /**
+   * Turn "hot" fast, with a few exceptions -
+   * Turrets and parachute infantry need to keep
+   * their own timings for animation / transitions.
+   */
+  transition-duration: 0.25s;
 }
 
 .smart-missile-tracking-active:after {
