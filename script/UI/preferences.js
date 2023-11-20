@@ -2,6 +2,7 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
   defaultMissileMode,
+  demo,
   GAME_SPEED,
   GAME_SPEED_INCREMENT,
   GAME_SPEED_MAX,
@@ -60,8 +61,8 @@ const defaultPrefs = {
   'weather': '', // [none|rain|hail|snow|turd]
   'domfetti': true,
   'gravestones_helicopters': true,
-  'gravestones_infantry': false,
-  'gravestones_vehicles': false,
+  'gravestones_infantry': demo || false,
+  'gravestones_vehicles': demo || false,
   'landing_pads_on_radar': true,
   'radar_enhanced_fx': false,
   'last_battle': null,
