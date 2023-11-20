@@ -1675,7 +1675,6 @@ body.is_firefox .sprite.shrapnel {
 }
 
 .smoke,
-.star,
 .transform-sprite {
   left: 0;
   position: absolute;
@@ -1697,14 +1696,7 @@ body.is_firefox .sprite.shrapnel {
 .turret .sub-sprite {
   /* for .smart-missile-tracking filter */
   transition: filter 1s ease-in-out;
-  transition-timing-function: cubic-bezier(.45, .48, .25, 1.57);
-}
-
-.star {
-  width: 0.75px;
-  height: 0.75px;
-  border-radius: 100%;
-  contain: strict;
+  transition-timing-function: cubic-bezier(0.45, 0.48, 0.25, 1.57);
 }
 
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
