@@ -1,5 +1,11 @@
 import { game } from '../core/Game.js';
-import { isMobile, oneOf, rnd, searchParams } from '../core/global.js';
+import {
+  isMobile,
+  isiPhone,
+  oneOf,
+  rnd,
+  searchParams
+} from '../core/global.js';
 
 const StarController = () => {
   // "Star Control" (star controller.) Ideally, version ][ of course. ;)
@@ -190,7 +196,9 @@ const StarController = () => {
     for (let i = 0, j = data.starCount; i < j; i++) {
       color = oneOf(colors);
       opacity = 0.15 + rnd(0.85);
-      radius = 0.75 + rnd(0.75);
+      // scale down differently on desktop, vs. iPhone, vs. mobile - "the pixels look big."
+      // this may be due to some other scaling shenanigans.
+      radius = (0.75 + rnd(0.75)) * isiPhone ? 0.5 : isMobile ? 0.85 : 0.75;
       data.stars[i] = {
         data: {
           x: rnd(data.width),
