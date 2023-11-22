@@ -6535,8 +6535,8 @@ body.game-over .target-ui {
   transition: 0.5s ease-in-out;
   opacity: 0;
   transition-property: transform, filter, opacity;
-  /* sit on top of announcements, etc. */
-  z-index: 11;
+  /* sit on top of announcements, clouds etc. */
+  z-index: 12;
 }
 
 #battle-over-letter.active {
