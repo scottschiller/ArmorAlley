@@ -121,26 +121,36 @@ const View = () => {
   }
 
   function refreshCoords() {
-    const hasNewScale = updateScreenScale();
-
-    // avoid redundant work during gameplay.
-    if (game.started && !hasNewScale) return;
-
-    applyScreenScale();
+    let width, height;
 
     /**
-     * Conservative window coordinate checks.
-     * iOS Safari is the one to watch out for,
-     * following an orientation change event.
+     * Various calculations depend on the current screen scale,
+     * which is based on screen height. If updated, it will be applied.
      */
-    const width =
-      document.documentElement.clientWidth ||
-      window.innerWidth ||
-      document.body.clientWidth;
-    const height =
-      document.documentElement.clientHeight ||
-      window.innerHeight ||
-      document.body.clientHeight;
+
+    const hasNewScale = updateScreenScale();
+
+    if (isMobile) {
+      /**
+       * tl;dr, safer(?) to measure a w/h 100% <div> on iOS Safari.
+       * It seems there's some inconsistency in measuring window w/h
+       * following an `orientationchange` event on iOS Safari.
+       *
+       * Introducing a delay helped, but that's undesirable.
+       * This may be connected to the browser UI, address bar etc.
+       * Most likely, I'm just doing something wrong. :X
+       */
+      const { aa } = dom;
+      if (!aa) {
+        console.warn('refreshCoords(): WTF no AA?');
+        return;
+      }
+      width = aa.offsetWidth;
+      height = aa.offsetHeight;
+    } else {
+      width = window.innerWidth;
+      height = window.innerHeight;
+    }
 
     data.browser.width = width / data.screenScale;
     data.browser.height = height / data.screenScale;
@@ -155,6 +165,14 @@ const View = () => {
 
     data.world.x = 0;
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
+
+    data.browser.screenWidth = width;
+    data.browser.screenHeight = height;
+
+    // avoid redundant work during gameplay.
+    if (game.started && !hasNewScale) return;
+
+    applyScreenScale();
 
     if (dom.logo) {
       // $$$
@@ -726,7 +744,7 @@ const View = () => {
 
     if (!keyCode) return false;
 
-    keyboardMonitor.keydown({ keyCode });
+    keyboardMonitor.keydown({ keyCode, fromAATouch: true });
 
     return true;
   }
@@ -809,7 +827,18 @@ const View = () => {
   function updateScreenScale() {
     if (disableScaling) return;
 
-    const innerHeight = window.innerHeight;
+    let innerHeight;
+
+    if (isMobile) {
+      if (!dom.aa) {
+        console.warn('updateScreenScale(): WTF no dom.aa?');
+        return;
+      }
+      innerHeight = dom.aa.offsetHeight;
+      dom.aa.offsetHeight;
+    } else {
+      innerHeight = window.innerHeight;
+    }
 
     let localWorldHeight = 410;
 
@@ -866,10 +895,7 @@ const View = () => {
 
       dom.worldWrapper._style.setProperty(
         'width',
-        `${Math.floor(
-          (window.innerWidth || document.body.clientWidth) *
-            (1 / data.screenScale)
-        )}px`
+        `${Math.floor(data.browser.screenWidth * (1 / data.screenScale))}px`
       );
 
       // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
@@ -1056,6 +1082,8 @@ const View = () => {
     ignoreMouseEvents: false,
     ignoreMouseMove: false,
     browser: {
+      screenWidth: 0,
+      screenHeight: 0,
       width: 0,
       eighthWidth: 0,
       fractionWidth: 0,
@@ -1387,6 +1415,12 @@ const View = () => {
       data.browser.isLandscape = isLandscape;
 
       refreshCoords();
+
+      if (isMobile && !game.data.started) {
+        // 11/2023: iOS Safari seems to need one more frame to get
+        // radar scale right on the home screen - here be dragons.
+        window.requestAnimationFrame(refreshCoords);
+      }
     }
   };
 
