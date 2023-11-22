@@ -323,8 +323,8 @@ body.is_safari #mtv-bnb-in {
   height: 100%;
   /* this will be overridden for mobile, landscape */
   aspect-ratio: 1/1;
+  max-width: 100%;
   max-width: 1024px;
-  max-height: 100vh;
   display: grid;
   align-content: center;
   /* always leave a little room */
@@ -346,12 +346,15 @@ body.is_safari #mtv-bnb-in {
   opacity: 1;
 }
 
+body.is-mobile #game-menu-wrapper {
+  /* always full-width on mobile. */
+  max-width: 100%;
+}
+
 @media screen and (orientation: landscape) {
   body.is-mobile #game-menu-wrapper {
     height: auto;
-    width: 100%;
     aspect-ratio: 16/9;
-    max-width: 100vw;
     /* leave room for address bar UI, etc. */
     max-height: 80vh;
     /* avoid overlapping radar area, whether the address bar is showing or not. */
