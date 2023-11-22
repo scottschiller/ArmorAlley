@@ -216,14 +216,13 @@ body.prefs-modal-open #game-menu-wrapper {
 }
 
 #aa {
-  cursor: crosshair;
-  cursor: url(../image/cursor-cross.png), crosshair;
-  height: 100%;
-  left: 0;
-  overflow: hidden;
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: url(../image/cursor-cross.png), crosshair;
 }
 
 #game-status,
