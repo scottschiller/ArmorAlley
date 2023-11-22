@@ -215,7 +215,7 @@ function getVolumeFromDistance(source, player, worldWidthScale = 1) {
   // based on two objects' distance from each other, return volume -
   // e.g., things far away are quiet, things close-up are loud.
   // `worldWidthScale` e.g., 0.5 = half the world distance.
-  if (!source || !player) return 100;
+  if (!source?.data?.x || !player?.data?.x) return 1;
 
   const scaledWorld = worldWidth * worldWidthScale;
 
@@ -228,7 +228,7 @@ function getVolumeFromDistance(source, player, worldWidthScale = 1) {
 
 function getPanFromLocation(source, player) {
   // rough panning based on distance from player, relative to world width
-  if (!source || !player) return 0;
+  if (!source?.data?.x || !player?.data?.x) return 0;
 
   let delta;
   let pan = 0;
@@ -307,15 +307,16 @@ function playSound(soundReference, target, soundOptions) {
     localOptions = common.mixin(localOptions, soundOptions);
   }
 
+  const playbackRate = target?.data?.playbackRate || 0;
+
   // playback speed based on object's `playbackRate`, OR, ±5% on playback speed, for variety
   if (!soundObject?.options?.fixedPlaybackRate) {
     localOptions.playbackRate =
-      (target?.data.playbackRate || 0.95 + Math.random() * 0.1) *
+      (playbackRate || 0.95 + Math.random() * 0.1) *
       (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
   } else {
     localOptions.playbackRate =
-      (target?.data.playbackRate || 1) *
-      (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
+      (playbackRate || 1) * (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
   }
 
   // HACK: need to fix and normalize sound options.

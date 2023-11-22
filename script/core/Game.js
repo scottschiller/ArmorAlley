@@ -726,25 +726,26 @@ const game = (() => {
       game.objects.inventory.startEnemyOrdering();
     }
 
+    let engineStarted;
+
     function startEngine() {
       // wait until available
       if (!sounds.helicopter.engine) return;
+      if (!engineStarted) {
+        const exports = null;
+        playSound(sounds.helicopter.engine, exports, {
+          onplay: () => (engineStarted = true)
+        });
 
-      playSound(sounds.helicopter.engine);
-
-      if (gamePrefs.bnb) {
-        playSound(
-          oneOf([sounds.bnb.letsKickALittleAss, sounds.bnb.heresACoolGame])
-        );
+        if (gamePrefs.bnb) {
+          playSound(
+            oneOf([sounds.bnb.letsKickALittleAss, sounds.bnb.heresACoolGame])
+          );
+        }
       }
-
-      utils.events.remove(document, 'click', startEngine);
     }
 
-    if (gamePrefs.sound) {
-      // wait for click or keypress, "user interaction"
-      utils.events.add(document, 'click', startEngine);
-    }
+    startEngine();
 
     game.objects.starController?.init();
   }
