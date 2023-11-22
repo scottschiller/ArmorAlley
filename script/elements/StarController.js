@@ -65,6 +65,12 @@ const StarController = () => {
     let scrollDelta =
       data.lastScrollLeft - game.objects.view.data.battleField.scrollLeft;
 
+    // hackish: if we've scrolled a huge distance, e.g,. helicopter died mid-way out and now back at base, just reset all stars.
+    if (Math.abs(scrollDelta) > game.objects.view.data.browser.width) {
+      resetStars();
+      return;
+    }
+
     // slight curvature to the world - scale it further down for narrow portrait screens, e.g., iPhone.
     const globeOffset = data.height / (data.width >= 420 ? 32 : 72);
 
