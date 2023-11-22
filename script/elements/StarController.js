@@ -32,10 +32,10 @@ const StarController = () => {
   };
 
   function getStarCount() {
-    // "at least," and more if windows are really big.
+    // if not specified, minimum or window width.
     return (
       parseInt(searchParams.get('stars'), 10) ||
-      Math.min(512, parseInt(window.innerWidth / 3))
+      Math.max(512, parseInt(window.innerWidth / 2, 10))
     );
   }
 
