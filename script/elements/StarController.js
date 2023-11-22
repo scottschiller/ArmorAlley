@@ -91,9 +91,12 @@ const StarController = () => {
       x += scrollDelta * data.stars[i].data.parallax;
 
       // wrap-around logic
-      if (x < 0) {
-        x = data.width - data.stars[i].data.diameter;
-      } else if (x + data.stars[i].data.diameter > data.width) {
+      if (scrollDelta < 0 && x < 0) {
+        x = data.width;
+      } else if (
+        scrollDelta > 0 &&
+        x + data.stars[i].data.diameter > data.width
+      ) {
         x = 0;
       }
 
