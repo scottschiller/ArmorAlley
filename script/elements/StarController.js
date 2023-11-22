@@ -122,7 +122,6 @@ const StarController = () => {
       ctx.fill();
     }
 
-    // update
     syncWithLeftScroll();
   }
 
