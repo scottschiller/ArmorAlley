@@ -1,6 +1,7 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
 import {
   clientFeatures,
+  FPS,
   FRAMERATE,
   GAME_SPEED,
   oneOf,
@@ -49,11 +50,67 @@ function isFastEnough(t1, t2) {
   );
 }
 
+function dropOff(x) {
+  // x from 0 to 1 returns from 1 to 0, with in-out easing.
+  // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+  // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+  return (Math.cos(Math.PI * x) + 1) / 2;
+}
+
+function easeInOutQuart(x) {
+  // hat tip: https://gizma.com/easing
+  return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
+}
+
+// TOOD: clean this up. :P
+let animateScrollActive;
+let animateScrollFrame = 0;
+let animateScrollDelta = 0;
+const animateScrollFrames = [];
+let animateScrollDuration;
+
+let decelerateScrollActive;
+let decelerateScrollFrame = 0;
+const decelerateScrollFrames = [];
+let decelerateScrollDuration;
+
 const View = () => {
   let css, data, dom, events, exports;
 
   const disableScaling = winloc.match(/noscal/i);
   let noPause = winloc.match(/noPause/i);
+
+  function animateLeftScrollTo(scrollX) {
+    if (animateScrollActive) return;
+    animateScrollActive = true;
+    animateScrollFrame = 0;
+    animateScrollDelta = data.battleField.scrollLeft - scrollX;
+    animateScrollDuration = FPS * 3 * (1 / GAME_SPEED);
+
+    for (let i = 0; i <= animateScrollDuration; i++) {
+      // 1/x, up to 1
+      animateScrollFrames[i] =
+        data.battleField.scrollLeft -
+        easeInOutQuart(i / animateScrollDuration) * animateScrollDelta;
+    }
+
+    // reset local stuff
+    game.players.local.data.scrollLeftVX = 0;
+    game.players.local.data.scrollLeft = 0;
+    data.battleField.scrollLeftVX = 0;
+    data.battleField.scrollLeft = 0;
+  }
+
+  function decelerateScroll() {
+    if (decelerateScrollActive) return;
+    decelerateScrollDuration = FPS * (1 / GAME_SPEED);
+    for (let i = 0; i <= decelerateScrollDuration; i++) {
+      // 1/x, up to 1
+      decelerateScrollFrames[i] = dropOff(i / decelerateScrollDuration);
+    }
+    decelerateScrollActive = true;
+    decelerateScrollFrame = 0;
+  }
 
   function setLeftScrollToPlayer(helicopter) {
     // just to be safe - only local.
@@ -506,6 +563,25 @@ const View = () => {
 
     if (!game.players.local) return;
 
+    if (animateScrollActive) {
+      // we're "warping" back to the landing pad for a respawn.
+      const override = true;
+      setLeftScroll(animateScrollFrames[animateScrollFrame], override);
+
+      animateScrollFrame++;
+
+      if (animateScrollFrame >= animateScrollFrames.length) {
+        animateScrollActive = false;
+        animateScrollFrame = 0;
+
+        data.scrollLeft = data.isEnemy
+          ? common.getLandingPadOffsetX(exports) -
+            game.objects.view.data.browser.halfWidth
+          : 0;
+        data.scrollLeftVX = 0;
+      }
+    }
+
     // don't scroll if helicopter is respawning, or not moving.
     if (
       !game.players.local.data.respawning &&
@@ -521,7 +597,25 @@ const View = () => {
       scrollAmount = mouseDelta / data.browser.halfWidth;
 
       // and scale
-      setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED);
+
+      // special case: slow down battlefield scroll after helicopter dies, then go back to base.
+      if (decelerateScrollActive) {
+        setLeftScroll(
+          scrollAmount *
+            data.maxScroll *
+            GAME_SPEED *
+            decelerateScrollFrames[decelerateScrollFrame]
+        );
+
+        decelerateScrollFrame++;
+        if (decelerateScrollFrame >= decelerateScrollFrames.length) {
+          decelerateScrollFrame = 0;
+          decelerateScrollActive = false;
+        }
+      } else if (!game.players.local.data.dead) {
+        // regular in-game scrolling, live chopper
+        setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED);
+      }
     }
   }
 
@@ -1429,10 +1523,12 @@ const View = () => {
 
   exports = {
     animate,
+    animateLeftScrollTo,
     applyScreenScale,
     bufferMouseInput,
     clearAnnouncement,
     data,
+    decelerateScroll,
     dom,
     events,
     handleChatInput,

@@ -1441,6 +1441,27 @@ const Helicopter = (options = {}) => {
 
     // don't respawn the enemy (CPU) chopper during tutorial mode.
     if (!tutorialMode || !data.isEnemy) {
+      if (data.isLocal) {
+        // animate back to home base.
+
+        // start animation after a delay...
+        window.setTimeout(() => {
+          // hackish: hard reset battlefield scroll
+          data.scrollLeft = data.isEnemy
+            ? common.getLandingPadOffsetX(exports) -
+              game.objects.view.data.browser.halfWidth
+            : 0;
+          data.scrollLeftVX = 0;
+
+          game.objects.view.animateLeftScrollTo(
+            common.getLandingPadOffsetX(exports) +
+              data.width * (1 / screenScale) -
+              game.objects.view.data.browser.halfWidth
+          );
+        }, 1000);
+      }
+
+      // by the time the above is almost finished, start proper respawn.
       common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
     }
 
