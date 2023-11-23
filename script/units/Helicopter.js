@@ -1441,7 +1441,7 @@ const Helicopter = (options = {}) => {
       common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
     }
 
-    // ensure we aren't doing anywhere.
+    // ensure we aren't going anywhere.
     data.vX = 0;
     data.vY = 0;
 
