@@ -1184,6 +1184,7 @@ const View = () => {
       if (
         data.ignoreMouseEvents ||
         data.ignoreMouseMove ||
+        game.players?.local?.data?.dead ||
         game.players?.local?.data?.isCPU
       )
         return;

@@ -1199,6 +1199,7 @@ const Helicopter = (options = {}) => {
 
       return;
     } else {
+      // finally, bring 'er up.
       resetAndRespawn();
     }
   }
@@ -1291,6 +1292,8 @@ const Helicopter = (options = {}) => {
     if (data.isLocal) {
       dropMissileTargets();
       reactToDamage(attacker);
+      // slow down and stop the battlefield scroll, if any.
+      game.objects.view.decelerateScroll();
     }
 
     if (
