@@ -310,9 +310,9 @@ const sprites = {
         o.dom._oRemovedParent = null;
       } else {
         if (o.dom.o.parentNode) {
-          // this is likely a pooled node, left in the DOM intentionally and re-used across objects.
-          // it does not need to be re-appended.
-          if (!o.data.domPool) {
+          // likely a pooled node re-used across objects, or a "preserved" node left in the DOM
+          // intentionally (e.g., local helicopter) and does not need to be re-appended.
+          if (!o.data.domPool && !o.data.preserveOffscreenDOM) {
             console.warn(
               'updateIsOnScreen(): WTF, on-screen node already appended?',
               o.data.type,
@@ -329,12 +329,14 @@ const sprites = {
 
       // callback, if defined
       o.isOnScreenChange?.(o.data.isOnScreen);
+
     } else if (o.data.isOnScreen || o.data.isOnScreen === null) {
       o.data.isOnScreen = false;
 
       // only do work if detaching node from live DOM
       // exclude pooled nodes from this; they are managed separately.
-      if (!o.data.poolNode && o.dom?.o?.parentNode) {
+      // special case: preseve local helicopter in DOM - for respawn, CSS animation purposes.
+      if (!o.data.poolNode && !o.data.preserveOffscreenDOM && o.dom?.o?.parentNode) {
         // detach, retaining parent node, for later re-append
         o.dom._oRemovedParent = o.dom.o.parentNode;
         o.dom.o.remove();
