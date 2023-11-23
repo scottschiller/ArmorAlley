@@ -117,8 +117,6 @@ const GameLoop = () => {
       sprites.moveWithScrollOffset(game.objects[TYPES.terrainItem][i]);
     }
 
-    game.objects.starController?.animate?.();
-
     if (isGameOver() && !data.gameStopped && data.battleOverFrameCount++ > 1) {
       data.gameStopped = true;
 
