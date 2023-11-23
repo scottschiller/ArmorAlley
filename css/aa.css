@@ -2661,8 +2661,8 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   background-size: contain;
   bottom: auto;
   top: 0;
-  /* all these things: rocks, graves, trees, barb wire etc. */
-  z-index: 5;
+  /* rocks, graves, trees, barb wire etc., all go on top of things. */
+  z-index: 11;
 }
 
 .left-arrow-sign,
