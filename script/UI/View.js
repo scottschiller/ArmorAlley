@@ -1532,6 +1532,7 @@ const View = () => {
     dom,
     events,
     handleChatInput,
+    isAnimateScrollActive: () => animateScrollActive,
     sendPlayerCoordinates,
     setAnnouncement,
     setLeftScroll,

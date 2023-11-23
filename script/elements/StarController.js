@@ -1,5 +1,6 @@
 import { game } from '../core/Game.js';
 import {
+  GAME_SPEED,
   isMobile,
   isiPhone,
   oneOf,
@@ -60,9 +61,6 @@ const StarController = () => {
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#fff';
 
-    const startAngle = 0;
-    const endAngle = Math.PI * 2;
-
     // wipe the slate clean, per se.
     ctx.clearRect(0, 0, data.width, data.height);
 
@@ -71,20 +69,28 @@ const StarController = () => {
     let scrollDelta =
       data.lastScrollLeft - game.objects.view.data.battleField.scrollLeft;
 
+    const absDelta = Math.abs(scrollDelta) * (1 / GAME_SPEED);
+
     // hackish: if we've scrolled a huge distance, e.g,. helicopter died mid-way out and now back at base, just reset all stars.
-    if (Math.abs(scrollDelta) > game.objects.view.data.browser.width) {
+    if (absDelta > game.objects.view.data.browser.width) {
       resetStars();
       return;
     }
 
+    /**
+     * "Engage." --Picard
+     * Also Picard: "Make it so."
+     */
+    data.warpEffect = game.objects.view.isAnimateScrollActive()
+      ? absDelta / 4
+      : absDelta / 5;
+
     // slight curvature to the world - scale it further down for narrow portrait screens, e.g., iPhone.
-    const globeOffset = data.height / (data.width >= 420 ? 32 : 72);
+    const globeOffset = data.height / (data.width >= 420 ? 16 : 72);
 
-    const chopperOffsetScale = data.height / 96;
+    const halfGlobeOffset = globeOffset / 2;
 
-    const chopperOffset =
-      (game.players.local.data.y / game.players.local.data.yMax) *
-      chopperOffsetScale;
+    let width;
 
     for (let i = 0; i < data.starCount; i++) {
       ctx.beginPath();
@@ -93,37 +99,36 @@ const StarController = () => {
 
       x = data.stars[i].data.x;
 
-      y = data.stars[i].data.y;
+      y = data.stars[i].data.y + halfGlobeOffset;
 
       var circleY =
         Math.sin(((data.width - x) / data.width) * Math.PI) * -globeOffset;
 
-      y += circleY - chopperOffset;
+      y += circleY;
 
       x += scrollDelta * data.stars[i].data.parallax;
 
+      width = data.stars[i].data.diameter + data.warpEffect;
+
       // wrap-around logic
-      if (scrollDelta < 0 && x < 0) {
+      if (scrollDelta < 0 && x + data.warpEffect < 0) {
         x = data.width;
-      } else if (
-        scrollDelta > 0 &&
-        x + data.stars[i].data.diameter > data.width
-      ) {
-        x = 0;
+      } else if (scrollDelta > 0 && x > data.width) {
+        x = 0 - width;
       }
 
       data.stars[i].data.x = x;
 
       ctx.moveTo(x, y);
 
-      /**
-       * arc(x, y, radius, startAngle, endAngle, counterclockwise)
-       * Draws an arc which is centered at `x, y` position with:
-       * radius `r` starting at `startAngle` and ending at `endAngle`
-       * going in the direction indicated by `counterclockwise`
-       * (defaulting to clockwise.)
-       */
-      ctx.arc(x, y, data.stars[i].data.radius, startAngle, endAngle, true);
+      // params: x, y, width, height, radii
+      ctx.roundRect(
+        x,
+        y,
+        data.stars[i].data.diameter + data.warpEffect,
+        data.stars[i].data.diameter,
+        [data.stars[i].data.radius]
+      );
 
       ctx.fill();
     }
