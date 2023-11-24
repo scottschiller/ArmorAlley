@@ -117,7 +117,7 @@ const Smoke = (options = {}) => {
     Object.assign(dom, data.domPool.dom);
 
     // realistically, some smoke should be behind objects
-    dom.o.style.zIndex = Math.random() >= 0.5 ? 0 : 4;
+    dom.o.style.zIndex = Math.random() >= 0.5 ? 0 : 11;
 
     // keep things centered when scaling
     dom.o._style.setProperty('transform-origin', '50% 50%');
