@@ -626,7 +626,8 @@ const SmartMissile = (options = {}) => {
       !data.expired &&
       (data.frameCount > data.expireFrameCount ||
         !objects.target ||
-        objects.target.data.dead)
+        objects.target.data.dead ||
+        game.data.battleOver)
     ) {
       utils.css.add(dom.o, css.expired);
       utils.css.add(radarItem.dom.o, css.expired);

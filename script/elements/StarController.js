@@ -85,6 +85,9 @@ const StarController = () => {
       ? absDelta / 4
       : absDelta / 5;
 
+    // bonus: gratuitous live streaking - per se.
+    if (game.data.battleOver) data.warpEffect *= 5;
+
     // slight curvature to the world - scale it further down for narrow portrait screens, e.g., iPhone.
     const globeOffset = data.height / (data.width >= 420 ? 16 : 72);
 

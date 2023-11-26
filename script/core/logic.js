@@ -252,13 +252,6 @@ function collisionCheckObject(options) {
 function collisionTest(collision, exports) {
   if (exports.data.frontZone === null || exports.data.rearZone === null) return;
 
-  // don't do collision detection during game-over sequence.
-  if (game.data.battleOver) {
-    // restore to original state
-    collision.targets = null;
-    return;
-  }
-
   // TODO: review, confirm and remove - no longer needed
   // hack: first-time run fix, as exports is initially undefined
   if (!collision.options.source) {
@@ -550,6 +543,8 @@ function enemyNearby(data, targets, triggerDistance) {
 }
 
 function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
+  if (game.data.battleOver) return;
+
   let i, j, result;
 
   const helicopter = game.objects[TYPES.helicopter];

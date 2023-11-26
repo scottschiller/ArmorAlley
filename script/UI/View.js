@@ -28,7 +28,6 @@ import {
   rubberChickenMode,
   bananaMode
 } from '../core/global.js';
-import { isGameOver } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { gameMenu } from './game-menu.js';
 import { net } from '../core/network.js';
@@ -58,10 +57,11 @@ function dropOff(x) {
   return (Math.cos(Math.PI * x) + 1) / 2;
 }
 
-function easeInOutQuart(x) {
+const easing = {
   // hat tip: https://gizma.com/easing
-  return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
-}
+  quart: (x) => (x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2),
+  quad: (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
+};
 
 // TOOD: clean this up. :P
 let animateScrollActive;
@@ -81,29 +81,35 @@ const View = () => {
   const disableScaling = winloc.match(/noscal/i);
   let noPause = winloc.match(/noPause/i);
 
-  function animateLeftScrollTo(scrollX) {
-    if (animateScrollActive) return;
+  function animateLeftScrollTo(
+    scrollX,
+    override,
+    duration = 3,
+    easingMethod = 'quart'
+  ) {
+    if (animateScrollActive && !override) return;
     animateScrollActive = true;
     animateScrollFrame = 0;
     animateScrollDelta = data.battleField.scrollLeft - scrollX;
-    animateScrollDuration = FPS * 3 * (1 / GAME_SPEED);
+    animateScrollDuration = FPS * duration * (1 / GAME_SPEED);
 
     for (let i = 0; i <= animateScrollDuration; i++) {
       // 1/x, up to 1
       animateScrollFrames[i] =
         data.battleField.scrollLeft -
-        easeInOutQuart(i / animateScrollDuration) * animateScrollDelta;
+        easing[easingMethod](i / animateScrollDuration) * animateScrollDelta;
     }
 
-    // reset local stuff
+    // Reset local stuff
+    // TODO: review, ensure that all of these(?) are needed
     game.players.local.data.scrollLeftVX = 0;
     game.players.local.data.scrollLeft = 0;
     data.battleField.scrollLeftVX = 0;
-    data.battleField.scrollLeft = 0;
   }
 
   function decelerateScroll() {
     if (decelerateScrollActive) return;
+    if (game.data.battleOver) return;
     decelerateScrollDuration = FPS * (1 / GAME_SPEED);
     for (let i = 0; i <= decelerateScrollDuration; i++) {
       // 1/x, up to 1
@@ -136,9 +142,6 @@ const View = () => {
 
   function setLeftScroll(x, allowOverride) {
     // slightly hackish: apply scroll offsets to both game view, and local player.
-
-    if (game.objects.gameLoop.data.gameStopped) return;
-
     if (allowOverride) {
       data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
@@ -383,7 +386,7 @@ const View = () => {
   }
 
   function setAnnouncement(text = '', delay = 5000) {
-    if (isGameOver()) return;
+    if (game.data.battleOver) return;
 
     if (!text) return;
 
@@ -613,7 +616,7 @@ const View = () => {
           decelerateScrollFrame = 0;
           decelerateScrollActive = false;
         }
-      } else if (!game.players.local.data.dead) {
+      } else if (!game.players.local.data.dead && !game.data.battleOver) {
         // regular in-game scrolling, live chopper
         setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED);
       }

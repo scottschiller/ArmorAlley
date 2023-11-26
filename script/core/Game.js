@@ -874,6 +874,7 @@ const game = (() => {
     battleOver: false,
     youWon: false,
     theyWon: false,
+    didEnemyWin: null,
     convoyDelay: 60,
     paused: false,
     productionHalted: false,

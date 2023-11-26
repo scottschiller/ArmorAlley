@@ -27,6 +27,9 @@ import { utils } from '../core/utils.js';
 const Base = (options = {}) => {
   let css, data, dom, exports, height, missileVMax, width;
 
+  let counter = 0;
+  const counterMax = 30;
+
   function fire() {
     let targetHelicopter;
 
@@ -111,22 +114,151 @@ const Base = (options = {}) => {
     common.setFrameTimeout(fire, 250 + rng(250, data.type));
   }
 
+  function smallBoom(exports) {
+    if (rnd(1) >= 0.75) {
+      effects.domFetti(exports);
+    }
+
+    effects.shrapnelExplosion(exports.data, {
+      count: 4 + rndInt(4),
+      velocity: 5 + rndInt(10),
+      // don't create identical "clouds" of smoke *at* base.
+      noInitialSmoke: true
+    });
+
+    effects.smokeRing(exports, {
+      offsetX: exports.data.width * 0.33 + rnd(exports.data.width * 0.33),
+      offsetY: rnd(exports.data.height / 4),
+      count: 3 + rndInt(3),
+      velocityMax: 6 + rndInt(6),
+      isGroundUnit: true,
+      increaseDeceleration: Math.random() >= 0.5 ? 1 : undefined
+    });
+
+    if (Math.random() >= 0.75) {
+      effects.inertGunfireExplosion({ exports, vX: 8, vY: 8 });
+    }
+  }
+
+  function boom() {
+    smallBoom(exports);
+
+    // make a noise?
+    if (sounds.genericExplosion) {
+      playSound(sounds.genericExplosion, exports);
+    }
+
+    const localPlayer = game.players.local;
+
+    if (!counter) {
+      // initial big explosion at base
+      for (let i = 0; i < 7; i++) {
+        effects.shrapnelExplosion(data, {
+          count: rndInt(64),
+          velocity: 8 + rnd(8)
+        });
+      }
+    } else {
+      effects.shrapnelExplosion(data, {
+        count: rndInt(16),
+        velocity: 4 + rnd(8),
+        // don't create identical "clouds" of smoke *at* base.
+        noInitialSmoke: true
+      });
+    }
+
+    counter++;
+
+    if (counter >= counterMax) {
+      playSequence(
+        localPlayer.data.isEnemy !== data.isEnemy
+          ? sounds.bnb.gameOverWin
+          : sounds.bnb.gameOverLose
+      );
+
+      if (
+        (tutorialMode || campaignBattles.includes(levelName)) &&
+        !net.active
+      ) {
+        common.setFrameTimeout(() => {
+          // as applicable, show a letter from "the old tanker."
+          const didWin = localPlayer.data.isEnemy !== data.isEnemy;
+          game.objects.envelope.show(didWin);
+        }, 1500);
+      }
+
+      // HUGE boom, why not.
+      common.setFrameTimeout(() => {
+        // ensure incoming missile is silenced
+        if (sounds.missileWarning) {
+          stopSound(sounds.missileWarning);
+        }
+
+        if (sounds.genericExplosion) {
+          playSound(sounds.genericExplosion, exports);
+          playSound(sounds.genericExplosion, exports);
+          playSound(sounds.genericExplosion, exports);
+        }
+
+        if (sounds.baseExplosion) {
+          playSound(sounds.baseExplosion, exports);
+        }
+
+        common.setFrameTimeout(() => {
+          let i, iteration;
+          iteration = 0;
+
+          // domFetti feature
+          screenBoom();
+
+          for (i = 0; i < 7; i++) {
+            effects.shrapnelExplosion(data, {
+              count: rndInt(64),
+              velocity: 8 + rnd(8),
+              // don't create identical "clouds" of smoke *at* base.
+              noInitialSmoke: true
+            });
+          }
+
+          for (i = 0; i < 3; i++) {
+            common.setFrameTimeout(() => {
+              // first one is always big.
+              const isBigBoom = !iteration || rnd(0.75);
+
+              effects.smokeRing(exports, {
+                velocityMax: 64,
+                count: isBigBoom ? 8 : 2,
+                offsetX: data.width * 0.25 + rnd(data.halfWidth),
+                offsetY: data.height,
+                isGroundUnit: true
+              });
+              iteration++;
+            }, 10 * i);
+          }
+
+          effects.inertGunfireExplosion({
+            exports,
+            count: 32 + rndInt(32),
+            vX: 2,
+            vY: 2
+          });
+
+          // visually destroy the base.
+          // TODO: big nuke like bunker?
+          dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+          utils.css.add(dom.o, 'burning');
+        }, 25);
+      }, 2500);
+    } else {
+      // big boom
+      common.setFrameTimeout(boom, 100 + rndInt(100));
+    }
+  }
+
   function die() {
-    let counter = 0;
-    const counterMax = 30;
-    const overrideMax = true;
-    let leftOffset;
+    if (data.dead) return;
 
     data.dead = true;
-
-    // bring the target base into view, and position slightly for the explosions
-    if (data.isEnemy) {
-      leftOffset = game.objects.view.data.battleField.width;
-      // shift so there is room for shrapnel, etc.
-      leftOffset -= game.objects.view.data.browser.width * 0.9;
-    } else {
-      leftOffset = -(game.objects.view.data.browser.width * 0.1);
-    }
 
     const localPlayer = game.players.local;
 
@@ -142,11 +274,47 @@ const Base = (options = {}) => {
       128
     );
 
-    game.objects.view.setLeftScroll(leftOffset, overrideMax);
+    // slow down nicely, then move on toward the opposing base.
+    game.objects.view.decelerateScroll();
+
+    common.setFrameTimeout(dieContinue, 1000);
+  }
+
+  function dieContinue() {
+    const override = true;
+    let leftOffset;
+
+    // bring the target base into view, and position slightly for the explosions
+    if (data.isEnemy) {
+      leftOffset = game.objects.view.data.battleField.width;
+      // shift so there is room for shrapnel, etc.
+      leftOffset -= game.objects.view.data.browser.width * 0.9;
+    } else {
+      leftOffset = -(game.objects.view.data.browser.width * 0.1);
+    }
+
+    const { scrollLeft } = game.objects.view.data.battleField;
+
+    // take time to scroll relative to the distance needed to be traveled.
+    const scrollDuration = Math.max(
+      3,
+      (Math.abs(scrollLeft - leftOffset) / worldWidth) * 12
+    );
+
+    game.objects.view.animateLeftScrollTo(
+      leftOffset,
+      override,
+      scrollDuration,
+      'quad'
+    );
 
     // disable view + helicopter events?
     // TODO: make this a method; cleaner, etc.
     game.objects.view.data.ignoreMouseEvents = true;
+
+    const onScreenDieDelay = game.objects.view.data.browser.isPortrait
+      ? FPS
+      : FPS * 4;
 
     // start destroying all the losing team's stuff
     let delay = 0;
@@ -163,157 +331,44 @@ const Base = (options = {}) => {
     ].forEach((type) => {
       if (game.objects[type]) {
         game.objects[type].forEach((item) => {
-          if (item.data.isEnemy === data.isEnemy) {
-            delay += 128;
-            common.setFrameTimeout(() => item.die(), delay);
+          const onLosingSide = item.data.isEnemy === data.isEnemy;
+          if (
+            item !== game.players.local &&
+            // bunkers always get trashed, because it's more fun that way.
+            (onLosingSide || item.data.hostile || item.data.type === TYPES.bunker)
+          ) {
+            const { scrollLeft } = game.objects.view.data.battleField;
+            // on-screen or "behind" the player (e.g., scrolling toward enemy base, but enemies are closer to our base behind us) = boom; otherwise, becoming on-screen = boom.
+            if (
+              item.data.isOnScreen ||
+              (data.isEnemy && item.data.x < scrollLeft) ||
+              (!data.isEnemy && item.data.x > scrollLeft)
+            ) {
+              delay += 128;
+              common.setFrameTimeout(item.die, delay);
+            } else {
+              // hack: hijack this event, and blow everything up. ;)
+              item.isOnScreenChange = (isOnScreen) => {
+                if (isOnScreen) {
+                  common.setFrameTimeout(item.die, onScreenDieDelay);
+                }
+              };
+            }
           }
         });
       }
     });
 
-    function smallBoom(exports) {
-      if (rnd(1) >= 0.75) {
-        effects.domFetti(exports);
-      }
-
-      effects.shrapnelExplosion(exports.data, {
-        count: 4 + rndInt(4),
-        velocity: 5 + rndInt(10),
-        // don't create identical "clouds" of smoke *at* base.
-        noInitialSmoke: true
-      });
-
-      effects.smokeRing(exports, {
-        offsetX: exports.data.width * 0.33 + rnd(exports.data.width * 0.33),
-        offsetY: rnd(exports.data.height / 4),
-        count: 3 + rndInt(3),
-        velocityMax: 6 + rndInt(6),
-        isGroundUnit: true,
-        increaseDeceleration: Math.random() >= 0.5 ? 1 : undefined
-      });
-
-      if (Math.random() >= 0.75) {
-        effects.inertGunfireExplosion({ exports, vX: 8, vY: 8 });
-      }
-    }
-
-    function boom() {
-      const endBunker = game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0];
-
-      // smaller explosions on both end bunker, and base (array offset)
-      smallBoom(endBunker);
-      smallBoom(exports);
-
-      // make a noise?
-      if (sounds.genericExplosion) {
-        playSound(sounds.genericExplosion, exports);
-      }
-
-      counter++;
-
-      if (counter >= counterMax) {
-        playSequence(
-          localPlayer.data.isEnemy !== data.isEnemy
-            ? sounds.bnb.gameOverWin
-            : sounds.bnb.gameOverLose
-        );
-
-        if ((tutorialMode || campaignBattles.includes(levelName)) && !net.active) {
-          common.setFrameTimeout(() => {
-            // as applicable, show a letter from "the old tanker."
-            const didWin = localPlayer.data.isEnemy !== data.isEnemy;
-            game.objects.envelope.show(didWin);
-          }, 1500);
-        }
-
-        // HUGE boom, why not.
-        common.setFrameTimeout(() => {
-          // ensure incoming missile is silenced
-          if (sounds.missileWarning) {
-            stopSound(sounds.missileWarning);
-          }
-
-          if (sounds.genericExplosion) {
-            playSound(sounds.genericExplosion, exports);
-            playSound(sounds.genericExplosion, exports);
-            playSound(sounds.genericExplosion, exports);
-          }
-
-          if (sounds.baseExplosion) {
-            playSound(sounds.baseExplosion, exports);
-          }
-
-          common.setFrameTimeout(() => {
-            let i, iteration;
-            iteration = 0;
-
-            // domFetti feature
-            screenBoom();
-
-            for (i = 0; i < 7; i++) {
-              effects.shrapnelExplosion(data, {
-                count: rndInt(64),
-                velocity: 8 + rnd(8),
-                // don't create identical "clouds" of smoke *at* base.
-                noInitialSmoke: true
-              });
-            }
-
-            for (i = 0; i < 3; i++) {
-              common.setFrameTimeout(() => {
-                // first one is always big.
-                const isBigBoom = !iteration || rnd(0.75);
-
-                effects.smokeRing(exports, {
-                  velocityMax: 64,
-                  count: isBigBoom ? 8 : 2,
-                  offsetX: data.width * 0.33 + rnd(data.width * 0.33),
-                  offsetY: data.height,
-                  isGroundUnit: true
-                });
-                iteration++;
-              }, 10 * i);
-            }
-
-            effects.inertGunfireExplosion({
-              exports,
-              count: 32 + rndInt(32),
-              vX: 2,
-              vY: 2
-            });
-            effects.inertGunfireExplosion({
-              exports: endBunker,
-              count: 32 + rndInt(32),
-              vX: 2,
-              vY: 2
-            });
-
-            smallBoom(endBunker);
-
-            // hide the base, too - since it should be gone.
-            dom.o.style.visibility = 'hidden';
-
-            // end bunker, too.
-            game.objects[TYPES.endBunker][
-              data.isEnemy ? 1 : 0
-            ].dom.o.style.visibility = 'hidden';
-          }, 25);
-        }, 2500);
-      } else {
-        // big boom
-        common.setFrameTimeout(boom, 100 + rndInt(100));
-      }
-    }
-
     document.getElementById('game-tips-list').innerHTML = '';
 
-    boom();
+    // start base explosions a bit before the battlefield animation finishes
+    common.setFrameTimeout(boom, scrollDuration * 1000 * 0.9);
   }
 
   function animate() {
-    if (data.dead) return;
-
     sprites.moveWithScrollOffset(exports);
+
+    if (data.dead) return;
 
     if (data.frameCount % data.fireModulus === 0) {
       fire();
@@ -361,7 +416,8 @@ const Base = (options = {}) => {
   height = 26;
 
   css = common.inheritCSS({
-    className: 'base'
+    className: 'base',
+    nuke: 'nuke'
   });
 
   const fireModulus = tutorialMode ? FPS * 5 : FPS * 2;
@@ -393,7 +449,8 @@ const Base = (options = {}) => {
   );
 
   dom = {
-    o: null
+    o: null,
+    oSubSpriteNuke: null
   };
 
   exports = {

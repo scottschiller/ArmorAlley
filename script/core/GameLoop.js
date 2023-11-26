@@ -13,7 +13,6 @@ import {
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
-import { isGameOver } from '../core/logic.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
@@ -119,25 +118,6 @@ const GameLoop = () => {
     // move static terrain items, too, given we're scrolling.
     for (i = 0, j = game.objects[TYPES.terrainItem].length; i < j; i++) {
       sprites.moveWithScrollOffset(game.objects[TYPES.terrainItem][i]);
-    }
-
-    if (isGameOver() && !data.gameStopped && data.battleOverFrameCount++ > 1) {
-      data.gameStopped = true;
-
-      // don't animate vans or helicopters, but allow everything else.
-      gameObjects.helicopter = [];
-      gameObjects.van = [];
-
-      // eventually, stop everything.
-      window.setTimeout(() => {
-        gameObjects = {
-          gunfire: game.objects.gunfire,
-          shrapnel: game.objects.shrapnel,
-          smoke: game.objects.smoke,
-          domFetti: game.objects.domFetti,
-          queue: game.objects.queue
-        };
-      }, 5000);
     }
 
     // update all setTimeout()-style FrameTimeout() instances.
@@ -380,8 +360,6 @@ const GameLoop = () => {
   };
 
   data = {
-    battleOverFrameCount: 0,
-    gameStopped: false,
     frameCount: 0,
     remoteFrameCount: 0,
     lastExec: 0,
