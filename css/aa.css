@@ -2472,11 +2472,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   width: 103px;
 }
 
-.base.burning {
-  /* reset "proper" width for burning state */
-  width: 102px;
-}
-
 .base .transform-sprite {
   animation: animate-transform-sprite-base calc(1s * var(--gs-frac)) steps(5)
     infinite alternate;
@@ -3166,16 +3161,29 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
   /* bunker is normally 52px */
   margin-left: -30px;
   margin-top: -87px;
-  /* width: 96px;
-  height: 71px; */
   width: 112px;
   z-index: 5; /* let nuke show on top of smoke */
+  filter: drop-shadow(0 0 8px #fff);
+  transition: filter 0.5s ease-in-out;
+}
+
+.bunker.burning .sub-sprite.nuke,
+.bunker.exploding .sub-sprite.nuke,
+.base.burning {
   /* a little "nuclear" glow, why not. */
-  filter: drop-shadow(0 0 5px #999);
+  filter: drop-shadow(0 0 16px #fff);
+  transition: filter 0.5s ease-in-out;
+}
+
+.base.burning {
+  width: 103px;
+  height: 103px;
+  margin-top: -77px;
 }
 
 /* special case */
-.bunker .sub-sprite.nuke {
+.bunker .sub-sprite.nuke,
+.base .sub-sprite.nuke {
   /**
    * Commercial, licensed asset - $1.99 USD.
    * https://infectedtribe.itch.io/pixel-explosion
@@ -3187,14 +3195,18 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
   background-repeat: no-repeat;
   background-size: 2352px 112px;
   margin-top: -2px;
-  transform: scale3d(0.88, 0.88, 1);
-  transform-origin: 50% 100%;
   visibility: hidden;
   z-index: 3;
 }
 
+.bunker .sub-sprite.nuke {
+  transform: scale3d(0.88, 0.88, 1);
+  transform-origin: 50% 100%;
+}
+
 .bunker.burning .sub-sprite.nuke,
-.bunker.exploding .sub-sprite.nuke {
+.bunker.exploding .sub-sprite.nuke,
+.base.burning .sub-sprite.nuke {
   /* go go go! */
   animation: nuke calc(1.5s * var(--gs-frac)) steps(21);
   animation-fill-mode: forwards;
