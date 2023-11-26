@@ -1,7 +1,6 @@
 import { COSTS, TYPES } from './global.js';
 import { game } from './Game.js';
 import { common } from '../core/common.js';
-import { isGameOver } from '../core/logic.js';
 import {
   addSequence,
   playSound,
@@ -248,7 +247,7 @@ function GameEvents() {
 
       onFire: (state, withMonologue = false) => {
         // play sounds, then switch.
-        if (isGameOver()) return;
+        if (game.data.battleOver) return;
 
         if (gamePrefs.bnb) {
           const andAnnounce = {
@@ -348,7 +347,7 @@ function GameEvents() {
           game.data.started &&
           !game.data.paused &&
           state.bnbCommentaryCounter < state.BORING_THRESHOLD &&
-          !isGameOver()
+          !game.data.battleOver
         ) {
           // space out these events in editor mode, over time.
           if (game.objects.editor) {

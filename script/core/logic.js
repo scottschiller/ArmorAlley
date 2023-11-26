@@ -745,10 +745,6 @@ function checkProduction() {
   }
 }
 
-function isGameOver() {
-  return game.data.battleOver;
-}
-
 export {
   canNotify,
   getNearestObject,
@@ -764,6 +760,5 @@ export {
   countSides,
   countFriendly,
   playerOwnsBunkers,
-  checkProduction,
-  isGameOver
+  checkProduction
 };

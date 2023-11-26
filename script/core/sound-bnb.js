@@ -11,7 +11,6 @@ import {
 import { game } from './Game.js';
 import { common } from './common.js';
 import { gamePrefs } from '../UI/preferences.js';
-import { isGameOver } from './logic.js';
 import { effects } from './effects.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
@@ -225,7 +224,7 @@ function playQueuedBNBSounds() {
     soundsToPlayBNB.processing &&
     soundsToPlayBNB.length &&
     now - soundsToPlayBNB[0].queued > 66666 &&
-    !isGameOver()
+    !game.data.battleOver
   ) {
     console.warn(
       `Stuck or delayed sound queue? ${

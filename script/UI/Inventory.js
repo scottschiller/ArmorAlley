@@ -10,7 +10,7 @@ import {
 } from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
-import { collisionCheck, isGameOver } from '../core/logic.js';
+import { collisionCheck } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 
@@ -128,9 +128,9 @@ const Inventory = () => {
   function order(type, options = {}, player) {
     // this should be called only by the human player, not the CPU
 
-    let orderObject, orderSize, cost, pendingNotification;
+    if (game.data.battleOver) return;
 
-    if (isGameOver()) return;
+    let orderObject, orderSize, cost, pendingNotification;
 
     // default off-screen setting
     options.x = -72;

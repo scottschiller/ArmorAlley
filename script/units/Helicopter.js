@@ -43,7 +43,6 @@ import {
   collisionCheckMidPoint,
   collisionTest,
   getNearestObject,
-  isGameOver,
   objectInView,
   trackObject
 } from '../core/logic.js';
@@ -1272,7 +1271,7 @@ const Helicopter = (options = {}) => {
 
   function respawn() {
     // exit if game is over.
-    if (isGameOver()) return;
+    if (game.data.battleOver) return;
 
     // helicopter died. move view, and reset.
     reset();
@@ -1410,6 +1409,9 @@ const Helicopter = (options = {}) => {
 
     // move sprite once explosion stuff has completed
     common.setFrameTimeout(() => {
+      // ignore if the game has ended.
+      if (game.data.battleOver) return;
+
       // reposition on appropriate landing pad
       data.x = common.getLandingPadOffsetX(exports);
       data.y = worldHeight - data.height;
@@ -1440,7 +1442,7 @@ const Helicopter = (options = {}) => {
     }
 
     // don't respawn the enemy (CPU) chopper during tutorial mode.
-    if (!tutorialMode || !data.isEnemy) {
+    if ((!tutorialMode || !data.isEnemy) && !game.data.battleOver) {
       if (data.isLocal) {
         // animate back to home base.
 
@@ -3219,7 +3221,7 @@ const Helicopter = (options = {}) => {
 
       if (e.button !== 0 || isMobile || data.isCPU || !data.fuel) return;
 
-      if (!isGameOver()) {
+      if (!game.data.battleOver) {
         if (!data.autoFlip) {
           flip();
         }
