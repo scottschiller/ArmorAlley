@@ -705,6 +705,10 @@ const common = {
       }
     }
 
+    // hackish: prevent winning units from being hit.
+    if (game.data.battleOver && game.data.didEnemyWin === target.data.isEnemy)
+      hitPoints = 0;
+
     newEnergy = Math.max(0, tData.energy - hitPoints);
 
     energyChanged = tData.energy !== newEnergy;
