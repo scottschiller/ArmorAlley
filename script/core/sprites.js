@@ -335,7 +335,11 @@ const sprites = {
       // only do work if detaching node from live DOM
       // exclude pooled nodes from this; they are managed separately.
       // special case: preseve local helicopter in DOM - for respawn, CSS animation purposes.
-      if (!o.data.poolNode && !o.data.preserveOffscreenDOM && o.dom?.o?.parentNode) {
+      if (
+        !o.data.poolNode &&
+        !o.data.preserveOffscreenDOM &&
+        o.dom?.o?.parentNode
+      ) {
         // detach, retaining parent node, for later re-append
         o.dom._oRemovedParent = o.dom.o.parentNode;
         o.dom.o.remove();
