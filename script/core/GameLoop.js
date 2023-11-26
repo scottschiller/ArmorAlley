@@ -17,6 +17,7 @@ import { isGameOver } from '../core/logic.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
+import { effects } from './effects.js';
 
 const GameLoop = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -50,6 +51,9 @@ const GameLoop = () => {
 
     // there may be sounds from the last frame, ready to go.
     playQueuedSounds();
+
+    // hackish: hook to add new shrapnel.
+    effects.animate();
 
     // view will have jumped to player or enemy base.
     // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.

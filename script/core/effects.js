@@ -24,11 +24,10 @@ function nextShrapnel() {
     options = shrapnelToAdd.shift();
     game.addObject(TYPES.shrapnel, options);
   }
-
-  game.objects.queue.addNextFrame(nextShrapnel);
 }
 
 const effects = {
+  animate: nextShrapnel,
   smokeRing: (item, smokeOptions) => {
     // don't create if not visible
     if (!item.data.isOnScreen) return;
@@ -436,10 +435,6 @@ const effects = {
         i === 0 || (shrapnelCount > 4 && i === shrapnelCount - 1);
 
       shrapnelToAdd.push({ ...localOptions });
-
-      if (shrapnelToAdd.length === 1) {
-        common.setFrameTimeout(nextShrapnel, 1);
-      }
 
       angle += angleIncrement;
     }
