@@ -1445,7 +1445,7 @@ const Helicopter = (options = {}) => {
         // animate back to home base.
 
         // start animation after a delay...
-        window.setTimeout(() => {
+        common.setFrameTimeout(() => {
           // hackish: hard reset battlefield scroll
           data.scrollLeft = data.isEnemy
             ? common.getLandingPadOffsetX(exports) -
