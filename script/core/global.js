@@ -154,7 +154,7 @@ const rad2Deg = 180 / Math.PI;
 // used for various measurements in the game
 const worldWidth = 8192;
 const worldHeight = 380;
-const worldOverflow = 256;
+const worldOverflow = 512;
 
 const forceZoom = !!searchParams.get('forceZoom');
 const forceTransform = !!searchParams.get('forceTransform');
