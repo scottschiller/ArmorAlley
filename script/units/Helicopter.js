@@ -2453,6 +2453,11 @@ const Helicopter = (options = {}) => {
       return;
     }
 
+    if (game.data.battleOver) {
+      hideTrailers();
+      return;
+    }
+
     // move according to delta between helicopter x/y and mouse, up to a max.
 
     let i, j, view, mouse, jamming, newX, spliceArgs, maxY, yOffset;
