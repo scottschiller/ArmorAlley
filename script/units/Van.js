@@ -227,6 +227,7 @@ const Van = (options = {}) => {
     }
 
     game.data.battleOver = true;
+    game.data.didEnemyWin = data.isEnemy;
     game.data.youWon = youWon;
     game.data.theyWon = !youWon;
 
