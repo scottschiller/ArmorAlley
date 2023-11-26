@@ -615,10 +615,10 @@ const SmartMissile = (options = {}) => {
       // hackish: bananas are 50%, default chicken volume is 20%.
       launchSound.setVolume(
         (data.isBanana ? 50 : 20) *
-          getVolumeFromDistance(exports, game.players.local, 0.5) *
+          getVolumeFromDistance(exports, 0.5) *
           Math.max(0.01, gamePrefs.volume)
       );
-      launchSound.setPan(getPanFromLocation(exports, game.players.local));
+      launchSound.setPan(getPanFromLocation(exports));
     }
 
     // "out of gas" -> dangerous to both sides -> fall to ground

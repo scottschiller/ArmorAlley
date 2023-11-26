@@ -211,37 +211,41 @@ function playQueuedSounds() {
   playQueuedBNBSounds();
 }
 
-function getVolumeFromDistance(source, player, worldWidthScale = 1) {
+function getVolumeFromDistance(source, worldWidthScale = 1) {
   // based on two objects' distance from each other, return volume -
   // e.g., things far away are quiet, things close-up are loud.
   // `worldWidthScale` e.g., 0.5 = half the world distance.
-  if (!source?.data?.x || !player?.data?.x) return 1;
+
+  const targetX = game.objects.view.data.battleField.scrollLeft;
+
+  if (!source?.data?.x || !targetX) return 1;
 
   const scaledWorld = worldWidth * worldWidthScale;
 
   // limit to within the specified scaled range
-  const delta = Math.min(Math.abs(source.data.x - player.data.x), scaledWorld);
+  const delta = Math.min(Math.abs(source.data.x - targetX), scaledWorld);
 
   // volume range: 5-90%?
   return 0.05 + 0.85 * ((scaledWorld - delta) / scaledWorld);
 }
 
-function getPanFromLocation(source, player) {
+function getPanFromLocation(source) {
   // rough panning based on distance from player, relative to world width
-  if (!source?.data?.x || !player?.data?.x) return 0;
+  const targetX = game.objects.view.data.battleField.scrollLeft;
+  if (!source?.data?.x || !targetX) return 0;
 
   let delta;
   let pan = 0;
 
   // don't allow 100% L/R pan, exactly
 
-  if (source.data.x < player.data.x) {
+  if (source.data.x < targetX) {
     // target is to the left
-    delta = player.data.x - source.data.x;
+    delta = targetX - source.data.x;
     pan = -(delta / worldWidth) * 0.75;
   } else {
     // to the right
-    delta = source.data.x - player.data.x;
+    delta = source.data.x - targetX;
     pan = (delta / worldWidth) * 0.75;
   }
 
@@ -298,8 +302,8 @@ function playSound(soundReference, target, soundOptions) {
     localOptions = {
       volume:
         (soundObject.soundOptions.onScreen.volume || 100) *
-        getVolumeFromDistance(target, game.players.local),
-      pan: getPanFromLocation(target, game.players.local)
+        getVolumeFromDistance(target),
+      pan: getPanFromLocation(target)
     };
   }
 
