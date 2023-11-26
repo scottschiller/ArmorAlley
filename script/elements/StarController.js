@@ -72,7 +72,11 @@ const StarController = () => {
     const absDelta = Math.abs(scrollDelta) * (1 / GAME_SPEED);
 
     // hackish: if we've scrolled a huge distance, e.g,. helicopter died mid-way out and now back at base, just reset all stars.
-    if (absDelta > game.objects.view.data.browser.width) {
+    // this mostly applies to small portrait screens, e.g., iPhone.
+    if (
+      absDelta > game.objects.view.data.browser.width &&
+      !game.objects.view.isAnimateScrollActive()
+    ) {
       resetStars();
       return;
     }
