@@ -2,11 +2,7 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
-import {
-  enemyHelicopterNearby,
-  isGameOver,
-  nearbyTest
-} from '../core/logic.js';
+import { enemyHelicopterNearby, nearbyTest } from '../core/logic.js';
 import {
   GAME_SPEED,
   TYPES,
@@ -30,6 +26,7 @@ const Van = (options = {}) => {
   }
 
   function resume() {
+    if (game.data.battleOver) return;
     data.stopped = false;
   }
 
@@ -114,7 +111,7 @@ const Van = (options = {}) => {
 
     let enemyHelicopter;
 
-    if (!data.stopped) {
+    if (!data.stopped && !game.data.battleOver) {
       sprites.moveTo(exports, data.x + data.vX * GAME_SPEED, data.y);
     } else {
       // if stopped, just take scroll into effect
@@ -126,7 +123,7 @@ const Van = (options = {}) => {
     effects.smokeRelativeToDamage(exports);
 
     // just in case: prevent any multiple "game over" actions via animation
-    if (isGameOver()) return;
+    if (game.data.battleOver) return;
 
     if (data.isEnemy && data.x <= data.xGameOver) {
       stop();
@@ -208,7 +205,7 @@ const Van = (options = {}) => {
     let yourBase, otherBase;
 
     // just in case
-    if (isGameOver()) return;
+    if (game.data.battleOver) return;
 
     const bases = game.objects[TYPES.base];
 
