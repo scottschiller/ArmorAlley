@@ -1,7 +1,13 @@
 import { prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { demo, GAME_SPEED, isMobile, searchParams } from '../core/global.js';
+import {
+  demo,
+  GAME_SPEED,
+  isMobile,
+  searchParams,
+  TYPES
+} from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
@@ -620,7 +626,6 @@ function hideTitleScreen(callback) {
       e.target === game.objects.view.dom.gameMenu &&
       e.propertyName === 'opacity'
     ) {
-
       // and transition, too.
       game.objects.view.dom.worldWrapper.style.transition = '';
 
@@ -676,18 +681,31 @@ function hideTitleScreen(callback) {
   utils.css.add(game.objects.view.dom.gameMenu, 'fade-out');
   utils.css.add(document.getElementById('stars'), 'fade-in');
 
-  // testing
-  const winloc = window.location.toString();
-  const theyWin = winloc.match(/theyWin/i);
-  const youWin = winloc.match(/youWin/i);
+  // testing - e.g., ?theywin=5000 for a 5-second game-over sequence
+  let theyWin = searchParams.get('theyWin');
+  const youWin = searchParams.get('youWin');
+
+  let winDelay;
+  const defaultDelay = 2000;
+
+  if (theyWin) {
+    winDelay = theyWin === 1 ? defaultDelay : theyWin;
+  } else if (youWin) {
+    winDelay = youWin === 1 ? defaultDelay : youWin;
+  }
 
   if (theyWin || youWin) {
     window.setTimeout(() => {
+      const pads = game.objects[TYPES.landingPad];
+      const x = theyWin
+        ? pads[0].data.x + 88
+        : pads[pads.length - 1].data.x - 44;
+
       game.addObject('van', {
         isEnemy: !!theyWin,
-        x: youWin ? 8088 : 88
+        x
       });
-    }, 2000);
+    }, winDelay);
   }
 }
 
