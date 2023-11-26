@@ -187,8 +187,8 @@ const Bunker = (options = {}) => {
     if (data.dead) return;
 
     // if off-screen, just avoid the nuke entirely.
-    if (!data.isOnScreen) {
-      removeNukeSprite();
+    if (data.isOnScreen) {
+      dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
     }
 
     utils.css.add(dom.o, css.exploding);
@@ -213,6 +213,7 @@ const Bunker = (options = {}) => {
       velocity: 3 + rng(3, data.type),
       bottomAligned: true
     });
+
     effects.inertGunfireExplosion({
       exports,
       count: 16 + rndInt(8),
@@ -362,8 +363,6 @@ const Bunker = (options = {}) => {
     });
 
     dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
-
-    dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
 
     data.oClassName = dom.o.className;
 
