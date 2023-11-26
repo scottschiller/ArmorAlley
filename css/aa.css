@@ -1775,7 +1775,6 @@ body.is_firefox .sprite.shrapnel {
 .sprite.bunker,
 .sprite.chain,
 .sprite.engineer,
-.sprite.helicopter,
 .sprite.infantry,
 .sprite.missile-launcher,
 /* note: only apply to armed smart missiles - otherwise, positioning gets messed up. */
@@ -1787,6 +1786,11 @@ body.is_firefox .sprite.shrapnel {
   /* for .smart-missile-tracking filter */
   transition: filter 1s ease-in-out;
   transition-timing-function: cubic-bezier(0.45, 0.48, 0.25, 1.57);
+}
+
+#battlefield .sprite.helicopter {
+  transition: filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57),
+    opacity 0.5s ease-in-out;
 }
 
 /* hide GPU-accelerated, transform-based animated sprites when exploding. */
