@@ -329,8 +329,7 @@ const sprites = {
 
       // callback, if defined
       o.isOnScreenChange?.(o.data.isOnScreen);
-
-    } else if (o.data.isOnScreen || o.data.isOnScreen === null) {
+    } else if (o.data.isOnScreen !== false) {
       o.data.isOnScreen = false;
 
       // only do work if detaching node from live DOM
