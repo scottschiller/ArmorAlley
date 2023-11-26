@@ -225,6 +225,10 @@ body.prefs-modal-open #game-menu-wrapper {
   cursor: url(../image/cursor-cross.png), crosshair;
 }
 
+body.demo #aa {
+  cursor: url(../image/cursor-cross-grey.png), crosshair;
+}
+
 #game-status,
 #radar,
 #radar-container,
@@ -1318,6 +1322,7 @@ body.edit-mode #home-video-wrapper {
   border-color: #fff;
 }
 
+body.demo #game-status,
 body.demo #home-video-wrapper,
 body.demo #notification-toasts,
 body.demo #stats-bar,
@@ -1339,8 +1344,8 @@ body.demo #world-noise-overlay {
   will-change: opacity;
 }
 
-body.demo #aa {
-  cursor: none !important;
+body.demo .target-marker {
+  opacity: 0;
 }
 
 #player-status-bar {
