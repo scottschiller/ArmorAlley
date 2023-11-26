@@ -62,7 +62,7 @@ const GameLoop = () => {
       if (gameObjects[item]) {
         // array of objects
 
-        if (gameObjects[item].length) {
+        if (Array.isArray(gameObjects[item])) {
           for (i = gameObjects[item].length - 1; i >= 0; i--) {
             sprites.updateIsOnScreen(gameObjects[item][i]);
 
