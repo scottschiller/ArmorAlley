@@ -241,6 +241,11 @@ function Stats() {
     // then, account for infantry which are actually engineers.
     let type = item.data.type;
 
+    // special case: engineers are infantry, with a role assigned.
+    if (type === TYPES.infantry && item.data.role) {
+      type = TYPES.engineer;
+    }
+
     // special case: if we have a smart missile, don't go up the chain to the missile launcher.
     // otherwise, check the parent and then handle the infantry/engineer case.
     if (type !== TYPES.smartMissile) {
