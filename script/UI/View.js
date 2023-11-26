@@ -5,6 +5,7 @@ import {
   FRAMERATE,
   GAME_SPEED,
   oneOf,
+  searchParams,
   TYPES,
   updateClientFeatures
 } from '../core/global.js';
@@ -1139,6 +1140,11 @@ const View = () => {
     } else {
       dom.mobileControls.remove();
       dom.mobileControls = null;
+    }
+
+    if (searchParams.get('noLogo')) {
+      // special case for recording homepage video (demo)
+      dom.logo.style.visibility = 'hidden';
     }
   }
 
