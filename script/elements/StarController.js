@@ -119,8 +119,10 @@ const StarController = () => {
 
       // wrap-around logic
       if (scrollDelta < 0 && x + data.warpEffect < 0) {
+        randomizeStar(i);
         x = data.width;
       } else if (scrollDelta > 0 && x > data.width) {
+        randomizeStar(i);
         x = 0 - width;
       }
 
@@ -196,34 +198,31 @@ const StarController = () => {
 
   function initStars() {
     data.starCount = getStarCount();
-
     syncWithLeftScroll();
-
-    let color;
-    let opacity;
-    let radius;
-
     data.stars = [];
-
     for (let i = 0, j = data.starCount; i < j; i++) {
-      color = oneOf(colors);
-      opacity = 0.15 + rnd(0.85);
-      // scale down differently on desktop, vs. iPhone, vs. mobile - "the pixels look big."
-      // this may be due to some other scaling shenanigans.
-      radius = (0.75 + rnd(0.75)) * isiPhone ? 0.5 : isMobile ? 0.85 : 0.75;
-      data.stars[i] = {
-        data: {
-          x: rnd(data.width),
-          y: rnd(data.height),
-          radius,
-          diameter: radius * 2,
-          rgb: `rgba(${color.join(',')},${opacity})`,
-          direction: 1,
-          // parallax is roughly correlated to distance / size
-          parallax: radius / 4 + rnd(radius / 4)
-        }
-      };
+      randomizeStar(i);
     }
+  }
+
+  function randomizeStar(offset) {
+    const color = oneOf(colors);
+    const opacity = 0.15 + rnd(0.85);
+    // scale down differently on desktop, vs. iPhone, vs. mobile - "the pixels look big."
+    // this may be due to some other scaling shenanigans.
+    const radius = (0.75 + rnd(0.75)) * isiPhone ? 0.5 : isMobile ? 0.85 : 0.75;
+    data.stars[offset] = {
+      data: {
+        x: rnd(data.width),
+        y: rnd(data.height),
+        radius,
+        diameter: radius * 2,
+        rgb: `rgba(${color.join(',')},${opacity})`,
+        direction: 1,
+        // parallax is roughly correlated to distance / size
+        parallax: radius / 4 + rnd(radius / 4)
+      }
+    };
   }
 
   function init() {
