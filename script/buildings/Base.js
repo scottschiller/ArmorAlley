@@ -22,9 +22,10 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { campaignBattles, levelName } from '../levels/default.js';
+import { utils } from '../core/utils.js';
 
 const Base = (options = {}) => {
-  let css, data, dom, exports, height, missileVMax;
+  let css, data, dom, exports, height, missileVMax, width;
 
   function fire() {
     let targetHelicopter;
@@ -356,7 +357,8 @@ const Base = (options = {}) => {
     game.objects.radar.addItem(exports, dom.o.className);
   }
 
-  height = 25;
+  width = 125;
+  height = 26;
 
   css = common.inheritCSS({
     className: 'base'
@@ -377,9 +379,9 @@ const Base = (options = {}) => {
       // left side, or right side (roughly)
       x: options.x || (options.isEnemy ? worldWidth - 192 : 64),
       y: game.objects.view.data.world.height - height - 2,
-      width: 125,
+      width,
       height,
-      halfWidth: 62,
+      halfWidth: width / 2,
       halfHeight: height / 2,
       // bases don't move, but these are for explosions.
       vX: 0,
