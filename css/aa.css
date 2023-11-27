@@ -57,6 +57,7 @@
   --menu-scale: 2.75;
   --game-scale-transform: 1;
   --game-scale-zoom: 1;
+  --game-scale-both: calc(var(--game-scale-zoom) * var(--game-scale-transform));
 }
 
 @font-face {
@@ -171,12 +172,6 @@ body.is_safari:not(.is-mobile) #top-bar {
   transform: scale3d(0.5, 0.5, 1);
   transform-origin: 0 0;
   width: 200%;
-}
-
-body.is_safari:not(.is-mobile).tutorial-mode #tutorial-window {
-  zoom: 2;
-  transform: scale3d(0.5, 0.5, 1) translate(-50%, -50%);
-  transform-origin: 0 0;
 }
 
 body.is_safari:not(.is-mobile).game-paused #game-paused {
@@ -1184,33 +1179,26 @@ body.radar_enhanced_fx.edit-mode #world-noise-overlay {
 
 #tv-display {
   display: none;
-  /* ensure this displays on top of stars */
-  z-index: 1;
-  height: 320px;
+  top: 50%;
   left: 50%;
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 57.5%;
   /* center, and slightly smaller */
-  transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
+  --scale: calc(var(--game-scale-both) / 2);
+  transform: translate3d(-50%, -50%, 0) scale3d(var(--scale), var(--scale), 1);
   transition: 0.25s ease-in;
   transition-property: transform, opacity, filter, position;
   width: 409px;
+  height: 320px;
 }
 
 body.bnb #tv-display {
   display: block;
 }
 
-#tv-display.widescreen {
-  /* align better with tutorial mode window */
-  top: 53%;
-}
-
 body.bnb #tv-display.active {
   opacity: 1;
-  transform: translate(-50%, -50%) scale3d(0.5, 0.5, 1);
 }
 
 #tv-display #tv {
@@ -1221,6 +1209,7 @@ body.bnb #tv-display.active {
   position: absolute;
   top: 0;
   width: 409px;
+  filter: drop-shadow(0 0 48px rgba(255, 255, 212, 0.33));
 }
 
 body.bnb #tv-display #tv,
@@ -3787,7 +3776,7 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips {
   /* tips, announcements, and game paused / resume prompts. */
-  font-size: calc(16px * var(--game-scale-transform) * var(--game-scale-zoom));
+  font-size: calc(16px * var(--game-scale-both));
   line-height: 100%;
 }
 
@@ -3805,12 +3794,8 @@ body.game-started #game-tips.active .tips-container {
     /* roughly line up with green bars */
     top: 16.35%;
     /* smaller text, too. */
-    font-size: calc(
-      12px * var(--game-scale-transform) * var(--game-scale-zoom)
-    );
-    line-height: calc(
-      12px * var(--game-scale-transform) * var(--game-scale-zoom)
-    );
+    font-size: calc(12px * var(--game-scale-both));
+    line-height: calc(12px * var(--game-scale-both));
   }
 }
 
@@ -3834,7 +3819,7 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips #game-announcements {
   color: #bbb;
-  font-size: calc(16px * var(--game-scale-transform) * var(--game-scale-zoom));
+  font-size: calc(16px * var(--game-scale-both));
   line-height: 110%;
   font-weight: 300;
   left: 0;
@@ -4529,7 +4514,7 @@ body:not(.is-mobile) .mobile-only {
   right: 1.5%;
   top: 27.5%;
   width: 25em;
-  font-size: calc(6px * var(--game-scale-transform) * var(--game-scale-zoom));
+  font-size: calc(6px * var(--game-scale-both));
   /* sit on top of L/R screen gradients */
   z-index: 11;
   pointer-events: none;
@@ -4576,9 +4561,7 @@ body:not(.is-mobile) .mobile-only {
 .notification-toast > span {
   /* don't apply to inline emoji, etc. */
   display: inline-block;
-  padding-bottom: calc(
-    4px * var(--game-scale-transform) * var(--game-scale-zoom)
-  );
+  padding-bottom: calc(4px * var(--game-scale-both));
 }
 
 #queue .fraction,
@@ -4826,7 +4809,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border-style: solid;
   border-width: 1px 0;
   height: 7px;
-  overflow: hidden;
   position: relative;
   text-align: center;
 }
@@ -4839,7 +4821,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   font-size: 6.5px;
   font-weight: 400;
   left: 50%;
-  line-height: 8px;
+  line-height: 123%;
   margin-top: -0.5px;
   padding: 0 3px;
   position: absolute;
@@ -4856,7 +4838,7 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   border-style: solid;
   border-width: 0.5px 0.25px;
   box-sizing: border-box;
-  height: 7px;
+  height: 100%;
   image-rendering: optimizeQuality;
   left: 0;
   position: absolute;
@@ -6285,13 +6267,41 @@ ul.inline-list li:not(:first-of-type) {
   display: none;
   left: 50%;
   top: 50%;
-  transform: scale(1) translate(-50%, -50%);
-  transform-origin: 0 0;
+  transform: translate3d(-50%, -50%, 0);
 }
 
-body:not(.is-mobile) #tutorial-window {
-  /* slightly larger on desktop */
-  transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
+#tutorial-window.finder .body {
+  /* lighten background, since helicopter underneath for now. */
+  /* note that colors are inverted for this window, heh. */
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#tutorial-window.finder .title-bar-stripes {
+  background-size: 16.5px 3px;
+}
+
+#tutorial-window.finder .title-bar {
+  height: calc(7px * var(--game-scale-both));
+  border-width: calc(1px * var(--game-scale-both)) 0;
+}
+
+#tutorial-window.finder h3 {
+  font-size: calc(7px * var(--game-scale-both));
+}
+
+#tutorial-window.finder .title-bar-label {
+  font-size: calc(6.5px * var(--game-scale-both));
+  margin-top: calc(-0.5px * var(--game-scale-both));
+  padding: 0px calc(3px * var(--game-scale-both));
+}
+
+#tutorial-window.finder .body {
+  font-size: calc(5px * var(--game-scale-both));
+}
+
+#tutorial-window.finder .body img {
+  /* images are safe to scale via zoom - in Safari, at least. */
+  zoom: var(--game-scale-both);
 }
 
 body.tutorial-mode #tutorial-window {
@@ -6333,7 +6343,21 @@ body.game-paused #tutorial-window {
 }
 
 #tutorial-window .body p:not(:last-of-type) {
-  margin-bottom: 3px;
+  margin-bottom: 0.55em;
+}
+
+#tutorial-window .body .mobile-touch-example {
+  display: inline-block;
+  padding: calc(0.5px * var(--game-scale-transform));
+  box-sizing: content-box;
+  border-radius: 100%;
+  border: calc(0.5px * var(--game-scale-transform)) solid #666;
+  vertical-align: text-top;
+  line-height: calc(4.5px * var(--game-scale-transform));
+  --size: calc(5px * var(--game-scale-transform));
+  width: var(--size);
+  height: var(--size);
+  text-align: center;
 }
 
 #level-preview {
@@ -6499,18 +6523,6 @@ body.game-over .target-ui {
   #mobile-controls li span.letter-block.show_inventory {
     top: 1.5px;
   }
-
-  /* scale up a bit; center of screen, avoid The Notch and such. */
-  body.is-mobile #tutorial-window {
-    left: 50%;
-    top: 50%;
-    transform: scale3d(1.75, 1.75, 1) translate3d(-50%, -40%, 0);
-  }
-
-  body.is_iphone #tutorial-window {
-    /* position nicely and overlay BnB "TV", as applicable. */
-    transform: scale3d(1.75, 1.75, 1) translate3d(-50%, -30%, 0);
-  }
 }
 
 #letters-from-the-old-tanker {
@@ -6636,11 +6648,6 @@ body.game-over .target-ui {
   body.game-paused #mobile-controls,
   body.game-paused #notification-toasts {
     visibility: hidden;
-  }
-
-  /* leave room for notifications. */
-  body.is-mobile #tutorial-window {
-    transform: scale3d(1.1, 1.1, 1) translate3d(-50%, -35%, 0);
   }
 
   body.is-mobile #battle-over-letter.active {
