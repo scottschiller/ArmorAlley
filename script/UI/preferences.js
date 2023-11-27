@@ -72,6 +72,10 @@ const defaultPrefs = {
   'show_keyboard_labels': !isiPhone, // iPhone is unlikely to have a keyboard. iPad might. Desktops should, etc.
   'show_game_tips': true,
   'show_health_status': PREFS.SHOW_HEALTH_SOMETIMES, // never | sometimes | always
+  'stars_color': true,
+  'stars_density': 'standard',
+  'stars_twinkle_fx': true,
+  'stars_warp_fx': true,
   // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
   'notifications_location': isMobile
     ? PREFS.NOTIFICATIONS_LOCATION_LEFT
@@ -1429,6 +1433,14 @@ function PrefsManager() {
 
       radar_enhanced_fx: (isActive) => {
         utils.css.addOrRemove(document.body, isActive, 'radar_enhanced_fx');
+      },
+
+      stars_color: () => {
+        game?.objects?.starController?.updateStarColorPref?.();
+      },
+
+      stars_density: () => {
+        game?.objects?.starController?.updateStarDensityPref?.();
       },
 
       super_bunker_arrows: (isActive) => {

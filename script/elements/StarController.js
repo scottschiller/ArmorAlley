@@ -1,10 +1,13 @@
+import { gamePrefs } from '../UI/preferences.js';
 import { game } from '../core/Game.js';
 import {
+  FPS,
   GAME_SPEED,
   isMobile,
   isiPhone,
   oneOf,
   rnd,
+  rndInt,
   searchParams
 } from '../core/global.js';
 
@@ -12,20 +15,25 @@ const StarController = () => {
   // "Star Control" (star controller.) Ideally, version ][ of course. ;)
   let data, dom, exports;
 
+  const white = [255, 255, 255];
+
   const colors = [
     [255, 0, 0], // red
     [255, 165, 0], // orange
     [255, 255, 0], // yellow
     [0, 255, 0], // green
-    [0, 0, 255], // blue
-    [255, 255, 255], // white
-    [255, 255, 255],
-    [255, 255, 255],
-    [255, 255, 255],
-    [255, 255, 255]
-  ];
+    [0, 0, 255] // blue
+  ].concat(Array(5).fill(white));
+
+  // game prefs vs. number of stars
+  const scaleMap = {
+    less: 0.25,
+    standard: 0.85,
+    more: 3
+  };
 
   data = {
+    frameCount: 0,
     lastScrollLeft: 0,
     starCount: 0,
     stars: [],
@@ -39,11 +47,12 @@ const StarController = () => {
   };
 
   function getStarCount() {
-    // if not specified, minimum or window width.
-    return (
+    // if not specified, use minimum or window width.
+    // scale relative to preference.
+    const count =
       parseInt(searchParams.get('stars'), 10) ||
-      Math.max(512, parseInt(window.innerWidth / 2, 10))
-    );
+      Math.max(512, parseInt(window.innerWidth / 2, 10));
+    return count * (scaleMap[gamePrefs.stars_density] || 1);
   }
 
   function syncWithLeftScroll() {
@@ -57,9 +66,6 @@ const StarController = () => {
     if (!data.stars.length) return;
 
     const { ctx } = dom;
-
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#fff';
 
     // wipe the slate clean, per se.
     ctx.clearRect(0, 0, data.width, data.height);
@@ -85,7 +91,12 @@ const StarController = () => {
      * "Engage." --Picard
      * Also Picard: "Make it so."
      */
-    data.warpEffect = game.objects.view.isAnimateScrollActive()
+
+    const isAnimateScrollActive = game.objects.view.isAnimateScrollActive();
+    
+    data.warpEffect = !gamePrefs.stars_warp_fx
+      ? 0
+      : isAnimateScrollActive
       ? absDelta / 4
       : absDelta / 5;
 
@@ -98,11 +109,32 @@ const StarController = () => {
     const halfGlobeOffset = globeOffset / 2;
 
     let width;
+    let height;
+    let scale;
+
+    // twinkle includes scaling, but not desirable during a warp.
+    const canScale = gamePrefs.stars_twinkle_fx && (!isAnimateScrollActive || !gamePrefs.stars_warp_fx);
 
     for (let i = 0; i < data.starCount; i++) {
+
+      // twinkle, twinkle? (ignore during a scroll / warp event.)
+      if (gamePrefs.stars_twinkle_fx) {
+        if (data.stars[i].data.twinkleFrameCount) {
+          // don't draw this one - decrement, and exit.
+          data.stars[i].data.twinkleFrameCount--;
+          // continue;
+        } else if (data.stars[i].data.twinkleModulus && data.frameCount % data.stars[i].data.twinkleModulus === 0) {
+          // start "twinkling."
+          data.stars[i].data.twinkleFrameCount = rndInt(8);
+          // randomize the modulus, again.
+          data.stars[i].data.twinkleModulus = getTwinkleModulus();
+          continue;
+        }
+      }
+
       ctx.beginPath();
 
-      ctx.fillStyle = data.stars[i].data.rgb;
+      ctx.fillStyle = data.stars[i].data.rgba;
 
       x = data.stars[i].data.x;
 
@@ -118,7 +150,7 @@ const StarController = () => {
       width = data.stars[i].data.diameter + data.warpEffect;
 
       // wrap-around logic
-      if (scrollDelta < 0 && x + data.warpEffect < 0) {
+      if (scrollDelta < 0 && x + width < 0) {
         randomizeStar(i);
         x = data.width;
       } else if (scrollDelta > 0 && x > data.width) {
@@ -130,19 +162,36 @@ const StarController = () => {
 
       ctx.moveTo(x, y);
 
+      scale = canScale ? (data.stars[i].data.twinkleFrameCount || 1) : 1;
+
       // params: x, y, width, height, radii
+
+      // new display width, different from logical width above...
+      width = data.stars[i].data.diameter;
+
+      // if scaling (as part of twinkle), ignore warp effect.
+      if (scale > 1) {
+        width *= scale;
+      } else {
+        width += data.warpEffect;
+      }
+
+      height = data.stars[i].data.diameter * scale;
+
       ctx.roundRect(
-        x,
-        y,
-        data.stars[i].data.diameter + data.warpEffect,
-        data.stars[i].data.diameter,
-        [data.stars[i].data.radius]
+        x - (width / 2),
+        y - (height / 2),
+        width,
+        height,
+        [data.stars[i].data.radius * scale]
       );
 
       ctx.fill();
     }
 
     syncWithLeftScroll();
+
+    data.frameCount++;
   }
 
   function refreshStarCoords(newWidth = data.width, newHeight = data.height) {
@@ -158,6 +207,7 @@ const StarController = () => {
     // desktop: scale relative to new screen.
     const xRatio = newWidth / data.width;
     const yRatio = newHeight / data.height;
+
     for (let i = 0; i < data.starCount; i++) {
       data.stars[i].data.x *= xRatio;
       data.stars[i].data.y *= yRatio;
@@ -205,8 +255,22 @@ const StarController = () => {
     }
   }
 
+  function getRGBA(opacity) {
+    const rgb = gamePrefs.stars_color ? oneOf(colors) : white;
+    return `rgba(${rgb.join(',')},${opacity})`;
+  }
+
+  function updateStarColorPref() {
+    for (let i = 0, j = data.stars.length; i < j; i++) {
+      data.stars[i].data.rgba = getRGBA(data.stars[i].data.opacity);
+    }
+  }
+
+  function getTwinkleModulus() {
+    return (FPS * 5) + rndInt(FPS * 25);
+  }
+
   function randomizeStar(offset) {
-    const color = oneOf(colors);
     const opacity = 0.15 + rnd(0.85);
     // scale down differently on desktop, vs. iPhone, vs. mobile - "the pixels look big."
     // this may be due to some other scaling shenanigans.
@@ -217,8 +281,11 @@ const StarController = () => {
         y: rnd(data.height),
         radius,
         diameter: radius * 2,
-        rgb: `rgba(${color.join(',')},${opacity})`,
-        direction: 1,
+        rgba: getRGBA(opacity),
+        opacity,
+        // initial random delay
+        twinkleModulus: rnd(1) >= 0.98 ? rndInt(FPS * 30) : 0,
+        twinkleFrameCount: 0,
         // parallax is roughly correlated to distance / size
         parallax: radius / 4 + rnd(radius / 4)
       }
@@ -236,7 +303,9 @@ const StarController = () => {
     data,
     init,
     resize,
-    reset: resetStars
+    reset: resetStars,
+    updateStarColorPref,
+    updateStarDensityPref: init
   };
 
   return exports;
