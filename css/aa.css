@@ -985,7 +985,7 @@ body.is_safari:not(.is-mobile) #queue {
 }
 
 #radar-scrubber {
-  background: hsla(0, 0%, 100%, 0.25);
+  background: rgba(0, 255, 0, 0.5);
   border: 0.5px solid #393;
   border-bottom: none;
   border-top: none;

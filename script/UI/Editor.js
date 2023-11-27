@@ -102,7 +102,9 @@ const Editor = () => {
 
     dom.oCutoffLine = battleField.appendChild(oCutoffLine);
     dom.oMarquee = battleField.appendChild(oMarquee);
-    dom.oRadarScrubber = battleField.appendChild(oRadarScrubber);
+
+    const world = document.getElementById('world');
+    dom.oRadarScrubber = world.appendChild(oRadarScrubber);
 
     dom.oFinder = document.getElementById('editor-window');
     dom.oFinder.style.display = 'block';
@@ -756,7 +758,7 @@ const Editor = () => {
     // dragging scrubber directly
     if (data.mouseDownTarget === dom.oRadarScrubber) {
       data.scrubberX = getScrubberX(clientX);
-      dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
+      dom.oRadarScrubber.style.transform = `translate3d(${data.scrubberX}px, 0px, 0)`;
     } else {
       // dragging the battlefield. move relatively.
       const maxOverflow = game.objects.view.data.browser.halfWidth;
@@ -777,7 +779,7 @@ const Editor = () => {
       data.scrubberX =
         (xOffset / worldWidth) * game.objects.view.data.browser.width;
 
-      dom.oRadarScrubber.style.transform = `translate(${data.scrubberX}px, 0px)`;
+      dom.oRadarScrubber.style.transform = `translate3d(${data.scrubberX}px, 0px, 0)`;
     }
   }
 
