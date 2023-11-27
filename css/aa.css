@@ -4554,7 +4554,7 @@ body:not(.is-mobile) .mobile-only {
   text-align: right;
   top: 0;
   transition: all 0.33s ease-in-out;
-  transition-property: height, margin, opacity, transform;
+  transition-property: height, margin, opacity;
   overflow-y: hidden;
   height: 0;
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.75);
@@ -4570,14 +4570,15 @@ body:not(.is-mobile) .mobile-only {
 }
 
 .notification-toast.toast-expiring {
-  transform: translate3d(0px, 25%, 0);
-  transform-origin: 50% 0px;
   opacity: 0;
 }
 
-.notification-toast span {
+.notification-toast > span {
+  /* don't apply to inline emoji, etc. */
   display: inline-block;
-  padding-bottom: calc(3.5px * var(--game-scale-transform));
+  padding-bottom: calc(
+    4px * var(--game-scale-transform) * var(--game-scale-zoom)
+  );
 }
 
 #queue .fraction,

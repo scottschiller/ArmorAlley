@@ -144,6 +144,11 @@ const Notifications = () => {
       updateListOpacity();
       // transition to the natural height, which can vary
       oToast.style.height = `${oToast.scrollHeight}px`;
+      // hackish: revert to "natural" height after animation completes.
+      // this is done so the UI remains responsive if screen scale / font size changes.
+      common.setFixedFrameTimeout(() => {
+        oToast.style.height = 'auto';
+      }, 500);
     }, 96);
 
     // assign for later node removal
@@ -158,7 +163,9 @@ const Notifications = () => {
 
   function updateListOpacity() {
     // show top toasts at 100% opacity, then start fading down the list.
-    const toasts = dom.oToasts.childNodes;
+    const toasts = dom.oToasts.querySelectorAll(
+      `.${css.notificationToast}:not(.${css.toastExpiring}):not(.${css.toastExpired})`
+    );
     let priority = 2;
     let fadeBy = 0.05;
     let opacity = 1;
@@ -185,15 +192,13 @@ const Notifications = () => {
 
     item = data.items.shift();
 
-    // slide contents out of view
-    // utils.css.remove(item.node, css.toastActive);
     utils.css.add(item.node, css.toastExpiring);
 
-    // reset opacity manually, because it's been affected by updateListOpacity().
-    item.node.style.opacity = 0;
+    // -ve margin, to pull down / collapse item
+    item.node.style.marginBottom = `-${item.node.scrollHeight}px`;
 
-    // ditto for height; transition forcefully.
-    item.node.style.height = '0px';
+    // hackish: reset opacity manually, because it's been affected by updateListOpacity().
+    item.node.style.opacity = 0;
 
     if (item.onComplete) {
       item.onComplete();
@@ -205,8 +210,8 @@ const Notifications = () => {
       common.setFixedFrameTimeout(() => {
         item?.node?.remove();
         updateListOpacity();
-      }, 660);
-    }, 660);
+      }, 330);
+    }, 330);
 
     if (!data.items.length) {
       // all done.
