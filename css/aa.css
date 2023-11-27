@@ -3768,26 +3768,6 @@ body.game-paused.prefs-modal-open #game-paused {
   display: none;
 }
 
-#game-tips .tips-container .tips-fader {
-  /**
-   * gradient generated via this useful tool...
-   * cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%205\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B'
-   */
-  background: linear-gradient(
-    90deg,
-    #000 0,
-    transparent 10%,
-    transparent 90%,
-    #000
-  );
-  height: 100%;
-  left: 0;
-  /* overlay tips */
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
 #game-tips .tips-container #game-tips-list {
   display: inline-block;
   margin: 0;
@@ -3801,6 +3781,27 @@ body.game-paused.prefs-modal-open #game-paused {
 
 body.game-started #game-tips.active .tips-container {
   display: block;
+  /**
+   * gradient generated via this useful tool...
+   * cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%205\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2020\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2050\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C0\%29\%2080\%25\%2C\%20rgba\%280\%2C0\%2C0\%2C1\%29\%2095\%25\%29\%3B'
+   *
+   * 11/2023: webkit prefix may apply for some time to come; dropped as of Chrome 120.
+   * https://caniuse.com/css-masks
+   */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
 }
 
 #game-tips .tips-container .animation-node,
@@ -3894,8 +3895,7 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
   overflow: visible;
 }
 
-#game-tips.has-announcement #game-tips-list,
-#game-tips.has-announcement .tips-fader {
+#game-tips.has-announcement #game-tips-list {
   opacity: 0;
 }
 
