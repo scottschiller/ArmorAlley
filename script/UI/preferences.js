@@ -189,18 +189,13 @@ function PrefsManager() {
       );
     }
 
-    // special case: apply gravestone prefs with current values.
+    // special case: apply certain prefs with current values at init.
     [
       'gravestones_helicopters',
       'gravestones_infantry',
-      'gravestones_vehicles'
+      'gravestones_vehicles',
+      'radar_enhanced_fx'
     ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
-
-    // ...and, enhanced FX.
-    // TODO: one method for all this stuff.
-    if (gamePrefs.radar_enhanced_fx) {
-      events.onPrefChange['radar_enhanced_fx'](gamePrefs.radar_enhanced_fx);
-    }
 
     // special case: apply BnB "VS" immediately.
     dom.oBnB.addEventListener('change', (e) =>
