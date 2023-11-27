@@ -4257,11 +4257,11 @@ body.is-mobile #mobile-controls {
 
 /* TODO: make this configurable. */
 body.is-mobile.notch-at-left #notification-toasts {
-  margin-left: env(safe-area-inset-left) !important;
+  margin-left: calc(env(safe-area-inset-left) * 0.9) !important;
 }
 
 body.is-mobile.notch-at-right #notification-toasts {
-  margin-right: env(safe-area-inset-right) !important;
+  margin-right: calc(env(safe-area-inset-right) * 0.9) !important;
 }
 
 /* go bigger on landscape. */
@@ -4529,36 +4529,25 @@ body:not(.is-mobile) .mobile-only {
 }
 
 #notification-toasts {
-  contain: strict;
-  height: 256px;
-  overflow: hidden;
   position: absolute;
-  right: 8px;
-  top: 112px;
-  width: 14em;
+  overflow: hidden;
+  contain: strict;
+  height: 55%;
+  right: 1.5%;
+  top: 27.5%;
+  width: 25em;
+  font-size: calc(6px * var(--game-scale-transform));
   /* sit on top of L/R screen gradients */
   z-index: 11;
-}
-
-body.is_safari:not(.is-mobile) #notification-toasts {
-  /* desktop safari zoom hacks */
-  zoom: 2;
-  height: 128px;
-  right: 4px;
-  /* note: half-scale of original */
-  top: 57px;
-  transform: scale3d(0.5, 0.5, 1);
-  transform-origin: top right;
+  pointer-events: none;
 }
 
 #notification-toasts.left-aligned {
-  left: 8px;
   right: auto;
+  left: 1.5%;
 }
 
 #notification-toasts.bottom-up {
-  /* note: positioning shenanigans */
-  margin-top: -16px;
   display: flex;
   align-items: flex-end;
   flex-direction: column;
@@ -4567,6 +4556,7 @@ body.is_safari:not(.is-mobile) #notification-toasts {
 
 .notification-toast {
   color: #999;
+  color: #aaa;
   left: 100%;
   opacity: 0;
   position: relative;
@@ -4602,11 +4592,8 @@ body.is_safari:not(.is-mobile) #notification-toasts {
 }
 
 .notification-toast span {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid transparent;
   display: inline-block;
-  font-size: 6px;
-  padding-bottom: 1px;
+  padding-bottom: calc(3.5px * var(--game-scale-transform));
 }
 
 #queue .fraction,
