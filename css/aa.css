@@ -3167,8 +3167,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
   transition: filter 0.5s ease-in-out;
 }
 
-.bunker.burning .sub-sprite.nuke,
-.bunker.exploding .sub-sprite.nuke,
 .base.burning {
   /* a little "nuclear" glow, why not. */
   filter: drop-shadow(0 0 16px #fff);
