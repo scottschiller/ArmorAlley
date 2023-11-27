@@ -1278,8 +1278,12 @@ body.bnb #tv-display.widescreen #tv {
 }
 
 /* don't show these on realy small portrait displays. */
-
 @media screen and (min-width: 640px) {
+  #stars {
+    /* hackish: offset because gradient overlay doesn't always seem to line up perfectly. */
+    width: 99.5% !important;
+  }
+
   body.game-started #battlefield-overlay-left {
     left: -1px;
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0));
