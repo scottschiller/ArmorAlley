@@ -245,7 +245,9 @@ const Base = (options = {}) => {
 
           // visually destroy the base.
           // TODO: big nuke like bunker?
-          dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+          dom.oSubSpriteNuke = dom.o.appendChild(
+            sprites.makeSubSprite(css.nuke)
+          );
           utils.css.add(dom.o, 'burning');
         }, 25);
       }, 2500);
@@ -277,10 +279,10 @@ const Base = (options = {}) => {
     // slow down nicely, then move on toward the opposing base.
     game.objects.view.decelerateScroll();
 
-    common.setFrameTimeout(dieContinue, 1000);
+    common.setFrameTimeout(battleOver, 1000);
   }
 
-  function dieContinue() {
+  function battleOver() {
     const override = true;
     let leftOffset;
 
@@ -312,52 +314,56 @@ const Base = (options = {}) => {
     // TODO: make this a method; cleaner, etc.
     game.objects.view.data.ignoreMouseEvents = true;
 
-    const onScreenDieDelay = game.objects.view.data.browser.isPortrait
-      ? FPS
-      : FPS * 4;
+    if (gamePrefs.gratuitous_battle_over) {
+      const onScreenDieDelay = game.objects.view.data.browser.isPortrait
+        ? FPS
+        : FPS * 4;
 
-    // start destroying all the losing team's stuff
-    let delay = 0;
-    [
-      TYPES.bunker,
-      TYPES.turret,
-      TYPES.balloon,
-      TYPES.tank,
-      TYPES.missileLauncher,
-      TYPES.van,
-      TYPES.infantry,
-      TYPES.engineer,
-      TYPES.helicopter
-    ].forEach((type) => {
-      if (game.objects[type]) {
-        game.objects[type].forEach((item) => {
-          const onLosingSide = item.data.isEnemy === data.isEnemy;
-          if (
-            item !== game.players.local &&
-            // bunkers always get trashed, because it's more fun that way.
-            (onLosingSide || item.data.hostile || item.data.type === TYPES.bunker)
-          ) {
-            const { scrollLeft } = game.objects.view.data.battleField;
-            // on-screen or "behind" the player (e.g., scrolling toward enemy base, but enemies are closer to our base behind us) = boom; otherwise, becoming on-screen = boom.
+      // start destroying all the losing team's stuff
+      let delay = 0;
+      [
+        TYPES.bunker,
+        TYPES.turret,
+        TYPES.balloon,
+        TYPES.tank,
+        TYPES.missileLauncher,
+        TYPES.van,
+        TYPES.infantry,
+        TYPES.engineer,
+        TYPES.helicopter
+      ].forEach((type) => {
+        if (game.objects[type]) {
+          game.objects[type].forEach((item) => {
+            const onLosingSide = item.data.isEnemy === data.isEnemy;
             if (
-              item.data.isOnScreen ||
-              (data.isEnemy && item.data.x < scrollLeft) ||
-              (!data.isEnemy && item.data.x > scrollLeft)
+              item !== game.players.local &&
+              // bunkers always get trashed, because it's more fun that way.
+              (onLosingSide ||
+                item.data.hostile ||
+                item.data.type === TYPES.bunker)
             ) {
-              delay += 128;
-              common.setFrameTimeout(item.die, delay);
-            } else {
-              // hack: hijack this event, and blow everything up. ;)
-              item.isOnScreenChange = (isOnScreen) => {
-                if (isOnScreen) {
-                  common.setFrameTimeout(item.die, onScreenDieDelay);
-                }
-              };
+              const { scrollLeft } = game.objects.view.data.battleField;
+              // on-screen or "behind" the player (e.g., scrolling toward enemy base, but enemies are closer to our base behind us) = boom; otherwise, becoming on-screen = boom.
+              if (
+                item.data.isOnScreen ||
+                (data.isEnemy && item.data.x < scrollLeft) ||
+                (!data.isEnemy && item.data.x > scrollLeft)
+              ) {
+                delay += 128;
+                common.setFrameTimeout(item.die, delay);
+              } else {
+                // hack: hijack this event, and blow everything up. ;)
+                item.isOnScreenChange = (isOnScreen) => {
+                  if (isOnScreen) {
+                    common.setFrameTimeout(item.die, onScreenDieDelay);
+                  }
+                };
+              }
             }
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }
 
     document.getElementById('game-tips-list').innerHTML = '';
 

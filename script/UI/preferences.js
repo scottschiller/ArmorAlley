@@ -61,6 +61,7 @@ const defaultPrefs = {
   'weather': '', // [none|rain|hail|snow|turd]
   'domfetti': true,
   'gravestones_helicopters': true,
+  'gratuitous_battle_over': true,
   'gravestones_infantry': demo || false,
   'gravestones_vehicles': demo || false,
   'landing_pads_on_radar': true,
