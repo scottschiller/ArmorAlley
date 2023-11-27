@@ -4536,7 +4536,7 @@ body:not(.is-mobile) .mobile-only {
   right: 1.5%;
   top: 27.5%;
   width: 25em;
-  font-size: calc(6px * var(--game-scale-transform));
+  font-size: calc(6px * var(--game-scale-transform) * var(--game-scale-zoom));
   /* sit on top of L/R screen gradients */
   z-index: 11;
   pointer-events: none;
