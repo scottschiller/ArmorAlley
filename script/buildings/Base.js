@@ -286,6 +286,11 @@ const Base = (options = {}) => {
     const override = true;
     let leftOffset;
 
+    // if you lost, destroy your helicopter right away.
+    if (game.players.local.data.isEnemy === data.isEnemy) {
+      game.players.local.die();
+    }
+
     // bring the target base into view, and position slightly for the explosions
     if (data.isEnemy) {
       leftOffset = game.objects.view.data.battleField.width;
