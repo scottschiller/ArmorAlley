@@ -3664,14 +3664,15 @@ body:not(.game-started) .scan-node {
 }
 
 #game-tips {
-  /* single line height */
+  position: absolute;
   font-family: 'Cheddar Gothic Stencil';
   font-weight: 400;
-  height: 13px;
+  /* will be repositioned higher up on small portrait screens. */
+  top: 23.5%;
   left: 0;
-  position: absolute;
-  top: 95px;
   width: 100%;
+  height: 0px;
+  pointer-events: none;
 }
 
 #game-tips .tips-container {
@@ -3683,30 +3684,10 @@ body:not(.game-started) .scan-node {
   padding: 0;
   position: absolute;
   text-shadow: 0 1px 0 #000;
-  top: 23.5%;
-  transform: translate3d(-50%, -50%, 0);
+  top: 0;
+  transform: translate3d(-50%, 0%, 0);
   width: 65%;
-}
-
-body.is_safari:not(.is-mobile) #game-tips .tips-container {
-  /* safari 2x zoom shenanigans */
-  zoom: 2;
-  height: 2em;
-  margin: 0;
-  /* note, adjusted because of zoom. */
-  top: 4px;
-  transform: scale3d(0.5, 0.5, 1) translate3d(-50%, -50%, 0);
-  transform-origin: 0 0;
-  /* TODO: sort out container width vs. wrapping */
-  width: 400px;
-}
-
-body.is_safari:not(.is-mobile) #game-tips .tips-container .animation-node,
-body.is_safari:not(.is-mobile) #game-tips .tips-container .tip {
-  animation: scrollText-safari-scale calc(16s * var(--gs-frac)) linear;
-  font-size: 28px;
-  line-height: 20px;
-  width: 64rem;
+  outline: 1px solid #339933;
 }
 
 body.tutorial-mode #game-tips .tips-container {
@@ -3724,15 +3705,15 @@ body.game-over #game-tips .tips-container {
 #game-paused {
   color: #ccc;
   display: none;
-  font-size: 1rem;
+  /* font-size: 1rem; */
   font-weight: 300;
-  height: 1rem;
+  /* height: 1rem; */
   left: 0;
-  margin-top: -0.5rem;
+  /* margin-top: -0.5rem; */
   position: absolute;
   text-align: center;
   text-shadow: 0 1px 0 #000;
-  top: 50%;
+  top: 0;
   width: 100%;
   z-index: 10;
 }
@@ -3769,6 +3750,7 @@ body.game-paused.prefs-modal-open #game-paused {
 
 #game-tips .tips-container #game-tips-list {
   display: inline-block;
+  width: 100%;
   margin: 0;
   opacity: 1;
   overflow: hidden;
@@ -3803,15 +3785,33 @@ body.game-started #game-tips.active .tips-container {
   );
 }
 
+#game-tips {
+  /* tips, announcements, and game paused / resume prompts. */
+  font-size: calc(16px * var(--game-scale-transform) * var(--game-scale-zoom));
+  line-height: 100%;
+}
+
 #game-tips .tips-container .animation-node,
 #game-tips .tips-container .tip {
   animation: scrollText calc(20s * var(--gs-frac)) linear;
-  font-size: 16px;
   font-weight: 300;
-  line-height: 16px;
   padding: 1px;
   text-rendering: optimizeSpeed; /* "ticker-tape" style? */
   /* animation-timing-function: steps(150); */
+}
+
+@media screen and (orientation: portrait) {
+  #game-tips {
+    /* roughly line up with green bars */
+    top: 16.35%;
+    /* smaller text, too. */
+    font-size: calc(
+      12px * var(--game-scale-transform) * var(--game-scale-zoom)
+    );
+    line-height: calc(
+      12px * var(--game-scale-transform) * var(--game-scale-zoom)
+    );
+  }
 }
 
 /* go bigger on landscape. */
@@ -3829,19 +3829,17 @@ body.game-started #game-tips.active .tips-container {
   display: inline-block;
   min-width: 32rem;
   /* each tip should roughly clear the screen before the next appears. */
-  width: 75%;
+  width: 125%;
 }
 
 #game-tips #game-announcements {
   color: #bbb;
-  font-size: 1.5em;
+  font-size: calc(16px * var(--game-scale-transform) * var(--game-scale-zoom));
+  line-height: 110%;
   font-weight: 300;
   left: 0;
-  line-height: 1.25em;
   margin: 0 auto;
-  min-height: 100%;
   opacity: 0;
-  /* overlay-type thingy */
   position: absolute;
   text-align: center;
   top: 0;
@@ -3853,11 +3851,6 @@ body.game-started #game-tips.active .tips-container {
   width: 100%;
   /* display on top of "TV." */
   z-index: 2;
-}
-
-body.is-mobile #game-tips #game-announcements {
-  border-radius: 1em;
-  padding: 4px;
 }
 
 #game-tips #game-announcements p {
@@ -6431,21 +6424,6 @@ body.game-over .target-ui {
     margin-top: 10vw;
   }
 
-  body.is-mobile #game-tips .tips-container .animation-node,
-  body.is-mobile #game-tips .tips-container .tip {
-    font-size: 26px;
-    line-height: 20px;
-    width: 75%;
-  }
-
-  body.is-mobile #game-tips #game-announcements {
-    /* larger type, please. */
-    font-size: 2.5em;
-    line-height: 1em;
-    /* slightly higher up on screen, too. */
-    margin-top: -0.65em;
-  }
-
   /* giant hack, for now - iPhone only, not iPads. */
   body.is-mobile.is_iphone #mobile-controls .mobile-controls-ordering,
   body.is-mobile.is_iphone #mobile-controls .mobile-controls-weapons {
@@ -6576,42 +6554,9 @@ body.game-over .target-ui {
     top: -0.5px;
   }
 
-  body.is-mobile #game-tips {
-    height: 13px;
-    top: 82px;
-  }
-
-  body.is-mobile:not(.game-paused) #game-tips {
-    top: 64px;
-  }
-
   body.is-mobile #game-tips .tips-container {
-    margin: 0;
     /* take most of the screen real estate */
-    top: 0;
-    transform: translate3d(-50%, 0, 0);
     width: 95%;
-  }
-
-  body.is-mobile #game-tips .tips-container .animation-node,
-  body.is-mobile #game-tips .tips-container .tip {
-    min-width: 30rem;
-  }
-
-  body.is-mobile
-    #game-tips
-    .tips-container
-    .animation-node:not(.hide-on-mobile),
-  body.is-mobile #game-tips .tips-container .tip:not(.hide-on-mobile) {
-    min-width: 15rem;
-    width: 75%;
-  }
-
-  body.is-mobile #game-tips #game-announcements {
-    /* smaller type, please. */
-    font-size: 1.25em;
-    line-height: 1.25em;
-    text-align: center;
   }
 
   body.is-mobile #help {
