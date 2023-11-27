@@ -136,15 +136,14 @@ const Notifications = () => {
       item.onRender ? item.onRender(item.text) : item.text
     }</span>`;
 
-    dom.oToasts.appendChild(oToast);
+    dom.oToasts.insertBefore(oToast, dom.oToasts.firstChild);
 
     // delay required for transition to work
     common.setFixedFrameTimeout(() => {
       utils.css.add(oToast, css.toastActive);
-      if (gamePrefs.notifications_order_bottom_up) {
-        // hackish: assign computed height for transition.
-        oToast.style.height = `${oToast.scrollHeight}px`;
-      }
+      updateListOpacity();
+      // transition to the natural height, which can vary
+      oToast.style.height = `${oToast.scrollHeight}px`;
     }, 96);
 
     // assign for later node removal
@@ -154,6 +153,25 @@ const Notifications = () => {
     if (!data.isDisplaying) {
       data.isDisplaying = true;
       item.timer = common.setFixedFrameTimeout(displayItemComplete, item.delay);
+    }
+  }
+
+  function updateListOpacity() {
+    // show top toasts at 100% opacity, then start fading down the list.
+    const toasts = dom.oToasts.childNodes;
+    let priority = 2;
+    let fadeBy = 0.05;
+    let opacity = 1;
+    let minOpacity = 0.1;
+    let itemOpacity;
+    for (var i = 0, j = toasts.length; i < j; i++) {
+      if (j < priority) {
+        itemOpacity = 1;
+      } else {
+        opacity = Math.max(minOpacity, opacity - fadeBy);
+        itemOpacity = opacity;
+      }
+      toasts[i].style.opacity = itemOpacity;
     }
   }
 
@@ -171,21 +189,24 @@ const Notifications = () => {
     // utils.css.remove(item.node, css.toastActive);
     utils.css.add(item.node, css.toastExpiring);
 
-    // yuck; read height from DOM.
-    const offsetHeight = item.node.offsetHeight;
-    item.node.style.marginTop = `-${offsetHeight}px`;
+    // reset opacity manually, because it's been affected by updateListOpacity().
+    item.node.style.opacity = 0;
+
+    // ditto for height; transition forcefully.
+    item.node.style.height = '0px';
 
     if (item.onComplete) {
       item.onComplete();
     }
 
-    // collapse height, and then disappear.
+    // slide / fade out of view, and then disappear.
     common.setFixedFrameTimeout(() => {
       utils.css.add(item.node, css.toastExpired);
       common.setFixedFrameTimeout(() => {
         item?.node?.remove();
-      }, 500);
-    }, 500);
+        updateListOpacity();
+      }, 660);
+    }, 660);
 
     if (!data.items.length) {
       // all done.
@@ -234,7 +255,8 @@ const Notifications = () => {
       playingMessage = gameTypes[gameType] || gameTypes.other;
     }
 
-    const welcome = 'Welcome to ARMOR ALLEY. <span class="inline-emoji">🚁</span><br />';
+    const welcome =
+      'Welcome to ARMOR ALLEY. <span class="inline-emoji">🚁</span><br />';
 
     const msg = `${welcome}${playingMessage}`;
 

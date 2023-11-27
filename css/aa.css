@@ -4555,22 +4555,16 @@ body:not(.is-mobile) .mobile-only {
 }
 
 .notification-toast {
-  color: #999;
   color: #aaa;
-  left: 100%;
   opacity: 0;
   position: relative;
   text-align: right;
   top: 0;
-  transition: margin 0.33s ease-in-out, opacity 0.33s ease-in-out;
-  will-change: transform;
-}
-
-#notification-toasts.bottom-up .notification-toast {
-  /* height wil be set dynamically by JS, in this case. :X */
-  transition-property: height, margin, opacity;
+  transition: all 0.33s ease-in-out;
+  transition-property: height, margin, opacity, transform;
   overflow-y: hidden;
   height: 0;
+  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.75);
 }
 
 #notification-toasts.left-aligned .notification-toast {
@@ -4579,15 +4573,12 @@ body:not(.is-mobile) .mobile-only {
 }
 
 .notification-toast.toast-active {
-  /* bring text into view */
-  left: 0;
   opacity: 1;
-  /* and, a little slower */
-  transition-duration: 0.5s;
 }
 
 .notification-toast.toast-expiring {
-  /* fade */
+  transform: translate3d(0px, 25%, 0);
+  transform-origin: 50% 0px;
   opacity: 0;
 }
 
