@@ -1689,16 +1689,11 @@ ul.stats-bar .bombs em {
 }
 
 #battlefield {
-  height: 100%;
-  top: 0;
-  /**
-   * width was previously hard-coded at 8192px, but that's silly. 
-   * no need for a real layer that large, just for positioning.
-   * and a transform offset for terrain elements.
-   */
-  width: 100%;
-  left: 0;
   position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
 }
 
 .sprite {
