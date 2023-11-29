@@ -754,8 +754,11 @@ body.edit-mode #world-wrapper {
   width: calc(42px * var(--gs-tz));
   /* collapse whitespace */
   font-size: 0px;
-  transition: opacity 0.25s ease-in-out;
   opacity: 0;
+}
+
+body.loaded #funds {
+  transition: opacity 0.25s ease-in-out;
 }
 
 body.game-started #funds {
@@ -1438,8 +1441,11 @@ body.is-mobile #top-bar #game-fps {
   padding: 0px;
   /* account for absolutely-positioned fuel line + bar */
   top: calc(10px * var(--gs-tz));
-  transition: opacity 0.5s ease-in-out;
   opacity: 0;
+}
+
+body.loaded #stats-bar {
+  transition: opacity 0.5s ease-in-out;
 }
 
 body.game-started #stats-bar {
@@ -1697,6 +1703,12 @@ body.edit-mode #top-bar {
 #top-bar {
   contain: strict;
   z-index: 1;
+  opacity: 0;
+}
+
+body.loaded #top-bar {
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
 }
 
 body:not(.edit-mode) #top-bar {
