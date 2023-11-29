@@ -413,6 +413,7 @@ const Bunker = (options = {}) => {
   data = common.inheritData(
     {
       type: TYPES.bunker,
+      bottomAligned: true,
       y: game.objects.view.data.world.height - 25 - 2, // override to fix helicopter / bunker vertical crash case
       smokeFramesLeft: parseInt(smokeFrames, 10),
       smokeFramesMax: smokeFrames,
