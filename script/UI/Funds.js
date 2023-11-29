@@ -1,34 +1,30 @@
 import { utils } from '../core/utils.js';
 import { playSound, skipSound, sounds } from '../core/sound.js';
-import { screenScale } from '../core/Game.js';
-import { DEFAULT_FUNDS, isFirefox, isSafari } from '../core/global.js';
+import { game } from '../core/Game.js';
+import { DEFAULT_FUNDS } from '../core/global.js';
 import { common } from '../core/common.js';
-import { sprites } from '../core/sprites.js';
 
 const Funds = () => {
   // a "Dune 2"-style credits UI that "spins", with matching sound effects.
   let css, data, dom, exports;
 
   css = {
-    collapsed: 'collapsed'
+    collapsed: 'collapsed',
+    noTransition: 'no-transition'
   };
 
   data = {
     active: false,
     value: DEFAULT_FUNDS,
-    displayValue: DEFAULT_FUNDS,
-    lastActiveDisplayValue: DEFAULT_FUNDS,
+    displayValue: 0,
+    lastActiveDisplayValue: 0,
     lastBnBValue: 0,
     bnbTimer: null,
     hideLeadingZeroes: true,
     frameInterval: 3,
     frameCount: 0,
-    fontSize: 10,
+    displayHeight: 10,
     offsetType: 'px',
-    pixelShift: 0, // isChrome ? -0.1825 * 0.5 : 0,
-    // sometimes, things don't line up exactly perfectly.
-    // pixelOffsets: [0,-0.5,-0.25,-0.5,0,0,0,0,-0.25,0],
-    pixelOffsets: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     digitCount: 3,
     // state for each digit
     offsetTop: [],
@@ -101,7 +97,6 @@ const Funds = () => {
     // raw string, and array of integers
     let digits = data.displayValue.toString();
     const digitInts = [];
-    let tensOffset = 0;
 
     // pad with leading zeroes, e.g., 9 -> 009
     if (digits.length < data.digitCount) {
@@ -109,6 +104,10 @@ const Funds = () => {
       digits =
         new Array(data.digitCount - digits.length + 1).join('0') + digits;
       // digits = '0'.repeat(data.digitCount - digits.length) + digits;
+    }
+
+    if (!dom.o) {
+      dom.o = document.getElementById('funds-count');
     }
 
     if (!dom.digits)
@@ -152,49 +151,59 @@ const Funds = () => {
         }
       }
 
-      // include the value of the prior column in the current background position offset.
-      // e.g., if there are 30 funds, the "ones" column should have an offset accounting for three "sets" of 0-9.
-      // without this, decrementing from 30 to 29 would cause the ones column to "jump" across a single set of digits visibly with the transition.
-      // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
-      tensOffset = (data.offsetTop[i - 1] || 0) * 10;
-
-      dom.digits[i].style.setProperty(
-        'background-position',
-        `0px ${
-          (data.offsetTop[i] + 1 + tensOffset) * data.fontSize +
-          (i === digitCountMinusOne ? 0 : data.pixelShift) +
-          data.pixelOffsets[digits[i]]
-        }${data.offsetType}`
-      );
+      redrawDigit(i);
     }
   }
 
-  function updateScale() {
-    // transforms are exempt, only apply to zoom
-    if (isFirefox || isSafari) return;
+  function redrawDigit(i) {
+    // include the value of the prior column in the current background position offset.
+    // e.g., if there are 30 funds, the "ones" column should have an offset accounting for three "sets" of 0-9.
+    // without this, decrementing from 30 to 29 would cause the ones column to "jump" across a single set of digits visibly with the transition.
+    // this offset means the background repeats, and the next 9 slides in from the top as would be expected.
+    const tensOffset = (data.offsetTop[i - 1] || 0) * 10;
 
+    // $$$: get the *real* rendered width / height (of the last digit)
+    const rect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
+
+    // scale to the real size - 1x + 10x
+    dom.digits[i].style.setProperty(
+      'background-size',
+      `${rect.width}px ${rect.height * 10}px`
+    );
+
+    dom.digits[i].style.setProperty(
+      'background-position',
+      `0px ${(data.offsetTop[i] + 1 + tensOffset) * data.displayHeight}${
+        data.offsetType
+      }`
+    );
+  }
+
+  function updateScale() {
     // read the actual rendered height from the DOM
     // this will then be used to do offsets for animating numbers
     if (!dom.digits.length) return;
 
-    const funds = sprites.getWithStyle('funds');
+    // $$$: get the *real* rendered width / height (of the last digit)
+    const rect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
 
-    // first, offset zoom scaling.
-    funds._style.setProperty('zoom', screenScale);
+    data.displayHeight = rect.height;
 
-    const adjustedScale = 1 / screenScale;
+    // redraw background images, temporarily ignoring transitions
+    utils.css.add(dom.o, css.noTransition);
+    for (let i = 0, j = data.digitCount; i < j; i++) {
+      redrawDigit(i);
+    }
 
-    // now, transform back so things look right, without throwing off background positioning on digits.
-    funds._style.setProperty(
-      'transform',
-      `scale3d(${[adjustedScale, adjustedScale, 1].join(',')})`
+    window.requestAnimationFrame(() =>
+      utils.css.remove(dom.o, css.noTransition)
     );
-    funds._style.setProperty('transform-origin', '0px 0px');
   }
 
   function updateSound() {
     // "... Press debit or credit" 🤣 -- Maria Bamford
     // https://www.youtube.com/watch?v=hi8UURLK6FM
+    if (!game.data.started) return;
     if (data.displayValue <= data.value) {
       playSound(sounds.inventory.credit);
     } else {

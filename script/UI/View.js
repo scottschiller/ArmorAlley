@@ -290,6 +290,7 @@ const View = () => {
     }
 
     game.objects.starController?.resize();
+    game.objects.radar?.resize();
   }
 
   function setTipsActive(active) {
@@ -1018,7 +1019,16 @@ const View = () => {
       dom.root?.style?.setProperty('--game-scale-zoom', data.screenScale);
     }
 
-    game.objects.funds.updateScale();
+    game.objects.funds?.updateScale();
+
+    if (!data.fundsTimer) {
+      // annoying: browsers may need this when switching to/from fullscreen.
+      // there's probably a modern API for this.
+      data.fundsTimer = window.setTimeout(() => {
+        data.fundsTimer = null;
+        game.objects.funds?.updateScale();
+      }, 750);
+    }
   }
 
   function renderMissileText(character, mode) {
@@ -1226,6 +1236,7 @@ const View = () => {
       scrollLeftVX: 0,
       parallaxRate: 0.1
     },
+    fundsTimer: null,
     topBar: {
       height: 0
     },

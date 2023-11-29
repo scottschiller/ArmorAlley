@@ -288,153 +288,6 @@
         <div id="level-preview"></div>
 
         <div id="world" class="welcome">
-          <div id="top-bar">
-            <div id="game-status-bar">
-              <div id="radar-container">
-                <div id="radar">
-                  <!-- radar items go here -->
-                </div>
-              </div>
-
-              <ul id="game-status">
-                <li id="funds">
-                  Funds:
-                  <div id="funds-count">
-                    <div class="digit"><div class="digit-wrapper"></div></div>
-                    <div class="digit"><div class="digit-wrapper"></div></div>
-                    <div class="digit"><div class="digit-wrapper"></div></div>
-                  </div>
-                </li>
-
-                <li id="game-fps">fps: <span id="fps-count">&infin;</span></li>
-                <!-- not implemented. -->
-                <!-- <li>Score: 0</li> -->
-              </ul>
-            </div>
-
-            <div id="player-status-bar">
-              <div id="fuel-bar"></div>
-              <div id="fuel-line"></div>
-
-              <ul id="stats-bar" class="stats-bar">
-                <li class="inventory-item">
-                  <span class="letter-block">M</span>
-                  <a
-                    href="#"
-                    onclick="return false"
-                    oncontextmenu="return false"
-                    onclick="return false"
-                    data-keyMap="missileLauncher"
-                    title="Missile launcher (3 funds)"
-                    class="missile-launcher"></a>
-                </li>
-
-                <li class="inventory-item">
-                  <span class="letter-block">T</span>
-                  <a
-                    href="#"
-                    onclick="return false"
-                    oncontextmenu="return false"
-                    onclick="return false"
-                    data-keyMap="tank"
-                    title="Tank (4 funds)"
-                    class="tank"></a>
-                </li>
-
-                <li class="inventory-item">
-                  <span class="letter-block">V</span>
-                  <a
-                    href="#"
-                    onclick="return false"
-                    oncontextmenu="return false"
-                    onclick="return false"
-                    data-keyMap="van"
-                    title="Van (2 funds)"
-                    class="van"></a>
-                </li>
-
-                <li class="inventory-item">
-                  <span class="letter-block">I</span>
-                  <a
-                    href="#"
-                    onclick="return false"
-                    oncontextmenu="return false"
-                    onclick="return false"
-                    data-keyMap="infantry"
-                    title="Infantry (5 funds)"
-                    class="infantry"></a>
-                </li>
-
-                <li class="inventory-item">
-                  <span class="letter-block">E</span>
-                  <a
-                    href="#"
-                    onclick="return false"
-                    oncontextmenu="return false"
-                    onclick="return false"
-                    data-keyMap="engineer"
-                    title="Engineers (5 funds)"
-                    class="engineer"></a>
-                </li>
-
-                <li class="spacer">
-                  <div id="bnb-now-playing">
-                    <div class="pow beavis"></div>
-                    <div class="pow butthead"></div>
-                  </div>
-                </li>
-
-                <!-- not implemented. -->
-                <!-- <li class="lives"><em>Lives:</em> <span id="lives-count">&infin;</span></li> -->
-
-                <li class="stats-item infantry-count">
-                  <span class="letter-block">Space</span>
-                  <span class="wrapper">
-                    <em>Infantry:</em> <span id="infantry-count">1</span>
-                  </span>
-                </li>
-
-                <li class="stats-item missiles">
-                  <span class="letter-block"
-                    >X<span class="alternate-missiles"
-                      ><span class="divider">|</span>C<span class="divider"
-                        >|</span
-                      >B</span
-                    ></span
-                  >
-                  <span class="wrapper">
-                    <em>Smart Missiles:</em>
-                    <span id="missile-count" class="weapon-count">2</span>
-                  </span>
-                </li>
-
-                <li class="stats-item ammo">
-                  <span class="letter-block">Shift</span>
-                  <span class="wrapper">
-                    <em>Ammo:</em>
-                    <span id="ammo-count" class="weapon-count double-wide"
-                      >64</span
-                    >
-                  </span>
-                </li>
-
-                <li class="stats-item bombs">
-                  <span class="letter-block">Z</span>
-                  <span class="wrapper">
-                    <em>Bombs:</em>
-                    <span id="bomb-count" class="weapon-count double-wide"
-                      >10</span
-                    >
-                  </span>
-                </li>
-              </ul>
-
-              <div id="repair-complete"></div>
-
-              <span id="spinner"></span>
-            </div>
-          </div>
-
           <div id="battlefield">
             <!-- world with terrain elements, vehicles, etc., lives here. -->
             <div id="battlefield-overlay-left"></div>
@@ -1197,6 +1050,144 @@
 
     <div id="domfetti-overlay">
       <!-- "DOMFetti" (DOM confetti) overlay -->
+    </div>
+
+    <div id="top-bar">
+      <div id="game-status-bar">
+        <div id="radar-container">
+          <div id="radar">
+            <!-- radar items go here -->
+          </div>
+        </div>
+
+        <div id="funds">
+          <span class="funds-label">Funds:</span>
+          <div id="funds-count">
+            <div class="digit"><div class="digit-wrapper"></div></div>
+            <div class="digit"><div class="digit-wrapper"></div></div>
+            <div class="digit"><div class="digit-wrapper"></div></div>
+          </div>
+        </div>
+
+        <div id="game-fps">fps: <span id="fps-count">&infin;</span></div>
+      </div>
+
+      <div id="player-status-bar">
+        <div id="fuel-bar"></div>
+        <div id="fuel-line"></div>
+
+        <ul id="stats-bar" class="stats-bar">
+          <li class="inventory-item">
+            <span class="letter-block">M</span>
+            <a
+              href="#"
+              onclick="return false"
+              oncontextmenu="return false"
+              onclick="return false"
+              data-keyMap="missileLauncher"
+              title="Missile launcher (3 funds)"
+              class="missile-launcher"></a>
+          </li>
+
+          <li class="inventory-item">
+            <span class="letter-block">T</span>
+            <a
+              href="#"
+              onclick="return false"
+              oncontextmenu="return false"
+              onclick="return false"
+              data-keyMap="tank"
+              title="Tank (4 funds)"
+              class="tank"></a>
+          </li>
+
+          <li class="inventory-item">
+            <span class="letter-block">V</span>
+            <a
+              href="#"
+              onclick="return false"
+              oncontextmenu="return false"
+              onclick="return false"
+              data-keyMap="van"
+              title="Van (2 funds)"
+              class="van"></a>
+          </li>
+
+          <li class="inventory-item">
+            <span class="letter-block">I</span>
+            <a
+              href="#"
+              onclick="return false"
+              oncontextmenu="return false"
+              onclick="return false"
+              data-keyMap="infantry"
+              title="Infantry (5 funds)"
+              class="infantry"></a>
+          </li>
+
+          <li class="inventory-item">
+            <span class="letter-block">E</span>
+            <a
+              href="#"
+              onclick="return false"
+              oncontextmenu="return false"
+              onclick="return false"
+              data-keyMap="engineer"
+              title="Engineers (5 funds)"
+              class="engineer"></a>
+          </li>
+
+          <li class="spacer">
+            <div id="bnb-now-playing">
+              <div class="pow beavis"></div>
+              <div class="pow butthead"></div>
+            </div>
+          </li>
+
+          <!-- not implemented. -->
+          <!-- <li class="lives"><em>Lives:</em> <span id="lives-count">&infin;</span></li> -->
+
+          <li class="stats-item infantry-count">
+            <span class="letter-block">Space</span>
+            <span class="wrapper">
+              <em>Infantry:</em> <span id="infantry-count">1</span>
+            </span>
+          </li>
+
+          <li class="stats-item missiles">
+            <span class="letter-block"
+              >X<span class="alternate-missiles"
+                ><span class="divider">|</span>C<span class="divider">|</span
+                >B</span
+              ></span
+            >
+            <span class="wrapper">
+              <em>Smart Missiles:</em>
+              <span id="missile-count" class="weapon-count">2</span>
+            </span>
+          </li>
+
+          <li class="stats-item ammo">
+            <span class="letter-block">Shift</span>
+            <span class="wrapper">
+              <em>Ammo:</em>
+              <span id="ammo-count" class="weapon-count double-wide">64</span>
+            </span>
+          </li>
+
+          <li class="stats-item bombs">
+            <span class="letter-block">Z</span>
+            <span class="wrapper">
+              <em>Bombs:</em>
+              <span id="bomb-count" class="weapon-count double-wide">10</span>
+            </span>
+          </li>
+        </ul>
+
+        <div id="repair-complete"></div>
+
+        <span id="spinner"></span>
+      </div>
     </div>
 
     <div id="tutorial-window" class="finder mac-classic dialog">

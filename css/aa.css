@@ -164,23 +164,6 @@ body.is_safari:not(.is-mobile) {
  * Wanna see some tricks? Here are some incredible hacks in CSS.
  * 2x parts of the document via zoom, then transform-scale down to 0.5 to keep things sharp.
  */
-body.is_safari:not(.is-mobile) #top-bar {
-  zoom: 2;
-  left: 0;
-  position: absolute;
-  top: 0;
-  transform: scale3d(0.5, 0.5, 1);
-  transform-origin: 0 0;
-  width: 200%;
-}
-
-body.is_safari:not(.is-mobile).game-paused #game-paused {
-  /* render 2x text, then scale down. */
-  zoom: 2;
-  transform: scale3d(0.5, 0.5, 1) translate(-50%, 0);
-  width: 200%;
-}
-
 body.is_safari:not(.is-mobile) #help {
   font-size: 2rem;
   top: 1px;
@@ -224,7 +207,6 @@ body.demo #aa {
   cursor: url(../image/cursor-cross-grey.png), crosshair;
 }
 
-#game-status,
 #radar,
 #radar-container,
 #world,
@@ -728,7 +710,7 @@ body.edit-mode #world-wrapper {
 }
 
 #game-status-bar {
-  border: 1px solid #17a007;
+  border: calc(1px * var(--game-scale-both)) solid #17a007;
   border-left: none;
   border-right: none;
 }
@@ -754,66 +736,58 @@ body.edit-mode #world-wrapper {
   width: 12px;
 }
 
-/* a little more spacing on mobile. */
-body.is-mobile #game-status li:first-of-type {
-  margin-left: 1rem;
-}
-
-body.is-mobile #game-status li:last-of-type {
-  margin-right: 0.6rem;
-}
-
-#game-status {
-  color: #999;
-  font-size: 65%;
-  height: 11px;
-  left: 1px;
-  overflow: hidden;
+#funds {
   position: absolute;
-  top: 4px;
-  width: 100%;
-  z-index: 9;
+  top: calc(4px * var(--game-scale-both));
+  left: calc(4px * var(--game-scale-both));
+  width: calc(42px * var(--game-scale-both));
+  /* collapse whitespace */
+  font-size: 0px;
+  visibility: hidden;
 }
 
-#game-status li {
-  margin-right: 1em;
-  text-indent: 0.33em;
+body.game-started #funds {
+  visibility: visible;
+}
+
+#funds .funds-label {
+  font-size: calc(7px * var(--game-scale-both));
+  line-height: calc(7px * var(--game-scale-both));
+  /* space before digits */
+  padding-right: calc(1.5px * var(--game-scale-both));
+}
+
+#game-fps {
+  position: absolute;
+  display: none;
+  top: calc(4px * var(--game-scale-both));
+  right: calc(4px * var(--game-scale-both));
+  width: calc(64px * var(--game-scale-both));
+  font-size: calc(5px * var(--game-scale-both));
+  color: rgba(255, 255, 255, 0.25);
+  text-align: right;
 }
 
 #funds,
 #funds-count {
   vertical-align: top;
+  color: #999;
 }
 
 #funds-count {
-  display: inline-block;
-  font-size: 0;
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
-  margin-left: -0.15rem;
-  margin-top: 0.5px;
-  min-width: 10px;
   position: relative;
-  transform: scale(0.85);
-}
-
-body.is_safari:not(.is-mobile) #funds-count {
-  margin-left: -2px;
-  /* safari 2x zoom hacks */
-  margin-top: 0;
-}
-
-body.is-mobile #funds-count {
-  margin-top: 1.25px;
+  display: inline-block;
+  image-rendering: optimizeQuality;
 }
 
 #funds-count .digit {
   color: transparent;
   display: inline-block;
-  font-size: 7px;
-  height: 10px;
-  line-height: 7px;
-  margin: -1px 0 0 -0.5px;
+  width: calc(4.25px * var(--game-scale-both));
+  height: calc(8.5px * var(--game-scale-both));
+  margin-top: calc(-0.5px * var(--game-scale-both));
+  /* tighten "letter spacing" a bit */
+  margin-right: calc(-0.33px * var(--game-scale-both));
   opacity: 1;
   overflow: hidden;
   padding: 0;
@@ -824,7 +798,6 @@ body.is-mobile #funds-count {
   transition: width 0.15s ease-in-out;
   vertical-align: top;
   white-space: nowrap;
-  width: 5px;
 }
 
 #funds-count .digit.collapsed {
@@ -833,18 +806,29 @@ body.is-mobile #funds-count {
 }
 
 #funds-count .digit-wrapper {
-  background: url(../image/number-strip-chicago.svg) 0 0/100% 1000%;
-  /* height ~10 pixels? */
-  display: inline-block;
-  height: 100%;
-  left: 0;
-  overflow: hidden;
   position: absolute;
   top: 0;
+  left: 0;
+  /**
+   * source image: #000.
+   * invert 80% -> #cc (216)
+   * invert 60% -> #99 (153)
+   */
+  filter: invert(0.6);
+  background: url(../image/number-strip-chicago.svg) 0 0/100% 1000%;
+  background-repeat: repeat-y;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   /* "rotating" number */
   transition: all calc(0.25s * var(--gs-frac)) ease-in-out;
   transition-property: margin, background-position;
-  width: 100%;
+  image-rendering: optimizeQuality;
+}
+
+#funds-count.no-transition .digit-wrapper {
+  transition: none;
 }
 
 #queue {
@@ -959,7 +943,7 @@ body.is_safari:not(.is-mobile) #queue {
 #radar,
 #radar-container,
 #radar-scrubber {
-  height: 32px;
+  height: calc(32px * var(--game-scale-both));
 }
 
 #radar-container {
@@ -969,11 +953,11 @@ body.is_safari:not(.is-mobile) #queue {
   background-image: repeating-linear-gradient(
     55deg,
     rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 0.5px,
-    rgba(0, 0, 0, 0.5) 0.5px,
-    rgba(0, 0, 0, 0.5) 0.75px,
-    rgba(0, 0, 0, 0.5) 0.75px,
-    rgba(0, 0, 0, 0) 1px
+    rgba(0, 0, 0, 0) 1.5px,
+    rgba(0, 0, 0, 0.5) 1.5px,
+    rgba(0, 0, 0, 0.5) 2.25px,
+    rgba(0, 0, 0, 0.5) 2.25px,
+    rgba(0, 0, 0, 0) 3px
   );
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
@@ -1254,6 +1238,7 @@ body.bnb #tv-display.widescreen #tv {
   top: 0;
   bottom: 0;
   width: 5%;
+  pointer-events: none;
 }
 
 #battlefield-overlay-left,
@@ -1315,7 +1300,6 @@ body.edit-mode #home-video-wrapper {
   border-color: #fff;
 }
 
-body.demo #game-status,
 body.demo #home-video-wrapper,
 body.demo #notification-toasts,
 body.demo #stats-bar,
@@ -1345,14 +1329,14 @@ body.demo .target-marker {
   color: #999;
   font-size: 55%;
   /* and room for green bars */
-  height: 48px;
+  height: calc(48px * var(--game-scale-both));
   left: 0;
   /* so type lines up */
-  line-height: 24px;
+  line-height: 50%; /* previously, 24px */
   position: absolute;
   text-align: center;
   text-shadow: 0 1px 0 #000;
-  top: 34px;
+  top: calc(34px * var(--game-scale-both));
   width: 100%;
 }
 
@@ -1381,18 +1365,24 @@ body.is-mobile #top-bar #game-fps {
   background-image: repeating-linear-gradient(
     -55deg,
     rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 0.5px,
-    rgba(255, 255, 255, 0.2) 0.5px,
-    rgba(255, 255, 255, 0.2) 0.75px,
-    rgba(255, 255, 255, 0.2) 0.75px,
-    rgba(255, 255, 255, 0) 1px
+    rgba(255, 255, 255, 0) 1.5px,
+    rgba(255, 255, 255, 0.2) 1.5px,
+    rgba(255, 255, 255, 0.2) 2.25px,
+    rgba(255, 255, 255, 0.2) 2.25px,
+    rgba(255, 255, 255, 0) 3px
   );
 }
 
 #fuel-line {
-  background-color: #161616;
-  background-image: url(../image/fuel-bar-background.png);
-  background-size: 1.5px;
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(255, 0, 0, 0),
+    rgba(255, 0, 0, 0) 1.5px,
+    rgba(192, 0, 0, 1) 1.5px,
+    rgba(192, 0, 0, 1) 2.25px,
+    rgba(192, 0, 0, 1) 2.25px,
+    rgba(255, 0, 0, 0) 3px
+  );
   image-rendering: optimizeQuality;
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
@@ -1403,8 +1393,8 @@ body.is-mobile #top-bar #game-fps {
 #fuel-bar,
 #fuel-line {
   position: absolute;
-  top: 2px;
-  height: 5px;
+  top: calc(2px * var(--game-scale-both));
+  height: calc(5px * var(--game-scale-both));
   overflow: hidden;
   width: 100%;
 }
@@ -1417,9 +1407,10 @@ body.is-mobile #top-bar #game-fps {
 
 #repair-complete {
   background: url(../image/status-repair-complete.png) repeat-x;
+  background-size: contain;
   display: none;
-  height: 13px;
-  top: 35px;
+  height: calc(13px * var(--game-scale-both));
+  top: calc(35px * var(--game-scale-both));
   width: 100%;
   z-index: 1;
 }
@@ -1427,7 +1418,7 @@ body.is-mobile #top-bar #game-fps {
 #stats-bar {
   position: relative;
   /* account for absolutely-positioned fuel line + bar */
-  top: 4px;
+  top: calc(10px * var(--game-scale-both));
 }
 
 ul.stats-bar {
@@ -1437,20 +1428,20 @@ ul.stats-bar {
 
 ul.stats-bar li {
   color: #ccc;
-  font-size: 7px;
+  font-size: calc(7px * var(--game-scale-both));
   position: relative;
   text-align: left;
 }
 
 body.bnb:not(.is-mobile) #aa ul.stats-bar li.inventory-item:first-of-type {
   /* centering shenanigans */
-  margin-left: 16px;
+  margin-left: calc(16px * var(--game-scale-both));
 }
 
 ul.stats-bar li.inventory-item:not(:last-of-type),
 ul.stats-bar li.stats-item:not(:last-of-type) {
   /* annoying, but need to override #aa rules */
-  padding-right: 8px !important;
+  padding-right: calc(8px * var(--game-scale-both)) !important;
 }
 
 #stats-bar.hide-inventory li.inventory-item,
@@ -1487,18 +1478,18 @@ body.is-mobile ul.stats-bar li {
 
 ul.stats-bar li.stats-item .weapon-count {
   display: inline-block;
-  margin-left: 0.075rem;
+  margin-left: calc(0.075rem * var(--game-scale-both));
   /* prevent a shift when as number counts change (for variable-width fonts) */
-  min-width: 0.65rem;
+  min-width: calc(0.65rem * var(--game-scale-both));
 }
 
 body.is_safari:not(.is-mobile) #ammo-count {
   /* fix shifting on Safari, especially, with three digits in tutorial mode. */
-  min-width: 11px;
+  min-width: calc(11px * var(--game-scale-both));
 }
 
 body.is_safari:not(.is-mobile) #bomb-count {
-  min-width: 9px;
+  min-width: calc(9px * var(--game-scale-both));
 }
 
 #mobile-controls li.inventory-item,
@@ -1539,7 +1530,9 @@ ul.stats-bar li.stats-item.weapon-reloading:not(.repairing) em {
 
 ul.stats-bar li .double-wide {
   display: inline-block;
-  min-width: 0.825rem; /* prevent 3 to 2 characters from causing UI shift. */
+  min-width: calc(
+    0.825rem * var(--game-scale-both)
+  ); /* prevent 3 to 2 characters from causing UI shift. */
 }
 
 ul.stats-bar li.repairing em {
@@ -1551,7 +1544,7 @@ ul.stats-bar em {
   /* hide inner text */
   overflow: hidden;
   position: relative;
-  text-indent: 2rem;
+  font-size: 0px;
   vertical-align: middle;
 }
 
@@ -1583,6 +1576,11 @@ ul.stats-bar .infantry-count em {
   background-size: 28%;
 }
 
+ul.stats-bar em {
+  /* scaling shenanigans */
+  zoom: var(--game-scale-both);
+}
+
 ul.stats-bar .infantry-count em {
   background-repeat: no-repeat;
   /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
@@ -1597,7 +1595,7 @@ ul.stats-bar .infantry-count em {
 /* hackish: min-width fix for pixel shift from 1/0. Ugh. */
 #infantry-count {
   display: inline-block;
-  min-width: 0.25rem;
+  min-width: calc(0.25rem * var(--game-scale-both));
 }
 
 ul.stats-bar .missiles em {
@@ -1608,10 +1606,10 @@ ul.stats-bar .missiles em {
   width: 10px;
 }
 
-#world ul.stats-bar .missiles span.divider {
+ul.stats-bar .missiles span.divider {
   /* X|C|B */
   display: inline-block;
-  min-width: 0.5rem;
+  min-width: calc(0.5rem * var(--game-scale-both));
   opacity: 0.25;
   text-align: center;
 }
@@ -1661,9 +1659,13 @@ ul.stats-bar .bombs em {
   width: 3px;
 }
 
+#top-bar,
+#level-preview {
+  height: calc(88px * var(--game-scale-both));
+}
+
 #top-bar {
   contain: strict;
-  height: 88px;
   z-index: 1;
   pointer-events: none;
 }
@@ -2807,7 +2809,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   width: 512px;
 }
 
-body:not(.game-over) #world-wrapper.jammed #radar {
+body:not(.game-over).radar_jammed #radar {
   /* TODO: review, $$$? */
   /* exception: allow the radar to show, even if jammed, when the game is over. */
   /* opacity should be fast, performance-wise, and smooth. */
@@ -2820,12 +2822,12 @@ body:not(.game-over).radar_enhanced_fx #world-wrapper #battlefield {
   filter: blur(0px);
 }
 
-body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield {
+body:not(.game-over).radar_enhanced_fx.radar_jammed #battlefield {
   /* first, assign a "safe" default - likely to be overridden. */
   filter: blur(0.33px);
 }
 
-body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield {
+body:not(.game-over).radar_enhanced_fx.radar_jammed #battlefield {
   /**
    * This number is affected by transforms, but not zoom-based scaling.
    * Therefore, offset this filter using the transform scale (if set.)
@@ -2834,32 +2836,38 @@ body:not(.game-over).radar_enhanced_fx #world-wrapper.jammed #battlefield {
 }
 
 /* Safari (desktop) needs its own rule, apparently. */
-body:not(.game-over).is_safari.radar_enhanced_fx
-  #world-wrapper.jammed
-  #battlefield {
+body:not(.game-over).is_safari.radar_enhanced_fx.radar_jammed #battlefield {
   filter: blur(calc(0.33px * (1 / var(--game-scale-zoom))));
 }
 
 /* Finally, Safari *mobile* seems to need a larger value. */
-body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
-  #world-wrapper.jammed
+body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   #battlefield {
   filter: blur(calc(0.5px * (1 / var(--game-scale-transform))));
 }
 
 #radar .sprite {
-  background: padding-box #17a007;
-  /* avoid border color bleed */
-  border-color: #ccc;
-  border-radius: 0.5px 0.5px 0 0;
-  contain: strict;
-  height: 3px;
-  left: 0;
-  margin-left: -1.5px;
   position: absolute;
   top: 0;
-  width: 3px;
+  left: 0;
+  background: padding-box #17a007;
+  border-color: #ccc;
+  border-radius: calc(0.5px * var(--game-scale-both))
+    calc(0.5px * var(--game-scale-both)) 0 0;
+  contain: strict;
+  width: calc(3px * var(--game-scale-both));
+  height: calc(3px * var(--game-scale-both));
   z-index: 2;
+}
+
+#radar .sprite.bottom-aligned {
+  top: auto;
+  bottom: 0;
+}
+
+#radar .sprite:not(.balloon) {
+  /* a little extra, to avoid rounding errors. */
+  padding-bottom: calc(0.5px * var(--game-scale-both));
 }
 
 /* .friendly? */
@@ -2870,7 +2878,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
    * filter: drop-shadow() seems to kill performance.
    * box-shadow seems to be OK.
    */
-  box-shadow: 0 0 0 0.5px #000;
+  box-shadow: 0 0 0 calc(0.5px * var(--game-scale-both)) #000;
 }
 
 #radar .sprite.enemy {
@@ -2880,41 +2888,48 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
 #radar .sprite.bunker,
 #radar .sprite.super-bunker {
   background-color: #17a007;
-  border: 0.5px solid rgba(23, 160, 7, 0.75);
+  border: calc(0.5px * var(--game-scale-both)) solid rgba(23, 160, 7, 0.75);
   border-bottom-color: #17a007;
+  /* account for bottom border? */
+  margin-bottom: calc(-0.5px * var(--game-scale-both));
   /* round corners */
-  border-radius: 1px 1px 0 0;
-  height: 3px;
-  margin-left: -1px;
-  padding: 0.5px;
+  border-radius: calc(1px * var(--game-scale-both))
+    calc(1px * var(--game-scale-both)) 0 0;
+  height: calc(2px * var(--game-scale-both));
+  margin-left: calc(-1px * var(--game-scale-both));
+  padding: calc(0.5px * var(--game-scale-both));
   /* friendly */
-  width: 2px;
+  border: none !important;
 }
 
 #radar .sprite.super-bunker {
-  height: 1.33px;
-  margin-left: -2.25px;
-  width: 4.5px;
+  height: calc(2.5px * var(--game-scale-both));
+  margin-left: calc(-2.25px * var(--game-scale-both));
+  width: calc(5px * var(--game-scale-both));
+}
+
+#radar .sprite.tank {
+  height: calc(2.25px * var(--game-scale-both));
 }
 
 #radar .sprite.balloon {
-  border: 1px solid #fff;
-  /* ever-so-slightly elliptical. */
-  border-radius: 0 3px;
-  height: 1px;
-  margin-left: -0.5px;
-  width: 1px;
+  border-radius: calc(1.75px * var(--game-scale-both));
+  height: calc(2px * var(--game-scale-both));
+  margin-left: calc(-0.5px * var(--game-scale-both));
+  width: calc(3px * var(--game-scale-both));
 }
 
 #radar .sprite.balloon,
 #radar .sprite.bunker.enemy,
-#radar .sprite.super-bunker.enemy {
+#radar .sprite.super-bunker.enemy,
+#radar .sprite.parachute-infantry.enemy {
   /* yellow-ish tinge */
   background-color: #9c9f09;
   border-color: #9c9f09;
 }
 
-#radar .sprite.balloon.friendly {
+#radar .sprite.balloon.friendly,
+#radar .sprite.parachute-infantry.friendly {
   background-color: #17a007;
   border-color: rgba(23, 160, 7, 0.75);
 }
@@ -2932,17 +2947,17 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
   background-image: url(../image/checkerboard-white-mask-50percent.png);
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  background-size: 32px 32px;
+  background-size: calc(32px * var(--game-scale-both));
   /* hackish: push the border down further */
-  padding-bottom: 1px;
+  padding-bottom: calc(1px * var(--game-scale-both));
 }
 
 #radar .sprite.cloud1,
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {
-  height: 2px;
+  height: calc(2px * var(--game-scale-both));
   /* hackish: position offset. */
-  top: 2px;
+  top: calc(2px * var(--game-scale-both));
   background-color: transparent;
   background-image: repeating-linear-gradient(
     -55deg,
@@ -2955,24 +2970,24 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
   );
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  border: 0.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
+  border: calc(0.5px * var(--game-scale-both)) solid rgba(255, 255, 255, 0.15);
+  border-radius: calc(2px * var(--game-scale-both));
   box-shadow: none;
   filter: none;
 }
 
 #radar .sprite.cloud1 {
-  width: 12px;
+  width: calc(12px * var(--game-scale-both));
 }
 
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {
-  width: 14px;
+  width: calc(14px * var(--game-scale-both));
 }
 
 #radar .sprite.landing-pad {
-  width: 4px;
-  height: 2px;
+  width: calc(4 * px * var(--game-scale-both));
+  height: calc(2px * var(--game-scale-both));
   /* green "U"-shape image */
   background-color: transparent;
   background-image: url(data:image/gif;base64,R0lGODlhBAACAIABABegBwAAACH5BAEKAAEALAAAAAAEAAIAAAIERAKZBQA7);
@@ -2992,14 +3007,15 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
 #radar .sprite.smart-missile {
   border-radius: 100%;
   bottom: auto;
-  height: 2px;
+  height: calc(1.25px * var(--game-scale-both));
+  border-radius: calc(1.25px * var(--game-scale-both));
   left: 0;
-  margin-left: -1px;
-  margin-top: -1px;
+  margin-left: calc(-1.5px * var(--game-scale-both));
+  margin-top: calc(0.25px * var(--game-scale-both));
   outline: 0;
   position: absolute;
   top: auto;
-  width: 2px;
+  width: calc(3px * var(--game-scale-both));
 }
 
 #radar .sprite.smart-missile.enemy {
@@ -3008,13 +3024,14 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
 
 #radar .sprite.helicopter {
   background-color: transparent;
-  border-bottom: 2.5px solid transparent;
-  border-left: 2.5px solid #17a007;
-  border-top: 2.5px solid transparent;
+  --border: calc(2.5px * var(--game-scale-both));
+  border-bottom: var(--border) solid transparent;
+  border-left: var(--border) solid #17a007;
+  border-top: var(--border) solid transparent;
   font-size: 0;
   height: 0;
-  margin-bottom: -0.5px;
-  margin-left: 0.5px;
+  margin-top: calc(1.25px * var(--game-scale-both));
+  /* margin-left: calc(-1.25px * var(--game-scale-both)); */
   outline: 0;
   width: 0;
   z-index: 5; /* show above landing pads, etc. */
@@ -3030,10 +3047,11 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
 }
 
 #radar .sprite.bomb {
-  border-radius: 0 0 2px 2px;
-  height: 2px;
-  margin-left: -1px;
-  width: 2px;
+  --two: calc(2px * var(--game-scale-both));
+  border-radius: 0 0 var(--two) var(--two);
+  height: var(--two);
+  margin-left: calc(--two / 2);
+  width: var(--two);
 }
 
 #radar .sprite.bomb.enemy,
@@ -3045,52 +3063,67 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx
 
 #radar .sprite.gunfire,
 #radar .sprite.shrapnel {
-  border-radius: 1px;
-  contain-intrinsic-size: 1px 1px;
+  --one: calc(1px * var(--game-scale-both));
+  border-radius: var(--one);
+  contain-intrinsic-size: var(--one) var(--one);
   /* hackish repositioning fix */
   content-visibility: auto;
-  height: 1px;
-  margin-left: -0.5px;
-  width: 1px;
+  height: var(--one);
+  margin-left: calc(var(--one) / 2);
+  width: var(--one);
 }
 
 #radar .sprite.missile-launcher,
 #radar .sprite.van {
-  height: 2px;
-  width: 2px;
+  height: calc(2px * var(--game-scale-both));
+  width: calc(2px * var(--game-scale-both));
 }
 
 #radar .sprite.engineer,
 #radar .sprite.infantry,
 #radar .sprite.parachute-infantry {
-  height: 2px;
-  margin-left: -0.5px;
-  outline-width: 0.25px;
-  width: 1px;
+  height: calc(2px * var(--game-scale-both));
+  margin-left: calc(-0.5px * var(--game-scale-both));
+  outline-width: calc(0.25px * var(--game-scale-both));
+  width: calc(1px * var(--game-scale-both));
 }
 
 #radar .sprite.engineer {
-  margin-left: -0.375px;
-  width: 0.75px;
+  margin-left: calc(-0.375px * var(--game-scale-both));
+  width: calc(0.75px * var(--game-scale-both));
 }
 
 #radar .sprite.parachute-infantry {
-  margin-top: 1px; /* hackish repositioning fix */
+  /* hackish repositioning fix */
+  margin-top: calc(1px * var(--game-scale-both));
+  /* semi-circle */
+  border: calc(1px * var(--game-scale-both)) solid rgba(23, 160, 7, 0.75);
+  border-bottom: none;
+  width: calc(1px * var(--game-scale-both));
+  height: calc(0.75px * var(--game-scale-both));
+  border-radius: 50% 50% 0 0;
+  margin-left: calc(-1px * var(--game-scale-both));
+  background: transparent !important;
+}
+
+#radar .sprite.parachute-infantry.enemy {
+  border-color: #ccc;
 }
 
 #radar .sprite.end-bunker {
-  border-radius: 1px;
+  border-radius: calc(1px * var(--game-scale-both));
 }
 
 #radar .sprite.base,
 #radar .sprite.end-bunker {
-  height: 2px;
-  margin-left: -1.5px;
-  width: 3px;
+  height: calc(2px * var(--game-scale-both));
+  margin-left: calc(-1.5px * var(--game-scale-both));
+  width: calc(3px * var(--game-scale-both));
 }
 
 #radar .sprite.base {
-  border-radius: 0.5px 0.5px 0 0;
+  --radius: calc(0.5px * var(--game-scale-both));
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 #radar .sprite.dying {
@@ -3431,17 +3464,17 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.helicopter.enemy {
-  margin-left: -0.5px;
+  margin-left: calc(-0.5px * var(--game-scale-both));
   background-color: transparent;
-  border: 2.5px solid transparent;
+  border: calc(2.5px * var(--game-scale-both)) solid transparent;
   border-right-color: #ccc;
 }
 
 #radar .sprite.turret {
   background-color: #17a007;
-  height: 2px;
-  margin-left: -0.5px;
-  width: 1px;
+  width: calc(1px * var(--game-scale-both));
+  height: calc(2px * var(--game-scale-both));
+  margin-left: calc(-0.5px * var(--game-scale-both));
 }
 
 #radar .sprite.turret.enemy {
@@ -3486,6 +3519,11 @@ body.bnb .sprite.engineer.butthead.building {
     transform;
   z-index: -2;
   pointer-events: none;
+}
+
+#radar .scan-node {
+  border-width: calc(0.5px * var(--game-scale-both));
+  margin-left: calc(-0.25px * var(--game-scale-both));
 }
 
 #radar .sprite.enemy .scan-node {
@@ -3549,20 +3587,9 @@ body:not(.game-started) .scan-node {
   transition-duration: calc(1s * var(--gs-frac));
 }
 
-#game-fps {
-  color: #666;
-  font-size: 75%;
-  right: 3px;
-  text-align: right;
-}
-
-#game-fps,
 .shrapnel {
   position: absolute;
   top: 0;
-}
-
-.shrapnel {
   height: 12px;
   left: 0;
   width: 12px;
@@ -3957,12 +3984,12 @@ body.is-mobile.notch-at-right #help {
 
 #player-status-bar .spacer {
   /* centering / sizing shenanigans */
-  left: -4px;
-  padding-right: 5px;
+  left: calc(-4px * var(--game-scale-both));
+  padding-right: calc(5px * var(--game-scale-both));
   position: relative;
   /* previously */
   /* min-width: 5% */
-  width: 32px;
+  width: calc(32px * var(--game-scale-both));
 }
 
 body.is-mobile #player-status-bar .inventory-item,
@@ -3974,8 +4001,8 @@ body.is-mobile #player-status-bar .spacer {
 /* except when BnB, and landscape? */
 body.bnb.is-mobile #player-status-bar .spacer {
   display: inline-block !important;
-  min-height: 16px;
-  top: 2px;
+  min-height: calc(16px * var(--game-scale-both));
+  top: calc(2px * var(--game-scale-both));
   /* display shenanigans */
   vertical-align: top;
 }
@@ -4050,15 +4077,15 @@ body.is-mobile #player-status-bar .stats-item {
 #player-status-bar span.letter-block {
   background-clip: padding-box;
   background: rgba(32, 32, 32, 0.75);
-  border: 0.5px solid rgba(48, 48, 48, 0.33);
-  border-radius: 2px;
+  border: calc(0.5px * var(--game-scale-both)) solid rgba(48, 48, 48, 0.33);
+  border-radius: calc(2px * var(--game-scale-both));
   color: #777;
   display: inline-block;
-  height: 10px;
-  line-height: 10px;
-  margin-top: -1px;
-  min-width: 6px;
-  padding: 0 3px;
+  height: calc(10px * var(--game-scale-both));
+  line-height: calc(10px * var(--game-scale-both));
+  margin-top: calc(-1px * var(--game-scale-both));
+  min-width: calc(6px * var(--game-scale-both));
+  padding: 0 calc(3px * var(--game-scale-both));
   text-align: center;
   vertical-align: middle; /* align with nearby text, e.g., bomb count */
 }
@@ -4082,6 +4109,8 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   vertical-align: middle;
   /* these shouldn't be clickable, despite being a link. :X */
   pointer-events: none;
+  /* scale these up. */
+  zoom: var(--game-scale-both);
 }
 
 #mobile-controls li.inventory-item a.missile-launcher,
@@ -6389,16 +6418,23 @@ body.game-paused #tutorial-window {
   border-bottom: 0 solid transparent;
   border-bottom-left-radius: 0.5px;
   border-bottom-right-radius: 0.5px;
-  height: 2px;
-  margin-left: -1.5px;
+  --height: calc(2px * var(--game-scale-both));
+  height: var(--height);
+  margin-bottom: calc(var(--height) / 2);
   position: absolute;
-  top: 34px;
-  width: 3px;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
   will-change: transform;
 }
 
-#world-wrapper.jammed .scan-node,
-#world-wrapper.jammed .target-marker,
+.target-marker.transition-active {
+  /* set while repositioning, moving to a new target */
+  transition-property: transform, width, opacity;
+}
+
+body.radar_jammed .scan-node,
 .sprite.dead .target-ui,
 .sprite.exploding .target-ui,
 .target-ui.disabled,
@@ -6406,7 +6442,12 @@ body.game-over .target-ui {
   opacity: 0;
 }
 
-#world-wrapper.jammed .scan-node {
+body.radar_jammed .target-marker {
+  /* need to override inline style :X */
+  opacity: 0 !important;
+}
+
+body.radar_jammed .scan-node {
   /* fade out, relatively quickly */
   transition-duration: 0.5s;
 }
@@ -6423,11 +6464,6 @@ body.game-over .target-ui {
 }
 
 @media screen and (orientation: landscape) {
-  body.is_iphone #game-status {
-    font-size: 120%;
-    height: 20px;
-  }
-
   body.is_iphone #funds-count {
     top: 1px;
     transform: scale(1.5);
@@ -6476,19 +6512,10 @@ body.game-over .target-ui {
     right: auto;
   }
 
-  body.is-mobile #funds {
-    margin-top: 2px;
-  }
-
   body.is-mobile.notch-at-left #funds,
   body.is-mobile.notch-at-right #funds {
     /* "home screen" app, iOS Safari */
     margin-left: calc(env(safe-area-inset-left) / 1.5) !important;
-  }
-
-  /* #game-fps positioning */
-  body.is-mobile #game-status li:last-of-type {
-    right: 8px;
   }
 
   /* bottom bar */
@@ -6555,18 +6582,6 @@ body.game-over .target-ui {
 
 @media screen and (orientation: portrait) {
   /* remove for portrait mode. */
-  body.is-mobile #game-status li:first-of-type {
-    margin-left: 0;
-  }
-
-  body.is-mobile #game-status li:last-of-type {
-    margin-right: 0;
-  }
-
-  body.is-mobile #funds-count {
-    top: -0.5px;
-  }
-
   body.is-mobile #game-tips .tips-container {
     /* take most of the screen real estate */
     width: 95%;

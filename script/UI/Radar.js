@@ -3,16 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-import {
-  demo,
-  isFirefox,
-  isMobile,
-  isSafari,
-  oneOf,
-  TYPES,
-  winloc,
-  worldWidth
-} from '../core/global.js';
+import { demo, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
 import {
   playSound,
   skipSound,
@@ -132,37 +123,15 @@ const Radar = () => {
 
     // read from DOM ($$$) and cache
     // note: offsetWidth + offsetHeight return integers, and without padding.
-
-    // performance note: this is $$$ - do away with it.
     let rect = itemObject.dom.o.getBoundingClientRect();
 
     // NOTE screenScale, important for positioning
     result.layout.width = rect.width;
     result.layout.height = rect.height;
 
-    // if using transforms, screenScale needs to be taken into account (and offset)
-    // because these items get scaled with the whole view being transformed.
-    // TODO: don't rely on isFirefox
-    if (isFirefox || isSafari) {
-      result.layout.width /= screenScale;
-      result.layout.height /= screenScale;
-    }
-
-    // hackish: adjust as needed, accounting for borders etc.
-    if (type === 'bunker') {
-      result.layout.height -= 2;
-    } else if (type === 'helicopter') {
-      // technically, helicopter height is 0 due to borders making triangle shape.
-      result.layout.height = 3;
-    } else if (type === 'balloon') {
-      result.layout.height -= 2;
-    } else if (type === 'smart-missile') {
-      result.layout.height -= 2;
-    }
-
     if (itemObject.oParent.data.bottomAligned) {
-      // radar height, minus own height
-      result.bottomAlignedY = data.height - result.layout.height;
+      // if set, use bottom: 0 and call it a day.
+      result.bottomAligned = true;
     }
 
     // cache
@@ -179,9 +148,8 @@ const Radar = () => {
       className += ` ${css.radarItemAnimated}`;
     }
 
-    // special case
-    if (item.isObscured) {
-      utils.css.add(itemObject.dom.o, css.obscured);
+    if (item.data.bottomAligned) {
+      className += ' bottom-aligned';
     }
 
     itemObject = RadarItem({
@@ -194,8 +162,13 @@ const Radar = () => {
       // width + height, determined after append
       layout: null,
       // assigned if bottom-aligned (static)
-      bottomAlignedY: 0
+      bottomAligned: !!item.data.bottomAligned
     });
+
+    // special case
+    if (item.isObscured) {
+      utils.css.add(itemObject.dom.o, css.obscured);
+    }
 
     // special case: hide immediately if game pref says "nein"
     if (
@@ -245,7 +218,7 @@ const Radar = () => {
     updateOverlay();
 
     // $$$ - watch performance.
-    utils.css.add(game.objects.view.dom.worldWrapper, css.jammed);
+    utils.css.add(document.body, css.radarJammed);
 
     if (!gamePrefs.sound) return;
 
@@ -349,7 +322,7 @@ const Radar = () => {
     updateOverlay(data.isJammed);
 
     // $$$
-    utils.css.remove(game.objects.view.dom.worldWrapper, css.jammed);
+    utils.css.remove(document.body, css.radarJammed);
 
     if (sounds.radarJamming) {
       stopSound(sounds.radarJamming);
@@ -363,18 +336,31 @@ const Radar = () => {
 
   function clearTarget() {
     data.radarTarget = null;
-    dom.targetMarker.style.visibility = 'hidden';
+    dom.targetMarker.style.opacity = 0;
   }
 
   // pixel pushing for a few types, so the underlying "bar" lines up with the radar sprite.
+  // TODO: border width in layout cache?
   const markerOffsets = {
-    [TYPES.bunker]: 2.75,
-    [TYPES.turret]: 6.5,
-    [TYPES.helicopter]: 24,
-    [TYPES.balloon]: 6
+    [TYPES.bunker]: {
+      width: 0,
+      left: -1
+    },
+    [TYPES.balloon]: {
+      left: 0,
+      width: -1
+    },
+    [TYPES.helicopter]: {
+      left: 3
+    },
+    [TYPES.turret]: {
+      // make the target larger
+      left: -1.75,
+      width: 2
+    }
   };
 
-  function updateTargetMarker(targetItem) {
+  function updateTargetMarker(targetItem, allowTransition) {
     // sanity check: ensure this object still exists.
     if (!targetItem?.oParent?.dom?.o) return;
 
@@ -382,21 +368,23 @@ const Radar = () => {
 
     const { width } = targetItem.layout;
 
-    if (width && data.radarTargetWidth !== width) {
-      // TODO: improve Safari layout.
-      dom.targetMarker.style.width = `${
-        width + (!isMobile && isSafari ? screenScale / 2 : 0)
-      }px`;
-      data.radarTargetWidth = width;
+    const offset = markerOffsets[targetItem?.oParent?.data.type];
+    const widthOffset = (offset?.width || 0) * screenScale;
+    const leftOffset = (offset?.left || 0) * screenScale;
+
+    const newWidth = width + widthOffset;
+    const newLeft = targetItem.data.left + leftOffset;
+
+    if (allowTransition) {
+      utils.css.add(dom.targetMarker, 'transition-active');
     }
 
-    const offset =
-      ((markerOffsets[targetItem?.oParent?.data.type] || 1) / screenScale) *
-      0.5;
+    if (newWidth && data.radarTargetWidth !== newWidth) {
+      dom.targetMarker.style.width = `${newWidth}px`;
+      data.radarTargetWidth = newWidth;
+    }
 
-    dom.targetMarker.style.transform = `translate3d(${
-      targetItem.data.left + offset
-    }px, 0px, 0px)`;
+    dom.targetMarker.style.transform = `translate3d(${newLeft}px, 0px, 0px)`;
   }
 
   function markTarget(targetItem) {
@@ -405,13 +393,11 @@ const Radar = () => {
       targetItem = null;
     }
     if (!data.radarTarget && targetItem) {
-      dom.targetMarker.style.visibility = 'visible';
-      updateTargetMarker(targetItem);
-      if (targetItem.isStatic || targetItem.data.left) {
-        updateTargetMarker(targetItem);
-      }
+      dom.targetMarker.style.opacity = 1;
+      const allowTransition = true;
+      updateTargetMarker(targetItem, allowTransition);
     } else if (data.radarTarget && !targetItem) {
-      dom.targetMarker.style.visibility = 'hidden';
+      dom.targetMarker.style.opacity = 0;
     }
 
     data.radarTarget = targetItem;
@@ -442,6 +428,24 @@ const Radar = () => {
     objects?.items?.forEach((item) => {
       item.die(dieOptions);
     });
+  }
+
+  function resize() {
+    // radar height has changed.
+    data.height = dom.radar.offsetHeight;
+
+    // trash the cache, and rebuild.
+    layoutCache = {};
+
+    let i, j;
+
+    // iterate through radar items and update, accordingly.
+    for (i = 0, j = objects.items.length; i < j; i++) {
+      objects.items[i] = common.mixin(
+        objects.items[i],
+        getLayout(objects.items[i])
+      );
+    }
   }
 
   function animate() {
@@ -495,6 +499,8 @@ const Radar = () => {
 
     // move all radar items
 
+    const adjustedScreenWidth = game.objects.view.data.browser.screenWidth - 5;
+
     for (i = 0, j = objects.items.length; i < j; i++) {
       // just in case: ensure the object still has a DOM node.
       if (!objects.items[i]?.dom?.o) continue;
@@ -529,7 +535,7 @@ const Radar = () => {
                 objects.items[i].oParent.data.x / worldWidth
               )
             ) *
-              (game.objects.view.data.browser.width - 5) +
+              adjustedScreenWidth +
             4;
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
@@ -537,7 +543,7 @@ const Radar = () => {
             ((objects.items[i].oParent.data.x +
               (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) /
               worldWidth) *
-              (game.objects.view.data.browser.width - 5) +
+              adjustedScreenWidth +
             4;
         }
 
@@ -550,20 +556,18 @@ const Radar = () => {
         }
 
         // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
-        top =
-          objects.items[i].bottomAlignedY ||
-          (objects.items[i].oParent.data.y /
-            game.objects.view.data.battleField.height) *
-            data.height -
+        top = objects.items[i].bottomAligned
+          ? 0
+          : (objects.items[i].oParent.data.y /
+              game.objects.view.data.battleField.height) *
+              data.height -
             (objects.items[i]?.layout?.height || 0);
 
-        // depending on parent type, may receive an additional transform property (e.g., balloons get rotated as well.)
         sprites.setTransformXY(
           objects.items[i],
           objects.items[i].dom.o,
           `${left}px`,
-          `${top}px`,
-          data.extraTransforms[objects.items[i].oParent.data.type]
+          `${top}px`
         );
 
         objects.items[i].data.left = left;
@@ -602,9 +606,12 @@ const Radar = () => {
     data.height = dom.radar.offsetHeight;
 
     dom.targetMarker = document.createElement('div');
-    dom.targetMarker.style.visibility = 'hidden';
+    dom.targetMarker.style.opacity = 0;
     dom.targetMarker.className = `target-marker target-ui`;
-    document.getElementById('world-wrapper').appendChild(dom.targetMarker);
+    dom.targetMarker.addEventListener('transitionend', () => {
+      utils.css.remove(dom.targetMarker, 'transition-active');
+    });
+    document.getElementById('player-status-bar').appendChild(dom.targetMarker);
   }
 
   // width / height of rendered elements, based on class name
@@ -613,7 +620,7 @@ const Radar = () => {
   css = {
     obscured: 'obscured',
     incomingSmartMissile: 'incoming-smart-missile',
-    jammed: 'jammed',
+    radarJammed: 'radar_jammed',
     radarItemAnimated: 'radar-item--animated'
   };
 
@@ -653,11 +660,7 @@ const Radar = () => {
     jamCount: 0,
     missileWarningCount: 0,
     lastMissileCount: 0,
-    incomingMissile: false,
-    // additional transform properties applied during radar item animation
-    extraTransforms: {
-      balloon: 'rotate3d(0, 0, 1, -45deg)'
-    }
+    incomingMissile: false
   };
 
   dom = {
@@ -678,6 +681,7 @@ const Radar = () => {
     objects,
     removeItem: removeRadarItem,
     reset: reset,
+    resize: resize,
     setStale,
     startJamming,
     stopJamming
