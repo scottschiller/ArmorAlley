@@ -6542,8 +6542,8 @@ body.radar_jammed .scan-node {
 
   body.is-mobile.notch-at-left #funds,
   body.is-mobile.notch-at-right #funds {
-    /* "home screen" app, iOS Safari */
-    margin-left: calc(env(safe-area-inset-left) / 1.5) !important;
+    /* "home screen" app, iOS Safari - and/or, address bar hidden - close to bezel */
+    margin-left: calc(env(safe-area-inset-left) / 4.5) !important;
   }
 
   /* bottom bar */
