@@ -943,8 +943,7 @@ body.is_safari:not(.is-mobile) #queue {
 }
 
 #radar,
-#radar-container,
-#radar-scrubber {
+#radar-container {
   height: calc(32px * var(--gs-tz));
 }
 
@@ -975,9 +974,15 @@ body.is_safari:not(.is-mobile) #queue {
   left: 0;
   opacity: 0.5;
   position: absolute;
-  top: 1px;
+  /* sit atop the fuel line */
+  top: 35px;
   width: 32px;
+  height: 6px;
   z-index: 99;
+}
+
+#radar-scrubber:hover {
+  opacity: 0.65;
 }
 
 #radar-scrubber.active {
@@ -1666,9 +1671,17 @@ ul.stats-bar .bombs em {
   height: calc(88px * var(--gs-tz));
 }
 
+body.edit-mode #top-bar {
+  /* crop the top, reserving radar for click-and-drag / scrubbing */
+  height: calc(42px * var(--gs-tz));
+}
+
 #top-bar {
   contain: strict;
   z-index: 1;
+}
+
+body:not(.edit-mode) #top-bar {
   pointer-events: none;
 }
 

@@ -933,7 +933,17 @@ const Editor = () => {
         return stopEvent(e);
       }
 
-      if (data.mouseDownTarget === dom.oRadarScrubber || !isSprite) {
+      // treat mousedown on scrubber, *or* radar / top bar the same as scrubber.
+      const isScrubber =
+        data.mouseDownTarget === dom.oRadarScrubber ||
+        data.mouseDownTarget.id?.match(/radar|top-bar|fuel-bar/i);
+
+      if (isScrubber || !isSprite) {
+        if (isScrubber) {
+          // assign the actual scrubber node, even if radar / top bar got the event.
+          data.mouseDownTarget = dom.oRadarScrubber;
+        }
+
         data.scrubberActive = true;
 
         if (e.target !== dom.oCutoffLine) {
