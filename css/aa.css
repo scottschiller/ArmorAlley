@@ -6465,13 +6465,6 @@ body.radar_jammed .scan-node {
 }
 
 @media screen and (orientation: landscape) {
-  body.is_iphone #funds-count {
-    top: 1px;
-    transform: scale(1.5);
-    transform-origin: 0 0;
-    margin-left: -6px;
-  }
-
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is_iphone ul.stats-bar {
     /* prevent overlap with fuel bar */
