@@ -2854,8 +2854,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   left: 0;
   background: padding-box #17a007;
   border-color: #ccc;
-  border-radius: calc(0.5px * var(--gs-tz))
-    calc(0.5px * var(--gs-tz)) 0 0;
+  border-radius: calc(0.5px * var(--gs-tz)) calc(0.5px * var(--gs-tz)) 0 0;
   contain: strict;
   width: calc(3px * var(--gs-tz));
   height: calc(3px * var(--gs-tz));
@@ -2895,8 +2894,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   /* account for bottom border? */
   margin-bottom: calc(-0.5px * var(--gs-tz));
   /* round corners */
-  border-radius: calc(1px * var(--gs-tz))
-    calc(1px * var(--gs-tz)) 0 0;
+  border-radius: calc(1px * var(--gs-tz)) calc(1px * var(--gs-tz)) 0 0;
   height: calc(2px * var(--gs-tz));
   margin-left: calc(-1px * var(--gs-tz));
   padding: calc(0.5px * var(--gs-tz));
@@ -6759,21 +6757,17 @@ body.is_safari .animated-mail .top-fold {
 #battle-over-letter .generic-cta {
   font-size: calc(8px * var(--gs-tz));
   padding: calc(2px * var(--gs-tz)) calc(8px * var(--gs-tz));
-  line-height: calc(10px * var(--gs-tz))
+  line-height: calc(10px * var(--gs-tz));
 }
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
-  filter: drop-shadow(
-    0px 0px calc(3px * var(--gs-tz)) rgba(0, 255, 0, 0.75)
-  );
+  filter: drop-shadow(0px 0px calc(3px * var(--gs-tz)) rgba(0, 255, 0, 0.75));
 }
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:active,
 #battle-over-letter:not(.open).mousedown .animated-mail .wax-seal {
   transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
-  filter: drop-shadow(
-    0px 0px calc(2px * var(--gs-tz)) rgba(0, 255, 0, 0.5)
-  );
+  filter: drop-shadow(0px 0px calc(2px * var(--gs-tz)) rgba(0, 255, 0, 0.5));
   transition-duration: 125ms;
 }
 
@@ -6783,8 +6777,7 @@ body.is_safari .animated-mail .top-fold {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 0 calc(100px * var(--gs-tz))
-    calc(200px * var(--gs-tz));
+  border-width: 0 0 calc(100px * var(--gs-tz)) calc(200px * var(--gs-tz));
   border-color: transparent transparent #282;
   z-index: 2;
 }
@@ -6796,8 +6789,7 @@ body.is_safari .animated-mail .top-fold {
   height: 0;
   border-style: solid;
   /* note: 51px to address border bleed / see-through */
-  border-width: calc(51px * var(--gs-tz))
-    calc(100px * var(--gs-tz)) 0;
+  border-width: calc(51px * var(--gs-tz)) calc(100px * var(--gs-tz)) 0;
   transform-origin: 50% 0%;
   transition: transform 0.8s 0.5s, z-index 0.5s 0.65s;
   border-color: #060 transparent transparent;
@@ -6820,8 +6812,8 @@ body.is_safari .animated-mail .top-fold {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: calc(50px * var(--gs-tz)) 0
-    calc(50px * var(--gs-tz)) calc(100px * var(--gs-tz));
+  border-width: calc(50px * var(--gs-tz)) 0 calc(50px * var(--gs-tz))
+    calc(100px * var(--gs-tz));
   border-color: transparent transparent transparent #171;
   z-index: 2;
 }
@@ -6847,11 +6839,7 @@ body.is_safari .animated-mail .top-fold {
   bottom: 0;
   position: absolute;
   width: calc(160px * var(--gs-tz));
-  transform: translate3d(
-    0,
-    calc(100% - calc(60px * var(--gs-tz))),
-    0
-  );
+  transform: translate3d(0, calc(100% - calc(60px * var(--gs-tz))), 0);
   will-change: transform;
   /**
    * Image by kues1 on Freepik
