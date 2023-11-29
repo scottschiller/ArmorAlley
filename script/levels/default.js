@@ -4,7 +4,7 @@ import { common } from '../core/common.js';
 import { searchParams, TYPES } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
-import { prefsManager } from '../aa.js';
+import { prefsManager, screenScale } from '../aa.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -195,7 +195,7 @@ function previewLevel(levelName, excludeVehicles) {
     },
     balloon: {
       data: {
-        y: 32
+        y: 32 * screenScale
       }
     }
   };
