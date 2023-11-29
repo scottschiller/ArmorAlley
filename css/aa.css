@@ -724,18 +724,27 @@ body.edit-mode #world-wrapper {
 
 /* nested in #player-status-bar */
 #spinner {
-  animation: 2s linear infinite rotating3d;
-  /* Gear SVG (gear.svg) by Fabián Alexis - https: //github.com/fabianalexisinostroza/Antu, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470 */
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTE4LjkyMSA5LjYzYS4zMjcuMzI3IDAgMCAwLS4yMTgtLjEzbC0xLjkwNy0uMjkyYTYuMjg0IDYuMjg0IDAgMCAwLS40MjctMS4wMmMuMTI1LS4xNzQuMzEyLS40MTkuNTYyLS43MzUuMjUtLjMxNi40MjctLjU0Ny41MzItLjY5M2EuNDAxLjQwMSAwIDAgMCAuMDgzLS4yNC4zMzYuMzM2IDAgMCAwLS4wNzMtLjIyOGMtLjI1LS4zNTUtLjgyMy0uOTQ1LTEuNzE5LTEuNzcxYS40MDIuNDAyIDAgMCAwLS4yNi0uMTA0LjMzOC4zMzggMCAwIDAtLjI1LjA5M2wtMS40OCAxLjExNWE2LjUxNCA2LjUxNCAwIDAgMC0uOTM3LS4zODZsLS4yOTEtMS45MTdhLjMwOS4zMDkgMCAwIDAtLjEyLS4yMjQuMzkzLjM5MyAwIDAgMC0uMjU2LS4wODhIOS44NDdjLS4yIDAtLjMyNi4wOTctLjM3NS4yOTEtLjA5LjM0Ny0uMTkuOTkzLS4zMDIgMS45MzdhNS45ODIgNS45ODIgMCAwIDAtLjk0OC4zOTZMNi43ODUgNC41MmEuNDQzLjQ0MyAwIDAgMC0uMjcxLS4xMDRjLS4xNTMgMC0uNDguMjQ4LS45ODQuNzQ0LS41MDQuNDk3LS44NDYuODctMS4wMjcgMS4xMmEuNDM5LjQzOSAwIDAgMC0uMDk0LjI0YzAgLjA4My4wMzUuMTY2LjEwNC4yNS40NjYuNTYyLjgzNyAxLjA0MSAxLjExNSAxLjQzN2E1LjE0IDUuMTQgMCAwIDAtLjQwNi45NTlsLTEuOTM3LjI5MWEuMzE0LjMxNCAwIDAgMC0uMTk4LjEzNi40MDEuNDAxIDAgMCAwLS4wODQuMjR2Mi4zMTJjMCAuMDkuMDI4LjE3Mi4wODQuMjQ1YS4zMjcuMzI3IDAgMCAwIC4yMTguMTNsMS45MDcuMjgyYy4wOTcuMzQuMjQuNjg0LjQyNyAxLjAzYTIxLjk4IDIxLjk4IDAgMCAxLS41NjMuNzM1Yy0uMjUuMzE2LS40MjcuNTQ3LS41My42OTJhLjQwMi40MDIgMCAwIDAtLjAxMS40OGMuMjcuMzc1Ljg0My45NTggMS43MTkgMS43NWEuMzU5LjM1OSAwIDAgMCAuMjYuMTE0LjM3NS4zNzUgMCAwIDAgLjI2LS4wOTNsMS40Ny0xLjExNWMuMjg0LjE0Ni41OTcuMjc0LjkzNy4zODZsLjI5MiAxLjkxN2EuMzEuMzEgMCAwIDAgLjEyLjIyNC4zOS4zOSAwIDAgMCAuMjU1LjA4OGgyLjMxM2MuMjAxIDAgLjMyNi0uMDk3LjM3NS0uMjkyLjA5LS4zNDcuMTktLjk5My4zMDItMS45MzdhNS45MiA1LjkyIDAgMCAwIC45NDgtLjM5NmwxLjQzNyAxLjEyNmEuNTEuNTEgMCAwIDAgLjI3MS4wOTNjLjE1MyAwIC40OC0uMjQ2Ljk4LS43NC41LS40OTIuODQzLS44NjggMS4wMy0xLjEyNWEuMzQ3LjM0NyAwIDAgMCAuMDk0LS4yMzkuNDAyLjQwMiAwIDAgMC0uMTA1LS4yNmMtLjUtLjYxMi0uODcxLTEuMDktMS4xMTQtMS40MzhhNi42OCA2LjY4IDAgMCAwIC40MDYtLjk0OGwxLjkyNy0uMjkxYS4zMTguMzE4IDAgMCAwIC4yMDgtLjEzNi40MDIuNDAyIDAgMCAwIC4wODMtLjI0VjkuODc0YS4zOTMuMzkzIDAgMCAwLS4wODMtLjI0NG0tNi4wMzEgMy4yNjVhMi41NyAyLjU3IDAgMCAxLTEuODg2Ljc4MiAyLjU3IDIuNTcgMCAwIDEtMS44ODUtLjc4MiAyLjU3IDIuNTcgMCAwIDEtLjc4MS0xLjg4NWMwLS43MzYuMjYtMS4zNjUuNzgtMS44ODZhMi41NyAyLjU3IDAgMCAxIDEuODg2LS43ODFjLjczNyAwIDEuMzY1LjI2IDEuODg2Ljc4MS41Mi41MjEuNzgxIDEuMTUuNzgxIDEuODg2YTIuNTcgMi41NyAwIDAgMS0uNzgxIDEuODg1Ii8+PC9zdmc+)
-    0 0 / contain no-repeat;
-  display: none;
-  height: 12px;
-  opacity: 0.67;
-  /* gear spinner */
+  /* .mac-system-spinner */
   position: absolute;
-  right: 8px;
-  top: 12px;
-  width: 12px;
+  top: calc(-2.5px * var(--gs-tz));
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1);
+  width: calc(8px * var(--gs-tz));
+  height: calc(8px * var(--gs-tz));
+  z-index: 11;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  transition-property: transform, opacity;
+}
+
+#spinner:not(.animating) {
+  /* avoid invisible animations. */
+  background: none;
+}
+
+#spinner.active {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
 }
 
 #funds {

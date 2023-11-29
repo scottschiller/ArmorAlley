@@ -284,7 +284,7 @@ const Helicopter = (options = {}) => {
 
     if (!data.isLocal) return;
 
-    document.getElementById('spinner').style.display = 'block';
+    setSpinner(true);
 
     const welcomeMessage = landingPad.data.welcomeMessage;
 
@@ -393,7 +393,7 @@ const Helicopter = (options = {}) => {
       utils.css.remove(dom.statusBar.bombCountLI, css.repairing);
       utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
 
-      document.getElementById('spinner').style.display = 'none';
+      setSpinner(false);
 
       if (sounds.repairing) {
         stopSound(sounds.repairing);
@@ -541,7 +541,7 @@ const Helicopter = (options = {}) => {
 
       if (!data.isLocal) return;
 
-      document.getElementById('spinner').style.display = 'none';
+      setSpinner(false);
       document.getElementById('repair-complete').style.display = 'block';
 
       if (sounds.repairing) {
@@ -2884,6 +2884,26 @@ const Helicopter = (options = {}) => {
     });
   }
 
+  function setSpinner(spinning) {
+    if (spinning) {
+      utils.css.add(dom.oSpinner, css.animating, css.active);
+      data.spinnerTimer?.reset();
+      data.spinnerTimer = null;
+      return;
+    }
+
+    // remove
+    utils.css.remove(dom.oSpinner, css.active);
+
+    // once faded, drop animation.
+    if (!data.spinnerTimer) {
+      data.spinnerTimer = common.setFixedFrameTimeout(() => {
+        utils.css.remove(dom.oSpinner, css.animating);
+        data.spinnerTimer = null;
+      }, 600);
+    }
+  }
+
   function initTrailers() {
     let i, trailerConfig, fragment;
 
@@ -2923,6 +2943,8 @@ const Helicopter = (options = {}) => {
     dom.o.appendChild(sprites.makeTransformSprite());
 
     dom.fuelLine = sprites.getWithStyle('fuel-line');
+
+    dom.oSpinner = document.getElementById('spinner');
 
     // before we move, or anything else - determine xMax + yMax.
     refreshCoords();
@@ -3000,6 +3022,8 @@ const Helicopter = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.helicopter,
+    animating: 'animating',
+    active: 'active',
     disabled: 'disabled',
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
@@ -3158,7 +3182,8 @@ const Helicopter = (options = {}) => {
       scrollLeftVX: 0,
       // a buffer for local input delay.
       mouseHistory: new Array(32),
-      missileMode: null
+      missileMode: null,
+      spinnerTimer: null
     },
     options
   );
@@ -3187,6 +3212,7 @@ const Helicopter = (options = {}) => {
   dom = {
     o: null,
     fuelLine: null,
+    oSpinner: null,
     statsBar,
     // hackish
     statusBar: (() => {
