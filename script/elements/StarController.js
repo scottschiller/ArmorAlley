@@ -152,10 +152,11 @@ const StarController = () => {
       // wrap-around logic
       if (scrollDelta < 0 && x + width < 0) {
         randomizeStar(i);
-        x = data.width;
+        // move off-screen, and push out relative to the distance being moved.
+        x = data.width + width + Math.abs(scrollDelta * data.stars[i].data.parallax);
       } else if (scrollDelta > 0 && x > data.width) {
         randomizeStar(i);
-        x = 0 - width;
+        x = 0 - width - Math.abs(scrollDelta * data.stars[i].data.parallax);
       }
 
       data.stars[i].data.x = x;
