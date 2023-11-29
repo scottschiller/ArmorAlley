@@ -706,7 +706,8 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
 
 body.game-started #world-wrapper,
 body.edit-mode #world-wrapper {
-  transition-property: filter;
+  transition: border 0.25s ease-in-out, filter 0.5s ease-in;
+  transition-property: border, filter;
   border-bottom-color: #875400;
 }
 
