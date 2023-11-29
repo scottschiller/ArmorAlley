@@ -226,22 +226,14 @@ const Helicopter = (options = {}) => {
   }
 
   function burnFuel() {
-    let frameCount, modulus;
-
     // don't burn fuel in these cases
     if (data.dead || data.repairing) return;
 
-    frameCount = game.objects.gameLoop.data.frameCount;
+    const burnRate = data.landed ? data.fuelRateLanded : data.fuelRateFlying;
 
-    modulus = data.landed ? data.fuelModulus : data.fuelModulusFlying;
+    data.fuel = Math.max(0, data.fuel - ((0.1 * 1) / burnRate) * GAME_SPEED);
 
-    if (frameCount % modulus === 0 && data.fuel > 0) {
-      // burn!
-      data.fuel = Math.max(0, data.fuel - 0.1 * GAME_SPEED);
-
-      // update UI
-      updateFuelUI();
-    }
+    updateFuelUI();
   }
 
   function repairInProgress() {
@@ -1045,7 +1037,9 @@ const Helicopter = (options = {}) => {
 
     // haaaack
     if (!data.yMin) {
-      data.yMin = document.getElementById('game-status-bar').offsetHeight + 8;
+      const statsBar = document.getElementById('stats-bar');
+      const rect = statsBar.getBoundingClientRect();
+      data.yMin = rect.top * (1 / screenScale);
     }
   }
 
@@ -3069,8 +3063,8 @@ const Helicopter = (options = {}) => {
       fireModulus: setFiringRate('fireModulus'),
       bombModulus: setFiringRate('bombModulus'),
       bombFrameCount: 0,
-      fuelModulus: tutorialMode ? 24 : 8,
-      fuelModulusFlying: tutorialMode ? 9 : 3,
+      fuelRateLanded: tutorialMode ? 24 : 8,
+      fuelRateFlying: tutorialMode ? 8 : 8 / 3,
       parachuteFrameCount: 0,
       parachuteModulus: setFiringRate('parachuteModulus'),
       repairModulus: 2,
