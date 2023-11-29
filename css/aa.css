@@ -1676,6 +1676,10 @@ body.edit-mode #top-bar {
   height: calc(42px * var(--gs-tz));
 }
 
+body:not(.game-started) #stats-bar {
+  opacity: 0;
+}
+
 #top-bar {
   contain: strict;
   z-index: 1;
