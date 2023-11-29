@@ -6562,8 +6562,8 @@ body.radar_jammed .scan-node {
   display: none;
   top: 50%;
   left: 50%;
-  width: 200px;
-  height: 150px;
+  width: calc(200px * var(--gs-tz));
+  height: calc(150px * var(--gs-tz));
   transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
   filter: blur(3px);
   transition: 0.5s ease-in-out;
@@ -6908,7 +6908,7 @@ body.is_safari .animated-mail .top-fold {
   }
 
   body.is-mobile.is_iphone #battle-over-letter.open {
-    transform: translate3d(-50%, 0%, 0) scale3d(2.5, 2.5, 1);
+    transform: translate3d(-50%, 0%, 0) scale3d(1.5, 1.5, 1);
   }
 
   body.is-mobile.is_iphone .animated-mail .letter-wrapper {
