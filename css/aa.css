@@ -1296,7 +1296,7 @@ body.edit-mode #home-video-wrapper {
   pointer-events: none;
 }
 
-#world-wrapper.incoming-smart-missile {
+body.game-started #world-wrapper.incoming-smart-missile {
   border-color: #fff;
 }
 
