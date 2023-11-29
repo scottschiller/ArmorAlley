@@ -745,11 +745,12 @@ body.edit-mode #world-wrapper {
   width: calc(42px * var(--gs-tz));
   /* collapse whitespace */
   font-size: 0px;
-  visibility: hidden;
+  transition: opacity 0.25s ease-in-out;
+  opacity: 0;
 }
 
 body.game-started #funds {
-  visibility: visible;
+  opacity: 1;
 }
 
 #funds .funds-label {
@@ -1242,20 +1243,21 @@ body.bnb #tv-display.widescreen #tv {
 #battlefield-overlay-left,
 #battlefield-overlay-right {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 5%;
-  pointer-events: none;
-}
-
-#battlefield-overlay-left,
-#battlefield-overlay-right {
   /* sit underneath fuel bar */
   top: 11%;
+  bottom: 0;
   width: 2%;
   z-index: 10;
   /* a rare occurrence - for iOS Safari so these render correctly on top. */
   transform: scale3d(1, 1, 1);
+  pointer-events: none;
+  transition: opacity 0.5s ease-in-out;
+  opacity: 0;
+}
+
+body.game-started #battlefield-overlay-left,
+body.game-started #battlefield-overlay-right {
+  opacity: 1;
 }
 
 /* don't show these on realy small portrait displays. */
@@ -1427,6 +1429,12 @@ body.is-mobile #top-bar #game-fps {
   padding: 0px;
   /* account for absolutely-positioned fuel line + bar */
   top: calc(10px * var(--gs-tz));
+  transition: opacity 0.5s ease-in-out;
+  opacity: 0;
+}
+
+body.game-started #stats-bar {
+  opacity: 1;
 }
 
 ul.stats-bar {
@@ -1675,10 +1683,6 @@ ul.stats-bar .bombs em {
 body.edit-mode #top-bar {
   /* crop the top, reserving radar for click-and-drag / scrubbing */
   height: calc(42px * var(--gs-tz));
-}
-
-body:not(.game-started) #stats-bar {
-  opacity: 0;
 }
 
 #top-bar {
