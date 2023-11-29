@@ -1424,6 +1424,7 @@ body.is-mobile #top-bar #game-fps {
 
 #stats-bar {
   position: relative;
+  padding: 0px;
   /* account for absolutely-positioned fuel line + bar */
   top: calc(10px * var(--gs-tz));
 }
