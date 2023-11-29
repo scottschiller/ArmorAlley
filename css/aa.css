@@ -4033,14 +4033,18 @@ body.is-mobile #player-status-bar .spacer {
 body.bnb.is-mobile #player-status-bar .spacer {
   display: inline-block !important;
   min-height: calc(16px * var(--gs-tz));
-  top: calc(2px * var(--gs-tz));
+  top: calc(-3.5px * var(--gs-tz));
   /* display shenanigans */
   vertical-align: top;
 }
 
+body.bnb.is-mobile #player-status-bar #spinner {
+  /* more BnB hacks. */
+  top: calc(8.25px * var(--gs-tz));
+}
+
 body.bnb.is-mobile #bnb-now-playing {
   height: 100%;
-  top: 1px;
 }
 
 #bnb-now-playing {
@@ -4056,10 +4060,10 @@ body.bnb.is-mobile #bnb-now-playing {
 }
 
 body:not(.is-mobile) #bnb-now-playing {
-  height: 20px;
-  left: 1px;
+  height: calc(20px * var(--gs-tz));
+  left: 0px;
   /* ugly hacks, I broke something while making changes for mobile. */
-  top: -13px;
+  top: calc(-13px * var(--gs-tz));
 }
 
 body.bnb #bnb-now-playing {
