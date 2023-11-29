@@ -345,6 +345,19 @@ const GameLoop = () => {
 
   function initGameLoop() {
     dom.fpsCount = document.getElementById('fps-count');
+
+    // ?fps=1 etc.
+    let fps = document.getElementById('game-fps');
+
+    if (searchParams.get('fps')) {
+      fps.style.display = 'block';
+    } else {
+      fps.remove();
+      dom.fpsCount = null;
+    }
+
+    fps = null;
+
     dom.lockStepIndicator = document.getElementById('lock-step-indicator');
     dom.networkInfo = document.getElementById('network-info');
 
