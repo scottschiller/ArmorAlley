@@ -16,7 +16,6 @@ const Bunker = (options = {}) => {
     if (!objects.balloon) {
       objects.balloon = game.addObject(TYPES.balloon, {
         bunker: exports,
-        leftMargin: 8,
         isEnemy: data.isEnemy,
         x: data.x,
         y: useRandomY ? undefined : common.bottomAlignedY(-data.height)
@@ -27,7 +26,7 @@ const Bunker = (options = {}) => {
       // create a chain, linking the base and the balloon
       objects.chain = game.addObject(TYPES.chain, {
         isEnemy: data.isEnemy,
-        x: data.x + (data.halfWidth - 1),
+        x: data.x + (data.halfWidth - 1.75),
         y: data.y,
         height: data.y - objects.balloon.data.y,
         balloon: objects.balloon,

@@ -1896,18 +1896,25 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   display: none;
 }
 
-.balloon,
-.balloon.enemy {
+.balloon {
   background-image: url(../image/balloon_mac.png);
   /* initially, show neutral */
   background-size: 38px 144px;
   /* 76 x 288 source image */
   height: 16px;
-  margin-right: 0;
   /* allow status bar to hang out a bit */
   overflow: visible;
   width: 38px;
   z-index: 2;
+}
+
+/* alignment / centering tweaks while on bunker w/chain */
+#battlefield .balloon.facing-left {
+  margin-left: 1.5px;
+}
+
+#battlefield .balloon.facing-right {
+  margin-left: -2.65px;
 }
 
 #battlefield.snow .balloon:not(.exploding):not(.dead) {
@@ -1919,17 +1926,18 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   background-position: 0 -128px; /* original yellow version: 0px -120px */
 }
 
-.balloon.animating,
+.balloon.animating {
+  transition: margin 0.8s linear;
+}
+
 .balloon.facing-right.animating {
   animation: balloonright calc(0.8s * var(--gs-frac)) steps(8);
 }
 
-.balloon.enemy,
 .balloon.facing-left {
   background-position: 0 0; /* default when animation finishes */
 }
 
-.balloon.enemy.animating,
 .balloon.facing-left.animating {
   animation: balloonleft calc(0.8s * var(--gs-frac)) steps(8);
 }
@@ -1951,17 +1959,36 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 .chain {
-  /* slightly over 1px to "thicken up" when scaled */
-  border-left: 1.02px dotted #999;
   /**
    * height will be set / reset by JS.
    * element is moved via transform and is effectively fixed-height when active.
    * height is only zeroed when chain is at bottom - detached from balloon and/or bunker.
    */
   height: 0;
-  margin-left: 1.2px;
   top: 0;
-  width: 0.75px;
+  width: 2.5px;
+  background-image: repeating-linear-gradient(
+    -33deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 0.5px,
+    rgba(255, 255, 255, 0.33) 0.5px,
+    rgba(255, 255, 255, 0.33) 1px,
+    rgba(255, 255, 255, 0.33) 1px,
+    rgba(255, 255, 255, 0) 1.5px
+  );
+}
+
+body.is_safari:not(.is-mobile) .chain {
+  /* tweak for desktop Safari, likely due to scaling. */
+  background-image: repeating-linear-gradient(
+    -33deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.33) 0.5px,
+    rgba(255, 255, 255, 0.33) 0.5px,
+    rgba(255, 255, 255, 0.33) 1px,
+    rgba(255, 255, 255, 0.33) 1.5px,
+    rgba(255, 255, 255, 0) 2px
+  );
 }
 
 .chain.jerking {
@@ -4598,6 +4625,14 @@ body:not(.is-mobile) .mobile-only {
   height: 55%;
   right: 1.5%;
   top: 27.5%;
+  /**
+   * Positioning: try to avoid overlapping a few other common
+   * composited elements "all the time" (tips / shadow overlays),
+   * which guarantees this becomes another full-screen GPU layer.
+   */
+  height: 54.4%;
+  right: 2.05%;
+  top: 32.5%;
   width: 25em;
   font-size: calc(6px * var(--gs-tz));
   /* sit on top of L/R screen gradients */

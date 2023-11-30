@@ -160,9 +160,9 @@ const Chain = (options = {}) => {
 
       if (objects.balloon && !objects.balloon.data.dead) {
         // chain -> balloon
-        x = objects.balloon.data.x + objects.balloon.data.halfWidth + 5;
+        x = objects.balloon.data.x + objects.balloon.data.halfWidth - 2;
 
-        y = objects.balloon.data.y + objects.balloon.data.height;
+        y = objects.balloon.data.y + objects.balloon.data.height - 1;
       } else {
         // free-falling, detached chain
         y = data.y;
@@ -222,7 +222,7 @@ const Chain = (options = {}) => {
       type: 'chain',
       energy: 1,
       hostile: !!options.hostile, // applies when detached from base or balloon
-      width: 1,
+      width: 2.5,
       /**
        * slightly complex: element height is basically fixed, moved via transforms,
        * set at init, zeroed when chain drops and reset if balloon respawns.

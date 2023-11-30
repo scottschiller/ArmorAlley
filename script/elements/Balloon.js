@@ -19,7 +19,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const Balloon = (options = {}) => {
-  let css, data, dom, height, objects, radarItem, reset, exports;
+  let css, data, dom, objects, radarItem, reset, exports;
 
   function checkRespawn() {
     // odd edge case - data not always defined if destroyed at the right time?
@@ -332,9 +332,6 @@ const Balloon = (options = {}) => {
       isEnemy: extraCSS
     });
 
-    // TODO: remove?
-    dom.o._style.setProperty('margin-left', `${data.leftMargin}px`);
-
     sprites.moveTo(exports);
   }
 
@@ -354,7 +351,13 @@ const Balloon = (options = {}) => {
     }
 
     // TODO: review hacky "can respawn" parameter
-    radarItem = game.objects.radar.addItem(exports, dom.o.className, true);
+    const canRespawn = true;
+
+    radarItem = game.objects.radar.addItem(
+      exports,
+      dom.o.className,
+      canRespawn
+    );
 
     utils.css.addOrRemove(
       radarItem.dom.o,
@@ -362,8 +365,6 @@ const Balloon = (options = {}) => {
       css.friendly
     );
   }
-
-  height = 16;
 
   objects = {
     bunker: options.bunker || null,
@@ -377,6 +378,14 @@ const Balloon = (options = {}) => {
     facingLeft: 'facing-left',
     facingRight: 'facing-right'
   });
+
+  const width = 38;
+  const height = 16;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+
+  // for centering over the bunker: half bunker width (if provided), minus half balloon width (local)
+  const leftOffset = (options.bunker?.data?.halfWidth || 0) - halfWidth;
 
   data = common.inheritData(
     {
@@ -393,12 +402,16 @@ const Balloon = (options = {}) => {
       hostile: !objects.bunker, // dangerous when detached
       verticalDirection: rngPlusMinus(1, TYPES.balloon),
       verticalDirectionDefault: 1,
-      leftMargin: options.leftMargin || 0,
-      width: 38,
+      width,
       height,
-      halfWidth: 19,
-      halfHeight: height / 2,
+      halfWidth,
+      halfHeight,
       deadTimer: null,
+      // centering balloon over bunker (half-bunker minus half-balloon widths)
+      leftOffset,
+      // centering balloon on radar (which expects x to line up with bunker x)
+      radarLeftOffset: -leftOffset,
+      x: options.x + leftOffset,
       minX: 0,
       maxX: worldWidth,
       minY: 48,

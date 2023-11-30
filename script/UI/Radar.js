@@ -541,6 +541,7 @@ const Radar = () => {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
           left =
             ((objects.items[i].oParent.data.x +
+              (objects.items[i].oParent.data.radarLeftOffset || 0) +
               (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) /
               worldWidth) *
               adjustedScreenWidth +
