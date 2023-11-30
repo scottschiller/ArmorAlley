@@ -1392,6 +1392,15 @@ body.is-mobile #top-bar #game-fps {
     rgba(255, 255, 255, 0.2) 2.25px,
     rgba(255, 255, 255, 0) 3px
   );
+  opacity: 0;
+}
+
+body.loaded #fuel-bar {
+  transition: opacity 0.25s ease-in-out;
+}
+
+body.game-started #fuel-bar {
+  opacity: 1;
 }
 
 #fuel-line {
