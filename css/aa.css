@@ -3068,6 +3068,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   position: absolute;
   top: auto;
   width: calc(3px * var(--gs-tz));
+  will-change: transform;
 }
 
 #radar .sprite.smart-missile.enemy {
