@@ -97,7 +97,10 @@ const GameLoop = () => {
         } else {
           // single object case - radar, gameLoop etc.
 
-          sprites.updateIsOnScreen(gameObjects[item]);
+          // only things with a type should be on/off-screen.
+          if (gameObjects[item]?.data?.type) {
+            sprites.updateIsOnScreen(gameObjects[item]);
+          }
 
           if (gameObjects[item].animate) {
             if (game.objects.editor && gameObjects[item]?.data?.type) {
