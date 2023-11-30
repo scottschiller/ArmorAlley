@@ -211,7 +211,6 @@ body.demo #aa {
 #radar,
 #radar-container,
 #world,
-#world-container,
 .sprite {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
   contain: strict;
@@ -2513,7 +2512,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   height: 26px;
   overflow: hidden;
   /* +1 pixel, sprite clipping workaround */
-  width: 103px;
+  width: 104px;
 }
 
 .base .transform-sprite {

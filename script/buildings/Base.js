@@ -423,7 +423,7 @@ const Base = (options = {}) => {
     game.objects.radar.addItem(exports, dom.o.className);
   }
 
-  width = 125;
+  width = 104;
   height = 26;
 
   css = common.inheritCSS({
