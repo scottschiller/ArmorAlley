@@ -1275,7 +1275,7 @@ body.bnb #tv-display.widescreen #tv {
   position: absolute;
   /* sit underneath fuel bar */
   top: 11%;
-  bottom: 0;
+  bottom: 5.5%;
   width: 2%;
   z-index: 10;
   /* a rare occurrence - for iOS Safari so these render correctly on top. */
