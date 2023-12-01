@@ -3789,7 +3789,6 @@ body:not(.game-started) .scan-node {
   top: 0;
   transform: translate3d(-50%, 0%, 0);
   width: 65%;
-  outline: 1px solid #339933;
 }
 
 body.tutorial-mode #game-tips .tips-container {
