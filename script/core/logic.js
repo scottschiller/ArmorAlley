@@ -342,7 +342,7 @@ function getNearestObject(source, options = {}) {
   items =
     options.items ||
     getTypes(
-      'tank, van, missileLauncher, helicopter, bunker, balloon, smartMissile, turret',
+      'tank, van, missileLauncher, helicopter, bunker, balloon, smartMissile, turret, superBunker',
       { exports: source }
     );
 
@@ -412,6 +412,18 @@ function getNearestObject(source, options = {}) {
   if (sData.type === TYPES.helicopter && sData.isEnemy) {
     localObjects.reverse();
   }
+
+  /**
+   * If localObjects[0] is a super bunker, and the next object is bottom-aligned,
+   * bail - the idea being that the super bunker would block the intended target.
+   */
+  if (
+    localObjects.length &&
+    sData.type === TYPES.helicopter &&
+    localObjects[0].obj.data.type === TYPES.superBunker &&
+    localObjects[1]?.obj?.data?.bottomAligned
+  )
+    return;
 
   // optional/hackish: return array.
   if (options?.getAll) return localObjects.map((object) => object.obj);
