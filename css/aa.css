@@ -6984,7 +6984,7 @@ body.is_safari .animated-mail .top-fold {
   }
 
   body.is-mobile.is_iphone #battle-over-letter.open {
-    transform: translate3d(-50%, 0%, 0) scale3d(1.5, 1.5, 1);
+    transform: translate3d(-50%, 0%, 0) scale3d(1.85, 1.85, 1);
   }
 
   body.is-mobile.is_iphone .animated-mail .letter-wrapper {
