@@ -316,6 +316,7 @@ body.is_safari #mtv-bnb-in {
   transform: translate3d(-50%, -50%, 0) scale3d(0.8, 0.8, 1);
   filter: blur(8px);
   opacity: 0;
+  z-index: 1;
 }
 
 #game-menu-wrapper.active {
