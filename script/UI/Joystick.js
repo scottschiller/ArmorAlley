@@ -6,6 +6,13 @@ import { snowStorm } from '../lib/snowstorm.js';
 function Joystick(options) {
   let css, data, dom, exports;
 
+  const DEFAULTS = {
+    pointer: {
+      x: 50,
+      y: 96
+    }
+  }
+
   css = {
     enabled: 'enabled',
     joystick: 'joystick',
@@ -30,8 +37,8 @@ function Joystick(options) {
     },
     pointer: {
       // percentages
-      x: 50,
-      y: 50
+      x: DEFAULTS.pointer.x,
+      y: DEFAULTS.pointer.y
     },
     // linear acceleration / deceleration
     easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -60,8 +67,8 @@ function Joystick(options) {
   }
 
   function resetPoint() {
-    dom.oPoint.style.setProperty('left', '50%');
     dom.oPoint.style.setProperty('top', '50%');
+    dom.oPoint.style.setProperty('left', '50%');
   }
 
   function start(e) {
@@ -270,8 +277,8 @@ function Joystick(options) {
 
   function setInitialPosition() {
     // update inner state
-    data.pointer.x = 50;
-    data.pointer.y = 50;
+    data.pointer.x = DEFAULTS.pointer.x;
+    data.pointer.y = DEFAULTS.pointer.y;
 
     dom.oPointer.style.transform = `translate3d(${
       game.objects.view.data.browser.width * (data.pointer.x / 100)
