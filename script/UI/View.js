@@ -1296,13 +1296,13 @@ const View = () => {
 
     mousemove(e) {
       if (
+        (!game.data.started && !game.objects.editor) ||
         data.ignoreMouseEvents ||
         data.ignoreMouseMove ||
         game.players?.local?.data?.dead ||
         game.players?.local?.data?.isCPU
       )
         return;
-
       if (!net.active) {
         data.mouse.x = e.clientX / data.screenScale;
         data.mouse.y = e.clientY / data.screenScale;
