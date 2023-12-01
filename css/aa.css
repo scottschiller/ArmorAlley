@@ -964,25 +964,13 @@ body.is_safari:not(.is-mobile) #queue {
   background: #0e360e;
   overflow: hidden;
   position: relative;
-  /* angled pinstripe pattern on larger screens. */
-  background-image: repeating-linear-gradient(
-    55deg,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 1.5px,
-    rgba(0, 0, 0, 0.33) 1.5px,
-    rgba(0, 0, 0, 0.33) 2.25px,
-    rgba(0, 0, 0, 0.33) 2.25px,
-    rgba(0, 0, 0, 0) 3px
-  );
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
 }
 
-@media (max-width: 1024px) and (max-height: 800px) {
-  /* horizontal pinstripe on smaller screens. */
+@media (min-width: 1000px) and (min-height: 940px) {
   #radar-container {
+    /* angled pinstripe pattern on larger screens - desktop, 12.9" iPad Pro and such. */
     background-image: repeating-linear-gradient(
-      0deg,
+      55deg,
       rgba(0, 0, 0, 0),
       rgba(0, 0, 0, 0) 1.5px,
       rgba(0, 0, 0, 0.33) 1.5px,
