@@ -358,6 +358,13 @@ function getNearestObject(source, options = {}) {
       if (tData.isEnemy === sData.isEnemy || tData.dead || tData.cloaked)
         continue;
 
+      /**
+       * Special case: ignore balloons that are attached to a bunker.
+       * This is to avoid UX/UI confusion between targeting a bunker vs. balloon.
+       * Only detached balloons are hostile.
+       */
+      if (tData.type === TYPES.balloon && !tData.hostile) continue;
+
       // if a van, target only if it has a radar item OR is on-screen.
       if (
         tData.type === TYPES.van &&
