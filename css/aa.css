@@ -4641,9 +4641,6 @@ body:not(.is-mobile) .mobile-only {
   position: absolute;
   overflow: hidden;
   contain: strict;
-  height: 55%;
-  right: 1.5%;
-  top: 27.5%;
   /**
    * Positioning: try to avoid overlapping a few other common
    * composited elements "all the time" (tips / shadow overlays),
@@ -4661,7 +4658,7 @@ body:not(.is-mobile) .mobile-only {
 
 #notification-toasts.left-aligned {
   right: auto;
-  left: 1.5%;
+  left: 2.05%;
 }
 
 #notification-toasts.bottom-up {
