@@ -1446,7 +1446,7 @@ body.game-started #fuel-bar {
   background-size: contain;
   display: none;
   height: calc(13px * var(--gs-tz));
-  top: calc(35px * var(--gs-tz));
+  top: calc(33px * var(--gs-tz));
   width: 100%;
   z-index: 1;
 }
