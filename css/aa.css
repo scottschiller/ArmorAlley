@@ -3111,11 +3111,11 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 }
 
 #radar .sprite.bomb {
-  --two: calc(2px * var(--gs-tz));
-  border-radius: 0 0 var(--two) var(--two);
-  height: var(--two);
-  margin-left: calc(--two / 2);
-  width: var(--two);
+  --width: calc(1.5px * var(--gs-tz));
+  border-radius: 0 0 var(--width) var(--width);
+  height: var(--width);
+  margin-left: calc(var(--width) * -1);
+  width: var(--width);
 }
 
 #radar .sprite.bomb.enemy,
