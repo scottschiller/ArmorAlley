@@ -353,11 +353,14 @@ function getNearestObject(source, options = {}) {
     itemArray = game.objects[items[i].type];
 
     for (k = 0, l = itemArray.length; k < l; k++) {
-      // potential target must be an enemy, not dead nor cloaked.
+      // potential target must be an enemy, not hostile, dead or cloaked.
       tData = itemArray[k].data;
-      if (tData.isEnemy === sData.isEnemy || tData.dead || tData.cloaked)
+      if (
+        (tData.isEnemy === sData.isEnemy && !tData.hostile) ||
+        tData.dead ||
+        tData.cloaked
+      )
         continue;
-
       /**
        * Special case: ignore balloons that are attached to a bunker.
        * This is to avoid UX/UI confusion between targeting a bunker vs. balloon.
