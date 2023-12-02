@@ -387,10 +387,9 @@ body.is-mobile #game-subtitle {
 
 #logo h1,
 body:not(.game-started) #mobile-controls {
-  visibility: hidden;
+  opacity: 0;
 }
 
-#world.welcome #mobile-controls,
 #world.welcome #player-status-bar {
   opacity: 0;
 }
@@ -407,8 +406,8 @@ body:not(.game-started) #mobile-controls {
 }
 
 #battlefield,
-#world.active #mobile-controls,
-#world.active #player-status-bar {
+body.game-started #mobile-controls,
+body.game-started #player-status-bar {
   transition: 1s ease-in-out;
   transition-property: filter, opacity, transform;
 }
@@ -1556,7 +1555,11 @@ ul.stats-bar li.stats-item .wrapper {
   transition-duration: 0.33s;
 }
 
-#mobile-controls li.weapons-item.weapon-unavailable,
+#mobile-controls li.weapons-item.weapon-unavailable {
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
 ul.stats-bar li.stats-item.weapon-unavailable:not(.repairing) .wrapper {
   filter: grayscale(1);
   opacity: 0.5;
@@ -1571,7 +1574,7 @@ ul.stats-bar li.stats-item.missiles:not(.weapon-unavailable) .wrapper {
 #mobile-controls li.weapons-item.weapon-reloading,
 ul.stats-bar li.stats-item.weapon-reloading:not(.repairing) em {
   /* fade the missile icon while "reloading" */
-  opacity: 0.5;
+  opacity: 0.75;
 }
 
 ul.stats-bar li .double-wide {
@@ -3939,7 +3942,7 @@ body.game-started #game-tips.active .tips-container {
   opacity: 0;
   position: absolute;
   text-align: center;
-  top: 0;
+  top: -0.5em;
   filter: blur(3px);
   transform: scale3d(1.2, 1.2, 1);
   transform-origin: 50% 50%;
@@ -4294,7 +4297,11 @@ body.is-mobile #player-status-bar .inventory-item:hover {
 #mobile-controls.can-not-order-infantry .infantry,
 #mobile-controls.can-not-order-missile-launcher .missile-launcher,
 #mobile-controls.can-not-order-tank .tank,
-#mobile-controls.can-not-order-van .van,
+#mobile-controls.can-not-order-van .van {
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
 #player-status-bar.can-not-order-engineer .engineer,
 #player-status-bar.can-not-order-infantry .infantry,
 #player-status-bar.can-not-order-missile-launcher .missile-launcher,
@@ -4305,32 +4312,53 @@ body.is-mobile #player-status-bar .inventory-item:hover {
 }
 
 #mobile-controls {
-  /* offset for top bar, etc. */
-  display: none;
-  height: 300px;
-  left: 0;
-  margin-top: 64px;
   position: absolute;
-  top: 0;
-  width: 100%;
+  display: none;
+  width: calc(60px * var(--gs-tz));
+  height: calc(80px * var(--gs-tz));
+  left: 0;
+  /* this works OK for iPad. */
+  bottom: calc(58px * var(--gs-tz));
   z-index: 11; /* sit atop clouds */
 }
 
 body.is-mobile #mobile-controls {
   display: block;
+  opacity: 0;
+}
+
+body.is-mobile.game-started #mobile-controls {
+  opacity: 1;
+}
+
+body.is_iphone #mobile-controls {
+  /* scale controls up. */
+  zoom: 1.25;
+  /* tighter bottom spacing. */
+  bottom: calc(53px * var(--gs-tz));
+}
+
+@media screen and (orientation: landscape) {
+  body.is_iphone #mobile-controls {
+    zoom: 1.5;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  /* tighter spacing + less vertical clearance needed */
+  body.is_iphone #mobile-controls {
+    bottom: calc(42px * var(--gs-tz));
+  }
+  body:not(.is_iphone) #mobile-controls {
+    /* tighter spacing + less vertical clearance needed */
+    bottom: calc(53px * var(--gs-tz));
+  }
 }
 
 #mobile-controls .mobile-controls-ordering,
 #mobile-controls .mobile-controls-weapons {
-  bottom: 0;
-  overflow: hidden;
-  padding-left: 2px;
-  padding-right: 2px;
   position: absolute;
-  right: 0;
-  /* bottom-align */
-  vertical-align: bottom;
-  width: 57px;
+  padding: 0;
 }
 
 #mobile-controls li.get-user-attention {
@@ -4340,6 +4368,14 @@ body.is-mobile #mobile-controls {
 
 #mobile-controls li.get-user-attention a {
   animation: 0.5s ease-in-out infinite alternate sorta-blink;
+}
+
+#mobile-controls.inventory_active
+  ul.mobile-controls-weapons
+  li:not(.show_inventory_control),
+#mobile-controls.weapons_active ul.mobile-controls-ordering {
+  /* hide one when the other is active. */
+  opacity: 0;
 }
 
 /* only blink inventory control when requested, if weapons are showing. */
@@ -4353,29 +4389,30 @@ body.is-mobile #mobile-controls {
 
 /* TODO: make this configurable. */
 body.is-mobile.notch-at-left #notification-toasts {
-  margin-left: calc(env(safe-area-inset-left) * 0.9) !important;
+  margin-left: calc(env(safe-area-inset-left) * 0.9);
 }
 
 body.is-mobile.notch-at-right #notification-toasts {
-  margin-right: calc(env(safe-area-inset-right) * 0.9) !important;
+  margin-right: calc(env(safe-area-inset-right) * 0.9);
 }
 
 /* go bigger on landscape. */
 #mobile-controls .mobile-controls-ordering li,
 #mobile-controls .mobile-controls-weapons li {
-  margin: 0 2px 2px 0;
+  --margin: calc(2px * var(--gs-tz));
+  margin: 0 var(--margin) var(--margin) 0;
   padding: 0;
-  width: 25px;
+  width: calc(25px * var(--gs-tz));
 }
 
 #mobile-controls li {
   /* microfiche, but OK on mobile. */
   background: url(../image/checkerboard-black-mask-75percent.png) 0 0/4px;
-  border: 1px dotted hsla(0, 0%, 100%, 0.15);
+  border: calc(0.75px * var(--gs-tz)) dotted hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
-  font-size: 7px;
-  height: 25px;
+  font-size: calc(7px * var(--gs-tz));
+  height: calc(25px * var(--gs-tz));
   line-height: 1rem;
   /* visibility: hidden; */
   opacity: 0;
@@ -4479,10 +4516,10 @@ body.is-mobile.notch-at-right #notification-toasts {
 #mobile-controls li span.letter-block.show_options {
   color: #666;
   display: block !important;
-  font-size: 16px;
+  font-size: calc(16px * var(--gs-tz));
   font-weight: lighter;
   letter-spacing: 0;
-  line-height: 20px;
+  line-height: calc(24px * var(--gs-tz));
   text-align: center;
   text-indent: 0;
   top: 0;
@@ -4490,12 +4527,12 @@ body.is-mobile.notch-at-right #notification-toasts {
 
 body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   /* Chrome on Android */
-  line-height: 20.5px;
+  line-height: calc(23.5px * var(--gs-tz));
 }
 
 #mobile-controls li span.letter-block.show_options {
-  font-size: 8px;
-  line-height: 25px;
+  font-size: calc(8px * var(--gs-tz));
+  line-height: calc(24px * var(--gs-tz));
 }
 
 /* hide groups of controls until activated */
@@ -6437,6 +6474,20 @@ body.tutorial-mode #tutorial-window.active {
   opacity: 1;
 }
 
+@media screen and (orientation: landscape) {
+  /* scale up tutorial window. */
+  body.is-mobile.tutorial-mode #tutorial-window.active {
+    transform: scale3d(1.5, 1.5, 1) translate3d(-50%, -50%, 0);
+  }
+  /* even more on iPhone. */
+  body.is_iphone.tutorial-mode #tutorial-window.active {
+    transform: scale3d(1.75, 1.75, 1) translate3d(-50%, -33%, 0);
+  }
+  body.is_iphone.tutorial-mode #tutorial-window.finder .title-bar-stripes {
+    background-size: 16.5px 1px;
+  }
+}
+
 body.game-paused #tutorial-window {
   display: none !important;
 }
@@ -6572,29 +6623,14 @@ body.radar_jammed .scan-node {
     margin-top: 10vw;
   }
 
-  /* giant hack, for now - iPhone only, not iPads. */
-  body.is-mobile.is_iphone #mobile-controls .mobile-controls-ordering,
-  body.is-mobile.is_iphone #mobile-controls .mobile-controls-weapons {
-    zoom: 2;
-  }
-
-  body.is-mobile #mobile-controls li {
-    /* account for 2x border */
-    border-width: 0.5px;
-  }
-
-  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-ordering,
-  body.is-mobile.notch-at-right #mobile-controls .mobile-controls-weapons {
+  body.is-mobile.notch-at-right #mobile-controls {
     left: auto;
-    /* HACKISH: offset for zoom */
-    margin-right: calc(env(safe-area-inset-right) / 2);
     right: 0;
+    margin-right: calc(env(safe-area-inset-right) / 2);
   }
 
-  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-ordering,
-  body.is-mobile.notch-at-left #mobile-controls .mobile-controls-weapons {
+  body.is-mobile.notch-at-left #mobile-controls {
     left: 0;
-    /* HACKISH: offset for zoom */
     margin-left: calc(env(safe-area-inset-left) / 2);
     right: auto;
   }
@@ -6683,25 +6719,11 @@ body.radar_jammed .scan-node {
     left: -1px;
   }
 
-  /* mobile, portrait: smaller controls. */
-  body.is_iphone #mobile-controls .mobile-controls-ordering,
-  body.is_iphone #mobile-controls .mobile-controls-weapons {
-    zoom: 1.25;
-  }
-
   body.is-mobile #mobile-controls .mobile-controls-ordering,
   body.is-mobile #mobile-controls .mobile-controls-weapons {
     /* collapse bullshit whitespace */
     font-size: 0;
     left: 0;
-    /* left side, by default */
-    right: auto;
-    width: 54px;
-  }
-
-  /* giant hack, for now */
-  #mobile-controls li {
-    height: 25px;
   }
 
   /* hide text when in portrait mode. */
@@ -6734,12 +6756,6 @@ body.radar_jammed .scan-node {
 
   #mobile-controls li.inventory-item a.bombs {
     background-size: 6.5%;
-  }
-
-  #mobile-controls li span.letter-block.show_inventory {
-    left: 0.25px;
-    line-height: 23px;
-    top: 0.5px;
   }
 
   body.is-mobile #mobile-landscape-tip {

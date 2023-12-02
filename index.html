@@ -291,137 +291,6 @@
           <div id="battlefield">
             <!-- world with terrain elements, vehicles, etc., lives here. -->
           </div>
-
-          <div id="mobile-controls">
-            <ul id="mobile-inventory-controls" class="mobile-controls-ordering">
-              <li class="inventory-item" data-for="tank">
-                <a
-                  href="#"
-                  data-keyMap="tank"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="tank"
-                  ><span class="letter-block">Tank</span></a
-                >
-              </li>
-
-              <li class="inventory-item" data-for="missile-launcher">
-                <a
-                  href="#"
-                  data-keyMap="missileLauncher"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="missile-launcher"
-                  ><span class="letter-block">Missile Launcher</span></a
-                >
-              </li>
-
-              <li class="inventory-item" data-for="van">
-                <a
-                  href="#"
-                  data-keyMap="van"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="van"
-                  ><span class="letter-block">Van</span></a
-                >
-              </li>
-
-              <li class="inventory-item" data-for="infantry">
-                <a
-                  href="#"
-                  data-keyMap="infantry"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="infantry"
-                  ><span class="letter-block">Infantry &times; 5</span></a
-                >
-              </li>
-
-              <li class="inventory-item" data-for="engineer">
-                <a
-                  href="#"
-                  data-keyMap="engineer"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="engineer"
-                  ><span class="letter-block">Engineers &times; 2</span></a
-                >
-              </li>
-            </ul>
-
-            <ul class="mobile-controls-weapons">
-              <li class="weapons-item" data-for="parachute-infantry">
-                <a
-                  href="#"
-                  data-keyMap="space"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="parachute-infantry"
-                  ><span class="letter-block">Infantry</span></a
-                >
-              </li>
-
-              <li class="weapons-item" data-for="guns">
-                <a
-                  href="#"
-                  data-keyMap="shift"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="ammo"
-                  ><span class="letter-block">Guns</span></a
-                >
-              </li>
-
-              <li class="weapons-item" data-for="smart-missile">
-                <a
-                  href="#"
-                  data-keyMap="smartMissile,rubberChicken,banana"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="smart-missile"
-                  ><span class="letter-block">Missiles</span></a
-                >
-              </li>
-
-              <li class="weapons-item" data-for="bombs">
-                <a
-                  href="#"
-                  data-keyMap="ctrl"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="bombs"
-                  ><span class="letter-block">Bombs</span></a
-                >
-              </li>
-
-              <li class="weapons-item" data-for="options">
-                <a
-                  href="#"
-                  id="mobile-show-options"
-                  data-keyMap="show_options"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="show_options"
-                  ><span class="show_options letter-block">🛠️</span></a
-                >
-              </li>
-
-              <li
-                class="inventory-item show_inventory_control"
-                data-for="inventory">
-                <a
-                  href="#"
-                  id="mobile-show-inventory"
-                  data-keyMap="show_inventory"
-                  oncontextmenu="return false"
-                  onclick="return false"
-                  class="show_inventory"
-                  ><span class="show_inventory letter-block">≡</span></a
-                >
-              </li>
-            </ul>
-          </div>
         </div>
 
         <div id="bottom">
@@ -668,6 +537,135 @@
         </p>
         <p class="mobile-only">Tap to resume</p>
       </div>
+    </div>
+
+    <div id="mobile-controls">
+      <ul id="mobile-inventory-controls" class="mobile-controls-ordering">
+        <li class="inventory-item" data-for="tank">
+          <a
+            href="#"
+            data-keyMap="tank"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="tank"
+            ><span class="letter-block">Tank</span></a
+          >
+        </li>
+
+        <li class="inventory-item" data-for="missile-launcher">
+          <a
+            href="#"
+            data-keyMap="missileLauncher"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="missile-launcher"
+            ><span class="letter-block">Missile Launcher</span></a
+          >
+        </li>
+
+        <li class="inventory-item" data-for="van">
+          <a
+            href="#"
+            data-keyMap="van"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="van"
+            ><span class="letter-block">Van</span></a
+          >
+        </li>
+
+        <li class="inventory-item" data-for="infantry">
+          <a
+            href="#"
+            data-keyMap="infantry"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="infantry"
+            ><span class="letter-block">Infantry &times; 5</span></a
+          >
+        </li>
+
+        <li class="inventory-item" data-for="engineer">
+          <a
+            href="#"
+            data-keyMap="engineer"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="engineer"
+            ><span class="letter-block">Engineers &times; 2</span></a
+          >
+        </li>
+      </ul>
+
+      <ul class="mobile-controls-weapons">
+        <li class="weapons-item" data-for="parachute-infantry">
+          <a
+            href="#"
+            data-keyMap="space"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="parachute-infantry"
+            ><span class="letter-block">Infantry</span></a
+          >
+        </li>
+
+        <li class="weapons-item" data-for="guns">
+          <a
+            href="#"
+            data-keyMap="shift"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="ammo"
+            ><span class="letter-block">Guns</span></a
+          >
+        </li>
+
+        <li class="weapons-item" data-for="smart-missile">
+          <a
+            href="#"
+            data-keyMap="smartMissile,rubberChicken,banana"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="smart-missile"
+            ><span class="letter-block">Missiles</span></a
+          >
+        </li>
+
+        <li class="weapons-item" data-for="bombs">
+          <a
+            href="#"
+            data-keyMap="ctrl"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="bombs"
+            ><span class="letter-block">Bombs</span></a
+          >
+        </li>
+
+        <li class="weapons-item" data-for="options">
+          <a
+            href="#"
+            id="mobile-show-options"
+            data-keyMap="show_options"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="show_options"
+            ><span class="show_options letter-block">🛠️</span></a
+          >
+        </li>
+
+        <li class="inventory-item show_inventory_control" data-for="inventory">
+          <a
+            href="#"
+            id="mobile-show-inventory"
+            data-keyMap="show_inventory"
+            oncontextmenu="return false"
+            onclick="return false"
+            class="show_inventory"
+            ><span class="show_inventory letter-block">≡</span></a
+          >
+        </li>
+      </ul>
     </div>
 
     <div id="domfetti-overlay">
