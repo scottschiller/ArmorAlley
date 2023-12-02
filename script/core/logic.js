@@ -429,6 +429,15 @@ function getNearestObject(source, options = {}) {
   )
     return;
 
+  /**
+   * If we still have a super bunker at [0], we likely have an
+   * airborne target at [1] - e.g., a helicopter. In this case,
+   * drop the super bunker and take the next eligible target.
+   */
+  if (localObjects[0].obj.data.type === TYPES.superBunker) {
+    localObjects.shift();
+  }
+
   // optional/hackish: return array.
   if (options?.getAll) return localObjects.map((object) => object.obj);
 
