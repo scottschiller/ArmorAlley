@@ -3917,6 +3917,12 @@ body.game-started #game-tips.active .tips-container {
   /* animation-timing-function: steps(150); */
 }
 
+body.is_iphone #game-tips .tips-container .animation-node,
+body.is_iphone #game-tips .tips-container .tip {
+  /* a little faster, animation-wise. */
+  animation-duration: calc(16s * var(--gs-frac));
+}
+
 @media screen and (orientation: portrait) {
   #game-tips {
     /* smaller text, too. */
