@@ -3163,8 +3163,8 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   /* semi-circle */
   border: calc(1px * var(--gs-tz)) solid rgba(23, 160, 7, 0.75);
   border-bottom: none;
-  width: calc(1px * var(--gs-tz));
-  height: calc(0.75px * var(--gs-tz));
+  width: calc(0.5px * var(--gs-tz));
+  height: calc(0.25px * var(--gs-tz));
   border-radius: 50% 50% 0 0;
   margin-left: calc(-1px * var(--gs-tz));
   background: 0 0 !important;
