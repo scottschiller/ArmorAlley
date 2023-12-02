@@ -376,8 +376,13 @@ function getNearestObject(source, options = {}) {
       )
         continue;
 
-      // is the target in front of the source?
-      isInFront = sData.isEnemy ? tData.x < sData.x : tData.x >= sData.x;
+      /**
+       * Is the target in front of the source? Note inclusion of width on friendly chopper.
+       * Once your "nose" crosses over a target, it's considered past you.
+       */
+      isInFront = sData.isEnemy
+        ? tData.x < sData.x
+        : tData.x >= sData.x + sData.width;
 
       // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
       if (
