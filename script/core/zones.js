@@ -9,6 +9,8 @@ const objectsByZone = [];
 
 const zoneDebugging = window.location.toString().match(/zone/i);
 
+const groups = ['all', 'friendly', 'enemy'];
+
 const useLookAheadTypes = {
   tank: true,
   infantry: true,
@@ -347,13 +349,26 @@ function debugZone(obj) {
 
   if (obj.dom?.oDebug) {
     const { zones } = obj.data;
+
+    // e.g., friendly,enemy,all -> f,a,e: take first character of group if thers's a match, and ignore empties.
+    let inGroups = groups
+      .map((group) =>
+        objectsByZone[zones[0]][group]?.[obj.data.type]?.[obj.data.id]
+          ? group
+          : ''
+      )
+      .map((value) => value && value.charAt(0))
+      .filter((val) => val)
+      .join(',');
+
     const id = obj.data.guid ? obj.data.guid.split('_')[1] + '&nbsp;' : '';
     // L->R ordering for multi-zone. if enemy, show "front" side first, then rear. friendly shows rear first, then front.
     const mzString = obj.data.isEnemy
       ? `${zones[0]}/${zones[1]}`
       : `${zones[1]}/${zones[0]}`;
     const zz = id && obj.data.multiZone ? mzString : zones[0];
-    obj.dom.oDebug.innerHTML = id ? `${id}<sup>${zz}</sup>` : zones[0];
+    obj.dom.oDebug.innerHTML =
+      (id ? `${id}<sup>${zz}</sup>` : zones[0]) + ` ${inGroups}`;
   }
 }
 
