@@ -771,6 +771,13 @@ body.game-started #funds {
   padding-right: calc(1.5px * var(--gs-tz));
 }
 
+@media screen and (orientation: landscape) {
+  body.is_iphone #funds .funds-label {
+    font-size: calc(10px * var(--gs-tz));
+    line-height: calc(10px * var(--gs-tz));
+  }
+}
+
 #game-fps {
   position: absolute;
   display: none;
