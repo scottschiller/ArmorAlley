@@ -398,7 +398,7 @@ const Balloon = (options = {}) => {
       energy: 3,
       energyMax: 3,
       direction: 0,
-      detached: false,
+      detached: !objects.bunker,
       hostile: !objects.bunker, // dangerous when detached
       verticalDirection: rngPlusMinus(1, TYPES.balloon),
       verticalDirectionDefault: 1,
