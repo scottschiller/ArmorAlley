@@ -4353,11 +4353,13 @@ body.is-mobile #player-status-bar .inventory-item:hover {
 #mobile-controls {
   position: absolute;
   display: none;
+  /* ugh, whitespace. */
+  font-size: 0px;
   width: calc(60px * var(--gs-tz));
   height: calc(80px * var(--gs-tz));
   left: 0;
   /* this works OK for iPad. */
-  bottom: calc(58px * var(--gs-tz));
+  bottom: calc(42px * var(--gs-tz));
   z-index: 11; /* sit atop clouds */
 }
 
@@ -4385,7 +4387,10 @@ body.is_iphone #mobile-controls {
   }
   body.is_iphone #mobile-controls {
     zoom: 2;
-    bottom: calc(45px * var(--gs-tz));
+    bottom: calc(28px * var(--gs-tz));
+  }
+  body.is-mobile:not(.is_iphone) #mobile-controls {
+    zoom: 1.25;
   }
   body.is-mobile #game-tips,
   body.is-mobile #game-tips #game-announcements {
@@ -4455,9 +4460,10 @@ body.is-mobile.notch-at-right #notification-toasts {
 /* go bigger on landscape. */
 #mobile-controls .mobile-controls-ordering li,
 #mobile-controls .mobile-controls-weapons li {
-  --margin: calc(2px * var(--gs-tz));
-  margin: 0 var(--margin) var(--margin) 0;
+  margin: 0;
   padding: 0;
+  margin-right: calc(2.5px * var(--gs-tz));
+  margin-bottom: calc(2.5px * var(--gs-tz));
   width: calc(25px * var(--gs-tz));
 }
 
@@ -4470,12 +4476,10 @@ body.is-mobile.notch-at-right #notification-toasts {
   font-size: calc(7px * var(--gs-tz));
   height: calc(25px * var(--gs-tz));
   line-height: 1rem;
-  /* visibility: hidden; */
   opacity: 0;
   padding: 0;
   pointer-events: none;
   text-align: center;
-  /* border-bottom-color: transparent; */
   vertical-align: middle;
 }
 
