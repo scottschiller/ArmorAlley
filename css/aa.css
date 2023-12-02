@@ -4464,7 +4464,7 @@ body.is-mobile.notch-at-right #notification-toasts {
 #mobile-controls li {
   /* microfiche, but OK on mobile. */
   background: url(../image/checkerboard-black-mask-75percent.png) 0 0/4px;
-  border: calc(0.75px * var(--gs-tz)) dotted hsla(0, 0%, 100%, 0.25);
+  border: calc(0.75px * var(--gs-tz)) dotted hsla(0, 0%, 100%, 0.175);
   box-sizing: border-box;
   display: inline-block;
   font-size: calc(7px * var(--gs-tz));
