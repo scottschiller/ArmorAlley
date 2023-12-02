@@ -417,14 +417,15 @@ function getNearestObject(source, options = {}) {
   }
 
   /**
-   * If localObjects[0] is a super bunker, and the next object is bottom-aligned,
-   * bail - the idea being that the super bunker would block the intended target.
+   * If localObjects[0] is a super bunker, and the only target, bail.
+   * If [0] is a super bunker and [1] is bottom-aligned, also bail -
+   * in this case, the super bunker would block the intended target.
    */
   if (
     localObjects.length &&
     sData.type === TYPES.helicopter &&
     localObjects[0].obj.data.type === TYPES.superBunker &&
-    localObjects[1]?.obj?.data?.bottomAligned
+    (localObjects.length === 1 || localObjects[1]?.obj?.data?.bottomAligned)
   )
     return;
 
