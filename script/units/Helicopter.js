@@ -994,7 +994,6 @@ const Helicopter = (options = {}) => {
 
   function refreshCoords() {
     const view = game.objects.view;
-    let controlsWidth;
     let landscapeDetail;
 
     // roughly accurate for iPhone X, 01/2018.
@@ -1014,19 +1013,11 @@ const Helicopter = (options = {}) => {
       landscapeDetail = getLandscapeLayout();
 
       if (landscapeDetail) {
-        controlsWidth = parseInt(
-          document.querySelectorAll('#mobile-controls ul')[0].offsetWidth,
-          10
-        );
-
         // slight offsets, allow helicopter to be very close to controls.
         // some affordance for The Notch, on iPhone (just assume for now, because FFS.)
         data.xMaxOffset =
-          controlsWidth * 0.75 +
-          (isiPhone && landscapeDetail === 'right' ? notchWidth : 0);
-        data.xMin =
-          controlsWidth * 0.75 +
-          (isiPhone && landscapeDetail === 'left' ? notchWidth : 0);
+          isiPhone && landscapeDetail === 'right' ? notchWidth : 0;
+        data.xMin = isiPhone && landscapeDetail === 'left' ? notchWidth : 0;
       } else {
         // portrait mode: just forget it altogether and let helicopter go atop controls.
         // compensate for half of helicopter width being subtracted, too.
