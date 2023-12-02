@@ -523,7 +523,7 @@ const SmartMissile = (options = {}) => {
       (!objects.target ||
         tData.dead ||
         tData.wentIntoHiding ||
-        tData.isEnemy === data.isEnemy)
+        (tData.isEnemy === data.isEnemy && !tData.hostile))
     ) {
       const whose =
         data.isEnemy !== game.players.local.data.isEnemy
