@@ -756,11 +756,8 @@ body.edit-mode #world-wrapper {
   opacity: 0;
 }
 
-body.loaded #funds {
-  transition: opacity 0.25s ease-in-out;
-}
-
 body.game-started #funds {
+  transition: opacity 0.25s ease-in-out;
   opacity: 1;
 }
 
