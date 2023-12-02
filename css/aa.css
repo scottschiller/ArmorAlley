@@ -773,9 +773,8 @@ body.game-started #funds {
 }
 
 @media screen and (orientation: landscape) {
-  body.is_iphone #funds .funds-label {
-    font-size: calc(10px * var(--gs-tz));
-    line-height: calc(10px * var(--gs-tz));
+  body.is_iphone #funds {
+    zoom: 1.5;
   }
 }
 
@@ -4397,11 +4396,11 @@ body.is_iphone #mobile-controls {
 
 /* TODO: make this configurable. */
 body.is-mobile.notch-at-left #notification-toasts {
-  margin-left: calc(env(safe-area-inset-left) * 0.9);
+  margin-left: calc(env(safe-area-inset-left) * 0.75);
 }
 
 body.is-mobile.notch-at-right #notification-toasts {
-  margin-right: calc(env(safe-area-inset-right) * 0.9);
+  margin-right: calc(env(safe-area-inset-right) * 0.75);
 }
 
 /* go bigger on landscape. */
