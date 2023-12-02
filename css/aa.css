@@ -390,6 +390,10 @@ body:not(.game-started) #mobile-controls {
   opacity: 0;
 }
 
+body:not(.game-started) #mobile-controls {
+  pointer-events: none;
+}
+
 #world.welcome #player-status-bar {
   opacity: 0;
 }
