@@ -6662,23 +6662,11 @@ body.radar_jammed .scan-node {
     top: 4px;
   }
 
-  body.is-mobile #notification-toasts {
-    /* note: half-size height, given transform. */
-    height: 128px;
-  }
-
-  body.is_iphone #notification-toasts {
-    transform: scale3d(2, 2, 1);
-    transform-origin: top right;
-  }
-
-  /* account for toast location, and apply transform appropriately */
-  body.is-mobile #notification-toasts.left-aligned {
-    transform-origin: top left;
-  }
-
-  #mobile-controls li span.letter-block.show_inventory {
-    top: 1.5px;
+  @media screen and (orientation: landscape) {
+    body.is-mobile #notification-toasts {
+      /* adjust to maintain size */
+      font-size: calc(7px * var(--gs-tz));
+    }
   }
 }
 
