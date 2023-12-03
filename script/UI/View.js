@@ -855,7 +855,27 @@ const View = () => {
       }
     }
 
+    // something else...
+    if (gamePrefs.radar_scaling) {
+      const keys = Object.keys(data.allTouchEvents);
+      const allTouches = keys.length;
 
+      if (allTouches === 2) {
+        /**
+         * Second touch event has started.
+         * Get its ID, then check to see if still active in a moment.
+         * TODO: confirm that newest touch is always last key? :X
+         */
+        const id = keys[keys.length - 1];
+        window.setTimeout(() => {
+          // still held down? do the thing.
+          if (data.allTouchEvents[id]) {
+            game.objects.radar.toggleScaling();
+          }
+        }, 500);
+        return false;
+      }
+    }
 
     return true;
   }
