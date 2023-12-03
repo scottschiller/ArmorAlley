@@ -3564,7 +3564,7 @@ body.bnb .sprite.engineer.butthead.building {
 #radar .sprite.missile-launcher,
 #radar .sprite.turret {
   /* ensure everything sits on top of scan nodes */
-  z-index: 1;
+  z-index: 2;
 }
 
 #battlefield .scan-node,
