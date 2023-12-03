@@ -4308,6 +4308,7 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   width: calc(60px * var(--gs-tz));
   height: calc(80px * var(--gs-tz));
   left: 0;
+  padding: 0px 1px;
   /* this works OK for iPad. */
   bottom: calc(42px * var(--gs-tz));
   z-index: 11; /* sit atop clouds */
