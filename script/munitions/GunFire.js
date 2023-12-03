@@ -15,6 +15,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
   let css, data, dom, collision, exports, frameTimeout, radarItem;
@@ -373,6 +374,19 @@ const GunFire = (options = {}) => {
       targets: undefined,
       checkTweens: !data.isInert,
       hit(target) {
+        /**
+         * Special case: let tank gunfire pass thru neutral / hostile super bunkers, since
+         * tanks use flame to clear out super bunkers. Gunfire here is meant for others,
+         *  e.g., a turret or tank overlapping or behind a super bunker being targeted.
+         */
+        if (
+          gamePrefs.tank_gunfire_miss_bunkers &&
+          target.data.type === TYPES.superBunker &&
+          target.data.hostile &&
+          data.parentType === TYPES.tank
+        )
+          return;
+
         // special case: ignore inert gunfire. let tank gunfire pass thru if 0 energy, or friendly.
         if (
           !data.isInert &&
