@@ -726,6 +726,8 @@ const game = (() => {
       game.objects.inventory.startEnemyOrdering();
     }
 
+    game.objects.radar.maybeApplyScaling();
+
     let engineStarted;
 
     function startEngine() {
