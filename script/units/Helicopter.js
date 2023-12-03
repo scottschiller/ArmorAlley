@@ -3398,7 +3398,8 @@ const Helicopter = (options = {}) => {
           cloak(target);
         } else if (
           tData.type === TYPES.superBunker &&
-          tData.isEnemy === data.isEnemy
+          tData.isEnemy === data.isEnemy &&
+          !tData.hostile
         ) {
           // "protect" the helicopter if completely enveloped within the bounds of a friendly super-bunker.
           // this check is added because sometimes the collision logic is imperfect, and fast-moving bombs or missiles might hit the "inner" chopper object. Oops. :D
