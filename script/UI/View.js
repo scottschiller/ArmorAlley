@@ -657,11 +657,12 @@ const View = () => {
   }
 
   function registerTouchEvent(touchEvent, options) {
-    if (!touchEvent || touchEvent.identifier === undefined) return;
+    if (!touchEvent?.identifier) return;
 
     // keep track of a touch event, and its type.
     const id = touchEvent.identifier;
 
+    // "registered" - handled by joystick etc.
     data.touchEvents[id] = {
       /* type, target */
     };
@@ -671,10 +672,10 @@ const View = () => {
       data.touchEvents[id][option] = options[option];
     }
 
-    const target = options && options.target;
+    const target = options?.target;
 
     // special case for UI on buttons.
-    if (target && target.nodeName === 'A') {
+    if (target?.nodeName === 'A') {
       utils.css.add(target, css.buttonActive);
 
       // hackish: mobile inventory controls
