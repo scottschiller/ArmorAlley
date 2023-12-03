@@ -829,22 +829,24 @@ const View = () => {
 
     keyMapValue = target.getAttribute('data-keyMap');
 
-    // if no keyMap, just let it continue.
-    if (!keyMapValue) return true;
+    if (keyMapValue) {
+      // if a comma-delimited list (e.g., smart missile types), split into an array and pick one.
+      if (keyMapValue.indexOf(',') !== -1) {
+        keyMapValue = oneOf(keyMapValue.split(','));
+      }
 
-    // if a comma-delimited list (e.g., smart missile types), split into an array and pick one.
-    if (keyMapValue.indexOf(',') !== -1) {
-      keyMapValue = oneOf(keyMapValue.split(','));
+      // hackish: store the active value for when the event ends.
+      target.setAttribute('data-activeKeyMap', keyMapValue);
+
+      keyCode = keyboardMonitor.keyMap[keyMapValue];
+
+      if (keyCode) {
+        keyboardMonitor.keydown({ keyCode, fromAATouch: true });
+        return true;
+      }
     }
 
-    // hackish: store the active value for when the event ends.
-    target.setAttribute('data-activeKeyMap', keyMapValue);
 
-    keyCode = keyboardMonitor.keyMap[keyMapValue];
-
-    if (!keyCode) return false;
-
-    keyboardMonitor.keydown({ keyCode, fromAATouch: true });
 
     return true;
   }
