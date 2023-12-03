@@ -4378,6 +4378,15 @@ body.is_iphone #mobile-controls {
   body:not(.is_iphone) #game-tips {
     font-size: calc(16px * var(--gs-tz));
   }
+
+  body.is_iphone
+    #game-tips
+    .tips-container
+    .animation-node:not(.hide-on-mobile),
+  body.is_iphone #game-tips .tips-container .tip:not(.hide-on-mobile) {
+    /* iPhone */
+    width: 150%;
+  }
 }
 
 #mobile-controls .mobile-controls-ordering,
