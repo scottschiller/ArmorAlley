@@ -786,6 +786,12 @@ const View = () => {
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = targetTouch && targetTouch.target;
 
+    if (data.touchEvents[targetTouch?.identifier]) {
+      // we've already handled this particular touch event - ignore.
+      // this can fire e.g., while user is flying the helicopter, then a second finger touches the screen.
+      return;
+    }
+
     // catch-all
     data.allTouchEvents[targetTouch.identifier] = targetTouch;
 
