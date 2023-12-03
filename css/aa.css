@@ -6596,7 +6596,9 @@ body.game-paused #tutorial-window {
   height: var(--height);
   margin-bottom: calc(var(--height) / 2);
   position: absolute;
-  top: 0;
+  top: auto;
+  bottom: 0;
+  margin-bottom: calc(var(--height) * -1.5);
   left: 0;
   opacity: 0;
   transition: opacity 0.25s ease-in-out;

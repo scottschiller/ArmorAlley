@@ -92,7 +92,10 @@ function RadarItem(options) {
 
     // size "scan radius" according to browser width, because vertical resizing does not affect spacing of radar layout.
     oScanNode.style.width = `${
-      (radius / worldWidth) * game.objects.view.data.browser.screenWidth * 2
+      (radius / worldWidth) *
+      game.objects.radar.data.scale *
+      game.objects.view.data.browser.screenWidth *
+      2
     }px`;
 
     const height = (radius / worldHeight) * game.objects.radar.data.height;
@@ -107,7 +110,9 @@ function RadarItem(options) {
 
     // show (e.g.,) cloud size relative to battlefield / screen width.
     dom.o.style.width = `${
-      (obj.data.width / worldWidth) * game.objects.view.data.browser.screenWidth
+      (obj.data.width / worldWidth) *
+      game.objects.radar.data.scale *
+      game.objects.view.data.browser.screenWidth
     }px`;
   }
 

@@ -604,15 +604,17 @@ const Radar = () => {
 
   function initRadar() {
     dom.radar = document.getElementById('radar');
+    dom.radarContainer = document.getElementById('radar-container');
     data.height = dom.radar.offsetHeight;
 
+    dom.root = document.querySelector(':root');
     dom.targetMarker = document.createElement('div');
     dom.targetMarker.style.opacity = 0;
     dom.targetMarker.className = `target-marker target-ui`;
     dom.targetMarker.addEventListener('transitionend', () => {
       utils.css.remove(dom.targetMarker, 'transition-active');
     });
-    document.getElementById('player-status-bar').appendChild(dom.targetMarker);
+    dom.radarContainer.appendChild(dom.targetMarker);
   }
 
   // width / height of rendered elements, based on class name
@@ -661,12 +663,16 @@ const Radar = () => {
     jamCount: 0,
     missileWarningCount: 0,
     lastMissileCount: 0,
-    incomingMissile: false
+    incomingMissile: false,
+    scale: searchParams.get('radarScale') || 1,
+    cssRadarScale: 1
   };
 
   dom = {
     radar: null,
+    radarContainer: null,
     radarItem: null,
+    root: null,
     targetMarker: null
   };
 
