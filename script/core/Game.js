@@ -715,6 +715,8 @@ const game = (() => {
 
     zones.init();
 
+    game.objects.radar.maybeApplyScaling();
+
     populateTerrain();
 
     // if a network game, let the host handle enemy ordering; objects will be replicated remotely.
@@ -725,8 +727,6 @@ const game = (() => {
     ) {
       game.objects.inventory.startEnemyOrdering();
     }
-
-    game.objects.radar.maybeApplyScaling();
 
     let engineStarted;
 
