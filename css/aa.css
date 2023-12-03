@@ -58,6 +58,9 @@
   --game-scale-zoom: 1;
   /* "transform + zoom" (combined value, regardless of method applied) */
   --gs-tz: calc(var(--game-scale-zoom) * var(--game-scale-transform));
+  /* radar scale, multiplier for tz */
+  --radar-scale: 1;
+  --rs: calc(var(--gs-tz) * var(--radar-scale));
 }
 
 @font-face {
@@ -208,7 +211,6 @@ body.demo #aa {
 }
 
 #radar,
-#radar-container,
 #world,
 .sprite {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
@@ -958,7 +960,6 @@ body.is_safari:not(.is-mobile) #queue {
 
 #radar-container {
   background: #0e360e;
-  overflow: hidden;
   position: relative;
 }
 
@@ -2920,7 +2921,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   border-color: #ccc;
   border-radius: calc(0.5px * var(--gs-tz)) calc(0.5px * var(--gs-tz)) 0 0;
   contain: strict;
-  width: calc(3px * var(--gs-tz));
+  width: calc(3px * var(--rs));
   height: calc(3px * var(--gs-tz));
   z-index: 2;
 }
@@ -2932,7 +2933,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite:not(.balloon) {
   /* a little extra, to avoid rounding errors. */
-  padding-bottom: calc(0.5px * var(--gs-tz));
+  padding-bottom: calc(0.5px * var(--rs));
 }
 
 /* .friendly? */
@@ -2953,22 +2954,22 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 #radar .sprite.bunker,
 #radar .sprite.super-bunker {
   background-color: #17a007;
-  border: calc(0.5px * var(--gs-tz)) solid rgba(23, 160, 7, 0.75);
+  border: calc(0.5px * var(--rs)) solid rgba(23, 160, 7, 0.75);
   /* account for bottom border? */
-  margin-bottom: calc(-0.5px * var(--gs-tz));
+  margin-bottom: calc(-0.5px * var(--rs));
   /* round corners */
   border-radius: calc(1px * var(--gs-tz)) calc(1px * var(--gs-tz)) 0 0;
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-1px * var(--gs-tz));
-  padding: calc(0.5px * var(--gs-tz));
+  margin-left: calc(-1px * var(--rs));
+  padding: calc(0.5px * var(--rs));
   /* friendly */
   border: none !important;
 }
 
 #radar .sprite.super-bunker {
   height: calc(2.5px * var(--gs-tz));
-  margin-left: calc(-2.25px * var(--gs-tz));
-  width: calc(5px * var(--gs-tz));
+  margin-left: calc(-2.25px * var(--rs));
+  width: calc(5px * var(--rs));
 }
 
 #radar .sprite.tank {
@@ -2978,8 +2979,8 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 #radar .sprite.balloon {
   border-radius: calc(1.75px * var(--gs-tz));
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-0.5px * var(--gs-tz));
-  width: calc(3px * var(--gs-tz));
+  margin-left: calc(-0.5px * var(--rs));
+  width: calc(3px * var(--rs));
 }
 
 #radar .sprite.balloon,
@@ -3040,20 +3041,20 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 }
 
 #radar .sprite.cloud1 {
-  width: calc(12px * var(--gs-tz));
+  width: calc(12px * var(--rs));
 }
 
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {
-  width: calc(14px * var(--gs-tz));
+  width: calc(14px * var(--rs));
 }
 
 #radar .sprite.landing-pad {
   top: auto;
   bottom: 0;
-  width: calc(8px * var(--gs-tz));
+  width: calc(8px * var(--rs));
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-4px * var(--gs-tz));
+  margin-left: calc(-4px * var(--rs));
   /* green "U"-shape image */
   background-color: transparent;
   background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAACCAYAAABllJ3tAAAAFUlEQVR4AWMQX8D+nwE7AMuBCXwYAIdBEWNHOYOnAAAAAElFTkSuQmCC);
@@ -3062,7 +3063,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   background-repeat: no-repeat;
   image-rendering: pixelated;
   box-shadow: none;
-  filter: drop-shadow(0 -1px 1px #000);
+  filter: drop-shadow(0px -1px 1px #000);
   z-index: 0;
 }
 
@@ -3077,12 +3078,12 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   height: calc(1.25px * var(--gs-tz));
   border-radius: calc(1.25px * var(--gs-tz));
   left: 0;
-  margin-left: calc(-1.5px * var(--gs-tz));
+  margin-left: calc(-1.5px * var(--rs));
   margin-top: calc(0.25px * var(--gs-tz));
   outline: 0;
   position: absolute;
   top: auto;
-  width: calc(3px * var(--gs-tz));
+  width: calc(3px * var(--rs));
   will-change: transform;
 }
 
@@ -3099,7 +3100,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   font-size: 0;
   height: 0;
   margin-top: calc(1.25px * var(--gs-tz));
-  /* margin-left: calc(-1.25px * var(--gs-tz)); */
   outline: 0;
   width: 0;
   z-index: 5; /* show above landing pads, etc. */
@@ -3115,9 +3115,10 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 }
 
 #radar .sprite.bomb {
-  --width: calc(1.5px * var(--gs-tz));
+  --width: calc(1.5px * var(--rs));
+  --height: calc(1.5px * var(--gs-tz));
   border-radius: 0 0 var(--width) var(--width);
-  height: var(--width);
+  height: var(--height);
   margin-left: calc(var(--width) * -1);
   width: var(--width);
 }
@@ -3131,12 +3132,12 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.gunfire,
 #radar .sprite.shrapnel {
-  --one: calc(1px * var(--gs-tz));
+  --one: calc(1px * var(--rs));
   border-radius: var(--one);
   contain-intrinsic-size: var(--one) var(--one);
   /* hackish repositioning fix */
   content-visibility: auto;
-  height: var(--one);
+  height: calc(1px * var(--gs-tz));
   margin-left: calc(var(--one) / 2);
   width: var(--one);
 }
@@ -3144,33 +3145,33 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 #radar .sprite.missile-launcher,
 #radar .sprite.van {
   height: calc(2px * var(--gs-tz));
-  width: calc(2px * var(--gs-tz));
+  width: calc(2px * var(--rs));
 }
 
 #radar .sprite.engineer,
 #radar .sprite.infantry,
 #radar .sprite.parachute-infantry {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-0.5px * var(--gs-tz));
-  outline-width: calc(0.25px * var(--gs-tz));
-  width: calc(1px * var(--gs-tz));
+  margin-left: calc(-0.5px * var(--rs));
+  outline-width: calc(0.25px * var(--rs));
+  width: calc(1px * var(--rs));
 }
 
 #radar .sprite.engineer {
-  margin-left: calc(-0.375px * var(--gs-tz));
-  width: calc(0.75px * var(--gs-tz));
+  margin-left: calc(-0.375px * var(--rs));
+  width: calc(0.75px * var(--rs));
 }
 
 #radar .sprite.parachute-infantry {
   /* hackish repositioning fix */
   margin-top: calc(1px * var(--gs-tz));
   /* semi-circle */
-  border: calc(1px * var(--gs-tz)) solid rgba(23, 160, 7, 0.75);
+  border: calc(1px * var(--rs)) solid rgba(23, 160, 7, 0.75);
   border-bottom: none;
-  width: calc(0.5px * var(--gs-tz));
+  width: calc(0.5px * var(--rs));
   height: calc(0.25px * var(--gs-tz));
   border-radius: 50% 50% 0 0;
-  margin-left: calc(-1px * var(--gs-tz));
+  margin-left: calc(-1px * var(--rs));
   background: 0 0 !important;
 }
 
@@ -3180,9 +3181,9 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.base {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-4px * var(--gs-tz));
-  width: calc(8px * var(--gs-tz));
-  --radius: calc(0.5px * var(--gs-tz));
+  margin-left: calc(-4px * var(--rs));
+  width: calc(8px * var(--rs));
+  --radius: calc(0.5px * var(--rs));
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
@@ -3193,8 +3194,8 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.end-bunker {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-1.5px * var(--gs-tz));
-  width: calc(3px * var(--gs-tz));
+  margin-left: calc(-1.5px * var(--rs));
+  width: calc(3px * var(--rs));
   border-radius: calc(1px * var(--gs-tz));
 }
 
@@ -3534,7 +3535,7 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 #radar .sprite.helicopter.enemy {
-  margin-left: calc(-0.5px * var(--gs-tz));
+  margin-left: calc(-0.5px * var(--rs));
   background-color: transparent;
   border: calc(2.5px * var(--gs-tz)) solid transparent;
   border-right-color: #ccc;
@@ -3542,9 +3543,9 @@ body.bnb .sprite.engineer.butthead.building {
 
 #radar .sprite.turret {
   background-color: #17a007;
-  width: calc(1px * var(--gs-tz));
+  width: calc(1px * var(--rs));
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-0.5px * var(--gs-tz));
+  margin-left: calc(-0.5px * var(--rs));
 }
 
 #radar .sprite.turret.enemy {
@@ -3593,7 +3594,7 @@ body.bnb .sprite.engineer.butthead.building {
 
 #radar .scan-node {
   border-width: calc(0.5px * var(--gs-tz));
-  margin-left: calc(-0.25px * var(--gs-tz));
+  margin-left: calc(-0.25px * var(--rs));
 }
 
 #radar .sprite.enemy .scan-node {
