@@ -129,7 +129,10 @@ function RadarItem(options) {
     isOnScreen: true, // radar items are always within view
     parentType: options.parentType,
     className: options.className,
-    dead: false
+    dead: false,
+    // set by radar animate method
+    left: 0,
+    top: 0
   };
 
   dom = {

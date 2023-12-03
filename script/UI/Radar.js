@@ -143,7 +143,7 @@ const Radar = () => {
     let rect = itemObject.dom.o.getBoundingClientRect();
 
     // NOTE screenScale, important for positioning
-    result.layout.width = rect.width;
+    result.layout.width = rect.width * (1 / data.cssRadarScale);
     result.layout.height = rect.height;
 
     if (itemObject.oParent.data.bottomAligned) {
@@ -356,52 +356,55 @@ const Radar = () => {
     dom.targetMarker.style.opacity = 0;
   }
 
-  // pixel pushing for a few types, so the underlying "bar" lines up with the radar sprite.
-  // TODO: border width in layout cache?
-  const markerOffsets = {
-    [TYPES.bunker]: {
-      width: 0,
-      left: -1
-    },
-    [TYPES.balloon]: {
-      left: 0,
-      width: -1
-    },
-    [TYPES.helicopter]: {
-      left: 3
-    },
-    [TYPES.turret]: {
-      // make the target larger
-      left: -1.75,
-      width: 2
-    }
-  };
-
   function updateTargetMarker(targetItem, allowTransition) {
+    // layout will be unavailable while jammed.
+    if (data.isJammed) return;
+
     // sanity check: ensure this object still exists.
     if (!targetItem?.oParent?.dom?.o) return;
 
-    if (!targetItem.layout?.width) return;
+    let width = targetItem.layout.width;
 
-    const { width } = targetItem.layout;
+    let marginLeft;
 
-    const offset = markerOffsets[targetItem?.oParent?.data.type];
-    const widthOffset = (offset?.width || 0) * screenScale;
-    const leftOffset = (offset?.left || 0) * screenScale;
-
-    const newWidth = width + widthOffset;
-    const newLeft = targetItem.data.left + leftOffset;
+    // $$$ + hackish: fetch and cache marginLeft, if need be.
+    if (targetItem.layout.marginLeft === undefined) {
+      // measure the item on the radar, then scale its margin back to match the marker (which is not scaled.)
+      marginLeft = parseFloat(
+        window
+          .getComputedStyle(targetItem.dom.o)
+          .getPropertyValue('margin-left')
+      );
+      targetItem.layout.marginLeft = marginLeft;
+    } else {
+      marginLeft = targetItem.layout.marginLeft;
+    }
 
     if (allowTransition) {
       utils.css.add(dom.targetMarker, 'transition-active');
     }
 
-    if (newWidth && data.radarTargetWidth !== newWidth) {
-      dom.targetMarker.style.width = `${newWidth}px`;
-      data.radarTargetWidth = newWidth;
+    dom.targetMarker.style.width = `${width * data.cssRadarScale}px`;
+    dom.targetMarker.style.marginLeft = `${parseFloat(marginLeft)}px`;
+
+    alignTargetMarkerWithScroll();
+  }
+
+  function alignTargetMarkerWithScroll() {
+    if (!data.radarTarget) return;
+
+    if (data.scale === 1) {
+      // no-scaling case
+      dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left}px, 0px, 0px)`;
+      return;
     }
 
-    dom.targetMarker.style.transform = `translate3d(${newLeft}px, 0px, 0px)`;
+    // player may be scrolling at or past the beginning of the world.
+    if (data.radarScrollLeft <= 0) return;
+
+    dom.targetMarker.style.transform = `translate3d(${
+      data.radarTarget.data.left * data.scale + -data.radarScrollLeft
+    }px, 0px, 0px)`;
   }
 
   function markTarget(targetItem) {
@@ -409,6 +412,7 @@ const Radar = () => {
     if (!gamePrefs.modern_smart_missiles) {
       targetItem = null;
     }
+
     if (!data.radarTarget && targetItem) {
       dom.targetMarker.style.opacity = 1;
       const allowTransition = true;
@@ -418,6 +422,9 @@ const Radar = () => {
     }
 
     data.radarTarget = targetItem;
+
+    // immediately align
+    alignTargetMarkerWithScroll();
   }
 
   function _removeRadarItem(offset) {
@@ -448,6 +455,8 @@ const Radar = () => {
   }
 
   function resize() {
+    setOrientationScale();
+
     // radar height has changed.
     data.height = dom.radar.offsetHeight;
 
@@ -467,6 +476,8 @@ const Radar = () => {
 
   function animate() {
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
+
+    scrollWithView();
 
     hasEnemyMissile = false;
 
@@ -552,8 +563,7 @@ const Radar = () => {
                 objects.items[i].oParent.data.x / worldWidth
               )
             ) *
-              adjustedScreenWidth +
-            4;
+            (adjustedScreenWidth + 4);
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
           left =
@@ -561,8 +571,7 @@ const Radar = () => {
               (objects.items[i].oParent.data.radarLeftOffset || 0) +
               (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) /
               worldWidth) *
-              adjustedScreenWidth +
-            4;
+            (adjustedScreenWidth + 4);
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
@@ -581,11 +590,15 @@ const Radar = () => {
               data.height -
             (objects.items[i]?.layout?.height || 0);
 
+        objects.items[i].data.left = left * data.scale;
+        objects.items[i].data.top = top;
+
         sprites.setTransformXY(
           objects.items[i],
           objects.items[i].dom.o,
-          `${left}px`,
-          `${top}px`
+          // apply radar scale here
+          `${objects.items[i].data.left}px`,
+          `${objects.items[i].data.top}px`
         );
 
         objects.items[i].data.left = left;
@@ -619,8 +632,55 @@ const Radar = () => {
     }
   }
 
+  function scrollWithView() {
+    if (data.scale === 1) return;
+
+    // TODO: don't update if battlefield scroll offset hasn't changed.
+    const maxScrollLeft = worldWidth - game.objects.view.data.browser.halfWidth;
+
+    const overflowWidth =
+      game.objects.view.data.browser.screenWidth * (data.scale - 1);
+
+    data.radarScrollLeft =
+      overflowWidth *
+      (game.objects.view.data.battleField.scrollLeft / maxScrollLeft);
+
+    dom.radar.style.transform = `translate3d(-${data.radarScrollLeft}px, 0px, 0)`;
+
+    alignTargetMarkerWithScroll();
+  }
+
   function enableOrDisableScaling(enable) {
     setScale(enable ? DEFAULT_UPSCALING : 1);
+  }
+
+  function toggleScaling() {
+    if (!gamePrefs.radar_scaling) return;
+    setScale(
+      gamePrefs.radar_scaling && data.scale === 1 ? DEFAULT_UPSCALING : 1
+    );
+  }
+
+  function setOrientationScale() {
+    // when enabled, apply larger scaling to landscape view.
+
+    let mobileUpscale;
+
+    if (game.objects.view.data.browser.isLandscape) {
+      if (isiPhone) {
+        // TODO: handle Android phones, too. :X
+        mobileUpscale = CSS_SCALING_LANDSCAPE_PHONE;
+      } else if (isMobile) {
+        mobileUpscale = CSS_SCALING_LANDSCAPE_TABLET;
+      }
+    }
+
+    data.cssRadarScale =
+      gamePrefs.radar_scaling && mobileUpscale
+        ? data.scale * mobileUpscale
+        : DEFAULT_CSS_SCALING;
+
+    dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
   }
 
   function setScale(scale = 1, notify = true) {
@@ -707,6 +767,7 @@ const Radar = () => {
 
   data = {
     frameCount: 0,
+    radarScrollLeft: 0,
     radarTarget: null,
     radarTargetWidth: 0,
     animatedTypes: [
@@ -760,6 +821,7 @@ const Radar = () => {
     dom,
     enableOrDisableScaling,
     markTarget,
+    maybeApplyScaling,
     objects,
     removeItem: removeRadarItem,
     reset: reset,
@@ -767,7 +829,8 @@ const Radar = () => {
     setScale,
     setStale,
     startJamming,
-    stopJamming
+    stopJamming,
+    toggleScaling
   };
 
   return exports;
