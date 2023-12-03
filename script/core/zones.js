@@ -316,6 +316,12 @@ function changeOwnership(obj) {
   // turrets and super-bunkers can be claimed, and need to update their targets.
   obj.refreshCollisionItems?.();
   obj.refreshNearbyItems?.();
+
+  // force-refresh debug label
+  if (obj.data.isOnScreen) {
+    debugZone(obj);
+  }
+
 }
 
 function leaveFrontAndRear(obj, group) {
