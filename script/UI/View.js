@@ -1423,7 +1423,7 @@ const View = () => {
       }
 
       // double and triple-tap "emulation": mobile "helicopter flip" function
-      if (e?.changedTouches?.[0]) {
+      if (game.data.started && e?.changedTouches?.[0]) {
         const touch = e.changedTouches[0];
         const now = Date.now();
 
