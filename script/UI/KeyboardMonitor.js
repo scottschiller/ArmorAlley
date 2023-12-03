@@ -39,6 +39,7 @@ function KeyboardMonitor() {
     plus: '=',
     plus_1: '+',
     missileLauncher: 77,
+    s: 83,
     tank: 84,
     van: 86,
     smartMissile: 88,
@@ -165,6 +166,12 @@ function KeyboardMonitor() {
 
       up() {
         processInput(game.players.local, 'setFiring', false);
+      }
+    },
+
+    [keyMap.s]: {
+      down() {
+        game.objects.radar?.toggleScaling();
       }
     },
 
