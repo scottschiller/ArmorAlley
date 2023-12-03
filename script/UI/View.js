@@ -786,6 +786,9 @@ const View = () => {
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = targetTouch && targetTouch.target;
 
+    // catch-all
+    data.allTouchEvents[targetTouch.identifier] = targetTouch;
+
     // ignore if prefs menu up
     if (prefsManager.isActive()) return true;
 
@@ -854,6 +857,8 @@ const View = () => {
   function handleTouchEnd(touchEvent, e) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Touch/target
     const target = touchEvent?.target;
+
+    delete data.allTouchEvents[touchEvent.identifier];
 
     // pass-thru if prefs screen is up
     if (prefsManager.isActive()) return true;
@@ -1225,6 +1230,7 @@ const View = () => {
     },
     touchHistory: [],
     touchEvents: {},
+    allTouchEvents: {},
     world: {
       width: 0,
       height: 0,
@@ -1290,7 +1296,8 @@ const View = () => {
       game.pause();
 
       // hackish: reset any lingering touch state.
-      data.touchEvents = [];
+      data.touchEvents = {};
+      data.allTouchEvents = {};
     },
 
     focus() {
