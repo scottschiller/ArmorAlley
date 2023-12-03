@@ -1,9 +1,17 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { screenScale } from '../aa.js';
 import { gamePrefs } from './preferences.js';
-import { demo, oneOf, TYPES, winloc, worldWidth } from '../core/global.js';
+import {
+  demo,
+  isiPhone,
+  isMobile,
+  oneOf,
+  searchParams,
+  TYPES,
+  winloc,
+  worldWidth
+} from '../core/global.js';
 import {
   playSound,
   skipSound,
@@ -16,6 +24,15 @@ import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
 import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
+
+const DEFAULT_UPSCALING = 3;
+
+// how much to widen icons by, separate from upscaling
+const DEFAULT_CSS_SCALING = 1;
+
+// how much to widen icons in landscape, relative to upscaling
+const CSS_SCALING_LANDSCAPE_TABLET = 0.5;
+const CSS_SCALING_LANDSCAPE_PHONE = 2 / 3;
 
 const scanNodeTypes = {
   [TYPES.turret]: TURRET_SCAN_RADIUS,
@@ -602,6 +619,63 @@ const Radar = () => {
     }
   }
 
+  function enableOrDisableScaling(enable) {
+    setScale(enable ? DEFAULT_UPSCALING : 1);
+  }
+
+  function setScale(scale = 1, notify = true) {
+    data.scale = scale;
+    // dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
+
+    // radar node needs updating too, unfortunately, to scale.
+    dom.radar.style.width = `${scale * 100}%`;
+
+    setOrientationScale();
+
+    if (scale === 1) {
+      // reset if a scale was previously applied
+      dom.radar.style.transform = 'translate3d(0px, 0px, 0)';
+    }
+
+    // update the layout on the active target, too.
+    if (data.radarTarget) {
+      data.radarTarget = common.mixin(
+        data.radarTarget,
+        getLayout(data.radarTarget)
+      );
+    }
+
+    // mark as stale?
+    data.isStale = true;
+
+    // and, resize?
+    animate();
+
+    if (notify) {
+      game.objects.notifications.add('Radar %s 🔎', {
+        type: 'radarScaling',
+        onRender(input) {
+          return input.replace(
+            '%s',
+            `${scale === 1 ? '@1x' : '@' + DEFAULT_UPSCALING + 'x'}`
+          );
+        }
+      });
+    }
+  }
+
+  function maybeApplyScaling() {
+    if (!gamePrefs.radar_scaling) return;
+
+    // scaling shenanigans: if enabled, pick the appropriate default.
+    data.scale = DEFAULT_UPSCALING;
+
+    if (data.scale !== 1) {
+      const notify = false;
+      setScale(data.scale, notify);
+    }
+  }
+
   function initRadar() {
     dom.radar = document.getElementById('radar');
     dom.radarContainer = document.getElementById('radar-container');
@@ -684,11 +758,13 @@ const Radar = () => {
     clearTarget,
     data,
     dom,
+    enableOrDisableScaling,
     markTarget,
     objects,
     removeItem: removeRadarItem,
     reset: reset,
     resize: resize,
+    setScale,
     setStale,
     startJamming,
     stopJamming

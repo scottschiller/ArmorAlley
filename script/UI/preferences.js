@@ -96,6 +96,7 @@ const defaultPrefs = {
   'ground_unit_traffic_control': true,
   'clouds_on_radar': true,
   'weapons_interval_classic': false,
+  'radar_scaling': isMobile,
   'scan_ui_battlefield_enemy': true,
   'scan_ui_battlefield_friendly': true,
   'scan_ui_radar_enemy': true,
@@ -194,7 +195,8 @@ function PrefsManager() {
       'gravestones_helicopters',
       'gravestones_infantry',
       'gravestones_vehicles',
-      'radar_enhanced_fx'
+      'radar_enhanced_fx',
+      'radar_scaling'
     ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
 
     // special case: apply BnB "VS" immediately.
@@ -1426,6 +1428,11 @@ function PrefsManager() {
         game.objects.radar?.objects?.items?.forEach((radarItem) =>
           radarItem?.onHiddenChange?.(isActive)
         ),
+
+      radar_scaling: (isActive) => {
+        if (!game.data.started) return;
+        game.objects.radar.enableOrDisableScaling(isActive);
+      },
 
       radar_enhanced_fx: (isActive) => {
         utils.css.addOrRemove(document.body, isActive, 'radar_enhanced_fx');
