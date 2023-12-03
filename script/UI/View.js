@@ -765,7 +765,7 @@ const View = () => {
       utils.css.remove(target, css.buttonActive);
     }
 
-    data.touchEvents[touchEvent.identifier] = null;
+    delete data.touchEvents[touchEvent.identifier];
   }
 
   function hasIgnoreTouch(node) {
@@ -1501,6 +1501,7 @@ const View = () => {
       if (changed) {
         for (i = 0, j = changed.length; i < j; i++) {
           handleTouchEnd(changed[i], e);
+          clearTouchEvent(changed[i]);
         }
       }
     },
