@@ -5314,11 +5314,6 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   font-size: calc(15px * var(--prefs-font-scale));
 }
 
-.mac-classic b {
-  /* slightly redundant: ensure consistent formatting */
-  font-weight: 700;
-}
-
 .mac-classic h3 {
   font-weight: 300;
   margin-bottom: 0.5em;
@@ -5643,6 +5638,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   outline: 0;
 }
 
+.mac-classic b,
 .mac-classic .label-text,
 .mac-classic .options-heading {
   /* letter-spacing: -0.25px; */
