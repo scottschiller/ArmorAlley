@@ -6610,7 +6610,7 @@ body.game-paused #tutorial-window {
 
 .target-marker.transition-active {
   /* set while repositioning, moving to a new target */
-  transition-property: transform, width, opacity;
+  transition-property: width, opacity;
 }
 
 .sprite.dead .target-ui,
