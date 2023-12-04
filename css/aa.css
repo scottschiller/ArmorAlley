@@ -118,6 +118,13 @@
 
 body,
 html {
+  /* scroll aversion */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
   margin: 0;
   padding: 0;
 }
@@ -150,8 +157,6 @@ body {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
-  /* more scroll aversion */
-  overflow: hidden;
 }
 
 body.is_safari:not(.is-mobile) {
