@@ -6474,6 +6474,8 @@ ul.inline-list li:not(:first-of-type) {
   top: 50%;
   /* scale up a bit for almost everyone. */
   transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
+  /* don't interfere with touch / click etc. */
+  pointer-events: none;
 }
 
 /* not iPhone, though - on portrait, scaling up will overlap controls. */

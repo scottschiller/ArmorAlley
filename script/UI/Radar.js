@@ -433,6 +433,13 @@ const Radar = () => {
     // there may be nothing to do.
     if (!data.radarTarget) return;
 
+    // hack: guard against invalid layout, for now.
+    if (!data.radarTarget?.layout) {
+      console.warn('alignTargetMarkerWithScroll(): No layout, re-fetching');
+      data.radarTarget = common.mixin(data.radarTarget, getLayout(data.radarTarget));
+      updateTargetMarkerLeftMargin(data.radarTarget);
+    }
+
     if (data.scale === 1) {
       // no-scaling case
       dom.targetMarker.style.transform = `translate3d(${
