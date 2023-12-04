@@ -93,7 +93,8 @@ function RadarItem(options) {
     // size "scan radius" according to browser width, because vertical resizing does not affect spacing of radar layout.
     oScanNode.style.width = `${
       (radius / worldWidth) *
-      game.objects.radar.data.scale *
+      // interimScale set by JS animation transition
+      (game.objects.radar.data.interimScale || game.objects.radar.data.scale) *
       game.objects.view.data.browser.screenWidth *
       2
     }px`;

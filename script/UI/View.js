@@ -290,7 +290,10 @@ const View = () => {
     }
 
     game.objects.starController?.resize();
-    game.objects.radar?.resize();
+
+    if (isMobile) {
+      game.objects.radar?.onOrientationChange();
+    }
   }
 
   function setTipsActive(active) {
@@ -1143,6 +1146,7 @@ const View = () => {
     utils.events.add(document, 'touchcancel', events.touchend);
 
     utils.events.add(window, 'resize', events.resize);
+
     utils.events.add(window, 'focus', events.focus);
     utils.events.add(window, 'blur', events.blur);
 
@@ -1542,6 +1546,8 @@ const View = () => {
     resize() {
       refreshCoords();
 
+      game.objects.radar?.resize();
+
       game.objects.editor?.events?.resize();
 
       game.objects.gameLoop.resetFPS();
@@ -1565,14 +1571,6 @@ const View = () => {
 
       data.browser.isPortrait = isPortrait;
       data.browser.isLandscape = isLandscape;
-
-      refreshCoords();
-
-      if (isMobile && !game.data.started) {
-        // 11/2023: iOS Safari seems to need one more frame to get
-        // radar scale right on the home screen - here be dragons.
-        window.requestAnimationFrame(refreshCoords);
-      }
     }
   };
 

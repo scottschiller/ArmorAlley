@@ -4,6 +4,8 @@ import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
 import {
   demo,
+  FPS,
+  GAME_SPEED,
   isiPhone,
   isMobile,
   oneOf,
@@ -25,14 +27,33 @@ import { sprites } from '../core/sprites.js';
 import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
 
-const DEFAULT_UPSCALING = 3;
+const DEFAULT_UPSCALING_PORTRAIT = 3;
+// if on a desktop, scale somewhere in-between.
+const DEFAULT_UPSCALING_LANDSCAPE = isiPhone ? 1.5 : isMobile ? 3 : 2.25;
 
 // how much to widen icons by, separate from upscaling
 const DEFAULT_CSS_SCALING = 1;
 
 // how much to widen icons in landscape, relative to upscaling
 const CSS_SCALING_LANDSCAPE_TABLET = 0.5;
-const CSS_SCALING_LANDSCAPE_PHONE = 2 / 3;
+const CSS_SCALING_PORTRAIT_TABLET = 0.5;
+
+const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
+const CSS_SCALING_PORTRAIT_PHONE = 0.35;
+
+// old-skool JS animation bits, stolen from View. TODO: DRY this up.
+
+const easing = {
+  // hat tip: https://gizma.com/easing
+  quart: (x) => (x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2),
+  quad: (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
+};
+
+let transitionScaleActive;
+let transitionScaleFrame;
+let transitionScaleFrames = [];
+let transitionScaleDuration;
+const tsDuration = 1;
 
 const scanNodeTypes = {
   [TYPES.turret]: TURRET_SCAN_RADIUS,
@@ -354,6 +375,24 @@ const Radar = () => {
   function clearTarget() {
     data.radarTarget = null;
     dom.targetMarker.style.opacity = 0;
+    data.lastRadarTargetWidth = null;
+  }
+
+  function updateTargetMarkerLeftMargin(source = data.radarTarget) {
+    if (!source) return;
+
+    if (!source?.layout) {
+      console.warn('updateTargetMarkerLeftMargin(): WTF no layout?', source);
+      return;
+    }
+
+    // measure the item on the radar, then scale its margin back to match the marker (which is not scaled.)
+    let marginLeft = parseFloat(
+      window.getComputedStyle(source.dom.o).getPropertyValue('margin-left')
+    );
+
+    source.layout.marginLeft =
+      marginLeft * (1 / data.scale) * (1 / data.cssRadarScale);
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
@@ -363,47 +402,51 @@ const Radar = () => {
     // sanity check: ensure this object still exists.
     if (!targetItem?.oParent?.dom?.o) return;
 
-    let width = targetItem.layout.width;
-
-    let marginLeft;
-
-    // $$$ + hackish: fetch and cache marginLeft, if need be.
-    if (targetItem.layout.marginLeft === undefined) {
-      // measure the item on the radar, then scale its margin back to match the marker (which is not scaled.)
-      marginLeft = parseFloat(
-        window
-          .getComputedStyle(targetItem.dom.o)
-          .getPropertyValue('margin-left')
-      );
-      targetItem.layout.marginLeft = marginLeft;
-    } else {
-      marginLeft = targetItem.layout.marginLeft;
+    // layout may have been nuked; recalculate, if so.
+    if (!targetItem.layout) {
+      targetItem = common.mixin(targetItem, getLayout(targetItem));
+      updateTargetMarkerLeftMargin(targetItem);
     }
 
-    if (allowTransition) {
+    if (!targetItem.layout) {
+      console.warn('updateTargetMarker(): WTF no target layout?', targetItem);
+      return;
+    }
+
+    let width = targetItem.layout.width * data.cssRadarScale;
+
+    // new target, hasn't been assigned yet
+    if (allowTransition && data.radarTarget !== targetItem) {
       utils.css.add(dom.targetMarker, 'transition-active');
     }
 
-    dom.targetMarker.style.width = `${width * data.cssRadarScale}px`;
-    dom.targetMarker.style.marginLeft = `${parseFloat(marginLeft)}px`;
+    // only apply changes
+    if (data.lastRadarTargetWidth !== width) {
+      dom.targetMarker.style.width = `${width}px`;
+      data.lastRadarTargetWidth = width;
+    }
 
     alignTargetMarkerWithScroll();
   }
 
   function alignTargetMarkerWithScroll() {
+    // there may be nothing to do.
     if (!data.radarTarget) return;
 
     if (data.scale === 1) {
       // no-scaling case
-      dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left}px, 0px, 0px)`;
+      dom.targetMarker.style.transform = `translate3d(${
+        data.radarTarget.data.left + data.radarTarget.layout.marginLeft
+      }px, 0px, 0px)`;
       return;
     }
 
-    // player may be scrolling at or past the beginning of the world.
-    if (data.radarScrollLeft <= 0) return;
-
+    // otherwise, scale and include the scroll offset
     dom.targetMarker.style.transform = `translate3d(${
-      data.radarTarget.data.left * data.scale + -data.radarScrollLeft
+      (data.radarTarget.data.left +
+        data.radarTarget.layout.marginLeft * data.cssRadarScale) *
+        data.scale -
+      (data.radarScrollLeft < 0 ? 0 : data.radarScrollLeft)
     }px, 0px, 0px)`;
   }
 
@@ -422,6 +465,19 @@ const Radar = () => {
     }
 
     data.radarTarget = targetItem;
+
+    // fetch layout immediately.
+    if (!data.radarTarget.layout) {
+      data.radarTarget = common.mixin(
+        data.radarTarget,
+        getLayout(data.radarTarget)
+      );
+    }
+
+    // left margin is needed, too.
+    if (data.radarTarget.layout) {
+      updateTargetMarkerLeftMargin(data.radarTarget);
+    }
 
     // immediately align
     alignTargetMarkerWithScroll();
@@ -454,9 +510,12 @@ const Radar = () => {
     });
   }
 
-  function resize() {
+  function onOrientationChange() {
     setOrientationScale();
+    resize();
+  }
 
+  function resize() {
     // radar height has changed.
     data.height = dom.radar.offsetHeight;
 
@@ -472,10 +531,72 @@ const Radar = () => {
         getLayout(objects.items[i])
       );
     }
+
+    // hackish: force target marker update.
+    if (data.radarTarget) {
+      data.radarTarget = common.mixin(
+        data.radarTarget,
+        getLayout(data.radarTarget)
+      );
+      updateTargetMarkerLeftMargin();
+    }
   }
 
   function animate() {
     let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
+
+    let nextScale;
+
+    // old-skool JS animation loop
+    if (transitionScaleActive) {
+      if (!transitionScaleFrame) {
+        // first frame hack: and specify the scale-to-be - which will be picked up by scan nodes.
+        // this is done because scan nodes have their own transitions.
+        data.interimScale =
+          transitionScaleFrames[transitionScaleFrames.length - 1].scale;
+      }
+
+      data.scale = transitionScaleFrames[transitionScaleFrame].scale;
+
+      const nextScale =
+        transitionScaleFrames[transitionScaleFrame].cssRadarScale;
+
+      // $$$
+      if (data.cssRadarScale !== nextScale) {
+        data.cssRadarScale =
+          transitionScaleFrames[transitionScaleFrame].cssRadarScale;
+        dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
+      }
+
+      // $$$ - needed on mobile due to CSS scaling shenanigans
+      updateTargetMarkerLeftMargin();
+
+      transitionScaleFrame++;
+
+      // ensure all items animate
+      data.isStale = true;
+
+      if (transitionScaleFrame >= transitionScaleFrames.length) {
+        // finished: apply final width, and clean up.
+        dom.radar.style.width = `${data.interimScale * 100}%`;
+
+        // ensure final values are exactly as expected.
+        data.scale = transitionScaleFrames.final.scale;
+
+        // $$$ - one last time.
+        if (data.cssRadarScale !== transitionScaleFrames.final.cssRadarScale) {
+          data.cssRadarScale = transitionScaleFrames.final.cssRadarScale;
+          dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
+        }
+
+        updateTargetMarkerLeftMargin();
+
+        transitionScaleActive = false;
+        transitionScaleFrame = 0;
+        data.interimScale = null;
+        data.isStale = true;
+      }
+    }
 
     scrollWithView();
 
@@ -590,18 +711,16 @@ const Radar = () => {
               data.height -
             (objects.items[i]?.layout?.height || 0);
 
-        objects.items[i].data.left = left * data.scale;
+        objects.items[i].data.left = left;
         objects.items[i].data.top = top;
 
         sprites.setTransformXY(
           objects.items[i],
           objects.items[i].dom.o,
           // apply radar scale here
-          `${objects.items[i].data.left}px`,
+          `${objects.items[i].data.left * data.scale}px`,
           `${objects.items[i].data.top}px`
         );
-
-        objects.items[i].data.left = left;
 
         if (objects.items[i] === data.radarTarget) {
           updateTargetMarker(objects.items[i]);
@@ -609,7 +728,7 @@ const Radar = () => {
 
         // resize, if method is present: currently, scan nodes and clouds.
         if (data.isStale && objects.items[i].oParent?.resize) {
-          objects.items[i].oParent.resize();
+          objects.items[i].oParent.resize(nextScale);
         }
 
         // hack: resize scan nodes manually for level previews
@@ -650,21 +769,63 @@ const Radar = () => {
     alignTargetMarkerWithScroll();
   }
 
+  function getDefaultScaling() {
+    if (game.objects.view.data.browser.isPortrait) {
+      return DEFAULT_UPSCALING_PORTRAIT;
+    }
+    return DEFAULT_UPSCALING_LANDSCAPE;
+  }
+
   function enableOrDisableScaling(enable) {
-    setScale(enable ? DEFAULT_UPSCALING : 1);
+    setScale(enable ? getDefaultScaling() : 1);
+  }
+
+  function transitionScale(newScale, easingMethod = easing.quart) {
+    transitionScaleActive = true;
+    transitionScaleFrame = 0;
+    const transitionScaleDelta = data.scale - newScale;
+    transitionScaleDuration = FPS * tsDuration * (1 / GAME_SPEED);
+
+    // only scale up if the scale is not the default.
+    // this covers the case when returning from scaled up, to non-scaled.
+    const mobileUpscale = newScale !== 1 ? getOrientationScale() : newScale;
+
+    const newCSSRadarScale = newScale * mobileUpscale;
+
+    const cssDelta =
+      gamePrefs.radar_scaling && mobileUpscale
+        ? data.cssRadarScale - newCSSRadarScale
+        : DEFAULT_CSS_SCALING;
+
+    for (let i = 0; i <= transitionScaleDuration; i++) {
+      // 1/x, up to 1
+      transitionScaleFrames[i] = {
+        scale:
+          data.scale -
+          easingMethod(i / transitionScaleDuration) * transitionScaleDelta,
+        cssRadarScale: mobileUpscale
+          ? data.cssRadarScale -
+            easingMethod(i / transitionScaleDuration) * cssDelta
+          : DEFAULT_CSS_SCALING
+      };
+    }
+
+    transitionScaleFrames.final = {
+      scale: newScale,
+      cssRadarScale: newCSSRadarScale
+    };
   }
 
   function toggleScaling() {
     if (!gamePrefs.radar_scaling) return;
     setScale(
-      gamePrefs.radar_scaling && data.scale === 1 ? DEFAULT_UPSCALING : 1
+      gamePrefs.radar_scaling && data.scale === 1 ? getDefaultScaling() : 1
     );
   }
 
-  function setOrientationScale() {
-    // when enabled, apply larger scaling to landscape view.
-
-    let mobileUpscale;
+  function getOrientationScale() {
+    // safe default
+    let mobileUpscale = 1;
 
     if (game.objects.view.data.browser.isLandscape) {
       if (isiPhone) {
@@ -673,7 +834,27 @@ const Radar = () => {
       } else if (isMobile) {
         mobileUpscale = CSS_SCALING_LANDSCAPE_TABLET;
       }
+    } else {
+      if (isiPhone) {
+        // TODO: handle Android phones, too. :X
+        mobileUpscale = CSS_SCALING_PORTRAIT_PHONE;
+      } else if (isMobile) {
+        mobileUpscale = CSS_SCALING_PORTRAIT_TABLET;
+      }
     }
+
+    return mobileUpscale;
+  }
+
+  function setOrientationScale() {
+    // when enabled, apply device-specific scaling to landscape vs. portrait.
+    if (!gamePrefs.radar_scaling) return;
+
+    if (data.scale === 1) return;
+
+    setScale(getDefaultScaling());
+
+    let mobileUpscale = getOrientationScale();
 
     data.cssRadarScale =
       gamePrefs.radar_scaling && mobileUpscale
@@ -684,41 +865,19 @@ const Radar = () => {
   }
 
   function setScale(scale = 1, notify = true) {
-    data.scale = scale;
-    // dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
+    transitionScale(scale);
 
     // radar node needs updating too, unfortunately, to scale.
-    dom.radar.style.width = `${scale * 100}%`;
-
-    setOrientationScale();
-
-    if (scale === 1) {
-      // reset if a scale was previously applied
-      dom.radar.style.transform = 'translate3d(0px, 0px, 0)';
+    // only set larger for now, given animation.
+    if (scale > data.scale) {
+      dom.radar.style.width = `${scale * 100}%`;
     }
-
-    // update the layout on the active target, too.
-    if (data.radarTarget) {
-      data.radarTarget = common.mixin(
-        data.radarTarget,
-        getLayout(data.radarTarget)
-      );
-    }
-
-    // mark as stale?
-    data.isStale = true;
-
-    // and, resize?
-    animate();
 
     if (notify) {
       game.objects.notifications.add('Radar %s 🔎', {
         type: 'radarScaling',
         onRender(input) {
-          return input.replace(
-            '%s',
-            `${scale === 1 ? '@1x' : '@' + DEFAULT_UPSCALING + 'x'}`
-          );
+          return input.replace('%s', `${scale + 'x'}`);
         }
       });
     }
@@ -726,14 +885,9 @@ const Radar = () => {
 
   function maybeApplyScaling() {
     if (!gamePrefs.radar_scaling) return;
-
-    // scaling shenanigans: if enabled, pick the appropriate default.
-    data.scale = DEFAULT_UPSCALING;
-
-    if (data.scale !== 1) {
-      const notify = false;
-      setScale(data.scale, notify);
-    }
+    const radarScale = searchParams.get('radarScale');
+    if (!isMobile && !radarScale) return;
+    setScale(getDefaultScaling());
   }
 
   function initRadar() {
@@ -769,7 +923,7 @@ const Radar = () => {
     frameCount: 0,
     radarScrollLeft: 0,
     radarTarget: null,
-    radarTargetWidth: 0,
+    lastRadarTargetWidth: 0,
     animatedTypes: [
       TYPES.bomb,
       TYPES.balloon,
@@ -799,7 +953,8 @@ const Radar = () => {
     missileWarningCount: 0,
     lastMissileCount: 0,
     incomingMissile: false,
-    scale: searchParams.get('radarScale') || 1,
+    scale: 1,
+    interimScale: null,
     cssRadarScale: 1
   };
 
@@ -823,6 +978,7 @@ const Radar = () => {
     markTarget,
     maybeApplyScaling,
     objects,
+    onOrientationChange,
     removeItem: removeRadarItem,
     reset: reset,
     resize: resize,
