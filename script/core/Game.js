@@ -715,7 +715,8 @@ const game = (() => {
 
     zones.init();
 
-    game.objects.radar.maybeApplyScaling();
+    // scale radar animation, after a slight delay.
+    common.setFixedFrameTimeout(game.objects.radar.maybeApplyScaling, 3000);
 
     populateTerrain();
 
