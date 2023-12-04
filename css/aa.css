@@ -3948,6 +3948,13 @@ body.is-mobile:not(.is_iphone)
   z-index: 2;
 }
 
+@media screen and (orientation: portrait) {
+  /* just a bit smaller on iPhone, portrait. */
+  #game-tips #game-announcements {
+    font-size: calc(18px * var(--gs-tz));
+  }
+}
+
 #game-tips #game-announcements p {
   overflow: visible;
   white-space: normal;
