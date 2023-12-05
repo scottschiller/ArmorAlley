@@ -548,11 +548,11 @@ body.is-mobile #game-subtitle {
     repeating-linear-gradient(
       33deg,
       rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0) 1.5px,
-      rgba(0, 0, 0, 0.15) 1.5px,
-      rgba(0, 0, 0, 0.15) 2.25px,
-      rgba(0, 0, 0, 0.15) 2.25px,
-      rgba(0, 0, 0, 0) 3px
+      rgba(0, 0, 0, 0) 1px,
+      rgba(0, 0, 0, 0.2) 1px,
+      rgba(0, 0, 0, 0.2) 1.5px,
+      rgba(0, 0, 0, 0.2) 2.5px,
+      rgba(0, 0, 0, 0) 2px
     );
 }
 
