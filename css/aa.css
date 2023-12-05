@@ -395,7 +395,14 @@ body.is-mobile #game-subtitle {
 }
 
 #game-menu-wrapper .logo-overlay {
-  background: linear-gradient(0deg, orange 0%, yellow 25%, red 50%, green 75%, orange 100%);
+  background: linear-gradient(
+    0deg,
+    orange 0%,
+    yellow 25%,
+    red 50%,
+    green 75%,
+    orange 100%
+  );
   mask-image: url(../image/armor-alley-wordmark-colour.webp);
   -webkit-mask-image: url(../image/armor-alley-wordmark-colour.webp);
   mask-size: contain;
