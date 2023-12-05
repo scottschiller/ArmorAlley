@@ -521,9 +521,9 @@ const SmartMissile = (options = {}) => {
       !data.expired &&
       gamePrefs.modern_smart_missiles &&
       (!objects.target ||
-        tData.dead ||
-        tData.wentIntoHiding ||
-        (tData.isEnemy === data.isEnemy && !tData.hostile))
+        tData?.dead ||
+        tData?.wentIntoHiding ||
+        (tData?.isEnemy === data.isEnemy && !tData?.hostile))
     ) {
       const whose =
         data.isEnemy !== game.players.local.data.isEnemy
@@ -538,14 +538,14 @@ const SmartMissile = (options = {}) => {
 
       // stop tracking the old one, as applicable.
       if (
-        tData.dead ||
-        tData.wentIntoHiding ||
-        tData.isEnemy === data.isEnemy
+        tData?.dead ||
+        tData?.wentIntoHiding ||
+        tData?.isEnemy === data.isEnemy
       ) {
         // notify if a helicopter evaded a smart missile by hiding in a cloud.
         if (
-          tData.wentIntoHiding &&
-          tData.type === TYPES.helicopter &&
+          tData?.wentIntoHiding &&
+          tData?.type === TYPES.helicopter &&
           gamePrefs[`notify_${data.type}`]
         ) {
           const text = `${whose} ${missileType} lost track of its target.`;
