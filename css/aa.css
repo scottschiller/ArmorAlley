@@ -397,21 +397,86 @@ body.is-mobile #game-subtitle {
 #game-menu-wrapper .logo-overlay {
   background: linear-gradient(
     0deg,
-    orange 0%,
-    yellow 25%,
-    red 50%,
-    green 75%,
-    orange 100%
+    brown 0%,
+    orange 16.66%,
+    yellow 33%,
+    red 49.98%,
+    green 66.64%,
+    orange 83.3%,
+    brown 100%
   );
+  /**
+   * Tool with color smoothing, albeit one color at a time...
+   * https://www.learnui.design/tools/gradient-generator.html
+   * #a52a2a @ 0%
+   * #ffa500 @ 16%
+   * #ffff00 @ 32%
+   * #dd3333 @ 48%
+   * #ffa500 @ 67%
+   * #008000 @ 83%
+   * #a52a2a @ 100%
+   */
+   /* smoothened version of the above */
+  background: linear-gradient(
+    180deg,
+    #a52a2a,
+    #b13225,
+    #bd3d20,
+    #c94b1a,
+    #d65c14,
+    #e3710e,
+    #f18907,
+    #ffa500,
+    #ffa500,
+    #ffb200,
+    #ffbf00,
+    #ffcc00,
+    #ffd800,
+    #ffe500,
+    #fff200,
+    #ffff00,
+    #ffff00,
+    #fad708,
+    #f5b30f,
+    #f09316,
+    #eb761e,
+    #e65c25,
+    #e2462c,
+    #dd3333,
+    #dd3333,
+    #e23d2c,
+    #e64925,
+    #eb571e,
+    #f06716,
+    #f5790f,
+    #fa8e08,
+    #ffa500,
+    #ffa500,
+    #edc700,
+    #d3db00,
+    #9bc900,
+    #6ab600,
+    #40a400,
+    #1c9200,
+    #008000,
+    #008000,
+    #2a8704,
+    #558e09,
+    #81940e,
+    #998614,
+    #9e661b,
+    #a24722,
+    #a52a2a
+  );
+
   mask-image: url(../image/armor-alley-wordmark-colour.webp);
   -webkit-mask-image: url(../image/armor-alley-wordmark-colour.webp);
   mask-size: contain;
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
-  opacity: 0.85;
-  animation: logo-gradient 120s linear infinite alternate;
-  background-size: 100% 800%;
+  animation: logo-gradient 90s linear infinite alternate-reverse;
+  background-size: 100% 600%;
   box-shadow: 0 2px 0 #fff, 0 -2px 0 #fff;
 }
 
@@ -420,7 +485,7 @@ body.is-mobile #game-subtitle {
     background-position: 0% 0%;
   }
   100% {
-    background-position: 0% -800%;
+    background-position: 0% -600%;
   }
 }
 
@@ -470,6 +535,7 @@ body.is-mobile #game-subtitle {
   z-index: 11;
   padding-bottom: 4vh;
   border-bottom: 1px solid #be7832;
+  opacity: 0.9;
 }
 
 #logo h1 {
