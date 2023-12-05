@@ -383,15 +383,59 @@ body.is-mobile #game-subtitle {
   padding-bottom: calc(2px * var(--gs-tz));
   /* offset the above. */
   margin-top: -calc(1px * var(--gs-tz));
+  overflow: hidden;
 }
 
 #game-menu-wrapper .logo-overlay,
-#game-menu-wrapper .logo-overlay-shadow {
+#game-menu-wrapper .logo-overlay-shadow,
+#game-menu-wrapper .logo-overlay-cutout,
+#game-menu-wrapper .logo-overlay-highlight {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+#game-menu-wrapper .logo-overlay-cutout {
+  mask-image: url(../image/armor-alley-wordmark-colour.webp);
+  -webkit-mask-image: url(../image/armor-alley-wordmark-colour.webp);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  /* this affects how the highlight gradient blends with the logo */
+  mix-blend-mode: overlay;
+}
+
+#game-menu-wrapper .logo-overlay-highlight {
+  width: 25%;
+  height: 130%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 5%,
+    rgba(255, 255, 255, 0.75) 35%,
+    rgba(255, 255, 255, 0.75) 66%,
+    rgba(255, 255, 255, 0) 95%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translate3d(-100%, -15%, 0) rotate(12deg);
+  animation: glint 8s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+@keyframes glint {
+  0% {
+    transform: translate3d(-100%, -15%, 0) rotate(12deg);
+  }
+  25% {
+    transform: translate3d(400%, -15%, 0) rotate(12deg);
+  }
+  /* stay until the end */
+  100% {
+    transform: translate3d(400%, -15%, 0) rotate(12deg);
+  }
 }
 
 #game-menu-wrapper .logo-overlay {
@@ -416,7 +460,7 @@ body.is-mobile #game-subtitle {
    * #008000 @ 83%
    * #a52a2a @ 100%
    */
-   /* smoothened version of the above */
+  /* smoothened version of the above */
   background: linear-gradient(
     180deg,
     #a52a2a,
