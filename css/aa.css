@@ -1399,6 +1399,10 @@ body.bnb #tv-display.active {
   opacity: 1;
 }
 
+body.bnb #tv-display.disabled {
+  opacity: 0 !important;
+}
+
 #tv-display #tv {
   /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
   background-size: contain;
