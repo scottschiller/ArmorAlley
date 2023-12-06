@@ -390,7 +390,7 @@ const View = () => {
   }
 
   function setAnnouncement(text = '', delay = 5000) {
-    if (game.data.battleOver) return;
+    if (game.data.battleOver && delay !== -1) return;
 
     if (!text) return;
 
