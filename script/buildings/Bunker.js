@@ -288,14 +288,17 @@ const Bunker = (options = {}) => {
       playSound(sounds.nuke, exports);
     }
 
-    if (data.isOnScreen) {
-      if (gamePrefs.bnb) playSound(sounds.bnb.bunkerExplosion, null);
-    } else {
-      game.objects.notifications.add(
-        data.isEnemy === game.players.local.data.isEnemy
-          ? 'A friendly bunker was destroyed 💥'
-          : 'An enemy bunker was destroyed 💥'
-      );
+    // don't report explosions during end sequence
+    if (!game.data.battleOver) {
+      if (data.isOnScreen) {
+        if (gamePrefs.bnb) playSound(sounds.bnb.bunkerExplosion, null);
+      } else {
+        game.objects.notifications.add(
+          data.isEnemy === game.players.local.data.isEnemy
+            ? 'A friendly bunker was destroyed 💥'
+            : 'An enemy bunker was destroyed 💥'
+        );
+      }
     }
 
     // check if enemy convoy production should stop or start
