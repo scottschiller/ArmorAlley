@@ -418,6 +418,9 @@ function GameEvents() {
             '🚚 Your van is approaching the enemy base 🤏💥'
           );
           if (prefs.bnb && sounds.bnb.almostThere) {
+            // preload sound, too?
+            common.preloadVideo('bnb_desert_scene_really_cool');
+            common.preloadAudio(sounds.bnb.desertSceneGameOver);
             playSequence(
               addSequence(
                 sounds.bnb.almostThere,

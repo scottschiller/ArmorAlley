@@ -1817,6 +1817,9 @@ bnb.explosionFire = {
   ...playImmediately
 };
 
+bnb.desertSceneGameOver = add('bnb_desert_scene_really_cool', 100);
+bnb.desertSceneGameOver.excludeDelay = true;
+
 bnb.fire = add('beavis_fire', 100);
 
 bnb.kickedAss = shuffle([

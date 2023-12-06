@@ -229,6 +229,7 @@ const slashCommands = {
 };
 
 let loadedVideos = {};
+let loadedAudio = {};
 let wzTimer;
 let videoActive;
 
@@ -824,6 +825,34 @@ const common = {
   initNearby(nearby, exports) {
     // map options.source -> exports
     nearby.options.source = exports;
+  },
+
+  preloadAudio(soundRef) {
+    if (!soundRef?.src) return;
+
+    const fileName = soundRef.src;
+    if (!fileName) return;
+
+    let audio = document.createElement('audio');
+    audio.preload = 'auto';
+
+    const canplay = 'canplaythrough';
+
+    function preloadOK() {
+      if (!audio) return;
+      loadedAudio[fileName] = true;
+      audio.removeEventListener(canplay, preloadOK);
+      audio.src = '';
+      audio = null;
+    }
+
+    audio.muted = true;
+    audio.addEventListener(canplay, preloadOK);
+
+    audio.src = fileName;
+    audio.play();
+
+    window.setTimeout(preloadOK, 5000);
   },
 
   preloadVideo(fileName) {
