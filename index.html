@@ -293,51 +293,6 @@
           </div>
         </div>
 
-        <div id="bottom">
-          <div id="queue"></div>
-
-          <div id="message-box">
-            <form id="message-form" action="." method="get" autocomplete="off">
-              <!-- note: data-gramm is for Grammarly. -->
-              <input
-                id="message-form-input"
-                name="message_text"
-                type="text"
-                placeholder="ENTER to chat, ESC to exit."
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                data-gramm="false" />
-            </form>
-          </div>
-
-          <div id="help">
-            <span id="network-status">
-              <span id="lock-step-indicator" class="mac-system-spinner"></span>
-              <span id="network-info"></span
-              ><span id="lights"><span class="sub-sprite"></span></span>
-              <span class="pipe">|</span>
-            </span>
-            <span>
-              <a id="game-options-link" href="#" data-ignore-touch="true"
-                >options</a
-              >
-            </span>
-            <span id="exit">
-              <span class="exit-pipe">|</span>
-              <a
-                href="./"
-                onclick="return window.aa.exit()"
-                title="Exit (reload required)"
-                data-ignore-touch="true"
-                class="exit"
-                >exit</a
-              >
-            </span>
-          </div>
-        </div>
-
         <div id="stats-endgame">
           <table cellpadding="0" cellspacing="0">
             <thead>
@@ -806,6 +761,51 @@
         </ul>
 
         <div id="repair-complete"></div>
+      </div>
+    </div>
+
+    <div id="bottom">
+      <div id="queue"></div>
+
+      <div id="message-box">
+        <form id="message-form" action="." method="get" autocomplete="off">
+          <!-- note: data-gramm is for Grammarly. -->
+          <input
+            id="message-form-input"
+            name="message_text"
+            type="text"
+            placeholder="ENTER to chat, ESC to exit."
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            data-gramm="false" />
+        </form>
+      </div>
+
+      <div id="help">
+        <span id="network-status">
+          <span id="lock-step-indicator" class="mac-system-spinner"></span>
+          <span id="network-info"></span
+          ><span id="lights"><span class="sub-sprite"></span></span>
+          <span class="pipe">|</span>
+        </span>
+        <span>
+          <a id="game-options-link" href="#" data-ignore-touch="true"
+            >options</a
+          >
+        </span>
+        <span id="exit">
+          <span class="exit-pipe">|</span>
+          <a
+            href="./"
+            onclick="return window.aa.exit()"
+            title="Exit (reload required)"
+            data-ignore-touch="true"
+            class="exit"
+            >exit</a
+          >
+        </span>
       </div>
     </div>
 

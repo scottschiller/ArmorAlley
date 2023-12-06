@@ -167,19 +167,6 @@ body.is_safari:not(.is-mobile) {
   image-rendering: optimizeQuality;
 }
 
-/**
- * But wait! Not only do you get the Ginsu knife...
- * Wanna see some tricks? Here are some incredible hacks in CSS.
- * 2x parts of the document via zoom, then transform-scale down to 0.5 to keep things sharp.
- */
-body.is_safari:not(.is-mobile) #help {
-  font-size: 2rem;
-  top: 1px;
-  margin-right: 8px;
-  transform: scale3d(0.25, 0.25, 1);
-  transform-origin: 100% 0;
-}
-
 body.is_safari:not(.is-mobile) #player-status-bar,
 body.is_safari:not(.is-mobile) .sprite {
   /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
@@ -3699,13 +3686,13 @@ body.is_safari .cornholio .sub-sprite {
 
 #bottom {
   position: absolute;
-  width: 100%;
-  height: 18px;
-  bottom: -25px;
+  height: calc(17px * var(--gs-tz));
   box-sizing: border-box;
   color: #666;
-  font-size: 0.65em;
+  font-size: calc(7px * var(--gs-tz));
   left: 0;
+  right: 0;
+  bottom: 0;
   padding: 0;
 }
 
@@ -4227,11 +4214,9 @@ body.game-paused #game-announcements {
 
 #help {
   float: right;
-  font-size: 0.5rem;
   margin-left: 1em;
   margin-right: 1em;
   position: relative;
-  top: 0.75px;
   white-space: nowrap;
 }
 
@@ -6382,30 +6367,28 @@ button .button-icon {
   display: none;
 }
 
-body.is_safari:not(.is-mobile) #lights {
-  /* zoom only for desktop Safari. */
-  zoom: 4;
-}
-
 #lights {
   display: inline-block;
+  width: 16px;
   height: 10px;
   image-rendering: pixelated;
   overflow: hidden;
   position: relative;
   vertical-align: middle;
-  width: 16px;
+  /* sneaky scaling shenanigans */
+  zoom: calc(1 * var(--gs-tz));
 }
 
 #lights .sub-sprite {
-  background: url(../image/lights.exe.png);
   display: block;
-  height: 10px;
+  background: url(../image/lights.exe.png);
+  background-repeat: no-repeat;
+  width: calc(64px * var(--gs-tz));
+  height: calc(10px * var(--gs-tz));
   left: 0;
   opacity: 0.75;
   position: absolute;
   top: 0;
-  width: 64px;
   will-change: transform;
 }
 
@@ -6436,9 +6419,9 @@ body.is_safari:not(.is-mobile) #lights {
   border: 0.5px solid #393;
   color: #3c3;
   display: block;
-  font-size: 7px;
+  font-size: calc(7px * var(--gs-tz));
   margin: 0;
-  padding: 2px;
+  padding: calc(2px * var(--gs-tz));
   text-align: center;
   width: 100%;
 }
