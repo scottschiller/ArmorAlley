@@ -685,6 +685,9 @@ function hideTitleScreen(callback) {
   let theyWin = searchParams.get('theyWin');
   const youWin = searchParams.get('youWin');
 
+  // e.g., ?vanOffset=440 to push further out from base.
+  const vanOffset = searchParams.get('vanOffset') || 0;
+
   let winDelay;
   const defaultDelay = 2000;
 
@@ -698,8 +701,8 @@ function hideTitleScreen(callback) {
     window.setTimeout(() => {
       const pads = game.objects[TYPES.landingPad];
       const x = theyWin
-        ? pads[0].data.x + 88
-        : pads[pads.length - 1].data.x - 44;
+        ? pads[0].data.x + 88 + vanOffset
+        : pads[pads.length - 1].data.x - 44 - vanOffset;
 
       game.addObject('van', {
         isEnemy: !!theyWin,
