@@ -379,12 +379,9 @@ const Radar = () => {
   }
 
   function updateTargetMarkerLeftMargin(source = data.radarTarget) {
-    if (!source) return;
+    if (!source?.dom?.o) return;
 
-    if (!source?.layout) {
-      console.warn('updateTargetMarkerLeftMargin(): WTF no layout?', source);
-      return;
-    }
+    if (!source?.layout) return;
 
     // measure the item on the radar, then scale its margin back to match the marker (which is not scaled.)
     let marginLeft = parseFloat(
@@ -408,10 +405,7 @@ const Radar = () => {
       updateTargetMarkerLeftMargin(targetItem);
     }
 
-    if (!targetItem.layout) {
-      console.warn('updateTargetMarker(): WTF no target layout?', targetItem);
-      return;
-    }
+    if (!targetItem.layout) return;
 
     let width = targetItem.layout.width * data.cssRadarScale;
 
@@ -435,15 +429,17 @@ const Radar = () => {
 
     // hack: guard against invalid layout, for now.
     if (!data.radarTarget?.layout) {
-      console.warn('alignTargetMarkerWithScroll(): No layout, re-fetching');
-      data.radarTarget = common.mixin(data.radarTarget, getLayout(data.radarTarget));
+      data.radarTarget = common.mixin(
+        data.radarTarget,
+        getLayout(data.radarTarget)
+      );
       updateTargetMarkerLeftMargin(data.radarTarget);
     }
 
     if (data.scale === 1) {
       // no-scaling case
       dom.targetMarker.style.transform = `translate3d(${
-        data.radarTarget.data.left + data.radarTarget.layout.marginLeft
+        data.radarTarget.data.left + (data.radarTarget?.layout?.marginLeft || 0)
       }px, 0px, 0px)`;
       return;
     }
@@ -473,17 +469,19 @@ const Radar = () => {
 
     data.radarTarget = targetItem;
 
-    // fetch layout immediately.
-    if (!data.radarTarget.layout) {
-      data.radarTarget = common.mixin(
-        data.radarTarget,
-        getLayout(data.radarTarget)
-      );
-    }
+    if (data.radarTarget) {
+      // fetch layout immediately, if needed.446
+      if (!data.radarTarget.layout) {
+        data.radarTarget = common.mixin(
+          data.radarTarget,
+          getLayout(data.radarTarget)
+        );
+      }
 
-    // left margin is needed, too.
-    if (data.radarTarget.layout) {
-      updateTargetMarkerLeftMargin(data.radarTarget);
+      // left margin is needed, too.
+      if (data.radarTarget.layout) {
+        updateTargetMarkerLeftMargin(data.radarTarget);
+      }
     }
 
     // immediately align
