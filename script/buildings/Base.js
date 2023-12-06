@@ -10,10 +10,11 @@ import {
   tutorialMode,
   worldWidth,
   TYPES,
-  rng
+  rng,
+  isMobile
 } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
-import { playSequence } from '../core/sound-bnb.js';
+import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { common } from '../core/common.js';
 import { enemyHelicopterNearby } from '../core/logic.js';
@@ -25,9 +26,10 @@ import { campaignBattles, levelName } from '../levels/default.js';
 import { utils } from '../core/utils.js';
 
 const Base = (options = {}) => {
-  let css, data, dom, exports, height, missileVMax, width;
+  let css, data, dom, exports, height, missileVMax, width, didWin;
 
   let counter = 0;
+  let lettermanDelay = 1500;
   const counterMax = 30;
 
   function fire() {
@@ -148,8 +150,6 @@ const Base = (options = {}) => {
       playSound(sounds.genericExplosion, exports);
     }
 
-    const localPlayer = game.players.local;
-
     if (!counter) {
       // initial big explosion at base
       for (let i = 0; i < 7; i++) {
@@ -170,91 +170,129 @@ const Base = (options = {}) => {
     counter++;
 
     if (counter >= counterMax) {
-      playSequence(
-        localPlayer.data.isEnemy !== data.isEnemy
-          ? sounds.bnb.gameOverWin
-          : sounds.bnb.gameOverLose
-      );
+      let hugeBoomDelay = 2500;
 
-      if (
-        (tutorialMode || campaignBattles.includes(levelName)) &&
-        !net.active
-      ) {
-        common.setFrameTimeout(() => {
-          // as applicable, show a letter from "the old tanker."
-          const didWin = localPlayer.data.isEnemy !== data.isEnemy;
-          game.objects.envelope.show(didWin);
-        }, 1500);
+      const canShowLetter =
+        (tutorialMode || campaignBattles.includes(levelName)) && !net.active;
+
+      if (!gamePrefs.bnb || !didWin) {
+        // final explosion sequence
+        playSequence(sounds.bnb.gameOverLose);
+        common.setFrameTimeout(nukeTheBase, hugeBoomDelay);
+        if (canShowLetter) {
+          common.setFrameTimeout(() => {
+            // as applicable, show a letter from "the old tanker."
+            game.objects.envelope.show(didWin);
+          }, lettermanDelay);
+        }
+      } else {
+        // hackish: reset the sound queue, a bunch of things may have piled up.
+        // at this point, irrelevant because the battle is over.
+        resetBNBSoundQueue();
+
+        playSound(sounds.bnb.desertSceneGameOver, exports, {
+          onplay: () => {
+            game.objects.view.setAnnouncement(
+              'Hey - you wanna see\nsomething really cool?\nHuh huh huh, huh huh huh...',
+              -1
+            );
+
+            // hack: hide the TV on desktop.
+            if (!isMobile) {
+              utils.css.add(document.getElementById('tv-display'), 'disabled');
+            }
+
+            common.setVideo('bnb_desert_scene_really_cool');
+
+            window.setTimeout(() => {
+              game.objects.view.setAnnouncement('🤣💨🧨🔥', -1);
+            }, 6750);
+
+            // attempt to start the base nuke explosion at the "right" time in the video. ;)
+            window.setTimeout(() => {
+              nukeTheBase();
+              game.objects.view.setAnnouncement(
+                '<span class="no-emoji-substitution" style="display:inline">☢️</span>💥🤯',
+                -1
+              );
+              window.setTimeout(() => {
+                game.objects.view.setAnnouncement('🔥Firrrre!🔥<br />😝🤘', -1);
+              }, 6500);
+            }, 7500);
+          },
+          onfinish: () => {
+            // queue post-win commentary
+            playSequence(sounds.bnb.gameOverWin);
+            if (canShowLetter) {
+              game.objects.envelope.show(didWin);
+            }
+          }
+        });
       }
-
-      // HUGE boom, why not.
-      common.setFrameTimeout(() => {
-        // ensure incoming missile is silenced
-        if (sounds.missileWarning) {
-          stopSound(sounds.missileWarning);
-        }
-
-        if (sounds.genericExplosion) {
-          playSound(sounds.genericExplosion, exports);
-          playSound(sounds.genericExplosion, exports);
-          playSound(sounds.genericExplosion, exports);
-        }
-
-        if (sounds.baseExplosion) {
-          playSound(sounds.baseExplosion, exports);
-        }
-
-        common.setFrameTimeout(() => {
-          let i, iteration;
-          iteration = 0;
-
-          // domFetti feature
-          screenBoom();
-
-          for (i = 0; i < 7; i++) {
-            effects.shrapnelExplosion(data, {
-              count: rndInt(64),
-              velocity: 8 + rnd(8),
-              // don't create identical "clouds" of smoke *at* base.
-              noInitialSmoke: true
-            });
-          }
-
-          for (i = 0; i < 3; i++) {
-            common.setFrameTimeout(() => {
-              // first one is always big.
-              const isBigBoom = !iteration || rnd(0.75);
-
-              effects.smokeRing(exports, {
-                velocityMax: 64,
-                count: isBigBoom ? 8 : 2,
-                offsetX: data.width * 0.25 + rnd(data.halfWidth),
-                offsetY: data.height,
-                isGroundUnit: true
-              });
-              iteration++;
-            }, 10 * i);
-          }
-
-          effects.inertGunfireExplosion({
-            exports,
-            count: 32 + rndInt(32),
-            vX: 2,
-            vY: 2
-          });
-
-          // visually destroy the base.
-          // TODO: big nuke like bunker?
-          dom.oSubSpriteNuke = dom.o.appendChild(
-            sprites.makeSubSprite(css.nuke)
-          );
-          utils.css.add(dom.o, 'burning');
-        }, 25);
-      }, 2500);
     } else {
       // big boom
       common.setFrameTimeout(boom, 100 + rndInt(100));
     }
+  }
+
+  function nukeTheBase() {
+    // ensure incoming missile is silenced
+    if (sounds.missileWarning) {
+      stopSound(sounds.missileWarning);
+    }
+
+    if (sounds.genericExplosion) {
+      playSound(sounds.genericExplosion, exports);
+      playSound(sounds.genericExplosion, exports);
+      playSound(sounds.genericExplosion, exports);
+    }
+
+    if (sounds.baseExplosion) {
+      playSound(sounds.baseExplosion, exports);
+    }
+
+    common.setFrameTimeout(() => {
+      let i, iteration;
+      iteration = 0;
+
+      // domFetti feature
+      screenBoom();
+
+      for (i = 0; i < 7; i++) {
+        effects.shrapnelExplosion(data, {
+          count: rndInt(64),
+          velocity: 8 + rnd(8),
+          // don't create identical "clouds" of smoke *at* base.
+          noInitialSmoke: true
+        });
+      }
+
+      for (i = 0; i < 3; i++) {
+        common.setFrameTimeout(() => {
+          // first one is always big.
+          const isBigBoom = !iteration || rnd(0.75);
+
+          effects.smokeRing(exports, {
+            velocityMax: 64,
+            count: isBigBoom ? 8 : 2,
+            offsetX: data.width * 0.25 + rnd(data.halfWidth),
+            offsetY: data.height,
+            isGroundUnit: true
+          });
+          iteration++;
+        }, 10 * i);
+      }
+
+      effects.inertGunfireExplosion({
+        exports,
+        count: 32 + rndInt(32),
+        vX: 2,
+        vY: 2
+      });
+
+      dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+      utils.css.add(dom.o, 'burning');
+    }, 25);
   }
 
   function die() {
@@ -264,17 +302,19 @@ const Base = (options = {}) => {
 
     const localPlayer = game.players.local;
 
-    common.setFrameTimeout(
-      () =>
-        playSound(
-          localPlayer.data.isEnemy !== data.isEnemy
-            ? sounds.bnb.singing
-            : sounds.bnb.beavisNoNoNoNooo,
-          null,
-          { volume: 85 }
-        ),
-      128
-    );
+    didWin = localPlayer.data.isEnemy !== data.isEnemy;
+
+    if (gamePrefs.bnb) {
+      common.setFrameTimeout(
+        () =>
+          playSound(
+            didWin ? sounds.bnb.singing : sounds.bnb.beavisNoNoNoNooo,
+            null,
+            { volume: 85 }
+          ),
+        128
+      );
+    }
 
     // slow down nicely, then move on toward the opposing base.
     game.objects.view.decelerateScroll();
