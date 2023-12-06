@@ -239,6 +239,10 @@ body.demo #aa {
   opacity: 0;
 }
 
+body.auto-start #game-menu-wrapper.active.fade-out {
+  transition-delay: 0.75s;
+}
+
 #mtv-bnb-in {
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -423,6 +427,11 @@ body.is-mobile #game-subtitle {
   transform: translate3d(-100%, -15%, 0) rotate(12deg);
   animation: glint 8s ease-in-out infinite;
   animation-delay: 1s;
+}
+
+body.auto-start #game-menu-wrapper .logo-overlay-highlight {
+  animation-duration: 3.85s;
+  animation-delay: 0.75s;
 }
 
 @keyframes glint {
