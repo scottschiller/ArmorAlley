@@ -2082,6 +2082,7 @@ function initBNBSound() {
     ),
     () => (game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle)
   );
+  bnb[EVENTS.boring].excludeThrottling = true;
 
   return bnb;
 }
