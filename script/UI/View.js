@@ -407,7 +407,7 @@ const View = () => {
     const replacement =
       '<span class="landscape-space-portrait-line-break"></span>';
 
-    text = text.replace(/\n/, replacement);
+    text = text.replace(/\n/g, replacement);
 
     // drop smart quotes, they render funny with Da Valencia.
     text = text.replace(/[“”]/g, '"');
