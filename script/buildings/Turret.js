@@ -234,22 +234,24 @@ const Turret = (options = {}) => {
         } else {
           const attacker = dieOptions.attacker?.data;
 
-          // infantry - specifically, dropped or released from helicopter
-          const infantryAttacker =
-            attacker?.parentType === TYPES.infantry &&
-            attacker.parent.data.unassisted === false;
+          if (attacker) {
+            // infantry - specifically, dropped or released from helicopter
+            const infantryAttacker =
+              attacker?.parentType === TYPES.infantry &&
+              attacker.parent.data.unassisted === false;
 
-          // likewise, from helicopter
-          const smartMissileAttacker =
-            attacker.type === TYPES.smartMissile &&
-            attacker.parentType === TYPES.helicopter;
+            // likewise, from helicopter
+            const smartMissileAttacker =
+              attacker.type === TYPES.smartMissile &&
+              attacker.parentType === TYPES.helicopter;
 
-          // on-screen, or helicopter-initiated things
-          if (
-            gamePrefs.bnb &&
-            (data.isOnScreen || infantryAttacker || smartMissileAttacker)
-          ) {
-            playSoundWithDelay(sounds.bnb.bungholeAndSimilar, exports, 750);
+            // on-screen, or helicopter-initiated things
+            if (
+              gamePrefs.bnb &&
+              (data.isOnScreen || infantryAttacker || smartMissileAttacker)
+            ) {
+              playSoundWithDelay(sounds.bnb.bungholeAndSimilar, exports, 750);
+            }
           }
         }
       }
