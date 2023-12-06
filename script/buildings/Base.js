@@ -193,26 +193,28 @@ const Base = (options = {}) => {
         playSound(sounds.bnb.desertSceneGameOver, exports, {
           onplay: () => {
             game.objects.view.setAnnouncement(
-              'Hey - you wanna see\nsomething really cool?\nHuh huh huh, huh huh huh...',
+              'Hey - you wanna see\nsomething really cool?<br />Huh huh huh, huh huh huh...',
               -1
             );
 
-            // hack: hide the TV on desktop.
-            if (!isMobile) {
+            // hack: hide the TV on desktop, and mobile in landscape.
+            if (!isMobile || game.objects.view.data.browser.isLandscape) {
               utils.css.add(document.getElementById('tv-display'), 'disabled');
             }
 
             common.setVideo('bnb_desert_scene_really_cool');
 
+            const boomString = '🤣💨🧨🔥';
+
             window.setTimeout(() => {
-              game.objects.view.setAnnouncement('🤣💨🧨🔥', -1);
+              game.objects.view.setAnnouncement(boomString, -1);
             }, 6750);
 
             // attempt to start the base nuke explosion at the "right" time in the video. ;)
             window.setTimeout(() => {
               nukeTheBase();
               game.objects.view.setAnnouncement(
-                '<span class="no-emoji-substitution" style="display:inline">☢️</span>💥🤯',
+                boomString + '<br /><span class="no-emoji-substitution" style="display:inline">☢️</span>💥🤯',
                 -1
               );
               window.setTimeout(() => {
