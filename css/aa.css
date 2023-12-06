@@ -4152,6 +4152,7 @@ body.is-mobile:not(.is_iphone)
   width: 100%;
   /* display on top of "TV." */
   z-index: 2;
+  text-shadow: 0px 1px 1px #000;
 }
 
 @media screen and (orientation: portrait) {
