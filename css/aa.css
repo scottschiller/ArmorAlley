@@ -662,7 +662,7 @@ body.auto-start #game-subtitle {
   width: 100%;
   color: #e19632;
   font-size: calc(5.5px * var(--menu-chicago-scale));
-  line-height: 100%;
+  line-height: 175%;
   margin: 0.75em;
   font-weight: 400;
   text-overflow: ellipsis;
