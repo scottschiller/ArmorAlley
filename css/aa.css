@@ -547,7 +547,7 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
       rgba(0, 0, 0, 0) 1px,
       rgba(0, 0, 0, 0.2) 1px,
       rgba(0, 0, 0, 0.2) 1.5px,
-      rgba(0, 0, 0, 0.2) 2.5px,
+      rgba(0, 0, 0, 0.2) 1.5px,
       rgba(0, 0, 0, 0) 2px
     );
 }
