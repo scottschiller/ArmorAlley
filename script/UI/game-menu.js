@@ -122,7 +122,7 @@ function bnbChange(bnb) {
 }
 
 function init() {
-  description = document.getElementById('game-description');
+  description = document.querySelector('#game-description span');
   defaultDescription = description.innerText;
   lastHTML = defaultDescription;
 
