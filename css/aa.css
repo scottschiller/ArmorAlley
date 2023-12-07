@@ -1525,6 +1525,13 @@ body.game-started #home-video-wrapper {
   transform: translate3d(-50%, -100%, 0);
 }
 
+@media screen and (orientation: portrait) {
+  /* pull video left on narrow screens, show helicopter on-screen more often. */
+  #home-menu-video {
+    margin-left: -45%;
+  }
+}
+
 #home-menu-video video {
   /* prevent controls, hover + pop-out etc. */
   pointer-events: none;
