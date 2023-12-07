@@ -91,6 +91,36 @@ if (customLevel) {
   }
 }
 
+function bnbChange(bnb) {
+  prefsManager.ignoreURLParams();
+  prefsManager.applyNewPrefs({ bnb });
+  prefsManager.writePrefsToStorage();
+
+  // hackish: ensure the in-game menu updates.
+  prefsManager.readAndApplyPrefsFromStorage();
+
+  const subTitle =
+    !game.data.started && document.getElementById('game-subtitle');
+
+  if (subTitle && !originalSubTitle) {
+    originalSubTitle = subTitle.innerHTML;
+  }
+
+  if (!bnb) {
+    // reset, if needed
+    didBNBIntro = false;
+    if (subTitle) {
+      subTitle.innerHTML = originalSubTitle || '';
+    }
+  } else {
+    // we're in a click event, go now?
+    introBNBSound();
+    if (subTitle) {
+      subTitle.innerHTML = subTitle.getAttribute('title-bnb');
+    }
+  }
+}
+
 function init() {
   description = document.getElementById('game-description');
   defaultDescription = description.innerText;
@@ -141,34 +171,7 @@ function init() {
   // update VS pref
   utils.events.add(vs, 'change', () => {
     const bnb = !!vs.checked;
-
-    prefsManager.ignoreURLParams();
-    prefsManager.applyNewPrefs({ bnb });
-    prefsManager.writePrefsToStorage();
-
-    // hackish: ensure the in-game menu updates.
-    prefsManager.readAndApplyPrefsFromStorage();
-
-    const subTitle =
-      !game.data.started && document.getElementById('game-subtitle');
-
-    if (subTitle && !originalSubTitle) {
-      originalSubTitle = subTitle.innerHTML;
-    }
-
-    if (!bnb) {
-      // reset, if needed
-      didBNBIntro = false;
-      if (subTitle) {
-        subTitle.innerHTML = originalSubTitle || '';
-      }
-    } else {
-      // we're in a click event, go now?
-      introBNBSound();
-      if (subTitle) {
-        subTitle.innerHTML = subTitle.getAttribute('title-bnb');
-      }
-    }
+    bnbChange(bnb);
   });
 
   // special case.
@@ -185,6 +188,11 @@ function init() {
     });
 
   prefsManager.init();
+
+  // also apply immediately, if checked.
+  if (vs.checked) {
+    bnbChange(true);
+  }
 
   // we should have game prefs, now.
   lastBattle = gamePrefs.last_battle;
