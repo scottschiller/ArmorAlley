@@ -3712,7 +3712,7 @@ body.is_safari .cornholio .sub-sprite {
 
 #bottom {
   position: absolute;
-  height: calc(17px * var(--gs-tz));
+  height: calc(18px * var(--gs-tz));
   box-sizing: border-box;
   color: #666;
   font-size: calc(7px * var(--gs-tz));
@@ -3720,6 +3720,11 @@ body.is_safari .cornholio .sub-sprite {
   right: 0;
   bottom: 0;
   padding: 0;
+}
+
+body.is-mobile #bottom {
+  /* a little more on mobile, for whatever the reason. :X */
+  height: calc(19px * var(--gs-tz));
 }
 
 .sprite.flame {
