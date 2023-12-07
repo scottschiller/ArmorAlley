@@ -567,13 +567,14 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 
 #logo {
   position: relative;
-  border-top: 2.75vh solid #444;
-  padding-top: 2.5vh;
+  margin: 0px auto;
+  border-top: calc(6px * var(--menu-scale)) solid #444;
+  padding-top: calc(6px * var(--menu-scale));
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
   transition-property: transform, scale, opacity;
   z-index: 11;
-  padding-bottom: 4vh;
+  padding-bottom: calc(6px * var(--menu-scale));
   border-bottom: 1px solid #be7832;
   opacity: 0.9;
 }
