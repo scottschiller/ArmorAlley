@@ -54,6 +54,7 @@
   --prefs-font-scale: 1.1;
   /* TODO: coordinate with view.js */
   --menu-scale: 2.75;
+  --menu-chicago-scale: 2.75;
   --game-scale-transform: 1;
   --game-scale-zoom: 1;
   /* "transform + zoom" (combined value, regardless of method applied) */
@@ -298,14 +299,16 @@ body.is_safari #mtv-bnb-in {
   /* this will be overridden for mobile, landscape */
   aspect-ratio: 1/1;
   max-width: 1024px;
-  display: grid;
-  align-content: center;
   /* always leave a little room */
   padding-left: 8px;
   padding-right: 8px;
+  margin: 0px auto;
   box-sizing: border-box;
+  display: grid;
+  align-content: center;
   /* initial state */
-  transform: translate3d(-50%, -50%, 0) scale3d(0.8, 0.8, 1);
+  transform: scale3d(0.8, 0.8, 1) translate3d(-50%, -50%, 0);
+  transform-origin: 0 0;
   filter: blur(8px);
   opacity: 0;
   z-index: 1;
@@ -315,7 +318,8 @@ body.is_safari #mtv-bnb-in {
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   transition-property: transform, opacity, filter;
-  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
+  transform-origin: 0 0;
   filter: blur(0px);
   opacity: 1;
 }
@@ -326,32 +330,34 @@ body.is-mobile #game-menu-wrapper {
 }
 
 @media screen and (orientation: landscape) {
-  body.is-mobile #game-menu-wrapper {
-    height: auto;
-    aspect-ratio: 16/9;
-    /* leave room for address bar UI, etc. */
-    max-height: 80vh;
-    /* avoid overlapping radar area, whether the address bar is showing or not. */
-    margin-top: 3%;
-  }
-
-  body.is-mobile #game-description {
-    font-size: calc(3.25px * var(--menu-scale));
-  }
-
   body.is_iphone #funds {
     zoom: 1.6;
   }
 }
 
-@media screen and (orientation: portrait) {
-  body.is-mobile #game-description {
-    font-size: calc(4px * var(--menu-scale));
+@media screen and (max-height: 780px) and (orientation: landscape) {
+  #game-menu-wrapper {
+    /**
+     * HACK: restrict the logo width on smaller (short) screens.
+     * TODO: make the home screen more responsive to vertical height restrictions.
+     */
+    width: 131.5vh;
+    margin-top: 0;
+    min-width: 350px;
+    max-width: 100vw;
+  }
+  body.is_iphone #logo {
+    /* collapse logo border, save some vertical space */
+    border-top-width: calc(2px * var(--menu-scale));
   }
 }
 
-body.is-mobile #game-subtitle {
-  font-size: calc(5px * var(--menu-scale));
+@media screen and (orientation: portrait) {
+  body.is_iphone #game-menu-wrapper {
+    /* tight space on e.g., iPhone in portrait. */
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 #game-menu-wrapper .logo-wrapper-wrapper {
@@ -370,6 +376,7 @@ body.is-mobile #game-subtitle {
   position: relative;
   display: inline-block;
   width: 100%;
+  margin: 0px auto;
   /* prevent bottom "r" from being clipped, ugh. */
   padding-bottom: calc(2px * var(--gs-tz));
   /* offset the above. */
@@ -654,9 +661,12 @@ body.auto-start #game-subtitle {
   position: relative;
   width: 100%;
   color: #e19632;
-  font-size: calc(6px * var(--menu-scale));
+  font-size: calc(5.5px * var(--menu-chicago-scale));
+  line-height: 100%;
+  margin: 0.75em;
   font-weight: 400;
   text-overflow: ellipsis;
+  overflow: hidden;
   /* ensure this clips the BnB overlay, when showing */
   z-index: 10;
 }
@@ -886,12 +896,20 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
 
 #game-description {
   color: #ccc;
-  font-size: calc(5px * var(--menu-scale));
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.75);
+  font-size: calc(5px * var(--menu-chicago-scale));
+  text-shadow: 0 0 2px #000;
   margin: 0 auto;
-  margin-top: calc(3px * var(--menu-scale));
+  margin-top: calc(2px * var(--menu-scale));
   /* reserve at least two lines */
-  min-height: 3.5rem;
+  min-height: 3em;
+}
+
+#game-description span {
+  display: inline-block;
+  padding: calc(1px * var(--menu-chicago-scale))
+    calc(2px * var(--menu-chicago-scale));
+  border-radius: calc(2px * var(--menu-chicago-scale));
+  background: rgba(0, 0, 0, 0.5);
 }
 
 #world-wrapper {
@@ -6214,12 +6232,6 @@ body.is_safari:not(.is-mobile) #game-menu button {
   /**  * Special case: On smaller screens, simplify UI.
   * Hide standalone network button, move into settings.
   */
-  body.bnb.is-mobile #game-subtitle {
-    /* game sub-title - iPhone, in particular */
-    font-size: calc(3.5px * var(--menu-scale));
-    line-height: 1.5rem;
-  }
-
   #start-network-game {
     /* home screen network menu icon */
     display: none;

@@ -242,25 +242,35 @@ const View = () => {
       const wrapperWidth =
         document.getElementById('game-menu-wrapper').offsetWidth;
 
-      const minWidth = 1400;
+      const minWidth = 1200;
 
-      // no smaller than this
-      const minScale = 0.25;
+      const shortScreen = window.innerHeight < 800;
+
+      let minScale = 0.25;
 
       let newScale = 1;
+      let fontScale = 1;
 
-      // portrait?
-      if (data.browser.isPortrait && wrapperWidth < 640) {
-        // "tiny screen case"
-        newScale = 0.475;
-      } else {
-        newScale =
-          wrapperWidth >= minWidth
-            ? 1
-            : Math.max(minScale, wrapperWidth / minWidth);
+      if (isMobile && shortScreen) {
+        if (data.browser.isPortrait) {
+          // hacks: allow larger scale on menu UI, but restrict description text on "smaller screens".
+          minScale = 0.5;
+          fontScale = 0.8;
+        } else {
+          fontScale = 1;
+        }
       }
 
+      newScale =
+        wrapperWidth >= minWidth
+          ? 1
+          : Math.max(minScale, wrapperWidth / minWidth);
+
       // this applies to `#game-menu`.
+      dom.root?.style?.setProperty(
+        '--menu-chicago-scale',
+        5.5 * newScale * fontScale
+      );
       dom.root?.style?.setProperty('--menu-scale', 6 * newScale);
     }
 
@@ -1163,6 +1173,11 @@ const View = () => {
 
       // iPhone-specific: handling "the notch"
       handleOrientationChange();
+
+      // TODO: review, see if this helps with knowing isPortrait / isLandscape during game
+      if (!game.data.started) {
+        refreshCoords();
+      }
     });
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
