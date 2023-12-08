@@ -1594,6 +1594,13 @@ body.demo .target-marker {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+@media screen and (orientation: portrait) and (max-height: 840px) {
+  /* up to iPhone 15 Pro Max, at least? */
+  #player-status-bar .radar-scroller {
+    border-radius: 0;
+  }
+}
+
 #aa li,
 #aa ul,
 #game-menu li,
