@@ -374,20 +374,6 @@ const Radar = () => {
     data.lastRadarTargetWidth = null;
   }
 
-  function updateTargetMarkerLeftMargin(source = data.radarTarget) {
-    if (!source?.dom?.o) return;
-
-    if (!source?.layout) return;
-
-    // measure the item on the radar, then scale its margin back to match the marker (which is not scaled.)
-    let marginLeft = parseFloat(
-      window.getComputedStyle(source.dom.o).getPropertyValue('margin-left')
-    );
-
-    source.layout.marginLeft =
-      marginLeft * (1 / data.scale) * (1 / data.cssRadarScale);
-  }
-
   function updateTargetMarker(targetItem, allowTransition) {
     // layout will be unavailable while jammed.
     if (data.isJammed) return;
@@ -398,7 +384,6 @@ const Radar = () => {
     // layout may have been nuked; recalculate, if so.
     if (!targetItem.layout) {
       targetItem = common.mixin(targetItem, getLayout(targetItem));
-      updateTargetMarkerLeftMargin(targetItem);
     }
 
     if (!targetItem.layout) return;
@@ -429,23 +414,17 @@ const Radar = () => {
         data.radarTarget,
         getLayout(data.radarTarget)
       );
-      updateTargetMarkerLeftMargin(data.radarTarget);
     }
 
     if (data.scale === 1) {
       // no-scaling case
-      dom.targetMarker.style.transform = `translate3d(${
-        data.radarTarget.data.left + (data.radarTarget?.layout?.marginLeft || 0)
-      }px, 0px, 0px)`;
+      dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left}px, 0px, 0px)`;
       return;
     }
 
     // otherwise, scale and include the scroll offset
     dom.targetMarker.style.transform = `translate3d(${
-      (data.radarTarget.data.left +
-        (data.radarTarget.layout?.marginLeft || 0) * data.cssRadarScale) *
-        data.scale -
-      data.radarScrollLeft
+      data.radarTarget.data.left * data.scale - data.radarScrollLeft
     }px, 0px, 0px)`;
   }
 
@@ -472,11 +451,6 @@ const Radar = () => {
           data.radarTarget,
           getLayout(data.radarTarget)
         );
-      }
-
-      // left margin is needed, too.
-      if (data.radarTarget.layout) {
-        updateTargetMarkerLeftMargin(data.radarTarget);
       }
     }
 
@@ -539,7 +513,6 @@ const Radar = () => {
         data.radarTarget,
         getLayout(data.radarTarget)
       );
-      updateTargetMarkerLeftMargin();
     }
 
     game.objects.radarScroller?.resize();
@@ -571,9 +544,6 @@ const Radar = () => {
         dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
       }
 
-      // $$$ - needed on mobile due to CSS scaling shenanigans
-      updateTargetMarkerLeftMargin();
-
       transitionScaleFrame++;
 
       // ensure all items animate
@@ -591,8 +561,6 @@ const Radar = () => {
           data.cssRadarScale = transitionScaleFrames.final.cssRadarScale;
           dom.root?.style?.setProperty('--radar-scale', data.cssRadarScale);
         }
-
-        updateTargetMarkerLeftMargin();
 
         transitionScaleActive = false;
         transitionScaleFrame = 0;
