@@ -3343,6 +3343,20 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   z-index: 5; /* show above landing pads, etc. */
 }
 
+@media screen and (orientation: landscape) and (max-height: 480px) {
+  #radar .sprite.helicopter {
+    /* larger chopper on small screens in landscape, given the radar is quite small. */
+    --border: calc(4px * var(--gs-tz));
+  }
+  /* give everybody a vertical boost, per se. */
+  #radar .sprite:not(.balloon) {
+    padding-bottom: calc(1px * var(--rs));
+  }
+  #radar .sprite.balloon {
+    padding-bottom: calc(0.75px * var(--rs));
+  }
+}
+
 #radar .sprite.helicopter.local-player {
   animation: blink calc(0.5s * var(--gs-frac)) infinite;
 }
