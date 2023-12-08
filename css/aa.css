@@ -3188,7 +3188,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   /* round corners */
   border-radius: calc(1px * var(--gs-tz)) calc(1px * var(--gs-tz)) 0 0;
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-1px * var(--rs));
   padding: calc(0.5px * var(--rs));
   /* friendly */
   border: none !important;
@@ -3196,7 +3195,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.super-bunker {
   height: calc(2.5px * var(--gs-tz));
-  margin-left: calc(-2.25px * var(--rs));
   width: calc(5px * var(--rs));
 }
 
@@ -3206,8 +3204,9 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.balloon {
   border-radius: calc(1.75px * var(--gs-tz));
+  /* special case left margin, for horizontal alignment over bunker */
+  margin-left: calc(0.5px * var(--rs));
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-0.5px * var(--rs));
   width: calc(3px * var(--rs));
 }
 
@@ -3282,7 +3281,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   bottom: 0;
   width: calc(8px * var(--rs));
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-4px * var(--rs));
   /* green "U"-shape image */
   background-color: transparent;
   background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAACCAYAAABllJ3tAAAAFUlEQVR4AWMQX8D+nwE7AMuBCXwYAIdBEWNHOYOnAAAAAElFTkSuQmCC);
@@ -3306,7 +3304,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   height: calc(1.25px * var(--gs-tz));
   border-radius: calc(1.25px * var(--gs-tz));
   left: 0;
-  margin-left: calc(-1.5px * var(--rs));
   margin-top: calc(0.25px * var(--gs-tz));
   outline: 0;
   position: absolute;
@@ -3347,7 +3344,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   --height: calc(1.5px * var(--gs-tz));
   border-radius: 0 0 var(--width) var(--width);
   height: var(--height);
-  margin-left: calc(var(--width) * -1);
   width: var(--width);
 }
 
@@ -3366,7 +3362,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   /* hackish repositioning fix */
   content-visibility: auto;
   height: calc(1px * var(--gs-tz));
-  margin-left: calc(var(--one) / 2);
   width: var(--one);
 }
 
@@ -3380,13 +3375,11 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 #radar .sprite.infantry,
 #radar .sprite.parachute-infantry {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-0.5px * var(--rs));
   outline-width: calc(0.25px * var(--rs));
   width: calc(1px * var(--rs));
 }
 
 #radar .sprite.engineer {
-  margin-left: calc(-0.375px * var(--rs));
   width: calc(0.75px * var(--rs));
 }
 
@@ -3399,7 +3392,6 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   width: calc(0.5px * var(--rs));
   height: calc(0.25px * var(--gs-tz));
   border-radius: 50% 50% 0 0;
-  margin-left: calc(-1px * var(--rs));
   background: 0 0 !important;
 }
 
@@ -3409,20 +3401,13 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 
 #radar .sprite.base {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-4px * var(--rs));
   width: calc(8px * var(--rs));
   --radius: calc(0.5px * var(--rs));
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-/* hack: don't pull the enemy base back. */
-#radar .sprite.base.enemy {
-  margin-left: 0;
-}
-
 #radar .sprite.end-bunker {
   height: calc(2px * var(--gs-tz));
-  margin-left: calc(-1.5px * var(--rs));
   width: calc(3px * var(--rs));
   border-radius: calc(1px * var(--gs-tz));
 }
