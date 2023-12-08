@@ -2010,7 +2010,8 @@ body:not(.edit-mode) #top-bar {
 .sprite.super-bunker,
 .sprite.terrain-item,
 .sprite.van,
-.turret .sub-sprite {
+.turret .sub-sprite,
+.radar-scroller {
   /**
    * 09/2021: Chrome may benefit from explicit "layer" promotion, per dev tools.
    * Here, green paint flashing (and thus, performance) is notably improved

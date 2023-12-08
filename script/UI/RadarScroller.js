@@ -12,13 +12,13 @@ const RadarScroller = () => {
 
     const left = getPosition() * game.objects.view.data.browser.screenWidth;
 
-    dom.o.style.left = `${left}px`;
+    dom.o.style.transform = `translate3d(${
+      left - data.scrollerLeftOffset
+    }px, 0px, 0`;
   }
 
   function getPosition() {
-    return Math.min(
-      game.objects.view.data.battleField.scrollLeft / worldWidth
-    );
+    return Math.min(game.objects.view.data.battleField.scrollLeft / worldWidth);
   }
 
   function resizeScroller() {
@@ -38,13 +38,12 @@ const RadarScroller = () => {
        * relative to the whole world width - and scale that based on the
        * scaled browser width (screen vs. battlefield), cut in half. WOOF.
        */
-      dom.o.style.marginLeft = `${
-        -(Math.abs(game.objects.radar.data.radarScrollLeft) / worldWidth) *
+      data.scrollerLeftOffset =
+        (Math.abs(game.objects.radar.data.radarScrollLeft) / worldWidth) *
         game.objects.view.data.browser.width *
-        0.5
-      }px`;
+        0.5;
     } else {
-      dom.o.style.marginLeft = '0px';
+      data.scrollerLeftOffset = 0;
     }
 
     dom.o.style.width = `${data.scrollerWidth}px`;
@@ -64,7 +63,8 @@ const RadarScroller = () => {
   };
 
   data = {
-    scrollerWidth: 0
+    scrollerWidth: 0,
+    scrollerLeftOffset: 0
   };
 
   dom = {
