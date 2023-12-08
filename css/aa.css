@@ -1582,6 +1582,18 @@ body.demo .target-marker {
   width: 100%;
 }
 
+#player-status-bar .radar-scroller {
+  position: absolute;
+  top: calc(1.75px * var(--gs-tz));
+  left: 0;
+  box-sizing: border-box;
+  width: 0;
+  height: calc(5.5px * var(--gs-tz));
+  border: calc(0.5px * var(--gs-tz)) solid rgba(255, 255, 255, 0.1);
+  border-radius: calc(1.5px * var(--gs-tz));
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 #aa li,
 #aa ul,
 #game-menu li,

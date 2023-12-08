@@ -63,6 +63,7 @@ import { Editor } from '../UI/Editor.js';
 import { common } from './common.js';
 import { StarController } from '../elements/StarController.js';
 import { Envelope } from '../UI/Envelope.js';
+import { RadarScroller } from '../UI/RadarScroller.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -564,6 +565,8 @@ const game = (() => {
 
     addWorldObjects();
 
+    objects.radarScroller = RadarScroller();
+
     // finally, start the helicopter engines. ;)
     game.objects.helicopter.forEach((helicopter) => helicopter.init());
   }
@@ -932,6 +935,7 @@ const game = (() => {
     'smoke': [],
     'terrain-item': [],
     'radar': null,
+    'radarScroller': null,
     'starController': null,
     'inventory': null,
     'tutorial': null,
