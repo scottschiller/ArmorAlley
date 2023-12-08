@@ -18,7 +18,7 @@ const RadarScroller = () => {
   }
 
   function getPosition() {
-    return Math.min(game.objects.view.data.battleField.scrollLeft / worldWidth);
+    return game.objects.view.data.battleField.scrollLeft / worldWidth;
   }
 
   function resizeScroller() {
