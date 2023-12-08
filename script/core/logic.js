@@ -429,7 +429,7 @@ function getNearestObject(source, options = {}) {
   if (
     localObjects.length &&
     sData.type === TYPES.helicopter &&
-    localObjects[0].obj.data.type === TYPES.superBunker &&
+    localObjects[0].obj?.data?.type === TYPES.superBunker &&
     (localObjects.length === 1 || localObjects[1]?.obj?.data?.bottomAligned)
   )
     return;
@@ -439,7 +439,7 @@ function getNearestObject(source, options = {}) {
    * airborne target at [1] - e.g., a helicopter. In this case,
    * drop the super bunker and take the next eligible target.
    */
-  if (localObjects[0].obj.data.type === TYPES.superBunker) {
+  if (localObjects[0]?.obj?.data?.type === TYPES.superBunker) {
     localObjects.shift();
   }
 
@@ -447,7 +447,7 @@ function getNearestObject(source, options = {}) {
   if (options?.getAll) return localObjects.map((object) => object.obj);
 
   // default: return the best single candidate.
-  return localObjects[0].obj;
+  return localObjects[0]?.obj;
 }
 
 function objectInView(data, options = {}) {
