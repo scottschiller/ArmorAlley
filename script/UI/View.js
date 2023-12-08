@@ -1174,10 +1174,7 @@ const View = () => {
       // iPhone-specific: handling "the notch"
       handleOrientationChange();
 
-      // TODO: review, see if this helps with knowing isPortrait / isLandscape during game
-      if (!game.data.started) {
-        refreshCoords();
-      }
+      refreshCoords();
     });
 
     utils.events.add(dom.messageForm, 'submit', events.sendChatMessage);
