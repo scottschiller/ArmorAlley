@@ -443,7 +443,7 @@ const Radar = () => {
     // otherwise, scale and include the scroll offset
     dom.targetMarker.style.transform = `translate3d(${
       (data.radarTarget.data.left +
-        data.radarTarget.layout.marginLeft * data.cssRadarScale) *
+        (data.radarTarget.layout?.marginLeft || 0) * data.cssRadarScale) *
         data.scale -
       data.radarScrollLeft
     }px, 0px, 0px)`;
