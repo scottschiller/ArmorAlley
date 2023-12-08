@@ -541,6 +541,8 @@ const Radar = () => {
       );
       updateTargetMarkerLeftMargin();
     }
+
+    game.objects.radarScroller?.resize();
   }
 
   function animate() {
@@ -597,6 +599,9 @@ const Radar = () => {
         data.interimScale = null;
         data.isStale = true;
       }
+
+      // update the radar scroller, too.
+      game.objects.radarScroller?.resize();
     }
 
     scrollWithView();
