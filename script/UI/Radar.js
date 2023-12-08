@@ -82,10 +82,6 @@ const Radar = () => {
     [TYPES.superBunker]: true
   };
 
-  const leftOffsetsByType = {
-    [TYPES.landingPad]: 26
-  };
-
   function setStale(isStale) {
     data.isStale = isStale;
   }
@@ -449,7 +445,7 @@ const Radar = () => {
       (data.radarTarget.data.left +
         data.radarTarget.layout.marginLeft * data.cssRadarScale) *
         data.scale -
-      (data.radarScrollLeft < 0 ? 0 : data.radarScrollLeft)
+      data.radarScrollLeft
     }px, 0px, 0px)`;
   }
 
@@ -653,8 +649,6 @@ const Radar = () => {
 
     // move all radar items
 
-    const adjustedScreenWidth = game.objects.view.data.browser.screenWidth - 5;
-
     for (i = 0, j = objects.items.length; i < j; i++) {
       // just in case: ensure the object still has a DOM node.
       if (!objects.items[i]?.dom?.o) continue;
@@ -688,16 +682,14 @@ const Radar = () => {
                 rightBoundary,
                 objects.items[i].oParent.data.x / worldWidth
               )
-            ) *
-            (adjustedScreenWidth + 4);
+            ) * game.objects.view.data.browser.screenWidth;
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
           left =
             ((objects.items[i].oParent.data.x +
-              (objects.items[i].oParent.data.radarLeftOffset || 0) +
-              (leftOffsetsByType[objects.items[i].oParent.data.type] || 0)) /
+              (objects.items[i].oParent.data.radarLeftOffset || 0)) /
               worldWidth) *
-            (adjustedScreenWidth + 4);
+            game.objects.view.data.browser.screenWidth;
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
@@ -769,7 +761,9 @@ const Radar = () => {
       overflowWidth *
       (game.objects.view.data.battleField.scrollLeft / maxScrollLeft);
 
-    dom.radar.style.transform = `translate3d(-${data.radarScrollLeft}px, 0px, 0)`;
+    dom.radar.style.transform = `translate3d(${
+      data.radarScrollLeft * -1
+    }px, 0px, 0)`;
 
     alignTargetMarkerWithScroll();
   }
