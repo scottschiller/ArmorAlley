@@ -3358,7 +3358,7 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 }
 
 #radar .sprite.helicopter.local-player {
-  animation: blink calc(0.5s * var(--gs-frac)) infinite;
+  animation: blink calc(0.5s * var(--gs-frac)) steps(1) infinite;
 }
 
 #radar .sprite.expired {
@@ -7490,8 +7490,14 @@ body.loaded #stars.fade-in {
 }
 
 @keyframes blink {
+  0% {
+    opacity: 1;
+  }
   50% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
