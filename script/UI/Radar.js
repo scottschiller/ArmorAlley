@@ -29,7 +29,7 @@ import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
 
 const DEFAULT_UPSCALING_PORTRAIT = 3;
 // if on a desktop, scale somewhere in-between.
-const DEFAULT_UPSCALING_LANDSCAPE = isiPhone ? 1.5 : isMobile ? 3 : 2.25;
+const DEFAULT_UPSCALING_LANDSCAPE = isiPhone ? 2 : isMobile ? 3 : 2.25;
 
 // how much to widen icons by, separate from upscaling
 const DEFAULT_CSS_SCALING = 1;
