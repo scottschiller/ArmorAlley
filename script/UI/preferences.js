@@ -96,7 +96,7 @@ const defaultPrefs = {
   'ground_unit_traffic_control': true,
   'clouds_on_radar': true,
   'weapons_interval_classic': false,
-  'radar_scaling': isMobile,
+  'radar_scaling': true,
   'scan_ui_battlefield_enemy': true,
   'scan_ui_battlefield_friendly': true,
   'scan_ui_radar_enemy': true,
