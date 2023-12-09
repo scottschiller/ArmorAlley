@@ -407,8 +407,8 @@ body.is-mobile #game-menu-wrapper {
 }
 
 #game-menu-wrapper .logo-overlay-highlight {
-  width: 25%;
-  height: 130%;
+  width: 33%;
+  height: 150%;
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
@@ -418,8 +418,8 @@ body.is-mobile #game-menu-wrapper {
     rgba(255, 255, 255, 0) 95%,
     rgba(255, 255, 255, 0) 100%
   );
-  transform: translate3d(-100%, -15%, 0) rotate(12deg);
-  animation: glint 8s ease-in-out infinite;
+  transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
+  animation: glint 10s ease-in-out infinite;
   animation-delay: 1s;
 }
 
@@ -430,14 +430,14 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 
 @keyframes glint {
   0% {
-    transform: translate3d(-100%, -15%, 0) rotate(12deg);
+    transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
   }
   25% {
-    transform: translate3d(400%, -15%, 0) rotate(12deg);
+    transform: translate3d(350%, -14.5%, 0) rotate(15deg);
   }
   /* stay until the end */
   100% {
-    transform: translate3d(400%, -15%, 0) rotate(12deg);
+    transform: translate3d(300%, -14.5%, 0) rotate(15deg);
   }
 }
 
