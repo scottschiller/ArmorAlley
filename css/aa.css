@@ -6936,7 +6936,9 @@ body.radar_jammed .scan-node {
   body.is-mobile.notch-at-left #funds,
   body.is-mobile.notch-at-right #funds {
     /* "home screen" app, iOS Safari - and/or, address bar hidden - close to bezel */
-    margin-left: calc(env(safe-area-inset-left) / 5) !important;
+    /* Note: offset lagely due to use of zoom. */
+    margin-left: calc(env(safe-area-inset-left) / 4) !important;
+    top: calc(6px * var(--gs-tz));
   }
 
   /* bottom bar */
