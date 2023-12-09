@@ -25,7 +25,8 @@ import {
   rngInt,
   rng,
   rngPlusMinus,
-  GAME_SPEED
+  GAME_SPEED,
+  clientFeatures
 } from '../core/global.js';
 
 import {
@@ -897,7 +898,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isLocal) {
       game.objects.notifications.add(
-        data.autoFlip ? 'Auto-flip enabled' : 'Auto-flip disabled'
+        data.autoFlip ? 'Auto-flip enabled' : (clientFeatures.touch ? 'Auto-flip disabled.\nTap with another finger to flip manually.' : 'Auto-flip disabled')
       );
 
       // TODO: better "confirmation" sound
