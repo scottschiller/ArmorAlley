@@ -839,9 +839,6 @@ const View = () => {
         });
 
         game.objects.joystick.start(targetTouch);
-
-        // and exit.
-        return false;
       }
     }
 
@@ -868,11 +865,11 @@ const View = () => {
       }
     }
 
+    const keys = Object.keys(data.allTouchEvents);
+    const allTouches = keys.length;
+
     // something else...
     if (gamePrefs.radar_scaling) {
-      const keys = Object.keys(data.allTouchEvents);
-      const allTouches = keys.length;
-
       if (allTouches === 2) {
         /**
          * Second touch event has started.
@@ -884,9 +881,100 @@ const View = () => {
           // still held down? do the thing.
           if (data.allTouchEvents[id]) {
             game.objects.radar.toggleScaling();
+            // if auto-flip is off, the chopper will have also flipped due to the initial touch event.
+            // reverse this at this point, so the user doesn't have to do extra work when they wanted to flip radar scaling.
+            if (!gamePrefs.auto_flip) {
+              game?.players?.local?.flip();
+            }
           }
         }, 500);
-        return false;
+      }
+    }
+
+    /**
+     * Single, double and triple-tap "emulation" handlers
+     * For now, only interested in touch events on "open space."
+     */
+    const ids = /mobile-controls|battlefield/i;
+
+    if (game.data.started && ids.test(targetTouch?.target?.id)) {
+      const touch = targetTouch;
+      const now = Date.now();
+
+      let h = data.touchHistory;
+      let lastTouch = h?.length && h[h.length - 1];
+
+      // let isValidDouble, isValidTriple;
+
+      let handled;
+
+      if (lastTouch) {
+        const last = lastTouch.touch;
+        let delta = now - lastTouch.ts;
+
+        // current target
+        let t = touch;
+
+        // restrict touch to IDs, time, and distance.
+        if (delta >= DBL_TOUCH_MIN_TIME && delta <= DBL_TOUCH_MAX_TIME) {
+          if (
+            ids.test(t?.target?.id) &&
+            ids.test(last?.target?.id) &&
+            isFastEnough(t, last)
+          ) {
+            // valid double-tap
+
+            // 12/2023: Ignoring triple-tap stuff for now.
+            // TODO: refactor and make this more generic / external.
+
+            // isValidDouble = true;
+
+            handled = true;
+
+            game?.players?.local?.toggleAutoFlip();
+
+            /*
+            // now, check triple-tap case
+            let lastTouch2 = h?.length >= 2 && h[h.length - 2];
+            if (lastTouch2) {
+              delta = lastTouch.ts - lastTouch2.ts;
+              // allow slightly longer MAX_TIME for third tap
+              if (delta < DBL_TOUCH_MAX_TIME * 1.5) {
+                t = lastTouch2.touch;
+                if (isFastEnough(t, last)) {
+                  isValidTriple = true;
+                }
+              }
+            }
+            */
+          }
+
+          // toggle feature on triple-tap; otherwise, if auto-flip is *off*, then flip manually.
+          /*
+          if (isValidTriple) {
+            game?.players?.local?.toggleAutoFlip();
+          } else if (isValidDouble && !gamePrefs.auto_flip) {
+            game?.players?.local?.flip();
+          }
+          */
+        }
+      }
+
+      // at this point: if this is a second (or greater) finger, not already "handled" and auto-flip is not enabled, just flip.
+      // allTouches could be 3 if for example, flying, firing the gun, and now flipping as well.
+      if (allTouches >= 2 && !handled && !gamePrefs.auto_flip) {
+        game?.players?.local?.flip();
+      }
+
+      // always track
+      data.touchHistory.push({
+        ts: now,
+        touch
+      });
+
+      // and, constrain history to three items.
+      if (data.touchHistory.length > 3) {
+        data.touchHistory.shift();
       }
     }
 
@@ -1436,71 +1524,6 @@ const View = () => {
          * Thusly, infer from a real event: this is likely a touch event, and not from a mouse.
          */
         updateClientFeatures({ touch: true });
-      }
-
-      // double and triple-tap "emulation": mobile "helicopter flip" function
-      if (game.data.started && e?.changedTouches?.[0]) {
-        const touch = e.changedTouches[0];
-        const now = Date.now();
-
-        let h = data.touchHistory;
-        let lastTouch = h?.length && h[h.length - 1];
-
-        let isValidDouble, isValidTriple;
-
-        if (lastTouch) {
-          const last = lastTouch.touch;
-          let delta = now - lastTouch.ts;
-
-          // current target
-          let t = touch;
-
-          // we're only interested in double-tap on "open space", at present.
-          const ids = /mobile-controls|battlefield/i;
-
-          // restrict touch to IDs, time, and distance.
-          if (delta >= DBL_TOUCH_MIN_TIME && delta <= DBL_TOUCH_MAX_TIME) {
-            if (
-              ids.test(t?.target?.id) &&
-              ids.test(last?.target?.id) &&
-              isFastEnough(t, last)
-            ) {
-              // valid double-tap
-              isValidDouble = true;
-
-              // now, check triple-tap case
-              let lastTouch2 = h?.length >= 2 && h[h.length - 2];
-              if (lastTouch2) {
-                delta = lastTouch.ts - lastTouch2.ts;
-                // allow slightly longer MAX_TIME for third tap
-                if (delta < DBL_TOUCH_MAX_TIME * 1.5) {
-                  t = lastTouch2.touch;
-                  if (isFastEnough(t, last)) {
-                    isValidTriple = true;
-                  }
-                }
-              }
-            }
-
-            // toggle feature on triple-tap; otherwise, if auto-flip is *off*, then flip manually.
-            if (isValidTriple) {
-              game?.players?.local?.toggleAutoFlip();
-            } else if (isValidDouble && !gamePrefs.auto_flip) {
-              game?.players?.local?.flip();
-            }
-          }
-        }
-
-        // always track
-        data.touchHistory.push({
-          ts: now,
-          touch
-        });
-
-        // and, constrain history to three items.
-        if (data.touchHistory.length > 3) {
-          data.touchHistory.shift();
-        }
       }
 
       let i, j;
