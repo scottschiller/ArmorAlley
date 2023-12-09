@@ -1253,12 +1253,13 @@ body.loaded #radar {
 body.radar_enhanced_fx #radar-jammed-overlay {
   transition: mix-blend-mode 0.5s ease-in-out;
   mix-blend-mode: soft-light;
+  /* 'auto' gets somewhat smoother results in Firefox, less flickery-looking radar. */
+  image-rendering: auto;
 }
 
 #radar-jammed-overlay .noise,
-#world-noise-overlay .noise,
-body.bnb .tv-noise-overlay {
-  background: url(../image/noise-tv.png) 0 0/250px 250px;
+#world-noise-overlay .noise {
+  background: url(../image/noise-tv.webp) 0 0/250px 250px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -1279,18 +1280,8 @@ body.loaded #world-noise-overlay .noise {
 
 #radar-jammed-overlay .noise,
 #world-noise-overlay .noise {
-  image-rendering: optimizeSpeed;
   background-image: url(../image/noise-tv.png);
-  background-size: 200px 200px;
-}
-
-body.bnb .tv-noise-overlay {
-  animation: 1s steps(8) infinite both noise;
-  /* faster */
-  animation-duration: 0.5s;
-  background-size: 100px 100px;
-  filter: blur(0.4px);
-  opacity: 0.2;
+  background-size: 128px 128px;
 }
 
 #radar-jammed-overlay.active .noise {
@@ -1345,8 +1336,7 @@ body.is_safari.game-paused.radar_enhanced_fx #radar-jammed-overlay {
   background: rgba(0, 48, 0, 0.45) !important;
 }
 
-body.game-paused #radar-jammed-overlay.active .noise,
-body.game-paused .tv-noise-overlay {
+body.game-paused #radar-jammed-overlay.active .noise {
   animation: none;
 }
 
@@ -1364,7 +1354,7 @@ body.game-paused .tv-noise-overlay {
 
 /* special case: home screen, game menu. */
 body.radar_enhanced_fx #world-noise-overlay {
-  opacity: 0.35;
+  opacity: 0.65;
   mix-blend-mode: soft-light;
 }
 
