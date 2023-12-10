@@ -162,6 +162,11 @@ const Tank = (options = {}) => {
 
       utils.css.add(dom.o, css.exploding);
 
+      // there might be an override of sorts.
+      if (css.explodingType) {
+        utils.css.add(dom.o, css.explodingType);
+      }
+
       effects.damageExplosion(exports);
 
       effects.shrapnelExplosion(data, {
@@ -394,6 +399,7 @@ const Tank = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.tank,
+    explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
     stopped: 'stopped'
   });
 
