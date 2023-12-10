@@ -254,11 +254,12 @@ const Bomb = (options = {}) => {
       );
 
       // hide bomb sprite entirely on collision with these items...
-      hidden = data.hidden || target.data.type.match(/balloon|helicopter/i);
+      hidden = data.hidden || target.data.type.match(/balloon/i);
 
       bottomAlign =
         (!spark &&
           !hidden &&
+          target.data.type !== TYPES.helicopter &&
           target.data.type !== TYPES.superBunker &&
           target.data.type !== TYPES.balloon &&
           target.data.type !== TYPES.gunfire &&
