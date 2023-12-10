@@ -2145,11 +2145,11 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 }
 
 /* alignment / centering tweaks while on bunker w/chain */
-#battlefield .balloon.facing-left {
+#battlefield .balloon.facing-left:not(.exploding) {
   margin-left: 1.5px;
 }
 
-#battlefield .balloon.facing-right {
+#battlefield .balloon.facing-right:not(.exploding) {
   margin-left: -2.65px;
 }
 
@@ -2178,12 +2178,36 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   animation: balloonleft calc(0.8s * var(--gs-frac)) steps(8);
 }
 
-.balloon.exploding {
+.generic-explosion,
+.generic-explosion-2 {
   /* default when animation finishes */
-  animation: genericexplosionsmall calc(0.45s * var(--gs-frac)) steps(3);
+  animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
+  /* give the first frame a little more time */
+  animation-delay: 0.075s;
+  /* stay at the last frame, when animation finishes */
+  animation-fill-mode: forwards;
   background-image: url(../image/generic-explosion.png);
-  background-position: 0 -30px;
-  background-size: auto;
+  /* full-width, and 5x height for the five frames */
+  background-size: 100% 500%;
+  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #cc3333);
+}
+
+@keyframes classic-explosion {
+  from {
+    transform: translate3d(0%, 0%, 0);
+  }
+  to {
+    transform: translate3d(0%, -100%, 0);
+  }
+}
+
+.generic-explosion-2 {
+  background-image: url(../image/generic-explosion-2.png);
+}
+
+.generic-explosion .sub-sprite,
+.generic-explosion-2 .sub-sprite {
+  display: none;
 }
 
 .balloon.dead {
@@ -3079,15 +3103,17 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   background-size: 14px 6px;
 }
 
-.bomb.explosion-large,
-.bomb.spark .sub-sprite {
+.bomb.spark .sub-sprite,
+.bomb.spark-2 .sub-sprite {
   animation: none;
 }
 
-.bomb.explosion-large,
 .bomb.spark .sub-sprite,
+.bomb.spark-2 .sub-sprite,
 .gunfire.spark,
-.smart-missile.spark {
+.gunfire.spark-2,
+.smart-missile.spark,
+.smart-missile.spark-2 {
   background-image: url(../image/explosion-spark.png);
   background-position: 0 0;
   background-size: contain;
@@ -3095,10 +3121,50 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   width: 5px;
 }
 
+.bomb.spark-2 .sub-sprite,
+.gunfire.spark-2,
+.smart-missile.spark-2 {
+  background-image: url(../image/explosion-spark-2.png);
+}
+
 .gunfire.spark,
-.smart-missile.spark {
+.gunfire.spark-2,
+.smart-missile.spark,
+.smart-missile.spark-2 {
   background-color: transparent;
   z-index: 5;
+}
+
+#battlefield .sprite.explosion-classic,
+#battlefield .sprite.explosion-classic-2 {
+  background: 0 0;
+  width: 56px;
+  height: 22px;
+  margin-left: 0;
+  margin-top: 0;
+  filter: drop-shadow(
+    0 calc(-0.25px * var(--gs-tz)) calc(1.5px * var(--gs-tz)) #cc3333
+  );
+}
+
+#battlefield .sprite.explosion-classic .sub-sprite,
+#battlefield .sprite.explosion-classic-2 .sub-sprite {
+  background-image: url(../image/explosion-large.png);
+  animation: classic-explosion calc(0.4s * var(--gs-frac)) steps(5);
+  /* default when animation finishes */
+  animation-fill-mode: forwards;
+  top: 0;
+  left: 0;
+  bottom: auto;
+  width: 100%;
+  height: 500%;
+  /* this element had better have the right aspect ratio. :X */
+  background-size: 100% 100%;
+  background-position: 0px 0px;
+}
+
+#battlefield .sprite.explosion-classic-2 .sub-sprite {
+  background-image: url(../image/explosion-large-2.png);
 }
 
 .bomb.explosion-large {
@@ -3463,6 +3529,8 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
 .turret.exploding,
 .van.exploding {
   animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
+  /* give the first frame a little more time */
+  animation-delay: 0.1s;
   animation-fill-mode: forwards;
   /* Stay on last frame when finished */
   background-image: url(../image/explosion-shrapnel-2.png);
@@ -3911,17 +3979,19 @@ body:not(.game-started) .scan-node {
 .shrapnel {
   position: absolute;
   top: 0;
-  height: 12px;
   left: 0;
-  width: 12px;
+  width: 11px;
+  height: 10px;
 }
 
 .shrapnel .transform-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
   background-image: url(../image/shrapnel.png);
   background-position: 0 0;
-  height: 12px;
-  /* note: active width is 48px, but background image will be repositioned so only one type shows. */
-  width: 12px;
+  width: 88px;
+  height: 10px;
 }
 
 .shrapnel.stopped .transform-sprite {
@@ -7685,24 +7755,14 @@ body.loaded #stars.fade-in {
   }
 }
 
-@keyframes genericexplosion {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 -250px;
-  }
-}
-
 /* small */
 @keyframes genericexplosionsmall {
-  0% {
+  from {
     background-position: 0 0;
   }
 
   to {
-    background-position: 0 -45px;
+    background-position: 0 100%;
   }
 }
 
