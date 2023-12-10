@@ -390,7 +390,7 @@ const Bomb = (options = {}) => {
     className: 'bomb',
     explosionLarge: 'explosion-large',
     explosionClassic: oneOf(['explosion-classic', 'explosion-classic-2']),
-    spark: 'spark'
+    spark: oneOf(['spark', 'spark-2'])
   });
 
   data = common.inheritData(

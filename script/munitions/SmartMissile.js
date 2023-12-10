@@ -6,6 +6,7 @@ import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
 import {
   GAME_SPEED,
   getTypes,
+  oneOf,
   rad2Deg,
   rndInt,
   rng,
@@ -933,7 +934,7 @@ const SmartMissile = (options = {}) => {
     trackingRemoval: 'smart-missile-tracking-removal',
     trailer: 'smart-missile-trailer',
     expired: 'expired',
-    spark: 'spark'
+    spark: oneOf(['spark', 'spark-2'])
   });
 
   // if game preferences allow AND no default specified, then pick at random.

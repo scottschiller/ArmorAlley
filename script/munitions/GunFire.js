@@ -9,7 +9,8 @@ import {
   TYPES,
   getTypes,
   rnd,
-  GAME_SPEED
+  GAME_SPEED,
+  oneOf
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -314,7 +315,7 @@ const GunFire = (options = {}) => {
   css = common.inheritCSS({
     className: 'gunfire',
     expired: 'expired',
-    spark: 'spark'
+    spark: oneOf(['spark', 'spark-2'])
   });
 
   data = common.inheritData(
