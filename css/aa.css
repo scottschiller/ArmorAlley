@@ -3766,18 +3766,18 @@ body.is_safari .cornholio .sub-sprite {
 
 .bunker.burning .sub-sprite.rubble,
 .bunker.exploding .sub-sprite.rubble {
-  animation: burninating calc(0.66s * var(--gs-frac)) steps(3) infinite;
-  background-image: url(../image/bunker-burning-sprite-horizontal.gif);
+  animation: burninating calc(0.5s * var(--gs-frac)) steps(4) infinite;
+  background-image: url(../image/bunker-burning-sprite-horizontal.png);
   background-position: 0 0;
   background-repeat: no-repeat;
   bottom: 0;
-  height: 8px;
+  height: 9px;
   left: 0;
   position: absolute;
   /* transition duration set via JS */
   transition: opacity;
-  /* 52px * 3 frames */
-  width: 156px;
+  /* 53px * 4 frames */
+  width: 212px;
 }
 
 .bunker.burning-out .sub-sprite.rubble {
@@ -3791,11 +3791,11 @@ body.is_safari .cornholio .sub-sprite {
   background-position: 50% 100%;
   display: block;
   /* room for burning animation */
-  height: 8px;
+  height: 9px;
   margin-left: 0;
   /* to get 25px height, align with bottom */
-  margin-top: 17px;
-  width: 52px;
+  margin-top: 16px;
+  width: 53px;
 }
 
 #bottom {
@@ -7525,7 +7525,7 @@ body.loaded #stars.fade-in {
   }
 
   to {
-    transform: translate3d(-156px, 0, 0);
+    transform: translate3d(-100%, 0, 0);
   }
 }
 
