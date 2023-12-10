@@ -4,6 +4,7 @@ import { gameType } from '../aa.js';
 import {
   FPS,
   getTypes,
+  oneOf,
   rad2Deg,
   rnd,
   rndInt,
@@ -257,6 +258,10 @@ const Turret = (options = {}) => {
       }
 
       utils.css.add(dom.o, css.exploding);
+
+      if (css.explodingType) {
+        utils.css.add(dom.o, css.explodingType);
+      }
 
       common.setFrameTimeout(() => {
         utils.css.remove(dom.o, css.exploding);
@@ -708,6 +713,7 @@ const Turret = (options = {}) => {
     className: TYPES.turret,
     destroyed: 'destroyed',
     engineerInteracting: 'engineer-interacting',
+    explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
     firing: 'firing',
     scanNode: 'scan-node'
   });

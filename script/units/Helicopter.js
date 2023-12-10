@@ -1238,7 +1238,14 @@ const Helicopter = (options = {}) => {
     data.shakeOffset = 0;
 
     utils.css.remove(dom.o, css.exploding);
+    if (css.explodingType) {
+      utils.css.remove(dom.o, css.explodingType);
+    }
+
     utils.css.remove(dom.o, css.dead);
+
+    // randomize
+    css.explodingType = getRandomExplodingType();
 
     // reposition on appropriate landing pad
     data.x = common.getLandingPadOffsetX(exports);
@@ -1270,6 +1277,10 @@ const Helicopter = (options = {}) => {
     data.frameCount = 0;
 
     utils.css.add(dom.o, css.exploding);
+
+    if (css.explodingType) {
+      utils.css.add(dom.o, css.explodingType);
+    }
 
     const { attacker } = dieOptions;
     const aData = attacker?.data;
@@ -2896,6 +2907,10 @@ const Helicopter = (options = {}) => {
     }
   }
 
+  function getRandomExplodingType() {
+    return oneOf(['', 'generic-explosion', 'generic-explosion-2']);
+  }
+
   function initTrailers() {
     let i, trailerConfig, fragment;
 
@@ -3017,6 +3032,7 @@ const Helicopter = (options = {}) => {
     animating: 'animating',
     active: 'active',
     disabled: 'disabled',
+    explodingType: getRandomExplodingType(),
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
     flippedLeft: 'flipped-left',

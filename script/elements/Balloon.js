@@ -9,7 +9,8 @@ import {
   rngInt,
   rngPlusMinus,
   rng,
-  GAME_SPEED
+  GAME_SPEED,
+  oneOf
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -89,7 +90,7 @@ const Balloon = (options = {}) => {
     if (data.dead) return;
 
     // pop!
-    utils.css.add(dom.o, css.exploding);
+    utils.css.add(dom.o, css.exploding, css.explodingType);
 
     if (sounds.balloonExplosion) {
       playSound(sounds.balloonExplosion, exports);
@@ -127,9 +128,9 @@ const Balloon = (options = {}) => {
 
       if (dom.o) {
         // hide the balloon
-        utils.css.swap(dom.o, css.exploding, css.dead);
+        utils.css.swap(dom.o, css.exploding, css.dead, css.explodingType);
       }
-    }, 550);
+    }, 750);
 
     zones.leaveAllZones(exports);
 
@@ -278,6 +279,10 @@ const Balloon = (options = {}) => {
     sprites.moveWithScrollOffset(exports);
   }
 
+  function randomExplosionType() {
+    return oneOf(['generic-explosion', 'generic-explosion-2']);
+  }
+
   reset = () => {
     // respawn can actually happen now
 
@@ -306,8 +311,10 @@ const Balloon = (options = {}) => {
     // update UI, right away?
     animate();
 
-    utils.css.remove(dom.o, css.exploding);
-    utils.css.remove(dom.o, css.dead);
+    utils.css.remove(dom.o, css.exploding, css.explodingType, css.dead);
+
+    // randomize again
+    css.explodingType = randomExplosionType();
 
     sprites.updateEnergy(exports);
 
@@ -373,6 +380,7 @@ const Balloon = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.balloon,
+    explodingType: randomExplosionType(),
     friendly: 'friendly',
     enemy: 'enemy',
     facingLeft: 'facing-left',
