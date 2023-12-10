@@ -1250,7 +1250,7 @@ const View = () => {
 
     utils.events.add(document, 'dblclick', () => {
       // only do if game isn't paused, prefs modal isn't up etc.
-      if (game.data.started && game.data.paused) return;
+      if ((game.data.started && game.data.paused) || game.data.battleOver) return;
       game?.players?.local?.toggleAutoFlip();
     });
 
