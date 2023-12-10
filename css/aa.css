@@ -2521,11 +2521,11 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 
 .next-missile-target {
   /* halo around potential targets */
-  filter: drop-shadow(0 0 5px #999);
+  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #999);
 }
 
 .smart-missile-tracking {
-  filter: drop-shadow(0 0 5px #ff3333);
+  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #ff3333);
 }
 
 .smart-missile-tracking:not(.turret):not(.parachute-infantry) {
@@ -3572,13 +3572,15 @@ body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
   width: 112px;
   z-index: 5;
   /* let nuke show on top of smoke */
-  filter: drop-shadow(0 0 8px #fff);
+  filter: drop-shadow(
+    0 calc(-0.25px * var(--gs-tz)) calc(1.5px * var(--gs-tz)) #fff
+  );
   transition: filter 0.5s ease-in-out;
 }
 
 .base.burning {
   /* a little "nuclear" glow, why not. */
-  filter: drop-shadow(0 0 16px #fff);
+  filter: drop-shadow(0 0 calc(8px * var(--gs-tz)) #fff);
   transition: filter 0.5s ease-in-out;
   width: 103px;
   height: 103px;
