@@ -6280,12 +6280,12 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
 .generic-cta:hover {
   background-color: #0a0;
   color: #fff;
-  filter: drop-shadow(0 0 3px #99ff99);
+  filter: drop-shadow(0 0 calc(1.5px * var(--menu-scale)) #66cc66);
 }
 
 #game-menu button.large.game-start:active,
 .generic-cta:active {
-  filter: drop-shadow(0 0 1.5px #99ff99);
+  filter: drop-shadow(0 0 calc(0.75px * var(--menu-scale)) #66cc66);
 }
 
 #game-menu .cta:not(label),
