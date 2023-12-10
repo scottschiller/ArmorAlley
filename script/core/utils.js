@@ -76,9 +76,14 @@ const utils = {
       utils.css[conditionToAdd ? 'add' : 'remove'](o, ...classNames);
     },
 
-    swap: (o, c1, c2) => {
-      o?.classList?.remove(c1);
-      o?.classList?.add(c2);
+    swap: (o, out, ...restIn) => {
+      if (!o?.classList) return;
+      if (out) {
+        o.classList.remove(...out);
+      }
+      if (restIn) {
+        o.classList.add(...restIn);
+      }
     }
   },
 
