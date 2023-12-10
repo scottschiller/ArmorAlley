@@ -3270,7 +3270,7 @@ const Helicopter = (options = {}) => {
           data.y = e.clientY * (1 / screenScale);
 
           effects.shrapnelExplosion(data, {
-            count: 8 + rndInt(8),
+            count: 8 + rndInt(16),
             velocity: 4 + rngInt(4, TYPES.shrapnel),
             // first burst always looks too similar, here.
             noInitialSmoke: true
