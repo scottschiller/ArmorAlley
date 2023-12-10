@@ -11,7 +11,8 @@ import {
   worldHeight,
   TYPES,
   getTypes,
-  GAME_SPEED
+  GAME_SPEED,
+  oneOf
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
@@ -70,8 +71,14 @@ const Bomb = (options = {}) => {
       playSound(sounds.bombExplosion, exports);
     }
 
+    const isClassicExplosion =
+      !dieOptions?.type || dieOptions.type !== TYPES.bunker;
+
     if (dieOptions.spark) {
       data.extraTransforms = `rotate3d(0, 0, 1, ${rnd(15) * plusMinus()}deg)`;
+    } else if (isClassicExplosion) {
+      // restore original scale.
+      data.scale = 1;
     } else {
       // hackish: offset rotation so explosion points upward.
       data.lastAngle -= 90;
@@ -84,10 +91,19 @@ const Bomb = (options = {}) => {
     if (dieOptions.hidden) {
       dom.o.style.visibility = 'hidden';
     } else {
-      className = !dieOptions.spark ? css.explosionLarge : css.spark;
+      className = !dieOptions.spark
+        ? isClassicExplosion
+          ? css.explosionClassic
+          : css.explosionLarge
+        : css.spark;
     }
 
     if (dieOptions.bottomAlign) {
+      if (isClassicExplosion) {
+        // hack: ensure that angle is 0 for the classic explosion sprite.
+        data.lastAngle = 0;
+      }
+
       // bombs explode, and dimensions change when they hit the ground.
 
       // adjust for larger explosion, "expanding" on both sides
@@ -367,6 +383,7 @@ const Bomb = (options = {}) => {
   css = common.inheritCSS({
     className: 'bomb',
     explosionLarge: 'explosion-large',
+    explosionClassic: oneOf(['explosion-classic', 'explosion-classic-2']),
     spark: 'spark'
   });
 
