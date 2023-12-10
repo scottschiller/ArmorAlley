@@ -28,6 +28,8 @@ const Shrapnel = (options = {}) => {
     exports,
     type = TYPES.shrapnel;
 
+  const spriteTypes = 8;
+
   function moveTo(x, y) {
     let relativeScale;
 
@@ -266,10 +268,10 @@ const Shrapnel = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    // apply the type of shrapnel, reversing any scaling (so we get the original pixel dimensions)
+    // apply the type of shrapnel
     dom.oTransformSprite._style.setProperty(
-      'background-position',
-      `${(data.spriteType * -data.width * 1) / data.scale}px 0px`
+      'transform',
+      `translate3d(${(data.spriteType / spriteTypes) * -100}%, 0px, 0)`
     );
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
@@ -302,7 +304,7 @@ const Shrapnel = (options = {}) => {
     {
       type,
       parentType: options.type || null,
-      spriteType: rngInt(4, type),
+      spriteType: rngInt(spriteTypes + 1, type),
       direction: 0,
       // sometimes zero / non-moving?
       vX: options.vX || 0,
@@ -313,8 +315,8 @@ const Shrapnel = (options = {}) => {
       // randomize fall rate
       gravityBase: 0.08,
       gravityRate: rng(0.05, type),
-      width: 12 * scale,
-      height: 12 * scale,
+      width: 11 * scale,
+      height: 10 * scale,
       scale,
       scaleRange: 0.4 + rng(0.25, type),
       rotate3DAngle: rndAngle(),
