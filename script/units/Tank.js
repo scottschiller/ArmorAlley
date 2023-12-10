@@ -305,7 +305,10 @@ const Tank = (options = {}) => {
     data.frameCount++;
 
     // exit early if dead
-    if (data.dead) return !data.deadTimer && !dom.o;
+    if (data.dead) {
+      sprites.moveWithScrollOffset(exports);  
+      return !data.deadTimer && !dom.o;
+    }
 
     repair();
 

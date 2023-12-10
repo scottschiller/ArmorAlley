@@ -199,14 +199,14 @@ const MissileLauncher = (options = {}) => {
   function animate() {
     data.frameCount++;
 
-    if (data.dead) return !dom.o;
-
     if (!data.stopped) {
       sprites.moveTo(exports, data.x + data.vX * GAME_SPEED, data.y);
     } else {
       // if stopped, just take scroll into effect
       sprites.moveWithScrollOffset(exports);
     }
+
+    if (data.dead) return !dom.o;
 
     effects.smokeRelativeToDamage(exports);
 
