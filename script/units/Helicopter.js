@@ -1358,8 +1358,11 @@ const Helicopter = (options = {}) => {
     effects.shrapnelExplosion(data, {
       count: 20,
       velocity: 4 + rngInt(4, TYPES.shrapnel),
-      parentVX: data.vX,
-      parentVY: data.vY,
+      vX: data.vX,
+      vY: -Math.abs(data.vY),
+      // special case: if a smart missile, use its velocity as the basis for the shrapnel.
+      parentVX: (attacker && aData?.type === TYPES.smartMissile ? aData.vX || data.vX : data.vX),
+      parentVY: -Math.abs(data.vY),
       // first burst always looks too similar, here.
       noInitialSmoke: true
     });
