@@ -2626,8 +2626,9 @@ body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
 .helicopter.flipped-right {
   animation: flipleft calc(0.33s * var(--gs-frac)) steps(3);
   background-image: url(../image/helicopter-rotating.png) !important;
-  height: 20px;
+  background-size: 50px 60px;
   width: 50px;
+  height: 20px;
 }
 
 .helicopter.flipped-left .transform-sprite,
