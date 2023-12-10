@@ -195,8 +195,8 @@ const Bomb = (options = {}) => {
               data.width / 2 +
               rndInt(data.width / 2) * 0.33 * plusMinus(),
             y: data.y + 12,
-            vX: rnd(4) * plusMinus(),
-            vY: rnd(-4),
+            vX: plusMinus(rnd(5)),
+            vY: rnd(-2),
             spriteFrame: rndInt(5)
           })
         );
