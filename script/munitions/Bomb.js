@@ -205,6 +205,11 @@ const Bomb = (options = {}) => {
 
     effects.domFetti(exports, dieOptions.target);
 
+    effects.inertGunfireExplosion({
+      exports,
+      count: 2 + rndInt(2)
+    });
+
     data.dead = true;
 
     if (radarItem) {
