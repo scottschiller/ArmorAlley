@@ -19,6 +19,7 @@ const Funds = () => {
     displayValue: 0,
     lastActiveDisplayValue: 0,
     lastBnBValue: 0,
+    clientRect: null,
     bnbTimer: null,
     hideLeadingZeroes: true,
     frameInterval: 3,
@@ -155,6 +156,14 @@ const Funds = () => {
     }
   }
 
+  function getWrecked() {
+    // $$$
+    if (!data.clientRect && dom.digits?.length) {
+      data.clientRect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
+    }
+    return data.clientRect;
+  }
+
   function redrawDigit(i) {
     // include the value of the prior column in the current background position offset.
     // e.g., if there are 30 funds, the "ones" column should have an offset accounting for three "sets" of 0-9.
@@ -163,7 +172,7 @@ const Funds = () => {
     const tensOffset = (data.offsetTop[i - 1] || 0) * 10;
 
     // $$$: get the *real* rendered width / height (of the last digit)
-    const rect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
+    const rect = getWrecked();
 
     // scale to the real size - 1x + 10x
     dom.digits[i].style.setProperty(
@@ -184,8 +193,11 @@ const Funds = () => {
     // this will then be used to do offsets for animating numbers
     if (!dom.digits.length) return;
 
+    // reset
+    data.clientRect = null;
+
     // $$$: get the *real* rendered width / height (of the last digit)
-    const rect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
+    const rect = getWrecked();
 
     data.displayHeight = rect.height;
 
