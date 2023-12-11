@@ -3187,21 +3187,31 @@ body:not(.game-over).radar_jammed #radar {
   opacity: 0;
 }
 
-body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed #battlefield {
-  /**
+/*
+body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed
+  #battlefield {
+*/
+/**
    * This number is affected by transforms, but not zoom-based scaling.
    * Therefore, offset this filter using the transform scale (if set.)
    *
    * Note: Excluding mobile - this might hit performance on iOS Safari
    * when lots of radar scan nodes and sprites are on the screen.
    */
-  /* filter: blur(calc(1px * (1 / var(--gs-tz)))); */
+/* filter: blur(calc(1px * (1 / var(--gs-tz)))); */
+/*
 }
+*/
 
-body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox #battlefield {
-  /* firefox seems to be more aggressive with the blur stuff; it's both literally and metaphorically unclear. :D */
-  /* filter: blur(calc(0.33px * (1 / var(--gs-tz)))); */
+/*
+body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
+  #battlefield {
+*/
+/* firefox seems to be more aggressive with the blur stuff; it's both literally and metaphorically unclear. :D */
+/* filter: blur(calc(0.33px * (1 / var(--gs-tz)))); */
+/*
 }
+*/
 
 #radar .sprite {
   position: absolute;
