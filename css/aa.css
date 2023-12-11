@@ -441,6 +441,22 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
   }
 }
 
+#start-game-button-mobile {
+  margin: 0.65em auto 0 auto;
+  border-radius: 5px;
+}
+
+body.loaded.is-mobile #start-game-button-mobile {
+  transition: all 0.5s ease-in-out;
+  transition-property: opacity, transform;
+}
+
+body.game-started #start-game-button-mobile {
+  transform: scale3d(1.2, 1.2, 1);
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
 #game-menu-wrapper .logo-overlay {
   position: absolute;
   top: 0;
@@ -6222,7 +6238,7 @@ button.attention:not(:active) {
   margin-right: calc(4px * var(--menu-scale));
 }
 
-#game-menu button.large,
+#game-menu-wrapper button.large,
 .generic-cta {
   color: #333;
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
@@ -6232,23 +6248,23 @@ button.attention:not(:active) {
   vertical-align: middle;
 }
 
-#game-menu button.game-start {
+#game-menu-wrapper button.game-start {
   font-family: 'Cheddar Gothic Stencil';
   font-size: calc(13.75px * var(--menu-scale));
   padding: calc(4px * var(--menu-scale));
 }
 
-#game-menu button.game-start .emoji-text {
+#game-menu-wrapper button.game-start .emoji-text {
   position: relative;
   top: -0.1em;
 }
 
-body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
+body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
   /* ugh. */
   vertical-align: bottom;
 }
 
-#game-menu button.large:hover {
+#game-menu-wrapper button.large:hover {
   background-color: rgba(0, 255, 0, 0.5);
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
@@ -6269,7 +6285,7 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
   line-height: 10px;
 }
 
-#game-menu button.game-start,
+#game-menu-wrapper button.game-start,
 .generic-cta {
   background: rgba(0, 255, 0, 0.5);
   border-color: transparent;
@@ -6277,38 +6293,33 @@ body.is_safari.is-mobile #game-menu button.game-start .emoji-text {
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
 }
 
-#game-menu button.large.game-start:hover,
+#game-menu-wrapper button.large.game-start:hover,
 .generic-cta:hover {
   background-color: #0a0;
   color: #fff;
   filter: drop-shadow(0 0 calc(1.5px * var(--menu-scale)) #66cc66);
 }
 
-#game-menu button.large.game-start:active,
+#game-menu-wrapper button.large.game-start:active,
 .generic-cta:active {
   filter: drop-shadow(0 0 calc(0.75px * var(--menu-scale)) #66cc66);
 }
 
-#game-menu .cta:not(label),
-#game-menu button.large,
+#game-menu-wrapper .cta:not(label),
+#game-menu-wrapper button.large,
 .generic-cta.large {
   border: 1px solid transparent;
   transition: background-color 50ms, color 50ms, filter 50ms, text-shadow 50ms,
     transform 50ms;
 }
 
-body.is_safari:not(.is-mobile) #game-menu button {
-  /* safari 2x zoom hacks: these are glitchy when combined with zoom, methinks. */
-  transition: none;
-}
-
-#game-menu button.large:active {
+#game-menu-wrapper button.large:active {
   background-color: (0, 192, 0, 0.25);
   filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.5));
 }
 
-#game-menu .cta:not(label):active,
-#game-menu button.large:active,
+#game-menu-wrapper .cta:not(label):active,
+#game-menu-wrapper button.large:active,
 .generic-cta:active {
   transform: scale3d(0.9, 0.9, 1);
   transform-origin: 50% 50%;

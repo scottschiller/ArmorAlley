@@ -293,13 +293,17 @@ function init() {
   }
 
   if (battle && autoStart) {
-    common.setFrameTimeout(() => {
+    // mobile needs user interaction, shows a button.
+    if (isMobile) return;
+    // desktop can do this immediately.
+    common.setFrameTimeout(
       formClick({
         target: {
           action: 'start-game'
         }
-      });
-    }, 1000);
+      }),
+      1000
+    );
   }
 }
 
