@@ -1218,8 +1218,6 @@ body.game-started #funds {
 
 #radar-scrubber.active {
   cursor: grabbing;
-  /* background-image: none; */
-  /* background-color: rgba(0,0,0,0.25); */
   opacity: 0.75;
 }
 
