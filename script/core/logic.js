@@ -11,6 +11,7 @@ import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { gamePrefs } from '../UI/preferences.js';
+import { playSound, sounds } from './sound.js';
 
 // certain types can be filtered in prefs, e.g., `notify_infantry = false`
 const notificationFilterTypes = {
@@ -769,11 +770,13 @@ function checkProduction() {
     announcement =
       'You own all bunkers. <span class="inline-emoji">🎉</span>\nEnemy production is halted. <span class="inline-emoji">🚫</span>';
     gData.productionHalted = true;
+    playSound(sounds.productionHalted);
   } else if (gData.productionHalted && !bunkersOwned) {
     // CPU has regained control of a bunker.
     announcement =
       'You no longer own all bunkers. <span class="inline-emoji">😰</span>\nEnemy production is resuming. <span class="inline-emoji">🛠️</span>';
     gData.productionHalted = false;
+    playSound(sounds.productionResuming);
   }
 
   if (announcement) {

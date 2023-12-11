@@ -1123,6 +1123,14 @@ soundManager.onready(() => {
     })
   ]);
 
+  sounds.productionHalted = add({
+    url: 'ta-metal-off'
+  });
+
+  sounds.productionResuming = add({
+    url: 'ta-metal-on'
+  });
+
   sounds.chainSnapping = add({
     url: 'chain-snapping',
     volume: 15
