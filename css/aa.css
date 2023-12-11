@@ -1014,7 +1014,7 @@ body.game-started #funds {
   display: inline-block;
   width: calc(4.25px * var(--gs-tz));
   height: calc(8.5px * var(--gs-tz));
-  margin-top: calc(-0.5px * var(--gs-tz));
+  margin-top: calc(-0.55px * var(--gs-tz));
   /* tighten "letter spacing" a bit */
   margin-right: calc(-0.33px * var(--gs-tz));
   opacity: 1;
