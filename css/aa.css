@@ -442,11 +442,13 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 }
 
 #start-game-button-mobile {
+  display: none;
   margin: 0.65em auto 0 auto;
   border-radius: 5px;
 }
 
-body.loaded.is-mobile #start-game-button-mobile {
+body.auto-start.is-mobile.loaded #start-game-button-mobile {
+  display: block;
   transition: all 0.5s ease-in-out;
   transition-property: opacity, transform;
 }
