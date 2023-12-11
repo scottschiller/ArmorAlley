@@ -151,10 +151,6 @@ const Radar = () => {
       return result;
     }
 
-    // TODO: review.
-    // if radar is jammed, items will be display: none and layout can't be read. bail.
-    if (data.isJammed) return itemObject;
-
     // read from DOM ($$$) and cache
     // note: offsetWidth + offsetHeight return integers, and without padding.
     let rect = itemObject.dom.o.getBoundingClientRect();
