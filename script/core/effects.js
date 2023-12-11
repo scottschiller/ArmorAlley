@@ -463,9 +463,12 @@ const effects = {
       vY: 1
     });
 
-    // additionally, create an additional explosion animation here.
+    // additionally, create an additional explosion animation here if it was from a bomb.
     // exclude bunkers as they have a nuke animation, that's plenty. ;)
-    if (data.type !== TYPES.bunker) {
+    if (
+      data.type !== TYPES.bunker &&
+      data.attacker?.data?.type === TYPES.bomb
+    ) {
       effects.ephemeralExplosion(exports);
     }
   },
