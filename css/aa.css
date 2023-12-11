@@ -6889,15 +6889,16 @@ body.game-paused #tutorial-window {
   margin-bottom: 0.55em;
 }
 
+
 #tutorial-window .body .mobile-touch-example {
   display: inline-block;
-  padding: calc(0.5px * var(--game-scale-transform));
+  padding: calc(0.5px * var(--gs-tz));
   box-sizing: content-box;
   border-radius: 100%;
-  border: calc(0.5px * var(--game-scale-transform)) solid #666;
+  border: calc(0.5px * var(--gs-tz)) solid #666;
   vertical-align: text-top;
-  line-height: calc(4.5px * var(--game-scale-transform));
-  --size: calc(5px * var(--game-scale-transform));
+  line-height: calc(4.74px * var(--gs-tz));
+  --size: calc(5px * var(--gs-tz));
   width: var(--size);
   height: var(--size);
   text-align: center;
