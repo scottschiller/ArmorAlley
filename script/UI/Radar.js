@@ -371,7 +371,7 @@ const Radar = () => {
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
-    // layout will be unavailable while jammed.
+    // ignore while jammed, since this "relies" on working radar.
     if (data.isJammed) return;
 
     // sanity check: ensure this object still exists.
