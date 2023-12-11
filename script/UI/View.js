@@ -1250,7 +1250,8 @@ const View = () => {
 
     utils.events.add(document, 'dblclick', () => {
       // only do if game isn't paused, prefs modal isn't up etc.
-      if ((game.data.started && game.data.paused) || game.data.battleOver) return;
+      if ((game.data.started && game.data.paused) || game.data.battleOver)
+        return;
       game?.players?.local?.toggleAutoFlip();
     });
 
@@ -1517,6 +1518,9 @@ const View = () => {
 
       // pass-thru if game menu is showing
       if (!game.data.started) return true;
+
+      // likewise, if prefs modal is up.
+      if (prefsManager.isActive()) return true;
 
       if (e?.changedTouches && !clientFeatures.touch) {
         /**
