@@ -1251,15 +1251,19 @@ body.loaded #radar {
 }
 
 body.radar_enhanced_fx #radar-jammed-overlay {
-  transition: mix-blend-mode 0.5s ease-in-out;
-  mix-blend-mode: soft-light;
   /* 'auto' gets somewhat smoother results in Firefox, less flickery-looking radar. */
   image-rendering: auto;
 }
 
-#radar-jammed-overlay .noise,
+body.radar_enhanced_fx #radar-jammed-overlay.active,
+body.radar_enhanced_fx #world-noise-overlay {
+  /* Probably $$$ - only apply when active. */
+  mix-blend-mode: soft-light;
+}
+
+#radar-jammed-overlay.active .noise,
 #world-noise-overlay .noise {
-  background: url(../image/noise-tv.webp) 0 0/250px 250px;
+  background: url(../image/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -1273,29 +1277,10 @@ body.radar_enhanced_fx #radar-jammed-overlay {
   top: 0;
 }
 
-body.loaded #radar-jammed-overlay .noise,
-body.loaded #world-noise-overlay .noise {
-  transition: opacity 0.25s ease-in;
-}
-
-#radar-jammed-overlay .noise,
-#world-noise-overlay .noise {
-  background-image: url(../image/noise-tv.png);
-  background-size: 128px 128px;
-}
-
 #radar-jammed-overlay.active .noise {
-  /* default: lower "frame rate" on desktop; reduce compositing work. */
+  /* default: lower "frame rate" on desktop; reduce compositing work? */
   animation: 1.6s steps(8) infinite both noise;
   opacity: 0.15;
-}
-
-/* note: radar jammed, plus game screen overlays */
-body.demo.radar_enhanced_fx #radar-jammed-overlay.active .noise,
-body.demo.radar_enhanced_fx #world-noise-overlay .noise {
-  /* always run, reduce hit on jam start? */
-  background-color: rgba(0, 0, 0, 0.25);
-  animation: 1s steps(15) infinite both noise;
 }
 
 /* note: radar jammed, plus game screen overlays */
