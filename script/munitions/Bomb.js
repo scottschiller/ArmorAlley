@@ -72,7 +72,9 @@ const Bomb = (options = {}) => {
     }
 
     const isClassicExplosion =
-      !dieOptions?.type || dieOptions.type !== TYPES.bunker;
+      !dieOptions?.type ||
+      (dieOptions.type !== TYPES.bunker &&
+        dieOptions.type !== TYPES.superBunker);
 
     if (dieOptions.spark) {
       data.extraTransforms = `rotate3d(0, 0, 1, ${rnd(15) * plusMinus()}deg)`;
