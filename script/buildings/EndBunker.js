@@ -97,6 +97,7 @@ const EndBunker = (options = {}) => {
     const isYourCapture = data.isEnemy !== game.players.local.data.isEnemy;
 
     if (!tutorialMode) {
+      playSound(sounds.cashMoney);
       if (isYourCapture) {
         if (!capturedFunds) {
           game.objects.notifications.add(

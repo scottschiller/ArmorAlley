@@ -610,6 +610,8 @@ Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://gith
 
 [Huge Explosion Part 3 - Long Crash](https://freesound.org/people/bevibeldesign/sounds/366086/) by bevibeldesign (CC0)
 
+[Cash Register](https://freesound.org/people/kiddpark/sounds/201159/) by kiddpark (CC BY 4.0 Deed)
+
 ## Images
 
 Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)

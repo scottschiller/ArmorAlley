@@ -1123,6 +1123,10 @@ soundManager.onready(() => {
     })
   ]);
 
+  sounds.cashMoney = add({
+    url: 'cash-money'
+  });
+
   sounds.productionHalted = add({
     url: 'ta-metal-off'
   });
