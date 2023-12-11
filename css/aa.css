@@ -1062,7 +1062,7 @@ body.game-started #funds {
 #queue {
   /* collapse whitespace */
   font-size: 0;
-  top: 8%;
+  top: 0;
   left: 1%;
   position: absolute;
   vertical-align: top;
