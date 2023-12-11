@@ -81,7 +81,7 @@ const defaultPrefs = {
   'notifications_location': isMobile
     ? PREFS.NOTIFICATIONS_LOCATION_RIGHT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
-  'notifications_order_bottom_up': isMobile,
+  'notifications_order_bottom_up': true,
   'notify_engineer': true,
   'notify_infantry': true,
   'notify_missile-launcher': true,

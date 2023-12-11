@@ -5027,6 +5027,11 @@ body:not(.is-mobile) .mobile-only {
   pointer-events: none;
 }
 
+body.is-mobile #notification-toasts {
+  /* always have a little L/R room on mobile */
+  padding: 0px 1%;
+}
+
 #notification-toasts.left-aligned {
   right: auto;
   left: 2.05%;
@@ -6895,7 +6900,6 @@ body.game-paused #tutorial-window {
   margin-bottom: 0.55em;
 }
 
-
 #tutorial-window .body .mobile-touch-example {
   display: inline-block;
   padding: calc(0.5px * var(--gs-tz));
@@ -7048,10 +7052,12 @@ body.radar_jammed .scan-node {
     body.is-mobile #notification-toasts {
       /* iPad / tablet */
       font-size: calc(7px * var(--gs-tz));
+      line-height: 150%;
     }
 
     body.is_iphone #notification-toasts {
       font-size: calc(10px * var(--gs-tz));
+      line-height: 150%;
     }
   }
 }
