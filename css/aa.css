@@ -1062,16 +1062,11 @@ body.game-started #funds {
 #queue {
   /* collapse whitespace */
   font-size: 0;
-  left: 6px;
+  top: 8%;
+  left: 1%;
   position: absolute;
-  top: 1px;
   vertical-align: top;
   white-space: nowrap;
-}
-
-body.is_safari:not(.is-mobile) #queue {
-  /* zoom shenanigans */
-  top: 2px;
 }
 
 #queue .progress {
@@ -1090,7 +1085,6 @@ body.is_safari:not(.is-mobile) #queue {
   filter: grayscale(1) blur(8px);
   font-family: JetBrains Mono, SF Mono, Lucida Console, Terminal, Monaco,
     monospace;
-  font-size: 0.5rem;
   height: 22px;
   margin-right: 0;
   margin-top: 15px;
@@ -1101,18 +1095,7 @@ body.is_safari:not(.is-mobile) #queue {
   transition-property: width, margin, opacity, filter, transform;
   vertical-align: top;
   /* small letter, e.g., "T" for "Tank" */
-  width: 0.5rem;
-}
-
-#queue .queue-item.has-counter {
-  margin-right: -3px;
-  /* expand */
-  width: 1rem;
-}
-
-#queue .queue-item.has-counter.over-ten {
-  margin-right: 0;
-  width: 1rem;
+  min-width: 1em;
 }
 
 #queue .queue-item.queued {
@@ -1145,19 +1128,18 @@ body.is_safari:not(.is-mobile) #queue {
 
 #queue .queue-item .counter {
   display: inline-block;
-  font-size: 0.4rem;
-  margin-right: 4px;
-  margin-top: -3px;
+  font-size: calc(4px * var(--gs-tz));
+  font-size: calc(4px * var(--gs-tz));
+  margin-top: -60%;
   opacity: 0;
-  padding: 1px 2px;
   position: absolute;
-  right: 0;
-  text-align: right;
+  left: 0;
+  text-align: center;
+  min-width: 1em;
   text-shadow: 0 1px 0 #000;
   top: 0;
   transform: scale(1);
   transition: opacity 175ms ease-in-out, filter 175ms ease-in-out;
-  vertical-align: middle;
 }
 
 #queue .queue-item.over-ten .counter {
@@ -1580,6 +1562,11 @@ body.demo .target-marker {
   border: calc(0.5px * var(--gs-tz)) solid rgba(255, 255, 255, 0.1);
   border-radius: calc(1.5px * var(--gs-tz));
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+#player-status-bar .radar-scroller.higher-visibility {
+  border-color: #339933;
+  background-color: rgba(32, 192, 32, 0.33);
 }
 
 @media screen and (orientation: landscape) and (max-height: 480px) {
@@ -3803,11 +3790,15 @@ body.is_safari .cornholio .sub-sprite {
   height: calc(18px * var(--gs-tz));
   box-sizing: border-box;
   color: #666;
-  font-size: calc(7px * var(--gs-tz));
   left: 0;
   right: 0;
   bottom: 0;
   padding: 0;
+}
+
+#bottom,
+#queue .queue-item {
+  font-size: calc(7px * var(--gs-tz));
 }
 
 body.is-mobile #bottom {
@@ -5091,7 +5082,7 @@ body:not(.is-mobile) .mobile-only {
 #queue .fraction,
 .notification-toast .fraction {
   /* "slash" character */
-  font-size: 110%;
+  font-size: calc(2px * var(--gs-tz));
   font-style: normal;
 }
 
@@ -5112,16 +5103,26 @@ body:not(.is-mobile) .mobile-only {
 }
 
 #queue span.fraction-wrapper {
-  left: 3px;
+  /* left: -15%; */
   /* building queue: nudge a little */
   position: relative;
-  top: -1px;
 }
 
 #queue .queue-item.has-counter .fraction-wrapper {
   /* hackish - so numbers don't overlap */
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: -66% 0 0 -33%;
   display: inline-block;
   transform: scale3d(0.9, 0.9, 1);
+  font-size: calc(5px * var(--gs-tz));
+  line-height: 1em;
+}
+
+body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
+  /* I suspect "all webkit" is fine, but Firefox needs less margin here. */
+  margin-top: -25%;
 }
 
 #queue .queue-item.has-counter.over-ten .fraction-wrapper {
@@ -5154,7 +5155,7 @@ body:not(.is-mobile) .mobile-only {
 }
 
 #queue .fraction {
-  font-size: 75%;
+  font-size: calc(5px * var(--gs-tz));
 }
 
 /* prefs + modal stuff - based on original 68K Macintosh UI */
