@@ -396,8 +396,8 @@ body.is-mobile #game-menu-wrapper {
 }
 
 #game-menu-wrapper .logo-overlay-cutout {
-  mask-image: url(../image/armor-alley-wordmark-colour.webp);
-  -webkit-mask-image: url(../image/armor-alley-wordmark-colour.webp);
+  mask-image: url(../image/armor-alley-wordmark-white.webp);
+  -webkit-mask-image: url(../image/armor-alley-wordmark-white.webp);
   mask-size: contain;
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
