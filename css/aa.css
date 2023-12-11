@@ -5021,6 +5021,7 @@ body:not(.is-mobile) .mobile-only {
   top: 32.5%;
   width: 25em;
   font-size: calc(6px * var(--gs-tz));
+  line-height: 150%;
   /* sit on top of L/R screen gradients */
   z-index: 11;
   pointer-events: none;
@@ -5078,10 +5079,11 @@ body.is-mobile:not(.is_iphone):not(.notch-at-right)
   position: relative;
   text-align: right;
   top: 0;
-  transition: 0.33s ease-in-out;
-  transition-property: height, margin, opacity;
+  transition: 0.5s ease-in-out;
+  transition-property: max-height, height, margin, opacity;
   overflow-y: hidden;
-  height: 0;
+  /* max-height as an expand/collapse feature. :tada: */
+  max-height: 0;
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.75);
 }
 
@@ -5092,10 +5094,14 @@ body.is-mobile:not(.is_iphone):not(.notch-at-right)
 
 .notification-toast.toast-active {
   opacity: 1;
+  /* sneaky: transition in. This "should" cover two lines. */
+  max-height: 3em;
 }
 
 .notification-toast.toast-expiring {
   opacity: 0;
+  /* easy collapse! */
+  max-height: 0;
 }
 
 .notification-toast > span {

@@ -142,13 +142,6 @@ const Notifications = () => {
     common.setFixedFrameTimeout(() => {
       utils.css.add(oToast, css.toastActive);
       updateListOpacity();
-      // transition to the natural height, which can vary
-      oToast.style.height = `${oToast.scrollHeight}px`;
-      // hackish: revert to "natural" height after animation completes.
-      // this is done so the UI remains responsive if screen scale / font size changes.
-      common.setFixedFrameTimeout(() => {
-        oToast.style.height = 'auto';
-      }, 500);
     }, 96);
 
     // assign for later node removal
@@ -194,9 +187,6 @@ const Notifications = () => {
 
     utils.css.add(item.node, css.toastExpiring);
 
-    // -ve margin, to pull down / collapse item
-    item.node.style.marginBottom = `-${item.node.scrollHeight}px`;
-
     // hackish: reset opacity manually, because it's been affected by updateListOpacity().
     item.node.style.opacity = 0;
 
@@ -210,8 +200,8 @@ const Notifications = () => {
       common.setFixedFrameTimeout(() => {
         item?.node?.remove();
         updateListOpacity();
-      }, 330);
-    }, 330);
+      }, 550);
+    }, 550);
 
     if (!data.items.length) {
       // all done.
