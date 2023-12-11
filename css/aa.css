@@ -3187,31 +3187,20 @@ body:not(.game-over).radar_jammed #radar {
   opacity: 0;
 }
 
-body:not(.game-over).radar_enhanced_fx #world-wrapper #battlefield {
-  /* optimization? */
-  will-change: filter;
-  filter: blur(0px);
-}
-
-body:not(.game-over).radar_enhanced_fx.radar_jammed #battlefield {
-  /* first, assign a "safe" default - likely to be overridden. */
-  filter: blur(0.33px);
+body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed #battlefield {
   /**
    * This number is affected by transforms, but not zoom-based scaling.
    * Therefore, offset this filter using the transform scale (if set.)
+   *
+   * Note: Excluding mobile - this might hit performance on iOS Safari
+   * when lots of radar scan nodes and sprites are on the screen.
    */
-  filter: blur(calc(0.33px * (1 / var(--game-scale-transform))));
+  /* filter: blur(calc(1px * (1 / var(--gs-tz)))); */
 }
 
-/* Safari (desktop) needs its own rule, apparently. */
-body:not(.game-over).is_safari.radar_enhanced_fx.radar_jammed #battlefield {
-  filter: blur(calc(0.33px * (1 / var(--game-scale-zoom))));
-}
-
-/* Finally, Safari *mobile* seems to need a larger value. */
-body:not(.game-over).is_safari.is-mobile.radar_enhanced_fx.radar_jammed
-  #battlefield {
-  filter: blur(calc(0.5px * (1 / var(--game-scale-transform))));
+body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox #battlefield {
+  /* firefox seems to be more aggressive with the blur stuff; it's both literally and metaphorically unclear. :D */
+  /* filter: blur(calc(0.33px * (1 / var(--gs-tz)))); */
 }
 
 #radar .sprite {
