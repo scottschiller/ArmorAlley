@@ -2583,14 +2583,19 @@
                           </ul>
                         </li>
 
-                        <li>
+                        <li class="hide-on-iphone">
                           <p class="compact options-heading">
                             <b>Notifications UI</b>
                           </p>
 
                           <p class="non-indented">
                             Where<span class="hide-on-mobile">, and how,</span>
-                            would you like your toast?
+                            would you like your toast?<span class="mobile-only"
+                              >* (<i>Note:</i> Mobile controls' location is
+                              presently based on device orientation. Try
+                              rotating your device 180&deg; to flip the
+                              controls.)</span
+                            >
                           </p>
 
                           <ul style="margin-bottom: -3px">
@@ -2617,7 +2622,7 @@
                               </label>
                             </li>
 
-                            <li class="hide-on-mobile">
+                            <li>
                               +&thinsp;
                               <label for="notifications_order_bottom_up">
                                 <input

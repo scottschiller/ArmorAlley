@@ -5028,6 +5028,7 @@ body.is-mobile #pointer {
 
 #mobile-tip,
 body.is-mobile .hide-on-mobile,
+body.is_iphone .hide-on-iphone,
 body:not(.is-mobile) .mobile-only {
   display: none;
 }
@@ -5054,6 +5055,40 @@ body:not(.is-mobile) .mobile-only {
 #notification-toasts.left-aligned {
   right: auto;
   left: 2.05%;
+}
+
+body.is_iphone.notch-at-left #notification-toasts.left-aligned {
+  /* avoid overlap with on-screen touch controls */
+  left: auto;
+  right: 0px;
+}
+
+body.is-mobile:not(.is_iphone).notch-at-right
+  #notification-toasts:not(.left-aligned).bottom-up,
+body.is_iphone.notch-at-right #notification-toasts:not(.left-aligned) {
+  /* special iPad OR iPhone, right-aligned / notch / controls at right case */
+  text-align: left;
+  right: auto;
+  left: 0px;
+}
+
+body.is-mobile:not(.is_iphone).notch-at-right
+  #notification-toasts:not(.left-aligned).bottom-up,
+body.notch-at-left #notification-toasts.left-aligned,
+body.is_iphone.notch-at-right #notification-toasts:not(.left-aligned) {
+  /* bottom-up, for legibility. */
+  display: flex;
+  /* left-align */
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: end;
+}
+
+/* controls at left, notifications at left and bottom-up */
+body.is-mobile:not(.is_iphone):not(.notch-at-right)
+  #notification-toasts.left-aligned {
+  /* undo all the flex stuff - show top-aligned */
+  display: block;
 }
 
 #notification-toasts.bottom-up {

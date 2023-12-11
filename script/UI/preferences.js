@@ -79,9 +79,9 @@ const defaultPrefs = {
   'stars_warp_fx': true,
   // special case: mobile defaults to show @ left, important especially on small screens in portrait mode.
   'notifications_location': isMobile
-    ? PREFS.NOTIFICATIONS_LOCATION_LEFT
+    ? PREFS.NOTIFICATIONS_LOCATION_RIGHT
     : PREFS.NOTIFICATIONS_LOCATION_RIGHT,
-  'notifications_order_bottom_up': false,
+  'notifications_order_bottom_up': isMobile,
   'notify_engineer': true,
   'notify_infantry': true,
   'notify_missile-launcher': true,
@@ -880,6 +880,17 @@ function PrefsManager() {
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
+      // special case: ignore certain notifications prefs on iPhone - they've been hidden from the UI as of 12/10/2023.
+      if (
+        value !== undefined &&
+        isiPhone &&
+        key.match(/notifications_location|notifications_order_bottom_up/i)
+      ) {
+        console.info(
+          `PrefsManager: ignoring pref ${key} = '${value}' for iPhone`
+        );
+        return;
+      }
       // special cases
       if (key === 'volume') {
         prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
