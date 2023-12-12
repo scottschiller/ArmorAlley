@@ -5085,9 +5085,6 @@ body.is-mobile.mobile-controls_right-aligned
     margin-left: calc(64px * var(--gs-tz) * 1.15);
     max-width: 60vw;
   }
-
-  body.is_iphone #notification-toasts
-
 }
 
 @media screen and (orientation: landscape) {
