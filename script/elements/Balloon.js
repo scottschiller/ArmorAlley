@@ -128,7 +128,8 @@ const Balloon = (options = {}) => {
 
       if (dom.o) {
         // hide the balloon
-        utils.css.swap(dom.o, css.exploding, css.dead, css.explodingType);
+        utils.css.swap(dom.o, css.exploding, css.dead);
+        utils.css.add(dom.o, css.explodingType);
       }
     }, 750);
 
