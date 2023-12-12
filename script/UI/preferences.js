@@ -67,6 +67,7 @@ const defaultPrefs = {
   'landing_pads_on_radar': true,
   'radar_enhanced_fx': demo || isMobile || false,
   'last_battle': null,
+  'mobile_controls_location': 'left',
   'super_bunker_arrows': true,
   'show_inventory': true,
   'show_weapons_status': true,
@@ -195,6 +196,8 @@ function PrefsManager() {
       'gravestones_helicopters',
       'gravestones_infantry',
       'gravestones_vehicles',
+      'mobile_controls_location',
+      'notifications_location',
       'radar_enhanced_fx',
       'radar_scaling'
     ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
@@ -880,17 +883,6 @@ function PrefsManager() {
     // TODO: validate the values pulled from storage. 😅
     Object.keys(defaultPrefs).forEach((key) => {
       let value = utils.storage.get(key);
-      // special case: ignore certain notifications prefs on iPhone - they've been hidden from the UI as of 12/10/2023.
-      if (
-        value !== undefined &&
-        isiPhone &&
-        key.match(/notifications_location|notifications_order_bottom_up/i)
-      ) {
-        console.info(
-          `PrefsManager: ignoring pref ${key} = '${value}' for iPhone`
-        );
-        return;
-      }
       // special cases
       if (key === 'volume') {
         prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
@@ -1529,12 +1521,31 @@ function PrefsManager() {
         });
       },
 
-      notifications_location: (newValue) =>
-        utils.css.addOrRemove(
-          dom.oToasts,
-          newValue === PREFS.NOTIFICATIONS_LOCATION_LEFT,
-          'left-aligned'
-        ),
+      mobile_controls_location: (newValue) => {
+        if (!isMobile) return;
+        // given one, remove the other.
+        const map = {
+          left: 'mobile-controls_left-aligned',
+          right: 'mobile-controls_right-aligned'
+        };
+        if (newValue === 'left') {
+          utils.css.swap(document.body, map.right, map.left);
+        } else {
+          utils.css.swap(document.body, map.left, map.right);
+        }
+      },
+
+      notifications_location: (newValue) => {
+        const map = {
+          left: 'left-aligned',
+          right: 'right-aligned'
+        };
+        if (newValue === PREFS.NOTIFICATIONS_LOCATION_LEFT) {
+          utils.css.swap(dom.oToasts, map.right, map.left);
+        } else {
+          utils.css.swap(dom.oToasts, map.left, map.right);
+        }
+      },
 
       notifications_order_bottom_up: (newValue) =>
         utils.css.addOrRemove(dom.oToasts, newValue, 'bottom-up'),

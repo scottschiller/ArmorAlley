@@ -2583,19 +2583,49 @@
                           </ul>
                         </li>
 
-                        <li class="hide-on-iphone">
+                        <li class="mobile-only">
+                          <p class="compact options-heading">
+                            <b>Mobile Controls</b>
+                          </p>
+
+                          <p class="non-indented">
+                            Controls are always bottom-aligned, and take
+                            priority over notifications.
+                          </p>
+
+                          <ul>
+                            <li class="compact">
+                              <label for="mobile_controls_location_left">
+                                <input
+                                  type="radio"
+                                  id="mobile_controls_location_left"
+                                  name="mobile_controls_location"
+                                  value="left"
+                                  checked />
+                                Left
+                              </label>
+                            </li>
+
+                            <li>
+                              <label for="mobile_controls_location_right">
+                                <input
+                                  type="radio"
+                                  id="mobile_controls_location_right"
+                                  name="mobile_controls_location"
+                                  value="right" />
+                                Right
+                              </label>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li>
                           <p class="compact options-heading">
                             <b>Notifications UI</b>
                           </p>
 
                           <p class="non-indented">
-                            Where<span class="hide-on-mobile">, and how,</span>
-                            would you like your toast?<span class="mobile-only"
-                              >* (<i>Note:</i> Mobile controls' location is
-                              presently based on device orientation. Try
-                              rotating your device 180&deg; to flip the
-                              controls.)</span
-                            >
+                            Where, and how, would you like your toast?
                           </p>
 
                           <ul style="margin-bottom: -3px">

@@ -4635,6 +4635,18 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   z-index: 11; /* sit atop clouds */
 }
 
+body.mobile-controls_left-aligned #mobile-controls {
+  /* set based on prefs */
+  left: 0;
+  right: auto;
+}
+
+body.mobile-controls_right-aligned #mobile-controls {
+  /* set based on prefs */
+  left: auto;
+  right: 0;
+}
+
 body.is-mobile #mobile-controls {
   display: block;
   opacity: 0;
@@ -4743,12 +4755,11 @@ body.is_iphone #mobile-controls {
   background-color: inherit;
 }
 
-/* TODO: make this configurable. */
-body.is-mobile.notch-at-left #notification-toasts {
+body.is-mobile.notch-at-left #notification-toasts.left-aligned {
   margin-left: calc(env(safe-area-inset-left) * 0.66);
 }
 
-body.is-mobile.notch-at-right #notification-toasts {
+body.is-mobile.notch-at-right #notification-toasts.right-aligned {
   margin-right: calc(env(safe-area-inset-right) * 0.66);
 }
 
@@ -5026,7 +5037,7 @@ body:not(.is-mobile) .mobile-only {
    * composited elements "all the time" (tips / shadow overlays),
    * which guarantees this becomes another full-screen GPU layer.
    */
-  height: 54.4%;
+  height: 54%;
   right: 2.05%;
   top: 32.5%;
   width: 25em;
@@ -5037,48 +5048,79 @@ body:not(.is-mobile) .mobile-only {
   pointer-events: none;
 }
 
-body.is-mobile #notification-toasts {
-  /* always have a little L/R room on mobile */
-  padding: 0px 1%;
-}
-
 #notification-toasts.left-aligned {
   right: auto;
   left: 2.05%;
 }
 
-body.is_iphone.notch-at-left #notification-toasts.left-aligned {
-  /* avoid overlap with on-screen touch controls */
-  left: auto;
-  right: 0px;
+/* touch controls at left, notifications also at left, AND bottom-aligned */
+body.is-mobile.mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  left: 0;
+  /* offset for touch controls, prevent overlap */
+  margin-left: calc(60px * var(--gs-tz));
 }
 
-body.is-mobile:not(.is_iphone).notch-at-right
-  #notification-toasts:not(.left-aligned).bottom-up,
-body.is_iphone.notch-at-right #notification-toasts:not(.left-aligned) {
-  /* special iPad OR iPhone, right-aligned / notch / controls at right case */
-  text-align: left;
-  right: auto;
-  left: 0px;
+body.is-mobile.mobile-controls_right-aligned
+  #notification-toasts.right-aligned.bottom-up {
+  right: 0;
+  /* offset for touch controls, prevent overlap */
+  margin-right: calc(69px * var(--gs-tz));
 }
 
-body.is-mobile:not(.is_iphone).notch-at-right
-  #notification-toasts:not(.left-aligned).bottom-up,
-body.notch-at-left #notification-toasts.left-aligned,
-body.is_iphone.notch-at-right #notification-toasts:not(.left-aligned) {
-  /* bottom-up, for legibility. */
-  display: flex;
-  /* left-align */
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: end;
+@media screen and (orientation: portrait) {
+  body.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone, controls right, notifications bottom right */
+    right: 0;
+    margin-right: calc(64px * var(--gs-tz) * 1.33);
+  }
+
+  body.is-mobile.is_iphone.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone, controls left, notifications bottom left */
+    left: 0;
+    margin-left: calc(64px * var(--gs-tz) * 1.15);
+  }
 }
 
-/* controls at left, notifications at left and bottom-up */
-body.is-mobile:not(.is_iphone):not(.notch-at-right)
-  #notification-toasts.left-aligned {
-  /* undo all the flex stuff - show top-aligned */
-  display: block;
+@media screen and (orientation: landscape) {
+  /* hackish: margin tweaks, due to scaling of mobile controls */
+  body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPad, controls right, notifications bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 1.5);
+  }
+
+  body.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone, controls right, notifications bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 3);
+  }
+
+  body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone + notch at left + controls + notifications at bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 2);
+  }
+
+  body.is-mobile.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPad, controls + notifications bottom left */
+    margin-left: calc(64px * var(--gs-tz) * 1.25);
+  }
+
+  body.is-mobile.is_iphone.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone, controls + notifications bottom left */
+    margin-left: calc(64px * var(--gs-tz) * 1.75);
+  }
+
+  body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone + notch at left + controls + notifications at bottom left. */
+    margin-left: calc(64px * var(--gs-tz) * 2.95);
+  }
 }
 
 #notification-toasts.bottom-up {
@@ -7024,16 +7066,12 @@ body.radar_jammed .scan-node {
     transform-origin: 50% 0;
   }
 
-  body.is-mobile.notch-at-right #mobile-controls {
-    left: auto;
-    right: 0;
+  body.is-mobile.notch-at-right.mobile-controls_right-aligned #mobile-controls {
     margin-right: calc(env(safe-area-inset-right) / 2.5);
   }
 
-  body.is-mobile.notch-at-left #mobile-controls {
-    left: 0;
+  body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
     margin-left: calc(env(safe-area-inset-left) / 2.5);
-    right: auto;
   }
 
   body.is-mobile.notch-at-left #funds,
