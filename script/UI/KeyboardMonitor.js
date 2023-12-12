@@ -49,6 +49,7 @@ function KeyboardMonitor() {
     flipAutomatically: 70,
     esc: 27,
     enter: 13,
+    backtick: '`',
     delete_1: 8,
     delete_2: 46,
     z: 90
@@ -134,6 +135,12 @@ function KeyboardMonitor() {
 
   keys = {
     // NOTE: Each function gets an (e) event argument.
+
+    [keyMap.backtick]: {
+      down() {
+        processInput(game.players.local, 'eject');
+      }
+    },
 
     // delete
     [keyMap.delete_1]: {
