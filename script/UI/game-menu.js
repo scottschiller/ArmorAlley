@@ -296,14 +296,13 @@ function init() {
     // mobile needs user interaction, shows a button.
     if (isMobile) return;
     // desktop can do this immediately.
-    common.setFrameTimeout(
+    common.setFrameTimeout(() => {
       formClick({
         target: {
           action: 'start-game'
         }
-      }),
-      1000
-    );
+      });
+    }, 1000);
   }
 }
 
