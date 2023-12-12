@@ -5101,7 +5101,7 @@ body.is-mobile.mobile-controls_right-aligned
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 2);
+    margin-right: calc(64px * var(--gs-tz) * 2.15);
   }
 
   body.is-mobile.mobile-controls_left-aligned
@@ -5113,13 +5113,13 @@ body.is-mobile.mobile-controls_right-aligned
   body.is-mobile.is_iphone.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs-tz) * 1.75);
+    margin-left: calc(64px * var(--gs-tz) * 1.95);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom left. */
-    margin-left: calc(64px * var(--gs-tz) * 2.95);
+    margin-left: calc(64px * var(--gs-tz) * 2.75);
   }
 }
 
