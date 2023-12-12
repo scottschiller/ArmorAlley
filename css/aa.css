@@ -6457,8 +6457,7 @@ body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
 
   #network-pipe {
     display: inline-block;
-    opacity: 0.5;
-    color: #000;
+    color: #003000;
   }
 
   #game-options-button {
