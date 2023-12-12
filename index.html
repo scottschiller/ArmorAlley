@@ -2127,6 +2127,145 @@
                     </fieldset>
 
                     <fieldset>
+                      <legend>Controls + Notifications</legend>
+
+                      <ul>
+                        <!-- TODO: show when a keyboard has been detected. -->
+                        <li class="hide-on-mobile">
+                          <p class="compact options-heading">
+                            <b>Keyboard Controls</b>
+                          </p>
+                          <ul style="margin-top: 3px">
+                            <li class="compact full-width">
+                              <ul class="real-list keycap-list">
+                                <li>
+                                  <b>MTVIE</b> Order inventory (i.e.,
+                                  <b>T</b>ank)
+                                </li>
+                                <li>
+                                  <b>XCB</b> Smart missile, chicken, banana
+                                </li>
+                                <li><b>Spacebar</b> Drop paratroopers</li>
+                                <li><b>Shift</b> Fire gun</li>
+                                <li><b>Ctrl</b> or <b>Z</b> Drop bombs</li>
+                                <li><b>~</b> Eject pilot + passengers</li>
+                              </ul>
+                              <ul class="real-list keycap-list">
+                                <li><b>-</b> <b>+</b> Adjust game speed</li>
+                                <li><b>Esc</b> Show game preferences</li>
+                                <li><b>P</b>ause game</li>
+                                <li>
+                                  Toggle auto-<b class="inline-key">F</b>lip (or
+                                  double-click)
+                                </li>
+                                <li>
+                                  Toggle radar <b class="inline-key">S</b>caling
+                                </li>
+                                <li class="network">
+                                  <b>Enter/return</b> Send a message
+                                </li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li class="mobile-only">
+                          <p class="compact options-heading">
+                            <b>Mobile Controls</b>
+                          </p>
+
+                          <p class="non-indented">
+                            Controls are always bottom-aligned, and take
+                            priority over notifications.
+                          </p>
+
+                          <ul>
+                            <li class="compact">
+                              <label for="mobile_controls_location_left">
+                                <input
+                                  type="radio"
+                                  id="mobile_controls_location_left"
+                                  name="mobile_controls_location"
+                                  value="left"
+                                  checked />
+                                Left
+                              </label>
+                            </li>
+
+                            <li>
+                              <label for="mobile_controls_location_right">
+                                <input
+                                  type="radio"
+                                  id="mobile_controls_location_right"
+                                  name="mobile_controls_location"
+                                  value="right" />
+                                Right
+                              </label>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li>
+                          <p class="compact options-heading">
+                            <b>Notifications UI</b>
+                          </p>
+
+                          <p class="non-indented">
+                            Where, and how, would you like your toast?
+                          </p>
+
+                          <ul style="margin-bottom: -3px">
+                            <li class="compact">
+                              <label for="notifications_location_left">
+                                <input
+                                  type="radio"
+                                  id="notifications_location_left"
+                                  name="notifications_location"
+                                  value="left" />
+                                Left
+                              </label>
+                            </li>
+
+                            <li>
+                              <label for="notifications_location_right">
+                                <input
+                                  type="radio"
+                                  id="notifications_location_right"
+                                  name="notifications_location"
+                                  value="right"
+                                  checked />
+                                Right
+                              </label>
+                            </li>
+
+                            <li>
+                              +&thinsp;
+                              <label for="notifications_order_bottom_up">
+                                <input
+                                  type="radio"
+                                  id="notifications_order_bottom_up"
+                                  name="notifications_order_bottom_up"
+                                  value="1" />
+                                Bottom-up <b>↑</b>
+                              </label>
+                            </li>
+                            <li>
+                              <label for="notifications_order_top_down">
+                                <input
+                                  type="radio"
+                                  id="notifications_order_top_down"
+                                  name="notifications_order_bottom_up"
+                                  value="0"
+                                  checked />
+                                Top-down <b>↓</b>
+                              </label>
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </fieldset>
+
+                    <fieldset>
                       <legend>Audio</legend>
 
                       <ul>
@@ -2218,7 +2357,8 @@
                               >80% is balanced for touch-based devices.</span
                             >
                             <span class="hide-on-mobile">
-                              In-game, use - and + keys to adjust.</span
+                              In-game, use <b class="keycap">-</b>
+                              <b class="keycap">+</b> keys to adjust.</span
                             >
                           </p>
                         </li>
@@ -2305,23 +2445,6 @@
                             <p class="non-indented">
                               Confetti-style fragments from explosions and
                               certain collisions.
-                            </p>
-                          </label>
-                        </li>
-
-                        <li style="padding-top: 1px">
-                          <label for="cb_radar_enhanced_fx">
-                            <input
-                              type="checkbox"
-                              id="cb_radar_enhanced_fx"
-                              name="radar_enhanced_fx"
-                              value="1" />
-                            <span class="label-text"
-                              >“Extra Fancy” Radar Jamming FX 📡</span
-                            >
-                            <p class="non-indented">
-                              Subtle film grain-style "noise" and blur when a
-                              van is jamming your radar.
                             </p>
                           </label>
                         </li>
@@ -2583,100 +2706,6 @@
                           </ul>
                         </li>
 
-                        <li class="mobile-only">
-                          <p class="compact options-heading">
-                            <b>Mobile Controls</b>
-                          </p>
-
-                          <p class="non-indented">
-                            Controls are always bottom-aligned, and take
-                            priority over notifications.
-                          </p>
-
-                          <ul>
-                            <li class="compact">
-                              <label for="mobile_controls_location_left">
-                                <input
-                                  type="radio"
-                                  id="mobile_controls_location_left"
-                                  name="mobile_controls_location"
-                                  value="left"
-                                  checked />
-                                Left
-                              </label>
-                            </li>
-
-                            <li>
-                              <label for="mobile_controls_location_right">
-                                <input
-                                  type="radio"
-                                  id="mobile_controls_location_right"
-                                  name="mobile_controls_location"
-                                  value="right" />
-                                Right
-                              </label>
-                            </li>
-                          </ul>
-                        </li>
-
-                        <li>
-                          <p class="compact options-heading">
-                            <b>Notifications UI</b>
-                          </p>
-
-                          <p class="non-indented">
-                            Where, and how, would you like your toast?
-                          </p>
-
-                          <ul style="margin-bottom: -3px">
-                            <li class="compact">
-                              <label for="notifications_location_left">
-                                <input
-                                  type="radio"
-                                  id="notifications_location_left"
-                                  name="notifications_location"
-                                  value="left" />
-                                Left
-                              </label>
-                            </li>
-
-                            <li>
-                              <label for="notifications_location_right">
-                                <input
-                                  type="radio"
-                                  id="notifications_location_right"
-                                  name="notifications_location"
-                                  value="right"
-                                  checked />
-                                Right
-                              </label>
-                            </li>
-
-                            <li>
-                              +&thinsp;
-                              <label for="notifications_order_bottom_up">
-                                <input
-                                  type="radio"
-                                  id="notifications_order_bottom_up"
-                                  name="notifications_order_bottom_up"
-                                  value="1" />
-                                Bottom-up <b>↑</b>
-                              </label>
-                            </li>
-                            <li>
-                              <label for="notifications_order_top_down">
-                                <input
-                                  type="radio"
-                                  id="notifications_order_top_down"
-                                  name="notifications_order_bottom_up"
-                                  value="0"
-                                  checked />
-                                Top-down <b>↓</b>
-                              </label>
-                            </li>
-                          </ul>
-                        </li>
-
                         <li>
                           <p class="compact options-heading">
                             <b>Unit Updates</b>
@@ -2748,6 +2777,29 @@
                             </li>
                           </ul>
                         </li>
+                      </ul>
+                    </fieldset>
+
+                    <fieldset>
+                      <legend>Radar</legend>
+
+                      <ul>
+                        <li style="padding-top: 1px">
+                          <label for="cb_radar_enhanced_fx">
+                            <input
+                              type="checkbox"
+                              id="cb_radar_enhanced_fx"
+                              name="radar_enhanced_fx"
+                              value="1" />
+                            <span class="label-text"
+                              >“Extra Fancy” Radar Jamming FX 📡</span
+                            >
+                            <p class="non-indented">
+                              Subtle film grain-style "noise" when a van is
+                              jamming your radar.
+                            </p>
+                          </label>
+                        </li>
 
                         <li>
                           <label for="cb_radar_scaling">
@@ -2759,8 +2811,9 @@
                             <span class="label-text">Radar Scaling</span>
                             <p class="non-indented">
                               <i>Experimental:</i> Larger radar which scrolls as
-                              you move. Press and hold a second finger while
-                              flying, or 's' on a keyboard to toggle scaling.
+                              you move. To toggle scaling, press and hold a
+                              second finger while flying, or
+                              <b class="keycap">S</b> on a keyboard.
                             </p>
                           </label>
                         </li>
@@ -3111,7 +3164,8 @@
                                 flying)</span
                               >
                               to flip manually.<br />
-                              Use the F key<span class="hide-on-mobile"
+                              Use the <b class="keycap">F</b> key<span
+                                class="hide-on-mobile"
                                 >, or double-click</span
                               ><span class="mobile-only"> or double-tap</span>
                               to toggle while playing.
