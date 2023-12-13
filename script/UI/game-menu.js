@@ -508,6 +508,11 @@ function formClick(e) {
 
     game.setGameType(gameType);
 
+    // if *not* the tutorial, that DOM tree can now be trimmed.
+    if (gameType !== 'tutorial') {
+      document.getElementById('tutorial-window')?.remove();
+    }
+
     formCleanup();
 
     // go go go!
