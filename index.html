@@ -275,10 +275,52 @@
 
     <div id="home-video-wrapper">
       <video id="home-menu-video" autoplay muted loop playsinline width="100vw">
-        <source src="video/aa_preview_1920x1080.mp4" type="video/mp4" />
-        <source src="video/aa_preview_1920x1080.webm" type="video/webm" />
+        <!--
+        <source src="video/aa_home_demo_4k.mp4" type="video/mp4" />
+        <source src="video/aa_home_menu_demo_4k.webm" type="video/webm" />
+        -->
       </video>
     </div>
+
+    <script>
+      (() => {
+        // load up video with most-likely-supported format at 1080p or 4K, depending.
+        function addSource(res, ext) {
+          if (!video) return;
+          const url = `video/aa_home_menu_demo_${res}.${ext}`;
+          const source = document.createElement('source');
+          source.src = url;
+          source.type = `video/${ext}`;
+          console.log(source);
+          video.appendChild(source);
+        }
+
+        function maybeCanPlay(format) {
+          return canPlay.test(MediaSource?.isTypeSupported?.(format) || video.canPlayType(format));
+        }
+
+        const video = document.getElementById('home-menu-video');
+        const canPlay = /maybe|probably/gi;
+
+        let res = (window.innerWidth >= 1920 ? '4k' : '1080p');
+
+        let types = {
+          // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
+          mp4: 'video/mp4; codecs="hev1.1.6.L93.B0"',
+          webm: 'video/webm; codecs="vp09.00.50.08"'
+        }
+
+        // test MP4 first, then webm as a default / fallback.
+        if (maybeCanPlay(types.mp4)) {
+          // if MP4 *and* webm, try webm first.
+          if (maybeCanPlay(types.webm)) addSource(res, 'webm');
+          addSource(res, 'mp4');
+        } else {
+          // if no MP4, then webm alone.
+          addSource(res, 'webm');
+        }
+      })();
+    </script>
 
     <!-- To reduce "Cumulative Layout Shift", initially hide until first resize / scale / layout. -->
     <div id="aa" style="visibility: hidden">
