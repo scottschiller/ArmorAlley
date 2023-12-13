@@ -539,6 +539,10 @@ body.game-started #start-game-button-mobile {
     #a24722,
     #a52a2a
   );
+}
+
+#game-menu-wrapper.active #logo-gradient {
+  /* delay slightly - this doesn't always work on first load on iOS. */
   animation: logo-gradient 20s ease-in-out infinite alternate;
 }
 
