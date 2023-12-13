@@ -5712,6 +5712,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 .mac-classic fieldset {
   border: 1px solid #000;
   margin: 12px;
+  margin-top: 0;
   padding: 6px 12px;
 }
 
