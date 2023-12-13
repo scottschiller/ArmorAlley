@@ -827,32 +827,40 @@ const common = {
     nearby.options.source = exports;
   },
 
-  preloadAudio(soundRef) {
-    if (!soundRef?.src) return;
+  fetch(url, callback) {
+    let xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      xhr.onload = null;
+      xhr = null;
+      callback?.();
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+  },
 
-    const fileName = soundRef.src;
+  preloadAudio(soundRef, callback) {
+    const fileName = soundRef?.src;
     if (!fileName) return;
 
-    let audio = document.createElement('audio');
-    audio.preload = 'auto';
-
-    const canplay = 'canplaythrough';
-
-    function preloadOK() {
-      if (!audio) return;
-      loadedAudio[fileName] = true;
-      audio.removeEventListener(canplay, preloadOK);
-      audio.src = '';
-      audio = null;
+    function doCallback() {
+      if (!callback) return;
+      window.requestAnimationFrame(callback);
     }
 
-    audio.muted = true;
-    audio.addEventListener(canplay, preloadOK);
+    if (loadedAudio[fileName]) {
+      doCallback();
+      return;
+    }
 
-    audio.src = fileName;
-    audio.play();
+    function complete() {
+      if (timer) window.clearTimeout(timer);
+      loadedAudio[fileName] = true;
+      doCallback();
+    }
 
-    window.setTimeout(preloadOK, 5000);
+    common.fetch(fileName, complete);
+
+    let timer = window.setTimeout(complete, 5000);
   },
 
   preloadVideo(fileName) {

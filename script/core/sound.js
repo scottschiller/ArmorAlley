@@ -26,6 +26,62 @@ const lastPlayedByURL = {};
 
 const { shuffle } = utils.array;
 
+let soundsToPreload;
+
+function preloadCommonSounds() {
+  // individual sound objects, and arrays of sound objects
+  soundsToPreload = [
+    sounds.machineGunFire,
+    sounds.machineGunFireEnemy,
+    sounds.bombHatch,
+    sounds.balloonExplosion,
+    sounds.bombExplosion,
+    sounds.genericBoom,
+    sounds.genericExplosion,
+    sounds.balloonHit,
+    sounds.explosionLarge,
+    sounds.chainSnapping,
+    sounds.inventory.begin,
+    sounds.rubberChicken.die
+  ];
+
+  const urls = [];
+
+  function parseURL(item) {
+    // array of URLs, or a single URL (e.g., if on dev.)
+    if (typeof item === 'string') return item;
+    // here be dragons: assume mp3/ogg/wav order as in getURL(). :X
+    if (soundManager.html5.mp3) return item[0];
+    if (soundManager.html5.ogg) return item[1];
+    return item[2];
+  }
+
+  function addURL(item) {
+    const url = parseURL(item);
+    // prevent duplicates
+    if (urls.indexOf(url) !== -1) return;
+    urls.push(url);
+  }
+
+  soundsToPreload.forEach((item) => {
+    if (item instanceof Array) {
+      item.forEach((entry) => addURL(entry.options.url));
+    } else {
+      addURL(item.options.url);
+    }
+  });
+
+  let i = 0;
+
+  function preloadNextSound() {
+    if (i >= urls.length) return;
+    common.preloadAudio({ src: urls[i] }, preloadNextSound);
+    i++;
+  }
+
+  preloadNextSound();
+}
+
 function getSound(soundReference) {
   // TODO: review, see if an early exit is still useful.
   if (!gamePrefs.sound) return;
@@ -1334,6 +1390,7 @@ export {
   playSound,
   getVolumeFromDistance,
   playSoundWithDelay,
+  preloadCommonSounds,
   skipSound,
   stopSound,
   playRepairingWrench,
