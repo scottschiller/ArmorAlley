@@ -44,7 +44,10 @@
     <meta property="og:image:width" content="1920" />
     <meta property="og:image:height" content="1080" />
     <meta property="og:video" content="https://www.youtube.com/v/6wEMcssFJ-E" />
-    <link rel="preload" as="image" href="image/armor-alley-wordmark-white.webp" />
+    <link
+      rel="preload"
+      as="image"
+      href="image/armor-alley-wordmark-white.webp" />
     <!--
 
                                          ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
@@ -305,7 +308,7 @@
         const video = document.getElementById('home-menu-video');
         const canPlay = /maybe|probably/gi;
 
-        let res = (window.innerWidth >= 1920 ? '4k' : '1080p');
+        let res = window.innerWidth >= 1920 ? '4k' : '1080p';
 
         let types = {
           // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
@@ -2515,7 +2518,7 @@
                           <p class="compact options-heading">
                             <b>Star Field ✨</b>
                           </p>
-                          <p class="non-indented" style="padding-top:0px">
+                          <p class="non-indented" style="padding-top: 0px">
                             B&amp;W, or technicolor? Warp drive, Scotty? Choose
                             well, live long, and prosper. 🖖
                           </p>
