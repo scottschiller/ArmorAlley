@@ -22,6 +22,8 @@ import { gamePrefs } from '../UI/preferences.js';
 const Balloon = (options = {}) => {
   let css, data, dom, objects, radarItem, reset, exports;
 
+  const windOffsetXMax = 3;
+
   function checkRespawn() {
     // odd edge case - data not always defined if destroyed at the right time?
     if (data?.canRespawn && data?.dead && !objects.bunker?.data?.dead) {
@@ -84,6 +86,13 @@ const Balloon = (options = {}) => {
       // if no bunker to detach, there should be no chain, either.
       attachChain();
     }
+
+    // assign immediate wind, based on ownership.
+    // just enough to be full left or right-facing.
+    data.windOffsetX =
+      windOffsetXMax * (data.isEnemy ? -1 : 1) * (1 / data.facingRatio + 0.01);
+
+    checkDirection();
   }
 
   function die(dieOptions = {}) {
@@ -173,30 +182,45 @@ const Balloon = (options = {}) => {
 
   function holdWind() {
     // don't allow a change in wind / direction for 5-10 seconds.
-    data.windModulus = 150 + rndInt(150);
+    data.windModulus = 150 + rngInt(150, data.type);
   }
 
   function checkDirection() {
-    if (data.windOffsetX > 0 && data.direction !== 1) {
-      // heading right
-      utils.css.remove(dom.o, css.facingLeft);
-      utils.css.add(dom.o, css.facingRight);
-
-      applyAnimatingTransition();
-
-      data.direction = 1;
-
+    if (
+      (data.windOffsetX > 0 && data.direction !== 1) |
+      (data.windOffsetX < 0 && data.direction !== -1)
+    ) {
+      // changing winds.
+      data.direction *= -1;
       holdWind();
-    } else if (data.windOffsetX < 0 && data.direction !== -1) {
-      // heading left
-      utils.css.remove(dom.o, css.facingRight);
-      utils.css.add(dom.o, css.facingLeft);
+    }
+    updateFacing();
+  }
 
-      applyAnimatingTransition();
+  function updateFacing() {
+    // "facing" based on wind
+    let facing;
 
-      data.direction = -1;
+    // limit to - / + range
+    facing = Math.min(
+      data.facingMax,
+      Math.max(-data.facingMax, Math.floor(data.windOffsetX * data.facingRatio))
+    );
 
-      holdWind();
+    if (facing !== data.lastFacingX) {
+      /**
+       * Update sprite position, moving up/down from center.
+       * Each balloon frame is 16px tall, when scaled down.
+       */
+      dom.o.style.backgroundPosition = `0px ${
+        -data.spriteMiddle - 16 * facing
+      }px`;
+      data.lastFacingX = facing;
+      data.width = data.facingWidths[facing + data.facingMax];
+      // offset X position with half of the difference vs. original width.
+      // TODO: move this to a transform / sub-sprite.
+      dom.o.style.marginLeft = `${-(width - data.width) / 2}px`;
+      data.halfWidth = data.width / 2;
     }
   }
 
@@ -241,7 +265,10 @@ const Balloon = (options = {}) => {
       // for network games, never change the wind.
       if (!net.active && data.frameCount % data.windModulus === 0) {
         data.windOffsetX += rngPlusMinus(1, data.type) * 0.25;
-        data.windOffsetX = Math.max(-3, Math.min(3, data.windOffsetX));
+        data.windOffsetX = Math.max(
+          -windOffsetXMax,
+          Math.min(windOffsetXMax, data.windOffsetX)
+        );
 
         data.windOffsetY += rngPlusMinus(1, data.type) * 0.05;
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
@@ -249,8 +276,6 @@ const Balloon = (options = {}) => {
         // and randomize
         data.windModulus = 32 + rndInt(32);
       }
-
-      checkDirection();
 
       // if at end of world, change the wind and prevent randomization until within world limits
       // this allows balloons to drift a little over, but they will return.
@@ -270,6 +295,8 @@ const Balloon = (options = {}) => {
         data.frameCount = 0;
         if (data.windOffsetY <= 0.5) data.windOffsetY += 0.1;
       }
+
+      checkDirection();
 
       data.x += data.windOffsetX * GAME_SPEED;
       data.y += data.windOffsetY * GAME_SPEED;
@@ -354,7 +381,10 @@ const Balloon = (options = {}) => {
 
     if (net.active) {
       // network case: set random wind only once, reduce the chance of de-sync during game.
-      data.windOffsetX = rngPlusMinus(rng(3, data.type), data.type);
+      data.windOffsetX = rngPlusMinus(
+        rng(windOffsetXMax, data.type),
+        data.type
+      );
       data.windOffsetY = rngPlusMinus(rng(0.33, data.type), data.type);
     }
 
@@ -393,6 +423,9 @@ const Balloon = (options = {}) => {
   const halfWidth = width / 2;
   const halfHeight = height / 2;
 
+  // plus/minus, sprite vs. direction
+  const facingMax = 4;
+
   // for centering over the bunker: half bunker width (if provided), minus half balloon width (local)
   const leftOffset = (options.bunker?.data?.halfWidth || 0) - halfWidth;
 
@@ -411,6 +444,12 @@ const Balloon = (options = {}) => {
       hostile: !objects.bunker, // dangerous when detached
       verticalDirection: rngPlusMinus(1, TYPES.balloon),
       verticalDirectionDefault: 1,
+      lastFacingX: null,
+      facingRatio: facingMax / (windOffsetXMax * 0.75),
+      spriteMiddle: 64,
+      facingMax,
+      // larger <- or -> to smaller o (circle) shape
+      facingWidths: [38, 33, 28, 22, 15, 22, 28, 33, 38],
       width,
       height,
       halfWidth,
