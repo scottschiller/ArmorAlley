@@ -185,10 +185,7 @@
           src = isProdSite || forceProd ? 'css/aa_min.css' : 'css/aa.css',
           onload
         ) {
-          const id = 'aa-css';
-          document.getElementById(id)?.remove();
           let link = document.createElement('link');
-          link.id = id;
           link.rel = 'stylesheet';
           link.media = 'screen';
           link.onload = () => {
@@ -254,6 +251,23 @@
           );
         }
 
+        // stolen from global JS
+        let maybeHasTouch;
+        let inferredTouchDevice;
+        try {
+          // on non-touch devices, this may throw "DOMException: Operation is not supported"
+          document.createEvent('TouchEvent');
+          maybeHasTouch = true;
+        } catch (e) {
+          // oh well
+        }
+        if (maybeHasTouch && navigator.maxTouchPoints > 0) {
+          inferredTouchDevice = true;
+          console.log(
+            'Touch support detected? Inferring a phone or tablet, rendering mobile version with touch controls.'
+          );
+        }
+
         if (dev) {
           // load the unminified sources.
           loadScript('script/aa.js');
@@ -261,7 +275,20 @@
           loadScript('script/aa_main.js');
         }
 
+        // common CSS
         loadCSS();
+
+        // mobile / touch device?
+        if (
+          !!navigator.userAgent.match(/mobile|iphone|ipad/i) ||
+          inferredTouchDevice
+        ) {
+          if (isProdSite || forceProd) {
+            loadCSS('css/aa-mobile_min.css');
+          } else {
+            loadCSS('css/aa-mobile.css');
+          }
+        }
 
         ga();
 
