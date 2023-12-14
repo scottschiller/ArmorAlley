@@ -328,6 +328,7 @@ const Turret = (options = {}) => {
           // restore to life at 25%
           data.dead = false;
 
+          if (css.explodingType) utils.css.remove(dom.o, css.explodingType);
           utils.css.remove(dom.o, css.destroyed);
           utils.css.remove(radarItem.dom.o, css.destroyed);
 
