@@ -5121,6 +5121,11 @@ body.is-mobile.mobile-controls_right-aligned
   justify-content: end;
 }
 
+body:not(.game-started) #notification-toasts {
+  /* initially, hide. */
+  display: none;
+}
+
 .notification-toast {
   color: #aaa;
   opacity: 0;
