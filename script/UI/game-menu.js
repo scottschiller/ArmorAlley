@@ -167,8 +167,6 @@ function init() {
     video = document.getElementById('home-menu-video');
   }
 
-  utils.css.add(document.body, 'loaded');
-
   // hackish: override inline HTML style
   menu.style.visibility = 'unset';
 

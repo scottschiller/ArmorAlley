@@ -117,6 +117,7 @@ const game = (() => {
 
     initItem();
 
+    // NOTE: $$$, layout hit
     width = width || _dom?.o?.offsetWidth;
     height = height || _dom?.o?.offsetHeight;
 
@@ -764,24 +765,28 @@ const game = (() => {
       return;
     }
 
+    const bodyCSS = [];
+
     didInit = true;
 
     // A few specific CSS tweaks - regrettably - are required.
-    if (isFirefox) utils.css.add(document.body, 'is_firefox');
+    if (isFirefox) bodyCSS.push('is_firefox');
 
     if (isSafari) {
-      utils.css.add(document.body, 'is_safari');
+      bodyCSS.push('is_safari');
       // progressive web-type app, "installed on home screen" (iOS Safari)
-      if (navigator.standalone) utils.css.add(document.body, 'is_standalone');
+      if (navigator.standalone) bodyCSS.push('is_standalone');
     }
 
     // Very limited CSS stuff, here, to hide keyboard controls.
-    if (isiPhone) {
-      utils.css.add(document.body, 'is_iphone');
-    }
+    if (isiPhone) bodyCSS.push('is_iphone');
+
+    if (isMac) bodyCSS.push('is_mac');
+
+    if (isWindows) bodyCSS.push('is_windows');
 
     if (isMobile) {
-      utils.css.add(document.body, 'is-mobile');
+      bodyCSS.push('is-mobile');
 
       // prevent context menu on links.
       // this is dirty, but it works (supposedly) for Android.
@@ -809,14 +814,6 @@ const game = (() => {
       }
     }
 
-    if (isMac) {
-      utils.css.add(document.body, 'is_mac');
-    }
-
-    if (isWindows) {
-      utils.css.add(document.body, 'is_windows');
-    }
-
     function markClientTouch(e) {
       if (e?.changedTouches && !clientFeatures.touch) {
         /**
@@ -831,6 +828,11 @@ const game = (() => {
 
     // touch event support may inform certain game features, UX / UI
     utils.events.add(document, 'touchstart', markClientTouch);
+
+    bodyCSS.push('loaded');
+
+    // update the body, finally, once.
+    utils.css.add(document.body, ...bodyCSS);
 
     // TODO: DOM init method or similar, ideally
 

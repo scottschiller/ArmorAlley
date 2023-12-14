@@ -105,9 +105,18 @@
   font-display: swap;
 }
 
+body:not(.loaded) {
+  /**
+   * Evil trade-off.
+   * Initially hide, to prevent CLS in terms of performance. https://web.dev/articles/cls
+   */
+  display: none;
+}
+
 body,
 html {
   /* scroll aversion */
+  background: #000;
   position: absolute;
   top: 0;
   left: 0;
@@ -131,7 +140,6 @@ body {
   /* font trickery */
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  background: #111;
   color: #fff;
   /**
    * avoid smooth image resizing, keep things pixelated - like the original.
