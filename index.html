@@ -286,48 +286,6 @@
       </video>
     </div>
 
-    <script>
-      (() => {
-        // load up video with most-likely-supported format at 1080p or 4K, depending.
-        function addSource(res, ext) {
-          if (!video) return;
-          const url = `video/aa_home_menu_demo_${res}.${ext}`;
-          const source = document.createElement('source');
-          source.src = url;
-          source.type = `video/${ext}`;
-          video.appendChild(source);
-        }
-
-        function maybeCanPlay(format) {
-          return (
-            window.MediaSource?.isTypeSupported?.(format) ||
-            canPlay.test(video.canPlayType(format))
-          );
-        }
-
-        const video = document.getElementById('home-menu-video');
-        const canPlay = /maybe|probably/gi;
-
-        let res = window.innerWidth >= 1920 ? '4k' : '1080p';
-
-        let types = {
-          // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
-          mp4: 'video/mp4; codec="hev1.1.6.L93.B0"',
-          webm: 'video/webm; codec="vp09.00.50.08"'
-        };
-
-        // test MP4 first, then webm as a default / fallback.
-        if (maybeCanPlay(types.mp4)) {
-          // if MP4 *and* webm, try webm first.
-          if (maybeCanPlay(types.webm)) addSource(res, 'webm');
-          addSource(res, 'mp4');
-        } else {
-          // if no MP4, then webm alone.
-          addSource(res, 'webm');
-        }
-      })();
-    </script>
-
     <!-- To reduce "Cumulative Layout Shift", initially hide until first resize / scale / layout. -->
     <div id="aa" style="visibility: hidden">
       <div id="world-wrapper">

@@ -321,6 +321,8 @@ function init() {
         }
       });
     }, 1000);
+  } else if (!demo) {
+    showHomeVideo();
   }
 }
 
@@ -642,6 +644,52 @@ function startGame() {
       showExitType();
       hideTitleScreen();
     });
+  }
+}
+
+function showHomeVideo() {
+  // skip if auto-start applies, e.g., in campaign or demo mode.
+  if (autoStart || demo) return;
+
+  const video = document.getElementById('home-menu-video');
+
+  if (!video) return;
+
+  const canPlay = /maybe|probably/gi;
+
+  const res = window.innerWidth >= 1920 ? '4k' : '1080p';
+
+  const types = {
+    // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
+    mp4: 'video/mp4; codec="hev1.1.6.L93.B0"',
+    webm: 'video/webm; codec="vp09.00.50.08"'
+  };
+
+  // load up video with most-likely-supported format at 1080p or 4K, depending.
+  function addSource(res, ext) {
+    if (!video) return;
+    const url = `video/aa_home_menu_demo_${res}.${ext}`;
+    const source = document.createElement('source');
+    source.src = url;
+    source.type = `video/${ext}`;
+    video.appendChild(source);
+  }
+
+  function maybeCanPlay(format) {
+    return (
+      window.MediaSource?.isTypeSupported?.(format) ||
+      canPlay.test(video.canPlayType(format))
+    );
+  }
+
+  // test MP4 first, then webm as a default / fallback.
+  if (maybeCanPlay(types.mp4)) {
+    // if MP4 *and* webm, try webm first.
+    if (maybeCanPlay(types.webm)) addSource(res, 'webm');
+    addSource(res, 'mp4');
+  } else {
+    // if no MP4, then webm alone.
+    addSource(res, 'webm');
   }
 }
 
