@@ -149,30 +149,7 @@ const Balloon = (options = {}) => {
     common.onDie(exports, dieOptions);
   }
 
-  function applyAnimatingTransition() {
-    // balloons might be off-screen, then return on-screen
-    // and will not animate unless explicitly enabled.
-    // this adds the animation class temporarily.
-    if (!dom?.o) return;
-
-    // enable transition (balloon turning left or right, or dying.)
-    utils.css.add(dom.o, css.animating);
-
-    // reset, if previously queued.
-    if (data.animationFrameTimeout) {
-      data.animationFrameTimeout.reset();
-    }
-
-    data.animationFrameTimeout = common.setFrameTimeout(() => {
-      data.animationFrameTimeout = null;
-      // balloon might have been destroyed.
-      if (!dom?.o) return;
-      utils.css.remove(dom.o, css.animating);
-      data.frameTimeout = null;
-    }, 1200);
-  }
-
-  function isOnScreenChange(/*isOnScreen*/) {
+  function isOnScreenChange() {
     // ignore if still tethered
     if (!data.detached) return;
 
