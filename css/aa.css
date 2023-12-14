@@ -81,18 +81,6 @@
 
 @font-face {
   font-display: swap;
-  /**
-   * font/DeValencia/README.txt
-   * https://www.behance.net/manuelfcg
-   */
-  font-family: de_valenciaregular;
-  font-style: normal;
-  font-weight: 400;
-  src: url(../font/DeValencia/de_valencia.woff2) format('woff2');
-}
-
-@font-face {
-  font-display: swap;
   /* https://fontsarena.com/sysfont-by-alina-sava/ (SIL Open Font License 1.1) */
   font-family: FA Sysfont C;
   font-style: normal;
