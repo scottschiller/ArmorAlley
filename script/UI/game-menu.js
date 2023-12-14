@@ -10,7 +10,7 @@ import {
   TYPES
 } from '../core/global.js';
 import { net } from '../core/network.js';
-import { playQueuedSounds, playSound, preloadCommonSounds, sounds } from '../core/sound.js';
+import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { utils } from '../core/utils.js';
 import {
   dependsOnGameType,
@@ -262,8 +262,6 @@ function init() {
   if (isMobile) {
     utils.events.add(document, 'touchstart', introBNBSound);
   }
-
-  preloadCommonSounds();
 
   // if we have a gameStyle, just get right to it.
   const searchParams = new URLSearchParams(window.location.search);

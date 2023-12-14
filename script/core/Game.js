@@ -22,7 +22,7 @@ import { utils } from './utils.js';
 import { zones } from './zones.js';
 import { gamePrefs, prefs } from '../UI/preferences.js';
 import { handleOrientationChange } from '../UI/mobile.js';
-import { playSound, sounds } from './sound.js';
+import { playSound, preloadCommonSounds, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
 import { Joystick } from '../UI/Joystick.js';
 import { View } from '../UI/View.js';
@@ -755,6 +755,8 @@ const game = (() => {
     startEngine();
 
     game.objects.starController?.init();
+
+    preloadCommonSounds();
   }
 
   // the home screen: choose a game type.
