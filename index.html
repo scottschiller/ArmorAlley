@@ -1655,7 +1655,8 @@
             <img
               id="logo-image"
               src="image/armor-alley-wordmark-white.webp"
-              alt="Armor Alley wordmark" />
+              alt="Armor Alley wordmark"
+              width="1062" />
             <div class="logo-overlay-cutout">
               <div id="logo-gradient" class="logo-overlay"></div>
             </div>
@@ -1693,9 +1694,7 @@
             id="game-level-wrapper"
             style="display: inline-block"
             class="mac-classic">
-            <!-- <p style="text-align:left">Battle</p> -->
-            <!-- <span>Level: </span> -->
-            <select id="game_level" name="level">
+            <select id="game_level" name="level" aria-label="Battle:">
               <optgroup label="New? Start here. 👇">
                 <option value="Tutorial">Tutorial</option>
               </optgroup>
@@ -1801,6 +1800,7 @@
               data-action="start-network-game"
               data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
               value="network"
+              aria-label="Start network game"
               class="large network">
               <span class="button-icon network-icon"></span>
             </button>
@@ -1810,6 +1810,7 @@
               data-action="start-editor"
               data-title="Modify the currently-selected battle.<br />*NOTE: Highly experimental."
               value="editor"
+              aria-label="Edit the currently-selected battle."
               class="large hide-on-mobile">
               <span class="button-icon">✏️</span>
             </button>
@@ -2018,7 +2019,8 @@
                             <!-- <span>Battle: </span> -->
                             <select
                               id="select_net_game_level"
-                              name="net_game_level">
+                              name="net_game_level"
+                              aria-label="Battle:">
                               <optgroup label="Network Battles">
                                 <option value="Cavern Cobra">
                                   Cavern Cobra
