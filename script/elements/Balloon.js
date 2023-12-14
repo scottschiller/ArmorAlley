@@ -281,10 +281,10 @@ const Balloon = (options = {}) => {
       // this allows balloons to drift a little over, but they will return.
       if (data.x + data.windOffsetX >= data.maxX) {
         data.frameCount = 0;
-        data.windOffsetX -= 0.1;
+        data.windOffsetX -= 0.05;
       } else if (data.x + data.windOffsetX <= data.minX) {
         data.frameCount = 0;
-        data.windOffsetX += 0.1;
+        data.windOffsetX += 0.05;
       }
 
       // limit to screen, too
