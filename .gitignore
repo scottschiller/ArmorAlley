@@ -11,7 +11,7 @@ node_modules
 npm-shrinkwrap.json
 package-lock.json
 script/aa_main.js
-css/aa_min.css
+css/*_min.css
 *copy*
 bnb
 bun.lockb

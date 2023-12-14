@@ -57,6 +57,7 @@ const js = (file) => `${jsPath}/${file}.js`;
 const mainJSFile = js('aa');
 const bundleFile = js('aa_main');
 const mainCSSFile = css('aa');
+const mobileCSSFile = css('aa-mobile');
 
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
@@ -82,10 +83,11 @@ function concatJS() {
     .pipe(dest('.'));
 }
 
-function minifyCSS() {
+function minifyCSS(cssFile) {
   return (
-    src(mainCSSFile)
-      .pipe(postcss([imageInliner(imageInlinerOpts)]))
+    src(cssFile)
+      // 12/2023: trying without inline images. CSS crunches down to 25 KB instead of 75 KB this way.
+      // .pipe(postcss([imageInliner(imageInlinerOpts)]))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
       .pipe(header(fs.readFileSync(headerFile, 'utf8')))
@@ -94,4 +96,12 @@ function minifyCSS() {
   );
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyCSS);
+function minifyMainCSS() {
+  return minifyCSS(mainCSSFile);
+}
+
+function minifyMobileCSS() {
+  return minifyCSS(mobileCSSFile);
+}
+
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS);
