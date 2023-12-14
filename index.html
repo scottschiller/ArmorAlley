@@ -296,7 +296,10 @@
         }
 
         function maybeCanPlay(format) {
-          return MediaSource?.isTypeSupported?.(format) || canPlay.test(video.canPlayType(format));
+          return (
+            window.MediaSource?.isTypeSupported?.(format) ||
+            canPlay.test(video.canPlayType(format))
+          );
         }
 
         const video = document.getElementById('home-menu-video');
