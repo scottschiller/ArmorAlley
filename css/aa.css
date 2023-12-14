@@ -298,7 +298,7 @@ body.is_safari #mtv-bnb-in {
   /* always leave a little room */
   padding-left: 8px;
   padding-right: 8px;
-  margin: 0px auto;
+  margin: 0 auto;
   box-sizing: border-box;
   display: grid;
   align-content: center;
@@ -326,6 +326,7 @@ body.is-mobile #game-menu-wrapper {
 }
 
 @media screen and (orientation: landscape) {
+  /* TODO: review and fix. */
   body.is_iphone #funds {
     zoom: 1.6;
   }
@@ -342,17 +343,10 @@ body.is-mobile #game-menu-wrapper {
     min-width: 350px;
     max-width: 100vw;
   }
+
   body.is_iphone #logo {
     /* collapse logo border, save some vertical space */
     border-top-width: calc(2px * var(--menu-scale));
-  }
-}
-
-@media screen and (orientation: portrait) {
-  body.is_iphone #game-menu-wrapper {
-    /* tight space on e.g., iPhone in portrait. */
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 
@@ -372,7 +366,7 @@ body.is-mobile #game-menu-wrapper {
   position: relative;
   display: inline-block;
   width: 100%;
-  margin: 0px auto;
+  margin: 0 auto;
   /* prevent bottom "r" from being clipped, ugh. */
   padding-bottom: calc(2px * var(--gs-tz));
   /* offset the above. */
@@ -381,9 +375,9 @@ body.is-mobile #game-menu-wrapper {
 }
 
 #game-menu-wrapper .logo-overlay,
-#game-menu-wrapper .logo-overlay-shadow,
 #game-menu-wrapper .logo-overlay-cutout,
-#game-menu-wrapper .logo-overlay-highlight {
+#game-menu-wrapper .logo-overlay-highlight,
+#game-menu-wrapper .logo-overlay-shadow {
   position: absolute;
   top: 0;
   left: 0;
@@ -407,7 +401,7 @@ body.is-mobile #game-menu-wrapper {
   height: 150%;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 0,
     rgba(255, 255, 255, 0) 5%,
     rgba(255, 255, 255, 0.75) 35%,
     rgba(255, 255, 255, 0.75) 66%,
@@ -415,8 +409,7 @@ body.is-mobile #game-menu-wrapper {
     rgba(255, 255, 255, 0) 100%
   );
   transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
-  animation: glint 10s ease-in-out infinite;
-  animation-delay: 1s;
+  animation: 10s ease-in-out 1s infinite glint;
 }
 
 body.auto-start #game-menu-wrapper .logo-overlay-highlight {
@@ -428,9 +421,11 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
   0% {
     transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
   }
+
   25% {
     transform: translate3d(350%, -14.5%, 0) rotate(15deg);
   }
+
   /* stay until the end */
   100% {
     transform: translate3d(300%, -14.5%, 0) rotate(15deg);
@@ -439,14 +434,13 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 
 #start-game-button-mobile {
   display: none;
-  margin: 0.65em auto 0 auto;
+  margin: 0.65em auto 0;
   border-radius: 5px;
 }
 
 body.auto-start.is-mobile.loaded #start-game-button-mobile {
   display: block;
-  transition: all 0.5s ease-in-out;
-  transition-property: opacity, transform;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 body.game-started #start-game-button-mobile {
@@ -462,16 +456,6 @@ body.game-started #start-game-button-mobile {
   width: 100%;
   /* note height here, for animation offset / scaling purposes */
   height: 600%;
-  background: linear-gradient(
-    0deg,
-    brown 0%,
-    orange 16.66%,
-    yellow 33%,
-    red 49.98%,
-    green 66.64%,
-    orange 83.3%,
-    brown 100%
-  );
   /**
    * Tool with color smoothing, albeit one color at a time...
    * https://www.learnui.design/tools/gradient-generator.html
@@ -486,79 +470,80 @@ body.game-started #start-game-button-mobile {
   /* smoothened version of the above */
   background: linear-gradient(
     180deg,
-    #a52a2a,
+    brown,
     #b13225,
     #bd3d20,
     #c94b1a,
     #d65c14,
     #e3710e,
     #f18907,
-    #ffa500,
-    #ffa500,
+    orange,
+    orange,
     #ffb200,
     #ffbf00,
-    #ffcc00,
+    #fc0,
     #ffd800,
     #ffe500,
     #fff200,
-    #ffff00,
-    #ffff00,
+    #ff0,
+    #ff0,
     #fad708,
     #f5b30f,
     #f09316,
     #eb761e,
     #e65c25,
     #e2462c,
-    #dd3333,
-    #dd3333,
+    #d33,
+    #d33,
     #e23d2c,
     #e64925,
     #eb571e,
     #f06716,
     #f5790f,
     #fa8e08,
-    #ffa500,
-    #ffa500,
+    orange,
+    orange,
     #edc700,
     #d3db00,
     #9bc900,
     #6ab600,
     #40a400,
     #1c9200,
-    #008000,
-    #008000,
+    green,
+    green,
     #2a8704,
     #558e09,
     #81940e,
     #998614,
     #9e661b,
     #a24722,
-    #a52a2a
+    brown
   );
-  animation: logo-gradient 20s ease-in-out infinite alternate;
+  animation: 20s ease-in-out infinite alternate logo-gradient;
 }
 
 @keyframes logo-gradient {
   0% {
-    transform: translate3d(0%, 0%, 0);
+    transform: translate3d(0, 0, 0);
   }
+
   100% {
     /* bottom-align, i.e., 100% minus a fraction of the full 600% height */
-    transform: translate3d(0%, calc(-100% + (100% * 1 / 6)), 0);
+    transform: translate3d(0, calc(-100% + (100% * 1 / 6)), 0);
   }
 }
 
 #game-menu-wrapper .logo-overlay-shadow {
   background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 0,
       rgba(0, 0, 0, 0.15) 10%,
       rgba(0, 0, 0, 0) 25%,
       rgba(0, 0, 0, 0) 50%,
       rgba(0, 0, 0, 0.33) 75%,
       rgba(0, 0, 0, 0.25) 92.5%,
       rgba(0, 0, 0, 0.2) 98%,
-      rgba(0, 0, 0, 1) 99%
+      #000 99%
     ),
     repeating-linear-gradient(
       33deg,
@@ -572,8 +557,8 @@ body.game-started #start-game-button-mobile {
 }
 
 #game-menu-wrapper .logo-overlay,
-#logo-image,
-#logo {
+#logo,
+#logo-image {
   image-rendering: auto;
   image-rendering: optimizequality;
 }
@@ -586,7 +571,7 @@ body.game-started #start-game-button-mobile {
 
 #logo {
   position: relative;
-  margin: 0px auto;
+  margin: 0 auto;
   border-top: calc(6px * var(--menu-scale)) solid #444;
   padding-top: calc(6px * var(--menu-scale));
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
@@ -1492,13 +1477,6 @@ body.game-started #home-video-wrapper {
   transform: translate3d(-50%, -100%, 0);
 }
 
-@media screen and (orientation: portrait) {
-  /* pull video left on narrow screens, show helicopter on-screen more often. */
-  #home-menu-video {
-    margin-left: -45%;
-  }
-}
-
 #home-menu-video video {
   /* prevent controls, hover + pop-out etc. */
   pointer-events: none;
@@ -1562,14 +1540,14 @@ body.demo .target-marker {
 }
 
 #player-status-bar .radar-scroller.higher-visibility {
-  border-color: #339933;
+  border-color: #393;
   background-color: rgba(32, 192, 32, 0.33);
 }
 
 @media screen and (orientation: landscape) and (max-height: 480px) {
   /* landscape + small screens, probably mobile */
   #player-status-bar .radar-scroller {
-    border-color: #339933;
+    border-color: #393;
     background-color: rgba(32, 192, 32, 0.33);
     /* square off the corners. */
     border-radius: 0;
@@ -1984,6 +1962,7 @@ body:not(.edit-mode) #top-bar {
 #radar .sprite.cloud3,
 .cornholio,
 .gunfire,
+.radar-scroller,
 .smoke .transform-sprite,
 .sprite.balloon,
 .sprite.bunker,
@@ -1999,8 +1978,7 @@ body:not(.edit-mode) #top-bar {
 .sprite.super-bunker,
 .sprite.terrain-item,
 .sprite.van,
-.turret .sub-sprite,
-.radar-scroller {
+.turret .sub-sprite {
   /**
    * 09/2021: Chrome may benefit from explicit "layer" promotion, per dev tools.
    * Here, green paint flashing (and thus, performance) is notably improved
@@ -2167,7 +2145,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   /* default when animation finishes */
   animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
   /* give the first frame a little more time */
-  animation-delay: 0.075s;
+  animation-delay: 75ms;
   /* stay at the last frame, when animation finishes */
   animation-fill-mode: forwards;
   background-image: url(../image/generic-explosion.png);
@@ -2178,10 +2156,11 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
 
 @keyframes classic-explosion {
   from {
-    transform: translate3d(0%, 0%, 0);
+    transform: translate3d(0, 0, 0);
   }
+
   to {
-    transform: translate3d(0%, -100%, 0);
+    transform: translate3d(0, -100%, 0);
   }
 }
 
@@ -2189,12 +2168,9 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   background-image: url(../image/generic-explosion-2.png);
 }
 
+.balloon.dead,
 .generic-explosion .sub-sprite,
 .generic-explosion-2 .sub-sprite {
-  display: none;
-}
-
-.balloon.dead {
   display: none;
 }
 
@@ -3145,7 +3121,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   height: 500%;
   /* this element had better have the right aspect ratio. :X */
   background-size: 100% 100%;
-  background-position: 0px 0px;
+  background-position: 0 0;
 }
 
 #battlefield .sprite.explosion-classic-2 .sub-sprite {
@@ -3197,8 +3173,8 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed
 /* filter: blur(calc(1px * (1 / var(--gs-tz)))); */
 /*
 }
-*/
 
+*/
 /*
 body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   #battlefield {
@@ -3207,8 +3183,8 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
 /* filter: blur(calc(0.33px * (1 / var(--gs-tz)))); */
 /*
 }
-*/
 
+*/
 #radar .sprite {
   position: absolute;
   top: 0;
@@ -3403,10 +3379,12 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
     /* larger chopper on small screens in landscape, given the radar is quite small. */
     --border: calc(4px * var(--gs-tz));
   }
+
   /* give everybody a vertical boost, per se. */
   #radar .sprite:not(.balloon) {
     padding-bottom: calc(1px * var(--rs));
   }
+
   #radar .sprite.balloon {
     padding-bottom: calc(0.75px * var(--rs));
   }
@@ -4199,14 +4177,6 @@ body.is_iphone #game-tips .tips-container .tip {
   animation-duration: calc(16s * var(--gs-frac));
 }
 
-@media screen and (orientation: portrait) {
-  #game-tips {
-    /* smaller text, too. */
-    font-size: calc(12px * var(--gs-tz));
-    line-height: 100%;
-  }
-}
-
 /* go bigger on landscape. */
 #game-tips .tips-container .animation-node {
   height: 0;
@@ -4256,10 +4226,27 @@ body.is-mobile:not(.is_iphone)
   width: 100%;
   /* display on top of "TV." */
   z-index: 2;
-  text-shadow: 0px 1px 1px #000;
+  text-shadow: 0 1px 1px #000;
 }
 
 @media screen and (orientation: portrait) {
+  body.is_iphone #game-menu-wrapper {
+    /* tight space on e.g., iPhone in portrait. */
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* pull video left on narrow screens, show helicopter on-screen more often. */
+  #home-menu-video {
+    margin-left: -45%;
+  }
+
+  #game-tips {
+    /* smaller text, too. */
+    font-size: calc(12px * var(--gs-tz));
+    line-height: 100%;
+  }
+
   /* just a bit smaller on iPhone, portrait. */
   #game-tips #game-announcements {
     font-size: calc(18px * var(--gs-tz));
@@ -4625,7 +4612,7 @@ body.is-mobile #player-status-bar .inventory-item:hover {
   width: calc(60px * var(--gs-tz));
   height: calc(80px * var(--gs-tz));
   left: 0;
-  padding: 0px 1px;
+  padding: 0 1px;
   /* this works OK for iPad. */
   bottom: calc(42px * var(--gs-tz));
   z-index: 11; /* sit atop clouds */
@@ -4691,31 +4678,6 @@ body.is_iphone #mobile-controls {
   body:not(.is-mobile) #game-tips #game-announcements {
     /* desktop */
     font-size: calc(24px * var(--gs-tz));
-  }
-}
-
-@media screen and (orientation: portrait) {
-  /* tighter spacing + less vertical clearance needed */
-  body.is_iphone #mobile-controls {
-    bottom: calc(42px * var(--gs-tz));
-  }
-
-  body:not(.is_iphone) #mobile-controls {
-    /* tighter spacing + less vertical clearance needed */
-    bottom: calc(53px * var(--gs-tz));
-  }
-
-  body:not(.is_iphone) #game-tips {
-    font-size: calc(16px * var(--gs-tz));
-  }
-
-  body.is_iphone
-    #game-tips
-    .tips-container
-    .animation-node:not(.hide-on-mobile),
-  body.is_iphone #game-tips .tips-container .tip:not(.hide-on-mobile) {
-    /* iPhone */
-    width: 150%;
   }
 }
 
@@ -5065,6 +5027,29 @@ body.is-mobile.mobile-controls_right-aligned
 }
 
 @media screen and (orientation: portrait) {
+  /* tighter spacing + less vertical clearance needed */
+  body.is_iphone #mobile-controls {
+    bottom: calc(42px * var(--gs-tz));
+  }
+
+  body:not(.is_iphone) #mobile-controls {
+    /* tighter spacing + less vertical clearance needed */
+    bottom: calc(53px * var(--gs-tz));
+  }
+
+  body:not(.is_iphone) #game-tips {
+    font-size: calc(16px * var(--gs-tz));
+  }
+
+  body.is_iphone
+    #game-tips
+    .tips-container
+    .animation-node:not(.hide-on-mobile),
+  body.is_iphone #game-tips .tips-container .tip:not(.hide-on-mobile) {
+    /* iPhone */
+    width: 150%;
+  }
+
   /* indent notifications to avoid overlap - and limit width, too. */
   body.is-mobile.is_iphone.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
@@ -5080,45 +5065,6 @@ body.is-mobile.mobile-controls_right-aligned
     left: 0;
     margin-left: calc(64px * var(--gs-tz) * 1.15);
     max-width: 60vw;
-  }
-}
-
-@media screen and (orientation: landscape) {
-  /* hackish: margin tweaks, due to scaling of mobile controls */
-  body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
-    #notification-toasts.right-aligned.bottom-up {
-    /* iPad, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 1.5);
-  }
-
-  body.is-mobile.is_iphone.mobile-controls_right-aligned
-    #notification-toasts.right-aligned.bottom-up {
-    /* iPhone, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 3);
-  }
-
-  body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
-    #notification-toasts.right-aligned.bottom-up {
-    /* iPhone + notch at left + controls + notifications at bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 2.15);
-  }
-
-  body.is-mobile.mobile-controls_left-aligned
-    #notification-toasts.left-aligned.bottom-up {
-    /* iPad, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs-tz) * 1.25);
-  }
-
-  body.is-mobile.is_iphone.mobile-controls_left-aligned
-    #notification-toasts.left-aligned.bottom-up {
-    /* iPhone, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs-tz) * 1.95);
-  }
-
-  body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
-    #notification-toasts.left-aligned.bottom-up {
-    /* iPhone + notch at left + controls + notifications at bottom left. */
-    margin-left: calc(64px * var(--gs-tz) * 2.75);
   }
 }
 
@@ -5712,8 +5658,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic fieldset {
   border: 1px solid #000;
-  margin: 12px;
-  margin-top: 0;
+  margin: 0 12px 12px;
   padding: 6px 12px;
 }
 
@@ -5836,11 +5781,11 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   margin-left: 14px;
 }
 
-.keycap-list b,
+.inline-key,
 .keycap,
-.inline-key {
+.keycap-list b {
   display: inline-block;
-  padding: 0px 3px;
+  padding: 0 3px;
   border: 1px solid #000;
   border-radius: 3px;
   text-align: center;
@@ -6083,9 +6028,9 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   outline: 0;
 }
 
-.mac-classic b,
 .mac-classic .label-text,
-.mac-classic .options-heading {
+.mac-classic .options-heading,
+.mac-classic b {
   /* letter-spacing: -0.25px; */
   /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
   font-family: Helvetica Neue, Helvetica, -apple-system, system-ui, sans-serif;
@@ -6449,9 +6394,10 @@ body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait) {
-  /**  * Special case: On smaller screens, simplify UI.
-  * Hide standalone network button, move into settings.
-  */
+  /**
+   * Special case: On smaller screens, simplify UI.
+   * Hide standalone network button, move into settings.
+   */
   #start-network-game {
     /* home screen network menu icon */
     display: none;
@@ -6613,8 +6559,7 @@ button .button-icon {
 
 #lights .sub-sprite {
   display: block;
-  background: url(../image/lights.exe.png);
-  background-repeat: no-repeat;
+  background: url(../image/lights.exe.png) no-repeat;
   width: calc(64px * var(--gs-tz));
   height: calc(10px * var(--gs-tz));
   left: 0;
@@ -7076,6 +7021,43 @@ body.radar_jammed .scan-node {
 }
 
 @media screen and (orientation: landscape) {
+  /* hackish: margin tweaks, due to scaling of mobile controls */
+  body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPad, controls right, notifications bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 1.5);
+  }
+
+  body.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone, controls right, notifications bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 3);
+  }
+
+  body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone + notch at left + controls + notifications at bottom right */
+    margin-right: calc(64px * var(--gs-tz) * 2.15);
+  }
+
+  body.is-mobile.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPad, controls + notifications bottom left */
+    margin-left: calc(64px * var(--gs-tz) * 1.25);
+  }
+
+  body.is-mobile.is_iphone.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone, controls + notifications bottom left */
+    margin-left: calc(64px * var(--gs-tz) * 1.95);
+  }
+
+  body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone + notch at left + controls + notifications at bottom left. */
+    margin-left: calc(64px * var(--gs-tz) * 2.75);
+  }
+
   /* scale up tutorial window. */
   body.is-mobile.tutorial-mode #tutorial-window.active {
     transform: scale3d(1.5, 1.5, 1) translate3d(-50%, -50%, 0);
@@ -7685,14 +7667,13 @@ body.loaded #stars.fade-in {
 }
 
 @keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
+  0%,
   100% {
     opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
   }
 }
 
