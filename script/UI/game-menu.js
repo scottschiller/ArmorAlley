@@ -5,6 +5,7 @@ import {
   demo,
   GAME_SPEED,
   isMobile,
+  isSafari,
   searchParams,
   TYPES
 } from '../core/global.js';
@@ -129,6 +130,25 @@ function init() {
   menu = document.getElementById('game-menu');
   optionsButton = document.getElementById('game-options-button');
   oSelect = document.getElementById('game_level');
+
+  /**
+   * HACK: Safari desktop and iOS just refuse to animate the gradient on first load -
+   * guessing this is layout and/or tied to the loading of the logo image asset.
+   */
+  if (isSafari) {
+    const lg = document.getElementById('logo-gradient');
+    if (!lg) return;
+    // wait until image load, then poke the animation again to re-start it.
+    lg.style.animationDuration = '99s';
+    let img = new Image();
+    img.onload = () => {
+      lg.style.animationDuration = '';
+      img.removeAttribute('src');
+      img.onload = null;
+      img = null;
+    };
+    img.src = 'image/armor-alley-wordmark-white.webp';
+  }
 
   if (battle && autoStart) {
     // "campaign mode" - hide the menu, minimal logo on start.
