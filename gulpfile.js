@@ -58,11 +58,12 @@ const mainJSFile = js('aa');
 const bundleFile = js('aa_main');
 
 const cssFiles = {
+  battleOverLetter: 'aa-battle-over-letter',
+  bnb: 'aa-bnb',
+  gameUI: 'aa-game-ui',
   main: 'aa',
   mobile: 'aa-mobile',
-  bnb: 'aa-bnb',
-  tutorialEditor: 'aa-tutorial-editor',
-  battleOverLetter: 'aa-battle-over-letter'
+  tutorialEditor: 'aa-tutorial-editor'
 }
 
 async function bundleJS() {
@@ -122,4 +123,8 @@ function minifyLetterCSS() {
   return minifyCSS(cssFiles.battleOverLetter);
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS);
+function minifyGameUICSS() {
+  return minifyCSS(cssFiles.gameUI);
+}
+
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS);

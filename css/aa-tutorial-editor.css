@@ -297,12 +297,6 @@ body.edit-mode #battlefield .terrain-item {
   transition: margin 0.25s ease-out;
 }
 
-#battlefield .terrain-item.dynamically-added {
-  transition: margin 0.75s ease-in-out;
-  /* lay back in the cut, as it were. */
-  z-index: 1;
-}
-
 body.edit-mode #battlefield .sprite.newly-added-sprite.tank,
 body.edit-mode #battlefield .sprite.tank {
   /* annoying pixel shift */
@@ -315,14 +309,6 @@ body.edit-mode #battlefield .sprite.newly-added-sprite {
 
 body.edit-mode #battlefield .terrain-item {
   margin-bottom: 0;
-}
-
-body.edit-mode #battlefield .sprite.submerged,
-body:not(.edit-mode) #battlefield .terrain-item.submerged,
-body:not(.gravestones_helicopters) #battlefield .terrain-item.gs_helicopter,
-body:not(.gravestones_infantry) #battlefield .terrain-item.gs_infantry,
-body:not(.gravestones_vehicles) #battlefield .terrain-item.gs_vehicle {
-  margin-top: 27px !important;
 }
 
 body.edit-mode #battlefield .terrain-item.submerged {
@@ -444,4 +430,9 @@ body.edit-mode #battlefield {
   top: 0;
   transition: opacity 125ms ease-out;
   width: 0;
+}
+
+body.edit-mode #top-bar {
+  /* crop the top, reserving radar for click-and-drag / scrubbing */
+  height: calc(42px * var(--gs-tz));
 }
