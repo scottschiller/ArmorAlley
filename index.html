@@ -135,6 +135,7 @@
         // "version" string, for CSS + JS assets.
         // comment out this line if you are getting 404s, etc.
         const v = '.V20231107';
+        let fetched = {};
 
         /**
          * ARMOR ALLEY: "Boot loader" - production bundle vs. development source.
@@ -143,7 +144,11 @@
          * https://github.com/scottschiller/ArmorAlley/
          */
 
-        function loadScript(src, type = 'module', async = false) {
+        function loadScript(src, type = 'module', async = false, onload) {
+          if (fetched[src]) {
+            onload?.();
+            return;
+          }
           let s = document.createElement('script');
           if (type) s.type = type;
           if (async) s.async = true;
@@ -161,13 +166,15 @@
             s = null;
             if (version) {
               version = '';
-              loadScript(src, type, async);
+              loadScript(src, type, async, onload);
               // try the same for CSS.
               loadCSS();
             }
           };
           s.onload = () => {
             console.log(`Loaded JS: ${src}${version}`);
+            fetched[src] = true;
+            onload?.();
             s.onload = null;
             s = null;
           };
@@ -182,20 +189,34 @@
         }
 
         function loadCSS(
-          src = isProdSite || forceProd ? 'css/aa_min.css' : 'css/aa.css',
+          src = 'css/aa.css',
           onload
         ) {
+          // minified version?
+          if (isProdSite || forceProd) src = src.replace('.css', '_min.css');
+
+          if (fetched[src]) {
+            onload?.();
+            return;
+          }
           let link = document.createElement('link');
           link.rel = 'stylesheet';
           link.media = 'screen';
           link.onload = () => {
             console.log(`Loaded CSS: ${src}${version}`);
+            fetched[src] = true;
             onload?.();
             link.onload = null;
             link = null;
           };
           link.href = `${src}${version}`;
           document.head?.appendChild(link);
+        }
+
+        // hackish: expose to modules
+        window.aaLoader = {
+          loadScript,
+          loadCSS
         }
 
         function doAppend() {
@@ -283,11 +304,7 @@
           !!navigator.userAgent.match(/mobile|iphone|ipad/i) ||
           inferredTouchDevice
         ) {
-          if (isProdSite || forceProd) {
-            loadCSS('css/aa-mobile_min.css');
-          } else {
-            loadCSS('css/aa-mobile.css');
-          }
+          loadCSS('css/aa-mobile.css');
         }
 
         ga();
