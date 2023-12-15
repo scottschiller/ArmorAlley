@@ -94,8 +94,7 @@ function concatJS() {
 function minifyCSS(cssFile) {
   return (
     src(css(cssFile))
-      // 12/2023: trying without inline images. CSS crunches down to 25 KB instead of 75 KB this way.
-      // .pipe(postcss([imageInliner(imageInlinerOpts)]))
+      .pipe(postcss([imageInliner(imageInlinerOpts)]))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
       .pipe(header(fs.readFileSync(headerFile, 'utf8')))
