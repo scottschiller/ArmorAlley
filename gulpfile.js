@@ -63,6 +63,7 @@ const cssFiles = {
   gameUI: 'aa-game-ui',
   main: 'aa',
   mobile: 'aa-mobile',
+  prefsAndModals: 'aa-prefs-and-modals',
   tutorialEditor: 'aa-tutorial-editor'
 }
 
@@ -126,5 +127,8 @@ function minifyLetterCSS() {
 function minifyGameUICSS() {
   return minifyCSS(cssFiles.gameUI);
 }
+function minifyPrefsAndModalsCSS() {
+  return minifyCSS(cssFiles.prefsAndModals);
+}
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS);
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);

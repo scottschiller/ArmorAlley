@@ -1,0 +1,841 @@
+/**
+ * Preferences and classic mac modal bits
+ */
+
+/* prefs + modal stuff - based on original 68K Macintosh UI */
+#game-prefs-modal {
+  border: 1px solid #000;
+  /* collapse */
+  font-size: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: 540px;
+  /* ensure this fits on small screens, e.g., mobile + portrait. */
+  max-width: 99vw;
+  z-index: 11;
+}
+
+#game-prefs-form,
+#game-prefs-modal {
+  height: 92vh;
+}
+
+/* leave room for address bar UI. */
+body.is_iphone #game-prefs-form,
+body.is_iphone #game-prefs-modal {
+  height: 85vh;
+}
+
+#game-prefs-submit {
+  position: relative;
+}
+
+#game-prefs-cancel {
+  display: none;
+  margin-top: 5px;
+}
+
+#game-prefs-modal.is-network #game-prefs-cancel {
+  display: block;
+  /* positioning shenanigans. */
+  margin-top: 9px;
+  margin-bottom: -6px;
+}
+
+/* hide once the game has started. */
+body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
+  display: none;
+}
+
+#volume-value {
+  display: inline-block;
+  min-width: 19px;
+  vertical-align: middle;
+}
+
+#game_speed-value {
+  vertical-align: middle;
+}
+
+#game-prefs-modal .game-speed-icons {
+  position: relative;
+  font-size: calc(16px * var(--prefs-font-scale));
+  line-height: 16px;
+  height: 16px;
+  padding-bottom: 1px;
+  -webkit-user-select: none;
+  user-select: none;
+  /* match .range-slider */
+  width: 200px;
+}
+
+#game-prefs-modal .emoji-turtle {
+  position: absolute;
+  left: 4px;
+  transform: scaleX(-1);
+}
+
+#game-prefs-modal .emoji-human {
+  position: absolute;
+  left: 50%;
+  margin-left: -0.25em;
+}
+
+body.is_safari #game-prefs-modal .emoji-human {
+  margin-left: -0.4em;
+}
+
+#game-prefs-modal .emoji-rabbit {
+  position: absolute;
+  right: -2px;
+  transform: scaleX(-1);
+}
+
+/* volume and game speed controls */
+#game-prefs-modal .range-slider {
+  display: inline-block;
+  appearance: none;
+  background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
+    0 0/3px #eee;
+  border: 1px solid #000;
+  border-radius: 16px;
+  height: 16px;
+  margin: 4px 0 0;
+  outline: 0;
+  padding: 0 2px;
+  width: 200px;
+  image-rendering: smooth;
+  image-rendering: crisp-edges;
+}
+
+body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
+  /* this looks nicer in desktop Safari. */
+  background-size: 2px;
+}
+
+#game-prefs-modal .range-slider::-webkit-slider-thumb {
+  appearance: none;
+  background: #eee;
+  box-shadow: none;
+  border: 1px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 12px;
+  width: 20px;
+}
+
+#game-prefs-modal .range-slider::-moz-range-thumb {
+  appearance: none;
+  background: #eee;
+  border: 1px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 10px;
+  width: 20px;
+}
+
+.close-button {
+  background: #f3f3f3;
+  border: 0.25px solid #000;
+  border-radius: 0.25px;
+  height: 4.5px;
+  left: 3.75px;
+  outline: hsla(0, 0%, 100%, 0.67) solid 0.25px;
+  position: absolute;
+  top: 0.75px;
+  width: 4.5px;
+  z-index: 2;
+}
+
+.close-button:active {
+  background-image: url(../image/apple-close-asterisk.png);
+  background-size: contain;
+}
+
+#game-prefs-modal .body {
+  font-size: calc(11px * var(--prefs-font-scale));
+  /* border all the way around */
+  border: 0.5px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  font-family: Geneva, verdana, arial, sans-serif;
+  /* height: 10rem; */
+  overflow: auto;
+  position: relative;
+  /* Firefox may show scaled-up scrollbars - this helps a bit. */
+  scrollbar-width: thin;
+}
+
+#game-prefs-modal .body,
+#game-prefs-modal .body legend {
+  background: #f3f3f3;
+}
+
+#game-prefs-modal.is-network {
+  /* leave room for level preview in radar area */
+  margin-top: 0;
+  top: 50.5%;
+}
+
+#game-prefs-modal p {
+  padding-top: 3px;
+}
+
+#game-prefs-header {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  padding: 10px;
+  width: 100%;
+}
+
+#game-prefs-header .aa-logo {
+  display: inline-block;
+  image-rendering: auto;
+  margin-right: 15px;
+  margin-top: 7.5px;
+  width: 390px;
+  max-width: 65vw;
+  height: auto;
+}
+
+#game-prefs-header .column {
+  align-self: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+#game-prefs-modal.is-network .column:last-of-type {
+  /* hack: scrollbar clipping on right side */
+  margin-right: -4px;
+}
+
+#game-prefs-modal textarea {
+  color: #000;
+  font-family: geneva, verdana, arial, sans-serif;
+  font-size: 10px;
+  height: 16rem;
+  transform: scale3d(0.33, 0.33, 1);
+  transform-origin: 0 0;
+  width: 23rem;
+}
+
+#game-prefs-modal #form-scroller-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+
+#game-prefs-modal #form-scroller {
+  overflow-y: scroll;
+}
+
+body.is_firefox #game-prefs-modal .fieldset-container {
+  /**
+   * best we can do for Firefox, which doesn't support zoom
+   * and thus scrollbars are larger due to transforms - long story.
+   * 11/2023: specific to firefox, because Chrome Canary started
+   * ignoring custom scrollbars if `scrollbar-width` was set.
+   */
+  scrollbar-width: thin;
+}
+
+/**
+ * System 7-style scrollbars
+ * Hat tip: https://github.com/sakofchit/system.css/ (MIT)
+ * https://github.com/sakofchit/system.css/blob/main/LICENSE
+ */
+#game-prefs-modal .fieldset-container::-webkit-scrollbar {
+  background-color: #fff;
+  width: 22px;
+}
+
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-track {
+  /* black checkerboard pattern */
+  background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
+    0 0/3px #fff;
+  border-left: 2px solid #000;
+  image-rendering: -webkit-optimize-contrast;
+  width: 10px;
+}
+
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-left: 2px solid #000;
+  border-right: 0.5px solid #000;
+  box-sizing: content-box;
+  /* two shadows, which are hidden when at the top and bottom */
+  box-shadow: 0 2px 0 #000, 0 -2px 0 #000;
+  width: 20px;
+}
+
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:horizontal:end:increment,
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:horizontal:start:decrement,
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:vertical:end:increment,
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:vertical:start:decrement {
+  display: block;
+}
+
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:start {
+  background-image: url(../image/icon/scrollbar-up.svg);
+  background-repeat: no-repeat;
+  height: 23.38px;
+}
+
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:vertical:start:active {
+  background-image: url(../image/icon/scrollbar-up-active.svg);
+  background-repeat: no-repeat;
+  height: 23.38px;
+}
+
+#game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end {
+  background-image: url(../image/icon/scrollbar-down.svg);
+  height: 23.38px;
+}
+
+#game-prefs-modal
+  .fieldset-container::-webkit-scrollbar-button:vertical:end:active {
+  background-image: url(../image/icon/scrollbar-down-active.svg);
+  background-repeat: no-repeat;
+  height: 23.38px;
+}
+
+#game-prefs-modal a {
+  border-radius: 1px;
+  color: #000;
+}
+
+#game-prefs-modal a:not(.no-hover):hover {
+  background-color: #000;
+  color: #fff;
+  margin: -0.25px -1px;
+  padding: 0.25px 1px;
+}
+
+.mac-classic fieldset:first-of-type {
+  margin-top: 2px;
+}
+
+.mac-classic fieldset {
+  border: 1px solid #000;
+  margin: 0 12px 12px;
+  padding: 6px 12px;
+}
+
+#game-prefs-modal button,
+.mac-classic fieldset legend,
+.mac-classic h3 {
+  font-family: FA Sysfont C, courier, sans-serif;
+  font-size: 7px;
+  vertical-align: middle;
+}
+
+#game-prefs-modal button,
+#game-prefs-modal legend {
+  font-size: calc(15px * var(--prefs-font-scale));
+}
+
+.mac-classic h3 {
+  font-weight: 300;
+  margin-bottom: 0.5em;
+  margin-top: 0;
+}
+
+.mac-classic ul {
+  list-style-type: none;
+}
+
+.mac-classic ul,
+.mac-classic ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.mac-classic ul li {
+  margin-bottom: 8px;
+  margin-top: 2px;
+}
+
+.mac-classic ul.partial-bottom-spacing li {
+  margin-bottom: 4px;
+}
+
+.mac-classic ul.less-bottom-spacing li {
+  margin-bottom: 0;
+}
+
+.mac-classic ul li:last-of-type {
+  margin-bottom: 2px;
+}
+
+.mac-classic ul li.less-bottom-spacing {
+  margin-bottom: 6px;
+}
+
+.mac-classic ul li ul li {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.mac-classic p {
+  margin: 0;
+  padding-top: 2px;
+}
+
+.mac-classic .compact,
+.mac-classic ul.compact li {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+
+.mac-classic li.inline-option {
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.mac-classic ul ul.real-list {
+  list-style-type: disc;
+}
+
+.mac-classic p,
+.mac-classic ul li p,
+.mac-classic ul ul.real-list li {
+  margin-bottom: 0;
+  margin-left: 18px;
+  padding-bottom: 2px;
+}
+
+.mac-classic li,
+.mac-classic p {
+  letter-spacing: -0.25px;
+}
+
+.mac-classic ul ul.real-list li {
+  display: list-item;
+  margin-left: 19px;
+}
+
+.mac-classic .indented {
+  margin-left: 9px;
+}
+
+.finder.mac-classic p.non-indented,
+.mac-classic .non-indented,
+.mac-classic ul li p.options-heading {
+  margin-left: 0;
+}
+
+.mac-classic .compact.full-width {
+  width: 100%;
+}
+
+.keycap-list {
+  display: inline-block;
+  width: 49%;
+  vertical-align: top;
+}
+
+.mac-classic ul ul.keycap-list li {
+  margin-left: 14px;
+}
+
+.inline-key,
+.keycap,
+.keycap-list b {
+  display: inline-block;
+  padding: 0 3px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.keycap-list b.inline-key {
+  margin-right: 0.5px;
+}
+
+.mac-classic input,
+.mac-classic label {
+  vertical-align: middle;
+}
+
+.mac-classic input[type='text'] {
+  border: 1px solid #000;
+  box-sizing: border-box;
+  display: block;
+  font-size: calc(12px * var(--prefs-font-scale));
+  padding: 4px;
+  width: 100%;
+}
+
+.mac-classic input[type='text']:focus {
+  outline: 0;
+}
+
+.mac-classic select {
+  --bg-size: calc(8px * var(--menu-scale));
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23000000'><polygon points='0,0 100,0 50,50'/></svg>")
+    no-repeat;
+  background-position: calc(100% - 8px) 70%;
+  background-size: calc(var(--bg-size));
+  border: 0.5px solid #999;
+  border-radius: 2px;
+  color: #ccc;
+  cursor: pointer;
+  font-family: FA Sysfont C, courier, sans-serif;
+  font-size: calc(10px * var(--menu-scale));
+  font-weight: 400;
+  /* look similar to buttons */
+  height: calc(18.25px * var(--menu-scale));
+  /* vertical align shenanigans */
+  margin: -2px 0 0 2px;
+  padding: 0 32px 0 0;
+  vertical-align: middle;
+  text-indent: calc(4px * var(--menu-scale));
+  scrollbar-width: thin;
+}
+
+#game-prefs-modal select {
+  border-color: #000;
+  color: #000;
+  font-family: FA Sysfont C, geneva, verdana, arial, sans-serif;
+  font-size: calc(12px * var(--prefs-font-scale));
+  border-width: 1px;
+  margin-left: 0;
+  margin-top: 1px;
+  height: calc(25px * var(--prefs-font-scale));
+  background-size: 10px;
+  min-width: 11em;
+  /* room for "Tanker's Demise" */
+  text-indent: 8px;
+}
+
+.mac-classic select:active,
+.mac-classic select:focus,
+.mac-classic select:hover {
+  border-color: #fff;
+}
+
+.mac-classic input[type='checkbox'],
+.mac-classic input[type='radio'] {
+  /* https://moderncss.dev/pure-css-custom-styled-radio-buttons/ */
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid;
+  border-radius: 50%;
+  color: currentColor;
+  font: inherit;
+  height: 15px;
+  /* Not removed via appearance */
+  margin: -0.5px 0 0;
+  padding: 0;
+  /* vertical align w/text */
+  position: relative;
+  transform: translateY(-0.5px);
+  width: 15px;
+}
+
+body.is_firefox .mac-classic input[type='checkbox'] {
+  position: relative;
+}
+
+.mac-classic input[type='checkbox'] {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.mac-classic input[type='checkbox']:before,
+.mac-classic input[type='radio']:before {
+  background: #000;
+  border-radius: 50%;
+  content: '';
+  height: 100%;
+  left: 0;
+  line-height: 0;
+  position: absolute;
+  top: 0;
+  visibility: hidden;
+  width: 100%;
+}
+
+.mac-classic input[type='radio']:before {
+  /* center the dot */
+  transform: scale3d(0.66, 0.66, 1);
+  transform-origin: 50% 50%;
+}
+
+.mac-classic input[type='checkbox']:before {
+  position: absolute;
+  top: -0.5px;
+  left: -0.5px;
+  width: 12px;
+  height: 12px;
+  background: url(../image/x.png) 50% 50%/250%;
+  filter: drop-shadow(0px 0px 0.5px #000);
+  image-rendering: auto;
+  content: ' ';
+}
+
+.mac-classic input[type='checkbox']:checked:before,
+.mac-classic input[type='radio']:checked:before {
+  visibility: visible;
+}
+
+.mac-classic input[type='checkbox']:active {
+  opacity: 0.75;
+}
+
+.mac-classic input[type='checkbox']:active:before {
+  transform: scale(0.5);
+  transform-origin: 50% 50%;
+  visibility: visible;
+}
+
+.mac-classic input[type='checkbox']:active,
+.mac-classic input[type='checkbox']:focus {
+  background: #e0e0e0;
+}
+
+.mac-classic input[type='checkbox']:focus {
+  animation: 1s steps(1) infinite blink-bg;
+}
+
+.mac-classic input[type='radio']:active:before {
+  transform: scale(0.4);
+  transform-origin: 50%;
+  visibility: visible;
+}
+
+.mac-classic input[type='radio']:focus:before {
+  animation: 0.5s ease-in-out infinite alternate-reverse pulse;
+}
+
+.mac-classic button:disabled,
+.mac-classic input[type='checkbox']:disabled,
+.mac-classic input[type='radio']:disabled {
+  opacity: 0.33;
+}
+
+.mac-classic input[type='checkbox']:focus-visible,
+.mac-classic input[type='radio']:focus-visible {
+  /* hide outline, because we have the animation */
+  outline: 0;
+}
+
+.mac-classic .label-text,
+.mac-classic .options-heading,
+.mac-classic b {
+  /* letter-spacing: -0.25px; */
+  /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
+  font-family: Helvetica Neue, Helvetica, -apple-system, system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.finder.mac-classic p {
+  margin: 0.1rem 0.25rem 0;
+  padding: 0;
+}
+
+.mac-classic fn.disclaimer {
+  font-size: calc(10px * var(--prefs-font-scale));
+  vertical-align: top;
+}
+
+#game-prefs-form {
+  /* one column, two rows. */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+#game-prefs-modal fieldset {
+  position: relative;
+}
+
+#game-prefs-modal .network,
+#game-prefs-modal.is-guest .show-to-host,
+#game-prefs-modal.is-host .show-to-guest {
+  /* hide by default */
+  display: none;
+}
+
+#game-prefs-modal.is-network .network {
+  display: block;
+}
+
+/* make room for mac icons */
+#game-prefs-modal.is-network #gameplay-options,
+#game-prefs-modal.is-network #network-options,
+#game-prefs-modal.is-network #traffic-control {
+  margin-top: 5px;
+}
+
+#game-prefs-modal.is-network .network-icon {
+  /* match #game-prefs-modal .body */
+  background-color: #f3f3f3;
+  background-image: url(../image/win95-networking-icon.png);
+  background-position: 4px 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+  /* shenanigans to hide the through-line */
+  padding-left: 6px;
+  padding-right: 4px;
+  position: absolute;
+  vertical-align: top;
+}
+
+#game-prefs-modal.is-network .network-icon-inline {
+  background-color: transparent;
+  background-position: 0 0;
+  background-size: 12px 12px;
+  margin-bottom: -2px;
+  /* avoid messing up the line height */
+  padding: 0;
+  position: relative;
+  vertical-align: middle;
+}
+
+#game-prefs-modal.is-network .hide-if-network {
+  display: none;
+}
+
+/* Redefine for prefs modal, which is not scaled up. */
+#game-prefs-modal button {
+  border-width: 1.5px;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  min-width: 3.5rem;
+  padding: 1px 10px;
+}
+
+#game-prefs-modal button.primary {
+  /* inner white, followed by outer black borders */
+  box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+  outline-offset: 1px;
+  /* Safari collapses buttons more than the others. :/ */
+  padding: 1px 20px;
+  /* Modal-specific: extra right spacing. */
+  margin-right: 10px;
+}
+
+#game-prefs-modal button.primary:not(:disabled):active,
+#game-prefs-modal button:not(.generic-cta):not(:disabled):active,
+button.primary:not(:disabled):active,
+button:not(.generic-cta):not(:disabled):active {
+  background-color: #000;
+  color: #fff;
+}
+
+body.game-started #network-prompt {
+  /* always hide this prefs panel option, once game has begun. */
+  display: none;
+}
+
+/* outer -> inner */
+#game-prefs-modal .border-3 {
+  border-color: #dadaff #8787b3 #8787b3 #dadaff;
+  border-style: solid;
+  border-width: 1px;
+}
+
+#game-prefs-modal .border-2 {
+  border: 1px solid #cdcdcd;
+}
+
+#game-prefs-modal .border-1 {
+  border-color: #8787b3 #dadaff #dadaff #8787b3;
+  border-style: solid;
+  border-width: 1px;
+}
+
+#network-options-chat-box {
+  border: 0.5px solid #999;
+  border-bottom: none;
+}
+
+#network-options-chat-scroll {
+  border-color: #999;
+  max-height: 10em;
+  overflow-y: auto;
+  padding: 3px;
+  position: relative;
+  scrollbar-width: thin;
+}
+
+#game-prefs-modal #network-chat-input {
+  border-color: #999;
+  border-radius: 0;
+}
+
+/* grey out everything that isn't "exempt" and still available in-game within a shared network fieldset. */
+#game-prefs-modal
+  fieldset.sync-over-network.faded
+  > ul
+  > li:not(.allow-in-game-updates),
+#game-prefs-modal
+  fieldset.sync-over-network.faded
+  legend:not(.allow-in-game-updates) {
+  opacity: 0.67;
+}
+
+#game-prefs-modal
+  fieldset.sync-over-network.faded
+  > ul
+  > li.allow-in-game-updates,
+#game-prefs-modal fieldset.sync-over-network.faded-exclude-legend legend {
+  opacity: 1;
+}
+
+button.attention:not(:active) {
+  animation: 1s steps(2) infinite button-blink;
+}
+
+#game-prefs-modal button.attention:not(:active) {
+  animation: 1s steps(2) infinite button-blink-larger;
+}
+
+@keyframes button-blink {
+  /**
+   * This is generally considered bad form, evil UX/UI,
+   * and you should never do it.
+   * ...Except in this one specific case, of course. 😇
+   */
+  0% {
+    box-shadow: 0 0 0 0.5px #fff, 0 0 0 2px #000;
+  }
+
+  to {
+    border-color: transparent;
+    box-shadow: 0 0 0 4px #f3f3f3, 0 0 0 2px #f3f3f3;
+  }
+}
+
+@keyframes button-blink-larger {
+  /* See above. :D */
+  0% {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+  }
+
+  to {
+    border-color: transparent;
+    box-shadow: 0 0 0 8px #f3f3f3, 0 0 0 4px #f3f3f3;
+  }
+}

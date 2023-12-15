@@ -577,6 +577,13 @@ function PrefsManager() {
   }
 
   function show(options = {}) {
+    // preload CSS and then do the actual thing
+    window.aaLoader.loadCSS('css/aa-prefs-and-modals.css', () =>
+      showForReal(options)
+    );
+  }
+
+  function showForReal(options = {}) {
     /**
      * options = {
      *   network: true,

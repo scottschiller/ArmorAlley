@@ -1175,6 +1175,7 @@ const Editor = () => {
       }
       fetch('css/aa-game-ui.css');
       fetch('css/aa-tutorial-editor.css');
+      fetch('css/aa-prefs-and-modals.css');
     }
   };
 

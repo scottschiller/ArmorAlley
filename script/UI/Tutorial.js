@@ -19,10 +19,24 @@ const Tutorial = () => {
       .getElementsByTagName('li');
     dom.oTutorialWindow = document.getElementById('tutorial-window');
     data.steps = dom.oList.length;
+
     // fetch the relevant CSS
-    window.aaLoader.loadCSS('css/aa-tutorial-editor.css', () =>
-      utils.css.add(document.body, 'tutorial-mode')
-    );
+    let needed = 0;
+
+    function onload() {
+      needed--;
+      if (!needed) {
+        utils.css.add(document.body, 'tutorial-mode');
+      }
+    }
+
+    function fetch(url) {
+      needed++;
+      window.aaLoader.loadCSS(url, onload);
+    }
+
+    fetch('css/aa-tutorial-editor.css');
+    fetch('css/aa-prefs-and-modals.css');
   }
 
   function selectItem(i) {
