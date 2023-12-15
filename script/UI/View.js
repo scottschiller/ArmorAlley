@@ -1314,8 +1314,6 @@ const View = () => {
     // enable the whole UI, basically.
     dom.aa.style.visibility = 'visible';
 
-    // bring the menu up.
-    utils.css.add(dom.gameMenu, css.active);
   }
 
   css = {

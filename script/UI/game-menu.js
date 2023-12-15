@@ -310,6 +310,11 @@ function init() {
     previewLevel(levelName);
   }
 
+  // wait one frame for things to settle, then bring the whole menu up.
+  window.requestAnimationFrame(() =>
+    utils.css.add(game.objects.view.dom.gameMenu, 'active')
+  );
+
   if (battle && autoStart) {
     // mobile needs user interaction, shows a button.
     if (isMobile) return;
@@ -795,7 +800,14 @@ function hideTitleScreen(callback) {
 }
 
 const gameMenu = {
-  init,
+  init: () => {
+    // preload might be necessary
+    if (!isMobile) return init();
+    // rAF = time to parse CSS? 😅
+    window.aaLoader.loadCSS('css/aa-mobile.css', () =>
+      window.requestAnimationFrame(init)
+    );
+  },
   menuUpdate,
   startGame
 };
