@@ -3524,13 +3524,6 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
 .cornholio {
   /* I am the great Cornholio! */
   display: none;
-  height: 33.6px;
-  /* hide until visible */
-  margin-top: 33.6px;
-  transition: margin-top 1s ease-in-out;
-  width: 12px;
-  /* show in front of bunkers */
-  z-index: 1;
 }
 
 .bunker.burning .sub-sprite.rubble-container,
