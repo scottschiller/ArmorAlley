@@ -1163,7 +1163,19 @@ const Editor = () => {
     data,
     dom,
     events,
-    init: () => window.aaLoader.loadCSS('css/aa-tutorial-editor.css', initEditor)
+    init: () => {
+      let needed = 0;
+      function onload() {
+        needed--;
+        if (!needed) initEditor();
+      }
+      function fetch(url) {
+        needed++;
+        window.aaLoader.loadCSS(url, onload);
+      }
+      fetch('css/aa-game-ui.css');
+      fetch('css/aa-tutorial-editor.css');
+    }
   };
 
   return exports;
