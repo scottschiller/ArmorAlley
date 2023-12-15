@@ -723,7 +723,14 @@ bnb.p2ComplimentsButthead = shuffle([
   addVL('bh_whoa_p2_is_smart_and_stuff')
 ]);
 
+bnb.beavisBeerAndScore = addSequence(
+  add('b_dammit_butthead_we_came_here_to_drink_beer_and_score', 50),
+  () => bnb.neverScored
+);
+bnb.beavisBeerAndScore.throttle = 60000;
+
 bnb.beavisComplaints = shuffle([
+  ...bnb.beavisBeerAndScore,
   addVL('b_dammit_i_keep_losing'),
   addVL('b_dammit_i_lose_money_even_when_were_playing_for_funsies'),
   addVL('b_dammit_this_game_sucks')
@@ -861,12 +868,6 @@ bnb.thoughtWeWereGonnaScore = add(
   75
 );
 bnb.thoughtWeWereGonnaScore.throttle = 60000;
-
-bnb.beavisBeerAndScore = addSequence(
-  add('b_dammit_butthead_we_came_here_to_drink_beer_and_score', 50),
-  () => bnb.neverScored
-);
-bnb.beavisBeerAndScore.throttle = 60000;
 
 bnb.beavisBigSchlong = add('beavis_schlong', 50);
 bnb.beavisBigSchlong.excludeDelay = true;
