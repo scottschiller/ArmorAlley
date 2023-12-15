@@ -991,7 +991,10 @@ const game = (() => {
     dom,
     findObjectById,
     getObjects,
-    init: () => window.aaLoader.loadCSS('css/aa-game-ui.css', () => window.requestAnimationFrame(init)),
+    init: () =>
+      window.aaLoader.loadCSS('css/aa-game-ui.css', () =>
+        window.requestAnimationFrame(init)
+      ),
     initArmorAlley,
     objects,
     objectsById,
