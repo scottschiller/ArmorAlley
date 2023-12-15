@@ -61,7 +61,8 @@ const cssFiles = {
   main: 'aa',
   mobile: 'aa-mobile',
   bnb: 'aa-bnb',
-  tutorialEditor: 'aa-tutorial-editor'
+  tutorialEditor: 'aa-tutorial-editor',
+  battleOverLetter: 'aa-battle-over-letter'
 }
 
 async function bundleJS() {
@@ -117,4 +118,8 @@ function minifyTutorialEditorCSS() {
   return minifyCSS(cssFiles.tutorialEditor);
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS);
+function minifyLetterCSS() {
+  return minifyCSS(cssFiles.battleOverLetter);
+}
+
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS);

@@ -1,0 +1,250 @@
+/**
+ * "Letters from the old tanker" 💌
+ */
+
+#battle-over-letter {
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  width: calc(200px * var(--gs-tz));
+  height: calc(150px * var(--gs-tz));
+  transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
+  filter: blur(3px);
+  transition: 0.5s ease-in-out;
+  opacity: 0;
+  transition-property: transform, filter, opacity;
+  /* sit on top of announcements, clouds etc. */
+  z-index: 12;
+}
+
+#battle-over-letter.active {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  transition-timing-function: cubic-bezier(0.45, 0.48, 0.44, 1.11);
+  transition-duration: 1.25s;
+  filter: none;
+}
+
+#battle-over-letter.mousedown {
+  transform: translate3d(-50%, -50%, 0) scale3d(0.975, 0.975, 1);
+  transition-duration: 0.33s;
+}
+
+#battle-over-letter .letter-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
+#battle-over-letter .letter-content h1 {
+  color: #9b1a1e;
+  font-family: 'War Wound', Stencil, 'Stencil Std', 'Stencil Compress D',
+    'Stencil Becker Compress', FA Sysfont C, Menlo, Monaco, SF Mono, Geneva,
+    verdana, arial, sans-serif;
+  font-weight: 400;
+  font-size: calc(19px * var(--gs-tz));
+  line-height: 1em;
+  margin-top: calc(4px * var(--gs-tz));
+  margin-bottom: 0;
+}
+
+#battle-over-letter .letter-content p {
+  color: #666;
+  font-family: Geneva, verdana, arial, sans-serif;
+  font-size: calc(5px * var(--gs-tz));
+  font-style: italic;
+}
+
+.letter-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(200px * var(--gs-tz));
+  height: calc(150px * var(--gs-tz));
+  transform: translate3d(-50%, -50%, 0);
+  cursor: pointer;
+}
+
+body.is_safari .animated-mail .back-fold,
+body.is_safari .animated-mail .body,
+body.is_safari .animated-mail .left-fold,
+body.is_safari .animated-mail .letter-buttons,
+body.is_safari .animated-mail .top-fold {
+  /* Safari has rendering / compositing issues without additional transforms. */
+  transform: translate3d(0, 0, 0);
+}
+
+.animated-mail {
+  /**
+   * Hat tip: https://bbbootstrap.com/snippets/opening-envelope-css-html-91462710 
+   */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s, z-index 1s;
+}
+
+.animated-mail .wax-seal {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: calc(32px * var(--gs-tz));
+  height: calc(31.25px * var(--gs-tz));
+  /**
+   * Hat tip: "Golden Wax Seal" via pngtree.com
+   * https://pngtree.com/freepng/golden-wax-seal_2079672.html
+   */
+  background: url(../image/pngtree-wax-seal.webp) 50% 50% / contain no-repeat;
+  transition: filter 0.25s ease-in-out, transform 0.25s ease-in-out;
+  image-rendering: optimizeQuality;
+  image-rendering: crisp-edges;
+}
+
+#battle-over-letter .generic-cta {
+  font-size: calc(8px * var(--gs-tz));
+  padding: calc(2px * var(--gs-tz)) calc(8px * var(--gs-tz));
+  line-height: calc(10px * var(--gs-tz));
+}
+
+#battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
+  filter: drop-shadow(0px 0px calc(3px * var(--gs-tz)) rgba(0, 255, 0, 0.75));
+}
+
+#battle-over-letter:not(.open) .animated-mail .wax-seal:active,
+#battle-over-letter:not(.open).mousedown .animated-mail .wax-seal {
+  transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
+  filter: drop-shadow(0px 0px calc(2px * var(--gs-tz)) rgba(0, 255, 0, 0.5));
+  transition-duration: 125ms;
+}
+
+.animated-mail .body {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 calc(100px * var(--gs-tz)) calc(200px * var(--gs-tz));
+  border-color: transparent transparent #282;
+  z-index: 2;
+}
+
+.animated-mail .top-fold {
+  position: absolute;
+  top: calc(50px * var(--gs-tz));
+  width: 0;
+  height: 0;
+  border-style: solid;
+  /* note: 51px to address border bleed / see-through */
+  border-width: calc(51px * var(--gs-tz)) calc(100px * var(--gs-tz)) 0;
+  transform-origin: 50% 0%;
+  transition: transform 0.8s 0.5s, z-index 0.5s 0.65s;
+  border-color: #060 transparent transparent;
+  z-index: 4;
+}
+
+.animated-mail .back-fold {
+  position: absolute;
+  bottom: 0;
+  width: calc(200px * var(--gs-tz));
+  height: calc(100px * var(--gs-tz));
+  background-color: #005a00;
+  z-index: 0;
+}
+
+.animated-mail .left-fold,
+.animated-mail .right-fold {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: calc(50px * var(--gs-tz)) 0 calc(50px * var(--gs-tz))
+    calc(100px * var(--gs-tz));
+  border-color: transparent transparent transparent #171;
+  z-index: 2;
+}
+
+.animated-mail .right-fold {
+  /* lazy mirroring */
+  right: 0;
+  transform: translate3d(0, 0, 0) scaleX(-1);
+}
+
+.animated-mail .letter-wrapper {
+  position: absolute;
+  bottom: 1px;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  /* always make sure there's tons of room. */
+  overflow: hidden;
+}
+
+.animated-mail .letter {
+  left: calc(20px * var(--gs-tz));
+  bottom: 0;
+  position: absolute;
+  width: calc(160px * var(--gs-tz));
+  transform: translate3d(0, calc(100% - calc(60px * var(--gs-tz))), 0);
+  will-change: transform;
+  /**
+   * Image by kues1 on Freepik
+   * https://www.freepik.com/free-photo/white-empty-canvas_1038705.htm#from_view=detail_alsolike#position=4
+   */
+  background: url(../image/white-empty-canvas-texture.webp) 0 0/128px #fff;
+  z-index: 1;
+  overflow: hidden;
+  transition: 1s ease-in-out;
+}
+
+.animated-mail .letter .letter-border {
+  height: 10px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ab3a3e,
+    #ab3a3e calc(8px * var(--gs-tz)),
+    transparent calc(8px * var(--gs-tz)),
+    transparent calc(18px * var(--gs-tz))
+  );
+}
+
+.animated-mail .letter .letter-context-body {
+  margin: calc(5px * var(--gs-tz)) calc(10px * var(--gs-tz));
+}
+
+.animated-mail .letter-buttons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-bottom: calc(3px * var(--gs-tz));
+  padding: calc(6px * var(--gs-tz));
+  box-sizing: border-box;
+  z-index: 2;
+  text-align: center;
+}
+
+#battle-over-letter.open .animated-mail {
+  transform: translateY(calc(60px * var(--gs-tz)));
+  transition-timing-function: ease-in-out;
+}
+
+#battle-over-letter.open .animated-mail .top-fold {
+  transition: transform 0.95s, z-index 0.5s;
+  transform: rotateX(180deg);
+  z-index: 0;
+}
+
+#battle-over-letter.open .animated-mail .letter {
+  /* bring the letter up, compensating for the overlapping part of the envelope. */
+  transform: translate3d(0, 0, 0);
+  padding-bottom: calc(84px * var(--gs-tz));
+}
+
+#battle-over-letter hr {
+  border: none;
+  border-top: calc(0.5px * var(--gs-tz)) dashed #999;
+}

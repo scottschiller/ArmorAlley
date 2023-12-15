@@ -94,10 +94,12 @@ function Envelope() {
 
   function show(didWin) {
     if (data.active) return;
-    data.active = true;
-    updateNextLink(didWin);
-    dom.o.style.display = 'block';
-    common.setFrameTimeout(() => utils.css.add(dom.o, css.active), 1000);
+    window.aaLoader.loadCSS('css/aa-battle-over-letter.css', () => {
+      data.active = true;
+      updateNextLink(didWin);
+      dom.o.style.display = 'block';
+      common.setFrameTimeout(() => utils.css.add(dom.o, css.active), 1000);
+    });
   }
 
   function updateMouse(e) {
