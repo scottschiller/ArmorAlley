@@ -754,6 +754,9 @@ const game = (() => {
 
     startEngine();
 
+    // hackish: force-resize, since we just got CSS loaded
+    game.objects.funds.updateScale();
+
     game.objects.starController?.init();
 
     preloadCommonSounds();
@@ -988,7 +991,7 @@ const game = (() => {
     dom,
     findObjectById,
     getObjects,
-    init,
+    init: () => window.aaLoader.loadCSS('css/aa-game-ui.css', init),
     initArmorAlley,
     objects,
     objectsById,
