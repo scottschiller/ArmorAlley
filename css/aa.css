@@ -582,6 +582,11 @@ body:not(.game-started) #mobile-controls {
   pointer-events: none;
 }
 
+body:not(.game-started) #player-status-bar {
+  /* hide, retaining layout */
+  visibility: hidden;
+}
+
 #world.welcome #player-status-bar {
   opacity: 0;
 }
