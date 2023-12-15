@@ -1163,7 +1163,7 @@ const Editor = () => {
     data,
     dom,
     events,
-    init: initEditor
+    init: () => window.aaLoader.loadCSS('css/aa-tutorial-editor.css', initEditor)
   };
 
   return exports;

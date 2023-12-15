@@ -60,7 +60,8 @@ const bundleFile = js('aa_main');
 const cssFiles = {
   main: 'aa',
   mobile: 'aa-mobile',
-  bnb: 'aa-bnb'
+  bnb: 'aa-bnb',
+  tutorialEditor: 'aa-tutorial-editor'
 }
 
 async function bundleJS() {
@@ -112,4 +113,8 @@ function minifyBNBCSS() {
   return minifyCSS(cssFiles.bnb);
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS);
+function minifyTutorialEditorCSS() {
+  return minifyCSS(cssFiles.tutorialEditor);
+}
+
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS);

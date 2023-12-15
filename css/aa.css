@@ -3877,14 +3877,6 @@ body:not(.game-started) .scan-node {
   width: 65%;
 }
 
-body.tutorial-mode #game-tips .tips-container {
-  color: #999;
-}
-
-body.tutorial-mode #game-tips .tips-container b {
-  color: #fff;
-}
-
 body.game-over #game-tips .tips-container {
   top: 30%;
 }
@@ -4096,7 +4088,10 @@ body.game-paused #game-announcements {
 }
 
 #help,
-#tutorial {
+#tutorial,
+#tutorial-window,
+#editor-window,
+#editor-window-help {
   display: none;
 }
 
@@ -4569,92 +4564,6 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   width: 20px;
 }
 
-.finder {
-  border: 0.5px solid #000;
-  filter: invert(1);
-  left: 20px;
-  position: absolute;
-  top: 17%;
-  transform: scale(2.16);
-  transform-origin: 0 0;
-}
-
-#editor-window-help {
-  display: none;
-  left: 312px;
-  top: 17%;
-}
-
-/* safari desktop: zoom hacks */
-body.is_safari:not(.is-mobile).edit-mode #editor-window,
-body.is_safari:not(.is-mobile).edit-mode #editor-window-help {
-  zoom: 2;
-  /* note: half of "usual" value */
-  transform: scale3d(1.13, 1.13, 1);
-  transform-origin: 0 0;
-}
-
-body.is_safari:not(.is-mobile).edit-mode #editor-window-help {
-  /* safari scale shenanigans: roughly half */
-  left: 160px;
-}
-
-body.is_safari:not(.is-mobile).edit-mode #editor-window {
-  left: 10px;
-}
-
-.finder .title-bar {
-  background: #f3f3f3;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 1px 0;
-  height: 7px;
-  position: relative;
-  text-align: center;
-}
-
-.finder .title-bar-label {
-  background: #f3f3f3;
-  color: #000;
-  display: inline-block;
-  font-family: FA Sysfont C, courier, sans-serif;
-  font-size: 6.5px;
-  font-weight: 400;
-  left: 50%;
-  line-height: 123%;
-  margin-top: -0.5px;
-  padding: 0 3px;
-  position: absolute;
-  text-align: center;
-  top: 0;
-  transform: translate(-50%, 0);
-  white-space: nowrap;
-}
-
-.finder .title-bar-stripes {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==)
-    0 0/8.25px 1px;
-  border-color: #f3f3f3;
-  border-style: solid;
-  border-width: 0.5px 0.25px;
-  box-sizing: border-box;
-  height: 100%;
-  image-rendering: optimizeQuality;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-.finder .title-bar-label,
-.finder .title-bar-stripes {
-  pointer-events: none;
-}
-
-.finder.active {
-  outline: #666 solid 0.5px;
-}
-
 .close-button {
   background: #f3f3f3;
   border: 0.25px solid #000;
@@ -4671,19 +4580,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 .close-button:active {
   background-image: url(../image/apple-close-asterisk.png);
   background-size: contain;
-}
-
-.finder .body {
-  background: hsla(0, 0%, 95%, 0.75);
-  border-top: 0.5px solid #000;
-  color: #000;
-  font-family: Geneva, verdana, arial, sans-serif;
-  /* overflow: auto; */
-  overflow: hidden;
-  padding: 1em;
-  position: relative;
-  /* min-width: 16em; */
-  width: 23em;
 }
 
 #game-prefs-modal .body {
@@ -4703,43 +4599,6 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
 #game-prefs-modal .body,
 #game-prefs-modal .body legend {
   background: #f3f3f3;
-}
-
-.finder .body,
-.finder .body ul.row li {
-  /* tutorial window */
-  font-size: 5px;
-}
-
-.finder .body .grid p {
-  margin-bottom: 0.75em;
-}
-
-.finder .body ul.row {
-  display: block;
-  font-size: 0;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  width: 100%;
-}
-
-.finder .body ul.row li {
-  border: 0.25px solid #999;
-  box-sizing: border-box;
-  display: inline-block;
-  padding: 1px;
-  text-align: center;
-  width: 20%;
-}
-
-.finder .body ul.row + ul.row li {
-  border-top: none;
-}
-
-.finder .body ul.row li:not(:last-of-type) {
-  border-right: none;
 }
 
 #game-prefs-modal.is-network {
@@ -5729,12 +5588,6 @@ body.game-started #network-prompt {
   vertical-align: middle;
 }
 
-body.edit-mode .sprite .zone-flag {
-  border-radius: 2px;
-  left: 1px;
-  top: 1px;
-}
-
 .sprite.infantry .zone-flag {
   font-size: 3px;
 }
@@ -5874,181 +5727,6 @@ button .button-icon {
   opacity: 1;
 }
 
-/* ignore events on sub/transform sprites, and explosions */
-body.edit-mode
-  #battlefield
-  .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(
-    .shrapnel
-  ):not(.gunfire):not(.helicopter):not(.smoke) {
-  pointer-events: unset;
-}
-
-/* ignore events on certain "non-moveable" sprites */
-body.edit-mode
-  #battlefield
-  .sprite:not(.end-bunker):not(.base):not(.exploding):hover {
-  border-radius: 3px;
-  outline: #999 solid 1px;
-}
-
-body.edit-mode #battlefield .sprite.selected:not(.exploding) {
-  /* background-color: #006600; */
-  border-radius: 3px;
-  /* override :not(), ugh. */
-  outline: #090 solid 1px !important;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite,
-body.edit-mode #battlefield .terrain-item {
-  transition: margin 0.25s ease-out;
-}
-
-#battlefield .terrain-item.dynamically-added {
-  transition: margin 0.75s ease-in-out;
-  /* lay back in the cut, as it were. */
-  z-index: 1;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite.tank,
-body.edit-mode #battlefield .sprite.tank {
-  /* annoying pixel shift */
-  margin-top: -2px;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite {
-  margin-top: 0;
-}
-
-body.edit-mode #battlefield .terrain-item {
-  margin-bottom: 0;
-}
-
-body.edit-mode #battlefield .sprite.submerged,
-body:not(.edit-mode) #battlefield .terrain-item.submerged,
-body:not(.gravestones_helicopters) #battlefield .terrain-item.gs_helicopter,
-body:not(.gravestones_infantry) #battlefield .terrain-item.gs_infantry,
-body:not(.gravestones_vehicles) #battlefield .terrain-item.gs_vehicle {
-  margin-top: 27px !important;
-}
-
-body.edit-mode #battlefield .terrain-item.submerged {
-  margin-bottom: -27px;
-}
-
-body.edit-mode #battlefield {
-  cursor: grab;
-}
-
-#battlefield #cutoff-line {
-  border-top: 0.75px dotted #666;
-  bottom: 0;
-  height: 0;
-  left: 0;
-  margin-bottom: -1px;
-  pointer-events: none;
-  position: absolute;
-  transition: height 0.25s ease-in-out, margin 0.25s ease-in-out;
-  width: 100%;
-}
-
-#battlefield #cutoff-line.active {
-  height: 32px;
-  margin-bottom: 0;
-  pointer-events: auto;
-}
-
-#editor-window {
-  display: none;
-}
-
-#editor-window .grid {
-  position: relative;
-}
-
-#editor-window ul.inline-list {
-  margin: 0;
-  padding: 0 0 1em;
-}
-
-#editor-window ul.inline-list li {
-  display: inline-block;
-  margin-bottom: 0;
-  min-width: 11em;
-}
-
-#marquee {
-  /* TODO: GPU */
-  background: rgba(33, 99, 33, 0.25);
-  border: 1px solid #393;
-  height: 0;
-  left: 0;
-  opacity: 0;
-  /* important: events need to fall through this, so JS sees clicks underneath. */
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  transition: opacity 125ms ease-out;
-  width: 0;
-}
-
-#editor-window .static-sprite {
-  background-position: 100% 50%;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
-#editor-window .static-sprite.default {
-  background-image: url(../image/icon_savegame.png);
-  height: 16px;
-  width: 16px;
-}
-
-#editor-window .static-sprite.balloon {
-  /* TODO: balloon-static.png? */
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAiBAMAAAAHRyIyAAAAD1BMVEUAAAAAAADa2tqzh1SHVAC3ExoMAAAAAXRSTlMAQObYZgAAAKVJREFUeF6t1OEJxCAMQGGzQd4KrpAV3H+mM1BziJjLQd8/5SOUorZ3E9BtGW37ANsy2vd7R2MS2Dc8DQYx6WQsZubjZCOb1cWY/M54mCFg19DFSBnBLAutMZz9UmOUmRMyM5XRpMYapMxVLzOh39mIb6PG8h/iavYPu7jxGDOKTBsOAE7hxUFyhqRMz0MeYByH3LncmTozK11As/w6lx6H+lPzfh8GtaYB2nfp/AAAAABJRU5ErkJggg==);
-  background-repeat: no-repeat;
-  background-size: contain;
-  height: 8.5px;
-  width: 19px;
-}
-
-#editor-window .static-sprite.cloud {
-  background-image: url(../image/cloud-1.png);
-  height: 10px;
-  width: 34px;
-}
-
-#editor-window .static-sprite.landing-pad {
-  /* TODO: landing-pad-static.png? */
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAHCAYAAABwWKHcAAAAXklEQVR4Ae3QgQXAUAyE4X/IN1u26gJdJpXHVdS1FIAcH0LAD5Bl72QDmbVlUaMaIORRfoWcgGpG0fEecuYCdqhyRNwAb/hOa6180JMxXC9aZfvgDaDRTEzVH/EZ7wKYR/MjFUCThgAAAABJRU5ErkJggg==)
-    0 0 / contain;
-  height: 3.5px;
-  width: 40.5px;
-}
-
-#editor-window .static-sprite.turret {
-  /* TODO: turret-static.png? */
-  background: url(data:image/png;base64,R0lGODlhEgAPAPIEAAAAAKpVAaqqAqqqqv///wAAAAAAAAAAACH5BAUKAAQALAAAAAASAA8AAAM0SLoEDixGMASUGIhw8dydt2ic+JXmCKaKA4YeFcxwttEsiZsP7YgOTu83Cc6OvhAAyTxeEgA7)
-    50% 0 / contain no-repeat;
-  height: 10px;
-  /* width: 18px, height: 15px; */
-  width: 12px;
-}
-
-#active-sprite {
-  bottom: 0;
-  filter: invert(1);
-  height: 12px;
-  position: absolute;
-  right: 0;
-  width: 32px;
-}
-
-#editor-clipboard {
-  display: none;
-}
-
-#editor-clipboard.active,
 ul.inline-list,
 ul.inline-list li {
   display: inline-block;
@@ -6060,111 +5738,6 @@ ul.inline-list li:not(:first-of-type) {
 
 #battlefield video {
   pointer-events: none;
-}
-
-#tutorial-window {
-  display: none;
-  left: 50%;
-  top: 50%;
-  /* scale up a bit for almost everyone. */
-  transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
-  /* don't interfere with touch / click etc. */
-  pointer-events: none;
-}
-
-/* not iPhone, though - on portrait, scaling up will overlap controls. */
-body.is_iphone #tutorial-window {
-  transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
-}
-
-#tutorial-window.finder .body {
-  /* lighten background, since helicopter underneath for now. */
-  /* note that colors are inverted for this window, heh. */
-  background: rgba(255, 255, 255, 0.15);
-}
-
-#tutorial-window.finder .title-bar-stripes {
-  background-size: 16.5px 3px;
-}
-
-#tutorial-window.finder .title-bar {
-  height: calc(7px * var(--gs-tz));
-  border-width: calc(1px * var(--gs-tz)) 0;
-}
-
-#tutorial-window.finder h3 {
-  font-size: calc(7px * var(--gs-tz));
-}
-
-#tutorial-window.finder .title-bar-label {
-  font-size: calc(6.5px * var(--gs-tz));
-  margin-top: calc(-0.5px * var(--gs-tz));
-  padding: 0 calc(3px * var(--gs-tz));
-}
-
-#tutorial-window.finder .body {
-  font-size: calc(5px * var(--gs-tz));
-}
-
-#tutorial-window.finder .body img {
-  /* images are safe to scale via zoom - in Safari, at least. */
-  zoom: var(--gs-tz);
-}
-
-body.tutorial-mode #tutorial-window {
-  display: block;
-  opacity: 0;
-  transition: opacity 1s ease-in;
-}
-
-body.tutorial-mode #tutorial-window.active {
-  opacity: 1;
-}
-
-body.game-paused #tutorial-window {
-  display: none !important;
-}
-
-#tutorial-window .title-bar {
-  image-rendering: smooth;
-  image-rendering: -webkit-optimize-contrast;
-}
-
-#tutorial-window .body {
-  min-width: 25em;
-}
-
-#tutorial-window .body img {
-  filter: invert(1);
-  vertical-align: middle;
-}
-
-#tutorial-window .body h3 img {
-  vertical-align: top;
-}
-
-#tutorial-window .body p {
-  line-height: 1.33em;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-#tutorial-window .body p:not(:last-of-type) {
-  margin-bottom: 0.55em;
-}
-
-#tutorial-window .body .mobile-touch-example {
-  display: inline-block;
-  padding: calc(0.5px * var(--gs-tz));
-  box-sizing: content-box;
-  border-radius: 100%;
-  border: calc(0.5px * var(--gs-tz)) solid #666;
-  vertical-align: text-top;
-  line-height: calc(4.74px * var(--gs-tz));
-  --size: calc(5px * var(--gs-tz));
-  width: var(--size);
-  height: var(--size);
-  text-align: center;
 }
 
 #level-preview {
@@ -6292,16 +5865,6 @@ body.radar_jammed .scan-node {
   line-height: 1em;
   margin-top: calc(4px * var(--gs-tz));
   margin-bottom: 0;
-}
-
-/* special case: smaller headers in tutorial, because there are two. */
-body.tutorial-mode #battle-over-letter .letter-content h1 {
-  font-size: calc(13px * var(--gs-tz));
-}
-
-body.tutorial-mode #battle-over-letter .letter-content h1 ~ h1 {
-  /* secondary header */
-  font-size: calc(12px * var(--gs-tz));
 }
 
 #battle-over-letter .letter-content p {
