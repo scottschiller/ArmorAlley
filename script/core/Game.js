@@ -991,10 +991,18 @@ const game = (() => {
     dom,
     findObjectById,
     getObjects,
-    init: () =>
-      window.aaLoader.loadCSS('css/aa-game-ui.css', () =>
-        window.requestAnimationFrame(init)
-      ),
+    init: () => {
+      window.aaLoader.loadCSS('css/aa-game-ui.css', () => {
+        function ready() {
+          window.requestAnimationFrame(init);
+        }
+        if (isMobile) {
+          window.aaLoader.loadCSS('css/aa-mobile.css', ready);
+        } else {
+          ready();
+        }
+      });
+    },
     initArmorAlley,
     objects,
     objectsById,

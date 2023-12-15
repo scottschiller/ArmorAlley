@@ -755,6 +755,11 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   background-image: none !important;
 }
 
+body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
+  /* ugh. */
+  vertical-align: bottom;
+}
+
 #game-menu select optgroup,
 #game-menu select option,
 #game-menu select:active option,
@@ -2002,6 +2007,19 @@ button.primary {
   transform-origin: 50% 50%;
 }
 
+@media screen and (orientation: portrait) {
+  body.is_iphone #game-menu-wrapper {
+    /* tight space on e.g., iPhone in portrait. */
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* pull video left on narrow screens, show helicopter on-screen more often. */
+  #home-menu-video {
+    margin-left: -45%;
+  }
+}
+
 #network-pipe,
 #network-prompt {
   /* prefs panel option: hide until deemed relevant. */
@@ -2237,6 +2255,11 @@ body.loaded #stars {
 
 body.loaded #stars.fade-in {
   opacity: 1;
+}
+
+body.is-mobile .hide-on-mobile,
+body.is_iphone .hide-on-iphone {
+  display: none;
 }
 
 @keyframes noise {

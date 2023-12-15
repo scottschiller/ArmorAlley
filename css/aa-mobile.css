@@ -171,11 +171,6 @@ body.is-mobile #pointer {
   width: 6.5px;
 }
 
-body.is-mobile .hide-on-mobile,
-body.is_iphone .hide-on-iphone {
-  display: none;
-}
-
 /* touch controls at left, notifications also at left, AND bottom-aligned */
 body.is-mobile.mobile-controls_left-aligned
   #notification-toasts.left-aligned.bottom-up {
@@ -241,11 +236,6 @@ body.is-mobile #game-prefs-modal .mobile-only-block {
 body.is-mobile #game-prefs-modal .mobile-only.network {
   /* hackish: override display when combined with non-network game, .network-only case */
   display: initial;
-}
-
-body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
-  /* ugh. */
-  vertical-align: bottom;
 }
 
 @media screen and (orientation: landscape) {
@@ -820,17 +810,6 @@ body.game-over .joystick-point {
 }
 
 @media screen and (orientation: portrait) {
-  body.is_iphone #game-menu-wrapper {
-    /* tight space on e.g., iPhone in portrait. */
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* pull video left on narrow screens, show helicopter on-screen more often. */
-  #home-menu-video {
-    margin-left: -45%;
-  }
-
   #game-tips {
     /* smaller text, too. */
     font-size: calc(12px * var(--gs-tz));

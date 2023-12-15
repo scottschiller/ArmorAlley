@@ -800,14 +800,7 @@ function hideTitleScreen(callback) {
 }
 
 const gameMenu = {
-  init: () => {
-    // preload might be necessary
-    if (!isMobile) return init();
-    // rAF = time to parse CSS? 😅
-    window.aaLoader.loadCSS('css/aa-mobile.css', () =>
-      window.requestAnimationFrame(init)
-    );
-  },
+  init,
   menuUpdate,
   startGame
 };
