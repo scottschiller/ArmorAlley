@@ -272,23 +272,6 @@
           );
         }
 
-        // stolen from global JS
-        let maybeHasTouch;
-        let inferredTouchDevice;
-        try {
-          // on non-touch devices, this may throw "DOMException: Operation is not supported"
-          document.createEvent('TouchEvent');
-          maybeHasTouch = true;
-        } catch (e) {
-          // oh well
-        }
-        if (maybeHasTouch && navigator.maxTouchPoints > 0) {
-          inferredTouchDevice = true;
-          console.log(
-            'Touch support detected? Inferring a phone or tablet, rendering mobile version with touch controls.'
-          );
-        }
-
         if (dev) {
           // load the unminified sources.
           loadScript('script/aa.js');
@@ -298,14 +281,6 @@
 
         // common CSS
         loadCSS();
-
-        // mobile / touch device?
-        if (
-          !!navigator.userAgent.match(/mobile|iphone|ipad/i) ||
-          inferredTouchDevice
-        ) {
-          loadCSS('css/aa-mobile.css');
-        }
 
         ga();
 
