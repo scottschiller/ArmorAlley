@@ -1296,6 +1296,16 @@ function PrefsManager() {
       sound: (isActive) => soundManager[isActive ? 'unmute' : 'mute'](),
 
       bnb: (isActive) => {
+        function updateCSS() {
+          // numerous UI updates
+          utils.css.addOrRemove(document.body, isActive, 'bnb');
+
+          // sprite coords may need updating, if in-game
+          [...game.objects.infantry, ...game.objects.engineer].forEach((ie) =>
+            ie.refreshHeight()
+          );
+        }
+
         // hackish: un-hide specific DOM elements
         // this is a workaround given "hidden by default" in HTML preventing a FOUC of sorts.
         ['tv-title-screen', 'mtv-bnb-in', 'bnb-vs'].forEach((id) => {
@@ -1328,13 +1338,13 @@ function PrefsManager() {
           return;
         }
 
-        // numerous UI updates
-        utils.css.addOrRemove(document.body, isActive, 'bnb');
-
-        // sprite coords may need updating
-        [...game.objects.infantry, ...game.objects.engineer].forEach((ie) =>
-          ie.refreshHeight()
-        );
+        if (isActive) {
+          // load CSS first
+          window.aaLoader.loadCSS('css/aa-bnb.css', updateCSS);
+        } else {
+          // right away
+          updateCSS();
+        }
 
         if (!isActive) resetBNBSoundQueue();
 
