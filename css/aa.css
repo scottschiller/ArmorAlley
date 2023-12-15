@@ -1646,11 +1646,6 @@ ul.stats-bar li {
   text-align: left;
 }
 
-body.bnb:not(.is-mobile) #aa ul.stats-bar li.inventory-item:first-of-type {
-  /* centering shenanigans */
-  margin-left: calc(16px * var(--gs-tz));
-}
-
 ul.stats-bar li.inventory-item:not(:last-of-type),
 ul.stats-bar li.stats-item:not(:last-of-type) {
   /* annoying, but need to override #aa rules */
@@ -2150,11 +2145,6 @@ body.is_safari:not(.is-mobile) .chain {
   );
 }
 
-.chain.jerking {
-  /* "Check it out, Beavis... I'm jerking my chain." ⛓️✊🤣 uh-huh huh huh. */
-  animation: jerkingmychain calc(0.69s * var(--gs-frac)) infinite alternate;
-}
-
 .missile-launcher {
   background-image: url(../image/missile-launcher.png);
   height: 18px;
@@ -2275,68 +2265,6 @@ body.is_safari:not(.is-mobile) .chain {
 
 .sprite.engineer:not(.enemy).building {
   margin-top: 23px;
-}
-
-body.bnb .engineer:not(.enemy).beavis,
-body.bnb .engineer:not(.enemy).butthead {
-  height: 30.66px;
-}
-
-body.bnb .engineer:not(.enemy).beavis .transform-sprite {
-  animation: animate-transform-sprite-engineer-bnb calc(0.8s * var(--gs-frac))
-    steps(10) infinite;
-  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
-  background-image: url(../image/beavis-walking.png);
-}
-
-body.bnb .engineer:not(.enemy).butthead .transform-sprite {
-  animation: animate-transform-sprite-engineer-bnb calc(0.8s * var(--gs-frac))
-    steps(10) infinite;
-  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
-  background-image: url(../image/butthead-walking.png);
-}
-
-body.bnb .engineer:not(.enemy).beavis .transform-sprite,
-body.bnb .engineer:not(.enemy).butthead .transform-sprite {
-  background-size: 143.33px;
-  height: 30.66px;
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
-  width: 143.33px;
-}
-
-body.bnb.is_safari .engineer:not(.enemy).beavis .transform-sprite,
-body.bnb.is_safari .engineer:not(.enemy).butthead .transform-sprite {
-  /* Safari does better with this here, ironically, vs. optimize-contrast */
-  image-rendering: optimizeQuality;
-}
-
-body.bnb .engineer:not(.enemy).beavis.stopped,
-body.bnb .engineer:not(.enemy).butthead.stopped {
-  height: 32px;
-  /* correction for positioning */
-  margin-top: -1.5px;
-  /* "whilst headbanging" */
-  width: 18.25px;
-}
-
-body.bnb .engineer:not(.enemy).beavis.stopped .transform-sprite {
-  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
-  background-image: url(../image/beavis-headbang.png);
-}
-
-body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
-  /* https://www.spriters-resource.com/genesis_32x_scd/beavisandbutthead/sheet/44963/ */
-  background-image: url(../image/butthead-headbang.png);
-}
-
-body.bnb .engineer:not(.enemy).beavis.stopped .transform-sprite,
-body.bnb .engineer:not(.enemy).butthead.stopped .transform-sprite {
-  animation: animate-transform-sprite-engineer-headbang-bnb
-    calc(0.4s * var(--gs-frac)) steps(4) infinite;
-  background-size: 73px 32px;
-  height: 32px;
-  width: 73px;
 }
 
 .engineer.stopped {
@@ -3605,43 +3533,6 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   z-index: 1;
 }
 
-body.bnb .cornholio {
-  display: block;
-}
-
-body.bnb .cornholio.visible {
-  margin-top: 0;
-}
-
-.cornholio .sub-sprite {
-  /* https://www.spriters-resource.com/fullview/44963/ */
-  background-image: url(../image/beavis-cornholio.png);
-  background-size: auto 33.6px;
-  height: 33.6px;
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
-  /* original dimensions / 2.5 */
-  width: 36px;
-}
-
-body.is_safari .cornholio .sub-sprite {
-  image-rendering: optimizeQuality;
-}
-
-.cornholio.bow-down .sub-sprite {
-  /* You must bow down to the almighty bunghole! */
-  transform: translate3d(-12px, 0, 0);
-}
-
-.cornholio.threatening .sub-sprite {
-  /* Are you threatening me!? */
-  transform: translate3d(-24px, 0, 0);
-}
-
-.cornholio.hidden .sub-sprite {
-  animation: none;
-}
-
 .bunker.burning .sub-sprite.rubble-container,
 .bunker.exploding .sub-sprite.rubble-container {
   bottom: 0;
@@ -3723,11 +3614,6 @@ body.is_safari .cornholio .sub-sprite {
 .sprite.engineer.building,
 .sprite.infantry.building {
   margin-top: 11px;
-}
-
-body.bnb .sprite.engineer.beavis.building,
-body.bnb .sprite.engineer.butthead.building {
-  margin-top: 31px;
 }
 
 .sprite.ordering {
@@ -4268,59 +4154,6 @@ body.network:not(.game-started) #help .pipe {
 
 #bnb-now-playing {
   display: none;
-  height: 72%;
-  /* cheap vertical alignment */
-  left: 0;
-  /* note: nested opacity, individual images fade. */
-  opacity: 0.75;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-body:not(.is-mobile) #bnb-now-playing {
-  height: calc(20px * var(--gs-tz));
-  left: 0;
-  /* ugly hacks, I broke something while making changes for mobile. */
-  top: calc(-13px * var(--gs-tz));
-}
-
-body.bnb #bnb-now-playing {
-  display: block;
-}
-
-#bnb-now-playing .pow {
-  height: 100%;
-  image-rendering: auto;
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
-  left: 0;
-  opacity: 0;
-  /* cartoon "pow" outline */
-  position: absolute;
-  top: 0;
-  transform: scale3d(1.2, 1.2, 0);
-  transition: calc(0.5s * var(--gs-frac)) ease-in-out;
-  transition-property: transform, opacity;
-  width: 100%;
-}
-
-body.is_safari #bnb-now-playing .pow {
-  image-rendering: optimizeQuality;
-}
-
-#bnb-now-playing .beavis {
-  background: url(../image/pow-beavis.webp) 50% 50% / contain no-repeat;
-}
-
-#bnb-now-playing .butthead {
-  background: url(../image/pow-butthead.webp) 50% 50% / contain no-repeat;
-}
-
-#bnb-now-playing.beavis .beavis,
-#bnb-now-playing.butthead .butthead {
-  opacity: 1;
-  transform: scale3d(1, 1, 1);
 }
 
 #player-status-bar span.letter-block {
@@ -6713,16 +6546,6 @@ body.loaded #stars.fade-in {
   opacity: 1;
 }
 
-@keyframes animate-transform-sprite-engineer-headbang-bnb {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-73px, 0, 0);
-  }
-}
-
 @keyframes drop-in {
   0% {
     opacity: 0;
@@ -6925,16 +6748,6 @@ body.loaded #stars.fade-in {
   }
 }
 
-@keyframes jerkingmychain {
-  0% {
-    margin-top: 0;
-  }
-
-  to {
-    margin-top: -13px;
-  }
-}
-
 @keyframes animate-transform-sprite-tank {
   0% {
     transform: translate3d(0, 0, 0);
@@ -7133,15 +6946,5 @@ body.loaded #stars.fade-in {
 
   to {
     transform: translate3d(500px, 0, 0);
-  }
-}
-
-@keyframes animate-transform-sprite-engineer-bnb {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-143.33px, 0, 0);
   }
 }
