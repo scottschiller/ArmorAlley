@@ -56,8 +56,12 @@ const js = (file) => `${jsPath}/${file}.js`;
 // note: these have path + extensions added via js() / css().
 const mainJSFile = js('aa');
 const bundleFile = js('aa_main');
-const mainCSSFile = css('aa');
-const mobileCSSFile = css('aa-mobile');
+
+const cssFiles = {
+  main: 'aa',
+  mobile: 'aa-mobile',
+  bnb: 'aa-bnb'
+}
 
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
@@ -85,7 +89,7 @@ function concatJS() {
 
 function minifyCSS(cssFile) {
   return (
-    src(cssFile)
+    src(css(cssFile))
       // 12/2023: trying without inline images. CSS crunches down to 25 KB instead of 75 KB this way.
       // .pipe(postcss([imageInliner(imageInlinerOpts)]))
       // https://github.com/clean-css/clean-css#constructor-options
@@ -97,11 +101,15 @@ function minifyCSS(cssFile) {
 }
 
 function minifyMainCSS() {
-  return minifyCSS(mainCSSFile);
+  return minifyCSS(cssFiles.main);
 }
 
 function minifyMobileCSS() {
-  return minifyCSS(mobileCSSFile);
+  return minifyCSS(cssFiles.mobile);
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS);
+function minifyBNBCSS() {
+  return minifyCSS(cssFiles.bnb);
+}
+
+exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS);
