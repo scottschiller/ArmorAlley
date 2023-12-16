@@ -142,7 +142,7 @@
         s.fetchpriority = 'high';
         s.type = 'module';
         s.src = `script/aa-loader.js${isProd ? '_min.' + aaVersion : ''}`;
-        document.documentElement.appendChild(s);
+        (document.head || document.documentElement).appendChild(s);
       })();
     </script>
   </head>
