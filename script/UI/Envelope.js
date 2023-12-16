@@ -1,3 +1,4 @@
+import { aaLoader } from '../aa-loader.js';
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
 import { searchParams } from '../core/global.js';
@@ -94,7 +95,7 @@ function Envelope() {
 
   function show(didWin) {
     if (data.active) return;
-    window.aaLoader.loadCSS('css/aa-battle-over-letter.css', () => {
+    aaLoader.loadCSS('css/aa-battle-over-letter.css', () => {
       data.active = true;
       updateNextLink(didWin);
       dom.o.style.display = 'block';

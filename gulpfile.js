@@ -54,6 +54,7 @@ const css = (file) => `${cssPath}/${file}.css`;
 const js = (file) => `${jsPath}/${file}.js`;
 
 // note: these have path + extensions added via js() / css().
+const loaderFile = js('aa-loader');
 const mainJSFile = js('aa');
 const bundleFile = js('aa_main');
 
@@ -70,6 +71,19 @@ const cssFiles = {
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
   return bundle.write({ file: bundleFile });
+}
+
+function minifyLoader() {
+  return src(loaderFile)
+  .pipe(
+    terser({
+      // https://github.com/terser/terser#minify-options
+      compress: true,
+      ecma: '2016'
+    })
+  )
+  .pipe(rename((path) => (path.basename += min)))
+  .pipe(dest(jsPath));
 }
 
 function minifyJS() {
@@ -130,4 +144,4 @@ function minifyPrefsAndModalsCSS() {
   return minifyCSS(cssFiles.prefsAndModals);
 }
 
-exports.default = series(bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
+exports.default = series(minifyLoader, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);

@@ -25,6 +25,7 @@ import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
 import { previewLevel, setLevel } from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
+import { aaLoader } from '../aa-loader.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -578,7 +579,7 @@ function PrefsManager() {
 
   function show(options = {}) {
     // preload CSS and then do the actual thing
-    window.aaLoader.loadCSS('css/aa-prefs-and-modals.css', () =>
+    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () =>
       showForReal(options)
     );
   }
@@ -1347,7 +1348,7 @@ function PrefsManager() {
 
         if (isActive) {
           // load CSS first
-          window.aaLoader.loadCSS('css/aa-bnb.css', updateCSS);
+          aaLoader.loadCSS('css/aa-bnb.css', updateCSS);
         } else {
           // right away
           updateCSS();

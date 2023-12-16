@@ -4,6 +4,7 @@ import { TYPES, FPS } from '../core/global.js';
 import { countFriendly, countSides } from '../core/logic.js';
 import { TutorialStep } from './TutorialStep.js';
 import { common } from '../core/common.js';
+import { aaLoader } from '../aa-loader.js';
 
 const Tutorial = () => {
   let config, css, data, dom, exports;
@@ -32,7 +33,7 @@ const Tutorial = () => {
 
     function fetch(url) {
       needed++;
-      window.aaLoader.loadCSS(url, onload);
+      aaLoader.loadCSS(url, onload);
     }
 
     fetch('css/aa-tutorial-editor.css');

@@ -1,3 +1,4 @@
+import { aaLoader } from '../aa-loader.js';
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
@@ -1171,7 +1172,7 @@ const Editor = () => {
       }
       function fetch(url) {
         needed++;
-        window.aaLoader.loadCSS(url, onload);
+        aaLoader.loadCSS(url, onload);
       }
       fetch('css/aa-game-ui.css');
       fetch('css/aa-tutorial-editor.css');

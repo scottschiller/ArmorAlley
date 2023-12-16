@@ -64,6 +64,7 @@ import { common } from './common.js';
 import { StarController } from '../elements/StarController.js';
 import { Envelope } from '../UI/Envelope.js';
 import { RadarScroller } from '../UI/RadarScroller.js';
+import { aaLoader } from '../aa-loader.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -992,12 +993,12 @@ const game = (() => {
     findObjectById,
     getObjects,
     init: () => {
-      window.aaLoader.loadCSS('css/aa-game-ui.css', () => {
+      aaLoader.loadCSS('css/aa-game-ui.css', () => {
         function ready() {
           window.requestAnimationFrame(init);
         }
         if (isMobile) {
-          window.aaLoader.loadCSS('css/aa-mobile.css', ready);
+          aaLoader.loadCSS('css/aa-mobile.css', ready);
         } else {
           ready();
         }
