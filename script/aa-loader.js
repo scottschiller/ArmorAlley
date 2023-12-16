@@ -21,9 +21,6 @@ const dev = !forceProd && (sp.get('dev') || !isProdSite);
 // e.g., '.V20231216'
 let version = (dev || isLocalhost) && !forceProd ? '' : v || '';
 
-// JS + CSS nodes
-let toAppend = [];
-
 console.log(
   '🚁 ARMOR ALLEY: using ' +
     (dev
@@ -59,7 +56,7 @@ function loadScript(src, type = 'module', async = false, onload) {
       version = '';
       loadScript(src, type, async, onload);
       // try the same for CSS.
-      loadCSS();
+      loadCSS('css/aa.css');
     }
   };
   s.onload = () => {
@@ -70,13 +67,7 @@ function loadScript(src, type = 'module', async = false, onload) {
     s = null;
   };
   s.src = `${src}${version}`;
-  if (toAppend) {
-    // document still loading
-    toAppend.push(s);
-  } else {
-    // retry case
-    document?.head?.appendChild(s);
-  }
+  document?.head?.appendChild(s);
 }
 
 function loadCSS(src, onload) {
@@ -100,17 +91,6 @@ function loadCSS(src, onload) {
   };
   link.href = `${src}${version}`;
   document.head?.appendChild(link);
-}
-
-function doAppend() {
-  if (!toAppend || !document.head) return;
-  try {
-    toAppend.forEach((s) => document.head.appendChild(s));
-    document.onreadystatechange = null;
-    toAppend = null;
-  } catch (e) {
-    console.warn('script append failed? :/');
-  }
 }
 
 function ga() {
@@ -144,12 +124,6 @@ if (dev) {
 loadCSS('css/aa.css');
 
 ga();
-
-// go go go!
-doAppend();
-
-// just in case: fallback method
-document.onreadystatechange = doAppend;
 
 const aaLoader = {
   loadScript,
