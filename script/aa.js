@@ -87,12 +87,15 @@ if (soundManager) {
   }
 }
 
-window.addEventListener('DOMContentLoaded', game.initArmorAlley);
+// boot sequence ultimately calls this
+window.initArmorAlley = function () {
+  window.addEventListener('DOMContentLoaded', game.initArmorAlley);
 
-// we may be late to this event party.
-if (document.readyState?.match(/interactive|complete|loaded/i)) {
-  game.initArmorAlley();
-}
+  // we may be late to this event party.
+  if (document.readyState?.match(/interactive|complete|loaded/i)) {
+    game.initArmorAlley();
+  }
+};
 
 // a few hot globals
 export { gameType, screenScale } from './core/Game.js';

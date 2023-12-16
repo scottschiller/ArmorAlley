@@ -135,13 +135,18 @@
         // "version" string, for CSS + JS assets.
         // comment out this line if you are getting 404s, etc.
         window.aaVersion = 'V20231216';
+        if (window.location.href.match(/noversion/i)) window.aaVersion = '';
 
-        // fetch AA "boot loader", which fetches the rest of the game.
+        // fetch AA core bundle.
         const isProd = !!window.location.host.match(/armor-alley\.net/i);
         let s = document.createElement('script');
         s.fetchpriority = 'high';
         s.type = 'module';
-        s.src = `script/aa-loader.js${isProd ? '_min.' + aaVersion : ''}`;
+        s.src = `${
+          isProd
+            ? 'script/aa-boot_bundle.js.' + aaVersion
+            : 'script/aa-boot_bundle.js'
+        }`;
         (document.head || document.documentElement).appendChild(s);
       })();
     </script>

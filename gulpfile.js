@@ -54,9 +54,11 @@ const css = (file) => `${cssPath}/${file}.css`;
 const js = (file) => `${jsPath}/${file}.js`;
 
 // note: these have path + extensions added via js() / css().
-const loaderFile = js('aa-loader');
+const bootFile = js('aa-boot');
+const bootBundleFile = js('aa-boot_bundle');
+
 const mainJSFile = js('aa');
-const bundleFile = js('aa_main');
+const bundleFile = js('aa' + min);
 
 const cssFiles = {
   battleOverLetter: 'aa-battle-over-letter',
@@ -73,8 +75,13 @@ async function bundleJS() {
   return bundle.write({ file: bundleFile });
 }
 
-function minifyLoader() {
-  return src(loaderFile)
+async function bundleBootFile() {
+  const bundle = await rollup({ input: bootFile });
+  return bundle.write({ file: bootBundleFile });
+}
+
+function minifyBootBundle() {
+  return src(bootBundleFile)
   .pipe(
     terser({
       // https://github.com/terser/terser#minify-options
@@ -82,7 +89,6 @@ function minifyLoader() {
       ecma: '2016'
     })
   )
-  .pipe(rename((path) => (path.basename += min)))
   .pipe(dest(jsPath));
 }
 
@@ -144,4 +150,4 @@ function minifyPrefsAndModalsCSS() {
   return minifyCSS(cssFiles.prefsAndModals);
 }
 
-exports.default = series(minifyLoader, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
+exports.default = series(bundleBootFile, minifyBootBundle, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
