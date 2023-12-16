@@ -64,7 +64,7 @@ import { common } from './common.js';
 import { StarController } from '../elements/StarController.js';
 import { Envelope } from '../UI/Envelope.js';
 import { RadarScroller } from '../UI/RadarScroller.js';
-import { aaLoader } from '../aa-loader.js';
+import { aaLoader } from '../core/aa-loader.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -993,16 +993,9 @@ const game = (() => {
     findObjectById,
     getObjects,
     init: () => {
-      aaLoader.loadCSS('css/aa-game-ui.css', () => {
-        function ready() {
-          window.requestAnimationFrame(init);
-        }
-        if (isMobile) {
-          aaLoader.loadCSS('css/aa-mobile.css', ready);
-        } else {
-          ready();
-        }
-      });
+      const css = ['css/aa-game-ui.css'];
+      if (isMobile) css.push('css/aa-mobile.css');
+      aaLoader.loadCSS(css, () => window.requestAnimationFrame(init));
     },
     initArmorAlley,
     objects,

@@ -32,65 +32,91 @@ console.log(
 
 let fetched = {};
 
-function loadScript(src, type = 'module', async = false, onload) {
+function addScript(src, onload, type = 'module', async = false) {
   if (fetched[src]) {
     onload?.();
     return;
   }
+
   let s = document.createElement('script');
+  if (!async) s.fetchpriority = 'high';
   if (type) s.type = type;
   if (async) s.async = true;
-  s.onerror = (e) => {
-    // ignore if not local
-    if (new URL(s.src).hostname !== wl.hostname) return;
-    console.warn(
-      `loadScript(): ${src}${version} failed.${
-        version ? ' Will retry, dropping version string.' : ''
-      }`,
-      e
-    );
-    s.onerror = null;
-    s.remove();
-    s = null;
-    if (version) {
-      version = '';
-      loadScript(src, type, async, onload);
-      // try the same for CSS.
-      loadCSS('css/aa.css');
-    }
-  };
+
   s.onload = () => {
-    console.log(`Loaded JS: ${src}${version}`);
+    console.log(`Loaded JS: ${src}`);
     fetched[src] = true;
     onload?.();
     s.onload = null;
     s = null;
   };
-  s.src = `${src}${version}`;
+
+  s.src = `${src}`;
   document?.head?.appendChild(s);
 }
 
-function loadCSS(src, onload) {
-  if (!src) return;
-  // minified version?
-  if (isProdSite || forceProd) src = src.replace('.css', '_min.css');
+function addCSS(href, onload) {
+  if (!href) return;
 
-  if (fetched[src]) {
-    onload?.();
-    return;
-  }
   let link = document.createElement('link');
   link.rel = 'stylesheet';
   link.media = 'screen';
+
   link.onload = () => {
-    console.log(`Loaded CSS: ${src}${version}`);
-    fetched[src] = true;
+    console.log(`Loaded CSS: ${href}`);
+    fetched[href] = true;
     onload?.();
     link.onload = null;
     link = null;
   };
-  link.href = `${src}${version}`;
+
+  link.href = href;
   document.head?.appendChild(link);
+}
+
+function minifyAndVersion(url) {
+  // TODO: DRY
+  if (isProdSite || forceProd)
+    url = url
+      .replace('.css', `_min.css${version}`)
+      .replace('.js', `_min.js${version}`);
+  return url;
+}
+
+function fetch(src, fetchMethod, onload) {
+  if (!src) return;
+
+  // always make an array.
+  if (!(src instanceof Array)) {
+    src = [src];
+  }
+
+  let loaded = 0;
+  let needed = src.length;
+
+  function didLoad() {
+    loaded++;
+    if (loaded >= needed) onload?.();
+  }
+
+  src.forEach((url) => {
+    url = minifyAndVersion(url);
+    if (fetched[url]) {
+      didLoad();
+    } else {
+      fetchMethod(url, didLoad);
+    }
+  });
+}
+
+function loadJS(src, onload) {
+  if (!src) return;
+  fetch(src, addScript, onload);
+}
+
+function loadCSS(src, onload) {
+  if (!src) return;
+  fetch(src, addCSS, onload);
 }
 
 function ga() {
@@ -105,28 +131,20 @@ function ga() {
   gtag('config', 'G-XGW2TDDC6V');
   window.gtag = gtag;
   let type = '',
+    onload = null,
     async = true;
-  loadScript(
+  addScript(
     'https://www.googletagmanager.com/gtag/js?id=G-XGW2TDDC6V',
+    onload,
     type,
     async
   );
 }
 
-if (dev) {
-  // load the unminified sources.
-  loadScript('script/aa.js');
-} else {
-  loadScript('script/aa_main.js');
-}
-
-// common CSS
-loadCSS('css/aa.css');
-
 ga();
 
 const aaLoader = {
-  loadScript,
+  loadJS,
   loadCSS
 };
 

@@ -4,7 +4,7 @@ import { TYPES, FPS } from '../core/global.js';
 import { countFriendly, countSides } from '../core/logic.js';
 import { TutorialStep } from './TutorialStep.js';
 import { common } from '../core/common.js';
-import { aaLoader } from '../aa-loader.js';
+import { aaLoader } from '../core/aa-loader.js';
 
 const Tutorial = () => {
   let config, css, data, dom, exports;

@@ -1,4 +1,4 @@
-import { aaLoader } from '../aa-loader.js';
+import { aaLoader } from '../core/aa-loader.js';
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
 import { searchParams } from '../core/global.js';

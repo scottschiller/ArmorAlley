@@ -25,7 +25,7 @@ import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
 import { previewLevel, setLevel } from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
-import { aaLoader } from '../aa-loader.js';
+import { aaLoader } from '../core/aa-loader.js';
 
 const prefs = {
   gameType: 'game_type'
