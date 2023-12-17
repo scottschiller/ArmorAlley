@@ -433,7 +433,7 @@ const View = () => {
     } else {
       common.setFrameTimeout(() => {
         utils.css.add(dom.gameTips, css.gameTips.hasAnnouncement);
-      }, 50);
+      }, 100);
     }
 
     if (text) {
@@ -1313,7 +1313,6 @@ const View = () => {
 
     // enable the whole UI, basically.
     dom.aa.style.visibility = 'visible';
-
   }
 
   css = {
