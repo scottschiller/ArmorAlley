@@ -142,7 +142,7 @@ function ga() {
   );
 }
 
-ga();
+window.setTimeout(ga, 1000);
 
 const aaLoader = {
   loadJS,
