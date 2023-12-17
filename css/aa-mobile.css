@@ -8,17 +8,6 @@ body.is-mobile #game-menu-wrapper {
   max-width: 100%;
 }
 
-body.auto-start.is-mobile.loaded #start-game-button-mobile {
-  display: block;
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-}
-
-body.game-started #start-game-button-mobile {
-  transform: scale3d(1.2, 1.2, 1);
-  transform-origin: 50% 50%;
-  opacity: 0;
-}
-
 body.is_safari.game-over.is-mobile #radar-jammed-overlay {
   /* Safari may fail to render the overlay w/mix-blend-mode at game over. */
   mix-blend-mode: normal !important;
