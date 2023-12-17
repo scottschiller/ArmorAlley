@@ -170,7 +170,7 @@ body.prefs-modal-open #game-menu-wrapper {
   height: 100%;
   overflow: hidden;
   /* ../image/cursor-cross.png */
-  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVR4AWNAAv/BECv4/5/WUv9hECqFgEABTABWhEcXPR2PJwwBYldZpwyOHyUAAAAASUVORK5CYII=), crosshair;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAFklEQVR4AWOgNvg/EjX9JxaPhh6lAAALMhTsTJ1lCQAAAABJRU5ErkJggg==);
 }
 
 body.demo #aa {
@@ -575,8 +575,7 @@ body:not(.game-started) #player-status-bar {
 }
 
 #world.welcome #mobile-controls,
-#world.welcome #player-status-bar,
-#world.welcome #pointer {
+#world.welcome #player-status-bar {
   filter: grayscale(1);
 }
 

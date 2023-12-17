@@ -11,7 +11,7 @@ function Joystick(options) {
       x: 50,
       y: 96
     }
-  }
+  };
 
   css = {
     enabled: 'enabled',
@@ -42,6 +42,8 @@ function Joystick(options) {
     },
     // linear acceleration / deceleration
     easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+    screenWidth: game.objects.view.data.browser.screenWidth,
+    screenHeight: game.objects.view.data.browser.screenHeight,
     tweenFrame: 0,
     tweenFrames: []
   };
@@ -164,14 +166,14 @@ function Joystick(options) {
 
   function setDirection(x, y) {
     const from = {
-      x: (data.pointer.x / 100) * game.objects.view.data.browser.width,
-      y: (data.pointer.y / 100) * game.objects.view.data.browser.height
+      x: (data.pointer.x / 100) * data.screenWidth,
+      y: (data.pointer.y / 100) * data.screenHeight
     };
 
     // x/y are relative to screen
     const to = {
-      x: (x / 100) * game.objects.view.data.browser.width,
-      y: (y / 100) * game.objects.view.data.browser.height
+      x: (x / 100) * data.screenWidth,
+      y: (y / 100) * data.screenHeight
     };
 
     data.tweenFrames = makeTweenFrames(from, to);
@@ -281,9 +283,9 @@ function Joystick(options) {
     data.pointer.y = DEFAULTS.pointer.y;
 
     dom.oPointer.style.transform = `translate3d(${
-      game.objects.view.data.browser.width * (data.pointer.x / 100)
+      data.screenWidth * (data.pointer.x / 100)
     }px, ${
-      game.objects.view.data.browser.height * (data.pointer.y / 100)
+      data.screenHeight * (data.pointer.y / 100)
     }px, 0px)`;
   }
 
@@ -299,8 +301,10 @@ function Joystick(options) {
     dom.oPointer.style.transform = `translate3d(${frame.x}px, ${frame.y}px, 0px)`;
 
     // update inner state
-    data.pointer.x = (frame.x / game.objects.view.data.browser.width) * 100;
-    data.pointer.y = (frame.y / game.objects.view.data.browser.height) * 100;
+    data.pointer.x =
+      (frame.x / data.screenWidth) * 100;
+    data.pointer.y =
+      (frame.y / data.screenHeight) * 100;
 
     // next!
     data.tweenFrame++;
@@ -317,9 +321,9 @@ function Joystick(options) {
 
     // update position of pointer, active or not.
     dom.oPointer.style.transform = `translate3d(${
-      game.objects.view.data.browser.width * (data.pointer.x / 100)
+      data.screenWidth * (data.pointer.x / 100)
     }px, ${
-      game.objects.view.data.browser.height * (data.pointer.y / 100)
+      data.screenHeight * (data.pointer.y / 100)
     }px, 0px)`;
   }
 
