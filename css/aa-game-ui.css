@@ -2,6 +2,29 @@
  * AA: Game UI
  */
 
+ @font-face {
+  font-display: swap;
+  /* https://www.jetbrains.com/lp/mono/ */
+  font-family: JetBrains Mono;
+  font-style: normal;
+  font-weight: 400;
+  /**
+   * 50% file savings via character subsetting
+   * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
+   */
+  src: url(../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
+    format('woff2');
+  unicode-range: U+21, U+22, U+25-5F, U+61-7D;
+}
+
+@font-face {
+  font-family: 'War Wound';
+  src: url('../font/war-wound/WarWound-subset.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 #game-status-bar.building {
   /* when inventory is being ordered */
   border-color: #fff;
