@@ -126,6 +126,7 @@ body.bnb .sprite.engineer.butthead.building {
   height: 72%;
   /* cheap vertical alignment */
   left: 0;
+  margin-left: calc(-4px * var(--gs-tz));
   /* note: nested opacity, individual images fade. */
   opacity: 0.75;
   position: absolute;
