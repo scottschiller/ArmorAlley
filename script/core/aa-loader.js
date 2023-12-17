@@ -39,7 +39,8 @@ function addScript(src, onload, type = 'module', async = false) {
   }
 
   let s = document.createElement('script');
-  if (!async) s.fetchpriority = 'high';
+  // make "boot" stuff high-priority
+  if (!async && src.match(/boot/i)) s.fetchpriority = 'high';
   if (type) s.type = type;
   if (async) s.async = true;
 
