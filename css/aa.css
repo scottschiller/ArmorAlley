@@ -1875,7 +1875,6 @@ button.primary {
   vertical-align: bottom;
   top: -0.5px;
   margin-left: calc(4px * var(--menu-scale));
-  margin-right: calc(4px * var(--menu-scale));
 }
 
 #game-type-list {
