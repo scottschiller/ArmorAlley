@@ -1,4 +1,5 @@
 import { prefsManager } from '../aa.js';
+import { aaLoader } from '../core/aa-loader.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
 import {
@@ -329,6 +330,10 @@ function init() {
   } else if (!demo) {
     showHomeVideo();
   }
+
+  // preload the game CSS, too.
+  aaLoader.loadCSS('css/aa-game-ui.css');
+
 }
 
 function introBNBSound(e) {
