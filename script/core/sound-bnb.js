@@ -740,7 +740,6 @@ bnb.beavisRetorts = shuffle([
   addVL('b_dammit_shutup'),
   addVL('b_fartknocker_dumbass_bh_settle_down_dumbass'),
   addVL('b_gonna_read_a_magazine_tell_me_when_this_is_over'),
-  addVL('b_heh_shut_up_fartknocker'),
   add('b_i_cant_concentrate_with_you_talking_bunghole', 40),
   addVL('b_i_knew_that_i_was_just_kidding'),
   addVL('b_i_suck_heh'),
