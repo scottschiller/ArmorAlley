@@ -615,6 +615,17 @@ body.auto-start #game-subtitle {
   color: transparent;
 }
 
+body.auto-start.is-mobile.loaded #start-game-button-mobile {
+  display: block;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+body.game-started #start-game-button-mobile {
+  transform: scale3d(1.2, 1.2, 1);
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
 #game-menu button {
   border-radius: calc(2px * var(--menu-scale));
   background-clip: padding-box;
