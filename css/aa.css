@@ -1871,7 +1871,6 @@ button.primary {
   /* collapse whitespace */
   font-size: 0px;
   display: inline-block;
-  margin-left: calc(0.25em * var(--menu-scale));
   vertical-align: bottom;
   top: -0.5px;
   margin-left: calc(4px * var(--menu-scale));
