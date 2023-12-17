@@ -1511,7 +1511,6 @@ body:not(.edit-mode) #top-bar {
   border-top: var(--border) solid transparent;
   font-size: 0;
   height: 0;
-  margin-top: calc(1.25px * var(--gs-tz));
   outline: 0;
   width: 0;
   z-index: 5; /* show above landing pads, etc. */
