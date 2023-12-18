@@ -129,8 +129,9 @@ function unloadCSS(src) {
   src.forEach((url) => {
     // remove from live DOM, and "loaded" cache.
     // this will ensure the load -> add to DOM happens next time, ideally from browser cache.
-    document.head.querySelector(`link[href="${minifyAndVersion(url)}"]`)?.remove?.();
-    fetched[src] = undefined;
+    url = minifyAndVersion(url);
+    fetched[url] = undefined;
+    document.head.querySelector(`link[href="${url}"]`)?.remove?.();
   });
 }
 
