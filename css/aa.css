@@ -272,7 +272,6 @@ body.is_safari #mtv-bnb-in {
   height: 100%;
   /* this will be overridden for mobile, landscape */
   aspect-ratio: 1/1;
-  max-width: 1024px;
   /* always leave a little room */
   padding-left: 8px;
   padding-right: 8px;
@@ -311,7 +310,7 @@ body.is_safari #mtv-bnb-in {
      * HACK: restrict the logo width on smaller (short) screens.
      * TODO: make the home screen more responsive to vertical height restrictions.
      */
-    width: 131.5vh;
+    width: 155vh;
     margin-top: 0;
     min-width: 350px;
     max-width: 100vw;
@@ -320,8 +319,6 @@ body.is_safari #mtv-bnb-in {
   body.is_iphone #logo {
     /* collapse logo border, save some vertical space */
     border-top-width: calc(2px * var(--menu-scale));
-    padding-top: calc(3px * var(--menu-scale));
-    padding-bottom: calc(3px * var(--menu-scale));
   }
 }
 
@@ -537,12 +534,12 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
   position: relative;
   margin: 0 auto;
   border-top: calc(6px * var(--menu-scale)) solid #444;
-  padding-top: calc(6px * var(--menu-scale));
+  padding-top: calc(3px * var(--menu-scale));
+  padding-bottom: calc(3px * var(--menu-scale));
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
   transition-property: transform, scale, opacity;
   z-index: 11;
-  padding-bottom: calc(6px * var(--menu-scale));
   border-bottom: 1px solid #be7832;
   opacity: 0.9;
 }
@@ -638,7 +635,7 @@ body.game-started #start-game-button-mobile {
   color: #e19632;
   font-size: calc(5.5px * var(--menu-chicago-scale));
   line-height: 175%;
-  margin: calc(2px * var(--menu-chicago-scale)) 0px;
+  margin: calc(1.5px * var(--menu-chicago-scale)) 0px calc(2px * var(--menu-chicago-scale)) 0;
   font-weight: 400;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -942,7 +939,7 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
   margin: 0 auto;
   margin-top: calc(2px * var(--menu-scale));
   /* reserve at least two lines */
-  min-height: 3em;
+  min-height: 3.15em;
 }
 
 #game-description span {
