@@ -333,7 +333,6 @@ function init() {
 
   // preload the game CSS, too.
   aaLoader.loadCSS('css/aa-game-ui.css');
-
 }
 
 function introBNBSound(e) {
@@ -667,7 +666,9 @@ function showHomeVideo() {
 
   const canPlay = /maybe|probably/gi;
 
-  const res = window.innerWidth >= 1920 ? '4k' : '1080p';
+  const hqVideo = searchParams.get('hqVideo');
+
+  let res = window.innerWidth >= 1920 ? '4k' : '1080p';
 
   const types = {
     // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
@@ -692,6 +693,10 @@ function showHomeVideo() {
     );
   }
 
+  // home screen / scerencast / screenshot demo recording
+  if (hqVideo) {
+    res += '_hq';
+  }
   // test MP4 first, then webm as a default / fallback.
   if (maybeCanPlay(types.mp4)) {
     // if MP4 *and* webm, try webm first.
