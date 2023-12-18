@@ -1870,7 +1870,6 @@ button.primary {
   font-size: 0px;
   display: inline-block;
   vertical-align: bottom;
-  top: -0.5px;
   margin-left: calc(4px * var(--menu-scale));
 }
 
