@@ -120,6 +120,20 @@ function loadCSS(src, onload) {
   fetch(src, addCSS, onload);
 }
 
+function unloadCSS(src) {
+  // always make an array.
+  if (!(src instanceof Array)) {
+    src = [src];
+  }
+
+  src.forEach((url) => {
+    // remove from live DOM, and "loaded" cache.
+    // this will ensure the load -> add to DOM happens next time, ideally from browser cache.
+    document.head.querySelector(`link[href="${minifyAndVersion(url)}"]`)?.remove?.();
+    fetched[src] = undefined;
+  });
+}
+
 function ga() {
   // google analytics, only for armor-alley.net.
   if (!wl.host.match(/armor-alley\.net/i)) return;
@@ -146,7 +160,8 @@ window.setTimeout(ga, 1000);
 
 const aaLoader = {
   loadJS,
-  loadCSS
+  loadCSS,
+  unloadCSS
 };
 
 export { aaLoader };

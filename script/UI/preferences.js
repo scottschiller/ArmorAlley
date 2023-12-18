@@ -579,9 +579,7 @@ function PrefsManager() {
 
   function show(options = {}) {
     // preload CSS and then do the actual thing
-    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () =>
-      showForReal(options)
-    );
+    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () => showForReal(options));
   }
 
   function showForReal(options = {}) {
@@ -704,6 +702,8 @@ function PrefsManager() {
     utils.css.remove(document.body, 'prefs-modal-open');
 
     game.objects.view.data.ignoreMouseEvents = false;
+
+    aaLoader.unloadCSS('css/aa-prefs-and-modals.css');
 
     game.resume();
   }
@@ -1350,7 +1350,8 @@ function PrefsManager() {
           // load CSS first
           aaLoader.loadCSS('css/aa-bnb.css', updateCSS);
         } else {
-          // right away
+          aaLoader.unloadCSS('css/aa-bnb.css');
+          // update immediately
           updateCSS();
         }
 
