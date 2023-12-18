@@ -212,7 +212,7 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   width: 25%;
   height: 46%;
   top: -13%;
-  left: 0.5%;
+  left: 1.65%;
   opacity: 0;
   position: absolute;
   transition: opacity 0.25s ease-in;
