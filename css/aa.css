@@ -1996,6 +1996,11 @@ button.primary {
     padding-right: 0;
   }
 
+  body.is_iphone #game-type-list-wrapper {
+    /* drop margins, since this is a single line item on portrait. */
+    margin-left: 0;
+  }
+
   /* pull video left on narrow screens, show helicopter on-screen more often. */
   #home-menu-video {
     margin-left: -45%;
