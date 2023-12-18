@@ -2552,6 +2552,10 @@ body.game-paused #game-announcements {
   width: 8px;
 }
 
+#player-status-bar .inventory-item a.engineer {
+  background-image: url(../image/engineer-static.png);
+}
+
 #player-status-bar.enemy .inventory-item a.engineer {
   background-image: url(../image/engineer-enemy-static.png);
 }
