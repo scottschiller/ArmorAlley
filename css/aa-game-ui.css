@@ -724,12 +724,6 @@ body.is_firefox .sprite.shrapnel {
   display: none;
 }
 
-/* hacks for radar items on desktop safari, where we apply body { zoom: 2 } shenanigans. */
-body.is_safari:not(.is-mobile) .radar-item,
-body.is_safari:not(.is-mobile) .radar-item--animated {
-  margin-top: -1px;
-}
-
 body.is_safari:not(.is-mobile) .radar-item.bunker {
   margin-top: -2px;
 }
