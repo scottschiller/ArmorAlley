@@ -34,11 +34,11 @@
 #spinner {
   /* .mac-system-spinner */
   position: absolute;
-  top: calc(-2.5px * var(--gs-tz));
+  top: calc(-2.5px * var(--gs));
   left: 50%;
   transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1);
-  width: calc(8px * var(--gs-tz));
-  height: calc(8px * var(--gs-tz));
+  width: calc(8px * var(--gs));
+  height: calc(8px * var(--gs));
   z-index: 11;
   opacity: 0;
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
@@ -56,9 +56,9 @@
 
 #funds {
   position: absolute;
-  top: calc(4px * var(--gs-tz));
-  left: calc(4px * var(--gs-tz));
-  width: calc(42px * var(--gs-tz));
+  top: calc(4px * var(--gs));
+  left: calc(4px * var(--gs));
+  width: calc(42px * var(--gs));
   /* collapse whitespace */
   font-size: 0px;
   opacity: 0;
@@ -70,19 +70,19 @@ body.game-started #funds {
 }
 
 #funds .funds-label {
-  font-size: calc(7px * var(--gs-tz));
-  line-height: calc(7px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
+  line-height: calc(7px * var(--gs));
   /* space before digits */
-  padding-right: calc(1.5px * var(--gs-tz));
+  padding-right: calc(1.5px * var(--gs));
 }
 
 #game-fps {
   position: absolute;
   display: none;
-  top: calc(4px * var(--gs-tz));
-  right: calc(4px * var(--gs-tz));
-  width: calc(64px * var(--gs-tz));
-  font-size: calc(5px * var(--gs-tz));
+  top: calc(4px * var(--gs));
+  right: calc(4px * var(--gs));
+  width: calc(64px * var(--gs));
+  font-size: calc(5px * var(--gs));
   color: rgba(255, 255, 255, 0.25);
   text-align: right;
 }
@@ -102,11 +102,11 @@ body.game-started #funds {
 #funds-count .digit {
   color: transparent;
   display: inline-block;
-  width: calc(4.25px * var(--gs-tz));
-  height: calc(8.5px * var(--gs-tz));
-  margin-top: calc(-0.55px * var(--gs-tz));
+  width: calc(4.25px * var(--gs));
+  height: calc(8.5px * var(--gs));
+  margin-top: calc(-0.55px * var(--gs));
   /* tighten "letter spacing" a bit */
-  margin-right: calc(-0.33px * var(--gs-tz));
+  margin-right: calc(-0.33px * var(--gs));
   opacity: 1;
   overflow: hidden;
   padding: 0;
@@ -218,8 +218,8 @@ body.game-started #funds {
 
 #queue .queue-item .counter {
   display: inline-block;
-  font-size: calc(4px * var(--gs-tz));
-  font-size: calc(4px * var(--gs-tz));
+  font-size: calc(4px * var(--gs));
+  font-size: calc(4px * var(--gs));
   margin-top: -60%;
   opacity: 0;
   position: absolute;
@@ -303,7 +303,7 @@ body.demo .target-marker {
   color: #999;
   font-size: 55%;
   /* and room for green bars */
-  height: calc(48px * var(--gs-tz));
+  height: calc(48px * var(--gs));
   left: 0;
   /* so type lines up */
   line-height: 50%;
@@ -311,19 +311,19 @@ body.demo .target-marker {
   position: absolute;
   text-align: center;
   text-shadow: 0 1px 0 #000;
-  top: calc(34px * var(--gs-tz));
+  top: calc(34px * var(--gs));
   width: 100%;
 }
 
 #player-status-bar .radar-scroller {
   position: absolute;
-  top: calc(1.75px * var(--gs-tz));
+  top: calc(1.75px * var(--gs));
   left: 0;
   box-sizing: border-box;
   width: 0;
-  height: calc(5.5px * var(--gs-tz));
-  border: calc(0.5px * var(--gs-tz)) solid rgba(255, 255, 255, 0.1);
-  border-radius: calc(1.5px * var(--gs-tz));
+  height: calc(5.5px * var(--gs));
+  border: calc(0.5px * var(--gs)) solid rgba(255, 255, 255, 0.1);
+  border-radius: calc(1.5px * var(--gs));
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -394,8 +394,8 @@ body.game-started #fuel-bar {
 #fuel-bar,
 #fuel-line {
   position: absolute;
-  top: calc(2px * var(--gs-tz));
-  height: calc(5px * var(--gs-tz));
+  top: calc(2px * var(--gs));
+  height: calc(5px * var(--gs));
   overflow: hidden;
   width: 100%;
 }
@@ -409,8 +409,8 @@ body.game-started #fuel-bar {
 #repair-complete {
   background: url(../image/status-repair-complete.png) 0 0 / contain repeat-x;
   display: none;
-  height: calc(13px * var(--gs-tz));
-  top: calc(33px * var(--gs-tz));
+  height: calc(13px * var(--gs));
+  top: calc(33px * var(--gs));
   width: 100%;
   z-index: 1;
 }
@@ -419,7 +419,7 @@ body.game-started #fuel-bar {
   position: relative;
   padding: 0;
   /* account for absolutely-positioned fuel line + bar */
-  top: calc(10px * var(--gs-tz));
+  top: calc(10px * var(--gs));
   opacity: 0;
 }
 
@@ -438,7 +438,7 @@ ul.stats-bar {
 
 ul.stats-bar li {
   color: #ccc;
-  font-size: calc(7px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
   position: relative;
   text-align: left;
 }
@@ -446,7 +446,7 @@ ul.stats-bar li {
 ul.stats-bar li.inventory-item:not(:last-of-type),
 ul.stats-bar li.stats-item:not(:last-of-type) {
   /* annoying, but need to override #aa rules */
-  padding-right: calc(8px * var(--gs-tz)) !important;
+  padding-right: calc(8px * var(--gs)) !important;
 }
 
 #stats-bar.hide-inventory li.inventory-item,
@@ -478,18 +478,18 @@ body.is_iphone #status-bar .letter-block {
 
 ul.stats-bar li.stats-item .weapon-count {
   display: inline-block;
-  margin-left: calc(0.075rem * var(--gs-tz));
+  margin-left: calc(0.075rem * var(--gs));
   /* prevent a shift when as number counts change (for variable-width fonts) */
-  min-width: calc(0.65rem * var(--gs-tz));
+  min-width: calc(0.65rem * var(--gs));
 }
 
 body.is_safari:not(.is-mobile) #ammo-count {
   /* fix shifting on Safari, especially, with three digits in tutorial mode. */
-  min-width: calc(11px * var(--gs-tz));
+  min-width: calc(11px * var(--gs));
 }
 
 body.is_safari:not(.is-mobile) #bomb-count {
-  min-width: calc(9px * var(--gs-tz));
+  min-width: calc(9px * var(--gs));
 }
 
 #mobile-controls li.inventory-item,
@@ -519,7 +519,7 @@ ul.stats-bar li.stats-item.weapon-reloading:not(.repairing) em {
 ul.stats-bar li .double-wide {
   display: inline-block;
   min-width: calc(
-    0.825rem * var(--gs-tz)
+    0.825rem * var(--gs)
   ); /* prevent 3 to 2 characters from causing UI shift. */
 }
 
@@ -534,8 +534,8 @@ ul.stats-bar em {
   position: relative;
   font-size: 0px;
   vertical-align: middle;
-  /* scaling shenanigans */
-  zoom: var(--gs-tz);
+  /* scaling shenanigans - TODO: clean up. */
+  zoom: var(--gs);
 }
 
 ul.stats-bar .lives em {
@@ -575,7 +575,7 @@ ul.stats-bar .infantry-count em {
 /* hackish: min-width fix for pixel shift from 1/0. Ugh. */
 #infantry-count {
   display: inline-block;
-  min-width: calc(0.25rem * var(--gs-tz));
+  min-width: calc(0.25rem * var(--gs));
 }
 
 ul.stats-bar .missiles em {
@@ -589,7 +589,7 @@ ul.stats-bar .missiles em {
 ul.stats-bar .missiles span.divider {
   /* X|C|B */
   display: inline-block;
-  min-width: calc(0.5rem * var(--gs-tz));
+  min-width: calc(0.5rem * var(--gs));
   opacity: 0.25;
   text-align: center;
 }
@@ -836,7 +836,7 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   background-image: url(../image/generic-explosion.png);
   /* full-width, and 5x height for the five frames */
   background-size: 100% 500%;
-  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #cc3333);
+  filter: drop-shadow(0 0 calc(2px * var(--gs)) #cc3333);
 }
 
 @keyframes classic-explosion {
@@ -1099,11 +1099,11 @@ body.is_safari:not(.is-mobile) .chain {
 
 .next-missile-target {
   /* halo around potential targets */
-  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #999);
+  filter: drop-shadow(0 0 calc(2px * var(--gs)) #999);
 }
 
 .smart-missile-tracking {
-  filter: drop-shadow(0 0 calc(2px * var(--gs-tz)) #ff3333);
+  filter: drop-shadow(0 0 calc(2px * var(--gs)) #ff3333);
 }
 
 .smart-missile-tracking:not(.turret):not(.parachute-infantry) {
@@ -1726,7 +1726,7 @@ body:not(.gravestones_vehicles) #battlefield .terrain-item.gs_vehicle {
   margin-left: 0;
   margin-top: 0;
   filter: drop-shadow(
-    0 calc(-0.25px * var(--gs-tz)) calc(1.5px * var(--gs-tz)) #cc3333
+    0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #cc3333
   );
 }
 
@@ -1792,7 +1792,7 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed
    * Note: Excluding mobile - this might hit performance on iOS Safari
    * when lots of radar scan nodes and sprites are on the screen.
    */
-/* filter: blur(calc(1px * (1 / var(--gs-tz)))); */
+/* filter: blur(calc(1px * (1 / var(--gs)))); */
 /*
 }
 
@@ -1802,7 +1802,7 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   #battlefield {
 */
 /* firefox seems to be more aggressive with the blur stuff; it's both literally and metaphorically unclear. :D */
-/* filter: blur(calc(0.33px * (1 / var(--gs-tz)))); */
+/* filter: blur(calc(0.33px * (1 / var(--gs)))); */
 /*
 }
 
@@ -1859,14 +1859,14 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   z-index: 5;
   /* let nuke show on top of smoke */
   filter: drop-shadow(
-    0 calc(-0.25px * var(--gs-tz)) calc(1.5px * var(--gs-tz)) #fff
+    0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #fff
   );
   transition: filter 0.5s ease-in-out;
 }
 
 .base.burning {
   /* a little "nuclear" glow, why not. */
-  filter: drop-shadow(0 0 calc(8px * var(--gs-tz)) #fff);
+  filter: drop-shadow(0 0 calc(8px * var(--gs)) #fff);
   transition: filter 0.5s ease-in-out;
   width: 103px;
   height: 103px;
@@ -2213,7 +2213,7 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   height: 0;
   pointer-events: none;
   /* tips, announcements, and game paused / resume prompts. */
-  font-size: calc(18px * var(--gs-tz));
+  font-size: calc(18px * var(--gs));
   line-height: 100%;
 }
 
@@ -2238,7 +2238,7 @@ body.game-over #game-tips .tips-container {
 #game-paused {
   color: #ccc;
   display: none;
-  font-size: calc(24px * var(--gs-tz));
+  font-size: calc(24px * var(--gs));
   margin-top: 10vw;
   font-weight: 300;
   left: 0;
@@ -2348,7 +2348,7 @@ body.is_iphone #game-tips .tips-container .tip {
 
 #game-tips #game-announcements {
   color: #bbb;
-  font-size: calc(20px * var(--gs-tz));
+  font-size: calc(20px * var(--gs));
   line-height: 110%;
   font-weight: 300;
   left: 0;
@@ -2443,26 +2443,26 @@ body.game-paused #game-announcements {
 
 #player-status-bar .spacer {
   /* centering / sizing shenanigans */
-  left: calc(-4px * var(--gs-tz));
-  padding-right: calc(5px * var(--gs-tz));
+  left: calc(-4px * var(--gs));
+  padding-right: calc(5px * var(--gs));
   position: relative;
   /* previously */
   /* min-width: 5% */
-  width: calc(32px * var(--gs-tz));
+  width: calc(32px * var(--gs));
 }
 
 #player-status-bar span.letter-block {
   background-clip: padding-box;
   background: rgba(32, 32, 32, 0.75);
-  border: calc(0.5px * var(--gs-tz)) solid rgba(48, 48, 48, 0.33);
-  border-radius: calc(2px * var(--gs-tz));
+  border: calc(0.5px * var(--gs)) solid rgba(48, 48, 48, 0.33);
+  border-radius: calc(2px * var(--gs));
   color: #777;
   display: inline-block;
-  height: calc(10px * var(--gs-tz));
-  line-height: calc(10px * var(--gs-tz));
-  margin-top: calc(-1px * var(--gs-tz));
-  min-width: calc(6px * var(--gs-tz));
-  padding: 0 calc(3px * var(--gs-tz));
+  height: calc(10px * var(--gs));
+  line-height: calc(10px * var(--gs));
+  margin-top: calc(-1px * var(--gs));
+  min-width: calc(6px * var(--gs));
+  padding: 0 calc(3px * var(--gs));
   text-align: center;
   vertical-align: middle; /* align with nearby text, e.g., bomb count */
 }
@@ -2477,7 +2477,7 @@ body.game-paused #game-announcements {
   /* these shouldn't be clickable, despite being a link. :X */
   pointer-events: none;
   /* scale these up. */
-  zoom: var(--gs-tz);
+  zoom: var(--gs);
 }
 
 #mobile-controls li.inventory-item a.missile-launcher,
@@ -2592,7 +2592,7 @@ body:not(.is-mobile) .mobile-only {
   right: 2.05%;
   top: 32.5%;
   width: 25em;
-  font-size: calc(6px * var(--gs-tz));
+  font-size: calc(6px * var(--gs));
   line-height: 150%;
   /* sit on top of L/R screen gradients */
   z-index: 11;
@@ -2645,13 +2645,13 @@ body:not(.is-mobile) .mobile-only {
 .notification-toast > span {
   /* don't apply to inline emoji, etc. */
   display: inline-block;
-  padding-bottom: calc(4px * var(--gs-tz));
+  padding-bottom: calc(4px * var(--gs));
 }
 
 #queue .fraction,
 .notification-toast .fraction {
   /* "slash" character */
-  font-size: calc(2px * var(--gs-tz));
+  font-size: calc(2px * var(--gs));
   font-style: normal;
 }
 
@@ -2685,7 +2685,7 @@ body:not(.is-mobile) .mobile-only {
   margin: -66% 0 0 -33%;
   display: inline-block;
   transform: scale3d(0.9, 0.9, 1);
-  font-size: calc(5px * var(--gs-tz));
+  font-size: calc(5px * var(--gs));
   line-height: 1em;
 }
 
@@ -2724,7 +2724,7 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 }
 
 #queue .fraction {
-  font-size: calc(5px * var(--gs-tz));
+  font-size: calc(5px * var(--gs));
 }
 
 /* "DOMFetti" - DOM confetti effect */
@@ -2802,7 +2802,7 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   border-bottom: 0 solid transparent;
   border-bottom-left-radius: 0.5px;
   border-bottom-right-radius: 0.5px;
-  --height: calc(2px * var(--gs-tz));
+  --height: calc(2px * var(--gs));
   height: var(--height);
   margin-bottom: calc(var(--height) / 2);
   position: absolute;
