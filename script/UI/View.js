@@ -14,13 +14,8 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
   COSTS,
-  forceZoom,
-  forceTransform,
-  isChrome,
-  isSafari,
   debug,
   isMobile,
-  isFirefox,
   worldWidth,
   worldOverflow,
   winloc,
@@ -1094,65 +1089,23 @@ const View = () => {
   function applyScreenScale() {
     if (disableScaling) return;
 
-    /**
-     * 09/2021: Most browsers perform and look better using scale3d() vs style.zoom.
-     * Chrome seems to be the exception, where zoom renders accurately, sharp and performant.
-     * Safari 15 still scales and has "fuzzy" text via scale3d(), but style.zoom is slower.
-     *
-     * 04/2020: It seems `style.zoom` is the way to go for performance, overall.
-     * Browsers seem to understand that this means "just magnify everything" in an efficient way.
-     *
-     * 10/2013: Safari 6.0.5 scales text after rasterizing via transform: scale3d(), thus it looks crap.
-     * Using document[element].zoom is OK, however.
-     *
-     * TESTING
-     * Force transform-based scaling with #forceTransform=1
-     * Force zoom-based scaling with #forceZoom=1
-     */
+    if (debug) console.log('using transform-based scaling');
 
-    // Pardon the non-standard formatting in exchange for legibility.
-    if (
-      !forceZoom &&
-      // URL param: prefer transform-based scaling
-      (forceTransform ||
-        // Firefox clips some of the world when using style.zoom.
-        isFirefox ||
-        // Chrome can do zoom, but mentions Safari in its userAgent.
-        // Safari does not do well with zoom.
-        (!isChrome && isSafari) ||
-        // Assume that on mobile, transform (GPU) is the way to go
-        isMobile)
-    ) {
-      if (debug) console.log('using transform-based scaling');
+    dom.worldWrapper._style.setProperty(
+      'width',
+      `${Math.floor(data.browser.screenWidth * (1 / data.screenScale))}px`
+    );
 
-      data.usingZoom = false;
+    // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
+    // and will need more refactoring to make that work the same.
+    dom.worldWrapper._style.setProperty(
+      'transform',
+      `scale3d(${data.screenScale}, ${data.screenScale}, 1)`
+    );
 
-      dom.worldWrapper._style.setProperty(
-        'width',
-        `${Math.floor(data.browser.screenWidth * (1 / data.screenScale))}px`
-      );
+    dom.root?.style?.setProperty('--game-scale-transform', data.screenScale);
 
-      // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
-      // and will need more refactoring to make that work the same.
-      dom.worldWrapper._style.setProperty(
-        'transform',
-        `scale3d(${data.screenScale}, ${data.screenScale}, 1)`
-      );
-
-      dom.root?.style?.setProperty('--game-scale-transform', data.screenScale);
-
-      dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
-    } else {
-      if (debug) console.log('using style.zoom-based scaling');
-
-      data.usingZoom = true;
-
-      // Safari 6 + Webkit nightlies (as of 10/2013) scale text after rasterizing, so it looks bad. This method is hackish, but text scales nicely.
-      // Additional note: this won't work in Firefox.
-      dom.aa.style.zoom = `${data.screenScale * 100}%`;
-
-      dom.root?.style?.setProperty('--game-scale-zoom', data.screenScale);
-    }
+    dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
 
     game.objects.funds?.updateScale();
 
@@ -1390,7 +1343,6 @@ const View = () => {
     maxScroll: 6,
     missileMode: null,
     screenScale: 1,
-    usingZoom: null,
     mobileInventoryActive: false,
     mobileInventoryTimer: null
   };

@@ -56,9 +56,8 @@
   --menu-scale: 2.75;
   --menu-chicago-scale: 2.75;
   --game-scale-transform: 1;
-  --game-scale-zoom: 1;
   /* "transform + zoom" (combined value, regardless of method applied) */
-  --gs-tz: calc(var(--game-scale-zoom) * var(--game-scale-transform));
+  --gs-tz: var(--game-scale-transform);
   /* radar scale, multiplier for tz */
   --radar-scale: 1;
   --rs: calc(var(--gs-tz) * var(--radar-scale));

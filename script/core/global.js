@@ -30,14 +30,6 @@ const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 
 const unlimitedFrameRate = searchParams.get('frameRate=*');
 
-/**
- * Evil tricks needed because Safari 6 (and Webkit nightly)
- * scale text after rasterization - thus, there's an option
- * to use document[element].style.zoom vs. transform: scale3d()
- * which renders text cleanly. Both have minor quirks.
- * force-enable transform under Safari 6 w/ #forceTransform=1
- */
-
 const isWebkit = ua.match(/webkit/i);
 const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
 const isFirefox = !!ua.match(/firefox/i);
@@ -155,9 +147,6 @@ const rad2Deg = 180 / Math.PI;
 const worldWidth = 8192;
 const worldHeight = 380;
 const worldOverflow = 512;
-
-const forceZoom = !!searchParams.get('forceZoom');
-const forceTransform = !!searchParams.get('forceTransform');
 
 let tutorialMode = !!searchParams.get('tutorial');
 
@@ -443,8 +432,6 @@ export {
   worldWidth,
   worldHeight,
   worldOverflow,
-  forceZoom,
-  forceTransform,
   tutorialMode,
   defaultMissileMode,
   rubberChickenMode,
