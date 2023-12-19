@@ -57,10 +57,10 @@
   --menu-chicago-scale: 2.75;
   --game-scale-transform: 1;
   /* "transform + zoom" (combined value, regardless of method applied) */
-  --gs-tz: var(--game-scale-transform);
+  --gs: var(--game-scale-transform);
   /* radar scale, multiplier for tz */
   --radar-scale: 1;
-  --rs: calc(var(--gs-tz) * var(--radar-scale));
+  --rs: calc(var(--gs) * var(--radar-scale));
 }
 
 @font-face {
@@ -339,9 +339,9 @@ body.is_safari #mtv-bnb-in {
   width: 100%;
   margin: 0 auto;
   /* prevent bottom "r" from being clipped, ugh. */
-  padding-bottom: calc(2px * var(--gs-tz));
+  padding-bottom: calc(2px * var(--gs));
   /* offset the above. */
-  margin-top: -calc(1px * var(--gs-tz));
+  margin-top: -calc(1px * var(--gs));
   overflow: hidden;
 }
 
@@ -634,7 +634,8 @@ body.game-started #start-game-button-mobile {
   color: #e19632;
   font-size: calc(5.5px * var(--menu-chicago-scale));
   line-height: 175%;
-  margin: calc(1.5px * var(--menu-chicago-scale)) 0px calc(2px * var(--menu-chicago-scale)) 0;
+  margin: calc(1.5px * var(--menu-chicago-scale)) 0px
+    calc(2px * var(--menu-chicago-scale)) 0;
   font-weight: 400;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -969,14 +970,14 @@ body.game-started #world-wrapper {
 }
 
 #game-status-bar {
-  border: calc(1px * var(--gs-tz)) solid #17a007;
+  border: calc(1px * var(--gs)) solid #17a007;
   border-left: none;
   border-right: none;
 }
 
 #radar,
 #radar-container {
-  height: calc(32px * var(--gs-tz));
+  height: calc(32px * var(--gs));
 }
 
 #radar-container {
@@ -1129,7 +1130,7 @@ body.radar_enhanced_fx.game-started #world-noise-overlay {
   pointer-events: none;
   position: absolute;
   /* center, and slightly smaller */
-  --scale: calc(var(--gs-tz) / 2);
+  --scale: calc(var(--gs) / 2);
   /* don't pull up a full half-height, leave room for announcement text etc. */
   transform: translate3d(-50%, -40%, 0) scale3d(var(--scale), var(--scale), 1);
   transition: 0.25s ease-in;
@@ -1286,7 +1287,7 @@ body.demo #world-noise-overlay {
 
 #level-preview,
 #top-bar {
-  height: calc(88px * var(--gs-tz));
+  height: calc(88px * var(--gs));
 }
 
 #top-bar {
@@ -1331,10 +1332,10 @@ body:not(.edit-mode) #top-bar {
   left: 0;
   background: padding-box #17a007;
   border-color: #ccc;
-  border-radius: calc(0.5px * var(--gs-tz)) calc(0.5px * var(--gs-tz)) 0 0;
+  border-radius: calc(0.5px * var(--gs)) calc(0.5px * var(--gs)) 0 0;
   contain: strict;
   width: calc(3px * var(--rs));
-  height: calc(3px * var(--gs-tz));
+  height: calc(3px * var(--gs));
   z-index: 2;
 }
 
@@ -1356,7 +1357,7 @@ body:not(.edit-mode) #top-bar {
    * filter: drop-shadow() seems to kill performance.
    * box-shadow seems to be OK.
    */
-  box-shadow: 0 0 0 calc(0.5px * var(--gs-tz)) #000;
+  box-shadow: 0 0 0 calc(0.5px * var(--gs)) #000;
 }
 
 #radar .sprite.enemy {
@@ -1370,27 +1371,27 @@ body:not(.edit-mode) #top-bar {
   /* account for bottom border? */
   margin-bottom: calc(-0.5px * var(--rs));
   /* round corners */
-  border-radius: calc(1px * var(--gs-tz)) calc(1px * var(--gs-tz)) 0 0;
-  height: calc(2px * var(--gs-tz));
+  border-radius: calc(1px * var(--gs)) calc(1px * var(--gs)) 0 0;
+  height: calc(2px * var(--gs));
   padding: calc(0.5px * var(--rs));
   /* friendly */
   border: none !important;
 }
 
 #radar .sprite.super-bunker {
-  height: calc(2.5px * var(--gs-tz));
+  height: calc(2.5px * var(--gs));
   width: calc(5px * var(--rs));
 }
 
 #radar .sprite.tank {
-  height: calc(2.25px * var(--gs-tz));
+  height: calc(2.25px * var(--gs));
 }
 
 #radar .sprite.balloon {
-  border-radius: calc(1.75px * var(--gs-tz));
+  border-radius: calc(1.75px * var(--gs));
   /* special case left margin, for horizontal alignment over bunker */
   margin-left: calc(0.5px * var(--rs));
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   width: calc(3px * var(--rs));
 }
 
@@ -1422,17 +1423,17 @@ body:not(.edit-mode) #top-bar {
   background-image: url(../image/checkerboard-white-mask-50percent.png);
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  background-size: calc(32px * var(--gs-tz));
+  background-size: calc(32px * var(--gs));
   /* hackish: push the border down further */
-  padding-bottom: calc(1px * var(--gs-tz));
+  padding-bottom: calc(1px * var(--gs));
 }
 
 #radar .sprite.cloud1,
 #radar .sprite.cloud2,
 #radar .sprite.cloud3 {
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   /* hackish: position offset. */
-  top: calc(2px * var(--gs-tz));
+  top: calc(2px * var(--gs));
   background-color: transparent;
   background-image: repeating-linear-gradient(
     -55deg,
@@ -1445,8 +1446,8 @@ body:not(.edit-mode) #top-bar {
   );
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  border: calc(0.5px * var(--gs-tz)) solid rgba(255, 255, 255, 0.15);
-  border-radius: calc(2px * var(--gs-tz));
+  border: calc(0.5px * var(--gs)) solid rgba(255, 255, 255, 0.15);
+  border-radius: calc(2px * var(--gs));
   box-shadow: none;
   filter: none;
 }
@@ -1464,11 +1465,11 @@ body:not(.edit-mode) #top-bar {
   top: auto;
   bottom: 0;
   width: calc(8px * var(--rs));
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   /* green "U"-shape image */
   background-color: transparent;
   background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAACCAYAAABllJ3tAAAAFUlEQVR4AWMQX8D+nwE7AMuBCXwYAIdBEWNHOYOnAAAAAElFTkSuQmCC);
-  background-position: 50% calc(1px * var(--gs-tz));
+  background-position: 50% calc(1px * var(--gs));
   background-size: contain;
   background-repeat: no-repeat;
   image-rendering: pixelated;
@@ -1485,10 +1486,10 @@ body:not(.edit-mode) #top-bar {
 #radar .sprite.smart-missile {
   border-radius: 100%;
   bottom: auto;
-  height: calc(1.25px * var(--gs-tz));
-  border-radius: calc(1.25px * var(--gs-tz));
+  height: calc(1.25px * var(--gs));
+  border-radius: calc(1.25px * var(--gs));
   left: 0;
-  margin-top: calc(0.25px * var(--gs-tz));
+  margin-top: calc(0.25px * var(--gs));
   outline: 0;
   position: absolute;
   top: auto;
@@ -1502,7 +1503,7 @@ body:not(.edit-mode) #top-bar {
 
 #radar .sprite.helicopter {
   background-color: transparent;
-  --border: calc(2.5px * var(--gs-tz));
+  --border: calc(2.5px * var(--gs));
   border-bottom: var(--border) solid transparent;
   border-left: var(--border) solid #17a007;
   border-top: var(--border) solid transparent;
@@ -1516,7 +1517,7 @@ body:not(.edit-mode) #top-bar {
 @media screen and (orientation: landscape) and (max-height: 480px) {
   #radar .sprite.helicopter {
     /* larger chopper on small screens in landscape, given the radar is quite small. */
-    --border: calc(4px * var(--gs-tz));
+    --border: calc(4px * var(--gs));
   }
 
   /* give everybody a vertical boost, per se. */
@@ -1540,7 +1541,7 @@ body:not(.edit-mode) #top-bar {
 
 #radar .sprite.bomb {
   --width: calc(1.5px * var(--rs));
-  --height: calc(1.5px * var(--gs-tz));
+  --height: calc(1.5px * var(--gs));
   border-radius: 0 0 var(--width) var(--width);
   height: var(--height);
   width: var(--width);
@@ -1560,20 +1561,20 @@ body:not(.edit-mode) #top-bar {
   contain-intrinsic-size: var(--one) var(--one);
   /* hackish repositioning fix */
   content-visibility: auto;
-  height: calc(1px * var(--gs-tz));
+  height: calc(1px * var(--gs));
   width: var(--one);
 }
 
 #radar .sprite.missile-launcher,
 #radar .sprite.van {
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   width: calc(2px * var(--rs));
 }
 
 #radar .sprite.engineer,
 #radar .sprite.infantry,
 #radar .sprite.parachute-infantry {
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   outline-width: calc(0.25px * var(--rs));
   width: calc(1px * var(--rs));
 }
@@ -1584,12 +1585,12 @@ body:not(.edit-mode) #top-bar {
 
 #radar .sprite.parachute-infantry {
   /* hackish repositioning fix */
-  margin-top: calc(1px * var(--gs-tz));
+  margin-top: calc(1px * var(--gs));
   /* semi-circle */
   border: calc(1px * var(--rs)) solid rgba(23, 160, 7, 0.75);
   border-bottom: none;
   width: calc(0.5px * var(--rs));
-  height: calc(0.25px * var(--gs-tz));
+  height: calc(0.25px * var(--gs));
   border-radius: 50% 50% 0 0;
   background: 0 0 !important;
 }
@@ -1599,16 +1600,16 @@ body:not(.edit-mode) #top-bar {
 }
 
 #radar .sprite.base {
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   width: calc(8px * var(--rs));
   --radius: calc(0.5px * var(--rs));
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
 #radar .sprite.end-bunker {
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   width: calc(3px * var(--rs));
-  border-radius: calc(1px * var(--gs-tz));
+  border-radius: calc(1px * var(--gs));
 }
 
 #radar .sprite.dying {
@@ -1624,7 +1625,7 @@ body:not(.edit-mode) #top-bar {
 
 #bottom {
   position: absolute;
-  height: calc(18px * var(--gs-tz));
+  height: calc(18px * var(--gs));
   box-sizing: border-box;
   color: #666;
   left: 0;
@@ -1635,20 +1636,20 @@ body:not(.edit-mode) #top-bar {
 
 #bottom,
 #queue .queue-item {
-  font-size: calc(7px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
 }
 
 #radar .sprite.helicopter.enemy {
   margin-left: calc(-0.5px * var(--rs));
   background-color: transparent;
-  border: calc(2.5px * var(--gs-tz)) solid transparent;
+  border: calc(2.5px * var(--gs)) solid transparent;
   border-right-color: #ccc;
 }
 
 #radar .sprite.turret {
   background-color: #17a007;
   width: calc(1px * var(--rs));
-  height: calc(2px * var(--gs-tz));
+  height: calc(2px * var(--gs));
   margin-left: calc(-0.5px * var(--rs));
 }
 
@@ -1697,7 +1698,7 @@ body:not(.edit-mode) #top-bar {
 }
 
 #radar .scan-node {
-  border-width: calc(0.5px * var(--gs-tz));
+  border-width: calc(0.5px * var(--gs));
   margin-left: calc(-0.25px * var(--rs));
 }
 
@@ -2102,14 +2103,14 @@ button .button-icon {
   position: relative;
   vertical-align: middle;
   /* sneaky scaling shenanigans */
-  zoom: calc(1 * var(--gs-tz));
+  zoom: calc(1 * var(--gs));
 }
 
 #lights .sub-sprite {
   display: block;
   background: url(../image/lights.exe.png) no-repeat;
-  width: calc(64px * var(--gs-tz));
-  height: calc(10px * var(--gs-tz));
+  width: calc(64px * var(--gs));
+  height: calc(10px * var(--gs));
   left: 0;
   opacity: 0.75;
   position: absolute;
@@ -2144,9 +2145,9 @@ button .button-icon {
   border: 0.5px solid #393;
   color: #3c3;
   display: block;
-  font-size: calc(7px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
   margin: 0;
-  padding: calc(2px * var(--gs-tz));
+  padding: calc(2px * var(--gs));
   text-align: center;
   width: 100%;
 }

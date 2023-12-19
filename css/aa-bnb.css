@@ -4,7 +4,7 @@
 
 body.bnb:not(.is-mobile) #aa ul.stats-bar li.inventory-item:first-of-type {
   /* centering shenanigans */
-  margin-left: calc(16px * var(--gs-tz));
+  margin-left: calc(16px * var(--gs));
 }
 
 body.bnb .engineer:not(.enemy).beavis,
@@ -126,7 +126,7 @@ body.bnb .sprite.engineer.butthead.building {
   height: 72%;
   /* cheap vertical alignment */
   left: 0;
-  margin-left: calc(-1px * var(--gs-tz));
+  margin-left: calc(-1px * var(--gs));
   /* note: nested opacity, individual images fade. */
   opacity: 0.75;
   position: absolute;
@@ -135,10 +135,10 @@ body.bnb .sprite.engineer.butthead.building {
 }
 
 body:not(.is-mobile) #bnb-now-playing {
-  height: calc(20px * var(--gs-tz));
+  height: calc(20px * var(--gs));
   left: 0;
   /* ugly hacks, I broke something while making changes for mobile. */
-  top: calc(-13px * var(--gs-tz));
+  top: calc(-13px * var(--gs));
 }
 
 body.bnb #bnb-now-playing {

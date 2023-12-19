@@ -170,27 +170,27 @@ body.is_iphone #tutorial-window {
 }
 
 #tutorial-window.finder .title-bar {
-  height: calc(7px * var(--gs-tz));
-  border-width: calc(1px * var(--gs-tz)) 0;
+  height: calc(7px * var(--gs));
+  border-width: calc(1px * var(--gs)) 0;
 }
 
 #tutorial-window.finder h3 {
-  font-size: calc(7px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
 }
 
 #tutorial-window.finder .title-bar-label {
-  font-size: calc(6.5px * var(--gs-tz));
-  margin-top: calc(-0.5px * var(--gs-tz));
-  padding: 0 calc(3px * var(--gs-tz));
+  font-size: calc(6.5px * var(--gs));
+  margin-top: calc(-0.5px * var(--gs));
+  padding: 0 calc(3px * var(--gs));
 }
 
 #tutorial-window.finder .body {
-  font-size: calc(5px * var(--gs-tz));
+  font-size: calc(5px * var(--gs));
 }
 
 #tutorial-window.finder .body img {
   /* images are safe to scale via zoom - in Safari, at least. */
-  zoom: var(--gs-tz);
+  zoom: var(--gs);
 }
 
 body.tutorial-mode #tutorial-window {
@@ -237,13 +237,13 @@ body.game-paused #tutorial-window {
 
 #tutorial-window .body .mobile-touch-example {
   display: inline-block;
-  padding: calc(0.5px * var(--gs-tz));
+  padding: calc(0.5px * var(--gs));
   box-sizing: content-box;
   border-radius: 100%;
-  border: calc(0.5px * var(--gs-tz)) solid #666;
+  border: calc(0.5px * var(--gs)) solid #666;
   vertical-align: text-top;
-  line-height: calc(4.74px * var(--gs-tz));
-  --size: calc(5px * var(--gs-tz));
+  line-height: calc(4.74px * var(--gs));
+  --size: calc(5px * var(--gs));
   width: var(--size);
   height: var(--size);
   text-align: center;
@@ -251,12 +251,12 @@ body.game-paused #tutorial-window {
 
 /* special case: smaller headers in tutorial, because there are two. */
 body.tutorial-mode #battle-over-letter .letter-content h1 {
-  font-size: calc(13px * var(--gs-tz));
+  font-size: calc(13px * var(--gs));
 }
 
 body.tutorial-mode #battle-over-letter .letter-content h1 ~ h1 {
   /* secondary header */
-  font-size: calc(12px * var(--gs-tz));
+  font-size: calc(12px * var(--gs));
 }
 
 body.tutorial-mode #game-tips .tips-container {
@@ -266,7 +266,6 @@ body.tutorial-mode #game-tips .tips-container {
 body.tutorial-mode #game-tips .tips-container b {
   color: #fff;
 }
-
 
 /* ignore events on sub/transform sprites, and explosions */
 body.edit-mode
@@ -434,5 +433,5 @@ body.edit-mode #battlefield {
 
 body.edit-mode #top-bar {
   /* crop the top, reserving radar for click-and-drag / scrubbing */
-  height: calc(42px * var(--gs-tz));
+  height: calc(42px * var(--gs));
 }

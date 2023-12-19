@@ -25,7 +25,7 @@ body.is-mobile ul.stats-bar li {
 
 body.is-mobile #bottom {
   /* a little more on mobile, for whatever the reason. :X */
-  height: calc(19px * var(--gs-tz));
+  height: calc(19px * var(--gs));
 }
 
 body.is-mobile:not(.is_iphone) #game-tips {
@@ -73,15 +73,15 @@ body.is-mobile #player-status-bar .spacer {
 /* except when BnB, and landscape? */
 body.bnb.is-mobile #player-status-bar .spacer {
   display: inline-block !important;
-  min-height: calc(16px * var(--gs-tz));
-  top: calc(-3.5px * var(--gs-tz));
+  min-height: calc(16px * var(--gs));
+  top: calc(-3.5px * var(--gs));
   /* display shenanigans */
   vertical-align: top;
 }
 
 body.bnb.is-mobile #player-status-bar #spinner {
   /* more BnB hacks. */
-  top: calc(8.25px * var(--gs-tz));
+  top: calc(8.25px * var(--gs));
 }
 
 body.bnb.is-mobile #bnb-now-playing {
@@ -116,19 +116,19 @@ body.is_iphone #mobile-controls {
   /* scale controls up. */
   zoom: 1.25;
   /* tighter bottom spacing. */
-  bottom: calc(53px * var(--gs-tz));
+  bottom: calc(53px * var(--gs));
 }
 
 @media screen and (orientation: landscape) {
   body:not(.is_iphone) #mobile-controls {
     /* iPad: a little spacing, whichever side of the screen we're on */
-    margin-left: calc(5px * var(--gs-tz));
-    margin-right: calc(5px * var(--gs-tz));
+    margin-left: calc(5px * var(--gs));
+    margin-right: calc(5px * var(--gs));
   }
 
   body.is_iphone #mobile-controls {
     zoom: 2;
-    bottom: calc(28px * var(--gs-tz));
+    bottom: calc(28px * var(--gs));
   }
 
   body.is-mobile:not(.is_iphone) #mobile-controls {
@@ -137,7 +137,7 @@ body.is_iphone #mobile-controls {
 
   body.is-mobile #game-tips,
   body.is-mobile #game-tips #game-announcements {
-    font-size: calc(24px * var(--gs-tz));
+    font-size: calc(24px * var(--gs));
   }
 }
 
@@ -159,29 +159,29 @@ body.is-mobile.mobile-controls_left-aligned
   #notification-toasts.left-aligned.bottom-up {
   left: 0;
   /* offset for touch controls, prevent overlap */
-  margin-left: calc(60px * var(--gs-tz));
+  margin-left: calc(60px * var(--gs));
 }
 
 body.is-mobile.mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
   right: 0;
   /* offset for touch controls, prevent overlap */
-  margin-right: calc(69px * var(--gs-tz));
+  margin-right: calc(69px * var(--gs));
 }
 
 @media screen and (orientation: portrait) {
   /* tighter spacing + less vertical clearance needed */
   body.is_iphone #mobile-controls {
-    bottom: calc(42px * var(--gs-tz));
+    bottom: calc(42px * var(--gs));
   }
 
   body:not(.is_iphone) #mobile-controls {
     /* tighter spacing + less vertical clearance needed */
-    bottom: calc(53px * var(--gs-tz));
+    bottom: calc(53px * var(--gs));
   }
 
   body:not(.is_iphone) #game-tips {
-    font-size: calc(16px * var(--gs-tz));
+    font-size: calc(16px * var(--gs));
   }
 
   body.is_iphone
@@ -198,7 +198,7 @@ body.is-mobile.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone, controls right, notifications bottom right */
     right: 0;
-    margin-right: calc(64px * var(--gs-tz) * 1.33);
+    margin-right: calc(64px * var(--gs) * 1.33);
     max-width: 60vw;
   }
 
@@ -206,7 +206,7 @@ body.is-mobile.mobile-controls_right-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls left, notifications bottom left */
     left: 0;
-    margin-left: calc(64px * var(--gs-tz) * 1.15);
+    margin-left: calc(64px * var(--gs) * 1.15);
     max-width: 60vw;
   }
 }
@@ -226,37 +226,37 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPad, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 1.5);
+    margin-right: calc(64px * var(--gs) * 1.5);
   }
 
   body.is-mobile.is_iphone.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 3);
+    margin-right: calc(64px * var(--gs) * 3);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom right */
-    margin-right: calc(64px * var(--gs-tz) * 2.15);
+    margin-right: calc(64px * var(--gs) * 2.15);
   }
 
   body.is-mobile.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPad, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs-tz) * 1.25);
+    margin-left: calc(64px * var(--gs) * 1.25);
   }
 
   body.is-mobile.is_iphone.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs-tz) * 1.95);
+    margin-left: calc(64px * var(--gs) * 1.95);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom left. */
-    margin-left: calc(64px * var(--gs-tz) * 2.75);
+    margin-left: calc(64px * var(--gs) * 2.75);
   }
 
   /* scale up tutorial window. */
@@ -295,7 +295,7 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
     /* "home screen" app, iOS Safari - and/or, address bar hidden - close to bezel */
     /* Note: offset lagely due to use of zoom. */
     margin-left: calc(env(safe-area-inset-left) / 4) !important;
-    top: calc(6px * var(--gs-tz));
+    top: calc(6px * var(--gs));
   }
 
   /* bottom bar */
@@ -315,12 +315,12 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   @media screen and (orientation: landscape) {
     body.is-mobile #notification-toasts {
       /* iPad / tablet */
-      font-size: calc(7px * var(--gs-tz));
+      font-size: calc(7px * var(--gs));
       line-height: 150%;
     }
 
     body.is_iphone #notification-toasts {
-      font-size: calc(10px * var(--gs-tz));
+      font-size: calc(10px * var(--gs));
       line-height: 150%;
     }
   }
@@ -425,7 +425,7 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
     /* TODO: investigate brief positioning / clipping in animation due to loss of transform. */
     transform: none;
     bottom: auto;
-    padding-bottom: calc(90px * var(--gs-tz));
+    padding-bottom: calc(90px * var(--gs));
   }
 }
 
@@ -484,12 +484,12 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   display: none;
   /* ugh, whitespace. */
   font-size: 0px;
-  width: calc(60px * var(--gs-tz));
-  height: calc(80px * var(--gs-tz));
+  width: calc(60px * var(--gs));
+  height: calc(80px * var(--gs));
   left: 0;
   padding: 0 1px;
   /* this works OK for iPad. */
-  bottom: calc(42px * var(--gs-tz));
+  bottom: calc(42px * var(--gs));
   z-index: 11; /* sit atop clouds */
 }
 
@@ -542,19 +542,19 @@ body.mobile-controls_right-aligned #mobile-controls {
 #mobile-controls .mobile-controls-weapons li {
   margin: 0;
   padding: 0;
-  margin-right: calc(2.5px * var(--gs-tz));
-  margin-bottom: calc(2.5px * var(--gs-tz));
-  width: calc(25px * var(--gs-tz));
+  margin-right: calc(2.5px * var(--gs));
+  margin-bottom: calc(2.5px * var(--gs));
+  width: calc(25px * var(--gs));
 }
 
 #mobile-controls li {
   /* microfiche, but OK on mobile. */
   background: url(../image/checkerboard-black-mask-75percent.png) 0 0/4px;
-  border: calc(0.75px * var(--gs-tz)) dotted hsla(0, 0%, 100%, 0.15);
+  border: calc(0.75px * var(--gs)) dotted hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
-  font-size: calc(7px * var(--gs-tz));
-  height: calc(25px * var(--gs-tz));
+  font-size: calc(7px * var(--gs));
+  height: calc(25px * var(--gs));
   line-height: 1rem;
   opacity: 0;
   padding: 0;
@@ -650,10 +650,10 @@ body.mobile-controls_right-aligned #mobile-controls {
 #mobile-controls li span.letter-block.show_options {
   color: #666;
   display: block !important;
-  font-size: calc(16px * var(--gs-tz));
+  font-size: calc(16px * var(--gs));
   font-weight: lighter;
   letter-spacing: 0;
-  line-height: calc(24px * var(--gs-tz));
+  line-height: calc(24px * var(--gs));
   text-align: center;
   text-indent: 0;
   top: 0;
@@ -661,12 +661,12 @@ body.mobile-controls_right-aligned #mobile-controls {
 
 body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   /* Chrome on Android */
-  line-height: calc(23.5px * var(--gs-tz));
+  line-height: calc(23.5px * var(--gs));
 }
 
 #mobile-controls li span.letter-block.show_options {
-  font-size: calc(8px * var(--gs-tz));
-  line-height: calc(24px * var(--gs-tz));
+  font-size: calc(8px * var(--gs));
+  line-height: calc(24px * var(--gs));
 }
 
 /* hide groups of controls until activated */
@@ -704,7 +704,7 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   }
   body:not(.is-mobile) #game-tips #game-announcements {
     /* desktop */
-    font-size: calc(24px * var(--gs-tz));
+    font-size: calc(24px * var(--gs));
   }
 }
 
@@ -783,7 +783,7 @@ body.game-over .joystick-point {
   margin: 0;
   position: absolute;
   top: 0;
-  --size: calc(5px * var(--gs-tz));
+  --size: calc(5px * var(--gs));
   --halfSize: calc(var(--size) * -0.5);
   width: var(--size);
   height: var(--size);
@@ -799,12 +799,12 @@ body.game-over .joystick-point {
 @media screen and (orientation: portrait) {
   #game-tips {
     /* smaller text, too. */
-    font-size: calc(12px * var(--gs-tz));
+    font-size: calc(12px * var(--gs));
     line-height: 100%;
   }
 
   /* just a bit smaller on iPhone, portrait. */
   #game-tips #game-announcements {
-    font-size: calc(18px * var(--gs-tz));
+    font-size: calc(18px * var(--gs));
   }
 }
