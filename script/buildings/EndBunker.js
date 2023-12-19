@@ -117,7 +117,7 @@ const EndBunker = (options = {}) => {
               } captured! 💰`
             );
           }
-          playSound(sounds.bnb.money);
+          playSound(sounds.bnb.stolenFunds);
         }
       } else {
         if (allFunds) {

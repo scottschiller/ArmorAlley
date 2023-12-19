@@ -280,6 +280,7 @@ function GameEvents() {
               playDelayedSound(sounds.bnb.beavisMyTurn);
               playDelayedSound(sounds.bnb.buttheadUhWhateverDumbass);
               playDelayedSound(sounds.bnb.beavisNoWayItsMyTurn, andAnnounce);
+              if (rnd >= 0.75) playDelayedSound(sounds.bnb.beavisLetsDriveIt);
             } else if (rnd >= 0.33) {
               playDelayedSound(sounds.bnb.buttheadGoForItBeavis);
               playDelayedSound(sounds.bnb.beavisMyTurn, andAnnounce);
@@ -287,6 +288,7 @@ function GameEvents() {
               playDelayedSound(sounds.bnb.beavisMyTurn, andAnnounce);
               playDelayedSound(sounds.bnb.buttheadDammitBeavisIWasAboutToScore);
               playDelayedSound(sounds.bnb.beavisNoWayItsMyTurn, andAnnounce);
+              if (rnd >= 0.15) playDelayedSound(sounds.bnb.beavisLetsDriveIt);
             }
           }
         }

@@ -218,6 +218,10 @@ function PrefsManager() {
     dom.oVolumeSlider.addEventListener('change', () => {
       // randomize, keep it fun.
       data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
+      if (gamePrefs.bnb && !data.didCrankIt) {
+        playSound(sounds.bnb.turnItUp, null);
+        data.didCrankIt = true;
+      }
     });
 
     // watch for and apply volume updates
@@ -704,6 +708,10 @@ function PrefsManager() {
     game.objects.view.data.ignoreMouseEvents = false;
 
     aaLoader.unloadCSS('css/aa-prefs-and-modals.css');
+
+    if (gamePrefs.bnb) {
+      data.didCrankIt = false;
+    }
 
     game.resume();
   }

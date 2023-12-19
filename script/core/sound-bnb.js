@@ -513,7 +513,8 @@ bnb.buttheadWhoaCool = shuffle([
   addVL('bh_uh_alright'),
   addVL('bh_uh_cool'),
   addVL('bh_whoa_check_it_out'),
-  addVL('bh_yeah_thats_cool')
+  addVL('bh_yeah_thats_cool'),
+  add('bh_thats_pretty_cool_laugh')
 ]);
 bnb.buttheadWhoaCool.maxDelay = 750;
 
@@ -835,12 +836,19 @@ bnb.buttheadInsults = Object.assign(
   }
 );
 
-bnb.buttheadIdle = add('vs_butthead_was_i_supposed_to_be_doing_something');
+bnb.buttheadIdle = shuffle([
+  add('vs_butthead_was_i_supposed_to_be_doing_something'),
+  add('b_hurry_up_dont_make_me_kick_your_ass', 60)
+]);
 
-bnb.beavisIdle = addSequence(
+bnb.beavisIdleCommentary = shuffle([
   add('butthead_whats_taking_you_so_damn_long'),
-  bnb.beavisRetorts
-);
+  add('bh_well_dont_just_stand_there_beavis'),
+  add('b_um_whatd_you_want_us_to_do_again', 60),
+  add('bh_dammit_beavis_hurry_up', 60)
+]);
+
+bnb.beavisIdle = addSequence(bnb.beavisIdleCommentary, bnb.beavisRetorts);
 
 bnb.buttheadComplaints = shuffle([
   addVL('bh_that_sucks_exclamation'),
@@ -897,6 +905,7 @@ bnb.comeToBeavisToo.maxDelay = 1000;
 
 bnb.gonnaScore = shuffle([
   add('bh_this_is_it_beavis_were_finally_going_to_score_thank_god'),
+  add('b_this_place_rules_i_think_were_really_gonna_score_about_time'),
   add('bh_were_gonna_score', 40),
   add('b_were_gonna_score', 40),
   add('b_were_gonna_score_x2', 40)
@@ -926,6 +935,7 @@ bnb.beavisCapturedBunker = shuffle([
   add('beavis_yeah_yeah'),
   add('beavis_come_on', 85),
   addVL('b_stop_in_the_name_of_the_law_vl'),
+  add('b_thank_you_walk_through', 60),
   bnb.mightNeedThatSomeday,
   ...bnb.taDammit
 ]);
@@ -969,7 +979,11 @@ bnb.beavisTooHard = addSequence(
 );
 
 bnb.beavisLostBunker = shuffle([
-  add('beavis_damn_son_of_a_bitch'),
+  oneOf[
+    (add('b_no_dammit'),
+    add('b_yell_dammit'),
+    add('beavis_damn_son_of_a_bitch'))
+  ],
   bnb.buttheadInsults,
   ...bnb.beavisComplaints
 ]);
@@ -1010,6 +1024,17 @@ bnb.beavisYeahMeToo.excludeDelay = true;
 bnb.dammitItsBroken = add('b_dammit_its_broken_or_something');
 bnb.dammitItsBroken.delay = 2000;
 
+bnb.dontLeaveMe = addSequence(
+  add('b_yell_bh_dont_leave_me_in_here_by_myself'),
+  add('bh_no_way_watching_beavis_get_his_ass_kicked')
+);
+
+bnb.tightGripOnShaft = addSequence(
+  add('b_tight_grip_on_that_shaft'),
+  add('bh_your_shaft_doesnt_work'),
+  bnb.beavisRetorts
+);
+
 bnb.howToTurnOn = addSequence(
   add('b_i_wonder_how_you_turn_this_damn_thing_on', 50),
   () => Math.random() >= 0.5 && bnb.dammitItsBroken
@@ -1033,6 +1058,7 @@ bnb.beavisMyTurn.excludeDelay = true;
 bnb.beavisThankYouDriveThrough = shuffle([
   add('vs_beavis_thank_you_drive_through', 40),
   add('b_thank_you_drive_through', 40),
+  add('b_thank_you_drive_through_2', 60),
   add('beavis_thank_you_drive_through_please'),
   addVL('b_thank_you_drive_through_long'),
   addVL('b_thank_you_my_name_is_beavis_good_night_drive_through'),
@@ -1041,11 +1067,15 @@ bnb.beavisThankYouDriveThrough = shuffle([
 
 bnb.beavisThankYouDriveThrough.maxDelay = 500;
 
-bnb.buttheadIDunno = add('butthead_uh_i_dunno', 50);
+bnb.buttheadIDunno = [
+  add('butthead_uh_i_dunno', 50),
+  add('b_uh_i_dunno_2', 60)
+];
 bnb.buttheadIDunno.maxDelay = 2000;
 
 bnb.beavisBattleship = shuffle([
   add('vs_beavis_you_sank_my_battleship', 40),
+  addVL('beavis_fore'),
   addSequence(
     add('beavis_are_explosions_science', 40),
     () => Math.random() >= 0.5 && bnb.buttheadIDunno
@@ -1072,14 +1102,17 @@ bnb.cockaDoodleDoo = addSequence(
 );
 bnb.cockaDoodleDoo.throttle = 120000;
 
-bnb.cock = addSequence(
-  add('vs_butthead_cock', 75),
-  () => Math.random() >= 0.5 && bnb.cockaDoodleDoo
+bnb.oneBigAssSchlong = add('b_yeah_thats_one_big_ass_schlong_alright');
+
+bnb.cock = addSequence(add('vs_butthead_cock', 75), () =>
+  Math.random() >= 0.5 ? bnb.cockaDoodleDoo : bnb.oneBigAssSchlong
 );
 bnb.cock.throttle = 15000;
 
 bnb.buttheadUhWhateverDumbass = add('butthead_uh_whatever_dumbass');
 bnb.buttheadUhWhateverDumbass.excludeDelay = true;
+
+bnb.beavisLetsDriveIt = add('b_cool_lets_drive_it_bh_this_thing_rules', 60);
 
 bnb.beavisNoWayItsMyTurn = shuffle([
   add('beavis_no_way_its_my_turn'),
@@ -1101,6 +1134,8 @@ bnb.buttheadWatchTheMaster = shuffle([
   add('butthead_watch_the_master_long')
 ]);
 bnb.buttheadWatchTheMaster.excludeDelay = true;
+
+bnb.turnItUp = add('b_yeah_turn_it_up_crank_it');
 
 bnb.volumeTestSounds = [
   shuffle([add('beavis_grunt_3'), add('beavis_grunt_4')]),
@@ -1161,7 +1196,8 @@ bnb.beavisOhYeah = shuffle([
   add('b_oh_yeah_laugh', 40),
   add('b_oh_yeah_mm_hmm', 40),
   add('b_heh_ill_be_damned_heh', 40),
-  addVL('b_whoa_really_ill_be_damned')
+  addVL('b_whoa_really_ill_be_damned'),
+  add('b_huh_ill_be_damned', 60)
 ]);
 bnb.beavisOhYeah.maxDelay = 1000;
 
@@ -1192,7 +1228,10 @@ bnb.bhWhatsTakingYouSoDamnLong = addSequence(
 bnb.beavisLostHelicopter = shuffle([
   bnb.iHateThisStupidGame,
   bnb.thoughtWeWereGonnaScore,
-  add('bh_that_was_stupid_beavis_but_it_was_pretty_cool_too'),
+  addSequence(
+    add('bh_that_was_stupid_beavis_but_it_was_pretty_cool_too'),
+    () => Math.random() >= 0.5 && bnb.beavisDoThatAgain
+  ),
   add('beavis_nooooo', 40),
   bnb.beavisTooHard,
   bnb.beavisReallyHard,
@@ -1259,6 +1298,7 @@ bnb.buttheadLostHelicopter = shuffle([
   add('beavis_taking_your_sweet_ass_time'),
   add('beavis_whatd_you_do_that_for'),
   add('beavis_wth_are_you_doing_fartknocker'),
+  add('bh_ugh_cut_it_out_dumbass'),
   addSequence(
     add('bh_dammit_this_sucks_its_like_too_hard_or_something'),
     addVL('bh_uh_does_that_remind_you_of_anything_beavis'),
@@ -1284,17 +1324,21 @@ bnb.buttheadLostUnit.maxDelay = 2000;
 
 bnb.beavisInfantryPickup = [
   add('b_get_over_here', 40),
-  add('vs_beavis_youre_coming_with_me', 40)
+  add('vs_beavis_youre_coming_with_me', 40),
+  add('b_hey_hows_it_going')
 ];
 bnb.beavisInfantryPickup.maxDelay = 500;
 
 bnb.comeToButthead = addSequence(
-  add('butthead_come_to_butthead', 60),
+  () =>
+    oneOf([add('butthead_come_to_butthead', 60), add('bh_come_to_butthead')]),
   () => Math.random() >= 0.5 && bnb.comeToBeavisToo
 );
 
 bnb.buttheadInfantryPickup = shuffle([
   bnb.comeToButthead,
+  add('bh_hey_baby'),
+  add('bh_ill_take_that'),
   addVL('bh_thank_you_may_i_have_another')
 ]);
 bnb.buttheadInfantryPickup.maxDelay = 500;
@@ -1311,7 +1355,7 @@ bnb.letsKickALittleAss.excludeDelay = true;
 bnb.heresACoolGame = add('butthead_heres_a_cool_game');
 bnb.heresACoolGame.excludeDelay = true;
 
-bnb.bhLetsRock = add('bh_lets_rock');
+bnb.bhLetsRock = [add('bh_lets_rock'), add('bh_yes_lets_party_beavis')];
 bnb.bhLetsRock.throttle = 60000;
 
 bnb.singing = shuffle([
@@ -1321,16 +1365,6 @@ bnb.singing = shuffle([
   add('bnb_singing_4')
 ]);
 // bnb.singing.playImmediately = true;
-
-bnb.singingSequence = addSequence(
-  ...shuffle([
-    add('bnb_singing_take_that'),
-    add('bnb_singing_2'),
-    add('bnb_singing_3'),
-    add('bnb_singing_4')
-  ])
-);
-// bnb.singingSequence.playImmediately = true;
 
 bnb.singingShort = shuffle([
   addSound({
@@ -1400,7 +1434,15 @@ bnb.screamShort = shuffle([
   add('b_ow_1', 40),
   add('b_ow_2', 40),
   add('b_ow_3', 40),
-  add('b_ow_4', 40)
+  add('b_ow_4', 40),
+  add('b_another_yell_2'),
+  addVL('b_yell_loud'),
+  add('b_another_good_yell'),
+  addVL('b_loud_ow'),
+  add('b_yell_stuck'),
+  add('beavis_ow_short_2'),
+  add('beavis_ow_short'),
+  add('beavis_oow')
 ]);
 bnb.screamShort.maxDelay = 500;
 bnb.screamShort.playImmediately = true;
@@ -1434,7 +1476,10 @@ bnb.screamPlusSit = shuffle([
 bnb.screamPlusSit.playImmediately = false;
 bnb.screamPlusSit.pauseBNBQueue = true;
 
-bnb.buttheadCutItOutDumbass = add('butthead_cut_it_out_dumbass');
+bnb.buttheadCutItOutDumbass = [
+  add('butthead_cut_it_out_dumbass'),
+  add('butthead_cut_it_out_dumbass_2')
+];
 bnb.buttheadCutItOutDumbass.maxDelay = 500;
 
 bnb.buttheadScreamShort = shuffle([
@@ -1444,20 +1489,15 @@ bnb.buttheadScreamShort = shuffle([
   add('bh_hit_a'),
   add('bh_hit_b'),
   add('bh_hit_c'),
-  add('bh_ugh')
+  add('bh_ugh'),
+  addVL('butthead_ugh')
 ]);
 bnb.buttheadScreamShort.playImmediately = true;
 
 bnb.buttheadScream = shuffle([
   ...bnb.buttheadScreamShort,
   // NB: two joined .wav files
-  add('butthead_ugh_cut_it_out_dumbass')
-  /*
-  addSequence(
-    add('bh_ugh'),
-    add('butthead_cut_it_out_dumbass')
-  )
-  */
+  ...bnb.buttheadCutItOutDumbass
 ]);
 bnb.buttheadScream.maxDelay = 500;
 
@@ -1481,7 +1521,16 @@ bnb.beavisScreamShort = shuffle([
   add('beavis_xscream_5', 40),
   add('beavis_xscream_6', 40),
   add('beavis_xscream_7', 40),
-  add('beavis_xscream_8', 40)
+  add('beavis_xscream_8', 40),
+  add('b_another_yell_2'),
+  addVL('b_yell_loud'),
+  add('b_another_good_yell'),
+  addVL('b_loud_ow'),
+  add('b_yell_stuck'),
+  add('b_yell_dammit'),
+  add('beavis_ow_short_2'),
+  add('beavis_ow_short'),
+  add('beavis_oow')
 ]);
 bnb.beavisScreamShort.maxDelay = 300;
 bnb.beavisScreamShort.playImmediately = true;
@@ -1546,9 +1595,19 @@ bnb.poopQuestion.excludeDelay = true;
 bnb.money = shuffle([
   add('b_money_money_laugh'),
   add('b_money_money_money'),
-  add('bh_money')
+  add('bh_money'),
+  add('b_yeah_yeah_money')
 ]);
 bnb.money.excludeDelay = true;
+
+bnb.stolenFunds = addSequence(
+  bnb.money,
+  oneOf([
+    add('bh_hey_b_were_gonna_be_rich', 60),
+    add('bh_sure_is_cool_having_money_and_chicks', 60)
+  ])
+);
+bnb.stolenFunds.throttle = 60000;
 
 bnb.beavisCmonButthead = add(
   'vs_cmon_butthead_hit_that_fartknocker',
@@ -1602,6 +1661,7 @@ bnb.cornholioRepair = shuffle([
 ]);
 
 bnb.cornholioAnnounce = shuffle([
+  add('cornholio1', 60),
   add('beavis_i_am_cornholio_loud', 33),
   add('beavis_i_am_cornholio_movie', 65),
   add('beavis_i_am_cornholio_short_tv', 65),
@@ -1648,6 +1708,8 @@ bnb.cornholioAttack = shuffle([
   add('b_are_you_threatening_me_my_bunghole_will_not_wait'),
   add('bunghole_question'),
   add('bunghole_x3'),
+  add('bungholio_x2'),
+  addVL('b_my_people_we_have_but_one_bunghole'),
   add('cornholio_i_order_you_to_surrender_your_tp')
 ]);
 bnb.cornholioAttack.throttle = 10000;
@@ -1967,7 +2029,15 @@ bnb.gameMenu = shuffle([
     add('beavis_whats_this_butthead_something_cool'),
     bnb.coolerThanIThought
   ),
+  addGMS(add('b_ahh_that_guys_in_his_underwear'), () => bnb.cock),
+  addGMS(add('bh_this_is_the_coolest_game_ive_ever_played'), addVL('b_fryer')),
   addGMS(add('b_what_the_hell_is_this_crap', 40), addVL('bh_worst_crap_ever')),
+  addGMS(
+    addVL('b_ooh_a_butt'),
+    add('bh_wait_a_minute_b_thats_a_dude'),
+    add('b_whoa_how_do_you_know_that'),
+    add('b_uh_i_dunno_2', 60)
+  ),
   addVL('beavis_whoa_look_a_human_butt'),
   add('b_here_we_go_again_this_sucks_mockery', 40),
   addGMS(addVL('bh_i_think_were_in_for_something_special')),
@@ -1996,6 +2066,11 @@ bnb.gameMenuHard = utils.array.shuffle([
     addVL('bh_hard_laugh'),
     bnb.lotsOfLaughs
   ),
+  addGMS(
+    add('b_did_you_hear_that_bh_now_it_said_harder'),
+    add('bh_dammit_beavis_settle_down'),
+    addVL('bh_hard_laugh')
+  ),
   addVL('bh_boioioing_b_you_cant_really_do_that_butthead')
 ]);
 bnb.gameMenuHard.excludeDelay = true;
@@ -2011,12 +2086,16 @@ bnb.helicopterDiedReactions = shuffle([
 ]);
 bnb.helicopterDiedReactions.maxDelay = 3000;
 
+bnb.beavisDoThatAgain = add('b_i_wanna_do_that_again', 60);
+
 function initBNBSound() {
   bnb.bunkerExplosion = [bnb.explosionFire].concat(
     shuffle([
       bnb.fire,
       bnb.kickedAss,
       bnb.beavisFire,
+      bnb.beavisDoThatAgain,
+      add('bh_this_is_the_coolest_game_ive_ever_played', 60),
       { ...bnb.buttheadCoolestThingEver, delay: 5000 }
     ])
   );
@@ -2026,6 +2105,8 @@ function initBNBSound() {
     [
       bnb.beavisGonnaBeCool,
       bnb.howToTurnOn,
+      bnb.dontLeaveMe,
+      bnb.tightGripOnShaft,
       bnb.rumble,
       bnb.poopQuestion,
       bnb.iHateThisStupidGame,
@@ -2036,6 +2117,7 @@ function initBNBSound() {
 
   bnb.buttheadTurn = shuffle(
     [
+      add('bh_yes_lets_like_shoot_stuff_with_this_thing', 60),
       bnb.buttheadGonnaBeCool,
       bnb.buttheadLetsFinishThis,
       bnb.buttheadOKGetReadyDude,
@@ -2082,7 +2164,11 @@ function initBNBSound() {
     ),
     () => (game.data.isBeavis ? bnb.beavisIdle : bnb.buttheadIdle)
   );
+
   bnb[EVENTS.boring].excludeThrottling = true;
+
+  // I don't think this should apply.
+  bnb[EVENTS.boring].excludeShuffle = true;
 
   return bnb;
 }
