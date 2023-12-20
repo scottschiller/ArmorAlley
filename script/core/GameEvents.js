@@ -8,7 +8,7 @@ import {
   sounds
 } from '../core/sound.js';
 import { playSequence } from './sound-bnb.js';
-import { gamePrefs, prefs } from '../UI/preferences.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const EVENTS = {
   boring: 'boring',
@@ -110,6 +110,7 @@ function GameEvents() {
     addEvent(EVENTS.enemyDied, {
       onFire: () => {
         // you took out the enemy helicopter.
+        if (!gamePrefs.bnb) return;
         playSoundWithDelay(sounds.bnb.helicopterDiedReactions, 1000);
       }
     });
@@ -398,7 +399,7 @@ function GameEvents() {
           game.objects.notifications.add(
             '🚚 An enemy van is approaching your base 😨🤏💥'
           );
-          if (prefs.bnb && sounds.bnb.uhOh) {
+          if (gamePrefs.bnb && sounds.bnb.uhOh) {
             playSequence(
               addSequence(
                 sounds.bnb.uhOh,
@@ -419,7 +420,7 @@ function GameEvents() {
           game.objects.notifications.add(
             '🚚 Your van is approaching the enemy base 🤏💥'
           );
-          if (prefs.bnb && sounds.bnb.almostThere) {
+          if (gamePrefs.bnb && sounds.bnb.almostThere) {
             // preload sound, too?
             common.preloadVideo('bnb_desert_scene_really_cool');
             common.preloadAudio(sounds.bnb.desertSceneGameOver);
@@ -490,7 +491,7 @@ function GameEvents() {
           // GOURANGA!
           if (state.timer) state.timer.reset();
 
-          if (prefs.bnb) return;
+          if (gamePrefs.bnb) return;
 
           // only queue this once.
           if (!state.timer) {
