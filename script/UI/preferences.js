@@ -707,7 +707,10 @@ function PrefsManager() {
 
     game.objects.view.data.ignoreMouseEvents = false;
 
-    aaLoader.unloadCSS('css/aa-prefs-and-modals.css');
+    // tutorial also uses modals CSS.
+    if (!tutorialMode) {
+      aaLoader.unloadCSS('css/aa-prefs-and-modals.css');
+    }
 
     if (gamePrefs.bnb) {
       data.didCrankIt = false;
