@@ -1,7 +1,6 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { poolBoy } from '../core/poolboy.js';
 import { collisionTest } from '../core/logic.js';
 import {
   rndInt,
@@ -26,11 +25,13 @@ const GunFire = (options = {}) => {
   }
 
   function spark() {
-    if (!dom.o) return;
+    if (!dom.o.nodeName) return;
 
     utils.css.add(dom.o, css.spark);
 
     // randomize a little
+
+    if (!data.isOnScreen) return;
 
     if (Math.random() > 0.5) {
       dom.o._style.setProperty('margin-left', randomDistance());
@@ -40,9 +41,7 @@ const GunFire = (options = {}) => {
       dom.o._style.setProperty('margin-top', randomDistance());
     }
 
-    if (data.isOnScreen) {
-      sprites.applyRandomRotation(dom.o);
-    }
+    sprites.applyRandomRotation(dom.o);
   }
 
   function die(force) {
@@ -176,10 +175,14 @@ const GunFire = (options = {}) => {
       }
     }
 
-    // steal node from pool, not to be recycled because we're changing dimensions and mutating it.
-    if (data.domPool && (canSpark || canDie)) {
-      dom = Object.assign(dom, data.domPool.steal().dom);
-      data.domPool = null;
+    // optimize: don't add DOM node if not visible.
+    if (canSpark && data.isOnScreen) {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id
+      });
+      // append immediately.
+      game.dom.battlefield.appendChild(dom.o);
     }
 
     if (canSpark) spark();
@@ -242,6 +245,7 @@ const GunFire = (options = {}) => {
       utils.css.add(dom.o, css.expired);
       if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
       data.expired = true;
+      data.domCanvas.backgroundColor = '#555';
     }
 
     if (data.isInert || data.expired) {
@@ -281,16 +285,7 @@ const GunFire = (options = {}) => {
     return data.dead && !dom.o && !dom.domPool;
   }
 
-  function initDOM() {
-    data.domPool = poolBoy.request({ className: css.className });
-
-    // merge domPool dom o + transform nodes
-    Object.assign(dom, data.domPool.dom);
-  }
-
   function initGunFire() {
-    initDOM();
-
     // randomize a little: ±1 pixel.
     if (!net.active && !options?.fixedXY) {
       data.x += plusMinus();
@@ -300,15 +295,11 @@ const GunFire = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     if (!data.isInert) {
-      radarItem = game.objects.radar.addItem(exports, dom.o.className);
+      radarItem = game.objects.radar.addItem(exports, css.className);
 
       if (data.isEnemy) {
         utils.css.add(radarItem.dom.o, css.enemy);
       }
-    }
-
-    if (options.className) {
-      utils.css.add(dom.o, options.className);
     }
   }
 
@@ -335,8 +326,8 @@ const GunFire = (options = {}) => {
         ((options.dieFrameCount || 75) * 1) / GAME_SPEED,
         10
       ), // live up to N frames, then die?
-      width: 2,
-      height: 1,
+      width: 1.5,
+      height: 0.75,
       gravity: 0.25,
       gravityRate: (options.isInert ? 1.09 : 1.1) + Math.random() * 0.025,
       damagePoints: options.damagePoints || 1,
@@ -348,17 +339,21 @@ const GunFire = (options = {}) => {
         startVelocity: 2 + rndInt(10),
         spread: 360,
         decay: 0.935
-      },
-      domPool: null
+      }
     },
     options
   );
+
+  data.domCanvas = {
+    backgroundColor: '#9c9f08',
+    borderRadius: 1
+  };
 
   // hackish
   data.domFetti.startVelocity = data.vX;
 
   dom = {
-    o: null
+    o: {}
   };
 
   exports = {
