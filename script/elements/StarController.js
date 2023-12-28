@@ -93,7 +93,7 @@ const StarController = () => {
      */
 
     const isAnimateScrollActive = game.objects.view.isAnimateScrollActive();
-    
+
     data.warpEffect = !gamePrefs.stars_warp_fx
       ? 0
       : isAnimateScrollActive
@@ -113,17 +113,21 @@ const StarController = () => {
     let scale;
 
     // twinkle includes scaling, but not desirable during a warp.
-    const canScale = gamePrefs.stars_twinkle_fx && (!isAnimateScrollActive || !gamePrefs.stars_warp_fx);
+    const canScale =
+      gamePrefs.stars_twinkle_fx &&
+      (!isAnimateScrollActive || !gamePrefs.stars_warp_fx);
 
     for (let i = 0; i < data.starCount; i++) {
-
       // twinkle, twinkle? (ignore during a scroll / warp event.)
       if (gamePrefs.stars_twinkle_fx) {
         if (data.stars[i].data.twinkleFrameCount) {
           // don't draw this one - decrement, and exit.
           data.stars[i].data.twinkleFrameCount--;
           // continue;
-        } else if (data.stars[i].data.twinkleModulus && data.frameCount % data.stars[i].data.twinkleModulus === 0) {
+        } else if (
+          data.stars[i].data.twinkleModulus &&
+          data.frameCount % data.stars[i].data.twinkleModulus === 0
+        ) {
           // start "twinkling."
           data.stars[i].data.twinkleFrameCount = rndInt(8);
           // randomize the modulus, again.
@@ -153,7 +157,10 @@ const StarController = () => {
       if (scrollDelta < 0 && x + width < 0) {
         randomizeStar(i);
         // move off-screen, and push out relative to the distance being moved.
-        x = data.width + width + Math.abs(scrollDelta * data.stars[i].data.parallax);
+        x =
+          data.width +
+          width +
+          Math.abs(scrollDelta * data.stars[i].data.parallax);
       } else if (scrollDelta > 0 && x > data.width) {
         randomizeStar(i);
         x = 0 - width - Math.abs(scrollDelta * data.stars[i].data.parallax);
@@ -163,7 +170,7 @@ const StarController = () => {
 
       ctx.moveTo(x, y);
 
-      scale = canScale ? (data.stars[i].data.twinkleFrameCount || 1) : 1;
+      scale = canScale ? data.stars[i].data.twinkleFrameCount || 1 : 1;
 
       // params: x, y, width, height, radii
 
@@ -179,13 +186,9 @@ const StarController = () => {
 
       height = data.stars[i].data.diameter * scale;
 
-      ctx.roundRect(
-        x - (width / 2),
-        y - (height / 2),
-        width,
-        height,
-        [data.stars[i].data.radius * scale]
-      );
+      ctx.roundRect(x - width / 2, y - height / 2, width, height, [
+        data.stars[i].data.radius * scale
+      ]);
 
       ctx.fill();
     }
@@ -268,7 +271,7 @@ const StarController = () => {
   }
 
   function getTwinkleModulus() {
-    return (FPS * 5) + rndInt(FPS * 25);
+    return FPS * 5 + rndInt(FPS * 25);
   }
 
   function randomizeStar(offset) {
