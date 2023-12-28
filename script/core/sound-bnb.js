@@ -979,11 +979,11 @@ bnb.beavisTooHard = addSequence(
 );
 
 bnb.beavisLostBunker = shuffle([
-  oneOf[
+  oneOf([
     (add('b_no_dammit'),
     add('b_yell_dammit'),
     add('beavis_damn_son_of_a_bitch'))
-  ],
+  ]),
   bnb.buttheadInsults,
   ...bnb.beavisComplaints
 ]);
