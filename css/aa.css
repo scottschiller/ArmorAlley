@@ -1509,6 +1509,8 @@ body:not(.edit-mode) #top-bar {
   border-bottom: var(--border) solid transparent;
   border-left: var(--border) solid #17a007;
   border-top: var(--border) solid transparent;
+  /* vertical offset, same as border = roughly half-height. */
+  top: calc(var(--border) * 0.9);
   font-size: 0;
   height: 0;
   outline: 0;
