@@ -175,7 +175,9 @@ const sprites = {
 
     // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
-      console.warn('setTransformXY(): WTF no o._style?', o);
+      if (!exports?.data?.domCanvas) {
+        console.warn('setTransformXY(): WTF no o._style?', o);
+      }
       return;
     }
 
@@ -213,7 +215,7 @@ const sprites = {
 
     if (!node) return;
 
-    node.remove();
+    node.remove?.();
     node._style = null;
     node = null;
   },
@@ -327,8 +329,10 @@ const sprites = {
         } else {
           zones.debugZone(o);
 
-          // first-time append, first time on-screen
-          game.dom.battlefield.appendChild(o.dom.o);
+          // first-time append, first time on-screen - if a valid node.
+          if (o.dom.o?.nodeType) {
+            game.dom.battlefield.appendChild(o.dom.o);
+          }
         }
       }
 
@@ -415,7 +419,7 @@ const sprites = {
     if (object.data.noEnergyStatus) return;
 
     // dynamically create, and maybe queue removal of `.energy` node
-    if (!object.dom.oEnergy) {
+    if (!object.dom.oEnergy && object.dom.o?.appendChild) {
       node = sprites.withStyle(document.createElement('div'));
       node.className = 'energy-status energy';
       object.dom.oEnergy = object.dom.o.appendChild(node);
