@@ -243,6 +243,10 @@ function Joystick(options) {
     data.oJoystickHeight = dom.oJoystick.offsetHeight;
     data.oPointWidth = dom.oPoint.offsetWidth;
     data.oPointHeight = dom.oPoint.offsetHeight;
+
+    // stay in sync with the source.
+    data.screenWidth = game.objects.view.data.browser.screenWidth;
+    data.screenHeight = game.objects.view.data.browser.screenHeight;
   }
 
   function addEvents() {
