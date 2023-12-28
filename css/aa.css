@@ -317,7 +317,7 @@ body.is_safari #mtv-bnb-in {
 
   body.is_iphone #logo {
     /* collapse logo border, save some vertical space */
-    border-top-width: calc(2px * var(--menu-scale));
+    border-top: none;
   }
 }
 
