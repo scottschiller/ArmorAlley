@@ -168,6 +168,11 @@ const sprites = {
       x = `${x}px`;
     }
 
+    // hackish: if this lives on the canvas, handle that here.
+    if (exports?.data?.domCanvas && exports.data.isOnScreen) {
+      common.domCanvas.draw(exports);
+    }
+
     // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
       console.warn('setTransformXY(): WTF no o._style?', o);
