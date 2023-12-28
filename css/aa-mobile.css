@@ -783,7 +783,7 @@ body.game-over .joystick-point {
   margin: 0;
   position: absolute;
   top: 0;
-  --size: calc(5px * var(--gs));
+  --size: calc(6px * var(--gs));
   --halfSize: calc(var(--size) * -0.5);
   width: var(--size);
   height: var(--size);
