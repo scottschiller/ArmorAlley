@@ -5,6 +5,8 @@
 
 import { aaLoader } from './core/aa-loader.js';
 
+aaLoader.hello();
+
 let loaded = 0;
 let needed = 0;
 
@@ -15,6 +17,7 @@ function complete() {
     if (window.initArmorAlley) {
       // go go go!
       window.initArmorAlley();
+      window.setTimeout(aaLoader.loadGA, 2500);
     } else {
       console.warn('AA-boot: WTF no window.initArmorAlley()?');
     }

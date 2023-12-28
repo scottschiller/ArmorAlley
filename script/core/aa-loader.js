@@ -21,14 +21,16 @@ const dev = !forceProd && (sp.get('dev') || !isProdSite);
 // e.g., '.V20231216'
 let version = (dev || isLocalhost) && !forceProd ? '' : v || '';
 
-console.log(
-  '🚁 ARMOR ALLEY: using ' +
-    (dev
-      ? 'development JS.'
-      : `production JS build, ${
-          version.length ? version.substr(1) : '[none]'
-        }. Try ?dev=1 for the full source with comments.`)
-);
+function hello() {
+  console.log(
+    '🚁 ARMOR ALLEY: using ' +
+      (dev
+        ? 'development JS.'
+        : `production JS build, ${
+            version.length ? version.substr(1) : '[none]'
+          }. Try ?dev=1 for the full source with comments.`)
+  );
+}
 
 let fetched = {};
 
@@ -135,7 +137,7 @@ function unloadCSS(src) {
   });
 }
 
-function ga() {
+function loadGA() {
   // google analytics, only for armor-alley.net.
   if (!wl.host.match(/armor-alley\.net/i)) return;
   if (sp.get('noga')) return;
@@ -157,9 +159,9 @@ function ga() {
   );
 }
 
-window.setTimeout(ga, 1000);
-
 const aaLoader = {
+  hello,
+  loadGA,
   loadJS,
   loadCSS,
   unloadCSS
