@@ -21,6 +21,7 @@ import { net } from './network.js';
 import { utils } from './utils.js';
 import { playSound, sounds } from './sound.js';
 import { prefsManager } from '../aa.js';
+import { DomCanvas } from '../UI/DomCanvas.js';
 
 // unique IDs for quick object equality checks
 let guid;
@@ -76,6 +77,18 @@ const defaultCSS = {
 const defaultCSSKeys = Object.keys(defaultCSS);
 
 const debugRects = [];
+
+const int = (number, base = 10) => parseInt(number, base);
+
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return null;
+  return {
+    r: int(result[1], 16),
+    g: int(result[2], 16),
+    b: int(result[3], 16)
+  };
+}
 
 function makeDebugRect(obj, viaNetwork) {
   if (!obj?.data) return;
@@ -353,6 +366,8 @@ const riseItemAfterDelay = (exports, delay = 33) =>
   );
 
 const common = {
+  domCanvas: DomCanvas(),
+  hexToRgb,
   setGameSpeed: (gameSpeed) => {
     if (gameSpeed == GAME_SPEED) return;
 
