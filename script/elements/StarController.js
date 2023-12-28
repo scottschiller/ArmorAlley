@@ -67,9 +67,6 @@ const StarController = () => {
 
     const { ctx } = dom;
 
-    // wipe the slate clean, per se.
-    ctx.clearRect(0, 0, data.width, data.height);
-
     let x, y;
 
     let scrollDelta =

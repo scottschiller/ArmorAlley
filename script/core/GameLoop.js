@@ -57,6 +57,9 @@ const GameLoop = () => {
     // view will have jumped to player or enemy base.
     // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.
 
+    // hackish: clear console.
+    common.domCanvas.clear();
+
     for (item in gameObjects) {
       if (gameObjects[item]) {
         // array of objects
