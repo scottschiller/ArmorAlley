@@ -266,7 +266,7 @@ const View = () => {
         '--menu-chicago-scale',
         5.5 * newScale * fontScale
       );
-      dom.root?.style?.setProperty('--menu-scale', 6 * newScale);
+      dom.root?.style?.setProperty('--menu-scale', 5.5 * newScale);
     }
 
     if (!data.battleField.width) {
