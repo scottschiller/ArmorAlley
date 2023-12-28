@@ -1271,7 +1271,12 @@ body.is_safari:not(.is-mobile) .chain {
   z-index: 2;
 }
 
-.gunfire.expired {
+#battlefield .gunfire {
+  margin-top: -0.75px;
+  margin-left: -1px;
+}
+
+#radar .gunfire.expired {
   background-color: #555;
 }
 
