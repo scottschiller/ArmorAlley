@@ -2173,6 +2173,25 @@ function initBNBSound() {
   return bnb;
 }
 
+function validateSounds(item) {
+  // check for bugs causing null / undefined sound references.
+  if (item && Object.keys(item)?.length) {
+    for (const key in item) {
+      item[key]?.forEach?.((thing) => {
+        if (!thing)
+          console.warn('validateSounds(): Empty array entry', key, item[key]);
+      });
+    }
+  } else if (item?.forEach) {
+    item.forEach((subItem) => {
+      if (!subItem) console.warn('validateSounds(): Empty array entry', item);
+    });
+  }
+}
+
+// check for null / undefined sound entries
+validateSounds(bnb);
+
 export {
   initBNBSound,
   playSequence,
