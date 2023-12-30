@@ -533,6 +533,11 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 
 #logo {
   position: relative;
+  /**
+   * 12/2023: Firefox Nightly renders this element quite tall without display: flex.
+   * I'm sure I'm doing something wrong, here be dragons etc.
+   */
+  display: flex;
   margin: 0 auto;
   /* prevent radar overlap */
   margin-top: calc(4px * var(--menu-scale));
