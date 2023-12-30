@@ -323,7 +323,7 @@ body.is_safari #mtv-bnb-in {
 
 #game-menu-wrapper .logo-wrapper-wrapper {
   position: relative;
-  display: inline-block;
+  display: block;
   width: 100%;
   padding-top: 1vh;
   padding-left: 8px;
@@ -331,11 +331,13 @@ body.is_safari #mtv-bnb-in {
   box-sizing: border-box;
   /* classic trick... */
   text-align: center;
+  /* collapse, s'il vous plait */
+  flex-basis: content;
 }
 
 #game-menu-wrapper .logo-wrapper {
   position: relative;
-  display: inline-block;
+  display: block;
   width: 100%;
   margin: 0 auto;
   /* prevent bottom "r" from being clipped, ugh. */
