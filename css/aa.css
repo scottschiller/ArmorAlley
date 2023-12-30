@@ -536,7 +536,7 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
   margin-top: calc(4px * var(--menu-scale));
   border-top: calc(6px * var(--menu-scale)) solid #444;
   padding-top: calc(1.5px * var(--menu-scale));
-  padding-bottom: calc(1.5px * var(--menu-scale));
+  padding-bottom: calc(3px * var(--menu-scale));
   transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
   /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
   transition-property: transform, scale, opacity;
