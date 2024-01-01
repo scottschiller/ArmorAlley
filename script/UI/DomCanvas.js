@@ -12,8 +12,8 @@ const DomCanvas = () => {
 
   function getCanvas() {
     if (!dom.o) {
-      dom.ctx = dom.o.getContext('2d');
       dom.o = document.getElementById('canvas');
+      dom.ctx = dom.o.getContext('2d', { alpha: false });
     }
 
     if (!dom.o) {
