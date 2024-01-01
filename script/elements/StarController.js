@@ -232,6 +232,7 @@ const StarController = () => {
 
     data.width = newWidth;
     data.height = newHeight;
+
     dom.o.width = data.width;
     dom.o.height = data.height;
 
