@@ -3,6 +3,7 @@ import { gamePrefs, PREFS } from '../UI/preferences.js';
 import {
   debug,
   debugType,
+  isChrome,
   rnd,
   useDOMPruning,
   winloc
@@ -332,6 +333,11 @@ const sprites = {
           // first-time append, first time on-screen - if a valid node.
           if (o.dom.o?.nodeType) {
             game.dom.battlefield.appendChild(o.dom.o);
+            if (isChrome) {
+              // hackish: annoying render / paint fix for first-append items, specific to Chrome.
+              // here be dragons, etc.
+              o.dom.o.style.outline = `1px solid transparent`;
+            }
           }
         }
       }
