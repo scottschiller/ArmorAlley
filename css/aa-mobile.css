@@ -714,7 +714,6 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   background-image: url(../image/engineer-static.png);
 }
 
-body.game-paused #domfetti-overlay,
 body.game-paused:not(.game-started) #world {
   /* side note: applying this to body throws off positioning in Firefox. */
   filter: grayscale(100%);

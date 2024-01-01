@@ -2726,18 +2726,6 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   font-size: calc(5px * var(--gs));
 }
 
-/* "DOMFetti" - DOM confetti effect */
-#domfetti-overlay {
-  filter: none;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  position: absolute;
-}
-
 .zone-post {
   background: #875400;
   border-radius: 1px;

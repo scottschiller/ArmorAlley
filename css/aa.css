@@ -2080,11 +2080,6 @@ button.primary {
   width: 25px;
 }
 
-#domfetti-overlay {
-  /* initially hidden, shown only with active explosions */
-  display: none;
-}
-
 button .network-icon {
   position: relative;
   background: url(../image/win95-networking-icon.png) 0 0 / contain no-repeat;
