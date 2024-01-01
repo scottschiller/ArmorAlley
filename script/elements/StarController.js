@@ -243,8 +243,7 @@ const StarController = () => {
   }
 
   function initDOM() {
-    dom.o = document.getElementById('stars');
-    dom.ctx = dom.o.getContext('2d');
+    dom.o = document.getElementById('canvas');
   }
 
   function initStars() {

@@ -12,8 +12,8 @@ const DomCanvas = () => {
 
   function getCanvas() {
     if (!dom.o) {
-      dom.o = document.getElementById('stars');
       dom.ctx = dom.o.getContext('2d');
+      dom.o = document.getElementById('canvas');
     }
 
     if (!dom.o) {

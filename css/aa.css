@@ -1229,7 +1229,7 @@ body.game-started #battlefield-overlay-right {
 
 /* don't show these on realy small portrait displays. */
 @media screen and (min-width: 640px) {
-  #stars {
+  #canvas {
     /* hackish: offset because gradient overlay doesn't always seem to line up perfectly. */
     width: 99.5% !important;
   }
@@ -2236,7 +2236,7 @@ span.no-emoji-substitution {
   border-right: none;
 }
 
-#stars {
+#canvas {
   position: absolute;
   /* offset for radar */
   top: 8%;
@@ -2247,11 +2247,11 @@ span.no-emoji-substitution {
   opacity: 0;
 }
 
-body.loaded #stars {
+body.loaded #canvas {
   transition: opacity 0.75s ease-in-out;
 }
 
-body.loaded #stars.fade-in {
+body.loaded #canvas.fade-in {
   opacity: 1;
 }
 
