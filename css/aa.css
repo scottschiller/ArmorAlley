@@ -1569,11 +1569,8 @@ body:not(.edit-mode) #top-bar {
 #radar .sprite.shrapnel {
   --one: calc(1px * var(--rs));
   border-radius: var(--one);
-  contain-intrinsic-size: var(--one) var(--one);
-  /* hackish repositioning fix */
-  content-visibility: auto;
+  width: calc(1px * var(--gs));
   height: calc(1px * var(--gs));
-  width: var(--one);
 }
 
 #radar .sprite.missile-launcher,
