@@ -282,7 +282,7 @@ const GunFire = (options = {}) => {
     }
 
     // notify caller if now dead and can be removed.
-    return data.dead && !dom.o && !dom.domPool;
+    return data.dead && !dom.o;
   }
 
   function initGunFire() {
