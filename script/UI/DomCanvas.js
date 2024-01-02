@@ -14,6 +14,10 @@ const DomCanvas = () => {
     if (!dom.o) {
       dom.o = document.getElementById('fx-canvas');
       dom.ctx = dom.o.getContext('2d');
+      // for gunfire, shrapnel, smoke - show the pixels.
+      // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
+      dom.ctx.imageSmoothingEnabled = false;
+      dom.ctx.scale(1, 1);
     }
 
     if (!dom.o) {
