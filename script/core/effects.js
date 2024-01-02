@@ -423,7 +423,7 @@ const effects = {
         localOptions.vY > 0 &&
         (options.bottomAligned || shrapnelOptions.bottomAligned)
       ) {
-        localOptions.vY *= -1;
+        localOptions.vY = Math.abs(localOptions.vY) * -1;
       }
 
       // include parent velocity, too.
