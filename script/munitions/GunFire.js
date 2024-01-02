@@ -297,7 +297,7 @@ const GunFire = (options = {}) => {
     if (!data.isInert) {
       radarItem = game.objects.radar.addItem(exports, css.className);
 
-      if (data.isEnemy) {
+      if (radarItem && data.isEnemy) {
         utils.css.add(radarItem.dom.o, css.enemy);
       }
     }

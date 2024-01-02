@@ -274,11 +274,10 @@ const Shrapnel = (options = {}) => {
       `translate3d(${(data.spriteType / spriteTypes) * -100}%, 0px, 0)`
     );
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
-    if (data.isEnemy) {
-      utils.css.add(radarItem.dom.o, css.enemy);
-    }
+    radarItem = game.objects.radar.addItem(
+      exports,
+      `${css.className} sprite${data.isEnemy ? ' ' + css.enemy : ''}`
+    );
 
     // special case for end game (base) explosion: don't create identical "clouds" of smoke *at* base.
     if (data.isOnScreen && !options.noInitialSmoke) {

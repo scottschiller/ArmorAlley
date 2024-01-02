@@ -171,6 +171,10 @@ const Radar = () => {
   }
 
   function addItem(item, className, canRespawn) {
+    // don't create "expensive" / redundant objects during game end sequence
+    if (game.data.battleOver && item.data.type.match(/gunfire|shrapnel/i))
+      return;
+
     let itemObject;
 
     // for GPU acceleration: note if this is an "animated" type.
