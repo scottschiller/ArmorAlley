@@ -1,8 +1,8 @@
-import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
+  FPS,
   GAME_SPEED,
   getTypes,
   plusMinus,
@@ -17,6 +17,9 @@ import {
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
+
+const shrapnelSprite = new Image();
+shrapnelSprite.src = 'image/shrapnel.png';
 
 const Shrapnel = (options = {}) => {
   let css,
@@ -41,12 +44,16 @@ const Shrapnel = (options = {}) => {
 
     data.relativeScale = relativeScale;
 
+    data.domCanvas.img.target.scale = data.relativeScale;
+
     // scale, 3d rotate, and spin
     data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(
       ','
     )}) rotate3d(1, 1, 1, ${data.rotate3DAngle}deg) rotate3d(0, 0, 1, ${
       data.spinAngle
     }deg)`;
+
+    data.domCanvas.img.target.rotation = data.spinAngle;
 
     // move, and retain 3d scaling (via extraTransforms)
     sprites.moveTo(exports, x, y);
@@ -78,26 +85,11 @@ const Shrapnel = (options = {}) => {
 
     shrapnelNoise();
 
-    // random fade duration
-    const delay = 1000 + rnd(1500);
+    data.isFading = true;
 
-    // this shouldn't be needed, but CSS seems to be applying "all" or ignoring the property.
-    dom.o.style.setProperty('transition-property', 'opacity');
-
-    dom.o.style.setProperty('transition-duration', delay + 'ms');
-
-    utils.css.add(dom.o, css.stopped);
-
-    data.deadTimer = common.setFrameTimeout(() => {
-      sprites.removeNodes(dom);
-      data.deadTimer = null;
-    }, delay + 50);
-
-    if (radarItem) {
-      radarItem.die({
-        silent: true
-      });
-    }
+    radarItem?.die({
+      silent: true
+    });
 
     common.onDie(exports);
   }
@@ -152,6 +144,7 @@ const Shrapnel = (options = {}) => {
     }
 
     // "embed", so this object moves relative to the target it hit
+    // TODO: refactor this method so it uses canvas + coords
     sprites.attachToTarget(exports, target);
 
     die();
@@ -209,12 +202,33 @@ const Shrapnel = (options = {}) => {
     playSound(sounds.ricochet, exports);
   }
 
+  function maybeFade() {
+    if (!data.isFading) return;
+
+    // if fading, animate every frame.
+    if (data.isFading) {
+      data.fadeFrame += GAME_SPEED;
+
+      if (data.fadeFrame < data.fadeFrames) {
+        data.domCanvas.img.target.opacity =
+          1 - data.fadeFrame / data.fadeFrames;
+      }
+
+      if (data.fadeFrame > data.fadeFrames) {
+        // animation finished
+        sprites.removeNodes(dom);
+      }
+    }
+  }
+
   function animate() {
     if (data.dead) {
       // keep moving with scroll, while visible
       sprites.moveWithScrollOffset(exports);
 
-      return !data.deadTimer && !dom.o;
+      maybeFade();
+
+      return !dom.o;
     }
 
     data.rotate3DAngle += data.rotate3DAngleIncrement;
@@ -233,8 +247,7 @@ const Shrapnel = (options = {}) => {
 
     // did we hit the ground?
     if (data.y - data.height >= worldHeight) {
-      // align w/ground, slightly lower
-      moveTo(data.x, worldHeight - 12 * data.relativeScale + 3);
+      moveTo(data.x, worldHeight + (data.height / 2) * data.relativeScale);
       die();
     } else {
       data.gravity *= 1 + (data.gravityBase + data.gravityRate) * GAME_SPEED;
@@ -243,7 +256,7 @@ const Shrapnel = (options = {}) => {
       collisionTest(collision, exports);
     }
 
-    return data.dead && !data.deadTimer && !dom.o;
+    return data.dead && !dom.o;
   }
 
   function makeSmoke() {
@@ -259,20 +272,13 @@ const Shrapnel = (options = {}) => {
   }
 
   function initShrapnel() {
-    dom.o = sprites.create({
-      className: css.className
-    });
-
-    dom.oTransformSprite = sprites.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
+    // domCanvas
+    dom.o = {};
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // apply the type of shrapnel
-    dom.oTransformSprite._style.setProperty(
-      'transform',
-      `translate3d(${(data.spriteType / spriteTypes) * -100}%, 0px, 0)`
-    );
+    data.domCanvas.img.source.frameX = data.spriteType;
 
     radarItem = game.objects.radar.addItem(
       exports,
@@ -295,8 +301,7 @@ const Shrapnel = (options = {}) => {
   scale = options.scale || 0.8 + rng(0.15, type);
 
   css = common.inheritCSS({
-    className: 'shrapnel',
-    stopped: 'stopped'
+    className: 'shrapnel'
   });
 
   data = common.inheritData(
@@ -305,6 +310,9 @@ const Shrapnel = (options = {}) => {
       parentType: options.type || null,
       spriteType: rngInt(spriteTypes + 1, type),
       direction: 0,
+      isFading: false,
+      fadeFrame: 0,
+      fadeFrames: FPS,
       // sometimes zero / non-moving?
       vX: options.vX || 0,
       vY: options.vY || 0,
@@ -334,6 +342,31 @@ const Shrapnel = (options = {}) => {
     },
     options
   );
+
+  data.domCanvas = {
+    img: {
+      src: shrapnelSprite,
+      source: {
+        x: 0,
+        y: 0,
+        width: shrapnelSprite.width,
+        height: shrapnelSprite.height,
+        is2X: true,
+        // frame size
+        frameWidth: 22,
+        frameHeight: 20,
+        // sprite offset indices
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 22,
+        height: 20,
+        rotation: 0,
+        scale: 1
+      }
+    }
+  };
 
   dom = {
     o: null,
