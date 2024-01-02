@@ -1,16 +1,15 @@
 import { rnd, rndInt, plusMinus, GAME_SPEED } from '../core/global.js';
 import { common } from '../core/common.js';
-import { poolBoy } from '../core/poolboy.js';
 import { sprites } from '../core/sprites.js';
 
+const smokeSprite = new Image();
+smokeSprite.src = 'image/smoke-sprite.png';
+
 const Smoke = (options = {}) => {
-  let css, dom, data, exports;
+  let dom, data, exports;
 
   function die() {
     if (data.dead) return;
-
-    data?.domPool?.release();
-    data.domPool = null;
 
     sprites.nullify(dom);
 
@@ -72,6 +71,7 @@ const Smoke = (options = {}) => {
       if (data.spriteFrame < data.spriteFrames) {
         // advance smoke sprite, 0% -> -100% (top-to-bottom)
         if (data.isOnScreen) {
+          data.domCanvas.img.source.frameY = data.spriteFrame;
           sprites.setTransformXY(
             exports,
             dom.oTransformSprite,
@@ -90,10 +90,8 @@ const Smoke = (options = {}) => {
       data.fadeFrame += GAME_SPEED;
 
       if (data.fadeFrame < data.fadeFrames && data.isOnScreen) {
-        dom.o._style.setProperty(
-          'opacity',
-          1 - data.fadeFrame / data.fadeFrames
-        );
+        data.domCanvas.img.target.opacity =
+          1 - data.fadeFrame / data.fadeFrames;
       }
 
       if (data.fadeFrame > data.fadeFrames) {
@@ -104,30 +102,13 @@ const Smoke = (options = {}) => {
 
     data.frameCount++;
 
-    return data.dead && !dom.o && !data.domPool;
+    return data.dead && !dom.o;
   }
 
   function initSmoke() {
-    data.domPool = poolBoy.request(
-      { className: css.className },
-      { transformSprite: true }
-    );
-
-    // merge domPool dom o + transform nodes
-    Object.assign(dom, data.domPool.dom);
-
-    // realistically, some smoke should be behind objects
-    dom.o.style.zIndex = Math.random() >= 0.5 ? 0 : 11;
-
-    // keep things centered when scaling
-    dom.o._style.setProperty('transform-origin', '50% 50%');
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y - 100}px`);
+    // null-ish object, for domCanvas
+    dom.o = {};
   }
-
-  css = common.inheritCSS({
-    className: 'smoke'
-  });
 
   data = common.inheritData(
     {
@@ -155,11 +136,33 @@ const Smoke = (options = {}) => {
       baseScale: options.baseScale || 0.65 + rnd(0.35),
       // hackish: use provided, or default values.
       vX: options.vX !== undefined ? options.vX : plusMinus(rnd(3)),
-      vY: options.vY !== undefined ? options.vY : -rnd(3),
-      domPool: null
+      vY: options.vY !== undefined ? options.vY : -rnd(3)
     },
     options
   );
+
+  data.domCanvas = {
+    img: {
+      src: smokeSprite,
+      source: {
+        x: 0,
+        y: 0,
+        width: smokeSprite.width,
+        height: smokeSprite.height,
+        is2X: true,
+        // frame size
+        frameWidth: 18,
+        frameHeight: 18,
+        // sprite offset indices
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 18,
+        height: 18
+      }
+    }
+  };
 
   dom = {
     o: null,
