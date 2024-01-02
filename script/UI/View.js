@@ -295,6 +295,7 @@ const View = () => {
     }
 
     game.objects.starController?.resize();
+    common?.domCanvas?.resize();
 
     if (isMobile) {
       game.objects.radar?.onOrientationChange();

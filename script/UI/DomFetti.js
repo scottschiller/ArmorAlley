@@ -11,8 +11,8 @@ const RENDER_AT_60FPS = false;
 const BACK_SIDE_COLOR = 2 / 3;
 
 var context = document
-  .getElementById('canvas')
-  .getContext('2d', { alpha: false });
+  .getElementById('fx-canvas')
+  .getContext('2d', { alpha: true });
 
 let activeBooms = 0;
 

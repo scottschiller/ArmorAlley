@@ -618,6 +618,8 @@ function startGame() {
     document.getElementById(id)?.remove()
   );
 
+  common.domCanvas.init();
+
   game.objects.radar.reset();
 
   game.objects.notifications.welcome();
@@ -776,7 +778,6 @@ function hideTitleScreen(callback) {
   );
 
   utils.css.add(game.objects.view.dom.gameMenu, 'fade-out');
-  utils.css.add(document.getElementById('canvas'), 'fade-in');
 
   // testing - e.g., ?theywin=5000 for a 5-second game-over sequence
   let theyWin = searchParams.get('theyWin');
