@@ -174,6 +174,7 @@ const sprites = {
       common.domCanvas.draw(exports);
     }
 
+    // TODO: review
     // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
       if (!exports?.data?.domCanvas) {
@@ -257,14 +258,8 @@ const sprites = {
       return;
     }
 
-    if (exports.data.domPool) {
-      exports.data.domPool.release();
-      exports.data.domPool = null;
-      sprites.nullify(exports.data.dom);
-    } else {
-      sprites.removeNodes(exports.dom);
-      sprites.nullify(exports.dom);
-    }
+    sprites.removeNodes(exports.dom);
+    sprites.nullify(exports.dom);
 
     // also "unlink" from game objects array
     common.unlinkObject(exports);
@@ -318,9 +313,9 @@ const sprites = {
         o.dom._oRemovedParent = null;
       } else {
         if (o.dom.o.parentNode) {
-          // likely a pooled node re-used across objects, or a "preserved" node left in the DOM
-          // intentionally (e.g., local helicopter) and does not need to be re-appended.
-          if (!o.data.domPool && !o.data.preserveOffscreenDOM) {
+          // likely a "preserved" node left in the DOM intentionally
+          // (e.g., local helicopter) and does not need to be re-appended.
+          if (!o.data.preserveOffscreenDOM) {
             console.warn(
               'updateIsOnScreen(): WTF, on-screen node already appended?',
               o.data.type,
@@ -348,13 +343,8 @@ const sprites = {
       o.data.isOnScreen = false;
 
       // only do work if detaching node from live DOM
-      // exclude pooled nodes from this; they are managed separately.
       // special case: preseve local helicopter in DOM - for respawn, CSS animation purposes.
-      if (
-        !o.data.poolNode &&
-        !o.data.preserveOffscreenDOM &&
-        o.dom?.o?.parentNode
-      ) {
+      if (!o.data.preserveOffscreenDOM && o.dom?.o?.parentNode) {
         // detach, retaining parent node, for later re-append
         o.dom._oRemovedParent = o.dom.o.parentNode;
         o.dom.o.remove();
