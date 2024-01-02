@@ -2,7 +2,7 @@
  * AA: Game UI
  */
 
- @font-face {
+@font-face {
   font-display: swap;
   /* https://www.jetbrains.com/lp/mono/ */
   font-family: JetBrains Mono;
@@ -1838,9 +1838,7 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
   width: 112px;
   z-index: 5;
   /* let nuke show on top of smoke */
-  filter: drop-shadow(
-    0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #fff
-  );
+  filter: drop-shadow(0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #fff);
   transition: filter 0.5s ease-in-out;
 }
 
