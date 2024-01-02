@@ -648,7 +648,6 @@ ul.stats-bar .bombs em {
 .cornholio,
 .gunfire,
 .radar-scroller,
-.smoke .transform-sprite,
 .sprite.balloon,
 .sprite.bunker,
 .sprite.chain,
@@ -676,22 +675,10 @@ ul.stats-bar .bombs em {
 
 /* firefox complains if we have too many elements using will-change. */
 .radar-item:not(.radar-item--animated),
-body.is_firefox #radar .radar-item--animated,
-body.is_firefox .sprite.shrapnel {
+body.is_firefox #radar .radar-item--animated {
   will-change: unset;
 }
 
-.smoke {
-  contain-intrinsic-size: 9px 9px;
-  content-visibility: auto;
-  height: 9px;
-  overflow: hidden;
-  width: 9px;
-  will-change: transform, opacity;
-  z-index: 4;
-}
-
-.smoke,
 .transform-sprite {
   left: 0;
   position: absolute;
@@ -1355,12 +1342,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 
 .helicopter-trailer {
   background-color: #666;
-}
-
-.smoke .transform-sprite {
-  background: url(../image/smoke-sprite.png) 0 0/9px 108px no-repeat;
-  height: 108px;
-  width: 9px;
 }
 
 .base {
@@ -2105,29 +2086,6 @@ body:not(.is-mobile):not(.game-over).radar_enhanced_fx.radar_jammed.is_firefox
     rgba(255, 255, 255, 0.15) 75%
   );
   background-size: 100% 200%;
-}
-
-.shrapnel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 11px;
-  height: 10px;
-}
-
-.shrapnel .transform-sprite {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-image: url(../image/shrapnel.png);
-  background-position: 0 0;
-  width: 88px;
-  height: 10px;
-}
-
-.shrapnel.stopped .transform-sprite {
-  opacity: 0;
-  transition: opacity calc(0.75s * var(--gs-frac)) ease-in-out;
 }
 
 .cloud1,

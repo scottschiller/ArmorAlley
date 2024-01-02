@@ -271,8 +271,8 @@ body.tutorial-mode #game-tips .tips-container b {
 body.edit-mode
   #battlefield
   .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(
-    .shrapnel
-  ):not(.gunfire):not(.helicopter):not(.smoke) {
+    .gunfire
+  ):not(.helicopter):not(.smoke) {
   pointer-events: unset;
 }
 
