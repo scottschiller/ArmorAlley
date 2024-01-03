@@ -1365,7 +1365,10 @@ const Helicopter = (options = {}) => {
       vX: data.vX,
       vY: -Math.abs(data.vY),
       // special case: if a smart missile, use its velocity as the basis for the shrapnel.
-      parentVX: (attacker && aData?.type === TYPES.smartMissile ? aData.vX || data.vX : data.vX),
+      parentVX:
+        attacker && aData?.type === TYPES.smartMissile
+          ? aData.vX || data.vX
+          : data.vX,
       parentVY: -Math.abs(data.vY),
       // first burst always looks too similar, here.
       noInitialSmoke: true
