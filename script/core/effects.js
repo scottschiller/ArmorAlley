@@ -155,6 +155,9 @@ const effects = {
     const isBunker = data.type == TYPES.bunker;
     const isTurret = data.type === TYPES.turret;
 
+    // for turrets, reduce chance by 33% as they smoke too much when damaged a lot.
+    if (isTurret && Math.random() <= 0.33) return;
+
     // bunkers can smoke across the whole thing
     const fractionWidth = isBunker ? data.halfWidth : data.halfWidth * 0.5;
 
