@@ -3184,7 +3184,7 @@ const Helicopter = (options = {}) => {
       cloakedCommentary: false,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
-        elementCount: 100 + rndInt(100),
+        elementCount: 250 + rndInt(250),
         startVelocity: 15 + rndInt(15),
         spread: 360,
         decay: 0.94
