@@ -84,8 +84,6 @@ const StarController = () => {
       return;
     }
 
-    dom.ctx.clearRect(0, 0, data.width, data.height);
-
     /**
      * "Engage." --Picard
      * Also Picard: "Make it so."
