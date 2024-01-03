@@ -365,6 +365,22 @@ const Shrapnel = (options = {}) => {
         rotation: 0,
         scale: 1
       }
+    },
+    radarItem: {
+      draw: (ctx, obj) => {
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.roundRect(
+          // radar objects have top + left
+          obj.data.left * game.objects.radar.data.cssRadarScale,
+          obj.data.top,
+          // width, height, border radius
+          1 * game.objects.view.data.screenScale * game.objects.radar.data.cssRadarScale,
+          1 * game.objects.view.data.screenScale,
+          1 * game.objects.radar.data.scale
+        );
+        ctx.fill();
+      }
     }
   };
 
