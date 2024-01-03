@@ -1545,11 +1545,6 @@ body:not(.edit-mode) #top-bar {
   animation: blink calc(0.5s * var(--gs-frac)) steps(1) infinite;
 }
 
-#radar .sprite.expired {
-  /* gunfire, etc. */
-  opacity: 0.4;
-}
-
 #radar .sprite.bomb {
   --width: calc(1.5px * var(--rs));
   --height: calc(1.5px * var(--gs));
@@ -1558,19 +1553,8 @@ body:not(.edit-mode) #top-bar {
   width: var(--width);
 }
 
-#radar .sprite.bomb.enemy,
-#radar .sprite.gunfire.enemy,
-#radar .sprite.shrapnel,
-#radar .sprite.shrapnel.enemy {
+#radar .sprite.bomb.enemy {
   background-color: red;
-}
-
-#radar .sprite.gunfire,
-#radar .sprite.shrapnel {
-  --one: calc(1px * var(--rs));
-  border-radius: var(--one);
-  width: calc(1px * var(--gs));
-  height: calc(1px * var(--gs));
 }
 
 #radar .sprite.missile-launcher,
