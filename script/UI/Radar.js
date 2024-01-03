@@ -142,6 +142,11 @@ const Radar = () => {
       bottomAlignedY: 0
     };
 
+    if (itemObject.data.domCanvas) {
+      // ignore domCanvas case
+      return result;
+    }
+
     // if we hit this, something is wrong.
     if (!itemObject?.dom?.o) {
       console.warn(
@@ -153,7 +158,12 @@ const Radar = () => {
 
     // read from DOM ($$$) and cache
     // note: offsetWidth + offsetHeight return integers, and without padding.
-    let rect = itemObject.dom.o.getBoundingClientRect();
+    let rect = itemObject.dom.o?.getBoundingClientRect?.();
+
+    if (!rect) {
+      console.warn('getLayout: no getBoundingClientRect?', itemObject);
+      return rect;
+    }
 
     // NOTE screenScale, important for positioning
     result.layout.width = rect.width * (1 / data.cssRadarScale);
@@ -188,7 +198,10 @@ const Radar = () => {
     }
 
     itemObject = RadarItem({
-      o: sprites.withStyle(document.createElement('div')),
+      // null-ish for domCanvas
+      o: item.data.domCanvas
+        ? {}
+        : sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
       className,
       oParent: item,
@@ -218,10 +231,12 @@ const Radar = () => {
     }
 
     game.objects.queue.addNextFrame(() => {
-      dom.radar.appendChild(itemObject.dom.o);
+      if (itemObject.dom?.o && !itemObject.data.domCanvas) {
+        dom.radar.appendChild(itemObject.dom.o);
 
-      // attempt to read from layout cache, or live DOM if needed for item height / positioning
-      itemObject = common.mixin(itemObject, getLayout(itemObject));
+        // attempt to read from layout cache, or live DOM if needed for item height / positioning
+        itemObject = common.mixin(itemObject, getLayout(itemObject));
+      }
 
       objects.items.push(itemObject);
     });
