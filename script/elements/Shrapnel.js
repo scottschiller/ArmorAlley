@@ -247,7 +247,7 @@ const Shrapnel = (options = {}) => {
 
     // did we hit the ground?
     if (data.y - data.height >= worldHeight) {
-      moveTo(data.x, worldHeight + (data.height / 2) * data.relativeScale);
+      moveTo(data.x, worldHeight - (data.height / 2) * data.relativeScale);
       die();
     } else {
       data.gravity *= 1 + (data.gravityBase + data.gravityRate) * GAME_SPEED;
@@ -372,7 +372,8 @@ const Shrapnel = (options = {}) => {
         ctx.beginPath();
         ctx.roundRect(
           // radar objects have top + left
-          obj.data.left * game.objects.radar.data.cssRadarScale,
+          obj.data.left * game.objects.radar.data.cssRadarScale -
+            game.objects.radar.data.radarScrollLeft,
           obj.data.top,
           // width, height, border radius
           1 * game.objects.view.data.screenScale * game.objects.radar.data.cssRadarScale,

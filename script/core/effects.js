@@ -152,7 +152,7 @@ const effects = {
     if (Math.random() < 1 - (data.energyMax - data.energy) / data.energyMax)
       return;
 
-    const isBunker = data.type == TYPES.bunker;
+    const isBunker = data.type === TYPES.bunker;
     const isTurret = data.type === TYPES.turret;
 
     // for turrets, reduce chance by 33% as they smoke too much when damaged a lot.
