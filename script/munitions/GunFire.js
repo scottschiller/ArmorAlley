@@ -53,11 +53,9 @@ const GunFire = (options = {}) => {
 
     sprites.removeNodesAndUnlink(exports);
 
-    if (radarItem) {
-      radarItem.die({
-        silent: true
-      });
-    }
+    radarItem?.die({
+      silent: true
+    });
 
     common.onDie(exports);
   }
@@ -242,8 +240,6 @@ const GunFire = (options = {}) => {
       !data.expired &&
       data.frameCount > data.expireFrameCount
     ) {
-      utils.css.add(dom.o, css.expired);
-      if (radarItem) utils.css.add(radarItem.dom.o, css.expired);
       data.expired = true;
       data.domCanvas.backgroundColor = '#555';
     }
@@ -296,10 +292,6 @@ const GunFire = (options = {}) => {
 
     if (!data.isInert) {
       radarItem = game.objects.radar.addItem(exports, css.className);
-
-      if (radarItem && data.isEnemy) {
-        utils.css.add(radarItem.dom.o, css.enemy);
-      }
     }
   }
 
@@ -326,8 +318,8 @@ const GunFire = (options = {}) => {
         ((options.dieFrameCount || 75) * 1) / GAME_SPEED,
         10
       ), // live up to N frames, then die?
-      width: 1.5,
-      height: 0.75,
+      width: options.isInert ? 1.5 : 2,
+      height: options.isInert ? 1.5 : 1,
       gravity: 0.25,
       gravityRate: (options.isInert ? 1.09 : 1.1) + Math.random() * 0.025,
       damagePoints: options.damagePoints || 1,
@@ -346,7 +338,28 @@ const GunFire = (options = {}) => {
 
   data.domCanvas = {
     backgroundColor: '#9c9f08',
-    borderRadius: 1
+    borderRadius: 2,
+    radarItem: {
+      draw: (ctx, obj) => {
+        // TODO: calculate 40% opacity for inert / expired color
+        ctx.fillStyle = data.isInert ? '#999' : data.domCanvas.backgroundColor;
+        ctx.beginPath();
+        ctx.roundRect(
+          // radar objects have top + left
+          obj.data.left * game.objects.radar.data.cssRadarScale -
+            game.objects.radar.data.radarScrollLeft,
+          // hackish: vertical align
+          obj.data.top - 1.5 * game.objects.view.data.screenScale,
+          // width, height, border
+          1 *
+            game.objects.view.data.screenScale *
+            game.objects.radar.data.cssRadarScale,
+          1 * game.objects.view.data.screenScale,
+          data.domCanvas.borderRadius * game.objects.radar.data.cssRadarScale
+        );
+        ctx.fill();
+      }
+    }
   };
 
   // hackish
