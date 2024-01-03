@@ -62,7 +62,7 @@ const Infantry = (options = {}) => {
         ? defaultItems
         : nearby.items,
       x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
-      y: data.y + data.halfHeight,
+      y: data.y + data.halfHeight - 2,
       vX: data.vX, // same velocity
       vY: 0
     });
