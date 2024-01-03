@@ -231,8 +231,8 @@ const Shrapnel = (options = {}) => {
       return !dom.o;
     }
 
-    data.rotate3DAngle += data.rotate3DAngleIncrement;
-    data.spinAngle += data.spinAngleIncrement;
+    data.rotate3DAngle += data.rotate3DAngleIncrement * GAME_SPEED;
+    data.spinAngle += data.spinAngleIncrement * GAME_SPEED;
 
     moveTo(
       data.x + data.vX * GAME_SPEED,
