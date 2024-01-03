@@ -189,7 +189,8 @@ const GunFire = (options = {}) => {
       // "embed", so this object moves relative to the target it hit
       sprites.attachToTarget(exports, target);
 
-      utils.css.add(dom.o, css.dead);
+      // delay before transition.
+      window.requestAnimationFrame(() => utils.css.add(dom.o, css.dead));
 
       // immediately mark as dead, prevent any more collisions.
       data.dead = true;
@@ -202,7 +203,7 @@ const GunFire = (options = {}) => {
           die(force);
           frameTimeout = null;
         },
-        canSpark ? 500 : 250
+        canSpark ? 750 : 250
       );
 
       if (tType !== TYPES.infantry) {

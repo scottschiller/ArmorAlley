@@ -1697,6 +1697,16 @@ body:not(.gravestones_vehicles) #battlefield .terrain-item.gs_vehicle {
   z-index: 5;
 }
 
+#battlefield .bomb.spark,
+#battlefield .gunfire.spark.dead,
+#battlefield .bomb.spark-2,
+#battlefield .gunfire.spark-2.dead {
+  /* nice fade for sparks */
+  transition: opacity 0.25s ease-in;
+  transition-delay: 0.5s;
+  opacity: 0;
+}
+
 #battlefield .sprite.explosion-classic,
 #battlefield .sprite.explosion-classic-2 {
   background: 0 0;
