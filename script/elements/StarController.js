@@ -246,7 +246,7 @@ const StarController = () => {
   }
 
   function initDOM() {
-    dom.o = document.getElementById('canvas');
+    dom.o = document.getElementById('battlefield-canvas');
     dom.ctx = dom.o.getContext('2d', { alpha: false });
     dom.ctx.scale(1, 1);
   }

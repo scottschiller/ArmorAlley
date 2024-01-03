@@ -1,48 +1,85 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
+import { TYPES } from '../core/global.js';
+
+const canvasConfig = [
+  // dom ID vs. object name / reference - e.g., `dom.o.fx` / `dom.ctx.fx`
+  { id: 'battlefield-canvas', name: 'battlefield', ctxArgs: { alpha: false } },
+  // for gunfire, shrapnel, smoke - show the pixels.
+  // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
+  { id: 'fx-canvas', name: 'fx', ctxOptions: { imageSmoothingEnabled: false } },
+  { id: 'radar-canvas', name: 'radar' }
+];
+
+// certain objects render in certain places.
+// TODO: sometimes, smoke should be behind the helicopter (and/or clouds), i.e., render on battlefield canvas.
+const ctxByType = {
+  'default': 'fx',
+  [TYPES.gunfire]: 'fx',
+  [TYPES.shrapnel]: 'fx',
+  [TYPES.smoke]: 'fx',
+  'radar-item': 'radar'
+};
 
 const DomCanvas = () => {
   // given a DOM/CSS-like data structure, draw it on canvas.
   let dom, exports;
 
   dom = {
-    o: null,
-    ctx: null
+    // see canvasConfig
+    o: {
+      battlefield: null,
+      fx: null,
+      radar: null
+    },
+    ctx: {
+      battlefield: null,
+      fx: null,
+      radar: null
+    }
   };
 
-  function getCanvas() {
-    if (!dom.o) {
-      dom.o = document.getElementById('fx-canvas');
-      dom.ctx = dom.o.getContext('2d');
-      // for gunfire, shrapnel, smoke - show the pixels.
-      // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
-      dom.ctx.imageSmoothingEnabled = false;
-      dom.ctx.scale(1, 1);
-    }
+  function initCanvas() {
+    canvasConfig.forEach((config) => {
+      // DOM node by id
+      dom.o[config.name] = document.getElementById(config.id);
 
-    if (!dom.o) {
-      console.warn('DomCanvas: no dom.o?');
-      return;
-    }
+      // context by name
+      dom.ctx[config.name] = dom.o[config.name].getContext(
+        '2d',
+        config.ctxArgs || {}
+      );
 
-    return true;
+      // just in case?
+      dom.ctx[config.name].scale(1, 1);
+
+      if (config.ctxOptions) {
+        Object.keys(config.ctxOptions).forEach((key) => {
+          dom.ctx[config.name][key] = config.ctxOptions[key];
+        });
+      }
+    });
   }
 
   function clear() {
-    if (!getCanvas()) return;
-    if (!game.objects.starController) return;
-    // hackish
-    dom.ctx.clearRect(
+    // guard
+    if (!dom.ctx.battlefield) return;
+
+    // TODO: is accessing width / height $$$?
+    dom.ctx.battlefield.clearRect(
       0,
       0,
-      game.objects.starController.data.width,
-      game.objects.starController.data.height
+      dom.o.battlefield.width,
+      dom.o.battlefield.height
     );
+    dom.ctx.fx.clearRect(0, 0, dom.o.fx.width, dom.o.fx.height);
+    dom.ctx.radar.clearRect(0, 0, dom.o.radar.width, dom.o.radar.height);
   }
 
   // center, scale, and rotate.
   // https://stackoverflow.com/a/43155027
   function drawImageCenter(
+    ctx,
     image,
     x,
     y,
@@ -56,13 +93,13 @@ const DomCanvas = () => {
     destY
   ) {
     // scale, and origin (offset) for rotation
-    dom.ctx.setTransform(scale, 0, 0, scale, destX, destY);
+    ctx.setTransform(scale, 0, 0, scale, destX + width / 2, destY + width / 2);
 
     // deg2rad
-    dom.ctx.rotate((rotation || 0) * 0.0175);
+    ctx.rotate((rotation || 0) * 0.0175);
 
     // copy one frame from the sprite
-    dom.ctx.drawImage(
+    ctx.drawImage(
       image,
       x - cx,
       y - cy,
@@ -75,12 +112,10 @@ const DomCanvas = () => {
     );
 
     // reset the origin transform
-    dom.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   function draw(exports) {
-    if (!getCanvas()) return;
-
     // original object data
     const { data } = exports;
 
@@ -92,7 +127,16 @@ const DomCanvas = () => {
       return;
     }
 
-    let strokeStyle;
+    // determine target canvas by type
+    const ctx = dom.ctx[ctxByType[exports.data.type] || ctxByType.default];
+
+    // some objects know how to draw themselves - e.g., gunfire radar object
+    if (oData.draw) {
+      oData.draw(ctx, exports);
+      return;
+    }
+
+    let fillStyle;
 
     const ss = game.objects.view.data.screenScale;
 
@@ -102,14 +146,14 @@ const DomCanvas = () => {
 
       // opacity?
       if (target.opacity >= 0) {
-        dom.ctx.save();
-        dom.ctx.globalAlpha = target.opacity;
+        ctx.save();
+        ctx.globalAlpha = target.opacity;
       }
 
       // single image, vs. sprite?
       if (img.source.frameX === undefined && img.source.frameY === undefined) {
         // single image
-        dom.ctx.drawImage(
+        ctx.drawImage(
           img.src,
           source.x,
           source.y,
@@ -123,6 +167,7 @@ const DomCanvas = () => {
       } else if (img.target.rotation) {
         // (image, x, y, cx, cy, width, height, scale, rotation, destX, destY)
         drawImageCenter(
+          ctx,
           img.src,
           source.frameWidth * (source.frameX || 0),
           source.frameHeight * (source.frameY || 0),
@@ -141,7 +186,7 @@ const DomCanvas = () => {
         // sprite - note 32 offset for radar, scaling etc.
         // TODO: rendering to foreground vs. background canvas layers
         // render background when in a cloud / cloaked; otherwise, at random.
-        dom.ctx.drawImage(
+        ctx.drawImage(
           img.src,
           source.frameWidth * (source.frameX || 0),
           source.frameHeight * (source.frameY || 0),
@@ -165,7 +210,7 @@ const DomCanvas = () => {
       }
 
       if (target.opacity >= 0) {
-        dom.ctx.restore();
+        ctx.restore();
       }
     }
 
@@ -184,39 +229,39 @@ const DomCanvas = () => {
         return;
       }
       // rgba()
-      strokeStyle = `rgba(${rgb.join(',')},${oData.opacity})`;
+      fillStyle = `rgba(${rgb.join(',')},${oData.opacity})`;
     } else {
-      strokeStyle = oData.backgroundColor;
+      fillStyle = oData.backgroundColor;
     }
 
     if (oData.borderRadius) {
       // roundRect time.
-      dom.ctx.strokeStyle = strokeStyle;
-      dom.ctx.beginPath();
-      dom.ctx.roundRect(
+      ctx.fillStyle = fillStyle;
+      ctx.beginPath();
+      ctx.roundRect(
         (data.x - game.objects.view.data.battleField.scrollLeft) * ss,
         (data.y - 32) * ss,
         data.width * ss,
         data.height * ss,
         oData.borderRadius
       );
-      dom.ctx.stroke();
+      ctx.fill();
     }
   }
 
   function resize() {
-    getCanvas();
-
     if (!dom.o) return;
 
-    let newWidth = dom.o.offsetWidth;
-    let newHeight = dom.o.offsetHeight;
-
-    dom.o.width = newWidth;
-    dom.o.height = newHeight;
+    // $$$
+    for (const canvas in dom.o) {
+      if (!dom.o[canvas]) continue;
+      dom.o[canvas].width = dom.o[canvas].offsetWidth;
+      dom.o[canvas].height = dom.o[canvas].offsetHeight;
+    }
   }
 
   function init() {
+    initCanvas();
     resize();
   }
 

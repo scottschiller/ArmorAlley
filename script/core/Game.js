@@ -847,6 +847,8 @@ const game = (() => {
 
     createObjects();
 
+    common.domCanvas.init();
+
     // game loop can be kicked off right away, for sound playback purposes.
     objects.gameLoop.init();
 

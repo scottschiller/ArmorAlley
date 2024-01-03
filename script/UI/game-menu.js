@@ -618,8 +618,6 @@ function startGame() {
     document.getElementById(id)?.remove()
   );
 
-  common.domCanvas.init();
-
   game.objects.radar.reset();
 
   game.objects.notifications.welcome();

@@ -137,7 +137,7 @@
   <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
   <body style="overflow: hidden">
     <!-- stars, gunfire, and "domfetti" particles -->
-    <canvas id="canvas"></canvas>
+    <canvas id="battlefield-canvas"></canvas>
 
     <div id="home-video-wrapper">
       <video id="home-menu-video" autoplay muted loop playsinline width="100vw">
@@ -445,6 +445,7 @@
           <div id="radar">
             <!-- radar items go here -->
           </div>
+          <canvas id="radar-canvas"></canvas>
         </div>
 
         <div id="funds">
