@@ -376,7 +376,9 @@ const Shrapnel = (options = {}) => {
             game.objects.radar.data.radarScrollLeft,
           obj.data.top,
           // width, height, border radius
-          1 * game.objects.view.data.screenScale * game.objects.radar.data.cssRadarScale,
+          1 *
+            game.objects.view.data.screenScale *
+            game.objects.radar.data.cssRadarScale,
           1 * game.objects.view.data.screenScale,
           1 * game.objects.radar.data.scale
         );
