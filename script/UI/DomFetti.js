@@ -312,7 +312,7 @@ function randomPhysics(
     originX,
     originY,
     scrollLeft,
-    velocity: (startVelocity * 0.5 + rnd(startVelocity)) * (screenScale * 0.5),
+    velocity: (startVelocity * 0.5 + rnd(startVelocity)) * (screenScale * 0.33),
     angle2D: -radAngle + 0.5 * radSpread - rnd(radSpread),
     angle3D: -(Math.PI / 4) + rnd() * (Math.PI / 2),
     tiltAngleX: rnd(360) * 0.0175,
@@ -345,7 +345,7 @@ function updateFetti(fetti, progress, decay, frameCount) {
   // DRY
   fp = fetti.physics;
 
-  const yDelta = Math.sin(fp.angle2D) * fp.velocity * GAME_SPEED;
+  const yDelta = Math.sin(fp.angle2D) * fp.velocity;
 
   fp.x += Math.cos(fp.angle2D) * fp.velocity * GAME_SPEED;
   fp.y += yDelta;
@@ -353,15 +353,15 @@ function updateFetti(fetti, progress, decay, frameCount) {
 
   fp.wobble += rnd(0.1) * (fp.coinToss ? 1 : -1) * GAME_SPEED;
 
-  fp.velocity *= 1 - (1 - decay) * GAME_SPEED;
-
-  // only accelerate if headed downward
-  if (yDelta >= 0) {
-    fp.y *= fp.yVelocity * GAME_SPEED;
-  }
+  fp.velocity *= 1 - (1 - decay);
 
   // always apply "gravity."
   fp.y += fp.yVelocity * GAME_SPEED;
+
+  // only accelerate if headed downward?
+  if (fp.y >= 1 && fp.yVelocity > 1) {
+    fp.y *= fp.yVelocity;
+  }
 
   fp.tiltAngleX += fp.xIncrement * (1 - progress) * GAME_SPEED;
   fp.tiltAngleY += fp.yIncrement * (1 - progress) * GAME_SPEED;
