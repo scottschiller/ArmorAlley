@@ -15,6 +15,13 @@ import { gamePrefs } from '../UI/preferences.js';
 
 const crossedSwords = '<span class="no-emoji-substitution">⚔️</span>';
 
+const slashPattern = new Image();
+// slashPattern.src ='image/checkerboard-white-mask-50percent.png'
+slashPattern.src =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEX///8AAABVwtN+AAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=';
+
+let pattern;
+
 const SuperBunker = (options = {}) => {
   let css, dom, data, width, height, nearby, radarItem, exports;
 
@@ -343,6 +350,10 @@ const SuperBunker = (options = {}) => {
     refreshNearbyItems
   };
 
+  data.domCanvas = {
+    radarItem: SuperBunker.radarItemConfig(exports)
+  };
+
   nearby = {
     options: {
       source: exports,
@@ -476,5 +487,30 @@ const SuperBunker = (options = {}) => {
 
   return exports;
 };
+
+SuperBunker.radarItemConfig = (exports) => ({
+  width: 6,
+  height: 3,
+  draw: (ctx, obj, pos, width, height) => {
+    if (exports?.data.hostile) {
+      if (!pattern) {
+        pattern = ctx.createPattern(slashPattern, 'repeat');
+      }
+      ctx.fillStyle = pattern;
+    } else {
+      ctx.fillStyle =
+        !gamePrefs.super_bunker_arrows || exports?.data.isEnemy
+          ? '#9c9f08'
+          : '#17a007';
+    }
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+  }
+});
 
 export { SuperBunker };

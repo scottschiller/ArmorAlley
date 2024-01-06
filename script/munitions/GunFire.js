@@ -339,26 +339,24 @@ const GunFire = (options = {}) => {
 
   data.domCanvas = {
     backgroundColor: '#9c9f08',
-    borderRadius: 2,
+    borderRadius: 1,
     radarItem: {
-      draw: (ctx, obj) => {
+      excludeStroke: true,
+      width: 1,
+      height: 1,
+      draw: (ctx, obj, pos, width, height) => {
         // TODO: calculate 40% opacity for inert / expired color
         ctx.fillStyle = data.isInert ? '#999' : data.domCanvas.backgroundColor;
-        ctx.beginPath();
+        const scaledHeight = pos.heightNoStroke(height);
         ctx.roundRect(
-          // radar objects have top + left
-          obj.data.left * game.objects.radar.data.cssRadarScale -
-            game.objects.radar.data.radarScrollLeft,
+          pos.left(obj.data.left),
           // hackish: vertical align
-          obj.data.top - 1.5 * game.objects.view.data.screenScale,
+          obj.data.top - scaledHeight,
           // width, height, border
-          1 *
-            game.objects.view.data.screenScale *
-            game.objects.radar.data.cssRadarScale,
-          1 * game.objects.view.data.screenScale,
+          pos.width(width),
+          scaledHeight,
           data.domCanvas.borderRadius * game.objects.radar.data.cssRadarScale
         );
-        ctx.fill();
       }
     }
   };

@@ -431,6 +431,44 @@ const Bomb = (options = {}) => {
     options
   );
 
+  data.domCanvas = {
+    radarItem: {
+      width: 1.25,
+      height: 2.5,
+      draw: (ctx, obj, pos, width, height) => {
+        if (data.isEnemy) {
+          ctx.fillStyle = '#cc0000';
+        }
+        const scaledWidth = pos.width(width);
+        const scaledHeight = pos.heightNoStroke(height);
+        const left = pos.left(obj.data.left) - scaledWidth / 2;
+        const top = obj.data.top;
+
+        // rotate from center of object
+        const centerX = left + scaledWidth / 2;
+        const centerY = top + scaledHeight / 2;
+
+        // move to the center
+        ctx.translate(centerX, centerY);
+
+        ctx.rotate(((data.lastAngle + 90) * Math.PI) / 180);
+
+        // back to "relative" origin
+        ctx.translate(-centerX, -centerY);
+
+        ctx.roundRect(left, top, scaledWidth, scaledHeight, [
+          0,
+          0,
+          scaledHeight,
+          scaledHeight
+        ]);
+
+        // reset transformation matrix to the identity matrix
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+    }
+  };
+
   dom = {
     o: null
   };

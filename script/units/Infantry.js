@@ -3,7 +3,13 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import { GAME_SPEED, getTypes, rngInt, TYPES } from '../core/global.js';
+import {
+  GAME_SPEED,
+  getTypes,
+  isiPhone,
+  rngInt,
+  TYPES
+} from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -412,6 +418,10 @@ const Infantry = (options = {}) => {
     stop
   };
 
+  data.domCanvas = {
+    radarItem: Infantry.radarItemConfig()
+  };
+
   defaultItems = getTypes(
     'tank, van, missileLauncher, infantry, engineer, helicopter, turret',
     { exports }
@@ -516,5 +526,19 @@ const Infantry = (options = {}) => {
 
   return exports;
 };
+
+Infantry.radarItemConfig = () => ({
+  width: 1.25,
+  height: 2.5,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+  }
+});
 
 export { Infantry };

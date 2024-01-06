@@ -808,7 +808,32 @@ const Turret = (options = {}) => {
     repair
   };
 
+  data.domCanvas = {
+    radarItem: Turret.radarItemConfig(exports)
+  };
+
   return exports;
 };
+
+Turret.radarItemConfig = (exports) => ({
+  width: 1.5,
+  height: 2.5,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.fillStyle = exports?.data?.dead
+      ? exports?.data?.isEnemy
+        ? 'rgba(204, 204, 204, 0.5)'
+        : 'rgba(23, 160, 7, 0.5)'
+      : exports?.data?.isEnemy
+      ? '#ccc'
+      : '#17a007';
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+  }
+});
 
 export { TURRET_SCAN_RADIUS, Turret };

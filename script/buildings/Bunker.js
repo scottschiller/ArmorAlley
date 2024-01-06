@@ -472,7 +472,26 @@ const Bunker = (options = {}) => {
     repair
   };
 
+  data.domCanvas = {
+    radarItem: Bunker.radarItemConfig()
+  };
+
   return exports;
 };
+
+Bunker.radarItemConfig = () => ({
+  width: 4.25,
+  height: 2.5,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.fillStyle = obj?.oParent?.data?.isEnemy ? '#9c9f08' : '#17a007';
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [3, 3, 0, 0]
+    );
+  }
+});
 
 export { Bunker };

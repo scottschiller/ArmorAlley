@@ -3201,7 +3201,10 @@ const Helicopter = (options = {}) => {
       // a buffer for local input delay.
       mouseHistory: new Array(32),
       missileMode: null,
-      spinnerTimer: null
+      spinnerTimer: null,
+      blinkCounter: 0,
+      blinkCounterHide: 8,
+      blinkCounterReset: 16
     },
     options
   );
@@ -3366,6 +3369,10 @@ const Helicopter = (options = {}) => {
     updateStatusUI
   };
 
+  data.domCanvas = {
+    radarItem: Helicopter.radarItemConfig(exports)
+  };
+
   collision = {
     options: {
       source: exports,
@@ -3488,5 +3495,56 @@ const Helicopter = (options = {}) => {
 
   return exports;
 };
+
+Helicopter.radarItemConfig = (exports) => ({
+  width: 2.5 * (isiPhone ? 1.33 : 1),
+  height: 2.5 * (isiPhone ? 1.33 : 1),
+  draw: (ctx, obj, pos, width, height) => {
+    if (exports?.data?.cloaked) return;
+
+    const isLocal = exports.data.id === game.players.local.data.id;
+
+    if (isLocal && exports?.data?.blinkCounter >= 0) {
+      // local chopper blinks continuously
+      exports.data.blinkCounter++;
+      if (exports.data.blinkCounter === exports.data.blinkCounterHide) {
+        exports.data.visible = !exports.data.visible;
+      } else if (exports.data.blinkCounter >= exports.data.blinkCounterReset) {
+        exports.data.visible = !exports.data.visible;
+        exports.data.blinkCounter = 0;
+      }
+    }
+    // don't draw if not visible.
+    if (isLocal && !exports.data.visible && !exports.data.respawning) return;
+
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.heightNoStroke(height);
+
+    // triangle depends on friendly / enemy + flip
+    const direction =
+      (exports?.data?.isEnemy && !exports.data.flipped) || exports.data.flipped
+        ? 1
+        : -1;
+
+    // TODO: review precise helicopter + landing pad alignment
+    let left =
+      Math.max(
+        0 + scaledWidth,
+        obj.data.left * game.objects.radar.data.scale -
+          game.objects.radar.data.radarScrollLeft
+      ) +
+      scaledWidth / 2;
+
+    const top = obj.data.top; // - height / 2;
+
+    // "center" triangle - not precisely...
+    left += direction === -1 ? scaledWidth / 2 : -scaledWidth;
+
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left + scaledWidth * direction, top + scaledHeight);
+    ctx.lineTo(left + scaledWidth * direction, top - scaledHeight);
+  }
+});
 
 export { Helicopter };

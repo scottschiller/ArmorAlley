@@ -515,7 +515,30 @@ const Base = (options = {}) => {
     isOnScreenChange
   };
 
+  data.domCanvas = {
+    radarItem: Base.radarItemConfig()
+  };
+
   return exports;
+};
+
+Base.radarItemConfig = () => {
+  return {
+    width: 3,
+    height: 4,
+    draw: (ctx, obj, pos, width, height) => {
+      ctx.ellipse(
+        pos.left(obj.data.left),
+        pos.bottomAlign(0),
+        pos.width(width),
+        height,
+        0,
+        0,
+        Math.PI,
+        true
+      );
+    }
+  };
 };
 
 export { Base };

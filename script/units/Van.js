@@ -7,7 +7,6 @@ import {
   GAME_SPEED,
   TYPES,
   FPS,
-  tutorialMode,
   rndInt,
   getTypes,
   rngInt
@@ -326,6 +325,10 @@ const Van = (options = {}) => {
     radarItem
   };
 
+  data.domCanvas = {
+    radarItem: Van.radarItemConfig(exports)
+  };
+
   friendlyNearby = {
     options: {
       source: exports,
@@ -346,5 +349,19 @@ const Van = (options = {}) => {
 
   return exports;
 };
+
+Van.radarItemConfig = () => ({
+  width: 3.5,
+  height: 2,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+  }
+});
 
 export { Van };

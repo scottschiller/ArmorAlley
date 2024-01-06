@@ -10,7 +10,8 @@ import {
   rngPlusMinus,
   rng,
   GAME_SPEED,
-  oneOf
+  oneOf,
+  worldHeight
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -473,7 +474,55 @@ const Balloon = (options = {}) => {
     setEnemy
   };
 
+  data.domCanvas = {
+    radarItem: Balloon.radarItemConfig(exports)
+  };
+
   return exports;
 };
+
+Balloon.radarItemConfig = (exports) => ({
+  width: 4,
+  height: 2,
+  excludeFillStroke: true,
+  draw: (ctx, obj, pos, width, height) => {
+    if (exports?.data?.dead && !exports.data.deadTimer) {
+      // special case: balloon is dead, but can be respawned.
+      return;
+    }
+    ctx.fillStyle =
+      exports?.data?.isEnemy || exports?.data?.hostile ? '#9c9f08' : '#17a007';
+    const left = pos.left(obj.data.left);
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.height(height);
+    ctx.roundRect(
+      left,
+      obj.data.top - scaledHeight / 2,
+      // width, height, border
+      scaledWidth,
+      scaledHeight,
+      4
+    );
+    ctx.fill();
+    ctx.stroke();
+    if (exports?.objects?.chain && !exports.objects.chain.data.dead) {
+      const chainX = left + scaledWidth / 2;
+      const chainY = obj.data.top + scaledHeight / 2;
+      const chainHeight =
+        ((exports?.objects.bunker
+          ? worldHeight
+          : exports.objects.chain.data.height) /
+          worldHeight) *
+        game.objects.radar.data.height;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.setLineDash([1, 2]);
+      ctx.moveTo(chainX, chainY);
+      ctx.lineTo(chainX, chainY + chainHeight);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+});
 
 export { Balloon };

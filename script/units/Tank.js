@@ -270,7 +270,7 @@ const Tank = (options = {}) => {
 
     data.energy = 0;
 
-    radarItem.die();
+    radarItem?.die();
 
     common.onDie(exports, dieOptions);
   }
@@ -306,7 +306,7 @@ const Tank = (options = {}) => {
 
     // exit early if dead
     if (data.dead) {
-      sprites.moveWithScrollOffset(exports);  
+      sprites.moveWithScrollOffset(exports);
       return !data.deadTimer && !dom.o;
     }
 
@@ -467,6 +467,10 @@ const Tank = (options = {}) => {
     updateHealth
   };
 
+  data.domCanvas = {
+    radarItem: Tank.radarItemConfig()
+  };
+
   friendlyNearby = {
     options: {
       source: exports,
@@ -516,5 +520,19 @@ const Tank = (options = {}) => {
 
   return exports;
 };
+
+Tank.radarItemConfig = () => ({
+  width: 3.5,
+  height: 2.75,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [2, 2, 0, 0]
+    );
+  }
+});
 
 export { Tank };

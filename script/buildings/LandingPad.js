@@ -1,4 +1,4 @@
-import { getTypes, rndInt, worldHeight } from '../core/global.js';
+import { GAME_SPEED, getTypes, rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
@@ -43,12 +43,7 @@ const LandingPad = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    const radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
-    if (data.isObscured && radarItem.dom?.o) {
-      // prevent display, even if landing_pads_on_radar is true.
-      radarItem.dom.o.style.opacity = 0;
-    }
+    game.objects.radar.addItem(exports, dom.o.className);
 
     setWelcomeMessage();
   }
@@ -87,7 +82,20 @@ const LandingPad = (options = {}) => {
         '🐟',
         '🥡'
       ],
-      drinkable: ['🍺', '🍻', '🍹', '<span class="no-emoji-substitution">☕</span>', '🍾', '🍷', '🍸', '🥂', '🥃']
+      drinkable: [
+        '🍺',
+        '🍻',
+        '🍹',
+        '<span class="no-emoji-substitution">☕</span>',
+        '🍾',
+        '🍷',
+        '🍸',
+        '🥂',
+        '🥃'
+      ],
+      lightFrameCount: 0,
+      lightFrameInterval: 15,
+      lightFrameColors: ['#ffa206', '#a30402']
     },
     options
   );
@@ -102,6 +110,10 @@ const LandingPad = (options = {}) => {
     dom,
     init: initLandingPad,
     isOnScreenChange
+  };
+
+  data.domCanvas = {
+    radarItem: LandingPad.radarItemConfig(exports)
   };
 
   collision = {
@@ -134,5 +146,51 @@ const LandingPad = (options = {}) => {
 
   return exports;
 };
+
+LandingPad.radarItemConfig = (exports) => ({
+  width: 5.5,
+  height: 0.75,
+  excludeFillStroke: true,
+  draw: (ctx, obj, pos, width, height) => {
+    if (exports.data.isObscured) return;
+    ctx.fillStyle = '#aaa';
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.height(height);
+    const cornerWidth = 3;
+    const cornerHeight = 2.25;
+    const cornerHeightOffset = pos.bottomAlign(height) - cornerHeight;
+
+    // alternate light colors
+    exports.data.lightFrameCount++;
+    if (exports.data.lightFrameCount % exports.data.lightFrameInterval === 0) {
+      exports.data.lightFrameColors.reverse();
+    }
+
+    ctx.fillRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      scaledWidth,
+      scaledHeight
+    );
+
+    // left-side light
+    ctx.fillStyle = exports.data.lightFrameColors?.[0] || '#aaa';
+    ctx.fillRect(
+      pos.left(obj.data.left),
+      cornerHeightOffset,
+      cornerWidth,
+      cornerHeight
+    );
+
+    // right-side light
+    ctx.fillStyle = exports.data.lightFrameColors?.[1] || '#aaa';
+    ctx.fillRect(
+      pos.left(obj.data.left) + scaledWidth - cornerWidth,
+      cornerHeightOffset,
+      cornerWidth,
+      cornerHeight
+    );
+  }
+});
 
 export { LandingPad };

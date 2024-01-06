@@ -26,6 +26,7 @@ import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
 import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
+import { pos } from './DomCanvas.js';
 
 const DEFAULT_UPSCALING_PORTRAIT = 3;
 // if on a desktop, scale somewhere in-between.
@@ -142,8 +143,8 @@ const Radar = () => {
       bottomAlignedY: 0
     };
 
-    if (itemObject.data.domCanvas) {
-      // ignore domCanvas case
+    // TODO: review scan nodes, and clean up
+    if (itemObject.data.domCanvas && !itemObject.dom.o?.nodeName) {
       return result;
     }
 
@@ -198,10 +199,11 @@ const Radar = () => {
     }
 
     itemObject = RadarItem({
-      // null-ish for domCanvas
-      o: item.data.domCanvas
-        ? {}
-        : sprites.withStyle(document.createElement('div')),
+      // special case: null-ish for domCanvas, provided there no scan node.
+      o:
+        item.data.domCanvas && !scanNodeTypes[item.data.type]
+          ? {}
+          : sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
       className,
       oParent: item,
@@ -212,11 +214,6 @@ const Radar = () => {
       // assigned if bottom-aligned (static)
       bottomAligned: !!item.data.bottomAligned
     });
-
-    // special case
-    if (item.isObscured) {
-      utils.css.add(itemObject.dom.o, css.obscured);
-    }
 
     // special case: hide immediately if game pref says "nein"
     if (
@@ -231,7 +228,7 @@ const Radar = () => {
     }
 
     game.objects.queue.addNextFrame(() => {
-      if (itemObject.dom?.o && !itemObject.data.domCanvas) {
+      if (itemObject.dom?.o?.nodeName) {
         dom.radar.appendChild(itemObject.dom.o);
 
         // attempt to read from layout cache, or live DOM if needed for item height / positioning
@@ -398,13 +395,21 @@ const Radar = () => {
     if (!targetItem?.oParent?.dom?.o) return;
 
     // layout may have been nuked; recalculate, if so.
-    if (!targetItem.layout) {
-      targetItem = common.mixin(targetItem, getLayout(targetItem));
+    // TODO: fix missile launcher + turret layout stuff
+    if (!targetItem.layout?.width || targetItem.oParent.data.type === TYPES.missileLauncher) {
+      // targetItem = common.mixin(targetItem, getLayout(targetItem));
+      // HACK
+      if (targetItem.oParent.data.domCanvas) {
+        targetItem.layout = {
+          width: pos.width(targetItem.oParent.data.domCanvas.radarItem.width),
+          height: pos.heightNoStroke(
+            targetItem.oParent.data.domCanvas.radarItem.height
+          )
+        };
+      }
     }
 
-    if (!targetItem.layout) return;
-
-    let width = targetItem.layout.width * data.cssRadarScale;
+    let width = targetItem.layout.width;
 
     // new target, hasn't been assigned yet
     if (allowTransition && data.radarTarget !== targetItem) {
@@ -461,7 +466,7 @@ const Radar = () => {
     data.radarTarget = targetItem;
 
     if (data.radarTarget) {
-      // fetch layout immediately, if needed.446
+      // fetch layout immediately, if needed.
       if (!data.radarTarget.layout) {
         data.radarTarget = common.mixin(
           data.radarTarget,
@@ -897,7 +902,6 @@ const Radar = () => {
   layoutCache = {};
 
   css = {
-    obscured: 'obscured',
     incomingSmartMissile: 'incoming-smart-missile',
     radarJammed: 'radar_jammed',
     radarItemAnimated: 'radar-item--animated'

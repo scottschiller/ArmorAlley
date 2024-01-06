@@ -51,8 +51,10 @@ const GameLoop = () => {
     // there may be sounds from the last frame, ready to go.
     playQueuedSounds();
 
-    // empty canvas.
-    common.domCanvas.clear();
+    // only level previews are rendered once / static
+    if (game.data.started) {
+      common.domCanvas.clear();
+    }
 
     // hackish: hook to add new shrapnel.
     effects.animate();

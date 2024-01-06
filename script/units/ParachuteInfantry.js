@@ -72,7 +72,7 @@ const ParachuteInfantry = (options = {}) => {
 
     data.dead = true;
 
-    radarItem.die(dieOptions);
+    radarItem?.die(dieOptions);
 
     common.onDie(exports, dieOptions);
   }
@@ -295,6 +295,38 @@ const ParachuteInfantry = (options = {}) => {
     },
     options
   );
+
+  data.domCanvas = {
+    radarItem: {
+      width: 1.25,
+      height: 2.5,
+      parachuteOpen: {
+        width: 2.5,
+        height: 2.25
+      },
+      draw: (ctx, obj, pos, width, height) => {
+        const scaledWidth = pos.width(
+          data.parachuteOpen
+            ? data.domCanvas.radarItem.parachuteOpen.width
+            : width
+        );
+        const scaledHeight = pos.heightNoStroke(
+          data.parachuteOpen
+            ? data.domCanvas.radarItem.parachuteOpen.height
+            : height
+        );
+        const left = pos.left(obj.data.left) - scaledWidth / 2;
+        const top = obj.data.top - scaledHeight / 2;
+
+        ctx.roundRect(left, top, scaledWidth, scaledHeight, [
+          scaledHeight,
+          scaledHeight,
+          0,
+          0
+        ]);
+      }
+    }
+  };
 
   dom = {
     o: null,

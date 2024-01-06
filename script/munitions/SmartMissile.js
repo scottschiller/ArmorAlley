@@ -979,6 +979,7 @@ const SmartMissile = (options = {}) => {
       infantryEnergyCost: 0.5,
       armed: false,
       didNotify: false,
+      excludeBlink: true,
       expired: false,
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       nearExpiry: false,
@@ -1034,6 +1035,37 @@ const SmartMissile = (options = {}) => {
     },
     options
   );
+
+  data.domCanvas = {
+    radarItem: {
+      width: 2.75,
+      height: 1,
+      draw: (ctx, obj, pos, width, height) => {
+        const scaledWidth = pos.width(width);
+        const scaledHeight = pos.height(height);
+
+        const left = pos.left(obj.data.left);
+        const top = obj.data.top - scaledHeight;
+
+        // rotate from center of object
+        const centerX = left + scaledWidth / 2;
+        const centerY = top + scaledHeight / 2;
+
+        // move to the center
+        ctx.translate(centerX, centerY);
+
+        ctx.rotate((data.angle * Math.PI) / 180);
+
+        // back to "relative" origin
+        ctx.translate(-centerX, -centerY);
+
+        ctx.roundRect(left, top, scaledWidth, scaledHeight, width);
+
+        // reset transformation matrix to the identity matrix
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+    }
+  };
 
   dom = {
     o: null,

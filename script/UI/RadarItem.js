@@ -131,6 +131,7 @@ function RadarItem(options) {
     parentType: options.parentType,
     className: options.className,
     dead: false,
+    visible: true,
     // set by radar animate method
     left: 0,
     top: 0

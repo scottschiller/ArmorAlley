@@ -21,6 +21,22 @@ const ctxByType = {
   'radar-item': 'radar'
 };
 
+const pos = {
+  // positioning / coordinate helper methods
+  // e.g., a bunker or tank on the radar
+  left: (left) =>
+    left * game.objects.radar.data.scale -
+    game.objects.radar.data.radarScrollLeft,
+  bottomAlign: (height) =>
+    32 * game.objects.view.data.screenScale -
+    height * game.objects.radar.data.itemScale,
+  top: (top) => top * game.objects.view.data.screenScale,
+  width: (width) => width * game.objects.radar.data.itemScale,
+  // offset for outline / stroke
+  height: (height) => (height + 0.5) * game.objects.radar.data.itemScale,
+  heightNoStroke: (height) => height * game.objects.radar.data.itemScale
+};
+
 const DomCanvas = () => {
   // given a DOM/CSS-like data structure, draw it on canvas.
   let dom, exports;
@@ -120,7 +136,7 @@ const DomCanvas = () => {
     const { data } = exports;
 
     // canvas-specific bits
-    const oData = exports.data.domCanvas;
+    const oData = data.domCanvas;
 
     if (!oData) {
       console.warn('DomCanvas: no data?', oData);
@@ -128,11 +144,39 @@ const DomCanvas = () => {
     }
 
     // determine target canvas by type
-    const ctx = dom.ctx[ctxByType[exports.data.type] || ctxByType.default];
+    const ctx = dom.ctx[ctxByType[data.type] || ctxByType.default];
 
-    // some objects know how to draw themselves - e.g., gunfire radar object
+    // shared logic for <canvas> elements
+    if (data.dead && !data.alwaysDraw) {
+      // if no blink, don't draw at all
+      if (data.excludeBlink) return;
+
+      // only draw every X
+      data.blinkCounter = data.blinkCounter || 0;
+      data.blinkCounter++;
+      if (data.blinkCounter % 3 === 0) {
+        data.visible = !data.visible;
+      }
+
+      // don't draw if not visible
+      if (!data.visible) return;
+    }
+
+    // does the object know how to draw itself?
     if (oData.draw) {
-      oData.draw(ctx, exports);
+      // "standard style"
+      ctx.beginPath();
+      ctx.strokeStyle = '#000';
+      // handle battlefield items, and radar items which link back to their parent.
+      ctx.fillStyle =
+        data.isEnemy || exports.oParent?.data?.isEnemy ? '#ccc' : '#17a007';
+      oData.draw(ctx, exports, pos, oData.width, oData.height);
+      if (!oData.excludeFillStroke) {
+        ctx.fill();
+        if (!oData.excludeStroke) {
+          ctx.stroke();
+        }
+      }
       return;
     }
 
@@ -177,10 +221,9 @@ const DomCanvas = () => {
           source.frameHeight,
           target.scale * (ss * 0.5),
           target.rotation || 0,
-          (exports.data.x - game.objects.view.data.battleField.scrollLeft) *
-            ss +
+          (data.x - game.objects.view.data.battleField.scrollLeft) * ss +
             (target.xOffset || 0),
-          (exports.data.y - 32) * ss + (target.yOffset || 0)
+          (data.y - 32) * ss + (target.yOffset || 0)
         );
       } else {
         // sprite - note 32 offset for radar, scaling etc.
@@ -192,10 +235,9 @@ const DomCanvas = () => {
           source.frameHeight * (source.frameY || 0),
           source.frameWidth,
           source.frameHeight,
-          (exports.data.x - game.objects.view.data.battleField.scrollLeft) *
-            ss +
+          (data.x - game.objects.view.data.battleField.scrollLeft) * ss +
             (target.xOffset || 0),
-          (exports.data.y - 32) * ss + (target.yOffset || 0),
+          (data.y - 32) * ss + (target.yOffset || 0),
           source.frameWidth *
             ss *
             (source.is2X ? 0.5 : 1) *
@@ -275,4 +317,4 @@ const DomCanvas = () => {
   return exports;
 };
 
-export { DomCanvas };
+export { pos, DomCanvas };

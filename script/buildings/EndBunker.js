@@ -371,7 +371,25 @@ const EndBunker = (options = {}) => {
     targets: []
   };
 
+  data.domCanvas = {
+    radarItem: EndBunker.radarItemConfig()
+  };
+
   return exports;
 };
+
+EndBunker.radarItemConfig = () => ({
+  width: 8,
+  height: 8,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height / 4),
+      width,
+      height,
+      width
+    );
+  }
+});
 
 export { EndBunker };

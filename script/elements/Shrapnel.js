@@ -19,7 +19,9 @@ import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
 
 const shrapnelSprite = new Image();
-shrapnelSprite.src = 'image/shrapnel.png';
+// shrapnelSprite.src = 'image/shrapnel.png';
+shrapnelSprite.src =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAAAUBAMAAADfFKqVAAAAGFBMVEUAAAC1BwB/f3//xQD///8AMww/Pz8AZhlqBgxSAAAAAXRSTlMAQObYZgAAAMpJREFUeF690kGNBDEQQ1FT+BRMwRRCYSkMhaG/UmvKh02kPWXq5E4q72C1nsHmk4QOQ5OPt/vch5Mn4B2GwM65iaDO6z5swA6WAGgZjUmPfSwjQujdz7uwBSIIQcLqwxZAwqEDJNufNAs/UpKL8BwTEKw1GhAKoJ4yBFBOK6ncuQZLoAiB14LDP1YhduVuIJK1yvk+LA2X1EtRMTKKre4yBoxrfxmmLkGqILE1aOMxQPRWvg+3QyjA354Kjtu8vbgPb9i+9f/wFfgXA+c0/4Hh/xMAAAAASUVORK5CYII=';
 
 const Shrapnel = (options = {}) => {
   let css,
@@ -310,6 +312,7 @@ const Shrapnel = (options = {}) => {
       parentType: options.type || null,
       spriteType: rngInt(spriteTypes + 1, type),
       direction: 0,
+      alwaysDraw: true,
       isFading: false,
       fadeFrame: 0,
       fadeFrames: FPS,
@@ -367,12 +370,12 @@ const Shrapnel = (options = {}) => {
       }
     },
     radarItem: {
+      excludeFillStroke: true,
       draw: (ctx, obj) => {
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
+        ctx.fillStyle = '#cc0000';
         ctx.roundRect(
           // radar objects have top + left
-          obj.data.left * game.objects.radar.data.cssRadarScale -
+          obj.data.left * game.objects.radar.data.scale -
             game.objects.radar.data.radarScrollLeft,
           obj.data.top,
           // width, height, border radius

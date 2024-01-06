@@ -353,6 +353,10 @@ const MissileLauncher = (options = {}) => {
     resize
   };
 
+  data.domCanvas = {
+    radarItem: MissileLauncher.radarItemConfig()
+  };
+
   friendlyNearby = {
     options: {
       source: exports,
@@ -374,5 +378,19 @@ const MissileLauncher = (options = {}) => {
 
   return exports;
 };
+
+MissileLauncher.radarItemConfig = () => ({
+  width: 4,
+  height: 2.5,
+  draw: (ctx, obj, pos, width, height) => {
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+  }
+});
 
 export { MISSILE_LAUNCHER_SCAN_RADIUS, MissileLauncher };
