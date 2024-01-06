@@ -1046,9 +1046,18 @@ function PrefsManager() {
     }
   }
 
-  function handleScanUIPrefChange(value, pref) {
+  function handleScanUIBattlefieldPrefChange(value, pref) {
     // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
-    utils.css.addOrRemove(game.dom.world, !value, `${pref}_disabled`);
+    utils.css.addOrRemove(game.dom.battlefield, !value, `${pref}_disabled`);
+  }
+
+  function handleScanUIRadarPrefChange(value, pref) {
+    // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
+    utils.css.addOrRemove(
+      game.objects.radar.dom.radar,
+      !value,
+      `${pref}_disabled`
+    );
   }
 
   data = {
@@ -1488,10 +1497,10 @@ function PrefsManager() {
         });
       },
 
-      scan_ui_battlefield_enemy: handleScanUIPrefChange,
-      scan_ui_battlefield_friendly: handleScanUIPrefChange,
-      scan_ui_radar_enemy: handleScanUIPrefChange,
-      scan_ui_radar_friendly: handleScanUIPrefChange,
+      scan_ui_battlefield_enemy: handleScanUIBattlefieldPrefChange,
+      scan_ui_battlefield_friendly: handleScanUIBattlefieldPrefChange,
+      scan_ui_radar_enemy: handleScanUIRadarPrefChange,
+      scan_ui_radar_friendly: handleScanUIRadarPrefChange,
 
       weather: (type) => {
         if (!snowStorm) return;

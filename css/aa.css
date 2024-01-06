@@ -1998,13 +1998,12 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 /* various cases for disabling scan range UI */
-#world.scan_ui_battlefield_enemy_disabled #battlefield .sprite.enemy .scan-node,
-#world.scan_ui_battlefield_friendly_disabled
-  #battlefield
+#battlefield.scan_ui_battlefield_enemy_disabled .sprite.enemy .scan-node,
+#battlefield.scan_ui_battlefield_friendly_disabled
   .sprite:not(.enemy)
   .scan-node,
-#world.scan_ui_radar_enemy_disabled #radar .sprite.enemy .scan-node,
-#world.scan_ui_radar_friendly_disabled #radar .sprite:not(.enemy) .scan-node {
+#radar.scan_ui_radar_enemy_disabled .sprite.enemy .scan-node,
+#radar.scan_ui_radar_friendly_disabled .sprite:not(.enemy) .scan-node {
   display: none;
 }
 
