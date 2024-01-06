@@ -1294,7 +1294,6 @@ body.demo #world-noise-overlay {
   list-style-type: none;
 }
 
-#level-preview,
 #top-bar {
   height: calc(88px * var(--gs));
 }
@@ -1371,70 +1370,6 @@ body:not(.edit-mode) #top-bar {
 
 #radar .sprite.enemy {
   background-color: #ccc;
-}
-
-#radar .sprite.bunker,
-#radar .sprite.super-bunker {
-  background-color: #17a007;
-  border: calc(0.5px * var(--rs)) solid rgba(23, 160, 7, 0.75);
-  /* account for bottom border? */
-  margin-bottom: calc(-0.5px * var(--rs));
-  /* round corners */
-  border-radius: calc(1px * var(--gs)) calc(1px * var(--gs)) 0 0;
-  height: calc(2px * var(--gs));
-  padding: calc(0.5px * var(--rs));
-  /* friendly */
-  border: none !important;
-}
-
-#radar .sprite.super-bunker {
-  height: calc(2.5px * var(--gs));
-  width: calc(5px * var(--rs));
-}
-
-#radar .sprite.tank {
-  height: calc(2.25px * var(--gs));
-}
-
-#radar .sprite.balloon {
-  border-radius: calc(1.75px * var(--gs));
-  /* special case left margin, for horizontal alignment over bunker */
-  margin-left: calc(0.5px * var(--rs));
-  height: calc(2px * var(--gs));
-  width: calc(3px * var(--rs));
-}
-
-#radar .sprite.balloon,
-#radar .sprite.bunker.enemy,
-#radar .sprite.parachute-infantry.enemy,
-#radar .sprite.super-bunker.enemy {
-  /* yellow-ish tinge */
-  background-color: #9c9f09;
-  border-color: #9c9f09;
-}
-
-#radar .sprite.balloon.friendly,
-#radar .sprite.parachute-infantry.friendly {
-  background-color: #17a007;
-  border-color: rgba(23, 160, 7, 0.75);
-}
-
-#radar .sprite.bunker.enemy,
-#radar .sprite.super-bunker.enemy {
-  border-color: rgba(156, 159, 9, 0.75) rgba(156, 159, 9, 0.75) #9c9f09;
-}
-
-#radar .sprite.end-bunker.neutral,
-#radar .sprite.super-bunker.hostile {
-  background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.35);
-  border-bottom-color: transparent;
-  background-image: url(../image/checkerboard-white-mask-50percent.png);
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  background-size: calc(32px * var(--gs));
-  /* hackish: push the border down further */
-  padding-bottom: calc(1px * var(--gs));
 }
 
 #radar .sprite.cloud1,
@@ -1545,74 +1480,12 @@ body:not(.edit-mode) #top-bar {
   animation: blink calc(0.5s * var(--gs-frac)) steps(1) infinite;
 }
 
-#radar .sprite.bomb {
-  --width: calc(1.5px * var(--rs));
-  --height: calc(1.5px * var(--gs));
-  border-radius: 0 0 var(--width) var(--width);
-  height: var(--height);
-  width: var(--width);
-}
-
-#radar .sprite.bomb.enemy {
-  background-color: red;
-}
-
-#radar .sprite.missile-launcher,
-#radar .sprite.van {
+#radar .sprite.missile-launcher {
+  /* now invisible, basically a placeholder for the scan node. */
+  background-color: transparent;
+  box-shadow: none;
   height: calc(2px * var(--gs));
   width: calc(2px * var(--rs));
-}
-
-#radar .sprite.engineer,
-#radar .sprite.infantry,
-#radar .sprite.parachute-infantry {
-  height: calc(2px * var(--gs));
-  outline-width: calc(0.25px * var(--rs));
-  width: calc(1px * var(--rs));
-}
-
-#radar .sprite.engineer {
-  width: calc(0.75px * var(--rs));
-}
-
-#radar .sprite.parachute-infantry {
-  /* hackish repositioning fix */
-  margin-top: calc(1px * var(--gs));
-  /* semi-circle */
-  border: calc(1px * var(--rs)) solid rgba(23, 160, 7, 0.75);
-  border-bottom: none;
-  width: calc(0.5px * var(--rs));
-  height: calc(0.25px * var(--gs));
-  border-radius: 50% 50% 0 0;
-  background: 0 0 !important;
-}
-
-#radar .sprite.parachute-infantry.enemy {
-  border-color: #ccc;
-}
-
-#radar .sprite.base {
-  height: calc(2px * var(--gs));
-  width: calc(8px * var(--rs));
-  --radius: calc(0.5px * var(--rs));
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-
-#radar .sprite.end-bunker {
-  height: calc(2px * var(--gs));
-  width: calc(3px * var(--rs));
-  border-radius: calc(1px * var(--gs));
-}
-
-#radar .sprite.dying {
-  animation: blink calc(0.25s * var(--gs-frac)) infinite;
-}
-
-#radar .sprite.dead {
-  display: none;
-  /* just in case */
-  /* will-change: initial; */
-  transform: none;
 }
 
 #bottom {
@@ -1631,22 +1504,13 @@ body:not(.edit-mode) #top-bar {
   font-size: calc(7px * var(--gs));
 }
 
-#radar .sprite.helicopter.enemy {
-  margin-left: calc(-0.5px * var(--rs));
-  background-color: transparent;
-  border: calc(2.5px * var(--gs)) solid transparent;
-  border-right-color: #ccc;
-}
-
 #radar .sprite.turret {
-  background-color: #17a007;
+  /* now invisible, basically a placeholder for the scan node. */
+  background-color: transparent;
+  box-shadow: none;
   width: calc(1px * var(--rs));
   height: calc(2px * var(--gs));
   margin-left: calc(-0.5px * var(--rs));
-}
-
-#radar .sprite.turret.enemy {
-  background-color: #ccc;
 }
 
 /* scan nodes */
@@ -1702,16 +1566,6 @@ body:not(.edit-mode) #top-bar {
 body:not(.game-started) .scan-node {
   /* no transitions while showing level previews */
   transition-duration: 0s !important;
-}
-
-#radar .sprite.turret.destroyed {
-  /* faded green */
-  background-color: rgba(23, 160, 7, 0.5);
-}
-
-#radar .sprite.turret.enemy.destroyed {
-  /* #ccc at 50% */
-  background-color: rgba(204, 204, 204, 0.5);
 }
 
 #battlefield .sprite.destroyed .scan-node,
@@ -2162,12 +2016,6 @@ ul.inline-list li:not(:first-of-type) {
   pointer-events: none;
 }
 
-#level-preview {
-  height: 100%;
-  width: 100%;
-}
-
-#level-preview,
 .target-dot {
   position: absolute;
   top: 0;
@@ -2234,6 +2082,9 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
+  /* full opacity to start, for level previews. */
+  opacity: 1;
+  transition: none;
 }
 
 body.loaded canvas {
