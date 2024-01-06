@@ -141,14 +141,9 @@ function init() {
     if (!lg) return;
     // wait until image load, then poke the animation again to re-start it.
     lg.style.animationDuration = '99s';
-    let img = new Image();
-    img.onload = () => {
+    utils.image.load('armor-alley-wordmark-white.webp', () => {
       lg.style.animationDuration = '';
-      img.removeAttribute('src');
-      img.onload = null;
-      img = null;
-    };
-    img.src = 'image/armor-alley-wordmark-white.webp';
+    });
   }
 
   if (battle && autoStart) {
@@ -709,8 +704,6 @@ function showHomeVideo() {
 }
 
 function hideTitleScreen(callback) {
-  document.getElementById('level-preview')?.remove();
-
   common.setVideo('vr-goggles-menu');
 
   // remove overlay effects

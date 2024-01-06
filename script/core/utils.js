@@ -98,20 +98,21 @@ const utils = {
   },
 
   image: {
-    loadImage: (url, callback) => {
+    load: (url, callback) => {
       if (preloadedImageURLs[url]) return callback();
 
       let img = new Image();
 
       img.onload = () => {
         preloadedImageURLs[url] = true;
+        img.removeAttribute('src');
         img.onload = null;
         img = null;
         callback();
       };
 
       // note: prefixed path.
-      img.src = `image/${url}`;
+      img.src = url.match(/data:/i) ? url : `image/${url}`;
     },
 
     preload: (urls, callback) => {
@@ -123,7 +124,7 @@ const utils = {
       }
 
       urls.forEach((url) => {
-        utils.image.loadImage(url, didLoad);
+        utils.image.load(url, didLoad);
       });
     }
   },

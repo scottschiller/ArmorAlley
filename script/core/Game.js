@@ -1000,6 +1000,7 @@ const game = (() => {
       aaLoader.loadCSS(css, init);
     },
     initArmorAlley,
+    objectConstructors,
     objects,
     objectsById,
     players,

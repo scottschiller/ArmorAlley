@@ -1,7 +1,7 @@
 import { gamePrefs } from '../UI/preferences.js';
 import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { searchParams, TYPES } from '../core/global.js';
+import { searchParams, TYPES, worldHeight } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
@@ -171,6 +171,7 @@ function previewLevel(levelName, excludeVehicles) {
     }
   });
 
+  common.domCanvas.clear();
   game.objects.radar.reset();
 
   if (excludeVehicles) {
@@ -200,8 +201,6 @@ function previewLevel(levelName, excludeVehicles) {
     }
   };
 
-  const oPreview = document.createElement('div');
-
   // ensure that GUIDs start from zero, so objects line up if we're playing a network game.
   common.resetGUID();
 
@@ -225,10 +224,21 @@ function previewLevel(levelName, excludeVehicles) {
       )
     };
 
+    // if present, render on canvas.
+    if (game.objectConstructors[item[0]]?.radarItemConfig) {
+      exports.data.domCanvas = {
+        radarItem: game.objectConstructors[item[0]]?.radarItemConfig(exports)
+      };
+    }
+
     const css = ['sprite', item[0]];
 
     if (item[1] === 'right') {
       css.push('enemy');
+    }
+
+    if (item[0] === TYPES.landingPad) {
+      exports.data.lightFrameColors = ['#ffa206', '#a30402'];
     }
 
     // neutral = dead turret
@@ -240,16 +250,9 @@ function previewLevel(levelName, excludeVehicles) {
       css.push('destroyed');
     }
 
-    const radarItem = game.objects.radar.addItem(exports, css.join(' '));
-
-    // pull vehicles behind bunkers, super-bunkers etc.
-    if (item[0].match(/tank|launcher|van|infantry|engineer/i)) {
-      radarItem.dom.o.style.zIndex = -1;
-    }
-
-    // if a bunker, also tweak opacity so overlapping units can be seen.
-    if (item[0].match(/base|bunker/i)) {
-      radarItem.dom.o.style.opacity = 0.9;
+    // if a free-floating balloon, mark as hostile.
+    if (item[0] === 'balloon') {
+      exports.data.hostile = true;
     }
 
     // if a bunker, also make a matching balloon.
@@ -268,19 +271,50 @@ function previewLevel(levelName, excludeVehicles) {
         )
       };
 
+      // attach a stub chain
+      balloonExports.objects = {
+        chain: {
+          data: {
+            // enough to get to bottom of radar
+            height: worldHeight
+          }
+        }
+      };
+
+      // render on canvas
+      if (game.objectConstructors[TYPES.balloon]?.radarItemConfig) {
+        balloonExports.data.domCanvas = {
+          radarItem:
+            game.objectConstructors[TYPES.balloon]?.radarItemConfig(
+              balloonExports
+            )
+        };
+      }
+
       game.objects.radar.addItem(
         balloonExports,
         `sprite balloon${item[1] === 'left' ? ' friendly' : ' enemy'}`
       );
-    } else if (scanNodeTypes[item[0]]) {
+    }
+
+    const radarItem = game.objects.radar.addItem(exports, css.join(' '));
+
+    if (scanNodeTypes[item[0]]) {
       // special case: certain radar items also get a "scan range" node.
       radarItem.initScanNode();
     }
-  });
 
-  const levelPreview = document.getElementById('level-preview');
-  levelPreview.innerHTML = '';
-  levelPreview.appendChild(oPreview);
+    if (!exports.data.domCanvas) {
+      // pull vehicles behind bunkers, super-bunkers etc.
+      if (item[0].match(/tank|launcher|van|infantry|engineer/i)) {
+        radarItem.dom.o.style.zIndex = -1;
+      }
+      // if a bunker, also tweak opacity so overlapping units can be seen.
+      if (item[0].match(/base|bunker/i)) {
+        radarItem.dom.o.style.opacity = 0.9;
+      }
+    }
+  });
 }
 
 function addWorldObjects() {

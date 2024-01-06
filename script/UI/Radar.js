@@ -504,6 +504,18 @@ const Radar = () => {
     objects?.items?.forEach((item) => {
       item.die(dieOptions);
     });
+
+    objects.items = [];
+
+    // hack: remove all DOM nodes.
+    document
+      .querySelectorAll('#radar .radar-item')
+      .forEach((node) => node.remove());
+
+    // hackish: clear all canvases
+    common.domCanvas.clear();
+
+    data.renderCount = 0;
   }
 
   function onOrientationChange() {
@@ -540,7 +552,14 @@ const Radar = () => {
   }
 
   function animate() {
-    let i, j, left, top, hasEnemyMissile, newestMissile, isInterval;
+    let i, j, left, top, hasEnemyMissile, newestMissile;
+
+    // minimize re-rendering of static level preview.
+    if (!game.data.started) {
+      data.renderCount++;
+      // off-by-one? :X Allow up to three renders.
+      if (data.renderCount > 2) return;
+    }
 
     let nextScale;
 
