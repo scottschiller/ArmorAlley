@@ -214,7 +214,8 @@ const Base = (options = {}) => {
             window.setTimeout(() => {
               nukeTheBase();
               game.objects.view.setAnnouncement(
-                boomString + '<br /><span class="no-emoji-substitution" style="display:inline">☢️</span>💥🤯',
+                boomString +
+                  '<br /><span class="no-emoji-substitution" style="display:inline">☢️</span>💥🤯',
                 -1
               );
               window.setTimeout(() => {
