@@ -548,6 +548,25 @@ const Radar = () => {
       );
     }
 
+    // scale radar items' width relative to available screen width, >= 500px.
+    // >= 500px width, that is.
+    let itemScale =
+      window.innerWidth <= 500
+        ? 1
+        : 1 + (window.innerWidth - 500) / window.innerWidth;
+    itemScale = Math.min(2, itemScale);
+
+    // hackish: less upscaling on iPhone in landscape
+    if (isiPhone && game.objects.view.data.browser.isLandscape) {
+      itemScale *= 1.5;
+    } else {
+      itemScale *= 2;
+    }
+
+    data.itemScale = itemScale;
+
+    data.renderCount = 0;
+
     game.objects.radarScroller?.resize();
   }
 
@@ -616,13 +635,6 @@ const Radar = () => {
 
     hasEnemyMissile = false;
 
-    // update some items every frame, most items can be throttled.
-    isInterval = data.frameCount++ >= data.animateInterval;
-
-    if (isInterval) {
-      data.frameCount = 0;
-    }
-
     /**
      * Even if jammed, missile count needs checking.
      * Otherwise, "incoming missile" UI / state could get stuck
@@ -672,11 +684,9 @@ const Radar = () => {
 
       if (
         data.isStale ||
-        (!objects.items[i].isStatic &&
-          (isInterval ||
-            data.animateEveryFrameTypes.includes(
-              objects.items[i].oParent.data.type
-            )))
+        !objects.items[i].isStatic ||
+        objects.items[i].data.domCanvas ||
+        data.animateEveryFrameTypes[objects.items[i].oParent.data.type]
       ) {
         if (
           !game.objects.editor &&
@@ -915,6 +925,7 @@ const Radar = () => {
       utils.css.remove(dom.targetMarker, 'transition-active');
     });
     dom.radarContainer.appendChild(dom.targetMarker);
+    resize();
   }
 
   // width / height of rendered elements, based on class name
@@ -931,7 +942,6 @@ const Radar = () => {
   };
 
   data = {
-    frameCount: 0,
     radarScrollLeft: 0,
     radarTarget: null,
     lastRadarTargetWidth: 0,
@@ -948,15 +958,13 @@ const Radar = () => {
       TYPES.shrapnel,
       TYPES.van
     ],
-    // try animating every frame, for now; it's all on the GPU, anyway.
-    animateInterval: 1,
-    animateEveryFrameTypes: [
-      TYPES.helicopter,
-      TYPES.shrapnel,
-      TYPES.bomb,
-      TYPES.gunfire,
-      TYPES.smartMissile
-    ],
+    animateEveryFrameTypes: {
+      [TYPES.helicopter]: true,
+      [TYPES.shrapnel]: true,
+      [TYPES.bomb]: true,
+      [TYPES.gunfire]: true,
+      [TYPES.smartMissile]: true
+    },
     height: 0,
     isJammed: false,
     isStale: false,
@@ -966,7 +974,9 @@ const Radar = () => {
     incomingMissile: false,
     scale: 1,
     interimScale: null,
-    cssRadarScale: 1
+    cssRadarScale: 1,
+    itemScale: 1,
+    renderCount: 0
   };
 
   dom = {
