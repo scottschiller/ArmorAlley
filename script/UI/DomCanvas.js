@@ -8,7 +8,11 @@ const canvasConfig = [
   // for gunfire, shrapnel, smoke - show the pixels.
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
   { id: 'fx-canvas', name: 'fx', ctxOptions: { imageSmoothingEnabled: false } },
-  { id: 'radar-canvas', name: 'radar' }
+  {
+    id: 'radar-canvas',
+    name: 'radar',
+    ctxOptions: { imageSmoothingEnabled: false }
+  }
 ];
 
 // certain objects render in certain places.
