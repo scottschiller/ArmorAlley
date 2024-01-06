@@ -3,7 +3,9 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
 const smokeSprite = new Image();
-smokeSprite.src = 'image/smoke-sprite.png';
+// smokeSprite.src = 'image/smoke-sprite.png';
+smokeSprite.src =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAADYBAMAAAAUk662AAAAD1BMVEUAAAAAAACWlpZUVFT///+NK79EAAAAAXRSTlMAQObYZgAAATtJREFUeF7F1NGNhTAMBdHQQW4L04JbSP81LVheW8FCWsTH5usIBIycvDfGoWvNMYZDui5hBppDIQ3h4q7VZOdCuxYYtksAbHJKGofLsxRRUTpD82jNSN7simZAbHLaLoSX7joBuzCV3jYHRt0U+YBLp0CIXVoGN5nRxGm7SYDrSMXnlAmzsirVEcmj7imSY84aUYpmKkpNaIaez5BzlwDwmbpiptmsaK6uaq3V++NZl0oAmildivltArpg3SWU09XjdPt6Hnm+BCQXZmim4rsGN7GwJqD09xPxIrr2SBkttIzSXnqUZERpCYPS9zmPI2/WEVIdK+JiTcMVfbnTKZZZEzS9af6GvjEh0EzJpYU1YWz6h1LTTCm0aBJZRb1Gbac/r+efaE6otOhCTd9n+v2ML5pkoSPV/m3frx9YTHR7id+njwAAAABJRU5ErkJggg==';
 
 const Smoke = (options = {}) => {
   let dom, data, exports;
