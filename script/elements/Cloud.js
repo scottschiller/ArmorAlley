@@ -17,17 +17,20 @@ const cloudTypes = [
   {
     className: 'cloud1',
     width: 102,
-    height: 29
+    height: 29,
+    radarWidth: 7
   },
   {
     className: 'cloud2',
     width: 116,
-    height: 28
+    height: 28,
+    radarWidth: 9
   },
   {
     className: 'cloud3',
     width: 125,
-    height: 34
+    height: 34,
+    radarWidth: 9
   }
 ];
 
@@ -138,10 +141,6 @@ const Cloud = (options = {}) => {
     }
   }
 
-  function resize() {
-    radarItem?.resizeWidth(exports);
-  }
-
   function initDOM() {
     dom.o = sprites.create({
       className: css.className,
@@ -155,9 +154,6 @@ const Cloud = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
-    // and, adjust scale.
-    resize();
   }
 
   css = common.inheritCSS({ className });
@@ -184,6 +180,35 @@ const Cloud = (options = {}) => {
     options
   );
 
+  data.domCanvas = {
+    radarItem: {
+      excludeStroke: true,
+      // approximate size relative to that as rendered on battlefield.
+      width: cloudData.radarWidth,
+      height: 2,
+      draw: (ctx, obj, pos, width, height) => {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.088)';
+
+        const scaledWidth = pos.width(width) * game.objects.radar.data.scale;
+        const scaledHeight = pos.heightNoStroke(height);
+
+        ctx.roundRect(
+          pos.left(obj.data.left),
+          obj.data.top - scaledHeight / 2,
+          // width, height, border
+          scaledWidth,
+          scaledHeight,
+          scaledWidth
+        );
+
+        ctx.strokeWidth = 0.25;
+        ctx.stroke();
+        ctx.strokeWidth = 1;
+      }
+    }
+  };
+
   dom = {
     o: null
   };
@@ -194,7 +219,6 @@ const Cloud = (options = {}) => {
     drift,
     dom,
     init: initCloud,
-    resize,
     startDrift
   };
 

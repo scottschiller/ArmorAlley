@@ -106,17 +106,6 @@ function RadarItem(options) {
     oScanNode.style.borderRadius = `${height}px ${height}px 0 0`;
   }
 
-  function resizeWidth(obj) {
-    if (!obj?.data?.width) return;
-
-    // show (e.g.,) cloud size relative to battlefield / screen width.
-    dom.o.style.width = `${
-      (obj.data.width / worldWidth) *
-      game.objects.radar.data.scale *
-      game.objects.view.data.browser.screenWidth
-    }px`;
-  }
-
   css = {
     radarItem: 'radar-item',
     dying: 'dying',
@@ -158,7 +147,6 @@ function RadarItem(options) {
     onHiddenChange,
     oParent,
     reset,
-    resizeWidth,
     updateScanNode
   };
 
