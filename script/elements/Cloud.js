@@ -5,7 +5,9 @@ import {
   TYPES,
   rngInt,
   GAME_SPEED,
-  rngPlusMinus
+  rngPlusMinus,
+  isiPhone,
+  clientFeatures
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
@@ -190,7 +192,12 @@ const Cloud = (options = {}) => {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.088)';
 
-        const scaledWidth = pos.width(width) * game.objects.radar.data.scale;
+        // TODO: sort out scaling vs. touch devices - not quite right when radar is scaled up.
+        const scaledWidth =
+          pos.width(width) *
+          game.objects.radar.data.scale *
+          (clientFeatures.touch ? 0.5 : 1);
+
         const scaledHeight = pos.heightNoStroke(height);
 
         ctx.roundRect(
