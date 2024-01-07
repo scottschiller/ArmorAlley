@@ -135,6 +135,25 @@ const DomCanvas = () => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
+  function rotate(ctx, angle, x, y, w, h) {
+    // rotate from center of object
+    const centerX = x + w / 2;
+    const centerY = y + h / 2;
+
+    // move to the center
+    ctx.translate(centerX, centerY);
+
+    ctx.rotate((angle * Math.PI) / 180);
+
+    // back to "relative" origin
+    ctx.translate(-centerX, -centerY);
+  }
+
+  function unrotate(ctx) {
+    // reset the origin transform
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
   function draw(exports) {
     // original object data
     const { data } = exports;
@@ -147,8 +166,10 @@ const DomCanvas = () => {
       return;
     }
 
-    // determine target canvas by type
-    const ctx = dom.ctx[ctxByType[data.type] || ctxByType.default];
+    // determine target canvas by type - specified by object, type, or default.
+    const ctx =
+      dom.ctx[data.domCanvas.ctxName] ||
+      dom.ctx[ctxByType[data.type] || ctxByType.default];
 
     // shared logic for <canvas> elements
     if (data.dead && !data.alwaysDraw) {
@@ -230,29 +251,47 @@ const DomCanvas = () => {
           (data.y - 32) * ss + (target.yOffset || 0)
         );
       } else {
-        // sprite - note 32 offset for radar, scaling etc.
-        // TODO: rendering to foreground vs. background canvas layers
-        // render background when in a cloud / cloaked; otherwise, at random.
+        // sprite case; note 32 offset for radar before scaling
+        // TODO: scaling and centering of rendered cropped sprite, e.g., smoke object with data.scale = 1.5 etc.
+
+        const dx =
+          (data.x - game.objects.view.data.battleField.scrollLeft) * ss +
+          (target.xOffset || 0);
+
+        const dy = (data.y - 32) * ss + (target.yOffset || 0);
+
+        const dWidth =
+          source.frameWidth *
+          ss *
+          (source.is2X ? 0.5 : 1) *
+          (target.scale || 1);
+
+        const dHeight =
+          source.frameHeight *
+          ss *
+          (source.is2X ? 0.5 : 1) *
+          (target.scale || 1);
+
+        if (data.rotation) {
+          rotate(ctx, data.rotation, dx, dy, dWidth, dHeight);
+        }
+
+        // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage(
           img.src,
           source.frameWidth * (source.frameX || 0),
           source.frameHeight * (source.frameY || 0),
           source.frameWidth,
           source.frameHeight,
-          (data.x - game.objects.view.data.battleField.scrollLeft) * ss +
-            (target.xOffset || 0),
-          (data.y - 32) * ss + (target.yOffset || 0),
-          source.frameWidth *
-            ss *
-            (source.is2X ? 0.5 : 1) *
-            (target.scale || 1),
-          source.frameHeight *
-            ss *
-            (source.is2X ? 0.5 : 1) *
-            (target.scale || 1),
-          1,
-          1
+          dx,
+          dy,
+          dWidth,
+          dHeight
         );
+
+        if (data.rotation) {
+          unrotate(ctx);
+        }
       }
 
       if (target.opacity >= 0) {
@@ -315,7 +354,9 @@ const DomCanvas = () => {
     clear,
     draw,
     init,
-    resize
+    resize,
+    rotate,
+    unrotate
   };
 
   return exports;
