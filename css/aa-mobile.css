@@ -459,12 +459,12 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   background-size: 10%;
 }
 
-#world.banana-mode #mobile-controls li.weapons-item a.smart-missile {
+body.banana-mode #mobile-controls li.weapons-item a.smart-missile {
   background-position: 50%;
   background-size: 42%;
 }
 
-#world.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
+body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
   background-position: 50%;
   background-size: 69%;
 }

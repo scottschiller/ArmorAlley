@@ -1129,7 +1129,7 @@ const View = () => {
     if (data.missileMode === mode) return;
 
     // swap in new class, removing old one
-    utils.css.swap(document.getElementById('world'), data.missileMode, mode);
+    utils.css.swap(document.body, data.missileMode, mode);
 
     data.missileMode = mode;
 

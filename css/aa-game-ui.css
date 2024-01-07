@@ -1296,20 +1296,20 @@ body.is_safari:not(.is-mobile) .chain {
   width: 24px;
 }
 
-#world.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
-#world.rubber-chicken-mode ul.stats-bar .missiles em {
+body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
+body.rubber-chicken-mode ul.stats-bar .missiles em {
   background: url(../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
     no-repeat;
   min-width: 16px;
 }
 
-#world.banana-mode #mobile-controls li.weapons-item a.smart-missile,
-#world.banana-mode ul.stats-bar .missiles em,
+body.banana-mode #mobile-controls li.weapons-item a.smart-missile,
+body.banana-mode ul.stats-bar .missiles em,
 .smart-missile.banana {
   background: url(../image/banana.png) 50% 0 / contain no-repeat; /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
 }
 
-#world.banana-mode ul.stats-bar .missiles em {
+body.banana-mode ul.stats-bar .missiles em {
   /* background: transparent url(../image/banana.png) 50% 0px no-repeat; */
   margin-top: -2px; /* height align tweak */
 }
