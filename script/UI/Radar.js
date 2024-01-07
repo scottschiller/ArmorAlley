@@ -129,6 +129,7 @@ const Radar = () => {
   }
 
   function getLayout(itemObject) {
+    // 01/2024: at present, just for missile launchers and turrets' scan nodes.
     let type = itemObject.data.parentType;
 
     // cache hit, based on "type"
@@ -140,13 +141,12 @@ const Radar = () => {
         width: 0,
         height: 0
       },
+      // TODO: review
       bottomAlignedY: 0
     };
 
-    // TODO: review scan nodes, and clean up
-    if (itemObject.data.domCanvas && !itemObject.dom.o?.nodeName) {
-      return result;
-    }
+    // domCanvas case: layout is N/A
+    if (itemObject.data.domCanvas && !itemObject.dom.o?.nodeName) return result;
 
     // if we hit this, something is wrong.
     if (!itemObject?.dom?.o) {
@@ -396,7 +396,10 @@ const Radar = () => {
 
     // layout may have been nuked; recalculate, if so.
     // TODO: fix missile launcher + turret layout stuff
-    if (!targetItem.layout?.width || targetItem.oParent.data.type === TYPES.missileLauncher) {
+    if (
+      !targetItem.layout?.width ||
+      targetItem.oParent.data.type === TYPES.missileLauncher
+    ) {
       // targetItem = common.mixin(targetItem, getLayout(targetItem));
       // HACK
       if (targetItem.oParent.data.domCanvas) {
@@ -716,7 +719,7 @@ const Radar = () => {
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
-        if (!objects.items[i].layout) {
+        if (!objects.items[i].layout?.width && !objects.items[i].data.domCanvas) {
           objects.items[i] = common.mixin(
             objects.items[i],
             getLayout(objects.items[i])
