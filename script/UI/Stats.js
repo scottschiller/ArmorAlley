@@ -554,6 +554,13 @@ function Stats() {
     )
       return;
 
+    console.log(text);
+
+    // HACK: one more exception: interaction between two "same" units - e.g., "An enemy infantry shot your <span ...>" - should be "yours", of course.
+    if (text.includes('your <')) {
+      text = text.replace('your <', 'one of yours <');
+    }
+
     // "go go go", capitalizing the first letter.
     game.objects.notifications.add(
       text.charAt(0).toUpperCase() + text.slice(1)
