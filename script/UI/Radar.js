@@ -719,7 +719,10 @@ const Radar = () => {
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
-        if (!objects.items[i].layout?.width && !objects.items[i].data.domCanvas) {
+        if (
+          !objects.items[i].layout?.width &&
+          !objects.items[i].data.domCanvas
+        ) {
           objects.items[i] = common.mixin(
             objects.items[i],
             getLayout(objects.items[i])
