@@ -176,6 +176,9 @@ const DomCanvas = () => {
       // if no blink, don't draw at all
       if (data.excludeBlink) return;
 
+      // special case for helicopters: only blink while initially exploding, not reset or respawning.
+      if (data.parentType === TYPES.helicopter && !exports.oParent?.data?.exploding) return;
+
       // only draw every X
       data.blinkCounter = data.blinkCounter || 0;
       data.blinkCounter++;

@@ -1241,6 +1241,7 @@ const Helicopter = (options = {}) => {
     data.parachuting = false;
     data.shakeOffset = 0;
 
+    data.exploding = false;
     utils.css.remove(dom.o, css.exploding);
     if (css.explodingType) {
       utils.css.remove(dom.o, css.explodingType);
@@ -1280,11 +1281,15 @@ const Helicopter = (options = {}) => {
     // reset animations
     data.frameCount = 0;
 
+    data.exploding = true;
     utils.css.add(dom.o, css.exploding);
 
     if (css.explodingType) {
       utils.css.add(dom.o, css.explodingType);
     }
+
+    // drop this state in a moment.
+    common.setFixedFrameTimeout(() => (data.exploding = false), 2000);
 
     const { attacker } = dieOptions;
     const aData = attacker?.data;
@@ -3083,6 +3088,7 @@ const Helicopter = (options = {}) => {
       shakeOffsetMax: 6,
       shakeThreshold: 7,
       bombing: false,
+      exploding: false,
       firing: false,
       fireFrameCount: 0,
       respawning: undefined,
