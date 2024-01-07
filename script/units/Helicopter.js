@@ -1031,12 +1031,11 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    // haaaack
-    if (!data.yMin) {
-      const statsBar = document.getElementById('stats-bar');
-      const rect = statsBar.getBoundingClientRect();
-      data.yMin = rect.top * (1 / screenScale);
-    }
+    // limit the helicopter to the top of the stats bar UI.
+    const statsBar = document.getElementById('stats-bar');
+    const rect = statsBar.getBoundingClientRect();
+    data.yMin = rect.top * (1 / screenScale);
+    
   }
 
   function moveToForReal(x, y) {
