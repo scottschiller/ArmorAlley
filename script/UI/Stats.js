@@ -554,8 +554,6 @@ function Stats() {
     )
       return;
 
-    console.log(text);
-
     // HACK: one more exception: interaction between two "same" units - e.g., "An enemy infantry shot your <span ...>" - should be "yours", of course.
     if (text.includes('your <')) {
       text = text.replace('your <', 'one of yours <');
