@@ -444,17 +444,14 @@ const Bomb = (options = {}) => {
         const left = pos.left(obj.data.left) - scaledWidth / 2;
         const top = obj.data.top;
 
-        // rotate from center of object
-        const centerX = left + scaledWidth / 2;
-        const centerY = top + scaledHeight / 2;
-
-        // move to the center
-        ctx.translate(centerX, centerY);
-
-        ctx.rotate(((data.lastAngle + 90) * Math.PI) / 180);
-
-        // back to "relative" origin
-        ctx.translate(-centerX, -centerY);
+        common.domCanvas.rotate(
+          ctx,
+          data.lastAngle + 90,
+          left,
+          top,
+          scaledWidth,
+          scaledHeight
+        );
 
         ctx.roundRect(left, top, scaledWidth, scaledHeight, [
           0,
@@ -463,8 +460,7 @@ const Bomb = (options = {}) => {
           scaledHeight
         ]);
 
-        // reset transformation matrix to the identity matrix
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        common.domCanvas.unrotate(ctx);
       }
     }
   };
