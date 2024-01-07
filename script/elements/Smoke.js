@@ -139,7 +139,8 @@ const Smoke = (options = {}) => {
       baseScale: options.baseScale || 0.65 + rnd(0.35),
       // hackish: use provided, or default values.
       vX: options.vX !== undefined ? options.vX : plusMinus(rnd(3)),
-      vY: options.vY !== undefined ? options.vY : -rnd(3)
+      vY: options.vY !== undefined ? options.vY : -rnd(3),
+      oParent: options.oParent
     },
     options
   );
@@ -166,6 +167,16 @@ const Smoke = (options = {}) => {
       }
     }
   };
+
+  // background vs. foreground canvas: show some "relative to damage" smoke behind ground units, helicopters and balloons.
+  if (
+    data.oParent &&
+    (data.oParent.data.bottomAligned ||
+      data.oParent.data.type === TYPES.helicopter ||
+      data.oParent.data.type === TYPES.balloon)
+  ) {
+    data.domCanvas.ctxName = oneOf(['fx', 'battlefield']);
+  }
 
   dom = {
     o: null,

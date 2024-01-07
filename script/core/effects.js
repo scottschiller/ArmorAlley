@@ -192,7 +192,8 @@ const effects = {
             ? -rnd(5 * chance)
             : data.type === TYPES.helicopter
             ? -rnd(3 * chance)
-            : -(data.vY || 0.25) + rnd(-2)
+            : -(data.vY || 0.25) + rnd(-2),
+        oParent: exports
       })
     );
   },
