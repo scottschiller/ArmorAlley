@@ -1,4 +1,11 @@
-import { rnd, rndInt, plusMinus, GAME_SPEED } from '../core/global.js';
+import {
+  rnd,
+  rndInt,
+  plusMinus,
+  GAME_SPEED,
+  oneOf,
+  TYPES
+} from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
@@ -21,7 +28,7 @@ const Smoke = (options = {}) => {
   function animate() {
     let scale = null;
 
-    // move?
+    // TODO: implement or drop scaling of smoke sprites in domCanvas.
     if (data.vX !== null && data.vY !== null) {
       data.x +=
         data.vX *
@@ -40,31 +47,33 @@ const Smoke = (options = {}) => {
             1 - (1 - options.increaseDeceleration) * GAME_SPEED;
         }
       }
+    }
 
-      // scale applied if also fading out
-      if (data.isFading) {
-        scale = 1 - data.fadeFrame / data.fadeFrames;
-      } else {
-        scale = data.baseScale;
-        if (data.rotation) {
-          data.rotation += data.rotationAmount;
-        }
-      }
+    // scale applied if also fading out
+    if (data.isFading) {
+      scale = 1 - data.fadeFrame / data.fadeFrames;
+    } else {
+      scale = data.baseScale;
+    }
 
-      if (scale) {
-        scale = `scale3d(${[scale, scale, 1].join(', ')})`;
-      }
+    if (data.rotation !== undefined) {
+      data.rotation += data.rotationAmount;
+    }
 
-      if (data.isOnScreen) {
-        sprites.setTransformXY(
-          exports,
-          dom.o,
-          `${data.x}px`,
-          `${data.y}px`,
-          (data.rotation ? `rotate3d(0, 0, 1, ${data.rotation}deg) ` : '') +
-            (scale ? ` ${scale}` : '')
-        );
-      }
+    if (scale) {
+      // data.scale = scale;
+      scale = `scale3d(${[scale, scale, 1].join(', ')})`;
+    }
+
+    if (data.isOnScreen) {
+      sprites.setTransformXY(
+        exports,
+        dom.o,
+        `${data.x}px`,
+        `${data.y}px`,
+        (data.rotation ? `rotate3d(0, 0, 1, ${data.rotation}deg) ` : '') +
+          (scale ? ` ${scale}` : '')
+      );
     }
 
     // animate and fade
@@ -72,15 +81,7 @@ const Smoke = (options = {}) => {
       // first, animate through sprite. then, fade opacity.
       if (data.spriteFrame < data.spriteFrames) {
         // advance smoke sprite, 0% -> -100% (top-to-bottom)
-        if (data.isOnScreen) {
-          data.domCanvas.img.source.frameY = data.spriteFrame;
-          sprites.setTransformXY(
-            exports,
-            dom.oTransformSprite,
-            `0%`,
-            `${-data.spriteFrame * data.spriteOffsetPerFrame}px`
-          );
-        }
+        data.domCanvas.img.source.frameY = data.spriteFrame;
         data.spriteFrame++;
       } else {
         data.isFading = true;
@@ -91,7 +92,7 @@ const Smoke = (options = {}) => {
     if (data.isFading) {
       data.fadeFrame += GAME_SPEED;
 
-      if (data.fadeFrame < data.fadeFrames && data.isOnScreen) {
+      if (data.fadeFrame < data.fadeFrames) {
         data.domCanvas.img.target.opacity =
           1 - data.fadeFrame / data.fadeFrames;
       }
