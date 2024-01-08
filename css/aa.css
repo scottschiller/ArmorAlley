@@ -183,63 +183,13 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   transition-delay: 0.75s;
 }
 
-#mtv-bnb-in {
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 25%;
-  height: 46%;
-  top: -13%;
-  left: 1.65%;
-  opacity: 0;
-  position: absolute;
-  transition: opacity 0.25s ease-in;
-  z-index: 10;
-}
-
-body.bnb #mtv-bnb-in {
-  opacity: 0.9;
-}
-
+#mtv-bnb-in,
 #bnb-vs {
-  /* https://www.steamgriddb.com/game/5248723 */
-  background-position: 50% 100%;
-  background-repeat: no-repeat;
-  background-size: contain;
-  position: absolute;
-  bottom: -1px;
-  filter: drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.5));
-  height: 98%;
-  left: 0;
   opacity: 0;
-  transition: opacity 0.25s ease-in;
-  width: 100%;
 }
 
-body.bnb #bnb-vs,
-body.bnb-preload #bnb-vs {
-  background-image: url(../image/virtual_stupidity_steamgriddb.webp);
-}
-
-body.bnb #bnb-vs {
-  opacity: 1;
-}
-
-body.bnb #mtv-bnb-in,
-body.bnb-preload #mtv-bnb-in {
-  background-image: url(../image/virtual_stupidity_overlay.webp);
-}
-
-#bnb-vs,
-#mtv-bnb-in {
-  image-rendering: optimizeQuality;
-  image-rendering: -webkit-optimize-contrast;
-}
-
-body.is_safari #bnb-vs,
-body.is_safari #mtv-bnb-in {
-  /* Safari does better with this here, ironically, vs. optimize-contrast */
-  image-rendering: optimizeQuality;
+#bnb-now-playing {
+  display: none;
 }
 
 #game-menu-wrapper {
@@ -1480,10 +1430,6 @@ body.network #help {
 
 body.network:not(.game-started) #help #game-options-link,
 body.network:not(.game-started) #help .pipe {
-  display: none;
-}
-
-#bnb-now-playing {
   display: none;
 }
 
