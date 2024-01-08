@@ -31,6 +31,7 @@ function fetch(method, url, callback = complete) {
 
 // common CSS
 fetch(aaLoader.loadCSS, 'css/aa.css');
+fetch(aaLoader.loadCSS, 'css/aa-game-menu.css');
 
 // aa.js: unminified
 // aa_min.js: bundled, minified build

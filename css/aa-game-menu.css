@@ -1,0 +1,878 @@
+/* Armor Alley: Home Screen Menu */
+
+#game-menu-wrapper.active.fade-out {
+  pointer-events: none;
+  filter: blur(8px);
+  transform: scale3d(1.1, 1.1, 1);
+  transform-origin: 50% 50%;
+  transition: 0.75s ease-in-out;
+  transition-property: filter, background-image, opacity, transform;
+  transform: translate3d(-50%, -50%, 0) scale3d(1.1, 1.1, 1);
+  opacity: 0;
+}
+
+body.auto-start #game-menu-wrapper.active.fade-out {
+  transition-delay: 0.75s;
+}
+
+#game-menu-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  /* this will be overridden for mobile, landscape */
+  aspect-ratio: 1/1;
+  /* always leave a little room */
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: grid;
+  align-content: center;
+  /* initial state */
+  transform: scale3d(0.8, 0.8, 1) translate3d(-50%, -50%, 0);
+  transform-origin: 0 0;
+  filter: blur(8px);
+  opacity: 0;
+  z-index: 1;
+}
+
+#game-menu-wrapper.active {
+  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
+  transition-property: transform, opacity, filter;
+  transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
+  transform-origin: 0 0;
+  filter: blur(0px);
+  opacity: 1;
+}
+
+@media screen and (max-height: 780px) and (orientation: landscape) {
+  #game-menu-wrapper {
+    /**
+     * HACK: restrict the logo width on smaller (short) screens.
+     * TODO: make the home screen more responsive to vertical height restrictions.
+     */
+    width: 155vh;
+    margin-top: 0;
+    min-width: 350px;
+    max-width: 100vw;
+  }
+
+  body.is_iphone #logo {
+    /* collapse logo border, save some vertical space */
+    border-top: none;
+  }
+}
+
+#game-menu-wrapper .logo-wrapper-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding-top: 1vh;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  /* classic trick... */
+  text-align: center;
+  /* collapse, s'il vous plait */
+  flex-basis: content;
+}
+
+#game-menu-wrapper .logo-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  /* prevent bottom "r" from being clipped, ugh. */
+  padding-bottom: calc(2px * var(--gs));
+  /* offset the above. */
+  margin-top: -calc(1px * var(--gs));
+  overflow: hidden;
+}
+
+#game-menu-wrapper .logo-overlay,
+#game-menu-wrapper .logo-overlay-cutout,
+#game-menu-wrapper .logo-overlay-highlight,
+#game-menu-wrapper .logo-overlay-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#game-menu-wrapper .logo-overlay-cutout {
+  mask-image: url(../image/armor-alley-wordmark-white.webp);
+  -webkit-mask-image: url(../image/armor-alley-wordmark-white.webp);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  /* this affects how the highlight gradient blends with the logo */
+  mix-blend-mode: overlay;
+}
+
+#game-menu-wrapper .logo-overlay-highlight {
+  width: 33%;
+  height: 150%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0) 5%,
+    rgba(255, 255, 255, 0.75) 35%,
+    rgba(255, 255, 255, 0.75) 66%,
+    rgba(255, 255, 255, 0) 95%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
+  animation: 10s ease-in-out 1s infinite glint;
+}
+
+body.auto-start #game-menu-wrapper .logo-overlay-highlight {
+  animation-duration: 3.85s;
+  animation-delay: 0.75s;
+}
+
+@keyframes glint {
+  0% {
+    transform: translate3d(-100%, -14.5%, 0) rotate(15deg);
+  }
+
+  25% {
+    transform: translate3d(350%, -14.5%, 0) rotate(15deg);
+  }
+
+  /* stay until the end */
+  100% {
+    transform: translate3d(300%, -14.5%, 0) rotate(15deg);
+  }
+}
+
+#start-game-button-mobile {
+  display: none;
+  margin: 0.65em auto 0;
+  border-radius: 5px;
+}
+
+#game-menu-wrapper .logo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* note height here, for animation offset / scaling purposes */
+  height: 600%;
+  /**
+   * Tool with color smoothing, albeit one color at a time...
+   * https://www.learnui.design/tools/gradient-generator.html
+   * #a52a2a @ 0%
+   * #ffa500 @ 16%
+   * #ffff00 @ 32%
+   * #dd3333 @ 48%
+   * #ffa500 @ 67%
+   * #008000 @ 83%
+   * #a52a2a @ 100%
+   */
+  /* smoothened version of the above */
+  background: linear-gradient(
+    180deg,
+    brown,
+    #b13225,
+    #bd3d20,
+    #c94b1a,
+    #d65c14,
+    #e3710e,
+    #f18907,
+    orange,
+    orange,
+    #ffb200,
+    #ffbf00,
+    #fc0,
+    #ffd800,
+    #ffe500,
+    #fff200,
+    #ff0,
+    #ff0,
+    #fad708,
+    #f5b30f,
+    #f09316,
+    #eb761e,
+    #e65c25,
+    #e2462c,
+    #d33,
+    #d33,
+    #e23d2c,
+    #e64925,
+    #eb571e,
+    #f06716,
+    #f5790f,
+    #fa8e08,
+    orange,
+    orange,
+    #edc700,
+    #d3db00,
+    #9bc900,
+    #6ab600,
+    #40a400,
+    #1c9200,
+    green,
+    green,
+    #2a8704,
+    #558e09,
+    #81940e,
+    #998614,
+    #9e661b,
+    #a24722,
+    brown
+  );
+  animation: 20s ease-in-out infinite alternate logo-gradient;
+}
+
+@keyframes logo-gradient {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    /* bottom-align, i.e., 100% minus a fraction of the full 600% height */
+    transform: translate3d(0, calc(-100% + (100% * 1 / 6)), 0);
+  }
+}
+
+#game-menu-wrapper .logo-overlay-shadow {
+  background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0.15) 10%,
+      rgba(0, 0, 0, 0) 25%,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.33) 75%,
+      rgba(0, 0, 0, 0.25) 92.5%,
+      rgba(0, 0, 0, 0.2) 98%,
+      rgba(0, 0, 0, 0) 99%
+    ),
+    repeating-linear-gradient(
+      33deg,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0) 1px,
+      rgba(0, 0, 0, 0.2) 1px,
+      rgba(0, 0, 0, 0.2) 1.5px,
+      rgba(0, 0, 0, 0.2) 1.5px,
+      rgba(0, 0, 0, 0) 2px
+    );
+}
+
+#game-menu-wrapper .logo-overlay,
+#logo,
+#logo-image {
+  image-rendering: auto;
+  image-rendering: optimizequality;
+}
+
+#logo-image {
+  display: block;
+  width: 100%;
+  visibility: hidden;
+}
+
+#logo {
+  position: relative;
+  /**
+   * 12/2023: Firefox Nightly renders this element quite tall without display: flex.
+   * I'm sure I'm doing something wrong, here be dragons etc.
+   */
+  display: flex;
+  margin: 0 auto;
+  /* prevent radar overlap */
+  margin-top: calc(4px * var(--menu-scale));
+  border-top: calc(6px * var(--menu-scale)) solid #444;
+  padding-top: calc(1.5px * var(--menu-scale));
+  padding-bottom: calc(3px * var(--menu-scale));
+  transition: 0.75s cubic-bezier(0.57, 0.18, 0.3, 1.15);
+  /* hat tip: https://cubic-bezier.com/#.57,.18,.3,1.15 */
+  transition-property: transform, scale, opacity;
+  z-index: 11;
+  border-bottom: 1px solid #be7832;
+  opacity: 0.9;
+}
+
+#logo h1 {
+  /* hackish: hide text */
+  font-size: 0px;
+  color: transparent;
+}
+
+#logo h1,
+body:not(.game-started) #mobile-controls {
+  opacity: 0;
+}
+
+body:not(.game-started) #mobile-controls {
+  pointer-events: none;
+}
+
+body:not(.game-started) #player-status-bar {
+  /* hide, retaining layout */
+  visibility: hidden;
+}
+
+#world.welcome #player-status-bar {
+  opacity: 0;
+}
+
+#world.welcome #battlefield {
+  opacity: 0;
+  filter: blur(8px);
+}
+
+#world.welcome #mobile-controls,
+#world.welcome #player-status-bar {
+  filter: grayscale(1);
+}
+
+#game-menu {
+  position: relative;
+  color: #ccc;
+  display: none;
+  font-size: calc(10px * var(--menu-scale));
+  text-align: center;
+  /* don't exceed the screen width (e.g., mobile phones in portrait mode.) */
+  width: 100%;
+}
+
+#game-menu.visible {
+  display: block;
+}
+
+body.auto-start #game-menu {
+  display: none;
+}
+
+body.auto-start #game-description,
+body.auto-start #game-menu-form {
+  /* used when "auto-start" is specified, i.e., user playing campaign mode */
+  display: none;
+}
+
+body.auto-start #game-subtitle {
+  /* hackish: hide the text because it fades out rather quickly. */
+  color: transparent;
+}
+
+body.auto-start.is-mobile.loaded #start-game-button-mobile {
+  display: block;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+body.game-started #start-game-button-mobile {
+  transform: scale3d(1.2, 1.2, 1);
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+#game-menu button {
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
+}
+
+#game-menu h2 {
+  position: relative;
+  color: #e19632;
+  font-size: calc(5.5px * var(--menu-chicago-scale));
+  line-height: 175%;
+  margin: calc(1.5px * var(--menu-chicago-scale)) 0px
+    calc(2px * var(--menu-chicago-scale)) 0;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /* ensure this clips the BnB overlay, when showing */
+  z-index: 10;
+}
+
+#game-menu label {
+  cursor: pointer;
+  display: inline-block;
+  padding: calc(4px * var(--menu-scale));
+  padding-left: calc(5px * var(--menu-scale));
+  padding-right: calc(5px * var(--menu-scale));
+  border-left: 0.5px solid #ccc;
+  border-right: 0.5px solid #ccc;
+  position: relative;
+  vertical-align: middle;
+}
+
+#game-menu label:first-of-type {
+  border-left: none;
+}
+
+#game-menu label:last-of-type {
+  border-right: none;
+}
+
+#checkbox-vs:hover,
+#game-menu label:hover,
+#game_level:hover {
+  background-color: rgba(0, 128, 0, 0.5);
+  color: #fff !important;
+}
+
+#game-type-list:hover,
+#game-type-list:hover input[type='radio'] {
+  color: #fff !important;
+}
+
+#game-menu select {
+  --bg-size: calc(8px * var(--menu-scale));
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>")
+    no-repeat padding-box;
+  background-position: calc(100% - var(--bg-size)) 70%;
+  background-size: var(--bg-size);
+  border-radius: calc(2px * var(--menu-scale));
+  text-indent: calc(4px * var(--menu-scale));
+}
+
+#game-menu select {
+  --bg-size: calc(6px * var(--menu-scale));
+  --text-indent: calc(3px * var(--menu-scale));
+  background-position: calc(100% - var(--text-indent) * 1.65) 65%;
+  background-size: calc(var(--bg-size));
+  border-radius: calc(2px * var(--menu-scale));
+  min-width: 7em;
+  font-size: calc(11px * var(--menu-scale));
+  font-weight: 400;
+  /* look similar to buttons */
+  min-height: calc(18px * var(--menu-scale));
+  /* vertical align shenanigans */
+  text-indent: var(--text-indent);
+  /* new ish */
+  font-family: 'Cheddar Gothic Stencil';
+  height: calc(18px * var(--menu-scale));
+  text-indent: var(--text-indent);
+  padding: 0;
+}
+
+body.is_mac:not(.is_safari):not(.is_firefox) #game-menu select:active {
+  /* WHAT A HACK. Prevent massive text size in Chrome on macOS. */
+  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
+  --scale: calc(1.5 * (1 / var(--menu-scale)));
+  zoom: var(--scale);
+  /* in case browsers use the color for the drop-down, make it black to be safe. */
+  color: #000;
+}
+
+body.is_safari.is_iphone #game-menu select {
+  /* stubborn iOS Safari */
+  /* height: calc(20.5px * var(--menu-scale)); */
+  height: calc(18.33px * var(--menu-scale));
+}
+
+body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
+  /* Safari-specific: adjust zoom, but retain sizing of element. */
+  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
+  --scale: calc(1.75 * (1 / var(--menu-scale)));
+  zoom: var(--scale);
+  font-family: FA Sysfont C, courier, sans-serif;
+  /* note slight padding on width. */
+  min-width: calc(7em * 1 / var(--scale) + 3px);
+  height: calc(0.925em * var(--menu-scale));
+  /* hide UI */
+  text-indent: -100%;
+  background-image: none !important;
+}
+
+body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
+  /* ugh. */
+  vertical-align: bottom;
+}
+
+#game-menu select optgroup,
+#game-menu select option,
+#game-menu select:active option,
+#game-menu select:focus option {
+  /* Font sizing (if not more) works in Firefox on Mac and Windows, and maybe also Edge and Chrome on Windows: Reset drop-down size. */
+  font-family: FA Sysfont C, courier, sans-serif;
+  font-size: 13px;
+  /* some browsers might render the list in white, poorly, against a light background? */
+  color: #000;
+  background-color: #fff;
+}
+
+#game-menu label:hover {
+  border-color: #fff;
+}
+
+#game-menu .cta,
+.generic-cta {
+  background-color: rgba(0, 102, 0, 0.5);
+  border: 1px solid green;
+  box-sizing: border-box;
+  color: #ccc;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  line-height: 1.5em;
+  padding-top: 4px;
+  padding-left: 0;
+  text-decoration: none;
+}
+
+#game-menu label.cta[for='checkbox-vs'] {
+  /* BnB-specific: vertical alignment */
+  padding-right: 0;
+  top: calc(2px * var(--menu-scale));
+  /* prevent top shift from pushing row down */
+  padding-bottom: 0;
+}
+
+#game-menu .cta-radio:first-of-type {
+  margin-left: 0;
+}
+
+#game-menu .cta:focus,
+#game-menu .cta:hover,
+.generic-cta:focus,
+.generic-cta:hover {
+  background-color: rgba(0, 153, 0, 0.75);
+  color: #fff;
+  outline: 0;
+}
+
+#game-menu form {
+  display: block;
+  width: 100%;
+  /* collapse whitespace */
+  font-size: 0px;
+}
+
+#game-menu form input {
+  cursor: pointer;
+}
+
+#game-menu form input[type='radio'] {
+  /* remove standard background appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* background-color only for content */
+  background-clip: content-box;
+  background-color: transparent;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  /* create custom radio button appearance */
+  display: inline-block;
+  width: calc(9px * var(--menu-scale));
+  height: calc(9px * var(--menu-scale));
+  margin: 0;
+  padding: calc(1.5px * var(--menu-scale));
+  position: relative;
+  vertical-align: middle;
+  /* offset border, and/or padding for centering? :X */
+  margin-top: calc(-1px * var(--menu-scale));
+}
+
+body:not(.is-mobile) #game-type-list .emoji-text {
+  position: relative;
+  top: calc(0.35px * var(--menu-scale));
+}
+
+body.is_firefox #game-type-list .emoji-text {
+  /* hack: push emoji down. */
+  top: calc(0.7px * var(--menu-scale));
+}
+
+body.is_firefox #game-type-list label {
+  /* hack: pull entire label up, vertical center. */
+  position: relative;
+  top: calc(-0.35px * var(--menu-scale));
+}
+
+#game-menu form input[type='radio']:checked {
+  background-color: #fff;
+}
+
+#game-menu .cta-checkbox {
+  background: 0 0;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  font-size: calc(10px * var(--menu-scale));
+  vertical-align: top;
+}
+
+#game-menu .checkbox-wrapper {
+  display: inline-block;
+  margin-left: 0;
+  vertical-align: top;
+}
+
+#game-menu .cta-checkbox input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
+  color: currentColor;
+  cursor: pointer;
+  display: grid;
+  margin: 0;
+  place-content: center;
+  width: calc(13px * var(--menu-scale));
+  height: calc(13px * var(--menu-scale));
+}
+
+#game-menu .cta-checkbox input[type='checkbox']:before {
+  position: absolute;
+  top: calc(-0.67px * var(--menu-scale));
+  left: calc(-0.55px * var(--menu-scale));
+  background: 0 0;
+  content: '🤘';
+  height: 1em;
+  width: 1em;
+  visibility: hidden;
+  font-size: calc(7px * var(--menu-scale));
+  transform: translate3d(50%, 50%, 0);
+}
+
+body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
+  /* Slightly smaller on iPhone. */
+  font-size: calc(6px * var(--menu-scale));
+}
+
+#game-menu .cta-checkbox input[type='checkbox']:checked:before {
+  visibility: visible;
+}
+
+#game-menu .cta-checkbox:hover {
+  animation: none;
+  background: 0 0;
+}
+
+#game-menu .emoji {
+  display: inline-block;
+  font-size: 1.25em;
+  line-height: 1.25em;
+  vertical-align: bottom;
+}
+
+#game-menu .cta:hover .emoji {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+#game-description {
+  color: #ccc;
+  font-size: calc(5px * var(--menu-chicago-scale));
+  text-shadow: 0 0 2px #000;
+  margin: 0 auto;
+  margin-top: calc(2px * var(--menu-scale));
+  /* reserve at least two lines */
+  min-height: 3.15em;
+}
+
+#game-description span {
+  display: inline-block;
+  padding: calc(1px * var(--menu-chicago-scale))
+    calc(2px * var(--menu-chicago-scale));
+  border-radius: calc(2px * var(--menu-chicago-scale));
+  background: rgba(0, 0, 0, 0.5);
+}
+
+body.loaded #home-video-wrapper {
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+}
+
+body.edit-mode #home-video-wrapper,
+body.game-started #home-video-wrapper {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+
+#home-menu-video {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: auto;
+  /* slightly over, vertical align tweak */
+  height: 100.15%;
+  aspect-ratio: 16/9;
+  transform: translate3d(-50%, -100%, 0);
+}
+
+#home-menu-video video {
+  /* prevent controls, hover + pop-out etc. */
+  pointer-events: none;
+}
+
+/* game menu screen */
+#checkbox-vs,
+#game-menu button.large,
+#game-menu select,
+#game-type-list {
+  background-color: rgba(0, 128, 0, 0.5);
+  border: none;
+}
+
+#game-menu button.large,
+#game-menu select {
+  color: #eee;
+}
+
+#game-level-wrapper,
+#game-type-list-wrapper {
+  margin-bottom: calc(4px * var(--menu-scale));
+}
+
+#game-type-list-wrapper {
+  position: relative;
+  /* collapse whitespace */
+  font-size: 0px;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left: calc(4px * var(--menu-scale));
+}
+
+#game-type-list {
+  border-radius: calc(2px * var(--menu-scale));
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+#game-type-list.disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+#game-type-list li:not(:last-of-type) label {
+  padding-left: calc(5px * var(--menu-scale));
+  padding-right: calc(5px * var(--menu-scale));
+}
+
+#game-type-list li:not(:first-of-type):not(:last-of-type) label {
+  border-left: 1px solid rgba(0, 0, 0, 0.5);
+  border-right: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+#game-type-list label {
+  font-size: calc(10px * var(--menu-scale));
+  line-height: calc(10px * var(--menu-scale));
+}
+
+#game-buttons {
+  position: relative;
+}
+
+#game-buttons button {
+  margin-right: calc(4px * var(--menu-scale));
+}
+
+#game-menu-wrapper button.game-start {
+  font-family: 'Cheddar Gothic Stencil';
+  font-size: calc(13.75px * var(--menu-scale));
+  padding: calc(4px * var(--menu-scale));
+}
+
+#game-menu-wrapper button.game-start .emoji-text {
+  position: relative;
+  top: -0.1em;
+}
+
+#game-menu-wrapper button.large:hover {
+  background-color: rgba(0, 255, 0, 0.5);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+#game-menu select:hover,
+#game-type-list label:hover {
+  background-color: rgba(0, 255, 0, 0.33);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
+#game-menu input[type='checkbox']:hover {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
+@media screen and (orientation: portrait) {
+  body.is_iphone #game-menu-wrapper {
+    /* tight space on e.g., iPhone in portrait. */
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  body.is_iphone #game-type-list-wrapper {
+    /* drop margins, since this is a single line item on portrait. */
+    margin-left: 0;
+  }
+
+  /* pull video left on narrow screens, show helicopter on-screen more often. */
+  #home-menu-video {
+    margin-left: -45%;
+  }
+}
+
+#game-options-button .emoji-text {
+  position: relative;
+  /* ugh, more emoji tweaks. */
+  top: calc(1px * var(--menu-scale));
+}
+
+#game-buttons .this-rocks {
+  position: relative;
+  top: -2px;
+}
+
+@media screen and (max-width: 900px) and (orientation: portrait) {
+  /**
+   * Special case: On smaller screens, simplify UI.
+   * Hide standalone network button, move into settings.
+   */
+  #start-network-game {
+    /* home screen network menu icon */
+    display: none;
+  }
+
+  #network-pipe {
+    display: inline-block;
+    color: #003000;
+  }
+
+  #game-options-button {
+    /* throw a network icon on here. */
+    background-image: url(../image/win95-networking-icon.png);
+    background-position: 86% 50%;
+    background-size: calc(8px * var(--menu-scale));
+    background-repeat: no-repeat;
+    /* make room for icon */
+    padding-left: calc(4px * var(--menu-scale)) !important;
+    padding-right: calc(12px * var(--menu-scale)) !important;
+  }
+
+  #game-buttons .this-rocks {
+    /* Reduce the size of 🎸🤘 */
+    font-size: calc(7.5px * var(--menu-scale));
+    vertical-align: bottom;
+  }
+
+  body:not(.game-started) #network-prompt {
+    /* show the network option in the prefs panel. */
+    display: block;
+  }
+}
+
+button .network-icon {
+  position: relative;
+  background: url(../image/win95-networking-icon.png) 0 0 / contain no-repeat;
+  display: inline-block;
+  width: calc(10px * var(--menu-scale));
+  height: calc(10px * var(--menu-scale));
+  /* positioning tricks */
+  top: calc(1px * var(--menu-scale));
+  padding: 3px;
+  margin: -6px 0;
+}
+
+button .button-icon {
+  pointer-events: none;
+}

@@ -746,6 +746,9 @@ function hideTitleScreen(callback) {
 
       game.data.started = true;
 
+      // drop game menu CSS.
+      aaLoader.unloadCSS('css/aa-game-menu.css');
+
       callback?.();
     }
   }

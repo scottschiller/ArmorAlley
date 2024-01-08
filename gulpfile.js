@@ -64,6 +64,7 @@ const cssFiles = {
   battleOverLetter: 'aa-battle-over-letter',
   bnb: 'aa-bnb',
   gameUI: 'aa-game-ui',
+  gameMenu: 'aa-game-menu',
   main: 'aa',
   mobile: 'aa-mobile',
   prefsAndModals: 'aa-prefs-and-modals',
@@ -143,11 +144,16 @@ function minifyLetterCSS() {
   return minifyCSS(cssFiles.battleOverLetter);
 }
 
+function minifyGameMenuCSS() {
+  return minifyCSS(cssFiles.gameMenu);
+}
+
 function minifyGameUICSS() {
   return minifyCSS(cssFiles.gameUI);
 }
+
 function minifyPrefsAndModalsCSS() {
   return minifyCSS(cssFiles.prefsAndModals);
 }
 
-exports.default = series(bundleBootFile, minifyBootBundle, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
+exports.default = series(bundleBootFile, minifyBootBundle, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameMenuCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
