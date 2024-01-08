@@ -69,7 +69,7 @@ const cssFiles = {
   mobile: 'aa-mobile',
   prefsAndModals: 'aa-prefs-and-modals',
   tutorialEditor: 'aa-tutorial-editor'
-}
+};
 
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
@@ -83,14 +83,14 @@ async function bundleBootFile() {
 
 function minifyBootBundle() {
   return src(bootBundleFile)
-  .pipe(
-    terser({
-      // https://github.com/terser/terser#minify-options
-      compress: true,
-      ecma: '2016'
-    })
-  )
-  .pipe(dest(jsPath));
+    .pipe(
+      terser({
+        // https://github.com/terser/terser#minify-options
+        compress: true,
+        ecma: '2016'
+      })
+    )
+    .pipe(dest(jsPath));
 }
 
 function minifyJS() {
@@ -156,4 +156,18 @@ function minifyPrefsAndModalsCSS() {
   return minifyCSS(cssFiles.prefsAndModals);
 }
 
-exports.default = series(bundleBootFile, minifyBootBundle, bundleJS, minifyJS, concatJS, minifyMainCSS, minifyMobileCSS, minifyBNBCSS, minifyTutorialEditorCSS, minifyLetterCSS, minifyGameMenuCSS, minifyGameUICSS, minifyPrefsAndModalsCSS);
+exports.default = series(
+  bundleBootFile,
+  minifyBootBundle,
+  bundleJS,
+  minifyJS,
+  concatJS,
+  minifyMainCSS,
+  minifyMobileCSS,
+  minifyBNBCSS,
+  minifyTutorialEditorCSS,
+  minifyLetterCSS,
+  minifyGameMenuCSS,
+  minifyGameUICSS,
+  minifyPrefsAndModalsCSS
+);
