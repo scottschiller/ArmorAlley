@@ -2,6 +2,84 @@
  * "Virtual Stupidity" CSS
  */
 
+.tv-screen-container {
+  position: absolute;
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  aspect-ratio: 16/9;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+#tv-display {
+  display: none;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  /* center, and slightly smaller */
+  --scale: calc(var(--gs) / 2);
+  /* don't pull up a full half-height, leave room for announcement text etc. */
+  transform: translate3d(-50%, -40%, 0) scale3d(var(--scale), var(--scale), 1);
+  transition: 0.25s ease-in;
+  transition-property: transform, opacity, filter, position;
+  width: 409px;
+  height: 320px;
+}
+
+body.bnb #tv-display {
+  display: block;
+}
+
+body.bnb #tv-display.active {
+  opacity: 1;
+}
+
+body.bnb #tv-display.disabled {
+  opacity: 0 !important;
+}
+
+#tv-display #tv {
+  /* https://pngtree.com/freepng/color-tube-television-screen-to-gold_7430214.html */
+  background-size: contain;
+  height: 320px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 409px;
+  filter: drop-shadow(0 0 48px rgba(255, 255, 212, 0.33));
+}
+
+body.bnb #tv-display #tv,
+body.bnb-preload #tv-display #tv {
+  background-image: url(../image/pngtree.com_color_tv.webp);
+}
+
+body.bnb #tv-display.widescreen #tv {
+  background: url(../image/pngtree.com_color_tv_widescreen.webp) 0 21.5px /
+    contain no-repeat;
+}
+
+#tv-display video {
+  height: 212px;
+  left: 60px;
+  position: absolute;
+  top: 34px;
+  width: 288px;
+}
+
+#tv-display.widescreen video {
+  height: 214px;
+  left: 59.5px;
+  top: 33px;
+  width: 290px;
+}
+
 body.bnb:not(.is-mobile) #aa ul.stats-bar li.inventory-item:first-of-type {
   /* centering shenanigans */
   margin-left: calc(16px * var(--gs));

@@ -327,7 +327,7 @@ function init() {
   }
 
   // preload the game CSS, too.
-  aaLoader.loadCSS('css/aa-game-ui.css');
+  window.setTimeout(() => aaLoader.loadCSS('css/aa-game-ui.css'), 5000);
 }
 
 function introBNBSound(e) {

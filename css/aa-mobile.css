@@ -298,6 +298,13 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
     top: calc(6px * var(--gs));
   }
 
+  @media screen and (orientation: landscape) {
+    /* TODO: review and fix. */
+    body.is_iphone #funds {
+      zoom: 1.6;
+    }
+  }
+
   /* bottom bar */
   body.is-mobile.notch-at-left #bottom {
     padding-right: 12px;

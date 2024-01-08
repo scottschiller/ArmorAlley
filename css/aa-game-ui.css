@@ -25,6 +25,21 @@
   font-display: swap;
 }
 
+body.is_safari:not(.is-mobile) #player-status-bar,
+body.is_safari:not(.is-mobile) .sprite {
+  /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
+  image-rendering: pixelated;
+}
+
+body.game-started {
+  -webkit-touch-callout: none;
+  /* prevent pinch-to-zoom and scroll */
+  touch-action: none;
+  /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 #game-status-bar.building {
   /* when inventory is being ordered */
   border-color: #fff;

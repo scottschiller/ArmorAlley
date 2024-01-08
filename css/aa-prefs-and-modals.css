@@ -2,6 +2,12 @@
  * Preferences and classic mac modal bits
  */
 
+body.prefs-modal-open #aa,
+body.prefs-modal-open #game-menu-wrapper {
+  /* prevent clicks on the battlefield and/or game menu. */
+  pointer-events: none;
+}
+
 /* prefs + modal stuff - based on original 68K Macintosh UI */
 #game-prefs-modal {
   border: 1px solid #000;
