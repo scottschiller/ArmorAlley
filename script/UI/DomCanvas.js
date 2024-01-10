@@ -31,9 +31,9 @@ const pos = {
   left: (left) =>
     left * game.objects.radar.data.scale -
     game.objects.radar.data.radarScrollLeft,
-  bottomAlign: (height) =>
+  bottomAlign: (height, obj) =>
     32 * game.objects.view.data.screenScale -
-    height * game.objects.radar.data.itemScale,
+    (height * (obj?.data?.stepOffset !== undefined ? obj?.data?.stepOffset : 1)) * game.objects.radar.data.itemScale,
   top: (top) => top * game.objects.view.data.screenScale,
   width: (width) => width * game.objects.radar.data.itemScale,
   // offset for outline / stroke
