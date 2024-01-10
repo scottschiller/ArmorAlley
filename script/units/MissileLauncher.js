@@ -350,6 +350,7 @@ const MissileLauncher = (options = {}) => {
     dom,
     die,
     init: initMissileLauncher,
+    radarItem,
     resize
   };
 
