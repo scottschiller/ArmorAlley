@@ -61,6 +61,11 @@ const scanNodeTypes = {
   [TYPES.missileLauncher]: MISSILE_LAUNCHER_SCAN_RADIUS
 };
 
+const ignoreLayoutTypes = {
+  [TYPES.balloon]: true,
+  [TYPES.helicopter]: true
+};
+
 const Radar = () => {
   let data;
   let css;
@@ -737,8 +742,8 @@ const Radar = () => {
               data.height -
             (objects.items[i]?.layout?.height || 0);
 
-        if (objects.items[i].data.parentType === TYPES.helicopter) {
-          // HACK: once helicopter has been targeted, it will have a layout object.
+        if (ignoreLayoutTypes[objects.items[i].data.parentType]) {
+          // HACK: once helicopter (or balloon) has been targeted, it will have a layout object.
           // this messes up the radar positioning, so subtract it here.
           top += objects.items[i]?.layout?.height || 0;
         }
