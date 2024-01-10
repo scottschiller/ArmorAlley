@@ -386,7 +386,7 @@ MissileLauncher.radarItemConfig = () => ({
   draw: (ctx, obj, pos, width, height) => {
     ctx.roundRect(
       pos.left(obj.data.left),
-      pos.bottomAlign(height),
+      pos.bottomAlign(height, obj),
       pos.width(width),
       pos.height(height),
       [height, height, 0, 0]
