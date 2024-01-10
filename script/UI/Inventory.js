@@ -14,6 +14,14 @@ import { collisionCheck } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 
+const stepTypes = {
+  [TYPES.tank]: true,
+  [TYPES.missileLauncher]: true,
+  [TYPES.van]: true,
+  [TYPES.infantry]: true,
+  [TYPES.engineer]: true
+};
+
 const Inventory = () => {
   let css, data, dom, objects, orderNotificationOptions, exports;
 
@@ -316,6 +324,11 @@ const Inventory = () => {
 
     // force-append this thing, if it's on-screen right now
     sprites.updateIsOnScreen(newObject);
+
+    // get the radar item, too (if one of MTVIE)
+    if (stepTypes[newObject.data.type]) {
+      newObject.radarItem?.stepUp();
+    }
 
     utils.css.add(newObject.dom.o, css.building);
 
