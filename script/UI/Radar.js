@@ -704,6 +704,9 @@ const Radar = () => {
           objects.items[i].isStatic = true;
         }
 
+        // animate method?
+        objects.items[i]?.animate?.();
+
         // constrain helicopters only, so they don't fly out-of-bounds
         if (objects.items[i].oParent.data.type === TYPES.helicopter) {
           left =
