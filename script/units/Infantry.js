@@ -214,7 +214,7 @@ const Infantry = (options = {}) => {
 
     data.dead = true;
 
-    radarItem?.die({ silent: dieOptions?.silent });
+    radarItem?.die(dieOptions);
 
     if (dieOptions.attacker) {
       data.attacker = dieOptions.attacker;

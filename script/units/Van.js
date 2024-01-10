@@ -63,7 +63,7 @@ const Van = (options = {}) => {
     }, 1000);
 
     if (radarItem) {
-      radarItem.die();
+      radarItem.die(dieOptions);
     } else {
       game.objects.stats.destroy(exports);
     }
