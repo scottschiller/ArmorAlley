@@ -656,6 +656,8 @@ function recycleTest(obj) {
   utils.css.remove(obj.dom.o, 'ordering');
   utils.css.add(obj.dom.o, 'recycling');
 
+  obj?.radarItem?.recycle?.();
+
   // ensure 'building' is set, as well. "pre-existing" game units will not have this.
   common.setFrameTimeout(() => {
     utils.css.add(obj.dom.o, 'building');
