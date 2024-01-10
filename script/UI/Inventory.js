@@ -327,7 +327,7 @@ const Inventory = () => {
 
     // get the radar item, too (if one of MTVIE)
     if (stepTypes[newObject.data.type]) {
-      newObject.radarItem?.stepUp();
+      newObject.radarItem?.summon();
     }
 
     utils.css.add(newObject.dom.o, css.building);

@@ -98,12 +98,12 @@ function RadarItem(options) {
     data.stepActive = true;
   }
 
-  function stepUp() {
+  function summon() {
     const reverse = true;
     makeStepFrames(reverse);
   }
 
-  function stepDown() {
+  function dismiss() {
     makeStepFrames();
     // hack: a few additional frames, ensure this is pulled out of view.
     data.stepFrames = data.stepFrames.concat([0, -0.05, -0.075, -0.1]);
@@ -112,7 +112,7 @@ function RadarItem(options) {
   function recycle() {
     if (data.recycling) return;
     data.recycling = true;
-    stepDown();
+    dismiss();
   }
 
   function animate() {
@@ -219,8 +219,8 @@ function RadarItem(options) {
     oParent,
     recycle,
     reset,
-    stepUp,
-    stepDown,
+    summon,
+    dismiss,
     updateScanNode
   };
 
