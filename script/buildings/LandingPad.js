@@ -1,4 +1,4 @@
-import { GAME_SPEED, getTypes, rndInt, worldHeight } from '../core/global.js';
+import { getTypes, rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
