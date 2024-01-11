@@ -970,6 +970,9 @@ const SmartMissile = (options = {}) => {
 
   const { width, height } = missileData;
 
+  // velocity x + y "basis"
+  const v = 12;
+
   data = common.inheritData(
     {
       type,
@@ -1013,8 +1016,8 @@ const SmartMissile = (options = {}) => {
       target: null,
       vX: net.active ? 1 : 1 + Math.random(),
       vY: net.active ? 1 : 1 + Math.random(),
-      vXMax: net.active ? 12 : 12 + rng(6, type) + (options.vXMax || 0),
-      vYMax: net.active ? 12 : 12 + rng(6, type) + (options.vYMax || 0),
+      vXMax: net.active ? v : v + rng(v / 2, type) + (options.vXMax || 0),
+      vYMax: net.active ? v : v + rng(v / 2, type) + (options.vYMax || 0),
       vYMaxExpired: 36,
       thrust: net.active ? 0.5 : 0.5 + rng(0.5, type),
       deadTimer: null,
