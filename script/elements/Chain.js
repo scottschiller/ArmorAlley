@@ -26,7 +26,8 @@ const Chain = (options = {}) => {
 
   function jerkCheck(sound) {
     // can't be jerking your chain if there's no balloon, it's not in view, and/or the chain is dead.
-    if (!objects.balloon || !objects.balloon.data.isOnScreen || data.dead) skipSound(sound);
+    if (!objects.balloon || !objects.balloon.data.isOnScreen || data.dead)
+      skipSound(sound);
   }
 
   function isJerking(intent) {
