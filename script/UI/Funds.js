@@ -1,7 +1,7 @@
 import { utils } from '../core/utils.js';
 import { playSound, skipSound, sounds } from '../core/sound.js';
 import { game } from '../core/Game.js';
-import { DEFAULT_FUNDS } from '../core/global.js';
+import { DEFAULT_FUNDS, GAME_SPEED_RATIOED } from '../core/global.js';
 import { common } from '../core/common.js';
 
 const Funds = () => {
@@ -89,7 +89,7 @@ const Funds = () => {
       i = 21;
     }
 
-    data.frameInterval = i;
+    data.frameInterval = i * (1 / GAME_SPEED_RATIOED);
   }
 
   function updateDOM() {
