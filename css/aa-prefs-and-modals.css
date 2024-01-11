@@ -818,6 +818,16 @@ button.attention:not(:active) {
   animation: 1s steps(2) infinite button-blink-larger;
 }
 
+/* block-level display shenanigans */
+body.is-mobile #game-prefs-modal .mobile-only-block {
+  display: block;
+}
+
+body.is-mobile #game-prefs-modal .mobile-only.network {
+  /* hackish: override display when combined with non-network game, .network-only case */
+  display: initial;
+}
+
 @keyframes button-blink {
   /**
    * This is generally considered bad form, evil UX/UI,

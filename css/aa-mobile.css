@@ -211,16 +211,6 @@ body.is-mobile.mobile-controls_right-aligned
   }
 }
 
-/* block-level display shenanigans */
-body.is-mobile #game-prefs-modal .mobile-only-block {
-  display: block;
-}
-
-body.is-mobile #game-prefs-modal .mobile-only.network {
-  /* hackish: override display when combined with non-network game, .network-only case */
-  display: initial;
-}
-
 @media screen and (orientation: landscape) {
   /* hackish: margin tweaks, due to scaling of mobile controls */
   body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
