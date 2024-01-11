@@ -2559,10 +2559,6 @@ body.game-started #world-wrapper.incoming-smart-missile {
   opacity: 0.5;
 }
 
-body:not(.is-mobile) .mobile-only {
-  display: none;
-}
-
 #notification-toasts {
   position: absolute;
   overflow: hidden;

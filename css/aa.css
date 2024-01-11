@@ -215,6 +215,10 @@ body.is_safari #game-menu select:focus {
   width: 100%;
 }
 
+body:not(.is-mobile) .mobile-only {
+  display: none;
+}
+
 body.edit-mode #world-wrapper,
 body.game-started #world-wrapper {
   transition: border 0.25s ease-in-out, filter 0.5s ease-in;
