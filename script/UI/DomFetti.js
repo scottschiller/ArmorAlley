@@ -1,11 +1,11 @@
 import { game } from '../core/Game.js';
-import { GAME_SPEED, TYPES, isiPhone } from '../core/global.js';
+import { FPS, GAME_SPEED, TYPES, isiPhone } from '../core/global.js';
 
 // "DOMFetti" experiment - 09/2018
 // Refactored 12/2023 to render to <canvas>
 
 // if false, target 30fps by updating style properties every other frame.
-const RENDER_AT_60FPS = false;
+let is60FPS = false;
 
 // e.g., 66% of #ccc
 const BACK_SIDE_COLOR = 2 / 3;
@@ -340,7 +340,7 @@ function randomPhysics(
 function updateFetti(fetti, progress, decay, frameCount) {
   if (!fetti?.physics) return;
 
-  const styleThisFrame = RENDER_AT_60FPS || frameCount % 2 === 0;
+  const styleThisFrame = is60FPS || frameCount % 2 === 0;
 
   // DRY
   fp = fetti.physics;
@@ -428,7 +428,7 @@ function animateFetti(fettis, decay, callback) {
 
   function animate() {
     let result = update();
-    if (RENDER_AT_60FPS) return result;
+    if (is60FPS) return result;
 
     /**
      * if running at 30FPS, big hack: do this again,
@@ -520,6 +520,8 @@ function confetti(
 
 function domFettiBoom(source, target, x, y) {
   if (!source?.data) return;
+
+  is60FPS = FPS === 60;
 
   const { screenScale } = game.objects.view.data;
 
