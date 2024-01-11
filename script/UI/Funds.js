@@ -159,7 +159,8 @@ const Funds = () => {
   function getWrecked() {
     // $$$
     if (!data.clientRect && dom.digits?.length) {
-      data.clientRect = dom.digits[dom.digits.length - 1].getBoundingClientRect();
+      data.clientRect =
+        dom.digits[dom.digits.length - 1].getBoundingClientRect();
     }
     return data.clientRect;
   }
