@@ -5,7 +5,7 @@ import { playSound, skipSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
-import { GAME_SPEED } from '../core/global.js';
+import { GAME_SPEED_RATIOED } from '../core/global.js';
 
 const Chain = (options = {}) => {
   let css, data, dom, objects, exports, defaultHeight;
@@ -167,10 +167,11 @@ const Chain = (options = {}) => {
         // free-falling, detached chain
         y = data.y;
 
-        y += data.fallingVelocity * GAME_SPEED;
+        y += data.fallingVelocity * GAME_SPEED_RATIOED;
 
         // cheap gravity acceleration
-        data.fallingVelocity += data.fallingVelocityIncrement * GAME_SPEED;
+        data.fallingVelocity +=
+          data.fallingVelocityIncrement * GAME_SPEED_RATIOED;
 
         if (y >= game.objects.view.data.world.height + 2) {
           die();

@@ -4,10 +4,9 @@ import {
   rng,
   TYPES,
   rngInt,
-  GAME_SPEED,
   rngPlusMinus,
-  isiPhone,
-  clientFeatures
+  clientFeatures,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { zones } from '../core/zones.js';
@@ -88,8 +87,8 @@ const Cloud = (options = {}) => {
       data.windOffsetY += 0.01;
     }
 
-    data.x += data.windOffsetX * GAME_SPEED;
-    data.y += data.windOffsetY * GAME_SPEED;
+    data.x += data.windOffsetX * GAME_SPEED_RATIOED;
+    data.y += data.windOffsetY * GAME_SPEED_RATIOED;
 
     // reset drift "flag"
     data.driftCount = 0;

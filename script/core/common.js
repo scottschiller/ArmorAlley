@@ -12,7 +12,8 @@ import {
   isSafari,
   FPS,
   GAME_SPEED,
-  updateGameSpeed
+  updateGameSpeed,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
@@ -369,8 +370,6 @@ const common = {
   domCanvas: DomCanvas(),
   hexToRgb,
   setGameSpeed: (gameSpeed) => {
-    if (gameSpeed == GAME_SPEED) return;
-
     // note: this updates GAME_SPEED
     const newGameSpeed = updateGameSpeed(gameSpeed);
 
@@ -427,7 +426,7 @@ const common = {
     // recalculate the new value, based on the original "1X" one - e.g., data['fireModulus'] => ['fireModulus1X'] * ...
     gameSpeedProps.forEach((prop) => {
       obj.data[prop] = parseInt(
-        (obj.data[`${prop}1X`] || 1) * (1 / GAME_SPEED),
+        (obj.data[`${prop}1X`] || 1) * (1 / GAME_SPEED_RATIOED),
         10
       );
     });
@@ -507,7 +506,7 @@ const common = {
     data = {
       frameCount: 0,
       frameInterval: parseInt(
-        (delayMsec / FRAMERATE) * (useGameSpeed ? 1 / GAME_SPEED : 1),
+        (delayMsec / FRAMERATE) * (useGameSpeed ? 1 / GAME_SPEED_RATIOED : 1),
         10
       ), // e.g., msec = 1000 -> frameInterval = 60
       callbackFired: false,

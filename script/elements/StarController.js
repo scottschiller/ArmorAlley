@@ -2,7 +2,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { game } from '../core/Game.js';
 import {
   FPS,
-  GAME_SPEED,
+  GAME_SPEED_RATIOED,
   isMobile,
   isiPhone,
   oneOf,
@@ -72,7 +72,7 @@ const StarController = () => {
     let scrollDelta =
       data.lastScrollLeft - game.objects.view.data.battleField.scrollLeft;
 
-    const absDelta = Math.abs(scrollDelta) * (1 / GAME_SPEED);
+    const absDelta = Math.abs(scrollDelta) * (1 / GAME_SPEED_RATIOED);
 
     // hackish: if we've scrolled a huge distance, e.g,. helicopter died mid-way out and now back at base, just reset all stars.
     // this mostly applies to small portrait screens, e.g., iPhone.

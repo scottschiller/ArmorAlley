@@ -2,9 +2,9 @@ import {
   rnd,
   rndInt,
   plusMinus,
-  GAME_SPEED,
   oneOf,
-  TYPES
+  TYPES,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
@@ -33,18 +33,18 @@ const Smoke = (options = {}) => {
       data.x +=
         data.vX *
         (options.fixedSpeed ? 1 : Math.max(0.9, Math.random())) *
-        GAME_SPEED;
+        GAME_SPEED_RATIOED;
       data.y +=
         (data.vY * (options.fixedSpeed ? 1 : Math.max(0.9, Math.random())) +
           data.gravity) *
-        GAME_SPEED;
+        GAME_SPEED_RATIOED;
 
       if (options.deceleration) {
-        data.vX *= 1 - (1 - options.deceleration) * GAME_SPEED;
-        data.vY *= 1 - (1 - options.deceleration) * GAME_SPEED;
+        data.vX *= 1 - (1 - options.deceleration) * GAME_SPEED_RATIOED;
+        data.vY *= 1 - (1 - options.deceleration) * GAME_SPEED_RATIOED;
         if (options.increaseDeceleration !== undefined) {
           options.deceleration *=
-            1 - (1 - options.increaseDeceleration) * GAME_SPEED;
+            1 - (1 - options.increaseDeceleration) * GAME_SPEED_RATIOED;
         }
       }
     }
@@ -90,7 +90,7 @@ const Smoke = (options = {}) => {
 
     // if fading, animate every frame.
     if (data.isFading) {
-      data.fadeFrame += GAME_SPEED;
+      data.fadeFrame += GAME_SPEED_RATIOED;
 
       if (data.fadeFrame < data.fadeFrames) {
         data.domCanvas.img.target.opacity =
@@ -118,7 +118,7 @@ const Smoke = (options = {}) => {
       type: 'smoke',
       frameCount: 0,
       spriteFrameModulus: parseInt(
-        (options.spriteFrameModulus || 2) * (1 / GAME_SPEED),
+        (options.spriteFrameModulus || 2) * (1 / GAME_SPEED_RATIOED),
         10
       ),
       spriteFrame:

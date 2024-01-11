@@ -8,7 +8,7 @@ import {
   TYPES,
   rng,
   rngInt,
-  GAME_SPEED
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -95,8 +95,8 @@ const ParachuteInfantry = (options = {}) => {
 
     sprites.moveTo(
       exports,
-      data.x + data.vX * GAME_SPEED,
-      data.y + data.vY * GAME_SPEED
+      data.x + data.vX * GAME_SPEED_RATIOED,
+      data.y + data.vY * GAME_SPEED_RATIOED
     );
 
     if (!data.parachuteOpen) {
@@ -124,7 +124,7 @@ const ParachuteInfantry = (options = {}) => {
           // -1, 0, 1
           randomWind = rngInt(3, data.type) - 1;
 
-          data.vX = randomWind * 0.25 * GAME_SPEED;
+          data.vX = randomWind * 0.25 * GAME_SPEED_RATIOED;
 
           if (randomWind === -1) {
             // moving left

@@ -4,7 +4,7 @@ import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { enemyHelicopterNearby, nearbyTest } from '../core/logic.js';
 import {
-  GAME_SPEED,
+  GAME_SPEED_RATIOED,
   TYPES,
   FPS,
   rndInt,
@@ -111,7 +111,7 @@ const Van = (options = {}) => {
     let enemyHelicopter;
 
     if (!data.stopped && !game.data.battleOver) {
-      sprites.moveTo(exports, data.x + data.vX * GAME_SPEED, data.y);
+      sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
     } else {
       // if stopped, just take scroll into effect
       sprites.moveWithScrollOffset(exports);

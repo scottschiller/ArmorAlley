@@ -3,13 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import {
-  GAME_SPEED,
-  getTypes,
-  isiPhone,
-  rngInt,
-  TYPES
-} from '../core/global.js';
+import { GAME_SPEED_RATIOED, getTypes, rngInt, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -248,7 +242,7 @@ const Infantry = (options = {}) => {
         if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
       } else {
         // engineers always move one pixel at a time; let's say it's because of the backpacks.
-        moveTo(data.x + data.vX * GAME_SPEED, data.y);
+        moveTo(data.x + data.vX * GAME_SPEED_RATIOED, data.y);
       }
     } else {
       sprites.setTransformXY(

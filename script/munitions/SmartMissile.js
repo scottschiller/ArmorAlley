@@ -5,6 +5,7 @@ import { common } from '../core/common.js';
 import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
 import {
   GAME_SPEED,
+  GAME_SPEED_RATIOED,
   getTypes,
   oneOf,
   rad2Deg,
@@ -62,7 +63,7 @@ const SmartMissile = (options = {}) => {
 
     // determine angle
     if (data.isBanana) {
-      data.angle += data.angleIncrement;
+      data.angle += data.angleIncrement * GAME_SPEED_RATIOED;
 
       if (data.angle >= 360) {
         data.angle -= 360;
@@ -675,7 +676,7 @@ const SmartMissile = (options = {}) => {
 
     if (data.expired) {
       // fall...
-      data.gravity *= 1.085;
+      data.gravity *= Math.max(1.0275, 1.085 * GAME_SPEED_RATIOED);
 
       // ... and decelerate on X-axis.
       data.vX *= 0.95;
@@ -683,7 +684,7 @@ const SmartMissile = (options = {}) => {
       // x-axis
 
       // if changing directions, cut in half.
-      data.vX += deltaX * 0.0033;
+      data.vX += deltaX * 0.0033 * GAME_SPEED_RATIOED;
 
       // y-axis
 
@@ -739,13 +740,13 @@ const SmartMissile = (options = {}) => {
       );
     }
 
-    newX = data.x + data.vX * GAME_SPEED;
+    newX = data.x + data.vX * GAME_SPEED_RATIOED;
     newY =
       data.y +
       (!data.expired
-        ? data.vY
+        ? data.vY * GAME_SPEED_RATIOED
         : Math.min(data.vY + data.gravity, data.vYMaxExpired)) *
-        GAME_SPEED;
+        GAME_SPEED_RATIOED;
 
     // determine angle of missile (pointing at target, not necessarily always heading that way)
     rad = Math.atan2(deltaY, deltaX);
@@ -992,11 +993,11 @@ const SmartMissile = (options = {}) => {
       decoyFrameCount: 15,
       ramiusFrameCount: 20,
       expireFrameCount: parseInt(
-        (options.expireFrameCount || 256) * (1 / GAME_SPEED),
+        (options.expireFrameCount || 256) * (1 / GAME_SPEED_RATIOED),
         10
       ),
       dieFrameCount: parseInt(
-        (options.dieFrameCount || 640) * (1 / GAME_SPEED),
+        (options.dieFrameCount || 640) * (1 / GAME_SPEED_RATIOED),
         10
       ), // 640 frames ought to be enough for anybody.
       width,

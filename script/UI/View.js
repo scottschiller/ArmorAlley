@@ -4,6 +4,7 @@ import {
   FPS,
   FRAMERATE,
   GAME_SPEED,
+  GAME_SPEED_RATIOED,
   oneOf,
   searchParams,
   TYPES,
@@ -617,7 +618,7 @@ const View = () => {
         setLeftScroll(
           scrollAmount *
             data.maxScroll *
-            GAME_SPEED *
+            GAME_SPEED_RATIOED *
             decelerateScrollFrames[decelerateScrollFrame]
         );
 
@@ -628,7 +629,7 @@ const View = () => {
         }
       } else if (!game.players.local.data.dead && !game.data.battleOver) {
         // regular in-game scrolling, live chopper
-        setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED);
+        setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED_RATIOED);
       }
     }
   }

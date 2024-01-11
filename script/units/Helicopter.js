@@ -25,8 +25,8 @@ import {
   rngInt,
   rng,
   rngPlusMinus,
-  GAME_SPEED,
-  clientFeatures
+  clientFeatures,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 
 import {
@@ -232,7 +232,10 @@ const Helicopter = (options = {}) => {
 
     const burnRate = data.landed ? data.fuelRateLanded : data.fuelRateFlying;
 
-    data.fuel = Math.max(0, data.fuel - ((0.1 * 1) / burnRate) * GAME_SPEED);
+    data.fuel = Math.max(
+      0,
+      data.fuel - ((0.1 * 1) / burnRate) * GAME_SPEED_RATIOED
+    );
 
     updateFuelUI();
   }
@@ -576,7 +579,7 @@ const Helicopter = (options = {}) => {
 
     data.repairFrames++;
 
-    data.fuel = Math.min(data.maxFuel, data.fuel + 0.4);
+    data.fuel = Math.min(data.maxFuel, data.fuel + 0.4 * GAME_SPEED_RATIOED);
 
     if (data.ammo < data.maxAmmo && data.repairFrames % 2 === 0) {
       data.ammo = Math.min(data.maxAmmo, data.ammo + 1 * GAME_SPEED);
@@ -1226,7 +1229,7 @@ const Helicopter = (options = {}) => {
     } else {
       lastTarget = null;
 
-      data.vX = -8;
+      data.vX = -8 * GAME_SPEED_RATIOED;
 
       if (data.flipped) {
         flip();
@@ -2054,8 +2057,8 @@ const Helicopter = (options = {}) => {
       deltaX = tData.x - data.x;
       deltaY = -4;
 
-      data.vX = deltaX;
-      data.vY = deltaY;
+      data.vX = deltaX * GAME_SPEED_RATIOED;
+      data.vY = deltaY * GAME_SPEED_RATIOED;
 
       data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
       data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
@@ -2067,7 +2070,7 @@ const Helicopter = (options = {}) => {
 
       if (data.x >= tData.x && data.x + data.width <= tData.x + tData.width) {
         data.vX = 0;
-        data.vY = 4;
+        data.vY = 4 * GAME_SPEED_RATIOED;
       }
 
       centerView();
@@ -2078,8 +2081,8 @@ const Helicopter = (options = {}) => {
     if (data.onLandingPad) {
       if (!data.repairing || data.repairComplete) {
         // repair didn't start, or has completed. go go go!
-        data.vY = -1;
-        data.vX = data.vXMax * data.isEnemy ? -1 : 1;
+        data.vY = -1 * GAME_SPEED_RATIOED;
+        data.vX = data.vXMax * GAME_SPEED_RATIOED * data.isEnemy ? -1 : 1;
 
         // reset target, too
         lastTarget = null;
@@ -2275,9 +2278,9 @@ const Helicopter = (options = {}) => {
 
       if (Math.abs(deltaVX) > 1) {
         if (data.vX < desiredVX) {
-          data.vX += 1 * GAME_SPEED;
+          data.vX += 1 * GAME_SPEED_RATIOED;
         } else {
-          data.vX -= 1 * GAME_SPEED;
+          data.vX -= 1 * GAME_SPEED_RATIOED;
         }
       } else {
         data.vX = 0;
@@ -2287,9 +2290,9 @@ const Helicopter = (options = {}) => {
 
       if (Math.abs(deltaVY) > 1) {
         if (data.vY < desiredVY) {
-          data.vY += 1;
+          data.vY += 1 * GAME_SPEED_RATIOED;
         } else {
-          data.vY -= 1;
+          data.vY -= 1 * GAME_SPEED_RATIOED;
         }
       } else {
         data.vY = 0;
@@ -2346,9 +2349,9 @@ const Helicopter = (options = {}) => {
     } else {
       // default: go "toward the other guys"
       if (data.isEnemy) {
-        data.vX -= 0.25 * GAME_SPEED;
+        data.vX -= 0.25 * GAME_SPEED_RATIOED;
       } else {
-        data.vX += 0.25 * GAME_SPEED;
+        data.vX += 0.25 * GAME_SPEED_RATIOED;
       }
 
       // and up
@@ -2562,9 +2565,9 @@ const Helicopter = (options = {}) => {
     if (data.fuel <= 0 || !data.pilot) {
       // gravity until dead.
       if (data.vY < 0.5) {
-        data.vY += 0.5 * GAME_SPEED;
+        data.vY += 0.5 * GAME_SPEED_RATIOED;
       } else {
-        data.vY *= 1 + 0.1 * GAME_SPEED;
+        data.vY *= 1 + 0.1 * GAME_SPEED_RATIOED;
       }
 
       if (data.landed) {
@@ -2579,7 +2582,7 @@ const Helicopter = (options = {}) => {
     }
 
     // take the difference between the game speed and real-time, if less than real-time.
-    const RELATIVE_GAME_SPEED = GAME_SPEED; // (GAME_SPEED < 1 ? (1 - (GAME_SPEED / 2)) : GAME_SPEED);
+    const RELATIVE_GAME_SPEED = GAME_SPEED_RATIOED; // (GAME_SPEED < 1 ? (1 - (GAME_SPEED / 2)) : GAME_SPEED);
 
     if (!data.dead) {
       newX = data.x + data.vX * RELATIVE_GAME_SPEED;

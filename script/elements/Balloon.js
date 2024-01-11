@@ -9,9 +9,9 @@ import {
   rngInt,
   rngPlusMinus,
   rng,
-  GAME_SPEED,
   oneOf,
-  worldHeight
+  worldHeight,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -234,7 +234,7 @@ const Balloon = (options = {}) => {
         data.verticalDirection *= -1;
       }
 
-      data.y += data.verticalDirection * GAME_SPEED;
+      data.y += data.verticalDirection * GAME_SPEED_RATIOED;
     } else {
       // free-floating balloon
 
@@ -276,8 +276,8 @@ const Balloon = (options = {}) => {
 
       checkDirection();
 
-      data.x += data.windOffsetX * GAME_SPEED;
-      data.y += data.windOffsetY * GAME_SPEED;
+      data.x += data.windOffsetX * GAME_SPEED_RATIOED;
+      data.y += data.windOffsetY * GAME_SPEED_RATIOED;
 
       zones.refreshZone(exports);
     }

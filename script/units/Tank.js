@@ -11,7 +11,7 @@ import {
   oneOf,
   getTypes,
   rngInt,
-  GAME_SPEED
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import {
   addSequence,
@@ -315,7 +315,7 @@ const Tank = (options = {}) => {
     effects.smokeRelativeToDamage(exports);
 
     if (!data.stopped) {
-      moveTo(data.x + data.vX * GAME_SPEED, data.y);
+      moveTo(data.x + data.vX * GAME_SPEED_RATIOED, data.y);
     } else {
       sprites.setTransformXY(
         exports,
@@ -331,7 +331,7 @@ const Tank = (options = {}) => {
           // run "moving" animation for a few frames
           utils.css.remove(dom.o, css.stopped);
 
-          moveTo(data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED, data.y);
+          moveTo(data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED_RATIOED, data.y);
 
           // and then stop again if we haven't resumed for real by that time.
           common.setFrameTimeout(() => {

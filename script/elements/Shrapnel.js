@@ -3,7 +3,7 @@ import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
   FPS,
-  GAME_SPEED,
+  GAME_SPEED_RATIOED,
   getTypes,
   plusMinus,
   rnd,
@@ -196,9 +196,12 @@ const Shrapnel = (options = {}) => {
 
     // data.y may have been "corrected" - move again, just to be safe.
     moveTo(
-      data.x + data.vX * GAME_SPEED,
+      data.x + data.vX * GAME_SPEED_RATIOED,
       data.y +
-        Math.min(data.maxVY, data.vY * GAME_SPEED + data.gravity * GAME_SPEED)
+        Math.min(
+          data.maxVY,
+          data.vY * GAME_SPEED_RATIOED + data.gravity * GAME_SPEED_RATIOED
+        )
     );
 
     playSound(sounds.ricochet, exports);
@@ -209,7 +212,7 @@ const Shrapnel = (options = {}) => {
 
     // if fading, animate every frame.
     if (data.isFading) {
-      data.fadeFrame += GAME_SPEED;
+      data.fadeFrame += GAME_SPEED_RATIOED;
 
       if (data.fadeFrame < data.fadeFrames) {
         data.domCanvas.img.target.opacity =
@@ -233,13 +236,16 @@ const Shrapnel = (options = {}) => {
       return !dom.o;
     }
 
-    data.rotate3DAngle += data.rotate3DAngleIncrement * GAME_SPEED;
-    data.spinAngle += data.spinAngleIncrement * GAME_SPEED;
+    data.rotate3DAngle += data.rotate3DAngleIncrement * GAME_SPEED_RATIOED;
+    data.spinAngle += data.spinAngleIncrement * GAME_SPEED_RATIOED;
 
     moveTo(
-      data.x + data.vX * GAME_SPEED,
+      data.x + data.vX * GAME_SPEED_RATIOED,
       data.y +
-        Math.min(data.maxVY, data.vY * GAME_SPEED + data.gravity * GAME_SPEED)
+        Math.min(
+          data.maxVY,
+          data.vY * GAME_SPEED_RATIOED + data.gravity * GAME_SPEED_RATIOED
+        )
     );
 
     // random: smoke while moving?
@@ -252,7 +258,8 @@ const Shrapnel = (options = {}) => {
       moveTo(data.x, worldHeight - (data.height / 2) * data.relativeScale);
       die();
     } else {
-      data.gravity *= 1 + (data.gravityBase + data.gravityRate) * GAME_SPEED;
+      data.gravity *=
+        1 + (data.gravityBase + data.gravityRate) * GAME_SPEED_RATIOED;
 
       // collision check
       collisionTest(collision, exports);

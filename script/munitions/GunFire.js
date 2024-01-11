@@ -8,8 +8,8 @@ import {
   TYPES,
   getTypes,
   rnd,
-  GAME_SPEED,
-  oneOf
+  oneOf,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -246,14 +246,14 @@ const GunFire = (options = {}) => {
     }
 
     if (data.isInert || data.expired) {
-      data.gravity *= 1 + (data.gravityRate - 1) * GAME_SPEED;
+      data.gravity *= 1 + (data.gravityRate - 1) * GAME_SPEED_RATIOED;
     }
 
     sprites.moveTo(
       exports,
-      data.x + data.vX * GAME_SPEED,
+      data.x + data.vX * GAME_SPEED_RATIOED,
       data.y +
-        data.vY * GAME_SPEED +
+        data.vY * GAME_SPEED_RATIOED +
         (data.isInert || data.expired ? data.gravity : 0)
     );
 
@@ -312,11 +312,11 @@ const GunFire = (options = {}) => {
       expired: false,
       frameCount: 0,
       expireFrameCount: parseInt(
-        ((options.expireFrameCount || 25) * 1) / GAME_SPEED,
+        ((options.expireFrameCount || 25) * 1) / GAME_SPEED_RATIOED,
         10
       ),
       dieFrameCount: parseInt(
-        ((options.dieFrameCount || 75) * 1) / GAME_SPEED,
+        ((options.dieFrameCount || 75) * 1) / GAME_SPEED_RATIOED,
         10
       ), // live up to N frames, then die?
       width: options.isInert ? 1.5 : 2,
