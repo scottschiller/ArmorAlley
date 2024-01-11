@@ -33,14 +33,18 @@ const Infantry = (options = {}) => {
     // always do positioning work, and maybe fire
 
     // only infantry: move back and forth a bit, and flip animation, while firing - like original game
-    const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4 * GAME_SPEED;
+    const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
     moveTo(data.x + offset, data.y);
 
     // hackish: undo the change `moveTo()` just applied to `data.x` so we don't actually change collision / position logic.
     data.x += offset * -1;
 
-    data.vXFrameOffset += 3;
+    data.vxFrameTick += GAME_SPEED_RATIOED;
+    if (data.vxFrameTick >= 1) {
+      data.vxFrameTick = 0;
+      data.vXFrameOffset += 3;
+    }
 
     if (data.vXFrameOffset >= data.vXFrames.length) {
       // reverse direction!
@@ -234,11 +238,16 @@ const Infantry = (options = {}) => {
       if (data.roles[data.role] === TYPES.infantry) {
         // infantry walking "pace" varies slightly, similar to original game
         moveTo(
-          data.x + data.vX * GAME_SPEED * data.vXFrames[data.vXFrameOffset],
+          data.x +
+            data.vX * GAME_SPEED_RATIOED * data.vXFrames[data.vXFrameOffset],
           data.y
         );
 
-        data.vXFrameOffset++;
+        data.vxFrameTick += GAME_SPEED_RATIOED;
+        if (data.vxFrameTick >= 1) {
+          data.vxFrameTick = 0;
+          data.vXFrameOffset++;
+        }
         if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
       } else {
         // engineers always move one pixel at a time; let's say it's because of the backpacks.
@@ -378,6 +387,7 @@ const Infantry = (options = {}) => {
         0.5, 0.5
       ],
       vXFrameOffset: 0,
+      vxFrameTick: 0,
       xLookAhead:
         options.xLookAhead !== undefined
           ? options.xLookAhead
