@@ -199,6 +199,8 @@ const MissileLauncher = (options = {}) => {
   function animate() {
     data.frameCount++;
 
+    const fpsMultiplier = 1 / GAME_SPEED_RATIOED;
+
     if (!data.stopped) {
       sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
     } else {
@@ -224,9 +226,9 @@ const MissileLauncher = (options = {}) => {
 
         // first wheel, delay, then a few frames until we animate the next two.
         if (data.state === 1 || data.state === 3) {
-          data.stateModulus = 36;
+          data.stateModulus = 36 * fpsMultiplier;
         } else {
-          data.stateModulus = 4;
+          data.stateModulus = 4 * fpsMultiplier;
         }
 
         data.frameCount = 0;
@@ -237,7 +239,10 @@ const MissileLauncher = (options = {}) => {
             `0px ${data.height * data.state * -1}px`
           );
         }
-      } else if (data.frameCount % data.stateModulus === 2 && data.isOnScreen) {
+      } else if (
+        data.frameCount % data.stateModulus === 2 * fpsMultiplier &&
+        data.isOnScreen
+      ) {
         // next frame - reset.
         dom.o._style.setProperty('background-position', '0px 0px');
       }
