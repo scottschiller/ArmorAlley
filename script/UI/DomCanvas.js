@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { TYPES } from '../core/global.js';
+import { FPS, TYPES } from '../core/global.js';
 
 const canvasConfig = [
   // dom ID vs. object name / reference - e.g., `dom.o.fx` / `dom.ctx.fx`
@@ -182,7 +182,9 @@ const DomCanvas = () => {
       // only draw every X
       data.blinkCounter = data.blinkCounter || 0;
       data.blinkCounter++;
-      if (data.blinkCounter % 3 === 0) {
+
+      // TODO: DRY / move to static value
+      if (data.blinkCounter % (FPS === 60 ? 6 : 3) === 0) {
         data.visible = !data.visible;
       }
 
