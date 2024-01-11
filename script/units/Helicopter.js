@@ -581,8 +581,11 @@ const Helicopter = (options = {}) => {
 
     data.fuel = Math.min(data.maxFuel, data.fuel + 0.4 * GAME_SPEED_RATIOED);
 
-    if (data.ammo < data.maxAmmo && data.repairFrames % 2 === 0) {
-      data.ammo = Math.min(data.maxAmmo, data.ammo + 1 * GAME_SPEED);
+    if (
+      data.ammo < data.maxAmmo &&
+      data.repairFrames % data.ammoRepairModulus === 0
+    ) {
+      data.ammo = Math.min(data.maxAmmo, data.ammo + 1 * GAME_SPEED_RATIOED);
       updated.ammo = true;
       if (data.ammo >= data.maxAmmo) {
         // stop blinking
@@ -590,13 +593,18 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    if (data.repairFrames % 5 === 0) {
+    // TODO: DRY / optimize
+    if (data.repairFrames % data.energyRepairModulus === 0) {
       // fix damage (no UI for this)
-      data.energy = Math.min(data.energyMax, data.energy + 1 * GAME_SPEED);
+      data.energy = Math.min(data.energyMax, data.energy + 1);
     }
 
-    if (data.bombs < data.maxBombs && data.repairFrames % 10 === 0) {
-      data.bombs = Math.min(data.maxBombs, data.bombs + 1 * GAME_SPEED);
+    // TODO: DRY / optimize
+    if (
+      data.bombs < data.maxBombs &&
+      data.repairFrames % data.bombRepairModulus === 0
+    ) {
+      data.bombs = Math.min(data.maxBombs, data.bombs + 1);
       updated.bombs = true;
       if (data.bombs >= data.maxBombs) {
         updated.bombsComplete = true;
@@ -605,11 +613,12 @@ const Helicopter = (options = {}) => {
 
     if (
       data.smartMissiles < data.maxSmartMissiles &&
-      data.repairFrames % 200 === 0
+      // TODO: DRY / optimize
+      data.repairFrames % data.smartMissileRepairModulus === 0
     ) {
       data.smartMissiles = Math.min(
         data.maxSmartMissiles,
-        data.smartMissiles + 1 * GAME_SPEED
+        data.smartMissiles + 1
       );
       updated.smartMissiles = true;
       if (data.smartMissiles >= data.maxSmartMissiles) {
@@ -1038,7 +1047,6 @@ const Helicopter = (options = {}) => {
     const statsBar = document.getElementById('stats-bar');
     const rect = statsBar.getBoundingClientRect();
     data.yMin = rect.top * (1 / screenScale);
-    
   }
 
   function moveToForReal(x, y) {
@@ -2863,6 +2871,28 @@ const Helicopter = (options = {}) => {
 
   const firingRates = {
     // "modern" vs. classic firing intervals.
+    // also, values that need scaling for 30 / 60 FPS.
+
+    smartMissileRepairModulus: {
+      default: 200
+    },
+
+    bombRepairModulus: {
+      default: 10
+    },
+
+    ammoRepairModulus: {
+      default: 2
+    },
+
+    energyRepairModulus: {
+      default: 5
+    },
+
+    missileLaunchingModulus: {
+      classic: 5,
+      modern: 5
+    },
 
     bombModulus: {
       classic: 6,
@@ -2894,7 +2924,11 @@ const Helicopter = (options = {}) => {
     // apply according to prefs.
     const pref = gamePrefs.weapons_interval_classic ? 'classic' : 'modern';
 
-    return parseInt(firingRates[type][pref] * (1 / GAME_SPEED), 10);
+    return parseInt(
+      (firingRates[type].default || firingRates[type][pref]) *
+        (1 / GAME_SPEED_RATIOED),
+      10
+    );
   }
 
   function updateFiringRates() {
@@ -2955,6 +2989,8 @@ const Helicopter = (options = {}) => {
   }
 
   function initHelicopter() {
+    updateFiringRates();
+
     if (data.isCPU || data.isRemote) {
       // offset fire modulus by half, to offset sound
       data.frameCount = Math.floor(data.fireModulus / 2);
@@ -3113,6 +3149,7 @@ const Helicopter = (options = {}) => {
       fireModulus: setFiringRate('fireModulus'),
       bombModulus: setFiringRate('bombModulus'),
       bombFrameCount: 0,
+      bombRepairModulus: 10,
       fuelRateLanded: tutorialMode ? 24 : 8,
       fuelRateFlying: tutorialMode ? 8 : 8 / 3,
       parachuteFrameCount: 0,
@@ -3137,6 +3174,7 @@ const Helicopter = (options = {}) => {
       ejectCount: 0,
       energy: 10,
       energyMax: 10,
+      energyRepairModulus: 5,
       energyLineScale: 0.25,
       direction: 0,
       pilot: true,
@@ -3161,6 +3199,7 @@ const Helicopter = (options = {}) => {
       tiltYOffset: 0.25,
       ammo: tutorialMode ? 128 : 64,
       maxAmmo: tutorialMode ? 128 : 64,
+      ammoRepairModulus: 2,
       bombs: tutorialMode ? 30 : 10,
       maxBombs: tutorialMode ? 30 : 10,
       parachutes: 1,
@@ -3168,6 +3207,7 @@ const Helicopter = (options = {}) => {
       bnbNoParachutes: false,
       smartMissiles: 2,
       maxSmartMissiles: 2,
+      smartMissileRepairModulus: 200,
       midPoint: null,
       trailerCount: 16,
       xHistory: [],
@@ -3211,8 +3251,9 @@ const Helicopter = (options = {}) => {
       missileMode: null,
       spinnerTimer: null,
       blinkCounter: 0,
-      blinkCounterHide: 8,
-      blinkCounterReset: 16
+      // TODO: DRY / optimize
+      blinkCounterHide: 8 * (FPS === 60 ? 2 : 1),
+      blinkCounterReset: 16 * (FPS === 60 ? 2 : 1)
     },
     options
   );
