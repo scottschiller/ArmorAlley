@@ -33,7 +33,9 @@ const pos = {
     game.objects.radar.data.radarScrollLeft,
   bottomAlign: (height, obj) =>
     32 * game.objects.view.data.screenScale -
-    (height * (obj?.data?.stepOffset !== undefined ? obj?.data?.stepOffset : 1)) * game.objects.radar.data.itemScale,
+    height *
+      (obj?.data?.stepOffset !== undefined ? obj?.data?.stepOffset : 1) *
+      game.objects.radar.data.itemScale,
   top: (top) => top * game.objects.view.data.screenScale,
   width: (width) => width * game.objects.radar.data.itemScale,
   // offset for outline / stroke
@@ -177,7 +179,11 @@ const DomCanvas = () => {
       if (data.excludeBlink) return;
 
       // special case for helicopters: only blink while initially exploding, not reset or respawning.
-      if (data.parentType === TYPES.helicopter && !exports.oParent?.data?.exploding) return;
+      if (
+        data.parentType === TYPES.helicopter &&
+        !exports.oParent?.data?.exploding
+      )
+        return;
 
       // only draw every X
       data.blinkCounter = data.blinkCounter || 0;
