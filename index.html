@@ -2111,6 +2111,44 @@
                       </ul>
                     </fieldset>
 
+                    <fieldset id="game-fps-pref" class="sync-over-network">
+                      <legend>
+                        Frame Rate<span class="network-icon"></span>
+                      </legend>
+                      <p class="non-indented">
+                        Try 30 FPS for a more “classic” feel, or if there are performance issues.<br />The original ran at
+                        perhaps 12-15 FPS.
+                      </p>
+                      <p class="non-indented network">
+                        The frame rate setting applies to all players.<br />
+                        <span class="no-emoji-substitution">⚠️</span> Network
+                        games at 60 FPS are experimental.
+                      </p>
+                      <ul class="less-bottom-spacing">
+                        <li>
+                          <input
+                            type="radio"
+                            id="radio_game_fps_30"
+                            name="game_fps"
+                            value="30"
+                            checked />
+                          <label for="radio_game_fps_30"
+                            >30 FPS (default)</label
+                          >
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            id="radio_game_fps_60"
+                            name="game_fps"
+                            value="60" />
+                          <label for="radio_game_fps_60"
+                            >60 FPS (01/2024: experimental)</label
+                          >
+                        </li>
+                      </ul>
+                    </fieldset>
+
                     <fieldset id="game-speed" class="sync-over-network">
                       <legend>
                         Game Speed<span class="network-icon"></span>

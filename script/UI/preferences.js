@@ -11,6 +11,7 @@ import {
   isiPhone,
   isMobile,
   oneOf,
+  setFrameRate,
   soundManager,
   tutorialMode,
   TYPES,
@@ -45,6 +46,7 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 // game defaults
 const defaultPrefs = {
   'auto_flip': !!isMobile,
+  'game_fps': 30,
   'game_speed': 0,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
@@ -103,6 +105,13 @@ const defaultPrefs = {
   'scan_ui_battlefield_friendly': true,
   'scan_ui_radar_enemy': true,
   'scan_ui_radar_friendly': true
+};
+
+// certain prefs should be treated as numbers.
+const numericPrefs = {
+  volume: true,
+  game_speed: true,
+  game_fps: true
 };
 
 // allow URL-based overrides of prefs
@@ -782,10 +791,7 @@ function PrefsManager() {
       // NOTE: form uses numbers, but game state tracks booleans.
       // key -> value: 0/1 to boolean; otherwise, keep as string.
       value = prefs[key];
-      result[key] =
-        isNaN(value) || key === 'volume' || key === 'game_speed'
-          ? value
-          : !!value;
+      result[key] = isNaN(value) || numericPrefs[key] ? value : !!value;
     }
 
     return result;
@@ -1409,6 +1415,12 @@ function PrefsManager() {
         if (local.data.autoFlip !== newAutoFlip) {
           local.toggleAutoFlip();
         }
+      },
+
+      game_fps: (newGameFPS) => {
+        setFrameRate(newGameFPS);
+        // update helicopter gunfire rate, etc.
+        common.applyGameSpeedToAll();
       },
 
       game_speed: (newGameSpeed) => {
