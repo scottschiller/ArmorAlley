@@ -10,7 +10,11 @@ const winloc = window.location.href.toString();
 
 const ua = navigator.userAgent;
 
-const FPS = 30;
+// defaults, until overridden or set via prefs
+let FPS = 30;
+let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
+let GAME_SPEED_RATIOED;
+
 const FRAMERATE = 1000 / FPS;
 
 /**
@@ -26,7 +30,7 @@ const FRAMERATE = 1000 / FPS;
  */
 const frameOffset = parseFloat(searchParams.get('frameOffset')) || 0.33;
 
-const FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
+let FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 
 const unlimitedFrameRate = searchParams.get('frameRate=*');
 
@@ -102,6 +106,15 @@ function getDefaultGameSpeed() {
 
 let GAME_SPEED = getDefaultGameSpeed();
 
+GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
+
+function setFrameRate(fps = 30) {
+  FPS = fps;
+  GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
+  GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
+  FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
+}
+
 function updateGameSpeed(gameSpeed = getDefaultGameSpeed()) {
   gameSpeed = Math.max(
     GAME_SPEED_MIN,
@@ -115,7 +128,9 @@ function updateGameSpeed(gameSpeed = getDefaultGameSpeed()) {
 
   GAME_SPEED = gameSpeed;
 
-  return gameSpeed;
+  GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
+
+  return GAME_SPEED;
 }
 
 // only assign a value "immediately" if provided via URL.
@@ -399,6 +414,8 @@ export {
   GAME_SPEED_MIN,
   GAME_SPEED_INCREMENT,
   GAME_SPEED_MAX,
+  GAME_SPEED_RATIO,
+  GAME_SPEED_RATIOED,
   TYPES,
   PRETTY_TYPES,
   COSTS,
@@ -445,6 +462,7 @@ export {
   rngPlusMinus,
   soundManager,
   setDefaultSeed,
+  setFrameRate,
   setTutorialMode,
   updateClientFeatures,
   updateGameSpeed
