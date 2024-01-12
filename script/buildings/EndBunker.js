@@ -163,7 +163,7 @@ const EndBunker = (options = {}) => {
     let offset, earnedFunds;
 
     // note: end bunkers never die
-    if (data.frameCount % data.fundsModulus !== 0) return;
+    if (data.frameCount % (data.fundsModulus * FPS) !== 0) return;
 
     // edge case: tutorial mode, and no enemy chopper present yet
     if (!objects.helicopters.length) return;
@@ -288,7 +288,7 @@ const EndBunker = (options = {}) => {
       firing: false,
       gunYOffset: 10,
       fireModulus: 4,
-      fundsModulus: FPS * 10,
+      fundsModulus: 10,
       midPoint: null
     },
     options
