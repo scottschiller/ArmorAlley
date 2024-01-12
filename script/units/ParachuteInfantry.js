@@ -102,7 +102,10 @@ const ParachuteInfantry = (options = {}) => {
     if (!data.parachuteOpen) {
       if (data.y >= data.parachuteOpensAtY) {
         openParachute();
-      } else if (data.frameCount % data.panicModulus === 0) {
+      } else if (
+        data.frameCount % (data.panicModulus * (1 / GAME_SPEED_RATIOED)) ===
+        0
+      ) {
         // like Tom Petty, free fallin'.
 
         if (data.isOnScreen) {
