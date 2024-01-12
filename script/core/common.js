@@ -419,6 +419,8 @@ const common = {
   applyGameSpeed: (obj) => {
     // update "game speed" on a particular object, or *all* eligible objects.
 
+    if (!obj?.data) return;
+
     const { gameSpeedProps } = obj?.data;
 
     if (!gameSpeedProps?.forEach) return;
