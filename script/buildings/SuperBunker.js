@@ -304,7 +304,7 @@ const SuperBunker = (options = {}) => {
       doorWidth: 6,
       height,
       firing: false,
-      gunYOffset: 20.75,
+      gunYOffset: 20,
       // fire speed relative to # of infantry arming it
       fireModulus: FIRE_MODULUS,
       fireModulus1X: FIRE_MODULUS,
