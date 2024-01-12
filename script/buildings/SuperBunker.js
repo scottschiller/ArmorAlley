@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { TYPES, getTypes } from '../core/global.js';
+import { FPS, GAME_SPEED_RATIOED, TYPES, getTypes } from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import {
@@ -29,7 +29,13 @@ const SuperBunker = (options = {}) => {
 
   function updateFireModulus() {
     // firing speed increases with # of infantry
-    data.fireModulus = Math.max(1, FIRE_MODULUS - data.energy);
+    const gsRatio = 1 / GAME_SPEED_RATIOED;
+    data.fireModulus = Math.max(
+      1,
+      FIRE_MODULUS * gsRatio - data.energy * gsRatio
+    );
+    // hackish: apply this back to the "1X" value, for scaling vs. game speed and FPS
+    data.fireModulus1X = data.fireModulus;
   }
 
   function capture(isEnemy) {
