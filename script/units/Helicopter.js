@@ -1834,8 +1834,8 @@ const Helicopter = (options = {}) => {
       if (data.parachutes > 0 && !data.parachutingThrottle) {
         data.parachutingThrottle = true;
 
-        // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
-        data.parachutingTimer = common.setFrameTimeout(
+        // set a timeout for "reloading", so the next parachute doesn't drop immediately.
+        data.parachutingTimer = common.setFixedFrameTimeout(
           () => {
             data.parachutingThrottle = false;
           },
