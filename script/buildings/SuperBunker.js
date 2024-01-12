@@ -267,6 +267,8 @@ const SuperBunker = (options = {}) => {
 
     initDOM();
 
+    updateFireModulus();
+
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
   }
 
