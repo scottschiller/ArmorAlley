@@ -5,7 +5,8 @@ import {
   tutorialMode,
   worldWidth,
   FPS,
-  getTypes
+  getTypes,
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
@@ -44,7 +45,7 @@ const EndBunker = (options = {}) => {
     if (
       !data.firing ||
       !data.energy ||
-      data.frameCount % data.fireModulus !== 0
+      data.frameCount % (data.fireModulus * (1 / GAME_SPEED_RATIOED)) !== 0
     )
       return;
 
