@@ -40,7 +40,49 @@ const Engineer = (options = {}) => {
     { group: 'enemy', exports: fakeExports }
   );
 
-  return Infantry(options);
+  const engineer = Infantry(options);
+
+  // override infantry method
+  engineer.data.domCanvas = {
+    radarItem: Engineer.radarItemConfig()
+  };
+
+  return engineer;
 };
+
+Engineer.radarItemConfig = () => ({
+  width: 1.25,
+  height: 2.5,
+  excludeFillStroke: true,
+  draw: (ctx, obj, pos, width, height) => {
+    // "backpack"
+    const scaledWidth = pos.width(width);
+    const scaledOffset =
+      scaledWidth * (1 / game.objects.radar.data.cssRadarScale);
+    ctx.roundRect(
+      pos.left(
+        obj.data.left +
+          (obj.oParent?.data?.isEnemy ? scaledOffset : -scaledOffset)
+      ),
+      pos.bottomAlign(height - 0.25, obj),
+      scaledWidth,
+      pos.height(1),
+      0.5
+    );
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    // "body"
+    ctx.roundRect(
+      pos.left(obj.data.left),
+      pos.bottomAlign(height, obj),
+      pos.width(width),
+      pos.height(height),
+      [height, height, 0, 0]
+    );
+    ctx.fill();
+    ctx.stroke();
+  }
+});
 
 export { Engineer };
