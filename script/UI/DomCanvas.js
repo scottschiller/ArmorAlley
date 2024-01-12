@@ -7,6 +7,11 @@ const canvasConfig = [
   { id: 'battlefield-canvas', name: 'battlefield', ctxArgs: { alpha: false } },
   // for gunfire, shrapnel, smoke - show the pixels.
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
+  {
+    id: 'battlefield-canvas',
+    name: 'fx-bg',
+    ctxOptions: { imageSmoothingEnabled: false }
+  },
   { id: 'fx-canvas', name: 'fx', ctxOptions: { imageSmoothingEnabled: false } },
   {
     id: 'radar-canvas',
@@ -50,14 +55,16 @@ const DomCanvas = () => {
   dom = {
     // see canvasConfig
     o: {
-      battlefield: null,
-      fx: null,
-      radar: null
+      'battlefield': null,
+      'fx': null,
+      'fx-bg': null,
+      'radar': null
     },
     ctx: {
-      battlefield: null,
-      fx: null,
-      radar: null
+      'battlefield': null,
+      'fx': null,
+      'fx-bg': null,
+      'radar': null
     }
   };
 

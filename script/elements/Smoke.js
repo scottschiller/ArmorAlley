@@ -175,7 +175,7 @@ const Smoke = (options = {}) => {
       data.oParent.data.type === TYPES.helicopter ||
       data.oParent.data.type === TYPES.balloon)
   ) {
-    data.domCanvas.ctxName = oneOf(['fx', 'battlefield']);
+    data.domCanvas.ctxName = oneOf(['fx', 'fx-bg']);
   }
 
   dom = {
