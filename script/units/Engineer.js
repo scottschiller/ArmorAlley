@@ -58,7 +58,7 @@ Engineer.radarItemConfig = () => ({
     // "backpack"
     const scaledWidth = pos.width(width);
     const scaledOffset =
-      scaledWidth * (1 / game.objects.radar.data.cssRadarScale);
+      scaledWidth * 0.75 * (1 / game.objects.radar.data.cssRadarScale);
     ctx.roundRect(
       pos.left(
         obj.data.left +
