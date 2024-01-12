@@ -676,7 +676,7 @@ const SmartMissile = (options = {}) => {
 
     if (data.expired) {
       // fall...
-      data.gravity *= Math.max(1.0275, 1.085 * GAME_SPEED_RATIOED);
+      data.gravity *= Math.max(1.05, 1.085 * GAME_SPEED_RATIOED);
 
       // ... and decelerate on X-axis.
       data.vX *= 0.95;
