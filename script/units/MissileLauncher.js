@@ -387,15 +387,46 @@ const MissileLauncher = (options = {}) => {
 
 MissileLauncher.radarItemConfig = () => ({
   width: 4,
-  height: 2.5,
+  height: 1.5,
+  excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    ctx.roundRect(
-      pos.left(obj.data.left),
-      pos.bottomAlign(height, obj),
-      pos.width(width),
-      pos.height(height),
-      [height, height, 0, 0]
+    const left = pos.left(obj.data.left);
+    const top = pos.bottomAlign(height, obj);
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.height(height);
+
+    ctx.roundRect(left, top, scaledWidth, scaledHeight, [height, height, 0, 0]);
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    // missile
+    common.domCanvas.rotate(
+      ctx,
+      obj.oParent.data.isEnemy ? 20 : -20,
+      left,
+      top,
+      scaledWidth / 2,
+      scaledHeight / 2
     );
+
+    const missileWidth = pos.width(2.75);
+    const missileHeight = pos.height(0.5);
+
+    ctx.roundRect(
+      left + (obj.oParent.data.isEnemy ? scaledWidth / 8 : scaledWidth / 4),
+      top - (obj.oParent.data.isEnemy ? 2 : 0),
+      missileWidth,
+      missileHeight,
+      1
+    );
+
+    common.domCanvas.unrotate(ctx);
+
+    ctx.fill();
+    ctx.stroke();
   }
 });
 
