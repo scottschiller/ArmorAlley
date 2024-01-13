@@ -480,6 +480,7 @@ function PrefsManager() {
         [
           'network-options',
           'input_game_speed',
+          'game-fps-pref',
           'gameplay-options',
           'traffic-control'
         ].forEach((id) =>
