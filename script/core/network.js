@@ -827,7 +827,7 @@ const net = {
         );
       };
 
-      const src = 'script/lib/peerjs@1.5.0.js';
+      const src = 'script/lib/peerjs@1.5.2.js';
       script.src = src;
 
       document.head.appendChild(script);
