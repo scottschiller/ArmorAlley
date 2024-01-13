@@ -175,7 +175,10 @@ const Smoke = (options = {}) => {
       data.oParent.data.type === TYPES.helicopter ||
       data.oParent.data.type === TYPES.balloon)
   ) {
-    data.domCanvas.ctxName = oneOf(['fx', 'fx-bg']);
+    // lastly - if a cloaked helicopter, always put behind helicopter and cloud.
+    data.domCanvas.ctxName = data.oParent.data.cloaked
+      ? 'fx-bg'
+      : oneOf(['fx', 'fx-bg']);
   }
 
   dom = {
