@@ -201,9 +201,13 @@ const DomCanvas = () => {
         data.visible = !data.visible;
       }
 
-      // don't draw if not visible
       if (!data.visible) return;
     }
+
+    // don't draw if explictly not visible (not undefined / false-y)
+    // HACK: ignore helicopters, otherwise the player's radar item disappears after dying. TODO: debug and fix.
+    if (data.oParent?.data?.type !== TYPES.helicopter && data.visible === false)
+      return;
 
     // does the object know how to draw itself?
     if (oData.draw) {
@@ -228,6 +232,9 @@ const DomCanvas = () => {
     const ss = game.objects.view.data.screenScale;
 
     if (oData.img) {
+      // only display if loaded
+      if (!oData.img.src) return;
+
       const { img } = oData;
       const { source, target } = img;
 
@@ -239,6 +246,31 @@ const DomCanvas = () => {
 
       // single image, vs. sprite?
       if (img.source.frameX === undefined && img.source.frameY === undefined) {
+        // screwy scaling here, but 2x source -> target @ 50%, plus screen scaling
+        const renderedWidth = (source.width / 2) * ss;
+        const renderedHeight = (source.height / 2) * ss;
+
+        const targetX =
+          (target.x - game.objects.view.data.battleField.scrollLeft) * ss +
+          (target.xOffset || 0);
+        // radar and other offsets, plus 4-pixel shift, AND "step" offset (summon / dismiss transition, if active.)
+        const targetY =
+          (target.y - 32) * ss +
+          (target.yOffset || 0) +
+          ss * 4 -
+          renderedHeight *
+            (data.stepOffset !== undefined ? data.stepOffset : 1);
+
+        const tx = targetX + renderedWidth / 2;
+        const ty = targetY + renderedHeight / 2;
+
+        if (data.flipX) {
+          ctx.save();
+          ctx.translate(tx, ty);
+          ctx.scale(-1, 1);
+          ctx.translate(-tx, -ty);
+        }
+
         // single image
         ctx.drawImage(
           img.src,
@@ -246,11 +278,16 @@ const DomCanvas = () => {
           source.y,
           source.width,
           source.height,
-          target.x,
-          target.y,
-          source.width,
-          source.height /*, target.scale || 1, target.scale || 1*/
+          targetX,
+          targetY,
+          renderedWidth,
+          renderedHeight
+          /*, target.scale || 1, target.scale || 1*/
         );
+
+        if (data.flipX) {
+          ctx.restore();
+        }
       } else if (img.target.rotation) {
         // (image, x, y, cx, cy, width, height, scale, rotation, destX, destY)
         drawImageCenter(
