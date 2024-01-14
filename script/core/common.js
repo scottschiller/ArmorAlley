@@ -320,14 +320,14 @@ function processGravestoneQueue() {
 
     // decorate clusters
     clusters.forEach((cluster) => {
-      cluster.forEach((item, i) => {
+      cluster.forEach((obj, i) => {
         if ((i + 1) % 2 === 0) {
           const item = game.addItem(
-            item.type,
-            item.x +
+            obj.type,
+            obj.x +
               rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem),
             {
-              gravestoneType: item.gravestoneType,
+              gravestoneType: obj.gravestoneType,
               visible: false
             }
           );
