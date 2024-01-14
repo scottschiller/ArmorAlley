@@ -16,7 +16,9 @@ import {
   clientFeatures,
   updateClientFeatures,
   isMac,
-  isWindows
+  isWindows,
+  FPS,
+  GAME_SPEED
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
@@ -55,7 +57,6 @@ import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
-import { sprites } from './sprites.js';
 import { addWorldObjects, levelName } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
@@ -65,6 +66,7 @@ import { StarController } from '../elements/StarController.js';
 import { Envelope } from '../UI/Envelope.js';
 import { RadarScroller } from '../UI/RadarScroller.js';
 import { aaLoader } from '../core/aa-loader.js';
+import { sprites } from './sprites.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -77,7 +79,6 @@ let didInit;
 const game = (() => {
   let data,
     dom,
-    layoutCache = {},
     boneyard,
     objects,
     objectsById,
@@ -85,29 +86,242 @@ const game = (() => {
     players,
     exports;
 
-  function addItem(className, x, extraTransforms) {
-    let data, _dom, id, width, height, inCache, exports;
+  // a cache of sorts
+  const terrainImages = {};
+
+  function getImage(type, url) {
+    // already "cached"
+    if (terrainImages[type]) return terrainImages[type];
+
+    // preload, then update; canvas will ignore rendering until loaded.
+    const img = new Image();
+    const src = `../image/${url}`;
+    utils.image.load(src, () => (img.src = src));
+
+    // return new object immediately
+    terrainImages[type] = img;
+    return img;
+  }
+
+  const terrainItems = {
+    'zone-post': {
+      width: 2,
+      height: 6
+    },
+
+    'zone-flag': {
+      width: 3,
+      height: 8
+    },
+
+    'gravestone': {
+      src: 'gravestone.png',
+      height: 12,
+      width: 20
+    },
+
+    'gravestone2': {
+      src: 'gravestone2.png',
+      height: 12,
+      width: 15
+    },
+
+    'grave-cross': {
+      src: 'grave-cross.png',
+      height: 10,
+      width: 13
+    },
+
+    'left-arrow-sign': {
+      src: 'left-arrow-sign-mac.png',
+      srcSnow: 'left-arrow-sign-mac_snow.png',
+      height: 25,
+      width: 28
+    },
+
+    'right-arrow-sign': {
+      src: 'right-arrow-sign-mac.png',
+      srcSnow: 'right-arrow-sign-mac_snow.png',
+      height: 25,
+      width: 28
+    },
+
+    'barb-wire': {
+      src: 'barb-wire.png',
+      height: 11,
+      width: 18
+    },
+
+    'cactus': {
+      src: 'cactus.png',
+      height: 17,
+      width: 12
+    },
+
+    'cactus2': {
+      src: 'cactus2.png',
+      height: 25,
+      width: 18
+    },
+
+    'sand-dune': {
+      src: 'sand-dune.png',
+      height: 8,
+      width: 51
+    },
+
+    'sand-dunes': {
+      src: 'sand-dunes.png',
+      height: 11,
+      width: 73
+    },
+
+    'checkmark-grass': {
+      src: 'checkmark-grass.png',
+      height: 10,
+      width: 15
+    },
+
+    'flower': {
+      src: 'flower.png',
+      height: 8,
+      width: 11
+    },
+
+    'flowers': {
+      src: 'flowers.png',
+      height: 11,
+      width: 34
+    },
+
+    'flower-bush': {
+      src: 'flower-bush.png',
+      height: 13,
+      width: 18
+    },
+
+    'tree': {
+      src: 'tree.png',
+      srcSnow: 'tree_snow.png',
+      height: 27,
+      width: 26
+    },
+
+    'tumbleweed': {
+      src: 'tumbleweed.png',
+      height: 15,
+      width: 18
+    },
+
+    'palm-tree': {
+      src: 'palm-tree.png',
+      height: 22,
+      width: 18
+    },
+
+    'rock': {
+      src: 'rock.png',
+      height: 13,
+      width: 18
+    },
+
+    'rock2': {
+      src: 'rock2.png',
+      height: 11,
+      width: 13
+    },
+
+    'grass': {
+      src: 'grass.png',
+      height: 9,
+      width: 40
+    }
+  };
+
+  function addItem(className, x, options = {}) {
+    let data, _dom, id, /*width, height, inCache, */ exports;
 
     id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
 
+    // special case: if in editor, or zone debugging, make a DOM node.
+    // TODO: migrate editor to work with terrain items also on canvas.
+    const useDomNode =
+      game.objects.editor ||
+      className === 'zone-post' ||
+      className === 'zone-flag';
+
+    // TODO: DRY / utility function
+    function dropOff(x) {
+      // x from 0 to 1 returns from 1 to 0, with in-out easing.
+      // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+      // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+      return (Math.cos(Math.PI * x) + 1) / 2;
+    }
+
+    function makeStepFrames(reverse) {
+      const duration = FPS * 0.5 * (1 / GAME_SPEED);
+      data.stepFrames = [];
+
+      for (let i = 0; i <= duration; i++) {
+        // 1/x, up to 1
+        data.stepFrames[i] = dropOff(i / duration);
+      }
+      if (reverse) {
+        data.stepFrames.reverse();
+      }
+      data.stepFrame = 0;
+      data.stepOffset = data.stepFrames[0];
+      data.stepActive = true;
+    }
+
+    function summon() {
+      const reverse = true;
+      makeStepFrames(reverse);
+      data.summoned = true;
+      data.dismissed = false;
+      // ensure visibility
+      data.visible = true;
+    }
+
+    function dismiss() {
+      makeStepFrames();
+      // hack: a few additional frames, ensure this is pulled out of view.
+      data.stepFrames = data.stepFrames.concat([0, -0.05, -0.075, -0.1]);
+      data.summoned = false;
+      data.dismissed = true;
+    }
+
+    function animate() {
+      // set top offset, if stepping up or down
+      if (!data.stepActive) return;
+
+      data.stepFrame++;
+
+      data.stepOffset = data.stepFrames[data.stepFrame];
+
+      if (data.stepFrame >= data.stepFrames.length - 1) {
+        data.stepActive = false;
+        // if "dismissed", then exclude from drawing.
+        if (data.dismissed) {
+          data.visible = false;
+        }
+      }
+    }
+
     function initDOM() {
-      _dom.o = sprites.create({
-        className: `${className} terrain-item`,
-        id
-      });
+      // legacy support / editor / zone debugging
+      if (useDomNode) {
+        _dom.o = sprites.create({
+          className: `${className} terrain-item`,
+          id
+        });
+        return;
+      }
+      _dom.o = {};
     }
 
     function initItem() {
       initDOM();
-
-      if (layoutCache[className]) {
-        inCache = true;
-        width = layoutCache[className].width;
-        height = layoutCache[className].height;
-      } else {
-        // append to get layout (based on CSS)
-        dom.battlefield.appendChild(_dom.o);
-      }
     }
 
     // prefixed to avoid name conflict with parent game namespace
@@ -118,40 +332,62 @@ const game = (() => {
 
     initItem();
 
-    // NOTE: $$$, layout hit
-    width = width || _dom?.o?.offsetWidth;
-    height = height || _dom?.o?.offsetHeight;
+    const props = terrainItems[className];
 
-    data = {
-      type: className,
-      id,
-      isTerrainItem: true,
-      bottomAligned: true,
-      x,
-      y: worldHeight - height + 4,
-      // dirty: force layout, read from CSS, and cache below
-      width,
-      height,
-      isOnScreen: null,
-      extraTransforms
-    };
+    const width = props.width;
+    const height = props.height;
 
-    if (!inCache) {
-      // store
-      layoutCache[className] = {
-        width: data.width,
-        height: data.height
-      };
+    data = Object.assign(
+      {
+        type: className,
+        id,
+        isTerrainItem: true,
+        bottomAligned: true,
+        // TODO: review default values
+        stepActive: false,
+        stepFrame: undefined,
+        stepFrames: null,
+        stepOffset: undefined,
+        x,
+        // note: legacy, will be updated within animate()
+        y: worldHeight - height + 4,
+        width,
+        height,
+        isOnScreen: null,
+        visible: true,
+        domCanvas: {
+          img: {
+            src: !useDomNode ? getImage(className, props.src) : null,
+            source: {
+              x: 0,
+              y: 0,
+              // note: sprite source is 2x
+              width: width * 2,
+              height: height * 2
+            },
+            target: {
+              x,
+              y: worldHeight,
+              width,
+              height
+            }
+          }
+        }
+      },
+      options
+    );
 
-      // remove the node, now that we have its layout.
-      // this will be re-appended when on-screen.
-      _dom.o.remove();
+    if (useDomNode) {
+      delete data.domCanvas;
     }
 
     // basic structure for a terrain item
     exports = {
+      animate,
       data,
-      dom: _dom
+      dom: _dom,
+      dismiss,
+      summon
     };
 
     // these will be tracked only for on-screen / off-screen purposes.

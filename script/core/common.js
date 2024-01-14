@@ -250,16 +250,21 @@ let videoActive;
 let gravestoneQueue = [];
 let gravestoneTimer;
 
-const smallDecor = [
+const mediumDecor = ['flowers', 'grass'];
+
+const smallMediumDecor = [
   'barb-wire',
+  'cactus',
   'checkmark-grass',
   'flower',
   'flower-bush',
   'palm-tree',
-  'cactus'
-];
-const largeDecor = ['flowers', 'grass', 'sand-dune', 'sand-dunes'];
-const gravestoneTypes = ['gravestone', 'gravestone2', 'grave-cross'];
+  'tumbleweed'
+].concat(mediumDecor);
+
+const largeDecor = mediumDecor.concat(['sand-dune', 'sand-dunes']);
+
+const gravestoneStyles = ['gravestone', 'gravestone2', 'grave-cross'];
 const maxGravestoneRange = 64;
 const maxQueueSize = 5;
 
@@ -286,14 +291,16 @@ function processGravestoneQueue() {
   let clusters = [];
   let clusterOffset = 0;
 
-  const extraCSS = 'dynamically-added submerged';
-
   // split X coordinates into "clusters", where applicable.
 
   if (gravestoneQueue.length >= 3) {
     // array of x coords, and "type" (based on thing that died)
     const items = gravestoneQueue
-      .map((item) => ({ x: item[0].data.x, typeCSS: item[2] }))
+      .map((item) => ({
+        type: item.data.type,
+        x: item.data.x,
+        gravestoneType: item.data.gravestoneType
+      }))
       .sort(utils.array.compare('x'));
 
     // pre-populate the first cluster
@@ -314,57 +321,49 @@ function processGravestoneQueue() {
     // decorate clusters
     clusters.forEach((cluster) => {
       cluster.forEach((item, i) => {
-        const { x, typeCSS } = item;
         if ((i + 1) % 2 === 0) {
-          riseItemAfterDelay(
-            game.addItem(
-              `${pickFrom(smallDecor)} ${typeCSS} ${extraCSS}`,
-              x + rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem)
-            ),
-            33 + 33 * (i + 1)
+          const item = game.addItem(
+            item.type,
+            item.x +
+              rngPlusMinus(rngInt(12, TYPES.terrainItem), TYPES.terrainItem),
+            {
+              gravestoneType: item.gravestoneType,
+              visible: false
+            }
           );
+          common.setFrameTimeout(item.summon, 33 + 33 * (i + 1));
         }
       });
       if (cluster.length > 2) {
+        // bigger decor items for larger clusters
         const i = 1 + rngInt(cluster.length - 1, TYPES.terrainItem);
-        riseItemAfterDelay(
-          game.addItem(
-            `${pickFrom(largeDecor)} ${cluster[i].typeCSS} ${extraCSS}`,
-            (cluster[i + 1] + cluster[i]) / 2
-          ),
-          33 + 33 * (i + 1)
+        const item = game.addItem(
+          pickFrom(largeDecor),
+          (cluster[i + 1] + cluster[i]) / 2,
+          {
+            gravestoneType: cluster[i].gravestoneType,
+            visible: false
+          }
         );
+        common.setFrameTimeout(item.summon, 33 + 33 * (i + 1));
       }
     });
   }
 
-  gravestoneQueue.forEach((item, i) => {
-    const exports = item[0];
-    const typeCSS = item[1];
-    const type = pickFrom(gravestoneTypes);
-
-    // gravestones face the side from which they died, per se.
-    const flipX = exports.data?.isEnemy ? 'scaleX(-1)' : '';
-
-    const stone = game.addItem(
-      `${type} ${typeCSS} ${extraCSS}`,
-      exports.data.x + exports.data.halfWidth,
-      flipX
-    );
-
-    // rise from the ... grave? ;)
-    riseItemAfterDelay(stone, 33 + 66 * (i + 1));
+  gravestoneQueue.forEach((obj, i) => {
+    const item = game.addItem(obj.data.type, obj.data.x, {
+      // e.g., `gs_helicopter`
+      gravestoneType: obj.data.gravestoneType,
+      visible: false,
+      // gravestones face the side from which they died, per se.
+      flipX: !!obj.data?.isEnemy
+    });
+    common.setFrameTimeout(item.summon, 33 + 66 * (i + 1));
   });
 
   // reset
   gravestoneQueue = [];
 }
-
-const riseItemAfterDelay = (exports, delay = 33) =>
-  common.setFrameTimeout(
-    () => utils.css.remove(exports?.dom?.o, 'submerged'),
-    delay
-  );
 
 const common = {
   domCanvas: DomCanvas(),
@@ -1087,35 +1086,32 @@ const common = {
 
     if (!isInfantry && !isHelicopter && !isVehicle) return;
 
-    const typeCSS = isInfantry
-      ? 'gs_infantry'
+    // these match the preference names - e.g., show gravestones for infantry.
+    const gravestoneType = isInfantry
+      ? 'gravestones_infantry'
       : isHelicopter
-      ? 'gs_helicopter'
-      : 'gs_vehicle';
-
-    function r() {
-      return [
-        {
-          data: {
-            x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem),
-            halfWidth: exports.data.halfWidth
-          }
-        },
-        pickFrom(smallDecor),
-        typeCSS
-      ];
-    }
+      ? 'gravestones_helicopters'
+      : 'gravestones_vehicles';
 
     // for non-infantry types, add a few extra before the gravestone pops up.
-    if (
-      exports.data.type !== TYPES.infantry &&
-      rng(1, TYPES.terrainItem) >= 0.5
-    ) {
-      gravestoneQueue.push(r());
+    if (dType !== TYPES.infantry && rng(1, TYPES.terrainItem) >= 0.5) {
+      gravestoneQueue.push({
+        data: {
+          type: pickFrom(smallMediumDecor),
+          x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem),
+          gravestoneType
+        }
+      });
     }
 
     // now add the thing we came here for.
-    gravestoneQueue.push([exports, typeCSS]);
+    gravestoneQueue.push({
+      data: {
+        type: pickFrom(gravestoneStyles),
+        x: exports.data.x,
+        gravestoneType
+      }
+    });
 
     queueGravestoneWork();
   },
