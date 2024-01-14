@@ -174,6 +174,10 @@ const sprites = {
       common.domCanvas.draw(exports);
     }
 
+    if (!game.objects.editor && exports?.data?.domCanvas && !exports.data.isOnScreen) {
+      console.log('domCanvas but not on-screen?', exports);
+    }
+
     // TODO: review
     // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
