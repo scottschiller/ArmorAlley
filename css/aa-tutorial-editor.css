@@ -435,3 +435,139 @@ body.edit-mode #top-bar {
   /* crop the top, reserving radar for click-and-drag / scrubbing */
   height: calc(42px * var(--gs));
 }
+
+/**
+ * Sprites for editor UI
+ */
+
+.sand-dune {
+  background-image: url(../image/sand-dune.png);
+  height: 8px;
+  width: 51px;
+}
+
+.sand-dunes {
+  background-image: url(../image/sand-dunes.png);
+  height: 11px;
+  width: 73px;
+}
+
+.checkmark-grass {
+  background-image: url(../image/checkmark-grass.png);
+  height: 10px;
+  width: 15px;
+}
+
+.flower {
+  background-image: url(../image/flower.png);
+  height: 8px;
+  width: 11px;
+}
+
+.flowers {
+  background-image: url(../image/flowers.png);
+  height: 11px;
+  width: 34px;
+}
+
+.flower-bush {
+  background-image: url(../image/flower-bush.png);
+  height: 13px;
+  width: 18px;
+}
+
+.tree {
+  background-image: url(../image/tree.png);
+  height: 27px;
+  width: 26px;
+}
+
+.tumbleweed {
+  background-image: url(../image/tumbleweed.png);
+  height: 15px;
+  width: 18px;
+}
+
+#battlefield.snow .tree {
+  background-image: url(../image/tree_snow.png);
+}
+
+.palm-tree {
+  background-image: url(../image/palm-tree.png);
+  height: 22px;
+  width: 18px;
+}
+
+.rock {
+  background-image: url(../image/rock.png);
+  height: 13px;
+  width: 18px;
+}
+
+.rock2 {
+  background-image: url(../image/rock2.png);
+  height: 11px;
+  width: 13px;
+}
+
+.grass {
+  background-image: url(../image/grass.png);
+  height: 9px;
+  width: 40px;
+}
+
+.gravestone {
+  background-image: url(../image/gravestone.png);
+  height: 12px;
+  width: 20px;
+}
+
+.gravestone2 {
+  background-image: url(../image/gravestone2.png);
+  height: 12px;
+  width: 15px;
+}
+
+.grave-cross {
+  background-image: url(../image/grave-cross.png);
+  height: 10px;
+  width: 13px;
+}
+
+.terrain-item {
+  background-size: contain;
+  bottom: auto;
+  top: 0;
+  /* rocks, graves, trees, barb wire etc., all go on top of things. */
+  z-index: 11;
+}
+
+#battlefield .terrain-item.dynamically-added {
+  transition: margin 0.75s ease-in-out;
+  /* lay back in the cut, as it were. */
+  z-index: 1;
+}
+
+.barb-wire {
+  background-image: url(../image/barb-wire.png);
+  height: 11px;
+  width: 18px;
+}
+
+.barb-wire,
+.cactus {
+  background-size: contain;
+}
+
+.cactus {
+  background-image: url(../image/cactus.png);
+  height: 17px;
+  width: 12px;
+}
+
+.cactus2 {
+  background-image: url(../image/cactus2.png);
+  background-size: contain;
+  height: 25px;
+  width: 18px;
+}

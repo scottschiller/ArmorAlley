@@ -141,6 +141,12 @@ body.is_iphone #mobile-controls {
   }
 }
 
+body.is_iphone #game-tips .tips-container .animation-node,
+body.is_iphone #game-tips .tips-container .tip {
+  /* a little faster, animation-wise. */
+  animation-duration: calc(16s * var(--gs-frac));
+}
+
 body.is-mobile.notch-at-left #notification-toasts.left-aligned {
   margin-left: calc(env(safe-area-inset-left) * 0.66);
 }
