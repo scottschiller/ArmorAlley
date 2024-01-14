@@ -347,7 +347,7 @@ function debugZone(obj) {
   if (obj.data.frontZone === null || obj.data.frontZone === undefined) return;
 
   // zone debugging
-  if (obj?.dom?.o && !obj.dom.oDebug) {
+  if (obj?.dom?.o?.nodeName && !obj.dom.oDebug) {
     obj.dom.oDebug = document.createElement('div');
     obj.dom.oDebug.className = 'zone-flag';
     obj.dom.o.appendChild(obj.dom.oDebug);
