@@ -210,7 +210,7 @@ function PrefsManager() {
       'notifications_location',
       'radar_enhanced_fx',
       'radar_scaling'
-    ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref]));
+    ].forEach((pref) => events.onPrefChange[pref](gamePrefs[pref], pref));
 
     // special case: apply BnB "VS" immediately.
     dom.oBnB.addEventListener('change', (e) =>
@@ -1067,6 +1067,27 @@ function PrefsManager() {
     );
   }
 
+  function updateGravestones(isActive, pref) {
+    const items = game.objects[TYPES.terrainItem];
+    let item;
+    for (let i = 0, j = items.length; i < j; i++) {
+      item = items[i];
+
+      // skip e.g., palm trees that aren't decor for gravestones.
+      if (!item.data.gravestoneType) continue;
+
+      // skip if not updating the given type, e.g., gravestones for helicopters.
+      if (item.data.gravestoneType !== pref) continue;
+
+      // show or hide, accordingly
+      if (isActive && !item.data.summoned) {
+        item.summon();
+      } else if (!isActive && !item.data.dismissed) {
+        item.dismiss();
+      }
+    }
+  }
+
   data = {
     active: false,
     originalHeight: 0,
@@ -1462,16 +1483,12 @@ function PrefsManager() {
         );
       },
 
-      gravestones_helicopters: (isActive) =>
-        utils.css.addOrRemove(
-          document.body,
-          isActive,
-          'gravestones_helicopters'
-        ),
-      gravestones_infantry: (isActive) =>
-        utils.css.addOrRemove(document.body, isActive, 'gravestones_infantry'),
-      gravestones_vehicles: (isActive) =>
-        utils.css.addOrRemove(document.body, isActive, 'gravestones_vehicles'),
+      gravestones_helicopters: (isActive, pref) =>
+        updateGravestones(isActive, pref),
+      gravestones_infantry: (isActive, pref) =>
+        updateGravestones(isActive, pref),
+      gravestones_vehicles: (isActive, pref) =>
+        updateGravestones(isActive, pref),
 
       // hackish: iterate over radar objects vs. game items, because we may be previewing a level and haven't started a game yet.
       landing_pads_on_radar: (isActive) =>
