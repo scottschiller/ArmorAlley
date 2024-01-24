@@ -11,7 +11,8 @@ import {
   oneOf,
   getTypes,
   rngInt,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  GAME_SPEED
 } from '../core/global.js';
 import {
   addSequence,
@@ -167,6 +168,11 @@ const Tank = (options = {}) => {
         utils.css.add(dom.o, css.explodingType);
       }
 
+      if (!dom.o._style) {
+        // NOTE: explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
+        data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+      }
+
       effects.damageExplosion(exports);
 
       effects.shrapnelExplosion(data, {
@@ -307,7 +313,35 @@ const Tank = (options = {}) => {
     // exit early if dead
     if (data.dead) {
       sprites.moveWithScrollOffset(exports);
+      data.domCanvas.dieExplosion?.animate?.();
+
       return !data.deadTimer && !dom.o;
+    }
+
+    if (!data.stopped && !dom.o?._style && data.domCanvas?.img) {
+      // animate tank treads
+      if (
+        data.domCanvas.img.frameCount > 0 &&
+        data.domCanvas.img.frameCount % data.domCanvas.img.animationModulus ===
+          0
+      ) {
+        // advance frame
+        data.domCanvas.img.animationFrame++;
+        data.domCanvas.img.source.frameX++;
+        if (
+          data.domCanvas.img.animationFrame >=
+          data.domCanvas.img.animationFrameCount
+        ) {
+          // loop / repeat animation
+          data.domCanvas.img.animationFrame = 0;
+          data.domCanvas.img.source.frameX = 0;
+        } else {
+          // keep on truckin'.
+          data.domCanvas.img.frameCount++;
+        }
+      } else {
+        data.domCanvas.img.frameCount++;
+      }
     }
 
     repair();
@@ -362,13 +396,16 @@ const Tank = (options = {}) => {
   function initDOM() {
     if (options.noInit) return;
 
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
-
-    dom.o.appendChild(sprites.makeTransformSprite());
+    if (!game.objects.editor) {
+      dom.o = {};
+    } else {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+      dom.o.appendChild(sprites.makeTransformSprite());
+    }
 
     // for testing
     if (options.extraClass) {
@@ -382,7 +419,7 @@ const Tank = (options = {}) => {
       `${data.y - data.yOffset}px`
     );
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, css.className);
 
     common.initNearby(nearby, exports);
     common.initNearby(friendlyNearby, exports);
@@ -421,6 +458,7 @@ const Tank = (options = {}) => {
       energy: 8,
       energyMax: 8,
       energyLineScale: 0.8,
+      energyLineOffset: 11,
       frameCount: 0,
       repairModulus: FPS,
       repairModulus1X: FPS,
@@ -440,6 +478,7 @@ const Tank = (options = {}) => {
       y: game.objects.view.data.world.height - tankHeight,
       // hackish: logical vs. sprite alignment offset
       yOffset: 2,
+      stepOffset: options.stepOffset,
       xLookAhead: width / 3,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
@@ -467,8 +506,41 @@ const Tank = (options = {}) => {
     updateHealth
   };
 
+  const src = data.isEnemy
+    ? 'tank-enemy-sprite-horizontal.png'
+    : 'tank-sprite-horizontal.png';
+
+  const spriteWidth = 348;
+  const spriteHeight = 36;
+  const frameWidth = 116;
+  const frameHeight = spriteHeight;
+
   data.domCanvas = {
-    radarItem: Tank.radarItemConfig()
+    radarItem: Tank.radarItemConfig(),
+    img: {
+      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
+      frameCount: 0,
+      animationFrame: 0,
+      animationFrameCount: spriteWidth / frameWidth,
+      source: {
+        x: 0,
+        y: 0,
+        // note: sprite source is 2x
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth,
+        frameHeight,
+        // sprite offset indices
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 58,
+        height: 18
+      }
+    }
   };
 
   friendlyNearby = {
