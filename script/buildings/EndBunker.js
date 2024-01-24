@@ -15,6 +15,13 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 
+const slashPattern = new Image();
+// slashPattern.src ='image/checkerboard-white-mask-50percent.png'
+slashPattern.src =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEX///8AAABVwtN+AAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=';
+
+let pattern;
+
 const EndBunker = (options = {}) => {
   let css, dom, data, exports, height, nearby, objects, radarItem;
 
@@ -425,6 +432,17 @@ EndBunker.radarItemConfig = () => ({
   width: 8,
   height: 8,
   draw: (ctx, obj, pos, width, height) => {
+    if (!obj.oParent?.data?.energy) {
+      if (!pattern) {
+        pattern = ctx.createPattern(slashPattern, 'repeat');
+      }
+      ctx.fillStyle = pattern;
+    } else {
+      ctx.fillStyle =
+        !gamePrefs.super_bunker_arrows || obj.oParent?.data?.isEnemy
+          ? '#9c9f08'
+          : '#17a007';
+    }
     ctx.roundRect(
       pos.left(obj.data.left),
       pos.bottomAlign(height / 4),
