@@ -40,11 +40,17 @@ const Van = (options = {}) => {
 
     utils.css.add(dom.o, css.exploding);
 
+    if (!dom.o._style) {
+      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+    }
+
     // stop moving while exploding
     data.vX = 0;
 
     // revert to CSS rules, prevent first frame of explosion from sticking
-    dom.o._style.setProperty('background-position', '0px -384px');
+    if (dom.o._style) {
+      dom.o._style.setProperty('background-position', '0px -384px');
+    }
 
     effects.shrapnelExplosion(data, {
       centerX: true,
@@ -110,6 +116,10 @@ const Van = (options = {}) => {
 
     let enemyHelicopter;
 
+    if (data.dead) {
+      data.domCanvas.dieExplosion?.animate?.();
+    }
+
     if (!data.stopped && !game.data.battleOver) {
       sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
     } else {
@@ -147,16 +157,23 @@ const Van = (options = {}) => {
             data.state = 0;
           }
 
-          if (data.isOnScreen) {
+          if (data.isOnScreen && dom.o._style) {
             dom.o._style.setProperty(
               'background-position',
               `0px ${data.height * data.state * -1}px`
             );
           }
+
+          if (data.domCanvas.img) {
+            data.domCanvas.img.source.frameY = data.state;
+          }
         } else if (data.frameCount % data.stateModulus === 2) {
           // next frame - reset.
-          if (data.isOnScreen) {
+          if (data.isOnScreen && dom.o._style) {
             dom.o._style.setProperty('background-position', '0px 0px');
+          }
+          if (data.domCanvas.img) {
+            data.domCanvas.img.source.frameY = 0;
           }
         }
       }
@@ -239,11 +256,15 @@ const Van = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
+    if (!game.objects.editor) {
+      dom.o = {};
+    } else {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+    }
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
@@ -292,6 +313,7 @@ const Van = (options = {}) => {
       xGameOver: 0, // set at init
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
+      stepOffset: options.stepOffset,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
         elementCount: 5 + rndInt(5),
@@ -314,8 +336,33 @@ const Van = (options = {}) => {
     radarItem
   };
 
+  const src = data.isEnemy ? 'van-enemy.png' : 'van.png';
+
+  const spriteWidth = 76;
+  const spriteHeight = 96;
+  const frameHeight = 32;
+
   data.domCanvas = {
-    radarItem: Van.radarItemConfig(exports)
+    radarItem: Van.radarItemConfig(exports),
+    img: {
+      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth: spriteWidth,
+        frameHeight,
+        // sprite offset indices
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: frameHeight / 2
+      }
+    }
   };
 
   friendlyNearby = {
@@ -340,15 +387,18 @@ const Van = (options = {}) => {
 };
 
 Van.radarItemConfig = () => ({
-  width: 3.5,
-  height: 2,
+  width: 3,
+  height: 1.75,
   draw: (ctx, obj, pos, width, height) => {
     ctx.roundRect(
       pos.left(obj.data.left),
       pos.bottomAlign(height, obj),
       pos.width(width),
       pos.height(height),
-      [height, height, 0, 0]
+      // "shape" depending on orientation
+      obj.oParent?.data?.isEnemy
+        ? [width * 1.65, width, width, width]
+        : [width, width * 1.65, width, width]
     );
   }
 });
