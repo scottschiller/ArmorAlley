@@ -624,8 +624,9 @@ const SuperBunker = (options = {}) => {
 };
 
 SuperBunker.radarItemConfig = (exports) => ({
-  width: 6,
+  width: 6.5,
   height: 3,
+  excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
     if (exports?.data.hostile) {
       if (!pattern) {
@@ -638,13 +639,52 @@ SuperBunker.radarItemConfig = (exports) => ({
           ? '#9c9f08'
           : '#17a007';
     }
+
+    const left = pos.left(obj.data.left);
+    const scaledWidth = pos.width(width);
+
+    // bunker shape
+    ctx.beginPath();
     ctx.roundRect(
-      pos.left(obj.data.left),
+      left,
       pos.bottomAlign(height),
-      pos.width(width),
+      scaledWidth,
       pos.height(height),
       [height, height, 0, 0]
     );
+    ctx.fill();
+    ctx.stroke();
+
+    // horizontal lines, building shape
+    ctx.beginPath();
+    ctx.rect(left, pos.bottomAlign(height * 0.75), scaledWidth, 2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.stroke();
+
+    const nearBottom = pos.bottomAlign(height * 0.25);
+
+    ctx.moveTo(left, nearBottom);
+
+    ctx.lineTo(left + scaledWidth, nearBottom);
+
+    ctx.stroke();
+
+    const doorWidth = 0.75;
+    const doorHeight = 1.25;
+    const scaledDoorWidth = pos.width(doorWidth);
+
+    // doorway
+    ctx.beginPath();
+    ctx.roundRect(
+      left + scaledWidth / 2 - scaledDoorWidth / 2,
+      pos.bottomAlign(doorHeight),
+      scaledDoorWidth,
+      pos.height(doorHeight),
+      [doorHeight, doorHeight, 0, 0]
+    );
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.stroke();
   }
 });
 
