@@ -55,7 +55,7 @@ const Shrapnel = (options = {}) => {
       data.spinAngle
     }deg)`;
 
-    data.domCanvas.img.target.rotation = data.spinAngle;
+    data.domCanvas.img.target.angle = data.spinAngle;
 
     // move, and retain 3d scaling (via extraTransforms)
     sprites.moveTo(exports, x, y);
@@ -372,7 +372,7 @@ const Shrapnel = (options = {}) => {
       target: {
         width: 22,
         height: 20,
-        rotation: 0,
+        angle: 0,
         scale: 1
       }
     },
