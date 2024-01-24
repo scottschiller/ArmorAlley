@@ -405,7 +405,6 @@ const Radar = () => {
       !targetItem.layout?.width ||
       targetItem.oParent.data.type === TYPES.missileLauncher
     ) {
-      // targetItem = common.mixin(targetItem, getLayout(targetItem));
       // HACK
       if (targetItem.oParent.data.domCanvas) {
         targetItem.layout = {
