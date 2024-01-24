@@ -3,6 +3,7 @@ import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
 import {
   FPS,
+  GAME_SPEED_RATIOED,
   getTypes,
   oneOf,
   rad2Deg,
@@ -55,7 +56,7 @@ const Turret = (options = {}) => {
 
   function setAngle(angle) {
     // TODO: CSS animation for this?
-    if (data.isOnScreen) {
+    if (data.isOnScreen && dom.oSubSprite) {
       dom.oSubSprite._style.setProperty(
         'transform',
         `rotate3d(0, 0, 1, ${angle}deg)`
@@ -64,7 +65,9 @@ const Turret = (options = {}) => {
   }
 
   function resetAngle() {
-    dom.oSubSprite._style.setProperty('transform', '');
+    if (dom.oSubSprite) {
+      dom.oSubSprite._style.setProperty('transform', '');
+    }
   }
 
   function fire() {
@@ -98,10 +101,18 @@ const Turret = (options = {}) => {
       setFiring(false);
     }
 
-    if (!target) return;
+    if (!target) {
+      if (okToMove()) {
+        // "scanning" animation.
+        data.angle += data.angleIncrement * GAME_SPEED_RATIOED;
+        if (data.angle >= 90 || data.angle < -90) {
+          data.angleIncrement *= -1;
+        }
+      }
+      return;
+    }
 
     // we have a live one.
-
     if (!data.firing) {
       setFiring(true);
     }
@@ -209,8 +220,6 @@ const Turret = (options = {}) => {
     data.angle = 0;
     setAngle(0);
 
-    effects.ephemeralExplosion(exports);
-
     data.energy = 0;
     data.restoring = false;
     data.dead = true;
@@ -219,6 +228,21 @@ const Turret = (options = {}) => {
 
     // hackish: ensure firing is reset.
     setFiring(false);
+
+    updateDomCanvas({
+      dead: true
+    });
+
+    if (!dieOptions.silent) {
+      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports, {
+        overlay: true,
+        onEnd: () => {
+          data.domCanvas.dieExplosion = null;
+          // reset the canvas config, render a single sprite
+          updateDomCanvas({ dead: true });
+        }
+      });
+    }
 
     // special case: when turret is initially rendered as dead, don't explode etc.
     if (!dieOptions.silent) {
@@ -290,6 +314,7 @@ const Turret = (options = {}) => {
     utils.css.remove(dom.o, css.firing);
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
+    utils.css.add(radarItem.dom.oScanNode, css.destroyed);
 
     resize();
 
@@ -334,6 +359,9 @@ const Turret = (options = {}) => {
           if (css.explodingType) utils.css.remove(dom.o, css.explodingType);
           utils.css.remove(dom.o, css.destroyed);
           utils.css.remove(radarItem.dom.o, css.destroyed);
+          utils.css.remove(radarItem.dom.oScanNode, css.destroyed);
+
+          updateDomCanvas({ dead: false });
 
           playSound(sounds.turretEnabled, exports);
 
@@ -497,6 +525,7 @@ const Turret = (options = {}) => {
     if (!data.engineerInteracting) {
       data.engineerInteracting = true;
       utils.css.add(dom.o, css.engineerInteracting);
+      utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
 
       // may not be provided, as in tutorial - just restoring immediately etc.
       if (engineer) {
@@ -572,7 +601,11 @@ const Turret = (options = {}) => {
 
     data.frameCount++;
 
-    if (!data.dead) fire();
+    if (!data.dead) {
+      fire();
+    } else {
+      data.domCanvas.dieExplosion?.animate?.();
+    }
 
     if (!data.dead && data.energy > 0) {
       effects.smokeRelativeToDamage(exports);
@@ -591,6 +624,7 @@ const Turret = (options = {}) => {
     if (data.engineerInteracting && !data.engineerHitCount) {
       data.engineerInteracting = false;
       utils.css.remove(dom.o, css.engineerInteracting);
+      utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
     }
 
     // always reset
@@ -653,11 +687,15 @@ const Turret = (options = {}) => {
     });
   }
 
+  function updateDomCanvas(state) {
+    data.domCanvas.img = state.dead ? turretDead : [turretBase, turretGun];
+  }
+
   function initDOM() {
     const isEnemy = data.isEnemy ? css.enemy : false;
 
     dom.o = sprites.create({
-      className: css.className,
+      className: game.objects.editor ? css.className : 'placeholder',
       id: data.id,
       isEnemy
     });
@@ -666,8 +704,10 @@ const Turret = (options = {}) => {
     dom.oScanNode.className = css.scanNode;
     dom.o.appendChild(dom.oScanNode);
 
-    dom.oSubSprite = sprites.makeSubSprite();
-    dom.o.appendChild(dom.oSubSprite);
+    if (game.objects.editor) {
+      dom.oSubSprite = sprites.makeSubSprite();
+      dom.o.appendChild(dom.oSubSprite);
+    }
 
     sprites.setTransformXY(
       exports,
@@ -693,7 +733,14 @@ const Turret = (options = {}) => {
       objects.cornholio.show();
     }
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(
+      exports,
+      game.objects.editor
+        ? dom.o.className
+        : data.isEnemy
+        ? 'scan-node enemy'
+        : 'scan-node'
+    );
 
     // turrets also get a scan node.
     radarItem.initScanNode();
@@ -767,6 +814,7 @@ const Turret = (options = {}) => {
       halfWidth: 5,
       halfHeight: height / 2,
       angle: 0,
+      angleIncrement: 1.75,
       maxAngle: 90,
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
@@ -812,10 +860,87 @@ const Turret = (options = {}) => {
   };
 
   data.domCanvas = {
+    img: [turretBase, turretGun],
     radarItem: Turret.radarItemConfig(exports)
   };
 
   return exports;
+};
+
+const src = 'turret-sprite.png';
+
+const spriteWidth = 36;
+const spriteHeight = 128;
+const frameHeight = 32;
+
+// base of turret
+const turretBase = {
+  src: utils.image.getImageObject(src),
+  source: {
+    x: 0,
+    y: 0,
+    is2X: true,
+    width: spriteWidth,
+    height: spriteHeight,
+    frameWidth: spriteWidth,
+    frameHeight,
+    // sprite offset indices
+    frameX: 0,
+    frameY: 0
+  },
+  target: {
+    width: spriteWidth / 2,
+    height: frameHeight / 2
+  }
+};
+
+// turret gun
+const turretGun = {
+  src: utils.image.getImageObject(src),
+  excludeEnergy: true,
+  source: {
+    x: 0,
+    y: 0,
+    is2X: true,
+    width: spriteWidth,
+    height: spriteHeight,
+    frameWidth: spriteWidth,
+    frameHeight,
+    // sprite offset indices
+    frameX: 0,
+    frameY: 1
+  },
+  target: {
+    width: spriteWidth / 2,
+    height: frameHeight / 2,
+    yOffset: -3.5,
+    // rotate based on turret data
+    useDataAngle: true,
+    // origin / axis of rotation relative to width/height
+    rotateXOffset: 0.5,
+    /* rotate origin is almost the bottom, but not exactly. */
+    rotateYOffset: 0.95
+  }
+};
+
+const turretDead = {
+  src: utils.image.getImageObject(src),
+  source: {
+    x: 0,
+    y: 0,
+    is2X: true,
+    width: spriteWidth,
+    height: spriteHeight,
+    frameWidth: spriteWidth,
+    frameHeight,
+    // sprite offset indices
+    frameX: 0,
+    frameY: 0
+  },
+  target: {
+    width: spriteWidth / 2,
+    height: frameHeight / 2
+  }
 };
 
 Turret.radarItemConfig = (exports) => ({
@@ -832,9 +957,8 @@ Turret.radarItemConfig = (exports) => ({
     ctx.roundRect(
       pos.left(obj.data.left),
       pos.bottomAlign(height),
-      pos.width(width),
-      pos.height(height),
-      [height, height, 0, 0]
+      barrelWidth / 2,
+      barrelHeight
     );
   }
 });
