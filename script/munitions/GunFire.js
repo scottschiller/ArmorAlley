@@ -338,23 +338,23 @@ const GunFire = (options = {}) => {
   );
 
   data.domCanvas = {
-    backgroundColor: '#9c9f08',
+    backgroundColor: options.isInert ? '#666' : '#9c9f08',
     borderRadius: 1,
     radarItem: {
       excludeStroke: true,
-      width: 1,
-      height: 1,
+      width: 4,
+      height: 2,
       draw: (ctx, obj, pos, width, height) => {
         // TODO: calculate 40% opacity for inert / expired color
-        ctx.fillStyle = data.isInert ? '#999' : data.domCanvas.backgroundColor;
-        const scaledHeight = pos.heightNoStroke(height);
+        ctx.fillStyle = obj.oParent?.data?.isInert
+          ? '#666'
+          : data.domCanvas.backgroundColor;
         ctx.roundRect(
-          pos.left(obj.data.left),
-          // hackish: vertical align
-          obj.data.top - scaledHeight,
-          // width, height, border
-          pos.width(width),
-          scaledHeight,
+          pos.left(obj.data.left) -
+            width * game.objects.radar.data.cssRadarScale,
+          obj.data.top - height,
+          width,
+          height,
           data.domCanvas.borderRadius * game.objects.radar.data.cssRadarScale
         );
       }
