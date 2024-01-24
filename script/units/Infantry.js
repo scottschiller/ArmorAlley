@@ -51,6 +51,8 @@ const Infantry = (options = {}) => {
       data.vXFrameOffset = 0;
       // and visually flip the sprite
       data.extraTransforms = !data.extraTransforms ? 'scaleX(-1)' : null;
+      // toggle
+      setFlip(!data.flipX);
     }
 
     // only fire every so often
@@ -90,6 +92,12 @@ const Infantry = (options = {}) => {
     );
   }
 
+  function setFlip(isFlipped) {
+    data.flipX = !!isFlipped;
+    // swap flipped / non-flipped sprites
+    data.domCanvas?.animation?.updateSprite(getSpriteURL());
+  }
+
   function stop(noFire) {
     if (data.stopped) return;
 
@@ -111,6 +119,7 @@ const Infantry = (options = {}) => {
 
     utils.css.remove(dom.o, css.stopped);
     data.extraTransforms = null;
+    setFlip(false);
     data.stopped = false;
     data.noFire = false;
   }
@@ -234,6 +243,14 @@ const Infantry = (options = {}) => {
       return !dom.o;
     }
 
+    // infantry are "always" walking, even when "stopped" (in which case they're firing.)
+    // engineers fully stop to claim and/or repair bunkers.
+    if (!data.stopped || !data.role) {
+      if (!dom.o?._style && data.domCanvas?.animation) {
+        data.domCanvas.animation.animate?.();
+      }
+    }
+
     if (!data.stopped) {
       if (data.roles[data.role] === TYPES.infantry) {
         // infantry walking "pace" varies slightly, similar to original game
@@ -281,18 +298,21 @@ const Infantry = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
+    if (!game.objects.editor) {
+      dom.o = {};
+    } else {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+      dom.o.appendChild(sprites.makeTransformSprite());
+    }
 
     // BNB
     if (!data.isEnemy && data.role) {
       utils.css.add(dom.o, data.isBeavis ? css.beavis : css.butthead);
     }
-
-    dom.o.appendChild(sprites.makeTransformSprite());
 
     sprites.setTransformXY(
       exports,
@@ -307,6 +327,15 @@ const Infantry = (options = {}) => {
 
     // infantry, or engineer?
     setRole(data.role, true);
+
+    // note: data.domCanvas must exist before this call, because it causes modifications. :X
+    // we also need to know the role, before doing canvas stuff here.
+    if (!game.objects.editor) {
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        animConfig
+      );
+    }
 
     initDOM();
 
@@ -394,7 +423,9 @@ const Infantry = (options = {}) => {
           : defaultLookAhead,
       xLookAheadBunker: options.xLookAheadBunker || null,
       unassisted: options.unassisted !== undefined ? options.unassisted : true,
+      stepOffset: options.stepOffset,
       extraTransforms: null,
+      flipX: false,
       x: options.x || 0,
       // one more pixel, making a "headshot" look more accurate
       y: game.objects.view.data.world.height - height - 1,
@@ -422,8 +453,40 @@ const Infantry = (options = {}) => {
     stop
   };
 
+  function getSpriteURL() {
+    const parts = [];
+
+    // infantry / engineer
+    parts.push(data.roles[data.role]);
+
+    if (data.isEnemy) parts.push('enemy');
+
+    // file name pattern
+    parts.push('sprite-horizontal');
+
+    if (data.flipX) parts.push('flipped');
+
+    return `${parts.join('-')}.png`;
+  }
+
+  const animConfig = {
+    sprite: {
+      url: getSpriteURL(),
+      // engineer sprite is packed slightly tighter.
+      width: data.role ? 100 : 110,
+      height: 22,
+      frameWidth: data.role ? 20 : 22,
+      frameHeight: 22,
+      animationDuration: 0.9,
+      horizontal: true,
+      loop: true,
+      reverseDirection: !data.isEnemy && !data.role
+    }
+  };
+
   data.domCanvas = {
-    radarItem: Infantry.radarItemConfig()
+    radarItem: Infantry.radarItemConfig(),
+    animation: null
   };
 
   defaultItems = getTypes(
