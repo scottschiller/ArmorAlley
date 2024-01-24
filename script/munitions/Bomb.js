@@ -457,10 +457,10 @@ const Bomb = (options = {}) => {
         );
 
         ctx.roundRect(left, top, scaledWidth, scaledHeight, [
-          0,
-          0,
           scaledHeight,
-          scaledHeight
+          scaledHeight,
+          0,
+          0
         ]);
 
         common.domCanvas.unrotate(ctx);
