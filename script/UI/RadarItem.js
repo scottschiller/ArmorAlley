@@ -21,7 +21,7 @@ function RadarItem(options) {
   function onHiddenChange(isVisible) {
     if (!onHiddenEnabled[data.parentType]) return;
 
-    if (!dom?.o) return;
+    if (!dom?.o?.style) return;
     dom.o.style.visibility = isVisible ? 'visible' : 'hidden';
   }
 
