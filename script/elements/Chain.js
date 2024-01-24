@@ -5,15 +5,20 @@ import { playSound, skipSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
-import { GAME_SPEED_RATIOED } from '../core/global.js';
+import { GAME_SPEED_RATIOED, worldHeight } from '../core/global.js';
+
+const slashPattern = new Image();
+slashPattern.src = 'image/chain.png';
+
+let pattern;
 
 const Chain = (options = {}) => {
   let css, data, dom, objects, exports, defaultHeight;
 
   function applyHeight() {
-    dom.o._style.setProperty('height', `${data.height}px`);
+    dom?.o?._style?.setProperty('height', `${data.height}px`);
 
-    data.appliedHeight = parseInt(data.height, 10);
+    data.appliedHeight = data.height;
   }
 
   function attachBalloon(balloon = null) {
@@ -91,6 +96,8 @@ const Chain = (options = {}) => {
   function animate() {
     let x, y, height;
 
+    x = data.x;
+
     height = data.height;
 
     // move if attached, fall if not
@@ -139,10 +146,7 @@ const Chain = (options = {}) => {
 
         // always track height, only assign if chain becomes detached.
         height =
-          game.objects.view.data.world.height -
-          y -
-          objects.bunker.data.height +
-          4;
+          game.objects.view.data.world.height - y - objects.bunker.data.height;
       } else {
         // - bunker -> chain, no balloon object at all?
         // this case should probably never happen
@@ -161,7 +165,7 @@ const Chain = (options = {}) => {
 
       if (objects.balloon && !objects.balloon.data.dead) {
         // chain -> balloon
-        x = objects.balloon.data.x + objects.balloon.data.halfWidth - 2;
+        x = objects.balloon.data.x + objects.balloon.data.halfWidth - 3;
 
         y = objects.balloon.data.y + objects.balloon.data.height - 1;
       } else {
@@ -193,10 +197,14 @@ const Chain = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id
+      });
+    } else {
+      dom.o = {};
+    }
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
@@ -240,6 +248,35 @@ const Chain = (options = {}) => {
     },
     options
   );
+
+  data.domCanvas = {
+    draw: (ctx, obj, pos, width, height) => {
+      if (!pattern) {
+        pattern = ctx.createPattern(slashPattern, 'repeat');
+      }
+      ctx.fillStyle = pattern;
+      // attached to balloon, or bunker?
+      const parent = obj.objects?.balloon || obj.objects?.bunker;
+      // balloon or bunker, minus half of own width
+      const left = parent.data.x + parent.data.halfWidth - width / 2;
+      const top = pos.top(obj.data.y - 32);
+      // if bunker is present, don't draw chain atop bunker.
+      const adjustedHeight = obj.objects.bunker?.data?.height
+        ? worldHeight -
+          obj.data.y -
+          (obj.objects.bunker?.data?.height || 0) +
+          3.75
+        : height;
+      ctx.rect(
+        (left - 0.5 - game.objects.view.data.battleField.scrollLeft) *
+          game.objects.view.data.screenScale,
+        top,
+        width * game.objects.view.data.screenScale,
+        Math.max(0, adjustedHeight) * game.objects.view.data.screenScale
+      );
+      ctx.fill();
+    }
+  };
 
   dom = {
     o: null
