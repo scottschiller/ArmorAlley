@@ -436,6 +436,16 @@ const sprites = {
     // prevent certain things from rendering this, e.g., smart missiles.
     if (object.data.noEnergyStatus) return;
 
+    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_SOMETIMES) {
+      object.data.energyCanvasTimer = FPS * 2;
+    }
+
+    // only do work if valid
+    if (!object?.dom?.o?._style) return;
+
+    // hack: don't show on scan nodes or "placeholder" sprites which contain scan nodes
+    if (object?.dom?.o?.className.match(/scan-node|placeholder/i)) return;
+
     // dynamically create, and maybe queue removal of `.energy` node
     if (!object.dom.oEnergy && object.dom.o?.appendChild) {
       node = sprites.withStyle(document.createElement('div'));
