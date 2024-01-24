@@ -1,7 +1,15 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import { rndInt, rnd, TYPES, FPS, rng, rngInt } from '../core/global.js';
+import {
+  rndInt,
+  rnd,
+  TYPES,
+  FPS,
+  rng,
+  rngInt,
+  GAME_SPEED_RATIOED
+} from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -122,12 +130,23 @@ const Bunker = (options = {}) => {
     if (data.energy < data.energyMax) {
       // stop, and don't fire
       engineer.stop(true);
-      data.energy = Math.min(data.energy + 0.05, data.energyMax);
+      data.energy = Math.min(
+        data.energy + 0.05 * GAME_SPEED_RATIOED,
+        data.energyMax
+      );
       if (!engineer.data.isEnemy) {
         bnbRepair(engineer);
       }
+      if (!data.isRepairing) {
+        data.isRpairing = true;
+        utils.css.add(dom.o, css.engineerInteracting);
+      }
     } else {
       // repair complete - keep moving
+      if (data.isRepairing) {
+        data.isRepairing = false;
+        utils.css.remove(dom.o, css.engineerInteracting);
+      }
       engineer.resume();
       if (!engineer.data.isEnemy) {
         data.hasBeavis = false;
@@ -398,6 +417,7 @@ const Bunker = (options = {}) => {
     arrow: 'arrow',
     burning: 'burning',
     burningOut: 'burning-out',
+    engineerInteracting: 'engineer-interacting',
     facingLeft: 'facing-left',
     facingRight: 'facing-right',
     rubbleContainer: 'rubble-container',
@@ -428,6 +448,7 @@ const Bunker = (options = {}) => {
       hasButthead: false,
       isRecapture: false,
       isSinging: false,
+      isRepairing: false,
       width: 52,
       halfWidth: 26,
       height: 25.5,
