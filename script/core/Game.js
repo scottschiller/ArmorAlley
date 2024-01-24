@@ -844,7 +844,6 @@ const game = (() => {
     'bunker': [],
     'cornholio': [],
     'domFetti': [],
-    'ephemeralExplosion': [],
     'end-bunker': [],
     'engineer': [],
     'flame': [],
