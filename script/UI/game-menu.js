@@ -137,12 +137,13 @@ function init() {
    * guessing this is layout and/or tied to the loading of the logo image asset.
    */
   if (isSafari) {
-    const lg = document.getElementById('logo-gradient');
+    let lg = document.getElementById('logo-gradient');
     if (!lg) return;
     // wait until image load, then poke the animation again to re-start it.
     lg.style.animationDuration = '99s';
     utils.image.load('armor-alley-wordmark-white.webp', () => {
       lg.style.animationDuration = '';
+      lg = null;
     });
   }
 
@@ -589,6 +590,8 @@ function formClick(e) {
 
 function formCleanup() {
   utils.events.remove(document, 'click', formClick);
+  optionsButton = null;
+  oSelect = null;
 }
 
 function configureNetworkGame() {
@@ -655,13 +658,13 @@ function showHomeVideo() {
   // skip if auto-start applies, e.g., in campaign or demo mode.
   if (autoStart || demo) return;
 
-  const video = document.getElementById('home-menu-video');
+  let video = document.getElementById('home-menu-video');
 
   if (!video) return;
 
   const canPlay = /maybe|probably/gi;
 
-  const hqVideo = searchParams.get('hqVideo');
+  let hqVideo = searchParams.get('hqVideo');
 
   let res = window.innerWidth >= 1920 ? '4k' : '1080p';
 
@@ -701,6 +704,9 @@ function showHomeVideo() {
     // if no MP4, then webm alone.
     addSource(res, 'webm');
   }
+
+  video = null;
+  hqVideo = null;
 }
 
 function hideTitleScreen(callback) {
