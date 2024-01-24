@@ -3,6 +3,7 @@ import { gamePrefs, PREFS } from '../UI/preferences.js';
 import {
   debug,
   debugType,
+  FPS,
   isChrome,
   rnd,
   useDOMPruning,
@@ -73,6 +74,22 @@ const sprites = {
     exports.data.x = x;
     exports.data.y = y;
 
+    // TODO: figure out how to refresh this efficiently.
+    if (exports.data.domCanvas?.img) {
+      if (exports.data.domCanvas?.img.forEach) {
+        exports.data.domCanvas?.img.forEach((imgObj) => {
+          if (imgObj.target) {
+            imgObj.target.x = exports.data.x;
+            imgObj.target.y = exports.data.y;
+          }
+        });
+      }
+      if (exports.data.domCanvas?.img?.target) {
+        exports.data.domCanvas.img.target.x = exports.data.x;
+        exports.data.domCanvas.img.target.y = exports.data.y;
+      }
+    }
+
     /**
      * Hackish: don't refresh dead things, they'll be re-added to `game.objectsById`.
      * Only turrets can be restored, and they don't move.
@@ -133,6 +150,11 @@ const sprites = {
       return;
     }
 
+    // hackish: if this lives on the canvas, handle that here.
+    if (exports?.data?.domCanvas && exports.data.isOnScreen) {
+      common.domCanvas.draw(exports);
+    }
+
     if (!o) return;
 
     // take object defaults, if not specified otherwise
@@ -169,12 +191,11 @@ const sprites = {
       x = `${x}px`;
     }
 
-    // hackish: if this lives on the canvas, handle that here.
-    if (exports?.data?.domCanvas && exports.data.isOnScreen) {
-      common.domCanvas.draw(exports);
-    }
-
-    if (!game.objects.editor && exports?.data?.domCanvas && !exports.data.isOnScreen) {
+    if (
+      !game.objects.editor &&
+      exports?.data?.domCanvas &&
+      !exports.data.isOnScreen
+    ) {
       console.log('domCanvas but not on-screen?', exports);
     }
 
@@ -404,9 +425,6 @@ const sprites = {
       DEFAULT_ENERGY_SCALE;
 
     DEFAULT_ENERGY_SCALE = 1;
-
-    // only do work if valid
-    if (!object?.dom?.o) return;
 
     // only do work if visible, OR "always" shown and needing updates
     if (
