@@ -594,16 +594,54 @@ const Tank = (options = {}) => {
 };
 
 Tank.radarItemConfig = () => ({
-  width: 3.5,
-  height: 2.75,
+  width: 4,
+  height: 1.25,
+  excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
+    const left = pos.left(obj.data.left);
+    const top = pos.bottomAlign(height, obj);
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.height(height);
+
+    // tank body
+    ctx.roundRect(left, top, scaledWidth, scaledHeight, scaledWidth / 2);
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    // "boomstick"
+    const barrelWidth = scaledWidth / 2;
+    const barrelHeight = pos.height(0.25);
+
     ctx.roundRect(
-      pos.left(obj.data.left),
-      pos.bottomAlign(height, obj),
-      pos.width(width),
-      pos.height(height),
-      [2, 2, 0, 0]
+      left + scaledWidth * (obj.oParent.data.isEnemy ? -0.2 : 0.6),
+      top - 3,
+      barrelWidth,
+      barrelHeight,
+      1
     );
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    // tank "cap"
+    ctx.ellipse(
+      left + scaledWidth / 2,
+      top,
+      scaledWidth / 4,
+      height * 3,
+      0,
+      0,
+      Math.PI,
+      true
+    );
+
+    ctx.fill();
+    ctx.stroke();
   }
 });
 
