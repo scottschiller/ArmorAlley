@@ -519,9 +519,6 @@ const Radar = () => {
       .querySelectorAll('#radar .radar-item')
       .forEach((node) => node.remove());
 
-    // hackish: clear all canvases
-    common.domCanvas.clear();
-
     data.renderCount = 0;
   }
 
