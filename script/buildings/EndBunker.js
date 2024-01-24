@@ -250,13 +250,54 @@ const EndBunker = (options = {}) => {
     );
   }
 
-  function initEndBunker() {
-    dom.o = sprites.create({
-      className: css.className,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
+  function getSpriteURL() {
+    // image = base + enemy + theme
+    return (
+      (data.isEnemy ? 'end-bunker-enemy' : 'end-bunker') +
+      (gamePrefs.weather === 'snow' ? '_snow' : '') +
+      '.png'
+    );
+  }
 
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+  function applySpriteURL() {
+    if (!data.domCanvas.img) return;
+    data.domCanvas.img.src = utils.image.getImageObject(getSpriteURL());
+  }
+
+  function initEndBunker() {
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+    } else {
+      dom.o = {};
+      const src = getSpriteURL();
+
+      const spriteWidth = 82;
+      const spriteHeight = 38;
+
+      const spriteConfig = {
+        src: utils.image.getImageObject(src),
+        source: {
+          x: 0,
+          y: 0,
+          width: spriteWidth,
+          height: spriteHeight
+        },
+        target: {
+          width: spriteWidth / 2,
+          height: spriteHeight / 2,
+          // TODO: figure out cause of offset, and fix.
+          yOffset: 2.5
+        }
+      };
+
+      data.domCanvas.img = spriteConfig;
+    }
+
+    // this will set x + y for domCanvas
+    sprites.moveTo(exports, data.x, data.y);
 
     radarItem = game.objects.radar.addItem(exports, dom.o.className);
 
@@ -318,7 +359,8 @@ const EndBunker = (options = {}) => {
     init: initEndBunker,
     onNeutralHiddenChange,
     registerHelicopter,
-    updateHealth
+    updateHealth,
+    updateSprite: applySpriteURL
   };
 
   nearby = {
