@@ -5,23 +5,6 @@ import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
 
-// a cache of sorts
-const terrainImages = {};
-
-function getImage(type, url) {
-  // already "cached"
-  if (terrainImages[type]) return terrainImages[type];
-
-  // preload, then update; canvas will ignore rendering until loaded.
-  const img = new Image();
-  const src = `../image/${url}`;
-  utils.image.load(src, () => (img.src = src));
-
-  // return new object immediately
-  terrainImages[type] = img;
-  return img;
-}
-
 const terrainItems = {
   'zone-post': {
     width: 2,
@@ -276,7 +259,7 @@ function addItem(className, x, options = {}) {
       visible: true,
       domCanvas: {
         img: {
-          src: !useDomNode ? getImage(className, props.src) : null,
+          src: !useDomNode ? utils.image.getImageObject(props.src) : null,
           source: {
             x: 0,
             y: 0,
