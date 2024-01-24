@@ -5,7 +5,6 @@ import { gamePrefs } from '../UI/preferences.js';
 import { rnd, rndInt, plusMinus, rad2Deg, TYPES } from '../core/global.js';
 import { Smoke } from '../elements/Smoke.js';
 import { GunFire } from '../munitions/GunFire.js';
-import { sprites } from './sprites.js';
 import { common } from './common.js';
 import { snowStorm } from '../lib/snowstorm.js';
 
@@ -198,98 +197,6 @@ const effects = {
     );
   },
 
-  ephemeralExplosion: (options = {}) => {
-    if (!options?.data) return;
-
-    const oData = options.data;
-
-    if (!oData.isOnScreen) return;
-
-    // create an explosion animation at the given coordinates, center, and scale.
-
-    let css, data, dom, exports;
-
-    // as set in CSS
-    const sprite_square_size = 100;
-
-    css = {
-      className: 'ephemeral-explosion'
-    };
-
-    data = common.inheritData({
-      type: 'ephemeral-explosion', // hackish: so battlefield scroll offset is included
-      frameCount: 0,
-      frameCountMax: 45,
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      scale: 1,
-      extraTransform: null
-    });
-
-    dom = {
-      o: null
-    };
-
-    function animate() {
-      sprites.setTransformXY(
-        exports,
-        dom.o,
-        `${data.x}px`,
-        `${data.y}px`,
-        data.extraTransform
-      );
-
-      const finished = ++data.frameCount >= data.frameCountMax;
-
-      if (finished) sprites.removeNodes(dom);
-
-      return finished;
-    }
-
-    function doLayout() {
-      const adjustedWidth = Math.max(24, oData.width);
-
-      // prevent extra-small sprite sizes, and possible vertical clipping
-      const adjustedHeight = Math.max(24, oData.height);
-
-      // set position and scale
-      data.scale = adjustedWidth / sprite_square_size;
-
-      // account for bottom-alignment
-      data.x = oData.x + adjustedWidth / 2;
-      data.y = oData.y - adjustedHeight;
-
-      // for game engine positioning
-      data.width = oData.width;
-      data.height = data.width; // square
-
-      data.extraTransform = `translate3d(-50%, -50%, 0) scale3d(${data.scale},${data.scale},1)`;
-    }
-
-    function initDOM() {
-      dom.o = sprites.create({
-        className: css.className
-      });
-
-      doLayout();
-    }
-
-    initDOM();
-
-    exports = {
-      animate,
-      data,
-      dom
-    };
-
-    // add ourselves to the main game loop
-    game.objects.ephemeralExplosion.push(exports);
-
-    return exports;
-  },
-
   inertGunfireExplosion: (options = {}) => {
     if (!options?.exports?.data) return;
 
@@ -466,15 +373,6 @@ const effects = {
       vX: 0,
       vY: 1
     });
-
-    // additionally, create an additional explosion animation here if it was from a bomb.
-    // exclude bunkers as they have a nuke animation, that's plenty. ;)
-    if (
-      data.type !== TYPES.bunker &&
-      data.attacker?.data?.type === TYPES.bomb
-    ) {
-      effects.ephemeralExplosion(exports);
-    }
   },
 
   updateStormStyle: (style) => {
@@ -503,7 +401,6 @@ const effects = {
       snowStorm.vMaxY = 10;
     } else if (style === 'turd') {
       char = '💩';
-
       snowStorm.flakesMax = 96;
       snowStorm.flakesMaxActive = 96;
       // snowStorm.vMaxX = 0;
@@ -515,7 +412,6 @@ const effects = {
       snowStorm.flakesMaxActive = 0;
     } else {
       // snow case
-
       char = defaultChar;
 
       snowStorm.flakesMax = 72;
