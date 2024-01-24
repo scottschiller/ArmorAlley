@@ -145,7 +145,7 @@ const effects = {
     if (!data.isOnScreen) return;
 
     // first off: certain chance of no smoke, regardless of status
-    if (Math.random() >= (chance || 0.66)) return;
+    if (Math.random() >= 0.66) return;
 
     // a proper roll of the dice: smoke at random. higher damage = greater chance of smoke
     if (Math.random() < 1 - (data.energyMax - data.energy) / data.energyMax)
