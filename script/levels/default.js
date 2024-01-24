@@ -171,7 +171,9 @@ function previewLevel(levelName, excludeVehicles) {
     }
   });
 
-  common.domCanvas.clear();
+  // get the canvas stuff ready to render.
+  common.domCanvas.resize();
+
   game.objects.radar.reset();
 
   if (excludeVehicles) {
