@@ -143,6 +143,9 @@ const Inventory = () => {
     // default off-screen setting
     options.x = -72;
 
+    // apply "summon" transition effect.
+    options.stepOffset = 0;
+
     if (player.data.isCPU) {
       options.isCPU = true;
     }
@@ -325,7 +328,8 @@ const Inventory = () => {
     // force-append this thing, if it's on-screen right now
     sprites.updateIsOnScreen(newObject);
 
-    // get the radar item, too (if one of MTVIE)
+    // hit the radar item, too (if one of MTVIE)
+    // this is also responsible for the battlefield item.
     if (stepTypes[newObject.data.type]) {
       newObject.radarItem?.summon();
     }
@@ -523,7 +527,9 @@ const Inventory = () => {
       if (!game.data.battleOver && !game.data.paused && !game.objects.editor) {
         options = {
           isEnemy: true,
-          x: worldWidth + 64
+          x: worldWidth + 64,
+          // "summon" transition effect
+          stepOffset: 0
         };
 
         if (!game.data.productionHalted) {
