@@ -636,25 +636,51 @@ body:not(.edit-mode) #top-bar {
   overflow: hidden;
   /* account for border */
   margin-left: -0.5px;
-  background-color: rgb(0, 255, 0, 0.025);
+  box-shadow: inset 0 15px 15px 0 rgba(0, 255, 0, 0.025);
   border: 0.5px solid rgba(0, 255, 0, 0.075);
   /* this will be set and updated via JS */
   border-radius: 100%;
   transition-duration: calc(1s * var(--gs-frac));
   transition-timing-function: ease-in-out;
-  transition-property: opacity, background-color, border-color, width, height,
-    transform;
+  transition-property: opacity, box-shadow, border-color, width, height;
   z-index: -2;
   pointer-events: none;
+  will-change: transform;
+}
+
+#battlefield .scan-node {
+  background-color: transparent;
 }
 
 #radar .scan-node {
+  /* bottom-align? */
+  left: 0;
   border-width: calc(0.5px * var(--gs));
-  margin-left: calc(-0.25px * var(--rs));
+  overflow: visible;
+  contain: style;
 }
 
+#radar .radar-item.missile-launcher .scan-node {
+  /* center scan node around missile launcher */
+  margin-left: calc(2.5px * var(--rs));
+}
+
+#radar .radar-item.turret .scan-node {
+  /* likewise, for turrets */
+  margin-left: calc(0.5px * var(--rs));
+}
+
+/* TODO: fix this repetition / nesting. */
+#radar .radar-item.scan-node,
+#radar .radar-item.scan-node .scan-node {
+  will-change: transform;
+  contain: style;
+}
+
+#radar .scan-node.enemy .scan-node,
 #radar .sprite.enemy .scan-node {
-  background-color: rgb(255, 255, 255, 0.025);
+  box-shadow: inset 0 15px 15px 0 rgba(255, 255, 255, 0.025);
+  background-color: transparent;
   border-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -663,23 +689,12 @@ body:not(.game-started) .scan-node {
   transition-duration: 0s !important;
 }
 
-#battlefield .sprite.destroyed .scan-node,
-#battlefield .sprite.exploding .scan-node,
-#radar .sprite.destroyed .scan-node {
-  transform: translate3d(-50%, -100%, 0) scale3d(0, 0, 1);
-  transform-origin: 50% 100%;
-  transition-duration: calc(1s * var(--gs-frac));
-}
-
-#help,
+#editor-window,
+#editor-window-help,
 #game-paused,
+#help,
 #tutorial,
 #tutorial-window,
-#editor-window,
-#editor-window-help {
-  display: none;
-}
-
 body:not(.game-started) #funds,
 body:not(.game-started) #game-tips {
   display: none;
@@ -942,17 +957,16 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 /* various cases for disabling scan range UI */
+#battle-over-letter,
+#battlefield.scan_ui_battlefield_enemy_disabled .scan-node.enemy,
 #battlefield.scan_ui_battlefield_enemy_disabled .sprite.enemy .scan-node,
 #battlefield.scan_ui_battlefield_friendly_disabled
   .sprite:not(.enemy)
   .scan-node,
+#battlefield.scan_ui_battlefield_friendly_disabled > .scan-node:not(.enemy),
+#letters-from-the-old-tanker,
 #radar.scan_ui_radar_enemy_disabled .sprite.enemy .scan-node,
 #radar.scan_ui_radar_friendly_disabled .sprite:not(.enemy) .scan-node {
-  display: none;
-}
-
-#letters-from-the-old-tanker,
-#battle-over-letter {
   display: none;
 }
 
