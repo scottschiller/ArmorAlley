@@ -89,10 +89,14 @@ const GunFire = (options = {}) => {
         common.hit(target, data.damagePoints, exports);
       }
 
-      // additional bits of shrapnel
+      // additional bits of shrapnel, for a helicopter shooting a few specific units
       if (
         pType === TYPES.helicopter &&
-        (tType === TYPES.tank || tType === TYPES.missileLauncher)
+        (tType === TYPES.tank ||
+          tType === TYPES.missileLauncher ||
+          tType === TYPES.helicopter ||
+          tType === TYPES.turret ||
+          tType === TYPES.bunker)
       ) {
         effects.inertGunfireExplosion({
           exports,
