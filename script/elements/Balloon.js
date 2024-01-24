@@ -39,6 +39,28 @@ const Balloon = (options = {}) => {
 
     zones.changeOwnership(exports);
 
+    // get a fresh copy, pull coords as balloon has likely been mutated.
+    const img = getCanvasBalloon();
+    const { width, height, frameWidth, frameHeight } = img.source;
+
+    const animConfig = {
+      sprite: {
+        url: spriteURL,
+        width,
+        height,
+        frameWidth,
+        frameHeight,
+        animationDuration: 1,
+        reverseDirection: isEnemy
+      },
+      onEnd: () => (data.domCanvas.ownershipAnimation = null)
+    };
+
+    data.domCanvas.ownershipAnimation = common.domCanvas.canvasAnimation(
+      exports,
+      animConfig
+    );
+
     utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
     utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
 
@@ -107,6 +129,12 @@ const Balloon = (options = {}) => {
       if (gamePrefs.bnb && data.isOnScreen) {
         playSound(sounds.bnb.beavisPoop, exports);
       }
+    }
+
+    if (!dom.o._style) {
+      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports, {
+        onEnd: () => (data.domCanvas.dieExplosion = null)
+      });
     }
 
     effects.inertGunfireExplosion({ exports });
@@ -186,25 +214,34 @@ const Balloon = (options = {}) => {
     );
 
     if (facing !== data.lastFacingX) {
+      data.lastFacingX = facing;
+      data.width = data.facingWidths[facing + data.facingMax];
+      data.halfWidth = data.width / 2;
       /**
        * Update sprite position, moving up/down from center.
        * Each balloon frame is 16px tall, when scaled down.
        */
-      dom.o.style.backgroundPosition = `0px ${
-        -data.spriteMiddle - 16 * facing
-      }px`;
-      data.lastFacingX = facing;
-      data.width = data.facingWidths[facing + data.facingMax];
-      // offset X position with half of the difference vs. original width.
-      // TODO: move this to a transform / sub-sprite.
-      dom.o.style.marginLeft = `${-(width - data.width) / 2}px`;
-      data.halfWidth = data.width / 2;
+      if (game.objects.editor) {
+        dom.o.style.backgroundPosition = `0px ${
+          -data.spriteMiddle - 16 * facing
+        }px`;
+
+        // offset X position with half of the difference vs. original width.
+        // TODO: move this to a transform / sub-sprite.
+        dom.o.style.marginLeft = `${-(width - data.width) / 2}px`;
+      }
+
+      if (data.domCanvas.img) {
+        data.domCanvas.img.source.frameY = data.frameYMiddle + facing;
+      }
     }
   }
 
   function animate() {
     if (data.dead) {
       checkRespawn();
+
+      data.domCanvas?.dieExplosion?.animate();
 
       // explosion underway: move, accounting for scroll
       if (data.deadTimer) {
@@ -221,6 +258,8 @@ const Balloon = (options = {}) => {
     }
 
     // not dead...
+
+    data.domCanvas?.ownershipAnimation?.animate();
 
     effects.smokeRelativeToDamage(exports);
 
@@ -319,6 +358,9 @@ const Balloon = (options = {}) => {
 
     utils.css.remove(dom.o, css.exploding, css.explodingType, css.dead);
 
+    // restore original sprite
+    data.domCanvas.img = getCanvasBalloon();
+
     // randomize again
     css.explodingType = randomExplosionType();
 
@@ -339,11 +381,15 @@ const Balloon = (options = {}) => {
       extraCSS = css.facingRight;
     }
 
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: extraCSS
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: extraCSS
+      });
+    } else {
+      dom.o = {};
+    }
 
     sprites.moveTo(exports);
   }
@@ -417,6 +463,7 @@ const Balloon = (options = {}) => {
       windOffsetY: 0,
       energy: 3,
       energyMax: 3,
+      centerEnergyLine: true,
       direction: 0,
       detached: !objects.bunker,
       hostile: !objects.bunker, // dangerous when detached
@@ -425,6 +472,7 @@ const Balloon = (options = {}) => {
       lastFacingX: null,
       facingRatio: facingMax / (windOffsetXMax * 0.75),
       spriteMiddle: 64,
+      frameYMiddle: 4,
       facingMax,
       // larger <- or -> to smaller o (circle) shape
       facingWidths: [38, 33, 28, 22, 15, 22, 28, 33, 38],
@@ -474,8 +522,38 @@ const Balloon = (options = {}) => {
     setEnemy
   };
 
+  const spriteURL = 'balloon_mac.png';
+
+  function getCanvasBalloon() {
+    const spriteWidth = 76;
+    const spriteHeight = 288;
+    const frameWidth = spriteWidth;
+    const frameHeight = 32; // 9 frames
+
+    return {
+      src: !game.objects.editor ? utils.image.getImageObject(spriteURL) : null,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth,
+        frameHeight,
+        frameX: 0,
+        // left vs. right-facing offsets
+        frameY: data.isEnemy ? 0 : 8
+      },
+      target: {
+        width: frameWidth / 2,
+        height: frameHeight / 2
+      }
+    };
+  }
+
   data.domCanvas = {
-    radarItem: Balloon.radarItemConfig(exports)
+    radarItem: Balloon.radarItemConfig(exports),
+    img: getCanvasBalloon()
   };
 
   return exports;
@@ -486,7 +564,7 @@ Balloon.radarItemConfig = (exports) => ({
   height: 2,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    if (exports?.data?.dead && !exports.data.deadTimer) {
+    if (exports?.data?.dead) {
       // special case: balloon is dead, but can be respawned.
       return;
     }
