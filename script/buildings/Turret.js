@@ -945,21 +945,60 @@ const turretDead = {
 
 Turret.radarItemConfig = (exports) => ({
   width: 1.5,
-  height: 2.5,
+  height: 2.25,
   draw: (ctx, obj, pos, width, height) => {
     ctx.fillStyle = exports?.data?.dead
       ? exports?.data?.isEnemy
-        ? 'rgba(204, 204, 204, 0.5)'
-        : 'rgba(23, 160, 7, 0.5)'
+        ? 'rgba(204, 204, 204, 0.25)'
+        : 'rgba(23, 160, 7, 0.25)'
       : exports?.data?.isEnemy
       ? '#ccc'
       : '#17a007';
-    ctx.roundRect(
-      pos.left(obj.data.left),
+
+    const left = pos.left(obj.data.left);
+    const scaledWidth = pos.width(width);
+    const scaledHeight = pos.height(height);
+
+    // base of turret
+    ctx.arc(
+      left + scaledWidth / 2,
+      pos.bottomAlign(0),
+      pos.width(1.15),
+      Math.PI,
+      0,
+      false
+    );
+
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    // turret gun barrel
+    const barrelWidth = scaledWidth * 0.75;
+    const barrelHeight = scaledHeight * 0.75;
+
+    common.domCanvas.rotate(
+      ctx,
+      exports.data.angle,
+      left + barrelWidth / 2,
       pos.bottomAlign(height),
       barrelWidth / 2,
       barrelHeight
     );
+
+    ctx.roundRect(
+      left + 1,
+      pos.bottomAlign(height + 0.5),
+      barrelWidth,
+      barrelHeight,
+      height
+    );
+
+    common.domCanvas.unrotate(ctx);
+
+    ctx.fill();
+    ctx.stroke();
   }
 });
 
