@@ -485,32 +485,36 @@ const sprites = {
     // if "always" show, no further work to do
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
 
-    // hide in a moment, clearing any existing timers.
+    // hide in a moment, recycling any existing timers.
     if (object.data.energyTimerFade) {
-      object.data.energyTimerFade.reset();
+      object.data.energyTimerFade.restart();
     }
 
     if (object.data.energyTimerRemove) {
-      object.data.energyTimerRemove.reset();
+      object.data.energyTimerRemove.restart();
     }
 
     // fade out, and eventually remove
-    object.data.energyTimerFade = common.setFrameTimeout(() => {
-      // in case prefs changed during a timer, prevent removal now
-      if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
+    if (!object.data.energyTimerFade) {
+      object.data.energyTimerFade = common.setFrameTimeout(() => {
+        // in case prefs changed during a timer, prevent removal now
+        if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
 
-      if (node?._style) node._style.setProperty('opacity', 0);
+        if (node?._style) node._style.setProperty('opacity', 0);
 
-      // fade should be completed within 250 msec
-      object.data.energyTimerRemove = common.setFrameTimeout(() => {
-        if (node) {
-          node.remove();
-          node._style = null;
-        }
-        object.dom.oEnergy = null;
-        node = null;
-      }, 250);
-    }, 2000);
+        // fade should be completed within 250 msec
+        object.data.energyTimerRemove = common.setFrameTimeout(() => {
+          if (node) {
+            node.remove();
+            node._style = null;
+          }
+          object.dom.oEnergy = null;
+          node = null;
+          object.data.energyTimerRemove = null;
+        }, 250);
+        object.data.energyTimerFade = null;
+      }, 2000);
+    }
   }
 };
 
