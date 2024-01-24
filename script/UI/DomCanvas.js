@@ -1,24 +1,38 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { FPS, TYPES } from '../core/global.js';
+import { FPS, GAME_SPEED, TYPES, oneOf } from '../core/global.js';
+import { utils } from '../core/utils.js';
+import { PREFS, gamePrefs } from './preferences.js';
 
 const canvasConfig = [
   // dom ID vs. object name / reference - e.g., `dom.o.fx` / `dom.ctx.fx`
-  { id: 'battlefield-canvas', name: 'battlefield', ctxArgs: { alpha: false } },
+  {
+    id: 'radar-canvas',
+    name: 'radar',
+    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: true }
+  },
+  {
+    id: 'battlefield-canvas',
+    name: 'battlefield',
+    ctxArgs: { alpha: false },
+    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
+  },
   // for gunfire, shrapnel, smoke - show the pixels.
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
   {
     id: 'battlefield-canvas',
     name: 'fx-bg',
-    ctxOptions: { imageSmoothingEnabled: false }
+    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
   },
-  { id: 'fx-canvas', name: 'fx', ctxOptions: { imageSmoothingEnabled: false } },
   {
-    id: 'radar-canvas',
-    name: 'radar',
-    ctxOptions: { imageSmoothingEnabled: false }
+    id: 'fx-canvas',
+    name: 'fx',
+    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
   }
 ];
+
+const ctxOptionsById = {};
+canvasConfig.forEach((item) => (ctxOptionsById[item.id] = item.ctxOptions));
 
 // certain objects render in certain places.
 // TODO: sometimes, smoke should be behind the helicopter (and/or clouds), i.e., render on battlefield canvas.
