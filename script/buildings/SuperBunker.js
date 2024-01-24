@@ -1,6 +1,12 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { FPS, GAME_SPEED_RATIOED, TYPES, getTypes } from '../core/global.js';
+import {
+  FPS,
+  GAME_SPEED,
+  GAME_SPEED_RATIOED,
+  TYPES,
+  getTypes
+} from '../core/global.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import {
@@ -120,6 +126,8 @@ const SuperBunker = (options = {}) => {
       css.hostile
     );
 
+    updateArrowState();
+
     zones.changeOwnership(exports);
   }
 
@@ -232,6 +240,14 @@ const SuperBunker = (options = {}) => {
 
     fire();
 
+    if (data.arrowFrameActive) {
+      arrowConfig.target.angle = data.arrowFrames[data.arrowFrame];
+      data.arrowFrame++;
+      if (data.arrowFrame >= data.arrowFrames.length) {
+        data.arrowFrameActive = false;
+      }
+    }
+
     // note: super bunkers never die, but leaving this in anyway.
     return !dom.o;
   }
@@ -244,28 +260,85 @@ const SuperBunker = (options = {}) => {
     );
   }
 
+  function updateArrowState() {
+    // TODO: DRY / utility function
+    function dropOff(x) {
+      // x from 0 to 1 returns from 1 to 0, with in-out easing.
+      // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+      // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+      return (Math.cos(Math.PI * x) + 1) / 2;
+    }
+
+    function makeArrowFrames(angleDelta) {
+      const duration = FPS * 0.5 * (1 / GAME_SPEED);
+
+      data.arrowFrames = [];
+
+      for (let i = 0; i <= duration; i++) {
+        // 1/x, up to 1
+        data.arrowFrames[i] =
+          arrowConfig.target.angle + dropOff(i / duration) * angleDelta;
+      }
+      // we want 0 to 1.
+      data.arrowFrames.reverse();
+
+      data.arrowFrame = 0;
+      data.arrowFrameActive = true;
+    }
+
+    const angles = {
+      left: -180,
+      up: -90,
+      right: 0
+    };
+
+    const toAngle =
+      angles[data.hostile ? 'up' : data.isEnemy ? 'left' : 'right'];
+
+    let delta = toAngle - arrowConfig.target.angle;
+
+    // don't loop / turn around the wrong way.
+    if (delta <= -180) {
+      delta += 360;
+    }
+
+    makeArrowFrames(delta);
+  }
+
   function onArrowHiddenChange(isVisible) {
-    if (!dom?.oArrow) return;
-    dom.oArrow.style.visibility = isVisible ? 'visible' : 'hidden';
     utils.css.addOrRemove(
       radarItem?.dom?.o,
       data.hostile && isVisible,
       css.hostile
     );
+    if (dom?.oArrow) {
+      dom.oArrow.style.visibility = isVisible ? 'visible' : 'hidden';
+    }
+    // update domCanvas config
+    data.domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: data.isEnemy ? `${css.enemy} ${css.facingLeft}` : css.facingRight
-    });
-
-    dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: data.isEnemy
+          ? `${css.enemy} ${css.facingLeft}`
+          : css.facingRight
+      });
+      dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+    } else {
+      dom.o = {};
+      data.domCanvas.img = gamePrefs.super_bunker_arrows
+        ? [spriteConfig, arrowConfig]
+        : spriteConfig;
+    }
 
     onArrowHiddenChange(gamePrefs.super_bunker_arrows);
 
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+    // this will set x + y for domCanvas
+    sprites.moveTo(exports, data.x, data.y);
   }
 
   function initSuperBunker() {
@@ -275,12 +348,25 @@ const SuperBunker = (options = {}) => {
 
     updateFireModulus();
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, css.className);
   }
 
   function destroy() {
     radarItem?.die();
     sprites.removeNodes(dom);
+  }
+
+  function getSpriteURL() {
+    return (
+      'super-bunker_mac' +
+      (gamePrefs.weather === 'snow' ? '_snow' : '') +
+      '.png'
+    );
+  }
+
+  function applySpriteURL() {
+    if (!spriteConfig) return;
+    spriteConfig.src = utils.image.getImageObject(getSpriteURL());
   }
 
   width = 66;
@@ -310,7 +396,7 @@ const SuperBunker = (options = {}) => {
       doorWidth: 6,
       height,
       firing: false,
-      gunYOffset: 20,
+      gunYOffset: 19,
       // fire speed relative to # of infantry arming it
       fireModulus: FIRE_MODULUS,
       fireModulus1X: FIRE_MODULUS,
@@ -354,8 +440,49 @@ const SuperBunker = (options = {}) => {
     hit,
     init: initSuperBunker,
     onArrowHiddenChange,
+    refreshNearbyItems,
     updateHealth,
-    refreshNearbyItems
+    updateSprite: applySpriteURL
+  };
+
+  const spriteWidth = 132;
+  const spriteHeight = 56;
+
+  const spriteConfig = {
+    src: utils.image.getImageObject(getSpriteURL()),
+    source: {
+      x: 0,
+      y: 0,
+      width: spriteWidth,
+      height: spriteHeight
+    },
+    target: {
+      width: spriteWidth / 2,
+      height: spriteHeight / 2
+    }
+  };
+
+  const arrowWidth = 6;
+  const arrowHeight = 10;
+
+  const arrowConfig = {
+    src: utils.image.getImageObject('arrow-right.png'),
+    excludeEnergy: true,
+    source: {
+      x: 0,
+      y: 0,
+      frameWidth: arrowWidth,
+      frameHeight: arrowHeight,
+      frameX: 0,
+      frameY: 0
+    },
+    target: {
+      width: arrowWidth,
+      height: arrowHeight,
+      xOffset: 50,
+      yOffset: -11,
+      angle: data.isEnemy ? 180 : data.isHostile ? -90 : 0
+    }
   };
 
   data.domCanvas = {
