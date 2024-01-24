@@ -68,6 +68,9 @@ const Turret = (options = {}) => {
   }
 
   function fire() {
+    // don't fire at things while in the editor. :P
+    if (game.objects.editor) return;
+
     let deltaX,
       deltaY,
       deltaXGretzky,
