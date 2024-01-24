@@ -215,6 +215,79 @@ body.is-mobile.mobile-controls_right-aligned
     margin-left: calc(64px * var(--gs) * 1.15);
     max-width: 60vw;
   }
+
+  /* remove for portrait mode. */
+  body.is-mobile #game-tips .tips-container {
+    /* take most of the screen real estate */
+    width: 95%;
+  }
+
+  body.is-mobile #help {
+    margin-left: 0.25rem;
+  }
+
+  body.bnb.is-mobile #bnb-now-playing {
+    /* More positioning hacks. Ugh. */
+    left: -1px;
+  }
+
+  body.is-mobile #mobile-controls .mobile-controls-ordering,
+  body.is-mobile #mobile-controls .mobile-controls-weapons {
+    /* collapse bullshit whitespace */
+    font-size: 0;
+    left: 0;
+  }
+
+  /* hide text when in portrait mode. */
+  /* only show if on a very wide device, e.g., ipad / tablet. */
+  body.is-mobile #mobile-controls li span,
+  body.is-mobile #player-status-bar span.letter-block {
+    display: none;
+  }
+
+  /* smaller inventory sizes */
+  #mobile-controls li.inventory-item a.missile-launcher,
+  #mobile-controls li.inventory-item a.tank {
+    background-size: 80%;
+  }
+
+  #mobile-controls li.inventory-item a.engineer,
+  #mobile-controls li.inventory-item a.infantry {
+    background-size: 33%;
+  }
+
+  /* helicopter weapons */
+  #mobile-controls li.inventory-item a.ammo,
+  #mobile-controls li.weapons-item a.parachute-infantry {
+    background-size: 25%;
+  }
+
+  #mobile-controls li.inventory-item a.smart-missile {
+    background-size: 30%;
+  }
+
+  #mobile-controls li.inventory-item a.bombs {
+    background-size: 6.5%;
+  }
+
+  body.is-mobile #mobile-landscape-tip {
+    display: block;
+  }
+
+  body.game-paused #game-tips .tips-container,
+  body.game-paused #mobile-controls,
+  body.game-paused #notification-toasts {
+    visibility: hidden;
+  }
+
+  body.is-mobile #battle-over-letter.active {
+    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  }
+
+  /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
+  body.is-mobile #battle-over-letter.open {
+    transform: translate3d(-50%, -20%, 0) scale3d(1, 1, 1);
+  }
 }
 
 @media screen and (orientation: landscape) {
@@ -294,13 +367,6 @@ body.is-mobile.mobile-controls_right-aligned
     top: calc(6px * var(--gs));
   }
 
-  @media screen and (orientation: landscape) {
-    /* TODO: review and fix. */
-    body.is_iphone #funds {
-      zoom: 1.6;
-    }
-  }
-
   /* bottom bar */
   body.is-mobile.notch-at-left #bottom {
     padding-right: 12px;
@@ -316,6 +382,11 @@ body.is-mobile.mobile-controls_right-aligned
   }
 
   @media screen and (orientation: landscape) {
+    /* TODO: review and fix. */
+    body.is_iphone #funds {
+      zoom: 1.6;
+    }
+
     body.is-mobile #notification-toasts {
       /* iPad / tablet */
       font-size: calc(7px * var(--gs));
@@ -327,84 +398,7 @@ body.is-mobile.mobile-controls_right-aligned
       line-height: 150%;
     }
   }
-}
 
-@media screen and (orientation: portrait) {
-  /* remove for portrait mode. */
-  body.is-mobile #game-tips .tips-container {
-    /* take most of the screen real estate */
-    width: 95%;
-  }
-
-  body.is-mobile #help {
-    margin-left: 0.25rem;
-  }
-
-  body.bnb.is-mobile #bnb-now-playing {
-    /* More positioning hacks. Ugh. */
-    left: -1px;
-  }
-
-  body.is-mobile #mobile-controls .mobile-controls-ordering,
-  body.is-mobile #mobile-controls .mobile-controls-weapons {
-    /* collapse bullshit whitespace */
-    font-size: 0;
-    left: 0;
-  }
-
-  /* hide text when in portrait mode. */
-  /* only show if on a very wide device, e.g., ipad / tablet. */
-  body.is-mobile #mobile-controls li span,
-  body.is-mobile #player-status-bar span.letter-block {
-    display: none;
-  }
-
-  /* smaller inventory sizes */
-  #mobile-controls li.inventory-item a.missile-launcher,
-  #mobile-controls li.inventory-item a.tank {
-    background-size: 80%;
-  }
-
-  #mobile-controls li.inventory-item a.engineer,
-  #mobile-controls li.inventory-item a.infantry {
-    background-size: 33%;
-  }
-
-  /* helicopter weapons */
-  #mobile-controls li.inventory-item a.ammo,
-  #mobile-controls li.weapons-item a.parachute-infantry {
-    background-size: 25%;
-  }
-
-  #mobile-controls li.inventory-item a.smart-missile {
-    background-size: 30%;
-  }
-
-  #mobile-controls li.inventory-item a.bombs {
-    background-size: 6.5%;
-  }
-
-  body.is-mobile #mobile-landscape-tip {
-    display: block;
-  }
-
-  body.game-paused #game-tips .tips-container,
-  body.game-paused #mobile-controls,
-  body.game-paused #notification-toasts {
-    visibility: hidden;
-  }
-
-  body.is-mobile #battle-over-letter.active {
-    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
-  }
-
-  /* pull letter down further on mobile + portrait, so "midnight oasis" letter fits on iOS Safari screen. */
-  body.is-mobile #battle-over-letter.open {
-    transform: translate3d(-50%, -20%, 0) scale3d(1, 1, 1);
-  }
-}
-
-@media screen and (orientation: landscape) {
   /* on short screens, accommodate the fact that letters won't fit when open. */
   body.is-mobile.is_iphone #battle-over-letter {
     transform: translate3d(-50%, -50%, 0) scale3d(1.85, 1.85, 1);
@@ -429,6 +423,19 @@ body.is-mobile.mobile-controls_right-aligned
     transform: none;
     bottom: auto;
     padding-bottom: calc(90px * var(--gs));
+  }
+
+  body:not(.is-mobile)
+    #game-tips
+    .tips-container
+    .animation-node:not(.hide-on-mobile),
+  body:not(.is-mobile) #game-tips .tips-container .tip:not(.hide-on-mobile) {
+    width: 165%;
+  }
+
+  body:not(.is-mobile) #game-tips #game-announcements {
+    /* desktop */
+    font-size: calc(24px * var(--gs));
   }
 }
 
@@ -483,8 +490,6 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
 }
 
 #mobile-controls {
-  position: absolute;
-  display: none;
   /* ugh, whitespace. */
   font-size: 0px;
   width: calc(60px * var(--gs));
@@ -493,7 +498,10 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
   padding: 0 1px;
   /* this works OK for iPad. */
   bottom: calc(42px * var(--gs));
-  z-index: 11; /* sit atop clouds */
+  z-index: 11;
+  /* sit atop clouds */
+  position: absolute;
+  display: none;
 }
 
 body.mobile-controls_left-aligned #mobile-controls {
@@ -690,25 +698,6 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 
 #mobile-inventory-controls li {
   transition: opacity 0.1s ease-out;
-}
-
-#mobile-controls {
-  position: absolute;
-  display: none;
-}
-
-@media screen and (orientation: landscape) {
-  body:not(.is-mobile)
-    #game-tips
-    .tips-container
-    .animation-node:not(.hide-on-mobile),
-  body:not(.is-mobile) #game-tips .tips-container .tip:not(.hide-on-mobile) {
-    width: 165%;
-  }
-  body:not(.is-mobile) #game-tips #game-announcements {
-    /* desktop */
-    font-size: calc(24px * var(--gs));
-  }
 }
 
 #mobile-controls li.inventory-item a.engineer,

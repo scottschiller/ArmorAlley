@@ -709,15 +709,6 @@ body.is_firefox #radar .radar-item--animated {
     opacity 0.5s ease-in-out;
 }
 
-/* hide GPU-accelerated, transform-based animated sprites when exploding. */
-.sprite.exploding .transform-sprite {
-  display: none;
-}
-
-body.is_safari:not(.is-mobile) .radar-item.bunker {
-  margin-top: -2px;
-}
-
 .bunker,
 .bunker.enemy {
   background-image: url(../image/bunker_mac.png);
@@ -763,256 +754,13 @@ body.is_safari:not(.is-mobile) .radar-item.bunker {
   display: none;
 }
 
-.balloon {
-  background-image: url(../image/balloon_mac.png);
-  /* initially, show neutral */
-  background-size: 38px 144px;
-  /* 76 x 288 source image */
-  height: 16px;
-  /* allow status bar to hang out a bit */
-  overflow: visible;
-  width: 38px;
-  z-index: 2;
-}
-
-/* alignment / centering tweaks while on bunker w/chain */
-#battlefield .balloon.facing-left:not(.exploding) {
-  margin-left: 1.5px;
-}
-
-#battlefield .balloon.facing-right:not(.exploding) {
-  margin-left: -2.65px;
-}
-
-#battlefield.snow .balloon:not(.exploding):not(.dead) {
-  background-image: url(../image/balloon_mac_snow.png);
-}
-
-.balloon,
-.balloon.facing-right {
-  background-position: 0 -128px; /* original yellow version: 0px -120px */
-}
-
-.balloon.animating {
-  transition: margin 0.8s linear;
-}
-
-.balloon.facing-right.animating {
-  animation: balloonright calc(0.8s * var(--gs-frac)) steps(8);
-}
-
-.balloon.facing-left {
-  background-position: 0 0; /* default when animation finishes */
-}
-
-.balloon.facing-left.animating {
-  animation: balloonleft calc(0.8s * var(--gs-frac)) steps(8);
-}
-
-.generic-explosion,
-.generic-explosion-2 {
-  /* default when animation finishes */
-  animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
-  /* give the first frame a little more time */
-  animation-delay: 75ms;
-  /* stay at the last frame, when animation finishes */
-  animation-fill-mode: forwards;
-  background-image: url(../image/generic-explosion.png);
-  /* full-width, and 5x height for the five frames */
-  background-size: 100% 500%;
-  filter: drop-shadow(0 0 calc(2px * var(--gs)) #cc3333);
-}
-
-@keyframes classic-explosion {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(0, -100%, 0);
-  }
-}
-
-.generic-explosion-2 {
-  background-image: url(../image/generic-explosion-2.png);
-}
-
-.balloon.dead,
-.generic-explosion .sub-sprite,
-.generic-explosion-2 .sub-sprite {
-  display: none;
-}
-
 .sprite.dead {
   background-image: none;
 }
 
-.chain {
-  /**
-   * height will be set / reset by JS.
-   * element is moved via transform and is effectively fixed-height when active.
-   * height is only zeroed when chain is at bottom - detached from balloon and/or bunker.
-   */
-  height: 0;
-  top: 0;
-  width: 2.5px;
-  background-image: repeating-linear-gradient(
-    -33deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 0.5px,
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0) 1.5px
-  );
-}
-
-body.is_safari:not(.is-mobile) .chain {
-  /* tweak for desktop Safari, likely due to scaling. */
-  background-image: repeating-linear-gradient(
-    -33deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0.33) 1.5px,
-    rgba(255, 255, 255, 0) 2px
-  );
-}
-
-.missile-launcher {
-  background-image: url(../image/missile-launcher.png);
-  height: 18px;
-  width: 54px;
-  z-index: 2;
-}
-
-.missile-launcher,
-.missile-launcher.enemy {
-  background-repeat: no-repeat;
-  background-size: 54px 72px;
-}
-
-.missile-launcher.enemy {
-  background-image: url(../image/missile-launcher-enemy.png);
-}
-
-.tank,
-.tank.enemy {
-  background-image: none;
-  height: 19px;
-  width: 58px;
-  z-index: 2;
-}
-
-.tank .transform-sprite {
-  background-image: url(../image/tank-sprite-horizontal.png);
-  background-size: 174px 18px;
-  /* 58px x 3 frames */
-  height: 18px;
-  width: 174px;
-}
-
-.tank .transform-sprite,
-.tank.enemy .transform-sprite {
-  animation: animate-transform-sprite-tank calc(0.1s * var(--gs-frac)) steps(3)
-    infinite;
-}
-
-.tank.enemy .transform-sprite {
-  background-image: url(../image/tank-enemy-sprite-horizontal.png);
-}
-
-.tank.stopped .transform-sprite {
-  /* show only one frame. */
-  animation: none;
-}
-
-.van,
-.van.enemy {
-  background-image: url(../image/van.png);
-  background-size: 38px 48px;
-  /* retina sprite, 76 x 96 -> 36 x (16px * 3) - vertical sprite */
-  height: 16px;
-  width: 38px;
-  z-index: 2;
-}
-
-.van.enemy {
-  background-image: url(../image/van-enemy.png);
-}
-
-.engineer,
-.infantry {
-  height: 11px;
-  overflow: hidden;
-  width: 11px;
-  z-index: 3; /* on top of helicopter, bunkers etc. */
-}
-
-.infantry .transform-sprite {
-  /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
-  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
-    steps(5) infinite reverse;
-  background-image: url(../image/infantry-sprite-horizontal.png);
-  background-size: 55px 11px;
-  height: 11px;
-  position: absolute;
-  width: 55px;
-}
-
-.infantry.enemy .transform-sprite {
-  /* proper L -> R order, in this case. */
-  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
-    steps(5) infinite;
-  background-image: url(../image/infantry-enemy-sprite-horizontal.png);
-}
-
-.infantry.stopped {
-  background-image: url(../image/infantry-static.png);
-  background-repeat: no-repeat;
-  background-size: 10px 12px;
-}
-
-.infantry.stopped .transform-sprite {
-  animation: none;
+/* hide GPU-accelerated, transform-based animated sprites when exploding. */
+.sprite.exploding .transform-sprite {
   display: none;
-}
-
-.infantry.enemy.stopped {
-  background-image: url(../image/infantry-enemy-static.png);
-  background-repeat: no-repeat;
-  background-size: 10px 12px;
-}
-
-.engineer {
-  width: 10px; /* slightly smaller than infantry. */
-}
-
-.engineer .transform-sprite {
-  animation: animate-transform-sprite-engineer calc(0.4s * var(--gs-frac))
-    steps(5) infinite;
-  background-image: url(../image/engineer-sprite-horizontal.png);
-  background-size: 50px 11px;
-  height: 11px;
-  width: 50px;
-}
-
-.sprite.engineer:not(.enemy).building {
-  margin-top: 23px;
-}
-
-.engineer.stopped {
-  background-image: none;
-}
-
-.engineer.stopped .transform-sprite {
-  animation: none;
-  display: block;
-}
-
-.engineer.enemy .transform-sprite {
-  background-image: url(../image/engineer-enemy-sprite-horizontal.png);
 }
 
 .parachute-infantry,
@@ -1081,8 +829,8 @@ body.is_safari:not(.is-mobile) .chain {
   top: auto;
 }
 
-.next-missile-target {
-  /* halo around potential targets */
+.next-missile-target:not(.placeholder) {
+  /* halo around potential targets, excluding "placeholder" nodes for turrets + missile launchers. */
   filter: drop-shadow(0 0 calc(2px * var(--gs)) #999);
 }
 
@@ -1090,7 +838,9 @@ body.is_safari:not(.is-mobile) .chain {
   filter: drop-shadow(0 0 calc(2px * var(--gs)) #ff3333);
 }
 
-.smart-missile-tracking:not(.turret):not(.parachute-infantry) {
+.smart-missile-tracking:not(.turret):not(.parachute-infantry):not(
+    .placeholder
+  ) {
   /**
    * Turn "hot" fast, with a few exceptions -
    * Turrets and parachute infantry need to keep
@@ -1139,30 +889,6 @@ body.is_safari:not(.is-mobile) .chain {
 .radar-item.helicopter.enemy.smart-missile-tracking-active {
   /* enemy helicopter */
   border-right-color: red !important;
-}
-
-.engineer.enemy.exploding,
-.infantry.enemy.exploding,
-.left-arrow-sign,
-.missile-launcher.enemy.exploding,
-.tank .sub-sprite,
-.tank.enemy.exploding,
-.van.enemy.exploding {
-  /* horizontal flip tricks */
-  filter: FlipH;
-  transform: scaleX(-1);
-}
-
-.engineer.enemy.exploding,
-.infantry.enemy.exploding {
-  /* stupid display fix */
-  height: 22px !important;
-}
-
-.tank.enemy .sub-sprite {
-  /* no flip in certain cases */
-  filter: unset;
-  transform: none;
 }
 
 .helicopter {
@@ -1695,25 +1421,32 @@ body:not(.game-over).radar_jammed #radar {
   margin-left: -28px;
 }
 
-/* new "generic" explosion */
-.ephemeral-explosion {
-  animation: ephemeralexplosion calc(0.75s * var(--gs-frac)) steps(14);
+.generic-explosion,
+.generic-explosion-2 {
+  /* default when animation finishes */
+  animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
+  /* give the first frame a little more time */
+  animation-delay: 75ms;
+  /* stay at the last frame, when animation finishes */
   animation-fill-mode: forwards;
-  /* Stay on last frame when finished */
-  background-image: url(../image/explosion_by_tungkann_dam5o19.png);
-  background-position: 0 0;
-  /* default state */
-  background-repeat: no-repeat;
-  background-size: 1400px 100px;
-  height: 100px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
-  transform-origin: 50% 100%;
-  /* bottom-align */
-  width: 100px;
-  z-index: 3;
+  background-image: url(../image/generic-explosion.png);
+  /* full-width, and 5x height for the five frames */
+  background-size: 100% 500%;
+  filter: drop-shadow(0 0 calc(2px * var(--gs)) #cc3333);
+}
+
+@keyframes classic-explosion {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+.generic-explosion-2 {
+  background-image: url(../image/generic-explosion-2.png);
 }
 
 .sprite .energy-status {
@@ -1730,6 +1463,11 @@ body:not(.game-over).radar_jammed #radar {
   transition-property: width, height, left, background-color, opacity;
   width: 100%;
   z-index: 2;
+}
+
+.sprite.engineer-interacting .energy-status {
+  /* don't transition width or left while engineers are e.g., repairing a bunker - particularly at 60 FPS. */
+  transition-property: height, background-color, opacity;
 }
 
 .sprite.tank .energy-status {
@@ -1855,67 +1593,64 @@ body:not(.game-over).radar_jammed #radar {
   transition: margin 2s;
 }
 
+#battlefield .sprite.placeholder {
+  /* hackish: placeholder for scan nodes, before moving (if at all) to canvas. */
+  width: 0px;
+  height: 0px;
+  overflow: visible;
+  contain: revert;
+  will-change: transform;
+}
+
+#radar .scan-node.destroyed,
+#radar .scan-node.engineer-interacting,
+#radar .radar-item.dying .scan-node, /* self-destructing missile launchers */
+#battlefield .sprite.exploding .scan-node, /* exploding turrets */
+#battlefield .sprite.destroyed .scan-node,
+#battlefield .sprite.placeholder.engineer-interacting .scan-node {
+  transition-property: transform, opacity;
+}
+
+#radar .radar-item.dying .scan-node, /* self-destructing missile launchers */
+#radar .scan-node.destroyed,
+#radar .scan-node.exploding,
+#radar .sprite.destroyed .scan-node {
+  transform: translate3d(-50%, -100%, 0) scale3d(0, 0, 1);
+  transform-origin: 50% 100%;
+  transition-duration: calc(1s * var(--gs-frac));
+  box-shadow: none;
+}
+
+#battlefield .sprite.placeholder.destroyed .scan-node,
+#battlefield .scan-node.exploding,
+#battlefield .sprite.placeholder.exploding .scan-node,
+#battlefield .scan-node.destroyed,
+#battlefield .sprite.placeholder.destroyed .scan-node {
+  /* NOTE: shenanigans - additional 18px on bottom for battlefield items. */
+  transform: translate3d(-50%, calc(-100% + 18px), 0) scale3d(0, 0, 1);
+  transform-origin: 50% 100%;
+  transition-duration: calc(1s * var(--gs-frac));
+}
+
+#battlefield .sprite.placeholder .scan-node {
+  /* hack: positioning offset for scan node within e.g., turret placeholder node. */
+  /* shift slightly left to align with center of turret, and pull down to align with battlefield. */
+  transform: translate3d(calc(-50% + 5px), calc(-100% + 18px), 0);
+}
+
 #battlefield .scan-node {
-  border-style: dotted;
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: rgba(0, 255, 0, 0.1);
+  /* background-color: rgba(0, 255, 0, 0.025); */
+  box-shadow: inset 0px 15px 15px 0px rgba(0, 255, 0, 0.075);
 }
 
-#battlefield .sprite .scan-node {
-  background-color: transparent;
-  border-color: rgba(0, 255, 0, 0.15);
-  background-image: radial-gradient(
-    circle,
-    rgba(0, 255, 0, 0) 0,
-    rgba(0, 255, 0, 0) 65%,
-    rgba(0, 255, 0, 0.15) 75%
-  );
-  /* render background at double-height, given semicircle shape */
-  background-size: 100% 200%;
-  background-position: 50% 0;
-}
-
-#battlefield .sprite.enemy .scan-node {
-  border: 0.5px dotted rgba(255, 255, 255, 0.15);
-  /**
-   * Numerous "steps", with zero transition between different colours.
-   * https://www.kirupa.com/animations/radial_gradient_stripes.htm
-   */
-  background-image: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0) 65%,
-    rgba(255, 255, 255, 0.15) 75%
-  );
-  background-size: 100% 200%;
-}
-
-.cloud1,
-.cloud2,
-.cloud3 {
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  background-size: contain;
-  left: 0;
-  top: 0;
-  /* clouds hide helicopters. */
-  z-index: 12;
-}
-
-.cloud1 {
-  background-image: url(../image/cloud-1.png);
-  height: 29px;
-  width: 102px;
-}
-
-.cloud2 {
-  background-image: url(../image/cloud-2.png);
-  height: 28px;
-  width: 116px;
-}
-
-.cloud3 {
-  background-image: url(../image/cloud-3.png);
-  height: 34px;
-  width: 125px;
+#battlefield .sprite.enemy .scan-node,
+#battlefield .scan-node.enemy {
+  border-color: rgba(255, 255, 255, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.025); */
+  box-shadow: inset 0px 15px 15px 0px rgba(255, 255, 255, 0.075);
 }
 
 #stats-endgame {
@@ -2639,16 +2374,6 @@ body.radar_jammed .scan-node {
 
   to {
     transform: translate3d(-100%, 0, 0) scale(0.5, 0.5);
-  }
-}
-
-@keyframes ephemeralexplosion {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: -1400px 0;
   }
 }
 

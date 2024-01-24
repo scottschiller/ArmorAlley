@@ -381,7 +381,7 @@ body.game-started #start-game-button-mobile {
   color: #e19632;
   font-size: calc(5.5px * var(--menu-chicago-scale));
   line-height: 175%;
-  margin: calc(1.5px * var(--menu-chicago-scale)) 0px
+  margin: calc(1.5px * var(--menu-chicago-scale)) 0
     calc(2px * var(--menu-chicago-scale)) 0;
   font-weight: 400;
   text-overflow: ellipsis;
@@ -431,9 +431,6 @@ body.game-started #start-game-button-mobile {
   background-size: var(--bg-size);
   border-radius: calc(2px * var(--menu-scale));
   text-indent: calc(4px * var(--menu-scale));
-}
-
-#game-menu select {
   --bg-size: calc(6px * var(--menu-scale));
   --text-indent: calc(3px * var(--menu-scale));
   background-position: calc(100% - var(--text-indent) * 1.65) 65%;

@@ -168,8 +168,8 @@ body.demo #aa {
   transform: translate(-100%, -100%);
 }
 
-#mtv-bnb-in,
-#bnb-vs {
+#bnb-vs,
+#mtv-bnb-in {
   opacity: 0;
 }
 
@@ -226,9 +226,9 @@ body.game-started #world-wrapper {
 }
 
 #game-status-bar {
-  border: calc(1px * var(--gs)) solid #17a007;
-  border-left: none;
-  border-right: none;
+  border-bottom: calc(1px * var(--gs)) solid #17a007;
+  padding-top: calc(1px * var(--gs));
+  background: linear-gradient(#002700, #0e360e, #153c15);
 }
 
 #radar,
@@ -237,25 +237,7 @@ body.game-started #world-wrapper {
 }
 
 #radar-container {
-  background: #0e360e;
   position: relative;
-}
-
-@media (min-width: 1000px) and (min-height: 940px) {
-  #radar-container {
-    /* angled pinstripe pattern on larger screens - desktop, 12.9" iPad Pro and such. */
-    background-image: repeating-linear-gradient(
-      55deg,
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0) 1.5px,
-      rgba(0, 0, 0, 0.33) 1.5px,
-      rgba(0, 0, 0, 0.33) 2.25px,
-      rgba(0, 0, 0, 0.33) 2.25px,
-      rgba(0, 0, 0, 0) 3px
-    );
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
 }
 
 #radar {
@@ -297,8 +279,8 @@ body.radar_enhanced_fx #world-noise-overlay {
 }
 
 #radar-jammed-overlay.active .noise,
-body.radar_enhanced_fx #world-noise-overlay .noise,
-body.game-started #world-noise-overlay .noise {
+body.game-started #world-noise-overlay .noise,
+body.radar_enhanced_fx #world-noise-overlay .noise {
   background: url(../image/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
@@ -439,9 +421,6 @@ body.demo #world-noise-overlay {
 
 #top-bar {
   height: calc(88px * var(--gs));
-}
-
-#top-bar {
   contain: strict;
   z-index: 1;
   opacity: 0;
@@ -627,9 +606,6 @@ body:not(.edit-mode) #top-bar {
   /* now invisible, basically a placeholder for the scan node. */
   background-color: transparent;
   box-shadow: none;
-  width: calc(1px * var(--rs));
-  height: calc(2px * var(--gs));
-  margin-left: calc(-0.5px * var(--rs));
 }
 
 /* scan nodes */
