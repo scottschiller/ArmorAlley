@@ -98,6 +98,23 @@ const utils = {
   },
 
   image: {
+    getImageObject: (url) => {
+      if (!url) {
+        console.warn('getImageObject: No URL?', url);
+      }
+      // already "cached"
+      if (imageObjects[url]) return imageObjects[url];
+
+      // preload, then update; canvas will ignore rendering until loaded.
+      const img = new Image();
+      const src = `image/${url}`;
+      utils.image.load(src, () => (img.src = src));
+
+      // return new object immediately
+      imageObjects[url] = img;
+      return img;
+    },
+
     load: (url, callback) => {
       if (preloadedImageURLs[url]) return callback();
 
@@ -112,7 +129,7 @@ const utils = {
       };
 
       // note: prefixed path.
-      img.src = url.match(/data:/i) ? url : `image/${url}`;
+      img.src = url.match(/data:|image\//i) ? url : `image/${url}`;
     },
 
     preload: (urls, callback) => {
@@ -211,6 +228,8 @@ const utils = {
   })()
 };
 
+// caches
 const preloadedImageURLs = {};
+const imageObjects = {};
 
 export { utils };

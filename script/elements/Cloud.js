@@ -13,22 +13,26 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 import { game } from '../core/Game.js';
+import { utils } from '../core/utils.js';
 
 const cloudTypes = [
   {
     className: 'cloud1',
+    src: 'cloud-1.png',
     width: 102,
     height: 29,
     radarWidth: 7
   },
   {
     className: 'cloud2',
+    src: 'cloud-2.png',
     width: 116,
     height: 28,
     radarWidth: 9
   },
   {
     className: 'cloud3',
+    src: 'cloud-3.png',
     width: 125,
     height: 34,
     radarWidth: 9
@@ -45,7 +49,7 @@ const Cloud = (options = {}) => {
 
   const cloudData = cloudTypes[rngInt(cloudTypes.length, type)];
 
-  const { className, width, height } = cloudData;
+  const { className, src, width, height } = cloudData;
 
   let css, dom, data, exports;
 
@@ -95,7 +99,7 @@ const Cloud = (options = {}) => {
 
     zones.refreshZone(exports);
 
-    sprites.moveWithScrollOffset(exports);
+    sprites.moveTo(exports, data.x, data.y);
   }
 
   function startDrift() {
@@ -143,10 +147,14 @@ const Cloud = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id
+      });
+    } else {
+      dom.o = {};
+    }
   }
 
   function initCloud() {
@@ -154,7 +162,7 @@ const Cloud = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    game.objects.radar.addItem(exports, className);
   }
 
   css = common.inheritCSS({ className });
@@ -182,6 +190,21 @@ const Cloud = (options = {}) => {
   );
 
   data.domCanvas = {
+    img: {
+      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      source: {
+        x: 0,
+        y: 0,
+        width: width * 2,
+        height: height * 2
+      },
+      target: {
+        x: data.x,
+        y: data.y,
+        width,
+        height
+      }
+    },
     radarItem: {
       excludeStroke: true,
       // approximate size relative to that as rendered on battlefield.
