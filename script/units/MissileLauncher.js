@@ -435,22 +435,27 @@ const MissileLauncher = (options = {}) => {
 
 MissileLauncher.radarItemConfig = () => ({
   width: 4,
-  height: 1.5,
+  height: 2.5,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
     const left = pos.left(obj.data.left);
     const top = pos.bottomAlign(height, obj);
+    const topHalf = pos.bottomAlign(height / 2, obj);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
 
-    ctx.roundRect(left, top, scaledWidth, scaledHeight, [height, height, 0, 0]);
+    ctx.beginPath();
 
+    ctx.rect(left, topHalf, scaledWidth, scaledHeight / 2);
     ctx.fill();
     ctx.stroke();
 
+    // don't draw a missile if we don't have one - i.e., just launched. ;)
+    if (obj?.oParent?.data?.dead) return;
+
     ctx.beginPath();
 
-    // missile
+    // missile (angled)
     common.domCanvas.rotate(
       ctx,
       obj.oParent.data.isEnemy ? 20 : -20,
@@ -464,11 +469,11 @@ MissileLauncher.radarItemConfig = () => ({
     const missileHeight = pos.height(0.5);
 
     ctx.roundRect(
-      left + (obj.oParent.data.isEnemy ? scaledWidth / 8 : scaledWidth / 4),
-      top - (obj.oParent.data.isEnemy ? 2 : 0),
+      left + (obj.oParent.data.isEnemy ? scaledWidth / 4 : 0),
+      top + (obj.oParent.data.isEnemy ? 0 : height),
       missileWidth,
       missileHeight,
-      1
+      missileWidth
     );
 
     common.domCanvas.unrotate(ctx);
