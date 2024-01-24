@@ -734,6 +734,64 @@ const DomCanvas = () => {
     }
   }
 
+  function drawEnergy(exports, ctx, left, top, width, height) {
+    if (exports.data.energy === undefined) return;
+
+    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
+
+    // only draw if on-screen
+    if (!exports.data.isOnScreen) return;
+
+    if (exports.data.energy <= 0 || exports.data.dead) return;
+
+    if (exports.data.energyCanvasTimer > 0) {
+      exports.data.energyCanvasTimer--;
+    }
+
+    // timer up, OR don't "always" show
+    if (
+      exports.data.energyCanvasTimer <= 0 &&
+      gamePrefs.show_health_status !== PREFS.SHOW_HEALTH_ALWAYS
+    )
+      return;
+
+    const energy = exports.data.energy / exports.data.energyMax;
+
+    if (energy > 0.66) {
+      ctx.fillStyle = '#33cc33';
+    } else if (energy > 0.33) {
+      ctx.fillStyle = '#cccc33';
+    } else {
+      ctx.fillStyle = '#cc3333';
+    }
+
+    const energyLineScale = exports.data.energyLineScale || 1;
+    const energyLineOffset = exports.data.energyLineOffset || 0;
+
+    const scaledWidth = width * energyLineScale;
+    const renderedWidth = scaledWidth * energy;
+
+    // right-align vs. center vs. left-align
+    const leftOffset = exports.data.centerEnergyLine
+      ? (scaledWidth - renderedWidth) / 2
+      : exports.data.isEnemy
+      ? width - renderedWidth
+      : energyLineOffset;
+
+    const lineHeight = 2.5;
+    const borderRadius = lineHeight;
+
+    ctx.beginPath();
+    ctx.roundRect(
+      left + leftOffset,
+      top + (height - lineHeight),
+      renderedWidth,
+      lineHeight,
+      borderRadius
+    );
+    ctx.fill();
+  }
+
   function resize() {
     if (!dom.o) return;
 
