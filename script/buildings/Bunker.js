@@ -503,15 +503,41 @@ const Bunker = (options = {}) => {
 Bunker.radarItemConfig = () => ({
   width: 4.25,
   height: 2.5,
+  excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
     ctx.fillStyle = obj?.oParent?.data?.isEnemy ? '#9c9f08' : '#17a007';
+
+    const left = pos.left(obj.data.left);
+    const scaledWidth = pos.width(width);
+
     ctx.roundRect(
-      pos.left(obj.data.left),
+      left,
       pos.bottomAlign(height),
-      pos.width(width),
+      scaledWidth,
       pos.height(height),
       [3, 3, 0, 0]
     );
+
+    ctx.fill();
+    ctx.stroke();
+
+    const doorWidth = 0.5;
+    const doorHeight = 1.25;
+    const scaledDoorWidth = pos.width(doorWidth);
+
+    // doorway
+    ctx.beginPath();
+    ctx.roundRect(
+      left + scaledWidth / 2 - scaledDoorWidth / 2,
+      pos.bottomAlign(doorHeight),
+      scaledDoorWidth,
+      pos.height(doorHeight),
+      [doorHeight, doorHeight, 0, 0]
+    );
+
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.stroke();
   }
 });
 
