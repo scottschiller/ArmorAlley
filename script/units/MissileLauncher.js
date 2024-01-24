@@ -46,6 +46,10 @@ const MissileLauncher = (options = {}) => {
         playSound(sounds.genericExplosion, exports);
       }
 
+      if (!game.objects.editor) {
+        data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+      }
+
       effects.inertGunfireExplosion({ exports });
 
       effects.domFetti(exports, dieOptions.attacker);
@@ -208,6 +212,8 @@ const MissileLauncher = (options = {}) => {
       sprites.moveWithScrollOffset(exports);
     }
 
+    data?.domCanvas?.dieExplosion?.animate();
+
     if (data.dead) return !dom.o;
 
     effects.smokeRelativeToDamage(exports);
@@ -231,20 +237,27 @@ const MissileLauncher = (options = {}) => {
           data.stateModulus = 4 * fpsMultiplier;
         }
 
-        data.frameCount = 0;
-
-        if (data.isOnScreen) {
+        if (data.isOnScreen && game.objects.editor) {
           dom.o._style.setProperty(
             'background-position',
             `0px ${data.height * data.state * -1}px`
           );
+        }
+
+        if (data.domCanvas.img) {
+          data.domCanvas.img.source.frameY = data.state;
         }
       } else if (
         data.frameCount % data.stateModulus === 2 * fpsMultiplier &&
         data.isOnScreen
       ) {
         // next frame - reset.
-        dom.o._style.setProperty('background-position', '0px 0px');
+        if (game.objects.editor) {
+          dom.o._style.setProperty('background-position', '0px 0px');
+        }
+        if (data.domCanvas.img) {
+          data.domCanvas.img.source.frameY = 0;
+        }
       }
     }
 
@@ -266,7 +279,7 @@ const MissileLauncher = (options = {}) => {
 
   function initDOM() {
     dom.o = sprites.create({
-      className: css.className,
+      className: game.objects.editor ? css.className : 'placeholder',
       id: data.id,
       isEnemy: data.isEnemy ? css.enemy : false
     });
@@ -295,7 +308,14 @@ const MissileLauncher = (options = {}) => {
       resize();
     }, 150);
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(
+      exports,
+      game.objects.editor
+        ? dom.o.className
+        : data.isEnemy
+        ? 'scan-node enemy'
+        : 'scan-node'
+    );
 
     // missile launchers also get a scan node.
     radarItem.initScanNode();
@@ -335,6 +355,7 @@ const MissileLauncher = (options = {}) => {
       gameSpeedProps: ['fireModulus', 'stateModulus'],
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
+      stepOffset: options.stepOffset,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
         elementCount: 7 + rndInt(7),
@@ -359,8 +380,35 @@ const MissileLauncher = (options = {}) => {
     resize
   };
 
+  const src = data.isEnemy
+    ? 'missile-launcher-enemy.png'
+    : 'missile-launcher.png';
+
+  const spriteWidth = 108;
+  const spriteHeight = 144;
+  const frameWidth = 108;
+  const frameHeight = 36;
+
   data.domCanvas = {
-    radarItem: MissileLauncher.radarItemConfig()
+    radarItem: MissileLauncher.radarItemConfig(),
+    img: {
+      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth,
+        frameHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: frameWidth / 2,
+        height: frameHeight / 2
+      }
+    }
   };
 
   friendlyNearby = {
