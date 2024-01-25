@@ -2075,10 +2075,13 @@ const Helicopter = (options = {}) => {
       data.lastVY = data.vY;
 
       // are we over the landing pad?
-
-      if (data.x >= tData.x && data.x + data.width <= tData.x + tData.width) {
+      if (
+        Math.ceil(data.x) >= tData.x &&
+        data.x + data.width <= tData.x + tData.width
+      ) {
         data.vX = 0;
-        data.vY = 4 * GAME_SPEED_RATIOED;
+        // ensure we're at least heading downward, no matter what.
+        data.vY = Math.max(0.5, 4 * GAME_SPEED_RATIOED);
       }
 
       centerView();
