@@ -4,10 +4,12 @@ import {
   plusMinus,
   oneOf,
   TYPES,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  worldWidth
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
+import { game } from '../core/Game.js';
 
 const smokeSprite = new Image();
 // smokeSprite.src = 'image/smoke-sprite.png';
@@ -101,6 +103,42 @@ const Smoke = (options = {}) => {
         // animation finished
         die();
       }
+    }
+
+    // smoke particles on radar, why not.
+    // TODO: DRY, and maybe make this an option in prefs.
+    if (!game.objects.radar.data.isJammed) {
+      common.domCanvas.draw({
+        data: {
+          type: 'on-radar',
+          x: data.x,
+          y: data.y,
+          domCanvas: {
+            width: 1.75,
+            height: 1.75,
+            ctxName: 'radar',
+            draw: (ctx, obj, pos, width, height) => {
+              // don't draw smoke from a cloaked (i.e., in a cloud) chopper.
+              if (data.oParent?.data?.cloaked) return;
+              const left =
+                pos.left(
+                  (obj.data.x / worldWidth) *
+                    game.objects.view.data.browser.screenWidth
+                ) - width;
+              const top =
+                (data.y / game.objects.view.data.battleField.height) *
+                  game.objects.radar.data.height -
+                height / 2;
+              if (data.domCanvas.img?.target?.opacity) {
+                ctx.fillStyle = `rgba(153, 153, 153, ${data.domCanvas.img?.target?.opacity}`;
+              } else {
+                ctx.fillStyle = '#999';
+              }
+              ctx.fillRect(left, top, width, height);
+            }
+          }
+        }
+      });
     }
 
     data.frameCount++;
