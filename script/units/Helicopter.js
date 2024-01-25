@@ -1628,8 +1628,10 @@ const Helicopter = (options = {}) => {
 
     dropNextTarget();
 
+    // TODO: refactor or drop when 100% on canvas.
+
     // new target
-    if (active && target?.dom?.o) {
+    if (active && target?.dom?.o.appendChild) {
       target.dom.o.appendChild(targetDot);
       utils.css.add(target.dom.o, css.nextMissileTarget);
       nextMissileTarget = target;
