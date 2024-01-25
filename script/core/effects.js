@@ -142,7 +142,11 @@ const effects = {
 
     const { data } = exports;
 
-    if (!data.isOnScreen) return;
+    // TODO: put "smoke on radar" behind a pref, and exit early when disabled and elements are off-screen.
+    // if (!data.isOnScreen) return;
+
+    // no damage = no smoke.
+    if (exports.data.energy === exports.data.energyMax) return;
 
     // first off: certain chance of no smoke, regardless of status
     if (Math.random() >= 0.66) return;
