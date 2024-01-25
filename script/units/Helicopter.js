@@ -1429,6 +1429,10 @@ const Helicopter = (options = {}) => {
 
     effects.domFetti(exports, attacker);
 
+    // randomize for next time
+    data.domFetti.elementCount = 256 + rndInt(512);
+    data.domFetti.startVelocity = 15 + rndInt(32);
+
     // move sprite once explosion stuff has completed
     common.setFrameTimeout(() => {
       // ignore if the game has ended.
@@ -3235,10 +3239,10 @@ const Helicopter = (options = {}) => {
       cloakedCommentary: false,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
-        elementCount: 250 + rndInt(250),
-        startVelocity: 15 + rndInt(15),
+        elementCount: 256 + rndInt(512),
+        startVelocity: 15 + rndInt(32),
         spread: 360,
-        decay: 0.94
+        decay: 0.95
       },
       // things originally stored on the view
       mouse: {
@@ -3362,13 +3366,16 @@ const Helicopter = (options = {}) => {
 
           playSound(sounds.balloonExplosion, exports);
 
+          const elementCount = 32 + rndInt(384);
+
           const options = {
             data: {
               domFetti: {
                 colorType: oneOf(['default', 'green', 'yellow', 'grey']),
-                elementCount: 35 + rndInt(65),
+                elementCount,
                 spread: 360,
-                startVelocity: 20 + rndInt(20)
+                startVelocity: 20 + rndInt(elementCount / 12),
+                decay: 0.95
               }
             }
           };
@@ -3380,8 +3387,8 @@ const Helicopter = (options = {}) => {
           effects.smokeRing(
             { data: args },
             {
-              velocityMax: 8,
-              count: 4 + rndInt(4)
+              velocityMax: 5,
+              count: 8 + rndInt(8)
             }
           );
         }
