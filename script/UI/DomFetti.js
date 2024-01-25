@@ -621,7 +621,7 @@ function screenBoom() {
   const options = {
     data: {
       domFetti: {
-        elementCount: 150,
+        elementCount: 300,
         spread: 360,
         decay: 0.95,
         startVelocity: 30
