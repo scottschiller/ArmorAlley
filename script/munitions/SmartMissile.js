@@ -734,7 +734,7 @@ const SmartMissile = (options = {}) => {
       game.objects.smoke.push(
         Smoke({
           x: data.x + (data.vX < 0 ? data.width - 2 : 0),
-          y: data.y,
+          y: data.y - 1,
           spriteFrame: 3
         })
       );
