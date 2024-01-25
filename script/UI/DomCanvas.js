@@ -735,9 +735,13 @@ const DomCanvas = () => {
   }
 
   function drawEnergy(exports, ctx, left, top, width, height) {
+
     if (exports.data.energy === undefined) return;
 
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
+
+    // exclude helicopters until if/when they are rendered on canvas.
+    if (exports.data.type === TYPES.helicopter) return;
 
     // only draw if on-screen
     if (!exports.data.isOnScreen) return;
