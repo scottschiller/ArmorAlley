@@ -456,10 +456,10 @@ const Bunker = (options = {}) => {
       midPoint: null,
       domFetti: {
         colorType: 'yellow',
-        elementCount: 100 + rndInt(100),
-        startVelocity: 15 + rndInt(15),
+        elementCount: 256 + rndInt(384),
+        startVelocity: 20 + rndInt(25),
         spread: 180,
-        decay: 0.94
+        decay: 0.95
       }
     },
     options
