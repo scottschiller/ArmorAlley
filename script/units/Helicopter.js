@@ -3324,16 +3324,20 @@ const Helicopter = (options = {}) => {
         // if clicking a button, don't do anything.
         if (e.target.tagName.match(/a|button/i)) return;
 
+        const ss = game.objects.view.data.screenScale;
+
         if (game.data.theyWon) {
           // dirty, dirty tricks: overwrite helicopter coordinates.
           data.x =
-            e.clientX * (1 / screenScale) +
+            e.clientX * (1 / ss) +
             game.objects.view.data.battleField.scrollLeft;
-          data.y = e.clientY * (1 / screenScale);
+          data.y = e.clientY * (1 / ss);
+
+          const count = 16 + rndInt(16);
 
           effects.shrapnelExplosion(data, {
-            count: 8 + rndInt(16),
-            velocity: 4 + rngInt(4, TYPES.shrapnel),
+            count,
+            velocity: 4 + rngInt(4 + count / 4, TYPES.shrapnel),
             // first burst always looks too similar, here.
             noInitialSmoke: true
           });
@@ -3344,9 +3348,9 @@ const Helicopter = (options = {}) => {
         } else {
           args = {
             x:
-              e.clientX * (1 / screenScale) +
+              e.clientX * (1 / ss) +
               game.objects.view.data.battleField.scrollLeft,
-            y: e.clientY * (1 / screenScale),
+            y: e.clientY * (1 / ss),
             vX: 1 + rndInt(8),
             vY: -rndInt(10),
             width: 1,
