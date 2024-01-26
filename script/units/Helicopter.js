@@ -807,6 +807,7 @@ const Helicopter = (options = {}) => {
       data.excludeFromCollision = false;
 
       radarItem?.reset();
+      radarItem?.summon();
 
       if (data.isLocal) {
         // reset everything.
@@ -3083,6 +3084,8 @@ const Helicopter = (options = {}) => {
       `${dom.o.className}${data.isLocal ? ' local-player' : ''}`,
       true
     );
+
+    radarItem.summon();
   }
 
   css = common.inheritCSS({
@@ -3598,7 +3601,12 @@ Helicopter.radarItemConfig = (exports) => ({
       ) +
       scaledWidth / 2;
 
-    const top = obj.data.top; // - height / 2;
+    // y offset, plus offset for "summon" transition
+    const top =
+      obj.data.top +
+      (obj?.data?.stepOffset !== undefined
+        ? scaledHeight * (1 - obj?.data?.stepOffset)
+        : 0);
 
     // "center" triangle - not precisely...
     left += direction === -1 ? scaledWidth / 2 : -scaledWidth;
