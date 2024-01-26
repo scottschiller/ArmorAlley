@@ -118,8 +118,8 @@ const Smoke = (options = {}) => {
             height: 1.75,
             ctxName: 'radar',
             draw: (ctx, obj, pos, width, height) => {
-              // don't draw smoke from a cloaked (i.e., in a cloud) chopper.
-              if (data.oParent?.data?.cloaked) return;
+              // special case: don't draw smoke from a cloaked helicopter (i.e., in a cloud.)
+              if (data.parentWasCloaked) return;
               const left =
                 pos.left(
                   (obj.data.x / worldWidth) *
@@ -178,6 +178,7 @@ const Smoke = (options = {}) => {
       // hackish: use provided, or default values.
       vX: options.vX !== undefined ? options.vX : plusMinus(rnd(3)),
       vY: options.vY !== undefined ? options.vY : -rnd(3),
+      parentWasCloaked: options.parentWasCloaked,
       oParent: options.oParent
     },
     options
