@@ -117,8 +117,12 @@ const Turret = (options = {}) => {
       setFiring(true);
     }
 
-    deltaX = target.data.x - data.x;
-    deltaY = target.data.y - data.y;
+    // midpoint of turret body
+    const startX = data.x + data.halfWidth + 2.75;
+    const startY = common.bottomAlignedY() + 12;
+
+    deltaX = target.data.x - startX;
+    deltaY = target.data.y - startY;
 
     // Gretzky: "Skate where the puck is going to be".
     deltaXGretzky = target.data.vX;
@@ -126,12 +130,8 @@ const Turret = (options = {}) => {
 
     // turret angle
     angle = Math.atan2(deltaY, deltaX) * rad2Deg + 90;
-    angle = Math.max(-data.maxAngle, Math.min(data.maxAngle, angle));
 
-    // hack: target directly to left, on ground of turret: correct 90 to -90 degrees.
-    if (deltaX < 0 && angle === 90) {
-      angle = -90;
-    }
+    const angleRad = (angle - 90) * 0.0175;
 
     moveOK = okToMove();
 
@@ -142,10 +142,12 @@ const Turret = (options = {}) => {
         parent: exports,
         parentType: data.type,
         isEnemy: data.isEnemy,
+        fixedXY: true,
         // turret gunfire mostly hits airborne things.
         collisionItems,
-        x: data.x + data.width + 2 + deltaX * 0.05,
-        y: common.bottomAlignedY() + 8 + deltaY * 0.05,
+        // roughly align gunfire with tip of angled barrel
+        x: startX + Math.cos(angleRad) * (data.halfWidth + 8.5),
+        y: startY + Math.sin(angleRad) * 16,
         vX: deltaX * 0.05 + deltaXGretzky,
         vY: Math.min(0, deltaY * 0.05 + deltaYGretzky)
       });
