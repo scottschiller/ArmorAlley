@@ -3586,10 +3586,12 @@ Helicopter.radarItemConfig = (exports) => ({
     const scaledHeight = pos.heightNoStroke(height);
 
     // triangle depends on friendly / enemy + flip
-    const direction =
-      (exports?.data?.isEnemy && !exports.data.flipped) || exports.data.flipped
-        ? 1
-        : -1;
+    let direction = exports.data.flipped ? 1 : -1;
+
+    if (exports.data.isEnemy) {
+      // reverse for the enemy chopper.
+      direction *= -1;
+    }
 
     // TODO: review precise helicopter + landing pad alignment
     let left =
