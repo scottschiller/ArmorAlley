@@ -164,12 +164,10 @@ const Balloon = (options = {}) => {
       // sanity check: don't hide if already respawned
       if (!data.dead) return;
 
-      if (dom.o) {
-        // hide the balloon
-        utils.css.swap(dom.o, css.exploding, css.dead);
-        utils.css.add(dom.o, css.explodingType);
-      }
-    }, 750);
+      // hide the balloon
+      utils.css.swap(dom.o, css.exploding, css.dead);
+      utils.css.add(dom.o, css.explodingType);
+    }, 1000);
 
     zones.leaveAllZones(exports);
 
@@ -565,7 +563,9 @@ Balloon.radarItemConfig = (exports) => ({
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
     // don't draw while dead - but may be respawned.
-    if (exports.data.dead) return;
+    // when first dead, timer is set - allow blinking.
+    // once dead AND the timer has finished, don't draw.
+    if (exports.data.dead && !exports.data.deadTimer) return;
     ctx.fillStyle =
       exports?.data?.isEnemy || exports?.data?.hostile ? '#9c9f08' : '#17a007';
     const left = pos.left(obj.data.left);
