@@ -489,13 +489,8 @@ const sprites = {
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
 
     // hide in a moment, recycling any existing timers.
-    if (object.data.energyTimerFade) {
-      object.data.energyTimerFade.restart();
-    }
-
-    if (object.data.energyTimerRemove) {
-      object.data.energyTimerRemove.restart();
-    }
+    object.data.energyTimerFade?.restart();
+    object.data.energyTimerRemove?.restart();
 
     // fade out, and eventually remove
     if (!object.data.energyTimerFade) {
@@ -507,9 +502,9 @@ const sprites = {
 
         // fade should be completed within 250 msec
         object.data.energyTimerRemove = common.setFrameTimeout(() => {
-          if (node) {
-            node.remove();
-            node._style = null;
+          if (object.dom.oEnergy) {
+            object.dom.oEnergy.remove();
+            object.dom.oEnergy._style = null;
           }
           object.dom.oEnergy = null;
           node = null;
