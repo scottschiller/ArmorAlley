@@ -575,6 +575,17 @@ const DomCanvas = () => {
       ctx.stroke();
       */
 
+      // smart missile: next, or current target?
+      if (data.smartMissileTracking || data.isNextMissileTarget) {
+        // radius approximately matching CSS glow...
+        ctx.shadowBlur = 8 * ss;
+
+        // current (active) vs. next detected target
+        ctx.shadowColor = data.smartMissileTracking
+          ? '#ff3333'
+          : '#999';
+      }
+
       // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
       ctx.drawImage(
         img.src,
@@ -587,6 +598,11 @@ const DomCanvas = () => {
         dWidth,
         dHeight
       );
+
+      // reset
+      if (data.smartMissileTracking || data.isNextMissileTarget) {
+        ctx.shadowBlur = 0;
+      }
 
       if (angle) {
         unrotate(ctx);

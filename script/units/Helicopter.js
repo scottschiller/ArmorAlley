@@ -1614,6 +1614,7 @@ const Helicopter = (options = {}) => {
   function dropNextTarget() {
     if (!nextMissileTarget) return;
     utils.css.remove(nextMissileTarget?.dom?.o, css.nextMissileTarget);
+    nextMissileTarget.data.isNextMissileTarget = false;
     nextMissileTarget = null;
   }
 
@@ -1630,6 +1631,8 @@ const Helicopter = (options = {}) => {
     dropNextTarget();
 
     // TODO: refactor or drop when 100% on canvas.
+
+    target.data.isNextMissileTarget = !!active;
 
     // new target
     if (active && target?.dom?.o.appendChild) {

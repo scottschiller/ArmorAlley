@@ -243,6 +243,8 @@ const SmartMissile = (options = {}) => {
     const targetNode = objects.target.dom.o;
     const radarNode = objects.target.radarItem?.dom?.o;
 
+    objects.target.data.smartMissileTracking = !!tracking;
+
     if (tracking) {
       addTracking(targetNode, radarNode);
     } else {
