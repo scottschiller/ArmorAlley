@@ -458,7 +458,6 @@ const Tank = (options = {}) => {
       energy: 8,
       energyMax: 8,
       energyLineScale: 0.8,
-      energyLineOffset: 11,
       frameCount: 0,
       repairModulus: FPS,
       repairModulus1X: FPS,

@@ -767,7 +767,6 @@ const DomCanvas = () => {
     }
 
     const energyLineScale = exports.data.energyLineScale || 1;
-    const energyLineOffset = exports.data.energyLineOffset || 0;
 
     const scaledWidth = width * energyLineScale;
     const renderedWidth = scaledWidth * energy;
@@ -775,9 +774,9 @@ const DomCanvas = () => {
     // right-align vs. center vs. left-align
     const leftOffset = exports.data.centerEnergyLine
       ? (scaledWidth - renderedWidth) / 2
-      : exports.data.isEnemy
+      : (exports.data.isEnemy
       ? width - renderedWidth
-      : energyLineOffset;
+      : 0);
 
     const lineHeight = 2.5;
     const borderRadius = lineHeight;
