@@ -128,7 +128,7 @@ const Smoke = (options = {}) => {
               const top =
                 (data.y / game.objects.view.data.battleField.height) *
                   game.objects.radar.data.height -
-                height / 2;
+                height;
               if (data.domCanvas.img?.target?.opacity) {
                 ctx.fillStyle = `rgba(153, 153, 153, ${data.domCanvas.img?.target?.opacity}`;
               } else {
