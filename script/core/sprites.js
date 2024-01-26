@@ -141,6 +141,12 @@ const sprites = {
      * battlefield scroll and "target" offset can also be included.
      */
 
+    // hackish: if this lives on the canvas, handle that here.
+    // we don't care about on/off-screen at this juncture, because logic may still need to run.
+    if (exports?.data?.domCanvas) {
+      common.domCanvas.draw(exports);
+    }
+
     // ignore if off-screen, or if editor is active
     if (exports && !exports?.data?.isOnScreen && !game.objects.editor) {
       if (debug) {
@@ -148,11 +154,6 @@ const sprites = {
         game.objects.gameLoop.incrementTransformCount(true);
       }
       return;
-    }
-
-    // hackish: if this lives on the canvas, handle that here.
-    if (exports?.data?.domCanvas && exports.data.isOnScreen) {
-      common.domCanvas.draw(exports);
     }
 
     if (!o) return;
@@ -189,14 +190,6 @@ const sprites = {
 
       // back to pixels
       x = `${x}px`;
-    }
-
-    if (
-      !game.objects.editor &&
-      exports?.data?.domCanvas &&
-      !exports.data.isOnScreen
-    ) {
-      console.log('domCanvas but not on-screen?', exports);
     }
 
     // TODO: review

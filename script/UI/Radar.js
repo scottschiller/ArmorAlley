@@ -679,9 +679,6 @@ const Radar = () => {
     // move all radar items
 
     for (i = 0, j = objects.items.length; i < j; i++) {
-      // just in case: ensure the object still has a DOM node.
-      if (!objects.items[i]?.dom?.o) continue;
-
       // is this a "static" item which is positioned only once and never moves?
       // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
       // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.

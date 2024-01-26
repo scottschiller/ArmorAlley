@@ -564,10 +564,8 @@ Balloon.radarItemConfig = (exports) => ({
   height: 2,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    if (exports?.data?.dead) {
-      // special case: balloon is dead, but can be respawned.
-      return;
-    }
+    // don't draw while dead - but may be respawned.
+    if (exports.data.dead) return;
     ctx.fillStyle =
       exports?.data?.isEnemy || exports?.data?.hostile ? '#9c9f08' : '#17a007';
     const left = pos.left(obj.data.left);

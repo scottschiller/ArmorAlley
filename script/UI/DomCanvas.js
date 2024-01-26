@@ -622,8 +622,6 @@ const DomCanvas = () => {
       return;
     }
 
-    if (exports.data.isOnScreen === false) return;
-
     const ss = game.objects.view.data.screenScale;
 
     // determine target canvas by type - specified by object, type, or default.
@@ -735,7 +733,6 @@ const DomCanvas = () => {
   }
 
   function drawEnergy(exports, ctx, left, top, width, height) {
-
     if (exports.data.energy === undefined) return;
 
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
