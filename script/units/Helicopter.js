@@ -2066,9 +2066,8 @@ const Helicopter = (options = {}) => {
 
       checkFacingTarget(target);
 
-      // aim for landing pad
-
-      deltaX = tData.x - data.x;
+      // aim for center of landing pad
+      deltaX = tData.x + tData.halfWidth - (data.x + data.halfWidth);
       deltaY = -4;
 
       data.vX = deltaX * GAME_SPEED_RATIOED;
@@ -2080,11 +2079,8 @@ const Helicopter = (options = {}) => {
       data.lastVX = data.vX;
       data.lastVY = data.vY;
 
-      // are we over the landing pad?
-      if (
-        Math.ceil(data.x) >= tData.x &&
-        data.x + data.width <= tData.x + tData.width
-      ) {
+      // are we enveloped within the width of the landing pad?
+      if (data.x >= tData.x && data.x + data.width <= tData.x + tData.width) {
         data.vX = 0;
         // ensure we're at least heading downward, no matter what.
         data.vY = Math.max(0.5, 4 * GAME_SPEED_RATIOED);

@@ -62,6 +62,7 @@ const LandingPad = (options = {}) => {
       isObscured: options.obscured,
       energy: 2,
       width: 81,
+      halfWidth: 40.5,
       height: 4,
       y: worldHeight - 3,
       edible: [
