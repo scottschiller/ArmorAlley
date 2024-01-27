@@ -187,6 +187,9 @@ const SmartMissile = (options = {}) => {
   function addTracking(targetNode, radarNode) {
     if (!gamePrefs.modern_smart_missiles) return;
 
+    // NTOE: exclude placeholder nodes as on turrets and missile launchers, whose tracking dots render on canvas.
+    if (utils.css.has(targetNode, 'placeholder')) return;
+
     if (targetNode) {
       utils.css.add(targetNode, css.tracking);
 

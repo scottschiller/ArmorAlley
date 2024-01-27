@@ -900,6 +900,7 @@ const turretBase = {
 const turretGun = {
   src: utils.image.getImageObject(src),
   excludeEnergy: true,
+  excludeDot: true,
   source: {
     x: 0,
     y: 0,

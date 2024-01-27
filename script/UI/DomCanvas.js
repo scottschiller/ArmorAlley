@@ -575,15 +575,16 @@ const DomCanvas = () => {
       ctx.stroke();
       */
 
+      const tracking =
+        !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
+
       // smart missile: next, or current target?
-      if (data.smartMissileTracking || data.isNextMissileTarget) {
+      if (tracking) {
         // radius approximately matching CSS glow...
         ctx.shadowBlur = 8 * ss;
 
         // current (active) vs. next detected target
-        ctx.shadowColor = data.smartMissileTracking
-          ? '#ff3333'
-          : '#999';
+        ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
       }
 
       // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
@@ -599,13 +600,28 @@ const DomCanvas = () => {
         dHeight
       );
 
-      // reset
-      if (data.smartMissileTracking || data.isNextMissileTarget) {
-        ctx.shadowBlur = 0;
-      }
-
       if (angle) {
         unrotate(ctx);
+      }
+
+      // reset blur
+      if (tracking) {
+        ctx.shadowBlur = 0;
+
+        // red dot
+        if (!img.excludeDot) {
+          ctx.beginPath();
+          ctx.arc(
+            dx + (data.isEnemy ? data.width * ss : 0) - 4,
+            dy + 6,
+            data.smartMissileTracking ? 4 : 3,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.fillStyle = '#ff3333';
+          ctx.fill();
+        }
       }
 
       // TODO: only draw this during energy updates / when applicable per prefs.
@@ -790,9 +806,9 @@ const DomCanvas = () => {
     // right-align vs. center vs. left-align
     const leftOffset = exports.data.centerEnergyLine
       ? (scaledWidth - renderedWidth) / 2
-      : (exports.data.isEnemy
+      : exports.data.isEnemy
       ? width - renderedWidth
-      : 0);
+      : 0;
 
     const lineHeight = 2.5;
     const borderRadius = lineHeight;

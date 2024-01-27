@@ -1635,7 +1635,13 @@ const Helicopter = (options = {}) => {
     target.data.isNextMissileTarget = !!active;
 
     // new target
-    if (active && target?.dom?.o.appendChild) {
+    // NOTE: excluding turrets and missile launchers which have placeholder DOM / scan nodes, but sprites + red dot rendered on canvas.
+    if (
+      active &&
+      target.data.type !== TYPES.turret &&
+      target.data.type !== TYPES.missileLauncher &&
+      target?.dom?.o.appendChild
+    ) {
       target.dom.o.appendChild(targetDot);
       utils.css.add(target.dom.o, css.nextMissileTarget);
       nextMissileTarget = target;
