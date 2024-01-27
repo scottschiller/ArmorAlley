@@ -861,89 +861,89 @@ const Turret = (options = {}) => {
     repair
   };
 
+  const src = 'turret-sprite.png';
+
+  const spriteWidth = 36;
+  const spriteHeight = 128;
+  const frameHeight = 32;
+  
+  // base of turret
+  const turretBase = {
+    src: utils.image.getImageObject(src),
+    source: {
+      x: 0,
+      y: 0,
+      is2X: true,
+      width: spriteWidth,
+      height: spriteHeight,
+      frameWidth: spriteWidth,
+      frameHeight,
+      // sprite offset indices
+      frameX: 0,
+      frameY: 0
+    },
+    target: {
+      width: spriteWidth / 2,
+      height: frameHeight / 2
+    }
+  };
+  
+  // turret gun
+  const turretGun = {
+    src: utils.image.getImageObject(src),
+    excludeEnergy: true,
+    excludeDot: true,
+    source: {
+      x: 0,
+      y: 0,
+      is2X: true,
+      width: spriteWidth,
+      height: spriteHeight,
+      frameWidth: spriteWidth,
+      frameHeight,
+      // sprite offset indices
+      frameX: 0,
+      frameY: 1
+    },
+    target: {
+      width: spriteWidth / 2,
+      height: frameHeight / 2,
+      yOffset: -3.5,
+      // rotate based on turret data
+      useDataAngle: true,
+      // origin / axis of rotation relative to width/height
+      rotateXOffset: 0.5,
+      /* rotate origin is almost the bottom, but not exactly. */
+      rotateYOffset: 0.95
+    }
+  };
+  
+  const turretDead = {
+    src: utils.image.getImageObject(src),
+    source: {
+      x: 0,
+      y: 0,
+      is2X: true,
+      width: spriteWidth,
+      height: spriteHeight,
+      frameWidth: spriteWidth,
+      frameHeight,
+      // sprite offset indices
+      frameX: 0,
+      frameY: 0
+    },
+    target: {
+      width: spriteWidth / 2,
+      height: frameHeight / 2
+    }
+  };
+
   data.domCanvas = {
     img: [turretBase, turretGun],
     radarItem: Turret.radarItemConfig(exports)
   };
 
   return exports;
-};
-
-const src = 'turret-sprite.png';
-
-const spriteWidth = 36;
-const spriteHeight = 128;
-const frameHeight = 32;
-
-// base of turret
-const turretBase = {
-  src: utils.image.getImageObject(src),
-  source: {
-    x: 0,
-    y: 0,
-    is2X: true,
-    width: spriteWidth,
-    height: spriteHeight,
-    frameWidth: spriteWidth,
-    frameHeight,
-    // sprite offset indices
-    frameX: 0,
-    frameY: 0
-  },
-  target: {
-    width: spriteWidth / 2,
-    height: frameHeight / 2
-  }
-};
-
-// turret gun
-const turretGun = {
-  src: utils.image.getImageObject(src),
-  excludeEnergy: true,
-  excludeDot: true,
-  source: {
-    x: 0,
-    y: 0,
-    is2X: true,
-    width: spriteWidth,
-    height: spriteHeight,
-    frameWidth: spriteWidth,
-    frameHeight,
-    // sprite offset indices
-    frameX: 0,
-    frameY: 1
-  },
-  target: {
-    width: spriteWidth / 2,
-    height: frameHeight / 2,
-    yOffset: -3.5,
-    // rotate based on turret data
-    useDataAngle: true,
-    // origin / axis of rotation relative to width/height
-    rotateXOffset: 0.5,
-    /* rotate origin is almost the bottom, but not exactly. */
-    rotateYOffset: 0.95
-  }
-};
-
-const turretDead = {
-  src: utils.image.getImageObject(src),
-  source: {
-    x: 0,
-    y: 0,
-    is2X: true,
-    width: spriteWidth,
-    height: spriteHeight,
-    frameWidth: spriteWidth,
-    frameHeight,
-    // sprite offset indices
-    frameX: 0,
-    frameY: 0
-  },
-  target: {
-    width: spriteWidth / 2,
-    height: frameHeight / 2
-  }
 };
 
 Turret.radarItemConfig = (exports) => ({
