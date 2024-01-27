@@ -7,9 +7,6 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { GAME_SPEED_RATIOED, worldHeight } from '../core/global.js';
 
-const slashPattern = new Image();
-slashPattern.src = 'image/chain.png';
-
 let pattern;
 
 const Chain = (options = {}) => {
@@ -252,7 +249,7 @@ const Chain = (options = {}) => {
   data.domCanvas = {
     draw: (ctx, obj, pos, width, height) => {
       if (!pattern) {
-        pattern = ctx.createPattern(slashPattern, 'repeat');
+        pattern = ctx.createPattern(utils.image.getImageObject('chain.png'), 'repeat');
       }
       ctx.fillStyle = pattern;
       // attached to balloon, or bunker?
