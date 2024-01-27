@@ -10,11 +10,7 @@ import {
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
-
-const smokeSprite = new Image();
-// smokeSprite.src = 'image/smoke-sprite.png';
-smokeSprite.src =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAADYBAMAAAAUk662AAAAD1BMVEUAAAAAAACWlpZUVFT///+NK79EAAAAAXRSTlMAQObYZgAAATtJREFUeF7F1NGNhTAMBdHQQW4L04JbSP81LVheW8FCWsTH5usIBIycvDfGoWvNMYZDui5hBppDIQ3h4q7VZOdCuxYYtksAbHJKGofLsxRRUTpD82jNSN7simZAbHLaLoSX7joBuzCV3jYHRt0U+YBLp0CIXVoGN5nRxGm7SYDrSMXnlAmzsirVEcmj7imSY84aUYpmKkpNaIaez5BzlwDwmbpiptmsaK6uaq3V++NZl0oAmildivltArpg3SWU09XjdPt6Hnm+BCQXZmim4rsGN7GwJqD09xPxIrr2SBkttIzSXnqUZERpCYPS9zmPI2/WEVIdK+JiTcMVfbnTKZZZEzS9af6GvjEh0EzJpYU1YWz6h1LTTCm0aBJZRb1Gbac/r+efaE6otOhCTd9n+v2ML5pkoSPV/m3frx9YTHR7id+njwAAAABJRU5ErkJggg==';
+import { utils } from '../core/utils.js';
 
 const Smoke = (options = {}) => {
   let dom, data, exports;
@@ -162,8 +158,6 @@ const Smoke = (options = {}) => {
       spriteFrame:
         options.spriteFrame !== undefined ? options.spriteFrame : rndInt(6),
       spriteFrames: 12,
-      spritePixelHeight: 108, // real sprite is 216, but we render half-size.
-      spriteOffsetPerFrame: 108 / 12,
       isFading: false,
       fadeFrame: 0,
       fadeFrames: 8,
@@ -186,23 +180,23 @@ const Smoke = (options = {}) => {
 
   data.domCanvas = {
     img: {
-      src: smokeSprite,
+      src: utils.image.getImageObject('smoke-sprite-glow.png'),
       source: {
         x: 0,
         y: 0,
-        width: smokeSprite.width,
-        height: smokeSprite.height,
+        width: 36,
+        height: 432,
         is2X: true,
         // frame size
-        frameWidth: 18,
-        frameHeight: 18,
+        frameWidth: 36,
+        frameHeight: 36,
         // sprite offset indices
         frameX: 0,
         frameY: 0
       },
       target: {
-        width: 18,
-        height: 18
+        width: 36,
+        height: 36
       }
     }
   };

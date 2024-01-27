@@ -280,21 +280,21 @@ const DomCanvas = () => {
 
     const sprites = [
       {
-        url: 'explosion-shrapnel-2.png',
+        url: 'explosion-shrapnel-2-glow.png',
         width: 79,
         height: 384,
         frameWidth: 79,
         frameHeight: 32
       },
       {
-        url: 'generic-explosion-2.png',
+        url: 'generic-explosion-2-glow.png',
         width: 55,
         height: 90,
         frameWidth: 55,
         frameHeight: 18
       },
       {
-        url: 'generic-explosion.png',
+        url: 'generic-explosion-glow.png',
         width: 55,
         height: 90,
         frameWidth: 55,

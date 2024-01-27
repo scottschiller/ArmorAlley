@@ -17,11 +17,7 @@ import {
 import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
-
-const shrapnelSprite = new Image();
-// shrapnelSprite.src = 'image/shrapnel.png';
-shrapnelSprite.src =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAAAUBAMAAADfFKqVAAAAGFBMVEUAAAC1BwB/f3//xQD///8AMww/Pz8AZhlqBgxSAAAAAXRSTlMAQObYZgAAAMpJREFUeF690kGNBDEQQ1FT+BRMwRRCYSkMhaG/UmvKh02kPWXq5E4q72C1nsHmk4QOQ5OPt/vch5Mn4B2GwM65iaDO6z5swA6WAGgZjUmPfSwjQujdz7uwBSIIQcLqwxZAwqEDJNufNAs/UpKL8BwTEKw1GhAKoJ4yBFBOK6ncuQZLoAiB14LDP1YhduVuIJK1yvk+LA2X1EtRMTKKre4yBoxrfxmmLkGqILE1aOMxQPRWvg+3QyjA354Kjtu8vbgPb9i+9f/wFfgXA+c0/4Hh/xMAAAAASUVORK5CYII=';
+import { utils } from '../core/utils.js';
 
 const Shrapnel = (options = {}) => {
   let css,
@@ -355,23 +351,23 @@ const Shrapnel = (options = {}) => {
 
   data.domCanvas = {
     img: {
-      src: shrapnelSprite,
+      src: utils.image.getImageObject('shrapnel-glow.png'),
       source: {
         x: 0,
         y: 0,
-        width: shrapnelSprite.width,
-        height: shrapnelSprite.height,
+        width: 352,
+        height: 40,
         is2X: true,
         // frame size
-        frameWidth: 22,
-        frameHeight: 20,
+        frameWidth: 44,
+        frameHeight: 40,
         // sprite offset indices
         frameX: 0,
         frameY: 0
       },
       target: {
-        width: 22,
-        height: 20,
+        width: 44,
+        height: 40,
         angle: 0,
         scale: 1
       }
