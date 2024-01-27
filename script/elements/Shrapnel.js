@@ -29,7 +29,7 @@ const Shrapnel = (options = {}) => {
     exports,
     type = TYPES.shrapnel;
 
-  const spriteTypes = 8;
+  const spriteTypes = 12;
 
   function moveTo(x, y) {
     let relativeScale;
@@ -355,7 +355,7 @@ const Shrapnel = (options = {}) => {
       source: {
         x: 0,
         y: 0,
-        width: 352,
+        width: 528,
         height: 40,
         is2X: true,
         // frame size
