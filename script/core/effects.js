@@ -295,7 +295,7 @@ const effects = {
     if (shrapnelOptions.centerX) {
       localOptions.x += halfWidth;
     } else {
-      localOptions.x += rng(localOptions.width, TYPES.shrapnel);
+      localOptions.x += rng(localOptions.width * 0.75, TYPES.shrapnel);
     }
 
     // silly, but copy right over.
