@@ -117,13 +117,13 @@ const Base = (options = {}) => {
   }
 
   function smallBoom(exports) {
-    if (rnd(1) >= 0.75) {
+    if (rnd(1) >= 0.66) {
       effects.domFetti(exports);
     }
 
     effects.shrapnelExplosion(exports.data, {
-      count: 4 + rndInt(4),
-      velocity: 5 + rndInt(10),
+      count: 8 + rndInt(8),
+      velocity: 5 + rndInt(12),
       // don't create identical "clouds" of smoke *at* base.
       noInitialSmoke: true
     });
@@ -131,7 +131,7 @@ const Base = (options = {}) => {
     effects.smokeRing(exports, {
       offsetX: exports.data.width * 0.33 + rnd(exports.data.width * 0.33),
       offsetY: rnd(exports.data.height / 4),
-      count: 3 + rndInt(3),
+      count: 5 + rndInt(5),
       velocityMax: 6 + rndInt(6),
       isGroundUnit: true,
       increaseDeceleration: Math.random() >= 0.5 ? 1 : undefined
@@ -263,8 +263,8 @@ const Base = (options = {}) => {
 
       for (i = 0; i < 7; i++) {
         effects.shrapnelExplosion(data, {
-          count: rndInt(64),
-          velocity: 8 + rnd(8),
+          count: rndInt(96),
+          velocity: 8 + rnd(12),
           // don't create identical "clouds" of smoke *at* base.
           noInitialSmoke: true
         });
@@ -277,7 +277,7 @@ const Base = (options = {}) => {
 
           effects.smokeRing(exports, {
             velocityMax: 64,
-            count: isBigBoom ? 8 : 2,
+            count: isBigBoom ? 12 : 3,
             offsetX: data.width * 0.25 + rnd(data.halfWidth),
             offsetY: data.height,
             isGroundUnit: true
@@ -288,7 +288,7 @@ const Base = (options = {}) => {
 
       effects.inertGunfireExplosion({
         exports,
-        count: 32 + rndInt(32),
+        count: 48 + rndInt(48),
         vX: 2,
         vY: 2
       });
@@ -609,7 +609,14 @@ const Base = (options = {}) => {
       vX: 0,
       vY: 0,
       // allow missiles to become more dangerous "if necessary"
-      missileVMax: 8
+      missileVMax: 8,
+      domFetti: {
+        colorType: options.isEnemy ? 'grey' : 'green',
+        elementCount: 100 + rndInt(100),
+        startVelocity: 15 + rndInt(30),
+        spread: 180,
+        decay: 0.95
+      }
     },
     options
   );
