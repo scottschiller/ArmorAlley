@@ -293,8 +293,68 @@ const Base = (options = {}) => {
         vY: 2
       });
 
-      dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+      if (dom.o.appendChild) {
+        dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+      }
+
       utils.css.add(dom.o, 'burning');
+
+      const burningConfig = (() => {
+        const spriteWidth = 816;
+        const spriteHeight = 32;
+        return {
+          sprite: {
+            url: 'base-sprite-horizontal_burning.png',
+            width: spriteWidth,
+            height: spriteHeight,
+            frameWidth: spriteWidth / 4,
+            frameHeight: spriteHeight,
+            animationDuration: 1.75,
+            horizontal: true,
+            loop: true
+          }
+        };
+      })();
+
+      // replace the base sprite
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        burningConfig
+      );
+
+      /**
+       * Commercial, licensed asset - $1.99 USD.
+       * https://infectedtribe.itch.io/pixel-explosion
+       * 112 x 112 x 21 frames, 100 ms per frame. spritesheet dimensions: 2352 x 112
+       * https://graphicriver.net/item/pixel-explosion-set/15457666
+       */
+      const nukeConfig = (() => {
+        const spriteWidth = 2352;
+        const spriteHeight = 112;
+        return {
+          overlay: true,
+          scale: 2,
+          sprite: {
+            url: 'infectedtribe_itch_io-pixel_explosion.png',
+            width: spriteWidth,
+            height: spriteHeight,
+            frameWidth: spriteWidth / 21,
+            frameHeight: spriteHeight,
+            animationDuration: 0.75,
+            horizontal: true
+          }
+        };
+      })();
+
+      // add the nuke overlay
+      if (!game.objects.editor) {
+        data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
+          exports,
+          nukeConfig
+        );
+      }
+
+      data.shadowBlur = 32;
     }, 25);
   }
 
@@ -422,6 +482,9 @@ const Base = (options = {}) => {
   function animate() {
     sprites.moveWithScrollOffset(exports);
 
+    data.domCanvas.animation?.animate();
+    data.domCanvas.nukeAnimation?.animate();
+
     if (data.dead) return;
 
     if (data.frameCount % data.fireModulus === 0) {
@@ -453,17 +516,66 @@ const Base = (options = {}) => {
     data.missileMode = getRandomMissileMode();
   }
 
+  function getSpriteURL() {
+    // image = base + enemy + theme
+    return (
+      (data.isEnemy
+        ? 'base-enemy-sprite-horizontal'
+        : 'base-sprite-horizontal') +
+      (gamePrefs.weather === 'snow' ? '_snow' : '') +
+      '.png'
+    );
+  }
+
+  function applySpriteURL() {
+    console.log('applySpriteURL', data.domCanvas);
+    if (!data.domCanvas.animation) return;
+    data.domCanvas.animation.updateSprite(getSpriteURL());
+  }
+
   function initBase() {
-    dom.o = sprites.create({
-      className: css.className,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+    } else {
+      dom.o = {};
+    }
+
+    const animConfig = (() => {
+      const spriteWidth = 1040;
+      const spriteHeight = 52;
+      return {
+        yOffset: 0.75,
+        sprite: {
+          url: getSpriteURL(),
+          width: spriteWidth,
+          height: spriteHeight,
+          frameWidth: spriteWidth / 5,
+          frameHeight: spriteHeight,
+          animationDuration: 2,
+          horizontal: true,
+          loop: true,
+          alternate: true
+        }
+      };
+    })();
+
+    if (!game.objects.editor) {
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        animConfig
+      );
+    }
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    dom.o.appendChild(sprites.makeTransformSprite());
+    if (dom.o.appendChild) {
+      dom.o.appendChild(sprites.makeTransformSprite());
+    }
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    game.objects.radar.addItem(exports, css.className);
   }
 
   width = 104;
@@ -513,7 +625,8 @@ const Base = (options = {}) => {
     dom,
     die,
     init: initBase,
-    isOnScreenChange
+    isOnScreenChange,
+    updateSprite: applySpriteURL
   };
 
   data.domCanvas = {

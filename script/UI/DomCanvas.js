@@ -155,9 +155,11 @@ const DomCanvas = () => {
       frameHeight,
       horizontal,
       loop,
-      reverseDirection,
+      alternate,
       hideAtEnd
     } = sprite;
+
+    let { reverseDirection } = sprite;
 
     const animationDuration = options.sprite.animationDuration || 1;
 
@@ -252,6 +254,9 @@ const DomCanvas = () => {
           if (!loop) {
             stopped = true;
             options?.onEnd?.();
+          } else {
+            // alternate direction on loop?
+            if (alternate) reverseDirection = !reverseDirection;
           }
         } else {
           frameCount++;
@@ -585,6 +590,10 @@ const DomCanvas = () => {
 
         // current (active) vs. next detected target
         ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
+      } else if (data.shadowBlur) {
+        // Note: $$$
+        ctx.shadowBlur = data.shadowBlur * ss;
+        ctx.shadowColor = data.shadowColor || '#fff';
       }
 
       // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
@@ -622,6 +631,8 @@ const DomCanvas = () => {
           ctx.fillStyle = '#ff3333';
           ctx.fill();
         }
+      } else if (ctx.shadowBlur) {
+        ctx.shadowBlur = 0;
       }
 
       // TODO: only draw this during energy updates / when applicable per prefs.
