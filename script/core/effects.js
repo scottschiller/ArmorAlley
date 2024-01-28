@@ -197,7 +197,7 @@ const effects = {
             ? -rnd(3 * chance)
             : -(data.vY || 0.25) + rnd(-2),
         // show smoke on battlefield, but not on radar when cloaked.
-        parentWasCloaked: (data.type === TYPES.helicopter && data.cloaked),
+        parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
         oParent: exports
       })
     );
