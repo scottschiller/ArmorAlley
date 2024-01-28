@@ -1376,7 +1376,7 @@ const Helicopter = (options = {}) => {
     }
 
     effects.shrapnelExplosion(data, {
-      count: 20,
+      count: 20 + (net.active ? 0 : rngInt(20, TYPES.shrapnel)),
       velocity: 4 + rngInt(4, TYPES.shrapnel),
       vX: data.vX,
       vY: -Math.abs(data.vY),
