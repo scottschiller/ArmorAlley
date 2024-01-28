@@ -1038,85 +1038,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   background-color: #666;
 }
 
-.base {
-  height: 26px;
-  overflow: hidden;
-  /* +1 pixel, sprite clipping workaround */
-  width: 104px;
-}
-
-.base .transform-sprite {
-  animation: animate-transform-sprite-base calc(1s * var(--gs-frac)) steps(5)
-    infinite alternate;
-  background-image: url(../image/base-sprite-horizontal.png);
-  background-size: 100% 100%;
-  height: 26px;
-  width: 520px;
-}
-
-#battlefield.snow .base .transform-sprite {
-  animation: animate-transform-sprite-base-snow calc(1s * var(--gs-frac))
-    steps(5) infinite alternate;
-  background-image: url(../image/base-sprite-horizontal_snow.png);
-  background-size: 100% 100%;
-  height: 25px;
-  width: 510px;
-}
-
-.base.enemy .transform-sprite {
-  background-image: url(../image/base-enemy-sprite-horizontal.png);
-}
-
-#battlefield.snow .base.enemy .transform-sprite {
-  background-image: url(../image/base-enemy-sprite-horizontal_snow.png);
-}
-
-#battlefield .base.burning .transform-sprite {
-  animation: animate-transform-sprite-base-burning calc(0.75s * var(--gs-frac))
-    steps(4) infinite;
-  background-image: url(../image/base-sprite-horizontal_burning.png);
-  background-size: 408px 16px;
-  width: 408px;
-  height: 16px;
-  top: auto;
-  bottom: 0;
-}
-
-.end-bunker {
-  background-image: url(../image/end-bunker.png);
-  background-size: contain;
-  height: 19px;
-  width: 41px;
-}
-
-#battlefield.snow .end-bunker {
-  /* snow version */
-  background-image: url(../image/end-bunker_snow.png);
-  margin-bottom: -0.5px;
-}
-
-.end-bunker.enemy {
-  background-image: url(../image/end-bunker-enemy.png);
-}
-
-#battlefield.snow .end-bunker.enemy {
-  background-image: url(../image/end-bunker-enemy_snow.png);
-}
-
-.super-bunker {
-  /* background-image: url(../image/super-bunker.png); */
-  background-image: url(../image/super-bunker_mac.png);
-  background-size: contain;
-  height: 28px;
-  width: 66px;
-}
-
-#battlefield.snow .super-bunker {
-  /* snow version */
-  background-image: url(../image/super-bunker_mac_snow.png);
-  background-size: contain;
-}
-
 .landing-pad {
   height: 7px;
   overflow: hidden;
@@ -1370,17 +1291,7 @@ body:not(.game-over).radar_jammed #radar {
   transition: filter 0.5s ease-in-out;
 }
 
-.base.burning {
-  /* a little "nuclear" glow, why not. */
-  filter: drop-shadow(0 0 calc(8px * var(--gs)) #fff);
-  transition: filter 0.5s ease-in-out;
-  width: 103px;
-  height: 103px;
-  margin-top: -77px;
-}
-
 /* special case */
-.base .sub-sprite.nuke,
 .bunker .sub-sprite.nuke {
   /**
    * Commercial, licensed asset - $1.99 USD.
@@ -1402,7 +1313,6 @@ body:not(.game-over).radar_jammed #radar {
   transform-origin: 50% 100%;
 }
 
-.base.burning .sub-sprite.nuke,
 .bunker.burning .sub-sprite.nuke,
 .bunker.exploding .sub-sprite.nuke {
   /* go go go! */
