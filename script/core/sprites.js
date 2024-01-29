@@ -147,7 +147,8 @@ const sprites = {
 
     // hackish: if this lives on the canvas, handle that here.
     // we don't care about on/off-screen at this juncture, because logic may still need to run.
-    if (exports?.data?.domCanvas) {
+    // furthermore: don't draw if there is an animation defined, it will take care of itself.
+    if (exports?.data?.domCanvas && !exports.data.domCanvas.animation) {
       common.domCanvas.draw(exports);
     }
 
