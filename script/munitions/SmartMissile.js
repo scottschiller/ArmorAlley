@@ -104,8 +104,9 @@ const SmartMissile = (options = {}) => {
   }
 
   function spark() {
-    utils.css.add(dom.o, css.spark);
-    sprites.applyRandomRotation(dom.o);
+    // TODO: random rotation?
+    data.domCanvas.img = sparkObj;
+    data.excludeBlink = true;
   }
 
   function makeTimeout(callback) {
@@ -249,9 +250,7 @@ const SmartMissile = (options = {}) => {
 
     let dieSound;
 
-    utils.css.add(dom.o, css.spark);
-
-    sprites.applyRandomRotation(dom.o);
+    spark();
 
     effects.inertGunfireExplosion({ exports });
 
@@ -478,6 +477,8 @@ const SmartMissile = (options = {}) => {
   function animate() {
     let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth;
 
+    data.domCanvas.animation?.animate();
+
     // notify caller if now dead and can be removed.
     if (data.dead) {
       sprites.moveWithScrollOffset(exports);
@@ -610,9 +611,7 @@ const SmartMissile = (options = {}) => {
         objects.target.data.dead ||
         game.data.battleOver)
     ) {
-      utils.css.add(dom.o, css.expired);
-      utils.css.add(radarItem.dom.o, css.expired);
-
+      data.blink = true;
       data.expired = true;
       data.hostile = true;
 
@@ -756,7 +755,8 @@ const SmartMissile = (options = {}) => {
       // become dangerous at this point.
       // obligatory: https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
       data.armed = true;
-      utils.css.add(dom.o, css.armed);
+      data.blink = false;
+      data.visible = true;
     }
 
     if (data.frameCount >= data.dieFrameCount) {
@@ -784,11 +784,14 @@ const SmartMissile = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
-
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+    } else {
+      dom.o = {};
+    }
 
     // initial placement
     sprites.setTransformXY(
@@ -810,7 +813,7 @@ const SmartMissile = (options = {}) => {
 
     const playbackRate = getPlaybackRate();
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports, css.className);
 
     if (data.isBanana && sounds.banana.launch) {
       // hackish: need to know on-screen right now.
@@ -942,7 +945,9 @@ const SmartMissile = (options = {}) => {
       infantryEnergyCost: 0.5,
       armed: false,
       didNotify: false,
-      excludeBlink: true,
+      blink: true,
+      blinkCounter: 0,
+      visible: true,
       expired: false,
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       nearExpiry: false,
@@ -999,7 +1004,92 @@ const SmartMissile = (options = {}) => {
     options
   );
 
+  const spriteConfig = {
+    banana: {
+      src: 'banana.png',
+      spriteWidth: 32,
+      spriteHeight: 38,
+      width: 8,
+      height: 9.5,
+      scale: 0.8
+    },
+    rubberChicken: {
+      // note: different params for animation.
+      sprite: {
+        url: 'rubber-chicken-96.png',
+        spriteWidth: 96,
+        spriteHeight: 48,
+        frameWidth: 96,
+        frameHeight: 24,
+        width: 24,
+        height: 6,
+        loop: true,
+        animationDuration: 0.5
+      },
+      // TODO: frame count shouldn't be required; fix canvasAnimation() math.
+      animationFrameCount: 2,
+      useDataAngle: true,
+      scale: 0.5
+    },
+    smartMissile: {
+      src: 'smart-missile.png',
+      spriteWidth: 30,
+      spriteHeight: 8,
+      width: 15,
+      height: 4,
+      scale: 1
+    }
+  };
+
+  const spriteObj =
+    spriteConfig[
+      data.isBanana
+        ? 'banana'
+        : data.isRubberChicken
+        ? 'rubberChicken'
+        : 'smartMissile'
+    ];
+
+  const { scale, spriteWidth, spriteHeight } = spriteObj;
+
+  const sparkObj = {
+    src: utils.image.getImageObject(
+      oneOf(['explosion-spark.png', 'explosion-spark-2.png'])
+    ),
+    source: {
+      width: 5,
+      height: 5,
+      spriteWidth: 5,
+      spriteHeight: 5,
+      frameWidth: 5,
+      frameHeight: 5,
+      frameX: 0,
+      frameY: 0
+    }
+  };
+
   data.domCanvas = {
+    img: {
+      src: !game.objects.editor
+        ? utils.image.getImageObject(spriteObj.src || spriteObj.sprite.url)
+        : null,
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight,
+        is2X: true,
+        frameWidth: spriteWidth,
+        frameHeight: spriteHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        useDataAngle: true,
+        scale
+      }
+    },
+
     radarItem: {
       width: 2.75,
       height: 1,
@@ -1060,6 +1150,14 @@ const SmartMissile = (options = {}) => {
       { exports }
     )
   };
+
+  if (data.isRubberChicken) {
+    // replace the base sprite
+    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      exports,
+      spriteObj
+    );
+  }
 
   return exports;
 };
