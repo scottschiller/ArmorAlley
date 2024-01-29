@@ -826,12 +826,6 @@ const Helicopter = (options = {}) => {
       utils.css.addOrRemove(dom.o, state, css.respawningActive);
     }, 128);
 
-    // player: restore trailers that may have been removed on die()
-    // TODO: bug where if CPU dies, trailers don't move?
-    if (!data.isCPU) {
-      initTrailers();
-    }
-
     if (state) {
       // "complete" respawn, re-enable mouse etc.
       common.setFrameTimeout(respawnComplete, 1500);
@@ -1101,56 +1095,15 @@ const Helicopter = (options = {}) => {
   }
 
   function moveTrailers() {
-    let i, j;
-
     if (!data.isOnScreen) return;
-    if (!dom?.trailers?.length) return;
 
-    for (i = 0, j = data.trailerCount; i < j; i++) {
-      // if previous X value exists, apply it
-      if (data.xHistory[i]) {
-        sprites.setTransformXY(
-          exports,
-          dom.trailers[i],
-          `${data.xHistory[i]}px`,
-          `${data.yHistory[i] + data.halfHeightAdjusted}px`
-        );
-        dom.trailers[i]._style.setProperty(
-          'opacity',
-          data.dead ? 0 : Math.max(0.25, (i + 1) / j)
-        );
-      }
-    }
-  }
-
-  function hideTrailers(resetHistory) {
-    let i, j;
-
-    if (!dom?.trailers?.length) return;
-
-    // exit if removel pending
-    if (data.removeTrailerTimer) return;
-
-    for (i = 0, j = data.trailerCount; i < j; i++) {
-      dom.trailers[i]._style.setProperty(
-        'transition',
-        'opacity 0.5s ease-in-out'
-      );
-      dom.trailers[i]._style.setProperty('opacity', 0);
-    }
-
-    if (resetHistory) {
-      data.xHistory = [];
-      data.yHistory = [];
-    }
-
-    data.removeTrailerTimer = common.setFrameTimeout(removeTrailers, 666);
-  }
-
-  function removeTrailers() {
-    sprites.removeNodeArray(dom.trailers);
-    dom.trailers = [];
-    data.removeTrailerTimer = null;
+    common.domCanvas.drawTrailers(
+      exports,
+      data.xHistory,
+      data.yHistory,
+      0,
+      data.halfHeightAdjusted
+    );
   }
 
   function reset() {
@@ -1425,8 +1378,6 @@ const Helicopter = (options = {}) => {
 
     // ensure any health bar is updated and hidden ASAP
     sprites.updateEnergy(exports);
-
-    hideTrailers(true /* reset x + y history */);
 
     effects.domFetti(exports, attacker);
 
@@ -2465,16 +2416,6 @@ const Helicopter = (options = {}) => {
     centerView();
   }
 
-  function isOnScreenChange(isOnScreen) {
-    if (isOnScreen) {
-      // make sure trailers are present, if not already
-      initTrailers();
-    } else if (data.isCPU) {
-      // helicopter might leave trailers when it dies while on-screen.
-      hideTrailers();
-    }
-  }
-
   function animate() {
     if (game.objects.editor) return;
 
@@ -2492,10 +2433,7 @@ const Helicopter = (options = {}) => {
       return;
     }
 
-    if (game.data.battleOver) {
-      hideTrailers();
-      return;
-    }
+    if (game.data.battleOver) return;
 
     // move according to delta between helicopter x/y and mouse, up to a max.
 
@@ -2977,32 +2915,6 @@ const Helicopter = (options = {}) => {
     return oneOf(['', 'generic-explosion', 'generic-explosion-2']);
   }
 
-  function initTrailers() {
-    let i, trailerConfig, fragment;
-
-    // if a removal is pending (i.e., helicopter just went off-screen), wait and try again.
-    if (data.removeTrailerTimer) {
-      common.setFrameTimeout(initTrailers, 666);
-      return;
-    }
-
-    // already present
-    if (dom.trailers.length) return;
-
-    fragment = document.createDocumentFragment();
-
-    trailerConfig = {
-      className: css.trailer
-    };
-
-    for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(sprites.create(trailerConfig));
-      fragment.appendChild(dom.trailers[i]);
-    }
-
-    game.dom.battlefield.appendChild(fragment);
-  }
-
   function initHelicopter() {
     updateFiringRates();
 
@@ -3117,8 +3029,7 @@ const Helicopter = (options = {}) => {
     respawning: 'respawning',
     respawningActive: 'respawning-active',
     unavailable: 'weapon-unavailable',
-    reloading: 'weapon-reloading',
-    trailer: 'helicopter-trailer'
+    reloading: 'weapon-reloading'
   });
 
   // computer player
@@ -3210,7 +3121,7 @@ const Helicopter = (options = {}) => {
       height: options.isEnemy ? 18 : 15,
       halfWidth: 24,
       halfHeight: 7,
-      halfHeightAdjusted: 5,
+      halfHeightAdjusted: 3.5,
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 0.25,
@@ -3314,8 +3225,7 @@ const Helicopter = (options = {}) => {
         missileCount: document.getElementById('missile-count'),
         missileCountLI: statsBar.querySelectorAll('li.missiles')[0]
       };
-    })(),
-    trailers: []
+    })()
   };
 
   events = {
@@ -3424,7 +3334,6 @@ const Helicopter = (options = {}) => {
     getGunfireParams,
     getSmartMissileParams,
     init: initHelicopter,
-    isOnScreenChange,
     objects,
     onLandingPad,
     reactToDamage,

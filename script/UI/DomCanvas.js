@@ -835,6 +835,34 @@ const DomCanvas = () => {
     ctx.fill();
   }
 
+  function drawTrailers(
+    exports,
+    xHistory = [],
+    yHistory = [],
+    xOffset = 0,
+    yOffset = 0
+  ) {
+    const ctx = dom.ctx['fx-bg'];
+    const ss = game.objects.view.data.screenScale;
+
+    for (let i = 0, j = xHistory.length; i < j; i++) {
+      ctx.beginPath();
+      ctx.roundRect(
+        (xHistory[i] +
+          xOffset -
+          game.objects.view.data.battleField.scrollLeft) *
+          ss,
+        (yHistory[i] - 32 + yOffset) * ss,
+        1.25 * ss,
+        1.25 * ss,
+        2 * ss
+      );
+      // #666 -> 102, 102, 102
+      ctx.fillStyle = `rgba(102, 102, 102, ${(i + 1) / j})`;
+      ctx.fill();
+    }
+  }
+
   function resize() {
     if (!dom.o) return;
 
@@ -902,6 +930,7 @@ const DomCanvas = () => {
     canvasExplosion,
     clear,
     draw,
+    drawTrailers,
     init,
     resize,
     rotate,

@@ -93,8 +93,6 @@ const SmartMissile = (options = {}) => {
   }
 
   function moveTrailers() {
-    let i, j, xOffset, yOffset;
-
     if (!data.isOnScreen) return;
 
     xOffset = 0;
@@ -300,8 +298,6 @@ const SmartMissile = (options = {}) => {
     } else if (sounds.metalClang) {
       playSound(sounds.metalClang, game.players.local);
     }
-
-    hideTrailers();
 
     data.deadTimer = common.setFrameTimeout(() => {
       sprites.removeNodesAndUnlink(exports);
@@ -809,26 +805,12 @@ const SmartMissile = (options = {}) => {
     collisionTest(collision, exports);
   }
 
-  function isOnScreenChange(isOnScreen) {
-    if (!isOnScreen) {
-      // missile might leave trailers when it leaves the screen
-      hideTrailers();
-    }
-  }
-
   function initDOM() {
-    let i, trailerConfig, fragment;
-
-    fragment = document.createDocumentFragment();
-
     dom.o = sprites.create({
       className: css.className,
       isEnemy: data.isEnemy ? css.enemy : false
     });
 
-    trailerConfig = {
-      className: css.trailer
-    };
 
     // initial placement
     sprites.setTransformXY(
@@ -838,14 +820,6 @@ const SmartMissile = (options = {}) => {
       `${data.y}px`,
       `rotate3d(0, 0, 1, ${data.angle}deg)`
     );
-
-    for (i = 0; i < data.trailerCount; i++) {
-      dom.trailers.push(sprites.create(trailerConfig));
-      fragment.appendChild(dom.trailers[i]);
-    }
-
-    // TODO: review and see if trailer fragment can be dynamically-appended when on-screen, too
-    game.dom.world.appendChild(fragment);
   }
 
   function initSmartMissile() {
@@ -941,7 +915,6 @@ const SmartMissile = (options = {}) => {
     tracking: 'smart-missile-tracking',
     trackingActive: 'smart-missile-tracking-active',
     trackingRemoval: 'smart-missile-tracking-removal',
-    trailer: 'smart-missile-trailer',
     expired: 'expired',
     spark: oneOf(['spark', 'spark-2'])
   });
@@ -1076,8 +1049,7 @@ const SmartMissile = (options = {}) => {
   };
 
   dom = {
-    o: null,
-    trailers: []
+    o: null
   };
 
   objects = {
@@ -1091,7 +1063,6 @@ const SmartMissile = (options = {}) => {
     dom,
     die,
     init: initSmartMissile,
-    isOnScreenChange,
     maybeTargetDecoy,
     radarItem,
     objects
