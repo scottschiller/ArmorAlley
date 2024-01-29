@@ -718,8 +718,6 @@ const DomCanvas = () => {
       if (data.blinkCounter % (FPS === 60 ? 6 : 3) === 0) {
         data.visible = !data.visible;
       }
-
-      if (!data.visible) return;
     }
 
     // don't draw if explictly not visible (not undefined / false-y)
