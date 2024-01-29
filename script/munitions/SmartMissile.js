@@ -94,35 +94,13 @@ const SmartMissile = (options = {}) => {
 
   function moveTrailers() {
     if (!data.isOnScreen) return;
-
-    xOffset = 0;
-    yOffset = data.height / 2 - 1;
-
-    for (i = 0, j = data.trailerCount; i < j; i++) {
-      // if previous X value exists, apply it
-      if (data.xHistory[i]) {
-        sprites.setTransformXY(
-          exports,
-          dom.trailers[i],
-          `${data.xHistory[i] + xOffset}px`,
-          `${data.yHistory[i] + yOffset}px`
-        );
-        dom.trailers[i]._style.setProperty(
-          'opacity',
-          Math.max(0.25, (i + 1) / j)
-        );
-      }
-    }
-  }
-
-  function hideTrailers() {
-    let i, j;
-
-    if (!dom.trailers?.length) return;
-
-    for (i = 0, j = data.trailerCount; i < j; i++) {
-      dom.trailers[i]._style.setProperty('opacity', 0);
-    }
+    common.domCanvas.drawTrailers(
+      exports,
+      data.xHistory,
+      data.yHistory,
+      0,
+      data.height / 2 - 1
+    );
   }
 
   function spark() {
