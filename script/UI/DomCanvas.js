@@ -684,20 +684,20 @@ const DomCanvas = () => {
     // shared logic for <canvas> elements
     // does not apply to bottom-aligned units, i.e., MTVIE, or balloons.
     if (
-      data.dead &&
+      (data.dead || data.blink) &&
+      !data.excludeBlink &&
       !data.bottomAligned &&
       !data.alwaysDraw &&
       data.type !== TYPES.balloon
     ) {
-      // if no blink, don't draw at all
-      if (data.excludeBlink) return;
-
-      // special case for helicopters: only blink while initially exploding, not reset or respawning.
+      // special case for helicopters: only blink radar item while initially exploding, not reset or respawning.
       if (
+        data.type === 'radar-item' &&
         data.parentType === TYPES.helicopter &&
         !exports.oParent?.data?.exploding
-      )
+      ) {
         return;
+      }
 
       // only draw every X
       data.blinkCounter = data.blinkCounter || 0;
