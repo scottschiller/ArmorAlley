@@ -425,7 +425,9 @@ const DomCanvas = () => {
       return;
     }
 
-    const { source, target } = img;
+    let { source, target } = img;
+
+    if (!target) target = {};
 
     // opacity?
     if (target.opacity >= 0) {
@@ -434,10 +436,14 @@ const DomCanvas = () => {
     }
 
     // single image, vs. sprite?
-    if (img.source.frameX === undefined && img.source.frameY === undefined) {
-      // screwy scaling here, but 2x source -> target @ 50%, plus screen scaling
-      const renderedWidth = (source.width / 2) * ss;
-      const renderedHeight = (source.height / 2) * ss;
+    if (
+      !target.rotation &&
+      source.frameX === undefined &&
+      source.frameY === undefined
+    ) {
+      // screwy scaling here, but 2x source -> target @ 50% (if unspecified), plus screen scaling
+      const renderedWidth = (target.width || source.width / 2) * ss;
+      const renderedHeight = (target.height || source.height / 2) * ss;
 
       const targetX =
         ((target.x || 0) -
@@ -509,7 +515,7 @@ const DomCanvas = () => {
       }
       // single image, rotated?
     } else if (
-      img.target.rotation &&
+      target.rotation &&
       source.frameX === undefined &&
       source.frameY === undefined
     ) {
