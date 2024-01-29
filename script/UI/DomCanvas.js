@@ -716,6 +716,9 @@ const DomCanvas = () => {
     if (data.oParent?.data?.type !== TYPES.helicopter && data.visible === false)
       return;
 
+    // run logic, but don't actually draw if not on-screen.
+    if (!exports.data.isOnScreen) return;
+
     // does the object know how to draw itself?
     if (oData.draw) {
       // "standard style"
