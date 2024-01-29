@@ -104,8 +104,12 @@ const sprites = {
   moveWithScrollOffset: (exports) => {
     if (!exports?.dom?.o) return;
 
-    // ignore if not on-screen, and editor is not active.
-    if (!exports?.data?.isOnScreen && !game.objects.editor) {
+    // ignore if off-screen and a real DOM node, and editor is not active.
+    if (
+      !exports?.data?.isOnScreen &&
+      exports?.dom?.o?.nodeType &&
+      !game.objects.editor
+    ) {
       if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
@@ -147,16 +151,20 @@ const sprites = {
       common.domCanvas.draw(exports);
     }
 
-    // ignore if off-screen, or if editor is active
-    if (exports && !exports?.data?.isOnScreen && !game.objects.editor) {
+    if (!o) return;
+
+    // ignore if off-screen and a real DOM node, and editor is not active.
+    if (
+      !exports?.data?.isOnScreen &&
+      exports?.dom?.o?.nodeType &&
+      !game.objects.editor
+    ) {
       if (debug) {
         // mark as "skipped" transform
         game.objects.gameLoop.incrementTransformCount(true);
       }
       return;
     }
-
-    if (!o) return;
 
     // take object defaults, if not specified otherwise
     if (!extraTransforms && exports?.data?.extraTransforms) {
