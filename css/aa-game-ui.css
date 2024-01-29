@@ -695,7 +695,6 @@ body.is_firefox #radar .radar-item--animated {
 .sprite.engineer,
 .sprite.infantry,
 .sprite.missile-launcher,
-.sprite.smart-missile.armed,
 .sprite.super-bunker,
 .sprite.tank,
 .sprite.van,
@@ -860,37 +859,6 @@ body.is_firefox #radar .radar-item--animated {
   opacity: 0;
 }
 
-.smart-missile.smart-missile-tracking:after {
-  animation: drop-in-small calc(0.25s * var(--gs-frac)) ease-out;
-  transform: translate3d(-50%, -50%, 0) scale3d(0.5, 0.5, 1);
-}
-
-.radar-item.smart-missile-tracking-active {
-  animation: blink calc(0.25s * var(--gs-frac)) infinite;
-}
-
-/* special case: avoid affecting display of child nodes */
-.radar-item.turret.smart-missile-tracking-active {
-  animation: blink-tracking-color calc(0.25s * var(--gs-frac)) infinite;
-}
-
-.radar-item.smart-missile-tracking-active:not(.helicopter):not(.turret) {
-  /* make the missile target obvious on the radar. */
-  /* helicopters are a special border-only case. */
-  background-color: red !important;
-  border-color: red !important;
-}
-
-.radar-item.helicopter:not(.enemy).smart-missile-tracking-active {
-  /* player's helicopter */
-  border-left-color: red !important;
-}
-
-.radar-item.helicopter.enemy.smart-missile-tracking-active {
-  /* enemy helicopter */
-  border-right-color: red !important;
-}
-
 .helicopter {
   /* cloaking opacity effect */
   opacity: 1;
@@ -976,25 +944,6 @@ body.is_firefox #radar .radar-item--animated {
   display: none;
 }
 
-.smart-missile {
-  background-image: url(../image/smart-missile.png);
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  background-size: 15px 4px;
-  height: 4px;
-  opacity: 1;
-  position: absolute;
-  /* a little transition on missile direction changes, as vX/vY can be pretty much immediate */
-  width: 15px;
-}
-
-.smart-missile.rubber-chicken {
-  /* heh */
-  background: url(../image/rubber-chicken.gif) 50% 50% / contain no-repeat;
-  height: 12px;
-  width: 24px;
-}
-
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
   background: url(../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
@@ -1017,12 +966,6 @@ body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
 body.original_missile_mode ul.stats-bar .missiles .divider {
   /* hide |C|B in UI when "alternate missiles" are disabled. */
   display: none !important;
-}
-
-.smart-missile.banana {
-  background-position: 50% 50%;
-  height: 15px;
-  width: 12px;
 }
 
 .landing-pad {
@@ -1127,9 +1070,7 @@ body.edit-mode #battlefield .sprite.submerged {
 .bomb.spark .sub-sprite,
 .bomb.spark-2 .sub-sprite,
 .gunfire.spark,
-.gunfire.spark-2,
-.smart-missile.spark,
-.smart-missile.spark-2 {
+.gunfire.spark-2 {
   background-image: url(../image/explosion-spark.png);
   background-position: 0 0;
   background-size: contain;
@@ -1138,15 +1079,12 @@ body.edit-mode #battlefield .sprite.submerged {
 }
 
 .bomb.spark-2 .sub-sprite,
-.gunfire.spark-2,
-.smart-missile.spark-2 {
+.gunfire.spark-2 {
   background-image: url(../image/explosion-spark-2.png);
 }
 
 .gunfire.spark,
-.gunfire.spark-2,
-.smart-missile.spark,
-.smart-missile.spark-2 {
+.gunfire.spark-2 {
   background-color: transparent;
   z-index: 5;
 }
