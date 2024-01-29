@@ -207,7 +207,8 @@ const DomCanvas = () => {
         scale: options.scale || 1,
         // approximate centering of explosion sprite vs. original
         xOffset: options.xOffset || 0,
-        yOffset: options.yOffset || 0
+        yOffset: options.yOffset || 0,
+        useDataAngle: !!options.useDataAngle
       }
     };
 
