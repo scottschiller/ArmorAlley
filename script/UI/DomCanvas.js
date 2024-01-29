@@ -1,8 +1,10 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { FPS, GAME_SPEED, TYPES, oneOf } from '../core/global.js';
+import { FPS, GAME_SPEED, TYPES, oneOf, searchParams } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { PREFS, gamePrefs } from './preferences.js';
+
+const debugCanvas = searchParams.get('debugCanvas');
 
 const canvasConfig = [
   // dom ID vs. object name / reference - e.g., `dom.o.fx` / `dom.ctx.fx`
@@ -469,12 +471,12 @@ const DomCanvas = () => {
       }
 
       // debugging: static images
-      /*
-      ctx.beginPath();
-      ctx.rect(targetX, targetY, renderedWidth, renderedHeight);
-      ctx.strokeStyle = '#fff';
-      ctx.stroke();
-      */
+      if (debugCanvas) {
+        ctx.beginPath();
+        ctx.rect(targetX, targetY, renderedWidth, renderedHeight);
+        ctx.strokeStyle = '#fff';
+        ctx.stroke();
+      }
 
       // single image
       ctx.drawImage(
@@ -573,12 +575,12 @@ const DomCanvas = () => {
       }
 
       // debugging sprite canvas drawing...
-      /*
-      ctx.beginPath();
-      ctx.rect(dx, dy, dWidth, dHeight);
-      ctx.strokeStyle = '#33cc33';
-      ctx.stroke();
-      */
+      if (debugCanvas) {
+        ctx.beginPath();
+        ctx.rect(dx, dy, dWidth, dHeight);
+        ctx.strokeStyle = '#33cc33';
+        ctx.stroke();
+      }
 
       const tracking =
         !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
