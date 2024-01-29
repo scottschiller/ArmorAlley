@@ -267,6 +267,8 @@ const DomCanvas = () => {
       } else {
         frameCount++;
       }
+
+      draw(exports);
     }
 
     return {
@@ -673,6 +675,15 @@ const DomCanvas = () => {
       console.warn('DomCanvas: no data?', oData);
       return;
     }
+
+    // prevent redundant / excessive canvas drawing calls - no more than one per frame.
+    // TODO: refactor and reduce the need for this check.
+    // console.warn('Already drawn', exports.data.id);
+    if (exports.data._drawFrame === game.objects.gameLoop.data.frameCount)
+      return;
+
+    // update
+    exports.data._drawFrame = game.objects.gameLoop.data.frameCount;
 
     const ss = game.objects.view.data.screenScale;
 
