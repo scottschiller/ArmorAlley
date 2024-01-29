@@ -1025,19 +1025,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   width: 12px;
 }
 
-.helicopter-trailer,
-.smart-missile-trailer {
-  background-color: #9c9f08;
-  height: 1px;
-  position: absolute;
-  transition: opacity 0.5s ease-in-out;
-  width: 1px;
-}
-
-.helicopter-trailer {
-  background-color: #666;
-}
-
 .landing-pad {
   height: 7px;
   overflow: hidden;
