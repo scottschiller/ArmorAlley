@@ -1553,10 +1553,12 @@ function PrefsManager() {
         }
 
         // update canvas images, too.
-        [TYPES.base, TYPES.endBunker, TYPES.superBunker].forEach((type) => {
-          // for now, we only care about snow.
-          game.objects[type]?.forEach?.((obj) => obj?.updateSprite?.());
-        });
+        [TYPES.base, TYPES.bunker, TYPES.endBunker, TYPES.superBunker].forEach(
+          (type) => {
+            // for now, we only care about snow.
+            game.objects[type]?.forEach?.((obj) => obj?.updateSprite?.());
+          }
+        );
       },
 
       show_inventory: (show) =>
