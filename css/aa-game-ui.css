@@ -690,7 +690,6 @@ body.is_firefox #radar .radar-item--animated {
 
 /* note: only apply to armed smart missiles - otherwise, positioning gets messed up. */
 .sprite.balloon,
-.sprite.bunker,
 .sprite.chain,
 .sprite.engineer,
 .sprite.infantry,
@@ -706,51 +705,6 @@ body.is_firefox #radar .radar-item--animated {
 #battlefield .sprite.helicopter {
   transition: filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57),
     opacity 0.5s ease-in-out;
-}
-
-.bunker,
-.bunker.enemy {
-  background-image: url(../image/bunker_mac.png);
-  background-size: contain;
-  height: 25.5px;
-  width: 52px;
-  z-index: 1; /* sit on top of chains. */
-}
-
-#battlefield.snow .bunker:not(.exploding):not(.burning):not(.dead) {
-  background-image: url(../image/bunker_mac_snow.png);
-  background-size: contain;
-}
-
-/* default / .bunker.facing-right case */
-.bunker .sub-sprite.arrow,
-.super-bunker .sub-sprite.arrow {
-  background-image: url(../image/arrow-right.png);
-  height: 10px;
-  left: 38px;
-  position: absolute;
-  top: 8px;
-  transition: transform 0.5s ease-in-out;
-  width: 6px;
-}
-
-.super-bunker .sub-sprite.arrow {
-  top: 6px;
-  left: 50px;
-}
-
-.bunker.facing-left .sub-sprite.arrow,
-.super-bunker.facing-left .sub-sprite.arrow {
-  transform: rotate3d(0, 0, 1, -180deg);
-}
-
-.super-bunker.hostile .sub-sprite.arrow {
-  transform: rotate3d(0, 0, 1, -90deg);
-}
-
-.bunker.burning .sub-sprite.arrow,
-.bunker.exploding .sub-sprite.arrow {
-  display: none;
 }
 
 .sprite.dead {
@@ -1162,13 +1116,8 @@ body:not(.game-over).radar_jammed #radar {
   opacity: 0;
 }
 
-.bunker.exploding,
-.helicopter.exploding,
-.missile-launcher.exploding,
-.tank.enemy.exploding,
-.tank.exploding,
-.turret.exploding,
-.van.exploding {
+.helicopter.exploding {
+  /* 01/2024: previously, applied to most all battlefield sprites. */
   animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
   /* give the first frame a little more time */
   animation-delay: 0.1s;
@@ -1181,79 +1130,6 @@ body:not(.game-over).radar_jammed #radar {
   background-size: auto;
   height: 32px;
   width: 79px;
-}
-
-.tank.exploding {
-  margin-left: -11px;
-  /* align with where tank was */
-  margin-top: -12px; /* offset for 57-pixel-wide normal tank */
-}
-
-.helicopter.exploding,
-.missile-launcher.exploding,
-.turret.exploding,
-.van.exploding {
-  /* align with where unit was */
-  margin-top: -16px;
-}
-
-.bunker.exploding {
-  animation: none;
-  /* special case */
-  background-image: none;
-}
-
-.bunker.burning,
-.bunker.exploding {
-  height: 112px;
-  /* bunker is normally 52px */
-  margin-left: -30px;
-  margin-top: -87px;
-  width: 112px;
-  z-index: 5;
-  /* let nuke show on top of smoke */
-  filter: drop-shadow(0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #fff);
-  transition: filter 0.5s ease-in-out;
-}
-
-/* special case */
-.bunker .sub-sprite.nuke {
-  /**
-   * Commercial, licensed asset - $1.99 USD.
-   * https://infectedtribe.itch.io/pixel-explosion
-   * 96 x 71 x 16 frames, 100 ms per frame. spritesheet dimensions: 1536 x 71
-   * https://graphicriver.net/item/pixel-explosion-set/15457666
-   */
-  background-image: url(../image/infectedtribe_itch_io-pixel_explosion.png);
-  background-position: 112px 0;
-  background-repeat: no-repeat;
-  background-size: 2352px 112px;
-  margin-top: -2px;
-  visibility: hidden;
-  z-index: 3;
-}
-
-.bunker .sub-sprite.nuke {
-  transform: scale3d(0.88, 0.88, 1);
-  transform-origin: 50% 100%;
-}
-
-.bunker.burning .sub-sprite.nuke,
-.bunker.exploding .sub-sprite.nuke {
-  /* go go go! */
-  animation: nuke calc(1.5s * var(--gs-frac)) steps(21);
-  animation-fill-mode: forwards;
-  visibility: visible;
-}
-
-.turret.exploding {
-  /* adjust for larger explosion sprite */
-  margin-left: -30.5px;
-}
-
-.van.exploding {
-  /* 32px -> 79px */
-  margin-left: -28px;
 }
 
 .generic-explosion,
@@ -1319,13 +1195,6 @@ body:not(.game-over).radar_jammed #radar {
   height: 0.5px;
 }
 
-.sprite.super-bunker .energy-status {
-  /* special case: improve legibility */
-  bottom: auto;
-  height: 1.5px;
-  top: 3.25px;
-}
-
 .helicopter.facing-left .energy-status,
 .sprite.enemy .energy-status {
   /* right-align on certain units, i.e., flipped helicopter w/custom width */
@@ -1347,85 +1216,11 @@ body:not(.game-over).radar_jammed #radar {
   display: none;
 }
 
-.bunker.burning .sub-sprite.rubble-container,
-.bunker.exploding .sub-sprite.rubble-container {
-  bottom: 0;
-  height: 8px;
-  left: 50%;
-  margin-left: -26px;
-  overflow: hidden;
-  top: auto;
-  /* always stay centered relative to bunker (larger when exploding etc.) */
-  width: 52px;
-}
-
-.bunker.burning .sub-sprite.rubble,
-.bunker.exploding .sub-sprite.rubble {
-  animation: burninating calc(0.5s * var(--gs-frac)) steps(4) infinite;
-  background-image: url(../image/bunker-burning-sprite-horizontal.png);
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  bottom: 0;
-  height: 9px;
-  left: 0;
-  position: absolute;
-  /* transition duration set via JS */
-  transition: opacity;
-  /* 53px * 4 frames */
-  width: 212px;
-}
-
-.bunker.burning-out .sub-sprite.rubble {
-  /* gradually hide the burning bits */
-  opacity: 0;
-}
-
-.bunker.burning,
-.bunker.dead {
-  background-image: url(../image/bunker-dead.png);
-  background-position: 50% 100%;
-  display: block;
-  /* room for burning animation */
-  height: 9px;
-  margin-left: 0;
-  /* to get 25px height, align with bottom */
-  margin-top: 16px;
-  width: 53px;
-}
-
 .sprite.flame {
   background-image: url(../image/tank_flame.png);
   background-size: contain;
   height: 18px;
   width: 32px;
-}
-
-.sprite.missile-launcher.building,
-.sprite.tank.building {
-  margin-top: 18px;
-}
-
-.sprite.van.building {
-  margin-top: 16px;
-}
-
-.sprite.engineer.building,
-.sprite.infantry.building {
-  margin-top: 11px;
-}
-
-.sprite.ordering {
-  contain: layout;
-  /* TODO: remove margin-bottom once all bottom-aligned things are out */
-  margin-bottom: 0 !important;
-  margin-top: 0 !important;
-  transition: margin 2s; /* override .building rules */
-}
-
-.sprite.recycling {
-  /* units drop "below", in reverse of ordering */
-  /* (when applied as .building.recycling) */
-  transition: margin 2s;
 }
 
 #battlefield .sprite.placeholder {
