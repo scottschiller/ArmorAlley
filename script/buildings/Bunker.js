@@ -8,7 +8,8 @@ import {
   FPS,
   rng,
   rngInt,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  GAME_SPEED
 } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
@@ -78,11 +79,9 @@ const Bunker = (options = {}) => {
       }
     }
 
-    // note: "enemy" is relative to the player, here. e.g., right-side will get a friendly CSS class (green) if the bunker is now an enemy unit.
-    utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
-    utils.css.addOrRemove(radarItem.dom.o, isEnemy, css.enemy);
-
     data.isEnemy = isEnemy;
+
+    updateArrowState();
 
     zones.changeOwnership(exports);
 
@@ -90,9 +89,14 @@ const Bunker = (options = {}) => {
     objects?.chain?.setEnemy(isEnemy);
     objects?.balloon?.setEnemy(isEnemy);
 
-    // arrow state
-    utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
-    utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
+    if (game.objects.editor) {
+      // note: "enemy" is relative to the player, here. e.g., right-side will get a friendly CSS class (green) if the bunker is now an enemy unit.
+      utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
+
+      // arrow state
+      utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
+      utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
+    }
 
     playSound(sounds.doorClose, exports);
 
@@ -139,13 +143,11 @@ const Bunker = (options = {}) => {
       }
       if (!data.isRepairing) {
         data.isRpairing = true;
-        utils.css.add(dom.o, css.engineerInteracting);
       }
     } else {
       // repair complete - keep moving
       if (data.isRepairing) {
         data.isRepairing = false;
-        utils.css.remove(dom.o, css.engineerInteracting);
       }
       engineer.resume();
       if (!engineer.data.isEnemy) {
@@ -204,12 +206,14 @@ const Bunker = (options = {}) => {
   function die(dieOptions = {}) {
     if (data.dead) return;
 
-    // if off-screen, just avoid the nuke entirely.
-    if (data.isOnScreen) {
-      dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
-    }
+    if (game.objects.editor) {
+      // if off-screen, just avoid the nuke entirely.
+      if (data.isOnScreen) {
+        dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
+      }
 
-    utils.css.add(dom.o, css.exploding);
+      utils.css.add(dom.o, css.exploding);
+    }
 
     effects.damageExplosion(exports);
 
@@ -251,51 +255,144 @@ const Bunker = (options = {}) => {
      */
     data.burninating = true;
 
-    // create and append rubbleContainer -> rubble nodes
-    let rubbleContainer = sprites.makeSubSprite(css.rubbleContainer);
-    let rubble = sprites.makeSubSprite(css.rubble);
+    // TODO: work into a common / utility shared with SuperBunker bits.
 
-    rubbleContainer.appendChild(rubble);
-    dom.o.appendChild(rubbleContainer);
+    const burningConfig = (() => {
+      const spriteWidth = 424;
+      const spriteHeight = 18;
+      return {
+        sprite: {
+          url: 'bunker-burning-sprite-horizontal.png',
+          width: spriteWidth,
+          height: spriteHeight,
+          frameWidth: spriteWidth / 4,
+          frameHeight: spriteHeight,
+          animationDuration: 1.5,
+          horizontal: true,
+          loop: true
+        }
+      };
+    })();
 
-    // no longer needed. ;)
-    dom.oArrow.remove();
-    dom.oArrow = null;
+    // replace the base sprite
+    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      exports,
+      burningConfig
+    );
+
+    /**
+     * Commercial, licensed asset - $1.99 USD.
+     * https://infectedtribe.itch.io/pixel-explosion
+     * 112 x 112 x 21 frames, 100 ms per frame. spritesheet dimensions: 2352 x 112
+     * https://graphicriver.net/item/pixel-explosion-set/15457666
+     */
+    const nukeConfig = (() => {
+      const spriteWidth = 2352;
+      const spriteHeight = 112;
+      return {
+        overlay: true,
+        scale: 2,
+        xOffset: -30,
+        yOffset: 0,
+        sprite: {
+          url: 'infectedtribe_itch_io-pixel_explosion-glow.png',
+          width: spriteWidth,
+          height: spriteHeight,
+          frameWidth: spriteWidth / 21,
+          frameHeight: spriteHeight,
+          animationDuration: 0.8,
+          horizontal: true,
+          hideAtEnd: true
+        }
+      };
+    })();
+
+    // add the nuke overlay
+    if (!game.objects.editor) {
+      data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
+        exports,
+        nukeConfig
+      );
+    }
+
+    data.shadowBlur = 8;
+    data.shadowColor = '#fff';
+
+    let rubble;
+    let rubbleContainer;
+
+    if (game.objects.editor) {
+      // create and append rubbleContainer -> rubble nodes
+      rubbleContainer = sprites.makeSubSprite(css.rubbleContainer);
+      rubble = sprites.makeSubSprite(css.rubble);
+
+      rubbleContainer.appendChild(rubble);
+      dom.o.appendChild(rubbleContainer);
+
+      // no longer needed. ;)
+      dom.oArrow.remove();
+      dom.oArrow = null;
+    } else {
+      // burning sprite
+      applySpriteURL();
+    }
 
     common.setFrameTimeout(() => {
-      // slight delay before swapping in burning animation
-      utils.css.swap(dom.o, css.exploding, css.burning);
+      if (game.objects.editor) {
+        // slight delay before swapping in burning animation
+        utils.css.swap(dom.o, css.exploding, css.burning);
+      }
 
       // start "burning out"...
       common.setFrameTimeout(() => {
-        // match transition to timer...
-        rubble.style.transitionDuration =
-          (burninatingTime * burnOutFade) / 1000 + 's';
-
-        utils.css.add(dom.o, css.burningOut);
+        if (game.objects.editor) {
+          // match transition to timer...
+          rubble.style.transitionDuration =
+            (burninatingTime * burnOutFade) / 1000 + 's';
+          utils.css.add(dom.o, css.burningOut);
+        }
 
         // and eventually exinguish.
         common.setFrameTimeout(() => {
           data.burninating = false;
 
-          utils.css.swap(dom.o, css.burning, css.dead);
-          utils.css.swap(dom.o, css.burningOut, css.dead);
-
-          // drop nodes
-          rubbleContainer.remove();
-          rubble = null;
-          rubbleContainer = null;
-
           if (game.objects.editor) {
+            utils.css.swap(dom.o, css.burning, css.dead);
+            utils.css.swap(dom.o, css.burningOut, css.dead);
+
+            // drop nodes
+            rubbleContainer.remove();
+            rubble = null;
+            rubbleContainer = null;
+
             destroy();
+          } else {
+            // stop animations
+            data.domCanvas.animation = null;
+            data.domCanvas.nukeAnimation = null;
+            data.shadowBlur = 0;
+
+            // apply dead sprite
+            applySpriteURL();
+
+            // re-apply static sprite, dropping animation
+            // hackish: apply positioning
+            deadConfig.target.x = data.x;
+            deadConfig.target.y = data.y;
+
+            // TODO: sort out the offset issue
+            deadConfig.target.yOffset = -5;
+            data.domCanvas.img = deadConfig;
           }
         }, burninatingTime * burnOutFade);
       }, burninatingTime);
     }, 1200);
 
-    // prevent this animation from re-appearing once played,
-    // e.g., if bunker goes off / on-screen.
-    common.setFrameTimeout(removeNukeSprite, 2000);
+    if (game.objects.editor) {
+      // prevent this animation from re-appearing once played,
+      // e.g., if bunker goes off / on-screen.
+      common.setFrameTimeout(removeNukeSprite, 2000);
+    }
 
     data.energy = 0;
 
@@ -329,10 +426,20 @@ const Bunker = (options = {}) => {
   }
 
   function animate() {
+    data.domCanvas?.animation?.animate();
+    data.domCanvas?.nukeAnimation?.animate();
+
     sprites.moveWithScrollOffset(exports);
 
     if (!data.dead) {
       effects.smokeRelativeToDamage(exports);
+      if (data.arrowFrameActive) {
+        arrowConfig.target.angle = data.arrowFrames[data.arrowFrame];
+        data.arrowFrame++;
+        if (data.arrowFrame >= data.arrowFrames.length) {
+          data.arrowFrameActive = false;
+        }
+      }
     } else if (data.burninating) {
       if (data.smokeFramesLeft) {
         effects.smokeRelativeToDamage(
@@ -340,6 +447,12 @@ const Bunker = (options = {}) => {
           data.smokeFramesLeft / data.smokeFramesMax
         );
         data.smokeFramesLeft--;
+        // cut size in half over time
+        data.shadowBlur = 8 * (data.smokeFramesLeft / data.smokeFramesMax);
+        // ... and fade blur out
+        data.shadowColor = `rgba(255, 255, 255, ${
+          data.smokeFramesLeft / data.smokeFramesMax
+        })`;
       }
     }
   }
@@ -372,28 +485,77 @@ const Bunker = (options = {}) => {
     }
   }
 
+  function updateArrowState() {
+    // TODO: DRY / utility function
+    function dropOff(x) {
+      // x from 0 to 1 returns from 1 to 0, with in-out easing.
+      // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+      // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+      return (Math.cos(Math.PI * x) + 1) / 2;
+    }
+
+    function makeArrowFrames(angleDelta) {
+      const duration = FPS * 0.5 * (1 / GAME_SPEED);
+
+      data.arrowFrames = [];
+
+      for (let i = 0; i <= duration; i++) {
+        // 1/x, up to 1
+        data.arrowFrames[i] =
+          arrowConfig.target.angle + dropOff(i / duration) * angleDelta;
+      }
+      // we want 0 to 1.
+      data.arrowFrames.reverse();
+
+      data.arrowFrame = 0;
+      data.arrowFrameActive = true;
+    }
+
+    const angles = {
+      left: -180,
+      right: 0
+    };
+
+    const toAngle = angles[data.isEnemy ? 'left' : 'right'];
+
+    let delta = toAngle - arrowConfig.target.angle;
+
+    // don't loop / turn around the wrong way.
+    if (delta <= -180) {
+      delta += 360;
+    }
+
+    makeArrowFrames(delta);
+  }
+
   function initDOM() {
-    const extraCSS = [data.isEnemy ? css.facingLeft : css.facingRight];
+    if (game.objects.editor) {
+      const extraCSS = [data.isEnemy ? css.facingLeft : css.facingRight];
 
-    if (data.isEnemy) extraCSS.push(css.enemy);
+      if (data.isEnemy) extraCSS.push(css.enemy);
 
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: extraCSS.join(' ')
-    });
+      dom.o = sprites.create({
+        className: css.className,
+        id: data.id,
+        isEnemy: extraCSS.join(' ')
+      });
 
-    dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
+      dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
 
-    data.oClassName = dom.o.className;
+      data.oClassName = dom.o.className;
 
-    // note hackish Y-offset, sprite position vs. collision detection
-    sprites.setTransformXY(
-      exports,
-      exports.dom.o,
-      `${data.x}px`,
-      `${data.y - 3}px`
-    );
+      // note hackish Y-offset, sprite position vs. collision detection
+      sprites.setTransformXY(
+        exports,
+        exports.dom.o,
+        `${data.x}px`,
+        `${data.y - 3}px`
+      );
+    } else {
+      dom.o = {};
+      data.domCanvas.img = [spriteConfig, arrowConfig];
+      sprites.moveTo(exports, data.x, data.y);
+    }
   }
 
   function initBunker() {
@@ -410,6 +572,18 @@ const Bunker = (options = {}) => {
   function destroy() {
     radarItem?.die();
     sprites.removeNodes(dom);
+  }
+
+  function getSpriteURL() {
+    if (data.dead) return 'bunker-dead.png';
+    return (
+      'bunker_mac' + (gamePrefs.weather === 'snow' ? '_snow' : '') + '.png'
+    );
+  }
+
+  function applySpriteURL() {
+    if (!spriteConfig) return;
+    spriteConfig.src = utils.image.getImageObject(getSpriteURL());
   }
 
   css = common.inheritCSS({
@@ -490,12 +664,73 @@ const Bunker = (options = {}) => {
     nullifyChain,
     nullifyBalloon,
     radarItem,
-    repair
+    repair,
+    updateSprite: applySpriteURL
   };
 
   data.domCanvas = {
     radarItem: Bunker.radarItemConfig()
   };
+
+  const spriteConfig = (() => {
+    const spriteWidth = 104;
+    const spriteHeight = 54; // actually 51, but hacking the height for alignnment here :X
+    return {
+      src: utils.image.getImageObject(getSpriteURL()),
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: spriteHeight / 2
+      }
+    };
+  })();
+
+  const deadConfig = (() => {
+    const spriteWidth = 106;
+    const spriteHeight = 21; // actually 18, but hacking the height for alignnment here :X
+    return {
+      src: utils.image.getImageObject('bunker-dead.png'),
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: spriteHeight / 2
+      }
+    };
+  })();
+
+  const arrowConfig = (() => {
+    const arrowWidth = 6;
+    const arrowHeight = 10;
+    return {
+      src: utils.image.getImageObject('arrow-right.png'),
+      excludeEnergy: true,
+      source: {
+        x: 0,
+        y: 0,
+        frameWidth: arrowWidth,
+        frameHeight: arrowHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: arrowWidth,
+        height: arrowHeight,
+        xOffset: 38,
+        yOffset: -8,
+        angle: data.isEnemy ? 180 : 0
+      }
+    };
+  })();
 
   return exports;
 };
