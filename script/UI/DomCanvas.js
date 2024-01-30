@@ -468,7 +468,10 @@ const DomCanvas = () => {
         // MTVIE?
         // worldHeight is 380, but bottom of battlefield is 368.
         targetY =
-          ((data.type === TYPES.superBunker ? 380 : 368) +
+          ((data.type === TYPES.superBunker ||
+          (data.type === TYPES.bunker && !data.dead)
+            ? 380
+            : 368) +
             (target.yOffset || 0)) *
             ss -
           renderedHeight *
