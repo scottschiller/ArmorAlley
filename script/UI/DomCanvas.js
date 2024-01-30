@@ -635,8 +635,9 @@ const DomCanvas = () => {
         if (!img.excludeDot) {
           ctx.beginPath();
           ctx.arc(
-            dx + (data.isEnemy ? data.width * ss : 0) - 4,
-            dy + 6,
+            // TODO: fix bunker red dot positioning.
+            dx + (data.isEnemy ? data.width * (data.type === TYPES.bunker ? ss / 3 : ss) : 0) - 4,
+            dy + (data.type === TYPES.bunker ? -12 : 6),
             data.smartMissileTracking ? 4 : 3,
             0,
             Math.PI * 2
