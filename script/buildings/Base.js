@@ -293,12 +293,6 @@ const Base = (options = {}) => {
         vY: 2
       });
 
-      if (dom.o.appendChild) {
-        dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
-      }
-
-      utils.css.add(dom.o, 'burning');
-
       const burningConfig = (() => {
         const spriteWidth = 816;
         const spriteHeight = 32;
@@ -528,7 +522,6 @@ const Base = (options = {}) => {
   }
 
   function applySpriteURL() {
-    console.log('applySpriteURL', data.domCanvas);
     if (!data.domCanvas.animation) return;
     data.domCanvas.animation.updateSprite(getSpriteURL());
   }
@@ -582,8 +575,7 @@ const Base = (options = {}) => {
   height = 26;
 
   css = common.inheritCSS({
-    className: 'base',
-    nuke: 'nuke'
+    className: 'base'
   });
 
   const fireModulus = tutorialMode ? FPS * 5 : FPS * 2;
