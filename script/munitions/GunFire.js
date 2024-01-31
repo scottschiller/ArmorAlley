@@ -25,23 +25,8 @@ const GunFire = (options = {}) => {
   }
 
   function spark() {
-    if (!dom.o.nodeName) return;
-
-    utils.css.add(dom.o, css.spark);
-
-    // randomize a little
-
-    if (!data.isOnScreen) return;
-
-    if (Math.random() > 0.5) {
-      dom.o._style.setProperty('margin-left', randomDistance());
-    }
-
-    if (Math.random() > 0.5) {
-      dom.o._style.setProperty('margin-top', randomDistance());
-    }
-
-    sprites.applyRandomRotation(dom.o);
+    data.domCanvas.img = effects.spark();
+    data.excludeBlink = true;
   }
 
   function die(force) {
