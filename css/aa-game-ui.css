@@ -913,22 +913,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   display: none !important;
 }
 
-.landing-pad {
-  height: 7px;
-  overflow: hidden;
-  width: 81px;
-  /* cover all ground units */
-  z-index: 5;
-}
-
-.landing-pad .transform-sprite {
-  animation: animate-transform-sprite-landing-pad calc(1s * var(--gs-frac))
-    steps(4) infinite;
-  background-image: url(../image/landing-pad-sprite-horizontal.png);
-  height: 7px;
-  width: 324px;
-}
-
 .helicopter,
 .helicopter.facing-left,
 .helicopter.facing-right {

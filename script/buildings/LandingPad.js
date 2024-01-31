@@ -8,6 +8,8 @@ const LandingPad = (options = {}) => {
   let css, dom, data, collision, exports;
 
   function animate() {
+    data.domCanvas?.animation?.animate();
+
     sprites.moveWithScrollOffset(exports);
 
     collisionTest(collision, exports);
@@ -33,17 +35,44 @@ const LandingPad = (options = {}) => {
   }
 
   function initLandingPad() {
-    dom.o = sprites.create({
-      id: data.id,
-      className: css.className,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        id: data.id,
+        className: css.className,
+        isEnemy: data.isEnemy ? css.enemy : false
+      });
+      dom.o.appendChild(sprites.makeTransformSprite());
+    } else {
+      dom.o = {};
 
-    dom.o.appendChild(sprites.makeTransformSprite());
+      const animConfig = (() => {
+        const spriteWidth = 648;
+        const spriteHeight = 14;
+        return {
+          yOffset: -0.75,
+          sprite: {
+            url: 'landing-pad-sprite-horizontal.png',
+            width: spriteWidth,
+            height: spriteHeight,
+            frameWidth: spriteWidth / 4,
+            frameHeight: spriteHeight,
+            animationDuration: 2,
+            horizontal: true,
+            loop: true,
+            alternate: true
+          }
+        };
+      })();
+
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        animConfig
+      );
+    }
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, dom.o.className);
+    game.objects.radar.addItem(exports, css.className);
 
     setWelcomeMessage();
   }
