@@ -109,11 +109,6 @@ const SmartMissile = (options = {}) => {
     data.excludeBlink = true;
   }
 
-  function makeTimeout(callback) {
-    objects?._timeout?.reset();
-    objects._timeout = common.setFrameTimeout(callback, 350);
-  }
-
   function maybeTargetDecoy(decoyTarget) {
     // guard, and ensure this is a "vs" situation.
     if (!decoyTarget?.data || data.isEnemy === decoyTarget.data.isEnemy) return;
@@ -161,75 +156,9 @@ const SmartMissile = (options = {}) => {
     setTargetTracking(true);
   }
 
-  function addTracking(targetNode, radarNode) {
-    if (!gamePrefs.modern_smart_missiles) return;
-
-    // NTOE: exclude placeholder nodes as on turrets and missile launchers, whose tracking dots render on canvas.
-    if (utils.css.has(targetNode, 'placeholder')) return;
-
-    if (targetNode) {
-      utils.css.add(targetNode, css.tracking);
-
-      makeTimeout(() => {
-        // this animation needs to run possibly after the object has died.
-        if (targetNode) utils.css.add(targetNode, css.trackingActive);
-
-        // prevent leaks?
-        targetNode = null;
-        radarNode = null;
-      });
-    }
-
-    if (radarNode) {
-      // radar goes immediately to "active" state, no transition.
-      utils.css.add(radarNode, css.trackingActive);
-    }
-  }
-
-  function removeTrackingFromNode(node) {
-    if (!node) return;
-
-    // remove tracking animation
-    utils.css.remove(node, css.tracking);
-    utils.css.remove(node, css.trackingActive);
-
-    // start fading/zooming out
-    utils.css.add(node, css.trackingRemoval);
-  }
-
-  function removeTracking(targetNode, radarNode) {
-    removeTrackingFromNode(targetNode);
-    removeTrackingFromNode(radarNode);
-
-    // one timer for both.
-    makeTimeout(() => {
-      if (targetNode) {
-        utils.css.remove(targetNode, css.trackingRemoval);
-      }
-
-      if (radarNode) {
-        utils.css.remove(radarNode, css.trackingRemoval);
-      }
-
-      // prevent leaks?
-      targetNode = null;
-      radarNode = null;
-    });
-  }
-
   function setTargetTracking(tracking) {
     if (!objects.target) return;
-
-    const targetNode = objects.target.dom.o;
-    const radarNode = objects.target.radarItem?.dom?.o;
-
     objects.target.data.smartMissileTracking = !!tracking;
-
-    if (tracking) {
-      addTracking(targetNode, radarNode);
-    } else {
-      removeTracking(targetNode, radarNode);
-    }
   }
 
   function die(dieOptions = {}) {
@@ -784,23 +713,10 @@ const SmartMissile = (options = {}) => {
   }
 
   function initDOM() {
-    if (game.objects.editor) {
-      dom.o = sprites.create({
-        className: css.className,
-        isEnemy: data.isEnemy ? css.enemy : false
-      });
-    } else {
-      dom.o = {};
-    }
+    dom.o = {};
 
     // initial placement
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y}px`,
-      `rotate3d(0, 0, 1, ${data.angle}deg)`
-    );
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
 
   function initSmartMissile() {
@@ -889,15 +805,7 @@ const SmartMissile = (options = {}) => {
   }
 
   css = common.inheritCSS({
-    className: 'smart-missile',
-    armed: 'armed',
-    banana: 'banana',
-    rubberChicken: 'rubber-chicken',
-    tracking: 'smart-missile-tracking',
-    trackingActive: 'smart-missile-tracking-active',
-    trackingRemoval: 'smart-missile-tracking-removal',
-    expired: 'expired',
-    spark: oneOf(['spark', 'spark-2'])
+    className: 'smart-missile'
   });
 
   // if game preferences allow AND no default specified, then pick at random.
@@ -908,15 +816,6 @@ const SmartMissile = (options = {}) => {
     !options.isSmartMissile
   ) {
     options = common.mixin(options, getRandomMissileMode());
-  }
-
-  // CSS extensions
-  if (options.isRubberChicken) {
-    css.className += ` ${css.rubberChicken}`;
-  }
-
-  if (options.isBanana) {
-    css.className += ` ${css.banana}`;
   }
 
   let type = TYPES.smartMissile;
