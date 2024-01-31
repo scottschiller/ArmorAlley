@@ -286,9 +286,27 @@ const DomCanvas = () => {
     };
   }
 
-  function canvasExplosion(exports, options = {}) {
+  function genericAnimation(exports, sprites, options = {}) {
     if (!exports?.data) return;
 
+    const sprite = oneOf(sprites);
+
+    const { data } = exports;
+
+    return canvasAnimation(exports, {
+      sprite,
+      // scale up to match size of the thing blowing up, as applicable.
+      scale: 2,
+      yOffset: exports.data.bottomAligned
+        ? 0
+        : Math.abs(sprite.frameHeight - data.height) * -0.5,
+      // allow for overrides, of course.
+      ...options
+    });
+  }
+
+  function canvasExplosion(exports, options = {}) {
+    // vertical sprites
     const sprites = [
       {
         url: 'explosion-shrapnel-2-glow.png',
@@ -313,23 +331,30 @@ const DomCanvas = () => {
       }
     ];
 
-    const sprite = oneOf(sprites);
+    return genericAnimation(exports, sprites, options);
+  }
 
-    const { data } = exports;
+  function canvasExplosionLarge(exports, options = {}) {
+    const sprites = [
+      {
+        url: 'explosion-large-glow.png',
+        width: 56,
+        height: 110,
+        frameWidth: 56,
+        frameHeight: 22,
+        hideAtEnd: true
+      },
+      {
+        url: 'explosion-large-2-glow.png',
+        width: 56,
+        height: 110,
+        frameWidth: 56,
+        frameHeight: 22,
+        hideAtEnd: true
+      }
+    ];
 
-    return canvasAnimation(exports, {
-      sprite,
-      // scale up to match size of the thing blowing up, as applicable.
-      scale: 2,
-      // approximate centering of explosion sprite vs. original
-      xOffset: Math.abs(sprite.width - data.width) * -0.5,
-      yOffset: exports.data.bottomAligned
-        ? 0
-        : Math.abs(sprite.frameHeight - data.height) * -0.5,
-      hideAtEnd: true,
-      // allow for overrides, of course.
-      ...options
-    });
+    return genericAnimation(exports, sprites, options);
   }
 
   // center, scale, and rotate.
@@ -954,6 +979,7 @@ const DomCanvas = () => {
   exports = {
     canvasAnimation,
     canvasExplosion,
+    canvasExplosionLarge,
     clear,
     draw,
     drawTrailers,
