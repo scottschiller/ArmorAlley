@@ -732,6 +732,22 @@ body.is_firefox #radar .radar-item--animated {
   background-position: 0 0;
 }
 
+.sprite .energy-status {
+  background-color: #3c3;
+  border: 0.25px solid #000;
+  border-radius: 1px;
+  bottom: 0;
+  font-size: 0;
+  height: 1px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  transition: all calc(0.2s * var(--gs-frac)) ease-out;
+  transition-property: width, height, left, background-color, opacity;
+  width: 100%;
+  z-index: 2;
+}
+
 /* applied to sprites being actively targeted / tracked - excluding radar item sprites */
 .smart-missile-tracking-active:not(.radar-item):after,
 .smart-missile-tracking-removal:not(.radar-item):after,

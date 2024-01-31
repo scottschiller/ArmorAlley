@@ -539,7 +539,7 @@ const DomCanvas = () => {
           exports,
           ctx,
           targetX,
-          targetY - 1,
+          targetY - (exports.data.type === TYPES.bunker ? 4 : 1),
           renderedWidth,
           renderedHeight
         );
