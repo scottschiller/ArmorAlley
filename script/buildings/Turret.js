@@ -180,8 +180,6 @@ const Turret = (options = {}) => {
 
     data.firing = isFiring;
 
-    utils.css.addOrRemove(dom.o, data.firing, css.firing);
-
     if (isFiring) {
       if (!data.isEnemy && gamePrefs.bnb && sounds.bnb.cornholioAttack) {
         // hackish: check that no other turrets are also firing, preventing overlap of this sound.
@@ -236,14 +234,8 @@ const Turret = (options = {}) => {
     });
 
     if (!dieOptions.silent) {
-      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports, {
-        overlay: true,
-        onEnd: () => {
-          data.domCanvas.dieExplosion = null;
-          // reset the canvas config, render a single sprite
-          updateDomCanvas({ dead: true });
-        }
-      });
+      updateDomCanvas({ dead: true });
+      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
     }
 
     // special case: when turret is initially rendered as dead, don't explode etc.
@@ -286,15 +278,9 @@ const Turret = (options = {}) => {
         }
       }
 
-      utils.css.add(dom.o, css.exploding);
-
-      if (css.explodingType) {
-        utils.css.add(dom.o, css.explodingType);
-      }
-
       common.setFrameTimeout(() => {
-        utils.css.remove(dom.o, css.exploding);
-      }, 1200);
+        data.domCanvas.dieExplosion = null;
+      }, 1500);
 
       effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
@@ -313,7 +299,6 @@ const Turret = (options = {}) => {
       playSound(sounds.genericExplosion, exports);
     }
 
-    utils.css.remove(dom.o, css.firing);
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
     utils.css.add(radarItem.dom.oScanNode, css.destroyed);
@@ -357,8 +342,6 @@ const Turret = (options = {}) => {
         if (data.dead && data.energy > data.energyMax * 0.25) {
           // restore to life at 25%
           data.dead = false;
-
-          if (css.explodingType) utils.css.remove(dom.o, css.explodingType);
           utils.css.remove(dom.o, css.destroyed);
           utils.css.remove(radarItem.dom.o, css.destroyed);
           utils.css.remove(radarItem.dom.oScanNode, css.destroyed);
@@ -526,7 +509,6 @@ const Turret = (options = {}) => {
 
     if (!data.engineerInteracting) {
       data.engineerInteracting = true;
-      utils.css.add(dom.o, css.engineerInteracting);
       utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
 
       // may not be provided, as in tutorial - just restoring immediately etc.
@@ -625,7 +607,6 @@ const Turret = (options = {}) => {
     // engineer interaction flag
     if (data.engineerInteracting && !data.engineerHitCount) {
       data.engineerInteracting = false;
-      utils.css.remove(dom.o, css.engineerInteracting);
       utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
     }
 
@@ -765,9 +746,6 @@ const Turret = (options = {}) => {
   css = common.inheritCSS({
     className: TYPES.turret,
     destroyed: 'destroyed',
-    engineerInteracting: 'engineer-interacting',
-    explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
-    firing: 'firing',
     scanNode: 'scan-node'
   });
 
@@ -866,7 +844,7 @@ const Turret = (options = {}) => {
   const spriteWidth = 36;
   const spriteHeight = 128;
   const frameHeight = 32;
-  
+
   // base of turret
   const turretBase = {
     src: utils.image.getImageObject(src),
@@ -887,7 +865,7 @@ const Turret = (options = {}) => {
       height: frameHeight / 2
     }
   };
-  
+
   // turret gun
   const turretGun = {
     src: utils.image.getImageObject(src),
@@ -917,7 +895,7 @@ const Turret = (options = {}) => {
       rotateYOffset: 0.95
     }
   };
-  
+
   const turretDead = {
     src: utils.image.getImageObject(src),
     source: {
