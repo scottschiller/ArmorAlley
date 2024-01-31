@@ -1,4 +1,4 @@
-import { rng, worldHeight } from '../core/global.js';
+import { oneOf, rng, worldHeight } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -7,6 +7,7 @@ import { Smoke } from '../elements/Smoke.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { common } from './common.js';
 import { snowStorm } from '../lib/snowstorm.js';
+import { utils } from './utils.js';
 
 let shrapnelToAdd = [];
 const MAX_SHRAPNEL_PER_FRAME = 128;
@@ -424,6 +425,22 @@ const effects = {
       vY: 1
     });
   },
+
+  spark: () => ({
+    src: utils.image.getImageObject(
+      oneOf(['explosion-spark.png', 'explosion-spark-2.png'])
+    ),
+    source: {
+      width: 5,
+      height: 5,
+      spriteWidth: 5,
+      spriteHeight: 5,
+      frameWidth: 5,
+      frameHeight: 5,
+      frameX: 0,
+      frameY: 0
+    }
+  }),
 
   updateStormStyle: (style) => {
     if (!snowStorm) return;
