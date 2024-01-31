@@ -386,11 +386,12 @@ const effects = {
     data.domCanvas.explosion = explosion;
 
     // center based on explosion width
-    data.x -= (explosion.sprite.frameWidth - data.width) / 2;
+    // note: sprites are 2x, so half the frame width is used for centering.
+    data.x -= ((explosion.sprite.frameWidth / 2) - data.width) / 2;
     data.width = explosion.sprite.frameWidth;
 
     data.height = explosion.sprite.frameHeight;
-    data.y = data.bottomAligned ? 369 - data.height : data.y;
+    data.y = data.bottomAligned ? 369 - data.height : (data.y + (explosion.sprite.frameHeight / 4));
 
     function animate() {
       explosion?.animate();

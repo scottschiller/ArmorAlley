@@ -138,7 +138,7 @@ const Bomb = (options = {}) => {
     }
 
     if (dieOptions.bottomAlign) {
-      data.y = 369;
+      data.y = 380;
 
       if (isClassicExplosion) {
         // hack: ensure that angle is 0 for the classic explosion sprite.
@@ -149,13 +149,15 @@ const Bomb = (options = {}) => {
       // bombs explode, and dimensions change when they hit the ground.
       if (data.domCanvas.dieExplosion) {
         // pull back by half the difference, remaining "centered" around original bomb coordinates.
+        // note that sprite is 2x, so frameWidth is cut in half.
         data.x -=
-          (data.domCanvas.dieExplosion.sprite.frameWidth - data.width) / 2;
+          ((data.domCanvas.dieExplosion.sprite.frameWidth / 2) - data.width) / 2;
 
         // resize accordingly
-        data.width = data.domCanvas.dieExplosion.sprite.frameWidth;
+        data.width = data.domCanvas.dieExplosion.sprite.frameWidth / 2;
         data.halfWidth = data.width / 2;
 
+        // TODO: review data.y vs. data.height in terms of collision logic, if collisions are off.
         data.height = data.domCanvas.dieExplosion.sprite.frameHeight;
         data.halfHeight = data.height / 2;
       }

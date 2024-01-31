@@ -286,7 +286,7 @@ const DomCanvas = () => {
     };
   }
 
-  function genericAnimation(exports, sprites, options = {}) {
+  function genericExplosion(exports, sprites, options = {}) {
     if (!exports?.data) return;
 
     const sprite = oneOf(sprites);
@@ -299,8 +299,6 @@ const DomCanvas = () => {
 
     return canvasAnimation(exports, {
       sprite,
-      // scale up to match size of the thing blowing up, as applicable.
-      scale: 2,
       yOffset: exports.data.bottomAligned
         ? 0
         : Math.abs(sprite.frameHeight - data.height) * -0.5,
@@ -314,51 +312,51 @@ const DomCanvas = () => {
     const sprites = [
       {
         url: 'explosion-shrapnel-2.png',
-        width: 79,
-        height: 384,
-        frameWidth: 79,
-        frameHeight: 32
+        width: 178,
+        height: 768,
+        frameWidth: 178,
+        frameHeight: 64
       },
       {
         url: 'generic-explosion-2.png',
-        width: 55,
-        height: 90,
-        frameWidth: 55,
-        frameHeight: 18
+        width: 110,
+        height: 180,
+        frameWidth: 110,
+        frameHeight: 36
       },
       {
         url: 'generic-explosion.png',
-        width: 55,
-        height: 90,
-        frameWidth: 55,
-        frameHeight: 18
+        width: 110,
+        height: 180,
+        frameWidth: 110,
+        frameHeight: 36
       }
     ];
 
-    return genericAnimation(exports, sprites, options);
+    return genericExplosion(exports, sprites, options);
   }
 
   function canvasExplosionLarge(exports, options = {}) {
     const sprites = [
       {
         url: 'explosion-large.png',
-        width: 56,
-        height: 110,
-        frameWidth: 56,
-        frameHeight: 22,
+        width: 112,
+        height: 220,
+        frameWidth: 112,
+        frameHeight: 44,
         hideAtEnd: true
       },
       {
         url: 'explosion-large-2.png',
-        width: 56,
-        height: 110,
-        frameWidth: 56,
-        frameHeight: 22,
+        width: 112,
+        height: 220,
+        frameWidth: 112,
+        frameHeight: 44,
         hideAtEnd: true
       }
     ];
 
-    return genericAnimation(exports, sprites, options);
+    return genericExplosion(exports, sprites, options);
   }
 
   // center, scale, and rotate.

@@ -951,10 +951,10 @@ body:not(.game-over).radar_jammed #radar {
   animation-fill-mode: forwards;
   /* Stay on last frame when finished */
   background-image: url(../image/explosion-shrapnel-2.png);
-  background-position: 0 -384px;
+  background-position: 0 -768px;
   /* default state */
   background-repeat: no-repeat;
-  background-size: auto;
+  background-size: 100%;
   height: 32px;
   width: 79px;
   /* adjust so explosion lines up with where helicopter was */
@@ -1754,7 +1754,7 @@ body.radar_jammed .scan-node {
   }
 
   to {
-    background-position: 0 -384px;
+    background-position: 0 -768px;
   }
 }
 
