@@ -293,6 +293,10 @@ const DomCanvas = () => {
 
     const { data } = exports;
 
+    // potentially dangerous: mutate the object being passed in.
+    data.shadowBlur = 8;
+    data.shadowColor = '#ff3333';
+
     return canvasAnimation(exports, {
       sprite,
       // scale up to match size of the thing blowing up, as applicable.
@@ -309,21 +313,21 @@ const DomCanvas = () => {
     // vertical sprites
     const sprites = [
       {
-        url: 'explosion-shrapnel-2-glow.png',
+        url: 'explosion-shrapnel-2.png',
         width: 79,
         height: 384,
         frameWidth: 79,
         frameHeight: 32
       },
       {
-        url: 'generic-explosion-2-glow.png',
+        url: 'generic-explosion-2.png',
         width: 55,
         height: 90,
         frameWidth: 55,
         frameHeight: 18
       },
       {
-        url: 'generic-explosion-glow.png',
+        url: 'generic-explosion.png',
         width: 55,
         height: 90,
         frameWidth: 55,
@@ -337,7 +341,7 @@ const DomCanvas = () => {
   function canvasExplosionLarge(exports, options = {}) {
     const sprites = [
       {
-        url: 'explosion-large-glow.png',
+        url: 'explosion-large.png',
         width: 56,
         height: 110,
         frameWidth: 56,
@@ -345,7 +349,7 @@ const DomCanvas = () => {
         hideAtEnd: true
       },
       {
-        url: 'explosion-large-2-glow.png',
+        url: 'explosion-large-2.png',
         width: 56,
         height: 110,
         frameWidth: 56,

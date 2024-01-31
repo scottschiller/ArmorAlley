@@ -295,7 +295,7 @@ const Bunker = (options = {}) => {
         xOffset: -30,
         yOffset: 0,
         sprite: {
-          url: 'infectedtribe_itch_io-pixel_explosion-glow.png',
+          url: 'infectedtribe_itch_io-pixel_explosion.png',
           width: spriteWidth,
           height: spriteHeight,
           frameWidth: spriteWidth / 21,
