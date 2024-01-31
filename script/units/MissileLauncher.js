@@ -47,7 +47,8 @@ const MissileLauncher = (options = {}) => {
       }
 
       if (!game.objects.editor) {
-        data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+        data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+        data.domCanvas.img = null;
       }
 
       effects.inertGunfireExplosion({ exports });

@@ -41,7 +41,8 @@ const Van = (options = {}) => {
     utils.css.add(dom.o, css.exploding);
 
     if (!dom.o._style) {
-      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+      data.domCanvas.img = null;
     }
 
     // stop moving while exploding

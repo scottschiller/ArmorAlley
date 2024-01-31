@@ -357,6 +357,50 @@ const effects = {
     }
   },
 
+  genericExplosion: (exports) => {
+    // given an object, create a visible explosion animation - and maybe do damage.
+    // center the explosion based on the coordinates of the original.
+
+    const data = {
+      // Note: x/y/w/h will be updated below.
+      x: exports.data.x,
+      y: exports.data.y,
+      width: exports.data.width,
+      height: exports.data.height,
+      bottomAligned: exports.data.bottomAligned,
+      alwaysDraw: true,
+      isOnScreen: exports.data.isOnScreen,
+      domCanvas: {
+        explosion: null,
+        img: null
+      }
+    };
+
+    const localExports = {
+      data
+    };
+
+    const explosion = common.domCanvas.canvasExplosion(localExports);
+
+    data.domCanvas.explosion = explosion;
+
+    // center based on explosion width
+    data.x -= (explosion.sprite.frameWidth - data.width) / 2;
+    data.width = explosion.sprite.frameWidth;
+
+    data.height = explosion.sprite.frameHeight;
+    data.y = data.bottomAligned ? 369 - data.height : data.y;
+
+    function animate() {
+      explosion?.animate();
+      common.domCanvas.draw(localExports);
+    }
+
+    return {
+      animate
+    };
+  },
+
   damageExplosion: (exports) => {
     // given an object, create a bomb explosion there and make it dangerous to the object.
     // this rewards the player for - e.g., blowing up a bunker while a tank is passing by.

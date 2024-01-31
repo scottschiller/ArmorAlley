@@ -132,9 +132,8 @@ const Balloon = (options = {}) => {
     }
 
     if (!dom.o._style) {
-      data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports, {
-        onEnd: () => (data.domCanvas.dieExplosion = null)
-      });
+      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+      data.domCanvas.img = null;
     }
 
     effects.inertGunfireExplosion({ exports });
@@ -160,6 +159,8 @@ const Balloon = (options = {}) => {
 
     data.deadTimer = common.setFrameTimeout(() => {
       data.deadTimer = null;
+
+      data.domCanvas.dieExplosion = null;
 
       // sanity check: don't hide if already respawned
       if (!data.dead) return;

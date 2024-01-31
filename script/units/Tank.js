@@ -170,7 +170,8 @@ const Tank = (options = {}) => {
 
       if (!dom.o._style) {
         // NOTE: explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
-        data.domCanvas.dieExplosion = common.domCanvas.canvasExplosion(exports);
+        data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+        data.domCanvas.img = null;
       }
 
       effects.damageExplosion(exports);
