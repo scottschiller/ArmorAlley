@@ -1144,3 +1144,294 @@ body.is_safari:not(.is-mobile) .chain {
   /* (when applied as .building.recycling) */
   transition: margin 2s;
 }
+
+.smart-missile-tracking:not(.turret):not(.parachute-infantry):not(
+    .placeholder
+  ) {
+  /**
+   * Turn "hot" fast, with a few exceptions -
+   * Turrets and parachute infantry need to keep
+   * their own timings for animation / transitions.
+   */
+  transition-duration: 0.25s;
+}
+
+.turret,
+.turret .sub-sprite {
+  background: url(../image/turret-sprite.png) 50% 0/18px 64px no-repeat;
+  height: 15px;
+  width: 22px;
+  /* 18 + a few pixels for turret rotation */
+  z-index: 2; /* sit atop bunkers */
+}
+
+.turret .sub-sprite {
+  background-position: 50% -16px;
+  height: 31px !important;
+  top: -5px;
+}
+
+.turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
+  animation: scan calc(2s * var(--gs-frac)) linear infinite alternate;
+}
+
+.turret:not(.firing):not(.exploding).engineer-interacting {
+  animation: sorta-blink-subtle calc(1s * var(--gs-frac)) steps(8) infinite;
+}
+
+.turret.destroyed {
+  background: 0 0;
+}
+
+.turret.destroyed .sub-sprite {
+  background-position: 50% 100%;
+  bottom: 0;
+  height: 3px !important;
+  /* bottom-align dead sprite */
+  top: auto;
+}
+
+.bomb {
+  bottom: auto;
+  height: 6px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 14px;
+  z-index: 2;
+}
+
+.bomb .sub-sprite {
+  background-image: url(../image/bomb.png);
+  background-position: 0 0;
+  background-size: 14px 6px;
+}
+
+.bomb.spark .sub-sprite,
+.bomb.spark-2 .sub-sprite {
+  animation: none;
+}
+
+.bomb.spark .sub-sprite,
+.bomb.spark-2 .sub-sprite,
+.gunfire.spark,
+.gunfire.spark-2 {
+  background-image: url(../image/explosion-spark.png);
+  background-position: 0 0;
+  background-size: contain;
+  height: 5px;
+  width: 5px;
+}
+
+.bomb.spark-2 .sub-sprite,
+.gunfire.spark-2 {
+  background-image: url(../image/explosion-spark-2.png);
+}
+
+.gunfire.spark,
+.gunfire.spark-2 {
+  background-color: transparent;
+  z-index: 5;
+}
+
+#battlefield .bomb.spark,
+#battlefield .gunfire.spark.dead,
+#battlefield .bomb.spark-2,
+#battlefield .gunfire.spark-2.dead {
+  /* nice fade for sparks */
+  transition: opacity 0.25s ease-in;
+  transition-delay: 0.5s;
+  opacity: 0;
+}
+
+#battlefield .sprite.explosion-classic,
+#battlefield .sprite.explosion-classic-2 {
+  background: 0 0;
+  width: 56px;
+  height: 22px;
+  margin-left: 0;
+  margin-top: 0;
+  filter: drop-shadow(
+    0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #cc3333
+  );
+}
+
+#battlefield .sprite.explosion-classic .sub-sprite,
+#battlefield .sprite.explosion-classic-2 .sub-sprite {
+  background-image: url(../image/explosion-large.png);
+  animation: classic-explosion calc(0.4s * var(--gs-frac)) steps(5);
+  /* default when animation finishes */
+  animation-fill-mode: forwards;
+  top: 0;
+  left: 0;
+  bottom: auto;
+  width: 100%;
+  height: 500%;
+  /* this element had better have the right aspect ratio. :X */
+  background-size: 100% 100%;
+  background-position: 0 0;
+}
+
+#battlefield .sprite.explosion-classic-2 .sub-sprite {
+  background-image: url(../image/explosion-large-2.png);
+}
+
+.bomb.explosion-large {
+  background: 0 0;
+  height: 56px;
+  margin-left: 0;
+  margin-top: -32px;
+  transform-origin: 50% 100%;
+  width: 51px;
+}
+
+.bomb.explosion-large .sub-sprite {
+  animation: largeexplosion calc(0.66s * var(--gs-frac)) steps(10);
+  /**
+   * "Dirt Explosion" by SrGrafo on DeviantArt
+   * https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
+   */
+  background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.webp);
+  background-position: 0 0;
+  background-size: 512px 51px;
+  height: 51px;
+  /* default state */
+  transform: translate3d(-512px, 0, 0);
+  width: 512px;
+}
+
+.generic-explosion,
+.generic-explosion-2 {
+  /* default when animation finishes */
+  animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
+  /* give the first frame a little more time */
+  animation-delay: 75ms;
+  /* stay at the last frame, when animation finishes */
+  animation-fill-mode: forwards;
+  background-image: url(../image/generic-explosion.png);
+  /* full-width, and 5x height for the five frames */
+  background-size: 100% 500%;
+  filter: drop-shadow(0 0 calc(2px * var(--gs)) #cc3333);
+}
+
+/* note: only apply to armed smart missiles - otherwise, positioning gets messed up. */
+.sprite.balloon,
+.sprite.chain,
+.sprite.engineer,
+.sprite.infantry,
+.sprite.missile-launcher,
+.sprite.super-bunker,
+.sprite.tank,
+.sprite.van,
+.turret .sub-sprite {
+  /* for .smart-missile-tracking filter */
+  transition: filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57);
+}
+
+body.edit-mode #battlefield .sprite.submerged {
+  margin-top: 27px !important;
+}
+
+@keyframes classic-explosion {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+.generic-explosion-2 {
+  background-image: url(../image/generic-explosion-2.png);
+}
+
+@keyframes balloonright {
+  0% {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 -128px; /* original yellow version: 0px -135px */
+  }
+}
+
+@keyframes balloonleft {
+  0% {
+    background-position: 0 -128px; /* original yellow version: 0px -120px */
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes nuke {
+  0% {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -2352px 0;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: rotate(-90deg);
+  }
+
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes animate-transform-sprite-tank {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-174px, 0, 0);
+  }
+}
+
+@keyframes animate-transform-sprite-infantry {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-55px, 0, 0);
+  }
+}
+
+@keyframes burninating {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes bomb {
+  0% {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 -33px;
+  }
+}
+
+@keyframes bomb-rotate {
+  0% {
+    transform: rotate(-90deg);
+  }
+
+  to {
+    transform: rotate(0);
+  }
+}
