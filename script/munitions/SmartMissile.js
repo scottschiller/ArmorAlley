@@ -105,7 +105,7 @@ const SmartMissile = (options = {}) => {
 
   function spark() {
     // TODO: random rotation?
-    data.domCanvas.img = sparkObj;
+    data.domCanvas.img = effects.spark();
     data.excludeBlink = true;
   }
 
@@ -1051,22 +1051,6 @@ const SmartMissile = (options = {}) => {
     ];
 
   const { scale, spriteWidth, spriteHeight } = spriteObj;
-
-  const sparkObj = {
-    src: utils.image.getImageObject(
-      oneOf(['explosion-spark.png', 'explosion-spark-2.png'])
-    ),
-    source: {
-      width: 5,
-      height: 5,
-      spriteWidth: 5,
-      spriteHeight: 5,
-      frameWidth: 5,
-      frameHeight: 5,
-      frameX: 0,
-      frameY: 0
-    }
-  };
 
   data.domCanvas = {
     img: {
