@@ -1,5 +1,4 @@
 import { game } from '../core/Game.js';
-import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
@@ -8,7 +7,6 @@ import {
   TYPES,
   getTypes,
   rnd,
-  oneOf,
   GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -19,10 +17,6 @@ import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
   let css, data, dom, collision, exports, frameTimeout, radarItem;
-
-  function randomDistance() {
-    return `${rndInt(10) * plusMinus()}px`;
-  }
 
   function spark() {
     data.domCanvas.img = effects.spark();
@@ -162,24 +156,11 @@ const GunFire = (options = {}) => {
       }
     }
 
-    // optimize: don't add DOM node if not visible.
-    if (canSpark && data.isOnScreen) {
-      dom.o = sprites.create({
-        className: css.className,
-        id: data.id
-      });
-      // append immediately.
-      game.dom.battlefield.appendChild(dom.o);
-    }
-
     if (canSpark) spark();
 
     if (canDie) {
       // "embed", so this object moves relative to the target it hit
       sprites.attachToTarget(exports, target);
-
-      // delay before transition.
-      window.requestAnimationFrame(() => utils.css.add(dom.o, css.dead));
 
       // immediately mark as dead, prevent any more collisions.
       data.dead = true;
@@ -257,8 +238,6 @@ const GunFire = (options = {}) => {
     if (data.y > game.objects.view.data.battleField.height) {
       if (!data.isInert) {
         playSound(sounds.bulletGroundHit, exports);
-      } else if (options.className) {
-        utils.css.remove(dom.o, options.className);
       }
       die();
     }
@@ -278,6 +257,8 @@ const GunFire = (options = {}) => {
       data.y += plusMinus();
     }
 
+    dom.o = {};
+
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     if (!data.isInert) {
@@ -286,9 +267,7 @@ const GunFire = (options = {}) => {
   }
 
   css = common.inheritCSS({
-    className: 'gunfire',
-    expired: 'expired',
-    spark: oneOf(['spark', 'spark-2'])
+    className: 'gunfire'
   });
 
   data = common.inheritData(
