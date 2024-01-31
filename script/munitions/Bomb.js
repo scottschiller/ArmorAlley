@@ -22,7 +22,7 @@ import { effects } from '../core/effects.js';
 const Bomb = (options = {}) => {
   let css, data, dom, collision, radarItem, exports;
 
-  function moveTo(x, y, rotateAngle) {
+  function moveTo(x, y) {
     let deltaX, deltaY, rad;
 
     deltaX = 0;
@@ -39,20 +39,24 @@ const Bomb = (options = {}) => {
     rad = Math.atan2(deltaY, deltaX);
 
     if (deltaX || deltaY) {
-      data.lastAngle = rad * rad2Deg;
+      data.angle = rad * rad2Deg;
     }
-
-    data.extraTransforms =
-      `rotate3d(0, 0, 1, ${
-        rotateAngle !== undefined ? rotateAngle : data.lastAngle
-      }deg)` + (data.scale ? ` scale3d(${data.scale}, ${data.scale}, 1)` : '');
 
     sprites.moveTo(exports, x, y);
   }
 
+  function dieExplosion() {
+    // TODO: migrate to effects call.
+    data.domCanvas.dieExplosion =
+      common.domCanvas.canvasExplosionLarge(exports);
+  }
+
+  function spark() {
+    data.domCanvas.img = effects.spark();
+  }
+
   function die(dieOptions = {}) {
     // aieee!
-    let className;
 
     if (data.dead || data.groundCollisionTest) return;
 
@@ -77,57 +81,91 @@ const Bomb = (options = {}) => {
         dieOptions.type !== TYPES.superBunker);
 
     if (dieOptions.spark) {
-      data.extraTransforms = `rotate3d(0, 0, 1, ${rnd(15) * plusMinus()}deg)`;
+      spark();
+      // TODO: attach to target?
     } else if (isClassicExplosion) {
       // restore original scale.
       data.scale = 1;
     } else {
-      // hackish: offset rotation so explosion points upward.
-      data.lastAngle -= 90;
-      // limit rotation, as well.
-      data.lastAngle *= 0.5;
+      if (data?.attacker?.data?.type !== TYPES.helicopter) {
+        // hackish: offset rotation so explosion points upward.
+        data.angle -= 90;
+        // limit rotation, as well.
+        data.angle *= 0.5;
+      }
       data.scale = 0.65;
     }
 
-    // bombs blow up big on the ground, and "spark" on other things.
     if (dieOptions.hidden) {
-      dom.o.style.visibility = 'hidden';
+      data.visible = false;
     } else {
-      className = !dieOptions.spark
-        ? isClassicExplosion
-          ? css.explosionClassic
-          : css.explosionLarge
-        : css.spark;
+      if (!dieOptions.spark) {
+        if (isClassicExplosion) {
+          dieExplosion();
+        } else {
+          // "dirt" exposion
+          const dirtConfig = (() => {
+            const spriteWidth = 1024;
+            const spriteHeight = 112;
+            return {
+              // overlay: true,
+              scale: 0.75,
+              xOffset: 0,
+              yOffset: -30,
+              useDataAngle: true,
+              sprite: {
+                url: 'deviantart-Dirt-Explosion-774442026.png',
+                width: spriteWidth,
+                height: spriteHeight,
+                frameWidth: spriteWidth / 10,
+                frameHeight: spriteHeight,
+                animationDuration: 2 / 3,
+                horizontal: true,
+                hideAtEnd: true
+              }
+            };
+          })();
+
+          data.shadowBlur = 4;
+          data.shadowColor = 'rgba(255, 255, 255, 0.5)';
+
+          data.domCanvas.dieExplosion = common.domCanvas.canvasAnimation(
+            exports,
+            dirtConfig
+          );
+        }
+      }
     }
 
     if (dieOptions.bottomAlign) {
+      data.y = 369;
+
       if (isClassicExplosion) {
         // hack: ensure that angle is 0 for the classic explosion sprite.
-        data.lastAngle = 0;
+        data.angle = 0;
+        dieExplosion();
       }
 
       // bombs explode, and dimensions change when they hit the ground.
+      if (data.domCanvas.dieExplosion) {
+        // pull back by half the difference, remaining "centered" around original bomb coordinates.
+        data.x -=
+          (data.domCanvas.dieExplosion.sprite.frameWidth - data.width) / 2;
 
-      // adjust for larger explosion, "expanding" on both sides
-      data.x -= (data.explosionWidth - data.width) / 2;
+        // resize accordingly
+        data.width = data.domCanvas.dieExplosion.sprite.frameWidth;
+        data.halfWidth = data.width / 2;
 
-      // assign new dimensions for explosion
-      data.width = data.explosionWidth;
-      data.halfWidth = data.explosionWidth / 2;
-
-      data.height = data.explosionHeight;
-      data.halfHeight = data.explosionheight / 2;
-
-      // bottom-align
-      // TODO: review why 17, still. :P
-      data.y = worldHeight - 17;
+        data.height = data.domCanvas.dieExplosion.sprite.frameHeight;
+        data.halfHeight = data.height / 2;
+      }
 
       // stop moving
       data.vY = 0;
       data.gravity = 0;
 
-      // reposition immediately
-      moveTo(data.x, data.y);
+      // this will move the domCanvas stuff, too.
+      sprites.moveTo(exports, data.x, data.y);
 
       // hackish: do one more collision check, since coords have changed, before this element is dead.
       // this will cause another call, which can be ignored.
@@ -178,27 +216,21 @@ const Bomb = (options = {}) => {
       sprites.attachToTarget(exports, dieOptions.target);
     }
 
-    if (dom.o) {
-      utils.css.add(dom.o, className);
-
-      data.deadTimer = common.setFrameTimeout(() => {
-        sprites.removeNodesAndUnlink(exports);
-        data.deadTimer = null;
-      }, 1000);
-    }
+    data.deadTimer = common.setFrameTimeout(() => {
+      data.domCanvas.dieExplosion = null;
+      sprites.removeNodesAndUnlink(exports);
+      data.deadTimer = null;
+    }, 1500);
 
     // TODO: move into something common?
     if (data.isOnScreen) {
       for (let i = 0; i < 3; i++) {
         game.objects.smoke.push(
           Smoke({
-            x:
-              data.x +
-              data.width / 2 +
-              rndInt(data.width / 2) * 0.33 * plusMinus(),
-            y: data.y + 12,
-            vX: plusMinus(rnd(5)),
-            vY: rnd(-2),
+            x: data.x + rndInt(data.width / 2) * 0.33 * plusMinus(),
+            y: data.y,
+            vX: plusMinus(rnd(3.5)),
+            vY: rnd(-2.5),
             spriteFrame: rndInt(5)
           })
         );
@@ -231,7 +263,7 @@ const Bomb = (options = {}) => {
 
     // some special cases, here
 
-    if (target.data.type === 'smart-missile') {
+    if (target.data.type === TYPES.smartMissile) {
       die({
         attacker: target,
         type: target.data.type,
@@ -239,7 +271,7 @@ const Bomb = (options = {}) => {
         spark: true,
         target
       });
-    } else if (target.data.type === 'infantry') {
+    } else if (target.data.type === TYPES.infantry) {
       /**
        * bomb -> infantry special case: don't let bomb die; keep on truckin'.
        * continue to ground, where larger explosion may take out a group of infantry.
@@ -329,11 +361,10 @@ const Bomb = (options = {}) => {
   }
 
   function animate() {
-    if (data.dead) {
-      if (dom.o) {
-        sprites.moveWithScrollOffset(exports);
-      }
+    data.domCanvas?.dieExplosion?.animate();
 
+    if (data.dead) {
+      sprites.moveWithScrollOffset(exports);
       return !data.deadTimer && !dom.o;
     }
 
@@ -368,12 +399,8 @@ const Bomb = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className
-    });
-
-    // parent gets transform position, subsprite gets rotation animation
-    dom.o.appendChild(sprites.makeSubSprite());
+    dom.o = {};
+    data.domCanvas.img = spriteConfig;
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
@@ -384,11 +411,7 @@ const Bomb = (options = {}) => {
     if (data.hidden) return;
 
     // TODO: don't create radar items for bombs from enemy helicopter when cloaked
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
-
-    if (data.isEnemy) {
-      utils.css.add(radarItem.dom.o, css.enemy);
-    }
+    radarItem = game.objects.radar.addItem(exports, css.className);
   }
 
   css = common.inheritCSS({
@@ -404,15 +427,16 @@ const Bomb = (options = {}) => {
       parent: options.parent || null,
       parentType: options.parentType || null,
       deadTimer: null,
+      excludeBlink: true,
       extraTransforms: null,
       hasHitGround: false,
       hidden: !!options.hidden,
       isMuted: false,
       groundCollisionTest: false,
       width: 14,
-      height: 12,
+      height: 6,
       halfWidth: 7,
-      halfHeight: 6,
+      halfHeight: 3,
       explosionWidth: 51,
       explosionHeight: 22,
       gravity: 1,
@@ -423,7 +447,7 @@ const Bomb = (options = {}) => {
       vX: options.vX || 0,
       vYMax: 128,
       bottomAlign: false,
-      lastAngle: 0,
+      angle: 0,
       scale: null,
       domFetti: {
         colorType: 'bomb',
@@ -449,7 +473,7 @@ const Bomb = (options = {}) => {
 
         common.domCanvas.rotate(
           ctx,
-          data.lastAngle + 90,
+          data.angle + 90,
           left,
           top,
           scaledWidth,
@@ -498,13 +522,35 @@ const Bomb = (options = {}) => {
         bombHitTarget(target);
       }
     },
-    items:
-      !game.objects.editor &&
-      getTypes(
-        'superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile',
-        { exports }
-      ).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
+    items: getTypes(
+      'superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile',
+      { exports }
+    ).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
   };
+
+  const spriteConfig = (() => {
+    const spriteWidth = 28;
+    const spriteHeight = 12;
+    return {
+      src: utils.image.getImageObject('bomb.png'),
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight,
+        is2X: true,
+        frameWidth: spriteWidth,
+        frameHeight: spriteHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: spriteHeight / 2,
+        useDataAngle: true
+      }
+    };
+  })();
 
   return exports;
 };
