@@ -130,6 +130,11 @@ const GameLoop = () => {
 
     // update all setTimeout()-style FrameTimeout() instances.
     frameTimeoutManager.animate();
+
+    // debug stuff
+    if (debugCollision) {
+      common.animateDebugRects();
+    }
   }
 
   function animateRAF(ts) {
@@ -439,11 +444,6 @@ const frameTimeoutManager = (() => {
         spliceArgs[0] = instances.indexOf(completed[i]);
         Array.prototype.splice.apply(instances, spliceArgs);
       }
-    }
-
-    // debug stuff
-    if (debugCollision) {
-      common.animateDebugRects();
     }
   }
 

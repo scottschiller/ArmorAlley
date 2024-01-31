@@ -890,6 +890,22 @@ const DomCanvas = () => {
     ctx.fill();
   }
 
+  function drawDebugRect(x, y, w, h, color = '#999') {
+    const ctx = dom.ctx['fx-bg'];
+    const ss = game.objects.view.data.screenScale;
+    ctx.beginPath();
+    ctx.rect(
+      (x - game.objects.view.data.battleField.scrollLeft) * ss,
+      (y - 32) * ss,
+      w * ss,
+      h * ss
+    );
+    ctx.strokeStyle = color;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
   function drawTrailers(
     exports,
     xHistory = [],
@@ -986,6 +1002,7 @@ const DomCanvas = () => {
     canvasExplosionLarge,
     clear,
     draw,
+    drawDebugRect,
     drawTrailers,
     init,
     resize,

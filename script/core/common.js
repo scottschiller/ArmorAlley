@@ -92,34 +92,17 @@ function makeDebugRect(obj, viaNetwork) {
   if (!obj?.data) return;
 
   const { data } = obj;
-
-  let { x, y } = data;
+  const { x, y } = data;
+  const color = data.isEnemy ? '#990000' : '#009900';
 
   function update() {
-    if (!o?.style) return;
-    o.style.transform = `translate3d(${
-      x - game.objects.view.data.battleField.scrollLeft
-    }px, ${y}px, 0px)`;
+    common.domCanvas.drawDebugRect(x, y, data.width, data.height, color);
   }
-
-  const o = document.createElement('div');
-  o.className = 'debug-rect';
-
-  Object.assign(o.style, {
-    'position': 'absolute',
-    'top': '0px',
-    'left': '0px',
-    'width': `${data.width}px`,
-    'height': `${data.height}px`,
-    'border': `1px ${viaNetwork ? 'dotted' : 'solid'} ${
-      data.isEnemy ? '#990000' : '#009900'
-    }`,
-    'color': '#fff',
-    'font-size': '4px'
-  });
 
   update();
 
+  // Old DOM stuff
+  /*
   // text inside element
   const span = document.createElement('span');
   const style = {};
@@ -141,6 +124,7 @@ function makeDebugRect(obj, viaNetwork) {
   o.appendChild(span);
 
   game.dom.battlefield.appendChild(o);
+  */
 
   debugRects.push(update);
 
@@ -169,11 +153,6 @@ function makeDebugRect(obj, viaNetwork) {
       params: [basicData, viaNetwork]
     });
   }
-
-  return {
-    update,
-    o
-  };
 }
 
 function getRenameString(oldName, newName, fromNetworkEvent) {
@@ -620,6 +599,11 @@ const common = {
     if (!tData.energy && target.die) {
       // mutate the object: assign its attacker.
       tData.attacker = attacker;
+
+      if (debugCollision) {
+        makeDebugRect(target);
+        makeDebugRect(attacker);
+      }
 
       target.die({ attacker });
     }
