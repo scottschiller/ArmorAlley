@@ -1440,7 +1440,7 @@ function PrefsManager() {
       },
 
       game_fps: (newGameFPS) => {
-        setFrameRate(newGameFPS);
+        setFrameRate(parseInt(newGameFPS, 10));
         // update helicopter gunfire rate, etc.
         common.applyGameSpeedToAll();
       },
