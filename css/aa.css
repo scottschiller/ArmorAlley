@@ -132,6 +132,14 @@ body {
   image-rendering: pixelated;
 }
 
+body:not(.prefs-modal-open) {
+  cursor: url(../image/cursor-cross.png), auto;
+}
+
+body.demo:not(.prefs-modal-open) {
+  cursor: url(../image/cursor-cross-grey.png), crosshair;
+}
+
 body.is_safari:not(.is-mobile) {
   /**
    * Safari seems to rasterize before transform()-based scaling of text and images,
@@ -147,12 +155,6 @@ body.is_safari:not(.is-mobile) {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  /* ../image/cursor-cross.png */
-  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAFklEQVR4AWOgNvg/EjX9JxaPhh6lAAALMhTsTJ1lCQAAAABJRU5ErkJggg==);
-}
-
-body.demo #aa {
-  cursor: url(../image/cursor-cross-grey.png), crosshair;
 }
 
 #radar,
