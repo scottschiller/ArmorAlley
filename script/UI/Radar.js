@@ -668,10 +668,6 @@ const Radar = () => {
       setIncomingMissile(hasEnemyMissile, newestMissile);
     }
 
-    // don't animate when radar is jammed.
-    // avoid lots of redundant style recalculations.
-    if (data.isJammed && !data.isStale) return;
-
     // move all radar items
 
     for (i = 0, j = objects.items.length; i < j; i++) {
