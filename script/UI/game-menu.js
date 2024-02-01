@@ -668,6 +668,8 @@ function showHomeVideo() {
 
   let res = window.innerWidth >= 1920 ? '4k' : '1080p';
 
+  let fps = gamePrefs.game_fps == 60 ? '_60fps' : '';
+
   const types = {
     // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
     mp4: 'video/mp4; codec="hev1.1.6.L93.B0"',
@@ -677,7 +679,7 @@ function showHomeVideo() {
   // load up video with most-likely-supported format at 1080p or 4K, depending.
   function addSource(res, ext) {
     if (!video) return;
-    const url = `video/aa_home_menu_demo_${res}.${ext}`;
+    const url = `video/aa_home_menu_demo_${res}${fps}.${ext}`;
     const source = document.createElement('source');
     source.src = url;
     source.type = `video/${ext}`;
