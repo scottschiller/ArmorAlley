@@ -29,6 +29,7 @@ import { gameMenu } from './game-menu.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
 import { handleOrientationChange } from './mobile.js';
+import { previewLevel } from '../levels/default.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -268,6 +269,11 @@ const View = () => {
         5.5 * newScale * fontScale
       );
       dom.root?.style?.setProperty('--menu-scale', 5.5 * newScale);
+
+      // hack: re-render level preview.
+      if (game.objects.radar) {
+        previewLevel(document.getElementById('game_level').value);
+      }
     }
 
     if (!data.battleField.width) {
