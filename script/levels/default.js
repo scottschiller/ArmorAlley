@@ -305,17 +305,6 @@ function previewLevel(levelName, excludeVehicles) {
       // special case: certain radar items also get a "scan range" node.
       radarItem.initScanNode();
     }
-
-    if (!exports.data.domCanvas) {
-      // pull vehicles behind bunkers, super-bunkers etc.
-      if (item[0].match(/tank|launcher|van|infantry|engineer/i)) {
-        radarItem.dom.o.style.zIndex = -1;
-      }
-      // if a bunker, also tweak opacity so overlapping units can be seen.
-      if (item[0].match(/base|bunker/i)) {
-        radarItem.dom.o.style.opacity = 0.9;
-      }
-    }
   });
 }
 
