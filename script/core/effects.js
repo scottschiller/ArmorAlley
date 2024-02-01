@@ -26,6 +26,56 @@ function nextShrapnel() {
   }
 }
 
+function genericExplosion(exports, sprites, options = {}) {
+  if (!exports?.data) return;
+
+  const sprite = oneOf(sprites);
+
+  const { data } = exports;
+
+  // potentially dangerous: mutate the object being passed in.
+  data.shadowBlur = 8;
+  data.shadowColor = '#ff3333';
+
+  return common.domCanvas.canvasAnimation(exports, {
+    sprite,
+    yOffset: exports.data.bottomAligned
+      ? 0
+      : Math.abs(sprite.frameHeight - data.height) * -0.5,
+    // allow for overrides, of course.
+    ...options
+  });
+}
+
+function canvasExplosion(exports, options = {}) {
+  // vertical sprites
+  const sprites = [
+    {
+      url: 'explosion-shrapnel-2.png',
+      width: 178,
+      height: 768,
+      frameWidth: 178,
+      frameHeight: 64
+    },
+    {
+      url: 'generic-explosion-2.png',
+      width: 110,
+      height: 180,
+      frameWidth: 110,
+      frameHeight: 36
+    },
+    {
+      url: 'generic-explosion.png',
+      width: 110,
+      height: 180,
+      frameWidth: 110,
+      frameHeight: 36
+    }
+  ];
+
+  return genericExplosion(exports, sprites, options);
+}
+
 const effects = {
   animate: nextShrapnel,
   smokeRing: (item, smokeOptions) => {
@@ -381,17 +431,19 @@ const effects = {
       data
     };
 
-    const explosion = common.domCanvas.canvasExplosion(localExports);
+    const explosion = canvasExplosion(localExports);
 
     data.domCanvas.explosion = explosion;
 
     // center based on explosion width
     // note: sprites are 2x, so half the frame width is used for centering.
-    data.x -= ((explosion.sprite.frameWidth / 2) - data.width) / 2;
+    data.x -= (explosion.sprite.frameWidth / 2 - data.width) / 2;
     data.width = explosion.sprite.frameWidth;
 
     data.height = explosion.sprite.frameHeight;
-    data.y = data.bottomAligned ? 369 - data.height : (data.y + (explosion.sprite.frameHeight / 4));
+    data.y = data.bottomAligned
+      ? 369 - data.height
+      : data.y + explosion.sprite.frameHeight / 4;
 
     function animate() {
       explosion?.animate();
@@ -401,6 +453,29 @@ const effects = {
     return {
       animate
     };
+  },
+
+  bombExplosion: (exports, options = {}) => {
+    const sprites = [
+      {
+        url: 'explosion-large.png',
+        width: 112,
+        height: 220,
+        frameWidth: 112,
+        frameHeight: 44,
+        hideAtEnd: true
+      },
+      {
+        url: 'explosion-large-2.png',
+        width: 112,
+        height: 220,
+        frameWidth: 112,
+        frameHeight: 44,
+        hideAtEnd: true
+      }
+    ];
+
+    return genericExplosion(exports, sprites, options);
   },
 
   damageExplosion: (exports) => {

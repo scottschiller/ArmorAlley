@@ -46,9 +46,8 @@ const Bomb = (options = {}) => {
   }
 
   function dieExplosion() {
-    // TODO: migrate to effects call.
     data.domCanvas.dieExplosion =
-      common.domCanvas.canvasExplosionLarge(exports);
+      effects.bombExplosion(exports);
   }
 
   function spark() {

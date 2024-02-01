@@ -286,79 +286,6 @@ const DomCanvas = () => {
     };
   }
 
-  function genericExplosion(exports, sprites, options = {}) {
-    if (!exports?.data) return;
-
-    const sprite = oneOf(sprites);
-
-    const { data } = exports;
-
-    // potentially dangerous: mutate the object being passed in.
-    data.shadowBlur = 8;
-    data.shadowColor = '#ff3333';
-
-    return canvasAnimation(exports, {
-      sprite,
-      yOffset: exports.data.bottomAligned
-        ? 0
-        : Math.abs(sprite.frameHeight - data.height) * -0.5,
-      // allow for overrides, of course.
-      ...options
-    });
-  }
-
-  function canvasExplosion(exports, options = {}) {
-    // vertical sprites
-    const sprites = [
-      {
-        url: 'explosion-shrapnel-2.png',
-        width: 178,
-        height: 768,
-        frameWidth: 178,
-        frameHeight: 64
-      },
-      {
-        url: 'generic-explosion-2.png',
-        width: 110,
-        height: 180,
-        frameWidth: 110,
-        frameHeight: 36
-      },
-      {
-        url: 'generic-explosion.png',
-        width: 110,
-        height: 180,
-        frameWidth: 110,
-        frameHeight: 36
-      }
-    ];
-
-    return genericExplosion(exports, sprites, options);
-  }
-
-  function canvasExplosionLarge(exports, options = {}) {
-    const sprites = [
-      {
-        url: 'explosion-large.png',
-        width: 112,
-        height: 220,
-        frameWidth: 112,
-        frameHeight: 44,
-        hideAtEnd: true
-      },
-      {
-        url: 'explosion-large-2.png',
-        width: 112,
-        height: 220,
-        frameWidth: 112,
-        frameHeight: 44,
-        hideAtEnd: true
-      }
-    ];
-
-    return genericExplosion(exports, sprites, options);
-  }
-
   // center, scale, and rotate.
   // https://stackoverflow.com/a/43155027
   function drawImageCenter(
@@ -1000,8 +927,6 @@ const DomCanvas = () => {
 
   exports = {
     canvasAnimation,
-    canvasExplosion,
-    canvasExplosionLarge,
     clear,
     draw,
     drawDebugRect,
