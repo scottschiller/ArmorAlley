@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { FPS, GAME_SPEED, TYPES, oneOf, searchParams } from '../core/global.js';
+import { FPS, GAME_SPEED, TYPES, demo, searchParams } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { PREFS, gamePrefs } from './preferences.js';
 
@@ -690,6 +690,9 @@ const DomCanvas = () => {
 
     // run logic, but don't actually draw if not on-screen.
     if (!exports.data.isOnScreen) return;
+
+    // if a radar item and in demo / screencast mode, don't draw.
+    if (demo && data.type === 'radar-item') return;
 
     // does the object know how to draw itself?
     if (oData.draw) {

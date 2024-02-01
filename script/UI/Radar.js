@@ -3,7 +3,6 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
 import {
-  demo,
   FPS,
   GAME_SPEED,
   isiPhone,
@@ -668,9 +667,6 @@ const Radar = () => {
 
       setIncomingMissile(hasEnemyMissile, newestMissile);
     }
-
-    // bail early, no radar UI in demo mode.
-    if (demo) return;
 
     // don't animate when radar is jammed.
     // avoid lots of redundant style recalculations.
