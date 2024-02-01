@@ -530,6 +530,9 @@ const Radar = () => {
     // radar height has changed.
     data.height = dom.radar.offsetHeight;
 
+    // for battle previews, before game start.
+    data.renderCount = 0;
+
     // trash the cache, and rebuild.
     layoutCache = {};
 
