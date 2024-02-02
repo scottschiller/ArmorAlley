@@ -38,8 +38,6 @@ const Van = (options = {}) => {
 
     data.dead = true;
 
-    utils.css.add(dom.o, css.exploding);
-
     if (!dom.o._style) {
       data.domCanvas.dieExplosion = effects.genericExplosion(exports);
       data.domCanvas.img = null;
@@ -47,11 +45,6 @@ const Van = (options = {}) => {
 
     // stop moving while exploding
     data.vX = 0;
-
-    // revert to CSS rules, prevent first frame of explosion from sticking
-    if (dom.o._style) {
-      dom.o._style.setProperty('background-position', '0px -384px');
-    }
 
     effects.shrapnelExplosion(data, {
       centerX: true,
@@ -158,21 +151,11 @@ const Van = (options = {}) => {
             data.state = 0;
           }
 
-          if (data.isOnScreen && dom.o._style) {
-            dom.o._style.setProperty(
-              'background-position',
-              `0px ${data.height * data.state * -1}px`
-            );
-          }
-
           if (data.domCanvas.img) {
             data.domCanvas.img.source.frameY = data.state;
           }
         } else if (data.frameCount % data.stateModulus === 2) {
           // next frame - reset.
-          if (data.isOnScreen && dom.o._style) {
-            dom.o._style.setProperty('background-position', '0px 0px');
-          }
           if (data.domCanvas.img) {
             data.domCanvas.img.source.frameY = 0;
           }
