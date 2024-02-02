@@ -8,7 +8,9 @@ import {
   TYPES,
   rng,
   rngInt,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  FPS,
+  GAME_SPEED
 } from '../core/global.js';
 import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -16,25 +18,17 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const ParachuteInfantry = (options = {}) => {
-  let css, dom, data, radarItem, exports;
+  let dom, data, radarItem, exports;
 
   function openParachute() {
     if (data.parachuteOpen) return;
 
     // undo manual assignment from free-fall animation
-    dom.oTransformSprite.style.backgroundPosition = '';
-
-    utils.css.add(dom.o, css.parachuteOpen);
+    data.domCanvas.img.source.frameY = 0;
 
     // update model with open height
-    data.height - 19;
+    data.height = 19;
     data.halfHeight = data.height / 2;
-
-    // randomize the animation a little
-    dom.oTransformSprite._style.setProperty(
-      'animation-duration',
-      `${0.75 + rng(0.75, data.type)}s`
-    );
 
     // and parachute speed, too.
     data.vY = 0.3 + rng(0.3, data.type);
@@ -49,6 +43,8 @@ const ParachuteInfantry = (options = {}) => {
 
   function die(dieOptions = {}) {
     if (data.dead) return;
+
+    data.domCanvas.img = null;
 
     if (!dieOptions?.silent) {
       effects.inertGunfireExplosion({ exports });
@@ -107,20 +103,24 @@ const ParachuteInfantry = (options = {}) => {
         0
       ) {
         // like Tom Petty, free fallin'.
-
-        if (data.isOnScreen) {
-          dom.oTransformSprite._style.setProperty(
-            'background-position',
-            `0px ${-(60 + data.frameHeight * data.panicFrame)}px`
-          );
-        }
-
         // alternate between 0/1
         data.panicFrame = !data.panicFrame;
+        data.domCanvas.img.source.frameY = 3 + data.panicFrame;
       }
     } else {
-      // (potentially) gone with the wind.
+      // "range" of rotation
+      data.angle =
+        -data.swing + data.swing * 2 * data.stepFrames[data.stepFrame];
 
+      data.stepFrame += data.stepFrameIncrement;
+
+      if (data.stepFrame >= data.stepFrames.length - 1) {
+        data.stepFrameIncrement *= -1;
+      } else if (data.stepFrame === 0) {
+        data.stepFrameIncrement *= -1;
+      }
+
+      // (potentially) gone with the wind.
       if (data.frameCount % data.windModulus === 0) {
         // choose a random direction?
         if (rng(1, data.type) > 0.5) {
@@ -131,22 +131,16 @@ const ParachuteInfantry = (options = {}) => {
 
           if (randomWind === -1) {
             // moving left
-            bgY = -20;
+            bgY = 1;
           } else if (randomWind === 1) {
             // moving right
-            bgY = -40;
+            bgY = 2;
           } else {
             // not moving!
             bgY = 0;
           }
 
-          if (data.isOnScreen) {
-            dom.oTransformSprite._style.setProperty(
-              'background-position',
-              `0px ${bgY}px`
-            );
-          }
-
+          data.domCanvas.img.source.frameY = bgY;
           // choose a new wind modulus, too.
           data.windModulus = 64 + rndInt(64);
         } else {
@@ -154,12 +148,7 @@ const ParachuteInfantry = (options = {}) => {
 
           data.vX = 0;
 
-          if (data.isOnScreen) {
-            dom.oTransformSprite._style.setProperty(
-              'background-position',
-              '0px 0px'
-            );
-          }
+          data.domCanvas.img.source.frameY = 0;
         }
       }
     }
@@ -227,17 +216,19 @@ const ParachuteInfantry = (options = {}) => {
     data.frameCount++;
   }
 
+  function getSpriteURL() {
+    const parts = [];
+
+    // infantry / engineer
+    parts.push('parachute-infantry');
+
+    if (data.isEnemy) parts.push('enemy');
+
+    return `${parts.join('-')}.png`;
+  }
+
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
-
-    // CSS animation (rotation) gets applied to this element
-    dom.oTransformSprite = sprites.makeTransformSprite();
-    dom.o.appendChild(dom.oTransformSprite);
-
+    dom.o = {};
     sprites.moveTo(exports);
   }
 
@@ -252,15 +243,33 @@ const ParachuteInfantry = (options = {}) => {
   function initParachuteInfantry() {
     initDOM();
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports);
 
     checkSmartMissileDecoy();
   }
 
-  css = common.inheritCSS({
-    className: 'parachute-infantry',
-    parachuteOpen: 'parachute-open'
-  });
+  function dropOff(x) {
+    // x from 0 to 1 returns from 1 to 0, with in-out easing.
+    // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+    // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+    return (Math.cos(Math.PI * x) + 1) / 2;
+  }
+
+  function makeStepFrames(duration = 1.75, reverse) {
+    // NOTE: duration parameter added, here.
+    duration = FPS * duration * (1 / GAME_SPEED);
+    data.stepFrames = [];
+
+    for (let i = 0; i <= duration; i++) {
+      // 1/x, up to 1
+      data.stepFrames[i] = dropOff(i / duration);
+    }
+    if (reverse) {
+      data.stepFrames.reverse();
+    }
+    data.stepFrame = 0;
+    data.stepActive = true;
+  }
 
   let type = TYPES.parachuteInfantry;
 
@@ -268,6 +277,11 @@ const ParachuteInfantry = (options = {}) => {
     {
       type,
       frameCount: rngInt(3, type),
+      angle: 0,
+      swing: 17.5,
+      stepFrames: [],
+      stepFrame: 0,
+      stepFrameIncrement: 1,
       panicModulus: 3,
       windModulus: options.windModulus || 32 + rngInt(32, type),
       panicFrame: rngInt(3, type),
@@ -299,7 +313,42 @@ const ParachuteInfantry = (options = {}) => {
     options
   );
 
+  // note: duration param.
+  makeStepFrames(1);
+
+  // animation "half-way"
+  data.stepFrame = Math.floor(data.stepFrames.length / 2);
+
+  // reverse animation
+  if (rng(1, data.type) >= 0.5) {
+    data.stepFrameIncrement *= -1;
+  }
+
+  const spriteWidth = 28;
+  const spriteHeight = 200;
+  const frameHeight = 40;
+
   data.domCanvas = {
+    img: {
+      src: utils.image.getImageObject(getSpriteURL()),
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth: spriteWidth,
+        frameHeight,
+        // sprite offset indices
+        frameX: 0,
+        frameY: 3
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: frameHeight / 2,
+        useDataAngle: true
+      }
+    },
     radarItem: {
       width: 1.25,
       height: 2.5,

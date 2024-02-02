@@ -702,36 +702,6 @@ body.is_firefox #radar .radar-item--animated {
   display: none;
 }
 
-.parachute-infantry,
-.parachute-infantry .transform-sprite {
-  /* shorter until parachute is deployed. */
-  height: 11px;
-  width: 14px;
-  /* ensure they display in front of bunkers. */
-  z-index: 2;
-}
-
-.parachute-infantry .transform-sprite {
-  background-image: url(../image/parachute-infantry.png);
-  background-position: 0 -60px;
-  background-size: 14px 100px;
-}
-
-.parachute-infantry.enemy .transform-sprite {
-  background-image: url(../image/parachute-infantry-enemy.png);
-}
-
-.parachute-infantry.parachute-open,
-.parachute-infantry.parachute-open .transform-sprite {
-  height: 19px;
-}
-
-.parachute-infantry.parachute-open .transform-sprite {
-  animation: parachute-swing calc(1s * var(--gs-frac)) ease-in-out infinite
-    alternate;
-  background-position: 0 0;
-}
-
 .sprite .energy-status {
   background-color: #3c3;
   border: 0.25px solid #000;
