@@ -315,10 +315,10 @@ const DomCanvas = () => {
       y - cy,
       width,
       height,
-      Math.floor(-width / 2),
-      Math.floor(-height / 2),
-      Math.floor(width),
-      Math.floor(height)
+      -width / 2,
+      -height / 2,
+      width,
+      height
     );
 
     // reset the origin transform
@@ -452,10 +452,10 @@ const DomCanvas = () => {
         source.y,
         source.width,
         source.height,
-        Math.floor(targetX),
-        Math.floor(targetY),
-        Math.floor(renderedWidth),
-        Math.floor(renderedHeight)
+        targetX,
+        targetY,
+        renderedWidth,
+        renderedHeight
       );
 
       // TODO: only draw this during energy updates / when applicable per prefs.
@@ -572,10 +572,10 @@ const DomCanvas = () => {
         source.frameHeight * (source.frameY || 0),
         source.frameWidth,
         source.frameHeight,
-        Math.floor(dx),
-        Math.floor(dy),
-        Math.floor(dWidth),
-        Math.floor(dHeight)
+        dx,
+        dy,
+        dWidth,
+        dHeight
       );
 
       if (angle) {
