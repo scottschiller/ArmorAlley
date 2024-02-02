@@ -685,7 +685,8 @@ const Bunker = (options = {}) => {
       },
       target: {
         width: spriteWidth / 2,
-        height: spriteHeight / 2
+        height: spriteHeight / 2,
+        yOffset: -0.25
       }
     };
   })();
