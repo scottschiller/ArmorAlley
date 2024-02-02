@@ -2,9 +2,10 @@ import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import { TYPES, getTypes } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
+import { utils } from '../core/utils.js';
 
 const Flame = (options = {}) => {
-  let css, data, dom, collision, exports;
+  let data, dom, collision, exports;
 
   function die(force) {
     // aieee!
@@ -38,9 +39,7 @@ const Flame = (options = {}) => {
   }
 
   function initDOM() {
-    dom.o = sprites.create({
-      className: css.className
-    });
+    dom.o = {};
   }
 
   function initFlame() {
@@ -55,10 +54,6 @@ const Flame = (options = {}) => {
     );
   }
 
-  css = common.inheritCSS({
-    className: 'flame'
-  });
-
   data = common.inheritData(
     {
       type: 'flame',
@@ -66,7 +61,6 @@ const Flame = (options = {}) => {
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
       frameCount: 0,
-      extraTransforms: options.isEnemy ? 'scaleX(-1)' : '',
       expireFrameCount: options.expireFrameCount || 2,
       width: 32,
       height: 18,
@@ -75,6 +69,29 @@ const Flame = (options = {}) => {
     },
     options
   );
+
+  const spriteWidth = 64;
+  const spriteHeight = 36;
+
+  data.domCanvas = {
+    img: {
+      src: utils.image.getImageObject(
+        data.isEnemy ? 'tank_flame-enemy.png' : 'tank_flame.png'
+      ),
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight
+      },
+      target: {
+        x: data.x + (data.isEnemy ? -(spriteWidth / 2) - 3 : 3),
+        y: data.y - 2,
+        width: spriteWidth / 2,
+        height: spriteHeight / 2
+      }
+    }
+  };
 
   // offset left 100% if parent tank is an enemy, so we line up with the tank
   if (options.isEnemy) {

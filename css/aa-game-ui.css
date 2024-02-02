@@ -959,13 +959,6 @@ body:not(.game-over).radar_jammed #radar {
   display: none;
 }
 
-.sprite.flame {
-  background-image: url(../image/tank_flame.png);
-  background-size: contain;
-  height: 18px;
-  width: 32px;
-}
-
 #battlefield .sprite.placeholder {
   /* hackish: placeholder for scan nodes, before moving (if at all) to canvas. */
   width: 0px;
