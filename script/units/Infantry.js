@@ -243,13 +243,12 @@ const Infantry = (options = {}) => {
 
     // infantry are "always" walking, even when "stopped" (in which case they're firing.)
     // engineers fully stop to claim and/or repair bunkers.
-    if (!dom.o?._style && data.domCanvas?.animation) {
+    if (data.domCanvas?.animation) {
       data.domCanvas.animation.animate?.();
-    }
-
-    if (data.stopped && data.role && data.domCanvas?.animation) {
-      // "freeze" engineer animation.
-      data.domCanvas.animation.restart();
+      if (data.stopped && data.role) {
+        // "freeze" engineer animation.
+        data.domCanvas.animation.restart();
+      }
     }
 
     if (!data.stopped) {
