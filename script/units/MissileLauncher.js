@@ -40,7 +40,6 @@ const MissileLauncher = (options = {}) => {
     if (data.dead) return;
 
     if (!dieOptions?.silent) {
-      utils.css.add(dom.o, css.exploding);
 
       if (sounds.genericExplosion) {
         playSound(sounds.genericExplosion, exports);
