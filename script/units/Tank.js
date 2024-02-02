@@ -68,7 +68,7 @@ const Tank = (options = {}) => {
         /infantry|engineer|super-bunker|end-bunker/i
       )
     ) {
-      game.addObject(TYPES.flame, {
+      data.flame = game.addObject(TYPES.flame, {
         parent: exports,
         parentType: data.type,
         isEnemy: data.isEnemy,
@@ -161,15 +161,7 @@ const Tank = (options = {}) => {
     if (!dieOptions.silent) {
       playSound(sounds.genericExplosion, exports);
 
-      utils.css.add(dom.o, css.exploding);
-
-      // there might be an override of sorts.
-      if (css.explodingType) {
-        utils.css.add(dom.o, css.explodingType);
-      }
-
       if (!dom.o._style) {
-        // NOTE: explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
         data.domCanvas.dieExplosion = effects.genericExplosion(exports);
         data.domCanvas.img = null;
       }
@@ -293,18 +285,14 @@ const Tank = (options = {}) => {
   }
 
   function stop() {
-    if (data.stopped) return;
-
-    utils.css.add(dom.o, css.stopped);
     data.stopped = true;
   }
 
   function resume() {
-    if (!data.stopped) return;
-
     if (data.lastNearbyTarget) return;
-
-    utils.css.remove(dom.o, css.stopped);
+    // wait until flame is "out" before resuming
+    if (data.flame && !data.flame.data.dead) return;
+    data.flame = null;
     data.stopped = false;
   }
 
@@ -364,16 +352,7 @@ const Tank = (options = {}) => {
         // the original game had something like this, too.
         if (data.frameCount % FPS === 0) {
           // run "moving" animation for a few frames
-          utils.css.remove(dom.o, css.stopped);
-
           moveTo(data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED_RATIOED, data.y);
-
-          // and then stop again if we haven't resumed for real by that time.
-          common.setFrameTimeout(() => {
-            if (data.stopped) {
-              utils.css.add(dom.o, css.stopped);
-            }
-          }, 150);
         }
 
         // only fire (i.e., GunFire objects) when stopped
@@ -408,11 +387,6 @@ const Tank = (options = {}) => {
       dom.o.appendChild(sprites.makeTransformSprite());
     }
 
-    // for testing
-    if (options.extraClass) {
-      utils.css.add(dom.o, options.extraClass);
-    }
-
     sprites.setTransformXY(
       exports,
       dom.o,
@@ -420,7 +394,7 @@ const Tank = (options = {}) => {
       `${data.y - data.yOffset}px`
     );
 
-    radarItem = game.objects.radar.addItem(exports, css.className);
+    radarItem = game.objects.radar.addItem(exports);
 
     common.initNearby(nearby, exports);
     common.initNearby(friendlyNearby, exports);
@@ -439,9 +413,7 @@ const Tank = (options = {}) => {
   };
 
   css = common.inheritCSS({
-    className: TYPES.tank,
-    explodingType: oneOf(['', 'generic-explosion', 'generic-explosion-2']),
-    stopped: 'stopped'
+    className: TYPES.tank
   });
 
   const width = 58;
@@ -459,6 +431,7 @@ const Tank = (options = {}) => {
       energy: 8,
       energyMax: 8,
       energyLineScale: 0.8,
+      flame: null,
       frameCount: 0,
       repairModulus: FPS,
       repairModulus1X: FPS,
