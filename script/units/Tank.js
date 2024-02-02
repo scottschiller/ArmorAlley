@@ -124,9 +124,9 @@ const Tank = (options = {}) => {
   }
 
   function repair() {
-    if (data.frameCount % data.repairModulus === 0) {
+    if (data.frameCount % (data.repairModulus / 15) === 0) {
       if (data.energy < data.energyMax) {
-        data.energy += 0.6;
+        data.energy += 0.6 / 15;
         updateHealth();
       }
     }
