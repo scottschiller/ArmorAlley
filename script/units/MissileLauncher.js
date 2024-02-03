@@ -40,7 +40,6 @@ const MissileLauncher = (options = {}) => {
     if (data.dead) return;
 
     if (!dieOptions?.silent) {
-
       if (sounds.genericExplosion) {
         playSound(sounds.genericExplosion, exports);
       }
@@ -190,12 +189,7 @@ const MissileLauncher = (options = {}) => {
       net.sendMessage({
         type: 'ADD_OBJECT',
         objectType: missile.data.type,
-        params: {
-          ...params,
-          id: params.id,
-          isBanana: params.isBanana,
-          isRubberChicken: params.isRubberChicken
-        }
+        params
       });
     }
   }
