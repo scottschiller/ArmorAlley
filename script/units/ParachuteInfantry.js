@@ -162,25 +162,13 @@ const ParachuteInfantry = (options = {}) => {
       die({ silent: true });
 
       const params = {
-        id: `${data.id}_to_infantry`,
-        staticID: true,
         x: data.x,
         isEnemy: data.isEnemy,
         // exclude from recycle "refund" / reward case
         unassisted: false
       };
 
-      const obj = game.addObject(TYPES.infantry, params);
-
-      // 02/2024: ensure this happens on the remote, too.
-      if (net.active) {
-        net.sendMessage({
-          type: 'ADD_OBJECT',
-          objectType: obj.data.type,
-          params
-        });
-      }
-
+      game.addObject(TYPES.infantry, params);
     } else if (!data.parachuteOpen) {
       if (data.y > data.maxYPanic / 2 && !data.didScream) {
         if (gamePrefs.bnb) {
