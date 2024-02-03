@@ -224,7 +224,7 @@ const effects = {
           parseInt(rnd(fractionWidth) * plusMinus(), 10),
         y:
           data.y +
-          data.halfHeight +
+          (data.type !== TYPES.helicopter ? data.halfHeight : 0) +
           parseInt(
             rnd(data.halfHeight) *
               (isBunker ? 0.5 : 0.25) *
