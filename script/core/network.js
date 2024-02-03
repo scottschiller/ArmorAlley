@@ -229,8 +229,6 @@ function sendMessage(obj, callback, delay) {
     tSend: performance.now()
   });
 
-  // net.sentPacketCount++;
-
   /**
    * Only certain messages cause "modem lights" to blink,
    * unless lock-step is active and we're waiting for the remote.
@@ -461,7 +459,6 @@ const messageActions = {
 
     if (syncAndFastForward) {
       // this thing has been re-synced to the helicopter position, after delivery.
-      // console.log('fast-forwarding new object');
       // we know precisely how many frames behind (or ahead) the remote is, because we have their frame count here vs. ours.
       // notwithstanding, try to round down to nearest 1-frame delay.
       const frameLagBetweenPeers = Math.max(
@@ -471,14 +468,16 @@ const messageActions = {
           Math.floor(net.halfTrip / FRAMERATE)
         )
       );
-      console.log(
-        'fast-forward object, lag between peers - based on packet.frameCount:',
-        game.objects.gameLoop.data.frameCount - data.frameCount,
-        'vs. halfTrip / FRAMERATE:',
-        net.halfTrip / FRAMERATE,
-        'result:',
-        frameLagBetweenPeers
-      );
+      if (debugNetwork) {
+        console.log(
+          'fast-forward object, lag between peers - based on packet.frameCount:',
+          game.objects.gameLoop.data.frameCount - data.frameCount,
+          'vs. halfTrip / FRAMERATE:',
+          net.halfTrip / FRAMERATE,
+          'result:',
+          frameLagBetweenPeers
+        );
+      }
       for (let i = 0; i < frameLagBetweenPeers; i++) {
         newObject.animate();
       }
@@ -717,7 +716,7 @@ function processRXQueue(
    *
    * The remote frame count is the latest-received / newest message in the queue.
    * We'll use this to "fast-forward" and catch up to the remote, if our window was in the background etc.
-   * TODO: break this number out into per-client-ID objects, if and when multiplayer is implemented.
+   * TODO: break this number out into per-client-ID objects, if and when 3+ human players is implemented.
    */
 
   if (rxQueue.length) {
@@ -746,7 +745,7 @@ function updateUI() {
    * LED lights, shamelessly stolen from Windows 9x/XP's `lights.exe`,
    * which showed modem lights in the taskbar.
    *
-   * Tangengially-related YouTube throwbacks to HyperTerminal and dial-up:
+   * Tangentially-related YouTube throwbacks to HyperTerminal and dial-up:
    * https://www.youtube.com/shorts/ObpkS96EksM
    * https://www.youtube.com/shorts/W4XM5-HFzhY
    */
@@ -858,8 +857,7 @@ const net = {
 
     if (debugNetwork) console.log('net.init()', peer);
 
-    // hackish: here's what will be called when the ping test is complete.
-    net.startGame = () => startGameCallback?.();
+    net.startGame = startGameCallback;
 
     peer.on('open', (id) => {
       // show a link to send to a friend
