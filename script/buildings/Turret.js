@@ -5,7 +5,6 @@ import {
   FPS,
   GAME_SPEED_RATIOED,
   getTypes,
-  oneOf,
   rad2Deg,
   rnd,
   rndInt,
