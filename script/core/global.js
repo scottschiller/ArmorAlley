@@ -110,7 +110,7 @@ GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
 
 function setFrameRate(fps = 30) {
   FPS = fps;
-  GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
+  GAME_SPEED_RATIO = FPS == 60 ? 0.5 : 1;
   GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
   FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 }
