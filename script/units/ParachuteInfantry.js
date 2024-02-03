@@ -122,7 +122,7 @@ const ParachuteInfantry = (options = {}) => {
       }
 
       // (potentially) gone with the wind.
-      if (data.frameCount % data.windModulus === 0) {
+      if (!net.active && data.frameCount % data.windModulus === 0) {
         // choose a random direction?
         if (rng(1, data.type) > 0.5) {
           // -1, 0, 1
