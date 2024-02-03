@@ -457,6 +457,10 @@ const messageActions = {
       fromNetworkEvent: true
     });
 
+    // if MTVIE, then there should be a "summon" method on the radar item object.
+    // TODO: this should probably live within game.addObject().
+    newObject?.radarItem?.summon?.();
+
     if (syncAndFastForward) {
       // this thing has been re-synced to the helicopter position, after delivery.
       // we know precisely how many frames behind (or ahead) the remote is, because we have their frame count here vs. ours.
