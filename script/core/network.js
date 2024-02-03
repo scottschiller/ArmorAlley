@@ -750,14 +750,17 @@ function updateUI() {
    * https://www.youtube.com/shorts/W4XM5-HFzhY
    */
 
+  // tick-style frame delay
+  const delay = FPS / 10;
+
   // tick-style values for packets, so they stay lit for a few frames.
   if (net.outgoingLEDCount) {
-    outgoingOffset += net.outgoingLEDCount * 3;
+    outgoingOffset += net.outgoingLEDCount * delay;
     net.outgoingLEDCount = 0;
   }
 
   if (net.incomingLEDCount) {
-    incomingOffset += net.incomingLEDCount * 3;
+    incomingOffset += net.incomingLEDCount * delay;
     net.incomingLEDCount = 0;
   }
 
@@ -772,8 +775,8 @@ function updateUI() {
 
   // reverse pattern, making lights blink after the first frame.
   if (
-    (outgoingOffset && outgoingOffset % 3 !== 0) ||
-    (incomingOffset && incomingOffset % 3 !== 0)
+    (outgoingOffset && outgoingOffset % delay !== 0) ||
+    (incomingOffset && incomingOffset % delay !== 0)
   ) {
     offset = 3 - offset;
   }
