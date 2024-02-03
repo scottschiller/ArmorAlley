@@ -16,6 +16,7 @@ import { skipSound, playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { net } from '../core/network.js';
 
 const ParachuteInfantry = (options = {}) => {
   let dom, data, radarItem, exports;
@@ -161,13 +162,25 @@ const ParachuteInfantry = (options = {}) => {
       die({ silent: true });
 
       const params = {
+        id: `${data.id}_to_infantry`,
+        staticID: true,
         x: data.x,
         isEnemy: data.isEnemy,
         // exclude from recycle "refund" / reward case
         unassisted: false
       };
 
-      game.addObject(TYPES.infantry, params);
+      const obj = game.addObject(TYPES.infantry, params);
+
+      // 02/2024: ensure this happens on the remote, too.
+      if (net.active) {
+        net.sendMessage({
+          type: 'ADD_OBJECT',
+          objectType: obj.data.type,
+          params
+        });
+      }
+
     } else if (!data.parachuteOpen) {
       if (data.y > data.maxYPanic / 2 && !data.didScream) {
         if (gamePrefs.bnb) {
