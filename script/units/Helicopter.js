@@ -70,7 +70,7 @@ const Helicopter = (options = {}) => {
     nextMissileTarget,
     statsBar;
 
-  const aiRNG = (number, type = null) => rng(number, type, aiSeedOffset);
+  const aiRNG = (number) => rng(number, data.type, aiSeedOffset);
 
   function cloak(cloud) {
     if (!data.cloaked) {
