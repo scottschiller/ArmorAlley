@@ -14,8 +14,7 @@ const ua = navigator.userAgent;
 let FPS = 30;
 let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
 let GAME_SPEED_RATIOED;
-
-const FRAMERATE = 1000 / FPS;
+let FRAMERATE = 1000 / FPS;
 
 /**
  * Skip frame(s) as needed, prevent the game from running too fast.
@@ -110,6 +109,7 @@ GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
 
 function setFrameRate(fps = 30) {
   FPS = fps;
+  FRAMERATE = 1000 / FPS;
   GAME_SPEED_RATIO = FPS == 60 ? 0.5 : 1;
   GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
   FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
