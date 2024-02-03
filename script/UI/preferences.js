@@ -46,7 +46,7 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 // game defaults
 const defaultPrefs = {
   'auto_flip': !!isMobile,
-  'game_fps': 30,
+  'game_fps': isMobile ? 60 : 30,
   'game_speed': 0,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
