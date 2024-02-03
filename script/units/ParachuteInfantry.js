@@ -290,7 +290,7 @@ const ParachuteInfantry = (options = {}) => {
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
       parachuteOpensAtY:
-        options.parachugeOpensAtY ||
+        options.parachuteOpensAtY ||
         options.y +
           rng(370 - options.y, type) +
           (!tutorialMode && rng(1, type) > 0.9 ? 999 : 0),
