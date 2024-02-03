@@ -1444,6 +1444,7 @@ function PrefsManager() {
 
       game_fps: (newGameFPS) => {
         setFrameRate(parseInt(newGameFPS, 10));
+        net.updateFrameTiming();
         // update helicopter gunfire rate, etc.
         common.applyGameSpeedToAll();
       },

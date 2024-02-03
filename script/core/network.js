@@ -12,9 +12,16 @@ import {
 } from './global.js';
 import { playSound, sounds } from './sound.js';
 
-const FRAME_LENGTH = FRAMERATE;
+let FRAME_LENGTH;
+let OLD_FRAME_CUTOFF;
 
-const OLD_FRAME_CUTOFF = FPS;
+function updateFrameTiming() {
+  // these numbers are subject to change, between 30 / 60 FPS.
+  FRAME_LENGTH = FRAMERATE;
+  OLD_FRAME_CUTOFF = FPS;
+}
+
+updateFrameTiming();
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -982,7 +989,9 @@ const net = {
     timePair.t2 = null;
     pingStack = [];
     statsByType = {};
-  }
+  },
+
+  updateFrameTiming
 };
 
 export { net };
