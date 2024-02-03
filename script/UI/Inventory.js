@@ -394,7 +394,8 @@ const Inventory = () => {
         if (sendToRemote) {
           net.sendMessage({
             type: 'ADD_OBJECT',
-            objectType: newObject.data.type,
+            // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
+            objectType: (newObject.data.type === TYPES.infantry && newObject.data.role ? TYPES.engineer : newObject.data.type),
             params: {
               ...objects.order.options,
               id: newObject.data.id
@@ -541,7 +542,8 @@ const Inventory = () => {
           if (net.active) {
             net.sendMessage({
               type: 'ADD_OBJECT',
-              objectType: newObject.data.type,
+              // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
+              objectType: (newObject.data.type === TYPES.infantry && newObject.data.role ? TYPES.engineer : newObject.data.type),
               params: {
                 ...options,
                 id: newObject.data.id
