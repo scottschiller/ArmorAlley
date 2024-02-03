@@ -1189,6 +1189,9 @@ function PrefsManager() {
         // update the local model with the boolean.
         gamePrefs[name] = value;
 
+        // fire local events, as applicable - e.g., game_speed + game_fps.
+        events.onPrefChange[name]?.(value);
+
         // stringify for the form.
         const formValue = boolToInt(value);
 
