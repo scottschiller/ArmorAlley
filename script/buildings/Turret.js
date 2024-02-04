@@ -327,7 +327,9 @@ const Turret = (options = {}) => {
     let result = false;
 
     if (data.energy < data.energyMax) {
-      if (data.frameCount % data.repairModulus === 0 || complete) {
+      if (data.frameCount % (data.repairModulus / 2) === 0 || complete) {
+        sprites.updateEnergy(exports);
+
         createSparks(3);
 
         restore(engineer);
@@ -336,7 +338,7 @@ const Turret = (options = {}) => {
 
         data.energy = complete
           ? data.energyMax
-          : Math.min(data.energyMax, data.energy + 1);
+          : Math.min(data.energyMax, data.energy + 0.5);
 
         if (data.dead && data.energy > data.energyMax * 0.25) {
           // restore to life at 25%
@@ -379,8 +381,6 @@ const Turret = (options = {}) => {
             }
           }
         }
-
-        sprites.updateEnergy(exports);
       }
 
       result = true;
