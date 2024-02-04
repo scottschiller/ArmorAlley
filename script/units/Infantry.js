@@ -104,6 +104,8 @@ const Infantry = (options = {}) => {
     data.stopped = true;
     data.noFire = !!noFire;
 
+    getSpriteURL();
+
     // engineers always stop, e.g., to repair and/or capture turrets.
     // infantry keep animation, but will appear to walk back and forth while firing.
     if (!data.noFire) {
@@ -114,12 +116,11 @@ const Infantry = (options = {}) => {
 
   function resume() {
     if (!data.stopped) return;
-
-    utils.css.remove(dom.o, css.stopped);
-    data.extraTransforms = null;
     setFlip(false);
     data.stopped = false;
     data.noFire = false;
+
+    getSpriteURL();
   }
 
   function setRole(role, force) {
@@ -246,8 +247,10 @@ const Infantry = (options = {}) => {
     if (data.domCanvas?.animation) {
       data.domCanvas.animation.animate?.();
       if (data.stopped && data.role) {
-        // "freeze" engineer animation.
-        data.domCanvas.animation.restart();
+        // "freeze" engineer animation, if not BnB.
+        if (!gamePrefs.bnb) {
+          data.domCanvas.animation.restart();
+        }
       }
     }
 
@@ -331,10 +334,7 @@ const Infantry = (options = {}) => {
     // note: data.domCanvas must exist before this call, because it causes modifications. :X
     // we also need to know the role, before doing canvas stuff here.
     if (!game.objects.editor) {
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(
-        exports,
-        animConfig
-      );
+      getSpriteURL();
     }
 
     initDOM();
@@ -347,9 +347,9 @@ const Infantry = (options = {}) => {
   }
 
   function refreshMeasurements() {
-    // hackish: make butthead stop to the left, and beavis stop to the right of (e.g.) a turret.
+    // hackish: make butthead stops to the left, and beavis stops to the right of (e.g.) a turret.
     if (gamePrefs.bnb && !data.isEnemy) {
-      data.xLookAhead = options.isButthead ? -28 : 8;
+      data.xLookAhead = options.isButthead ? -28 : 15;
     } else {
       data.xLookAhead = options.xLookAhead || defaultLookAhead;
     }
@@ -364,6 +364,9 @@ const Infantry = (options = {}) => {
       height = DEFAULT_HEIGHT;
     } else {
       // if role (engineer), then BnB now
+      if (options.role) {
+        data.domCanvas?.animation?.updateSprite(getSpriteURL());
+      }
       height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
     }
 
@@ -453,7 +456,7 @@ const Infantry = (options = {}) => {
     stop
   };
 
-  function getSpriteURL() {
+  function getInfantryEngURL() {
     const parts = [];
 
     // infantry / engineer
@@ -469,9 +472,97 @@ const Infantry = (options = {}) => {
     return `${parts.join('-')}.png`;
   }
 
+  function getSpriteURL() {
+    // TODO: refactor, split sprite URL + animation logic.
+    if (
+      gamePrefs.bnb &&
+      data.role &&
+      game.players.local.data.isEnemy === data.isEnemy
+    ) {
+      if (data.isBeavis) {
+        data.domCanvas.animation = common.domCanvas.canvasAnimation(
+          exports,
+          data.stopped ? beavisHeadbanging : beavisWalking
+        );
+        return data.stopped ? 'beavis-headbang.png' : 'beavis-walking.png';
+      }
+      if (data.isButthead) {
+        data.domCanvas.animation = common.domCanvas.canvasAnimation(
+          exports,
+          data.stopped ? buttheadHeadbanging : buttheadWalking
+        );
+        return data.stopped ? 'butthead-headbang.png' : 'butthead-walking.png';
+      }
+    } else {
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        animConfig
+      );
+    }
+    return getInfantryEngURL();
+  }
+
+  const beavisWalking = {
+    sprite: {
+      url: 'beavis-walking.png',
+      // engineer sprite is packed slightly tighter.
+      width: 430,
+      height: 92,
+      frameWidth: 43,
+      frameHeight: 92,
+      animationDuration: 0.8,
+      horizontal: true,
+      loop: true
+    }
+  };
+
+  const beavisHeadbanging = {
+    sprite: {
+      url: 'beavis-headbang.png',
+      width: 228,
+      height: 96,
+      frameWidth: 57,
+      frameHeight: 96,
+      animationDuration: 1.5,
+      horizontal: true,
+      loop: true
+    }
+  };
+
+  const buttheadWalking = {
+    sprite: {
+      url: 'butthead-walking.png',
+      width: 430,
+      height: 92,
+      frameWidth: 43,
+      frameHeight: 92,
+      animationDuration: 0.8,
+      horizontal: true,
+      loop: true
+    }
+  };
+
+  const buttheadHeadbanging = {
+    sprite: {
+      url: 'butthead-headbang.png',
+      width: 220,
+      height: 96,
+      frameWidth: 55,
+      frameHeight: 96,
+      animationDuration: 1,
+      horizontal: true,
+      loop: true
+    }
+  };
+
+  data.domCanvas = {
+    radarItem: Infantry.radarItemConfig(),
+    animation: null
+  };
+
   const animConfig = {
     sprite: {
-      url: getSpriteURL(),
+      url: getInfantryEngURL(),
       // engineer sprite is packed slightly tighter.
       width: data.role ? 100 : 110,
       height: 22,
@@ -482,11 +573,6 @@ const Infantry = (options = {}) => {
       loop: true,
       reverseDirection: !data.isEnemy && !data.role
     }
-  };
-
-  data.domCanvas = {
-    radarItem: Infantry.radarItemConfig(),
-    animation: null
   };
 
   defaultItems = getTypes(
