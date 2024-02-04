@@ -441,6 +441,28 @@ const Turret = (options = {}) => {
     return result;
   }
 
+  function updateHealth(/*attacker*/) {
+    // special case: beavis "reacts" to friendly cornholio turret hits.
+    if (
+      gamePrefs.bnb &&
+      !data.lastReactionSound &&
+      game.players.local.data.isEnemy === data.isEnemy
+    ) {
+      data.lastReactionSound = true;
+      playSound(sounds.bnb.beavisScreamShort, exports, {
+        onfinish: (sound) => {
+          data.lastReactionSound = null;
+          // call the "main" onfinish, which will hit onAASoundEnd() and destroy things cleanly.
+          // hackish: ensure that sound has not already been destroyed, prevent infinite loop.
+          // NOTE: I dislike this pattern and wish to do away with it. ;)
+          if (!sound.disabled) {
+            sound.options.onfinish(sound);
+          }
+        }
+      });
+    }
+  }
+
   function setEnemy(isEnemy) {
     if (data.isEnemy === isEnemy) return;
 
@@ -706,7 +728,8 @@ const Turret = (options = {}) => {
 
     objects.cornholio = game.addObject(TYPES.cornholio, {
       x: data.x - data.cornholioOffsetX,
-      y: data.y
+      y: data.y,
+      oParent: exports
     });
 
     if (options.DOA || data.isEnemy) {
@@ -836,7 +859,8 @@ const Turret = (options = {}) => {
     radarItem,
     refreshCollisionItems,
     resize,
-    repair
+    repair,
+    updateHealth
   };
 
   const src = 'turret-sprite.png';
