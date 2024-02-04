@@ -7,7 +7,6 @@ import {
   GAME_SPEED,
   GAME_SPEED_RATIOED,
   getTypes,
-  oneOf,
   rad2Deg,
   rndInt,
   rng,
