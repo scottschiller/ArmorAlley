@@ -133,6 +133,7 @@ function unloadCSS(src) {
     // this will ensure the load -> add to DOM happens next time, ideally from browser cache.
     url = minifyAndVersion(url);
     fetched[url] = undefined;
+    console.log(`Unloading CSS: ${url}`);
     document.head.querySelector(`link[href="${url}"]`)?.remove?.();
   });
 }

@@ -754,8 +754,8 @@ function hideTitleScreen(callback) {
 
       game.data.started = true;
 
-      // drop game menu CSS.
-      aaLoader.unloadCSS('css/aa-game-menu.css');
+      // drop game menu CSS in a minute.
+      window.setTimeout(() => aaLoader.unloadCSS('css/aa-game-menu.css'), 1250);
 
       callback?.();
     }
