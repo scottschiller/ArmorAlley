@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
-import { oneOf, TYPES } from '../core/global.js';
+import { oneOf, rndInt, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
@@ -26,6 +26,12 @@ const Cornholio = (options = {}) => {
 
     data.speaking = speaking;
 
+    if (speaking) {
+      data.domCanvas.img.source.frameX = 1 + rndInt(2);
+    } else {
+      data.domCanvas.img.source.frameX = 0;
+    }
+
     if (data.speaking) {
       data.lastSpeaking = oneOf(css.speaking);
     }
@@ -42,13 +48,17 @@ const Cornholio = (options = {}) => {
   function initDOM() {
     const isEnemy = data.isEnemy ? css.enemy : false;
 
-    dom.o = sprites.create({
-      className: css.className,
-      isEnemy
-    });
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        isEnemy
+      });
 
-    dom.oSubSprite = sprites.makeSubSprite();
-    dom.o.appendChild(dom.oSubSprite);
+      dom.oSubSprite = sprites.makeSubSprite();
+      dom.o.appendChild(dom.oSubSprite);
+    } else {
+      dom.o = {};
+    }
   }
 
   height = 33.6;
@@ -70,12 +80,38 @@ const Cornholio = (options = {}) => {
       lastSpeaking: null,
       lastSound: null,
       x: options.x || 0,
-      y: game.objects.view.data.world.height - height - 2,
-      xOffset: 0,
-      yOffset: 2
+      y: game.objects.view.data.world.height - height - 2
     },
     options
   );
+
+  const spriteWidth = 90;
+  const spriteHeight = 84;
+  const frameWidth = spriteWidth / 3;
+  const frameHeight = 84;
+
+  data.domCanvas = {
+    img: {
+      src: !game.objects.editor
+        ? utils.image.getImageObject('beavis-cornholio.png')
+        : null,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth,
+        frameHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: spriteWidth / 2,
+        height: frameHeight / 2
+      }
+    }
+  };
 
   dom = {
     o: null,
