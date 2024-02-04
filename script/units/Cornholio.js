@@ -10,7 +10,8 @@ const Cornholio = (options = {}) => {
   function setVisible(visible) {
     if (data.visible === visible) return;
 
-    data.visible = visible;
+    // BnB pref change can fire this; make sure turret is also live.
+    data.visible = !data.oParent.data.dead && visible;
 
     utils.css.addOrRemove(dom.o, data.visible, css.visible);
   }
@@ -79,6 +80,7 @@ const Cornholio = (options = {}) => {
       visible: null,
       lastSpeaking: null,
       lastSound: null,
+      oParent: options.oParent,
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2
     },
@@ -126,7 +128,8 @@ const Cornholio = (options = {}) => {
     init: initDOM,
     show: () => setVisible(true),
     setActiveSound,
-    setSpeaking
+    setSpeaking,
+    setVisible
   };
 
   return exports;

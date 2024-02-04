@@ -832,6 +832,7 @@ const Turret = (options = {}) => {
     engineerCanInteract,
     engineerHit,
     init: initTurret,
+    objects,
     radarItem,
     refreshCollisionItems,
     resize,

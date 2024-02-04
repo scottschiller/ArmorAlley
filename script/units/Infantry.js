@@ -331,6 +331,8 @@ const Infantry = (options = {}) => {
     // infantry, or engineer?
     setRole(data.role, true);
 
+    refreshHeight();
+
     // note: data.domCanvas must exist before this call, because it causes modifications. :X
     // we also need to know the role, before doing canvas stuff here.
     if (!game.objects.editor) {
@@ -364,10 +366,12 @@ const Infantry = (options = {}) => {
       height = DEFAULT_HEIGHT;
     } else {
       // if role (engineer), then BnB now
-      if (options.role) {
-        data.domCanvas?.animation?.updateSprite(getSpriteURL());
-      }
       height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
+    }
+
+    if (options.role) {
+      // if an engineer, ensure the proper sprite / animation is applied.
+      getSpriteURL();
     }
 
     data.height = height;
@@ -437,8 +441,6 @@ const Infantry = (options = {}) => {
     },
     options
   );
-
-  refreshHeight();
 
   dom = {
     o: null

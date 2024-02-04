@@ -1363,6 +1363,11 @@ function PrefsManager() {
           [...game.objects.infantry, ...game.objects.engineer].forEach((ie) =>
             ie.refreshHeight()
           );
+
+          // update each turret's "cornholio" object.
+          game.objects.turret.forEach((turret) =>
+            turret.objects?.cornholio?.setVisible?.(isActive)
+          );
         }
 
         // hackish: un-hide specific DOM elements
