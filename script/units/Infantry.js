@@ -35,12 +35,11 @@ const Infantry = (options = {}) => {
     // only infantry: move back and forth a bit, and flip animation, while firing - like original game
     const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
-    moveTo(data.x + offset, data.y);
-
-    // hackish: undo the change `moveTo()` just applied to `data.x` so we don't actually change collision / position logic.
-    data.x += offset * -1;
+    // apply offset to the canvas-based animation
+    data.domCanvas.animation.img.target.xOffset = offset;
 
     data.vxFrameTick += GAME_SPEED_RATIOED;
+
     if (data.vxFrameTick >= 1) {
       data.vxFrameTick = 0;
       data.vXFrameOffset += 3;
@@ -49,8 +48,6 @@ const Infantry = (options = {}) => {
     if (data.vXFrameOffset >= data.vXFrames.length) {
       // reverse direction!
       data.vXFrameOffset = 0;
-      // and visually flip the sprite
-      data.extraTransforms = !data.extraTransforms ? 'scaleX(-1)' : null;
       // toggle
       setFlip(!data.flipX);
     }
@@ -94,8 +91,10 @@ const Infantry = (options = {}) => {
 
   function setFlip(isFlipped) {
     data.flipX = !!isFlipped;
-    // swap flipped / non-flipped sprites
-    data.domCanvas?.animation?.updateSprite(getSpriteURL());
+    // swap flipped / non-flipped sprites, when not BnB + engineers
+    if (!data.role || !gamePrefs.bnb) {
+      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+    }
   }
 
   function stop(noFire) {
@@ -104,7 +103,11 @@ const Infantry = (options = {}) => {
     data.stopped = true;
     data.noFire = !!noFire;
 
-    getSpriteURL();
+    if (data.role) {
+      getSpriteURL();
+    } else {
+      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+    }
 
     // engineers always stop, e.g., to repair and/or capture turrets.
     // infantry keep animation, but will appear to walk back and forth while firing.
@@ -120,7 +123,7 @@ const Infantry = (options = {}) => {
     data.stopped = false;
     data.noFire = false;
 
-    getSpriteURL();
+    data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
   }
 
   function setRole(role, force) {

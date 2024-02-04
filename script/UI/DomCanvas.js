@@ -274,6 +274,7 @@ const DomCanvas = () => {
     return {
       animate,
       sprite,
+      img: newImg,
       stop: () => (stopped = true),
       resume: () => (stopped = false),
       restart: () => {
