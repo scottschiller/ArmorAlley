@@ -774,7 +774,12 @@ const DomCanvas = () => {
     // only draw if on-screen
     if (!exports.data.isOnScreen) return;
 
-    if (exports.data.energy <= 0 || exports.data.dead) return;
+    // allow turrets being "restored" by engineers (dead, but not yet revived) to show energy.
+    if (
+      (exports.data.energy <= 0 || exports.data.dead) &&
+      !exports.data.engineerInteracting
+    )
+      return;
 
     if (exports.data.energyCanvasTimer > 0) {
       exports.data.energyCanvasTimer--;
