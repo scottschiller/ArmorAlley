@@ -182,6 +182,15 @@ function PrefsManager() {
     dom.oGameSpeedSlider.max = GAME_SPEED_MAX;
     dom.oGameSpeedSlider.step = GAME_SPEED_INCREMENT;
 
+    /**
+     * Hackish: if game_fps is 60, apply to ensure the change takes effect.
+     * The game defaults to 30 FPS, with the exception of mobile.
+     * If the user chooses 30 FPS, it will be read and applied from storage.
+     */
+    if (defaultPrefs.game_fps == 60) {
+      events.onPrefChange['game_fps']?.(defaultPrefs.game_fps);
+    }
+
     readAndApplyPrefsFromStorage();
 
     // hackish / special-case: force-update notification toast location IF it's on the left.
@@ -935,7 +944,6 @@ function PrefsManager() {
   function readAndApplyPrefsFromStorage() {
     if (!utils.storage.unavailable) {
       let prefs = readPrefsFromStorage();
-
       applyNewPrefs(prefs);
     }
 
