@@ -120,7 +120,7 @@ const connectionText = `Connecting, “${
   reliable ? 'reliable' : 'fast'
 }” delivery...`;
 
-const showLocalMessage = (html) => console.log(html);
+const showLocalMessage = (html) => console.log(html.replace(/<br \/>/gi, '\n'));
 
 function sendDelayedMessage(obj, callback) {
   /**
@@ -508,7 +508,8 @@ const messageActions = {
     if (!obj[data.method]) {
       console.warn(
         `GAME_EVENT: WTF no method ${data.method} on data.id ${data.id}?`,
-        data.method
+        data.method,
+        obj
       );
       return;
     }
@@ -588,7 +589,7 @@ const messageActions = {
 
     let halfTrip = avg(pingStack) / 2;
 
-    console.log(`half-roundtrip, time to reach remote: ${halfTrip}ms`);
+    console.log(`Half-roundtrip, time to reach remote: ${halfTrip}ms`);
 
     prefsManager.onChat(`Ping: ${avg(pingStack).toFixed(1)}ms`);
 
