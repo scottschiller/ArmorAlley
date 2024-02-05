@@ -57,7 +57,7 @@ const staticIDTypes = {
 
 // noisy, and hopefully, deterministic events that can be ignored.
 const excludeFromNetworkTypes = {
-  // [TYPES.gunfire]: true,
+  [TYPES.gunfire]: true,
   [TYPES.shrapnel]: true,
   [TYPES.superBunker]: true
 };
