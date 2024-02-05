@@ -906,7 +906,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   background-image: url(../image/helicopter-sprite-horizontal-facing-left.png);
 }
 
-body:not(.game-over).radar_jammed #radar {
+body:not(.game-over).radar_jammed #radar-canvas {
   /* TODO: review, $$$? */
   /* exception: allow the radar to show, even if jammed, when the game is over. */
   /* opacity should be fast, performance-wise, and smooth. */
