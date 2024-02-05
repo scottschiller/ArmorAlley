@@ -145,19 +145,45 @@ const game = (() => {
 
     if (obj) return obj;
 
-    const by = game.boneyard[id];
+    let by = game.boneyard[id];
 
-    let byDetails = '';
-
-    if (by) {
-      byDetails = ` found in boneyard ☠️ (died ${parseInt(
+    if (net.debugNetwork && by) {
+      const byDetails = ` found in boneyard ☠️ (died ${parseInt(
         performance.now() - by.ts,
         10
       )} msec ago${by.attacker ? ', attacker: ' + by.attacker : ''})`;
+      console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
     }
 
-    if (net.debugNetwork)
-      console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
+    /**
+     * If prefixed, try swapping guest / host prefixes.
+     * This was initially done to avoid collisions, but clients' object
+     * IDs should match 1:1 and this can probably be refactored out.
+     */
+    if (id.startsWith('guest_')) {
+      id = id.replace(/guest_/i, 'host_');
+    } else if (id.startsWith('host_')) {
+      id = id.replace(/host_/i, 'guest_');
+    }
+
+    if (objectsById[id]) return objectsById[id];
+
+    by = game.boneyard[id];
+
+    if (net.debugNetwork) {
+      if (by) {
+        const byDetails = ` found in boneyard ☠️ (died ${parseInt(
+          performance.now() - by.ts,
+          10
+        )} msec ago${by.attacker ? ', attacker: ' + by.attacker : ''})`;
+        console.info(`${consoleInfoArgs?.[0]} | ${id}${byDetails}`);
+      } else {
+        console.warn(
+          `${consoleInfoArgs?.[0]} | ${id}: Could not find regular or guest/host obj`,
+          id
+        );
+      }
+    }
   }
 
   function createObjects() {
