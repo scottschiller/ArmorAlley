@@ -123,7 +123,11 @@ const Infantry = (options = {}) => {
     data.stopped = false;
     data.noFire = false;
 
-    data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+    if (data.role) {
+      getSpriteURL();
+    } else {
+      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+    }
   }
 
   function setRole(role, force) {
