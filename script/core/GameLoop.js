@@ -73,11 +73,7 @@ const GameLoop = () => {
             if (game.objects.editor) {
               sprites.moveWithScrollOffset(gameObjects[item][i]);
               // don't animate certain things.
-              if (
-                gameObjects[item][i]?.data?.type.match(
-                  /missile-launcher|tank|van|infantry|engineer|balloon|cloud/i
-                )
-              )
+              if (gameObjects[item][i]?.data?.type.match(/balloon|cloud/i))
                 continue;
             }
 
