@@ -652,16 +652,7 @@ function recycleTest(obj) {
 
   oData.isRecycling = true;
 
-  // animate down, back into the depths from whence it came
-  utils.css.remove(obj.dom.o, 'ordering');
-  utils.css.add(obj.dom.o, 'recycling');
-
   obj?.radarItem?.recycle?.();
-
-  // ensure 'building' is set, as well. "pre-existing" game units will not have this.
-  common.setFrameTimeout(() => {
-    utils.css.add(obj.dom.o, 'building');
-  }, 16);
 
   common.setFrameTimeout(() => {
     // if object was killed at the last second, no refund! ;)
