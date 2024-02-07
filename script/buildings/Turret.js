@@ -279,6 +279,7 @@ const Turret = (options = {}) => {
       playSound(sounds.genericExplosion, exports);
     }
 
+    // TODO: review what's needed for scan node
     utils.css.add(dom.o, css.destroyed);
     utils.css.add(radarItem.dom.o, css.destroyed);
     utils.css.add(radarItem.dom.oScanNode, css.destroyed);

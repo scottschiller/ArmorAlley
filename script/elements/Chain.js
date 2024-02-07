@@ -53,6 +53,7 @@ const Chain = (options = {}) => {
     const isJerkingNow =
       intent && data.y + data.height < data.adjustedWorldHeight;
 
+    // TODO: fix. ;)
     utils.css.addOrRemove(dom.o, isJerkingNow, css.jerking);
 
     return isJerkingNow;

@@ -157,6 +157,8 @@ const SuperBunker = (options = {}) => {
   }
 
   function fire() {
+    // TODO: BUG FIX - figure out why super bunker doesn't fire at local helicopter on right side. :X
+
     let fireOptions;
 
     if (
