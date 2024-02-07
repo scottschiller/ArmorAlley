@@ -89,15 +89,6 @@ const Bunker = (options = {}) => {
     objects?.chain?.setEnemy(isEnemy);
     objects?.balloon?.setEnemy(isEnemy);
 
-    if (game.objects.editor) {
-      // note: "enemy" is relative to the player, here. e.g., right-side will get a friendly CSS class (green) if the bunker is now an enemy unit.
-      utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
-
-      // arrow state
-      utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
-      utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
-    }
-
     playSound(sounds.doorClose, exports);
 
     // check if enemy convoy production should stop or start
@@ -196,24 +187,8 @@ const Bunker = (options = {}) => {
     }
   }
 
-  function removeNukeSprite() {
-    if (!dom?.oSubSpriteNuke) return;
-
-    dom.oSubSpriteNuke.remove();
-    dom.oSubSpriteNuke = null;
-  }
-
   function die(dieOptions = {}) {
     if (data.dead) return;
-
-    if (game.objects.editor) {
-      // if off-screen, just avoid the nuke entirely.
-      if (data.isOnScreen) {
-        dom.oSubSpriteNuke = dom.o.appendChild(sprites.makeSubSprite(css.nuke));
-      }
-
-      utils.css.add(dom.o, css.exploding);
-    }
 
     effects.damageExplosion(exports);
 
@@ -308,91 +283,43 @@ const Bunker = (options = {}) => {
     })();
 
     // add the nuke overlay
-    if (!game.objects.editor) {
-      data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
-        exports,
-        nukeConfig
-      );
-    }
+    data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
+      exports,
+      nukeConfig
+    );
 
     data.shadowBlur = 8;
     data.shadowColor = '#fff';
 
-    let rubble;
-    let rubbleContainer;
-
-    if (game.objects.editor) {
-      // create and append rubbleContainer -> rubble nodes
-      rubbleContainer = sprites.makeSubSprite(css.rubbleContainer);
-      rubble = sprites.makeSubSprite(css.rubble);
-
-      rubbleContainer.appendChild(rubble);
-      dom.o.appendChild(rubbleContainer);
-
-      // no longer needed. ;)
-      dom.oArrow.remove();
-      dom.oArrow = null;
-    } else {
-      // burning sprite
-      applySpriteURL();
-    }
+    // burning sprite
+    applySpriteURL();
 
     common.setFrameTimeout(() => {
-      if (game.objects.editor) {
-        // slight delay before swapping in burning animation
-        utils.css.swap(dom.o, css.exploding, css.burning);
-      }
-
       // start "burning out"...
       common.setFrameTimeout(() => {
-        if (game.objects.editor) {
-          // match transition to timer...
-          rubble.style.transitionDuration =
-            (burninatingTime * burnOutFade) / 1000 + 's';
-          utils.css.add(dom.o, css.burningOut);
-        }
-
         // and eventually exinguish.
         common.setFrameTimeout(() => {
           data.burninating = false;
 
-          if (game.objects.editor) {
-            utils.css.swap(dom.o, css.burning, css.dead);
-            utils.css.swap(dom.o, css.burningOut, css.dead);
+          // stop animations
+          data.domCanvas.animation = null;
+          data.domCanvas.nukeAnimation = null;
+          data.shadowBlur = 0;
 
-            // drop nodes
-            rubbleContainer.remove();
-            rubble = null;
-            rubbleContainer = null;
+          // apply dead sprite
+          applySpriteURL();
 
-            destroy();
-          } else {
-            // stop animations
-            data.domCanvas.animation = null;
-            data.domCanvas.nukeAnimation = null;
-            data.shadowBlur = 0;
+          // re-apply static sprite, dropping animation
+          // hackish: apply positioning
+          deadConfig.target.x = data.x;
+          deadConfig.target.y = data.y;
 
-            // apply dead sprite
-            applySpriteURL();
-
-            // re-apply static sprite, dropping animation
-            // hackish: apply positioning
-            deadConfig.target.x = data.x;
-            deadConfig.target.y = data.y;
-
-            // TODO: sort out the offset issue
-            deadConfig.target.yOffset = -5;
-            data.domCanvas.img = deadConfig;
-          }
+          // TODO: sort out the offset issue
+          deadConfig.target.yOffset = -5;
+          data.domCanvas.img = deadConfig;
         }, burninatingTime * burnOutFade);
       }, burninatingTime);
     }, 1200);
-
-    if (game.objects.editor) {
-      // prevent this animation from re-appearing once played,
-      // e.g., if bunker goes off / on-screen.
-      common.setFrameTimeout(removeNukeSprite, 2000);
-    }
 
     data.energy = 0;
 
@@ -530,32 +457,15 @@ const Bunker = (options = {}) => {
 
   function initDOM() {
     if (game.objects.editor) {
-      const extraCSS = [data.isEnemy ? css.facingLeft : css.facingRight];
-
-      if (data.isEnemy) extraCSS.push(css.enemy);
-
       dom.o = sprites.create({
         className: css.className,
-        id: data.id,
-        isEnemy: extraCSS.join(' ')
+        id: data.id
       });
-
-      dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
-
-      data.oClassName = dom.o.className;
-
-      // note hackish Y-offset, sprite position vs. collision detection
-      sprites.setTransformXY(
-        exports,
-        exports.dom.o,
-        `${data.x}px`,
-        `${data.y - 3}px`
-      );
     } else {
       dom.o = {};
-      data.domCanvas.img = [spriteConfig, arrowConfig];
-      sprites.moveTo(exports, data.x, data.y);
     }
+    data.domCanvas.img = [spriteConfig, arrowConfig];
+    sprites.moveTo(exports, data.x, data.y);
   }
 
   function initBunker() {
@@ -640,9 +550,7 @@ const Bunker = (options = {}) => {
   );
 
   dom = {
-    o: null,
-    oArrow: null,
-    oSubSpriteNuke: null
+    o: null
   };
 
   objects = {
