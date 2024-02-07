@@ -143,9 +143,12 @@ const Turret = (options = {}) => {
           data.fireCount % data.shellCasingInterval === 0
         ) {
           // shell casing?
-          common.setFrameTimeout(() => {
-            playSound(sounds.bulletShellCasing, exports);
-          }, 250 + rnd(250));
+          common.setFrameTimeout(
+            () => {
+              playSound(sounds.bulletShellCasing, exports);
+            },
+            250 + rnd(250)
+          );
         }
       }
     }
@@ -716,8 +719,8 @@ const Turret = (options = {}) => {
       game.objects.editor
         ? dom.o.className
         : data.isEnemy
-        ? 'scan-node enemy'
-        : 'scan-node'
+          ? 'scan-node enemy'
+          : 'scan-node'
     );
 
     // turrets also get a scan node.
@@ -747,10 +750,10 @@ const Turret = (options = {}) => {
   const fireModulus = tutorialMode
     ? 12
     : gameType === 'extreme'
-    ? 2
-    : gameType === 'hard'
-    ? 6
-    : 12; // a little easier in tutorial mode vs. hard vs. easy modes
+      ? 2
+      : gameType === 'hard'
+        ? 6
+        : 12; // a little easier in tutorial mode vs. hard vs. easy modes
 
   const claimModulus = 16;
 
@@ -930,8 +933,8 @@ Turret.radarItemConfig = (exports) => ({
         ? 'rgba(204, 204, 204, 0.25)'
         : 'rgba(23, 160, 7, 0.25)'
       : exports?.data?.isEnemy
-      ? '#ccc'
-      : '#17a007';
+        ? '#ccc'
+        : '#17a007';
 
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
