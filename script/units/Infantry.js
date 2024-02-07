@@ -199,8 +199,8 @@ const Infantry = (options = {}) => {
         const str = context
           ? `${context} killed %s ${emoji}`
           : isOpponent
-          ? `You killed %s ${emoji}`
-          : `You lost %s ${emoji}`;
+            ? `You killed %s ${emoji}`
+            : `You lost %s ${emoji}`;
         const maybeEnemy = isOpponent ? 'an enemy ' : 'an ';
         if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
           game.objects.notifications.add(
