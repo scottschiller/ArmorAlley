@@ -91,41 +91,6 @@ const SuperBunker = (options = {}) => {
     // now friendly toward the local player?
     const isFriendly = data.isEnemy === game.players.local.data.isEnemy;
 
-    utils.css.addOrRemove(dom.o, data.hostile, css.hostile);
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      gamePrefs.super_bunker_arrows && data.hostile,
-      css.hostile
-    );
-
-    // arrow < >, friendly / enemy
-    utils.css.addOrRemove(dom.o, data.isEnemy && !data.hostile, css.facingLeft);
-    utils.css.addOrRemove(
-      dom.o,
-      !data.isEnemy && !data.hostile,
-      css.facingRight
-    );
-
-    // radar, friendly / enemy
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      isFriendly && !data.hostile,
-      css.friendly
-    );
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      !isFriendly && !data.hostile,
-      css.enemy
-    );
-
-    // arrow + radar, hostile ^
-    utils.css.addOrRemove(dom.o, data.hostile, css.hostile);
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      gamePrefs.super_bunker_arrows && data.hostile,
-      css.hostile
-    );
-
     updateArrowState();
 
     zones.changeOwnership(exports);
@@ -306,14 +271,6 @@ const SuperBunker = (options = {}) => {
   }
 
   function onArrowHiddenChange(isVisible) {
-    utils.css.addOrRemove(
-      radarItem?.dom?.o,
-      data.hostile && isVisible,
-      css.hostile
-    );
-    if (dom?.oArrow) {
-      dom.oArrow.style.visibility = isVisible ? 'visible' : 'hidden';
-    }
     // update domCanvas config
     data.domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
   }
@@ -322,18 +279,15 @@ const SuperBunker = (options = {}) => {
     if (game.objects.editor) {
       dom.o = sprites.create({
         className: css.className,
-        id: data.id,
-        isEnemy: data.isEnemy
-          ? `${css.enemy} ${css.facingLeft}`
-          : css.facingRight
+        id: data.id
       });
-      dom.oArrow = dom.o.appendChild(sprites.makeSubSprite(css.arrow));
     } else {
       dom.o = {};
-      data.domCanvas.img = gamePrefs.super_bunker_arrows
-        ? [spriteConfig, arrowConfig]
-        : spriteConfig;
     }
+
+    data.domCanvas.img = gamePrefs.super_bunker_arrows
+      ? [spriteConfig, arrowConfig]
+      : spriteConfig;
 
     onArrowHiddenChange(gamePrefs.super_bunker_arrows);
 
@@ -426,8 +380,7 @@ const SuperBunker = (options = {}) => {
   };
 
   dom = {
-    o: null,
-    oArrow: null
+    o: null
   };
 
   exports = {
