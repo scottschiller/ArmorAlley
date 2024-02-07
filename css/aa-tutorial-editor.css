@@ -55,7 +55,10 @@ body.edit-mode .sprite .zone-flag {
   background: #f3f3f3;
   color: #000;
   display: inline-block;
-  font-family: FA Sysfont C, courier, sans-serif;
+  font-family:
+    FA Sysfont C,
+    courier,
+    sans-serif;
   font-size: 6.5px;
   font-weight: 400;
   left: 50%;
@@ -322,7 +325,9 @@ body.edit-mode #battlefield {
   margin-bottom: -1px;
   pointer-events: none;
   position: absolute;
-  transition: height 0.25s ease-in-out, margin 0.25s ease-in-out;
+  transition:
+    height 0.25s ease-in-out,
+    margin 0.25s ease-in-out;
   width: 100%;
 }
 
