@@ -356,6 +356,10 @@ body.edit-mode #battlefield {
   min-width: 11em;
 }
 
+ul.inline-list li:not(:first-of-type) {
+  margin-left: 0;
+}
+
 #editor-window .static-sprite {
   background-position: 100% 50%;
   background-repeat: no-repeat;
