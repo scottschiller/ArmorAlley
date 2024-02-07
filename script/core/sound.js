@@ -320,7 +320,7 @@ function playSound(soundReference, target, soundOptions) {
   if (!soundReference) {
     // this is bad.
     console.warn('playSound: WTF no soundReference??', soundReference);
-    if (window.location.hostname.indexOf('schillmania') === -1) debugger;
+    if (window.location.hostname.indexOf('armor-alley.net') === -1) debugger;
     return;
   }
 
