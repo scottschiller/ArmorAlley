@@ -657,6 +657,7 @@ const Editor = () => {
       gameObj.capture(isEnemy);
     } else {
       gameObj.data.isEnemy = isEnemy;
+      gameObj.refreshSprite?.();
       zones.changeOwnership(gameObj, isEnemy);
     }
 
