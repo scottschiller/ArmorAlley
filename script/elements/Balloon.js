@@ -60,26 +60,6 @@ const Balloon = (options = {}) => {
       exports,
       animConfig
     );
-
-    utils.css.addOrRemove(dom.o, isEnemy, css.facingLeft);
-    utils.css.addOrRemove(dom.o, !isEnemy, css.facingRight);
-
-    // apply CSS animation effect, and stop/remove in one second.
-    // this prevents the animation from replaying when switching
-    // between on / off-screen.
-    utils.css.add(dom.o, css.animating);
-
-    data.frameTimeout = common.setFrameTimeout(() => {
-      if (!dom.o) return;
-      utils.css.remove(dom.o, css.animating);
-      data.frameTimeout = null;
-    }, 1200);
-
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      !data.isEnemy && !data.hostile,
-      css.friendly
-    );
   }
 
   function attachChain(chain = null) {
@@ -122,8 +102,6 @@ const Balloon = (options = {}) => {
     if (data.dead) return;
 
     // pop!
-    utils.css.add(dom.o, css.exploding, css.explodingType);
-
     if (sounds.balloonExplosion) {
       playSound(sounds.balloonExplosion, exports);
       if (gamePrefs.bnb && data.isOnScreen) {
@@ -131,10 +109,8 @@ const Balloon = (options = {}) => {
       }
     }
 
-    if (!dom.o._style) {
-      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-      data.domCanvas.img = null;
-    }
+    data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+    data.domCanvas.img = null;
 
     effects.inertGunfireExplosion({ exports });
 
@@ -159,15 +135,9 @@ const Balloon = (options = {}) => {
 
     data.deadTimer = common.setFrameTimeout(() => {
       data.deadTimer = null;
-
       data.domCanvas.dieExplosion = null;
-
       // sanity check: don't hide if already respawned
       if (!data.dead) return;
-
-      // hide the balloon
-      utils.css.swap(dom.o, css.exploding, css.dead);
-      utils.css.add(dom.o, css.explodingType);
     }, 1000);
 
     zones.leaveAllZones(exports);
@@ -175,6 +145,11 @@ const Balloon = (options = {}) => {
     data.dead = true;
 
     common.onDie(exports, dieOptions);
+
+    // editor case: when destroyed, gone for good.
+    if (game.objects.editor) {
+      sprites.removeNodes(dom);
+    }
   }
 
   function isOnScreenChange() {
@@ -220,16 +195,6 @@ const Balloon = (options = {}) => {
        * Update sprite position, moving up/down from center.
        * Each balloon frame is 16px tall, when scaled down.
        */
-      if (game.objects.editor) {
-        dom.o.style.backgroundPosition = `0px ${
-          -data.spriteMiddle - 16 * facing
-        }px`;
-
-        // offset X position with half of the difference vs. original width.
-        // TODO: move this to a transform / sub-sprite.
-        dom.o.style.marginLeft = `${-(width - data.width) / 2}px`;
-      }
-
       if (data.domCanvas.img) {
         data.domCanvas.img.source.frameY = data.frameYMiddle + facing;
       }
@@ -355,8 +320,6 @@ const Balloon = (options = {}) => {
     // update UI, right away?
     animate();
 
-    utils.css.remove(dom.o, css.exploding, css.explodingType, css.dead);
-
     // restore original sprite
     data.domCanvas.img = getCanvasBalloon();
 
@@ -372,19 +335,10 @@ const Balloon = (options = {}) => {
   };
 
   function initDOM() {
-    let extraCSS;
-
-    if (data.isEnemy) {
-      extraCSS = css.facingLeft;
-    } else {
-      extraCSS = css.facingRight;
-    }
-
     if (game.objects.editor) {
       dom.o = sprites.create({
         className: css.className,
-        id: data.id,
-        isEnemy: extraCSS
+        id: data.id
       });
     } else {
       dom.o = {};
@@ -419,12 +373,6 @@ const Balloon = (options = {}) => {
       dom.o.className,
       canRespawn
     );
-
-    utils.css.addOrRemove(
-      radarItem.dom.o,
-      !data.isEnemy && !data.hostile,
-      css.friendly
-    );
   }
 
   objects = {
@@ -434,11 +382,7 @@ const Balloon = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.balloon,
-    explodingType: randomExplosionType(),
-    friendly: 'friendly',
-    enemy: 'enemy',
-    facingLeft: 'facing-left',
-    facingRight: 'facing-right'
+    explodingType: randomExplosionType()
   });
 
   const width = 38;
@@ -530,7 +474,7 @@ const Balloon = (options = {}) => {
     const frameHeight = 32; // 9 frames
 
     return {
-      src: !game.objects.editor ? utils.image.getImageObject(spriteURL) : null,
+      src: utils.image.getImageObject(spriteURL),
       source: {
         x: 0,
         y: 0,
