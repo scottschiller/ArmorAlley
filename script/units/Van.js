@@ -128,13 +128,17 @@ const Van = (options = {}) => {
     // just in case: prevent any multiple "game over" actions via animation
     if (game.data.battleOver) return;
 
-    if (data.isEnemy && data.x <= data.xGameOver) {
+    if (data.isEnemy && data.x <= data.xGameOver && !game.objects.editor) {
       stop();
 
       game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
 
       gameOver(onOurSide());
-    } else if (!data.isEnemy && data.x >= data.xGameOver) {
+    } else if (
+      !data.isEnemy &&
+      data.x >= data.xGameOver &&
+      !game.objects.editor
+    ) {
       stop();
 
       game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
