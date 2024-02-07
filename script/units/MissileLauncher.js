@@ -359,22 +359,25 @@ const MissileLauncher = (options = {}) => {
     die,
     init: initMissileLauncher,
     radarItem,
+    refreshSprite,
     resize
   };
-
-  const src = data.isEnemy
-    ? 'missile-launcher-enemy.png'
-    : 'missile-launcher.png';
 
   const spriteWidth = 108;
   const spriteHeight = 144;
   const frameWidth = 108;
   const frameHeight = 36;
 
+  function refreshSprite() {
+    data.domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
+    );
+  }
+
   data.domCanvas = {
     radarItem: MissileLauncher.radarItemConfig(),
     img: {
-      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      src: null,
       source: {
         x: 0,
         y: 0,
@@ -392,6 +395,8 @@ const MissileLauncher = (options = {}) => {
       }
     }
   };
+
+  refreshSprite();
 
   friendlyNearby = {
     options: {
