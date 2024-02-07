@@ -259,7 +259,7 @@ function addItem(className, x, options = {}) {
       visible: true,
       domCanvas: {
         img: {
-          src: !useDomNode ? utils.image.getImageObject(props.src) : null,
+          src: utils.image.getImageObject(props.src),
           source: {
             x: 0,
             y: 0,
@@ -278,10 +278,6 @@ function addItem(className, x, options = {}) {
     },
     options
   );
-
-  if (useDomNode) {
-    delete data.domCanvas;
-  }
 
   // basic structure for a terrain item
   exports = {
