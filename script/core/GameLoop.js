@@ -72,14 +72,6 @@ const GameLoop = () => {
 
             if (game.objects.editor) {
               sprites.moveWithScrollOffset(gameObjects[item][i]);
-              // special case: infantry + engineers need constant updates, otherwise they lose positioning during scrolling.
-              // check for data.type, because this could include e.g., domFetti objects and such.
-              if (
-                gameObjects[item][i]?.data?.type === TYPES.infantry &&
-                !gameObjects[item][i].data.movedOnce
-              )
-                gameObjects[item][i].moveTo();
-
               // don't animate certain things.
               if (
                 gameObjects[item][i]?.data?.type.match(
