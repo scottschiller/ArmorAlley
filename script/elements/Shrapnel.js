@@ -20,8 +20,7 @@ import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 
 const Shrapnel = (options = {}) => {
-  let css,
-    dom,
+  let dom,
     data,
     collision,
     radarItem,
@@ -285,10 +284,7 @@ const Shrapnel = (options = {}) => {
     // apply the type of shrapnel
     data.domCanvas.img.source.frameX = data.spriteType;
 
-    radarItem = game.objects.radar.addItem(
-      exports,
-      `${css.className} sprite${data.isEnemy ? ' ' + css.enemy : ''}`
-    );
+    radarItem = game.objects.radar.addItem(exports);
 
     // special case for end game (base) explosion: don't create identical "clouds" of smoke *at* base.
     if (data.isOnScreen && !options.noInitialSmoke) {
@@ -304,10 +300,6 @@ const Shrapnel = (options = {}) => {
 
   // default
   scale = options.scale || 0.8 + rng(0.15, type);
-
-  css = common.inheritCSS({
-    className: 'shrapnel'
-  });
 
   data = common.inheritData(
     {

@@ -52,7 +52,7 @@ const SmartMissile = (options = {}) => {
    *  -- Homer Simpson
    */
 
-  let css, dom, data, radarItem, objects, collision, launchSound, exports;
+  let dom, data, radarItem, objects, collision, launchSound, exports;
 
   function moveTo(x, y, angle) {
     // prevent from "crashing" into terrain, only if not expiring and target is still alive
@@ -728,7 +728,7 @@ const SmartMissile = (options = {}) => {
 
     const playbackRate = getPlaybackRate();
 
-    radarItem = game.objects.radar.addItem(exports, css.className);
+    radarItem = game.objects.radar.addItem(exports);
 
     if (data.isBanana && sounds.banana.launch) {
       // hackish: need to know on-screen right now.
@@ -802,10 +802,6 @@ const SmartMissile = (options = {}) => {
   function getPlaybackRate() {
     return data.playbackRate * (gamePrefs.game_speed_pitch ? GAME_SPEED : 1);
   }
-
-  css = common.inheritCSS({
-    className: 'smart-missile'
-  });
 
   // if game preferences allow AND no default specified, then pick at random.
   if (

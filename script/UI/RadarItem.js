@@ -136,6 +136,7 @@ function RadarItem(options) {
 
   function initRadarItem() {
     // string -> array as params
+    if (!options.className) return;
     const classNames = options.className.split(' ');
     utils.css.add(dom.o, css.radarItem, ...classNames);
   }

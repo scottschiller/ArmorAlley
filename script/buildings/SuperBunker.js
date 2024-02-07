@@ -88,9 +88,6 @@ const SuperBunker = (options = {}) => {
     data.isEnemy = status.isEnemy;
     data.hostile = status.hostile;
 
-    // now friendly toward the local player?
-    const isFriendly = data.isEnemy === game.players.local.data.isEnemy;
-
     updateArrowState();
 
     zones.changeOwnership(exports);
@@ -302,7 +299,7 @@ const SuperBunker = (options = {}) => {
 
     updateFireModulus();
 
-    radarItem = game.objects.radar.addItem(exports, css.className);
+    radarItem = game.objects.radar.addItem(exports);
   }
 
   function destroy() {

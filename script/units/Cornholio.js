@@ -12,8 +12,6 @@ const Cornholio = (options = {}) => {
 
     // BnB pref change can fire this; make sure turret is also live.
     data.visible = !data.oParent.data.dead && visible;
-
-    utils.css.addOrRemove(dom.o, data.visible, css.visible);
   }
 
   function setActiveSound(sound, turretFiring = null) {
@@ -36,8 +34,6 @@ const Cornholio = (options = {}) => {
     if (data.speaking) {
       data.lastSpeaking = oneOf(css.speaking);
     }
-
-    utils.css.addOrRemove(dom.o, speaking, data.lastSpeaking);
   }
 
   function animate() {
@@ -61,7 +57,6 @@ const Cornholio = (options = {}) => {
   css = common.inheritCSS({
     className: TYPES.cornholio,
     cornholio: 'cornholio',
-    visible: 'visible',
     speaking: ['threatening', 'bow-down']
   });
 
@@ -110,8 +105,7 @@ const Cornholio = (options = {}) => {
   };
 
   dom = {
-    o: null,
-    oSubSprite: null
+    o: null
   };
 
   exports = {

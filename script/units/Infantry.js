@@ -1,5 +1,4 @@
 import { game } from '../core/Game.js';
-import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
@@ -135,10 +134,6 @@ const Infantry = (options = {}) => {
     if (data.role !== role || force) {
       // role
       data.role = role;
-      css.className = css[data.roles[data.role]];
-      if (dom.o) {
-        utils.css.add(dom.o, css.className);
-      }
     }
   }
 

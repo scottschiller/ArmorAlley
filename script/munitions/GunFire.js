@@ -16,7 +16,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
-  let css, data, dom, collision, exports, frameTimeout, radarItem;
+  let data, dom, collision, exports, frameTimeout, radarItem;
 
   function spark() {
     data.domCanvas.img = effects.spark();
@@ -262,13 +262,9 @@ const GunFire = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     if (!data.isInert) {
-      radarItem = game.objects.radar.addItem(exports, css.className);
+      radarItem = game.objects.radar.addItem(exports);
     }
   }
-
-  css = common.inheritCSS({
-    className: 'gunfire'
-  });
 
   data = common.inheritData(
     {

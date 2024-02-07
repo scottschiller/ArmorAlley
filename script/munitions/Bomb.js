@@ -11,7 +11,6 @@ import {
   worldHeight,
   TYPES,
   getTypes,
-  oneOf,
   GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
@@ -20,7 +19,7 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const Bomb = (options = {}) => {
-  let css, data, dom, collision, radarItem, exports;
+  let data, dom, collision, radarItem, exports;
 
   function moveTo(x, y) {
     let deltaX, deltaY, rad;
@@ -412,15 +411,8 @@ const Bomb = (options = {}) => {
     if (data.hidden) return;
 
     // TODO: don't create radar items for bombs from enemy helicopter when cloaked
-    radarItem = game.objects.radar.addItem(exports, css.className);
+    radarItem = game.objects.radar.addItem(exports);
   }
-
-  css = common.inheritCSS({
-    className: 'bomb',
-    explosionLarge: 'explosion-large',
-    explosionClassic: oneOf(['explosion-classic', 'explosion-classic-2']),
-    spark: oneOf(['spark', 'spark-2'])
-  });
 
   data = common.inheritData(
     {

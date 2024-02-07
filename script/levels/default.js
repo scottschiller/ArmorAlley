@@ -293,13 +293,10 @@ function previewLevel(levelName, excludeVehicles) {
         };
       }
 
-      game.objects.radar.addItem(
-        balloonExports,
-        `sprite balloon${item[1] === 'left' ? ' friendly' : ' enemy'}`
-      );
+      game.objects.radar.addItem(balloonExports);
     }
 
-    const radarItem = game.objects.radar.addItem(exports, css.join(' '));
+    const radarItem = game.objects.radar.addItem(exports);
 
     if (scanNodeTypes[item[0]]) {
       // special case: certain radar items also get a "scan range" node.

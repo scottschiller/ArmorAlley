@@ -161,10 +161,8 @@ const Tank = (options = {}) => {
     if (!dieOptions.silent) {
       playSound(sounds.genericExplosion, exports);
 
-      if (!dom.o._style) {
-        data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-        data.domCanvas.img = null;
-      }
+      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+      data.domCanvas.img = null;
 
       effects.damageExplosion(exports);
 

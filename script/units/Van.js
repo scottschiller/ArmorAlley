@@ -38,10 +38,8 @@ const Van = (options = {}) => {
 
     data.dead = true;
 
-    if (!dom.o._style) {
-      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-      data.domCanvas.img = null;
-    }
+    data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+    data.domCanvas.img = null;
 
     // stop moving while exploding
     data.vX = 0;
@@ -261,7 +259,7 @@ const Van = (options = {}) => {
 
     common.initNearby(friendlyNearby, exports);
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports);
 
     pads = game.objects[TYPES.landingPad];
   }

@@ -476,12 +476,7 @@ const Bunker = (options = {}) => {
 
     data.midPoint = common.getDoorCoords(exports);
 
-    radarItem = game.objects.radar.addItem(exports, data.oClassName);
-  }
-
-  function destroy() {
-    radarItem?.die();
-    sprites.removeNodes(dom);
+    radarItem = game.objects.radar.addItem(exports);
   }
 
   function getSpriteURL() {

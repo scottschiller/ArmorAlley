@@ -69,7 +69,7 @@ const LandingPad = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, css.className);
+    game.objects.radar.addItem(exports);
 
     setWelcomeMessage();
   }

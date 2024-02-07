@@ -162,7 +162,7 @@ const Cloud = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    game.objects.radar.addItem(exports, className);
+    game.objects.radar.addItem(exports);
   }
 
   css = common.inheritCSS({ className });
