@@ -1026,7 +1026,8 @@ body.loaded canvas {
   transition: opacity 0.75s ease-in-out;
 }
 
-body.game-started canvas {
+body.game-started canvas,
+body.edit-mode canvas {
   opacity: 1;
 }
 
