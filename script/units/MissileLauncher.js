@@ -295,8 +295,8 @@ const MissileLauncher = (options = {}) => {
       game.objects.editor
         ? dom.o.className
         : data.isEnemy
-        ? 'scan-node enemy'
-        : 'scan-node'
+          ? 'scan-node enemy'
+          : 'scan-node'
     );
 
     // missile launchers also get a scan node.
