@@ -372,6 +372,10 @@ ul.inline-list li:not(:first-of-type) {
   width: 16px;
 }
 
+#editor-window .static-sprite.barb-wire {
+  background-image: url(../image/barb-wire.png);
+}
+
 #editor-window .static-sprite.balloon {
   /* TODO: balloon-static.png? */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAAAiBAMAAAAHRyIyAAAAD1BMVEUAAAAAAADa2tqzh1SHVAC3ExoMAAAAAXRSTlMAQObYZgAAAKVJREFUeF6t1OEJxCAMQGGzQd4KrpAV3H+mM1BziJjLQd8/5SOUorZ3E9BtGW37ANsy2vd7R2MS2Dc8DQYx6WQsZubjZCOb1cWY/M54mCFg19DFSBnBLAutMZz9UmOUmRMyM5XRpMYapMxVLzOh39mIb6PG8h/iavYPu7jxGDOKTBsOAE7hxUFyhqRMz0MeYByH3LncmTozK11As/w6lx6H+lPzfh8GtaYB2nfp/AAAAABJRU5ErkJggg==);
@@ -381,26 +385,55 @@ ul.inline-list li:not(:first-of-type) {
   width: 19px;
 }
 
+#editor-window .static-sprite.cactus {
+  background-image: url(../image/cactus.png);
+}
+
+#editor-window .static-sprite.cactus2 {
+  background-image: url(../image/cactus2.png);
+}
+
 #editor-window .static-sprite.cloud {
   background-image: url(../image/cloud-1.png);
   height: 10px;
   width: 34px;
 }
 
+#editor-window .static-sprite.gravestone {
+  background-image: url(../image/gravestone.png);
+}
+
+#editor-window .static-sprite.gravestone2 {
+  background-image: url(../image/gravestone2.png);
+}
+
+#editor-window .static-sprite.grave-cross {
+  background-image: url(../image/grave-cross.png);
+}
+
 #editor-window .static-sprite.landing-pad {
   /* TODO: landing-pad-static.png? */
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAHCAYAAABwWKHcAAAAXklEQVR4Ae3QgQXAUAyE4X/IN1u26gJdJpXHVdS1FIAcH0LAD5Bl72QDmbVlUaMaIORRfoWcgGpG0fEecuYCdqhyRNwAb/hOa6180JMxXC9aZfvgDaDRTEzVH/EZ7wKYR/MjFUCThgAAAABJRU5ErkJggg==)
-    0 0 / contain;
+  background: url(../image/landing-pad-animated.gif) 0 0 / contain;
   height: 3.5px;
   width: 40.5px;
 }
 
 #editor-window .static-sprite.turret {
-  /* TODO: turret-static.png? */
-  background: url(data:image/png;base64,R0lGODlhEgAPAPIEAAAAAKpVAaqqAqqqqv///wAAAAAAAAAAACH5BAUKAAQALAAAAAASAA8AAAM0SLoEDixGMASUGIhw8dydt2ic+JXmCKaKA4YeFcxwttEsiZsP7YgOTu83Cc6OvhAAyTxeEgA7)
-    50% 0 / contain no-repeat;
+  background: url(../image/turret-static.gif) 50% 0 / contain no-repeat;
   height: 10px;
   width: 12px;
+}
+
+#editor-window .static-sprite.engineer {
+  background-image: url(../image/engineer-static.png);
+}
+
+#editor-window .static-sprite.bunker {
+  background-image: url(../image/bunker_mac.png);
+}
+
+#editor-window .static-sprite.super-bunker {
+  background-image: url(../image/super-bunker_mac.png);
 }
 
 #active-sprite {
@@ -444,105 +477,137 @@ body.edit-mode #top-bar {
  * Sprites for editor UI
  */
 .sand-dune {
-  background-image: url(../image/sand-dune.png);
   height: 8px;
   width: 51px;
 }
 
+#editor-window .sand-dune {
+  background-image: url(../image/sand-dune.png);
+}
+
 .sand-dunes {
-  background-image: url(../image/sand-dunes.png);
   height: 11px;
   width: 73px;
 }
 
+#editor-window .sand-dunes {
+  background-image: url(../image/sand-dunes.png);
+}
+
 .checkmark-grass {
-  background-image: url(../image/checkmark-grass.png);
   height: 10px;
   width: 15px;
 }
 
+#editor-window .checkmark-grass {
+  background-image: url(../image/checkmark-grass.png);
+}
+
 .flower {
-  background-image: url(../image/flower.png);
   height: 8px;
   width: 11px;
 }
 
+#editor-window .flower {
+  background-image: url(../image/flower.png);
+}
+
 .flowers {
-  background-image: url(../image/flowers.png);
   height: 11px;
   width: 34px;
 }
 
+#editor-window .flowers {
+  background-image: url(../image/flowers.png);
+}
+
 .flower-bush {
-  background-image: url(../image/flower-bush.png);
   height: 13px;
   width: 18px;
 }
 
+#editor-window .flower-bush {
+  background-image: url(../image/flower-bush.png);
+}
+
 .tree {
-  background-image: url(../image/tree.png);
   height: 27px;
   width: 26px;
 }
 
+#editor-window .tree {
+  background-image: url(../image/tree.png);
+}
+
 .tumbleweed {
-  background-image: url(../image/tumbleweed.png);
   height: 15px;
   width: 18px;
 }
 
-#battlefield.snow .tree {
-  background-image: url(../image/tree_snow.png);
+#editor-window .tumbleweed {
+  background-image: url(../image/tumbleweed.png);
 }
 
 .palm-tree {
-  background-image: url(../image/palm-tree.png);
   height: 22px;
   width: 18px;
 }
 
+#editor-window .palm-tree {
+  background-image: url(../image/palm-tree.png);
+}
+
 .rock {
-  background-image: url(../image/rock.png);
   height: 13px;
   width: 18px;
 }
 
+#editor-window .rock {
+  background-image: url(../image/rock.png);
+}
+
 .rock2 {
-  background-image: url(../image/rock2.png);
   height: 11px;
   width: 13px;
 }
 
+#editor-window .rock2 {
+  background-image: url(../image/rock2.png);
+}
+
 .grass {
-  background-image: url(../image/grass.png);
   height: 9px;
   width: 40px;
 }
 
+#editor-window .grass {
+  background-image: url(../image/grass.png);
+}
+
 .gravestone {
-  background-image: url(../image/gravestone.png);
   height: 12px;
   width: 20px;
 }
 
 .gravestone2 {
-  background-image: url(../image/gravestone2.png);
   height: 12px;
   width: 15px;
 }
 
 .grave-cross {
-  background-image: url(../image/grave-cross.png);
   height: 10px;
   width: 13px;
 }
 
+.left-arrow-sign,
+.right-arrow-sign {
+  width: 28px;
+  height: 25px;
+}
+
 .terrain-item {
-  background-size: contain;
   bottom: auto;
   top: 0;
-  /* rocks, graves, trees, barb wire etc., all go on top of things. */
-  z-index: 11;
 }
 
 #battlefield .terrain-item.dynamically-added {
@@ -552,7 +617,6 @@ body.edit-mode #top-bar {
 }
 
 .barb-wire {
-  background-image: url(../image/barb-wire.png);
   height: 11px;
   width: 18px;
 }
@@ -563,13 +627,11 @@ body.edit-mode #top-bar {
 }
 
 .cactus {
-  background-image: url(../image/cactus.png);
   height: 17px;
   width: 12px;
 }
 
 .cactus2 {
-  background-image: url(../image/cactus2.png);
   background-size: contain;
   height: 25px;
   width: 18px;
@@ -578,15 +640,8 @@ body.edit-mode #top-bar {
 /* classic game sprites, DOM node edition */
 
 .balloon {
-  background-image: url(../image/balloon_mac.png);
-  /* initially, show neutral */
-  background-size: 38px 144px;
-  /* 76 x 288 source image */
   height: 16px;
-  /* allow status bar to hang out a bit */
-  overflow: visible;
   width: 38px;
-  z-index: 2;
 }
 
 /* alignment / centering tweaks while on bunker w/chain */
@@ -596,10 +651,6 @@ body.edit-mode #top-bar {
 
 #battlefield .balloon.facing-right:not(.exploding) {
   margin-left: -2.65px;
-}
-
-#battlefield.snow .balloon:not(.exploding):not(.dead) {
-  background-image: url(../image/balloon_mac_snow.png);
 }
 
 .balloon,
@@ -665,109 +716,24 @@ body.is_safari:not(.is-mobile) .chain {
 }
 
 .missile-launcher {
-  background-image: url(../image/missile-launcher.png);
   height: 18px;
   width: 54px;
-  z-index: 2;
 }
 
-.missile-launcher,
-.missile-launcher.enemy {
-  background-repeat: no-repeat;
-  background-size: 54px 72px;
-}
-
-.missile-launcher.enemy {
-  background-image: url(../image/missile-launcher-enemy.png);
-}
-
-.tank,
-.tank.enemy {
-  background-image: none;
+.tank {
   height: 19px;
   width: 58px;
-  z-index: 2;
 }
 
-.tank .transform-sprite {
-  background-image: url(../image/tank-sprite-horizontal.png);
-  background-size: 174px 18px;
-  /* 58px x 3 frames */
-  height: 18px;
-  width: 174px;
-}
-
-.tank .transform-sprite,
-.tank.enemy .transform-sprite {
-  animation: animate-transform-sprite-tank calc(0.1s * var(--gs-frac)) steps(3)
-    infinite;
-}
-
-.tank.enemy .transform-sprite {
-  background-image: url(../image/tank-enemy-sprite-horizontal.png);
-}
-
-.tank.stopped .transform-sprite {
-  /* show only one frame. */
-  animation: none;
-}
-
-.van,
-.van.enemy {
-  background-image: url(../image/van.png);
-  background-size: 38px 48px;
-  /* retina sprite, 76 x 96 -> 36 x (16px * 3) - vertical sprite */
+.van {
   height: 16px;
   width: 38px;
-  z-index: 2;
-}
-
-.van.enemy {
-  background-image: url(../image/van-enemy.png);
 }
 
 .engineer,
 .infantry {
   height: 11px;
-  overflow: hidden;
   width: 11px;
-  /* on top of helicopter, bunkers etc. */
-  z-index: 3;
-}
-
-.infantry .transform-sprite {
-  /* NOTE: sprite is backwards in sequence. reverse restores proper order. */
-  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
-    steps(5) infinite reverse;
-  background-image: url(../image/infantry-sprite-horizontal.png);
-  background-size: 55px 11px;
-  height: 11px;
-  position: absolute;
-  width: 55px;
-}
-
-.infantry.enemy .transform-sprite {
-  /* proper L -> R order, in this case. */
-  animation: animate-transform-sprite-infantry calc(0.4s * var(--gs-frac))
-    steps(5) infinite;
-  background-image: url(../image/infantry-enemy-sprite-horizontal.png);
-}
-
-.infantry.stopped {
-  background-image: url(../image/infantry-static.png);
-  background-repeat: no-repeat;
-  background-size: 10px 12px;
-}
-
-.infantry.stopped .transform-sprite {
-  animation: none;
-  display: none;
-}
-
-.infantry.enemy.stopped {
-  background-image: url(../image/infantry-enemy-static.png);
-  background-repeat: no-repeat;
-  background-size: 10px 12px;
 }
 
 .engineer {
@@ -775,217 +741,48 @@ body.is_safari:not(.is-mobile) .chain {
   width: 10px;
 }
 
-.engineer .transform-sprite {
-  animation: animate-transform-sprite-engineer calc(0.4s * var(--gs-frac))
-    steps(5) infinite;
-  background-image: url(../image/engineer-sprite-horizontal.png);
-  background-size: 50px 11px;
-  height: 11px;
-  width: 50px;
-}
-
-.sprite.engineer:not(.enemy).building {
-  margin-top: 23px;
-}
-
-.engineer.stopped {
-  background-image: none;
-}
-
-.engineer.stopped .transform-sprite {
-  animation: none;
-  display: block;
-}
-
-.engineer.enemy .transform-sprite {
-  background-image: url(../image/engineer-enemy-sprite-horizontal.png);
-}
-
-.engineer.enemy.exploding,
-.infantry.enemy.exploding,
-.left-arrow-sign,
-.missile-launcher.enemy.exploding,
-.tank .sub-sprite,
-.tank.enemy.exploding,
-.van.enemy.exploding {
-  /* horizontal flip tricks */
-  filter: FlipH;
-  transform: scaleX(-1);
-}
-
-.engineer.enemy.exploding,
-.infantry.enemy.exploding {
-  /* stupid display fix */
-  height: 22px !important;
-}
-
-.tank.enemy .sub-sprite {
-  /* no flip in certain cases */
-  filter: unset;
-  transform: none;
-}
-
-.cloud1,
+. .cloud1,
 .cloud2,
 .cloud3 {
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  background-size: contain;
   left: 0;
   top: 0;
-  /* clouds hide helicopters. */
-  z-index: 12;
 }
 
 .cloud1 {
-  background-image: url(../image/cloud-1.png);
   height: 29px;
   width: 102px;
 }
 
 .cloud2 {
-  background-image: url(../image/cloud-2.png);
   height: 28px;
   width: 116px;
 }
 
 .cloud3 {
-  background-image: url(../image/cloud-3.png);
   height: 34px;
   width: 125px;
 }
 
 .base {
   height: 26px;
-  overflow: hidden;
   /* +1 pixel, sprite clipping workaround */
   width: 104px;
 }
 
-.base.burning {
-  /* a little "nuclear" glow, why not. */
-  filter: drop-shadow(0 0 calc(8px * var(--gs)) #fff);
-  transition: filter 0.5s ease-in-out;
-  width: 103px;
-  height: 103px;
-  margin-top: -77px;
-}
-
-.base .transform-sprite {
-  animation: animate-transform-sprite-base calc(1s * var(--gs-frac)) steps(5)
-    infinite alternate;
-  background-image: url(../image/base-sprite-horizontal.png);
-  background-size: 100% 100%;
-  height: 26px;
-  width: 520px;
-}
-
-#battlefield.snow .base .transform-sprite {
-  animation: animate-transform-sprite-base-snow calc(1s * var(--gs-frac))
-    steps(5) infinite alternate;
-  background-image: url(../image/base-sprite-horizontal_snow.png);
-  background-size: 100% 100%;
-  height: 25px;
-  width: 510px;
-}
-
-.base.enemy .transform-sprite {
-  background-image: url(../image/base-enemy-sprite-horizontal.png);
-}
-
-#battlefield.snow .base.enemy .transform-sprite {
-  background-image: url(../image/base-enemy-sprite-horizontal_snow.png);
-}
-
-#battlefield .base.burning .transform-sprite {
-  animation: animate-transform-sprite-base-burning calc(0.75s * var(--gs-frac))
-    steps(4) infinite;
-  background-image: url(../image/base-sprite-horizontal_burning.png);
-  background-size: 408px 16px;
-  width: 408px;
-  height: 16px;
-  top: auto;
-  bottom: 0;
-}
-
 .end-bunker {
-  background-image: url(../image/end-bunker.png);
-  background-size: contain;
   height: 19px;
   width: 41px;
 }
 
-#battlefield.snow .end-bunker {
-  /* snow version */
-  background-image: url(../image/end-bunker_snow.png);
-  margin-bottom: -0.5px;
-}
-
-.end-bunker.enemy {
-  background-image: url(../image/end-bunker-enemy.png);
-}
-
-#battlefield.snow .end-bunker.enemy {
-  background-image: url(../image/end-bunker-enemy_snow.png);
-}
-
 .super-bunker {
-  /* background-image: url(../image/super-bunker.png); */
-  background-image: url(../image/super-bunker_mac.png);
-  background-size: contain;
   height: 28px;
   width: 66px;
 }
 
-#battlefield.snow .super-bunker {
-  /* snow version */
-  background-image: url(../image/super-bunker_mac_snow.png);
-  background-size: contain;
-}
-
 .bunker,
 .bunker.enemy {
-  background-image: url(../image/bunker_mac.png);
-  background-size: contain;
   height: 25.5px;
   width: 52px;
-  z-index: 1; /* sit on top of chains. */
-}
-
-#battlefield.snow .bunker:not(.exploding):not(.burning):not(.dead) {
-  background-image: url(../image/bunker_mac_snow.png);
-  background-size: contain;
-}
-
-/* default / .bunker.facing-right case */
-.bunker .sub-sprite.arrow,
-.super-bunker .sub-sprite.arrow {
-  background-image: url(../image/arrow-right.png);
-  height: 10px;
-  left: 38px;
-  position: absolute;
-  top: 8px;
-  transition: transform 0.5s ease-in-out;
-  width: 6px;
-}
-
-.super-bunker .sub-sprite.arrow {
-  top: 6px;
-  left: 50px;
-}
-
-.bunker.facing-left .sub-sprite.arrow,
-.super-bunker.facing-left .sub-sprite.arrow {
-  transform: rotate3d(0, 0, 1, -180deg);
-}
-
-.super-bunker.hostile .sub-sprite.arrow {
-  transform: rotate3d(0, 0, 1, -90deg);
-}
-
-.bunker.burning .sub-sprite.arrow,
-.bunker.exploding .sub-sprite.arrow {
-  display: none;
 }
 
 .helicopter.exploding,
@@ -1006,138 +803,6 @@ body.is_safari:not(.is-mobile) .chain {
   background-size: auto;
   height: 32px;
   width: 79px;
-}
-
-.tank.exploding {
-  margin-left: -11px;
-  /* align with where tank was */
-  margin-top: -12px; /* offset for 57-pixel-wide normal tank */
-}
-
-.missile-launcher.exploding,
-.turret.exploding,
-.van.exploding {
-  /* align with where unit was */
-  margin-top: -16px;
-}
-
-.bunker.exploding {
-  animation: none;
-  /* special case */
-  background-image: none;
-}
-
-.bunker.burning,
-.bunker.exploding {
-  height: 112px;
-  /* bunker is normally 52px */
-  margin-left: -30px;
-  margin-top: -87px;
-  width: 112px;
-  z-index: 5;
-  /* let nuke show on top of smoke */
-  filter: drop-shadow(0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #fff);
-  transition: filter 0.5s ease-in-out;
-}
-
-/* special case */
-.bunker .sub-sprite.nuke {
-  /**
-   * Commercial, licensed asset - $1.99 USD.
-   * https://infectedtribe.itch.io/pixel-explosion
-   * 96 x 71 x 16 frames, 100 ms per frame. spritesheet dimensions: 1536 x 71
-   * https://graphicriver.net/item/pixel-explosion-set/15457666
-   */
-  background-image: url(../image/infectedtribe_itch_io-pixel_explosion.png);
-  background-position: 112px 0;
-  background-repeat: no-repeat;
-  background-size: 2352px 112px;
-  margin-top: -2px;
-  visibility: hidden;
-  z-index: 3;
-}
-
-.bunker .sub-sprite.nuke {
-  transform: scale3d(0.88, 0.88, 1);
-  transform-origin: 50% 100%;
-}
-
-.bunker.burning .sub-sprite.nuke,
-.bunker.exploding .sub-sprite.nuke {
-  /* go go go! */
-  animation: nuke calc(1.5s * var(--gs-frac)) steps(21);
-  animation-fill-mode: forwards;
-  visibility: visible;
-}
-
-.turret.exploding {
-  /* adjust for larger explosion sprite */
-  margin-left: -30.5px;
-}
-
-.van.exploding {
-  /* 32px -> 79px */
-  margin-left: -28px;
-}
-
-.bunker.burning .sub-sprite.rubble-container,
-.bunker.exploding .sub-sprite.rubble-container {
-  bottom: 0;
-  height: 8px;
-  left: 50%;
-  margin-left: -26px;
-  overflow: hidden;
-  top: auto;
-  /* always stay centered relative to bunker (larger when exploding etc.) */
-  width: 52px;
-}
-
-.bunker.burning .sub-sprite.rubble,
-.bunker.exploding .sub-sprite.rubble {
-  animation: burninating calc(0.5s * var(--gs-frac)) steps(4) infinite;
-  background-image: url(../image/bunker-burning-sprite-horizontal.png);
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  bottom: 0;
-  height: 9px;
-  left: 0;
-  position: absolute;
-  /* transition duration set via JS */
-  transition: opacity;
-  /* 53px * 4 frames */
-  width: 212px;
-}
-
-.bunker.burning-out .sub-sprite.rubble {
-  /* gradually hide the burning bits */
-  opacity: 0;
-}
-
-.bunker.burning,
-.bunker.dead {
-  background-image: url(../image/bunker-dead.png);
-  background-position: 50% 100%;
-  display: block;
-  /* room for burning animation */
-  height: 9px;
-  margin-left: 0;
-  /* to get 25px height, align with bottom */
-  margin-top: 16px;
-  width: 53px;
-}
-
-.sprite.missile-launcher.building,
-.sprite.tank.building {
-  margin-top: 18px;
-}
-
-.sprite.van.building {
-  margin-top: 16px;
-}
-
-.sprite.engineer.building,
-.sprite.infantry.building {
-  margin-top: 11px;
 }
 
 .sprite.ordering {
@@ -1167,29 +832,17 @@ body.is_safari:not(.is-mobile) .chain {
 
 .turret,
 .turret .sub-sprite {
-  background: url(../image/turret-sprite.png) 50% 0/18px 64px no-repeat;
   height: 15px;
   width: 22px;
-  /* 18 + a few pixels for turret rotation */
-  z-index: 2; /* sit atop bunkers */
 }
 
 .turret .sub-sprite {
-  background-position: 50% -16px;
   height: 31px !important;
   top: -5px;
 }
 
 .turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
   animation: scan calc(2s * var(--gs-frac)) linear infinite alternate;
-}
-
-.turret:not(.firing):not(.exploding).engineer-interacting {
-  animation: sorta-blink-subtle calc(1s * var(--gs-frac)) steps(8) infinite;
-}
-
-.turret.destroyed {
-  background: 0 0;
 }
 
 .turret.destroyed .sub-sprite {
@@ -1200,161 +853,9 @@ body.is_safari:not(.is-mobile) .chain {
   top: auto;
 }
 
-.bomb {
-  bottom: auto;
-  height: 6px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 14px;
-  z-index: 2;
-}
-
-.bomb .sub-sprite {
-  background-image: url(../image/bomb.png);
-  background-position: 0 0;
-  background-size: 14px 6px;
-}
-
-.bomb.spark .sub-sprite,
-.bomb.spark-2 .sub-sprite {
-  animation: none;
-}
-
-.bomb.spark .sub-sprite,
-.bomb.spark-2 .sub-sprite,
-.gunfire.spark,
-.gunfire.spark-2 {
-  background-image: url(../image/explosion-spark.png);
-  background-position: 0 0;
-  background-size: contain;
-  height: 5px;
-  width: 5px;
-}
-
-.bomb.spark-2 .sub-sprite,
-.gunfire.spark-2 {
-  background-image: url(../image/explosion-spark-2.png);
-}
-
-.gunfire.spark,
-.gunfire.spark-2 {
-  background-color: transparent;
-  z-index: 5;
-}
-
-#battlefield .bomb.spark,
-#battlefield .gunfire.spark.dead,
-#battlefield .bomb.spark-2,
-#battlefield .gunfire.spark-2.dead {
-  /* nice fade for sparks */
-  transition: opacity 0.25s ease-in;
-  transition-delay: 0.5s;
-  opacity: 0;
-}
-
-#battlefield .sprite.explosion-classic,
-#battlefield .sprite.explosion-classic-2 {
-  background: 0 0;
-  width: 56px;
-  height: 22px;
-  margin-left: 0;
-  margin-top: 0;
-  filter: drop-shadow(
-    0 calc(-0.25px * var(--gs)) calc(1.5px * var(--gs)) #cc3333
-  );
-}
-
-#battlefield .sprite.explosion-classic .sub-sprite,
-#battlefield .sprite.explosion-classic-2 .sub-sprite {
-  background-image: url(../image/explosion-large.png);
-  animation: classic-explosion calc(0.4s * var(--gs-frac)) steps(5);
-  /* default when animation finishes */
-  animation-fill-mode: forwards;
-  top: 0;
-  left: 0;
-  bottom: auto;
-  width: 100%;
-  height: 500%;
-  /* this element had better have the right aspect ratio. :X */
-  background-size: 100% 100%;
-  background-position: 0 0;
-}
-
-#battlefield .sprite.explosion-classic-2 .sub-sprite {
-  background-image: url(../image/explosion-large-2.png);
-}
-
-.bomb.explosion-large {
-  background: 0 0;
-  height: 56px;
-  margin-left: 0;
-  margin-top: -32px;
-  transform-origin: 50% 100%;
-  width: 51px;
-}
-
-.bomb.explosion-large .sub-sprite {
-  animation: largeexplosion calc(0.66s * var(--gs-frac)) steps(10);
-  /**
-   * "Dirt Explosion" by SrGrafo on DeviantArt
-   * https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026
-   */
-  background-image: url(../image/deviantart-Dirt-Explosion-774442026_1024x112.webp);
-  background-position: 0 0;
-  background-size: 512px 51px;
-  height: 51px;
-  /* default state */
-  transform: translate3d(-512px, 0, 0);
-  width: 512px;
-}
-
-.generic-explosion,
-.generic-explosion-2 {
-  /* default when animation finishes */
-  animation: genericexplosionsmall calc(0.5s * var(--gs-frac)) steps(4);
-  /* give the first frame a little more time */
-  animation-delay: 75ms;
-  /* stay at the last frame, when animation finishes */
-  animation-fill-mode: forwards;
-  background-image: url(../image/generic-explosion.png);
-  /* full-width, and 5x height for the five frames */
-  background-size: 100% 500%;
-  filter: drop-shadow(0 0 calc(2px * var(--gs)) #cc3333);
-}
-
-/* note: only apply to armed smart missiles - otherwise, positioning gets messed up. */
-.sprite.balloon,
-.sprite.chain,
-.sprite.engineer,
-.sprite.infantry,
-.sprite.missile-launcher,
-.sprite.super-bunker,
-.sprite.tank,
-.sprite.van,
-.turret .sub-sprite {
-  /* for .smart-missile-tracking filter */
-  transition: filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57);
-}
-
-body.edit-mode #battlefield .sprite.submerged {
-  margin-top: 27px !important;
-}
-
 .landing-pad {
   height: 7px;
-  overflow: hidden;
   width: 81px;
-  /* cover all ground units */
-  z-index: 5;
-}
-
-.landing-pad .transform-sprite {
-  animation: animate-transform-sprite-landing-pad calc(1s * var(--gs-frac))
-    steps(4) infinite;
-  background-image: url(../image/landing-pad-sprite-horizontal.png);
-  height: 7px;
-  width: 324px;
 }
 
 @keyframes classic-explosion {
