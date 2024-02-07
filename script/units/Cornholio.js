@@ -47,16 +47,10 @@ const Cornholio = (options = {}) => {
   }
 
   function initDOM() {
-    const isEnemy = data.isEnemy ? css.enemy : false;
-
     if (game.objects.editor) {
       dom.o = sprites.create({
-        className: css.className,
-        isEnemy
+        className: css.className
       });
-
-      dom.oSubSprite = sprites.makeSubSprite();
-      dom.o.appendChild(dom.oSubSprite);
     } else {
       dom.o = {};
     }
