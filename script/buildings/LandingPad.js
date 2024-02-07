@@ -38,37 +38,34 @@ const LandingPad = (options = {}) => {
     if (game.objects.editor) {
       dom.o = sprites.create({
         id: data.id,
-        className: css.className,
-        isEnemy: data.isEnemy ? css.enemy : false
+        className: css.className
       });
-      dom.o.appendChild(sprites.makeTransformSprite());
     } else {
       dom.o = {};
-
-      const animConfig = (() => {
-        const spriteWidth = 648;
-        const spriteHeight = 14;
-        return {
-          yOffset: -0.75,
-          sprite: {
-            url: 'landing-pad-sprite-horizontal.png',
-            width: spriteWidth,
-            height: spriteHeight,
-            frameWidth: spriteWidth / 4,
-            frameHeight: spriteHeight,
-            animationDuration: 2,
-            horizontal: true,
-            loop: true,
-            alternate: true
-          }
-        };
-      })();
-
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(
-        exports,
-        animConfig
-      );
     }
+
+    const animConfig = (() => {
+      const spriteWidth = 648;
+      const spriteHeight = 14;
+      return {
+        yOffset: -0.75,
+        sprite: {
+          url: 'landing-pad-sprite-horizontal.png',
+          width: spriteWidth,
+          height: spriteHeight,
+          frameWidth: spriteWidth / 4,
+          frameHeight: spriteHeight,
+          animationDuration: 2,
+          horizontal: true,
+          loop: true
+        }
+      };
+    })();
+
+    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      exports,
+      animConfig
+    );
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
