@@ -6,6 +6,7 @@ import { TYPES, isSafari, worldWidth } from '../core/global.js';
 import { collisionCheck } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { zones } from '../core/zones.js';
+import { sprites } from '../core/sprites.js';
 
 const HELP_X_PREF = 'editor_help_x';
 
@@ -714,6 +715,13 @@ const Editor = () => {
     if (item.dataset.y) {
       gameObj.data.y = top;
     }
+
+    // ugly hack for terrain items, not quite right. TODO: isolate and fix.
+    if (gameObj.data.isTerrainItem) {
+      gameObj.data.domCanvas.img.target.yOffset = (gameObj.data.height * 3) / 4;
+    }
+
+    sprites.moveTo(gameObj, gameObj.data.x, gameObj.data.y);
 
     if (gameObj?.dom?.oEditorFlag) {
       gameObj.dom.oEditorFlag.innerHTML = Math.floor(left);
