@@ -320,19 +320,24 @@ const Van = (options = {}) => {
     dom,
     die,
     init: initVan,
-    radarItem
+    radarItem,
+    refreshSprite
   };
-
-  const src = data.isEnemy ? 'van-enemy.png' : 'van.png';
 
   const spriteWidth = 76;
   const spriteHeight = 96;
   const frameHeight = 32;
 
+  function refreshSprite() {
+    data.domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy ? 'van-enemy.png' : 'van.png'
+    );
+  }
+
   data.domCanvas = {
     radarItem: Van.radarItemConfig(exports),
     img: {
-      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      src: null,
       source: {
         x: 0,
         y: 0,
@@ -351,6 +356,8 @@ const Van = (options = {}) => {
       }
     }
   };
+
+  refreshSprite();
 
   friendlyNearby = {
     options: {
