@@ -422,7 +422,9 @@ function PrefsManager() {
         // handlers for radio buttons + checkboxes, keeping things in sync
 
         function handleInputChange(e) {
-          let { name, value } = e?.target;
+          if (!e?.target) return;
+
+          let { name, value } = e.target;
 
           if (e.target.type === 'checkbox') {
             // NOTE: assuming 0/1 values here, no "true" strings etc. for checkboxes.

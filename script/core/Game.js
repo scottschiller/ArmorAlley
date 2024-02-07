@@ -248,7 +248,8 @@ const game = (() => {
 
     for (const item in objects) {
       game.objects[item]?.forEach((obj) => {
-        let { type } = obj?.data;
+        if (!obj.data) return;
+        let { type } = obj.data;
         // I forgot about this special case.
         if (type === TYPES.infantry && obj.data.role) {
           type = TYPES.engineer;

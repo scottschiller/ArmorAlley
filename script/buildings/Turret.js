@@ -464,8 +464,6 @@ const Turret = (options = {}) => {
   function claim(engineer) {
     if (!engineer?.data) return;
 
-    const { isEnemy } = engineer?.data;
-
     if (data.frameCount % data.claimModulus !== 0) return;
 
     createSparks(2);
@@ -498,7 +496,7 @@ const Turret = (options = {}) => {
       }
     }
 
-    setEnemy(isEnemy);
+    setEnemy(engineer.data.isEnemy);
 
     data.claimPoints = 0;
   }

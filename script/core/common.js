@@ -278,7 +278,7 @@ const common = {
 
     if (!obj?.data) return;
 
-    const { gameSpeedProps } = obj?.data;
+    const { gameSpeedProps } = obj.data;
 
     if (!gameSpeedProps?.forEach) return;
 

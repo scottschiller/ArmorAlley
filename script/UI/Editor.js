@@ -392,9 +392,9 @@ const Editor = () => {
   function getGameObject(item) {
     // given an item with an ID, return the game object.
 
-    if (!item) return;
+    if (!item?.dataset) return;
 
-    const { id } = item?.dataset;
+    const { id } = item.dataset;
 
     if (!id) {
       console.warn('getGameObject: no item?.id?', item, id);
