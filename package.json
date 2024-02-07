@@ -24,22 +24,21 @@
   },
   "homepage": "https://github.com/scottschiller/ArmorAlley#readme",
   "devDependencies": {
-    "clean-css": "^5.3.2",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.8.0",
-    "extract-comments": "^1.1.0",
+    "clean-css": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-cli": "^2.3.0",
     "gulp-concat": "^2.6.1",
     "gulp-esprima": "^0.1.0",
     "gulp-header": "^2.0.9",
-    "gulp-postcss": "^9.0.1",
+    "gulp-postcss": "^9.1.0",
     "gulp-rename": "^2.0.0",
     "gulp-terser": "^2.1.0",
-    "postcss-image-inliner": "^6.1.0",
-    "prettier": "2.8.8",
-    "rollup": "^3.21.5"
+    "postcss-image-inliner": "^7.0.1",
+    "prettier": "3.2.5",
+    "rollup": "^4.9.6"
   },
   "overrides": {
     "graceful-fs": "^4.2.11"
