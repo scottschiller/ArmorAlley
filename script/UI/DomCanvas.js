@@ -808,8 +808,8 @@ const DomCanvas = () => {
     const leftOffset = exports.data.centerEnergyLine
       ? (scaledWidth - renderedWidth) / 2
       : exports.data.isEnemy
-      ? width - renderedWidth
-      : 0;
+        ? width - renderedWidth
+        : 0;
 
     const lineHeight = 2.5;
     const borderRadius = lineHeight;
