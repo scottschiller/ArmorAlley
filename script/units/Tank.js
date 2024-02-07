@@ -307,7 +307,7 @@ const Tank = (options = {}) => {
       return !data.deadTimer && !dom.o;
     }
 
-    if (!data.stopped && !dom.o?._style && data.domCanvas?.img) {
+    if (!data.stopped && data.domCanvas?.img) {
       // animate tank treads
       if (
         data.domCanvas.img.frameCount > 0 &&
