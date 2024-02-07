@@ -249,7 +249,10 @@ const Chain = (options = {}) => {
   data.domCanvas = {
     draw: (ctx, obj, pos, width, height) => {
       if (!pattern) {
-        pattern = ctx.createPattern(utils.image.getImageObject('chain.png'), 'repeat');
+        pattern = ctx.createPattern(
+          utils.image.getImageObject('chain.png'),
+          'repeat'
+        );
       }
       ctx.fillStyle = pattern;
       // attached to balloon, or bunker?
