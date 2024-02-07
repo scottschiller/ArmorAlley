@@ -121,6 +121,16 @@ const game = (() => {
 
       objectArray.push(object);
 
+      // hackish: for editor mode, set vX and vY to 0 so things don't move across the battlefield.
+      if (game.objects.editor) {
+        if (object.data.vX !== undefined) {
+          object.data.vX = 0;
+        }
+        if (object.data.vY !== undefined) {
+          object.data.vY = 0;
+        }
+      }
+
       if (!options.skipInit) {
         object?.init?.();
       }
