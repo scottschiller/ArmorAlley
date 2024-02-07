@@ -45,8 +45,7 @@ const Bomb = (options = {}) => {
   }
 
   function dieExplosion() {
-    data.domCanvas.dieExplosion =
-      effects.bombExplosion(exports);
+    data.domCanvas.dieExplosion = effects.bombExplosion(exports);
   }
 
   function spark() {
@@ -149,7 +148,7 @@ const Bomb = (options = {}) => {
         // pull back by half the difference, remaining "centered" around original bomb coordinates.
         // note that sprite is 2x, so frameWidth is cut in half.
         data.x -=
-          ((data.domCanvas.dieExplosion.sprite.frameWidth / 2) - data.width) / 2;
+          (data.domCanvas.dieExplosion.sprite.frameWidth / 2 - data.width) / 2;
 
         // resize accordingly
         data.width = data.domCanvas.dieExplosion.sprite.frameWidth / 2;
