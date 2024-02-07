@@ -47,7 +47,7 @@ const sprites = {
       o.dataset.id = options.id; // data-id = ...
     }
 
-    if (!options.className.match(/transform-sprite|sub-sprite|terrain/i)) {
+    if (!options?.className?.match(/transform-sprite|sub-sprite|terrain/i)) {
       o._style.setProperty('top', '0px');
       o._style.setProperty('left', '0px');
     }
