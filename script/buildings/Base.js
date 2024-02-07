@@ -529,8 +529,7 @@ const Base = (options = {}) => {
   function initBase() {
     if (game.objects.editor) {
       dom.o = sprites.create({
-        className: css.className,
-        isEnemy: data.isEnemy ? css.enemy : false
+        className: css.className
       });
     } else {
       dom.o = {};
@@ -555,18 +554,12 @@ const Base = (options = {}) => {
       };
     })();
 
-    if (!game.objects.editor) {
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(
-        exports,
-        animConfig
-      );
-    }
+    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      exports,
+      animConfig
+    );
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
-    if (dom.o.appendChild) {
-      dom.o.appendChild(sprites.makeTransformSprite());
-    }
 
     game.objects.radar.addItem(exports, css.className);
   }
