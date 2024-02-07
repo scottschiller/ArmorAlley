@@ -133,8 +133,6 @@ const Infantry = (options = {}) => {
   function setRole(role, force) {
     // TODO: minimize CSS thrashing, track lastClass etc.
     if (data.role !== role || force) {
-      utils.css.remove(dom.o, css[data.roles[0]]);
-      utils.css.remove(dom.o, css[data.roles[1]]);
       // role
       data.role = role;
       css.className = css[data.roles[data.role]];
@@ -313,15 +311,8 @@ const Infantry = (options = {}) => {
     } else {
       dom.o = sprites.create({
         className: css.className,
-        id: data.id,
-        isEnemy: data.isEnemy ? css.enemy : false
+        id: data.id
       });
-      dom.o.appendChild(sprites.makeTransformSprite());
-    }
-
-    // BNB
-    if (!data.isEnemy && data.role) {
-      utils.css.add(dom.o, data.isBeavis ? css.beavis : css.butthead);
     }
 
     sprites.setTransformXY(
@@ -348,7 +339,7 @@ const Infantry = (options = {}) => {
 
     initDOM();
 
-    radarItem = game.objects.radar.addItem(exports, dom.o.className);
+    radarItem = game.objects.radar.addItem(exports);
 
     common.initNearby(nearby, exports);
 
