@@ -44,10 +44,8 @@ const MissileLauncher = (options = {}) => {
         playSound(sounds.genericExplosion, exports);
       }
 
-      if (!game.objects.editor) {
-        data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-        data.domCanvas.img = null;
-      }
+      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+      data.domCanvas.img = null;
 
       effects.inertGunfireExplosion({ exports });
 
@@ -231,13 +229,6 @@ const MissileLauncher = (options = {}) => {
           data.stateModulus = 4 * fpsMultiplier;
         }
 
-        if (data.isOnScreen && game.objects.editor) {
-          dom.o._style.setProperty(
-            'background-position',
-            `0px ${data.height * data.state * -1}px`
-          );
-        }
-
         if (data.domCanvas.img) {
           data.domCanvas.img.source.frameY = data.state;
         }
@@ -246,9 +237,6 @@ const MissileLauncher = (options = {}) => {
         data.isOnScreen
       ) {
         // next frame - reset.
-        if (game.objects.editor) {
-          dom.o._style.setProperty('background-position', '0px 0px');
-        }
         if (data.domCanvas.img) {
           data.domCanvas.img.source.frameY = 0;
         }
