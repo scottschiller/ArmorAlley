@@ -333,9 +333,7 @@ const Infantry = (options = {}) => {
 
     // note: data.domCanvas must exist before this call, because it causes modifications. :X
     // we also need to know the role, before doing canvas stuff here.
-    if (!game.objects.editor) {
-      getSpriteURL();
-    }
+    getSpriteURL();
 
     initDOM();
 
@@ -452,6 +450,16 @@ const Infantry = (options = {}) => {
     init: initInfantry,
     moveTo,
     refreshHeight,
+    refreshSprite: () => {
+      // standard infantry / engineer
+      animConfig.sprite.url = getInfantryEngURL();
+      if (data.role) {
+        // possible BnB case
+        getSpriteURL();
+      } else {
+        data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+      }
+    },
     resume,
     stop
   };
