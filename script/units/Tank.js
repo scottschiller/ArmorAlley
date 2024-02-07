@@ -472,24 +472,29 @@ const Tank = (options = {}) => {
     die,
     init: initDOM,
     radarItem,
+    refreshSprite,
     resume,
     stop,
     updateHealth
   };
-
-  const src = data.isEnemy
-    ? 'tank-enemy-sprite-horizontal.png'
-    : 'tank-sprite-horizontal.png';
 
   const spriteWidth = 348;
   const spriteHeight = 36;
   const frameWidth = 116;
   const frameHeight = spriteHeight;
 
+  function refreshSprite() {
+    data.domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy
+        ? 'tank-enemy-sprite-horizontal.png'
+        : 'tank-sprite-horizontal.png'
+    );
+  }
+
   data.domCanvas = {
     radarItem: Tank.radarItemConfig(),
     img: {
-      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      src: null,
       animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
       frameCount: 0,
       animationFrame: 0,
@@ -513,6 +518,8 @@ const Tank = (options = {}) => {
       }
     }
   };
+
+  refreshSprite();
 
   friendlyNearby = {
     options: {
