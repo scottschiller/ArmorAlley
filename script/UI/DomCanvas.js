@@ -618,9 +618,6 @@ const DomCanvas = () => {
       ) {
         drawEnergy(exports, ctx, dx, dy, dWidth, dHeight);
       }
-
-      // if "always" show, no further work to do
-      if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
     }
 
     if (target.opacity >= 0) {
