@@ -53,22 +53,6 @@ const Turret = (options = {}) => {
     );
   }
 
-  function setAngle(angle) {
-    // TODO: CSS animation for this?
-    if (data.isOnScreen && dom.oSubSprite) {
-      dom.oSubSprite._style.setProperty(
-        'transform',
-        `rotate3d(0, 0, 1, ${angle}deg)`
-      );
-    }
-  }
-
-  function resetAngle() {
-    if (dom.oSubSprite) {
-      dom.oSubSprite._style.setProperty('transform', '');
-    }
-  }
-
   function fire() {
     // don't fire at things while in the editor. :P
     if (game.objects.editor) return;
@@ -168,10 +152,6 @@ const Turret = (options = {}) => {
 
     // target the enemy
     data.angle = angle;
-
-    if (moveOK) {
-      setAngle(angle);
-    }
   }
 
   function setFiring(isFiring) {
@@ -200,7 +180,6 @@ const Turret = (options = {}) => {
       }
     } else {
       data.fireCount = 0;
-      resetAngle();
     }
 
     if (!data.isEnemy) {
@@ -217,7 +196,6 @@ const Turret = (options = {}) => {
 
     // reset rotation
     data.angle = 0;
-    setAngle(0);
 
     data.energy = 0;
     data.restoring = false;
@@ -707,11 +685,6 @@ const Turret = (options = {}) => {
     dom.oScanNode = document.createElement('div');
     dom.oScanNode.className = css.scanNode;
     dom.o.appendChild(dom.oScanNode);
-
-    if (game.objects.editor) {
-      dom.oSubSprite = sprites.makeSubSprite();
-      dom.o.appendChild(dom.oSubSprite);
-    }
 
     sprites.setTransformXY(
       exports,
