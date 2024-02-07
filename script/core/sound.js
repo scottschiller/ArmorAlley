@@ -105,6 +105,14 @@ function getSound(soundReference) {
     // mark this object
     soundObject = soundReference[soundReference.soundOffset];
 
+    if (!soundObject) {
+      console.warn(
+        'getSound(): WTF, soundObject by soundOffset is null?',
+        soundReference
+      );
+      if (window.location.hostname.indexOf('armor-alley.net') === -1) debugger;
+    }
+
     // hackish: exclude throttling on sound objects that are in arrays,
     // unless the object is explicitly specified to be throttled.
     // we don't know if they're in an array until we get to this point.
@@ -536,12 +544,15 @@ function playRepairingWrench(isRepairing, exports) {
     onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(repairingWrench);
-      exports.repairingWrenchTimer = common.setFrameTimeout(function () {
-        exports.repairingWrenchTimer = null;
-        if (isRepairing()) {
-          playRepairingWrench.apply(this, args);
-        }
-      }, 1000 + rndInt(2000));
+      exports.repairingWrenchTimer = common.setFrameTimeout(
+        function () {
+          exports.repairingWrenchTimer = null;
+          if (isRepairing()) {
+            playRepairingWrench.apply(this, args);
+          }
+        },
+        1000 + rndInt(2000)
+      );
     }
   });
 }
@@ -564,12 +575,15 @@ function playImpactWrench(isRepairing, exports) {
     onstop: (sound) => destroySound(sound),
     onfinish() {
       destroySound(impactWrench);
-      exports.impactWrenchTimer = common.setFrameTimeout(function () {
-        exports.impactWrenchTimer = null;
-        if (isRepairing()) {
-          playImpactWrench.apply(this, args);
-        }
-      }, 500 + rndInt(2000));
+      exports.impactWrenchTimer = common.setFrameTimeout(
+        function () {
+          exports.impactWrenchTimer = null;
+          if (isRepairing()) {
+            playImpactWrench.apply(this, args);
+          }
+        },
+        500 + rndInt(2000)
+      );
     }
   });
 }
