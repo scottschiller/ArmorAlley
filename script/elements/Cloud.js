@@ -191,7 +191,7 @@ const Cloud = (options = {}) => {
 
   data.domCanvas = {
     img: {
-      src: !game.objects.editor ? utils.image.getImageObject(src) : null,
+      src: utils.image.getImageObject(src),
       source: {
         x: 0,
         y: 0,
