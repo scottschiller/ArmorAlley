@@ -101,6 +101,7 @@ const utils = {
     getImageObject: (url) => {
       if (!url) {
         console.warn('getImageObject: No URL?', url);
+        return;
       }
       // already "cached"
       if (imageObjects[url]) return imageObjects[url];
