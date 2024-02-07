@@ -271,10 +271,10 @@ const game = (() => {
           iData.isHostile || (type === TYPES.turret && iData.dead)
             ? 'n'
             : iData.isEnemy
-            ? 'r'
-            : iData.isNeutral
-            ? 'n'
-            : 'l',
+              ? 'r'
+              : iData.isNeutral
+                ? 'n'
+                : 'l',
           Math.floor(iData.x)
         ];
 
