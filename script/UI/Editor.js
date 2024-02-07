@@ -33,7 +33,7 @@ const Editor = () => {
     terrain: {
       rock: ['rock', 'rock2'],
       grave: ['gravestone', 'gravestone2', 'grave-cross'],
-      tumbleweed: ['tumbleweed '],
+      tumbleweed: ['tumbleweed'],
       grass: ['checkmark-grass', 'grass'],
       barbWire: ['barb-wire'],
       flower: ['flower', 'flowers', 'flower-bush'],
@@ -59,6 +59,7 @@ const Editor = () => {
     f: itemTypes.terrain.flower,
     g: [...itemTypes.terrain.grass, ...itemTypes.terrain.grave],
     r: itemTypes.terrain.rock,
+    u: itemTypes.terrain.tumbleweed,
     w: itemTypes.terrain.tree // categorized as "wood"
   };
 
