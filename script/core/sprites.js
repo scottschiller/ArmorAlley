@@ -40,7 +40,7 @@ const sprites = {
     // note: `isEnemy` value may not be 'enemy', but 'facing-left' (e.g., for balloons.)
     o.className = `sprite ${options.className}${
       options.isEnemy ? ' ' + options.isEnemy : ''
-    }`;
+    }${game.objects.editor ? ' editor-placeholder' : ''}`;
 
     // editor case
     if (game.objects.editor && options.id) {
