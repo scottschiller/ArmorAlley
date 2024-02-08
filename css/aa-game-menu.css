@@ -966,7 +966,6 @@ button .button-icon {
 .glow-item::before {
   position: absolute;
   inset: -1px;
-  padding: 1px;
   border: var(--glow-border-width) solid transparent;
   content: '';
   border-radius: var(--glow-border-radius);
@@ -1003,8 +1002,7 @@ button .button-icon {
   opacity: var(--glow-active, 0);
   transition: opacity 1s;
   --glow-alpha: 0;
-  inset: -1px;
-  padding: 1px;
+  inset: -2px;
   border: var(--glow-border-width) solid transparent;
   mask: linear-gradient(#0000, #0000),
     conic-gradient(
