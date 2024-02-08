@@ -140,6 +140,12 @@ function restyle() {
     '--glow-direction',
     config.vertical ? 'column' : 'row'
   );
+  // glow-spread overrides, HTML -> CSS, set per-element
+  const prop = 'glow-spread';
+  const attr = `data-${prop}`;
+  container.querySelectorAll(`[${attr}]`).forEach((node) => {
+    node.style.setProperty(`--${prop}`, node.getAttribute(attr));
+  });
 }
 
 const config = {
