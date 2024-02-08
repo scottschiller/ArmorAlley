@@ -44,7 +44,8 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   transition-property: transform, opacity, filter;
   transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
   transform-origin: 0 0;
-  filter: blur(0px);
+  /* important: remove filter completely, vs. filter: blur(0px); this is key to backdrop-filter working in Chrome. */
+  filter: none;
   opacity: 1;
 }
 
@@ -373,11 +374,6 @@ body.game-started #start-game-button-mobile {
   opacity: 0;
 }
 
-#game-menu button {
-  border-radius: calc(2px * var(--menu-scale));
-  background-clip: padding-box;
-}
-
 #game-menu h2 {
   position: relative;
   color: #e19632;
@@ -415,7 +411,6 @@ body.game-started #start-game-button-mobile {
 #checkbox-vs:hover,
 #game-menu label:hover,
 #game_level:hover {
-  background-color: rgba(0, 128, 0, 0.5);
   color: #fff !important;
 }
 
@@ -716,7 +711,6 @@ body.game-started #home-video-wrapper {
 #game-menu button.large,
 #game-menu select,
 #game-type-list {
-  background-color: rgba(0, 128, 0, 0.5);
   border: none;
 }
 
@@ -775,6 +769,7 @@ body.game-started #home-video-wrapper {
 
 #game-menu-wrapper button.game-start {
   font-family: 'Cheddar Gothic Stencil';
+  background-color: rgba(0, 255, 0, 0.2);
   font-size: calc(13.75px * var(--menu-scale));
   padding: calc(4px * var(--menu-scale));
 }
@@ -784,19 +779,20 @@ body.game-started #home-video-wrapper {
   top: -0.1em;
 }
 
-#game-menu-wrapper button.large:hover {
-  background-color: rgba(0, 255, 0, 0.5);
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+#game-type-list:not(.disabled):hover,
+#game-menu-wrapper button.large:hover,
+#game-menu .glow-item-checkbox:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.25));
 }
 
-#game-menu select:hover,
-#game-type-list label:hover {
-  background-color: rgba(0, 255, 0, 0.33);
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+#game-menu select:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.25));
 }
 
-#game-menu input[type='checkbox']:hover {
-  background-color: rgba(0, 255, 0, 0.5);
+#game-type-list label:not(.no-filter):hover {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.25));
 }
 
 @media screen and (orientation: portrait) {
@@ -881,4 +877,149 @@ button .network-icon {
 button .button-icon {
   pointer-events: none;
   image-rendering: pixelated;
+}
+
+/**
+ * "Proximity glow" effect
+ * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
+ */
+
+:root {
+  --glow-bg: hsl(0, 44%, 7%);
+  --glow-border: hsl(280 10% 50%, 1);
+  --glow-card: transparent;
+  --glow-color: hsl(240 18% 80%);
+  --glow-border-width: 2px;
+  --glow-border-radius: 12px;
+  --glow-gradient: conic-gradient(
+    from 180deg at 50% 70%,
+    hsla(0, 0%, 98%, 1) 0deg,
+    #eec32d 72.0000010728836deg,
+    #ec4b4b 144.0000021457672deg,
+    #709ab9 216.00000858306885deg,
+    #4dffbf 288.0000042915344deg,
+    hsla(0, 0%, 98%, 1) 1turn
+  );
+}
+
+@property --glow-start {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.glow-item {
+  position: relative;
+  --glow-active: 0.15;
+  --glow-start: 0;
+  background: var(--glow-card);
+  border-radius: var(--glow-border-radius);
+}
+
+.glow-item,
+#game-menu .glow-item-checkbox,
+#game-menu button.game-start {
+  border: calc(0.4px * var(--menu-scale)) solid rgba(255, 255, 255, 0.15);
+}
+
+.glow-item-checkbox {
+  /* special case. */
+  position: absolute;
+  top: 7%;
+  left: 0px;
+  width: calc(12px * var(--menu-scale));
+  height: calc(12px * var(--menu-scale));
+}
+
+.glows {
+  pointer-events: none;
+  position: absolute;
+  display: block;
+  inset: 0;
+  filter: blur(calc(var(--glow-blur) * 1px));
+}
+
+.glows::after,
+.glows::before {
+  --glow-alpha: 0;
+  content: '';
+  background: var(--glow-gradient);
+  background-attachment: fixed;
+  position: absolute;
+  inset: -5px;
+  border: 10px solid transparent;
+  border-radius: var(--glow-border-radius);
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from calc((var(--glow-start) - (var(--glow-spread) * 0.5)) * 1deg),
+      #000 0deg,
+      #fff,
+      #0000 calc(var(--glow-spread) * 1deg)
+    );
+  mask-composite: intersect;
+  mask-clip: padding-box, border-box;
+  opacity: var(--glow-active);
+  transition: opacity 1s;
+  z-index: 99;
+}
+
+.glow-item::before {
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border: var(--glow-border-width) solid transparent;
+  content: '';
+  border-radius: var(--glow-border-radius);
+  pointer-events: none;
+  background: var(--glow-border);
+  background-attachment: fixed;
+  border-radius: var(--glow-border-radius);
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from
+        calc(
+          (
+              (var(--glow-start) + (var(--glow-spread) * 0.25)) -
+                (var(--glow-spread) * 1.5)
+            ) * 1deg
+        ),
+      hsl(0 0% 100% / 0.15) 0deg,
+      white,
+      hsl(0 0% 100% / 0.15) calc(var(--glow-spread) * 2.5deg)
+    );
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  opacity: var(--glow-active);
+  transition: opacity 1s;
+}
+
+.glow-item::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  background: var(--glow-gradient);
+  background-attachment: fixed;
+  border-radius: var(--glow-border-radius);
+  opacity: var(--glow-active, 0);
+  transition: opacity 1s;
+  --glow-alpha: 0;
+  inset: -1px;
+  padding: 1px;
+  border: var(--glow-border-width) solid transparent;
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from
+        calc(
+          (
+              (var(--glow-start) + (var(--glow-spread) * 0.25)) -
+                (var(--glow-spread) * 0.5)
+            ) * 1deg
+        ),
+      #0000 0deg,
+      #fff,
+      #0000 calc(var(--glow-spread) * 0.5deg)
+    );
+  filter: brightness(1.5);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
 }

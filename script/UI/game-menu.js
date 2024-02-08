@@ -3,6 +3,7 @@ import { aaLoader } from '../core/aa-loader.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
 import {
+  clientFeatures,
   demo,
   GAME_SPEED,
   isMobile,
@@ -120,6 +121,92 @@ function bnbChange(bnb) {
     if (subTitle) {
       subTitle.innerHTML = subTitle.getAttribute('title-bnb');
     }
+  }
+}
+
+/**
+ * "Proximity glow cards" effect
+ * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
+ * https://codepen.io/jh3y/pen/QWYPaax
+ */
+
+let container;
+let cards;
+
+function restyle() {
+  container.style.setProperty('--glow-blur', config.blur);
+  container.style.setProperty('--glow-spread', config.spread);
+  container.style.setProperty(
+    '--glow-direction',
+    config.vertical ? 'column' : 'row'
+  );
+}
+
+const config = {
+  proximity: 40,
+  spread: 80,
+  blur: 20,
+  opacity: 0
+};
+
+let layoutCache = {};
+
+const useCache = true;
+let glowIDs = 0;
+
+function clearLayoutCache() {
+  layoutCache = {};
+}
+
+function getLayout(item) {
+  if (!useCache) return item.getBoundingClientRect();
+
+  if (!item.id) {
+    item.id = `glow_element_${glowIDs++}`;
+  }
+
+  if (layoutCache[item.id]) return layoutCache[item.id];
+
+  layoutCache[item.id] = item.getBoundingClientRect();
+
+  return layoutCache[item.id];
+}
+
+if (useCache) {
+  utils.events.add(window, 'resize', clearLayoutCache);
+}
+
+function updatePointer(event) {
+  if (!event) return;
+
+  // for now, ignore on touch devices.
+  if (clientFeatures.touch) return;
+
+  // get the angle based on the center point of the card and pointer position
+  for (const card of cards) {
+    // Check the card against the proximity and then start updating
+    const card_bounds = getLayout(card);
+    // Get distance between pointer and outerbounds of card
+    if (
+      event.x > card_bounds.left - config.proximity &&
+      event.x < card_bounds.left + card_bounds.width + config.proximity &&
+      event.y > card_bounds.top - config.proximity &&
+      event.y < card_bounds.top + card_bounds.height + config.proximity
+    ) {
+      // if within proximity, set the active opacity
+      card.style.setProperty('--glow-active', 1);
+    } else {
+      card.style.setProperty('--glow-active', config.opacity);
+    }
+    const card_center = [
+      card_bounds.left + card_bounds.width * 0.5,
+      card_bounds.top + card_bounds.height * 0.5
+    ];
+    let angle =
+      (Math.atan2(event.y - card_center[1], event.x - card_center[0]) * 180) /
+      Math.PI;
+    angle = angle < 0 ? angle + 360 : angle;
+    card.style.setProperty('--glow-start', angle + 90);
   }
 }
 
@@ -327,8 +414,42 @@ function init() {
     showHomeVideo();
   }
 
+  if (!autoStart) {
+    container = document.getElementById('game-menu');
+    cards = container.querySelectorAll('.glow-item');
+
+    // child / effect node for each "card" - <span class="glows"></span>
+    let glowNode = document.createElement('span');
+    glowNode.className = 'glows';
+
+    cards.forEach((card) => card.appendChild(glowNode.cloneNode()));
+
+    utils.events.add(document.body, 'pointermove', updatePointer);
+
+    restyle();
+
+    // pretend-reset everything, so glow is entirely hidden.
+    updatePointer({ x: 0, y: 0 });
+
+    // clear layout cache in a moment, because user may have moved the mouse while the menu was zooming in.
+    utils.events.add(
+      game.objects.view.dom.gameMenu,
+      'transitionend',
+      afterTransitionIn
+    );
+  }
+
   // preload the game CSS, too.
   window.setTimeout(() => aaLoader.loadCSS('css/aa-game-ui.css'), 5000);
+}
+
+function afterTransitionIn() {
+  clearLayoutCache();
+  utils.events.remove(
+    game.objects.view.dom.gameMenu,
+    'transitionend',
+    afterTransitionIn
+  );
 }
 
 function introBNBSound(e) {
@@ -590,6 +711,8 @@ function formClick(e) {
 
 function formCleanup() {
   utils.events.remove(document, 'click', formClick);
+  utils.events.remove(document.body, 'pointermove', updatePointer);
+  utils.events.remove(window, 'resize', clearLayoutCache);
   optionsButton = null;
   oSelect = null;
 }

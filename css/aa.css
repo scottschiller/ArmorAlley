@@ -833,7 +833,6 @@ button.primary {
 
 #game-menu-wrapper button.game-start,
 .generic-cta {
-  background: rgba(0, 255, 0, 0.5);
   border-color: transparent;
   color: #fff;
   text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
@@ -841,22 +840,47 @@ button.primary {
 
 #game-menu-wrapper button.large.game-start:hover,
 .generic-cta:hover {
-  background-color: #0a0;
+  background-color: rgba(0, 255, 0, 0.25);
   color: #fff;
-  filter: drop-shadow(0 0 calc(1.5px * var(--menu-scale)) #66cc66);
+  filter: drop-shadow(
+    0 0 calc(1px * var(--menu-scale)) rgba(255, 255, 255, 0.5)
+  );
 }
 
 #game-menu-wrapper button.large.game-start:active,
 .generic-cta:active {
-  filter: drop-shadow(0 0 calc(0.75px * var(--menu-scale)) #66cc66);
+  filter: drop-shadow(
+    0 0 calc(0.75px * var(--menu-scale)) rgba(0, 255, 0, 0.75)
+  );
 }
 
+#game-type-list,
+#game-menu select,
 #game-menu-wrapper .cta:not(label),
 #game-menu-wrapper button.large,
-.generic-cta.large {
+.generic-cta.large,
+#game-menu .glow-item-checkbox {
   border: 1px solid transparent;
-  transition: background-color 50ms, color 50ms, filter 50ms, text-shadow 50ms,
-    transform 50ms;
+  transition:
+    background-color 250ms,
+    color 250ms,
+    filter 250ms,
+    text-shadow 250ms,
+    transform 250ms,
+    backdrop-filter 250ms;
+}
+
+body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
+  /* 02/2024: don't transition `backdrop-filter` during .fade-out, causes elements to disappear in Firefox during menu zoom + fade. */
+  transition-property: background-color, color, filter, text-shadow, transform;
+}
+
+/* all the above should be "glow" items. */
+#game-menu-wrapper.active:not(.fade-out) .glow-item:hover,
+#game-menu-wrapper.active:not(.fade-out) .glow-item-checkbox:hover {
+  /* Nifty tricks; "Aero" glass, Windows Vista style. */
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
 #game-menu-wrapper button.large:active {
@@ -866,6 +890,8 @@ button.primary {
 
 #game-menu-wrapper .cta:not(label):active,
 #game-menu-wrapper button.large:active,
+#game-menu-wrapper .checkbox-wrapper:active,
+#game-menu-wrapper input:active,
 .generic-cta:active {
   transform: scale3d(0.9, 0.9, 1);
   transform-origin: 50% 50%;
