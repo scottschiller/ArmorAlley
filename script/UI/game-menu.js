@@ -143,9 +143,9 @@ function restyle() {
 }
 
 const config = {
-  proximity: 40,
-  spread: 80,
-  blur: 20,
+  proximity: 50,
+  spread: 120,
+  blur: 15,
   opacity: 0
 };
 
