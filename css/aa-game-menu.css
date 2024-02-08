@@ -362,7 +362,9 @@ body.auto-start #game-subtitle {
 
 body.auto-start.is-mobile.loaded #start-game-button-mobile {
   display: block;
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transition:
+    opacity 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
 }
 
 body.game-started #start-game-button-mobile {
@@ -468,7 +470,10 @@ body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.75 * (1 / var(--menu-scale)));
   zoom: var(--scale);
-  font-family: FA Sysfont C, courier, sans-serif;
+  font-family:
+    FA Sysfont C,
+    courier,
+    sans-serif;
   /* note slight padding on width. */
   min-width: calc(7em * 1 / var(--scale));
   height: calc(0.925em * var(--menu-scale));
@@ -489,7 +494,10 @@ body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
 #game-menu select:active option,
 #game-menu select:focus option {
   /* Font sizing (if not more) works in Firefox on Mac and Windows, and maybe also Edge and Chrome on Windows: Reset drop-down size. */
-  font-family: FA Sysfont C, courier, sans-serif;
+  font-family:
+    FA Sysfont C,
+    courier,
+    sans-serif;
   font-size: 13px;
   /* some browsers might render the list in white, poorly, against a light background? */
   color: #000;
