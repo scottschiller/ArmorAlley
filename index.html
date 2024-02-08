@@ -1480,54 +1480,60 @@
             id="game-level-wrapper"
             style="display: inline-block"
             class="mac-classic">
-            <select id="game_level" name="level" aria-label="Battle:">
-              <optgroup label="New? Start here. 👇">
-                <option value="Tutorial">Tutorial</option>
-              </optgroup>
-              <optgroup label="Original Campaign Battles">
-                <option value="Cake Walk">Cake Walk</option>
-                <option value="One-Gun">One-Gun</option>
-                <option value="Sucker Punch">Sucker Punch</option>
-                <option value="Airborne">Airborne</option>
-                <option value="Two-Gun">Two-Gun</option>
-                <option value="Super Bunker">Super Bunker</option>
-                <option value="Scrapyard">Scrapyard</option>
-                <option value="Blind Spot">Blind Spot</option>
-                <option value="Wasteland">Wasteland</option>
-                <option value="Midnight Oasis">Midnight Oasis</option>
-              </optgroup>
-              <optgroup label="Network Game Battles">
-                <option value="Cavern Cobra">Cavern Cobra</option>
-                <option value="Desert Sortie">Desert Sortie</option>
-                <option value="First Blood">First Blood</option>
-                <option value="Network Mania">Network Mania</option>
-                <option value="Rescue Raiders">Rescue Raiders</option>
-                <option value="Midpoint">Midpoint</option>
-                <option value="Slithy Toves">Slithy Toves</option>
-                <option value="Tanker's Demise">Tanker's Demise</option>
-                <option value="WindStalker">WindStalker</option>
-                <option value="Sandstorm">Sandstorm</option>
-                <option value="Rainstorm">Rainstorm</option>
-                <option value="Balloon Fun">Balloon Fun</option>
-              </optgroup>
-              <!--
+            <div
+              style="position: relative; display: inline-block"
+              class="glow-item">
+              <select id="game_level" name="level" aria-label="Battle:">
+                <optgroup label="New? Start here. 👇">
+                  <option value="Tutorial">Tutorial</option>
+                </optgroup>
+                <optgroup label="Original Campaign Battles">
+                  <option value="Cake Walk">Cake Walk</option>
+                  <option value="One-Gun">One-Gun</option>
+                  <option value="Sucker Punch">Sucker Punch</option>
+                  <option value="Airborne">Airborne</option>
+                  <option value="Two-Gun">Two-Gun</option>
+                  <option value="Super Bunker">Super Bunker</option>
+                  <option value="Scrapyard">Scrapyard</option>
+                  <option value="Blind Spot">Blind Spot</option>
+                  <option value="Wasteland">Wasteland</option>
+                  <option value="Midnight Oasis">Midnight Oasis</option>
+                </optgroup>
+                <optgroup label="Network Game Battles">
+                  <option value="Cavern Cobra">Cavern Cobra</option>
+                  <option value="Desert Sortie">Desert Sortie</option>
+                  <option value="First Blood">First Blood</option>
+                  <option value="Network Mania">Network Mania</option>
+                  <option value="Rescue Raiders">Rescue Raiders</option>
+                  <option value="Midpoint">Midpoint</option>
+                  <option value="Slithy Toves">Slithy Toves</option>
+                  <option value="Tanker's Demise">Tanker's Demise</option>
+                  <option value="WindStalker">WindStalker</option>
+                  <option value="Sandstorm">Sandstorm</option>
+                  <option value="Rainstorm">Rainstorm</option>
+                  <option value="Balloon Fun">Balloon Fun</option>
+                </optgroup>
+                <!--
               <optgroup label="Practice Battles">
                 <option value="Demo 1">Demo 1</option>
                 <option value="Demo 2">Demo 2</option>
                 <option value="Demo 3">Demo 3</option>
                 <option value="Demo 4">Demo 4</option>
               </optgroup>
-            --></select>
+            -->
+              </select>
+            </div>
           </div>
 
-          <div id="game-type-list-wrapper">
+          <div id="game-type-list-wrapper" class="glow-item">
             <!-- <span>Difficulty: </span> -->
             <!-- <p style="margin:0px;text-align:left">Difficulty</p> -->
             <ul id="game-type-list" class="inline-list less-bottom-spacing">
               <li>
                 <label
                   for="radio_game_type_easy"
-                  title="Get a van to the enemy base! (Easy mode.)">
+                  title="Get a van to the enemy base! (Easy mode.)"
+                  class="no-filter">
                   <input
                     type="radio"
                     id="radio_game_type_easy"
@@ -1540,7 +1546,8 @@
               <li>
                 <label
                   for="radio_game_type_hard"
-                  title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets are faster, more dangerous.">
+                  title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets are faster, more dangerous."
+                  class="no-filter">
                   <input
                     type="radio"
                     id="radio_game_type_hard"
@@ -1552,7 +1559,8 @@
               <li>
                 <label
                   for="radio_game_type_extreme"
-                  title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Turrets fire at tanks. Owning all bunkers is no longer beneficial.">
+                  title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Turrets fire at tanks. Owning all bunkers is no longer beneficial."
+                  class="no-filter">
                   <input
                     type="radio"
                     id="radio_game_type_extreme"
@@ -1570,14 +1578,14 @@
               id="start-game-button"
               data-action="start-game"
               data-title="Play the original game, with a variety of battles and difficulties."
-              class="game-start large">
+              class="game-start large glow-item">
               START <span data-action="start-game" class="emoji-text">🚁</span>
             </button>
             <button
               type="button"
               id="game-options-button"
               data-title="General settings. Access in-game via ESC or options link."
-              class="large">
+              class="large glow-item">
               <span class="emoji-text">🛠️</span><span id="network-pipe">|</span>
             </button>
             <button
@@ -1587,7 +1595,7 @@
               data-title="Play with your best friend, or against your worst enemy online.<br />*NOTE: Somewhat experimental."
               value="network"
               aria-label="Start network game"
-              class="large network">
+              class="large network glow-item">
               <span class="button-icon network-icon"></span>
             </button>
             <button
@@ -1597,7 +1605,7 @@
               data-title="Modify the currently-selected battle.<br />*NOTE: Highly experimental."
               value="editor"
               aria-label="Edit the currently-selected battle."
-              class="large hide-on-mobile">
+              class="large hide-on-mobile glow-item">
               <span class="button-icon">✏️</span>
             </button>
             <label
@@ -1605,6 +1613,7 @@
               title='Virtual Stupidity: Play the game "with" two unruly, unlicensed teenagers.'
               class="cta cta-checkbox">
               <span class="checkbox-wrapper">
+                <span class="glow-item glow-item-checkbox"></span>
                 <input id="checkbox-vs" name="bnb" type="checkbox" value="1" />
               </span>
               <span class="this-rocks">🎸</span>
