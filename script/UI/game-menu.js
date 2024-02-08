@@ -185,8 +185,8 @@ if (useCache) {
 function updatePointer(event) {
   if (!event) return;
 
-  // for now, ignore on touch devices.
-  if (clientFeatures.touch) return;
+  // for now, ignore on touch devices - note custom `force` property on fake event.
+  if (clientFeatures.touch && !event.force) return;
 
   // get the angle based on the center point of the card and pointer position
   for (const card of cards) {
@@ -435,7 +435,7 @@ function init() {
     restyle();
 
     // pretend-reset everything, so glow is entirely hidden.
-    updatePointer({ x: 0, y: 0 });
+    updatePointer({ x: 0, y: 0, force: true });
 
     // clear layout cache in a moment, because user may have moved the mouse while the menu was zooming in.
     utils.events.add(
