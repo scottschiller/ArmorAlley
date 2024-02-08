@@ -889,8 +889,8 @@ button .button-icon {
   --glow-border: hsl(280 10% 50%, 1);
   --glow-card: transparent;
   --glow-color: hsl(240 18% 80%);
-  --glow-border-width: 2px;
-  --glow-border-radius: 12px;
+  --glow-border-width: calc(0.4px * var(--menu-scale));
+  --glow-border-radius: calc(2px * var(--menu-scale));
   --glow-gradient: conic-gradient(
     from 180deg at 50% 70%,
     hsla(0, 0%, 98%, 1) 0deg,
