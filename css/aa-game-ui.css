@@ -56,7 +56,9 @@ body.game-started {
   height: calc(8px * var(--gs));
   z-index: 11;
   opacity: 0;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  transition:
+    transform 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
 }
 
 #spinner:not(.animating) {
@@ -188,7 +190,12 @@ body.game-started #funds {
   color: #ccc;
   display: inline-block;
   filter: grayscale(1) blur(8px);
-  font-family: JetBrains Mono, SF Mono, Lucida Console, Terminal, Monaco,
+  font-family:
+    JetBrains Mono,
+    SF Mono,
+    Lucida Console,
+    Terminal,
+    Monaco,
     monospace;
   height: 22px;
   margin-right: 0;
@@ -244,7 +251,9 @@ body.game-started #funds {
   text-shadow: 0 1px 0 #000;
   top: 0;
   transform: scale(1);
-  transition: opacity 175ms ease-in-out, filter 175ms ease-in-out;
+  transition:
+    opacity 175ms ease-in-out,
+    filter 175ms ease-in-out;
 }
 
 #queue .queue-item.over-ten .counter {
@@ -511,7 +520,9 @@ body.is_safari:not(.is-mobile) #bomb-count {
 #mobile-controls li.weapons-item,
 ul.stats-bar li.stats-item .wrapper {
   filter: grayscale(0);
-  transition: filter 0.33s ease-out, opacity 0.33s ease-out;
+  transition:
+    filter 0.33s ease-out,
+    opacity 0.33s ease-out;
 }
 
 ul.stats-bar li.stats-item.weapon-unavailable:not(.repairing) .wrapper {
@@ -689,7 +700,8 @@ body.is_firefox #radar .radar-item--animated {
 }
 
 #battlefield .sprite.helicopter {
-  transition: filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57),
+  transition:
+    filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57),
     opacity 0.5s ease-in-out;
 }
 
@@ -1235,8 +1247,18 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips #game-announcements .inline-emoji {
   /* font may be required for consistent alignment on iOS Safari. :X */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
   line-height: 1em;
   vertical-align: middle;
 }
@@ -1411,7 +1433,9 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #player-status-bar a {
   /* inventory ordering */
   filter: grayscale(0);
-  transition: filter 0.33s ease-out, opacity 0.33s ease-out;
+  transition:
+    filter 0.33s ease-out,
+    opacity 0.33s ease-out;
 }
 
 #player-status-bar.can-not-order-engineer .engineer,
