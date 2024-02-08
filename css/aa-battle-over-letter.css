@@ -103,9 +103,21 @@ body.is_safari .animated-mail .top-fold {
 }
 
 #battle-over-letter .generic-cta {
+  background-color: #fff;
+  filter: drop-shadow(0 0 calc(1px * var(--menu-scale)) rgba(0, 0, 0, 0.25));
+  color: #000;
+  text-shadow: none;
   font-size: calc(8px * var(--gs));
   padding: calc(2px * var(--gs)) calc(8px * var(--gs));
   line-height: calc(10px * var(--gs));
+  text-decoration: none;
+  border-radius: calc(1px * var(--menu-scale));
+}
+
+#battle-over-letter .generic-cta:hover {
+  color: #fff;
+  background-color: rgba(0, 255, 0, 0.5);
+  filter: drop-shadow(0 0 calc(1px * var(--menu-scale)) rgba(0, 0, 0, 0.25));
 }
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
