@@ -880,4 +880,5 @@ button .network-icon {
 
 button .button-icon {
   pointer-events: none;
+  image-rendering: pixelated;
 }
