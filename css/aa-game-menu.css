@@ -836,7 +836,7 @@ body.game-started #home-video-wrapper {
 
   #network-pipe {
     display: inline-block;
-    color: #003000;
+    color: rgba(255, 255, 255, 0.1);
   }
 
   #game-options-button {
