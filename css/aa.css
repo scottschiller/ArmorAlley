@@ -1004,15 +1004,13 @@ ul.inline-list li:not(:first-of-type) {
 
 /* various cases for disabling scan range UI */
 #battle-over-letter,
-#battlefield.scan_ui_battlefield_enemy_disabled .scan-node.enemy,
-#battlefield.scan_ui_battlefield_enemy_disabled .sprite.enemy .scan-node,
-#battlefield.scan_ui_battlefield_friendly_disabled
-  .sprite:not(.enemy)
-  .scan-node,
-#battlefield.scan_ui_battlefield_friendly_disabled > .scan-node:not(.enemy),
 #letters-from-the-old-tanker,
-#radar.scan_ui_radar_enemy_disabled .sprite.enemy .scan-node,
-#radar.scan_ui_radar_friendly_disabled .sprite:not(.enemy) .scan-node {
+#battlefield.scan_ui_battlefield_enemy_disabled .scan-node.enemy,
+#battlefield.scan_ui_battlefield_friendly_disabled .scan-node:not(.enemy),
+#radar.scan_ui_radar_enemy_disabled > .sprite.enemy .scan-node,
+#radar.scan_ui_radar_enemy_disabled > .scan-node.enemy,
+#radar.scan_ui_radar_friendly_disabled > .sprite:not(.enemy) .scan-node,
+#radar.scan_ui_radar_friendly_disabled > .scan-node:not(.enemy) {
   display: none;
 }
 
