@@ -94,8 +94,8 @@ const StarController = () => {
     data.warpEffect = !gamePrefs.stars_warp_fx
       ? 0
       : isAnimateScrollActive
-      ? absDelta / 4
-      : absDelta / 5;
+        ? absDelta / 4
+        : absDelta / 5;
 
     // bonus: gratuitous live streaking - per se.
     if (game.data.battleOver) data.warpEffect *= 5;
