@@ -256,7 +256,7 @@ const MissileLauncher = (options = {}) => {
   }
 
   function resize() {
-    return common.resizeScanNode(exports, radarItem);
+    return common.resizeScanNode(exports, radarItem, css.className);
   }
 
   function initDOM() {
