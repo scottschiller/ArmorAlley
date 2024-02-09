@@ -126,7 +126,8 @@ const StarController = () => {
           data.frameCount % data.stars[i].data.twinkleModulus === 0
         ) {
           // start "twinkling."
-          data.stars[i].data.twinkleFrameCount = rndInt(8);
+          data.stars[i].data.twinkleFrameCount =
+            rndInt(8) * (FPS / 30);
           // randomize the modulus, again.
           data.stars[i].data.twinkleModulus = getTwinkleModulus();
           continue;
