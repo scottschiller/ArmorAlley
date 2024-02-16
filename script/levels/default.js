@@ -194,6 +194,7 @@ function previewLevel(levelName, excludeVehicles) {
 
   const initMethods = {
     base: {
+      // TODO: review + remove?
       transformSprite: true
     },
     balloon: {
