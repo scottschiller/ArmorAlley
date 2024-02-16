@@ -36,6 +36,9 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   filter: blur(8px);
   opacity: 0;
   z-index: 1;
+  /* discourage selection. */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #game-menu-wrapper.active {
