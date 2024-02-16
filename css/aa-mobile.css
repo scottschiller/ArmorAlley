@@ -613,7 +613,9 @@ body.mobile-controls_right-aligned #mobile-controls {
   line-height: 1.5rem;
   position: absolute;
   top: 0;
-  transition: background-color 0.33s ease-out, filter 0.33s ease-out,
+  transition:
+    background-color 0.33s ease-out,
+    filter 0.33s ease-out,
     opacity 0.33s ease-out;
   width: 100%;
 }
@@ -747,7 +749,9 @@ body.game-paused .sprite {
   opacity: 0;
   transform: scale(0.125);
   transform-origin: 50% 50%;
-  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition:
+    opacity 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
   /* TODO: fix dimension -> scale calculations.: D */
   width: 100px;
 }
