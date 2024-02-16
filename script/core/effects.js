@@ -238,16 +238,16 @@ const effects = {
           data.type === TYPES.helicopter
             ? rnd(1.5) * plusMinus()
             : isBunker || isTurret
-            ? plusMinus(0.5 * chance)
-            : -(data.vX || 0) +
-              rnd(1.5) *
-                (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
+              ? plusMinus(0.5 * chance)
+              : -(data.vX || 0) +
+                rnd(1.5) *
+                  (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
         vY:
           isBunker || isTurret
             ? -rnd(5 * chance)
             : data.type === TYPES.helicopter
-            ? -rnd(3 * chance)
-            : -(data.vY || 0.25) + rnd(-2),
+              ? -rnd(3 * chance)
+              : -(data.vY || 0.25) + rnd(-2),
         // show smoke on battlefield, but not on radar when cloaked.
         parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
         oParent: exports
