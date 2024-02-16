@@ -646,19 +646,8 @@ ul.stats-bar .bombs em {
   position: absolute;
 }
 
-/* bunkers go green when overlapping with ground units, i.e., tanks? */
 #fuel-line,
-#radar .radar-item--animated,
-.cornholio,
-.radar-scroller,
-.sprite.balloon,
-.sprite.bunker,
-.sprite.chain,
-.sprite.end-bunker,
-.sprite.missile-launcher,
-.sprite.super-bunker,
-.sprite.van,
-.turret .sub-sprite {
+.radar-scroller {
   /**
    * 09/2021: Chrome may benefit from explicit "layer" promotion, per dev tools.
    * Here, green paint flashing (and thus, performance) is notably improved
@@ -669,97 +658,8 @@ ul.stats-bar .bombs em {
   contain: strict;
 }
 
-/* firefox complains if we have too many elements using will-change. */
-.radar-item:not(.radar-item--animated),
-body.is_firefox #radar .radar-item--animated {
-  will-change: unset;
-}
-
-.transform-sprite {
-  left: 0;
-  position: absolute;
-  top: 0;
-}
-
 .sprite.dead {
   background-image: none;
-}
-
-/* hide GPU-accelerated, transform-based animated sprites when exploding. */
-.sprite.exploding .transform-sprite {
-  display: none;
-}
-
-.sprite .energy-status {
-  background-color: #3c3;
-  border: 0.25px solid #000;
-  border-radius: 1px;
-  bottom: 0;
-  font-size: 0;
-  height: 1px;
-  left: 0;
-  opacity: 0;
-  position: absolute;
-  transition: all calc(0.2s * var(--gs-frac)) ease-out;
-  transition-property: width, height, left, background-color, opacity;
-  width: 100%;
-  z-index: 2;
-}
-
-/* applied to sprites being actively targeted / tracked - excluding radar item sprites */
-.smart-missile-tracking-active:not(.radar-item):after,
-.smart-missile-tracking-removal:not(.radar-item):after,
-.smart-missile-tracking:not(.radar-item):after {
-  /* similar to .target-dot */
-  content: '';
-  font-size: 0px;
-  opacity: 1;
-  position: absolute;
-  background: #c00;
-  border: 0.5px solid #000;
-  border-radius: 3px;
-  width: 3px;
-  height: 3px;
-  top: -0.5px;
-  right: -0.5px;
-  z-index: 4;
-}
-
-.smart-missile-tracking .target-dot {
-  /* hide larger dot while the other is actively blinking. */
-  visibility: hidden;
-}
-
-.sprite:not(.balloon).exploding.smart-missile-tracking-active:not(
-    .radar-item
-  ):after,
-.sprite:not(.balloon).exploding.smart-missile-tracking-removal:not(
-    .radar-item
-  ):after,
-.sprite:not(.balloon).exploding.smart-missile-tracking:not(.radar-item):after {
-  /* reposition so tracking dot stays in the right place - bunker is normally 25px in height */
-  bottom: 0;
-  top: auto;
-}
-
-.next-missile-target:not(.placeholder) {
-  /* halo around potential targets, excluding "placeholder" nodes for turrets + missile launchers. */
-  filter: drop-shadow(0 0 calc(2px * var(--gs)) #999);
-}
-
-.smart-missile-tracking {
-  filter: drop-shadow(0 0 calc(2px * var(--gs)) #ff3333);
-}
-
-.smart-missile-tracking-active:after {
-  animation: blink calc(0.33s * var(--gs-frac)) none infinite;
-}
-
-.smart-missile-tracking-removal:after,
-.smart-missile-tracking-removal:not(.radar-item):after {
-  animation: drop-in calc(0.33s * var(--gs-frac)) ease-in-out reverse;
-  /* final state once animation finishes */
-  opacity: 0;
 }
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
@@ -772,7 +672,8 @@ body.rubber-chicken-mode ul.stats-bar .missiles em {
 body.banana-mode #mobile-controls li.weapons-item a.smart-missile,
 body.banana-mode ul.stats-bar .missiles em,
 .smart-missile.banana {
-  background: url(../image/banana.png) 50% 0 / contain no-repeat; /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
+  /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
+  background: url(../image/banana.png) 50% 0 / contain no-repeat;
 }
 
 body.banana-mode ul.stats-bar .missiles em {
@@ -784,33 +685,6 @@ body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
 body.original_missile_mode ul.stats-bar .missiles .divider {
   /* hide |C|B in UI when "alternate missiles" are disabled. */
   display: none !important;
-}
-
-body:not(.game-over).radar_jammed #radar-canvas {
-  /* TODO: review, $$$? */
-  /* exception: allow the radar to show, even if jammed, when the game is over. */
-  /* opacity should be fast, performance-wise, and smooth. */
-  opacity: 0;
-}
-
-.sprite.parachute-infantry .energy-status {
-  height: 0.5px;
-}
-
-.helicopter.facing-left .energy-status,
-.sprite.enemy .energy-status {
-  /* right-align on certain units, i.e., flipped helicopter w/custom width */
-  left: auto;
-  right: 0;
-}
-
-.sprite .sub-sprite {
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  /* explosion / burning overlays */
-  position: absolute;
-  width: 100%;
 }
 
 .cornholio {
@@ -1586,16 +1460,6 @@ body.radar_jammed .scan-node {
   }
 }
 
-@keyframes explosionshrapnel2 {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 -768px;
-  }
-}
-
 @keyframes blink {
   0%,
   100% {
@@ -1640,46 +1504,6 @@ body.radar_jammed .scan-node {
   50% {
     opacity: 0.5;
     filter: grayscale(1);
-  }
-}
-
-@keyframes flipleft {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 -60px;
-  }
-}
-
-@keyframes flipright {
-  0% {
-    background-position: 0 -40px;
-  }
-
-  to {
-    background-position: 0 20px;
-  }
-}
-
-@keyframes animate-transform-sprite-engineer {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-50px, 0, 0);
-  }
-}
-
-@keyframes rotating3d {
-  0% {
-    transform: rotate3d(0, 0, 1, 0deg);
-  }
-
-  to {
-    transform: rotate3d(0, 0, 1, 1turn);
   }
 }
 
