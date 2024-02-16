@@ -8,6 +8,7 @@ import {
   isiPhone,
   isMobile,
   oneOf,
+  plusMinus,
   searchParams,
   TYPES,
   winloc,
@@ -40,6 +41,11 @@ const CSS_SCALING_PORTRAIT_TABLET = 0.5;
 
 const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
 const CSS_SCALING_PORTRAIT_PHONE = 0.35;
+
+const noisePattern = new Image();
+noisePattern.src = 'image/noise-tv.webp';
+
+let pattern;
 
 // old-skool JS animation bits, stolen from View. TODO: DRY this up.
 
@@ -193,11 +199,6 @@ const Radar = () => {
 
     let itemObject;
 
-    // for GPU acceleration: note if this is an "animated" type.
-    if (data.animatedTypes.includes(item.data.type)) {
-      className += ` ${css.radarItemAnimated}`;
-    }
-
     if (item.data.bottomAligned) {
       className += ' bottom-aligned';
     }
@@ -268,9 +269,6 @@ const Radar = () => {
 
     updateOverlay();
 
-    // $$$ - watch performance.
-    utils.css.add(document.body, css.radarJammed);
-
     if (!gamePrefs.sound) return;
 
     if (sounds.radarStatic) {
@@ -331,49 +329,32 @@ const Radar = () => {
     // if (gameType === 'extreme') setIncomingMissile(false);
   }
 
+  function overlayActive() {
+    return data.isJammed || data.jamOpacity > 0;
+  }
+
   function updateOverlay() {
-    const id = 'radar-jammed-overlay';
-    let o = document.getElementById(id);
-
-    if (!data.isJammed) {
-      if (o) {
-        // $$$
-        utils.css.remove(o, 'active');
-        // reduce layer cost?
-        if (!gamePrefs.radar_enhanced_fx) {
-          common.setFrameTimeout(() => {
-            o.remove();
-            o = null;
-          }, 1024);
-        }
-      }
-      return;
+    if (!data.ctx.fx) {
+      data.ctx.fx = common.domCanvas.dom.ctx.fx;
+      data.ctx.radar = common.domCanvas.dom.ctx.radar;
+      data.ctx.battlefield = common.domCanvas.dom.ctx.battlefield;
     }
 
-    if (!o) {
-      o = document.createElement('div');
-      o.id = id;
-      o.innerHTML = '<div class="noise"></div>';
-      document.body.appendChild(o);
+    if (!pattern) {
+      pattern = data.ctx.fx.createPattern(noisePattern, 'repeat');
     }
 
-    common.setFrameTimeout(() => {
-      if (!o) return;
-      let noiseCSS = ['active'];
-      // useful for when screencasting / recording / streaming - this effect can kill framerate.
-      if (window.location.href.match(/staticRadar/i)) noiseCSS.push('static');
-      utils.css.add(o, ...noiseCSS);
-      o = null;
-    }, 128);
+    data.jamOffsetX = 0;
+    data.jamOffsetY = 0;
+
+    // for scan nodes
+    utils.css.addOrRemove(dom.radar, data.isJammed, css.jammed);
   }
 
   function stopJamming() {
     data.isJammed = false;
 
-    updateOverlay(data.isJammed);
-
-    // $$$
-    utils.css.remove(document.body, css.radarJammed);
+    updateOverlay();
 
     if (sounds.radarJamming) {
       stopSound(sounds.radarJamming);
@@ -777,6 +758,79 @@ const Radar = () => {
       // only do this once.
       data.isStale = false;
     }
+
+    if (game.data.started) {
+      // jammed, OR, fading in/out.
+      if (overlayActive()) {
+        // if radar has become unjammed, fade out.
+        // otherwise, fade in.
+        const fadeIncrement = 4 / FPS;
+
+        if (data.isJammed && data.jamOpacity < 1) {
+          data.jamOpacity = Math.min(1, data.jamOpacity + fadeIncrement);
+        } else if (!data.isJammed && data.jamOpacity > 0) {
+          data.jamOpacity = Math.max(0, data.jamOpacity - fadeIncrement);
+        }
+
+        if (gamePrefs.radar_enhanced_fx) {
+          const mode = 'soft-light';
+          data.ctx.fx.globalCompositeOperation = mode;
+          data.ctx.battlefield.globalCompositeOperation = mode;
+        }
+
+        jamCanvas('radar', 0.15);
+
+        if (gamePrefs.radar_enhanced_fx) {
+          jamCanvas('fx');
+        }
+
+        // reset
+        if (gamePrefs.radar_enhanced_fx) {
+          data.ctx.fx.globalCompositeOperation = 'source-over';
+          data.ctx.battlefield.globalCompositeOperation = 'source-over';
+        }
+      }
+    }
+  }
+
+  function jamCanvas(id, targetOpacity = 0.15) {
+    const ctx = data.ctx[id];
+
+    if (!ctx) {
+      console.warn('jamCanvas: no ctx?', id);
+      return;
+    }
+
+    const layout = common.domCanvas.data.ctxLayout[id];
+
+    if (gamePrefs.radar_enhanced_fx) {
+      // darken everything slightly, counter the light from noise overlay.
+      ctx.fillStyle = `rgba(0,16,0,${0.33 * data.jamOpacity})`;
+      ctx.fillRect(0, 0, layout.width, layout.height);
+    }
+
+    data.jamOffsetX += plusMinus(64);
+    data.jamOffsetY += plusMinus(64);
+
+    const matrix = new DOMMatrix().translate(data.jamOffsetX, data.jamOffsetY);
+
+    // opacity?
+    ctx.globalAlpha = targetOpacity * data.jamOpacity;
+
+    ctx.setTransform(matrix);
+
+    ctx.fillStyle = pattern;
+
+    ctx.fillRect(
+      -data.jamOffsetX,
+      -data.jamOffsetY,
+      layout.width,
+      layout.height
+    );
+    ctx.fillStyle = '#fff';
+
+    ctx.globalAlpha = 1;
+    ctx.resetTransform();
   }
 
   function scrollWithView() {
@@ -941,8 +995,7 @@ const Radar = () => {
 
   css = {
     incomingSmartMissile: 'incoming-smart-missile',
-    radarJammed: 'radar_jammed',
-    radarItemAnimated: 'radar-item--animated'
+    jammed: 'jammed'
   };
 
   objects = {
@@ -950,22 +1003,14 @@ const Radar = () => {
   };
 
   data = {
+    ctx: {
+      battlefield: null,
+      fx: null,
+      radar: null
+    },
     radarScrollLeft: 0,
     radarTarget: null,
     lastRadarTargetWidth: 0,
-    animatedTypes: [
-      TYPES.bomb,
-      TYPES.balloon,
-      TYPES.helicopter,
-      TYPES.tank,
-      TYPES.gunfire,
-      TYPES.infantry,
-      TYPES.parachuteInfantry,
-      TYPES.engineer,
-      TYPES.missileLauncher,
-      TYPES.shrapnel,
-      TYPES.van
-    ],
     animateEveryFrameTypes: {
       [TYPES.helicopter]: true,
       [TYPES.shrapnel]: true,
@@ -977,6 +1022,9 @@ const Radar = () => {
     isJammed: false,
     isStale: false,
     jamCount: 0,
+    jamOffsetX: 0,
+    jamOffsetY: 0,
+    jamOpacity: 0,
     missileWarningCount: 0,
     lastMissileCount: 0,
     incomingMissile: false,
@@ -1008,6 +1056,7 @@ const Radar = () => {
     maybeApplyScaling,
     objects,
     onOrientationChange,
+    overlayActive,
     removeItem: removeRadarItem,
     reset: reset,
     resize: resize,

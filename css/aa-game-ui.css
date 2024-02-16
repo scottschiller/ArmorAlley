@@ -290,19 +290,6 @@ body.game-started #funds {
   opacity: 0.75;
 }
 
-body.game-over.radar_enhanced_fx #radar-jammed-overlay .noise {
-  opacity: 0.25;
-}
-
-#radar-jammed-overlay.static .noise {
-  animation: none !important;
-  background: rgba(0, 48, 0, 0.45) !important;
-}
-
-body.game-paused #radar-jammed-overlay.active .noise {
-  animation: none;
-}
-
 body.demo #game-tips,
 body.demo #help,
 body.demo #home-video-wrapper,
@@ -312,11 +299,6 @@ body.demo #queue,
 body.demo #radar,
 body.demo #stats-bar {
   display: none !important;
-}
-
-body.demo #radar-jammed-overlay {
-  /* don't animate in radar area, waste of video bitrate :P */
-  top: 8%;
 }
 
 body.demo .target-marker {
@@ -978,6 +960,10 @@ body:not(.game-over).radar_jammed #radar-canvas {
   overflow: visible;
   contain: revert;
   will-change: transform;
+}
+
+#radar.jammed .radar-item {
+  opacity: 0;
 }
 
 #radar .scan-node.destroyed,

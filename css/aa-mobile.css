@@ -8,12 +8,6 @@ body.is-mobile #game-menu-wrapper {
   max-width: 100%;
 }
 
-body.is_safari.game-over.is-mobile #radar-jammed-overlay {
-  /* Safari may fail to render the overlay w/mix-blend-mode at game over. */
-  mix-blend-mode: normal !important;
-  opacity: 0.5;
-}
-
 body.is-mobile #top-bar #game-fps {
   display: none;
 }
