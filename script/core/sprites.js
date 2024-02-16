@@ -47,13 +47,12 @@ const sprites = {
       o.dataset.id = options.id; // data-id = ...
     }
 
-    if (!options?.className?.match(/transform-sprite|sub-sprite|terrain/i)) {
+    if (!options?.className?.match(/terrain/i)) {
       o._style.setProperty('top', '0px');
       o._style.setProperty('left', '0px');
     }
 
     if (debugType) {
-      o.innerHTML = options.className.replace(/sub-sprite/i, '');
       o._style.setProperty('font-size', '3px');
     }
 
@@ -111,8 +110,7 @@ const sprites = {
       exports,
       exports.dom.o,
       `${exports.data.x}px`,
-      `${exports.data.y}px`,
-      exports.data.extraTransforms
+      `${exports.data.y}px`
     );
   },
 
