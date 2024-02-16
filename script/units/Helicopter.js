@@ -26,7 +26,8 @@ import {
   rng,
   rngPlusMinus,
   clientFeatures,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  GAME_SPEED
 } from '../core/global.js';
 
 import {
@@ -53,9 +54,9 @@ import { gamePrefs } from '../UI/preferences.js';
 import { getLandscapeLayout } from '../UI/mobile.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { zones } from '../core/zones.js';
-import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { sprites } from '../core/sprites.js';
 
 const Helicopter = (options = {}) => {
   let css,
@@ -81,14 +82,14 @@ const Helicopter = (options = {}) => {
     // hackish: mark and/or update the current frame when this happened.
     data.cloaked = game.objects.gameLoop.data.frameCount;
 
+    data.opacity = 0.33;
+    data.domCanvas.img.target.opacity = data.opacity;
+
     // Tough times with turrets? “The answer, my friend, is blowing in the wind.” 🌬️🚁
     cloud?.drift(data.isEnemy);
   }
 
   function doCloak() {
-    utils.css.add(dom.o, css.cloaked);
-    utils.css.add(radarItem.dom.o, css.cloaked);
-
     // mark the frame this began
     data.cloakedFrameStart = game.objects.gameLoop.data.frameCount;
 
@@ -137,9 +138,6 @@ const Helicopter = (options = {}) => {
     if (!data.cloaked || data.cloaked === game.objects.gameLoop.data.frameCount)
       return;
 
-    utils.css.remove(dom.o, css.cloaked);
-    utils.css.remove(radarItem.dom.o, css.cloaked);
-
     if (gamePrefs.bnb && data.isLocal && data.cloakedCommentary && !data.dead) {
       playSoundWithDelay(sounds.bnb.beavisPeekaboo, 250);
     }
@@ -152,6 +150,8 @@ const Helicopter = (options = {}) => {
     }
 
     data.cloaked = false;
+    data.opacity = 1;
+    data.domCanvas.img.target.opacity = data.opacity;
     data.cloakedFrameStart = 0;
     data.wentIntoHiding = false;
     data.cloakedCommentary = false;
@@ -319,7 +319,8 @@ const Helicopter = (options = {}) => {
                   );
                   playSound(sounds.bnb.muchaMuchacha, null);
                   common.setVideo('camper', 1.05);
-                  utils.css.add(dom.o, css.muchaMuchacha);
+                  // TODO: re-implement in Canvas. ;)
+                  // utils.css.add(dom.o, css.muchaMuchacha);
                 }
               } else {
                 game.objects.notifications.add(
@@ -418,9 +419,7 @@ const Helicopter = (options = {}) => {
       if (sounds.bnb.muchaMuchacha) {
         data.muchaMuchacha = false;
         // hackish: ensure we reset any horizontal travel.
-        dom.o.style.left = '0px';
         stopSound(sounds.bnb.muchaMuchacha);
-        utils.css.remove(dom.o, css.muchaMuchacha);
       }
 
       if (sounds.bnb.iGotYouBabe) {
@@ -664,8 +663,11 @@ const Helicopter = (options = {}) => {
       }
 
       // hackish: horizontal travel.
+      // TODO: move to sprite offsetX / xOffset.
+      /*
       dom.o.style.left =
         (progress === 0 || Math.random() < 0.66 ? 0 : plusMinus(rnd(1))) + 'px';
+        */
 
       // hackish: force update.
       sprites.setTransformXY(
@@ -771,7 +773,6 @@ const Helicopter = (options = {}) => {
 
     const respawnY = data.yMax - 4;
 
-    // initial respawning
     if (state) {
       // hackish: hard reset battlefield scroll
       data.scrollLeft = data.isEnemy
@@ -816,15 +817,9 @@ const Helicopter = (options = {}) => {
 
       sprites.updateEnergy(exports);
 
-      utils.css.add(dom.o, css.respawning);
-    } else {
-      utils.css.remove(dom.o, css.respawning);
+      // ensure we're visible.
+      data.visible = true;
     }
-
-    // transition, helicopter rises from landing pad
-    common.setFrameTimeout(() => {
-      utils.css.addOrRemove(dom.o, state, css.respawningActive);
-    }, 128);
 
     if (state) {
       // "complete" respawn, re-enable mouse etc.
@@ -854,33 +849,17 @@ const Helicopter = (options = {}) => {
     )
       return;
 
-    if (data.flipped) {
-      // going back to L->R
-      utils.css.remove(dom.o, css.facingLeft);
-      utils.css.remove(dom.o, css.flippedLeft);
-    } else {
-      utils.css.remove(dom.o, css.facingRight);
-      utils.css.remove(dom.o, css.flippedRight);
-    }
-
     data.flipped = !data.flipped;
+
+    // TODO: yuck. refactor.
+    spriteConfig.rotating.animationConfig.reverseDirection =
+      (data.isEnemy && data.flipped) || (!data.isEnemy && !data.flipped);
+
+    swapSprite(spriteConfig.rotating);
 
     // immediately re-scan for new missile targets.
     if (data.isLocal) {
       scanRadar();
-    }
-
-    utils.css.add(dom.o, data.flipped ? css.flippedLeft : css.flippedRight);
-
-    if (!data.flipTimer) {
-      data.flipTimer = common.setFrameTimeout(() => {
-        utils.css.remove(
-          dom.o,
-          data.flipped ? css.flippedLeft : css.flippedRight
-        );
-        utils.css.add(dom.o, data.flipped ? css.facingLeft : css.facingRight);
-        data.flipTimer = null;
-      }, 333);
     }
 
     if (data.isLocal && !data.autoFlip && sounds.helicopter.flip) {
@@ -965,7 +944,7 @@ const Helicopter = (options = {}) => {
         : (data.vX / data.vXMax) * 12.5 + data.shakeOffset;
 
     // transform-specific, to be provided to sprites.setTransformXY() as an additional transform
-    data.angle = `rotate3d(0, 0, 1, ${data.tiltOffset}deg)`;
+    data.angle = data.tiltOffset;
   }
 
   function onLandingPad(state) {
@@ -1078,7 +1057,7 @@ const Helicopter = (options = {}) => {
 
     zones.refreshZone(exports);
 
-    sprites.setTransformXY(exports, dom.o, `${x}px`, `${y}px`, data.angle);
+    sprites.setTransformXY(exports, dom.o, `${x}px`, `${y}px`);
   }
 
   function moveTo(x, y) {
@@ -1206,15 +1185,6 @@ const Helicopter = (options = {}) => {
     data.shakeOffset = 0;
 
     data.exploding = false;
-    utils.css.remove(dom.o, css.exploding);
-    if (css.explodingType) {
-      utils.css.remove(dom.o, css.explodingType);
-    }
-
-    utils.css.remove(dom.o, css.dead);
-
-    // randomize
-    css.explodingType = getRandomExplodingType();
 
     // reposition on appropriate landing pad
     data.x = common.getLandingPadOffsetX(exports);
@@ -1246,11 +1216,6 @@ const Helicopter = (options = {}) => {
     data.frameCount = 0;
 
     data.exploding = true;
-    utils.css.add(dom.o, css.exploding);
-
-    if (css.explodingType) {
-      utils.css.add(dom.o, css.explodingType);
-    }
 
     // drop this state in a moment.
     common.setFixedFrameTimeout(() => (data.exploding = false), 2000);
@@ -1368,7 +1333,6 @@ const Helicopter = (options = {}) => {
     }
 
     common.setFrameTimeout(() => {
-      utils.css.add(dom.o, css.dead);
       // undo flip
       if (data.flipped) {
         flip(true);
@@ -1409,6 +1373,8 @@ const Helicopter = (options = {}) => {
     data.dieCount++;
 
     radarItem.die();
+
+    data.visible = false;
 
     if (sounds.explosionLarge) {
       playSound(sounds.explosionLarge, exports);
@@ -2429,6 +2395,8 @@ const Helicopter = (options = {}) => {
       net.sendMessage({ type: 'PING' });
     }
 
+    data.domCanvas.animation?.animate();
+
     if (data.respawning) {
       sprites.moveWithScrollOffset(exports);
       return;
@@ -2722,45 +2690,51 @@ const Helicopter = (options = {}) => {
     // already queued?
     if (data.commentaryTimer) return;
 
-    data.commentaryTimer = common.setFrameTimeout(() => {
-      // don't run too often
-      const now = Date.now();
-      data.commentaryTimer = null;
-      if (now - data.commentaryLastExec < data.commentaryThrottle) return;
+    data.commentaryTimer = common.setFrameTimeout(
+      () => {
+        // don't run too often
+        const now = Date.now();
+        data.commentaryTimer = null;
+        if (now - data.commentaryLastExec < data.commentaryThrottle) return;
 
-      // "still fighting"?
-      if (!isAttackerValid(attacker)) return;
+        // "still fighting"?
+        if (!isAttackerValid(attacker)) return;
 
-      function onplay(sound) {
-        // attacker may have died between queue and playback start
-        if (!isAttackerValid(attacker)) skipSound(sound);
-      }
-
-      // finally!
-      playSound(sounds.bnb.beavisCmonButthead, null, {
-        onplay,
-        onfinish: function (sound) {
-          if (sound.skipped || !isAttackerValid(attacker)) return;
-          // "you missed, butt-head."
-          common.setFrameTimeout(() => {
-            playSound(sounds.bnb.beavisYouMissed, null, {
-              onplay,
-              onfinish: (sound2) => {
-                if (sound2.skipped) return;
-                playSoundWithDelay(
-                  sounds.bnb.beavisYouMissedResponse,
-                  null,
-                  { onplay },
-                  1000
-                );
-              }
-            });
-          }, 5000 + rndInt(2000));
+        function onplay(sound) {
+          // attacker may have died between queue and playback start
+          if (!isAttackerValid(attacker)) skipSound(sound);
         }
-      });
 
-      data.commentaryLastExec = now;
-    }, 2000 + rndInt(2000));
+        // finally!
+        playSound(sounds.bnb.beavisCmonButthead, null, {
+          onplay,
+          onfinish: function (sound) {
+            if (sound.skipped || !isAttackerValid(attacker)) return;
+            // "you missed, butt-head."
+            common.setFrameTimeout(
+              () => {
+                playSound(sounds.bnb.beavisYouMissed, null, {
+                  onplay,
+                  onfinish: (sound2) => {
+                    if (sound2.skipped) return;
+                    playSoundWithDelay(
+                      sounds.bnb.beavisYouMissedResponse,
+                      null,
+                      { onplay },
+                      1000
+                    );
+                  }
+                });
+              },
+              5000 + rndInt(2000)
+            );
+          }
+        });
+
+        data.commentaryLastExec = now;
+      },
+      2000 + rndInt(2000)
+    );
   }
 
   function isAttackerValid(attacker) {
@@ -2912,10 +2886,6 @@ const Helicopter = (options = {}) => {
     }
   }
 
-  function getRandomExplodingType() {
-    return oneOf(['', 'generic-explosion', 'generic-explosion-2']);
-  }
-
   function initHelicopter() {
     updateFiringRates();
 
@@ -2924,11 +2894,7 @@ const Helicopter = (options = {}) => {
       data.frameCount = Math.floor(data.fireModulus / 2);
     }
 
-    dom.o = sprites.create({
-      className: css.className + (data.isEnemy ? ` ${css.enemy}` : '')
-    });
-
-    dom.o.appendChild(sprites.makeTransformSprite());
+    dom.o = {};
 
     dom.fuelLine = sprites.getWithStyle('fuel-line');
 
@@ -2952,13 +2918,7 @@ const Helicopter = (options = {}) => {
       exports
     );
 
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y}px`,
-      data.angle
-    );
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // for human player: append immediately, so initial game start / respawn animation works nicely
     sprites.updateIsOnScreen(exports);
@@ -2974,9 +2934,12 @@ const Helicopter = (options = {}) => {
         callAction('setRespawning', true);
       } else {
         // randomize start times a bit
-        common.setFrameTimeout(() => {
-          callAction('setRespawning', true);
-        }, 1000 + aiRNG(2000));
+        common.setFrameTimeout(
+          () => {
+            callAction('setRespawning', true);
+          },
+          1000 + aiRNG(2000)
+        );
       }
     } else {
       // non-network, local player(s)
@@ -3003,9 +2966,12 @@ const Helicopter = (options = {}) => {
     // note final true param, for respawn purposes
     radarItem = game.objects.radar.addItem(
       exports,
-      `${dom.o.className}${data.isLocal ? ' local-player' : ''}`,
+      `${css.className}${data.isLocal ? ' local-player' : ''}`,
       true
     );
+
+    // ugh - hack.
+    data.radarItem = radarItem;
 
     radarItem.summon();
   }
@@ -3015,20 +2981,8 @@ const Helicopter = (options = {}) => {
     animating: 'animating',
     active: 'active',
     disabled: 'disabled',
-    explodingType: getRandomExplodingType(),
-    facingLeft: 'facing-left',
-    facingRight: 'facing-right',
-    flippedLeft: 'flipped-left',
-    flippedRight: 'flipped-right',
-    cloaked: 'cloaked',
-    muchaMuchacha: 'mucha-muchacha',
-    movingLeft: 'moving-left',
-    movingRight: 'moving-right',
     nextMissileTarget: 'next-missile-target',
-    tilt: 'tilt',
     repairing: 'repairing',
-    respawning: 'respawning',
-    respawningActive: 'respawning-active',
     unavailable: 'weapon-unavailable',
     reloading: 'weapon-reloading'
   });
@@ -3044,6 +2998,7 @@ const Helicopter = (options = {}) => {
       isRemote: !!options.isRemote,
       attachEvents: !!options.attachEvents,
       angle: 0,
+      excludeBlink: true, // TODO: review
       lastReactionSound: null,
       commentaryTimer: null,
       commentaryLastExec: 0,
@@ -3181,8 +3136,8 @@ const Helicopter = (options = {}) => {
       spinnerTimer: null,
       blinkCounter: 0,
       // TODO: DRY / optimize
-      blinkCounterHide: 8 * (FPS === 60 ? 2 : 1),
-      blinkCounterReset: 16 * (FPS === 60 ? 2 : 1)
+      blinkCounterHide: 8 * (FPS / 30),
+      blinkCounterReset: 16 * (FPS / 30)
     },
     options
   );
@@ -3349,9 +3304,106 @@ const Helicopter = (options = {}) => {
     updateStatusUI
   };
 
-  data.domCanvas = {
-    radarItem: Helicopter.radarItemConfig(exports)
+  // enemy chopper is a bit bigger.
+  const defaultWidth = data.isEnemy ? 440 : 400;
+  const defaultHeight = data.isEnemy ? 36 : 30;
+
+  const rotatingWidth = 100;
+  const rotatingHeight = 120;
+
+  const spriteConfig = {
+    default: {
+      getImage: () => {
+        return `helicopter${data.isEnemy ? '-enemy' : ''}-sprite-horizontal${data.flipped ? '-flipped' : ''}.png`;
+      },
+      width: defaultWidth,
+      height: defaultHeight,
+      frameWidth: defaultWidth / 4,
+      frameHeight: defaultHeight,
+      animationConfig: {
+        animationDuration: 1.35,
+        horizontal: true,
+        loop: true
+      }
+    },
+    rotating: {
+      getImage: () => {
+        if (data.isEnemy) return 'helicopter-rotating-enemy.png';
+        return 'helicopter-rotating.png';
+      },
+      width: rotatingWidth,
+      height: rotatingHeight,
+      frameWidth: rotatingWidth,
+      frameHeight: rotatingHeight / 3,
+      // vertical sprite
+      animationConfig: {
+        animationDuration: 0.7,
+        onEnd: () => {
+          // back to default sprite.
+          swapSprite(spriteConfig.default, {
+            skipFrame: true
+          });
+        }
+      }
+    }
   };
+
+  data.domCanvas = {
+    radarItem: Helicopter.radarItemConfig(exports),
+    img: {
+      src: null,
+      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
+      frameCount: 0,
+      animationFrame: 0,
+      animationFrameCount: 0,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: 0,
+        height: 0,
+        frameWidth: 0,
+        frameHeight: 0,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 0,
+        height: 0
+      }
+    }
+  };
+
+  function swapSprite(newSprite = spriteConfig.default, options = {}) {
+    const props = ['width', 'height', 'frameWidth', 'frameHeight'];
+    props.forEach((prop) => {
+      data.domCanvas.img.source[prop] = newSprite[prop];
+    });
+    // assign target width + height based on source frame width + height
+    data.domCanvas.img.target.width = newSprite.frameWidth;
+    data.domCanvas.img.target.height = newSprite.frameHeight;
+    // animation?
+    if (newSprite.animationConfig) {
+      const { width, height, frameWidth, frameHeight } = newSprite;
+      data.domCanvas.animation = common.domCanvas.canvasAnimation(exports, {
+        skipFrame: !!options.skipFrame,
+        sprite: {
+          width,
+          height,
+          frameWidth,
+          frameHeight,
+          url: newSprite.getImage(),
+          ...newSprite.animationConfig
+        },
+        // TODO: move this into sprite or something
+        useDataAngle: true,
+        // TODO: this is also bad and needs moving.
+        onEnd: newSprite.animationConfig.onEnd
+      });
+    }
+  }
+
+  swapSprite();
 
   collision = {
     options: {
@@ -3484,18 +3536,21 @@ Helicopter.radarItemConfig = (exports) => ({
 
     const isLocal = exports.data.id === game.players.local.data.id;
 
-    if (isLocal && exports?.data?.blinkCounter >= 0) {
+    const radarData = exports.data.radarItem?.data;
+
+    if (isLocal && radarData && exports.data.blinkCounter >= 0) {
       // local chopper blinks continuously
       exports.data.blinkCounter++;
       if (exports.data.blinkCounter === exports.data.blinkCounterHide) {
-        exports.data.visible = !exports.data.visible;
+        radarData.visible = !radarData.visible;
       } else if (exports.data.blinkCounter >= exports.data.blinkCounterReset) {
-        exports.data.visible = !exports.data.visible;
+        radarData.visible = !radarData.visible;
         exports.data.blinkCounter = 0;
       }
     }
+
     // don't draw if not visible.
-    if (isLocal && !exports.data.visible && !exports.data.respawning) return;
+    if (isLocal && !radarData.visible && !exports.data.respawning) return;
 
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.heightNoStroke(height);

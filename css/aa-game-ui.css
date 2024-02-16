@@ -681,12 +681,6 @@ body.is_firefox #radar .radar-item--animated {
   top: 0;
 }
 
-#battlefield .sprite.helicopter {
-  transition:
-    filter 1s cubic-bezier(0.45, 0.48, 0.25, 1.57),
-    opacity 0.5s ease-in-out;
-}
-
 .sprite.dead {
   background-image: none;
 }
@@ -768,91 +762,6 @@ body.is_firefox #radar .radar-item--animated {
   opacity: 0;
 }
 
-.helicopter {
-  /* cloaking opacity effect */
-  opacity: 1;
-  top: 0;
-  transition: opacity 0.25s ease-in-out;
-}
-
-.helicopter.respawning .transform-sprite {
-  top: 15px;
-}
-
-#world.welcome .helicopter.respawning-active .transform-sprite,
-.helicopter.respawning-active .transform-sprite {
-  top: 0;
-  transition: all calc(1.5s * var(--gs-frac)) ease-in-out;
-  /* filter: blur() may be applied during game start */
-  transition-property: top, filter;
-}
-
-.helicopter.flipped-left,
-.helicopter.flipped-right {
-  animation: flipleft calc(0.33s * var(--gs-frac)) steps(3);
-  background-image: url(../image/helicopter-rotating.png) !important;
-  background-size: 50px 60px;
-  width: 50px;
-  height: 20px;
-}
-
-.helicopter.flipped-left .transform-sprite,
-.helicopter.flipped-right .transform-sprite {
-  /* hide while rotating */
-  display: none;
-}
-
-.helicopter.flipped-left.enemy,
-.helicopter.flipped-right.enemy {
-  /* hack for enemy case */
-  background-image: url(../image/helicopter-rotating-enemy.png) !important;
-}
-
-.helicopter.flipped-left.enemy,
-.helicopter.flipped-right {
-  /* backwards */
-  animation: flipright calc(0.33s * var(--gs-frac)) steps(3);
-}
-
-.helicopter.flipped-right.enemy {
-  /* backwards */
-  animation: flipleft calc(0.33s * var(--gs-frac)) steps(3);
-}
-
-.helicopter.cloaked {
-  opacity: 0.33;
-}
-
-#radar .helicopter.cloaked {
-  visibility: hidden;
-}
-
-.helicopter.enemy,
-.helicopter.enemy.facing-left,
-.helicopter.enemy.facing-right {
-  height: 18px;
-  overflow: hidden;
-  width: 55px;
-}
-
-.helicopter.enemy .transform-sprite {
-  animation: animate-transform-sprite-helicopter-enemy
-    calc(0.52s * var(--gs-frac)) steps(4) infinite;
-  background-image: url(../image/helicopter-enemy-sprite-horizontal.png);
-  background-size: 220px 18px;
-  height: 18px;
-  width: 220px;
-}
-
-.helicopter.enemy.facing-left .transform-sprite {
-  /* updated sprite */
-  background-image: url(../image/helicopter-enemy-sprite-horizontal-facing-right.png);
-}
-
-.helicopter.dead {
-  display: none;
-}
-
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
   background: url(../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
@@ -877,55 +786,11 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   display: none !important;
 }
 
-.helicopter,
-.helicopter.facing-left,
-.helicopter.facing-right {
-  height: 15px;
-  overflow: hidden;
-  width: 48px;
-  z-index: 11; /* show on top of notifications, and landing pad - but not clouds. */
-}
-
-.helicopter .transform-sprite {
-  animation: animate-transform-sprite-helicopter calc(0.52s * var(--gs-frac))
-    steps(4) infinite;
-  background-image: url(../image/helicopter-sprite-horizontal.png);
-  background-size: 200px 15px;
-  height: 15px;
-  width: 200px;
-}
-
-.helicopter.facing-left .transform-sprite {
-  /* new sprite */
-  background-image: url(../image/helicopter-sprite-horizontal-facing-left.png);
-}
-
 body:not(.game-over).radar_jammed #radar-canvas {
   /* TODO: review, $$$? */
   /* exception: allow the radar to show, even if jammed, when the game is over. */
   /* opacity should be fast, performance-wise, and smooth. */
   opacity: 0;
-}
-
-.helicopter.exploding {
-  /* 01/2024: previously, applied to most all battlefield sprites. */
-  animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
-  /* give the first frame a little more time */
-  animation-delay: 0.1s;
-  animation-fill-mode: forwards;
-  /* Stay on last frame when finished */
-  background-image: url(../image/explosion-shrapnel-2.png);
-  background-position: 0 -768px;
-  /* default state */
-  background-repeat: no-repeat;
-  background-size: 100%;
-  height: 32px;
-  width: 79px;
-  /* adjust so explosion lines up with where helicopter was */
-  margin-left: -15px;
-  margin-top: -17px;
-  /* glow similar to canvas */
-  filter: drop-shadow(0px 0px 8px #ff3333);
 }
 
 .sprite.parachute-infantry .energy-status {
@@ -1805,27 +1670,6 @@ body.radar_jammed .scan-node {
 
   to {
     transform: translate3d(-50px, 0, 0);
-  }
-}
-
-@keyframes animate-transform-sprite-helicopter {
-  /* is translate vs. translate3d() any better? */
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-200px, 0, 0);
-  }
-}
-
-@keyframes animate-transform-sprite-helicopter-enemy {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-220px, 0, 0);
   }
 }
 
