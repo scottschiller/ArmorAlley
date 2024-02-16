@@ -116,7 +116,12 @@ const Balloon = (options = {}) => {
 
     effects.domFetti(exports, dieOptions.attacker);
 
-    effects.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+    effects.smokeRing(exports, {
+      parentVX: data.vX,
+      parentVY: data.vY,
+      offsetX: 3,
+      offsetY: 0.01
+    });
 
     if (gameType === 'hard' || gameType === 'extreme') {
       effects.shrapnelExplosion(data, {
