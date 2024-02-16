@@ -670,13 +670,7 @@ const Helicopter = (options = {}) => {
         */
 
       // hackish: force update.
-      sprites.setTransformXY(
-        exports,
-        dom.o,
-        `${data.x}px`,
-        `${data.y}px`,
-        `rotate3d(0, 0, 1, ${data.tiltOffset}deg)`
-      );
+      sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
     }
   }
 
