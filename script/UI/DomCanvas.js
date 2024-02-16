@@ -148,6 +148,8 @@ const DomCanvas = () => {
 
     const { sprite } = options;
 
+    let { skipFrame } = options;
+
     let img = utils.image.getImageObject(sprite.url);
 
     const {
@@ -183,6 +185,7 @@ const DomCanvas = () => {
     if (hideAtEnd) animationFrameCount++;
 
     let stopped;
+    let onEndFired;
 
     const newImg = {
       src: img,
@@ -208,7 +211,8 @@ const DomCanvas = () => {
         // approximate centering of explosion sprite vs. original
         xOffset: options.xOffset || 0,
         yOffset: options.yOffset || 0,
-        useDataAngle: !!options.useDataAngle
+        useDataAngle: !!options.useDataAngle,
+        opacity: exports.data.opacity
       }
     };
 
@@ -226,29 +230,63 @@ const DomCanvas = () => {
     // assign a reference to the new source (e.g., on a turret), whether replaced or added.
     const thisImg = newImg;
 
-    function animate() {
-      // animation routine
-      if (stopped) return;
+    function applyOffset() {
+      if (horizontal) {
+        thisImg.source.frameX = reverseDirection
+          ? animationFrameCount - 1 - spriteOffset
+          : spriteOffset;
+      } else {
+        thisImg.source.frameY = reverseDirection
+          ? animationFrameCount - 1 - spriteOffset
+          : spriteOffset;
+      }
+    }
 
+    function animate() {
       // FPS + game speed -> animation speed ratio.
       // TODO: reduce object churn - update only when FPS and/or game speed change.
       const animationModulus = Math.floor(
         FPS * (1 / GAME_SPEED) * (1 / 10) * animationDuration
       );
 
-      if (frameCount > 0 && frameCount % animationModulus === 0) {
-        // next frame: default spritesheet shenanigans.
-        if (horizontal) {
-          thisImg.source.frameX = reverseDirection
-            ? animationFrameCount - 1 - spriteOffset
-            : spriteOffset;
-        } else {
-          thisImg.source.frameY = reverseDirection
-            ? animationFrameCount - 1 - spriteOffset
-            : spriteOffset;
+      if (skipFrame) {
+        /**
+         * HACK: this is for the case when the helicopter is changing directions,
+         * and the first frame is shown for two frames' time. This hacks around it.
+         * TODO: figure out why this happens and fix it.
+         */
+        frameCount = animationModulus;
+        skipFrame = false;
+      }
+
+      // all frames have run...
+      if (stopped) {
+        // don't persist last frame
+        if (hideAtEnd) return;
+
+        // delay one more animation frame before reset, so last doesn't disappear immediately.
+        if (options.onEnd && !onEndFired) {
+          if (frameCount > 0 && frameCount % animationModulus === 0) {
+            onEndFired = true;
+            options.onEnd();
+          } else {
+            // waiting to end...
+            frameCount++;
+          }
         }
+
+        // draw last frame until instructed otherwise.
+        return draw(exports);
+      }
+
+      if (frameCount > 0 && frameCount % animationModulus === 0) {
+        // hackish note: apply offset before increment.
+        applyOffset();
+
+        // next frame: default spritesheet shenanigans.
         spriteOffset++;
         animationFrame++;
+
         if (animationFrame >= animationFrameCount) {
           // done!
           animationFrame = 0;
@@ -256,7 +294,6 @@ const DomCanvas = () => {
           spriteOffset = 0;
           if (!loop) {
             stopped = true;
-            options?.onEnd?.();
           } else {
             // alternate direction on loop?
             if (alternate) reverseDirection = !reverseDirection;
@@ -265,7 +302,15 @@ const DomCanvas = () => {
           frameCount++;
         }
       } else {
-        frameCount++;
+        // HACK: ensure the first frame is set right away.
+        if (!frameCount && !loop) {
+          // prevent a potential flash of the "un-reversed" sprite...
+          applyOffset();
+          // HACK: avoid showing the first frame for twice the duration.
+          frameCount = animationModulus;
+        } else {
+          frameCount++;
+        }
       }
 
       draw(exports);
@@ -934,6 +979,9 @@ const DomCanvas = () => {
   exports = {
     canvasAnimation,
     clear,
+    // TODO: don't expose data + DOM. :X
+    data,
+    dom,
     draw,
     drawDebugRect,
     drawTrailers,
