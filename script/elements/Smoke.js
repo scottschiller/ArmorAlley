@@ -213,7 +213,7 @@ const Smoke = (options = {}) => {
     // lastly - if a cloaked helicopter, always put behind helicopter and cloud.
     data.domCanvas.ctxName = data.oParent.data.cloaked
       ? 'fx-bg'
-      : oneOf(['fx', 'fx-bg']);
+      : options.ctxName || oneOf(['fx', 'fx-bg']);
   }
 
   dom = {
