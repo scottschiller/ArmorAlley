@@ -217,8 +217,7 @@ const Smoke = (options = {}) => {
   }
 
   dom = {
-    o: null,
-    oTransformSprite: null
+    o: null
   };
 
   exports = {

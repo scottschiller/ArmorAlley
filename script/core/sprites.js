@@ -60,11 +60,6 @@ const sprites = {
     return o;
   },
 
-  makeTransformSprite: (extraClass) =>
-    sprites.create({
-      className: `transform-sprite${extraClass ? ` ${extraClass}` : ''}`
-    }),
-
   moveTo: (exports, x = exports.data.x, y = exports.data.y) => {
     exports.data.x = x;
     exports.data.y = y;
