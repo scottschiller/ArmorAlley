@@ -734,8 +734,14 @@ const DomCanvas = () => {
     // run logic, but don't actually draw if not on-screen.
     if (!exports.data.isOnScreen) return;
 
-    // if a radar item and in demo / screencast mode, don't draw.
-    if (demo && data.type === 'radar-item') return;
+    // special radar item cases
+    if (data.type === 'radar-item') {
+      // if a radar item and in demo / screencast mode, don't draw.
+      if (demo && data.type === 'radar-item') return;
+
+      // if radar is jammed, don't draw.
+      if (game.objects.radar.data.isJammed) return;
+    }
 
     // does the object know how to draw itself?
     if (oData.draw) {
