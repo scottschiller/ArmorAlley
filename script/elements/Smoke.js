@@ -11,6 +11,7 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const Smoke = (options = {}) => {
   let dom, data, exports;
@@ -102,13 +103,14 @@ const Smoke = (options = {}) => {
     }
 
     // smoke particles on radar, why not.
-    // TODO: DRY, and maybe make this an option in prefs.
-    if (!game.objects.radar.data.isJammed) {
+    if (gamePrefs.radar_enhanced_fx && !game.objects.radar.data.isJammed) {
       common.domCanvas.draw({
         data: {
           type: 'on-radar',
           x: data.x,
           y: data.y,
+          // fake it 'til you make it.
+          isOnScreen: true,
           domCanvas: {
             width: 1.75,
             height: 1.75,
