@@ -142,7 +142,8 @@ const effects = {
         spriteFrameModulus: smokeOptions.spriteFrameModulus || 3,
         gravity: 0.25,
         deceleration: 0.98,
-        increaseDeceleration: 0.9985
+        increaseDeceleration: 0.9985,
+        ctxName: 'fx'
       };
 
       game.objects.smoke.push(Smoke(smokeArgs));
@@ -193,11 +194,11 @@ const effects = {
 
     const { data } = exports;
 
-    // TODO: put "smoke on radar" behind a pref, and exit early when disabled and elements are off-screen.
-    // if (!data.isOnScreen) return;
-
     // no damage = no smoke.
     if (exports.data.energy === exports.data.energyMax) return;
+
+    // don't show if not in view, AND no "smoke on radar."
+    if (!data.isOnScreen && !gamePrefs.radar_enhanced_fx) return;
 
     // first off: certain chance of no smoke, regardless of status
     if (Math.random() >= 0.66) return;
