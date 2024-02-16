@@ -9,7 +9,8 @@ import {
   isMobile,
   isSafari,
   searchParams,
-  TYPES
+  TYPES,
+  updateClientFeatures
 } from '../core/global.js';
 import { net } from '../core/network.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
@@ -478,6 +479,12 @@ function afterTransitionIn() {
 }
 
 function introBNBSound(e) {
+  // if from a key event, take note; this affects the in-game UI on mobile.
+  if (e?.type?.match(/(keydown|keypress|keyup)/i) && !clientFeatures.keyboard) {
+    updateClientFeatures({ keyboard: true });
+    utils.css.add(document.getElementById('player-status-bar'), 'has_keyboard');
+  }
+
   if (!gamePrefs.bnb) return;
 
   // bail if not ready yet - and ignore clicks on #game-options-link which play other sound.

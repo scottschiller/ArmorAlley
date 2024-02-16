@@ -64,9 +64,13 @@ body.is-mobile.notch-at-right #help {
   margin-right: calc(env(safe-area-inset-right) / 3);
 }
 
-body.is-mobile #player-status-bar .inventory-item,
-body.is-mobile #player-status-bar .spacer {
-  /* hide outright */
+body.is-mobile #player-status-bar:not(.has_keyboard) .inventory-item,
+body.is-mobile #player-status-bar:not(.has_keyboard) .spacer,
+body.is-mobile #player-status-bar:not(.has_keyboard) span.letter-block {
+  /**
+   * Hide inventory UI outright (and weapons labels,) unless a keyboard has been detected.
+   * TODO: expand (width) and fade inventory in.
+   */
   display: none;
 }
 
@@ -243,6 +247,19 @@ body.is-mobile.mobile-controls_right-aligned
   body.is-mobile #mobile-controls li span,
   body.is-mobile #player-status-bar span.letter-block {
     display: none;
+  }
+
+  /* allow keyboard controls for iPad / tablet in portrait, when a keyboard is present. */
+  body.is-mobile:not(.is_iphone)
+    #player-status-bar.has_keyboard
+    span.letter-block {
+    /* TODO: troubleshoot and fix centering. */
+    display: inline-block;
+  }
+
+  /* all mobile, including iPad / tablet: hide MTVIE even with keyboard in portrait, likely no room. */
+  body.is-mobile #player-status-bar.has_keyboard .inventory-item {
+    display: none !important;
   }
 
   /* smaller inventory sizes */

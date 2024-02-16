@@ -7,7 +7,9 @@ import {
   rubberChickenMode,
   bananaMode,
   GAME_SPEED,
-  GAME_SPEED_INCREMENT
+  GAME_SPEED_INCREMENT,
+  clientFeatures,
+  updateClientFeatures
 } from '../core/global.js';
 import { gamePrefs } from './preferences.js';
 import { net } from '../core/network.js';
@@ -84,7 +86,15 @@ function KeyboardMonitor() {
         return stopEvent(e);
       }
     }
-
+    // if not a "simulated" event, mark the client as having support.
+    // TODO: maybe hook this event separately.
+    if (!e.fromAATouch && !clientFeatures.keyboard) {
+      updateClientFeatures({ keyboard: true });
+      utils.css.add(
+        document.getElementById('player-status-bar'),
+        'has_keyboard'
+      );
+    }
     return true;
   }
 
