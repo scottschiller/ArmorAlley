@@ -610,12 +610,6 @@ body.edit-mode #top-bar {
   top: 0;
 }
 
-#battlefield .terrain-item.dynamically-added {
-  transition: margin 0.75s ease-in-out;
-  /* lay back in the cut, as it were. */
-  z-index: 1;
-}
-
 .barb-wire {
   height: 11px;
   width: 18px;
@@ -642,77 +636,6 @@ body.edit-mode #top-bar {
 .balloon {
   height: 16px;
   width: 38px;
-}
-
-/* alignment / centering tweaks while on bunker w/chain */
-#battlefield .balloon.facing-left:not(.exploding) {
-  margin-left: 1.5px;
-}
-
-#battlefield .balloon.facing-right:not(.exploding) {
-  margin-left: -2.65px;
-}
-
-.balloon,
-.balloon.facing-right {
-  /* original yellow version: 0px -120px */
-  background-position: 0 -128px;
-}
-
-.balloon.animating {
-  transition: margin 0.8s linear;
-}
-
-.balloon.facing-right.animating {
-  animation: balloonright calc(0.8s * var(--gs-frac)) steps(8);
-}
-
-.balloon.facing-left {
-  /* default when animation finishes */
-  background-position: 0 0;
-}
-
-.balloon.facing-left.animating {
-  animation: balloonleft calc(0.8s * var(--gs-frac)) steps(8);
-}
-
-.balloon.dead,
-.generic-explosion .sub-sprite,
-.generic-explosion-2 .sub-sprite {
-  display: none;
-}
-
-.chain {
-  /**
-   * height will be set / reset by JS.
-   * element is moved via transform and is effectively fixed-height when active.
-   * height is only zeroed when chain is at bottom - detached from balloon and/or bunker.
-   */
-  height: 0;
-  top: 0;
-  width: 2.5px;
-  background-image: repeating-linear-gradient(
-    -33deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 0.5px,
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0) 1.5px
-  );
-}
-
-body.is_safari:not(.is-mobile) .chain {
-  /* tweak for desktop Safari, likely due to scaling. */
-  background-image: repeating-linear-gradient(
-    -33deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 0.5px,
-    rgba(255, 255, 255, 0.33) 1px,
-    rgba(255, 255, 255, 0.33) 1.5px,
-    rgba(255, 255, 255, 0) 2px
-  );
 }
 
 .missile-launcher {
@@ -785,51 +708,6 @@ body.is_safari:not(.is-mobile) .chain {
   width: 52px;
 }
 
-.helicopter.exploding,
-.missile-launcher.exploding,
-.tank.enemy.exploding,
-.tank.exploding,
-.turret.exploding,
-.van.exploding {
-  animation: explosionshrapnel2 calc(1s * var(--gs-frac)) steps(12);
-  /* give the first frame a little more time */
-  animation-delay: 0.1s;
-  animation-fill-mode: forwards;
-  /* Stay on last frame when finished */
-  background-image: url(../image/explosion-shrapnel-2.png);
-  background-position: 0 -384px;
-  /* default state */
-  background-repeat: no-repeat;
-  background-size: auto;
-  height: 32px;
-  width: 79px;
-}
-
-.sprite.ordering {
-  contain: layout;
-  /* TODO: remove margin-bottom once all bottom-aligned things are out */
-  margin-bottom: 0 !important;
-  margin-top: 0 !important;
-  transition: margin 2s; /* override .building rules */
-}
-
-.sprite.recycling {
-  /* units drop "below", in reverse of ordering */
-  /* (when applied as .building.recycling) */
-  transition: margin 2s;
-}
-
-.smart-missile-tracking:not(.turret):not(.parachute-infantry):not(
-    .placeholder
-  ) {
-  /**
-   * Turn "hot" fast, with a few exceptions -
-   * Turrets and parachute infantry need to keep
-   * their own timings for animation / transitions.
-   */
-  transition-duration: 0.25s;
-}
-
 .turret,
 .turret .sub-sprite {
   height: 15px;
@@ -841,123 +719,7 @@ body.is_safari:not(.is-mobile) .chain {
   top: -5px;
 }
 
-.turret:not(.destroyed):not(.firing):not(.exploding) .sub-sprite {
-  animation: scan calc(2s * var(--gs-frac)) linear infinite alternate;
-}
-
-.turret.destroyed .sub-sprite {
-  background-position: 50% 100%;
-  bottom: 0;
-  height: 3px !important;
-  /* bottom-align dead sprite */
-  top: auto;
-}
-
 .landing-pad {
   height: 7px;
   width: 81px;
-}
-
-@keyframes classic-explosion {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(0, -100%, 0);
-  }
-}
-
-.generic-explosion-2 {
-  background-image: url(../image/generic-explosion-2.png);
-}
-
-@keyframes balloonright {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 -128px; /* original yellow version: 0px -135px */
-  }
-}
-
-@keyframes balloonleft {
-  0% {
-    background-position: 0 -128px; /* original yellow version: 0px -120px */
-  }
-
-  to {
-    background-position: 0 0;
-  }
-}
-
-@keyframes nuke {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: -2352px 0;
-  }
-}
-
-@keyframes scan {
-  0% {
-    transform: rotate(-90deg);
-  }
-
-  to {
-    transform: rotate(90deg);
-  }
-}
-
-@keyframes animate-transform-sprite-tank {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-174px, 0, 0);
-  }
-}
-
-@keyframes animate-transform-sprite-infantry {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-55px, 0, 0);
-  }
-}
-
-@keyframes burninating {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-
-@keyframes bomb {
-  0% {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 -33px;
-  }
-}
-
-@keyframes bomb-rotate {
-  0% {
-    transform: rotate(-90deg);
-  }
-
-  to {
-    transform: rotate(0);
-  }
 }
