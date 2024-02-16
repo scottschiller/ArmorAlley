@@ -377,13 +377,19 @@ const Helicopter = (options = {}) => {
       utils.css.add(dom.statusBar.bombCountLI, css.repairing);
     }
 
-    common.setFrameTimeout(() => {
-      playRepairingWrench(repairInProgress, exports);
-    }, 500 + rndInt(1500));
+    common.setFrameTimeout(
+      () => {
+        playRepairingWrench(repairInProgress, exports);
+      },
+      500 + rndInt(1500)
+    );
 
-    common.setFrameTimeout(() => {
-      playImpactWrench(repairInProgress, exports);
-    }, 500 + rndInt(1500));
+    common.setFrameTimeout(
+      () => {
+        playImpactWrench(repairInProgress, exports);
+      },
+      500 + rndInt(1500)
+    );
   }
 
   function stopRepairing() {
@@ -881,8 +887,8 @@ const Helicopter = (options = {}) => {
         data.autoFlip
           ? 'Auto-flip enabled'
           : clientFeatures.touch
-          ? 'Auto-flip disabled.\nTap with another finger to flip manually.'
-          : 'Auto-flip disabled'
+            ? 'Auto-flip disabled.\nTap with another finger to flip manually.'
+            : 'Auto-flip disabled'
       );
 
       // TODO: better "confirmation" sound
