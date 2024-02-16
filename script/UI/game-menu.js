@@ -182,11 +182,29 @@ if (useCache) {
   utils.events.add(window, 'resize', clearLayoutCache);
 }
 
+function resetPointer() {
+  // pretend-reset everything, so glow is entirely hidden.
+  updatePointer({ x: 0, y: 0 });
+}
+
+function hidePointer() {
+  for (const card of cards) {
+    // apply default opacity
+    card.style.setProperty('--glow-active', config.opacity);
+  }
+}
+
+function startPointer(e) {
+  if (!e.touches?.length) return;
+  const touch = e.touches[e.touches.length - 1];
+  updatePointer({
+    x: touch.clientX,
+    y: touch.clientY
+  });
+}
+
 function updatePointer(event) {
   if (!event) return;
-
-  // for now, ignore on touch devices - note custom `force` property on fake event.
-  if (clientFeatures.touch && !event.force) return;
 
   // get the angle based on the center point of the card and pointer position
   for (const card of cards) {
@@ -430,12 +448,13 @@ function init() {
 
     cards.forEach((card) => card.appendChild(glowNode.cloneNode()));
 
+    utils.events.add(document, 'touchstart', startPointer);
+    utils.events.add(document.body, 'touchend', hidePointer);
     utils.events.add(document.body, 'pointermove', updatePointer);
 
     restyle();
 
-    // pretend-reset everything, so glow is entirely hidden.
-    updatePointer({ x: 0, y: 0, force: true });
+    resetPointer();
 
     // clear layout cache in a moment, because user may have moved the mouse while the menu was zooming in.
     utils.events.add(
@@ -717,7 +736,9 @@ function formClick(e) {
 
 function formCleanup() {
   utils.events.remove(document, 'click', formClick);
+  utils.events.remove(document, 'touchstart', startPointer);
   utils.events.remove(document.body, 'pointermove', updatePointer);
+  utils.events.remove(document.body, 'touchend', hidePointer);
   utils.events.remove(window, 'resize', clearLayoutCache);
   optionsButton = null;
   oSelect = null;
