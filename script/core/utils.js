@@ -98,7 +98,7 @@ const utils = {
   },
 
   image: {
-    getImageObject: (url) => {
+    getImageObject: (url, onload) => {
       if (!url) {
         console.warn('getImageObject: No URL?', url);
         return;
@@ -109,7 +109,10 @@ const utils = {
       // preload, then update; canvas will ignore rendering until loaded.
       const img = new Image();
       const src = `image/${url}`;
-      utils.image.load(src, () => (img.src = src));
+      utils.image.load(src, () => {
+        img.src = src;
+        onload?.(img);
+      });
 
       // return new object immediately
       imageObjects[url] = img;
@@ -138,7 +141,7 @@ const utils = {
 
       function didLoad() {
         loaded++;
-        if (loaded >= urls.length) callback();
+        if (loaded >= urls.length) callback?.();
       }
 
       urls.forEach((url) => {
