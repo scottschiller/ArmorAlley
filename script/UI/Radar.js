@@ -780,7 +780,7 @@ const Radar = () => {
           data.jamOpacity = Math.max(0, data.jamOpacity - fadeIncrement);
         }
 
-        jamCanvas('radar', 0.25);
+        jamCanvas('radar', 0.2);
 
         if (gamePrefs.radar_enhanced_fx) {
           jamCanvas('fx', 0.65);
