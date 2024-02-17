@@ -97,7 +97,14 @@ function RadarItem(options) {
     if (reverse) {
       data.stepFrames.reverse();
     }
+
     data.stepFrame = 0;
+
+    data.stepOffset = data.stepFrames[data.stepFrame];
+
+    // hackish: assign to parent
+    data.oParent.data.stepOffset = data.stepOffset;
+
     data.stepActive = true;
   }
 
