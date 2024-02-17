@@ -219,19 +219,15 @@ const effects = {
     // TODO: clean this up. yuck.
     game.objects.smoke.push(
       Smoke({
-        x:
-          data.x +
-          data.halfWidth +
-          parseInt(rnd(fractionWidth) * plusMinus(), 10),
+        x: data.x + data.halfWidth + plusMinus(rnd(fractionWidth)),
         y:
           data.y +
-          (data.type !== TYPES.helicopter ? data.halfHeight : 0) +
-          parseInt(
-            rnd(data.halfHeight) *
-              (isBunker ? 0.5 : 0.25) *
-              (data.vY <= 0 ? -1 : 1),
-            10
-          ),
+          (data.type !== TYPES.helicopter && data.type !== TYPES.balloon
+            ? data.halfHeight
+            : 0) +
+          rnd(data.halfHeight) *
+            (data.type === TYPES.balloon ? 0 : isBunker ? 0.5 : 0.25) *
+            (data.vY <= 0 ? -1 : 1),
         // if undefined or zero, allow smoke to go left or right
         // special handling for helicopters and turrets. this should be moved into config options.
         vX:
