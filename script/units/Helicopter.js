@@ -1074,7 +1074,8 @@ const Helicopter = (options = {}) => {
   }
 
   function moveTrailers() {
-    if (!data.isOnScreen) return;
+    // don't show if dead, or being "summoned" (respawning) via stepOffset
+    if (!data.isOnScreen || data.dead || data.stepOffset < 1) return;
 
     common.domCanvas.drawTrailers(
       exports,
