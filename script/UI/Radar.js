@@ -42,10 +42,13 @@ const CSS_SCALING_PORTRAIT_TABLET = 0.5;
 const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
 const CSS_SCALING_PORTRAIT_PHONE = 0.35;
 
-const noisePattern = new Image();
-noisePattern.src = 'image/noise-tv.webp';
+let noisePatternDark;
+let noisePatternLight;
 
-let pattern;
+let patterns = {
+  dark: null,
+  light: null
+};
 
 // old-skool JS animation bits, stolen from View. TODO: DRY this up.
 
@@ -340,8 +343,16 @@ const Radar = () => {
       data.ctx.battlefield = common.domCanvas.dom.ctx.battlefield;
     }
 
-    if (!pattern) {
-      pattern = data.ctx.fx.createPattern(noisePattern, 'repeat');
+    if (!patterns.light) {
+      utils.image.getImageObject('noise-tv-dark.webp', (img) => {
+        patterns.dark = data.ctx.fx.createPattern(img, 'repeat');
+      });
+    }
+
+    if (!patterns.dark && gamePrefs.radar_enhanced_fx) {
+      utils.image.getImageObject('noise-tv.webp', (img) => {
+        patterns.light = data.ctx.fx.createPattern(img, 'repeat');
+      });
     }
 
     data.jamOffsetX = 0;
@@ -772,28 +783,16 @@ const Radar = () => {
           data.jamOpacity = Math.max(0, data.jamOpacity - fadeIncrement);
         }
 
-        if (gamePrefs.radar_enhanced_fx) {
-          const mode = 'soft-light';
-          data.ctx.fx.globalCompositeOperation = mode;
-          data.ctx.battlefield.globalCompositeOperation = mode;
-        }
-
-        jamCanvas('radar', 0.15);
+        jamCanvas('radar', 0.25);
 
         if (gamePrefs.radar_enhanced_fx) {
-          jamCanvas('fx');
-        }
-
-        // reset
-        if (gamePrefs.radar_enhanced_fx) {
-          data.ctx.fx.globalCompositeOperation = 'source-over';
-          data.ctx.battlefield.globalCompositeOperation = 'source-over';
+          jamCanvas('fx', 0.65);
         }
       }
     }
   }
 
-  function jamCanvas(id, targetOpacity = 0.15) {
+  function jamCanvas(id, targetOpacity = 0.5) {
     const ctx = data.ctx[id];
 
     if (!ctx) {
@@ -803,14 +802,14 @@ const Radar = () => {
 
     const layout = common.domCanvas.data.ctxLayout[id];
 
-    if (gamePrefs.radar_enhanced_fx) {
-      // darken everything slightly, counter the light from noise overlay.
-      ctx.fillStyle = `rgba(0,16,0,${0.33 * data.jamOpacity})`;
-      ctx.fillRect(0, 0, layout.width, layout.height);
-    }
+    data.jamOffsetX += data.jamOffsetXIncrement;
+    data.jamOffsetY += data.jamOffsetYIncrement;
 
-    data.jamOffsetX += plusMinus(64);
-    data.jamOffsetY += plusMinus(64);
+    if (game.objects.gameLoop.data.frameCount % 4 === 0) {
+      // randomize
+      data.jamOffsetXIncrement = plusMinus(96);
+      data.jamOffsetYIncrement = plusMinus(96);
+    }
 
     const matrix = new DOMMatrix().translate(data.jamOffsetX, data.jamOffsetY);
 
@@ -819,7 +818,7 @@ const Radar = () => {
 
     ctx.setTransform(matrix);
 
-    ctx.fillStyle = pattern;
+    ctx.fillStyle = id === 'radar' ? patterns.light : patterns.dark;
 
     ctx.fillRect(
       -data.jamOffsetX,
@@ -1024,6 +1023,8 @@ const Radar = () => {
     jamCount: 0,
     jamOffsetX: 0,
     jamOffsetY: 0,
+    jamOffsetXIncrement: 0,
+    jamOffsetYIncrement: 0,
     jamOpacity: 0,
     missileWarningCount: 0,
     lastMissileCount: 0,
