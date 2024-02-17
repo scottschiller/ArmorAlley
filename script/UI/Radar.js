@@ -42,9 +42,6 @@ const CSS_SCALING_PORTRAIT_TABLET = 0.5;
 const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
 const CSS_SCALING_PORTRAIT_PHONE = 0.35;
 
-let noisePatternDark;
-let noisePatternLight;
-
 let patterns = {
   dark: null,
   light: null
@@ -344,14 +341,14 @@ const Radar = () => {
     }
 
     if (!patterns.light) {
-      utils.image.getImageObject('noise-tv-dark.webp', (img) => {
-        patterns.dark = data.ctx.fx.createPattern(img, 'repeat');
+      utils.image.getImageObject('noise-tv.webp', (img) => {
+        patterns.light = data.ctx.fx.createPattern(img, 'repeat');
       });
     }
 
     if (!patterns.dark && gamePrefs.radar_enhanced_fx) {
-      utils.image.getImageObject('noise-tv.webp', (img) => {
-        patterns.light = data.ctx.fx.createPattern(img, 'repeat');
+      utils.image.getImageObject('noise-tv-dark.webp', (img) => {
+        patterns.dark = data.ctx.fx.createPattern(img, 'repeat');
       });
     }
 
