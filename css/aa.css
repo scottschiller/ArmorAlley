@@ -274,7 +274,7 @@ body.loaded #radar {
 }
 
 body.radar_enhanced_fx #world-noise-overlay {
-  /* Probably $$$ - only apply when active. */
+  /* Probably $$$ - TODO: only apply when active. */
   mix-blend-mode: soft-light;
 }
 
@@ -314,16 +314,23 @@ body.radar_enhanced_fx #world-noise-overlay .noise {
   pointer-events: none;
 }
 
+body.game-started #world-noise-overlay {
+  top: 0;
+}
+
 /* special case: home screen, game menu. */
 body.radar_enhanced_fx #world-noise-overlay {
   opacity: 0.65;
-  mix-blend-mode: soft-light;
 }
 
 body.radar_enhanced_fx.edit-mode #world-noise-overlay,
 body.radar_enhanced_fx.game-started #world-noise-overlay {
   transition: opacity 0.75s ease-in-out;
   opacity: 0;
+}
+
+body.radar_enhanced_fx #world-noise-overlay.radar-jammed {
+  opacity: 1;
 }
 
 #tv-display {

@@ -42,11 +42,6 @@ const CSS_SCALING_PORTRAIT_TABLET = 0.5;
 const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
 const CSS_SCALING_PORTRAIT_PHONE = 0.35;
 
-let patterns = {
-  dark: null,
-  light: null
-};
-
 // old-skool JS animation bits, stolen from View. TODO: DRY this up.
 
 const easing = {
@@ -329,34 +324,11 @@ const Radar = () => {
     // if (gameType === 'extreme') setIncomingMissile(false);
   }
 
-  function overlayActive() {
-    return data.isJammed || data.jamOpacity > 0;
-  }
-
   function updateOverlay() {
-    if (!data.ctx.fx) {
-      data.ctx.fx = common.domCanvas.dom.ctx.fx;
-      data.ctx.radar = common.domCanvas.dom.ctx.radar;
-      data.ctx.battlefield = common.domCanvas.dom.ctx.battlefield;
-    }
-
-    if (!patterns.light) {
-      utils.image.getImageObject('noise-tv.webp', (img) => {
-        patterns.light = data.ctx.fx.createPattern(img, 'repeat');
-      });
-    }
-
-    if (!patterns.dark && gamePrefs.radar_enhanced_fx) {
-      utils.image.getImageObject('noise-tv-dark.webp', (img) => {
-        patterns.dark = data.ctx.fx.createPattern(img, 'repeat');
-      });
-    }
-
-    data.jamOffsetX = 0;
-    data.jamOffsetY = 0;
-
     // for scan nodes
     utils.css.addOrRemove(dom.radar, data.isJammed, css.jammed);
+
+    utils.css.addOrRemove(dom.overlay, data.isJammed, css.jammed);
   }
 
   function stopJamming() {
@@ -766,67 +738,6 @@ const Radar = () => {
       // only do this once.
       data.isStale = false;
     }
-
-    if (game.data.started) {
-      // jammed, OR, fading in/out.
-      if (overlayActive()) {
-        // if radar has become unjammed, fade out.
-        // otherwise, fade in.
-        const fadeIncrement = 4 / FPS;
-
-        if (data.isJammed && data.jamOpacity < 1) {
-          data.jamOpacity = Math.min(1, data.jamOpacity + fadeIncrement);
-        } else if (!data.isJammed && data.jamOpacity > 0) {
-          data.jamOpacity = Math.max(0, data.jamOpacity - fadeIncrement);
-        }
-
-        jamCanvas('radar', 0.2);
-
-        if (gamePrefs.radar_enhanced_fx) {
-          jamCanvas('fx', 0.65);
-        }
-      }
-    }
-  }
-
-  function jamCanvas(id, targetOpacity = 0.5) {
-    const ctx = data.ctx[id];
-
-    if (!ctx) {
-      console.warn('jamCanvas: no ctx?', id);
-      return;
-    }
-
-    const layout = common.domCanvas.data.ctxLayout[id];
-
-    data.jamOffsetX += data.jamOffsetXIncrement;
-    data.jamOffsetY += data.jamOffsetYIncrement;
-
-    if (game.objects.gameLoop.data.frameCount % 4 === 0) {
-      // randomize
-      data.jamOffsetXIncrement = plusMinus(96);
-      data.jamOffsetYIncrement = plusMinus(96);
-    }
-
-    const matrix = new DOMMatrix().translate(data.jamOffsetX, data.jamOffsetY);
-
-    // opacity?
-    ctx.globalAlpha = targetOpacity * data.jamOpacity;
-
-    ctx.setTransform(matrix);
-
-    ctx.fillStyle = id === 'radar' ? patterns.light : patterns.dark;
-
-    ctx.fillRect(
-      -data.jamOffsetX,
-      -data.jamOffsetY,
-      layout.width,
-      layout.height
-    );
-    ctx.fillStyle = '#fff';
-
-    ctx.globalAlpha = 1;
-    ctx.resetTransform();
   }
 
   function scrollWithView() {
@@ -974,7 +885,7 @@ const Radar = () => {
     dom.radar = document.getElementById('radar');
     dom.radarContainer = document.getElementById('radar-container');
     data.height = dom.radar.offsetHeight;
-
+    dom.overlay = document.getElementById('world-noise-overlay');
     dom.root = document.querySelector(':root');
     dom.targetMarker = document.createElement('div');
     dom.targetMarker.style.opacity = 0;
@@ -991,7 +902,7 @@ const Radar = () => {
 
   css = {
     incomingSmartMissile: 'incoming-smart-missile',
-    jammed: 'jammed'
+    jammed: 'radar-jammed'
   };
 
   objects = {
@@ -1034,6 +945,7 @@ const Radar = () => {
   };
 
   dom = {
+    overlay: null,
     radar: null,
     radarContainer: null,
     radarItem: null,
@@ -1054,7 +966,6 @@ const Radar = () => {
     maybeApplyScaling,
     objects,
     onOrientationChange,
-    overlayActive,
     removeItem: removeRadarItem,
     reset: reset,
     resize: resize,

@@ -907,20 +907,11 @@ function hideTitleScreen(callback) {
       }
 
       document.getElementById('home-video-wrapper')?.remove();
-      document.getElementById('world-noise-overlay')?.remove();
 
       game.data.started = true;
 
       // drop game menu CSS in a minute.
       window.setTimeout(() => aaLoader.unloadCSS('css/aa-game-menu.css'), 1250);
-
-      window.setTimeout(() => {
-        // preload some radar jamming assets.
-        utils.image.preload(['noise-tv.webp']);
-        if (gamePrefs.radar_enhanced_fx) {
-          utils.image.preload(['noise-tv-dark.webp']);
-        }
-      }, 5000);
 
       callback?.();
     }

@@ -701,7 +701,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   will-change: transform;
 }
 
-#radar.jammed .radar-item {
+#radar.radar-jammed .radar-item {
   opacity: 0;
 }
 
