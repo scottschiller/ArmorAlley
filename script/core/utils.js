@@ -104,15 +104,22 @@ const utils = {
         return;
       }
       // already "cached"
-      if (imageObjects[url]) return imageObjects[url];
+      if (imageObjects[url]) {
+        onload?.(img);
+        return imageObjects[url];
+      }
 
       // preload, then update; canvas will ignore rendering until loaded.
       const img = new Image();
       const src = `image/${url}`;
-      utils.image.load(src, () => {
-        img.src = src;
+
+      img.onload = () => {
+        preloadedImageURLs[url] = src;
         onload?.(img);
-      });
+        img.onload = null;
+      };
+
+      img.src = src;
 
       // return new object immediately
       imageObjects[url] = img;
