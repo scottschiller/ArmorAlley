@@ -64,6 +64,7 @@ import { Envelope } from '../UI/Envelope.js';
 import { RadarScroller } from '../UI/RadarScroller.js';
 import { aaLoader } from '../core/aa-loader.js';
 import { addItem as addTerrainItem } from '../elements/Terrain.js';
+import { Smoke } from '../elements/Smoke.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -936,6 +937,7 @@ const game = (() => {
     'parachute-infantry': ParachuteInfantry,
     'shrapnel': Shrapnel,
     'smart-missile': SmartMissile,
+    'smoke': Smoke,
     'super-bunker': SuperBunker,
     'turret': Turret,
     'tank': Tank,
