@@ -18,18 +18,6 @@ const canvasConfig = [
     name: 'battlefield',
     ctxArgs: { alpha: false },
     ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
-  },
-  // for gunfire, shrapnel, smoke - show the pixels.
-  // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingEnabled
-  {
-    id: 'battlefield-canvas',
-    name: 'fx-bg',
-    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
-  },
-  {
-    id: 'fx-canvas',
-    name: 'fx',
-    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: false }
   }
 ];
 
@@ -37,24 +25,11 @@ const ctxOptionsById = {};
 canvasConfig.forEach((item) => (ctxOptionsById[item.id] = item.ctxOptions));
 
 // certain objects render in certain places.
-// TODO: sometimes, smoke should be behind the helicopter (and/or clouds), i.e., render on battlefield canvas.
 const ctxByType = {
-  'default': 'fx',
-  [TYPES.gunfire]: 'fx',
-  [TYPES.shrapnel]: 'fx',
-  [TYPES.smoke]: 'fx',
-  [TYPES.cloud]: 'fx',
+  'default': 'battlefield',
   'radar-item': 'radar',
   // special generic case
-  'on-radar': 'radar',
-  [TYPES.superBunker]: 'battlefield',
-  [TYPES.endBunker]: 'battlefield',
-  // hack: for now, all units on foreground fx canvas.
-  [TYPES.missileLauncher]: 'fx',
-  [TYPES.tank]: 'fx',
-  [TYPES.van]: 'fx',
-  [TYPES.infantry]: 'fx',
-  [TYPES.engineer]: 'fx'
+  'on-radar': 'radar'
 };
 
 const pos = {
@@ -88,16 +63,12 @@ const DomCanvas = () => {
   dom = {
     // see canvasConfig
     o: {
-      'battlefield': null,
-      'fx': null,
-      'fx-bg': null,
-      'radar': null
+      battlefield: null,
+      radar: null
     },
     ctx: {
-      'battlefield': null,
-      'fx': null,
-      'fx-bg': null,
-      'radar': null
+      battlefield: null,
+      radar: null
     }
   };
 
@@ -899,7 +870,7 @@ const DomCanvas = () => {
     xOffset = 0,
     yOffset = 0
   ) {
-    const ctx = dom.ctx['fx-bg'];
+    const ctx = dom.ctx.battlefield;
     const ss = game.objects.view.data.screenScale;
 
     for (let i = 0, j = xHistory.length; i < j; i++) {
