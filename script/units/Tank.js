@@ -493,7 +493,7 @@ const Tank = (options = {}) => {
     radarItem: Tank.radarItemConfig(),
     img: {
       src: null,
-      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
+      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 22)), // 1 / 10 = 1-second animation
       frameCount: 0,
       animationFrame: 0,
       animationFrameCount: spriteWidth / frameWidth,
