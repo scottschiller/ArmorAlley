@@ -142,44 +142,39 @@ const effects = {
         spriteFrameModulus: smokeOptions.spriteFrameModulus || 3,
         gravity: 0.25,
         deceleration: 0.98,
-        increaseDeceleration: 0.9985,
-        ctxName: 'fx'
+        increaseDeceleration: 0.9985
       };
 
-      game.objects.smoke.push(Smoke(smokeArgs));
+      game.addObject(TYPES.smoke, smokeArgs);
 
       // past a certain amount, create inner "rings"
       if (count >= 20 || velocityMax > 15) {
         // second inner ring
         if (i % 2 === 0) {
-          game.objects.smoke.push(
-            Smoke(
-              common.mixin(smokeArgs, {
-                vX: vectorX * 0.75,
-                vY: vectorY * 0.75
-              })
-            )
+          game.addObject(
+            TYPES.smoke,
+            common.mixin(smokeArgs, {
+              vX: vectorX * 0.75,
+              vY: vectorY * 0.75
+            })
           );
         }
-
         // third inner ring
         if (i % 3 === 0) {
-          game.objects.smoke.push(
-            Smoke(
-              common.mixin(smokeArgs, {
-                vX: vectorX * 0.66,
-                vY: vectorY * 0.66
-              })
-            )
+          game.addObject(
+            TYPES.smoke,
+            common.mixin(smokeArgs, {
+              vX: vectorX * 0.66,
+              vY: vectorY * 0.66
+            })
           );
         }
 
         // fourth inner ring
         if (i % 4 === 0) {
-          game.objects.smoke.push(
-            Smoke(
-              common.mixin(smokeArgs, { vX: vectorX * 0.5, vY: vectorY * 0.5 })
-            )
+          game.addObject(
+            TYPES.smoke,
+            common.mixin(smokeArgs, { vX: vectorX * 0.5, vY: vectorY * 0.5 })
           );
         }
       }
@@ -217,38 +212,36 @@ const effects = {
     const fractionWidth = isBunker ? data.halfWidth : data.halfWidth * 0.5;
 
     // TODO: clean this up. yuck.
-    game.objects.smoke.push(
-      Smoke({
-        x: data.x + data.halfWidth + plusMinus(rnd(fractionWidth)),
-        y:
-          data.y +
-          (data.type !== TYPES.helicopter && data.type !== TYPES.balloon
-            ? data.halfHeight
-            : 0) +
-          rnd(data.halfHeight) *
-            (data.type === TYPES.balloon ? 0 : isBunker ? 0.5 : 0.25) *
-            (data.vY <= 0 ? -1 : 1),
-        // if undefined or zero, allow smoke to go left or right
-        // special handling for helicopters and turrets. this should be moved into config options.
-        vX:
-          data.type === TYPES.helicopter
-            ? rnd(1.5) * plusMinus()
-            : isBunker || isTurret
-              ? plusMinus(0.5 * chance)
-              : -(data.vX || 0) +
-                rnd(1.5) *
-                  (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
-        vY:
-          isBunker || isTurret
-            ? -rnd(5 * chance)
-            : data.type === TYPES.helicopter
-              ? -rnd(3 * chance)
-              : -(data.vY || 0.25) + rnd(-2),
-        // show smoke on battlefield, but not on radar when cloaked.
-        parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
-        oParent: exports
-      })
-    );
+    game.addObject(TYPES.smoke, {
+      x: data.x + data.halfWidth + plusMinus(rnd(fractionWidth)),
+      y:
+        data.y +
+        (data.type !== TYPES.helicopter && data.type !== TYPES.balloon
+          ? data.halfHeight
+          : 0) +
+        rnd(data.halfHeight) *
+          (data.type === TYPES.balloon ? 0 : isBunker ? 0.5 : 0.25) *
+          (data.vY <= 0 ? -1 : 1),
+      // if undefined or zero, allow smoke to go left or right
+      // special handling for helicopters and turrets. this should be moved into config options.
+      vX:
+        data.type === TYPES.helicopter
+          ? rnd(1.5) * plusMinus()
+          : isBunker || isTurret
+            ? plusMinus(0.5 * chance)
+            : -(data.vX || 0) +
+              rnd(1.5) *
+                (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
+      vY:
+        isBunker || isTurret
+          ? -rnd(5 * chance)
+          : data.type === TYPES.helicopter
+            ? -rnd(3 * chance)
+            : -(data.vY || 0.25) + rnd(-2),
+      // show smoke on battlefield, but not on radar when cloaked.
+      parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
+      oParent: exports
+    });
   },
 
   inertGunfireExplosion: (options = {}) => {

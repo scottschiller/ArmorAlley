@@ -264,15 +264,13 @@ const Shrapnel = (options = {}) => {
   }
 
   function makeSmoke() {
-    game.objects.smoke.push(
-      Smoke({
-        x: data.x + 6 + rnd(6) * 0.33 * plusMinus(),
-        y: data.y + 6 + rnd(6) * 0.33 * plusMinus(),
-        vX: rnd(6) * plusMinus(),
-        vY: rnd(-5),
-        spriteFrame: rndInt(5)
-      })
-    );
+    game.addObject(TYPES.smoke, {
+      x: data.x + 6 + rnd(6) * 0.33 * plusMinus(),
+      y: data.y + 6 + rnd(6) * 0.33 * plusMinus(),
+      vX: rnd(6) * plusMinus(),
+      vY: rnd(-5),
+      spriteFrame: rndInt(5)
+    });
   }
 
   function initShrapnel() {

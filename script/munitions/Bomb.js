@@ -224,15 +224,13 @@ const Bomb = (options = {}) => {
     // TODO: move into something common?
     if (data.isOnScreen) {
       for (let i = 0; i < 3; i++) {
-        game.objects.smoke.push(
-          Smoke({
-            x: data.x + rndInt(data.width / 2) * 0.33 * plusMinus(),
-            y: data.y,
-            vX: plusMinus(rnd(3.5)),
-            vY: rnd(-2.5),
-            spriteFrame: rndInt(5)
-          })
-        );
+        game.addObject(TYPES.smoke, {
+          x: data.x + rndInt(data.width / 2) * 0.33 * plusMinus(),
+          y: data.y,
+          vX: plusMinus(rnd(3.5)),
+          vY: rnd(-2.5),
+          spriteFrame: rndInt(5)
+        });
       }
     }
 

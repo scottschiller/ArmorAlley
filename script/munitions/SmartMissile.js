@@ -637,16 +637,14 @@ const SmartMissile = (options = {}) => {
         progress >= data.nearExpiryThreshold ||
         (progress >= 0.05 && Math.random() >= smokeThreshold))
     ) {
-      game.objects.smoke.push(
-        Smoke({
-          // "most recent" last coordinate
-          x: data.xHistory[data.xHistory.length - 1],
-          y:
-            data.yHistory[data.xHistory.length - 1] -
-            (data.isBanana || data.isRubberChicken ? 3 : 5),
-          spriteFrame: 3
-        })
-      );
+      game.addObject(TYPES.smoke, {
+        // "most recent" last coordinate
+        x: data.xHistory[data.xHistory.length - 1],
+        y:
+          data.yHistory[data.xHistory.length - 1] -
+          (data.isBanana || data.isRubberChicken ? 3 : 5),
+        spriteFrame: 3
+      });
     }
 
     newX = data.x + data.vX * GAME_SPEED_RATIOED;
