@@ -1027,8 +1027,7 @@ canvas {
   opacity: 0;
 }
 
-#battlefield-canvas,
-#fx-canvas {
+#battlefield-canvas {
   /* offset for radar */
   top: 8%;
   left: 0;

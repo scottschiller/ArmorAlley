@@ -11,7 +11,7 @@ let is60FPS = false;
 const BACK_SIDE_COLOR = 2 / 3;
 
 var context = document
-  .getElementById('fx-canvas')
+  .getElementById('battlefield-canvas')
   .getContext('2d', { alpha: true });
 
 let activeBooms = 0;
