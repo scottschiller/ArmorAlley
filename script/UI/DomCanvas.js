@@ -839,7 +839,7 @@ const DomCanvas = () => {
     ctx.beginPath();
     ctx.roundRect(
       left + leftOffset,
-      top + (height - lineHeight),
+      top + (height - lineHeight * 1.5),
       renderedWidth,
       lineHeight,
       borderRadius
