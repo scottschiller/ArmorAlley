@@ -90,10 +90,7 @@ const game = (() => {
   function addObject(type, options = {}) {
     // given type of TYPES.van, create object and append to respective array.
 
-    let object, objectArray;
-
-    // TYPES.van -> game.objects['van'], etc.
-    objectArray = objects[type];
+    let object;
 
     // create and push an instance object onto its relevant array by type (e.g., TYPES.van -> game.objects['vans'])
     if (objectConstructors[type]) {
@@ -120,7 +117,13 @@ const game = (() => {
         return objectsById[object.data.id];
       }
 
-      objectArray.push(object);
+      // special case: override, e.g., smoke object that wants to be in objects.backgroundSmoke vs. objects.smoke
+      if (object.data.gameObjectGroup && objects[object.data.gameObjectGroup]) {
+        objects[object.data.gameObjectGroup].push(object);
+      } else {
+        // TYPES.van -> game.objects['van'], etc.
+        objects[type].push(object);
+      }
 
       // hackish: for editor mode, set vX and vY to 0 so things don't move across the battlefield.
       if (game.objects.editor) {
@@ -877,6 +880,7 @@ const game = (() => {
     'gameLoop': null,
     'view': null,
     'starController': null,
+    'backgroundSmoke': [],
     'base': [],
     'chain': [],
     'balloon': [],

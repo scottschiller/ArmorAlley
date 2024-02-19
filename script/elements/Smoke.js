@@ -203,6 +203,8 @@ const Smoke = (options = {}) => {
     }
   };
 
+  let isBackground;
+
   // background vs. foreground canvas: show some "relative to damage" smoke behind ground units, helicopters and balloons.
   if (
     data.oParent &&
@@ -211,9 +213,13 @@ const Smoke = (options = {}) => {
       data.oParent.data.type === TYPES.balloon)
   ) {
     // lastly - if a cloaked helicopter, always put behind helicopter and cloud.
-    data.domCanvas.ctxName = data.oParent.data.cloaked
-      ? 'fx-bg'
-      : options.ctxName || oneOf(['fx', 'fx-bg']);
+    isBackground =
+      data.oParent.data.cloaked || options.background || rnd(1) >= 0.5;
+  }
+
+  if (isBackground) {
+    // place in different array, draw earlier.
+    data.gameObjectGroup = 'backgroundSmoke';
   }
 
   dom = {
