@@ -409,8 +409,8 @@ function updateFetti(fetti, progress, decay, frameCount) {
           (isiPhone && game.objects.view.data.browser.isPortrait
             ? 1.5
             : isiPhone
-            ? 2
-            : 1),
+              ? 2
+              : 1),
         fp.originX,
         fp.originY,
         fetti.colors.frontColor,
