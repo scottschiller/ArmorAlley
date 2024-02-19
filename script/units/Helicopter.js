@@ -2415,6 +2415,23 @@ const Helicopter = (options = {}) => {
 
     view = game.objects.view;
 
+    // trailer history
+    // push x/y to trailer history arrays, maintain size
+
+    if (data.isOnScreen) {
+      data.xHistory.push(
+        data.x + (data.isEnemy || data.flipped ? data.width : 0)
+      );
+      data.yHistory.push(data.y);
+
+      if (data.xHistory.length > data.trailerCount + 1) {
+        data.xHistory.shift();
+        data.yHistory.shift();
+      }
+
+      moveTrailers();
+    }
+
     if (data.pilot && data.fuel > 0) {
       /**
        * Mouse data can come from a few sources.
@@ -2598,23 +2615,6 @@ const Helicopter = (options = {}) => {
         data.radarJamming = jamming;
         game.objects.radar.stopJamming();
       }
-    }
-
-    // trailer history
-    // push x/y to trailer history arrays, maintain size
-
-    if (data.isOnScreen) {
-      data.xHistory.push(
-        data.x + (data.isEnemy || data.flipped ? data.width : 0)
-      );
-      data.yHistory.push(data.y);
-
-      if (data.xHistory.length > data.trailerCount + 1) {
-        data.xHistory.shift();
-        data.yHistory.shift();
-      }
-
-      moveTrailers();
     }
 
     burnFuel();
