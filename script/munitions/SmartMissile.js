@@ -318,8 +318,8 @@ const SmartMissile = (options = {}) => {
               ? `A${weakened} enemy`
               : 'An enemy'
             : data?.parent?.data?.id === game.players.local.data.id
-            ? `Your${weakened}`
-            : `A friendly${weakened}`;
+              ? `Your${weakened}`
+              : `A friendly${weakened}`;
         const missileType = game.objects.stats.formatForDisplay(
           data.type,
           exports
@@ -383,8 +383,8 @@ const SmartMissile = (options = {}) => {
         data.isEnemy !== game.players.local.data.isEnemy
           ? 'An enemy'
           : data?.parentType === TYPES.helicopter
-          ? 'Your'
-          : 'A friendly';
+            ? 'Your'
+            : 'A friendly';
       const missileType = game.objects.stats.formatForDisplay(
         data.type,
         exports
@@ -439,8 +439,8 @@ const SmartMissile = (options = {}) => {
         data.isEnemy !== game.players.local.data.isEnemy
           ? 'An enemy'
           : data?.parent?.data?.id === game.players.local.data.id
-          ? `Your`
-          : `A friendly`;
+            ? `Your`
+            : `A friendly`;
       const missileType = game.objects.stats.formatForDisplay(
         data.type,
         exports
@@ -818,8 +818,8 @@ const SmartMissile = (options = {}) => {
       options.isRubberChicken
         ? 'rubberChicken'
         : options.isBanana
-        ? 'banana'
-        : 'smartMissile'
+          ? 'banana'
+          : 'smartMissile'
     ];
 
   const { width, height } = missileData;
@@ -938,8 +938,8 @@ const SmartMissile = (options = {}) => {
       data.isBanana
         ? 'banana'
         : data.isRubberChicken
-        ? 'rubberChicken'
-        : 'smartMissile'
+          ? 'rubberChicken'
+          : 'smartMissile'
     ];
 
   const { scale, spriteWidth, spriteHeight } = spriteObj;
