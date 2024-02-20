@@ -33,12 +33,12 @@ let FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 
 const unlimitedFrameRate = searchParams.get('frameRate=*');
 
+// you should never do user-agent sniffing, ever - except for when you have to, for some very good reason. :X
 const isWebkit = ua.match(/webkit/i);
-const isChrome = !!(isWebkit && (ua.match(/chrome/i) || []).length);
+const isChrome = !!ua.match(/chrome/i); // MS' Edge is likely to include Chrome + 'edg' as an identifier.
 const isFirefox = !!ua.match(/firefox/i);
 const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
-const isWindows = !!ua.match(/win/i); // typically, 'win32'
-const isMac = !!ua.match(/mac/i) && !isWindows; // note: macIntel reported even on Apple M2 silicon as of 11/2023.
+const isMac = !!ua.match(/mac/i); // note: macIntel reported even on Apple M2 silicon as of 11/2023.
 
 // special use, for recording screencasts
 const demo = searchParams.get('demo');
@@ -430,14 +430,12 @@ export {
   forceAppleMobile,
   getTypes,
   parseTypes,
-  isWebkit,
   isChrome,
   isFirefox,
   isSafari,
   isMobile,
   isiPhone,
   isMac,
-  isWindows,
   useDOMPruning,
   debug,
   debugCollision,

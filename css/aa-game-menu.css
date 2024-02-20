@@ -449,7 +449,7 @@ body.game-started #start-game-button-mobile {
   padding: 0;
 }
 
-body.is_mac:not(.is_safari):not(.is_firefox) #game-menu select:active {
+body.is_mac.is_chrome #game-menu select:active {
   /* WHAT A HACK. Prevent massive text size in Chrome on macOS. */
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.5 * (1 / var(--menu-scale)));
