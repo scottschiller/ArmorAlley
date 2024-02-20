@@ -877,15 +877,14 @@ const common = {
       fs = document.createElement('div');
       fs.id = 'fs';
       Object.assign(fs.style, {
-        'position': 'absolute',
-        'top': '34px',
-        'left': '0px',
-        'height': `100%`,
-        'width': '100%',
-        'overflow': 'hidden',
-        'z-index': -1,
-        'opacity': 0,
-        'transition': 'opacity 5s'
+        position: 'absolute',
+        top: '34px',
+        left: '0px',
+        height: `100%`,
+        width: '100%',
+        overflow: 'hidden',
+        opacity: 0,
+        transition: 'opacity 5s'
       });
 
       fs.innerHTML = [
@@ -894,8 +893,8 @@ const common = {
         '</video>'
       ].join('');
 
-      const bf = document.getElementById('battlefield');
-      bf.insertBefore(fs, bf.childNodes[0]);
+      const body = document.body;
+      body.insertBefore(fs, body.childNodes[0]);
 
       videos = [
         document.getElementById('tv-video'),
