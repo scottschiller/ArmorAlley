@@ -15,7 +15,7 @@ import {
   clientFeatures,
   updateClientFeatures,
   isMac,
-  isWindows
+  isChrome
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
@@ -750,7 +750,7 @@ const game = (() => {
 
     if (isMac) bodyCSS.push('is_mac');
 
-    if (isWindows) bodyCSS.push('is_windows');
+    if (isChrome) bodyCSS.push('is_chrome');
 
     if (isMobile) {
       bodyCSS.push('is-mobile');
