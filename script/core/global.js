@@ -86,6 +86,13 @@ function updateClientFeatures(data) {
   clientFeatures = Object.assign(clientFeatures, data);
 }
 
+// buildings on radar
+let ENEMY_COLOR = '#9c9f08';
+
+// units on radar
+let ENEMY_UNIT_COLOR = '#ccc';
+let ENEMY_UNIT_COLOR_RGBA = 'rgba(204, 204, 204, 0.25)';
+
 /**
  * Game Speed - defaults + settings config
  */
@@ -409,6 +416,9 @@ const COSTS = {
 
 export {
   DEFAULT_FUNDS,
+  ENEMY_COLOR,
+  ENEMY_UNIT_COLOR,
+  ENEMY_UNIT_COLOR_RGBA,
   GAME_SPEED,
   GAME_SPEED_DEFAULT_DESKTOP,
   GAME_SPEED_MIN,
