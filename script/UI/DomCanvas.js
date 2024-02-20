@@ -16,7 +16,7 @@ const canvasConfig = [
   {
     id: 'battlefield-canvas',
     name: 'battlefield',
-    ctxArgs: { alpha: false },
+    ctxArgs: { alpha: true },
     ctxOptions: { imageSmoothingEnabled: false, useDevicePixelRatio: false }
   }
 ];
