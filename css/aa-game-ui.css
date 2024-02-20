@@ -950,8 +950,6 @@ body.game-started #game-tips.active .tips-container {
   transition: all calc(0.5s * var(--gs-frac)) ease-in-out;
   transition-property: filter, opacity, transform;
   width: 100%;
-  /* display on top of "TV." */
-  z-index: 2;
   text-shadow: 0 1px 1px #000;
 }
 
@@ -1187,8 +1185,6 @@ body.game-started #world-wrapper.incoming-smart-missile {
   width: 25em;
   font-size: calc(6px * var(--gs));
   line-height: 150%;
-  /* sit on top of L/R screen gradients */
-  z-index: 11;
   pointer-events: none;
 }
 
