@@ -1,6 +1,7 @@
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import {
+  ENEMY_COLOR,
   FPS,
   GAME_SPEED,
   GAME_SPEED_RATIOED,
@@ -588,7 +589,7 @@ SuperBunker.radarItemConfig = (exports) => ({
     } else {
       ctx.fillStyle =
         !gamePrefs.super_bunker_arrows || exports?.data.isEnemy
-          ? '#9c9f08'
+          ? ENEMY_COLOR
           : '#17a007';
     }
 

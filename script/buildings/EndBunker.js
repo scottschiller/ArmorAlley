@@ -6,7 +6,8 @@ import {
   worldWidth,
   FPS,
   getTypes,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  ENEMY_COLOR
 } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionCheckMidPoint, nearbyTest } from '../core/logic.js';
@@ -440,7 +441,7 @@ EndBunker.radarItemConfig = () => ({
     } else {
       ctx.fillStyle =
         !gamePrefs.super_bunker_arrows || obj.oParent?.data?.isEnemy
-          ? '#9c9f08'
+          ? ENEMY_COLOR
           : '#17a007';
     }
     ctx.roundRect(

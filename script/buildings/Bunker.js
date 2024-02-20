@@ -9,7 +9,8 @@ import {
   rng,
   rngInt,
   GAME_SPEED_RATIOED,
-  GAME_SPEED
+  GAME_SPEED,
+  ENEMY_COLOR
 } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
@@ -644,7 +645,7 @@ Bunker.radarItemConfig = () => ({
   height: 2.5,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    ctx.fillStyle = obj?.oParent?.data?.isEnemy ? '#9c9f08' : '#17a007';
+    ctx.fillStyle = obj?.oParent?.data?.isEnemy ? ENEMY_COLOR : '#17a007';
 
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);

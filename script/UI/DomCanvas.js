@@ -1,6 +1,6 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { FPS, GAME_SPEED, TYPES, demo, searchParams } from '../core/global.js';
+import { ENEMY_UNIT_COLOR, FPS, GAME_SPEED, TYPES, demo, searchParams } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { PREFS, gamePrefs } from './preferences.js';
 
@@ -721,7 +721,7 @@ const DomCanvas = () => {
       ctx.strokeStyle = '#000';
       // handle battlefield items, and radar items which link back to their parent.
       ctx.fillStyle =
-        data.isEnemy || exports.oParent?.data?.isEnemy ? '#ccc' : '#17a007';
+        data.isEnemy || exports.oParent?.data?.isEnemy ? ENEMY_UNIT_COLOR : '#17a007';
       // TODO: review oData vs. data, radar item vs. battlefield (e.g., chain object) logic.
       oData.draw(
         ctx,

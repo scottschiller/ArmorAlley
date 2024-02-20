@@ -11,7 +11,8 @@ import {
   rng,
   oneOf,
   worldHeight,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  ENEMY_COLOR
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -517,7 +518,9 @@ Balloon.radarItemConfig = (exports) => ({
     // once dead AND the timer has finished, don't draw.
     if (exports.data.dead && !exports.data.deadTimer) return;
     ctx.fillStyle =
-      exports?.data?.isEnemy || exports?.data?.hostile ? '#9c9f08' : '#17a007';
+      exports?.data?.isEnemy || exports?.data?.hostile
+        ? ENEMY_COLOR
+        : '#17a007';
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
@@ -541,7 +544,10 @@ Balloon.radarItemConfig = (exports) => ({
           worldHeight) *
         game.objects.radar.data.height;
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.strokeStyle =
+        exports?.data?.isEnemy || exports?.data?.hostile
+          ? ENEMY_COLOR
+          : 'rgba(255, 255, 255, 0.25)';
       ctx.setLineDash([1, 2]);
       ctx.moveTo(chainX, chainY);
       ctx.lineTo(chainX, chainY + chainHeight);

@@ -7,7 +7,8 @@ import {
   TYPES,
   getTypes,
   rnd,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  ENEMY_COLOR
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -312,7 +313,9 @@ const GunFire = (options = {}) => {
         // TODO: calculate 40% opacity for inert / expired color
         ctx.fillStyle = obj.oParent?.data?.isInert
           ? '#666'
-          : data.domCanvas.backgroundColor;
+          : data.isEnemy
+            ? ENEMY_COLOR
+            : '#9c9f08';
         ctx.roundRect(
           pos.left(obj.data.left) -
             width * game.objects.radar.data.cssRadarScale,

@@ -2,6 +2,8 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
 import {
+  ENEMY_UNIT_COLOR,
+  ENEMY_UNIT_COLOR_RGBA,
   FPS,
   GAME_SPEED_RATIOED,
   getTypes,
@@ -929,10 +931,10 @@ Turret.radarItemConfig = (exports) => ({
   draw: (ctx, obj, pos, width, height) => {
     ctx.fillStyle = exports?.data?.dead
       ? exports?.data?.isEnemy
-        ? 'rgba(204, 204, 204, 0.25)'
+        ? ENEMY_UNIT_COLOR_RGBA
         : 'rgba(23, 160, 7, 0.25)'
       : exports?.data?.isEnemy
-        ? '#ccc'
+        ? ENEMY_UNIT_COLOR
         : '#17a007';
 
     const left = pos.left(obj.data.left);
