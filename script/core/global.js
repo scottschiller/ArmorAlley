@@ -86,12 +86,34 @@ function updateClientFeatures(data) {
   clientFeatures = Object.assign(clientFeatures, data);
 }
 
+const enemyColors = {
+  classic: {
+    color: '#9c9f08',
+    unit_color: '#ccc',
+    color_rgba: 'rgba(204, 204, 204, 0.25)'
+  },
+  red: {
+    color: '#ff3333',
+    unit_color: '#ff3333',
+    color_rgba: 'rgba(255, 51, 51, 0.25)'
+  }
+};
+
 // buildings on radar
-let ENEMY_COLOR = '#9c9f08';
+let ENEMY_COLOR;
 
 // units on radar
-let ENEMY_UNIT_COLOR = '#ccc';
-let ENEMY_UNIT_COLOR_RGBA = 'rgba(204, 204, 204, 0.25)';
+let ENEMY_UNIT_COLOR;
+let ENEMY_UNIT_COLOR_RGBA;
+
+function updateRadarTheme(theme = 'classic') {
+  const colors = enemyColors[theme] || enemyColors.classic;
+  ENEMY_COLOR = colors.color;
+  ENEMY_UNIT_COLOR = colors.unit_color;
+  ENEMY_UNIT_COLOR_RGBA = colors.color_rgba;
+}
+
+updateRadarTheme();
 
 /**
  * Game Speed - defaults + settings config
@@ -473,5 +495,6 @@ export {
   setFrameRate,
   setTutorialMode,
   updateClientFeatures,
-  updateGameSpeed
+  updateGameSpeed,
+  updateRadarTheme
 };

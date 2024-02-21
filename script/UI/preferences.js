@@ -15,7 +15,8 @@ import {
   soundManager,
   tutorialMode,
   TYPES,
-  updateGameSpeed
+  updateGameSpeed,
+  updateRadarTheme
 } from '../core/global.js';
 import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -72,6 +73,7 @@ const defaultPrefs = {
   'radar_enhanced_fx': demo || isMobile || false,
   'last_battle': null,
   'mobile_controls_location': 'left',
+  'radar_theme': 'classic',
   'super_bunker_arrows': true,
   'show_inventory': true,
   'show_weapons_status': true,
@@ -1518,6 +1520,10 @@ function PrefsManager() {
             if (obj.data.stopped) obj.data.stopped = false;
           });
         }
+      },
+
+      radar_theme: (newTheme) => {
+        updateRadarTheme(newTheme);
       },
 
       weapons_interval_classic: () => {

@@ -2707,7 +2707,7 @@
                           </ul>
                         </li>
 
-                        <li style="margin-bottom: -1px">
+                        <li style="margin-bottom: 2px">
                           <p class="compact options-heading">
                             <b>Range UI: Battlefield</b>
                           </p>
@@ -2737,6 +2737,49 @@
                               <label for="cb_scan_ui_battlefield_enemy"
                                 >Enemy</label
                               >
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li style="margin-bottom: -1px">
+                          <p class="options-heading">
+                            <b>Radar Theme</b>
+                          </p>
+                          <ul>
+                            <li style="margin-bottom: 1px">
+                              <label for="radar_theme_classic">
+                                <input
+                                  type="radio"
+                                  id="radar_theme_classic"
+                                  name="radar_theme"
+                                  value="classic"
+                                  checked />
+                                <span class="label-text"
+                                  >Classic: green / white / yellow</span
+                                >
+                                <p>
+                                  The original: "left" side = green, "right"
+                                  side (enemy) ground units are white, and enemy
+                                  bunkers are yellow.
+                                </p>
+                              </label>
+                            </li>
+
+                            <li>
+                              <label for="radar_theme_red">
+                                <input
+                                  type="radio"
+                                  id="radar_theme_red"
+                                  name="radar_theme"
+                                  value="red" />
+                                <span class="label-text"
+                                  >Alternate: green / red</span
+                                >
+                                <p>
+                                  An alternate theme, where all "right" (enemy)
+                                  forces are in red.
+                                </p>
+                              </label>
                             </li>
                           </ul>
                         </li>
