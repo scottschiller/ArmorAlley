@@ -136,8 +136,6 @@
   </head>
   <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
   <body style="overflow: hidden">
-    <canvas id="battlefield-canvas"></canvas>
-
     <div id="home-video-wrapper">
       <video id="home-menu-video" autoplay muted loop playsinline width="100vw">
         <!-- <source> will be assigned here based on format support, resolution, and 30 vs. 60 FPS options. -->
@@ -302,6 +300,8 @@
         <p class="mobile-only">Tap to resume</p>
       </div>
     </div>
+
+    <canvas id="battlefield-canvas"></canvas>
 
     <div id="mobile-controls">
       <ul id="mobile-inventory-controls" class="mobile-controls-ordering">
@@ -2133,42 +2133,46 @@
                         Frame Rate<span class="network-icon"></span>
                       </legend>
                       <p class="non-indented">
-                        Try 30 FPS for a more “classic” feel, or if there are
+                        <span class="hide-if-network"
+                          >By default, the game will choose based on performance.<br
+                        /></span>
+                        Try 30 fps for a more “classic” feel, or if there are
                         performance issues.<br />The original game ran at
-                        perhaps 12-15 FPS.
+                        perhaps 12-15 fps.
                       </p>
                       <p class="non-indented network">
                         The frame rate setting applies to all players.<br />
                         <span class="no-emoji-substitution">⚠️</span> Network
-                        games at 60 FPS are experimental.
+                        games at 60 fps are experimental.
                       </p>
+                      <!-- TODO: three radio buttons - choose best, 30, 60. -->
                       <ul class="less-bottom-spacing">
-                        <li>
+                        <li class="hide-if-network">
                           <input
                             type="radio"
-                            id="radio_game_fps_30"
-                            name="game_fps"
-                            value="30"
+                            id="radio_game_fps_auto_auto"
+                            name="game_fps_auto"
+                            value="1"
                             checked />
-                          <label for="radio_game_fps_30"
-                            >30 FPS<span class="hide-on-mobile">
-                              (default)</span
-                            ></label
+                          <label for="radio_game_fps_auto_auto"
+                            >Choose best</label
                           >
                         </li>
                         <li>
                           <input
                             type="radio"
-                            id="radio_game_fps_60"
-                            name="game_fps"
+                            id="radio_game_fps_auto_30"
+                            name="game_fps_auto"
+                            value="30" />
+                          <label for="radio_game_fps_auto_30">30 fps</label>
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            id="radio_game_fps_auto_60"
+                            name="game_fps_auto"
                             value="60" />
-                          <label for="radio_game_fps_60"
-                            >60 FPS<span class="hide-on-mobile">
-                              (smoother)</span
-                            ><span class="mobile-only">
-                              (smoother, default)</span
-                            ></label
-                          >
+                          <label for="radio_game_fps_auto_60">60 fps</label>
                         </li>
                       </ul>
                     </fieldset>

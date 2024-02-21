@@ -47,6 +47,7 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 const defaultPrefs = {
   'auto_flip': !!isMobile,
   'game_fps': isMobile ? 60 : 30,
+  'game_fps_auto': 1, // 1 | 60 | 30
   'game_speed': 0,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
@@ -111,7 +112,8 @@ const defaultPrefs = {
 const numericPrefs = {
   volume: true,
   game_speed: true,
-  game_fps: true
+  game_fps: true,
+  game_fps_auto: true
 };
 
 // allow URL-based overrides of prefs
@@ -1457,9 +1459,21 @@ function PrefsManager() {
         }
       },
 
+      game_fps_auto: (newGameFPSAuto) => {
+        // if not the default "auto-detect", then update FPS directly.
+        if (newGameFPSAuto == 1) {
+          game?.objects?.gameLoop?.restartFrameTiming();
+        } else {
+          // user has manually set 30 / 60 FPS
+          events.onPrefChange['game_fps']?.(newGameFPSAuto);
+        }
+      },
+
       game_fps: (newGameFPS) => {
-        setFrameRate(parseInt(newGameFPS, 10));
+        newGameFPS = parseInt(newGameFPS, 10);
+        setFrameRate(newGameFPS);
         net.updateFrameTiming();
+        game?.objects?.gameLoop?.updateFPS();
         // update helicopter gunfire rate, etc.
         common.applyGameSpeedToAll();
       },

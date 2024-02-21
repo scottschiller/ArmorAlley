@@ -17,6 +17,7 @@ import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { effects } from './effects.js';
+import { prefsManager } from '../aa.js';
 
 const GameLoop = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -197,7 +198,11 @@ const GameLoop = () => {
       return;
     }
 
-    if (net.active) net.updateUI();
+    if (!net.active) {
+      measureFrameTiming(ts);
+    } else {
+      net.updateUI();
+    }
 
     if (gamePrefs.lock_step && net.active && game.data.started) {
       // Lock-step network play: don't do anything until we've received data from the remote.
@@ -302,6 +307,7 @@ const GameLoop = () => {
     if (data.timer) return;
 
     data.timer = true;
+    resetFrameTiming();
     animateRAF();
   }
 
@@ -310,12 +316,15 @@ const GameLoop = () => {
 
     data.timer = null;
     data.lastExec = 0;
+    resetFrameTiming();
   }
 
   function resetFPS() {
     // re-measure FPS timings.
     data.lastExec = 0;
     data.frames = 0;
+    // and, 30 vs. 60 performance testing.
+    restartFrameTiming();
   }
 
   function incrementTransformCount(isExclude) {
@@ -342,6 +351,146 @@ const GameLoop = () => {
         `Lock step: Waiting for ${gamePrefs.net_remote_player_name}...`
       );
     }
+  }
+
+  function timingReport(avg) {
+    const ideal = 1000 / FPS;
+
+    // passable
+    const slow = 1.05;
+
+    // auto-downgrade
+    const threshold = 1.1;
+
+    const score = avg / ideal;
+
+    if (debugGameLoop) {
+      console.log(
+        `⏱️ FPS = ${FPS}: ${avg.toFixed(2)} / ${ideal.toFixed(2)} = ${score.toFixed(2)}. Slow = ${slow}, threshold = ${threshold}`
+      );
+    }
+
+    if (score >= threshold) {
+      // performance may be sub-par.
+      const canDowngrade = gamePrefs.game_fps_auto && FPS === 60;
+      const preamble = `🐌 ${data.userChose60fps ? 'Still slow?' : 'Slow?'}`;
+
+      if (canDowngrade) {
+        // only notify if we didn't test 60fps automagically.
+        if (!data.testing60fps) {
+          game.objects.notifications.add(`🐌 Slow? Switching to 30 fps.`);
+        }
+      } else {
+        if (isMobile) {
+          // assumption: landscape is larger, wider, more $$$ to render vs. portrait.
+          if (
+            !data.sawRotateHint &&
+            game.objects.view.data.browser.isLandscape
+          ) {
+            data.sawRotateHint = true;
+            game.objects.notifications.add(
+              `${preamble} Rotating your device\nmay help performance. ⤵`
+            );
+          }
+        } else {
+          game.objects.notifications.add(
+            `${preamble} A smaller window\nmay help performance. ⧉`
+          );
+        }
+      }
+
+      // auto-downgrade 60 -> 30FPS
+      if (canDowngrade) {
+        // reset in the event of a future upgrade
+        data.userNotified60fps = false;
+        prefsManager.onUpdatePrefs([{ name: 'game_fps', value: 30 }]);
+        // wait for test to re-run
+        return;
+      } else {
+        data.frameTimingComplete = true;
+        data.testing60fps = false;
+        applyTimingResults();
+      }
+    } else {
+      if (FPS === 30 && score < slow) {
+        // "auto-upgrade" to 60? only if FPS is "auto.""
+        if (
+          gamePrefs.game_fps_auto === 1 &&
+          !data.userChose60fps &&
+          !data.userNotified60fps
+        ) {
+          game.objects.notifications.add('⏱️ Testing game performance&hellip;');
+          prefsManager.onUpdatePrefs([{ name: 'game_fps', value: 60 }]);
+          data.testing60fps = true;
+          // wait for test to re-run
+          return;
+        } else {
+          game.objects.notifications.add('⏱️ Running at 30 fps.');
+          data.frameTimingComplete = true;
+          applyTimingResults();
+        }
+      }
+      if (FPS === 60 && score < slow) {
+        if (!data.userNotified60fps) {
+          game.objects.notifications.add('⏱️ 60 fps supported ✓');
+          data.userNotified60fps = true;
+        }
+        data.frameTimingComplete = true;
+        applyTimingResults();
+      }
+    }
+  }
+
+  function applyTimingResults() {
+    // for now, allow auto-FPS-detect to run all the time on mobile.
+    if (isMobile) return;
+
+    prefsManager.onUpdatePrefs([
+      { name: 'game_fps', value: FPS },
+      // 1 is "auto", 30 or 60 are of course real FPS values.
+      { name: 'game_fps_auto', value: FPS }
+    ]);
+
+    prefsManager.writePrefsToStorage();
+  }
+
+  function measureFrameTiming(ts) {
+    if (data.frameTimingComplete) return;
+
+    // only sample while game is running - i.e,. not on game menu screen
+    if (!game.data.started || !data.lastExec || !ts) return;
+
+    data.frameSamples++;
+    data.frameExecTime += ts - data.lastExec;
+    if (data.frameSamples > FPS * 1.5) {
+      timingReport(data.frameExecTime / data.frameSamples);
+      resetFrameTiming();
+    }
+  }
+
+  function resetFrameTiming() {
+    data.frameSamples = 0;
+    data.frameExecTime = 0;
+  }
+
+  function restartFrameTiming() {
+    // allow auto-framerate detection again
+    if (gamePrefs.game_fps_auto !== 1) return;
+    resetFrameTiming();
+    data.testing60fps = false;
+    data.userChose30fps = false;
+    data.userChose60fps = false;
+    data.frameTimingComplete = false;
+  }
+
+  function updateFPS() {
+    if (FPS === 60) {
+      data.userChose60fps = true;
+    } else if (FPS === 30) {
+      data.userChose30fps = true;
+    }
+    // retain user "choices", but reset timing / ability to re-test
+    resetFrameTiming();
   }
 
   function initGameLoop() {
@@ -376,6 +525,9 @@ const GameLoop = () => {
   data = {
     frameCount: 0,
     remoteFrameCount: 0,
+    frameSamples: 0,
+    frameExecTime: 0,
+    frameTimingComplete: false,
     lastExec: 0,
     packetWaitCounter: 0,
     frames: 0,
@@ -383,10 +535,16 @@ const GameLoop = () => {
     timer: null,
     fpsTimer: null,
     fpsTimerInterval: 1000,
+    testing60fps: false,
     transformCount: 0,
     excludeTransformCount: 0,
+    sawRotateHint: false,
     waiting: false,
-    lastWaitNotified: 0
+    lastWaitNotified: 0,
+    userChose30fps: null,
+    userNotified30fps: false,
+    userChose60fps: null,
+    userNotified60fps: false
   };
 
   exports = {
@@ -394,9 +552,11 @@ const GameLoop = () => {
     incrementTransformCount,
     init: initGameLoop,
     resetFPS,
+    restartFrameTiming,
     setWaiting,
     stop,
-    start
+    start,
+    updateFPS
   };
 
   return exports;
