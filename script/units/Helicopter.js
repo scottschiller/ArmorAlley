@@ -2866,6 +2866,10 @@ const Helicopter = (options = {}) => {
     Object.keys(firingRates).forEach((key) => {
       data[key] = setFiringRate(key);
     });
+
+    // hackish: also, some FPS numbers.
+    data.blinkCounterHide = 8 * (FPS / 30);
+    data.blinkCounterReset = 16 * (FPS / 30);
   }
 
   function setSpinner(spinning) {
