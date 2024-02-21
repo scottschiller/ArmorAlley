@@ -1770,13 +1770,14 @@ const Helicopter = (options = {}) => {
         data.parachutingThrottle = true;
 
         // set a timeout for "reloading", so the next parachute doesn't drop immediately.
-        data.parachutingTimer = common.setFixedFrameTimeout(
+        data.parachutingTimer = common.setFrameTimeout(
           () => {
             data.parachutingThrottle = false;
           },
-          data.landed
+          (data.landed
             ? data.parachutingDelayLanded
-            : data.parachutingDelayFlying
+            : data.parachutingDelayFlying) *
+            (30 / FPS)
         );
 
         // helicopter landed? Just create an infantry.
@@ -2840,12 +2841,12 @@ const Helicopter = (options = {}) => {
 
     parachutingDelayFlying: {
       classic: 200,
-      modern: 125
+      modern: 120
     },
 
     parachutingDelayLanded: {
       classic: 300,
-      modern: 200
+      modern: 210
     }
   };
 
