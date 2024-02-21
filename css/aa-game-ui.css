@@ -1186,6 +1186,7 @@ body.game-started #world-wrapper.incoming-smart-missile {
   font-size: calc(6px * var(--gs));
   line-height: 150%;
   pointer-events: none;
+  z-index: 2;
 }
 
 #notification-toasts.left-aligned {
