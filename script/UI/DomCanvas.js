@@ -1,6 +1,14 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { ENEMY_UNIT_COLOR, FPS, GAME_SPEED, TYPES, demo, searchParams } from '../core/global.js';
+import {
+  ENEMY_UNIT_COLOR,
+  FPS,
+  GAME_SPEED,
+  TYPES,
+  demo,
+  isSafari,
+  searchParams
+} from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { PREFS, gamePrefs } from './preferences.js';
 
@@ -582,6 +590,17 @@ const DomCanvas = () => {
         ctx.shadowColor = data.shadowColor || '#fff';
       }
 
+       * 02/2024: Safari screws up `shadowBlur` rendering on "pixelated" contexts.
+       * Work around this by enabling image smoothing while `shadowBlur` is present.
+       * These effects should be somewhat ephemeral, on missile targets and explosions.
+       */
+      let shadowSmoothingHack =
+        isSafari && (tracking || data.shadowBlur) && !ctx.imageSmoothingEnabled;
+
+      if (shadowSmoothingHack) {
+        ctx.imageSmoothingEnabled = true;
+      }
+
       // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
       ctx.drawImage(
         img.src,
@@ -601,7 +620,11 @@ const DomCanvas = () => {
 
       // reset blur
       if (tracking) {
+      if (tracking || data.shadowBlur) {
         ctx.shadowBlur = 0;
+          ctx.imageSmoothingEnabled = false;
+        }
+      }
 
         // red dot
         if (!img.excludeDot) {
@@ -623,7 +646,6 @@ const DomCanvas = () => {
           ctx.fill();
         }
       } else if (ctx.shadowBlur) {
-        ctx.shadowBlur = 0;
       }
 
       // TODO: only draw this during energy updates / when applicable per prefs.
