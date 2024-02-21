@@ -681,6 +681,16 @@ function PrefsManager() {
       // this is separate from the "ready to start" logic.
       dom.oFormSubmit.disabled = true;
 
+      // set 30 FPS, if none has been chosen yet.
+      if (gamePrefs.game_fps_auto < 30) {
+        applyNewPrefs({
+          ...gamePrefs,
+          game_fps_auto: 30,
+          game_fps: 30
+        });
+        updateForm();
+      }
+
       startNetwork();
     } else {
       dom.oFormSubmit.innerHTML = 'OK';
