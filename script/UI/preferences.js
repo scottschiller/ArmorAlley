@@ -1069,7 +1069,6 @@ function PrefsManager() {
   }
 
   function handleScanUIRadarPrefChange(value, pref) {
-    console.log('handleScanUIRadarPrefChange', pref, value);
     // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
     utils.css.addOrRemove(
       game.objects.radar.dom.radar,
