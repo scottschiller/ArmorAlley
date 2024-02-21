@@ -324,6 +324,7 @@ const GameLoop = () => {
     data.lastExec = 0;
     data.frames = 0;
     // and, 30 vs. 60 performance testing.
+    resetFrameTiming();
     restartFrameTiming();
   }
 
