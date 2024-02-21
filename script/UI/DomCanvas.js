@@ -590,6 +590,7 @@ const DomCanvas = () => {
         ctx.shadowColor = data.shadowColor || '#fff';
       }
 
+      /**
        * 02/2024: Safari screws up `shadowBlur` rendering on "pixelated" contexts.
        * Work around this by enabling image smoothing while `shadowBlur` is present.
        * These effects should be somewhat ephemeral, on missile targets and explosions.
@@ -619,13 +620,14 @@ const DomCanvas = () => {
       }
 
       // reset blur
-      if (tracking) {
       if (tracking || data.shadowBlur) {
         ctx.shadowBlur = 0;
+        if (shadowSmoothingHack) {
           ctx.imageSmoothingEnabled = false;
         }
       }
 
+      if (tracking) {
         // red dot
         if (!img.excludeDot) {
           ctx.beginPath();
@@ -645,7 +647,6 @@ const DomCanvas = () => {
           ctx.fillStyle = '#ff3333';
           ctx.fill();
         }
-      } else if (ctx.shadowBlur) {
       }
 
       // TODO: only draw this during energy updates / when applicable per prefs.
