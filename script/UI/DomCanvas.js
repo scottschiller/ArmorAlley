@@ -742,7 +742,9 @@ const DomCanvas = () => {
       ctx.strokeStyle = '#000';
       // handle battlefield items, and radar items which link back to their parent.
       ctx.fillStyle =
-        data.isEnemy || exports.oParent?.data?.isEnemy ? ENEMY_UNIT_COLOR : '#17a007';
+        data.isEnemy || exports.oParent?.data?.isEnemy
+          ? ENEMY_UNIT_COLOR
+          : '#17a007';
       // TODO: review oData vs. data, radar item vs. battlefield (e.g., chain object) logic.
       oData.draw(
         ctx,
