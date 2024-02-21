@@ -360,7 +360,7 @@ const GameLoop = () => {
     const slow = 1.05;
 
     // auto-downgrade
-    const threshold = 1.1;
+    const threshold = 1.25;
 
     const score = avg / ideal;
 
