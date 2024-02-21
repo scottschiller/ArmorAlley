@@ -413,7 +413,6 @@ const DomCanvas = () => {
 
     // opacity?
     if (target.opacity >= 0) {
-      ctx.save();
       ctx.globalAlpha = target.opacity;
     }
 
@@ -581,7 +580,6 @@ const DomCanvas = () => {
       if (tracking) {
         // radius approximately matching CSS glow...
         ctx.shadowBlur = 8 * ss;
-
         // current (active) vs. next detected target
         ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
       } else if (data.shadowBlur) {
@@ -660,7 +658,7 @@ const DomCanvas = () => {
     }
 
     if (target.opacity >= 0) {
-      ctx.restore();
+      ctx.globalAlpha = 1;
     }
   }
 
