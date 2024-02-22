@@ -483,7 +483,20 @@ const Tutorial = () => {
     selectItem
   };
 
-  initTutorial();
+  function init() {
+    const placeholder = document.getElementById('tutorial-placeholder');
+
+    if (!placeholder.hasChildNodes()) {
+      // fetch the preferences HTML fragment
+      aaLoader.loadHTML('html/tutorial.html', (response) => {
+        placeholder.innerHTML = response;
+        initTutorial();
+      });
+      return;
+    }
+  }
+
+  init();
 
   return exports;
 };
