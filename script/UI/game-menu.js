@@ -314,8 +314,6 @@ function init() {
       });
     });
 
-  prefsManager.init();
-
   // also apply immediately, if checked.
   if (vs.checked) {
     bnbChange(true);
