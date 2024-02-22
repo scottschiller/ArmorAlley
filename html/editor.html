@@ -1,0 +1,152 @@
+<div id="editor-window" class="finder mac-classic dialog">
+  <div class="title-bar">
+    <div class="title-bar-stripes"></div>
+    <div class="title-bar-label">Armor Alley&trade; Editor</div>
+  </div>
+
+  <div class="body">
+    <div class="grid">
+      <h3>Controls</h3>
+
+      <ul class="compact" style="margin-bottom: 4px !important">
+        <li>&middot; Prev / next item in active group: <b>[</b> <b>]</b></li>
+        <li>&middot; Set selected ownership: <b>&lt;</b> <b>&gt;</b></li>
+        <li>&middot; Delete selected item(s): <b>delete ⌦</b></li>
+        <li>&middot; Move selected item(s): <b>←</b> arrow keys <b>→</b></li>
+      </ul>
+
+      <h3>Units</h3>
+
+      <ul class="inline-list">
+        <li>
+          &middot;
+          <u><b>M</b></u
+          >issile...&middot; <u><b>T</b></u
+          >ank &middot; <u><b>V</b></u
+          >an &middot; <u><b>I</b></u
+          >nfantry &middot; <u><b>E</b></u
+          >ngineer
+        </li>
+      </ul>
+
+      <h3><u>S</u>tructures (x4)</h3>
+
+      <ul class="inline-list">
+        <li>&middot;Bunker</li>
+        <li>&middot;Super Bunker</li>
+        <li>&middot;Turret</li>
+        <li>&middot;Landing Pad</li>
+      </ul>
+
+      <h3><u>A</u>irborne (x2)</h3>
+
+      <ul class="inline-list">
+        <li>&middot;Cloud</li>
+        <li>&middot;Balloon</li>
+      </ul>
+
+      <h3>Terrain</h3>
+
+      <ul class="inline-list">
+        <li>
+          &middot;<u><b>B</b></u
+          >arb wire
+        </li>
+        <li>
+          &middot;<u><b>C</b></u
+          >actus (x2)
+        </li>
+        <li>
+          &middot;<u><b>D</b></u
+          >une (x2)
+        </li>
+        <li>
+          &middot;<u><b>F</b></u
+          >lower (x3)
+        </li>
+        <li>
+          &middot;<u><b>G</b></u
+          >rass / Grave (x5)
+        </li>
+        <li>
+          &middot;<u><b>R</b></u
+          >ock (x2)
+        </li>
+        <li>
+          &middot;<u><b>W</b></u
+          >ood (trees) (x2)
+        </li>
+        <li>
+          &middot;T<u><b>U</b></u
+          >mbleweed
+        </li>
+      </ul>
+
+      <div id="active-sprite" class="static-sprite default"></div>
+
+      <p class="non-indented">
+        <b>Active: </b><span id="editor-active">[none]</span>
+      </p>
+
+      <button id="editor-export" data-method="export" type="button">
+        Export
+      </button>
+
+      <button id="editor-play" data-method="play" type="button">Play</button>
+
+      <button id="editor-show-help" data-method="showHelp" type="button">
+        Help
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="editor-window-help" class="finder mac-classic dialog">
+  <div class="title-bar">
+    <div class="close-button"></div>
+    <div class="title-bar-stripes"></div>
+    <div class="title-bar-label">Armor Alley&trade; Editor :: Help</div>
+  </div>
+
+  <div class="body">
+    <div class="grid">
+      <h3>EXPERIMENTAL DISCLAIMER</h3>
+      <p>This level editor is a work in progress!</p>
+      <p>
+        Think of it like a toolbox of brushes. Select a brush, then "paint" the
+        landscape with e.g., tanks, bunkers, or flowers.
+      </p>
+
+      <h3>How-To</h3>
+
+      <p>
+        Click and drag the landscape, or use the "scrollbar" in the top radar
+        area to navigate.
+      </p>
+
+      <h3>Placing Items</h3>
+      <p>
+        To place a Tank, press <b><u>T</u></b> (shift not required), then click
+        near the ground. Use the <b>&lt;</b> <b>&gt;</b> keys to switch sides.
+      </p>
+      <p>
+        Some elements are grouped by type. Press the relevant key, e.g.
+        <b><u>S</u></b> for structures, <b><u>G</u></b> for grass / gravestones.
+        Once active, press the same key or use <b>[</b> <b>]</b> to cycle
+        through items.
+      </p>
+      <p>Once there is an "active" type, click near the ground to place it.</p>
+
+      <h3>Selecting Items</h3>
+      <p>
+        Click an item to select it. Arrow keys can move L/R one pixel at a time.
+      </p>
+      <p>
+        Click while pressing <b>CMD / windows / meta-key</b> to draw a selection
+        marquee. CMD-click on an item to toggle and do multi-selection.
+        <b>Shift</b> can be held during marquee for multi-select / toggle.
+      </p>
+      <p>Press <b>esc</b> to exit "placement" mode.</p>
+    </div>
+  </div>
+</div>
