@@ -6,6 +6,18 @@ ExpiresActive On
 </FilesMatch>
 
 #
+# 02/2024: far future expires on dynamically-fetched HTML fragments.
+# this matches the html/ path without requiring a separate .htaccess file in that directory.
+# note that # is just another start / end character, to avoid escaping slashes.
+# https://stackoverflow.com/questions/868088/apache-filesmatch-matching-a-folder-in-the-regular-expression
+# TODO: restrict to also requiring .VXXX?
+#
+<If "%{REQUEST_URI} =~ m#^.*/html/.*\.(html)#">
+  ExpiresByType text/html A31536000
+  AddDefaultCharset UTF-8
+</If>
+
+#
 # 08/12/2023: Explicit far future expires headers on some MIME types
 # because the above rule doesn't seem to catch everything... ¯\_(ツ)_/¯
 #
