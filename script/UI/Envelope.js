@@ -18,6 +18,7 @@ function Envelope() {
 
   data = {
     active: false,
+    level: '',
     open: false
   };
 
@@ -37,8 +38,14 @@ function Envelope() {
   }
 
   function setLevel(level = 'Tutorial') {
+    data.level = level;
     updateGameType();
+  }
+
+  function applyLevel() {
     if (!dom.o) return;
+
+    const { level } = data;
 
     dom.oLetter.innerHTML =
       '<h1>' +
@@ -95,8 +102,11 @@ function Envelope() {
 
   function show(didWin) {
     if (data.active) return;
-    aaLoader.loadCSS('css/aa-battle-over-letter.css', () => {
+    init(() => {
+      initDOM();
+      addEvents();
       data.active = true;
+      applyLevel();
       updateNextLink(didWin);
       dom.o.style.display = 'block';
       common.setFrameTimeout(() => utils.css.add(dom.o, css.active), 1000);
@@ -121,12 +131,28 @@ function Envelope() {
     dom.nextLink = document.getElementById('next-battle');
   }
 
-  function init() {
-    initDOM();
-    addEvents();
+  function init(callback) {
+    const needed = 2;
+    let done = 0;
+
+    function loaded() {
+      done++;
+      if (done === needed) callback?.();
+    }
+
+    const placeholder = document.getElementById('envelopes-placeholder');
+
+    if (!placeholder.hasChildNodes()) {
+      aaLoader.loadHTML('html/envelopes.html', (response) => {
+        placeholder.innerHTML = response;
+        loaded();
+      });
+    }
+
+    aaLoader.loadCSS('css/aa-battle-over-letter.css', loaded);
   }
 
-  init();
+  // note: no self-init; lazy-init due to asset fetching.
 
   exports = {
     close,
