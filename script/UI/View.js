@@ -30,6 +30,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
 import { handleOrientationChange } from './mobile.js';
 import { previewLevel } from '../levels/default.js';
+import { aaLoader } from '../core/aa-loader.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -1244,19 +1245,24 @@ const View = () => {
     dom.gameTips = sprites.getWithStyle('game-tips');
     dom.gameTipsList = sprites.getWithStyle('game-tips-list');
     dom.gameAnnouncements = sprites.getWithStyle('game-announcements');
-    dom.mobileControls = document.getElementById('mobile-controls');
     dom.messageBox = document.getElementById('message-box');
     dom.messageForm = document.getElementById('message-form');
     dom.messageInput = document.getElementById('message-form-input');
     dom.root = document.querySelector(':root');
 
-    // TODO: improve and clean up.
-    // maybe remove nodes if not on mobile.
     if (isMobile) {
-      updateMobileInventory();
-    } else {
-      dom.mobileControls.remove();
-      dom.mobileControls = null;
+      // one more trick: set up controls, then start.
+      const placeholder = document.getElementById(
+        'mobile-controls-placeholder'
+      );
+
+      if (!placeholder.hasChildNodes()) {
+        aaLoader.loadHTML('html/mobile-controls.html', (response) => {
+          placeholder.innerHTML = response;
+          dom.mobileControls = document.getElementById('mobile-controls');
+          updateMobileInventory();
+        });
+      }
     }
 
     if (searchParams.get('noLogo')) {
