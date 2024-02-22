@@ -313,12 +313,10 @@ const game = (() => {
       if (!game.objects.editor) {
         objects.tutorial = Tutorial();
       }
-
       utils.css.add(document.getElementById('help'), 'active');
     } else {
       utils.css.add(document.getElementById('help'), 'inactive');
-
-      document.getElementById('tutorial')?.remove();
+      document.getElementById('tutorial-placeholder')?.remove();
     }
 
     zones.initDebug();
