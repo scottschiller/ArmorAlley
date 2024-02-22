@@ -77,11 +77,29 @@ function addCSS(href, onload) {
   document.head?.appendChild(link);
 }
 
+function addHTML(href, onload) {
+  // note: no caching mechanism, here; avoid storing response.
+  if (!href) return;
+  href = minifyAndVersion(href);
+  let req = new XMLHttpRequest();
+  function onready() {
+    console.log(`Loaded HTML: ${href}`);
+    const text = this.responseText;
+    onload?.(text);
+    req.removeEventListener('load', onready);
+    req = null;
+  }
+  req.addEventListener('load', onready);
+  req.open('GET', href);
+  req.send();
+}
+
 function minifyAndVersion(url) {
   // TODO: DRY
   if (isProdSite || forceProd)
     url = url
       .replace('.css', `_min.css${version}`)
+      .replace('.html', `.html${version}`)
       .replace('.js', `_min.js${version}`);
   return url;
 }
@@ -120,6 +138,12 @@ function loadJS(src, onload) {
 function loadCSS(src, onload) {
   if (!src) return;
   fetch(src, addCSS, onload);
+}
+
+function loadHTML(src, onload) {
+  if (!src) return;
+  // note: single request, no batch or cache or queueing.
+  addHTML(src, onload);
 }
 
 function unloadCSS(src) {
@@ -165,6 +189,7 @@ const aaLoader = {
   loadGA,
   loadJS,
   loadCSS,
+  loadHTML,
   unloadCSS
 };
 
