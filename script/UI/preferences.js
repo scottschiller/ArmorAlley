@@ -49,7 +49,7 @@ const defaultPrefs = {
   'auto_flip': !!isMobile,
   'game_fps': isMobile ? 60 : 30,
   'game_fps_auto': 1, // 1 | 60 | 30
-  'game_speed': 0,
+  'game_speed': 1,
   'game_speed_pitch': false,
   'game_type': '', // [easy|hard|extreme]
   'net_game_level': '',
