@@ -154,7 +154,25 @@ let gamePrefs = {
 function PrefsManager() {
   let data, dom, events;
 
-  function init() {
+  function init(callback) {
+    if (data.initComplete) {
+      // this shouldn't happen, but just in case...
+      callback?.();
+      return;
+    }
+
+    const placeholder = document.getElementById('game-prefs-modal-placeholder');
+
+    if (!placeholder.hasChildNodes()) {
+      // fetch the preferences HTML fragment
+      aaLoader.loadHTML('html/game-prefs-modal.html', (response) => {
+        placeholder.innerHTML = response;
+        // and redo when complete.
+        init(callback);
+      });
+      return;
+    }
+
     dom.o = document.getElementById('game-prefs-modal');
     dom.oBnB = document.getElementById('cb_bnb');
     dom.oChatScroll = document.getElementById('network-options-chat-scroll');
@@ -167,7 +185,6 @@ function PrefsManager() {
       'network-options-status-label'
     );
     dom.oVolumeSlider = document.getElementById('main_volume');
-    dom.optionsLink = document.getElementById('game-options-link');
     dom.oStatsBar = document.getElementById('stats-bar');
     dom.oGameTips = document.getElementById('game-tips');
     dom.oToasts = document.getElementById('notification-toasts');
@@ -178,7 +195,6 @@ function PrefsManager() {
     // delightfully old-skool.
     dom.oForm.onsubmit = events.onFormSubmit;
     dom.oForm.onreset = events.onFormReset;
-    dom.optionsLink.onclick = events.optionsLinkOnClick;
 
     // Configure game speed slider, based on JS values.
     // Slider goes down to 0 for consistency, but limit the math to GAME_SPEED_MIN.
@@ -266,6 +282,10 @@ function PrefsManager() {
 
       queuedSoundHack();
     });
+
+    data.initComplete = true;
+
+    callback?.();
   }
 
   function queuedSoundHack() {
@@ -608,7 +628,15 @@ function PrefsManager() {
 
   function show(options = {}) {
     // preload CSS and then do the actual thing
-    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () => showForReal(options));
+    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () => {
+      if (data.initComplete) {
+        showForReal(options);
+      } else {
+        // fetch HTML fragment, append, then show
+        // TODO: simultaneous vs. sequential HTML + CSS fetch
+        init(() => showForReal(options));
+      }
+    });
   }
 
   function showForReal(options = {}) {
@@ -842,13 +870,16 @@ function PrefsManager() {
     oLevelSelect.selectedIndex = oLevelSelect.options.length - 1;
   }
 
-  function applyNewPrefs(newGamePrefs) {
+  function applyNewPrefs(newGamePrefs, force) {
     let prefChanges = [];
 
     // queue data for onChange() calls, as applicable
     // e.g., game needs to handle enabling or disabling snow or health bars
     for (let key in newGamePrefs) {
-      if (events.onPrefChange[key] && gamePrefs[key] !== newGamePrefs[key]) {
+      if (
+        events.onPrefChange[key] &&
+        (gamePrefs[key] !== newGamePrefs[key] || force)
+      ) {
         prefChanges.push({ key, value: newGamePrefs[key] });
       }
     }
@@ -866,6 +897,9 @@ function PrefsManager() {
   }
 
   function updateForm() {
+    // form may not be ready yet...
+    if (!data.initComplete) return;
+
     // given current `gamePrefs`, ensure the form has the right things selected / checked.
     Object.keys(gamePrefs).forEach((key) => {
       let value = boolToInt(gamePrefs[key]);
@@ -938,7 +972,7 @@ function PrefsManager() {
       if (key === 'volume') {
         prefsFromStorage[key] = value || DEFAULT_VOLUME_MULTIPLIER;
       } else if (key === 'game_speed') {
-        // note: default is 0
+        // note: default is 1
         prefsFromStorage[key] = value;
       } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
@@ -952,6 +986,12 @@ function PrefsManager() {
         ...prefsByURL
       };
       applyNewPrefs(prefsFromStorage);
+    }
+
+    // ensure prefs are applied on first-time load - so, e.g., it starts snowing right away.
+    if (!data.initComplete) {
+      const force = true;
+      applyNewPrefs(prefsFromStorage, force);
     }
 
     return prefsFromStorage;
@@ -1114,6 +1154,7 @@ function PrefsManager() {
 
   data = {
     active: false,
+    initComplete: false,
     originalHeight: 0,
     network: false,
     lastMenuOpen: 0,
@@ -1684,6 +1725,14 @@ function PrefsManager() {
       }
     }
   };
+
+  /**
+   * Special case / slight anti-pattern: assign this before DOM init.
+   * This is required because prefsManager needs to init itself,
+   * lazy-loading HTML and CSS to display.
+   */
+  dom.optionsLink = document.getElementById('game-options-link');
+  dom.optionsLink.onclick = events.optionsLinkOnClick;
 
   return {
     addGroupAndLevel,
