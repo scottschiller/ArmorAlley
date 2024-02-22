@@ -1175,12 +1175,32 @@ const Editor = () => {
     dom,
     events,
     init: () => {
+      // fetch HTML + CSS
+      let needed = 2;
+      let done = 0;
+
+      function stepComplete() {
+        done++;
+        if (done === needed) initEditor();
+      }
+
       const css = [
         'css/aa-game-ui.css',
         'css/aa-tutorial-editor.css',
         'css/aa-prefs-and-modals.css'
       ];
-      aaLoader.loadCSS(css, initEditor);
+
+      aaLoader.loadCSS(css, stepComplete);
+
+      const placeholder = document.getElementById('editor-placeholder');
+
+      if (!placeholder.hasChildNodes()) {
+        aaLoader.loadHTML('html/editor.html', (response) => {
+          placeholder.innerHTML = response;
+          stepComplete();
+        });
+        return;
+      }
     }
   };
 
