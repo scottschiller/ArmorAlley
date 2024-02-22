@@ -1241,8 +1241,6 @@ function PrefsManager() {
     },
 
     onUpdatePrefs: (prefs) => {
-      if (!dom.oForm) return;
-
       if (!prefs?.length) return;
 
       const isBatch = prefs.length > 1;
@@ -1260,37 +1258,39 @@ function PrefsManager() {
         // stringify for the form.
         const formValue = boolToInt(value);
 
-        // find all input(s) (radio + checkbox) with the given name, then check the value.
-        // qSA() doesn't return a full array, rather a note list; hence, the spread.
-        [...dom.oForm.querySelectorAll(`input[name="${name}"]`)].forEach(
-          (input) => {
-            if (input.type === 'range') {
-              input.value = formValue;
-              // haaaack: update the local model, too.
-              if (input.name === 'game_speed') {
-                common.setGameSpeed(gamePrefs.game_speed);
-                renderGameSpeedSlider();
+        if (dom.oForm) {
+          // find all input(s) (radio + checkbox) with the given name, then check the value.
+          // qSA() doesn't return a full array, rather a note list; hence, the spread.
+          [...dom.oForm.querySelectorAll(`input[name="${name}"]`)].forEach(
+            (input) => {
+              if (input.type === 'range') {
+                input.value = formValue;
+                // haaaack: update the local model, too.
+                if (input.name === 'game_speed') {
+                  common.setGameSpeed(gamePrefs.game_speed);
+                  renderGameSpeedSlider();
+                }
+              } else {
+                input.checked = input.value == formValue;
               }
-            } else {
-              input.checked = input.value == formValue;
             }
-          }
-        );
+          );
 
-        // select / option drop-downs.
-        [...dom.oForm.querySelectorAll(`select[name="${name}"]`)].forEach(
-          (select) => {
-            // find the matching entry and set its `selected` property.
-            const option = select.querySelector(`option[value="${value}"]`);
-            if (option) {
-              option.selected = true;
-              // hackish: update the local model, too.
-              if (name === 'net_game_level') {
-                selectLevel(value);
+          // select / option drop-downs.
+          [...dom.oForm.querySelectorAll(`select[name="${name}"]`)].forEach(
+            (select) => {
+              // find the matching entry and set its `selected` property.
+              const option = select.querySelector(`option[value="${value}"]`);
+              if (option) {
+                option.selected = true;
+                // hackish: update the local model, too.
+                if (name === 'net_game_level') {
+                  selectLevel(value);
+                }
               }
             }
-          }
-        );
+          );
+        }
 
         if (name === 'net_game_style') {
           // re-render, as we may need to show or hide vehicles.
