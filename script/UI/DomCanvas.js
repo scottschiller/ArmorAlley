@@ -387,6 +387,56 @@ const DomCanvas = () => {
     }
   }
 
+  function startShadowBlur(ctx, exports) {
+    const { data } = exports;
+    const ss = game.objects.view.data.screenScale;
+
+    const tracking =
+      !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
+
+    // smart missile: next, or current target?
+    if (tracking) {
+      // radius approximately matching CSS glow.
+      ctx.shadowBlur = 8 * ss;
+      // current (active) vs. next detected target
+      ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
+    } else if (data.shadowBlur) {
+      // TODO: cache.
+      ctx.shadowBlur = data.shadowBlur * ss;
+      ctx.shadowColor = data.shadowColor || '#fff';
+    }
+
+    /**
+     * 02/2024: Safari screws up `shadowBlur` rendering on "pixelated" contexts.
+     * Work around this by enabling image smoothing while `shadowBlur` is present.
+     * These effects should be somewhat ephemeral, on missile targets and explosions.
+     */
+    let shadowSmoothingHack =
+      isSafari && (tracking || data.shadowBlur) && !ctx.imageSmoothingEnabled;
+
+    if (shadowSmoothingHack) {
+      ctx.imageSmoothingEnabled = true;
+    }
+  }
+
+  function endShadowBlur(ctx, exports) {
+    const { data } = exports;
+
+    const tracking =
+      !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
+
+    // reset blur
+    if (tracking || data.shadowBlur) {
+      ctx.shadowBlur = 0;
+      let shadowSmoothingHack =
+        isSafari && (tracking || data.shadowBlur) && !ctx.imageSmoothingEnabled;
+
+      if (shadowSmoothingHack) {
+        ctx.imageSmoothingEnabled = false;
+      }
+    }
+  }
+
   function drawImage(ctx, exports, imgObject) {
     const { data } = exports;
     const { domCanvas } = data;
@@ -469,6 +519,8 @@ const DomCanvas = () => {
         ctx.stroke();
       }
 
+      startShadowBlur(ctx, exports);
+
       // single image
       ctx.drawImage(
         img.src,
@@ -481,6 +533,8 @@ const DomCanvas = () => {
         renderedWidth,
         renderedHeight
       );
+
+      endShadowBlur(ctx, exports);
 
       // TODO: only draw this during energy updates / when applicable per prefs.
       if (
@@ -573,32 +627,7 @@ const DomCanvas = () => {
         ctx.stroke();
       }
 
-      const tracking =
-        !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
-
-      // smart missile: next, or current target?
-      if (tracking) {
-        // radius approximately matching CSS glow...
-        ctx.shadowBlur = 8 * ss;
-        // current (active) vs. next detected target
-        ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
-      } else if (data.shadowBlur) {
-        // Note: $$$
-        ctx.shadowBlur = data.shadowBlur * ss;
-        ctx.shadowColor = data.shadowColor || '#fff';
-      }
-
-      /**
-       * 02/2024: Safari screws up `shadowBlur` rendering on "pixelated" contexts.
-       * Work around this by enabling image smoothing while `shadowBlur` is present.
-       * These effects should be somewhat ephemeral, on missile targets and explosions.
-       */
-      let shadowSmoothingHack =
-        isSafari && (tracking || data.shadowBlur) && !ctx.imageSmoothingEnabled;
-
-      if (shadowSmoothingHack) {
-        ctx.imageSmoothingEnabled = true;
-      }
+      startShadowBlur(ctx, exports);
 
       // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
       ctx.drawImage(
@@ -617,13 +646,10 @@ const DomCanvas = () => {
         unrotate(ctx);
       }
 
-      // reset blur
-      if (tracking || data.shadowBlur) {
-        ctx.shadowBlur = 0;
-        if (shadowSmoothingHack) {
-          ctx.imageSmoothingEnabled = false;
-        }
-      }
+      endShadowBlur(ctx, exports);
+
+      const tracking =
+        !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
 
       if (tracking) {
         // red dot
