@@ -1229,6 +1229,8 @@ function PrefsManager() {
 
       item.innerHTML = text;
 
+      if (!dom.oChatUI) return;
+
       dom.oChatUI?.appendChild(item);
 
       const scroller = dom.oChatScroll;
