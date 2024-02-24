@@ -15,7 +15,7 @@ import { PREFS, gamePrefs } from './preferences.js';
 const debugCanvas = searchParams.get('debugCanvas');
 
 const canvasConfig = [
-  // dom ID vs. object name / reference - e.g., `dom.o.fx` / `dom.ctx.fx`
+  // dom ID vs. object name / reference - e.g., `dom.o.battlefield` / `dom.ctx.battlefield`
   {
     id: 'radar-canvas',
     name: 'radar',
