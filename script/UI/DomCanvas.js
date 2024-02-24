@@ -871,7 +871,7 @@ const DomCanvas = () => {
   }
 
   function drawDebugRect(x, y, w, h, color = '#999') {
-    const ctx = dom.ctx['fx-bg'];
+    const ctx = dom.ctx['battlefield'];
     const ss = game.objects.view.data.screenScale;
     ctx.beginPath();
     ctx.rect(
