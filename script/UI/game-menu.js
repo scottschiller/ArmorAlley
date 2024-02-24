@@ -50,6 +50,8 @@ const gameTypeParam = searchParams.get('gameType');
 
 let customLevel = searchParams.get('customLevel');
 
+let customGroup;
+
 if (customLevel) {
   try {
     customLevel = JSON.parse(customLevel);
@@ -330,7 +332,8 @@ function init() {
   if (customLevel) {
     // <optgroup label="Network Game Levels">
 
-    const customGroup = document.createElement('optgroup');
+    // this will be available for the network modal, too.
+    customGroup = document.createElement('optgroup');
     customGroup.label = 'Custom Game Level';
 
     const customOption = document.createElement('option');
@@ -341,9 +344,6 @@ function init() {
     oSelect.appendChild(customGroup);
 
     oSelect.selectedIndex = oSelect.options.length - 1;
-
-    // do the same thing for the network modal
-    prefsManager.addGroupAndLevel(customGroup.cloneNode(true));
   } else if (thisBattle) {
     // a battle has been specified.
     Object.values(oSelect.options).forEach(
@@ -968,6 +968,7 @@ function hideTitleScreen(callback) {
 
 const gameMenu = {
   init,
+  getCustomGroup: () => customGroup,
   menuUpdate,
   startGame
 };

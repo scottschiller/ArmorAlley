@@ -211,6 +211,13 @@ function PrefsManager() {
       events.onPrefChange['game_fps']?.(defaultPrefs.game_fps);
     }
 
+    // network game + custom level case
+    const customGroup = gameMenu.getCustomGroup();
+
+    if (customGroup) {
+      addGroupAndLevel(customGroup.cloneNode(true));
+    }
+
     readAndApplyPrefsFromStorage();
 
     // hackish / special-case: force-update notification toast location IF it's on the left.
@@ -862,6 +869,7 @@ function PrefsManager() {
   }
 
   function addGroupAndLevel(oGroup) {
+    if (!dom.o) return;
     const oLevelSelect = dom.o.querySelector('[name="net_game_level"]');
     if (!oLevelSelect) return;
 
