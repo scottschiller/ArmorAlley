@@ -675,14 +675,14 @@ function initSoundTypes() {
 }
 
 function getURL(file) {
-  if (document.domain === 'localhost') return `audio/wav/${file}.wav`;
+  if (document.domain === 'localhost') return `assets/audio/wav/${file}.wav`;
 
   // SM2 will determine the appropriate format to play, based on client support.
   // URL pattern -> array of .ogg and .mp3 URLs
   return [
-    `audio/mp3/${file}.mp3`,
-    `audio/ogg/${file}.ogg`,
-    `audio/wav/${file}.wav`
+    `assets/audio/mp3/${file}.mp3`,
+    `assets/audio/ogg/${file}.ogg`,
+    `assets/audio/wav/${file}.wav`
   ];
 }
 

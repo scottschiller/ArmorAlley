@@ -426,14 +426,14 @@ function getSoundFromArray(ref) {
 // https://youtu.be/nSsYgd96seg
 
 function bnbURL(file) {
-  if (window.location.hostname === 'localhost') return `audio/bnb/${file}.wav`;
+  if (window.location.hostname === 'localhost') return `assets/audio/bnb/${file}.wav`;
 
   // SM2 will determine the appropriate format to play, based on client support.
   // URL pattern -> array of .ogg and .mp3 URLs
   return [
-    `audio/mp3/bnb/${file}.mp3`,
-    `audio/ogg/bnb/${file}.ogg`,
-    `audio/bnb/${file}.wav`
+    `assets/audio/mp3/bnb/${file}.mp3`,
+    `assets/audio/ogg/bnb/${file}.ogg`,
+    `assets/audio/bnb/${file}.wav`
   ];
 }
 
