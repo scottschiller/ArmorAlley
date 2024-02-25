@@ -13,6 +13,7 @@ npm-shrinkwrap.json
 package-lock.json
 script/*bundle.js
 src/css/*.js
+assets/video
 *copy*
 bnb
 bun.lockb
