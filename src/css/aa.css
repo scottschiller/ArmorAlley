@@ -258,7 +258,12 @@ body.game-started #world-wrapper {
     filter 0.75s ease-in-out,
     opacity 0.5s ease-in-out;
   opacity: 0;
-  visibility: hidden; /* initially hide, to prevent visible opacity flash */
+  visibility: hidden;
+  /* initially hide, to prevent visible opacity flash */
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
 body.loaded #radar {
@@ -266,16 +271,10 @@ body.loaded #radar {
   visibility: visible;
 }
 
-#radar {
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
 body.radar_enhanced_fx #world-noise-overlay {
   /* Probably $$$ - TODO: only apply when active. */
   mix-blend-mode: soft-light;
+  opacity: 0.65;
 }
 
 body.game-started #world-noise-overlay .noise,
@@ -319,10 +318,6 @@ body.game-started #world-noise-overlay {
 }
 
 /* special case: home screen, game menu. */
-body.radar_enhanced_fx #world-noise-overlay {
-  opacity: 0.65;
-}
-
 body.radar_enhanced_fx.edit-mode #world-noise-overlay,
 body.radar_enhanced_fx.game-started #world-noise-overlay {
   transition: opacity 0.75s ease-in-out;
@@ -826,12 +821,12 @@ button.primary {
   );
 }
 
-#game-type-list,
+#game-menu .glow-item-checkbox,
 #game-menu select,
 #game-menu-wrapper .cta:not(label),
 #game-menu-wrapper button.large,
-.generic-cta.large,
-#game-menu .glow-item-checkbox {
+#game-type-list,
+.generic-cta.large {
   border: 1px solid transparent;
   transition:
     background-color 250ms,
@@ -850,8 +845,8 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 }
 
 /* all the above should be "glow" items. */
-#game-menu-wrapper.active:not(.fade-out) .glow-item:hover,
-#game-menu-wrapper.active:not(.fade-out) .glow-item-checkbox:hover {
+#game-menu-wrapper.active:not(.fade-out) .glow-item-checkbox:hover,
+#game-menu-wrapper.active:not(.fade-out) .glow-item:hover {
   /* Nifty tricks; "Aero" glass, Windows Vista style. */
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
@@ -862,9 +857,9 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
   filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.5));
 }
 
+#game-menu-wrapper .checkbox-wrapper:active,
 #game-menu-wrapper .cta:not(label):active,
 #game-menu-wrapper button.large:active,
-#game-menu-wrapper .checkbox-wrapper:active,
 #game-menu-wrapper input:active,
 .generic-cta:active {
   transform: scale3d(0.9, 0.9, 1);
@@ -878,7 +873,8 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 }
 
 .flying-ace {
-  background: url(../../assets/image/flying_ace.png) 50% 100% / contain no-repeat;
+  background: url(../../assets/image/flying_ace.png) 50% 100% / contain
+    no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
   width: 25px;
@@ -976,15 +972,15 @@ ul.inline-list li:not(:first-of-type) {
 
 /* various cases for disabling scan range UI */
 #battle-over-letter,
-#letters-from-the-old-tanker,
 #battlefield.scan_ui_battlefield_enemy_disabled .placeholder.enemy .scan-node,
 #battlefield.scan_ui_battlefield_friendly_disabled
   .placeholder:not(.enemy)
   .scan-node,
-#radar.scan_ui_radar_enemy_disabled > .sprite.enemy .scan-node,
+#letters-from-the-old-tanker,
 #radar.scan_ui_radar_enemy_disabled > .scan-node.enemy,
-#radar.scan_ui_radar_friendly_disabled > .sprite:not(.enemy) .scan-node,
-#radar.scan_ui_radar_friendly_disabled > .scan-node:not(.enemy) {
+#radar.scan_ui_radar_enemy_disabled > .sprite.enemy .scan-node,
+#radar.scan_ui_radar_friendly_disabled > .scan-node:not(.enemy),
+#radar.scan_ui_radar_friendly_disabled > .sprite:not(.enemy) .scan-node {
   display: none;
 }
 
@@ -1051,8 +1047,8 @@ body.loaded canvas {
   transition: opacity 0.75s ease-in-out;
 }
 
-body.game-started canvas,
-body.edit-mode canvas {
+body.edit-mode canvas,
+body.game-started canvas {
   opacity: 1;
 }
 

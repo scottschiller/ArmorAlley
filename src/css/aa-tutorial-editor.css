@@ -419,7 +419,8 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 #editor-window .static-sprite.turret {
-  background: url(../../assets/image/turret-static.gif) 50% 0 / contain no-repeat;
+  background: url(../../assets/image/turret-static.gif) 50% 0 / contain
+    no-repeat;
   height: 10px;
   width: 12px;
 }
@@ -632,7 +633,6 @@ body.edit-mode #top-bar {
 }
 
 /* classic game sprites, DOM node edition */
-
 .balloon {
   height: 16px;
   width: 38px;

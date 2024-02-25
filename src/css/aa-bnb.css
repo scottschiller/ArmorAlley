@@ -1,7 +1,6 @@
 /**
  * "Virtual Stupidity" CSS
  */
-
 .tv-screen-container {
   position: absolute;
   overflow: hidden;
@@ -120,8 +119,8 @@ body.bnb-preload #tv-display #tv {
 }
 
 body.bnb #tv-display.widescreen #tv {
-  background: url(../../assets/image/pngtree.com_color_tv_widescreen.webp) 0 21.5px /
-    contain no-repeat;
+  background: url(../../assets/image/pngtree.com_color_tv_widescreen.webp) 0
+    21.5px / contain no-repeat;
 }
 
 #tv-display video {
@@ -221,11 +220,13 @@ body.is_safari #bnb-now-playing .pow {
 }
 
 #bnb-now-playing .beavis {
-  background: url(../../assets/image/pow-beavis.webp) 50% 50% / contain no-repeat;
+  background: url(../../assets/image/pow-beavis.webp) 50% 50% / contain
+    no-repeat;
 }
 
 #bnb-now-playing .butthead {
-  background: url(../../assets/image/pow-butthead.webp) 50% 50% / contain no-repeat;
+  background: url(../../assets/image/pow-butthead.webp) 50% 50% / contain
+    no-repeat;
 }
 
 #bnb-now-playing.beavis .beavis,

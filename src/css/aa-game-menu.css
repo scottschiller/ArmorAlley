@@ -1,5 +1,4 @@
 /* Armor Alley: Home Screen Menu */
-
 #game-menu-wrapper.active.fade-out {
   pointer-events: none;
   filter: blur(8px);
@@ -413,12 +412,9 @@ body.game-started #start-game-button-mobile {
 
 #checkbox-vs:hover,
 #game-menu label:hover,
-#game_level:hover {
-  color: #fff !important;
-}
-
 #game-type-list:hover,
-#game-type-list:hover input[type='radio'] {
+#game-type-list:hover input[type='radio'],
+#game_level:hover {
   color: #fff !important;
 }
 
@@ -782,9 +778,9 @@ body.game-started #home-video-wrapper {
   top: -0.1em;
 }
 
-#game-type-list:not(.disabled):hover,
+#game-menu .glow-item-checkbox:hover,
 #game-menu-wrapper button.large:hover,
-#game-menu .glow-item-checkbox:hover {
+#game-type-list:not(.disabled):hover {
   background-color: rgba(255, 255, 255, 0.06);
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.25));
 }
@@ -867,7 +863,8 @@ body.game-started #home-video-wrapper {
 
 button .network-icon {
   position: relative;
-  background: url(../../assets/image/win95-networking-icon.png) 0 0 / contain no-repeat;
+  background: url(../../assets/image/win95-networking-icon.png) 0 0 / contain
+    no-repeat;
   display: inline-block;
   width: calc(10px * var(--menu-scale));
   height: calc(10px * var(--menu-scale));
@@ -886,7 +883,6 @@ button .button-icon {
  * "Proximity glow" effect
  * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
  */
-
 :root {
   --glow-bg: hsl(0, 44%, 7%);
   --glow-border: hsl(280 10% 50%, 1);
@@ -919,9 +915,9 @@ button .button-icon {
   border-radius: var(--glow-border-radius);
 }
 
-.glow-item,
 #game-menu .glow-item-checkbox,
-#game-menu button.game-start {
+#game-menu button.game-start,
+.glow-item {
   border: calc(0.4px * var(--menu-scale)) solid rgba(255, 255, 255, 0.15);
 }
 
@@ -929,7 +925,7 @@ button .button-icon {
   /* special case. */
   position: absolute;
   top: 7%;
-  left: 0px;
+  left: 0;
   width: calc(12px * var(--menu-scale));
   height: calc(12px * var(--menu-scale));
 }

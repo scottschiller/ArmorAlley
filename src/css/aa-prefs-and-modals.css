@@ -1,7 +1,6 @@
 /**
  * Preferences and classic mac modal bits
  */
-
 body.prefs-modal-open #aa,
 body.prefs-modal-open #game-menu-wrapper {
   /* prevent clicks on the battlefield and/or game menu. */
@@ -274,7 +273,9 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-right: 0.5px solid #000;
   box-sizing: content-box;
   /* two shadows, which are hidden when at the top and bottom */
-  box-shadow: 0 2px 0 #000, 0 -2px 0 #000;
+  box-shadow:
+    0 2px 0 #000,
+    0 -2px 0 #000;
   width: 20px;
 }
 
@@ -339,7 +340,10 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 #game-prefs-modal button,
 .mac-classic fieldset legend,
 .mac-classic h3 {
-  font-family: FA Sysfont C, courier, sans-serif;
+  font-family:
+    FA Sysfont C,
+    courier,
+    sans-serif;
   font-size: 7px;
   vertical-align: middle;
 }
@@ -499,7 +503,10 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   border-radius: 2px;
   color: #ccc;
   cursor: pointer;
-  font-family: FA Sysfont C, courier, sans-serif;
+  font-family:
+    FA Sysfont C,
+    courier,
+    sans-serif;
   font-size: calc(10px * var(--menu-scale));
   font-weight: 400;
   /* look similar to buttons */
@@ -515,7 +522,12 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 #game-prefs-modal select {
   border-color: #000;
   color: #000;
-  font-family: FA Sysfont C, geneva, verdana, arial, sans-serif;
+  font-family:
+    FA Sysfont C,
+    geneva,
+    verdana,
+    arial,
+    sans-serif;
   font-size: calc(12px * var(--prefs-font-scale));
   border-width: 1px;
   margin-left: 0;
@@ -646,7 +658,12 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 .mac-classic b {
   /* letter-spacing: -0.25px; */
   /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
-  font-family: Helvetica Neue, Helvetica, -apple-system, system-ui, sans-serif;
+  font-family:
+    Helvetica Neue,
+    Helvetica,
+    -apple-system,
+    system-ui,
+    sans-serif;
   font-weight: 700;
 }
 
@@ -734,7 +751,9 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 
 #game-prefs-modal button.primary {
   /* inner white, followed by outer black borders */
-  box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+  box-shadow:
+    0 0 0 1px #fff,
+    0 0 0 4px #000;
   outline-offset: 1px;
   /* Safari collapses buttons more than the others. :/ */
   padding: 1px 20px;
@@ -835,23 +854,31 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
    * ...Except in this one specific case, of course. 😇
    */
   0% {
-    box-shadow: 0 0 0 0.5px #fff, 0 0 0 2px #000;
+    box-shadow:
+      0 0 0 0.5px #fff,
+      0 0 0 2px #000;
   }
 
   to {
     border-color: transparent;
-    box-shadow: 0 0 0 4px #f3f3f3, 0 0 0 2px #f3f3f3;
+    box-shadow:
+      0 0 0 4px #f3f3f3,
+      0 0 0 2px #f3f3f3;
   }
 }
 
 @keyframes button-blink-larger {
   /* See above. :D */
   0% {
-    box-shadow: 0 0 0 1px #fff, 0 0 0 4px #000;
+    box-shadow:
+      0 0 0 1px #fff,
+      0 0 0 4px #000;
   }
 
   to {
     border-color: transparent;
-    box-shadow: 0 0 0 8px #f3f3f3, 0 0 0 4px #f3f3f3;
+    box-shadow:
+      0 0 0 8px #f3f3f3,
+      0 0 0 4px #f3f3f3;
   }
 }

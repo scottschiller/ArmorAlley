@@ -2,7 +2,6 @@
  * The big mobile / touchscreen rules file.
  * TODO: Maybe drop `body.is-mobile` everywhere.
  */
-
 body.is-mobile #game-menu-wrapper {
   /* always full-width on mobile. */
   max-width: 100%;
