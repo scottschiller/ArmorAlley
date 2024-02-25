@@ -187,7 +187,6 @@ function PrefsManager() {
     dom.oVolumeSlider = document.getElementById('main_volume');
     dom.oStatsBar = document.getElementById('stats-bar');
     dom.oGameTips = document.getElementById('game-tips');
-    dom.oToasts = document.getElementById('notification-toasts');
 
     // just in case
     if (!dom.o || !dom.oForm || !dom.optionsLink) return;
@@ -1744,6 +1743,9 @@ function PrefsManager() {
    */
   dom.optionsLink = document.getElementById('game-options-link');
   dom.optionsLink.onclick = events.optionsLinkOnClick;
+
+  // notification preferences also may to be applied, left vs. right-alignment before init.
+  dom.oToasts = document.getElementById('notification-toasts');
 
   return {
     addGroupAndLevel,
