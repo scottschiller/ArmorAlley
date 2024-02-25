@@ -31,7 +31,6 @@
     "gulp-clean-css": "^4.3.0",
     "gulp-cli": "^2.3.0",
     "gulp-concat": "^2.6.1",
-    "gulp-esprima": "^0.1.0",
     "gulp-header": "^2.0.9",
     "gulp-postcss": "^9.1.0",
     "gulp-rename": "^2.0.0",
@@ -44,6 +43,7 @@
     "graceful-fs": "^4.2.11"
   },
   "dependencies": {
+    "gulp-htmlmin": "^5.0.1",
     "http-server": "^14.1.1"
   }
 }

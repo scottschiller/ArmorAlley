@@ -18,58 +18,62 @@
  */
 
 // npmjs.com/package/[name] unless otherwise specified
-const { gulp, src, dest, series } = require('gulp');
+const { src, dest, series } = require('gulp');
 const rename = require('gulp-rename');
 const terser = require('gulp-terser');
 const { rollup } = require('rollup');
 const cleanCSS = require('gulp-clean-css');
-const header = require('gulp-header');
 const concat = require('gulp-concat');
-const postcss = require('gulp-postcss');
+const header = require('gulp-header');
+const htmlmin = require('gulp-htmlmin');
 const imageInliner = require('postcss-image-inliner');
+const postcss = require('gulp-postcss');
 
 const imageInlinerOpts = {
   assetPaths: ['image'],
   maxFileSize: 2048
 };
 
-// https://github.com/dtao/gulp-esprima
-const esprima = require('gulp-esprima');
-
 var fs = require('fs');
 
 // common paths / patterns
-const jsPath = 'script';
+const srcRoot = 'src';
+const distRoot = 'dist';
+
+function root(path) {
+  return `${srcRoot}/${path}`;
+}
+
+function dist(path) {
+  return `${distRoot}/${path}`;
+}
+
 const cssPath = 'css';
+const htmlPath = 'html';
+const jsPath = 'js';
+const libPath = 'lib';
 
-// "libraries" under script/
-const lib = 'lib';
-
-// minified postfix
-const min = '_min';
+const distPaths = {
+  css: dist(cssPath),
+  html: dist(htmlPath),
+  js: dist(jsPath),
+  lib: dist(`${jsPath}/${libPath}`)
+};
 
 const headerFile = 'build/aa_header.txt';
 
-const css = (file) => `${cssPath}/${file}.css`;
-const js = (file) => `${jsPath}/${file}.js`;
+const css = (file) => root(`${cssPath}/${file}.css`);
+const js = (file) => root(`${jsPath}/${file}.js`);
+const html = (file) => root(`${htmlPath}/${file}.html`);
+
+const distFile = (file) => `${distRoot}/${file}.js`;
 
 // note: these have path + extensions added via js() / css().
 const bootFile = js('aa-boot');
-const bootBundleFile = js('aa-boot_bundle');
+const bootBundleFile = distFile('js/aa-boot_bundle');
 
 const mainJSFile = js('aa');
-const bundleFile = js('aa' + min);
-
-const cssFiles = {
-  battleOverLetter: 'aa-battle-over-letter',
-  bnb: 'aa-bnb',
-  gameUI: 'aa-game-ui',
-  gameMenu: 'aa-game-menu',
-  main: 'aa',
-  mobile: 'aa-mobile',
-  prefsAndModals: 'aa-prefs-and-modals',
-  tutorialEditor: 'aa-tutorial-editor'
-};
+const bundleFile = distFile('js/aa');
 
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
@@ -90,7 +94,7 @@ function minifyBootBundle() {
         ecma: '2016'
       })
     )
-    .pipe(dest(jsPath));
+    .pipe(dest(distPaths.js));
 }
 
 function minifyJS() {
@@ -102,7 +106,7 @@ function minifyJS() {
         ecma: '2016'
       })
     )
-    .pipe(dest(jsPath));
+    .pipe(dest(distPaths.js));
 }
 
 function concatJS() {
@@ -112,48 +116,31 @@ function concatJS() {
     .pipe(dest('.'));
 }
 
-function minifyCSS(cssFile) {
+function minifyHTML() {
+  return src(html('*'))
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(dest(distPaths.html));
+}
+
+function minifyLibs() {
+  return src(root(`${jsPath}/${libPath}/*`))
+  .pipe(terser({
+    // https://github.com/terser/terser#minify-options
+    compress: true,
+    ecma: '2016'
+  })
+  .pipe(dest(distPaths.lib)));
+}
+
+function minifyCSS() {
   return (
-    src(css(cssFile))
+    src(css('*'))
       .pipe(postcss([imageInliner(imageInlinerOpts)]))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
       .pipe(header(fs.readFileSync(headerFile, 'utf8')))
-      .pipe(rename((path) => (path.basename += min)))
-      .pipe(dest(cssPath))
+      .pipe(dest(distPaths.css))
   );
-}
-
-function minifyMainCSS() {
-  return minifyCSS(cssFiles.main);
-}
-
-function minifyMobileCSS() {
-  return minifyCSS(cssFiles.mobile);
-}
-
-function minifyBNBCSS() {
-  return minifyCSS(cssFiles.bnb);
-}
-
-function minifyTutorialEditorCSS() {
-  return minifyCSS(cssFiles.tutorialEditor);
-}
-
-function minifyLetterCSS() {
-  return minifyCSS(cssFiles.battleOverLetter);
-}
-
-function minifyGameMenuCSS() {
-  return minifyCSS(cssFiles.gameMenu);
-}
-
-function minifyGameUICSS() {
-  return minifyCSS(cssFiles.gameUI);
-}
-
-function minifyPrefsAndModalsCSS() {
-  return minifyCSS(cssFiles.prefsAndModals);
 }
 
 exports.default = series(
@@ -162,12 +149,7 @@ exports.default = series(
   bundleJS,
   minifyJS,
   concatJS,
-  minifyMainCSS,
-  minifyMobileCSS,
-  minifyBNBCSS,
-  minifyTutorialEditorCSS,
-  minifyLetterCSS,
-  minifyGameMenuCSS,
-  minifyGameUICSS,
-  minifyPrefsAndModalsCSS
+  minifyLibs,
+  minifyCSS,
+  minifyHTML
 );
