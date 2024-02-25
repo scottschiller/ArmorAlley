@@ -126,7 +126,7 @@
         let s = document.createElement('script');
         s.fetchpriority = 'high';
         s.type = 'module';
-        s.src = isProd ? `${bootFile}.aaVersion` : bootFile;
+        s.src = isProd ? `${bootFile}.${aaVersion}` : bootFile;
         (document.head || document.documentElement).appendChild(s);
       })();
     </script>
