@@ -7,69 +7,69 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "assets/image/app-icons/favicon-72x72.png",
+      "src": "image/app-icons/favicon-72x72.png",
       "type": "image/png",
       "sizes": "72x72"
     },
     {
-      "src": "assets/image/app-icons/favicon-76x76.png",
+      "src": "image/app-icons/favicon-76x76.png",
       "type": "image/png",
       "sizes": "76x76"
     },
     {
-      "src": "assets/image/app-icons/apple-touch-icon-120x120.png",
+      "src": "image/app-icons/apple-touch-icon-120x120.png",
       "type": "image/png",
       "sizes": "120x120"
     },
     {
-      "src": "assets/image/app-icons/apple-touch-icon-152x152.png",
+      "src": "image/app-icons/apple-touch-icon-152x152.png",
       "type": "image/png",
       "sizes": "152x152"
     },
     {
-      "src": "assets/image/app-icons/apple-touch-icon-180x180.png",
+      "src": "image/app-icons/apple-touch-icon-180x180.png",
       "type": "image/png",
       "sizes": "180x180"
     },
     {
-      "src": "assets/image/app-images/armor_alley_game_image_192x192.png",
+      "src": "image/app-images/armor_alley_game_image_192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "assets/image/app-images/armor_alley_game_image_256x256.png",
+      "src": "image/app-images/armor_alley_game_image_256x256.png",
       "type": "image/png",
       "sizes": "256x256"
     },
     {
-      "src": "assets/image/app-images/armor_alley_game_image_512x512.png",
+      "src": "image/app-images/armor_alley_game_image_512x512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "assets/image/app-images/armor_alley_game_image_512x512_maskable.png",
+      "src": "image/app-images/armor_alley_game_image_512x512_maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/image/app-images/armor_alley_game_image_512x512_maskable.webp",
+      "src": "image/app-images/armor_alley_game_image_512x512_maskable.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "maskable"
     },
     {
-      "src": "assets/image/app-icons/favicon-16x16.png",
+      "src": "image/app-icons/favicon-16x16.png",
       "type": "image/png",
       "sizes": "16x16"
     },
     {
-      "src": "assets/image/app-icons/favicon-32x32.png",
+      "src": "image/app-icons/favicon-32x32.png",
       "type": "image/png",
       "sizes": "32x32"
     },
     {
-      "src": "assets/image/app-icons/favicon.ico",
+      "src": "image/app-icons/favicon.ico",
       "type": "image/x-icon",
       "sizes": "16x16 32x32"
     }
