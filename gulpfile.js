@@ -123,13 +123,9 @@ function minifyHTML() {
 }
 
 function minifyLibs() {
-  return src(root(`${jsPath}/${libPath}/*`))
-  .pipe(terser({
-    // https://github.com/terser/terser#minify-options
-    compress: true,
-    ecma: '2016'
-  })
-  .pipe(dest(distPaths.lib)));
+  return src(root(`${jsPath}/${libPath}/*.js`))
+    .pipe(terser())
+    .pipe(dest(distPaths.lib));
 }
 
 function minifyCSS() {
