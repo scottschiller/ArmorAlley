@@ -60,7 +60,7 @@ const distPaths = {
   lib: dist(`${jsPath}/${libPath}`)
 };
 
-const headerFile = 'build/aa_header.txt';
+const headerFile = 'src/aa_header.txt';
 
 const css = (file) => root(`${cssPath}/${file}.css`);
 const js = (file) => root(`${jsPath}/${file}.js`);
