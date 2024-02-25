@@ -30,7 +30,7 @@ const imageInliner = require('postcss-image-inliner');
 const postcss = require('gulp-postcss');
 
 const imageInlinerOpts = {
-  assetPaths: ['image'],
+  assetPaths: ['assets/image'],
   maxFileSize: 2048
 };
 
