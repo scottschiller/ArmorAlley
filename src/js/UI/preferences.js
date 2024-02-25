@@ -1455,6 +1455,7 @@ function PrefsManager() {
         // first-time activation: preload background images for menu, then activate.
         if (
           !game.data.started &&
+          isActive &&
           !utils.css.has(document.body, 'bnb-preload')
         ) {
           // pre-fetch...
