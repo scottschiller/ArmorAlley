@@ -469,13 +469,13 @@ body.is-mobile.mobile-controls_right-aligned
 }
 
 #mobile-controls li.weapons-item a.ammo {
-  /* background-image: url(../../image/status-ammo.png); */
+  /* background-image: url(../../assets/image/status-ammo.png); */
   background-position: 50% 50%;
   background-size: 42%;
 }
 
 #mobile-controls li.weapons-item a.bombs {
-  /* background-image: url(../../image/status-bombs.png); */
+  /* background-image: url(../../assets/image/status-bombs.png); */
   background-position: 50% 50%;
   background-size: 10%;
 }
@@ -571,7 +571,7 @@ body.mobile-controls_right-aligned #mobile-controls {
 
 #mobile-controls li {
   /* microfiche, but OK on mobile. */
-  background: url(../../image/checkerboard-black-mask-75percent.png) 0 0/4px;
+  background: url(../../assets/image/checkerboard-black-mask-75percent.png) 0 0/4px;
   border: calc(0.75px * var(--gs)) dotted hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
@@ -647,7 +647,7 @@ body.mobile-controls_right-aligned #mobile-controls {
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry {
-  background-image: url(../../image/parachute-infantry-static.png);
+  background-image: url(../../assets/image/parachute-infantry-static.png);
   background-position: 50% 50%;
   background-size: 39% !important; /* argh */
 }
@@ -666,7 +666,7 @@ body.mobile-controls_right-aligned #mobile-controls {
 
 #mobile-controls li.weapons-item a.smart-missile {
   background-position: 50% 50%;
-  /* background-image: url(../../image/status-missile.png); */
+  /* background-image: url(../../assets/image/status-missile.png); */
   background-size: 40%;
 }
 
@@ -716,7 +716,7 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 #mobile-controls li.inventory-item a.engineer,
 #player-status-bar .inventory-item a.engineer,
 .static-sprite.engineer {
-  background-image: url(../../image/engineer-static.png);
+  background-image: url(../../assets/image/engineer-static.png);
 }
 
 body.game-paused:not(.game-started) #world {
@@ -764,7 +764,7 @@ body.game-paused .sprite {
 }
 
 .joystick-point {
-  background-image: url(../../image/checkerboard-black-mask-75percent.png);
+  background-image: url(../../assets/image/checkerboard-black-mask-75percent.png);
   border: 1px dotted #333;
   height: 50%;
   left: 50%;

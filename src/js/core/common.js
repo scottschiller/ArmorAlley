@@ -760,8 +760,8 @@ const common = {
     }
 
     video.innerHTML = [
-      `<source src="image/bnb/${fileName}.webm" type="video/webm" />`,
-      `<source src="image/bnb/${fileName}.mp4" type="video/mp4" />`
+      `<source src="assets/image/bnb/${fileName}.webm" type="video/webm" />`,
+      `<source src="assets/image/bnb/${fileName}.mp4" type="video/mp4" />`
     ].join('');
 
     video.addEventListener(canplay, preloadOK);
@@ -819,8 +819,8 @@ const common = {
     const isWZ = fileName.match(/wz/i);
 
     const sources = [
-      `<source src="image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
-      `<source src="image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`
+      `<source src="assets/image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
+      `<source src="assets/image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`
     ];
 
     // MP4 first, due to historical bias...

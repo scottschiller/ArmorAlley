@@ -53,7 +53,7 @@ For running the game locally and JS + CSS build instructions, see [README_DEVEL.
 
 Previous release: V2.0.20230501.
 
-![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](image/app-images/armor-alley_game_image_1920x1080.webp)
+![Screenshot: Armor Alley, 2023 update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](assets/image/app-images/armor-alley_game_image_1920x1080.webp)
 
 ## Video overview
 

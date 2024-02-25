@@ -111,7 +111,7 @@ const utils = {
 
       // preload, then update; canvas will ignore rendering until loaded.
       const img = new Image();
-      const src = `image/${url}`;
+      const src = `assets/image/${url}`;
 
       img.onload = () => {
         preloadedImageURLs[url] = src;
@@ -140,7 +140,7 @@ const utils = {
       };
 
       // note: prefixed path.
-      img.src = url.match(/data:|image\//i) ? url : `image/${url}`;
+      img.src = url.match(/data:|image\//i) ? url : `assets/image/${url}`;
     },
 
     preload: (urls, callback) => {

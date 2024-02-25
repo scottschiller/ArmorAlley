@@ -367,13 +367,13 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 #editor-window .static-sprite.default {
-  background-image: url(../../image/icon_savegame.png);
+  background-image: url(../../assets/image/icon_savegame.png);
   height: 16px;
   width: 16px;
 }
 
 #editor-window .static-sprite.barb-wire {
-  background-image: url(../../image/barb-wire.png);
+  background-image: url(../../assets/image/barb-wire.png);
 }
 
 #editor-window .static-sprite.balloon {
@@ -386,54 +386,54 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 #editor-window .static-sprite.cactus {
-  background-image: url(../../image/cactus.png);
+  background-image: url(../../assets/image/cactus.png);
 }
 
 #editor-window .static-sprite.cactus2 {
-  background-image: url(../../image/cactus2.png);
+  background-image: url(../../assets/image/cactus2.png);
 }
 
 #editor-window .static-sprite.cloud {
-  background-image: url(../../image/cloud-1.png);
+  background-image: url(../../assets/image/cloud-1.png);
   height: 10px;
   width: 34px;
 }
 
 #editor-window .static-sprite.gravestone {
-  background-image: url(../../image/gravestone.png);
+  background-image: url(../../assets/image/gravestone.png);
 }
 
 #editor-window .static-sprite.gravestone2 {
-  background-image: url(../../image/gravestone2.png);
+  background-image: url(../../assets/image/gravestone2.png);
 }
 
 #editor-window .static-sprite.grave-cross {
-  background-image: url(../../image/grave-cross.png);
+  background-image: url(../../assets/image/grave-cross.png);
 }
 
 #editor-window .static-sprite.landing-pad {
   /* TODO: landing-pad-static.png? */
-  background: url(../../image/landing-pad-animated.gif) 0 0 / contain;
+  background: url(../../assets/image/landing-pad-animated.gif) 0 0 / contain;
   height: 3.5px;
   width: 40.5px;
 }
 
 #editor-window .static-sprite.turret {
-  background: url(../../image/turret-static.gif) 50% 0 / contain no-repeat;
+  background: url(../../assets/image/turret-static.gif) 50% 0 / contain no-repeat;
   height: 10px;
   width: 12px;
 }
 
 #editor-window .static-sprite.engineer {
-  background-image: url(../../image/engineer-static.png);
+  background-image: url(../../assets/image/engineer-static.png);
 }
 
 #editor-window .static-sprite.bunker {
-  background-image: url(../../image/bunker_mac.png);
+  background-image: url(../../assets/image/bunker_mac.png);
 }
 
 #editor-window .static-sprite.super-bunker {
-  background-image: url(../../image/super-bunker_mac.png);
+  background-image: url(../../assets/image/super-bunker_mac.png);
 }
 
 #active-sprite {
@@ -482,7 +482,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .sand-dune {
-  background-image: url(../../image/sand-dune.png);
+  background-image: url(../../assets/image/sand-dune.png);
 }
 
 .sand-dunes {
@@ -491,7 +491,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .sand-dunes {
-  background-image: url(../../image/sand-dunes.png);
+  background-image: url(../../assets/image/sand-dunes.png);
 }
 
 .checkmark-grass {
@@ -500,7 +500,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .checkmark-grass {
-  background-image: url(../../image/checkmark-grass.png);
+  background-image: url(../../assets/image/checkmark-grass.png);
 }
 
 .flower {
@@ -509,7 +509,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .flower {
-  background-image: url(../../image/flower.png);
+  background-image: url(../../assets/image/flower.png);
 }
 
 .flowers {
@@ -518,7 +518,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .flowers {
-  background-image: url(../../image/flowers.png);
+  background-image: url(../../assets/image/flowers.png);
 }
 
 .flower-bush {
@@ -527,7 +527,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .flower-bush {
-  background-image: url(../../image/flower-bush.png);
+  background-image: url(../../assets/image/flower-bush.png);
 }
 
 .tree {
@@ -536,7 +536,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .tree {
-  background-image: url(../../image/tree.png);
+  background-image: url(../../assets/image/tree.png);
 }
 
 .tumbleweed {
@@ -545,7 +545,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .tumbleweed {
-  background-image: url(../../image/tumbleweed.png);
+  background-image: url(../../assets/image/tumbleweed.png);
 }
 
 .palm-tree {
@@ -554,7 +554,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .palm-tree {
-  background-image: url(../../image/palm-tree.png);
+  background-image: url(../../assets/image/palm-tree.png);
 }
 
 .rock {
@@ -563,7 +563,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .rock {
-  background-image: url(../../image/rock.png);
+  background-image: url(../../assets/image/rock.png);
 }
 
 .rock2 {
@@ -572,7 +572,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .rock2 {
-  background-image: url(../../image/rock2.png);
+  background-image: url(../../assets/image/rock2.png);
 }
 
 .grass {
@@ -581,7 +581,7 @@ body.edit-mode #top-bar {
 }
 
 #editor-window .grass {
-  background-image: url(../../image/grass.png);
+  background-image: url(../../assets/image/grass.png);
 }
 
 .gravestone {
