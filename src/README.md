@@ -118,7 +118,7 @@ Take note of the versioning pattern in use, as well.
 
 **.htaccess: Caching and URL versioning pattern**
 
-An Apache `.htaccess` file is provided that sets 1-year cache headers on static assets, and simple asset versioning / cache busting to ensure clients get the latest and greatest.
+A "vintage" Apache `.htaccess` file is provided that sets 1-year cache headers on static assets, and simple asset versioning / cache busting to ensure clients get the latest and greatest.
 
 By default, the boot loader appends the versioning string to JS + CSS assets in production.
 
@@ -126,6 +126,6 @@ The versioning pattern allows for a ".V" to be appended to a static file, so `aa
 ```
 RewriteRule (.*)\.(.*)\.[vV]\d+$ $1.$2 [L]
 ```
-You may notice a 404 when loading the game, where a JS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `script/aa_min.js.V20230522` will throw a 404 when the actual file on disk is `script/aa_min.js`.
+You may notice a 404 when loading the game, where a JS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `dist/aa.js.V20240404` will throw a 404 when the actual file on disk is `dist/aa.js`.
 
-If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line that assigns `v` the version string, e.g., `v = '.V20230529';` within `index.html`.
+If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line that assigns `v` the version string, e.g., `v = '.V20240420';` within `index.html`.
