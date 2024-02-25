@@ -4,6 +4,7 @@
 *?old.*
 *test.*
 build/build.*
+dist/
 homepage
 misc
 build.js
@@ -11,8 +12,7 @@ node_modules
 npm-shrinkwrap.json
 package-lock.json
 script/*bundle.js
-script/*_min.js
-css/*_min.css
+src/css/*.js
 *copy*
 bnb
 bun.lockb
