@@ -834,7 +834,7 @@ function showHomeVideo() {
   // load up video with most-likely-supported format at 1080p or 4K, depending.
   function addSource(res, ext) {
     if (!video) return;
-    const url = `video/aa_home_menu_demo_${res}${fps}.${ext}`;
+    const url = `assets/video/aa_home_menu_demo_${res}${fps}.${ext}`;
     const source = document.createElement('source');
     source.src = url;
     source.type = `video/${ext}`;
