@@ -955,8 +955,8 @@ const game = (() => {
     findObjectById,
     getObjects,
     init: () => {
-      const css = ['css/aa-game-ui.css'];
-      if (isMobile) css.push('css/aa-mobile.css');
+      const css = ['aa-game-ui.css'];
+      if (isMobile) css.push('aa-mobile.css');
       aaLoader.loadCSS(css, init);
     },
     initArmorAlley,

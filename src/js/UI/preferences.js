@@ -165,7 +165,7 @@ function PrefsManager() {
 
     if (!placeholder.hasChildNodes()) {
       // fetch the preferences HTML fragment
-      aaLoader.loadHTML('html/game-prefs-modal.html', (response) => {
+      aaLoader.loadHTML('game-prefs-modal.html', (response) => {
         placeholder.innerHTML = response;
         // and redo when complete.
         init(callback);
@@ -635,7 +635,7 @@ function PrefsManager() {
 
   function show(options = {}) {
     // preload CSS and then do the actual thing
-    aaLoader.loadCSS('css/aa-prefs-and-modals.css', () => {
+    aaLoader.loadCSS('aa-prefs-and-modals.css', () => {
       if (data.initComplete) {
         showForReal(options);
       } else {
@@ -779,7 +779,7 @@ function PrefsManager() {
 
     // tutorial also uses modals CSS.
     if (!tutorialMode) {
-      aaLoader.unloadCSS('css/aa-prefs-and-modals.css');
+      aaLoader.unloadCSS('aa-prefs-and-modals.css');
     }
 
     if (gamePrefs.bnb) {
@@ -1479,9 +1479,9 @@ function PrefsManager() {
 
         if (isActive) {
           // load CSS first
-          aaLoader.loadCSS('css/aa-bnb.css', updateCSS);
+          aaLoader.loadCSS('aa-bnb.css', updateCSS);
         } else {
-          aaLoader.unloadCSS('css/aa-bnb.css');
+          aaLoader.unloadCSS('aa-bnb.css');
           // update immediately
           updateCSS();
         }

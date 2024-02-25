@@ -102,7 +102,7 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
   Ideally, this will run without a bunch of errors. Take a look at [gulpfile.js](gulpfile.js) for some notes as to requirements, and troubleshooting.
 
-  Gulp should dump a bunch of output—I apologize for all the circular dependency warnings—and ultimately create `script/aa-boot_bundle.js`, `script/aa_min.js` and `css/aa_min.css`. This is the "bundled" JS, and minified CSS that the game loads in production mode. The game will load faster using these files, vs. the raw development source files.
+  Gulp should dump a bunch of output—I apologize for all the circular dependency warnings—and ultimately create files under `dist/js`, `dist/css` and the like. This is the "bundled" JS, and minified CSS that the game loads in production mode. The game will load faster using these files, vs. the raw development source files.
 
   Whenever you make changes to the source JS or CSS, you can re-run `gulp` to update the "build." I also recommend updating the version string in `index.html`, if you are pushing this to production. More on that below.
 

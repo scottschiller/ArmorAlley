@@ -1,5 +1,6 @@
 import { prefsManager } from '../aa.js';
 import { gamePrefs } from '../UI/preferences.js';
+import { aaLoader } from './aa-loader.js';
 import { common } from './common.js';
 import { game } from './Game.js';
 import {
@@ -829,10 +830,11 @@ const net = {
       // go get it, then call this method again.
       if (debugNetwork) console.log('Loading PeerJS...');
 
-      var script = document.createElement('script');
+      aaLoader.loadJS('lib/peerjs@1.5.2.js', () =>
+        net.init(onInitCallback, startGameCallback)
+      );
 
-      script.onload = () => net.init(onInitCallback, startGameCallback);
-
+      /*
       // TODO: show in the UI.
       script.onerror = (e) => {
         console.log('Error loading PeerJS', e);
@@ -840,12 +842,7 @@ const net = {
           `Error loading PeerJS script "${src}": ${e.message}`
         );
       };
-
-      const src = 'script/lib/peerjs@1.5.2.js';
-      script.src = src;
-
-      document.head.appendChild(script);
-
+      */
       return;
     }
 

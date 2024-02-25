@@ -122,14 +122,11 @@
 
         // fetch AA core bundle.
         const isProd = !!window.location.host.match(/armor-alley\.net/i);
+        const bootFile = 'dist/js/aa-boot_bundle.js';
         let s = document.createElement('script');
         s.fetchpriority = 'high';
         s.type = 'module';
-        s.src = `${
-          isProd
-            ? 'script/aa-boot_bundle.js.' + aaVersion
-            : 'script/aa-boot_bundle.js'
-        }`;
+        s.src = isProd ? `${bootFile}.aaVersion` : bootFile;
         (document.head || document.documentElement).appendChild(s);
       })();
     </script>

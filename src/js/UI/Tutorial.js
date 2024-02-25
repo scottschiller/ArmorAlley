@@ -36,8 +36,8 @@ const Tutorial = () => {
       aaLoader.loadCSS(url, onload);
     }
 
-    fetch('css/aa-tutorial-editor.css');
-    fetch('css/aa-prefs-and-modals.css');
+    fetch('aa-tutorial-editor.css');
+    fetch('aa-prefs-and-modals.css');
   }
 
   function selectItem(i) {
@@ -488,7 +488,7 @@ const Tutorial = () => {
 
     if (!placeholder.hasChildNodes()) {
       // fetch the preferences HTML fragment
-      aaLoader.loadHTML('html/tutorial.html', (response) => {
+      aaLoader.loadHTML('tutorial.html', (response) => {
         placeholder.innerHTML = response;
         initTutorial();
       });

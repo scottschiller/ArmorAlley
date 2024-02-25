@@ -1185,9 +1185,9 @@ const Editor = () => {
       }
 
       const css = [
-        'css/aa-game-ui.css',
-        'css/aa-tutorial-editor.css',
-        'css/aa-prefs-and-modals.css'
+        'aa-game-ui.css',
+        'aa-tutorial-editor.css',
+        'aa-prefs-and-modals.css'
       ];
 
       aaLoader.loadCSS(css, stepComplete);
@@ -1195,7 +1195,7 @@ const Editor = () => {
       const placeholder = document.getElementById('editor-placeholder');
 
       if (!placeholder.hasChildNodes()) {
-        aaLoader.loadHTML('html/editor.html', (response) => {
+        aaLoader.loadHTML('editor.html', (response) => {
           placeholder.innerHTML = response;
           stepComplete();
         });

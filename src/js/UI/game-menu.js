@@ -464,7 +464,7 @@ function init() {
   }
 
   // preload the game CSS, too.
-  window.setTimeout(() => aaLoader.loadCSS('css/aa-game-ui.css'), 5000);
+  window.setTimeout(() => aaLoader.loadCSS('aa-game-ui.css'), 5000);
 }
 
 function afterTransitionIn() {
@@ -909,7 +909,7 @@ function hideTitleScreen(callback) {
       game.data.started = true;
 
       // drop game menu CSS in a minute.
-      window.setTimeout(() => aaLoader.unloadCSS('css/aa-game-menu.css'), 1250);
+      window.setTimeout(() => aaLoader.unloadCSS('aa-game-menu.css'), 1250);
 
       callback?.();
     }

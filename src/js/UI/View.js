@@ -1257,7 +1257,7 @@ const View = () => {
       );
 
       if (!placeholder.hasChildNodes()) {
-        aaLoader.loadHTML('html/mobile-controls.html', (response) => {
+        aaLoader.loadHTML('mobile-controls.html', (response) => {
           placeholder.innerHTML = response;
           dom.mobileControls = document.getElementById('mobile-controls');
           updateMobileInventory();

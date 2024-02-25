@@ -12,7 +12,7 @@
    * 50% file savings via character subsetting
    * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
    */
-  src: url(../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
+  src: url(../../font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
     format('woff2');
   unicode-range: U+21, U+22, U+25-5F, U+61-7D;
 }
@@ -143,7 +143,7 @@ body.game-started #funds {
    * invert 60% -> #99 (153)
    */
   filter: invert(0.6);
-  background: url(../image/number-strip-chicago.svg) 0 0/100% 1000% repeat-y;
+  background: url(../../image/number-strip-chicago.svg) 0 0/100% 1000% repeat-y;
   display: block;
   width: 100%;
   height: 100%;
@@ -405,7 +405,7 @@ body.game-started #fuel-bar {
 }
 
 #repair-complete {
-  background: url(../image/status-repair-complete.png) 0 0 / contain repeat-x;
+  background: url(../../image/status-repair-complete.png) 0 0 / contain repeat-x;
   display: none;
   height: calc(13px * var(--gs));
   top: calc(33px * var(--gs));
@@ -539,7 +539,7 @@ ul.stats-bar em {
 }
 
 ul.stats-bar .lives em {
-  background: url(../image/status-helicopter.png) no-repeat;
+  background: url(../../image/status-helicopter.png) no-repeat;
   height: 7px;
   margin-left: 0.5em;
   width: 15px;
@@ -552,18 +552,18 @@ ul.stats-bar .infantry-count {
 #mobile-controls li.weapons-item a.parachute-infantry,
 .static-sprite.parachute-infantry,
 ul.stats-bar .infantry-count em {
-  background: url(../image/parachute-infantry-static.png) no-repeat;
+  background: url(../../image/parachute-infantry-static.png) no-repeat;
 }
 
 #mobile-controls.enemy li.weapons-item a.parachute-infantry,
 #player-status-bar.enemy .infantry-count em {
-  background: url(../image/parachute-infantry-enemy-static.png) 0 0 / contain
+  background: url(../../image/parachute-infantry-enemy-static.png) 0 0 / contain
     no-repeat;
 }
 
 ul.stats-bar .infantry-count em {
   background-repeat: no-repeat;
-  /* background: transparent url(../image/parachute-infantry-static.png) no-repeat 0px 0px; */
+  /* background: transparent url(../../image/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
   height: 13px;
   margin-right: 3px;
@@ -596,7 +596,7 @@ ul.stats-bar .missiles span.divider {
 
 #mobile-controls li.weapons-item a.smart-missile,
 ul.stats-bar .missiles em {
-  background-image: url(../image/smart-missile.png);
+  background-image: url(../../image/smart-missile.png);
   background-position: 50% 50%;
   background-repeat: no-repeat;
   background-size: 75%;
@@ -604,7 +604,7 @@ ul.stats-bar .missiles em {
 
 #mobile-controls li.weapons-item a.ammo,
 ul.stats-bar .ammo em {
-  background-image: url(../image/status-ammo.png);
+  background-image: url(../../image/status-ammo.png);
   background-position: 2px 1px;
   background-repeat: no-repeat;
   background-size: 80%;
@@ -617,7 +617,7 @@ ul.stats-bar .ammo em {
 
 #mobile-controls li.weapons-item a.bombs,
 ul.stats-bar .bombs em {
-  background: url(../image/status-bombs.png) 50% 1px/75% no-repeat;
+  background: url(../../image/status-bombs.png) 50% 1px/75% no-repeat;
 }
 
 ul.stats-bar .bombs em {
@@ -656,7 +656,7 @@ ul.stats-bar .bombs em {
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
-  background: url(../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
+  background: url(../../image/rubber-chicken-static.png) 50% 33%/16px 4.5px
     no-repeat;
   min-width: 16px;
 }
@@ -665,11 +665,11 @@ body.banana-mode #mobile-controls li.weapons-item a.smart-missile,
 body.banana-mode ul.stats-bar .missiles em,
 .smart-missile.banana {
   /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
-  background: url(../image/banana.png) 50% 0 / contain no-repeat;
+  background: url(../../image/banana.png) 50% 0 / contain no-repeat;
 }
 
 body.banana-mode ul.stats-bar .missiles em {
-  /* background: transparent url(../image/banana.png) 50% 0px no-repeat; */
+  /* background: transparent url(../../image/banana.png) 50% 0px no-repeat; */
   margin-top: -2px; /* height align tweak */
 }
 
@@ -1068,12 +1068,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.missile-launcher,
 #player-status-bar .inventory-item a.missile-launcher,
 .static-sprite.missile-launcher {
-  background-image: url(../image/missile-launcher-static.png);
+  background-image: url(../../image/missile-launcher-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.missile-launcher,
 #player-status-bar.enemy .inventory-item a.missile-launcher {
-  background-image: url(../image/missile-launcher-enemy-static.png);
+  background-image: url(../../image/missile-launcher-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.missile-launcher {
@@ -1087,12 +1087,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #player-status-bar .inventory-item a.tank,
 .static-sprite.tank {
   /* TODO: replace with new asset */
-  background-image: url(../image/tank-static.png);
+  background-image: url(../../image/tank-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.tank,
 #player-status-bar.enemy .inventory-item a.tank {
-  background-image: url(../image/tank-enemy-static.png);
+  background-image: url(../../image/tank-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.tank {
@@ -1104,12 +1104,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.van,
 #player-status-bar .inventory-item a.van,
 .static-sprite.van {
-  background-image: url(../image/van-static.png);
+  background-image: url(../../image/van-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.van,
 #player-status-bar.enemy .inventory-item a.van {
-  background-image: url(../image/van-enemy-static.png);
+  background-image: url(../../image/van-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.van {
@@ -1121,12 +1121,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.infantry,
 #player-status-bar .inventory-item a.infantry,
 .static-sprite.infantry {
-  background-image: url(../image/infantry-static.png);
+  background-image: url(../../image/infantry-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.infantry,
 #player-status-bar.enemy .inventory-item a.infantry {
-  background-image: url(../image/infantry-enemy-static.png);
+  background-image: url(../../image/infantry-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.engineer,
@@ -1138,11 +1138,11 @@ body.game-started #world-wrapper.incoming-smart-missile {
 }
 
 #player-status-bar .inventory-item a.engineer {
-  background-image: url(../image/engineer-static.png);
+  background-image: url(../../image/engineer-static.png);
 }
 
 #player-status-bar.enemy .inventory-item a.engineer {
-  background-image: url(../image/engineer-enemy-static.png);
+  background-image: url(../../image/engineer-enemy-static.png);
 }
 
 #player-status-bar a {

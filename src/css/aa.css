@@ -69,12 +69,12 @@
   font-family: FA Sysfont C;
   font-style: normal;
   font-weight: 400;
-  src: url(../font/sysfont/sysfont.woff2) format('woff2');
+  src: url(../../font/sysfont/sysfont.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'Cheddar Gothic Stencil';
-  src: url('../font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
+  src: url('../../font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
     format('woff2');
   font-weight: 400;
   font-style: normal;
@@ -140,11 +140,11 @@ body {
 }
 
 body:not(.prefs-modal-open) {
-  cursor: url(../image/cursor-cross.png), auto;
+  cursor: url(../../image/cursor-cross.png), auto;
 }
 
 body.demo:not(.prefs-modal-open) {
-  cursor: url(../image/cursor-cross-grey.png), crosshair;
+  cursor: url(../../image/cursor-cross-grey.png), crosshair;
 }
 
 body.is_safari:not(.is-mobile) {
@@ -280,7 +280,7 @@ body.radar_enhanced_fx #world-noise-overlay {
 
 body.game-started #world-noise-overlay .noise,
 body.radar_enhanced_fx #world-noise-overlay .noise {
-  background: url(../image/noise-tv.webp) 0 0/128px 128px;
+  background: url(../../image/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -758,7 +758,7 @@ button.primary {
   /**
    * Hat tip: https://impossiblue.github.io/log/150406/index.html
    */
-  background-image: url(../image/apple-watch.gif);
+  background-image: url(../../image/apple-watch.gif);
   background-position: 50% 50%;
   background-size: 11px 16px;
   margin-bottom: -2.75px;
@@ -775,7 +775,7 @@ button.primary {
 }
 
 .mac-system-spinner {
-  background-image: url(../image/mac-system-spinner.gif);
+  background-image: url(../../image/mac-system-spinner.gif);
   background-size: contain;
   margin-bottom: -1px;
   margin-right: 1px;
@@ -878,7 +878,7 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 }
 
 .flying-ace {
-  background: url(../image/flying_ace.png) 50% 100% / contain no-repeat;
+  background: url(../../image/flying_ace.png) 50% 100% / contain no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
   width: 25px;
@@ -902,7 +902,7 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 
 #lights .sub-sprite {
   display: block;
-  background: url(../image/lights.exe.png) no-repeat;
+  background: url(../../image/lights.exe.png) no-repeat;
   width: calc(64px * var(--gs));
   height: calc(10px * var(--gs));
   left: 0;

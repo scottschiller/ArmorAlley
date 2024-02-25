@@ -95,13 +95,14 @@ function addHTML(href, onload) {
 }
 
 function minifyAndVersion(url) {
-  // TODO: DRY
-  if (isProdSite || forceProd)
-    url = url
-      .replace('.css', `_min.css${version}`)
-      .replace('.html', `.html${version}`)
-      .replace('.js', `_min.js${version}`);
-  return url;
+  // .js, .css etc.
+  const fileExt = url.substr(url.lastIndexOf('.') + 1);
+
+  // minified, production assets load from dist/ with a .V[0-9]+ versioning pattern.
+  if (isProdSite || forceProd) return `dist/${fileExt}/${url}${version}`;
+
+  // dev / local
+  return `src/${fileExt}/${url}`;
 }
 
 function fetch(src, fetchMethod, onload) {

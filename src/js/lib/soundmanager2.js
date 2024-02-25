@@ -1710,7 +1710,7 @@ function SoundManager() {
     this._webAudioOnLoad = (buffer) => {
 
       if (!buffer) {
-        console.log('webAudioOnLoad: fail?', buffer);
+        console.log('webAudioOnLoad: fail?', s, buffer);
         return;
       }
 

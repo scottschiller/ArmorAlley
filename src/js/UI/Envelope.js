@@ -143,13 +143,13 @@ function Envelope() {
     const placeholder = document.getElementById('envelopes-placeholder');
 
     if (!placeholder.hasChildNodes()) {
-      aaLoader.loadHTML('html/envelopes.html', (response) => {
+      aaLoader.loadHTML('envelopes.html', (response) => {
         placeholder.innerHTML = response;
         loaded();
       });
     }
 
-    aaLoader.loadCSS('css/aa-battle-over-letter.css', loaded);
+    aaLoader.loadCSS('aa-battle-over-letter.css', loaded);
   }
 
   // note: no self-init; lazy-init due to asset fetching.
