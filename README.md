@@ -43,7 +43,7 @@ https://en.wikipedia.org/wiki/Armor_alley
 **Developer Notes**
 ---
 
-For running the game locally and JS + CSS build instructions, see [README_DEVEL.md](README_DEVEL.md).
+For running the game locally and JS + CSS build instructions, see [src/README.md](src/README.md).
 
 **Changelog / Revision History**
 ---
@@ -91,7 +91,7 @@ Previous release: V2.0.20230501.
 
 ## For developers
 
-* Added developer notes, `gulp-cli`-based build via `npm`: [README_DEVEL.md](README_DEVEL.md).
+* Added developer notes, `gulp-cli`-based build via `npm`: [src/README.md](src/README.md).
 
 * Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
 

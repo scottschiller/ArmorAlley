@@ -24,7 +24,7 @@ Changelog / Revision History
     • Updated "Armor Alley" wordmark to resemble the original boxed software one, based on the "Stencil Compress D" font.
 
   + For developers
-    • Added developer notes, `gulp-cli`-based build via `npm`: README_DEVEL.md.
+    • Added developer notes, `gulp-cli`-based build via `npm`: src/README.md.
     • Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
     • SM2 + Snowstorm are now ES6 modules, included vs. concatenated into bundle.
 

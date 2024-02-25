@@ -1,8 +1,8 @@
 /**
  * ARMOR ALLEY: "Boot loader" - production bundle vs. development source.
  * Try ?dev=1 if you want to see the unminified, raw source JS + CSS.
- * See README_DEVEL.md for more.
- * https://github.com/scottschiller/ArmorAlley/
+ * See src/README.md for more.
+ * https://github.com/scottschiller/ArmorAlley/src/
  */
 let v;
 

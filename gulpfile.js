@@ -1,7 +1,7 @@
 /**
  * To be used with `gulp-cli` - e.g., running `gulp` will use this file for the build process.
  * https://www.npmjs.com/package/gulp-cli
- * For more details, see README_DEVEL.md.
+ * For more details, see src/README.md.
  *
  * Setup:
  *  npm install
