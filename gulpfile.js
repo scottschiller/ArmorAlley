@@ -123,7 +123,9 @@ function minifyHTML() {
 }
 
 function minifyLibs() {
-  return src(root(`${jsPath}/${libPath}/*.js`))
+  // only lazy-loaded libraries need to be in dist/
+  // PeerJS is fetched on-the-fly, but SM2 and snowstorm are bundled.
+  return src(root(`${jsPath}/${libPath}/peerjs*.js`))
     .pipe(terser())
     .pipe(dest(distPaths.lib));
 }
