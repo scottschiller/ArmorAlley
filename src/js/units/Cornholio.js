@@ -84,7 +84,7 @@ const Cornholio = (options = {}) => {
   data.domCanvas = {
     img: {
       src: !game.objects.editor
-        ? utils.image.getImageObject('beavis-cornholio.png')
+        ? utils.image.getImageObject('bnb/beavis-cornholio.png')
         : null,
       source: {
         x: 0,

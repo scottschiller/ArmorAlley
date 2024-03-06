@@ -487,14 +487,18 @@ const Infantry = (options = {}) => {
           exports,
           data.stopped ? beavisHeadbanging : beavisWalking
         );
-        return data.stopped ? 'beavis-headbang.png' : 'beavis-walking.png';
+        return data.stopped
+          ? 'bnb/beavis-headbang.png'
+          : 'bnb/beavis-walking.png';
       }
       if (data.isButthead) {
         data.domCanvas.animation = common.domCanvas.canvasAnimation(
           exports,
           data.stopped ? buttheadHeadbanging : buttheadWalking
         );
-        return data.stopped ? 'butthead-headbang.png' : 'butthead-walking.png';
+        return data.stopped
+          ? 'bnb/butthead-headbang.png'
+          : 'bnb/butthead-walking.png';
       }
     } else {
       data.domCanvas.animation = common.domCanvas.canvasAnimation(
@@ -507,7 +511,7 @@ const Infantry = (options = {}) => {
 
   const beavisWalking = {
     sprite: {
-      url: 'beavis-walking.png',
+      url: 'bnb/beavis-walking.png',
       // engineer sprite is packed slightly tighter.
       width: 430,
       height: 92,
@@ -521,7 +525,7 @@ const Infantry = (options = {}) => {
 
   const beavisHeadbanging = {
     sprite: {
-      url: 'beavis-headbang.png',
+      url: 'bnb/beavis-headbang.png',
       width: 228,
       height: 96,
       frameWidth: 57,
@@ -534,7 +538,7 @@ const Infantry = (options = {}) => {
 
   const buttheadWalking = {
     sprite: {
-      url: 'butthead-walking.png',
+      url: 'bnb/butthead-walking.png',
       width: 430,
       height: 92,
       frameWidth: 43,
@@ -547,7 +551,7 @@ const Infantry = (options = {}) => {
 
   const buttheadHeadbanging = {
     sprite: {
-      url: 'butthead-headbang.png',
+      url: 'bnb/butthead-headbang.png',
       width: 220,
       height: 96,
       frameWidth: 55,

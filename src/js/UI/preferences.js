@@ -1460,9 +1460,9 @@ function PrefsManager() {
           // pre-fetch...
           utils.image.preload(
             [
-              'virtual_stupidity_steamgriddb.webp',
-              'virtual_stupidity_overlay.webp',
-              'pngtree.com_color_tv.webp'
+              'bnb/virtual_stupidity_steamgriddb.webp',
+              'bnb/virtual_stupidity_overlay.webp',
+              'bnb/pngtree.com_color_tv.webp'
             ],
             () => {
               // ...and call this method again, where we'll now pass-thru to the activation.

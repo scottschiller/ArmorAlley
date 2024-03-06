@@ -66,7 +66,7 @@ body.bnb #mtv-bnb-in {
 
 body.bnb #bnb-vs,
 body.bnb-preload #bnb-vs {
-  background-image: url(../../assets/image/virtual_stupidity_steamgriddb.webp);
+  background-image: url(../../assets/image/bnb/virtual_stupidity_steamgriddb.webp);
 }
 
 body.bnb #bnb-vs {
@@ -75,7 +75,7 @@ body.bnb #bnb-vs {
 
 body.bnb #mtv-bnb-in,
 body.bnb-preload #mtv-bnb-in {
-  background-image: url(../../assets/image/virtual_stupidity_overlay.webp);
+  background-image: url(../../assets/image/bnb/virtual_stupidity_overlay.webp);
 }
 
 #bnb-vs,
@@ -115,11 +115,11 @@ body.bnb #tv-display.disabled {
 
 body.bnb #tv-display #tv,
 body.bnb-preload #tv-display #tv {
-  background-image: url(../../assets/image/pngtree.com_color_tv.webp);
+  background-image: url(../../assets/image/bnb/pngtree.com_color_tv.webp);
 }
 
 body.bnb #tv-display.widescreen #tv {
-  background: url(../../assets/image/pngtree.com_color_tv_widescreen.webp) 0
+  background: url(../../assets/image/bnb/pngtree.com_color_tv_widescreen.webp) 0
     21.5px / contain no-repeat;
 }
 
@@ -220,12 +220,12 @@ body.is_safari #bnb-now-playing .pow {
 }
 
 #bnb-now-playing .beavis {
-  background: url(../../assets/image/pow-beavis.webp) 50% 50% / contain
+  background: url(../../assets/image/bnb/pow-beavis.webp) 50% 50% / contain
     no-repeat;
 }
 
 #bnb-now-playing .butthead {
-  background: url(../../assets/image/pow-butthead.webp) 50% 50% / contain
+  background: url(../../assets/image/bnb/pow-butthead.webp) 50% 50% / contain
     no-repeat;
 }
 

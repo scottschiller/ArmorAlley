@@ -16,5 +16,7 @@ script/*bundle.js
 src/css/*.js
 assets/video
 *copy*
-bnb
+assets/audio/bnb
+assets/audio/*/bnb
+assets/video/bnb
 bun.lockb

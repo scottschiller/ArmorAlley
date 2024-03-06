@@ -74,6 +74,8 @@ const defaultCSS = {
 
 const defaultCSSKeys = Object.keys(defaultCSS);
 
+const bnbVideoRoot = 'assets/video/bnb/';
+
 const debugRects = [];
 
 const int = (number, base = 10) => parseInt(number, base);
@@ -760,8 +762,8 @@ const common = {
     }
 
     video.innerHTML = [
-      `<source src="assets/image/bnb/${fileName}.webm" type="video/webm" />`,
-      `<source src="assets/image/bnb/${fileName}.mp4" type="video/mp4" />`
+      `<source src="${bnbVideoRoot}/${fileName}.webm" type="video/webm" />`,
+      `<source src="${bnbVideoRoot}/${fileName}.mp4" type="video/mp4" />`
     ].join('');
 
     video.addEventListener(canplay, preloadOK);
@@ -819,8 +821,8 @@ const common = {
     const isWZ = fileName.match(/wz/i);
 
     const sources = [
-      `<source src="assets/image/bnb/${fileName}.webm${startTime}" type="video/webm" />`,
-      `<source src="assets/image/bnb/${fileName}.mp4${startTime}" type="video/mp4" />`
+      `<source src="${bnbVideoRoot}/${fileName}.webm${startTime}" type="video/webm" />`,
+      `<source src="${bnbVideoRoot}/${fileName}.mp4${startTime}" type="video/mp4" />`
     ];
 
     // MP4 first, due to historical bias...
