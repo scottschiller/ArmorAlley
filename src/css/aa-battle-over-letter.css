@@ -116,7 +116,7 @@ body.is_safari .animated-mail .top-fold {
    * Hat tip: "Golden Wax Seal" via pngtree.com
    * https://pngtree.com/freepng/golden-wax-seal_2079672.html
    */
-  background: url(../../assets/image/pngtree-wax-seal.webp) 50% 50% / contain
+  background: url(../../assets/image/UI/pngtree-wax-seal.webp) 50% 50% / contain
     no-repeat;
   transition:
     filter 0.25s ease-in-out,
@@ -230,7 +230,7 @@ body.is_safari .animated-mail .top-fold {
    * Image by kues1 on Freepik
    * https://www.freepik.com/free-photo/white-empty-canvas_1038705.htm#from_view=detail_alsolike#position=4
    */
-  background: url(../../assets/image/white-empty-canvas-texture.webp) 0 0/128px
+  background: url(../../assets/image/UI/white-empty-canvas-texture.webp) 0 0/128px
     #fff;
   z-index: 1;
   overflow: hidden;

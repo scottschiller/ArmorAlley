@@ -23,7 +23,7 @@ import { gamePrefs } from '../UI/preferences.js';
 const crossedSwords = '<span class="no-emoji-substitution">⚔️</span>';
 
 const slashPattern = new Image();
-// slashPattern.src ='image/checkerboard-white-mask-50percent.png'
+// slashPattern.src ='image/UI/checkerboard-white-mask-50percent.png'
 slashPattern.src =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEX///8AAABVwtN+AAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=';
 

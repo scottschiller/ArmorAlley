@@ -1,7 +1,7 @@
 /**
  * AA: Game UI
  */
- @font-face {
+@font-face {
   font-display: swap;
   /* https://www.jetbrains.com/lp/mono/ */
   font-family: JetBrains Mono;
@@ -11,8 +11,9 @@
    * 50% file savings via character subsetting
    * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
    */
-  src: url(../../assets/font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2) format('woff2');
-  unicode-range: U+21,U+22,U+25-5F,U+61-7D;
+  src: url(../../assets/font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
+    format('woff2');
+  unicode-range: U+21, U+22, U+25-5F, U+61-7D;
 }
 
 body.is_safari:not(.is-mobile) #player-status-bar,
@@ -41,12 +42,14 @@ body.game-started {
   position: absolute;
   top: calc(-2.5px * var(--gs));
   left: 50%;
-  transform: translate3d(-50%,-50%,0) scale3d(1.25,1.25,1);
+  transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1);
   width: calc(8px * var(--gs));
   height: calc(8px * var(--gs));
   z-index: 11;
   opacity: 0;
-  transition: transform .5s ease-in-out,opacity .5s ease-in-out;
+  transition:
+    transform 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
 }
 
 #spinner:not(.animating) {
@@ -56,7 +59,7 @@ body.game-started {
 
 #spinner.active {
   opacity: 1;
-  transform: translate3d(-50%,-50%,0) scale3d(1,1,1);
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
 }
 
 #funds {
@@ -70,7 +73,7 @@ body.game-started {
 }
 
 body.game-started #funds {
-  transition: opacity .25s ease-in-out;
+  transition: opacity 0.25s ease-in-out;
   opacity: 1;
 }
 
@@ -88,7 +91,7 @@ body.game-started #funds {
   right: calc(4px * var(--gs));
   width: calc(64px * var(--gs));
   font-size: calc(5px * var(--gs));
-  color: rgba(255,255,255,.25);
+  color: rgba(255, 255, 255, 0.25);
   text-align: right;
 }
 
@@ -109,9 +112,9 @@ body.game-started #funds {
   display: inline-block;
   width: calc(4.25px * var(--gs));
   height: calc(8.5px * var(--gs));
-  margin-top: calc(-.55px * var(--gs));
+  margin-top: calc(-0.55px * var(--gs));
   /* tighten "letter spacing" a bit */
-  margin-right: calc(-.33px * var(--gs));
+  margin-right: calc(-0.33px * var(--gs));
   opacity: 1;
   overflow: hidden;
   padding: 0;
@@ -119,7 +122,7 @@ body.game-started #funds {
   text-align: left;
   text-indent: 0;
   /* collapse / expand, 1 <-> 10 <-> 100 */
-  transition: width .15s ease-in-out;
+  transition: width 0.15s ease-in-out;
   vertical-align: top;
   white-space: nowrap;
 }
@@ -138,15 +141,16 @@ body.game-started #funds {
    * invert 80% -> #cc (216)
    * invert 60% -> #99 (153)
    */
-  filter: invert(.6);
-  background: url(../../assets/image/number-strip-chicago.svg) 0 0/100% 1000% repeat-y;
+  filter: invert(0.6);
+  background: url(../../assets/image/UI/number-strip-chicago.svg) 0 0/100% 1000%
+    repeat-y;
   display: block;
   width: 100%;
   height: 100%;
   overflow: hidden;
   /* "rotating" number */
-  transition: all calc(.25s * var(--gs-frac)) ease-in-out;
-  transition-property: margin,background-position;
+  transition: all calc(0.25s * var(--gs-frac)) ease-in-out;
+  transition-property: margin, background-position;
   image-rendering: optimizeQuality;
 }
 
@@ -178,15 +182,21 @@ body.game-started #funds {
   color: #ccc;
   display: inline-block;
   filter: grayscale(1) blur(8px);
-  font-family: JetBrains Mono,SF Mono,Lucida Console,Terminal,Monaco,monospace;
+  font-family:
+    JetBrains Mono,
+    SF Mono,
+    Lucida Console,
+    Terminal,
+    Monaco,
+    monospace;
   height: 22px;
   margin-right: 0;
   margin-top: 15px;
   opacity: 0;
   padding-right: 1px;
   position: relative;
-  transition: .25s ease-out;
-  transition-property: width,margin,opacity,filter,transform;
+  transition: 0.25s ease-out;
+  transition-property: width, margin, opacity, filter, transform;
   vertical-align: top;
   /* small letter, e.g., "T" for "Tank" */
   min-width: 1em;
@@ -195,7 +205,7 @@ body.game-started #funds {
 #queue .queue-item.queued {
   filter: grayscale(1) blur(0);
   margin-top: 0;
-  opacity: .66;
+  opacity: 0.66;
 }
 
 #queue .queue-item.building {
@@ -216,7 +226,7 @@ body.game-started #funds {
   filter: grayscale(0) blur(8px);
   opacity: 0;
   /* faster */
-  transition-duration: .33s;
+  transition-duration: 0.33s;
   transition-timing-function: ease-in;
 }
 
@@ -233,7 +243,9 @@ body.game-started #funds {
   text-shadow: 0 1px 0 #000;
   top: 0;
   transform: scale(1);
-  transition: opacity 175ms ease-in-out,filter 175ms ease-in-out;
+  transition:
+    opacity 175ms ease-in-out,
+    filter 175ms ease-in-out;
 }
 
 #queue .queue-item.over-ten .counter {
@@ -245,14 +257,14 @@ body.game-started #funds {
 }
 
 #radar-scrubber {
-  background: rgba(0,255,0,.5);
-  border: .5px solid #393;
+  background: rgba(0, 255, 0, 0.5);
+  border: 0.5px solid #393;
   border-bottom: none;
   border-top: none;
   box-sizing: border-box;
   cursor: grab;
   left: 0;
-  opacity: .5;
+  opacity: 0.5;
   position: absolute;
   /* sit atop the fuel line */
   top: 35px;
@@ -262,12 +274,12 @@ body.game-started #funds {
 }
 
 #radar-scrubber:hover {
-  opacity: .65;
+  opacity: 0.65;
 }
 
 #radar-scrubber.active {
   cursor: grabbing;
-  opacity: .75;
+  opacity: 0.75;
 }
 
 body.demo #game-tips,
@@ -278,7 +290,7 @@ body.demo #notification-toasts,
 body.demo #queue,
 body.demo #radar,
 body.demo #stats-bar {
-  display: none!important;
+  display: none !important;
 }
 
 body.demo .target-marker {
@@ -308,31 +320,31 @@ body.demo .target-marker {
   box-sizing: border-box;
   width: 0;
   height: calc(5.5px * var(--gs));
-  border: calc(.5px * var(--gs)) solid rgba(255,255,255,.1);
+  border: calc(0.5px * var(--gs)) solid rgba(255, 255, 255, 0.1);
   border-radius: calc(1.5px * var(--gs));
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 #player-status-bar .radar-scroller.higher-visibility {
   border-color: #393;
-  background-color: rgba(32,192,32,.33);
+  background-color: rgba(32, 192, 32, 0.33);
 }
 
-@media screen and (orientation:landscape) and (max-height:480px) {  /* landscape + small screens, probably mobile */
+@media screen and (orientation: landscape) and (max-height: 480px) {
+  /* landscape + small screens, probably mobile */
   #player-status-bar .radar-scroller {
     border-color: #393;
-    background-color: rgba(32,192,32,.33);
+    background-color: rgba(32, 192, 32, 0.33);
     /* square off the corners. */
     border-radius: 0;
   }
-
 }
 
-@media screen and (orientation:portrait) and (max-height:840px) {  /* up to iPhone 15 Pro Max, at least? */
+@media screen and (orientation: portrait) and (max-height: 840px) {
+  /* up to iPhone 15 Pro Max, at least? */
   #player-status-bar .radar-scroller {
     border-radius: 0;
   }
-
 }
 
 #top-bar li {
@@ -340,12 +352,20 @@ body.demo .target-marker {
 }
 
 #fuel-bar {
-  background-image: repeating-linear-gradient(-55deg,rgba(255,255,255,0),rgba(255,255,255,0) 1.5px,rgba(255,255,255,.2) 1.5px,rgba(255,255,255,.2) 2.25px,rgba(255,255,255,.2) 2.25px,rgba(255,255,255,0) 3px);
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 1.5px,
+    rgba(255, 255, 255, 0.2) 1.5px,
+    rgba(255, 255, 255, 0.2) 2.25px,
+    rgba(255, 255, 255, 0.2) 2.25px,
+    rgba(255, 255, 255, 0) 3px
+  );
   opacity: 0;
 }
 
 body.loaded #fuel-bar {
-  transition: opacity .25s ease-in-out;
+  transition: opacity 0.25s ease-in-out;
 }
 
 body.game-started #fuel-bar {
@@ -353,12 +373,20 @@ body.game-started #fuel-bar {
 }
 
 #fuel-line {
-  background-image: repeating-linear-gradient(-55deg,rgba(255,0,0,0),rgba(255,0,0,0) 1.5px,#c00000 1.5px,#c00000 2.25px,#c00000 2.25px,rgba(255,0,0,0) 3px);
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(255, 0, 0, 0),
+    rgba(255, 0, 0, 0) 1.5px,
+    #c00000 1.5px,
+    #c00000 2.25px,
+    #c00000 2.25px,
+    rgba(255, 0, 0, 0) 3px
+  );
   image-rendering: optimizeQuality;
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   /* hide at first */
-  transform: translate3d(-100%,0,0);
+  transform: translate3d(-100%, 0, 0);
 }
 
 #fuel-bar,
@@ -377,7 +405,8 @@ body.game-started #fuel-bar {
 }
 
 #repair-complete {
-  background: url(../../assets/image/status-repair-complete.png) 0 0/contain repeat-x;
+  background: url(../../assets/image/UI/status-repair-complete.png) 0 0 /
+    contain repeat-x;
   display: none;
   height: calc(13px * var(--gs));
   top: calc(33px * var(--gs));
@@ -394,7 +423,7 @@ body.game-started #fuel-bar {
 }
 
 body.loaded #stats-bar {
-  transition: opacity .5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
 }
 
 body.game-started #stats-bar {
@@ -416,7 +445,7 @@ ul.stats-bar li {
 ul.stats-bar li.inventory-item:not(:last-of-type),
 ul.stats-bar li.stats-item:not(:last-of-type) {
   /* annoying, but need to override #aa rules */
-  padding-right: calc(8px * var(--gs))!important;
+  padding-right: calc(8px * var(--gs)) !important;
 }
 
 #stats-bar.hide-inventory li.inventory-item,
@@ -443,14 +472,14 @@ body.is_iphone #status-bar .letter-block {
 #stats-bar.hide-keyboard-labels li.inventory-item:not(:last-of-type),
 #stats-bar.hide-keyboard-labels li.stats-item:not(:last-of-type) {
   /* ugh, one more override. */
-  padding-right: 12px!important;
+  padding-right: 12px !important;
 }
 
 ul.stats-bar li.stats-item .weapon-count {
   display: inline-block;
-  margin-left: calc(.075rem * var(--gs));
+  margin-left: calc(0.075rem * var(--gs));
   /* prevent a shift when as number counts change (for variable-width fonts) */
-  min-width: calc(.65rem * var(--gs));
+  min-width: calc(0.65rem * var(--gs));
 }
 
 body.is_safari:not(.is-mobile) #ammo-count {
@@ -466,12 +495,14 @@ body.is_safari:not(.is-mobile) #bomb-count {
 #mobile-controls li.weapons-item,
 ul.stats-bar li.stats-item .wrapper {
   filter: grayscale(0);
-  transition: filter .33s ease-out,opacity .33s ease-out;
+  transition:
+    filter 0.33s ease-out,
+    opacity 0.33s ease-out;
 }
 
 ul.stats-bar li.stats-item.weapon-unavailable:not(.repairing) .wrapper {
   filter: grayscale(1);
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #mobile-controls li.weapons-item.missiles:not(.weapon-unavailable),
@@ -483,17 +514,18 @@ ul.stats-bar li.stats-item.missiles:not(.weapon-unavailable) .wrapper {
 #mobile-controls li.weapons-item.weapon-reloading,
 ul.stats-bar li.stats-item.weapon-reloading:not(.repairing) em {
   /* fade the missile icon while "reloading" */
-  opacity: .75;
+  opacity: 0.75;
 }
 
 ul.stats-bar li .double-wide {
   display: inline-block;
-  min-width: calc(.825rem * var(--gs));/* prevent 3 to 2 characters from causing UI shift. */
-  
+  min-width: calc(
+    0.825rem * var(--gs)
+  ); /* prevent 3 to 2 characters from causing UI shift. */
 }
 
 ul.stats-bar li.repairing em {
-  animation: .5s ease-in-out infinite alternate sorta-blink;
+  animation: 0.5s ease-in-out infinite alternate sorta-blink;
 }
 
 ul.stats-bar em {
@@ -508,30 +540,31 @@ ul.stats-bar em {
 }
 
 ul.stats-bar .lives em {
-  background: url(../../assets/image/status-helicopter.png) no-repeat;
+  background: url(../../assets/image/UI/status-helicopter.png) no-repeat;
   height: 7px;
-  margin-left: .5em;
+  margin-left: 0.5em;
   width: 15px;
 }
 
 ul.stats-bar .infantry-count {
-  background: 0 0!important;
+  background: 0 0 !important;
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry,
 .static-sprite.parachute-infantry,
 ul.stats-bar .infantry-count em {
-  background: url(../../assets/image/parachute-infantry-static.png) no-repeat;
+  background: url(../../assets/image/UI/parachute-infantry-static.png) no-repeat;
 }
 
 #mobile-controls.enemy li.weapons-item a.parachute-infantry,
 #player-status-bar.enemy .infantry-count em {
-  background: url(../../assets/image/parachute-infantry-enemy-static.png) 0 0/contain no-repeat;
+  background: url(../../assets/image/UI/parachute-infantry-enemy-static.png) 0 0 /
+    contain no-repeat;
 }
 
 ul.stats-bar .infantry-count em {
   background-repeat: no-repeat;
-  /* background: transparent url(../../assets/image/parachute-infantry-static.png) no-repeat 0px 0px; */
+  /* background: transparent url(../../assets/image/UI/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
   height: 13px;
   margin-right: 3px;
@@ -543,7 +576,7 @@ ul.stats-bar .infantry-count em {
 /* hackish: min-width fix for pixel shift from 1/0. Ugh. */
 #infantry-count {
   display: inline-block;
-  min-width: calc(.25rem * var(--gs));
+  min-width: calc(0.25rem * var(--gs));
 }
 
 ul.stats-bar .missiles em {
@@ -557,8 +590,8 @@ ul.stats-bar .missiles em {
 ul.stats-bar .missiles span.divider {
   /* X|C|B */
   display: inline-block;
-  min-width: calc(.5rem * var(--gs));
-  opacity: .25;
+  min-width: calc(0.5rem * var(--gs));
+  opacity: 0.25;
   text-align: center;
 }
 
@@ -572,7 +605,7 @@ ul.stats-bar .missiles em {
 
 #mobile-controls li.weapons-item a.ammo,
 ul.stats-bar .ammo em {
-  background-image: url(../../assets/image/status-ammo.png);
+  background-image: url(../../assets/image/UI/status-ammo.png);
   background-position: 2px 1px;
   background-repeat: no-repeat;
   background-size: 80%;
@@ -585,7 +618,7 @@ ul.stats-bar .ammo em {
 
 #mobile-controls li.weapons-item a.bombs,
 ul.stats-bar .bombs em {
-  background: url(../../assets/image/status-bombs.png) 50% 1px/75% no-repeat;
+  background: url(../../assets/image/UI/status-bombs.png) 50% 1px/75% no-repeat;
 }
 
 ul.stats-bar .bombs em {
@@ -624,7 +657,8 @@ ul.stats-bar .bombs em {
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
-  background: url(../../assets/image/rubber-chicken-static.png) 50% 33%/16px 4.5px no-repeat;
+  background: url(../../assets/image/UI/rubber-chicken-static.png) 50% 33%/16px
+    4.5px no-repeat;
   min-width: 16px;
 }
 
@@ -632,19 +666,18 @@ body.rubber-chicken-mode ul.stats-bar .missiles em {
 body.banana-mode #mobile-controls li.weapons-item a.smart-missile,
 body.banana-mode ul.stats-bar .missiles em {
   /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
-  background: url(../../assets/image/banana.png) 50% 0/contain no-repeat;
+  background: url(../../assets/image/banana.png) 50% 0 / contain no-repeat;
 }
 
 body.banana-mode ul.stats-bar .missiles em {
   /* background: transparent url(../../assets/image/banana.png) 50% 0px no-repeat; */
-  margin-top: -2px;/* height align tweak */
-  
+  margin-top: -2px; /* height align tweak */
 }
 
 body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
 body.original_missile_mode ul.stats-bar .missiles .divider {
   /* hide |C|B in UI when "alternate missiles" are disabled. */
-  display: none!important;
+  display: none !important;
 }
 
 .cornholio {
@@ -673,7 +706,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 #radar .radar-item.dying .scan-node,
 #radar .scan-node.destroyed,
 #radar .scan-node.engineer-interacting {
-  transition-property: transform,opacity;
+  transition-property: transform, opacity;
 }
 
 /* self-destructing missile launchers */
@@ -681,7 +714,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 #radar .scan-node.destroyed,
 #radar .scan-node.exploding,
 #radar .sprite.destroyed .scan-node {
-  transform: translate3d(-50%,-100%,0) scale3d(0,0,1);
+  transform: translate3d(-50%, -100%, 0) scale3d(0, 0, 1);
   transform-origin: 50% 100%;
   transition-duration: calc(1s * var(--gs-frac));
   box-shadow: none;
@@ -692,7 +725,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 #battlefield .sprite.placeholder.destroyed .scan-node,
 #battlefield .sprite.placeholder.exploding .scan-node {
   /* NOTE: shenanigans - additional 18px on bottom for battlefield items. */
-  transform: translate3d(-50%,calc(-100% + 18px),0) scale3d(0,0,1);
+  transform: translate3d(-50%, calc(-100% + 18px), 0) scale3d(0, 0, 1);
   transform-origin: 50% 100%;
   transition-duration: calc(1s * var(--gs-frac));
 }
@@ -700,18 +733,18 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 #battlefield .sprite.placeholder .scan-node {
   /* hack: positioning offset for scan node within e.g., turret placeholder node. */
   /* shift slightly left to align with center of turret, and pull down to align with battlefield. */
-  transform: translate3d(calc(-50% + 5px),calc(-100% + 18px),0);
+  transform: translate3d(calc(-50% + 5px), calc(-100% + 18px), 0);
 }
 
 #battlefield .scan-node {
-  border: .5px solid rgba(0,255,0,.1);
-  box-shadow: inset 0 15px 15px 0 rgba(0,255,0,.075);
+  border: 0.5px solid rgba(0, 255, 0, 0.1);
+  box-shadow: inset 0 15px 15px 0 rgba(0, 255, 0, 0.075);
 }
 
 #battlefield .scan-node.enemy,
 #battlefield .sprite.enemy .scan-node {
-  border-color: rgba(255,255,255,.1);
-  box-shadow: inset 0 15px 15px 0 rgba(255,255,255,.075);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 15px 15px 0 rgba(255, 255, 255, 0.075);
 }
 
 #stats-endgame {
@@ -731,14 +764,14 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 
 #stats-endgame table td,
 #stats-endgame table th {
-  background-color: rgba(0,153,0,.25);
+  background-color: rgba(0, 153, 0, 0.25);
   border-left: 1px solid #090;
   min-width: 2em;
-  padding: .25em .33em;
+  padding: 0.25em 0.33em;
 }
 
 #stats-endgame table thead th {
-  padding: .25em;
+  padding: 0.25em;
 }
 
 #stats-endgame table thead th:first-of-type {
@@ -780,7 +813,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   position: absolute;
   text-shadow: 0 1px 0 #000;
   top: 0;
-  transform: translate3d(-50%,0,0);
+  transform: translate3d(-50%, 0, 0);
   width: 65%;
 }
 
@@ -804,8 +837,8 @@ body.game-over #game-tips .tips-container {
 }
 
 #game-paused p {
-  margin-top: -.25rem;
-  padding: .25rem .5rem;
+  margin-top: -0.25rem;
+  padding: 0.25rem 0.5rem;
 }
 
 body.game-paused #game-tips .tips-container {
@@ -837,7 +870,7 @@ body.game-paused.prefs-modal-open #game-paused {
   overflow: hidden;
   padding: 0;
   position: relative;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   white-space: nowrap;
 }
 
@@ -850,8 +883,20 @@ body.game-started #game-tips.active .tips-container {
    * 11/2023: webkit prefix may apply for some time to come; dropped as of Chrome 120.
    * https://caniuse.com/css-masks
    */
-  -webkit-mask-image: linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent);
-  mask-image: linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
 }
 
 #game-tips .tips-container .animation-node,
@@ -859,9 +904,8 @@ body.game-started #game-tips.active .tips-container {
   animation: scrollText calc(24s * var(--gs-frac)) linear;
   font-weight: 300;
   padding: 1px;
-  text-rendering: optimizeSpeed;/* "ticker-tape" style? */
+  text-rendering: optimizeSpeed; /* "ticker-tape" style? */
   /* animation-timing-function: steps(150); */
-  
 }
 
 /* go bigger on landscape. */
@@ -892,12 +936,12 @@ body.game-started #game-tips.active .tips-container {
   opacity: 0;
   position: absolute;
   text-align: center;
-  top: -.5em;
+  top: -0.5em;
   filter: blur(3px);
-  transform: scale3d(1.2,1.2,1);
+  transform: scale3d(1.2, 1.2, 1);
   transform-origin: 50% 50%;
-  transition: all calc(.5s * var(--gs-frac)) ease-in-out;
-  transition-property: filter,opacity,transform;
+  transition: all calc(0.5s * var(--gs-frac)) ease-in-out;
+  transition-property: filter, opacity, transform;
   width: 100%;
   text-shadow: 0 1px 1px #000;
 }
@@ -919,7 +963,18 @@ body.game-started #game-tips.active .tips-container {
 
 #game-tips #game-announcements .inline-emoji {
   /* font may be required for consistent alignment on iOS Safari. :X */
-  font-family: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
   line-height: 1em;
   vertical-align: middle;
 }
@@ -928,7 +983,7 @@ body.game-started #game-tips.active .tips-container {
 body.is_firefox #game-tips #game-announcements .inline-emoji {
   position: relative;
   vertical-align: baseline;
-  top: -.05em;
+  top: -0.05em;
 }
 
 #game-tips.has-announcement .tips-container {
@@ -942,7 +997,7 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
 #game-tips.has-announcement #game-announcements {
   transition-delay: 667ms;
   opacity: 1;
-  transform: scale3d(1,1,1);
+  transform: scale3d(1, 1, 1);
   filter: none;
 }
 
@@ -984,8 +1039,8 @@ body.game-started #world-wrapper.incoming-smart-missile {
 
 #player-status-bar span.letter-block {
   background-clip: padding-box;
-  background: rgba(32,32,32,.75);
-  border: calc(.5px * var(--gs)) solid rgba(48,48,48,.33);
+  background: rgba(32, 32, 32, 0.75);
+  border: calc(0.5px * var(--gs)) solid rgba(48, 48, 48, 0.33);
   border-radius: calc(2px * var(--gs));
   color: #777;
   display: inline-block;
@@ -995,8 +1050,7 @@ body.game-started #world-wrapper.incoming-smart-missile {
   min-width: calc(6px * var(--gs));
   padding: 0 calc(3px * var(--gs));
   text-align: center;
-  vertical-align: middle;/* align with nearby text, e.g., bomb count */
-  
+  vertical-align: middle; /* align with nearby text, e.g., bomb count */
 }
 
 #player-status-bar .inventory-item a {
@@ -1015,12 +1069,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.missile-launcher,
 #player-status-bar .inventory-item a.missile-launcher,
 .static-sprite.missile-launcher {
-  background-image: url(../../assets/image/missile-launcher-static.png);
+  background-image: url(../../assets/image/UI/missile-launcher-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.missile-launcher,
 #player-status-bar.enemy .inventory-item a.missile-launcher {
-  background-image: url(../../assets/image/missile-launcher-enemy-static.png);
+  background-image: url(../../assets/image/UI/missile-launcher-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.missile-launcher {
@@ -1034,12 +1088,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #player-status-bar .inventory-item a.tank,
 .static-sprite.tank {
   /* TODO: replace with new asset */
-  background-image: url(../../assets/image/tank-static.png);
+  background-image: url(../../assets/image/UI/tank-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.tank,
 #player-status-bar.enemy .inventory-item a.tank {
-  background-image: url(../../assets/image/tank-enemy-static.png);
+  background-image: url(../../assets/image/UI/tank-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.tank {
@@ -1051,12 +1105,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.van,
 #player-status-bar .inventory-item a.van,
 .static-sprite.van {
-  background-image: url(../../assets/image/van-static.png);
+  background-image: url(../../assets/image/UI/van-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.van,
 #player-status-bar.enemy .inventory-item a.van {
-  background-image: url(../../assets/image/van-enemy-static.png);
+  background-image: url(../../assets/image/UI/van-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.van {
@@ -1068,12 +1122,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.infantry,
 #player-status-bar .inventory-item a.infantry,
 .static-sprite.infantry {
-  background-image: url(../../assets/image/infantry-static.png);
+  background-image: url(../../assets/image/UI/infantry-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.infantry,
 #player-status-bar.enemy .inventory-item a.infantry {
-  background-image: url(../../assets/image/infantry-enemy-static.png);
+  background-image: url(../../assets/image/UI/infantry-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.engineer,
@@ -1085,17 +1139,19 @@ body.game-started #world-wrapper.incoming-smart-missile {
 }
 
 #player-status-bar .inventory-item a.engineer {
-  background-image: url(../../assets/image/engineer-static.png);
+  background-image: url(../../assets/image/UI/engineer-static.png);
 }
 
 #player-status-bar.enemy .inventory-item a.engineer {
-  background-image: url(../../assets/image/engineer-enemy-static.png);
+  background-image: url(../../assets/image/UI/engineer-enemy-static.png);
 }
 
 #player-status-bar a {
   /* inventory ordering */
   filter: grayscale(0);
-  transition: filter .33s ease-out,opacity .33s ease-out;
+  transition:
+    filter 0.33s ease-out,
+    opacity 0.33s ease-out;
 }
 
 #player-status-bar.can-not-order-engineer .engineer,
@@ -1104,7 +1160,7 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #player-status-bar.can-not-order-tank .tank,
 #player-status-bar.can-not-order-van .van {
   filter: grayscale(1);
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #notification-toasts {
@@ -1144,12 +1200,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
   position: relative;
   text-align: right;
   top: 0;
-  transition: .5s ease-in-out;
-  transition-property: max-height,height,margin,opacity;
+  transition: 0.5s ease-in-out;
+  transition-property: max-height, height, margin, opacity;
   overflow-y: hidden;
   /* max-height as an expand/collapse feature. :tada: */
   max-height: 0;
-  text-shadow: .5px .5px rgba(0,0,0,.75);
+  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.75);
 }
 
 #notification-toasts.left-aligned .notification-toast {
@@ -1195,7 +1251,7 @@ body.game-started #world-wrapper.incoming-smart-missile {
 
 .notification-toast sup:not(.nsf) {
   /* bump out a bit, e.g., tank[3] - multiple tanks being ordered */
-  padding-left: .5px;
+  padding-left: 0.5px;
 }
 
 #queue span.fraction-wrapper {
@@ -1211,7 +1267,7 @@ body.game-started #world-wrapper.incoming-smart-missile {
   left: 0;
   margin: -66% 0 0 -33%;
   display: inline-block;
-  transform: scale3d(.9,.9,1);
+  transform: scale3d(0.9, 0.9, 1);
   font-size: calc(5px * var(--gs));
   line-height: 1em;
 }
@@ -1224,7 +1280,7 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 #queue .queue-item.has-counter.over-ten .fraction-wrapper {
   /* hackish - so numbers don't overlap */
   display: inline-block;
-  transform: scale3d(.75,.75,1);
+  transform: scale3d(0.75, 0.75, 1);
 }
 
 #queue sub,
@@ -1242,12 +1298,12 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 }
 
 #queue sup {
-  left: .5px;
+  left: 0.5px;
   margin-left: 0;
 }
 
 #queue sub {
-  left: -.5px;
+  left: -0.5px;
 }
 
 #queue .fraction {
@@ -1258,11 +1314,11 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   background: #875400;
   border-radius: 1px;
   bottom: 0;
-  contain: layout!important;
+  contain: layout !important;
   height: 6px;
   margin-bottom: -1px;
   margin-left: -1px;
-  overflow: visible!important;
+  overflow: visible !important;
   width: 2px;
 }
 
@@ -1273,8 +1329,8 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 }
 
 .zone-flag {
-  background: rgba(0,192,0,.75);
-  border: .5px solid hsla(0,0%,100%,.1);
+  background: rgba(0, 192, 0, 0.75);
+  border: 0.5px solid hsla(0, 0%, 100%, 0.1);
   border-radius: 1px;
   font-size: 4px;
   left: 0;
@@ -1296,12 +1352,12 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   line-height: 6px;
   padding: 1px 3px;
   top: 0;
-  transform: translate3d(-50%,-100%,0);
+  transform: translate3d(-50%, -100%, 0);
 }
 
 .target-dot {
   background: #c00;
-  border: .5px solid #000;
+  border: 0.5px solid #000;
   border-radius: 2px;
   height: 2px;
   right: 0;
@@ -1315,24 +1371,24 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 .target-marker {
   background: #c00;
   border-bottom: 0 solid transparent;
-  border-bottom-left-radius: .5px;
-  border-bottom-right-radius: .5px;
+  border-bottom-left-radius: 0.5px;
+  border-bottom-right-radius: 0.5px;
   --height: calc(2px * var(--gs));
   height: var(--height);
-  margin-bottom: calc(var(--height)/ 2);
+  margin-bottom: calc(var(--height) / 2);
   position: absolute;
   top: auto;
   bottom: 0;
   margin-bottom: calc(var(--height) * -1.5);
   left: 0;
   opacity: 0;
-  transition: opacity .25s ease-in-out;
+  transition: opacity 0.25s ease-in-out;
   will-change: transform;
 }
 
 .target-marker.transition-active {
   /* set while repositioning, moving to a new target */
-  transition-property: width,opacity;
+  transition-property: width, opacity;
 }
 
 .sprite.dead .target-ui,
@@ -1345,56 +1401,57 @@ body.radar_jammed .scan-node {
 
 body.radar_jammed .target-marker {
   /* need to override inline style :X */
-  opacity: 0!important;
+  opacity: 0 !important;
 }
 
 body.radar_jammed .scan-node {
   /* fade out, relatively quickly */
-  transition-duration: .5s;
+  transition-duration: 0.5s;
 }
 
-@keyframes tracking-active {  0%,
+@keyframes tracking-active {
+  0%,
   to {
-    transform: translate3d(-50%,-50%,0) scale3d(.75,.75,1);
+    transform: translate3d(-50%, -50%, 0) scale3d(0.75, 0.75, 1);
   }
 
   50% {
-    transform: translate3d(-50%,-50%,0) scale3d(.33,.33,1);
+    transform: translate3d(-50%, -50%, 0) scale3d(0.33, 0.33, 1);
   }
-
 }
 
-@keyframes parachute-swing {  0% {
-    transform: rotate3d(0,0,1,-12.5deg);
+@keyframes parachute-swing {
+  0% {
+    transform: rotate3d(0, 0, 1, -12.5deg);
   }
 
   to {
-    transform: rotate3d(0,0,1,12.5deg);
+    transform: rotate3d(0, 0, 1, 12.5deg);
   }
-
 }
 
-@keyframes scrollText {  0% {
-    transform: translate3d(0,0,0);
+@keyframes scrollText {
+  0% {
+    transform: translate3d(0, 0, 0);
   }
 
   to {
-    transform: translate3d(-100%,0,0);
+    transform: translate3d(-100%, 0, 0);
   }
-
 }
 
-@keyframes scrollText-safari-scale {  0% {
-    transform: translate3d(0,0,0) scale(.5,.5);
+@keyframes scrollText-safari-scale {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.5, 0.5);
   }
 
   to {
-    transform: translate3d(-100%,0,0) scale(.5,.5);
+    transform: translate3d(-100%, 0, 0) scale(0.5, 0.5);
   }
-
 }
 
-@keyframes blink {  0%,
+@keyframes blink {
+  0%,
   100% {
     opacity: 1;
   }
@@ -1402,51 +1459,50 @@ body.radar_jammed .scan-node {
   50% {
     opacity: 0;
   }
-
 }
 
-@keyframes blink-bg {  50% {
+@keyframes blink-bg {
+  50% {
     background-color: #fff;
-    opacity: .75;
+    opacity: 0.75;
   }
-
 }
 
-@keyframes blink-tracking-color {  50% {
+@keyframes blink-tracking-color {
+  50% {
     background-color: red;
     border-color: red;
     color: red;
   }
-
 }
 
-@keyframes sorta-blink {  50% {
-    opacity: .65;
-    transform: scale3d(1.1,1.1,1.1);
+@keyframes sorta-blink {
+  50% {
+    opacity: 0.65;
+    transform: scale3d(1.1, 1.1, 1.1);
   }
-
 }
 
-@keyframes sorta-blink-alt {  50% {
-    background-color: rgba(27,107,27,.5);
-    transform: scale3d(.9,.9,.9);
+@keyframes sorta-blink-alt {
+  50% {
+    background-color: rgba(27, 107, 27, 0.5);
+    transform: scale3d(0.9, 0.9, 0.9);
   }
-
 }
 
-@keyframes sorta-blink-subtle {  50% {
-    opacity: .5;
+@keyframes sorta-blink-subtle {
+  50% {
+    opacity: 0.5;
     filter: grayscale(1);
   }
-
 }
 
-@keyframes pulse {  0% {
-    transform: scale3d(.66,.66,1);
+@keyframes pulse {
+  0% {
+    transform: scale3d(0.66, 0.66, 1);
   }
 
   to {
-    transform: scale3d(.33,.33,1);
+    transform: scale3d(0.33, 0.33, 1);
   }
-
 }

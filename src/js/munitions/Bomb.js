@@ -111,7 +111,7 @@ const Bomb = (options = {}) => {
               yOffset: -30,
               useDataAngle: true,
               sprite: {
-                url: 'deviantart-Dirt-Explosion-774442026.png',
+                url: 'battlefield/standalone/deviantart-Dirt-Explosion-774442026.png',
                 width: spriteWidth,
                 height: spriteHeight,
                 frameWidth: spriteWidth / 10,

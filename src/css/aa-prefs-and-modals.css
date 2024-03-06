@@ -154,7 +154,7 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 .close-button:active {
-  background-image: url(../../assets/image/apple-close-asterisk.png);
+  background-image: url(../../assets/image/UI/apple-close-asterisk.png);
   background-size: contain;
 }
 
@@ -291,26 +291,26 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 }
 
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:start {
-  background-image: url(../../assets/image/icon/scrollbar-up.svg);
+  background-image: url(../../assets/image/UI/icon/scrollbar-up.svg);
   background-repeat: no-repeat;
   height: 23.38px;
 }
 
 #game-prefs-modal
   .fieldset-container::-webkit-scrollbar-button:vertical:start:active {
-  background-image: url(../../assets/image/icon/scrollbar-up-active.svg);
+  background-image: url(../../assets/image/UI/icon/scrollbar-up-active.svg);
   background-repeat: no-repeat;
   height: 23.38px;
 }
 
 #game-prefs-modal .fieldset-container::-webkit-scrollbar-button:vertical:end {
-  background-image: url(../../assets/image/icon/scrollbar-down.svg);
+  background-image: url(../../assets/image/UI/icon/scrollbar-down.svg);
   height: 23.38px;
 }
 
 #game-prefs-modal
   .fieldset-container::-webkit-scrollbar-button:vertical:end:active {
-  background-image: url(../../assets/image/icon/scrollbar-down-active.svg);
+  background-image: url(../../assets/image/UI/icon/scrollbar-down-active.svg);
   background-repeat: no-repeat;
   height: 23.38px;
 }
@@ -601,7 +601,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   left: -0.5px;
   width: 12px;
   height: 12px;
-  background: url(../../assets/image/x.png) 50% 50%/250%;
+  background: url(../../assets/image/UI/x.png) 50% 50%/250%;
   filter: drop-shadow(0px 0px 0.5px #000);
   image-rendering: auto;
   content: ' ';
@@ -709,7 +709,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 #game-prefs-modal.is-network .network-icon {
   /* match #game-prefs-modal .body */
   background-color: #f3f3f3;
-  background-image: url(../../assets/image/win95-networking-icon.png);
+  background-image: url(../../assets/image/UI/win95-networking-icon.png);
   background-position: 4px 0;
   background-repeat: no-repeat;
   background-size: contain;

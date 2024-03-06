@@ -140,11 +140,11 @@ body {
 }
 
 body:not(.prefs-modal-open) {
-  cursor: url(../../assets/image/cursor-cross.png), auto;
+  cursor: url(../../assets/image/UI/cursor-cross.png), auto;
 }
 
 body.demo:not(.prefs-modal-open) {
-  cursor: url(../../assets/image/cursor-cross-grey.png), crosshair;
+  cursor: url(../../assets/image/UI/cursor-cross-grey.png), crosshair;
 }
 
 body.is_safari:not(.is-mobile) {
@@ -279,7 +279,7 @@ body.radar_enhanced_fx #world-noise-overlay {
 
 body.game-started #world-noise-overlay .noise,
 body.radar_enhanced_fx #world-noise-overlay .noise {
-  background: url(../../assets/image/noise-tv.webp) 0 0/128px 128px;
+  background: url(../../assets/image/UI/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -753,7 +753,7 @@ button.primary {
   /**
    * Hat tip: https://impossiblue.github.io/log/150406/index.html
    */
-  background-image: url(../../assets/image/apple-watch.gif);
+  background-image: url(../../assets/image/UI/apple-watch.gif);
   background-position: 50% 50%;
   background-size: 11px 16px;
   margin-bottom: -2.75px;
@@ -770,7 +770,7 @@ button.primary {
 }
 
 .mac-system-spinner {
-  background-image: url(../../assets/image/mac-system-spinner.gif);
+  background-image: url(../../assets/image/UI/mac-system-spinner.gif);
   background-size: contain;
   margin-bottom: -1px;
   margin-right: 1px;
@@ -873,7 +873,7 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 }
 
 .flying-ace {
-  background: url(../../assets/image/flying_ace.png) 50% 100% / contain
+  background: url(../../assets/image/UI/flying_ace.png) 50% 100% / contain
     no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
@@ -898,7 +898,7 @@ body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
 
 #lights .sub-sprite {
   display: block;
-  background: url(../../assets/image/lights.exe.png) no-repeat;
+  background: url(../../assets/image/UI/lights.exe.png) no-repeat;
   width: calc(64px * var(--gs));
   height: calc(10px * var(--gs));
   left: 0;

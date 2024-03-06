@@ -367,7 +367,7 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 #editor-window .static-sprite.default {
-  background-image: url(../../assets/image/icon_savegame.png);
+  background-image: url(../../assets/image/UI/icon_savegame.png);
   height: 16px;
   width: 16px;
 }
@@ -413,20 +413,20 @@ ul.inline-list li:not(:first-of-type) {
 
 #editor-window .static-sprite.landing-pad {
   /* TODO: landing-pad-static.png? */
-  background: url(../../assets/image/landing-pad-animated.gif) 0 0 / contain;
+  background: url(../../assets/image/UI/landing-pad-animated.gif) 0 0 / contain;
   height: 3.5px;
   width: 40.5px;
 }
 
 #editor-window .static-sprite.turret {
-  background: url(../../assets/image/turret-static.gif) 50% 0 / contain
+  background: url(../../assets/image/UI/turret-static.gif) 50% 0 / contain
     no-repeat;
   height: 10px;
   width: 12px;
 }
 
 #editor-window .static-sprite.engineer {
-  background-image: url(../../assets/image/engineer-static.png);
+  background-image: url(../../assets/image/UI/engineer-static.png);
 }
 
 #editor-window .static-sprite.bunker {

@@ -614,9 +614,6 @@ Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://gith
 
 ## Images
 
-Gear SVG by Fabián Alexis (CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=49940470)
-https://github.com/fabianalexisinostroza/Antu
-
 [Dirt Explosion](https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026) by SrGrafo on DeviantArt
 
 "Cornholio" and BnB sprites, Genesis 32X SCD. Hat tip: "aperson98" on [The Spriters Resource](https://www.spriters-resource.com/fullview/44963/)

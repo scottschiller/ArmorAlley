@@ -329,7 +329,7 @@ const Base = (options = {}) => {
           overlay: true,
           scale: 2,
           sprite: {
-            url: 'infectedtribe_itch_io-pixel_explosion.png',
+            url: 'battlefield/standalone/infectedtribe_itch_io-pixel_explosion.png',
             width: spriteWidth,
             height: spriteHeight,
             frameWidth: spriteWidth / 21,

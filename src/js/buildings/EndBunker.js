@@ -17,7 +17,7 @@ import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 
 const slashPattern = new Image();
-// slashPattern.src ='image/checkerboard-white-mask-50percent.png'
+// slashPattern.src ='image/UI/checkerboard-white-mask-50percent.png'
 slashPattern.src =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEX///8AAABVwtN+AAAAAnRSTlN/AN40qAEAAAAVSURBVHgBYwiFAoZVUEC8yKjIqAgAdHP/Abts7zEAAAAASUVORK5CYII=';
 
