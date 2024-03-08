@@ -105,7 +105,7 @@ const utils = {
       }
       // already "cached"
       if (imageObjects[url]) {
-        onload?.(img);
+        onload?.();
         return imageObjects[url];
       }
 
