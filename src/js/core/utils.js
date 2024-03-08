@@ -110,29 +110,84 @@ const utils = {
       }
 
       // preload, then update; canvas will ignore rendering until loaded.
-      const img = new Image();
+      let img = new Image();
       const src = `assets/image/${url}`;
 
-      img.onload = () => {
-        preloadedImageURLs[url] = src;
-        onload?.(img);
-        img.onload = null;
-      };
+      function flipInCanvas(img, callback) {
+        let canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-      img.src = src;
+        // note: no smoothing, this is a 1:1-scale copy.
+        let ctx = canvas.getContext('2d', { alpha: true });
+
+        // horizontal flip
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, canvas.width * -1, 0);
+
+        img.onload = () => {
+          img.onload = null;
+          callback?.(img);
+        };
+
+        // assign new flipped source
+        img.src = canvas.toDataURL('image/png');
+
+        ctx = null;
+        canvas = null;
+      }
+
+      /**
+       * Hackish special case: "virtual" flipped image URL pattern -
+       * e.g., `some-sprite-flipped.png`. File does not actually exist.
+       * Generate and return a flipped version of the original asset.
+       */
+
+      const flipPattern = '-flipped';
+
+      if (src.indexOf(flipPattern) !== -1) {
+        // e.g., `sprite-flipped.png` -> `sprite.png`
+        const nonFlippedSrc = src.replace(flipPattern, '');
+
+        // fetch the original asset, then flip and cache
+        // TODO: refactor and drop `preserveImg`
+        const preserveImg = true;
+        utils.image.load(
+          nonFlippedSrc,
+          (nonFlippedImg) => {
+            flipInCanvas(nonFlippedImg, (newImg) => {
+              preloadedImageURLs[url] = src;
+              // re-assign the final, flipped base64-encoded URL.
+              img.src = newImg.src;
+              onload?.(newImg);
+            });
+          },
+          preserveImg
+        );
+      } else {
+        img.onload = () => {
+          preloadedImageURLs[url] = src;
+          onload?.(img);
+          img.onload = null;
+        };
+
+        img.src = src;
+      }
 
       // return new object immediately
       imageObjects[url] = img;
       return img;
     },
 
-    load: (url, callback) => {
+    load: (url, callback, preserveImg) => {
       if (preloadedImageURLs[url]) return callback();
 
       let img = new Image();
 
       img.onload = () => {
         preloadedImageURLs[url] = true;
+        // trash image object, unless specified
+        if (preserveImg) return callback(img);
         img.removeAttribute('src');
         img.onload = null;
         img = null;
