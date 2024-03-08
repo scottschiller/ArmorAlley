@@ -76,7 +76,7 @@ const Flame = (options = {}) => {
   data.domCanvas = {
     img: {
       src: utils.image.getImageObject(
-        data.isEnemy ? 'tank_flame-enemy.png' : 'tank_flame.png'
+        data.isEnemy ? 'tank_flame-flipped.png' : 'tank_flame.png'
       ),
       source: {
         x: 0,
