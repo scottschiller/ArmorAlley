@@ -512,12 +512,11 @@ const Base = (options = {}) => {
 
   function getSpriteURL() {
     // image = base + enemy + theme
+    const file = (data.isEnemy
+      ? 'base-enemy-sprite-horizontal'
+      : 'base-sprite-horizontal');
     return (
-      (data.isEnemy
-        ? 'base-enemy-sprite-horizontal'
-        : 'base-sprite-horizontal') +
-      (gamePrefs.weather === 'snow' ? '_snow' : '') +
-      '.png'
+      gamePrefs.weather === 'snow' ? `snow/${file}_snow.png` : `${file}.png`
     );
   }
 

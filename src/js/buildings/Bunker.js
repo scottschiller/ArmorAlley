@@ -482,9 +482,10 @@ const Bunker = (options = {}) => {
 
   function getSpriteURL() {
     if (data.dead) return 'bunker-dead.png';
-    return (
-      'bunker_mac' + (gamePrefs.weather === 'snow' ? '_snow' : '') + '.png'
-    );
+    const file = 'bunker_mac';
+    return gamePrefs.weather === 'snow'
+      ? `snow/${file}_snow.png`
+      : `${file}.png`;
   }
 
   function applySpriteURL() {

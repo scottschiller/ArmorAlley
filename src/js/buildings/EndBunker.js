@@ -260,11 +260,10 @@ const EndBunker = (options = {}) => {
 
   function getSpriteURL() {
     // image = base + enemy + theme
-    return (
-      (data.isEnemy ? 'end-bunker-enemy' : 'end-bunker') +
-      (gamePrefs.weather === 'snow' ? '_snow' : '') +
-      '.png'
-    );
+    const file = data.isEnemy ? 'end-bunker-enemy' : 'end-bunker';
+    return gamePrefs.weather === 'snow'
+      ? `snow/${file}_snow.png`
+      : `${file}.png`;
   }
 
   function applySpriteURL() {

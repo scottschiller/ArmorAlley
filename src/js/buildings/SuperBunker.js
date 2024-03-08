@@ -311,11 +311,10 @@ const SuperBunker = (options = {}) => {
   }
 
   function getSpriteURL() {
-    return (
-      'super-bunker_mac' +
-      (gamePrefs.weather === 'snow' ? '_snow' : '') +
-      '.png'
-    );
+    const file = 'super-bunker_mac';
+    return gamePrefs.weather === 'snow'
+      ? `snow/${file}_snow.png`
+      : `${file}.png`;
   }
 
   function applySpriteURL() {

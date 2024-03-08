@@ -36,14 +36,14 @@ const terrainItems = {
 
   'left-arrow-sign': {
     src: 'left-arrow-sign-mac.png',
-    srcSnow: 'left-arrow-sign-mac_snow.png',
+    srcSnow: 'snow/left-arrow-sign-mac_snow.png',
     height: 25,
     width: 28
   },
 
   'right-arrow-sign': {
     src: 'right-arrow-sign-mac.png',
-    srcSnow: 'right-arrow-sign-mac_snow.png',
+    srcSnow: 'snow/right-arrow-sign-mac_snow.png',
     height: 25,
     width: 28
   },
@@ -104,7 +104,7 @@ const terrainItems = {
 
   'tree': {
     src: 'tree.png',
-    srcSnow: 'tree_snow.png',
+    srcSnow: 'snow/tree_snow.png',
     height: 27,
     width: 26
   },
