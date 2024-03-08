@@ -52,10 +52,10 @@ function canvasExplosion(exports, options = {}) {
   const sprites = [
     {
       url: 'explosion-shrapnel-2.png',
-      width: 178,
-      height: 768,
-      frameWidth: 178,
-      frameHeight: 64
+      width: 79,
+      height: 384,
+      frameWidth: 79,
+      frameHeight: 32
     },
     {
       url: 'generic-explosion-2.png',
