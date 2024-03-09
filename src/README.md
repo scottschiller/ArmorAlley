@@ -46,11 +46,11 @@ Armor Alley can be served via your HTTP daemon of choice.
 
 In the olden days, you could drag `index.html` right into a browser where it would open via `file://` and run local and/or remote JavaScript, no problem.
 
-For understandable security reasons, that is no longer the case. Armor Alley uses JavaScript Modules, which must also be served over HTTP.
+For (now-obvious) security reasons, that is no longer the case. Armor Alley uses JavaScript Modules, which must be served via HTTP.
 
 **CLI set-up**
 
-The npm `http-server` package is popular and convenient, and supports byte serving (useful for HTML5 audio/video) and caching, making it a preferable choice to "simpler" built-in servers, e.g. `python3 -m http.server`.
+The npm `http-server` package is popular and convenient, and supports byte serving (useful for HTML5 audio/video) and caching. This is preferable to "simpler" built-in servers, e.g. `python3 -m http.server`.
 
 **Install `http-server`**
 
@@ -76,7 +76,7 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 ---
 
-**Requirements: Building "Armor Alley" JS + CSS bundles with Gulp**
+**Requirements: Building "Armor Alley" JS + CSS bundles + spritesheet(s) with Gulp**
 
 **_Disclaimer:_** I suspect this section is very niche content, and likely not applicable. Notwithstanding, it is documented for my own reference and provided in case anyone else is poking around. ;)
 
@@ -92,13 +92,13 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
   This should grab all of the required "dev dependencies."
 
-  If all is well, you should now have "gulp" and related packages which bundle, minify and concatenate JS + CSS files.
+  If all is well, you should now have "gulp" and related packages which bundle, minify and concatenate JS + CSS files and generate spritesheet assets.
 
 **Build the JS bundle + minified CSS**
 
 * To build the assets, run this from the CLI in the AA home directory (which has `gulpfile.js`)...
 
-  `gulp`
+  `npx gulp`
 
   Ideally, this will run without a bunch of errors. Take a look at [gulpfile.js](gulpfile.js) for some notes as to requirements, and troubleshooting.
 

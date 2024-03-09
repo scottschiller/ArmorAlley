@@ -5,16 +5,8 @@
  *
  * Setup:
  *  npm install
- *  gulp
+ *  npx gulp
  *
- * NOTE: fsevents@1.2.13 may be required to fix `"ReferenceError: primordials is not defined" in Node.js` error.
- * https://stackoverflow.com/questions/55921442/how-to-fix-referenceerror-primordials-is-not-defined-in-node-js/58394828#58394828
- * This "patch" works as of 05/2023, but introduces security warnings of its own.
- * This section applies to package.json.
- *
- * "overrides": {
- *  "graceful-fs": "^4.2.11"
- * }
  */
 
 // npmjs.com/package/[name] unless otherwise specified
@@ -24,21 +16,28 @@ const terser = require('gulp-terser');
 const { rollup } = require('rollup');
 const cleanCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
-const header = require('gulp-header');
 const htmlmin = require('gulp-htmlmin');
 const imageInliner = require('postcss-image-inliner');
 const postcss = require('gulp-postcss');
 
-const imageInlinerOpts = {
-  assetPaths: ['assets/image'],
-  maxFileSize: 2048
-};
+// spritesheet bits
+// https://www.npmjs.com/package/gulp.spritesmith#spritesmithparams
+var buffer = require('vinyl-buffer');
+var merge = require('merge-stream');
+var spritesmith = require('gulp.spritesmith');
+
+// for spritesheet JSON
+var map = require('map-stream');
+
+// post-build cleanup for JSON
+var clean = require('gulp-clean');
 
 var fs = require('fs');
 
 // common paths / patterns
 const srcRoot = 'src';
 const distRoot = 'dist';
+const imageRoot = 'assets/image';
 
 function root(path) {
   return `${srcRoot}/${path}`;
@@ -52,28 +51,42 @@ const cssPath = 'css';
 const htmlPath = 'html';
 const jsPath = 'js';
 const libPath = 'lib';
+const spriteSheetPath = 'spritesheet';
 
 const distPaths = {
   css: dist(cssPath),
   html: dist(htmlPath),
   js: dist(jsPath),
-  lib: dist(`${jsPath}/${libPath}`)
+  lib: dist(`${jsPath}/${libPath}`),
+  spriteSheet: dist(spriteSheetPath)
 };
 
-const headerFile = 'src/aa_header.txt';
+const spriteSheet = {
+  glob: `${imageRoot}/*.png`,
+  png: 'spritesheet.png',
+  json: 'spritesheet.json',
+  js: 'spritesheet_config.js'
+};
+
+const headerFile = root('aa_header.txt');
 
 const css = (file) => root(`${cssPath}/${file}.css`);
 const js = (file) => root(`${jsPath}/${file}.js`);
 const html = (file) => root(`${htmlPath}/${file}.html`);
+const distCSS = (file) => `${distRoot}/css/${file}.css`;
+const distJS = (file) => `${distRoot}/js/${file}.js`;
 
-const distFile = (file) => `${distRoot}/${file}.js`;
-
-// note: these have path + extensions added via js() / css().
+// note: these have path + extensions added.
 const bootFile = js('aa-boot');
-const bootBundleFile = distFile('js/aa-boot_bundle');
+const bootBundleFile = distJS('aa-boot_bundle');
 
 const mainJSFile = js('aa');
-const bundleFile = distFile('js/aa');
+const bundleFile = distJS('aa');
+
+const imageInlinerOpts = {
+  assetPaths: [imageRoot],
+  maxFileSize: 2048
+};
 
 async function bundleJS() {
   const bundle = await rollup({ input: mainJSFile });
@@ -110,16 +123,19 @@ function minifyJS() {
 }
 
 function concatJS() {
-  return src(bundleFile)
+  return src([
+    headerFile,
+    // hackish: append the spritesheet config to the main AA JS bundle
+    `${distPaths.spriteSheet}/${spriteSheet.js}`,
+    bundleFile
+  ])
     .pipe(concat(bundleFile))
-    .pipe(header(fs.readFileSync(headerFile, 'utf8')))
     .pipe(dest('.'));
 }
 
-function minifyHTML() {
-  return src(html('*'))
-    .pipe(htmlmin({ collapseWhitespace: true }))
-    .pipe(dest(distPaths.html));
+function prependCSS() {
+  const aaCSS = distCSS('aa');
+  return src([headerFile, aaCSS]).pipe(concat(aaCSS)).pipe(dest('.'));
 }
 
 function minifyLibs() {
@@ -136,18 +152,121 @@ function minifyCSS() {
       .pipe(postcss([imageInliner(imageInlinerOpts)]))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
-      .pipe(header(fs.readFileSync(headerFile, 'utf8')))
       .pipe(dest(distPaths.css))
+  );
+}
+
+function minifyHTML() {
+  return src(html('*'))
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(dest(distPaths.html));
+}
+
+function buildSpriteSheet() {
+  // Battlefield sprites
+  var spriteData = src(spriteSheet.glob).pipe(
+    spritesmith({
+      imgName: spriteSheet.png,
+      cssName: spriteSheet.json,
+      padding: 4,
+      // review as needed, if one sprite exceeds this...
+      total_width: 1280
+      // https://github.com/twolfson/gulp.spritesmith?tab=readme-ov-file#algorithms
+      // algorithm: 'left-right'
+    })
+  );
+
+  var imgStream = spriteData.img.pipe(dest(distPaths.spriteSheet));
+  var cssStream = spriteData.css.pipe(dest(distPaths.spriteSheet));
+
+  // Return a merged stream to handle both `end` events
+  return merge(imgStream, cssStream);
+}
+
+function minifyImages(callback) {
+  // https://stackoverflow.com/questions/75165366/how-can-i-prevent-a-gulp-task-with-a-dynamic-import-from-being-asynchronous
+  const { pipeline } = require('stream');
+  return import('gulp-imagemin')
+    .then((module) => {
+      const imagemin = module.default;
+      // 03/2024: leaving default optipng settings - minimal gains with higher optimizationLevel.
+      // const { optipng } = module;
+      pipeline(
+        src(`${distPaths.spriteSheet}/*.png`),
+        imagemin(),
+        /*
+          imagemin([
+            // https://github.com/imagemin/imagemin-optipng
+            optipng({optimizationLevel: 7}),
+          ]),
+        */
+        dest(distPaths.spriteSheet),
+        callback
+      );
+    })
+    .catch(callback);
+}
+
+function buildSpriteSheetConfig() {
+  //
+  /**
+   * Reduce spritesmith JSON to per-sprite data: [x,y,w,h]
+   * Export to a temporary file, and concat with JS bundle.
+   * TODO: This could be tidier.
+   */
+  return src(`${distPaths.spriteSheet}/${spriteSheet.json}`)
+    .pipe(rename(spriteSheet.js))
+    .pipe(
+      map((file, done) => {
+        var json = JSON.parse(file.contents.toString());
+
+        const parsedJSON = {};
+
+        Object.keys(json).forEach((key) => {
+          let src = json[key]['source_image'];
+
+          // e.g., `assets/image/whatever.png` -> `image/whatever.png`
+          src = src.substring(src.indexOf(imageRoot) + imageRoot.length);
+
+          const data = json[key];
+
+          parsedJSON[src] = [data.x, data.y, data.width, data.height];
+        });
+
+        // object to expose to AA JS bundle
+        const name = 'aaSpriteSheetConfig';
+
+        const output = [
+          `window.${name} = `,
+          `${JSON.stringify(parsedJSON)};`
+        ].join('\n');
+
+        file.contents = Buffer.from(output);
+        done(null, file);
+      })
+    )
+    .pipe(dest(distPaths.spriteSheet));
+}
+
+function cleanup() {
+  // delete temporary spritesheet JS + JSON
+  return src(`${distPaths.spriteSheet}/spritesheet*.js*`, { read: false }).pipe(
+    clean()
   );
 }
 
 exports.default = series(
   bundleBootFile,
   minifyBootBundle,
+  buildSpriteSheet,
+  buildSpriteSheetConfig,
   bundleJS,
   minifyJS,
   concatJS,
   minifyLibs,
   minifyCSS,
-  minifyHTML
+  prependCSS,
+  minifyHTML,
+  minifyImages,
+  cleanup
 );

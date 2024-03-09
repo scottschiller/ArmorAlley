@@ -6,6 +6,7 @@
 dist/css/
 dist/html/
 dist/js/
+dist/spritesheet/
 homepage
 misc
 build.js
