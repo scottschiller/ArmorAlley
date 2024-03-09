@@ -1,5 +1,7 @@
 const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
+const IMAGE_ROOT = 'assets/image';
+const SPRITESHEET_URL = 'dist/spritesheet/spritesheet.png';
 
 const utils = {
   array: {
@@ -98,12 +100,68 @@ const utils = {
   },
 
   image: {
+    getImageFromSpriteSheet: (imgRef, callback) => {
+      // extract and cache a named image (based on URL) from the "default" spritesheet
+
+      // include versioning on the spritesheet, too.
+      let ssURL =
+        SPRITESHEET_URL + (window.aaVersion ? '.' + window.aaVersion : '');
+
+      function ssReady(ssImg) {
+        // NOTE: `aaSpriteSheetConfig` is an external reference, generated
+        // and included only in the production bundle by the build process.
+        // TODO: this could use a DRY refactor.
+        const ssConfig = window.aaSpriteSheetConfig?.[imgRef];
+
+        if (!ssConfig) return;
+
+        // extract and cache.
+        let extractedImg = new Image();
+
+        let canvas = document.createElement('canvas');
+
+        let x = ssConfig[0];
+        let y = ssConfig[1];
+        let w = ssConfig[2];
+        let h = ssConfig[3];
+
+        canvas.width = w;
+        canvas.height = h;
+
+        // note: no smoothing, this is a 1:1-scale copy.
+        let ctx = canvas.getContext('2d', { alpha: true });
+
+        ctx.drawImage(ssImg, x, y, w, h, 0, 0, w, h);
+
+        extractedImg.onload = () => {
+          extractedImg.onload = null;
+          callback?.(extractedImg);
+        };
+
+        // our newly-extracted image
+        extractedImg.src = canvas.toDataURL('image/png');
+
+        // mark in cache
+        imageObjects[imgRef] = extractedImg;
+
+        ctx = null;
+        canvas = null;
+      }
+
+      // fetch, as needed
+      if (imageObjects[ssURL]) {
+        ssReady(imageObjects[ssURL]);
+      } else {
+        utils.image.load(ssURL, ssReady);
+      }
+    },
     getImageObject: (url, onload) => {
       if (!url) {
         console.warn('getImageObject: No URL?', url);
         return;
       }
-      // already "cached"
+
+      // already in cache.
       if (imageObjects[url]) {
         onload?.();
         return imageObjects[url];
@@ -111,27 +169,30 @@ const utils = {
 
       // preload, then update; canvas will ignore rendering until loaded.
       let img = new Image();
-      const src = `assets/image/${url}`;
+      const src = `${IMAGE_ROOT}/${url}`;
 
-      function flipInCanvas(img, callback) {
+      function flipInCanvas(imgToFlip, callback) {
         let canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = imgToFlip.width;
+        canvas.height = imgToFlip.height;
 
         // note: no smoothing, this is a 1:1-scale copy.
         let ctx = canvas.getContext('2d', { alpha: true });
 
         // horizontal flip
         ctx.scale(-1, 1);
-        ctx.drawImage(img, canvas.width * -1, 0);
+        ctx.drawImage(imgToFlip, canvas.width * -1, 0);
 
-        img.onload = () => {
-          img.onload = null;
-          callback?.(img);
+        let flippedImg = new Image();
+
+        flippedImg.onload = () => {
+          flippedImg.onload = null;
+          callback?.(flippedImg);
         };
 
-        // assign new flipped source
-        img.src = canvas.toDataURL('image/png');
+        // create a new image, don't mutate our source which may be from cache
+        // e.g., spritesheet -> extracted source -> new flipped image
+        flippedImg.src = canvas.toDataURL('image/png');
 
         ctx = null;
         canvas = null;
@@ -149,29 +210,59 @@ const utils = {
         // e.g., `sprite-flipped.png` -> `sprite.png`
         const nonFlippedSrc = src.replace(flipPattern, '');
 
-        // fetch the original asset, then flip and cache
-        // TODO: refactor and drop `preserveImg`
-        const preserveImg = true;
-        utils.image.load(
-          nonFlippedSrc,
-          (nonFlippedImg) => {
+        // eligible for spritesheet?
+
+        const shortSrc = nonFlippedSrc.substring(
+          nonFlippedSrc.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
+        );
+
+        if (window.aaSpriteSheetConfig?.[shortSrc]) {
+          // extract from sprite, and flip.
+          utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) => {
             flipInCanvas(nonFlippedImg, (newImg) => {
-              preloadedImageURLs[url] = src;
+              preloadedImageURLs[url] = true;
               // re-assign the final, flipped base64-encoded URL.
               img.src = newImg.src;
               onload?.(newImg);
             });
-          },
-          preserveImg
-        );
+          });
+        } else {
+          // flipping a non-spritesheet asset
+          // fetch the original asset, then flip and cache
+          utils.image.load(nonFlippedSrc, (nonFlippedImg) => {
+            flipInCanvas(nonFlippedImg, (newImg) => {
+              preloadedImageURLs[url] = true;
+              // re-assign the final, flipped base64-encoded URL.
+              img.src = newImg.src;
+              onload?.(newImg);
+            });
+          });
+        }
       } else {
-        img.onload = () => {
-          preloadedImageURLs[url] = src;
-          onload?.(img);
-          img.onload = null;
-        };
+        // non-flipped asset
 
-        img.src = src;
+        // eligible for spritesheet?
+        const shortSrc = src.substring(
+          src.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
+        );
+
+        if (window.aaSpriteSheetConfig?.[shortSrc]) {
+          // spritesheet asset case
+          utils.image.getImageFromSpriteSheet(shortSrc, (newImg) => {
+            preloadedImageURLs[url] = src;
+            // update local cache with the new base64-encoded extracted source.
+            img.src = newImg.src;
+          });
+        } else {
+          // load image directly from disk
+          img.onload = () => {
+            preloadedImageURLs[url] = src;
+            onload?.(img);
+            img.onload = null;
+          };
+
+          img.src = src;
+        }
       }
 
       // return new object immediately
@@ -179,23 +270,22 @@ const utils = {
       return img;
     },
 
-    load: (url, callback, preserveImg) => {
-      if (preloadedImageURLs[url]) return callback();
+    load: (url, callback) => {
+      if (preloadedImageURLs[url]) return callback(imageObjects[url]);
 
       let img = new Image();
 
       img.onload = () => {
         preloadedImageURLs[url] = true;
-        // trash image object, unless specified
-        if (preserveImg) return callback(img);
-        img.removeAttribute('src');
+        imageObjects[url] = img;
         img.onload = null;
-        img = null;
-        callback();
+        return callback(img);
       };
 
       // note: prefixed path.
-      img.src = url.match(/data:|image\//i) ? url : `assets/image/${url}`;
+      img.src = url.match(/data:|dist\/|image\//i)
+        ? url
+        : `${IMAGE_ROOT}/${url}`;
     },
 
     preload: (urls, callback) => {
