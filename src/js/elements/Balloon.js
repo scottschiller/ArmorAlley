@@ -46,7 +46,7 @@ const Balloon = (options = {}) => {
 
     const animConfig = {
       sprite: {
-        url: spriteURL,
+        url: getSpriteURL(),
         width,
         height,
         frameWidth,
@@ -471,7 +471,11 @@ const Balloon = (options = {}) => {
     setEnemy
   };
 
-  const spriteURL = 'balloon_mac.png';
+  function getSpriteURL() {
+    return gamePrefs.weather === 'snow'
+      ? 'snow/balloon_mac_snow.png'
+      : 'balloon_mac.png';
+  }
 
   function getCanvasBalloon() {
     const spriteWidth = 76;
@@ -480,7 +484,7 @@ const Balloon = (options = {}) => {
     const frameHeight = 32; // 9 frames
 
     return {
-      src: utils.image.getImageObject(spriteURL),
+      src: utils.image.getImageObject(getSpriteURL()),
       source: {
         x: 0,
         y: 0,
