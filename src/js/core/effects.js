@@ -216,7 +216,9 @@ const effects = {
       x: data.x + data.halfWidth + plusMinus(rnd(fractionWidth)),
       y:
         data.y +
-        (data.type !== TYPES.helicopter && data.type !== TYPES.balloon
+        (data.type !== TYPES.helicopter &&
+        data.type !== TYPES.balloon &&
+        (!data.bottomAligned || data.type === TYPES.bunker)
           ? data.halfHeight
           : 0) +
         rnd(data.halfHeight) *
