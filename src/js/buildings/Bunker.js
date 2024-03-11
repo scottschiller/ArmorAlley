@@ -234,17 +234,16 @@ const Bunker = (options = {}) => {
     // TODO: work into a common / utility shared with SuperBunker bits.
 
     const burningConfig = (() => {
-      const spriteWidth = 424;
-      const spriteHeight = 18;
+      const spriteWidth = 106;
+      const spriteHeight = 72;
       return {
         sprite: {
-          url: 'bunker-burning-sprite-horizontal.png',
+          url: 'bunker-burning-sprite.png',
           width: spriteWidth,
           height: spriteHeight,
-          frameWidth: spriteWidth / 4,
-          frameHeight: spriteHeight,
+          frameWidth: spriteWidth,
+          frameHeight: spriteHeight / 4,
           animationDuration: 1.5,
-          horizontal: true,
           loop: true
         }
       };
