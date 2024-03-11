@@ -468,13 +468,19 @@ const Balloon = (options = {}) => {
     isOnScreenChange,
     objects,
     reset,
-    setEnemy
+    setEnemy,
+    updateSprite
   };
 
   function getSpriteURL() {
     return gamePrefs.weather === 'snow'
       ? 'snow/balloon_mac_snow.png'
       : 'balloon_mac.png';
+  }
+
+  function updateSprite() {
+    if (!data?.domCanvas?.img) return;
+    data.domCanvas.img.src = utils.image.getImageObject(getSpriteURL());
   }
 
   function getCanvasBalloon() {
