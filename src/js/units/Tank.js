@@ -314,14 +314,14 @@ const Tank = (options = {}) => {
       ) {
         // advance frame
         data.domCanvas.img.animationFrame++;
-        data.domCanvas.img.source.frameX++;
+        data.domCanvas.img.source.frameY++;
         if (
           data.domCanvas.img.animationFrame >=
           data.domCanvas.img.animationFrameCount
         ) {
           // loop / repeat animation
           data.domCanvas.img.animationFrame = 0;
-          data.domCanvas.img.source.frameX = 0;
+          data.domCanvas.img.source.frameY = 0;
         } else {
           // keep on truckin'.
           data.domCanvas.img.frameCount++;
@@ -476,16 +476,15 @@ const Tank = (options = {}) => {
     updateHealth
   };
 
-  const spriteWidth = 348;
-  const spriteHeight = 36;
+  const spriteWidth = 116;
+  const spriteHeight = 114;
+
   const frameWidth = 116;
-  const frameHeight = spriteHeight;
+  const frameHeight = spriteHeight / 3;
 
   function refreshSprite() {
     data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy
-        ? 'tank-enemy-sprite-horizontal.png'
-        : 'tank-sprite-horizontal.png'
+      data.isEnemy ? 'tank-enemy-sprite.png' : 'tank-sprite.png'
     );
   }
 
@@ -496,7 +495,7 @@ const Tank = (options = {}) => {
       animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 22)), // 1 / 10 = 1-second animation
       frameCount: 0,
       animationFrame: 0,
-      animationFrameCount: spriteWidth / frameWidth,
+      animationFrameCount: spriteHeight / frameHeight,
       source: {
         x: 0,
         y: 0,
