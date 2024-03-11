@@ -25,7 +25,7 @@ const ParachuteInfantry = (options = {}) => {
     if (data.parachuteOpen) return;
 
     // undo manual assignment from free-fall animation
-    data.domCanvas.img.source.frameY = 0;
+    data.domCanvas.img.source.frameX = 0;
 
     // update model with open height
     data.height = 19;
@@ -84,7 +84,7 @@ const ParachuteInfantry = (options = {}) => {
   }
 
   function animate() {
-    let randomWind, bgY;
+    let randomWind, bgX;
 
     if (data.dead) return !dom.o;
 
@@ -106,7 +106,7 @@ const ParachuteInfantry = (options = {}) => {
         // like Tom Petty, free fallin'.
         // alternate between 0/1
         data.panicFrame = !data.panicFrame;
-        data.domCanvas.img.source.frameY = 3 + data.panicFrame;
+        data.domCanvas.img.source.frameX = 3 + data.panicFrame;
       }
     } else {
       // "range" of rotation
@@ -132,16 +132,16 @@ const ParachuteInfantry = (options = {}) => {
 
           if (randomWind === -1) {
             // moving left
-            bgY = 1;
+            bgX = 1;
           } else if (randomWind === 1) {
             // moving right
-            bgY = 2;
+            bgX = 2;
           } else {
             // not moving!
-            bgY = 0;
+            bgX = 0;
           }
 
-          data.domCanvas.img.source.frameY = bgY;
+          data.domCanvas.img.source.frameX = bgX;
           // choose a new wind modulus, too.
           data.windModulus = 64 + rndInt(64);
         } else {
@@ -149,7 +149,7 @@ const ParachuteInfantry = (options = {}) => {
 
           data.vX = 0;
 
-          data.domCanvas.img.source.frameY = 0;
+          data.domCanvas.img.source.frameX = 0;
         }
       }
     }
@@ -325,8 +325,11 @@ const ParachuteInfantry = (options = {}) => {
     data.stepFrameIncrement *= -1;
   }
 
-  const spriteWidth = 28;
-  const spriteHeight = 200;
+  const spriteWidth = 140;
+  const spriteHeight = 40;
+
+  // horizontal sprite arrangement.
+  const frameWidth = 28;
   const frameHeight = 40;
 
   data.domCanvas = {
@@ -338,11 +341,12 @@ const ParachuteInfantry = (options = {}) => {
         is2X: true,
         width: spriteWidth,
         height: spriteHeight,
-        frameWidth: spriteWidth,
+        frameWidth,
         frameHeight,
         // sprite offset indices
-        frameX: 0,
-        frameY: 3
+        // start with "free-falling" state
+        frameX: 3,
+        frameY: 0
       },
       target: {
         width: spriteWidth / 2,
