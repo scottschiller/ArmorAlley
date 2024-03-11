@@ -280,7 +280,11 @@ const Shrapnel = (options = {}) => {
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     // apply the type of shrapnel
-    data.domCanvas.img.source.frameX = data.spriteType;
+    data.domCanvas.img.source.frameX =
+      data.spriteType % data.domCanvas.img.source.spriteCols;
+    data.domCanvas.img.source.frameY = Math.floor(
+      data.spriteType % data.domCanvas.img.source.spriteRows
+    );
 
     radarItem = game.objects.radar.addItem(exports);
 
@@ -345,15 +349,18 @@ const Shrapnel = (options = {}) => {
       source: {
         x: 0,
         y: 0,
-        width: 528,
-        height: 40,
+        width: 160,
+        height: 132,
         is2X: true,
         // frame size
         frameWidth: 44,
         frameHeight: 40,
         // sprite offset indices
         frameX: 0,
-        frameY: 0
+        frameY: 0,
+        // for determining display offsets vs. shrapnel "type"
+        spriteCols: 3,
+        spriteRows: 4
       },
       target: {
         width: 44,
