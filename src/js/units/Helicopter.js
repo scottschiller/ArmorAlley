@@ -3311,8 +3311,8 @@ const Helicopter = (options = {}) => {
   };
 
   // enemy chopper is a bit bigger.
-  const defaultWidth = data.isEnemy ? 440 : 400;
-  const defaultHeight = data.isEnemy ? 36 : 30;
+  const defaultWidth = data.isEnemy ? 110 : 100;
+  const defaultHeight = data.isEnemy ? 152 : 128;
 
   const rotatingWidth = 100;
   const rotatingHeight = 120;
@@ -3320,15 +3320,14 @@ const Helicopter = (options = {}) => {
   const spriteConfig = {
     default: {
       getImage: () => {
-        return `helicopter${data.isEnemy ? '-enemy' : ''}-sprite-horizontal${data.flipped ? '-flipped' : ''}.png`;
+        return `helicopter${data.isEnemy ? '-enemy' : ''}-sprite${data.flipped ? '-flipped' : ''}.png`;
       },
       width: defaultWidth,
       height: defaultHeight,
-      frameWidth: defaultWidth / 4,
-      frameHeight: defaultHeight,
+      frameWidth: defaultWidth,
+      frameHeight: defaultHeight / 4,
       animationConfig: {
         animationDuration: 1.35,
-        horizontal: true,
         loop: true
       }
     },
