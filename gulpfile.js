@@ -168,9 +168,7 @@ function buildSpriteSheet() {
     spritesmith({
       imgName: spriteSheet.png,
       cssName: spriteSheet.json,
-      padding: 4,
-      // review as needed, if one sprite exceeds this...
-      total_width: 1280
+      padding: 2
       // https://github.com/twolfson/gulp.spritesmith?tab=readme-ov-file#algorithms
       // algorithm: 'left-right'
     })
@@ -208,7 +206,6 @@ function minifyImages(callback) {
 }
 
 function buildSpriteSheetConfig() {
-  //
   /**
    * Reduce spritesmith JSON to per-sprite data: [x,y,w,h]
    * Export to a temporary file, and concat with JS bundle.
