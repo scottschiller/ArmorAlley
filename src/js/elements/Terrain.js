@@ -1,3 +1,4 @@
+import { gamePrefs } from '../UI/preferences.js';
 import { game } from '../core/Game.js';
 import { FPS, GAME_SPEED, worldHeight } from '../core/global.js';
 import { TYPES } from '../core/global.js';
@@ -35,8 +36,9 @@ const terrainItems = {
   },
 
   'left-arrow-sign': {
-    src: 'left-arrow-sign-mac.png',
-    srcSnow: 'snow/left-arrow-sign-mac_snow.png',
+    // note: "virtual" image, right-arrow flipped via canvas
+    src: 'right-arrow-sign-mac-flipped.png',
+    srcSnow: 'snow/right-arrow-sign-mac_snow-flipped.png',
     height: 25,
     width: 28
   },
@@ -239,6 +241,17 @@ function addItem(className, x, options = {}) {
   const width = props.width;
   const height = props.height;
 
+  function getSpriteURL() {
+    return utils.image.getImageObject(
+      props.srcSnow && gamePrefs.weather === 'snow' ? props.srcSnow : props.src
+    );
+  }
+
+  function updateSprite() {
+    if (!data.domCanvas?.img?.src) return;
+    data.domCanvas.img.src = getSpriteURL();
+  }
+
   data = Object.assign(
     {
       type: className,
@@ -259,7 +272,7 @@ function addItem(className, x, options = {}) {
       visible: true,
       domCanvas: {
         img: {
-          src: utils.image.getImageObject(props.src),
+          src: getSpriteURL(),
           source: {
             x: 0,
             y: 0,
@@ -285,7 +298,8 @@ function addItem(className, x, options = {}) {
     data,
     dom: _dom,
     dismiss,
-    summon
+    summon,
+    updateSprite
   };
 
   // these will be tracked only for on-screen / off-screen purposes.
