@@ -294,17 +294,16 @@ const Base = (options = {}) => {
       });
 
       const burningConfig = (() => {
-        const spriteWidth = 816;
-        const spriteHeight = 32;
+        const spriteWidth = 204;
+        const spriteHeight = 128;
         return {
           sprite: {
-            url: 'base-sprite-horizontal_burning.png',
+            url: 'base-sprite-burning.png',
             width: spriteWidth,
             height: spriteHeight,
-            frameWidth: spriteWidth / 4,
-            frameHeight: spriteHeight,
+            frameWidth: spriteWidth,
+            frameHeight: spriteHeight / 4,
             animationDuration: 1.75,
-            horizontal: true,
             loop: true
           }
         };
@@ -512,12 +511,10 @@ const Base = (options = {}) => {
 
   function getSpriteURL() {
     // image = base + enemy + theme
-    const file = (data.isEnemy
-      ? 'base-enemy-sprite-horizontal'
-      : 'base-sprite-horizontal');
-    return (
-      gamePrefs.weather === 'snow' ? `snow/${file}_snow.png` : `${file}.png`
-    );
+    const file = data.isEnemy ? 'base-sprite-enemy' : 'base-sprite';
+    return gamePrefs.weather === 'snow'
+      ? `snow/${file}_snow.png`
+      : `${file}.png`;
   }
 
   function applySpriteURL() {
@@ -535,18 +532,17 @@ const Base = (options = {}) => {
     }
 
     const animConfig = (() => {
-      const spriteWidth = 1040;
-      const spriteHeight = 52;
+      const spriteWidth = 208;
+      const spriteHeight = 265;
       return {
         yOffset: 0.75,
         sprite: {
           url: getSpriteURL(),
           width: spriteWidth,
           height: spriteHeight,
-          frameWidth: spriteWidth / 5,
-          frameHeight: spriteHeight,
+          frameWidth: spriteWidth,
+          frameHeight: spriteHeight / 5,
           animationDuration: 2,
-          horizontal: true,
           loop: true,
           alternate: true
         }
