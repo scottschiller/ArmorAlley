@@ -1,7 +1,7 @@
 const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
 const IMAGE_ROOT = 'assets/image';
-const SPRITESHEET_URL = 'dist/spritesheet/spritesheet.png';
+const SPRITESHEET_URL = 'dist/spritesheet/spritesheet.webp';
 
 const utils = {
   array: {

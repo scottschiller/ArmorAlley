@@ -65,7 +65,8 @@ const spriteSheet = {
   glob: `${imageRoot}/*.png`,
   png: 'spritesheet.png',
   json: 'spritesheet.json',
-  js: 'spritesheet_config.js'
+  js: 'spritesheet_config.js',
+  webp: 'spritesheet.webp'
 };
 
 const headerFile = root('aa_header.txt');
@@ -181,7 +182,30 @@ function buildSpriteSheet() {
   return merge(imgStream, cssStream);
 }
 
+function minifySpriteSheet(callback) {
+  // webP-specific version
+  return import('gulp-imagemin').then((imageminModule) => {
+    return import('imagemin-webp').then((webpModule) => {
+      const imagemin = imageminModule.default;
+      const imageminWebp = webpModule.default;
+      const { pipeline } = require('stream');
+
+      pipeline(
+        src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
+        imagemin([
+          // https://www.npmjs.com/package/imagemin-webp
+          imageminWebp({ lossless: 9 })
+        ]),
+        rename(spriteSheet.webp),
+        dest(distPaths.spriteSheet),
+        callback
+      );
+    });
+  });
+}
+
 function minifyImages(callback) {
+  // PNG-specific version
   // https://stackoverflow.com/questions/75165366/how-can-i-prevent-a-gulp-task-with-a-dynamic-import-from-being-asynchronous
   const { pipeline } = require('stream');
   return import('gulp-imagemin')
@@ -190,7 +214,7 @@ function minifyImages(callback) {
       // 03/2024: leaving default optipng settings - minimal gains with higher optimizationLevel.
       // const { optipng } = module;
       pipeline(
-        src(`${distPaths.spriteSheet}/*.png`),
+        src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
         imagemin(),
         /*
           imagemin([
@@ -265,5 +289,6 @@ exports.default = series(
   prependCSS,
   minifyHTML,
   minifyImages,
+  minifySpriteSheet,
   cleanup
 );
