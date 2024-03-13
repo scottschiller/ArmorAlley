@@ -182,7 +182,7 @@ const Tank = (options = {}) => {
       }, 1500);
 
       // special case: you destroyed a tank, and didn't crash into one.
-      if (data.isEnemy && attackerType !== TYPES.helicopter) {
+      if (gamePrefs.bnb && data.isEnemy && attackerType !== TYPES.helicopter) {
         // helicopter bombed / shot / missiled tank
         if (
           data.isOnScreen &&
@@ -210,7 +210,7 @@ const Tank = (options = {}) => {
       }
 
       // other special case: beavis saw an on-screen tank get taken out while butt-head is playing.
-      if (!data.isEnemy) {
+      if (gamePrefs.bnb && !data.isEnemy) {
         if (
           game.data.isButthead &&
           sounds.bnb.beavisCmonButthead &&

@@ -245,7 +245,7 @@ const Helicopter = (options = {}) => {
   }
 
   function iGotYouBabe() {
-    if (!gamePrefs.muzak || !gamePrefs.sound || !gamePrefs.bnb) return;
+    if (!gamePrefs.bnb || !gamePrefs.muzak || !gamePrefs.sound) return;
 
     const { iGotYouBabe } = sounds.bnb;
 
@@ -418,17 +418,17 @@ const Helicopter = (options = {}) => {
         stopSound(sounds.dangerZone);
       }
 
-      if (sounds.bnb.theme) {
+      if (sounds.bnb?.theme) {
         stopSound(sounds.bnb.theme);
       }
 
-      if (sounds.bnb.muchaMuchacha) {
+      if (sounds.bnb?.muchaMuchacha) {
         data.muchaMuchacha = false;
         // hackish: ensure we reset any horizontal travel.
         stopSound(sounds.bnb.muchaMuchacha);
       }
 
-      if (sounds.bnb.iGotYouBabe) {
+      if (sounds.bnb?.iGotYouBabe) {
         stopSound(sounds.bnb.iGotYouBabe);
       }
 
@@ -565,11 +565,11 @@ const Helicopter = (options = {}) => {
         stopSound(sounds.dangerZone);
       }
 
-      if (sounds.bnb.theme) {
+      if (sounds.bnb?.theme) {
         stopSound(sounds.bnb.theme);
       }
 
-      if (sounds.bnb.beavisThankYouDriveThrough) {
+      if (sounds.bnb?.beavisThankYouDriveThrough) {
         playSound(sounds.bnb.beavisThankYouDriveThrough);
       }
 
@@ -639,7 +639,7 @@ const Helicopter = (options = {}) => {
 
     if (!data.isLocal) return;
 
-    if (data.muchaMuchacha && data.repairFrames % 5 === 0) {
+    if (gamePrefs.bnb && data.muchaMuchacha && data.repairFrames % 5 === 0) {
       if (rnd(1) < 0.25) return;
 
       const { sound } = sounds.bnb.muchaMuchacha;

@@ -118,16 +118,18 @@ const Radar = () => {
         data.missileWarningCount++;
       }
 
-      common.setFrameTimeout(() => {
-        if (!data.incomingMissile) return;
-        playSound(
-          sounds.bnb[
-            newestMissile.data.isRubberChicken
-              ? 'incomingSmartMissilePlusCock'
-              : 'incomingSmartMissile'
-          ]
-        );
-      }, 1000);
+      if (gamePrefs.bnb) {
+        common.setFrameTimeout(() => {
+          if (!data.incomingMissile) return;
+          playSound(
+            sounds.bnb[
+              newestMissile.data.isRubberChicken
+                ? 'incomingSmartMissilePlusCock'
+                : 'incomingSmartMissile'
+            ]
+          );
+        }, 1000);
+      }
     } else if (sounds.missileWarning?.sound) {
       stopSound(sounds.missileWarning);
     }
@@ -293,7 +295,7 @@ const Radar = () => {
 
     function onFinishCheck() {
       // note: scoped to SMSound instance
-      if (this.skipped || game.data.isBeavis || Math.random() <= 0.5) return;
+      if (!gamePrefs.bnb || this.skipped || game.data.isBeavis || Math.random() <= 0.5) return;
       playSoundWithDelay(
         oneOf([sounds.bnb.tryAndPayAttention, sounds.bnb.beavisOhYeah]),
         null,
@@ -302,7 +304,7 @@ const Radar = () => {
     }
 
     // half the time, commentary.
-    if (Math.random() >= 0.5) {
+    if (gamePrefs.bnb && Math.random() >= 0.5) {
       playSoundWithDelay(
         sounds.bnb[
           game.data.isBeavis ? 'radarJammedBeavis' : 'radarJammedButthead'
