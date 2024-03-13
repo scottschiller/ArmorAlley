@@ -1,7 +1,10 @@
+import { aaLoader } from './aa-loader.js';
+import { SPRITESHEET_URL, imageSpriteConfig } from './global.js';
+
 const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
-const IMAGE_ROOT = 'assets/image';
-const SPRITESHEET_URL = 'dist/spritesheet/spritesheet.webp';
+
+const IMAGE_ROOT = aaLoader.getImageRoot();
 
 const utils = {
   array: {
@@ -103,15 +106,13 @@ const utils = {
     getImageFromSpriteSheet: (imgRef, callback) => {
       // extract and cache a named image (based on URL) from the "default" spritesheet
 
-      // include versioning on the spritesheet, too.
       let ssURL =
-        SPRITESHEET_URL + (window.aaVersion ? '.' + window.aaVersion : '');
+        SPRITESHEET_URL;
 
       function ssReady(ssImg) {
-        // NOTE: `aaSpriteSheetConfig` is an external reference, generated
+        // NOTE: `imageSpriteConfig` is an external reference, generated
         // and included only in the production bundle by the build process.
-        // TODO: this could use a DRY refactor.
-        const ssConfig = window.aaSpriteSheetConfig?.[imgRef];
+        const ssConfig = imageSpriteConfig[imgRef];
 
         if (!ssConfig) return;
 
@@ -216,7 +217,7 @@ const utils = {
           nonFlippedSrc.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
         );
 
-        if (window.aaSpriteSheetConfig?.[shortSrc]) {
+        if (imageSpriteConfig?.[shortSrc]) {
           // extract from sprite, and flip.
           utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) => {
             flipInCanvas(nonFlippedImg, (newImg) => {
@@ -246,7 +247,7 @@ const utils = {
           src.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
         );
 
-        if (window.aaSpriteSheetConfig?.[shortSrc]) {
+        if (imageSpriteConfig?.[shortSrc]) {
           // spritesheet asset case
           utils.image.getImageFromSpriteSheet(shortSrc, (newImg) => {
             preloadedImageURLs[url] = src;
