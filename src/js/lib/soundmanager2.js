@@ -2623,11 +2623,7 @@ function playSoundFromBuffer(snd, buffer) {
   
   const when = 0;
   const offset = ((snd._iO.from / msecScale) || 0);
-  const duration = snd._iO.to ? snd.duration - (snd._iO.to / msecScale) : undefined;
-
-  if (when || offset || duration) {
-    console.log('starting playback with when, offset, duration (to)', when, offset, duration);
-  }
+  const duration = snd._iO.to ? (snd._iO.to / msecScale) : undefined;
 
   if (snd._iO.onplay) {
     snd._iO.onplay.apply(snd, [snd]);
