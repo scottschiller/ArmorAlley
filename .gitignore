@@ -3,10 +3,16 @@
 *.sh
 *?old.*
 *test.*
+dist/manifest.json
 dist/css/
 dist/html/
 dist/js/
+dist/audio/
+dist/font/
+dist/image/
 dist/spritesheet/
+dist/video/
+dist/video/bnb/
 homepage
 misc
 build.js
