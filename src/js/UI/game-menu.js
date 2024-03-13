@@ -9,6 +9,7 @@ import {
   isMobile,
   isSafari,
   searchParams,
+  SPRITESHEET_URL,
   TYPES,
   updateClientFeatures
 } from '../core/global.js';
@@ -465,8 +466,11 @@ function init() {
     );
   }
 
-  // preload the game CSS, too.
-  window.setTimeout(() => aaLoader.loadCSS('aa-game-ui.css'), 5000);
+  // preload game CSS and main sprite, too.
+  window.setTimeout(() => {
+    aaLoader.loadCSS('aa-game-ui.css');
+    utils.image.load(SPRITESHEET_URL);
+  }, 5000);
 }
 
 function afterTransitionIn() {
