@@ -27,7 +27,7 @@ function hello() {
       (dev
         ? 'development JS.'
         : `production JS build, ${
-            version.length ? version.substr(1) : '[none]'
+            version.length ? version.substring(1) : '[none]'
           }. Try ?dev=1 for the full source with comments.`)
   );
 }
