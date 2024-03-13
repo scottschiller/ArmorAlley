@@ -1,4 +1,5 @@
 import { soundManager } from '../lib/soundmanager2.js';
+import { aaLoader } from './aa-loader.js';
 
 // oft-referenced constants, and a few simple methods.
 
@@ -450,6 +451,7 @@ export {
   GAME_SPEED_MAX,
   GAME_SPEED_RATIO,
   GAME_SPEED_RATIOED,
+  SPRITESHEET_URL,
   TYPES,
   PRETTY_TYPES,
   COSTS,
