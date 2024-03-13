@@ -19,7 +19,7 @@ const forceProd = sp.get('prod');
 const dev = !forceProd && (sp.get('dev') || !isProdSite);
 
 // e.g., '.V20231216'
-let version = (dev || isLocalhost) && !forceProd ? '' : v || '';
+const version = (dev || isLocalhost) && !forceProd ? '' : v || '';
 
 function hello() {
   console.log(
@@ -191,6 +191,7 @@ const aaLoader = {
   loadJS,
   loadCSS,
   loadHTML,
+  version,
   unloadCSS
 };
 
