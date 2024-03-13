@@ -62,21 +62,27 @@ const Bunker = (options = {}) => {
 
       playSoundWithDelay(sounds.friendlyClaim, exports);
 
-      playSoundWithDelay(
-        sounds.bnb[
-          game.data.isBeavis ? 'beavisCapturedBunker' : 'buttheadCapturedBunker'
-        ],
-        null
-      );
+      if (gamePrefs.bnb && sounds.bnb) {
+        playSoundWithDelay(
+          bnb.sounds[
+            game.data.isBeavis
+              ? 'beavisCapturedBunker'
+              : 'buttheadCapturedBunker'
+          ],
+          null
+        );
+      }
     } else {
       game.objects.notifications.add('The enemy captured a bunker 🚩');
 
       playSoundWithDelay(sounds.enemyClaim, exports);
 
-      if (game.data.isBeavis) {
-        playSoundWithDelay(sounds.bnb.beavisLostBunker);
-      } else {
-        playSoundWithDelay(sounds.bnb.buttheadLostBunker);
+      if (gamePrefs.bnb && sounds.bnb) {
+        playSoundWithDelay(
+          sounds.bnb[
+            game.data.isBeavis ? 'beavisLostBunker' : 'buttheadLostBunker'
+          ]
+        );
       }
     }
 

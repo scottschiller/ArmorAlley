@@ -141,6 +141,8 @@ function GameEvents() {
         // "you died", clear + restart auto-switch timer.
         fireEvent(EVENTS.autoSwitchPlayers, 'start');
 
+        if (!gamePrefs.bnb) return;
+
         // don't play helicopter "loss" audibly if a bunker is blowing up,
         // since bunker explosions have their own commentary.
         const hitBunker = state?.attacker?.data?.type === TYPES.bunker;
@@ -347,6 +349,7 @@ function GameEvents() {
       checkForBoredom: (state) => {
         // complain if it's been relatively quiet.
         if (
+          gamePrefs.bnb &&
           game.data.started &&
           !game.data.paused &&
           state.bnbCommentaryCounter < state.BORING_THRESHOLD &&
@@ -500,23 +503,25 @@ function GameEvents() {
             });
           }
 
-          state.timer = common.setFrameTimeout(() => {
-            const { bnb } = sounds;
+          if (gamePrefs.bnb) {
+            state.timer = common.setFrameTimeout(() => {
+              const { bnb } = sounds;
 
-            const commentary = game.data.isBeavis
-              ? bnb.beavisGouranga
-              : bnb.buttheadGouranga;
+              const commentary = game.data.isBeavis
+                ? bnb.beavisGouranga
+                : bnb.buttheadGouranga;
 
-            const target = null;
+              const target = null;
 
-            const helicopterCheck = () => !game.players.local.data.dead;
+              const helicopterCheck = () => !game.players.local.data.dead;
 
-            playSound(commentary, target, {
-              playNextCondition: helicopterCheck,
-              onplay: helicopterCheck,
-              onfinish: () => fireEvent(state.name, 'reset')
-            });
-          }, 2000);
+              playSound(commentary, target, {
+                playNextCondition: helicopterCheck,
+                onplay: helicopterCheck,
+                onfinish: () => fireEvent(state.name, 'reset')
+              });
+            }, 2000);
+          }
         }
       }
     });

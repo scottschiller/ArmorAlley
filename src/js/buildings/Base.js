@@ -175,9 +175,9 @@ const Base = (options = {}) => {
       const canShowLetter =
         (tutorialMode || campaignBattles.includes(levelName)) && !net.active;
 
-      if (!gamePrefs.bnb || !didWin) {
+      if (!didWin) {
         // final explosion sequence
-        playSequence(sounds.bnb.gameOverLose);
+          playSequence(sounds.bnb?.gameOverLose);
         common.setFrameTimeout(nukeTheBase, hugeBoomDelay);
         if (canShowLetter) {
           common.setFrameTimeout(() => {
@@ -190,7 +190,7 @@ const Base = (options = {}) => {
         // at this point, irrelevant because the battle is over.
         resetBNBSoundQueue();
 
-        playSound(sounds.bnb.desertSceneGameOver, exports, {
+        playSound(sounds.bnb?.desertSceneGameOver, exports, {
           onplay: () => {
             game.objects.view.setAnnouncement(
               'Hey - you wanna see\nsomething really cool?<br />Huh huh huh, huh huh huh...',
@@ -225,7 +225,7 @@ const Base = (options = {}) => {
           },
           onfinish: () => {
             // queue post-win commentary
-            playSequence(sounds.bnb.gameOverWin);
+            playSequence(sounds.bnb?.gameOverWin);
             if (canShowLetter) {
               game.objects.envelope.show(didWin);
             }
@@ -360,7 +360,7 @@ const Base = (options = {}) => {
 
     didWin = localPlayer.data.isEnemy !== data.isEnemy;
 
-    if (gamePrefs.bnb) {
+    if (gamePrefs.bnb && sounds.bnb) {
       common.setFrameTimeout(
         () =>
           playSound(
