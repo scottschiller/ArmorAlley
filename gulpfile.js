@@ -3,14 +3,52 @@
  * https://www.npmjs.com/package/gulp-cli
  * For more details, see src/README.md.
  *
- * Setup:
- *  npm install
- *  npx gulp
+ * ADDITIONAL REQUIREMENTS
+ * `ffmpeg` with `libmp3lame` and `libvorbis` are required for encoding audio.
  *
+ * Setup:
+ *  `npm install`
+ *
+ * Default build, full game (audio + image sprite + assets, placed into `dist/`):
+ *  `npx gulp`
+ *
+ * Faster build, once audio sprite has been generated:
+ *  `npx gulp build`
+ *
+ * The audio "sprite" (single file with many sounds) can take some time to run.
+ * Once this task has run, a `build` or default task will include the new sprite + config.
+ *  `npx gulp audio`
+ *
+ * Audio and image "sprites" have configuration / definition JS files, which are built and stored in src/config.
+ * These config modules are loaded by the game JS and rolled up into the bundle at build time.
  */
 
+function aa(callback) {
+  const logo = [
+    '                           ▄██▀',
+    '                          ▄█▀',
+    '          ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄',
+    '                      ▄█████▄▄▄▄  ▀▀▀',
+    '      ▄         ▄████████████████▄',
+    '      ██       ▀████████████████████▄',
+    '      ▀███    ▄██████████████████████',
+    '       ████▄▄███████████████████████▀',
+    '      ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀',
+    '       ██▀              ██▘▘ ██▘▘',
+    ''
+  ];
+  const label = 'A R M O R  A L L E Y :: R E M A S T E R E D';
+  // in living color.
+  console.log('\x1b[0m', '');
+  console.log('\x1b[32m', logo.join('\n'));
+  console.log('\x1b[33m', label);
+  // reset color
+  console.log('\x1b[0m', '');
+  callback();
+}
+
 // npmjs.com/package/[name] unless otherwise specified
-const { src, dest, series } = require('gulp');
+const { src, dest, series, task } = require('gulp');
 const rename = require('gulp-rename');
 const terser = require('gulp-terser');
 const { rollup } = require('rollup');
@@ -24,6 +62,7 @@ const postcss = require('gulp-postcss');
 // https://www.npmjs.com/package/gulp.spritesmith#spritesmithparams
 var buffer = require('vinyl-buffer');
 var merge = require('merge-stream');
+const { pipeline } = require('stream');
 var spritesmith = require('gulp.spritesmith');
 
 // for spritesheet JSON
@@ -32,7 +71,12 @@ var map = require('map-stream');
 // post-build cleanup for JSON
 var clean = require('gulp-clean');
 
-var fs = require('fs');
+// path replacement
+replace = require('gulp-replace');
+
+// audio
+var audiosprite = require('gulp-audiosprite');
+var ffmpeg = require('gulp-fluent-ffmpeg');
 
 // common paths / patterns
 const srcRoot = 'src';
@@ -51,23 +95,39 @@ const cssPath = 'css';
 const htmlPath = 'html';
 const jsPath = 'js';
 const libPath = 'lib';
-const spriteSheetPath = 'spritesheet';
+const imagePath = 'image';
 
 const distPaths = {
+  config: 'src/config',
   css: dist(cssPath),
   html: dist(htmlPath),
   js: dist(jsPath),
   lib: dist(`${jsPath}/${libPath}`),
-  spriteSheet: dist(spriteSheetPath)
+  spriteSheet: dist(imagePath)
 };
+
+const audioSpriteModule = 'audioSpriteConfig';
+const imageSpriteModule = 'imageSpriteConfig';
+
+const audioSpriteSheet = {
+  js: `${audioSpriteModule}.js`
+};
+
+// "audio sprite" file name on disk
+const asName = 'aa-spritesheet';
 
 const spriteSheet = {
   glob: `${imageRoot}/*.png`,
-  png: 'spritesheet.png',
-  json: 'spritesheet.json',
-  js: 'spritesheet_config.js',
-  webp: 'spritesheet.webp'
+  png: `${asName}.png`,
+  json: `${asName}.json`,
+  js: `${imageSpriteModule}.js`,
+  webp: `${asName}.webp`
 };
+
+const standaloneFiles = [
+  'assets/audio/wav/ipanema-elevator.wav',
+  'assets/audio/wav/danger_zone_midi_doom_style.wav'
+];
 
 const headerFile = root('aa_header.txt');
 
@@ -89,13 +149,21 @@ const imageInlinerOpts = {
   maxFileSize: 2048
 };
 
+const rollupOpts = {
+  onwarn: function (message) {
+    // silence / ignore "circular dependency" warnings. :X
+    if (/circular dependency/i.test(message)) return;
+    console.error(message);
+  }
+};
+
 async function bundleJS() {
-  const bundle = await rollup({ input: mainJSFile });
+  const bundle = await rollup({ ...rollupOpts, input: mainJSFile });
   return bundle.write({ file: bundleFile });
 }
 
 async function bundleBootFile() {
-  const bundle = await rollup({ input: bootFile });
+  const bundle = await rollup({ ...rollupOpts, input: bootFile });
   return bundle.write({ file: bootBundleFile });
 }
 
@@ -123,18 +191,11 @@ function minifyJS() {
     .pipe(dest(distPaths.js));
 }
 
-function concatJS() {
-  return src([
-    headerFile,
-    // hackish: append the spritesheet config to the main AA JS bundle
-    `${distPaths.spriteSheet}/${spriteSheet.js}`,
-    bundleFile
-  ])
-    .pipe(concat(bundleFile))
-    .pipe(dest('.'));
+function headerJS() {
+  return src([headerFile, bundleFile]).pipe(concat(bundleFile)).pipe(dest('.'));
 }
 
-function prependCSS() {
+function headerCSS() {
   const aaCSS = distCSS('aa');
   return src([headerFile, aaCSS]).pipe(concat(aaCSS)).pipe(dest('.'));
 }
@@ -151,6 +212,11 @@ function minifyCSS() {
   return (
     src(css('*'))
       .pipe(postcss([imageInliner(imageInlinerOpts)]))
+      /**
+       * Remap production / bundled CSS asset references, accordingly.
+       * Given this trivial string match, “What could possibly go wrong?” ;)
+       */
+      .pipe(replace('assets/', 'dist/'))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
       .pipe(dest(distPaths.css))
@@ -188,8 +254,6 @@ function minifySpriteSheet(callback) {
     return import('imagemin-webp').then((webpModule) => {
       const imagemin = imageminModule.default;
       const imageminWebp = webpModule.default;
-      const { pipeline } = require('stream');
-
       pipeline(
         src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
         imagemin([
@@ -207,7 +271,6 @@ function minifySpriteSheet(callback) {
 function minifyImages(callback) {
   // PNG-specific version
   // https://stackoverflow.com/questions/75165366/how-can-i-prevent-a-gulp-task-with-a-dynamic-import-from-being-asynchronous
-  const { pipeline } = require('stream');
   return import('gulp-imagemin')
     .then((module) => {
       const imagemin = module.default;
@@ -232,8 +295,7 @@ function minifyImages(callback) {
 function buildSpriteSheetConfig() {
   /**
    * Reduce spritesmith JSON to per-sprite data: [x,y,w,h]
-   * Export to a temporary file, and concat with JS bundle.
-   * TODO: This could be tidier.
+   * and export to a config/ path for inclusion in the main JS bundle.
    */
   return src(`${distPaths.spriteSheet}/${spriteSheet.json}`)
     .pipe(rename(spriteSheet.js))
@@ -254,41 +316,202 @@ function buildSpriteSheetConfig() {
           parsedJSON[src] = [data.x, data.y, data.width, data.height];
         });
 
-        // object to expose to AA JS bundle
-        const name = 'aaSpriteSheetConfig';
-
         const output = [
-          `window.${name} = `,
-          `${JSON.stringify(parsedJSON)};`
+          `// Note: this file was generated by the build process. See README.md in src/ for details.\n`,
+          // nit: pretty print w/2 spaces, and swap double for single quotes.
+          `const ${imageSpriteModule} = ${JSON.stringify(parsedJSON, null, 2)};`.replace(
+            /\"/g,
+            "'"
+          ),
+          '',
+          `export { ${imageSpriteModule} };`
         ].join('\n');
 
         file.contents = Buffer.from(output);
         done(null, file);
       })
     )
-    .pipe(dest(distPaths.spriteSheet));
+    .pipe(dest(distPaths.config));
+}
+
+function buildAudioSpriteConfig() {
+  /**
+   * audiosprite howler JSON -> JS
+   * Export to a config/ path for inclusion in the main JS bundle.
+   */
+  return src(`${dist('audio')}/${asName}.json`)
+    .pipe(rename(audioSpriteSheet.js))
+    .pipe(
+      map((file, done) => {
+        var json = JSON.parse(file.contents.toString());
+        const output = [
+          `// Note: this file was generated by the build process. See README.md in src/ for details.\n`,
+          // nit: pretty print w/2 spaces, and swap double for single quotes.
+          `const ${audioSpriteModule} = ${JSON.stringify(json, null, 2)};`.replace(
+            /\"/g,
+            "'"
+          ),
+          '',
+          `export { ${audioSpriteModule} };`
+        ].join('\n');
+
+        file.contents = Buffer.from(output);
+        done(null, file);
+      })
+    )
+    .pipe(dest(distPaths.config));
+}
+
+function copyStaticResources() {
+  // all the regular images, icons, manifest.json and so forth.
+  // note: some assets may not always be included. ;)
+  const bnb = { allowEmpty: true };
+
+  return merge([
+    src('assets/font/**/*').pipe(dest('dist/font')),
+    // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
+    // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
+    src(['assets/image/**/*', '!assets/image/*.png']).pipe(dest('dist/image')),
+    src('assets/manifest.json').pipe(dest('dist')),
+    src('assets/audio/mp3/bnb/*.*', bnb).pipe(dest('dist/audio/mp3/bnb')),
+    src('assets/audio/ogg/bnb/*.*', bnb).pipe(dest('dist/audio/ogg/bnb')),
+    src('assets/video/aa_*.*').pipe(dest('dist/video')),
+    src('assets/video/bnb/*.*', bnb).pipe(dest('dist/video/bnb'))
+  ]);
+}
+
+function createAudioSprite() {
+  const spriteFilesGlob = ['assets/audio/wav/*.wav'].concat(
+    standaloneFiles.map((fn) => `!${fn}`)
+  );
+  return src(spriteFilesGlob)
+    .pipe(
+      audiosprite({
+        format: 'howler',
+        export: 'ogg,mp3',
+        output: asName,
+        gap: 0.05,
+        channels: 2,
+        // undocumented - consistent gap between samples
+        ignorerounding: true,
+        // less-noisy output
+        log: 'notice'
+      })
+    )
+    .pipe(dest(dist('audio')));
+}
+
+function encodeStandaloneFiles() {
+  return merge([encodeStandaloneMP3(), encodeStandaloneOgg()]);
+}
+
+function encodeStandaloneMP3() {
+  return src(standaloneFiles)
+    .pipe(
+      ffmpeg('mp3', function (cmd) {
+        return cmd
+          .audioBitrate('128k')
+          .audioChannels(2)
+          .audioCodec('libmp3lame');
+      })
+    )
+    .pipe(dest(dist('audio/mp3')));
+}
+
+function encodeStandaloneOgg() {
+  return src(standaloneFiles)
+    .pipe(
+      ffmpeg('ogg', function (cmd) {
+        return cmd
+          .audioBitrate('128k')
+          .audioChannels(2)
+          .audioCodec('libvorbis');
+      })
+    )
+    .pipe(dest(dist('audio/ogg')));
+}
+
+function cleanAudioDist() {
+  // delete previously-built audio assets
+  return src('dist/audio', { read: false }).pipe(clean());
+}
+
+function cleanAudioTemp() {
+  // delete temporary audio JS / JSON, post-build
+  return src('dist/audio/*.json', { read: false }).pipe(clean());
+}
+
+function cleanDist() {
+  // delete dist/ path, with a few exceptions.
+  return src(['dist/*', '!dist/audio', '!dist/README.md'], {
+    read: false
+  }).pipe(clean());
 }
 
 function cleanup() {
-  // delete temporary spritesheet JS + JSON
-  return src(`${distPaths.spriteSheet}/spritesheet*.js*`, { read: false }).pipe(
+  // delete temporary spritesheet image
+  return src(`${distPaths.spriteSheet}/${asName}*.js*`, { read: false }).pipe(
     clean()
   );
 }
 
-exports.default = series(
+function minifyCode() {
+  return merge(
+    minifyBootBundle(),
+    minifyJS(),
+    minifyLibs(),
+    minifyCSS(),
+    minifyHTML()
+  );
+}
+
+function copyFiles() {
+  return merge(headerCSS(), headerJS(), copyStaticResources());
+}
+
+const buildTasks = [
   bundleBootFile,
-  minifyBootBundle,
   buildSpriteSheet,
   buildSpriteSheetConfig,
   bundleJS,
-  minifyJS,
-  concatJS,
-  minifyLibs,
-  minifyCSS,
-  prependCSS,
-  minifyHTML,
+  minifyCode,
   minifyImages,
   minifySpriteSheet,
-  cleanup
-);
+  copyFiles
+];
+
+const audioTasks = [
+  cleanAudioDist,
+  createAudioSprite,
+  buildAudioSpriteConfig,
+  encodeStandaloneFiles,
+  cleanAudioTemp
+];
+
+/**
+ * `npx gulp audio`
+ * Builds the audio sprite + config JS module.
+ * ---
+ * Run default build task to roll these changes into the full bundle.
+ * This applies only when source audio files have changed, or need re-encoding.
+ */
+task('audio', series(aa, ...audioTasks));
+
+/**
+ * `npx gulp build`
+ * Builds the game, without generating or re-building the audio sprite portion.
+ * ---
+ * This is handy for regular development and build testing.
+ * Once built, the audio sprite only needs rebuilding if the audio assets change.
+ */
+task('build', series(aa, cleanDist, ...buildTasks, cleanup));
+
+/**
+ * `npx gulp`
+ * Default task: full build of game assets into dist/
+ * ---
+ * This task builds the audio and image sprites, then builds the game including dynamically-built sprite configurations.
+ * For a faster build, use `npx gulp build` once the audio sprite has been generated at least once.
+ * The audio task can be run separately, via `npx gulp audio`.
+ */
+exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks, cleanup);
