@@ -272,7 +272,7 @@ const utils = {
     },
 
     load: (url, callback) => {
-      if (preloadedImageURLs[url]) return callback(imageObjects[url]);
+      if (preloadedImageURLs[url] && callback instanceof Function) return callback(imageObjects[url]);
 
       let img = new Image();
 
@@ -280,7 +280,7 @@ const utils = {
         preloadedImageURLs[url] = true;
         imageObjects[url] = img;
         img.onload = null;
-        return callback(img);
+        if (callback instanceof Function) callback(img);
       };
 
       // note: prefixed path.
@@ -294,7 +294,7 @@ const utils = {
 
       function didLoad() {
         loaded++;
-        if (loaded >= urls.length) callback?.();
+        if (loaded >= urls.length && callback instanceof Function) callback?.();
       }
 
       urls.forEach((url) => {
