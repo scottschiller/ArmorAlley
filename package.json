@@ -36,11 +36,14 @@
     "gulp-terser": "^2.1.0",
     "postcss-image-inliner": "^7.0.1",
     "prettier": "3.2.5",
-    "rollup": "^4.12.1"
+    "rollup": "^4.13.0"
   },
   "dependencies": {
+    "gulp-audiosprite": "^1.1.0",
     "gulp-clean": "^0.4.0",
+    "gulp-fluent-ffmpeg": "^2.0.0",
     "gulp-imagemin": "^9.0.0",
+    "gulp-replace": "^1.1.4",
     "gulp.spritesmith": "^6.13.0",
     "http-server": "^14.1.1",
     "imagemin-webp": "^8.0.0",
