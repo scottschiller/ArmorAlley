@@ -48,6 +48,8 @@ const autoStart = searchParams.get('start');
 
 const gameTypeParam = searchParams.get('gameType');
 
+const noVideo = searchParams.get('noVideo');
+
 let customLevel = searchParams.get('customLevel');
 
 let customGroup;
@@ -271,7 +273,7 @@ function init() {
     utils.css.add(document.body, 'demo');
   }
 
-  if (autoStart || demo) {
+  if (autoStart || demo || noVideo) {
     // hackish: don't show the intro video at all.
     document.getElementById('home-video-wrapper').remove();
   } else {
