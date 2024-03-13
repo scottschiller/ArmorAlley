@@ -20,6 +20,7 @@ import { playSound, sounds } from './sound.js';
 import { prefsManager } from '../aa.js';
 import { DomCanvas } from '../UI/DomCanvas.js';
 import { addGravestone } from '../elements/Graveyard.js';
+import { aaLoader } from './aa-loader.js';
 
 // unique IDs for quick object equality checks
 let guid;
@@ -74,7 +75,7 @@ const defaultCSS = {
 
 const defaultCSSKeys = Object.keys(defaultCSS);
 
-const bnbVideoRoot = 'assets/video/bnb/';
+const bnbVideoRoot = `${aaLoader.getVideoRoot()}/bnb/`;
 
 const debugRects = [];
 
