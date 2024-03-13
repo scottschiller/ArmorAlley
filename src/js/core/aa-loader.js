@@ -105,6 +105,18 @@ function minifyAndVersion(url) {
   return `src/${fileExt}/${url}`;
 }
 
+function getAudioRoot() {
+  return (isProdSite || forceProd) ? 'dist/audio' : 'assets/audio';
+}
+
+function getImageRoot() {
+  return (isProdSite || forceProd) ? 'dist/image' : 'assets/image';
+}
+
+function getVideoRoot() {
+  return (isProdSite || forceProd) ? 'dist/video' : 'assets/video';
+}
+
 function fetch(src, fetchMethod, onload) {
   if (!src) return;
 
@@ -186,6 +198,9 @@ function loadGA() {
 }
 
 const aaLoader = {
+  getAudioRoot,
+  getImageRoot,
+  getVideoRoot,
   hello,
   loadGA,
   loadJS,

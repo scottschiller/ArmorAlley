@@ -2,6 +2,8 @@ import { soundManager } from '../lib/soundmanager2.js';
 
 // oft-referenced constants, and a few simple methods.
 
+const SPRITESHEET_URL = `dist/image/aa-spritesheet.webp${aaLoader.version}`;
+
 const searchParams = new URLSearchParams(window.location.search);
 
 const DEFAULT_FUNDS = searchParams.get('FUNDS') ? 999 : 32;
