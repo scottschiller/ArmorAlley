@@ -1442,8 +1442,18 @@ soundManager.onready(() => {
   });
 
   // uh-huh huh huh. heh heh, m-heh.
-  sounds.bnb = initBNBSound();
+  sounds.bnb = {};
 });
+
+function initBNBSFX() {
+  // lazy-init, only if pref enabled.
+  // and, run once.
+  if (Object.keys(sounds.bnb).length) return;
+  // ensure SM2 is good to go, whenever this runs.
+  soundManager.onready(() => {
+    sounds.bnb = initBNBSound();
+  });
+}
 
 export {
   addSequence,
@@ -1451,6 +1461,7 @@ export {
   destroySound,
   getPanFromLocation,
   getSound,
+  initBNBSFX,
   playQueuedSounds,
   playSound,
   getVolumeFromDistance,
