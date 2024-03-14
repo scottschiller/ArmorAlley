@@ -1,12 +1,15 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
+  audioSpriteConfig,
   rndInt,
   soundManager,
   TYPES,
   worldWidth,
   DEFAULT_VOLUME,
-  GAME_SPEED
+  GAME_SPEED,
+  isSafari,
+  AUDIO_SPRITE_ROOT
 } from './global.js';
 import { common } from './common.js';
 import {

@@ -2142,12 +2142,12 @@ function SoundManager() {
     }
   };
 
-  // startup
-
-  testHTML5();
-
   // assign top-level soundManager properties eg. soundManager.url
   setProperties();
+
+  // startup
+  testHTML5();
+
 } // SoundManager()
 
 function initAudioContext() {
