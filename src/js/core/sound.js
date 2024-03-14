@@ -1458,6 +1458,7 @@ function initBNBSFX() {
 export {
   addSequence,
   addSound,
+  chosenCodec,
   destroySound,
   getPanFromLocation,
   getSound,
