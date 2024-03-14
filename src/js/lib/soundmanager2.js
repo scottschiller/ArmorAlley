@@ -55,7 +55,7 @@ function SoundManager() {
    */
 
   this.setupOptions = {
-    debugMode: true, // enable debugging output (console.log() with HTML fallback)
+    debugMode: !!window.location.href?.match?.(/debug=1/), // enable debugging output (console.log() with HTML fallback)
     useConsole: true, // use console.log() if available (otherwise, writes to #soundmanager-debug element)
     ignoreMobileRestrictions: true, // if true, SM2 will not apply global HTML5 audio rules to mobile UAs. iOS > 7 and WebViews may allow multiple Audio() instances.
     html5Test: /^(probably|maybe)$/i, // HTML5 Audio() format support test. Use /^probably$/i; if you want to be more conservative.
