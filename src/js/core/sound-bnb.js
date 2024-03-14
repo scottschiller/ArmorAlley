@@ -4,6 +4,7 @@ import { utils } from '../core/utils.js';
 import {
   addSequence,
   addSound,
+  chosenCodec,
   getSound,
   playSound,
   skipSound
@@ -14,6 +15,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { effects } from './effects.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
+import { aaLoader } from './aa-loader.js';
 
 const bnb = {};
 const playImmediately = { playImmediately: true };
@@ -426,15 +428,10 @@ function getSoundFromArray(ref) {
 // https://youtu.be/nSsYgd96seg
 
 function bnbURL(file) {
-  if (window.location.hostname === 'localhost') return `assets/audio/bnb/${file}.wav`;
+  if (window.location.hostname === 'localhost' || chosenCodec === 'wav')
+    return `${aaLoader.getAudioRoot()}/bnb/${file}.wav`;
 
-  // SM2 will determine the appropriate format to play, based on client support.
-  // URL pattern -> array of .ogg and .mp3 URLs
-  return [
-    `assets/audio/mp3/bnb/${file}.mp3`,
-    `assets/audio/ogg/bnb/${file}.ogg`,
-    `assets/audio/bnb/${file}.wav`
-  ];
+  return `${aaLoader.getAudioRoot()}/${chosenCodec}/bnb/${file}.${chosenCodec}`;
 }
 
 const soundCache = {};

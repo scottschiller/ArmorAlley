@@ -18,7 +18,12 @@ import {
   updateGameSpeed,
   updateRadarTheme
 } from '../core/global.js';
-import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
+import {
+  initBNBSFX,
+  playQueuedSounds,
+  playSound,
+  sounds
+} from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
@@ -1442,6 +1447,11 @@ function PrefsManager() {
           game.objects.turret.forEach((turret) =>
             turret.objects?.cornholio?.setVisible?.(isActive)
           );
+        }
+
+        // 600+ sound samples. :P
+        if (isActive) {
+          initBNBSFX();
         }
 
         // hackish: un-hide specific DOM elements
