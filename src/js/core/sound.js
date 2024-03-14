@@ -349,7 +349,9 @@ function playSound(soundReference, target, soundOptions) {
     if (soundManager.disabled) return;
 
     console.warn('playSound: WTF no soundReference??', soundReference);
-    if (window.location.hostname.indexOf('armor-alley.net') === -1) debugger;
+
+    if (window.location.hostname.match(/localhost/i)) debugger;
+
     return;
   }
 
