@@ -2023,8 +2023,8 @@ function SoundManager() {
 
         result = isOK;
       } else {
-        canPlay = !!a?.canPlayType(m);
-        result = !!canPlay?.match(sm2.html5Test);
+        canPlay = a?.canPlayType(m);
+        result = !!canPlay?.match?.(sm2.html5Test);
       }
 
       return result;
