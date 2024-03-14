@@ -33,9 +33,9 @@ if (soundManager.canPlayMIME('audio/ogg')) {
   if (aaLoader.version) {
     console.warn('No OGG or MP3 support detected? Disabling sound.');
     soundManager.disable();
-    return;
+  } else {
+    chosenCodec = 'wav';
   }
-  chosenCodec = 'wav';
 }
 
 console.log(`🔊 Preferred codec, based on support: ${chosenCodec}`);
