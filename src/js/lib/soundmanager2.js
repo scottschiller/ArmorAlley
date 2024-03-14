@@ -2009,8 +2009,15 @@ function SoundManager() {
 
         for (i = 0, j = m.length; i < j; i++) {
           if (sm2.html5[m[i]] || a.canPlayType(m[i]).match(sm2.html5Test)) {
+            if (sm2.debugMode) {
+              sm2._wD(`✅ ${m[i]} (${a.canPlayType(m[i])})`);
+            }
             isOK = true;
             sm2.html5[m[i]] = true;
+          } else {
+            if (sm2.debugMode) {
+              sm2._wD(`❌ ${m[i]}`);
+            }
           }
         }
 
