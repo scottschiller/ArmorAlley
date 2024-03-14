@@ -91,7 +91,7 @@ function preloadCommonSounds() {
   soundsToPreload.forEach((item) => {
     if (item instanceof Array) {
       item.forEach((entry) => addURL(entry.options.url));
-    } else {
+    } else if (item) {
       addURL(item.options.url);
     }
   });
