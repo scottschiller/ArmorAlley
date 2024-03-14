@@ -716,7 +716,21 @@ const add = (options = {}) =>
   addSound({ ...options, url: getURL(options.url) });
 
 function addSound(options) {
-  return {
+  // split URL for spritesheet
+
+  const { url } = options;
+
+  if (!url?.split) {
+    console.warn('addSound: WTF no URL??', options);
+    return;
+  }
+
+  // `/path/to/some.mp3` -> `some`
+  const parts = url.split('/');
+  const fileName = parts[parts.length - 1];
+  const name = fileName.substring(0, fileName.lastIndexOf('.'));
+
+  const obj = {
     // sound object is now deferred until play(), which itself is now queued.
     sound: null,
     options,
@@ -733,6 +747,18 @@ function addSound(options) {
     throttle: options.throttle || 0,
     lastPlayed: 0
   };
+
+  // Use audio sprite for applicable sounds
+  if (audioSpriteConfig?.sprite?.[name]) {
+    // if version string is present, provide explicit type so SM2 knows the MIME.
+    options.type = `audio/${chosenCodec}`;
+    options.url = `${AUDIO_SPRITE_ROOT}.${chosenCodec}${aaLoader.version}`;
+    // start time + duration
+    options.from = audioSpriteConfig.sprite[name][0];
+    options.to = audioSpriteConfig.sprite[name][1];
+  }
+
+  return obj;
 }
 
 function addSequence(...args) {
