@@ -19,6 +19,28 @@ import {
   queueBNBSound
 } from './sound-bnb.js';
 import { gamePrefs } from '../UI/preferences.js';
+import { aaLoader } from './aa-loader.js';
+
+// client format support
+let chosenCodec;
+
+if (soundManager.canPlayMIME('audio/ogg')) {
+  chosenCodec = 'ogg';
+} else if (soundManager.canPlayMIME('audio/mp3')) {
+  chosenCodec = 'mp3';
+} else {
+  // Only allow .wav files ($$$) on dev / localhost.
+  if (aaLoader.version) {
+    console.warn('No OGG or MP3 support detected? Disabling sound.');
+    soundManager.disable();
+    return;
+  }
+  chosenCodec = 'wav';
+}
+
+console.log(`🔊 Preferred codec, based on support: ${chosenCodec}`);
+
+const audioRoot = aaLoader.getAudioRoot();
 
 let soundIDs = 0;
 
