@@ -344,6 +344,10 @@ function getPanFromLocation(source) {
 function playSound(soundReference, target, soundOptions) {
   if (!soundReference) {
     // this is bad.
+
+    // bail silently if SM2 has been explicitly disabled, e.g., due to lack of OGG/MP3 support.
+    if (soundManager.disabled) return;
+
     console.warn('playSound: WTF no soundReference??', soundReference);
     if (window.location.hostname.indexOf('armor-alley.net') === -1) debugger;
     return;
