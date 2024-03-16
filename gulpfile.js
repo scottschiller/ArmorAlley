@@ -474,8 +474,8 @@ const buildTasks = [
   bundleJS,
   minifyCode,
   minifyImages,
-  minifySpriteSheet,
-  copyFiles
+  copyFiles,
+  cleanup
 ];
 
 const audioTasks = [
@@ -502,7 +502,7 @@ task('audio', series(aa, ...audioTasks));
  * This is handy for regular development and build testing.
  * Once built, the audio sprite only needs rebuilding if the audio assets change.
  */
-task('build', series(aa, cleanDist, ...buildTasks, cleanup));
+task('build', series(aa, cleanDist, ...buildTasks));
 
 /**
  * `npx gulp`
@@ -512,4 +512,4 @@ task('build', series(aa, cleanDist, ...buildTasks, cleanup));
  * For a faster build, use `npx gulp build` once the audio sprite has been generated at least once.
  * The audio task can be run separately, via `npx gulp audio`.
  */
-exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks, cleanup);
+exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks);
