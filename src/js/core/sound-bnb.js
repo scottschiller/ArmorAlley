@@ -1881,8 +1881,6 @@ function addBNBSounds() {
     add('vs_beavis_bunghole')
   ]);
 
-  bnb.beavisFire = add('beavis_fire_fire_fire_fire');
-
   bnb.explosionFire = {
     ...add('desert_explosion_fire', 85, undefined, undefined, {
       onplay: function (sound) {
@@ -1895,7 +1893,10 @@ function addBNBSounds() {
   bnb.desertSceneGameOver = add('bnb_desert_scene_really_cool', 100);
   bnb.desertSceneGameOver.excludeDelay = true;
 
-  bnb.fire = add('beavis_fire', 100);
+  bnb.beavisFire = shuffle([
+    add('beavis_fire_fire_fire_fire'),
+    add('beavis_fire', 100)
+  ]);
 
   bnb.kickedAss = shuffle([
     add('bnb_nirvana_kicked_ass_ruled', 60),
@@ -2113,7 +2114,6 @@ function initBNBSound() {
 
   bnb.bunkerExplosion = [bnb.explosionFire].concat(
     shuffle([
-      bnb.fire,
       bnb.kickedAss,
       bnb.beavisFire,
       bnb.beavisDoThatAgain,
