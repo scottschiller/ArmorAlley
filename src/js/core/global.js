@@ -5,8 +5,8 @@ import { aaLoader } from './aa-loader.js';
 
 // oft-referenced constants, and a few simple methods.
 
-const AUDIO_SPRITE_ROOT = 'dist/audio/aa-spritesheet';
-const SPRITESHEET_URL = `dist/image/aa-spritesheet.webp${aaLoader.version}`;
+const AUDIO_SPRITE_ROOT = `dist/audio/${audioSpriteConfig.spriteFileName}`;
+const SPRITESHEET_URL = `dist/image/${audioSpriteConfig.spriteFileName}.webp${aaLoader.version}`;
 
 const searchParams = new URLSearchParams(window.location.search);
 
