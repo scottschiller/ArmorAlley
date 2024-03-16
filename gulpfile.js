@@ -425,12 +425,14 @@ function encodeStandaloneOgg() {
 
 function cleanAudioDist() {
   // delete previously-built audio assets
-  return src('dist/audio', { read: false }).pipe(clean());
+  return src('dist/audio', { allowEmpty: true, read: false }).pipe(clean());
 }
 
 function cleanAudioTemp() {
   // delete temporary audio JS / JSON, post-build
-  return src('dist/audio/*.json', { read: false }).pipe(clean());
+  return src('dist/audio/*.json', { allowEmpty: true, read: false }).pipe(
+    clean()
+  );
 }
 
 function cleanDist() {
