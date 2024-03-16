@@ -17,6 +17,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { aaLoader } from '../core/aa-loader.js';
 
 const Bomb = (options = {}) => {
   let data, dom, collision, radarItem, exports;
@@ -111,7 +112,8 @@ const Bomb = (options = {}) => {
               yOffset: -30,
               useDataAngle: true,
               sprite: {
-                url: 'battlefield/standalone/deviantart-Dirt-Explosion-774442026.png',
+                // TODO: refactor this pattern out.
+                url: `battlefield/standalone/deviantart-Dirt-Explosion-774442026.${aaLoader.version ? 'webp' : 'png'}`,
                 width: spriteWidth,
                 height: spriteHeight,
                 frameWidth: spriteWidth / 10,
