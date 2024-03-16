@@ -378,22 +378,37 @@ function copyStaticResources() {
   ]);
 }
 
-function createAudioSprite() {
-  const spriteFilesGlob = ['assets/audio/wav/*.wav'].concat(
-    standaloneFiles.map((fn) => `!${fn}`)
-  );
-  return src(spriteFilesGlob)
+const asConfigMP3 = {
+  format: 'howler',
+  export: 'mp3',
+  output: asName,
+  gap: 0.05,
+  vbr: 9,
+  channels: 2,
+  // undocumented - consistent gap between samples
+  ignorerounding: true,
+  // less-noisy output
+  log: 'notice'
+};
+
+const audioSpriteFiles = ['assets/audio/wav/*.wav'].concat(
+  standaloneFiles.map((fn) => `!${fn}`)
+);
+
+function createAudioSpriteMP3() {
+  return src(audioSpriteFiles)
+    .pipe(audiosprite(asConfigMP3))
+    .pipe(dest(dist('audio')));
+}
+
+function createAudioSpriteOGG() {
+  return src(audioSpriteFiles)
     .pipe(
       audiosprite({
-        format: 'howler',
-        export: 'ogg,mp3',
-        output: asName,
-        gap: 0.05,
-        channels: 2,
-        // undocumented - consistent gap between samples
-        ignorerounding: true,
-        // less-noisy output
-        log: 'notice'
+        ...asConfigMP3,
+        export: 'ogg',
+        // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
+        bitrate: 64
       })
     )
     .pipe(dest(dist('audio')));
@@ -488,7 +503,8 @@ const buildTasks = [
 
 const audioTasks = [
   cleanAudioDist,
-  createAudioSprite,
+  createAudioSpriteMP3,
+  createAudioSpriteOGG,
   buildAudioSpriteConfig,
   encodeStandaloneFiles,
   cleanAudioTemp
