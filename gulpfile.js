@@ -248,7 +248,7 @@ function buildSpriteSheet() {
   return merge(imgStream, cssStream);
 }
 
-function minifySpriteSheet(callback) {
+function minifyImages(callback) {
   // webP-specific version
   return import('gulp-imagemin').then((imageminModule) => {
     return import('imagemin-webp').then((webpModule) => {
@@ -256,40 +256,32 @@ function minifySpriteSheet(callback) {
       const imageminWebp = webpModule.default;
       pipeline(
         src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
-        imagemin([
-          // https://www.npmjs.com/package/imagemin-webp
-          imageminWebp({ lossless: 9 })
-        ]),
+        imagemin(
+          [
+            // https://www.npmjs.com/package/imagemin-webp
+            imageminWebp({ lossless: 9 })
+          ],
+          { silent: true }
+        ),
         rename(spriteSheet.webp),
         dest(distPaths.spriteSheet),
+        // battlefield sprite which compresses well
+        src(
+          `assets/image/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
+        ),
+        imagemin(
+          [
+            // https://www.npmjs.com/package/imagemin-webp
+            imageminWebp({ quality: 50 })
+          ],
+          { silent: true }
+        ),
+        rename('deviantart-Dirt-Explosion-774442026.webp'),
+        dest('dist/image/battlefield/standalone'),
         callback
       );
     });
   });
-}
-
-function minifyImages(callback) {
-  // PNG-specific version
-  // https://stackoverflow.com/questions/75165366/how-can-i-prevent-a-gulp-task-with-a-dynamic-import-from-being-asynchronous
-  return import('gulp-imagemin')
-    .then((module) => {
-      const imagemin = module.default;
-      // 03/2024: leaving default optipng settings - minimal gains with higher optimizationLevel.
-      // const { optipng } = module;
-      pipeline(
-        src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
-        imagemin(),
-        /*
-          imagemin([
-            // https://github.com/imagemin/imagemin-optipng
-            optipng({optimizationLevel: 7}),
-          ]),
-        */
-        dest(distPaths.spriteSheet),
-        callback
-      );
-    })
-    .catch(callback);
 }
 
 function buildSpriteSheetConfig() {
@@ -449,10 +441,16 @@ function cleanDist() {
 }
 
 function cleanup() {
-  // delete temporary spritesheet image
-  return src(`${distPaths.spriteSheet}/${asName}*.js*`, { read: false }).pipe(
-    clean()
-  );
+  // delete temporary spritesheet files, and PNGs which have been webP-encoded.
+  // TODO: refactor. :P
+  return src(
+    [
+      `${distPaths.spriteSheet}/${asName}*.js*`,
+      'dist/image/aa-spritesheet.png',
+      'dist/image/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png'
+    ],
+    { read: false }
+  ).pipe(clean());
 }
 
 function minifyCode() {
