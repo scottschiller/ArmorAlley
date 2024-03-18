@@ -771,7 +771,7 @@ const Helicopter = (options = {}) => {
 
     data.respawning = state;
 
-    const respawnY = data.yMax - 4;
+    const respawnY = data.yMax - data.yMaxOffset;
 
     if (state) {
       // hackish: hard reset battlefield scroll
@@ -996,7 +996,7 @@ const Helicopter = (options = {}) => {
     data.xMax = view.data.battleField.width + worldOverflow;
 
     // including border
-    data.yMax = view.data.world.height - data.height - 2;
+    data.yMax = view.data.world.height - data.height - data.yMaxOffset;
 
     // if mobile, set xMin and mobileControlsWidth (referenced in animate()) to prevent chopper flying over/under mobile controls.
     if (isMobile) {
@@ -3073,6 +3073,7 @@ const Helicopter = (options = {}) => {
       xMaxOffset: 0,
       yMin: 0,
       yMax: null,
+      yMaxOffset: 3,
       vX: 0,
       vXMax: isCPU ? 8 : 12,
       vYMax: isCPU ? 8 : 10,
