@@ -111,8 +111,7 @@ const utils = {
     getImageFromSpriteSheet: (imgRef, callback) => {
       // extract and cache a named image (based on URL) from the "default" spritesheet
 
-      let ssURL =
-        SPRITESHEET_URL;
+      let ssURL = SPRITESHEET_URL;
 
       function ssReady(ssImg) {
         // NOTE: `imageSpriteConfig` is an external reference, generated
@@ -282,7 +281,8 @@ const utils = {
     },
 
     load: (url, callback) => {
-      if (preloadedImageURLs[url] && callback instanceof Function) return callback(imageObjects[url]);
+      if (preloadedImageURLs[url] && callback instanceof Function)
+        return callback(imageObjects[url]);
 
       let img = new Image();
 
