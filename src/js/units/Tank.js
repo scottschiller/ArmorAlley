@@ -314,14 +314,14 @@ const Tank = (options = {}) => {
       ) {
         // advance frame
         data.domCanvas.img.animationFrame++;
-        data.domCanvas.img.source.frameY++;
+        refreshSprite();
         if (
           data.domCanvas.img.animationFrame >=
           data.domCanvas.img.animationFrameCount
         ) {
           // loop / repeat animation
           data.domCanvas.img.animationFrame = 0;
-          data.domCanvas.img.source.frameY = 0;
+          refreshSprite();
         } else {
           // keep on truckin'.
           data.domCanvas.img.frameCount++;
@@ -483,8 +483,13 @@ const Tank = (options = {}) => {
   const frameHeight = spriteHeight / 3;
 
   function refreshSprite() {
+    const offset = data.domCanvas.img.animationFrame || 0;
+    if (offset >= 3) {
+      // hack: don't draw a blank / empty last frame, just keep existing sprite.
+      return;
+    }
     data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? 'tank-enemy-sprite.png' : 'tank-sprite.png'
+      data.isEnemy ? `tank-enemy_${offset}.png` : `tank_${offset}.png`
     );
   }
 
