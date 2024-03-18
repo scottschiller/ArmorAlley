@@ -6,6 +6,11 @@ const LS_VERSION = '2023';
 
 const IMAGE_ROOT = aaLoader.getImageRoot();
 
+const emptyURL = 'NULL';
+
+const blankImage = new Image();
+blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
 const utils = {
   array: {
     compareByLastItem: () => {
@@ -156,12 +161,7 @@ const utils = {
         utils.image.load(ssURL, ssReady);
       }
     },
-    getImageObject: (url, onload) => {
-      if (!url) {
-        console.warn('getImageObject: No URL?', url);
-        return;
-      }
-
+    getImageObject: (url = emptyURL, onload) => {
       // already in cache.
       if (imageObjects[url]) {
         onload?.();
@@ -170,7 +170,7 @@ const utils = {
 
       // preload, then update; canvas will ignore rendering until loaded.
       let img = new Image();
-      const src = `${IMAGE_ROOT}/${url}`;
+      const src = url === emptyURL ? blankImage.src : `${IMAGE_ROOT}/${url}`;
 
       function flipInCanvas(imgToFlip, callback) {
         let canvas = document.createElement('canvas');
@@ -260,8 +260,18 @@ const utils = {
             preloadedImageURLs[url] = src;
             onload?.(img);
             img.onload = null;
+            img.onerror = null;
           };
-
+          img.onerror = () => {
+            // TODO: allow retry of image load in a moment?
+            console.warn('Image failed to load', img.src);
+            preloadedImageURLs[url] = blankImage.src;
+            onload?.(img);
+            img.onload = null;
+            img.onerror = null;
+            // reassign empty image
+            img.src = blankImage.src;
+          };
           img.src = src;
         }
       }
