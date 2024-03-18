@@ -3312,37 +3312,41 @@ const Helicopter = (options = {}) => {
 
   // enemy chopper is a bit bigger.
   const defaultWidth = data.isEnemy ? 110 : 100;
-  const defaultHeight = data.isEnemy ? 152 : 128;
+  const defaultHeight = data.isEnemy ? 152 : 32;
 
   const rotatingWidth = 100;
-  const rotatingHeight = 120;
+  const rotatingHeight = data.isEnemy ? 42 : 40;
 
   const spriteConfig = {
     default: {
       getImage: () => {
-        return `helicopter${data.isEnemy ? '-enemy' : ''}-sprite${data.flipped ? '-flipped' : ''}.png`;
+        return `helicopter${data.isEnemy ? '-enemy' : ''}_#${data.flipped ? '-flipped' : ''}.png`;
       },
       width: defaultWidth,
       height: defaultHeight,
       frameWidth: defaultWidth,
-      frameHeight: defaultHeight / 4,
+      frameHeight: defaultHeight,
       animationConfig: {
         animationDuration: 1.35,
-        loop: true
+        loop: true,
+        isSequence: true,
+        animationFrameCount: 4
       }
     },
     rotating: {
       getImage: () => {
-        if (data.isEnemy) return 'helicopter-rotating-enemy.png';
-        return 'helicopter-rotating.png';
+        if (data.isEnemy) return 'helicopter-rotating-enemy_#.png';
+        return 'helicopter-rotating_#.png';
       },
       width: rotatingWidth,
       height: rotatingHeight,
       frameWidth: rotatingWidth,
-      frameHeight: rotatingHeight / 3,
+      frameHeight: rotatingHeight,
       // vertical sprite
       animationConfig: {
         animationDuration: 0.7,
+        isSequence: true,
+        animationFrameCount: 3,
         onEnd: () => {
           // back to default sprite.
           swapSprite(spriteConfig.default, {
@@ -3361,6 +3365,7 @@ const Helicopter = (options = {}) => {
       frameCount: 0,
       animationFrame: 0,
       animationFrameCount: 0,
+      isSequence: true,
       source: {
         x: 0,
         y: 0,
