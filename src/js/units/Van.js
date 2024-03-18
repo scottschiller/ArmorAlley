@@ -148,18 +148,22 @@ const Van = (options = {}) => {
       if (data.frameCount > FPS * 2) {
         if (data.frameCount % data.stateModulus === 0) {
           data.state++;
+          data.imageOffset = data.state;
 
           if (data.state > data.stateMax) {
             data.state = 0;
+            data.imageOffset = 0;
           }
 
           if (data.domCanvas.img) {
-            data.domCanvas.img.source.frameY = data.state;
+            // data.domCanvas.img.source.frameY = data.state;
+            refreshSprite();
           }
         } else if (data.frameCount % data.stateModulus === 2) {
           // next frame - reset.
           if (data.domCanvas.img) {
-            data.domCanvas.img.source.frameY = 0;
+            data.imageOffset = 0;
+            refreshSprite();
           }
         }
       }
@@ -288,6 +292,7 @@ const Van = (options = {}) => {
       halfWidth: 19,
       height,
       halfHeight: height / 2,
+      imageOffset: 0,
       state: 0,
       stateMax: 2,
       stateModulus: FPS,
@@ -328,7 +333,9 @@ const Van = (options = {}) => {
 
   function refreshSprite() {
     data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? 'van-enemy.png' : 'van.png'
+      data.isEnemy
+        ? `van-enemy_${data.imageOffset}.png`
+        : `van_${data.imageOffset}.png`
     );
   }
 
