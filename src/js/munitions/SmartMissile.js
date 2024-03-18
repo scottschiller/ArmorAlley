@@ -242,6 +242,7 @@ const SmartMissile = (options = {}) => {
 
     // special case: added sound for first hit of a bunker (or turret), but not the (nuclear) explosion sequence.
     if (
+      gamePrefs.bnb &&
       sounds.bnb.beavisYes &&
       data.armed &&
       !data.expired &&
@@ -733,6 +734,7 @@ const SmartMissile = (options = {}) => {
 
       // on-screen, OR, targeting the player chopper
       if (
+        gamePrefs.bnb &&
         sounds.bnb.boioioing &&
         (data.isOnScreen ||
           (data.isEnemy && objects?.target?.data?.type === TYPES.helicopter))
@@ -759,6 +761,7 @@ const SmartMissile = (options = {}) => {
 
       // human player, firing smart missile OR on-screen enemy - make noise if it's "far enough" away
       if (
+        gamePrefs.bnb &&
         Math.abs(objects?.target?.data?.x - data.x) >= 666 &&
         !data.isEnemy &&
         (data.parentType === TYPES.helicopter || data.isOnScreen) &&
@@ -774,6 +777,7 @@ const SmartMissile = (options = {}) => {
 
       // human helicopter, firing smart missile
       if (
+        gamePrefs.bnb &&
         !data.isEnemy &&
         data.parentType === TYPES.helicopter &&
         sounds.bnb.beavisYeahGo

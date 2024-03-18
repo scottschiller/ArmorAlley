@@ -103,6 +103,8 @@ const Bunker = (options = {}) => {
   }
 
   function bnbRepair(engineer) {
+    if (!gamePrefs.bnb) return;
+    
     if (!data.hasBeavis && engineer.data.isBeavis) {
       data.hasBeavis = true;
     }

@@ -43,6 +43,8 @@ const Chain = (options = {}) => {
 
     if (!isJerking) return;
 
+    if (!gamePrefs.bnb) return;
+
     playSound(sounds.bnb.buttheadJerkingMyChain, null, { onplay: jerkCheck });
   }
 

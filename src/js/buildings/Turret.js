@@ -179,7 +179,7 @@ const Turret = (options = {}) => {
           }
         });
 
-        if (!otherFriendlyTurretFiring) {
+        if (!otherFriendlyTurretFiring && gamePrefs.bnb) {
           playSound(sounds.bnb.cornholioAttack, exports);
         }
       }
@@ -564,13 +564,13 @@ const Turret = (options = {}) => {
 
     if (!data.hasButthead && engineer.data.isButthead) {
       data.hasButthead = true;
-      if (helicopterOK) playSound(sounds.bnb.bhLetsRock, exports);
+      if (helicopterOK && gamePrefs.bnb) playSound(sounds.bnb.bhLetsRock, exports);
     }
 
     if (data.hasBeavis && data.hasButthead && !data.isSinging) {
       data.isSinging = true;
       // omit "take that, you commie butthole!" unless on-screen.
-      if (helicopterOK)
+      if (helicopterOK && gamePrefs.bnb)
         playSound(
           data.isOnScreen ? sounds.bnb.singing : sounds.bnb.singingShort,
           game.players.local

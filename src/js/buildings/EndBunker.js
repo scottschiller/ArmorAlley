@@ -126,7 +126,9 @@ const EndBunker = (options = {}) => {
               } captured! 💰`
             );
           }
-          playSound(sounds.bnb.stolenFunds);
+          if (gamePrefs.bnb) {
+            playSound(sounds.bnb.stolenFunds);
+          }
         }
       } else {
         if (allFunds) {
