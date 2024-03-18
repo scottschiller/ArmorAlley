@@ -129,7 +129,8 @@ const DomCanvas = () => {
 
     let { skipFrame } = options;
 
-    let img = utils.image.getImageObject(sprite.url);
+    // HACK: replace e.g., 'tank_#' with 'tank_0' for initial render.
+    let img = utils.image.getImageObject(sprite.url.replace('#', 0));
 
     const {
       width,
@@ -156,7 +157,9 @@ const DomCanvas = () => {
     let spriteOffset = 0;
 
     // take direct count, OR assume vertical sprite, unless specified otherwise.
+    // TODO: normalize where this property lives
     let animationFrameCount =
+      options.sprite.animationFrameCount ||
       options?.animationFrameCount ||
       (horizontal ? width / frameWidth : height / frameHeight);
 
@@ -207,10 +210,26 @@ const DomCanvas = () => {
     }
 
     // assign a reference to the new source (e.g., on a turret), whether replaced or added.
-    const thisImg = newImg;
+    let thisImg = newImg;
 
     function applyOffset() {
-      if (horizontal) {
+      // imageSequence case - e.g., tank_# -> tank_0.png and so forth
+      if (sprite.url.indexOf('#') !== -1) {
+        // e.g., tank_0.png -> tank_2.png
+        const offset = reverseDirection
+          ? animationFrameCount - 1 - spriteOffset
+          : spriteOffset;
+
+        // hackish: if hideAtEnd, take empty frame into account.
+        // otherwise, things go sideways.
+        if (hideAtEnd && offset >= animationFrameCount - 1) {
+          thisImg.src = utils.image.getImageObject();
+        } else {
+          thisImg.src = utils.image.getImageObject(
+            sprite.url.replace('#', offset || 0)
+          );
+        }
+      } else if (horizontal) {
         thisImg.source.frameX = reverseDirection
           ? animationFrameCount - 1 - spriteOffset
           : spriteOffset;
