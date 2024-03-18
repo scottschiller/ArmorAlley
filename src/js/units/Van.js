@@ -146,7 +146,7 @@ const Van = (options = {}) => {
       // bounce wheels after the first few seconds
 
       if (data.frameCount > FPS * 2) {
-        if (data.frameCount % data.stateModulus === 0) {
+        if (data.frameCount % (data.stateModulus / 2) === 0) {
           data.state++;
           data.imageOffset = data.state;
 
@@ -159,7 +159,7 @@ const Van = (options = {}) => {
             // data.domCanvas.img.source.frameY = data.state;
             refreshSprite();
           }
-        } else if (data.frameCount % data.stateModulus === 2) {
+        } else if (data.frameCount % (data.stateModulus / 2) === 2) {
           // next frame - reset.
           if (data.domCanvas.img) {
             data.imageOffset = 0;
