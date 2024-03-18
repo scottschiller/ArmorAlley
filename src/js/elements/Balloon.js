@@ -335,7 +335,10 @@ const Balloon = (options = {}) => {
     // update UI, right away?
     animate();
 
-    // restore original sprite
+    // stop any animation...
+    data.domCanvas.ownershipAnimation = null;
+
+    // and reset
     data.domCanvas.img = getCanvasBalloon();
 
     // randomize again
