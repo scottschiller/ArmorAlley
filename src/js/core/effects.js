@@ -43,6 +43,7 @@ function genericExplosion(exports, sprites, options = {}) {
       ? 0
       : Math.abs(sprite.frameHeight - data.height) * -0.5,
     // allow for overrides, of course.
+    isSequence: true,
     ...options
   });
 }
@@ -51,25 +52,40 @@ function canvasExplosion(exports, options = {}) {
   // vertical sprites
   const sprites = [
     {
-      url: 'explosion-shrapnel-2.png',
+      url: 'explosion-shrapnel_#.png',
+      width: 79,
+      height: 250,
+      frameWidth: 54,
+      frameHeight: 25,
+      hideAtEnd: true,
+      animationFrameCount: 10
+    },
+    {
+      url: 'explosion-shrapnel-2_#.png',
       width: 79,
       height: 384,
       frameWidth: 79,
-      frameHeight: 32
+      frameHeight: 32,
+      hideAtEnd: true,
+      animationFrameCount: 12
     },
     {
-      url: 'generic-explosion-2.png',
+      url: 'generic-explosion-2_#.png',
       width: 110,
       height: 180,
       frameWidth: 110,
-      frameHeight: 36
+      frameHeight: 36,
+      hideAtEnd: true,
+      animationFrameCount: 5
     },
     {
-      url: 'generic-explosion.png',
+      url: 'generic-explosion_#.png',
       width: 110,
       height: 180,
       frameWidth: 110,
-      frameHeight: 36
+      frameHeight: 36,
+      hideAtEnd: true,
+      animationFrameCount: 5
     }
   ];
 
@@ -450,7 +466,7 @@ const effects = {
   bombExplosion: (exports, options = {}) => {
     const sprites = [
       {
-        url: 'explosion-large.png',
+        url: 'explosion-large_#.png',
         width: 112,
         height: 220,
         frameWidth: 112,
@@ -458,7 +474,7 @@ const effects = {
         hideAtEnd: true
       },
       {
-        url: 'explosion-large-2.png',
+        url: 'explosion-large-2_#.png',
         width: 112,
         height: 220,
         frameWidth: 112,
