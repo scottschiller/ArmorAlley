@@ -279,13 +279,6 @@ const Shrapnel = (options = {}) => {
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
-    // apply the type of shrapnel
-    data.domCanvas.img.source.frameX =
-      data.spriteType % data.domCanvas.img.source.spriteCols;
-    data.domCanvas.img.source.frameY = Math.floor(
-      data.spriteType % data.domCanvas.img.source.spriteRows
-    );
-
     radarItem = game.objects.radar.addItem(exports);
 
     // special case for end game (base) explosion: don't create identical "clouds" of smoke *at* base.
@@ -307,7 +300,7 @@ const Shrapnel = (options = {}) => {
     {
       type,
       parentType: options.type || null,
-      spriteType: rngInt(spriteTypes + 1, type),
+      spriteType: rngInt(spriteTypes, type),
       direction: 0,
       alwaysDraw: true,
       isFading: false,
@@ -345,7 +338,7 @@ const Shrapnel = (options = {}) => {
 
   data.domCanvas = {
     img: {
-      src: utils.image.getImageObject('shrapnel-glow.png'),
+      src: utils.image.getImageObject(`shrapnel-glow_v${data.spriteType}.png`),
       source: {
         x: 0,
         y: 0,
@@ -357,10 +350,7 @@ const Shrapnel = (options = {}) => {
         frameHeight: 40,
         // sprite offset indices
         frameX: 0,
-        frameY: 0,
-        // for determining display offsets vs. shrapnel "type"
-        spriteCols: 3,
-        spriteRows: 4
+        frameY: 0
       },
       target: {
         width: 44,
