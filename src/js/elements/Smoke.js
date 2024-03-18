@@ -79,13 +79,8 @@ const Smoke = (options = {}) => {
     if (data.frameCount % data.spriteFrameModulus === 0) {
       // first, animate through sprite. then, fade opacity.
       if (data.spriteFrame < data.spriteFrames) {
-        // advance smoke sprite, L -> R and top to bottom
-        data.domCanvas.img.source.frameX =
-          data.spriteFrame % data.domCanvas.img.source.spriteCols;
-        data.domCanvas.img.source.frameY = Math.floor(
-          data.spriteFrame / data.domCanvas.img.source.spriteCols
-        );
         data.spriteFrame++;
+        data.domCanvas.img.src = refreshSprite();
       } else {
         data.isFading = true;
       }
@@ -163,7 +158,7 @@ const Smoke = (options = {}) => {
       ),
       spriteFrame:
         options.spriteFrame !== undefined ? options.spriteFrame : rndInt(6),
-      spriteFrames: 12,
+      spriteFrames: 11,
       isFading: false,
       fadeFrame: 0,
       fadeFrames: 8,
@@ -184,9 +179,13 @@ const Smoke = (options = {}) => {
     options
   );
 
+  function refreshSprite() {
+    return utils.image.getImageObject(`smoke-glow_${data.spriteFrame}.png`);
+  }
+
   data.domCanvas = {
     img: {
-      src: utils.image.getImageObject('smoke-sprite-glow.png'),
+      src: refreshSprite(),
       source: {
         x: 0,
         y: 0,
@@ -198,9 +197,7 @@ const Smoke = (options = {}) => {
         frameHeight: 36,
         // sprite offset indices
         frameX: 0,
-        frameY: 0,
-        // for determining display offsets vs. smoke "type"
-        spriteCols: 3
+        frameY: 0
       },
       target: {
         width: 36,
