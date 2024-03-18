@@ -136,7 +136,7 @@ const Bunker = (options = {}) => {
         data.energy + 0.05 * GAME_SPEED_RATIOED,
         data.energyMax
       );
-      if (!engineer.data.isEnemy) {
+      if (gamePrefs.bnb && !engineer.data.isEnemy) {
         bnbRepair(engineer);
       }
       if (!data.isRepairing) {
