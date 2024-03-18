@@ -44,17 +44,23 @@ const Balloon = (options = {}) => {
     const img = getCanvasBalloon();
     const { width, height, frameWidth, frameHeight } = img.source;
 
+    const isSnowing = gamePrefs.weather === 'snow';
+
     const animConfig = {
       sprite: {
-        url: getSpriteURL(),
+        url: isSnowing ? 'snow/balloon_mac_snow.png' : `balloon_#.png`,
         width,
         height,
         frameWidth,
         frameHeight,
         animationDuration: 1,
+        // snow version is a single sprite
+        animationFrameCount: isSnowing ? 0 : 9,
         reverseDirection: isEnemy
       },
-      onEnd: () => (data.domCanvas.ownershipAnimation = null)
+      onEnd: () => {
+        data.domCanvas.ownershipAnimation = null;
+      }
     };
 
     data.domCanvas.ownershipAnimation = common.domCanvas.canvasAnimation(
@@ -188,21 +194,24 @@ const Balloon = (options = {}) => {
     let facing;
 
     // limit to - / + range
-    facing = Math.min(
+    data.facing = Math.min(
       data.facingMax,
       Math.max(-data.facingMax, Math.floor(data.windOffsetX * data.facingRatio))
     );
 
-    if (facing !== data.lastFacingX) {
-      data.lastFacingX = facing;
-      data.width = data.facingWidths[facing + data.facingMax];
+    if (data.facing !== data.lastFacingX) {
+      data.lastFacingX = data.facing;
+      data.width = data.facingWidths[data.facing + data.facingMax];
       data.halfWidth = data.width / 2;
       /**
        * Update sprite position, moving up/down from center.
        * Each balloon frame is 16px tall, when scaled down.
        */
       if (data.domCanvas.img) {
-        data.domCanvas.img.source.frameY = data.frameYMiddle + facing;
+        if (gamePrefs.weather === 'snow') {
+          data.domCanvas.img.source.frameY = data.frameYMiddle + data.facing;
+        }
+        updateSprite();
       }
     }
   }
@@ -418,9 +427,9 @@ const Balloon = (options = {}) => {
       hostile: !objects.bunker, // dangerous when detached
       verticalDirection: rngPlusMinus(1, TYPES.balloon),
       verticalDirectionDefault: 1,
+      facing: options.isEnemy ? -4 : 4,
       lastFacingX: null,
       facingRatio: facingMax / (windOffsetXMax * 0.75),
-      spriteMiddle: 64,
       frameYMiddle: 4,
       facingMax,
       // larger <- or -> to smaller o (circle) shape
@@ -473,9 +482,10 @@ const Balloon = (options = {}) => {
   };
 
   function getSpriteURL() {
+    const offset = data.frameYMiddle + data.facing;
     return gamePrefs.weather === 'snow'
       ? 'snow/balloon_mac_snow.png'
-      : 'balloon_mac.png';
+      : `balloon_${offset}.png`;
   }
 
   function updateSprite() {
