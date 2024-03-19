@@ -46,6 +46,9 @@ const Balloon = (options = {}) => {
 
     const isSnowing = gamePrefs.weather === 'snow';
 
+    // update internal "facing" state
+    data.facing = isEnemy ? -4 : 4;
+
     const animConfig = {
       sprite: {
         url: isSnowing ? 'snow/balloon_mac_snow.png' : `balloon_#.png`,
@@ -513,8 +516,8 @@ const Balloon = (options = {}) => {
         frameWidth,
         frameHeight,
         frameX: 0,
-        // left vs. right-facing offsets
-        frameY: data.isEnemy ? 0 : 8
+        // left vs. right-facing offsets, snow version only
+        frameY: gamePrefs.weather !== 'snow' ? 0 : data.isEnemy ? 0 : 8
       },
       target: {
         width: frameWidth / 2,
