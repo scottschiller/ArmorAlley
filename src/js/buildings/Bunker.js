@@ -64,7 +64,7 @@ const Bunker = (options = {}) => {
 
       if (gamePrefs.bnb && sounds.bnb) {
         playSoundWithDelay(
-          bnb.sounds[
+          sounds.bnb[
             game.data.isBeavis
               ? 'beavisCapturedBunker'
               : 'buttheadCapturedBunker'
@@ -104,7 +104,7 @@ const Bunker = (options = {}) => {
 
   function bnbRepair(engineer) {
     if (!gamePrefs.bnb) return;
-    
+
     if (!data.hasBeavis && engineer.data.isBeavis) {
       data.hasBeavis = true;
     }
