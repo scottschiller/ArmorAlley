@@ -221,8 +221,8 @@ const effects = {
     const isBunker = data.type === TYPES.bunker;
     const isTurret = data.type === TYPES.turret;
 
-    // for turrets, reduce chance by 33% as they smoke too much when damaged a lot.
-    if (isTurret && Math.random() <= 0.33) return;
+    // reduce certain structures' chance of smoke, as they smoke too much when damaged a lot.
+    if ((isBunker || isTurret) && Math.random() <= 0.25) return;
 
     // bunkers can smoke across the whole thing
     const fractionWidth = isBunker ? data.halfWidth : data.halfWidth * 0.5;
@@ -252,7 +252,7 @@ const effects = {
                 (data.vX === undefined || data.vX === 0 ? plusMinus() : 1),
       vY:
         isBunker || isTurret
-          ? -rnd(5 * chance)
+          ? -rnd(6 * Math.max(0.33, chance))
           : data.type === TYPES.helicopter
             ? -rnd(3 * chance)
             : -(data.vY || 0.25) + rnd(-2),
