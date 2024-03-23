@@ -9,7 +9,8 @@ import {
   FPS,
   GAME_SPEED,
   updateGameSpeed,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  soundManager
 } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
@@ -728,7 +729,7 @@ const common = {
       window.requestAnimationFrame(callback);
     }
 
-    if (loadedAudio[fileName]) {
+    if (loadedAudio[fileName] || soundManager.disabled || !gamePrefs.sound) {
       doCallback();
       return;
     }

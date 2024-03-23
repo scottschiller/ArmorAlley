@@ -109,7 +109,7 @@ function preloadCommonSounds() {
 
 function getSound(soundReference) {
   // TODO: review, see if an early exit is still useful.
-  if (!gamePrefs.sound) return;
+  if (!gamePrefs.sound || soundManager.disabled) return;
 
   // hackish: only BnB presently uses sequences. bail if not enabled in prefs.
   if (soundReference.isSequence && !gamePrefs.bnb) return;
