@@ -742,27 +742,29 @@ function PrefsManager() {
 
     const now = Date.now();
 
-    if (now - data.lastMenuOpen > data.lastMenuOpenThrottle) {
-      data.lastMenuOpen = now;
+    if (gamePrefs.bnb) {
+      if (now - data.lastMenuOpen > data.lastMenuOpenThrottle) {
+        data.lastMenuOpen = now;
 
-      window.setTimeout(() => {
-        if (!data.active) return;
+        window.setTimeout(() => {
+          if (!data.active) return;
 
-        playSequence(
-          oneOf([
-            sounds.bnb.menuOpenV1,
-            sounds.bnb.menuOpenV2,
-            sounds.bnb.menuOpenV3
-          ]),
-          null,
-          () => data.active
-        );
+          playSequence(
+            oneOf([
+              sounds.bnb.menuOpenV1,
+              sounds.bnb.menuOpenV2,
+              sounds.bnb.menuOpenV3
+            ]),
+            null,
+            () => data.active
+          );
 
-        // hackish BnB case: ensure what we may have just queued gets heard.
-        playQueuedSounds();
-      }, 500);
-    } else {
-      playSound(sounds.bnb.beavisPoop);
+          // hackish BnB case: ensure what we may have just queued gets heard.
+          playQueuedSounds();
+        }, 500);
+      } else {
+        playSound(sounds.bnb.beavisPoop);
+      }
     }
 
     // hackish BnB case: ensure what we may have just queued gets heard.
