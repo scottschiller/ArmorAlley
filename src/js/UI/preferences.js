@@ -63,7 +63,7 @@ const defaultPrefs = {
   'lock_step': false,
   'net_player_name': '',
   'net_remote_player_name': '',
-  'sound': !!window.location.search.match(/mute/i),
+  'sound': !window.location.search.match(/mute/i),
   'volume': DEFAULT_VOLUME_MULTIPLIER, // 0-1
   'muzak': true,
   'bnb': false,
