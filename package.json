@@ -42,6 +42,7 @@
     "gulp-audiosprite": "^1.1.0",
     "gulp-clean": "^0.4.0",
     "gulp-fluent-ffmpeg": "^2.0.0",
+    "gulp-gzip": "^1.4.2",
     "gulp-image-resize": "^0.13.1",
     "gulp-imagemin": "^9.0.0",
     "gulp-replace": "^1.1.4",
