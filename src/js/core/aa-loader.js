@@ -17,16 +17,19 @@ const isLocalhost = !!wl.host.match(/localhost/i);
 const sp = new URLSearchParams(wl.search);
 const forceProd = sp.get('prod');
 const dev = !forceProd && (sp.get('dev') || !isProdSite);
+const isFloppy = wl.href.match(/floppy/i) || sp.get('floppy');
 
 // e.g., '.V20231216'
 const version = (dev || isLocalhost) && !forceProd ? '' : v || '';
 
 function hello() {
   console.log(
-    '🚁 ARMOR ALLEY: using ' +
+    '🚁 ARMOR ALLEY: ' +
       (dev
-        ? 'development JS.'
-        : `production JS build, ${
+        ? isFloppy
+          ? '💾 floppy disk build.'
+          : 'using development JS.'
+        : `using production JS build, ${
             version.length ? version.substring(1) : '[none]'
           }. Try ?dev=1 for the full source with comments.`)
   );
@@ -202,6 +205,7 @@ const aaLoader = {
   getImageRoot,
   getVideoRoot,
   hello,
+  isFloppy,
   loadGA,
   loadJS,
   loadCSS,
