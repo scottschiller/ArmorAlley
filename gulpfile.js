@@ -65,6 +65,8 @@ var merge = require('merge-stream');
 const { pipeline } = require('stream');
 var spritesmith = require('gulp.spritesmith');
 
+var imageResize = require('gulp-image-resize');
+
 // for spritesheet JSON
 var map = require('map-stream');
 
@@ -269,6 +271,8 @@ function minifyImages(callback) {
         src(
           `assets/image/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
         ),
+        // https://www.npmjs.com/package/gulp-image-resize
+        imageResize({ percentage: 50, imageMagick: true }),
         imagemin(
           [
             // https://www.npmjs.com/package/imagemin-webp

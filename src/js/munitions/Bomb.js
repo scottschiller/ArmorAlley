@@ -103,17 +103,26 @@ const Bomb = (options = {}) => {
         } else {
           // "dirt" exposion
           const dirtConfig = (() => {
-            const spriteWidth = 1024;
-            const spriteHeight = 112;
+            let spriteWidth = 1024;
+            let spriteHeight = 112;
+            let ext = 'png';
+            const webP = aaLoader.version || aaLoader.isFloppy;
+            // .webp is half-sized via build process, saves some bytes.
+            let scale = webP ? 0.5 : 1;
+            if (webP) {
+              spriteWidth *= scale;
+              spriteHeight *= scale;
+              ext = 'webp';
+            }
             return {
               // overlay: true,
-              scale: 0.75,
+              scale: 0.75 * (1 / scale),
               xOffset: 0,
               yOffset: -30,
               useDataAngle: true,
               sprite: {
                 // TODO: refactor this pattern out.
-                url: `battlefield/standalone/deviantart-Dirt-Explosion-774442026.${aaLoader.version ? 'webp' : 'png'}`,
+                url: `battlefield/standalone/deviantart-Dirt-Explosion-774442026.${ext}`,
                 width: spriteWidth,
                 height: spriteHeight,
                 frameWidth: spriteWidth / 10,
