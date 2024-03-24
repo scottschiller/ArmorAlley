@@ -387,7 +387,7 @@ const asConfigMP3 = {
   format: 'howler',
   export: 'mp3',
   output: asName,
-  gap: 0.05,
+  gap: 0.01,
   vbr: 9,
   channels: 2,
   // undocumented - consistent gap between samples
