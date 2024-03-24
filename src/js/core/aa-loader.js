@@ -37,6 +37,19 @@ function hello() {
 
 let fetched = {};
 
+function fetchGZ(url, callback) {
+  // 💾 “Special use case”: fetch + exec gzip-encoded asset(s).
+  const decompress = async (url) => {
+    const ds = new DecompressionStream('gzip');
+    const response = await fetch(url);
+    const blob_in = await response.blob();
+    const stream_in = blob_in.stream().pipeThrough(ds);
+    const blob_out = await new Response(stream_in).blob();
+    return await blob_out.text();
+  };
+  decompress(url).then((result) => callback?.(result));
+}
+
 function addScript(src, onload, type = 'module', async = false) {
   if (fetched[src]) {
     onload?.();
@@ -44,20 +57,41 @@ function addScript(src, onload, type = 'module', async = false) {
   }
 
   let s = document.createElement('script');
+
+  function ready() {
+    console.log(`Loaded JS: ${src}`);
+    fetched[src] = true;
+    onload?.();
+    if (!s) return;
+    s.onload = null;
+    s = null;
+  }
+
   // make "boot" stuff high-priority
   if (!async && src.match(/boot/i)) s.fetchpriority = 'high';
   if (type) s.type = type;
   if (async) s.async = true;
 
-  s.onload = () => {
-    console.log(`Loaded JS: ${src}`);
-    fetched[src] = true;
-    onload?.();
-    s.onload = null;
-    s = null;
-  };
+  s.onload = ready;
 
-  s.src = `${src}`;
+  if (isFloppy) {
+    // JS onload()-style callback shenanigans
+    let cbName = `aaFetchCallback_${src.replace(/[/\/]/g, '_')}`;
+
+    window[cbName] = () => {
+      // internal callback
+      ready();
+      delete window[cbName];
+    };
+
+    fetchGZ(src, (result) => {
+      // sneaky: append callback to the end of module script
+      s.text = result + `\n;window['${cbName}']?.();`;
+    });
+  } else {
+    s.src = src;
+  }
+
   document?.head?.appendChild(s);
 }
 
@@ -76,14 +110,31 @@ function addCSS(href, onload) {
     link = null;
   };
 
-  link.href = href;
-  document.head?.appendChild(link);
+  if (isFloppy) {
+    fetchGZ(href, (result) => {
+      let style = document.createElement('style');
+
+      // mimic source, for dynamic removal
+      style.setAttribute('data-href', href);
+
+      style.appendChild(document.createTextNode(result));
+      document.head?.appendChild(style);
+      link.onload();
+    });
+  } else {
+    link.href = href;
+    document.head?.appendChild(link);
+  }
 }
 
 function addHTML(href, onload) {
   // note: no caching mechanism, here; avoid storing response.
   if (!href) return;
   href = minifyAndVersion(href);
+
+  // gzip
+  if (isFloppy) return fetchGZ(href, (result) => onload?.(result));
+
   let req = new XMLHttpRequest();
   function onready() {
     console.log(`Loaded HTML: ${href}`);
@@ -100,6 +151,8 @@ function addHTML(href, onload) {
 function minifyAndVersion(url) {
   // .js, .css etc.
   const fileExt = url.substr(url.lastIndexOf('.') + 1);
+
+  if (isFloppy) return `dist/${fileExt}/${url}.gz`;
 
   // minified, production assets load from dist/ with a .V[0-9]+ versioning pattern.
   if (isProdSite || forceProd) return `dist/${fileExt}/${url}${version}`;
@@ -120,7 +173,7 @@ function getVideoRoot() {
   return (isProdSite || forceProd) ? 'dist/video' : 'assets/video';
 }
 
-function fetch(src, fetchMethod, onload) {
+function localFetch(src, fetchMethod, onload) {
   if (!src) return;
 
   // always make an array.
@@ -148,12 +201,12 @@ function fetch(src, fetchMethod, onload) {
 
 function loadJS(src, onload) {
   if (!src) return;
-  fetch(src, addScript, onload);
+  localFetch(src, addScript, onload);
 }
 
 function loadCSS(src, onload) {
   if (!src) return;
-  fetch(src, addCSS, onload);
+  localFetch(src, addCSS, onload);
 }
 
 function loadHTML(src, onload) {
@@ -174,7 +227,15 @@ function unloadCSS(src) {
     url = minifyAndVersion(url);
     fetched[url] = undefined;
     console.log(`Unloading CSS: ${url}`);
-    document.head.querySelector(`link[href="${url}"]`)?.remove?.();
+    let node, attr;
+    if (isFloppy) {
+      node = 'style';
+      attr = 'data-href';
+    } else {
+      node = 'link';
+      attr = 'href';
+    }
+    document.head.querySelector(`${node}[${attr}="${url}"]`)?.remove?.();
   });
 }
 
