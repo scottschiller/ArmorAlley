@@ -117,6 +117,17 @@
     <link
       rel="apple-touch-startup-image"
       href="dist/image/app-images/armor_alley_game_image_512x512.png" />
+    <!-- deferred webfont shenanigans: non-standard false-y `media` query -->
+    <style id="extra-fonts" media="none">
+      @font-face {
+        font-family: 'Cheddar Gothic Stencil';
+        src: url('dist/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
+          format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
     <script>
       (() => {
         // "version" string, for CSS + JS assets.
@@ -132,6 +143,11 @@
         s.type = 'module';
         s.src = isProd ? `${bootFile}.${aaVersion}` : bootFile;
         (document.head || document.documentElement).appendChild(s);
+
+        // Special case: exclude WOFF2 when storage is at a premium. 💾🗜️
+        if (!window.location.href.match(/floppy/i)) {
+          document.getElementById('extra-fonts').removeAttribute('media');
+        }
       })();
     </script>
   </head>
