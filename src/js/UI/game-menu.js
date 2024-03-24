@@ -49,7 +49,7 @@ const autoStart = searchParams.get('start');
 
 const gameTypeParam = searchParams.get('gameType');
 
-const noVideo = searchParams.get('noVideo');
+const noVideo = aaLoader.isFloppy || searchParams.get('noVideo');
 
 let customLevel = searchParams.get('customLevel');
 
