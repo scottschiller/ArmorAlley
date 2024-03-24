@@ -379,7 +379,7 @@ body.game-started #start-game-button-mobile {
 #game-menu h2 {
   position: relative;
   color: #e19632;
-  font-size: calc(5.5px * var(--menu-chicago-scale));
+  font-size: calc(4.5px * var(--menu-chicago-scale));
   line-height: 175%;
   margin: calc(1.5px * var(--menu-chicago-scale)) 0
     calc(2px * var(--menu-chicago-scale)) 0;
