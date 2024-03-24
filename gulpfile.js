@@ -80,6 +80,11 @@ replace = require('gulp-replace');
 var audiosprite = require('gulp-audiosprite');
 var ffmpeg = require('gulp-fluent-ffmpeg');
 
+// floppy disk-specific build
+var gzip = require('gulp-gzip');
+
+const floppyRoot = 'floppy-version';
+
 // common paths / patterns
 const srcRoot = 'src';
 const distRoot = 'dist';
@@ -419,6 +424,22 @@ function createAudioSpriteOGG() {
     .pipe(dest(dist('audio')));
 }
 
+function hearThatFloppy(callback) {
+  pipeline(
+    // lo-fi OGG sprite for floppy version
+    src(audioSpriteFiles),
+    audiosprite({
+      ...asConfigMP3,
+      export: 'ogg',
+      // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
+      bitrate: 32,
+      samplerate: 22050
+    }),
+    dest(`${floppyRoot}/${dist('audio')}`),
+    callback
+  );
+}
+
 function encodeStandaloneFiles() {
   return merge([encodeStandaloneMP3(), encodeStandaloneOgg()]);
 }
@@ -495,6 +516,110 @@ function copyFiles() {
   return merge(headerCSS(), headerJS(), copyStaticResources());
 }
 
+function cleanThatFloppy() {
+  return src(floppyRoot, { allowEmpty: true, read: false }).pipe(clean());
+}
+
+function copyThatFloppy() {
+  // copy select assets into a separate build path
+  return merge([
+    // gotta have a favicon.ico, of course...
+    src('assets/image/app-icons/favicon.ico').pipe(dest(floppyRoot)),
+    src('index.html').pipe(dest(floppyRoot)),
+    // note: ignore all dot-files, e.g., .DS_Store and friends
+    src([
+      'dist/**/*',
+      '!**/.*',
+      '!**/*.json',
+      '!**/*.md',
+      '!dist/audio/**/*',
+      '!dist/video/**/*'
+    ]).pipe(dest(`${floppyRoot}/dist`))
+  ]);
+}
+
+function tidyThatFloppyCopy() {
+  const floppyDist = `${floppyRoot}/dist`;
+  const globs = [
+    // drop all fonts
+    `${floppyDist}/font/**/*.*`,
+
+    // except woff2 for sysfont
+    `!${floppyDist}/font/sysfont/*.woff2`,
+
+    // drop non-gzip things
+    `${floppyDist}/css/**/*.css`,
+    `${floppyDist}/html/**/*.html`,
+
+    // all JS (but not gzip versions)
+    `${floppyDist}/js/*.js`,
+
+    // and exclude aa-boot_bundle
+    `!${floppyDist}/js/aa-boot_bundle.js`,
+
+    // no network, for now
+    `${floppyDist}/js/lib/**/*`,
+
+    // pare down images
+    `${floppyDist}/image/app-icons/**/*`,
+    `${floppyDist}/image/app-images/**/*`,
+    `${floppyDist}/image/bnb/**/*`,
+
+    // all except select UI
+    `${floppyDist}/image/UI/**/*`,
+    `!${floppyDist}/image/UI/armor-alley-wordmark-white.webp`,
+
+    // nor audio or video
+    `${floppyDist}/audio`,
+    `${floppyDist}/video`
+  ];
+
+  return src(globs, { allowEmpty: true, read: false }).pipe(clean());
+}
+
+function gzipThatFloppy() {
+  const gzipOptions = {
+    level: 9
+  };
+  return merge([
+    // index.html -> aa.html.gz (a new index.html "boot loader" will be created)
+    src(`index.html`).pipe(gzip(gzipOptions)).pipe(dest(floppyRoot)),
+
+    // CSS
+    src(`${floppyRoot}/${distCSS('*')}`)
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(`${floppyRoot}/${distPaths.css}`)),
+
+    // HTML
+    src(`${floppyRoot}/${distPaths.html}/*.html`)
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(`${floppyRoot}/${distPaths.html}`)),
+
+    // JS (excluding aa-boot_bundle)
+    src([
+      `${floppyRoot}/${distJS('*')}`,
+      `!${floppyRoot}/${distJS('aa-boot_bundle')}`
+    ])
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(`${floppyRoot}/${distPaths.js}`))
+  ]);
+}
+
+function bootThatFloppy() {
+  // floppy boot -> index.html "boot loader"
+  // this will fetch the actual game at index.html.gz
+  return src('src/floppy/index-floppy.html')
+    .pipe(rename('index.html'))
+    .pipe(dest(floppyRoot));
+}
+
+function lastFloppyCleanup() {
+  return src(`${floppyRoot}/${dist('audio/*.json')}`, {
+    allowEmpty: true,
+    read: false
+  }).pipe(clean());
+}
+
 const buildTasks = [
   bundleBootFile,
   buildSpriteSheet,
@@ -514,6 +639,25 @@ const audioTasks = [
   encodeStandaloneFiles,
   cleanAudioTemp
 ];
+
+const floppyTasks = [
+  // https://www.npmjs.com/package/gulp-gzip
+  aa,
+  cleanThatFloppy,
+  copyThatFloppy,
+  gzipThatFloppy,
+  tidyThatFloppyCopy,
+  hearThatFloppy,
+  bootThatFloppy,
+  lastFloppyCleanup
+];
+
+/**
+ * `npx gulp build-floppy`
+ * 💾 Special case: floppy disk-specific build.
+ * ---
+ */
+task('build-floppy', series(...floppyTasks));
 
 /**
  * `npx gulp audio`
