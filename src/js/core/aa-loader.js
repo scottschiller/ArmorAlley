@@ -162,15 +162,15 @@ function minifyAndVersion(url) {
 }
 
 function getAudioRoot() {
-  return (isProdSite || forceProd) ? 'dist/audio' : 'assets/audio';
+  return isProdSite || forceProd ? 'dist/audio' : 'assets/audio';
 }
 
 function getImageRoot() {
-  return (isProdSite || forceProd) ? 'dist/image' : 'assets/image';
+  return isProdSite || forceProd ? 'dist/image' : 'assets/image';
 }
 
 function getVideoRoot() {
-  return (isProdSite || forceProd) ? 'dist/video' : 'assets/video';
+  return isProdSite || forceProd ? 'dist/video' : 'assets/video';
 }
 
 function localFetch(src, fetchMethod, onload) {
