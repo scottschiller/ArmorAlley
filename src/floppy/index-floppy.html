@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" style="background-color: #000">
+  <head>
+    <title>💾 Armor Alley: Remastered</title>
+    <style>
+      body {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-image: url(data:image/gif;base64,R0lGODlhHgAeAPECAAAAAP///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFDwACACwAAAAAHgAeAAACZJSPoMvo75gEsIrJgg7NGrxs3OKBmbgplRmimhqxrftShzzT8IcDdGrj4X41YY8I7OV+yhOyudRBp9QhcgS9YptaarfJe/YSPqKSLMahzeMYU7Yqu9QW53biMYpY+RioH/dnUQAAIfkEBQ8AAgAsAgACABoAGgAAAlGUBanLeo+aXDDO6w7ewKQQcA24kGIZKqDJrem3ni7sslKN11jOx0wPfKmCQBqxZzzqfsolqikcNXc5o8xnFc2GJ5S3C0t4wIwHuQw5V8bgRwEAIfkEBQ8AAgAsAgACABoAGgAAAkqUb6GB7b/YmykuSu3FUAcAhiLoeN+IThqadhE7Yi88mjMd2gsu6goPDAqHQ98JaBQmgxEM0jJ5Nh9SaKM65TRM2pKnu92AvYpJAQAh+QQFDwACACwCAAIAGgAaAAACR5SPFsvpr9iC9MgbqsPSgQ9wHEiWIlam4Bmobni+LyrPV10vOK7v/g8M9oKmFnF1O9KALGZsx5LwokPA5qRJsLIQDPfh1RQAADs=);
+        background-size: 20px 20px;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        cursor: wait;
+      }
+    </style>
+    <!-- full-bleed in iOS landscape view, including the notch -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <script>
+      (() => {
+        /**
+         * 💾 AA: FLOPPY DISK BOOT LOADER
+         * This file becomes index.html for the floppy disk version of the game.
+         * This loader fetches and swaps in a gzip-compressed version of the regular index.html.
+         */
+        window.aaVersion = '';
+
+        const isProd = true;
+        const url = 'index.html.gz';
+
+        function fetchGZ(url, callback) {
+          // 💾 “Special use case”: fetch + exec gzip-encoded asset(s).
+          console.log(`💾 ${url.replace('dist/css', '')} 🗜️`);
+
+          const decompress = async (url) => {
+            const ds = new DecompressionStream('gzip');
+            const response = await fetch(url);
+            const blob_in = await response.blob();
+            const stream_in = blob_in.stream().pipeThrough(ds);
+            const blob_out = await new Response(stream_in).blob();
+            return await blob_out.text();
+          };
+
+          decompress(url).then((result) => callback?.(result));
+        }
+
+        fetchGZ(url, (resp) => {
+          // parse the original index.html, and insert its contents into the page.
+          const dom = new DOMParser().parseFromString(resp, 'text/html');
+
+          // basically, an entire page swap!
+          // <head> seems to respect dynamic updates only; so be it.
+          Array.from(dom.head.children).forEach((node) => {
+            // prevent some 404s - favicon + manifest.json
+            if (node?.rel?.match(/manifest|shortcut|icon/i)) return;
+
+            // all good: regular append.
+            document.head.appendChild(node);
+
+            // inline script node: just run it as-is; here be dragons, etc.
+            if (node.nodeName === 'SCRIPT' && !node.src) {
+              eval(node.text);
+            }
+          });
+
+          // meanwhile, <body> can be swapped out entirely.
+          document.body.replaceWith(dom.body);
+        });
+      })();
+    </script>
+  </head>
+  <body style="overflow: hidden"></body>
+</html>
