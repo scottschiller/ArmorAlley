@@ -42,6 +42,8 @@ console.log(`🔊 Preferred codec, based on support: ${chosenCodec}`);
 
 const audioRoot = aaLoader.getAudioRoot();
 
+const audioSpriteURL = `${AUDIO_SPRITE_ROOT}.${chosenCodec}${aaLoader.version}`;
+
 let soundIDs = 0;
 
 const soundsToPlay = [];
@@ -1458,6 +1460,7 @@ function initBNBSFX() {
 export {
   addSequence,
   addSound,
+  audioSpriteURL,
   chosenCodec,
   destroySound,
   getPanFromLocation,

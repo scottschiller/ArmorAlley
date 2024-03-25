@@ -14,7 +14,12 @@ import {
   updateClientFeatures
 } from '../core/global.js';
 import { net } from '../core/network.js';
-import { playQueuedSounds, playSound, sounds } from '../core/sound.js';
+import {
+  audioSpriteURL,
+  playQueuedSounds,
+  playSound,
+  sounds
+} from '../core/sound.js';
 import { utils } from '../core/utils.js';
 import {
   dependsOnGameType,
@@ -467,10 +472,22 @@ function init() {
   }
 
   // preload game CSS and main sprite, too.
-  window.setTimeout(() => {
-    aaLoader.loadCSS('aa-game-ui.css');
-    utils.image.load(SPRITESHEET_URL);
-  }, 5000);
+  if (aaLoader.isFloppy) {
+    aaLoader.loadCSS('aa-game-ui.css', () => {
+      aaLoader.loadGeneric(SPRITESHEET_URL, () => {
+        if (!gamePrefs.sound) return;
+        aaLoader.loadGeneric(audioSpriteURL);
+      });
+    });
+  } else {
+    window.setTimeout(() => {
+      aaLoader.loadCSS('aa-game-ui.css');
+      aaLoader.loadGeneric(SPRITESHEET_URL);
+      if (gamePrefs.sound) {
+        aaLoader.loadGeneric(audioSpriteURL);
+      }
+    }, 5000);
+  }
 }
 
 function afterTransitionIn() {
