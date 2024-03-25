@@ -475,6 +475,7 @@ function init() {
   if (aaLoader.isFloppy) {
     aaLoader.loadCSS('aa-game-ui.css', () => {
       aaLoader.loadGeneric(SPRITESHEET_URL, () => {
+        utils.image.load(SPRITESHEET_URL);
         if (!gamePrefs.sound) return;
         aaLoader.loadGeneric(audioSpriteURL);
       });
