@@ -83,12 +83,12 @@ var ffmpeg = require('gulp-fluent-ffmpeg');
 // floppy disk-specific build
 var gzip = require('gulp-gzip');
 
-const floppyRoot = 'floppy-version';
-
 // common paths / patterns
 const srcRoot = 'src';
 const distRoot = 'dist';
 const imageRoot = 'assets/image';
+
+const floppyRoot = `${distRoot}/floppy-version`;
 
 function root(path) {
   return `${srcRoot}/${path}`;
@@ -655,6 +655,8 @@ const floppyTasks = [
 /**
  * `npx gulp build-floppy`
  * 💾 Special case: floppy disk-specific build.
+ * This builds a version of the game intended for loading from 3.5" or 5.25" FDD media.
+ * This references the stock build, so run `build` at least once before this task.
  * ---
  */
 task('build-floppy', series(...floppyTasks));
@@ -679,10 +681,11 @@ task('build', series(aa, cleanDist, ...buildTasks));
 
 /**
  * `npx gulp`
- * Default task: full build of game assets into dist/
+ * Default task: full build of audio sprites, and game assets into dist/
  * ---
  * This task builds the audio and image sprites, then builds the game including dynamically-built sprite configurations.
  * For a faster build, use `npx gulp build` once the audio sprite has been generated at least once.
  * The audio task can be run separately, via `npx gulp audio`.
+ * The floppy build is also separate, and not included here.
  */
 exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks);
