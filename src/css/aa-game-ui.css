@@ -1,21 +1,6 @@
 /**
  * AA: Game UI
  */
-@font-face {
-  font-display: swap;
-  /* https://www.jetbrains.com/lp/mono/ */
-  font-family: JetBrains Mono;
-  font-style: normal;
-  font-weight: 400;
-  /**
-   * 50% file savings via character subsetting
-   * https://documentation.platformos.com/best-practices/frontend-performance/optimizing-font-files
-   */
-  src: url(../../assets/font/JetBrainsMono/JetBrainsMono-Regular-subset.woff2)
-    format('woff2');
-  unicode-range: U+21, U+22, U+25-5F, U+61-7D;
-}
-
 body.is_safari:not(.is-mobile) #player-status-bar,
 body.is_safari:not(.is-mobile) .sprite {
   /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
