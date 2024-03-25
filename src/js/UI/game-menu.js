@@ -482,7 +482,7 @@ function init() {
   } else {
     window.setTimeout(() => {
       aaLoader.loadCSS('aa-game-ui.css');
-      aaLoader.loadGeneric(SPRITESHEET_URL);
+      utils.image.load(SPRITESHEET_URL);
       if (gamePrefs.sound) {
         aaLoader.loadGeneric(audioSpriteURL);
       }
