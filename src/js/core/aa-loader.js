@@ -37,17 +37,153 @@ function hello() {
 
 let fetched = {};
 
+let appended,
+  hideTimer,
+  progressContainer,
+  progressHeight,
+  progressBar,
+  fileLabel;
+
+if (isFloppy) {
+  progressContainer = document.createElement('div');
+
+  progressHeight = '20px';
+
+  Object.assign(progressContainer.style, {
+    position: 'absolute',
+    bottom: progressHeight,
+    left: '50%',
+    width: '16rem',
+    transform: 'translate3d(-50%, 0%, 0)',
+    height: progressHeight,
+    borderRadius: '6px',
+    border: '1px solid #fff',
+    background: 'rgba(0, 0, 0, 0.5)',
+    overflow: 'hidden'
+  });
+
+  progressBar = document.createElement('div');
+
+  const barStyle = {
+    position: 'absolute',
+    top: '0px',
+    left: '0px',
+    width: '0%',
+    height: '100%',
+    background: '#fff'
+  };
+
+  Object.assign(progressBar.style, barStyle);
+
+  progressContainer.appendChild(progressBar);
+
+  fileLabel = document.createElement('div');
+
+  Object.assign(fileLabel.style, {
+    ...barStyle,
+    fontFamily: 'monospace',
+    fontSize: '12px',
+    lineHeight: progressHeight,
+    background: 'transparent',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    color: '#fff',
+    width: '100%'
+  });
+
+  progressContainer.appendChild(fileLabel);
+}
+
+function cancelHide() {
+  if (hideTimer) {
+    clearTimeout(hideTimer);
+    hideTimer = null;
+  }
+}
+
+function renderProgress(url, progress = 0) {
+  if (!isFloppy) return;
+
+  if (!appended) {
+    document.body.appendChild(progressContainer);
+    appended = true;
+  }
+
+  // ensure visibility
+  progressContainer.style.display = 'block';
+
+  // mix-blend-mode: invert text color as progress bar passes underneath.
+  const toRemove = 'dist/';
+  let offset = url.indexOf(toRemove);
+  if (offset !== -1) {
+    offset += toRemove.length;
+  } else {
+    offset = 0;
+  }
+
+  fileLabel.innerHTML = `&nbsp;💾 <span style="mix-blend-mode:exclusion">${url.substring(offset)}: ${progress}%</span>`;
+
+  progressBar.style.width = `${progress}%`;
+
+  cancelHide();
+}
+
+async function fetchWithProgress(url, callback) {
+  const response = await fetch(url);
+
+  const bytesTotal = Number(response.headers.get('content-length'));
+
+  const reader = response.body.getReader();
+  let bytesReceived = 0;
+
+  while (true) {
+    const result = await reader.read();
+
+    if (result.done) {
+      renderProgress(url, 100);
+      if (isFloppy && !hideTimer) {
+        hideTimer = setTimeout(() => {
+          progressContainer.style.display = 'none';
+          hideTimer = null;
+        }, 1000);
+      }
+      break;
+    }
+
+    bytesReceived += result.value.length;
+
+    console.log(
+      (isFloppy ? '💾 ' : '') + `${url}: ${bytesReceived} / ${bytesTotal}`
+    );
+
+    const loaded = bytesReceived / bytesTotal;
+    renderProgress(url, Math.floor(100 * loaded));
+  }
+
+  callback?.();
+}
+
 function fetchGZ(url, callback) {
   // 💾 “Special use case”: fetch + exec gzip-encoded asset(s).
-  const decompress = async (url) => {
-    const ds = new DecompressionStream('gzip');
-    const response = await fetch(url);
-    const blob_in = await response.blob();
-    const stream_in = blob_in.stream().pipeThrough(ds);
-    const blob_out = await new Response(stream_in).blob();
-    return await blob_out.text();
-  };
-  decompress(url).then((result) => callback?.(result));
+  renderProgress(url);
+
+  fetchWithProgress(url, () => {
+    const decompress = async (url) => {
+      // dirty: fetch "again", but from cache. :X
+      // TODO: DRY, avoid additional fetch.
+      const response = await fetch(url);
+
+      const blob_in = await response.blob();
+      const stream_in = blob_in
+        .stream()
+        .pipeThrough(new DecompressionStream('gzip'));
+      const blob_out = await new Response(stream_in).blob();
+      return await blob_out.text();
+    };
+
+    decompress(url).then((result) => callback?.(result));
+  });
 }
 
 function addScript(src, onload, type = 'module', async = false) {
@@ -152,7 +288,12 @@ function minifyAndVersion(url) {
   // .js, .css etc.
   const fileExt = url.substr(url.lastIndexOf('.') + 1);
 
-  if (isFloppy) return `dist/${fileExt}/${url}.gz`;
+  /**
+   * Prepend `dist/` as needed.
+   * Only text-based resources are gzip-encoded.
+   */
+  if (isFloppy)
+    return `${url.match(/dist\//i) ? '' : 'dist'}/${fileExt}/${url}${url.match(/\.(js|css|html)/i) ? '.gz' : ''}`;
 
   // minified, production assets load from dist/ with a .V[0-9]+ versioning pattern.
   if (isProdSite || forceProd) return `dist/${fileExt}/${url}${version}`;
@@ -215,6 +356,10 @@ function loadHTML(src, onload) {
   addHTML(src, onload);
 }
 
+function loadGeneric(src, onload) {
+  fetchWithProgress(src, onload);
+}
+
 function unloadCSS(src) {
   // always make an array.
   if (!(src instanceof Array)) {
@@ -267,10 +412,11 @@ const aaLoader = {
   getVideoRoot,
   hello,
   isFloppy,
-  loadGA,
-  loadJS,
   loadCSS,
+  loadGA,
+  loadGeneric,
   loadHTML,
+  loadJS,
   version,
   unloadCSS
 };
