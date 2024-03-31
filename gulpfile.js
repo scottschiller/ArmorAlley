@@ -544,6 +544,11 @@ function tidyThatFloppyCopy() {
     // drop all fonts
     `${floppyDist}/font/**/*.*`,
 
+    // empty directories
+    `${floppyDist}/font/CheddarGothicStencil`,
+    `${floppyDist}/font/JetBrainsMono`,
+    `${floppyDist}/font/war-wound`,
+
     // except woff2 for sysfont
     `!${floppyDist}/font/sysfont/*.woff2`,
 
@@ -558,15 +563,17 @@ function tidyThatFloppyCopy() {
     `!${floppyDist}/js/aa-boot_bundle.js`,
 
     // no network, for now
-    `${floppyDist}/js/lib/**/*`,
+    `${floppyDist}/js/lib`,
 
     // pare down images
-    `${floppyDist}/image/app-icons/**/*`,
-    `${floppyDist}/image/app-images/**/*`,
-    `${floppyDist}/image/bnb/**/*`,
+    `${floppyDist}/image/app-icons`,
+    `${floppyDist}/image/app-images`,
+    `${floppyDist}/image/bnb`,
+    `${floppyDist}/image/snow`,
 
     // all except select UI
     `${floppyDist}/image/UI/**/*`,
+    // drop snow for now, too.
     `!${floppyDist}/image/UI/armor-alley-wordmark-white.webp`,
 
     // nor audio or video
