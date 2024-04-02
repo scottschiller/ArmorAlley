@@ -27,6 +27,8 @@ const upscaleByName = {
   'infantry-enemy-sprite-horizontal.png': 2,
   'infantry-sprite-horizontal.png': 2,
   'landing-pad-sprite.png': 2,
+  'missile-launcher.png': 2,
+  'missile-launcher-enemy.png': 2,
   'parachute-infantry.png': 2,
   'parachute-infantry-enemy.png': 2,
 };
