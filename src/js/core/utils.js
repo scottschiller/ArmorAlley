@@ -30,6 +30,10 @@ function addSeries(prefix, len) {
 }
 
 addSeries('balloon_', 8);
+addSeries('helicopter_', 3);
+addSeries('helicopter-enemy_', 3);
+addSeries('helicopter-rotating_', 3);
+addSeries('helicopter-rotating-enemy_', 3);
 const utils = {
   array: {
     compareByLastItem: () => {
