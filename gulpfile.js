@@ -533,7 +533,9 @@ function copyThatFloppy() {
       '!**/*.json',
       '!**/*.md',
       '!dist/audio/**/*',
-      '!dist/video/**/*'
+      '!dist/video/**/*',
+      `!dist/image/unused/**/*`,
+      `!dist/image/unused`
     ]).pipe(dest(`${floppyRoot}/dist`))
   ]);
 }
