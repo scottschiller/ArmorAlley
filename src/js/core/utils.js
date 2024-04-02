@@ -24,6 +24,7 @@ function addSeries(prefix, len) {
   }
 }
 
+addSeries('balloon_', 8);
 const utils = {
   array: {
     compareByLastItem: () => {
