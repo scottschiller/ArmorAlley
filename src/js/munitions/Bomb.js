@@ -530,8 +530,8 @@ const Bomb = (options = {}) => {
   };
 
   const spriteConfig = (() => {
-    const spriteWidth = 28;
-    const spriteHeight = 12;
+    const spriteWidth = 26;
+    const spriteHeight = 10;
     return {
       src: utils.image.getImageObject('bomb.png'),
       source: {
