@@ -11,6 +11,16 @@ const emptyURL = 'NULL';
 const blankImage = new Image();
 blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
+// sneaky tricks: source image -> canvas upscaling
+const upscaleByName = {
+};
+
+function addSeries(prefix, len) {
+  for (let i = 0; i <= len; i++) {
+    upscaleByName[`${prefix}${i}.png`] = 2;
+  }
+}
+
 const utils = {
   array: {
     compareByLastItem: () => {
@@ -130,13 +140,24 @@ const utils = {
         let w = ssConfig[2];
         let h = ssConfig[3];
 
-        canvas.width = w;
-        canvas.height = h;
+        const imageName = imgRef.substring(imgRef.lastIndexOf('/') + 1);
+        const scale = upscaleByName[imageName] || 1;
+
+        const targetWidth = w * scale;
+        const targetHeight = h * scale;
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        let ctx = canvas.getContext('2d', {
+          useDevicePixelRatio: false,
+          alpha: true
+        });
 
         // note: no smoothing, this is a 1:1-scale copy.
-        let ctx = canvas.getContext('2d', { alpha: true });
+        ctx.imageSmoothingEnabled = false;
 
-        ctx.drawImage(ssImg, x, y, w, h, 0, 0, w, h);
+        ctx.drawImage(ssImg, x, y, w, h, 0, 0, targetWidth, targetHeight);
 
         extractedImg.onload = () => {
           extractedImg.onload = null;
