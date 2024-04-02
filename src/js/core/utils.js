@@ -21,6 +21,8 @@ const upscaleByName = {
   'cloud-2.png': 2,
   'cloud-3.png': 2,
   'landing-pad-sprite.png': 2,
+  'parachute-infantry.png': 2,
+  'parachute-infantry-enemy.png': 2,
 };
 
 function addSeries(prefix, len) {
