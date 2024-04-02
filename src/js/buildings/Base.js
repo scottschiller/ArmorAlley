@@ -29,6 +29,7 @@ const Base = (options = {}) => {
   let css, data, dom, exports, height, missileVMax, width, didWin;
 
   let counter = 0;
+  let canShowLetter;
   let lettermanDelay = 1500;
   const counterMax = 30;
 
@@ -116,6 +117,18 @@ const Base = (options = {}) => {
     common.setFrameTimeout(fire, 250 + rng(250, data.type));
   }
 
+  function delayedNukeAndLetter() {
+    const hugeBoomDelay = 2500;
+    common.setFrameTimeout(nukeTheBase, hugeBoomDelay);
+
+    if (canShowLetter) {
+      common.setFrameTimeout(() => {
+        // as applicable, show a letter from "the old tanker."
+        game.objects.envelope.show(didWin);
+      }, lettermanDelay);
+    }
+  }
+
   function smallBoom(exports) {
     if (rnd(1) >= 0.66) {
       effects.domFetti(exports);
@@ -170,24 +183,25 @@ const Base = (options = {}) => {
     counter++;
 
     if (counter >= counterMax) {
-      let hugeBoomDelay = 2500;
-
-      const canShowLetter =
+      canShowLetter =
         (tutorialMode || campaignBattles.includes(levelName)) && !net.active;
 
       if (!didWin) {
         // final explosion sequence
+
+        if (gamePrefs.bnb) {
           playSequence(sounds.bnb?.gameOverLose);
-        common.setFrameTimeout(nukeTheBase, hugeBoomDelay);
-        if (canShowLetter) {
-          common.setFrameTimeout(() => {
-            // as applicable, show a letter from "the old tanker."
-            game.objects.envelope.show(didWin);
-          }, lettermanDelay);
         }
+
+        delayedNukeAndLetter();
       } else {
         // hackish: reset the sound queue, a bunch of things may have piled up.
         // at this point, irrelevant because the battle is over.
+        if (!gamePrefs.bnb) {
+          delayedNukeAndLetter();
+          return;
+        }
+
         resetBNBSoundQueue();
 
         playSound(sounds.bnb?.desertSceneGameOver, exports, {
