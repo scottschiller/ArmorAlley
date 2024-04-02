@@ -13,6 +13,9 @@ blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
 // sneaky tricks: source image -> canvas upscaling
 const upscaleByName = {
+  'base-sprite.png': 2,
+  'base-sprite-enemy.png': 2,
+  'base-sprite-burning.png': 2,
 };
 
 function addSeries(prefix, len) {

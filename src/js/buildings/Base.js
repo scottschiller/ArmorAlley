@@ -533,9 +533,8 @@ const Base = (options = {}) => {
 
     const animConfig = (() => {
       const spriteWidth = 208;
-      const spriteHeight = 265;
+      const spriteHeight = 270;
       return {
-        yOffset: 0.75,
         sprite: {
           url: getSpriteURL(),
           width: spriteWidth,
