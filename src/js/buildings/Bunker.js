@@ -585,8 +585,8 @@ const Bunker = (options = {}) => {
   };
 
   const spriteConfig = (() => {
-    const spriteWidth = 104;
-    const spriteHeight = 54; // actually 51, but hacking the height for alignnment here :X
+    const spriteWidth = 106;
+    const spriteHeight = 52;
     return {
       src: utils.image.getImageObject(getSpriteURL()),
       source: {
@@ -598,7 +598,7 @@ const Bunker = (options = {}) => {
       target: {
         width: spriteWidth / 2,
         height: spriteHeight / 2,
-        yOffset: -0.25
+        yOffset: -2.5
       }
     };
   })();
