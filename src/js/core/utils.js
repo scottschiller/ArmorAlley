@@ -34,6 +34,7 @@ addSeries('helicopter_', 3);
 addSeries('helicopter-enemy_', 3);
 addSeries('helicopter-rotating_', 3);
 addSeries('helicopter-rotating-enemy_', 3);
+addSeries('shrapnel-glow_v', 11);
 addSeries('smoke-glow_', 11);
 addSeries('tank_', 2);
 addSeries('tank-enemy_', 2);
