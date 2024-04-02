@@ -16,6 +16,9 @@ const upscaleByName = {
   'base-sprite.png': 2,
   'base-sprite-enemy.png': 2,
   'base-sprite-burning.png': 2,
+  'cloud-1.png': 2,
+  'cloud-2.png': 2,
+  'cloud-3.png': 2,
 };
 
 function addSeries(prefix, len) {
