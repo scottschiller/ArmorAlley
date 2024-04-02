@@ -32,6 +32,8 @@ function addSeries(prefix, len) {
 }
 
 addSeries('balloon_', 8);
+addSeries('explosion-large_', 4);
+addSeries('explosion-large-2_', 4);
 addSeries('generic-explosion_', 4);
 addSeries('generic-explosion-2_', 4);
 addSeries('helicopter_', 3);
