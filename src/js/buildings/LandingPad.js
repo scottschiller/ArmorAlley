@@ -46,9 +46,8 @@ const LandingPad = (options = {}) => {
 
     const animConfig = (() => {
       const spriteWidth = 162;
-      const spriteHeight = 68;
+      const spriteHeight = 56;
       return {
-        yOffset: -0.75,
         sprite: {
           url: 'landing-pad-sprite.png',
           width: spriteWidth,
