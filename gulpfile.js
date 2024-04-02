@@ -124,7 +124,7 @@ const audioSpriteSheet = {
 const asName = 'aa-spritesheet';
 
 const spriteSheet = {
-  glob: `${imageRoot}/*.png`,
+  glob: [`${imageRoot}/*.png`, `!${imageRoot}/unused/*.*`],
   png: `${asName}.png`,
   json: `${asName}.json`,
   js: `${imageSpriteModule}.js`,
