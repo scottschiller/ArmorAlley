@@ -31,6 +31,7 @@ const upscaleByName = {
   'missile-launcher-enemy.png': 2,
   'parachute-infantry.png': 2,
   'parachute-infantry-enemy.png': 2,
+  'smart-missile.png': 2,
   'super-bunker_mac.png': 2,
   'tank_flame.png': 2,
   'turret-sprite.png': 2
