@@ -31,6 +31,7 @@ const upscaleByName = {
   'engineer-sprite-horizontal.png': 2,
   'flower.png': 2,
   'flower-bush.png': 2,
+  'flowers.png': 2,
   'grass.png': 2,
   'grave-cross.png': 2,
   'gravestone.png': 2,
