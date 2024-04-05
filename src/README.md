@@ -98,7 +98,7 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 * To build the assets, run this from the CLI in the AA home directory (which has `gulpfile.js`)...
 
-  `npx gulp`
+  `gulp`
 
   Ideally, this will run without a bunch of errors. Take a look at [gulpfile.js](gulpfile.js) for some notes as to requirements, and troubleshooting.
 

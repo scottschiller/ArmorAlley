@@ -9,15 +9,15 @@
  * Setup:
  *  `npm install`
  *
- * Default build, full game (audio + image sprite + assets, placed into `dist/`):
- *  `npx gulp`
+ * Default build using `gulp-cli`, full game (audio + image sprite + assets, placed into `dist/`):
+ *  `gulp`
  *
  * Faster build, once audio sprite has been generated:
- *  `npx gulp build`
+ *  `gulp build`
  *
  * The audio "sprite" (single file with many sounds) can take some time to run.
  * Once this task has run, a `build` or default task will include the new sprite + config.
- *  `npx gulp audio`
+ *  `gulp audio`
  *
  * Audio and image "sprites" have configuration / definition JS files, which are built and stored in src/config.
  * These config modules are loaded by the game JS and rolled up into the bundle at build time.
@@ -662,16 +662,16 @@ const floppyTasks = [
 ];
 
 /**
- * `npx gulp build-floppy`
  * 💾 Special case: floppy disk-specific build.
  * This builds a version of the game intended for loading from 3.5" or 5.25" FDD media.
+ * `gulp build-floppy`
  * This references the stock build, so run `build` at least once before this task.
  * ---
  */
 task('build-floppy', series(...floppyTasks));
 
 /**
- * `npx gulp audio`
+ * `gulp audio`
  * Builds the audio sprite + config JS module.
  * ---
  * Run default build task to roll these changes into the full bundle.
@@ -680,7 +680,7 @@ task('build-floppy', series(...floppyTasks));
 task('audio', series(aa, ...audioTasks));
 
 /**
- * `npx gulp build`
+ * `gulp build`
  * Builds the game, without generating or re-building the audio sprite portion.
  * ---
  * This is handy for regular development and build testing.
@@ -689,12 +689,12 @@ task('audio', series(aa, ...audioTasks));
 task('build', series(aa, cleanDist, ...buildTasks));
 
 /**
- * `npx gulp`
+ * `gulp`
  * Default task: full build of audio sprites, and game assets into dist/
  * ---
  * This task builds the audio and image sprites, then builds the game including dynamically-built sprite configurations.
- * For a faster build, use `npx gulp build` once the audio sprite has been generated at least once.
- * The audio task can be run separately, via `npx gulp audio`.
+ * For a faster build, use `gulp build` once the audio sprite has been generated at least once.
+ * The audio task can be run separately, via `gulp audio`.
  * The floppy build is also separate, and not included here.
  */
 exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks);
