@@ -467,17 +467,17 @@ const effects = {
     const sprites = [
       {
         url: 'explosion-large_#.png',
-        width: 112,
+        width: 102,
         height: 220,
-        frameWidth: 112,
+        frameWidth: 102,
         frameHeight: 44,
         hideAtEnd: true
       },
       {
         url: 'explosion-large-2_#.png',
-        width: 112,
+        width: 102,
         height: 220,
-        frameWidth: 112,
+        frameWidth: 102,
         frameHeight: 44,
         hideAtEnd: true
       }
