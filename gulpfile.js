@@ -697,6 +697,7 @@ function floppy360KTask(callback) {
 }
 
 function floppy1200KTask() {
+  // default floppy build: 1200k version.
   return series(...floppyTasks);
 }
 
