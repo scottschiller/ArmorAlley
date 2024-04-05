@@ -88,7 +88,12 @@ const srcRoot = 'src';
 const distRoot = 'dist';
 const imageRoot = 'assets/image';
 
-const floppyRoot = `${distRoot}/floppy-version`;
+const floppyTypes = {
+  _360: 'floppy-360k',
+  _1200: 'floppy-1200k'
+}
+
+let floppyRoot = `${distRoot}/${floppyTypes._1200}`;
 
 function root(path) {
   return `${srcRoot}/${path}`;
@@ -529,6 +534,8 @@ function copyThatFloppy() {
     // note: ignore all dot-files, e.g., .DS_Store and friends
     src([
       'dist/**/*',
+      // exclude any floppy versions, too
+      '!dist/floppy-*/**/*',
       '!**/.*',
       '!**/*.json',
       '!**/*.md',
@@ -623,7 +630,22 @@ function bootThatFloppy() {
 }
 
 function lastFloppyCleanup() {
-  return src(`${floppyRoot}/${dist('audio/*.json')}`, {
+  return src([
+    `${floppyRoot}/${dist('audio/*.json')}`,
+    // ensure the other floppy version didn't sneak in
+    `${floppyRoot}/dist/floppy-*`
+  ], {
+    allowEmpty: true,
+    read: false
+  }).pipe(clean());
+}
+
+function lastFloppyCleanup360() {
+  // drop all audio for 360K version
+  return src([
+    // `${floppyRoot}/${dist('audio/**/*')}`,
+    `${floppyRoot}/${dist('audio')}`
+  ], {
     allowEmpty: true,
     read: false
   }).pipe(clean());
@@ -661,14 +683,37 @@ const floppyTasks = [
   lastFloppyCleanup
 ];
 
+const floppyTasks360 = [
+  ...floppyTasks,
+  lastFloppyCleanup360
+];
+
+function floppy360KTask(callback) {
+  return series(function set360Root(callback) {
+    floppyRoot = `${distRoot}/${floppyTypes._360}`;
+    callback();
+  },
+  ...floppyTasks360);
+}
+
+function floppy1200KTask() {
+  return series(...floppyTasks);
+}
+
 /**
- * 💾 Special case: floppy disk-specific build.
- * This builds a version of the game intended for loading from 3.5" or 5.25" FDD media.
  * `gulp build-floppy`
+ * 💾 Special case: floppy disk-specific builds.
+ * This builds a version of the game intended for loading from 3.5" and 5.25" FDD media.
  * This references the stock build, so run `build` at least once before this task.
  * ---
  */
-task('build-floppy', series(...floppyTasks));
+task('build-floppy', series(...floppyTasks, floppy360KTask()));
+
+// 360 KB version of floppy build.
+task('build-floppy-360', floppy360KTask());
+
+// 1.2-MB version of floppy build.
+task('build-floppy-1200', floppy1200KTask());
 
 /**
  * `gulp audio`

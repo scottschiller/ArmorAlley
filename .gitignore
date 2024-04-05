@@ -13,7 +13,7 @@ dist/image/
 dist/spritesheet/
 dist/video/
 dist/video/bnb/
-dist/floppy-version
+dist/floppy-*
 homepage
 misc
 build.js
