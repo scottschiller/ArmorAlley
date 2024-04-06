@@ -18,6 +18,8 @@ const upscaleByName = {
   'base-sprite-enemy.png': 2,
   'base-sprite-burning.png': 2,
   'bomb.png': 2,
+  'bunker-burning-sprite.png': 2,
+  'bunker-dead.png': 2,
   'cactus.png': 2,
   'cactus2.png': 2,
   'checkmark-grass.png': 2,

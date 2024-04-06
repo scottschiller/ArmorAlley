@@ -242,7 +242,7 @@ const Bunker = (options = {}) => {
     // TODO: work into a common / utility shared with SuperBunker bits.
 
     const burningConfig = (() => {
-      const spriteWidth = 106;
+      const spriteWidth = 104;
       const spriteHeight = 72;
       return {
         sprite: {
@@ -323,7 +323,7 @@ const Bunker = (options = {}) => {
           deadConfig.target.y = data.y;
 
           // TODO: sort out the offset issue
-          deadConfig.target.yOffset = -5;
+          deadConfig.target.yOffset = -8;
           data.domCanvas.img = deadConfig;
         }, burninatingTime * burnOutFade);
       }, burninatingTime);
@@ -604,8 +604,8 @@ const Bunker = (options = {}) => {
   })();
 
   const deadConfig = (() => {
-    const spriteWidth = 106;
-    const spriteHeight = 21; // actually 18, but hacking the height for alignnment here :X
+    const spriteWidth = 104;
+    const spriteHeight = 18;
     return {
       src: utils.image.getImageObject('bunker-dead.png'),
       source: {
