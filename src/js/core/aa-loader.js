@@ -153,9 +153,9 @@ async function fetchWithProgress(url, callback) {
 
     bytesReceived += result.value.length;
 
-    console.log(
-      (isFloppy ? '💾 ' : '') + `${url}: ${bytesReceived} / ${bytesTotal}`
-    );
+    if (isFloppy) {
+      console.log(`💾 ${url}: ${bytesReceived} / ${bytesTotal}`);
+    }
 
     const loaded = bytesReceived / bytesTotal;
     renderProgress(url, Math.floor(100 * loaded));
