@@ -100,7 +100,7 @@ const defaultPrefs = {
   'notify_smart-missile': true,
   'notify_tank': true,
   'notify_van': true,
-  'alt_smart_missiles': true,
+  'alt_smart_missiles': !isMobile,
   'modern_smart_missiles': true,
   'engineers_repair_bunkers': true,
   'engineers_rob_the_bank': true,
