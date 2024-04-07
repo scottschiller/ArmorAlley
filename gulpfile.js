@@ -85,16 +85,21 @@ var ffmpeg = require('gulp-fluent-ffmpeg');
 var gzip = require('gulp-gzip');
 
 // common paths / patterns
-const srcRoot = 'src';
-const distRoot = 'dist';
-const imageRoot = 'assets/image';
+let srcRoot = 'src';
+const srcRoot360 = 'src-360k';
+const distRootPath = 'dist';
+let distRoot = distRootPath;
 
 const floppyTypes = {
   _360: 'floppy-360k',
   _1200: 'floppy-1200k'
-}
+};
 
 let floppyRoot = `${distRoot}/${floppyTypes._1200}`;
+
+function asset(path) {
+  return `${assetPath}/${path}`;
+}
 
 function root(path) {
   return `${srcRoot}/${path}`;
@@ -104,20 +109,41 @@ function dist(path) {
   return `${distRoot}/${path}`;
 }
 
+// root path for binary assets: images, etc.
+const assetPath = 'assets';
+
+const audioPath = 'audio';
 const cssPath = 'css';
+const fontPath = 'font';
 const htmlPath = 'html';
+const imagePath = 'image';
 const jsPath = 'js';
 const libPath = 'lib';
-const imagePath = 'image';
+const videoPath = 'video';
 
-const distPaths = {
-  config: 'src/config',
-  css: dist(cssPath),
-  html: dist(htmlPath),
-  js: dist(jsPath),
-  lib: dist(`${jsPath}/${libPath}`),
-  spriteSheet: dist(imagePath)
-};
+// asset paths
+const ap = [audioPath, fontPath, imagePath, videoPath].map((path) => ({
+  [path]: asset(path)
+}));
+
+const imageRoot = `${assetPath}/${imagePath}`;
+
+function updateDistPaths() {
+  dp = {
+    audio: dist(audioPath),
+    config: `${srcRoot}/config`,
+    css: dist(cssPath),
+    font: dist(fontPath),
+    html: dist(htmlPath),
+    image: dist(imagePath),
+    js: dist(jsPath),
+    lib: dist(`${jsPath}/${libPath}`),
+    video: dist(videoPath)
+  };
+}
+
+let dp;
+updateDistPaths();
 
 const audioSpriteModule = 'audioSpriteConfig';
 const imageSpriteModule = 'imageSpriteConfig';
@@ -138,24 +164,23 @@ const spriteSheet = {
 };
 
 const standaloneFiles = [
-  'assets/audio/wav/ipanema-elevator.wav',
-  'assets/audio/wav/danger_zone_midi_doom_style.wav'
+  `${assetPath}/${audioPath}/wav/ipanema-elevator.wav`,
+  `${assetPath}/${audioPath}/wav/danger_zone_midi_doom_style.wav`
 ];
 
-const headerFile = root('aa_header.txt');
-
+const headerFile = () => root('aa_header.txt');
 const css = (file) => root(`${cssPath}/${file}.css`);
 const js = (file) => root(`${jsPath}/${file}.js`);
 const html = (file) => root(`${htmlPath}/${file}.html`);
-const distCSS = (file) => `${distRoot}/css/${file}.css`;
-const distJS = (file) => `${distRoot}/js/${file}.js`;
+const distCSS = (file) => `${distRoot}/${cssPath}/${file}.css`;
+const distJS = (file) => `${distRoot}/${jsPath}/${file}.js`;
 
 // note: these have path + extensions added.
-const bootFile = js('aa-boot');
-const bootBundleFile = distJS('aa-boot_bundle');
+const bootFile = () => js('aa-boot');
+const bootBundleFile = () => distJS('aa-boot_bundle');
 
-const mainJSFile = js('aa');
-const bundleFile = distJS('aa');
+const mainJSFile = () => js('aa');
+const bundleFile = () => distJS('aa');
 
 const imageInlinerOpts = {
   assetPaths: [imageRoot],
@@ -171,17 +196,17 @@ const rollupOpts = {
 };
 
 async function bundleJS() {
-  const bundle = await rollup({ ...rollupOpts, input: mainJSFile });
-  return bundle.write({ file: bundleFile });
+  const bundle = await rollup({ ...rollupOpts, input: mainJSFile() });
+  return bundle.write({ file: bundleFile() });
 }
 
 async function bundleBootFile() {
-  const bundle = await rollup({ ...rollupOpts, input: bootFile });
-  return bundle.write({ file: bootBundleFile });
+  const bundle = await rollup({ ...rollupOpts, input: bootFile() });
+  return bundle.write({ file: bootBundleFile() });
 }
 
 function minifyBootBundle() {
-  return src(bootBundleFile)
+  return src(bootBundleFile())
     .pipe(
       terser({
         // https://github.com/terser/terser#minify-options
@@ -189,11 +214,11 @@ function minifyBootBundle() {
         ecma: '2016'
       })
     )
-    .pipe(dest(distPaths.js));
+    .pipe(dest(dp.js));
 }
 
 function minifyJS() {
-  return src(bundleFile)
+  return src(bundleFile())
     .pipe(
       terser({
         // https://github.com/terser/terser#minify-options
@@ -201,16 +226,18 @@ function minifyJS() {
         ecma: '2016'
       })
     )
-    .pipe(dest(distPaths.js));
+    .pipe(dest(dp.js));
 }
 
 function headerJS() {
-  return src([headerFile, bundleFile]).pipe(concat(bundleFile)).pipe(dest('.'));
+  return src([headerFile(), bundleFile()])
+    .pipe(concat(bundleFile()))
+    .pipe(dest('.'));
 }
 
 function headerCSS() {
   const aaCSS = distCSS('aa');
-  return src([headerFile, aaCSS]).pipe(concat(aaCSS)).pipe(dest('.'));
+  return src([headerFile(), aaCSS]).pipe(concat(aaCSS)).pipe(dest('.'));
 }
 
 function minifyLibs() {
@@ -218,7 +245,7 @@ function minifyLibs() {
   // PeerJS is fetched on-the-fly, but SM2 and snowstorm are bundled.
   return src(root(`${jsPath}/${libPath}/peerjs*.js`))
     .pipe(terser())
-    .pipe(dest(distPaths.lib));
+    .pipe(dest(dp.lib));
 }
 
 function minifyCSS() {
@@ -229,17 +256,17 @@ function minifyCSS() {
        * Remap production / bundled CSS asset references, accordingly.
        * Given this trivial string match, “What could possibly go wrong?” ;)
        */
-      .pipe(replace('assets/', 'dist/'))
+      .pipe(replace(assetPath + '/', distRootPath + '/'))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(cleanCSS({ level: 2 }))
-      .pipe(dest(distPaths.css))
+      .pipe(dest(dp.css))
   );
 }
 
 function minifyHTML() {
   return src(html('*'))
     .pipe(htmlmin({ collapseWhitespace: true }))
-    .pipe(dest(distPaths.html));
+    .pipe(dest(dp.html));
 }
 
 function buildSpriteSheet() {
@@ -254,8 +281,8 @@ function buildSpriteSheet() {
     })
   );
 
-  var imgStream = spriteData.img.pipe(dest(distPaths.spriteSheet));
-  var cssStream = spriteData.css.pipe(dest(distPaths.spriteSheet));
+  var imgStream = spriteData.img.pipe(dest(dp.image));
+  var cssStream = spriteData.css.pipe(dest(dp.image));
 
   // Return a merged stream to handle both `end` events
   return merge(imgStream, cssStream);
@@ -268,7 +295,7 @@ function minifyImages(callback) {
       const imagemin = imageminModule.default;
       const imageminWebp = webpModule.default;
       pipeline(
-        src(`${distPaths.spriteSheet}/${spriteSheet.png}`),
+        src(`${dp.image}/${spriteSheet.png}`),
         imagemin(
           [
             // https://www.npmjs.com/package/imagemin-webp
@@ -277,10 +304,10 @@ function minifyImages(callback) {
           { silent: true }
         ),
         rename(spriteSheet.webp),
-        dest(distPaths.spriteSheet),
+        dest(dp.image),
         // battlefield sprite which compresses well
         src(
-          `assets/image/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
+          `${assetPath}/${imagePath}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
         ),
         // https://www.npmjs.com/package/gulp-image-resize
         imageResize({ percentage: 50, imageMagick: true }),
@@ -292,7 +319,7 @@ function minifyImages(callback) {
           { silent: true }
         ),
         rename('deviantart-Dirt-Explosion-774442026.webp'),
-        dest('dist/image/battlefield/standalone'),
+        dest(`dist/${imagePath}/battlefield/standalone`),
         callback
       );
     });
@@ -304,7 +331,7 @@ function buildSpriteSheetConfig() {
    * Reduce spritesmith JSON to per-sprite data: [x,y,w,h]
    * and export to a config/ path for inclusion in the main JS bundle.
    */
-  return src(`${distPaths.spriteSheet}/${spriteSheet.json}`)
+  return src(`${dp.image}/${spriteSheet.json}`)
     .pipe(rename(spriteSheet.js))
     .pipe(
       map((file, done) => {
@@ -339,7 +366,7 @@ function buildSpriteSheetConfig() {
         done(null, file);
       })
     )
-    .pipe(dest(distPaths.config));
+    .pipe(dest(dp.config));
 }
 
 function buildAudioSpriteConfig() {
@@ -347,7 +374,7 @@ function buildAudioSpriteConfig() {
    * audiosprite howler JSON -> JS
    * Export to a config/ path for inclusion in the main JS bundle.
    */
-  return src(`${dist('audio')}/${asName}.json`)
+  return src(`${dp.audio}/${asName}.json`)
     .pipe(rename(audioSpriteSheet.js))
     .pipe(
       map((file, done) => {
@@ -373,7 +400,7 @@ function buildAudioSpriteConfig() {
         done(null, file);
       })
     )
-    .pipe(dest(distPaths.config));
+    .pipe(dest(dp.config));
 }
 
 function copyStaticResources() {
@@ -382,15 +409,17 @@ function copyStaticResources() {
   const bnb = { allowEmpty: true };
 
   return merge([
-    src('assets/font/**/*').pipe(dest('dist/font')),
+    src(`${assetPath}/${fontPath}/**/*`).pipe(dest(dp.font)),
     // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
     // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
-    src(['assets/image/**/*', '!assets/image/*.png']).pipe(dest('dist/image')),
-    src('assets/manifest.json').pipe(dest('dist')),
-    src('assets/audio/mp3/bnb/*.*', bnb).pipe(dest('dist/audio/mp3/bnb')),
-    src('assets/audio/ogg/bnb/*.*', bnb).pipe(dest('dist/audio/ogg/bnb')),
-    src('assets/video/aa_*.*').pipe(dest('dist/video')),
-    src('assets/video/bnb/*.*', bnb).pipe(dest('dist/video/bnb'))
+    src([`${assetPath}/${imagePath}/**/*`, `!${assetPath}/${imagePath}/*.png`]).pipe(
+      dest(dp.image)
+    ),
+    src(`${assetPath}/manifest.json`).pipe(dest('dist')),
+    src(`${assetPath}/${audioPath}/mp3/bnb/*.*`, bnb).pipe(dest(`${dp.audio}/mp3/bnb`)),
+    src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(dest(`${dp.audio}/ogg/bnb`)),
+    src(`${assetPath}/${videoPath}/aa_*.*`).pipe(dest(dp.video)),
+    src(`${assetPath}/${videoPath}/bnb/*.*`, bnb).pipe(dest(`${dp.video}/bnb`))
   ]);
 }
 
@@ -407,14 +436,14 @@ const asConfigMP3 = {
   log: 'notice'
 };
 
-const audioSpriteFiles = ['assets/audio/wav/*.wav'].concat(
+const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
   standaloneFiles.map((fn) => `!${fn}`)
 );
 
 function createAudioSpriteMP3() {
   return src(audioSpriteFiles)
     .pipe(audiosprite(asConfigMP3))
-    .pipe(dest(dist('audio')));
+    .pipe(dest(dp.audio));
 }
 
 function createAudioSpriteOGG() {
@@ -427,7 +456,7 @@ function createAudioSpriteOGG() {
         bitrate: 64
       })
     )
-    .pipe(dest(dist('audio')));
+    .pipe(dest(dp.audio));
 }
 
 function hearThatFloppy(callback) {
@@ -441,7 +470,7 @@ function hearThatFloppy(callback) {
       bitrate: 32,
       samplerate: 22050
     }),
-    dest(`${floppyRoot}/${dist('audio')}`),
+    dest(dp.audio),
     callback
   );
 }
@@ -460,7 +489,7 @@ function encodeStandaloneMP3() {
           .audioCodec('libmp3lame');
       })
     )
-    .pipe(dest(dist('audio/mp3')));
+    .pipe(dest(`${dp.audio}/mp3`));
 }
 
 function encodeStandaloneOgg() {
@@ -473,24 +502,24 @@ function encodeStandaloneOgg() {
           .audioCodec('libvorbis');
       })
     )
-    .pipe(dest(dist('audio/ogg')));
+    .pipe(dest(`${dp.audio}/ogg`));
 }
 
 function cleanAudioDist() {
   // delete previously-built audio assets
-  return src('dist/audio', { allowEmpty: true, read: false }).pipe(clean());
+  return src(dp.audio, { allowEmpty: true, read: false }).pipe(clean());
 }
 
 function cleanAudioTemp() {
   // delete temporary audio JS / JSON, post-build
-  return src('dist/audio/*.json', { allowEmpty: true, read: false }).pipe(
+  return src(`${dp.audio}/*.json`, { allowEmpty: true, read: false }).pipe(
     clean()
   );
 }
 
 function cleanDist() {
   // delete dist/ path, with a few exceptions.
-  return src(['dist/*', '!dist/audio', '!dist/README.md'], {
+  return src(['dist/*', `!dist/${audioPath}`, '!dist/README.md'], {
     read: false
   }).pipe(clean());
 }
@@ -500,11 +529,11 @@ function cleanup() {
   // TODO: refactor. :P
   return src(
     [
-      `${distPaths.spriteSheet}/${asName}*.js*`,
-      'dist/image/aa-spritesheet.png',
-      'dist/image/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png'
+      `${dp.image}/${asName}*.js*`,
+      `${dp.image}/${asName}.png`,
+      `${dp.image}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
     ],
-    { read: false }
+    { allowEmpty: true, read: false }
   ).pipe(clean());
 }
 
@@ -530,7 +559,7 @@ function copyThatFloppy() {
   // copy select assets into a separate build path
   return merge([
     // gotta have a favicon.ico, of course...
-    src('assets/image/app-icons/favicon.ico').pipe(dest(floppyRoot)),
+    src(`assets/${imagePath}/app-icons/favicon.ico`).pipe(dest(floppyRoot)),
     src('index.html').pipe(dest(floppyRoot)),
     // note: ignore all dot-files, e.g., .DS_Store and friends
     src([
@@ -540,55 +569,75 @@ function copyThatFloppy() {
       '!**/.*',
       '!**/*.json',
       '!**/*.md',
-      '!dist/audio/**/*',
-      '!dist/video/**/*',
-      `!dist/image/unused/**/*`,
-      `!dist/image/unused`
+      `!dist/${audioPath}/**/*`,
+      `!dist/${videoPath}/**/*`,
+      `!dist/${imagePath}/unused/**/*`,
+      `!dist/${imagePath}/unused`
     ]).pipe(dest(`${floppyRoot}/dist`))
   ]);
+}
+
+function copy360FloppySource() {
+  // duplicate `src/`
+  return src(`${srcRoot}/**/*`).pipe(dest(srcRoot360));
+}
+
+function build360FloppyBundle(callback) {
+  // sneaky: have the build reference the floppy source, and output to floppy dist.
+  srcRoot = srcRoot360;
+  distRoot = `${floppyRoot}/${distRootPath}`;
+  updateDistPaths();
+  callback();
+}
+
+function apply360FloppyOverrides() {
+  // floppy-specific source file overrides
+  return src(`${srcRoot}/floppy/src-360/**/*`).pipe(dest(srcRoot360));
 }
 
 function tidyThatFloppyCopy() {
   const floppyDist = `${floppyRoot}/dist`;
   const globs = [
     // drop all fonts
-    `${floppyDist}/font/**/*.*`,
+    `${dp.font}/**/*.*`,
 
     // empty directories
-    `${floppyDist}/font/CheddarGothicStencil`,
-    `${floppyDist}/font/JetBrainsMono`,
-    `${floppyDist}/font/war-wound`,
+    `${dp.font}/CheddarGothicStencil`,
+    `${dp.font}/JetBrainsMono`,
+    `${dp.font}/war-wound`,
 
     // except woff2 for sysfont
-    `!${floppyDist}/font/sysfont/*.woff2`,
+    `!${dp.font}/sysfont/*.woff2`,
 
     // drop non-gzip things
-    `${floppyDist}/css/**/*.css`,
-    `${floppyDist}/html/**/*.html`,
+    `${dp.css}/**/*.css`,
+    `${dp.html}/**/*.html`,
 
     // all JS (but not gzip versions)
-    `${floppyDist}/js/*.js`,
+    `${dp.js}/*.js`,
 
     // and exclude aa-boot_bundle
-    `!${floppyDist}/js/aa-boot_bundle.js`,
+    `!${dp.js}/aa-boot_bundle.js`,
 
     // no network, for now
-    `${floppyDist}/js/lib`,
+    `${dp.js}/lib`,
 
     // pare down images
-    `${floppyDist}/image/app-icons`,
-    `${floppyDist}/image/app-images`,
-    `${floppyDist}/image/bnb`,
-    `${floppyDist}/image/snow`,
+    `${dp.image}/app-icons`,
+    `${dp.image}/app-images`,
+    `${dp.image}/bnb`,
+    `${dp.image}/snow`,
 
     // all except select UI
-    `${floppyDist}/image/UI/**/*`,
-    // drop snow for now, too.
-    `!${floppyDist}/image/UI/armor-alley-wordmark-white.webp`,
+    `${dp.image}/UI/**/*`,
+    `!${dp.image}/UI/armor-alley-wordmark-white.webp`,
+
+    // medals and whatnot
+    `${dp.image}/unused`,
 
     // nor audio or video
-    `${floppyDist}/audio`,
-    `${floppyDist}/video`
+    dp.audio,
+    dp.video
   ];
 
   return src(globs, { allowEmpty: true, read: false }).pipe(clean());
@@ -603,22 +652,17 @@ function gzipThatFloppy() {
     src(`index.html`).pipe(gzip(gzipOptions)).pipe(dest(floppyRoot)),
 
     // CSS
-    src(`${floppyRoot}/${distCSS('*')}`)
-      .pipe(gzip(gzipOptions))
-      .pipe(dest(`${floppyRoot}/${distPaths.css}`)),
+    src(distCSS('*')).pipe(gzip(gzipOptions)).pipe(dest(dp.css)),
 
     // HTML
-    src(`${floppyRoot}/${distPaths.html}/*.html`)
+    src(`${dp.html}/*.html`)
       .pipe(gzip(gzipOptions))
-      .pipe(dest(`${floppyRoot}/${distPaths.html}`)),
+      .pipe(dest(dp.html)),
 
     // JS (excluding aa-boot_bundle)
-    src([
-      `${floppyRoot}/${distJS('*')}`,
-      `!${floppyRoot}/${distJS('aa-boot_bundle')}`
-    ])
+    src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
       .pipe(gzip(gzipOptions))
-      .pipe(dest(`${floppyRoot}/${distPaths.js}`))
+      .pipe(dest(dp.js))
   ]);
 }
 
@@ -631,25 +675,34 @@ function bootThatFloppy() {
 }
 
 function lastFloppyCleanup() {
-  return src([
-    `${floppyRoot}/${dist('audio/*.json')}`,
-    // ensure the other floppy version didn't sneak in
-    `${floppyRoot}/dist/floppy-*`
-  ], {
-    allowEmpty: true,
-    read: false
-  }).pipe(clean());
+  return src(
+    [
+      `${dp.audio}/*.json`,
+      // ensure the other floppy version didn't sneak in
+      `${floppyRoot}/dist/floppy-*`
+    ],
+    {
+      allowEmpty: true,
+      read: false
+    }
+  ).pipe(clean());
 }
 
 function lastFloppyCleanup360() {
-  // drop all audio for 360K version
-  return src([
-    // `${floppyRoot}/${dist('audio/**/*')}`,
-    `${floppyRoot}/${dist('audio')}`
-  ], {
-    allowEmpty: true,
-    read: false
-  }).pipe(clean());
+  return src(
+    [
+      // clean up "ephemeral" 360K-modded source path
+      srcRoot360,
+      // drop all audio from 360K build
+      dp.audio,
+      // no BnB CSS
+      `${dp.css}/aa-bnb.css.gz`
+    ],
+    {
+      allowEmpty: true,
+      read: false
+    }
+  ).pipe(clean());
 }
 
 const buildTasks = [
@@ -672,11 +725,10 @@ const audioTasks = [
   cleanAudioTemp
 ];
 
-const floppyTasks = [
-  // https://www.npmjs.com/package/gulp-gzip
-  aa,
+const floppyTasks1200 = [
   cleanThatFloppy,
   copyThatFloppy,
+  ...buildTasks,
   gzipThatFloppy,
   tidyThatFloppyCopy,
   hearThatFloppy,
@@ -685,21 +737,42 @@ const floppyTasks = [
 ];
 
 const floppyTasks360 = [
-  ...floppyTasks,
+  cleanThatFloppy,
+  copyThatFloppy,
+  copy360FloppySource,
+  apply360FloppyOverrides,
+  build360FloppyBundle,
+  ...buildTasks,
+  gzipThatFloppy,
+  tidyThatFloppyCopy,
+  bootThatFloppy,
+  lastFloppyCleanup,
   lastFloppyCleanup360
 ];
 
-function floppy360KTask(callback) {
-  return series(function set360Root(callback) {
-    floppyRoot = `${distRoot}/${floppyTypes._360}`;
-    callback();
-  },
-  ...floppyTasks360);
+function floppy360KTask() {
+  return series(
+    function set360Root(callback) {
+      floppyRoot = `${distRootPath}/${floppyTypes._360}`;
+      distRoot = `${floppyRoot}/${distRootPath}`;
+      updateDistPaths();
+      callback();
+    },
+    ...floppyTasks360
+  );
 }
 
 function floppy1200KTask() {
   // default floppy build: 1200k version.
-  return series(...floppyTasks);
+  return series(
+    function set1200Root(callback) {
+      floppyRoot = `${distRootPath}/${floppyTypes._1200}`;
+      distRoot = `${floppyRoot}/${distRootPath}`;
+      updateDistPaths();
+      callback();
+    },
+    ...floppyTasks1200
+  );
 }
 
 /**
@@ -709,13 +782,13 @@ function floppy1200KTask() {
  * This references the stock build, so run `build` at least once before this task.
  * ---
  */
-task('build-floppy', series(...floppyTasks, floppy360KTask()));
+task('build-floppy', series(aa, floppy1200KTask(), floppy360KTask()));
 
 // 360 KB version of floppy build.
-task('build-floppy-360', floppy360KTask());
+task('build-floppy-360k', series(aa, floppy360KTask()));
 
 // 1.2-MB version of floppy build.
-task('build-floppy-1200', floppy1200KTask());
+task('build-floppy-1200k', series(aa, floppy1200KTask()));
 
 /**
  * `gulp audio`
