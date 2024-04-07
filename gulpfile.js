@@ -5,6 +5,7 @@
  *
  * ADDITIONAL REQUIREMENTS
  * `ffmpeg` with `libmp3lame` and `libvorbis` are required for encoding audio.
+ * `imagemagick` is required for generating the image spritesheet used by the game.
  *
  * Setup:
  *  `npm install`
@@ -12,7 +13,7 @@
  * Default build using `gulp-cli`, full game (audio + image sprite + assets, placed into `dist/`):
  *  `gulp`
  *
- * Faster build, once audio sprite has been generated:
+ * Faster build, once the audio sprites have been generated:
  *  `gulp build`
  *
  * The audio "sprite" (single file with many sounds) can take some time to run.
