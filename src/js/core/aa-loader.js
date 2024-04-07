@@ -113,24 +113,55 @@ function renderProgress(url, progress = 0) {
   // ensure visibility
   progressContainer.style.display = 'block';
 
-  // mix-blend-mode: invert text color as progress bar passes underneath.
-  const toRemove = 'dist/';
-  let offset = url.indexOf(toRemove);
-  if (offset !== -1) {
-    offset += toRemove.length;
-  } else {
-    offset = 0;
-  }
+  // slice certain strings out
+  ['dist/', '?'].forEach((toRemove) => {
+    let offset = url.lastIndexOf(toRemove);
+    if (offset !== -1) {
+      url = url.substring(offset + toRemove.length);
+    }
+  });
 
-  fileLabel.innerHTML = `&nbsp;💾 <span style="mix-blend-mode:exclusion">${url.substring(offset)}: ${progress}%</span>`;
+  // mix-blend-mode: invert text color as progress bar passes underneath.
+  fileLabel.innerHTML = `&nbsp;💾 <span style="mix-blend-mode:exclusion">${url}: ${progress}%</span>`;
 
   progressBar.style.width = `${progress}%`;
+  progressBar.style.display = 'block';
 
   cancelHide();
 }
 
+const cb = {};
+
+function getCB(url) {
+  /**
+   * Per-page-load cache-busting pattern.
+   * First load is "guaranteed" to be from disk; any subsequent requests are via browser cache.
+   * Floppy disk fetch presently does something hackish, and loads twice: first time shows progress,
+   * then a second fetch for the same resource - so it benefits from the cache.
+   */
+
+  // only applies to floppy disk version.
+  if (!isFloppy) return url;
+
+  let r = cb[url];
+
+  if (!r) {
+    cb[url] = `?r=${Math.random()}`;
+    r = cb[url];
+  }
+
+  return `${url}${r}`;
+}
+
 async function fetchWithProgress(url, callback) {
-  const response = await fetch(url);
+  // TODO: debug the source of this.
+  if (!url || !url.length) {
+    callback?.();
+    return;
+  }
+
+  // NOTE: URL cache-busting may apply to floppy version.
+  const response = await fetch(getCB(url));
 
   const bytesTotal = Number(response.headers.get('content-length'));
 
@@ -142,7 +173,8 @@ async function fetchWithProgress(url, callback) {
 
     if (result.done) {
       renderProgress(url, 100);
-      if (isFloppy && !hideTimer) {
+      if (isFloppy) {
+        cancelHide();
         hideTimer = setTimeout(() => {
           progressContainer.style.display = 'none';
           hideTimer = null;
@@ -169,10 +201,10 @@ function fetchGZ(url, callback) {
   renderProgress(url);
 
   fetchWithProgress(url, () => {
-    const decompress = async (url) => {
+    const decompress = async () => {
       // dirty: fetch "again", but from cache. :X
       // TODO: DRY, avoid additional fetch.
-      const response = await fetch(url);
+      const response = await fetch(getCB(url));
 
       const blob_in = await response.blob();
       const stream_in = blob_in
@@ -182,7 +214,7 @@ function fetchGZ(url, callback) {
       return await blob_out.text();
     };
 
-    decompress(url).then((result) => callback?.(result));
+    decompress().then((result) => callback?.(result));
   });
 }
 
