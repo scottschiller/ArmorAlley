@@ -72,6 +72,15 @@
   src: url(../../assets/font/sysfont/sysfont.woff2) format('woff2');
 }
 
+@font-face {
+  font-family: 'Cheddar Gothic Stencil';
+  src: url('../../assets/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 body,
 html {
   /* scroll aversion */
