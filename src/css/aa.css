@@ -72,14 +72,6 @@
   src: url(../../assets/font/sysfont/sysfont.woff2) format('woff2');
 }
 
-body:not(.loaded) * {
-  /**
-   * Evil trade-off.
-   * Initially hide, to prevent CLS in terms of performance. https://web.dev/articles/cls
-   */
-  display: none;
-}
-
 body,
 html {
   /* scroll aversion */
