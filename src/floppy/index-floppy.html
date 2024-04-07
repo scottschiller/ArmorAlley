@@ -43,6 +43,8 @@
           // 💾 “Special use case”: fetch + exec gzip-encoded asset(s).
           console.log(`💾 ${url.replace('dist/css', '')} 🗜️`);
 
+          url = `${url}?r=${Math.random()}`;
+
           const decompress = async (url) => {
             const ds = new DecompressionStream('gzip');
             const response = await fetch(url);
