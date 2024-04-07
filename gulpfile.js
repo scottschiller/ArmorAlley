@@ -602,12 +602,13 @@ function tidyThatFloppyCopy() {
     `${dp.font}/**/*.*`,
 
     // empty directories
-    `${dp.font}/CheddarGothicStencil`,
     `${dp.font}/JetBrainsMono`,
     `${dp.font}/war-wound`,
 
-    // except woff2 for sysfont
+    // except certain fonts
     `!${dp.font}/sysfont/*.woff2`,
+    // this one for mobile, in particular
+    `!${dp.font}/CheddarGothicStencil/*.woff2`,
 
     // drop non-gzip things
     `${dp.css}/**/*.css`,
