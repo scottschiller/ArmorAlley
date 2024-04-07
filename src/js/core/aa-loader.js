@@ -17,7 +17,7 @@ const isLocalhost = !!wl.host.match(/localhost/i);
 const sp = new URLSearchParams(wl.search);
 const forceProd = sp.get('prod');
 const dev = !forceProd && (sp.get('dev') || !isProdSite);
-const isFloppy = wl.href.match(/floppy/i) || sp.get('floppy');
+const isFloppy = !!(wl.href.match(/floppy/i) || sp.get('floppy'));
 
 // e.g., '.V20231216'
 const version = (dev || isLocalhost) && !forceProd ? '' : v || '';
