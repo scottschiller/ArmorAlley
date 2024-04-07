@@ -140,17 +140,17 @@ function getCB(url) {
    * then a second fetch for the same resource - so it benefits from the cache.
    */
 
-  // only applies to floppy disk version.
-  if (!isFloppy) return url;
+  // only applies to floppy disk version, non-font assets.
+  if (!isFloppy || url?.match(/font/i)) return url;
 
-  let r = cb[url];
+  let ts = cb[url];
 
-  if (!r) {
-    cb[url] = `?r=${Math.random()}`;
-    r = cb[url];
+  if (!ts) {
+    cb[url] = `?ts=${Date.now()}`;
+    ts = cb[url];
   }
 
-  return `${url}${r}`;
+  return `${url}${ts}`;
 }
 
 async function fetchWithProgress(url, callback) {
