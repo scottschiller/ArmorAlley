@@ -37,6 +37,9 @@ function hello() {
 
 let fetched = {};
 
+// CSS hides all but these nodes during floppy "boot."
+const className = 'aa-loader';
+
 let appended,
   hideTimer,
   progressContainer,
@@ -46,6 +49,7 @@ let appended,
 
 if (isFloppy) {
   progressContainer = document.createElement('div');
+  progressContainer.className = className;
 
   progressHeight = '20px';
 
@@ -63,6 +67,7 @@ if (isFloppy) {
   });
 
   progressBar = document.createElement('div');
+  progressBar.className = className;
 
   const barStyle = {
     position: 'absolute',
@@ -78,6 +83,7 @@ if (isFloppy) {
   progressContainer.appendChild(progressBar);
 
   fileLabel = document.createElement('div');
+  fileLabel.className = className;
 
   Object.assign(fileLabel.style, {
     ...barStyle,
@@ -122,7 +128,7 @@ function renderProgress(url, progress = 0) {
   });
 
   // mix-blend-mode: invert text color as progress bar passes underneath.
-  fileLabel.innerHTML = `&nbsp;💾 <span style="mix-blend-mode:exclusion">${url}: ${progress}%</span>`;
+  fileLabel.innerHTML = `&nbsp;💾 <span style="mix-blend-mode:exclusion" class="${className}">${url}: ${progress}%</span>`;
 
   progressBar.style.width = `${progress}%`;
   progressBar.style.display = 'block';

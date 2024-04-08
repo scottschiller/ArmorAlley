@@ -58,6 +58,10 @@
         background-position: 50% 50%;
         background-repeat: no-repeat;
       }
+      body:not(.loaded) *:not(.aa-loader) {
+        /* Floppy support: Hide all except loader UI during "boot." */
+        visibility: hidden;
+      }
     </style>
     <!--
 
