@@ -12,6 +12,7 @@ aaLoader.hello();
 let loaded = 0;
 let needed = 0;
 let fetchQueue = [];
+let activeFetchCount = 0;
 
 function complete() {
   loaded++;
@@ -26,29 +27,41 @@ function complete() {
     }
     return;
   }
-  // next item in the queue, as applicable
-  if (isFloppy && fetchQueue.length) {
-    let fetchCall = fetchQueue.shift();
-    fetchCall();
-  }
 }
 
 function fetch(method, url, callback) {
   needed++;
 
   function nextFetch() {
-    method(url, () => {
-      callback?.();
-      complete();
-    });
+    // next in queue
+
+    let fetchItem;
+
+    // next item in the queue, as applicable
+    if (fetchQueue.length) {
+      fetchItem = fetchQueue.shift();
+      activeFetchCount++;
+      fetchItem.method();
+    }
   }
 
+  function fetchComplete() {
+    activeFetchCount--;
+    callback?.();
+    complete();
+    nextFetch();
+  }
+
+  // always push the new thing onto the queue.
+  fetchQueue.push({
+    url,
+    method: () => method(url, fetchComplete)
+  });
+
   if (isFloppy) {
-    // queue empty? Go go go!
-    if (!fetchQueue.length) {
+    // was queue empty? Go go go!
+    if (fetchQueue.length === 1 && !activeFetchCount) {
       nextFetch();
-    } else {
-      fetchQueue.push(nextFetch);
     }
     // otherwise, wait until the current item is complete.
   } else {
