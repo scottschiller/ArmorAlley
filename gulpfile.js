@@ -561,6 +561,8 @@ function copyThatFloppy() {
     // gotta have a favicon.ico, of course...
     src(`assets/${imagePath}/app-icons/favicon.ico`).pipe(dest(floppyRoot)),
     src('index.html').pipe(dest(floppyRoot)),
+    // batch file to start the HTTP server
+    src(`${srcRoot}/floppy/aa.bat`).pipe(dest(floppyRoot)),
     // note: ignore all dot-files, e.g., .DS_Store and friends
     src([
       'dist/**/*',
