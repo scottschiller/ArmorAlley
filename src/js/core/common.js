@@ -76,7 +76,7 @@ const defaultCSS = {
 
 const defaultCSSKeys = Object.keys(defaultCSS);
 
-const bnbVideoRoot = `${aaLoader.getVideoRoot()}/bnb/`;
+const bnbVideoRoot = `${aaLoader.getVideoRoot()}/bnb`;
 
 const debugRects = [];
 
