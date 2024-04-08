@@ -74,7 +74,20 @@ function fetch(method, url, callback) {
 if (isFloppy) {
   fetch(
     aaLoader.loadGeneric,
-    'dist/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2'
+    'dist/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2',
+    () => {
+      // inject some content using this type, so the browser renders it (and prevents "FOUT") before the game menu.
+      let o = document.createElement('div');
+      o.style.fontFamily = 'Cheddar Gothic Stencil';
+      o.innerHTML = 'This type is set in Cheddar Gothic Stencil.';
+      o.style.fontSize = '1px';
+      o.style.visibility = 'hidden';
+      document.body.appendChild(o);
+      window.setTimeout(() => {
+        o.remove();
+        o = null;
+      }, 1000);
+    }
   );
 }
 
