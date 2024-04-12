@@ -365,8 +365,8 @@ const MissileLauncher = (options = {}) => {
 
   const spriteWidth = 108;
   const spriteHeight = 144;
-  const frameWidth = 108;
-  const frameHeight = 36;
+  const frameWidth = spriteWidth;
+  const frameHeight = spriteHeight / 4;
 
   function refreshSprite() {
     data.domCanvas.img.src = utils.image.getImageObject(

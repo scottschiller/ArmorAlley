@@ -479,7 +479,7 @@ const Tank = (options = {}) => {
   const spriteWidth = 116;
   const spriteHeight = 114;
 
-  const frameWidth = 116;
+  const frameWidth = spriteWidth;
   const frameHeight = spriteHeight / 3;
 
   function refreshSprite() {

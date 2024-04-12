@@ -329,8 +329,8 @@ const ParachuteInfantry = (options = {}) => {
   const spriteHeight = 40;
 
   // horizontal sprite arrangement.
-  const frameWidth = 28;
-  const frameHeight = 40;
+  const frameWidth = spriteWidth / 5;
+  const frameHeight = spriteHeight;
 
   data.domCanvas = {
     img: {

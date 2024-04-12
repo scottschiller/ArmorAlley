@@ -79,7 +79,7 @@ const Cornholio = (options = {}) => {
   const spriteWidth = 90;
   const spriteHeight = 84;
   const frameWidth = spriteWidth / 3;
-  const frameHeight = 84;
+  const frameHeight = spriteHeight;
 
   data.domCanvas = {
     img: {

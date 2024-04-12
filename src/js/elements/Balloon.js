@@ -503,7 +503,7 @@ const Balloon = (options = {}) => {
     const spriteWidth = 76;
     const spriteHeight = 288;
     const frameWidth = spriteWidth;
-    const frameHeight = 32; // 9 frames
+    const frameHeight = spriteHeight / 9;
 
     return {
       src: utils.image.getImageObject(getSpriteURL()),
