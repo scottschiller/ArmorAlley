@@ -292,7 +292,7 @@ function playQueuedBNBSounds() {
       (delayed || throttled || item.soundObject.skip) &&
       !isContinuingSequenceSound
     ) {
-      const url = item.soundObject.options.url.substr(
+      const url = item.soundObject.options.url.substring(
         item.soundObject.options.url.lastIndexOf('/') + 1
       );
 

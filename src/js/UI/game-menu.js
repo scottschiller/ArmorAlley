@@ -744,7 +744,7 @@ function formClick(e) {
     e.preventDefault();
 
     const { href } = target;
-    const hash = href.substr(href.lastIndexOf('#') + 1);
+    const hash = href.substring(href.lastIndexOf('#') + 1);
 
     // #[easy|hard|extreme|tutorial]
 

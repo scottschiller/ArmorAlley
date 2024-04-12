@@ -141,7 +141,7 @@ function normalizePrefValue(name, val) {
 }
 
 const { hash } = window.location;
-const hashParams = hash?.substr(hash.indexOf('#') === 0 ? 1 : 0);
+const hashParams = hash?.substring(hash.indexOf('#') === 0 ? 1 : 0);
 const searchParams = new URLSearchParams(window.location.search || hashParams);
 
 for (const p of searchParams) {

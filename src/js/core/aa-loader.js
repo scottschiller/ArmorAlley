@@ -324,7 +324,7 @@ function addHTML(href, onload) {
 
 function minifyAndVersion(url) {
   // .js, .css etc.
-  const fileExt = url.substr(url.lastIndexOf('.') + 1);
+  const fileExt = url.substring(url.lastIndexOf('.') + 1);
 
   /**
    * Prepend `dist/` as needed.
