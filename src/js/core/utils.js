@@ -13,7 +13,6 @@ blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
 // sneaky tricks: source image -> canvas upscaling
 const upscaleByName = {
-  'arrow-right.png': 2,
   'barb-wire.png': 2,
   'base-sprite.png': 2,
   'base-sprite-enemy.png': 2,
