@@ -412,12 +412,17 @@ function copyStaticResources() {
     src(`${assetPath}/${fontPath}/**/*`).pipe(dest(dp.font)),
     // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
     // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
-    src([`${assetPath}/${imagePath}/**/*`, `!${assetPath}/${imagePath}/*.png`]).pipe(
-      dest(dp.image)
-    ),
+    src([
+      `${assetPath}/${imagePath}/**/*`,
+      `!${assetPath}/${imagePath}/*.png`
+    ]).pipe(dest(dp.image)),
     src(`${assetPath}/manifest.json`).pipe(dest('dist')),
-    src(`${assetPath}/${audioPath}/mp3/bnb/*.*`, bnb).pipe(dest(`${dp.audio}/mp3/bnb`)),
-    src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(dest(`${dp.audio}/ogg/bnb`)),
+    src(`${assetPath}/${audioPath}/mp3/bnb/*.*`, bnb).pipe(
+      dest(`${dp.audio}/mp3/bnb`)
+    ),
+    src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(
+      dest(`${dp.audio}/ogg/bnb`)
+    ),
     src(`${assetPath}/${videoPath}/aa_*.*`).pipe(dest(dp.video)),
     src(`${assetPath}/${videoPath}/bnb/*.*`, bnb).pipe(dest(`${dp.video}/bnb`))
   ]);
@@ -658,9 +663,7 @@ function gzipThatFloppy() {
     src(distCSS('*')).pipe(gzip(gzipOptions)).pipe(dest(dp.css)),
 
     // HTML
-    src(`${dp.html}/*.html`)
-      .pipe(gzip(gzipOptions))
-      .pipe(dest(dp.html)),
+    src(`${dp.html}/*.html`).pipe(gzip(gzipOptions)).pipe(dest(dp.html)),
 
     // JS (excluding aa-boot_bundle)
     src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
