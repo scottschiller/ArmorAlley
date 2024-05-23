@@ -271,7 +271,7 @@ function minifyHTML() {
 
 function buildSpriteSheet() {
   // Battlefield sprites
-  var spriteData = src(spriteSheet.glob).pipe(
+  var spriteData = src(spriteSheet.glob, { encoding: false }).pipe(
     spritesmith({
       imgName: spriteSheet.png,
       cssName: spriteSheet.json,
