@@ -411,7 +411,8 @@ const utils = {
     }
 
     function get(name) {
-      if (!localStorage) return undefined;
+      // return current state, if unable to save.
+      if (!localStorage) return data[name];
 
       try {
         data[name] = localStorage.getItem(name);
