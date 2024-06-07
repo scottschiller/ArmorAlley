@@ -253,7 +253,9 @@ const Tank = (options = {}) => {
         // ignore if attacker is the enemy helicopter, i.e., it bombed our tank - that's reported elsewhere.
         if (
           attackerType !== TYPES.helicopter &&
-          data?.attacker?.data?.parentType !== TYPES.helicopter
+          data?.attacker?.data?.parentType !== TYPES.helicopter &&
+          // ignore tanks being recycled, they have their own notifications and aren't a "loss."
+          !data.isRecycling
         ) {
           game.objects.notifications.add('You lost a tank 💥');
         }
