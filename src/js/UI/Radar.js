@@ -114,7 +114,12 @@ const Radar = () => {
       playSound(sounds.missileWarning);
 
       if (data.missileWarningCount < 3) {
-        game.objects.notifications.add('🚀 Incoming smart missile! 😬');
+        const mType = newestMissile.data.isRubberChicken
+          ? 'rubber chicken! 🐔'
+          : newestMissile.data.isBanana
+            ? 'banana! 🍌'
+            : 'smart missile! ';
+        game.objects.notifications.add(`🚀 Incoming ${mType}😬`);
         data.missileWarningCount++;
       }
 
