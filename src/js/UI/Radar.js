@@ -300,7 +300,13 @@ const Radar = () => {
 
     function onFinishCheck() {
       // note: scoped to SMSound instance
-      if (!gamePrefs.bnb || this.skipped || game.data.isBeavis || Math.random() <= 0.5) return;
+      if (
+        !gamePrefs.bnb ||
+        this.skipped ||
+        game.data.isBeavis ||
+        Math.random() <= 0.5
+      )
+        return;
       playSoundWithDelay(
         oneOf([sounds.bnb.tryAndPayAttention, sounds.bnb.beavisOhYeah]),
         null,
