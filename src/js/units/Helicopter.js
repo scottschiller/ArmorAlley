@@ -2497,7 +2497,7 @@ const Helicopter = (options = {}) => {
       onLandingPad(false);
     } else if (data.onLandingPad) {
       // ensure the helicopter stays aligned with the landing pad.
-      data.y = maxY - yOffset + (data.isEnemy ? 3 : 0);
+      data.y = maxY - yOffset;
     }
 
     if (data.landed && !data.isCPU) {
