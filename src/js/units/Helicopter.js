@@ -1193,7 +1193,6 @@ const Helicopter = (options = {}) => {
     moveTo(data.x, data.y);
 
     // data.dead and other bits will be set with respawn action
-
     callAction('setRespawning', true);
   }
 
