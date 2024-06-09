@@ -58,6 +58,10 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
 
+// constraints on chopper movement, some buffer vs. edge-of-screen
+const HELICOPTER_BOUNDARY_LEFT = 0.25;
+const HELICOPTER_BOUNDARY_RIGHT = 0.75;
+
 const Helicopter = (options = {}) => {
   let css,
     data,
@@ -2535,11 +2539,11 @@ const Helicopter = (options = {}) => {
       if (data.isLocal) {
         newX = Math.max(
           game.players.local.data.scrollLeft +
-            view.data.browser.width * 0.05 +
+            view.data.browser.width * HELICOPTER_BOUNDARY_LEFT +
             data.halfWidth +
             data.xMin,
           Math.min(
-            view.data.browser.width * 0.95 +
+            view.data.browser.width * HELICOPTER_BOUNDARY_RIGHT +
               game.players.local.data.scrollLeft -
               data.xMaxOffset -
               data.width * 1.5,
