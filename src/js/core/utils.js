@@ -40,7 +40,6 @@ const upscaleByName = {
   'gravestone2.png': 2,
   'infantry-enemy-sprite-horizontal.png': 2,
   'infantry-sprite-horizontal.png': 2,
-  'landing-pad-sprite.png': 2,
   'missile-launcher.png': 2,
   'missile-launcher-enemy.png': 2,
   'palm-tree.png': 2,
@@ -73,6 +72,7 @@ addSeries('helicopter_', 3);
 addSeries('helicopter-enemy_', 3);
 addSeries('helicopter-rotating_', 3);
 addSeries('helicopter-rotating-enemy_', 3);
+addSeries('landing-pad_', 3);
 addSeries('shrapnel-glow_v', 11);
 addSeries('smoke-glow_', 11);
 addSeries('tank_', 2);

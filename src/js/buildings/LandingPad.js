@@ -46,15 +46,16 @@ const LandingPad = (options = {}) => {
 
     const animConfig = (() => {
       const spriteWidth = 162;
-      const spriteHeight = 56;
+      const spriteHeight = 14;
       return {
         sprite: {
-          url: 'landing-pad-sprite.png',
+          url: 'landing-pad_#.png',
           width: spriteWidth,
           height: spriteHeight,
           frameWidth: spriteWidth,
-          frameHeight: spriteHeight / 4,
+          frameHeight: spriteHeight,
           animationDuration: 2,
+          animationFrameCount: 4,
           loop: true
         }
       };
