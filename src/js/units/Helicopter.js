@@ -1151,15 +1151,13 @@ const Helicopter = (options = {}) => {
     data.repairComplete = false;
     data.hasLiftOff = false;
 
+    data.vX = 0;
     data.vY = 0;
     data.lastVX = 0;
 
     data.attacker = undefined;
 
     if (!data.isCPU) {
-      data.vX = 0;
-      data.lastVX = 0;
-
       if (!tutorialMode) {
         game.objects.view.clearAnnouncement();
       }
@@ -1170,9 +1168,6 @@ const Helicopter = (options = {}) => {
         );
     } else {
       lastTarget = null;
-
-      data.vX = -8 * GAME_SPEED_RATIOED;
-
       if (data.flipped) {
         flip();
       }
