@@ -14,8 +14,6 @@ blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 // sneaky tricks: source image -> canvas upscaling
 const upscaleByName = {
   'barb-wire.png': 2,
-  'base-sprite.png': 2,
-  'base-sprite-enemy.png': 2,
   'base-sprite-burning.png': 2,
   'bomb.png': 2,
   'bunker-burning-sprite.png': 2,
@@ -63,6 +61,8 @@ function addSeries(prefix, len) {
   }
 }
 
+addSeries('base_', 4);
+addSeries('base-enemy_', 4);
 addSeries('balloon_', 8);
 addSeries('explosion-large_', 4);
 addSeries('explosion-large-2_', 4);

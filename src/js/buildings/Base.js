@@ -525,15 +525,59 @@ const Base = (options = {}) => {
 
   function getSpriteURL() {
     // image = base + enemy + theme
-    const file = data.isEnemy ? 'base-sprite-enemy' : 'base-sprite';
-    return gamePrefs.weather === 'snow'
-      ? `snow/${file}_snow.png`
-      : `${file}.png`;
+    const fileName =
+      gamePrefs.weather === 'snow'
+        ? data.isEnemy
+          ? 'snow/base-enemy-snow_#'
+          : 'snow/base-snow_#'
+        : data.isEnemy
+          ? 'base-enemy_#'
+          : 'base_#';
+    return `${fileName}.png`;
   }
 
   function applySpriteURL() {
     if (!data.domCanvas.animation) return;
-    data.domCanvas.animation.updateSprite(getSpriteURL());
+
+    // maybe handle snow update
+    refreshSprite();
+  }
+
+  function refreshSprite() {
+    // only update snow / non-snow, live cases
+    if (data.dead) return;
+
+    // animation parameters differ between snow and non-snow
+    const animConfig = (() => {
+      const spriteWidth = 204;
+
+      // hacks for non-spritesheet (snow) assets
+      const isSnowing = gamePrefs.weather === 'snow';
+      const spriteHeight = 50 * (isSnowing ? 0.5 : 1);
+
+      const frameCount = 5;
+
+      return {
+        sprite: {
+          url: getSpriteURL(),
+          width: spriteWidth,
+          height: spriteHeight * frameCount,
+          frameWidth: spriteWidth,
+          frameHeight: spriteHeight,
+          animationDuration: 2,
+          frameCount,
+          loop: true,
+          alternate: true
+        },
+        // only upscale if snowing, using non-spritesheet asset
+        scale: isSnowing ? 2 : 1
+      };
+    })();
+
+    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      exports,
+      animConfig
+    );
   }
 
   function initBase() {
@@ -545,27 +589,7 @@ const Base = (options = {}) => {
       dom.o = {};
     }
 
-    const animConfig = (() => {
-      const spriteWidth = 208;
-      const spriteHeight = 270;
-      return {
-        sprite: {
-          url: getSpriteURL(),
-          width: spriteWidth,
-          height: spriteHeight,
-          frameWidth: spriteWidth,
-          frameHeight: spriteHeight / 5,
-          animationDuration: 2,
-          loop: true,
-          alternate: true
-        }
-      };
-    })();
-
-    data.domCanvas.animation = common.domCanvas.canvasAnimation(
-      exports,
-      animConfig
-    );
+    refreshSprite();
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
