@@ -3313,7 +3313,7 @@ const Helicopter = (options = {}) => {
 
   // enemy chopper is a bit bigger.
   const defaultWidth = data.isEnemy ? 110 : 100;
-  const defaultHeight = data.isEnemy ? 152 : 32;
+  const defaultHeight = data.isEnemy ? 36 : 32;
 
   const rotatingWidth = 100;
   const rotatingHeight = data.isEnemy ? 42 : 40;
