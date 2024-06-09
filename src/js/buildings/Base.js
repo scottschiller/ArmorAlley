@@ -309,14 +309,15 @@ const Base = (options = {}) => {
 
       const burningConfig = (() => {
         const spriteWidth = 204;
-        const spriteHeight = 128;
+        const spriteHeight = 32;
+        const frameCount = 4;
         return {
           sprite: {
-            url: 'base-sprite-burning.png',
+            url: 'base-burning_#.png',
             width: spriteWidth,
-            height: spriteHeight,
+            height: spriteHeight * frameCount,
             frameWidth: spriteWidth,
-            frameHeight: spriteHeight / 4,
+            frameHeight: spriteHeight,
             animationDuration: 1.75,
             loop: true
           }

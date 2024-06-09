@@ -63,6 +63,7 @@ function addSeries(prefix, len) {
 
 addSeries('base_', 4);
 addSeries('base-enemy_', 4);
+addSeries('base-burning_', 3);
 addSeries('balloon_', 8);
 addSeries('explosion-large_', 4);
 addSeries('explosion-large-2_', 4);
