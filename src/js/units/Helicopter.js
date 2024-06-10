@@ -1443,6 +1443,25 @@ const Helicopter = (options = {}) => {
         ? data.tiltOffset * data.tiltYOffset * (data.flipped ? -1 : 1)
         : 0;
 
+    let vX;
+
+    // inherent speed of a bullet
+    const bulletVX = 7;
+
+    // limit how much bullets can be "thrown"
+    const bulletVXMax = data.vXMax + bulletVX / 1.5;
+
+    // ensure bullets fire and move away from the chopper.
+    const flipped = !!data.flipped;
+
+    if ((!data.isEnemy && flipped) || (data.isEnemy && !flipped)) {
+      // -ve: ensure bullets go left
+      vX = Math.max(-bulletVXMax, Math.min(-bulletVX, data.vX - bulletVX));
+    } else {
+      // +ve: ensure bullets go right
+      vX = Math.min(bulletVXMax, Math.max(bulletVX, bulletVX + data.vX));
+    }
+
     return {
       parent: exports,
       parentType: data.type,
@@ -1457,7 +1476,7 @@ const Helicopter = (options = {}) => {
         data.halfHeight +
         (data.tilt !== null ? tiltOffset + 2 : 0) +
         (data.isEnemy ? 2 : 0),
-      vX: data.vX + 6 * (data.flipped ? -1 : 1) * (data.isEnemy ? -1 : 1),
+      vX,
       vY:
         data.vY +
         (data.isCPU ? 0 : tiltOffset * (!data.isCPU && data.isEnemy ? -1 : 1)) // CPU doesn't know how to account for tilt
