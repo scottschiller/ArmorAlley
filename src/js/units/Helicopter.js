@@ -945,7 +945,7 @@ const Helicopter = (options = {}) => {
     data.tiltOffset =
       data.dead || data.respawning || data.landed || data.onLandingPad
         ? 0
-        : (data.vX / data.vXMax) * 12.5 + data.shakeOffset;
+        : (data.vX / data.vXMax) * 10 + data.shakeOffset;
 
     // transform-specific, to be provided to sprites.setTransformXY() as an additional transform
     data.angle = data.tiltOffset;
