@@ -1432,7 +1432,7 @@ const Helicopter = (options = {}) => {
       isEnemy: data.isEnemy,
       x: data.x + data.halfWidth,
       y: data.y + data.height - 6,
-      vX: data.vX * 0.75,
+      vX: data.vX * 0.5,
       vY: data.vY
     };
   }
