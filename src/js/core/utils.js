@@ -242,6 +242,12 @@ const utils = {
       }
     },
     getImageObject: (url = emptyURL, onload) => {
+      function doCallback() {
+        onload?.(img);
+        img.onload = null;
+        img.onerror = null;
+      }
+
       // already in cache.
       if (imageObjects[url]) {
         onload?.();
@@ -333,22 +339,19 @@ const utils = {
             preloadedImageURLs[url] = src;
             // update local cache with the new base64-encoded extracted source.
             img.src = newImg.src;
+            doCallback();
           });
         } else {
           // load image directly from disk
           img.onload = () => {
             preloadedImageURLs[url] = src;
-            onload?.(img);
-            img.onload = null;
-            img.onerror = null;
+            doCallback();
           };
           img.onerror = () => {
             // TODO: allow retry of image load in a moment?
             console.warn('Image failed to load', img.src);
             preloadedImageURLs[url] = blankImage.src;
-            onload?.(img);
-            img.onload = null;
-            img.onerror = null;
+            doCallback();
             // reassign empty image
             img.src = blankImage.src;
           };
@@ -474,7 +477,36 @@ const utils = {
       set,
       unavailable
     };
-  })()
+  })(),
+
+  init: () => {
+    /**
+     * Pre-fetch / render and cache a few animation sequences, avoid flicker on game start.
+     * Filter applies to URLs with sequence patterns, e.g., `base-enemy_3.png`
+     */
+    if (!imageSpriteConfig) return;
+
+    // TODO: preload snow versions of sprites, as applicable.
+    const urls = Object.keys(imageSpriteConfig)?.filter((val) =>
+      val.match(/(base|balloon|helicopter|landing-pad)_[0-9]/gi)
+    );
+
+    if (!urls?.length) return;
+
+    function preloadNext() {
+      const url = urls[i].substring(1);
+      utils.image.getImageObject(url, loaded);
+    }
+
+    function loaded() {
+      i++;
+      if (i < urls.length) preloadNext();
+    }
+
+    // start pre-fetch
+    let i = 0;
+    preloadNext();
+  }
 };
 
 // caches
