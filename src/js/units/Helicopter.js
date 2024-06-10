@@ -1432,7 +1432,7 @@ const Helicopter = (options = {}) => {
       isEnemy: data.isEnemy,
       x: data.x + data.halfWidth,
       y: data.y + data.height - 6,
-      vX: data.vX,
+      vX: data.vX * 0.75,
       vY: data.vY
     };
   }
@@ -1457,7 +1457,7 @@ const Helicopter = (options = {}) => {
         data.halfHeight +
         (data.tilt !== null ? tiltOffset + 2 : 0) +
         (data.isEnemy ? 2 : 0),
-      vX: data.vX + 8 * (data.flipped ? -1 : 1) * (data.isEnemy ? -1 : 1),
+      vX: data.vX + 6 * (data.flipped ? -1 : 1) * (data.isEnemy ? -1 : 1),
       vY:
         data.vY +
         (data.isCPU ? 0 : tiltOffset * (!data.isCPU && data.isEnemy ? -1 : 1)) // CPU doesn't know how to account for tilt
