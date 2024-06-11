@@ -487,9 +487,7 @@ const utils = {
     if (!imageSpriteConfig) return;
 
     // TODO: preload snow versions of sprites, as applicable.
-    const urls = Object.keys(imageSpriteConfig)?.filter((val) =>
-      val.match(/(base|balloon|helicopter|landing-pad)_[0-9]/gi)
-    );
+    const urls = Object.keys(imageSpriteConfig);
 
     if (!urls?.length) return;
 
