@@ -9,7 +9,7 @@ const IMAGE_ROOT = aaLoader.getImageRoot();
 const emptyURL = 'NULL';
 
 const blankImage = new Image();
-blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+blankImage.src = 'data:image/gif;base64,R0lGODlhAQABAPAAAAAAAP///yH5BAUKAAAALAAAAAABAAEAQAICRAEAOw==';
 
 // sneaky tricks: source image -> canvas upscaling
 const upscaleByName = {
