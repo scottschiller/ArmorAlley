@@ -833,7 +833,7 @@ const View = () => {
       });
     } else {
       // ignore if the joystick is already active.
-      if (game.objects.joystick && !game.objects.joystick.data.active) {
+      if (game.objects.joystick && !game.objects.joystick.data?.active) {
         registerTouchEvent(targetTouch, {
           type: 'joystick'
         });
