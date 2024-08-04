@@ -670,12 +670,10 @@ const View = () => {
   }
 
   function getTouchEvent(touchEvent) {
-    return data.touchEvents[touchEvent && touchEvent.identifier] || null;
+    return data.touchEvents[touchEvent?.identifier] || null;
   }
 
   function registerTouchEvent(touchEvent, options) {
-    if (!touchEvent?.identifier) return;
-
     // keep track of a touch event, and its type.
     const id = touchEvent.identifier;
 
@@ -773,7 +771,7 @@ const View = () => {
   }
 
   function clearTouchEvent(touchEvent) {
-    if (!touchEvent || !touchEvent.identifier) return;
+    if (!touchEvent || isNaN(touchEvent?.identifier)) return;
 
     const target = data.touchEvents[touchEvent.identifier]?.target;
 
