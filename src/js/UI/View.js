@@ -818,16 +818,14 @@ const View = () => {
 
     // sub-par: check all parent nodes in the tree, too.
     // NOTE: this presently applies only when the game is over.
-    if (game.data.battleOver && target.parentNode) {
-      const hasIgnore = hasIgnoreTouch(target);
-      if (hasIgnore) return true;
-    }
+    if (game.data.battleOver && target.parentNode && hasIgnoreTouch(target))
+      return true;
 
     // if not "ignore", then prevent default.
     e.preventDefault();
 
     // touch should always have a target, but just in case...
-    if (target && target.nodeName === 'A') {
+    if (target?.nodeName === 'A') {
       // it's a link; treat as a button. ignore subsequent move events.
       registerTouchEvent(targetTouch, {
         type: 'press',
