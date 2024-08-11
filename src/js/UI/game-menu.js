@@ -285,7 +285,9 @@ function init() {
     const v = window.aaVersion.substring(1);
     versionInfo.title = 'Version / last updated date';
     versionInfo.innerText =
-      [v.substring(0, 4), v.substring(4, 6), v.substring(6)].join('.') + ' ::';
+      ':: Build ' +
+      [v.substring(0, 4), v.substring(4, 6), v.substring(6)].join('.') +
+      ' ::';
   }
 
   aaVersion.substring();
