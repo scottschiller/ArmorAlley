@@ -901,7 +901,7 @@ const DomCanvas = () => {
         ? width - renderedWidth
         : 0;
 
-    const lineHeight = 2.5;
+    const lineHeight = 3;
     const borderRadius = lineHeight;
 
     ctx.beginPath();
