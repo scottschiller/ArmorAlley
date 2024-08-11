@@ -1210,6 +1210,7 @@ const View = () => {
       // only do if game isn't paused, prefs modal isn't up etc.
       if (
         (game.data.started && game.data.paused) ||
+        prefsManager.isActive() ||
         game.data.battleOver ||
         game.objects.editor
       )
