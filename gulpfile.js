@@ -525,6 +525,7 @@ function cleanAudioTemp() {
 function cleanDist() {
   // delete dist/ path, with a few exceptions.
   return src(['dist/*', `!dist/${audioPath}`, '!dist/README.md'], {
+    allowEmpty: true,
     read: false
   }).pipe(clean());
 }
