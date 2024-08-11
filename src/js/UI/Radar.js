@@ -773,8 +773,8 @@ const Radar = () => {
     alignTargetMarkerWithScroll();
   }
 
-  function getDefaultScaling() {
-    if (!isMobile) return 1;
+  function getDefaultScaling(allowOnDesktop) {
+    if (!isMobile && !allowOnDesktop) return 1;
     if (game.objects.view.data.browser.isPortrait) {
       return DEFAULT_UPSCALING_PORTRAIT;
     }
@@ -821,10 +821,10 @@ const Radar = () => {
     };
   }
 
-  function toggleScaling() {
+  function toggleScaling(fromEvent) {
     if (!gamePrefs.radar_scaling) return;
     setScale(
-      gamePrefs.radar_scaling && data.scale === 1 ? getDefaultScaling() : 1
+      gamePrefs.radar_scaling && data.scale === 1 ? getDefaultScaling(fromEvent) : 1
     );
   }
 

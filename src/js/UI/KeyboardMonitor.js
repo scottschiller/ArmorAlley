@@ -188,7 +188,7 @@ function KeyboardMonitor() {
 
     [keyMap.s]: {
       down() {
-        game.objects.radar?.toggleScaling();
+        game.objects.radar?.toggleScaling(true);
       }
     },
 
