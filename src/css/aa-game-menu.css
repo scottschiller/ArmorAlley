@@ -69,6 +69,14 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   }
 }
 
+#version-info {
+  position: absolute;
+  top: -1.78em;
+  right: 0.75em;
+  font-size: calc(2.5px * var(--menu-scale));
+  color: rgba(0, 0, 0, 0.9);
+}
+
 #game-menu-wrapper .logo-wrapper-wrapper {
   position: relative;
   display: block;

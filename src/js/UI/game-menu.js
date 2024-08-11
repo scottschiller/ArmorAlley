@@ -279,6 +279,20 @@ function init() {
     utils.css.add(document.body, 'demo');
   }
 
+  let versionInfo = document.getElementById('version-info');
+
+  if (versionInfo && window.aaVersion) {
+    const v = window.aaVersion.substring(1);
+    versionInfo.title = 'Version / last updated date';
+    versionInfo.innerText = [
+      v.substring(0, 4),
+      v.substring(4, 6),
+      v.substring(6)
+    ].join('.');
+  }
+
+  aaVersion.substring();
+
   if (autoStart || demo || noVideo) {
     // hackish: don't show the intro video at all.
     document.getElementById('home-video-wrapper').remove();
