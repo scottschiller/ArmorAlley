@@ -870,6 +870,8 @@ const Radar = () => {
   }
 
   function setScale(scale = 1, notify = true) {
+    if (data.scale === scale) return;
+
     transitionScale(scale);
 
     // radar node needs updating too, unfortunately, to scale.
