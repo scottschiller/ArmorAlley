@@ -1009,9 +1009,9 @@ body.game-started #world-wrapper.incoming-smart-missile {
   border-bottom: none;
 }
 
-body.demo-mode #flight-range {
+body.game-started:not(.demo) #flight-range {
   /* hide in "screencast" / demo mode */
-  display: none;
+  display: block;
 }
 
 #help a {

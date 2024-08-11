@@ -751,8 +751,6 @@ const game = (() => {
 
     if (isChrome) bodyCSS.push('is_chrome');
 
-    if (demo) bodyCSS.push('demo-mode');
-
     if (isMobile) {
       bodyCSS.push('is-mobile');
 
