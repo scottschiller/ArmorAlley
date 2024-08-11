@@ -243,7 +243,7 @@ const Bunker = (options = {}) => {
 
     const burningConfig = (() => {
       const spriteWidth = 104;
-      const spriteHeight = 72;
+      const spriteHeight = 80;
       return {
         sprite: {
           url: 'bunker-burning-sprite.png',
