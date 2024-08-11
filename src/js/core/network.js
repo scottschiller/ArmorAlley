@@ -830,7 +830,7 @@ const net = {
       // go get it, then call this method again.
       if (debugNetwork) console.log('Loading PeerJS...');
 
-      aaLoader.loadJS('lib/peerjs@1.5.2.js', () =>
+      aaLoader.loadJS('lib/peerjs@1.5.4.js', () =>
         net.init(onInitCallback, startGameCallback)
       );
 
