@@ -774,6 +774,7 @@ const Radar = () => {
   }
 
   function getDefaultScaling() {
+    if (!isMobile) return 1;
     if (game.objects.view.data.browser.isPortrait) {
       return DEFAULT_UPSCALING_PORTRAIT;
     }
