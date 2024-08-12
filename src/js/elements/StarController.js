@@ -109,10 +109,10 @@ const StarController = () => {
     let height;
     let scale;
 
+    const isWarp = gamePrefs.stars_warp_fx && isAnimateScrollActive;
+
     // twinkle includes scaling, but not desirable during a warp.
-    const canScale =
-      gamePrefs.stars_twinkle_fx &&
-      (!isAnimateScrollActive || !gamePrefs.stars_warp_fx);
+    const canScale = gamePrefs.stars_twinkle_fx && !isWarp;
 
     for (let i = 0; i < data.starCount; i++) {
       // twinkle, twinkle? (ignore during a scroll / warp event.)
@@ -156,14 +156,25 @@ const StarController = () => {
       // wrap-around logic
       if (scrollDelta < 0 && x + width < 0) {
         randomizeStar(i);
-        // move off-screen, and push out relative to the distance being moved.
-        x =
-          data.width +
-          width +
-          Math.abs(scrollDelta * data.stars[i].data.parallax);
+        // move more randomly if warping.
+        if (isWarp) {
+          // random place on screen.
+          x = Math.random(width);
+        } else {
+          // move off-screen, and push out relative to the distance being moved.
+          x =
+            data.width +
+            width +
+            Math.abs(scrollDelta * data.stars[i].data.parallax);
+        }
       } else if (scrollDelta > 0 && x > data.width) {
         randomizeStar(i);
-        x = 0 - width - Math.abs(scrollDelta * data.stars[i].data.parallax);
+        if (isWarp) {
+          // random place on screen.
+          x = Math.random(width);
+        } else {
+          x = 0 - width - Math.abs(scrollDelta * data.stars[i].data.parallax);
+        }
       }
 
       data.stars[i].data.x = x;
