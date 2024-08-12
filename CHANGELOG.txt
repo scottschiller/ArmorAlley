@@ -2,6 +2,223 @@ ARMOR ALLEY: REMASTERED
 Changelog / Revision History
 ----------------------------
 
+WORK IN PROGRESS: 2023-2024 updates since last major release
+(V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
+
+Updated and improved layout for mobile and touch-screen devices
+"Installable" PWA-style web app, iOS home screen / Chrome "app" support
+
+Bug fixes
+Unit / convoy production could get stuck due to "traffic control" https://github.com/scottschiller/ArmorAlley/commit/4708ef4e8d104f68fd3f838eb8accee011f10f6e
+
+Traffic control: Allow a tank to roll up beside another which has stopped to fire. https://github.com/scottschiller/ArmorAlley/commit/7a29cf13644d335d9aff3cdb7d11fea791b4b57a
+
+Traffic control: Fix production halt case if item being ordered is destroyed. https://github.com/scottschiller/ArmorAlley/commit/1dc9e360f0267a44d753797fdfc66583952e89e6
+
+Bottom bar UI would sometimes overlap battlefield in Safari, capturing clicks. https://github.com/scottschiller/ArmorAlley/commit/6b79bda5ef637743ef15ce5608cbc20e592c2a92
+
+Turret radar item was not reflecting enemy/friendly ownership change. https://github.com/scottschiller/ArmorAlley/commit/361b72aa129aefc27c2f03cc1b32a9cb95c9645a
+
+Fix dead / respawning turret, "not dead" when at 25%. https://github.com/scottschiller/ArmorAlley/commit/902616a7e4f44c8e2a18f30f14086fc71a2f0d95
+
+Show energy while restoring dead turrets. https://github.com/scottschiller/ArmorAlley/commit/cf0bd11dc3a9c2ec0e2b4e3c5d4ca3a3678246f4
+
+Helicopter auto-eject drops correct number of paratroopers.
+https://github.com/scottschiller/ArmorAlley/commit/a9b8738acd3c2e9b4f6200530be84be01b23a93b
+
+Improved inventory ordering timing + spacing, closer to original. https://github.com/scottschiller/ArmorAlley/commit/6e4ca041450c0a6126726f43a7220a0755f10941
+
+Improved home screen / menu on Windows 10. https://github.com/scottschiller/ArmorAlley/commit/4682cc84901baf48a4858a2316cd0f93b5c72163
+
+Bring chopper boundary closer to original game, 25% on each side of screen. Originally 5%. 😅 https://github.com/scottschiller/ArmorAlley/commit/9c82367356c67651d39985e7b0d2f7ccf696f168
+
+Touch events had regressed on mobile Android / Chrome. https://github.com/scottschiller/ArmorAlley/commit/344fe9d297028d391f053860ffdaced2a2ddda63
+
+Rendering
+Desktop Safari: Scale + transform hacks on certain UI elements to retain sharp rendering. https://github.com/scottschiller/ArmorAlley/commit/ec66d3ee13853d5a7e1f5e14f9e570739988089d
+
+Super bunkers now fire at vans, as in the original game. https://github.com/scottschiller/ArmorAlley/commit/b8ab6a1e2b44383a6b39ece13dca6ffc00c62fd1
+
+Turret gunfire should hit bunkers. https://github.com/scottschiller/ArmorAlley/commit/1b706529619cd17ed2c4036c00bf09cf8531b591
+
+Misc
+Simplified boot loading
+
+UX/UI
+
+Redesigned radar UI with more detail, shape of units vs. rectangles. https://github.com/scottschiller/ArmorAlley/commit/e7238d8ed7c1da274245cb8b78a487b0bfbd051d
+
+More detail for buildings (e.g., Super Bunkers) on radar. https://github.com/scottschiller/ArmorAlley/commit/c532fe4048eec7ea081cb59938d42e82ea4a398a
+
+Game pref / default: 60 FPS, where supported. https://github.com/scottschiller/ArmorAlley/commit/b5fbbb8588af8fd8f74cac89e849e1cfeb0d9868
+
+Always show vans on radar (previously: only if friendly, or playing tutorial.) https://github.com/scottschiller/ArmorAlley/commit/7f2da30d3ab4451cf6ef215c12c94d7b58b9064d
+
+"Remastered" 8-bit sprites from V1.1 of Mac game. https://github.com/scottschiller/ArmorAlley/commit/9e7c9f163884c88df4d7799aa9ac89678aa7aebb
+
+New sounds for production stop/start, borrowing from another classic https://github.com/scottschiller/ArmorAlley/commit/fc4759a1964e4f77b1caf94a349a97f19db4fe0f
+
+"Cash money" sound when stealing from end bunker. https://github.com/scottschiller/ArmorAlley/commit/add457c874b5a89090a01bc8e03cfdc8ad3c2d53
+
+Redesigned home / start screen, more responsive.
+
+Notification toasts can be set to L/R on mobile, too. https://github.com/scottschiller/ArmorAlley/commit/25071680ac5232aeebc7c5e105dbc7084992facf
+
+Improve smart missile targeting UX/UI on radar + battlefield sprites https://github.com/scottschiller/ArmorAlley/commit/082d7383d424a735fddf9c5d32003cdb0595ef34
+
+Pseudo-3D parallax starfield effect, rendering on <canvas>. https://github.com/scottschiller/ArmorAlley/commit/3e6b00a5197a26759c289ee25f94c892b3eba17f https://github.com/scottschiller/ArmorAlley/commit/74fd11910a35aa1f51915558ee7fc9257a746a56
+
+Added terrain decor on network battles, e.g., "Network Mania." https://github.com/scottschiller/ArmorAlley/commit/dc8f088d8767581d1e8a452a79d9d9b182eee2d6
+
+Balloons now show friendly / enemy state on radar. (Original game did not.) https://github.com/scottschiller/ArmorAlley/commit/15b64edcc5c88c154ad26b9e66614555171502bb
+
+Balloons now turn with the wind / their direction, like the original game. https://github.com/scottschiller/ArmorAlley/commit/94098383103a45ac686e8bdfff416f3407ac2fd1
+
+Added base burning animation at game end, finally. https://github.com/scottschiller/ArmorAlley/commit/6dd7c88a84a56991eaf3f2bb0b4529a0c9c9d74c
+
+Push dynamic gravestones back behind most other sprites. https://github.com/scottschiller/ArmorAlley/commit/be395ae78b64c8c1a7c3aa2e0220665e9393bf96
+
+Smoother fuel line animation. https://github.com/scottschiller/ArmorAlley/commit/6c3e5d40b41c44824c61c67ba0ccfddac6ceea49
+
+Nicer "woven" balloon cables / chains. https://github.com/scottschiller/ArmorAlley/commit/327f482268d7bf573edff167f504ff87ae5a2fbf
+
+Preferences
+
+By default, disable banana and rubber chickens on mobile. (Can be enabled in prefs.) https://github.com/scottschiller/ArmorAlley/commit/3aa328c00b2beb3a0b4a957099cfe3aba6a4f433
+
+Red / green radar theme, based on unreleased iPhone prototype from 2010. https://github.com/scottschiller/ArmorAlley/commit/dfc1da2dc79033d8074baced816cc96309149a1f
+
+Gratuitous battle-over pref + animation sequence. https://github.com/scottschiller/ArmorAlley/commit/f7659cad93c29b9b26d7900687509141a8b3dfb5 https://github.com/scottschiller/ArmorAlley/commit/7f03cf7fba2f802d11fd70b7a3419c94351a8bf3
+ helicopter auto-flip / rotate based on heading, like the original
+(Double-tap on mobile to toggle feature, single-tap with second finger to flip.) https://github.com/scottschiller/ArmorAlley/commit/fe58683712c6b651531b7d8fdaaab703829deee3
+
+Game speed option, like the original. https://github.com/scottschiller/ArmorAlley/commit/0d620f1101647bba5c9d73a3943ae9988529669e
+
+Apply 80% game speed by default on mobile/touch devices, a bit more balanced. https://github.com/scottschiller/ArmorAlley/commit/cece24fc4729630861d63727797532a1db4e80d0
+
+Clouds on radar. https://github.com/scottschiller/ArmorAlley/commit/7742ad1358c588e232e5dce89e6a1c83ff84b063
+
+"Show landing pads on radar." Some can be obscured by shrubbery. https://github.com/scottschiller/ArmorAlley/commit/b06ce3bbe31cf06bc4af53e761c1462b71bdbc48 https://github.com/scottschiller/ArmorAlley/commit/cadace06b03db418069f4909652ce0ef43b44894
+
+Super Bunker: "Show arrow" pref, including friendly / hostile / enemy. Original game did not. https://github.com/scottschiller/ArmorAlley/commit/10d1f870e9f4cbf16b41d97d5d2b07d0e6643f38
+
+Smart Missile Upgrades pref: targeting, retargeting, and delay features.
+
+Notifications: Position and sorting (L/R, top-down / bottom-up) options. https://github.com/scottschiller/ArmorAlley/commit/26a3dfb6c1d71ce95afd2b9c0cf43024cec6a03c
+
+"Extra-fancy" radar jamming effects: in-game, and home screen. https://github.com/scottschiller/ArmorAlley/commit/d82b209a7c20da8421800e42450d90d0b03a418d https://github.com/scottschiller/ArmorAlley/commit/103079cdc5f7e1f66a64879ad4cff7424abbde14
+
+Allow tank gunfire to pass thru bunkers and super bunkers. https://github.com/scottschiller/ArmorAlley/commit/7a9df0ea8e664f14e1ce8fe5855a75d219d5e594
+
+Radar scaling and scrolling feature, useful particularly for mobile devices. https://github.com/scottschiller/ArmorAlley/commit/37c452972163ea1c00a7c72a65660d40d46b6042
+
+Mobile / touch
+Improved handling of device rotation and game scaling, portrait vs. landscape. https://github.com/scottschiller/ArmorAlley/commit/00ba9bbdef609e01d14eb0db79f853af76fcb833
+
+Show keyboard labels if keypresses are detected, e.g., an iPad "folio" keyboard. https://github.com/scottschiller/ArmorAlley/commit/4a687a39264ad601822d45c711845a9b6db83279
+
+Don't pause the game on screen rotate any more. https://github.com/scottschiller/ArmorAlley/commit/327bd67ace135f41a3c7ddc8073c4246c1db05e9
+
+Bug fix: Always add touch and mouse event listeners. https://github.com/scottschiller/ArmorAlley/commit/d7ce04f1641dd4d4ccf30df5138c198d61a73dec
+
+Gameplay
+Responsiveness: Make helicopter react ASAP to user action. https://github.com/scottschiller/ArmorAlley/commit/8be1eeced1069aa2a68479ae904ab2be9a963959 https://github.com/scottschiller/ArmorAlley/commit/589eee62cde85403e6a4b9e183b96b575c05746a
+
+Tighter collision checks. https://github.com/scottschiller/ArmorAlley/commit/9b057c122bd7b654259ddde6660425567dbf7607
+
+Match gunfire position with angled tip of turrets when firing. 🎯 https://github.com/scottschiller/ArmorAlley/commit/e121f0b51211d6ebd3f2e4505b216eca18d74e5c
+
+Adjusted velocities on bombs, gravity vs. "lobbing" https://github.com/scottschiller/ArmorAlley/commit/dd3336cadb1c0f91d2009dd1039645490e546eee
+
+Tweaks to shrapnel velocities. https://github.com/scottschiller/ArmorAlley/commit/4ba35240ee213fa0c0673605f7165aee7819060e
+
+Original game: "Z" for bombs, retaining the remake-introduced Ctrl. https://github.com/scottschiller/ArmorAlley/commit/db568ac235b09db3f02439bf77ad85d93651eac2
+
+New keyboard entry: ` (backtick) = eject. Keeping old backspace key for legacy, for now. https://github.com/scottschiller/ArmorAlley/commit/fd1d1f4efbb58b5b6b9faac34e3f6923fc72ab19
+
+Paratroopers drop faster when flying, slower when landed. https://github.com/scottschiller/ArmorAlley/commit/19d6f61d20cf35a6debf3c95c3b443d35acd0a3e
+
+Slightly slower bombing rate. https://github.com/scottschiller/ArmorAlley/commit/641d31a6b6aba2baacad0076075fead61babafe9
+
+By request: "Classic" helicopter controls option, slower gunfire + bomb intervals etc. https://github.com/scottschiller/ArmorAlley/commit/c8605659167e24a3280319e3ee7d1c8c6219b32f
+ helicopters can now escape smart missile tracking by entering a cloud for 1.5 seconds. https://github.com/scottschiller/ArmorAlley/commit/b05e618effac881e2cf755f846863962977b94db
+
+Allow respawning helicopter "a chance" if an enemy turret is within firing range of your landing pad. https://github.com/scottschiller/ArmorAlley/commit/2d7c78fd99284d9fe9124739c3b2fbf1da542815
+
+Super Bunkers fire faster, slightly greater range. https://github.com/scottschiller/ArmorAlley/commit/fc4c4c470d2cb6d858c60d257b4dcab6e932b657
+
+"Envelope": Letters from The Old Tanker for each battle, based on the story from the printed combat handbook. https://github.com/scottschiller/ArmorAlley/commit/dac4bd195c631af135649b2b3a66a6e246ac6ba4
+
+Clouds don't "bounce" off top / bottom of world, but now smoothly drift. https://github.com/scottschiller/ArmorAlley/commit/f3c9a5b83a51b970153a1079955b1a173a8035cf
+
+Clouds reverse direction over world boundaries more smoothly. https://github.com/scottschiller/ArmorAlley/commit/cdf87d3aad1c312525e7e49277704666f8884abf
+
+Choppers cause clouds to start drifting toward the opposing base. https://github.com/scottschiller/ArmorAlley/commit/a6a92bdfc695318d77a64ac452673fb4ea5bc694
+
+Battlefield now "warp"-scrolls back to respawn point, and to enemy base at end of game. https://github.com/scottschiller/ArmorAlley/commit/5e6d8ea5149cc27f5e5b8cf1e77851d3b5cceab6
+
+Smart missiles no longer target balloons attached to bunkers. https://github.com/scottschiller/ArmorAlley/commit/718386f480d097c6b752d19794e48f16f3b282e7
+
+"Smarter" smart missiles: Don't target ground units behind impervious super bunkers. https://github.com/scottschiller/ArmorAlley/commit/61db3f4a555d19831d428193d78ed6652ea9788c
+
+Enemy helicopter now takes off slowly on respawn. https://github.com/scottschiller/ArmorAlley/commit/410c2b6ade89ccd468594155933b08f057f066b2
+
+Network / multiplayer
+
+Fix de-sync of balloons between clients in network games. https://github.com/scottschiller/ArmorAlley/commit/0b6c5293a8bd2a9c0a91bae2a034013d0cedd234
+
+Use fixed wind values for balloons, "random" and related wind changes were causing de-sync. https://github.com/scottschiller/ArmorAlley/commit/74a19e1fe5c800056256ea5309f4a24c8c8059d7
+
+"Scan range" UI for turrets and missile launchers, in radar and/or battlefield. https://github.com/scottschiller/ArmorAlley/commit/cf70b247c92479b84d64d3009d2c3e15dba7d6da
+
+Possible fix for annoying explosion-on-respawn bug. https://github.com/scottschiller/ArmorAlley/commit/14cecdab94d672835fcd2b923bf7a756dad0190a
+
+Omit random parachute on helicopter die, de-sync risk. https://github.com/scottschiller/ArmorAlley/commit/0b39d18467b73d8c50cc26f975275a84c3549d45
+
+Network bug: Remote engineers were showing as infantry. https://github.com/scottschiller/ArmorAlley/commit/64ec9927a9115d4aff982ea096a7e0b37c75a80f
+
+De-sync risk: Ignore wind on paratroopers. https://github.com/scottschiller/ArmorAlley/commit/668d37ecc15cbd556c041d4e644229cfb2783cc3
+
+Performance
+
+"Boot loader" for game start, and dynamic load / unload of assets. https://github.com/scottschiller/ArmorAlley/commit/fab72decc8a046d498a0d9a9c6a670d7da635b41
+
+Code splitting of JS + CSS modules, dynamic fetch and unload where feasible. https://github.com/scottschiller/ArmorAlley/commit/e22fe9785855dbef7fc85879996e81e714b9ab78 https://github.com/scottschiller/ArmorAlley/commit/dd643d32bdc15b8c55e2b02b980c30ec3913ed32
+
+Code splitting: HTML fragments. https://github.com/scottschiller/ArmorAlley/commit/346708b71c2d053c8d81ad8ce6c1e237a6e9b9d3
+
+Drop preview and level editor on game start. https://github.com/scottschiller/ArmorAlley/commit/91a7c0348cd5e4862ac8aca35a82dfa3e71acf5a
+
+Almost all radar UI, shrapnel, gunfire, smoke, confetti, battlefield and sprites now rendered on <canvas> for performance. https://github.com/scottschiller/ArmorAlley/commit/40600cfdcf7e28951609b91891756ae7098a4c7c https://github.com/scottschiller/ArmorAlley/commit/6d156e05b30a304a1c59809d585d69b5ca09baf7 https://github.com/scottschiller/ArmorAlley/commit/b9b4ded6f8309e91ea7fc74cfff49d9106696b3b
+
+Google Lighthouse improvements - first paint, load, game start etc.
+
+"BnB: Virtual Stupidity"
+
+"I am the great Cornholio!" 😝👕👐 https://github.com/scottschiller/ArmorAlley/commit/7768c46457f4e484d81d5052a8111c14552d902e
+
+Update BnB end-of-battle sequence, now with proper desert scene. 🤣💨🧨🔥 https://github.com/scottschiller/ArmorAlley/commit/49274f6b739e9ec1d8793fa5703d4a4064115fbf
+
+Development / build process
+
+Reorganized codebase into conventional src/ and dist/ subdirectories. Better file structure.
+
+gulp build script, spritesheets for image and audio. https://github.com/scottschiller/ArmorAlley/commit/bec179f1d97f42dfa189a4783406baf9265372ea https://github.com/scottschiller/ArmorAlley/commit/dc7b574e87b83e552035b22e8452898c4ec23973
+
+.webp-based spritesheet, ~50% savings vs. PNG. https://github.com/scottschiller/ArmorAlley/commit/071a1ae3aab37ae2df2d1b024577bc8042447cc6
+
+Preloading of spritesheets. https://github.com/scottschiller/ArmorAlley/commit/0eb8d28076f39657e24cd4e5006877768891842d
+
+Canvas-based spritesheet image extractor + cache mechanism for rendering. https://github.com/scottschiller/ArmorAlley/commit/dcf541baaf15f9773dfbad1272e5e2d715ba91f6
+
+Floppy disk version: 5.25" (360K) and 3.5" (1.44 MB) builds of the game
+
+Floppy version boot loader https://github.com/scottschiller/ArmorAlley/commit/6f69bf96568c1b04ebd030405ef9de7f5f75d2a2
+
+💾 build-floppy gulp task. Build target: floppy-version/ https://github.com/scottschiller/ArmorAlley/commit/bca9aa22e5d280f69ae262a6cf34a71ea65b2c7b
+
+Floppy build: +aa.bat (web server portion) on Windows. https://github.com/scottschiller/ArmorAlley/commit/4385d85eecb4496bc0fb1c3af0920313dd4144dc
+
 + V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum
 
   + 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
