@@ -1,4 +1,4 @@
-import { oneOf, rng, worldHeight } from '../core/global.js';
+import { FPS, oneOf, rng, worldHeight } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -184,6 +184,9 @@ const effects = {
     chance = 1 - exports?.data?.energy / exports?.data?.energyMax
   ) => {
     if (!exports || !exports.data || !exports.dom) return;
+
+    // 60fps: only run every other frame.
+    if (FPS === 60 && game.objects.gameLoop.data.frameCount % 2 !== 0) return;
 
     const { data } = exports;
 
