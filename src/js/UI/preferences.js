@@ -294,6 +294,87 @@ function PrefsManager() {
       queuedSoundHack();
     });
 
+    const prefVersion = document.getElementById('prefs-modal-version');
+
+    if (prefVersion && window.aaVersion) {
+      const v = window.aaVersion.substring(1);
+      const versionString = [
+        v.substring(0, 4),
+        v.substring(4, 6),
+        v.substring(6)
+      ].join('.');
+      prefVersion.innerText = versionString;
+    }
+
+    const changelog = document.getElementById('changelog');
+
+    let showChangelog = document.getElementById('show-changelog');
+
+    function maybeTruncate(url) {
+      // github commit-to-short-hash shenanigans
+      const base = 'https://github.com/scottschiller/ArmorAlley/commit/';
+      const offset = url.indexOf(base);
+      if (offset !== -1) {
+        const start = offset + base.length;
+        const hashLength = 7;
+        return url.substring(start, start + hashLength);
+      }
+      return url.substr(url.indexOf('//') + 2);
+    }
+
+    function mungeURL(match) {
+      return `<a href="${match}" target="_blank">${maybeTruncate(match)}</a>`;
+    }
+
+    function parseChangelog(text) {
+      var urlPattern =
+        /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+
+      return (
+        text
+          // escape
+          .replace(/</g, '&lt')
+          .replace(/>/g, '&gt')
+
+          // URLs to links
+          .replace(urlPattern, mungeURL)
+
+          // newlines
+          .replace(/(?:\r\n|\r|\n)/g, '<br>')
+
+          // indentation
+          .replace(/  /gi, '&#8202;')
+      ); // hair-space
+    }
+
+    let changelogVisible;
+
+    function updateChangelog() {
+      changelogVisible = !changelogVisible;
+      showChangelog.removeAttribute('disabled');
+      showChangelog.getElementsByTagName('span')[0].innerHTML = changelogVisible
+        ? 'Hide'
+        : 'Show';
+    }
+
+    function fetchChangelog() {
+      showChangelog.setAttribute('disabled', true);
+      const details = document.getElementById('changelog-details');
+
+      if (changelogVisible) {
+        details.innerHTML = '';
+        updateChangelog();
+        return;
+      }
+      aaLoader.loadHTML('../../CHANGELOG.txt', (response) => {
+        updateChangelog();
+        document.getElementById('changelog-details').innerHTML =
+          '<br />' + parseChangelog(response);
+      });
+    }
+
+    utils.events.add(showChangelog, 'click', fetchChangelog);
+
     data.initComplete = true;
 
     callback?.();
