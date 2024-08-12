@@ -232,7 +232,7 @@ const Chain = (options = {}) => {
       type: 'chain',
       energy: 1,
       hostile: !!options.hostile, // applies when detached from base or balloon
-      width: 2.5,
+      width: 3,
       /**
        * slightly complex: element height is basically fixed, moved via transforms,
        * set at init, zeroed when chain drops and reset if balloon respawns.
@@ -261,7 +261,7 @@ const Chain = (options = {}) => {
       // attached to balloon, or bunker?
       const parent = obj.objects?.balloon || obj.objects?.bunker;
       // balloon or bunker, minus half of own width
-      const left = parent.data.x + parent.data.halfWidth - width / 2;
+      const left = parent.data.x + parent.data.halfWidth - width / 2 + 0.5;
       const top = pos.top(obj.data.y - 32);
       // if bunker is present, don't draw chain atop bunker.
       const adjustedHeight = obj.objects.bunker?.data?.height
@@ -271,7 +271,7 @@ const Chain = (options = {}) => {
           3.75
         : height;
       ctx.rect(
-        (left - 0.5 - game.objects.view.data.battleField.scrollLeft) *
+        (left - game.objects.view.data.battleField.scrollLeft) *
           game.objects.view.data.screenScale,
         top,
         width * game.objects.view.data.screenScale,
