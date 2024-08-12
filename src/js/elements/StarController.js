@@ -116,7 +116,10 @@ const StarController = () => {
 
     for (let i = 0; i < data.starCount; i++) {
       // twinkle, twinkle? (ignore during a scroll / warp event.)
-      if (gamePrefs.stars_twinkle_fx) {
+      if (
+        gamePrefs.stars_twinkle_fx &&
+        (FPS !== 60 || game.objects.gameLoop.data.frameCount % 2 === 0)
+      ) {
         if (data.stars[i].data.twinkleFrameCount) {
           // don't draw this one - decrement, and exit.
           data.stars[i].data.twinkleFrameCount--;
@@ -126,8 +129,7 @@ const StarController = () => {
           data.frameCount % data.stars[i].data.twinkleModulus === 0
         ) {
           // start "twinkling."
-          data.stars[i].data.twinkleFrameCount =
-            rndInt(8) * (FPS / 30);
+          data.stars[i].data.twinkleFrameCount = rndInt(8) * (FPS / 30);
           // randomize the modulus, again.
           data.stars[i].data.twinkleModulus = getTwinkleModulus();
           continue;
