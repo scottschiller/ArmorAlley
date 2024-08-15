@@ -526,12 +526,15 @@ function PrefsManager() {
           events.onChat(
             'This may fail in a "double NAT" case from some routers &amp; firewalls, often used at offices and schools. 😞'
           );
-          // debugNetwork
           if (!net.debugNetwork) {
-            events.onChat('For technical detail, try reloading with network debug logging.');
-            events.onChat(`<button type="button" onclick="window.location.href += '&debugNetwork=1'">Network debug mode</button>`)
+            events.onChat(
+              'For technical detail, try reloading with network debug logging.'
+            );
+            events.onChat(
+              `<button type="button" onclick="window.location.href += '&debugNetwork=1'">Network debug mode</button>`
+            );
           }
-        }, 5000);
+        }, 6500);
       }, 5000);
     }
 
@@ -698,8 +701,12 @@ function PrefsManager() {
         } else {
           events.onChat('Connection established with host.');
           if (net.debugNetwork) {
-            events.onChat('NOTE: Network OK. Disable debugging for smoother network gameplay.')
-            events.onChat(`<button type="button" onclick="window.location.href = window.location.href.substring(0, window.location.href.indexOf('&debugNetwork=1'))">Disable network debug mode</button>`)
+            events.onChat(
+              'NOTE: Network OK. Disable debugging for smoother network gameplay.'
+            );
+            events.onChat(
+              `<button type="button" onclick="window.location.href = window.location.href.substring(0, window.location.href.indexOf('&debugNetwork=1'))">Disable network debug mode</button>`
+            );
           }
         }
 
