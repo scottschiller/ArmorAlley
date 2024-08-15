@@ -892,17 +892,17 @@ const net = {
 
     console.log(`Using ${reliable ? 'reliable' : 'fast'} delivery`);
 
-    // PeerJS options
-    const debugConfig = {
-      debug: debugNetwork ? 3 : 0
-    };
-
     if (remoteID && debugNetwork) {
       prefsManager.onChat('DEBUG MODE: See JS console for full details.');
       console.log('Connecting...');
     }
 
-    peer = new window.Peer(null, debugConfig);
+    // PeerJS options
+    const peerConfig = {
+      debug: debugNetwork ? 3 : 0
+    };
+
+    peer = new window.Peer(peerConfig);
 
     if (debugNetwork) console.log('net.init()', peer);
 
