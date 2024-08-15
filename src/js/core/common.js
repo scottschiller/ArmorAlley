@@ -215,7 +215,21 @@ const slashCommands = {
     }
 
     if (!fromNetworkEvent) {
-      // update locally, and send
+      // update locally, "echo" and send
+
+      // local echo version
+      const echoMsg = common.getRenameString(
+        gamePrefs.net_player_name,
+        newName
+      );
+
+      // this can happen during a live game
+      if (game.data.started) {
+        game.objects.notifications.add(msg);
+      } else {
+        prefsManager.onChat(echoMsg);
+      }
+
       gamePrefs.net_player_name = newName;
       net.sendMessage({ type: 'REMOTE_PLAYER_NAME', newName });
     }
