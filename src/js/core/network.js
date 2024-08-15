@@ -858,6 +858,11 @@ const net = {
       // debug: 3
     };
 
+    if (remoteID && debugNetwork) {
+      prefsManager.onChat('DEBUG MODE: See JS console for full details.');
+      console.log('Connecting...');
+    }
+
     peer = new window.Peer(null, debugConfig);
 
     if (debugNetwork) console.log('net.init()', peer);
@@ -873,8 +878,6 @@ const net = {
         onInitCallback?.(id);
       } else {
         // you are the guest, connecting to the host.
-        if (debugNetwork) console.log('Connecting...');
-
         net.connect(remoteID, onInitCallback);
       }
     });
