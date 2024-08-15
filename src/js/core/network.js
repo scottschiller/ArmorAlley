@@ -846,6 +846,46 @@ const net = {
       return;
     }
 
+    if (debugNetwork) {
+      // massive hack: wrap console calls and echo peerJS output to chat window.
+      const _log = window.console.log;
+      const _error = window.console.error;
+      function consoleHandler(log1, ...rest) {
+        if (
+          !net.connected &&
+          log1?.includes &&
+          (log1.includes('PeerJS') ||
+            log1.includes('WARNING') ||
+            log1.includes('ERROR'))
+        ) {
+          // format each console param nicely
+          let msg = Array.prototype.slice.call(arguments).map((arg) => {
+            let str = '';
+            if (arg && Object.keys(arg).length) {
+              try {
+                str = JSON.stringify(arg);
+              } catch (e) {
+                str = '[ Object, see JS console ]';
+              }
+            } else {
+              str = arg;
+            }
+            // drop "quotes"
+            if (str?.charAt?.(0) === '"') {
+              str = str.substring(1);
+              str = str.substring(0, str.length - 1);
+            }
+            return str;
+          });
+          prefsManager.onChat(msg.join(' '));
+        }
+        return _log(log1, ...rest);
+      }
+      window.console.log = consoleHandler;
+      window.console.warning = consoleHandler;
+      window.console.error = consoleHandler;
+    }
+
     oLights = document.getElementById('lights');
     oLightsSubSprite = oLights.childNodes[0];
 
