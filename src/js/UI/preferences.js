@@ -757,6 +757,13 @@ function PrefsManager() {
 
     maybeUpdateGameSpeed();
 
+    if (options.network) {
+      // hackish: ensure game type migrates to "easy" from unassigned / default "tutorial"
+      if (gamePrefs.net_game_type === 'tutorial') {
+        gamePrefs.net_game_type = 'easy';
+      }
+    }
+
     // ensure the form matches the JS state.
     updateForm();
 
