@@ -849,7 +849,6 @@ const net = {
     if (debugNetwork) {
       // massive hack: wrap console calls and echo peerJS output to chat window.
       const _log = window.console.log;
-      const _error = window.console.error;
       function consoleHandler(log1, ...rest) {
         if (
           !net.connected &&
