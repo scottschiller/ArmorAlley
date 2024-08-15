@@ -794,6 +794,7 @@ body.game-started #network-prompt {
 #network-options-chat-box {
   border: 0.5px solid #999;
   border-bottom: none;
+  word-break: break-word;
 }
 
 #network-options-chat-scroll {
