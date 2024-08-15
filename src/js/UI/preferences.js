@@ -1077,6 +1077,16 @@ function PrefsManager() {
       } else if (key === 'game_speed') {
         // note: default is 1
         prefsFromStorage[key] = value;
+      } else if (
+        key === 'net_player_name' ||
+        key === 'net_remote_player_name'
+      ) {
+        // guard against "guest" and "host" sneaking into storage
+        if (
+          prefsFromStorage[key] === 'guest' ||
+          prefsFromStorage[key] === 'host'
+        )
+          prefsFromStorage[key] = '';
       } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
