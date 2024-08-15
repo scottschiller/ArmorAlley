@@ -855,7 +855,7 @@ const net = {
 
     // PeerJS options
     const debugConfig = {
-      // debug: 3
+      debug: debugNetwork ? 3 : 0
     };
 
     if (remoteID && debugNetwork) {
