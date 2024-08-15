@@ -126,6 +126,8 @@ const numericPrefs = {
 // allow URL-based overrides of prefs
 let prefsByURL = {};
 
+const appleWatch = '<span class="mac-system-waiting"></span>';
+
 function normalizePrefValue(name, val) {
   // string / number to boolean, etc.
 
@@ -444,7 +446,7 @@ function PrefsManager() {
   };
 
   function updateNetworkStatus(status) {
-    const statusHTML = 'Network Status';
+    const statusHTML = '🌐 &hairsp;Network';
 
     dom.oNetStatusLabel.innerHTML = `${statusHTML}: ${status}`;
   }
@@ -478,12 +480,13 @@ function PrefsManager() {
       copyToClipboard(inviteURL, (ok) => {
         inviteContainer.remove();
         linkDetail.innerHTML = [
-          `<p class="non-indented">Send this link to a friend:</p>`,
-          `<a href="${inviteURL}" onclick="return false" class="no-hover" style="font-weight:bold">${inviteURLDisplay}</a>`,
+          `<p class="non-indented">Send this link to a friend. You are the host, and they will connect to you.</p>`,
+          `<a href="${inviteURL}" onclick="return false" class="no-hover" style="font-weight:bold;font-size:75%">${inviteURLDisplay}</a>`,
           ok
             ? `<p class="non-indented">The link has been copied to your clipboard.</p>`
             : ``
         ].join('\n');
+        updateNetworkStatus(`Waiting for guest... ☎️ 👀&thinsp;${appleWatch}`);
       });
     };
   }
@@ -500,22 +503,20 @@ function PrefsManager() {
     } else {
       events.onChat('Connecting...');
 
-      const appleWatch = '<span class="mac-system-waiting"></span>';
-
       window.setTimeout(() => {
         if (net.connected) return;
 
-        updateNetworkStatus(`Connecting... ${appleWatch}`);
+        updateNetworkStatus(`Connecting... ${appleWatch}☎️`);
       }, 1000);
 
       window.setTimeout(() => {
         if (net.connected) return;
 
-        updateNetworkStatus(`Still connecting... ${appleWatch}`);
-        events.onChat('Still connecting...');
+        updateNetworkStatus(`Still connecting... ${appleWatch}😅`);
+        events.onChat('Still connecting...😅');
 
         window.setTimeout(() => {
-          updateNetworkStatus('Connection trouble');
+          updateNetworkStatus(`Connection trouble 😬😒`);
           events.onChat(
             '<b>Unable to connect; apologies.</b> Try reloading, then getting a new invite link.'
           );
@@ -523,7 +524,7 @@ function PrefsManager() {
             'This game uses PeerJS to establish a peer-to-peer WebRTC session.'
           );
           events.onChat(
-            'This may fail in a "double NAT" scenario, when both peers are behind certain routers or firewalls - as often found at offices and schools. :/'
+            'This may fail in a "double NAT" case from some routers &amp; firewalls, often used at offices and schools. 😞'
           );
         }, 5000);
       }, 5000);
@@ -697,7 +698,7 @@ function PrefsManager() {
           'Discuss options amongst yourselves, and click "READY" to proceed.'
         );
 
-        events.onChat('Identify yourself: /name [your name here]');
+        events.onChat('Set your name by typing /name [your name here]');
 
         const chatInput = document.getElementById('network-chat-input');
 
