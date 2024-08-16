@@ -339,7 +339,7 @@ function Stats() {
     // lots of types, e.g., gunfire and bombs, can be ignored when they die.
     if (!notifyItem || notifyItem.exclude) return;
 
-    // special case: parachute infantry hit the ground, the parachute didn't open in time.
+    // special case: paratroopers hit the ground, the parachute didn't open in time.
     if (target.data.didHitGround) {
       if (gamePrefs[`notify_${data.type}`]) {
         game.objects.notifications.add(

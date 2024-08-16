@@ -170,7 +170,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Additional "arrow signs" on battlefield were missing from bases since 2013. Oops. ;)
 
-• Parachute infantry (dropped from helicopter) no longer get a recycle (reaching end of battlefield) reward.
+• Paratroopers (dropped from helicopter) no longer get a recycle (reaching end of battlefield) reward.
 
 • Balloon respawning at top of screen: fixed.
 
@@ -200,7 +200,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 • Smart Missiles now blink on launch, and take a moment (0.5 seconds) to arm themselves, and are not as dangerous (1 damage point) until then. This is implemented as the "Ramius frame count" (delay) [1d71faf](https://github.com/scottschiller/ArmorAlley/commit/1d71faf5dd66b38dad93e17aba9242a9b228a220) - as inspired by "The Hunt For Red October." https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
 
-• New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed parachute infantry when the initial target was the helicopter. [926b16f](https://github.com/scottschiller/ArmorAlley/commit/926b16f262a9a45a91e75a5dfebbdb73bb457b49)
+• New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed paratrooper when the initial target was the helicopter. [926b16f](https://github.com/scottschiller/ArmorAlley/commit/926b16f262a9a45a91e75a5dfebbdb73bb457b49)
 
 **Gunfire**
 
@@ -428,7 +428,7 @@ bullets hitting the ground, turret being disabled and enabled (restored.)
 
  • Don't assume the top of the battlefield is always safe; watch out for balloons!
 
- • Parachute infantry now fall at slightly different rates, and may be affected more by wind
+ • Paratroopers now fall at slightly different rates, and may be affected more by wind
 
  • A few additional, inspirational [ game paused in background ] messages
 

@@ -101,7 +101,7 @@ const Shrapnel = (options = {}) => {
     }
 
     // hackish: there was a collision, but "pass-thru" if the target says to ignore shrapnel.
-    // e.g., parachute infantry dropped from a helicopter while it's exploding mid-air,
+    // e.g., paratroopers dropped from a helicopter while it's exploding mid-air,
     // so the infantry doesn't die and the shrapnel isn't taken out in the process.
     if (target.data.ignoreShrapnel) return;
 

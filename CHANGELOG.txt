@@ -287,7 +287,7 @@ Floppy build: +aa.bat (web server portion) on Windows. https://github.com/scotts
     • Helicopter bombs could be delayed after key press. They should now be consistent and fire on the next frame.
     • Super Bunkers would sometimes stay yellow, even when friendly.
     • Additional "arrow signs" on battlefield were missing from bases since 2013. Oops. ;)
-    • Parachute infantry (dropped from helicopter) no longer get a recycle (reaching end of battlefield) reward.
+    • Paratroopers (dropped from helicopter) no longer get a recycle (reaching end of battlefield) reward.
     • Balloon respawning at top of screen: fixed.
     • Allow balloons to be moving up or down at init, previously always downward.
     • Fixed bomb spark / hidden / bottom-align logic.
@@ -305,7 +305,7 @@ Floppy build: +aa.bat (web server portion) on Windows. https://github.com/scotts
       • Smart Missile targeting refactor. Removed former "missile facing target" requirement. Prefer shortest distance, unless just above ground. Hat tip: Pythagoras. :wink: :triangular_ruler:
       • Smart Missiles now target your vertical offset, plus half your height.
       • Smart Missiles now blink on launch, and take a moment (0.5 seconds) to arm themselves, and are not as dangerous (1 damage point) until then. This is implemented as the "Ramius frame count" (delay) [1d71faf] - as inspired by "The Hunt For Red October." https://www.youtube.com/watch?v=CgTc3cYaLdo&t=112s
-      • New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed parachute infantry when the initial target was the helicopter. [926b16f]
+      • New feature: Smart Missile "decoy" ability, - about 1/3 of a second to see and retarget a newly-deployed paratrooper when the initial target was the helicopter. [926b16f]
 
     + Gunfire
       • Gunfire can now collide with gunfire.
@@ -436,7 +436,7 @@ Floppy build: +aa.bat (web server portion) on Windows. https://github.com/scotts
   • Extreme mode: If you shoot down the enemy base's smart missiles while near the base, it will launch new ones that are faster and more difficult to dodge.
   • While on a landing pad, your gunfire may go over infantry's heads most of the time.
   • Don't assume the top of the battlefield is always safe; watch out for balloons!
-  • Parachute infantry now fall at slightly different rates, and may be affected more by wind
+  • Paratroopers now fall at slightly different rates, and may be affected more by wind
   • A few additional, inspirational [ game paused in background ] messages
 
   + Technical notes: development / code

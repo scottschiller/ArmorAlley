@@ -1311,7 +1311,7 @@ const Helicopter = (options = {}) => {
 
     effects.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
-    // roll the dice: drop a parachute infantry (pilot ejects safely)
+    // roll the dice: drop a paratrooper (pilot ejects safely)
     // skipping this for network games, risk of de-sync - needs troubleshooting.
     if (
       !net.active &&

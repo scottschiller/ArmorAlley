@@ -937,7 +937,7 @@ soundManager.onready(() => {
   });
 
   sounds.popSound2 = add({
-    // used when deploying parachute infantry
+    // used when deploying paratroopers
     // https://freesound.org/people/runirasmussen/sounds/178446/
     url: 'popsound2',
     volume: 10

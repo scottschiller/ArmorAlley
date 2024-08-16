@@ -75,7 +75,7 @@ const ParachuteInfantry = (options = {}) => {
   }
 
   function hit(hitPoints, target) {
-    // special case: helicopter explosion resulting in a parachute infantry - make parachute invincible to shrapnel.
+    // special case: helicopter explosion resulting in a paratrooper - make parachute invincible to shrapnel.
     if (target?.data?.type === 'shrapnel' && data.ignoreShrapnel) {
       return false;
     }
