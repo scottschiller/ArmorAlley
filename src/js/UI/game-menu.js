@@ -875,8 +875,8 @@ function showHomeVideo() {
 
   const types = {
     // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
-    mp4: 'video/mp4; codec="hev1.1.6.L93.B0"',
-    webm: 'video/webm; codec="vp09.00.50.08"'
+    mp4: 'video/mp4; codecs="hev1.1.6.L93.B0"',
+    webm: 'video/webm; codecs="vp09.00.50.08"'
   };
 
   // load up video with most-likely-supported format at 1080p or 4K, depending.
