@@ -289,12 +289,16 @@ function init() {
 
   if (versionInfo && window.aaVersion) {
     const v = window.aaVersion.substring(1);
-    const versionString = [v.substring(0, 4), v.substring(4, 6), v.substring(6)].join('.');
+    const versionString = [
+      v.substring(0, 4),
+      v.substring(4, 6),
+      v.substring(6)
+    ].join('.');
     versionInfo.title = 'Version / last updated date';
     versionInfo.innerText = `:: Build ${versionString} ::`;
-    versionInfo.onmousedown = function() {
+    versionInfo.onmousedown = function () {
       game.objects.envelope.showChangelog(true);
-    }
+    };
   }
 
   aaVersion.substring();

@@ -565,7 +565,8 @@ const Turret = (options = {}) => {
 
     if (!data.hasButthead && engineer.data.isButthead) {
       data.hasButthead = true;
-      if (helicopterOK && gamePrefs.bnb) playSound(sounds.bnb.bhLetsRock, exports);
+      if (helicopterOK && gamePrefs.bnb)
+        playSound(sounds.bnb.bhLetsRock, exports);
     }
 
     if (data.hasBeavis && data.hasButthead && !data.isSinging) {
