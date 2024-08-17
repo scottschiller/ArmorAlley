@@ -34,7 +34,8 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   transform-origin: 0 0;
   filter: blur(8px);
   opacity: 0;
-  z-index: 1;
+  /* don't sit on top of top bar UI, e.g., iOS Safari. */
+  z-index: 0;
   /* discourage selection. */
   -webkit-user-select: none;
   user-select: none;
