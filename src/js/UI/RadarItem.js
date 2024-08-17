@@ -4,6 +4,7 @@ import { common } from '../core/common.js';
 import {
   FPS,
   GAME_SPEED,
+  noRadar,
   TYPES,
   worldHeight,
   worldWidth
@@ -149,7 +150,7 @@ function RadarItem(options) {
   }
 
   function initScanNode() {
-    if (!dom?.o) return;
+    if (!dom?.o || noRadar) return;
 
     // special case: certain radar items also get a "scan range" node.
     let scanNode = document.createElement('div');

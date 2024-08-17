@@ -9,7 +9,8 @@ import {
   TYPES,
   FRAMERATE,
   FPS,
-  isMobile
+  isMobile,
+  demo
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
@@ -500,7 +501,7 @@ const GameLoop = () => {
     // ?fps=1 etc.
     let fps = document.getElementById('game-fps');
 
-    if (searchParams.get('fps')) {
+    if (searchParams.get('fps') && !demo) {
       fps.style.display = 'block';
     } else {
       fps.remove();

@@ -267,19 +267,25 @@ body.game-started #funds {
   opacity: 0.75;
 }
 
-body.demo #game-tips,
+body.demo #game-fps,
 body.demo #help,
 body.demo #home-video-wrapper,
 body.demo #logo,
-body.demo #notification-toasts,
-body.demo #queue,
-body.demo #radar,
-body.demo #stats-bar {
+body.demo #queue {
   display: none !important;
 }
 
+body.demo #funds,
 body.demo .target-marker {
   opacity: 0;
+}
+
+body.minimal #game-tips,
+body.minimal #notification-toasts,
+body.minimal #game-status-bar,
+body.minimal #player-status-bar {
+  /* reduced UI for home screen "attract mode" video */
+  display: none !important;
 }
 
 #player-status-bar {

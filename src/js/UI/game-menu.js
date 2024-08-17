@@ -8,6 +8,7 @@ import {
   GAME_SPEED,
   isMobile,
   isSafari,
+  minimal,
   searchParams,
   SPRITESHEET_URL,
   TYPES,
@@ -275,8 +276,13 @@ function init() {
   }
 
   if (demo) {
-    // special mode for making demo videos of UI
+    // special mode for making demo videos for the homepage etc.
     utils.css.add(document.body, 'demo');
+  }
+
+  if (minimal) {
+    // reduced UI for in-game "attract mode" video
+    utils.css.add(document.body, 'minimal');
   }
 
   let versionInfo = document.getElementById('version-info');

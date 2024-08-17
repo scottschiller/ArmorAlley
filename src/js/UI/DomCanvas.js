@@ -7,6 +7,7 @@ import {
   TYPES,
   demo,
   isSafari,
+  noRadar,
   searchParams
 } from '../core/global.js';
 import { utils } from '../core/utils.js';
@@ -777,7 +778,7 @@ const DomCanvas = () => {
       if (game.objects.radar.data.isJammed) return;
 
       // screencast mode
-      if (demo) return;
+      if (noRadar) return;
     }
 
     // does the object know how to draw itself?

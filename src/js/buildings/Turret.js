@@ -7,6 +7,7 @@ import {
   FPS,
   GAME_SPEED_RATIOED,
   getTypes,
+  noRadar,
   rad2Deg,
   rnd,
   rndInt,
@@ -715,17 +716,19 @@ const Turret = (options = {}) => {
       objects.cornholio.show();
     }
 
-    radarItem = game.objects.radar.addItem(
-      exports,
-      game.objects.editor
-        ? dom.o.className
-        : data.isEnemy
-          ? 'scan-node enemy'
-          : 'scan-node'
-    );
+    if (!noRadar) {
+      radarItem = game.objects.radar.addItem(
+        exports,
+        game.objects.editor
+          ? dom.o.className
+          : data.isEnemy
+            ? 'scan-node enemy'
+            : 'scan-node'
+      );
 
-    // turrets also get a scan node.
-    radarItem.initScanNode();
+      // turrets also get a scan node.
+      radarItem.initScanNode();
+    }
 
     // "dead on arrival"
     if (options.DOA) {

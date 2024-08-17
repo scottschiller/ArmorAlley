@@ -48,6 +48,10 @@ const isMac = !!ua.match(/mac/i); // note: macIntel reported even on Apple M2 si
 
 // special use, for recording screencasts
 const demo = searchParams.get('demo');
+const noRadar = searchParams.get('noRadar');
+
+// no notifications, tips etc.
+const minimal = searchParams.get('minimal');
 
 /**
  * 11/2023: Experimental iPad hack (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
@@ -471,6 +475,7 @@ export {
   demo,
   forceAppleMobile,
   getTypes,
+  minimal,
   parseTypes,
   isChrome,
   isFirefox,
@@ -483,6 +488,7 @@ export {
   debugCollision,
   debugType,
   DEFAULT_VOLUME,
+  noRadar,
   rad2Deg,
   searchParams,
   unlimitedFrameRate,
