@@ -869,9 +869,7 @@ function showHomeVideo() {
 
   let hqVideo = searchParams.get('hqVideo');
 
-  let res = window.innerWidth >= 1920 ? '4k' : '1080p';
-
-  let fps = gamePrefs.game_fps == 60 ? '_60fps' : '';
+  let res = window.innerWidth >= 1920 ? '4k' : 'hd';
 
   const types = {
     // https://cconcolato.github.io/media-mime-support/#video/mp4;%20codecs=%22hvc1%22
@@ -879,34 +877,44 @@ function showHomeVideo() {
     webm: 'video/webm; codecs="vp09.00.50.08"'
   };
 
+  const support = {
+    mp4: false,
+    webm: false
+  };
+
   // load up video with most-likely-supported format at 1080p or 4K, depending.
   function addSource(res, ext) {
     if (!video) return;
-    const url = `${aaLoader.getVideoRoot()}/aa_home_menu_demo_${res}${fps}.${ext}`;
+    const url = `${aaLoader.getVideoRoot()}/aa-game-${res}.${ext}`;
     const source = document.createElement('source');
     source.src = url;
     source.type = `video/${ext}`;
     video.appendChild(source);
   }
 
-  function maybeCanPlay(format) {
+  function maybeCanPlay(type) {
+    const format = types[type];
     return (
       window.MediaSource?.isTypeSupported?.(format) ||
       canPlay.test(video.canPlayType(format))
     );
   }
 
-  // home screen / scerencast / screenshot demo recording
+  // home screen / screencast / screenshot demo recording
   if (hqVideo) {
     res += '_hq';
   }
-  // test MP4 first, then webm as a default / fallback.
-  if (maybeCanPlay(types.mp4)) {
-    // if MP4 *and* webm, try webm first.
-    if (maybeCanPlay(types.webm)) addSource(res, 'webm');
+
+  // Safari indicates support, but then fails to play my webm-encoded videos.
+  if (maybeCanPlay('webm') && !navigator.userAgent.match(/safari/i)) {
+    addSource(res, 'webm');
     addSource(res, 'mp4');
+  } else if (maybeCanPlay('mp4')) {
+    addSource(res, 'mp4');
+    addSource(res, 'webm');
   } else {
-    // if no MP4, then webm alone.
+    // fallback
+    addSource(res, 'mp4');
     addSource(res, 'webm');
   }
 
