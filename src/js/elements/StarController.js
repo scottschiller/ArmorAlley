@@ -159,7 +159,7 @@ const StarController = () => {
         // move more randomly if warping.
         if (isWarp) {
           // random place on screen.
-          x = Math.random(width);
+          x = data.width + width + Math.abs(rnd(data.stars[i].data.parallax));
         } else {
           // move off-screen, and push out relative to the distance being moved.
           x =
