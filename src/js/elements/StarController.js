@@ -171,7 +171,7 @@ const StarController = () => {
         randomizeStar(i);
         if (isWarp) {
           // random place on screen.
-          x = Math.random(width);
+          x = rnd(width);
         } else {
           x = 0 - width - Math.abs(scrollDelta * data.stars[i].data.parallax);
         }
