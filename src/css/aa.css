@@ -831,14 +831,7 @@ button.primary {
     color 250ms,
     filter 250ms,
     text-shadow 250ms,
-    transform 250ms,
-    backdrop-filter 250ms;
-}
-
-body.is_firefox #game-menu-wrapper.active.fade-out .glow-item {
-  /* 02/2024: don't transition `backdrop-filter` during .fade-out, causes elements to disappear in Firefox during menu zoom + fade. */
-  transition-property: background-color, border, color, filter, text-shadow,
-    transform;
+    transform 250ms;
 }
 
 /* all the above should be "glow" items. */
