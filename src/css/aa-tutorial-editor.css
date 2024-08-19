@@ -723,3 +723,31 @@ body.edit-mode #top-bar {
   height: 7px;
   width: 81px;
 }
+
+/* Editor UI */
+
+#radar-scrubber {
+  background: rgba(0, 255, 0, 0.5);
+  border: 0.5px solid #393;
+  border-bottom: none;
+  border-top: none;
+  box-sizing: border-box;
+  cursor: grab;
+  left: 0;
+  opacity: 0.5;
+  position: absolute;
+  /* sit atop the fuel line */
+  top: 35px;
+  width: 32px;
+  height: 6px;
+  z-index: 9;
+}
+
+#radar-scrubber:hover {
+  opacity: 0.65;
+}
+
+#radar-scrubber.active {
+  cursor: grabbing;
+  opacity: 0.75;
+}

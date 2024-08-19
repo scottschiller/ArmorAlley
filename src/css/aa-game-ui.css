@@ -241,32 +241,6 @@ body.game-started #funds {
   opacity: 1;
 }
 
-#radar-scrubber {
-  background: rgba(0, 255, 0, 0.5);
-  border: 0.5px solid #393;
-  border-bottom: none;
-  border-top: none;
-  box-sizing: border-box;
-  cursor: grab;
-  left: 0;
-  opacity: 0.5;
-  position: absolute;
-  /* sit atop the fuel line */
-  top: 35px;
-  width: 32px;
-  height: 6px;
-  z-index: 99;
-}
-
-#radar-scrubber:hover {
-  opacity: 0.65;
-}
-
-#radar-scrubber.active {
-  cursor: grabbing;
-  opacity: 0.75;
-}
-
 body.demo #game-fps,
 body.demo #help,
 body.demo #home-video-wrapper,
