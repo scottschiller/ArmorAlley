@@ -835,9 +835,9 @@ button.primary {
 }
 
 /* all the above should be "glow" items. */
-#game-menu-wrapper.active:not(.fade-out) .glow-item-checkbox:hover,
-#game-menu-wrapper.active:not(.fade-out) .glow-item:hover {
-  /* Nifty tricks; "Aero" glass, Windows Vista style. */
+body:not(.is_safari) #game-menu-wrapper.active:not(.fade-out) .glow-item-checkbox,
+body:not(.is_safari) #game-menu-wrapper.active:not(.fade-out) .glow-item {
+  /* Nifty tricks; "Aero" glass, Windows Vista style. NOTE: Safari messes up glow rendering if this is applied. */
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
