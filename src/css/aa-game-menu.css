@@ -160,7 +160,7 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
 
   /* stay until the end */
   100% {
-    transform: translate3d(300%, -14.5%, 0) rotate(15deg);
+    transform: translate3d(350%, -14.5%, 0) rotate(15deg);
   }
 }
 
