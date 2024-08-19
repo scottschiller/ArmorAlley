@@ -58,6 +58,11 @@ const RadarScroller = () => {
     resize();
   }
 
+  function stop() {
+    dom.o?.remove();
+    dom.o = null;
+  }
+
   css = {
     radarScroller: 'radar-scroller'
   };
@@ -87,7 +92,8 @@ const RadarScroller = () => {
   exports = {
     animate,
     init,
-    resize
+    resize,
+    stop
   };
 
   return exports;

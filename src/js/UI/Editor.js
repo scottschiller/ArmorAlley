@@ -138,6 +138,8 @@ const Editor = () => {
     events.resize();
 
     keyboardMonitor.init();
+
+    game.objects?.radarScroller?.stop();
   }
 
   css = {
