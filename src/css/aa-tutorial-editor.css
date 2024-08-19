@@ -471,7 +471,7 @@ ul.inline-list li:not(:first-of-type) {
 
 body.edit-mode #top-bar {
   /* crop the top, reserving radar for click-and-drag / scrubbing */
-  height: calc(42px * var(--gs));
+  height: calc(34px * var(--gs));
 }
 
 /**
