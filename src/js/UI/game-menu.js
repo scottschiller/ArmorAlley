@@ -902,7 +902,7 @@ function showHomeVideo() {
 
   // home screen / screencast / screenshot demo recording
   if (hqVideo) {
-    res += '_hq';
+    res += '-hq';
   }
 
   // Safari indicates support, but then fails to play my webm-encoded videos.

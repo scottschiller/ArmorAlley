@@ -423,7 +423,7 @@ function copyStaticResources() {
     src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(
       dest(`${dp.audio}/ogg/bnb`)
     ),
-    src(`${assetPath}/${videoPath}/aa_*.*`).pipe(dest(dp.video)),
+    src(`${assetPath}/${videoPath}/aa-*.*`).pipe(dest(dp.video)),
     src(`${assetPath}/${videoPath}/bnb/*.*`, bnb).pipe(dest(`${dp.video}/bnb`))
   ]);
 }
