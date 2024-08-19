@@ -39,6 +39,8 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   /* discourage selection. */
   -webkit-user-select: none;
   user-select: none;
+  /* allow video elements to peek through wordmark, etc. */
+  mix-blend-mode: screen;
 }
 
 #game-menu-wrapper.active {
