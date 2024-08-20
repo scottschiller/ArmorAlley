@@ -455,6 +455,8 @@ const View = () => {
     if (!data.gameTips.hasAnnouncement || !data.gameTips.announcementTimer)
       return;
 
+    data.gameTips.announcementTimer?.reset();
+
     data.gameTips.hasAnnouncement = false;
     data.gameTips.announcementTimer = null;
     data.gameTips.lastAnnouncement = null;
