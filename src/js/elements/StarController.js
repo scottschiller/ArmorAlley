@@ -115,7 +115,10 @@ const StarController = () => {
     );
 
     // twinkle includes scaling, but not desirable during a warp.
-    const canScale = gamePrefs.stars_twinkle_fx && (!isWarp || game.objects.editor || game.data.started);
+    const canScale =
+      gamePrefs.stars_twinkle_fx &&
+      (game.objects.editor || game.data.started) &&
+      !isWarp;
 
     for (let i = 0; i < data.starCount; i++) {
       // twinkle, twinkle? (ignore during a scroll / warp event.)
