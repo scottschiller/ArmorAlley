@@ -457,6 +457,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic ul ul.keycap-list li {
   margin-left: 14px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .inline-key,
