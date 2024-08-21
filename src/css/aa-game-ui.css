@@ -504,11 +504,26 @@ ul.stats-bar em {
   zoom: var(--gs);
 }
 
+body:not(.limited-lives-mode) #top-bar li.lives,
+body:not(.limited-lives-mode) #top-bar li.helicopter-item {
+  display: none;
+}
+
+ul.stats-bar .lives .letter-block {
+  margin-right: 3px;
+}
+
 ul.stats-bar .lives em {
   background: url(../../assets/image/UI/status-helicopter.png) no-repeat;
-  height: 7px;
+  background-size: contain;
+  height: 4.67px;
   margin-left: 0.5em;
-  width: 15px;
+  width: 10px;
+}
+
+#lives-count {
+  display: inline-block;
+  min-width: 1.25em;
 }
 
 ul.stats-bar .infantry-count {

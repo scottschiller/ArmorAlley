@@ -647,6 +647,13 @@ const game = (() => {
 
     objects.envelope.setLevel(levelName);
 
+    // unlimited vs. limited-lives mode - N/A for tutorial and network.
+    utils.css.addOrRemove(
+      document.body,
+      !tutorialMode && !net.active && !gamePrefs.unlimited_lives,
+      'limited-lives-mode'
+    );
+
     utils.css.add(document.body, 'game-started');
 
     keyboardMonitor.init();
