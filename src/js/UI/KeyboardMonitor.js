@@ -40,6 +40,7 @@ function KeyboardMonitor() {
     minus_1: '_',
     plus: '=',
     plus_1: '+',
+    helicopter: 72,
     missileLauncher: 77,
     s: 83,
     tank: 84,
@@ -211,6 +212,16 @@ function KeyboardMonitor() {
 
       up() {
         processInput(game.players.local, 'setParachuting', false);
+      }
+    },
+
+    [keyMap.helicopter]: {
+      down() {
+        game.objects.inventory.order(
+          TYPES.helicopter,
+          undefined,
+          game.players.local
+        );
       }
     },
 
