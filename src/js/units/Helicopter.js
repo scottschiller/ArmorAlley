@@ -58,6 +58,9 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
 
+// N.B.: You get four choppers, as the original "lives remaining" UI goes down to 0.
+const DEFAULT_LIVES = 3;
+
 // constraints on chopper movement, some buffer vs. edge-of-screen
 const HELICOPTER_BOUNDARY_LEFT = 0.25;
 const HELICOPTER_BOUNDARY_RIGHT = 0.75;
@@ -3161,7 +3164,8 @@ const Helicopter = (options = {}) => {
       blinkCounter: 0,
       // TODO: DRY / optimize
       blinkCounterHide: 8 * (FPS / 30),
-      blinkCounterReset: 16 * (FPS / 30)
+      blinkCounterReset: 16 * (FPS / 30),
+      lives: DEFAULT_LIVES
     },
     options
   );
