@@ -419,6 +419,10 @@ const enemyGroupMap = {
 };
 
 const COSTS = {
+  [TYPES.helicopter]: {
+    funds: 20,
+    count: 1
+  },
   [TYPES.missileLauncher]: {
     funds: 3,
     count: 1,
