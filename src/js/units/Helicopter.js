@@ -527,6 +527,13 @@ const Helicopter = (options = {}) => {
     }
   }
 
+  function updateLives(plusOrMinusOneLife = 0) {
+    // optional param: ±1 - presently used when purchasing additional choppers
+    if (common.unlimitedLivesMode()) return;
+    data.lives += plusOrMinusOneLife;
+    document.getElementById('lives-count').innerText = Math.max(0, data.lives);
+  }
+
   function updateStatusUI(updated) {
     // ignore enemy repair / updates, but apply player's changes
     if (
@@ -820,6 +827,7 @@ const Helicopter = (options = {}) => {
       if (data.isLocal) {
         // reset everything.
         updateStatusUI({ force: true });
+        updateLives();
       }
 
       sprites.updateEnergy(exports);
@@ -2987,6 +2995,7 @@ const Helicopter = (options = {}) => {
 
     if (data.isLocal) {
       updateStatusUI({ force: true });
+      updateLives();
     }
 
     // note final true param, for respawn purposes
@@ -3329,6 +3338,7 @@ const Helicopter = (options = {}) => {
     setRespawning,
     toggleAutoFlip,
     updateFiringRates,
+    updateLives,
     updateStatusUI
   };
 
