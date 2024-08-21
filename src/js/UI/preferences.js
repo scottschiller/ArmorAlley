@@ -112,7 +112,8 @@ const defaultPrefs = {
   'scan_ui_battlefield_enemy': true,
   'scan_ui_battlefield_friendly': true,
   'scan_ui_radar_enemy': true,
-  'scan_ui_radar_friendly': true
+  'scan_ui_radar_friendly': true,
+  'unlimited_lives': true
 };
 
 // certain prefs should be treated as numbers.
