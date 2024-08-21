@@ -10,7 +10,8 @@ import {
   GAME_SPEED,
   updateGameSpeed,
   GAME_SPEED_RATIOED,
-  soundManager
+  soundManager,
+  tutorialMode
 } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
@@ -1009,6 +1010,29 @@ const common = {
 
     // border radius shenanigans
     oScanNode.style.borderRadius = `${radius}px ${radius}px 0 0`;
+  },
+
+  unlimitedLivesMode() {
+    // regardless of pref, treat tutorial as "unlimited."
+    if (gamePrefs.unlimited_lives || tutorialMode) return true;
+
+    // no network games, for now.
+    if (net.active) return true;
+
+    const pData = game.players?.local?.data;
+    if (!pData) return true;
+
+    // CPUs get unlimited treatment.
+    if (pData.isCPU) return true;
+
+    // finally, allow limited lives.
+    return false;
+  },
+
+  playerCanLoseLives(data) {
+    if (!data) return;
+    // even if unlimited mode, exclude remote + CPUs.
+    return !common.unlimitedLivesMode() && data.isLocal && !data.isCPU;
   }
 };
 
