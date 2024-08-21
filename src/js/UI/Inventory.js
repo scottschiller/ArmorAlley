@@ -425,7 +425,10 @@ const Inventory = () => {
           net.sendMessage({
             type: 'ADD_OBJECT',
             // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
-            objectType: (newObject.data.type === TYPES.infantry && newObject.data.role ? TYPES.engineer : newObject.data.type),
+            objectType:
+              newObject.data.type === TYPES.infantry && newObject.data.role
+                ? TYPES.engineer
+                : newObject.data.type,
             params: {
               ...objects.order.options,
               id: newObject.data.id
@@ -573,7 +576,10 @@ const Inventory = () => {
             net.sendMessage({
               type: 'ADD_OBJECT',
               // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
-              objectType: (newObject.data.type === TYPES.infantry && newObject.data.role ? TYPES.engineer : newObject.data.type),
+              objectType:
+                newObject.data.type === TYPES.infantry && newObject.data.role
+                  ? TYPES.engineer
+                  : newObject.data.type,
               params: {
                 ...options,
                 id: newObject.data.id

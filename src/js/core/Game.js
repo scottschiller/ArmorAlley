@@ -828,7 +828,7 @@ const game = (() => {
   function setGameType(type = null) {
     gameType = type || DEFAULT_GAME_TYPE;
     gamePrefs.game_type = gameType;
-    gamePrefs.net_game_type = (gameType !== 'tutorial' ? gameType : 'easy');
+    gamePrefs.net_game_type = gameType !== 'tutorial' ? gameType : 'easy';
     prefsManager.writePrefsToStorage();
     setTutorialMode(gameType === 'tutorial');
   }
