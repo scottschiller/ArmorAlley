@@ -22,6 +22,8 @@ const stepTypes = {
   [TYPES.engineer]: true
 };
 
+const noChopperPurchase = 'Helicopter order N/A:\nYou have unlimited lives. 🚁';
+
 const Inventory = () => {
   let css, data, dom, objects, orderNotificationOptions, exports;
 
@@ -138,6 +140,12 @@ const Inventory = () => {
 
     if (game.data.battleOver) return;
 
+    if (game.players.local.data.lives < 0) {
+      // prevent ordering if player ran out of lives
+      playSound(sounds.inventory.denied);
+      return;
+    }
+
     let orderObject, orderSize, cost, pendingNotification;
 
     // default off-screen setting
@@ -205,6 +213,12 @@ const Inventory = () => {
         playSound(sounds.inventory.denied);
       }
 
+      // special case: helicopter.
+      if (type === TYPES.helicopter && common.unlimitedLivesMode()) {
+        game.objects.notifications.addNoRepeat(noChopperPurchase);
+        return;
+      }
+
       game.objects.notifications.add('%s1%s2: %c1/%c2 💰 🤏 🤷', {
         type: 'NSF',
         onRender(input) {
@@ -265,6 +279,22 @@ const Inventory = () => {
 
         return;
       }
+    }
+
+    // special case: helicopter.
+    if (type === TYPES.helicopter) {
+      if (!common.unlimitedLivesMode()) {
+        if (sounds.inventory.begin) {
+          playSound(sounds.inventory.begin);
+        }
+        game.objects.notifications.add('Helicopter purchased 🚁');
+        // TODO: ensure this applies to the right player in future / network games
+        player.updateLives(1);
+      } else {
+        game.objects.notifications.addNoRepeat(noChopperPurchase);
+        playSound(sounds.inventory.denied);
+      }
+      return;
     }
 
     // and now, remove `noInit` for the real build.
