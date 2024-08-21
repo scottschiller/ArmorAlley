@@ -1143,6 +1143,34 @@
                   </legend>
 
                   <ul>
+                    <!-- NOTE: hidden on mobile until touch UI for ordering lands. -->
+                    <li class="hide-on-mobile">
+                      <label for="cb_unlimited_lives">
+                        <input
+                          type="checkbox"
+                          id="cb_unlimited_lives"
+                          name="unlimited_lives"
+                          value="1"
+                          checked />
+                        <span class="label-text">Unlimited Lives 🚁&infin;</span>
+                        <p>
+                          The original game had four choppers to start,
+                          <b class="keycap">H</b> for more at 20 funds each. The
+                          original was famously difficult, so "unlimited" is the
+                          default. For an extra challenge, try disabling this
+                          setting. Changes will apply to the next battle.
+                        </p>
+                        <p class="compact">
+                          <fn class="network disclaimer"
+                            >*<i
+                              >Note: network games presently support "unlimited"
+                              only.</i
+                            ></fn
+                          >
+                        </p>
+                      </label>
+                    </li>
+
                     <li>
                       <label for="cb_alt_smart_missiles">
                         <input
