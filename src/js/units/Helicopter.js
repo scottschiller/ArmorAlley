@@ -837,6 +837,16 @@ const Helicopter = (options = {}) => {
     }
 
     if (state) {
+      // notify local human, only.
+      if (common.playerCanLoseLives(data) && data.lives === 0) {
+        const warning =
+          '<span class="inline-emoji" style="animation: blink 0.5s infinite">⚠️</span>';
+        game.objects.view.setAnnouncement(
+          `${warning} Last helicopter ${warning}`
+        );
+        game.objects.notifications.addNoRepeat('WARNING: Last helicopter! 🚁');
+      }
+
       // "complete" respawn, re-enable mouse etc.
       common.setFrameTimeout(respawnComplete, 1500);
     }
@@ -1153,6 +1163,9 @@ const Helicopter = (options = {}) => {
   }
 
   function resetAndRespawn() {
+    // bail if game over (local human, only.)
+    if (data.lives < 0 && common.playerCanLoseLives(data)) return;
+
     data.fuel = data.maxFuel;
     data.energy = data.energyMax;
     data.parachutes = 1;
@@ -1433,6 +1446,21 @@ const Helicopter = (options = {}) => {
 
     if (!data.deployedParachute) {
       common.addGravestone(exports);
+    }
+
+    // Local, human player only
+    if (common.playerCanLoseLives(data)) {
+      data.lives--;
+      if (data.lives < 0) {
+        // game over.
+        game.objects.view.setAnnouncement(
+          'Game over! <span class="inline-emoji">☠️🏳️</span><br />Better luck next time.',
+          -1
+        );
+        game.objects.notifications.add(
+          'Game over. <span class="no-emoji-substitution">☠️</span> 🏳️'
+        );
+      }
     }
   }
 
