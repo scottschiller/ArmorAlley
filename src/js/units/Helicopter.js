@@ -62,8 +62,8 @@ import { sprites } from '../core/sprites.js';
 const DEFAULT_LIVES = 3;
 
 // constraints on chopper movement, some buffer vs. edge-of-screen
-const HELICOPTER_BOUNDARY_LEFT = 0.25;
-const HELICOPTER_BOUNDARY_RIGHT = 0.75;
+const HELICOPTER_BOUNDARY_LEFT = 0.2;
+const HELICOPTER_BOUNDARY_RIGHT = 0.8;
 
 const Helicopter = (options = {}) => {
   let css,

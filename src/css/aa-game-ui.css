@@ -994,8 +994,8 @@ body.game-started #world-wrapper.incoming-smart-missile {
   position: absolute;
   box-sizing: border-box;
   bottom: calc(17px * var(--gs));
-  left: calc(30% * var(--gs-frac));
-  width: 40%;
+  left: 22.5%; /* calc(20% * var(--gs-frac)); */
+  width: 55%;
   border: calc(2.5px * var(--gs)) solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.1);
   height: calc(2.5px * var(--gs));
