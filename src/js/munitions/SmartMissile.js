@@ -4,6 +4,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
 import {
+  FPS,
   GAME_SPEED,
   GAME_SPEED_RATIOED,
   getTypes,
@@ -81,12 +82,15 @@ const SmartMissile = (options = {}) => {
 
     // push x/y to history arrays, maintain size
 
-    data.xHistory.push(data.x);
-    data.yHistory.push(data.y);
+    // if 60FPS, only update every other frame
+    if (FPS === 30 || data.frameCount % 2 === 0) {
+      data.xHistory.push(data.x);
+      data.yHistory.push(data.y);
 
-    if (data.xHistory.length > data.trailerCount + 1) {
-      data.xHistory.shift();
-      data.yHistory.shift();
+      if (data.xHistory.length > data.trailerCount + 1) {
+        data.xHistory.shift();
+        data.yHistory.shift();
+      }
     }
   }
 

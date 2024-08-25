@@ -2476,14 +2476,18 @@ const Helicopter = (options = {}) => {
     // push x/y to trailer history arrays, maintain size
 
     if (data.isOnScreen) {
-      data.xHistory.push(
-        data.x + (data.isEnemy || data.flipped ? data.width : 0)
-      );
-      data.yHistory.push(data.y);
 
-      if (data.xHistory.length > data.trailerCount + 1) {
-        data.xHistory.shift();
-        data.yHistory.shift();
+      // if 60FPS, only update every other frame
+      if (FPS === 30 || game.objects.gameLoop.data.frameCount % 2 === 0) {
+        data.xHistory.push(
+          data.x + (data.isEnemy || data.flipped ? data.width : 0)
+        );
+        data.yHistory.push(data.y);
+
+        if (data.xHistory.length > data.trailerCount + 1) {
+          data.xHistory.shift();
+          data.yHistory.shift();
+        }
       }
 
       moveTrailers();
