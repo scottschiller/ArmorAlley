@@ -2476,7 +2476,6 @@ const Helicopter = (options = {}) => {
     // push x/y to trailer history arrays, maintain size
 
     if (data.isOnScreen) {
-
       // if 60FPS, only update every other frame
       if (FPS === 30 || game.objects.gameLoop.data.frameCount % 2 === 0) {
         data.xHistory.push(
@@ -3101,8 +3100,8 @@ const Helicopter = (options = {}) => {
       bombModulus: setFiringRate('bombModulus'),
       bombFrameCount: 0,
       bombRepairModulus: 10,
-      fuelRateLanded: tutorialMode ? 24 : 8,
-      fuelRateFlying: tutorialMode ? 8 : 4.5,
+      fuelRateLanded: tutorialMode ? 18 : 9,
+      fuelRateFlying: tutorialMode ? 9 : 4.5,
       parachuteFrameCount: 0,
       parachuteModulus: setFiringRate('parachuteModulus'),
       repairModulus: 2,
