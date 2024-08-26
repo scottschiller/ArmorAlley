@@ -645,7 +645,9 @@ const View = () => {
 
   function updateFundsUI() {
     // based on funds, update "affordability" bits of UI.
-    const playerFunds = game.objects[TYPES.endBunker][0].data.funds;
+    const playerFunds =
+      game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0]
+        .data.funds;
 
     const nodes = [document.getElementById('player-status-bar')];
 
