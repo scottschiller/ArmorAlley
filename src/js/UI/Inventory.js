@@ -233,7 +233,7 @@ const Inventory = () => {
                 text.charAt(0).toUpperCase() +
                 (data.canShowNSF ? '' : text.slice(1))
             )
-            .replace('%c1', game.objects[TYPES.endBunker][0].data.funds)
+            .replace('%c1', game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0].data.funds)
             .replace('%c2', cost);
           return result;
         },
