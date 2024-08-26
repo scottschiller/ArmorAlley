@@ -2863,7 +2863,7 @@ const Helicopter = (options = {}) => {
     // also, values that need scaling for 30 / 60 FPS.
 
     smartMissileRepairModulus: {
-      default: 200
+      default: 128
     },
 
     bombRepairModulus: {
@@ -3158,7 +3158,7 @@ const Helicopter = (options = {}) => {
       bnbNoParachutes: false,
       smartMissiles: 2,
       maxSmartMissiles: 2,
-      smartMissileRepairModulus: 200,
+      smartMissileRepairModulus: 128,
       midPoint: null,
       trailerCount: 16,
       xHistory: [],
