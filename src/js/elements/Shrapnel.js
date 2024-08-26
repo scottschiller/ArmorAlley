@@ -325,7 +325,7 @@ const Shrapnel = (options = {}) => {
       spinAngleIncrement: rndAngle(),
       extraTransforms: '',
       hostile: true,
-      damagePoints: 0.5,
+      damagePoints: 0.25,
       hasSound: !!options.hasSound,
       rndRicochetAmount: 0.5 + rng(0.75, type),
       ricochetCount: 0,
