@@ -165,11 +165,29 @@ body.is-mobile.mobile-controls_left-aligned
   margin-left: calc(60px * var(--gs));
 }
 
+body.limited-lives-mode.is-mobile.mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  /* "limited lives" mode: pull up to avoid overlapping helicopter icon. */
+  margin-top: calc(-32px * var(--gs));
+}
+
+body.limited-lives-mode.is-mobile.is_safari.mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  /* "limited lives" on iPad, desktop mode? */
+  margin-top: calc(-24px * var(--gs));
+}
+
+body.limited-lives-mode.is-mobile.is_iphone.mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  /* iOS safari needs a lot more space. */
+  margin-top: calc(-45px * var(--gs));
+}
+
 body.is-mobile.mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
   right: 0;
   /* offset for touch controls, prevent overlap */
-  margin-right: calc(69px * var(--gs));
+  margin-right: calc(60px * var(--gs));
 }
 
 @media screen and (orientation: portrait) {
@@ -305,37 +323,37 @@ body.is-mobile.mobile-controls_right-aligned
   body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPad, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs) * 1.5);
+    margin-right: calc(60px * var(--gs) * 1.5);
   }
 
   body.is-mobile.is_iphone.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone, controls right, notifications bottom right */
-    margin-right: calc(64px * var(--gs) * 3);
+    margin-right: calc(60px * var(--gs) * 3);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom right */
-    margin-right: calc(64px * var(--gs) * 2.15);
+    margin-right: calc(56px * var(--gs) * 2.15);
   }
 
   body.is-mobile.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPad, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs) * 1.25);
+    margin-left: calc(68px * var(--gs) * 1.25);
   }
 
   body.is-mobile.is_iphone.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls + notifications bottom left */
-    margin-left: calc(64px * var(--gs) * 1.95);
+    margin-left: calc(65px * var(--gs) * 1.95);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone + notch at left + controls + notifications at bottom left. */
-    margin-left: calc(64px * var(--gs) * 2.75);
+    margin-left: calc(65px * var(--gs) * 2.75);
   }
 
   /* scale up tutorial window. */
@@ -503,7 +521,7 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
 #mobile-controls {
   /* ugh, whitespace. */
   font-size: 0px;
-  width: calc(60px * var(--gs));
+  width: calc(55px * var(--gs));
   height: calc(80px * var(--gs));
   left: 0;
   padding: 0 1px;
@@ -517,14 +535,19 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
 
 body.mobile-controls_left-aligned #mobile-controls {
   /* set based on prefs */
-  left: 0;
+  left: 3px;
   right: auto;
 }
 
 body.mobile-controls_right-aligned #mobile-controls {
   /* set based on prefs */
   left: auto;
-  right: 0;
+  right: 0px;
+}
+
+body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
+  /* iOS: full left-align */
+  left: 0px;
 }
 
 #mobile-controls .mobile-controls-ordering,
