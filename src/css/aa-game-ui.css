@@ -1084,6 +1084,44 @@ body.game-started:not(.demo) #flight-range {
   width: 27px;
 }
 
+#mobile-controls li.inventory-item[data-for='helicopter'] {
+  display: none;
+}
+
+body.limited-lives-mode
+  #mobile-controls
+  li.inventory-item[data-for='helicopter'] {
+  position: absolute;
+  display: block;
+  bottom: 0px;
+  right: 0px;
+  transform: translate3d(107%, 0px, 0);
+}
+
+body.is-mobile.limited-lives-mode.mobile-controls_right-aligned:not(
+    .notch-at-right
+  )
+  #mobile-controls
+  li.inventory-item[data-for='helicopter'] {
+  /* right-aligned controls, non-iOS (no notch): helicopter at top right */
+  bottom: auto;
+  right: auto;
+  top: 0px;
+  left: 0px;
+  transform: translate3d(107%, -110%, 0);
+}
+
+body.limited-lives-mode #mobile-controls li.inventory-item a.helicopter {
+  background-image: url(../../assets/image/UI/helicopter-static.png);
+  background-size: 78%;
+}
+
+body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
+  /* enemy chopper */
+  background-image: url(../../assets/image/UI/helicopter-enemy-static.png);
+  background-size: 78%;
+}
+
 #mobile-controls li.inventory-item a.tank,
 #player-status-bar .inventory-item a.tank,
 .static-sprite.tank {
