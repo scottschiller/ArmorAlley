@@ -421,7 +421,8 @@ const enemyGroupMap = {
 const COSTS = {
   [TYPES.helicopter]: {
     funds: 20,
-    count: 1
+    count: 1,
+    css: 'can-not-order-helicopter'
   },
   [TYPES.missileLauncher]: {
     funds: 3,

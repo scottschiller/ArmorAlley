@@ -490,6 +490,7 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
 }
 
 /* grey out items when ordering is not possible. */
+#mobile-controls.can-not-order-helicopter .helicopter,
 #mobile-controls.can-not-order-engineer .engineer,
 #mobile-controls.can-not-order-infantry .infantry,
 #mobile-controls.can-not-order-missile-launcher .missile-launcher,
