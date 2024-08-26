@@ -3102,7 +3102,7 @@ const Helicopter = (options = {}) => {
       bombFrameCount: 0,
       bombRepairModulus: 10,
       fuelRateLanded: tutorialMode ? 24 : 8,
-      fuelRateFlying: tutorialMode ? 8 : 8 / 3,
+      fuelRateFlying: tutorialMode ? 8 : 4.5,
       parachuteFrameCount: 0,
       parachuteModulus: setFiringRate('parachuteModulus'),
       repairModulus: 2,
