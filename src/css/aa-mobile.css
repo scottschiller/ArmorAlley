@@ -743,6 +743,10 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   background-image: url(../../assets/image/UI/engineer-static.png);
 }
 
+#mobile-controls.enemy li.inventory-item a.engineer {
+  background-image: url(../../assets/image/UI/engineer-enemy-static.png);
+}
+
 body.game-paused:not(.game-started) #world {
   /* side note: applying this to body throws off positioning in Firefox. */
   filter: grayscale(100%);
