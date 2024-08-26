@@ -8,6 +8,8 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 Updated and improved layout for mobile and touch-screen devices
 "Installable" PWA-style web app, iOS home screen / Chrome "app" support
 
+"Unlimited lives" preference, on by default. You can now purchase additional helicopters via "H" (20 funds each), and lose if you run out of choppers. https://github.com/scottschiller/ArmorAlley/commit/55937c5928fe3cba52007fdc8dc6872ab55e4fce
+
 Bug fixes
 Unit / convoy production could get stuck due to "traffic control" https://github.com/scottschiller/ArmorAlley/commit/4708ef4e8d104f68fd3f838eb8accee011f10f6e
 
@@ -164,6 +166,8 @@ Smart missiles no longer target balloons attached to bunkers. https://github.com
 Enemy helicopter now takes off slowly on respawn. https://github.com/scottschiller/ArmorAlley/commit/410c2b6ade89ccd468594155933b08f057f066b2
 
 Network / multiplayer
+
+Basic network troubleshooting UI for guest connection trouble. https://github.com/scottschiller/ArmorAlley/commit/a3c4150a143d1bcde3aae021c7ab99da25301fb0
 
 Fix de-sync of balloons between clients in network games. https://github.com/scottschiller/ArmorAlley/commit/0b6c5293a8bd2a9c0a91bae2a034013d0cedd234
 
