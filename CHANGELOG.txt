@@ -124,6 +124,21 @@ Don't pause the game on screen rotate any more. https://github.com/scottschiller
 Bug fix: Always add touch and mouse event listeners. https://github.com/scottschiller/ArmorAlley/commit/d7ce04f1641dd4d4ccf30df5138c198d61a73dec
 
 Gameplay
+
+Tanks are now more evenly-balanced; CPU tanks no longer have the advantage of slightly-faster gunfire rates in hard + extreme mode. https://github.com/scottschiller/ArmorAlley/commit/71435b3cec21afc46e2b7113c17ce0a5d461abf5
+
+Helicopter "responsiveness" tweaks, CPU + human. https://github.com/scottschiller/ArmorAlley/commit/1faeb7bd099cdd559b0eee6aaea602e16683e8a9
+
+Fuel burn rate reduced, closer to original game: ~30% (instead of ~50%) of a tank to fly across battlefield. https://github.com/scottschiller/ArmorAlley/commit/55db1bcd13de3b6e7166b95181867cd7923829f3
+
+Smart missile "repair" (reloading) rate increased, closer to original: one for every 32 ammo added. https://github.com/scottschiller/ArmorAlley/commit/e8a6fb20a025e9916d1ee35a0a8f85775c6abff4
+
+Infantry gunfire now takes a long time to take out turrets, like the original. https://github.com/scottschiller/ArmorAlley/commit/1e1ec2587dd4d4db419edef1dcc5791019b5dcf5
+
+Slightly longer delays between enemy convoys on hard + extreme mode, it was pretty tough. https://github.com/scottschiller/ArmorAlley/commit/ae4583bf262b69fc99bb69b59e1b6c04cd8ba849
+
+Allow CPU helicopters to use "tilt," vs. purely horizontal gunfire. https://github.com/scottschiller/ArmorAlley/commit/9b5120be9237acbfc7f45c88c014b427261fb3e9
+
 Responsiveness: Make helicopter react ASAP to user action. https://github.com/scottschiller/ArmorAlley/commit/8be1eeced1069aa2a68479ae904ab2be9a963959 https://github.com/scottschiller/ArmorAlley/commit/589eee62cde85403e6a4b9e183b96b575c05746a
 
 Tighter collision checks. https://github.com/scottschiller/ArmorAlley/commit/9b057c122bd7b654259ddde6660425567dbf7607
