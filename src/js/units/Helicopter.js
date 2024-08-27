@@ -793,7 +793,6 @@ const Helicopter = (options = {}) => {
         ? common.getLandingPadOffsetX(exports) -
           game.objects.view.data.browser.halfWidth
         : 0;
-      data.scrollLeftVX = 0;
 
       moveTo(common.getLandingPadOffsetX(exports), respawnY);
 
@@ -1421,7 +1420,6 @@ const Helicopter = (options = {}) => {
             ? common.getLandingPadOffsetX(exports) -
               game.objects.view.data.browser.halfWidth
             : 0;
-          data.scrollLeftVX = 0;
 
           game.objects.view.animateLeftScrollTo(
             common.getLandingPadOffsetX(exports) +
@@ -1440,7 +1438,6 @@ const Helicopter = (options = {}) => {
     data.vY = 0;
 
     data.scrollLeft = 0;
-    data.scrollLeftVX = 0;
 
     common.onDie(exports, dieOptions);
 
@@ -2505,12 +2502,7 @@ const Helicopter = (options = {}) => {
           data.lastVX = parseFloat(data.vX);
 
           data.vX =
-            (data.scrollLeft +
-              data.scrollLeftVX * 9.5 +
-              mouse.x -
-              data.x -
-              data.halfWidth) *
-            0.1;
+            (data.scrollLeft + mouse.x - data.x - data.halfWidth) * 0.1;
 
           // and limit
           data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
@@ -3196,7 +3188,6 @@ const Helicopter = (options = {}) => {
         vY: 0
       },
       scrollLeft: 0,
-      scrollLeftVX: 0,
       // a buffer for local input delay.
       mouseHistory: new Array(32),
       missileMode: null,
