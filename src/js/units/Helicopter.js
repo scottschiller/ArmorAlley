@@ -1518,9 +1518,7 @@ const Helicopter = (options = {}) => {
         (data.tilt !== null ? tiltOffset + 2 : 0) +
         (data.isEnemy ? 2 : 0),
       vX,
-      vY:
-        data.vY +
-        (data.isCPU ? 0 : tiltOffset * (!data.isCPU && data.isEnemy ? -1 : 1)) // CPU doesn't know how to account for tilt
+      vY: data.vY + tiltOffset * (data.isEnemy ? -1 : 1)
     };
   }
 
