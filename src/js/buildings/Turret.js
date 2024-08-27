@@ -436,13 +436,16 @@ const Turret = (options = {}) => {
       data.lastReactionSound = true;
       playSound(sounds.bnb.beavisScreamShort, exports, {
         onfinish: (sound) => {
-          data.lastReactionSound = null;
-          // call the "main" onfinish, which will hit onAASoundEnd() and destroy things cleanly.
-          // hackish: ensure that sound has not already been destroyed, prevent infinite loop.
-          // NOTE: I dislike this pattern and wish to do away with it. ;)
-          if (!sound.disabled) {
-            sound.options.onfinish(sound);
-          }
+          // only allow this every so often.
+          common.setFixedFrameTimeout(() => {
+            data.lastReactionSound = null;
+            // call the "main" onfinish, which will hit onAASoundEnd() and destroy things cleanly.
+            // hackish: ensure that sound has not already been destroyed, prevent infinite loop.
+            // NOTE: I dislike this pattern and wish to do away with it. ;)
+            if (!sound.disabled) {
+              sound.options.onfinish(sound);
+            }
+          }, 20000);
         }
       });
     }
