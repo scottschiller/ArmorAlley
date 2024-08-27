@@ -61,6 +61,12 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
 
+// how "fast" the enemy CPU changes velocity
+const RESPONSIVE_TYPES = {
+  easy: 0.5,
+  hard: 0.75,
+  extreme: 1
+};
 
 const Helicopter = (options = {}) => {
   let css,
@@ -76,6 +82,8 @@ const Helicopter = (options = {}) => {
     statsBar;
 
   const aiRNG = (number) => rng(number, data.type, aiSeedOffset);
+
+  const RESPONSIVENESS = RESPONSIVE_TYPES[gameType] || RESPONSIVE_TYPES.easy;
 
   function cloak(cloud) {
     if (!data.cloaked) {
@@ -2271,9 +2279,9 @@ const Helicopter = (options = {}) => {
 
       if (Math.abs(deltaVX) > 1) {
         if (data.vX < desiredVX) {
-          data.vX += 1 * GAME_SPEED_RATIOED;
+          data.vX += RESPONSIVENESS * GAME_SPEED_RATIOED;
         } else {
-          data.vX -= 1 * GAME_SPEED_RATIOED;
+          data.vX -= RESPONSIVENESS * GAME_SPEED_RATIOED;
         }
       } else {
         data.vX = 0;
@@ -2283,9 +2291,9 @@ const Helicopter = (options = {}) => {
 
       if (Math.abs(deltaVY) > 1) {
         if (data.vY < desiredVY) {
-          data.vY += 1 * GAME_SPEED_RATIOED;
+          data.vY += RESPONSIVENESS * GAME_SPEED_RATIOED;
         } else {
-          data.vY -= 1 * GAME_SPEED_RATIOED;
+          data.vY -= RESPONSIVENESS * GAME_SPEED_RATIOED;
         }
       } else {
         data.vY = 0;
@@ -2342,9 +2350,9 @@ const Helicopter = (options = {}) => {
     } else {
       // default: go "toward the other guys"
       if (data.isEnemy) {
-        data.vX -= 0.25 * GAME_SPEED_RATIOED;
+        data.vX -= 0.175 * GAME_SPEED_RATIOED;
       } else {
-        data.vX += 0.25 * GAME_SPEED_RATIOED;
+        data.vX += 0.175 * GAME_SPEED_RATIOED;
       }
 
       // and up
@@ -2499,7 +2507,7 @@ const Helicopter = (options = {}) => {
           data.lastVX = parseFloat(data.vX);
 
           data.vX =
-            (data.scrollLeft + mouse.x - data.x - data.halfWidth) * 0.1;
+            (data.scrollLeft + mouse.x - data.x - data.halfWidth) * 0.075;
 
           // and limit
           data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
@@ -2507,7 +2515,7 @@ const Helicopter = (options = {}) => {
 
         if (mouse.y) {
           data.vY =
-            (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.1;
+            (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.066;
 
           // and limit
           data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
