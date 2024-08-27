@@ -34,8 +34,7 @@ const Tank = (options = {}) => {
     nearby,
     friendlyNearby,
     exports,
-    tankHeight,
-    fireRates;
+    tankHeight;
 
   function fire() {
     let collisionItems;
@@ -400,26 +399,12 @@ const Tank = (options = {}) => {
 
   tankHeight = 18;
 
-  // gunfire every N frames, based on game type.
-  // lower number = faster firing rate.
-  fireRates = {
-    default: 12,
-    tutorial: 12,
-    easy: 12,
-    hard: 11,
-    extreme: 10
-  };
-
   css = common.inheritCSS({
     className: TYPES.tank
   });
 
   const width = 58;
-
-  const fireModulus =
-    fireRates[
-      options.isEnemy && game.players.cpu.length ? gameType : 'default'
-    ];
+  const fireModulus = 12;
 
   data = common.inheritData(
     {
@@ -433,7 +418,6 @@ const Tank = (options = {}) => {
       frameCount: 0,
       repairModulus: FPS,
       repairModulus1X: FPS,
-      // enemy tanks shoot a little faster, depending on the game difficulty
       fireModulus,
       fireModulus1X: fireModulus,
       gameSpeedProps: ['fireModulus', 'repairModulus'],
