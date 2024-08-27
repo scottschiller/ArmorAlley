@@ -100,9 +100,7 @@ const View = () => {
 
     // Reset local stuff
     // TODO: review, ensure that all of these(?) are needed
-    game.players.local.data.scrollLeftVX = 0;
     game.players.local.data.scrollLeft = 0;
-    data.battleField.scrollLeftVX = 0;
   }
 
   function decelerateScroll() {
@@ -141,21 +139,17 @@ const View = () => {
   function setLeftScroll(x, allowOverride) {
     // slightly hackish: apply scroll offsets to both game view, and local player.
     if (allowOverride) {
-      data.battleField.scrollLeftVX = 0;
       data.battleField.scrollLeft = x;
 
       if (game.players.local) {
-        game.players.local.data.scrollLeftVX = 0;
         game.players.local.data.scrollLeft = x;
       }
     } else {
       // editor case...
       if (game.objects.editor) {
         data.battleField.scrollLeft = x;
-        data.battleField.scrollLeftVX = 0;
       } else {
         // scroll the battlefield by relative amount.
-        game.players.local.data.scrollLeftVX = 0;
         game.players.local.data.scrollLeft = Math.max(
           -worldOverflow,
           Math.min(
@@ -171,7 +165,6 @@ const View = () => {
             data.battleField.scrollLeft + x
           )
         );
-        data.battleField.scrollLeftVX = x;
       }
     }
 
@@ -577,8 +570,7 @@ const View = () => {
       x: player.data.mouse.delayedInputX,
       y: player.data.mouse.delayedInputY,
       // needed by remote helicopter.animate()
-      scrollLeft: player.data.scrollLeft,
-      scrollLeftVX: player.data.scrollLeftVX
+      scrollLeft: player.data.scrollLeft
     });
   }
 
@@ -602,7 +594,6 @@ const View = () => {
           ? common.getLandingPadOffsetX(exports) -
             game.objects.view.data.browser.halfWidth
           : 0;
-        data.scrollLeftVX = 0;
       }
     }
 
@@ -1342,7 +1333,6 @@ const View = () => {
       scrollLeftWithBrowserWidth: 0,
       height: 0,
       scrollLeft: 0,
-      scrollLeftVX: 0,
       parallaxRate: 0.1
     },
     fundsTimer: null,

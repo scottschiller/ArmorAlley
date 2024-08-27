@@ -307,7 +307,6 @@ const messageActions = {
 
       // view
       helicopter.data.scrollLeft = data.scrollLeft;
-      helicopter.data.scrollLeftVX = data.scrollLeftVX;
     }
 
     if (debugNetwork) {
