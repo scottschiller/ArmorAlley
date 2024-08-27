@@ -3124,8 +3124,9 @@ const Helicopter = (options = {}) => {
       yMax: null,
       yMaxOffset: 3,
       vX: 0,
-      vXMax: isCPU ? 8 : 12,
-      vYMax: isCPU ? 8 : 10,
+      // TODO: sort out CPU 2X difference. :X
+      vXMax: isCPU ? 6 : 12,
+      vYMax: isCPU ? 5 : 10,
       lastVX: 0,
       vY: 0,
       vyMin: 0,
