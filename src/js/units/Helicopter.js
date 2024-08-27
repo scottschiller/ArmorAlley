@@ -27,7 +27,10 @@ import {
   rngPlusMinus,
   clientFeatures,
   GAME_SPEED_RATIOED,
-  GAME_SPEED
+  GAME_SPEED,
+  DEFAULT_LIVES,
+  HELICOPTER_BOUNDARY_LEFT,
+  HELICOPTER_BOUNDARY_RIGHT
 } from '../core/global.js';
 
 import {
@@ -58,12 +61,6 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
 
-// N.B.: You get four choppers, as the original "lives remaining" UI goes down to 0.
-const DEFAULT_LIVES = 3;
-
-// constraints on chopper movement, some buffer vs. edge-of-screen
-const HELICOPTER_BOUNDARY_LEFT = 0.2;
-const HELICOPTER_BOUNDARY_RIGHT = 0.8;
 
 const Helicopter = (options = {}) => {
   let css,

@@ -16,6 +16,14 @@ const winloc = window.location.href.toString();
 
 const ua = navigator.userAgent;
 
+// N.B.: You get four choppers, as the original "lives remaining" UI goes down to 0.
+const DEFAULT_LIVES = 3;
+
+// constraints on chopper movement, some buffer vs. edge-of-screen
+const HELICOPTER_BOUNDARY = 0.2;
+const HELICOPTER_BOUNDARY_LEFT = HELICOPTER_BOUNDARY;
+const HELICOPTER_BOUNDARY_RIGHT = 1 - HELICOPTER_BOUNDARY;
+
 // defaults, until overridden or set via prefs
 let FPS = 30;
 let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
@@ -475,11 +483,14 @@ export {
   FPS,
   FRAMERATE,
   clientFeatures,
+  DEFAULT_LIVES,
   defaultSeed,
   defaultSeeds,
   demo,
   forceAppleMobile,
   getTypes,
+  HELICOPTER_BOUNDARY_LEFT,
+  HELICOPTER_BOUNDARY_RIGHT,
   minimal,
   parseTypes,
   isChrome,
