@@ -53,9 +53,14 @@ const GunFire = (options = {}) => {
 
     if (target) {
       // special case: tanks hit turrets for a lot of damage.
-      if (pType === TYPES.tank && tType === TYPES.turret) {
-        data.damagePoints = 8;
-        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
+      if (tType === TYPES.turret) {
+        if (pType === TYPES.tank) {
+          data.damagePoints = 8;
+          effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
+        } else if (pType === TYPES.infantry) {
+          // infantry take a *long* time to take out a turret in the original game.
+          data.damagePoints /= 5;
+        }
       }
 
       // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
