@@ -554,7 +554,7 @@ const Inventory = () => {
 
     // the more CPUs, the faster the convoys! :D
     const convoyDelay =
-      (gameType === 'extreme' ? 20 : gameType === 'hard' ? 30 : 60) /
+      (gameType === 'extreme' ? 30 : gameType === 'hard' ? 45 : 60) /
       game.players.cpu.length;
 
     // after ordering, wait a certain amount before the next convoy
