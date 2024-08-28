@@ -603,7 +603,7 @@ const Helicopter = (options = {}) => {
 
     data.repairFrames++;
 
-    data.fuel = Math.min(data.maxFuel, data.fuel + 0.4 * GAME_SPEED_RATIOED);
+    data.fuel = Math.min(data.maxFuel, data.fuel + 0.25 * GAME_SPEED_RATIOED);
 
     if (
       data.ammo < data.maxAmmo &&
