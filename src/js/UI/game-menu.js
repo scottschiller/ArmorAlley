@@ -6,6 +6,8 @@ import {
   clientFeatures,
   demo,
   GAME_SPEED,
+  isChrome,
+  isMac,
   isMobile,
   isSafari,
   minimal,
@@ -394,6 +396,32 @@ function init() {
 
   // ... and apply for current selection, too.
   updateGameTypeControls(oSelect.value);
+
+  if (isMac && (isChrome || isSafari)) {
+    /**
+     * HACK: `select:active` (CSS) can be used to apply a resize / scale hack that applies
+     * to mouse clicks, but not arrow keys that invoke the picker UI.
+     *
+     * Here, catch arrow and spacebar keys and then apply the workaround via JS.
+     */
+    const open = 'picker_open';
+    const openKeys = {
+      'ArrowDown': true,
+      'ArrowUp': true,
+      ' ': true
+    };
+    oSelect.addEventListener('keydown', (e) => {
+      // shenanigans only if a key is used that opens the "picker"
+      utils.css.addOrRemove(oSelect, openKeys[e.key], open);
+      if (openKeys[e.key]) {
+        /**
+         * extra sneaky: the OS is now showing the picker UI with a proper font size,
+         * so CSS can be reset and the original scale restored on <select>.
+         */
+        window.requestAnimationFrame(() => utils.css.remove(oSelect, open));
+      }
+    });
+  }
 
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);

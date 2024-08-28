@@ -461,7 +461,8 @@ body.game-started #start-game-button-mobile {
   outline-color: rgba(0, 0, 0, 0.5);
 }
 
-body.is_mac.is_chrome #game-menu select:active {
+body.is_mac.is_chrome #game-menu select:active,
+body.is_mac.is_chrome #game-menu select.picker_open {
   /* WHAT A HACK. Prevent massive text size in Chrome on macOS. */
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.5 * (1 / var(--menu-scale)));
@@ -475,7 +476,8 @@ body.is_safari.is_iphone #game-menu select {
   height: calc(18.33px * var(--menu-scale));
 }
 
-body.is_safari:not(.is-mobile):not(.is_firefox) #game-menu select:active {
+body.is_safari:not(.is-mobile) #game-menu select:active,
+body.is_safari:not(.is-mobile) #game-menu select.picker_open {
   /* Safari-specific: adjust zoom, but retain sizing of element. */
   /* set a value relative to menu scaling, so text is reasonably fixed-size. */
   --scale: calc(1.75 * (1 / var(--menu-scale)));
