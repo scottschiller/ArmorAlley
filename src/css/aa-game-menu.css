@@ -429,17 +429,14 @@ body.game-started #start-game-button-mobile {
 }
 
 #game-menu select {
-  --bg-size: calc(8px * var(--menu-scale));
   appearance: none;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23ffffff'><polygon points='0,0 100,0 50,50'/></svg>")
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='100' fill='%23ffffff'><polygon points='0,0 100,100 100, 0 0, 100'/></svg>")
     no-repeat padding-box;
-  background-position: calc(100% - var(--bg-size)) 70%;
-  background-size: var(--bg-size);
   border-radius: calc(2px * var(--menu-scale));
   text-indent: calc(4px * var(--menu-scale));
-  --bg-size: calc(6px * var(--menu-scale));
+  --bg-size: calc(3.75px * var(--menu-scale));
   --text-indent: calc(3px * var(--menu-scale));
-  background-position: calc(100% - var(--text-indent) * 1.65) 65%;
+  background-position: calc(100% - var(--text-indent) * 1.65) 48%;
   background-size: calc(var(--bg-size));
   min-width: 7em;
   font-size: calc(11px * var(--menu-scale));
@@ -461,39 +458,9 @@ body.game-started #start-game-button-mobile {
   outline-color: rgba(0, 0, 0, 0.5);
 }
 
-body.is_mac.is_chrome #game-menu select:active,
-body.is_mac.is_chrome #game-menu select.picker_open {
-  /* WHAT A HACK. Prevent massive text size in Chrome on macOS. */
-  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
-  --scale: calc(1.5 * (1 / var(--menu-scale)));
-  zoom: var(--scale);
-  /* in case browsers use the color for the drop-down, make it black to be safe. */
-  color: #000;
-}
-
 body.is_safari.is_iphone #game-menu select {
   /* stubborn iOS Safari */
   height: calc(18.33px * var(--menu-scale));
-}
-
-body.is_safari:not(.is-mobile) #game-menu select:active,
-body.is_safari:not(.is-mobile) #game-menu select.picker_open {
-  /* Safari-specific: adjust zoom, but retain sizing of element. */
-  /* set a value relative to menu scaling, so text is reasonably fixed-size. */
-  --scale: calc(1.75 * (1 / var(--menu-scale)));
-  zoom: var(--scale);
-  font-family:
-    FA Sysfont C,
-    courier,
-    sans-serif;
-  /* note slight padding on width. */
-  min-width: calc(7em * 1 / var(--scale));
-  height: calc(0.925em * var(--menu-scale));
-  /* hide UI */
-  text-indent: -100%;
-  background-image: none !important;
-  /* not exact, but up rounded borders to retain approximate look. */
-  border-radius: calc(2px * var(--menu-scale) * 2.25);
 }
 
 body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
