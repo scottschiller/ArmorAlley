@@ -1064,7 +1064,6 @@ const View = () => {
         return;
       }
       innerHeight = dom.aa.offsetHeight;
-      dom.aa.offsetHeight;
     } else {
       innerHeight = window.innerHeight;
     }
