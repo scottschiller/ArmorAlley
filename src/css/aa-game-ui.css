@@ -490,7 +490,7 @@ ul.stats-bar li .double-wide {
 }
 
 ul.stats-bar li.repairing em {
-  animation: 0.5s ease-in-out infinite alternate sorta-blink;
+  animation: 0.5s ease-in-out infinite alternate sorta-blink-repairing;
 }
 
 ul.stats-bar em {
@@ -563,8 +563,12 @@ ul.stats-bar .missiles em {
   height: 9px;
   min-width: 16px;
   /* accommodate rubber chicken mode */
-  transform: rotate(-5deg);
+  transform: rotate(-25deg);
   width: 10px;
+}
+
+body.banana-mode ul.stats-bar .missiles em {
+  transform: rotate(14deg);
 }
 
 ul.stats-bar .missiles span.divider {
@@ -1525,6 +1529,13 @@ body.radar_jammed .scan-node {
   50% {
     background-color: rgba(27, 107, 27, 0.5);
     transform: scale3d(0.9, 0.9, 0.9);
+  }
+}
+
+@keyframes sorta-blink-repairing {
+  50% {
+    opacity: 0.65;
+    transform: scale3d(1.1, 1.1, 1.1) rotate(-15deg);
   }
 }
 
