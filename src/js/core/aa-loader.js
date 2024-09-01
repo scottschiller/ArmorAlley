@@ -279,7 +279,7 @@ function addCSS(href, onload) {
   link.onload = () => {
     console.log(`Loaded CSS: ${href}`);
     fetched[href] = true;
-    onload?.();
+    window.requestAnimationFrame(() => onload?.());
     link.onload = null;
     link = null;
   };
