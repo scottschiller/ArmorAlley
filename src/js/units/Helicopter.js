@@ -1919,8 +1919,8 @@ const Helicopter = (options = {}) => {
         y: data.y + data.height - 11
       });
 
-      // ...plus, any paratroopers
-      const parachutes = parseInt(data.parachutes, 10) + 1 || 1;
+      // per the original game, always drop a grand total of five.
+      const parachutes = 4;
 
       // note that chopper could be dead, or parachutes could be deployed by the time this fires.
       for (let i = 0; i < parachutes; i++) {
@@ -1970,9 +1970,6 @@ const Helicopter = (options = {}) => {
     // only deploy if not already dead.
     // e.g., helicopter could be ejected, then explode before all infantry have released.
     if (data.dead) return;
-
-    // guard against parachutes being released before ejection, too.
-    if (!data.parachutes) return;
 
     deployParachuteInfantry({
       isEnemy: data.isEnemy,
