@@ -830,7 +830,9 @@ const Radar = () => {
   function toggleScaling(fromEvent) {
     if (!gamePrefs.radar_scaling) return;
     setScale(
-      gamePrefs.radar_scaling && data.scale === 1 ? getDefaultScaling(fromEvent) : 1
+      gamePrefs.radar_scaling && data.scale === 1
+        ? getDefaultScaling(fromEvent)
+        : 1
     );
   }
 
