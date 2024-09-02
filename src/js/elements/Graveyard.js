@@ -147,7 +147,7 @@ function addGravestone(exports) {
     gravestoneQueue.push({
       data: {
         type: pickFrom(smallMediumDecor),
-        x: exports.data.x + rngPlusMinus(12, TYPES.terrainItem),
+        x: exports.data.x + rngPlusMinus(rng(12, TYPES.terrainItem), TYPES.terrainItem),
         gravestoneType
       }
     });
