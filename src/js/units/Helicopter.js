@@ -2306,7 +2306,7 @@ const Helicopter = (options = {}) => {
       // within firing range?
       if (tData.type === TYPES.balloon || tData.type === TYPES.helicopter) {
         if (tData.type === TYPES.balloon) {
-          if (Math.abs(result.deltaX) < 100 && Math.abs(result.deltaY) < 48) {
+          if (Math.abs(result.deltaX) < 50 && Math.abs(result.deltaY) < 48) {
             if (!data.firing) callAction('setFiring', true);
           } else {
             if (data.firing) callAction('setFiring', false);
