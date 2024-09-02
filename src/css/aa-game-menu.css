@@ -422,8 +422,6 @@ body.game-started #start-game-button-mobile {
 
 #checkbox-vs:hover,
 #game-menu label:hover,
-#game-type-list:hover,
-#game-type-list:hover input[type='radio'],
 #game_level:hover {
   color: #fff !important;
 }
@@ -438,16 +436,14 @@ body.game-started #start-game-button-mobile {
   --text-indent: calc(3px * var(--menu-scale));
   background-position: calc(100% - var(--text-indent) * 1.65) 48%;
   background-size: calc(var(--bg-size));
-  min-width: 7em;
+  min-width: 8em;
   font-size: calc(11px * var(--menu-scale));
+  line-height: calc(18px * var(--menu-scale));
   font-weight: 400;
-  /* look similar to buttons */
-  min-height: calc(18px * var(--menu-scale));
-  /* vertical align shenanigans */
+  /* similar to buttons */
   text-indent: var(--text-indent);
-  /* new ish */
   font-family: 'Cheddar Gothic Stencil';
-  height: calc(18px * var(--menu-scale));
+  min-height: calc(18px * var(--menu-scale));
   text-indent: var(--text-indent);
   padding: 0;
 }
@@ -554,22 +550,6 @@ body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
   vertical-align: middle;
   /* offset border, and/or padding for centering? :X */
   margin-top: calc(-1px * var(--menu-scale));
-}
-
-body:not(.is-mobile) #game-type-list .emoji-text {
-  position: relative;
-  top: calc(0.35px * var(--menu-scale));
-}
-
-body.is_firefox #game-type-list .emoji-text {
-  /* hack: push emoji down. */
-  top: calc(0.7px * var(--menu-scale));
-}
-
-body.is_firefox #game-type-list label {
-  /* hack: pull entire label up, vertical center. */
-  position: relative;
-  top: calc(-0.35px * var(--menu-scale));
 }
 
 #game-menu form input[type='radio']:checked {
@@ -693,8 +673,7 @@ body.game-started #home-video-wrapper {
 /* game menu screen */
 #checkbox-vs,
 #game-menu button.large,
-#game-menu select,
-#game-type-list {
+#game-menu select {
   border: none;
 }
 
@@ -703,44 +682,8 @@ body.game-started #home-video-wrapper {
   color: #eee;
 }
 
-#game-level-wrapper,
-#game-type-list-wrapper {
+#game-level-wrapper {
   margin-bottom: calc(4px * var(--menu-scale));
-}
-
-#game-type-list-wrapper {
-  position: relative;
-  /* collapse whitespace */
-  font-size: 0px;
-  display: inline-block;
-  vertical-align: bottom;
-  margin-left: calc(4px * var(--menu-scale));
-}
-
-#game-type-list {
-  border-radius: calc(2px * var(--menu-scale));
-  background-clip: padding-box;
-  overflow: hidden;
-}
-
-#game-type-list.disabled {
-  opacity: 0.5;
-  filter: grayscale(1);
-}
-
-#game-type-list li:not(:last-of-type) label {
-  padding-left: calc(5px * var(--menu-scale));
-  padding-right: calc(5px * var(--menu-scale));
-}
-
-#game-type-list li:not(:first-of-type):not(:last-of-type) label {
-  border-left: 1px solid rgba(0, 0, 0, 0.5);
-  border-right: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-#game-type-list label {
-  font-size: calc(10px * var(--menu-scale));
-  line-height: calc(10px * var(--menu-scale));
 }
 
 #game-buttons {
@@ -755,7 +698,9 @@ body.game-started #home-video-wrapper {
   font-family: 'Cheddar Gothic Stencil';
   background-color: rgba(0, 255, 0, 0.2);
   font-size: calc(13.75px * var(--menu-scale));
-  padding: calc(4px * var(--menu-scale));
+  padding: calc(3.33px * var(--menu-scale));
+  margin-left: calc(4px * var(--menu-scale));
+  vertical-align: top;
 }
 
 #game-menu-wrapper button.game-start .emoji-text {
@@ -764,8 +709,7 @@ body.game-started #home-video-wrapper {
 }
 
 #game-menu .glow-item-checkbox:hover,
-#game-menu-wrapper button.large:hover,
-#game-type-list:not(.disabled):hover {
+#game-menu-wrapper button.large:hover {
   background-color: rgba(255, 255, 255, 0.06);
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.25));
 }
@@ -775,20 +719,11 @@ body.game-started #home-video-wrapper {
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.25));
 }
 
-#game-type-list label:not(.no-filter):hover {
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.25));
-}
-
 @media screen and (orientation: portrait) {
   body.is_iphone #game-menu-wrapper {
     /* tight space on e.g., iPhone in portrait. */
     padding-left: 0;
     padding-right: 0;
-  }
-
-  body.is_iphone #game-type-list-wrapper {
-    /* drop margins, since this is a single line item on portrait. */
-    margin-left: 0;
   }
 
   /* pull video left on narrow screens, show helicopter on-screen more often. */

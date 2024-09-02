@@ -337,19 +337,6 @@ function init() {
     bnbChange(bnb);
   });
 
-  // special case.
-  document
-    .getElementById('radio_game_type_hard')
-    .addEventListener('change', () => {
-      // if BnB, react appropriately. 🤣
-      if (!gamePrefs.bnb || gameMenuActive) return;
-
-      gameMenuActive = true;
-      playSound(sounds.bnb.gameMenuHard, null, {
-        onfinish: () => (gameMenuActive = false)
-      });
-    });
-
   // also apply immediately, if checked.
   if (vs.checked) {
     bnbChange(true);
@@ -387,15 +374,8 @@ function init() {
 
   previewLevel(oSelect.value);
 
-  oSelect.addEventListener('change', () => {
-    const selectedIndex = oSelect.selectedIndex;
-    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
-    previewLevel(oSelect.value);
-    updateGameTypeControls(oSelect.value);
   });
 
-  // ... and apply for current selection, too.
-  updateGameTypeControls(oSelect.value);
 
 
   utils.events.add(document, 'mousedown', introBNBSound);
@@ -426,22 +406,11 @@ function init() {
 
   const gameTypeFromPrefs = gamePrefs.game_type;
 
-  // cascade of priority: URL param, prefs, browser remembering form value, OR default.
+  // cascade of priority: URL param, prefs, OR default.
   const defaultGameType =
     gameTypeParam ||
-    gameTypeFromPrefs ||
-    document.querySelector('#game-type-list input[name="game_type"]:checked')
-      ?.value ||
+    gameTypeFromPrefs
     'easy';
-
-  // ensure the right radio is checked at this point.
-  const gameTypeRadio = document.querySelector(
-    `#game-type-list input[value="${defaultGameType}"]`
-  );
-
-  if (gameTypeRadio) {
-    gameTypeRadio.checked = true;
-  }
 
   game.setGameType(defaultGameType);
 
@@ -566,23 +535,8 @@ function introBNBSound(e) {
   }
 }
 
-function updateGameTypeControls(levelName) {
-  const isTutorial = !!levelName.match(/tutorial/i);
 
-  // enable or disable "game type" based on whether the tutorial is selected.
-  utils.css.addOrRemove(
-    document.getElementById('game-type-list'),
-    isTutorial,
-    'disabled'
-  );
 
-  document.querySelectorAll('#game-type-list input').forEach((node) => {
-    if (isTutorial) {
-      node.setAttribute('disabled', true);
-    } else {
-      node.removeAttribute('disabled');
-    }
-  });
 }
 
 function resetMenu() {
@@ -695,16 +649,6 @@ function formClick(e) {
   if (action === 'start-editor') {
     const selectedIndex = oSelect.selectedIndex;
 
-    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
-
-    // get the current game type from the form.
-    const gameType = oSelect.value.match(/tutorial/i)
-      ? 'tutorial'
-      : document.querySelector(
-          '#game-type-list input[name="game_type"]:checked'
-        )?.value || 'easy';
-
-    game.setGameType(gameType);
 
     formCleanup();
 
@@ -720,20 +664,8 @@ function formClick(e) {
   }
 
   if (action === 'start-game') {
-    // set level and game type, if not already
-
-    // get the current game type from the form.
-    const gameType = oSelect.value.match(/tutorial/i)
-      ? 'tutorial'
-      : document.querySelector(
-          '#game-type-list input[name="game_type"]:checked'
-        )?.value || 'easy';
-
     const selectedIndex = oSelect.selectedIndex;
 
-    setLevel(oSelect.value, oSelect[selectedIndex].textContent);
-
-    game.setGameType(gameType);
 
     // if *not* the tutorial, that DOM tree can now be trimmed.
     if (gameType !== 'tutorial') {

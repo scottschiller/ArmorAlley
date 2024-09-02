@@ -625,66 +625,17 @@
             </div>
           </div>
 
-          <div
-            id="game-type-list-wrapper"
-            data-glow-spread="45"
-            class="glow-item">
-            <!-- <span>Difficulty: </span> -->
-            <!-- <p style="margin:0px;text-align:left">Difficulty</p> -->
-            <ul id="game-type-list" class="inline-list less-bottom-spacing">
-              <li>
-                <label
-                  for="radio_game_type_easy"
-                  title="Get a van to the enemy base! (Easy mode.)"
-                  class="no-filter">
-                  <input
-                    type="radio"
-                    id="radio_game_type_easy"
-                    name="game_type"
-                    value="easy"
-                    checked />
-                  <span class="emoji-text">😁</span>
-                </label>
-              </li>
-              <li>
-                <label
-                  for="radio_game_type_hard"
-                  title="Get a van to the enemy base! (Hard mode.)<br />More enemies, more often. Turrets are faster, more dangerous."
-                  class="no-filter">
-                  <input
-                    type="radio"
-                    id="radio_game_type_hard"
-                    name="game_type"
-                    value="hard" />
-                  <span class="emoji-text">😰</span>
-                </label>
-              </li>
-              <li>
-                <label
-                  for="radio_game_type_extreme"
-                  title="Get a van to the enemy base! (Extreme mode.) Even more enemies.<br />Turrets fire at tanks. Owning all bunkers is no longer beneficial."
-                  class="no-filter">
-                  <input
-                    type="radio"
-                    id="radio_game_type_extreme"
-                    name="game_type"
-                    value="extreme" />
-                  <span class="emoji-text">😱</span>
-                </label>
-              </li>
-            </ul>
-          </div>
+          <button
+            type="button"
+            id="start-game-button"
+            data-action="start-game"
+            data-title="Play the original game, with a variety of battles and difficulties."
+            data-glow-spread="90"
+            class="game-start large glow-item">
+            START <span data-action="start-game" class="emoji-text">🚁</span>
+          </button>
 
           <div id="game-buttons">
-            <button
-              type="button"
-              id="start-game-button"
-              data-action="start-game"
-              data-title="Play the original game, with a variety of battles and difficulties."
-              data-glow-spread="90"
-              class="game-start large glow-item">
-              START <span data-action="start-game" class="emoji-text">🚁</span>
-            </button>
             <button
               type="button"
               id="game-options-button"

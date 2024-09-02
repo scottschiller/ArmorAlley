@@ -822,7 +822,6 @@ button.primary {
 #game-menu select,
 #game-menu-wrapper .cta:not(label),
 #game-menu-wrapper button.large,
-#game-type-list,
 .generic-cta.large {
   border: 1px solid transparent;
   transition:
