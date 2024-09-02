@@ -3607,7 +3607,12 @@ Helicopter.radarItemConfig = (exports) => ({
   height: 2.5 * (isiPhone ? 1.33 : 1),
   draw: (ctx, obj, pos, width, height) => {
     // don't draw other team's choppers if playing a battle with steath mode
-    if (exports?.data?.cloaked || (exports.data.stealth && exports.data.isEnemy !== game.players.local.data.isEnemy)) return;
+    if (
+      exports?.data?.cloaked ||
+      (exports.data.stealth &&
+        exports.data.isEnemy !== game.players.local.data.isEnemy)
+    )
+      return;
 
     const isLocal = exports.data.id === game.players.local.data.id;
 
