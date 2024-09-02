@@ -395,9 +395,31 @@ function PrefsManager() {
       }
     );
 
+    // "more info" show/hide links
+    dom.o.querySelectorAll('.more-info-toggle').forEach((o) => {
+      utils.events.add(o, 'click', moreInfoHandler);
+    });
+
     data.initComplete = true;
 
     callback?.();
+  }
+
+  function moreInfoHandler(e) {
+    // expand and collapse a node specified by the clicked element.
+    const { target } = e;
+    const id = target.getAttribute('data-for');
+    const css = 'active';
+    const node = document.getElementById(id);
+    const showing = !utils.css.has(node, css);
+    if (showing) {
+      node.style.height = node.scrollHeight + 'px';
+    } else {
+      node.style.height = '0px';
+    }
+    utils.css.addOrRemove(node, showing, css);
+    e.preventDefault();
+    return false;
   }
 
   function queuedSoundHack() {

@@ -1051,6 +1051,31 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   display: initial;
 }
 
+#game-prefs-modal .more-info-toggle {
+  /* allow button to collapse */
+  min-width: auto;
+}
+
+#game-prefs-modal legend .more-info-toggle {
+  /* less spacing */
+  margin-right: 2px;
+  /* smaller button size */
+  padding: 0px 6px;
+}
+
+#game-prefs-modal .more-info {
+  position: relative;
+  overflow: hidden;
+  transition: height 0.5s ease-in-out;
+  transition-property: height, opacity;
+  height: 0px;
+  opacity: 0;
+}
+
+#game-prefs-modal .more-info.active {
+  opacity: 1;
+}
+
 @keyframes button-blink {
   /**
    * This is generally considered bad form, evil UX/UI,

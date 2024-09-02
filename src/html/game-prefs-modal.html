@@ -297,19 +297,21 @@
                 </fieldset>
 
                 <fieldset id="prefs-select-level" class="select-level select-level-only hide-if-network hide-if-started">
-                  <legend>Battle Selection</legend>
+                  <legend>Battle Selection <button type="button" data-for="select-more-info" class="more-info-toggle">?</button></legend>
 
-                  <p class="non-indented">
-                    Choose an original campaign battle, or one of the network battles to play locally. Battles have different features, based on the original:
-                  </p>
+                  <div id="select-more-info" class="more-info">
+                    <p class="non-indented">
+                      Choose an original campaign battle, or one of the network battles to play locally. Battles have different features, based on the original:
+                    </p>
 
-                  <ul class="real-list non-indented">
-                    <li><b><u>B</u>ullets</b>: helicopters fire bullets, instead of aimed missiles.</li>
-                    <li><b><u>N</u>apalm</b>: bombs explode wider, vs. a "spark" on the ground.</li>
-                    <li><b><u>S</u>tealth</b>: the opposing team's helicopters don't show on radar.</li>
-                    <li><b><u>J</u>amming</b>: the radars do not operate.</li>
-                    <li><b><u>F</u>airness</b>: battlefield bias, left (-) to right (+). 0 = balanced.</li>
-                  </ul>
+                    <ul class="real-list non-indented">
+                      <li><b><u>B</u>ullets</b>: helicopters fire bullets, instead of aimed missiles.<sup>*</sup><br /><fn class="disclaimer"><i><sup>*</sup>(Aimed missiles coming soon, not yet implemented.)</i>
+                      <li><b><u>N</u>apalm</b>: bombs explode wider, vs. a "spark" on the ground.</li>
+                      <li><b><u>S</u>tealth</b>: the opposing team's helicopters don't show on radar.</li>
+                      <li><b><u>J</u>amming</b>: the radars do not operate.</li>
+                      <li><b><u>F</u>airness</b>: battlefield bias, left (-) to right (+). 0 = balanced.</li>
+                    </ul>
+                 </div>
 
                   <div class="battle-list">
                     <ul class="less-bottom-spacing monospace" style="vertical-align:top;margin-top:5px;min-width:48%;margin-right:1%">
