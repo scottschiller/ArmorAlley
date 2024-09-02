@@ -27,6 +27,7 @@ import { sprites } from '../core/sprites.js';
 import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
 import { pos } from './DomCanvas.js';
+import { levelFlags } from '../levels/default.js';
 
 const DEFAULT_UPSCALING_PORTRAIT = 3;
 // if on a desktop, scale somewhere in-between.
