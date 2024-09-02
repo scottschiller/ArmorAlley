@@ -766,6 +766,17 @@ function PrefsManager() {
     });
   }
 
+  function updateGameType(prefix) {
+    // given radio buttons, update CSS on modal.
+    ['easy', 'hard', 'extreme'].forEach((mode) => {
+      utils.css.addOrRemove(
+        dom.o,
+        document.getElementById(`${prefix}${mode}`).checked,
+        mode
+      );
+    });
+  }
+
   function showForReal(options = {}) {
     /**
      * options = {
@@ -796,6 +807,40 @@ function PrefsManager() {
       if (gamePrefs.net_game_type === 'tutorial') {
         gamePrefs.net_game_type = 'easy';
       }
+      // catch network game difficulty and update modal / battle list accordingly
+      document
+        .querySelectorAll('input[name="net_game_type"]')
+        .forEach((radio) => {
+          utils.events.add(radio, 'change', (e) => {
+            updateGameType('radio_net_game_type_');
+          });
+        });
+    } else {
+      // apply game mode CSS, which applies to battle list flags
+      updateGameType('prefs_radio_game_type_');
+
+      const oSubmit = document.getElementById('game-prefs-submit');
+      oSubmit?.focus();
+
+      const fieldset = document.getElementById('prefs-select-level');
+
+      utils.events.add(fieldset, 'change', (e) => {
+        // a level has been selected from within the modal.
+        const { value } = e.target;
+
+        // set the preview, etc.
+        selectLevel(value);
+
+        gameMenu.updateGameLevelControl(value);
+      });
+
+      const difficulty = document.getElementById('prefs-game-difficulty');
+      utils.events.add(difficulty, 'change', (e) => {
+        game.setGameType(e.target.value);
+        updateGameType('prefs_radio_game_type_');
+        game.setGameType(e.target.value);
+        gameMenu.updateGameLevelControl();
+      });
     }
 
     // ensure the form matches the JS state.
@@ -812,17 +857,23 @@ function PrefsManager() {
     // only do the network connect flow once, of course.
     if (data.network && !data.connected) {
       // hackish: grab network level selection from home menu, and apply to prefs.
-      const gameMenuLevel = document.getElementById('game_level');
+      // by default, check drop-down.
+      let netGameLevel = document.getElementById('game_level').value;
+      // if tutorial, check stored pref with fallback.
+      if (netGameLevel === 'Tutorial') netGameLevel = gamePrefs.net_game_level;
+      if (!netGameLevel || netGameLevel === 'Tutorial')
+        netGameLevel = 'Cavern Cobra';
 
-      const netGameLevel = document.getElementById('select_net_game_level');
+      gamePrefs.net_game_level = netGameLevel;
 
-      // find and select the matching item in the prefs modal list.
-      // the level ordering is different here, because we put the network levels first.
-      netGameLevel.querySelectorAll('option').forEach((option) => {
-        if (option.value === gameMenuLevel.value) option.selected = true;
-      });
+      // select the matching item in the prefs modal list.
+      let radio = document.querySelector(
+        `#network-options input[name="net_game_level"][value="${netGameLevel}"]`
+      );
 
-      gamePrefs.net_game_level = netGameLevel.value;
+      if (radio) {
+        radio.checked = true;
+      }
 
       // and, update local model.
       selectLevel(gamePrefs.net_game_level);
@@ -1058,6 +1109,23 @@ function PrefsManager() {
         }
       });
     });
+
+    // which battle should the user be playing?
+    // hackish: ensure caps, e.g,. tutorial -> Tutorial for form value match
+    let lastBattle =
+      gamePrefs.last_battle === 'null'
+        ? 'tutorial'
+        : gamePrefs.last_battle || 'tutorial';
+
+    if (lastBattle) {
+      lastBattle = `${lastBattle.charAt(0).toUpperCase()}${lastBattle.substring(1)}`;
+      let radio = document.querySelector(
+        `#prefs-select-level input[value="${lastBattle}"]`
+      );
+      if (radio) {
+        radio.checked = true;
+      }
+    }
 
     dom.oGameSpeedSlider.value = gamePrefs.game_speed;
     renderGameSpeedSlider();
@@ -1420,7 +1488,12 @@ function PrefsManager() {
                   renderGameSpeedSlider();
                 }
               } else {
-                input.checked = input.value == formValue;
+                const match = input.value == formValue;
+                input.checked = match;
+                // hackish: update the local model, too.
+                if (match && name === 'net_game_level') {
+                  selectLevel(value);
+                }
               }
             }
           );
@@ -1432,10 +1505,6 @@ function PrefsManager() {
               const option = select.querySelector(`option[value="${value}"]`);
               if (option) {
                 option.selected = true;
-                // hackish: update the local model, too.
-                if (name === 'net_game_level') {
-                  selectLevel(value);
-                }
               }
             }
           );
