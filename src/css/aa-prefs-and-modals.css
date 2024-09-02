@@ -302,10 +302,6 @@ body.is_iphone .mac-classic ul.real-list li {
   }
 }
 
-#game-prefs-modal.is-network {
-  /* leave room for level preview in radar area */
-  margin-top: 0;
-  top: 50.5%;
 #game-prefs-modal .body,
 #game-prefs-modal .body legend {
   background: #fff;
@@ -462,7 +458,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 .mac-classic fieldset {
   border: 1px solid #000;
   margin: 0 12px 12px;
-  padding: 6px 12px;
+  padding: 3px 12px 6px 12px;
 }
 
 #game-prefs-modal button,
@@ -609,16 +605,16 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   margin-right: 3px;
 }
 
-.mac-classic ul ul.real-list {
+.mac-classic ul.real-list {
   list-style-type: disc;
+  padding-top: 2px;
 }
 
 .mac-classic p,
 .mac-classic ul li p,
-.mac-classic ul ul.real-list li {
+.mac-classic ul.real-list li {
   margin-bottom: 0;
-  margin-left: 18px;
-  padding-bottom: 2px;
+  margin-left: 19px;
 }
 
 .mac-classic li,
@@ -626,7 +622,7 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   letter-spacing: -0.25px;
 }
 
-.mac-classic ul ul.real-list li {
+.mac-classic ul.real-list li {
   display: list-item;
   margin-left: 19px;
 }
@@ -639,6 +635,10 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 .mac-classic .non-indented,
 .mac-classic ul li p.options-heading {
   margin-left: 0;
+}
+
+.mac-classic ul.non-indented {
+  margin-left: -0.33em;
 }
 
 .mac-classic .compact.full-width {
@@ -934,7 +934,8 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   vertical-align: middle;
 }
 
-#game-prefs-modal.is-network .hide-if-network {
+#game-prefs-modal.is-network .hide-if-network,
+body.game-started #game-prefs-modal .hide-if-started {
   display: none;
 }
 
