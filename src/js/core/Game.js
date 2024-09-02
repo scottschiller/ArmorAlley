@@ -636,6 +636,10 @@ const game = (() => {
 
   // when the player has chosen a game type from the menu - tutorial, or easy/hard/extreme.
   function init() {
+
+    // start preload of various sprites
+    utils.init();
+
     document.getElementById('help').style.display = 'block';
 
     data.started = true;
@@ -813,8 +817,6 @@ const game = (() => {
     dom.battlefield = document.getElementById('battlefield');
 
     createObjects();
-
-    utils.init();
 
     common.domCanvas.init();
 
