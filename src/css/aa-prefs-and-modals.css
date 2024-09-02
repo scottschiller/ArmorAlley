@@ -253,7 +253,7 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 #game-prefs-modal #form-scroller {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 body.is_firefox #game-prefs-modal .fieldset-container {
