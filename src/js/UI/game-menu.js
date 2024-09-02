@@ -469,14 +469,17 @@ function init() {
 
   // preload game CSS and main sprite, too.
   if (aaLoader.isFloppy) {
-    aaLoader.loadCSS('aa-game-ui.css', () => {
-      aaLoader.loadGeneric(SPRITESHEET_URL, () => {
-        utils.image.load(SPRITESHEET_URL);
-        if (!gamePrefs.sound) return;
-        aaLoader.loadGeneric(audioSpriteURL);
+    aaLoader.loadCSS('aa-prefs-and-modals.css', () => {
+      aaLoader.loadCSS('aa-game-ui.css', () => {
+        aaLoader.loadGeneric(SPRITESHEET_URL, () => {
+          utils.image.load(SPRITESHEET_URL);
+          if (!gamePrefs.sound) return;
+          aaLoader.loadGeneric(audioSpriteURL);
+        });
       });
     });
   } else {
+    aaLoader.loadCSS('aa-prefs-and-modals.css');
     window.setTimeout(() => {
       aaLoader.loadCSS('aa-game-ui.css');
       utils.image.load(SPRITESHEET_URL);
