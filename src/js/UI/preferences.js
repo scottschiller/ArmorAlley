@@ -781,6 +781,7 @@ function PrefsManager() {
     /**
      * options = {
      *   network: true,
+     *   selectLevel: true,
      *   // expect game_type to be one of easy / hard / extreme
      *   onStart: (networkGameType) => startGame(networkGameType)
      * };
@@ -793,6 +794,9 @@ function PrefsManager() {
     data.network = !!options.network;
 
     game.objects.view.data.ignoreMouseEvents = true;
+
+    // select mode (or not)
+    utils.css.addOrRemove(dom.o, options.selectLevel, 'select-level');
 
     document.body.appendChild(dom.o);
 
