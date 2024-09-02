@@ -71,6 +71,22 @@ body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level {
   width: 550px;
 }
 
+#game-prefs-modal:not(.select-level) .select-level-only,
+#game-prefs-modal.select-level fieldset:not(.select-level),
+#game-prefs-modal.select-level #game-prefs-header button {
+  /* hide all except "select level" in that mode. */
+  display: none;
+}
+
+/* shenanigans: center the AA logo in the "select level" modal */
+#game-prefs-modal.select-level #game-prefs-header .aa-logo {
+  align-self: center;
+}
+
+#game-prefs-modal.select-level .column:not(:first-of-type) {
+  display: none;
+}
+
 #volume-value {
   display: inline-block;
   min-width: 19px;
