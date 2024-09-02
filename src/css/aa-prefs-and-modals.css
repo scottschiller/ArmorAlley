@@ -252,7 +252,12 @@ body.is_iphone .mac-classic ul.real-list li {
   }
 
   body.is_iphone #game-prefs-modal:not(.select-level) ul li ul li label,
-  body.is_iphone #game-prefs-modal:not(.select-level) fieldset ul li .inline-option {
+  body.is_iphone
+    #game-prefs-modal:not(.select-level)
+    fieldset
+    ul
+    li
+    .inline-option {
     /* fix screwy nested(?) label sizing. invalid HTML? cause unclear. */
     font-size: calc(9px * var(--prefs-font-scale));
   }
