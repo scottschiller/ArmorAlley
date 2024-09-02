@@ -170,45 +170,45 @@
                         original classics.
                       </p>
 
-                      <div>
-                        <!-- <span>Battle: </span> -->
-                        <select
-                          id="select_net_game_level"
-                          name="net_game_level"
-                          aria-label="Battle:">
-                          <optgroup label="Network Battles">
-                            <option value="Cavern Cobra">Cavern Cobra</option>
-                            <option value="Desert Sortie">Desert Sortie</option>
-                            <option value="First Blood">First Blood</option>
-                            <option value="Network Mania">Network Mania</option>
-                            <option value="Rescue Raiders">
-                              Rescue Raiders
-                            </option>
-                            <option value="Midpoint">Midpoint</option>
-                            <option value="Slithy Toves">Slithy Toves</option>
-                            <option value="Tanker's Demise">
-                              Tanker's Demise
-                            </option>
-                            <option value="WindStalker">WindStalker</option>
-                            <option value="Sandstorm">Sandstorm</option>
-                            <option value="Rainstorm">Rainstorm</option>
-                            <option value="Balloon Fun">Balloon Fun</option>
-                          </optgroup>
-                          <optgroup label="Original Battles">
-                            <option value="Cake Walk">Cake Walk</option>
-                            <option value="One-Gun">One-Gun</option>
-                            <option value="Sucker Punch">Sucker Punch</option>
-                            <option value="Airborne">Airborne</option>
-                            <option value="Two-Gun">Two-Gun</option>
-                            <option value="Super Bunker">Super Bunker</option>
-                            <option value="Scrapyard">Scrapyard</option>
-                            <option value="Blind Spot">Blind Spot</option>
-                            <option value="Wasteland">Wasteland</option>
-                            <option value="Midnight Oasis">
-                              Midnight Oasis
-                            </option>
-                          </optgroup>
-                        </select>
+                      <ul class="real-list non-indented">
+                        <li><b><u>B</u>ullets</b>: helicopters fire bullets, instead of aimed missiles.</li>
+                        <li><b><u>N</u>apalm</b>: bombs explode wider, vs. a "spark" on the ground.</li>
+                        <li><b><u>S</u>tealth</b>: the opposing team's helicopters don't show on radar.</li>
+                        <li><b><u>J</u>amming</b>: the radars do not operate.</li>
+                        <li><b><u>F</u>airness</b>: battlefield bias, left (-) to right (+). 0 = balanced.</li>
+                      </ul>
+
+                      <div class="battle-list">
+                        <ul class="less-bottom-spacing monospace" style="vertical-align:top;margin-top:5px;min-width:48%;margin-right:1%">
+                          <li class="compact"><pre><b>------ Network Battles ------</b></pre></li>
+                          <li class="compact"><pre style="padding-top:3px"><b>Name               B N S J  F</b></pre></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_cavern_cobra" value="Cavern Cobra"><label for="net_game_cavern_cobra"><pre>Cavern Cobra    •        0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_desert_sortie" value="Desert Sortie"><label for="net_game_desert_sortie"><pre>Desert Sortie   • •      0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_first_blood" value="First Blood"><label for="net_game_first_blood"><pre>First Blood     •       +2</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_network_mania" value="Network Mania"><label for="net_game_network_mania"><pre>Network Mania   • •     +5</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_rescue_raiders" value="Rescue Raiders"><label for="net_game_rescue_raiders"><pre>Rescue Raiders  • •      0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_midpoint" value="Midpoint"><label for="net_game_midpoint"><pre>Midpoint        • • •   -2</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_slithy_toves" value="Slithy Toves"><label for="net_game_slithy_toves"><pre>Slithy Toves    • •      0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_tankers_demise" value="Tanker's Demise"><label for="net_game_tankers_demise"><pre>Tanker's Demise • • •    0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_windstalker" value="WindStalker"><label for="net_game_windstalker"><pre>WindStalker     • •   • +2</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_sandstorm" value="Sandstorm"><label for="net_game_sandstorm"><pre>Sandstorm       • • •    0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_rainstorm" value="Rainstorm"><label for="net_game_rainstorm"><pre>Rainstorm       • •   •  0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_balloon_fun" value="Balloon Fun"><label for="net_game_balloon_fun"><pre>Balloon Fun     •        0</pre></label></input></li>
+                        </ul>
+                        <ul class="less-bottom-spacing monospace" style="vertical-align:top;margin-left:1em;margin-top:5px;min-width:48%;margin-left:1%">
+                          <li class="compact"><pre><b>------ Regular Battles ------</b></pre></li>
+                          <li class="compact"><pre style="padding-top:3px"><b>Name               B N S J  F</b></pre></li>   
+                          <li><input type="radio" name="net_game_level" id="net_game_cake_walk" value="Cake Walk"><label for="net_game_cake_walk"><pre>Cake Walk       <u>•</u> <b>•</b>     -1</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_one_gun" value="One-Gun"><label for="net_game_one_gun"><pre>One-Gun         <u>•</u> <b>•</b> <b>•</b>   -1</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_sucker_punch" value="Sucker Punch"><label for="net_game_sucker_punch"><pre>Sucker Punch    <u>•</u> <b>•</b> <b>•</b>    0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_airborne" value="Airborne"><label for="net_game_airborne"><pre>Airborne        <u>•</u> <s>•</s> <b>•</b>    0</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_two-gun" value="Two-Gun"><label for="net_game_two-gun"><pre>Two-Gun         <u>•</u> <s>•</s> <b>•</b>   +2</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_super_bunker" value="Super Bunker"><label for="net_game_super_bunker"><pre>Super Bunker    <u>•</u> <s>•</s> <b>•</b> <b>•</b> +9</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_scrapyard" value="Scrapyard"><label for="net_game_scrapyard"><pre>Scrapyard       • <s>•</s> <b>•</b> <b>•</b> +9</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_blind_spot" value="Blind Spot"><label for="net_game_blind_spot"><pre>Blind Spot      <b class="q">•</b> • <b>•</b> <b>•</b> +9</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_wasteland" value="Wasteland"><label for="net_game_wasteland"><pre>Wasteland       <q>•</q> • <b>•</b> <b>•</b> +9</pre></label></input></li>
+                          <li><input type="radio" name="net_game_level" id="net_game_midnight_oasis" value="Midnight Oasis"><label for="net_game_midnight_oasis"><pre>Midnight Oasis  <q>•</q> • <s>•</s> <b>•</b> +9</pre></label></input></li>
+                        </ul>
                       </div>
                     </li>
 
@@ -296,6 +296,106 @@
                     </li>
                   </ul>
                 </fieldset>
+
+                <fieldset id="prefs-select-level" class="select-level select-level-only hide-if-network hide-if-started">
+                  <legend>Battle Selection</legend>
+
+                  <p class="non-indented">
+                    Choose an original campaign battle, or one of the network battles to play locally. Battles have different features, based on the original:
+                  </p>
+
+                  <ul class="real-list non-indented">
+                    <li><b><u>B</u>ullets</b>: helicopters fire bullets, instead of aimed missiles.</li>
+                    <li><b><u>N</u>apalm</b>: bombs explode wider, vs. a "spark" on the ground.</li>
+                    <li><b><u>S</u>tealth</b>: the opposing team's helicopters don't show on radar.</li>
+                    <li><b><u>J</u>amming</b>: the radars do not operate.</li>
+                    <li><b><u>F</u>airness</b>: battlefield bias, left (-) to right (+). 0 = balanced.</li>
+                  </ul>
+
+                  <div class="battle-list">
+                    <ul class="less-bottom-spacing monospace" style="vertical-align:top;margin-top:5px;min-width:48%;margin-right:1%">
+                      <li class="compact"><pre><b>------ Regular Battles ------</b></pre></li>
+                      <li class="compact"><pre style="padding-top:3px"><b>Name               B N S J  F</b></pre></li>
+                      <li style="margin:0px;padding:0px 0px 0px 0px;line-height:1.45em"><pre><i>New? Start here.</i>👇           </pre></li>
+                      <li><input type="radio" name="game_level" id="game_tutorial" value="Tutorial"><label for="game_tutorial"><pre>Tutorial        •        0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_cake_walk" value="Cake Walk"><label for="game_cake_walk"><pre>Cake Walk       <u>•</u> <b>•</b>     -1</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_one_gun" value="One-Gun"><label for="game_one_gun"><pre>One-Gun         <u>•</u> <b>•</b> <b>•</b>   -1</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_sucker_punch" value="Sucker Punch"><label for="game_sucker_punch"><pre>Sucker Punch    <u>•</u> <b>•</b> <b>•</b>    0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_airborne" value="Airborne"><label for="game_airborne"><pre>Airborne        <u>•</u> <s>•</s> <b>•</b>    0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_two-gun" value="Two-Gun"><label for="game_two-gun"><pre>Two-Gun         <u>•</u> <s>•</s> <b>•</b>   +2</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_super_bunker" value="Super Bunker"><label for="game_super_bunker"><pre>Super Bunker    <u>•</u> <s>•</s> <b>•</b> <b>•</b> +9</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_scrapyard" value="Scrapyard"><label for="game_scrapyard"><pre>Scrapyard       • <s>•</s> <b>•</b> <b>•</b> +9</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_blind_spot" value="Blind Spot"><label for="game_blind_spot"><pre>Blind Spot      <b class="q">•</b> • <b>•</b> <b>•</b> +9</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_wasteland" value="Wasteland"><label for="game_wasteland"><pre>Wasteland       <q>•</q> • <b>•</b> <b>•</b> +9</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_midnight_oasis" value="Midnight Oasis"><label for="game_midnight_oasis"><pre>Midnight Oasis  <q>•</q> • <s>•</s> <b>•</b> +9</pre></label></input></li>
+                    </ul>
+                    <ul class="less-bottom-spacing monospace" style="vertical-align:top;margin-top:5px;min-width:48%;margin-left:1%">
+                      <li class="compact"><pre><b>------ Network Battles ------</b></pre></li>
+                      <li class="compact"><pre style="padding-top:3px"><b>Name               B N S J  F</b></pre></li>
+                      <li><input type="radio" name="game_level" id="game_cavern_cobra" value="Cavern Cobra"><label for="game_cavern_cobra"><pre>Cavern Cobra    •        0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_desert_sortie" value="Desert Sortie"><label for="game_desert_sortie"><pre>Desert Sortie   • •      0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_first_blood" value="First Blood"><label for="game_first_blood"><pre>First Blood     •       +2</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_network_mania" value="Network Mania"><label for="game_network_mania"><pre>Network Mania   • •     +5</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_rescue_raiders" value="Rescue Raiders"><label for="game_rescue_raiders"><pre>Rescue Raiders  • •      0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_midpoint" value="Midpoint"><label for="game_midpoint"><pre>Midpoint        • • •   -2</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_slithy_toves" value="Slithy Toves"><label for="game_slithy_toves"><pre>Slithy Toves    • •      0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_tankers_demise" value="Tanker's Demise"><label for="game_tankers_demise"><pre>Tanker's Demise • • •    0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_windstalker" value="WindStalker"><label for="game_windstalker"><pre>WindStalker     • •   • +2</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_sandstorm" value="Sandstorm"><label for="game_sandstorm"><pre>Sandstorm       • • •    0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_rainstorm" value="Rainstorm"><label for="game_rainstorm"><pre>Rainstorm       • •   •  0</pre></label></input></li>
+                      <li><input type="radio" name="game_level" id="game_balloon_fun" value="Balloon Fun"><label for="game_balloon_fun"><pre>Balloon Fun     •        0</pre></label></input></li>
+                    </ul>
+                  </div>
+
+                </fieldset>
+
+                <fieldset id="prefs-game-difficulty" class="select-level select-level-only hide-if-network hide-if-started">
+                  <legend>Game Difficulty</legend>
+
+                  <ul>
+                    <li>
+                      <p class="non-indented">
+                        This affects CPU convoy production, turret targeting and
+                        gunfire rates etc., on all battles. It can also affect some features, e.g., radar jamming.
+                      </p>
+                      <ul class="less-bottom-spacing">
+                        <li>
+                          <input
+                            type="radio"
+                            id="prefs_radio_game_type_easy"
+                            name="game_type"
+                            value="easy"
+                            checked />
+                          <label for="prefs_radio_game_type_easy">Easy</label>
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            id="prefs_radio_game_type_hard"
+                            name="game_type"
+                            value="hard" />
+                          <label for="prefs_radio_game_type_hard">Hard</label>
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            id="prefs_radio_game_type_extreme"
+                            name="game_type"
+                            value="extreme" />
+                          <label for="prefs_radio_game_type_extreme"
+                            >Extreme</label
+                          >
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </fieldset>
+
+                <p class="select-level-only" style="padding-bottom:12px;padding-left:0px;margin-left:16px">
+                  <button type="submit" class="primary">
+                    OK
+                  </button>
+                </p>
 
                 <fieldset>
                   <legend>Controls</legend>
