@@ -1175,7 +1175,10 @@ function PrefsManager() {
 
     if (filteredGamePrefs[gt] === 'tutorial') {
       const storedType = utils.storage.get(gt);
-      filteredGamePrefs[gt] = (!storedType || storedType === 'tutorial' ? defaultPrefs[gt] : storedType);
+      filteredGamePrefs[gt] =
+        !storedType || storedType === 'tutorial'
+          ? defaultPrefs[gt]
+          : storedType;
     }
 
     Object.keys(filteredGamePrefs).forEach((key) =>
