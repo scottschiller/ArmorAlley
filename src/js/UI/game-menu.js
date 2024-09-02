@@ -374,9 +374,37 @@ function init() {
 
   previewLevel(oSelect.value);
 
+  // stop default behaviours higher-up
+  const wrapper = document.getElementById('game-level-wrapper');
+
+  const openKeys = {
+    'ArrowDown': true,
+    'ArrowUp': true,
+    ' ': true
+  };
+
+  utils.events.add(oSelect, 'keydown', (e) => {
+    // shenanigans only if a key is used that opens the "picker"
+    if (openKeys[e.key]) {
+      selectLevel();
+      e.preventDefault();
+      return false;
+    }
   });
 
+  utils.events.add(wrapper, 'mousedown', (e) => {
+    // ignore right-clicks
+    if (e.button) return true;
+    selectLevel();
+    e.preventDefault();
+    return false;
+  });
 
+  utils.events.add(wrapper, 'touchstart', (e) => {
+    selectLevel();
+    e.preventDefault();
+    return false;
+  });
 
   utils.events.add(document, 'mousedown', introBNBSound);
   utils.events.add(window, 'keydown', introBNBSound);
