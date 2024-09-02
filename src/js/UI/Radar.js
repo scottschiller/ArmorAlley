@@ -267,6 +267,9 @@ const Radar = () => {
 
     if (noJamming) return;
 
+    // ignore vans if jammed permanently per level flags
+    if (data.isJammed && levelFlags.jamming) return;
+
     data.isJammed = true;
 
     updateOverlay();
@@ -326,7 +329,7 @@ const Radar = () => {
       );
     }
 
-    if (data.jamCount < 3) {
+    if (data.jamCount < 3 && !levelFlags.jamming) {
       game.objects.notifications.addNoRepeat(
         '🚚 An enemy van is jamming your radar 📡 🚫'
       );
@@ -345,6 +348,9 @@ const Radar = () => {
   }
 
   function stopJamming() {
+    // bail if permanently jammed
+    if (levelFlags.jamming) return;
+
     data.isJammed = false;
 
     updateOverlay();

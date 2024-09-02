@@ -4,7 +4,7 @@ import { common } from '../core/common.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { gamePrefs } from './preferences.js';
 import { net } from '../core/network.js';
-import { levelName } from '../levels/default.js';
+import { levelFlags, levelName } from '../levels/default.js';
 import { effects } from '../core/effects.js';
 
 const Notifications = () => {
@@ -265,6 +265,16 @@ const Notifications = () => {
     }
 
     game.objects.view.setAnnouncement(msg);
+
+    // level flags
+    if (levelFlags.jamming) {
+      game.objects.notifications.add('⚠️ JAMMING MODE: Radar is inoperable.');
+      game.objects.radar.startJamming();
+    } else if (levelFlags.stealth) {
+      game.objects.notifications.add(
+        '⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷'
+      );
+    }
 
     // special case
     if (levelName === 'Rainstorm') {

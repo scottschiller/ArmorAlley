@@ -60,6 +60,7 @@ import { zones } from '../core/zones.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
+import { levelFlags } from '../levels/default.js';
 
 // how "fast" the enemy CPU changes velocity
 const RESPONSIVE_TYPES = {
@@ -3109,6 +3110,7 @@ const Helicopter = (options = {}) => {
       cloakedFrameStart: 0,
       wentIntoHiding: false,
       wentIntoHidingSeconds: 1.5,
+      stealth: levelFlags.stealth,
       flipped: false,
       flipTimer: null,
       // if player is remote (via network,) then flip events are sent via network.
@@ -3600,7 +3602,8 @@ Helicopter.radarItemConfig = (exports) => ({
   width: 2.5 * (isiPhone ? 1.33 : 1),
   height: 2.5 * (isiPhone ? 1.33 : 1),
   draw: (ctx, obj, pos, width, height) => {
-    if (exports?.data?.cloaked) return;
+    // don't draw other team's choppers if playing a battle with steath mode
+    if (exports?.data?.cloaked || (exports.data.stealth && exports.data.isEnemy !== game.players.local.data.isEnemy)) return;
 
     const isLocal = exports.data.id === game.players.local.data.id;
 
