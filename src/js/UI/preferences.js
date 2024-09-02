@@ -819,6 +819,8 @@ function PrefsManager() {
             updateGameType('radio_net_game_type_');
           });
         });
+      // drop range UI, since we don't limit helicopter movement in network mode
+      document.getElementById('flight-range')?.remove();
     } else {
       // apply game mode CSS, which applies to battle list flags
       updateGameType('prefs_radio_game_type_');

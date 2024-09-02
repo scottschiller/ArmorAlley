@@ -1915,7 +1915,9 @@ const Helicopter = (options = {}) => {
         parent: exports,
         // a little variety
         x:
-          data.x + data.halfWidth + rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
+          data.x +
+          data.halfWidth +
+          rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
         y: data.y + data.height - 11
       });
 
@@ -1975,7 +1977,10 @@ const Helicopter = (options = {}) => {
       isEnemy: data.isEnemy,
       parent: exports,
       // a little variety
-      x: data.x + data.halfWidth + rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
+      x:
+        data.x +
+        data.halfWidth +
+        rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
       y: data.y + data.height - 11
     });
 
@@ -2593,11 +2598,13 @@ const Helicopter = (options = {}) => {
       if (data.isLocal) {
         newX = Math.max(
           game.players.local.data.scrollLeft +
-            view.data.browser.width * HELICOPTER_BOUNDARY_LEFT +
+            view.data.browser.width *
+              (net.active ? 0 : HELICOPTER_BOUNDARY_LEFT) +
             data.halfWidth +
             data.xMin,
           Math.min(
-            view.data.browser.width * HELICOPTER_BOUNDARY_RIGHT +
+            view.data.browser.width *
+              (net.active ? 1 : HELICOPTER_BOUNDARY_RIGHT) +
               game.players.local.data.scrollLeft -
               data.xMaxOffset -
               data.width * 1.5,
