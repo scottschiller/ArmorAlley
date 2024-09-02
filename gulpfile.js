@@ -265,7 +265,7 @@ function minifyCSS() {
 
 function minifyHTML() {
   return src(html('*'))
-    .pipe(htmlmin({ collapseWhitespace: true }))
+    // .pipe(htmlmin({ collapseWhitespace: true, conservativeCollapse: true }))
     .pipe(dest(dp.html));
 }
 
