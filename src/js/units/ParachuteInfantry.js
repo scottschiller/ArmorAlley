@@ -128,7 +128,7 @@ const ParachuteInfantry = (options = {}) => {
           // -1, 0, 1
           randomWind = rngInt(3, data.type) - 1;
 
-          data.vX = randomWind * 0.25 * GAME_SPEED_RATIOED;
+          data.vX = randomWind * 0.5 * GAME_SPEED_RATIOED;
 
           if (randomWind === -1) {
             // moving left
