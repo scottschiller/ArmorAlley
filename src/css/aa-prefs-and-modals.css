@@ -242,12 +242,22 @@ body.is_iphone .mac-classic ul.real-list li {
     padding: 0px 8px 4px 8px;
   }
 
-  /* TODO: review sizing of some inconsistent modal elements, iOS landscape view. */
-  body.is_iphone #game-prefs-modal .body {
-    font-size: calc(6.5px * var(--prefs-font-scale));
+  body.is_iphone #game-prefs-modal.select-level .body {
+    font-size: calc(10px * var(--prefs-font-scale));
   }
 
-  body.is_iphone #game-prefs-modal fn.disclaimer {
+  /* TODO: review sizing of some inconsistent modal elements, iOS landscape view. */
+  body.is_iphone #game-prefs-modal:not(.select-level) .body {
+    font-size: calc(6px * var(--prefs-font-scale));
+  }
+
+  body.is_iphone #game-prefs-modal:not(.select-level) ul li ul li label,
+  body.is_iphone #game-prefs-modal:not(.select-level) fieldset ul li .inline-option {
+    /* fix screwy nested(?) label sizing. invalid HTML? cause unclear. */
+    font-size: calc(9px * var(--prefs-font-scale));
+  }
+
+  body.is_iphone #game-prefs-modal:not(.select-level) fn.disclaimer {
     font-size: calc(6px * var(--prefs-font-scale));
   }
 
