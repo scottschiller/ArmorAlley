@@ -872,7 +872,6 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 
 .mac-classic fn.disclaimer {
   font-size: calc(10px * var(--prefs-font-scale));
-  vertical-align: top;
 }
 
 #game-prefs-form {
