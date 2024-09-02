@@ -422,16 +422,6 @@ function init() {
     configureNetworkGame();
   }
 
-  if (battle && autoStart) {
-    // was a game type specified?
-    if (gameTypeParam) {
-      const checkbox = document.getElementById(
-        `radio_game_type_${gameTypeParam}`
-      );
-      if (checkbox) checkbox.checked = true;
-    }
-  }
-
   const gameTypeFromPrefs = gamePrefs.game_type;
 
   // cascade of priority: URL param, prefs, OR default.
