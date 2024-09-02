@@ -507,6 +507,14 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   font-size: calc(15px * var(--prefs-font-scale));
 }
 
+body.is_iphone #game-prefs-modal legend {
+  font-size: calc(12.5px * var(--prefs-font-scale));
+}
+
+body.is_iphone #game-prefs-modal button {
+  font-size: calc(12px * var(--prefs-font-scale));
+}
+
 .mac-classic h3 {
   font-weight: 300;
   margin-bottom: 0.5em;
