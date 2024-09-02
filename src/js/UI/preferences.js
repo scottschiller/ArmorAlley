@@ -1131,6 +1131,13 @@ function PrefsManager() {
       }
     }
 
+    // ensure battle list shows the right things.
+    if (data.network) {
+      updateGameType('radio_net_game_type_');
+    } else {
+      updateGameType('prefs_radio_game_type_');
+    }
+
     dom.oGameSpeedSlider.value = gamePrefs.game_speed;
     renderGameSpeedSlider();
   }
