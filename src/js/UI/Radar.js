@@ -285,7 +285,7 @@ const Radar = () => {
     }
 
     // we may be dead; ignore if so.
-    if (game.players.local.data.dead) return;
+    if (game.players.local?.data?.dead) return;
 
     const dieCount = parseInt(game.data.dieCount, 10);
 
