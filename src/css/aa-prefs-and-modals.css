@@ -190,6 +190,100 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   scrollbar-width: thin;
 }
 
+#game-prefs-modal .battle-list {
+  /* center reasonably when modal is wider. */
+  text-align: center;
+}
+
+body.is_iphone .mac-classic ul.real-list li {
+  /* collapse list items somewhat */
+  padding-bottom: 0px;
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level #game-prefs-header {
+    /* (likely) iPad: hide header entirely in battle selection */
+    display: none;
+  }
+
+  body.is_iphone #game-prefs-modal fieldset {
+    /* tighten up modal spacing at large */
+    margin: 0px 6px 6px 6px;
+    padding: 0px 8px 4px 8px;
+  }
+
+  /* TODO: review sizing of some inconsistent modal elements, iOS landscape view. */
+  body.is_iphone #game-prefs-modal .body {
+    font-size: calc(6.5px * var(--prefs-font-scale));
+  }
+
+  body.is_iphone #game-prefs-modal fn.disclaimer {
+    font-size: calc(6px * var(--prefs-font-scale));
+  }
+
+  body.is_iphone #game-prefs-modal .aa-logo {
+    /* crunch logo down, space is at a premium. */
+    width: 256px;
+    margin-top: 0px;
+    padding: 0px 32px;
+  }
+
+  body.is_iphone #game-prefs-modal:not(.is-network) #game-prefs-submit {
+    /* space button out to balance logo at left. */
+    margin-right: 42px;
+  }
+
+  body.is_iphone #game-prefs-modal.select-level #game-prefs-header {
+    /* hide header entirely in battle selection */
+    display: none;
+  }
+
+  body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level fieldset legend:first-of-type,
+  body.is_iphone #game-prefs-modal.select-level fieldset legend:first-of-type {
+    /* pad content on top a bit */
+    padding-top: 4px;
+  }
+
+  body.is_iphone #game-prefs-modal.is-network #game-prefs-header .column {
+    /* allow start / cancel buttons to wrap */
+    flex-direction: row;
+  }
+
+  body.is_iphone #game-prefs-modal.is-network #game-prefs-submit {
+    /* space between buttons */
+    margin-right: 12px;
+  }
+
+  body.is_iphone #game-prefs-modal.is-network #game-prefs-cancel {
+    /* align cancel button */
+    top: -8px;
+  }
+
+  body.is_iphone #game-prefs-modal .battle-list,
+  body.is_iphone #game-prefs-modal .battle-list label {
+    font-size: calc(10px * var(--prefs-font-scale));
+  }
+}
+
+@media screen and (orientation: portrait) {
+  body.is_iphone #game-prefs-modal .body {
+    /* fit better on iPhone, portrait */
+    font-size: calc(9.5px * var(--prefs-font-scale));
+  }
+
+  body.is_iphone #game-prefs-modal fieldset {
+    /* tighten up modal spacing at large */
+    margin: 0px 6px 10px 6px;
+    padding: 0px 8px 2px 8px;
+  }
+
+  body.is_iphone #game-prefs-modal .battle-list li {
+    line-height: 1.5em;
+  }
+
+  body.is_iphone #game-prefs-modal ul.monospace li pre {
+    letter-spacing: -0.65px;
+  }
 }
 
 #game-prefs-modal.is-network {
