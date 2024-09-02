@@ -1507,8 +1507,12 @@ function PrefsManager() {
                 const match = input.value == formValue;
                 input.checked = match;
                 // hackish: update the local model, too.
-                if (match && name === 'net_game_level') {
-                  selectLevel(value);
+                if (match) {
+                  if (name === 'net_game_level') {
+                    selectLevel(value);
+                  } else if (name === 'net_game_type') {
+                    updateGameType('radio_net_game_type_');
+                  }
                 }
               }
             }
