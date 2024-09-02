@@ -1915,7 +1915,7 @@ const Helicopter = (options = {}) => {
         parent: exports,
         // a little variety
         x:
-          data.x + data.halfWidth + rngPlusMinus(data.halfWidth / 2, data.type),
+          data.x + data.halfWidth + rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
         y: data.y + data.height - 11
       });
 
@@ -1978,7 +1978,7 @@ const Helicopter = (options = {}) => {
       isEnemy: data.isEnemy,
       parent: exports,
       // a little variety
-      x: data.x + data.halfWidth + rngPlusMinus(data.halfWidth / 2, data.type),
+      x: data.x + data.halfWidth + rngPlusMinus(rng(data.halfWidth / 2, data.type), data.type),
       y: data.y + data.height - 11
     });
 
