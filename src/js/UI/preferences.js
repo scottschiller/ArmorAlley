@@ -56,7 +56,7 @@ const defaultPrefs = {
   'game_fps_auto': 1, // 1 | 60 | 30
   'game_speed': 1,
   'game_speed_pitch': false,
-  'game_type': '', // [easy|hard|extreme]
+  'game_type': 'easy', // [easy|hard|extreme]
   'net_game_level': '',
   'net_game_type': 'easy', // non-network default is tutorial, need to be explicit.
   'net_game_style': 'pvp', // [pvp|pvp_cpu|coop_2v1|coop_2v2]
