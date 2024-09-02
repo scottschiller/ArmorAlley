@@ -2893,7 +2893,7 @@ const Helicopter = (options = {}) => {
 
     parachutingDelayFlying: {
       classic: 200,
-      modern: 120
+      modern: 100
     },
 
     parachutingDelayLanded: {
