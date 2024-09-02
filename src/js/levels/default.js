@@ -27,14 +27,169 @@ const campaignBattles = [
   'Midnight Oasis'
 ];
 
-function setCustomLevel(levelData) {
-  originalLevels['Custom Level'] = levelData;
-  setLevel('Custom Level', 'Custom Level');
+/**
+ * Battle "flags" from the original game
+ * [B]ullets: the helicopters are equipped with bullets, instead of aimed missiles.
+ * [N]apalm: the helicopters are equipped with napalm. (Bombs explode larger, instead of just a "spark" when they hit the ground.]
+ * [S]tealth: the opposing team's helicopters do not appear on the radar.
+ * [J]amming: the radars do not operate.
+ *
+ * Ratings:
+ *
+ * IQ - This is a rating of the computer intelligence. (N.B.: "IQ" ratings are not implemented in this remake.)
+ * Fairness - The field is biased toward the left player or right player and is indicated by a rating of -9 (left) to +9 (right).
+ *
+ * "Boot Camp"
+ * 
+ *  # Battle         B N S J  IQ   F
+ * ---------------------------------
+ *  1 Cake Walk      •        16  -1
+ *  2 One-Gun        •        18  -1
+ *  3 Sucker Punch   •        22   0
+ *  4 Airborne       •        29   0
+ *  5 Two-Gun        •        29  +2
+ *  6 Super Bunker   •        28  +9
+ *  7 Scrapyard      •        42  +9
+ *  8 Blind Spot     • •     111  +9
+ *  9 Wasteland      • •     115  +9
+ * 10 Midnight Oasis • •     133  +9
+ * 
+ * "Wargames" and "Conflict"
+ * 
+ *  # Battle         B N S J  IQ   F
+ * ---------------------------------
+ *  1 Cake Walk      •        29  -1
+ *  2 One-Gun        •        28  -1
+ *  3 Sucker Punch   •        42   0
+ *  4 Airborne       • •     111   0
+ *  5 Two-Gun        • •     115  +2
+ *  6 Super Bunker   • •     133  +9
+ *  7 Scrapyard      • •     133  +9
+ *  8 Blind Spot       •     153  +9
+ *  9 Wasteland        •     153  +9
+ * 10 Midnight Oasis   • •   176  +9
+ * 
+ * "Armorgeddon"
+ *
+ *  # Battle         B N S J  IQ   F
+ * ---------------------------------
+ *  1 Cake Walk        •     153  -1
+ *  2 One-Gun          • •   176  -1
+ *  3 Sucker Punch     • •   176   0
+ *  4 Airborne         • •   193   0
+ *  5 Two-Gun          • •   193  +2
+ *  6 Super Bunker     • • • 218  +9
+ *  7 Scrapyard      • • • • 198  +9
+ *  8 Blind Spot     • • • • 198  +9
+ *  9 Wasteland        • • • 218  +9
+ * 10 Midnight Oasis   • • • 218  +9
+ *
+ * Network Battles
+ *
+ * Name              B N S J  IQ   F
+ * ---------------------------------
+ * Balloon Fun       •       126   0
+ * Cavern Cobra      •       127   0
+ * Desert Sortie     • •     150   0
+ * First Blood       •       131  +2
+ * Network Mania     • •     154  +5
+ * Rescue Raiders    • •     158   0
+ * Midpoint          • • •   176  -2
+ * Slithy Toves      • •     178   0
+ * Tanker's Demise   • • •   178   0
+ * WindStalker       • •   • 179  +2
+ * Sandstorm         • • •   177   0
+ * Rainstorm         • •   • 177   0
+ */
+
+const networkFlags = {
+  'Balloon Fun': [1, 0, 0, 0, 126, 0],
+  'Cavern Cobra': [1, 0, 0, 0, 127, 0],
+  'Desert Sortie': [1, 1, 0, 0, 150, 0],
+  'First Blood': [1, 0, 0, 0, 131, 2],
+  'Network Mania': [1, 1, 0, 0, 154, 5],
+  'Rescue Raiders': [1, 1, 0, 0, 158, 0],
+  'Midpoint': [1, 1, 1, 0, 176, -2],
+  'Slithy Toves': [1, 1, 0, 0, 178, 0],
+  "Tanker's Demise": [1, 1, 1, 0, 178, 0],
+  'WindStalker': [1, 1, 0, 1, 179, 2],
+  'Sandstorm': [1, 1, 1, 0, 177, 0],
+  'Rainstorm': [1, 1, 0, 1, 177, 0]
+};
+
+function getDefaultFlags() {
+  // Boot Camp campaign
+  return {
+    'Cake Walk': [1, 0, 0, 0, 16, -1],
+    'One-Gun': [1, 0, 0, 0, 18, -1],
+    'Sucker Punch': [1, 0, 0, 0, 22, 0],
+    'Airborne': [1, 1, 0, 0, 29, 0],
+    'Two-Gun': [1, 1, 0, 0, 29, 2],
+    'Super Bunker': [1, 1, 0, 0, 28, 9],
+    'Scrapyard': [1, 0, 0, 0, 42, 9],
+    'Blind Spot': [1, 1, 0, 0, 111, 9],
+    'Wasteland': [1, 1, 0, 0, 115, 9],
+    'Midnight Oasis': [1, 1, 0, 0, 133, 9],
+    ...networkFlags
+  };
 }
 
-function setLevel(levelLabel, newLevelName) {
+const flagsByLevel = {
+  easy: getDefaultFlags(),
+  hard: {
+    // Wargames + Conflict campaigns
+    'Cake Walk': [1, 0, 0, 0, 29, -1],
+    'One-Gun': [1, 0, 0, 0, 28, -1],
+    'Sucker Punch': [1, 0, 0, 0, 42, 0],
+    'Airborne': [1, 1, 0, 0, 111, 0],
+    'Two-Gun': [1, 1, 0, 0, 115, 2],
+    'Super Bunker': [1, 1, 0, 0, 133, 9],
+    'Scrapyard': [1, 1, 0, 0, 133, 9],
+    'Blind Spot': [0, 1, 0, 0, 153, 9],
+    'Wasteland': [0, 1, 0, 0, 153, 9],
+    'Midnight Oasis': [0, 1, 1, 0, 176, 9],
+    ...networkFlags
+  },
+  extreme: {
+    // Armorgeddon
+    'Cake Walk': [0, 1, 0, 0, 153, -1],
+    'One-Gun': [0, 1, 1, 0, 176, -1],
+    'Sucker Punch': [0, 1, 1, 0, 176, 0],
+    'Airborne': [0, 1, 1, 0, 193, 0],
+    'Two-Gun': [0, 1, 1, 0, 193, 2],
+    'Super Bunker': [0, 1, 1, 1, 218, 9],
+    'Scrapyard': [1, 1, 1, 1, 198, 9],
+    'Blind Spot': [1, 1, 1, 1, 198, 9],
+    'Wasteland': [0, 1, 1, 1, 218, 9],
+    'Midnight Oasis': [0, 1, 1, 1, 218, 9],
+    ...networkFlags
+  }
+};
+
+const defaultFlags = [1, 0, 0, 0, 0, 0];
+
+let levelFlags = defaultFlags;
+
+function parseFlags(levelName) {
+  if (!levelName) return;
+  const f = flagsByLevel[gamePrefs.game_type]?.[levelName] || defaultFlags;
+  return {
+    bullets: f[0],
+    napalm: f[1],
+    stealth: f[2],
+    jamming: f[3],
+    fairness: f[5]
+  };
+}
+
+function setCustomLevel(levelData) {
+  originalLevels['Custom Level'] = levelData;
+  setLevel('Custom Level');
+}
+
+function setLevel(levelLabel) {
   level = levelLabel;
-  levelName = newLevelName;
+  levelName = levelLabel;
   if (level !== 'Custom Level') {
     gamePrefs.last_battle = level;
     prefsManager.writePrefsToStorage();
@@ -153,6 +308,10 @@ function normalizeLevelData(data) {
   return results;
 }
 
+function updateFlags(levelName) {
+  levelFlags = parseFlags(levelName);
+}
+
 function previewLevel(levelName, excludeVehicles) {
   // given level data, filter down and render at scale.
 
@@ -161,6 +320,8 @@ function previewLevel(levelName, excludeVehicles) {
   let data = normalizeLevelData(originalLevels[levelName]);
 
   if (!data) return;
+
+  updateFlags(levelName);
 
   // if nothing is > 4096, then it's original game data; double all values.
   let multiplier = 2;
@@ -2565,8 +2726,10 @@ export {
   addWorldObjects,
   campaignBattles,
   dependsOnGameType,
+  levelFlags,
   levelName,
   previewLevel,
   setCustomLevel,
-  setLevel
+  setLevel,
+  updateFlags
 };
