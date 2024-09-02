@@ -563,9 +563,14 @@ function updateGameLevelControl(value) {
   // if no value, maintain and decorate current selection w/difficulty emoji
   const gameLevel = document.getElementById('game_level');
 
-  const index = !value
+  let index = !value
     ? gameLevel.selectedIndex
     : document.querySelector(`#game_level option[value="${value}"]`).index;
+
+  // override: if game type is "tutorial" but index is non-zero, then set "easy" mode.
+  if (index && gamePrefs.game_type === 'tutorial') {
+    game.setGameType('easy');
+  }
 
   // update drop-down text with emoji
   const option = gameLevel.getElementsByTagName('option')[index];
