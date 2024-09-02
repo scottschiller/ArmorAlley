@@ -217,7 +217,9 @@ body.is_iphone .mac-classic ul.real-list li {
 }
 
 @media screen and (orientation: landscape) {
-  body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level #game-prefs-header {
+  body.is-mobile.is_safari:not(.is_iphone)
+    #game-prefs-modal.select-level
+    #game-prefs-header {
     /* (likely) iPad: hide header entirely in battle selection */
     display: none;
   }
@@ -254,7 +256,10 @@ body.is_iphone .mac-classic ul.real-list li {
     display: none;
   }
 
-  body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level fieldset legend:first-of-type,
+  body.is-mobile.is_safari:not(.is_iphone)
+    #game-prefs-modal.select-level
+    fieldset
+    legend:first-of-type,
   body.is_iphone #game-prefs-modal.select-level fieldset legend:first-of-type {
     /* pad content on top a bit */
     padding-top: 4px;
