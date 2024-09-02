@@ -36,6 +36,7 @@ function KeyboardMonitor() {
     up: 38,
     right: 39,
     down: 40,
+    eject: '`',
     minus: '-',
     minus_1: '_',
     plus: '=',

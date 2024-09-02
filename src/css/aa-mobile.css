@@ -157,32 +157,6 @@ body.is-mobile.game-over #mobile-controls {
   display: none !important;
 }
 
-/* touch controls at left, notifications also at left, AND bottom-aligned */
-body.is-mobile.mobile-controls_left-aligned
-  #notification-toasts.left-aligned.bottom-up {
-  left: 0;
-  /* offset for touch controls, prevent overlap */
-  margin-left: calc(60px * var(--gs));
-}
-
-body.limited-lives-mode.is-mobile.mobile-controls_left-aligned
-  #notification-toasts.left-aligned.bottom-up {
-  /* "limited lives" mode: pull up to avoid overlapping helicopter icon. */
-  margin-top: calc(-32px * var(--gs));
-}
-
-body.limited-lives-mode.is-mobile.is_safari.mobile-controls_left-aligned
-  #notification-toasts.left-aligned.bottom-up {
-  /* "limited lives" on iPad, desktop mode? */
-  margin-top: calc(-24px * var(--gs));
-}
-
-body.limited-lives-mode.is-mobile.is_iphone.mobile-controls_left-aligned
-  #notification-toasts.left-aligned.bottom-up {
-  /* iOS safari needs a lot more space. */
-  margin-top: calc(-45px * var(--gs));
-}
-
 body.is-mobile.mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
   right: 0;
@@ -341,7 +315,7 @@ body.is-mobile.mobile-controls_right-aligned
   body.is-mobile.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPad, controls + notifications bottom left */
-    margin-left: calc(68px * var(--gs) * 1.25);
+    margin-left: calc(58px * var(--gs) * 1.25);
   }
 
   body.is-mobile.is_iphone.mobile-controls_left-aligned
@@ -695,7 +669,8 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
 }
 
 #mobile-controls li span.letter-block.show_inventory,
-#mobile-controls li span.letter-block.show_options {
+#mobile-controls li span.letter-block.show_options,
+#mobile-controls li span.letter-block.eject {
   color: #666;
   display: block !important;
   font-size: calc(16px * var(--gs));
@@ -710,6 +685,12 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
 body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
   /* Chrome on Android */
   line-height: calc(23.5px * var(--gs));
+}
+
+#mobile-controls li span.letter-block.eject {
+  font-size: calc(10px * var(--gs));
+  line-height: calc(24px * var(--gs));
+  filter: grayscale(0.25);
 }
 
 #mobile-controls li span.letter-block.show_options {
