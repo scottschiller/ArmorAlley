@@ -719,6 +719,11 @@ function formClick(e) {
 
     setLevel(oSelect.value);
 
+    if (oSelect.value === 'Tutorial') {
+      // sanity check: ensure game type if tutorial level is selected, but game type is not set.
+      game.setGameType('tutorial');
+    }
+
     // if *not* the tutorial, that DOM tree can now be trimmed.
     if (gamePrefs.game_type !== 'tutorial') {
       document.getElementById('tutorial-window')?.remove();

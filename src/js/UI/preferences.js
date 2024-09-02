@@ -1166,8 +1166,20 @@ function PrefsManager() {
       return;
     }
 
-    Object.keys(gamePrefs).forEach((key) =>
-      utils.storage.set(key, gamePrefs[key])
+    const filteredGamePrefs = {
+      ...gamePrefs
+    };
+
+    // HACK: don't save tutorial as a game type - preserve current LS value, or default.
+    const gt = 'game_type';
+
+    if (filteredGamePrefs[gt] === 'tutorial') {
+      const storedType = utils.storage.get(gt);
+      filteredGamePrefs[gt] = (!storedType || storedType === 'tutorial' ? defaultPrefs[gt] : storedType);
+    }
+
+    Object.keys(filteredGamePrefs).forEach((key) =>
+      utils.storage.set(key, filteredGamePrefs[key])
     );
   }
 
