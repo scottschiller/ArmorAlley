@@ -28,7 +28,8 @@ import {
   dependsOnGameType,
   previewLevel,
   setCustomLevel,
-  setLevel
+  setLevel,
+  updateFlags
 } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
@@ -425,10 +426,8 @@ function init() {
   const gameTypeFromPrefs = gamePrefs.game_type;
 
   // cascade of priority: URL param, prefs, OR default.
-  const defaultGameType =
-    gameTypeParam ||
-    gameTypeFromPrefs
-    'easy';
+  const defaultGameType = gameTypeParam || gameTypeFromPrefs;
+  ('easy');
 
   game.setGameType(defaultGameType);
 
@@ -437,7 +436,11 @@ function init() {
   if (dependsOnGameType(levelName)) {
     // maybe rebuild preview, depending
     previewLevel(levelName);
+  } else {
+    updateFlags(levelName);
   }
+
+  updateGameLevelControl();
 
   // wait one frame for things to settle, then bring the whole menu up.
   window.requestAnimationFrame(() =>
@@ -556,8 +559,28 @@ function introBNBSound(e) {
   }
 }
 
+function updateGameLevelControl(value) {
+  // if no value, maintain and decorate current selection w/difficulty emoji
+  const gameLevel = document.getElementById('game_level');
 
+  const index = !value
+    ? gameLevel.selectedIndex
+    : document.querySelector(`#game_level option[value="${value}"]`).index;
 
+  // update drop-down text with emoji
+  const option = gameLevel.getElementsByTagName('option')[index];
+
+  const emoji = {
+    tutorial: '📖',
+    easy: '😁',
+    hard: '😰',
+    extreme: '😱'
+  };
+
+  option.innerHTML = `${option.value} ${option.value === 'Tutorial' ? emoji.tutorial : emoji[gamePrefs.game_type]}`;
+
+  // update the main drop-down
+  document.getElementById('game_level').selectedIndex = index;
 }
 
 function resetMenu() {
@@ -670,6 +693,7 @@ function formClick(e) {
   if (action === 'start-editor') {
     const selectedIndex = oSelect.selectedIndex;
 
+    setLevel(oSelect.value);
 
     formCleanup();
 
@@ -685,11 +709,13 @@ function formClick(e) {
   }
 
   if (action === 'start-game') {
+    // set level, if not already
     const selectedIndex = oSelect.selectedIndex;
 
+    setLevel(oSelect.value);
 
     // if *not* the tutorial, that DOM tree can now be trimmed.
-    if (gameType !== 'tutorial') {
+    if (gamePrefs.game_type !== 'tutorial') {
       document.getElementById('tutorial-window')?.remove();
     }
 
@@ -715,6 +741,8 @@ function formClick(e) {
     if (dependsOnGameType(levelName)) {
       // maybe rebuild preview, depending
       previewLevel(levelName);
+    } else {
+      updateFlags(levelName);
     }
 
     return;
@@ -765,6 +793,10 @@ function configureNetworkGame() {
   }
 
   prefsManager.show(options);
+}
+
+function selectLevel() {
+  prefsManager.show({ selectLevel: true });
 }
 
 function startGame() {
@@ -981,6 +1013,7 @@ function hideTitleScreen(callback) {
 const gameMenu = {
   init,
   getCustomGroup: () => customGroup,
+  updateGameLevelControl,
   menuUpdate,
   startGame
 };
