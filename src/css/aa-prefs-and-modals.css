@@ -21,23 +21,35 @@ body.prefs-modal-open #game-menu-wrapper {
   z-index: 11;
 }
 
-#game-prefs-modal #game-prefs-form,
-#game-prefs-modal {
+#game-prefs-modal .body {
   /* fit roughly within battlefield, leaving room for radar UI. */
   max-height: 81vh;
 }
 
-/* leave room for address bar UI. */
-body.is_iphone #game-prefs-form,
+#game-prefs-modal #game-prefs-form {
+  max-height: 80vh;
+}
+
 body.is_iphone #game-prefs-modal {
-  max-height: 72.5vh;
   top: 50%;
 }
 
+body.is_iphone #game-prefs-modal .body {
+  /* leave room for address bar UI. */
+  max-height: 72.5vh;
+}
+
+body.is_iphone #game-prefs-form {
+  max-height: 71.5vh;
+}
+
 /* larger if a standalone / homescreen app */
-body.is_standalone #game-prefs-form,
-body.is_standalone #game-prefs-modal {
+body.is_standalone #game-prefs-modal .body {
   max-height: 80vh;
+}
+
+body.is_standalone #game-prefs-modal #game-prefs-form {
+  max-height: 79vh;
 }
 
 #game-prefs-submit {
