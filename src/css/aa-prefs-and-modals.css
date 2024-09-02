@@ -13,23 +13,31 @@ body.prefs-modal-open #game-menu-wrapper {
   /* collapse */
   font-size: 0;
   left: 50%;
-  top: 50%;
+  top: 50.5%;
   transform: translate3d(-50%, -50%, 0);
-  width: 540px;
+  width: 550px;
   /* ensure this fits on small screens, e.g., mobile + portrait. */
   max-width: 99vw;
   z-index: 11;
 }
 
-#game-prefs-form,
+#game-prefs-modal #game-prefs-form,
 #game-prefs-modal {
-  height: 92vh;
+  /* fit roughly within battlefield, leaving room for radar UI. */
+  max-height: 81vh;
 }
 
 /* leave room for address bar UI. */
 body.is_iphone #game-prefs-form,
 body.is_iphone #game-prefs-modal {
-  height: 85vh;
+  max-height: 72.5vh;
+  top: 50%;
+}
+
+/* larger if a standalone / homescreen app */
+body.is_standalone #game-prefs-form,
+body.is_standalone #game-prefs-modal {
+  max-height: 80vh;
 }
 
 #game-prefs-submit {
@@ -51,6 +59,16 @@ body.is_iphone #game-prefs-modal {
 /* hide once the game has started. */
 body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   display: none;
+}
+
+#game-prefs-modal.select-level {
+  /* slightly more narrow */
+  width: 500px;
+}
+
+body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level {
+  /* larger on ipads, though. */
+  width: 550px;
 }
 
 #volume-value {
