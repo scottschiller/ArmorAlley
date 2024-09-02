@@ -5,6 +5,34 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 09/01/2024, uncategorized ---
+
+Refueling rate slowed down, made closer to original game.
+
+Updated home screen menu, battle + difficulty now set and updated via preferences modal.
+
+Battle "flags" now listed and mostly implemented, similar to original game: Bullets, Napalm, Stealth, Jamming, and Fairness (battlefield L/R bias)
+
+"Napalm" battle flag: bombs spark on the ground, vs. wider explosion when they have napalm - more effective at taking out infantry + engineers.
+
+"Stealth" battle flag: Enemy helicopter is always hidden on radar.
+
+"Jamming" battle flag: Radar is always jammed, unavailable.
+
+Tweak enemy helicopter acceleration, accounting for inclusion of tilt for gunfire.
+
+Fixed random distribution of paratroopers on chopper eject
+
+Larger random wind effect on paratroopers.
+
+Per original game, always drop five paratroopers when ejecting helicopter.
+
+Helicopter "eject" button added to mobile UI. 🥀 https://github.com/scottschiller/ArmorAlley/commit/6e45a1d1b749f0f55fce49f5f30e2d475d920390
+
+Drop helicopter screen "boundary" in network games, possible range / visibility issue. https://github.com/scottschiller/ArmorAlley/commit/39d59e67386f2c1fc75a91ec3fb06e20b849d2fb
+
+---
+
 Updated and improved layout for mobile and touch-screen devices
 "Installable" PWA-style web app, iOS home screen / Chrome "app" support
 
