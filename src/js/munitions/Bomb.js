@@ -78,7 +78,7 @@ const Bomb = (options = {}) => {
       (dieOptions.type !== TYPES.bunker &&
         dieOptions.type !== TYPES.superBunker);
 
-    if (dieOptions.spark) {
+    if (dieOptions.spark || !data.napalm) {
       spark();
       // TODO: attach to target?
     } else if (isClassicExplosion) {
@@ -97,7 +97,7 @@ const Bomb = (options = {}) => {
     if (dieOptions.hidden) {
       data.visible = false;
     } else {
-      if (!dieOptions.spark) {
+      if (!dieOptions.spark && data.napalm) {
         if (isClassicExplosion) {
           dieExplosion();
         } else {
@@ -151,7 +151,12 @@ const Bomb = (options = {}) => {
       if (isClassicExplosion) {
         // hack: ensure that angle is 0 for the classic explosion sprite.
         data.angle = 0;
-        dieExplosion();
+        if (data.napalm) {
+          dieExplosion();
+        } else {
+          // pull spark up slightly
+          data.y--;
+        }
       }
 
       // bombs explode, and dimensions change when they hit the ground.
@@ -444,6 +449,7 @@ const Bomb = (options = {}) => {
       energy: 3,
       damagePoints: 3,
       damagePointsOnGround: 2,
+      napalm: !!options.napalm,
       target: null,
       vX: options.vX || 0,
       vYMax: 128,
