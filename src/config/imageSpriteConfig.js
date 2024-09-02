@@ -115,7 +115,7 @@ const imageSpriteConfig = {
   '/shrapnel-glow_v7.png': [72,395,22,20],
   '/shrapnel-glow_v8.png': [96,395,22,20],
   '/shrapnel-glow_v9.png': [120,395,22,20],
-  '/smart-missile.png': [406,387,15,4],
+  '/smart-missile.png': [423,387,15,4],
   '/smoke-glow_0.png': [329,66,18,18],
   '/smoke-glow_1.png': [329,86,18,18],
   '/smoke-glow_10.png': [329,106,18,18],
