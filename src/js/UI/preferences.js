@@ -378,6 +378,23 @@ function PrefsManager() {
 
     utils.events.add(showChangelog, 'click', fetchChangelog);
 
+    let bnbSoundActive;
+
+    // special case.
+    utils.events.add(
+      document.getElementById('prefs_radio_game_type_hard'),
+      'change',
+      () => {
+        // if BnB, react appropriately. 🤣
+        if (!gamePrefs.bnb || bnbSoundActive) return;
+
+        bnbSoundActive = true;
+        playSound(sounds.bnb.gameMenuHard, null, {
+          onfinish: () => (bnbSoundActive = false)
+        });
+      }
+    );
+
     data.initComplete = true;
 
     callback?.();
