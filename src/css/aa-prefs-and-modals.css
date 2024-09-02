@@ -141,7 +141,7 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 .close-button {
-  background: #f3f3f3;
+  background: #fff;
   border: 0.25px solid #000;
   border-radius: 0.25px;
   height: 4.5px;
@@ -172,15 +172,15 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   scrollbar-width: thin;
 }
 
-#game-prefs-modal .body,
-#game-prefs-modal .body legend {
-  background: #f3f3f3;
 }
 
 #game-prefs-modal.is-network {
   /* leave room for level preview in radar area */
   margin-top: 0;
   top: 50.5%;
+#game-prefs-modal .body,
+#game-prefs-modal .body legend {
+  background: #fff;
 }
 
 #game-prefs-modal p {
@@ -710,7 +710,7 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 
 #game-prefs-modal.is-network .network-icon {
   /* match #game-prefs-modal .body */
-  background-color: #f3f3f3;
+  background-color: #fff;
   background-image: url(../../assets/image/UI/win95-networking-icon.png);
   background-position: 4px 0;
   background-repeat: no-repeat;
@@ -865,8 +865,8 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   to {
     border-color: transparent;
     box-shadow:
-      0 0 0 4px #f3f3f3,
-      0 0 0 2px #f3f3f3;
+      0 0 0 4px #fff,
+      0 0 0 2px #fff;
   }
 }
 
@@ -881,7 +881,7 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   to {
     border-color: transparent;
     box-shadow:
-      0 0 0 8px #f3f3f3,
-      0 0 0 4px #f3f3f3;
+      0 0 0 8px #fff,
+      0 0 0 4px #fff;
   }
 }
