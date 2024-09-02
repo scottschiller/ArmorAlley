@@ -497,6 +497,74 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   padding: 0;
 }
 
+.mac-classic ul.monospace {
+  display: inline-block;
+}
+
+.mac-classic ul.monospace li {
+  display: block;
+}
+.mac-classic ul.monospace li,
+.mac-classic ul.monospace li pre b {
+  font-family: monospace;
+}
+
+.mac-classic ul.monospace li label pre s {
+  /* battle "flags" to be hidden under boot camp mode */
+  text-decoration: none;
+}
+
+.mac-classic ul.monospace li label pre q::before,
+.mac-classic ul.monospace li label pre q::after {
+  /* hide quote marks */
+  display: none;
+}
+
+#game-prefs-modal:not(.easy) ul.monospace li label pre q {
+  /* battle "flags" to be shown only under boot camp mode */
+  visibility: hidden;
+}
+
+#game-prefs-modal.easy ul.monospace li label pre b.q {
+  /* hackish: extreme mode flag also needs to show for easy mode. */
+  visibility: visible;
+}
+
+#game-prefs-modal.easy ul.monospace li label pre s {
+  visibility: hidden;
+}
+
+.mac-classic ul.monospace li label pre u {
+  /* battle "flags" to be hidden under extreme mode */
+  text-decoration: none;
+}
+
+#game-prefs-modal.extreme ul.monospace li label pre u {
+  /* battle "flags" to be hidden under extreme mode */
+  visibility: hidden;
+}
+
+.mac-classic ul.monospace li label pre b {
+  /* battle "flags" for extreme mode */
+  font-weight: normal;
+  visibility: hidden;
+}
+
+#game-prefs-modal.extreme ul.monospace li label pre b {
+  /* only show "extreme" flags in extreme mode */
+  visibility: visible;
+}
+
+.mac-classic ul.monospace li pre {
+  display: inline-block;
+  margin: 1px 0px;
+  letter-spacing: -0.33px;
+}
+
+.mac-classic ul.monospace li label {
+  padding-left: 0.45em;
+}
+
 .mac-classic ul li {
   margin-bottom: 8px;
   margin-top: 2px;
