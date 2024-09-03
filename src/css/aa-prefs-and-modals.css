@@ -39,7 +39,7 @@ body.is_iphone #game-prefs-modal .body {
   max-height: 72.5vh;
 }
 
-body.is_iphone #game-prefs-form {
+body.is_iphone #game-prefs-modal #game-prefs-form {
   max-height: 71.5vh;
 }
 
