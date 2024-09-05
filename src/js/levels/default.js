@@ -41,7 +41,7 @@ const campaignBattles = [
  * Fairness - The field is biased toward the left player or right player and is indicated by a rating of -9 (left) to +9 (right).
  *
  * "Boot Camp"
- * 
+ *
  *  # Battle         B N S J  IQ   F
  * ---------------------------------
  *  1 Cake Walk      •        16  -1
@@ -54,9 +54,9 @@ const campaignBattles = [
  *  8 Blind Spot     • •     111  +9
  *  9 Wasteland      • •     115  +9
  * 10 Midnight Oasis • •     133  +9
- * 
+ *
  * "Wargames" and "Conflict"
- * 
+ *
  *  # Battle         B N S J  IQ   F
  * ---------------------------------
  *  1 Cake Walk      •        29  -1
@@ -69,7 +69,7 @@ const campaignBattles = [
  *  8 Blind Spot       •     153  +9
  *  9 Wasteland        •     153  +9
  * 10 Midnight Oasis   • •   176  +9
- * 
+ *
  * "Armorgeddon"
  *
  *  # Battle         B N S J  IQ   F
