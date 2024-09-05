@@ -956,6 +956,7 @@ const SmartMissile = (options = {}) => {
       src: !game.objects.editor
         ? utils.image.getImageObject(spriteObj.src || spriteObj.sprite.url)
         : null,
+      excludeDot: true,
       source: {
         x: 0,
         y: 0,
