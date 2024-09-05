@@ -94,6 +94,7 @@ const imageSpriteConfig = {
   '/landing-pad_3.png': [169,347,81,7],
   '/missile-launcher-enemy.png': [0,50,54,72],
   '/missile-launcher.png': [56,50,54,72],
+  '/missile.png': [406,387,15,4],
   '/palm-tree.png': [426,272,18,22],
   '/parachute-infantry-enemy.png': [0,226,70,20],
   '/parachute-infantry.png': [72,226,70,20],

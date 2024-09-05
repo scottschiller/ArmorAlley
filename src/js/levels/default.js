@@ -5,6 +5,7 @@ import { searchParams, TYPES, worldHeight } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
+import { utils } from '../core/utils.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -166,20 +167,34 @@ const flagsByLevel = {
   }
 };
 
+let levelFlags;
+
 const defaultFlags = [1, 0, 0, 0, 0, 0];
 
-let levelFlags = defaultFlags;
+// restrict bullet / aimed missile game flag to dev, for now.
+const isProd = !!window.location.host.match(/armor-alley\.net/i);
 
 function parseFlags(levelName) {
-  if (!levelName) return;
   const f = flagsByLevel[gamePrefs.game_type]?.[levelName] || defaultFlags;
   return {
-    bullets: f[0],
+    bullets: isProd ? 1 : f[0],
     napalm: f[1],
     stealth: f[2],
     jamming: f[3],
     fairness: f[5]
   };
+}
+
+function updateFlags(levelName) {
+  levelFlags = parseFlags(levelName);
+}
+
+function applyFlags() {
+  utils.css.addOrRemove(
+    document.body,
+    !levelFlags.bullets,
+    'aimed-missile-mode'
+  );
 }
 
 function setCustomLevel(levelData) {
@@ -306,10 +321,6 @@ function normalizeLevelData(data) {
   });
 
   return results;
-}
-
-function updateFlags(levelName) {
-  levelFlags = parseFlags(levelName);
 }
 
 function previewLevel(levelName, excludeVehicles) {
@@ -2723,6 +2734,7 @@ originalLevels = {
 };
 
 export {
+  applyFlags,
   addWorldObjects,
   campaignBattles,
   dependsOnGameType,

@@ -25,6 +25,7 @@ import {
 } from '../core/sound.js';
 import { utils } from '../core/utils.js';
 import {
+  applyFlags,
   dependsOnGameType,
   previewLevel,
   setCustomLevel,
@@ -816,6 +817,9 @@ function startGame() {
   ['editor-window', 'editor-window-help'].forEach((id) =>
     document.getElementById(id)?.remove()
   );
+
+  // update <body> based on level-specific flags, e.g., aimed missiles
+  applyFlags();
 
   game.objects.radar.reset();
 

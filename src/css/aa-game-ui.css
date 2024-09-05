@@ -600,6 +600,14 @@ ul.stats-bar .ammo em {
   width: 14px;
 }
 
+/* "aimed missile" mode */
+body.aimed-missile-mode #mobile-controls li.weapons-item a.ammo,
+body.aimed-missile-mode ul.stats-bar .ammo em {
+  background-image: url(../../assets/image/missile.png);
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+
 #mobile-controls li.weapons-item a.bombs,
 ul.stats-bar .bombs em {
   background: url(../../assets/image/UI/status-bombs.png) 50% 1px/75% no-repeat;
