@@ -341,10 +341,10 @@ const AimedMissile = (options = {}) => {
   const spriteConfig = {
     src: 'missile.png',
     srcFlipped: 'missile-flipped.png',
-    spriteWidth: 30,
-    spriteHeight: 8,
-    width: 15,
-    height: 4,
+    spriteWidth: dimensions.width,
+    spriteHeight: dimensions.height,
+    width: dimensions.width,
+    height: dimensions.height,
     scale: 2
   };
 
