@@ -119,7 +119,7 @@ function Stats() {
    */
   const notifyTypes = {
     'chain': {
-      verb: 'flew into'
+      verb: 'hit'
     },
     // special case: missile launchers can destroy things, or be destroyed by an infantry or tank.
     // they typically die with silent: true, when self-destructing in order to launch a missile.
