@@ -66,6 +66,8 @@ import { RadarScroller } from '../UI/RadarScroller.js';
 import { aaLoader } from '../core/aa-loader.js';
 import { addItem as addTerrainItem } from '../elements/Terrain.js';
 import { Smoke } from '../elements/Smoke.js';
+import { AimedMissile } from '../munitions/AimedMissile.js';
+import { MissileNapalm } from '../munitions/MissileNapalm.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -915,6 +917,8 @@ const game = (() => {
     'landing-pad': [],
     'shrapnel': [],
     'domFetti': [],
+    'aimed-missile': [],
+    'missile-napalm': [],
     'cloud': [],
     'radar': null,
     'radarScroller': null,
@@ -932,6 +936,8 @@ const game = (() => {
   boneyard = {};
 
   objectConstructors = {
+    'aimed-missile': AimedMissile,
+    'missile-napalm': MissileNapalm,
     'balloon': Balloon,
     'base': Base,
     'bomb': Bomb,
