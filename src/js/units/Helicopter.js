@@ -1475,7 +1475,83 @@ const Helicopter = (options = {}) => {
       x: data.x + data.halfWidth,
       y: data.y + data.height - 6,
       vX: data.vX * 0.625,
-      vY: data.vY
+      vY: data.vY,
+      napalm: levelFlags.napalm
+    };
+  }
+
+  function getAimedMissileParams() {
+    let vX, vXDirection;
+
+    // ensure bullets fire and move away from the chopper.
+    const flipped = !!data.flipped;
+
+    if (!data.isEnemy) {
+      if (data.vX < 0) {
+        // flying backward
+        if (!data.flipped) {
+          // facing right
+          vX = data.vX * 0.25;
+          vXDirection = 1;
+        } else {
+          // facing left
+          vX = data.vX * 0.75;
+          vXDirection = -1;
+        }
+      } else {
+        // flying forward
+        if (data.flipped) {
+          // facing left
+          vX = data.vX * 0.25;
+          vXDirection = -1;
+        } else {
+          // facing right
+          vX = data.vX * 0.75;
+          vXDirection = 1;
+        }
+      }
+    } else {
+      if (data.vX < 0) {
+        // flying forward
+        if (!data.flipped) {
+          // facing left
+          vX = data.vX * 0.75;
+          vXDirection = -1;
+        } else {
+          // facing right
+          vX = data.vX * 0.25;
+          vXDirection = 1;
+        }
+      } else {
+        // flying backward
+        if (!data.flipped) {
+          // facing left
+          vX = data.vX * 0.25;
+          vXDirection = -1;
+        } else {
+          // facing right
+          vX = data.vX * 0.75;
+          vXDirection = 1;
+        }
+      }
+    }
+
+    return {
+      parent: exports,
+      parentType: data.type,
+      isEnemy: data.isEnemy,
+      x:
+        data.x +
+        ((!data.isEnemy && data.flipped) || (data.isEnemy && !data.flipped)
+          ? 0
+          : data.width - 8),
+      y:
+        data.y +
+        data.halfHeight +
+        (data.tilt !== null ? tiltOffset + 2 : 0) +
+        (data.isEnemy ? 2 : 0),
+      vX,
+      vXDirection
     };
   }
 
@@ -1693,17 +1769,21 @@ const Helicopter = (options = {}) => {
 
     if (data.firing && data.fireFrameCount % data.fireModulus === 0) {
       if (data.ammo > 0) {
-        let params = getGunfireParams();
-        // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
+        if (levelFlags.bullets) {
+          // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
+          let params = getGunfireParams();
 
-        game.addObject(TYPES.gunfire, params);
+          game.addObject(TYPES.gunfire, params);
 
-        playSound(
-          data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire,
-          exports
-        );
+          playSound(
+            data.isEnemy ? sounds.machineGunFireEnemy : sounds.machineGunFire,
+            exports
+          );
+        } else {
+          let params = getAimedMissileParams();
 
-        // TODO: CPU
+          game.addObject(TYPES.aimedMissile, params);
+        }
 
         data.ammo = Math.max(0, data.ammo - 1);
 
@@ -2871,7 +2951,7 @@ const Helicopter = (options = {}) => {
     },
 
     ammoRepairModulus: {
-      default: 2
+      default: tutorialMode || levelFlags.bullets ? 2 : 10
     },
 
     energyRepairModulus: {
@@ -2889,8 +2969,8 @@ const Helicopter = (options = {}) => {
     },
 
     fireModulus: {
-      classic: 3,
-      modern: 2
+      classic: levelFlags.bullets ? 3 : 999,
+      modern: levelFlags.bullets ? 2 : 999
     },
 
     parachuteModulus: {
@@ -3150,9 +3230,10 @@ const Helicopter = (options = {}) => {
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 0.25,
-      ammo: tutorialMode ? 128 : 64,
-      maxAmmo: tutorialMode ? 128 : 64,
-      ammoRepairModulus: 2,
+      ammo: tutorialMode ? 128 : levelFlags.bullets ? 64 : 6,
+      // note: bullets vs. "aimed missiles" logic, here
+      maxAmmo: tutorialMode ? 128 : levelFlags.bullets ? 64 : 6,
+      ammoRepairModulus: tutorialMode || levelFlags.bullets ? 2 : 20,
       bombs: tutorialMode ? 30 : 10,
       maxBombs: tutorialMode ? 30 : 10,
       parachutes: 1,
