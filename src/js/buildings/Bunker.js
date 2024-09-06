@@ -302,30 +302,28 @@ const Bunker = (options = {}) => {
     // burning sprite
     applySpriteURL();
 
+    // start "burning out"...
     common.setFrameTimeout(() => {
-      // start "burning out"...
+      // and eventually exinguish.
       common.setFrameTimeout(() => {
-        // and eventually exinguish.
-        common.setFrameTimeout(() => {
-          data.burninating = false;
+        data.burninating = false;
 
-          // stop animations
-          data.domCanvas.animation = null;
-          data.domCanvas.nukeAnimation = null;
-          data.shadowBlur = 0;
+        // stop animations
+        data.domCanvas.animation = null;
+        data.domCanvas.nukeAnimation = null;
+        data.shadowBlur = 0;
 
-          // apply dead sprite
-          applySpriteURL();
+        // apply dead sprite
+        applySpriteURL();
 
-          // re-apply static sprite, dropping animation
-          // hackish: apply positioning
-          deadConfig.target.x = data.x;
-          deadConfig.target.y = data.y;
+        // re-apply static sprite, dropping animation
+        // hackish: apply positioning
+        deadConfig.target.x = data.x;
+        deadConfig.target.y = data.y;
 
-          // TODO: sort out the offset issue
-          deadConfig.target.yOffset = -8;
-          data.domCanvas.img = deadConfig;
-        }, burninatingTime * burnOutFade);
+        // TODO: sort out the offset issue
+        deadConfig.target.yOffset = -8;
+        data.domCanvas.img = deadConfig;
       }, burninatingTime);
     }, 1200);
 
@@ -375,20 +373,19 @@ const Bunker = (options = {}) => {
           data.arrowFrameActive = false;
         }
       }
-    } else if (data.burninating) {
-      if (data.smokeFramesLeft) {
-        effects.smokeRelativeToDamage(
-          exports,
-          data.smokeFramesLeft / data.smokeFramesMax
-        );
-        data.smokeFramesLeft--;
-        // cut size in half over time
-        data.shadowBlur = 8 * (data.smokeFramesLeft / data.smokeFramesMax);
-        // ... and fade blur out
-        data.shadowColor = `rgba(255, 255, 255, ${
-          data.smokeFramesLeft / data.smokeFramesMax
-        })`;
-      }
+    } else if (data.burninating && data.smokeFramesLeft) {
+      effects.smokeRelativeToDamage(
+        exports,
+        data.smokeFramesLeft / data.smokeFramesMax
+      );
+      // we made smoke on this frame
+      data.smokeFramesLeft--;
+      // cut size in half over time
+      data.shadowBlur = 8 * (data.smokeFramesLeft / data.smokeFramesMax);
+      // ... and fade blur out
+      data.shadowColor = `rgba(255, 255, 255, ${
+        data.smokeFramesLeft / data.smokeFramesMax
+      })`;
     }
   }
 
@@ -517,8 +514,7 @@ const Bunker = (options = {}) => {
   const burninatingTime = 10000;
   const burnOutFade = 0.5;
 
-  const smokeFrames =
-    ((burninatingTime + burninatingTime * burnOutFade * 0.85) / 1000) * FPS;
+  const smokeFrames = (burninatingTime / 1000) * FPS;
 
   data = common.inheritData(
     {
