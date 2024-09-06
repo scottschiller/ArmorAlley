@@ -118,6 +118,19 @@ function Stats() {
    * icon type (death vs. explosion) and language / notification options
    */
   const notifyTypes = {
+    'aimed-missile': {
+      // special case: smart missiles are the "attacker" only when hostile.
+      'hostilePrefix': 'a hostile ',
+      // exclude: true,
+      'verb': 'smoked',
+      'verb_bunker': 'destroyed',
+      'verb_infantry': 'toasted',
+      'verb_engineer': 'toasted',
+      'verb_parachute-infantry': 'walloped',
+      'verb_van': 'vaporized',
+      'verb_aimed-missile': 'neutralized',
+      'verb_smart-missile': 'took out'
+    },
     'chain': {
       verb: 'hit'
     },
