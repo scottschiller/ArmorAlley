@@ -635,21 +635,39 @@ const SmartMissile = (options = {}) => {
       data.vYMax *= gameType === 'extreme' ? 1.25 : 1.1;
     }
 
+    // determine angle of missile (pointing at target, not necessarily always heading that way)
+    rad = Math.atan2(deltaY, deltaX);
+
     if (
+      // don't smoke too much.
       data.isOnScreen &&
+      (FPS === 30 || data.frameCount % 2 === 0) &&
       (data.expired ||
         progress >= data.nearExpiryThreshold ||
         (progress >= 0.05 && Math.random() >= smokeThreshold))
     ) {
       game.addObject(TYPES.smoke, {
-        // "most recent" last coordinate
-        x: data.xHistory[data.xHistory.length - 1],
+        x: data.x,
         y:
-          data.yHistory[data.xHistory.length - 1] -
+          data.y -
           (data.isBanana || data.isRubberChicken ? 3 : 5),
         spriteFrame: 3
       });
     }
+
+    // push x/y to trailer history arrays, maintain size
+    data.xHistory.push(
+      data.x + (data.vX < 0 ? data.width : 0)
+    );
+
+    data.yHistory.push(data.y);
+
+    if (data.xHistory.length > data.trailerCount + 1) {
+      data.xHistory.shift();
+      data.yHistory.shift();
+    }
+
+    moveTrailers();
 
     newX = data.x + data.vX * GAME_SPEED_RATIOED;
     newY =
@@ -659,21 +677,7 @@ const SmartMissile = (options = {}) => {
         : Math.min(data.vY + data.gravity, data.vYMaxExpired)) *
         GAME_SPEED_RATIOED;
 
-    // determine angle of missile (pointing at target, not necessarily always heading that way)
-    rad = Math.atan2(deltaY, deltaX);
-
     moveTo(newX, newY, rad * rad2Deg);
-
-    // push x/y to trailer history arrays, maintain size
-    data.xHistory.push(data.x);
-    data.yHistory.push(data.y);
-
-    if (data.xHistory.length > data.trailerCount + 1) {
-      data.xHistory.shift();
-      data.yHistory.shift();
-    }
-
-    moveTrailers();
 
     data.frameCount++;
 
