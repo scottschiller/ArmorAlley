@@ -2347,10 +2347,12 @@ const Helicopter = (options = {}) => {
       }
 
       // enforce distance limits?
-      if (tData.type === TYPES.balloon || tData.type === TYPES.helicopter) {
-        if (Math.abs(result.deltaX) < 200) {
-          result.deltaX = 0;
-        }
+      if (tData.type === TYPES.helicopter && Math.abs(result.deltaX) < 200) {
+        result.deltaX = 0;
+      }
+
+      if (tData.type === TYPES.balloon && Math.abs(result.deltaX) < 40) {
+        result.deltaX = 0;
       }
 
       desiredVX = result.deltaX;
