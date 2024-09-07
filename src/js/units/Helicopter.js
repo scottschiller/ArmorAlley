@@ -1,7 +1,7 @@
 import { game } from '../core/Game.js';
 import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { utils } from '../core/utils.js';
-import { gameType, keyboardMonitor, screenScale } from '../aa.js';
+import { gameType, keyboardMonitor, prefsManager, screenScale } from '../aa.js';
 
 import {
   bananaMode,
@@ -923,6 +923,25 @@ const Helicopter = (options = {}) => {
   }
 
   function toggleAutoFlip() {
+    // special case: if on landing pad, flip muzak pref.
+    if (game?.players?.local?.data?.onLandingPad) {
+      const pref = 'muzak';
+      if (data.onLandingPad && data.isLocal) {
+        // flip
+        prefsManager.applyNewPrefs({ [pref]: !gamePrefs[pref] });
+        game.objects.notifications.addNoRepeat(
+          `📻 Muzak switched ${gamePrefs[pref] ? 'on' : 'off'}.`
+        );
+        if (gamePrefs[pref]) {
+          const force = true;
+          maybeStartRepairingMedia(force);
+        } else {
+          stopRepairingMedia();
+        }
+        return;
+      }
+    }
+
     // revert to normal setting
     if (data.flipped) flip();
 
