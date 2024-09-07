@@ -664,17 +664,13 @@ const SmartMissile = (options = {}) => {
     ) {
       game.addObject(TYPES.smoke, {
         x: data.x,
-        y:
-          data.y -
-          (data.isBanana || data.isRubberChicken ? 3 : 5),
+        y: data.y - (data.isBanana || data.isRubberChicken ? 3 : 5),
         spriteFrame: 3
       });
     }
 
     // push x/y to trailer history arrays, maintain size
-    data.xHistory.push(
-      data.x + (data.vX < 0 ? data.width : 0)
-    );
+    data.xHistory.push(data.x + (data.vX < 0 ? data.width : 0));
 
     data.yHistory.push(data.y);
 
