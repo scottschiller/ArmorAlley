@@ -798,8 +798,7 @@ const SmartMissile = (options = {}) => {
       // human helicopter, firing smart missile
       if (
         gamePrefs.bnb &&
-        !data.isEnemy &&
-        data.parentType === TYPES.helicopter &&
+        options.parent === game.players.local &&
         sounds.bnb.beavisYeahGo
       ) {
         // hackish: only play if this is the first active missile.
