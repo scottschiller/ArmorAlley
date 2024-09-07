@@ -2435,15 +2435,26 @@ function playSoundFromBuffer(snd, buffer) {
     .connect(snd.panNode)
     .connect(audioContext.destination);
 
-  if (snd._iO?.loops > 1) {
-    source.loop = true;
-  }
-
   // TODO: is the sound paused, or should it start from a given offset?
 
   const when = 0;
   const offset = snd._iO.from / msecScale || 0;
-  const duration = snd._iO.to ? snd._iO.to / msecScale : undefined;
+
+  /**
+   * NOTE: if "to" not provided, run with buffer length assigned to `snd.duration`.
+   * OK for self-contained / standalone sound assets, not good for audio sprites.
+   */
+
+  const duration = snd._iO.to
+    ? snd._iO.to / msecScale
+    : snd.duration / msecScale;
+
+  if (snd._iO?.loops > 1) {
+    source.loop = true;
+    // start-to-finish
+    source.loopStart = Math.floor(offset);
+    source.loopEnd = Math.floor(offset + duration);
+  }
 
   if (snd._iO.onplay) {
     snd._iO.onplay.apply(snd, [snd]);
@@ -2455,10 +2466,17 @@ function playSoundFromBuffer(snd, buffer) {
   if (whilePlaying) addWhilePlaying(snd);
 
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/start
-  if (duration !== undefined && duration > 0) {
+  if (source.loop) {
+    // don't specify duration for loops(?)
+    source.start(when, offset);
+  } else if (duration !== undefined && duration > 0) {
     source.start(when, offset, duration);
   } else {
-    source.start(when, offset);
+    if (offset) {
+      source.start(when, offset);
+    } else {
+      source.start();
+    }
   }
 
   snd._startTime = audioContext.currentTime + when;
