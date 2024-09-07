@@ -1305,6 +1305,11 @@ soundManager.onready(() => {
     volume: 10
   });
 
+  sounds.tankFlame = add({
+    url: '412558__grimgrum__combust',
+    volume: 30
+  });
+
   sounds.missileLaunch = add({
     url: 'ga-217_missile_launch',
     volume: 25

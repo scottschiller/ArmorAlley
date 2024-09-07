@@ -3,6 +3,8 @@ import { collisionTest } from '../core/logic.js';
 import { TYPES, getTypes } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
+import { playSound, sounds } from '../core/sound.js';
+import { game } from '../core/Game.js';
 
 const Flame = (options = {}) => {
   let data, dom, collision, exports;
@@ -52,6 +54,10 @@ const Flame = (options = {}) => {
       `${data.y}px`,
       data.extraTransforms
     );
+
+    if (sounds.tankFlame) {
+      playSound(sounds.tankFlame, game.players.local);
+    }
   }
 
   data = common.inheritData(

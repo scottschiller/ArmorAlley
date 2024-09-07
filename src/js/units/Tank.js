@@ -27,14 +27,7 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
 const Tank = (options = {}) => {
-  let css,
-    data,
-    dom,
-    radarItem,
-    nearby,
-    friendlyNearby,
-    exports,
-    tankHeight;
+  let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
 
   function fire() {
     let collisionItems;
@@ -78,10 +71,6 @@ const Tank = (options = {}) => {
         vX: 0,
         vY: 0
       });
-
-      if (sounds.tankGunFire) {
-        playSound(sounds.tankGunFire, exports);
-      }
 
       return;
     }
