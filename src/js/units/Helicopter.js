@@ -291,8 +291,10 @@ const Helicopter = (options = {}) => {
     });
   }
 
-  function startRepairing(landingPad) {
+  function startRepairing() {
     if (data.repairing) return;
+
+    const { landingPad } = data;
 
     data.repairing = true;
 
@@ -303,78 +305,9 @@ const Helicopter = (options = {}) => {
 
     setSpinner(true);
 
-    const welcomeMessage = landingPad.data.welcomeMessage;
-
     playSound(sounds.repairing);
 
-    const somethingIsEmpty = !data.smartMissiles || !data.bombs || !data.ammo;
-
-    if (
-      data.smartMissiles < data.maxSmartMissiles ||
-      data.fuel < 33 ||
-      somethingIsEmpty
-    ) {
-      if (landingPad.data.isKennyLoggins) {
-        // welcome to *** THE DANGER ZONE! ***
-        if (!net.active && gamePrefs.muzak) {
-          playSound(sounds.dangerZone, null);
-        }
-      } else if (gamePrefs.muzak) {
-        if (gamePrefs.bnb) {
-          if (landingPad.data.isMidway || somethingIsEmpty) {
-            if (game.data.isBeavis) {
-              if (Math.random() >= 0.25) {
-                data.muchaMuchacha = true;
-                if (gamePrefs.sound) {
-                  game.objects.notifications.add(
-                    '🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆',
-                    { noDuplicate: true }
-                  );
-                  playSound(sounds.bnb.muchaMuchacha, null);
-                  common.setVideo('camper', 1.05);
-                  // TODO: re-implement in Canvas. ;)
-                  // utils.css.add(dom.o, css.muchaMuchacha);
-                }
-              } else {
-                game.objects.notifications.add(
-                  '🎵 Now playing: “Ratfinks, Suicide Tanks And Cannibal Girls” 🎸🤘💥',
-                  { noDuplicate: true }
-                );
-                const muted = false;
-                common.setVideo('beavis-wz', 1, 1, muted);
-              }
-            } else {
-              iGotYouBabe();
-            }
-          } else {
-            playSound(sounds.bnb.theme, null);
-          }
-        } else if (gamePrefs.muzak) {
-          // hit the chorus, if we'll be "a while."
-
-          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
-          game.objects.notifications.add(
-            '🎵 Now playing: “The Girl From Ipanema” 🎸🤘',
-            { noDuplicate: true }
-          );
-        }
-      }
-
-      game.objects.notifications.add(welcomeMessage, {
-        type: 'landingPad',
-        noDuplicate: true
-      });
-    } else if (gamePrefs.muzak) {
-      if (landingPad.data.isKennyLoggins && !net.active) {
-        // welcome to *** THE DANGER ZONE! ***
-        playSound(sounds.dangerZone, null);
-      } else if (gamePrefs.bnb) {
-        playSound(sounds.bnb.theme, null);
-      } else {
-        // start from the beginning, if a shorter visit.
-        playSound(sounds.ipanemaMuzak, null, { position: 0 });
-      }
-    }
+    maybeStartRepairingMedia();
 
     // start blinking certain things
 
@@ -423,30 +356,6 @@ const Helicopter = (options = {}) => {
         stopSound(sounds.repairing);
       }
 
-      if (sounds.ipanemaMuzak) {
-        stopSound(sounds.ipanemaMuzak);
-      }
-
-      if (sounds.dangerZone) {
-        stopSound(sounds.dangerZone);
-      }
-
-      if (sounds.bnb?.theme) {
-        stopSound(sounds.bnb.theme);
-      }
-
-      if (sounds.bnb?.muchaMuchacha) {
-        data.muchaMuchacha = false;
-        // hackish: ensure we reset any horizontal travel.
-        stopSound(sounds.bnb.muchaMuchacha);
-      }
-
-      if (sounds.bnb?.iGotYouBabe) {
-        stopSound(sounds.bnb.iGotYouBabe);
-      }
-
-      common.setVideo();
-
       if (data.repairComplete) {
         document.getElementById('repair-complete').style.display = 'none';
       }
@@ -454,6 +363,121 @@ const Helicopter = (options = {}) => {
 
     data.repairing = false;
     data.repairComplete = false;
+  }
+
+  function maybeStartRepairingMedia(force) {
+    const { landingPad } = data;
+
+    const somethingIsEmpty = !data.smartMissiles || !data.bombs || !data.ammo;
+
+    if (
+      data.smartMissiles < data.maxSmartMissiles ||
+      data.fuel < 33 ||
+      somethingIsEmpty ||
+      force
+    ) {
+      if (landingPad.data.isKennyLoggins) {
+        // welcome to *** THE DANGER ZONE! ***
+        if (!net.active && gamePrefs.muzak) {
+          playSound(sounds.dangerZone, null);
+        }
+      } else if (gamePrefs.muzak) {
+        if (gamePrefs.bnb) {
+          if (landingPad.data.isMidway || somethingIsEmpty) {
+            if (game.data.isBeavis) {
+              if (Math.random() >= 0.25) {
+                data.muchaMuchacha = true;
+                if (gamePrefs.sound) {
+                  if (!force) {
+                    game.objects.notifications.addNoRepeat(
+                      '🎵 Now playing: “Mucha Muchacha” 🇲🇽🪅🍆',
+                      { noDuplicate: true }
+                    );
+                  }
+                  playSound(sounds.bnb.muchaMuchacha, null);
+                  data.bnbMediaActive = true;
+                  common.setVideo('camper', 1.05);
+                  // TODO: re-implement in Canvas. ;)
+                  // utils.css.add(dom.o, css.muchaMuchacha);
+                }
+              } else {
+                if (!force) {
+                  game.objects.notifications.addNoRepeat(
+                    '🎵 Now playing: “Ratfinks, Suicide Tanks And Cannibal Girls” 🎸🤘💥',
+                    { noDuplicate: true }
+                  );
+                }
+                const muted = false;
+                data.bnbMediaActive = true;
+                common.setVideo('beavis-wz', 1, 1, muted);
+              }
+            } else {
+              iGotYouBabe();
+            }
+          } else {
+            playSound(sounds.bnb.theme, null);
+          }
+        } else if (gamePrefs.muzak) {
+          // hit the chorus, if we'll be "a while."
+
+          playSound(sounds.ipanemaMuzak, null, { position: 13700 });
+          if (!force) {
+            game.objects.notifications.addNoRepeat(
+              '🎵 Now playing: “The Girl From Ipanema” 🎸🤘',
+              { noDuplicate: true }
+            );
+          }
+        }
+      }
+
+      if (!force) {
+        game.objects.notifications.addNoRepeat(landingPad.data.welcomeMessage, {
+          type: 'landingPad',
+          noDuplicate: true
+        });
+      }
+    } else if (gamePrefs.muzak) {
+      if (landingPad.data.isKennyLoggins && !net.active) {
+        // welcome to *** THE DANGER ZONE! ***
+        playSound(sounds.dangerZone, null);
+      } else if (gamePrefs.bnb) {
+        playSound(sounds.bnb.theme, null);
+      } else {
+        // start from the beginning, if a shorter visit.
+        playSound(sounds.ipanemaMuzak, null, { position: 0 });
+      }
+    }
+  }
+
+  function stopRepairingMedia() {
+    if (!data.isLocal) return;
+
+    if (sounds.ipanemaMuzak) {
+      stopSound(sounds.ipanemaMuzak);
+    }
+
+    if (sounds.dangerZone) {
+      stopSound(sounds.dangerZone);
+    }
+
+    if (sounds.bnb?.theme) {
+      stopSound(sounds.bnb.theme);
+    }
+
+    if (sounds.bnb?.muchaMuchacha) {
+      data.muchaMuchacha = false;
+      // hackish: ensure we reset any horizontal travel.
+      stopSound(sounds.bnb.muchaMuchacha);
+    }
+
+    if (sounds.bnb?.iGotYouBabe) {
+      stopSound(sounds.bnb.iGotYouBabe);
+    }
+
+    common.setVideo();
+
+    data.bnbMediaActive = false;
+
   }
 
   // Status item
@@ -575,18 +599,6 @@ const Helicopter = (options = {}) => {
 
       if (sounds.repairing) {
         stopSound(sounds.repairing);
-      }
-
-      if (sounds.ipanemaMuzak) {
-        stopSound(sounds.ipanemaMuzak);
-      }
-
-      if (sounds.dangerZone) {
-        stopSound(sounds.dangerZone);
-      }
-
-      if (sounds.bnb?.theme) {
-        stopSound(sounds.bnb.theme);
       }
 
       if (sounds.bnb?.beavisThankYouDriveThrough) {
@@ -801,6 +813,12 @@ const Helicopter = (options = {}) => {
         : 0;
 
       moveTo(common.getLandingPadOffsetX(exports), respawnY);
+
+      // assign landing pad object
+      const pads = game.objects[TYPES.landingPad];
+      const landingPad = pads[data.isEnemy ? pads.length - 1 : 0];
+
+      data.landingPad = landingPad;
 
       if (data.isLocal) {
         // "get to the choppa!" (center the view on it, that is.)

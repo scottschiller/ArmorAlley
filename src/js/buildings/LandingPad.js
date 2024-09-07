@@ -159,7 +159,7 @@ const LandingPad = (options = {}) => {
           // "friendly landing pad HIT"
           if (target.data.y + target.data.height >= worldHeight) {
             // provide the "active" landing pad
-            target.onLandingPad(exports);
+            target.onLandingPad(true, exports);
           }
         } else {
           // "friendly landing pad MISS"
