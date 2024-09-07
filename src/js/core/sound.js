@@ -1380,7 +1380,7 @@ soundManager.onready(() => {
     // hat tip to Mike Russell for the "vintage radio" / elevator muzak EQ effect: https://youtu.be/ko9hRYx1lF4
     url: 'ipanema-elevator',
     fixedPlaybackRate,
-    volume: 5,
+    volume: 8,
     loops: 999
   });
 
