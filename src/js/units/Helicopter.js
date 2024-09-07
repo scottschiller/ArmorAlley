@@ -3120,9 +3120,8 @@ const Helicopter = (options = {}) => {
     // attach events?
 
     if (options.attachEvents && !isMobile) {
-      const world = document.getElementById('world');
       // TODO: static DOM reference.
-      utils.events.add(world, 'mousedown', events.mousedown);
+      utils.events.add(document, 'mousedown', events.mousedown);
       utils.events.add(window, 'scroll', (e) => {
         // don't allow scrolling at all?
         e.preventDefault();
