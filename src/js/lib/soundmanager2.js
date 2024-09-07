@@ -1959,7 +1959,9 @@ function SoundManager() {
         offset = mime.indexOf(';');
 
         // strip "audio/X; codecs..."
-        fileExt = (offset !== -1 ? mime.substring(0, offset) : mime).substring(6);
+        fileExt = (offset !== -1 ? mime.substring(0, offset) : mime).substring(
+          6
+        );
       }
     } else {
       // match the raw extension name - "mp3", for example
@@ -2154,7 +2156,6 @@ function SoundManager() {
 
   // startup
   testHTML5();
-
 } // SoundManager()
 
 function initAudioContext() {
