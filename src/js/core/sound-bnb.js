@@ -119,8 +119,12 @@ function playSequence(soundReference, exports, sequenceOptions = {}) {
     onfinish: function (sound) {
       const { parentSoundObject } = sound;
 
-      // bail if a sound didn't play, if the playNextCondition is false-y, or we're at the end.
-      if (sound.skipped || !playNextCondition(sound)) {
+      // bail if a sound didn't play, if the playNextCondition is false-y, we're at the end, OR, the BnB repair "TV" media is on.
+      if (
+        sound.skipped ||
+        !playNextCondition(sound) ||
+        game?.players?.local?.data?.bnbMediaActive
+      ) {
         // if a sequence, and this is the first, then drop all the others.
         if (parentSoundObject.sequenceOffset === 0) {
           // note length - 1, we have already processed the first sound in the sequence.
@@ -284,6 +288,11 @@ function playQueuedBNBSounds() {
 
     // skip if a BnB sound is queued, but pref was disabled in the meantime
     if (!gamePrefs.bnb) {
+      item.soundObject.skip = true;
+    }
+
+    // also skip if BnB "media" is active
+    if (game?.players?.local?.data?.bnbMediaActive) {
       item.soundObject.skip = true;
     }
 
