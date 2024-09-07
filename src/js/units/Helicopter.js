@@ -477,7 +477,6 @@ const Helicopter = (options = {}) => {
     common.setVideo();
 
     data.bnbMediaActive = false;
-
   }
 
   // Status item
@@ -995,10 +994,13 @@ const Helicopter = (options = {}) => {
     data.angle = data.tiltOffset;
   }
 
-  function onLandingPad(state) {
+  function onLandingPad(state, pad = null) {
     if (data.dead) {
       // ensure repair is canceled, if underway
-      if (data.repairing) stopRepairing();
+      if (data.repairing) {
+        stopRepairing();
+        stopRepairingMedia();
+      }
 
       return;
     }
@@ -1008,6 +1010,9 @@ const Helicopter = (options = {}) => {
 
     data.onLandingPad = state;
     data.landed = state;
+
+    // assign the active landing pad.
+    data.landingPad = pad;
 
     // edge case: helicopter is "live", but not active yet.
     if (data.respawning) return;
@@ -1022,9 +1027,10 @@ const Helicopter = (options = {}) => {
       callAction('setFiring', false);
       callAction('setBombing', false);
 
-      startRepairing(state);
+      startRepairing();
     } else {
       stopRepairing();
+      stopRepairingMedia();
 
       // only allow repair, etc., once hasLiftOff has been set.
       data.hasLiftOff = true;
@@ -3208,6 +3214,7 @@ const Helicopter = (options = {}) => {
       radarJamming: 0,
       repairComplete: false,
       landed: true,
+      landingPad: null,
       onLandingPad: true,
       hasLiftOff: false,
       cloaked: false,
@@ -3227,6 +3234,7 @@ const Helicopter = (options = {}) => {
       energyMax: 10,
       energyRepairModulus: 5,
       energyLineScale: 0.25,
+      bnbMediaActive: false,
       direction: 0,
       pilot: true,
       xMin: 0,
