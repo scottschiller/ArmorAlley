@@ -668,31 +668,6 @@ const DomCanvas = () => {
 
       endShadowBlur(ctx, exports);
 
-      const tracking =
-        !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
-
-      if (tracking) {
-        // red dot
-        if (!img.excludeDot) {
-          ctx.beginPath();
-          ctx.arc(
-            // TODO: fix bunker red dot positioning.
-            dx +
-              (data.isEnemy
-                ? data.width * (data.type === TYPES.bunker ? ss / 3 : ss)
-                : 0) -
-              4,
-            dy + (data.type === TYPES.bunker ? -12 : 6),
-            data.smartMissileTracking ? 4 : 3,
-            0,
-            Math.PI * 2
-          );
-
-          ctx.fillStyle = '#ff3333';
-          ctx.fill();
-        }
-      }
-
       // TODO: only draw this during energy updates / when applicable per prefs.
       if (
         !img.excludeEnergy &&
