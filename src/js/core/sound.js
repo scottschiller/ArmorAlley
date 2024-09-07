@@ -1393,6 +1393,21 @@ soundManager.onready(() => {
     loops: 999
   });
 
+  sounds.rubberChicken.bg = shuffle([
+    add({
+      url: 'rubber-chicken-bg0',
+      volume: 30
+    }),
+    add({
+      url: 'rubber-chicken-bg1',
+      volume: 30
+    }),
+    add({
+      url: 'rubber-chicken-bg2',
+      volume: 30
+    })
+  ]);
+
   sounds.rubberChicken.launch = shuffle([
     add({
       url: 'rubber-chicken-launch-1',

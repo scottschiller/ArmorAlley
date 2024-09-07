@@ -9,6 +9,7 @@ import {
   GAME_SPEED_RATIOED,
   getTypes,
   rad2Deg,
+  rnd,
   rndInt,
   rng,
   rngInt,
@@ -617,6 +618,21 @@ const SmartMissile = (options = {}) => {
 
     const progress = data.frameCount / data.expireFrameCount;
 
+    if (data.isRubberChicken) {
+      // occasional background sound
+      const p = Math.floor(progress * 10);
+      if (data.lifeCyclePhase < p && p % 4 === 0) {
+        data.lifeCyclePhase++;
+        playSound(sounds.rubberChicken.bg, exports);
+        if (rnd(1) >= 0.5) {
+          common.setFrameTimeout(
+            () => playSound(sounds.rubberChicken.bg, exports),
+            350 + rndInt(350)
+          );
+        }
+      }
+    }
+
     // smoke increases as missile nears expiry
     const smokeThreshold = 1.25 - Math.min(1, progress);
 
@@ -855,6 +871,7 @@ const SmartMissile = (options = {}) => {
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       nearExpiry: false,
       nearExpiryThreshold: 0.88,
+      lifeCyclePhase: 0,
       frameCount: 0,
       foundDecoy: false,
       decoyItemTypes: getTypes('parachuteInfantry', {
