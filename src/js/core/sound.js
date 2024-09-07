@@ -1305,6 +1305,11 @@ soundManager.onready(() => {
     volume: 10
   });
 
+  sounds.missileNapalm = add({
+    url: '186374__samararaine__bonfire-being-lit',
+    volume: 30
+  });
+
   sounds.tankFlame = add({
     url: '412558__grimgrum__combust',
     volume: 30

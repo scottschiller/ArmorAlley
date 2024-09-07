@@ -86,6 +86,10 @@ const AimedMissile = (options = {}) => {
 
       const napalmCount = 5;
 
+      if (sounds.missileNapalm) {
+        playSound(sounds.missileNapalm, game.players.local);
+      }
+
       for (let i = 0; i < napalmCount; i++) {
         common.setFrameTimeout(
           () => {
