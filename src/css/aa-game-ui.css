@@ -690,8 +690,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   opacity: 0;
 }
 
-/* self-destructing missile launchers */
-/* exploding turrets */
+/* self-destructing missile launchers + exploding turrets */
 #battlefield .sprite.destroyed .scan-node,
 #battlefield .sprite.exploding .scan-node,
 #battlefield .sprite.placeholder.engineer-interacting .scan-node,
@@ -716,6 +715,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 #battlefield .scan-node.exploding,
 #battlefield .sprite.placeholder.destroyed .scan-node,
 #battlefield .sprite.placeholder.exploding .scan-node {
+  transition-property: transform, opacity;
   /* NOTE: shenanigans - additional 18px on bottom for battlefield items. */
   transform: translate3d(-50%, calc(-100% + 18px), 0) scale3d(0, 0, 1);
   transform-origin: 50% 100%;

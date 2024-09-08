@@ -40,6 +40,8 @@ const MissileLauncher = (options = {}) => {
     if (data.dead) return;
 
     if (!dieOptions?.silent) {
+      utils.css.add(dom.o, css.exploding);
+
       if (sounds.genericExplosion) {
         playSound(sounds.genericExplosion, exports);
       }
@@ -308,6 +310,7 @@ const MissileLauncher = (options = {}) => {
 
   css = common.inheritCSS({
     className: 'missile-launcher',
+    exploding: 'exploding',
     scanNode: 'scan-node'
   });
 
