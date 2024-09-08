@@ -427,8 +427,7 @@ function init() {
   const gameTypeFromPrefs = gamePrefs.game_type;
 
   // cascade of priority: URL param, prefs, OR default.
-  const defaultGameType = gameTypeParam || gameTypeFromPrefs;
-  ('easy');
+  const defaultGameType = gameTypeParam || gameTypeFromPrefs || 'easy';
 
   game.setGameType(defaultGameType);
 
