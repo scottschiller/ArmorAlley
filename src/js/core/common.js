@@ -71,8 +71,7 @@ const PREFIX_GUEST = 'guest_';
 const defaultCSS = {
   animating: 'animating',
   dead: 'dead',
-  enemy: 'enemy',
-  exploding: 'exploding'
+  enemy: 'enemy'
 };
 
 const defaultCSSKeys = Object.keys(defaultCSS);
