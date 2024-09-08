@@ -510,7 +510,6 @@ const Helicopter = (options = {}) => {
     }
 
     if (force || updated.smartMissiles) {
-      maybeUpdateTargetDot();
       dom.statusBar.missileCount.innerText = Math.floor(data.smartMissiles);
       if (updated.smartMissilesComplete) {
         utils.css.remove(dom.statusBar.missileCountLI, css.repairing);
@@ -660,7 +659,6 @@ const Helicopter = (options = {}) => {
       if (data.smartMissiles >= data.maxSmartMissiles) {
         updated.smartMissilesComplete = true;
       }
-      maybeUpdateTargetDot();
     }
 
     sprites.updateEnergy(exports);
@@ -1659,11 +1657,11 @@ const Helicopter = (options = {}) => {
       isBanana: missileModeSource === bananaMode,
       isRubberChicken: missileModeSource === rubberChickenMode,
       isSmartMissile: missileModeSource === defaultMissileMode,
-      onDie: maybeDisableTargetDot
+      onDie: maybeDisableTargetUI
     };
   }
 
-  function maybeDisableTargetDot() {
+  function maybeDisableTargetUI() {
     // this applies only to the local player.
     if (!data.isLocal) return;
 
@@ -1676,23 +1674,7 @@ const Helicopter = (options = {}) => {
     // bail if there are still missiles in the air.
     if (activeMissiles.length) return;
 
-    utils.css.add(targetDot, css.disabled);
-
     game.objects.radar.clearTarget();
-  }
-
-  function maybeUpdateTargetDot() {
-    // this applies only to the local player.
-    if (!data.isLocal) return;
-
-    // does the local player have any active missiles?
-    const activeMissiles = game.objects[TYPES.smartMissile].filter(
-      (m) => !m.data.dead && m.data.parent === game.players.local
-    );
-
-    if (!data.smartMissiles && !activeMissiles.length) return;
-
-    utils.css.remove(targetDot, css.disabled);
   }
 
   function dropMissileTargets() {
@@ -1708,7 +1690,6 @@ const Helicopter = (options = {}) => {
 
   function dropNextTarget() {
     if (!nextMissileTarget) return;
-    utils.css.remove(nextMissileTarget?.dom?.o, css.nextMissileTarget);
     nextMissileTarget.data.isNextMissileTarget = false;
     nextMissileTarget = null;
   }
@@ -1730,27 +1711,14 @@ const Helicopter = (options = {}) => {
     target.data.isNextMissileTarget = !!active;
 
     // new target
-    // NOTE: excluding turrets and missile launchers which have placeholder DOM / scan nodes, but sprites + red dot rendered on canvas.
-    if (
-      active &&
-      target.data.type !== TYPES.turret &&
-      target.data.type !== TYPES.missileLauncher &&
-      target?.dom?.o.appendChild
-    ) {
-      target.dom.o.appendChild(targetDot);
-      utils.css.add(target.dom.o, css.nextMissileTarget);
+    if (active) {
       nextMissileTarget = target;
-      utils.css.remove(targetDot, css.disabled);
       game.objects.radar.markTarget(target.radarItem);
     }
 
     if (!active) {
       nextMissileTarget = null;
       if (targetDot) {
-        utils.css.add(targetDot, css.disabled);
-        if (target?.dom?.o) {
-          utils.css.remove(target.dom.o, css.nextMissileTarget);
-        }
         game.objects.radar.clearTarget();
       }
     }
@@ -1889,11 +1857,6 @@ const Helicopter = (options = {}) => {
           missileTarget = lastMissileTarget;
         } else {
           missileTarget = getNearestObject(exports, { useInFront: true });
-
-          // sync the UI if local, too.
-          if (data.isLocal) {
-            maybeUpdateTargetDot();
-          }
         }
 
         if (
@@ -3171,7 +3134,6 @@ const Helicopter = (options = {}) => {
     animating: 'animating',
     active: 'active',
     disabled: 'disabled',
-    nextMissileTarget: 'next-missile-target',
     repairing: 'repairing',
     unavailable: 'weapon-unavailable',
     reloading: 'weapon-reloading'

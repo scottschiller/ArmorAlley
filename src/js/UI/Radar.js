@@ -344,8 +344,9 @@ const Radar = () => {
   function updateOverlay() {
     // for scan nodes
     utils.css.addOrRemove(dom.radar, data.isJammed, css.jammed);
-
     utils.css.addOrRemove(dom.overlay, data.isJammed, css.jammed);
+    // targeting
+    utils.css.addOrRemove(dom.targetMarker, data.isJammed, css.jammed);
   }
 
   function stopJamming() {
@@ -427,13 +428,12 @@ const Radar = () => {
     if (data.scale === 1) {
       // no-scaling case
       dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left}px, 0px, 0px)`;
-      return;
+    } else {
+      // otherwise, scale and include the scroll offset
+      dom.targetMarker.style.transform = `translate3d(${
+        data.radarTarget.data.left * data.scale - data.radarScrollLeft
+      }px, 0px, 0px)`;
     }
-
-    // otherwise, scale and include the scroll offset
-    dom.targetMarker.style.transform = `translate3d(${
-      data.radarTarget.data.left * data.scale - data.radarScrollLeft
-    }px, 0px, 0px)`;
   }
 
   function markTarget(targetItem) {

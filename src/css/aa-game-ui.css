@@ -1445,15 +1445,15 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 .target-marker {
   background: #c00;
   border-bottom: 0 solid transparent;
-  border-bottom-left-radius: 0.5px;
-  border-bottom-right-radius: 0.5px;
-  --height: calc(2px * var(--gs));
+  --height: calc(1.5px * var(--gs));
+  border-bottom-left-radius: var(--height);
+  border-bottom-right-radius: var(--height);
   height: var(--height);
   margin-bottom: calc(var(--height) / 2);
   position: absolute;
   top: auto;
   bottom: 0;
-  margin-bottom: calc(var(--height) * -1.5);
+  margin-bottom: calc(var(--height) * -2);
   left: 0;
   opacity: 0;
   transition: opacity 0.25s ease-in-out;
@@ -1463,6 +1463,11 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 .target-marker.transition-active {
   /* set while repositioning, moving to a new target */
   transition-property: width, opacity;
+}
+
+.target-marker.radar-jammed {
+  /* effectively hidden */
+  background: transparent;
 }
 
 .sprite.dead .target-ui,
