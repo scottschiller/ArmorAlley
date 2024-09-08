@@ -518,8 +518,8 @@ function Stats() {
                 ? 'an enemy '
                 : 'your '
               : notifyItem.isAn
-              ? 'an '
-              : 'a ') + getNormalizedUnitName(target)
+                ? 'an '
+                : 'a ') + getNormalizedUnitName(target)
       }`;
 
       /**
