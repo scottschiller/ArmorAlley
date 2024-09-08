@@ -593,7 +593,7 @@ SuperBunker.radarItemConfig = (exports) => ({
     }
 
     const left = pos.left(obj.data.left);
-    const scaledWidth = pos.width(width);
+    const scaledWidth = pos.width(width) * 0.75;
 
     // bunker shape
     ctx.beginPath();
