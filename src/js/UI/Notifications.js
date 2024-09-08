@@ -272,10 +272,10 @@ const Notifications = () => {
 
     // level flags
     if (levelFlags.jamming) {
-      game.objects.notifications.add('⚠️ JAMMING MODE: Radar is inoperable.');
+      add('⚠️ JAMMING MODE: Radar is inoperable.');
       game.objects.radar.startJamming();
     } else if (levelFlags.stealth) {
-      game.objects.notifications.add(
+      add(
         '⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷'
       );
     }
@@ -284,7 +284,7 @@ const Notifications = () => {
     if (levelName === 'Rainstorm') {
       common.setFixedFrameTimeout(() => {
         effects.updateStormStyle('rain');
-        game.objects.notifications.add(
+        add(
           '☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)'
         );
       }, 5000);
