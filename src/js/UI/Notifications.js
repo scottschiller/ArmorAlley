@@ -266,6 +266,10 @@ const Notifications = () => {
 
     game.objects.view.setAnnouncement(msg);
 
+    if (!levelFlags.bullets) {
+      add('Aimed missiles are now your primary weapon.');
+    }
+
     // level flags
     if (levelFlags.jamming) {
       game.objects.notifications.add('⚠️ JAMMING MODE: Radar is inoperable.');
