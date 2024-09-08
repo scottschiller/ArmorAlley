@@ -878,7 +878,10 @@ function PrefsManager() {
     if (options.selectLevel) {
       // hackish: ensure the modal matches the game menu selection.
       const levelName = document.getElementById('game_level').value;
-      document.querySelector(`#prefs-select-level input[value="${levelName}"]`).checked = true;
+      const radio = document.querySelector(
+        `#prefs-select-level input[value="${levelName}"]`
+      );
+      if (!radio) radio.checked = true;
     }
 
     // ensure the volume slider is up-to-date.
