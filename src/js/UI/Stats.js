@@ -113,24 +113,29 @@ function Stats() {
     }
   }
 
+  const aimedMissile = {
+    // special case: smart missiles are the "attacker" only when hostile.
+    'hostilePrefix': 'a hostile ',
+    // exclude: true,
+    'verb': 'smoked',
+    'verb_bunker': 'destroyed',
+    'verb_infantry': 'toasted',
+    'verb_engineer': 'toasted',
+    'verb_parachute-infantry': 'walloped',
+    'verb_van': 'vaporized',
+    'verb_aimed-missile': 'neutralized',
+    'verb_smart-missile': 'took out',
+    'verb_super-bunker': 'hit'
+  };
+
   /**
    * by type, behaviours for notifications when units are destroyed including
    * icon type (death vs. explosion) and language / notification options
    */
   const notifyTypes = {
-    'aimed-missile': {
-      // special case: smart missiles are the "attacker" only when hostile.
-      'hostilePrefix': 'a hostile ',
-      // exclude: true,
-      'verb': 'smoked',
-      'verb_bunker': 'destroyed',
-      'verb_infantry': 'toasted',
-      'verb_engineer': 'toasted',
-      'verb_parachute-infantry': 'walloped',
-      'verb_van': 'vaporized',
-      'verb_aimed-missile': 'neutralized',
-      'verb_smart-missile': 'took out'
-    },
+    // consider both aimed + napalm as the same for notifications
+    'aimed-missile': aimedMissile,
+    'missile-napalm': aimedMissile,
     'chain': {
       verb: 'hit'
     },
