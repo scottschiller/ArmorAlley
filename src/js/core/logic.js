@@ -184,6 +184,15 @@ function collisionCheckObject(options) {
   let target, id, tData;
 
   for (id in options.targets) {
+    // edge case: safeguard in case this becomes undefined during the loop.
+    if (!options?.targets) {
+      console.warn(
+        'collisionCheckObject(): options.targets became undefined during loop',
+        options
+      );
+      return;
+    }
+
     target = options.targets[id];
 
     tData = target?.data;
