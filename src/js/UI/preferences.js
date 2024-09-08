@@ -1090,7 +1090,9 @@ function PrefsManager() {
 
     oLevelSelect.appendChild(oGroup);
 
-    oLevelSelect.selectedIndex = oLevelSelect.options.length - 1;
+    if (oLevelSelect.options?.length) {
+      oLevelSelect.selectedIndex = oLevelSelect.options.length - 1;
+    }
   }
 
   function applyNewPrefs(newGamePrefs, force) {
