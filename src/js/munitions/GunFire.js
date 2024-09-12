@@ -60,7 +60,7 @@ const GunFire = (options = {}) => {
           effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
         } else if (pType === TYPES.infantry) {
           // infantry take a *long* time to take out a turret in the original game.
-          data.damagePoints /= 5;
+          data.damagePoints /= 4;
         }
       }
 
