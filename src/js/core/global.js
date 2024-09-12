@@ -106,8 +106,8 @@ function updateClientFeatures(data) {
 
 const enemyColors = {
   classic: {
-    color: '#9c9f08',
-    unit_color: '#ccc',
+    color: 'rgba(153, 107, 46, 0.9)', // previously: '#9c9f08',
+    unit_color: 'rgba(255, 255, 255, 0.75)', // previously: '#ccc',
     color_rgba: 'rgba(204, 204, 204, 0.25)'
   },
   red: {
