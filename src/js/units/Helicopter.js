@@ -3076,11 +3076,6 @@ const Helicopter = (options = {}) => {
     // for human player: append immediately, so initial game start / respawn animation works nicely
     sprites.updateIsOnScreen(exports);
 
-    if (data.isLocal) {
-      targetDot = document.createElement('div');
-      targetDot.className = 'target-dot target-ui';
-    }
-
     if (net.active) {
       if (!data.isCPU) {
         // regular local case
@@ -3319,7 +3314,6 @@ const Helicopter = (options = {}) => {
 
   // TODO: clean this up
   let lastMissileTarget;
-  let targetDot;
 
   dom = {
     o: null,
