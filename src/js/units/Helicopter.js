@@ -1718,7 +1718,7 @@ const Helicopter = (options = {}) => {
 
     if (!active) {
       nextMissileTarget = null;
-      if (targetDot) {
+      if (data.isLocal) {
         game.objects.radar.clearTarget();
       }
     }
