@@ -8,7 +8,8 @@ import {
   getTypes,
   rnd,
   GAME_SPEED_RATIOED,
-  ENEMY_COLOR
+  ENEMY_GUNFIRE_COLOR,
+  FRIENDLY_GUNFIRE_COLOR
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -308,7 +309,7 @@ const GunFire = (options = {}) => {
   );
 
   data.domCanvas = {
-    backgroundColor: options.isInert ? '#666' : '#9c9f08',
+    backgroundColor: options.isInert ? '#666' : FRIENDLY_GUNFIRE_COLOR,
     borderRadius: 1,
     radarItem: {
       excludeStroke: true,
@@ -319,8 +320,8 @@ const GunFire = (options = {}) => {
         ctx.fillStyle = obj.oParent?.data?.isInert
           ? '#666'
           : data.isEnemy
-            ? ENEMY_COLOR
-            : '#9c9f08';
+            ? ENEMY_GUNFIRE_COLOR
+            : FRIENDLY_GUNFIRE_COLOR;
         ctx.roundRect(
           pos.left(obj.data.left) -
             width * game.objects.radar.data.cssRadarScale,
