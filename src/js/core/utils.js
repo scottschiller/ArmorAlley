@@ -242,21 +242,64 @@ const utils = {
       }
     },
     getImageObject: (url = emptyURL, onload) => {
-      function doCallback() {
-        onload?.(img);
-        img.onload = null;
-        img.onerror = null;
-      }
+      /**
+       * NOTE: This method has become somewhat complex.
+       * It returns an `<img>` which is initially empty, then ready via `onload()`.
+       *
+       * Internally, this method queues image requests and canvas processing tasks
+       * to avoid redundant work. Callbacks are queued on "pending" tasks and then
+       * executed once the image is ready and cached.
+       *
+       * Once cached, callbacks should be almost instantaneous.
+       */
 
-      // already in cache.
+      // simple case, already in cache: callback and return, no queue etc.
       if (imageObjects[url]) {
-        onload?.();
+        // yield, because outer function may not have returned object yet.
+        // also, this feels like an antipattern and should be refactored.
+        window.requestAnimationFrame(() => onload?.(imageObjects[url]));
         return imageObjects[url];
       }
 
-      // preload, then update; canvas will ignore rendering until loaded.
-      let img = new Image();
-      const src = url === emptyURL ? blankImage.src : `${IMAGE_ROOT}/${url}`;
+      let img;
+      let src;
+
+      function doCallback() {
+        if (!imageObjects[url]) {
+          imageObjects[url] = img;
+          img.onload = null;
+          img.onerror = null;
+        }
+
+        // yield, because outer function may not have returned the `<img>` object yet.
+        // note: antipattern comment as per above.
+        window.requestAnimationFrame(() => {
+          pendingImageCallbacks[url]?.forEach?.((func) =>
+            func?.(imageObjects[url])
+          );
+          // no longer pending.
+          delete pendingImageObjects[url];
+          delete pendingImageCallbacks[url];
+        });
+      }
+
+      // avoid redundant work: catch and mark "pending" requests for resources already being processed.
+      if (!pendingImageCallbacks[url]) {
+        img = new Image();
+        src = url === emptyURL ? blankImage.src : `${IMAGE_ROOT}/${url}`;
+
+        // mark pending work
+        pendingImageObjects[url] = img;
+
+        // start with the first/own callback in the queue.
+        pendingImageCallbacks[url] = [onload];
+      } else {
+        // push a new callback onto the queue, and bail.
+        pendingImageCallbacks[url].push(onload);
+
+        // the to-be-loaded image.
+        return pendingImageObjects[url];
+      }
 
       function flipInCanvas(imgToFlip, callback) {
         let canvas = document.createElement('canvas');
@@ -360,7 +403,6 @@ const utils = {
       }
 
       // return new object immediately
-      imageObjects[url] = img;
       return img;
     },
 
@@ -510,5 +552,7 @@ const utils = {
 // caches
 const preloadedImageURLs = {};
 const imageObjects = {};
+const pendingImageCallbacks = {};
+const pendingImageObjects = {};
 
 export { utils };
