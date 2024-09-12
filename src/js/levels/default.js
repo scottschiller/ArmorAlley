@@ -6,6 +6,7 @@ import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
 import { utils } from '../core/utils.js';
+import { FACING } from '../elements/Balloon.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -428,6 +429,8 @@ function previewLevel(levelName, excludeVehicles) {
     // if a free-floating balloon, mark as hostile.
     if (item[0] === 'balloon') {
       exports.data.hostile = true;
+      // determine its direction, too.
+      exports.data.facing = 0;
     }
 
     // if a bunker, also make a matching balloon.
@@ -437,7 +440,8 @@ function previewLevel(levelName, excludeVehicles) {
           {
             type: 'balloon',
             isOnScreen: true,
-            isEnemy: exports.data.isEnemy
+            isEnemy: exports.data.isEnemy,
+            facing: exports.data.isEnemy ? -FACING : FACING
           },
           {
             x: exports.data.x,

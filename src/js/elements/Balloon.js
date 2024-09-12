@@ -12,7 +12,8 @@ import {
   oneOf,
   worldHeight,
   GAME_SPEED_RATIOED,
-  ENEMY_COLOR
+  ENEMY_COLOR,
+  isSafari
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -20,6 +21,9 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
+
+const FRAME_Y_MIDDLE = 4;
+const FACING = 4;
 
 const Balloon = (options = {}) => {
   let css, data, dom, objects, radarItem, reset, exports;
@@ -41,13 +45,13 @@ const Balloon = (options = {}) => {
     zones.changeOwnership(exports);
 
     // get a fresh copy, pull coords as balloon has likely been mutated.
-    const img = getCanvasBalloon();
+    const img = getCanvasBalloon(data);
     const { width, height, frameWidth, frameHeight } = img.source;
 
     const isSnowing = gamePrefs.weather === 'snow';
 
     // update internal "facing" state
-    data.facing = isEnemy ? -4 : 4;
+    data.facing = isEnemy ? -FACING : FACING;
 
     const animConfig = {
       sprite: {
@@ -70,6 +74,9 @@ const Balloon = (options = {}) => {
       exports,
       animConfig
     );
+
+    // hackish: apply the same to the radar item, too.
+    data.domCanvas.radarItemImg = data.domCanvas.img;
   }
 
   function attachChain(chain = null) {
@@ -204,15 +211,19 @@ const Balloon = (options = {}) => {
 
     if (data.facing !== data.lastFacingX) {
       data.lastFacingX = data.facing;
-      data.width = data.facingWidths[data.facing + data.facingMax];
+      const newWidth = data.facingWidths[data.facing + data.facingMax];
+      const delta = data.width - newWidth;
+      data.width = newWidth;
       data.halfWidth = data.width / 2;
+      // reposition balloon, since width changed
+      data.x += delta / 2;
       /**
        * Update sprite position, moving up/down from center.
        * Each balloon frame is 16px tall, when scaled down.
        */
       if (data.domCanvas.img) {
         if (gamePrefs.weather === 'snow') {
-          data.domCanvas.img.source.frameY = data.frameYMiddle + data.facing;
+          data.domCanvas.img.source.frameY = FRAME_Y_MIDDLE + data.facing;
         }
         updateSprite();
       }
@@ -241,7 +252,9 @@ const Balloon = (options = {}) => {
 
     // not dead...
 
-    data.domCanvas?.ownershipAnimation?.animate();
+    if (data.domCanvas?.ownershipAnimation) {
+      data.domCanvas.ownershipAnimation.animate();
+    }
 
     effects.smokeRelativeToDamage(exports);
 
@@ -342,7 +355,7 @@ const Balloon = (options = {}) => {
     data.domCanvas.ownershipAnimation = null;
 
     // and reset
-    data.domCanvas.img = getCanvasBalloon();
+    data.domCanvas.img = getCanvasBalloon(data);
 
     // randomize again
     css.explodingType = randomExplosionType();
@@ -436,7 +449,6 @@ const Balloon = (options = {}) => {
       facing: options.isEnemy ? -4 : 4,
       lastFacingX: null,
       facingRatio: facingMax / (windOffsetXMax * 0.75),
-      frameYMiddle: 4,
       facingMax,
       // larger <- or -> to smaller o (circle) shape
       facingWidths: [38, 33, 28, 22, 15, 22, 28, 33, 38],
@@ -487,52 +499,63 @@ const Balloon = (options = {}) => {
     updateSprite
   };
 
-  function getSpriteURL() {
-    const offset = data.frameYMiddle + data.facing;
-    return gamePrefs.weather === 'snow'
-      ? 'snow/balloon_mac_snow.png'
-      : `balloon_${offset}.png`;
-  }
-
   function updateSprite() {
     if (!data?.domCanvas?.img) return;
-    data.domCanvas.img.src = utils.image.getImageObject(getSpriteURL());
-  }
-
-  function getCanvasBalloon() {
-    const spriteWidth = 76;
-    const spriteHeight = 288;
-    const frameWidth = spriteWidth;
-    const frameHeight = spriteHeight / 9;
-
-    return {
-      src: utils.image.getImageObject(getSpriteURL()),
-      source: {
-        x: 0,
-        y: 0,
-        is2X: true,
-        width: spriteWidth,
-        height: spriteHeight,
-        frameWidth,
-        frameHeight,
-        frameX: 0,
-        // left vs. right-facing offsets, snow version only
-        frameY: gamePrefs.weather !== 'snow' ? 0 : data.isEnemy ? 0 : 8
-      },
-      target: {
-        width: frameWidth / 2,
-        height: frameHeight / 2
+    data.domCanvas.img.src = utils.image.getImageObject(
+      getSpriteURL(data),
+      (newImg) => {
+        // update the radar balloon, also.
+        data.domCanvas.radarItemImg.src = newImg;
       }
-    };
+    );
   }
 
   data.domCanvas = {
+    ownershipAnimation: null,
     radarItem: Balloon.radarItemConfig(exports),
-    img: getCanvasBalloon()
+    img: getCanvasBalloon(data),
+    radarItemImg: getCanvasBalloon(data)
   };
 
   return exports;
 };
+
+// note: external methods
+
+function getSpriteURL(data) {
+  const offset = FRAME_Y_MIDDLE + data.facing;
+  if (data.facing === undefined) debugger;
+  return gamePrefs.weather === 'snow'
+    ? 'snow/balloon_mac_snow.png'
+    : `balloon_${offset}.png`;
+}
+
+function getCanvasBalloon(data, onload = () => {}) {
+  const spriteWidth = 76;
+  const spriteHeight = 288;
+  const frameWidth = spriteWidth;
+  const frameHeight = spriteHeight / 9;
+
+  return {
+    src: utils.image.getImageObject(getSpriteURL(data), onload),
+    source: {
+      x: 0,
+      y: 0,
+      is2X: true,
+      width: spriteWidth,
+      height: spriteHeight,
+      frameWidth,
+      frameHeight,
+      frameX: 0,
+      // left vs. right-facing offsets, snow version only
+      frameY: gamePrefs.weather !== 'snow' ? 0 : data.isEnemy ? 0 : 8
+    },
+    target: {
+      width: frameWidth / 2,
+      height: frameHeight / 2
+    }
+  };
+}
 
 Balloon.radarItemConfig = (exports) => ({
   width: 4,
@@ -543,23 +566,9 @@ Balloon.radarItemConfig = (exports) => ({
     // when first dead, timer is set - allow blinking.
     // once dead AND the timer has finished, don't draw.
     if (exports.data.dead && !exports.data.deadTimer) return;
-    ctx.fillStyle =
-      exports?.data?.isEnemy || exports?.data?.hostile
-        ? ENEMY_COLOR
-        : '#17a007';
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
-    ctx.roundRect(
-      left,
-      obj.data.top - scaledHeight / 2,
-      // width, height, border
-      scaledWidth,
-      scaledHeight,
-      4
-    );
-    ctx.fill();
-    ctx.stroke();
     if (exports?.objects?.chain && !exports.objects.chain.data.dead) {
       const chainX = left + scaledWidth / 2;
       const chainY = obj.data.top + scaledHeight / 2;
@@ -570,17 +579,57 @@ Balloon.radarItemConfig = (exports) => ({
           worldHeight) *
         game.objects.radar.data.height;
       ctx.beginPath();
-      ctx.strokeStyle =
-        exports?.data?.isEnemy || exports?.data?.hostile
-          ? ENEMY_COLOR
-          : 'rgba(255, 255, 255, 0.25)';
+      ctx.strokeStyle = '#666';
       ctx.setLineDash([1, 2]);
       ctx.moveTo(chainX, chainY);
       ctx.lineTo(chainX, chainY + chainHeight);
       ctx.stroke();
       ctx.setLineDash([]);
     }
+
+    const { data } = exports;
+
+    function render() {
+      // in preview mode, no live battlefield image.
+      const radarItemImg = data?.domCanvas.img || data?.domCanvas.radarItemImg;
+
+      let targetX = left;
+      let targetY = obj.data.top - scaledHeight / 2;
+
+      const renderedWidth =
+        ((radarItemImg.target.width || radarItemImg.source.width / 2) / 2) *
+        (data.facing === 0 ? 0.9 : 0.78);
+
+      // TODO: WTF with Safari vs. everyone else on canvas height? :X
+      const renderedHeight =
+        (radarItemImg.target.height || radarItemImg.source.height / 2) *
+        (isSafari ? 0.5 : 4);
+
+      ctx.drawImage(
+        radarItemImg.src,
+        radarItemImg.source.x,
+        radarItemImg.source.y,
+        radarItemImg.source.width,
+        radarItemImg.source.height,
+        targetX,
+        targetY,
+        renderedWidth,
+        renderedHeight
+      );
+    }
+
+    // this covers the initial game menu / level preview case...
+    if (!data.domCanvas.radarItemImg) {
+      data.domCanvas.radarItemImg = getCanvasBalloon(data, (newImg) => {
+        // ensure the image is set before rendering
+        data.domCanvas.radarItemImg.src = newImg;
+        render();
+      });
+    } else {
+      // only render once fully loaded
+      render();
+    }
   }
 });
 
-export { Balloon };
+export { Balloon, FACING };
