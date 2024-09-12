@@ -397,7 +397,10 @@ const Radar = () => {
       }
     }
 
-    let width = targetItem.layout.width;
+    // prevent tiny width on e.g., turrets
+    targetItem.layout.width = Math.max(7, targetItem.layout.width);
+
+    let { width } = targetItem.layout;
 
     // new target, hasn't been assigned yet
     if (allowTransition && data.radarTarget !== targetItem) {
