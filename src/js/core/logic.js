@@ -6,7 +6,7 @@ import { gameType } from '../aa.js';
 import { utils } from './utils.js';
 import { common } from './common.js';
 import { game } from './Game.js';
-import { COSTS, getTypes, TYPES, worldWidth } from './global.js';
+import { COSTS, getTypes, searchParams, TYPES, worldWidth } from './global.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
 import { net } from './network.js';
@@ -24,6 +24,8 @@ const notificationFilterTypes = {
 };
 
 const NET_TRIGGER_DISTANCE = 360;
+
+const debugCanvas = searchParams.get('debugCollision');
 
 function canNotify(targetType, attackerType) {
   /**
@@ -47,7 +49,7 @@ function canNotify(targetType, attackerType) {
   return true;
 }
 
-function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
+function cc(rect1, rect2, rect1XLookAhead = 0) {
   /**
    * Given two rect objects with shape { x, y, width, height }, determine if there is overlap.
    * Additional hacky param: `rect1XLookAhead`, x-axis offset. Used for cases where tanks etc. need to know when objects are nearby.
@@ -68,9 +70,31 @@ function collisionCheck(rect1, rect2, rect1XLookAhead = 0) {
   );
 }
 
+function ccDebug(rect1, rect2, rect1XLookAhead = 0) {
+  common.domCanvas.drawDebugRect(
+    rect1.x,
+    rect1.y,
+    rect1.width + rect1XLookAhead,
+    rect1.height,
+    '#3333ff'
+  );
+  common.domCanvas.drawDebugRect(
+    rect2.x,
+    rect2.y,
+    rect2.width,
+    rect2.height,
+    '#ff3333'
+  );
+  return cc(...arguments);
+}
+
+// since collision runs a lot, have a separate debug version.
+const collisionCheck = debugCanvas ? ccDebug : cc;
+
 function collisionCheckWithOffsets(rect1, rect2, r1XOffset = 0, r1YOffset = 0) {
   // Modified version of collisionCheck, with X and Y offset params.
   // This may be premature optimization, but collision calls are very common - the intent is to reduce object creation.
+  // This is presently used only by collisionCheckTweens().
   return (
     // rect 2 is to the right.
     rect1.x + r1XOffset < rect2.x + rect2.width &&
