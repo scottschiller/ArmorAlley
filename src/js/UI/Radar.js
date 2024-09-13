@@ -428,13 +428,19 @@ const Radar = () => {
       );
     }
 
+    const offset =
+      data.radarTarget.data.parentType === 'balloon'
+        ? (data.radarTarget.data.oParent?.data?.width * 0.25) / data.scale || 0
+        : 0;
+
     if (data.scale === 1) {
       // no-scaling case
-      dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left}px, 0px, 0px)`;
+      dom.targetMarker.style.transform = `translate3d(${data.radarTarget.data.left - offset}px, 0px, 0px)`;
     } else {
       // otherwise, scale and include the scroll offset
       dom.targetMarker.style.transform = `translate3d(${
-        data.radarTarget.data.left * data.scale - data.radarScrollLeft
+        (data.radarTarget.data.left - offset) * data.scale -
+        data.radarScrollLeft
       }px, 0px, 0px)`;
     }
   }
