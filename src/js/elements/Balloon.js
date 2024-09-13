@@ -212,11 +212,17 @@ const Balloon = (options = {}) => {
     if (data.facing !== data.lastFacingX) {
       data.lastFacingX = data.facing;
       const newWidth = data.facingWidths[data.facing + data.facingMax];
-      const delta = data.width - newWidth;
+      const delta = newWidth - data.width;
       data.width = newWidth;
       data.halfWidth = data.width / 2;
       // reposition balloon, since width changed
-      data.x += delta / 2;
+      data.x -= delta / 2;
+      /**
+       * HACKISH: offset sprite to match collision box, because sprite is drawn at full-width.
+       * This repositions the sprite so that e.g., the non-moving narrow balloon is drawn with the hitbox centered.
+       */
+      data.domCanvas.img.target.xOffset =
+        -(data.facingWidths[0] - data.width) / 2;
       /**
        * Update sprite position, moving up/down from center.
        * Each balloon frame is 16px tall, when scaled down.
@@ -552,7 +558,9 @@ function getCanvasBalloon(data, onload = () => {}) {
     },
     target: {
       width: frameWidth / 2,
-      height: frameHeight / 2
+      height: frameHeight / 2,
+      // for repositioning of sprite vs. collision hitbox
+      xOffset: 0
     }
   };
 }
