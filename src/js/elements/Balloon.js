@@ -221,13 +221,13 @@ const Balloon = (options = {}) => {
        * HACKISH: offset sprite to match collision box, because sprite is drawn at full-width.
        * This repositions the sprite so that e.g., the non-moving narrow balloon is drawn with the hitbox centered.
        */
-      data.domCanvas.img.target.xOffset =
-        -(data.facingWidths[0] - data.width) / 2;
-      /**
-       * Update sprite position, moving up/down from center.
-       * Each balloon frame is 16px tall, when scaled down.
-       */
       if (data.domCanvas.img) {
+        data.domCanvas.img.target.xOffset =
+          -(data.facingWidths[0] - data.width) / 2;
+        /**
+         * Update sprite position, moving up/down from center.
+         * Each balloon frame is 16px tall, when scaled down.
+         */
         if (gamePrefs.weather === 'snow') {
           data.domCanvas.img.source.frameY = FRAME_Y_MIDDLE + data.facing;
         }
