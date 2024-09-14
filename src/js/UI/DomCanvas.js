@@ -891,7 +891,7 @@ const DomCanvas = () => {
     ctx.fill();
   }
 
-  function drawDebugRect(x, y, w, h, color = '#999') {
+  function drawDebugRect(x, y, w, h, color = '#999', fillStyle = false) {
     const ctx = dom.ctx['battlefield'];
     const ss = game.objects.view.data.screenScale;
     ctx.beginPath();
@@ -903,6 +903,11 @@ const DomCanvas = () => {
     );
     ctx.strokeStyle = color;
     ctx.setLineDash([3, 3]);
+    if (fillStyle) {
+      ctx.fillStyle = fillStyle;
+      ctx.fill();
+      ctx.fillStyle = '';
+    }
     ctx.stroke();
     ctx.setLineDash([]);
   }
