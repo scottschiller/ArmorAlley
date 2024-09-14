@@ -485,10 +485,17 @@ function getNearestObject(source, options = {}) {
 }
 
 function objectInView(data, options = {}) {
-  // unrelated to other nearby functions: test if an object is on-screen (or slightly off-screen),
-  // alive, either enemy or friendly (depending on option), not cloaked, and within range.
+  /**
+   * Unrelated to other nearby functions: find the closest object "by type"
+   * that's on-screen (or slightly off-screen), alive, either enemy or friendly
+   * (depending on option), not cloaked, and within range.
+   */
 
-  let i, j, iData, items, result;
+  let i,
+    j,
+    iData,
+    items,
+    results = [];
 
   // defaults
   options.triggerDistance = net.active
@@ -508,12 +515,18 @@ function objectInView(data, options = {}) {
         : data.isEnemy !== iData.isEnemy || iData.isNeutral) &&
       Math.abs(iData.x - data.x) < options.triggerDistance
     ) {
-      result = items[i];
-      break;
+      results.push(items[i]);
     }
   }
 
-  return result;
+  if (!results.length) return null;
+
+  // sort and return the closest, based on X.
+  results.sort(
+    (o1, o2) => Math.abs(o1.data.x - data.x) - Math.abs(o2.data.x - data.x)
+  );
+
+  return results[0];
 }
 
 function isPointInCircle(pointX, pointY, circleX, circleY, circleRadius) {
