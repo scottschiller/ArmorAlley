@@ -342,6 +342,33 @@ function trackObject(source, target) {
   const sData = source.data,
     tData = target.data;
 
+  // hack: if target is a balloon, return the distance to the exact edge.
+  if (target.data.type === 'balloon') {
+    deltaX =
+      tData.x +
+      (tData.x < sData.x ? tData.width : 0) -
+      (sData.x + (sData.x < tData.x ? sData.width : 0));
+    deltaY = tData.y - sData.y;
+
+    if (debugCanvas) {
+      // illustrate the distance between balloon and helicopter
+      common.domCanvas.drawDebugRect(
+        tData.x,
+        tData.y,
+        deltaX * -1,
+        tData.height,
+        '#33ffff',
+        'rgba(32, 255, 32, 0.5)'
+      );
+    }
+
+    return {
+      deltaX,
+      deltaY
+    };
+  }
+
+  // regular delta math
   deltaX = tData.x + tData.halfWidth - (sData.x + sData.halfWidth);
 
   // by default, offset target to one side of a balloon.
