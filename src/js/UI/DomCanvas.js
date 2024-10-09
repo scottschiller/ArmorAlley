@@ -816,10 +816,10 @@ const DomCanvas = () => {
       ctx.fillStyle = fillStyle;
       ctx.beginPath();
       ctx.roundRect(
-        (data.x - game.objects.view.data.battleField.scrollLeft) * ss,
-        (data.y - 32) * ss,
-        data.width * ss,
-        data.height * ss,
+        cx(data.x),
+        cy(data.y),
+        cw(data.width),
+        ch(data.height),
         oData.borderRadius
       );
       ctx.fill();
@@ -891,16 +891,18 @@ const DomCanvas = () => {
     ctx.fill();
   }
 
-  function drawDebugRect(x, y, w, h, color = '#999', fillStyle = false) {
+  function drawDebugRect(
+    x,
+    y,
+    w,
+    h,
+    color = '#999',
+    fillStyle = false,
+    text = ''
+  ) {
     const ctx = dom.ctx['battlefield'];
-    const ss = game.objects.view.data.screenScale;
     ctx.beginPath();
-    ctx.rect(
-      (x - game.objects.view.data.battleField.scrollLeft) * ss,
-      (y - 32) * ss,
-      w * ss,
-      h * ss
-    );
+    ctx.rect(cx(x), cy(y), cw(w), ch(h));
     ctx.strokeStyle = color;
     ctx.setLineDash([3, 3]);
     if (fillStyle) {
@@ -910,6 +912,70 @@ const DomCanvas = () => {
     }
     ctx.stroke();
     ctx.setLineDash([]);
+    if (text) {
+      ctx.font = '10px sans-serif';
+      ctx.fillText(text, 10, 50);
+    }
+  }
+
+  function drawPoint(vector, color, fill = false, ctx = dom.ctx.battlefield) {
+    const radius = 3;
+    if (!ctx) return;
+    ctx.beginPath();
+    ctx.arc(
+      cx(vector.x),
+      cy(vector.y),
+      radius * game.objects.view.data.screenScale,
+      0,
+      2 * Math.PI,
+      false
+    );
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    if (fill) {
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    ctx.closePath();
+  }
+
+  function cw(n) {
+    return n * game.objects.view.data.screenScale;
+  }
+
+  function ch(n) {
+    return n * game.objects.view.data.screenScale;
+  }
+
+  function cx(n) {
+    // logical to display values
+    return (
+      (n - game.objects.view.data.battleField.scrollLeft) *
+      game.objects.view.data.screenScale
+    );
+  }
+
+  function cy(n) {
+    // logical to display values
+    return (n - 32) * game.objects.view.data.screenScale;
+  }
+
+  function drawForceVector(position, force, color, scale = MAX_AVOID_AHEAD) {
+    let ctx = dom.ctx.battlefield;
+    if (!ctx) return;
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.moveTo(cx(position.x), cy(position.y));
+    ctx.setLineDash([1, 1]);
+    ctx.lineTo(
+      cx(position.x + force.x * scale),
+      cy(position.y + force.y * scale)
+    );
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.closePath();
   }
 
   function drawTrailers(
@@ -1009,6 +1075,8 @@ const DomCanvas = () => {
     data,
     dom,
     draw,
+    drawForceVector,
+    drawPoint,
     drawDebugRect,
     drawTrailers,
     init,
