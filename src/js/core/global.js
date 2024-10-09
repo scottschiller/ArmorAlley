@@ -328,6 +328,11 @@ function rnd(number) {
   return Math.random() * number;
 }
 
+function rngBool(type) {
+  // roll of the dice.
+  return rng(1, type) >= 0.5;
+}
+
 function rngInt(number, type) {
   return parseInt(rng(number, type), 10);
 }
@@ -523,6 +528,7 @@ export {
   oneOf,
   rnd,
   rng,
+  rngBool,
   rndInt,
   rngInt,
   plusMinus,
