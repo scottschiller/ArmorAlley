@@ -49,6 +49,15 @@ function canNotify(targetType, attackerType) {
   return true;
 }
 
+function collisionCheckX(rect1, rect2, rect1XLookAhead = 0) {
+  return (
+    // rect 2 is to the right.
+    rect1.x + rect1XLookAhead < rect2.x + rect2.width &&
+    // overlap on x axis.
+    rect1.x + rect1.width + rect1XLookAhead > rect2.x
+  );
+}
+
 function cc(rect1, rect2, rect1XLookAhead = 0) {
   /**
    * Given two rect objects with shape { x, y, width, height }, determine if there is overlap.
@@ -829,6 +838,7 @@ export {
   getNearestObject,
   trackObject,
   collisionCheck,
+  collisionCheckX,
   collisionCheckMidPoint,
   collisionTest,
   objectInView,
