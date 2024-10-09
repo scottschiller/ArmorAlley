@@ -19,6 +19,7 @@ import {
 } from './Helicopter-utils.js';
 import { addForce } from './Helicopter-forces.js';
 import { steerTowardTarget } from './Helicopter-steering.js';
+import { common } from '../core/common.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 const whiskerColor = '#888';

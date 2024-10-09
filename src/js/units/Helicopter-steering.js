@@ -6,6 +6,7 @@ import { dist, seek, Vector } from '../core/Vector.js';
 import { brakeX, brakeXY, brakeY, TOO_LOW } from './Helicopter-utils.js';
 import { addForce } from './Helicopter-forces.js';
 import { resetSineWaveTimer } from './Helicopter-wander.js';
+import { common } from '../core/common.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 
