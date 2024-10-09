@@ -126,7 +126,7 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
   rightWhisker.add(tvRight);
 
   let tvAbove = new Vector(0, -MAX_VELOCITY);
-  tvAbove.setMag((magVel * 2) / 3);
+  tvAbove.setMag((magVel * 2) / 3.5);
 
   let above = position.clone();
   above.add(tvAbove);
