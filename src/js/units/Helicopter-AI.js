@@ -1,7 +1,7 @@
 /**
  * Helicopter "AI"
  * Rudimentary, dumb smarts using vectors and basic steering behaviours.
- * As with prior versiosn in the 2010s: To call this "AI" would be an insult to the AI community. ;)
+ * As with prior versions in the 2010s: To call this "AI" would be an insult to the AI community. ;)
  * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
  */
 
