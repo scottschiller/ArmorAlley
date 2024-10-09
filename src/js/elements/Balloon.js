@@ -13,7 +13,8 @@ import {
   worldHeight,
   GAME_SPEED_RATIOED,
   ENEMY_COLOR,
-  isSafari
+  isSafari,
+  rngBool
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -478,7 +479,8 @@ const Balloon = (options = {}) => {
         elementCount: 20 + rndInt(40),
         startVelocity: 10 + rndInt(15),
         spread: 360
-      }
+      },
+      cpuCanTarget: rngBool(options.type)
     },
     options
   );
