@@ -144,10 +144,10 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
     common.domCanvas.drawForceVector(position, tvRight, whiskerColor, 1);
     common.domCanvas.drawPoint(rightWhisker, whiskerColor);
 
-    common.domCanvas.drawForceVector(options.exports, tvAbove, whiskerColor, 1);
+    common.domCanvas.drawForceVector(position, tvAbove, whiskerColor, 1);
     common.domCanvas.drawPoint(above, whiskerColor);
 
-    common.domCanvas.drawForceVector(options.exports, tvBelow, whiskerColor, 1);
+    common.domCanvas.drawForceVector(position, tvBelow, whiskerColor, 1);
     common.domCanvas.drawPoint(below, whiskerColor);
   }
 
