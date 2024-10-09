@@ -991,12 +991,15 @@ const Helicopter = (options = {}) => {
     // auto-flip (rotate) feature
     if (!data.landed && data.autoFlip) {
       if (!data.isEnemy) {
-        if ((data.vX > 0 && data.flipped) || (data.vX < 0 && !data.flipped)) {
+        if (
+          (data.vX > data.autoFlipThreshold && data.flipped) ||
+          (data.vX < -data.autoFlipThreshold && !data.flipped)
+        ) {
           flip();
         }
       } else if (
-        (data.vX > 0 && !data.flipped) ||
-        (data.vX < 0 && data.flipped)
+        (data.vX > data.autoFlipThreshold && !data.flipped) ||
+        (data.vX < -data.autoFlipThreshold && data.flipped)
       ) {
         flip();
       }
@@ -3201,6 +3204,8 @@ const Helicopter = (options = {}) => {
       flipTimer: null,
       // if player is remote (via network,) then flip events are sent via network.
       autoFlip: options.isRemote ? false : isCPU || gamePrefs.auto_flip,
+      // allow CPU to move back and forth a bit without flipping
+      autoFlipThreshold: isCPU ? 3 : 0,
       repairing: false,
       repairFrames: 0,
       dieCount: 0,
