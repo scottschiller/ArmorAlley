@@ -7,7 +7,6 @@ import {
   bananaMode,
   defaultMissileMode,
   rubberChickenMode,
-  debug,
   FPS,
   isiPhone,
   isMobile,
@@ -30,7 +29,9 @@ import {
   GAME_SPEED,
   DEFAULT_LIVES,
   HELICOPTER_BOUNDARY_LEFT,
-  HELICOPTER_BOUNDARY_RIGHT
+  HELICOPTER_BOUNDARY_RIGHT,
+  debug,
+  debugCollision
 } from '../core/global.js';
 
 import {
@@ -2792,7 +2793,7 @@ const Helicopter = (options = {}) => {
           data.targeting.clouds = true;
         }
 
-        if (debug) {
+        if (debug || debugCollision) {
           console.log(
             `AI tank targeting mode: ${data.targeting.tanks}, clouds: ${data.targeting.clouds}, helicopters: ${data.targeting.helicopters}`
           );
