@@ -5,6 +5,30 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 10/08/2024, uncategorized ---
+
+Expand/collapse "more info" section on some modal dialogs.
+
+Dropped red targeting dots in UI - halo or glow deemed sufficient. https://github.com/scottschiller/ArmorAlley/commit/d3e7ad8598d169b7d6b5ecd4a14946680a2ab726
+
+Last missing weapon from the original game, "aimed missiles" (AKA "dumb" missiles) - they replace regular gunfire ammo on certain levels. https://github.com/scottschiller/ArmorAlley/commit/5c2060c807f596056abfbc05d89feb45b9418cb1
+
+Bug fix: Sounds weren't looping, e.g., helicopter engine. https://github.com/scottschiller/ArmorAlley/commit/56480791fbaea6e02b2f8036c8c42df8587ccd7f
+
+Additional mid-flight rubber chicken smart missile sounds. https://github.com/scottschiller/ArmorAlley/commit/e0116c5c3d73019b35bb2ea43aa61a28d8446c51
+
+New sound for tank flamethrowers. https://github.com/scottschiller/ArmorAlley/commit/7abc9e167574597b23084f13c4d456d2188e40d6
+
+Reduced BnB "chatter" when landing pad repair media / TV is active. https://github.com/scottschiller/ArmorAlley/commit/279f65d7f357ddf613b47f1cabbc69c1ab779991
+
+Double-click / tap can now toggle landing pad muzak. https://github.com/scottschiller/ArmorAlley/commit/0d992f3c1f2447c5d421038923aabf4e2f46ee86
+
+Fix transition effect on turret + missile launcher scan nodes. https://github.com/scottschiller/ArmorAlley/commit/75115f5d872094b432d9805036f0f1b0fdd68481
+
+Radar UI updates: More-detailed balloons and bunker icons. https://github.com/scottschiller/ArmorAlley/commit/50308fb8527fad39a74494ceb637645c9e29dcfa
+
+Updated enemy helicopter "AI": seek, evade, wander and so on - now using improved vectors and "autonomous agent"-style steering logic. https://github.com/scottschiller/ArmorAlley/commit/33d9e2e4d0b7ac6b2fbf56bf628dfeafddcc3b33 https://github.com/scottschiller/ArmorAlley/commit/301916da8ee0ebbd3f1b54c6688a061e33c6e5c8
+
 --- 09/01/2024, uncategorized ---
 
 Refueling rate slowed down, made closer to original game.
