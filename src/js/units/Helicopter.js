@@ -48,9 +48,7 @@ import {
   collisionCheck,
   collisionCheckMidPoint,
   collisionTest,
-  getNearestObject,
-  objectInView,
-  trackObject
+  getNearestObject
 } from '../core/logic.js';
 
 import { common } from '../core/common.js';
@@ -62,13 +60,8 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
 import { levelFlags } from '../levels/default.js';
-
-// how "fast" the enemy CPU changes velocity
-const RESPONSIVE_TYPES = {
-  easy: 0.5,
-  hard: 0.75,
-  extreme: 1
-};
+import { seek, Vector } from '../core/Vector.js';
+import { HelicopterAI } from './Helicopter-AI.js';
 
 const Helicopter = (options = {}) => {
   let css,
@@ -79,13 +72,10 @@ const Helicopter = (options = {}) => {
     objects,
     collision,
     radarItem,
-    lastTarget,
     nextMissileTarget,
     statsBar;
 
   const aiRNG = (number) => rng(number, data.type, aiSeedOffset);
-
-  const RESPONSIVENESS = RESPONSIVE_TYPES[gameType] || RESPONSIVE_TYPES.easy;
 
   function cloak(cloud) {
     if (!data.cloaked) {
@@ -294,8 +284,6 @@ const Helicopter = (options = {}) => {
 
   function startRepairing() {
     if (data.repairing) return;
-
-    const { landingPad } = data;
 
     data.repairing = true;
 
@@ -749,6 +737,10 @@ const Helicopter = (options = {}) => {
     } else {
       data.firing = false;
     }
+    // ensure that if false (and CPU), firing rate is reset.
+    if (data.isCPU && !data.firing) {
+      setCPUFiringRate();
+    }
   }
 
   function setBombing(state) {
@@ -767,6 +759,10 @@ const Helicopter = (options = {}) => {
         // start or stop immediately, too.
         data.bombFrameCount = parseInt(data.bombModulus, 10);
       }
+    }
+    // ensure that if false (and CPU), bombing rate is reset.
+    if (data.isCPU && !data.bombing) {
+      setCPUBombingRate();
     }
   }
 
@@ -842,6 +838,9 @@ const Helicopter = (options = {}) => {
       data.deployedParachute = false;
       data.excludeFromCollision = false;
 
+      // used by CPU to determine default heading
+      data.defaultDirection = true;
+
       radarItem?.reset();
       radarItem?.summon();
 
@@ -877,7 +876,7 @@ const Helicopter = (options = {}) => {
     callAction('setRespawning', false);
 
     if (data.isCPU) {
-      data.vY = -1;
+      data.ai?.resetSineWave(data);
     }
   }
 
@@ -1245,7 +1244,6 @@ const Helicopter = (options = {}) => {
           sounds.helicopter.engineVolume * gamePrefs.volume
         );
     } else {
-      lastTarget = null;
       if (data.flipped) {
         flip();
       }
@@ -1593,7 +1591,10 @@ const Helicopter = (options = {}) => {
       y:
         data.y +
         data.halfHeight +
-        (data.tilt !== null ? tiltOffset + 2 : 0) +
+        // don't apply tilt when CPU has an "obstacle" object.
+        (data.tilt !== null && (!data.isCPU || !data.obstacle)
+          ? tiltOffset + 2
+          : 0) +
         (data.isEnemy ? 2 : 0),
       vX,
       vXDirection
@@ -1606,7 +1607,7 @@ const Helicopter = (options = {}) => {
         ? data.tiltOffset * data.tiltYOffset * (data.flipped ? -1 : 1)
         : 0;
 
-    let vX;
+    let vX, vY, x, y;
 
     // inherent speed of a bullet
     const bulletVX = 7;
@@ -1617,6 +1618,18 @@ const Helicopter = (options = {}) => {
     // ensure bullets fire and move away from the chopper.
     const flipped = !!data.flipped;
 
+    x =
+      data.x +
+      ((!data.isEnemy && data.flipped) || (data.isEnemy && !data.flipped)
+        ? 0
+        : data.width - 8);
+
+    y =
+      data.y +
+      data.halfHeight +
+      (data.tilt !== null ? tiltOffset + 2 : 0) +
+      (data.isEnemy ? 2 : 0);
+
     if ((!data.isEnemy && flipped) || (data.isEnemy && !flipped)) {
       // -ve: ensure bullets go left
       vX = Math.max(-bulletVXMax, Math.min(-bulletVX, data.vX - bulletVX));
@@ -1625,22 +1638,42 @@ const Helicopter = (options = {}) => {
       vX = Math.min(bulletVXMax, Math.max(bulletVX, bulletVX + data.vX));
     }
 
+    vY = data.vY + tiltOffset * (data.isEnemy ? -1 : 1);
+
+    // TODO: implement data.ammoTarget for network games
+    if (data.isCPU && !net.active) {
+      // aim for data.ammoTarget
+      // HACK: Note data.ammoTarget is the data structure. :X
+      let ammoTarget = new Vector(data.ammoTarget.x, data.ammoTarget.y);
+
+      let pos = new Vector(data.x, data.y);
+
+      let velocity = new Vector(data.ammoTarget.vX, data.ammoTarget.vY);
+
+      // NOTE: inverting velocity on the target, because seek expects velocity of the chopper chasing the target.
+      velocity.mult(-1);
+
+      // this magnitude works OK for targeting balloons on chains, and the human chopper.
+      velocity.setMag(1);
+
+      let seekForce = seek(ammoTarget, pos, velocity, data.vXMax, data.vXMax);
+
+      // approximation of max bullet speed.
+      // CPU might have a *slight* advantage in bullet velocity, here.
+      seekForce.setMag(data.vXMax * 2.25);
+
+      vX = seekForce.x;
+      vY = seekForce.y;
+    }
+
     return {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      x:
-        data.x +
-        ((!data.isEnemy && data.flipped) || (data.isEnemy && !data.flipped)
-          ? 0
-          : data.width - 8),
-      y:
-        data.y +
-        data.halfHeight +
-        (data.tilt !== null ? tiltOffset + 2 : 0) +
-        (data.isEnemy ? 2 : 0),
+      x,
+      y,
       vX,
-      vY: data.vY + tiltOffset * (data.isEnemy ? -1 : 1)
+      vY
     };
   }
 
@@ -2087,455 +2120,6 @@ const Helicopter = (options = {}) => {
     game.addObject(TYPES.parachuteInfantry, options);
   }
 
-  function ai() {
-    /**
-     * Rudimentary, dumb smarts. To call this "AI" would be an insult to the AI community. ;)
-     * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
-     */
-
-    let deltaX,
-      deltaY,
-      ltData,
-      target,
-      tData,
-      result,
-      altTarget,
-      desiredVX,
-      desiredVY,
-      deltaVX,
-      deltaVY,
-      maxY;
-
-    // wait until fully-respawned, including initial undefined / not-yet-initialized case.
-    if (data.respawning || data.respawning === undefined) return;
-
-    // ignore if on empty.
-    if (data.fuel <= 0) return;
-
-    maxY = 320;
-
-    // low fuel means low fuel. or ammo. or bombs.
-
-    if (
-      (data.fuel < 30 || data.energy < 2 || (!data.ammo && !data.bombs)) &&
-      data.energy > 0 &&
-      !data.landed &&
-      !data.repairing
-    ) {
-      if (data.firing) callAction('setFiring', false);
-      if (data.bombing) callAction('setBombing', false);
-
-      /**
-       * fly toward closest landing pad.
-       * use own base if within 25% of respective end of battlefield.
-       * otherwise, use "neutral" mid-level base.
-       * if you're there and the enemy decides to land,
-       * you're going to find yourself in trouble. ;)
-       */
-
-      const pads = game.objects[TYPES.landingPad];
-
-      if (data.isEnemy) {
-        target = pads[pads.length - (data.x > 6144 ? 1 : 2)];
-      } else {
-        target = pads[data.x < 2048 ? 0 : 1];
-      }
-
-      tData = target.data;
-
-      checkFacingTarget(target);
-
-      // aim for center of landing pad
-      deltaX = tData.x + tData.halfWidth - (data.x + data.halfWidth);
-      deltaY = -4;
-
-      data.vX = deltaX * GAME_SPEED_RATIOED;
-      data.vY = deltaY * GAME_SPEED_RATIOED;
-
-      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
-
-      data.lastVX = data.vX;
-      data.lastVY = data.vY;
-
-      // are we enveloped within the width of the landing pad?
-      if (data.x >= tData.x && data.x + data.width <= tData.x + tData.width) {
-        data.vX = 0;
-        // ensure we're at least heading downward, no matter what.
-        data.vY = Math.max(0.5, 4 * GAME_SPEED_RATIOED);
-      }
-
-      centerView();
-
-      return;
-    }
-
-    if (data.onLandingPad) {
-      if (!data.repairing || data.repairComplete) {
-        // repair didn't start, or has completed. go go go!
-        data.vY = -1 * GAME_SPEED_RATIOED;
-        data.vX = data.vXMax * GAME_SPEED_RATIOED * data.isEnemy ? -1 : 1;
-
-        // reset target, too
-        lastTarget = null;
-      } else {
-        // still repairing. don't move.
-
-        data.vX = 0;
-        data.vY = 0;
-
-        return;
-      }
-    }
-
-    if (lastTarget) {
-      // toast?
-
-      ltData = lastTarget?.data;
-
-      if (ltData.dead) {
-        // was it a tank? reset tank-seeking mode until next interval.
-        if (ltData.type === TYPES.tank) {
-          data.targeting.tanks = false;
-        }
-
-        lastTarget = null;
-      } else if (
-        (ltData.type === TYPES.balloon || ltData.type === TYPES.tank) &&
-        ltData.y > maxY
-      ) {
-        // flying too low?
-        lastTarget = null;
-      } else if (ltData.cloaked) {
-        // did the player go behind a cloud?
-        lastTarget = null;
-      }
-    }
-
-    if (!lastTarget) {
-      if (data.targeting.clouds) {
-        lastTarget = objectInView(data, { items: TYPES.cloud });
-        ltData = lastTarget?.data;
-
-        // hack: only go after clouds in the player's half of the field.
-        if (lastTarget) {
-          if (data.isEnemy && ltData.x > 4096) {
-            lastTarget = null;
-          } else if (!data.isEnemy && ltData.x < 4096) {
-            lastTarget = null;
-          }
-        }
-      }
-
-      if (!lastTarget && data.targeting.balloons && data.ammo) {
-        lastTarget = objectInView(data, { items: TYPES.balloon });
-      }
-
-      if (!lastTarget && data.targeting.tanks && data.bombs) {
-        lastTarget = objectInView(data, { items: TYPES.tank });
-      }
-
-      if (!lastTarget && data.targeting.helicopters && data.ammo) {
-        lastTarget = objectInView(data, { items: TYPES.helicopter });
-      }
-
-      ltData = lastTarget?.data;
-
-      // is the new target too low?
-      // TODO: exclude if targeting player helicopter in extreme mode?
-      if (
-        lastTarget &&
-        (ltData.type === TYPES.balloon || ltData.type === TYPES.helicopter) &&
-        ltData.y > maxY
-      ) {
-        lastTarget = null;
-      }
-
-      if (lastTarget && ltData.cloaked) {
-        lastTarget = null;
-      }
-    } else if (ltData.type === 'cloud') {
-      // we already have a target - can we get a more interesting one?
-      if (data.targeting.balloons && data.ammo) {
-        altTarget = objectInView(data, {
-          items: TYPES.balloon,
-          triggerDistance: game.objects.view.data.browser.halfWidth
-        });
-      }
-
-      if (!altTarget && data.targeting.tanks && data.bombs) {
-        altTarget = objectInView(data, {
-          items: TYPES.tank,
-          triggerDistance: game.objects.view.data.browser.width
-        });
-      }
-
-      if (!altTarget && data.targeting.helicopters && data.ammo) {
-        altTarget = objectInView(data, {
-          items: TYPES.helicopter,
-          triggerDistance: game.objects.view.data.browser.width
-        });
-      }
-
-      // better - go for that.
-      if (altTarget && !altTarget.data.dead) {
-        lastTarget = altTarget;
-      }
-    }
-
-    // all the cases where a target can be considered toast.
-
-    if (lastTarget?.data?.dead) {
-      lastTarget = null;
-    }
-
-    if (lastTarget?.data?.type === TYPES.tank && data.bombs <= 0) {
-      lastTarget = null;
-    }
-
-    if (
-      ltData &&
-      (ltData.type === TYPES.balloon || ltData.type === TYPES.helicopter) &&
-      (ltData.y > maxY || data.ammo <= 0)
-    ) {
-      lastTarget = null;
-    }
-
-    if (lastTarget?.data?.cloaked) {
-      lastTarget = null;
-    }
-
-    ltData = lastTarget?.data;
-
-    /**
-     * sanity check: if after all this, there is no target / nothing to do,
-     * clouds aren't being targeted and there's a nearby cloud, go for that.
-     */
-
-    if (!lastTarget && !data.targeting.clouds) {
-      lastTarget = objectInView(data, { items: TYPES.cloud });
-      ltData = lastTarget?.data;
-
-      // hack: only go after clouds in the player's half of the field, plus one screen width
-      const targetX =
-        4096 + (net.active ? 512 : game.objects.view.data.browser.width);
-
-      if (
-        lastTarget &&
-        (data.isEnemy ? ltData.x > targetX : ltData.x < targetX)
-      ) {
-        lastTarget = null;
-        ltData = null;
-      }
-    }
-
-    // now go after the target.
-
-    target = lastTarget;
-    tData = target?.data;
-
-    data.lastVX = parseFloat(data.vX);
-
-    if (target && !tData.dead) {
-      // go go go!
-
-      result = trackObject(exports, target);
-
-      if (tData.type !== TYPES.balloon) {
-        if (tData.type === TYPES.landingPad) {
-          result.deltaY = 0;
-        }
-
-        /*
-        // hack: if target is not a balloon and is bottom-aligned (i.e., a tank), stay at current position.
-        if (tData.bottomAligned) {
-          result.deltaY = 0;
-        }
-        */
-      } else {
-        if (data.bombing) callAction('setBombing', false);
-      }
-
-      // enforce distance limits?
-      if (tData.type === TYPES.helicopter && Math.abs(result.deltaX) < 200) {
-        result.deltaX = 0;
-      }
-
-      if (tData.type === TYPES.balloon && Math.abs(result.deltaX) < 40) {
-        result.deltaX = 0;
-      }
-
-      desiredVX = result.deltaX;
-      desiredVY = result.deltaY;
-
-      deltaVX = Math.abs(data.vX - result.deltaX);
-
-      if (Math.abs(deltaVX) > 1) {
-        if (data.vX < desiredVX) {
-          data.vX += RESPONSIVENESS * GAME_SPEED_RATIOED;
-        } else {
-          data.vX -= RESPONSIVENESS * GAME_SPEED_RATIOED;
-        }
-      } else {
-        data.vX = 0;
-      }
-
-      deltaVY = Math.abs(data.vY - result.deltaY);
-
-      if (Math.abs(deltaVY) > 1) {
-        if (data.vY < desiredVY) {
-          data.vY += RESPONSIVENESS * GAME_SPEED_RATIOED;
-        } else {
-          data.vY -= RESPONSIVENESS * GAME_SPEED_RATIOED;
-        }
-      } else {
-        data.vY = 0;
-      }
-
-      // throttle
-
-      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
-
-      // within firing range?
-      if (tData.type === TYPES.balloon || tData.type === TYPES.helicopter) {
-        if (tData.type === TYPES.balloon) {
-          if (Math.abs(result.deltaX) < 50 && Math.abs(result.deltaY) < 48) {
-            if (!data.firing) callAction('setFiring', true);
-          } else {
-            if (data.firing) callAction('setFiring', false);
-          }
-        } else if (Math.abs(result.deltaX) < 100) {
-          // shoot at the player
-
-          if (Math.abs(result.deltaY) < 48) {
-            if (!data.firing) callAction('setFiring', true);
-            if (data.bombing) callAction('setBombing', false);
-          } else {
-            if (data.firing) callAction('setFiring', false);
-
-            // bomb the player?
-            // TODO: verify that deltaY is not negative.
-            if (Math.abs(result.deltaX) < 50 && result.deltaY > 48) {
-              if (!data.bombing) callAction('setBombing', true);
-            } else {
-              if (data.bombing) callAction('setBombing', false);
-            }
-          }
-        }
-      } else if (tData.type === TYPES.tank) {
-        // targeting a tank? randomize bombing depending on game difficulty.
-        // default to 10% chance if no specific gameType match.
-        if (
-          Math.abs(result.deltaX) < tData.halfWidth &&
-          Math.abs(data.vX) < 3 &&
-          aiRNG() > (data.bombingThreshold[gameType] || 0.9)
-        ) {
-          if (!data.bombing) callAction('setBombing', true);
-        } else {
-          if (data.bombing) callAction('setBombing', false);
-        }
-      } else {
-        // safety case: don't fire or bomb.
-        if (data.firing) callAction('setFiring', false);
-        if (data.bombing) callAction('setBombing', false);
-      }
-    } else {
-      // default: go "toward the other guys"
-      if (data.isEnemy) {
-        data.vX -= 0.175 * GAME_SPEED_RATIOED;
-      } else {
-        data.vX += 0.175 * GAME_SPEED_RATIOED;
-      }
-
-      // and up
-      data.vY -= 0.1;
-
-      // and throttle
-      data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
-      data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
-    }
-
-    /**
-     * bonus: cloud-based "stealth bombing" mode
-     * if in a cloud and cloaked, not actively targeting tanks/helicopters
-     * but targets are passing underneath, bomb away.
-     */
-
-    if (
-      data.targeting.clouds &&
-      !data.targeting.tanks &&
-      data.cloaked &&
-      data.bombs
-    ) {
-      // for once, literally, "in the cloud."
-
-      // is a tank very close by?
-
-      altTarget = objectInView(data, {
-        items: TYPES.tank,
-        triggerDistance: game.objects.view.data.browser.fractionWidth
-      });
-
-      if (altTarget) {
-        result = trackObject(exports, altTarget);
-
-        if (Math.abs(result.deltaX) < 50 && Math.abs(data.vX) < 4) {
-          // RELEASE ZE BOMBS
-
-          if (!data.bombing) callAction('setBombing', true);
-        } else {
-          if (data.bombing) callAction('setBombing', false);
-        }
-      } else {
-        if (data.bombing) callAction('setBombing', false);
-      }
-    }
-
-    // sanity check
-    if (
-      !lastTarget ||
-      lastTarget.data.dead ||
-      lastTarget.data.type === TYPES.cloud ||
-      lastTarget.data.type === TYPES.landingPad
-    ) {
-      // no need to be firing...
-      if (data.firing) callAction('setFiring', false);
-    }
-
-    if (
-      data.vY > 0 &&
-      data.y > maxY &&
-      (!lastTarget || lastTarget.data.type !== TYPES.landingPad)
-    ) {
-      // hack: flying too low. limit.
-      data.y = maxY;
-      data.vY -= 0.25;
-    }
-
-    // ensure helicopter is pointing the right way, whether chasing a target or flying
-    if (target) {
-      checkFacingTarget(target);
-    } else {
-      // TODO: DRY
-      if (data.isEnemy) {
-        if (data.vX < 0 && data.flipped) {
-          flip();
-        } else if (data.vX > 0 && !data.flipped) {
-          flip();
-        }
-      } else {
-        if (data.vX < 0 && !data.flipped) {
-          flip();
-        } else if (data.vX > 0 && data.flipped) {
-          flip();
-        }
-      }
-    }
-
-    centerView();
-  }
-
   function animate() {
     if (game.objects.editor) return;
 
@@ -2624,7 +2208,8 @@ const Helicopter = (options = {}) => {
 
     // has the helicopter landed?
     // TODO: note and fix(?) slight offset, helicopter falls short of perfect alignment with bottom.
-    yOffset = 3;
+    yOffset = data.isCPU ? 0 : 3;
+
     maxY = worldHeight - data.height + yOffset;
 
     // allow helicopter to land on the absolute bottom, IF it is not on a landing pad (which sits a bit above.)
@@ -2646,7 +2231,6 @@ const Helicopter = (options = {}) => {
       (data.vY < 0 && (data.landed || data.onLandingPad))
     ) {
       // once landed, only leave once we're moving upward.
-
       data.landed = false;
       onLandingPad(false);
     } else if (data.onLandingPad) {
@@ -2772,7 +2356,10 @@ const Helicopter = (options = {}) => {
     burnFuel();
 
     if (data.isCPU && !data.isRemote) {
-      ai();
+      if (!data.onLandingPad || !repairInProgress()) {
+        data.ai?.animate();
+      }
+      centerView();
 
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
         const rng = aiRNG();
@@ -2977,12 +2564,23 @@ const Helicopter = (options = {}) => {
 
     bombModulus: {
       classic: 6,
-      modern: 4
+      modern: 4,
+      cpu: {
+        // special firing rates
+        balloon: 30,
+        helicopter: 60,
+        tank: 20
+      }
     },
 
     fireModulus: {
       classic: levelFlags.bullets ? 3 : 999,
-      modern: levelFlags.bullets ? 2 : 999
+      modern: levelFlags.bullets ? 2 : 999,
+      cpu: {
+        // special firing rates
+        helicopter: 4,
+        balloon: 10
+      }
     },
 
     parachuteModulus: {
@@ -3000,6 +2598,30 @@ const Helicopter = (options = {}) => {
       modern: 210
     }
   };
+
+  function setCPUBombingRate(targetType) {
+    // special case: CPU bombing can vary depending on target.
+    if (firingRates.bombModulus.cpu[targetType]) {
+      data.bombModulus = firingRates.bombModulus.cpu[targetType];
+      return;
+    }
+
+    // restore default, if not specified or no match.
+    const rateType = 'bombModulus';
+    data[rateType] = setFiringRate([rateType]);
+  }
+
+  function setCPUFiringRate(targetType) {
+    // special case: CPU gunfire can vary depending on target.
+    if (firingRates.fireModulus.cpu[targetType]) {
+      data.fireModulus = firingRates.fireModulus.cpu[targetType];
+      return;
+    }
+
+    // restore default, if not specified or no match.
+    const rateType = 'fireModulus';
+    data[rateType] = setFiringRate([rateType]);
+  }
 
   function setFiringRate(type) {
     // apply according to prefs.
@@ -3217,6 +2839,7 @@ const Helicopter = (options = {}) => {
       energyLineScale: 0.25,
       bnbMediaActive: false,
       direction: 0,
+      defaultDirection: true,
       pilot: true,
       xMin: 0,
       xMax: null,
@@ -3257,10 +2880,9 @@ const Helicopter = (options = {}) => {
       yHistory: [],
       // for AI
       targeting: {
-        balloons: true,
-        clouds: true,
-        helicopters: true,
-        tanks: true
+        clouds: false,
+        helicopters: false,
+        tanks: false
       },
       targetingModulus: FPS * 30,
       // chance per gameType
@@ -3296,7 +2918,11 @@ const Helicopter = (options = {}) => {
       // TODO: DRY / optimize
       blinkCounterHide: 8 * (FPS / 30),
       blinkCounterReset: 16 * (FPS / 30),
-      lives: DEFAULT_LIVES
+      lives: DEFAULT_LIVES,
+      votes: {
+        ammo: 0,
+        bomb: 0
+      }
     },
     options
   );
@@ -3439,6 +3065,7 @@ const Helicopter = (options = {}) => {
     animate,
     callAction,
     centerView,
+    checkFacingTarget,
     data,
     dom,
     die,
@@ -3453,6 +3080,8 @@ const Helicopter = (options = {}) => {
     refreshCoords,
     flip,
     setBombing,
+    setCPUBombingRate,
+    setCPUFiringRate,
     setFiring,
     setMissileLaunching,
     setParachuting,
@@ -3462,6 +3091,10 @@ const Helicopter = (options = {}) => {
     updateLives,
     updateStatusUI
   };
+
+  if (options.isCPU) {
+    data.ai = HelicopterAI({ exports });
+  }
 
   // enemy chopper is a bit bigger.
   const defaultWidth = data.isEnemy ? 110 : 100;
