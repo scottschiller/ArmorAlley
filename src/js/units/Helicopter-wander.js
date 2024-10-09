@@ -4,7 +4,7 @@ import { common } from '../core/common.js';
 import { GAME_SPEED_RATIOED } from '../core/global.js';
 import { Vector } from '../core/Vector.js';
 import { addForce } from './Helicopter-forces.js';
-import { brakeY } from './Helicopter-movement.js';
+import { brakeY } from './Helicopter-utils.js';
 
 const END_OF_WORLD_LEFT = 0;
 const END_OF_WORLD_RIGHT = 8192;
