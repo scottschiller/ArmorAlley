@@ -520,7 +520,12 @@ function getNearestObject(source, options = {}) {
   return localObjects[0]?.obj;
 }
 
-function objectInView(data, options = {}) {
+function objectsInView(
+  data,
+  options = {
+    /* enemyOnly: boolean, items: 'helicopter' or ['helicopter', 'tank'] etc. */
+  }
+) {
   /**
    * Unrelated to other nearby functions: find the closest object "by type"
    * that's on-screen (or slightly off-screen), alive, either enemy or friendly
@@ -530,39 +535,56 @@ function objectInView(data, options = {}) {
   let i,
     j,
     iData,
-    items,
     results = [];
 
   // defaults
   options.triggerDistance = net.active
     ? NET_TRIGGER_DISTANCE
     : options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+
   options.friendlyOnly = !!options.friendlyOnly;
+  options.enemyOnly = !options.friendlyOnly && !!options.enemyOnly;
 
-  items = game.objects[options.items || TYPES.helicopter];
+  // yuck-ish: convert param to an array, and use a default if unspecified.
+  const itemArray =
+    options.items instanceof Array
+      ? options.items
+      : [options.items || TYPES.helicopter];
 
-  for (i = 0, j = items.length; i < j; i++) {
-    iData = items[i].data;
-    if (
-      !iData.dead &&
-      !iData.cloaked &&
-      (options.friendlyOnly
-        ? data.isEnemy === iData.isEnemy
-        : data.isEnemy !== iData.isEnemy || iData.isNeutral) &&
-      Math.abs(iData.x - data.x) < options.triggerDistance
-    ) {
-      results.push(items[i]);
+  itemArray.forEach((itemType) => {
+    const items = game.objects[itemType];
+
+    for (i = 0, j = items.length; i < j; i++) {
+      iData = items[i].data;
+      if (
+        !iData.dead &&
+        !iData.cloaked &&
+        !iData.isInert &&
+        Math.abs(iData.x - data.x) < options.triggerDistance &&
+        (options.enemyOnly
+          ? (data.isHostile || data.isEnemy !== iData.isEnemy) &&
+            !iData.isNeutral
+          : options.friendlyOnly
+            ? data.isEnemy === iData.isEnemy
+            : data.isEnemy !== iData.isEnemy || iData.isNeutral)
+      ) {
+        results.push(items[i]);
+      }
     }
-  }
+  });
 
-  if (!results.length) return null;
+  if (!results.length) return results;
 
   // sort and return the closest, based on X.
   results.sort(
     (o1, o2) => Math.abs(o1.data.x - data.x) - Math.abs(o2.data.x - data.x)
   );
 
-  return results[0];
+  return results;
+}
+
+function objectInView(data, options = {}) {
+  return objectsInView(data, options)[0] || null;
 }
 
 function isPointInCircle(pointX, pointY, circleX, circleY, circleRadius) {
@@ -869,6 +891,7 @@ export {
   collisionCheckMidPoint,
   collisionTest,
   objectInView,
+  objectsInView,
   nearbyTest,
   enemyNearby,
   enemyHelicopterNearby,
