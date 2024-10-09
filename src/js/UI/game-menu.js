@@ -369,6 +369,13 @@ function init() {
     oSelect.selectedIndex = oSelect.options.length - 1;
   } else if (thisBattle) {
     // a battle has been specified.
+    // try to apply this to the drop-down.
+    const menuBattleOption = document.querySelector(
+      `#game_level option[value='${thisBattle}']`
+    );
+    if (menuBattleOption) {
+      menuBattleOption.selected = true;
+    }
     Object.values(oSelect.options).forEach(
       (option) => (option.selected = option.value === thisBattle)
     );
@@ -565,7 +572,7 @@ function updateGameLevelControl(value) {
 
   let index = !value
     ? gameLevel.selectedIndex
-    : document.querySelector(`#game_level option[value="${value}"]`).index;
+    : gameLevel.querySelector(`option[value="${value}"]`).index;
 
   // override: if game type is "tutorial" but index is non-zero, then set "easy" mode.
   if (index && gamePrefs.game_type === 'tutorial') {
