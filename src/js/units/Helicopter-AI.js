@@ -234,8 +234,19 @@ const HelicopterAI = (options = {}) => {
     let isHelicopter = targetData.type === TYPES.helicopter;
     if (
       distance(targetData.x, data.x) < 320 &&
+      // NOTE: tighter Y restrictions when using guided missiles vs. bullets.
+      // TODO: refactor and tidy up.
       distance(targetData.y, data.y) <
-        (isHelicopter ? data.height * 1.5 : data.halfHeight) &&
+        (!isHelicopter
+          ? data.halfHeight
+          : levelFlags.bullets
+            ? data.height * 1.5
+            : data.height) &&
+      // if helicopter + guided missiles, ensure CPU is above human chopper OR near top of screen as missiles "fall" downward.
+      (!isHelicopter ||
+        levelFlags.bullets ||
+        targetData.y > data.y ||
+        data.y < 48) &&
       // try to limit velocity, OR, eliminate use of angle on gunfire.
       (isHelicopter || (Math.abs(data.vY) <= 3 && Math.abs(data.vX < 5)))
     ) {
