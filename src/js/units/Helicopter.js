@@ -732,7 +732,7 @@ const Helicopter = (options = {}) => {
 
       if (!data.isCPU) {
         // start or stop immediately, too.
-        data.fireFrameCount = parseInt(data.fireModulus, 10);
+        data.fireFrameCount = 0;
       }
     } else {
       data.firing = false;
@@ -757,7 +757,7 @@ const Helicopter = (options = {}) => {
 
       if (!data.isCPU) {
         // start or stop immediately, too.
-        data.bombFrameCount = parseInt(data.bombModulus, 10);
+        data.bombFrameCount = 0;
       }
     }
     // ensure that if false (and CPU), bombing rate is reset.
@@ -1815,7 +1815,8 @@ const Helicopter = (options = {}) => {
     )
       return;
 
-    if (data.firing && data.fireFrameCount % data.fireModulus === 0) {
+    if (data.firing && !data.fireFrameCount) {
+      data.fireFrameCount = parseInt(data.fireModulus, 10);
       if (data.ammo > 0) {
         if (levelFlags.bullets) {
           // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
@@ -1849,9 +1850,12 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    data.fireFrameCount++;
+    if (data.fireFrameCount) {
+      data.fireFrameCount--;
+    }
 
-    if (data.bombing && data.bombFrameCount % data.bombModulus === 0) {
+    if (data.bombing && !data.bombFrameCount) {
+      data.bombFrameCount = parseInt(data.bombModulus, 10);
       if (data.bombs > 0) {
         let params = getBombParams();
 
@@ -1881,7 +1885,9 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    data.bombFrameCount++;
+    if (data.bombFrameCount) {
+      data.bombFrameCount--;
+    }
 
     if (data.missileLaunching) {
       if (data.smartMissiles > 0) {
@@ -1943,7 +1949,9 @@ const Helicopter = (options = {}) => {
       }
     }
 
-    data.missileLaunchingFrameCount++;
+    if (data.missileLaunchingFrameCount) {
+      data.missileLaunchingFrameCount--;
+    }
 
     if (data.parachuting) {
       if (data.parachutes > 0 && !data.parachutingThrottle) {
