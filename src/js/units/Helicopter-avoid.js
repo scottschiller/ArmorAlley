@@ -20,6 +20,7 @@ import {
 import { addForce } from './Helicopter-forces.js';
 import { steerTowardTarget } from './Helicopter-steering.js';
 import { common } from '../core/common.js';
+import { levelFlags } from '../levels/default.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 const whiskerColor = '#888';
@@ -234,6 +235,8 @@ function avoidBuildings(data) {
     // IF the closest thing is a free-floating balloon, seek it out - IF we have ammo and it's targetable...
     if (
       b?.data?.type === 'balloon' &&
+      // don't go after balloons with aimed missiles - "too expensive."
+      levelFlags.bullets && 
       b.data.cpuCanTarget &&
       !b.objects?.chain &&
       data.ammo &&

@@ -18,6 +18,7 @@ import { brakeX, distance, findEnemy } from './Helicopter-utils.js';
 import { applyForces } from './Helicopter-forces.js';
 import { checkVerticalRange, seekLandingPad } from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
+import { levelFlags } from '../levels/default.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 
@@ -184,8 +185,12 @@ const HelicopterAI = (options = {}) => {
         tData = target.data;
       } else {
         // fallback: try for chopper or balloon at any time
+        // NOTE: exclude balloons if chopper is armed with "aimed" missiles.
         newTarget =
-          data.ammo && findEnemy(data, [TYPES.helicopter, TYPES.balloon]);
+          data.ammo &&
+          (levelFlags.bullets
+            ? findEnemy(data, [TYPES.helicopter, TYPES.balloon])
+            : findEnemy(data, [TYPES.helicopter]));
         if (newTarget.length) {
           target = newTarget[0];
           tData = target.data;
