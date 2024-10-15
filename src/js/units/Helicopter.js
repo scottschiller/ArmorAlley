@@ -1935,7 +1935,9 @@ const Helicopter = (options = {}) => {
         // out of ammo / no available targets - and, it's been an interval OR the missile key / trigger was just pressed...
         if (
           sounds.inventory.denied &&
-          data.missileLaunchingFrameCount % data.missileLaunchingModulus === 0
+          game.objects.gameLoop.data.frameCount %
+            parseInt(data.missileLaunchingModulus, 10) ===
+            0
         ) {
           playSound(sounds.inventory.denied);
         }
