@@ -2584,12 +2584,15 @@ const Helicopter = (options = {}) => {
     },
 
     fireModulus: {
+      // NOTE: high value = effectively non-repeating.
       classic: levelFlags.bullets ? 3 : 999,
       modern: levelFlags.bullets ? 2 : 999,
       cpu: {
-        // special firing rates
-        helicopter: 4,
-        balloon: 10
+        // special firing rates - with aimed missiles, faster with game difficulty
+        helicopter: levelFlags.bullets
+          ? 4
+          : FPS / (gameType === 'extreme' ? 3 : gameType === 'hard' ? 2 : 1),
+        balloon: levelFlags.bullets ? 10 : FPS * 1.5
       }
     },
 
