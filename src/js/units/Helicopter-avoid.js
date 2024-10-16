@@ -378,15 +378,6 @@ function avoidNearbyMunition(data) {
     }
   }
 
-  // only allow one regular gunfire check per frame.
-  if (validObstacle) {
-    if (!data.dodgedBullet) {
-      data.dodgedBullet = true;
-    } else {
-      validObstacle = false;
-    }
-  }
-
   if (nearbyObstacle) {
     // reasonably close on Y-axis?
     validObstacle = Math.abs(data.y - nearbyObstacle.data.y) < data.height * 2;

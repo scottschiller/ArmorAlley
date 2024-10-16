@@ -91,7 +91,6 @@ const HelicopterAI = (options = {}) => {
     data.bombTargets = [];
 
     data.avoidingTurret = false;
-    data.dodgedBullet = false;
     data.foundSteerTarget = false;
     data.wantsLandingPad = false;
 
