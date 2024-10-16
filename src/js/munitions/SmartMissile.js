@@ -856,6 +856,7 @@ const SmartMissile = (options = {}) => {
       parentType: options.parentType || null,
       energy: 2,
       energyMax: 2,
+      excludeEnergy: true,
       infantryEnergyCost: 0.5,
       armed: false,
       didNotify: false,

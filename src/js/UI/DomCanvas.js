@@ -2,6 +2,8 @@ import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import {
   ENEMY_UNIT_COLOR,
+  ENERGY_TIMER_DELAY,
+  ENERGY_TIMER_FADE_RATIO,
   FPS,
   GAME_SPEED,
   TYPES,
@@ -562,14 +564,7 @@ const DomCanvas = () => {
         (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS ||
           exports.data.energyCanvasTimer)
       ) {
-        drawEnergy(
-          exports,
-          ctx,
-          targetX,
-          targetY - (exports.data.type === TYPES.bunker ? 3 : 1),
-          renderedWidth,
-          renderedHeight
-        );
+        drawEnergy(exports, ctx);
       }
       // single image, rotated?
     } else if (
@@ -674,7 +669,7 @@ const DomCanvas = () => {
         (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS ||
           exports.data.energyCanvasTimer)
       ) {
-        drawEnergy(exports, ctx, dx, dy, dWidth, dHeight);
+        drawEnergy(exports, ctx);
       }
     }
 
@@ -826,13 +821,12 @@ const DomCanvas = () => {
     }
   }
 
-  function drawEnergy(exports, ctx, left, top, width, height) {
+  function drawEnergy(exports, ctx) {
     if (exports.data.energy === undefined) return;
 
-    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
+    if (exports.data.dead) return;
 
-    // exclude helicopters until if/when they are rendered on canvas.
-    if (exports.data.type === TYPES.helicopter) return;
+    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
 
     // only draw if on-screen
     if (!exports.data.isOnScreen) return;
@@ -844,8 +838,37 @@ const DomCanvas = () => {
     )
       return;
 
+    // fade out as timer counts down, fading within last fraction of a second
+    let fpsOffset = FPS * ENERGY_TIMER_FADE_RATIO;
+
+    let opacity;
+
+    let defaultTimer = FPS * ENERGY_TIMER_DELAY;
+
+    let timerDelta = defaultTimer - exports.data.energyCanvasTimer;
+
+    // fade in, first.
+    if (timerDelta < fpsOffset) {
+      opacity = Math.min(1, Math.max(0, timerDelta / fpsOffset));
+    } else {
+      exports.data.energyCanvasTimerFadeInComplete = true;
+      // eventually, fade out
+      opacity = Math.min(
+        1,
+        Math.max(
+          0,
+          Math.max(0, exports.data.energyCanvasTimer - fpsOffset) / fpsOffset
+        )
+      );
+    }
+
     if (exports.data.energyCanvasTimer > 0) {
       exports.data.energyCanvasTimer--;
+    }
+
+    if (exports.data.energyCanvasTimer <= 0) {
+      // reset the "fade-in" state.
+      exports.data.energyCanvasTimerFadeInComplete = false;
     }
 
     // timer up, OR don't "always" show
@@ -855,40 +878,141 @@ const DomCanvas = () => {
     )
       return;
 
-    const energy = exports.data.energy / exports.data.energyMax;
+    let energy = exports.data.energy / exports.data.energyMax;
 
-    if (energy > 0.66) {
-      ctx.fillStyle = '#33cc33';
-    } else if (energy > 0.33) {
-      ctx.fillStyle = '#cccc33';
-    } else {
-      ctx.fillStyle = '#cc3333';
+    if (exports.data.lastDrawnEnergy === undefined) {
+      exports.data.lastDrawnEnergy = 1;
     }
 
-    const energyLineScale = exports.data.energyLineScale || 1;
+    // animate toward target energy
+    let diff = energy - exports.data.lastDrawnEnergy;
 
-    const scaledWidth = width * energyLineScale;
-    const renderedWidth = scaledWidth * energy;
+    // nothing to do?
+    if (!diff) return;
 
-    // right-align vs. center vs. left-align
-    const leftOffset = exports.data.centerEnergyLine
-      ? (scaledWidth - renderedWidth) / 2
-      : exports.data.isEnemy
-        ? width - renderedWidth
-        : 0;
+    // "animate" the energy bar value change
+    exports.data.lastDrawnEnergy += diff * (1 / (FPS / 8));
 
-    const lineHeight = 3;
-    const borderRadius = lineHeight;
+    // hackish: re-assign "energy" as the value to draw.
+    energy = exports.data.lastDrawnEnergy;
+
+    // don't draw at 100%.
+    if (energy === 1) return;
+
+    let outerRadius = 4.25;
+    let innerRadius = 3;
+
+    // TODO: DRY.
+    let left = exports.data.x;
+    let top = exports.data.y;
+
+    if (exports.data.type === TYPES.balloon) {
+      left += exports.data.halfWidth + 0.5;
+      top += exports.data.halfHeight - 0.5;
+    } else if (exports.data.type === TYPES.bunker) {
+      left += exports.data.halfWidth + 0.5 * game.objects.view.data.screenScale;
+      top += exports.data.height * 0.425;
+    } else if (exports.data.type === TYPES.helicopter) {
+      if (exports.data.isEnemy) {
+        left += exports.data.halfWidth + (exports.data.flipped ? 8 : -3);
+        top += exports.data.halfHeight + 4;
+      } else {
+        left += exports.data.halfWidth + (exports.data.flipped ? -3 : 7);
+        top += exports.data.halfHeight + 2.5;
+      }
+      // wild hack: reference radar item while summoning (rising) from landing pad, as the offset lives there.
+      if (exports.data.radarItem) {
+        top +=
+          exports.data.radarItem.data.stepOffset !== undefined
+            ? exports.data.height *
+              (1 - exports.data.radarItem.data.stepOffset || 0)
+            : 0;
+      }
+    } else if (
+      exports.data.type === TYPES.infantry ||
+      exports.data.type === TYPES.parachuteInfantry
+    ) {
+      left += exports.data.halfWidth + (exports.data.isEnemy ? 0 : 3);
+      top -= outerRadius + 5;
+      // special infantry offset case, accounting for moving back and forth while firing; also, yuck.
+      left += exports.data.domCanvas?.animation?.img?.target?.xOffset || 0;
+    } else if (exports.data.type === TYPES.turret) {
+      left += exports.data.width - 1;
+      top -= outerRadius + 4;
+    } else if (exports.data.type === TYPES.van) {
+      left += exports.data.halfWidth;
+      top += exports.data.halfHeight - 2.5;
+    } else if (exports.data.type === TYPES.tank) {
+      left += exports.data.halfWidth + 1;
+      top += exports.data.halfHeight - 1.5;
+    } else if (exports.data.type === TYPES.superBunker) {
+      top += 6;
+    } else if (exports.data.bottomAligned) {
+      left += exports.data.halfWidth + 0.5;
+      top -= outerRadius + 2;
+    }
+
+    ctx.globalAlpha = opacity;
+
+    // background / overlay
+    ctx.beginPath();
+
+    // "inner" dark border
+    ctx.arc(
+      cx(left),
+      cy(top),
+      outerRadius * game.objects.view.data.screenScale + 2,
+      0,
+      2 * Math.PI,
+      false
+    );
+    ctx.fillStyle = 'rgba(32, 32, 32, 0.75)';
+    ctx.fill();
+
+    // "outer" light border
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.stroke();
+
+    // inner circle
+    ctx.beginPath();
+
+    // "inner track" - which is always empty.
+    ctx.arc(
+      cx(left),
+      cy(top),
+      innerRadius * game.objects.view.data.screenScale,
+      0,
+      Math.PI * 2,
+      false
+    );
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(32, 32, 32, 1)';
+    ctx.stroke();
+
+    if (energy > 0.66) {
+      ctx.strokeStyle = '#33cc33';
+    } else if (energy > 0.33) {
+      ctx.strokeStyle = '#cccc33';
+    } else {
+      ctx.strokeStyle = '#cc3333';
+    }
 
     ctx.beginPath();
-    ctx.roundRect(
-      left + leftOffset,
-      top + (height - lineHeight * 1.5),
-      renderedWidth,
-      lineHeight,
-      borderRadius
+    // start from 12 o'clock, then go counter-clockwise as energy decreases.
+    ctx.arc(
+      cx(left),
+      cy(top),
+      innerRadius * game.objects.view.data.screenScale,
+      -Math.PI / 2,
+      -Math.PI / 2 + Math.PI * 2 * energy,
+      false
     );
-    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1;
   }
 
   function drawDebugRect(

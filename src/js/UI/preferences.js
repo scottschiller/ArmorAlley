@@ -1975,8 +1975,8 @@ function PrefsManager() {
             // exit if unset or zero
             if (!obj?.data?.lastEnergy) return;
 
-            // update immediately if pref is now "always" show, OR, "sometimes/never" and we have an energy DOM node present.
-            if (newValue === PREFS.SHOW_HEALTH_ALWAYS || obj?.dom?.oEnergy) {
+            // update immediately if pref is now "always" show, OR, "sometimes/never"
+            if (newValue === PREFS.SHOW_HEALTH_ALWAYS) {
               sprites.updateEnergy(obj, forceUpdate);
             }
           });

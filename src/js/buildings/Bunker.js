@@ -526,8 +526,6 @@ const Bunker = (options = {}) => {
       energy: 50,
       energyHalf: 25,
       energyMax: 50,
-      energyLineScale: 1,
-      centerEnergyLine: true,
       hasBeavis: false,
       hasButthead: false,
       isRecapture: false,

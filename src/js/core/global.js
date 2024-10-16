@@ -24,6 +24,12 @@ const HELICOPTER_BOUNDARY = 0.2;
 const HELICOPTER_BOUNDARY_LEFT = HELICOPTER_BOUNDARY;
 const HELICOPTER_BOUNDARY_RIGHT = 1 - HELICOPTER_BOUNDARY;
 
+// how many seconds to show the unit energy UI, on the "sometimes" pref
+const ENERGY_TIMER_DELAY = 2;
+
+// timing for fade in/out effects relative to framerate
+const ENERGY_TIMER_FADE_RATIO = 0.125;
+
 // defaults, until overridden or set via prefs
 let FPS = 30;
 let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
@@ -476,6 +482,8 @@ export {
   ENEMY_GUNFIRE_COLOR,
   ENEMY_UNIT_COLOR,
   ENEMY_UNIT_COLOR_RGBA,
+  ENERGY_TIMER_DELAY,
+  ENERGY_TIMER_FADE_RATIO,
   FRIENDLY_GUNFIRE_COLOR,
   GAME_SPEED,
   GAME_SPEED_DEFAULT_DESKTOP,

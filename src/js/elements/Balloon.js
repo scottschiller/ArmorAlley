@@ -447,7 +447,6 @@ const Balloon = (options = {}) => {
       windOffsetY: 0,
       energy: 3,
       energyMax: 3,
-      centerEnergyLine: true,
       direction: 0,
       detached: !objects.bunker,
       hostile: !objects.bunker, // dangerous when detached

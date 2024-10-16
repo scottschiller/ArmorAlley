@@ -341,11 +341,10 @@ const SuperBunker = (options = {}) => {
       frameCount: 0,
       energy: options.energy || 5,
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
-      energyLineScale: 0.95,
-      centerEnergyLine: true,
       isEnemy: !!options.isEnemy,
       width,
       halfWidth: width / 2,
+      halfHeight: height / 2,
       doorWidth: 6,
       height,
       firing: false,

@@ -3,6 +3,8 @@ import { gamePrefs, PREFS } from '../UI/preferences.js';
 import {
   debug,
   debugType,
+  ENERGY_TIMER_DELAY,
+  ENERGY_TIMER_FADE_RATIO,
   FPS,
   isChrome,
   rnd,
@@ -398,23 +400,7 @@ const sprites = {
   },
 
   updateEnergy: (object, forceUpdate) => {
-    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) {
-      // if present, remove right away
-      if (object?.dom?.oEnergy) {
-        object.dom.oEnergy.remove();
-        object.dom.oEnergy = null;
-      }
-      return;
-    }
-
-    let node,
-      didCreate,
-      energy,
-      energyLineScale,
-      newWidth,
-      DEFAULT_ENERGY_SCALE;
-
-    DEFAULT_ENERGY_SCALE = 1;
+    let didCreate, energy;
 
     // only do work if visible, OR "always" shown and needing updates
     if (
@@ -426,28 +412,21 @@ const sprites = {
     // prevent certain things from rendering this, e.g., smart missiles.
     if (object.data.noEnergyStatus) return;
 
-    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_SOMETIMES) {
-      object.data.energyCanvasTimer = FPS * 2;
+    // don't constantly show if at 100%
+    if (
+      gamePrefs.show_health_status === PREFS.SHOW_HEALTH_SOMETIMES &&
+      object.data.energy < object.data.energyMax
+    ) {
+      if (!object.data.energyCanvasTimer) {
+        object.data.energyCanvasTimer = FPS * ENERGY_TIMER_DELAY;
+      } else {
+        // "recharge" timer so it is just after fade-in.
+        if (object.data.energyCanvasTimer < FPS) {
+          object.data.energyCanvasTimer =
+            FPS * ENERGY_TIMER_DELAY * (1 - ENERGY_TIMER_FADE_RATIO);
+        }
+      }
     }
-
-    // only do work if valid
-    if (!object?.dom?.o?._style) return;
-
-    // hack: don't show on scan nodes or "placeholder" sprites which contain scan nodes
-    if (object?.dom?.o?.className.match(/scan-node|placeholder/i)) return;
-
-    // dynamically create, and maybe queue removal of `.energy` node
-    if (!object.dom.oEnergy && object.dom.o?.appendChild) {
-      node = sprites.withStyle(document.createElement('div'));
-      node.className = 'energy-status energy';
-      object.dom.oEnergy = object.dom.o.appendChild(node);
-      didCreate = true;
-    }
-
-    node = object.dom.oEnergy;
-
-    // some objects may have a custom width, e.g., 0.33.
-    energyLineScale = object.data.energyLineScale || DEFAULT_ENERGY_SCALE;
 
     energy = (object.data.energy / object.data.energyMax) * 100;
 
@@ -457,59 +436,6 @@ const sprites = {
     if (object.data.lastEnergy === energy && !didCreate && !forceUpdate) return;
 
     object.data.lastEnergy = energy;
-
-    // show when damaged, but not when dead.
-    node._style.setProperty('opacity', energy < 100 ? 1 : 0);
-
-    if (energy > 66) {
-      node._style.setProperty('background-color', '#33cc33');
-    } else if (energy > 33) {
-      node._style.setProperty('background-color', '#cccc33');
-    } else {
-      node._style.setProperty('background-color', '#cc3333');
-    }
-
-    newWidth = energy * energyLineScale;
-
-    // width may be relative, e.g., 0.33 for helicopter so it doesn't overlap
-    node._style.setProperty('width', `${newWidth}%`);
-
-    // only center if full-width, or explicitly specified
-    if (
-      energyLineScale === DEFAULT_ENERGY_SCALE ||
-      object.data.centerEnergyLine
-    ) {
-      node._style.setProperty('left', (100 - newWidth) / 2 + '%');
-    }
-
-    // if "always" show, no further work to do
-    if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
-
-    // hide in a moment, recycling any existing timers.
-    object.data.energyTimerFade?.restart();
-    object.data.energyTimerRemove?.restart();
-
-    // fade out, and eventually remove
-    if (!object.data.energyTimerFade) {
-      object.data.energyTimerFade = common.setFrameTimeout(() => {
-        // in case prefs changed during a timer, prevent removal now
-        if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_ALWAYS) return;
-
-        if (node?._style) node._style.setProperty('opacity', 0);
-
-        // fade should be completed within 250 msec
-        object.data.energyTimerRemove = common.setFrameTimeout(() => {
-          if (object.dom.oEnergy) {
-            object.dom.oEnergy.remove();
-            object.dom.oEnergy._style = null;
-          }
-          object.dom.oEnergy = null;
-          node = null;
-          object.data.energyTimerRemove = null;
-        }, 250);
-        object.data.energyTimerFade = null;
-      }, 2000);
-    }
   }
 };
 
