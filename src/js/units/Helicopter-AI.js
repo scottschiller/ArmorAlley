@@ -107,6 +107,7 @@ const HelicopterAI = (options = {}) => {
     checkVerticalRange(data);
     avoidVerticalObstacle(tData, data);
     avoidNearbyMunition(data);
+    checkThreats();
     maybeFireOrBomb(data, options);
 
     // reset
@@ -200,6 +201,31 @@ const HelicopterAI = (options = {}) => {
     if (tData && tData.type !== TYPES.cloud) {
       maybeFireAtTarget(target);
       maybeBombTarget(target);
+    }
+  }
+
+  function checkThreats() {
+    /**
+     * Identify incoming / nearby things to fire at, but not chase.
+     * NOTE: only fire at things the chopper is facing - no backwards firing tricks.
+     * TODO: cpuCanTarget on smartMissile and parachuteInfantry?
+     */
+    let nearbyThreats = findEnemy(
+      data,
+      [TYPES.smartMissile, TYPES.parachuteInfantry],
+      192
+    );
+
+    let threat = nearbyThreats[0];
+
+    // ensure the target has *some* room, not almost directly above or below.
+    if (
+      threat &&
+      options.exports.isFacingTarget(threat) &&
+      distance(threat.data.x, data.x) >= data.width
+    ) {
+      data.votes.ammo++;
+      data.ammoTargets.push(threat.data);
     }
   }
 
