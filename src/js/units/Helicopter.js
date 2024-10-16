@@ -2590,7 +2590,11 @@ const Helicopter = (options = {}) => {
       cpu: {
         // special firing rates - with aimed missiles, faster with game difficulty
         helicopter: levelFlags.bullets
-          ? 4
+          ? gameType === 'extreme'
+            ? 2
+            : gameType === 'hard'
+              ? 3
+              : 5
           : FPS / (gameType === 'extreme' ? 3 : gameType === 'hard' ? 2 : 1),
         balloon: levelFlags.bullets ? 10 : FPS * 1.5
       }
