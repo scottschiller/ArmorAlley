@@ -939,6 +939,9 @@ const DomCanvas = () => {
     } else if (exports.data.type === TYPES.turret) {
       left += exports.data.width - 1;
       top -= outerRadius + 4;
+    } else if (exports.data.type === TYPES.missileLauncher) {
+      left += exports.data.halfWidth;
+      top += exports.data.halfHeight;
     } else if (exports.data.type === TYPES.van) {
       left += exports.data.halfWidth;
       top += exports.data.halfHeight - 2.5;
