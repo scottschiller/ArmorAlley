@@ -698,6 +698,18 @@ const Helicopter = (options = {}) => {
     }
   }
 
+  function isFacingTarget(target) {
+    const tData = target.data;
+    if (data.isEnemy) {
+      if (tData.x + tData.width < data.x && data.flipped) return false;
+      if (tData.x + tData.width > data.x && !data.flipped) return false;
+    } else {
+      if (tData.x + tData.width < data.x && !data.flipped) return false;
+      if (tData.x + tData.width > data.x && data.flipped) return false;
+    }
+    return true;
+  }
+
   function checkFacingTarget(target) {
     // ensure the enemy chopper is facing the target before firing.
     if (!target) return;
@@ -705,21 +717,8 @@ const Helicopter = (options = {}) => {
     // ignore direction and prevent excessive flipping when bombing tanks, or if hidden within a cloud
     if (data.bombing || data.cloaked) return;
 
-    const tData = target.data;
-
-    // TODO: revisit and DRY
-    if (data.isEnemy) {
-      if (tData.x + tData.width < data.x && data.flipped) {
-        flip();
-      } else if (tData.x + tData.width > data.x && !data.flipped) {
-        flip();
-      }
-    } else {
-      if (tData.x + tData.width < data.x && !data.flipped) {
-        flip();
-      } else if (tData.x + tData.width > data.x && data.flipped) {
-        flip();
-      }
+    if (!isFacingTarget(target)) {
+      flip();
     }
   }
 
@@ -3087,6 +3086,7 @@ const Helicopter = (options = {}) => {
     callAction,
     centerView,
     checkFacingTarget,
+    isFacingTarget,
     data,
     dom,
     die,
