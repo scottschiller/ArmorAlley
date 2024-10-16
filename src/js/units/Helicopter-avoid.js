@@ -236,7 +236,7 @@ function avoidBuildings(data) {
     if (
       b?.data?.type === 'balloon' &&
       // don't go after balloons with aimed missiles - "too expensive."
-      levelFlags.bullets && 
+      levelFlags.bullets &&
       b.data.cpuCanTarget &&
       !b.objects?.chain &&
       data.ammo &&
