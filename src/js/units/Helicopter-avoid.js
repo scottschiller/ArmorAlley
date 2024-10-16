@@ -356,6 +356,7 @@ function avoidNearbyMunition(data) {
   nearbyObstacle = gunfireObstacles[0];
 
   let isTurretGunfire;
+  let isSmartMissile;
 
   // don't dodge gunfire that's moving away / past chopper.
   if (nearbyObstacle) {
@@ -390,14 +391,15 @@ function avoidNearbyMunition(data) {
     // smart missiles
     gunfireObstacles = findEnemy(data, TYPES.smartMissile, 192);
     nearbyObstacle = gunfireObstacles[0];
-    validObstacle = nearbyObstacle || false;
+    validObstacle = !!nearbyObstacle;
+    isSmartMissile = validObstacle;
   }
 
   if (!validObstacle) {
     // bombs
     gunfireObstacles = findEnemy(data, TYPES.bomb, 64);
     nearbyObstacle = gunfireObstacles[0];
-    validObstacle = nearbyObstacle || false;
+    validObstacle = !!nearbyObstacle;
   }
 
   if (!validObstacle) return;
