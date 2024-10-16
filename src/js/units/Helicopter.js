@@ -2612,6 +2612,10 @@ const Helicopter = (options = {}) => {
     }
   };
 
+  function adjustForGameSpeed(value) {
+    return parseInt(value * (1 / GAME_SPEED_RATIOED), 10);
+  }
+
   function setCPUBombingRate(targetType) {
     // special case: CPU bombing can vary depending on target.
     if (firingRates.bombModulus.cpu[targetType]) {
@@ -2627,23 +2631,23 @@ const Helicopter = (options = {}) => {
   function setCPUFiringRate(targetType) {
     // special case: CPU gunfire can vary depending on target.
     if (firingRates.fireModulus.cpu[targetType]) {
-      data.fireModulus = firingRates.fireModulus.cpu[targetType];
+      data.fireModulus = adjustForGameSpeed(
+        firingRates.fireModulus.cpu[targetType]
+      );
       return;
     }
 
     // restore default, if not specified or no match.
     const rateType = 'fireModulus';
-    data[rateType] = setFiringRate([rateType]);
+    data[rateType] = adjustForGameSpeed(setFiringRate([rateType]));
   }
 
   function setFiringRate(type) {
     // apply according to prefs.
     const pref = gamePrefs.weapons_interval_classic ? 'classic' : 'modern';
 
-    return parseInt(
-      (firingRates[type].default || firingRates[type][pref]) *
-        (1 / GAME_SPEED_RATIOED),
-      10
+    return adjustForGameSpeed(
+      firingRates[type].default || firingRates[type][pref]
     );
   }
 
