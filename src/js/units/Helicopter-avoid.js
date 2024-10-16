@@ -388,7 +388,7 @@ function avoidNearbyMunition(data) {
 
   if (!validObstacle) {
     // smart missiles
-    gunfireObstacles = findEnemy(data, TYPES.smartMissile);
+    gunfireObstacles = findEnemy(data, TYPES.smartMissile, 192);
     nearbyObstacle = gunfireObstacles[0];
     validObstacle = nearbyObstacle || false;
   }
