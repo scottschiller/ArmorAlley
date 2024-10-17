@@ -74,7 +74,15 @@ const SmartMissile = (options = {}) => {
         data.angleIncrement *= 0.97;
       }
     } else {
-      data.angle = angle;
+      let angleChange = angle - data.lastAngle;
+      // handle "wrap-around" from 360 -> 0 ("flip" is closer to, but not exactly 360.)
+      if (angleChange > 180) {
+        angleChange -= 360;
+      } else if (angleChange < -180) {
+        angleChange += 360;
+      }
+      data.angle += angleChange;
+      data.lastAngle = angle;
     }
 
     sprites.moveTo(exports, x, y);
@@ -655,6 +663,11 @@ const SmartMissile = (options = {}) => {
     // determine angle of missile (pointing at target, not necessarily always heading that way)
     rad = Math.atan2(deltaY, deltaX);
 
+    // 0-360
+    if (rad < 0) {
+      rad += 2 * Math.PI;
+    }
+
     if (
       // don't smoke too much.
       data.isOnScreen &&
@@ -916,6 +929,7 @@ const SmartMissile = (options = {}) => {
       yHistory: [],
       yMax: null,
       angle: options.isEnemy ? 180 : 0,
+      lastAngle: options.isEnemy ? 180 : 0,
       angleIncrement: 45,
       noEnergyStatus: true,
       domFetti: {
