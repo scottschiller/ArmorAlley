@@ -1216,7 +1216,7 @@ const Helicopter = (options = {}) => {
 
     data.fuel = data.maxFuel;
     data.energy = data.energyMax;
-    data.parachutes = 1;
+    data.parachutes = data.isCPU ? parseInt(data.maxParachutes, 10) : 1;
     data.smartMissiles = data.maxSmartMissiles;
     data.ammo = data.maxAmmo;
     data.bombs = data.maxBombs;
@@ -2888,7 +2888,7 @@ const Helicopter = (options = {}) => {
       ammoRepairModulus: tutorialMode || levelFlags.bullets ? 2 : 20,
       bombs: tutorialMode ? 30 : 10,
       maxBombs: tutorialMode ? 30 : 10,
-      parachutes: 1,
+      parachutes: isCPU ? 5 : 1,
       maxParachutes: 5,
       bnbNoParachutes: false,
       smartMissiles: 2,
