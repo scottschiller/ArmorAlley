@@ -720,9 +720,8 @@ const SmartMissile = (options = {}) => {
     }
 
     if (data.frameCount >= data.dieFrameCount) {
+      // TODO: review and remove; this scenario is unlikely.
       die();
-      // but don't fall too fast?
-      data.vYMax *= 0.5;
     }
 
     // hit bottom?
@@ -902,10 +901,11 @@ const SmartMissile = (options = {}) => {
         (options.expireFrameCount || 256) * (1 / GAME_SPEED_RATIOED),
         10
       ),
+      // lifetime limit: 640 frames ought to be enough for anybody.
       dieFrameCount: parseInt(
         (options.dieFrameCount || 640) * (1 / GAME_SPEED_RATIOED),
         10
-      ), // 640 frames ought to be enough for anybody.
+      ),
       width,
       halfWidth: width / 2,
       height,
