@@ -602,9 +602,7 @@ Balloon.radarItemConfig = (exports) => ({
       // in preview mode, no live battlefield image.
       const radarItemImg = data?.domCanvas.img || data?.domCanvas.radarItemImg;
 
-      let targetX =
-        left -
-        (game.data.started && !exports?.objects?.bunker ? scaledWidth / 2 : 0);
+      let targetX = left;
       let targetY = obj.data.top - scaledHeight / 2;
 
       const renderedWidth =
