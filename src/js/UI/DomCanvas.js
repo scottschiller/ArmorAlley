@@ -949,7 +949,8 @@ const DomCanvas = () => {
       left += exports.data.halfWidth + 1;
       top += exports.data.halfHeight - 1.5;
     } else if (exports.data.type === TYPES.superBunker) {
-      top += 6;
+      left += exports.data.halfWidth;
+      top += 5.5;
     } else if (exports.data.bottomAligned) {
       left += exports.data.halfWidth + 0.5;
       top -= outerRadius + 2;
