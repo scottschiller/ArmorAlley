@@ -612,6 +612,8 @@ Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://gith
 
 [Cash Register](https://freesound.org/people/kiddpark/sounds/201159/) by kiddpark (CC BY 4.0 Deed)
 
+[Bonfire Being Lit](https://freesound.org/people/samararaine/sounds/186374/) by samararaine (CC0)
+
 ## Images
 
 [Dirt Explosion](https://www.deviantart.com/srgrafo/art/Dirt-Explosion-774442026) by SrGrafo on DeviantArt
