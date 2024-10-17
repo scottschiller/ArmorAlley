@@ -1043,6 +1043,14 @@ const SmartMissile = (options = {}) => {
     objects
   };
 
+  function getCollisionItems(group) {
+    // if unspecified, getTypes() uses a default group.
+    return getTypes(
+      'superBunker, helicopter, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, bunker, balloon, smartMissile, turret',
+      { exports, group }
+    );
+  }
+
   collision = {
     options: {
       source: exports,
@@ -1052,10 +1060,7 @@ const SmartMissile = (options = {}) => {
         sparkAndDie(target);
       }
     },
-    items: getTypes(
-      'superBunker, helicopter, tank, van, missileLauncher, infantry, parachuteInfantry, engineer, bunker, balloon, smartMissile, turret',
-      { exports }
-    )
+    items: getCollisionItems()
   };
 
   if (data.isRubberChicken) {
