@@ -5,6 +5,16 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 10/16/2024, uncategorized ---
+
+Enemy helicopter can now drop "decoy" paratroopers when targeted by a new smart missile. https://github.com/scottschiller/ArmorAlley/commit/9be834c50a6d3bbc083c780b179593bd27be610a
+
+Enemy helicopter tries to dodge, and shoot down incoming smart missiles (and parachute infantry) in its path. https://github.com/scottschiller/ArmorAlley/commit/1b5bc6a61cccf8ecf7aa09c9e0c947b3fb812aac
+
+Energy UI refactor: Draw on canvas, use a circle instead of a line. WIP. https://github.com/scottschiller/ArmorAlley/commit/23acbaa651a0ee914e6ec2e069a3bacc139d1b73
+
+Behavior change: Make chopper gunfire slower on easy, faster on hard + extreme. https://github.com/scottschiller/ArmorAlley/commit/0533af9037ae5ccbe1bf52025ea53e39fcd0cc77
+
 --- 10/08/2024, uncategorized ---
 
 Expand/collapse "more info" section on some modal dialogs.
