@@ -1314,7 +1314,7 @@ soundManager.onready(() => {
   });
 
   sounds.tankFlame = add({
-    url: '412558__grimgrum__combust',
+    url: '186374__samararaine__bonfire-being-lit_flame_only',
     volume: 30
   });
 
