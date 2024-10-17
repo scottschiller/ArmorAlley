@@ -2453,8 +2453,8 @@ function playSoundFromBuffer(snd, buffer) {
   if (snd._iO?.loops > 1) {
     source.loop = true;
     // start-to-finish
-    source.loopStart = Math.floor(offset);
-    source.loopEnd = Math.floor(offset + duration);
+    source.loopStart = offset;
+    source.loopEnd = offset + duration;
   }
 
   if (snd._iO.onplay) {
