@@ -5,7 +5,14 @@
  * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
  */
 
-import { searchParams, TYPES } from '../core/global.js';
+import {
+  FPS,
+  rnd,
+  rngBool,
+  rngInt,
+  searchParams,
+  TYPES
+} from '../core/global.js';
 import { collisionCheckX, objectInView } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { getAverages, Vector } from '../core/Vector.js';
@@ -19,6 +26,8 @@ import { applyForces } from './Helicopter-forces.js';
 import { checkVerticalRange, seekLandingPad } from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
 import { levelFlags } from '../levels/default.js';
+import { net } from '../core/network.js';
+import { common } from '../core/common.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 
@@ -229,6 +238,41 @@ const HelicopterAI = (options = {}) => {
     }
   }
 
+  function maybeDecoySmartMissile() {
+    /**
+     * If airborne and targeted by a newly-minted smart missile,
+     * (maybe) drop a decoy paratrooper.
+     */
+
+    // nothing to drop?
+    if (!options.exports.data.parachutes) return;
+
+    // don't implement in network games until tested and stable.
+    if (net.active) return;
+
+    // "reasonably" airborne, time for parachute to open etc.?
+    if (options.exports.data.landed || options.exports.data.y > 300) return;
+
+    // 50% chance...
+    if (!rngBool(TYPES.helicopter)) return;
+
+    if (options.exports.data.cpuParachutingTimer) return;
+
+    // finally, do the damn thing - with a random delay basis for both start and duration.
+    // this means the chopper can be late to decoy, AND/OR, it may drop multiple paratroopers.
+    let delay = rngInt(1000, TYPES.helicopter);
+
+    options.exports.data.cpuParachutingTimer = common.setFrameTimeout(() => {
+      options.exports.setParachuting(true);
+      options.exports.data.cpuParachutingTimer = null;
+
+      // and, stop dropping momentarily.
+      common.setFrameTimeout(() => {
+        options.exports.setParachuting(false);
+      }, delay / 2);
+    }, delay);
+  }
+
   function maybeBombTarget(target) {
     /**
      * WITHIN BOMBING RANGE
@@ -311,6 +355,7 @@ const HelicopterAI = (options = {}) => {
 
   return {
     animate: ai,
+    maybeDecoySmartMissile,
     maybeFireAtTarget,
     resetSineWave
   };
