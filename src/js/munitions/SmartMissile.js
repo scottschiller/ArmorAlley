@@ -748,6 +748,15 @@ const SmartMissile = (options = {}) => {
 
     radarItem = game.objects.radar.addItem(exports);
 
+    if (
+      objects?.target?.data?.type === TYPES.helicopter &&
+      objects.target.data.isCPU &&
+      !objects.target.data.isRemote
+    ) {
+      // if targeting a chopper (and it's a local CPU), give it a chance to take evasive action.
+      objects.target.data?.ai?.maybeDecoySmartMissile(exports);
+    }
+
     if (data.isBanana && sounds.banana.launch) {
       // hackish: need to know on-screen right now.
       sprites.updateIsOnScreen(exports);
