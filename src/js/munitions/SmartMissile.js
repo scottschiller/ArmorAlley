@@ -192,11 +192,17 @@ const SmartMissile = (options = {}) => {
 
     effects.inertGunfireExplosion({ exports });
 
+    // rough velocity throttling
+    let velocity = Math.max(
+      data.vYMax * -1,
+      Math.min(data.vYMax, (Math.abs(data.vX) + Math.abs(data.vY)) / 2)
+    );
+
     if (data.armed) {
       effects.shrapnelExplosion(data, {
         count: 3 + rngInt(3, TYPES.shrapnel),
-        velocity: (Math.abs(data.vX) + Math.abs(data.vY)) / 2,
-        parentVX: data.vX * 2,
+        velocity,
+        parentVX: data.vX,
         parentVY: data.vY
       });
 
