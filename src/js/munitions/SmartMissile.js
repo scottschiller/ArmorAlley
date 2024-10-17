@@ -546,6 +546,9 @@ const SmartMissile = (options = {}) => {
       data.expired = true;
       data.hostile = true;
 
+      // expired missiles, now hostile, are dangerous to both sides.
+      collision.items = getCollisionItems('all');
+
       if (
         data.isRubberChicken &&
         !data.isBanana &&
