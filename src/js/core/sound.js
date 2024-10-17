@@ -754,6 +754,9 @@ function addSound(options) {
   if (audioSpriteConfig?.sprite?.[name]) {
     // if version string is present, provide explicit type so SM2 knows the MIME.
     options.type = `audio/${chosenCodec}`;
+    // for debugging, include the original URL.
+    options._url = options.url;
+    // assign the relevant sprite asset.
     options.url = `${AUDIO_SPRITE_ROOT}.${chosenCodec}${aaLoader.version}`;
     // start time + duration
     options.from = audioSpriteConfig.sprite[name][0];
