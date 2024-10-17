@@ -129,7 +129,7 @@ const sprites = {
     exports.data.targetStartY = target?.data?.y;
   },
 
-  setTransformXY: (exports, o, x, y, extraTransforms = '') => {
+  setTransformXY: (exports, o, x, y) => {
     /**
      * given an object (and its on-screen/off-screen status), apply transform to its live DOM node.
      * battlefield scroll and "target" offset can also be included.
@@ -156,14 +156,6 @@ const sprites = {
       }
       return;
     }
-
-    // take object defaults, if not specified otherwise
-    if (!extraTransforms && exports?.data?.extraTransforms) {
-      extraTransforms = exports.data.extraTransforms;
-    }
-
-    // format additional transform arguments, e.g., rotate3d(0, 0, 1, 45deg)
-    if (extraTransforms) extraTransforms = ` ${extraTransforms}`;
 
     // somewhat hackish: include scroll and "target" offset for most pixel-based values
     if (
@@ -201,15 +193,9 @@ const sprites = {
     }
 
     if (useTranslate3d) {
-      o._style.setProperty(
-        'transform',
-        `translate3d(${x}, ${y}, 0px)${extraTransforms}`
-      );
+      o._style.setProperty('transform', `translate3d(${x}, ${y}, 0px)`);
     } else {
-      o._style.setProperty(
-        'transform',
-        `translate(${x}, ${y})${extraTransforms}`
-      );
+      o._style.setProperty('transform', `translate(${x}, ${y})`);
     }
 
     if (debug) {

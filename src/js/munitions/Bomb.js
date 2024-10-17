@@ -434,7 +434,6 @@ const Bomb = (options = {}) => {
       parentType: options.parentType || null,
       deadTimer: null,
       excludeBlink: true,
-      extraTransforms: null,
       hasHitGround: false,
       hidden: !!options.hidden,
       isMuted: false,

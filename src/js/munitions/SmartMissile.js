@@ -77,8 +77,6 @@ const SmartMissile = (options = {}) => {
       data.angle = angle;
     }
 
-    data.extraTransforms = `rotate3d(0, 0, 1, ${data.angle}deg)`;
-
     sprites.moveTo(exports, x, y);
 
     // push x/y to history arrays, maintain size

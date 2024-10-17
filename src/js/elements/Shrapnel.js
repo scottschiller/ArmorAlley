@@ -43,16 +43,8 @@ const Shrapnel = (options = {}) => {
 
     data.domCanvas.img.target.scale = data.relativeScale;
 
-    // scale, 3d rotate, and spin
-    data.extraTransforms = `scale3d(${[relativeScale, relativeScale, 1].join(
-      ','
-    )}) rotate3d(1, 1, 1, ${data.rotate3DAngle}deg) rotate3d(0, 0, 1, ${
-      data.spinAngle
-    }deg)`;
-
     data.domCanvas.img.target.angle = data.spinAngle;
 
-    // move, and retain 3d scaling (via extraTransforms)
     sprites.moveTo(exports, x, y);
   }
 
@@ -323,7 +315,6 @@ const Shrapnel = (options = {}) => {
       rotate3DAngleIncrement: rndAngle(),
       spinAngle: rndAngle(),
       spinAngleIncrement: rndAngle(),
-      extraTransforms: '',
       hostile: true,
       damagePoints: 0.25,
       hasSound: !!options.hasSound,

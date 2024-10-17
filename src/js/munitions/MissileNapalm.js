@@ -77,13 +77,7 @@ const MissileNapalm = (options = {}) => {
 
     radarItem = game.objects.radar.addItem(exports);
 
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y}px`,
-      data.extraTransforms
-    );
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
 
   data = common.inheritData(

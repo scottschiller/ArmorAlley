@@ -422,7 +422,6 @@ const Infantry = (options = {}) => {
       xLookAheadBunker: options.xLookAheadBunker || null,
       unassisted: options.unassisted !== undefined ? options.unassisted : true,
       stepOffset: options.stepOffset,
-      extraTransforms: null,
       flipX: false,
       x: options.x || 0,
       // one more pixel, making a "headshot" look more accurate

@@ -47,13 +47,7 @@ const Flame = (options = {}) => {
   function initFlame() {
     initDOM();
 
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y}px`,
-      data.extraTransforms
-    );
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
     if (sounds.tankFlame) {
       playSound(sounds.tankFlame, game.players.local);
