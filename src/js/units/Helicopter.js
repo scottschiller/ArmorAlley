@@ -785,10 +785,8 @@ const Helicopter = (options = {}) => {
   function setParachuting(state) {
     data.parachuting = state;
 
-    if (!data.isCPU) {
-      // start or stop immediately, too.
-      data.parachuteFrameCount = parseInt(data.parachuteModulus, 10);
-    }
+    // start or stop immediately, too.
+    data.parachuteFrameCount = parseInt(data.parachuteModulus, 10);
   }
 
   function setRespawning(state) {
