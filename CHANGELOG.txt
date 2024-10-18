@@ -5,6 +5,10 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 10/17/2024, uncategorized ---
+
+Bug fix: Expired (falling) smart missiles weren't hitting friendly units. https://github.com/scottschiller/ArmorAlley/commit/887212346756293922c2c2d8abf31f9e2d343e17
+
 --- 10/16/2024, uncategorized ---
 
 Enemy helicopter can now drop "decoy" paratroopers when targeted by a new smart missile. https://github.com/scottschiller/ArmorAlley/commit/9be834c50a6d3bbc083c780b179593bd27be610a
