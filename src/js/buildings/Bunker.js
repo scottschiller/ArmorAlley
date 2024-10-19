@@ -134,6 +134,7 @@ const Bunker = (options = {}) => {
     if (data.energy < data.energyMax) {
       // stop, and don't fire
       engineer.stop(true);
+      data.lastEnergy = data.energy;
       data.energy = Math.min(
         data.energy + 0.05 * GAME_SPEED_RATIOED,
         data.energyMax
