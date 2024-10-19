@@ -143,7 +143,7 @@ const Bunker = (options = {}) => {
         bnbRepair(engineer);
       }
       if (!data.isRepairing) {
-        data.isRpairing = true;
+        data.isRepairing = true;
       }
     } else {
       // repair complete - keep moving
