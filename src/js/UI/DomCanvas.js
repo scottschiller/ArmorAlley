@@ -824,7 +824,8 @@ const DomCanvas = () => {
   function drawEnergy(exports, ctx) {
     if (exports.data.energy === undefined) return;
 
-    if (exports.data.dead) return;
+    // special case: turrets can be dead and being repaired, non-zero energy until "restored"
+    if (exports.data.dead && exports.data.energy === 0) return;
 
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
 
@@ -883,7 +884,8 @@ const DomCanvas = () => {
     let energy = exports.data.energy / exports.data.energyMax;
 
     if (exports.data.lastDrawnEnergy === undefined) {
-      exports.data.lastDrawnEnergy = 1;
+      exports.data.lastDrawnEnergy =
+        exports.data.lastEnergy !== undefined ? exports.data.lastEnergy : 1;
     }
 
     // animate toward target energy
@@ -1016,6 +1018,29 @@ const DomCanvas = () => {
     );
     ctx.lineWidth = 2.5;
     ctx.stroke();
+
+    // plus sign when repairing (helicopters) / energy is going up (turret + tank self-repair.)
+    // half-duty-cycle, flashing on/off pattern.
+    if (
+      (exports.data.repairing ||
+        exports.data.energy > exports.data.lastEnergy) &&
+      game.objects.gameLoop.data.frameCount % FPS < FPS / 2
+    ) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.66)';
+      ctx.beginPath();
+
+      // line "length"
+      let l = 1.5;
+
+      ctx.moveTo(cx(left), cy(top - l));
+      ctx.lineTo(cx(left), cy(top + l));
+
+      ctx.moveTo(cx(left - l), cy(top));
+      ctx.lineTo(cx(left + l), cy(top));
+
+      ctx.stroke();
+    }
 
     ctx.globalAlpha = 1;
     ctx.lineWidth = 1;
