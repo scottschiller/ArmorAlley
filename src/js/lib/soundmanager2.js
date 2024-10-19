@@ -1367,7 +1367,7 @@ function SoundManager() {
       s.muted = true;
 
       if (s._a) {
-        // s._a.muted = true;
+        s._a.muted = true;
         if (s.gainNode) {
           s.gainNode.gain.value = 0;
         } else {
