@@ -8,6 +8,7 @@ import {
   FPS,
   isChrome,
   rnd,
+  TYPES,
   useDOMPruning,
   winloc
 } from '../core/global.js';
@@ -385,9 +386,7 @@ const sprites = {
     );
   },
 
-  updateEnergy: (object, forceUpdate) => {
-    let didCreate, energy;
-
+  updateEnergy: (object) => {
     // only do work if visible, OR "always" shown and needing updates
     if (
       !object.data.isOnScreen &&
@@ -413,15 +412,6 @@ const sprites = {
         }
       }
     }
-
-    energy = (object.data.energy / object.data.energyMax) * 100;
-
-    if (isNaN(energy)) return;
-
-    // don't show node unless just created, or forced
-    if (object.data.lastEnergy === energy && !didCreate && !forceUpdate) return;
-
-    object.data.lastEnergy = energy;
   }
 };
 

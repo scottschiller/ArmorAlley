@@ -1968,7 +1968,6 @@ function PrefsManager() {
           'tank, van, bunker, missileLauncher, infantry, parachuteInfantry, engineer, helicopter, balloon, smartMissile, endBunker, superBunker, turret',
           { group: 'all' }
         );
-        let forceUpdate = true;
 
         targets.forEach((target) => {
           game.objects[target.type].forEach((obj) => {
@@ -1977,7 +1976,7 @@ function PrefsManager() {
 
             // update immediately if pref is now "always" show, OR, "sometimes/never"
             if (newValue === PREFS.SHOW_HEALTH_ALWAYS) {
-              sprites.updateEnergy(obj, forceUpdate);
+              sprites.updateEnergy(obj);
             }
           });
         });
