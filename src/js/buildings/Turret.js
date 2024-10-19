@@ -772,6 +772,7 @@ const Turret = (options = {}) => {
       dead: false,
       energy: 50,
       energyMax: 50,
+      energyTimerScale: 3,
       lastEnergy: 50,
       firing: false,
       fireCount: 0,

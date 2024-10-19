@@ -843,7 +843,9 @@ const DomCanvas = () => {
 
     let opacity;
 
-    let defaultTimer = FPS * ENERGY_TIMER_DELAY;
+    // account for custom timings, e.g., on turrets.
+    let defaultTimer =
+      FPS * ENERGY_TIMER_DELAY * (exports.data.energyTimerScale || 1);
 
     let timerDelta = defaultTimer - exports.data.energyCanvasTimer;
 

@@ -397,19 +397,26 @@ const sprites = {
     // prevent certain things from rendering this, e.g., smart missiles.
     if (object.data.noEnergyStatus) return;
 
+    // some objects may have longer timings, e.g., turrets.
+    let timerDelayScale = object.data.energyTimerScale || 1;
+
     // don't constantly show if at 100%
     if (
       gamePrefs.show_health_status === PREFS.SHOW_HEALTH_SOMETIMES &&
       object.data.energy < object.data.energyMax
     ) {
       if (!object.data.energyCanvasTimer) {
-        object.data.energyCanvasTimer = FPS * ENERGY_TIMER_DELAY;
+        object.data.energyCanvasTimer =
+          FPS * ENERGY_TIMER_DELAY * timerDelayScale;
       } else {
-        // "recharge" timer so it is just after fade-in.
-        if (object.data.energyCanvasTimer < FPS) {
-          object.data.energyCanvasTimer =
-            FPS * ENERGY_TIMER_DELAY * (1 - ENERGY_TIMER_FADE_RATIO);
-        }
+        // "reset" timer to just after the fade-in point, as needed.
+        object.data.energyCanvasTimer = Math.max(
+          object.data.energyCanvasTimer,
+          FPS *
+            ENERGY_TIMER_DELAY *
+            timerDelayScale *
+            (1 - ENERGY_TIMER_FADE_RATIO)
+        );
       }
     }
   }
