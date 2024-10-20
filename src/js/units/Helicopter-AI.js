@@ -12,7 +12,7 @@ import { getAverages, Vector } from '../core/Vector.js';
 import {
   avoidBuildings,
   avoidNearbyMunition,
-  avoidVerticalObstacle
+  avoidAboveOrBelow
 } from './Helicopter-avoid.js';
 import { brakeX, distance, findEnemy } from './Helicopter-utils.js';
 import { applyForces } from './Helicopter-forces.js';
@@ -119,13 +119,9 @@ const HelicopterAI = (options = {}) => {
 
     // high priority: avoid obstacles.
     let foundBuilding = avoidBuildings(data);
-    let foundVerticalObstacle = avoidVerticalObstacle(tData, data);
+    let foundAboveOrBelow = avoidAboveOrBelow(tData, data);
 
-    let obstacle = foundBuilding || foundVerticalObstacle;
-
-    checkVerticalRange(data);
-
-    if (!obstacle) {
+    if (!foundBuilding || foundAboveOrBelow) {
       // if "safe," go for target.
       maybeSteerTowardTarget(tData, data);
 
@@ -145,6 +141,9 @@ const HelicopterAI = (options = {}) => {
 
     // motion
     wander(data);
+
+    checkVerticalRange(data);
+
     applyForces(data);
     throttleVelocity();
     resetForces();

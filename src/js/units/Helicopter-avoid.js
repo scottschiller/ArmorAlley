@@ -22,7 +22,7 @@ import { steerTowardTarget } from './Helicopter-steering.js';
 import { common } from '../core/common.js';
 import { levelFlags } from '../levels/default.js';
 
-const debugCanvas = searchParams.get('debugCollision');
+const debugCanvas = searchParams.get('debugCanvas');
 const whiskerColor = '#888';
 
 function improvedAvoid(data, nearbyObstacle, avoidScale = 0.125) {
@@ -231,6 +231,8 @@ function avoidBuildings(data) {
     256
   );
 
+  let steerTarget;
+
   buildings?.forEach?.((b) => {
     // IF the closest thing is a free-floating balloon, seek it out - IF we have ammo and it's targetable...
     if (
@@ -245,10 +247,7 @@ function avoidBuildings(data) {
     ) {
       // only steer toward one thing per frame.
       data.foundSteerTarget = true;
-
-      steerTowardTarget(data, b.data, 64);
-      // hackish / circuitous: call helicopter AI method
-      data.ai.maybeFireAtTarget(b);
+      steerTarget = b;
     }
 
     // can this item be excluded? i.e., helicopter is moving away from it (and not a balloon or the human chopper)
@@ -268,7 +267,7 @@ function avoidBuildings(data) {
       common.domCanvas.drawDebugRect(
         b.data.x,
         b.data.y,
-        b.data.width, // + rect1XLookAhead,
+        b.data.width,
         b.data.height,
         '#66ffff',
         'rgba(255, 255, 255, 0.33)'
@@ -287,7 +286,7 @@ function avoidBuildings(data) {
         common.domCanvas.drawDebugRect(
           compositeObj.x,
           compositeObj.y,
-          compositeObj.width, // + rect1XLookAhead,
+          compositeObj.width,
           compositeObj.height,
           '#ff6666'
         );
@@ -312,9 +311,16 @@ function avoidBuildings(data) {
     addForce(data, avoidance, 'avoid');
     return true;
   }
+
+  // if no avoidance, but we found something to chase...
+  if (steerTarget) {
+    steerTowardTarget(data, steerTarget.data, 64);
+    // hackish / circuitous: call helicopter AI method
+    // data.ai.maybeFireAtTarget(steerTarget);
+  }
 }
 
-function avoidVerticalObstacle(tData, data) {
+function avoidAboveOrBelow(tData, data) {
   /**
    * AVOID HUMAN CHOPPER (or other obstacle)
    */
@@ -416,8 +422,4 @@ function avoidNearbyMunition(data) {
   addForce(data, avoidMunition, 'avoid', 'munition');
 }
 
-export {
-  avoidNearbyMunition,
-  avoidVerticalObstacle,
-  avoidBuildings
-};
+export { avoidNearbyMunition, avoidAboveOrBelow, avoidBuildings };
