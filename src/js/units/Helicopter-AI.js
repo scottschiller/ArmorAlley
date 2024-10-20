@@ -432,7 +432,7 @@ const HelicopterAI = (options = {}) => {
        */
       return (
         (f.data.isEnemy && f.data.x > tData.x + tData.halfWidth) ||
-        (!f.data.isEnemy && f.data.x < tData.x)
+        (!f.data.isEnemy && f.data.x + f.data.width < tData.x)
       );
     });
 
