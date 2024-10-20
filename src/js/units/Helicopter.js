@@ -2371,25 +2371,14 @@ const Helicopter = (options = {}) => {
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
         const rng = aiRNG();
 
-        // should we target tanks?
-        data.targeting.tanks = rng > 0.65;
-
-        // should we target clouds?
-        data.targeting.clouds = rng > 0.5;
-
+        data.targeting.tanks = rng > 0.75;
+        data.targeting.clouds = rng > 0.65;
+        data.targeting.bunkers = rng > 0.5;
         data.targeting.helicopters = rng > 0.25 || tutorialMode;
-
-        if (winloc.match(/clouds/i)) {
-          // hack/testing: cloud-only targeting mode
-          data.targeting.balloons = false;
-          data.targeting.tanks = false;
-          data.targeting.helicopters = false;
-          data.targeting.clouds = true;
-        }
 
         if (debug || debugCollision) {
           console.log(
-            `AI tank targeting mode: ${data.targeting.tanks}, clouds: ${data.targeting.clouds}, helicopters: ${data.targeting.helicopters}`
+            `AI tank targeting mode: ${data.targeting.tanks}, clouds: ${data.targeting.clouds}, bunkers: ${data.targeting.bunkers}, helicopters: ${data.targeting.helicopters}`
           );
         }
       }
@@ -2900,7 +2889,8 @@ const Helicopter = (options = {}) => {
       targeting: {
         clouds: false,
         helicopters: false,
-        tanks: false
+        tanks: false,
+        bunkers: false
       },
       targetingModulus: FPS * 30,
       // chance per gameType
