@@ -45,6 +45,10 @@ const HelicopterAI = (options = {}) => {
   let ahead;
   let lastTarget;
 
+  // throttle how often paratroopers can be dropped over target(s)
+  let paratrooperDropTimer;
+  let paratrooperDropDelay = 30000;
+
   let parachutingActiveTimer;
 
   data.vectors = {
@@ -200,6 +204,10 @@ const HelicopterAI = (options = {}) => {
         newTarget = objectInView(data, { items: TYPES.cloud });
       }
 
+      if (!newTarget && data.targeting.bunkers) {
+        newTarget = objectInView(data, { items: TYPES.bunker });
+      }
+
       if (!newTarget && data.targeting.helicopters) {
         newTarget = objectInView(data, { items: TYPES.helicopter });
       }
@@ -223,9 +231,13 @@ const HelicopterAI = (options = {}) => {
       }
     }
 
-    if (tData && tData.type !== TYPES.cloud) {
-      maybeFireAtTarget(target);
-      maybeBombTarget(target);
+    if (tData) {
+      if (data.targeting.bunkers && tData.type === TYPES.bunker) {
+        maybeDropParatroopersOverTarget();
+      } else if (tData.type !== TYPES.cloud) {
+        maybeFireAtTarget(target);
+        maybeBombTarget(target);
+      }
     }
   }
 
@@ -397,6 +409,43 @@ const HelicopterAI = (options = {}) => {
       data.bombTargets.sort(utils.array.compare('x'));
       options.exports.setCPUBombingRate(data.bombTargets[0]?.type);
     }
+  }
+
+  function maybeDropParatroopersOverTarget() {
+    if (!target || !tData) return;
+
+    // only run once in a while
+    if (paratrooperDropTimer) return;
+
+    // approximately above enemy target?
+    if (!collisionCheckX(tData, data)) return;
+
+    // be smart / efficient: is there already a nearby unit that may get the bunker?
+    let friendsInView = objectsInView(data, {
+      items: [TYPES.parachuteInfantry, TYPES.infantry],
+      friendlyOnly: true
+    });
+
+    let validFriends = friendsInView.filter((f) => {
+      /**
+       * Paratrooper / infantry must be moving toward the target - not already past it.
+       * Account for enemy and "friendly" CPUs, since human players can have friendly CPUs in network games.
+       */
+      return (
+        (f.data.isEnemy && f.data.x > tData.x + tData.halfWidth) ||
+        (!f.data.isEnemy && f.data.x < tData.x)
+      );
+    });
+
+    if (validFriends.length) return;
+
+    paratrooperDropTimer = common.setFrameTimeout(() => {
+      paratrooperDropTimer = null;
+    }, paratrooperDropDelay);
+
+    // drop within the next few frames
+    let minimalDelay = true;
+    dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
   }
 
   return {
