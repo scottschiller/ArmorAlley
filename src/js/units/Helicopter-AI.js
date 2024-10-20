@@ -5,15 +5,8 @@
  * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
  */
 
-import {
-  FPS,
-  rnd,
-  rngBool,
-  rngInt,
-  searchParams,
-  TYPES
-} from '../core/global.js';
-import { collisionCheckX, objectInView } from '../core/logic.js';
+import { FPS, rngBool, rngInt, TYPES } from '../core/global.js';
+import { collisionCheckX, objectInView, objectsInView } from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { getAverages, Vector } from '../core/Vector.js';
 import {
@@ -23,13 +16,15 @@ import {
 } from './Helicopter-avoid.js';
 import { brakeX, distance, findEnemy } from './Helicopter-utils.js';
 import { applyForces } from './Helicopter-forces.js';
-import { checkVerticalRange, seekLandingPad } from './Helicopter-steering.js';
+import {
+  checkVerticalRange,
+  seekLandingPad,
+  steerTowardTarget
+} from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
 import { levelFlags } from '../levels/default.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
-
-const debugCanvas = searchParams.get('debugCollision');
 
 // low fuel means low fuel. or ammo. or bombs.
 let lowFuelLimit = 30;
@@ -49,6 +44,8 @@ const HelicopterAI = (options = {}) => {
 
   let ahead;
   let lastTarget;
+
+  let parachutingActiveTimer;
 
   data.vectors = {
     acceleration: new Vector(0, 0),
@@ -110,13 +107,32 @@ const HelicopterAI = (options = {}) => {
 
     data.didWander = false;
 
+    // go for the landing pad?
     landingPadCheck();
+
+    // new target(s)?
     checkLastAndNewTarget();
-    avoidBuildings(data);
+
+    // high priority: avoid obstacles.
+    let foundBuilding = avoidBuildings(data);
+    let foundVerticalObstacle = avoidVerticalObstacle(tData, data);
+
+    let obstacle = foundBuilding || foundVerticalObstacle;
+
     checkVerticalRange(data);
-    avoidVerticalObstacle(tData, data);
-    avoidNearbyMunition(data);
+
+    if (!obstacle) {
+      // if "safe," go for target.
+      maybeSteerTowardTarget(tData, data);
+
+      // dodge bullets, etc., if also no obstacle.
+      avoidNearbyMunition(data);
+    }
+
+    // incoming gunfire etc.
     checkThreats();
+
+    // offensive
     maybeFireOrBomb(data, options);
 
     // reset
@@ -256,21 +272,51 @@ const HelicopterAI = (options = {}) => {
     // 50% chance...
     if (!rngBool(TYPES.helicopter)) return;
 
-    if (options.exports.data.cpuParachutingTimer) return;
+    // finally, deploy
+    dropParatroopersAtRandom();
+  }
 
-    // finally, do the damn thing - with a random delay basis for both start and duration.
-    // this means the chopper can be late to decoy, AND/OR, it may drop multiple paratroopers.
-    let delay = rngInt(1000, TYPES.helicopter);
+  function dropParatroopersAtRandom(
+    delay = rngInt(1000, TYPES.helicopter),
+    minimalDelay
+  ) {
+    /**
+     * Deploy a random number of paratroopers, using a random delay basis for both start and duration.
+     * This means the chopper can be late to act (e.g., decoy a smart missile), AND/OR, it may drop multiple paratroopers.
+     */
+    if (parachutingActiveTimer) return;
 
-    options.exports.data.cpuParachutingTimer = common.setFrameTimeout(() => {
+    parachutingActiveTimer = common.setFrameTimeout(() => {
       options.exports.setParachuting(true);
-      options.exports.data.cpuParachutingTimer = null;
+
+      let stopDelay = minimalDelay ? 1 / FPS : delay / 2;
 
       // and, stop dropping momentarily.
       common.setFrameTimeout(() => {
         options.exports.setParachuting(false);
-      }, delay / 2);
+        parachutingActiveTimer = null;
+      }, stopDelay);
     }, delay);
+  }
+
+  function maybeSteerTowardTarget(tData, data) {
+    if (!tData) return;
+    // TODO: refactor CPU "can target" logic for other applicable objects
+    let isStructure =
+      tData.type === TYPES.bunker ||
+      tData.type === TYPES.superBunker ||
+      tData.type === TYPES.endBunker ||
+      tData.type === TYPES.turret;
+    if (
+      !data.foundSteerTarget &&
+      !data.wantsLandingPad &&
+      (tData.type !== TYPES.balloon || tData.cpuCanTarget) &&
+      !isStructure
+    ) {
+      // go for it!
+      data.foundSteerTarget = true;
+      steerTowardTarget(data, tData, tData.type === TYPES.cloud ? -1 : 64);
+    }
   }
 
   function maybeBombTarget(target) {

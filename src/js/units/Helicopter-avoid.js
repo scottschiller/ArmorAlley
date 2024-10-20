@@ -310,6 +310,7 @@ function avoidBuildings(data) {
   if (avoidance.mag() > 0) {
     brakeXY(data, 0.98);
     addForce(data, avoidance, 'avoid');
+    return true;
   }
 }
 
@@ -330,17 +331,7 @@ function avoidVerticalObstacle(tData, data) {
     let avoidMag = 0.125;
     let avoidForce = improvedAvoid(data, { data: tData }, avoidMag);
     addForce(data, avoidForce, 'avoid', tData.type);
-  } else {
-    // only chase if not already going after a balloon?
-    // TODO: refactor CPU "can target" logic for other applicable objects
-    if (
-      !data.foundSteerTarget &&
-      !data.wantsLandingPad &&
-      (tData.type !== TYPES.balloon || tData.cpuCanTarget)
-    ) {
-      data.foundSteerTarget = true;
-      steerTowardTarget(data, tData, tData.type === TYPES.cloud ? -1 : 64);
-    }
+    return true;
   }
 }
 
@@ -425,4 +416,8 @@ function avoidNearbyMunition(data) {
   addForce(data, avoidMunition, 'avoid', 'munition');
 }
 
-export { avoidNearbyMunition, avoidVerticalObstacle, avoidBuildings };
+export {
+  avoidNearbyMunition,
+  avoidVerticalObstacle,
+  avoidBuildings
+};
