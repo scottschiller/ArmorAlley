@@ -232,7 +232,7 @@ const HelicopterAI = (options = {}) => {
 
     if (tData) {
       if (data.targeting.bunkers && tData.type === TYPES.bunker) {
-        maybeDropParatroopersOverTarget();
+        maybeDropParatroopersNearTarget(target);
       } else if (tData.type !== TYPES.cloud) {
         maybeFireAtTarget(target);
         maybeBombTarget(target);
@@ -410,14 +410,29 @@ const HelicopterAI = (options = {}) => {
     }
   }
 
-  function maybeDropParatroopersOverTarget() {
-    if (!target || !tData) return;
+  function maybeDropParatroopersNearTarget(target) {
+    if (!target) return;
+
+    let tData = target.data;
+
+    if (!tData) return;
 
     // only run once in a while
     if (paratrooperDropTimer) return;
 
-    // approximately above enemy target?
-    if (!collisionCheckX(tData, data)) return;
+    // bunker case: approximately above enemy target?
+    if (target.data.type === TYPES.bunker && !collisionCheckX(tData, data))
+      return;
+
+    if (target.data.type === TYPES.turret) {
+      // turret case: we must be approaching, not directly over or past the target.
+
+      // firstly, we also don't want to be too far away.
+      if (distance(data.x, tData.x) > 64) return;
+
+      if (data.isEnemy && data.x < tData.x + tData.width) return;
+      if (!data.isEnemy && data.x + data.width > tData.x) return;
+    }
 
     // be smart / efficient: is there already a nearby unit that may get the bunker?
     let friendsInView = objectsInView(data, {
@@ -442,8 +457,11 @@ const HelicopterAI = (options = {}) => {
       paratrooperDropTimer = null;
     }, paratrooperDropDelay);
 
+    // "fast" deploy, does efficiency + accuracy matter?
+    let minimalDelay =
+      tData.type === TYPES.bunker || tData.type === TYPES.turret;
+
     // drop within the next few frames
-    let minimalDelay = true;
     dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
   }
 
@@ -451,6 +469,7 @@ const HelicopterAI = (options = {}) => {
     animate: ai,
     maybeDecoySmartMissile,
     maybeFireAtTarget,
+    maybeDropParatroopersNearTarget,
     resetSineWave
   };
 };

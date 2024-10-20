@@ -381,6 +381,8 @@ function avoidNearbyMunition(data) {
     validObstacle = Math.abs(data.y - nearbyObstacle.data.y) < data.height * 2;
     if (isTurretGunfire) {
       data.avoidingTurret = true;
+      // hackish: circuitous reference
+      data.ai.maybeDropParatroopersNearTarget(nearbyObstacle.data.parent);
     }
   }
 
