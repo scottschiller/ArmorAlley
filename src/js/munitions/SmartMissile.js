@@ -649,7 +649,7 @@ const SmartMissile = (options = {}) => {
     }
 
     // smoke increases as missile nears expiry
-    const smokeThreshold = 1.25 - Math.min(1, progress);
+    const smokeThreshold = 0.75 + (1 - progress) * 0.25;
 
     if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
       data.nearExpiry = true;
@@ -678,9 +678,8 @@ const SmartMissile = (options = {}) => {
       // don't smoke too much.
       data.isOnScreen &&
       (FPS === 30 || data.frameCount % 2 === 0) &&
-      (data.expired ||
-        progress >= data.nearExpiryThreshold ||
-        (progress >= 0.05 && Math.random() >= smokeThreshold))
+      progress >= 0.05 &&
+      Math.random() >= smokeThreshold
     ) {
       game.addObject(TYPES.smoke, {
         x: data.x,
