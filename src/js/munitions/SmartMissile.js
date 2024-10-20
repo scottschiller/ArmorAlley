@@ -103,12 +103,19 @@ const SmartMissile = (options = {}) => {
 
   function moveTrailers() {
     if (!data.isOnScreen) return;
+    let isSpecial = data.isBanana || data.isRubberChicken;
     common.domCanvas.drawTrailers(
       exports,
       data.xHistory,
       data.yHistory,
-      0,
-      data.height / 2 - 1
+      data.halfWidth +
+        (isSpecial
+          ? 0
+          : data.halfWidth +
+            data.halfWidth * -Math.cos((data.angle * Math.PI) / 180)),
+      isSpecial
+        ? data.halfHeight
+        : data.halfHeight * Math.sin((data.angle * Math.PI) / 180)
     );
   }
 
@@ -689,8 +696,7 @@ const SmartMissile = (options = {}) => {
     }
 
     // push x/y to trailer history arrays, maintain size
-    data.xHistory.push(data.x + (data.vX < 0 ? data.width : 0));
-
+    data.xHistory.push(data.x);
     data.yHistory.push(data.y);
 
     if (data.xHistory.length > data.trailerCount + 1) {
@@ -914,6 +920,7 @@ const SmartMissile = (options = {}) => {
       width,
       halfWidth: width / 2,
       height,
+      halfHeight: height / 2,
       gravity: 1,
       damagePoints: 12.5,
       isBanana: !!options.isBanana,
