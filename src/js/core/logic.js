@@ -518,12 +518,15 @@ function isFacingTarget(tData, sData) {
    */
   if (!tData || !sData) return;
 
+  // "is the target to the left?"
+  let tLeft = tData.x + tData.width < sData.x;
+
   if (sData.isEnemy) {
-    if (tData.x + tData.width < sData.x && sData.flipped) return false;
-    if (tData.x + tData.width > sData.x && !sData.flipped) return false;
+    if (tLeft && sData.flipped) return false;
+    if (!tLeft && !sData.flipped) return false;
   } else {
-    if (tData.x + tData.width < sData.x && !sData.flipped) return false;
-    if (tData.x + tData.width > sData.x && sData.flipped) return false;
+    if (tLeft && !sData.flipped) return false;
+    if (!tLeft && sData.flipped) return false;
   }
 
   return true;
