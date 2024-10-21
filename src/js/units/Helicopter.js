@@ -1673,7 +1673,11 @@ const Helicopter = (options = {}) => {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      x: data.x + (data.flipped ? 0 : data.width) - 8,
+      x:
+        data.x +
+        (data.isEnemy
+          ? (data.flipped ? data.width : 0) - 8
+          : (data.flipped ? 0 : data.width) - 8),
       y: data.y + data.halfHeight, // + (data.tilt !== null ? tiltOffset + 2 : 0),
       target: missileTarget,
       // special variants of the smart missile. ;)
