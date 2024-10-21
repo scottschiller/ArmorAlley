@@ -397,7 +397,6 @@ function getNearestObject(source, options = {}) {
     items,
     localObjects,
     tData,
-    isInFront,
     useInFront,
     distanceX,
     distanceY;
@@ -447,19 +446,11 @@ function getNearestObject(source, options = {}) {
         continue;
 
       /**
-       * Is the target in front of the source? Note inclusion of width on friendly chopper.
-       * Once your "nose" crosses over a target, it's considered past you.
+       * If applicable: is the target "in front" of the source, with the target facing it?
        */
-      isInFront = sData.isEnemy
-        ? tData.x < sData.x
-        : tData.x >= sData.x + sData.width;
 
       // additionally: is the helicopter pointed at the thing, and is it "in front" of the helicopter?
-      if (
-        !useInFront ||
-        (useInFront &&
-          ((!sData.flipped && isInFront) || (sData.flipped && !isInFront)))
-      ) {
+      if (!useInFront || isFacingTarget(tData, sData)) {
         // how far to the target?
         distanceX = Math.abs(Math.abs(tData.x) - Math.abs(sData.x));
         distanceY = Math.abs(Math.abs(tData.y) - Math.abs(sData.y));
@@ -518,6 +509,24 @@ function getNearestObject(source, options = {}) {
 
   // default: return the best single candidate.
   return localObjects[0]?.obj;
+}
+
+function isFacingTarget(tData, sData) {
+  /**
+   * Given a target, return true if the source (helicopter) is facing it.
+   * NOTE: sData is assumed to be a helicopter given the flipped property.
+   */
+  if (!tData || !sData) return;
+
+  if (sData.isEnemy) {
+    if (tData.x + tData.width < sData.x && sData.flipped) return false;
+    if (tData.x + tData.width > sData.x && !sData.flipped) return false;
+  } else {
+    if (tData.x + tData.width < sData.x && !sData.flipped) return false;
+    if (tData.x + tData.width > sData.x && sData.flipped) return false;
+  }
+
+  return true;
 }
 
 function objectsInView(
@@ -890,6 +899,7 @@ export {
   collisionCheckX,
   collisionCheckMidPoint,
   collisionTest,
+  isFacingTarget,
   objectInView,
   objectsInView,
   nearbyTest,
