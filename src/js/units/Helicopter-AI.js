@@ -5,8 +5,13 @@
  * Rule-based logic: Detect, target and destroy enemy targets, hide in clouds, return to base as needed and so forth.
  */
 
-import { FPS, rngBool, rngInt, TYPES } from '../core/global.js';
-import { collisionCheckX, objectInView, objectsInView } from '../core/logic.js';
+import { FPS, rngBool, rngInt, tutorialMode, TYPES } from '../core/global.js';
+import {
+  collisionCheckX,
+  isFacingTarget,
+  objectInView,
+  objectsInView
+} from '../core/logic.js';
 import { utils } from '../core/utils.js';
 import { getAverages, Vector } from '../core/Vector.js';
 import {
@@ -25,6 +30,8 @@ import { resetSineWave, wander } from './Helicopter-wander.js';
 import { levelFlags } from '../levels/default.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
+import { gameType } from '../aa.js';
+import { game } from '../core/Game.js';
 
 // low fuel means low fuel. or ammo. or bombs.
 let lowFuelLimit = 30;
@@ -44,6 +51,17 @@ const HelicopterAI = (options = {}) => {
 
   let ahead;
   let lastTarget;
+
+  // "AI-assigned" opposing helicopter targeting
+  let missileTarget;
+  let missileLaunchTimer;
+
+  // at which point the chopper can retaliate
+  let missileEnergyThreshold =
+    gameType === 'extreme' ? 8 : gameType === 'hard' ? 5 : 2;
+
+  // when to go easy on the player, apropos
+  let oneMissileOnly = gameType === 'easy';
 
   // throttle how often paratroopers can be dropped over target(s)
   let paratrooperDropTimer;
@@ -257,7 +275,7 @@ const HelicopterAI = (options = {}) => {
     // ensure the target has *some* room, not almost directly above or below.
     if (
       threat &&
-      options.exports.isFacingTarget(threat) &&
+      isFacingTarget(threat.data, data) &&
       distance(threat.data.x, data.x) >= data.width
     ) {
       data.votes.ammo++;
@@ -465,8 +483,78 @@ const HelicopterAI = (options = {}) => {
     dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
   }
 
+  function maybeRetaliateWithSmartMissile(attacker) {
+    /**
+     * Potential retaliation: Launch smart missile(s) if damaged sufficiently
+     * by opposing helicopter gunfire, depending on game difficulty.
+     */
+
+    // don't do this in certain modes.
+    if (tutorialMode) return;
+
+    // throttle, ignore if active
+    if (missileLaunchTimer) return;
+
+    // need to be armed
+    if (!data.smartMissiles) return;
+
+    // and damaged, depending on difficulty
+    if (data.energy > missileEnergyThreshold) return;
+
+    // and shot by helicopter gunfire
+    if (attacker.data.type !== TYPES.gunfire) return;
+    if (attacker.data.parentType !== TYPES.helicopter) return;
+
+    // look for nearby helicopter
+    let mTarget = objectInView(data, { items: TYPES.helicopter });
+
+    if (!mTarget) return;
+
+    // are there other active missiles targeting the attacking chopper?
+    // launch more only if in hard / extreme mode.
+    if (oneMissileOnly) {
+      let similarMissileCount = 0,
+        i,
+        j;
+
+      for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
+        if (game.objects[TYPES.smartMissile][i].objects.target === mTarget) {
+          similarMissileCount++;
+        }
+      }
+
+      if (similarMissileCount) return;
+    }
+
+    let delay = rngInt(1000, TYPES.helicopter);
+
+    missileLaunchTimer = common.setFrameTimeout(() => {
+      // sanity check, given delay / async...
+      if (data.dead) {
+        missileLaunchTimer = null;
+        return;
+      }
+
+      // "AI" target for helicopter missile launch method
+      // (predetermined rather than real-time, because reasons.)
+      missileTarget = mTarget;
+
+      // it's possible the CPU is being chased, needs to flip to fire.
+      options.exports.checkFacingTarget(mTarget);
+
+      options.exports.setMissileLaunching(true);
+
+      // and, stop momentarily.
+      common.setFrameTimeout(() => {
+        options.exports.setMissileLaunching(false);
+        missileLaunchTimer = null;
+      }, 1 / FPS);
+    }, delay);
+  }
+
   return {
     animate: ai,
+    onHit: maybeRetaliateWithSmartMissile,
     maybeDecoySmartMissile,
     maybeFireAtTarget,
     maybeDropParatroopersNearTarget,

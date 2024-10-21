@@ -2467,6 +2467,14 @@ const Helicopter = (options = {}) => {
     return !data.dead && !attacker.data.dead && attacker.data.isOnScreen;
   }
 
+  function onHit(attacker) {
+    // generic callback event: we've been hit by something.
+    // for helicopters, only of interest for CPU AI.
+    if (data.isCPU) {
+      data.ai?.onHit(attacker);
+    }
+  }
+
   function callMethod(method, params) {
     // no arguments.
     if (params === undefined) return exports[method]();
@@ -3071,6 +3079,7 @@ const Helicopter = (options = {}) => {
     fire,
     init: initHelicopter,
     objects,
+    onHit,
     onLandingPad,
     reactToDamage,
     startRepairing,
