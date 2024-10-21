@@ -608,8 +608,10 @@ const common = {
     tData.energy = newEnergy;
 
     // special cases for updating state
-    if (energyChanged && target.updateHealth) {
-      target.updateHealth(attacker);
+    if (energyChanged) {
+      target?.updateHealth?.(attacker);
+      // callback-style method, e.g., helicopter was shot
+      target?.onHit?.(attacker);
     }
 
     sprites.updateEnergy(target);
