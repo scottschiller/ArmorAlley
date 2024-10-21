@@ -554,6 +554,7 @@ const HelicopterAI = (options = {}) => {
 
   return {
     animate: ai,
+    getMissileTarget: () => missileTarget,
     onHit: maybeRetaliateWithSmartMissile,
     maybeDecoySmartMissile,
     maybeFireAtTarget,

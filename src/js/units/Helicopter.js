@@ -1879,11 +1879,14 @@ const Helicopter = (options = {}) => {
       if (data.smartMissiles > 0) {
         // local chopper may use target from UI
         if (
+          !data.isCPU &&
           data.isLocal &&
           lastMissileTarget?.dom?.o &&
           !lastMissileTarget?.data?.dead
         ) {
           missileTarget = lastMissileTarget;
+        } else if (data.isCPU && data.ai?.getMissileTarget) {
+          missileTarget = data.ai.getMissileTarget();
         } else {
           missileTarget = getNearestObject(exports, { useInFront: true });
         }
