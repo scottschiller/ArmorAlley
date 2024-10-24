@@ -357,7 +357,7 @@ function avoidAboveOrBelow(tData, data) {
     Math.abs(tData.y - data.y) < data.height * 2
   ) {
     // something is near the chopper - dodge up or down, in particular.
-    let avoidMag = 0.125;
+    let avoidMag = 0.5;
     let avoidForce = improvedAvoid(data, { data: tData }, avoidMag);
     addForce(data, avoidForce, 'avoid', tData.type);
     return true;
