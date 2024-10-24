@@ -263,8 +263,8 @@ function avoidBuildings(data) {
       TYPES.superBunker,
       TYPES.chain
     ],
-    256
-  );
+    MAX_AVOID_AHEAD
+  ).concat(findEnemy(data, [TYPES.helicopter], 256));
 
   let steerTarget;
 
