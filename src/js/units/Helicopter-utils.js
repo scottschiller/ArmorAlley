@@ -2,7 +2,7 @@ import { objectsInView } from '../core/logic.js';
 
 // CPU threshold for "dangerously-low" flying
 const TOO_LOW = 320;
-const MAX_AVOID_AHEAD = 100;
+const MAX_AVOID_AHEAD = 64;
 const MAX_VELOCITY = 8;
 
 function distance(a, b) {
