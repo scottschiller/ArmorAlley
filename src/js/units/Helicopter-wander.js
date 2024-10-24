@@ -32,6 +32,8 @@ function wander(data) {
 
   let accel = new Vector();
 
+  let onlyDodgingAmmo = data.forces.avoid && (Object.keys(data.forces.avoid).length === 1 && data.forces.avoid.munition);
+
   if (!data.wantsLandingPad) {
     if (data.isEnemy) {
       if (
@@ -40,10 +42,13 @@ function wander(data) {
       ) {
         data.defaultDirection = !data.defaultDirection;
       }
-      accel.x +=
-        (data.vYMax / 30) *
-        (data.defaultDirection ? -1 : 1) *
-        GAME_SPEED_RATIOED;
+      if (!data.forces.avoid || onlyDodgingAmmo) {
+        // don't always accelerate toward other end
+        accel.x +=
+          (data.vYMax / 30) *
+          (data.defaultDirection ? -1 : 1) *
+          GAME_SPEED_RATIOED;
+      }
     } else {
       if (
         (data.vX > 0 &&
@@ -53,17 +58,20 @@ function wander(data) {
       ) {
         data.defaultDirection = !data.defaultDirection;
       }
-      accel.x +=
-        (data.vYMax / 30) *
-        (data.defaultDirection ? 1 : -1) *
-        GAME_SPEED_RATIOED;
+      if (!data.forces.avoid || onlyDodgingAmmo) {
+        // don't always accelerate toward other end
+        accel.x +=
+          (data.vXMax / 30) *
+          (data.defaultDirection ? 1 : -1) *
+          GAME_SPEED_RATIOED;
+      }
     }
   }
 
   // no sine wave if "avoid" - UNLESS, only gunfire / munition being dodged.
   if (
     !data.forces.avoid ||
-    (Object.keys(data.forces.avoid).length === 1 && data.forces.avoid.munition)
+    onlyDodgingAmmo
   ) {
     accel.y += sineWave(data);
   }
