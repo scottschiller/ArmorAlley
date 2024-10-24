@@ -333,7 +333,8 @@ function avoidBuildings(data) {
           compositeObj.y,
           compositeObj.width,
           compositeObj.height,
-          '#ff6666'
+          '#ff6666',
+          'rgba(255, 0, 0, 0.33)'
         );
       }
     }
