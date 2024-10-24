@@ -25,7 +25,7 @@ import { levelFlags } from '../levels/default.js';
 const debugCanvas = searchParams.get('debugCanvas');
 const whiskerColor = '#888';
 
-function improvedAvoid(data, nearbyObstacle, avoidScale = 0.125) {
+function improvedAvoid(data, nearbyObstacle, avoidScale = 0.67) {
   let target = new Vector(nearbyObstacle.data.x, nearbyObstacle.data.y);
   let pos = new Vector(data.x, data.y);
   let velocity = new Vector(data.vX, data.vY);
@@ -42,12 +42,6 @@ function improvedAvoid(data, nearbyObstacle, avoidScale = 0.125) {
 
   // and reverse.
   avoidance.mult(-1);
-
-  // special case, "wall" navigation: avoid "composite" objects (bunker / chain / balloon) by ensuring upward movement.
-  if (nearbyObstacle.data.type === 'composite' && avoidance.y > 0) {
-    // head upward, and amp up avoidance a bit.
-    avoidance.y *= -1.1;
-  }
 
   if (data.y > TOO_LOW && (data.vY > 0 || avoidance.y > 0)) {
     // TOO LOW case: avoidance might be trying to move further downward to ignore a ground unit, i.e., bunker. Ignore and move upward.
