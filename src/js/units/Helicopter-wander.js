@@ -6,8 +6,11 @@ import { Vector } from '../core/Vector.js';
 import { addForce } from './Helicopter-forces.js';
 import { brakeY } from './Helicopter-utils.js';
 
-const END_OF_WORLD_LEFT = 0;
-const END_OF_WORLD_RIGHT = 8192;
+// a bit of breathing room
+const END_OF_WORLD_BUFFER = 128;
+
+const END_OF_WORLD_LEFT = 0 + END_OF_WORLD_BUFFER;
+const END_OF_WORLD_RIGHT = 8192 - END_OF_WORLD_BUFFER;
 
 function wander(data) {
   // default: go "toward the other guys" - and reverse if we reach the end of the world.
@@ -35,7 +38,6 @@ function wander(data) {
         (data.vX < 0 && data.x <= END_OF_WORLD_LEFT && data.defaultDirection) ||
         (data.vX > 0 && data.x >= END_OF_WORLD_RIGHT && !data.defaultDirection)
       ) {
-        // console.log('REACHED LEFT BASE - heading RIGHT');
         data.defaultDirection = !data.defaultDirection;
       }
       accel.x +=
@@ -49,7 +51,6 @@ function wander(data) {
           data.defaultDirection) ||
         (data.vX < 0 && data.x <= END_OF_WORLD_LEFT && !data.defaultDirection)
       ) {
-        // console.log('REACHED RIGHT BASE - heading LEFT');
         data.defaultDirection = !data.defaultDirection;
       }
       accel.x +=
