@@ -285,18 +285,6 @@ function avoidBuildings(data) {
       steerTarget = b;
     }
 
-    // can this item be excluded? i.e., helicopter is moving away from it (and not a balloon or the human chopper)
-    if (b.data.type !== TYPES.balloon && b.data.type !== TYPES.helicopter) {
-      if (data.vX > 0 && b.data.x < data.x) {
-        // obstacle to the left, chopper moving right
-        return;
-      }
-      if (data.vX < 0 && b.data.x > data.x) {
-        // obstacle to the right, chopper moving left
-        return;
-      }
-    }
-
     if (debugCanvas && b) {
       // console.log('found building', b.data.guid, b.data.y, data.y);
       common.domCanvas.drawDebugRect(
