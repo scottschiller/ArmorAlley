@@ -85,7 +85,9 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
   }
 
   // figure out angle, then subtract an amount
-  // opposite and adjacent are known
+
+  // TODO: DRY
+
   let angle = velocity.getAngle();
 
   let whiskerAngleOffset = 40 * (Math.PI / 180);
@@ -132,6 +134,28 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
   let below = position.clone();
   below.add(tvBelow);
 
+  // rear, lower
+
+  let rearWhisker = position.clone();
+
+  let tvRear = new Vector(MAX_VELOCITY, MAX_VELOCITY);
+
+  tvRear.setMag((magVel * 2) / 3);
+
+  rearWhisker.add(tvRear);
+
+  // front, lower
+
+  let frontWhisker = position.clone();
+
+  let tvFront = new Vector(-MAX_VELOCITY, MAX_VELOCITY);
+
+  tvFront.setMag((magVel * 2) / 3);
+
+  frontWhisker.add(tvFront);
+
+  // ---
+
   if (debugCanvas) {
     common.domCanvas.drawForceVector(position, tvLeft, whiskerColor, 1);
     common.domCanvas.drawPoint(leftWhisker, whiskerColor);
@@ -144,13 +168,26 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
 
     common.domCanvas.drawForceVector(position, tvBelow, whiskerColor, 1);
     common.domCanvas.drawPoint(below, whiskerColor);
+
+    common.domCanvas.drawForceVector(position, tvRear, whiskerColor, 1);
+    common.domCanvas.drawPoint(rearWhisker, whiskerColor);
+
+    common.domCanvas.drawForceVector(position, tvFront, whiskerColor, 1);
+    common.domCanvas.drawPoint(frontWhisker, whiskerColor);
   }
 
   let avoidCount = 0;
   let newAvoidance;
   let totalAvoidance = new Vector(0, 0);
 
-  let vehicleLines = [ahead, leftWhisker, rightWhisker, above, below];
+  let vehicleLines = [
+    ahead,
+    leftWhisker,
+    rightWhisker,
+    above,
+    below,
+    rearWhisker
+  ];
 
   for (let i = 0; i < obstacles.length; i++) {
     let obstacle = obstacles[i];
