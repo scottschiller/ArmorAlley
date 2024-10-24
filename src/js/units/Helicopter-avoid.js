@@ -220,6 +220,10 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
 
         // add all obstacle avoidance vectors, then divide to get the average.
         if (collision) {
+          if (debugCanvas) {
+            common.domCanvas.drawPoint(vehicleLines[j], '#ff33ff');
+          }
+
           avoidCount++;
 
           newAvoidance = improvedAvoid(data, {
