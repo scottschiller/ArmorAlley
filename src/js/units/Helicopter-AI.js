@@ -345,7 +345,12 @@ const HelicopterAI = (options = {}) => {
     ) {
       // go for it!
       data.foundSteerTarget = true;
-      steerTowardTarget(data, tData, tData.type === TYPES.cloud ? -1 : 64);
+      // TODO: review offset logic.
+      steerTowardTarget(
+        data,
+        tData,
+        tData.type === TYPES.cloud ? -1 : data.halfWidth
+      );
     }
   }
 
