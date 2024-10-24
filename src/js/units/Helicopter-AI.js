@@ -388,7 +388,7 @@ const HelicopterAI = (options = {}) => {
       // TODO: refactor and tidy up.
       distance(targetData.y, data.y) <
         (!isHelicopter
-          ? data.halfHeight
+          ? data.height
           : levelFlags.bullets
             ? data.height * 1.5
             : data.height) &&
@@ -396,9 +396,7 @@ const HelicopterAI = (options = {}) => {
       (!isHelicopter ||
         levelFlags.bullets ||
         targetData.y > data.y ||
-        data.y < 48) &&
-      // try to limit velocity, OR, eliminate use of angle on gunfire.
-      (isHelicopter || (Math.abs(data.vY) <= 3 && Math.abs(data.vX < 5)))
+        data.y < 48)
     ) {
       data.votes.ammo++;
       data.ammoTargets.push(targetData);
