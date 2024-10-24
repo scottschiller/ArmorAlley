@@ -427,7 +427,7 @@ function avoidNearbyMunition(data) {
   if (!validObstacle) return;
 
   // incoming munition or object
-  let avoidScale = isTurretGunfire || isSmartMissile ? 2 : 0;
+  let avoidScale = isTurretGunfire || isSmartMissile ? 3 : undefined;
   let avoidMunition = improvedAvoid(data, nearbyObstacle, avoidScale);
 
   // hackish: reduce X avoidance of gunfire and smart missiles significantly.
