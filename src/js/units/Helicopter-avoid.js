@@ -195,8 +195,8 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
 
     // aligned, or too close on X? if so, check that Y delta is "risky."
     collision =
-      (Math.abs(obstacle.data.x - data.x) < 72 ||
-        collisionCheckX(obstacle.data, data)) &&
+      // note: using lookahead
+      collisionCheckX(obstacle.data, data, MAX_AVOID_AHEAD) &&
       Math.abs(data.y - obstacle.data.y) < data.height * 2;
 
     if (collision) {
