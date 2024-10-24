@@ -316,10 +316,7 @@ function avoidBuildings(data) {
       }
     }
 
-    // exclude balloons, unless they lack a chain.
-    if ((b && b.data.type !== TYPES.balloon) || !b.objects?.chain) {
-      parsedBuildings.push(b);
-    }
+    parsedBuildings.push(b);
   });
 
   let avoidance = collisionAvoidance(
