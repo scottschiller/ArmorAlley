@@ -203,7 +203,7 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
       avoidCount++;
 
       // slow down, braking effect?
-      brakeXY(data, 0.95);
+      brakeXY(data, 0.975);
 
       newAvoidance = improvedAvoid(data, obstacle);
 
