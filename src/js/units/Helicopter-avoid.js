@@ -1,7 +1,7 @@
 // helicopter AI extension: avoidance methods
 
 import { searchParams, TYPES } from '../core/global.js';
-import { collisionCheckX } from '../core/logic.js';
+import { collisionCheckX, isFacingTarget } from '../core/logic.js';
 import {
   averageForce,
   MAX_AVOID_AHEAD,
@@ -202,6 +202,10 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
     if (collision) {
       avoidCount++;
 
+      if (obstacle.data.type === 'composite') {
+        totalAvoidance.add(avoidComposite(obstacle, data));
+      }
+
       // slow down, braking effect?
       brakeXY(data, 0.975);
 
@@ -226,12 +230,16 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
 
           avoidCount++;
 
+          if (obstacle.data.type === 'composite') {
+            totalAvoidance.add(avoidComposite(obstacle, data));
+          }
+
           newAvoidance = improvedAvoid(data, {
             data: { x: vehicleLines[j].x, y: vehicleLines[j].y }
           });
-        }
 
-        totalAvoidance.add(newAvoidance);
+          totalAvoidance.add(newAvoidance);
+        }
       }
     }
   }
@@ -245,6 +253,20 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
   }
 
   return totalAvoidance;
+}
+
+function avoidComposite(obstacle, data) {
+  // hackish: if there is a "composite" object in the mix, brake on X and add an upward vertical force.
+  // this is to help ensure that the chopper slows down and flies upward to avoid bunker -> chain -> balloon structures.
+  // brake somewhat aggressively
+  brakeXY(data, 0.975);
+  // if facing the obstacle, navigate upward to try to get above it.
+  if (isFacingTarget(obstacle.data, data)) {
+    // move upward to avoid obstacle in path
+    return new Vector(0, -0.66);
+  }
+  // no change.
+  return new Vector(0, 0);
 }
 
 function avoidBuildings(data) {
