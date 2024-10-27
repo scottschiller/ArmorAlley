@@ -270,6 +270,11 @@ const Notifications = () => {
       add('🚁 You are now equipped with aimed missiles. 🚀');
     }
 
+    // notify when the player has napalm, when it's the exception.
+    if ((gameType === 'easy' || gameType === 'hard') && levelFlags.napalm) {
+      add('💣 Your bombs now have napalm. 🔥');
+    }
+
     // level flags
     if (levelFlags.jamming) {
       add('⚠️ JAMMING MODE: Radar is inoperable.');
