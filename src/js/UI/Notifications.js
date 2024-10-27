@@ -267,7 +267,7 @@ const Notifications = () => {
     game.objects.view.setAnnouncement(msg);
 
     if (!levelFlags.bullets) {
-      add('Your helicopter is now armed with aimed missiles.');
+      add('🚁 You are now equipped with aimed missiles. 🚀');
     }
 
     // level flags
