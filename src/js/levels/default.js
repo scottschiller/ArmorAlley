@@ -173,13 +173,10 @@ let levelFlags;
 // TODO: override when playing a custom level that might have flags specified, e.g., &fb=1&fn=0&fs=0&fj=0
 const defaultFlags = [1, 0, 0, 0, 0, 0];
 
-// restrict bullet / aimed missile game flag to dev, for now.
-const isProd = !!window.location.host.match(/armor-alley\.net/i);
-
 function parseFlags(levelName) {
   const f = flagsByLevel[gamePrefs.game_type]?.[levelName] || defaultFlags;
   return {
-    bullets: isProd ? 1 : f[0],
+    bullets: f[0],
     napalm: f[1],
     stealth: f[2],
     jamming: f[3],
