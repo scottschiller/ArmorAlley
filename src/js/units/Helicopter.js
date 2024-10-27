@@ -1829,9 +1829,15 @@ const Helicopter = (options = {}) => {
         if (data.isLocal) {
           updated.ammo = true;
         }
-      } else if (data.isLocal && sounds.inventory.denied) {
-        // player is out of ammo.
-        playSound(sounds.inventory.denied);
+      } else {
+        // special case: allow CPU to fire smart missiles in some cases, when out of aimed missiles.
+        if (data.isCPU && !levelFlags.bullets && !data.isRemote) {
+          data.ai?.maybeRetaliateWithSmartMissile?.();
+        }
+        if (data.isLocal && sounds.inventory.denied) {
+          // player is out of ammo.
+          playSound(sounds.inventory.denied);
+        }
       }
 
       // SHIFT key still down?

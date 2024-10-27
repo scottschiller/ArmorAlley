@@ -490,7 +490,8 @@ const HelicopterAI = (options = {}) => {
   function maybeRetaliateWithSmartMissile(attacker) {
     /**
      * Potential retaliation: Launch smart missile(s) if damaged sufficiently
-     * by opposing helicopter gunfire, depending on game difficulty.
+     * by opposing helicopter gunfire depending on game difficulty, OR, when
+     * armed with "dumb" aimed missiles, and out of those.
      */
 
     // don't do this in certain modes.
@@ -502,12 +503,20 @@ const HelicopterAI = (options = {}) => {
     // need to be armed
     if (!data.smartMissiles) return;
 
-    // and damaged, depending on difficulty
-    if (data.energy > missileEnergyThreshold) return;
+    // common case: armed with bullets.
+    if (levelFlags.bullets) {
+      // need to be damaged, depending on difficulty
+      if (data.energy > missileEnergyThreshold) return;
 
-    // and shot by helicopter gunfire
-    if (attacker.data.type !== TYPES.gunfire) return;
-    if (attacker.data.parentType !== TYPES.helicopter) return;
+      // and shot by helicopter gunfire
+      if (!attacker?.data) return;
+      if (attacker.data.type !== TYPES.gunfire) return;
+      if (attacker.data.parentType !== TYPES.helicopter) return;
+    } else {
+      // aimed missile battle case: only fire smart missiles if out of aimed missiles.
+      // ignore damage check, because one missile hit = dead.
+      if (data.ammo) return;
+    }
 
     // look for nearby helicopter
     let mTarget = objectInView(data, { items: TYPES.helicopter });
@@ -563,6 +572,7 @@ const HelicopterAI = (options = {}) => {
     maybeDecoySmartMissile,
     maybeFireAtTarget,
     maybeDropParatroopersNearTarget,
+    maybeRetaliateWithSmartMissile,
     resetSineWave
   };
 };
