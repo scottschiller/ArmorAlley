@@ -267,7 +267,7 @@ const Notifications = () => {
     game.objects.view.setAnnouncement(msg);
 
     if (!levelFlags.bullets) {
-      add('Aimed missiles are now your primary weapon.');
+      add('Your helicopter is now armed with aimed missiles.');
     }
 
     // level flags
