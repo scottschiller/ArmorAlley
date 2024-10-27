@@ -374,8 +374,19 @@ const Radar = () => {
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
-    // ignore while jammed, since this "relies" on working radar.
-    if (data.isJammed) return;
+    /**
+     * Ignore while jammed, OR, "target is helicopter but hidden for this battle
+     * because of helicopter stealth mode," since this "relies" on working radar.
+     */
+    //
+    if (
+      data.isJammed ||
+      (levelFlags.stealth && targetItem.oParent.data.type === TYPES.helicopter)
+    ) {
+      return;
+    }
+
+    dom.targetMarker.style.opacity = 1;
 
     // sanity check: ensure this object still exists.
     if (!targetItem?.oParent?.dom?.o) return;
@@ -452,7 +463,6 @@ const Radar = () => {
     }
 
     if (!data.radarTarget && targetItem) {
-      dom.targetMarker.style.opacity = 1;
       const allowTransition = true;
       updateTargetMarker(targetItem, allowTransition);
     } else if (data.radarTarget && !targetItem) {
