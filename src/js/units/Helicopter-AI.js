@@ -341,7 +341,9 @@ const HelicopterAI = (options = {}) => {
       !data.wantsLandingPad &&
       // don't go explicitly after balloons.
       tData.type !== TYPES.balloon &&
-      !isStructure
+      !isStructure &&
+      // don't try to go after landed helicopters.
+      !tData.landed
     ) {
       // go for it!
       data.foundSteerTarget = true;
