@@ -3348,10 +3348,10 @@ Helicopter.radarItemConfig = (exports) => ({
   width: 2.5 * (isiPhone ? 1.33 : 1),
   height: 2.5 * (isiPhone ? 1.33 : 1),
   draw: (ctx, obj, pos, width, height) => {
-    // don't draw other team's choppers if playing a battle with steath mode
+    // don't draw other team's choppers if playing a battle with steath mode, and not in view
     if (
       exports?.data?.cloaked ||
-      (exports.data.stealth &&
+      ((exports.data.stealth && !exports.data.isOnScreen) &&
         exports.data.isEnemy !== game.players.local.data.isEnemy)
     )
       return;
