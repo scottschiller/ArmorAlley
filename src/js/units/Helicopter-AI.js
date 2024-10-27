@@ -153,10 +153,6 @@ const HelicopterAI = (options = {}) => {
     // offensive
     maybeFireOrBomb(data, options);
 
-    // reset
-    data.ammoTargets = [];
-    data.bombTargets = [];
-
     // motion
     wander(data);
 
