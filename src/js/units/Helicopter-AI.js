@@ -256,6 +256,17 @@ const HelicopterAI = (options = {}) => {
         maybeBombTarget(target);
       }
     }
+
+    // always be up for bombing opposing choppers.
+    for (var i = 0, j = game.objects.helicopter.length; i < j; i++) {
+      // opposing, plus not already a current target...
+      if (
+        game.objects.helicopter[i].data.isEnemy !== data.isEnemy &&
+        game.objects.helicopter[i] !== target
+      ) {
+        maybeBombTarget(game.objects.helicopter[i]);
+      }
+    }
   }
 
   function checkThreats() {
