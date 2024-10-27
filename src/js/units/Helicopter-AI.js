@@ -370,11 +370,7 @@ const HelicopterAI = (options = {}) => {
     const targetData = target?.data;
     if (!targetData) return;
 
-    if (
-      collisionCheckX(targetData, data) &&
-      data.y < targetData.y &&
-      Math.abs(data.vX) <= Math.abs(targetData.vX)
-    ) {
+    if (collisionCheckX(targetData, data) && data.y < targetData.y) {
       // align on X-axis, and player / balloon / tank is below...
       // drop ze bombs!
       brakeX(data, 0.98);
