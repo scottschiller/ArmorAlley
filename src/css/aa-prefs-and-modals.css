@@ -559,18 +559,10 @@ body.is_iphone #game-prefs-modal button {
   display: none;
 }
 
-#game-prefs-modal:not(.easy) ul.monospace li label pre q {
-  /* battle "flags" to be shown only under boot camp mode */
-  visibility: hidden;
-}
-
 #game-prefs-modal.easy ul.monospace li label pre b.q {
   /* hackish: extreme mode flag also needs to show for easy mode. */
   visibility: visible;
-}
-
-#game-prefs-modal.easy ul.monospace li label pre s {
-  visibility: hidden;
+  color: #000;
 }
 
 .mac-classic ul.monospace li label pre u {
@@ -578,20 +570,38 @@ body.is_iphone #game-prefs-modal button {
   text-decoration: none;
 }
 
+.mac-classic {
+  --disabled-flag: #ccc;
+}
+
+.mac-classic ul.monospace li label pre i {
+  /* flags that are always in the off/inactive stats */
+  color: var(--disabled-flag);
+}
+
+#game-prefs-modal:not(.easy) ul.monospace li label pre q {
+  /* when *not* in "boot camp" mode */
+  color: var(--disabled-flag);
+}
+
+#game-prefs-modal.easy ul.monospace li label pre s {
+  color: var(--disabled-flag);
+}
+
 #game-prefs-modal.extreme ul.monospace li label pre u {
   /* battle "flags" to be hidden under extreme mode */
-  visibility: hidden;
+  color: var(--disabled-flag);
 }
 
 .mac-classic ul.monospace li label pre b {
   /* battle "flags" for extreme mode */
   font-weight: normal;
-  visibility: hidden;
+  color: var(--disabled-flag);
 }
 
 #game-prefs-modal.extreme ul.monospace li label pre b {
   /* only show "extreme" flags in extreme mode */
-  visibility: visible;
+  color: #000;
 }
 
 .mac-classic ul.monospace li pre {
