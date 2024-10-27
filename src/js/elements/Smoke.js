@@ -12,6 +12,7 @@ import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gamePrefs } from '../UI/preferences.js';
+import { levelFlags } from '../levels/default.js';
 
 const Smoke = (options = {}) => {
   let dom, data, exports;
@@ -102,7 +103,11 @@ const Smoke = (options = {}) => {
     }
 
     // smoke particles on radar, why not.
-    if (gamePrefs.radar_enhanced_fx && !game.objects.radar.data.isJammed) {
+    if (
+      gamePrefs.radar_enhanced_fx &&
+      !game.objects.radar.data.isJammed &&
+      !data.isStealthSmoke
+    ) {
       common.domCanvas.draw({
         data: {
           type: 'on-radar',
@@ -174,6 +179,13 @@ const Smoke = (options = {}) => {
       vX: options.vX !== undefined ? options.vX : plusMinus(rnd(3)),
       vY: options.vY !== undefined ? options.vY : -rnd(3),
       parentWasCloaked: options.parentWasCloaked,
+      // don't draw if originating from an opposing helicopter that should be hidden, unless it's in view.
+      isStealthSmoke:
+        levelFlags.stealth &&
+        options.oParent &&
+        options.oParent.data.type === TYPES.helicopter &&
+        !options.oParent.data.isOnScreen &&
+        options.oParent.data.isEnemy !== game.players.local.data.isEnemy,
       oParent: options.oParent
     },
     options
