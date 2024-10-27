@@ -3360,7 +3360,8 @@ Helicopter.radarItemConfig = (exports) => ({
     // don't draw other team's choppers if playing a battle with steath mode, and not in view
     if (
       exports?.data?.cloaked ||
-      ((exports.data.stealth && !exports.data.isOnScreen) &&
+      (exports.data.stealth &&
+        !exports.data.isOnScreen &&
         exports.data.isEnemy !== game.players.local.data.isEnemy)
     )
       return;
