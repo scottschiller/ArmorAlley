@@ -1497,13 +1497,22 @@ const Helicopter = (options = {}) => {
   }
 
   function getBombParams() {
+    let vX = data.vX * 0.625;
+
+    // CPU advantage: subtract some of the difference between CPU and target vX.
+    if (data.isCPU && data.bombTargets?.[0]) {
+      // give CPU more of an edge, depending on difficulty.
+      let bombAccuracy =
+        gameType === 'extreme' ? 2 : gameType === 'hard' ? 3 : 4;
+      vX -= (vX - data.bombTargets[0].vX) / bombAccuracy;
+    }
     return {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
       x: data.x + data.halfWidth,
       y: data.y + data.height - 6,
-      vX: data.vX * 0.625,
+      vX,
       vY: data.vY,
       napalm: levelFlags.napalm
     };
