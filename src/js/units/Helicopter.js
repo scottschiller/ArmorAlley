@@ -2585,7 +2585,7 @@ const Helicopter = (options = {}) => {
             : gameType === 'hard'
               ? 3
               : 5
-          : FPS / (gameType === 'extreme' ? 3 : gameType === 'hard' ? 2 : 1),
+          : FPS / (gameType === 'extreme' ? 6 : gameType === 'hard' ? 3 : 2),
         balloon: levelFlags.bullets ? 10 : FPS * 1.5
       }
     },
