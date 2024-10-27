@@ -275,18 +275,14 @@ const Notifications = () => {
       add('⚠️ JAMMING MODE: Radar is inoperable.');
       game.objects.radar.startJamming();
     } else if (levelFlags.stealth) {
-      add(
-        '⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷'
-      );
+      add('⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷');
     }
 
     // special case
     if (levelName === 'Rainstorm') {
       common.setFixedFrameTimeout(() => {
         effects.updateStormStyle('rain');
-        add(
-          '☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)'
-        );
+        add('☂️ Weather update: rainstorm 🌧️<br />(Disable in options.)');
       }, 5000);
     }
 
