@@ -385,18 +385,12 @@ const HelicopterAI = (options = {}) => {
     if (!targetData) return;
 
     let isHelicopter = targetData.type === TYPES.helicopter;
+    let dX = distance(targetData.x, data.x);
     if (
-      distance(targetData.x, data.x) < 320 &&
-      // ignore if overlapping on X, because target is then directly above or underneath.
-      !collisionCheckX(targetData, data) &&
-      // NOTE: tighter Y restrictions when using guided missiles vs. bullets.
-      // TODO: refactor and tidy up.
-      distance(targetData.y, data.y) <
-        (!isHelicopter
-          ? data.height
-          : levelFlags.bullets
-            ? data.height * 1.5
-            : data.height) &&
+      // ignore if too far away, OR basically right above / underneath.
+      dX < 320 &&
+      dX > data.width &&
+      distance(targetData.y, data.y) < data.height * 1.5 &&
       // if helicopter + guided missiles, ensure CPU is above human chopper OR near top of screen as missiles "fall" downward.
       (!isHelicopter ||
         levelFlags.bullets ||
