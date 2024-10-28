@@ -1044,6 +1044,15 @@ const common = {
     if (!data) return;
     // even if unlimited mode, exclude remote + CPUs.
     return !common.unlimitedLivesMode() && data.isLocal && !data.isCPU;
+  },
+
+  easing: {
+    // hat tip: https://gizma.com/easing
+    cubic: (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2),
+    easeInOutSine: (x) => -(Math.cos(Math.PI * x) - 1) / 2,
+    quart: (x) =>
+      x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2,
+    quad: (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
   }
 };
 

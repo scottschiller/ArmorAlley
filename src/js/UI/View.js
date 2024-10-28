@@ -55,12 +55,6 @@ function dropOff(x) {
   return (Math.cos(Math.PI * x) + 1) / 2;
 }
 
-const easing = {
-  // hat tip: https://gizma.com/easing
-  quart: (x) => (x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2),
-  quad: (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
-};
-
 // TOOD: clean this up. :P
 let animateScrollActive;
 let animateScrollFrame = 0;
@@ -95,7 +89,7 @@ const View = () => {
       // 1/x, up to 1
       animateScrollFrames[i] =
         data.battleField.scrollLeft -
-        easing[easingMethod](i / animateScrollDuration) * animateScrollDelta;
+        common.easing[easingMethod](i / animateScrollDuration) * animateScrollDelta;
     }
 
     // Reset local stuff

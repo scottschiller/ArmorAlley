@@ -43,14 +43,6 @@ const CSS_SCALING_PORTRAIT_TABLET = 0.5;
 const CSS_SCALING_LANDSCAPE_PHONE = 1.25;
 const CSS_SCALING_PORTRAIT_PHONE = 0.35;
 
-// old-skool JS animation bits, stolen from View. TODO: DRY this up.
-
-const easing = {
-  // hat tip: https://gizma.com/easing
-  quart: (x) => (x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2),
-  quad: (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
-};
-
 let transitionScaleActive;
 let transitionScaleFrame;
 let transitionScaleFrames = [];
@@ -811,7 +803,7 @@ const Radar = () => {
     setScale(enable ? getDefaultScaling() : 1);
   }
 
-  function transitionScale(newScale, easingMethod = easing.quart) {
+  function transitionScale(newScale, easingMethod = common.easing.quart) {
     transitionScaleActive = true;
     transitionScaleFrame = 0;
     const transitionScaleDelta = data.scale - newScale;
