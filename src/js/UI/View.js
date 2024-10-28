@@ -89,7 +89,8 @@ const View = () => {
       // 1/x, up to 1
       animateScrollFrames[i] =
         data.battleField.scrollLeft -
-        common.easing[easingMethod](i / animateScrollDuration) * animateScrollDelta;
+        common.easing[easingMethod](i / animateScrollDuration) *
+          animateScrollDelta;
     }
 
     // Reset local stuff
