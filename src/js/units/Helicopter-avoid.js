@@ -21,6 +21,7 @@ import { addForce } from './Helicopter-forces.js';
 import { steerTowardTarget } from './Helicopter-steering.js';
 import { common } from '../core/common.js';
 import { levelFlags } from '../levels/default.js';
+import { gameType } from '../aa.js';
 
 const debugCanvas = searchParams.get('debugCanvas');
 const whiskerColor = '#888';
@@ -397,6 +398,8 @@ function avoidNearbyMunition(data) {
 
   let isTurretGunfire;
   let isSmartMissile;
+  let isAimedMissile;
+  let fromHelicopter;
 
   // don't dodge gunfire that's moving away / past chopper.
   if (nearbyObstacle) {
@@ -438,7 +441,10 @@ function avoidNearbyMunition(data) {
     );
     nearbyObstacle = gunfireObstacles[0];
     validObstacle = !!nearbyObstacle;
-    isSmartMissile = validObstacle;
+    isSmartMissile =
+      validObstacle && nearbyObstacle.data.type === TYPES.smartMissile;
+    isAimedMissile =
+      validObstacle && nearbyObstacle.data.type === TYPES.aimedMissile;
   }
 
   if (!validObstacle) {
@@ -461,6 +467,19 @@ function avoidNearbyMunition(data) {
   } else {
     // cut down X-axis movement for regular case.
     avoidMunition.x *= 0.5;
+  }
+
+  // did the munition originate from a chopper?
+  fromHelicopter = nearbyObstacle.data.parentType === TYPES.helicopter;
+
+  // player may be targeting CPU with dumb (aimed) or smart missiles.
+  // in certain modes, maybe "retaliate" by starting to target helicopters if not already.
+  if (
+    !data.targeting.helicopters &&
+    (isAimedMissile || isSmartMissile) &&
+    (gameType === 'hard' || gameType === 'extreme')
+  ) {
+    data.ai.maybeChaseHelicopters();
   }
 
   // avoid getting stuck at the top; dive below if near the top of the screen.
