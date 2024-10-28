@@ -2591,7 +2591,7 @@ const Helicopter = (options = {}) => {
       modern: 4,
       cpu: {
         // special firing rates
-        balloon: 30,
+        balloon: 90,
         helicopter: 60,
         tank: 20
       }
