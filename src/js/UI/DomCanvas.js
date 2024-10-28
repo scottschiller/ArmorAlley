@@ -904,7 +904,7 @@ const DomCanvas = () => {
     if (energy === 1) return;
 
     let outerRadius = 4.25;
-    let innerRadius = 3;
+    let innerRadius = 3.125;
 
     // TODO: DRY.
     let left = exports.data.x;
@@ -995,7 +995,7 @@ const DomCanvas = () => {
       false
     );
     ctx.lineWidth = 3;
-    ctx.strokeStyle = 'rgba(32, 32, 32, 1)';
+    ctx.strokeStyle = 'rgba(16, 16, 16, 1)';
     ctx.stroke();
 
     if (energy > 0.66) {
@@ -1005,6 +1005,8 @@ const DomCanvas = () => {
     } else {
       ctx.strokeStyle = '#cc3333';
     }
+
+    ctx.lineWidth = 3;
 
     ctx.beginPath();
     // start from 12 o'clock, then go counter-clockwise as energy decreases.
@@ -1016,29 +1018,34 @@ const DomCanvas = () => {
       -Math.PI / 2 + Math.PI * 2 * energy,
       false
     );
-    ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // plus sign when repairing (helicopters) / energy is going up (turret + tank self-repair.)
-    // half-duty-cycle, flashing on/off pattern.
+    // animation when repairing (helicopters) / energy is going up (turret + tank self-repair.)
     if (
-      (exports.data.repairing ||
-        exports.data.energy > exports.data.lastEnergy) &&
-      game.objects.gameLoop.data.frameCount % FPS < FPS / 2
+      exports.data.repairing ||
+      exports.data.energy > exports.data.lastEnergy
     ) {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.66)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+
+      let progress = common.easing.cubic(
+        (game.objects.gameLoop.data.frameCount % FPS) / FPS
+      );
+
+      // start moving circle start point forward, and shrinking ring size toward end.
+      let offset = progress > 0.5 ? progress - 0.5 : 0;
+
+      // inner animated ring
       ctx.beginPath();
-
-      // line "length"
-      let l = 1.5;
-
-      ctx.moveTo(cx(left), cy(top - l));
-      ctx.lineTo(cx(left), cy(top + l));
-
-      ctx.moveTo(cx(left - l), cy(top));
-      ctx.lineTo(cx(left + l), cy(top));
-
+      ctx.arc(
+        cx(left),
+        cy(top),
+        innerRadius * game.objects.view.data.screenScale,
+        // start
+        -Math.PI / 2 + Math.PI * 2 * offset * 2,
+        // end
+        -Math.PI / 2 + Math.PI * 2 * progress,
+        false
+      );
       ctx.stroke();
     }
 
