@@ -501,18 +501,26 @@ const HelicopterAI = (options = {}) => {
     if (
       !data.targeting.helicopters &&
       // NOTE: parentType for munitions e.g., gunfire from chopper
-      attacker.data.parentType === TYPES.helicopter &&
-      !respondToHitTimer
+      attacker.data.parentType === TYPES.helicopter
     ) {
-      // throttle response, so not every bullet triggers a roll of the dice.
-      respondToHitTimer = common.setFrameTimeout(() => {
-        data.targeting.helicopters = rngBool(data.type);
-        respondToHitTimer = null;
-      }, respondToHitDelay);
+      maybeChaseHelicopters();
     }
 
     // and, maybe fire a smart missile regardless!
     return maybeRetaliateWithSmartMissile(attacker);
+  }
+
+  function maybeChaseHelicopters() {
+    if (data.targeting.helicopters) return;
+
+    // if hit or under attack, maybe start pursuit.
+    if (respondToHitTimer) return;
+
+    // throttle, so not every (e.g.) bullet hit or dodge triggers a roll of the dice.
+    respondToHitTimer = common.setFrameTimeout(() => {
+      data.targeting.helicopters = rngBool(data.type);
+      respondToHitTimer = null;
+    }, respondToHitDelay);
   }
 
   function maybeRetaliateWithSmartMissile(attacker) {
@@ -597,6 +605,7 @@ const HelicopterAI = (options = {}) => {
     animate: ai,
     getMissileTarget: () => missileTarget,
     onHit: respondToHit,
+    maybeChaseHelicopters,
     maybeDecoySmartMissile,
     maybeFireAtTarget,
     maybeDropParatroopersNearTarget,
