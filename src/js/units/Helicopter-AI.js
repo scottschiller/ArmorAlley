@@ -253,9 +253,8 @@ const HelicopterAI = (options = {}) => {
       }
     }
 
-    // always be up for bombing opposing choppers.
+    // always be up for bombing opposing choppers, if not already the target.
     for (var i = 0, j = game.objects.helicopter.length; i < j; i++) {
-      // opposing, plus not already a current target...
       if (
         game.objects.helicopter[i].data.isEnemy !== data.isEnemy &&
         game.objects.helicopter[i] !== target
