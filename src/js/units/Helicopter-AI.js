@@ -213,20 +213,20 @@ const HelicopterAI = (options = {}) => {
     let newTarget;
 
     if (!data.wantsLandingPad) {
-      if (data.targeting.tanks && (data.bombs || data.ammo)) {
-        newTarget = objectInView(data, { items: TYPES.tank });
+      if (!newTarget && data.targeting.helicopters) {
+        newTarget = objectInView(data, { items: TYPES.helicopter });
       }
 
-      if (!newTarget && data.targeting.clouds) {
-        newTarget = objectInView(data, { items: TYPES.cloud });
+      if (data.targeting.tanks && (data.bombs || data.ammo)) {
+        newTarget = objectInView(data, { items: TYPES.tank });
       }
 
       if (!newTarget && data.targeting.bunkers) {
         newTarget = objectInView(data, { items: TYPES.bunker });
       }
 
-      if (!newTarget && data.targeting.helicopters) {
-        newTarget = objectInView(data, { items: TYPES.helicopter });
+      if (!newTarget && data.targeting.clouds) {
+        newTarget = objectInView(data, { items: TYPES.cloud });
       }
 
       if (newTarget) {
