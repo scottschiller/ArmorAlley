@@ -229,14 +229,9 @@ const HelicopterAI = (options = {}) => {
         lastTarget = target;
         target = newTarget;
         tData = target.data;
-      } else {
-        // fallback: try for chopper or balloon at any time
-        // NOTE: exclude balloons if chopper is armed with "aimed" missiles.
-        newTarget =
-          data.ammo &&
-          (levelFlags.bullets
-            ? findEnemy(data, [TYPES.helicopter, TYPES.balloon])
-            : findEnemy(data, [TYPES.helicopter]));
+      } else if (levelFlags.bullets && data.ammo) {
+        // fallback: try for balloons, if we have bullets and not "aimed" missiles.
+        newTarget = findEnemy(data, TYPES.balloon);
         if (newTarget.length) {
           target = newTarget[0];
           tData = target.data;
