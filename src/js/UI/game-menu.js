@@ -300,9 +300,6 @@ function init() {
     ].join('.');
     versionInfo.title = 'Version / last updated date';
     versionInfo.innerText = `:: Build ${versionString} ::`;
-    versionInfo.onmousedown = function () {
-      game.objects.envelope.showChangelog(true);
-    };
   }
 
   aaVersion.substring();
