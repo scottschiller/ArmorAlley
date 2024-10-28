@@ -266,7 +266,7 @@ const HelicopterAI = (options = {}) => {
         maybeBombTarget(game.objects.helicopter[i]);
         // additional special case: fire aimed missiles at any time.
         if (!levelFlags.bullets) {
-          maybeFireAtTarget(target);
+          maybeFireAtTarget(game.objects.helicopter[i]);
         }
       }
     }
