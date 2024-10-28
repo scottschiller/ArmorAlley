@@ -252,12 +252,11 @@ const HelicopterAI = (options = {}) => {
       }
     }
 
-
     /**
      * Always be up for bombing opposing choppers, if not already the target.
      * Also, consider launching "dumb" aimed missiles if armed accordingly.
      */
-    
+
     for (var i = 0, j = game.objects.helicopter.length; i < j; i++) {
       if (
         game.objects.helicopter[i].data.isEnemy !== data.isEnemy &&
