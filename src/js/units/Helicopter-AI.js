@@ -56,6 +56,10 @@ const HelicopterAI = (options = {}) => {
   let missileTarget;
   let missileLaunchTimer;
 
+  // throttle how often the helicopter can decide to chase when hit by e.g., gunfire
+  let respondToHitTimer;
+  let respondToHitDelay = 1000;
+
   // at which point the chopper can retaliate
   let missileEnergyThreshold =
     gameType === 'extreme' ? 8 : gameType === 'hard' ? 5 : 2;
@@ -486,6 +490,29 @@ const HelicopterAI = (options = {}) => {
     dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
   }
 
+  function respondToHit(attacker) {
+    /**
+     * At this point, we've been hit by something.
+     * If from a helicopter, maybe start targeting choppers.
+     */
+
+    if (
+      !data.targeting.helicopters &&
+      // NOTE: parentType for munitions e.g., gunfire from chopper
+      attacker.data.parentType === TYPES.helicopter &&
+      !respondToHitTimer
+    ) {
+      // throttle response, so not every bullet triggers a roll of the dice.
+      respondToHitTimer = common.setFrameTimeout(() => {
+        data.targeting.helicopters = rngBool(data.type);
+        respondToHitTimer = null;
+      }, respondToHitDelay);
+    }
+
+    // and, maybe fire a smart missile regardless!
+    return maybeRetaliateWithSmartMissile(attacker);
+  }
+
   function maybeRetaliateWithSmartMissile(attacker) {
     /**
      * Potential retaliation: Launch smart missile(s) if damaged sufficiently
@@ -567,7 +594,7 @@ const HelicopterAI = (options = {}) => {
   return {
     animate: ai,
     getMissileTarget: () => missileTarget,
-    onHit: maybeRetaliateWithSmartMissile,
+    onHit: respondToHit,
     maybeDecoySmartMissile,
     maybeFireAtTarget,
     maybeDropParatroopersNearTarget,
