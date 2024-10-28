@@ -293,7 +293,7 @@ function avoidBuildings(data) {
   buildings?.forEach?.((b) => {
     // IF the closest thing is a free-floating balloon, seek it out - IF we have ammo and it's targetable...
     if (
-      b?.data?.type === 'balloon' &&
+      b.data.type === 'balloon' &&
       // don't go after balloons with aimed missiles - "too expensive."
       levelFlags.bullets &&
       b.data.cpuCanTarget &&
