@@ -573,7 +573,7 @@ const HelicopterAI = (options = {}) => {
 
     missileLaunchTimer = common.setFrameTimeout(() => {
       // sanity check, given delay / async...
-      if (data.dead) {
+      if (data.dead || mTarget.data.dead) {
         missileLaunchTimer = null;
         return;
       }
