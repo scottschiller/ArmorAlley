@@ -2497,6 +2497,15 @@ const Helicopter = (options = {}) => {
     }
   }
 
+  function onKill(target) {
+    if (!data.isCPU) return;
+    if (target.data.type !== TYPES.helicopter) return;
+    // CPU case: stop chasing helicopters, since we got one.
+    if (gameType === 'tutorial' || gameType === 'easy') {
+      data.targeting.helicopters = false;
+    }
+  }
+
   function callMethod(method, params) {
     // no arguments.
     if (params === undefined) return exports[method]();
@@ -3102,6 +3111,7 @@ const Helicopter = (options = {}) => {
     init: initHelicopter,
     objects,
     onHit,
+    onKill,
     onLandingPad,
     reactToDamage,
     startRepairing,
