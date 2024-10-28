@@ -632,15 +632,25 @@ const common = {
   onDie(target, dieOptions = {}) {
     /**
      * A generic catch-all for battlefield item `die()` events.
-     * This was added specifically for the network game case,
-     * but may be refactored in future as needed.
+     * This is mostly for supporting network games.
      */
 
-    if (!net.active) return;
-
     // NOTE: attacker may not always be defined.
-
     const attacker = dieOptions.attacker || target?.data?.attacker;
+
+    // callback-style methods
+
+    if (attacker?.data?.parent?.onKill) {
+      // e.g., helicopter shot target with gunfire
+      attacker.data.parent.onKill(target);
+    }
+
+    if (attacker?.onKill) {
+      // e.g., helicopter crashed directly into target
+      attacker.onKill(target);
+    }
+
+    if (!net.active) return;
 
     if (debugCollision) {
       if (attacker && attacker.data.type === TYPES.helicopter)
