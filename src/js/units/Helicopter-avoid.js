@@ -359,8 +359,6 @@ function avoidBuildings(data) {
   // if no avoidance, but we found something to chase...
   if (steerTarget) {
     steerTowardTarget(data, steerTarget.data, data.halfWidth);
-    // hackish / circuitous: call helicopter AI method
-    // data.ai.maybeFireAtTarget(steerTarget);
   }
 }
 
