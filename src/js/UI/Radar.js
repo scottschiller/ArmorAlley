@@ -373,7 +373,7 @@ const Radar = () => {
     //
     if (
       data.isJammed ||
-      (levelFlags.stealth && targetItem.oParent.data.type === TYPES.helicopter)
+      (levelFlags.stealth && targetItem?.oParent && targetItem.oParent.data.type === TYPES.helicopter)
     ) {
       return;
     }
