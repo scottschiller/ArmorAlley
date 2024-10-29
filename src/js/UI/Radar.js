@@ -253,6 +253,22 @@ const Radar = () => {
     ).length;
   }
 
+  function startInterference() {
+    // mess up, but don't permanently disable radar.
+    if (!dom.interference) {
+      // only do this once.
+      dom.interference = document.createElement('div');
+      dom.interference.className = css.interference;
+      dom.interference.innerHTML = '<div class="noise"></div>';
+      dom.radarContainer.appendChild(dom.interference);
+    }
+    utils.css.add(document.body, css.interference);
+    // yield, then transition in.
+    window.requestAnimationFrame(() =>
+      utils.css.add(dom.radarContainer, css.interference)
+    );
+  }
+
   function startJamming() {
     // [ obligatory Bob Marley reference goes here ]
 
@@ -342,9 +358,6 @@ const Radar = () => {
   }
 
   function stopJamming() {
-    // bail if permanently jammed
-    if (levelFlags.jamming) return;
-
     data.isJammed = false;
 
     updateOverlay();
@@ -354,7 +367,11 @@ const Radar = () => {
     }
 
     if (data.jamCount < 3) {
-      game.objects.notifications.addNoRepeat('Radar has been restored 📡');
+      game.objects.notifications.addNoRepeat(
+        levelFlags.jamming
+          ? 'Radar has been partially restored 📡'
+          : 'Radar has been restored 📡'
+      );
       data.jamCount++;
     }
   }
@@ -367,13 +384,15 @@ const Radar = () => {
 
   function updateTargetMarker(targetItem, allowTransition) {
     /**
-     * Ignore while jammed, OR, "target is helicopter but hidden for this battle
+     * Ignore while jammed by van or level flags OR, "target is helicopter but hidden for this battle
      * because of helicopter stealth mode," since this "relies" on working radar.
      */
-    //
     if (
       data.isJammed ||
-      (levelFlags.stealth && targetItem?.oParent && targetItem.oParent.data.type === TYPES.helicopter)
+      levelFlags.jamming ||
+      (levelFlags.stealth &&
+        targetItem?.oParent &&
+        targetItem.oParent.data.type === TYPES.helicopter)
     ) {
       return;
     }
@@ -938,6 +957,7 @@ const Radar = () => {
 
   css = {
     incomingSmartMissile: 'incoming-smart-missile',
+    interference: 'interference',
     jammed: 'radar-jammed'
   };
 
@@ -1007,6 +1027,7 @@ const Radar = () => {
     resize: resize,
     setScale,
     setStale,
+    startInterference,
     startJamming,
     stopJamming,
     toggleScaling
