@@ -39,9 +39,11 @@ function steerTowardTarget(
   ignoreY = false
 ) {
   let tankBombCase = targetData.type === TYPES.tank && data.bombs;
+  let helicopterBombCase =
+    targetData.type === TYPES.helicopter && data.bombs && !data.ammo;
 
   // hackish: tank targeting - move helicopter to safe bombing position above tank.
-  if (tankBombCase) {
+  if (tankBombCase || helicopterBombCase) {
     arriveOffset = -1;
   }
 
@@ -57,6 +59,22 @@ function steerTowardTarget(
 
   // if "ignoring" Y, then use present chopper Y value ("no change") and just move on X.
   let targetY = ignoreY ? data.y : targetData.y;
+
+  if (helicopterBombCase) {
+    /**
+     * Aim for above the enemy chopper, if not already.
+     * If target is too close to top, assume unsafe; bail and stop targeting.
+     */
+    if (targetData.y < 64) {
+      data.targeting.helicopters = false;
+    } else {
+      // aim to bomb the chopper, being at least somewhat overhead.
+      targetY = Math.min(
+        data.y,
+        Math.max(data.yMin, targetData.y - data.height * 2)
+      );
+    }
+  }
 
   if (tankBombCase) {
     targetY = Math.min(300, data.y);
