@@ -1828,6 +1828,10 @@ const Helicopter = (options = {}) => {
             exports
           );
         } else {
+          // CPU case: ensure facing target
+          if (data.isCPU && !data.isRemote && data.ammoTarget) {
+            checkFacingTarget({ data: data.ammoTarget });
+          }
           let params = getAimedMissileParams();
 
           game.addObject(TYPES.aimedMissile, params);
