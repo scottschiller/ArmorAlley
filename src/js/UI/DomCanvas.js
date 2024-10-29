@@ -10,9 +10,11 @@ import {
   demo,
   isSafari,
   noRadar,
+  rng,
   searchParams
 } from '../core/global.js';
 import { utils } from '../core/utils.js';
+import { levelFlags } from '../levels/default.js';
 import { PREFS, gamePrefs } from './preferences.js';
 
 const debugCanvas = searchParams.get('debugCanvas');
@@ -459,7 +461,7 @@ const DomCanvas = () => {
     }
   }
 
-  function drawImage(ctx, exports, imgObject) {
+  function drawImage(ctx, exports, imgObject, drawOpacity = 1) {
     const { data } = exports;
     const { domCanvas } = data;
     const ss = game.objects.view.data.screenScale;
@@ -483,9 +485,9 @@ const DomCanvas = () => {
 
     if (!target) target = {};
 
-    // opacity?
-    if (target.opacity >= 0) {
-      ctx.globalAlpha = target.opacity;
+    // opacity on object, and/or "draw" opacity
+    if (target.opacity >= 0 || drawOpacity !== 1) {
+      ctx.globalAlpha = (target.opacity || 1) * drawOpacity;
     }
 
     // single image, vs. sprite?
@@ -673,7 +675,7 @@ const DomCanvas = () => {
       }
     }
 
-    if (target.opacity >= 0) {
+    if (target.opacity >= 0 || drawOpacity !== 1) {
       ctx.globalAlpha = 1;
     }
   }
@@ -751,9 +753,26 @@ const DomCanvas = () => {
       if (noRadar) return;
     }
 
+    /**
+     * Hackish: assign random opacity if a radar item, and radar has interference per flags.
+     * Don't draw opacity during level previews - only when game started.
+     */
+    if (
+      ((levelFlags.jamming &&
+        game.data.started &&
+        data.type === 'radar-item') ||
+        data.domCanvas.ctxName === 'radar') &&
+      !oData.jammingOpacity
+    ) {
+      oData.jammingOpacity = 0.125 + rng(0.75, 'radar');
+    }
+
     // does the object know how to draw itself?
     if (oData.draw) {
       // "standard style"
+      if (oData.jammingOpacity && oData.jammingOpacity !== 1) {
+        ctx.globalAlpha = oData.jammingOpacity;
+      }
       ctx.beginPath();
       ctx.strokeStyle = '#000';
       // handle battlefield items, and radar items which link back to their parent.
@@ -775,6 +794,9 @@ const DomCanvas = () => {
           ctx.stroke();
         }
       }
+      if (oData.jammingOpacity && oData.jammingOpacity !== 1) {
+        ctx.globalAlpha = 1;
+      }
       return;
     }
 
@@ -782,9 +804,11 @@ const DomCanvas = () => {
 
     if (oData.img) {
       if (oData.img.forEach) {
-        oData.img.forEach((imgObject) => drawImage(ctx, exports, imgObject));
+        oData.img.forEach((imgObject) =>
+          drawImage(ctx, exports, imgObject, oData.jammingOpacity)
+        );
       } else {
-        drawImage(ctx, exports);
+        drawImage(ctx, exports, null, oData.jammingOpacity);
       }
     }
 
