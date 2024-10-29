@@ -3,6 +3,7 @@ import { aaLoader } from '../core/aa-loader.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
 import {
+  autoStart,
   clientFeatures,
   demo,
   GAME_SPEED,
@@ -54,8 +55,6 @@ let originalSubTitle;
 let lastBattle;
 
 const battle = searchParams.get('battle');
-
-const autoStart = searchParams.get('start');
 
 const gameTypeParam = searchParams.get('gameType');
 

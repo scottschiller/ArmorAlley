@@ -10,6 +10,8 @@ const SPRITESHEET_URL = `dist/image/${audioSpriteConfig.spriteFileName}.webp${aa
 
 const searchParams = new URLSearchParams(window.location.search);
 
+const autoStart = searchParams.get('start');
+
 const DEFAULT_FUNDS = searchParams.get('FUNDS') ? 999 : 32;
 
 const winloc = window.location.href.toString();
@@ -474,6 +476,7 @@ const COSTS = {
 };
 
 export {
+  autoStart,
   audioSpriteConfig,
   imageSpriteConfig,
   AUDIO_SPRITE_ROOT,
