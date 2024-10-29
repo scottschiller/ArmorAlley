@@ -1,7 +1,7 @@
 import { gamePrefs } from '../UI/preferences.js';
 import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { searchParams, TYPES, worldHeight } from '../core/global.js';
+import { autoStart, searchParams, TYPES, worldHeight } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
@@ -332,6 +332,9 @@ function previewLevel(levelName, excludeVehicles) {
   if (!data) return;
 
   updateFlags(levelName);
+
+  // special case: don't draw at all if jamming, and in campaign mode.
+  if (levelFlags.jamming && autoStart) return;
 
   // if nothing is > 4096, then it's original game data; double all values.
   let multiplier = 2;
