@@ -170,16 +170,22 @@ const flagsByLevel = {
 
 let levelFlags;
 
+let flagOverrides = {
+  aimedMissiles: searchParams.get('aimedMissiles'),
+  jamming: !searchParams.get('noInterference'),
+  stealth: searchParams.get('noStealth')
+};
+
 // TODO: override when playing a custom level that might have flags specified, e.g., &fb=1&fn=0&fs=0&fj=0
 const defaultFlags = [1, 0, 0, 0, 0, 0];
 
 function parseFlags(levelName) {
   const f = flagsByLevel[gamePrefs.game_type]?.[levelName] || defaultFlags;
   return {
-    bullets: f[0],
+    bullets: flagOverrides.aimedMissiles ? 0 : f[0],
     napalm: f[1],
-    stealth: f[2],
-    jamming: f[3],
+    stealth: flagOverrides.stealth ? 0 : f[2],
+    jamming: f[3] && flagOverrides.jamming,
     fairness: f[5]
   };
 }
