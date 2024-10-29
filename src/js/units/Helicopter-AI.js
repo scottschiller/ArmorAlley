@@ -535,12 +535,6 @@ const HelicopterAI = (options = {}) => {
     // don't do this in certain modes.
     if (tutorialMode) return;
 
-    // throttle, ignore if active
-    if (missileLaunchTimer) return;
-
-    // need to be armed
-    if (!data.smartMissiles) return;
-
     // common case: armed with bullets.
     if (levelFlags.bullets) {
       // need to be damaged, depending on difficulty
@@ -555,6 +549,16 @@ const HelicopterAI = (options = {}) => {
       // ignore damage check, because one missile hit = dead.
       if (data.ammo) return;
     }
+
+    maybeFireMissileAtHelicopter();
+  }
+
+  function maybeFireMissileAtHelicopter() {
+    // throttle, ignore if active
+    if (missileLaunchTimer) return;
+
+    // need to be armed
+    if (!data.smartMissiles) return;
 
     // look for nearby helicopter
     let mTarget = objectInView(data, { items: TYPES.helicopter });
