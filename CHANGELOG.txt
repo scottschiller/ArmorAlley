@@ -5,6 +5,34 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 10/29/2024, uncategorized ---
+
+Battle flag, "jamming" update: radar has "interference" - partially inoperable and fuzzy, rather than completely blocked. https://github.com/scottschiller/ArmorAlley/commit/2d2d721c782d123c5ec316dcc4e86378daca9c98
+
+--- 10/27/2024, uncategorized ---
+
+The last missing weapon: "aimed" AKA "dumb" missiles for helicopters, replacing bullets. Enabled for certain battles and difficulties. https://github.com/scottschiller/ArmorAlley/commit/34739349d7ab61f35209990f5eadaeadd5df0f77
+
+Don't show stealth helicopters on radar, unless they are in view on screen. Ditto for smoke. https://github.com/scottschiller/ArmorAlley/commit/b2079a4ab6b083494ca44ae9692fb742c8f4ac8f https://github.com/scottschiller/ArmorAlley/commit/03d022187720462181630c34d647eb513e264cc7
+
+Bug fix: Smart missile targeting UI was showing stealth helicopters on radar. https://github.com/scottschiller/ArmorAlley/commit/9e62abf3c67f388d866a8070108304fc3b9abea4
+
+If CPU runs out of "dumb" / aimed missiles, it can launch smart missiles at opposing choppers. https://github.com/scottschiller/ArmorAlley/commit/5f351b48252fcd33755f93226b579ab516ebaa0b
+
+Fix CPU wander "end of world" logic, it now reverses course if it gets to the other base. https://github.com/scottschiller/ArmorAlley/commit/d0a4933cf5d4b4115ab2289ad69ceca05e5dd157
+
+--- 10/20/2024, uncategorized ---
+
+Allow CPU choppers to retaliate with smart missiles, when damaged by helicopter gunfire. Can fire single or multiple missiles, depending on game difficulty. https://github.com/scottschiller/ArmorAlley/commit/65c4304cd2d0a647680ab2b3feab844edbbd9f74
+
+Allow CPU choppers to drop paratroopers near turrets, if under attack. https://github.com/scottschiller/ArmorAlley/commit/27e87785fd8d7d03cf7a5f2704bf37f92be6a526
+
+Allow CPU choppers to target and capture bunkers with paratroopers. https://github.com/scottschiller/ArmorAlley/commit/55132fbf47925cbf59131f9203c49523d9c07d4c
+
+--- 10/19/2024, uncategorized ---
+
+Radial energy UI: show + sign when units are repairing. https://github.com/scottschiller/ArmorAlley/commit/7275b15ccafc899f1d64c1dae91dffdba7e78ad4
+
 --- 10/17/2024, uncategorized ---
 
 Bug fix: Expired (falling) smart missiles weren't hitting friendly units. https://github.com/scottschiller/ArmorAlley/commit/887212346756293922c2c2d8abf31f9e2d343e17
