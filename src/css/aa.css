@@ -300,7 +300,7 @@ body.radar_enhanced_fx #world-noise-overlay .noise {
 
 #world-noise-overlay {
   position: absolute;
-  /* radar offset */
+  /* initial radar offset for home screen / game menu */
   top: 8%;
   bottom: 0;
   left: 0;
@@ -310,7 +310,8 @@ body.radar_enhanced_fx #world-noise-overlay .noise {
   pointer-events: none;
 }
 
-body.game-started #world-noise-overlay {
+body.game-started:not(.interference) #world-noise-overlay {
+  /* once started (and not flag-specific jamming / interference mode), cover radar. */
   top: 0;
 }
 
