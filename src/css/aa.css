@@ -268,14 +268,31 @@ body.loaded #radar {
   visibility: visible;
 }
 
-body.radar_enhanced_fx #world-noise-overlay {
+body.radar_enhanced_fx #world-noise-overlay,
+body.radar_enhanced_fx #radar-container.interference .interference {
   /* Probably $$$ - TODO: only apply when active. */
   mix-blend-mode: soft-light;
   opacity: 0.65;
 }
 
+#radar-container .interference {
+  /* battle flag: "jamming" */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#radar-container.interference .interference {
+  opacity: 1;
+}
+
 body.game-started #world-noise-overlay .noise,
-body.radar_enhanced_fx #world-noise-overlay .noise {
+body.radar_enhanced_fx #world-noise-overlay .noise,
+#radar-container .interference .noise {
   background: url(../../assets/image/UI/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
@@ -290,8 +307,9 @@ body.radar_enhanced_fx #world-noise-overlay .noise {
   top: 0;
 }
 
-/* game screen overlay */
-body.radar_enhanced_fx #world-noise-overlay .noise {
+/* game screen + radar "interference"-specific overlays */
+body.radar_enhanced_fx #world-noise-overlay .noise,
+body.radar_enhanced_fx #radar-container .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
   background-color: rgba(0, 0, 0, 0.25);
   animation: 1s steps(15) infinite both noise;
@@ -1042,6 +1060,17 @@ body.loaded canvas {
 body.edit-mode canvas,
 body.game-started canvas {
   opacity: 1;
+}
+
+#radar-container.interference canvas,
+#radar-container.interference .scan-node {
+  /* on some levels, "jamming" means radar is fuzzy */
+  filter: blur(3px);
+}
+
+#radar-container.interference .scan-node {
+  /* reduce scan nodes a bit */
+  opacity: 0.75;
 }
 
 body.is-mobile .hide-on-mobile,
