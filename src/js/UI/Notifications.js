@@ -277,8 +277,8 @@ const Notifications = () => {
 
     // level flags
     if (levelFlags.jamming) {
-      add('⚠️ JAMMING MODE: Radar is inoperable.');
-      game.objects.radar.startJamming();
+      add('⚠️ JAMMING MODE: Radar performance is impacted.');
+      game.objects.radar.startInterference();
     } else if (levelFlags.stealth) {
       add('⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷');
     }
