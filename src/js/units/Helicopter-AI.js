@@ -398,13 +398,17 @@ const HelicopterAI = (options = {}) => {
       // ignore if too far away, OR basically right above / underneath.
       dX < 320 &&
       dX > data.width &&
-      distance(targetData.y, data.y) < data.height * 1.5 &&
-      // if helicopter + guided missiles, ensure CPU is above human chopper OR near top of screen as missiles "fall" downward.
-      (!isHelicopter ||
-        levelFlags.bullets ||
-        targetData.y > data.y ||
-        data.y < 48)
+      distance(targetData.y, data.y) < data.height * 1.5
     ) {
+      /**
+       * If helicopter + guided missiles, ensure CPU is above human chopper
+       * OR near top of screen as missiles "fall" downward.
+       */
+
+      // special case: don't fire dumb / aimed missiles when target is above, unless near top of screen.
+      if (!levelFlags.bullets && targetData.y < data.y && data.y > 48) return;
+
+      // queue action.
       data.votes.ammo++;
       data.ammoTargets.push(targetData);
       options.exports.checkFacingTarget(target);
