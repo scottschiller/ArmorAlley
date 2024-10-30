@@ -1146,13 +1146,15 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   position: relative;
   overflow: hidden;
   transition: height 0.5s ease-in-out;
-  transition-property: height, opacity;
+  transition-property: height, opacity, padding;
   height: 0px;
   opacity: 0;
+  padding-bottom: 0px;
 }
 
 #game-prefs-modal .more-info.active {
   opacity: 1;
+  padding-bottom: 5px;
 }
 
 @keyframes button-blink {
