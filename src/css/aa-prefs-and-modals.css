@@ -75,7 +75,7 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal.select-level {
   /* slightly more narrow */
-  width: 500px;
+  width: 512px;
 }
 
 body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level {
@@ -624,7 +624,21 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul.monospace li pre {
   display: inline-block;
   margin: 1px 0px;
-  letter-spacing: 0px;
+  letter-spacing: -0.25px;
+}
+
+.mac-classic ul.monospace li pre.header {
+  background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
+    0 0/3px #eee;
+  image-rendering: smooth;
+  image-rendering: crisp-edges;
+}
+
+.mac-classic ul.monospace li pre.header b {
+  background: #fff;
+  padding: 1px 8px;
+  /* counter-spacing */
+  margin: 0px -8px;
 }
 
 .mac-classic ul.monospace li label {
