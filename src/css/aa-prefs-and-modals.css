@@ -83,6 +83,13 @@ body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level {
   width: 550px;
 }
 
+#game-prefs-modal p.select-level-only {
+  padding-bottom: 12px;
+  padding-left: 0px;
+  margin-left: 16px;
+  margin-bottom: 1px;
+}
+
 #game-prefs-modal:not(.select-level) .select-level-only,
 #game-prefs-modal.select-level fieldset:not(.select-level),
 #game-prefs-modal.select-level #game-prefs-header button {
@@ -561,7 +568,6 @@ body.is_iphone #game-prefs-modal button {
 
 #game-prefs-modal.easy ul.monospace li label pre b.q {
   /* hackish: extreme mode flag also needs to show for easy mode. */
-  visibility: visible;
   color: #000;
 }
 
@@ -580,34 +586,45 @@ body.is_iphone #game-prefs-modal button {
 }
 
 #game-prefs-modal:not(.easy) ul.monospace li label pre q {
-  /* when *not* in "boot camp" mode */
+  /* when *not* in easy */
   color: var(--disabled-flag);
 }
 
 #game-prefs-modal.easy ul.monospace li label pre s {
+  /* <s>: easy */
+  color: var(--disabled-flag);
+}
+
+#game-prefs-modal:not(.extreme) ul.monospace li label pre .ne {
+  /* .ne: not extreme */
   color: var(--disabled-flag);
 }
 
 #game-prefs-modal.extreme ul.monospace li label pre u {
-  /* battle "flags" to be hidden under extreme mode */
+  /* <u>: hide when extreme */
   color: var(--disabled-flag);
 }
 
 .mac-classic ul.monospace li label pre b {
-  /* battle "flags" for extreme mode */
+  /* hide <b> when not extreme mode */
   font-weight: normal;
   color: var(--disabled-flag);
 }
 
+#game-prefs-modal.hard ul.monospace li label pre .h {
+  /* hard-mode-specific */
+  color: #000;
+}
+
 #game-prefs-modal.extreme ul.monospace li label pre b {
-  /* only show "extreme" flags in extreme mode */
+  /* <b>: extreme */
   color: #000;
 }
 
 .mac-classic ul.monospace li pre {
   display: inline-block;
   margin: 1px 0px;
-  letter-spacing: -0.33px;
+  letter-spacing: 0px;
 }
 
 .mac-classic ul.monospace li label {
