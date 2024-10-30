@@ -374,7 +374,7 @@ const HelicopterAI = (options = {}) => {
      * WITHIN BOMBING RANGE
      */
     const targetData = target?.data;
-    if (!targetData || targetData.dead) return;
+    if (!targetData || targetData.dead || targetData.cloaked) return;
 
     if (collisionCheckX(targetData, data) && data.y < targetData.y) {
       // align on X-axis, and player / balloon / tank is below...
