@@ -119,9 +119,8 @@ const networkFlags = {
   'Rainstorm': [1, 1, 0, 1, 177, 0]
 };
 
-function getDefaultFlags() {
-  // Boot Camp campaign
-  return {
+const flagsByLevel = {
+  easy: {
     'Cake Walk': [1, 0, 0, 0, 16, -1],
     'One-Gun': [1, 0, 0, 0, 18, -1],
     'Sucker Punch': [1, 0, 0, 0, 22, 0],
@@ -133,11 +132,7 @@ function getDefaultFlags() {
     'Wasteland': [1, 1, 0, 0, 115, 9],
     'Midnight Oasis': [1, 1, 0, 0, 133, 9],
     ...networkFlags
-  };
-}
-
-const flagsByLevel = {
-  easy: getDefaultFlags(),
+  },
   hard: {
     // Wargames + Conflict campaigns
     'Cake Walk': [1, 0, 0, 0, 29, -1],
