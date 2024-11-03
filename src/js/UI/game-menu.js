@@ -496,7 +496,7 @@ function init() {
     aaLoader.loadCSS('aa-prefs-and-modals.css', () => {
       aaLoader.loadCSS('aa-game-ui.css', () => {
         aaLoader.loadGeneric(SPRITESHEET_URL, () => {
-          utils.image.load(SPRITESHEET_URL);
+          loadSprites();
           if (!gamePrefs.sound) return;
           aaLoader.loadGeneric(audioSpriteURL);
         });
@@ -506,12 +506,19 @@ function init() {
     aaLoader.loadCSS('aa-prefs-and-modals.css');
     window.setTimeout(() => {
       aaLoader.loadCSS('aa-game-ui.css');
-      utils.image.load(SPRITESHEET_URL);
+      loadSprites();
       if (gamePrefs.sound) {
         aaLoader.loadGeneric(audioSpriteURL);
       }
-    }, 5000);
+    }, 1000);
   }
+}
+
+function loadSprites() {
+  utils.image.load(SPRITESHEET_URL, () => {
+    // extract certain sprites up front, reduce initial flickering
+    utils.prefetchSprites();
+  });
 }
 
 function afterTransitionIn() {
