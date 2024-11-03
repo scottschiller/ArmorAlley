@@ -556,9 +556,28 @@ const utils = {
 
     if (!urls?.length) return;
 
+    // note: only "friendly" base, 99% of time that'll be on-screen at game start.
+    const preloadURLs = options.all
+      ? urls
+      : urls.filter((url) =>
+          url.match(/base_|helicopter|tank-enemy|landing|explosion/i)
+        );
+
+    if (!preloadURLs?.length) return;
+
+    // hackish: put landing pad first, most likely to flicker on game start.
+    if (!options.all) {
+      preloadURLs.sort((a, b) => {
+        return a.indexOf('landing') !== -1 ? -1 : 0;
+      });
+    }
+
+    let i = 0;
+
     function preloadNext() {
-      const url = urls[i].substring(1);
+      const url = preloadURLs[i].substring(1);
       utils.image.getImageObject(url, loaded);
+      i++;
     }
 
     function loaded() {
