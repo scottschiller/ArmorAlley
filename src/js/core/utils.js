@@ -544,11 +544,8 @@ const utils = {
     };
   })(),
 
-  init: () => {
-    /**
-     * Pre-fetch / render and cache a few animation sequences, avoid flicker on game start.
-     * Filter applies to URLs with sequence patterns, e.g., `base-enemy_3.png`
-     */
+  prefetchSprites: (options = { all: false, callback: null }) => {
+    // Pre-render and cache certain animation sequences, reduce flicker on game start.
     if (!imageSpriteConfig) return;
 
     // TODO: preload snow versions of sprites, as applicable.
@@ -581,12 +578,15 @@ const utils = {
     }
 
     function loaded() {
-      i++;
-      if (i < urls.length) preloadNext();
+      // note: getImageObject() has requestAnimationFrame() in callbacks.
+      if (i < preloadURLs.length) {
+        preloadNext();
+      } else if (options.callback instanceof Function) {
+        options.callback();
+      }
     }
 
     // start pre-fetch
-    let i = 0;
     preloadNext();
   }
 };
