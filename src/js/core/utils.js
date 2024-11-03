@@ -544,7 +544,7 @@ const utils = {
     };
   })(),
 
-  prefetchSprites: (options = { all: false, callback: null }) => {
+  preRenderSprites: (options = { all: false, callback: null }) => {
     // Pre-render and cache certain animation sequences, reduce flicker on game start.
     if (!imageSpriteConfig) return;
 

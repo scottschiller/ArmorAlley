@@ -517,7 +517,7 @@ function init() {
 function loadSprites() {
   utils.image.load(SPRITESHEET_URL, () => {
     // extract certain sprites up front, reduce initial flickering
-    utils.prefetchSprites();
+    utils.preRenderSprites();
   });
 }
 
