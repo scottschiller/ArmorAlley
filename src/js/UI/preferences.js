@@ -792,11 +792,9 @@ function PrefsManager() {
   function updateGameType(prefix) {
     // given radio buttons, update CSS on modal.
     ['easy', 'hard', 'extreme'].forEach((mode) => {
-      utils.css.addOrRemove(
-        dom.o,
-        document.getElementById(`${prefix}${mode}`).checked,
-        mode
-      );
+      let element = document.getElementById(`${prefix}${mode}`);
+      if (!element) return;
+      utils.css.addOrRemove(dom.o, element.checked, mode);
     });
   }
 
