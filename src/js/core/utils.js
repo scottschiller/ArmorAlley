@@ -12,6 +12,9 @@ const blankImage = new Image();
 blankImage.src =
   'data:image/gif;base64,R0lGODlhAQABAPAAAAAAAP///yH5BAUKAAAALAAAAAABAAEAQAICRAEAOw==';
 
+let bufferCanvas;
+let bufferCanvasCtx;
+
 // sneaky tricks: source image -> canvas upscaling
 const upscaleByName = {
   'barb-wire.png': 2,
@@ -194,7 +197,13 @@ const utils = {
         // extract and cache.
         let extractedImg = new Image();
 
-        let canvas = document.createElement('canvas');
+        if (!bufferCanvas) {
+          bufferCanvas = document.createElement('canvas');
+          bufferCanvasCtx = bufferCanvas.getContext('2d', {
+            useDevicePixelRatio: false,
+            alpha: true
+          });
+        }
 
         let x = ssConfig[0];
         let y = ssConfig[1];
@@ -207,32 +216,45 @@ const utils = {
         const targetWidth = w * scale;
         const targetHeight = h * scale;
 
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
-
-        let ctx = canvas.getContext('2d', {
-          useDevicePixelRatio: false,
-          alpha: true
-        });
+        bufferCanvas.width = targetWidth;
+        bufferCanvas.height = targetHeight;
 
         // note: no smoothing, this is a 1:1-scale copy.
-        ctx.imageSmoothingEnabled = false;
+        bufferCanvasCtx.imageSmoothingEnabled = false;
 
-        ctx.drawImage(ssImg, x, y, w, h, 0, 0, targetWidth, targetHeight);
+        bufferCanvasCtx.drawImage(
+          ssImg,
+          x,
+          y,
+          w,
+          h,
+          0,
+          0,
+          targetWidth,
+          targetHeight
+        );
 
         extractedImg.onload = () => {
           extractedImg.onload = null;
           callback?.(extractedImg);
         };
 
-        // our newly-extracted image
-        extractedImg.src = canvas.toDataURL('image/png');
+        // more modern vs. toDataURL() - and faster?
+        bufferCanvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+
+          extractedImg.onload = () => {
+            extractedImg.onload = null;
+            callback?.(extractedImg);
+            // blob no longer needed, revoke
+            URL.revokeObjectURL(url);
+          };
+
+          extractedImg.src = url;
+        });
 
         // mark in cache
         imageObjects[imgRef] = extractedImg;
-
-        ctx = null;
-        canvas = null;
       }
 
       // fetch, as needed
