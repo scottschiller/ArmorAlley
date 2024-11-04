@@ -16,7 +16,7 @@ import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
-import { getVictoryMessage } from '../levels/default.js';
+import { getDefeatMessage, getVictoryMessage } from '../levels/default.js';
 
 const Van = (options = {}) => {
   let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
@@ -96,7 +96,8 @@ const Van = (options = {}) => {
   function getGameOverAnnouncement() {
     return onOurSide()
       ? getVictoryMessage()
-      : 'The enemy has won the battle.\nBetter luck next time. <span class="inline-emoji no-emoji-substitution">☠️</span>';
+      : 'The enemy has won the battle.\nBetter luck next time. <span class="inline-emoji no-emoji-substitution">☠️</span><br />' +
+          getDefeatMessage();
   }
 
   function animate() {
