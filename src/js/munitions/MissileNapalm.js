@@ -174,6 +174,7 @@ const MissileNapalm = (options = {}) => {
       useLookAhead: true,
       // hackish: each flame jumps forward, so use lookahead to catch the "tweens" until the last frame.
       xLookAhead: width,
+      checkTweens: true,
       hit(target) {
         if (data.damagePoints) {
           // hit once, then remain until the object animation has completed.
