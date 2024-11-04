@@ -169,12 +169,16 @@ const flagsByLevel = {
   }
 };
 
+// network-specific battles, tutorial etc.
+let genericVictory = 'Congratulations!\nYou have won the battle. <span class="inline-emoji">🎉</span>';
+
+// reused a few times
 let youWon = `You've defeated the enemy and rescued the 'Old Tanker'...`;
 
 let victoryMessages = {
   // if unspecified / no match, use 'easy' as default.
   'Tutorial': {
-    easy: `Try playing the REAL thing!`
+    easy: `${genericVictory}<br />Try playing the <u>REAL</u> thing!`
   },
   'Cake Walk': {
     easy: `You've done a good job in the first battle. Congratulations! But look out - the enemy is alerted now...`,
@@ -219,7 +223,7 @@ function getVictoryMessage() {
   let msgs = victoryMessages[levelName];
   // if no match for the level (e.g., network-specific battle?), return a generic string.
   if (!msgs)
-    return 'Congratulations!\nYou have won the battle. <span class="inline-emoji">🎉</span>';
+    return genericVictory;
 
   // default to 'easy', if no gameType-specific one found.
   return msgs[gameType] || msgs['easy'];
