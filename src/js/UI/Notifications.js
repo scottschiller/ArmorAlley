@@ -230,7 +230,7 @@ const Notifications = () => {
     };
 
     const emoji = {
-      easy: '😁',
+      easy: '😎',
       hard: '😰',
       extreme: '😱'
     };

@@ -587,7 +587,7 @@ function updateGameLevelControl(value) {
 
   const emoji = {
     tutorial: '📖',
-    easy: '😁',
+    easy: '😎',
     hard: '😰',
     extreme: '😱'
   };
