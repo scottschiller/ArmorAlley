@@ -266,12 +266,28 @@ const Notifications = () => {
 
     game.objects.view.setAnnouncement(msg);
 
-    if (!levelFlags.bullets) {
+    if (
+      !levelFlags.bullets &&
+      gameType === 'hard' &&
+      levelName === 'Blind Spot'
+    ) {
       add('🚁 You are now equipped with aimed missiles. 🚀');
     }
 
-    // notify when the player has napalm, when it's the exception.
-    if ((gameType === 'easy' || gameType === 'hard') && levelFlags.napalm) {
+    // extreme mode exceptions: notify when the chopper *is* armed with bullets.
+    if (
+      gameType === 'extreme' &&
+      levelFlags.bullets
+    ) {
+      add('🚁 You are equipped with bullets for this battle. 🔫');
+    }
+
+    // notify when the player first gets napalm, i.e., when it's new.
+    if (
+      ((gameType === 'easy' && levelName === 'Blind Spot') ||
+        (gameType === 'hard' && levelName === 'Airborne')) &&
+      levelFlags.napalm
+    ) {
       add('💣 Your bombs now have napalm. 🔥');
     }
 
