@@ -978,12 +978,6 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
   top: -0.05em;
 }
 
-#game-tips.has-announcement {
-  /* a little spacing */
-  width: 95%;
-  left: 2.5%;
-}
-
 #game-tips.has-announcement .tips-container {
   overflow: visible;
 }
@@ -997,6 +991,13 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
   opacity: 1;
   transform: scale3d(1, 1, 1);
   filter: none;
+}
+
+#game-tips.has-announcement .announcement-text {
+  /* prevent super-wide messages, e.g., battle won or lost */
+  max-width: 24em;
+  display: inline-block;
+  text-align: center;
 }
 
 body.game-paused #game-announcements {

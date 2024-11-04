@@ -414,6 +414,9 @@ const View = () => {
     // drop smart quotes, they render funny with Da Valencia.
     text = text.replace(/[“”]/g, '"');
 
+    // finally, wrap in a node.
+    text = `<div class="announcement-text">${text}</div>`;
+
     data.gameTips.hasAnnouncement = true;
 
     dom.gameAnnouncements.innerHTML = text;
