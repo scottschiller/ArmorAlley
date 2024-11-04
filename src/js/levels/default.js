@@ -163,6 +163,61 @@ const flagsByLevel = {
   }
 };
 
+let youWon = `You've defeated the enemy and rescued the 'Old Tanker'...`;
+
+let victoryMessages = {
+  // if unspecified / no match, use 'easy' as default.
+  'Tutorial': {
+    easy: `Try playing the REAL thing!`
+  },
+  'Cake Walk': {
+    easy: `You've done a good job in the first battle. Congratulations! But look out - the enemy is alerted now...`,
+    hard: `The Wargames are on! You took the first enemy position, but now you need to work on the next battle!`,
+  },
+  'One-Gun': {
+    easy: `That was well done! Keep it up, but don't get overconfident: you can expect the going to get tougher.`,
+    hard: `Looking good. Keep developing your convoy strategies. They will come in handy later.`,
+  },
+  'Sucker Punch': {
+    easy: `Excellent! Don't stop now. You're well on your way into enemy territory. Just watch out for new problems to overcome.`,
+    hard: `We have napalm for your chopper. Now the enemy is in for a real surprise!`,
+  },
+  'Airborne': {
+    easy: `Fantastic! I guess you are getting the hang of this.`,
+    hard: `Careful! The enemy is getting smarter.`,
+    extreme: `Fantastic! That napalm really must help.`
+  },
+  'Two-Gun': {
+    easy: `You've won again. Superb effort! You're now halfway to total victory. Expect the enemy to tighten their defenses.`,
+  },
+  'Super Bunker': {
+    easy: `Another victory! You're on a roll, but remember the enemy has tricks you haven't seen yet.`,
+  },
+  'Scrapyard': {
+    easy: `It was tough going, but you made it! You are closing to the completion of your mission. Don't expect things to get easier.`, 
+  },
+  'Blind Spot': {
+    easy: `Terrific! Just two more battles to win. You've got the enemy cornered. They don't like that...`
+  },
+  'Wasteland': {
+    easy: `You've conquered every obstacle and mastered every trick the enemy knew. You're a general to be reckoned with. Just one last battle.`
+  },
+  'Midnight Oasis': {
+    easy: `${youWon} Now that you have made it through Boot Camp, try your luck in Wargames!`,
+    hard: `${youWon} Now you are ready for a real test! Try 'Armorgeddon' for a real test of your skills.`,
+    extreme: `${youWon} in a battle of the highest difficulty. Congratulations!`
+  }
+};
+
+function getVictoryMessage() {
+  let msgs = victoryMessages[levelName];
+  // if no match for the level (e.g., network-specific battle?), return a generic string.
+  if (!msgs) return 'Congratulations!\nYou have won the battle. <span class="inline-emoji">🎉</span>';
+
+  // default to 'easy', if no gameType-specific one found.
+  return msgs[gameType] || msgs['easy'];
+}
+
 let levelFlags;
 
 let flagOverrides = {
@@ -2744,6 +2799,7 @@ export {
   addWorldObjects,
   campaignBattles,
   dependsOnGameType,
+  getVictoryMessage,
   levelFlags,
   levelName,
   previewLevel,
