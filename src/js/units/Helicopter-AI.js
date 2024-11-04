@@ -539,6 +539,9 @@ const HelicopterAI = (options = {}) => {
     // don't do this in certain modes.
     if (tutorialMode) return;
 
+    // per original game: CPU doesn't use missiles "on the first level."
+    if (gameType === 'easy') return;
+
     // common case: armed with bullets.
     if (levelFlags.bullets) {
       // need to be damaged, depending on difficulty
