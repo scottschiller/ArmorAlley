@@ -978,6 +978,12 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
   top: -0.05em;
 }
 
+#game-tips.has-announcement {
+  /* a little spacing */
+  width: 95%;
+  left: 2.5%;
+}
+
 #game-tips.has-announcement .tips-container {
   overflow: visible;
 }
