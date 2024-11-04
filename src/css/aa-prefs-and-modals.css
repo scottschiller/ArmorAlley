@@ -662,6 +662,7 @@ body.is_iphone #game-prefs-modal button {
   margin-bottom: 2px;
 }
 
+.mac-classic .more-bottom-spacing,
 .mac-classic ul li.less-bottom-spacing {
   margin-bottom: 6px;
 }
@@ -669,6 +670,11 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul li ul li {
   display: inline-block;
   margin-right: 2px;
+}
+
+.mac-classic ul li ul.list li {
+  display: block;
+  margin-right: auto;
 }
 
 .mac-classic p {
