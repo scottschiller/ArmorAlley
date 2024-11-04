@@ -2596,7 +2596,7 @@ const Helicopter = (options = {}) => {
       cpu: {
         // special firing rates
         balloon: 90,
-        helicopter: 60,
+        helicopter: gameType === 'extreme' ? 12 : gameType === 'hard' ? 24 : 60,
         tank: 20
       }
     },
