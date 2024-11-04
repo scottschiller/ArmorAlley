@@ -367,7 +367,7 @@ function init() {
     // a battle has been specified.
     // try to apply this to the drop-down.
     const menuBattleOption = document.querySelector(
-      `#game_level option[value='${thisBattle}']`
+      `#game_level option[value="${thisBattle}"]`
     );
     if (menuBattleOption) {
       menuBattleOption.selected = true;
