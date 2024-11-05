@@ -1235,6 +1235,100 @@
                   </ul>
                 </fieldset>
 
+                <fieldset id="radar-options-2" class="sync-over-network">
+                  <legend>Radar, Cont'd<span class="network-icon"></span></legend>
+
+                  <p class="non-indented network">
+                    These are shared network options.
+                  </p>
+
+                  <ul>
+                    <li>
+                      <label for="cb_landing_pads_on_radar">
+                        <input
+                          type="checkbox"
+                          id="cb_landing_pads_on_radar"
+                          name="landing_pads_on_radar"
+                          value="1"
+                          checked />
+                        <span class="label-text">Landing pads on radar*</span>
+                        <p>
+                          The original game did not show landing pads on the
+                          radar.<br />
+                          Some battles have an open landing pad at the
+                          mid-point.
+                        </p>
+                        <p class="compact">
+                          <fn class="disclaimer"
+                            >*<i
+                              >Shrubbery sometimes obscures landing pads, making
+                              them invisible to radar.</i
+                            ></fn
+                          >
+                        </p>
+                      </label>
+                    </li>
+
+                    <li>
+                      <label for="cb_clouds_on_radar">
+                        <input
+                          type="checkbox"
+                          id="cb_clouds_on_radar"
+                          name="clouds_on_radar"
+                          value="1"
+                          checked />
+                        <span class="label-text">Clouds on radar</span>
+                        <p>
+                          Clouds can be used strategically, but they were not on
+                          radar in the original.
+                        </p>
+                      </label>
+                    </li>
+
+                    <li>
+                      <p class="options-heading">
+                        <b>Radar Interference Style</b>
+                      </p>
+                      <p class="non-indented">Some battles have permanent interference; vans still cause radar to jam fully.</p>
+                      <ul>
+                        <li style="margin-bottom: 1px">
+                          <label for="radar_interference_blanking_on">
+                            <input
+                              type="radio"
+                              id="radar_interference_blanking_on"
+                              name="radar_interference_blank"
+                              value="1"
+                              checked />
+                            <span class="label-text"
+                              >Jamming</span
+                            >
+                            <p>
+                              Like the original, radar is permanently jammed - hidden.
+                            </p>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label for="radar_interference_blanking_off">
+                            <input
+                              type="radio"
+                              id="radar_interference_blanking_off"
+                              name="radar_interference_blank"
+                              value="0" />
+                            <span class="label-text"
+                              >Blurry</span
+                            >
+                            <p>
+                              Radar visuals are permanently "impaired" - fuzzy.
+                            </p>
+                          </label>
+                        </li>
+                      </ul>
+                    </li>
+
+                  </ul>
+                </fieldset>
+
                 <fieldset id="gameplay-options" class="sync-over-network">
                   <p class="non-indented network">
                     These are shared network options.
@@ -1363,48 +1457,6 @@
                               too.</i
                             >
                           </fn>
-                        </p>
-                      </label>
-                    </li>
-
-                    <li>
-                      <label for="cb_landing_pads_on_radar">
-                        <input
-                          type="checkbox"
-                          id="cb_landing_pads_on_radar"
-                          name="landing_pads_on_radar"
-                          value="1"
-                          checked />
-                        <span class="label-text">Landing pads on radar*</span>
-                        <p>
-                          The original game did not show landing pads on the
-                          radar.<br />
-                          Some battles have an open landing pad at the
-                          mid-point.
-                        </p>
-                        <p class="compact">
-                          <fn class="disclaimer"
-                            >*<i
-                              >Shrubbery sometimes obscures landing pads, making
-                              them invisible to radar.</i
-                            ></fn
-                          >
-                        </p>
-                      </label>
-                    </li>
-
-                    <li>
-                      <label for="cb_clouds_on_radar">
-                        <input
-                          type="checkbox"
-                          id="cb_clouds_on_radar"
-                          name="clouds_on_radar"
-                          value="1"
-                          checked />
-                        <span class="label-text">Clouds on radar</span>
-                        <p>
-                          Clouds can be used strategically, but they were not on
-                          radar in the original.
                         </p>
                       </label>
                     </li>
