@@ -269,13 +269,19 @@ body.loaded #radar {
 }
 
 body.radar_enhanced_fx #world-noise-overlay,
-body.radar_enhanced_fx #radar-container.interference .interference {
+body.radar_enhanced_fx.radar_interference_blur
+  #radar-container.interference
+  .interference {
   /* Probably $$$ - TODO: only apply when active. */
   mix-blend-mode: soft-light;
   opacity: 0.65;
 }
 
-#radar-container .interference {
+body:not(.radar_interference_blur) #radar-container .interference {
+  display: none;
+}
+
+body #radar-container .interference {
   /* battle flag: "jamming" */
   position: absolute;
   top: 0px;
@@ -286,13 +292,13 @@ body.radar_enhanced_fx #radar-container.interference .interference {
   transition: opacity 0.5s;
 }
 
-#radar-container.interference .interference {
+body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
 
 body.game-started #world-noise-overlay .noise,
 body.radar_enhanced_fx #world-noise-overlay .noise,
-#radar-container .interference .noise {
+body.radar_interference_blur #radar-container .interference .noise {
   background: url(../../assets/image/UI/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
@@ -328,7 +334,7 @@ body.radar_enhanced_fx #radar-container .noise {
   pointer-events: none;
 }
 
-body.game-started:not(.interference) #world-noise-overlay {
+body.game-started:not(.radar_interference_blur) #world-noise-overlay {
   /* once started (and not flag-specific jamming / interference mode), cover radar. */
   top: 0;
 }
@@ -1062,13 +1068,13 @@ body.game-started canvas {
   opacity: 1;
 }
 
-#radar-container.interference canvas,
-#radar-container.interference .scan-node {
+body.radar_interference_blur #radar-container.interference canvas,
+body.radar_interference_blur #radar-container.interference .scan-node {
   /* on some levels, "jamming" means radar is fuzzy */
   filter: blur(3px);
 }
 
-#radar-container.interference .scan-node {
+body.radar_interference_blur #radar-container.interference .scan-node {
   /* reduce scan nodes a bit */
   opacity: 0.75;
 }

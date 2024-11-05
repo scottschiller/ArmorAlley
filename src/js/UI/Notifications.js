@@ -293,8 +293,14 @@ const Notifications = () => {
 
     // level flags
     if (levelFlags.jamming) {
-      add('⚠️ JAMMING MODE: Radar performance is impacted.');
-      game.objects.radar.startInterference();
+      // full blank vs. "blurry" interference
+      if (gamePrefs.radar_interference_blank) {
+        add('⚠️ JAMMING: Radar is permanently jammed.');
+        game.objects.radar.startJamming();
+      } else {
+        add('⚠️ INTERFERENCE: Radar performance is impacted.');
+        game.objects.radar.startInterference();
+      }
     } else if (levelFlags.stealth) {
       add('⚠️ STEALTH MODE: Enemy 🚁 hidden on radar. 🥷');
     }

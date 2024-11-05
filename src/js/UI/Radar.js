@@ -254,7 +254,8 @@ const Radar = () => {
   }
 
   function startInterference() {
-    // mess up, but don't permanently disable radar.
+    if (gamePrefs.radar_interference_blank) return;
+    // if "blurring" is allowed, mess up but don't permanently disable radar.
     if (!dom.interference) {
       // only do this once.
       dom.interference = document.createElement('div');
@@ -269,15 +270,29 @@ const Radar = () => {
     );
   }
 
+  function stopInterference() {
+    if (dom.interference) {
+      dom.interference.remove();
+      dom.interference = null;
+    }
+    utils.css.remove(document.body, css.interference);
+    utils.css.remove(dom.radarContainer, css.interference);
+  }
+
   function startJamming() {
     // [ obligatory Bob Marley reference goes here ]
-
     if (game.objects.editor) return;
 
     if (noJamming) return;
 
     // ignore vans if jammed permanently per level flags
-    if (data.isJammed && levelFlags.jamming) return;
+    if (
+      data.isJammed &&
+      levelFlags.jamming &&
+      gamePrefs.radar_interference_blank
+    ) {
+      return;
+    }
 
     data.isJammed = true;
 
@@ -358,6 +373,9 @@ const Radar = () => {
   }
 
   function stopJamming() {
+    // if permanently jammed and full block, ignore.
+    if (levelFlags.jamming && gamePrefs.radar_interference_blank) return;
+
     data.isJammed = false;
 
     updateOverlay();
@@ -1029,6 +1047,7 @@ const Radar = () => {
     setStale,
     startInterference,
     startJamming,
+    stopInterference,
     stopJamming,
     toggleScaling
   };

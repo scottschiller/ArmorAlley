@@ -30,7 +30,7 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
-import { previewLevel, setLevel } from '../levels/default.js';
+import { levelFlags, previewLevel, setLevel } from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { aaLoader } from '../core/aa-loader.js';
 
@@ -70,6 +70,7 @@ const defaultPrefs = {
   'bnb_tv': true,
   'weather': '', // [none|rain|hail|snow|turd]
   'domfetti': true,
+  'radar_interference_blank': true,
   'gravestones_helicopters': true,
   'gratuitous_battle_over': true,
   'gravestones_infantry': demo || false,
@@ -1848,6 +1849,35 @@ function PrefsManager() {
             // otherwise, resume.
             if (obj.data.stopped) obj.data.stopped = false;
           });
+        }
+      },
+
+      radar_interference_blank: (newBlank) => {
+        // flags may not have been applied, e.g., initial game load.
+        if (!levelFlags) return;
+
+        // this only applies on battles with jamming / interference flag set.
+        if (!levelFlags.jamming) return;
+
+        // radar blur is allowed (as "interference"), if blanking is off.
+        utils.css.addOrRemove(
+          document.body,
+          !newBlank,
+          'radar_interference_blur'
+        );
+
+        // below here: in-game changes.
+        if (!game.data.started) return;
+
+        // if radar is not fully blank, it should have interference.
+        if (!newBlank) {
+          game.objects.radar.startInterference();
+          // hackish / compromise: this may oscillate if there are van(s) in the area, actively blocking.
+          game.objects.radar.stopJamming();
+        } else {
+          game.objects.radar.stopInterference();
+          // ensure radar is jammed
+          game.objects.radar.startJamming();
         }
       },
 

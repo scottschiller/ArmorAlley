@@ -759,6 +759,7 @@ const DomCanvas = () => {
      */
     if (
       ((levelFlags.jamming &&
+        !gamePrefs.radar_interference_blank &&
         game.data.started &&
         data.type === 'radar-item') ||
         data.domCanvas.ctxName === 'radar') &&
@@ -770,7 +771,11 @@ const DomCanvas = () => {
     // does the object know how to draw itself?
     if (oData.draw) {
       // "standard style"
-      if (oData.jammingOpacity && oData.jammingOpacity !== 1) {
+      if (
+        !gamePrefs.radar_interference_blank &&
+        oData.jammingOpacity &&
+        oData.jammingOpacity !== 1
+      ) {
         ctx.globalAlpha = oData.jammingOpacity;
       }
       ctx.beginPath();
@@ -794,7 +799,11 @@ const DomCanvas = () => {
           ctx.stroke();
         }
       }
-      if (oData.jammingOpacity && oData.jammingOpacity !== 1) {
+      if (
+        gamePrefs.radar_interference_blank &&
+        oData.jammingOpacity &&
+        oData.jammingOpacity !== 1
+      ) {
         ctx.globalAlpha = 1;
       }
       return;
