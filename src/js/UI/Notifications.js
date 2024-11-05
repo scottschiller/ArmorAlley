@@ -275,10 +275,7 @@ const Notifications = () => {
     }
 
     // extreme mode exceptions: notify when the chopper *is* armed with bullets.
-    if (
-      gameType === 'extreme' &&
-      levelFlags.bullets
-    ) {
+    if (gameType === 'extreme' && levelFlags.bullets) {
       add('🚁 You are equipped with bullets for this battle. 🔫');
     }
 
