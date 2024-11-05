@@ -55,7 +55,7 @@ import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
-import { addWorldObjects, levelName } from '../levels/default.js';
+import { addWorldObjects, levelFlags, levelName } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
@@ -692,6 +692,16 @@ const game = (() => {
 
     // scale radar animation, after a slight delay.
     common.setFixedFrameTimeout(game.objects.radar.maybeApplyScaling, 3000);
+
+    // hackish: ensure radar interference CSS is applied, as needed.
+    if (levelFlags.jamming) {
+      prefsManager.onUpdatePrefs([
+        {
+          name: 'radar_interference_blank',
+          value: gamePrefs.radar_interference_blank
+        }
+      ]);
+    }
 
     populateTerrain();
 
