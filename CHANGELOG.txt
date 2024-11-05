@@ -5,11 +5,19 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
---- 10/29/2024, uncategorized ---
+--- 11/2024, uncategorized ---
+
+Battle victory messages, based on original game - sometimes specific to the game difficulty. https://github.com/scottschiller/ArmorAlley/commit/8366b553f035fb12086fe7a13ef61c0773eb18ec
+
+Battle defeat messages, more hints and tips. https://github.com/scottschiller/ArmorAlley/commit/adbc20502b78cede6c8989a4e53de6b1a0d6c0e2
+
+Renaming difficulties similar to original game: Easy = Boot Camp. Hard = Wargames. Extreme = Armorgeddon. (TBD: "Conflict" difficulty, between the latter two.) https://github.com/scottschiller/ArmorAlley/commit/9fe2ea35c11df304d8f9e59de747b637da87b13f1
+
+--- 10/2024, uncategorized ---
+
+Battle flag re-labeling: Bullets, Napalm, Stealth, Jamming (BNSJ) -> Aimed Missiles, Napalm, Stealth, Interference (ANSI.) https://github.com/scottschiller/ArmorAlley/commit/9bb0fbb91509baec114b2a83a457bdd9bd0dec16
 
 Battle flag, "jamming" update: radar has "interference" - partially inoperable and fuzzy, rather than completely blocked. https://github.com/scottschiller/ArmorAlley/commit/2d2d721c782d123c5ec316dcc4e86378daca9c98
-
---- 10/27/2024, uncategorized ---
 
 The last missing weapon: "aimed" AKA "dumb" missiles for helicopters, replacing bullets. Enabled for certain battles and difficulties. https://github.com/scottschiller/ArmorAlley/commit/34739349d7ab61f35209990f5eadaeadd5df0f77
 
@@ -21,23 +29,15 @@ If CPU runs out of "dumb" / aimed missiles, it can launch smart missiles at oppo
 
 Fix CPU wander "end of world" logic, it now reverses course if it gets to the other base. https://github.com/scottschiller/ArmorAlley/commit/d0a4933cf5d4b4115ab2289ad69ceca05e5dd157
 
---- 10/20/2024, uncategorized ---
-
 Allow CPU choppers to retaliate with smart missiles, when damaged by helicopter gunfire. Can fire single or multiple missiles, depending on game difficulty. https://github.com/scottschiller/ArmorAlley/commit/65c4304cd2d0a647680ab2b3feab844edbbd9f74
 
 Allow CPU choppers to drop paratroopers near turrets, if under attack. https://github.com/scottschiller/ArmorAlley/commit/27e87785fd8d7d03cf7a5f2704bf37f92be6a526
 
 Allow CPU choppers to target and capture bunkers with paratroopers. https://github.com/scottschiller/ArmorAlley/commit/55132fbf47925cbf59131f9203c49523d9c07d4c
 
---- 10/19/2024, uncategorized ---
-
 Radial energy UI: show + sign when units are repairing. https://github.com/scottschiller/ArmorAlley/commit/7275b15ccafc899f1d64c1dae91dffdba7e78ad4
 
---- 10/17/2024, uncategorized ---
-
 Bug fix: Expired (falling) smart missiles weren't hitting friendly units. https://github.com/scottschiller/ArmorAlley/commit/887212346756293922c2c2d8abf31f9e2d343e17
-
---- 10/16/2024, uncategorized ---
 
 Enemy helicopter can now drop "decoy" paratroopers when targeted by a new smart missile. https://github.com/scottschiller/ArmorAlley/commit/9be834c50a6d3bbc083c780b179593bd27be610a
 
@@ -46,8 +46,6 @@ Enemy helicopter tries to dodge, and shoot down incoming smart missiles (and par
 Energy UI refactor: Draw on canvas, use a circle instead of a line. WIP. https://github.com/scottschiller/ArmorAlley/commit/23acbaa651a0ee914e6ec2e069a3bacc139d1b73
 
 Behavior change: Make chopper gunfire slower on easy, faster on hard + extreme. https://github.com/scottschiller/ArmorAlley/commit/0533af9037ae5ccbe1bf52025ea53e39fcd0cc77
-
---- 10/08/2024, uncategorized ---
 
 Expand/collapse "more info" section on some modal dialogs.
 
