@@ -1266,6 +1266,54 @@ const Helicopter = (options = {}) => {
     reset();
   }
 
+  function shouldDelayRespawn() {
+    /**
+     * Special case: if a non-network game and a "fire" key is held down, delay respawn.
+     * This was in the original game as a feature where you could continue to watch the scene where you died.
+     */
+
+    return (
+      !net.active &&
+      (keyboardMonitor.isDown('shift') ||
+        keyboardMonitor.isDown('ctrl') ||
+        keyboardMonitor.isDown('x') ||
+        keyboardMonitor.isDown('z'))
+    );
+  }
+
+  function localReset(noDelay) {
+    /**
+     * Special case: if a non-network game and a "fire" key is held down, delay respawn.
+     * This was an original game feature where you could continue to watch the scene where you died.
+     */
+
+    // start animation after a delay...
+    let delay = noDelay ? 1 : 1000;
+
+    common.setFrameTimeout(() => {
+      if (shouldDelayRespawn()) {
+        // check again in a moment, but don't wait - once key is released, response should be immediate.
+        window.requestAnimationFrame(() => localReset(true));
+        return;
+      }
+
+      // hackish: hard reset battlefield scroll
+      data.scrollLeft = data.isEnemy
+        ? common.getLandingPadOffsetX(exports) -
+          game.objects.view.data.browser.halfWidth
+        : 0;
+
+      game.objects.view.animateLeftScrollTo(
+        common.getLandingPadOffsetX(exports) +
+          data.width * (1 / screenScale) -
+          game.objects.view.data.browser.halfWidth
+      );
+
+      // by the time the above is almost finished, start proper respawn.
+      common.setFrameTimeout(respawn, delay + (data.isCPU ? 7000 : 2000));
+    }, delay);
+  }
+
   function die(dieOptions = {}) {
     if (data.dead) return;
 
@@ -1447,25 +1495,11 @@ const Helicopter = (options = {}) => {
     if ((!tutorialMode || !data.isEnemy) && !game.data.battleOver) {
       if (data.isLocal) {
         // animate back to home base.
-
-        // start animation after a delay...
-        common.setFrameTimeout(() => {
-          // hackish: hard reset battlefield scroll
-          data.scrollLeft = data.isEnemy
-            ? common.getLandingPadOffsetX(exports) -
-              game.objects.view.data.browser.halfWidth
-            : 0;
-
-          game.objects.view.animateLeftScrollTo(
-            common.getLandingPadOffsetX(exports) +
-              data.width * (1 / screenScale) -
-              game.objects.view.data.browser.halfWidth
-          );
-        }, 1000);
+        localReset();
+      } else {
+        // by the time the above is almost finished, start proper respawn.
+        common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
       }
-
-      // by the time the above is almost finished, start proper respawn.
-      common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
     }
 
     // ensure we aren't going anywhere.

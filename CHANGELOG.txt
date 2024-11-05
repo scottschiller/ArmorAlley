@@ -7,6 +7,8 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 
 --- 11/2024, uncategorized ---
 
+Original game feature: Hold shift/ctrl/x/z (within 1 second) to delay respawn, keep watching scene where you died. https://github.com/scottschiller/ArmorAlley/commit/2d5c74477fbc2c15eb9e708df8ea80086d4f94a8
+
 Battle victory messages, based on original game - sometimes specific to the game difficulty. https://github.com/scottschiller/ArmorAlley/commit/8366b553f035fb12086fe7a13ef61c0773eb18ec
 
 Battle defeat messages, more hints and tips. https://github.com/scottschiller/ArmorAlley/commit/adbc20502b78cede6c8989a4e53de6b1a0d6c0e2
