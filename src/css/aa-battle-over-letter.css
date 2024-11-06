@@ -255,7 +255,13 @@ body.is_safari .animated-mail .top-fold {
 }
 
 .animated-mail .letter .letter-context-body {
-  margin: calc(5px * var(--gs)) calc(10px * var(--gs));
+  padding: calc(5px * var(--gs)) calc(10px * var(--gs));
+  max-height: 50vh;
+  overflow: auto;
+  /* Firefox may show scaled-up scrollbars - this helps a bit. */
+  scrollbar-width: thin;
+  /* compensate for the bottom part of the envelope */
+  padding-bottom: calc(84px * var(--gs));
 }
 
 .animated-mail .letter-buttons {
@@ -286,7 +292,6 @@ body.is_safari .animated-mail .top-fold {
 #battle-over-letter.open .animated-mail .letter {
   /* bring the letter up, compensating for the overlapping part of the envelope. */
   transform: translate3d(0, 0, 0);
-  padding-bottom: calc(84px * var(--gs));
 }
 
 #battle-over-letter hr {
