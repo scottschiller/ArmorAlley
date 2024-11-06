@@ -230,7 +230,7 @@ body.is_safari .animated-mail .top-fold {
    * Image by kues1 on Freepik
    * https://www.freepik.com/free-photo/white-empty-canvas_1038705.htm#from_view=detail_alsolike#position=4
    */
-  background: url(../../assets/image/UI/white-empty-canvas-texture.webp) 0 0/128px
+  background: url(../../assets/image/UI/white-empty-canvas-texture.webp) 0 0/256px
     #fff;
   z-index: 1;
   overflow: hidden;
