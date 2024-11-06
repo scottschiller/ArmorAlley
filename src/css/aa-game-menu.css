@@ -446,6 +446,8 @@ body.game-started #start-game-button-mobile {
   min-height: calc(18px * var(--menu-scale));
   text-indent: var(--text-indent);
   padding: 0;
+  /* override: make this arrow look nice. */
+  image-rendering: auto;
 }
 
 #game-menu select:focus,
