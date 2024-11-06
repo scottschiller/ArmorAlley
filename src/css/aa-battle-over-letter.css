@@ -44,7 +44,8 @@
   height: 100%;
 }
 
-#battle-over-letter .letter-content h1 {
+#battle-over-letter .letter-content h1,
+#battle-over-letter .letter-content h3 {
   color: #9b1a1e;
   font-family:
     'War Wound',
@@ -65,6 +66,12 @@
   line-height: 1em;
   margin-top: calc(4px * var(--gs));
   margin-bottom: 0;
+}
+
+#battle-over-letter .letter-content h3 {
+  font-size: calc(13px * var(--gs));
+  margin-top: calc(6.5px * var(--gs));
+  color: #006600;
 }
 
 #battle-over-letter .letter-content h1 span {
