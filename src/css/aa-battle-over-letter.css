@@ -61,7 +61,7 @@
     arial,
     sans-serif;
   font-weight: 400;
-  font-size: calc(19px * var(--gs));
+  font-size: calc(15px * var(--gs));
   line-height: 1em;
   margin-top: calc(4px * var(--gs));
   margin-bottom: 0;
@@ -75,7 +75,7 @@
 #battle-over-letter .letter-content p {
   color: #444;
   font-family: Geneva, verdana, arial, sans-serif;
-  font-size: calc(5px * var(--gs));
+  font-size: calc(4.675px * var(--gs));
   font-style: italic;
 }
 
