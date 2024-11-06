@@ -67,6 +67,11 @@
   margin-bottom: 0;
 }
 
+#battle-over-letter .letter-content h1 span {
+  /* try to keep the battle name together - on the next line if needed. */
+  white-space: nowrap;
+}
+
 #battle-over-letter .letter-content p {
   color: #444;
   font-family: Geneva, verdana, arial, sans-serif;
