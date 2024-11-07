@@ -221,6 +221,9 @@ function startPointer(e) {
 function updatePointer(event) {
   if (!event) return;
 
+  // don't draw while in "background"
+  if (prefsManager?.isActive()) return;
+
   // get the angle based on the center point of the card and pointer position
   for (const card of cards) {
     // Check the card against the proximity and then start updating
@@ -316,7 +319,11 @@ function init() {
   utils.css.add(menu, 'visible');
 
   utils.events.add(document, 'click', formClick);
-  utils.events.add(optionsButton, 'click', () => prefsManager.show());
+  utils.events.add(optionsButton, 'click', () => {
+    prefsManager.show();
+    // turn the glow effects off
+    hidePointer();
+  });
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
 
