@@ -109,13 +109,140 @@ function Envelope() {
       applyLevel();
       updateNextLink(didWin);
       dom.o.style.display = 'block';
+      addGlows();
       common.setFrameTimeout(() => utils.css.add(dom.o, css.active), 1000);
     });
+  }
+
+  function addGlows() {
+    // child / effect node for each "card" - <span class="glows"></span>
+    let glowNode = document.createElement('span');
+    glowNode.className = 'glows';
+
+    // just get all eligible nodes in the DOM?
+    cards = document.querySelectorAll('.glow-item');
+    cards.forEach((card) => card.appendChild(glowNode.cloneNode()));
+
+    utils.events.add(document, 'touchstart', startPointer);
+    utils.events.add(document.body, 'touchend', hidePointer);
+    utils.events.add(document.body, 'pointermove', updatePointer);
+
+    restyle();
+    resetPointer();
   }
 
   function updateMouse(e) {
     const isValid = e.type === 'mousedown'; // && utils.css.has(e.target, 'wax-seal');
     utils.css.addOrRemove(dom.o, isValid, 'mousedown');
+  }
+
+  /**
+   * "Proximity glow cards" effect
+   * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
+   * https://codepen.io/jh3y/pen/QWYPaax
+   */
+
+  let container;
+  let cards;
+
+  function restyle() {
+    container.style.setProperty('--glow-blur', config.blur);
+    container.style.setProperty('--glow-spread', config.spread);
+    container.style.setProperty(
+      '--glow-direction',
+      config.vertical ? 'column' : 'row'
+    );
+    // glow-spread overrides, HTML -> CSS, set per-element
+    const prop = 'glow-spread';
+    const attr = `data-${prop}`;
+    container.querySelectorAll(`[${attr}]`).forEach((node) => {
+      node.style.setProperty(`--${prop}`, node.getAttribute(attr));
+    });
+  }
+
+  const config = {
+    proximity: 50,
+    spread: 120,
+    blur: 15,
+    opacity: 0
+  };
+
+  let layoutCache = {};
+
+  let useCache = false;
+  let glowIDs = 0;
+
+  function clearLayoutCache() {
+    layoutCache = {};
+  }
+
+  utils.events.add(window, 'resize', clearLayoutCache);
+
+  function getLayout(item) {
+    if (!useCache)
+      return item.getBoundingClientRect();
+
+    if (!item.id) {
+      item.id = `glow_element_${glowIDs++}`;
+    }
+
+    if (layoutCache[item.id]) return layoutCache[item.id];
+
+    layoutCache[item.id] = item.getBoundingClientRect();
+
+    return layoutCache[item.id];
+  }
+
+  function resetPointer() {
+    // pretend-reset everything, so glow is entirely hidden.
+    updatePointer({ x: 0, y: 0 });
+  }
+
+  function hidePointer() {
+    for (const card of cards) {
+      // apply default opacity
+      card.style.setProperty('--glow-active', config.opacity);
+    }
+  }
+
+  function startPointer(e) {
+    if (!e.touches?.length) return;
+    const touch = e.touches[e.touches.length - 1];
+    updatePointer({
+      x: touch.clientX,
+      y: touch.clientY
+    });
+  }
+
+  function updatePointer(event) {
+    if (!event) return;
+
+    // get the angle based on the center point of the card and pointer position
+    for (const card of cards) {
+      // Check the card against the proximity and then start updating
+      const card_bounds = getLayout(card);
+      // Get distance between pointer and outerbounds of card
+      if (
+        event.x > card_bounds.left - config.proximity &&
+        event.x < card_bounds.left + card_bounds.width + config.proximity &&
+        event.y > card_bounds.top - config.proximity &&
+        event.y < card_bounds.top + card_bounds.height + config.proximity
+      ) {
+        // if within proximity, set the active opacity
+        card.style.setProperty('--glow-active', 1);
+      } else {
+        card.style.setProperty('--glow-active', config.opacity);
+      }
+      const card_center = [
+        card_bounds.left + card_bounds.width * 0.5,
+        card_bounds.top + card_bounds.height * 0.5
+      ];
+      let angle =
+        (Math.atan2(event.y - card_center[1], event.x - card_center[0]) * 180) /
+        Math.PI;
+      angle = angle < 0 ? angle + 360 : angle;
+      card.style.setProperty('--glow-start', angle + 90);
+    }
   }
 
   function addEvents() {
@@ -126,6 +253,7 @@ function Envelope() {
 
   function initDOM() {
     dom.o = document.getElementById('battle-over-letter');
+    container = dom.o;
     dom.oLetter = dom.o?.querySelector('.letter-context-body');
     dom.oLetterSource = document.getElementById('letters-from-the-old-tanker');
     dom.nextLink = document.getElementById('next-battle');

@@ -38,6 +38,15 @@
   transition-duration: 0.33s;
 }
 
+#battle-over-letter .glow-element {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  top: 33.3%;
+  right: 0px;
+  background-color: transparent;
+}
+
 #battle-over-letter .letter-content {
   position: relative;
   z-index: 2;
@@ -139,20 +148,20 @@ body.is_safari .animated-mail .top-fold {
 
 #battle-over-letter .generic-cta {
   background-color: #fff;
-  filter: drop-shadow(0 0 calc(1px * var(--menu-scale)) rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 0 calc(1px * var(--env-scale)) rgba(0, 0, 0, 0.25));
   color: #000;
   text-shadow: none;
   font-size: calc(8px * var(--gs));
   padding: calc(2px * var(--gs)) calc(8px * var(--gs));
   line-height: calc(10px * var(--gs));
   text-decoration: none;
-  border-radius: calc(1px * var(--menu-scale));
+  border-radius: calc(1px * var(--env-scale));
 }
 
 #battle-over-letter .generic-cta:hover {
   color: #fff;
   background-color: rgba(0, 255, 0, 0.5);
-  filter: drop-shadow(0 0 calc(1px * var(--menu-scale)) rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 0 calc(1px * var(--env-scale)) rgba(0, 0, 0, 0.25));
 }
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
@@ -304,4 +313,142 @@ body.is_safari .animated-mail .top-fold {
 #battle-over-letter hr {
   border: none;
   border-top: calc(0.5px * var(--gs)) dashed #999;
+}
+
+/* duplicated from aa-game-menu */
+
+:root {
+  --env-scale: calc(var(--menu-scale));
+}
+
+/**
+ * "Proximity glow" effect
+ * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
+ */
+:root {
+  --glow-bg: hsl(0, 44%, 7%);
+  --glow-border: hsl(280 10% 50%, 1);
+  --glow-card: transparent;
+  --glow-color: hsl(240 18% 80%);
+  --glow-border-width: calc(0.4px * var(--env-scale));
+  --glow-border-radius: calc(1px * var(--env-scale));
+  --glow-gradient: conic-gradient(
+    from 180deg at 50% 70%,
+    hsla(0, 0%, 98%, 1) 0deg,
+    #eec32d 72.0000010728836deg,
+    #ec4b4b 144.0000021457672deg,
+    #709ab9 216.00000858306885deg,
+    #4dffbf 288.0000042915344deg,
+    hsla(0, 0%, 98%, 1) 1turn
+  );
+}
+
+@property --glow-start {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.glow-item {
+  position: relative;
+  --glow-active: 0.15;
+  --glow-start: 0;
+  background: var(--glow-card);
+  border-radius: var(--glow-border-radius);
+}
+
+a.glow-item {
+  /* specific to button / link */
+  border: calc(0.4px * var(--env-scale)) solid rgba(255, 255, 255, 0.15);
+}
+
+.glows {
+  pointer-events: none;
+  position: absolute;
+  display: block;
+  inset: 0;
+  filter: blur(calc(var(--glow-blur) * 1px));
+}
+
+.glows::after,
+.glows::before {
+  --glow-alpha: 0;
+  content: '';
+  background: var(--glow-gradient);
+  background-attachment: fixed;
+  position: absolute;
+  inset: -5px;
+  border: 10px solid transparent;
+  border-radius: var(--glow-border-radius);
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from calc((var(--glow-start) - (var(--glow-spread) * 0.5)) * 1deg),
+      #000 0deg,
+      #fff,
+      #0000 calc(var(--glow-spread) * 1deg)
+    );
+  mask-composite: intersect;
+  mask-clip: padding-box, border-box;
+  opacity: var(--glow-active);
+  transition: opacity 0.5s;
+  z-index: 99;
+}
+
+.glow-item::before {
+  position: absolute;
+  inset: -1px;
+  border: var(--glow-border-width) solid transparent;
+  content: '';
+  border-radius: var(--glow-border-radius);
+  pointer-events: none;
+  background: var(--glow-border);
+  background-attachment: fixed;
+  border-radius: var(--glow-border-radius);
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from
+        calc(
+          (
+              (var(--glow-start) + (var(--glow-spread) * 0.25)) -
+                (var(--glow-spread) * 1.5)
+            ) * 1deg
+        ),
+      hsl(0 0% 100% / 0.15) 0deg,
+      white,
+      hsl(0 0% 100% / 0.15) calc(var(--glow-spread) * 2.5deg)
+    );
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  opacity: var(--glow-active);
+  transition: opacity 0.5s;
+}
+
+.glow-item::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  background: var(--glow-gradient);
+  background-attachment: fixed;
+  border-radius: var(--glow-border-radius);
+  opacity: var(--glow-active, 0);
+  transition: opacity 0.5s;
+  --glow-alpha: 0;
+  inset: -2px;
+  border: var(--glow-border-width) solid transparent;
+  mask: linear-gradient(#0000, #0000),
+    conic-gradient(
+      from
+        calc(
+          (
+              (var(--glow-start) + (var(--glow-spread) * 0.25)) -
+                (var(--glow-spread) * 0.5)
+            ) * 1deg
+        ),
+      #0000 0deg,
+      #fff,
+      #0000 calc(var(--glow-spread) * 0.5deg)
+    );
+  filter: brightness(1.5);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
 }
