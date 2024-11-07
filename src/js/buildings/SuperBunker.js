@@ -218,7 +218,11 @@ const SuperBunker = (options = {}) => {
   }
 
   function refreshNearbyItems() {
-    // set on init, updated with `zones.changeOwnership()` as targets change sides
+    /**
+     * Set on init, updated with `zones.changeOwnership()` as targets change sides.
+     * NOTE: Super Bunkers likely fire at all units when armed, but not when neutral.
+     * TODO: verify that Super Bunkers fire at vans on multiple battles / difficulties in original game.
+     */
     nearby.items = getTypes(
       'infantry:all, engineer, missileLauncher, van, helicopter',
       { group: 'enemy', exports }
@@ -339,7 +343,8 @@ const SuperBunker = (options = {}) => {
       type: TYPES.superBunker,
       bottomAligned: true,
       frameCount: 0,
-      energy: options.energy || 5,
+      // if neutral / hostile, then "unmanned" - but helicopters and munitions can still hit it.
+      energy: options.hostile ? 0 : options.energy || 5,
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
       isEnemy: !!options.isEnemy,
       width,
@@ -353,7 +358,7 @@ const SuperBunker = (options = {}) => {
       fireModulus: FIRE_MODULUS,
       fireModulus1X: FIRE_MODULUS,
       gameSpeedProps: ['fireModulus'],
-      hostile: false,
+      hostile: !!options.hostile,
       midPoint: null,
       xLookAhead: width / 3,
       y: game.objects.view.data.world.height - height
