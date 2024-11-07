@@ -461,9 +461,10 @@ const SuperBunker = (options = {}) => {
         setFiring(nearby.options.fireTargetCount > 0);
       },
       hit(target) {
-        let isFriendly = target.data.isEnemy === data.isEnemy;
+        let isFriendly = !data.hostile && target.data.isEnemy === data.isEnemy;
 
         const isTargetFriendlyToPlayer =
+          !target.data.hostile &&
           target.data.isEnemy === game.players.local.data.isEnemy;
 
         // enemy might be inside the bunker bounding box, e.g., parachuted in from above. Consider a miss, if so.
