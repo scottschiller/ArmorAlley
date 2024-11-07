@@ -504,13 +504,18 @@ function previewLevel(levelName, excludeVehicles) {
     // don't show landing pads that are intentionally hidden by terrain decor
     if (item[0] === TYPES.landingPad && item[3]?.obscured) return;
 
+    // special Super Bunker case: neutral / hostile - rendering can depend on prefs.
+    let hostileSB = item[0] === 'super-bunker' && item[1] === 'neutral';
+    let canShowHostile = gamePrefs.super_bunker_arrows;
+
     const exports = {
       data: common.inheritData(
         {
           type: item[0],
           bottomAligned: item[0] !== 'balloon',
           isOnScreen: true,
-          isEnemy: item[1] === 'right',
+          // Special SB case: show hostile as enemy only if "arrows" pref is off.
+          isEnemy: item[1] === 'right' || (hostileSB && !canShowHostile),
           ...item[0].data
         },
         {
@@ -519,6 +524,11 @@ function previewLevel(levelName, excludeVehicles) {
         }
       )
     };
+
+    // special hostile Super Bunker case
+    if (hostileSB && canShowHostile) {
+      exports.data.hostile = true;
+    }
 
     // if present, render on canvas.
     if (game.objectConstructors[item[0]]?.radarItemConfig) {
