@@ -758,12 +758,11 @@ const DomCanvas = () => {
      * Don't draw opacity during level previews - only when game started.
      */
     if (
-      ((levelFlags.jamming &&
-        !gamePrefs.radar_interference_blank &&
-        game.data.started &&
-        data.type === 'radar-item') ||
-        data.domCanvas.ctxName === 'radar') &&
-      !oData.jammingOpacity
+      levelFlags.jamming &&
+      !gamePrefs.radar_interference_blank &&
+      game.data.started &&
+      (data.type === 'radar-item' || data.domCanvas.ctxName === 'radar') &&
+      oData.jammingOpacity === undefined
     ) {
       oData.jammingOpacity = 0.125 + rng(0.75, 'radar');
     }
