@@ -584,14 +584,14 @@ SuperBunker.radarItemConfig = (exports) => ({
   height: 3,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    if (exports?.data.hostile) {
+    if (exports?.data.hostile && gamePrefs.super_bunker_arrows) {
       if (!pattern) {
         pattern = ctx.createPattern(slashPattern, 'repeat');
       }
       ctx.fillStyle = pattern;
     } else {
       ctx.fillStyle =
-        !gamePrefs.super_bunker_arrows || exports?.data.isEnemy
+        exports?.data.hostile || exports?.data.isEnemy
           ? ENEMY_COLOR
           : '#17a007';
     }
