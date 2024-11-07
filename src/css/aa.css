@@ -303,6 +303,8 @@ body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
 
+/* home screen + radar "interference"-specific overlays */
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise,
 body.game-started #world-noise-overlay.radar-jammed .noise,
 body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
 body.radar_interference_blur
@@ -323,7 +325,8 @@ body.radar_interference_blur
   top: 0;
 }
 
-/* game screen + radar "interference"-specific overlays */
+/* home screen + radar "interference"-specific overlays (when active) */
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise,
 body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
 body.radar_enhanced_fx #radar-container.interference .noise,
 body.radar_interference_blur
@@ -346,6 +349,20 @@ body.radar_interference_blur
   z-index: 11;
   opacity: 0;
   pointer-events: none;
+}
+
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay {
+  /* home screen */
+  opacity: 1;
+}
+
+body:not(.game-started).is_firefox.radar_enhanced_fx
+  #world-noise-overlay
+  .noise {
+  /* hack: disable for Firefox given <video> render failure RE: mix-blend-mode. */
+  display: none;
+  opacity: 0;
+  animation: none;
 }
 
 body.game-started:not(.radar_interference_blur) #world-noise-overlay {
