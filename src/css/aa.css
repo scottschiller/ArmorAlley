@@ -303,9 +303,12 @@ body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
 
-body.game-started #world-noise-overlay .noise,
-body.radar_enhanced_fx #world-noise-overlay .noise,
-body.radar_interference_blur #radar-container .interference .noise {
+body.game-started #world-noise-overlay.radar-jammed .noise,
+body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
+body.radar_interference_blur
+  #radar-container.interference
+  .interference
+  .noise {
   background: url(../../assets/image/UI/noise-tv.webp) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
@@ -321,8 +324,12 @@ body.radar_interference_blur #radar-container .interference .noise {
 }
 
 /* game screen + radar "interference"-specific overlays */
-body.radar_enhanced_fx #world-noise-overlay .noise,
-body.radar_enhanced_fx #radar-container .noise {
+body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
+body.radar_enhanced_fx #radar-container.interference .noise,
+body.radar_interference_blur
+  #radar-container.interference
+  .interference
+  .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
   background-color: rgba(0, 0, 0, 0.25);
   animation: 1s steps(15) infinite both noise;
