@@ -319,11 +319,7 @@ function init() {
   utils.css.add(menu, 'visible');
 
   utils.events.add(document, 'click', formClick);
-  utils.events.add(optionsButton, 'click', () => {
-    prefsManager.show();
-    // turn the glow effects off
-    hidePointer();
-  });
+  utils.events.add(optionsButton, 'click', () => showPrefs());
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
 
@@ -819,11 +815,17 @@ function configureNetworkGame() {
     prefsManager.hide();
   }
 
-  prefsManager.show(options);
+  showPrefs(options);
 }
 
 function selectLevel() {
-  prefsManager.show({ selectLevel: true });
+  showPrefs({ selectLevel: true });
+}
+
+function showPrefs(options) {
+  // turn off glow effects
+  hidePointer();
+  prefsManager.show(options);
 }
 
 function startGame() {
