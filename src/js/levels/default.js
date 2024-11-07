@@ -1287,7 +1287,7 @@ originalLevels = {
     },
     {
       t: 'super-bunker',
-      l: [4096]
+      n: [4096]
     },
     {
       t: 'tree',
