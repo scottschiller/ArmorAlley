@@ -165,8 +165,8 @@ function restyle() {
 
 const config = {
   proximity: 50,
-  spread: 120,
-  blur: 15,
+  spread: 180,
+  blur: 13,
   opacity: 0
 };
 
