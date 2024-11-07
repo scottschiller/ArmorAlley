@@ -1877,8 +1877,8 @@ const Helicopter = (options = {}) => {
           updated.ammo = true;
         }
       } else {
-        // special case: allow CPU to fire smart missiles in some cases, when out of aimed missiles.
-        if (data.isCPU && !levelFlags.bullets && !data.isRemote) {
+        // special case: allow CPU to fire smart missiles in some cases
+        if (data.isCPU && !data.isRemote) {
           data.ai?.maybeRetaliateWithSmartMissile?.();
         }
         if (data.isLocal && sounds.inventory.denied) {

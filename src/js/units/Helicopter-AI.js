@@ -64,8 +64,8 @@ const HelicopterAI = (options = {}) => {
   let missileEnergyThreshold =
     gameType === 'extreme' ? 8 : gameType === 'hard' ? 5 : 2;
 
-  // when to go easy on the player, apropos
-  let oneMissileOnly = gameType === 'easy';
+  // retaliate with a single missile, unless in extreme (armorgeddon) mode
+  let oneMissileOnly = gameType !== 'extreme';
 
   // throttle how often paratroopers can be dropped over target(s)
   let paratrooperDropTimer;
@@ -552,9 +552,8 @@ const HelicopterAI = (options = {}) => {
       if (attacker.data.type !== TYPES.gunfire) return;
       if (attacker.data.parentType !== TYPES.helicopter) return;
     } else {
-      // aimed missile battle case: only fire smart missiles if out of aimed missiles.
-      // ignore damage check, because one missile hit = dead.
-      if (data.ammo) return;
+      // aimed missile case: fire at any time if extreme - otherwise, fire when out of aimed missiles.
+      if (gameType !== 'extreme' && data.ammo) return;
     }
 
     maybeFireMissileAtHelicopter();
@@ -573,22 +572,25 @@ const HelicopterAI = (options = {}) => {
     if (!mTarget) return;
 
     // are there other active missiles targeting the attacking chopper?
-    // launch more only if in hard / extreme mode.
-    if (oneMissileOnly) {
-      let similarMissileCount = 0,
-        i,
-        j;
+    // launch more only if in extreme mode.
+    let similarMissileCount = 0,
+      i,
+      j;
 
-      for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
-        if (game.objects[TYPES.smartMissile][i].objects.target === mTarget) {
-          similarMissileCount++;
-        }
+    for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
+      if (game.objects[TYPES.smartMissile][i].objects.target === mTarget) {
+        similarMissileCount++;
       }
-
-      if (similarMissileCount) return;
     }
 
+    if (oneMissileOnly && similarMissileCount) return;
+
     let delay = rngInt(1000, TYPES.helicopter);
+
+    if (similarMissileCount) {
+      // extend delay when launching "additional" missiles
+      delay += rngInt(3000, TYPES.helicopter);
+    }
 
     missileLaunchTimer = common.setFrameTimeout(() => {
       // sanity check, given delay / async...

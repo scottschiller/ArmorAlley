@@ -478,6 +478,10 @@ function avoidNearbyMunition(data) {
     (gameType === 'hard' || gameType === 'extreme')
   ) {
     data.ai.maybeChaseHelicopters();
+    // special extreme case: retaliate, too.
+    if (gameType === 'extreme') {
+      data.ai.maybeRetaliateWithSmartMissile(nearbyObstacle.data.parent);
+    }
   }
 
   // avoid getting stuck at the top; dive below if near the top of the screen.
