@@ -333,7 +333,7 @@ body.radar_interference_blur
   /* "enhanced" version - also composited with a blend-mode filter. */
   background-color: rgba(0, 0, 0, 0.25);
   animation: 1s steps(15) infinite both noise;
-  opacity: 1;
+  opacity: 0.65;
 }
 
 #world-noise-overlay {
