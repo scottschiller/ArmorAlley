@@ -39,7 +39,13 @@ body.auto-start #game-menu-wrapper.active.fade-out {
   /* discourage selection. */
   -webkit-user-select: none;
   user-select: none;
-  /* allow video elements to peek through wordmark, etc. */
+}
+
+body:not(.is_firefox) #game-menu-wrapper {
+  /**
+   * Allow video elements to peek through wordmark, etc.
+   * This breaks video rendering in Firefox, solid pink color.
+   */
   mix-blend-mode: screen;
 }
 
@@ -654,6 +660,11 @@ body.edit-mode #home-video-wrapper,
 body.game-started #home-video-wrapper {
   opacity: 0;
   transition: opacity 0.25s ease-in-out;
+}
+
+body.is_firefox #home-video-wrapper {
+  /* 11/2024: opacity transition seems to trigger pink video rendering issue in Firefox. */
+  transition: none !important;
 }
 
 #home-menu-video {

@@ -268,13 +268,20 @@ body.loaded #radar {
   visibility: visible;
 }
 
-body.radar_enhanced_fx #world-noise-overlay,
-body.radar_enhanced_fx.radar_interference_blur
+body:not(.is_firefox).radar_enhanced_fx #world-noise-overlay,
+body.is_firefox.game-started.radar_enhanced_fx #world-noise-overlay,
+body:not(.is_firefox).radar_enhanced_fx.radar_interference_blur
+  #radar-container.interference
+  .interference,
+body.is_firefox.game-started.radar_enhanced_fx.radar_interference_blur
   #radar-container.interference
   .interference {
-  /* Probably $$$ - TODO: only apply when active. */
+  /**
+   * Probably $$$ - TODO: only apply when active.
+   * 11/2024: This breaks video rendering in Firefox on the home menu (at least on macOS?), solid pink.
+   * In-game (BnB) videos seem to be OK.
+   */
   mix-blend-mode: soft-light;
-  opacity: 0.65;
 }
 
 body:not(.radar_interference_blur) #radar-container .interference {
@@ -859,13 +866,26 @@ button.primary {
 }
 
 /* all the above should be "glow" items. */
-body:not(.is_safari)
+body:not(.is_safari):not(.is_firefox)
   #game-menu-wrapper.active:not(.fade-out)
   .glow-item-checkbox,
-body:not(.is_safari) #game-menu-wrapper.active:not(.fade-out) .glow-item {
-  /* Nifty tricks; "Aero" glass, Windows Vista style. NOTE: Safari messes up glow rendering if this is applied. */
+body:not(.is_safari):not(.is_firefox)
+  #game-menu-wrapper.active:not(.fade-out)
+  .glow-item {
+  /**
+   * "Aero" glass, Windows Vista style. NOTE: Safari messes up glow rendering if this is applied.
+   * 11/2024: This breaks video rendering in Firefox (at least on macOS?), solid pink.
+   */
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
+}
+
+video {
+  /**
+   * All <video>, in fact?
+   * 11/2024: "non-default" image-rendering here breaks video rendering in Firefox (at least on macOS?), solid pink. Wild.
+   */
+  image-rendering: auto;
 }
 
 #game-menu-wrapper button.large:active {
