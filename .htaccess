@@ -27,7 +27,7 @@ ExpiresByType image/png A31536000
 ExpiresByType image/jpg A31536000
 ExpiresByType image/gif A31536000
 
-ExpiresByType application/javascript A31536000
+ExpiresByType text/javascript A31536000
 ExpiresByType text/css A31536000
 ExpiresByType image/svg+xml A31536000
 
