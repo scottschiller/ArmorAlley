@@ -278,7 +278,7 @@ let defeatMessages = [
 ];
 
 function getDefeatMessage() {
-  return `<span class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</span><a href="${window.location.href}" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`;
+  return `<span class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</span><a href="${window.location.href}" data-ignore-touch="true" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`;
 }
 
 let levelFlags;
