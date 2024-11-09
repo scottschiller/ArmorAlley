@@ -520,7 +520,15 @@ function init() {
 function loadSprites() {
   utils.image.load(SPRITESHEET_URL, () => {
     // extract certain sprites up front, reduce initial flickering
-    utils.preRenderSprites();
+    utils.preRenderSprites({
+      callback: () => {
+        // preload in-game might cause jank, affecting framerate test.
+        if (game.data.started) return;
+        utils.preRenderSprites({
+          all: true
+        });
+      }
+    });
   });
 }
 
