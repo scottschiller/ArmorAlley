@@ -96,7 +96,7 @@ const Van = (options = {}) => {
   function getGameOverAnnouncement() {
     return onOurSide()
       ? getVictoryMessage()
-      : 'The enemy has won the battle.\nBetter luck next time. <span class="inline-emoji no-emoji-substitution">☠️</span><br />' +
+      : 'The enemy has won the battle.\nBetter luck next time. <span class="inline-emoji no-emoji-substitution">🏳️</span><hr />' +
           getDefeatMessage();
   }
 
