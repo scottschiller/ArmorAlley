@@ -180,8 +180,7 @@ function Envelope() {
   utils.events.add(window, 'resize', clearLayoutCache);
 
   function getLayout(item) {
-    if (!useCache)
-      return item.getBoundingClientRect();
+    if (!useCache) return item.getBoundingClientRect();
 
     if (!item.id) {
       item.id = `glow_element_${glowIDs++}`;
