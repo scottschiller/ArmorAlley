@@ -213,11 +213,14 @@ const View = () => {
     data.world.x = 0;
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
+    // keep track of width-only resize, because canvas sprites need scaling.
+    let widthChange = (data.browser.screenWidth !== width);
+
     data.browser.screenWidth = width;
     data.browser.screenHeight = height;
 
     // avoid redundant work during gameplay.
-    if (game.data.started && !hasNewScale) return;
+    if (game.data.started && !hasNewScale && !widthChange) return;
 
     applyScreenScale();
 
