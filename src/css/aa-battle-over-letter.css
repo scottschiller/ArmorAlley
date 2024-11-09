@@ -255,7 +255,7 @@ body.is_safari .animated-mail .top-fold {
     #fff;
   z-index: 1;
   overflow: hidden;
-  transition: 1s ease-in-out;
+  transition: transform 1s ease-in-out;
 }
 
 .animated-mail .letter .letter-border {
