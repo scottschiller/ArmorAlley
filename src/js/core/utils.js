@@ -373,7 +373,7 @@ const utils = {
           utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) => {
             flipInCanvas(nonFlippedImg, (newImg) => {
               preloadedImageURLs[url] = true;
-              // re-assign the final, flipped base64-encoded URL.
+              // re-assign the final, flipped blob asset.
               img.src = newImg.src;
               onload?.(newImg);
             });
@@ -384,7 +384,7 @@ const utils = {
           utils.image.load(nonFlippedSrc, (nonFlippedImg) => {
             flipInCanvas(nonFlippedImg, (newImg) => {
               preloadedImageURLs[url] = true;
-              // re-assign the final, flipped base64-encoded URL.
+              // re-assign the final, flipped blob asset.
               img.src = newImg.src;
               onload?.(newImg);
             });
@@ -402,7 +402,7 @@ const utils = {
           // spritesheet asset case
           utils.image.getImageFromSpriteSheet(shortSrc, (newImg) => {
             preloadedImageURLs[url] = src;
-            // update local cache with the new base64-encoded extracted source.
+            // update local cache with the new blob-based extracted source.
             img.src = newImg.src;
             doCallback();
           });
