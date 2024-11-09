@@ -60,7 +60,7 @@ import { zones } from '../core/zones.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
-import { levelFlags } from '../levels/default.js';
+import { getDefeatMessage, levelFlags } from '../levels/default.js';
 import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 
@@ -1491,17 +1491,6 @@ const Helicopter = (options = {}) => {
         sounds.helicopter.engine.sound.setVolume(0);
     }
 
-    // don't respawn the enemy (CPU) chopper during tutorial mode.
-    if ((!tutorialMode || !data.isEnemy) && !game.data.battleOver) {
-      if (data.isLocal) {
-        // animate back to home base.
-        localReset();
-      } else {
-        // by the time the above is almost finished, start proper respawn.
-        common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
-      }
-    }
-
     // ensure we aren't going anywhere.
     data.vX = 0;
     data.vY = 0;
@@ -1524,9 +1513,28 @@ const Helicopter = (options = {}) => {
             getDefeatMessage(),
           -1
         );
+
         game.objects.notifications.add(
           'Game over. <span class="no-emoji-substitution">☠️</span> 🏳️'
         );
+
+        game.data.battleOver = true;
+
+        // ensure joystick UI is hidden, if present
+        game.objects.joystick?.end();
+
+        utils.css.add(document.body, 'game-over');
+      }
+    }
+
+    // don't respawn the enemy (CPU) chopper during tutorial mode.
+    if ((!tutorialMode || !data.isEnemy) && !game.data.battleOver) {
+      if (data.isLocal) {
+        // animate back to home base.
+        localReset();
+      } else {
+        // by the time the above is almost finished, start proper respawn.
+        common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
       }
     }
   }
