@@ -416,7 +416,7 @@ const Base = (options = {}) => {
     // take time to scroll relative to the distance needed to be traveled.
     const scrollDuration = Math.max(
       3,
-      (Math.abs(scrollLeft - leftOffset) / worldWidth) * 12
+      (Math.abs(scrollLeft - leftOffset) / worldWidth) * (gamePrefs.gratuitous_battle_over ? 12 : 5)
     );
 
     game.objects.view.animateLeftScrollTo(
