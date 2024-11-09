@@ -795,6 +795,60 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   line-height: 100%;
 }
 
+body.game-over #game-tips {
+  /* allow events at this point, user may have lost and links need to work. */
+  pointer-events: auto;
+  /* show atop explosions and whatnot. */
+  z-index: 1;
+}
+
+#game-tips .game-over-tip {
+  color: #339933;
+}
+
+#game-tips hr {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+#game-tips .game-start {
+  /* game over, "try again" button */
+  display: inline-block;
+  font-family: 'Cheddar Gothic Stencil';
+  background-color: rgba(0, 255, 0, 0.2);
+  font-size: calc(20px * var(--gs));
+  margin-top: calc(12px * var(--gs));
+  padding: calc(5px * var(--gs)) calc(10px * var(--gs));
+  line-height: 100%;
+  color: #fff;
+  border: calc(0.5px * var(--gs)) solid rgba(255, 255, 255, 0.2);
+  transition:
+    background-color 250ms,
+    border 250ms,
+    color 250ms,
+    filter 250ms,
+    text-shadow 250ms,
+    transform 250ms;
+  border-radius: calc(3px * var(--gs));
+  text-decoration: none;
+}
+
+#game-tips .game-start:hover {
+  background-color: rgba(0, 255, 0, 0.25);
+  filter: drop-shadow(0 0 calc(1px * var(--gs)) rgba(255, 255, 255, 0.5));
+}
+
+#game-tips .game-start:active {
+  filter: drop-shadow(0 0 calc(0.75px * var(--gs)) rgba(0, 255, 0, 0.75));
+  transform: scale3d(0.9, 0.9, 1);
+  transform-origin: 50% 50%;
+}
+
+#game-tips .game-start .emoji-text {
+  position: relative;
+  top: -0.1em;
+}
+
 #game-tips .tips-container {
   border-radius: 1em;
   color: #707070;
