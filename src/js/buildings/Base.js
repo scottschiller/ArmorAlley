@@ -121,10 +121,10 @@ const Base = (options = {}) => {
     const hugeBoomDelay = 2500;
     common.setFrameTimeout(nukeTheBase, hugeBoomDelay);
 
-    if (canShowLetter) {
+    if (canShowLetter && didWin) {
       common.setFrameTimeout(() => {
         // as applicable, show a letter from "the old tanker."
-        game.objects.envelope.show(didWin);
+        game.objects.envelope.show();
       }, lettermanDelay);
     }
   }
@@ -240,8 +240,8 @@ const Base = (options = {}) => {
           onfinish: () => {
             // queue post-win commentary
             playSequence(sounds.bnb?.gameOverWin);
-            if (canShowLetter) {
-              game.objects.envelope.show(didWin);
+            if (canShowLetter && didWin) {
+              game.objects.envelope.show();
             }
           }
         });

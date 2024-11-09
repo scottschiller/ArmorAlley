@@ -49,7 +49,7 @@ const Tutorial = () => {
       // tutorial complete!
       utils.css.remove(dom.o, css.active);
       utils.css.remove(dom.oTutorialWindow, css.active);
-      game.objects.envelope.show(true);
+      game.objects.envelope.show();
       return;
     }
 

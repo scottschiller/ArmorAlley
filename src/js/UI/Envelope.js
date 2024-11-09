@@ -100,13 +100,14 @@ function Envelope() {
     utils.css.remove(dom.o, css.open);
   }
 
-  function show(didWin) {
+  function show() {
     if (data.active) return;
     init(() => {
       initDOM();
       addEvents();
       data.active = true;
       applyLevel();
+      let didWin = true;
       updateNextLink(didWin);
       dom.o.style.display = 'block';
       addGlows();
