@@ -217,7 +217,7 @@ const View = () => {
     data.browser.screenHeight = height;
 
     // avoid redundant work during gameplay.
-    if (game.started && !hasNewScale) return;
+    if (game.data.started && !hasNewScale) return;
 
     applyScreenScale();
 

@@ -184,7 +184,6 @@ const utils = {
   image: {
     getImageFromSpriteSheet: (imgRef, callback) => {
       // extract and cache a named image (based on URL) from the "default" spritesheet
-
       let ssURL = SPRITESHEET_URL;
 
       function ssReady(ssImg) {
@@ -553,12 +552,13 @@ const utils = {
 
     if (!urls?.length) return;
 
-    // note: only "friendly" base, 99% of time that'll be on-screen at game start.
+    // for initial pre-render, get "friendly" base which is on-screen 99% of games at start time.
+    const subset = /base_|helicopter|tank-enemy|landing|explosion/i;
+
+    // when fetching "all", grab everything *except* the subset which should have been done first.
     const preloadURLs = options.all
-      ? urls
-      : urls.filter((url) =>
-          url.match(/base_|helicopter|tank-enemy|landing|explosion/i)
-        );
+      ? urls.filter((url) => !url.match(subset))
+      : urls.filter((url) => url.match(subset));
 
     if (!preloadURLs?.length) return;
 
