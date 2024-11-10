@@ -467,7 +467,7 @@ const HelicopterAI = (options = {}) => {
       if (!data.isEnemy && data.x + data.width > tData.x) return;
     }
 
-    // be smart / efficient: is there already a nearby unit that may get the bunker?
+    // be smart / efficient: is there already a nearby unit that may get the target?
     let friendsInView = objectsInView(data, {
       items: [TYPES.parachuteInfantry, TYPES.infantry],
       friendlyOnly: true
