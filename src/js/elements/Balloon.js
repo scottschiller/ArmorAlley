@@ -141,12 +141,15 @@ const Balloon = (options = {}) => {
       offsetY: 0.01
     });
 
-    if (gameType === 'hard' || gameType === 'extreme') {
-      effects.shrapnelExplosion(data, {
-        count: 3 + rngInt(3, TYPES.shrapnel),
-        velocity: rngInt(4, TYPES.shrapnel)
-      });
-    }
+    effects.shrapnelExplosion(data, {
+      count:
+        3 +
+        (gameType === 'hard' || gameType === 'extreme'
+          ? rngInt(3, TYPES.shrapnel)
+          : 0),
+      velocity: rngInt(4, TYPES.shrapnel),
+      parentVX: dieOptions?.attacker?.data?.vX
+    });
 
     // sanity check: balloon may be almost immediately restored
     // if shot while a group of infantry are passing by the bunker,
