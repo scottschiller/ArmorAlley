@@ -850,7 +850,12 @@ const Helicopter = (options = {}) => {
         game.objects.view.setAnnouncement(
           `${warning} Last helicopter ${warning}`
         );
-        game.objects.notifications.addNoRepeat('WARNING: Last helicopter! 🚁');
+        let buyMore = clientFeatures.keyboard
+          ? '\n<u>H</u> to order more, 20 funds ea.'
+          : ' Extra chopper = 20 funds.';
+        game.objects.notifications.addNoRepeat(
+          `WARNING: Last helicopter! 🚁${buyMore}`
+        );
       }
 
       // "complete" respawn, re-enable mouse etc.
