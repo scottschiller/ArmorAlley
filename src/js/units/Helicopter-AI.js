@@ -37,6 +37,8 @@ import { game } from '../core/Game.js';
 let lowFuelLimit = 30;
 let lowEnergyLimit = 2;
 
+const turretLookAhead = 128;
+
 const HelicopterAI = (options = {}) => {
   const { data } = options.exports;
 
@@ -275,6 +277,46 @@ const HelicopterAI = (options = {}) => {
       let nearbyTurret = objectInView(data, { items: TYPES.turret });
       if (nearbyTurret) {
         maybeBombTarget(nearbyTurret);
+
+        // extra-mean: maybe fire and/or launch a smart missile, if not going after the chopper.
+        if (
+          !missileLaunchTimer &&
+          (!tData || tData.type !== TYPES.helicopter)
+        ) {
+          let mTarget = objectInView(data, { items: TYPES.turret });
+
+          if (mTarget) {
+            maybeFireAtTarget(mTarget);
+          }
+
+          if (mTarget && collisionCheckX(mTarget.data, data, turretLookAhead)) {
+            // wait a few frames before firing.
+            let delay = rngInt(FPS * 5, data.type);
+
+            missileLaunchTimer = common.setFrameTimeout(() => {
+              // sanity check, given delay / async...
+              if (data.dead || mTarget.data.dead) {
+                missileLaunchTimer = null;
+                return;
+              }
+
+              // "AI" target for helicopter missile launch method
+              // (predetermined rather than real-time, because reasons.)
+              missileTarget = mTarget;
+
+              // it's possible the CPU is being chased, needs to flip to fire.
+              options.exports.checkFacingTarget(mTarget);
+
+              options.exports.setMissileLaunching(true);
+
+              // and, stop momentarily.
+              common.setFrameTimeout(() => {
+                options.exports.setMissileLaunching(false);
+                missileLaunchTimer = null;
+              }, 1 / FPS);
+            }, delay);
+          }
+        }
       }
     }
   }
