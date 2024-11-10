@@ -30,6 +30,9 @@ const Shrapnel = (options = {}) => {
 
   const spriteTypes = 12;
 
+  const maxVX = 16;
+  const maxVY = 16;
+
   function moveTo(x, y) {
     let relativeScale;
 
@@ -299,10 +302,10 @@ const Shrapnel = (options = {}) => {
       fadeFrame: 0,
       fadeFrames: FPS,
       // sometimes zero / non-moving?
-      vX: options.vX || 0,
-      vY: options.vY || 0,
-      maxVX: 64,
-      maxVY: 64,
+      vX: rng(Math.max(-maxVX, Math.min(maxVX, options.vX || 0)), type),
+      vY: rng(Math.max(-maxVY, Math.min(maxVY, options.vY || 0)), type),
+      maxVX,
+      maxVY,
       gravity: 1,
       // randomize fall rate
       gravityBase: 0.08,

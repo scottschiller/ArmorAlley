@@ -368,8 +368,7 @@ const effects = {
 
     angle = 0;
 
-    // TODO: revisit
-    explosionVelocityMax = 4.75;
+    explosionVelocityMax = 5;
 
     shrapnelCount = shrapnelOptions.count || 8;
 
@@ -393,9 +392,9 @@ const effects = {
         localOptions.vY = Math.abs(localOptions.vY) * -1;
       }
 
-      // include parent velocity, too.
-      localOptions.vX += parentVX / 8;
-      localOptions.vY += parentVY / 10;
+      // let parent velocities influence this, somewhat.
+      localOptions.vX += parentVX / 4;
+      localOptions.vY += parentVY / 8;
 
       // have first and last make noise
       localOptions.hasSound =
