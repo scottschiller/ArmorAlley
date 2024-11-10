@@ -1552,7 +1552,13 @@ const Helicopter = (options = {}) => {
       // give CPU more of an edge, depending on difficulty.
       let bombAccuracy =
         gameType === 'extreme' ? 2 : gameType === 'hard' ? 3 : 6;
-      vX -= (vX - data.bombTargets[0].vX) / bombAccuracy;
+      if (data.bombTargets[0].type === TYPES.turret) {
+        // "cheat" and bomb much more vertically.
+        vX = data.vX * 0.125;
+      } else {
+        // compensate somewhat for target vX.
+        vX -= (vX - (data.bombTargets[0].vX || 0)) / bombAccuracy;
+      }
     }
     return {
       parent: exports,
@@ -2437,6 +2443,8 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks = rng > 0.75;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
+        // actively go after turrets only when they're a threat to tanks, etc.
+        data.targeting.turrets = rng > 0.5 && gameType === 'extreme';
         data.targeting.helicopters = rng > 0.25 || tutorialMode;
 
         if (debug || debugCollision) {
@@ -2970,7 +2978,8 @@ const Helicopter = (options = {}) => {
         clouds: false,
         helicopters: false,
         tanks: false,
-        bunkers: false
+        bunkers: false,
+        turrets: false
       },
       targetingModulus: FPS * 30,
       // chance per gameType

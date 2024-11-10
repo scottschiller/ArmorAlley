@@ -269,6 +269,14 @@ const HelicopterAI = (options = {}) => {
         }
       }
     }
+
+    // maybe bomb turrets, too?
+    if (data.targeting.turrets) {
+      let nearbyTurret = objectInView(data, { items: TYPES.turret });
+      if (nearbyTurret) {
+        maybeBombTarget(nearbyTurret);
+      }
+    }
   }
 
   function checkThreats() {
@@ -377,7 +385,7 @@ const HelicopterAI = (options = {}) => {
     if (!targetData || targetData.dead || targetData.cloaked) return;
 
     if (collisionCheckX(targetData, data) && data.y < targetData.y) {
-      // align on X-axis, and player / balloon / tank is below...
+      // align on X-axis, and player / balloon / tank / turret is below...
       // drop ze bombs!
       brakeX(data, 0.98);
       data.votes.bomb++;
@@ -491,8 +499,11 @@ const HelicopterAI = (options = {}) => {
     }, paratrooperDropDelay);
 
     // "fast" deploy, does efficiency + accuracy matter?
+    // if a turret, allow dropping a bunch if on a higher difficulty.
     let minimalDelay =
-      tData.type === TYPES.bunker || tData.type === TYPES.turret;
+      tData.type === TYPES.bunker ||
+      (tData.type === TYPES.turret &&
+        (gameType === 'tutorial' || gameType === 'easy'));
 
     // drop within the next few frames
     dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
