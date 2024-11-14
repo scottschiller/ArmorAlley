@@ -32,7 +32,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
-const TURRET_SCAN_RADIUS = 334;
+const TURRET_SCAN_RADIUS = 340;
 
 const Turret = (options = {}) => {
   let css,
