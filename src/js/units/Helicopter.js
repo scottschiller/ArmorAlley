@@ -200,7 +200,7 @@ const Helicopter = (options = {}) => {
           exports
         );
       }
-    } else if (data.fuel < 12.5 && data.fuel > 11.5) {
+    } else if (data.fuel < 16 && data.fuel > 15) {
       text = 'Fuel critical <span class="inline-emoji">⛽ 🤏 😱</span>';
 
       game.objects.view.setAnnouncement(text);
@@ -3392,6 +3392,7 @@ const Helicopter = (options = {}) => {
                 updateParams = { force: true };
               }
 
+              updateStatusUI(updateParams);
             }
           }
         } else if (tData.type === TYPES.cloud) {
