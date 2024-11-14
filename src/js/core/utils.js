@@ -15,6 +15,12 @@ blankImage.src =
 let bufferCanvas;
 let bufferCanvasCtx;
 
+let flipCanvas;
+let flipCanvasCtx;
+
+let blurCanvas;
+let blurCanvasCtx;
+
 // sneaky tricks: source image -> canvas upscaling, 2X scaling and so on
 const upscaleByName = {
   'barb-wire.png': 2,
@@ -86,6 +92,119 @@ addSeries('tank_', 2);
 addSeries('tank-enemy_', 2);
 addSeries('van_', 2);
 addSeries('van-enemy_', 2);
+
+function applyShadowBlur(originalSrc, img, blurData, callback) {
+  // assume image is already loaded. :X
+
+  if (!blurCanvas) {
+    blurCanvas = document.createElement('canvas');
+  }
+
+  blurCanvas.width = img.width;
+  blurCanvas.height = img.height;
+
+  // note: no smoothing, this is a 1:1-scale copy.
+  // however, enable to allow "glow" to be drawn smoothly.
+  if (!blurCanvasCtx) {
+    blurCanvasCtx = blurCanvas.getContext('2d', {
+      alpha: true,
+      imageSmoothingEnabled: true
+    });
+  }
+
+  /**
+   * Shenanigans: config property can be a function, or a number.
+   * A function allows for dynamic calculation, e.g., glow effect based on the frame number.
+   */
+  blurCanvasCtx.shadowBlur =
+    blurData.config.blur instanceof Function
+      ? blurData.config.blur(originalSrc, blurData)
+      : blurData.config.blur;
+
+  blurCanvasCtx.shadowColor = blurData.config.color;
+
+  blurCanvasCtx.drawImage(
+    img,
+    // source
+    0,
+    0,
+    img.width,
+    img.height,
+    // target
+    0,
+    0,
+    img.width,
+    img.height
+  );
+
+  // reset blur
+  blurCanvasCtx.shadowBlur = 0;
+  blurCanvasCtx.shadowColor = '';
+
+  // more modern vs. toDataURL() - and faster?
+  blurCanvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+
+    let blurredImg = new Image();
+
+    blurredImg.onload = () => {
+      blurredImg.onload = null;
+      callback?.(blurredImg);
+      // blob no longer needed, revoke momentarily
+      window.requestAnimationFrame(() => URL.revokeObjectURL(url));
+    };
+
+    blurredImg.src = url;
+  });
+}
+
+function preProcess(originalSrc, img, callback) {
+  /**
+   * Dynamic canvas-applied blur / glow effects.
+   * img / sprite -> canvas treatments can be applied here before going to cache.
+   */
+
+  let fileName = originalSrc.substring(originalSrc.lastIndexOf('/') + 1);
+
+  // does the given file need an effect applied?
+  if (!preProcessData[fileName]) {
+    callback(img);
+    return;
+  }
+
+  applyShadowBlur(originalSrc, img, preProcessData[fileName], (blurImg) =>
+    callback(blurImg)
+  );
+}
+
+function flipInCanvas(imgToFlip, callback) {
+  if (!flipCanvas) {
+    flipCanvas = document.createElement('canvas');
+  }
+
+  flipCanvas.width = imgToFlip.width;
+  flipCanvas.height = imgToFlip.height;
+
+  // note: no smoothing, this is a 1:1-scale copy.
+  if (!flipCanvasCtx) {
+    flipCanvasCtx = flipCanvas.getContext('2d', { alpha: true });
+  }
+
+  // horizontal flip
+  flipCanvasCtx.scale(-1, 1);
+  flipCanvasCtx.drawImage(imgToFlip, -imgToFlip.width, 0);
+
+  let flippedImg = new Image();
+
+  flippedImg.onload = () => {
+    flippedImg.onload = null;
+    callback?.(flippedImg);
+  };
+
+  // create a new image, don't mutate our source which may be from cache
+  // e.g., spritesheet -> extracted source -> new flipped image
+  flippedImg.src = flipCanvas.toDataURL('image/png');
+}
 
 const utils = {
   array: {
@@ -247,8 +366,8 @@ const utils = {
           extractedImg.onload = () => {
             extractedImg.onload = null;
             callback?.(extractedImg);
-            // blob no longer needed, revoke
-            URL.revokeObjectURL(url);
+            // blob no longer needed, revoke momentarily
+            window.requestAnimationFrame(() => URL.revokeObjectURL(url));
           };
 
           extractedImg.src = url;
@@ -325,33 +444,6 @@ const utils = {
         return pendingImageObjects[url];
       }
 
-      function flipInCanvas(imgToFlip, callback) {
-        let canvas = document.createElement('canvas');
-        canvas.width = imgToFlip.width;
-        canvas.height = imgToFlip.height;
-
-        // note: no smoothing, this is a 1:1-scale copy.
-        let ctx = canvas.getContext('2d', { alpha: true });
-
-        // horizontal flip
-        ctx.scale(-1, 1);
-        ctx.drawImage(imgToFlip, canvas.width * -1, 0);
-
-        let flippedImg = new Image();
-
-        flippedImg.onload = () => {
-          flippedImg.onload = null;
-          callback?.(flippedImg);
-        };
-
-        // create a new image, don't mutate our source which may be from cache
-        // e.g., spritesheet -> extracted source -> new flipped image
-        flippedImg.src = canvas.toDataURL('image/png');
-
-        ctx = null;
-        canvas = null;
-      }
-
       /**
        * Hackish special case: "virtual" flipped image URL pattern -
        * e.g., `some-sprite-flipped.png`. File does not actually exist.
@@ -360,37 +452,35 @@ const utils = {
 
       const flipPattern = '-flipped';
 
+      function flip(nonFlippedImg) {
+        return flipInCanvas(nonFlippedImg, (newImg) => {
+          preloadedImageURLs[url] = true;
+          // re-assign the final, flipped blob asset.
+          img.src = newImg.src;
+          onload?.(newImg);
+        });
+      }
+
       if (src.indexOf(flipPattern) !== -1) {
         // e.g., `sprite-flipped.png` -> `sprite.png`
         const nonFlippedSrc = src.replace(flipPattern, '');
 
         // eligible for spritesheet?
-
         const shortSrc = nonFlippedSrc.substring(
           nonFlippedSrc.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
         );
 
         if (imageSpriteConfig?.[shortSrc]) {
           // extract from sprite, and flip.
-          utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) => {
-            flipInCanvas(nonFlippedImg, (newImg) => {
-              preloadedImageURLs[url] = true;
-              // re-assign the final, flipped blob asset.
-              img.src = newImg.src;
-              onload?.(newImg);
-            });
-          });
+          utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) =>
+            flip(nonFlippedImg)
+          );
         } else {
           // flipping a non-spritesheet asset
           // fetch the original asset, then flip and cache
-          utils.image.load(nonFlippedSrc, (nonFlippedImg) => {
-            flipInCanvas(nonFlippedImg, (newImg) => {
-              preloadedImageURLs[url] = true;
-              // re-assign the final, flipped blob asset.
-              img.src = newImg.src;
-              onload?.(newImg);
-            });
-          });
+          utils.image.load(nonFlippedSrc, (nonFlippedImg) =>
+            flip(nonFlippedImg)
+          );
         }
       } else {
         // non-flipped asset
@@ -403,16 +493,20 @@ const utils = {
         if (imageSpriteConfig?.[shortSrc]) {
           // spritesheet asset case
           utils.image.getImageFromSpriteSheet(shortSrc, (newImg) => {
-            preloadedImageURLs[url] = src;
-            // update local cache with the new blob-based extracted source.
-            img.src = newImg.src;
-            doCallback();
+            preProcess(src, newImg, (processedImg) => {
+              preloadedImageURLs[url] = src;
+              // update local cache with the new blob-based extracted source.
+              img.src = processedImg.src;
+              doCallback();
+            });
           });
         } else {
           // load image directly from disk
           img.onload = () => {
-            preloadedImageURLs[url] = src;
-            doCallback();
+            preProcess(src, img, (processedImg) => {
+              preloadedImageURLs[url] = processedImg.src;
+              doCallback();
+            });
           };
           img.onerror = () => {
             // TODO: allow retry of image load in a moment?
