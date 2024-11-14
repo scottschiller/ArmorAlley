@@ -509,10 +509,23 @@ const Infantry = (options = {}) => {
           : 'bnb/butthead-walking.png';
       }
     } else {
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(
-        exports,
-        animConfig
-      );
+      if (data.stopped) {
+        // hack: reset to proper frame.
+        // "freeze" animation, stop at "feet planted" frame for both types.
+        if (data.domCanvas.animation) {
+          data.domCanvas.animation.img.source.frameX = data.isEnemy ? 0 : 2;
+          data.domCanvas.animation.stop();
+        }
+      } else {
+        if (!data.domCanvas.animation) {
+          data.domCanvas.animation = common.domCanvas.canvasAnimation(
+            exports,
+            animConfig
+          );
+        } else {
+          data.domCanvas.animation?.resume();
+        }
+      }
     }
     return getInfantryEngURL();
   }
