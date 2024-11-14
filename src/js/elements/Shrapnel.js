@@ -332,12 +332,12 @@ const Shrapnel = (options = {}) => {
 
   data.domCanvas = {
     img: {
-      src: utils.image.getImageObject(`shrapnel-glow_v${data.spriteType}.png`),
+      src: utils.image.getImageObject(`shrapnel_v${data.spriteType}.png`),
       source: {
         x: 0,
         y: 0,
-        width: 160,
-        height: 132,
+        width: 22,
+        height: 20,
         is2X: true,
         // frame size
         frameWidth: 44,
@@ -349,8 +349,7 @@ const Shrapnel = (options = {}) => {
       target: {
         width: 44,
         height: 40,
-        angle: 0,
-        scale: 1
+        angle: 0
       }
     },
     radarItem: {

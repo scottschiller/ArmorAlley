@@ -43,7 +43,7 @@ const MissileNapalm = (options = {}) => {
 
       if (data.domCanvas.img.animationFrame >= 0) {
         data.domCanvas.img.src = utils.image.getImageObject(
-          `shrapnel-glow_v${data.domCanvas.img.frameMap[data.domCanvas.img.animationFrame]}.png`
+          `shrapnel_v${data.domCanvas.img.frameMap[data.domCanvas.img.animationFrame]}.png`
         );
       } else {
         // -1 = end of animation
@@ -102,7 +102,7 @@ const MissileNapalm = (options = {}) => {
   data.domCanvas = {
     img: {
       // NOTE: start on smallest spark / flame sprite
-      src: utils.image.getImageObject(`shrapnel-glow_v3.png`),
+      src: utils.image.getImageObject(`shrapnel_v3.png`),
       // NOTE: allow one extra frame in animation
       animationModulus:
         Math.floor(FPS / (animationFrameCount + 0.5) / 2) *
