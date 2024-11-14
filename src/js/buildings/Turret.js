@@ -670,7 +670,7 @@ const Turret = (options = {}) => {
         data: {
           type: data.type,
           x: data.x + 3,
-          y: data.y + 10,
+          y: data.y + 8,
           halfWidth: data.halfWidth,
           isOnScreen: data.isOnScreen
         }
