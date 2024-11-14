@@ -916,7 +916,7 @@ const Turret = (options = {}) => {
       frameHeight,
       // sprite offset indices
       frameX: 0,
-      frameY: 0
+      frameY: 3
     },
     target: {
       width: spriteWidth / 2,
