@@ -663,7 +663,7 @@ const Turret = (options = {}) => {
       // options
       count,
       vX: 1,
-      vY: 1,
+      vY: 1 + rnd(2),
       css: 'welding-spark',
       // object in question
       exports: {
