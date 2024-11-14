@@ -342,9 +342,15 @@ const Infantry = (options = {}) => {
   function refreshMeasurements() {
     // hackish: make butthead stops to the left, and beavis stops to the right of (e.g.) a turret.
     if (gamePrefs.bnb && !data.isEnemy) {
+      // override regular look-ahead, special case.
       data.xLookAhead = options.isButthead ? -28 : 15;
+      // TODO: review - BnB are not spaced out enough, not far apart.
+      data.xLookAheadTurret = data.isButthead ? 36 : 24;
     } else {
-      data.xLookAhead = options.xLookAhead || defaultLookAhead;
+      data.xLookAhead = data.isEnemy
+        ? 12
+        : options.xLookAhead || defaultLookAhead;
+      data.xLookAheadTurret = data.isEnemy ? 0 : 12;
     }
 
     data.halfHeight = data.height / 2;
@@ -420,6 +426,7 @@ const Infantry = (options = {}) => {
           ? options.xLookAhead
           : defaultLookAhead,
       xLookAheadBunker: options.xLookAheadBunker || null,
+      xLookAheadTurret: options.xLookAheadTurret || null,
       unassisted: options.unassisted !== undefined ? options.unassisted : true,
       stepOffset: options.stepOffset,
       flipX: false,
@@ -477,7 +484,9 @@ const Infantry = (options = {}) => {
   function getSpriteURL() {
     // TODO: refactor, split sprite URL + animation logic.
     if (
+      // NOTE: Only friendly side has BnB, for now
       gamePrefs.bnb &&
+      !data.isEnemy &&
       data.role &&
       game.players.local.data.isEnemy === data.isEnemy
     ) {
@@ -596,6 +605,12 @@ const Infantry = (options = {}) => {
         // engineer + turret case? reclaim or repair.
         if (data.role && tData.type === TYPES.turret) {
           // is there work to do?
+          // ignore if too far away, accounting for special look-ahead offset.
+          let deltaX = target.data.x - data.x - (data.xLookAheadTurret || 0);
+          if (deltaX > 0) {
+            // nothing to see here.
+            resume();
+          }
           if (target.engineerCanInteract(data.isEnemy)) {
             stop(true);
             target.engineerHit(exports);

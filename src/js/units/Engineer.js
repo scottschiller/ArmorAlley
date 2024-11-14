@@ -13,10 +13,11 @@ const Engineer = (options = {}) => {
     game.data.engineerSwitch = !game.data.engineerSwitch;
   }
 
-  // hack: -ve lookahead offset allowing engineers to be basically atop turrets
-  options.xLookAhead = options.isEnemy ? 4 : -8;
+  // special case 1: -ve lookahead offset allowing engineers to be basically atop turrets
+  // the BnB stuff is set later.
+  options.xLookAheadTurret = options.isEnemy ? 0 : -8;
 
-  // special case
+  // special case 2: BnB bunker offsets
   options.xLookAheadBunker = {
     beavis: 11,
     butthead: -9
