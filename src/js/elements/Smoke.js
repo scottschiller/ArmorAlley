@@ -192,7 +192,7 @@ const Smoke = (options = {}) => {
   );
 
   function refreshSprite() {
-    return utils.image.getImageObject(`smoke-glow_${data.spriteFrame}.png`);
+    return utils.image.getImageObject(`smoke_v${data.spriteFrame}.png`);
   }
 
   data.domCanvas = {
@@ -201,8 +201,8 @@ const Smoke = (options = {}) => {
       source: {
         x: 0,
         y: 0,
-        width: 108,
-        height: 144,
+        width: 18,
+        height: 18,
         is2X: true,
         // frame size
         frameWidth: 36,
