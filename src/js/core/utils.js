@@ -76,6 +76,8 @@ addSeries('generic-explosion-2_', 4);
 addSeries('helicopter_', 3);
 addSeries('helicopter-enemy_', 3);
 addSeries('helicopter-rotating_', 3);
+addSeries('helicopter-rotated_', 3);
+addSeries('helicopter-enemy-rotated_', 3);
 addSeries('helicopter-rotating-enemy_', 3);
 addSeries('landing-pad_', 3);
 addSeries('shrapnel_v', 11);
