@@ -93,6 +93,67 @@ addSeries('tank-enemy_', 2);
 addSeries('van_', 2);
 addSeries('van-enemy_', 2);
 
+// image pre-fetch / render / cache helper bits
+let explosionConfig = {
+  count: 5,
+  config: {
+    blur: 3,
+    color: 'rgba(255, 0, 0, 0.33)'
+  }
+};
+
+// apply "glow" effects to certain groups of sprites at image load / extract time.
+let preProcessConfig = [
+  {
+    // file name pattern, blur amount, color
+    file: 'generic-explosion_',
+    ...explosionConfig
+  },
+  {
+    file: 'generic-explosion-2_',
+    ...explosionConfig
+  },
+  {
+    file: 'shrapnel_v',
+    count: 12,
+    config: {
+      blur: 10,
+      color: 'rgba(255, 0, 0, 0.75)'
+    }
+  },
+  {
+    file: 'smoke_v',
+    count: 12,
+    config: {
+      blurMax: 10,
+      blur: (fileName, data) => {
+        // dynamic blur / glow amount, reduced as images rotate through range. e.g., frame 0 -> 11
+        let i = getFrame(fileName, data.file);
+        return (
+          data.config.blurMax - (data.config.blurMax - 1) * (i / data.count)
+        );
+      },
+      color: 'rgba(255, 255, 255, 0.4)'
+    }
+  }
+];
+
+// this will be populated with blur config, for groups of sprites - e.g., shrapnel_v0 through shrapnel_v12.png.
+let preProcessData = {};
+
+preProcessConfig.forEach((item) => {
+  // potentially dangerous: assuming PNG, here.
+  for (let i = 0; i < item.count; i++) {
+    preProcessData[`${item.file}${i}.png`] = item;
+  }
+});
+
+function getFrame(url, str) {
+  // hackish: parse the number out of the image URL - e.g., smoke_v10.png
+  let offset = url.indexOf(str);
+  return url.substring(offset + str.length, url.lastIndexOf('.'));
+}
+
 function applyShadowBlur(originalSrc, img, blurData, callback) {
   // assume image is already loaded. :X
 
