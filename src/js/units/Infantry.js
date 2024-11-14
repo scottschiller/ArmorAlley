@@ -31,6 +31,12 @@ const Infantry = (options = {}) => {
     // walking is synced with animation, but bullets fire less often
     // always do positioning work, and maybe fire
 
+    // hackish: ensure that animation is set.
+    // this may be stuck if an engineer stops to repair a turret, but then is trying to fire at something else? :X
+    if (!data.domCanvas.animation) {
+      resume();
+    }
+
     // only infantry: move back and forth a bit, and flip animation, while firing - like original game
     const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
@@ -244,15 +250,7 @@ const Infantry = (options = {}) => {
 
     // infantry are "always" walking, even when "stopped" (in which case they're firing.)
     // engineers fully stop to claim and/or repair bunkers.
-    if (data.domCanvas?.animation) {
-      data.domCanvas.animation.animate?.();
-      if (data.stopped && data.role) {
-        // "freeze" engineer animation, if not BnB.
-        if (!gamePrefs.bnb) {
-          data.domCanvas.animation.restart();
-        }
-      }
-    }
+    data.domCanvas?.animation?.animate?.();
 
     if (!data.stopped) {
       if (data.roles[data.role] === TYPES.infantry) {
