@@ -3352,7 +3352,46 @@ const Helicopter = (options = {}) => {
                 data.maxParachutes,
                 data.parachutes + 1
               );
-              updateStatusUI({ parachutes: true });
+
+              // parachutes are changing, maybe more. TBD.
+              let updateParams = { parachutes: true };
+
+              // if an engineer, notify about repairs etc.
+              if (tData.role) {
+                game.objects.notifications.add(
+                  'An engineer partially re-armed your chopper. 🚁'
+                );
+
+                // 50% energy boost
+                data.energy = Math.min(
+                  data.energyMax,
+                  data.energy + data.energyMax / 2
+                );
+
+                // 12.5% fuel boost
+                data.fuel = Math.min(100, data.fuel + 100 / 8);
+
+                // one bomb
+                data.bombs = Math.min(data.maxBombs, data.bombs + 1);
+
+                // up to 32 bullets, OR, one "dumb" missile
+                if (levelFlags.bullets) {
+                  data.ammo = Math.min(
+                    data.maxAmmo,
+                    data.ammo + data.maxAmmo / 2
+                  );
+                } else {
+                  // "dumb" missile
+                  data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
+                }
+
+                // only +1 smart missile, if you have zero left
+                if (!data.smartMissiles) {
+                  data.smartMissiles++;
+                }
+                updateParams = { force: true };
+              }
+
             }
           }
         } else if (tData.type === TYPES.cloud) {

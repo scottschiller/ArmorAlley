@@ -243,8 +243,7 @@ let defeatMessages = [
 
   `Create more than one convoy. This way, if your leading convoy is destroyed, a new convoy will be ready to continue the assault immediately.`,
 
-  // TODO: verify in original game. I don't think this is true at all in the original.
-  // The original game tips also say, "Don't believe everything you read."
+  // HINT: Pick up an engineer for a partial repair: fuel, ammo and so on.
   `You can repair your helicopter in the field if you have men on board.`,
 
   `Land to conserve fuel.`,
