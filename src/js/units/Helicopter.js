@@ -3205,9 +3205,8 @@ const Helicopter = (options = {}) => {
 
   const spriteConfig = {
     default: {
-      getImage: () => {
-        return `helicopter${data.isEnemy ? '-enemy' : ''}_#${data.flipped ? '-flipped' : ''}.png`;
-      },
+      getImage: () =>
+        `helicopter${data.isEnemy ? '-enemy' : ''}${data.flipped ? '-rotated' : ''}_#.png`,
       width: defaultWidth,
       height: defaultHeight,
       frameWidth: defaultWidth,
