@@ -15,7 +15,7 @@ blankImage.src =
 let bufferCanvas;
 let bufferCanvasCtx;
 
-// sneaky tricks: source image -> canvas upscaling
+// sneaky tricks: source image -> canvas upscaling, 2X scaling and so on
 const upscaleByName = {
   'barb-wire.png': 2,
   'base-sprite-burning.png': 2,
