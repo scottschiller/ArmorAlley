@@ -13,7 +13,8 @@ function Envelope() {
 
   css = {
     active: 'active',
-    open: 'open'
+    open: 'open',
+    envelopeOpen: 'envelope-open'
   };
 
   data = {
@@ -92,12 +93,14 @@ function Envelope() {
     if (data.open) return;
     data.open = true;
     utils.css.addOrRemove(dom.o, data.open, css.open);
+    utils.css.addOrRemove(document.body, data.open, css.envelopeOpen);
   }
 
   function close() {
     if (!data.open) return;
     data.open = false;
     utils.css.remove(dom.o, css.open);
+    utils.css.addOrRemove(document.body, data.open, css.envelopeOpen);
   }
 
   function show() {

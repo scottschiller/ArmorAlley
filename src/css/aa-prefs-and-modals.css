@@ -7,6 +7,11 @@ body.prefs-modal-open #game-menu-wrapper {
   pointer-events: none;
 }
 
+body.prefs-modal-open #envelopes-placeholder {
+  /* when battle over, allow prefs to override / display on top. */
+  display: none;
+}
+
 /* prefs + modal stuff - based on original 68K Macintosh UI */
 #game-prefs-modal {
   border: 1px solid #000;

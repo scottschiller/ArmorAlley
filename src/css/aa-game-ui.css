@@ -1002,7 +1002,10 @@ body.game-started #game-tips.active .tips-container {
 }
 
 /* TODO: review and remove */
-#game-tips #game-announcements span:not(.hide-on-mobile):not(.inline-emoji) {
+body:not(.game-over)
+  #game-tips
+  #game-announcements
+  span:not(.hide-on-mobile):not(.inline-emoji) {
   display: block;
   width: 100%;
 }

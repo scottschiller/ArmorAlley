@@ -1107,6 +1107,27 @@ body.loaded canvas {
   transition: opacity 0.75s ease-in-out;
 }
 
+body.game-over #top-bar,
+body.game-over #battlefield-canvas,
+body.game-over #game-announcements .announcement-text {
+  transition: 0.5s ease-in-out;
+  transition-property: filter;
+  filter: none;
+}
+
+/* "letter" and "prefs" open cases - dim background */
+body.game-over.envelope-open #top-bar,
+body.game-over.envelope-open #battlefield-canvas,
+body.game-over.envelope-open #game-announcements .announcement-text,
+body.prefs-modal-open #top-bar,
+body.prefs-modal-open #battlefield-canvas,
+body.prefs-modal-open #game-announcements .announcement-text,
+body.prefs-modal-open #notification-toasts,
+body.prefs-modal-open #home-menu-video,
+body.prefs-modal-open #game-menu-wrapper {
+  filter: brightness(0.5);
+}
+
 body.edit-mode canvas,
 body.game-started canvas {
   opacity: 1;
