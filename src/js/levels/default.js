@@ -3,6 +3,7 @@ import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
 import {
   autoStart,
+  IMAGE_ROOT,
   rndInt,
   searchParams,
   TYPES,
@@ -220,13 +221,104 @@ let victoryMessages = {
   }
 };
 
+/**
+ * Data pattern: number of medals to show in order of types / images #1 - #6,
+ * split between left and right columns, with the offset being the medal number.
+ *
+ * e.g., Wasteland pattern [ 3, 3, 1, 2, 1, 0 ]:
+ * ROW 1: three of medal 1 and three of medal 2,
+ * ROW 2: one of medal 3 and two of medal 4,
+ * ROW 3: one of medal 5 and none of medal 6.
+ *
+ * Medals can run in arbitrary group lengths, but the default is three.
+ */
+const medalList = {
+  'Cake Walk': [1, 0, 0, 0, 0, 0],
+  'One-Gun': [2, 0, 0, 0, 0, 0],
+  'Sucker Punch': [2, 1, 0, 0, 0, 0],
+  'Airborne': [2, 2, 0, 0, 0, 0],
+  'Two-Gun': [3, 2, 1, 0, 0, 0],
+  'Super Bunker': [3, 2, 1, 0, 0, 0],
+  'Scrapyard': [3, 3, 1, 1, 0, 0],
+  'Blind Spot': [3, 3, 1, 2, 0, 0],
+  'Wasteland': [3, 3, 1, 2, 1, 0],
+  'Midnight Oasis': [4, 4, 2, 2, 1, 1]
+};
+
+function medalTemplate(i) {
+  if (i === 0) return emptyTemplate();
+  return `<span class="medal medal-${i}"></span>`;
+}
+
+function columnSpacer() {
+  return '<span class="column-spacer"></span>';
+}
+
+function emptyTemplate() {
+  return '<span class="medal-spacer"></span>';
+}
+
+function medalGroup(count, medal, isEven) {
+  // show `count` of the specified `medal`, by offset - with alignment and padding for empty slots, as needed.
+  let html = [];
+  let defaultGroupSize = 3;
+  // group size can be overridden, e.g., 4 for Midnight Oasis.
+  let groupSize = Math.max(count, defaultGroupSize);
+  for (var i = 0; i < groupSize; i++) {
+    html.push(i < count ? medalTemplate(medal) : emptyTemplate());
+  }
+  // if an "even" column, we're on the left side - flip array, so items are right-aligned e.g., a single medal is on right.
+  if (isEven) html.reverse();
+  return html.join('');
+}
+
+function getMedals() {
+  if (!medalList[levelName]) return '';
+
+  let html = [];
+  let isEven;
+
+  // build out groups of medals, typically three at a time.
+  medalList[levelName].forEach((count, i) => {
+    isEven = i % 2 === 0;
+    // note: medal CSS + images start at 1.
+    html.push(medalGroup(count, i + 1, isEven));
+    // space between "columns" vs. line break
+    if (isEven) {
+      html.push(columnSpacer());
+    } else {
+      html.push('<br />');
+    }
+  });
+
+  window.requestAnimationFrame(() => {
+    // hackish: assign transition delays before fading in.
+    // this happens here because of laziness, having generated arrays of strings which are now live nodes.
+    let m = document.getElementById('medals');
+    // just in case...
+    if (!m) return;
+    let medalDelay = 150;
+    m.querySelectorAll('.medal').forEach((m, i) => {
+      m.style.transitionDelay = `${medalDelay * i}ms`;
+    });
+    // start transitions
+    common.setFrameTimeout(() => {
+      m.className = 'active';
+    }, 1000);
+  });
+
+  return `<div id="medals">${html.join('')}</div>`;
+}
+
 function getVictoryMessage() {
   let msgs = victoryMessages[levelName];
   // if no match for the level (e.g., network-specific battle?), return a generic string.
   if (!msgs) return genericVictory;
 
   // default to 'easy', if no gameType-specific one found.
-  return msgs[gameType] || msgs['easy'];
+  let msg = msgs[gameType] || msgs['easy'];
+
+  return msg + getMedals();
 }
 
 let defeatMessages = [

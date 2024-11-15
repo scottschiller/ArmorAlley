@@ -1553,6 +1553,76 @@ body.radar_jammed .scan-node {
   transition-duration: 0.5s;
 }
 
+/* end of battle (campaign mode) medals */
+
+#medals {
+  position: relative;
+  margin: 12px auto 0px auto;
+  font-size: 0px;
+  line-height: 0px;
+}
+
+#medals .medal,
+#medals .medal-spacer,
+#medals .column-spacer {
+  position: relative;
+  display: inline-block;
+  /* original medal width x height: 35px x 44px */
+  /* this works out so medals roughly overlay the envelope nicely, if they have to. */
+  width: calc(35px * var(--gs) * 0.72);
+  /* enforce aspect ratio, if width is constrained */
+  aspect-ratio: 0.795;
+  /* ensure that on a narrow, tall window, things still fit without wrapping. */
+  max-width: 9.5%;
+  margin: calc(2px * var(--gs) * 0.72);
+  margin-top: 1px;
+  margin-left: 0px;
+  padding: 1px;
+}
+
+#medals .medal {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: scale3d(3, 3, 1);
+  filter: blur(5px);
+  opacity: 0;
+  transition: 1s ease-in-out;
+  /* overshoot target a bit, "bounce" elastic ease back in. */
+  transition-property: transform, filter, opacity;
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#medals.active .medal {
+  transform: scale3d(1, 1, 1);
+  filter: none;
+  opacity: 1;
+}
+
+#medals .medal-1 {
+  background-image: url(../../assets/image/UI/medal-1.png);
+}
+
+#medals .medal-2 {
+  background-image: url(../../assets/image/UI/medal-2.png);
+}
+
+#medals .medal-3 {
+  background-image: url(../../assets/image/UI/medal-3.png);
+}
+
+#medals .medal-4 {
+  background-image: url(../../assets/image/UI/medal-4.png);
+}
+
+#medals .medal-5 {
+  background-image: url(../../assets/image/UI/medal-5.png);
+}
+
+#medals .medal-6 {
+  background-image: url(../../assets/image/UI/medal-6.png);
+}
+
 @keyframes tracking-active {
   0%,
   to {
