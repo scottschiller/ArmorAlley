@@ -3,6 +3,8 @@ import { imageSpriteConfig } from '../../config/imageSpriteConfig.js';
 import { soundManager } from '../lib/soundmanager2.js';
 import { aaLoader } from './aa-loader.js';
 
+const IMAGE_ROOT = aaLoader.getImageRoot();
+
 // oft-referenced constants, and a few simple methods.
 
 const AUDIO_SPRITE_ROOT = `dist/audio/${audioSpriteConfig.spriteFileName}`;
@@ -495,6 +497,7 @@ export {
   GAME_SPEED_MAX,
   GAME_SPEED_RATIO,
   GAME_SPEED_RATIOED,
+  IMAGE_ROOT,
   SPRITESHEET_URL,
   TYPES,
   PRETTY_TYPES,

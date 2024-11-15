@@ -1,10 +1,7 @@
-import { aaLoader } from './aa-loader.js';
-import { SPRITESHEET_URL, imageSpriteConfig } from './global.js';
+import { IMAGE_ROOT, SPRITESHEET_URL, imageSpriteConfig } from './global.js';
 
 const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
-
-const IMAGE_ROOT = aaLoader.getImageRoot();
 
 const emptyURL = 'NULL';
 
