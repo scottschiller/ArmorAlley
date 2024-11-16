@@ -14,7 +14,6 @@ import {
   GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
-import { Smoke } from '../elements/Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { aaLoader } from '../core/aa-loader.js';
@@ -47,6 +46,9 @@ const Bomb = (options = {}) => {
 
   function dieExplosion() {
     data.domCanvas.dieExplosion = effects.bombExplosion(exports);
+    // napalm effect - "flame burns both sides"
+    // allow bomb explosion to also hit friendly infantry + engineers.
+    data.hostile = true;
   }
 
   function spark() {
@@ -444,6 +446,7 @@ const Bomb = (options = {}) => {
       halfHeight: 3,
       explosionWidth: 51,
       explosionHeight: 22,
+      hostile: false,
       gravity: 1,
       energy: 3,
       damagePoints: 3,
@@ -528,8 +531,9 @@ const Bomb = (options = {}) => {
         bombHitTarget(target);
       }
     },
+    // note: "all" parachutes + infantry + engineers can be hit, but friendly collisions happen only when `data.hostile` is true.
     items: getTypes(
-      'superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry, parachuteInfantry, engineer, turret, smartMissile',
+      'superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry:all, parachuteInfantry:all, engineer:all, turret, smartMissile',
       { exports }
     ).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
   };
