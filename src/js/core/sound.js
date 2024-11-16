@@ -1305,7 +1305,7 @@ soundManager.onready(() => {
   sounds.inventory.end = add({
     url: 'order-complete',
     fixedPlaybackRate,
-    volume: 10
+    volume: 20
   });
 
   sounds.missileNapalm = add({
