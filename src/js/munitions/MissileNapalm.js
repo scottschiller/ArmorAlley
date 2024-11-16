@@ -86,6 +86,7 @@ const MissileNapalm = (options = {}) => {
       parent: options.parent || null,
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
+      hostile: true, // for collision logic, dangerous to all infantry and engineers.
       frameCount: 0,
       expireFrameCount: Math.floor((FPS * 1) / GAME_SPEED),
       width,
@@ -182,9 +183,13 @@ const MissileNapalm = (options = {}) => {
       }
     },
     // if unspecified, use default list of items which napalm can hit.
+    // note: "flame burns both sides."
     items:
       options.collisionItems ||
-      getTypes('infantry, engineer, helicopter, parachuteInfantry', { exports })
+      getTypes(
+        'infantry:all, engineer:all, parachuteInfantry:all, helicopter',
+        { exports }
+      )
   };
 
   return exports;
