@@ -2,7 +2,7 @@ import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
-import { GAME_SPEED_RATIOED, getTypes, rngInt, TYPES } from '../core/global.js';
+import { GAME_SPEED_RATIOED, getTypes, plusMinus, rnd, rngInt, TYPES } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
@@ -167,7 +167,7 @@ const Infantry = (options = {}) => {
         playSound(sounds.scream, exports);
       }
 
-      effects.inertGunfireExplosion({ exports });
+      effects.inertGunfireExplosion({ exports, inertColor: '#ccbbaa', vX: plusMinus(rnd(3)), vY: rnd(5) });
 
       const isInfantry = data.roles[data.role] === TYPES.infantry;
       const isEngineer = data.roles[data.role] === TYPES.engineer;
