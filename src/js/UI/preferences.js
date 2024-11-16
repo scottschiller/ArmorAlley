@@ -75,6 +75,7 @@ const defaultPrefs = {
   'gratuitous_battle_over': true,
   'gravestones_infantry': demo || false,
   'gravestones_vehicles': demo || false,
+  'unlimited_inventory': false,
   'landing_pads_on_radar': true,
   'radar_enhanced_fx': demo || isMobile || false,
   'last_battle': null,
