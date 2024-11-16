@@ -13,6 +13,18 @@ import { common } from '../core/common.js';
 import { collisionCheck } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
+import { gamePrefs } from './preferences.js';
+
+let men = 30;
+// from the original game: "requisition denied - quota exceeded"
+const maxUnitsByType = {
+  [TYPES.tank]: 15,
+  [TYPES.missileLauncher]: 6,
+  [TYPES.van]: 10,
+  // all "men" - infantry + engineers, and paratroopers.
+  [TYPES.infantry]: men,
+  [TYPES.engineer]: men
+};
 
 const stepTypes = {
   [TYPES.tank]: true,
@@ -38,6 +50,80 @@ const Inventory = () => {
   function setWaiting(isWaiting) {
     data.waiting = isWaiting;
     data.waitingFrames = 0;
+  }
+
+  function filterUnit(unit, type, isEnemy) {
+    return (
+      unit.data.type === type &&
+      !unit.data.dead &&
+      unit.data.isEnemy === isEnemy
+    );
+  }
+
+  function withinUnitLimits(type, isEnemy) {
+    /**
+     * Given a unit type and friendly/enemy "team", count the number of active items.
+     * Pending orders also count toward the limit.
+     */
+    let count = 0;
+    let units = [];
+
+    // here, use the copy of the queue which is preserved until all orders in a "batch" are completed.
+    let q = data.queue;
+
+    // special case: infantry = "men", combining with engineers and paratroopers (which will either die or become infantry.)
+    if (type === TYPES.infantry || type === TYPES.engineer) {
+      units = units.concat(
+        game.objects[TYPES.infantry],
+        game.objects[TYPES.engineer],
+        game.objects[TYPES.parachuteInfantry]
+      );
+
+      // each order here represents multiples; five infantry, or two engineers.
+      // when known, just add directly to the count.
+      let orders = [];
+
+      let queueOrders = q.filter((item) =>
+        item.data.type.match(/infantry|engineer/)
+      );
+
+      // "multiply" each order by its size - e.g., two engineers, or five infantry.
+      queueOrders.forEach((qOrder) => {
+        // NOTE: using `originalSize` as order `size` counts change while "building," e.g., 3 of 5 infantry deployed.
+        // the live objects should make up for the remainder, so the count should always be accurate.
+        count += qOrder.originalSize;
+      });
+
+      // account for any existing order underway, could be any type and size may be dynamic.
+      if (objects.order) {
+        count += objects.order.data.type.match(/infantry|engineer/)
+          ? objects.order.size
+          : 0;
+      }
+    } else {
+      units = units.concat(
+        game.objects[type],
+        // matching types in the queue
+        q.filter((item) => filterUnit(item, type, isEnemy)),
+        // and current order, if defined
+        objects.order && objects.order.data.type === type ? [objects.order] : []
+      );
+    }
+
+    // filter: iterate over units (including orders), counting "not dead" friendly ones.
+    count += units.filter((unit) => filterUnit(unit, type, isEnemy)).length;
+
+    /**
+     * Logic thus far assumes one unit per order / at a time.
+     * For orders which are more than 1 item (e.g., two engineers, five infantry),
+     * add that to the existing count to ensure there's room for the group.
+     */
+    if (COSTS[type].count) {
+      count += COSTS[type].count;
+    }
+
+    // finally: yay or nay
+    return count <= maxUnitsByType[type];
   }
 
   function processNextOrder() {
@@ -192,7 +278,17 @@ const Inventory = () => {
 
     const bunkerOffset = player.data.isEnemy ? 1 : 0;
 
-    if (game.objects[TYPES.endBunker][bunkerOffset].data.funds >= cost) {
+    // got the funds?
+    let canAfford =
+      game.objects[TYPES.endBunker][bunkerOffset].data.funds >= cost;
+
+    // at present, CPUs are not subject to inventory limits.
+    let canOrder =
+      player.data.isCPU ||
+      gamePrefs.unlimited_inventory ||
+      withinUnitLimits(type, player.data.isEnemy);
+
+    if (canAfford && canOrder) {
       game.objects[TYPES.endBunker][bunkerOffset].data.funds -= cost;
 
       game.objects.view.updateFundsUI();
@@ -207,7 +303,7 @@ const Inventory = () => {
 
       // player may now be able to order things.
       game.players.local.updateStatusUI({ funds: true });
-    } else {
+    } else if (!canAfford) {
       // Insufficient funds. "We require more vespene gas."
       if (sounds.inventory.denied) {
         playSound(sounds.inventory.denied);
@@ -247,6 +343,25 @@ const Inventory = () => {
           data.canShowNSF = true;
         }
       });
+
+      return;
+    } else {
+      // can't order - "requisition denied - quota exceeded"
+
+      game.objects.view.setAnnouncement(
+        `<span class="inline-emoji">⛔</span> ${PRETTY_TYPES[type]} requisition denied - quota exceeded`,
+        3000
+      );
+
+      let isMen = type === TYPES.infantry || type === TYPES.engineer;
+
+      game.objects.notifications.addNoRepeat(
+        `⛔ ${isMen ? 'Soldier' : PRETTY_TYPES[type]} limit: ${maxUnitsByType[type]}`
+      );
+
+      if (sounds.inventory.denied) {
+        playSound(sounds.inventory.denied);
+      }
 
       return;
     }
