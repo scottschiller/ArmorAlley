@@ -2293,8 +2293,18 @@ const Helicopter = (options = {}) => {
       // slightly annoying: allow one additional pixel when landing.
       data.y = maxY + 1;
 
-      // only "reset" for human player
       if (!data.isCPU) {
+        // "safety" check: if moving too fast, this is a crash as per the original game.
+        if (!data.dead && Math.abs(data.vX) >= data.vXMax - 2) {
+          game.objects.notifications.add(
+            'You hit the ground going too fast. 🚁💥'
+          );
+          die();
+          data.vX = 0;
+          data.vY = 0;
+          return;
+        }
+        // only "reset" for human player
         data.vX = 0;
         data.vY = 0;
       }
