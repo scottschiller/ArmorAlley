@@ -177,12 +177,7 @@ const MissileNapalm = (options = {}) => {
       checkTweens: true,
       hit(target) {
         if (data.damagePoints) {
-          // hit once, then remain until the object animation has completed.
           common.hit(target, data.damagePoints, exports);
-          // nullify this object unless infantry / engineers, so we don't hit e.g., a super-bunker repeatedly.
-          if (target.data.type !== TYPES.infantry) {
-            data.damagePoints = 0;
-          }
         }
       }
     },
