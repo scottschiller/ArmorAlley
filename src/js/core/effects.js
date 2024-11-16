@@ -271,6 +271,7 @@ const effects = {
         className,
         parentType: data.type,
         isInert: true,
+        inertColor: options.inertColor,
         // empty array may prevent collision, but `isInert` is provided explicitly for this purpose
         collisionItems: [],
         x: data.x + (data.halfWidth || 0),
