@@ -146,7 +146,7 @@ body.game-started #funds {
 #queue {
   /* collapse whitespace */
   font-size: 0;
-  top: 0;
+  top: 15%;
   left: 1%;
   position: absolute;
   vertical-align: top;
