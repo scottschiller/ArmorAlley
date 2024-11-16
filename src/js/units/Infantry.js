@@ -374,7 +374,7 @@ const Infantry = (options = {}) => {
     refreshMeasurements();
   }
 
-  defaultLookAhead = 8;
+  defaultLookAhead = 4;
 
   css = common.inheritCSS({
     className: null,
