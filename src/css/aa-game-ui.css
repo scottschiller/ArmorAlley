@@ -1404,9 +1404,10 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   position: absolute;
   top: 0;
   left: 0;
-  margin: -66% 0 0 -33%;
+  margin: -66% 0 0 -50%;
   display: inline-block;
   transform: scale3d(0.9, 0.9, 1);
+  transform-origin: 50% 50%;
   font-size: calc(5px * var(--gs));
   line-height: 1em;
 }
