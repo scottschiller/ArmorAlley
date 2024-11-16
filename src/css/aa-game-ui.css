@@ -982,7 +982,7 @@ body.game-started #game-tips.active .tips-container {
   opacity: 0;
   position: absolute;
   text-align: center;
-  top: -0.5em;
+  top: -0.125rem;
   filter: blur(3px);
   transform: scale3d(1.2, 1.2, 1);
   transform-origin: 50% 50%;
