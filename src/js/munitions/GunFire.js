@@ -219,7 +219,7 @@ const GunFire = (options = {}) => {
       data.frameCount > data.expireFrameCount
     ) {
       data.expired = true;
-      data.domCanvas.backgroundColor = '#555';
+      data.domCanvas.backgroundColor = data.inertColor;
     }
 
     if (data.isInert || data.expired) {
@@ -281,6 +281,7 @@ const GunFire = (options = {}) => {
       isInert: !!options.isInert,
       isEnemy: options.isEnemy,
       expired: false,
+      inertColor: options.inertColor || '#666',
       frameCount: 0,
       expireFrameCount: parseInt(
         ((options.expireFrameCount || 25) * 1) / GAME_SPEED_RATIOED,
@@ -309,16 +310,15 @@ const GunFire = (options = {}) => {
   );
 
   data.domCanvas = {
-    backgroundColor: options.isInert ? '#666' : FRIENDLY_GUNFIRE_COLOR,
+    backgroundColor: options.isInert ? data.inertColor : FRIENDLY_GUNFIRE_COLOR,
     borderRadius: 1,
     radarItem: {
       excludeStroke: true,
       width: 4,
       height: 2,
       draw: (ctx, obj, pos, width, height) => {
-        // TODO: calculate 40% opacity for inert / expired color
         ctx.fillStyle = obj.oParent?.data?.isInert
-          ? '#666'
+          ? data.inertColor
           : data.isEnemy
             ? ENEMY_GUNFIRE_COLOR
             : FRIENDLY_GUNFIRE_COLOR;
