@@ -243,8 +243,8 @@ const Bomb = (options = {}) => {
     if (data.isOnScreen) {
       for (let i = 0; i < 3; i++) {
         game.addObject(TYPES.smoke, {
-          x: data.x + rndInt(data.width / 2) * 0.33 * plusMinus(),
-          y: data.y,
+          x: data.x + data.halfWidth,
+          y: dieOptions.bottomAlign ? worldHeight - 8 : data.y,
           vX: plusMinus(rnd(3.5)),
           vY: rnd(-2.5),
           spriteFrame: rndInt(5)
