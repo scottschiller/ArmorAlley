@@ -867,7 +867,6 @@ function PrefsManager() {
       utils.events.add(difficulty, 'change', (e) => {
         game.setGameType(e.target.value);
         updateGameType('prefs_radio_game_type_');
-        game.setGameType(e.target.value);
         gameMenu.updateGameLevelControl();
       });
     }
