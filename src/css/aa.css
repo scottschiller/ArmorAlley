@@ -299,6 +299,10 @@ body #radar-container .interference {
   transition: opacity 0.5s;
 }
 
+#radar-container.interference .scan-node {
+  display: none;
+}
+
 body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
