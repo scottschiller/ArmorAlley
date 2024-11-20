@@ -222,7 +222,7 @@ const AimedMissile = (options = {}) => {
     data.vX += data.vXDirection * 0.15 * GAME_SPEED_RATIOED;
 
     // limit vertical velocity
-    data.vY = Math.min(8, data.vY + data.vY * 0.03 * GAME_SPEED_RATIOED);
+    data.vY = Math.min(8, data.vY + data.vY * 0.04 * GAME_SPEED_RATIOED);
 
     // and throttle
     data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
