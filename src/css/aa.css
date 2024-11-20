@@ -511,108 +511,15 @@ body:not(.edit-mode) #top-bar {
   bottom: 0;
 }
 
-#radar .sprite:not(.balloon) {
-  /* a little extra, to avoid rounding errors. */
-  padding-bottom: calc(0.5px * var(--rs));
-}
-
-/* .friendly? */
-#radar .sprite:not(.helicopter) {
-  /**
-   * Performance observation -
-   * `outline: 0.5px solid #000;` causes repaint in Chrome 110 on most radar items when gunfire happens.
-   * filter: drop-shadow() seems to kill performance.
-   * box-shadow seems to be OK.
-   */
-  box-shadow: 0 0 0 calc(0.5px * var(--gs)) #000;
-}
-
 #radar .sprite.enemy {
   background-color: #ccc;
 }
 
-#radar .sprite.cloud1 {
-  width: calc(12px * var(--rs));
-}
-
-#radar .sprite.cloud2,
-#radar .sprite.cloud3 {
-  width: calc(14px * var(--rs));
-}
-
-#radar .sprite.landing-pad {
-  top: auto;
-  bottom: 0;
-  width: calc(8px * var(--rs));
-  height: calc(2px * var(--gs));
-  /* green "U"-shape image */
-  background-color: transparent;
-  background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAACCAYAAABllJ3tAAAAFUlEQVR4AWMQX8D+nwE7AMuBCXwYAIdBEWNHOYOnAAAAAElFTkSuQmCC);
-  background-position: 50% calc(1px * var(--gs));
-  background-size: contain;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  box-shadow: none;
-  filter: drop-shadow(0px -1px 1px #000);
-  z-index: 0;
-}
-
-#radar .sprite.landing-pad.enemy {
-  /* #ccc "U"-shape image */
-  background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAACCAYAAABllJ3tAAAAFUlEQVR4AWM4ePDgfwbsACwHJvBhAO1MIJVMk7QUAAAAAElFTkSuQmCC);
-}
-
-#radar .sprite.smart-missile {
-  border-radius: 100%;
-  bottom: auto;
-  height: calc(1.25px * var(--gs));
-  border-radius: calc(1.25px * var(--gs));
-  left: 0;
-  margin-top: calc(0.25px * var(--gs));
-  outline: 0;
-  position: absolute;
-  top: auto;
-  width: calc(3px * var(--rs));
-  will-change: transform;
-}
-
-#radar .sprite.smart-missile.enemy {
-  background-color: red;
-}
-
-#radar .sprite.helicopter {
-  background-color: transparent;
-  --border: calc(2.5px * var(--gs));
-  border-bottom: var(--border) solid transparent;
-  border-left: var(--border) solid #17a007;
-  border-top: var(--border) solid transparent;
-  /* vertical offset, same as border = roughly half-height. */
-  top: calc(var(--border) * 0.9);
-  font-size: 0;
-  height: 0;
-  outline: 0;
-  width: 0;
-  z-index: 5; /* show above landing pads, etc. */
-}
-
 @media screen and (orientation: landscape) and (max-height: 480px) {
-  #radar .sprite.helicopter {
-    /* larger chopper on small screens in landscape, given the radar is quite small. */
-    --border: calc(4px * var(--gs));
-  }
-
   /* give everybody a vertical boost, per se. */
   #radar .sprite:not(.balloon) {
     padding-bottom: calc(1px * var(--rs));
   }
-
-  #radar .sprite.balloon {
-    padding-bottom: calc(0.75px * var(--rs));
-  }
-}
-
-#radar .sprite.helicopter.local-player {
-  animation: blink calc(0.5s * var(--gs-frac)) steps(1) infinite;
 }
 
 #radar .sprite.missile-launcher {
