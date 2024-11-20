@@ -1119,7 +1119,7 @@ body.game-over #game-announcements .announcement-text {
 body.game-over.envelope-open #top-bar,
 body.game-over.envelope-open #battlefield-canvas,
 body.game-over.envelope-open #game-announcements .announcement-text,
-body.prefs-modal-open #top-bar,
+body.game-started.prefs-modal-open #top-bar,
 body.prefs-modal-open #battlefield-canvas,
 body.prefs-modal-open #game-announcements .announcement-text,
 body.prefs-modal-open #notification-toasts,
