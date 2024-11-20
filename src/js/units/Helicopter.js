@@ -3222,7 +3222,7 @@ const Helicopter = (options = {}) => {
       frameWidth: defaultWidth,
       frameHeight: defaultHeight,
       animationConfig: {
-        animationDuration: 1.35,
+        animationDuration: 0.85,
         loop: true,
         isSequence: true,
         animationFrameCount: 4
