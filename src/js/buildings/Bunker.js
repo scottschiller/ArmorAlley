@@ -22,13 +22,13 @@ import { effects } from '../core/effects.js';
 const Bunker = (options = {}) => {
   let css, data, dom, objects, radarItem, exports;
 
-  function createBalloon(useRandomY) {
+  function createBalloon() {
     if (!objects.balloon) {
       objects.balloon = game.addObject(TYPES.balloon, {
         bunker: exports,
         isEnemy: data.isEnemy,
         x: data.x,
-        y: useRandomY ? undefined : common.bottomAlignedY(-data.height)
+        y: common.bottomAlignedY(-data.height)
       });
     }
 
@@ -477,8 +477,7 @@ const Bunker = (options = {}) => {
   function initBunker() {
     initDOM();
 
-    // first time, create at random Y location.
-    createBalloon(true);
+    createBalloon();
 
     data.midPoint = common.getDoorCoords(exports);
 
