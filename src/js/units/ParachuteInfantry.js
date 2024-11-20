@@ -299,7 +299,7 @@ const ParachuteInfantry = (options = {}) => {
       didHitGround: false,
       landed: false,
       vX: 0, // wind
-      vY: options.vY || 2 + rng(1, type) + rng(1, type),
+      vY: options.vY || 2 + rng(1, type),
       maxY: worldHeight + 3,
       maxYPanic: 300,
       maxYParachute: worldHeight - 13
