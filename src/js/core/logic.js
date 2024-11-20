@@ -718,7 +718,8 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
      */
     hData = helicopter[i].data;
     if (
-      !hData.cloaked &&
+      // cloaked check: most units can't see choppers in clouds, but vans' jamming equipment still affects cloaked choppers.
+      (!hData.cloaked || data.type === TYPES.van) &&
       !hData.dead &&
       data.isEnemy !== hData.isEnemy &&
       (hData.hasLiftOff ||
