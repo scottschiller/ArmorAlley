@@ -1,28 +1,16 @@
-import { gameType } from '../aa.js';
 import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { canNotify, collisionTest } from '../core/logic.js';
 import {
-  FPS,
   GAME_SPEED,
   GAME_SPEED_RATIOED,
   getTypes,
-  rndInt,
   rng,
-  rngInt,
   TYPES,
   worldHeight
 } from '../core/global.js';
-import {
-  playSound,
-  playSoundWithDelay,
-  skipSound,
-  stopSound,
-  sounds,
-  getVolumeFromDistance,
-  getPanFromLocation
-} from '../core/sound.js';
+import { playSound, sounds } from '../core/sound.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
