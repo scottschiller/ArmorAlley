@@ -2242,7 +2242,7 @@ function initIOSAudio() {
 
   iosAudioElement = new Audio();
 
-  // no remote spekaer shenanigans
+  // no remote speaker shenanigans
   iosAudioElement.setAttribute('x-webkit-airplay', 'deny');
   iosAudioElement.setAttribute('disableRemotePlayback', true);
 
