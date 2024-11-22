@@ -32,6 +32,7 @@ import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
 import { game } from '../core/Game.js';
+import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 
 // low fuel means low fuel. or ammo. or bombs.
 let lowFuelLimit = 30;
@@ -286,6 +287,12 @@ const HelicopterAI = (options = {}) => {
     // maybe bomb turrets, too?
     if (data.targeting.turrets) {
       let nearbyTurret = objectInView(data, { items: TYPES.turret });
+      // scan for turrets, before entering their firing range
+      let nearbyTurret = objectInView(data, {
+        items: TYPES.turret,
+        triggerDistance: TURRET_SCAN_RADIUS * 1.5
+      });
+
       if (nearbyTurret) {
         maybeBombTarget(nearbyTurret);
 
@@ -296,37 +303,48 @@ const HelicopterAI = (options = {}) => {
         ) {
           let mTarget = objectInView(data, { items: TYPES.turret });
 
-          if (mTarget) {
-            maybeFireAtTarget(mTarget);
-          }
+          if (!mTarget) return;
 
-          if (mTarget && collisionCheckX(mTarget.data, data, turretLookAhead)) {
-            // wait a few frames before firing.
-            let delay = rngInt(FPS * 5, data.type);
+          maybeFireAtTarget(mTarget);
 
-            missileLaunchTimer = common.setFrameTimeout(() => {
-              // sanity check, given delay / async...
-              if (data.dead || mTarget.data.dead) {
-                missileLaunchTimer = null;
-                return;
-              }
+          // only throw in a smart missile if allowed.
+          if (!levelConfig.useMissileB) return;
 
-              // "AI" target for helicopter missile launch method
-              // (predetermined rather than real-time, because reasons.)
-              missileTarget = mTarget;
+          // only use missiles if low on bombs
+          if (data.bombs >= 5) return;
 
-              // it's possible the CPU is being chased, needs to flip to fire.
-              options.exports.checkFacingTarget(mTarget);
+          if (!collisionCheckX(mTarget.data, data, turretLookAhead)) return;
 
-              options.exports.setMissileLaunching(true);
+          // wait a few frames before firing.
+          let delay = rngInt(FPS * 5, data.type);
 
-              // and, stop momentarily.
-              common.setFrameTimeout(() => {
+          missileLaunchTimer = common.setFrameTimeout(() => {
+            // sanity check, given delay / async...
+            if (data.dead || mTarget.data.dead) {
+              missileLaunchTimer = null;
+              return;
+            }
+
+            // "AI" target for helicopter missile launch method
+            // (predetermined rather than real-time, because reasons.)
+            missileTarget = mTarget;
+
+            // it's possible the CPU is being chased, needs to flip to fire.
+            options.exports.checkFacingTarget(mTarget);
+
+            options.exports.setMissileLaunching(true);
+
+            // and, stop momentarily.
+            common.setFrameTimeout(
+              () => {
                 options.exports.setMissileLaunching(false);
                 missileLaunchTimer = null;
-              }, 1 / FPS);
-            }, delay);
-          }
+                // if on "easy", only one missile.
+                // otherwise, up to two.
+              },
+              gameType === 'easy' ? 1 / FPS : FPS
+            );
+          }, delay);
         }
       }
     }
