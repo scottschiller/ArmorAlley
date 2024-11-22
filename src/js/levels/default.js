@@ -63,7 +63,7 @@ const campaignBattles = [
  *  9 Wasteland      • •     115  +9
  * 10 Midnight Oasis • •     133  +9
  *
- * "Wargames" and "Conflict"
+ * "Wargames"
  *
  *  # Battle         B N S J  IQ   F
  * ---------------------------------
@@ -77,6 +77,21 @@ const campaignBattles = [
  *  8 Blind Spot       •     153  +9
  *  9 Wasteland        •     153  +9
  * 10 Midnight Oasis   • •   176  +9
+ *
+ * "Conflict" (IQ needs confirming vs. original))
+ *
+ *  # Battle         B N S J  IQ   F
+ * ---------------------------------
+ *  1 Cake Walk      •       115  -1
+ *  2 One-Gun        •       133  -1
+ *  3 Sucker Punch   •       133   0
+ *  4 Airborne       • •     153   0
+ *  5 Two-Gun        • •     153  +2
+ *  6 Super Bunker   • •     176  +9
+ *  7 Scrapyard      • •     176  +9
+ *  8 Blind Spot       •     193  +9
+ *  9 Wasteland        •     193  +9
+ * 10 Midnight Oasis   • •   218  +9
  *
  * "Armorgeddon"
  *
