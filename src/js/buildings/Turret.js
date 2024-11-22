@@ -763,13 +763,15 @@ const Turret = (options = {}) => {
     scanNode: 'scan-node'
   });
 
-  const fireModulus = tutorialMode
-    ? 12
-    : gameType === 'extreme'
-      ? 2
-      : gameType === 'hard'
-        ? 6
-        : 12; // a little easier in tutorial mode vs. hard vs. easy modes
+  let fireModulusMap = {
+    armorgeddon: 1,
+    extreme: 2,
+    hard: 6,
+    easy: 12,
+    tutorial: 15
+  };
+
+  const fireModulus = fireModulusMap[gameType] || fireModulusMap.easy;
 
   const claimModulus = 16;
 
