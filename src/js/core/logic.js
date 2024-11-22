@@ -704,9 +704,9 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
   const helicopter = game.objects[TYPES.helicopter];
   let hData;
 
-  // by default
+  // special case for network: use fixed distance, unless dealing with a van which provides its own fixed distance.
   triggerDistance =
-    net.active && !useCircleMath
+    net.active && data.type !== TYPES.van && !useCircleMath
       ? NET_TRIGGER_DISTANCE
       : triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
 
