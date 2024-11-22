@@ -1,14 +1,7 @@
 import { gamePrefs } from '../UI/preferences.js';
 import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
-import {
-  autoStart,
-  IMAGE_ROOT,
-  rndInt,
-  searchParams,
-  TYPES,
-  worldHeight
-} from '../core/global.js';
+import { autoStart, searchParams, TYPES, worldHeight } from '../core/global.js';
 import { net } from '../core/network.js';
 import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
@@ -21,6 +14,7 @@ let originalLevels;
 
 let level = searchParams.get('level');
 let levelName;
+let levelNumber;
 
 // The original 10 game battles, in order.
 const campaignBattles = [
@@ -34,6 +28,21 @@ const campaignBattles = [
   'Blind Spot',
   'Wasteland',
   'Midnight Oasis'
+];
+
+const networkBattles = [
+  'Balloon Fun',
+  'Cavern Cobra',
+  'Desert Sortie',
+  'First Blood',
+  'Network Mania',
+  'Rescue Raiders',
+  'Midpoint',
+  'Slithy Toves',
+  "Tanker's Demise",
+  'WindStalker',
+  'Sandstorm',
+  'Rainstorm'
 ];
 
 /**
@@ -186,50 +195,48 @@ const flagsByLevel = {
 };
 
 /**
- * Data pattern: number of medals to show in order of types / images #1 - #6,
- * split between left and right columns, with the offset being the medal number.
+ * 22 different forms of difficulty: a sliding scale, depending on game type - based on research of the original.
  *
- * e.g., Wasteland pattern [ 3, 3, 1, 2, 1, 0 ]:
- * ROW 1: three of medal 1 and three of medal 2,
- * ROW 2: one of medal 3 and two of medal 4,
- * ROW 3: one of medal 5 and none of medal 6.
- *
- * Medals can run in arbitrary group lengths, but the default is three.
+ * vanJammingI: van radar jamming distance, combined with a random number to determine jamming.
+ * clipSpeedI: limit on CPU helicopter vs. MAXVELX? - also used to determine robotRDP->defendB (defend) status, might affect chasing helicopter? - cwGotoHB() (take out end bunker, refit/repair, close chopper combat, close chopper case (follow up to max velocity - 1, `clipvel1()`?), "fly to home", suicide, run/flee - case 6) + gotoH() does not seem to be clipped.
+ * fundMinI: enemy minimum funds - hardly referenced, aside from determining enemy IQ score and whether to go after player's end bunker(?)
+ * funMaxI: enemy maximum funds - same as min.
+ * convoyLevelI: when CPU builds convoys - part of enemy IQ score. "convoyItemI" = which one, index into things to build
+ * regenTimeI: how long before a new helicopter. 48 frames = ~5 seconds (or maybe 5.5.)
+ * bombSlopperI: appears to be unused.
+ * bDumbMissiles: flag, bullets vs. dumb/aimed missiles - factors into IQ score.
+ * bNapalm: flag, whether bombs have napalm instead of "incendiary" bombs. IQ score.
+ * bFlameThrower: true if tanks can use flame throwers on men. IQ score.
+ * buildTruckB: Whether CPUs can build missile launchers. IQ score.
+ * buildEngineersB: Whether CPUs can build engineers. IQ score.
+ * useMissileB: Whether CPU can fire (smart? TBD) missiles. IQ score.
+ * useMenB: Whether CPU can pick up infantry, and also order ones to pick up(?) - IQ score. Not sure if this affects deploying paratroopers.
+ * killCopterB: Whether CPU can retaliate when targeted by a smart missile, chase and fight etc. IQ score. Connected to `statusB->attackB`.
+ * killVanB: Whether CPU can target vans (only with bombs? TBD.) IQ score.
+ * killTankB: Whether CPU can target tanks. IQ score.
+ * killMenB: Whether CPU can target men. IQ score.
+ * killMissileB: Whether CPU can fire at incoming smart missiles (if 5+ ammo.) IQ score.
+ * killEndB: Whether CPU can go after the end bunker, "stealB" is set, and human player has at least `fundMinI` or more than `fundMaxI` funds(?). IQ score. `cwTakeOutEndB()`
+ * suicideB: Whether CPU can make a beeline for helicopter / crash? IQ score. Applies to state machine when `attackI` is set to 5.
+ * stealthB: True when enemy not on radar. IQ score.
+ * jammingB: Whether radar is fully jammed. May occasionally flicker. IQ score.
+ * scatterBombB: Whether CPU can drop bombs on things, separately from killTankB/killVanB/killMenB. IQ score. `scatterBombB()`
  */
-const medalList = {
-  'Cake Walk': [1, 0, 0, 0, 0, 0],
-  'One-Gun': [2, 0, 0, 0, 0, 0],
-  'Sucker Punch': [2, 1, 0, 0, 0, 0],
-  'Airborne': [2, 2, 0, 0, 0, 0],
-  'Two-Gun': [3, 2, 1, 0, 0, 0],
-  'Super Bunker': [3, 2, 1, 0, 0, 0],
-  'Scrapyard': [3, 3, 1, 1, 0, 0],
-  'Blind Spot': [3, 3, 1, 2, 0, 0],
-  'Wasteland': [3, 3, 1, 2, 1, 0],
-  'Midnight Oasis': [4, 4, 2, 2, 1, 1]
-};
 
-function medalTemplate(i) {
-  if (i === 0) return emptyTemplate();
-  return `<span class="medal medal-${i}"></span>`;
+let paramsMap;
+
+function makeParamsMap() {
+  // quick-and-dirty "flags to offsets" enumeration.
+  let pMap = {};
+  'vanJammingI clipSpeedI fundMinI fundMaxI convoyLevelI regenTimeI bDumbMissiles bNapalm bFlameThrower buildTruckB buildEngineersB useMissileB useMenB killCopterB killVanB killTankB killMenB killMissileB killEndB suicideB stealthB jammingB scatterBombB'
+    .split(' ')
+    .forEach((name, index) => {
+      pMap[name] = index;
+    });
+
+  return pMap;
 }
 
-function columnSpacer() {
-  return '<span class="column-spacer"></span>';
-}
-
-function emptyTemplate() {
-  return '<span class="medal-spacer"></span>';
-}
-
-function medalGroup(count, medal, isEven) {
-  // show `count` of the specified `medal`, by offset - with alignment and padding for empty slots, as needed.
-  let html = [];
-  let defaultGroupSize = 3;
-  // group size can be overridden, e.g., 4 for Midnight Oasis.
-  let groupSize = Math.max(count, defaultGroupSize);
-  for (var i = 0; i < groupSize; i++) {
-    html.push(i < count ? medalTemplate(medal) : emptyTemplate());
 const originalParams = [
   //jam sp <$  >$ cnvy tm dm np ft TK EN ms mn kcp kv kt km km ke sc st jm sctbm
   //----------------------------------------------------------------------------
@@ -287,60 +294,36 @@ const networkParams = [
   [511, 14, 60, h, 10, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1]
 ];
 
+function getLevelParams(paramArray, offset) {
+  if (offset < 0) {
+    return unpackLevelParams(demoParams[0]);
   }
-  // if an "even" column, we're on the left side - flip array, so items are right-aligned e.g., a single medal is on right.
-  if (isEven) html.reverse();
-  return html.join('');
+  // calculateIQ(paramArray[offset]);
+  return unpackLevelParams(paramArray[offset]);
 }
 
-function getMedals() {
-  if (!medalList[levelName]) return '';
+// expand 1,0,0 etc., into object with name/value pairs.
+function unpackLevelParams(levelParams) {
+  let unpacked = {};
 
-  let html = [];
-  let isEven;
+  if (!paramsMap) {
+    paramsMap = makeParamsMap();
+  }
 
-  // build out groups of medals, typically three at a time.
-  medalList[levelName].forEach((count, i) => {
-    isEven = i % 2 === 0;
-    // note: medal CSS + images start at 1.
-    html.push(medalGroup(count, i + 1, isEven));
-    // space between "columns" vs. line break
-    if (isEven) {
-      html.push(columnSpacer());
-    } else {
-      html.push('<br />');
-    }
+  Object.keys(paramsMap).forEach((key) => {
+    unpacked[key] = levelParams[paramsMap[key]];
   });
 
-  window.requestAnimationFrame(() => {
-    // hackish: assign transition delays before fading in.
-    // this happens here because of laziness, having generated arrays of strings which are now live nodes.
-    let m = document.getElementById('medals');
-    // just in case...
-    if (!m) return;
-    let medalDelay = 150;
-    m.querySelectorAll('.medal').forEach((m, i) => {
-      m.style.transitionDelay = `${medalDelay * i}ms`;
-    });
-    // start transitions
-    common.setFrameTimeout(() => {
-      m.className = 'active';
-    }, 1000);
-  });
-
-  return `<div id="medals">${html.join('')}</div>`;
+  return unpacked;
 }
 
-function getVictoryMessage() {
-  let msgs = victoryMessages[levelName];
-  // if no match for the level (e.g., network-specific battle?), return a generic string.
-  if (!msgs) return genericVictory;
+function calculateIQ(o) {
+  // CPU "IQ" for a given set of level parameters
 
-  // default to 'easy', if no gameType-specific one found.
-  let msg = msgs[gameType] || msgs['easy'];
+  let iq = 0;
 
-  return msg + getMedals();
-}
+  // from original
+  const MAXVELX = 14;
 
   // clipSpeedI
   iq += Math.floor((o[1] * 20) / MAXVELX);
@@ -351,10 +334,28 @@ function getVictoryMessage() {
   // convoyLevelI
   iq += o[4];
 
-function getDefeatMessage() {
-  return `<span class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</span><a href="${window.location.href}" data-ignore-touch="true" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`;
+  // buildTruckB, buildEngineersB, useMenB, killTankB, killMenB, suicideB
+  iq += (o[9] + o[10] + o[12] + o[15] + o[16] + o[19]) * 4;
+
+  // killVanB
+  iq += o[14] * 6;
+
+  // useMissileB + killMissileB + killEndB
+  iq += (o[11] + o[17] + o[18]) * 10;
+
+  // bDumbMissiles + bNapalm + stealthB + jammingB + scatterBombB
+  iq += (o[6] + o[7] + o[20] + o[21] + o[22]) * 20;
+
+  // killcopterB
+  iq += o[13] * 26;
+
+  return iq;
 }
 
+// based on original game data
+let levelConfig = {};
+
+// based on original game UI
 let levelFlags;
 
 let flagOverrides = {
@@ -379,6 +380,35 @@ function parseFlags(levelName) {
 
 function updateFlags(levelName) {
   levelFlags = parseFlags(levelName);
+  // for now, also get config from here.
+  // TODO: DRY.
+  levelConfig = getLevelConfig(levelName);
+}
+
+function getLevelConfig(levelName) {
+  let offset;
+
+  offset = campaignBattles.indexOf(levelName);
+
+  let d = 0;
+  if (gameType === 'hard') d = 1;
+  if (gameType === 'extreme') d = 2;
+  if (gameType === 'armorgeddon') d = 3;
+
+  if (offset !== -1) {
+    return getLevelParams(originalParams, d === 0 ? offset : d * 4 + offset);
+  }
+
+  // network battle
+  offset = networkBattles.indexOf(levelName);
+
+  if (offset !== -1) {
+    // 1:1 mapping, params do not change based on difficulty.
+    return getLevelParams(networkParams, offset);
+  }
+
+  // tutorial or custom level: use default demo params.
+  return getLevelParams(demoParams, 0);
 }
 
 function applyFlags() {
@@ -394,9 +424,15 @@ function setCustomLevel(levelData) {
   setLevel('Custom Level');
 }
 
+function updateLevelNumber(levelName) {
+  // note: only for set of original battles, not the network ones yet
+  levelNumber = campaignBattles.indexOf(levelName);
+}
+
 function setLevel(levelLabel) {
   level = levelLabel;
   levelName = levelLabel;
+  updateLevelNumber(levelName);
   if (level !== 'Custom Level') {
     gamePrefs.last_battle = level;
     prefsManager.writePrefsToStorage();
@@ -553,6 +589,15 @@ function previewLevel(levelName, excludeVehicles) {
   // given level data, filter down and render at scale.
 
   if (!levelName) return;
+
+  updateLevelNumber(levelName);
+
+  if (!gameType) {
+    // HACK: don't render preview until gameType is known, as previews depend on it.
+    // (this also shouldn't happen.)
+    console.warn('previewLevel(): no gameType');
+    return;
+  }
 
   let data = normalizeLevelData(originalLevels[levelName]);
 
@@ -833,7 +878,6 @@ function addWorldObjects() {
       // additional arguments, e.g., `{ obscured: true }`
       if (item[3]) Object.assign(args, item[3]);
 
-      // special cases
       if (item[0] === TYPES.landingPad) {
         args.name = landingPadNames[item[1]];
         if (item[1] === 'neutral') {
@@ -2915,9 +2959,10 @@ export {
   applyFlags,
   addWorldObjects,
   campaignBattles,
-  dependsOnGameType,
   levelFlags,
+  levelConfig,
   levelName,
+  levelNumber,
   previewLevel,
   setCustomLevel,
   setLevel,
