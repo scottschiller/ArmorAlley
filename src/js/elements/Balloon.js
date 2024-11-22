@@ -144,7 +144,9 @@ const Balloon = (options = {}) => {
     effects.shrapnelExplosion(data, {
       count:
         3 +
-        (gameType === 'hard' || gameType === 'extreme'
+        (gameType === 'hard' ||
+        gameType === 'extreme' ||
+        gameType === 'armorgeddon'
           ? rngInt(3, TYPES.shrapnel)
           : 0),
       velocity: rngInt(4, TYPES.shrapnel),

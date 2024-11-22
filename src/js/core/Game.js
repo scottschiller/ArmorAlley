@@ -852,7 +852,7 @@ const game = (() => {
     } else {
       gameType =
         utils.storage.get(prefs.gameType) ||
-        winloc.match(/easy|hard|extreme|tutorial/i) ||
+        winloc.match(/easy|hard|extreme|armorgeddon|tutorial/i) ||
         DEFAULT_GAME_TYPE;
 
       if (gameType instanceof Array) {
@@ -860,7 +860,10 @@ const game = (() => {
       }
 
       // safety check
-      if (gameType && !gameType.match(/easy|hard|extreme|tutorial/i)) {
+      if (
+        gameType &&
+        !gameType.match(/easy|hard|extreme|armorgeddon|tutorial/i)
+      ) {
         gameType = null;
       }
     }

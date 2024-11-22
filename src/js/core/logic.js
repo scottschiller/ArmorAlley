@@ -862,8 +862,8 @@ function checkProduction() {
 
   const gData = game.data;
 
-  // playing extreme mode? this benefit would practically be cheating! ;)
-  if (gameType === 'extreme') return;
+  // playing the harder modes? this benefit would practically be cheating! ;)
+  if (gameType === 'extreme' || gameType === 'armorgeddon') return;
 
   // network game? only show if playing co-op, humans vs. one or two CPUs.
   if (

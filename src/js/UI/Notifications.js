@@ -231,8 +231,9 @@ const Notifications = () => {
 
     const emoji = {
       easy: '😎',
-      hard: '😰',
-      extreme: '😱'
+      hard: '😬',
+      extreme: '😰',
+      armorgeddon: '😱'
     };
 
     const gameTypes = {
@@ -274,8 +275,11 @@ const Notifications = () => {
       add('🚁 You are now equipped with aimed missiles. 🚀');
     }
 
-    // extreme mode exceptions: notify when the chopper *is* armed with bullets.
-    if (gameType === 'extreme' && levelFlags.bullets) {
+    // extreme + armorgeddon mode: notify when the chopper *is* armed with bullets, since it's rare.
+    if (
+      (gameType === 'extreme' || gameType === 'armageddon') &&
+      levelFlags.bullets
+    ) {
       add('🚁 You are equipped with bullets for this battle. 🔫');
     }
 

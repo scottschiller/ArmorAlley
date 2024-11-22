@@ -599,8 +599,9 @@ function updateGameLevelControl(value) {
   const emoji = {
     tutorial: '📖',
     easy: '😎',
-    hard: '😰',
-    extreme: '😱'
+    hard: '😬',
+    extreme: '😰',
+    armorgeddon: '😱'
   };
 
   option.innerHTML = `${option.value} ${option.value === 'Tutorial' ? emoji.tutorial : emoji[gamePrefs.game_type]}`;

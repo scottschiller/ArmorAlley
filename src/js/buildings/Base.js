@@ -97,7 +97,7 @@ const Base = (options = {}) => {
 
   function onSmartMissileDie() {
     // extreme mode, human player at enemy base: spawn another immediately on die().
-    if (gameType !== 'extreme') return;
+    if (gameType !== 'extreme' && gameType !== 'armorgeddon') return;
 
     // check again, within a screen's distance.
     const targetHelicopter = enemyHelicopterNearby(

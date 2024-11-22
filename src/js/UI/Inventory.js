@@ -659,7 +659,7 @@ const Inventory = () => {
     const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
     let orderOffset = 0;
 
-    if (gameType === 'extreme') {
+    if (gameType === 'extreme' || gameType === 'armorgeddon') {
       // one more tank to round out the bunch, and (possibly) further complicate things :D
       enemyOrders.push(TYPES.tank);
 
@@ -668,9 +668,15 @@ const Inventory = () => {
     }
 
     // the more CPUs, the faster the convoys! :D
+    // armorgeddon might be insanely difficult here, TBD.
     const convoyDelay =
-      (gameType === 'extreme' ? 30 : gameType === 'hard' ? 45 : 60) /
-      game.players.cpu.length;
+      (gameType === 'armorgeddon'
+        ? 20
+        : gameType === 'extreme'
+          ? 30
+          : gameType === 'hard'
+            ? 45
+            : 60) / game.players.cpu.length;
 
     // after ordering, wait a certain amount before the next convoy
     enemyDelays.push(convoyDelay);

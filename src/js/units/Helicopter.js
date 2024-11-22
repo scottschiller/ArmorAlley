@@ -1427,7 +1427,7 @@ const Helicopter = (options = {}) => {
     if (
       !net.active &&
       ((data.isCPU &&
-        (gameType === 'hard' || gameType === 'extreme'
+        (gameType === 'hard' || gameType === 'extreme' || gameType === 'armorgeddon'
           ? aiRNG() > 0.5
           : aiRNG() > 0.25)) ||
         (data.isLocal && rng(data.type) > 0.66))
@@ -1551,7 +1551,7 @@ const Helicopter = (options = {}) => {
     if (data.isCPU && data.bombTargets?.[0]) {
       // give CPU more of an edge, depending on difficulty.
       let bombAccuracy =
-        gameType === 'extreme' ? 2 : gameType === 'hard' ? 3 : 6;
+        gameType === 'extreme' || gameType === 'armorgeddon' ? 2 : gameType === 'hard' ? 3 : 6;
       if (data.bombTargets[0].type === TYPES.turret) {
         // "cheat" and bomb much more vertically.
         vX = data.vX * 0.125;
@@ -2662,7 +2662,12 @@ const Helicopter = (options = {}) => {
       cpu: {
         // special firing rates
         balloon: 90,
-        helicopter: gameType === 'extreme' ? 12 : gameType === 'hard' ? 24 : 60,
+        helicopter:
+          gameType === 'extreme' || gameType === 'armorgeddon'
+            ? 12
+            : gameType === 'hard'
+              ? 24
+              : 60,
         tank: 20
       }
     },
@@ -2674,12 +2679,17 @@ const Helicopter = (options = {}) => {
       cpu: {
         // special firing rates - with aimed missiles, faster with game difficulty
         helicopter: levelFlags.bullets
-          ? gameType === 'extreme'
+          ? gameType === 'extreme' || gameType === 'armorgeddon'
             ? 2
             : gameType === 'hard'
               ? 3
               : 5
-          : FPS / (gameType === 'extreme' ? 6 : gameType === 'hard' ? 3 : 2),
+          : FPS /
+            (gameType === 'extreme' || gameType === 'armorgeddon'
+              ? 6
+              : gameType === 'hard'
+                ? 3
+                : 2),
         balloon: levelFlags.bullets ? 10 : FPS * 1.5
       }
     },

@@ -667,10 +667,16 @@ const SmartMissile = (options = {}) => {
         stopSound(sounds.missileWarning);
       }
 
-      // allow a burst of thrust when near expiry, as in the original game.
-      // this can make "almost-done" missiles very dangerous.
-      data.vXMax *= gameType === 'extreme' ? 1.25 : 1.1;
-      data.vYMax *= gameType === 'extreme' ? 1.25 : 1.1;
+      /**
+       * Allow a burst of thrust when near expiry, as in the original game.
+       * This can make "almost-done" missiles very dangerous.
+       * Amp this up on harder levels.
+       */
+      let multiplier =
+        gameType === 'extreme' || gameType === 'armorgeddon' ? 1.275 : 1.1;
+
+      data.vXMax *= multiplier;
+      data.vYMax *= multiplier;
     }
 
     // determine angle of missile (pointing at target, not necessarily always heading that way)

@@ -535,7 +535,11 @@ const Bomb = (options = {}) => {
     items: getTypes(
       'superBunker, bunker, tank, helicopter, balloon, van, missileLauncher, infantry:all, parachuteInfantry:all, engineer:all, turret, smartMissile',
       { exports }
-    ).concat(gameType === 'extreme' ? getTypes('gunfire', { exports }) : [])
+    ).concat(
+      gameType === 'extreme' || gameType === 'armorgeddon'
+        ? getTypes('gunfire', { exports })
+        : []
+    )
   };
 
   const spriteConfig = (() => {

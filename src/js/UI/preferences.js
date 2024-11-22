@@ -56,7 +56,7 @@ const defaultPrefs = {
   'game_fps_auto': 1, // 1 | 60 | 30
   'game_speed': 1,
   'game_speed_pitch': false,
-  'game_type': 'easy', // [easy|hard|extreme]
+  'game_type': 'easy', // [easy|hard|extreme|armorgeddon]
   'net_game_level': '',
   'net_game_type': 'easy', // non-network default is tutorial, need to be explicit.
   'net_game_style': 'pvp', // [pvp|pvp_cpu|coop_2v1|coop_2v2]
@@ -793,10 +793,14 @@ function PrefsManager() {
 
   function updateGameType(prefix) {
     // given radio buttons, update CSS on modal.
-    ['easy', 'hard', 'extreme'].forEach((mode) => {
+    ['easy', 'hard', 'extreme', 'armorgeddon'].forEach((mode) => {
       let element = document.getElementById(`${prefix}${mode}`);
       if (!element) return;
       utils.css.addOrRemove(dom.o, element.checked, mode);
+      // HACK: treat armorgeddon same as extreme for now
+      if (mode === 'armorgeddon' && element.checked) {
+        utils.css.add(dom.o, 'extreme');
+      }
     });
   }
 
