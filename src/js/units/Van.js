@@ -16,6 +16,7 @@ import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { levelConfig } from '../levels/default.js';
 import { getDefeatMessage, getVictoryMessage } from '../levels/battle-over.js';
 
 const Van = (options = {}) => {
@@ -174,7 +175,8 @@ const Van = (options = {}) => {
         // look for nearby bad guys
         enemyHelicopter = enemyHelicopterNearby(
           data,
-          game.objects.view.data.browser.twoThirdsWidth
+          levelConfig.vanJammingI ||
+            game.objects.view.data.browser.twoThirdsWidth
         );
 
         if (!data.jamming && enemyHelicopter) {
