@@ -1295,8 +1295,18 @@ const Helicopter = (options = {}) => {
      * This was an original game feature where you could continue to watch the scene where you died.
      */
 
+    let respawnDelay = getRespawnDelay();
+
+    let halfRespawn = respawnDelay / 2;
+
+    // ensure this scroll takes priority, not that another should be running anyway.
+    let override = true;
+
+    // enough time to get back to base before helicopter has fully respawned.
+    let scrollDuration = 4;
+
     // start animation after a delay...
-    let delay = noDelay ? 1 : 1000;
+    let delay = noDelay ? 1 : halfRespawn;
 
     common.setFrameTimeout(() => {
       if (shouldDelayRespawn()) {
@@ -1314,11 +1324,13 @@ const Helicopter = (options = {}) => {
       game.objects.view.animateLeftScrollTo(
         common.getLandingPadOffsetX(exports) +
           data.width * (1 / screenScale) -
-          game.objects.view.data.browser.halfWidth
+          game.objects.view.data.browser.halfWidth,
+        override,
+        scrollDuration
       );
 
-      // by the time the above is almost finished, start proper respawn.
-      common.setFrameTimeout(respawn, delay + (data.isCPU ? 7000 : 2000));
+      // start proper respawn by the time the view has scrolled back to the base.
+      common.setFrameTimeout(respawn, halfRespawn);
     }, delay);
   }
 
