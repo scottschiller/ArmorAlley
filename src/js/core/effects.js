@@ -185,11 +185,11 @@ const effects = {
   ) => {
     if (!exports || !exports.data || !exports.dom) return;
 
-    // 60fps: only run every other frame of animation by object, or game if unspecified.
+    // 60fps: only run every fourth frame of animation by object, or game if unspecified.
     if (
       FPS === 60 &&
       (exports?.data?.frameCount || game.objects.gameLoop.data.frameCount) %
-        2 !==
+        4 !==
         0
     )
       return;
