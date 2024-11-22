@@ -435,28 +435,28 @@ function setLevel(levelLabel) {
   }
 }
 
-function dependsOnGameType(levelName) {
-  // if there's an inline function, there's dynamic data - assume it may reference gameType.
-  return !!originalLevels[levelName]?.hasDynamicData;
-}
+// new "version 3" levelData parsing has an array of { objects }, not an array of arrays.
+const groupMap = {
+  l: 'left',
+  n: 'neutral',
+  r: 'right',
+  s: 'static', // terrain items
+  d: 'dynamic', // inline function
+  o: 'obscured', // some landing pads
+  gl: 'groundLeft', // certain turrets target ground units
+  gr: 'groundRight'
+};
 
 function normalizeLevelData(data) {
   let results = [];
 
   // new "version 3" parsing has an array of { objects }, not an array of arrays.
   if (!data[0].length) {
-    const groupMap = {
-      l: 'left',
-      n: 'neutral',
-      r: 'right',
-      s: 'static', // terrain items
-      d: 'dynamic', // inline function
-      o: 'obscured' // some landing pads
-    };
-
     // special case
     const extraParams = {
-      obscured: { obscured: true }
+      obscured: { obscured: true },
+      groundLeft: { isEnemy: false, targetGroundUnits: true },
+      groundRight: { isEnemy: true, targetGroundUnits: true }
     };
 
     data.forEach((entry) => {
@@ -547,6 +547,40 @@ function normalizeLevelData(data) {
   return results;
 }
 
+function shouldExcludeUnit(item) {
+  if (!item?.length) return;
+
+  // exclude "ground-targeting" turrets in certain cases.
+  if (
+    item[0] === 'turret' &&
+    (item[1] === groupMap.gl || item[1] === groupMap.gr)
+  ) {
+    // for now, exclude from all levels on Boot Camp.
+    if (gameType === 'easy') return true;
+
+    /**
+     * From testing original, Wargames and Conflict have these as of level 5.
+     * At present, assuming all-or-nothing; it's possible that groups may be
+     * reduced for conflict / wargames vs. armorgeddon, e.g., 1 turret vs. 3.
+     *
+     * Also unconfirmed: There is a single ground turret in level 4,
+     * and only Armorgeddon remains as the one difficulty that would show it.
+     */
+    return levelNumber <= (gameType !== 'armorgeddon' ? 4 : 5);
+  }
+
+  /**
+   * At this point, only exclude certain units from right side due to levelConfig
+   * where the CPU won't be building them.
+   */
+  if (item[1] === 'right') {
+    return (
+      (item[0] === TYPES.missileLauncher && !levelConfig.buildTruckB) ||
+      (item[0] === TYPES.engineer && !levelConfig.buildEngineersB)
+    );
+  }
+}
+
 function previewLevel(levelName, excludeVehicles) {
   // given level data, filter down and render at scale.
 
@@ -584,10 +618,11 @@ function previewLevel(levelName, excludeVehicles) {
     );
   } else {
     // buildings + units
-    data = data.filter((item) =>
-      item?.[0]?.match(
-        /base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i
-      )
+    data = data.filter(
+      (item) =>
+        item?.[0]?.match(
+          /base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i
+        ) && !shouldExcludeUnit(item)
     );
   }
 
@@ -606,6 +641,8 @@ function previewLevel(levelName, excludeVehicles) {
   // ensure that GUIDs start from zero, so objects line up if we're playing a network game.
   common.resetGUID();
 
+  let lastTurretX = 0;
+
   data.forEach((item) => {
     // don't show landing pads that are intentionally hidden by terrain decor
     if (item[0] === TYPES.landingPad && item[3]?.obscured) return;
@@ -614,14 +651,24 @@ function previewLevel(levelName, excludeVehicles) {
     let hostileSB = item[0] === 'super-bunker' && item[1] === 'neutral';
     let canShowHostile = gamePrefs.super_bunker_arrows;
 
+    // special enemy turret case
+    let isEnemyGroundTurret = item[1] === groupMap.gr;
+    let isGroundTurret = item[1] === groupMap.gl;
+
+    // special ground-targeting turret cases?
+
     const exports = {
       data: common.inheritData(
         {
           type: item[0],
           bottomAligned: item[0] !== 'balloon',
           isOnScreen: true,
+          // Special group-right turret case
           // Special SB case: show hostile as enemy only if "arrows" pref is off.
-          isEnemy: item[1] === 'right' || (hostileSB && !canShowHostile),
+          isEnemy:
+            isEnemyGroundTurret ||
+            item[1] === 'right' ||
+            (hostileSB && !canShowHostile),
           ...item[0].data
         },
         {
@@ -645,8 +692,20 @@ function previewLevel(levelName, excludeVehicles) {
 
     const css = ['sprite', item[0]];
 
-    if (item[1] === 'right') {
+    // common right units, AND "ground-right" turrets.
+    if (item[1] === 'right' || isEnemyGroundTurret) {
       css.push('enemy');
+    }
+
+    // angle turrets to indicate which side they're on.
+    if (item[0] === TYPES.turret || isGroundTurret || isEnemyGroundTurret) {
+      exports.data.angle = exports.data.isEnemy ? -33 : 33;
+      // is this a "duplicate" turret, i.e., a doubling-up of the last-placed one?
+      // (used typically in Midnight Oasis, and perhaps Tanker's Demise.)
+      if (lastTurretX === exports.data.x) {
+        exports.data.angle *= -1;
+      }
+      lastTurretX = exports.data.x;
     }
 
     if (item[0] === TYPES.landingPad) {
@@ -783,6 +842,8 @@ function addWorldObjects() {
     }
 
     data.forEach((item) => {
+      if (shouldExcludeUnit(item)) return;
+
       // hackish: terrain items (and clouds) only have two params.
       if (item.length === 2) {
         if (item[0] === TYPES.cloud) {
