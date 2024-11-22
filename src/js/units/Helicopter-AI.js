@@ -622,9 +622,6 @@ const HelicopterAI = (options = {}) => {
     // don't do this in certain modes.
     if (tutorialMode) return;
 
-    // per original game: CPU doesn't use missiles "on the first level."
-    if (gameType === 'easy') return;
-
     // common case: armed with bullets.
     if (levelFlags.bullets) {
       // need to be damaged, depending on difficulty
@@ -643,6 +640,9 @@ const HelicopterAI = (options = {}) => {
   }
 
   function maybeFireMissileAtHelicopter() {
+    // need to be "allowed" to use missiles, per level config
+    if (!levelConfig.useMissileB) return;
+
     // throttle, ignore if active
     if (missileLaunchTimer) return;
 
@@ -681,6 +681,8 @@ const HelicopterAI = (options = {}) => {
         missileLaunchTimer = null;
         return;
       }
+
+      maybeEngageRetaliationMode();
 
       // "AI" target for helicopter missile launch method
       // (predetermined rather than real-time, because reasons.)
