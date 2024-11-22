@@ -652,16 +652,11 @@ const Turret = (options = {}) => {
       collisionItems = collisionItems.concat(targets);
     }
 
-    if (gameType === 'extreme') {
-      /**
-       * additional challenge: make turret go after ground vehicles, as well. also, just to be extra-mean: smart missiles.
-       * note: vans are given a pass; they're so weak, they'll be taken out in a convoy by gunfire + explosions.
-       * otherwise, a single van may be able to "sneak by" a turret.
-       *
-       * 02/2023: I had smartMissile in here, but it's insanely tough with these being shot down. Maybe for insane mode.
-       */
-      targets = getTypes('tank, missileLauncher', { exports });
-
+    if (
+      gameType === 'hard' ||
+      gameType === 'extreme' ||
+      gameType === 'armorgeddon'
+    ) {
       // also: these things may not be targeted, but can be hit.
       collisionItems = collisionItems.concat(
         getTypes('engineer, smartMissile', { exports })
