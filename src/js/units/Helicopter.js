@@ -2481,9 +2481,11 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks = rng > 0.75;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
-        data.targeting.helicopters = rng > 0.25 || tutorialMode;
         data.targeting.turrets = rng > 0.5;
 
+        // go after choppers if allowed by level config, OR, in tutorial mode.
+        data.targeting.helicopters =
+          (levelConfig.killCopterB && rng > 0.25) || tutorialMode;
 
         if (debug || debugCollision) {
           console.log(
