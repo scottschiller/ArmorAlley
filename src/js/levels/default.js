@@ -820,17 +820,19 @@ function addWorldObjects() {
 
 function selectByDifficulty(optionsArray) {
   /**
-   * Given optionsArray of [1, 2, 3], return the whole thing or a subset based on difficulty.
-   * e.g., groups of turrets in "Midnight Oasis", in easy / hard / extreme mode.
-   * This will be inconsistent if there are more than three options provided.
+   * Given optionsArray of [1, 2, 3, 4], return the whole thing or a subset based on difficulty.
+   * e.g., groups of turrets in "Midnight Oasis", in easy / hard / extreme / armorgeddon mode.
+   * This will be inconsistent if there are more than four options provided.
    */
 
-  // note: always return an array with nested items.
-  if (!gameType || gameType === 'easy') return [optionsArray[0]];
-  if (gameType === 'hard')
-    return optionsArray.slice(0, optionsArray.length - 1);
+  let offsets = {
+    easy: 1,
+    hard: 2,
+    extreme: 3,
+    armorgeddon: 4
+  };
 
-  return optionsArray;
+  return optionsArray.splice(0, offsets[gameType] || offsets.easy);
 }
 
 // a few local shortcuts
