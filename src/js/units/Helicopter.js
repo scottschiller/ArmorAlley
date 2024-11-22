@@ -59,6 +59,7 @@ import { zones } from '../core/zones.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
+import { levelConfig, levelFlags } from '../levels/default.js';
 import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
@@ -1224,7 +1225,6 @@ const Helicopter = (options = {}) => {
 
     data.vX = 0;
     data.vY = 0;
-    data.lastVX = 0;
 
     data.attacker = undefined;
 
@@ -1665,7 +1665,14 @@ const Helicopter = (options = {}) => {
     const bulletVX = 7;
 
     // limit how much bullets can be "thrown"
-    const bulletVXMax = data.vXMax + bulletVX / 1.5;
+
+    let xMax = !data.isCPU
+      ? data.vXMax
+      : data.useClippedSpeed && !data.targeting.retaliation
+        ? data.vXMaxClipped / 2
+        : data.vXMax / 2;
+
+    const bulletVXMax = xMax + bulletVX / 1.5;
 
     // ensure bullets fire and move away from the chopper.
     const flipped = !!data.flipped;
@@ -1712,7 +1719,7 @@ const Helicopter = (options = {}) => {
 
       // approximation of max bullet speed.
       // CPU might have a *slight* advantage in bullet velocity, here.
-      seekForce.setMag(data.vXMax * 2.25);
+      seekForce.setMag(xMax * 2.5);
 
       vX = seekForce.x;
       vY = seekForce.y;
@@ -2260,8 +2267,6 @@ const Helicopter = (options = {}) => {
         // only allow X-axis if not on ground...
         if (mouse.x) {
           // accelerate scroll vX, so chopper nearly matches mouse when scrolling
-          data.lastVX = parseFloat(data.vX);
-
           data.vX =
             (data.scrollLeft + mouse.x - data.x - data.halfWidth) * 0.075;
 
@@ -2966,10 +2971,12 @@ const Helicopter = (options = {}) => {
       yMax: null,
       yMaxOffset: 3,
       vX: 0,
-      // TODO: sort out CPU 2X difference. :X
-      vXMax: isCPU ? 6 : 12,
-      vYMax: isCPU ? 5 : 10,
-      lastVX: 0,
+      vXMax: 12,
+      vXMaxClipped:
+        isCPU && levelConfig.clipSpeedI
+          ? (levelConfig.clipSpeedI / 14) * 12
+          : 12,
+      vYMax: 10,
       vY: 0,
       vyMin: 0,
       width: 48,
@@ -3011,6 +3018,7 @@ const Helicopter = (options = {}) => {
         hard: 0.85,
         extreme: 0.75
       },
+      useClippedSpeed: false,
       x: options.x || 0,
       y: options.y || game.objects.view.data.world.height - 20,
       muchaMuchacha: false,

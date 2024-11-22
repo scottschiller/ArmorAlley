@@ -20,7 +20,11 @@ function seekTarget(data, targetData, mag = 0.075) {
   let pos = new Vector(data.x, data.y);
   let velocity = new Vector(data.vX, data.vY);
 
-  let seekForce = seek(seekTarget, pos, velocity, data.vXMax, data.vXMax);
+  // if target is a helicopter, use "clipped" vXMax - possible CPU disadvantage.
+  let vXMax =
+    targetData.type === TYPES.helicopter ? data.vXMaxClipped : data.vXMax;
+
+  let seekForce = seek(seekTarget, pos, velocity, vXMax, vXMax);
 
   // TODO: make nicer so it's more of an approach.
   seekForce.setMag(mag);
@@ -46,6 +50,10 @@ function steerTowardTarget(
   if (tankBombCase || helicopterBombCase) {
     arriveOffset = -1;
   }
+
+  // if target is a helicopter, use "clipped" vXMax - possible CPU disadvantage.
+  let vXMax =
+    targetData.type === TYPES.helicopter ? data.vXMaxClipped : data.vXMax;
 
   // special-case arriveOffset: use midpoint of target, minus a quarter(?) chopper width so we land in the center.
   let targetX =
@@ -93,7 +101,7 @@ function steerTowardTarget(
 
   let arriveForce;
 
-  arriveForce = seek(target, pos, velocity, data.vXMax, data.vXMax);
+  arriveForce = seek(target, pos, velocity, vXMax, vXMax);
 
   let d = dist(target, pos);
 
