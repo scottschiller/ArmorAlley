@@ -1126,13 +1126,13 @@ const Helicopter = (options = {}) => {
   }
 
   function moveTo(x, y) {
-    if (data.isRemote && data.dead) return;
+    if (net.active && data.isRemote && data.dead) return;
 
     // Note: this updates data.x + data.y.
     moveToForReal(x, y);
 
     // Note: CPU may also be local, which is why we don't exit early above.
-    if (data.isCPU && !data.isRemote) {
+    if (net.active && data.isCPU && !data.isRemote) {
       // immediately send our data abroad...
       game.objects.view.sendPlayerCoordinates(exports);
     }
