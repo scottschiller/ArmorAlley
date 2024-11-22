@@ -2481,9 +2481,9 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks = rng > 0.75;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
-        // actively go after turrets only when they're a threat to tanks, etc.
-        data.targeting.turrets = rng > 0.5 && gameType === 'extreme';
         data.targeting.helicopters = rng > 0.25 || tutorialMode;
+        data.targeting.turrets = rng > 0.5;
+
 
         if (debug || debugCollision) {
           console.log(
