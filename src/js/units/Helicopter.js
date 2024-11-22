@@ -1570,7 +1570,11 @@ const Helicopter = (options = {}) => {
     if (data.isCPU && data.bombTargets?.[0]) {
       // give CPU more of an edge, depending on difficulty.
       let bombAccuracy =
-        gameType === 'extreme' || gameType === 'armorgeddon' ? 2 : gameType === 'hard' ? 3 : 6;
+        gameType === 'extreme' || gameType === 'armorgeddon'
+          ? 2
+          : gameType === 'hard'
+            ? 3
+            : 6;
       if (data.bombTargets[0].type === TYPES.turret) {
         // "cheat" and bomb much more vertically.
         vX = data.vX * 0.125;
