@@ -1430,7 +1430,7 @@ const Helicopter = (options = {}) => {
     if (
       !net.active &&
       ((data.isCPU &&
-        (gameType === 'hard' || gameType === 'extreme' || gameType === 'armorgeddon'
+        (!tutorialMode && gameType !== 'easy'
           ? aiRNG() > 0.5
           : aiRNG() > 0.25)) ||
         (data.isLocal && rng(data.type) > 0.66))
