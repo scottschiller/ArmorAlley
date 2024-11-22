@@ -119,7 +119,7 @@ const networkFlags = {
   'Network Mania': [1, 1, 0, 0, 154, 5],
   'Rescue Raiders': [1, 1, 0, 0, 158, 0],
   'Midpoint': [1, 1, 1, 0, 176, -2],
-  'Slithy Toves': [1, 1, 0, 0, 178, 0],
+  'Slithy Toves': [1, 1, 0, 0, 158, 0],
   "Tanker's Demise": [1, 1, 1, 0, 178, 0],
   'WindStalker': [1, 1, 0, 1, 179, 2],
   'Sandstorm': [1, 1, 1, 0, 177, 0],
