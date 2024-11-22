@@ -2997,7 +2997,7 @@ const Helicopter = (options = {}) => {
       ammoRepairModulus: tutorialMode || levelFlags.bullets ? 2 : 20,
       bombs: tutorialMode ? 30 : 10,
       maxBombs: tutorialMode ? 30 : 10,
-      parachutes: isCPU ? 5 : 1,
+      parachutes: isCPU ? 5 : tutorialMode ? 1 : 0,
       maxParachutes: 5,
       bnbNoParachutes: false,
       smartMissiles: 2,
