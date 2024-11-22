@@ -69,7 +69,9 @@ const Turret = (options = {}) => {
       target,
       moveOK;
 
-    target = enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode);
+    if (!data.targetGroundUnits) {
+      target = enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode);
+    }
 
     // alternate target(s) within range?
     if (!target && targets) {
@@ -630,13 +632,24 @@ const Turret = (options = {}) => {
       { exports }
     );
 
-    if (gameType === 'hard' || gameType === 'extreme') {
-      // additional challenge: make turret gunfire dangerous to some ground units, too.
-      collisionItems = collisionItems.concat(
-        getTypes('tank, van, infantry, missileLauncher, bunker, superBunker', {
-          exports
-        })
-      );
+    /**
+     * additional challenge: make turrets sometimes go after tanks, as well.
+     * note: vans are given a pass; they're so weak, they'll be taken out in a convoy by gunfire + explosions.
+     * otherwise, a single van may be able to "sneak by" a turret.
+     *
+     * 02/2023: I had smartMissile in here, but it's insanely tough with these being shot down. Maybe for insane mode.
+     */
+
+    /**
+     * If "hard" (wargames), then some turrets fire at tanks only starting with battle 5 - "Two-Gun"?
+     * It appears that some turrets can be set up *only* to fire at tanks, maybe all ground vehicles - and not helicopters. TBD.
+     * On "Super Bunker" in Wargames, the original has a mix of air and ground-unit turrets.
+     * This needs review / study vs. the original game.
+     * See AA Level Editor 2.0:mac for reference.
+     */
+    if (data.targetGroundUnits) {
+      targets = getTypes('tank', { exports });
+      collisionItems = collisionItems.concat(targets);
     }
 
     if (gameType === 'extreme') {
@@ -795,6 +808,7 @@ const Turret = (options = {}) => {
       claimPointsMax: 25,
       engineerInteracting: false,
       engineerHitCount: 0,
+      targetGroundUnits: !!options.targetGroundUnits,
       width: 10,
       logicalWidth: TURRET_SCAN_RADIUS,
       height,
