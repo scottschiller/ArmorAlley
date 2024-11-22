@@ -214,7 +214,7 @@ const View = () => {
     data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
 
     // keep track of width-only resize, because canvas sprites need scaling.
-    let widthChange = (data.browser.screenWidth !== width);
+    let widthChange = data.browser.screenWidth !== width;
 
     data.browser.screenWidth = width;
     data.browser.screenHeight = height;
