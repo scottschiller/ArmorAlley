@@ -1542,9 +1542,13 @@ const Helicopter = (options = {}) => {
         localReset();
       } else {
         // by the time the above is almost finished, start proper respawn.
-        common.setFrameTimeout(respawn, data.isCPU ? 8000 : 3000);
+        common.setFrameTimeout(respawn, getRespawnDelay());
       }
     }
+  }
+
+  function getRespawnDelay() {
+    return (data.isCPU ? levelConfig.regenTimeI : 48) * 100;
   }
 
   function getBombParams() {
