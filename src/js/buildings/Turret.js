@@ -775,6 +775,11 @@ const Turret = (options = {}) => {
 
   const claimModulus = 16;
 
+  // "duplicate" turrets are part of a "stack", i.e., there's another turret at the same location.
+  // this is used sparingly in Midnight Oasis.
+  let lastTurret = game.objects.turret[game.objects.turret.length - 1 || 0];
+  let isDuplicate = options.x === lastTurret?.data?.x;
+
   data = common.inheritData(
     {
       type: TYPES.turret,
@@ -811,9 +816,13 @@ const Turret = (options = {}) => {
       height,
       halfWidth: 5,
       halfHeight: height / 2,
-      angle: 0,
-      angleIncrement: 1.75,
+      angle: 33 * (options.isEnemy ? -1 : 1) * (isDuplicate ? -1 : 1),
       maxAngle: 90,
+      // ensure that "duplicate" turrets move a little faster, so they de-sync with their radar counterparts after firing at target(s).
+      angleIncrement:
+        (1.75 + (isDuplicate ? rnd(0.25) : 0)) *
+        (options.isEnemy ? -1 : 1) *
+        (isDuplicate ? -1 : 1),
       x: options.x || 0,
       y: game.objects.view.data.world.height - height - 2,
       // logical vs. sprite offset
