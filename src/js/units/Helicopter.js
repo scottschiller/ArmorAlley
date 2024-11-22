@@ -1208,7 +1208,11 @@ const Helicopter = (options = {}) => {
 
     data.fuel = data.maxFuel;
     data.energy = data.energyMax;
-    data.parachutes = data.isCPU ? parseInt(data.maxParachutes, 10) : 1;
+    data.parachutes = data.isCPU
+      ? parseInt(data.maxParachutes, 10)
+      : tutorialMode
+        ? 1
+        : 0;
     data.smartMissiles = data.maxSmartMissiles;
     data.ammo = data.maxAmmo;
     data.bombs = data.maxBombs;
