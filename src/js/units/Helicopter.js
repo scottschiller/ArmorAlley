@@ -2830,18 +2830,7 @@ const Helicopter = (options = {}) => {
     sprites.updateIsOnScreen(exports);
 
     if (net.active) {
-      if (!data.isCPU) {
-        // regular local case
-        callAction('setRespawning', true);
-      } else {
-        // randomize start times a bit
-        common.setFrameTimeout(
-          () => {
-            callAction('setRespawning', true);
-          },
-          1000 + aiRNG(2000)
-        );
-      }
+      callAction('setRespawning', true);
     } else {
       // non-network, local player(s)
       setRespawning(true);
