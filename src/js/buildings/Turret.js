@@ -628,7 +628,7 @@ const Turret = (options = {}) => {
     // set on init, updated with `zones.changeOwnership()` as targets change sides
 
     collisionItems = getTypes(
-      'bunker, helicopter, balloon, turret, parachuteInfantry, shrapnel',
+      'bunker, superBunker, helicopter, balloon, turret, parachuteInfantry, shrapnel',
       { exports }
     );
 
