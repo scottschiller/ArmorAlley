@@ -984,8 +984,8 @@ Turret.radarItemConfig = (exports) => ({
     ctx.beginPath();
 
     // turret gun barrel
-    const barrelWidth = scaledWidth * 0.75;
-    const barrelHeight = scaledHeight * 0.75;
+    const barrelWidth = scaledWidth * 0.7;
+    const barrelHeight = scaledHeight * 0.8;
 
     common.domCanvas.rotate(
       ctx,
