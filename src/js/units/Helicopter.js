@@ -15,7 +15,6 @@ import {
   plusMinus,
   tutorialMode,
   TYPES,
-  winloc,
   worldWidth,
   worldHeight,
   worldOverflow,
@@ -60,9 +59,9 @@ import { zones } from '../core/zones.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { sprites } from '../core/sprites.js';
-import { getDefeatMessage, levelFlags } from '../levels/default.js';
 import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
+import { getDefeatMessage } from '../levels/battle-over.js';
 
 const Helicopter = (options = {}) => {
   let css,

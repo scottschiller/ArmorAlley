@@ -16,7 +16,7 @@ import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
-import { getDefeatMessage, getVictoryMessage } from '../levels/default.js';
+import { getDefeatMessage, getVictoryMessage } from '../levels/battle-over.js';
 
 const Van = (options = {}) => {
   let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
