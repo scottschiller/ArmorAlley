@@ -91,7 +91,7 @@ const Turret = (options = {}) => {
       if (okToMove()) {
         // "scanning" animation.
         data.angle += data.angleIncrement * GAME_SPEED_RATIOED;
-        if (data.angle >= 90 || data.angle < -90) {
+        if (Math.abs(data.angle) >= data.maxAngle) {
           data.angleIncrement *= -1;
         }
       }
