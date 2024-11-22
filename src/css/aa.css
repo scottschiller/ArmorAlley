@@ -263,6 +263,14 @@ body.game-started #world-wrapper {
   width: 100%;
 }
 
+body:not(.is_firefox) #radar {
+  /**
+   * A little nicer blend for overlapping scan-range bits.
+   * Not for Firefox, however, given pink video compositing issue.
+   */
+  mix-blend-mode: screen;
+}
+
 body.loaded #radar {
   opacity: 1;
   visibility: visible;
