@@ -14,6 +14,7 @@ import { collisionCheck } from '../core/logic.js';
 import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
+import { levelConfig } from '../levels/default.js';
 
 let men = 30;
 // from the original game: "requisition denied - quota exceeded"
@@ -653,10 +654,27 @@ const Inventory = () => {
 
   function startEnemyOrdering() {
     // basic enemy ordering pattern
+
     const enemyOrders = parseTypes(
       'missileLauncher, tank, van, infantry, infantry, infantry, infantry, infantry, engineer, engineer'
     );
+
     const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
+
+    // hackish: depending on level config, maybe drop missile launchers...
+    if (!levelConfig.buildTruckB) {
+      enemyOrders.shift();
+      enemyDelays.shift();
+    }
+
+    // ...and engineers.
+    if (!levelConfig.buildEngineersB) {
+      for (let i = 0; i < 2; i++) {
+        enemyOrders.pop();
+        enemyDelays.pop();
+      }
+    }
+
     let orderOffset = 0;
 
     if (gameType === 'extreme' || gameType === 'armorgeddon') {
