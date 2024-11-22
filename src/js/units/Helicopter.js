@@ -3020,7 +3020,8 @@ const Helicopter = (options = {}) => {
         helicopters: false,
         tanks: false,
         bunkers: false,
-        turrets: false
+        turrets: false,
+        retaliation: false
       },
       targetingModulus: FPS * 30,
       // chance per gameType

@@ -27,7 +27,7 @@ import {
   steerTowardTarget
 } from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
-import { levelFlags } from '../levels/default.js';
+import { levelConfig, levelFlags } from '../levels/default.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
@@ -38,6 +38,8 @@ let lowFuelLimit = 30;
 let lowEnergyLimit = 2;
 
 const turretLookAhead = 128;
+
+const retaliationModeDuration = 30000;
 
 const HelicopterAI = (options = {}) => {
   const { data } = options.exports;
@@ -102,8 +104,14 @@ const HelicopterAI = (options = {}) => {
   }
 
   function throttleVelocity() {
-    data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
-    data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
+    // when retaliation is engaged, full-speed is allowed even if level specifies VX clipping.
+    // NOTE: max is 50% for CPU in any case, otherwise the CPU flies twice as fast between regular + "AI" movement.
+    let max =
+      (data.useClippedSpeed && !data.targeting.retaliation
+        ? data.vXMaxClipped
+        : data.vXMax) / 2;
+    data.vX = Math.max(-max, Math.min(max, data.vX));
+    data.vY = Math.max(-max, Math.min(max, data.vY));
   }
 
   function ai() {
@@ -134,6 +142,9 @@ const HelicopterAI = (options = {}) => {
     data.vectors.acceleration = new Vector();
 
     data.didWander = false;
+
+    // reset every frame, may be applied if chasing helicopter etc.
+    data.useClippedSpeed = false;
 
     // go for the landing pad?
     landingPadCheck();
@@ -410,6 +421,10 @@ const HelicopterAI = (options = {}) => {
     ) {
       // go for it!
       data.foundSteerTarget = true;
+      // clip speed? this may be the only case where speed throttling applies.
+      if (tData.type === TYPES.helicopter) {
+        data.useClippedSpeed = true;
+      }
       // TODO: review offset logic.
       steerTowardTarget(
         data,
@@ -580,6 +595,21 @@ const HelicopterAI = (options = {}) => {
       data.targeting.helicopters = rngBool(data.type);
       respondToHitTimer = null;
     }, respondToHitDelay);
+  }
+
+  function maybeEngageRetaliationMode() {
+    // in certain cases, e.g., responding to being a smart missile target: set retaliation mode.
+    // this allows CPU choppers to fly at full VX speed despite possible VX clipping.
+
+    // this "feature" is gated by level config.
+    if (!levelConfig.killCopterB) return;
+
+    // already active?
+    if (data.targeting.retaliation) return;
+
+    common.setFrameTimeout(() => {
+      data.targeting.retaliation = false;
+    }, retaliationModeDuration);
   }
 
   function maybeRetaliateWithSmartMissile(attacker) {
