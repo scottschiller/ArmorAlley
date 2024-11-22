@@ -1413,8 +1413,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      l: [1536, 2688],
-      r: [5517]
+      l: [1492, 2707],
+      gr: [5523]
     }
   ],
 
@@ -1522,7 +1522,11 @@ originalLevels = {
     {
       t: 'turret',
       l: [534],
-      r: [1857, 4108, 6466]
+      r: [1840, 4134, 6448],
+      // "ground" turrets start taking effect at level 5, in Wargames.
+      // this means they probably also apply on Conflict at level 5, and Armorgeddon at 5.
+      // ground turrets don't show on Boot Camp level 6, Super Bunker - they may not show on any.
+      gr: [1904, 4166, 6512]
     },
     {
       t: 'van',
@@ -1539,6 +1543,10 @@ originalLevels = {
       t: 'base',
       l: [192],
       r: [8000]
+    },
+    {
+      t: 'barb-wire',
+      s: [700]
     },
     {
       t: 'bunker',
@@ -1606,7 +1614,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      r: [1667, 1897, 4165, 6288, 6513]
+      r: [1648, 1888, 6256, 6496],
+      gr: [1680, 1952, 4046, 4142, 6288, 6560]
     },
     {
       t: 'van',
@@ -1693,7 +1702,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      r: [1913, 3210, 5802]
+      r: [1888, 3200, 5792, 6496],
+      r: [1952, 3232, 3264, 5824, 5856, 6560]
     },
     {
       t: 'van',
@@ -1789,7 +1799,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      r: [1908, 3600, 5392, 6510, 6608, 7175]
+      r: [1888, 3584, 5376, 6496, 7168],
+      gr: [1976, 3616, 5408, 6560, 7200]
     },
     {
       t: 'van',
@@ -1878,15 +1889,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      d: [
-        [
-          'turret',
-          // Special case: in extreme mode, incoming enemy tanks would be shot by nearby opposing turret.
-          () => (gameType === 'extreme' ? r : l),
-          967
-        ]
-      ],
-      r: [1897, 1952, 6518]
+      r: [960, 1888, 6496],
+      gr: [992, 1952, 6560, 7296]
     },
     {
       t: 'van',
@@ -1985,47 +1989,11 @@ originalLevels = {
     },
     {
       t: 'turret',
-      d: [
-        /**
-         * Tie the number of turrets to the difficulty.
-         * 1 for easy, 2 for hard, 3 for extreme.
-         */
-        () =>
-          selectByDifficulty([
-            ['turret', r, 1888],
-            ['turret', r, 1920],
-            ['turret', r, 1952]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 4224],
-            ['turret', r, 4256],
-            ['turret', r, 4288]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 4704],
-            ['turret', r, 4736],
-            ['turret', r, 4768]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 5248],
-            ['turret', r, 5280],
-            ['turret', r, 5312]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 5632],
-            ['turret', r, 5664],
-            ['turret', r, 5696]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 6496],
-            ['turret', r, 6528],
-            ['turret', r, 6560]
-          ])
+      // note: intentional duplicates, here: there are two turrets at the same coordinates here.
+      r: [1888, 4224, 4704, 4704, 5248, 5632, 6496],
+      gr: [
+        1920, 1952, 4256, 4288, 4736, 4736, 4768, 4768, 5280, 5312, 5664, 5696,
+        6528, 6560
       ]
     },
     {
@@ -2108,32 +2076,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      d: [
-        () =>
-          selectByDifficulty([
-            ['turret', l, 1088],
-            ['turret', l, 1024],
-            ['turret', l, 1152]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', l, 2112],
-            ['turret', l, 2048],
-            ['turret', l, 2176]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 6080],
-            ['turret', r, 6016],
-            ['turret', r, 6144]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 7104],
-            ['turret', r, 7040],
-            ['turret', r, 7168]
-          ])
-      ]
+      l: [1024, 1088, 1152, 2048, 2112, 2176],
+      r: [6144, 6080, 6016, 7104, 7168, 7040]
     },
     {
       t: 'balloon',
@@ -2223,8 +2167,10 @@ originalLevels = {
     },
     {
       t: 'turret',
-      l: [1152, 2048, 2080, 2688, 3072, 3104],
-      r: [5088, 5120, 5504, 6624, 6656, 7040]
+      l: [1152, 2080, 2688, 3104],
+      r: [5120, 5504, 6656, 7040],
+      gl: [2048, 3072],
+      gr: [5088, 6624]
     }
   ],
 
@@ -2382,7 +2328,9 @@ originalLevels = {
     {
       t: 'turret',
       l: [512],
-      r: [1840, 1904, 4096, 4128, 6448, 6512]
+      r: [1840, 4096, 6448],
+      gl: [512],
+      gr: [1904, 4128, 6512]
     },
     {
       t: 'van',
@@ -2470,27 +2418,8 @@ originalLevels = {
     },
     {
       t: 'turret',
-      r: [6560],
-      d: [
-        () =>
-          selectByDifficulty([
-            ['turret', r, 1680],
-            ['turret', r, 1648],
-            ['turret', r, 1888]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 1952],
-            ['turret', r, 4067],
-            ['turret', r, 4163]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 6288],
-            ['turret', r, 6256],
-            ['turret', r, 6496]
-          ])
-      ]
+      r: [1648, 1888, 6256, 6496],
+      gr: [1680, 1952, 4046, 4142, 6288, 6560]
     },
     {
       t: 'van',
@@ -2561,8 +2490,10 @@ originalLevels = {
     },
     {
       t: 'turret',
-      l: [512, 1024, 1536, 2208, 2272, 4064, 4120],
-      r: [4119, 4182, 5920, 5984, 6656, 7168, 7680]
+      l: [512, 1024, 1536, 2208, 4032, 4096],
+      r: [4096, 4160, 5920, 5984, 6656, 7168, 7680],
+      gl: [2272],
+      gr: [5920]
     }
   ],
 
@@ -2639,7 +2570,8 @@ originalLevels = {
     {
       t: 'turret',
       l: [512, 576, 4160, 4192],
-      r: [3072, 3136, 4000, 4032, 5056, 5120, 7616, 7680]
+      r: [4000, 4032, 7616, 7680],
+      gr: [3072, 3136, 5056, 5120]
     }
   ],
 
@@ -2774,8 +2706,8 @@ originalLevels = {
     },
     {
       t: 'super-bunker',
-      l: [512, 588, 2560, 4000],
-      r: [4200, 5632, 7034, 7114]
+      l: [512, 588, 2536, 4000],
+      r: [4200, 5608, 7034, 7114]
     },
     {
       t: 'tree',
@@ -2783,35 +2715,10 @@ originalLevels = {
     },
     {
       t: 'turret',
-      // NB: original level editor suggests there were two turrets @ 572 and 7096.
-      l: [572, 2552, 2611],
-      r: [5623, 5684, 7096],
-      d: [
-        () =>
-          selectByDifficulty([
-            ['turret', l, 2080],
-            ['turret', l, 2048],
-            ['turret', l, 2112]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', l, 4132],
-            ['turret', l, 4100],
-            ['turret', l, 4164]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 4080],
-            ['turret', r, 4112],
-            ['turret', r, 4144]
-          ]),
-        () =>
-          selectByDifficulty([
-            ['turret', r, 6176],
-            ['turret', r, 6144],
-            ['turret', r, 6208]
-          ])
-      ]
+      l: [582, 582, 2056, 2532, 2588, 4104],
+      r: [4084, 4116, 5604, 5660, 6144, 7098, 7098],
+      gl: [2088, 2112, 4136, 4168],
+      gr: [4146, 6176, 6208]
     }
   ],
 
@@ -2832,7 +2739,7 @@ originalLevels = {
     {
       t: 'bunker',
       r: [1992, 2118, 4224, 4352, 6090, 6212],
-      l: [3688, 3968]
+      l: [3828, 3968]
     },
     {
       t: 'cactus',
@@ -2890,7 +2797,7 @@ originalLevels = {
     },
     {
       t: 'turret',
-      r: [1986, 2189, 4608, 5120, 6085, 6291],
+      r: [1968, 2168, 4608, 5120, 6064, 6264],
       l: [3072, 3584]
     }
   ],
