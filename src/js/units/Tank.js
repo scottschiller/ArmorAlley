@@ -25,6 +25,7 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { levelConfig } from '../levels/default.js';
 
 const Tank = (options = {}) => {
   let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
@@ -55,10 +56,15 @@ const Tank = (options = {}) => {
       collisionItems = nearby.items;
     }
 
+    /**
+     * Is this target flamethrower-eligible?
+     * Super Bunkers and End Bunkers always get flames - infantry and engineers depend on level config.
+     */
     if (
-      data.lastNearbyTarget?.data.type.match(
-        /infantry|engineer|super-bunker|end-bunker/i
-      )
+      (data.lastNearbyTarget?.data &&
+        data.lastNearbyTarget.data.type.match(/super-bunker|end-bunker/i)) ||
+      (levelConfig.bFlameThrower &&
+        data.lastNearbyTarget.data.type.match(/infantry|engineer/i))
     ) {
       data.flame = game.addObject(TYPES.flame, {
         parent: exports,
