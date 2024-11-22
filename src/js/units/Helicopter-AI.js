@@ -375,11 +375,16 @@ const HelicopterAI = (options = {}) => {
     }
   }
 
-  function maybeDecoySmartMissile() {
+  function maybeDecoySmartMissile(missile) {
     /**
      * If airborne and targeted by a newly-minted smart missile,
      * (maybe) drop a decoy paratrooper.
      */
+
+    // if missile is from a helicopter, maybe retaliate.
+    if (missile && missile.data.parentType === TYPES.helicopter) {
+      maybeEngageRetaliationMode();
+    }
 
     // nothing to drop?
     if (!options.exports.data.parachutes) return;
