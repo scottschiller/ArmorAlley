@@ -27,7 +27,6 @@ import {
 import { utils } from '../core/utils.js';
 import {
   applyFlags,
-  dependsOnGameType,
   previewLevel,
   setCustomLevel,
   setLevel,
@@ -380,8 +379,6 @@ function init() {
     );
   }
 
-  previewLevel(oSelect.value);
-
   // stop default behaviours higher-up
   const wrapper = document.getElementById('game-level-wrapper');
 
@@ -439,12 +436,7 @@ function init() {
 
   const levelName = document.getElementById('game_level').value;
 
-  if (dependsOnGameType(levelName)) {
-    // maybe rebuild preview, depending
-    previewLevel(levelName);
-  } else {
-    updateFlags(levelName);
-  }
+  previewLevel(levelName);
 
   updateGameLevelControl();
 
@@ -770,12 +762,7 @@ function formClick(e) {
 
     const levelName = document.getElementById('game_level').value;
 
-    if (dependsOnGameType(levelName)) {
-      // maybe rebuild preview, depending
-      previewLevel(levelName);
-    } else {
-      updateFlags(levelName);
-    }
+    previewLevel(levelName);
 
     return;
   }
