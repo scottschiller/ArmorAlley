@@ -455,6 +455,9 @@ function getNearestObject(source, options = {}) {
         distanceX = Math.abs(Math.abs(tData.x) - Math.abs(sData.x));
         distanceY = Math.abs(Math.abs(tData.y) - Math.abs(sData.y));
 
+        // should we ignore overlap on X? i.e., helicopter is slightly overhead an enemy bunker and not past it...
+        if (options.ignoreIntersect && collisionCheckX(tData, sData)) continue;
+
         // too far away for a missile to reach?
         if (distanceX > 3072) continue;
 

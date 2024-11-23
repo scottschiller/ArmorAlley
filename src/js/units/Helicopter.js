@@ -1852,7 +1852,10 @@ const Helicopter = (options = {}) => {
       return;
     }
 
-    const newTarget = getNearestObject(exports, { useInFront: true });
+    const newTarget = getNearestObject(exports, {
+      useInFront: true,
+      ignoreIntersect: true
+    });
 
     if (newTarget && newTarget !== lastMissileTarget) {
       markTarget(lastMissileTarget, false);
