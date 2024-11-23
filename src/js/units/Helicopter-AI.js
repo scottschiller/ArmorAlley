@@ -231,7 +231,10 @@ const HelicopterAI = (options = {}) => {
         newTarget = objectInView(data, { items: TYPES.helicopter });
       }
 
-      if (data.targeting.tanks && (data.bombs || data.ammo)) {
+      if (
+        data.targeting.tanks &&
+        (data.ammo || (data.bombs && levelConfig.scatterBombB))
+      ) {
         newTarget = objectInView(data, { items: TYPES.tank });
       }
 
@@ -461,6 +464,10 @@ const HelicopterAI = (options = {}) => {
     /**
      * WITHIN BOMBING RANGE
      */
+
+    // does this battle allow bombing?
+    if (!levelConfig.scatterBombB) return;
+
     const targetData = target?.data;
     if (!targetData || targetData.dead || targetData.cloaked) return;
 
