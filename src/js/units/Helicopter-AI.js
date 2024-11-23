@@ -115,6 +115,12 @@ const HelicopterAI = (options = {}) => {
     data.vY = Math.max(-max, Math.min(max, data.vY));
   }
 
+  // "threats" which can be fired at
+  let threatTypes = [TYPES.parachuteInfantry];
+
+  // ability to fire at incoming smart missiles
+  let threatTypesWithMissile = threatTypes.concat(TYPES.smartMissile);
+
   function ai() {
     // ignore if dead
     if (data.dead) return;
@@ -358,13 +364,24 @@ const HelicopterAI = (options = {}) => {
      * NOTE: only fire at things the chopper is facing - no backwards firing tricks.
      * TODO: cpuCanTarget on smartMissile and parachuteInfantry?
      */
-    let nearbyThreats = findEnemy(
-      data,
-      [TYPES.smartMissile, TYPES.parachuteInfantry],
-      192
-    );
+
+    // allow missiles to be shot at, IF enabled in level config, we have bullets, and enough of 'em
+    let types =
+      levelConfig.killMissileB && levelFlags.bullets && data.ammo > 5
+        ? threatTypesWithMissile
+        : threatTypes;
+
+    let nearbyThreats = findEnemy(data, types, 192);
 
     let threat = nearbyThreats[0];
+
+    if (!threat) return;
+
+    // if a smart missile is found, the chopper can target and fire at it.
+    // this might contribute to rapid helicopter flipping, in need of review.
+    if (threat.data.type === TYPES.smartMissile) {
+      options.exports.checkFacingTarget(target);
+    }
 
     // ensure the target has *some* room, not almost directly above or below.
     if (
