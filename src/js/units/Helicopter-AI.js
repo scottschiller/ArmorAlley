@@ -288,8 +288,7 @@ const HelicopterAI = (options = {}) => {
     }
 
     // maybe bomb turrets, too?
-    if (data.targeting.turrets) {
-      let nearbyTurret = objectInView(data, { items: TYPES.turret });
+    if (data.targeting.turrets || data.cloaked) {
       // scan for turrets, before entering their firing range
       let nearbyTurret = objectInView(data, {
         items: TYPES.turret,
