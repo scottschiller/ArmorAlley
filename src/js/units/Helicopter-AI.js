@@ -287,7 +287,7 @@ const HelicopterAI = (options = {}) => {
       ) {
         maybeBombTarget(game.objects.helicopter[i]);
         // additional special case: fire aimed missiles at any time.
-        if (!levelFlags.bullets) {
+        if (!levelFlags.bullets || levelConfig.killCopterB) {
           maybeFireAtTarget(game.objects.helicopter[i]);
         }
       }
@@ -631,6 +631,9 @@ const HelicopterAI = (options = {}) => {
   }
 
   function maybeChaseHelicopters() {
+    // for now, gate behind level config.
+    if (!levelConfig.killCopterB) return;
+
     if (data.targeting.helicopters) return;
 
     // if hit or under attack, maybe start pursuit.
