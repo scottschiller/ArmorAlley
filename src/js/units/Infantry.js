@@ -386,7 +386,8 @@ const Infantry = (options = {}) => {
     refreshMeasurements();
   }
 
-  defaultLookAhead = 4;
+  // engineers stop closer to turrets vs. infantry.
+  defaultLookAhead = options.role ? 4 : 8;
 
   css = common.inheritCSS({
     className: null,
