@@ -503,13 +503,17 @@ const HelicopterAI = (options = {}) => {
     const targetData = target?.data;
     if (!targetData) return;
 
+    let dY = distance(targetData.y, data.y);
+
+    // firstly, ignore if not close on Y-axis.
+    if (dY > data.height * 1.5) return;
+
     let isHelicopter = targetData.type === TYPES.helicopter;
     let dX = distance(targetData.x, data.x);
     if (
       // ignore if too far away, OR basically right above / underneath.
       dX < 320 &&
-      dX > data.width &&
-      distance(targetData.y, data.y) < data.height * 1.5
+      dX > data.width
     ) {
       /**
        * If helicopter + guided missiles, ensure CPU is above human chopper
