@@ -1047,6 +1047,12 @@ body.prefs-modal-open #game-menu-wrapper {
   filter: brightness(0.5);
 }
 
+body.is_firefox.prefs-modal-open #home-menu-video,
+body.is_firefox.prefs-modal-open #game-menu-wrapper {
+  /* pink video compositing fix */
+  filter: none;
+}
+
 body.edit-mode canvas,
 body.game-started canvas {
   opacity: 1;
