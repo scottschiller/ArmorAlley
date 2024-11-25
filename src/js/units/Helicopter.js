@@ -1299,8 +1299,8 @@ const Helicopter = (options = {}) => {
 
     let halfRespawn = respawnDelay / 2;
 
-    // ensure this scroll takes priority, not that another should be running anyway.
-    let override = true;
+    // this should not take priority, e.g., if the game-over sequence is running.
+    let override = false;
 
     // enough time to get back to base before helicopter has fully respawned.
     let scrollDuration = 4;
