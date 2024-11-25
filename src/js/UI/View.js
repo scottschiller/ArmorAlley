@@ -616,6 +616,9 @@ const View = () => {
 
       // special case: slow down battlefield scroll after helicopter dies, then go back to base.
       if (decelerateScrollActive) {
+        // hackish: prevent this from interfering with battle-over sequence.
+        if (game.data.battleOver) return;
+
         setLeftScroll(
           scrollAmount *
             data.maxScroll *
