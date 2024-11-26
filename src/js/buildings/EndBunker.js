@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, gameType } from '../core/Game.js';
 import {
   DEFAULT_FUNDS,
   TYPES,
@@ -15,6 +15,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
+import { levelNumber } from '../levels/default.js';
 
 const slashPattern = new Image();
 // slashPattern.src ='image/UI/checkerboard-white-mask-75percent.png'
@@ -326,6 +327,14 @@ const EndBunker = (options = {}) => {
     neutral: 'neutral'
   });
 
+  // CPU "discount" / price advantage on inventory costs
+  let cpuBiasByGameType = {
+    easy: 1,
+    hard: 1.015,
+    extreme: 1.03,
+    armorgeddon: 1.06
+  };
+
   data = common.inheritData(
     {
       type: TYPES.endBunker,
@@ -341,6 +350,12 @@ const EndBunker = (options = {}) => {
       halfHeight: height / 2,
       doorWidth: 5,
       funds: DEFAULT_FUNDS,
+      // give CPU an advantage via "discount" on ordering, so it can send out larger convoys up front on tougher battles.
+      // up to 200% scale plus 12%, for Midnight Oasis on Armorgeddon where the enemy can afford the largest convoys up-front.
+      fundsMultiplier:
+        !options.isEnemy || tutorialMode
+          ? 1
+          : Math.max(1, ((levelNumber + 1) / 5) * cpuBiasByGameType[gameType]),
       firing: false,
       gunYOffset: 10,
       fireModulus: 4,
