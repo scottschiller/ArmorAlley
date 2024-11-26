@@ -383,11 +383,13 @@ const HelicopterAI = (options = {}) => {
       options.exports.checkFacingTarget(target);
     }
 
-    // ensure the target has *some* room, not almost directly above or below.
+    // ensure the target has *some* room, not almost directly above or below,
+    // and roughly within vertical.
     if (
       threat &&
       isFacingTarget(threat.data, data) &&
-      distance(threat.data.x, data.x) >= data.width
+      distance(threat.data.x, data.x) >= data.width &&
+      distance(threat.data.y, data.y) <= data.height * 1.5
     ) {
       data.votes.ammo++;
       data.ammoTargets.push(threat.data);
