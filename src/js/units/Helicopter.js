@@ -1317,6 +1317,9 @@ const Helicopter = (options = {}) => {
         return;
       }
 
+      // guard against resetting scroll during battle-over sequence
+      if (game.data.battleOver) return;
+
       // hackish: hard reset battlefield scroll
       data.scrollLeft = data.isEnemy
         ? common.getLandingPadOffsetX(exports) -
