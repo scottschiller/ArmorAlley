@@ -7,6 +7,60 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 
 --- 11/2024, uncategorized ---
 
+Enemy bias / discount on inventory "up to 212%" (so it can afford largest original in-game convoys), subject to level and difficulty. https://github.com/scottschiller/ArmorAlley/681a890ffe5c9355e7b65d749bfec92ea22ff046
+
+"All-new" CPU convoy ordering patterns varying by level, timing and difficulty - based on the original. https://github.com/scottschiller/ArmorAlley/dc5f9aaeb780ebb8a8a15c139d0bb4c45bd7bad3 https://github.com/scottschiller/ArmorAlley/334776c507bb8f958b57e4c875065f182a636b35
+
+The enemy helicopter can fire smart missiles at turrets, depending on level. https://github.com/scottschiller/ArmorAlley/83959f5ddad6520af636ebab23faa7d52f95df38
+
+Per original: Helicopters start with no paratroopers on board. https://github.com/scottschiller/ArmorAlley/7fb090627d1f066df4ee0ec8cb5cda080130b509
+
+The enemy helicopter can respawn faster as difficulty increases. https://github.com/scottschiller/ArmorAlley/4ad8237512621b1340ae04dd66fca2d31375240b
+
+The enemy helicopter is typically slower than the player on easier levels. https://github.com/scottschiller/ArmorAlley/9b60f9f248b8c05ffc41be03a81a856ed0652ca7
+
+The enemy does not order missile launchers or engineers on easier levels. https://github.com/scottschiller/ArmorAlley/36abc87110adee7eea417ca4720249b6bcf98fed
+
+Tanks eventually use flamethrowers (vs. bullets) on men, depending on level. https://github.com/scottschiller/ArmorAlley/187d1d2232e47f968a3c7767a073b607b8d17e1a
+
+Vans now jam radar at variable distances, depending on level + difficulty. https://github.com/scottschiller/ArmorAlley/d13c049449a8911ecf61d5efc0733f77034f2d2b
+
+Complete refactor of battle configuration / flags, enemy "IQ" and such based on original. https://github.com/scottschiller/ArmorAlley/1601addd1b748d8488df8b975e41daa537a6cc28
+
+Per original: some turrets only target "ground" items (e.g., tanks) instead of helicopters. https://github.com/scottschiller/ArmorAlley/f7a94add177497a35ff28c981bae5b3c43c2ec54 https://github.com/scottschiller/ArmorAlley/273e5a2653e483c4dad952bf5c1d8b4b18dbd3a9
+
+Human players start without any paratroopers - like original. https://github.com/scottschiller/ArmorAlley/1b64313ea1743848d96a1148359d3bf46f322b25
+
+"Armorgeddon" difficulty level, like original. https://github.com/scottschiller/ArmorAlley/cec6fb8d6a88c29619c21598c64cbda84ffa8ef1
+
+Helicopter rotor animation speed, closer to original. https://github.com/scottschiller/ArmorAlley/a84921f643e9cadbd7f4cde2ba0b3fcff6a7c1b4
+
+Bug fix: Hiding in a cloud does not exclude you from vans' radar jamming capabilities. https://github.com/scottschiller/ArmorAlley/4832c9e0d6606108988a65e2718c4b4836d5fba5
+
+Like original, all bunker balloons start at the bottom. https://github.com/scottschiller/ArmorAlley/cf52dac3e97c3dc07f800c50c26ac9c59ac75890
+
+Per original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers. https://github.com/scottschiller/ArmorAlley/e291ede808b5cbfd06591dbc338c93ef1fb2b04d https://github.com/scottschiller/ArmorAlley/9dd55b432ae917af3829fedbc7d83feccae3d472 https://github.com/scottschiller/ArmorAlley/1ac9c100457de3a34fb93dcf8b82694a2035ed07
+
+Per original, inventory / ordering limits: "Requisition denied - quota exceeded" - (`unlimited_inventory` pref, off / limited by default.) https://github.com/scottschiller/ArmorAlley/6dbf71f5218b869d36d33181ad533742a2496552
+
+Nice SoundBlaster-era FM synth sample for "order complete," from the original MS-DOS game. https://github.com/scottschiller/ArmorAlley/225e2280bb2dfb105765629b4374bdd372edfb7c
+
+Like the original, you can now crash into the ground if flying too fast. https://github.com/scottschiller/ArmorAlley/18d9fb5f04961a466350e2b062c652a607506761
+
+Medals are now awarded as you progress through the original campaign battles. https://github.com/scottschiller/ArmorAlley/commit/244fb53314061937bfb149457f51b4b16b0d5d12
+
+Turret gunfire can now hit turrets on the opposing team. https://github.com/scottschiller/ArmorAlley/commit/ad44aae1a65ef7f6d7396e01a7e93e3e69c1389c
+
+It turns out, there can be a benefit to picking up engineers in the field. https://github.com/scottschiller/ArmorAlley/commit/baff08e234ad657846be482c69d5b39d87ea39a6
+
+"Remastered" game sprites, cut from a Mac emulator with the proper Macintosh gamma applied. https://github.com/scottschiller/ArmorAlley/commit/b2348340e479e80ecf017e99b12ecc00111f6253
+
+Enable CPU smart missile firing at turrets, only in Armorgeddon difficulty. https://github.com/scottschiller/ArmorAlley/commit/9462c5e62d97064f4d462f22921c1c684ee86801
+
+Enable CPU bombing of turrets, only in Armorgeddon difficulty. https://github.com/scottschiller/ArmorAlley/commit/194150ea796bd2d7addfbf8b34f6471e07be633e
+
+Improved battle defeat / game over UX/UI, "try again" button. https://github.com/scottschiller/ArmorAlley/commit/c4cdbed45d5a56896c753c071cb521771175b898
+
 Original game feature: Hold shift/ctrl/x/z (within 1 second) to delay respawn, keep watching scene where you died. https://github.com/scottschiller/ArmorAlley/commit/2d5c74477fbc2c15eb9e708df8ea80086d4f94a8
 
 Battle victory messages, based on original game - sometimes specific to the game difficulty. https://github.com/scottschiller/ArmorAlley/commit/8366b553f035fb12086fe7a13ef61c0773eb18ec
