@@ -1,10 +1,11 @@
-import { game, gameType } from '../core/Game.js';
+import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import {
   COSTS,
   FPS,
-  parseTypes,
   PRETTY_TYPES,
+  rnd,
+  rndInt,
   TYPES,
   worldWidth
 } from '../core/global.js';
@@ -15,6 +16,8 @@ import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
 import { levelConfig } from '../levels/default.js';
+import { parseConvoyData } from '../levels/convoys.js';
+
 const MAX_MEN = 30;
 
 // from the original game: "requisition denied - quota exceeded"
@@ -35,7 +38,26 @@ const stepTypes = {
   [TYPES.engineer]: true
 };
 
+const charToType = {
+  M: TYPES.missileLauncher,
+  T: TYPES.tank,
+  V: TYPES.van,
+  I: TYPES.infantry,
+  E: TYPES.engineer
+};
+
+const delaysByType = {
+  [TYPES.missileLauncher]: 3,
+  [TYPES.tank]: 3,
+  [TYPES.van]: 2,
+  [TYPES.infantry]: 1,
+  [TYPES.engineer]: 1
+};
+
 const noChopperPurchase = 'Helicopter order N/A:\nYou have unlimited lives. 🚁';
+
+// parsed convoy data for the current battle
+let convoys;
 
 const Inventory = () => {
   let css, data, dom, objects, orderNotificationOptions, exports;
@@ -652,54 +674,90 @@ const Inventory = () => {
     }
   };
 
+  let enemyQueue = [];
+
+  function getRandomEnemyQueue(funds = 0) {
+    // given a battle, filter down a list of possible inventory combos and pick one.
+
+    let options = convoys.filter((convoy) => funds >= convoy.cost);
+
+    // no options!? player might be broke.
+    if (!options.length) {
+      return [];
+    }
+
+    let option = options[rndInt(options.length)];
+
+    let queue = [];
+
+    for (let i = 0; i < option.items.length; i++) {
+      queue.push(charToType[option.items[i]]);
+    }
+
+    return queue;
+  }
+
+  function refreshEnemyQueue() {
+    let bank = game.objects[TYPES.endBunker][1].data;
+
+    const enemyOrders = getRandomEnemyQueue(bank.funds * bank.fundsMultiplier);
+    const enemyDelays = enemyOrders.map((item) => delaysByType[item]);
+
+    return {
+      enemyOrders,
+      enemyDelays
+    };
+  }
+
   function startEnemyOrdering() {
-    // basic enemy ordering pattern
+    let nsf;
 
-    const enemyOrders = parseTypes(
-      'missileLauncher, tank, van, infantry, infantry, infantry, infantry, infantry, engineer, engineer'
-    );
+    convoys = convoys || parseConvoyData(levelConfig.convoyLevelI);
 
-    const enemyDelays = [4, 4, 3, 0.4, 0.4, 0.4, 0.4, 1, 0.45];
+    console.log('got convoys', convoys);
 
-    // hackish: depending on level config, maybe drop missile launchers...
-    if (!levelConfig.buildTruckB) {
-      enemyOrders.shift();
-      enemyDelays.shift();
-    }
-
-    // ...and engineers.
-    if (!levelConfig.buildEngineersB) {
-      for (let i = 0; i < 2; i++) {
-        enemyOrders.pop();
-        enemyDelays.pop();
-      }
-    }
+    let { enemyOrders, enemyDelays } = refreshEnemyQueue();
 
     let orderOffset = 0;
 
-    if (gameType === 'extreme' || gameType === 'armorgeddon') {
-      // one more tank to round out the bunch, and (possibly) further complicate things :D
-      enemyOrders.push(TYPES.tank);
+    // "the more CPUs, the faster the convoys." :X
+    // original game needs more studying; possibly every 512 clock cycles / ticks.
+    let convoyDelay = 22 / game.players.cpu.length;
 
-      // matching delay, too
-      enemyDelays.push(4);
-    }
-
-    // the more CPUs, the faster the convoys! :D
-    // armorgeddon might be insanely difficult here, TBD.
-    const convoyDelay =
-      (gameType === 'armorgeddon'
-        ? 20
-        : gameType === 'extreme'
-          ? 30
-          : gameType === 'hard'
-            ? 45
-            : 60) / game.players.cpu.length;
-
-    // after ordering, wait a certain amount before the next convoy
-    enemyDelays.push(convoyDelay);
+    // scale delay depending on "difficulty"?
+    convoyDelay /= Math.max(1, levelConfig.convoyLevelI / 5);
 
     function orderNextItem() {
+      if (orderOffset >= enemyOrders.length) {
+        /**
+         * Special cases:
+         * If the CPU ran out of funds, wait a full delay before ordering anything more.
+         * If only one unit in order, cut the delay (until next one) in half.
+         */
+        let adjustedDelay =
+          convoyDelay * (!nsf && enemyOrders.length === 1 ? 0.5 : 1);
+
+        // randomize a bit, too.
+        if (!net.active) {
+          adjustedDelay = Math.floor(adjustedDelay * (1 + rnd(0.25)));
+        }
+
+        // delay before next convoy
+        common.setFrameTimeout(() => {
+          let refresh = refreshEnemyQueue();
+          enemyOrders = refresh.enemyOrders;
+          enemyDelays = refresh.enemyDelays;
+          orderOffset = 0;
+          orderNextItem();
+        }, adjustedDelay * 1000);
+
+        // reset state
+        orderOffset = 0;
+        nsf = false;
+
+        return;
+      }
+
       let options;
 
       if (!game.data.battleOver && !game.data.paused && !game.objects.editor) {
@@ -710,8 +768,24 @@ const Inventory = () => {
           stepOffset: 0
         };
 
-        if (!game.data.productionHalted) {
-          const newObject = game.addObject(enemyOrders[orderOffset], options);
+        let type = enemyOrders[orderOffset];
+        let cost = COSTS[type].funds;
+
+        // DRY (/humour, zing)
+        let bank = game.objects[TYPES.endBunker][1].data;
+
+        let canAfford = bank.funds * bank.fundsMultiplier >= cost;
+
+        if (!canAfford && !nsf) {
+          nsf = true;
+        }
+
+        if (canAfford && !game.data.productionHalted) {
+          // TODO: CPU quota, "requisition denied" cases.
+          const newObject = game.addObject(type, options);
+
+          // when subtracting, apply the inverse scale and round down.
+          bank.funds -= Math.floor(cost * (1 / bank.fundsMultiplier));
 
           applyRiseTransition(newObject);
 
@@ -735,10 +809,6 @@ const Inventory = () => {
         common.setFrameTimeout(orderNextItem, enemyDelays[orderOffset] * 1000);
 
         orderOffset++;
-
-        if (orderOffset >= enemyOrders.length) {
-          orderOffset = 0;
-        }
       }
     }
 
