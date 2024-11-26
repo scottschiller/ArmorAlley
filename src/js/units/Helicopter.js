@@ -2490,7 +2490,7 @@ const Helicopter = (options = {}) => {
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
         const rng = aiRNG();
 
-        data.targeting.tanks = rng > 0.75;
+        data.targeting.tanks = rng > 0.75 && levelConfig.scatterBombB;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
         data.targeting.turrets = rng > 0.5;
