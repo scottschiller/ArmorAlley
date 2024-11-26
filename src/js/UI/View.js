@@ -592,6 +592,9 @@ const View = () => {
         animateScrollActive = false;
         animateScrollFrame = 0;
 
+        // end of animation AND battle over - don't return to landing pad.
+        if (game.data.battleOver) return;
+
         data.scrollLeft = data.isEnemy
           ? common.getLandingPadOffsetX(exports) -
             game.objects.view.data.browser.halfWidth
