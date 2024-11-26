@@ -13,7 +13,7 @@ Enemy bias / discount on inventory "up to 212%" (so it can afford largest origin
 
 The enemy helicopter can fire smart missiles at turrets, depending on level. https://github.com/scottschiller/ArmorAlley/83959f5ddad6520af636ebab23faa7d52f95df38
 
-Per original: Helicopters start with no paratroopers on board. https://github.com/scottschiller/ArmorAlley/7fb090627d1f066df4ee0ec8cb5cda080130b509
+Per original: Helicopters start with no paratroopers on board. https://github.com/scottschiller/ArmorAlley/7fb090627d1f066df4ee0ec8cb5cda080130b509 https://github.com/scottschiller/ArmorAlley/1b64313ea1743848d96a1148359d3bf46f322b25
 
 The enemy helicopter can respawn faster as difficulty increases. https://github.com/scottschiller/ArmorAlley/4ad8237512621b1340ae04dd66fca2d31375240b
 
@@ -28,8 +28,6 @@ Vans now jam radar at variable distances, depending on level + difficulty. https
 Complete refactor of battle configuration / flags, enemy "IQ" and such based on original. https://github.com/scottschiller/ArmorAlley/1601addd1b748d8488df8b975e41daa537a6cc28
 
 Per original: some turrets only target "ground" items (e.g., tanks) instead of helicopters. https://github.com/scottschiller/ArmorAlley/f7a94add177497a35ff28c981bae5b3c43c2ec54 https://github.com/scottschiller/ArmorAlley/273e5a2653e483c4dad952bf5c1d8b4b18dbd3a9
-
-Human players start without any paratroopers - like original. https://github.com/scottschiller/ArmorAlley/1b64313ea1743848d96a1148359d3bf46f322b25
 
 "Armorgeddon" difficulty level, like original. https://github.com/scottschiller/ArmorAlley/cec6fb8d6a88c29619c21598c64cbda84ffa8ef1
 
