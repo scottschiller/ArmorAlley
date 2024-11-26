@@ -15,16 +15,16 @@ import { sprites } from '../core/sprites.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
 import { levelConfig } from '../levels/default.js';
+const MAX_MEN = 30;
 
-let men = 30;
 // from the original game: "requisition denied - quota exceeded"
 const maxUnitsByType = {
   [TYPES.tank]: 15,
   [TYPES.missileLauncher]: 6,
   [TYPES.van]: 10,
   // all "men" - infantry + engineers, and paratroopers.
-  [TYPES.infantry]: men,
-  [TYPES.engineer]: men
+  [TYPES.infantry]: MAX_MEN,
+  [TYPES.engineer]: MAX_MEN
 };
 
 const stepTypes = {
