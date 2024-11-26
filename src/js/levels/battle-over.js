@@ -25,32 +25,40 @@ let victoryMessages = {
   },
   'Sucker Punch': {
     easy: `Excellent! Don't stop now. You're well on your way into enemy territory. Just watch out for new problems to overcome.`,
-    hard: `We have napalm for your chopper. Now the enemy is in for a real surprise!`
+    hard: `We have napalm for your chopper. Now the enemy is in for a real surprise!`,
+    armorgeddon: `They're on the run now...`
   },
   'Airborne': {
     easy: `Fantastic! I guess you are getting the hang of this.`,
     hard: `Careful! The enemy is getting smarter.`,
-    extreme: `Fantastic! That napalm really must help.`
+    extreme: `Fantastic! That napalm really must help...`,
+    armorgeddon: `Are you having fun yet?`
   },
   'Two-Gun': {
-    easy: `You've won again. Superb effort! You're now halfway to total victory. Expect the enemy to tighten their defenses.`
+    easy: `You've won again. Superb effort! You're now halfway to total victory. Expect the enemy to tighten their defenses.`,
+    armorgeddon: `Just when you thought you had it made...`
   },
   'Super Bunker': {
-    easy: `Another victory! You're on a roll, but remember the enemy has tricks you haven't seen yet.`
+    easy: `Another victory! You're on a roll, but remember the enemy has tricks you haven't seen yet.`,
+    armorgeddon: `Things are going to get tougher now. Time to put in some overtime!`
   },
   'Scrapyard': {
-    easy: `It was tough going, but you made it! You are closing to the completion of your mission. Don't expect things to get easier.`
+    easy: `It was tough going, but you made it! You are closing to the completion of your mission. Don't expect things to get easier.`,
+    armorgeddon: `They have nicknamed you, 'The Hawk.' Shows you what they know...`
   },
   'Blind Spot': {
-    easy: `Terrific! Just two more battles to win. You've got the enemy cornered. They don't like that...`
+    easy: `Terrific! Just two more battles to win. You've got the enemy cornered. They don't like that...`,
+    armorgeddon: `You are almost to their final position! They are realy getting worried...`
   },
   'Wasteland': {
-    easy: `You've conquered every obstacle and mastered every trick the enemy knew. You're a general to be reckoned with. Just one last battle.`
+    easy: `You've conquered every obstacle and mastered every trick the enemy knew. You're a general to be reckoned with. Just one last battle.`,
+    armorgeddon: `Well, you just think you're tough. Wait 'til the next battle!`,
   },
   'Midnight Oasis': {
     easy: `${youWon} Now that you have made it through Boot Camp, try your luck in Wargames!`,
-    hard: `${youWon} Now you are ready for a real test! Try 'Armorgeddon' for a real test of your skills.`,
-    extreme: `${youWon} in a battle of the highest difficulty. Congratulations!`
+    hard: `${youWon} Now you are ready for a real test! Try 'Combat' for a real test of your skills.`,
+    extreme: `${youWon} Now you are ready for your final challenge! Try 'Armorgeddon' for the ultimate test of your skills.`,
+    armorgeddon: `We don't believe it. You MUST have cheated... no way, Jose! Impossible! Holy handgrenades! ${youWon} in a battle of the highest difficulty. Congratulations!`
   }
 };
 
