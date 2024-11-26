@@ -859,11 +859,13 @@ const Helicopter = (options = {}) => {
       }
 
       // "complete" respawn, re-enable mouse etc.
-      common.setFrameTimeout(respawnComplete, 1500);
+      data.respawnCompleteTimer = common.setFrameTimeout(respawnComplete, 1500);
     }
   }
 
   function respawnComplete() {
+    data.respawnCompleteTimer?.reset();
+    data.respawnCompleteTimer = null;
     callAction('setRespawning', false);
 
     if (data.isCPU) {
@@ -1337,6 +1339,9 @@ const Helicopter = (options = {}) => {
   function die(dieOptions = {}) {
     if (data.dead) return;
 
+    data.respawnCompleteTimer?.reset();
+    data.respawnCompleteTimer = null;
+
     // reset animations
     data.frameCount = 0;
 
@@ -1560,7 +1565,8 @@ const Helicopter = (options = {}) => {
   }
 
   function getRespawnDelay() {
-    return (data.isCPU ? levelConfig.regenTimeI : 48) * 100;
+    // delay at least 1 second, to prevent an infinite explosion / respawn loop
+    return Math.max(1000, (data.isCPU ? levelConfig.regenTimeI : 48) * 100);
   }
 
   function getBombParams() {
