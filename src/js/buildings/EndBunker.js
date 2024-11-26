@@ -180,10 +180,13 @@ const EndBunker = (options = {}) => {
 
     objects.helicopters.forEach((helicopter) => {
       // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
+
+      let pos = helicopter.data.x / game.objects.view.data.battleField.width;
+
       if (data.isEnemy) {
-        offset = 1 - helicopter.data.x / helicopter.data.x;
+        offset = 1 - pos;
       } else {
-        offset = helicopter.data.x / game.objects.view.data.battleField.width;
+        offset = pos;
       }
 
       if (offset < 0.33) {
@@ -200,6 +203,9 @@ const EndBunker = (options = {}) => {
        * Otherwise, you'd earn double on each human player's side.
        */
       if (helicopter.data.isLocal) {
+        data.funds += earnedFunds;
+      } else if (helicopter.data.isCPU) {
+        // TODO: does this need any special handling for network games? :X
         data.funds += earnedFunds;
       }
 
