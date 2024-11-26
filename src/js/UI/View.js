@@ -59,12 +59,12 @@ function dropOff(x) {
 let animateScrollActive;
 let animateScrollFrame = 0;
 let animateScrollDelta = 0;
-const animateScrollFrames = [];
+let animateScrollFrames = [];
 let animateScrollDuration;
 
 let decelerateScrollActive;
 let decelerateScrollFrame = 0;
-const decelerateScrollFrames = [];
+let decelerateScrollFrames = [];
 let decelerateScrollDuration;
 
 const View = () => {
@@ -80,6 +80,7 @@ const View = () => {
     easingMethod = 'quart'
   ) {
     if (animateScrollActive && !override) return;
+    animateScrollFrames = [];
     animateScrollActive = true;
     animateScrollFrame = 0;
     animateScrollDelta = data.battleField.scrollLeft - scrollX;
@@ -93,14 +94,13 @@ const View = () => {
           animateScrollDelta;
     }
 
-    // Reset local stuff
-    // TODO: review, ensure that all of these(?) are needed
     game.players.local.data.scrollLeft = 0;
   }
 
   function decelerateScroll() {
     if (decelerateScrollActive) return;
     if (game.data.battleOver) return;
+    decelerateScrollFrames = [];
     decelerateScrollDuration = FPS * (1 / GAME_SPEED);
     for (let i = 0; i <= decelerateScrollDuration; i++) {
       // 1/x, up to 1
@@ -580,9 +580,10 @@ const View = () => {
 
     if (!game.players.local) return;
 
+    // we're "warping" back to the landing pad for a respawn - or, a base for the end of the game.
     if (animateScrollActive) {
-      // we're "warping" back to the landing pad for a respawn.
       const override = true;
+
       setLeftScroll(animateScrollFrames[animateScrollFrame], override);
 
       animateScrollFrame++;
