@@ -202,6 +202,7 @@ function resetPointer() {
 }
 
 function hidePointer() {
+  if (!cards) return;
   for (const card of cards) {
     // apply default opacity
     card.style.setProperty('--glow-active', config.opacity);
