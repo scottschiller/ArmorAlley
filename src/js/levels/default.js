@@ -2559,7 +2559,8 @@ originalLevels = {
     {
       t: 'super-bunker',
       l: [2048],
-      r: [4608, 4768, 6144]
+      n: [4608, 4768],
+      r: [6144]
     },
     {
       t: 'turret',
