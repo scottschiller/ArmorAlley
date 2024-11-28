@@ -15,6 +15,7 @@ import { airborneLevel } from './campaign/airborne.js';
 import { twoGunLevel } from './campaign/two-gun.js';
 import { superBunkerLevel } from './campaign/super-bunker.js';
 import { scrapyardLevel } from './campaign/scrapyard.js';
+import { blindSpotLevel } from './campaign/blind-spot.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -1087,102 +1088,6 @@ originalLevels = {
 
 
 
-  'Blind Spot': [
-    {
-      t: 'balloon',
-      l: [3584, 4096, 4608]
-    },
-    {
-      t: 'barb-wire',
-      s: [3697, 6518]
-    },
-    {
-      t: 'base',
-      l: [192],
-      r: [8000]
-    },
-    {
-      t: 'bunker',
-      r: [3520, 4352, 5312, 5632, 5696, 6528, 6656]
-    },
-    {
-      t: 'checkmark-grass',
-      s: [3788]
-    },
-    {
-      t: 'cloud',
-      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
-    },
-    {
-      t: 'end-bunker',
-      l: [24],
-      r: [8168]
-    },
-    {
-      t: 'flower',
-      s: [3604]
-    },
-    {
-      t: 'flower-bush',
-      s: [1031, 1828, 3921]
-    },
-    {
-      t: 'grave-cross',
-      s: [1235, 6191, 6462, 6574]
-    },
-    {
-      t: 'gravestone',
-      s: [4976]
-    },
-    {
-      t: 'infantry',
-      r: [1104, 1264, 2560, 6224, 6464, 6656, 7248, 7488]
-    },
-    {
-      t: 'landing-pad',
-      l: [320],
-      r: [7872]
-    },
-    {
-      t: 'missile-launcher',
-      r: [1024, 1424, 2880, 6544]
-    },
-    {
-      t: 'palm-tree',
-      s: [
-        734, 976, 2452, 3016, 3106, 3504, 4072, 4106, 4842, 5506, 5697, 6182,
-        6413, 6872, 7308, 7599
-      ]
-    },
-    {
-      t: 'rock',
-      s: [6933]
-    },
-    {
-      t: 'super-bunker',
-      r: [1792, 6400]
-    },
-    {
-      t: 'tank',
-      r: [1024, 6144, 6384, 7171, 7408, 7568, 7648]
-    },
-    {
-      t: 'tree',
-      s: [
-        1606, 1590, 2060, 2733, 3301, 3689, 4073, 4729, 4846, 5029, 5075, 5443,
-        6111
-      ]
-    },
-    {
-      t: 'turret',
-      r: [1888, 3584, 5376, 6496, 7168],
-      gr: [1976, 3616, 5408, 6560, 7200]
-    },
-    {
-      t: 'van',
-      r: [1634, 6594]
-    }
-  ],
 
   'Wasteland': [
     {
@@ -2265,6 +2170,7 @@ originalLevels = {
   'Two-Gun': twoGunLevel,
   'Super Bunker': superBunkerLevel,
   'Scrapyard': scrapyardLevel,
+  'Blind Spot': blindSpotLevel,
 };
 
 export {
