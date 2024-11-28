@@ -26,6 +26,11 @@ body.prefs-modal-open #envelopes-placeholder {
   z-index: 11;
 }
 
+body.prefs-modal-open.network #game-prefs-modal {
+  /* a little wider */
+  width: 560px;
+}
+
 #game-prefs-modal .body {
   /* fit roughly within battlefield, leaving room for radar UI. */
   max-height: 81vh;
@@ -76,16 +81,6 @@ body.is_standalone #game-prefs-modal #game-prefs-form {
 /* hide once the game has started. */
 body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   display: none;
-}
-
-#game-prefs-modal.select-level {
-  /* slightly more narrow */
-  width: 512px;
-}
-
-body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal.select-level {
-  /* larger on ipads, though. */
-  width: 550px;
 }
 
 #game-prefs-modal p.select-level-only {
@@ -369,12 +364,20 @@ body.is_iphone .mac-classic ul.real-list li {
 
 #game-prefs-header .aa-logo {
   display: inline-block;
-  image-rendering: auto;
   margin-right: 15px;
   margin-top: 7.5px;
   width: 390px;
   max-width: 65vw;
   height: auto;
+  image-rendering: auto;
+}
+
+#game-prefs-modal.select-level .aa-logo {
+  /* larger logo only in this one case. */
+  width: auto;
+  max-width: 466px;
+  margin-right: 0px;
+  image-rendering: pixelated;
 }
 
 #game-prefs-header .column {
