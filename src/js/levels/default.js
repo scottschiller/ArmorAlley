@@ -13,6 +13,7 @@ import { oneGunLevel } from './campaign/one-gun.js';
 import { suckerPunchLevel } from './campaign/sucker-punch.js';
 import { airborneLevel } from './campaign/airborne.js';
 import { twoGunLevel } from './campaign/two-gun.js';
+import { superBunkerLevel } from './campaign/super-bunker.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -1083,94 +1084,6 @@ originalLevels = {
 
 
 
-  'Super Bunker': [
-    {
-      t: 'balloon',
-      l: [3584, 4096, 4608]
-    },
-    {
-      t: 'base',
-      l: [192],
-      r: [8000]
-    },
-    {
-      t: 'barb-wire',
-      s: [700]
-    },
-    {
-      t: 'bunker',
-      r: [1024, 3968, 4224, 7168]
-    },
-    {
-      t: 'cactus',
-      s: [2074, 2995, 7066]
-    },
-    {
-      t: 'checkmark-grass',
-      s: [5982]
-    },
-    {
-      t: 'cloud',
-      s: [2048, 2633, 3218, 3803, 4388, 4973, 5558, 6144]
-    },
-    {
-      t: 'end-bunker',
-      l: [24],
-      r: [8168]
-    },
-    {
-      t: 'grass',
-      s: [2205]
-    },
-    {
-      t: 'gravestone',
-      s: [4783]
-    },
-    {
-      t: 'infantry',
-      r: [1616, 1856, 4176, 4416, 5200, 5360, 6656, 6656]
-    },
-    {
-      t: 'landing-pad',
-      l: [320],
-      r: [7872]
-    },
-    {
-      t: 'missile-launcher',
-      r: [1936, 3296, 4096, 5520, 6976]
-    },
-    {
-      t: 'palm-tree',
-      s: [
-        1760, 3862, 3892, 3961, 4356, 4531, 4551, 3453, 3398, 3327, 3405, 3073,
-        4820, 4825, 4855, 4900, 4927, 5074, 5232, 5303
-      ]
-    },
-    {
-      t: 'super-bunker',
-      r: [1792, 4096, 6400]
-    },
-    {
-      t: 'tank',
-      r: [1536, 1776, 4096, 4336, 4496, 4576, 5120]
-    },
-    {
-      t: 'tree',
-      s: [
-        4074, 4650, 4657, 3681, 3391, 3379, 3336, 3268, 3227, 3237, 3116, 4695,
-        4733, 4776, 4871, 4958, 5023, 5224, 5260, 5974, 6782
-      ]
-    },
-    {
-      t: 'turret',
-      r: [1648, 1888, 6256, 6496],
-      gr: [1680, 1952, 4046, 4142, 6288, 6560]
-    },
-    {
-      t: 'van',
-      r: [1986, 5730]
-    }
-  ],
 
   'Scrapyard': [
     {
@@ -2436,6 +2349,7 @@ originalLevels = {
   'Sucker Punch': suckerPunchLevel,
   'Airborne': airborneLevel,
   'Two-Gun': twoGunLevel,
+  'Super Bunker': superBunkerLevel,
 };
 
 export {
