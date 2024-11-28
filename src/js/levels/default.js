@@ -16,6 +16,7 @@ import { twoGunLevel } from './campaign/two-gun.js';
 import { superBunkerLevel } from './campaign/super-bunker.js';
 import { scrapyardLevel } from './campaign/scrapyard.js';
 import { blindSpotLevel } from './campaign/blind-spot.js';
+import { wastelandLevel } from './campaign/wasteland.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -1089,95 +1090,6 @@ originalLevels = {
 
 
 
-  'Wasteland': [
-    {
-      t: 'balloon',
-      l: [3584, 4096, 4608]
-    },
-    {
-      t: 'base',
-      l: [192],
-      r: [8000]
-    },
-    {
-      t: 'bunker',
-      r: [640, 1152, 3200, 3968, 4224, 5248, 6656, 6784]
-    },
-    {
-      t: 'cactus',
-      s: [4308, 7227, 1294]
-    },
-    {
-      t: 'cactus2',
-      s: [3371, 5068, 6338, 6862, 7416, 7427, 883]
-    },
-    {
-      t: 'checkmark-grass',
-      s: [4219]
-    },
-    {
-      t: 'cloud',
-      s: [
-        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
-        5558, 5558, 6144, 6144
-      ]
-    },
-    {
-      t: 'end-bunker',
-      l: [24],
-      r: [8168]
-    },
-    {
-      t: 'grave-cross',
-      s: [3662, 4178, 4643, 4836, 5172, 5763, 6803, 7270, 7663, 871, 1254]
-    },
-    {
-      t: 'gravestone',
-      s: [
-        2542, 1676, 3345, 4191, 4611, 5011, 5150, 5250, 5335, 5530, 5620, 5819,
-        6085, 6915, 7115, 7524
-      ]
-    },
-    {
-      t: 'infantry',
-      r: [1360, 1600, 1616, 1776, 2560, 2800, 3040, 3663, 3904]
-    },
-    {
-      t: 'landing-pad',
-      l: [320],
-      n: [4092],
-      r: [7872]
-    },
-    {
-      t: 'missile-launcher',
-      r: [1680, 1936, 2880, 3984]
-    },
-    {
-      t: 'sand-dune',
-      s: [3629, 4178, 4715]
-    },
-    {
-      t: 'sand-dunes',
-      s: [2618, 3814, 6126]
-    },
-    {
-      t: 'super-bunker',
-      r: [1792, 6400]
-    },
-    {
-      t: 'tank',
-      r: [1280, 1520, 1536, 2720, 2960, 3120, 3200, 3584, 3824]
-    },
-    {
-      t: 'turret',
-      r: [960, 1888, 6496],
-      gr: [992, 1952, 6560, 7296]
-    },
-    {
-      t: 'van',
-      r: [1730, 2146, 4034]
-    }
-  ],
 
   'Midnight Oasis': [
     {
@@ -2171,6 +2083,7 @@ originalLevels = {
   'Super Bunker': superBunkerLevel,
   'Scrapyard': scrapyardLevel,
   'Blind Spot': blindSpotLevel,
+  'Wasteland': wastelandLevel,
 };
 
 export {
