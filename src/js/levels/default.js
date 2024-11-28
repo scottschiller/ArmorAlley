@@ -934,11 +934,6 @@ function selectByDifficulty(optionsArray) {
   return optionsArray.splice(0, offsets[gameType] || offsets.easy);
 }
 
-// a few local shortcuts
-const n = 'n',
-  l = 'l',
-  r = 'r';
-
 originalLevels = {
   'Balloon Fun': [
     {
