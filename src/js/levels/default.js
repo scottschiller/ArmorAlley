@@ -10,6 +10,7 @@ import { FACING } from '../elements/Balloon.js';
 import { tutorialLevel } from './tutorial.js';
 import { cakeWalkLevel } from './campaign/cake-walk.js';
 import { oneGunLevel } from './campaign/one-gun.js';
+import { suckerPunchLevel } from './campaign/sucker-punch.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -1077,73 +1078,6 @@ originalLevels = {
 
 
 
-  // Based On Practice Battle #3: Boot Camp, Level 3
-  'Sucker Punch': [
-    {
-      t: 'balloon',
-      l: [3584, 4096, 4608]
-    },
-    {
-      t: 'barb-wire',
-      s: [6066]
-    },
-    {
-      t: 'base',
-      l: [192],
-      r: [8000]
-    },
-    {
-      t: 'bunker',
-      l: [1024, 2048, 3072, 3840],
-      r: [4352, 5120, 6144, 7168]
-    },
-    {
-      t: 'cactus',
-      s: [1750, 6063, 6457]
-    },
-    {
-      t: 'cactus2',
-      s: [636, 1892, 1951, 2286, 2481, 6187, 6670]
-    },
-    {
-      t: 'cloud',
-      s: [
-        2048, 2048, 2633, 2633, 3218, 3218, 3803, 3803, 4388, 4388, 4973, 4973,
-        5558, 5558, 6144, 6144
-      ]
-    },
-    {
-      t: 'end-bunker',
-      l: [24],
-      r: [8168]
-    },
-    {
-      t: 'grave-cross',
-      s: [4043, 4088, 4354, 4395, 4487]
-    },
-    {
-      t: 'gravestone',
-      s: [3761, 3905, 4062, 4139, 4197]
-    },
-    {
-      t: 'landing-pad',
-      l: [320],
-      r: [7872]
-    },
-    {
-      t: 'sand-dune',
-      s: [1413, 2243, 4236, 4423, 5002, 5476, 6487, 6596, 6985, 7054]
-    },
-    {
-      t: 'sand-dunes',
-      s: [601, 816, 1048, 3789, 4267, 4533, 4690, 4906, 5160, 5754]
-    },
-    {
-      t: 'turret',
-      l: [1536, 2560],
-      r: [5632, 6678]
-    }
-  ],
 
   // Based On Practice Battle #4: Boot Camp, Level 4
   'Airborne': [
@@ -2694,6 +2628,7 @@ originalLevels = {
   'Tutorial': tutorialLevel,
   'Cake Walk': cakeWalkLevel,
   'One-Gun': oneGunLevel,
+  'Sucker Punch': suckerPunchLevel,
 };
 
 export {
