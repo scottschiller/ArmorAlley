@@ -228,6 +228,9 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 #game-prefs-modal .battle-list {
   /* center reasonably when modal is wider. */
   text-align: center;
+  /* dirty tricks: space out and pull content closer to edges. */
+  width: 102%;
+  margin-left: -1%;
 }
 
 body.is_iphone .mac-classic ul.real-list li {
@@ -632,7 +635,7 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul.monospace li pre {
   display: inline-block;
   margin: 1px 0px;
-  letter-spacing: -0.25px;
+  letter-spacing: -0.33px;
 }
 
 .mac-classic ul.monospace li pre.header {
