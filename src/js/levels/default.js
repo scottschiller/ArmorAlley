@@ -9,6 +9,7 @@ import { utils } from '../core/utils.js';
 import { FACING } from '../elements/Balloon.js';
 import { tutorialLevel } from './tutorial.js';
 import { cakeWalkLevel } from './campaign/cake-walk.js';
+import { oneGunLevel } from './campaign/one-gun.js';
 
 // Default "world": Tutorial, level 1 or level 9 (roughly)
 
@@ -1075,98 +1076,6 @@ originalLevels = {
   ],
 
 
-  // Based On Practice Battle #2: Boot Camp, Level 2
-  'One-Gun': [
-    {
-      t: 'balloon',
-      l: [3584, 4096, 4608]
-    },
-    {
-      t: 'barb-wire',
-      s: [1129, 4824]
-    },
-    {
-      t: 'base',
-      l: [192],
-      r: [8000]
-    },
-    {
-      t: 'bunker',
-      l: [768, 1024, 2048, 2560, 3072, 3584, 3712],
-      r: [4480, 4608, 5120, 5632, 6144, 7168, 7424]
-    },
-    {
-      t: 'cactus',
-      s: [4454]
-    },
-    {
-      t: 'cactus2',
-      s: [6793]
-    },
-    {
-      t: 'checkmark-grass',
-      s: [2537]
-    },
-    {
-      t: 'cloud',
-      s: [
-        2048, 2048, 2048, 2633, 2633, 2633, 3218, 3218, 3218, 3803, 3803, 3803,
-        4388, 4388, 4388, 4973, 4973, 4973, 5558, 5558, 5558, 6144, 6144, 6144
-      ]
-    },
-    {
-      t: 'end-bunker',
-      l: [24],
-      r: [8168]
-    },
-    {
-      t: 'infantry',
-      l: [256]
-    },
-    {
-      t: 'landing-pad',
-      l: [320],
-      r: [7872]
-    },
-    {
-      t: 'missile-launcher',
-      l: [64]
-    },
-    {
-      t: 'palm-tree',
-      s: [
-        490, 1918, 2960, 3015, 3139, 3187, 3194, 3789, 3965, 4135, 4149, 4211,
-        4328, 4387, 4872, 4918, 5106, 5190, 5231, 5264
-      ]
-    },
-    {
-      t: 'sand-dune',
-      s: [2961]
-    },
-    {
-      t: 'sand-dunes',
-      s: [2924]
-    },
-    {
-      t: 'tank',
-      l: [512, 640]
-    },
-    {
-      t: 'tree',
-      s: [
-        3493, 3550, 3643, 3705, 3710, 3729, 3873, 4395, 4614, 4655, 4739, 4797,
-        5189, 5264, 5771, 6522, 6722
-      ]
-    },
-    {
-      t: 'turret',
-      r: [4096]
-    },
-    {
-      t: 'van',
-      l: [128]
-    }
-  ],
 
   // Based On Practice Battle #3: Boot Camp, Level 3
   'Sucker Punch': [
@@ -2784,6 +2693,7 @@ originalLevels = {
   ]
   'Tutorial': tutorialLevel,
   'Cake Walk': cakeWalkLevel,
+  'One-Gun': oneGunLevel,
 };
 
 export {
