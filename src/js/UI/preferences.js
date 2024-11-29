@@ -30,7 +30,15 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
-import { levelFlags, previewLevel, setLevel } from '../levels/default.js';
+import {
+  calculateIQ,
+  campaignBattles,
+  getDifficultyMultiplier,
+  levelFlags,
+  networkBattles,
+  previewLevel,
+  setLevel
+} from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { aaLoader } from '../core/aa-loader.js';
 
@@ -801,6 +809,59 @@ function PrefsManager() {
       if (mode === 'armorgeddon' && element.checked) {
         utils.css.add(dom.o, 'extreme');
       }
+    });
+    updateIQ();
+  }
+
+  function updateIQ() {
+    dom.o
+      .querySelectorAll('.battle-list')
+      ?.forEach((list) => updateIQList(list));
+  }
+
+  function updateIQList(list) {
+    let inputs = list.querySelectorAll('input');
+    if (!inputs.length) return;
+
+    inputs.forEach((input) => {
+      let levelName = input.getAttribute('value');
+
+      let isTutorial = levelName === 'Tutorial';
+
+      /**
+       * Ignore tutorial; technically it uses demoParams, but ultimately N/A for user
+       * since the enemy doesn't order convoys, and the enemy chopper only spawns once.
+       */
+      if (isTutorial) return;
+
+      let isNetwork = networkBattles.includes(levelName);
+
+      let levelList = isNetwork ? networkBattles : campaignBattles;
+
+      let levelNumber = levelList.indexOf(levelName);
+
+      let difficultyOffset =
+        isNetwork || levelName === 'Tutorial'
+          ? 0
+          : getDifficultyMultiplier(data.network);
+
+      let iq = calculateIQ(
+        isNetwork ? 'network' : 'campaign',
+        difficultyOffset + levelNumber
+      );
+
+      // right-align and ensure 3-character-wide IQ results.
+      if (!iq) {
+        // "empty" (tutorial or not-found) case
+        iq = 'N/A';
+      } else if (iq < 10) {
+        iq = `  ${iq}`;
+      } else if (iq < 100) {
+        iq = ` ${iq}`;
+      }
+
+      // old-skool. :P
+      input.parentNode.getElementsByTagName('span')[0].innerText = iq;
     });
   }
 
