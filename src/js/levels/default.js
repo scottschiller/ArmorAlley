@@ -321,11 +321,7 @@ const networkParams = [
 ];
 
 function getLevelParams(paramArray, offset) {
-  if (offset < 0) {
-    return unpackLevelParams(demoParams[0]);
-  }
-  // calculateIQ(paramArray[offset]);
-  return unpackLevelParams(paramArray[offset]);
+  return unpackLevelParams(offset < 0 ? demoParams[0] : paramArray[offset]);
 }
 
 // expand 1,0,0 etc., into object with name/value pairs.
