@@ -1152,6 +1152,16 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   min-width: auto;
 }
 
+#game-prefs-modal .more-info-toggle:hover {
+  background: #000;
+  color: #fff;
+}
+
+#game-prefs-modal .more-info-toggle:active {
+  transform: scale3d(0.8, 0.8, 1);
+  transform-origin: 50% 50%;
+}
+
 #game-prefs-modal legend .more-info-toggle {
   /* less spacing */
   margin-right: 2px;
