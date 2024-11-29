@@ -414,18 +414,23 @@ function updateFlags(levelName) {
   levelConfig = getLevelConfig(levelName);
 }
 
+function getDifficultyMultiplier(isNetwork) {
+  let d = 0;
+  // compare vs. regular, or network game prefs depending
+  let gt = isNetwork ? gamePrefs.net_game_type : gameType;
+  if (gt === 'hard') d = 1;
+  if (gt === 'extreme') d = 2;
+  if (gt === 'armorgeddon') d = 3;
+  return d * 4;
+}
+
 function getLevelConfig(levelName) {
   let offset;
 
   offset = campaignBattles.indexOf(levelName);
 
-  let d = 0;
-  if (gameType === 'hard') d = 1;
-  if (gameType === 'extreme') d = 2;
-  if (gameType === 'armorgeddon') d = 3;
-
   if (offset !== -1) {
-    return getLevelParams(originalParams, d === 0 ? offset : d * 4 + offset);
+    return getLevelParams(originalParams, getDifficultyMultiplier() + offset);
   }
 
   // network battle
@@ -983,10 +988,12 @@ export {
   addWorldObjects,
   calculateIQ,
   campaignBattles,
+  getDifficultyMultiplier,
   levelFlags,
   levelConfig,
   levelName,
   levelNumber,
+  networkBattles,
   previewLevel,
   setCustomLevel,
   setLevel,
