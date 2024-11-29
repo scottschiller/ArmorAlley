@@ -339,8 +339,18 @@ function unpackLevelParams(levelParams) {
   return unpacked;
 }
 
-function calculateIQ(o) {
+function calculateIQ(type = 'campaign', offset = 0) {
   // CPU "IQ" for a given set of level parameters
+
+  let o =
+    type === 'tutorial'
+      ? demoParams[0]
+      : (type === 'campaign' ? originalParams : networkParams)[offset];
+
+  if (!o) {
+    console.warn('calculateIQ(): Could not find level', type, offset);
+    return 0;
+  }
 
   let iq = 0;
 
@@ -971,6 +981,7 @@ originalLevels = {
 export {
   applyFlags,
   addWorldObjects,
+  calculateIQ,
   campaignBattles,
   levelFlags,
   levelConfig,
