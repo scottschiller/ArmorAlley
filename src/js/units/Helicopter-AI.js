@@ -558,6 +558,18 @@ const HelicopterAI = (options = {}) => {
       canBombTarget(target)
     ) {
       // align on X-axis, player / balloon / tank / turret is below, AND, no bombs already (or <3 for tanks)...
+
+      // Sanity check: avoid hitting friendly men with napalm-enabled bombs, as flame burns both sides.
+      if (levelFlags.bNapalm) {
+        let friendsInView = objectsInView(data, {
+          items: [TYPES.infantry, TYPES.engineer],
+          triggerDistance: 128,
+          friendlyOnly: true
+        });
+
+        if (friendsInView.length) return;
+      }
+
       // drop ze bombs!
       brakeX(data, 0.98);
       data.votes.bomb++;
