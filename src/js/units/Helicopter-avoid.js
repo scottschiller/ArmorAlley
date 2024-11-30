@@ -446,6 +446,9 @@ function avoidNearbyMunition(data) {
     if (isTurretGunfire) {
       data.avoidingTurret = true;
       // hackish: circuitous reference
+      // if being fired at, consider deploying a smart missile.
+      let checkBombs = false;
+      data.ai.maybeFireSmartMissileAtTurret(checkBombs);
       data.ai.maybeDropParatroopersNearTarget(nearbyObstacle.data.parent);
     }
   }
