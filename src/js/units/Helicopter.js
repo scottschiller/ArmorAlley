@@ -3026,6 +3026,7 @@ const Helicopter = (options = {}) => {
       trailerCount: 16,
       xHistory: [],
       yHistory: [],
+      isKamikaze: false,
       // for AI
       targeting: {
         clouds: false,

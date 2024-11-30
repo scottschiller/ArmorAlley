@@ -200,6 +200,11 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
       collisionCheckX(obstacle.data, data, MAX_AVOID_AHEAD) &&
       Math.abs(data.y - obstacle.data.y) < data.height * 2;
 
+    if (obstacle.data.type === TYPES.helicopter && data.isKamikaze) {
+      // chopper <-> chopper collision desired
+      collision = false;
+    }
+
     if (collision) {
       avoidCount++;
 
@@ -222,6 +227,11 @@ function collisionAvoidance(data, pos, velocity, obstacles) {
           vehicleLines[j],
           obstacle.data
         );
+
+        if (obstacle.data.type === TYPES.helicopter && data.isKamikaze) {
+          // chopper <-> chopper collision desired
+          collision = false;
+        }
 
         // add all obstacle avoidance vectors, then divide to get the average.
         if (collision) {
@@ -369,6 +379,11 @@ function avoidAboveOrBelow(tData, data) {
 
   if (!tData) return;
 
+  if (tData.type === TYPES.helicopter && data.isKamikaze) {
+    // chopper <-> chopper collision desired
+    return;
+  }
+
   // X-axis align, and player (or some other obstacle) is flying above CPU - an advantage (or slightly below, not an advantage.)
   if (
     tData.type === TYPES.helicopter &&
@@ -387,6 +402,11 @@ function avoidNearbyMunition(data) {
   /**
    * NEARBY OBSTACLES: GUNFIRE, MISSILES, BOMBS ETC.
    */
+
+  if (data.isKamikaze) {
+    // chopper <-> chopper collision desired
+    return;
+  }
 
   let nearbyObstacle;
   let validObstacle;
