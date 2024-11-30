@@ -24,6 +24,7 @@ import { applyForces } from './Helicopter-forces.js';
 import {
   checkVerticalRange,
   seekLandingPad,
+  seekTarget,
   steerTowardTarget
 } from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
@@ -469,12 +470,45 @@ const HelicopterAI = (options = {}) => {
       if (tData.type === TYPES.helicopter) {
         data.useClippedSpeed = true;
       }
-      // TODO: review offset logic.
-      steerTowardTarget(
-        data,
-        tData,
-        tData.type === TYPES.cloud ? -1 : data.halfWidth
-      );
+
+      /**
+       * Special case: "all criteria met" for a kamikaze run.
+       * Targeting helicopters (and one nearby), provoked (retaliation), level flag set, empty munitions.
+       */
+      if (
+        levelConfig.suicideB &&
+        tData.type === TYPES.helicopter &&
+        data.targeting.helicopters &&
+        tData.type === TYPES.helicopter &&
+        data.targeting.retaliation &&
+        !data.ammo &&
+        !data.bombs &&
+        !data.smartMissiles
+      ) {
+        data.isKamikaze = true;
+      } else {
+        data.isKamikaze = false;
+      }
+
+      if (data.isKamikaze) {
+        let seekMag = 1;
+        seekTarget(
+          data,
+          {
+            x: tData.x,
+            y: tData.y,
+            type: tData.type
+          },
+          seekMag
+        );
+      } else {
+        // TODO: review offset logic.
+        steerTowardTarget(
+          data,
+          tData,
+          tData.type === TYPES.cloud ? -1 : data.halfWidth
+        );
+      }
     }
   }
 
