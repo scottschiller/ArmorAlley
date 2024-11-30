@@ -294,6 +294,17 @@ const HelicopterAI = (options = {}) => {
       }
     }
 
+    if (data.targeting.men && data.bombs) {
+      let nearbyMan = objectInView(data, {
+        items: [TYPES.infantry, TYPES.engineer],
+        triggerDistance: data.width * 2
+      });
+
+      if (nearbyMan) {
+        maybeBombTarget(nearbyMan);
+      }
+    }
+
     // maybe bomb turrets, too?
     if (data.targeting.turrets || data.cloaked) {
       // scan for turrets, before entering their firing range
