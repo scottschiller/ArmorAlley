@@ -546,13 +546,74 @@ const HelicopterAI = (options = {}) => {
     const targetData = target?.data;
     if (!targetData || targetData.dead || targetData.cloaked) return;
 
-    if (collisionCheckX(targetData, data) && data.y < targetData.y) {
-      // align on X-axis, and player / balloon / tank / turret is below...
+    if (
+      collisionCheckX(targetData, data) &&
+      data.y < targetData.y &&
+      canBombTarget(target)
+    ) {
+      // align on X-axis, player / balloon / tank / turret is below, AND, no bombs already (or <3 for tanks)...
       // drop ze bombs!
       brakeX(data, 0.98);
       data.votes.bomb++;
       data.bombTargets.push(targetData);
     }
+  }
+
+  const bombsByTarget = {};
+
+  function canBombTarget(target) {
+    /**
+     * Basic bomb -> target throttling: limit to one bomb for most targets.
+     * Tanks get up to 3; helicopters + turrets can be carpet-bombed at will.
+     */
+
+    if (!target?.data) return;
+
+    // unlimited bombs
+    if (
+      target.data.type === TYPES.helicopter ||
+      target.data.type === TYPES.turret
+    )
+      return true;
+
+    /**
+     * Infantry + engineers: limit by "group of men" vs. per-object IF we have napalm, since these come in groups.
+     * This avoids redundant carpet-bombing of five unique objects, e.g., default group of five infantry.
+     */
+    let id =
+      (target.data.type === TYPES.infantry ||
+        target.data.type === TYPES.engineer) &&
+      levelConfig.bNapalm
+        ? 'men'
+        : target.data.id;
+
+    if (!bombsByTarget[id]) {
+      bombsByTarget[id] = {
+        bombCount: 0,
+        bombLimit: target.data.type === TYPES.tank ? 3 : 1,
+        timer: null
+      };
+    }
+
+    let data = bombsByTarget[id];
+
+    // at capacity?
+    if (data.bombCount >= data.bombLimit) return false;
+
+    data.bombCount++;
+
+    /**
+     * Hackish: clear this state in a moment, allowing more bombs.
+     * Bomb object(s) don't yet exist, a throttle should suffice.
+     */
+    if (!data.timer) {
+      data.timer = common.setFrameTimeout(() => {
+        data.timer = null;
+        bombsByTarget[id] = null;
+      }, 750 * data.bombLimit);
+    }
+
+    return true;
   }
 
   function maybeFireAtTarget(target) {
