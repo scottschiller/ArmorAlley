@@ -2493,6 +2493,8 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks = rng > 0.75 && levelConfig.scatterBombB;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
+        data.targeting.men = rng > 0.5 && levelConfig.killMenB;
+        data.targeting.vans = rng > 0.5 && levelConfig.killVanB;
         data.targeting.turrets = rng > 0.5;
 
         // go after choppers if allowed by level config, OR, in tutorial mode.
@@ -3034,6 +3036,8 @@ const Helicopter = (options = {}) => {
         tanks: false,
         bunkers: false,
         turrets: false,
+        men: false,
+        vans: false,
         retaliation: false
       },
       targetingModulus: FPS * 30,
