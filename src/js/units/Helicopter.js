@@ -2273,8 +2273,8 @@ const Helicopter = (options = {}) => {
     // push x/y to trailer history arrays, maintain size
 
     if (data.isOnScreen) {
-      // if 60FPS, only update every other frame
-      if (FPS === 30 || game.objects.gameLoop.data.frameCount % 2 === 0) {
+      // only update every 2 or 4 frames, depending
+      if (game.objects.gameLoop.data.frameCount % (FPS === 60 ? 3 : 2) === 0) {
         data.xHistory.push(
           data.x + (data.isEnemy || data.flipped ? data.width : 0)
         );
@@ -3023,7 +3023,7 @@ const Helicopter = (options = {}) => {
       maxSmartMissiles: 2,
       smartMissileRepairModulus: 128,
       midPoint: null,
-      trailerCount: 16,
+      trailerCount: 12,
       xHistory: [],
       yHistory: [],
       isKamikaze: false,
