@@ -132,7 +132,12 @@ const Shrapnel = (options = {}) => {
     }
 
     if (damageTarget) {
-      common.hit(target, data.damagePoints, exports);
+      common.hit(
+        target,
+        // choppers get "special" treatment.
+        data.damagePoints * (target.data.type === TYPES.helicopter ? 2 : 1),
+        exports
+      );
     }
 
     // "embed", so this object moves relative to the target it hit
@@ -319,7 +324,7 @@ const Shrapnel = (options = {}) => {
       spinAngle: rndAngle(),
       spinAngleIncrement: rndAngle(),
       hostile: true,
-      damagePoints: 0.5,
+      damagePoints: 0.25,
       hasSound: !!options.hasSound,
       rndRicochetAmount: 0.5 + rng(0.75, type),
       ricochetCount: 0,
