@@ -218,15 +218,8 @@ const HelicopterAI = (options = {}) => {
       // did current or recent target become invalidated, or (TODO) unreachable?
       let ltData = lastTarget?.data;
 
-      if (ltData.dead) {
-        // was it a tank? reset tank-seeking mode until next interval.
-        if (ltData.type === TYPES.tank) {
-          data.targeting.tanks = false;
-        }
-
-        lastTarget = null;
-      } else if (ltData.cloaked) {
-        // did the player go behind a cloud?
+      if (ltData.dead || ltData.cloaked) {
+        // toast, or hiding
         lastTarget = null;
       }
     }
