@@ -331,58 +331,65 @@ const HelicopterAI = (options = {}) => {
       if (nearbyTurret) {
         maybeBombTarget(nearbyTurret);
 
-        // extra-mean: maybe fire and/or launch a smart missile, if not going after the chopper.
-        if (
-          !missileLaunchTimer &&
-          (!tData || tData.type !== TYPES.helicopter)
-        ) {
-          let mTarget = objectInView(data, { items: TYPES.turret });
+        maybeDropParatroopersNearTarget(nearbyTurret);
 
-          if (!mTarget) return;
-
-          maybeFireAtTarget(mTarget);
-
-          // only throw in a smart missile if allowed.
-          if (!levelConfig.useMissileB) return;
-
-          // only use missiles if low on bombs
-          if (data.bombs >= 5) return;
-
-          if (!collisionCheckX(mTarget.data, data, turretLookAhead)) return;
-
-          // wait a few frames before firing.
-          let delay = rngInt(FPS * 5, data.type);
-
-          missileLaunchTimer = common.setFrameTimeout(() => {
-            // sanity check, given delay / async...
-            if (data.dead || mTarget.data.dead) {
-              missileLaunchTimer = null;
-              return;
-            }
-
-            // "AI" target for helicopter missile launch method
-            // (predetermined rather than real-time, because reasons.)
-            missileTarget = mTarget;
-
-            // it's possible the CPU is being chased, needs to flip to fire.
-            options.exports.checkFacingTarget(mTarget);
-
-            options.exports.setMissileLaunching(true);
-
-            // and, stop momentarily.
-            common.setFrameTimeout(
-              () => {
-                options.exports.setMissileLaunching(false);
-                missileLaunchTimer = null;
-                // if on "easy", only one missile.
-                // otherwise, up to two.
-              },
-              gameType === 'easy' ? 1 / FPS : FPS
-            );
-          }, delay);
-        }
+        let checkBombs = true;
+        maybeFireSmartMissileAtTurret(checkBombs);
       }
     }
+  }
+
+  function maybeFireSmartMissileAtTurret(checkBombs) {
+    // extra-mean: maybe fire and/or launch a smart missile, if not going after the chopper.
+    if (missileLaunchTimer) return;
+    if (tData?.type === TYPES.helicopter) return;
+
+    let mTarget = objectInView(data, { items: TYPES.turret });
+
+    if (!mTarget) return;
+
+    // possibly redundant
+    maybeFireAtTarget(mTarget);
+
+    // only throw in a smart missile if allowed.
+    if (!levelConfig.useMissileB) return;
+
+    // conservative option: bomb check.
+    // this can be ignored when e.g., retaliating to turret gunfire.
+    if (checkBombs && levelConfig.scatterBombB && data.bombs >= 5) return;
+
+    if (!collisionCheckX(mTarget.data, data, turretLookAhead)) return;
+
+    // wait a few frames before firing.
+    let delay = rngInt(FPS * 5, data.type);
+
+    missileLaunchTimer = common.setFrameTimeout(() => {
+      // sanity check, given delay / async...
+      if (data.dead || mTarget.data.dead) {
+        missileLaunchTimer = null;
+        return;
+      }
+
+      // "AI" target for helicopter missile launch method
+      // (predetermined rather than real-time, because reasons.)
+      missileTarget = mTarget;
+
+      // it's possible the CPU is being chased, needs to flip to fire.
+      options.exports.checkFacingTarget(mTarget);
+
+      options.exports.setMissileLaunching(true);
+
+      // and, stop momentarily.
+      common.setFrameTimeout(
+        () => {
+          options.exports.setMissileLaunching(false);
+          missileLaunchTimer = null;
+          // if on "easy", only one missile.
+          // otherwise, up to two.
+        },
+        gameType === 'easy' ? 1 / FPS : FPS
+      );
+    }, delay);
   }
 
   function checkThreats() {
@@ -899,6 +906,7 @@ const HelicopterAI = (options = {}) => {
     maybeChaseHelicopters,
     maybeDecoySmartMissile,
     maybeFireAtTarget,
+    maybeFireSmartMissileAtTurret,
     maybeDropParatroopersNearTarget,
     maybeRetaliateWithSmartMissile,
     resetSineWave
