@@ -2951,6 +2951,7 @@ const Helicopter = (options = {}) => {
       ignoreMouseEvents: !!game.objects.editor,
       fuel: 100,
       maxFuel: 100,
+      needsFuel: 25,
       fireModulus: setFiringRate('fireModulus'),
       bombModulus: setFiringRate('bombModulus'),
       bombFrameCount: 0,

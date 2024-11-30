@@ -28,7 +28,7 @@ import {
   steerTowardTarget
 } from './Helicopter-steering.js';
 import { resetSineWave, wander } from './Helicopter-wander.js';
-import { levelConfig, levelFlags } from '../levels/default.js';
+import { levelConfig, levelFlags, levelNumber } from '../levels/default.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
@@ -191,18 +191,31 @@ const HelicopterAI = (options = {}) => {
 
   function landingPadCheck() {
     // low fuel means low fuel. or ammo. or bombs.
-    if (
-      (data.fuel < lowFuelLimit ||
-        data.energy < lowEnergyLimit ||
-        (!data.ammo && !data.bombs)) &&
-      data.energy > 0 &&
-      !data.landed &&
-      !data.repairing
-    ) {
+    let needsFuel = data.fuel < data.needsFuel;
+
+    // short on bullets, OR completely out of aimed / dumb missiles
+    let needsAmmo = levelFlags.bullets ? data.ammo < 6 : !data.ammo;
+
+    let needsBombs = !data.bombs;
+    let needsRepair = data.energy < 5;
+
+    // sneaky: adding booleans, comparing integers.
+    // note: chopper more likely to return for repair on first two battles.
+    let needsRefit =
+      needsFuel ||
+      needsAmmo +
+        needsBombs +
+        needsRepair +
+        (levelNumber === 1 || levelNumber === 2) >=
+        2;
+
+    if (needsRefit && !data.landed && !data.repairing) {
       seekLandingPad(data, options);
       return;
     }
 
+    // TODO: this could be used if the human chopper is nearby and a threat, etc.
+    // let combatReady = data.fuel > (data.maxFuel * 0.3) && data.bombs > 2 && data.energy > 10;
     if (
       data.onLandingPad &&
       (data.repairing || !data.repairComplete) &&
