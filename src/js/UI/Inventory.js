@@ -781,28 +781,21 @@ const Inventory = () => {
         }
 
         if (canAfford && !game.data.productionHalted) {
-          // TODO: CPU quota, "requisition denied" cases.
-          const newObject = game.addObject(type, options);
-
           // when subtracting, apply the inverse scale and round down.
           bank.funds -= Math.floor(cost * (1 / bank.fundsMultiplier));
 
-          applyRiseTransition(newObject);
+          processCPUOrder(type, options);
 
-          // ensure this order shows up on the remote
-          if (net.active) {
-            net.sendMessage({
-              type: 'ADD_OBJECT',
-              // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
-              objectType:
-                newObject.data.type === TYPES.infantry && newObject.data.role
-                  ? TYPES.engineer
-                  : newObject.data.type,
-              params: {
-                ...options,
-                id: newObject.data.id
-              }
-            });
+          // if infantry or engineers, do this a few more times.
+          let orderSize = COSTS[type].count;
+          if (orderSize > 1) {
+            for (let i = 1; i < orderSize; i++) {
+              // note: starting at 1, for delay and size math
+              common.setFrameTimeout(
+                () => processCPUOrder(type, options),
+                750 * i
+              );
+            }
           }
         }
 
@@ -813,6 +806,29 @@ const Inventory = () => {
     }
 
     common.setFrameTimeout(orderNextItem, data.enemyOrderDelay);
+  }
+
+  function processCPUOrder(type, options) {
+    // TODO: CPU quota, "requisition denied" cases.
+    const newObject = game.addObject(type, options);
+
+    applyRiseTransition(newObject);
+
+    // ensure this order shows up on the remote
+    if (net.active) {
+      net.sendMessage({
+        type: 'ADD_OBJECT',
+        // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
+        objectType:
+          newObject.data.type === TYPES.infantry && newObject.data.role
+            ? TYPES.engineer
+            : newObject.data.type,
+        params: {
+          ...options,
+          id: newObject.data.id
+        }
+      });
+    }
   }
 
   function updateInventoryQueue(item) {
