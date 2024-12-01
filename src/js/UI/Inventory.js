@@ -716,8 +716,6 @@ const Inventory = () => {
 
     convoys = convoys || parseConvoyData(levelConfig.convoyLevelI);
 
-    console.log('got convoys', convoys);
-
     let { enemyOrders, enemyDelays } = refreshEnemyQueue();
 
     let orderOffset = 0;
