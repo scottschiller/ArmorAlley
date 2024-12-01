@@ -776,7 +776,9 @@ const Inventory = () => {
 
         let canAfford = bank.funds * bank.fundsMultiplier >= cost;
 
-        if (!canAfford && !nsf) {
+        // if total funds drop below the cost of a tank, delay.
+        // this helps avoid a bunch of cheap vans going out in series.
+        if ((!canAfford || bank.funds < 4) && !nsf) {
           nsf = true;
         }
 
