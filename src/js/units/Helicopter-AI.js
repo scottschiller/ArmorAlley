@@ -564,12 +564,8 @@ const HelicopterAI = (options = {}) => {
     const targetData = target?.data;
     if (!targetData || targetData.dead || targetData.cloaked) return;
 
-    if (
-      collisionCheckX(targetData, data) &&
-      data.y < targetData.y &&
-      canBombTarget(target)
-    ) {
-      // align on X-axis, player / balloon / tank / turret is below, AND, no bombs already (or <3 for tanks)...
+    if (collisionCheckX(targetData, data) && data.y < targetData.y) {
+      // align on X-axis, player / balloon / tank / turret is below
 
       // Sanity check: avoid hitting friendly men with napalm-enabled bombs, as flame burns both sides.
       if (levelFlags.bNapalm) {
@@ -591,21 +587,8 @@ const HelicopterAI = (options = {}) => {
 
   const bombsByTarget = {};
 
-  function canBombTarget(target) {
-    /**
-     * Basic bomb -> target throttling: limit to one bomb for most targets.
-     * Tanks get up to 3; helicopters + turrets can be carpet-bombed at will.
-     */
-
-    if (!target?.data) return;
-
-    // unlimited bombs
-    if (
-      target.data.type === TYPES.helicopter ||
-      target.data.type === TYPES.turret
-    )
-      return true;
-
+  function getBombTargetID(target) {
+    if (!target?.data) return '';
     /**
      * Infantry + engineers: limit by "group of men" vs. per-object IF we have napalm, since these come in groups.
      * This avoids redundant carpet-bombing of five unique objects, e.g., default group of five infantry.
@@ -617,33 +600,71 @@ const HelicopterAI = (options = {}) => {
         ? 'men'
         : target.data.id;
 
+    return id;
+  }
+
+  function canBombTarget(target) {
+    /**
+     * Basic bomb -> target throttling: limit to one bomb for most targets.
+     * Tanks get up to 3; turrets can be carpet-bombed at will.
+     */
+
+    if (!target?.data) return;
+
+    // unlimited bombs
+    if (target.data.type === TYPES.turret) return true;
+
+    let id = getBombTargetID(target);
+
     if (!bombsByTarget[id]) {
       bombsByTarget[id] = {
         bombCount: 0,
-        bombLimit: target.data.type === TYPES.tank ? 3 : 1,
+        bombLimit:
+          target.data.type === TYPES.tank ||
+          target.data.type === TYPES.helicopter
+            ? 3
+            : 1,
         timer: null
       };
     }
 
-    let data = bombsByTarget[id];
+    let bbt = bombsByTarget[id];
 
     // at capacity?
-    if (data.bombCount >= data.bombLimit) return false;
+    if (bbt.bombCount >= bbt.bombLimit) return;
 
-    data.bombCount++;
-
-    /**
-     * Hackish: clear this state in a moment, allowing more bombs.
-     * Bomb object(s) don't yet exist, a throttle should suffice.
-     */
-    if (!data.timer) {
-      data.timer = common.setFrameTimeout(() => {
-        data.timer = null;
-        bombsByTarget[id] = null;
-      }, 750 * data.bombLimit);
-    }
-
+    // bombs away!
     return true;
+  }
+
+  function addBomb(target) {
+    let data = bombsByTarget[getBombTargetID(target)];
+    if (!data) return;
+    data.bombCount++;
+    // cancel any pending clear timer if this object is being re-used -
+    // e.g., a new group of `men` after one was killed off.
+    if (data.timer) {
+      data.timer.reset();
+      data.timer = null;
+    }
+  }
+
+  function removeBomb(target) {
+    let id = getBombTargetID(target);
+    let data = bombsByTarget[id];
+    if (!data) return;
+    data.bombCount = Math.max(0, data.bombCount - 1);
+    if (!data.bombCount) {
+      delete bombsByTarget[id];
+    }
+  }
+
+  function clearBombWithDelay(target, delay = 2500) {
+    let id = getBombTargetID(target);
+    let data = bombsByTarget[id];
+    if (!data) return;
+    if (data.timer) return;
+    data.timer = common.setFrameTimeout(() => delete bombsByTarget[id], delay);
   }
 
   function maybeFireAtTarget(target) {
@@ -906,6 +927,10 @@ const HelicopterAI = (options = {}) => {
 
   return {
     animate: ai,
+    canBombTarget,
+    addBomb,
+    clearBombWithDelay,
+    removeBomb,
     getMissileTarget: () => missileTarget,
     onHit: respondToHit,
     maybeChaseHelicopters,
