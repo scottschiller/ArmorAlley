@@ -268,6 +268,11 @@ const Bomb = (options = {}) => {
     }
 
     common.onDie(exports, dieOptions);
+
+    if (options.onDie) {
+      options.onDie(exports, dieOptions);
+    }
+
   }
 
   function bombHitTarget(target) {
