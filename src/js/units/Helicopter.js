@@ -2757,7 +2757,7 @@ const Helicopter = (options = {}) => {
             : gameType === 'hard'
               ? 24
               : 60,
-        tank: 20
+        tank: 12
       }
     },
 
