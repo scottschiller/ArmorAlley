@@ -235,6 +235,11 @@ const HelicopterAI = (options = {}) => {
         // toast, or hiding
         lastTarget = null;
       }
+
+      // if targeting tanks, but no bombs, then forget this one.
+      if (ltData === TYPES.tank && !data.bombs) {
+        lastTarget = null;
+      }
     }
 
     let newTarget;
