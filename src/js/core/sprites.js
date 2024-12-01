@@ -397,6 +397,9 @@ const sprites = {
     // prevent certain things from rendering this, e.g., smart missiles.
     if (object.data.noEnergyStatus) return;
 
+    // if a cloaked (in a cloud) chopper and not on your side, don't show - the flash of color would be a giveaway.
+    if (object.data.cloaked && object.data.isEnemy !== game.players.local.data.isEnemy) return;
+
     // some objects may have longer timings, e.g., turrets.
     let timerDelayScale = object.data.energyTimerScale || 1;
 
