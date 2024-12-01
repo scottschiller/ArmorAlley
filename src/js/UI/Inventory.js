@@ -50,8 +50,8 @@ const delaysByType = {
   [TYPES.missileLauncher]: 3,
   [TYPES.tank]: 3,
   [TYPES.van]: 2,
-  [TYPES.infantry]: 1,
-  [TYPES.engineer]: 1
+  [TYPES.infantry]: 4,
+  [TYPES.engineer]: 2
 };
 
 const noChopperPurchase = 'Helicopter order N/A:\nYou have unlimited lives. 🚁';
