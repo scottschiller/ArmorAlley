@@ -1971,6 +1971,44 @@ const Helicopter = (options = {}) => {
       if (data.bombs > 0) {
         let params = getBombParams();
 
+        /**
+         * "AI" case: throttle bombing by target type; e.g., tanks get up to 3 bombs dropped at once.
+         * Intent: optimize the chance of taking out the target, while also not wasting bombs.
+         */
+        if (data.isCPU && data.ai && data.bombTargets?.[0]) {
+          // HACK: re-define data.bombTargets[0] object because they were flattened for sorting.
+          let bombTarget = { data: data.bombTargets[0] };
+
+          // exit if already at limit.
+          if (!data.ai.canBombTarget(bombTarget)) return;
+
+          // count toward the limit.
+          data.ai.addBomb(bombTarget);
+
+          // track when this bomb dies - whether it hit or missed, and whether the target died.
+          params.onDie = function (bombExports, bombDieOptions) {
+            // remove (decrement) if the target was not hit
+            // bomb may not have a target if it hit the ground, etc.
+            let didHitTarget =
+              bombDieOptions?.target?.data?.id === bombTarget.data.id;
+
+            if (didHitTarget) {
+              // reset tracking after a delay (so more can be dropped), in case the target is still alive.
+              data.ai.clearBombWithDelay(bombTarget);
+            }
+
+            // clear entirely if target is dead.
+            if (bombTarget.data.dead) {
+              data.ai.removeBomb(bombTarget);
+              // reset state
+              data.ai.clearBombWithDelay(bombTarget);
+            } else if (!didHitTarget) {
+              // target is still live, bomb missed; try another?
+              data.ai.removeBomb(bombTarget);
+            }
+          };
+        }
+
         game.addObject(TYPES.bomb, params);
 
         if (sounds.bombHatch) {
