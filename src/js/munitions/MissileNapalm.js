@@ -178,6 +178,14 @@ const MissileNapalm = (options = {}) => {
       checkTweens: true,
       hit(target) {
         if (data.damagePoints) {
+          // special case: missile napalm doesn't burn friendly helicopters in the original, but can hurt the opposing team's choppers.
+          // collision logic brings us here because flame is hostile and dangerous to both, hence this special check.
+          if (
+            target.data.type === TYPES.helicopter &&
+            data.parent.data.isEnemy === target.data.isEnemy
+          ) {
+            return;
+          }
           common.hit(target, data.damagePoints, exports);
         }
       }

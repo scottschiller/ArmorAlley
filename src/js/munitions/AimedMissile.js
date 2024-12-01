@@ -43,7 +43,9 @@ const AimedMissile = (options = {}) => {
     return {
       x: data.x,
       y: worldHeight - 12,
-      vXDirection: data.vXDirection
+      vXDirection: data.vXDirection,
+      parent: data.parent,
+      parentType: data.parentTYpe
     };
   }
 
@@ -207,7 +209,7 @@ const AimedMissile = (options = {}) => {
       return data.dead && !dom.o;
     }
 
-    data.vX += data.vXDirection * 0.15 * GAME_SPEED_RATIOED;
+    data.vX += data.vXDirection * 0.175 * GAME_SPEED_RATIOED;
 
     // limit vertical velocity
     data.vY = Math.min(8, data.vY + data.vY * 0.04 * GAME_SPEED_RATIOED);
