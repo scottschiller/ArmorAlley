@@ -1572,6 +1572,13 @@ const Helicopter = (options = {}) => {
     return Math.max(1000, (data.isCPU ? levelConfig.regenTimeI : 48) * 100);
   }
 
+  let verticalBombTypes = {
+    // allow CPU to drop closer to vX = 0, for "accuracy"
+    [TYPES.turret]: true,
+    [TYPES.infantry]: true,
+    [TYPES.engineer]: true
+  };
+
   function getBombParams() {
     let vX = data.vX * 0.625;
 
@@ -1584,7 +1591,7 @@ const Helicopter = (options = {}) => {
           : gameType === 'hard'
             ? 3
             : 6;
-      if (data.bombTargets[0].type === TYPES.turret) {
+      if (verticalBombTypes[data.bombTargets[0].type]) {
         // "cheat" and bomb much more vertically.
         vX = data.vX * 0.125;
       } else {
