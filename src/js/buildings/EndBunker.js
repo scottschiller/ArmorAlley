@@ -164,61 +164,85 @@ const EndBunker = (options = {}) => {
 
   function registerHelicopter(helicopter) {
     if (!objects.helicopters.includes(helicopter)) {
+      // track all choppers
       objects.helicopters.push(helicopter);
+
+      // count, and mark the first R/L we get for funds purposes
+      if (helicopter.data.isEnemy) {
+        objects.rightHelicopterCount++;
+        if (!objects.helicopters.right) {
+          objects.helicopters.right = helicopter;
+        }
+      } else {
+        objects.leftHelicopterCount++;
+        if (!objects.helicopters.left) {
+          objects.helicopters.left = helicopter;
+        }
+      }
     }
   }
 
   function distributeFunds() {
     if (game.objects.editor) return;
 
-    let offset, earnedFunds;
-
-    // note: end bunkers never die
-    if (data.frameCount % (data.fundsModulus * FPS) !== 0) return;
-
     // edge case: tutorial mode, and no enemy chopper present yet
     if (!objects.helicopters.length) return;
 
-    objects.helicopters.forEach((helicopter) => {
-      // figure out what region the chopper is in, and award funds accordingly. closer to enemy space = more reward.
+    // TODO: handle multiple players / shared banking / ??? later.
 
-      let pos = helicopter.data.x / game.objects.view.data.battleField.width;
+    // 2x for 60 FPS
+    let interval = Math.floor(
+      data.fundsModulus * FPS * (FPS / 30) * GAME_SPEED_RATIOED
+    );
 
-      if (data.isEnemy) {
-        offset = 1 - pos;
-      } else {
-        offset = pos;
-      }
+    let helicopter = objects.helicopters[data.isEnemy ? 'right' : 'left'];
+    let chopperX = helicopter.data.x;
 
-      if (offset < 0.33) {
-        earnedFunds = 1;
-      } else if (offset >= 0.33 && offset < 0.66) {
-        earnedFunds = 2;
-      } else {
-        earnedFunds = 3;
-      }
+    /**
+     * Based on original: add helicopter "distance" every frame,
+     * then some math at an interval to determine if funds are earned.
+     */
+    data.moneyDistL += data.isEnemy ? worldWidth - chopperX : chopperX;
 
-      /**
-       * TODO: co-op "joint banking" option.
-       * Until then, only local players contribute funds.
-       * Otherwise, you'd earn double on each human player's side.
-       */
-      if (helicopter.data.isLocal) {
-        data.funds += earnedFunds;
-      } else if (helicopter.data.isCPU) {
-        // TODO: does this need any special handling for network games? :X
-        data.funds += earnedFunds;
-      }
+    if (data.frameCount % interval !== 0) return;
 
-      if (helicopter.data.isLocal) {
-        game.objects.notifications.add(
-          `+${earnedFunds === 1 ? '💰' : `${earnedFunds} 💰`}`
-        );
-        game.objects.view.updateFundsUI();
+    let teamChopperCount = data.isEnemy
+      ? objects.rightHelicopterCount
+      : objects.leftHelicopterCount;
 
-        helicopter.updateStatusUI({ funds: true });
-      }
-    });
+    // based on original: 8192 x 32 ulGameClock ticks
+    let unitL = worldWidth * interval;
+
+    // no funds earned
+    if (data.moneyDistL <= unitL) return;
+
+    let amt =
+      unitL <<
+      Math.min(
+        (Math.max(0, data.funds) / 20 + teamChopperCount) >>
+          (gameType === 'easy' || tutorialMode
+            ? 4
+            : gameType === 'hard'
+              ? 3
+              : 2),
+        4
+      );
+
+    data.moneyDistL -= amt;
+
+    /**
+     * TODO: co-op "joint banking" option.
+     * Until then, only local players contribute funds.
+     * Otherwise, you'd earn double on each human player's side.
+     */
+    if (helicopter.data.isLocal) {
+      data.funds++;
+      game.objects.view.updateFundsUI();
+      helicopter.updateStatusUI({ funds: true });
+    } else if (helicopter.data.isCPU) {
+      // TODO: does this need any special handling for network games? :X
+      data.funds++;
+    }
   }
 
   function animate() {
@@ -356,10 +380,11 @@ const EndBunker = (options = {}) => {
         !options.isEnemy || tutorialMode
           ? 1
           : Math.max(1, ((levelNumber + 1) / 5) * cpuBiasByGameType[gameType]),
+      moneyDistL: 0,
       firing: false,
       gunYOffset: 10,
       fireModulus: 4,
-      fundsModulus: 10,
+      fundsModulus: 5.5, // as in, every 5.5 seconds
       midPoint: null
     },
     options
@@ -378,7 +403,11 @@ const EndBunker = (options = {}) => {
   };
 
   objects = {
-    helicopters: []
+    helicopters: [],
+    leftHelicopterCount: 0,
+    rightHelicopterCount: 0,
+    leftHelicopter: null,
+    rightHelicopter: null
   };
 
   exports = {
