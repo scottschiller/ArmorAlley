@@ -151,7 +151,8 @@ function seekLandingPad(data, options) {
   let target, targetData, deltaX, deltaY;
 
   if (data.isEnemy) {
-    target = pads[pads.length - (data.x > 6144 ? 1 : 2)];
+    // stick to own base, but take middle pad if available.
+    target = pads[pads.length - (data.x > 6144 ? 1 : (pads.length === 3 ? 2 : 1))];
   } else {
     target = pads[data.x < 2048 ? 0 : 1];
   }
