@@ -941,23 +941,6 @@ function addWorldObjects() {
   );
 }
 
-function selectByDifficulty(optionsArray) {
-  /**
-   * Given optionsArray of [1, 2, 3, 4], return the whole thing or a subset based on difficulty.
-   * e.g., groups of turrets in "Midnight Oasis", in easy / hard / extreme / armorgeddon mode.
-   * This will be inconsistent if there are more than four options provided.
-   */
-
-  let offsets = {
-    easy: 1,
-    hard: 2,
-    extreme: 3,
-    armorgeddon: 4
-  };
-
-  return optionsArray.splice(0, offsets[gameType] || offsets.easy);
-}
-
 originalLevels = {
   'Tutorial': tutorialLevel,
   'Cake Walk': cakeWalkLevel,
