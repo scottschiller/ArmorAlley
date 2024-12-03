@@ -658,10 +658,11 @@ function previewLevel(levelName, excludeVehicles) {
 
   if (excludeVehicles) {
     // buildings only
-    data = data.filter((item) =>
-      item?.[0]?.match(
-        /base|bunker|super-bunker|chain|balloon|turret|landing-pad/i
-      )
+    data = data.filter(
+      (item) =>
+        item?.[0]?.match(
+          /base|bunker|super-bunker|chain|balloon|turret|landing-pad/i
+        ) && !shouldExcludeUnit(item)
     );
   } else {
     // buildings + units
