@@ -31,6 +31,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
+import { Vector } from '../core/Vector.js';
 
 const TURRET_SCAN_RADIUS = 340;
 
@@ -126,6 +127,24 @@ const Turret = (options = {}) => {
     if (data.frameCount % data.fireModulus === 0 && moveOK) {
       data.fireCount++;
 
+      let fireOffset = data.fireCount % 3;
+
+      if (fireOffset !== 0) {
+        // "spray" by offsetting target x/y a bit, two thirds of the time
+        deltaX += target.data.vX << (fireOffset + 1);
+        deltaY += target.data.vY << (fireOffset + 1);
+      }
+
+      let vX = deltaX;
+      let vY = Math.min(0, deltaY);
+
+      let hyp = Math.abs(Math.hypot(vX, vY));
+    
+      let vec = new Vector(vX, vY);
+
+      // reasonable "distance to barrel velocity"
+      vec.setMag(Math.min(32, hyp / 10));
+
       game.addObject(TYPES.gunfire, {
         parent: exports,
         parentType: data.type,
@@ -134,10 +153,11 @@ const Turret = (options = {}) => {
         // turret gunfire mostly hits airborne things.
         collisionItems,
         // roughly align gunfire with tip of angled barrel
-        x: startX + Math.cos(angleRad) * (data.halfWidth + 8.5),
-        y: startY + Math.sin(angleRad) * 16,
-        vX: deltaX * 0.05 + deltaXGretzky,
-        vY: Math.min(0, deltaY * 0.05 + deltaYGretzky)
+        x: startX + Math.cos(angleRad),
+        y: startY + Math.sin(angleRad),
+        vX: vec.x,
+        vY: vec.y,
+        damagePoints: (gameType === 'easy' ? 2 : 1) // original game used 5, but we use a higher frame + firing rate.
       });
 
       if (sounds.turretGunFire) {
