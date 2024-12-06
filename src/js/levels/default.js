@@ -428,6 +428,37 @@ function calculateIQ(type = 'campaign', offset = 0) {
   return iq;
 }
 
+function getBalance(levelData) {
+  // Battlefield fairness
+
+  if (!levelData || !itemStats) return;
+
+  let left = 0;
+  let right = 0;
+
+  levelData.forEach((item) => {
+    // certain types are omitted e.g., `landing-pad`, all values are zeroed.
+    // type check: left + groundLeft, right + groundRight
+    if (item[1].match(/left/i)) {
+      left += itemStats[item[0]]?.iMass || 0;
+    } else if (item[1].match(/right/i)) {
+      right += itemStats[item[0]]?.iMass || 0;
+    }
+  });
+
+  let b;
+
+  if (left == right) {
+    b = 0;
+  } else {
+    b = Math.round(
+      left > right ? Math.max(-9, -(left / right)) : Math.min(9, right / left)
+    );
+  }
+
+  return b;
+}
+
 // based on original game data
 let levelConfig = {};
 
