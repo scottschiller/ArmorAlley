@@ -3431,14 +3431,21 @@ const Helicopter = (options = {}) => {
           common.hit(target, 999, exports);
         } else if (tData.type === TYPES.infantry) {
           // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
-          if (
-            data.landed &&
-            !data.onLandingPad &&
-            data.parachutes < data.maxParachutes &&
-            tData.isEnemy === data.isEnemy
-          ) {
+          if (data.landed && !data.onLandingPad) {
             // check if it's at the helicopter "door".
             if (collisionCheckMidPoint(target, exports)) {
+              // Per game tips: "infantry carry grenades" - and here's where they get used. Deadly!
+              if (tData.isEnemy !== data.isEnemy) {
+                game.objects.notifications.addNoRepeat(
+                  'Your helicopter was hit with a grenade. 🚁'
+                );
+                die({ attacker: target });
+                return;
+              }
+
+              // bail if at capacity
+              if (data.parachutes >= data.maxParachutes) return;
+
               // pick up infantry (silently)
               target.die({ silent: true });
               playSound(sounds.popSound, exports);
@@ -3541,7 +3548,7 @@ const Helicopter = (options = {}) => {
       }
     },
     items: getTypes(
-      'helicopter, superBunker:all, bunker, balloon, tank, van, missileLauncher, chain, infantry:friendly, engineer:friendly, cloud:all',
+      'helicopter, superBunker:all, bunker, balloon, tank, van, missileLauncher, chain, infantry:all, engineer:all, cloud:all',
       { exports }
     )
   };
