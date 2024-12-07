@@ -2956,6 +2956,8 @@ const Helicopter = (options = {}) => {
   // computer player
   let isCPU = !!options.isCPU;
 
+  const energy = 20;
+
   data = common.inheritData(
     {
       type: TYPES.helicopter,
@@ -3027,9 +3029,9 @@ const Helicopter = (options = {}) => {
       repairFrames: 0,
       dieCount: 0,
       ejectCount: 0,
-      energy: 10,
-      energyMax: 10,
-      energyRepairModulus: 5,
+      energy,
+      energyMax: energy,
+      energyRepairModulus: 10,
       energyLineScale: 0.25,
       bnbMediaActive: false,
       direction: 0,

@@ -314,12 +314,14 @@ const MissileLauncher = (options = {}) => {
     scanNode: 'scan-node'
   });
 
+  const energy = 8;
+
   data = common.inheritData(
     {
       type: 'missile-launcher',
       bottomAligned: true,
-      energy: 3,
-      energyMax: 3,
+      energy,
+      energyMax: energy,
       direction: 0,
       vX: options.isEnemy ? -1 : 1,
       frameCount: 0,

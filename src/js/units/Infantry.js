@@ -401,13 +401,15 @@ const Infantry = (options = {}) => {
   width = 10;
   height = DEFAULT_HEIGHT;
 
+  const energy = 5;
+
   data = common.inheritData(
     {
       type: TYPES.infantry,
       frameCount: Math.random() > 0.5 ? 5 : 0,
       bottomAligned: true,
-      energy: 2,
-      energyMax: 2,
+      energy,
+      energyMax: energy,
       role: options.role || 0,
       roles: [TYPES.infantry, TYPES.engineer],
       isBeavis: !options.isEnemy && !!options.isBeavis,

@@ -800,15 +800,17 @@ const Turret = (options = {}) => {
   let lastTurret = game.objects.turret[game.objects.turret.length - 1 || 0];
   let isDuplicate = options.x === lastTurret?.data?.x;
 
+  const energy = 31;
+
   data = common.inheritData(
     {
       type: TYPES.turret,
       bottomAligned: true,
       dead: false,
-      energy: 50,
-      energyMax: 50,
+      energy,
+      energyMax: energy,
       energyTimerScale: 3,
-      lastEnergy: 50,
+      lastEnergy: energy,
       firing: false,
       fireCount: 0,
       frameCount: 3 * game.objects[TYPES.turret].length, // stagger so sound effects interleave nicely

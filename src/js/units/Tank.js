@@ -402,13 +402,15 @@ const Tank = (options = {}) => {
   const width = 58;
   const fireModulus = 12;
 
+  const energy = 15;
+
   data = common.inheritData(
     {
       type: TYPES.tank,
       bottomAligned: true,
       deadTimer: null,
-      energy: 8,
-      energyMax: 8,
+      energy,
+      energyMax: energy,
       energyLineScale: 0.8,
       flame: null,
       frameCount: 0,

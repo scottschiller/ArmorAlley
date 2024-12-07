@@ -267,6 +267,8 @@ const ParachuteInfantry = (options = {}) => {
 
   let type = TYPES.parachuteInfantry;
 
+  const energy = 5;
+
   data = common.inheritData(
     {
       type,
@@ -279,8 +281,8 @@ const ParachuteInfantry = (options = {}) => {
       panicModulus: 3,
       windModulus: options.windModulus || 32 + rngInt(32, type),
       panicFrame: rngInt(3, type),
-      energy: 2,
-      energyMax: 2,
+      energy,
+      energyMax: energy,
       parachuteOpen: false,
       // "most of the time", a parachute will open. no idea what the original game did. 10% failure rate.
       parachuteOpensAtY:

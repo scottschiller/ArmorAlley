@@ -278,6 +278,8 @@ const Van = (options = {}) => {
     className: TYPES.van
   });
 
+  const energy = 12;
+
   data = common.inheritData(
     {
       type: TYPES.van,
@@ -287,8 +289,8 @@ const Van = (options = {}) => {
       radarJammerModulus: FPS / 3,
       radarJammerModulus1X: FPS / 3,
       jamming: false,
-      energy: 2,
-      energyMax: 2,
+      energy,
+      energyMax: energy,
       direction: 0,
       approachingBase: 768,
       vX: options.isEnemy ? -1 : 1,

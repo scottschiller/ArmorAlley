@@ -516,6 +516,8 @@ const Bunker = (options = {}) => {
 
   const smokeFrames = (burninatingTime / 1000) * FPS;
 
+  const energy = 69;
+
   data = common.inheritData(
     {
       type: TYPES.bunker,
@@ -523,9 +525,9 @@ const Bunker = (options = {}) => {
       y: game.objects.view.data.world.height - 25 - 2, // override to fix helicopter / bunker vertical crash case
       smokeFramesLeft: parseInt(smokeFrames, 10),
       smokeFramesMax: smokeFrames,
-      energy: 50,
-      energyHalf: 25,
-      energyMax: 50,
+      energy,
+      energyHalf: energy / 2,
+      energyMax: energy,
       hasBeavis: false,
       hasButthead: false,
       isRecapture: false,

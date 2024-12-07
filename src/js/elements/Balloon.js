@@ -442,6 +442,8 @@ const Balloon = (options = {}) => {
   // for centering over the bunker: half bunker width (if provided), minus half balloon width (local)
   const leftOffset = (options.bunker?.data?.halfWidth || 0) - halfWidth;
 
+  const energy = 6;
+
   data = common.inheritData(
     {
       type: TYPES.balloon,
@@ -450,8 +452,8 @@ const Balloon = (options = {}) => {
       windModulus: 16,
       windOffsetX: 0,
       windOffsetY: 0,
-      energy: 3,
-      energyMax: 3,
+      energy,
+      energyMax: energy,
       direction: 0,
       detached: !objects.bunker,
       hostile: !objects.bunker, // dangerous when detached
