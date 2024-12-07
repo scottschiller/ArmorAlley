@@ -671,6 +671,9 @@ function shouldExcludeUnit(item) {
     // for now, exclude from all levels on Boot Camp.
     if (gameType === 'easy') return true;
 
+    // never exclude on armorgeddon.
+    if (gameType === 'armorgeddon') return false;
+
     /**
      * From testing original, Wargames and Conflict have these as of level 5.
      * At present, assuming all-or-nothing; it's possible that groups may be
@@ -679,7 +682,7 @@ function shouldExcludeUnit(item) {
      * Also unconfirmed: There is a single ground turret in level 4,
      * and only Armorgeddon remains as the one difficulty that would show it.
      */
-    return levelNumber <= (gameType !== 'armorgeddon' ? 4 : 5);
+    return levelNumber < 4;
   }
 
   /**
