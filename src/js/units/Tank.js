@@ -121,7 +121,7 @@ const Tank = (options = {}) => {
     if (data.frameCount % (data.repairModulus / 15) === 0) {
       if (data.energy < data.energyMax) {
         data.lastEnergy = parseFloat(data.energy);
-        data.energy += 0.6 / 15;
+        data.energy += 1.5 / 15;
         updateHealth();
       }
     }
