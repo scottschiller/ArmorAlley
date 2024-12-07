@@ -927,7 +927,7 @@ const DomCanvas = () => {
     if (!diff) return;
 
     // "animate" the energy bar value change
-    exports.data.lastDrawnEnergy += diff * (1 / (FPS / 8));
+    exports.data.lastDrawnEnergy += diff * (1 / (FPS / 16));
 
     // hackish: re-assign "energy" as the value to draw.
     energy = exports.data.lastDrawnEnergy;
