@@ -58,6 +58,12 @@ const GunFire = (options = {}) => {
         if (pType === TYPES.tank) {
           data.damagePoints = 8;
           effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
+        } else if (pType === TYPES.helicopter) {
+          /**
+           * In the original game, helicopter gunfire is 2 and turrets have 31 hit points.
+           * To keep things challenging, make helicopter gunfire less effective on turrets.
+           */
+          data.damagePoints /= 2;
         } else if (pType === TYPES.infantry) {
           // infantry take a *long* time to take out a turret in the original game.
           data.damagePoints /= 4;
