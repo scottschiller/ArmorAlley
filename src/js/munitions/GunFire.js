@@ -65,8 +65,9 @@ const GunFire = (options = {}) => {
            */
           data.damagePoints /= 2;
         } else if (pType === TYPES.infantry) {
-          // infantry take a *long* time to take out a turret in the original game.
-          data.damagePoints /= 4;
+          // infantry also take more time on turrets, in the original.
+          // this rate takes ~2x as long vs. original, but feels reasonable.
+          data.damagePoints /= 2;
         }
       }
 
