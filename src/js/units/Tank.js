@@ -85,7 +85,7 @@ const Tank = (options = {}) => {
       parent: exports,
       parentType: data.type,
       isEnemy: data.isEnemy,
-      damagePoints: 2, // tanks fire at half-rate, so double damage.
+      damagePoints: 5,
       collisionItems,
       x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
       // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry

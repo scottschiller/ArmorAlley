@@ -134,8 +134,13 @@ const Shrapnel = (options = {}) => {
     if (damageTarget) {
       common.hit(
         target,
-        // choppers get "special" treatment.
-        data.damagePoints * (target.data.type === TYPES.helicopter ? 2 : 1),
+        // choppers get double, vans get half-damage.
+        data.damagePoints *
+          (target.data.type === TYPES.helicopter
+            ? 2
+            : target.data.type === TYPES.van
+              ? 0.5
+              : 1),
         exports
       );
     }

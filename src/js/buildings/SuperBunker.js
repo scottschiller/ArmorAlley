@@ -178,7 +178,8 @@ const SuperBunker = (options = {}) => {
       y: data.y + data.gunYOffset, // position of bunker gun
       fixedXY: true,
       vX: 2,
-      vY: 0
+      vY: 0,
+      damagePoints: 4
     };
 
     game.addObject(TYPES.gunfire, fireOptions);

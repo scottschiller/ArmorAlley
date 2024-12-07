@@ -1761,6 +1761,8 @@ const Helicopter = (options = {}) => {
       vY = seekForce.y;
     }
 
+    const damagePoints = 2;
+
     return {
       parent: exports,
       parentType: data.type,
@@ -1768,7 +1770,8 @@ const Helicopter = (options = {}) => {
       x,
       y,
       vX,
-      vY
+      vY,
+      damagePoints
     };
   }
 

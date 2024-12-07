@@ -66,7 +66,8 @@ const EndBunker = (options = {}) => {
       x: data.x + (data.width + 1),
       y: data.y + data.gunYOffset, // half of height
       vX: 2,
-      vY: 0
+      vY: 0,
+      damagePoints: 4
     };
 
     game.addObject(TYPES.gunfire, fireOptions);

@@ -157,7 +157,7 @@ const Turret = (options = {}) => {
         y: startY + Math.sin(angleRad),
         vX: vec.x,
         vY: vec.y,
-        damagePoints: (gameType === 'easy' ? 2 : 1) // original game used 5, but we use a higher frame + firing rate.
+        damagePoints: gameType === 'easy' ? 2 : 1 // original game used 5, but we use a higher frame + firing rate.
       });
 
       if (sounds.turretGunFire) {

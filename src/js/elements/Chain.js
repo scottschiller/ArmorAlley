@@ -241,7 +241,7 @@ const Chain = (options = {}) => {
       adjustedWorldHeight: game.objects.view.data.world.height - 16,
       // tracks what's actually on the DOM
       appliedHeight: 0,
-      damagePoints: 6,
+      damagePoints: 18,
       fallingVelocity: 0.5,
       fallingVelocityInitialRate: 0.5,
       fallingVelocityIncrement: 0.125

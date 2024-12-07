@@ -928,7 +928,7 @@ const SmartMissile = (options = {}) => {
       height,
       halfHeight: height / 2,
       gravity: 1,
-      damagePoints: 12.5,
+      damagePoints: 25,
       isBanana: !!options.isBanana,
       isRubberChicken: !!options.isRubberChicken,
       isSmartMissile: !!options.isSmartMissile,
