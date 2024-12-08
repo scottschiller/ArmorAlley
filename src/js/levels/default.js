@@ -386,13 +386,17 @@ function parseFlags(levelConfig) {
   return result;
 }
 
+function getFlagsByLevel(levelName) {
+  // for building the battle list
+  let config = getLevelConfig(levelName);
+  let flags = parseFlags(config);
+  return flags;
 }
 
 function updateFlags(levelName) {
-  levelFlags = parseFlags(levelName);
-  // for now, also get config from here.
-  // TODO: DRY.
+  // active selection / what to play
   levelConfig = getLevelConfig(levelName);
+  levelFlags = parseFlags(levelConfig);
 }
 
 function getDifficultyMultiplier() {
@@ -410,25 +414,36 @@ function getDifficultyMultiplier() {
   return d;
 }
 
-function getLevelConfig(levelName) {
-  let offset;
+function getLevelOffset(levelName) {
+  let offset = campaignBattles.indexOf(levelName);
 
-  offset = campaignBattles.indexOf(levelName);
-
+  // regular campaign match
   if (offset !== -1) {
-    return getLevelParams(originalParams, getDifficultyMultiplier() + offset);
+    return {
+      value: getDifficultyMultiplier() + offset,
+      isCampaign: true
+    };
   }
 
   // network battle
-  offset = networkBattles.indexOf(levelName);
+  return {
+    value: networkBattles.indexOf(levelName),
+    isCampaign: false
+  };
+}
 
-  if (offset !== -1) {
-    // 1:1 mapping, params do not change based on difficulty.
-    return getLevelParams(networkParams, offset);
-  }
+function getLevelConfig(levelName) {
+  let offset = getLevelOffset(levelName);
 
   // tutorial or custom level: use default demo params.
-  return getLevelParams(demoParams, 0);
+  if (offset.value === -1) {
+    return getLevelParams(demoParams, 0);
+  }
+
+  return getLevelParams(
+    offset.isCampaign ? originalParams : networkParams,
+    offset.value
+  );
 }
 
 function applyFlags() {
