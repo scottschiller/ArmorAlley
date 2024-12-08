@@ -765,6 +765,19 @@ function formClick(e) {
     return;
   }
 
+  if (name === 'net_game_type') {
+    // hackish: grab the currently-selected level
+    const levelName = document.querySelector(
+      'input[name="net_game_level"]:checked'
+    ).value;
+
+    game.setGameType(target.value);
+
+    previewLevel(levelName);
+
+    return;
+  }
+
   if (target.href && utils.css.has(target, 'cta')) {
     e.preventDefault();
 
