@@ -626,8 +626,35 @@ function shouldExcludeUnit(item) {
   }
 }
 
-function previewLevel(levelName, excludeVehicles) {
+function filterLevelData(data, excludeVehicles) {
+  if (excludeVehicles) {
+    // buildings only
+    return data.filter(
+      (item) =>
+        item?.[0]?.match(
+          /base|bunker|super-bunker|chain|balloon|turret|landing-pad/i
+        ) && !shouldExcludeUnit(item)
+    );
+  }
+  // buildings + units
+  return data.filter(
+    (item) =>
+      item?.[0]?.match(
+        /base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i
+      ) && !shouldExcludeUnit(item)
+  );
+}
+
+function previewLevel(levelName) {
   // given level data, filter down and render at scale.
+
+  // if playing network co-op vs. CPU, then include CPU vehicles to start.
+  // also, let custom levels include any provided vehicles.
+
+  const excludeVehicles =
+    prefsManager.data.network &&
+    gamePrefs.net_game_style.match(/coop/) &&
+    levelName != 'Custom Level';
 
   if (!levelName) return;
 
@@ -658,28 +685,12 @@ function previewLevel(levelName, excludeVehicles) {
     }
   });
 
+  data = filterLevelData(data, excludeVehicles);
+
   // get the canvas stuff ready to render.
   common.domCanvas.resize();
 
   game.objects.radar.reset();
-
-  if (excludeVehicles) {
-    // buildings only
-    data = data.filter(
-      (item) =>
-        item?.[0]?.match(
-          /base|bunker|super-bunker|chain|balloon|turret|landing-pad/i
-        ) && !shouldExcludeUnit(item)
-    );
-  } else {
-    // buildings + units
-    data = data.filter(
-      (item) =>
-        item?.[0]?.match(
-          /base|bunker|super-bunker|chain|balloon|turret|landing-pad|tank|launcher|van|infantry|engineer/i
-        ) && !shouldExcludeUnit(item)
-    );
-  }
 
   const initMethods = {
     base: {
@@ -979,6 +990,7 @@ export {
   addWorldObjects,
   calculateIQ,
   campaignBattles,
+  filterLevelData,
   levelFlags,
   levelConfig,
   levelName,
