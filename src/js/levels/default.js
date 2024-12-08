@@ -159,65 +159,6 @@ const networkBattles = [
  * Rainstorm         • •   • 177   0
  */
 
-const networkFlags = {
-  'Balloon Fun': [1, 0, 0, 0, 126, 0],
-  'Cavern Cobra': [1, 0, 0, 0, 127, 0],
-  'Desert Sortie': [1, 1, 0, 0, 150, 0],
-  'First Blood': [1, 0, 0, 0, 131, 2],
-  'Network Mania': [1, 1, 0, 0, 154, 5],
-  'Rescue Raiders': [1, 1, 0, 0, 158, 0],
-  'Midpoint': [1, 1, 1, 0, 176, -2],
-  'Slithy Toves': [1, 1, 0, 0, 158, 0],
-  "Tanker's Demise": [1, 1, 1, 0, 178, 0],
-  'WindStalker': [1, 1, 0, 1, 179, 2],
-  'Sandstorm': [1, 1, 1, 0, 177, 0],
-  'Rainstorm': [1, 1, 0, 1, 177, 0]
-};
-
-const flagsByLevel = {
-  easy: {
-    'Cake Walk': [1, 0, 0, 0, 16, -1],
-    'One-Gun': [1, 0, 0, 0, 18, -1],
-    'Sucker Punch': [1, 0, 0, 0, 22, 0],
-    'Airborne': [1, 0, 0, 0, 29, 0],
-    'Two-Gun': [1, 0, 0, 0, 29, 2],
-    'Super Bunker': [1, 0, 0, 0, 28, 9],
-    'Scrapyard': [1, 0, 0, 0, 42, 9],
-    'Blind Spot': [1, 1, 0, 0, 111, 9],
-    'Wasteland': [1, 1, 0, 0, 115, 9],
-    'Midnight Oasis': [1, 1, 0, 0, 133, 9],
-    ...networkFlags
-  },
-  hard: {
-    // Wargames + Conflict campaigns
-    'Cake Walk': [1, 0, 0, 0, 29, -1],
-    'One-Gun': [1, 0, 0, 0, 28, -1],
-    'Sucker Punch': [1, 0, 0, 0, 42, 0],
-    'Airborne': [1, 1, 0, 0, 111, 0],
-    'Two-Gun': [1, 1, 0, 0, 115, 2],
-    'Super Bunker': [1, 1, 0, 0, 133, 9],
-    'Scrapyard': [1, 1, 0, 0, 133, 9],
-    'Blind Spot': [0, 1, 0, 0, 153, 9],
-    'Wasteland': [0, 1, 0, 0, 153, 9],
-    'Midnight Oasis': [0, 1, 1, 0, 176, 9],
-    ...networkFlags
-  },
-  extreme: {
-    // Armorgeddon
-    'Cake Walk': [0, 1, 0, 0, 153, -1],
-    'One-Gun': [0, 1, 1, 0, 176, -1],
-    'Sucker Punch': [0, 1, 1, 0, 176, 0],
-    'Airborne': [0, 1, 1, 0, 193, 0],
-    'Two-Gun': [0, 1, 1, 0, 193, 2],
-    'Super Bunker': [0, 1, 1, 1, 218, 9],
-    'Scrapyard': [1, 1, 1, 1, 198, 9],
-    'Blind Spot': [1, 1, 1, 1, 198, 9],
-    'Wasteland': [0, 1, 1, 1, 218, 9],
-    'Midnight Oasis': [0, 1, 1, 1, 218, 9],
-    ...networkFlags
-  }
-};
-
 // TODO: override when playing a custom level that might have flags specified, e.g., &fb=1&fn=0&fs=0&fj=0
 const defaultFlags = [1, 0, 0, 0, 0, 0];
 
