@@ -566,70 +566,15 @@ body.is_iphone #game-prefs-modal button {
   font-family: monospace;
 }
 
-.mac-classic ul.monospace li label pre s {
-  /* battle "flags" to be hidden under boot camp mode */
-  text-decoration: none;
-}
-
-.mac-classic ul.monospace li label pre q::before,
-.mac-classic ul.monospace li label pre q::after {
-  /* hide quote marks */
-  display: none;
-}
-
-#game-prefs-modal.easy ul.monospace li label pre b.q {
-  /* hackish: extreme mode flag also needs to show for easy mode. */
-  color: #000;
-}
-
-.mac-classic ul.monospace li label pre u {
-  /* battle "flags" to be hidden under extreme mode */
-  text-decoration: none;
-}
-
-.mac-classic {
-  --disabled-flag: #ccc;
-}
-
-.mac-classic ul.monospace li label pre i {
-  /* flags that are always in the off/inactive stats */
-  color: var(--disabled-flag);
-}
-
-#game-prefs-modal:not(.easy) ul.monospace li label pre q {
-  /* when *not* in easy */
-  color: var(--disabled-flag);
-}
-
-#game-prefs-modal.easy ul.monospace li label pre s {
-  /* <s>: easy */
-  color: var(--disabled-flag);
-}
-
-#game-prefs-modal:not(.extreme) ul.monospace li label pre .ne {
-  /* .ne: not extreme */
-  color: var(--disabled-flag);
-}
-
-#game-prefs-modal.extreme ul.monospace li label pre u {
-  /* <u>: hide when extreme */
-  color: var(--disabled-flag);
-}
-
 .mac-classic ul.monospace li label pre b {
-  /* hide <b> when not extreme mode */
-  font-weight: normal;
-  color: var(--disabled-flag);
-}
-
-#game-prefs-modal.hard ul.monospace li label pre .h {
-  /* hard-mode-specific */
+  /* "enabled" flag */
   color: #000;
 }
 
-#game-prefs-modal.extreme ul.monospace li label pre b {
-  /* <b>: extreme */
-  color: #000;
+.mac-classic ul.monospace li label pre s {
+  /* "disabled" flag */
+  text-decoration: none;
+  color: #ccc;
 }
 
 .mac-classic ul.monospace li pre {
