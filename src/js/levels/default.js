@@ -623,16 +623,19 @@ function normalizeLevelData(data) {
 function shouldExcludeUnit(item) {
   if (!item?.length) return;
 
+  // hackish: network vs. local game type check.
+  let gt = prefsManager.data.network ? gamePrefs.net_game_type : gameType;
+
   // exclude "ground-targeting" turrets in certain cases.
   if (
     item[0] === 'turret' &&
     (item[1] === groupMap.gl || item[1] === groupMap.gr)
   ) {
     // for now, exclude from all levels on Boot Camp.
-    if (gameType === 'easy') return true;
+    if (gt === 'easy') return true;
 
     // never exclude on armorgeddon.
-    if (gameType === 'armorgeddon') return false;
+    if (gt === 'armorgeddon') return false;
 
     /**
      * From testing original, Wargames and Conflict have these as of level 5.
