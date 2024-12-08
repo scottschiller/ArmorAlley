@@ -32,10 +32,14 @@ import { common } from '../core/common.js';
 import { gameMenu } from './game-menu.js';
 import {
   calculateIQ,
-  campaignBattles,
-  getDifficultyMultiplier,
+  filterLevelData,
+  getBalance,
+  getFlagsByLevel,
+  getLevelOffset,
   levelFlags,
   networkBattles,
+  normalizeLevelData,
+  originalLevels,
   previewLevel,
   setLevel
 } from '../levels/default.js';
@@ -793,70 +797,78 @@ function PrefsManager() {
     });
   }
 
-  function updateGameType(prefix) {
-    // given radio buttons, update CSS on modal.
-    ['easy', 'hard', 'extreme', 'armorgeddon'].forEach((mode) => {
-      let element = document.getElementById(`${prefix}${mode}`);
-      if (!element) return;
-      utils.css.addOrRemove(dom.o, element.checked, mode);
-      // HACK: treat armorgeddon same as extreme for now
-      if (mode === 'armorgeddon' && element.checked) {
-        utils.css.add(dom.o, 'extreme');
-      }
-    });
-    updateIQ();
-  }
-
-  function updateIQ() {
+  function updateBattleLists() {
     dom.o
       .querySelectorAll('.battle-list')
-      ?.forEach((list) => updateIQList(list));
+      ?.forEach((list) => updateBattleList(list));
   }
 
-  function updateIQList(list) {
+  function updateBattleList(list) {
     let inputs = list.querySelectorAll('input');
     if (!inputs.length) return;
 
-    inputs.forEach((input) => {
-      let levelName = input.getAttribute('value');
+    inputs.forEach((input) =>
+      renderBattleRow(input.getAttribute('value'), input)
+    );
+  }
 
-      let isTutorial = levelName === 'Tutorial';
+  function renderBattleRow(levelName, inputNode) {
+    let data = normalizeLevelData(
+      originalLevels[levelName] || networkBattles[levelName]
+    );
 
-      /**
-       * Ignore tutorial; technically it uses demoParams, but ultimately N/A for user
-       * since the enemy doesn't order convoys, and the enemy chopper only spawns once.
-       */
-      if (isTutorial) return;
+    if (!data) return;
 
-      let isNetwork = networkBattles.includes(levelName);
+    // TODO: externalize, make a method or something
+    const excludeVehicles =
+      data.network &&
+      gamePrefs.net_game_style.match(/coop/) &&
+      levelName != 'Custom Level';
 
-      let levelList = isNetwork ? networkBattles : campaignBattles;
+    data = filterLevelData(data, excludeVehicles);
 
-      let levelNumber = levelList.indexOf(levelName);
+    let flags = getFlagsByLevel(levelName);
 
-      let difficultyOffset =
-        isNetwork || levelName === 'Tutorial'
-          ? 0
-          : getDifficultyMultiplier(data.network);
+    // render battle / level row in menu
+    let html = [];
 
-      let iq = calculateIQ(
-        isNetwork ? 'network' : 'campaign',
-        difficultyOffset + levelNumber
-      );
+    // fixed-width
+    let spacing = ' '.repeat(15 - levelName.length);
+    html.push(levelName + spacing);
 
-      // right-align and ensure 3-character-wide IQ results.
-      if (!iq) {
-        // "empty" (tutorial or not-found) case
-        iq = 'N/A';
-      } else if (iq < 10) {
-        iq = `  ${iq}`;
-      } else if (iq < 100) {
-        iq = ` ${iq}`;
-      }
+    Object.keys(flags).forEach((key) =>
+      html.push(flags[key] ? '<b>•</b>' : '<s>•</s>')
+    );
 
-      // old-skool. :P
-      input.parentNode.getElementsByTagName('span')[0].innerText = iq;
-    });
+    // fairness
+    let balance = getBalance(data);
+
+    // equal spacing
+    html.push((balance > 0 ? '+' : balance === 0 ? ' ' : '') + balance);
+
+    // IQ
+    let offset = getLevelOffset(levelName);
+
+    let iq = calculateIQ(
+      offset.isCampaign ? 'campaign' : 'network',
+      offset.value
+    );
+
+    // right-align and ensure 3-character-wide IQ results.
+    if (!iq) {
+      // "empty" (tutorial or not-found) case
+      iq = ' --';
+    } else if (iq < 10) {
+      iq = `  ${iq}`;
+    } else if (iq < 100) {
+      iq = ` ${iq}`;
+    }
+
+    html.push(iq);
+
+    if (inputNode) {
+      inputNode.parentNode.querySelector('pre').innerHTML = html.join(' ');
+    }
   }
 
   function showForReal(options = {}) {
@@ -898,14 +910,15 @@ function PrefsManager() {
         .querySelectorAll('input[name="net_game_type"]')
         .forEach((radio) => {
           utils.events.add(radio, 'change', (e) => {
-            updateGameType('radio_net_game_type_');
+            // hackish: assign pref right away.
+            gamePrefs.net_game_type = e.target.value;
+            updateBattleLists();
           });
         });
       // drop range UI, since we don't limit helicopter movement in network mode
       document.getElementById('flight-range')?.remove();
     } else {
-      // apply game mode CSS, which applies to battle list flags
-      updateGameType('prefs_radio_game_type_');
+      updateBattleLists();
 
       const oSubmit = document.getElementById('game-prefs-submit');
       oSubmit?.focus();
@@ -925,7 +938,7 @@ function PrefsManager() {
       const difficulty = document.getElementById('prefs-game-difficulty');
       utils.events.add(difficulty, 'change', (e) => {
         game.setGameType(e.target.value);
-        updateGameType('prefs_radio_game_type_');
+        updateBattleLists();
         gameMenu.updateGameLevelControl();
       });
     }
@@ -1226,11 +1239,7 @@ function PrefsManager() {
     }
 
     // ensure battle list shows the right things.
-    if (data.network) {
-      updateGameType('radio_net_game_type_');
-    } else {
-      updateGameType('prefs_radio_game_type_');
-    }
+    updateBattleLists();
 
     dom.oGameSpeedSlider.value = gamePrefs.game_speed;
     renderGameSpeedSlider();
@@ -1615,7 +1624,7 @@ function PrefsManager() {
                   if (name === 'net_game_level') {
                     selectLevel(value);
                   } else if (name === 'net_game_type') {
-                    updateGameType('radio_net_game_type_');
+                    updateBattleLists();
                   }
                 }
               }
