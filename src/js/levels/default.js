@@ -399,10 +399,15 @@ function getDifficultyMultiplier() {
   let d = 0;
   // compare vs. regular, or network game prefs depending
   let gt = prefsManager.data.network ? gamePrefs.net_game_type : gameType;
-  if (gt === 'hard') d = 1;
-  if (gt === 'extreme') d = 2;
-  if (gt === 'armorgeddon') d = 3;
-  return d * 4;
+  if (gt === 'hard') d = 4;
+  /**
+   * It appears Wargames and Conflict get the same offsets (battle flags / IQ etc.) in the original "choose battle" UI.
+   * The battles would be identical and this seems like a display bug, given the offsets divide nicely by 4.
+   * Thusly, Conflict has an offset of 8 to place it evenly between Wargames and Armorgeddon.
+   */
+  if (gt === 'extreme') d = 8;
+  if (gt === 'armorgeddon') d = 12;
+  return d;
 }
 
 function getLevelConfig(levelName) {
@@ -959,7 +964,6 @@ export {
   addWorldObjects,
   calculateIQ,
   campaignBattles,
-  getDifficultyMultiplier,
   levelFlags,
   levelConfig,
   levelName,
