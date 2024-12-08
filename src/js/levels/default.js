@@ -991,13 +991,17 @@ export {
   calculateIQ,
   campaignBattles,
   filterLevelData,
+  getFlagsByLevel,
+  getBalance,
+  getLevelOffset,
   levelFlags,
   levelConfig,
   levelName,
   levelNumber,
   networkBattles,
+  normalizeLevelData,
+  originalLevels,
   previewLevel,
   setCustomLevel,
-  setLevel,
-  updateFlags
+  setLevel
 };
