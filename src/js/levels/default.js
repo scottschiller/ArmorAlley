@@ -431,15 +431,23 @@ let flagOverrides = {
   stealth: searchParams.get('noStealth')
 };
 
-function parseFlags(levelName) {
-  const f = flagsByLevel[gamePrefs.game_type]?.[levelName] || defaultFlags;
-  return {
-    bullets: flagOverrides.aimedMissiles ? 0 : f[0],
-    napalm: f[1],
-    stealth: flagOverrides.stealth ? 0 : f[2],
-    jamming: f[3] && flagOverrides.jamming,
-    fairness: f[5]
+function parseFlags(levelConfig) {
+  const c = levelConfig;
+
+  let f = {
+    bullets: flagOverrides.aimedMissiles ? 0 : !c.bDumbMissiles,
+    napalm: c.bNapalm,
+    stealth: flagOverrides.stealth ? 0 : c.stealthB,
+    jamming: c.jammingB && flagOverrides.jamming
   };
+
+  let result = {};
+  // boolean coersion
+  Object.keys(f).forEach((k) => (result[k] = !!f[k]));
+
+  return result;
+}
+
 }
 
 function updateFlags(levelName) {
