@@ -449,10 +449,10 @@ function updateFlags(levelName) {
   levelConfig = getLevelConfig(levelName);
 }
 
-function getDifficultyMultiplier(isNetwork) {
+function getDifficultyMultiplier() {
   let d = 0;
   // compare vs. regular, or network game prefs depending
-  let gt = isNetwork ? gamePrefs.net_game_type : gameType;
+  let gt = prefsManager.data.network ? gamePrefs.net_game_type : gameType;
   if (gt === 'hard') d = 1;
   if (gt === 'extreme') d = 2;
   if (gt === 'armorgeddon') d = 3;
