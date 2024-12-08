@@ -593,8 +593,8 @@ const Helicopter = (options = {}) => {
         playSound(sounds.bnb.beavisThankYouDriveThrough);
       }
 
-      if (sounds.inventory.end) {
-        playSound(sounds.inventory.end);
+      if (sounds.repairComplete) {
+        playSound(sounds.repairComplete);
       }
     }
   }

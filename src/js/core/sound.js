@@ -1308,6 +1308,12 @@ soundManager.onready(() => {
     volume: 20
   });
 
+  sounds.repairComplete = add({
+    url: 'repair-complete',
+    fixedPlaybackRate,
+    volume: 20
+  });
+
   sounds.missileNapalm = add({
     url: '186374__samararaine__bonfire-being-lit',
     volume: 30
