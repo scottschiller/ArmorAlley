@@ -159,9 +159,6 @@ const networkBattles = [
  * Rainstorm         • •   • 177   0
  */
 
-// TODO: override when playing a custom level that might have flags specified, e.g., &fb=1&fn=0&fs=0&fj=0
-const defaultFlags = [1, 0, 0, 0, 0, 0];
-
 /**
  * 22 different forms of difficulty: a sliding scale, depending on game type - based on research of the original.
  *
