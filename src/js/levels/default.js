@@ -343,6 +343,9 @@ function unpackLevelParams(levelParams) {
 function calculateIQ(type = 'campaign', offset = 0) {
   // CPU "IQ" for a given set of level parameters
 
+  // tutorial case (or, possibly a bug. :X)
+  if (offset === -1) return 0;
+
   let o =
     type === 'tutorial'
       ? demoParams[0]
