@@ -7,8 +7,6 @@ import {
   clientFeatures,
   demo,
   GAME_SPEED,
-  isChrome,
-  isMac,
   isMobile,
   isSafari,
   minimal,
@@ -29,8 +27,7 @@ import {
   applyFlags,
   previewLevel,
   setCustomLevel,
-  setLevel,
-  updateFlags
+  setLevel
 } from '../levels/default.js';
 import { gamePrefs } from './preferences.js';
 
