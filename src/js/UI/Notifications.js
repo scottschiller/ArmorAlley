@@ -269,8 +269,8 @@ const Notifications = () => {
 
     if (
       !levelFlags.bullets &&
-      gameType === 'hard' &&
-      levelName === 'Blind Spot'
+      ((gameType === 'hard' && levelName === 'Blind Spot') ||
+        (gameType === 'extreme' && levelName === 'Airborne'))
     ) {
       add('🚁 You are now equipped with aimed missiles. 🚀');
     }
