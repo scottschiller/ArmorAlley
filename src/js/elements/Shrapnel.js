@@ -329,7 +329,8 @@ const Shrapnel = (options = {}) => {
       spinAngle: rndAngle(),
       spinAngleIncrement: rndAngle(),
       hostile: true,
-      damagePoints: 0.25,
+      // shrapnel in original is 1 point, sometimes 2 based on random seed result.
+      damagePoints: 1,
       hasSound: !!options.hasSound,
       rndRicochetAmount: 0.5 + rng(0.75, type),
       ricochetCount: 0,
