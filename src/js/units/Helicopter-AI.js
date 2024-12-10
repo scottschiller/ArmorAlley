@@ -261,6 +261,10 @@ const HelicopterAI = (options = {}) => {
         newTarget = objectInView(data, { items: TYPES.bunker });
       }
 
+      if (!newTarget && data.targeting.superBunkers) {
+        newTarget = objectInView(data, { items: TYPES.superBunker });
+      }
+
       if (!newTarget && data.targeting.clouds) {
         newTarget = objectInView(data, { items: TYPES.cloud });
       }
@@ -280,7 +284,10 @@ const HelicopterAI = (options = {}) => {
     }
 
     if (tData) {
-      if (data.targeting.bunkers && tData.type === TYPES.bunker) {
+      if (
+        (data.targeting.bunkers && tData.type === TYPES.bunker) ||
+        (data.targeting.superBunkers && tData.type === TYPES.superBunker)
+      ) {
         maybeDropParatroopersNearTarget(target);
       } else if (tData.type !== TYPES.cloud) {
         maybeFireAtTarget(target);
@@ -761,8 +768,13 @@ const HelicopterAI = (options = {}) => {
     // only run once in a while
     if (paratrooperDropTimer) return;
 
-    // bunker case: approximately above enemy target?
-    if (target.data.type === TYPES.bunker && !collisionCheckX(tData, data))
+    let isSuperBunker = target.data.type === TYPES.superBunker;
+
+    // bunker + super-bunker case: approximately above enemy target?
+    if (
+      (target.data.type === TYPES.bunker || isSuperBunker) &&
+      !collisionCheckX(tData, data)
+    )
       return;
 
     if (target.data.type === TYPES.turret) {
@@ -775,28 +787,43 @@ const HelicopterAI = (options = {}) => {
       if (!data.isEnemy && data.x + data.width > tData.x) return;
     }
 
-    // be smart / efficient: is there already a nearby unit that may get the target?
-    let friendsInView = objectsInView(data, {
-      items: [TYPES.parachuteInfantry, TYPES.infantry],
-      friendlyOnly: true
-    });
+    // "Nearby friends" check - e.g., infantry already near bunker or turret.
+    // This does not apply for Super Bunkers.
+    if (!isSuperBunker) {
+      // be smart / efficient: is there already a nearby unit that may get the target?
+      let friendsInView = objectsInView(data, {
+        items: [TYPES.parachuteInfantry, TYPES.infantry],
+        friendlyOnly: true
+      });
 
-    let validFriends = friendsInView.filter((f) => {
-      /**
-       * Paratrooper / infantry must be moving toward the target - not already past it.
-       * Account for enemy and "friendly" CPUs, since human players can have friendly CPUs in network games.
-       */
-      return (
-        (f.data.isEnemy && f.data.x > tData.x + tData.halfWidth) ||
-        (!f.data.isEnemy && f.data.x + f.data.width < tData.x)
-      );
-    });
+      let validFriends = friendsInView.filter((f) => {
+        /**
+         * Paratrooper / infantry must be moving toward the target - not already past it.
+         * Account for enemy and "friendly" CPUs, since human players can have friendly CPUs in network games.
+         */
+        return (
+          (f.data.isEnemy && f.data.x > tData.x + tData.halfWidth) ||
+          (!f.data.isEnemy && f.data.x + f.data.width < tData.x)
+        );
+      });
 
-    if (validFriends.length) return;
+      if (validFriends.length) return;
+    }
 
+    // at this point, mark that deployment is happening.
     paratrooperDropTimer = common.setFrameTimeout(() => {
       paratrooperDropTimer = null;
     }, paratrooperDropDelay);
+
+    // Super Bunker case: always drop all.
+    // otherwise: drop ALL vs. one or two, if under 50% energy or bombs.
+    if (
+      isSuperBunker ||
+      data.energy < data.energyMax << 1 ||
+      data.bombs < data.bombsMax << 1
+    ) {
+      return dropAllParatroopersAtRandom(FPS * 5);
+    }
 
     // "fast" deploy, does efficiency + accuracy matter?
     // if a turret, allow dropping a bunch if on a higher difficulty.
