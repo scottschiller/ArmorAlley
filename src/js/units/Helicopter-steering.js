@@ -153,7 +153,8 @@ function seekLandingPad(data, options) {
 
   if (data.isEnemy) {
     // stick to own base, but take middle pad if available.
-    target = pads[pads.length - (data.x > 6144 ? 1 : (pads.length === 3 ? 2 : 1))];
+    target =
+      pads[pads.length - (data.x > 6144 ? 1 : pads.length === 3 ? 2 : 1)];
   } else {
     target = pads[data.x < 2048 ? 0 : 1];
   }
