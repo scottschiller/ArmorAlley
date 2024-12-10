@@ -222,7 +222,6 @@ const SuperBunker = (options = {}) => {
     /**
      * Set on init, updated with `zones.changeOwnership()` as targets change sides.
      * NOTE: Super Bunkers likely fire at all units when armed, but not when neutral.
-     * TODO: verify that Super Bunkers fire at vans on multiple battles / difficulties in original game.
      */
     nearby.items = getTypes(
       'infantry:all, engineer, missileLauncher, van, helicopter',
