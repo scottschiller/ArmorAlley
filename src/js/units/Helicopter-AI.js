@@ -23,6 +23,7 @@ import { brakeX, distance, findEnemy } from './Helicopter-utils.js';
 import { applyForces } from './Helicopter-forces.js';
 import {
   checkVerticalRange,
+  seekEndBunker,
   seekLandingPad,
   seekTarget,
   steerTowardTarget
@@ -245,6 +246,8 @@ const HelicopterAI = (options = {}) => {
     let newTarget;
 
     if (!data.wantsLandingPad) {
+      maybeTakeOutEndBunker();
+
       if (!newTarget && data.targeting.helicopters) {
         newTarget = objectInView(data, { items: TYPES.helicopter });
       }
@@ -460,6 +463,25 @@ const HelicopterAI = (options = {}) => {
 
     // finally, deploy
     dropParatroopersAtRandom();
+  }
+
+  function dropAllParatroopersAtRandom(startDelayMax = 500) {
+    /**
+     * Deploy all available paratroopers, using a random delay for starting.
+     */
+    if (parachutingActiveTimer || !data.parachutes) return;
+
+    let startDelay = rngInt(startDelayMax, TYPES.helicopter);
+    let stopDelay = 1000;
+
+    parachutingActiveTimer = common.setFrameTimeout(() => {
+      options.exports.setParachuting(true);
+      // and, stop dropping momentarily.
+      common.setFrameTimeout(() => {
+        options.exports.setParachuting(false);
+        parachutingActiveTimer = null;
+      }, stopDelay);
+    }, startDelay);
   }
 
   function dropParatroopersAtRandom(
@@ -923,6 +945,43 @@ const HelicopterAI = (options = {}) => {
         missileLaunchTimer = null;
       }, 1 / FPS);
     }, delay);
+  }
+
+  function maybeTakeOutEndBunker() {
+    if (!data.targeting.endBunkers) return;
+
+    // also required: paratroopers
+    if (!data.parachutes) return;
+
+    let opponentBank = game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1];
+    let targetX = opponentBank.data.x;
+    let funds = opponentBank.data.funds;
+
+    // CPU can try to steal funds / bunker if `killEndB` and minimum funds to steal, OR, you're too rich to ignore.
+    if (
+      !(
+        (levelConfig.killEndB && funds > levelConfig.fundMinI) ||
+        funds > levelConfig.fundMaxI
+      )
+    )
+      return;
+
+    // distance to target...
+    let distX = data.isEnemy ? data.x - targetX : targetX - data.x;
+
+    /**
+     * From original: funds-to-distance ratio.
+     * Enemy helicopter has to be within a certain range before it can make an end run.
+     * More funds to steal = greater distance; e.g., 50% battlefield distance (4096) >> 6 = 64 (funds)
+     * ∴ 128 funds = whole battlefield.
+     */
+    if (distX >> 6 >= funds) return;
+
+    // OK to target end bunker
+    if (seekEndBunker(data)) {
+      // within range: drop
+      dropAllParatroopersAtRandom();
+    }
   }
 
   return {
