@@ -32,7 +32,10 @@ function wander(data) {
 
   let accel = new Vector();
 
-  let onlyDodgingAmmo = data.forces.avoid && (Object.keys(data.forces.avoid).length === 1 && data.forces.avoid.munition);
+  let onlyDodgingAmmo =
+    data.forces.avoid &&
+    Object.keys(data.forces.avoid).length === 1 &&
+    data.forces.avoid.munition;
 
   if (!data.wantsLandingPad) {
     if (data.isEnemy) {
@@ -69,10 +72,7 @@ function wander(data) {
   }
 
   // no sine wave if "avoid" - UNLESS, only gunfire / munition being dodged.
-  if (
-    !data.forces.avoid ||
-    onlyDodgingAmmo
-  ) {
+  if (!data.forces.avoid || onlyDodgingAmmo) {
     accel.y += sineWave(data);
   }
 
