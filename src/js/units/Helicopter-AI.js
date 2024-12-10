@@ -994,7 +994,6 @@ const HelicopterAI = (options = {}) => {
     onHit: respondToHit,
     maybeChaseHelicopters,
     maybeDecoySmartMissile,
-    maybeFireAtTarget,
     maybeFireSmartMissileAtTurret,
     maybeDropParatroopersNearTarget,
     maybeRetaliateWithSmartMissile,
