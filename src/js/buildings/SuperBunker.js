@@ -32,7 +32,7 @@ let pattern;
 const SuperBunker = (options = {}) => {
   let css, dom, data, width, height, nearby, radarItem, exports;
 
-  const FIRE_MODULUS = 7;
+  const FIRE_MODULUS = 6;
 
   function updateFireModulus() {
     // firing speed increases with # of infantry
@@ -179,7 +179,7 @@ const SuperBunker = (options = {}) => {
       fixedXY: true,
       vX: 2,
       vY: 0,
-      damagePoints: 4
+      damagePoints: 5
     };
 
     game.addObject(TYPES.gunfire, fireOptions);
