@@ -2541,7 +2541,8 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks = rng > 0.75 && levelConfig.scatterBombB;
         data.targeting.clouds = rng > 0.65;
         data.targeting.bunkers = rng > 0.5;
-        data.targeting.superBunkers = rng > 0.5;
+        data.targeting.superBunkers =
+          rng > 0.5 && game.objects[TYPES.superBunker].length;
         data.targeting.endBunkers = rng > 0.75 && levelConfig.killEndB;
         data.targeting.men = rng > 0.5 && levelConfig.killMenB;
         data.targeting.vans = rng > 0.5 && levelConfig.killVanB;
