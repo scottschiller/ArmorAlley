@@ -7,6 +7,7 @@ import { brakeX, brakeXY, brakeY, TOO_LOW } from './Helicopter-utils.js';
 import { addForce } from './Helicopter-forces.js';
 import { resetSineWaveTimer } from './Helicopter-wander.js';
 import { common } from '../core/common.js';
+import { collisionCheckX } from '../core/logic.js';
 
 const debugCanvas = searchParams.get('debugCollision');
 
@@ -202,6 +203,28 @@ function seekLandingPad(data, options) {
   }
 }
 
+function seekEndBunker(data) {
+  const pads = game.objects[TYPES.landingPad];
+
+  let target, targetData, deltaX, deltaY;
+
+  target = game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1];
+
+  targetData = target.data;
+
+  if (collisionCheckX(data, targetData, 16)) {
+    // over target - good to drop paratroopers.
+    return true;
+  }
+
+  // steer toward the center of the end bunker, and the top portion of the screen.
+  seekTarget(data, {
+    x: targetData.x,
+    y: Math.min(96, data.y),
+    type: targetData.type
+  });
+}
+
 function checkVerticalRange(data) {
   // HACKISH: don't fly too low, nor too high.
   if (data.y > TOO_LOW && data.vY > 0) {
@@ -225,4 +248,10 @@ function checkVerticalRange(data) {
   }
 }
 
-export { checkVerticalRange, seekTarget, steerTowardTarget, seekLandingPad };
+export {
+  checkVerticalRange,
+  seekTarget,
+  steerTowardTarget,
+  seekEndBunker,
+  seekLandingPad
+};
