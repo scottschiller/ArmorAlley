@@ -485,26 +485,26 @@ const HelicopterAI = (options = {}) => {
   }
 
   function dropParatroopersAtRandom(
-    delay = rngInt(1000, TYPES.helicopter),
+    startDelay = rngInt(1000, TYPES.helicopter),
     minimalDelay
   ) {
     /**
      * Deploy a random number of paratroopers, using a random delay basis for both start and duration.
      * This means the chopper can be late to act (e.g., decoy a smart missile), AND/OR, it may drop multiple paratroopers.
      */
-    if (parachutingActiveTimer) return;
+    if (parachutingActiveTimer || !data.parachutes) return;
 
     parachutingActiveTimer = common.setFrameTimeout(() => {
       options.exports.setParachuting(true);
 
-      let stopDelay = minimalDelay ? 1 / FPS : delay / 2;
+      let stopDelay = minimalDelay ? 1 / FPS : startDelay / 2;
 
       // and, stop dropping momentarily.
       common.setFrameTimeout(() => {
         options.exports.setParachuting(false);
         parachutingActiveTimer = null;
       }, stopDelay);
-    }, delay);
+    }, startDelay);
   }
 
   function maybeSteerTowardTarget(tData, data) {
