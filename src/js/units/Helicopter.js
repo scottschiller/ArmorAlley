@@ -2538,19 +2538,34 @@ const Helicopter = (options = {}) => {
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
         const rng = aiRNG();
 
-        data.targeting.tanks = rng > 0.75 && levelConfig.scatterBombB;
+        // determines smart missile counter-measures
+        let defendB = (game.iQuickRandom() & 0xf) < levelConfig.clipSpeedI;
+
+        // determines whether "in combat" with nearby missile or chopper, whether to go after / kill the helicopter, AND, some counter-measures like dropping bombs and men
+        let attackB = !!(game.iQuickRandom() & 0x7);
+
+        // only related to capturing the end bunker / funds
+        let stealB = !(game.getRandSeedUI() & 0x30);
+
+        // TODO: implement shooting tanks with gunfire and dumb / aimed missiles, too.
+        data.targeting.tanks =
+          levelConfig.killTankB && levelConfig.scatterBombB;
+
         data.targeting.clouds = rng > 0.65;
-        data.targeting.bunkers = rng > 0.5;
-        data.targeting.superBunkers =
-          rng > 0.5 && game.objects[TYPES.superBunker].length;
-        data.targeting.endBunkers = rng > 0.75 && levelConfig.killEndB;
-        data.targeting.men = rng > 0.5 && levelConfig.killMenB;
-        data.targeting.vans = rng > 0.5 && levelConfig.killVanB;
-        data.targeting.turrets = rng > 0.5;
+        data.targeting.bunkers = true;
+        data.targeting.superBunkers = game.objects[TYPES.superBunker].length;
+        data.targeting.endBunkers = stealB && levelConfig.killEndB;
+        data.targeting.men = levelConfig.killMenB;
+        data.targeting.vans = levelConfig.killVanB;
+        data.targeting.turrets = true;
 
         // go after choppers if allowed by level config, OR, in tutorial mode.
         data.targeting.helicopters =
-          (levelConfig.killCopterB && rng > 0.25) || tutorialMode;
+          (levelConfig.killCopterB && attackB) || tutorialMode;
+
+        data.targeting.defendB = defendB;
+        data.targeting.attackB = attackB;
+        data.targeting.stealB = stealB;
 
         if (debug || debugCollision) {
           console.log(
@@ -3085,6 +3100,9 @@ const Helicopter = (options = {}) => {
       isKamikaze: false,
       // for AI
       targeting: {
+        attackB: false,
+        defendB: false,
+        stealB: false,
         clouds: false,
         endBunkers: false,
         helicopters: false,
