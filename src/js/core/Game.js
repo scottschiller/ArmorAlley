@@ -76,6 +76,23 @@ let screenScale = 1;
 let started;
 let didInit;
 
+// as per the original
+let lRandSeed, lRandOffset, randSeedUI;
+
+function incrementRandSeed(incrementAmount = 1) {
+  lRandSeed += incrementAmount;
+  randSeedUI = (lRandSeed << 16) >> 16;
+}
+
+function setOriginalSeeds() {
+  lRandSeed = lRandOffset = randSeedUI = 0x11224433;
+
+  // original used an unsigned short (16-bit) int, here.
+  randSeedUI = (lRandSeed << 16) >> 16;
+}
+
+setOriginalSeeds();
+
 const game = (() => {
   let data,
     dom,
@@ -743,6 +760,13 @@ const game = (() => {
     preloadCommonSounds();
   }
 
+  function iQuickRandom() {
+    return (lRandSeed =
+      ((lRandSeed << 16) | (lRandSeed >> 16)) +
+      0x14125423 +
+      (lRandOffset += 0x4235531 + (data?.frameCount || 0)));
+  }
+
   // the home screen: choose a game type.
 
   function initArmorAlley() {
@@ -982,12 +1006,15 @@ const game = (() => {
     dom,
     findObjectById,
     getObjects,
+    incrementRandSeed,
+    getRandSeedUI: () => randSeedUI,
     init: () => {
       const css = ['aa-game-ui.css'];
       if (isMobile) css.push('aa-mobile.css');
       aaLoader.loadCSS(css, init);
     },
     initArmorAlley,
+    iQuickRandom,
     objectConstructors,
     objects,
     objectsById,
