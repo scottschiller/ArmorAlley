@@ -92,7 +92,17 @@ const EndBunker = (options = {}) => {
     // because they're special, engineers may be able to steal all funds. 💰
     allFunds = target.data.role && gamePrefs.engineers_rob_the_bank;
 
-    capturedFunds = Math.min(data.funds, maxFunds);
+    let endBunkers = game.objects[TYPES.endBunker];
+
+    // who gets the loot?
+    let beneficiary = endBunkers[target.data.isEnemy ? 1 : 0];
+
+    // 100% or 50% of available funds, if > 0.
+    capturedFunds = Math.max(0, allFunds ? data.funds : data.funds >> 1);
+
+    // once captured, now in the hole financially.
+    // this can be reset by recapturing the bunker, OR earning 25 funds.
+    data.funds = -25;
 
     // engineer + BnB case, vs.
     if (target.data.role) {
@@ -146,12 +156,9 @@ const EndBunker = (options = {}) => {
     }
 
     // who gets the loot?
-    game.objects[TYPES.endBunker][data.isEnemy ? 0 : 1].data.funds +=
-      capturedFunds;
+    beneficiary.data.funds += capturedFunds;
 
     game.objects.view.updateFundsUI();
-
-    data.funds -= capturedFunds;
 
     if (target) {
       target.die({ silent: true });
@@ -457,6 +464,17 @@ const EndBunker = (options = {}) => {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
+            // if funds were negative due to enemy capture, zero them out.
+            if (
+              data.funds < 0 &&
+              data.isEnemy === game.players.local.data.isEnemy
+            ) {
+              let msg = 'You have recaptured your end bunker. ⛳';
+              game.objects.notifications.add(msg);
+              game.objects.view.setAnnouncement(msg);
+            }
+            data.funds = Math.max(0, data.funds);
+            game.objects.view.updateFundsUI();
             sprites.updateEnergy(exports);
             onEnergyUpdate();
             // die silently.
