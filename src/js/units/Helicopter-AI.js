@@ -825,8 +825,8 @@ const HelicopterAI = (options = {}) => {
     // otherwise: drop ALL vs. one or two, if under 50% energy or bombs.
     if (
       isSuperBunker ||
-      data.energy < data.energyMax << 1 ||
-      data.bombs < data.bombsMax << 1
+      data.energy < data.energyMax >> 1 ||
+      data.bombs < data.maxBombs >> 1
     ) {
       return dropAllParatroopersAtRandom(FPS * 5);
     }
