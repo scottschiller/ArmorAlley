@@ -42,7 +42,8 @@ const Funds = () => {
 
   dom = {
     o: null,
-    digits: null
+    digits: null,
+    oNegative: null
   };
 
   function show(offset) {
@@ -109,6 +110,10 @@ const Funds = () => {
 
     if (!dom.o) {
       dom.o = document.getElementById('funds-count');
+    }
+
+    if (!dom.oNegative) {
+      dom.oNegative = document.getElementById('funds-negative');
     }
 
     if (!dom.digits)
@@ -255,7 +260,17 @@ const Funds = () => {
     // debit or credit sound, first and foremost.
     updateSound();
 
+    let oldValue = data.displayValue;
+
     data.displayValue += data.displayValue < data.value ? 1 : -1;
+
+    if (oldValue >= 0 && data.displayValue < 0) {
+      // -ve: expand, show minus sign
+      dom.oNegative.style.width = dom.oNegative.scrollWidth + 'px';
+    } else if (oldValue < 0 && data.displayValue >= 0) {
+      // +ve: collapse, hide
+      dom.oNegative.style.width = '0px';
+    }
 
     updateBnB();
 
