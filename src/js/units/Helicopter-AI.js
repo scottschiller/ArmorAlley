@@ -454,6 +454,9 @@ const HelicopterAI = (options = {}) => {
      * (maybe) drop a decoy paratrooper.
      */
 
+    // only do this while in "defend" mode.
+    if (!options.exports.data.targeting.defendB) return;
+
     // if missile is from a helicopter, maybe retaliate.
     if (missile && missile.data.parentType === TYPES.helicopter) {
       maybeEngageRetaliationMode();
