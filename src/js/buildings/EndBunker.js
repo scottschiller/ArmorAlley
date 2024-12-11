@@ -98,12 +98,15 @@ const EndBunker = (options = {}) => {
     capturedFunds = Math.min(data.funds, maxFunds);
 
     // engineer + BnB case, vs.
-    actor =
-      gamePrefs.bnb && target.data.role
+    if (target.data.role) {
+      actor = gamePrefs.bnb
         ? target.data.isBeavis
           ? 'Beavis'
           : 'Butt-Head'
         : 'Your engineer';
+    } else {
+      actor = 'Your infantry';
+    }
 
     const isYourCapture = data.isEnemy !== game.players.local.data.isEnemy;
 
@@ -112,7 +115,7 @@ const EndBunker = (options = {}) => {
       if (isYourCapture) {
         if (!capturedFunds) {
           game.objects.notifications.add(
-            `🏦 🏴‍☠️ 🤷 ${actor} captured 0 enemy funds. 😒 Good effort, though.`
+            `🏦 🏴‍☠️ ${actor} found no enemy funds to capture. 🤷`
           );
         } else {
           if (allFunds) {
