@@ -428,11 +428,12 @@ const HelicopterAI = (options = {}) => {
 
     if (!threat) return;
 
-    // if a smart missile is found, the chopper can target and fire at it.
-    // this might contribute to rapid helicopter flipping, in need of review.
-    if (threat.data.type === TYPES.smartMissile) {
-      options.exports.checkFacingTarget(target);
-    }
+    // if a smart missile is found, the chopper can target and fire at it IF in "defend" mode.
+    if (
+      threat.data.type === TYPES.smartMissile &&
+      !options.exports.data.targeting.defendB
+    )
+      return;
 
     // ensure the target has *some* room, not almost directly above or below,
     // and roughly within vertical.
