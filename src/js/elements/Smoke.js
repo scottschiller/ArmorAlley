@@ -248,6 +248,9 @@ const Smoke = (options = {}) => {
     die
   };
 
+  // in the original, smoke generation increments a key seed value for the game.
+  game.incrementRandSeed();
+
   initSmoke();
 
   return exports;
