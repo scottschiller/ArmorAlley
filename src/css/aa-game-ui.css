@@ -92,6 +92,17 @@ body.game-started #funds {
   image-rendering: optimizeQuality;
 }
 
+#funds-negative {
+  position: relative;
+  display: inline-block;
+  /* allow expand/collapse */
+  width: 0px;
+  overflow: hidden;
+  transition: width 0.5s ease-in-out;
+  line-height: 50%; /* errr... */
+  margin-right: calc(-2.5px * var(--gs));
+}
+
 #funds-count .digit {
   color: transparent;
   display: inline-block;
