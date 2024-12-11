@@ -229,7 +229,6 @@ body.game-started #funds {
 #queue .queue-item .counter {
   display: inline-block;
   font-size: calc(4px * var(--gs));
-  font-size: calc(4px * var(--gs));
   margin-top: -60%;
   opacity: 0;
   position: absolute;
