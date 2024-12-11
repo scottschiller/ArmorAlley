@@ -126,18 +126,15 @@ const EndBunker = (options = {}) => {
           );
         } else {
           if (allFunds) {
-            game.objects.notifications.add(
-              `🏦 🏴‍☠️ 💰 ${actor} captured all ${capturedFunds}${
-                capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'
-              }`
-            );
+            msg = `🏦 💰 ${actor} captured all ${capturedFunds}${
+              capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'
+            }`;
           } else {
-            game.objects.notifications.add(
-              `🏦 🏴‍☠️ 💸 ${capturedFunds} enemy ${
-                capturedFunds > 1 ? ' funds' : ' fund'
-              } captured! 💰`
-            );
+            msg = `🏦 💸 ${capturedFunds} enemy ${
+              capturedFunds > 1 ? ' funds' : ' fund'
+            } captured! 💰`;
           }
+
           if (gamePrefs.bnb) {
             playSound(sounds.bnb.stolenFunds);
           }
