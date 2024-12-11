@@ -118,11 +118,10 @@ const EndBunker = (options = {}) => {
     const isYourCapture = data.isEnemy !== game.players.local.data.isEnemy;
 
     if (!tutorialMode) {
-      playSound(sounds.cashMoney);
       if (isYourCapture) {
         if (!capturedFunds) {
           game.objects.notifications.add(
-            `🏦 🏴‍☠️ ${actor} found no enemy funds to capture. 🤷`
+            `🏦 ${actor} found no enemy funds. 🤷`
           );
         } else {
           if (allFunds) {
@@ -163,6 +162,9 @@ const EndBunker = (options = {}) => {
     if (target) {
       target.die({ silent: true });
       playSound(sounds.doorClose, exports);
+      if (capturedFunds) {
+        playSound(sounds.cashMoney);
+      }
     }
 
     // force update of the local helicopter
