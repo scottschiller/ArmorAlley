@@ -356,9 +356,12 @@ const Inventory = () => {
             )
             .replace(
               '%c1',
-              game.objects[TYPES.endBunker][
-                game.players.local.data.isEnemy ? 1 : 0
-              ].data.funds
+              Math.max(
+                0,
+                game.objects[TYPES.endBunker][
+                  game.players.local.data.isEnemy ? 1 : 0
+                ].data.funds
+              )
             )
             .replace('%c2', cost);
           return result;
