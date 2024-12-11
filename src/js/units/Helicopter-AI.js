@@ -860,8 +860,8 @@ const HelicopterAI = (options = {}) => {
   }
 
   function maybeChaseHelicopters() {
-    // for now, gate behind level config.
-    if (!levelConfig.killCopterB) return;
+    // gate behind level config AND attack flag.
+    if (!levelConfig.killCopterB || !data.targeting.attackB) return;
 
     if (data.targeting.helicopters) return;
 
@@ -870,7 +870,7 @@ const HelicopterAI = (options = {}) => {
 
     // throttle, so not every (e.g.) bullet hit or dodge triggers a roll of the dice.
     respondToHitTimer = common.setFrameTimeout(() => {
-      data.targeting.helicopters = rngBool(data.type);
+      data.targeting.helicopters = data.targeting.attackB && rngBool(data.type);
       respondToHitTimer = null;
     }, respondToHitDelay);
   }
@@ -879,8 +879,8 @@ const HelicopterAI = (options = {}) => {
     // in certain cases, e.g., responding to being a smart missile target: set retaliation mode.
     // this allows CPU choppers to fly at full VX speed despite possible VX clipping.
 
-    // this "feature" is gated by level config.
-    if (!levelConfig.killCopterB) return;
+    // this "feature" is gated by level config AND local state.
+    if (!levelConfig.killCopterB || !data.targeting.attackB) return;
 
     // already active?
     if (data.targeting.retaliation) return;
