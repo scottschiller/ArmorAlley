@@ -118,6 +118,7 @@ const EndBunker = (options = {}) => {
     const isYourCapture = data.isEnemy !== game.players.local.data.isEnemy;
 
     if (!tutorialMode) {
+      let msg;
       if (isYourCapture) {
         if (!capturedFunds) {
           game.objects.notifications.add(
@@ -141,16 +142,15 @@ const EndBunker = (options = {}) => {
             playSound(sounds.bnb.stolenFunds);
           }
         }
-      } else {
-        if (allFunds) {
-          game.objects.notifications.add(
-            '🏦 🏴‍☠️ 💸 An enemy engineer captured all your funds. 😱'
-          );
-        } else {
-          game.objects.notifications.add(
-            `🏦 🏴‍☠️ 💸 The enemy captured ${capturedFunds} of your funds. 😨`
-          );
+        if (msg) {
+          game.objects.view.setAnnouncement(msg);
+          game.objects.notifications.add(msg);
         }
+      } else {
+        msg = `The enemy captured your funds. 💸 😱<br />Recover your end bunker to reset funds.`;
+        let msgDelay = 8000;
+        game.objects.view.setAnnouncement(msg, msgDelay);
+        game.objects.notifications.add(msg);
       }
     }
 
