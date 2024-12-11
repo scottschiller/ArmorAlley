@@ -100,7 +100,7 @@ body.game-started #funds {
   overflow: hidden;
   transition: width 0.5s ease-in-out;
   line-height: 50%; /* errr... */
-  margin-right: calc(-2.5px * var(--gs));
+  margin-right: -2.5px;
 }
 
 #funds-count .digit {
