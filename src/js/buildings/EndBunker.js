@@ -89,11 +89,8 @@ const EndBunker = (options = {}) => {
     let maxFunds, capturedFunds, allFunds, actor;
 
     // infantry only get to steal so much at a time.
-    // because they're special, engineers get to rob the bank! 💰
-    allFunds = !!target.data.role;
-    maxFunds = allFunds
-      ? game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds
-      : 20;
+    // because they're special, engineers may be able to steal all funds. 💰
+    allFunds = target.data.role && gamePrefs.engineers_rob_the_bank;
 
     capturedFunds = Math.min(data.funds, maxFunds);
 
