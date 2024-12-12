@@ -454,6 +454,7 @@ const EndBunker = (options = {}) => {
             ) {
               captureFunds(target);
             }
+            data.energy = 0;
           } else if (
             !target.data.role &&
             !data.energy &&
@@ -464,11 +465,11 @@ const EndBunker = (options = {}) => {
             // claim infantry, enable guns.
             data.energy = data.energyMax;
             // if funds were negative due to enemy capture, zero them out.
-            if (
-              data.funds < 0 &&
-              data.isEnemy === game.players.local.data.isEnemy
-            ) {
-              let msg = 'You have recaptured your end bunker. ⛳';
+            if (data.funds < 0) {
+              let isYours = data.isEnemy === game.players.local.data.isEnemy;
+              let msg = isYours
+                ? 'You have recaptured your end bunker. ⛳'
+                : 'The enemy has recaptured their end bunker. ⛳';
               game.objects.notifications.add(msg);
               game.objects.view.setAnnouncement(msg);
             }
