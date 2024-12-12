@@ -228,6 +228,9 @@ const HelicopterAI = (options = {}) => {
   }
 
   function checkLastAndNewTarget() {
+    // ignore all of this while still on the landing pad.
+    if (data.landed) return;
+
     if (lastTarget) {
       // did current or recent target become invalidated, or (TODO) unreachable?
       let ltData = lastTarget?.data;
@@ -247,6 +250,9 @@ const HelicopterAI = (options = {}) => {
 
     if (!data.wantsLandingPad) {
       maybeTakeOutEndBunker();
+
+      // priority: own end bunker has been captured.
+      if (maybeRecaptureEndBunker()) return;
 
       if (!newTarget && data.targeting.helicopters) {
         newTarget = objectInView(data, { items: TYPES.helicopter });
@@ -446,6 +452,42 @@ const HelicopterAI = (options = {}) => {
       data.votes.ammo++;
       data.ammoTargets.push(threat.data);
     }
+  }
+
+  function maybeRecaptureEndBunker() {
+    /**
+     * If the pesky human has captured the CPU end bunker, try to recover.
+     * Otherwise, enemy production will be stopped for quite a long time.
+     */
+
+    // firstly, need paratroopers.
+    if (!data.parachutes) return;
+
+    // only do this while in "attack" AND "defend" mode.
+    if (!data.targeting.defendB || !data.targeting.attackB) return;
+
+    let endBunker = game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0];
+
+    // end bunker needs to be "dead", AND, -ve funds due to capture
+    if (endBunker.data.energy || endBunker.data.funds >= 0) return;
+
+    // use van jamming range as a maximum for "detecting" end bunker trouble.
+    if (distance(endBunker.data.x, data.x) > levelConfig.vanJammingI) return;
+
+    steerTowardTarget(
+      data,
+      endBunker.data,
+      // inverse offset to the other side of the bunker, respectively
+      endBunker.data.width * endBunker.data.isEnemy ? -1 : 1,
+      // ignore target Y and go specifically to this coordinate...
+      false,
+      120
+    );
+
+    maybeDropParatroopersNearTarget(endBunker);
+
+    // indicate to caller: yes, this is priority.
+    return true;
   }
 
   function maybeDecoySmartMissile(missile) {
