@@ -435,10 +435,7 @@ const HelicopterAI = (options = {}) => {
     if (!threat) return;
 
     // if a smart missile is found, the chopper can target and fire at it IF in "defend" mode.
-    if (
-      threat.data.type === TYPES.smartMissile &&
-      !options.exports.data.targeting.defendB
-    )
+    if (threat.data.type === TYPES.smartMissile && !data.targeting.defendB)
       return;
 
     // ensure the target has *some* room, not almost directly above or below,
@@ -497,7 +494,7 @@ const HelicopterAI = (options = {}) => {
      */
 
     // only do this while in "defend" mode.
-    if (!options.exports.data.targeting.defendB) return;
+    if (!data.targeting.defendB) return;
 
     // if missile is from a helicopter, maybe retaliate.
     if (missile && missile.data.parentType === TYPES.helicopter) {
@@ -505,13 +502,13 @@ const HelicopterAI = (options = {}) => {
     }
 
     // nothing to drop?
-    if (!options.exports.data.parachutes) return;
+    if (!data.parachutes) return;
 
     // don't implement in network games until tested and stable.
     if (net.active) return;
 
     // "reasonably" airborne, time for parachute to open etc.?
-    if (options.exports.data.landed || options.exports.data.y > 300) return;
+    if (data.landed || data.y > 300) return;
 
     // 50% chance...
     if (!rngBool(TYPES.helicopter)) return;
