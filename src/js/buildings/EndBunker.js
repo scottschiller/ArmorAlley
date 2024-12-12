@@ -452,8 +452,8 @@ const EndBunker = (options = {}) => {
               (!target.data.role || gamePrefs.engineers_rob_the_bank)
             ) {
               captureFunds(target);
+              data.energy = 0;
             }
-            data.energy = 0;
           } else if (
             !target.data.role &&
             !data.energy &&
