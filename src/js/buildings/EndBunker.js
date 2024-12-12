@@ -486,8 +486,10 @@ const EndBunker = (options = {}) => {
         setFiring(false);
       }
     },
-    // who gets fired at?
-    items: getTypes('infantry:all, engineers, helicopters', { exports }),
+    // who gets fired at (and for friendly infantry, who can enter the door.)
+    items: getTypes('infantry:all, engineer, missileLauncher, helicopter', {
+      exports
+    }),
     targets: []
   };
 
