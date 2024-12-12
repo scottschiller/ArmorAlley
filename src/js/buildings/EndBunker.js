@@ -392,7 +392,8 @@ const EndBunker = (options = {}) => {
       gunYOffset: 10,
       fireModulus: 3,
       fundsModulus: 5.5, // as in, every 5.5 seconds
-      midPoint: null
+      midPoint: null,
+      xLookAhead: 24
     },
     options
   );
