@@ -816,11 +816,13 @@ const HelicopterAI = (options = {}) => {
     // only run once in a while
     if (paratrooperDropTimer) return;
 
+    let isBunker = target.data.type === TYPES.bunker;
     let isSuperBunker = target.data.type === TYPES.superBunker;
+    let isEndBunker = target.data.type === TYPES.endBunker;
 
-    // bunker + super-bunker case: approximately above enemy target?
+    // bunker, super-bunker, end-bunker case: approximately above enemy target?
     if (
-      (target.data.type === TYPES.bunker || isSuperBunker) &&
+      (isBunker || isSuperBunker || isEndBunker) &&
       !collisionCheckX(tData, data)
     )
       return;
@@ -835,10 +837,8 @@ const HelicopterAI = (options = {}) => {
       if (!data.isEnemy && data.x + data.width > tData.x) return;
     }
 
-    // "Nearby friends" check - e.g., infantry already near bunker or turret.
-    // This does not apply for Super Bunkers.
-    if (!isSuperBunker) {
-      // be smart / efficient: is there already a nearby unit that may get the target?
+    // "Nearby friends" check, be efficient - e.g., infantry already nearby certain targets that will do the work.
+    if (!isSuperBunker && !isEndBunker) {
       let friendsInView = objectsInView(data, {
         items: [TYPES.parachuteInfantry, TYPES.infantry],
         friendlyOnly: true
@@ -863,10 +863,11 @@ const HelicopterAI = (options = {}) => {
       paratrooperDropTimer = null;
     }, paratrooperDropDelay);
 
-    // Super Bunker case: always drop all.
+    // Super Bunker / end bunker case: always drop all.
     // otherwise: drop ALL vs. one or two, if under 50% energy or bombs.
     if (
       isSuperBunker ||
+      isEndBunker ||
       data.energy < data.energyMax >> 1 ||
       data.bombs < data.maxBombs >> 1
     ) {
