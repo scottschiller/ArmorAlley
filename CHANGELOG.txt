@@ -5,6 +5,34 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
+--- 12/2024, work in progress ---
+
+The enemy helicopter can recapture its own end bunker. https://github.com/scottschiller/ArmorAlley/1e7b7d349a5f3fbd3a5695119d70e3dcda87110a
+
+Fund capture, now like original. Infantry capture 50% of available funds (optional preference: engineers can "rob the bank" for 100%), end bunker is neutralized, local funds go to -25 (original game showed "captured" in this state.) "Reclaim" end bunker to reset funds to 0, or earn 25+ funds over time. https://github.com/scottschiller/ArmorAlley/497347b365ac995ac5a630f89a76a48f385d037d
+
+Updated enemy behaviour switching to mimic original: attack, defend, steal. https://github.com/scottschiller/ArmorAlley/49e81d4624d13ebc7dd33eda9b0ffc14c907ab56
+
+The enemy helicopter can target Super Bunkers. https://github.com/scottschiller/ArmorAlley/a84206627e0f3ae48ec31ed48d37a318c4ce8708
+
+The enemy helicopter can target your end bunker, and try to capture your funds. https://github.com/scottschiller/ArmorAlley/467ebd6afa76f927c74779fd069b6cd420e55b1a https://github.com/scottschiller/ArmorAlley/d6bbdc4b40eeb0ac201c46d82b8721b7fad91aa0
+
+Nice SoundBlaster FM synth "repair complete" sound from DOS game, overlooked all these years. https://github.com/scottschiller/ArmorAlley/146fbef23a77d69886c6c2c5647f908e9bd15f6b
+
+Battle selection menu now shows calculated IQ + fairness + BNSJ flags based on difficulty, like original. https://github.com/scottschiller/ArmorAlley/a526d8e4f425a202800271cee4e30226662ed4f6
+
+Refactored enemy IQ + battle flags for Conflict difficulty, between Wargames and Armorgeddon. https://github.com/scottschiller/ArmorAlley/aa69d787f93ec8e53bd0475e5aee62e61f9bd9fd
+
+It turns out that infantry *do* carry grenades after all, for one specific case. https://github.com/scottschiller/ArmorAlley/e86014addc0c12c49529efe2a20d0cc609ce88b7
+
+Adjust infantry -> turret damage rate. Slower than original, but feels apropos. https://github.com/scottschiller/ArmorAlley/ef8ca6ffe36e3ab251fdda394c62b7ef7f9ec93a
+ 
+Updated "hit points" and other stats for units and structures, based on original. https://github.com/scottschiller/ArmorAlley/d97fff889213e7e19473869b1488dac81ee98380 https://github.com/scottschiller/ArmorAlley/107cc10d62f6b4c093609542903f5de2648be75d https://github.com/scottschiller/ArmorAlley/62f10150b8ab322efdba2be304a400d0d029035f
+
+Turret gunfire targeting now closer to original, trajectory bug fixed. https://github.com/scottschiller/ArmorAlley/dce10c9f164e8acfae905ee0455cec750f6da3ad
+
+Updated earning of funds, based on original: 1 fund is earned at a fixed interval, depending on distance into enemy territory and difficulty. https://github.com/scottschiller/ArmorAlley/6d30af44ca6d128fd7e7d9b99794f98015114825
+
 --- 11/2024, uncategorized ---
 
 Enemy bias / discount on inventory "up to 212%" (so it can afford largest original in-game convoys), subject to level and difficulty. https://github.com/scottschiller/ArmorAlley/681a890ffe5c9355e7b65d749bfec92ea22ff046
