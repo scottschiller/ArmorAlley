@@ -41,7 +41,8 @@ function steerTowardTarget(
   data,
   targetData,
   arriveOffset = arriveOffsetDefault,
-  ignoreY = false
+  ignoreY = false, // don't match target Y, boolean
+  overrideY // specifically, go to "this" Y coordinate
 ) {
   let tankBombCase = targetData.type === TYPES.tank && data.bombs;
   let helicopterBombCase =
@@ -67,7 +68,7 @@ function steerTowardTarget(
         targetData.vX;
 
   // if "ignoring" Y, then use present chopper Y value ("no change") and just move on X.
-  let targetY = ignoreY ? data.y : targetData.y;
+  let targetY = overrideY || (ignoreY ? data.y : targetData.y);
 
   if (helicopterBombCase) {
     /**
