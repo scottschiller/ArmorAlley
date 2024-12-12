@@ -464,9 +464,9 @@ const EndBunker = (options = {}) => {
             // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
+            let isYours = data.isEnemy === game.players.local.data.isEnemy;
             // if funds were negative due to enemy capture, zero them out.
             if (data.funds < 0) {
-              let isYours = data.isEnemy === game.players.local.data.isEnemy;
               let msg = isYours
                 ? 'You have recaptured your end bunker. ⛳'
                 : 'The enemy has recaptured their end bunker. ⛳';
@@ -474,7 +474,11 @@ const EndBunker = (options = {}) => {
               game.objects.view.setAnnouncement(msg);
             }
             data.funds = Math.max(0, data.funds);
-            game.objects.view.updateFundsUI();
+            if (isYours) {
+              game.objects.view.updateFundsUI();
+              // force update of local funds counter
+              game.objects.funds.setFunds(data.funds);
+            }
             sprites.updateEnergy(exports);
             onEnergyUpdate();
             // die silently.
