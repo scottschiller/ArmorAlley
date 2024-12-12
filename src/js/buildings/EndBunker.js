@@ -372,7 +372,7 @@ const EndBunker = (options = {}) => {
       bottomAligned: true,
       frameCount: 0,
       energy: 0,
-      energyMax: 1,
+      energyMax: 10,
       x: options.x || (options.isEnemy ? worldWidth - 48 : 8),
       y: game.objects.view.data.world.height - height - 2,
       width: 39,
