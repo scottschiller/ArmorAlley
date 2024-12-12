@@ -434,7 +434,6 @@ const EndBunker = (options = {}) => {
       source: exports,
       targets: undefined,
       useLookAhead: true,
-      // TODO: rename to something generic?
       hit(target) {
         const isFriendly = target.data.isEnemy === data.isEnemy;
 

@@ -63,8 +63,6 @@ const Turret = (options = {}) => {
 
     let deltaX,
       deltaY,
-      deltaXGretzky,
-      deltaYGretzky,
       angle,
       otherTargets,
       target,
@@ -113,10 +111,6 @@ const Turret = (options = {}) => {
     deltaX = target.data.x - startX;
     deltaY = target.data.y - startY;
 
-    // Gretzky: "Skate where the puck is going to be".
-    deltaXGretzky = target.data.vX;
-    deltaYGretzky = target.data.vY;
-
     // turret angle
     angle = Math.atan2(deltaY, deltaX) * rad2Deg + 90;
 
@@ -139,7 +133,7 @@ const Turret = (options = {}) => {
       let vY = Math.min(0, deltaY);
 
       let hyp = Math.abs(Math.hypot(vX, vY));
-    
+
       let vec = new Vector(vX, vY);
 
       // reasonable "distance to barrel velocity"
@@ -157,7 +151,8 @@ const Turret = (options = {}) => {
         y: startY + Math.sin(angleRad),
         vX: vec.x,
         vY: vec.y,
-        damagePoints: gameType === 'easy' ? 2 : 1 // original game used 5, but we use a higher frame + firing rate.
+        // original game used 5, but we use a higher frame + firing rate.
+        damagePoints: gameType === 'easy' ? 2 : 1
       });
 
       if (sounds.turretGunFire) {
