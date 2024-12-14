@@ -102,6 +102,9 @@ const SmartMissile = (options = {}) => {
 
   const difficultyFactor = Math.max(1, 1 + difficultyOffset * clipSpeedScale);
 
+  // toward end of life, ramp this up to provide the 2X "bust" similar to the original
+  let speedBurstFactor = 1;
+
   let iCurShape = 0;
 
   function moveTo(x, y, angle) {
@@ -718,9 +721,12 @@ const SmartMissile = (options = {}) => {
       if (iCurShape === iDestShape) {
         // original uses >> 1, (i.e., * 2)
         // adjust "responsiveness" slightly based on level + difficulty.
-        data.vX += iSgn(iMisV.x[iCurShape] - data.vX) * difficultyFactor;
+        data.vX +=
+          iSgn(iMisV.x[iCurShape] - data.vX) *
+          difficultyFactor *
+          speedBurstFactor;
 
-        let nextVY = iMisV.y[iCurShape] * 1.5;
+        let nextVY = iMisV.y[iCurShape] * 1.5 * speedBurstFactor;
 
         if (targetData.bottomAligned) {
           // workaround: if "almost" aligned with a target, cut the Y velocity way down.
@@ -765,7 +771,7 @@ const SmartMissile = (options = {}) => {
       (data.isOnScreen || gamePrefs.radar_enhanced_fx) &&
       // smoke logic from original (which used `ulGameClock` vs. frameCount.)
       (!(game.iQuickRandom() & 0x3f) ||
-        (progress >= 0.78125 && !(data.frameCount & 3)))
+        (progress >= data.nearExpiryThreshold && !(data.frameCount & 3)))
     ) {
       game.addObject(TYPES.smoke, {
         x: data.x,
@@ -782,17 +788,16 @@ const SmartMissile = (options = {}) => {
         playSound(sounds.missileWarningExpiry, exports);
         stopSound(sounds.missileWarning);
       }
+    }
 
-      /**
-       * Allow a burst of thrust when near expiry, as in the original game.
-       * This can make "almost-done" missiles very dangerous.
-       * Amp this up on harder levels.
-       */
-      let multiplier =
-        gameType === 'extreme' || gameType === 'armorgeddon' ? 1.275 : 1.1;
-
-      data.vXMax *= multiplier;
-      data.vYMax *= multiplier;
+    if (data.nearExpiry) {
+      // ramp up speed while "running out of gas" (and smoking)
+      data.speedBurstFactor =
+        1 +
+        (progress - data.nearExpiryThreshold) / (1 - data.nearExpiryThreshold);
+      // increase max velocity, including difficulty factor.
+      data.vXMax = vMax * difficultyFactor * data.speedBurstFactor;
+      data.vYMax = vMax * difficultyFactor * data.speedBurstFactor;
     }
 
     // determine angle of missile (pointing at target, not necessarily always heading that way)
@@ -810,7 +815,7 @@ const SmartMissile = (options = {}) => {
       data.y +
       (!data.expired
         ? data.vY * GAME_SPEED_RATIOED
-        : Math.min(data.vY + data.gravity, data.vYMaxExpired)) *
+        : Math.min(data.vY + data.gravity, data.vYMax)) *
         GAME_SPEED_RATIOED;
 
     moveTo(newX, newY, rad * rad2Deg);
@@ -995,7 +1000,7 @@ const SmartMissile = (options = {}) => {
       expired: false,
       hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
       nearExpiry: false,
-      nearExpiryThreshold: 0.88,
+      nearExpiryThreshold: 0.78125,
       lifeCyclePhase: 0,
       frameCount: 0,
       foundDecoy: false,
@@ -1029,7 +1034,6 @@ const SmartMissile = (options = {}) => {
       vY: net.active ? 1 : 1 + Math.random(),
       vXMax: vMax,
       vYMax: vMax,
-      vYMaxExpired: vMax * 2,
       thrust: net.active ? 0.5 : 0.5 + rng(0.5, type),
       deadTimer: null,
       trailerCount: 16,
