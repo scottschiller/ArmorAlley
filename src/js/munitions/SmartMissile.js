@@ -740,8 +740,8 @@ const SmartMissile = (options = {}) => {
     }
 
     // and throttle
-    data.vX = Math.max(data.vXMax * -1, Math.min(data.vXMax, data.vX));
-    data.vY = Math.max(data.vYMax * -1, Math.min(data.vYMax, data.vY));
+    data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
+    data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
 
     const progress = Math.min(1, data.frameCount / data.expireFrameCount);
 
