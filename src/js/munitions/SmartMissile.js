@@ -28,6 +28,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
+import { levelConfig } from '../levels/default.js';
 
 const dimensions = {
   rubberChicken: {
@@ -44,8 +45,39 @@ const dimensions = {
   }
 };
 
+// 0-50% increase
+const difficulties = {
+  default: 0,
+  easy: 0.125,
+  hard: 0.25,
+  extreme: 0.375,
+  armorgeddon: 0.5
+};
+
+/**
+ * Given game difficulty + battle which defines CPU helicopter "speed",
+ * scale between 100% - 150% for increasingly-challenging missiles.
+ */
+const clipSpeedI = {
+  min: 8,
+  max: 14
+};
+
+// velocities from original: iMisXV + iMisYV
+const iMisV = {
+  x: [0, 16, 24, 24, 32, 24, 24, 16, 0, -16, -24, -24, -32, -24, -24, -16],
+  y: [-9, -7, -4, -1, 0, 1, 4, 7, 9, 7, 4, 1, 0, 1, -4, -7]
+};
+
+// what constitutes "nearby" for missile velocity purposes
+const yThreshold = 24;
+
 // X and Y
 const vMax = 12;
+
+function iSgn(i) {
+  return i ? (i > 0 ? 1 : -1) : 0;
+}
 
 const SmartMissile = (options = {}) => {
   /**
@@ -57,6 +89,20 @@ const SmartMissile = (options = {}) => {
    */
 
   let dom, data, radarItem, objects, collision, launchSound, exports;
+
+  /**
+   * "Clip speed" as a range from 0-100%, e.g., 0/6 -> 6/6
+   * as CPU speed + smarts increase through battles.
+   */
+  let clipSpeedScale =
+    (levelConfig.clipSpeedI - (clipSpeedI.max - clipSpeedI.min)) /
+    clipSpeedI.min;
+
+  let difficultyOffset = difficulties[gameType] || difficulties.default;
+
+  const difficultyFactor = Math.max(1, 1 + difficultyOffset * clipSpeedScale);
+
+  let iCurShape = 0;
 
   function moveTo(x, y, angle) {
     // prevent from "crashing" into terrain, only if not expiring and target is still alive
@@ -616,23 +662,80 @@ const SmartMissile = (options = {}) => {
       // ... and decelerate on X-axis.
       data.vX *= 0.95;
     } else {
-      // x-axis
+      // based on original missile shape (sprite) + velocity
+      let iRY, iDY, iADY, iDestShape, iDeltaShape;
 
-      // if changing directions, cut in half.
-      data.vX += deltaX * 0.0033 * GAME_SPEED_RATIOED;
+      iADY = iDY = deltaY;
 
-      // y-axis
+      if (iADY < 0) {
+        iADY = -iADY;
+      }
 
-      if (deltaY <= targetData.height && deltaY >= -targetData.height) {
-        // lock on target.
+      if (!iADY) {
+        iRY = 0;
+      } else if (iADY < 4) {
+        iRY = 1;
+      } else if (iADY < 12) {
+        iRY = 2;
+      } else {
+        iRY = 3;
+      }
 
-        if (data.vY >= 0 && data.vY >= 0.25) {
-          data.vY *= 0.8;
-        } else if (data.vY <= 0 && data.vY < -0.25) {
-          data.vY *= 0.8;
+      if (targetData.x < data.x) {
+        if (iDY < 0) {
+          iDestShape = 12 + iRY;
+        } else {
+          iDestShape = 12 - iRY;
+        }
+      } else if (targetData.x > data.x) {
+        if (iDY < 0) {
+          iDestShape = 4 - iRY;
+        } else {
+          iDestShape = 4 + iRY;
         }
       } else {
-        data.vY += deltaY >= 0 ? data.thrust : -data.thrust;
+        if (iDY < 0) {
+          iDestShape = 0;
+        } else {
+          iDestShape = 8;
+        }
+      }
+
+      iDeltaShape = iDestShape - iCurShape;
+
+      if (iDeltaShape < 0) {
+        if (iDeltaShape < -8) {
+          iCurShape = (iCurShape + 1) & 0xf;
+        } else {
+          iCurShape = (iCurShape - 1) & 0xf;
+        }
+      } else if (iDeltaShape > 8) {
+        iCurShape = (iCurShape - 1) & 0xf;
+      } else {
+        iCurShape = (iCurShape + 1) & 0xf;
+      }
+
+      if (iCurShape === iDestShape) {
+        // original uses >> 1, (i.e., * 2)
+        // adjust "responsiveness" slightly based on level + difficulty.
+        data.vX += iSgn(iMisV.x[iCurShape] - data.vX) * difficultyFactor;
+
+        let nextVY = iMisV.y[iCurShape] * 1.5;
+
+        if (targetData.bottomAligned) {
+          // workaround: if "almost" aligned with a target, cut the Y velocity way down.
+          let absY = Math.abs(deltaY);
+          if (absY < yThreshold) {
+            nextVY = iMisV.y[iCurShape] * (absY / yThreshold);
+            data.vY = nextVY;
+          } else {
+            // drop faster for ground targets
+            data.vY = nextVY * 1.5;
+          }
+        } else {
+          // smoother Y-axis changes for airborne targets
+          data.vY += (nextVY - data.vY) / 3;
+        }
       }
     }
 
