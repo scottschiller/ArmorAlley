@@ -595,7 +595,7 @@ const SmartMissile = (options = {}) => {
 
     targetData = objects.target?.data || objects.lastTarget?.data;
 
-    targetHalfWidth = targetData.width / 2;
+    targetHalfWidth = targetData.halfWidth || targetData.width / 2;
 
     // delta of x/y between this and target
     deltaX = targetData.x + targetHalfWidth - data.x;
