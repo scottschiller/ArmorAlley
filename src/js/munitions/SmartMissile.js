@@ -1003,7 +1003,7 @@ const SmartMissile = (options = {}) => {
         exports: { data: { isEnemy: options.isEnemy } }
       }),
       decoyFrameCount: 15,
-      ramiusFrameCount: 20,
+      ramiusFrameCount: (FPS * 2) / 3,
       expireFrameCount: parseInt(
         (options.expireFrameCount || 256) * (1 / GAME_SPEED_RATIOED),
         10
