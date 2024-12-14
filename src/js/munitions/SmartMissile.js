@@ -600,13 +600,14 @@ const SmartMissile = (options = {}) => {
     // delta of x/y between this and target
     deltaX = targetData.x + targetHalfWidth - data.x;
 
-    // Always aim for "y", plus half height
+    // Always aim for "y", plus half height - minus own height.
     deltaY =
       targetData.y +
       (targetData.type === TYPES.balloon
         ? data.vY
         : targetData.halfHeight || targetData.height / 2) -
-      data.y;
+      data.y -
+      data.height;
 
     if (data.expired) {
       // fall...
