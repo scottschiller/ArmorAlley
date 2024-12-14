@@ -62,9 +62,6 @@ const Base = (options = {}) => {
       // position roughly around "launcher" point of base
       x: data.x + data.width * (data.isEnemy ? 1 / 4 : 3 / 4),
       y: data.y,
-      // hackish: these add to existing max vX / vY, they don't replace.
-      vXMax: missileVMax,
-      vYMax: missileVMax,
       target: targetHelicopter,
       onDie: onSmartMissileDie
     };
