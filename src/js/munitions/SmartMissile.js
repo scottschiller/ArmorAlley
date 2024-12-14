@@ -760,8 +760,19 @@ const SmartMissile = (options = {}) => {
       }
     }
 
-    // smoke increases as missile nears expiry
-    const smokeThreshold = 0.75 + (1 - progress) * 0.25;
+    if (
+      // smoke if visible, OR "smoke on radar" is enabled.
+      (data.isOnScreen || gamePrefs.radar_enhanced_fx) &&
+      // smoke logic from original (which used `ulGameClock` vs. frameCount.)
+      (!(game.iQuickRandom() & 0x3f) ||
+        (progress >= 0.78125 && !(data.frameCount & 3)))
+    ) {
+      game.addObject(TYPES.smoke, {
+        x: data.x,
+        y: data.y - (data.isBanana || data.isRubberChicken ? 3 : 5),
+        spriteFrame: 3
+      });
+    }
 
     if (!data.nearExpiry && progress >= data.nearExpiryThreshold) {
       data.nearExpiry = true;
@@ -790,20 +801,6 @@ const SmartMissile = (options = {}) => {
     // 0-360
     if (rad < 0) {
       rad += 2 * Math.PI;
-    }
-
-    if (
-      // don't smoke too much.
-      data.isOnScreen &&
-      (FPS === 30 || data.frameCount % 2 === 0) &&
-      progress >= 0.05 &&
-      Math.random() >= smokeThreshold
-    ) {
-      game.addObject(TYPES.smoke, {
-        x: data.x,
-        y: data.y - (data.isBanana || data.isRubberChicken ? 3 : 5),
-        spriteFrame: 3
-      });
     }
 
     moveTrailers();
