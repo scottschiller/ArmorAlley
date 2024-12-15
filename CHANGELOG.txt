@@ -7,6 +7,10 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 
 --- 12/2024, work in progress ---
 
+Smart missiles smoothly accelerate up to 200% normal speed, when running low on fuel (when they start emitting lots of smoke.) In the original, they simply "move twice" in a single frame. https://github.com/scottschiller/ArmorAlley/e7478f75cd7a0e7db8f3e77a7f2ef0dd939aef99 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8
+
+Smart missile targeting is now closer to the original; faster to respond, and harder to evade. https://github.com/scottschiller/ArmorAlley/acd0899f4851d0c35f7ec0b5428571be540491ad
+
 The enemy helicopter can recapture its own end bunker. https://github.com/scottschiller/ArmorAlley/1e7b7d349a5f3fbd3a5695119d70e3dcda87110a
 
 Fund capture, now like original. Infantry capture 50% of available funds (optional preference: engineers can "rob the bank" for 100%), end bunker is neutralized, local funds go to -25 (original game showed "captured" in this state.) "Reclaim" end bunker to reset funds to 0, or earn 25+ funds over time. https://github.com/scottschiller/ArmorAlley/497347b365ac995ac5a630f89a76a48f385d037d
