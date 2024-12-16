@@ -67,6 +67,7 @@ import { addItem as addTerrainItem } from '../elements/Terrain.js';
 import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
+import { scoreCreate } from './scores.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -142,6 +143,14 @@ const game = (() => {
       } else {
         // TYPES.van -> game.objects['van'], etc.
         objects[type].push(object);
+      }
+
+      /**
+       * Narrow cases for exclusion: paratrooper -> infantry is "free" in terms of points,
+       * paratrooper silently dies and an infantry object is created which should not impact score.
+       */
+      if (!options.excludeFromScoreCreate) {
+        scoreCreate(object);
       }
 
       // hackish: for editor mode, set vX and vY to 0 so things don't move across the battlefield.

@@ -165,7 +165,9 @@ const ParachuteInfantry = (options = {}) => {
         x: data.x,
         isEnemy: data.isEnemy,
         // exclude from recycle "refund" / reward case
-        unassisted: false
+        unassisted: false,
+        // this is an object "conversion", doesn't count against score.
+        excludeFromScoreCreate: true
       };
 
       game.addObject(TYPES.infantry, params);

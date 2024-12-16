@@ -23,6 +23,7 @@ import { prefsManager } from '../aa.js';
 import { DomCanvas } from '../UI/DomCanvas.js';
 import { addGravestone } from '../elements/Graveyard.js';
 import { aaLoader } from './aa-loader.js';
+import { scoreDestroy } from './scores.js';
 
 // unique IDs for quick object equality checks
 let guid;
@@ -632,11 +633,15 @@ const common = {
   onDie(target, dieOptions = {}) {
     /**
      * A generic catch-all for battlefield item `die()` events.
-     * This is mostly for supporting network games.
      */
 
     // NOTE: attacker may not always be defined.
     const attacker = dieOptions.attacker || target?.data?.attacker;
+
+    if (!game.objects.editor && !dieOptions.silent) {
+      // ignore "silent" deaths, e.g., infantry being picked up by helicopter
+      scoreDestroy(target);
+    }
 
     // callback-style methods
 
