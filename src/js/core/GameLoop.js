@@ -19,6 +19,7 @@ import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { effects } from './effects.js';
 import { prefsManager } from '../aa.js';
+import { score } from './scores.js';
 
 const GameLoop = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -120,6 +121,9 @@ const GameLoop = () => {
 
     // update all setTimeout()-style FrameTimeout() instances.
     frameTimeoutManager.animate();
+
+    // points, bonus, level / difficulty UI
+    score.animate();
 
     // debug stuff
     if (debugCollision) {
