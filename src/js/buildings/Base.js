@@ -24,6 +24,7 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { campaignBattles, levelName } from '../levels/default.js';
 import { utils } from '../core/utils.js';
+import { scoreGameOver } from '../core/scores.js';
 
 const Base = (options = {}) => {
   let css, data, dom, exports, height, missileVMax, width, didWin;
@@ -397,6 +398,9 @@ const Base = (options = {}) => {
     // if you lost, destroy your helicopter right away.
     if (game.players.local.data.isEnemy === data.isEnemy) {
       game.players.local.die();
+    } else {
+      // you won: add bonus to score
+      scoreGameOver(game.players.local);
     }
 
     // bring the target base into view, and position slightly for the explosions
