@@ -69,21 +69,34 @@ body.game-started #funds {
   padding-right: calc(1.5px * var(--gs));
 }
 
+#game-status,
 #game-fps {
   position: absolute;
   display: none;
   top: calc(4px * var(--gs));
   right: calc(4px * var(--gs));
+  font-size: calc(7px * var(--gs));
+  vertical-align: top;
+  text-align: right;
+  margin-top: calc(-0.5px * var(--gs));
+}
+
+#game-fps {
+  top: calc(22px * var(--gs));
   width: calc(64px * var(--gs));
   font-size: calc(5px * var(--gs));
   color: rgba(255, 255, 255, 0.25);
-  text-align: right;
 }
 
 #funds,
-#funds-count {
+#funds-count,
+#game-status {
   vertical-align: top;
   color: #999;
+}
+
+body.game-started #game-status {
+  display: block;
 }
 
 #funds-count {

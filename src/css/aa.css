@@ -169,6 +169,13 @@ body.is_safari:not(.is-mobile) {
   transform: translate(-100%, -100%);
 }
 
+#game-status,
+#game-fps {
+  /* initially, hide */
+  position: absolute;
+  display: none;
+}
+
 #bnb-vs,
 #mtv-bnb-in {
   opacity: 0;
