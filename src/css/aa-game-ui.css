@@ -802,7 +802,7 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   pointer-events: none;
   /* tips, announcements, and game paused / resume prompts. */
   font-size: calc(18px * var(--gs));
-  line-height: 100%;
+  line-height: 125%;
 }
 
 body.game-over #game-tips {
