@@ -1,7 +1,7 @@
 import { levelName, levelNumber } from '../levels/default.js';
 import { itemStats } from '../levels/item-stats.js';
 import { game, gameType } from './Game.js';
-import { TYPES } from './global.js';
+import { FPS, GAME_SPEED_RATIOED, TYPES } from './global.js';
 
 // left + right teams' scores, respectively.
 const scores = [0, 0];
@@ -91,10 +91,16 @@ function scoreCreate(o) {
 
   // which team?
   scores[o.data.isEnemy ? 1 : 0] += points;
+
+  maybeRefresh();
 }
 
 function scoreDestroy(o) {
   // e.g., a tank has been destroyed.
+
+  // ignore anything destroyed during end sequence.
+  if (game.data.battleOver) return;
+
   if (o.data.hostile) return;
 
   let item = itemStats[o.data.type];
@@ -109,11 +115,69 @@ function scoreDestroy(o) {
   // "this" team loses points, "that" team gains - scaled by difficulty.
   scores[thisTeam] += multiplyI(item.iDieScore);
   scores[thatTeam] += multiplyI(item.iKillScore);
+
+  maybeRefresh();
+}
+
 function getScore(player) {
   // given a player (helicopter) object, return the score for the team.
   return scores[player.data.isEnemy ? 1 : 0];
 }
 
+function scoreGameOver(player) {
+  // at the end of the battle, combine score and bonus.
+  scores[player.data.isEnemy ? 1 : 0] += scoreBonus(player);
+  dropBonusState();
 }
 
-export { scoreBonus, scoreCreate, scoreDestroy };
+function dropBonusState() {
+  // hackish: don't show bonus once battle has ended.
+  delete states.bonus;
+  // update list of keys, and "roll back" one accordingly.
+  keys = Object.keys(states);
+  if (state > 0) {
+    state--;
+  }
+}
+
+function animate() {
+  if (!game.data.started) return;
+  // 2x for 60 FPS
+  let interval = Math.floor(
+    scoreModulus * FPS * (FPS / 30) * GAME_SPEED_RATIOED
+  );
+
+  if (game.objects.gameLoop.data.frameCount % interval === 0) {
+    nextState();
+  }
+}
+
+function nextState() {
+  state++;
+  if (state >= keys.length) {
+    state = 0;
+  }
+  updateScoreUI();
+}
+
+function maybeRefresh() {
+  // for case when score or bonus changes while being displayed in UI
+  if (!game.data.started) return;
+  if (state === 0 || state === 1) {
+    updateScoreUI();
+  }
+}
+
+function updateScoreUI() {
+  if (!gameStatus) {
+    gameStatus = document.getElementById('game-status');
+  }
+  gameStatus.innerText = states[keys[state]]();
+}
+
+// minimal "API" for game loop
+const score = {
+  animate
+};
+
+export { score, scoreCreate, scoreDestroy, scoreGameOver };
