@@ -1,21 +1,13 @@
 import { levelName, levelNumber } from '../levels/default.js';
 import { itemStats } from '../levels/item-stats.js';
 import { game, gameType } from './Game.js';
-import { FPS, GAME_SPEED_RATIOED, TYPES } from './global.js';
+import { FPS, GAME_SPEED_RATIOED, gameTypeEmoji, TYPES } from './global.js';
 
 // left + right teams' scores, respectively.
 const scores = [0, 0];
 
 let gameStatus;
 let state = 0;
-
-let gameTypeMap = {
-  tutorial: '📖',
-  easy: '😎',
-  hard: '😬',
-  extreme: '😰',
-  armorgeddon: '😱'
-};
 
 let states = {
   score: () => {
@@ -26,7 +18,7 @@ let states = {
   },
   battle: () => {
     // difficulty + battle
-    return `${levelName || ''} ${gameTypeMap[gameType]}`;
+    return `${levelName || ''} ${gameTypeEmoji[gameType]}`;
   }
 };
 

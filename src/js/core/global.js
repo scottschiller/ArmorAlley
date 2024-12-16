@@ -477,9 +477,18 @@ const COSTS = {
   }
 };
 
+let gameTypeEmoji = {
+  tutorial: '📖',
+  easy: '😎',
+  hard: '😬',
+  extreme: '😰',
+  armorgeddon: '😱'
+};
+
 export {
   autoStart,
   audioSpriteConfig,
+  gameTypeEmoji,
   imageSpriteConfig,
   AUDIO_SPRITE_ROOT,
   DEFAULT_FUNDS,

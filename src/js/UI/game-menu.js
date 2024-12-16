@@ -7,6 +7,7 @@ import {
   clientFeatures,
   demo,
   GAME_SPEED,
+  gameTypeEmoji,
   isMobile,
   isSafari,
   minimal,
@@ -586,15 +587,7 @@ function updateGameLevelControl(value) {
   // update drop-down text with emoji
   const option = gameLevel.getElementsByTagName('option')[index];
 
-  const emoji = {
-    tutorial: '📖',
-    easy: '😎',
-    hard: '😬',
-    extreme: '😰',
-    armorgeddon: '😱'
-  };
-
-  option.innerHTML = `${option.value} ${option.value === 'Tutorial' ? emoji.tutorial : emoji[gamePrefs.game_type]}`;
+  option.innerHTML = `${option.value} ${option.value === 'Tutorial' ? gameTypeEmoji.tutorial : gameTypeEmoji[gamePrefs.game_type]}`;
 
   // update the main drop-down
   document.getElementById('game_level').selectedIndex = index;
