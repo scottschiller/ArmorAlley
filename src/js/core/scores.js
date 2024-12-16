@@ -1,10 +1,38 @@
-import { levelNumber } from '../levels/default.js';
+import { levelName, levelNumber } from '../levels/default.js';
 import { itemStats } from '../levels/item-stats.js';
 import { game, gameType } from './Game.js';
 import { TYPES } from './global.js';
 
 // left + right teams' scores, respectively.
 const scores = [0, 0];
+
+let gameStatus;
+let state = 0;
+
+let gameTypeMap = {
+  easy: 'Boot Camp',
+  hard: 'Wargames',
+  extreme: 'Conflict',
+  armorgeddon: 'Armorgeddon'
+};
+
+let states = {
+  score: () => {
+    return `Score: ${getScore(game.players.local)}`;
+  },
+  bonus: () => {
+    return `Bonus: ${scoreBonus(game.players.local)}`;
+  },
+  battle: () => {
+    // difficulty + battle
+    return `${gameTypeMap[gameType]}: ${levelName}`;
+  }
+};
+
+let keys = Object.keys(states);
+
+// how often to refresh UI
+let scoreModulus = 5.5;
 
 // objects which involve scoring - create + die + bonus points
 let scoreTypes = [
@@ -81,6 +109,11 @@ function scoreDestroy(o) {
   // "this" team loses points, "that" team gains - scaled by difficulty.
   scores[thisTeam] += multiplyI(item.iDieScore);
   scores[thatTeam] += multiplyI(item.iKillScore);
+function getScore(player) {
+  // given a player (helicopter) object, return the score for the team.
+  return scores[player.data.isEnemy ? 1 : 0];
+}
+
 }
 
 export { scoreBonus, scoreCreate, scoreDestroy };
