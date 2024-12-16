@@ -10,10 +10,11 @@ let gameStatus;
 let state = 0;
 
 let gameTypeMap = {
-  easy: 'Boot Camp',
-  hard: 'Wargames',
-  extreme: 'Conflict',
-  armorgeddon: 'Armorgeddon'
+  tutorial: '📖',
+  easy: '😎',
+  hard: '😬',
+  extreme: '😰',
+  armorgeddon: '😱'
 };
 
 let states = {
@@ -25,7 +26,7 @@ let states = {
   },
   battle: () => {
     // difficulty + battle
-    return `${gameTypeMap[gameType]}: ${levelName}`;
+    return `${levelName || ''} ${gameTypeMap[gameType]}`;
   }
 };
 

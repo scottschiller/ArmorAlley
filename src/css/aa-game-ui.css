@@ -77,6 +77,7 @@ body.game-started #funds {
   right: calc(4px * var(--gs));
   font-size: calc(7px * var(--gs));
   vertical-align: top;
+  line-height: 100%;
   text-align: right;
   margin-top: calc(-0.5px * var(--gs));
 }
