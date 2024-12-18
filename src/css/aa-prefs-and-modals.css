@@ -253,7 +253,7 @@ body.is_iphone .mac-classic ul.real-list li {
   }
 
   body.is_iphone #game-prefs-modal.select-level .body {
-    font-size: calc(10px * var(--prefs-font-scale));
+    font-size: calc(6.5px * var(--prefs-font-scale));
   }
 
   /* TODO: review sizing of some inconsistent modal elements, iOS landscape view. */
@@ -328,10 +328,13 @@ body.is_iphone .mac-classic ul.real-list li {
 
 @media screen and (orientation: portrait) {
   body.is_iphone #game-prefs-modal .body {
-    /* fit better on iPhone, portrait */
+    /* regular prefs modal: fit better on iPhone, portrait */
     font-size: calc(9.5px * var(--prefs-font-scale));
   }
-
+  body.is_iphone #game-prefs-modal.select-level .body {
+    /* "select level" needs to be a bit smaller. */
+    font-size: calc(8.5px * var(--prefs-font-scale));
+  }
   body.is_iphone #game-prefs-modal fieldset {
     /* tighten up modal spacing at large */
     margin: 0px 6px 10px 6px;
@@ -378,7 +381,7 @@ body.is_iphone .mac-classic ul.real-list li {
 #game-prefs-modal.select-level .aa-logo {
   /* larger logo only in this one case. */
   width: auto;
-  max-width: 466px;
+  max-width: 100%;
   margin-right: 0px;
   image-rendering: pixelated;
 }
