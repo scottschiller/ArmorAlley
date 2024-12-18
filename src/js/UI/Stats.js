@@ -545,6 +545,12 @@ function Stats() {
         `the enemy ${emoji.helicopter}`
       );
 
+      // HACK: fix cases like `💣 bombed your van 💣`
+      // TODO: determine root cause and properly fix. :X
+      if (text.charCodeAt(0) === '💣'.charCodeAt(0)) {
+        text = text.replace('💣 ', 'the enemy helicopter ');
+      }
+
       // one more emoji search-and-replace.
       text = text.replace('helicopter', emoji.helicopter);
 
