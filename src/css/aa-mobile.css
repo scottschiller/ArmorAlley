@@ -530,6 +530,10 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
   padding: 0;
 }
 
+#mobile-controls li.warning {
+  animation: 0.25s linear infinite blink-warning;
+}
+
 #mobile-controls li.get-user-attention {
   animation: 0.5s ease-in-out infinite alternate sorta-blink-alt;
   background-color: rgba(27, 107, 27, 0.45);
@@ -690,7 +694,13 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 #mobile-controls li span.letter-block.eject {
   font-size: calc(10px * var(--gs));
   line-height: calc(24px * var(--gs));
-  filter: grayscale(0.25);
+  /* de-saturate, avoid over-contrast with regular icons. */
+  filter: saturate(0.5);
+}
+
+#mobile-controls li.warning span.letter-block.eject {
+  /* show full color when in "warning" state */
+  filter: none;
 }
 
 #mobile-controls li span.letter-block.show_options {

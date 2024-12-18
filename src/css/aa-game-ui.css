@@ -1707,11 +1707,10 @@ body.radar_jammed .scan-node {
   }
 }
 
-@keyframes blink-tracking-color {
+@keyframes blink-warning {
   50% {
-    background-color: red;
-    border-color: red;
-    color: red;
+    background-color: #cc3333;
+    border-color: #cc3333;
   }
 }
 

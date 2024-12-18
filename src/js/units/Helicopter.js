@@ -2196,6 +2196,30 @@ const Helicopter = (options = {}) => {
       return;
     }
 
+    /**
+     * If on a touch device, require a "double-tap" (at least, while the UI is up.)
+     * And, notify the first time this happens.
+     */
+    if (clientFeatures.touch && data.isLocal) {
+      if (!data.ejectTimer) {
+        // mark the first event...
+        let oEject = document.getElementById('mobile-eject');
+        let ua = 'warning';
+        utils.css.add(oEject, ua);
+        data.ejectTimer = common.setFrameTimeout(() => {
+          data.ejectTimer = null;
+          utils.css.remove(oEject, ua);
+        }, 2000);
+        // and notify the first time this happens during this game.
+        if (!data.ejectCount) {
+          game.objects.notifications.add(
+            '⚠️ EJECT: Tap again to bail out. 🚁 🪂'
+          );
+        }
+        return;
+      }
+    }
+
     // bail!
     if (!data.dead && data.pilot) {
       // always deploy the pilot...
@@ -2229,11 +2253,11 @@ const Helicopter = (options = {}) => {
 
       if (!tutorialMode) {
         game.objects.view.setAnnouncement(
-          'No pilot <span class="inline-emoji">😱</span>'
+          'No pilot <span class="inline-emoji">🚁 🪂 😱</span>'
         );
       }
 
-      if (tutorialMode || !data.ejectCount) {
+      if (tutorialMode) {
         game.objects.notifications.add(
           'You found the “eject” button. <span class="inline-emoji">😱 💀</span>'
         );
