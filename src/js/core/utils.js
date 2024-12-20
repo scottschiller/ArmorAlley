@@ -1,4 +1,8 @@
+import { atkinson } from '../UI/atkinson.js';
 import { IMAGE_ROOT, SPRITESHEET_URL, imageSpriteConfig } from './global.js';
+
+// temporary / prototype stuff
+let useAtkinson = window.location.href.match(/atkinson/i);
 
 const LS_VERSION_KEY = 'AA';
 const LS_VERSION = '2023';
@@ -411,6 +415,17 @@ const utils = {
           targetWidth,
           targetHeight
         );
+
+        // TODO: implement properly. :P
+        if (useAtkinson) {
+          atkinson(
+            imageName,
+            bufferCanvas,
+            bufferCanvasCtx,
+            targetWidth,
+            targetHeight
+          );
+        }
 
         extractedImg.onload = () => {
           extractedImg.onload = null;
