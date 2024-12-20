@@ -7,6 +7,10 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 
 --- 12/2024, work in progress ---
 
+Score, bonus, battle and difficulty display in top right. https://github.com/scottschiller/ArmorAlley/2900425e1b64b9f063bd0d79a646b74d76301637 https://github.com/scottschiller/ArmorAlley/8ddf254edf8789a34f9b0b2535c928629e922aca
+
+Score + bonus tracking, based on original. https://github.com/scottschiller/ArmorAlley/d8655fa85da70ea5d326029f518ee6c25edb1786
+
 Smart missiles smoothly accelerate up to 200% normal speed, when running low on fuel (when they start emitting lots of smoke.) In the original, they simply "move twice" in a single frame. https://github.com/scottschiller/ArmorAlley/e7478f75cd7a0e7db8f3e77a7f2ef0dd939aef99 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8
 
 Smart missile targeting is now closer to the original; faster to respond, and harder to evade. https://github.com/scottschiller/ArmorAlley/acd0899f4851d0c35f7ec0b5428571be540491ad
