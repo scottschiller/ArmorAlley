@@ -883,6 +883,8 @@ function PrefsManager() {
 
     if (data.active || !dom.o) return;
 
+    data.lastActiveElement = document.activeElement;
+
     data.active = true;
 
     data.network = !!options.network;
@@ -920,8 +922,15 @@ function PrefsManager() {
     } else {
       updateBattleLists();
 
-      const oSubmit = document.getElementById('game-prefs-submit');
-      oSubmit?.focus();
+      // focus?
+      let focusTarget = dom.o.querySelector('[data-focus-start-here]');
+
+      if (focusTarget) {
+        focusTarget.focus();
+      } else {
+        let oSubmit = document.getElementById('game-prefs-submit');
+        oSubmit?.focus();
+      }
 
       const fieldset = document.getElementById('prefs-select-level');
 
@@ -1074,6 +1083,15 @@ function PrefsManager() {
     if (gamePrefs.bnb) {
       data.didCrankIt = false;
     }
+
+    // return focus to where it was
+    try {
+      data.lastActiveElement?.focus();
+    } catch(e) {
+      console.warn('Failed to focus last active element', data.lastActiveElement);
+    }
+
+    data.lastActiveElement = null;
 
     game.resume();
   }
@@ -1501,6 +1519,7 @@ function PrefsManager() {
     initComplete: false,
     originalHeight: 0,
     network: false,
+    lastActiveElement: null,
     lastMenuOpen: 0,
     lastMenuOpenThrottle: 30000,
     readyToStart: false,
