@@ -462,6 +462,13 @@ body.game-started #start-game-button-mobile {
   outline: 1px solid #fff;
 }
 
+#game-menu select:focus:active,
+#game-menu input:focus:active,
+#game-menu button:focus:active {
+  /* immediate feedback for keyboard, spacebar use */
+  outline: none;
+}
+
 body.is_safari.is_iphone #game-menu select {
   /* stubborn iOS Safari */
   height: calc(18.33px * var(--menu-scale));
