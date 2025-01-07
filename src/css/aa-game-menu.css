@@ -459,7 +459,7 @@ body.game-started #start-game-button-mobile {
 #game-menu select:focus,
 #game-menu input:focus,
 #game-menu button:focus {
-  outline-color: rgba(0, 0, 0, 0.5);
+  outline: 1px solid #fff;
 }
 
 body.is_safari.is_iphone #game-menu select {
@@ -848,6 +848,11 @@ button .button-icon {
   border-radius: var(--glow-border-radius);
 }
 
+#game-menu button.game-start {
+  /* prevent focus border bleed */
+  overflow: hidden;
+}
+
 #game-menu .glow-item-checkbox,
 #game-menu button.game-start,
 .glow-item {
@@ -857,8 +862,8 @@ button .button-icon {
 .glow-item-checkbox {
   /* special case. */
   position: absolute;
-  top: 7%;
-  left: 0;
+  top: 5.5%;
+  left: 0.5%;
   width: calc(12px * var(--menu-scale));
   height: calc(12px * var(--menu-scale));
 }
