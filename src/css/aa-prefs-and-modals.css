@@ -533,6 +533,10 @@ body.is_firefox #game-prefs-modal .fieldset-container {
   font-size: calc(15px * var(--prefs-font-scale));
 }
 
+#game-prefs-modal button:focus-visible {
+  outline-color: #000;
+}
+
 body.is_iphone #game-prefs-modal legend {
   font-size: calc(12.5px * var(--prefs-font-scale));
 }
@@ -1006,6 +1010,25 @@ body.game-started #game-prefs-modal .hide-if-started {
   padding: 1px 20px;
   /* Modal-specific: extra right spacing. */
   margin-right: 10px;
+}
+
+#game-prefs-modal button.primary:not(:disabled):focus-visible {
+  /* blink */
+  animation: 1s steps(2) infinite button-blink-larger;
+}
+
+#game-prefs-modal button:not(.generic-cta):not(:disabled):focus-visible,
+button.primary:not(:disabled):focus-visible,
+button:not(.generic-cta):not(:disabled):focus-visible {
+  outline: none;
+  animation: 1s infinite modal-pulse;
+}
+
+@keyframes modal-pulse {
+  50% {
+    opacity: 0.75;
+    transform: scale3d(0.9, 0.9, 1);
+  }
 }
 
 #game-prefs-modal button.primary:not(:disabled):active,
