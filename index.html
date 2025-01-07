@@ -166,7 +166,14 @@
   <!-- While running: Remove "game-paused" class to see the full game UI, or add nopause=1 to URL. -->
   <body style="overflow: hidden">
     <div id="home-video-wrapper">
-      <video id="home-menu-video" autoplay muted loop playsinline width="100vw">
+      <video
+        id="home-menu-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        tabindex="-1"
+        width="100vw">
         <!-- <source> will be assigned here based on format support, resolution, and 30 vs. 60 FPS options. -->
       </video>
     </div>
