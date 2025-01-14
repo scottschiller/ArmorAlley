@@ -16,7 +16,10 @@
  * mappings, and should work reliably across browsers. However, results vary.
  *
  * If a standard mapping is not indicated, "here be dragons."
- *
+ * 
+ * The intent of this work is to abstract and normalize the common use cases
+ * between controller updates and the ability to handle special controllers.
+ * 
  * Gamepads have an ID string which varies by browser, and may include product
  * and vendor IDs that can be parsed out. This is reminiscent of UA sniffing.
  *
@@ -42,9 +45,6 @@
  *
  * In Firefox, the d-pad "9-value" number is mapped to axes[0] instead of [9],
  * and the analog joysticks are on axes[1-4] vs. [0-3].
- *
- * The intent of this work is to abstract and normalize the common use cases,
- * between controller updates and the ability to handle special controllers.
  */
 
 import { gpConfig, gpMap } from './gamepad-config.js';
