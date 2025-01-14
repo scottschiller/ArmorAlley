@@ -1,5 +1,5 @@
 /**
- * The big mobile / touchscreen rules file.
+ * The big mobile / touchscreen / gamepad rules file.
  * TODO: Maybe drop `body.is-mobile` everywhere.
  */
 body.is-mobile #game-menu-wrapper {
@@ -157,11 +157,19 @@ body.is-mobile.game-over #mobile-controls {
   display: none !important;
 }
 
-body.is-mobile.mobile-controls_right-aligned
+body.is-mobile
+  mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
   right: 0;
   /* offset for touch controls, prevent overlap */
   margin-right: calc(60px * var(--gs));
+}
+
+body.has-gamepad.mobile-controls_right-aligned
+  #notification-toasts.right-aligned.bottom-up {
+  right: 0;
+  /* larger offset for gamepad controls */
+  margin-right: calc(102px * var(--gs));
 }
 
 @media screen and (orientation: portrait) {
@@ -551,6 +559,22 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
   opacity: 0;
 }
 
+body.has-gamepad #mobile-controls {
+  display: block;
+  /* larger width, 3x3 grid */
+  width: calc(83px * var(--gs));
+}
+
+body.has-gamepad #mobile-controls ul.mobile-controls-weapons {
+  display: none;
+  opacity: 0;
+}
+
+body.has-gamepad #mobile-controls ul.mobile-controls-ordering,
+body.has-gamepad #mobile-controls ul.mobile-controls-ordering li {
+  opacity: 1;
+}
+
 /* only blink inventory control when requested, if weapons are showing. */
 #mobile-controls.inventory_active li.show_inventory_control.get-user-attention,
 #mobile-controls.inventory_active
@@ -571,9 +595,7 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
 }
 
 #mobile-controls li {
-  /* microfiche, but OK on mobile. */
-  background: url(../../assets/image/UI/checkerboard-black-mask-75percent.png) 0
-    0/4px;
+  background-color: rgba(0, 0, 0, 0.66);
   border: calc(0.75px * var(--gs)) dotted hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
@@ -641,6 +663,48 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
   position: absolute;
   text-align: center;
   width: 100%;
+}
+
+body #mobile-controls li.gamepad {
+  display: none;
+}
+
+/* special case */
+body.has-gamepad #mobile-controls li.gamepad {
+  display: inline-block;
+}
+
+body.has-gamepad #mobile-controls li.gamepad span {
+  display: block;
+  /* correct vertical positioning */
+  bottom: auto;
+  font-size: calc(12px * var(--gs));
+  text-indent: 1px;
+}
+
+body.has-gamepad #mobile-controls.active li a {
+  /* respond faster to gamepad actions. */
+  transition-duration: 60ms;
+}
+
+body.has-gamepad #mobile-controls.active li {
+  transition: background-color 60ms ease-in-out;
+}
+
+body.has-gamepad.is-mobile #mobile-controls:not(.active) li:not(.gamepad) {
+  /* drop background mask */
+  background-color: transparent;
+}
+
+body.has-gamepad.is-mobile #mobile-controls:not(.active) li:not(.gamepad) a {
+  /* hide "options" when gamepad is not in use */
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+body.has-gamepad.is-mobile #mobile-controls:not(.active) #mobile-eject a {
+  /* special case: needs more dimming. */
+  opacity: 0.25;
 }
 
 #mobile-controls li.inventory-item a.engineer,
