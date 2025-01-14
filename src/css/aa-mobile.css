@@ -531,6 +531,21 @@ body.is-mobile.notch-at-left.mobile-controls_left-aligned #mobile-controls {
   left: 0px;
 }
 
+body.has-gamepad:not(.is-mobile).mobile-controls_left-aligned #mobile-controls {
+  /* left-aligned gamepad controls case, desktop */
+  left: 0px;
+  /* align with notifications */
+  margin-left: 1.85%;
+}
+
+body.has-gamepad:not(.is-mobile).mobile-controls_right-aligned
+  #mobile-controls {
+  /* right-aligned gamepad controls case, desktop */
+  right: 0px;
+  /* align with notifications */
+  margin-right: 1.85%;
+}
+
 #mobile-controls .mobile-controls-ordering,
 #mobile-controls .mobile-controls-weapons {
   position: absolute;
