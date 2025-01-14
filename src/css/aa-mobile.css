@@ -694,15 +694,13 @@ body.has-gamepad.is-mobile #mobile-controls:not(.active) li:not(.gamepad) {
   background-color: transparent;
 }
 
-body.has-gamepad.is-mobile #mobile-controls:not(.active) li:not(.gamepad) a {
-  /* hide "options" when gamepad is not in use */
-  opacity: 0.5;
+body.has-gamepad.is-mobile.is_iphone
+  #mobile-controls:not(.active)
+  li:not(.gamepad)
+  a {
+  /* iPhone + gamepad: hide gamepad UI "options" when gamepad is not in use */
+  opacity: 0;
   filter: grayscale(1);
-}
-
-body.has-gamepad.is-mobile #mobile-controls:not(.active) #mobile-eject a {
-  /* special case: needs more dimming. */
-  opacity: 0.25;
 }
 
 #mobile-controls li.inventory-item a.engineer,
