@@ -188,6 +188,23 @@ body.has-gamepad.mobile-controls_right-aligned
   margin-right: 2.05%;
 }
 
+body.is-mobile:not(.is_iphone).mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  /* iPad or similar */
+  top: 14%;
+  left: 0;
+  margin-left: 1.85%;
+  /* prevent overlap with regular touch, or gamepad controls */
+  height: 47%;
+}
+
+@media screen and (orientation: landscape) {
+  body.has-gamepad.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone + gamepad, landscape, controls right, notifications bottom right */
+    top: auto;
+    bottom: 15%;
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -223,11 +240,38 @@ body.has-gamepad.mobile-controls_right-aligned
     max-width: 60vw;
   }
 
+  /* indent notifications to avoid overlap - and limit width, too. */
+  body.has-gamepad.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone + gamepad, controls right, notifications bottom right */
+    right: 0;
+    /* sit just above status bar */
+    top: 14.5%;
+    /* leave room for game controls */
+    height: 48%;
+    /* minimal margin */
+    margin-right: calc(8px * var(--gs) * 1.33);
+    max-width: 60vw;
+  }
+
   body.is-mobile.is_iphone.mobile-controls_left-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls left, notifications bottom left */
     left: 0;
     margin-left: calc(64px * var(--gs) * 1.15);
+    max-width: 60vw;
+  }
+
+  body.has-gamepad.is-mobile.is_iphone.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone + gamepad, controls left, notifications bottom left */
+    left: 0;
+    /* sit just above status bar */
+    top: 14.5%;
+    /* leave room for game controls */
+    height: 48%;
+    /* minimal margin */
+    margin-left: calc(8px * var(--gs) * 1.15);
     max-width: 60vw;
   }
 
@@ -323,13 +367,20 @@ body.has-gamepad.mobile-controls_right-aligned
   body.is-mobile:not(.is_iphone).mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPad, controls right, notifications bottom right */
-    margin-right: calc(60px * var(--gs) * 1.5);
+    top: 14.5%;
+    height: 47%;
   }
 
   body.is-mobile.is_iphone.mobile-controls_right-aligned
     #notification-toasts.right-aligned.bottom-up {
     /* iPhone, controls right, notifications bottom right */
     margin-right: calc(60px * var(--gs) * 3);
+  }
+
+  body.has-gamepad.is-mobile.is_iphone.mobile-controls_right-aligned
+    #notification-toasts.right-aligned.bottom-up {
+    /* iPhone + gamepad, controls right, notifications bottom right */
+    margin-right: calc(80px * var(--gs) * 3);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_right-aligned
@@ -348,6 +399,12 @@ body.has-gamepad.mobile-controls_right-aligned
     #notification-toasts.left-aligned.bottom-up {
     /* iPhone, controls + notifications bottom left */
     margin-left: calc(65px * var(--gs) * 1.95);
+  }
+
+  body.has-gamepad.is-mobile.is_iphone.mobile-controls_left-aligned
+    #notification-toasts.left-aligned.bottom-up {
+    /* iPhone + gamepad, controls + notifications bottom left */
+    margin-left: calc(96px * var(--gs) * 1.95);
   }
 
   body.is-mobile.is_iphone.notch-at-left.mobile-controls_left-aligned
