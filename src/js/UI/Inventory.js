@@ -88,6 +88,10 @@ const Inventory = () => {
      * Given a unit type and friendly/enemy "team", count the number of active items.
      * Pending orders also count toward the limit.
      */
+
+    // when not in "unlimited lives" mode, you can purchase as many choppers as you like.
+    if (type === TYPES.helicopter) return true;
+
     let count = 0;
     let units = [];
 
