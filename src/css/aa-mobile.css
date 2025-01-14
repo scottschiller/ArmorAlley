@@ -164,11 +164,30 @@ body.is-mobile.mobile-controls_right-aligned
   margin-right: calc(60px * var(--gs));
 }
 
+body.has-gamepad.mobile-controls_left-aligned
+  #notification-toasts.left-aligned.bottom-up {
+  /**
+   * Gamepad controls and notifications, bottom left
+   */
+  left: 0;
+  /* align with top of gamepad controls */
+  top: 14.5%;
+  /* slight left indent */
+  margin-left: 2.05%;
+}
+
 body.has-gamepad.mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
+  /**
+   * Gamepad controls and notifications, bottom right
+   */
   right: 0;
-  /* larger offset for gamepad controls */
-  margin-right: calc(102px * var(--gs));
+  /* align with top of gamepad controls */
+  top: 14.5%;
+  /* slight right indent */
+  margin-right: 2.05%;
+}
+
 }
 
 @media screen and (orientation: portrait) {
