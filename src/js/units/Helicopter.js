@@ -63,6 +63,7 @@ import { levelConfig, levelFlags } from '../levels/default.js';
 import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
+import { gamepad, gamepadFeature } from '../UI/gamepad.js';
 
 const Helicopter = (options = {}) => {
   let css,
@@ -1031,6 +1032,8 @@ const Helicopter = (options = {}) => {
     if (data.respawning) return;
 
     if (state) {
+      maybeRumbleOnLanding();
+
       data.vX = 0;
       data.vY = 0;
 
@@ -2310,6 +2313,12 @@ const Helicopter = (options = {}) => {
     game.addObject(TYPES.parachuteInfantry, options);
   }
 
+  function maybeRumbleOnLanding() {
+    if (!data.isLocal || data.isCPU || !gamepadFeature) return;
+    // a bit of fun: bump the controller relative to how fast the chopper was descending.
+    gamepad.rumble(Math.abs(data.vX) / data.vXMax, 50);
+  }
+
   function animate() {
     if (game.objects.editor) return;
 
@@ -2416,6 +2425,9 @@ const Helicopter = (options = {}) => {
           data.vY = 0;
           return;
         }
+
+        maybeRumbleOnLanding();
+
         // only "reset" for human player
         data.vX = 0;
         data.vY = 0;
