@@ -1537,7 +1537,7 @@ const Helicopter = (options = {}) => {
       if (data.lives < 0) {
         // game over.
         game.objects.view.setAnnouncement(
-          'Game over! <span class="inline-emoji">☠️🏳️</span> &hairsp;Better luck next time.<hr />' +
+          'Game over! <span class="inline-emoji">☠️&hairsp;🏳️</span> &hairsp;Better luck next time.<hr />' +
             getDefeatMessage(),
           -1
         );
