@@ -679,7 +679,6 @@ body.has-gamepad #mobile-controls li.gamepad span {
   /* correct vertical positioning */
   bottom: auto;
   font-size: calc(12px * var(--gs));
-  text-indent: 1px;
 }
 
 body.has-gamepad #mobile-controls.active li a {
