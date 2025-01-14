@@ -1024,7 +1024,9 @@ const game = (() => {
     getRandSeedUI: () => randSeedUI,
     init: () => {
       const css = ['aa-game-ui.css'];
-      if (isMobile) css.push('aa-mobile.css');
+      if (isMobile || gamepadFeature) {
+        css.push('aa-mobile.css');
+      }
       aaLoader.loadCSS(css, init);
     },
     initArmorAlley,
