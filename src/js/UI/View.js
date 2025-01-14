@@ -31,6 +31,7 @@ import { gamePrefs } from './preferences.js';
 import { handleOrientationChange } from './mobile.js';
 import { previewLevel } from '../levels/default.js';
 import { aaLoader } from '../core/aa-loader.js';
+import { gamepadFeature } from './gamepad.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -287,10 +288,12 @@ const View = () => {
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
     if (game.objects.radar) game.objects.radar.setStale(true);
 
-    if (isMobile && game.objects.joystick) {
+    if ((isMobile || gamepadFeature) && game.objects.joystick) {
       // attempt to reset and reposition.
       game.objects.joystick.reset();
-      game.players.local.centerView();
+      if (isMobile) {
+        game.players.local.centerView();
+      }
     }
 
     game.objects.starController?.resize();
@@ -650,8 +653,10 @@ const View = () => {
 
     const nodes = [document.getElementById('player-status-bar')];
 
-    if (isMobile) {
-      nodes.push(document.getElementById('mobile-controls'));
+    let mobileControls = document.getElementById('mobile-controls');
+
+    if (mobileControls) {
+      nodes.push(mobileControls);
     }
 
     const toAdd = [];
@@ -1249,7 +1254,7 @@ const View = () => {
     dom.messageInput = document.getElementById('message-form-input');
     dom.root = document.querySelector(':root');
 
-    if (isMobile) {
+    if (isMobile || gamepadFeature) {
       // one more trick: set up controls, then start.
       const placeholder = document.getElementById(
         'mobile-controls-placeholder'
