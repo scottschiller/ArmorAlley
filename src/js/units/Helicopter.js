@@ -63,6 +63,7 @@ import { levelConfig, levelFlags } from '../levels/default.js';
 import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
+import { findEnemy } from './Helicopter-utils.js';
 import { gamepad, gamepadFeature } from '../UI/gamepad.js';
 
 const Helicopter = (options = {}) => {
@@ -510,9 +511,9 @@ const Helicopter = (options = {}) => {
     let mobileControls;
     let mobileControlItems;
 
-    if (isMobile) {
+    if (isMobile || gamepadFeature) {
       mobileControls = document.getElementById('mobile-controls');
-      mobileControlItems = mobileControls.querySelectorAll(
+      mobileControlItems = mobileControls?.querySelectorAll(
         '.mobile-controls-weapons li'
       );
     }
@@ -1739,29 +1740,61 @@ const Helicopter = (options = {}) => {
     vY = data.vY + tiltOffset * (data.isEnemy ? -1 : 1);
 
     // TODO: implement data.ammoTarget for network games
-    if (data.isCPU && !net.active) {
+    if (
+      // TODO: ensure gamepad is active, connected and enabled in prefs.
+      (gamepadFeature && gamepad.data.state.isFiring) ||
+      (data.isCPU && !net.active)
+    ) {
       // aim for data.ammoTarget
-      // HACK: Note data.ammoTarget is the data structure. :X
-      let ammoTarget = new Vector(data.ammoTarget.x, data.ammoTarget.y);
+      let target;
 
-      let pos = new Vector(data.x, data.y);
+      if (data.isCPU) {
+        target = data.ammoTarget;
+      } else if (data.y < 330) {
+        // airborne human player, not landed nor too close to ground.
+        // HACK: "soft auto-targeting" for human players using gamepads.
+        let types = [TYPES.balloon, TYPES.helicopter, TYPES.smartMissile];
 
-      let velocity = new Vector(data.ammoTarget.vX, data.ammoTarget.vY);
+        let nearbyThreats = findEnemy(data, types, 192);
 
-      // NOTE: inverting velocity on the target, because seek expects velocity of the chopper chasing the target.
-      velocity.mult(-1);
+        target = nearbyThreats[0];
 
-      // this magnitude works OK for targeting balloons on chains, and the human chopper.
-      velocity.setMag(1);
+        if (target) {
+          // ignore targets that would make gunfire movement look unrealistically wacky.
+          if (Math.abs(target.data.y - data.y) > 24) {
+            target = null;
+          } else {
+            // hackish: make target the data structure, as ammoTarget normally expects.
+            target = target.data;
+          }
+        }
+      }
 
-      let seekForce = seek(ammoTarget, pos, velocity, data.vXMax, data.vXMax);
+      if (target) {
+        // HACK: Note target is the data structure. :X
+        let ammoTarget = new Vector(target.x, target.y);
 
-      // approximation of max bullet speed.
-      // CPU might have a *slight* advantage in bullet velocity, here.
-      seekForce.setMag(xMax * 2.5);
+        let pos = new Vector(data.x, data.y);
 
-      vX = seekForce.x;
-      vY = seekForce.y;
+        let velocity = new Vector(target.vX, target.vY);
+
+        // NOTE: inverting velocity on the target, because seek expects velocity of the chopper chasing the target.
+        velocity.mult(-1);
+
+        // this magnitude works OK for targeting balloons on chains, and the human chopper.
+        velocity.setMag(1);
+
+        let seekForce = seek(ammoTarget, pos, velocity, data.vXMax, data.vXMax);
+
+        // approximation of max bullet speed.
+        // CPU might have a *slight* advantage in bullet velocity, here.
+        if (data.isCPU) {
+          seekForce.setMag(xMax * 2.5);
+        }
+
+        vX = seekForce.x;
+        vY = seekForce.y;
+      }
     }
 
     const damagePoints = 2;
