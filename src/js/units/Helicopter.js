@@ -2618,6 +2618,16 @@ const Helicopter = (options = {}) => {
   }
 
   function reactToDamage(attacker) {
+    // hackish: data.exploding is true before dead = true, long story short here.
+    // TODO: prefs etc.
+    if (gamepadFeature) {
+      if (data.dead || !data.energy || data.exploding) {
+        gamepad.rumble(0.65, 150);
+      } else {
+        gamepad.rumble(0.65, 50);
+      }
+    }
+
     // extra special case: BnB, and helicopter being hit by shrapnel or enemy gunfire.
     if (!gamePrefs.bnb) return;
 
