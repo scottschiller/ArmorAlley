@@ -89,8 +89,10 @@ function Joystick(options) {
     // re-center the "nub".
     resetPoint();
 
-    // show joystick UI
-    utils.css.add(dom.oJoystick, css.active);
+    // show joystick UI, unless specified otherwise
+    if (!e.hidden) {
+      utils.css.add(dom.oJoystick, css.active);
+    }
 
     // stop touch from causing scroll, too?
     if (e.preventDefault) e.preventDefault();
