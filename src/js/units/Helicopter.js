@@ -64,7 +64,7 @@ import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
 import { findEnemy } from './Helicopter-utils.js';
-import { gamepad, gamepadFeature } from '../UI/gamepad.js';
+import { gamepad, gamepadFeature, useGamepad } from '../UI/gamepad.js';
 
 const Helicopter = (options = {}) => {
   let css,
@@ -2236,24 +2236,26 @@ const Helicopter = (options = {}) => {
      * If on a touch device, require a "double-tap" (at least, while the UI is up.)
      * And, notify the first time this happens.
      */
-    if (clientFeatures.touch && data.isLocal) {
-      if (!data.ejectTimer) {
-        // mark the first event...
-        let oEject = document.getElementById('mobile-eject');
-        let ua = 'warning';
-        utils.css.add(oEject, ua);
-        data.ejectTimer = common.setFrameTimeout(() => {
-          data.ejectTimer = null;
-          utils.css.remove(oEject, ua);
-        }, 2000);
-        // and notify the first time this happens during this game.
-        if (!data.ejectCount) {
-          game.objects.notifications.add(
-            '⚠️ EJECT: Tap again to bail out. 🚁 🪂'
-          );
-        }
-        return;
+    if (
+      data.isLocal &&
+      ((gamepadFeature && useGamepad) || clientFeatures.touch) &&
+      !data.ejectTimer
+    ) {
+      // mark the first event...
+      let oEject = document.getElementById('mobile-eject');
+      let ua = 'warning';
+      utils.css.add(oEject, ua);
+      data.ejectTimer = common.setFrameTimeout(() => {
+        data.ejectTimer = null;
+        utils.css.remove(oEject, ua);
+      }, 2000);
+      // and notify the first time this happens during this game.
+      if (!data.ejectCount) {
+        game.objects.notifications.add(
+          '⚠️ EJECT: Press again to bail out. 🚁 🪂'
+        );
       }
+      return;
     }
 
     // bail!
