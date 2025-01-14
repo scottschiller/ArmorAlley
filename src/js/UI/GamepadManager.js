@@ -27,6 +27,14 @@
  * formatted. Safari may not provide IDs at all, or perhaps omit IDs when
  * standard mapping applies.
  *
+ * QUIRKS: iOS Safari
+ * ---
+ * On iOS, gamepads need to be connected via USB cable to work with Safari.
+ * Gamepads paired via bluetooth do not get `gamepadconnected` on iOS 18.
+ * In testing, joystick buttons did not work on an iPhone 14 with iOS 17.0.
+ *
+ * QUIRKS: 8Bitdo NES30Pro
+ * ---
  * In testing, an older 8Bitdo NES30Pro (bluetooth) controller does not get a
  * "standard" mapping in Firefox or Chrome. In addition, Firefox's mapping of
  * this controller also differs slightly from that of Chrome.
