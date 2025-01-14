@@ -68,6 +68,7 @@ import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
 import { scoreCreate } from './scores.js';
+import { gamepad, gamepadFeature } from '../UI/gamepad.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -251,6 +252,8 @@ const game = (() => {
     objects.starController = StarController();
 
     objects.envelope = Envelope();
+
+    objects.gamepad = gamepad;
   }
 
   function getObjects() {
@@ -686,8 +689,10 @@ const game = (() => {
 
     keyboardMonitor.init();
 
-    // allow joystick if in debug mode (i.e., testing on desktop)
-    if (isMobile || debug) {
+    gamepad.init();
+
+    // "joystick" applies for gamepad, mobile, or debug mode (i.e., testing on desktop)
+    if (gamepadFeature || isMobile || debug) {
       objects.joystick = Joystick();
 
       objects.joystick.onSetDirection = (directionX, directionY) => {
@@ -932,6 +937,7 @@ const game = (() => {
     'editor': null,
     'envelope': null,
     'gameLoop': null,
+    'gamepad': null,
     'view': null,
     'starController': null,
     'backgroundSmoke': [],
