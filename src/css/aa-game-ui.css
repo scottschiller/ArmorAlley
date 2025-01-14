@@ -1372,7 +1372,7 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
    * composited elements "all the time" (tips / shadow overlays),
    * which guarantees this becomes another full-screen GPU layer.
    */
-  height: 54%;
+  height: 53%;
   right: 2.05%;
   top: 32.5%;
   width: 25em;
