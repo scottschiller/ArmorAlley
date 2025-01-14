@@ -256,7 +256,7 @@ function updateAA() {
     lastABXY.left || lastABXY.bottom || ljs[MENU].button || ljs[FLY].button;
 
   if (inventoryButtonWasActive && !inventoryButtonActive) {
-    let target = dom.inventory[data.dPadOffset].querySelector('a');
+    let target = dom.inventory[data.dPadOffset]?.querySelector?.('a');
     utils.css.remove(target, css.buttonActive);
   }
 }
