@@ -157,8 +157,7 @@ body.is-mobile.game-over #mobile-controls {
   display: none !important;
 }
 
-body.is-mobile
-  mobile-controls_right-aligned
+body.is-mobile.mobile-controls_right-aligned
   #notification-toasts.right-aligned.bottom-up {
   right: 0;
   /* offset for touch controls, prevent overlap */
