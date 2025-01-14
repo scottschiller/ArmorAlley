@@ -45,6 +45,7 @@ import {
 } from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { aaLoader } from '../core/aa-loader.js';
+import { gamepadFeature } from './gamepad.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -2098,7 +2099,7 @@ function PrefsManager() {
       },
 
       mobile_controls_location: (newValue) => {
-        if (!isMobile) return;
+        if (!isMobile && !gamepadFeature) return;
         // given one, remove the other.
         const map = {
           left: 'mobile-controls_left-aligned',
