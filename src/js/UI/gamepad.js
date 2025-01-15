@@ -122,9 +122,6 @@ function updateAA() {
   if ((lastX != 0 || lastY != 0) && curX == 0 && curY == 0) {
     // only stop once
     game.objects.joystick?.end?.();
-  /**
-   * D-pad(s) - we only check for the first one, here.
-   */
   } else if (curX != 0 || curY != 0) {
     if (lastX == 0 && lastY == 0) {
       // "start" moving
@@ -138,79 +135,17 @@ function updateAA() {
       data.gamepadX += curX * JOYSTICK_SENSITIVITY;
       data.gamepadY += curY * JOYSTICK_SENSITIVITY;
 
-  if (gamepadState.dpads?.[0]) {
-    // check for change
-    let { offset } = gamepadState.dpads[0];
-
-    if (offset === OFFSET_CENTER) {
-      // D-pad unchanged and inactive - try joystick
-      let { x, y } = gamepadState.joysticks[MENU];
-
-      let row, col, itemsPerRow, div;
-
-      // 3x3
-      itemsPerRow = 3;
-
-      // one cell width or height
-      div = 1 / itemsPerRow;
-
-      // column (L->R)
-      if (x <= -div) {
-        col = 0;
-      } else if (x >= -div && x <= div) {
-        col = 1;
-      } else {
-        col = 2;
-      }
-
-      // row (T->B)
-      if (y <= -div) {
-        row = 0;
-      } else if (y >= -div && y <= div) {
-        row = 1;
-      } else {
-        row = 2;
-      }
-
-      offset = row * itemsPerRow + col;
-    }
       data.gamepadX = Math.min(50, Math.max(-50, data.gamepadX));
       data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
 
-    if (offset !== data.dPadOffset) {
-      let items = dom.inventory;
-
-      if (items[data.dPadOffset]) {
-        // deselect
-        items[data.dPadOffset].style.borderColor = '';
-        // ensure the button is no longer activated
-        utils.css.remove(
-          items[data.dPadOffset].querySelector('a'),
-          css.buttonActive
-        );
-      }
-
-      if (items[offset]) {
-        // inactive / active
-        items[offset].style.borderColor =
-          offset === OFFSET_CENTER ? '' : '#33ff33';
-      }
-
-      // mark the menu as being active, or not.
-      utils.css.addOrRemove(
-        dom.controls,
-        offset !== OFFSET_CENTER,
-        css.menuActive
-      );
-
-      // update
-      data.dPadOffset = offset;
       game.objects.joystick.move({
         clientX: startX + data.gamepadX,
         clientY: startY + data.gamepadY
       });
     }
   }
+
+  checkDPad(gamepadState.dpads?.[DPAD]);
 
   /**
    * Joystick and/or ABXY button(s): Flip helicopter, or inventory order
@@ -278,6 +213,81 @@ function updateAA() {
   if (data.dPadOffset !== OFFSET_CENTER) return;
 
   checkButtonGroup(abxy, lastABXY, abxyMap);
+}
+
+function checkDPadViaJoystick(js) {
+  // map joystick position to a 9-axis D-pad
+
+  // if not found, bail safely
+  if (!js) return OFFSET_CENTER;
+
+  let { x, y } = js;
+
+  let row, col, itemsPerRow, div;
+
+  // 3x3
+  itemsPerRow = 3;
+
+  // one cell width or height
+  div = 1 / itemsPerRow;
+
+  // column (L->R)
+  if (x <= -div) {
+    col = 0;
+  } else if (x >= -div && x <= div) {
+    col = 1;
+  } else {
+    col = 2;
+  }
+
+  // row (T->B)
+  if (y <= -div) {
+    row = 0;
+  } else if (y >= -div && y <= div) {
+    row = 1;
+  } else {
+    row = 2;
+  }
+
+  return row * itemsPerRow + col;
+}
+
+function checkDPad(dpad) {
+  if (!dpad) return;
+
+  let { offset } = dpad;
+
+  if (offset === OFFSET_CENTER) {
+    // D-pad inactive - try joystick, which may be assigned
+    offset = checkDPadViaJoystick(gamepadState.joysticks[MENU]);
+  }
+
+  // bail if unchanged
+  if (offset === data.dPadOffset) return;
+
+  // update selection
+  let items = dom.inventory;
+
+  if (items[data.dPadOffset]) {
+    // deselect
+    items[data.dPadOffset].style.borderColor = '';
+    // ensure the button is no longer activated
+    utils.css.remove(
+      items[data.dPadOffset].querySelector('a'),
+      css.buttonActive
+    );
+  }
+
+  if (items[offset]) {
+    // inactive / active
+    items[offset].style.borderColor = offset === OFFSET_CENTER ? '' : '#33ff33';
+  }
+
+  // mark the menu as being active, or not.
+  utils.css.addOrRemove(dom.controls, offset !== OFFSET_CENTER, css.menuActive);
+
+  // update
+  data.dPadOffset = offset;
 }
 
 function checkButtonGroup(csGroup, lsGroup, groupMap) {
