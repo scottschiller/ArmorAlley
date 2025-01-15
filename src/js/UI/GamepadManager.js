@@ -258,7 +258,8 @@ const GamepadManager = (options = {}) => {
           left: null,
           top: null,
           right: null,
-          bottom: null
+          bottom: null,
+          activeCount: null
         };
       });
     }
@@ -272,6 +273,7 @@ const GamepadManager = (options = {}) => {
       cs.top = ls[`gp${gpi}/${o.top}`].value;
       cs.right = ls[`gp${gpi}/${o.right}`].value;
       cs.bottom = ls[`gp${gpi}/${o.bottom}`].value;
+      cs.activeCount = cs.left + cs.top + cs.right + cs.bottom;
     });
 
     // d-pads (most controllers have just one?)
