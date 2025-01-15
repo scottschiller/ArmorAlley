@@ -75,6 +75,7 @@ const actions = {
   }
 };
 
+// shoulder buttons -> helicopter weapons
 const shoulderMap = {
   r1: actions.missile,
   r2: actions.ammo,
@@ -82,6 +83,7 @@ const shoulderMap = {
   l2: actions.bomb
 };
 
+// ABXY buttons -> helicopter weapons
 const abxyMap = {
   bottom: actions.bomb,
   left: actions.ammo,
@@ -101,9 +103,7 @@ function updateAA() {
     prefsManager.show();
   }
 
-  /**
-   * Joysticks: helicopter and inventory controls
-   */
+  // Joystick: Helicopter controls
 
   // previous
   let lastX = lastGamepadState.joysticks[FLY].x;
