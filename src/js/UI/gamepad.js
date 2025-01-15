@@ -47,6 +47,39 @@ const FLY = 1;
 // joystick offset: inventory UI
 const MENU = 0;
 
+/**
+ * In-game actions, joystick -> keyboard code
+ */
+const actions = {
+  missile: {
+    keyCode: () => keyboardMonitor.keyMap.smartMissile
+  },
+  ammo: {
+    keyCode: () => keyboardMonitor.keyMap.shift,
+    relatedState: 'isFiring'
+  },
+  paratrooper: {
+    keyCode: () => keyboardMonitor.keyMap.space
+  },
+  bomb: {
+    keyCode: () => keyboardMonitor.keyMap.ctrl
+  }
+};
+
+const shoulderMap = {
+  r1: actions.missile,
+  r2: actions.ammo,
+  l1: actions.paratrooper,
+  l2: actions.bomb
+};
+
+const abxyMap = {
+  bottom: actions.bomb,
+  left: actions.ammo,
+  up: actions.paratrooper,
+  right: actions.missile
+};
+
 function updateAA() {
   // AA-specific implementation of gamepad
   if (!gamepadFeature || !useGamepad) return;
@@ -91,44 +124,6 @@ function updateAA() {
           clientY: startY + data.gamepadY
         });
       }
-    }
-  }
-
-  /**
-   * Shoulder buttons: weapons + paratrooper controls
-   */
-
-  const buttonsToControls = {
-    r1: {
-      // missile
-      keyCode: keyboardMonitor.keyMap.smartMissile
-    },
-    r2: {
-      // gun
-      keyCode: keyboardMonitor.keyMap.shift,
-      relatedState: 'isFiring'
-    },
-    l1: {
-      // paratrooper
-      keyCode: keyboardMonitor.keyMap.space
-    },
-    l2: {
-      // bomb
-      keyCode: keyboardMonitor.keyMap.ctrl
-    }
-  };
-
-  // did a button change?
-  for (let btn in buttonsToControls) {
-    if (gamepadState.buttons[btn] === lastGamepadState.buttons[btn]) continue;
-    keyboardMonitor[gamepadState.buttons[btn] ? 'keydown' : 'keyup']({
-      keyCode: buttonsToControls[btn].keyCode,
-      fromAATouch: true
-    });
-    // update local state, e.g., `isFiring`, accordingly
-    if (buttonsToControls[btn].relatedState) {
-      data.state[buttonsToControls[btn].relatedState] =
-        !!gamepadState.buttons[btn];
     }
   }
 
@@ -213,9 +208,11 @@ function updateAA() {
   let js = gamepadState.joysticks;
   let ljs = lastGamepadState.joysticks;
 
+  // joystick button
   let menuJSButtonActive =
     js[MENU].button && js[MENU].button !== ljs[MENU].button;
 
+  // joystick button
   let flyJSButtonActive = js[FLY].button && js[FLY].button !== ljs[FLY].button;
 
   if (flyJSButtonActive) {
@@ -259,6 +256,32 @@ function updateAA() {
   if (inventoryButtonWasActive && !inventoryButtonActive) {
     let target = dom.inventory[data.dPadOffset]?.querySelector?.('a');
     utils.css.remove(target, css.buttonActive);
+  }
+
+  // check for shoulder button changes; these are independent of the D-pad.
+  checkButtonGroup(gamepadState.buttons, lastGamepadState.buttons, shoulderMap);
+
+  // finally - if the D-pad is not active, check ABXY for regular use cases e.g., firing weapons.
+  if (data.dPadOffset !== OFFSET_CENTER) return;
+
+  checkButtonGroup(abxy, lastABXY, abxyMap);
+}
+
+function checkButtonGroup(csGroup, lsGroup, groupMap) {
+  // current state group, last state group, map
+  for (let btn in groupMap) {
+    // ignore if unchaged
+    if (csGroup[btn] === lsGroup[btn]) continue;
+
+    keyboardMonitor[csGroup[btn] ? 'keydown' : 'keyup']({
+      keyCode: groupMap[btn].keyCode(),
+      fromAATouch: true
+    });
+
+    // update local state, e.g., `isFiring`, accordingly
+    if (groupMap[btn].relatedState) {
+      data.state[groupMap[btn].relatedState] = !!csGroup[btn];
+    }
   }
 }
 
