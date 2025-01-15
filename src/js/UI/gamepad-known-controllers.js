@@ -25,7 +25,7 @@ function addControllers() {
      * https://beej.us/blog/data/javascript-gamepad/
      */
 
-    // standalone, not part of a d-pad or group
+    // standalone, not part of a D-pad or group
     buttons: {
       // left shoulder / trigger
       l1: 'btn4',
@@ -56,7 +56,7 @@ function addControllers() {
       }
     ],
 
-    // button order, per d-pad: up, down, left, right
+    // button order, per D-pad: up, down, left, right
     dpads: [['btn12', 'btn13', 'btn14', 'btn15']],
 
     joystickOptions: {
@@ -139,7 +139,7 @@ function addControllers() {
 
     dpads: [
       /**
-       * Special case: 8Bitdo NES30 Pro (Bluetooth) d-pad uses a single axis
+       * Special case: 8Bitdo NES30 Pro (Bluetooth) D-pad uses a single axis
        * instead of buttons. The axis is set to one of 9 values, representing
        * the individual directions in order. axes3 + axes4 provide integer
        * values for this controller, but are ignored in this case.

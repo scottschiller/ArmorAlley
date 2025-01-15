@@ -3,7 +3,7 @@
  * https://www.w3.org/TR/gamepad/
  *
  * The gamepad API exposes arrays of digital buttons, and analog axes.
- * A form of mapping applies, where button[0] may be a d-pad or start button
+ * A form of mapping applies, where button[0] may be a D-pad or start button
  * and axes[0] is typically assigned to an analog joystick.
  *
  * Browsers determine whether a controller has a "standard" mapping or not.
@@ -39,7 +39,7 @@
  * "standard" mapping in Firefox or Chrome. In addition, Firefox's mapping of
  * this controller also differs slightly from that of Chrome.
  *
- * The NES30Pro has a d-pad, but its values are mapped to a few axes vs. four
+ * The NES30Pro has a D-pad, but its values are mapped to a few axes vs. four
  * buttons. One axis shows nine different values, reflecting the positions of
  * the d-pad. On a standard mapping, the four buttons' binary values can
  * represent 9 directions.
@@ -48,10 +48,10 @@
  * ← · →
  * ↙ ↓ ↘
  *
- * Safari reports a standard mapping for the NES30Pro, but still has the d-pad
+ * Safari reports a standard mapping for the NES30Pro, but still has the D-pad
  * as a single-axis with multiple values at axes[9].
  *
- * In Firefox, the d-pad "9-value" number is mapped to axes[0] instead of [9],
+ * In Firefox, the D-pad "9-value" number is mapped to axes[0] instead of [9],
  * and the analog joysticks are on axes[1-4] vs. [0-3].
  */
 

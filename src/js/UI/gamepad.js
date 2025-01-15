@@ -141,7 +141,7 @@ function updateAA() {
     let { offset } = gamepadState.dpads[0];
 
     if (offset === OFFSET_CENTER) {
-      // dpad unchanged and inactive - try joystick
+      // D-pad unchanged and inactive - try joystick
       let { x, y } = gamepadState.joysticks[MENU];
 
       let row, col, itemsPerRow, div;
@@ -219,14 +219,14 @@ function updateAA() {
   let flyJSButtonActive = js[FLY].button && js[FLY].button !== ljs[FLY].button;
 
   if (flyJSButtonActive) {
-    // flip if D-pad is not engaged - otherwise, dpad + flight joystick button = select
+    // flip if D-pad is not engaged - otherwise, D-pad + flight joystick button = select
     if (data.dPadOffset === OFFSET_CENTER) {
       game.players.local.flip();
     } else {
       inventoryAction = true;
     }
   } else if (data.dPadOffset !== OFFSET_CENTER && menuJSButtonActive) {
-    // menu joystick button has been pressed, while dpad active.
+    // menu joystick button has been pressed, while D-pad is engaged.
     inventoryAction = true;
   }
 
@@ -245,7 +245,7 @@ function updateAA() {
     inventoryClick(data.dPadOffset);
   }
 
-  // is an inventory order still active, d-pad + button being held?
+  // is an inventory order still active, D-pad + button being held?
   let inventoryButtonActive =
     inventoryAction ||
     (data.dPadOffset !== OFFSET_CENTER &&
