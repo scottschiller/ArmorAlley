@@ -42,10 +42,10 @@ let dom = {
 };
 
 // joystick offset: helicopter control
-const FLY = 1;
+const FLY = 0;
 
 // joystick offset: inventory UI
-const MENU = 0;
+const MENU = 1;
 
 /**
  * In-game actions, joystick -> keyboard code
