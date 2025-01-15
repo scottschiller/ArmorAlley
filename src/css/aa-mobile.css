@@ -833,8 +833,8 @@ body.has-gamepad #mobile-controls.active li {
   transition: background-color 60ms ease-in-out;
 }
 
-body.has-gamepad.is-mobile #mobile-controls:not(.active) li:not(.gamepad) {
-  /* drop background mask */
+body.has-gamepad.is-mobile #mobile-controls:not(.active) li {
+  /* drop background mask while inactive */
   background-color: transparent;
 }
 
