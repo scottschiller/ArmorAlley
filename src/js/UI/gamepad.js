@@ -44,6 +44,9 @@ let dom = {
   inventory: null
 };
 
+// D-pad offset (most controllers have only one)
+const DPAD = 0;
+
 // joystick offset: helicopter control
 const FLY = 0;
 
