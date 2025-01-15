@@ -7,77 +7,77 @@ WORK IN PROGRESS: 2023-2024 updates since last major release
 
 --- 12/2024, work in progress ---
 
-Score, bonus, battle and difficulty display in top right. https://github.com/scottschiller/ArmorAlley/2900425e1b64b9f063bd0d79a646b74d76301637 https://github.com/scottschiller/ArmorAlley/8ddf254edf8789a34f9b0b2535c928629e922aca
+Score, bonus, battle and difficulty display in top right. https://github.com/scottschiller/ArmorAlley/commit/2900425e1b64b9f063bd0d79a646b74d76301637 https://github.com/scottschiller/ArmorAlley/commit/8ddf254edf8789a34f9b0b2535c928629e922aca
 
-Score + bonus tracking, based on original. https://github.com/scottschiller/ArmorAlley/d8655fa85da70ea5d326029f518ee6c25edb1786
+Score + bonus tracking, based on original. https://github.com/scottschiller/ArmorAlley/commit/d8655fa85da70ea5d326029f518ee6c25edb1786
 
-Smart missiles smoothly accelerate up to 200% normal speed, when running low on fuel (when they start emitting lots of smoke.) In the original, they simply "move twice" in a single frame. https://github.com/scottschiller/ArmorAlley/e7478f75cd7a0e7db8f3e77a7f2ef0dd939aef99 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8 https://github.com/scottschiller/ArmorAlley/7d961559cc3e86342ac5906ec162f89c9a2682b8
+Smart missiles smoothly accelerate up to 200% normal speed, when running low on fuel (when they start emitting lots of smoke.) In the original, they simply "move twice" in a single frame. https://github.com/scottschiller/ArmorAlley/commit/e7478f75cd7a0e7db8f3e77a7f2ef0dd939aef99 https://github.com/scottschiller/ArmorAlley/commit/7d961559cc3e86342ac5906ec162f89c9a2682b8 https://github.com/scottschiller/ArmorAlley/commit/7d961559cc3e86342ac5906ec162f89c9a2682b8
 
-Smart missile targeting is now closer to the original; faster to respond, and harder to evade. https://github.com/scottschiller/ArmorAlley/acd0899f4851d0c35f7ec0b5428571be540491ad
+Smart missile targeting is now closer to the original; faster to respond, and harder to evade. https://github.com/scottschiller/ArmorAlley/commit/acd0899f4851d0c35f7ec0b5428571be540491ad
 
-The enemy helicopter can recapture its own end bunker. https://github.com/scottschiller/ArmorAlley/1e7b7d349a5f3fbd3a5695119d70e3dcda87110a
+The enemy helicopter can recapture its own end bunker. https://github.com/scottschiller/ArmorAlley/commit/1e7b7d349a5f3fbd3a5695119d70e3dcda87110a
 
-Fund capture, now like original. Infantry capture 50% of available funds (optional preference: engineers can "rob the bank" for 100%), end bunker is neutralized, local funds go to -25 (original game showed "captured" in this state.) "Reclaim" end bunker to reset funds to 0, or earn 25+ funds over time. https://github.com/scottschiller/ArmorAlley/497347b365ac995ac5a630f89a76a48f385d037d
+Fund capture, now like original. Infantry capture 50% of available funds (optional preference: engineers can "rob the bank" for 100%), end bunker is neutralized, local funds go to -25 (original game showed "captured" in this state.) "Reclaim" end bunker to reset funds to 0, or earn 25+ funds over time. https://github.com/scottschiller/ArmorAlley/commit/497347b365ac995ac5a630f89a76a48f385d037d
 
-Updated enemy behaviour switching to mimic original: attack, defend, steal. https://github.com/scottschiller/ArmorAlley/49e81d4624d13ebc7dd33eda9b0ffc14c907ab56
+Updated enemy behaviour switching to mimic original: attack, defend, steal. https://github.com/scottschiller/ArmorAlley/commit/49e81d4624d13ebc7dd33eda9b0ffc14c907ab56
 
-The enemy helicopter can target Super Bunkers. https://github.com/scottschiller/ArmorAlley/a84206627e0f3ae48ec31ed48d37a318c4ce8708
+The enemy helicopter can target Super Bunkers. https://github.com/scottschiller/ArmorAlley/commit/a84206627e0f3ae48ec31ed48d37a318c4ce8708
 
-The enemy helicopter can target your end bunker, and try to capture your funds. https://github.com/scottschiller/ArmorAlley/467ebd6afa76f927c74779fd069b6cd420e55b1a https://github.com/scottschiller/ArmorAlley/d6bbdc4b40eeb0ac201c46d82b8721b7fad91aa0
+The enemy helicopter can target your end bunker, and try to capture your funds. https://github.com/scottschiller/ArmorAlley/commit/467ebd6afa76f927c74779fd069b6cd420e55b1a https://github.com/scottschiller/ArmorAlley/commit/d6bbdc4b40eeb0ac201c46d82b8721b7fad91aa0
 
-Nice SoundBlaster FM synth "repair complete" sound from DOS game, overlooked all these years. https://github.com/scottschiller/ArmorAlley/146fbef23a77d69886c6c2c5647f908e9bd15f6b
+Nice SoundBlaster FM synth "repair complete" sound from DOS game, overlooked all these years. https://github.com/scottschiller/ArmorAlley/commit/146fbef23a77d69886c6c2c5647f908e9bd15f6b
 
-Battle selection menu now shows calculated IQ + fairness + BNSJ flags based on difficulty, like original. https://github.com/scottschiller/ArmorAlley/a526d8e4f425a202800271cee4e30226662ed4f6
+Battle selection menu now shows calculated IQ + fairness + BNSJ flags based on difficulty, like original. https://github.com/scottschiller/ArmorAlley/commit/a526d8e4f425a202800271cee4e30226662ed4f6
 
-Refactored enemy IQ + battle flags for Conflict difficulty, between Wargames and Armorgeddon. https://github.com/scottschiller/ArmorAlley/aa69d787f93ec8e53bd0475e5aee62e61f9bd9fd
+Refactored enemy IQ + battle flags for Conflict difficulty, between Wargames and Armorgeddon. https://github.com/scottschiller/ArmorAlley/commit/aa69d787f93ec8e53bd0475e5aee62e61f9bd9fd
 
-It turns out that infantry *do* carry grenades after all, for one specific case. https://github.com/scottschiller/ArmorAlley/e86014addc0c12c49529efe2a20d0cc609ce88b7
+It turns out that infantry *do* carry grenades after all, for one specific case. https://github.com/scottschiller/ArmorAlley/commit/e86014addc0c12c49529efe2a20d0cc609ce88b7
 
-Adjust infantry -> turret damage rate. Slower than original, but feels apropos. https://github.com/scottschiller/ArmorAlley/ef8ca6ffe36e3ab251fdda394c62b7ef7f9ec93a
+Adjust infantry -> turret damage rate. Slower than original, but feels apropos. https://github.com/scottschiller/ArmorAlley/commit/ef8ca6ffe36e3ab251fdda394c62b7ef7f9ec93a
  
-Updated "hit points" and other stats for units and structures, based on original. https://github.com/scottschiller/ArmorAlley/d97fff889213e7e19473869b1488dac81ee98380 https://github.com/scottschiller/ArmorAlley/107cc10d62f6b4c093609542903f5de2648be75d https://github.com/scottschiller/ArmorAlley/62f10150b8ab322efdba2be304a400d0d029035f
+Updated "hit points" and other stats for units and structures, based on original. https://github.com/scottschiller/ArmorAlley/commit/d97fff889213e7e19473869b1488dac81ee98380 https://github.com/scottschiller/ArmorAlley/commit/107cc10d62f6b4c093609542903f5de2648be75d https://github.com/scottschiller/ArmorAlley/commit/62f10150b8ab322efdba2be304a400d0d029035f
 
-Turret gunfire targeting now closer to original, trajectory bug fixed. https://github.com/scottschiller/ArmorAlley/dce10c9f164e8acfae905ee0455cec750f6da3ad
+Turret gunfire targeting now closer to original, trajectory bug fixed. https://github.com/scottschiller/ArmorAlley/commit/dce10c9f164e8acfae905ee0455cec750f6da3ad
 
-Updated earning of funds, based on original: 1 fund is earned at a fixed interval, depending on distance into enemy territory and difficulty. https://github.com/scottschiller/ArmorAlley/6d30af44ca6d128fd7e7d9b99794f98015114825
+Updated earning of funds, based on original: 1 fund is earned at a fixed interval, depending on distance into enemy territory and difficulty. https://github.com/scottschiller/ArmorAlley/commit/6d30af44ca6d128fd7e7d9b99794f98015114825
 
 --- 11/2024, uncategorized ---
 
-Enemy bias / discount on inventory "up to 212%" (so it can afford largest original in-game convoys), subject to level and difficulty. https://github.com/scottschiller/ArmorAlley/681a890ffe5c9355e7b65d749bfec92ea22ff046
+Enemy bias / discount on inventory "up to 212%" (so it can afford largest original in-game convoys), subject to level and difficulty. https://github.com/scottschiller/ArmorAlley/commit/681a890ffe5c9355e7b65d749bfec92ea22ff046
 
-"All-new" CPU convoy ordering patterns varying by level, timing and difficulty - based on the original. https://github.com/scottschiller/ArmorAlley/dc5f9aaeb780ebb8a8a15c139d0bb4c45bd7bad3 https://github.com/scottschiller/ArmorAlley/334776c507bb8f958b57e4c875065f182a636b35
+"All-new" CPU convoy ordering patterns varying by level, timing and difficulty - based on the original. https://github.com/scottschiller/ArmorAlley/commit/dc5f9aaeb780ebb8a8a15c139d0bb4c45bd7bad3 https://github.com/scottschiller/ArmorAlley/commit/334776c507bb8f958b57e4c875065f182a636b35
 
-The enemy helicopter can fire smart missiles at turrets, depending on level. https://github.com/scottschiller/ArmorAlley/83959f5ddad6520af636ebab23faa7d52f95df38
+The enemy helicopter can fire smart missiles at turrets, depending on level. https://github.com/scottschiller/ArmorAlley/commit/83959f5ddad6520af636ebab23faa7d52f95df38
 
-Per original: Helicopters start with no paratroopers on board. https://github.com/scottschiller/ArmorAlley/7fb090627d1f066df4ee0ec8cb5cda080130b509 https://github.com/scottschiller/ArmorAlley/1b64313ea1743848d96a1148359d3bf46f322b25
+Per original: Helicopters start with no paratroopers on board. https://github.com/scottschiller/ArmorAlley/commit/7fb090627d1f066df4ee0ec8cb5cda080130b509 https://github.com/scottschiller/ArmorAlley/commit/1b64313ea1743848d96a1148359d3bf46f322b25
 
-The enemy helicopter can respawn faster as difficulty increases. https://github.com/scottschiller/ArmorAlley/4ad8237512621b1340ae04dd66fca2d31375240b
+The enemy helicopter can respawn faster as difficulty increases. https://github.com/scottschiller/ArmorAlley/commit/4ad8237512621b1340ae04dd66fca2d31375240b
 
-The enemy helicopter is typically slower than the player on easier levels. https://github.com/scottschiller/ArmorAlley/9b60f9f248b8c05ffc41be03a81a856ed0652ca7
+The enemy helicopter is typically slower than the player on easier levels. https://github.com/scottschiller/ArmorAlley/commit/9b60f9f248b8c05ffc41be03a81a856ed0652ca7
 
-The enemy does not order missile launchers or engineers on easier levels. https://github.com/scottschiller/ArmorAlley/36abc87110adee7eea417ca4720249b6bcf98fed
+The enemy does not order missile launchers or engineers on easier levels. https://github.com/scottschiller/ArmorAlley/commit/36abc87110adee7eea417ca4720249b6bcf98fed
 
-Tanks eventually use flamethrowers (vs. bullets) on men, depending on level. https://github.com/scottschiller/ArmorAlley/187d1d2232e47f968a3c7767a073b607b8d17e1a
+Tanks eventually use flamethrowers (vs. bullets) on men, depending on level. https://github.com/scottschiller/ArmorAlley/commit/187d1d2232e47f968a3c7767a073b607b8d17e1a
 
-Vans now jam radar at variable distances, depending on level + difficulty. https://github.com/scottschiller/ArmorAlley/d13c049449a8911ecf61d5efc0733f77034f2d2b
+Vans now jam radar at variable distances, depending on level + difficulty. https://github.com/scottschiller/ArmorAlley/commit/d13c049449a8911ecf61d5efc0733f77034f2d2b
 
-Complete refactor of battle configuration / flags, enemy "IQ" and such based on original. https://github.com/scottschiller/ArmorAlley/1601addd1b748d8488df8b975e41daa537a6cc28
+Complete refactor of battle configuration / flags, enemy "IQ" and such based on original. https://github.com/scottschiller/ArmorAlley/commit/1601addd1b748d8488df8b975e41daa537a6cc28
 
-Per original: some turrets only target "ground" items (e.g., tanks) instead of helicopters. https://github.com/scottschiller/ArmorAlley/f7a94add177497a35ff28c981bae5b3c43c2ec54 https://github.com/scottschiller/ArmorAlley/273e5a2653e483c4dad952bf5c1d8b4b18dbd3a9
+Per original: some turrets only target "ground" items (e.g., tanks) instead of helicopters. https://github.com/scottschiller/ArmorAlley/commit/f7a94add177497a35ff28c981bae5b3c43c2ec54 https://github.com/scottschiller/ArmorAlley/commit/273e5a2653e483c4dad952bf5c1d8b4b18dbd3a9
 
-"Armorgeddon" difficulty level, like original. https://github.com/scottschiller/ArmorAlley/cec6fb8d6a88c29619c21598c64cbda84ffa8ef1
+"Armorgeddon" difficulty level, like original. https://github.com/scottschiller/ArmorAlley/commit/cec6fb8d6a88c29619c21598c64cbda84ffa8ef1
 
-Helicopter rotor animation speed, closer to original. https://github.com/scottschiller/ArmorAlley/a84921f643e9cadbd7f4cde2ba0b3fcff6a7c1b4
+Helicopter rotor animation speed, closer to original. https://github.com/scottschiller/ArmorAlley/commit/a84921f643e9cadbd7f4cde2ba0b3fcff6a7c1b4
 
-Bug fix: Hiding in a cloud does not exclude you from vans' radar jamming capabilities. https://github.com/scottschiller/ArmorAlley/4832c9e0d6606108988a65e2718c4b4836d5fba5
+Bug fix: Hiding in a cloud does not exclude you from vans' radar jamming capabilities. https://github.com/scottschiller/ArmorAlley/commit/4832c9e0d6606108988a65e2718c4b4836d5fba5
 
-Like original, all bunker balloons start at the bottom. https://github.com/scottschiller/ArmorAlley/cf52dac3e97c3dc07f800c50c26ac9c59ac75890
+Like original, all bunker balloons start at the bottom. https://github.com/scottschiller/ArmorAlley/commit/cf52dac3e97c3dc07f800c50c26ac9c59ac75890
 
-Per original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers. https://github.com/scottschiller/ArmorAlley/e291ede808b5cbfd06591dbc338c93ef1fb2b04d https://github.com/scottschiller/ArmorAlley/9dd55b432ae917af3829fedbc7d83feccae3d472 https://github.com/scottschiller/ArmorAlley/1ac9c100457de3a34fb93dcf8b82694a2035ed07
+Per original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers. https://github.com/scottschiller/ArmorAlley/commit/e291ede808b5cbfd06591dbc338c93ef1fb2b04d https://github.com/scottschiller/ArmorAlley/9dd55b432ae917af3829fedbc7d83feccae3d472 https://github.com/scottschiller/ArmorAlley/1ac9c100457de3a34fb93dcf8b82694a2035ed07
 
-Per original, inventory / ordering limits: "Requisition denied - quota exceeded" - (`unlimited_inventory` pref, off / limited by default.) https://github.com/scottschiller/ArmorAlley/6dbf71f5218b869d36d33181ad533742a2496552
+Per original, inventory / ordering limits: "Requisition denied - quota exceeded" - (`unlimited_inventory` pref, off / limited by default.) https://github.com/scottschiller/ArmorAlley/commit/6dbf71f5218b869d36d33181ad533742a2496552
 
-Nice SoundBlaster-era FM synth sample for "order complete," from the original MS-DOS game. https://github.com/scottschiller/ArmorAlley/225e2280bb2dfb105765629b4374bdd372edfb7c
+Nice SoundBlaster-era FM synth sample for "order complete," from the original MS-DOS game. https://github.com/scottschiller/ArmorAlley/commit/225e2280bb2dfb105765629b4374bdd372edfb7c
 
 Like the original, you can now crash into the ground if flying too fast. https://github.com/scottschiller/ArmorAlley/18d9fb5f04961a466350e2b062c652a607506761
 
