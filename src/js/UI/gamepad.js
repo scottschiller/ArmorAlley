@@ -203,7 +203,7 @@ function updateAA() {
       if (items[offset]) {
         // inactive / active
         items[offset].style.borderColor =
-          offset === OFFSET_CENTER ? '#666' : '#33ff33';
+          offset === OFFSET_CENTER ? '' : '#33ff33';
       }
 
       // mark the menu as being active, or not.
