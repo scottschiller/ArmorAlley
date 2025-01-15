@@ -287,7 +287,8 @@ const GamepadManager = (options = {}) => {
           up: null,
           down: null,
           left: null,
-          right: null
+          right: null,
+          offset: null
         };
       });
     }
