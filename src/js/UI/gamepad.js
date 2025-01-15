@@ -110,12 +110,17 @@ function updateAA() {
   let curX = gamepadState.joysticks[FLY].x;
   let curY = gamepadState.joysticks[FLY].y;
 
-  let startX = game.objects.joystick.data.screenWidth / 2;
-  let startY = game.objects.joystick.data.screenHeight / 2;
+  game;
+
+  let width = game.objects.joystick.data.screenWidth / 2;
+  let height = game.objects.joystick.data.screenHeight / 2;
+
+  let startX = game.objects.view.data.browser.isLandscape ? width : height;
+  let startY = game.objects.view.data.browser.isLandscape ? height : width;
 
   if ((lastX != 0 || lastY != 0) && curX == 0 && curY == 0) {
-    // only stop once?
-    // game.objects.joystick?.end?.();
+    // only stop once
+    game.objects.joystick?.end?.();
   } else {
     if (curX != 0 || curY != 0) {
       if (lastX == 0 && lastY == 0) {
