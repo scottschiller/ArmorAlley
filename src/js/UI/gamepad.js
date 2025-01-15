@@ -17,6 +17,9 @@ let gamepadFeature = !!window.location.href.match(/gamepad/i);
 // TODO: implement in prefs
 let useGamepad = !!gamepadFeature;
 
+// multiply joystick values, more responsiveness
+const JOYSTICK_SENSITIVITY = 2;
+
 // middle / "inactive" position in a 9-axis d-pad
 let OFFSET_CENTER = 4;
 
@@ -123,9 +126,9 @@ function updateAA() {
           hidden: true
         });
       } else {
-        // move with velocity?
-        data.gamepadX += curX * 2;
-        data.gamepadY += curY * 2;
+        // move relative to joystick
+        data.gamepadX += curX * JOYSTICK_SENSITIVITY;
+        data.gamepadY += curY * JOYSTICK_SENSITIVITY;
 
         data.gamepadX = Math.min(50, Math.max(-50, data.gamepadX));
         data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
