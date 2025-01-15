@@ -4,7 +4,7 @@
  * https://www.w3.org/TR/gamepad/
  */
 
-import { keyboardMonitor } from '../aa.js';
+import { keyboardMonitor, prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
 import { FPS } from '../core/global.js';
@@ -63,6 +63,9 @@ const actions = {
   },
   bomb: {
     keyCode: () => keyboardMonitor.keyMap.ctrl
+  },
+  preferences: {
+    keyCode: () => keyboardMonitor.keyMap.esc
   }
 };
 
@@ -83,6 +86,14 @@ const abxyMap = {
 function updateAA() {
   // AA-specific implementation of gamepad
   if (!gamepadFeature || !useGamepad) return;
+
+  // PS4 / standard: 'options' - NES30Pro, 'select'
+  if (
+    (gamepadState.buttons.options || gamepadState.buttons.select) &&
+    !lastGamepadState.buttons.options
+  ) {
+    prefsManager.show();
+  }
 
   /**
    * Joysticks: helicopter and inventory controls
