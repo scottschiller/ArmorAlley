@@ -16,24 +16,43 @@
  * mappings, and should work reliably across browsers. However, results vary.
  *
  * If a standard mapping is not indicated, "here be dragons."
- * 
+ *
+ * The non-standard case quickly devolves into looking for hints: parsing
+ * game controller IDs for product and vendor IDs, and so on.
+ *
  * The intent of this work is to abstract and normalize the common use cases
  * between controller updates and the ability to handle special controllers.
- * 
+ *
+ * RESOURCES: TESTING
+ * ---
+ * This site is a handy resource that exposes the buttons and axes reported
+ * by the gamepad API, as well as vibration/haptic feedback if supported.
+ *
+ * https://hardwaretester.com/gamepad
+ *
+ * GAMEPAD IDS
+ * ---
  * Gamepads have an ID string which varies by browser, and may include product
  * and vendor IDs that can be parsed out. This is reminiscent of UA sniffing.
  *
  * Firefox and Chrome appear to provide vendor and product IDs, differently-
- * formatted. Safari may not provide IDs at all, or perhaps omit IDs when
+ * formatted. Safari may not provide IDs at all, or perhaps omits IDs when
  * standard mapping applies.
+ *
+ * In testing, a product ID may differ when connecting via bluetooth vs. USB.
+ *
+ * In the ideal case, a controller is "standard" and is mapping is reliable.
+ * However, there have been exceptions found in testing.
  *
  * QUIRKS: iOS Safari
  * ---
  * On iOS, gamepads need to be connected via USB cable to work with Safari.
- * Gamepads paired via bluetooth do not get `gamepadconnected` on iOS 18.
+ * Gamepads paired via bluetooth do not trigger `gamepadconnected` on iOS 18.
  * In testing, joystick buttons did not work on an iPhone 14 with iOS 17.0.
+ * Haptic "rumble" feedback doesn't work via USB on iOS, but does on a Mac.
+ * (Testing was done on a Sony PS4 dualshock.)
  *
- * QUIRKS: 8Bitdo NES30Pro
+ * QUIRKS: 8Bitdo NES30Pro Controller
  * ---
  * In testing, an older 8Bitdo NES30Pro (bluetooth) controller does not get a
  * "standard" mapping in Firefox or Chrome. In addition, Firefox's mapping of
@@ -53,6 +72,8 @@
  *
  * In Firefox, the D-pad "9-value" number is mapped to axes[0] instead of [9],
  * and the analog joysticks are on axes[1-4] vs. [0-3].
+ *
+ * These differences are resolved by an `overrides` object in configuration.
  */
 
 import { gpConfig, gpMap } from './gamepad-config.js';
