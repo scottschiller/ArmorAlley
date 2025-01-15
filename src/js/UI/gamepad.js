@@ -113,8 +113,6 @@ function updateAA() {
   let curX = gamepadState.joysticks[FLY].x;
   let curY = gamepadState.joysticks[FLY].y;
 
-  game;
-
   let width = game.objects.joystick.data.screenWidth / 2;
   let height = game.objects.joystick.data.screenHeight / 2;
 
