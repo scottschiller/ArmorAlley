@@ -122,34 +122,21 @@ function updateAA() {
   if ((lastX != 0 || lastY != 0) && curX == 0 && curY == 0) {
     // only stop once
     game.objects.joystick?.end?.();
-  } else {
-    if (curX != 0 || curY != 0) {
-      if (lastX == 0 && lastY == 0) {
-        // "start" moving
-        game.objects.joystick?.start?.({
-          clientX: startX,
-          clientY: startY,
-          hidden: true
-        });
-      } else {
-        // move relative to joystick
-        data.gamepadX += curX * JOYSTICK_SENSITIVITY;
-        data.gamepadY += curY * JOYSTICK_SENSITIVITY;
-
-        data.gamepadX = Math.min(50, Math.max(-50, data.gamepadX));
-        data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
-
-        game.objects.joystick.move({
-          clientX: startX + data.gamepadX,
-          clientY: startY + data.gamepadY
-        });
-      }
-    }
-  }
-
   /**
    * D-pad(s) - we only check for the first one, here.
    */
+  } else if (curX != 0 || curY != 0) {
+    if (lastX == 0 && lastY == 0) {
+      // "start" moving
+      game.objects.joystick?.start?.({
+        clientX: startX,
+        clientY: startY,
+        hidden: true
+      });
+    } else {
+      // move relative to joystick
+      data.gamepadX += curX * JOYSTICK_SENSITIVITY;
+      data.gamepadY += curY * JOYSTICK_SENSITIVITY;
 
   if (gamepadState.dpads?.[0]) {
     // check for change
@@ -187,6 +174,8 @@ function updateAA() {
 
       offset = row * itemsPerRow + col;
     }
+      data.gamepadX = Math.min(50, Math.max(-50, data.gamepadX));
+      data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
 
     if (offset !== data.dPadOffset) {
       let items = dom.inventory;
@@ -216,6 +205,10 @@ function updateAA() {
 
       // update
       data.dPadOffset = offset;
+      game.objects.joystick.move({
+        clientX: startX + data.gamepadX,
+        clientY: startY + data.gamepadY
+      });
     }
   }
 
