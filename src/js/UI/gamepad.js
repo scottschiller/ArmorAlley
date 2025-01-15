@@ -235,7 +235,8 @@ function updateAA() {
   let lastABXY = lastGamepadState.abxy[0];
 
   if (abxy) {
-    if ((abxy.left && !lastABXY.left) || (abxy.bottom && !lastABXY.bottom)) {
+    // if any ABXY button is pressed, consider this an action (if the D-pad is also engaged.)
+    if (abxy.activeCount > lastABXY.activeCount) {
       inventoryAction = true;
     }
   }
@@ -249,11 +250,11 @@ function updateAA() {
   let inventoryButtonActive =
     inventoryAction ||
     (data.dPadOffset !== OFFSET_CENTER &&
-      (abxy.left || abxy.bottom || js[MENU].button || js[FLY].button));
+      (abxy.activeCount || js[MENU].button || js[FLY].button));
 
   // was it this previously active?
   let inventoryButtonWasActive =
-    lastABXY.left || lastABXY.bottom || ljs[MENU].button || ljs[FLY].button;
+    lastABXY.activeCount || ljs[MENU].button || ljs[FLY].button;
 
   if (inventoryButtonWasActive && !inventoryButtonActive) {
     let target = dom.inventory[data.dPadOffset]?.querySelector?.('a');
