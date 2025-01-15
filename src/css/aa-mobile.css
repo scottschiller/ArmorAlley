@@ -739,7 +739,7 @@ body.has-gamepad #mobile-controls ul.mobile-controls-ordering li {
 
 #mobile-controls li {
   background-color: rgba(0, 0, 0, 0.66);
-  border: calc(0.75px * var(--gs)) dotted hsla(0, 0%, 100%, 0.15);
+  border: calc(0.75px * var(--gs)) solid hsla(0, 0%, 100%, 0.15);
   box-sizing: border-box;
   display: inline-block;
   font-size: calc(7px * var(--gs));
