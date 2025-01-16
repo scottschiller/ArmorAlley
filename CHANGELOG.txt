@@ -5,7 +5,11 @@ Changelog / Revision History
 WORK IN PROGRESS: 2023-2024 updates since last major release
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
---- 12/2024, work in progress ---
+--- 01/2025, work in progress ---
+
+Experimental gamepad controller support. https://github.com/scottschiller/ArmorAlley/commit/251622ae8b1d8fe441b9f965b0d5a3026eac406d https://github.com/scottschiller/ArmorAlley/commit/b40ef3a1de2c151726ce4d57191ab641ad625cad https://github.com/scottschiller/ArmorAlley/commit/7c0a2a0ac9768a6b187b72afdb8fdf706260d4b2
+
+--- 12/2024, uncategorized ---
 
 Score, bonus, battle and difficulty display in top right. https://github.com/scottschiller/ArmorAlley/commit/2900425e1b64b9f063bd0d79a646b74d76301637 https://github.com/scottschiller/ArmorAlley/commit/8ddf254edf8789a34f9b0b2535c928629e922aca
 
