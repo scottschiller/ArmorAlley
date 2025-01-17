@@ -25,11 +25,14 @@ const OFFSET_CENTER = 4;
 
 let css = {
   menuActive: 'active',
-  buttonActive: 'active'
+  buttonActive: 'active',
+  gamepadActive: 'gamepad-active',
+  hasGamepad: 'has-gamepad'
 };
 
 let data = {
   enabled: false,
+  active: false,
   gamepadX: 0,
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
@@ -101,6 +104,16 @@ function updateAA() {
     !lastGamepadState.buttons.options
   ) {
     prefsManager.show();
+  }
+
+  // ignore if not active, maybe disabled by mouse activity - BUT, activate if a button is pressed.
+  if (!data.active) {
+    if (gamepadState.activeButtons) {
+      setActive(true);
+    } else {
+      // gamepad is inactive, or has been disabled; ignore input.
+      return;
+    }
   }
 
   // Joystick: Helicopter controls
@@ -341,17 +354,13 @@ function inventoryClick(offset) {
   }, 1 / FPS);
 }
 
-function updateCSS(lastKnownGamepadCount) {
-  utils.css.addOrRemove(
-    document.body,
-    useGamepad && lastKnownGamepadCount,
-    'has-gamepad'
-  );
+function updateOnAddOrRemove(lastKnownGamepadCount) {
+  // a gamepad has been added, or removed from the browser's perspective.
+  if (lastKnownGamepadCount) return;
 
-  if (!lastKnownGamepadCount) {
-    // TODO: reset state only if no controllers connected at all?
-    Object.keys(data.state).forEach((k) => (data.state[k] = false));
-  }
+  // reset state, and deactivate
+  Object.keys(data.state).forEach((k) => (data.state[k] = false));
+  setActive(false);
 }
 
 function enable() {
@@ -362,6 +371,34 @@ function enable() {
 function disable() {
   data.enabled = false;
   gamepadManager.disable();
+  // drop gamepad UI and enable mouse, etc.
+  setActive(false);
+}
+
+function setActive(isActive) {
+  if (data.active === isActive) return;
+
+  data.active = isActive;
+
+  utils.css.addOrRemove(
+    document.body,
+    useGamepad && gamepadManager.data.lastKnownGamepadCount && isActive,
+    css.hasGamepad
+  );
+
+  // CSS cursor
+  utils.css.addOrRemove(document.body, isActive, css.gamepadActive);
+
+  // joystick cursor
+  game.objects.joystick?.setPointerVisibility(isActive);
+
+  // explicitly stop cursor, too?
+  if (!isActive) {
+    game.objects.joystick?.end?.();
+  }
+
+  // start or stop ignoring mouse (and touch) movement, respectively.
+  game.objects.view.data.ignoreMouseMove = isActive;
 }
 
 function init() {
@@ -376,7 +413,7 @@ function init() {
 
 const gamepadManager = GamepadManager({
   onChange: updateAA, // update / animate()-style callback
-  onAddOrRemove: updateCSS
+  onAddOrRemove: updateOnAddOrRemove
 });
 
 // DRY
@@ -387,6 +424,7 @@ const gamepad = {
   animate: gamepadManager.animate,
   data,
   init,
+  setActive,
   state: gamepadState,
   rumble: gamepadManager.rumble
 };
