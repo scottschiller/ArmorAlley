@@ -36,6 +36,7 @@ let data = {
   gamepadX: 0,
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
+  waitUntilButtonRelease: false,
   state: {
     // hackish: external-facing status
     isFiring: false
@@ -106,12 +107,26 @@ function updateAA() {
     prefsManager.show();
   }
 
-  // ignore if not active, maybe disabled by mouse activity - BUT, activate if a button is pressed.
+  // activate gamepad if a button is pressed.
   if (!data.active) {
     if (gamepadState.activeButtons) {
       setActive(true);
     } else {
       // gamepad is inactive, or has been disabled; ignore input.
+      return;
+    }
+  }
+
+  /**
+   * When gamepad is activated via button press, prevent actions until release.
+   * Otherwise, helicopter would immediately fire guns etc.
+   */
+  if (data.waitUntilButtonRelease) {
+    if (!gamepadState.activeButtons) {
+      // resume standard behaviour
+      data.waitUntilButtonRelease = false;
+    } else {
+      // wait
       return;
     }
   }
@@ -399,6 +414,15 @@ function setActive(isActive) {
 
   // start or stop ignoring mouse (and touch) movement, respectively.
   game.objects.view.data.ignoreMouseMove = isActive;
+
+  /**
+   * If becoming active, ignore the current button(s) so e.g.,
+   * mouse -> gamepad hand-off doesn't trigger an immediate action
+   * like firing the guns.
+   */
+  if (isActive) {
+    data.waitUntilButtonRelease = true;
+  }
 
   // return the previous state, for interested parties.
   return !isActive;
