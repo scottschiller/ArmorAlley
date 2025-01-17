@@ -239,11 +239,17 @@ const GamepadManager = (options = {}) => {
       lastGamepadState.buttons = {};
     }
 
+    // running total, for convenience
+    let activeButtons = 0;
+
     // iterate over map, applying lastState
     Object.entries(map).forEach(([key, value]) => {
       // 'r1': (value of btn7)
       lastGamepadState.buttons[value] = gamepadState.buttons[value];
       gamepadState.buttons[value] = lastState[`gp${gpi}/${key}`]?.value;
+      if (gamepadState.buttons[value]) {
+        activeButtons++;
+      }
     });
 
     // ABXY "diamonds" (or similar groups of buttons)
@@ -273,6 +279,7 @@ const GamepadManager = (options = {}) => {
       cs.right = ls[`gp${gpi}/${o.right}`].value;
       cs.bottom = ls[`gp${gpi}/${o.bottom}`].value;
       cs.activeCount = cs.left + cs.top + cs.right + cs.bottom;
+      activeButtons += cs.activeCount;
     });
 
     // d-pads (most controllers have just one?)
@@ -400,7 +407,13 @@ const GamepadManager = (options = {}) => {
       js.y = y;
 
       js.button = ls[`gp${gpi}/${o.button}`].value;
+
+      if (js.button) activeButtons++;
     });
+
+    // finally, update button count
+    lastGamepadState.activeButtons = gamepadState.activeButtons;
+    gamepadState.activeButtons = activeButtons;
   }
 
   function applyChanges() {
