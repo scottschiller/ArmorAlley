@@ -581,7 +581,7 @@ const GamepadManager = (options = {}) => {
       navigator.getGamepads()?.filter?.((gp) => !!gp)?.length || 0;
   }
 
-  function rumble(magnitude = 1, duration = 40) {
+  function rumble(magnitude = 1, duration = 40, reason) {
     if (!gamepadFeature) return;
 
     const pad = navigator.getGamepads()[gpi];
@@ -595,7 +595,7 @@ const GamepadManager = (options = {}) => {
       let ha = pad.hapticActuators;
       // actuators array may exist, but be empty despite "dual-rumble" e.g., on PS4 Dualshock.
       if (ha.length) {
-        console.log('pad.hapticActuators', ha, magnitude, duration);
+        console.log('pad.hapticActuators', ha, magnitude, duration, reason);
         ha[0].pulse(magnitude, duration);
       } else {
         console.log('No haptic actuators found.');
@@ -617,7 +617,7 @@ const GamepadManager = (options = {}) => {
         // Safari implements `canPlayEffectType()` - use if defined.
         (!va.canPlayEffectType || va.canPlayEffectType?.(effect))
       ) {
-        console.log('gamepad effect', effect, magnitude, duration);
+        console.log('gamepad effect', effect, magnitude, duration, reason);
         va.playEffect(effect, {
           startDelay: 0,
           duration,
