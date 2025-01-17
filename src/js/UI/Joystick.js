@@ -38,7 +38,8 @@ function Joystick(options) {
     pointer: {
       // percentages
       x: DEFAULTS.pointer.x,
-      y: DEFAULTS.pointer.y
+      y: DEFAULTS.pointer.y,
+      visible: false
     },
     // linear acceleration / deceleration
     easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
@@ -71,6 +72,12 @@ function Joystick(options) {
   function resetPoint() {
     dom.oPoint.style.setProperty('top', '50%');
     dom.oPoint.style.setProperty('left', '50%');
+  }
+
+  function setPointerVisibility(visible) {
+    if (data.pointer.visible === visible) return;
+    utils.css.addOrRemove(dom.oPointer, visible, css.enabled);
+    data.pointer.visible = visible;
   }
 
   function start(e) {
@@ -267,7 +274,6 @@ function Joystick(options) {
     dom.o = (options && options.o) || document.body;
 
     dom.oPointer = document.getElementById('pointer');
-    utils.css.add(dom.oPointer, css.enabled);
 
     const oJoystick = document.createElement('div');
     oJoystick.className = css.joystick;
@@ -344,7 +350,8 @@ function Joystick(options) {
     start,
     move,
     end,
-    reset
+    reset,
+    setPointerVisibility
   };
 
   return exports;
