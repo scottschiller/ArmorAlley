@@ -88,7 +88,7 @@ const GamepadManager = (options = {}) => {
   const lastGamepadState = {};
   const gamepadState = {};
 
-  let changed;
+  let changed = [];
 
   // id -> { product, vendor } map
   let parseIdCache = {};
@@ -183,7 +183,6 @@ const GamepadManager = (options = {}) => {
   function checkForChange(id, value) {
     let state;
     if (lastState[id].lastValue !== value) {
-      if (!changed) changed = [];
       changed.push({ id, value });
     }
   }
@@ -405,15 +404,15 @@ const GamepadManager = (options = {}) => {
   }
 
   function applyChanges() {
-    changed?.forEach?.(applyChange);
+    changed.forEach(applyChange);
 
     refreshState();
 
     options?.onChange?.();
 
-    changed?.forEach?.(updateLastValue);
+    changed.forEach(updateLastValue);
 
-    changed = null;
+    changed = [];
   }
 
   function update() {
