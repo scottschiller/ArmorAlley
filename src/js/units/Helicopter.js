@@ -2351,7 +2351,15 @@ const Helicopter = (options = {}) => {
   function maybeRumbleOnLanding() {
     if (!data.isLocal || data.isCPU || !gamepadFeature) return;
     // a bit of fun: bump the controller relative to how fast the chopper was descending.
-    gamepad.rumble(Math.abs(data.vX) / data.vXMax, 50);
+
+    // throttle
+    if (data.rumbleTimer) return;
+    data.rumbleTimer = common.setFrameTimeout(
+      () => (data.rumbleTimer = null),
+      500
+    );
+
+    gamepad.rumble(Math.abs(data.vX) / data.vXMax, 50, 'maybeRumbleOnLanding');
   }
 
   function animate() {
@@ -2657,9 +2665,24 @@ const Helicopter = (options = {}) => {
     // TODO: prefs etc.
     if (gamepadFeature) {
       if (data.dead || !data.energy || data.exploding) {
-        gamepad.rumble(0.65, 150);
+        // throttle
+        if (!data.rumbleTimer) {
+          data.rumbleTimer = common.setFrameTimeout(
+            () => (data.rumbleTimer = null),
+            1000
+          );
+          gamepad.rumble(
+            0.65,
+            200,
+            'reactToDamage: dead || !energy || exploding'
+          );
+        }
       } else {
-        gamepad.rumble(0.65, 50);
+        gamepad.rumble(
+          0.65,
+          50,
+          'reactToDamage: not dead, has energy, not exploding'
+        );
       }
     }
 
