@@ -21,7 +21,7 @@ let useGamepad = !!gamepadFeature;
 const JOYSTICK_SENSITIVITY = 2;
 
 // middle / "inactive" position in a 9-axis d-pad
-let OFFSET_CENTER = 4;
+const OFFSET_CENTER = 4;
 
 let css = {
   menuActive: 'active',
