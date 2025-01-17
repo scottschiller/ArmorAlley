@@ -1186,6 +1186,17 @@ const View = () => {
     data.chatVisible = false;
   }
 
+  function maybeShowDisabledMouseCursor() {
+    if (!gamepadFeature || !game.objects.gamepad.data.active) return;
+    if (data.notAllowed) return;
+    // show "no-entry", then hide.
+    document.body.style.cursor = 'not-allowed';
+    data.notAllowed = common.setFrameTimeout(() => {
+      data.notAllowed = null;
+      document.body.style.cursor = '';
+    }, 1000);
+  }
+
   function addEvents() {
     /**
      * Mouse, touch, window event handlers.
@@ -1412,8 +1423,11 @@ const View = () => {
         data.ignoreMouseMove ||
         game.players?.local?.data?.dead ||
         game.players?.local?.data?.isCPU
-      )
+      ) {
+        // special case: temporarily show mouse cursor, IF gamepad present and active.
+        maybeShowDisabledMouseCursor();
         return;
+      }
       if (!net.active) {
         data.mouse.x = e.clientX / data.screenScale;
         data.mouse.y = e.clientY / data.screenScale;
