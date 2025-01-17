@@ -682,6 +682,7 @@ const GamepadManager = (options = {}) => {
 
   return {
     animate: update,
+    data,
     enable: () => (data.enabled = true),
     disable: () => (data.enabled = false),
     lastState,
