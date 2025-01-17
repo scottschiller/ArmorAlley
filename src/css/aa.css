@@ -139,6 +139,10 @@ body.demo:not(.prefs-modal-open) {
   cursor: url(../../assets/image/UI/cursor-cross-grey.png), crosshair;
 }
 
+body.has-gamepad.gamepad-active:not(.prefs-modal-open) {
+  cursor: none;
+}
+
 body.is_safari:not(.is-mobile) {
   /**
    * Safari seems to rasterize before transform()-based scaling of text and images,
