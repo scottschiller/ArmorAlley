@@ -1480,6 +1480,11 @@ const View = () => {
     },
 
     touchstart(e) {
+      // (technically, mousedown + touchstart)
+      if (gamepadFeature && game.objects.gamepad) {
+        // mouse is active - hide / disable gamepad UX/UI, restore mouse cursor
+        game.objects.gamepad.setActive(false);
+      }
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mousedown(e);
 
