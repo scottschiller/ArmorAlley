@@ -247,7 +247,11 @@ const GamepadManager = (options = {}) => {
       // 'r1': (value of btn7)
       lastGamepadState.buttons[value] = gamepadState.buttons[value];
       gamepadState.buttons[value] = lastState[`gp${gpi}/${key}`]?.value;
-      if (gamepadState.buttons[value]) {
+      /**
+       * Be strict: ignore analog triggers that might be partially-activated,
+       * because the gamepad is resting on a desk. Ask me how I know. ;)
+       */
+      if (gamepadState.buttons[value] === 1) {
         activeButtons++;
       }
     });
