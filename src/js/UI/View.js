@@ -1495,10 +1495,15 @@ const View = () => {
 
     touchstart(e) {
       // (technically, mousedown + touchstart)
+
       if (gamepadFeature && game.objects.gamepad) {
         // mouse is active - hide / disable gamepad UX/UI, restore mouse cursor
-        game.objects.gamepad.setActive(false);
+        let wasActive = game.objects.gamepad.setActive(false);
+
+        // if gamepad WAS engaged, swallow this event to prevent helicopter flip.
+        if (wasActive) return;
       }
+
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mousedown(e);
 

@@ -399,6 +399,9 @@ function setActive(isActive) {
 
   // start or stop ignoring mouse (and touch) movement, respectively.
   game.objects.view.data.ignoreMouseMove = isActive;
+
+  // return the previous state, for interested parties.
+  return !isActive;
 }
 
 function init() {
