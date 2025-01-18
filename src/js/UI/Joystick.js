@@ -80,6 +80,12 @@ function Joystick(options) {
     data.pointer.visible = visible;
   }
 
+  function updatePointer() {
+    dom.oPointer.style.transform = `translate3d(${
+      data.screenWidth * (data.pointer.x / 100)
+    }px, ${data.screenHeight * (data.pointer.y / 100)}px, 0px)`;
+  }
+
   function start(e) {
     if (data.active) return;
 
@@ -297,9 +303,7 @@ function Joystick(options) {
     data.pointer.x = DEFAULTS.pointer.x;
     data.pointer.y = DEFAULTS.pointer.y;
 
-    dom.oPointer.style.transform = `translate3d(${
-      data.screenWidth * (data.pointer.x / 100)
-    }px, ${data.screenHeight * (data.pointer.y / 100)}px, 0px)`;
+    updatePointer();
   }
 
   function animate() {
@@ -331,9 +335,7 @@ function Joystick(options) {
     }
 
     // update position of pointer, active or not.
-    dom.oPointer.style.transform = `translate3d(${
-      data.screenWidth * (data.pointer.x / 100)
-    }px, ${data.screenHeight * (data.pointer.y / 100)}px, 0px)`;
+    updatePointer();
   }
 
   function init() {
