@@ -7,7 +7,7 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { FPS } from '../core/global.js';
+import { clientFeatures, FPS } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { GamepadManager } from './GamepadManager.js';
 
@@ -37,6 +37,8 @@ let data = {
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
   waitUntilButtonRelease: false,
+  startX: 0,
+  startY: 0,
   state: {
     // hackish: external-facing status
     isFiring: false
@@ -141,12 +143,6 @@ function updateAA() {
   let curX = gamepadState.joysticks[FLY].x;
   let curY = gamepadState.joysticks[FLY].y;
 
-  let width = game.objects.joystick.data.screenWidth / 2;
-  let height = game.objects.joystick.data.screenHeight / 2;
-
-  let startX = game.objects.view.data.browser.isLandscape ? width : height;
-  let startY = game.objects.view.data.browser.isLandscape ? height : width;
-
   if ((lastX != 0 || lastY != 0) && curX == 0 && curY == 0) {
     // only stop once
     game.objects.joystick?.end?.();
@@ -154,8 +150,8 @@ function updateAA() {
     if (lastX == 0 && lastY == 0) {
       // "start" moving
       game.objects.joystick?.start?.({
-        clientX: startX,
-        clientY: startY,
+        clientX: data.startX,
+        clientY: data.startY,
         hidden: true
       });
     } else {
@@ -167,8 +163,8 @@ function updateAA() {
       data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
 
       game.objects.joystick.move({
-        clientX: startX + data.gamepadX,
-        clientY: startY + data.gamepadY
+        clientX: data.startX + data.gamepadX,
+        clientY: data.startY + data.gamepadY
       });
     }
   }
@@ -403,6 +399,42 @@ function setActive(isActive) {
 
   // CSS cursor
   utils.css.addOrRemove(document.body, isActive, css.gamepadActive);
+
+  if (isActive) {
+    let jsData = game.objects.joystick.data;
+    if (!clientFeatures.touch) {
+      /**
+       * Desktop mouse / trackpad case: sync virtual / mouse positions.
+       *
+       * Desktop uses the real mouse pointer rendered by the OS, with
+       * CSS rendering a custom + icon. On touch/mobile, a "virtual"
+       * pointer is rendered via `<div>` and positioned by touch events.
+       *
+       * The virtual pointer is connected to the joystick object.
+       * On desktop (sans-touch), the virtual pointer is gamepad-only.
+       *
+       * This bit keeps the virtual pointer in sync with the real one.
+       */
+      let width = jsData.screenWidth / 2;
+      let height = jsData.screenHeight / 2;
+
+      const { clientX, clientY } = game.objects.view.data.mouse;
+
+      // sync gamepad X + Y (-50 to +50) to mouse position.
+      data.gamepadX = (clientX / width - 1) * 50;
+      data.gamepadY = (clientY / height - 1) * 50;
+
+      // sync gamepad joystick UI to mouse position - note slight offset.
+      data.startX = clientX + 7;
+      data.startY = clientY + 7;
+
+      game.objects.joystick.jumpTo(data.startX, data.startY);
+    } else {
+      // sync gamepad pointer to last touch (joystick) position.
+      data.gamepadX = jsData.pointer.x - 50;
+      data.gamepadY = jsData.pointer.y - 50;
+    }
+  }
 
   // joystick cursor
   game.objects.joystick?.setPointerVisibility(isActive);

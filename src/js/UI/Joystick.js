@@ -80,6 +80,15 @@ function Joystick(options) {
     data.pointer.visible = visible;
   }
 
+  function jumpTo(x, y) {
+    data.start.x = x;
+    data.start.y = y;
+    moveContainerTo(x, y);
+    data.pointer.x = (x / data.screenWidth) * 100;
+    data.pointer.y = (y / data.screenHeight) * 100;
+    updatePointer();
+  }
+
   function updatePointer() {
     dom.oPointer.style.transform = `translate3d(${
       data.screenWidth * (data.pointer.x / 100)
@@ -352,6 +361,7 @@ function Joystick(options) {
   exports = {
     animate,
     data,
+    jumpTo,
     start,
     move,
     end,
