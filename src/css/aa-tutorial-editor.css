@@ -152,6 +152,8 @@ body.edit-mode .sprite .zone-flag {
   transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
   /* don't interfere with touch / click etc. */
   pointer-events: none;
+  /* semi-transparent overlay */
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* not iPhone, though - on portrait, scaling up will overlap controls. */
