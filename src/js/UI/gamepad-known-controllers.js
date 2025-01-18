@@ -26,20 +26,31 @@ function addControllers() {
      * https://beej.us/blog/data/javascript-gamepad/
      */
 
-    // "standalone" buttons (ABXY, joysticks and D-pads defined separately)
+    /**
+     * "Standalone" buttons - shoulders, select/start, logo etc.
+     * ABXY, joysticks and D-pads defined separately
+     */
     buttons: {
-      // left shoulder / trigger
+      // left shoulder button
       l1: 'btn4',
-      l2: 'btn6', // PS4: spring-loaded trigger with range: 0-1
 
-      // right shoulder / trigger
+      // left shoulder spring-loaded trigger, value 0-1 (PS4)
+      l2: 'btn6',
+
+      // right shoulder button
       r1: 'btn5',
-      r2: 'btn7', // PS4: spring-loaded trigger with range: 0-1
 
-      options: 'btn9', // PS4 label: "OPTIONS"
-      share: 'btn8', // PS4 label: "SHARE"
+      // right shoulder spring-loaded trigger, value 0-1 (PS4)
+      r2: 'btn7',
 
-      logo: 'btn16' // PS4: PlayStation logo (opens Control Center in macOS)
+      // PS4 label: "OPTIONS"
+      options: 'btn9',
+
+      // PS4 label: "SHARE"
+      share: 'btn8',
+
+      // PS4: PlayStation logo (opens Control Center in macOS)
+      logo: 'btn16'
     },
 
     /**
@@ -55,10 +66,17 @@ function addControllers() {
      */
     abxy: [
       {
-        top: 'btn3', // △ or X
-        left: 'btn2', // □ or Y
-        right: 'btn1', // ○ or A
-        bottom: 'btn0' // × or B
+        // △ or X
+        top: 'btn3',
+
+        // □ or Y
+        left: 'btn2',
+
+        // ○ or A
+        right: 'btn1',
+
+        // × or B
+        bottom: 'btn0'
       }
     ],
 
@@ -142,10 +160,17 @@ function addControllers() {
      */
     abxy: [
       {
-        top: 'btn3', // X
-        left: 'btn4', // Y
-        right: 'btn0', // A
-        bottom: 'btn1' // B
+        // X
+        top: 'btn3',
+
+        // Y
+        left: 'btn4',
+
+        // A
+        right: 'btn0',
+
+        // B
+        bottom: 'btn1'
       }
     ],
 
