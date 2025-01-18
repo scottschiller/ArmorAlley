@@ -236,6 +236,10 @@ body:not(.is-mobile) .mobile-only {
   display: none;
 }
 
+body:not(.has-gamepad) .gamepad-only {
+  display: none;
+}
+
 body.edit-mode #world-wrapper,
 body.game-started #world-wrapper {
   transition:
