@@ -224,6 +224,20 @@ function addControllers() {
     vendor: '054c',
     product: '09cc',
     ...knownControllers.sonyPS4DualShock
+    ...knownControllers.standard
+  });
+
+  configGamePad({
+    /**
+     * Nintendo Switch (original) Joy-Con, left + right controller pair
+     * Tested on Chrome under Windows 10, connected via Bluetooth
+     * These are recognized (together, L+R?) as a standard controller.
+     * Vibration / rumble feedback should be supported.
+     */
+    label: 'Joy-Con L+R',
+    vendor: '057e',
+    product: '200e',
+    ...knownControllers.standard
   });
 }
 
