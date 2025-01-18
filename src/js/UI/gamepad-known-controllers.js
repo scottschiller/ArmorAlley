@@ -111,6 +111,7 @@ function addControllers() {
        * Extra wiggle room to account for joystick drift, beyond values
        * read during "drift calibration." 0 = disabled.
        */
+      // NOTE: not yet implemented.
       driftBufferPercent: 100
     },
 
