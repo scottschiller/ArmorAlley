@@ -810,6 +810,7 @@ body.has-gamepad #mobile-controls ul.mobile-controls-ordering li {
 
 body #mobile-controls li.gamepad {
   display: none;
+  border-color: transparent;
 }
 
 /* special case */
