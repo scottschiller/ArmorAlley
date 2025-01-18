@@ -1428,6 +1428,11 @@ const View = () => {
         maybeShowDisabledMouseCursor();
         return;
       }
+
+      // always track the raw values - for gamepad sync, if nothing else.
+      data.mouse.clientX = e.clientX;
+      data.mouse.clientY = e.clientY;
+
       if (!net.active) {
         data.mouse.x = e.clientX / data.screenScale;
         data.mouse.y = e.clientY / data.screenScale;
