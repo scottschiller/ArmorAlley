@@ -96,6 +96,9 @@ function Joystick(options) {
     // re-center the "nub".
     resetPoint();
 
+    // ensure pointer is visible
+    setPointerVisibility(true);
+
     // show joystick UI, unless specified otherwise
     if (!e.hidden) {
       utils.css.add(dom.oJoystick, css.active);
