@@ -26,7 +26,7 @@ function addControllers() {
      * https://beej.us/blog/data/javascript-gamepad/
      */
 
-    // standalone, not part of a D-pad or group
+    // "standalone" buttons (ABXY, joysticks and D-pads defined separately)
     buttons: {
       // left shoulder / trigger
       l1: 'btn4',
@@ -39,25 +39,39 @@ function addControllers() {
       options: 'btn9', // PS4 label: "OPTIONS"
       share: 'btn8', // PS4 label: "SHARE"
 
-      logo: 'btn16' // PS4: Playstation logo (brings up Control Center in macOS)
+      logo: 'btn16' // PS4: PlayStation logo (opens Control Center in macOS)
     },
 
     /**
      * "ABXY" ("diamond") button layout
-     *  △
-     * □ ○
-     *  ×
+     *
+     *    PS4      Std
+     *  /‾‾‾‾‾\  /‾‾‾‾‾\
+     *     △        X
+     *   □   ○    Y   A
+     *     ×        B
+     *  \_____/  \_____/
+     *
      */
     abxy: [
       {
-        top: 'btn3', // PS4: "Triangle" (standard: "Y")
-        left: 'btn2', // PS4: "Square" (standard: "X")
-        right: 'btn1', // PS4: "O" (standard: "B")
-        bottom: 'btn0' // PS4: "X" (standard: "A")
+        top: 'btn3', // △ or X
+        left: 'btn2', // □ or Y
+        right: 'btn1', // ○ or A
+        bottom: 'btn0' // × or B
       }
     ],
 
-    // button order, per D-pad: up, down, left, right
+    /**
+     * Directional pad (D-pad) definitions
+     *
+     * ↖ ↑ ↗
+     * ← · →
+     * ↙ ↓ ↘
+     *
+     * Button order, per D-pad: [up, down, left, right]
+     * Standard controllers typically have one D-pad.
+     */
     dpads: [['btn12', 'btn13', 'btn14', 'btn15']],
 
     joystickOptions: {
@@ -82,6 +96,12 @@ function addControllers() {
       driftBufferPercent: 100
     },
 
+    /**
+     * 🕹️ Joystick definitions
+     * Each joystick axis has a value between -1 and +1.
+     * The order is [x-axis, y-axis], and a single button when pressed.
+     * Standard controllers should have two joysticks.
+     */
     joysticks: [
       {
         // x-axis, y-axis
@@ -114,9 +134,11 @@ function addControllers() {
 
     /**
      * "ABXY" ("diamond") button layout
-     *  X
-     * Y A
-     *  B
+     *  /‾‾‾‾‾\
+     *     X
+     *   Y   A
+     *     B
+     *  \_____/
      */
     abxy: [
       {
@@ -132,7 +154,7 @@ function addControllers() {
       zeroPoint: 0.03
     },
 
-    // analog + button
+    // x/y, button
     joysticks: [
       { axes: ['axes0', 'axes1'], button: 'btn13' },
       { axes: ['axes2', 'axes5'], button: 'btn14' }
@@ -140,7 +162,7 @@ function addControllers() {
 
     dpads: [
       /**
-       * Special case: 8Bitdo NES30 Pro (Bluetooth) D-pad uses a single axis
+       * Special case: 8Bitdo NES30 Pro (Bluetooth) D-pad updates one axis
        * instead of buttons. The axis is set to one of 9 values, representing
        * the individual directions in order. axes3 + axes4 provide integer
        * values for this controller, but are ignored in this case.
@@ -163,7 +185,6 @@ function addControllers() {
           { axes: ['axes1', 'axes2'], button: 'btn13' },
           { axes: ['axes3', 'axes4'], button: 'btn14' }
         ],
-
         dpads: [
           {
             axis: 'axes0',
@@ -176,25 +197,30 @@ function addControllers() {
     }
   });
 
-  // fallback / standard controller case
+  /**
+   * Fallback / standard controller case
+   * For controllers lacking an exact ID match
+   */
   configGamePad({
-    label: 'Standard / generic',
+    label: 'Standard / Generic Controller',
     vendor: 'standard',
     product: 'standard',
     ...knownControllers.standard
   });
 
+  // NES30 Pro, connecting via USB
   configGamePad({
     label: '8Bitdo NES30 Pro',
     vendor: '2dc8',
-    product: '9001', // when connecting via USB
+    product: '9001',
     ...knownControllers.nes30Pro
   });
 
+  // NES30 Pro, connecting via Bluetooth
   configGamePad({
     label: 'Bluetooth Wireless Controller (8Bitdo NES30 Pro)',
     vendor: '2dc8',
-    product: '3820', // when connecting via Bluetooth
+    product: '3820',
     ...knownControllers.nes30Pro
   });
 
@@ -207,7 +233,7 @@ function addControllers() {
     label: '8Bitdo NES30 Pro Extended Gamepad',
     ...knownControllers.standard,
     // TODO: exclude / delete "share" button?
-    // redefine order for NES30Pro
+    // NES30 Pro has a unique ABXY mapping.
     ...knownControllers.nes30Pro.abxy
   });
 
