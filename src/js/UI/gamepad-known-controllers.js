@@ -17,8 +17,9 @@ function addKnownController(label, data) {
 }
 
 function addControllers() {
-  addKnownController('sonyPS4DualShock', {
+  addKnownController('standard', {
     /**
+     * Reference / standard controller layout
      * PS4 = "Sony PS4 DualShock" (Vendor: 054c, product: 09cc)
      * This is commonly recognized as a "standard" gamepad layout / mapping
      * https://w3c.github.io/gamepad/standard_gamepad.svg
@@ -180,7 +181,7 @@ function addControllers() {
     label: 'Standard / generic',
     vendor: 'standard',
     product: 'standard',
-    ...knownControllers.sonyPS4DualShock
+    ...knownControllers.standard
   });
 
   configGamePad({
@@ -204,7 +205,7 @@ function addControllers() {
      * The label here matches the Safari ID, a fallback for vendor/product.
      */
     label: '8Bitdo NES30 Pro Extended Gamepad',
-    ...knownControllers.sonyPS4DualShock,
+    ...knownControllers.standard,
     // TODO: exclude / delete "share" button?
     // redefine order for NES30Pro
     ...knownControllers.nes30Pro.abxy
@@ -216,14 +217,13 @@ function addControllers() {
      * (lacks product + vendor ID, but has `dual-rumble` vibration actuator)
      */
     label: 'Wireless Controller Extended Gamepad',
-    ...knownControllers.sonyPS4DualShock
+    ...knownControllers.standard
   });
 
   configGamePad({
     label: 'DUALSHOCK 4 Wireless Controller (Sony PlayStation)',
     vendor: '054c',
     product: '09cc',
-    ...knownControllers.sonyPS4DualShock
     ...knownControllers.standard
   });
 
