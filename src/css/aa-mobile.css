@@ -843,8 +843,8 @@ body.has-gamepad.is-mobile.is_iphone #mobile-controls:not(.active) li {
   border-color: transparent;
 }
 
-body.has-gamepad.is-mobile.is_iphone #mobile-controls:not(.active) li a {
-  /* iPhone + gamepad: hide gamepad UI when gamepad is not in use */
+body.has-gamepad.is-mobile.is_iphone:not(.tutorial-mode) #mobile-controls:not(.active) li a {
+  /* iPhone + gamepad: hide gamepad UI when gamepad is not in use, EXCEPT tutorial mode */
   opacity: 0;
 }
 
