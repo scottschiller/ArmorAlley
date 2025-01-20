@@ -1045,6 +1045,7 @@ function hideTitleScreen(callback) {
 }
 
 const gameMenu = {
+  formClick,
   init,
   getCustomGroup: () => customGroup,
   updateGameLevelControl,
