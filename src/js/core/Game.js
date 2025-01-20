@@ -691,7 +691,9 @@ const game = (() => {
 
     // "joystick" applies for gamepad, mobile, or debug mode (i.e., testing on desktop)
     if (gamepadFeature || isMobile || debug) {
-      objects.joystick = Joystick();
+      if (!objects.joystick) {
+        objects.joystick = Joystick();
+      }
 
       objects.joystick.onSetDirection = (directionX, directionY) => {
         // TODO: have this call game.objects.view.mousemove(); ?
