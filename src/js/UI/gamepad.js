@@ -383,8 +383,27 @@ function inventoryClick(offset) {
   }, 1 / FPS);
 }
 
+let foundFirstGamepad = false;
+
 function updateOnAddOrRemove(lastKnownGamepadCount) {
   // a gamepad has been added, or removed from the browser's perspective.
+
+  // hackish: catch the first-added gamepad for the home screen case.
+  if (!foundFirstGamepad && !game.data.started && lastKnownGamepadCount === 1) {
+    foundFirstGamepad = true;
+
+    // activate right away, regardless of what button or d-pad bit was pressed.
+    setActive(true);
+
+    if (
+      data.prefsOffset === 0 &&
+      (!document.activeElement || document.activeElement.id !== 'game_level')
+    ) {
+      // initial focus
+      document.getElementById('game_level').focus();
+    }
+  }
+
   if (lastKnownGamepadCount) return;
 
   // reset state, and deactivate
