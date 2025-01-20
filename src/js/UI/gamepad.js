@@ -420,7 +420,7 @@ function setActive(isActive) {
   // CSS cursor
   utils.css.addOrRemove(document.body, isActive, css.gamepadActive);
 
-  if (isActive) {
+  if (isActive && game.objects.joystick) {
     let jsData = game.objects.joystick.data;
     if (!clientFeatures.touch) {
       /**
