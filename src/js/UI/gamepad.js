@@ -397,12 +397,14 @@ function enable() {
   gamepadManager.enable();
 }
 
+/*
 function disable() {
   data.enabled = false;
   gamepadManager.disable();
   // drop gamepad UI and enable mouse, etc.
   setActive(false);
 }
+*/
 
 function setActive(isActive) {
   if (data.active === isActive) return;
