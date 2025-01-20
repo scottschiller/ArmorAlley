@@ -252,8 +252,6 @@ const game = (() => {
     objects.starController = StarController();
 
     objects.envelope = Envelope();
-
-    objects.gamepad = gamepad;
   }
 
   function getObjects() {

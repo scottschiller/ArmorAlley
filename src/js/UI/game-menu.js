@@ -30,6 +30,7 @@ import {
   setCustomLevel,
   setLevel
 } from '../levels/default.js';
+import { gamepad, gamepadFeature } from './gamepad.js';
 import { gamePrefs } from './preferences.js';
 
 let video;
@@ -457,6 +458,10 @@ function init() {
     }, 1000);
   } else if (!demo) {
     showHomeVideo();
+  }
+
+  if (gamepadFeature) {
+    game.objects.gamepad = gamepad;
   }
 
   if (!autoStart) {
