@@ -65,13 +65,11 @@ function Joystick(options) {
   function moveContainerTo(x, y) {
     const targetX = x - data.oJoystickWidth / 2;
     const targetY = y - data.oJoystickHeight / 2;
-    dom.oJoystick.style.setProperty('left', `${targetX}px`);
-    dom.oJoystick.style.setProperty('top', `${targetY}px`);
+    dom.oJoystick.style.transform = `translate3d(${targetX}px, ${targetY}px, 0px)`;
   }
 
   function resetPoint() {
-    dom.oPoint.style.setProperty('top', '50%');
-    dom.oPoint.style.setProperty('left', '50%');
+    dom.oPoint.style.transform = `translate3d(${data.oJoystickWidth / 2}px, ${data.oJoystickHeight / 2}px, 0px)`;
   }
 
   function setPointerVisibility(visible) {
@@ -187,8 +185,7 @@ function Joystick(options) {
   }
 
   function movePoint(x, y) {
-    dom.oPoint.style.setProperty('left', `${x}%`);
-    dom.oPoint.style.setProperty('top', `${y}%`);
+    dom.oPoint.style.transform = `translate3d(${(x / 100) * data.oJoystickWidth}px, ${(y / 100) * data.oJoystickHeight}px, 0px)`;
   }
 
   function setDirection(x, y) {
