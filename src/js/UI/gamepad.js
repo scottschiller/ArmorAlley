@@ -500,6 +500,8 @@ function setActive(isActive) {
 }
 
 function getSubmitHTML() {
+  if (!gamepadFeature || !useGamepad) return;
+
   // Best guess at Sony/PlayStation-brand controllers, for button hints
   let isSony;
 
