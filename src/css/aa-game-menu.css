@@ -455,10 +455,12 @@ body.game-started #start-game-button-mobile {
   /* override: make this arrow look nice. */
   image-rendering: auto;
 }
-
-#game-menu select:focus,
 #game-menu input:focus,
-#game-menu button:focus {
+#game-menu button:focus,
+#game-menu select:focus-visible,
+/* slightly redundant rules here for iOS Safari */
+body.has-gamepad #game-menu select:focus-visible,
+body.has-gamepad #game-menu select:focus {
   outline: 1px solid #fff;
 }
 
