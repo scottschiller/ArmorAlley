@@ -210,6 +210,7 @@ function PrefsManager() {
     dom.oVolumeSlider = document.getElementById('main_volume');
     dom.oStatsBar = document.getElementById('stats-bar');
     dom.oGameTips = document.getElementById('game-tips');
+    dom.oShowChangelog = document.getElementById('show-changelog');
 
     // just in case
     if (!dom.o || !dom.oForm || !dom.optionsLink) return;
@@ -291,58 +292,7 @@ function PrefsManager() {
       prefVersion.innerText = versionString;
     }
 
-    const changelog = document.getElementById('changelog');
-
-    let showChangelog = document.getElementById('show-changelog');
-
-    function maybeTruncate(url) {
-      // github commit-to-short-hash shenanigans
-      const base = 'https://github.com/scottschiller/ArmorAlley/commit/';
-      const offset = url.indexOf(base);
-      if (offset !== -1) {
-        const start = offset + base.length;
-        const hashLength = 7;
-        return url.substring(start, start + hashLength);
-      }
-      return url.substr(url.indexOf('//') + 2);
-    }
-
-    function mungeURL(match) {
-      return `<a href="${match}" target="_blank">${maybeTruncate(match)}</a>`;
-    }
-
-    function parseChangelog(text) {
-      var urlPattern =
-        /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-
-      return (
-        text
-          // escape
-          .replace(/</g, '&lt')
-          .replace(/>/g, '&gt')
-
-          // URLs to links
-          .replace(urlPattern, mungeURL)
-
-          // newlines
-          .replace(/(?:\r\n|\r|\n)/g, '<br>')
-
-          // indentation
-          .replace(/  /gi, '&#8202;')
-      ); // hair-space
-    }
-
-    let changelogVisible;
-
-    function updateChangelog() {
-      changelogVisible = !changelogVisible;
-      showChangelog.removeAttribute('disabled');
-      showChangelog.getElementsByTagName('span')[0].innerHTML = changelogVisible
-        ? 'Hide'
-        : 'Show';
-    }
-
-    utils.events.add(showChangelog, 'click', events.fetchChangelog);
+    utils.events.add(dom.oShowChangelog, 'click', events.fetchChangelog);
 
     let bnbSoundActive;
 
@@ -369,6 +319,50 @@ function PrefsManager() {
     data.initComplete = true;
 
     callback?.();
+  }
+
+  function updateChangelog() {
+    data.changelogVisible = !data.changelogVisible;
+    dom.oShowChangelog.removeAttribute('disabled');
+    dom.oShowChangelog.getElementsByTagName('span')[0].innerHTML =
+      data.changelogVisible ? 'Hide' : 'Show';
+  }
+
+  function maybeTruncate(url) {
+    // github commit-to-short-hash shenanigans
+    const base = 'https://github.com/scottschiller/ArmorAlley/commit/';
+    const offset = url.indexOf(base);
+    if (offset !== -1) {
+      const start = offset + base.length;
+      const hashLength = 7;
+      return url.substring(start, start + hashLength);
+    }
+    return url.substr(url.indexOf('//') + 2);
+  }
+
+  function mungeURL(match) {
+    return `<a href="${match}" target="_blank">${maybeTruncate(match)}</a>`;
+  }
+
+  function parseChangelog(text) {
+    var urlPattern =
+      /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+
+    return (
+      text
+        // escape
+        .replace(/</g, '&lt')
+        .replace(/>/g, '&gt')
+
+        // URLs to links
+        .replace(urlPattern, mungeURL)
+
+        // newlines
+        .replace(/(?:\r\n|\r|\n)/g, '<br>')
+
+        // indentation
+        .replace(/  /gi, '&#8202;')
+    ); // hair-space
   }
 
   function queuedSoundHack() {
@@ -1435,6 +1429,7 @@ function PrefsManager() {
 
   data = {
     active: false,
+    changelogVisible: false,
     initComplete: false,
     originalHeight: 0,
     network: false,
@@ -1460,6 +1455,7 @@ function PrefsManager() {
     optionsLink: null,
     oStatsBar: null,
     oGameTips: null,
+    oShowChangelog: null,
     oToasts: null
   };
 
@@ -2057,10 +2053,10 @@ function PrefsManager() {
   // DOM event handlers, exposed here for gamepad use.
 
   events.fetchChangelog = () => {
-    showChangelog.setAttribute('disabled', true);
+    dom.oShowChangelog.setAttribute('disabled', true);
     const details = document.getElementById('changelog-details');
 
-    if (changelogVisible) {
+    if (data.changelogVisible) {
       details.innerHTML = '';
       updateChangelog();
       return;
