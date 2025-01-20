@@ -687,7 +687,7 @@ const game = (() => {
 
     keyboardMonitor.init();
 
-    gamepad.init();
+    gamepad.onGameStart();
 
     // "joystick" applies for gamepad, mobile, or debug mode (i.e., testing on desktop)
     if (gamepadFeature || isMobile || debug) {
