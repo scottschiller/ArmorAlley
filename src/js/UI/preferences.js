@@ -800,7 +800,8 @@ function PrefsManager() {
      *   network: true,
      *   selectLevel: true,
      *   // expect game_type to be one of easy / hard / extreme
-     *   onStart: (networkGameType) => startGame(networkGameType)
+     *   onStart: (networkGameType) => startGame(networkGameType),
+     *   onShowComplete: () => optional callback
      * };
      */
 
@@ -975,6 +976,9 @@ function PrefsManager() {
     playQueuedSounds();
 
     game.pause({ noMute: true });
+
+    // optional callback
+    options?.onShowComplete?.();
   }
 
   function hide() {
