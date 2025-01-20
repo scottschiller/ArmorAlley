@@ -999,8 +999,11 @@ function PrefsManager() {
     // return focus to where it was
     try {
       data.lastActiveElement?.focus();
-    } catch(e) {
-      console.warn('Failed to focus last active element', data.lastActiveElement);
+    } catch (e) {
+      console.warn(
+        'Failed to focus last active element',
+        data.lastActiveElement
+      );
     }
 
     data.lastActiveElement = null;
