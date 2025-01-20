@@ -543,7 +543,6 @@ const { lastGamepadState, gamepadState } = gamepadManager;
 // "API" (for now)
 const gamepad = {
   animate: gamepadManager.animate,
-  checkDPad,
   checkDPadViaJoystick,
   data,
   getSubmitHTML,
