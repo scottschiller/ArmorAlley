@@ -588,6 +588,9 @@ const GamepadManager = (options = {}) => {
 
     updateGamepadCount();
 
+    // try to read state immediately
+    update();
+
     // callback
     options?.onAddOrRemove?.(data.lastKnownGamepadCount);
   }
