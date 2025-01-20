@@ -23,7 +23,7 @@
                 <button id="game-prefs-submit" type="submit" class="primary">
                   OK
                 </button>
-                <button id="game-prefs-cancel" type="reset">CANCEL</button>
+                <button id="game-prefs-cancel" type="reset" data-action="cancel-network">CANCEL</button>
               </div>
             </div>
 
@@ -55,6 +55,7 @@
                       <button
                         id="network-options-invite-link"
                         type="button"
+                        data-action="get-invite-link"
                         disabled>
                         Get invite link
                       </button>
@@ -305,7 +306,7 @@
                         ></b>
                       </p>
                       <p class="options-heading">
-                        <button id="show-changelog" type="button">
+                        <button id="show-changelog" data-action="changelog" type="button">
                           <span>Show</span> changelog
                         </button>
                       </p>
@@ -421,7 +422,7 @@
                 </fieldset>
 
                 <p class="select-level-only">
-                  <button type="submit" class="primary">
+                  <button id="select-level-submit" type="submit" class="primary">
                     OK
                   </button>
                 </p>
