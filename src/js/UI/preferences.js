@@ -275,42 +275,9 @@ function PrefsManager() {
       events.onPrefChange['bnb'](e.target.checked)
     );
 
-    dom.oGameSpeedSlider.addEventListener('input', () => {
-      gamePrefs.game_speed = getGameSpeedFromSlider();
-      common.setGameSpeed(gamePrefs.game_speed);
-      renderGameSpeedSlider();
-      queuedSoundHack();
-    });
-
-    dom.oVolumeSlider.addEventListener('change', () => {
-      // randomize, keep it fun.
-      data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
-      if (gamePrefs.bnb && !data.didCrankIt) {
-        playSound(sounds.bnb.turnItUp, null);
-        data.didCrankIt = true;
-      }
-    });
-
-    // watch for and apply volume updates
-    dom.oVolumeSlider.addEventListener('input', () => {
-      // stored in model as 0-1, but form values are 0-10.
-
-      // don't bother doing any SM2 work like mute() etc., just set the "volume scale."
-      gamePrefs.volume = getVolumeFromSlider();
-
-      // hackish: apply immediately.
-      events.onPrefChange['volume']?.(gamePrefs.volume);
-
-      renderVolumeSlider();
-
-      // play a sound, too.
-      playSound(
-        gamePrefs.bnb ? data.bnbVolumeTestSound : sounds.inventory.begin,
-        null
-      );
-
-      queuedSoundHack();
-    });
+    dom.oGameSpeedSlider.addEventListener('input', events.onGameSpeedInput);
+    dom.oVolumeSlider.addEventListener('change', events.onVolumeChange);
+    dom.oVolumeSlider.addEventListener('input', events.onVolumeInput);
 
     const prefVersion = document.getElementById('prefs-modal-version');
 
@@ -375,23 +342,7 @@ function PrefsManager() {
         : 'Show';
     }
 
-    function fetchChangelog() {
-      showChangelog.setAttribute('disabled', true);
-      const details = document.getElementById('changelog-details');
-
-      if (changelogVisible) {
-        details.innerHTML = '';
-        updateChangelog();
-        return;
-      }
-      aaLoader.loadHTML('../../CHANGELOG.txt', (response) => {
-        updateChangelog();
-        document.getElementById('changelog-details').innerHTML =
-          '<br />' + parseChangelog(response);
-      });
-    }
-
-    utils.events.add(showChangelog, 'click', fetchChangelog);
+    utils.events.add(showChangelog, 'click', events.fetchChangelog);
 
     let bnbSoundActive;
 
@@ -412,29 +363,12 @@ function PrefsManager() {
 
     // "more info" show/hide links
     dom.o.querySelectorAll('.more-info-toggle').forEach((o) => {
-      utils.events.add(o, 'click', moreInfoHandler);
+      utils.events.add(o, 'click', events.moreInfoHandler);
     });
 
     data.initComplete = true;
 
     callback?.();
-  }
-
-  function moreInfoHandler(e) {
-    // expand and collapse a node specified by the clicked element.
-    const { target } = e;
-    const id = target.getAttribute('data-for');
-    const css = 'active';
-    const node = document.getElementById(id);
-    const showing = !utils.css.has(node, css);
-    if (showing) {
-      node.style.height = node.scrollHeight + 'px';
-    } else {
-      node.style.height = '0px';
-    }
-    utils.css.addOrRemove(node, showing, css);
-    e.preventDefault();
-    return false;
   }
 
   function queuedSoundHack() {
@@ -526,19 +460,7 @@ function PrefsManager() {
 
     const linkDetail = document.getElementById('network-options-link');
 
-    inviteButton.onclick = () => {
-      copyToClipboard(inviteURL, (ok) => {
-        inviteContainer.remove();
-        linkDetail.innerHTML = [
-          `<p class="non-indented">Send this link to a friend. You are the host, and they will connect to you.</p>`,
-          `<a href="${inviteURL}" onclick="return false" class="no-hover" style="font-weight:bold;font-size:75%">${inviteURLDisplay}</a>`,
-          ok
-            ? `<p class="non-indented">The link has been copied to your clipboard.</p>`
-            : ``
-        ].join('\n');
-        updateNetworkStatus(`Waiting for guest... ☎️ 👀&thinsp;${appleWatch}`);
-      });
-    };
+    inviteButton.onclick = events.onInvite;
   }
 
   function startNetwork() {
@@ -935,22 +857,11 @@ function PrefsManager() {
 
       const fieldset = document.getElementById('prefs-select-level');
 
-      utils.events.add(fieldset, 'change', (e) => {
-        // a level has been selected from within the modal.
-        const { value } = e.target;
-
-        // set the preview, etc.
-        selectLevel(value);
-
-        gameMenu.updateGameLevelControl(value);
-      });
+      utils.events.add(fieldset, 'change', events.onLevelSelect);
 
       const difficulty = document.getElementById('prefs-game-difficulty');
-      utils.events.add(difficulty, 'change', (e) => {
-        game.setGameType(e.target.value);
-        updateBattleLists();
-        gameMenu.updateGameLevelControl();
-      });
+
+      utils.events.add(difficulty, 'change', events.onDifficultySelect);
     }
 
     // ensure the form matches the JS state.
@@ -2136,6 +2047,107 @@ function PrefsManager() {
     }
   };
 
+  // DOM event handlers, exposed here for gamepad use.
+
+  events.fetchChangelog = () => {
+    showChangelog.setAttribute('disabled', true);
+    const details = document.getElementById('changelog-details');
+
+    if (changelogVisible) {
+      details.innerHTML = '';
+      updateChangelog();
+      return;
+    }
+    aaLoader.loadHTML('../../CHANGELOG.txt', (response) => {
+      updateChangelog();
+      document.getElementById('changelog-details').innerHTML =
+        '<br />' + parseChangelog(response);
+    });
+  };
+
+  events.onGameSpeedInput = () => {
+    gamePrefs.game_speed = getGameSpeedFromSlider();
+    common.setGameSpeed(gamePrefs.game_speed);
+    renderGameSpeedSlider();
+    queuedSoundHack();
+  };
+
+  events.onVolumeChange = () => {
+    // randomize, keep it fun.
+    data.bnbVolumeTestSound = oneOf(sounds.bnb.volumeTestSounds);
+    if (gamePrefs.bnb && !data.didCrankIt) {
+      playSound(sounds.bnb.turnItUp, null);
+      data.didCrankIt = true;
+    }
+  };
+
+  events.onVolumeInput = () => {
+    // stored in model as 0-1, but form values are 0-10.
+
+    // don't bother doing any SM2 work like mute() etc., just set the "volume scale."
+    gamePrefs.volume = getVolumeFromSlider();
+
+    // hackish: apply immediately.
+    events.onPrefChange['volume']?.(gamePrefs.volume);
+
+    renderVolumeSlider();
+
+    // play a sound, too.
+    playSound(
+      gamePrefs.bnb ? data.bnbVolumeTestSound : sounds.inventory.begin,
+      null
+    );
+
+    queuedSoundHack();
+  };
+
+  events.moreInfoHandler = (e) => {
+    // expand and collapse a node specified by the clicked element.
+    const { target } = e;
+    const id = target.getAttribute('data-for');
+    const css = 'active';
+    const node = document.getElementById(id);
+    const showing = !utils.css.has(node, css);
+    if (showing) {
+      node.style.height = node.scrollHeight + 'px';
+    } else {
+      node.style.height = '0px';
+    }
+    utils.css.addOrRemove(node, showing, css);
+    e.preventDefault?.();
+    return false;
+  };
+
+  events.onLevelSelect = (e) => {
+    // a level has been selected from within the modal.
+    const { value } = e.target;
+
+    // set the preview, etc.
+    selectLevel(value);
+
+    gameMenu.updateGameLevelControl(value);
+  };
+
+  events.onDifficultySelect = (e) => {
+    game.setGameType(e.target.value);
+    updateBattleLists();
+    gameMenu.updateGameLevelControl();
+  };
+
+  events.onInvite = () => {
+    copyToClipboard(inviteURL, (ok) => {
+      inviteContainer.remove();
+      linkDetail.innerHTML = [
+        `<p class="non-indented">Send this link to a friend. You are the host, and they will connect to you.</p>`,
+        `<a href="${inviteURL}" onclick="return false" class="no-hover" style="font-weight:bold;font-size:75%">${inviteURLDisplay}</a>`,
+        ok
+          ? `<p class="non-indented">The link has been copied to your clipboard.</p>`
+          : ``
+      ].join('\n');
+      updateNetworkStatus(`Waiting for guest... ☎️ 👀&thinsp;${appleWatch}`);
+    });
+  };
+
   /**
    * Special case / slight anti-pattern: assign this before DOM init.
    * This is required because prefsManager needs to init itself,
@@ -2151,6 +2163,7 @@ function PrefsManager() {
     addGroupAndLevel,
     applyNewPrefs,
     data,
+    events,
     hide,
     init,
     ignoreURLParams,
