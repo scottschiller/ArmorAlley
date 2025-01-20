@@ -595,7 +595,12 @@
             <div
               style="position: relative; display: inline-block"
               class="glow-item">
-              <select id="game_level" name="level" aria-label="Battle:">
+              <select
+                id="game_level"
+                name="level"
+                tabindex="0"
+                aria-label="Battle:"
+                data-action="select-level">
                 <optgroup label="New? Start here. ↴">
                   <option value="Tutorial">Tutorial</option>
                 </optgroup>
@@ -652,7 +657,8 @@
               type="button"
               id="game-options-button"
               data-title="General settings. Access in-game via ESC or options link."
-              class="large glow-item">
+              class="large glow-item"
+              data-action="game-options">
               <span class="emoji-text">🛠️</span><span id="network-pipe">|</span>
             </button>
             <button
@@ -681,7 +687,12 @@
               class="cta cta-checkbox">
               <span class="checkbox-wrapper">
                 <span class="glow-item glow-item-checkbox"></span>
-                <input id="checkbox-vs" name="bnb" type="checkbox" value="1" />
+                <input
+                  id="checkbox-vs"
+                  name="bnb"
+                  type="checkbox"
+                  value="1"
+                  data-action="virtual-stupidity" />
               </span>
               <span class="this-rocks">🎸</span>
             </label>
