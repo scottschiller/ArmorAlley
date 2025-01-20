@@ -818,8 +818,10 @@ function configureNetworkGame() {
   showPrefs(options);
 }
 
-function selectLevel() {
-  showPrefs({ selectLevel: true });
+function selectLevel(options = {}) {
+  // options might include prefs callbacks, etc.
+  let params = Object.assign(options, { selectLevel: true });
+  showPrefs(params);
 }
 
 function showPrefs(options) {
@@ -1047,6 +1049,7 @@ const gameMenu = {
   getCustomGroup: () => customGroup,
   updateGameLevelControl,
   menuUpdate,
+  selectLevel,
   startGame
 };
 
