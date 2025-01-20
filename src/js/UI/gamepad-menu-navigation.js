@@ -4,6 +4,8 @@
  */
 
 import { prefsManager } from '../aa.js';
+import { game } from '../core/Game.js';
+import { isiPhone } from '../core/global.js';
 import { gameMenu } from './game-menu.js';
 import {
   DPAD,
@@ -131,16 +133,31 @@ function updateAsNavigation() {
      * Game menu, home screen
      */
 
+    
+    // special case: don't skip rows on small screens with 1 item per row.
+    // TODO: proper logic for this.
+    let avoidJump = isiPhone && game.objects.view.data.browser.isPortrait;
+
     if (offset === 3) {
+      // LEFT
       data.homeFocusOffset--;
     } else if (offset === 5) {
+      // RIGHT
       data.homeFocusOffset++;
     } else if (offset === 7 && data.homeFocusOffset < 2) {
-      // second row
-      data.homeFocusOffset = 2;
+      // DOWN: move to second row
+      if (avoidJump) {
+        data.homeFocusOffset++;
+      } else {
+        data.homeFocusOffset = 2;
+      }
     } else if (offset === 1) {
-      // top row
-      data.homeFocusOffset = 0;
+      // UP: top row
+      if (avoidJump) {
+        data.homeFocusOffset--;
+      } else {
+        data.homeFocusOffset = 0;
+      }
     }
 
     focusNodes = document
