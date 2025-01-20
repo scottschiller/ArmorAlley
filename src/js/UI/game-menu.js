@@ -811,7 +811,7 @@ function configureNetworkGame() {
   };
 
   // prefs might be open, we could be switching to the network version.
-  if (prefsManager.isActive) {
+  if (prefsManager.isActive()) {
     prefsManager.hide();
   }
 
