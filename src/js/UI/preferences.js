@@ -1691,7 +1691,7 @@ function PrefsManager() {
         hide();
       }
 
-      e.preventDefault();
+      e?.preventDefault();
       return false;
     },
 
