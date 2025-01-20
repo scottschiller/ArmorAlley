@@ -488,6 +488,9 @@ function init() {
       'transitionend',
       afterTransitionIn
     );
+
+    // start "game menu" mode for gamepad
+    game.objects.gamepad?.onGameMenu();
   }
 
   // preload game CSS and main sprite, too.
