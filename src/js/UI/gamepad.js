@@ -124,7 +124,7 @@ function updateAA() {
     (gamepadState.buttons.options || gamepadState.buttons.select) &&
     !lastGamepadState.buttons.options
   ) {
-    prefsManager.show();
+    prefsManager.toggleDisplay();
   }
 
   // activate gamepad if a button is pressed.
