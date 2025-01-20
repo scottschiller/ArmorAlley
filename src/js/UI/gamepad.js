@@ -36,7 +36,13 @@ let data = {
   gamepadX: 0,
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
+  homeFocusOffset: 0,
+  prefsOffset: 0,
   waitUntilButtonRelease: false,
+  repeatDelay: 300,
+  repeatIntervalHome: 100,
+  repeatInterval: 50,
+  lastButtonTS: 0,
   startX: 0,
   startY: 0,
   state: {
@@ -481,6 +487,8 @@ const { lastGamepadState, gamepadState } = gamepadManager;
 // "API" (for now)
 const gamepad = {
   animate: gamepadManager.animate,
+  checkDPad,
+  checkDPadViaJoystick,
   data,
   init,
   setActive,
@@ -488,4 +496,14 @@ const gamepad = {
   rumble: gamepadManager.rumble
 };
 
-export { gamepad, gamepadFeature, useGamepad };
+export {
+  gamepad,
+  gamepadFeature,
+  gamepadState,
+  lastGamepadState,
+  useGamepad,
+  DPAD,
+  FLY,
+  MENU,
+  OFFSET_CENTER
+};
