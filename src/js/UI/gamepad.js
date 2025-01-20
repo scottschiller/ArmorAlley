@@ -9,6 +9,7 @@ import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
 import { clientFeatures, FPS } from '../core/global.js';
 import { utils } from '../core/utils.js';
+import { updateAsNavigation } from './gamepad-menu-navigation.js';
 import { GamepadManager } from './GamepadManager.js';
 
 // for dev / testing
@@ -103,8 +104,19 @@ const abxyMap = {
   right: actions.missile
 };
 
+function onGamepadUpdate() {
+  if (!gamepadFeature || !useGamepad) return;
+  if (game.data.started) {
+    if (prefsManager.isActive()) {
+      return updateAsNavigation();
+    }
+    return updateAA();
+  }
+  return updateAsNavigation();
+}
+
 function updateAA() {
-  // AA-specific implementation of gamepad
+  // In-game virtual mouse pointer and gamepad UX/UI
   if (!gamepadFeature || !useGamepad) return;
 
   // PS4 / standard: 'options' - NES30Pro, 'select'
@@ -466,18 +478,41 @@ function setActive(isActive) {
   return !isActive;
 }
 
-function init() {
-  // TODO: tie into game prefs etc.
-  if (!gamepadFeature || !useGamepad) return;
+function getSubmitHTML() {
+  // Best guess at Sony/PlayStation-brand controllers, for button hints
+  let isSony;
 
+  let { config } = gamepadManager?.data?.gamepad;
+
+  if (config) {
+    isSony =
+      config.label.match(/sony|playstation/i) || config.vendor === '054c';
+  }
+
+  // Safari doesn't provide vendor or product IDs, so the fallback is to show both.
+  let generic = config.vendor.match(/standard/i);
+
+  // sony, unknown, abxy
+  return `<span class="gamepad-only"> ${isSony ? '△' : generic ? '(△ / X)' : '(X)'}</span>`;
+}
+
+function onGameMenu() {
   enable();
+  if (!gamepadFeature || !useGamepad) return;
+}
+
+function onGameStart() {
+  // TODO: tie into game prefs etc.
+  enable();
+
+  if (!gamepadFeature || !useGamepad) return;
 
   dom.controls = document.getElementById('mobile-controls');
   dom.inventory = Array.from(dom.controls.querySelectorAll('.inventory-item'));
 }
 
 const gamepadManager = GamepadManager({
-  onChange: updateAA, // update / animate()-style callback
+  onChange: onGamepadUpdate, // update / animate()-style callback
   onAddOrRemove: updateOnAddOrRemove
 });
 
@@ -490,7 +525,9 @@ const gamepad = {
   checkDPad,
   checkDPadViaJoystick,
   data,
-  init,
+  getSubmitHTML,
+  onGameMenu,
+  onGameStart,
   setActive,
   state: gamepadState,
   rumble: gamepadManager.rumble
