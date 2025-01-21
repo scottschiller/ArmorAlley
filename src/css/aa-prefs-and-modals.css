@@ -904,6 +904,26 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   outline: 0;
 }
 
+body.has-gamepad.gamepad-active .mac-classic input[type='checkbox']:focus,
+body.has-gamepad.gamepad-active .mac-classic input[type='radio']:focus,
+body.has-gamepad.gamepad-active #game-prefs-modal .range-slider:focus {
+  /* visual cues for gamepad navigation */
+  outline: 2px solid #339933;
+}
+
+body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle:focus, 
+body.has-gamepad.gamepad-active .mac-classic button:not([type='submit']):focus {
+  /* gamepad highlight: "more info", cancel / reset buttons */
+  border-color: #339933;
+}
+
+body.has-gamepad.gamepad-active #game-prefs-modal button.primary {
+  /* gamepad highlight, OK buttons */
+  box-shadow:
+    0 0 0 1px #fff,
+    0 0 0 4px #339933;
+}
+
 .mac-classic .label-text,
 .mac-classic .options-heading,
 .mac-classic b {
