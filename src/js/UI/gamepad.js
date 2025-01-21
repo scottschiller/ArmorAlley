@@ -543,7 +543,12 @@ const { lastGamepadState, gamepadState } = gamepadManager;
 
 // "API" (for now)
 const gamepad = {
-  animate: gamepadManager.animate,
+  animate: () => {
+    // hackish: don't run if in editor mode
+    // TODO: disable when editor starts.
+    if (game.objects.editor) return;
+    gamepadManager.animate();
+  },
   checkDPadViaJoystick,
   data,
   getSubmitHTML,

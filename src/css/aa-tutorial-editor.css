@@ -35,6 +35,11 @@ body.is_safari:not(.is-mobile).edit-mode #editor-window {
   left: 10px;
 }
 
+body.edit-mode #mobile-controls {
+  /* when in editor, hide gamepad UI entirely. */
+  display: none;
+}
+
 body.edit-mode .sprite .zone-flag {
   border-radius: 2px;
   left: 1px;
