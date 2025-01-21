@@ -507,13 +507,12 @@ function getSubmitHTML() {
 
   let { config } = gamepadManager?.data?.gamepad;
 
-  if (config) {
-    isSony =
-      config.label.match(/sony|playstation/i) || config.vendor === '054c';
-  }
+  if (!config) return '';
+
+  isSony = config.label.match(/sony|playstation/i) || config.vendor === '054c';
 
   // Safari doesn't provide vendor or product IDs, so the fallback is to show both.
-  let generic = config.vendor.match(/standard/i);
+  let generic = config.vendor?.match(/standard/i);
 
   // sony, unknown, abxy
   return `<span class="gamepad-only"> ${isSony ? '△' : generic ? '(△ / X)' : '(X)'}</span>`;
