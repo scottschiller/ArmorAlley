@@ -133,7 +133,6 @@ function updateAsNavigation() {
      * Game menu, home screen
      */
 
-    
     // special case: don't skip rows on small screens with 1 item per row.
     // TODO: proper logic for this.
     let avoidJump = isiPhone && game.objects.view.data.browser.isPortrait;
@@ -170,7 +169,12 @@ function updateAsNavigation() {
     );
 
     let node = focusNodes[data.homeFocusOffset];
-    node?.focus();
+
+    if (node) {
+      node.focus();
+      // show the related description text
+      gameMenu.menuUpdate({ target: node });
+    }
 
     return;
   }
