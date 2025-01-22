@@ -616,9 +616,10 @@ const game = (() => {
     utils.css.add(document.body, ...css);
 
     data.paused = true;
-  }
 
-  window.pause = pause;
+    // gamepad normally updates via loop.
+    maybePollGamepad();
+  }
 
   function resume() {
     // exit if preferences menu is open; it will handle resume on close.
@@ -647,6 +648,22 @@ const game = (() => {
     data.paused = false;
   }
 
+  function maybePollGamepad() {
+    /**
+     * If a single-player game is underway, the game loop will stop while
+     * the prefs modal is up. In this case, update the gamepad manually
+     * and keep doing so while the modal is active, since the gamepad can
+     * be used for navigation.
+     *
+     * This should be the only case where gamepad polling is required.
+     */
+    if (!gamepadFeature) return;
+    if (game.data.started && game.data.paused && prefsManager.isActive()) {
+      gamepad.animate();
+      window.requestAnimationFrame(maybePollGamepad);
+    }
+  }
+
   function startEditor() {
     // stop scrolling
     utils.css.remove(document.getElementById('game-tips'), 'active');
@@ -664,7 +681,6 @@ const game = (() => {
 
   // when the player has chosen a game type from the menu - tutorial, or easy/hard/extreme.
   function init() {
-
     document.getElementById('help').style.display = 'block';
 
     data.started = true;

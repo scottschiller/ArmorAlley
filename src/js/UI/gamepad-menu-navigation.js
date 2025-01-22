@@ -6,6 +6,7 @@
 import { prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
 import { isiPhone } from '../core/global.js';
+import { utils } from '../core/utils.js';
 import { gameMenu } from './game-menu.js';
 import {
   DPAD,
@@ -170,8 +171,14 @@ function updateAsNavigation() {
 
     let node = focusNodes[data.homeFocusOffset];
 
+    // additional CSS to ensure "selection", if focus is lost.
+    if (document.activeElement) {
+      utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
+    }
+
     if (node) {
       node.focus();
+      utils.css.add(node, gamepad.css.gamepadSelected);
       // show the related description text
       gameMenu.menuUpdate({ target: node });
     }
@@ -228,8 +235,11 @@ function updateAsNavigation() {
       data.prefsOffset = 0;
     }
 
-    if (focusNodes[data.prefsOffset]) {
-      focusNodes[data.prefsOffset].focus();
+    // only set focus if things changed / moved.
+    if (offset !== 4) {
+      if (focusNodes[data.prefsOffset]) {
+        prefsManager.setFocus(focusNodes[data.prefsOffset]);
+      }
     }
   }
 }

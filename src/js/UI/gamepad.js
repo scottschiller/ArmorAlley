@@ -28,7 +28,8 @@ let css = {
   menuActive: 'active',
   buttonActive: 'active',
   gamepadActive: 'gamepad-active',
-  hasGamepad: 'has-gamepad'
+  hasGamepad: 'has-gamepad',
+  gamepadSelected: 'gamepad-selected'
 };
 
 let data = {
@@ -481,6 +482,10 @@ function setActive(isActive) {
   // explicitly stop cursor, too?
   if (!isActive) {
     game.objects.joystick?.end?.();
+    // ensure any "selected" (focus-related) CSS is dropped.
+    Array.from(document.querySelectorAll(`.${css.gamepadSelected}`)).forEach(
+      (node) => utils.css.remove(node, css.gamepadSelected)
+    );
   }
 
   // start or stop ignoring mouse (and touch) movement, respectively.
@@ -549,6 +554,7 @@ const gamepad = {
     if (game.objects.editor) return;
     gamepadManager.animate();
   },
+  css,
   checkDPadViaJoystick,
   data,
   getSubmitHTML,
