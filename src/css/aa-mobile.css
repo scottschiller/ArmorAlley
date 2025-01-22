@@ -643,6 +643,11 @@ body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile {
   display: none;
 }
 
+body:not(.is-mobile) #mobile-controls {
+  /* positioning tweaks for desktop */
+  bottom: calc(57px * var(--gs));
+}
+
 body.mobile-controls_left-aligned #mobile-controls {
   /* set based on prefs */
   left: 3px;
