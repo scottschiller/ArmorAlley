@@ -84,6 +84,8 @@ const GamepadManager = (options = {}) => {
   // singular, global "gamepad index" (AA uses only one controller at a time.)
   let gpi;
 
+  let knownUnknown = {};
+
   const lastState = {};
   const lastGamepadState = {};
   const gamepadState = {};
