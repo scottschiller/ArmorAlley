@@ -524,7 +524,7 @@ function getSubmitHTML() {
   let generic = config.vendor?.match(/standard/i);
 
   // sony, unknown, abxy
-  return `<span class="gamepad-only"> ${isSony ? '△' : generic ? '(△ / X)' : '(X)'}</span>`;
+  return `<span class="gamepad-only"> ${isSony ? '△' : generic ? '(△/X)' : '(X)'}</span>`;
 }
 
 function onGameMenu() {
