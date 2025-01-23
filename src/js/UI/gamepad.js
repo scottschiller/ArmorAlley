@@ -482,10 +482,7 @@ function setActive(isActive) {
   // explicitly stop cursor, too?
   if (!isActive) {
     game.objects.joystick?.end?.();
-    // ensure any "selected" (focus-related) CSS is dropped.
-    Array.from(document.querySelectorAll(`.${css.gamepadSelected}`)).forEach(
-      (node) => utils.css.remove(node, css.gamepadSelected)
-    );
+    resetSelected();
   }
 
   // start or stop ignoring mouse (and touch) movement, respectively.
@@ -502,6 +499,13 @@ function setActive(isActive) {
 
   // return the previous state, for interested parties.
   return !isActive;
+}
+
+function resetSelected() {
+  // ensure any "selected" (focus-related) CSS is dropped.
+  Array.from(document.querySelectorAll(`.${css.gamepadSelected}`)).forEach(
+    (node) => utils.css.remove(node, css.gamepadSelected)
+  );
 }
 
 function getSubmitHTML() {
@@ -560,6 +564,7 @@ const gamepad = {
   getSubmitHTML,
   onGameMenu,
   onGameStart,
+  resetSelected,
   setActive,
   state: gamepadState,
   rumble: gamepadManager.rumble

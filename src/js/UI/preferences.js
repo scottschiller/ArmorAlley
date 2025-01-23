@@ -982,6 +982,8 @@ function PrefsManager() {
   function hide() {
     if (!data.active || !dom.o) return;
 
+    gamepad.resetSelected();
+
     dom.o.remove();
     data.active = false;
 
