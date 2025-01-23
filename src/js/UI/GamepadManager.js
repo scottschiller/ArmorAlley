@@ -222,7 +222,7 @@ const GamepadManager = (options = {}) => {
       return;
     }
 
-    let parsedID = parseId(gp.id);
+    let parsedID = parseId(gp);
     let vpid = `${parsedID.vendor}/${parsedID.product}`;
     let gpc = gpConfig[vpid];
     let map = gpMap[vpid];
@@ -443,6 +443,9 @@ const GamepadManager = (options = {}) => {
     for (const pad of navigator.getGamepads()) {
       if (!pad?.connected) continue;
 
+      // if this gamepad is non-standard / has unknown mapping, skip it.
+      if (!checkGamepadSupport(pad)) continue;
+
       // hackish: assign global while iterating through gamepads.
       // this is sub-par, but a compromise to maintain one "active" gamepad.
       gpi = pad.index;
@@ -466,14 +469,7 @@ const GamepadManager = (options = {}) => {
     }
   }
 
-  function normalizeId(id) {
-    // gamepad ID strings sometimes have extra spacing.
-    // TODO: review and maybe drop.
-    // .replace(/\s+/g, ' ');
-    return id;
-  }
-
-  function parseId(id) {
+  function parseId(gp) {
     /**
      * Gamepad shenanigans: Firefox and Chrome may provide vendor & product IDs.
      * Safari appears to omit them, and marks controllers as "standard"
@@ -488,6 +484,8 @@ const GamepadManager = (options = {}) => {
      * Firefox's vendor + product may be 3 characters, missing a leading zero
      * unlike Chrome. This was tested with a Sony PS4 DualShock.
      */
+
+    let { id } = gp;
 
     if (parseIdCache[id]) return parseIdCache[id];
 
@@ -530,7 +528,9 @@ const GamepadManager = (options = {}) => {
     // fallback: Safari does not provide vendor nor product IDs,
     // in testing 8Bitdo + PS4 controllers.
     if (!vendor || !product) {
-      vendor = product = 'standard';
+      // best guess.
+      let isStandard = gp.mapping.match(/standard/i);
+      vendor = product = isStandard ? 'standard' : 'unknown';
     }
 
     let result = { vendor, product };
@@ -540,35 +540,68 @@ const GamepadManager = (options = {}) => {
     return result;
   }
 
-  function addGamePad(e) {
-    const gp = navigator.getGamepads()[e.gamepad.index];
+  function checkGamepadSupport(gp) {
+    // given a gamepad object from the browser, test it for mapping / support.
 
-    // if "known", connect this ID to the given configuration.
-    let id = normalizeId(gp.id);
+    if (!gp?.id) return;
 
-    let parsedID = parseId(gp.id);
+    let { id } = gp;
+
+    // already a known unknown? :X
+    if (knownUnknown[id]) return;
+
+    // preferable: already known.
+    if (gpConfig[id]) return gpConfig[id];
+
+    // determine which of the two above, we're dealing with.
+    let parsedID = parseId(gp);
+
+    let config;
 
     // Gamepad API: mapping should be "standard", if recognized.
     let isStandard = gp.mapping.match(/standard/i);
 
-    if (!gpConfig[id]) {
-      let vp;
+    if (isStandard) {
+      console.log('Gamepad indicates standard mapping');
+    }
+
+    config = gpConfig[`${parsedID.vendor}/${parsedID.product}`];
+
+    if (config) {
+      console.log('Found local mapping for controller', config);
+      gpConfig[id] = config;
+    } else {
       if (isStandard) {
-        console.log('Gamepad indicates standard mapping');
-      }
-      vp = gpConfig[`${parsedID.vendor}/${parsedID.product}`];
-      if (vp) {
-        console.log('Found local mapping for controller', vp);
-        gpConfig[id] = vp;
+        console.log('Could not find local mapping, using standard...');
+        console.log(gpConfig);
+        gpConfig[id] = gpConfig['standard/standard'];
+        console.log('assigned config', gpConfig[id]);
       } else {
-        console.log('No local mapping for controller');
-        if (isStandard) {
-          console.log('No local mapping found - try standard mapping?');
-        }
+        console.warn(
+          'Could not find local mapping, browser did not indicate standard layout. :(',
+          gp
+        );
+        // boourns.
+        knownUnknown[id] = true;
+        return;
       }
     }
 
-    data.gamepad.config = gpConfig[id];
+    return config;
+  }
+
+  function addGamePad(e) {
+    const gp = navigator.getGamepads()[e.gamepad.index];
+
+    // if supported, configuration / mapping is returned.
+    let config = checkGamepadSupport(gp);
+
+    if (config) {
+      data.gamepad.config = config;
+      return true;
+    }
+
+    return false;
   }
 
   function removeGamePad(e) {
@@ -582,16 +615,20 @@ const GamepadManager = (options = {}) => {
       `🎮 Gamepad "${gp.id}" (#${gp.index}) ${connected ? 'connected' : 'disconnected'} - ${gp.buttons.length} buttons, ${gp.axes.length} axes.`
     );
 
+    let gamepadSupported;
+
     if (connected) {
-      addGamePad(e);
+      gamepadSupported = addGamePad(e);
     } else {
       removeGamePad(e);
     }
 
     updateGamepadCount();
 
-    // try to read state immediately
-    update();
+    // try to read state immediately, if successfully added
+    if (gamepadSupported) {
+      update();
+    }
 
     // callback
     options?.onAddOrRemove?.(data.lastKnownGamepadCount);
@@ -600,7 +637,8 @@ const GamepadManager = (options = {}) => {
   function updateGamepadCount() {
     // navigator.getGamepads() can return an array with [null, [Gamepad]]-type entries; filter out null-ish ones.
     data.lastKnownGamepadCount =
-      navigator.getGamepads()?.filter?.((gp) => !!gp)?.length || 0;
+      navigator.getGamepads()?.filter?.((gp) => gp && !!checkGamepadSupport(gp))
+        ?.length || 0;
   }
 
   function rumble(magnitude = 1, duration = 40, reason) {
