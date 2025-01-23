@@ -253,6 +253,7 @@ function addControllers() {
   configGamePad({
     /**
      * Safari sees the NES30 Pro as a standard controller, with unique mapping.
+     * Unlike Chrome + Firefox, Safari has 4 standard axes vs. 1 for the D-pad.
      * In testing, Safari does not provide a product or vendor ID.
      * The label here matches the Safari ID, a fallback for vendor/product.
      */
