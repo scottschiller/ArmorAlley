@@ -905,26 +905,37 @@ body.is_firefox .mac-classic input[type='checkbox'] {
 }
 
 body.has-gamepad.gamepad-active .mac-classic input[type='checkbox']:focus,
-body.has-gamepad.gamepad-active .mac-classic input[type='checkbox'].gamepad-selected,
+body.has-gamepad.gamepad-active
+  .mac-classic
+  input[type='checkbox'].gamepad-selected,
 body.has-gamepad.gamepad-active .mac-classic input[type='radio']:focus,
-body.has-gamepad.gamepad-active .mac-classic input[type='radio'].gamepad-selected,
+body.has-gamepad.gamepad-active
+  .mac-classic
+  input[type='radio'].gamepad-selected,
 body.has-gamepad.gamepad-active #game-prefs-modal .range-slider:focus,
-body.has-gamepad.gamepad-active #game-prefs-modal .range-slider.gamepad-selected
- {
+body.has-gamepad.gamepad-active
+  #game-prefs-modal
+  .range-slider.gamepad-selected {
   /* visual cues for gamepad navigation */
   outline: 2px solid #339933;
 }
 
-body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle:focus, 
-body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle.gamepad-selected,
+body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle:focus,
+body.has-gamepad.gamepad-active
+  #game-prefs-modal
+  .more-info-toggle.gamepad-selected,
 body.has-gamepad.gamepad-active .mac-classic button:not([type='submit']):focus,
-body.has-gamepad.gamepad-active .mac-classic button:not([type='submit']).gamepad-selected {
+body.has-gamepad.gamepad-active
+  .mac-classic
+  button:not([type='submit']).gamepad-selected {
   /* gamepad highlight: "more info", cancel / reset buttons */
   border-color: #339933;
 }
 
 body.has-gamepad.gamepad-active #game-prefs-modal button.primary:focus,
-body.has-gamepad.gamepad-active #game-prefs-modal button.primary.gamepad-selected {
+body.has-gamepad.gamepad-active
+  #game-prefs-modal
+  button.primary.gamepad-selected {
   /* gamepad highlight, OK buttons */
   box-shadow:
     0 0 0 1px #fff,
