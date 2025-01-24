@@ -1039,10 +1039,7 @@ const game = (() => {
     incrementRandSeed,
     getRandSeedUI: () => randSeedUI,
     init: () => {
-      const css = ['aa-game-ui.css'];
-      if (isMobile || gamepadFeature) {
-        css.push('aa-mobile.css');
-      }
+      const css = ['aa-game-ui.css', 'aa-mobile.css'];
       aaLoader.loadCSS(css, init);
     },
     initArmorAlley,
