@@ -11,12 +11,7 @@ import { clientFeatures, FPS } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { updateAsNavigation } from './gamepad-menu-navigation.js';
 import { GamepadManager } from './GamepadManager.js';
-
-// for dev / testing
-let gamepadFeature = !!window.location.href.match(/gamepad/i);
-
-// TODO: implement in prefs
-let useGamepad = !!gamepadFeature;
+import { gamePrefs } from './preferences.js';
 
 // multiply joystick values, more responsiveness
 const JOYSTICK_SENSITIVITY = 2;
@@ -106,7 +101,7 @@ const abxyMap = {
 };
 
 function onGamepadUpdate() {
-  if (!gamepadFeature || !useGamepad) return;
+  if (!gamePrefs.gamepad) return;
   if (game.data.started) {
     if (prefsManager.isActive()) {
       return updateAsNavigation();
@@ -118,7 +113,7 @@ function onGamepadUpdate() {
 
 function updateAA() {
   // In-game virtual mouse pointer and gamepad UX/UI
-  if (!gamepadFeature || !useGamepad) return;
+  if (!gamePrefs.gamepad) return;
 
   // PS4 / standard: 'options' - NES30Pro, 'select'
   if (
@@ -389,6 +384,8 @@ let foundFirstGamepad = false;
 function updateOnAddOrRemove(lastKnownGamepadCount) {
   // a gamepad has been added, or removed from the browser's perspective.
 
+  // ignore if pref is off
+  if (!gamePrefs.gamepad) return;
   // hackish: catch the first-added gamepad for the home screen case.
   if (!foundFirstGamepad && !game.data.started && lastKnownGamepadCount === 1) {
     foundFirstGamepad = true;
@@ -530,7 +527,7 @@ function scanGamepads() {
 }
 
 function getSubmitHTML() {
-  if (!gamepadFeature || !useGamepad) return '';
+  if (!gamePrefs.gamepad) return '';
 
   // Best guess at Sony/PlayStation-brand controllers, for button hints
   let isSony;
@@ -550,14 +547,13 @@ function getSubmitHTML() {
 
 function onGameMenu() {
   enable();
-  if (!gamepadFeature || !useGamepad) return;
 }
 
 function onGameStart() {
   // TODO: tie into game prefs etc.
   enable();
 
-  if (!gamepadFeature || !useGamepad) return;
+  if (!gamePrefs.gamepad) return;
 
   dom.controls = document.getElementById('mobile-controls');
   dom.inventory = Array.from(dom.controls.querySelectorAll('.inventory-item'));
@@ -594,10 +590,8 @@ const gamepad = {
 
 export {
   gamepad,
-  gamepadFeature,
   gamepadState,
   lastGamepadState,
-  useGamepad,
   DPAD,
   FLY,
   MENU,
