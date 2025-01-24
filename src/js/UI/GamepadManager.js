@@ -666,7 +666,7 @@ const GamepadManager = (options = {}) => {
       // actuators array may exist, but be empty despite "dual-rumble" e.g., on PS4 Dualshock.
       if (ha.length) {
         console.log('pad.hapticActuators', ha, magnitude, duration, reason);
-        ha[0].pulse(magnitude, duration);
+        ha[0]?.pulse?.(magnitude, duration);
       } else {
         console.log('No haptic actuators found.');
       }
