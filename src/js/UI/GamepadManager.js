@@ -437,23 +437,30 @@ const GamepadManager = (options = {}) => {
     // bail if not active
     if (!data.enabled) return;
 
-    gpi = undefined;
+    let buttonPressed;
 
-    for (const pad of navigator.getGamepads()) {
+    const gamepads = navigator.getGamepads();
+
+    for (const pad of gamepads) {
       if (!pad?.connected) continue;
 
       // if this gamepad is non-standard / has unknown mapping, skip it.
       if (!checkGamepadSupport(pad)) continue;
-
-      // hackish: assign global while iterating through gamepads.
-      // this is sub-par, but a compromise to maintain one "active" gamepad.
-      gpi = pad.index;
 
       for (const [i, button] of pad.buttons.entries()) {
         setNewState(`gp${pad.index}/btn${i}`, {
           value: button.value,
           pressed: button.pressed
         });
+        /**
+         * Hackish: assign global counter while iterating through gamepads.
+         * This is a way to maintain one "active" gamepad, no matter what.
+         * This allows for multiple gamepads to be connected and seamless
+         * "hand-off" between them, including connect & disconnect events.
+         */
+        if (button.pressed) {
+          gpi = pad.index;
+        }
       }
 
       for (const [i, axis] of pad.axes.entries()) {
@@ -463,7 +470,7 @@ const GamepadManager = (options = {}) => {
       }
     }
 
-    if (gpi !== undefined) {
+    if (gamepads[gpi]) {
       applyChanges();
     }
   }
