@@ -12,16 +12,15 @@ import {
   DPAD,
   FLY,
   gamepad,
-  gamepadFeature,
   gamepadState,
   lastGamepadState,
   MENU,
-  OFFSET_CENTER,
-  useGamepad
+  OFFSET_CENTER
 } from './gamepad.js';
+import { gamePrefs } from './preferences.js';
 
 function updateAsNavigation() {
-  if (!gamepadFeature || !useGamepad) return;
+  if (!gamePrefs.gamepad) return;
 
   const { data } = gamepad;
 
@@ -176,7 +175,7 @@ function updateAsNavigation() {
       utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
     }
 
-    if (node) {
+    if (node && gamePrefs.gamepad && gamepad.data.active) {
       node.focus();
       utils.css.add(node, gamepad.css.gamepadSelected);
       // show the related description text
