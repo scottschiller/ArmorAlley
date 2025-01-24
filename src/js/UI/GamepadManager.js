@@ -229,11 +229,8 @@ const GamepadManager = (options = {}) => {
     let gpc = gpConfig[vpid];
     let map = gpMap[vpid];
 
-    // this should not happen.
-    if (!map) {
-      console.warn('WTF no map?');
-      return;
-    }
+    // this should not happen unless a controller is unsupported.
+    if (!map) return;
 
     if (!gamepadState.buttons) {
       gamepadState.buttons = {};
