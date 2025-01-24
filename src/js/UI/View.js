@@ -31,7 +31,6 @@ import { gamePrefs } from './preferences.js';
 import { handleOrientationChange } from './mobile.js';
 import { previewLevel } from '../levels/default.js';
 import { aaLoader } from '../core/aa-loader.js';
-import { gamepadFeature } from './gamepad.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -288,7 +287,7 @@ const View = () => {
     // hackish: and, radar. force an update so static items like bunkers get repositioned to scale.
     if (game.objects.radar) game.objects.radar.setStale(true);
 
-    if ((isMobile || gamepadFeature) && game.objects.joystick) {
+    if ((isMobile || gamePrefs.gamepad) && game.objects.joystick) {
       // attempt to reset and reposition.
       game.objects.joystick.reset();
       if (isMobile) {
@@ -1187,7 +1186,7 @@ const View = () => {
   }
 
   function maybeShowDisabledMouseCursor() {
-    if (!gamepadFeature || !game.objects.gamepad.data.active) return;
+    if (!gamePrefs.gamepad) return;
     if (data.notAllowed) return;
     // show "no-entry", then hide.
     document.body.style.cursor = 'not-allowed';
@@ -1265,19 +1264,17 @@ const View = () => {
     dom.messageInput = document.getElementById('message-form-input');
     dom.root = document.querySelector(':root');
 
-    if (isMobile || gamepadFeature) {
-      // one more trick: set up controls, then start.
-      const placeholder = document.getElementById(
-        'mobile-controls-placeholder'
-      );
+    // one more trick: set up controls, then start.
+    const placeholder = document.getElementById(
+      'mobile-controls-placeholder'
+    );
 
-      if (!placeholder.hasChildNodes()) {
-        aaLoader.loadHTML('mobile-controls.html', (response) => {
-          placeholder.innerHTML = response;
-          dom.mobileControls = document.getElementById('mobile-controls');
-          updateMobileInventory();
-        });
-      }
+    if (!placeholder.hasChildNodes()) {
+      aaLoader.loadHTML('mobile-controls.html', (response) => {
+        placeholder.innerHTML = response;
+        dom.mobileControls = document.getElementById('mobile-controls');
+        updateMobileInventory();
+      });
     }
 
     if (searchParams.get('noLogo')) {
@@ -1501,7 +1498,7 @@ const View = () => {
     touchstart(e) {
       // (technically, mousedown + touchstart)
 
-      if (gamepadFeature && game.objects.gamepad) {
+      if (game.objects.gamepad) {
         // mouse is active - hide / disable gamepad UX/UI, restore mouse cursor
         let wasActive = game.objects.gamepad.setActive(false);
 
