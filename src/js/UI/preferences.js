@@ -1004,13 +1004,15 @@ function PrefsManager() {
     }
 
     // return focus to where it was
-    try {
-      setFocus(data.lastActiveElement);
-    } catch (e) {
-      console.warn(
-        'Failed to focus last active element',
-        data.lastActiveElement
-      );
+    if (gamePrefs.gamepad && gamepad.data.active) {
+      try {
+        setFocus(data.lastActiveElement);
+      } catch (e) {
+        console.warn(
+          'Failed to focus last active element',
+          data.lastActiveElement
+        );
+      }
     }
 
     data.lastActiveElement = null;
