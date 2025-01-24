@@ -415,16 +415,18 @@ function updateOnAddOrRemove(lastKnownGamepadCount) {
 }
 
 function enable() {
+  if (data.enabled) return;
   data.enabled = true;
   gamepadManager.enable();
 }
 
-/*
 function disable() {
+  if (!data.enabled) return;
   data.enabled = false;
   gamepadManager.disable();
   // drop gamepad UI and enable mouse, etc.
   setActive(false);
+  resetSelected();
 }
 */
 
