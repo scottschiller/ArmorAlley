@@ -80,6 +80,9 @@ import { gpConfig, gpMap } from './gamepad-config.js';
 import { addControllers } from './gamepad-known-controllers.js';
 import { gamepadFeature, useGamepad } from './gamepad.js';
 
+// gamepad API: `mapping` value indicating a standard layout
+const STD = 'standard';
+
 const GamepadManager = (options = {}) => {
   // singular, global "gamepad index" (AA uses only one controller at a time.)
   let gpi;
@@ -739,4 +742,4 @@ const GamepadManager = (options = {}) => {
   };
 };
 
-export { GamepadManager };
+export { GamepadManager, STD };

@@ -1,4 +1,5 @@
 import { configGamePad } from './gamepad-config.js';
+import { STD } from './GamepadManager.js';
 
 /**
  * 🎮 "Standard" and other controllers, with "known" mappings for Armor Alley.
@@ -17,7 +18,7 @@ function addKnownController(label, data) {
 }
 
 function addControllers() {
-  addKnownController('standard', {
+  addKnownController(STD, {
     /**
      * Reference / standard controller layout
      * PS4 = "Sony PS4 DualShock" (Vendor: 054c, product: 09cc)
@@ -229,9 +230,9 @@ function addControllers() {
    */
   configGamePad({
     label: 'Standard / Generic Controller',
-    vendor: 'standard',
-    product: 'standard',
-    ...knownControllers.standard
+    vendor: STD,
+    product: STD,
+    ...knownControllers[STD]
   });
 
   // NES30 Pro, connecting via USB
@@ -258,7 +259,7 @@ function addControllers() {
      * The label here matches the Safari ID, a fallback for vendor/product.
      */
     label: '8Bitdo NES30 Pro Extended Gamepad',
-    ...knownControllers.standard,
+    ...knownControllers[STD],
     // TODO: exclude / delete "share" button?
     // NES30 Pro has a unique ABXY mapping.
     ...knownControllers.nes30Pro.abxy
@@ -270,14 +271,23 @@ function addControllers() {
      * (lacks product + vendor ID, but has `dual-rumble` vibration actuator)
      */
     label: 'Wireless Controller Extended Gamepad',
-    ...knownControllers.standard
+    ...knownControllers[STD]
+  });
+
+  configGamePad({
+    /**
+     * Sony PS4 DualShock under Safari, macOS, connected via Bluetooth
+     * (lacks product + vendor ID, but has `dual-rumble` vibration actuator)
+     */
+    label: 'DUALSHOCK 4 Wireless Controller Extended Gamepad',
+    ...knownControllers[STD]
   });
 
   configGamePad({
     label: 'DUALSHOCK 4 Wireless Controller (Sony PlayStation)',
     vendor: '054c',
     product: '09cc',
-    ...knownControllers.standard
+    ...knownControllers[STD]
   });
 
   configGamePad({
@@ -290,7 +300,7 @@ function addControllers() {
     label: 'Joy-Con L+R',
     vendor: '057e',
     product: '200e',
-    ...knownControllers.standard
+    ...knownControllers[STD]
   });
 }
 
