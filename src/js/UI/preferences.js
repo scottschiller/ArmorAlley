@@ -166,6 +166,7 @@ const searchParams = new URLSearchParams(window.location.search || hashParams);
 for (const p of searchParams) {
   // p = [name, value]
   if (defaultPrefs[p[0]] !== undefined) {
+    console.warn(`Applying URL pref override: ${p[0]}=${p[1]}`);
     prefsByURL[p[0]] = normalizePrefValue(p[0], p[1]);
   }
 }
