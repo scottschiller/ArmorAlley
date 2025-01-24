@@ -78,7 +78,6 @@
 
 import { gpConfig, gpMap } from './gamepad-config.js';
 import { addControllers } from './gamepad-known-controllers.js';
-import { gamepadFeature, useGamepad } from './gamepad.js';
 
 // gamepad API: `mapping` value indicating a standard layout
 const STD = 'standard';
@@ -439,7 +438,7 @@ const GamepadManager = (options = {}) => {
 
   function update() {
     // bail if not active
-    if (!gamepadFeature || !useGamepad || !data.enabled) return;
+    if (!data.enabled) return;
 
     gpi = undefined;
 
@@ -645,7 +644,7 @@ const GamepadManager = (options = {}) => {
   }
 
   function rumble(magnitude = 1, duration = 40, reason) {
-    if (!gamepadFeature) return;
+    if (!data.enabled) return;
 
     const pad = navigator.getGamepads()[gpi];
 
@@ -712,8 +711,6 @@ const GamepadManager = (options = {}) => {
   }
 
   function init() {
-    if (!gamepadFeature) return;
-
     // init standard PS4-style and nes30pro mappings
     addControllers();
 
