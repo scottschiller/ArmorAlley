@@ -21,7 +21,7 @@ function addControllers() {
   addKnownController(STD, {
     /**
      * Reference / standard controller layout
-     * PS4 = "Sony PS4 DualShock" (Vendor: 054c, product: 09cc)
+     * PS4 = "Sony DualShock 4" model CUH-ZCT2 (Vendor: 054c, product: 09cc)
      * This is commonly recognized as a "standard" gamepad layout / mapping
      * https://w3c.github.io/gamepad/standard_gamepad.svg
      * https://beej.us/blog/data/javascript-gamepad/
