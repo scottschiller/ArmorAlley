@@ -405,6 +405,11 @@ function updateOnAddOrRemove(lastKnownGamepadCount) {
     }
   }
 
+  // if prefs manager is active, gamepad list may be showing.
+  if (prefsManager.isActive()) {
+    prefsManager.updateGamepadList();
+  }
+
   if (lastKnownGamepadCount) return;
 
   // reset state, and deactivate

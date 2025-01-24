@@ -872,6 +872,8 @@ function PrefsManager() {
       // update the submit button, too.
       document.getElementById('select-level-submit').innerHTML =
         'OK' + gamepad.getSubmitHTML();
+    } else {
+      updateGamepadList();
     }
 
     // ensure the volume slider is up-to-date.
@@ -1192,6 +1194,28 @@ function PrefsManager() {
 
     dom.oGameSpeedSlider.value = gamePrefs.game_speed;
     renderGameSpeedSlider();
+  }
+
+  function updateGamepadList() {
+    // "scan" and list gamepad status.
+    let gamepads = gamepad.scanGamepads();
+    let info = gamepads.map((gp) => {
+      return (
+        '&bull; ' +
+        (gp.supported ? '✅' : '❌') +
+        ' ' +
+        gp.id +
+        ' ' +
+        (gp.isStandard
+          ? '(Standard)'
+          : gp.supported
+            ? '(Non-std, mapping known)'
+            : '(Non-std, mapping unknown)')
+      );
+    });
+    document.getElementById('gamepad-list').innerHTML = info.length
+      ? info.join('<br />')
+      : 'No gamepads detected. Connect one and press buttons to test.';
   }
 
   function boolToInt(value) {
@@ -2202,6 +2226,7 @@ function PrefsManager() {
     show,
     setFocus,
     updateForm,
+    updateGamepadList,
     writePrefsToStorage
   };
 }
