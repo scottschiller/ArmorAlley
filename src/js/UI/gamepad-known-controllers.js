@@ -47,7 +47,7 @@ function addControllers() {
       // PS4 label: "OPTIONS"
       options: 'btn9',
 
-      // PS4 label: "SHARE"
+      // PS4 label: "SHARE" (CREATE on PS5)
       share: 'btn8',
 
       // PS4: PlayStation logo (opens Control Center in macOS)
