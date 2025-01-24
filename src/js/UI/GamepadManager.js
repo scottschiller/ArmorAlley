@@ -561,7 +561,13 @@ const GamepadManager = (options = {}) => {
     if (knownUnknown[id]) return;
 
     // preferable: already known.
-    if (gpConfig[id]) return gpConfig[id];
+    if (gpConfig[id]) {
+      // add `isStandard`, based on browser support.
+      if (gpConfig[id].isStandard === undefined) {
+        gpConfig[id].isStandard = isStandardMapping(gp);
+      }
+      return gpConfig[id];
+    }
 
     // determine which of the two above, we're dealing with.
     let parsedID = parseId(gp);
@@ -579,12 +585,18 @@ const GamepadManager = (options = {}) => {
 
     if (config) {
       console.log('Found local mapping for controller', config);
-      gpConfig[id] = config;
+      gpConfig[id] = {
+        ...config,
+        isStandard
+      };
     } else {
       if (isStandard) {
         console.log('Could not find local mapping, using standard...');
         console.log(gpConfig);
-        gpConfig[id] = gpConfig['standard/standard'];
+        gpConfig[id] = {
+          ...gpConfig[`${STD}/${STD}`],
+          isStandard
+        };
         console.log('assigned config', gpConfig[id]);
       } else {
         console.warn(
@@ -597,7 +609,7 @@ const GamepadManager = (options = {}) => {
       }
     }
 
-    return config;
+    return gpConfig[id];
   }
 
   function addGamePad(e) {
