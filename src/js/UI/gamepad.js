@@ -508,6 +508,22 @@ function resetSelected() {
   );
 }
 
+function scanGamepads() {
+  // iterate through current list, reporting results
+  let results = [];
+  for (const pad of navigator.getGamepads()) {
+    // note: pad may be null, per gamepad API spec.
+    if (!pad || !pad.connected) continue;
+    let config = gamepadManager.checkGamepadSupport(pad);
+    results.push({
+      id: config?.label || pad.id,
+      supported: !!config,
+      isStandard: !!config?.isStandard
+    });
+  }
+  return results;
+}
+
 function getSubmitHTML() {
   if (!gamepadFeature || !useGamepad) return '';
 
@@ -565,6 +581,7 @@ const gamepad = {
   onGameMenu,
   onGameStart,
   resetSelected,
+  scanGamepads,
   setActive,
   state: gamepadState,
   rumble: gamepadManager.rumble
