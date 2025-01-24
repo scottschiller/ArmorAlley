@@ -45,7 +45,7 @@ import {
 } from '../levels/default.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { aaLoader } from '../core/aa-loader.js';
-import { gamepad, gamepadFeature } from './gamepad.js';
+import { gamepad } from './gamepad.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -1874,6 +1874,14 @@ function PrefsManager() {
         common.setGameSpeed(newGameSpeed);
       },
 
+      gamepad: (newValue) => {
+        if (newValue) {
+          gamepad.enable();
+        } else {
+          gamepad.disable();
+        }
+      },
+
       ground_unit_traffic_control: (isActive) => {
         if (isActive) return;
 
@@ -2057,7 +2065,6 @@ function PrefsManager() {
       },
 
       mobile_controls_location: (newValue) => {
-        if (!isMobile && !gamepadFeature) return;
         // given one, remove the other.
         const map = {
           left: 'mobile-controls_left-aligned',
