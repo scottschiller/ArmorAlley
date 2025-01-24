@@ -535,8 +535,8 @@ const GamepadManager = (options = {}) => {
     // in testing 8Bitdo + PS4 controllers.
     if (!vendor || !product) {
       // best guess.
-      let isStandard = gp.mapping.match(/standard/i);
-      vendor = product = isStandard ? 'standard' : 'unknown';
+      let isStandard = isStandardMapping(gp);
+      vendor = product = isStandard ? STD : 'unknown';
     }
 
     let result = { vendor, product };
@@ -544,6 +544,10 @@ const GamepadManager = (options = {}) => {
     parseIdCache[id] = result;
 
     return result;
+  }
+
+  function isStandardMapping(gp) {
+    return gp?.mapping?.toLowerCase?.() === STD;
   }
 
   function checkGamepadSupport(gp) {
@@ -565,7 +569,7 @@ const GamepadManager = (options = {}) => {
     let config;
 
     // Gamepad API: mapping should be "standard", if recognized.
-    let isStandard = gp.mapping.match(/standard/i);
+    let isStandard = isStandardMapping(gp);
 
     if (isStandard) {
       console.log('Gamepad indicates standard mapping');
