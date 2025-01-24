@@ -64,7 +64,7 @@ import { seek, Vector } from '../core/Vector.js';
 import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
 import { findEnemy } from './Helicopter-utils.js';
-import { gamepad, gamepadFeature, useGamepad } from '../UI/gamepad.js';
+import { gamepad } from '../UI/gamepad.js';
 
 const Helicopter = (options = {}) => {
   let css,
@@ -511,12 +511,10 @@ const Helicopter = (options = {}) => {
     let mobileControls;
     let mobileControlItems;
 
-    if (isMobile || gamepadFeature) {
-      mobileControls = document.getElementById('mobile-controls');
-      mobileControlItems = mobileControls?.querySelectorAll(
-        '.mobile-controls-weapons li'
-      );
-    }
+    mobileControls = document.getElementById('mobile-controls');
+    mobileControlItems = mobileControls?.querySelectorAll(
+      '.mobile-controls-weapons li'
+    );
 
     if (force || updated.parachutes) {
       modify(dom.statusBar.infantryCountLI, data.parachutes);
@@ -1741,8 +1739,7 @@ const Helicopter = (options = {}) => {
 
     // TODO: implement data.ammoTarget for network games
     if (
-      // TODO: ensure gamepad is active, connected and enabled in prefs.
-      (gamepadFeature && gamepad.data.state.isFiring) ||
+      (gamePrefs.gamepad && gamepad.data.state.isFiring) ||
       (data.isCPU && !net.active)
     ) {
       // aim for data.ammoTarget
@@ -2238,7 +2235,7 @@ const Helicopter = (options = {}) => {
      */
     if (
       data.isLocal &&
-      ((gamepadFeature && useGamepad) || clientFeatures.touch) &&
+      (gamePrefs.gamepad || clientFeatures.touch) &&
       !data.ejectTimer
     ) {
       // mark the first event...
@@ -2349,7 +2346,7 @@ const Helicopter = (options = {}) => {
   }
 
   function maybeRumbleOnLanding() {
-    if (!data.isLocal || data.isCPU || !gamepadFeature) return;
+    if (!gamePrefs.gamepad || !data.isLocal || data.isCPU) return;
     // a bit of fun: bump the controller relative to how fast the chopper was descending.
 
     // throttle
@@ -2662,8 +2659,7 @@ const Helicopter = (options = {}) => {
 
   function reactToDamage(attacker) {
     // hackish: data.exploding is true before dead = true, long story short here.
-    // TODO: prefs etc.
-    if (gamepadFeature) {
+    if (gamePrefs.gamepad) {
       if (data.dead || !data.energy || data.exploding) {
         // throttle
         if (!data.rumbleTimer) {
