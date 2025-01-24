@@ -749,6 +749,7 @@ const GamepadManager = (options = {}) => {
 
   return {
     animate: update,
+    checkGamepadSupport,
     data,
     enable: () => (data.enabled = true),
     disable: () => (data.enabled = false),
