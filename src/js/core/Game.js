@@ -19,7 +19,7 @@ import {
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
-import { gamePrefs, prefs } from '../UI/preferences.js';
+import { gamePrefs } from '../UI/preferences.js';
 import { handleOrientationChange } from '../UI/mobile.js';
 import { playSound, preloadCommonSounds, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
@@ -68,7 +68,7 @@ import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
 import { scoreCreate } from './scores.js';
-import { gamepad, gamepadFeature } from '../UI/gamepad.js';
+import { gamepad } from '../UI/gamepad.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -657,7 +657,7 @@ const game = (() => {
      *
      * This should be the only case where gamepad polling is required.
      */
-    if (!gamepadFeature) return;
+    if (!gamePrefs.gamepad) return;
     if (game.data.started && game.data.paused && prefsManager.isActive()) {
       gamepad.animate();
       window.requestAnimationFrame(maybePollGamepad);
@@ -706,7 +706,7 @@ const game = (() => {
     gamepad.onGameStart();
 
     // "joystick" applies for gamepad, mobile, or debug mode (i.e., testing on desktop)
-    if (gamepadFeature || isMobile || debug) {
+    if (gamePrefs.gamepad || isMobile || debug) {
       if (!objects.joystick) {
         objects.joystick = Joystick();
       }
