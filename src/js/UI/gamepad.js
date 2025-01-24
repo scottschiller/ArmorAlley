@@ -30,10 +30,12 @@ let css = {
 let data = {
   enabled: false,
   active: false,
+  foundFirstGamepad: false,
   gamepadX: 0,
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
   homeFocusOffset: 0,
+  logged: {},
   prefsOffset: 0,
   waitUntilButtonRelease: false,
   repeatDelay: 300,
@@ -379,16 +381,58 @@ function inventoryClick(offset) {
   }, 1 / FPS);
 }
 
-let foundFirstGamepad = false;
-
-function updateOnAddOrRemove(lastKnownGamepadCount) {
+function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   // a gamepad has been added, or removed from the browser's perspective.
+
+  // if prefs manager is active, gamepad list may be showing.
+  if (prefsManager.isActive()) {
+    prefsManager.updateGamepadList();
+  }
 
   // ignore if pref is off
   if (!gamePrefs.gamepad) return;
+
+  let cfg = gamepadManager.checkGamepadSupport(gpInfo.gamepad);
+
+  let logInfo = {
+    id: gpInfo.gamepad.id,
+    mapping: gpInfo?.gamepad?.mapping || 'NO_MAPPING',
+    supported: !!cfg
+  };
+
+  // only assign if known; Safari seems not to provide this.
+  if (cfg?.vendor && cfg?.product) {
+    logInfo.vendor = cfg.vendor;
+    logInfo.product = cfg.product;
+  }
+
+  maybeLog(logInfo);
+
+  if (game.data.started && !game.data.paused) {
+    let label = cfg?.label || gpInfo.gamepad.id;
+
+    // hackish newline pattern
+    label = label.replace(' (', '\n(');
+
+    if (gpInfo.connected && !cfg) {
+      // warn if not supported
+      game.objects.notifications.add(
+        `🎮 ⛔ Not supported 😞: ${label || 'unknown'}`
+      );
+    } else {
+      game.objects.notifications.add(
+        `🎮 ${gpInfo.connected ? '✅ Connected' : 'Disconnected'}: ${label || 'unknown'}`
+      );
+    }
+  }
+
   // hackish: catch the first-added gamepad for the home screen case.
-  if (!foundFirstGamepad && !game.data.started && lastKnownGamepadCount === 1) {
-    foundFirstGamepad = true;
+  if (
+    !data.foundFirstGamepad &&
+    !game.data.started &&
+    lastKnownGamepadCount === 1
+  ) {
+    data.foundFirstGamepad = true;
 
     // activate right away, regardless of what button or d-pad bit was pressed.
     setActive(true);
@@ -402,16 +446,30 @@ function updateOnAddOrRemove(lastKnownGamepadCount) {
     }
   }
 
-  // if prefs manager is active, gamepad list may be showing.
-  if (prefsManager.isActive()) {
-    prefsManager.updateGamepadList();
-  }
+  updateCSS();
 
   if (lastKnownGamepadCount) return;
 
-  // reset state, and deactivate
+  // reset state, and deactivate if no gamepads connected.
   Object.keys(data.state).forEach((k) => (data.state[k] = false));
   setActive(false);
+}
+
+function maybeLog(info = {}) {
+  if (!!window.location.host.match(/armor-alley\.net/i)) return;
+  /**
+   * This exists to gather stats on controllers being used with the game,
+   * and whether or not they are supported on the given OS + browser.
+   *
+   * The intent is to help sort out if custom mappings are needed,
+   * e.g., as for the 8bitdo nes30pro.
+   */
+  if (data.logged[info.id]) return;
+  data.logged[info.id] = true;
+  let params = new URLSearchParams(info).toString();
+  fetch(`/stats?${params}`, {
+    method: 'GET'
+  });
 }
 
 function enable() {
@@ -428,23 +486,32 @@ function disable() {
   setActive(false);
   resetSelected();
 }
-*/
 
-function setActive(isActive) {
-  if (data.active === isActive) return;
-
-  data.active = isActive;
-
+function updateCSS() {
   utils.css.addOrRemove(
     document.body,
-    useGamepad && gamepadManager.data.lastKnownGamepadCount && isActive,
+    gamePrefs.gamepad &&
+      gamepadManager.data.lastKnownGamepadCount &&
+      data.active,
     css.hasGamepad
   );
 
-  // CSS cursor
-  utils.css.addOrRemove(document.body, isActive, css.gamepadActive);
+  // CSS cursor: switch between mouse and gamepad UI
+  utils.css.addOrRemove(
+    document.body,
+    gamePrefs.gamepad && data.active,
+    css.gamepadActive
+  );
+}
 
-  if (isActive && game.objects.joystick) {
+function setActive(active) {
+  if (data.active === active) return;
+
+  data.active = active;
+
+  updateCSS();
+
+  if (active && game.objects.joystick) {
     let jsData = game.objects.joystick.data;
     if (!clientFeatures.touch) {
       /**
@@ -481,28 +548,28 @@ function setActive(isActive) {
   }
 
   // joystick cursor
-  game.objects.joystick?.setPointerVisibility(isActive);
+  game.objects.joystick?.setPointerVisibility(active);
 
   // explicitly stop cursor, too?
-  if (!isActive) {
+  if (!active) {
     game.objects.joystick?.end?.();
     resetSelected();
   }
 
   // start or stop ignoring mouse (and touch) movement, respectively.
-  game.objects.view.data.ignoreMouseMove = isActive;
+  game.objects.view.data.ignoreMouseMove = active;
 
   /**
    * If becoming active, ignore the current button(s) so e.g.,
    * mouse -> gamepad hand-off doesn't trigger an immediate action
    * like firing the guns.
    */
-  if (isActive) {
+  if (active) {
     data.waitUntilButtonRelease = true;
   }
 
   // return the previous state, for interested parties.
-  return !isActive;
+  return !active;
 }
 
 function resetSelected() {
@@ -510,6 +577,10 @@ function resetSelected() {
   Array.from(document.querySelectorAll(`.${css.gamepadSelected}`)).forEach(
     (node) => utils.css.remove(node, css.gamepadSelected)
   );
+  // attempt to blur current node, too.
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
 }
 
 function scanGamepads() {
@@ -563,7 +634,7 @@ function onGameStart() {
 
 const gamepadManager = GamepadManager({
   onChange: onGamepadUpdate, // update / animate()-style callback
-  onAddOrRemove: updateOnAddOrRemove
+  onAddOrRemove
 });
 
 // DRY
@@ -580,6 +651,8 @@ const gamepad = {
   css,
   checkDPadViaJoystick,
   data,
+  disable,
+  enable,
   getSubmitHTML,
   onGameMenu,
   onGameStart,
