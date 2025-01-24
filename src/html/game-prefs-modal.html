@@ -476,9 +476,9 @@
                       </ul>
                     </li>
 
-                    <li class="mobile-only">
+                    <li>
                       <p class="compact options-heading">
-                        <b>Mobile Controls</b>
+                        <b><span class="mobile-only">Mobile and </span>Gamepad Controls</b>
                       </p>
 
                       <p class="non-indented">
@@ -510,6 +510,67 @@
                           </label>
                         </li>
                       </ul>
+                    </li>
+                    <li class="compact">
+                      <ul>
+                        <li class="compact">
+                          <label for="cb_gamepad">
+                            <input
+                              type="checkbox"
+                              id="cb_gamepad"
+                              name="gamepad"
+                              value="1"
+                              checked />
+                              <span class="label-text">Gamepad Support</span>
+                          </label>
+                        </li>
+                      </ul>
+
+                      <p class="non-indented">
+                        <span class="gamepad-emoji">🎮</span>
+                        Standard layout required, support varies by browser. USB connection may be required. Rumble feature where supported.
+                      </p>
+
+                      <ul class="real-list non-indented" style="clear:both">
+                        <li>
+                          <b>Joystick 1</b>: Helicopter control. Press to flip.
+                        </li>
+                        <li>
+                          <b>Joystick 2</b>: Inventory. Press to select.
+                        </li>
+                        <li>
+                          <b>D-pad</b>: Inventory. Press joystick or ABXY to select.
+                        </li>
+                        <li>
+                          <div style="display:flex;flex-wrap:wrap">
+
+                            <!-- collapse left shenanigans -->
+                            <div style="flex:0%;white-space:nowrap">
+                              <b>ABXY + shoulder buttons</b>
+                              <ul class="non-indented gamepad-buttons">
+                                <li><b>Y</b> <strong>R2</strong> Main weapon</li>
+                                <li><b>A</b> <strong>R1</strong> Smart missiles</li>
+                                <li><b>B</b> <strong>L2</strong> Bombs</li>
+                                <li><b>X</b> <strong>L1</strong> Paratroopers</li>
+                              </ul>
+                            </div>
+                            <div style="flex:50%">
+                              <pre style="margin:1em 0px 0px 0.5em">  Std      PS4
+/‾‾‾‾‾\  /‾‾‾‾‾\
+   X        △
+ Y   A    □   ○
+   B        ×
+\_____/  \_____/</pre>                              
+                            </div>
+                          </div>
+                        </li>
+                      </ul>                      
+                    </li>
+                    <li>
+                      <p class="options-heading more-top-spacing">
+                        <b>Connected Gamepads</b>
+                        <div id="gamepad-list"></div>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>

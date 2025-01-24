@@ -630,6 +630,10 @@ body.is_iphone #game-prefs-modal button {
   margin-bottom: 6px;
 }
 
+.mac-classic .more-top-spacing {
+  margin-top: 6px;
+}
+
 .mac-classic ul li ul li {
   display: inline-block;
   margin-right: 2px;
@@ -694,6 +698,11 @@ body.is_iphone #game-prefs-modal button {
   margin-left: -0.33em;
 }
 
+.mac-classic ul.real-list.non-indented ul.non-indented li {
+  /* one more nested-level fix. */
+  margin-left: 0px;
+}
+
 .mac-classic .compact.full-width {
   width: 100%;
 }
@@ -723,6 +732,33 @@ body.is_iphone #game-prefs-modal button {
 
 .keycap-list b.inline-key {
   margin-right: 0.5px;
+}
+
+.gamepad-emoji {
+  float: left;
+  font-size: 300%;
+  line-height: 100%;
+  margin-right: 0.15em;
+  margin-top: 0px;
+  vertical-align: top;
+}
+
+b.gamepad-button,
+.gamepad-buttons b,
+.gamepad-buttons strong {
+  display: inline-block;
+  padding: 0 3.5px;
+  box-sizing: content-box;
+  border: 1px solid #000;
+  border-radius: 100%;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.gamepad-buttons strong {
+  font-weight: bold;
+  padding: 0 5px;
+  border-radius: 7px;
 }
 
 .mac-classic input,
