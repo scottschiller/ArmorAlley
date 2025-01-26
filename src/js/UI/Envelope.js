@@ -118,6 +118,21 @@ function Envelope() {
     });
   }
 
+  function setScrollTop(offset) {
+    if (!dom.oLetter) return;
+    if (!layoutCache.letterScrollRange) {
+      /**
+       * Repurposing for gamepad scroll shenanigans.
+       * The distance to be scrolled is the scroll height, minus displayed.
+       */
+      layoutCache.letterScrollRange =
+        dom.oLetter.scrollHeight - dom.oLetter.offsetHeight;
+    }
+    if (layoutCache.letterScrollRange) {
+      dom.oLetter.scrollTop = layoutCache.letterScrollRange * offset;
+    }
+  }
+
   function addGlows() {
     // child / effect node for each "card" - <span class="glows"></span>
     let glowNode = document.createElement('span');
@@ -287,9 +302,11 @@ function Envelope() {
 
   exports = {
     close,
+    data,
     open,
     openOrClose,
     setLevel,
+    setScrollTop,
     show
   };
 
