@@ -653,7 +653,10 @@ const GamepadManager = (options = {}) => {
     }
 
     // callback
-    options?.onAddOrRemove?.(data.lastKnownGamepadCount, { gamepad: gp, connected });
+    options?.onAddOrRemove?.(data.lastKnownGamepadCount, {
+      gamepad: gp,
+      connected
+    });
   }
 
   function updateGamepadCount() {
