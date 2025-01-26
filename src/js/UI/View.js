@@ -1265,9 +1265,7 @@ const View = () => {
     dom.root = document.querySelector(':root');
 
     // one more trick: set up controls, then start.
-    const placeholder = document.getElementById(
-      'mobile-controls-placeholder'
-    );
+    const placeholder = document.getElementById('mobile-controls-placeholder');
 
     if (!placeholder.hasChildNodes()) {
       aaLoader.loadHTML('mobile-controls.html', (response) => {
