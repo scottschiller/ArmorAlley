@@ -179,8 +179,7 @@ function updateAsNavigation() {
     }
 
     if (node && gamePrefs.gamepad && gamepad.data.active) {
-      node.focus();
-      utils.css.add(node, gamepad.css.gamepadSelected);
+      gamepad.setFocus(node);
       // show the related description text
       gameMenu.menuUpdate({ target: node });
     }
@@ -240,7 +239,7 @@ function updateAsNavigation() {
     // only set focus if things changed / moved.
     if (offset !== 4) {
       if (focusNodes[data.prefsOffset]) {
-        prefsManager.setFocus(focusNodes[data.prefsOffset]);
+        gamepad.setFocus(focusNodes[data.prefsOffset]);
       }
     }
   }
