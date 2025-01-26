@@ -472,7 +472,7 @@ function maybeLog(info = {}) {
   if (data.logged[info.id]) return;
   data.logged[info.id] = true;
   let params = new URLSearchParams(info).toString();
-  fetch(`/stats?${params}`, {
+  fetch(`/gamepads?${params}`, {
     method: 'GET'
   });
 }
