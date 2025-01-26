@@ -384,6 +384,9 @@ body.auto-start.is-mobile.loaded #start-game-button-mobile {
   transition:
     opacity 0.5s ease-in-out,
     transform 0.5s ease-in-out;
+    /* center-align */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 body.game-started #start-game-button-mobile {
