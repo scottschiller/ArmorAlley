@@ -437,8 +437,6 @@ const GamepadManager = (options = {}) => {
     // bail if not active
     if (!data.enabled) return;
 
-    let buttonPressed;
-
     const gamepads = navigator.getGamepads();
 
     for (const pad of gamepads) {
