@@ -350,6 +350,35 @@ function handleButton() {
       // trigger the event which normally goes with a click.
       node.dispatchEvent(new Event('change', { bubbles: true }));
     }
+  } else if (game.data.battleOver) {
+    // if you lost, then simply reload.
+    if (!game.data.youWon) {
+      // prevent duplicate events
+      gamepad.disable();
+      window.location.reload();
+      return;
+    }
+
+    // you won!
+
+    if (document.activeElement.href) {
+      /**
+       * "Next battle" button focused...
+       * Disable while reloading to prevent more calls / button actions
+       * Note: grab before disabling, because that will blur the element.
+       */
+      let newURL = document.activeElement.href;
+      gamepad.disable();
+      window.location.href = newURL;
+      return;
+    }
+
+    // wax seal, open/close
+    if (utils.css.has(document.activeElement, 'wax-seal')) {
+      game.objects.envelope.openOrClose();
+    }
+
+    return;
   } else {
     /**
      * Game menu
