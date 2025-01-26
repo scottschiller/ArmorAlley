@@ -19,6 +19,9 @@ import {
 } from './gamepad.js';
 import { gamePrefs } from './preferences.js';
 
+let envelopeScroll = 0;
+let gameOverNodes = [];
+
 function updateAsNavigation() {
   if (!gamePrefs.gamepad) return;
 
@@ -130,6 +133,85 @@ function updateAsNavigation() {
    */
 
   let focusNodes;
+
+  if (game.data.battleOver) {
+    /**
+     * You lost.
+     */
+    if (game.data.theyWon) {
+      if (!gameOverNodes.length) {
+        gameOverNodes = document.querySelectorAll(
+          '#game-announcements a.game-start'
+        );
+      }
+
+      if (document.activeElement !== gameOverNodes[0]) {
+        gamepad.setFocus(gameOverNodes[0]);
+      }
+
+      // nothing else to do.
+      return;
+    }
+
+    /**
+     * You won!
+     */
+
+    // wait until the letter UI is active.
+    if (!game.objects.envelope.data.active) return;
+
+    if (!gameOverNodes.length) {
+      let letter = document.getElementById('battle-over-letter');
+      if (letter) {
+        gameOverNodes = letter.querySelectorAll('#next-battle, .wax-seal');
+        // focus the first by default - i.e., wax seal.
+        if (document.activeElement !== gameOverNodes[0]) {
+          gamepad.setFocus(gameOverNodes[0]);
+        }
+      }
+    }
+
+    /**
+     * Scrolling, "letters from the old tanker"
+     */
+    if (game.objects.envelope.data.open) {
+      // simply grab both Y values.
+      let joyY = gamepadState.joysticks[MENU].y + gamepadState.joysticks[FLY].y;
+
+      if (joyY !== 0) {
+        // move in small increments
+        envelopeScroll += joyY / 10;
+
+        // scroll is based on 0-1
+        envelopeScroll = Math.max(0, Math.min(1, envelopeScroll));
+        game.objects.envelope.setScrollTop(envelopeScroll);
+      }
+    }
+
+    /**
+     * Standard input, button, checkbox etc.
+     */
+    if (offset === 3 || offset === 1) {
+      data.battleOverFocusOffset--;
+    } else if (offset === 5 || offset === 7) {
+      data.battleOverFocusOffset++;
+    }
+
+    if (data.battleOverFocusOffset < 0) {
+      data.battleOverFocusOffset = gameOverNodes.length - 1;
+    } else if (data.battleOverFocusOffset >= gameOverNodes.length) {
+      data.battleOverFocusOffset = 0;
+    }
+
+    // only set focus if things changed / moved.
+    if (offset !== 4) {
+      if (gameOverNodes[data.battleOverFocusOffset]) {
+        gamepad.setFocus(gameOverNodes[data.battleOverFocusOffset]);
+      }
+    }
+
+    return;
+  }
 
   if (!prefsManager.isActive()) {
     /**
