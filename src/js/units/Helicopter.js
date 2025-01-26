@@ -1549,6 +1549,9 @@ const Helicopter = (options = {}) => {
         );
 
         game.data.battleOver = true;
+        game.data.youWon = false;
+        game.data.theyWon = true;
+        game.data.didEnemyWin = true;
 
         // ensure joystick UI is hidden, if present
         game.objects.joystick?.end();
