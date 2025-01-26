@@ -59,15 +59,18 @@ function updateAsNavigation() {
 
   let { offset } = gamepadState.dpads[DPAD];
 
-  if (offset === OFFSET_CENTER) {
-    // D-pad inactive - try joystick, which may be assigned
-    offset = gamepad.checkDPadViaJoystick(gamepadState.joysticks[MENU]);
-  }
+  // special case: reserve joysticks if game over and you won.
+  if (!game.objects.envelope.data.active) {
+    if (offset === OFFSET_CENTER) {
+      // D-pad inactive - try joystick, which may be assigned
+      offset = gamepad.checkDPadViaJoystick(gamepadState.joysticks[MENU]);
+    }
 
-  // try other joystick, too.
-  if (offset === OFFSET_CENTER) {
-    // default joystick inactive; try the other one.
-    offset = gamepad.checkDPadViaJoystick(gamepadState.joysticks[FLY]);
+    // try other joystick, too.
+    if (offset === OFFSET_CENTER) {
+      // default joystick inactive; try the other one.
+      offset = gamepad.checkDPadViaJoystick(gamepadState.joysticks[FLY]);
+    }
   }
 
   // if ABXY "top" button [ △ or (Y) ] is pushed, OK/exit.
