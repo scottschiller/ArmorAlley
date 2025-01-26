@@ -34,6 +34,7 @@ let data = {
   gamepadX: 0,
   gamepadY: 0,
   dPadOffset: OFFSET_CENTER,
+  battleOverFocusOffset: 0,
   homeFocusOffset: 0,
   logged: {},
   prefsOffset: 0,
@@ -105,6 +106,10 @@ const abxyMap = {
 function onGamepadUpdate() {
   if (!gamePrefs.gamepad) return;
   if (game.data.started) {
+    if (game.data.battleOver) {
+      // win or lose?
+      return updateAsNavigation();
+    }
     if (prefsManager.isActive()) {
       return updateAsNavigation();
     }
