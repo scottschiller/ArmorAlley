@@ -93,7 +93,7 @@ const defaultPrefs = {
   'landing_pads_on_radar': true,
   'radar_enhanced_fx': demo || isMobile || false,
   'last_battle': null,
-  'mobile_controls_location': 'left',
+  'mobile_controls_location': isMobile ? 'left' : 'right', // "mobile" is gamepad UI on desktop.
   'radar_theme': 'classic',
   'super_bunker_arrows': true,
   'show_inventory': true,
