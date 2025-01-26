@@ -30,12 +30,12 @@
         button like so:
         <span class="mobile-touch-example">≡</span>
       </p>
-      <p class="gamepad-only mobile-only">
+      <p class="gamepad-only">
         <!-- game controller note specific to mobile, which just mentioned touch controls for inventory -->
-        For game controllers, the inventory menu is accessed via D-pad or
-        joystick. Once active, most buttons will select the highlighted item.
+        Use a D-pad or joystick for inventory. Once active, most buttons will
+        select the highlighted item.
       </p>
-      <p class="instructions hide-on-mobile">
+      <p class="instructions hide-on-mobile hide-on-gamepad">
         Click to change direction.<br />Double-click or press <b>F</b> to toggle
         auto-flip.
       </p>
@@ -43,10 +43,14 @@
         Your helicopter follows your finger, mouse or joystick and auto-flips
         based on direction. Double-tap to toggle auto-flip.
       </p>
-      <p class="instructions">
+      <p class="instructions hide-on-gamepad">
         First up, weapons: While flying, try firing guns
         <span class="hide-on-mobile">(<b>SHIFT</b>) </span> and dropping
         bombs<span class="hide-on-mobile"> (<b>Z</b> or <b>CTRL</b>.)</span>
+      </p>
+      <p class="gamepad-only">
+        First up, weapons: While flying, try firing guns (□) / (Y) and dropping
+        bombs (×) / (B).
       </p>
     </li>
 
@@ -73,7 +77,11 @@
         You’ve got company! Look for white blocks on the radar. Don’t let their
         van reach your base!
       </p>
-      <p class="instructions">
+      <p class="gamepad-only">
+        Bombs (×) / (B) are effective on tanks. The mahine gun (□) / (Y) is good
+        for others.
+      </p>
+      <p class="instructions hide-on-gamepad">
         Bombs
         <span class="hide-on-mobile">(<b>Z</b> or <b>CTRL</b>)</span>
         are effective on tanks.<br />The machine gun
@@ -93,7 +101,7 @@
       </h3>
       <p class="instructions">Return to your base, and order some infantry.</p>
       <p class="instructions">
-        <span class="hide-on-mobile">
+        <span class="hide-on-mobile hide-on-gamepad">
           Press the <b>i</b> key for <u>i</u>nfantry.
         </span>
         <span class="mobile-only"
@@ -124,10 +132,13 @@
         Find an enemy bunker near your base.<br />Enemy buildings are orange
         blocks on the radar.
       </p>
-      <p class="instructions">
+      <p class="instructions hide-on-gamepad">
         Drop an infantry near the bunker<span class="hide-on-mobile">
           via <b><u>SPACE</u></b></span
         >.
+      </p>
+      <p class="instructions gamepad-only">
+        Drop an infantry near the bunker via <b>L1</b>.
       </p>
       <p class="instructions">
         Enemy bunkers have a left-facing arrow, and will "claim" the first
@@ -157,7 +168,11 @@
         Super Bunkers fire at everything except tanks. Tanks disarm Super
         Bunkers.
       </p>
-      <p class="instructions">
+      <p class="instructions gamepad-only">
+        To disarm the bunker via helicopter, drop 3 Infantry from directly
+        overhead using <b>L1</b>.
+      </p>
+      <p class="instructions hide-on-gamepad">
         To disarm the bunker via helicopter, drop 3 Infantry from directly
         overhead<span class="hide-on-mobile">
           using <b><u>SPACE</u></b></span
@@ -175,7 +190,9 @@
         Order a <b><u>M</u></b
         >issile launcher, a <b><u>T</u></b
         >ank, and a <b><u>V</u></b
-        >an <span class="hide-on-mobile">using the underlined letters</span>.
+        >an<span class="hide-on-mobile hide-on-gamepad">
+          using the underlined letters</span
+        >.
       </p>
       <p>
         You need funds to build convoys. You start with a number of funds, and
