@@ -31,6 +31,7 @@ import { gamePrefs } from './preferences.js';
 import { handleOrientationChange } from './mobile.js';
 import { previewLevel } from '../levels/default.js';
 import { aaLoader } from '../core/aa-loader.js';
+import { gamepad } from './gamepad.js';
 
 const noDelayedInput = winloc.match(/noDelayedInput/i);
 const ignoreTouch = 'data-ignore-touch';
@@ -1420,8 +1421,10 @@ const View = () => {
         game.players?.local?.data?.isCPU
       ) {
         // special case: temporarily show mouse cursor, IF gamepad present and active.
-        maybeShowDisabledMouseCursor();
-        return;
+        if (gamepad.data.enabled && gamepad.data.active) {
+          maybeShowDisabledMouseCursor();
+          return;
+        }
       }
 
       // always track the raw values - for gamepad sync, if nothing else.
