@@ -846,10 +846,10 @@ function PrefsManager() {
       let focusTarget = dom.o.querySelector('[data-focus-start-here]');
 
       if (focusTarget) {
-        setFocus(focusTarget);
+        gamepad.setFocus(focusTarget);
       } else {
         let oSubmit = document.getElementById('game-prefs-submit');
-        setFocus(oSubmit);
+        gamepad.setFocus(oSubmit);
       }
 
       const fieldset = document.getElementById('prefs-select-level');
@@ -1007,7 +1007,7 @@ function PrefsManager() {
     // return focus to where it was
     if (gamePrefs.gamepad && gamepad.data.active) {
       try {
-        setFocus(data.lastActiveElement);
+        gamepad.setFocus(data.lastActiveElement);
       } catch (e) {
         console.warn(
           'Failed to focus last active element',
@@ -1022,18 +1022,6 @@ function PrefsManager() {
   }
 
   const isActive = () => data.active;
-
-  function setFocus(node) {
-    // for gamepad, specifically.
-    if (!node) return;
-    if (document.activeElement) {
-      utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
-    }
-    if (node.focus) {
-      utils.css.add(node, gamepad.css.gamepadSelected);
-      node.focus();
-    }
-  }
 
   function getEmptyCheckboxData() {
     // checkbox inputs that aren't checked, won't be submitted.
@@ -2235,7 +2223,6 @@ function PrefsManager() {
     readPrefsFromStorage,
     readAndApplyPrefsFromStorage,
     show,
-    setFocus,
     updateForm,
     updateGamepadList,
     writePrefsToStorage

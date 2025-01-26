@@ -572,6 +572,18 @@ function setActive(active) {
   return !active;
 }
 
+function setFocus(node) {
+  // native focus, and CSS "selection"
+  if (document.activeElement) {
+    utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
+  }
+  if (!node) return;
+  if (node.focus) {
+    utils.css.add(node, gamepad.css.gamepadSelected);
+    node.focus();
+  }
+}
+
 function resetSelected() {
   // ensure any "selected" (focus-related) CSS is dropped.
   Array.from(document.querySelectorAll(`.${css.gamepadSelected}`)).forEach(
@@ -659,6 +671,7 @@ const gamepad = {
   resetSelected,
   scanGamepads,
   setActive,
+  setFocus,
   state: gamepadState,
   rumble: gamepadManager.rumble
 };
