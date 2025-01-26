@@ -288,7 +288,7 @@ function handleButton() {
         onShowComplete: () => {
           // do focus and stuff
           // assign focus to the first thing and reset offset?
-          document.getElementById('game-prefs-submit').focus();
+          gamepad.setFocus(document.getElementById('game-prefs-submit'));
           data.prefsOffset = 0;
         }
       });
@@ -300,7 +300,7 @@ function handleButton() {
           data.prefsOffset = 0;
           // try to select the "focus start" element
           let qs = '#prefs-select-level [data-focus-start-here]';
-          document.querySelector(qs)?.focus();
+          gamepad.setFocus(document.querySelector(qs));
         }
       });
     },
