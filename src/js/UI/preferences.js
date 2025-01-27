@@ -359,6 +359,9 @@ function PrefsManager() {
         // URLs to links
         .replace(urlPattern, mungeURL)
 
+        // `text` -> <code>text</code>
+        .replace(/`(.[^\n]*?)`/g, '<code>$1</code>')
+
         // newlines
         .replace(/(?:\r\n|\r|\n)/g, '<br>')
 
