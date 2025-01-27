@@ -1,15 +1,15 @@
-ARMOR ALLEY: REMASTERED
-Changelog / Revision History
-----------------------------
+`ARMOR ALLEY: REMASTERED`
+`Changelog / Revision History`
+`----------------------------`
 
-WORK IN PROGRESS: 2023-2024 updates since last major release
+`WORK IN PROGRESS: 2023-2025 updates since last major release`
 (V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum)
 
---- 01/2025, work in progress ---
+`01/2025, work in progress`
 
 Experimental gamepad controller support. https://github.com/scottschiller/ArmorAlley/commit/251622ae8b1d8fe441b9f965b0d5a3026eac406d https://github.com/scottschiller/ArmorAlley/commit/b40ef3a1de2c151726ce4d57191ab641ad625cad https://github.com/scottschiller/ArmorAlley/commit/7c0a2a0ac9768a6b187b72afdb8fdf706260d4b2
 
---- 12/2024, uncategorized ---
+`12/2024, uncategorized`
 
 Score, bonus, battle and difficulty display in top right. https://github.com/scottschiller/ArmorAlley/commit/2900425e1b64b9f063bd0d79a646b74d76301637 https://github.com/scottschiller/ArmorAlley/commit/8ddf254edf8789a34f9b0b2535c928629e922aca
 
@@ -45,7 +45,7 @@ Turret gunfire targeting now closer to original, trajectory bug fixed. https://g
 
 Updated earning of funds, based on original: 1 fund is earned at a fixed interval, depending on distance into enemy territory and difficulty. https://github.com/scottschiller/ArmorAlley/commit/6d30af44ca6d128fd7e7d9b99794f98015114825
 
---- 11/2024, uncategorized ---
+`11/2024, uncategorized`
 
 Enemy bias / discount on inventory "up to 212%" (so it can afford largest original in-game convoys), subject to level and difficulty. https://github.com/scottschiller/ArmorAlley/commit/681a890ffe5c9355e7b65d749bfec92ea22ff046
 
@@ -107,7 +107,7 @@ Battle defeat messages, more hints and tips. https://github.com/scottschiller/Ar
 
 Renaming difficulties similar to original game: Easy = Boot Camp. Hard = Wargames. Extreme = Armorgeddon. (TBD: "Conflict" difficulty, between the latter two.) https://github.com/scottschiller/ArmorAlley/commit/9fe2ea35c11df304d8f9e59de747b637da87b13f1
 
---- 10/2024, uncategorized ---
+`10/2024, uncategorized`
 
 Battle flag re-labeling: Bullets, Napalm, Stealth, Jamming (BNSJ) -> Aimed Missiles, Napalm, Stealth, Interference (ANSI.) https://github.com/scottschiller/ArmorAlley/commit/9bb0fbb91509baec114b2a83a457bdd9bd0dec16
 
@@ -163,7 +163,7 @@ Radar UI updates: More-detailed balloons and bunker icons. https://github.com/sc
 
 Updated enemy helicopter "AI": seek, evade, wander and so on - now using improved vectors and "autonomous agent"-style steering logic. https://github.com/scottschiller/ArmorAlley/commit/33d9e2e4d0b7ac6b2fbf56bf628dfeafddcc3b33 https://github.com/scottschiller/ArmorAlley/commit/301916da8ee0ebbd3f1b54c6688a061e33c6e5c8
 
---- 09/01/2024, uncategorized ---
+`09/01/2024, uncategorized`
 
 Refueling rate slowed down, made closer to original game.
 
@@ -196,7 +196,8 @@ Updated and improved layout for mobile and touch-screen devices
 
 "Unlimited lives" preference, on by default. You can now purchase additional helicopters via "H" (20 funds each), and lose if you run out of choppers. https://github.com/scottschiller/ArmorAlley/commit/55937c5928fe3cba52007fdc8dc6872ab55e4fce
 
-Bug fixes
+`Bug fixes`
+
 Unit / convoy production could get stuck due to "traffic control" https://github.com/scottschiller/ArmorAlley/commit/4708ef4e8d104f68fd3f838eb8accee011f10f6e
 
 Traffic control: Allow a tank to roll up beside another which has stopped to fire. https://github.com/scottschiller/ArmorAlley/commit/7a29cf13644d335d9aff3cdb7d11fea791b4b57a
@@ -222,17 +223,19 @@ Bring chopper boundary closer to original game, 25% on each side of screen. Orig
 
 Touch events had regressed on mobile Android / Chrome. https://github.com/scottschiller/ArmorAlley/commit/344fe9d297028d391f053860ffdaced2a2ddda63
 
-Rendering
+`Rendering`
+
 Desktop Safari: Scale + transform hacks on certain UI elements to retain sharp rendering. https://github.com/scottschiller/ArmorAlley/commit/ec66d3ee13853d5a7e1f5e14f9e570739988089d
 
 Super bunkers now fire at vans, as in the original game. https://github.com/scottschiller/ArmorAlley/commit/b8ab6a1e2b44383a6b39ece13dca6ffc00c62fd1
 
 Turret gunfire should hit bunkers. https://github.com/scottschiller/ArmorAlley/commit/1b706529619cd17ed2c4036c00bf09cf8531b591
 
-Misc
+`Misc`
+
 Simplified boot loading
 
-UX/UI
+`UX/UI`
 
 Redesigned radar UI with more detail, shape of units vs. rectangles. https://github.com/scottschiller/ArmorAlley/commit/e7238d8ed7c1da274245cb8b78a487b0bfbd051d
 
@@ -270,7 +273,7 @@ Smoother fuel line animation. https://github.com/scottschiller/ArmorAlley/commit
 
 Nicer "woven" balloon cables / chains. https://github.com/scottschiller/ArmorAlley/commit/327f482268d7bf573edff167f504ff87ae5a2fbf
 
-Preferences
+`Preferences`
 
 By default, disable banana and rubber chickens on mobile. (Can be enabled in prefs.) https://github.com/scottschiller/ArmorAlley/commit/3aa328c00b2beb3a0b4a957099cfe3aba6a4f433
 
@@ -300,7 +303,8 @@ Allow tank gunfire to pass thru bunkers and super bunkers. https://github.com/sc
 
 Radar scaling and scrolling feature, useful particularly for mobile devices. https://github.com/scottschiller/ArmorAlley/commit/37c452972163ea1c00a7c72a65660d40d46b6042
 
-Mobile / touch
+`Mobile / touch`
+
 Improved handling of device rotation and game scaling, portrait vs. landscape. https://github.com/scottschiller/ArmorAlley/commit/00ba9bbdef609e01d14eb0db79f853af76fcb833
 
 Show keyboard labels if keypresses are detected, e.g., an iPad "folio" keyboard. https://github.com/scottschiller/ArmorAlley/commit/4a687a39264ad601822d45c711845a9b6db83279
@@ -309,7 +313,7 @@ Don't pause the game on screen rotate any more. https://github.com/scottschiller
 
 Bug fix: Always add touch and mouse event listeners. https://github.com/scottschiller/ArmorAlley/commit/d7ce04f1641dd4d4ccf30df5138c198d61a73dec
 
-Gameplay
+`Gameplay`
 
 Tanks are now more evenly-balanced; CPU tanks no longer have the advantage of slightly-faster gunfire rates in hard + extreme mode. https://github.com/scottschiller/ArmorAlley/commit/71435b3cec21afc46e2b7113c17ce0a5d461abf5
 
@@ -366,7 +370,7 @@ Smart missiles no longer target balloons attached to bunkers. https://github.com
 
 Enemy helicopter now takes off slowly on respawn. https://github.com/scottschiller/ArmorAlley/commit/410c2b6ade89ccd468594155933b08f057f066b2
 
-Network / multiplayer
+`Network / multiplayer`
 
 Basic network troubleshooting UI for guest connection trouble. https://github.com/scottschiller/ArmorAlley/commit/a3c4150a143d1bcde3aae021c7ab99da25301fb0
 
@@ -384,7 +388,7 @@ Network bug: Remote engineers were showing as infantry. https://github.com/scott
 
 De-sync risk: Ignore wind on paratroopers. https://github.com/scottschiller/ArmorAlley/commit/668d37ecc15cbd556c041d4e644229cfb2783cc3
 
-Performance
+`Performance`
 
 "Boot loader" for game start, and dynamic load / unload of assets. https://github.com/scottschiller/ArmorAlley/commit/fab72decc8a046d498a0d9a9c6a670d7da635b41
 
@@ -404,7 +408,7 @@ Google Lighthouse improvements - first paint, load, game start etc.
 
 Update BnB end-of-battle sequence, now with proper desert scene. 🤣💨🧨🔥 https://github.com/scottschiller/ArmorAlley/commit/49274f6b739e9ec1d8793fa5703d4a4064115fbf
 
-Development / build process
+`Development / build process`
 
 Reorganized codebase into conventional src/ and dist/ subdirectories. Better file structure.
 
