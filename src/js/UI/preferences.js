@@ -366,7 +366,7 @@ function PrefsManager() {
         .replace(/(?:\r\n|\r|\n)/g, '<br>')
 
         // indentation
-        .replace(/  /gi, '&#8202;')
+        .replace(/  /gi, '&hairsp;')
     ); // hair-space
   }
 
