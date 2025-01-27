@@ -742,6 +742,11 @@ body.is_firefox #home-video-wrapper {
   top: -0.1em;
 }
 
+body.is-mobile #game-menu-wrapper button.large {
+  /* mobile: always apply a bit of a background color, for contrast. */
+  background-color: #111;
+}
+
 #game-menu .glow-item-checkbox:hover,
 #game-menu-wrapper button.large:hover {
   background-color: rgba(255, 255, 255, 0.06);
