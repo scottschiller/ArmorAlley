@@ -777,6 +777,22 @@ body.is-mobile #game-menu-wrapper button.large {
   top: calc(1px * var(--menu-scale));
 }
 
+#whats-new-button span.sub-text {
+  font-size: calc(2.5px * var(--menu-scale));
+  position: absolute;
+  bottom: 0.5em;
+  left: 0px;
+  width: 100%;
+  line-height: 1em;
+  text-align: center;
+  color: #666;
+  transition: color 0.2s ease-in-out;
+}
+
+#whats-new-button:hover span.sub-text {
+  color: #ccc;
+}
+
 #game-buttons .this-rocks {
   position: relative;
   top: -2px;
