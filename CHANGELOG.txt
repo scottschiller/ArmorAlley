@@ -179,7 +179,6 @@ Battle "flags" now listed and mostly implemented, similar to original game: Bull
 
 Tweak enemy helicopter acceleration, accounting for inclusion of tilt for gunfire.
 
-Fixed random distribution of paratroopers on chopper eject
 
 Larger random wind effect on paratroopers.
 
