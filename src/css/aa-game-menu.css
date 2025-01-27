@@ -721,6 +721,13 @@ body.is_firefox #home-video-wrapper {
   margin-right: calc(4px * var(--menu-scale));
 }
 
+@media screen and (orientation: portrait) {
+  body.is-mobile #game-buttons {
+    /* home screen spacing tweak */
+    margin-top: calc(3px * var(--menu-scale));
+  }
+}
+
 #game-menu-wrapper button.game-start {
   font-family: 'Cheddar Gothic Stencil';
   background-color: rgba(0, 255, 0, 0.2);
