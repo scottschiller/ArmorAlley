@@ -359,8 +359,16 @@ function PrefsManager() {
         // URLs to links
         .replace(urlPattern, mungeURL)
 
+        // quick-and-dirty markdown shenanigans, single-line parsing
+
         // `text` -> <code>text</code>
         .replace(/`(.[^\n]*?)`/g, '<code>$1</code>')
+
+        // *text* -> <b>text</b>
+        .replace(/\*(.[^\*]*?)\*/g, '<b>$1</b>')
+
+        // _text_ -> <u>text</u>
+        .replace(/\_(.[^\_]*?)\_/g, '<i>$1</i>')
 
         // newlines
         .replace(/(?:\r\n|\r|\n)/g, '<br>')

@@ -29,7 +29,7 @@ This is a work-in-progress overview of update highlights. For code-level details
 
 · Per original: some turrets only target "ground" units (e.g., tanks) instead of helicopters.
 
-· It turns out that infantry *do* carry grenades after all, for one specific case.
+· It turns out that infantry _do_ carry grenades after all, for one specific case.
 
 · Engineers lose their backpacks and become infantry when picked up "in the field," but sometimes there is a strategic reason to do so. 💭😉
 
