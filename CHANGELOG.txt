@@ -77,13 +77,13 @@ Bug fix: Hiding in a cloud does not exclude you from vans' radar jamming capabil
 
 Like original, all bunker balloons start at the bottom. https://github.com/scottschiller/ArmorAlley/commit/cf52dac3e97c3dc07f800c50c26ac9c59ac75890
 
-Per original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers. https://github.com/scottschiller/ArmorAlley/commit/e291ede808b5cbfd06591dbc338c93ef1fb2b04d https://github.com/scottschiller/ArmorAlley/9dd55b432ae917af3829fedbc7d83feccae3d472 https://github.com/scottschiller/ArmorAlley/1ac9c100457de3a34fb93dcf8b82694a2035ed07
+Per original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers. https://github.com/scottschiller/ArmorAlley/commit/e291ede808b5cbfd06591dbc338c93ef1fb2b04d https://github.com/scottschiller/ArmorAlley/commit/9dd55b432ae917af3829fedbc7d83feccae3d472 https://github.com/scottschiller/ArmorAlley/commit/1ac9c100457de3a34fb93dcf8b82694a2035ed07
 
 Per original, inventory / ordering limits: "Requisition denied - quota exceeded" - (`unlimited_inventory` pref, off / limited by default.) https://github.com/scottschiller/ArmorAlley/commit/6dbf71f5218b869d36d33181ad533742a2496552
 
 Nice SoundBlaster-era FM synth sample for "order complete," from the original MS-DOS game. https://github.com/scottschiller/ArmorAlley/commit/225e2280bb2dfb105765629b4374bdd372edfb7c
 
-Like the original, you can now crash into the ground if flying too fast. https://github.com/scottschiller/ArmorAlley/18d9fb5f04961a466350e2b062c652a607506761
+Like the original, you can now crash into the ground if flying too fast. https://github.com/scottschiller/ArmorAlley/commit/18d9fb5f04961a466350e2b062c652a607506761
 
 Medals are now awarded as you progress through the original campaign battles. https://github.com/scottschiller/ArmorAlley/commit/244fb53314061937bfb149457f51b4b16b0d5d12
 
