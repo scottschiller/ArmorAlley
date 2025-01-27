@@ -3,7 +3,7 @@ This is a work-in-progress overview of update highlights. For code-level details
 
 `Gamepad Support: V1.0 (Experimental) 🎮🤞`
 
-· Designed for "standard" game controller layout - e.g., XBOX and PlayStation: two joysticks, one D-pad, ABXY, and shoulder buttons. Desktop + mobile. Rumble features where supported. (From testing: Chrome and Safari on desktop.)
+· Designed for "standard" game controller layout - e.g., XBOX and PlayStation: two joysticks, one D-pad, ABXY and shoulder buttons. Desktop + mobile. Rumble features where supported. (From testing: Chrome and Safari on desktop.)
 
 · Disclaimers: See game settings for control mappings. Support for controllers varies across devices and browsers. USB connection may be required as seen in testing on Safari, macOS + iOS.
 
@@ -73,4 +73,4 @@ This is a work-in-progress overview of update highlights. For code-level details
 
 `Previously...`
 
-`V2.01.20230520`: 10th Anniversary "Remastered" Edition Addendum
+`V2.01.20230520`: 10th Anniversary "Remastered" Edition Addendum - details on Github: https://github.com/scottschiller/ArmorAlley
