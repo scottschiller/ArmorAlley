@@ -393,6 +393,17 @@ function handleButton() {
   }
 
   const actions = {
+    'whats-new': () => {
+      prefsManager.show({
+        whatsNew: true,
+        onShowComplete: () => {
+          // do focus and stuff
+          // assign focus to the first thing and reset offset?
+          gamepad.setFocus(document.getElementById('game-prefs-submit'));
+          data.prefsOffset = 0;
+        }
+      });
+    },
     'game-options': () => {
       prefsManager.show({
         onShowComplete: () => {

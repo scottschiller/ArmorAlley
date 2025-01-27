@@ -97,6 +97,16 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
   display: none;
 }
 
+/* all except "what's new", in that mode. */
+#game-prefs-modal:not(.whats-new) .whats-new-only,
+#game-prefs-modal.whats-new fieldset:not(.whats-new) {
+  display: none;
+}
+
+#game-prefs-modal.whats-new fieldset.whats-new code {
+  font-weight: bold;
+}
+
 /* shenanigans: center the AA logo in the "select level" modal */
 #game-prefs-modal.select-level #game-prefs-header .aa-logo {
   align-self: center;

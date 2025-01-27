@@ -29,6 +29,12 @@
 
             <div id="form-scroller-wrapper">
               <div id="form-scroller" class="fieldset-container">
+                <fieldset class="whats-new whats-new-only">
+                  <legend>What's New 📣</legend>
+                  <p id="whats-new-content" class="non-indented">
+                    The latest and greatest.
+                  </p>
+                </fieldset>
                 <fieldset id="network-prompt" class="hide-if-network">
                   <legend>Network Game</legend>
                   <p class="non-indented">
@@ -40,6 +46,25 @@
                       Network Setup
                     </button>
                   </p>
+                </fieldset>
+                <fieldset class="whats-new whats-new-only">
+                  <legend>Changelog / Revision History</legend>
+                  <ul>
+                    <li>
+                      <p class="options-heading">
+                        <b
+                          >💾 Current build:
+                          <span id="prefs-modal-version"></span
+                        ></b>
+                      </p>
+                      <p class="options-heading">
+                        <button id="show-changelog" data-action="changelog" type="button">
+                          <span>Show</span> changelog.txt
+                        </button>
+                      </p>
+                      <div id="changelog-details"></div>
+                    </li>
+                  </ul>
                 </fieldset>
                 <fieldset id="network-options-status" class="network">
                   <legend id="network-options-status-label">
@@ -291,26 +316,6 @@
                           </label>
                         </li>
                       </ul>
-                    </li>
-                  </ul>
-                </fieldset>
-
-                <fieldset>
-                  <legend>Changelog / Revision History</legend>
-                  <ul>
-                    <li>
-                      <p class="options-heading">
-                        <b
-                          >💾 Current build:
-                          <span id="prefs-modal-version"></span
-                        ></b>
-                      </p>
-                      <p class="options-heading">
-                        <button id="show-changelog" data-action="changelog" type="button">
-                          <span>Show</span> changelog
-                        </button>
-                      </p>
-                      <div id="changelog-details"></div>
                     </li>
                   </ul>
                 </fieldset>

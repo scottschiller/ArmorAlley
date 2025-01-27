@@ -795,6 +795,7 @@ function PrefsManager() {
      * options = {
      *   network: true,
      *   selectLevel: true,
+     *   whatsNew: true,
      *   // expect game_type to be one of easy / hard / extreme
      *   onStart: (networkGameType) => startGame(networkGameType),
      *   onShowComplete: () => optional callback
@@ -813,6 +814,7 @@ function PrefsManager() {
 
     // select mode (or not)
     utils.css.addOrRemove(dom.o, options.selectLevel, 'select-level');
+    utils.css.addOrRemove(dom.o, options.whatsNew, 'whats-new');
 
     document.body.appendChild(dom.o);
 
@@ -876,6 +878,10 @@ function PrefsManager() {
         'OK' + gamepad.getSubmitHTML();
     } else {
       updateGamepadList();
+    }
+
+    if (options.whatsNew) {
+      events.fetchWhatsNew();
     }
 
     // ensure the volume slider is up-to-date.
@@ -2093,6 +2099,13 @@ function PrefsManager() {
   };
 
   // DOM event handlers, exposed here for gamepad use.
+
+  events.fetchWhatsNew = () => {
+    const details = document.getElementById('whats-new-content');
+    aaLoader.loadHTML('../../NEWS.txt', (response) => {
+      details.innerHTML = parseChangelog(response);
+    });
+  };
 
   events.fetchChangelog = () => {
     dom.oShowChangelog.setAttribute('disabled', true);

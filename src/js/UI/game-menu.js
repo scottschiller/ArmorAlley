@@ -43,6 +43,7 @@ let lastHTML;
 // TODO: clean up this mess. :P
 let menu;
 let optionsButton;
+let whatsNewButton;
 let oSelect;
 let videoInterval;
 
@@ -258,6 +259,7 @@ function init() {
 
   menu = document.getElementById('game-menu');
   optionsButton = document.getElementById('game-options-button');
+  whatsNewButton = document.getElementById('whats-new-button');
   oSelect = document.getElementById('game_level');
 
   /**
@@ -319,6 +321,7 @@ function init() {
 
   utils.events.add(document, 'click', formClick);
   utils.events.add(optionsButton, 'click', () => showPrefs());
+  utils.events.add(whatsNewButton, 'click', () => showPrefs({ whatsNew: true }));
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
 
@@ -807,6 +810,7 @@ function formCleanup() {
   utils.events.remove(document.body, 'touchend', hidePointer);
   utils.events.remove(window, 'resize', clearLayoutCache);
   optionsButton = null;
+  whatsNewButton = true;
   oSelect = null;
 }
 

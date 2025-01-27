@@ -1,0 +1,78 @@
+`The latest and greatest: January 2025 Edition 🗞️`
+This is a work-in-progress overview of update highlights. For code-level details, see the changelog section below.
+
+`Gamepad Support: V1.0 (Experimental) 🎮🤞`
+
+· Designed for "standard" game controller layout - e.g., XBOX and PlayStation: two joysticks, one D-pad, ABXY, and shoulder buttons. Desktop + mobile. Rumble features where supported. (From testing: Chrome and Safari on desktop.)
+
+· Disclaimers: See game settings for control mappings. Support for controllers varies across devices and browsers. USB connection may be required as seen in testing on Safari, macOS + iOS.
+
+`Game Behaviours: Scoring + Funds 💰`
+
+· Score, bonus, battle / difficulty display in top right. Bonus is based on friendly units (and difficulty), and added to your score when you win.
+
+· Updated earning of funds, like original: awarded at a fixed interval, depending on distance into enemy territory, battle and difficulty.
+
+· End bunker fund capture: Infantry capture 50% of available funds (optional preference: engineers can "rob the bank" for 100%), end bunker is neutralized, local funds go to -25 (original game showed "captured" in this state.) "Reclaim" end bunker to reset funds to 0, or earn 25+ funds over time.
+
+`Munitions, Weapons &amp; Units 💣`
+
+· "Napalm" battle flag: bombs spark on the ground, vs. wider explosion when equipped with napalm - more effective at taking out infantry + engineers.
+
+· "Stealth" battle flag: Enemy helicopter is always hidden on radar.
+
+· "Jamming" battle flag: Radar is always jammed, unavailable.
+
+· The last missing weapon: "aimed" AKA "dumb" missiles armed with napalm, which replace helicopter ammunition on some battles.
+
+· Smart missile and turret targeting updated, closer to original.
+
+· Per original: some turrets only target "ground" units (e.g., tanks) instead of helicopters.
+
+· It turns out that infantry *do* carry grenades after all, for one specific case.
+
+· Be careful with napalm around certain ground units: "flame burns both sides."
+
+· Engineers lose their backpacks and become infantry when picked up "in the field," but sometimes there is a strategic reason to do so. 💭😉
+
+· Vans now jam radar at variable distances, depending on battle + difficulty.
+
+· As in the original, "flame burns both sides" - bombs with napalm, aimed missile napalm, and tank flamethrowers can hit friendly infantry and engineers.
+
+`Inventory 🚚`
+
+· Inventory / ordering limits per original: "Requisition denied - quota exceeded" - no more than 15 tanks, 6 missile launchers, 10 vans, and 30 "men" between engineers, infantry and paratroopers.
+
+`Enemy "IQ" 🧠`
+
+· Updated enemy helicopter "AI": seek, evade, wander etc., now using improved vectors and "autonomous agent"-style steering logic.
+
+· Updated enemy behaviour switching to mimic original: attack, defend, steal.
+
+· The enemy helicopter can drop paratroopers to take out turrets and capture bunkers, including super bunkers and your end bunker (which means, stealing funds.) It can also recapture its own end bunker.
+
+· "All-new" enemy convoy ordering patterns varying by battle, timing and difficulty - based on the original.
+
+· Battle selection menu now shows calculated IQ + fairness + "flags" (weapons / radar details) based on difficulty, like the original.
+
+· The enemy helicopter can fire smart missiles at turrets, respawn faster, and take other countermeasures based on the battle and difficulty.
+
+· The enemy helicopter can now drop "decoy" paratroopers for, and try to shoot down incoming smart missiles.
+
+`Miscellaneous`
+
+· Like the original, you can now crash into the ground if flying too fast.
+
+· "Unlimited helicopters" preference: for a challenge, turn this off and buy additional helicopters @ 20 funds ea. as per original game.
+
+· Battle victory messages and medals are now awarded as you progress through the original campaign battles and difficulties.
+
+· Original game feature: Hold `shift/ctrl/x/z` (within 1 second) to delay respawn, keep watching scene where you died.
+
+· Updated radial energy UI. Shown when units are damaged, and/or repairing.
+
+· Updated radar UI, increased detail for scannability of buildings and ground units.
+
+`Previously...`
+
+`V2.01.20230520`: 10th Anniversary "Remastered" Edition Addendum
