@@ -2121,8 +2121,7 @@ function PrefsManager() {
     }
     aaLoader.loadHTML('../../CHANGELOG.txt', (response) => {
       updateChangelog();
-      document.getElementById('changelog-details').innerHTML =
-        '<br />' + parseChangelog(response);
+      details.innerHTML = '<br />' + parseChangelog(response);
     });
   };
 
