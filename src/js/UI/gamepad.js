@@ -48,7 +48,8 @@ let data = {
   state: {
     // hackish: external-facing status
     isFiring: false
-  }
+  },
+  hasFocus: document.hasFocus()
 };
 
 let dom = {
@@ -105,6 +106,10 @@ const abxyMap = {
 
 function onGamepadUpdate() {
   if (!gamePrefs.gamepad) return;
+
+  // ignore if window is not in focus - excluding mobile, to be safe.
+  if (!data.hasFocus && !isMobile) return;
+
   if (game.data.started) {
     if (game.data.battleOver) {
       // win or lose?
@@ -662,6 +667,17 @@ function onGameStart() {
   dom.controls = document.getElementById('mobile-controls');
   dom.inventory = Array.from(dom.controls.querySelectorAll('.inventory-item'));
 }
+
+function onFocus() {
+  data.hasFocus = true;
+}
+
+function onBlur() {
+  data.hasFocus = false;
+}
+
+window.addEventListener('blur', onBlur);
+window.addEventListener('focus', onFocus);
 
 const gamepadManager = GamepadManager({
   onChange: onGamepadUpdate, // update / animate()-style callback
