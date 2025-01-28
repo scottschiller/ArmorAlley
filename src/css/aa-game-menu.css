@@ -176,6 +176,28 @@ body.auto-start #game-menu-wrapper .logo-overlay-highlight {
   border-radius: 5px;
 }
 
+#start-game-button-mobile:focus,
+#start-game-button-mobile:focus-visible {
+  outline: 1px solid #fff;
+}
+
+#start-game-mobile-hint {
+  display: none;
+  margin-top: 1em;
+  font-size: calc(5px * var(--menu-scale));
+  text-align: center;
+  color: #999;
+}
+
+body.auto-start.is-mobile #start-game-mobile-hint {
+  display: block;
+  visibility: hidden;
+}
+
+body.auto-start.is-mobile.loaded.has-gamepad #start-game-mobile-hint {
+  visibility: visible;
+}
+
 #game-menu-wrapper .logo-overlay {
   position: absolute;
   top: 0;

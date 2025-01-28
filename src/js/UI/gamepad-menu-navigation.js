@@ -5,7 +5,7 @@
 
 import { prefsManager } from '../aa.js';
 import { game } from '../core/Game.js';
-import { isiPhone } from '../core/global.js';
+import { autoStart, isiPhone, isMobile } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { gameMenu } from './game-menu.js';
 import {
@@ -20,6 +20,7 @@ import {
 import { gamePrefs } from './preferences.js';
 
 let envelopeScroll = 0;
+
 let gameOverNodes = [];
 
 function updateAsNavigation() {
@@ -392,12 +393,17 @@ function handleButton() {
     }
 
     return;
+  } else if (!game.data.started && autoStart && isMobile) {
+    /**
+     * First button press = focus; CSS will show touch-for-sound hint.
+     */
+    node = document.getElementById('start-game-button-mobile');
+    node?.focus();
   } else {
     /**
      * Game menu
      * Take action on current selection, if one exists.
      */
-
     focusNodes = document
       .getElementById('game-menu')
       .querySelectorAll('input, button, select, textarea, a[href]');
@@ -406,6 +412,13 @@ function handleButton() {
   }
 
   const actions = {
+    'start-game': () => {
+      gameMenu.formClick({
+        target: {
+          action: 'start-game'
+        }
+      });
+    },
     'whats-new': () => {
       prefsManager.show({
         whatsNew: true,
@@ -458,7 +471,7 @@ function handleButton() {
   };
 
   // "OK" button?
-  if (node.type === 'submit') {
+  if (node?.type === 'submit') {
     prefsManager.events.onFormSubmit();
     return;
   }

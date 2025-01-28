@@ -7,7 +7,7 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { clientFeatures, FPS } from '../core/global.js';
+import { autoStart, clientFeatures, FPS, isMobile } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { updateAsNavigation } from './gamepad-menu-navigation.js';
 import { GamepadManager } from './GamepadManager.js';
@@ -442,12 +442,26 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
     // activate right away, regardless of what button or d-pad bit was pressed.
     setActive(true);
 
-    if (
-      data.prefsOffset === 0 &&
-      (!document.activeElement || document.activeElement.id !== 'game_level')
-    ) {
-      // initial focus
-      document.getElementById('game_level').focus();
+    /**
+     * Special case: gamepad activated during auto-start (campaign) on mobile.
+     * First button press should set focus on "start" button.
+     * User will be prompted RE: touch required to enable sound.
+     */
+    if (!game.data.started && autoStart && isMobile) {
+      // button press = start game, but touch may be required for sound to work.
+      let node = document.getElementById('start-game-button-mobile');
+      node?.focus();
+    } else {
+      /**
+       * More common: home screen case
+       */
+      if (
+        data.prefsOffset === 0 &&
+        (!document.activeElement || document.activeElement.id !== 'game_level')
+      ) {
+        // initial focus
+        document.getElementById('game_level').focus();
+      }
     }
   }
 
