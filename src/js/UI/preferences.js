@@ -204,6 +204,7 @@ function PrefsManager() {
     dom.oChatUI = document.getElementById('network-options-chat-ui');
     dom.oForm = document.getElementById('game-prefs-form');
     dom.oFormSubmit = document.getElementById('game-prefs-submit');
+    dom.oFormScroller = document.getElementById('form-scroller');
     dom.oFormCancel = document.getElementById('game-prefs-cancel');
     dom.oGameSpeedSlider = document.getElementById('input_game_speed');
     dom.oNetStatusLabel = document.getElementById(
@@ -328,6 +329,11 @@ function PrefsManager() {
     dom.oShowChangelog.removeAttribute('disabled');
     dom.oShowChangelog.getElementsByTagName('span')[0].innerHTML =
       data.changelogVisible ? 'Hide' : 'Show';
+    if (gamepad.data.active) {
+      dom.oShowChangelog.focus();
+      // invalidate layout, since content height has changed.
+      data.layoutCache = {};
+    }
   }
 
   function maybeTruncate(url) {
@@ -817,9 +823,13 @@ function PrefsManager() {
 
     data.lastActiveElement = document.activeElement;
 
+    data.layoutCache = {};
+
     data.active = true;
 
     data.network = !!options.network;
+
+    data.whatsNew = !!options.whatsNew;
 
     game.objects.view.data.ignoreMouseEvents = true;
 
@@ -928,7 +938,7 @@ function PrefsManager() {
       selectLevel(gamePrefs.net_game_level);
 
       // browsers may remember scroll offset through reloads; ensure it resets.
-      document.getElementById('form-scroller').scrollTop = 0;
+      dom.oFormScroller.scrollTop = 0;
 
       utils.css.add(document.body, 'network');
 
@@ -1007,6 +1017,8 @@ function PrefsManager() {
 
     dom.o.remove();
     data.active = false;
+
+    data.whatsNew = false;
 
     utils.css.remove(document.body, 'prefs-modal-open');
 
@@ -1490,7 +1502,8 @@ function PrefsManager() {
     lastMenuOpenThrottle: 30000,
     readyToStart: false,
     remoteReadyToStart: false,
-    bnbVolumeTestSound: null
+    bnbVolumeTestSound: null,
+    whatsNew: false
   };
 
   dom = {
@@ -1500,6 +1513,7 @@ function PrefsManager() {
     oChatUI: null,
     oForm: null,
     oFormCancel: null,
+    oFormScroller: null,
     oFormSubmit: null,
     oGameSpeedSlider: null,
     oNetStatusLabel: null,
@@ -2110,6 +2124,27 @@ function PrefsManager() {
   };
 
   // DOM event handlers, exposed here for gamepad use.
+
+  events.scrollBy = (offset = 0, node = dom.oFormScroller) => {
+    if (!node) return;
+      
+    if (!data.layoutCache[node]) {
+      data.layoutCache[node] = {
+        /**
+         * Repurposing for gamepad scroll shenanigans.
+         * The distance to be scrolled is the scroll height, minus displayed.
+         * This should be invalidated and reset on window and content resize.
+         */
+        scrollRange: node.scrollHeight - node.offsetHeight
+      };
+    }
+
+    if (data.layoutCache[node].scrollRange) {
+      // move relative to current scroll position, restricting range.
+      let newScrollTop = Math.min(data.layoutCache[node].scrollRange, Math.max(node.scrollTop + (data.layoutCache[node].scrollRange * offset), 0));
+      node.scrollTop = newScrollTop;
+    }
+  };
 
   events.fetchWhatsNew = () => {
     const details = document.getElementById('whats-new-content');

@@ -63,7 +63,10 @@ function updateAsNavigation() {
   let { offset } = gamepadState.dpads[DPAD];
 
   // special case: reserve joysticks if game over and you won.
-  if (!game.objects.envelope.data.active) {
+  if (
+    !game.objects.envelope.data.active &&
+    (!prefsManager.isActive() || !prefsManager.data.whatsNew)
+  ) {
     if (offset === OFFSET_CENTER) {
       // D-pad inactive - try joystick, which may be assigned
       offset = gamepad.checkDPadViaJoystick(gamepadState.joysticks[MENU]);
@@ -323,6 +326,16 @@ function updateAsNavigation() {
       if (focusNodes[data.prefsOffset]) {
         gamepad.setFocus(focusNodes[data.prefsOffset]);
       }
+    }
+  }
+
+  if (prefsManager.data.whatsNew) {
+    // simply grab both Y values.
+    let joyY = gamepadState.joysticks[MENU].y + gamepadState.joysticks[FLY].y;
+
+    if (joyY !== 0) {
+      // move in small increments
+      prefsManager.events.scrollBy(joyY / 50);
     }
   }
 }
