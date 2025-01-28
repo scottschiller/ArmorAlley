@@ -330,6 +330,12 @@ body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
 
+body:not(.radar_enhanced_fx) #radar-container.interference .interference .noise {
+  /* hide if not enhanced. */
+  display: none;
+  background: none;
+}
+
 /* home screen + radar "interference"-specific overlays */
 body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise,
 body.game-started #world-noise-overlay.radar-jammed .noise,
