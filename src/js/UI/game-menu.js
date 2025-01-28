@@ -443,6 +443,8 @@ function init() {
 
   updateGameLevelControl();
 
+  game.objects.gamepad = gamepad;
+
   // wait one frame for things to settle, then bring the whole menu up.
   window.requestAnimationFrame(() =>
     utils.css.add(game.objects.view.dom.gameMenu, 'active')
@@ -462,8 +464,6 @@ function init() {
   } else if (!demo) {
     showHomeVideo();
   }
-
-  game.objects.gamepad = gamepad;
 
   if (!autoStart) {
     container = document.getElementById('game-menu');
