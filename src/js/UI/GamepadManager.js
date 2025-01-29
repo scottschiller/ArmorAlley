@@ -86,6 +86,11 @@ const GamepadManager = (options = {}) => {
   // singular, global "gamepad index" (AA uses only one controller at a time.)
   let gpi;
 
+  /**
+   * Cultural context, if this reference is a known unknown -
+   * and then it can be a known known, instead. 😵‍💫
+   * https://youtu.be/REWeBzGuzCc
+   */
   let knownUnknown = {};
 
   const lastState = {};
