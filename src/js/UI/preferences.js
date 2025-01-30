@@ -807,6 +807,20 @@ function PrefsManager() {
     }
   }
 
+  function setDefaultFocus() {
+    let focusTarget;
+
+    if (data.network) {
+      focusTarget = dom.oFormCancel;
+    } else if (data.whatsNew) {
+      focusTarget = dom.oFormSubmit;
+    } else if (data.selectLevel) {
+      focusTarget = dom.o.querySelector('[data-focus-start-here]');
+    }
+
+    gamepad.setFocus(focusTarget || dom.oFormSubmit);
+  }
+
   function showForReal(options = {}) {
     /**
      * options = {
@@ -867,15 +881,7 @@ function PrefsManager() {
     } else {
       updateBattleLists();
 
-      // focus?
-      let focusTarget = dom.o.querySelector('[data-focus-start-here]');
-
-      if (focusTarget) {
-        gamepad.setFocus(focusTarget);
-      } else {
-        let oSubmit = document.getElementById('game-prefs-submit');
-        gamepad.setFocus(oSubmit);
-      }
+      setDefaultFocus();
 
       const fieldset = document.getElementById('prefs-select-level');
 
@@ -2292,6 +2298,7 @@ function PrefsManager() {
     toggleDisplay,
     readPrefsFromStorage,
     readAndApplyPrefsFromStorage,
+    setDefaultFocus,
     show,
     updateForm,
     updateGamepadList,
