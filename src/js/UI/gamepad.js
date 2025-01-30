@@ -486,7 +486,6 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
 }
 
 function maybeLog(info = {}) {
-  if (!!window.location.host.match(/armor-alley\.net/i)) return;
   /**
    * This exists to gather stats on controllers being used with the game,
    * and whether or not they are supported on the given OS + browser.
