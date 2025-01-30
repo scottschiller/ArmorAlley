@@ -267,7 +267,8 @@ function updateAsNavigation() {
       utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
     }
 
-    if (node && gamePrefs.gamepad && gamepad.data.active) {
+    // numerous guards - look for gamepad movement.
+    if (node && offset !== 4 && gamePrefs.gamepad && gamepad.data.active) {
       gamepad.setFocus(node);
       // show the related description text
       gameMenu.menuUpdate({ target: node });
