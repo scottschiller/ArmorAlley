@@ -829,6 +829,8 @@ function PrefsManager() {
 
     data.network = !!options.network;
 
+    data.selectLevel = !!options.selectLevel;
+
     data.whatsNew = !!options.whatsNew;
 
     game.objects.view.data.ignoreMouseEvents = true;
@@ -1018,7 +1020,10 @@ function PrefsManager() {
     dom.o.remove();
     data.active = false;
 
+    // reset "display mode" flags
+    data.network = false;
     data.whatsNew = false;
+    data.selectLevel = false;
 
     utils.css.remove(document.body, 'prefs-modal-open');
 
@@ -1503,7 +1508,8 @@ function PrefsManager() {
     readyToStart: false,
     remoteReadyToStart: false,
     bnbVolumeTestSound: null,
-    whatsNew: false
+    whatsNew: false,
+    selectLevel: false
   };
 
   dom = {
