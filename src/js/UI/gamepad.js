@@ -457,15 +457,21 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
       let node = document.getElementById('start-game-button-mobile');
       node?.focus();
     } else {
-      /**
-       * More common: home screen case
-       */
-      if (
-        data.prefsOffset === 0 &&
-        (!document.activeElement || document.activeElement.id !== 'game_level')
-      ) {
-        // initial focus
-        document.getElementById('game_level').focus();
+      if (prefsManager.isActive()) {
+        // element depends on state - battle selection, prefs, network etc.
+        prefsManager.setDefaultFocus();
+      } else {
+        /**
+         * More common: home screen case
+         */
+        if (
+          data.prefsOffset === 0 &&
+          (!document.activeElement ||
+            document.activeElement.id !== 'game_level')
+        ) {
+          // initial focus
+          document.getElementById('game_level').focus();
+        }
       }
     }
   }
