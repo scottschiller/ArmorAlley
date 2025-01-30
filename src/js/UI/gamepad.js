@@ -100,7 +100,7 @@ const shoulderMap = {
 const abxyMap = {
   bottom: actions.bomb,
   left: actions.ammo,
-  up: actions.paratrooper,
+  top: actions.paratrooper,
   right: actions.missile
 };
 
