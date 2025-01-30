@@ -248,9 +248,12 @@ function updateAsNavigation() {
       }
     }
 
-    focusNodes = document
-      .getElementById('game-menu')
-      .querySelectorAll('input, button, select, textarea, a[href]');
+    // dirty: account for mobile and hidden elements, e.g., editor button.
+    focusNodes = Array.from(
+      document
+        .getElementById('game-menu')
+        .querySelectorAll('input, button, select, textarea, a[href]')
+    ).filter((o) => !isMobile || !utils.css.has(o, 'hide-on-mobile'));
 
     data.homeFocusOffset = Math.min(
       focusNodes.length - 1,
