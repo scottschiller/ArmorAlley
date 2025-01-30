@@ -2127,7 +2127,7 @@ function PrefsManager() {
 
   events.scrollBy = (offset = 0, node = dom.oFormScroller) => {
     if (!node) return;
-      
+
     if (!data.layoutCache[node]) {
       data.layoutCache[node] = {
         /**
@@ -2141,7 +2141,13 @@ function PrefsManager() {
 
     if (data.layoutCache[node].scrollRange) {
       // move relative to current scroll position, restricting range.
-      let newScrollTop = Math.min(data.layoutCache[node].scrollRange, Math.max(node.scrollTop + (data.layoutCache[node].scrollRange * offset), 0));
+      let newScrollTop = Math.min(
+        data.layoutCache[node].scrollRange,
+        Math.max(
+          node.scrollTop + data.layoutCache[node].scrollRange * offset,
+          0
+        )
+      );
       node.scrollTop = newScrollTop;
     }
   };
