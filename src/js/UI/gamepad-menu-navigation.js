@@ -12,8 +12,6 @@ import {
   DPAD,
   FLY,
   gamepad,
-  gamepadState,
-  lastGamepadState,
   MENU,
   OFFSET_CENTER
 } from './gamepad.js';
@@ -23,10 +21,12 @@ let envelopeScroll = 0;
 
 let gameOverNodes = [];
 
-function updateAsNavigation() {
+function updateAsNavigation(gamepadManager) {
   if (!gamePrefs.gamepad) return;
 
   const { data } = gamepad;
+
+  const { lastGamepadState, gamepadState } = gamepadManager.getState();
 
   // PS4 / standard: 'options' - NES30Pro, 'select'
   if (
