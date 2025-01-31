@@ -39,32 +39,36 @@ function parseConfig(config) {
   return parsedConfig;
 }
 
-function mapGamePad(config) {
+function mapGamePad(config, key) {
   // gamepad config is label-to-button for legibility, e.g., 'start': 'btn13'
   // ...this creates the inverse.
   const map = {};
 
-  Object.keys(config.buttons).forEach((key) => {
-    map[config.buttons[key]] = key;
+  Object.keys(config.buttons).forEach((k) => {
+    map[config.buttons[k]] = k;
   });
 
-  gpMap[`${config.vendor}/${config.product}`] = map;
+  gpMap[key] = map;
 }
 
 function configGamePad(config) {
   // firstly, apply any browser-specific config overrides
   let cfg = parseConfig(config);
 
+  let key;
+
   if (cfg.vendor && cfg.product) {
-    gpConfig[`${cfg.vendor}/${cfg.product}`] = cfg;
+    key = `${cfg.vendor}/${cfg.product}`;
   } else {
     // as noted, Safari may not provide vendor + product.
     // try for label / ID, in that case.
-    gpConfig[`${cfg.label}`] = cfg;
+    key = cfg.label;
   }
 
+  gpConfig[key] = cfg;
+
   // apply mapping e.g., 'start': 'btn13' etc.
-  mapGamePad(cfg);
+  mapGamePad(cfg, key);
 }
 
 export { gpConfig, gpMap, configGamePad };
