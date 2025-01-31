@@ -109,7 +109,7 @@ const GamepadManager = (options = {}) => {
       dpads: [],
       joysticks: [],
       activeButtons: 0
-    }
+    };
   }
 
   // "mapped" state, e.g., { buttons: { 'btn3' : { pressed: false, value: 0 } } }
