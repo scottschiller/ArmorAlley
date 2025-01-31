@@ -8,13 +8,7 @@ import { game } from '../core/Game.js';
 import { autoStart, isiPhone, isMobile } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { gameMenu } from './game-menu.js';
-import {
-  DPAD,
-  FLY,
-  gamepad,
-  MENU,
-  OFFSET_CENTER
-} from './gamepad.js';
+import { DPAD, FLY, gamepad, MENU, OFFSET_CENTER } from './gamepad.js';
 import { gamePrefs } from './preferences.js';
 
 let envelopeScroll = 0;
