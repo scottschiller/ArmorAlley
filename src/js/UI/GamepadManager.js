@@ -619,7 +619,6 @@ const GamepadManager = (options = {}) => {
           ...gpConfig[`${STD}/${STD}`],
           isStandard
         };
-        console.log('assigned config', gpConfig[id]);
       } else {
         console.warn(
           'Could not find local mapping, browser did not indicate standard layout. :(',
