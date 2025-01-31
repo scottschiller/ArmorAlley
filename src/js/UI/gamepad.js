@@ -412,7 +412,9 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   let logInfo = {
     id: gpInfo.gamepad.id,
     mapping: gpInfo?.gamepad?.mapping || 'NO_MAPPING',
-    supported: !!cfg
+    supported: !!cfg,
+    buttons: gpInfo.gamepad.buttons?.length || 'unknown',
+    axes: gpInfo.gamepad.axes?.length || 'unknown'
   };
 
   // only assign if known; Safari seems not to provide this.
