@@ -104,23 +104,24 @@ const abxyMap = {
   right: actions.missile
 };
 
+function navigate() {
+  return updateAsNavigation(gamepadManager);
+}
+
 function onGamepadUpdate() {
   if (!gamePrefs.gamepad) return;
 
   // ignore if window is not in focus - excluding mobile, to be safe.
   if (!data.hasFocus && !isMobile) return;
 
-  if (game.data.started) {
-    if (game.data.battleOver) {
-      // win or lose?
-      return updateAsNavigation();
-    }
-    if (prefsManager.isActive()) {
-      return updateAsNavigation();
-    }
-    return updateAA();
-  }
-  return updateAsNavigation();
+  // home menu, etc.
+  if (!game.data.started) return navigate();
+
+  // won or lost, OR, prefs modal up?
+  if (game.data.battleOver || prefsManager.isActive()) return navigate();
+
+  // regular gameplay
+  return updateAA();
 }
 
 function updateAA() {
