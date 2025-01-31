@@ -259,10 +259,7 @@ function addControllers() {
      * The label here matches the Safari ID, a fallback for vendor/product.
      */
     label: '8Bitdo NES30 Pro Extended Gamepad',
-    ...knownControllers[STD],
-    // TODO: exclude / delete "share" button?
-    // NES30 Pro has a unique ABXY mapping.
-    ...knownControllers.nes30Pro.abxy
+    ...knownControllers[STD]
   });
 
   configGamePad({
