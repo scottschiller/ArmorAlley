@@ -22,15 +22,6 @@ function updateAsNavigation(gamepadManager) {
 
   const { lastGamepadState, gamepadState } = gamepadManager.getState();
 
-  // PS4 / standard: 'options' - NES30Pro, 'select'
-  if (
-    (gamepadState.buttons.options && !lastGamepadState.buttons.options) ||
-    (gamepadState.buttons.select && !lastGamepadState.buttons.select)
-  ) {
-    prefsManager.toggleDisplay();
-    return;
-  }
-
   // activate gamepad if a button is pressed.
   if (!data.active) {
     if (gamepadState.activeButtons) {
@@ -53,6 +44,15 @@ function updateAsNavigation(gamepadManager) {
       // wait
       return;
     }
+  }
+
+  // PS4 / standard: 'options' - NES30Pro, 'select'
+  if (
+    (gamepadState.buttons.options && !lastGamepadState.buttons.options) ||
+    (gamepadState.buttons.select && !lastGamepadState.buttons.select)
+  ) {
+    prefsManager.toggleDisplay();
+    return;
   }
 
   let { offset } = gamepadState.dpads[DPAD];
