@@ -255,7 +255,7 @@ const GamepadManager = (options = {}) => {
 
     // iterate over map, applying lastState
     Object.entries(map).forEach(([key, value]) => {
-      // 'r1': (value of btn7)
+      // e.g., 'r1': (value of btn7)
       lastGamepadState.buttons[value] = gamepadState.buttons[value];
       gamepadState.buttons[value] = lastState[`gp${gpi}/${key}`]?.value;
       /**
