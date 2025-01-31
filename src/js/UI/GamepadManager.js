@@ -354,9 +354,6 @@ const GamepadManager = (options = {}) => {
     });
 
     // joysticks
-    if (!gamepadState.joysticks) {
-      gamepadState.joysticks = [];
-      lastGamepadState.joysticks = [];
       // initial state
       gpc.joysticks?.forEach?.((joystick, i) => {
         gamepadState.joysticks[i] = {
@@ -759,9 +756,10 @@ const GamepadManager = (options = {}) => {
     data,
     enable: () => (data.enabled = true),
     disable: () => (data.enabled = false),
-    lastState,
-    lastGamepadState,
-    gamepadState,
+    getState: () => ({
+      lastGamepadState,
+      gamepadState
+    }),
     rumble
   };
 };

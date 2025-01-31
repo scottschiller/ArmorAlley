@@ -127,6 +127,8 @@ function updateAA() {
   // In-game virtual mouse pointer and gamepad UX/UI
   if (!gamePrefs.gamepad) return;
 
+  const { lastGamepadState, gamepadState } = gamepadManager.getState();
+
   // PS4 / standard: 'options' - NES30Pro, 'select'
   if (
     (gamepadState.buttons.options || gamepadState.buttons.select) &&
@@ -306,6 +308,8 @@ function checkDPad(dpad) {
   if (!dpad) return;
 
   let { offset } = dpad;
+
+  const { gamepadState } = gamepadManager.getState();
 
   if (offset === OFFSET_CENTER) {
     // D-pad inactive - try joystick, which may be assigned
@@ -689,9 +693,6 @@ const gamepadManager = GamepadManager({
   onAddOrRemove
 });
 
-// DRY
-const { lastGamepadState, gamepadState } = gamepadManager;
-
 // "API" (for now)
 const gamepad = {
   animate: () => {
@@ -712,14 +713,11 @@ const gamepad = {
   scanGamepads,
   setActive,
   setFocus,
-  state: gamepadState,
   rumble: gamepadManager.rumble
 };
 
 export {
   gamepad,
-  gamepadState,
-  lastGamepadState,
   DPAD,
   FLY,
   MENU,
