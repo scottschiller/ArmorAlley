@@ -82,6 +82,12 @@ import { addControllers } from './gamepad-known-controllers.js';
 // gamepad API: `mapping` value indicating a standard layout
 const STD = 'standard';
 
+const sp = new URLSearchParams(window.location.search);
+
+// for debugging gamepad IDs; allow testing / override via URL params
+let debugVendor = sp.get('vendor');
+let debugProduct = sp.get('product');
+
 const GamepadManager = (options = {}) => {
   // singular, global "gamepad index" (AA uses only one controller at a time.)
   let gpi;
@@ -542,6 +548,14 @@ const GamepadManager = (options = {}) => {
     }
 
     let result = { vendor, product };
+
+    if (debugVendor || debugProduct) {
+      console.warn(
+        `Found vendor/product override ${debugVendor}, ${debugProduct} vs. parsed ${vendor || 'unknown'}, ${product || 'unknown'}`
+      );
+      result.vendor = debugVendor;
+      result.product = debugProduct;
+    }
 
     parseIdCache[id] = result;
 
