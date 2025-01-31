@@ -15,6 +15,37 @@ let envelopeScroll = 0;
 
 let gameOverNodes = [];
 
+function maybeSetHomeFocus() {
+  const { data } = gamepad;
+
+  if (!gamePrefs.gamepad || !data.active) return;
+
+  // dirty: account for mobile and hidden elements, e.g., editor button.
+  let focusNodes = Array.from(
+    document
+      .getElementById('game-menu')
+      .querySelectorAll('input, button, select, textarea, a[href]')
+  ).filter((o) => !isMobile || !utils.css.has(o, 'hide-on-mobile'));
+
+  data.homeFocusOffset = Math.min(
+    focusNodes.length - 1,
+    Math.max(0, data.homeFocusOffset)
+  );
+
+  let node = focusNodes[data.homeFocusOffset];
+
+  if (!node) return;
+
+  // additional CSS to ensure "selection", if focus is lost.
+  if (document.activeElement) {
+    utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
+  }
+
+  gamepad.setFocus(node);
+  // show the related description text
+  gameMenu.menuUpdate({ target: node });
+}
+
 function updateAsNavigation(gamepadManager) {
   if (!gamePrefs.gamepad) return;
 
@@ -26,6 +57,10 @@ function updateAsNavigation(gamepadManager) {
   if (!data.active) {
     if (gamepadState.activeButtons) {
       gamepad.setActive(true);
+      // special case: if first activation and on home screen, force focus.
+      if (!game.data.active) {
+        maybeSetHomeFocus();
+      }
     } else {
       // gamepad is inactive, or has been disabled; ignore input.
       return;
@@ -252,30 +287,9 @@ function updateAsNavigation(gamepadManager) {
       }
     }
 
-    // dirty: account for mobile and hidden elements, e.g., editor button.
-    focusNodes = Array.from(
-      document
-        .getElementById('game-menu')
-        .querySelectorAll('input, button, select, textarea, a[href]')
-    ).filter((o) => !isMobile || !utils.css.has(o, 'hide-on-mobile'));
-
-    data.homeFocusOffset = Math.min(
-      focusNodes.length - 1,
-      Math.max(0, data.homeFocusOffset)
-    );
-
-    let node = focusNodes[data.homeFocusOffset];
-
-    // additional CSS to ensure "selection", if focus is lost.
-    if (document.activeElement) {
-      utils.css.remove(document.activeElement, gamepad.css.gamepadSelected);
-    }
-
-    // numerous guards - look for gamepad movement.
-    if (node && offset !== 4 && gamePrefs.gamepad && gamepad.data.active) {
-      gamepad.setFocus(node);
-      // show the related description text
-      gameMenu.menuUpdate({ target: node });
+    // update if there's movement.
+    if (offset !== 4) {
+      maybeSetHomeFocus();
     }
 
     return;
