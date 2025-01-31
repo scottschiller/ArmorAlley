@@ -249,9 +249,15 @@ const GamepadManager = (options = {}) => {
     }
 
     let parsedID = parseId(gp);
+
     let vpid = `${parsedID.vendor}/${parsedID.product}`;
-    let gpc = gpConfig[vpid];
-    let map = gpMap[vpid];
+
+    // gamepad config is always keyed off the gamepad's full ID.
+    let gpc = gpConfig[gp.id];
+
+    // if no mapping for the given vendor and product, use standard.
+    // this should probably just be attached to the config object.
+    let map = gpMap[vpid] || gpMap[`${STD}/${STD}`];
 
     // this should not happen unless a controller is unsupported.
     if (!map) return;
