@@ -451,9 +451,6 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   ) {
     data.foundFirstGamepad = true;
 
-    // activate right away, regardless of what button or d-pad bit was pressed.
-    setActive(true);
-
     /**
      * Special case: gamepad activated during auto-start (campaign) on mobile.
      * First button press should set focus on "start" button.
