@@ -55,6 +55,16 @@ function updateAsNavigation(gamepadManager) {
     return;
   }
 
+  // sanity check
+  if (
+    !gamepadState.dpads ||
+    !gamepadState.joysticks ||
+    !gamepadState.buttons ||
+    !gamepadState.abxy
+  ) {
+    console.warn('Incomplete gamepadState?', gamepadState);
+  }
+
   let { offset } = gamepadState.dpads[DPAD];
 
   // special case: reserve joysticks if game over and you won.
