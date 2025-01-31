@@ -719,10 +719,4 @@ const gamepad = {
   rumble: gamepadManager.rumble
 };
 
-export {
-  gamepad,
-  DPAD,
-  FLY,
-  MENU,
-  OFFSET_CENTER
-};
+export { gamepad, DPAD, FLY, MENU, OFFSET_CENTER };
