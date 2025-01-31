@@ -93,9 +93,22 @@ const GamepadManager = (options = {}) => {
    */
   let knownUnknown = {};
 
+  // internal raw button/axis values
   const lastState = {};
-  const lastGamepadState = {};
-  const gamepadState = {};
+
+  function getDefaultState() {
+    return {
+      buttons: {},
+      abxy: [],
+      dpads: [],
+      joysticks: [],
+      activeButtons: 0
+    }
+  }
+
+  // "mapped" state, e.g., { buttons: { 'btn3' : { pressed: false, value: 0 } } }
+  const lastGamepadState = getDefaultState();
+  const gamepadState = getDefaultState();
 
   let changed = [];
 
@@ -237,14 +250,6 @@ const GamepadManager = (options = {}) => {
     // this should not happen unless a controller is unsupported.
     if (!map) return;
 
-    if (!gamepadState.buttons) {
-      gamepadState.buttons = {};
-    }
-
-    if (!lastGamepadState.buttons) {
-      lastGamepadState.buttons = {};
-    }
-
     // running total, for convenience
     let activeButtons = 0;
 
@@ -263,9 +268,7 @@ const GamepadManager = (options = {}) => {
     });
 
     // ABXY "diamonds" (or similar groups of buttons)
-    if (!gamepadState.abxy) {
-      gamepadState.abxy = [];
-      lastGamepadState.abxy = [];
+    if (!gamepadState.abxy.length) {
       // initial state
       gpc.abxy?.forEach?.((abxy, i) => {
         lastGamepadState.abxy[i] = Object.assign({}, gamepadState.abxy[i]);
@@ -293,9 +296,7 @@ const GamepadManager = (options = {}) => {
     });
 
     // d-pads (most controllers have just one?)
-    if (!gamepadState.dpads) {
-      gamepadState.dpads = [];
-      lastGamepadState.dpads = [];
+    if (!gamepadState.dpads.length) {
       // initial state
       gpc.dpads?.forEach?.((dpad, i) => {
         lastGamepadState.dpads[i] = Object.assign({}, gamepadState.dpads[i]);
@@ -354,6 +355,7 @@ const GamepadManager = (options = {}) => {
     });
 
     // joysticks
+    if (!gamepadState.joysticks.length) {
       // initial state
       gpc.joysticks?.forEach?.((joystick, i) => {
         gamepadState.joysticks[i] = {
