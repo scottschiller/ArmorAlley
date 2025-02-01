@@ -1,3 +1,4 @@
+import { isFirefox } from '../core/global.js';
 import { configGamePad } from './gamepad-config.js';
 import { STD } from './GamepadManager.js';
 
@@ -125,6 +126,38 @@ function addControllers() {
     ]
   });
 
+  const patterns = {
+    // shared mappings used by some 8Bitdo controllers, when non-standard
+    eightBitDo: {
+      abxy0134: [
+        {
+          // X
+          top: 'btn3',
+  
+          // Y
+          left: 'btn4',
+  
+          // A
+          right: 'btn0',
+  
+          // B
+          bottom: 'btn1'
+        }
+      ],
+      nesButtons: {
+        // as labeled, NES-style
+        select: 'btn10',
+        start: 'btn11',
+  
+        // shoulder / side buttons
+        l1: 'btn6',
+        r1: 'btn7',
+        l2: 'btn8',
+        r2: 'btn9'
+      }
+    }
+  };
+  
   addKnownController('nes30Pro', {
     /**
      * 8Bitdo "NES30 Pro" controller, bluetooth version (firmware 4.10)
@@ -133,17 +166,7 @@ function addControllers() {
      * it still has a special D-pad handling case.)
      */
 
-    buttons: {
-      // as labeled, NES-style
-      select: 'btn10',
-      start: 'btn11',
-
-      // shoulder / side buttons
-      l1: 'btn6',
-      r1: 'btn7',
-      l2: 'btn8',
-      r2: 'btn9'
-    },
+    buttons: patterns.eightBitDo.nesButtons,
 
     /**
      * "ABXY" ("diamond") button layout
@@ -153,21 +176,7 @@ function addControllers() {
      *     B
      *  \_____/
      */
-    abxy: [
-      {
-        // X
-        top: 'btn3',
-
-        // Y
-        left: 'btn4',
-
-        // A
-        right: 'btn0',
-
-        // B
-        bottom: 'btn1'
-      }
-    ],
+    abxy: patterns.eightBitDo.abxy0134,
 
     joystickOptions: {
       precision: 2,
