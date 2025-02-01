@@ -600,7 +600,11 @@ const GamepadManager = (options = {}) => {
     let isStandard = isStandardMapping(gp);
 
     if (isStandard) {
-      console.log('Gamepad indicates standard mapping');
+      console.log('Gamepad indicates standard mapping.');
+    } else {
+      console.log(
+        `Gamepad does NOT indicate standard mapping${gp.mapping ? '(' + gp.mapping + ')' : ''}.`
+      );
     }
 
     config = gpConfig[`${parsedID.vendor}/${parsedID.product}`];
