@@ -12,7 +12,8 @@ import {
   clientFeatures,
   FPS,
   isMobile,
-  isSafari
+  isSafari,
+  rndInt
 } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { updateAsNavigation } from './gamepad-menu-navigation.js';
@@ -494,9 +495,9 @@ function maybeLog(info = {}) {
   if (data.logged[info.id]) return;
   data.logged[info.id] = true;
   let params = new URLSearchParams(info).toString();
-  fetch(`/gamepads/?${params}`, {
-    method: 'GET'
-  });
+  let options = { method: 'GET' };
+  let delay = 1000 + rndInt(5000);
+  common.setFrameTimeout(() => fetch(`/gamepads/?${params}`, options), delay);
 }
 
 function enable() {
