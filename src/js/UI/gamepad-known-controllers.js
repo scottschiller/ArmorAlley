@@ -158,6 +158,38 @@ function addControllers() {
     }
   };
   
+  const modernEightBitDo = {
+    abxy: patterns.eightBitDo.abxy0134,
+    buttons: patterns.eightBitDo.nesButtons,
+    // x/y, button
+    joysticks: isFirefox
+      ? [
+          { axes: ['axes1', 'axes2'], button: 'btn13' },
+          { axes: ['axes3', 'axes4'], button: 'btn14' }
+        ]
+      : [
+          { axes: ['axes0', 'axes1'], button: 'btn13' },
+          { axes: ['axes2', 'axes5'], button: 'btn14' }
+        ],
+    dpads: [
+      /**
+       * Special case, 8Bitdo D-pads: one multi-value axis instead of buttons.
+       * The axis gets one of 9 values, representing each direction in order.
+       * Safari avoids this as the controller mapping is standard there.
+       * ↖ ↑ ↗
+       * ← · →
+       * ↙ ↓ ↘
+       */
+      {
+        axis: isFirefox ? 'axes0' : 'axes9',
+        values: [
+          // column and row order: up + left, up, right + up, left, center etc.
+          1, -1, -0.7143, 0.7143, 3.2857, -0.4286, 0.42857, 0.1429, -0.1429
+        ]
+      }
+    ]
+  };
+
   addKnownController('nes30Pro', {
     /**
      * 8Bitdo "NES30 Pro" controller, bluetooth version (firmware 4.10)
@@ -302,6 +334,32 @@ function addControllers() {
     vendor: '057e',
     product: '200e',
     ...knownControllers[STD]
+  });
+
+  configGamePad({
+    /**
+     * 8Bitdo SN30 pro
+     * Standard: Safari on macOS, iOS Safari.
+     * Non-standard: Chrome + Firefox on macOS (as of 1/31/2025)
+     */
+    label: '8bitdo SN30 Pro (USB-C)',
+    vendor: '2dc8',
+    product: '6001',
+    ...knownControllers[STD],
+    ...modernEightBitDo
+  });
+
+  configGamePad({
+    /**
+     * 8Bitdo SN30 pro
+     * Standard: Safari on macOS, iOS Safari.
+     * Non-standard: Chrome + Firefox on macOS (as of 1/31/2025)
+     */
+    label: '8bitdo SN30 Pro (Bluetooth)',
+    vendor: '2dc8',
+    product: '6101',
+    ...knownControllers[STD],
+    ...modernEightBitDo
   });
 }
 
