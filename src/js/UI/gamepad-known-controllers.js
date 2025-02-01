@@ -55,28 +55,21 @@ function addControllers() {
     },
 
     /**
-     * "ABXY" ("diamond") button layout
+     * "ABXY" ("diamond") button layouts
      *
-     *    PS4      Std
-     *  /‾‾‾‾‾\  /‾‾‾‾‾\
-     *     △        X
-     *   □   ○    Y   A
-     *     ×        B
-     *  \_____/  \_____/
+     *   Sony      Std     XBOX
+     *  /‾‾‾‾‾\  /‾‾‾‾‾\  /‾‾‾‾‾\
+     *     △        X        Y
+     *   □   ○    Y   A    X   B
+     *     ×        B        A
+     *  \_____/  \_____/  \_____/
      *
      */
     abxy: [
       {
-        // △ or X
         top: 'btn3',
-
-        // □ or Y
         left: 'btn2',
-
-        // ○ or A
         right: 'btn1',
-
-        // × or B
         bottom: 'btn0'
       }
     ],
