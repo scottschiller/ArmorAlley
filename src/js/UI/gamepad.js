@@ -418,7 +418,7 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
 
   let logInfo = {
     id: gpInfo.gamepad.id,
-    mapping: gpInfo?.gamepad?.mapping || 'NO_MAPPING',
+    mapping: gpInfo?.gamepad?.mapping || 'NONE',
     supported: !!cfg,
     buttons: gpInfo.gamepad.buttons?.length || 'unknown',
     axes: gpInfo.gamepad.axes?.length || 'unknown'
