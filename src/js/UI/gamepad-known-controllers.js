@@ -361,6 +361,23 @@ function addControllers() {
     ...knownControllers[STD],
     ...modernEightBitDo
   });
+
+  configGamePad({
+    /**
+     * 8Bitdo Ultimate Wireless 2.4G (Bluetooth or USB-C = same product ID)
+     * Standard: Safari on macOS, iOS Safari.
+     * Non-standard: Chrome on macOS (as of 1/31/2025)
+     *
+     * Label provided is when connecting via bluetooth.
+     * Label when connected via USB-C differs slightly:
+     * "8BitDo Ultimate wireless Controller for PC Extended Gamepad"
+     */
+    label: '8BitDo Ultimate wireless Extended Gamepad',
+    vendor: '2dc8',
+    product: '3012',
+    ...knownControllers[STD],
+    ...modernEightBitDo
+  });
 }
 
 export { addControllers };
