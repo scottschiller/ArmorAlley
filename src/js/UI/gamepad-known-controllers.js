@@ -162,8 +162,7 @@ function addControllers() {
     /**
      * 8Bitdo "NES30 Pro" controller, bluetooth version (firmware 4.10)
      * This is NOT recognized as a "standard" gamepad layout in most browsers,
-     * and requires special handling. (Safari recognizes it as standard, but
-     * it still has a special D-pad handling case.)
+     * and requires special handling. Safari identifies it as standard.
      */
 
     buttons: patterns.eightBitDo.nesButtons,
@@ -202,6 +201,7 @@ function addControllers() {
       {
         axis: 'axes9',
         values: [
+          // column and row order: up + left, up, right + up, left, center etc.
           1, -1, -0.7143, 0.7143, 3.2857, -0.4286, 0.4286, 0.1429, -0.1429
         ]
       }
@@ -218,7 +218,9 @@ function addControllers() {
           {
             axis: 'axes0',
             values: [
-              1, -1, -0.7143, 0.7143, 3.2857, -0.4286, 0.4286, 0.1429, -0.1429
+              // column and row order: up + left, up, right + up, left, center etc.
+              1,
+              -1, -0.7143, -0.4286, 3.2857, -0.1429, 0.1429, 0.4286, 0.7143
             ]
           }
         ]
