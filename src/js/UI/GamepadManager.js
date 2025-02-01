@@ -600,10 +600,10 @@ const GamepadManager = (options = {}) => {
     let isStandard = isStandardMapping(gp);
 
     if (isStandard) {
-      console.log('Gamepad indicates standard mapping.');
+      console.log(`Gamepad "${id}" indicates standard mapping.`);
     } else {
       console.log(
-        `Gamepad does NOT indicate standard mapping${gp.mapping ? '(' + gp.mapping + ')' : ''}.`
+        `Gamepad "${id}" does NOT indicate standard mapping${gp.mapping ? '(' + gp.mapping + ')' : ''}.`
       );
     }
 
@@ -617,7 +617,7 @@ const GamepadManager = (options = {}) => {
       };
     } else {
       if (isStandard) {
-        console.log('Could not find local mapping, using standard...');
+        console.log(`Could not find local mapping for "${id}", using standard...`);
         console.log(gpConfig);
         gpConfig[id] = {
           ...gpConfig[`${STD}/${STD}`],
@@ -626,7 +626,7 @@ const GamepadManager = (options = {}) => {
         console.log('assigned config', id, gpConfig[id]);
       } else {
         console.warn(
-          'Could not find local mapping, browser did not indicate standard layout. :(',
+          `Could not find local mapping for "${id}", browser did not indicate standard layout. :(`,
           gp
         );
         // boourns.
