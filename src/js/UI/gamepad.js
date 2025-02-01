@@ -7,7 +7,13 @@
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { common } from '../core/common.js';
 import { game } from '../core/Game.js';
-import { autoStart, clientFeatures, FPS, isMobile } from '../core/global.js';
+import {
+  autoStart,
+  clientFeatures,
+  FPS,
+  isMobile,
+  isSafari
+} from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { updateAsNavigation } from './gamepad-menu-navigation.js';
 import { GamepadManager } from './GamepadManager.js';
@@ -633,7 +639,8 @@ function scanGamepads() {
 }
 
 function getSubmitHTML() {
-  if (!gamePrefs.gamepad) return '';
+  // Safari just doesn't give us enough info to be reliable.
+  if (!gamePrefs.gamepad || isSafari) return '';
 
   // Best guess at Sony/PlayStation-brand controllers, for button hints
   let isSony;
