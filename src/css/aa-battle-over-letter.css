@@ -294,6 +294,10 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   padding-bottom: calc(84px * var(--gs));
 }
 
+body.gamepad-active .animated-mail .letter .letter-context-body {
+  /* scrolling (scrollTop) set via JS, in gamepad case. */
+  overflow: hidden;
+}
 .animated-mail .letter-buttons {
   position: absolute;
   bottom: 0;
