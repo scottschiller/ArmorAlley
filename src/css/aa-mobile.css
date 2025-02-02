@@ -547,12 +547,12 @@ body:not(.is-mobile).has-gamepad.mobile-controls_right-aligned
   }
 
   body.is-mobile.is_iphone #battle-over-letter.open {
-    transform: translate3d(-50%, 0, 0) scale3d(1.85, 1.85, 1);
+    transform: translate3d(-50%, -90%, 0) scale3d(1.85, 1.85, 1);
   }
 
   body.is-mobile.is_iphone .animated-mail .letter-wrapper {
     /* size to near-top of screen */
-    height: 60vh;
+    height: 44vh;
     overflow: auto;
   }
 
