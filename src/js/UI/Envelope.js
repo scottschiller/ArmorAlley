@@ -1,9 +1,10 @@
 import { aaLoader } from '../core/aa-loader.js';
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
-import { searchParams } from '../core/global.js';
+import { isMobile, searchParams } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { campaignBattles, levelName } from '../levels/default.js';
+import { game } from '../core/Game.js';
 
 let gameTypeParam;
 let gtParam;
@@ -26,6 +27,8 @@ function Envelope() {
   dom = {
     o: null,
     oLetter: null,
+    oLetterContextBody: null,
+    oLetterWrapper: null,
     oLetterSource: null,
     nextLink: null
   };
@@ -99,8 +102,10 @@ function Envelope() {
   function close() {
     if (!data.open) return;
     data.open = false;
+    setScrollTop(0);
     utils.css.remove(dom.o, css.open);
     utils.css.addOrRemove(document.body, data.open, css.envelopeOpen);
+    clearLayoutCache();
   }
 
   function show() {
@@ -123,13 +128,39 @@ function Envelope() {
     if (!layoutCache.letterScrollRange) {
       /**
        * Repurposing for gamepad scroll shenanigans.
-       * The distance to be scrolled is the scroll height, minus displayed.
+       * Details differ on mobile, between landscape and portrait.
+       * NOTE: this is a mess and could use a JS + CSS refactoring.
        */
-      layoutCache.letterScrollRange =
-        dom.oLetter.scrollHeight - dom.oLetter.offsetHeight;
+      if (isMobile) {
+        if (game.objects.view.data.browser.isPortrait) {
+          layoutCache.letterScrollRange =
+            dom.oLetterContextBody.scrollHeight -
+            dom.oLetterContextBody.offsetHeight;
+        } else {
+          // mobile landscape
+          layoutCache.letterScrollRange = dom.oLetter.scrollHeight;
+        }
+      } else {
+        // desktop
+        layoutCache.letterScrollRange =
+          dom.oLetter.scrollHeight - dom.oLetter.offsetHeight;
+      }
     }
+
+    // scroll nodes differ on mobile. :X
     if (layoutCache.letterScrollRange) {
-      dom.oLetter.scrollTop = layoutCache.letterScrollRange * offset;
+      let scrollNode;
+      if (isMobile) {
+        if (game.objects.view.data.browser.isPortrait) {
+          scrollNode = dom.oLetterContextBody;
+        } else {
+          scrollNode = dom.oLetterWrapper;
+        }
+      } else {
+        scrollNode = dom.oLetter;
+      }
+      if (!scrollNode) return;
+      scrollNode.scrollTop = layoutCache.letterScrollRange * offset;
     }
   }
 
@@ -273,6 +304,8 @@ function Envelope() {
     dom.o = document.getElementById('battle-over-letter');
     container = dom.o;
     dom.oLetter = dom.o?.querySelector('.letter-context-body');
+    dom.oLetterContextBody = dom.o?.querySelector('.letter-context-body');
+    dom.oLetterWrapper = dom.o?.querySelector('.letter-wrapper');
     dom.oLetterSource = document.getElementById('letters-from-the-old-tanker');
     dom.nextLink = document.getElementById('next-battle');
   }
