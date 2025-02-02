@@ -298,6 +298,23 @@ body.gamepad-active .animated-mail .letter .letter-context-body {
   /* scrolling (scrollTop) set via JS, in gamepad case. */
   overflow: hidden;
 }
+
+@media screen and (orientation: landscape) {
+  body.is-mobile.gamepad-active .animated-mail .letter .letter-context-body {
+    /* tricks when using gamepad, for scrolling */
+    max-height: 100%;
+    /* only drop bottom border on mobile landscape + gamepad */
+    padding-bottom: 0px;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  body.is-mobile.gamepad-active .animated-mail .letter .letter-context-body {
+    /* limit letter height */
+    max-height: 50vh;
+  }
+}
+
 .animated-mail .letter-buttons {
   position: absolute;
   bottom: 0;
