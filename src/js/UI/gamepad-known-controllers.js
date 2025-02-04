@@ -393,13 +393,28 @@ function addControllers() {
 
   configGamePad({
     /**
-     * 8Bitdo Ultimate Wireless 2.4G (Bluetooth or USB-C = same product ID)
-     * Standard: Safari on macOS, iOS Safari.
-     * Non-standard: Chrome on macOS (as of 1/31/2025)
+     * 8Bitdo Ultimate Wireless 2.4G (+ Bluetooth + USB-C)
+     * Likely requires firmware v2.0 or newer.
      *
      * Label provided is when connecting via bluetooth.
      * Label when connected via USB-C differs slightly:
      * "8BitDo Ultimate wireless Controller for PC Extended Gamepad"
+     *
+     * Vibration looks to work on desktop Safari, in a specific case.
+     * From my findings, vibration is not supported in iOS Safari at all.
+     *
+     * With the controller's mode switched to "D":
+     * Connect via wifi, then press and hold (-) and (LB) for a moment.
+     * The controller will vibrate to indicate it's in "Switch mode."
+     *
+     * Vibration works when in "Switch" and on wifi, but not bluetooth.
+     *
+     * When connected via USB-C, (-) and (LB) switch mode doesn't work.
+     *
+     * NOTE: With the physical switch in "X" mode, the controller may cause
+     * a crash in Firefox tabs using the gamepad API with 2.4G and the
+     * aforementioned (-) and (LB) combo. "D" mode does not seem to do this.
+     *
      */
     label: '8BitDo Ultimate wireless Extended Gamepad',
     vendor: '2dc8',
