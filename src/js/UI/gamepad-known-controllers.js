@@ -338,9 +338,16 @@ function addControllers() {
 
   configGamePad({
     /**
-     * 8Bitdo SN30 pro
-     * Standard: Safari on macOS, iOS Safari.
-     * Non-standard: Chrome + Firefox on macOS (as of 1/31/2025)
+     * 8Bitdo SN30 pro, connected via USB-C.
+     * Recognized on iOS, but no vibration on iOS Safari.
+     *
+     * If not recognized, unplug and turn off (hold START 5 seconds),
+     * then press A, hold, then press and also hold START.
+     * Three green LEDs on controller should flash. Connect USB.
+     *
+     * In this mode, the controller appears as a PS4 DualShock.
+     *
+     * X-mode works partially, but joystick vertical is flipped.
      */
     label: '8bitdo SN30 Pro (USB-C)',
     vendor: '2dc8',
@@ -352,8 +359,30 @@ function addControllers() {
   configGamePad({
     /**
      * 8Bitdo SN30 pro
-     * Standard: Safari on macOS, iOS Safari.
-     * Non-standard: Chrome + Firefox on macOS (as of 1/31/2025)
+     * Support for rumble feature varies, depending on browser and mode.
+     *
+     * When powered off, hold START + [button] to set the mode.
+     * SEQUENCE TIP: Push and hold X or Y first, then press and hold START.
+     * Press the pairing button if your device does not show a prompt.
+     *
+     * Mode        Vibration (macOS)   Notes (tested 02/2025, macOS Sequoia)
+     * ---------------------------------------------------------------------
+     * START+X     Chrome, Safari
+     * START+Y     Chrome, Safari      Controller not detected in Firefox
+     * START+B     N/A
+     * START+A     Chrome, Safari      Shows as PS4 DualShock, v/p 054c/05c4
+     *
+     * iOS Safari: Vibration API appears not to be implemented.
+     * These are for bluetooth connections only. "START+A mode" works w/USB.
+     * Mode        Playable     Device name (tested 02/2025, iOS 18.3 22D60)
+     * ---------------------------------------------------------------------
+     * START+X     Yes          8Bitdo SN30 Pro
+     * START+Y     Yes          Pro Controller
+     * START+B     Yes          8Bitdo SN30 Pro
+     * START+A     Yes          DUALSHOCK 4 Wireless Controller
+     *
+     * Modes per manual: X: Windows, Y: Switch, B: Android, A: macOS
+     * https://download.8bitdo.com/Manual/Controller/SN30pro+SF30pro/SN30pro+SF30pro_Manual.pdf?20220513
      */
     label: '8bitdo SN30 Pro (Bluetooth)',
     vendor: '2dc8',
