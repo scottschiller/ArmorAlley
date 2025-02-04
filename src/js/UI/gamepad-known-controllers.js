@@ -378,6 +378,18 @@ function addControllers() {
     ...knownControllers[STD],
     ...modernEightBitDo
   });
+
+  configGamePad({
+    /**
+     * 8Bitdo Ultimate Wireless 2.4G - 3013 is the bluetooth product ID.
+     */
+    label: '8BitDo Ultimate wireless Extended Gamepad',
+    vendor: '2dc8',
+    product: '3013',
+    ...knownControllers[STD],
+    ...modernEightBitDo
+  });
+
 }
 
 export { addControllers };
