@@ -617,7 +617,9 @@ const GamepadManager = (options = {}) => {
       };
     } else {
       if (isStandard) {
-        console.log(`Could not find local mapping for "${id}", using standard...`);
+        console.log(
+          `Could not find local mapping for "${id}", using standard...`
+        );
         console.log(gpConfig);
         gpConfig[id] = {
           ...gpConfig[`${STD}/${STD}`],

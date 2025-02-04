@@ -133,13 +133,13 @@ function addControllers() {
         {
           // X
           top: 'btn3',
-  
+
           // Y
           left: 'btn4',
-  
+
           // A
           right: 'btn0',
-  
+
           // B
           bottom: 'btn1'
         }
@@ -148,7 +148,7 @@ function addControllers() {
         // as labeled, NES-style
         select: 'btn10',
         start: 'btn11',
-  
+
         // shoulder / side buttons
         l1: 'btn6',
         r1: 'btn7',
@@ -157,7 +157,7 @@ function addControllers() {
       }
     }
   };
-  
+
   const modernEightBitDo = {
     abxy: patterns.eightBitDo.abxy0134,
     buttons: patterns.eightBitDo.nesButtons,
