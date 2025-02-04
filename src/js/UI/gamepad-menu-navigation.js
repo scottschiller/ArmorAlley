@@ -58,7 +58,11 @@ function updateAsNavigation(gamepadManager) {
     if (gamepadState.activeButtons) {
       gamepad.setActive(true);
       // special case: if first activation and on home screen, force focus.
-      if (!game.data.active && !game.data.battleOver) {
+      if (
+        !game.data.active &&
+        !game.data.battleOver &&
+        !prefsManager.isActive()
+      ) {
         maybeSetHomeFocus();
       }
       // battle-over / envelope case falls through here, handled below.
