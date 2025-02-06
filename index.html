@@ -147,14 +147,52 @@
         window.aaVersion = 'V20241017';
         if (window.location.href.match(/noversion/i)) window.aaVersion = '';
 
+        function loadJS(url, onerror) {
+          if (!url) return;
+          let s = document.createElement('script');
+          s.fetchpriority = 'high';
+          s.type = 'module';
+          s.src = isProd ? `${url}.${aaVersion}` : url;
+          if (onerror) {
+            s.onerror = (e) => {
+              console.warn('Loading JS failed', url);
+              onerror();
+              s.remove();
+              s.onerror = null;
+              s = null;
+            };
+          }
+          (document.head || document.documentElement).appendChild(s);
+        }
+
         // fetch AA core bundle.
         const isProd = !!window.location.host.match(/armor-alley\.net/i);
+
+        /**
+         * Try for distributable / compressed version first, with fallback
+         * to the uncompressed, raw source module version of the game.
+         *
+         * This is handy if you just want to download and play the game
+         * on localhost:8080 etc., without having to do a full npm build.
+         */
         const bootFile = 'dist/js/aa-boot_bundle.js';
-        let s = document.createElement('script');
-        s.fetchpriority = 'high';
-        s.type = 'module';
-        s.src = isProd ? `${bootFile}.${aaVersion}` : bootFile;
-        (document.head || document.documentElement).appendChild(s);
+        const bootFileSrc = 'src/js/aa-boot.js';
+
+        function maybeSwap(el, attr, pOld, pNew) {
+          if (!el[attr].match(pOld)) return;
+          el[attr] = el[attr].replace(pOld, pNew);
+        }
+
+        loadJS(bootFile, () => {
+          console.info(`Switching to source, loading ${bootFileSrc}`);
+          // set a flag to force "development", load all assets from source.
+          window._aaForceDev = true;
+          // dirty: swap image + related sources in HTML, too; dist/ -> assets/
+          document.querySelectorAll('img, link').forEach((el) => {
+            maybeSwap(el, (el.nodeName === 'IMG' ? 'src' : 'href'), /dist\//i, 'assets/');
+          });
+          loadJS(bootFileSrc);
+        });
 
         // Special case: exclude WOFF2 when storage is at a premium. 💾🗜️
         if (!window.location.href.match(/floppy/i)) {
