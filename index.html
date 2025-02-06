@@ -155,7 +155,6 @@
           s.src = isProd ? `${url}.${aaVersion}` : url;
           if (onerror) {
             s.onerror = (e) => {
-              console.warn('Loading JS failed', url);
               onerror();
               s.remove();
               s.onerror = null;
@@ -184,12 +183,17 @@
         }
 
         loadJS(bootFile, () => {
-          console.info(`Switching to source, loading ${bootFileSrc}`);
+          console.warn(`Switching to dev mode, loading ${bootFileSrc}.`);
           // set a flag to force "development", load all assets from source.
-          window._aaForceDev = true;
+          window._aaMissingDist = true;
           // dirty: swap image + related sources in HTML, too; dist/ -> assets/
           document.querySelectorAll('img, link').forEach((el) => {
-            maybeSwap(el, (el.nodeName === 'IMG' ? 'src' : 'href'), /dist\//i, 'assets/');
+            maybeSwap(
+              el,
+              el.nodeName === 'IMG' ? 'src' : 'href',
+              /dist\//i,
+              'assets/'
+            );
           });
           loadJS(bootFileSrc);
         });
