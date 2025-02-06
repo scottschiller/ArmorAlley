@@ -16,8 +16,11 @@ const isLocalhost = !!wl.host.match(/localhost/i);
 
 const sp = new URLSearchParams(wl.search);
 const forceProd = sp.get('prod');
-const dev = !forceProd && (sp.get('dev') || !isProdSite);
+const dev = !forceProd && (sp.get('dev') || !isProdSite || window._aaForceDev);
 const isFloppy = !!(wl.href.match(/floppy/i) || sp.get('floppy'));
+
+// global "development version" flag (src/ vs. dist/ for assets)
+window._aaDev = !!dev;
 
 // e.g., '.V20231216'
 const version = (dev || isLocalhost) && !forceProd ? '' : v || '';
