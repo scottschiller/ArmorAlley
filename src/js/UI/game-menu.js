@@ -321,7 +321,9 @@ function init() {
 
   utils.events.add(document, 'click', formClick);
   utils.events.add(optionsButton, 'click', () => showPrefs());
-  utils.events.add(whatsNewButton, 'click', () => showPrefs({ whatsNew: true }));
+  utils.events.add(whatsNewButton, 'click', () =>
+    showPrefs({ whatsNew: true })
+  );
   utils.events.add(menu, 'mouseover', menuUpdate);
   utils.events.add(menu, 'mouseout', menuUpdate);
 
