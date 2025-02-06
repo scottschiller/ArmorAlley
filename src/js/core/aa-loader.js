@@ -337,22 +337,26 @@ function minifyAndVersion(url) {
     return `${url.match(/dist\//i) ? '' : 'dist'}/${fileExt}/${url}${url.match(/\.(js|css|html)/i) ? '.gz' : ''}`;
 
   // minified, production assets load from dist/ with a .V[0-9]+ versioning pattern.
-  if (isProdSite || forceProd) return `dist/${fileExt}/${url}${version}`;
+  if (isProd()) return `dist/${fileExt}/${url}${version}`;
 
   // dev / local
   return `src/${fileExt}/${url}`;
 }
 
+function isProd() {
+  return (isProdSite || forceProd) && !window._aaDev;
+}
+
 function getAudioRoot() {
-  return isProdSite || forceProd ? 'dist/audio' : 'assets/audio';
+  return isProd() ? 'dist/audio' : 'assets/audio';
 }
 
 function getImageRoot() {
-  return isProdSite || forceProd ? 'dist/image' : 'assets/image';
+  return isProd() ? 'dist/image' : 'assets/image';
 }
 
 function getVideoRoot() {
-  return isProdSite || forceProd ? 'dist/video' : 'assets/video';
+  return isProd() ? 'dist/video' : 'assets/video';
 }
 
 function localFetch(src, fetchMethod, onload) {
