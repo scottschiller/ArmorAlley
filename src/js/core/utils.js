@@ -368,93 +368,13 @@ const utils = {
     getImageFromSpriteSheet: (imgRef, callback) => {
       // extract and cache a named image (based on URL) from the "default" spritesheet
       let ssURL = SPRITESHEET_URL;
-
-      function ssReady(ssImg) {
-        // NOTE: `imageSpriteConfig` is an external reference, generated
-        // and included only in the production bundle by the build process.
-        const ssConfig = imageSpriteConfig[imgRef];
-
-        if (!ssConfig) return;
-
-        // extract and cache.
-        let extractedImg = new Image();
-
-        if (!bufferCanvas) {
-          bufferCanvas = document.createElement('canvas');
-          bufferCanvasCtx = bufferCanvas.getContext('2d', {
-            useDevicePixelRatio: false,
-            alpha: true
-          });
-        }
-
-        let x = ssConfig[0];
-        let y = ssConfig[1];
-        let w = ssConfig[2];
-        let h = ssConfig[3];
-
-        const imageName = imgRef.substring(imgRef.lastIndexOf('/') + 1);
-        const scale = upscaleByName[imageName] || 1;
-
-        const targetWidth = w * scale;
-        const targetHeight = h * scale;
-
-        bufferCanvas.width = targetWidth;
-        bufferCanvas.height = targetHeight;
-
-        // note: no smoothing, this is a 1:1-scale copy.
-        bufferCanvasCtx.imageSmoothingEnabled = false;
-
-        bufferCanvasCtx.drawImage(
-          ssImg,
-          x,
-          y,
-          w,
-          h,
-          0,
-          0,
-          targetWidth,
-          targetHeight
-        );
-
-        // TODO: implement properly. :P
-        if (useAtkinson) {
-          atkinson(
-            imageName,
-            bufferCanvas,
-            bufferCanvasCtx,
-            targetWidth,
-            targetHeight
-          );
-        }
-
-        extractedImg.onload = () => {
-          extractedImg.onload = null;
-          callback?.(extractedImg);
-        };
-
-        // more modern vs. toDataURL() - and faster?
-        bufferCanvas.toBlob((blob) => {
-          const url = URL.createObjectURL(blob);
-
-          extractedImg.onload = () => {
-            extractedImg.onload = null;
-            callback?.(extractedImg);
-            // blob no longer needed, revoke momentarily
-            window.requestAnimationFrame(() => URL.revokeObjectURL(url));
-          };
-
-          extractedImg.src = url;
-        });
-
-        // mark in cache
-        imageObjects[imgRef] = extractedImg;
-      }
-
       // fetch, as needed
       if (imageObjects[ssURL]) {
-        ssReady(imageObjects[ssURL]);
+        imageResourceReady(imageObjects[ssURL], imgRef, callback);
       } else {
-        utils.image.load(ssURL, ssReady);
+        utils.image.load(ssURL, (ssImg) =>
+          imageResourceReady(ssImg, imgRef, callback)
+        );
       }
     },
     getImageObject: (url = emptyURL, onload) => {
@@ -759,6 +679,83 @@ const utils = {
     preloadNext();
   }
 };
+
+function imageResourceReady(ssImg, imgRef, callback) {
+  // NOTE: `imageSpriteConfig` is an external reference, generated
+  // and included only in the production bundle by the build process.
+
+  if (aaLoader.missingDist) {
+    // hack for dev / local: fix path -> spritesheet lookup
+    imgRef = imgRef.replace(aaLoader.getImageRoot(), '');
+  }
+
+  const ssConfig = imageSpriteConfig[imgRef];
+
+  if (!ssConfig) return;
+
+  // extract and cache.
+  let extractedImg = new Image();
+
+  if (!bufferCanvas) {
+    bufferCanvas = document.createElement('canvas');
+    bufferCanvasCtx = bufferCanvas.getContext('2d', {
+      useDevicePixelRatio: false,
+      alpha: true
+    });
+  }
+
+  let x = ssConfig[0];
+  let y = ssConfig[1];
+  let w = ssConfig[2];
+  let h = ssConfig[3];
+
+  // in dev when loading original sprite assets from disk, x/y are always 0,0.
+  if (aaLoader.missingDist) {
+    x = y = 0;
+  }
+
+  const imageName = imgRef.substring(imgRef.lastIndexOf('/') + 1);
+  const scale = upscaleByName[imageName] || 1;
+
+  const targetWidth = w * scale;
+  const targetHeight = h * scale;
+
+  bufferCanvas.width = targetWidth;
+  bufferCanvas.height = targetHeight;
+
+  // note: no smoothing, this is a 1:1-scale copy.
+  bufferCanvasCtx.imageSmoothingEnabled = false;
+
+  bufferCanvasCtx.drawImage(ssImg, x, y, w, h, 0, 0, targetWidth, targetHeight);
+
+  // TODO: implement properly. :P
+  if (useAtkinson) {
+    atkinson(
+      imageName,
+      bufferCanvas,
+      bufferCanvasCtx,
+      targetWidth,
+      targetHeight
+    );
+  }
+
+  // more modern vs. toDataURL() - and faster?
+  bufferCanvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+
+    extractedImg.onload = () => {
+      extractedImg.onload = null;
+      callback?.(extractedImg);
+      // blob no longer needed, revoke momentarily
+      window.requestAnimationFrame(() => URL.revokeObjectURL(url));
+    };
+
+    extractedImg.src = url;
+  });
+
+  // mark in cache
+  imageObjects[imgRef] = extractedImg;
+}
 
 // caches
 const preloadedImageURLs = {};
