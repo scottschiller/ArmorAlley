@@ -1,4 +1,5 @@
 import { atkinson } from '../UI/atkinson.js';
+import { aaLoader } from './aa-loader.js';
 import { IMAGE_ROOT, SPRITESHEET_URL, imageSpriteConfig } from './global.js';
 
 // temporary / prototype stuff
@@ -463,7 +464,7 @@ const utils = {
           nonFlippedSrc.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
         );
 
-        if (imageSpriteConfig?.[shortSrc]) {
+        if (imageSpriteConfig?.[shortSrc] && !aaLoader.missingDist) {
           // extract from sprite, and flip.
           utils.image.getImageFromSpriteSheet(shortSrc, (nonFlippedImg) =>
             flip(nonFlippedImg)
@@ -472,7 +473,9 @@ const utils = {
           // flipping a non-spritesheet asset
           // fetch the original asset, then flip and cache
           utils.image.load(nonFlippedSrc, (nonFlippedImg) =>
-            flip(nonFlippedImg)
+            imageResourceReady(nonFlippedImg, nonFlippedSrc, (scaledImg) =>
+              flip(scaledImg)
+            )
           );
         }
       } else {
@@ -483,7 +486,7 @@ const utils = {
           src.indexOf(IMAGE_ROOT) + IMAGE_ROOT.length
         );
 
-        if (imageSpriteConfig?.[shortSrc]) {
+        if (imageSpriteConfig?.[shortSrc] && !aaLoader.missingDist) {
           // spritesheet asset case
           utils.image.getImageFromSpriteSheet(shortSrc, (newImg) => {
             preProcess(src, newImg, (processedImg) => {
@@ -496,9 +499,13 @@ const utils = {
         } else {
           // load image directly from disk
           img.onload = () => {
-            preProcess(src, img, (processedImg) => {
-              preloadedImageURLs[url] = processedImg.src;
-              doCallback();
+            imageResourceReady(img, src, (scaledImg) => {
+              preProcess(src, scaledImg, (processedImg) => {
+                preloadedImageURLs[url] = src;
+                // update local cache with the new blob-based extracted source.
+                img.src = processedImg.src;
+                doCallback();
+              });
             });
           };
           img.onerror = () => {
