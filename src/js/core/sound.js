@@ -751,7 +751,7 @@ function addSound(options) {
   };
 
   // Use audio sprite for applicable sounds
-  if (audioSpriteConfig?.sprite?.[name]) {
+  if (audioSpriteConfig?.sprite?.[name] && !aaLoader.missingDist) {
     // if version string is present, provide explicit type so SM2 knows the MIME.
     options.type = `audio/${chosenCodec}`;
     // for debugging, include the original URL.
