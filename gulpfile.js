@@ -575,7 +575,7 @@ function copyThatFloppy() {
     src([
       'dist/**/*',
       // exclude any floppy versions, too
-      '!dist/floppy-*/**/*',
+      '!dist/{floppy-*,floppy-*/**}',
       '!**/.*',
       '!**/*.json',
       '!**/*.md',
