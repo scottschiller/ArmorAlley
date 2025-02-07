@@ -428,17 +428,19 @@ function copyStaticResources() {
   ]);
 }
 
-const asConfigMP3 = {
-  format: 'howler',
-  export: 'mp3',
-  output: asName,
-  gap: 0.01,
-  vbr: 9,
-  channels: 2,
-  // undocumented - consistent gap between samples
-  ignorerounding: true,
-  // less-noisy output
-  log: 'notice'
+function getAudioOptions() {
+  return {
+    format: 'howler',
+    export: 'mp3',
+    output: asName,
+    gap: 0.01,
+    vbr: 9,
+    channels: 2,
+    // undocumented - consistent gap between samples
+    ignorerounding: true,
+    // less-noisy output
+    log: 'notice'
+  }
 };
 
 const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
@@ -447,7 +449,7 @@ const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
 
 function createAudioSpriteMP3() {
   return src(audioSpriteFiles)
-    .pipe(audiosprite(asConfigMP3))
+    .pipe(audiosprite(getAudioOptions()))
     .pipe(dest(dp.audio));
 }
 
@@ -455,7 +457,7 @@ function createAudioSpriteOGG() {
   return src(audioSpriteFiles)
     .pipe(
       audiosprite({
-        ...asConfigMP3,
+        ...getAudioOptions(),
         export: 'ogg',
         // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
         bitrate: 64
@@ -469,7 +471,7 @@ function hearThatFloppy(callback) {
     // lo-fi OGG sprite for floppy version
     src(audioSpriteFiles),
     audiosprite({
-      ...asConfigMP3,
+      ...getAudioOptions(),
       export: 'ogg',
       // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
       bitrate: 32,
