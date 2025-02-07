@@ -54,7 +54,7 @@ The npm `http-server` package is popular and convenient, and supports byte servi
 
 **Install `http-server`**
 
-* Install [npm](https://npmjs.org), if you don't have it yet.
+* Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`.
 
 * From the command prompt, within the Armor Alley directory:
 
@@ -84,15 +84,25 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 **Install required dev dependencies**
 
-* With `npm` installed - from the CLI, within the AA home directory (which has `package.json`):
+* Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`. The AA project uses a variety of npm packages ("libraries") for its build process.
+
+* With `npm` installed, run this command within the AA home directory (which has `package.json`):
 
   `npm install`
 
-  (Wait while magic happens)
+  (Wait while "magic" happens)
 
   This should grab all of the required "dev dependencies."
 
   If all is well, you should now have "gulp" and related packages which bundle, minify and concatenate JS + CSS files and generate spritesheet assets.
+
+**Install required system libraries**
+
+* The build process for Armor Alley includes encoding .WAV audio to .MP3 and .OGG formats via `ffmpeg`, and building spritesheets via `imagemagick`.
+
+* You will need to install `ffmpeg` with `libmp3lame` and `libvorbis` support in order to encode .MP3 and .OGG, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Vorbis and lame may be included by default - so `brew install ffmpeg` may work. If not, `brew install ffmpeg --with-theora --with-libvorbis` may be the next thing to try.
+
+* On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + OGG support.
 
 **Build the JS bundle + minified CSS**
 
