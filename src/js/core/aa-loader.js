@@ -14,11 +14,11 @@ const wl = window.location;
 const isProdSite = !!wl.host.match(/armor-alley\.net/i);
 const isLocalhost = !!wl.host.match(/localhost/i);
 
-const sp = new URLSearchParams(wl.search);
-const forceProd = sp.get('prod');
-
 // used to switch between dist/ and src/
 const missingDist = window._aaMissingDist;
+
+const sp = new URLSearchParams(wl.search);
+const forceProd = sp.get('prod') && !missingDist;
 
 const dev = !forceProd && (sp.get('dev') || !isProdSite || missingDist);
 const isFloppy = !!(wl.href.match(/floppy/i) || sp.get('floppy'));
@@ -34,7 +34,7 @@ function hello() {
           ? '💾 floppy disk build.'
           : 'using development JS.'
         : `using production JS build, ${
-            version.length ? version.substring(1) : '[none]'
+            version.length ? version.substring(1) : 'no versioning'
           }. Try ?dev=1 for the full source with comments.`)
   );
 }

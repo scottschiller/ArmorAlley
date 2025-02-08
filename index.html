@@ -117,7 +117,6 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-
     <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link
@@ -142,17 +141,33 @@
     </style>
     <script>
       (() => {
-        // "version" string, for CSS + JS assets.
-        // comment out this line if you are getting 404s, etc.
-        window.aaVersion = 'V20241017';
-        if (window.location.href.match(/noversion/i)) window.aaVersion = '';
+        // "version" string for loading assets.
+        window.aaVersion = 'V20250207';
+
+        let wl = window.location;
+        let wlhref = wl.href;
+        let wlhost = wl.host;
+
+        // ?prod=1 to force production build, loading assets from dist/ rather than src/
+        let forceProd = wlhref.match(/prod=1/i);
+
+        let isProdHost = wlhost.match(/armor-alley\.net/i);
+        let isProd = isProdHost || forceProd;
+
+        // For testing in production
+        let noVersion = wlhref.match(/noversion/i);
+
+        if (!isProdHost || noversion) {
+          // Versioning is applicable on the production site, e.g., aa.js.V20250101
+          // Without a custom .htaccess or similar rule, you'll get 404s.
+          window.aaVersion = '';
+        }
 
         function loadJS(url, onerror) {
           if (!url) return;
           let s = document.createElement('script');
           s.fetchpriority = 'high';
           s.type = 'module';
-          s.src = isProd ? `${url}.${aaVersion}` : url;
           if (onerror) {
             s.onerror = (e) => {
               onerror();
@@ -161,11 +176,9 @@
               s = null;
             };
           }
+          s.src = isProd && aaVersion ? `${url}.${aaVersion}` : url;
           (document.head || document.documentElement).appendChild(s);
         }
-
-        // fetch AA core bundle.
-        const isProd = !!window.location.host.match(/armor-alley\.net/i);
 
         /**
          * Try for distributable / compressed version first, with fallback
@@ -182,10 +195,15 @@
           el[attr] = el[attr].replace(pOld, pNew);
         }
 
-        loadJS(bootFile, () => {
-          console.warn(`Switching to dev mode, loading ${bootFileSrc}.`);
-          // set a flag to force "development", load all assets from source.
+        function bootDev() {
+          isProd = false;
+
+          // allow versioning if running dev, but ON production.
+          if (!isProdHost || noVersion) window.aaVersion = '';
+
+          // force "development", load all assets from source.
           window._aaMissingDist = true;
+
           // dirty: swap image + related sources in HTML, too; dist/ -> assets/
           document.querySelectorAll('img, link').forEach((el) => {
             maybeSwap(
@@ -195,8 +213,20 @@
               'assets/'
             );
           });
+
           loadJS(bootFileSrc);
-        });
+        }
+
+        if (isProd) {
+          // Production: boot from dist/ version first, with fallback.
+          loadJS(bootFile, () => {
+            console.info(`Switching to dev mode, loading ${bootFileSrc}.`);
+            bootDev();
+          });
+        } else {
+          // Dev: boot from src/ - wait for DOM ready
+          window.addEventListener('DOMContentLoaded', bootDev);
+        }
 
         // Special case: exclude WOFF2 when storage is at a premium. 💾🗜️
         if (!window.location.href.match(/floppy/i)) {
