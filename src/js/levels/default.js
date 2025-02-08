@@ -71,15 +71,21 @@ const networkBattles = [
 
 /**
  * Battle "flags" from the original game
- * [B]ullets: the helicopters are equipped with bullets, instead of aimed missiles.
- * [N]apalm: the helicopters are equipped with napalm. (Bombs explode larger, instead of just a "spark" when they hit the ground.]
+ * 
+ * [B]ullets: helicopters are equipped with bullets, vs. aimed missiles.
+ * 
+ * [N]apalm: the helicopters are equipped with napalm
+ * (Bombs explode larger, instead of just a "spark" when they hit targets.)
+ * 
  * [S]tealth: the opposing team's helicopters do not appear on the radar.
+ * 
  * [J]amming: the radars do not operate.
  *
  * Ratings:
  *
- * IQ - This is a rating of the computer intelligence. (N.B.: "IQ" ratings are not implemented in this remake.)
- * Fairness - The field is biased toward the left player or right player and is indicated by a rating of -9 (left) to +9 (right).
+ * IQ - This is a rating of the computer intelligence.
+ * Fairness - The field is biased toward the left player or right player and is
+ * indicated by a rating of -9 (left) to +9 (right).
  *
  * "Boot Camp"
  *
