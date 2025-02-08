@@ -60,6 +60,11 @@ body:not(.is_firefox) #game-menu-wrapper {
   opacity: 1;
 }
 
+body.bnb #game-menu-wrapper.active {
+  /* allow "sticker" to overlap radar if needed on shorter screens */
+  z-index: 1;
+}
+
 @media screen and (max-height: 780px) and (orientation: landscape) {
   #game-menu-wrapper {
     /**
