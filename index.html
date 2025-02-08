@@ -157,7 +157,7 @@
         // For testing in production
         let noVersion = wlhref.match(/noversion/i);
 
-        if (!isProdHost || noversion) {
+        if (!isProdHost || noVersion) {
           // Versioning is applicable on the production site, e.g., aa.js.V20250101
           // Without a custom .htaccess or similar rule, you'll get 404s.
           window.aaVersion = '';
