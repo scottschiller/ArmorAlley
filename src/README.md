@@ -102,7 +102,7 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 * You will need to install `ffmpeg` with `libmp3lame` and `libvorbis` support in order to encode .MP3 and .OGG, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Vorbis and lame may be included by default - so `brew install ffmpeg` may work. If not, `brew install ffmpeg --with-theora --with-libvorbis` may be the next thing to try.
 
-* On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + OGG support.
+* On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + OGG support. For imagemagick, you can try `winget install ImageMagick.Q8`.
 
 **Build the JS bundle + minified CSS**
 
