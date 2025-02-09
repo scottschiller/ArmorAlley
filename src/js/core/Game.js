@@ -699,6 +699,8 @@ const game = (() => {
       return startEditor();
     }
 
+    game.logEvent('GAME_START');
+
     objects.envelope.setLevel(levelName);
 
     // unlimited vs. limited-lives mode - N/A for tutorial and network.
