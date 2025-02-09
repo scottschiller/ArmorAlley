@@ -246,6 +246,8 @@ const Van = (options = {}) => {
 
     utils.css.add(document.body, 'game-over');
 
+    game.logEvent('GAME_OVER');
+
     game.objects.stats.displayEndGameStats();
   }
 
