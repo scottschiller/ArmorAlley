@@ -686,6 +686,13 @@ const game = (() => {
     populateTerrain();
 
     game.objects.editor.init();
+
+    utils.log({
+      info: {
+        event: '_EDITOR_START_',
+        level_name: levelName
+      }
+    });
   }
 
   // when the player has chosen a game type from the menu - tutorial, or easy/hard/extreme.
