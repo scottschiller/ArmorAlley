@@ -664,6 +664,15 @@ const game = (() => {
     }
   }
 
+  function logEvent(type) {
+    if (!type) return;
+    if (!logEvents[type]) {
+      console.warn('logEvent(): No type found?', type);
+      return;
+    }
+    logEvents[type]();
+  }
+
   function startEditor() {
     // stop scrolling
     utils.css.remove(document.getElementById('game-tips'), 'active');
@@ -1044,6 +1053,7 @@ const game = (() => {
     },
     initArmorAlley,
     iQuickRandom,
+    logEvent,
     objectConstructors,
     objects,
     objectsById,
@@ -1059,5 +1069,8 @@ const game = (() => {
 
   return exports;
 })();
+
+const logEvents = {
+};
 
 export { game, gameType, screenScale };
