@@ -639,6 +639,35 @@ const utils = {
     };
   })(),
 
+  log: ({
+    info = {},
+    delay = 1000 + parseInt(Math.random() * 5000, 10),
+    rawValues = false
+  }) => {
+    /**
+     * Game events and stats: basic usage, is the game working well etc.
+     * Also, TBD: Optional Webhooks for posting games to Slack and Discord.
+     */
+
+    // drop false-y values from { key: value }
+    if (!rawValues) {
+      info = filter(info);
+    }
+
+    let params = new URLSearchParams(info).toString();
+    let options = { method: 'GET' };
+
+    function doLog() {
+      fetch(`/events/?${params}`, options);
+    }
+
+    if (delay) {
+      window.setTimeout(doLog, delay);
+    } else {
+      doLog();
+    }
+  },
+
   preRenderSprites: (options = { all: false, callback: null }) => {
     // Pre-render and cache certain animation sequences, reduce flicker on game start.
     if (!imageSpriteConfig) return;
@@ -762,6 +791,16 @@ function imageResourceReady(ssImg, imgRef, callback) {
 
   // mark in cache
   imageObjects[imgRef] = extractedImg;
+}
+
+function filter(obj) {
+  // for { key: value }, drop false-y values
+  return Object.keys(obj).reduce((acc, key) => {
+    if (obj[key]) {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
 }
 
 // caches
