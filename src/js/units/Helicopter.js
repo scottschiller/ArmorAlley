@@ -549,6 +549,9 @@ const Helicopter = (options = {}) => {
     // optional param: ±1 - presently used when purchasing additional choppers
     if (common.unlimitedLivesMode()) return;
     data.lives += plusOrMinusOneLife;
+    if (plusOrMinusOneLife === 1) {
+      data.livesPurchased++;
+    }
     document.getElementById('lives-count').innerText = Math.max(0, data.lives);
   }
 
@@ -1343,6 +1346,8 @@ const Helicopter = (options = {}) => {
 
   function die(dieOptions = {}) {
     if (data.dead) return;
+
+    data.livesLost++;
 
     data.respawnCompleteTimer?.reset();
     data.respawnCompleteTimer = null;
@@ -3260,6 +3265,8 @@ const Helicopter = (options = {}) => {
       blinkCounterHide: 8 * (FPS / 30),
       blinkCounterReset: 16 * (FPS / 30),
       lives: DEFAULT_LIVES,
+      livesLost: 0,
+      livesPurchased: 0,
       votes: {
         ammo: 0,
         bomb: 0
