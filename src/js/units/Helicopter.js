@@ -1742,7 +1742,9 @@ const Helicopter = (options = {}) => {
 
     // TODO: implement data.ammoTarget for network games
     if (
-      (gamePrefs.gamepad && gamepad.data.state.isFiring) ||
+      (gamePrefs.gamepad &&
+        gamepad.data.active &&
+        gamepad.data.state.isFiring) ||
       (data.isCPU && !net.active)
     ) {
       // aim for data.ammoTarget
@@ -2238,7 +2240,7 @@ const Helicopter = (options = {}) => {
      */
     if (
       data.isLocal &&
-      (gamePrefs.gamepad || clientFeatures.touch) &&
+      ((gamePrefs.gamepad && gamepad.data.active) || clientFeatures.touch) &&
       !data.ejectTimer
     ) {
       // mark the first event...
@@ -2349,7 +2351,13 @@ const Helicopter = (options = {}) => {
   }
 
   function maybeRumbleOnLanding() {
-    if (!gamePrefs.gamepad || !data.isLocal || data.isCPU) return;
+    if (
+      !gamePrefs.gamepad ||
+      !gamepad.data.active ||
+      !data.isLocal ||
+      data.isCPU
+    )
+      return;
     // a bit of fun: bump the controller relative to how fast the chopper was descending.
 
     // throttle
@@ -2662,7 +2670,7 @@ const Helicopter = (options = {}) => {
 
   function reactToDamage(attacker) {
     // hackish: data.exploding is true before dead = true, long story short here.
-    if (gamePrefs.gamepad) {
+    if (gamePrefs.gamepad && gamepad.data.active) {
       if (data.dead || !data.energy || data.exploding) {
         // throttle
         if (!data.rumbleTimer) {
