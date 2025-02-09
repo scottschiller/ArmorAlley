@@ -318,6 +318,7 @@ const Inventory = () => {
       withinUnitLimits(type, player.data.isEnemy);
 
     if (canAfford && canOrder) {
+      game.objects[TYPES.endBunker][bunkerOffset].data.fundsSpent += cost;
       game.objects[TYPES.endBunker][bunkerOffset].data.funds -= cost;
 
       game.objects.view.updateFundsUI();

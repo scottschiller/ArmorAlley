@@ -100,6 +100,9 @@ const EndBunker = (options = {}) => {
     // 100% or 50% of available funds, if > 0.
     capturedFunds = Math.max(0, allFunds ? data.funds : data.funds >> 1);
 
+    // track how much was stolen from local player, before going negative.
+    data.fundsLost += data.funds;
+
     // once captured, now in the hole financially.
     // this can be reset by recapturing the bunker, OR earning 25 funds.
     data.funds = -25;
@@ -153,6 +156,7 @@ const EndBunker = (options = {}) => {
 
     // who gets the loot?
     beneficiary.data.funds += capturedFunds;
+    beneficiary.data.fundsCaptured += capturedFunds;
 
     game.objects.view.updateFundsUI();
 
@@ -244,11 +248,13 @@ const EndBunker = (options = {}) => {
      */
     if (helicopter.data.isLocal) {
       data.funds++;
+      data.fundsEarned++;
       game.objects.view.updateFundsUI();
       helicopter.updateStatusUI({ funds: true });
     } else if (helicopter.data.isCPU) {
       // TODO: does this need any special handling for network games? :X
       data.funds++;
+      data.fundsEarned++;
     }
   }
 
@@ -381,6 +387,10 @@ const EndBunker = (options = {}) => {
       halfHeight: height / 2,
       doorWidth: 5,
       funds: DEFAULT_FUNDS,
+      fundsEarned: 0,
+      fundsSpent: 0,
+      fundsCaptured: 0,
+      fundsLost: 0,
       // give CPU an advantage via "discount" on ordering, so it can send out larger convoys up front on tougher battles.
       // up to 200% scale plus 12%, for Midnight Oasis on Armorgeddon where the enemy can afford the largest convoys up-front.
       fundsMultiplier:
