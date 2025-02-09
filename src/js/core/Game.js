@@ -1090,7 +1090,7 @@ const logEvents = {
     utils.log({
       info: {
         // _NET_BATTLE_WON_ / _NET_BATTLE_LOST_
-        event: net.active ? `_NET_${wl}_` : `_${wl}_`,
+        event: net.active ? `_NET${wl}` : wl,
         game_duration:
           game.objects.gameLoop.data.frameCount -
           game.objects.gameLoop.data.gameStartFrameCount,
