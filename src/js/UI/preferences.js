@@ -449,31 +449,15 @@ function PrefsManager() {
   }
 
   function doHostSetup(id) {
-    const wl = window.location;
-
-    let params = [`id=${id}&game_style=network`];
-
-    // add existing query params to array, too.
-    if (window.location.search.length) {
-      params = params.concat(window.location.search.substring(1).split('&'));
-    }
-
     updateNetworkStatus('Ready');
 
-    // TODO: filter URL params, drop ones that are prefs?
-    const inviteURL = `${wl.origin}${wl.pathname}?${params.join('&')}`;
-    const inviteURLDisplay =
-      inviteURL.length > 120 ? inviteURL.slice(0, 120) + '...' : inviteURL;
-    const inviteContainer = document.getElementById(
-      'network-options-invite-container'
-    );
     const inviteButton = document.getElementById('network-options-invite-link');
 
     inviteButton.disabled = '';
 
-    const linkDetail = document.getElementById('network-options-link');
-
-    inviteButton.onclick = events.onInvite;
+    inviteButton.onclick = () => {
+      events.onInvite(id);
+    };
   }
 
   function startNetwork() {
@@ -2255,9 +2239,27 @@ function PrefsManager() {
     gameMenu.updateGameLevelControl();
   };
 
-  events.onInvite = () => {
+  events.onInvite = (id) => {
+    // TODO: filter URL params, drop ones that are prefs?
+    let inviteParams = [`id=${id}&game_style=network`];
+
+    // add existing query params to array, too.
+    if (window.location.search.length) {
+      inviteParams = inviteParams.concat(
+        window.location.search.substring(1).split('&')
+      );
+    }
+    const wl = window.location;
+    const inviteURL = `${wl.origin}${wl.pathname}?${inviteParams.join('&')}`;
+
     copyToClipboard(inviteURL, (ok) => {
-      inviteContainer.remove();
+      const inviteContainer = document.getElementById(
+        'network-options-invite-container'
+      );
+      inviteContainer?.remove();
+      const inviteURLDisplay =
+        inviteURL.length > 120 ? inviteURL.slice(0, 120) + '...' : inviteURL;
+      const linkDetail = document.getElementById('network-options-link');
       linkDetail.innerHTML = [
         `<p class="non-indented">Send this link to a friend. You are the host, and they will connect to you.</p>`,
         `<a href="${inviteURL}" onclick="return false" class="no-hover" style="font-weight:bold;font-size:75%">${inviteURLDisplay}</a>`,
