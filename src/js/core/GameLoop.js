@@ -534,6 +534,7 @@ const GameLoop = () => {
     frameSamples: 0,
     frameExecTime: 0,
     frameTimingComplete: false,
+    gameStartFrameCount: 0,
     lastExec: 0,
     packetWaitCounter: 0,
     frames: 0,

@@ -67,7 +67,7 @@ import { addItem as addTerrainItem } from '../elements/Terrain.js';
 import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
-import { scoreCreate } from './scores.js';
+import { getScore, scoreCreate } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -1080,6 +1080,81 @@ const game = (() => {
 })();
 
 const logEvents = {
+  GAME_OVER: () => {
+    let wl = game.data.youWon ? '_BATTLE_WON_' : '_BATTLE_LOST_';
+
+    let endBunker =
+      game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0]
+        .data;
+
+    utils.log({
+      info: {
+        // _NET_BATTLE_WON_ / _NET_BATTLE_LOST_
+        event: net.active ? `_NET_${wl}_` : `_${wl}_`,
+        game_duration:
+          game.objects.gameLoop.data.frameCount -
+          game.objects.gameLoop.data.gameStartFrameCount,
+        score_with_bonus: getScore(game.players.local),
+        game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
+        level_name: levelName,
+        net_game_style: net.active && gamePrefs.net_game_style,
+        net_host: net.active && net.isHost,
+        net_guest: net.active && !net.isHost,
+        is_tutorial: tutorialMode,
+        is_mobile: isMobile,
+        using_gamepad: gamepad.data.active,
+        is_bnb: gamePrefs.bnb,
+        game_fps: gamePrefs.game_fps,
+        game_fps_auto:
+          gamePrefs.game_fps_auto !== gamePrefs.game_fps
+            ? gamePrefs.game_fps_auto
+            : 0,
+        latency: net.active && net.halfTrip,
+        funds_earned: endBunker.fundsEarned,
+        funds_captured: endBunker.fundsCaptured,
+        funds_spent: endBunker.fundsSpent,
+        funds_lost: endBunker.fundsLost,
+        choppers_lost: game.players.local.data.livesLost,
+        choppers_purchased: game.players.local.data.livesPurchased,
+        /**
+         * NOTE: game is over when lives goes to -1, so last chopper is 0.
+         * But zero and false-y values are filtered out, so we add 1.
+         */
+        choppers_left:
+          !common.unlimitedLivesMode() && game.players.local.data.lives + 1
+      }
+    });
+  },
+
+  GAME_START: () => {
+    // GAME_START
+    utils.log({
+      info: {
+        event: net.active ? '_NET_GAME_START_' : '_GAME_START_',
+        game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
+        level_name: levelName,
+        net_game_style: net.active && gamePrefs.net_game_style,
+        net_host: net.active && net.isHost,
+        net_guest: net.active && !net.isHost,
+        is_tutorial: tutorialMode,
+        is_mobile: isMobile,
+        using_gamepad: gamepad.data.active,
+        is_bnb: gamePrefs.bnb,
+        game_fps: gamePrefs.game_fps,
+        game_fps_auto:
+          gamePrefs.game_fps_auto !== gamePrefs.game_fps
+            ? gamePrefs.game_fps_auto
+            : 0,
+        latency: net.active && net.halfTrip
+      }
+    });
+
+    // mark the game start, so duration is known
+    game.objects.gameLoop.data.gameStartFrameCount = parseInt(
+      game.objects.gameLoop.data.frameCount,
+      10
+    );
+  }
 };
 
 export { game, gameType, screenScale };

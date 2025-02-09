@@ -173,4 +173,4 @@ const score = {
   animate
 };
 
-export { score, scoreCreate, scoreDestroy, scoreGameOver };
+export { getScore, score, scoreCreate, scoreDestroy, scoreGameOver };
