@@ -417,6 +417,7 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   let cfg = gamepadManager.checkGamepadSupport(gpInfo.gamepad);
 
   let logInfo = {
+    event: '_GAMEPAD_',
     id: gpInfo.gamepad.id,
     mapping: gpInfo?.gamepad?.mapping || 'NONE',
     supported: !!cfg,
@@ -494,10 +495,7 @@ function maybeLog(info = {}) {
    */
   if (data.logged[info.id]) return;
   data.logged[info.id] = true;
-  let params = new URLSearchParams(info).toString();
-  let options = { method: 'GET' };
-  let delay = 1000 + rndInt(5000);
-  common.setFrameTimeout(() => fetch(`/gamepads/?${params}`, options), delay);
+  utils.log({ info, rawValues: true });
 }
 
 function enable() {
