@@ -98,7 +98,7 @@ if (customLevel) {
         newData.push([...entry, offset]);
       });
 
-      newData.sort(utils.array.compareByLastItem());
+    newData.sort(utils.array.compareByLastItem);
 
       setCustomLevel(newData);
     });

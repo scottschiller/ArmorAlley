@@ -330,7 +330,7 @@ const game = (() => {
     }
 
     // sort the array based on the x value.
-    gameData.sort(utils.array.compareByLastItem());
+    gameData.sort(utils.array.compareByLastItem);
 
     return gameData;
   }

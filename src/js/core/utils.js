@@ -271,20 +271,12 @@ function flipInCanvas(imgToFlip, callback) {
 
 const utils = {
   array: {
-    compareByLastItem: () => {
-      let result;
-
-      return (a, b) => {
-        const prop = a.length - 1;
-        if (a[prop] < b[prop]) {
-          result = -1;
-        } else if (a[prop] > b[prop]) {
-          result = 1;
-        } else {
-          result = 0;
-        }
-        return result;
-      };
+    compareByLastItem: (a, b) => {
+      const propA = a.length - 1;
+      const propB = b.length - 1;
+      if (a[propA] < b[propB]) return -1;
+      if (a[propA] > b[propB]) return 1;
+      return 0;
     },
 
     compare: (property) => {
