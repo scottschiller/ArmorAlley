@@ -264,9 +264,11 @@ function minifyCSS() {
 }
 
 function minifyHTML() {
-  return src(html('*'))
-    // .pipe(htmlmin({ collapseWhitespace: true, conservativeCollapse: true }))
-    .pipe(dest(dp.html));
+  return (
+    src(html('*'))
+      // .pipe(htmlmin({ collapseWhitespace: true, conservativeCollapse: true }))
+      .pipe(dest(dp.html))
+  );
 }
 
 function buildSpriteSheet() {
@@ -447,8 +449,8 @@ function getAudioOptions() {
     ignorerounding: true,
     // less-noisy output
     log: 'notice'
-  }
-};
+  };
+}
 
 const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
   standaloneFiles.map((fn) => `!${fn}`)
