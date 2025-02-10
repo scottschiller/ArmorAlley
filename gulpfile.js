@@ -342,7 +342,14 @@ function buildSpriteSheetConfig() {
         Object.keys(json).forEach((key) => {
           let src = json[key]['source_image'];
 
-          // e.g., `assets/image/whatever.png` -> `image/whatever.png`
+          /**
+           * Account for Windows-style double-slashes, e.g.,
+           * 'C:\\Temp\\AA\\assets\\image\\whatever.png'
+           * (output is from spritesmith via node.)
+           */
+          src = src.replace(/\\/g, '/');
+
+          // e.g., `assets/image/whatever.png` -> `/whatever.png`
           src = src.substring(src.indexOf(imageRoot) + imageRoot.length);
 
           const data = json[key];
