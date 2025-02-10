@@ -386,7 +386,9 @@ const utils = {
       if (imageObjects[url]) {
         // yield, because outer function may not have returned object yet.
         // also, this feels like an antipattern and should be refactored.
-        window.requestAnimationFrame(() => onload?.(imageObjects[url]));
+        if (onload) {
+          window.requestAnimationFrame(() => onload(imageObjects[url]));
+        }
         return imageObjects[url];
       }
 
