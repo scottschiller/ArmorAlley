@@ -672,10 +672,20 @@ const utils = {
     // Pre-render and cache certain animation sequences, reduce flicker on game start.
     if (!imageSpriteConfig) return;
 
+    // avoid redundant work.
+    if (preRendered.all) return;
+    if (preRendered.subset) return;
+
     // TODO: preload snow versions of sprites, as applicable.
     const urls = Object.keys(imageSpriteConfig);
 
     if (!urls?.length) return;
+
+    if (options.all) {
+      preRendered.all = true;
+    } else {
+      preRendered.subset = true;
+    }
 
     // for initial pre-render, get "friendly" base which is on-screen 99% of games at start time.
     const subset = /base_|helicopter|tank-enemy|landing|explosion/i;
@@ -802,6 +812,11 @@ function filter(obj) {
     return acc;
   }, {});
 }
+
+let preRendered = {
+  subset: false,
+  all: false
+};
 
 // caches
 const preloadedImageURLs = {};
