@@ -97,11 +97,11 @@ if (customLevel) {
       customLevel[item].forEach((offset) => {
         newData.push([...entry, offset]);
       });
+    });
 
     newData.sort(utils.array.compareByLastItem);
 
-      setCustomLevel(newData);
-    });
+    setCustomLevel(newData);
   } catch (e) {
     console.warn('Invalid custom level data?', e);
     customLevel = null;
