@@ -689,7 +689,7 @@ const game = (() => {
 
     utils.log({
       info: {
-        event: '_EDITOR_START_',
+        event: 'EDITOR_START',
         level_name: levelName
       }
     });
@@ -1081,7 +1081,7 @@ const game = (() => {
 
 const logEvents = {
   GAME_OVER: () => {
-    let wl = game.data.youWon ? '*BATTLE_WON*' : '*BATTLE_LOST*';
+    let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
 
     let endBunker =
       game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0]
@@ -1089,8 +1089,8 @@ const logEvents = {
 
     utils.log({
       info: {
-        // *NET_BATTLE_WON* / *NET_BATTLE_LOST*
-        event: net.active ? `*NET${wl}` : wl,
+        // NET_BATTLE_WON / NET_BATTLE_LOST
+        event: net.active ? `NET${wl}` : wl,
         game_duration:
           game.objects.gameLoop.data.frameCount -
           game.objects.gameLoop.data.gameStartFrameCount,
@@ -1129,7 +1129,7 @@ const logEvents = {
     // GAME_START
     utils.log({
       info: {
-        event: net.active ? '*NET_GAME_START*' : '*GAME_START*',
+        event: net.active ? 'NET_GAME_START' : 'GAME_START',
         game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
         level_name: levelName,
         net_game_style: net.active && gamePrefs.net_game_style,

@@ -648,6 +648,11 @@ const utils = {
       info = filter(info);
     }
 
+    // "wrap" event in formatting
+    if (info.event) {
+      info.event = `*${info.event}*`;
+    }
+
     let params = new URLSearchParams(info).toString();
     let options = { method: 'GET' };
 

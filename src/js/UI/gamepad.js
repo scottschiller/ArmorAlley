@@ -417,7 +417,7 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   let cfg = gamepadManager.checkGamepadSupport(gpInfo.gamepad);
 
   let logInfo = {
-    event: '_GAMEPAD_',
+    event: 'GAMEPAD',
     id: gpInfo.gamepad.id,
     mapping: gpInfo?.gamepad?.mapping || 'NONE',
     supported: !!cfg,
