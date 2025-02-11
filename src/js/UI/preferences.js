@@ -1221,8 +1221,8 @@ function PrefsManager() {
         (gp.isStandard
           ? '(Standard)'
           : gp.supported
-            ? '(Non-std, mapping known)'
-            : '(Non-std, mapping unknown)')
+            ? '(Non-standard, mapping known)'
+            : '(Non-standard, mapping unknown)')
       );
     });
     document.getElementById('gamepad-list').innerHTML = info.length
