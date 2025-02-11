@@ -389,6 +389,7 @@ const GamepadManager = (options = {}) => {
       let lgs = lastGamepadState;
       let ls = lastState;
       let js = gamepadState.joysticks[i];
+      let opt = data.gamepad.config.joystickOptions;
 
       // update "last state"
       lgs.joysticks[i].x = parseFloat(js.x);
@@ -396,10 +397,10 @@ const GamepadManager = (options = {}) => {
       lgs.joysticks[i].button = js.button;
 
       // new live values
-      let x = parseFloat(ls[`gp${gpi}/${o.axes[0]}`].value);
-      let y = parseFloat(ls[`gp${gpi}/${o.axes[1]}`].value);
+      let x = parseFloat(ls[`gp${gpi}/${o.axes[0]}`].value * (opt?.invertXAxis ? -1 : 1));
+      let y = parseFloat(ls[`gp${gpi}/${o.axes[1]}`].value * (opt?.invertYAxis ? -1 : 1));
 
-      let jp = data.gamepad.config.joystickOptions?.precision;
+      let jp = opt?.precision;
 
       if (jp) {
         x = parseFloat(x.toFixed(jp));
@@ -416,10 +417,10 @@ const GamepadManager = (options = {}) => {
       }
 
       // minimum
-      if (data.gamepad.config.joystickOptions?.zeroPoint) {
-        if (x !== 0 && absX < data.gamepad.config.joystickOptions.zeroPoint)
+      if (opt?.zeroPoint) {
+        if (x !== 0 && absX <opt.zeroPoint)
           x = 0;
-        if (y !== 0 && absY < data.gamepad.config.joystickOptions.zeroPoint)
+        if (y !== 0 && absY < opt.zeroPoint)
           y = 0;
       }
 

@@ -107,7 +107,11 @@ function addControllers() {
        * read during "drift calibration." 0 = disabled.
        */
       // NOTE: not yet implemented.
-      driftBufferPercent: 100
+      driftBufferPercent: 100,
+
+      // some controllers might report values in reverse of the spec.
+      invertXAxis: false,
+      invertYAxis: false
     },
 
     /**
