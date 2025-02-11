@@ -426,8 +426,14 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
     axes: gpInfo.gamepad.axes?.length || 'unknown'
   };
 
+  let effects = gpInfo?.gamepad?.vibrationActuator?.effects?.join?.(',');
+
+  if (effects) {
+    logInfo.effects = effects;
+  }
+
   // only assign if known; Safari seems not to provide this.
-  if (cfg?.vendor && cfg?.product) {
+  if (cfg?.vendor && cfg?.product && cfg.vendor !== 'standard' && cfg.product !== 'standard') {
     logInfo.vendor = cfg.vendor;
     logInfo.product = cfg.product;
   }
