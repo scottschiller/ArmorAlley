@@ -1106,6 +1106,17 @@ function getGameDuration(f) {
   return time.join(':');
 }
 
+function getMTVIE(enemySide) {
+  let key = enemySide ? 'enemy' : 'player';
+  let data = game.objects.stats.data[key];
+  let results = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'].map(
+    (item) => {
+      // created / destroyed
+      return `${data.created[item]}/${data.destroyed[item]}`;
+    }
+  );
+  return results.join(', ');
+}
 const logEvents = {
   GAME_OVER: () => {
     let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
@@ -1133,6 +1144,8 @@ const logEvents = {
             ? gamePrefs.game_fps_auto
             : 0,
         latency: net.active && net.halfTrip,
+        mtvie_yours: getMTVIE(false),
+        mtvie_theirs: getMTVIE(true),
         funds_earned: endBunker.fundsEarned,
         funds_captured: endBunker.fundsCaptured,
         funds_spent: endBunker.fundsSpent,
