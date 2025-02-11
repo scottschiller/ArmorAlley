@@ -1079,6 +1079,33 @@ const game = (() => {
   return exports;
 })();
 
+function getGameDuration(f) {
+  let gld = game.objects.gameLoop.data;
+
+  // elapsed time in game
+  let frames = gld.frameCount - gld.gameStartFrameCount;
+  let sec = frames / FPS;
+
+  let hours = Math.floor(sec / 3600);
+  let minutes = Math.floor((sec - hours * 3600) / 60);
+  let seconds = Math.floor(sec - hours * 3600 - minutes * 60);
+
+  let time = [hours, minutes, seconds].map((v) => {
+    // leading zero
+    if (v < 10) return `0${v}`;
+    // for consistency, stringify.
+    return v.toString();
+  });
+
+  // drop hours if zero
+  if (time[0] == '00') {
+    time.shift();
+  }
+
+  // hh:mm:ss
+  return time.join(':');
+}
+
 const logEvents = {
   GAME_OVER: () => {
     let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
@@ -1091,9 +1118,7 @@ const logEvents = {
       info: {
         // NET_BATTLE_WON / NET_BATTLE_LOST
         event: net.active ? `NET${wl}` : wl,
-        game_duration:
-          game.objects.gameLoop.data.frameCount -
-          game.objects.gameLoop.data.gameStartFrameCount,
+        game_duration: getGameDuration(),
         score_with_bonus: getScore(game.players.local),
         game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
         level_name: levelName,
