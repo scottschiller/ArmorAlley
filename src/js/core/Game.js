@@ -54,7 +54,7 @@ import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
-import { addWorldObjects, levelFlags, levelName } from '../levels/default.js';
+import { addWorldObjects, levelFlags, levelName, setCustomLevel } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
@@ -1132,6 +1132,7 @@ const logEvents = {
         event: net.active ? 'NET_GAME_START' : 'GAME_START',
         game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
         level_name: levelName,
+        custom_level: new URLSearchParams(window.location.search).get('customLevel'),
         net_game_style: net.active && gamePrefs.net_game_style,
         net_host: net.active && net.isHost,
         net_guest: net.active && !net.isHost,
