@@ -434,7 +434,12 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   }
 
   // only assign if known; Safari seems not to provide this.
-  if (cfg?.vendor && cfg?.product && cfg.vendor !== 'standard' && cfg.product !== 'standard') {
+  if (
+    cfg?.vendor &&
+    cfg?.product &&
+    cfg.vendor !== 'standard' &&
+    cfg.product !== 'standard'
+  ) {
     logInfo.vendor = cfg.vendor;
     logInfo.product = cfg.product;
   }
@@ -446,13 +451,11 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
     let label = getPrettyLabel(cfg?.label, gpInfo.gamepad.id);
 
     // Don't notify about "standard/generic" e.g., in Safari - keep it brief.
-    let labelDetail = (label.match(/generic/i)) ? '' : `: ${label}`;
+    let labelDetail = label.match(/generic/i) ? '' : `: ${label}`;
 
     if (gpInfo.connected && !cfg) {
       // warn if not supported
-      game.objects.notifications.add(
-        `🎮 ⛔ Not supported 😞: ${label}`
-      );
+      game.objects.notifications.add(`🎮 ⛔ Not supported 😞: ${label}`);
     } else {
       game.objects.notifications.add(
         `🎮 ${gpInfo.connected ? 'Connected' : 'Disconnected'}${labelDetail}`
@@ -499,7 +502,8 @@ function getPrettyLabel(gpLabel, gpID) {
    * Safari gets label first, because it lacks p/v info.
    * Others take label if not "generic" - else, ID.
    */
-  let label = isSafari || !gpLabel.match(/generic/i) ? gpLabel : gpID || gpLabel;
+  let label =
+    isSafari || !gpLabel.match(/generic/i) ? gpLabel : gpID || gpLabel;
 
   let firstBracket = label.indexOf('(');
 
@@ -666,26 +670,6 @@ function scanGamepads() {
   return results;
 }
 
-function getSubmitHTML() {
-  // Safari just doesn't give us enough info to be reliable.
-  if (!gamePrefs.gamepad || isSafari) return '';
-
-  // Best guess at Sony/PlayStation-brand controllers, for button hints
-  let isSony;
-
-  let { config } = gamepadManager?.data?.gamepad;
-
-  if (!config) return '';
-
-  isSony = config.label.match(/sony|playstation/i) || config.vendor === '054c';
-
-  // Safari doesn't provide vendor or product IDs, so the fallback is to show both.
-  let generic = config.vendor?.match(/standard/i);
-
-  // sony, unknown, abxy
-  return `<span class="gamepad-only"> ${isSony ? '△' : generic ? '(△/X)' : '(X)'}</span>`;
-}
-
 function onGameMenu() {
   enable();
 }
@@ -729,7 +713,6 @@ const gamepad = {
   data,
   disable,
   enable,
-  getSubmitHTML,
   onGameMenu,
   onGameStart,
   resetSelected,

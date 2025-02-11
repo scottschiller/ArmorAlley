@@ -886,9 +886,6 @@ function PrefsManager() {
         `#prefs-select-level input[value="${levelName}"]`
       );
       if (radio) radio.checked = true;
-      // update the submit button, too.
-      document.getElementById('select-level-submit').innerHTML =
-        'OK' + gamepad.getSubmitHTML();
     } else {
       updateGamepadList();
     }
@@ -941,8 +938,7 @@ function PrefsManager() {
       utils.css.addOrRemove(dom.o, data.network && net.isGuest, 'is-guest');
       utils.css.addOrRemove(dom.o, data.network && net.isHost, 'is-host');
 
-      dom.oFormSubmit.innerHTML =
-        (net.isGuest ? 'READY' : 'READY') + gamepad.getSubmitHTML();
+      dom.oFormSubmit.innerHTML = 'READY';
 
       // manually disable button, until the network is connected.
       // this is separate from the "ready to start" logic.
@@ -960,7 +956,7 @@ function PrefsManager() {
 
       startNetwork();
     } else {
-      dom.oFormSubmit.innerHTML = 'OK' + gamepad.getSubmitHTML();
+      dom.oFormSubmit.innerHTML = 'OK';
 
       // ensure this is active - may have been disabled during network flow
       dom.oFormSubmit.disabled = false;
@@ -1386,7 +1382,7 @@ function PrefsManager() {
   }
 
   function resetReadyUI() {
-    dom.oFormSubmit.innerHTML = 'OK' + gamepad.getSubmitHTML();
+    dom.oFormSubmit.innerHTML = 'OK';
     utils.css.remove(dom.oFormSubmit, 'attention');
   }
 
@@ -1397,7 +1393,7 @@ function PrefsManager() {
     }
 
     dom.oFormSubmit.innerHTML =
-      (data.remoteReadyToStart ? 'START' : 'READY') + gamepad.getSubmitHTML();
+      (data.remoteReadyToStart ? 'START' : 'READY');
 
     // highlight local button if remote is ready, or reset if not.
     utils.css.addOrRemove(
