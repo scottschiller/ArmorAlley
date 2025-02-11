@@ -589,6 +589,9 @@ const Inventory = () => {
           });
         }
 
+        // for stats: track that something was ordered.
+        game.objects.stats.create(newObject);
+
         applyRiseTransition(newObject);
       }
 
