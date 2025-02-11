@@ -1194,6 +1194,7 @@ const logEvents = {
         net_game_style: net.active && gamePrefs.net_game_style,
         net_host: net.active && net.isHost,
         net_guest: net.active && !net.isHost,
+        is_mobile: isMobile ? navigator.userAgent : null,
         using_gamepad: gamepad.data.active,
         is_bnb: gamePrefs.bnb,
         game_fps: gamePrefs.game_fps,
