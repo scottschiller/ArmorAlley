@@ -52,7 +52,6 @@ function Stats() {
       'helicopter': 0,
       'smart-missile': 0,
       'bomb': 0,
-      'shrapnel': 0,
       'turret': 0
     };
   }
