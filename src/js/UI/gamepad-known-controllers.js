@@ -493,11 +493,11 @@ function addControllers() {
      * Vibration looks to work on desktop Safari, in a specific case.
      * From my findings, vibration is not supported in iOS Safari at all.
      *
-     * With the controller's mode switched to "D":
-     * Connect via wifi, then press and hold (-) and (LB) for a moment.
+     * With the controller's mode switched to "X":
+     * Connect via wifi to the base, then press and hold (-) and (LB).
      * The controller will vibrate to indicate it's in "Switch mode."
      *
-     * Vibration works when in "Switch" and on wifi, but not bluetooth.
+     * Vibration works when in X + "Switch" and on wifi, but not Bluetooth.
      *
      * When connected via USB-C, (-) and (LB) switch mode doesn't work.
      *
