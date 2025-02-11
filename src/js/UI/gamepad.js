@@ -21,7 +21,7 @@ import { GamepadManager } from './GamepadManager.js';
 import { gamePrefs } from './preferences.js';
 
 // multiply joystick values, more responsiveness
-const JOYSTICK_SENSITIVITY = 2;
+const JOYSTICK_SENSITIVITY = 1.5;
 
 // middle / "inactive" position in a 9-axis d-pad
 const OFFSET_CENTER = 4;
