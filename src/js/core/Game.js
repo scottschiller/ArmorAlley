@@ -1190,7 +1190,9 @@ const logEvents = {
         event: net.active ? 'NET_GAME_START' : 'GAME_START',
         game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
         level_name: levelName,
-        custom_level: new URLSearchParams(window.location.search).get('customLevel'),
+        custom_level: new URLSearchParams(window.location.search).get(
+          'customLevel'
+        ),
         net_game_style: net.active && gamePrefs.net_game_style,
         net_host: net.active && net.isHost,
         net_guest: net.active && !net.isHost,
