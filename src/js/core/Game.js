@@ -1121,10 +1121,10 @@ function getMTVIE(enemySide) {
   let results = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'].map(
     (item) => {
       // created / destroyed
-      return `${item.charAt(0).toUpperCase()}:${yourData.created[item]}/${yourData.destroyed[item]}|${theirData.created[item]}/${theirData.destroyed[item]}`;
+      return `${item.charAt(0).toUpperCase()}: ${yourData.created[item]}/${yourData.destroyed[item]}, ${theirData.created[item]}/${theirData.destroyed[item]}`;
     }
   );
-  return results.join(', ');
+  return results.join(' ');
 }
 
 function getEnemyChoppersLost() {
