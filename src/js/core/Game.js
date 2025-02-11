@@ -15,7 +15,8 @@ import {
   clientFeatures,
   updateClientFeatures,
   isMac,
-  isChrome
+  isChrome,
+  FPS
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
