@@ -1115,11 +1115,13 @@ function getGameDuration(f) {
 
 function getMTVIE(enemySide) {
   let key = enemySide ? 'enemy' : 'player';
-  let data = game.objects.stats.data[key];
+  // TODO: sort out what happens when you are playing as the enemy in the network case. :X
+  let yourData = game.objects.stats.data.player;
+  let theirData = game.objects.stats.data.enemy;
   let results = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'].map(
     (item) => {
       // created / destroyed
-      return `${data.created[item]}/${data.destroyed[item]}`;
+      return `${item.charAt(0).toUpperCase()}:${yourData.created[item]}/${yourData.destroyed[item]}|${theirData.created[item]}/${theirData.destroyed[item]}`;
     }
   );
   return results.join(', ');
@@ -1163,8 +1165,7 @@ const logEvents = {
             ? gamePrefs.game_fps_auto
             : 0,
         latency: net.active && net.halfTrip,
-        mtvie_yours: getMTVIE(false),
-        mtvie_theirs: getMTVIE(true),
+        units: getMTVIE(),
         bunkers_owned: `${countFriendly(TYPES.bunker)}/${game.objects[TYPES.bunker].length}`,
         super_bunkers_owned: !game.objects[TYPES.superBunker].length
           ? 0
