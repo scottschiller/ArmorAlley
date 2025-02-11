@@ -1118,6 +1118,18 @@ function getMTVIE(enemySide) {
   );
   return results.join(', ');
 }
+
+function getEnemyChoppersLost() {
+  let isEnemy = game.players.local.data.isEnemy;
+  let lost = 0;
+  game.objects.helicopter.forEach((chopper) => {
+    // don't count the own team
+    if (chopper.data.isEnemy === isEnemy) return;
+    lost += chopper.data.livesLost;
+  });
+  return lost;
+}
+
 const logEvents = {
   GAME_OVER: () => {
     let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
