@@ -74,6 +74,8 @@ function Stats() {
   }
 
   function create(obj) {
+    // exclude during level previews, and battle-over destruction sequences
+    if (!game.data.started || game.data.battleOver) return;
     let dataObj, type;
     obj = normalizeObj(obj);
     type = normalizeType(obj);
@@ -84,6 +86,9 @@ function Stats() {
   }
 
   function destroy(obj, options) {
+    // exclude during level previews, and battle-over destruction sequences
+    if (!game.data.started || game.data.battleOver) return;
+
     // there might be no data, so go up the chain.
 
     let dataObj, type;
