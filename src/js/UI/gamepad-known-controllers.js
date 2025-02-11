@@ -334,10 +334,45 @@ function addControllers() {
      * These are recognized (together, L+R?) as a standard controller.
      * Vibration / rumble feedback should be supported.
      */
-    label: 'Joy-Con L+R',
+    label: 'Nintendo Switch Joy-Con L+R',
     vendor: '057e',
     product: '200e',
     ...knownControllers[STD]
+  });
+
+  configGamePad({
+    /**
+     * 8Bitdo SN30 pro
+     * Support for rumble feature varies, depending on browser and mode.
+     *
+     * When powered off, hold START + [button] to set the mode.
+     * SEQUENCE TIP: Push and hold X or Y first, then press and hold START.
+     * Press the pairing button if your device does not show a prompt.
+     *
+     * Mode        Vibration (macOS)   Notes (tested 02/2025, macOS Sequoia)
+     * ---------------------------------------------------------------------
+     * START+X     Chrome, Safari      +trigger-rumble effect in Chrome.
+     * START+Y     Chrome, Safari      Controller not detected in Firefox
+     * START+B     N/A
+     * START+A     Chrome, Safari      Shows as PS4 DualShock, v/p 054c/05c4
+     *
+     * iOS Safari: Vibration API appears not to be implemented.
+     * These are for bluetooth connections only. "START+A mode" works w/USB.
+     * Mode        Playable     Device name (tested 02/2025, iOS 18.3 22D60)
+     * ---------------------------------------------------------------------
+     * START+X     Yes          8Bitdo SN30 Pro
+     * START+Y     Yes          Pro Controller
+     * START+B     Yes          8Bitdo SN30 Pro
+     * START+A     Yes          DUALSHOCK 4 Wireless Controller
+     *
+     * Modes per manual: X: Windows, Y: Switch, B: Android, A: macOS
+     * https://download.8bitdo.com/Manual/Controller/SN30pro+SF30pro/SN30pro+SF30pro_Manual.pdf?20220513
+     */
+    label: '8bitdo SN30 Pro (Bluetooth)',
+    vendor: '2dc8',
+    product: '6101',
+    ...knownControllers[STD],
+    ...modernEightBitDo
   });
 
   configGamePad({
@@ -362,37 +397,88 @@ function addControllers() {
 
   configGamePad({
     /**
-     * 8Bitdo SN30 pro
-     * Support for rumble feature varies, depending on browser and mode.
-     *
-     * When powered off, hold START + [button] to set the mode.
-     * SEQUENCE TIP: Push and hold X or Y first, then press and hold START.
-     * Press the pairing button if your device does not show a prompt.
-     *
-     * Mode        Vibration (macOS)   Notes (tested 02/2025, macOS Sequoia)
-     * ---------------------------------------------------------------------
-     * START+X     Chrome, Safari
-     * START+Y     Chrome, Safari      Controller not detected in Firefox
-     * START+B     N/A
-     * START+A     Chrome, Safari      Shows as PS4 DualShock, v/p 054c/05c4
-     *
-     * iOS Safari: Vibration API appears not to be implemented.
-     * These are for bluetooth connections only. "START+A mode" works w/USB.
-     * Mode        Playable     Device name (tested 02/2025, iOS 18.3 22D60)
-     * ---------------------------------------------------------------------
-     * START+X     Yes          8Bitdo SN30 Pro
-     * START+Y     Yes          Pro Controller
-     * START+B     Yes          8Bitdo SN30 Pro
-     * START+A     Yes          DUALSHOCK 4 Wireless Controller
-     *
-     * Modes per manual: X: Windows, Y: Switch, B: Android, A: macOS
-     * https://download.8bitdo.com/Manual/Controller/SN30pro+SF30pro/SN30pro+SF30pro_Manual.pdf?20220513
+     * 8Bitdo SN30 pro, connected via USB-C in X-input mode.
+     * Standard under Chrome, but joystick vertical is inverted.
+     * Non-standard under Firefox.
      */
-    label: '8bitdo SN30 Pro (Bluetooth)',
-    vendor: '2dc8',
-    product: '6101',
+    label: '8bitdo SN30 Pro (USB-C, X-input, inverted Y-axis joysticks)',
+    vendor: '045e',
+    product: '028e',
     ...knownControllers[STD],
-    ...modernEightBitDo
+    overrides: {
+      firefox: {
+        buttons: {
+          /**
+           * NOTE: Shoulder buttons are somewhat broken, here.
+           * TODO: fix spring-loaded triggers which currently don't work as buttons.
+           */
+
+          // left shoulder button
+          l1: 'btn8',
+    
+          // TODO: fix for axis case of -1 / 1
+          l2: 'axis4',
+    
+          // right shoulder button
+          r1: 'btn9',
+    
+          // TODO: fix for axis case of -1 / 1
+          r2: 'axis5',
+    
+          share: null,
+          select: 'btn5',
+    
+          option: null,
+          start: 'btn4',
+    
+          logo: null
+        },
+        dpads: [['btn0', 'btn1', 'btn2', 'btn3']],
+        abxy:[
+          {
+            // X
+            top: 'btn14',
+    
+            // Y
+            left: 'btn13',
+    
+            // A
+            right: 'btn12',
+    
+            // B
+            bottom: 'btn11'
+          }
+        ]
+      }
+    },
+    joystickOptions: {
+      ...knownControllers[STD].joystickOptions,
+      invertYAxis: true
+    }
+  });
+
+  configGamePad({
+    /**
+     * 8Bitdo SN30 pro (USB-C and/or bluetooth), START + A-mode (DualShock)
+     * Standard under Firefox, but no vibration feature.
+     * Standard + vibration in Chrome and Safari.
+     */
+    label: '8bitdo SN30 Pro (USB-C / Bluetooth, START+A mode)',
+    vendor: '054c',
+    product: '05c4',
+    ...knownControllers[STD]
+  });
+
+  configGamePad({
+    /**
+     * 8Bitdo SN30 pro (USB-C and/or bluetooth), START + Y-mode (Switch Pro)
+     * Not detected at all under Firefox.
+     * Standard + vibration in Chrome and Safari.
+     */
+    label: '8bitdo SN30 Pro (USB-C / Bluetooth, START+Y / Switch mode)',
+    vendor: '057e',
+    product: '2009',
+    ...knownControllers[STD]
   });
 
   configGamePad({
@@ -438,6 +524,16 @@ function addControllers() {
     ...modernEightBitDo
   });
 
+  configGamePad({
+    /**
+     * 8Bitdo "generic" fallback - best guess if vendor, but no product match.
+     */
+    label: '8BitDo Generic fallback',
+    vendor: '2dc8',
+    product: 'GENERIC',
+    ...knownControllers[STD],
+    ...modernEightBitDo
+  });
 }
 
 export { addControllers };
