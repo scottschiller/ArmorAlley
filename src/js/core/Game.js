@@ -1138,7 +1138,8 @@ const logEvents = {
         funds_captured: endBunker.fundsCaptured,
         funds_spent: endBunker.fundsSpent,
         funds_lost: endBunker.fundsLost,
-        choppers_lost: game.players.local.data.livesLost,
+        their_choppers_lost: getEnemyChoppersLost(),
+        your_choppers_lost: game.players.local.data.livesLost,
         choppers_purchased: game.players.local.data.livesPurchased,
         /**
          * NOTE: game is over when lives goes to -1, so last chopper is 0.
