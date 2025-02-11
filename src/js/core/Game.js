@@ -69,6 +69,7 @@ import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
 import { getScore, scoreCreate } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
+import { countFriendly } from './logic.js';
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -1146,6 +1147,13 @@ const logEvents = {
         latency: net.active && net.halfTrip,
         mtvie_yours: getMTVIE(false),
         mtvie_theirs: getMTVIE(true),
+        bunkers_owned: `${countFriendly(TYPES.bunker)}/${game.objects[TYPES.bunker].length}`,
+        super_bunkers_owned: !game.objects[TYPES.superBunker].length
+          ? 0
+          : `${countFriendly(TYPES.superBunker)}/${game.objects[TYPES.superBunker].length}`,
+        bunkers_destroyed:
+          game.objects.stats.data.enemy.destroyed.bunker +
+          game.objects.stats.data.player.destroyed.bunker,
         funds_earned: endBunker.fundsEarned,
         funds_captured: endBunker.fundsCaptured,
         funds_spent: endBunker.fundsSpent,
