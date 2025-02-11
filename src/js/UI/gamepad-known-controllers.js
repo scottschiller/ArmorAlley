@@ -194,6 +194,60 @@ function addControllers() {
     ]
   };
 
+  const modernEightBitDoInvertedY = {
+    ...knownControllers[STD],
+    overrides: {
+      firefox: {
+        buttons: {
+          /**
+           * NOTE: Shoulder buttons are somewhat broken, here.
+           * TODO: fix spring-loaded triggers which currently don't work as buttons.
+           */
+
+          // left shoulder button
+          l1: 'btn8',
+    
+          // TODO: fix for axis case of -1 / 1
+          l2: 'axis4',
+    
+          // right shoulder button
+          r1: 'btn9',
+    
+          // TODO: fix for axis case of -1 / 1
+          r2: 'axis5',
+    
+          share: null,
+          select: 'btn5',
+    
+          option: null,
+          start: 'btn4',
+    
+          logo: null
+        },
+        dpads: [['btn0', 'btn1', 'btn2', 'btn3']],
+        abxy:[
+          {
+            // X
+            top: 'btn14',
+    
+            // Y
+            left: 'btn13',
+    
+            // A
+            right: 'btn12',
+    
+            // B
+            bottom: 'btn11'
+          }
+        ]
+      }
+    },
+    joystickOptions: {
+      ...knownControllers[STD].joystickOptions,
+      invertYAxis: true
+    }
+  }
+
   addKnownController('nes30Pro', {
     /**
      * 8Bitdo "NES30 Pro" controller, bluetooth version (firmware 4.10)
@@ -404,57 +458,7 @@ function addControllers() {
     label: '8bitdo SN30 Pro (USB-C, X-input, inverted Y-axis joysticks)',
     vendor: '045e',
     product: '028e',
-    ...knownControllers[STD],
-    overrides: {
-      firefox: {
-        buttons: {
-          /**
-           * NOTE: Shoulder buttons are somewhat broken, here.
-           * TODO: fix spring-loaded triggers which currently don't work as buttons.
-           */
-
-          // left shoulder button
-          l1: 'btn8',
-    
-          // TODO: fix for axis case of -1 / 1
-          l2: 'axis4',
-    
-          // right shoulder button
-          r1: 'btn9',
-    
-          // TODO: fix for axis case of -1 / 1
-          r2: 'axis5',
-    
-          share: null,
-          select: 'btn5',
-    
-          option: null,
-          start: 'btn4',
-    
-          logo: null
-        },
-        dpads: [['btn0', 'btn1', 'btn2', 'btn3']],
-        abxy:[
-          {
-            // X
-            top: 'btn14',
-    
-            // Y
-            left: 'btn13',
-    
-            // A
-            right: 'btn12',
-    
-            // B
-            bottom: 'btn11'
-          }
-        ]
-      }
-    },
-    joystickOptions: {
-      ...knownControllers[STD].joystickOptions,
-      invertYAxis: true
-    }
+    ...modernEightBitDoInvertedY
   });
 
   configGamePad({
