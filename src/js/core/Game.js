@@ -1195,6 +1195,14 @@ const logEvents = {
         net_host: net.active && net.isHost,
         net_guest: net.active && !net.isHost,
         is_mobile: isMobile ? navigator.userAgent : null,
+        unlimited_inv: gamePrefs.unlimited_inventory,
+        radar_enhanced_fx: gamePrefs.radar_enhanced_fx,
+        no_bananas: !gamePrefs.alt_smart_missiles,
+        weapons_interval_classic: gamePrefs.weapons_interval_classic,
+        show_health_status:
+          gamePrefs.show_health_status !== 'sometimes'
+            ? gamePrefs.show_health_status
+            : null,
         using_gamepad: gamepad.data.active,
         is_bnb: gamePrefs.bnb,
         game_fps: gamePrefs.game_fps,
