@@ -423,7 +423,8 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
     mapping: gpInfo?.gamepad?.mapping || 'NONE',
     supported: !!cfg,
     buttons: gpInfo.gamepad.buttons?.length || 'unknown',
-    axes: gpInfo.gamepad.axes?.length || 'unknown'
+    axes: gpInfo.gamepad.axes?.length || 'unknown',
+    user_agent: navigator.userAgent
   };
 
   let effects = gpInfo?.gamepad?.vibrationActuator?.effects?.join?.(',');
