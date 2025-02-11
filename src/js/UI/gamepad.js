@@ -419,6 +419,7 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   let logInfo = {
     event: 'GAMEPAD',
     id: gpInfo.gamepad.id,
+    label: cfg?.label,
     mapping: gpInfo?.gamepad?.mapping || 'NONE',
     supported: !!cfg,
     buttons: gpInfo.gamepad.buttons?.length || 'unknown',
@@ -434,19 +435,20 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   maybeLog(logInfo);
 
   if (game.data.started && !game.data.paused) {
-    let label = cfg?.label || gpInfo.gamepad.id;
+    // Safari gets label first, because it lacks p/v info. Everyone else gets the ID first.
+    let label = getPrettyLabel(cfg?.label, gpInfo.gamepad.id);
 
-    // hackish newline pattern
-    label = label.replace(' (', '\n(');
+    // Don't notify about "standard/generic" e.g., in Safari - keep it brief.
+    let labelDetail = (label.match(/generic/i)) ? '' : `: ${label}`;
 
     if (gpInfo.connected && !cfg) {
       // warn if not supported
       game.objects.notifications.add(
-        `🎮 ⛔ Not supported 😞: ${label || 'unknown'}`
+        `🎮 ⛔ Not supported 😞: ${label}`
       );
     } else {
       game.objects.notifications.add(
-        `🎮 ${gpInfo.connected ? '✅ Connected' : 'Disconnected'}: ${label || 'unknown'}`
+        `🎮 ${gpInfo.connected ? 'Connected' : 'Disconnected'}${labelDetail}`
       );
     }
   }
@@ -483,6 +485,25 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
   // reset state, and deactivate if no gamepads connected.
   Object.keys(data.state).forEach((k) => (data.state[k] = false));
   setActive(false);
+}
+
+function getPrettyLabel(gpLabel, gpID) {
+  /**
+   * Safari gets label first, because it lacks p/v info.
+   * Others take label if not "generic" - else, ID.
+   */
+  let label = isSafari || !gpLabel.match(/generic/i) ? gpLabel : gpID || gpLabel;
+
+  let firstBracket = label.indexOf('(');
+
+  if (firstBracket !== -1) {
+    label = label.substr(0, firstBracket - 1);
+  }
+
+  // there might be whitespace, e.g., before the just-dropped bracket.
+  label = label.trim();
+
+  return label || 'unknown';
 }
 
 function maybeLog(info = {}) {
@@ -630,6 +651,7 @@ function scanGamepads() {
     let config = gamepadManager.checkGamepadSupport(pad);
     results.push({
       id: config?.label || pad.id,
+      prettyLabel: getPrettyLabel(config?.label, pad.id),
       supported: !!config,
       isStandard: !!config?.isStandard
     });

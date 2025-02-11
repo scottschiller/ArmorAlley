@@ -1220,7 +1220,7 @@ function PrefsManager() {
         '&bull; ' +
         (gp.supported ? '✅' : '❌') +
         ' ' +
-        gp.id +
+        gp.prettyLabel +
         ' ' +
         (gp.isStandard
           ? '(Standard)'
