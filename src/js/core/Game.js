@@ -708,7 +708,16 @@ const game = (() => {
       return startEditor();
     }
 
-    game.logEvent('GAME_START');
+    // mark the game start, so gameplay duration is known
+    game.objects.gameLoop.data.gameStartFrameCount = parseInt(
+      game.objects.gameLoop.data.frameCount,
+      10
+    );
+
+    // delay, to allow FPS test etc. to finish.
+    window.setTimeout(() => {
+      game.logEvent('GAME_START');
+    }, 5000);
 
     objects.envelope.setLevel(levelName);
 
