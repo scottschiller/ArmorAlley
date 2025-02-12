@@ -55,12 +55,7 @@ import { GunFire } from '../munitions/GunFire.js';
 import { ParachuteInfantry } from '../units/ParachuteInfantry.js';
 import { SmartMissile } from '../munitions/SmartMissile.js';
 import { Shrapnel } from '../elements/Shrapnel.js';
-import {
-  addWorldObjects,
-  levelFlags,
-  levelName,
-  setCustomLevel
-} from '../levels/default.js';
+import { addWorldObjects, levelFlags, levelName } from '../levels/default.js';
 import { gameMenu } from '../UI/game-menu.js';
 import { net } from './network.js';
 import { Editor } from '../UI/Editor.js';
