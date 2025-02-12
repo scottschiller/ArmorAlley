@@ -1227,12 +1227,6 @@ const logEvents = {
         latency: net.active && net.halfTrip
       }
     });
-
-    // mark the game start, so duration is known
-    game.objects.gameLoop.data.gameStartFrameCount = parseInt(
-      game.objects.gameLoop.data.frameCount,
-      10
-    );
   }
 };
 
