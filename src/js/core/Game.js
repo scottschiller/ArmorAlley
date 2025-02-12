@@ -1219,6 +1219,7 @@ const logEvents = {
         using_gamepad: gamepad.data.active,
         is_bnb: gamePrefs.bnb,
         game_fps: gamePrefs.game_fps,
+        fps_avg: game.objects.gameLoop.data.fpsAverage,
         game_fps_auto:
           gamePrefs.game_fps_auto !== gamePrefs.game_fps
             ? gamePrefs.game_fps_auto
