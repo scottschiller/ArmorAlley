@@ -134,7 +134,8 @@ const GameLoop = () => {
   function animateRAF(ts) {
     if (!data.timer) return;
 
-    if (!data.fpsTimer) data.fpsTimer = ts;
+    // set timer for 1-second interval only once game started.
+    if (!data.fpsTimer && game.data.started) data.fpsTimer = ts;
 
     /**
      * first things first: always request the next frame right away.
@@ -287,7 +288,15 @@ const GameLoop = () => {
     }
 
     // every interval, update framerate.
-    if (!unlimitedFrameRate && ts - data.fpsTimer >= data.fpsTimerInterval) {
+    if (
+      game.data.started &&
+      !unlimitedFrameRate &&
+      ts - data.fpsTimer >= data.fpsTimerInterval
+    ) {
+      // running average, for stats
+      data.fpsSamples++;
+      data.fpsAverage = (data.frameCount / data.fpsSamples).toFixed(2);
+
       if (!isMobile && dom.fpsCount && data.frames !== data.lastFrames) {
         dom.fpsCount.innerText = data.frames;
         data.lastFrames = data.frames;
@@ -542,6 +551,8 @@ const GameLoop = () => {
     timer: null,
     fpsTimer: null,
     fpsTimerInterval: 1000,
+    fpsAverage: 0,
+    fpsSamples: 0,
     testing60fps: false,
     transformCount: 0,
     excludeTransformCount: 0,
