@@ -1101,16 +1101,16 @@ function getGameDuration(f) {
   let minutes = Math.floor((sec - hours * 3600) / 60);
   let seconds = Math.floor(sec - hours * 3600 - minutes * 60);
 
-  let time = [hours, minutes, seconds].map((v) => {
+  let time = [minutes, seconds].map((v) => {
     // leading zero
     if (v < 10) return `0${v}`;
     // for consistency, stringify.
     return v.toString();
   });
 
-  // drop hours if zero
-  if (time[0] == '00') {
-    time.shift();
+  // prepend hours, as applicable
+  if (hours) {
+    time.unshift(hours.toString());
   }
 
   // hh:mm:ss
