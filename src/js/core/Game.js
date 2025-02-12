@@ -1090,7 +1090,7 @@ const game = (() => {
   return exports;
 })();
 
-function getGameDuration(f) {
+function getGameDuration() {
   let gld = game.objects.gameLoop.data;
 
   // elapsed time in game
