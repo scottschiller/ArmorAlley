@@ -41,8 +41,6 @@ function RadarItem(options) {
       utils.css.add(dom.o, css.dying);
     }
 
-    game.objects.stats.destroy(exports, dieOptions);
-
     data.dead = true;
 
     if (!options.canRespawn) {
@@ -74,9 +72,6 @@ function RadarItem(options) {
     // ensure visibility, reset blink state
     data.visible = true;
     data.blinkCounter = 0;
-
-    // reset is the same as creating a new object.
-    game.objects.stats.create(exports);
   }
 
   // TODO: DRY / utility function
