@@ -64,10 +64,8 @@ const Van = (options = {}) => {
 
     if (radarItem) {
       radarItem.die(dieOptions);
-    } else {
-      game.objects.stats.destroy(exports);
     }
-
+    
     if (sounds.genericExplosion) {
       playSound(sounds.genericExplosion, exports);
     }
