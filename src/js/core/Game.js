@@ -15,8 +15,7 @@ import {
   clientFeatures,
   updateClientFeatures,
   isMac,
-  isChrome,
-  FPS
+  isChrome
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
@@ -71,6 +70,8 @@ import { MissileNapalm } from '../munitions/MissileNapalm.js';
 import { getScore, scoreCreate } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
 import { countFriendly } from './logic.js';
+import { getEnemyChoppersLost, getGameDuration, getMTVIE, postToService } from './game-reporting.js';
+
 const DEFAULT_GAME_TYPE = 'tutorial';
 
 // very commonly-accessed attributes to be exported
@@ -1090,58 +1091,6 @@ const game = (() => {
   return exports;
 })();
 
-function getGameDuration() {
-  let gld = game.objects.gameLoop.data;
-
-  // elapsed time in game
-  let frames = gld.frameCount - gld.gameStartFrameCount;
-  let sec = frames / FPS;
-
-  let hours = Math.floor(sec / 3600);
-  let minutes = Math.floor((sec - hours * 3600) / 60);
-  let seconds = Math.floor(sec - hours * 3600 - minutes * 60);
-
-  let time = [minutes, seconds].map((v) => {
-    // leading zero
-    if (v < 10) return `0${v}`;
-    // for consistency, stringify.
-    return v.toString();
-  });
-
-  // prepend hours, as applicable
-  if (hours) {
-    time.unshift(hours.toString());
-  }
-
-  // hh:mm:ss
-  return time.join(':');
-}
-
-function getMTVIE(enemySide) {
-  let key = enemySide ? 'enemy' : 'player';
-  // TODO: sort out what happens when you are playing as the enemy in the network case. :X
-  let yourData = game.objects.stats.data.player;
-  let theirData = game.objects.stats.data.enemy;
-  let results = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'].map(
-    (item) => {
-      // created / destroyed
-      return `${item.charAt(0).toUpperCase()}: ${yourData.created[item]}/${yourData.destroyed[item]}, ${theirData.created[item]}/${theirData.destroyed[item]}`;
-    }
-  );
-  return results.join(' ');
-}
-
-function getEnemyChoppersLost() {
-  let isEnemy = game.players.local.data.isEnemy;
-  let lost = 0;
-  game.objects.helicopter.forEach((chopper) => {
-    // don't count the own team
-    if (chopper.data.isEnemy === isEnemy) return;
-    lost += chopper.data.livesLost;
-  });
-  return lost;
-}
-
 const logEvents = {
   GAME_OVER: () => {
     let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
@@ -1193,6 +1142,9 @@ const logEvents = {
           !common.unlimitedLivesMode() && game.players.local.data.lives + 1
       }
     });
+
+    postToService('discord');
+    postToService('slack');
   },
 
   GAME_START: () => {
