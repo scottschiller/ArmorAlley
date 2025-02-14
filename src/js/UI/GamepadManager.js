@@ -789,6 +789,7 @@ const GamepadManager = (options = {}) => {
       lastGamepadState,
       gamepadState
     }),
+    getGPI: () => gpi,
     rumble
   };
 };

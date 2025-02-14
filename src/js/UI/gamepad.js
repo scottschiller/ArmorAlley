@@ -660,11 +660,14 @@ function scanGamepads() {
     // note: pad may be null, per gamepad API spec.
     if (!pad || !pad.connected) continue;
     let config = gamepadManager.checkGamepadSupport(pad);
+    let gpi = gamepadManager.getGPI();
     results.push({
       id: config?.label || pad.id,
       prettyLabel: getPrettyLabel(config?.label, pad.id),
       supported: !!config,
-      isStandard: !!config?.isStandard
+      isStandard: !!config?.isStandard,
+      // "is this the one in use"? (active via button press)
+      inUse: pad.index === gpi
     });
   }
   return results;
