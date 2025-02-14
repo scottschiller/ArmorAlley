@@ -1,3 +1,65 @@
+/**
+ * AllMightySauron / ascii-table3 (Apache 2.0)
+ * https://github.com/AllMightySauron/ascii-table3
+ *
+ * xpl/printable-characters (public domain)
+ * https://github.com/xpl/printable-characters
+ */
+
+import { styles } from './ascii-table3-styles.js';
+
+// --- xpl/printable-characters portion ---
+
+const ansiEscapeCode =
+    '[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]',
+  zeroWidthCharacterExceptNewline =
+    '\u0000-\u0008\u000B-\u0019\u001b\u009b\u00ad\u200b\u2028\u2029\ufeff\ufe00-\ufe0f',
+  zeroWidthCharacter = '\n' + zeroWidthCharacterExceptNewline,
+  zeroWidthCharacters = new RegExp(
+    '(?:' + ansiEscapeCode + ')|[' + zeroWidthCharacter + ']',
+    'g'
+  ),
+  partitionRegEx = new RegExp(
+    '((?:' +
+      ansiEscapeCode +
+      ')|[\t' +
+      zeroWidthCharacter +
+      '])?([^\t' +
+      zeroWidthCharacter +
+      ']*)',
+    'g'
+  );
+
+// Array.from solves the emoji problem as described here: http://blog.jonnew.com/posts/poo-dot-length-equals-two
+const strlen = (s) => Array.from(s.replace(zeroWidthCharacters, '')).length;
+
+const isBlank = (s) =>
+  s.replace(zeroWidthCharacters, '').replace(/\s/g, '').length === 0;
+
+const partition = (s) => {
+  for (
+    var m, spans = [];
+    partitionRegEx.lastIndex !== s.length && (m = partitionRegEx.exec(s));
+
+  ) {
+    spans.push([m[1] || '', m[2]]);
+  }
+  partitionRegEx.lastIndex = 0; // reset
+  return spans;
+};
+
+// --- below: ascii-table3 portion ---
+
+/**
+ * Filename containing rendering styles.
+ */
+
+/**
+ * Originally:
+ * const STYLES_FILENAME = '../ascii-table3.styles.json';
+ * now imported.
+ */
+
 /*jshint esversion: 6 */
 
 /**
@@ -13,7 +75,8 @@
 /**
  * Filename containing rendering styles.
  */
-const STYLES_FILENAME = '../ascii-table3.styles.json';
+// original node version - adapted for browser use.
+// const STYLES_FILENAME = '../ascii-table3.styles.json';
 
 /**
  * Alignment direction enum.
@@ -25,8 +88,9 @@ const AlignmentEnum = {
     AUTO: 3
 };
 
-const fs = require('fs');
-const { strlen, isBlank, partition } = require('printable-characters');
+// original node version - adapted for browser use.
+// const fs = require('fs');
+// const { strlen, isBlank, partition } = require('printable-characters');
 
 /**
  * Class for creating beautiful ASCII tables.
@@ -39,7 +103,8 @@ class AsciiTable3 {
      */
     constructor(title = '') {
         /** @type {Style[]} */
-        this.styles = JSON.parse(fs.readFileSync(require.resolve(STYLES_FILENAME), 'utf8'))
+        this.styles = styles;
+        // this.styles = JSON.parse(fs.readFileSync(require.resolve(STYLES_FILENAME), 'utf8'))
 
         this.clear();
 
@@ -1344,4 +1409,4 @@ class AsciiTable3 {
 /*!
  * Module exports.
  */
-module.exports = { AsciiTable3, AlignmentEnum };
+export { AsciiTable3, AlignmentEnum };
