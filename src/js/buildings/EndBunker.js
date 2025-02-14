@@ -477,6 +477,11 @@ const EndBunker = (options = {}) => {
             let isYours = data.isEnemy === game.players.local.data.isEnemy;
             // if funds were negative due to enemy capture, zero them out.
             if (data.funds < 0) {
+              /**
+               * Reverse some or all "lost" fund penalty, since we are now recovering.
+               * Note that `fundsLost` is +ve, this is an intentional subtraction.
+               */
+              data.fundsLost += parseInt(data.funds, 10);
               let msg = isYours
                 ? 'You have recaptured your end bunker. ⛳'
                 : 'The enemy has recaptured their end bunker. ⛳';
