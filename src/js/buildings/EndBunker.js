@@ -101,7 +101,7 @@ const EndBunker = (options = {}) => {
     capturedFunds = Math.max(0, allFunds ? data.funds : data.funds >> 1);
 
     // track how much was stolen from local player, before going negative.
-    data.fundsLost += data.funds;
+    data.fundsLost += parseInt(data.funds, 10) + 25;
 
     // once captured, now in the hole financially.
     // this can be reset by recapturing the bunker, OR earning 25 funds.
