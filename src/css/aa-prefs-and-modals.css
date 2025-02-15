@@ -243,6 +243,11 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   margin-left: -1%;
 }
 
+#game-prefs-modal .battle-list input[type='radio'] {
+  /* positioning shenanigans */
+  margin-right: calc(-2px * var(--prefs-font-scale));
+}
+
 body.is_iphone .mac-classic ul.real-list li {
   /* collapse list items somewhat */
   padding-bottom: 0px;
@@ -615,7 +620,7 @@ body.is_iphone #game-prefs-modal button {
 }
 
 .mac-classic ul.monospace li label {
-  padding-left: 0.45em;
+  padding-left: 0;
 }
 
 .mac-classic ul li {
