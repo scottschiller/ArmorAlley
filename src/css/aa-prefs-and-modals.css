@@ -342,6 +342,11 @@ body.is_iphone .mac-classic ul.real-list li {
 }
 
 @media screen and (orientation: portrait) {
+  body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal {
+    /* (likely) iPad: wider modal. */
+    width: 600px;
+  }
+
   body.is_iphone #game-prefs-modal .body {
     /* regular prefs modal: fit better on iPhone, portrait */
     font-size: calc(9.5px * var(--prefs-font-scale));
