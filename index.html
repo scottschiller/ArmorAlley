@@ -114,12 +114,19 @@
 
     -->
     <!-- full-bleed in iOS landscape view, including the notch -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      // HACK: don't apply <meta> viewport for iPad, messes with scaling of modals before rotation in portrait.
+      (function () {
+        let ua = navigator.userAgent;
+        if (ua.match(/safari/i) && ua.match(/chrome|edg|iphone/i)) {
+          let m = document.createElement('meta');
           m.name = 'viewport';
           m.content =
             'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover user-scalable=no';
+          (document.head || document.documentElement).appendChild(m);
+        }
+      })();
+    </script>
     <meta name="apple-mobile-web-app-title" content="Armor Alley: Remastered" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link
