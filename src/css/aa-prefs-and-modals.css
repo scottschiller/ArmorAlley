@@ -41,16 +41,26 @@ body.prefs-modal-open.network #game-prefs-modal {
 }
 
 body.is_iphone #game-prefs-modal {
-  top: 50%;
+  /* portrait */
+  top: 51%;
+}
+
+@media screen and (orientation: landscape) {
+  body.is_iphone #game-prefs-modal {
+    top: 52.5%;
+    /* font size + scaling hacks for entire modal */
+    width: 440px;
+    --prefs-font-scale: 0.9;
+  }
 }
 
 body.is_iphone #game-prefs-modal .body {
-  /* leave room for address bar UI. */
-  max-height: 72.5vh;
+  /* on mobile, allow full height as outer element is constrained. */
+  max-height: 100vh;
 }
 
 body.is_iphone #game-prefs-modal #game-prefs-form {
-  max-height: 71.5vh;
+  max-height: 73.5vh;
 }
 
 /* larger if a standalone / homescreen app */
