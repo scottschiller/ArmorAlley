@@ -1031,13 +1031,6 @@ body.has-gamepad.gamepad-active
   font-size: calc(10px * var(--prefs-font-scale));
 }
 
-#game-prefs-form {
-  /* one column, two rows. */
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
-}
-
 #game-prefs-modal fieldset {
   position: relative;
 }
