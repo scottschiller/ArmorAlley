@@ -736,7 +736,7 @@ body.is_firefox #home-video-wrapper {
 }
 
 #game-level-wrapper {
-  margin-bottom: calc(4px * var(--menu-scale));
+  margin-bottom: calc(3px * var(--menu-scale));
 }
 
 #game-buttons {
