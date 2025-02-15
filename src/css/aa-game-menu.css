@@ -773,6 +773,11 @@ body.is-mobile #game-menu-wrapper button.large {
   background-color: #111;
 }
 
+#game-menu .glow-item-checkbox {
+  /* "vs" selection fix for iOS Safari */
+  pointer-events: none;
+}
+
 #game-menu .glow-item-checkbox:hover,
 #game-menu-wrapper button.large:hover {
   background-color: rgba(255, 255, 255, 0.06);
