@@ -236,16 +236,24 @@ const View = () => {
 
       const shortScreen = window.innerHeight < 800;
 
+      /**
+       * iPads and phones in portrait mode: allow menu buttons
+       * to scale up, since we have more vertical space.
+       */
+      const tallAndNarrowScreen = window.innerHeight > window.innerWidth;
+
       let minScale = 0.25;
 
       let newScale = 1;
       let fontScale = 1;
+      let scaleTweak = 1;
 
-      if (isMobile && shortScreen) {
+      if (tallAndNarrowScreen || (isMobile && shortScreen)) {
         if (data.browser.isPortrait) {
           // hacks: allow larger scale on menu UI, but restrict description text on "smaller screens".
           minScale = 0.5;
-          fontScale = 0.8;
+          fontScale = 1.1;
+          scaleTweak = 1.3;
         } else {
           fontScale = 1;
         }
@@ -261,7 +269,8 @@ const View = () => {
         '--menu-chicago-scale',
         5.5 * newScale * fontScale
       );
-      dom.root?.style?.setProperty('--menu-scale', 5.5 * newScale);
+
+      dom.root?.style?.setProperty('--menu-scale', 5.5 * newScale * scaleTweak);
 
       // hack: re-render level preview.
       if (game.objects.radar) {
