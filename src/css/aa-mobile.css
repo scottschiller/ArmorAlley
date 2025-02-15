@@ -57,6 +57,17 @@ body.is-mobile.notch-at-right #help {
   margin-right: calc(env(safe-area-inset-right) / 3);
 }
 
+body.is-mobile #game-status {
+  right: 3px;
+  padding-right: 3px;
+  margin-top: calc(-0.5px * var(--gs));
+}
+
+body.is-mobile.notch-at-right #game-status {
+  /* just in case */
+  padding-right: calc(env(safe-area-inset-right) / 3);
+}
+
 body.is-mobile #player-status-bar:not(.has_keyboard) .inventory-item,
 body.is-mobile #player-status-bar:not(.has_keyboard) .spacer,
 body.is-mobile #player-status-bar:not(.has_keyboard) span.letter-block {
@@ -117,6 +128,10 @@ body.is_iphone #mobile-controls {
 }
 
 @media screen and (orientation: landscape) {
+  body.is_iphone #game-status {
+    top: calc(8px * var(--gs));
+    font-size: calc(11px * var(--gs));
+  }
   body:not(.is_iphone) #mobile-controls {
     /* iPad: a little spacing, whichever side of the screen we're on */
     margin-left: calc(5px * var(--gs));
