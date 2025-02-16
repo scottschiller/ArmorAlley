@@ -330,7 +330,10 @@ body.radar_interference_blur #radar-container.interference .interference {
   opacity: 1;
 }
 
-body:not(.radar_enhanced_fx) #radar-container.interference .interference .noise {
+body:not(.radar_enhanced_fx)
+  #radar-container.interference
+  .interference
+  .noise {
   /* hide if not enhanced. */
   display: none;
   background: none;
@@ -819,7 +822,7 @@ button.primary {
 #game-menu-wrapper .cta:not(label),
 #game-menu-wrapper button.large,
 .generic-cta.large {
-  border: 1px solid transparent;
+  border: none;
   transition:
     background-color 250ms,
     border 250ms,
