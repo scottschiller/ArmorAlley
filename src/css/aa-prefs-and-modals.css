@@ -26,7 +26,7 @@ body.prefs-modal-open #envelopes-placeholder {
   z-index: 11;
 }
 
-body.prefs-modal-open.network #game-prefs-modal {
+body:not(.is_iphone).prefs-modal-open.network #game-prefs-modal {
   /* a little wider */
   width: 560px;
 }
@@ -302,15 +302,27 @@ body.is_iphone .mac-classic ul.real-list li {
   }
 
   body.is_iphone #game-prefs-modal .aa-logo {
-    /* crunch logo down, space is at a premium. */
-    width: 256px;
-    margin-top: 0px;
-    padding: 0px 32px;
+    /* space is at a premium. */
+    margin-top: 2.5px;
+    width: 100%;
+    padding: 0px;
+  }
+
+  body.is_iphone #game-prefs-modal.is-network .aa-logo {
+    /* crunch logo down more. */
+    width: 92%;
+  }
+
+  body.is_iphone #game-prefs-modal #game-prefs-header .column:last-of-type {
+    /* condense last one */
+    flex: 0.5;
   }
 
   body.is_iphone #game-prefs-modal:not(.is-network) #game-prefs-submit {
     /* space button out to balance logo at left. */
-    margin-right: 42px;
+    margin: 0px auto;
+    align-self: center;
+    min-width: 67%;
   }
 
   body.is_iphone #game-prefs-modal.select-level #game-prefs-header {
@@ -328,21 +340,6 @@ body.is_iphone .mac-classic ul.real-list li {
   body.is_iphone #game-prefs-modal.select-level #prefs-select-level legend {
     /* tighter spacing on iPhone */
     padding-top: 4px;
-  }
-
-  body.is_iphone #game-prefs-modal.is-network #game-prefs-header .column {
-    /* allow start / cancel buttons to wrap */
-    flex-direction: row;
-  }
-
-  body.is_iphone #game-prefs-modal.is-network #game-prefs-submit {
-    /* space between buttons */
-    margin-right: 12px;
-  }
-
-  body.is_iphone #game-prefs-modal.is-network #game-prefs-cancel {
-    /* align cancel button */
-    top: -8px;
   }
 
   body.is_iphone #game-prefs-modal .battle-list,
@@ -394,13 +391,14 @@ body.is_iphone .mac-classic ul.real-list li {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  padding: 10px;
+  padding: 10px 0px 10px;
   width: 100%;
 }
 
 #game-prefs-header .aa-logo {
   display: inline-block;
-  margin-right: 15px;
+  padding-right: 15px;
+  margin-left: 15px;
   margin-top: 7.5px;
   width: 390px;
   max-width: 65vw;
@@ -411,8 +409,8 @@ body.is_iphone .mac-classic ul.real-list li {
 #game-prefs-modal.select-level .aa-logo {
   /* larger logo only in this one case. */
   width: auto;
-  max-width: 100%;
-  margin-right: 0px;
+  max-width: 95%;
+  box-sizing: border-box;
   image-rendering: pixelated;
 }
 
@@ -423,9 +421,9 @@ body.is_iphone .mac-classic ul.real-list li {
   flex-direction: column;
 }
 
-#game-prefs-modal.is-network .column:last-of-type {
-  /* hack: scrollbar clipping on right side */
-  margin-right: -4px;
+body:not(.is_iphone) #game-prefs-header .column:last-of-type {
+  /* ready + cancel buttons: right-side alignment, iPad */
+  padding-right: 6px;
 }
 
 #game-prefs-modal textarea {
