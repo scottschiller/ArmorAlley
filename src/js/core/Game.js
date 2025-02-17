@@ -73,6 +73,7 @@ import { countFriendly } from './logic.js';
 import {
   copyToClipboardHandler,
   formatForWebhook,
+  freezeStats,
   getEnemyChoppersLost,
   getGameDuration,
   getMTVIE,
@@ -1100,6 +1101,10 @@ const game = (() => {
 
 const logEvents = {
   GAME_OVER: () => {
+
+    // "bake" the data for stats / reporting
+    freezeStats();
+
     let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
 
     let endBunker =
