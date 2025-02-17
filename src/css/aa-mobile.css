@@ -149,7 +149,13 @@ body.is_iphone #mobile-controls {
 
   body.is-mobile #game-tips,
   body.is-mobile #game-tips #game-announcements {
-    font-size: calc(24px * var(--gs));
+    font-size: calc(20px * var(--gs));
+  }
+
+  body.is-mobile.is_iphone #game-tips,
+  body.is-mobile.is_iphone #game-tips #game-announcements {
+    /* smaller on iPhone, specifically. */
+    font-size: calc(14px * var(--gs));
   }
 }
 
@@ -985,6 +991,6 @@ body.game-paused .sprite {
 
   /* just a bit smaller on iPhone, portrait. */
   #game-tips #game-announcements {
-    font-size: calc(18px * var(--gs));
+    font-size: calc(13px * var(--gs));
   }
 }
