@@ -859,7 +859,7 @@ body.game-over #game-tips {
 
 body.has-gamepad.gamepad-active #game-tips .game-start:focus,
 body.has-gamepad.gamepad-active #game-tips .generic-cta:focus,
-body.has-gamepad.gamepad-active #game-tips .game-start:focus-visible, 
+body.has-gamepad.gamepad-active #game-tips .game-start:focus-visible,
 body.has-gamepad.gamepad-active #game-tips .generic-cta:focus-visible {
   border: 1px solid #fff;
   outline: none;
