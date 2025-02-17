@@ -52,7 +52,7 @@ let victoryMessages = {
   },
   'Wasteland': {
     easy: `You've conquered every obstacle and mastered every trick the enemy knew. You're a general to be reckoned with. Just one last battle.`,
-    armorgeddon: `Well, you just think you're tough. Wait 'til the next battle!`,
+    armorgeddon: `Well, you just think you're tough. Wait 'til the next battle!`
   },
   'Midnight Oasis': {
     easy: `${youWon} Now that you have made it through Boot Camp, try your luck in Wargames!`,
