@@ -1561,7 +1561,9 @@ const Helicopter = (options = {}) => {
         // ensure joystick UI is hidden, if present
         game.objects.joystick?.end();
 
-        utils.css.add(document.body, 'game-over');
+        console.warn('TODO: integrate game-over stats report');
+
+        utils.css.add(document.body, 'game-over', 'you-lost');
       }
     }
 

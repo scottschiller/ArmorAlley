@@ -65,7 +65,7 @@ const Van = (options = {}) => {
     if (radarItem) {
       radarItem.die(dieOptions);
     }
-    
+
     if (sounds.genericExplosion) {
       playSound(sounds.genericExplosion, exports);
     }
@@ -242,7 +242,7 @@ const Van = (options = {}) => {
     // ensure joystick UI is hidden, if present
     game.objects.joystick?.end();
 
-    utils.css.add(document.body, 'game-over');
+    utils.css.add(document.body, 'game-over', youWon ? 'you-won' : 'you-lost');
 
     game.logEvent('GAME_OVER');
 
