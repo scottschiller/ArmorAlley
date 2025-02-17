@@ -137,7 +137,7 @@ function Envelope() {
             common.setFrameTimeout(() => {
               open();
               addEvents();
-            }, 250);
+            }, 150);
           }, 250);
         }, 850);
       }, 1000);
