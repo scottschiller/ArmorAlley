@@ -1083,9 +1083,12 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
 }
 
 #game-tips.has-announcement .announcement-text {
-  /* prevent super-wide messages, e.g., battle won or lost */
-  max-width: 27.25em;
-  padding: 0px 0.5em;
+  /**
+   * Balance between tall and narrow portrait, and widescreens.
+   */
+  min-width: 15em;
+  max-width: 24em;
+  padding: 0px;
   display: inline-block;
   text-align: center;
 }
