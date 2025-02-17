@@ -1414,26 +1414,6 @@ button.copy-game-stats:active {
   z-index: 2;
 }
 
-body.game-over.you-lost #notification-toasts {
-  /* hackish: reposition for game over, "you lost" case */
-  transition: all 0.5s ease-in-out;
-  transition-property: position, height;
-  pointer-events: all;
-  /* just above stats bar */
-  top: 13.5%;
-  /* extend to bottom */
-  height: 80%;
-  /* sit underneath announcements */
-  z-index: 1;
-}
-
-body.game-over.you-lost #notification-toasts .notification-toast span {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
-  padding-left: calc(2px * var(--gs));
-  padding-right: calc(2px * var(--gs));
-}
-
 #notification-toasts.left-aligned {
   right: auto;
   left: 2.05%;
