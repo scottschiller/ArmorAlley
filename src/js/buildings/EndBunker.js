@@ -86,7 +86,9 @@ const EndBunker = (options = {}) => {
   }
 
   function captureFunds(target) {
-    let maxFunds, capturedFunds, allFunds, actor;
+    if (game.data.battleOver) return;
+
+    let capturedFunds, allFunds, actor;
 
     // infantry only get to steal so much at a time.
     // because they're special, engineers may be able to steal all funds. 💰
