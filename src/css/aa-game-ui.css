@@ -1371,6 +1371,27 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   opacity: 0.5;
 }
 
+button.copy-game-stats {
+  /* button within notifications */
+  font-family: monospace;
+  letter-spacing: -0.25px;
+  font-size: 100%;
+  background: rgba(0, 128, 0, 0.9);
+  border: 1px solid rgba(0, 160, 0, 0.9);
+  color: #ccc;
+  padding: calc(2px * var(--gs)) calc(4px * var(--gs));
+  border-radius: calc(2px * var(--gs));
+}
+
+body.game-over.you-won button.copy-game-stats {
+  color: #fff;
+}
+
+button.copy-game-stats:active {
+  background: rgba(0, 96, 0, 0.9);
+  color: #fff;
+}
+
 #notification-toasts {
   position: absolute;
   overflow: hidden;
