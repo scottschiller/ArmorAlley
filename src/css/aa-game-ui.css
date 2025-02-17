@@ -1517,14 +1517,6 @@ button.copy-game-stats:active {
   max-height: 3em;
 }
 
-body.game-over.you-lost .notification-toast.toast-active {
-  /**
-   * Hack around the end-game case - this breaks the nice transitions
-   * when notifications collapse and fade out. TODO: revisit.
-  */
-  max-height: 100%;
-}
-
 .notification-toast.toast-expiring {
   opacity: 0;
   /* easy collapse! */
