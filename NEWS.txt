@@ -1,5 +1,11 @@
-`The latest and greatest: January 2025 Edition 🗞️`
-This is a work-in-progress overview of update highlights. For code-level details, see the changelog section below.
+`The latest and greatest: February 2025 Edition 🗞️`
+This is a summary of work in progress. For code-level details, see the changelog section below.
+
+`Game Statistics V2.0`
+
+· Game stats: time, score, inventory and other details when battle is won or lost.
+
+· Work in progress: Support for posting game stats to Discord + Slack via webhooks.
 
 `Gamepad Support: V1.0 (Experimental) 🎮🤞`
 
