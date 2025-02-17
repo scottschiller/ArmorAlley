@@ -305,17 +305,36 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   line-height: 150%;
 }
 
+.animated-mail .letter .letter-context-body .copy-game-stats-wrapper br {
+  /* hacks! */
+  display: none;
+}
+
+.animated-mail .letter .letter-context-body .game-stats ul {
+  display: inline-block;
+  margin: 0px;
+  margin-left: 1em;
+  padding: 0px;
+  list-style-type: disc;
+}
+
+.animated-mail .letter .letter-context-body .game-stats ul li {
+  margin: 0px;
+  padding: 0px;
+}
+
 .animated-mail .letter .letter-context-body .game-stats code {
   white-space: pre-wrap;
   font-size: calc(4px * var(--gs));
   float: left;
-  line-height: 125%;
-  margin: -0.85em 1.2em 0px 0px;
+  line-height: 130%;
+  margin: 0px 1.5em 0px 0px;
 }
 
 .animated-mail .letter .letter-context-body .game-stats + p {
   /* clear the float from stats, old-skool */
   clear: both;
+  margin-top: 0px;
 }
 
 body.gamepad-active .animated-mail .letter .letter-context-body {
