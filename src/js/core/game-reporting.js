@@ -277,10 +277,15 @@ function formatForWebhook(style, options = {}) {
     decor = ' ' + '🎖️'.repeat(difficultyMap[gamePrefs.game_type] || 1) + ' ';
   }
 
-  let preamble = !isNotification && !isHTML ? `🚁 ${won ? '🎉' : '🪦'} ` : '';
+  // "out of lives" vs. "lost battle"
+  let isDefeat = !won && !common.unlimitedLivesMode();
+
+  let preamble = !isHTML ? `🚁 ${won ? '🎉' : isDefeat ? '🪦' : '🏳️'} ` : '';
 
   let battleStatus = !isHTML
-    ? `Battle ${won ? 'won' : 'lost'}${isNotification ? '\n' : ': '}`
+    ? isDefeat
+      ? 'Defeat (all choppers lost): '
+      : `Battle ${won ? 'won' : 'lost'}: `
     : '';
 
   let difficulty = `${gameTypeMap[gamePrefs.game_type]} ${gameTypeEmoji[gamePrefs.game_type]}`;
