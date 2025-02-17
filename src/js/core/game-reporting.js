@@ -320,7 +320,9 @@ function formatForWebhook(style, options = {}) {
 
   debugInfo.push(
     `📺 Avg FPS: ${dc.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` +
-      (gamePrefs.game_speed != 1 ? `, ${gamePrefs.game_speed}x speed` : '')
+      (gamePrefs.game_speed != 1
+        ? `, ${gamePrefs.game_speed * 100}% speed`
+        : '')
   );
 
   let copyGameStats =
