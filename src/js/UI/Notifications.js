@@ -28,6 +28,7 @@ const Notifications = () => {
 
     if (!text?.replace) return;
 
+    // normalize non-breaking spaces and newlines.
     text = text.replace(/\s&nbsp;\s/gi, ' ').replace(/\n/gi, '<br />');
 
     if (!data.items) data.items = [];
