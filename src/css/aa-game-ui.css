@@ -1374,6 +1374,58 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   opacity: 0.5;
 }
 
+#game-announcements div.game-over-stats-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-top: 0.5em;
+}
+
+#game-announcements div.game-over-stats {
+  display: inline-block;
+  text-align: left;
+  margin: 0px auto;
+  font-size: calc(5.5px * var(--gs));
+  line-height: 150%;
+  font-family: monospace;
+}
+
+#game-announcements div.game-over-stats ul {
+  display: inline-block;
+  margin: 0px;
+  margin-left: 1em;
+  padding: 0px;
+  list-style-type: disc;
+}
+
+#game-announcements div.game-over-stats ul li {
+  margin: 0px;
+  padding: 0px;
+}
+
+#game-announcements div.game-over-stats code {
+  white-space: pre-wrap;
+  float: left;
+  line-height: 130%;
+  margin: 0px 1.2em 0px 0px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+}
+
+#game-announcements div.copy-game-stats-wrapper {
+  margin-top: 3px;
+}
+
+#game-announcements div.copy-game-stats-wrapper br {
+  /* hack! */
+  display: none;
+}
+
+#game-announcements div.copy-game-stats-wrapper button:not(:hover) {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 button.copy-game-stats {
   /* button within notifications */
   font-family: monospace;
