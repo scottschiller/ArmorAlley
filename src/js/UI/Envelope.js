@@ -5,6 +5,10 @@ import { isMobile, searchParams } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { campaignBattles, levelName } from '../levels/default.js';
 import { game } from '../core/Game.js';
+import {
+  copyToClipboardHandler,
+  formatForWebhook
+} from '../core/game-reporting.js';
 
 let gameTypeParam;
 let gtParam;
@@ -51,18 +55,20 @@ function Envelope() {
 
     const { level } = data;
 
-    dom.oLetter.innerHTML =
-      '<h1>' +
-      (dom.oLetterSource.querySelector(`dt[data-battle="${level}"]`)
-        ?.innerHTML || 'missing') +
-      '</h1>' +
-      (dom.oLetterSource.querySelector(`dd[data-battle="${level}"]`)
-        ?.innerHTML || 'missing');
+    dom.oLetter.innerHTML = [
+      `<h1>${
+        dom.oLetterSource.querySelector(`dt[data-battle="${level}"]`)
+          ?.innerHTML || 'missing'
+      }</h1>`,
+      `<div class="game-stats">${formatForWebhook('html')}</div>`,
+      dom.oLetterSource.querySelector(`dd[data-battle="${level}"]`)
+        ?.innerHTML || 'missing'
+    ].join('');
 
     const currentOffset = campaignBattles.indexOf(level);
     const nextLevel = campaignBattles[currentOffset + 1];
-
     const { nextLink } = dom;
+
     if (nextLevel) {
       nextLink.href = `?battle=${nextLevel}${gtParam}&start=1`;
       nextLink.innerHTML = `Next Battle: ${nextLevel} ➠`;
@@ -86,7 +92,8 @@ function Envelope() {
   }
 
   function openOrClose(e) {
-    // special case: ignore "next" link, don't toggle envelope.
+    // special case: ignore "next" link and elements with actions.
+    if (e?.target?.getAttribute('data-action')) return;
     if (e?.target?.id === 'next-battle') return;
     if (data.open) return close();
     open();
@@ -112,14 +119,28 @@ function Envelope() {
     if (data.active) return;
     init(() => {
       initDOM();
-      addEvents();
       data.active = true;
       applyLevel();
       let didWin = true;
       updateNextLink(didWin);
+
       dom.o.style.display = 'block';
       addGlows();
-      common.setFrameTimeout(() => utils.css.add(dom.o, css.active), 1000);
+
+      // activate, simulate mouse down / up, open.
+      common.setFrameTimeout(() => {
+        utils.css.add(dom.o, css.active);
+        common.setFrameTimeout(() => {
+          utils.css.add(dom.o, 'mousedown');
+          common.setFrameTimeout(() => {
+            utils.css.remove(dom.o, 'mousedown');
+            common.setFrameTimeout(() => {
+              open();
+              addEvents();
+            }, 250);
+          }, 250);
+        }, 850);
+      }, 1000);
     });
   }
 
@@ -298,6 +319,9 @@ function Envelope() {
     dom.o.onmousedown = updateMouse;
     dom.o.onmouseup = updateMouse;
     dom.o.onclick = openOrClose;
+    let statsButton = dom.o.querySelector('.copy-game-stats');
+    // deliciously old-skool.
+    utils.events.add(statsButton, 'mousedown', copyToClipboardHandler);
   }
 
   function initDOM() {
