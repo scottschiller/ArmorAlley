@@ -633,6 +633,14 @@ const utils = {
     };
   })(),
 
+  copyToClipboard: (str, callback) => {
+    if (!navigator?.clipboard?.writeText) return callback(false);
+    return navigator.clipboard.writeText(str).then(
+      () => callback(true),
+      () => callback(false)
+    );
+  },
+
   log: ({
     info = {},
     delay = 1000 + parseInt(Math.random() * 5000, 10),

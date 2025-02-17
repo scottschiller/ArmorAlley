@@ -434,14 +434,6 @@ function PrefsManager() {
     }
   }
 
-  const copyToClipboard = (str, callback) => {
-    if (!navigator?.clipboard?.writeText) return callback(false);
-    return navigator.clipboard.writeText(str).then(
-      () => callback(true),
-      () => callback(false)
-    );
-  };
-
   function updateNetworkStatus(status) {
     const statusHTML = '🌐 &hairsp;Network';
 
@@ -2248,7 +2240,7 @@ function PrefsManager() {
     const wl = window.location;
     const inviteURL = `${wl.origin}${wl.pathname}?${inviteParams.join('&')}`;
 
-    copyToClipboard(inviteURL, (ok) => {
+    utils.copyToClipboard(inviteURL, (ok) => {
       const inviteContainer = document.getElementById(
         'network-options-invite-container'
       );
