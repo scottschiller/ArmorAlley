@@ -1409,13 +1409,12 @@ button.copy-game-stats:active {
   line-height: calc(8px * var(--gs));
   pointer-events: none;
   z-index: 2;
-  /* hack - TODO: test */
-  transition: all 0.5s ease-in-out;
-  transition-property: position, height;
 }
 
 body.game-over.you-lost #notification-toasts {
   /* hackish: reposition for game over, "you lost" case */
+  transition: all 0.5s ease-in-out;
+  transition-property: position, height;
   pointer-events: all;
   /* just above stats bar */
   top: 13.5%;
@@ -1476,6 +1475,14 @@ body.game-over.you-lost #notification-toasts .notification-toast span {
 .notification-toast.toast-active {
   opacity: 1;
   /* sneaky: transition in. This "should" cover two lines. */
+  max-height: 3em;
+}
+
+body.game-over.you-lost .notification-toast.toast-active {
+  /**
+   * Hack around the end-game case - this breaks the nice transitions
+   * when notifications collapse and fade out. TODO: revisit.
+  */
   max-height: 100%;
 }
 
