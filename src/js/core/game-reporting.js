@@ -3,13 +3,24 @@
  */
 
 import { levelName } from '../levels/default.js';
-import { AlignmentEnum, AsciiTable3 } from '../lib/ascii-table3/ascii-table3.js';
+import {
+  AlignmentEnum,
+  AsciiTable3
+} from '../lib/ascii-table3/ascii-table3.js';
 import { gamepad } from '../UI/gamepad.js';
 import { gamePrefs } from '../UI/preferences.js';
+import { common } from './common.js';
 import { game } from './Game.js';
-import { DEFAULT_FUNDS, FPS, gameTypeEmoji, TYPES } from './global.js';
+import {
+  DEFAULT_FUNDS,
+  FPS,
+  gameTypeEmoji,
+  isMobile,
+  TYPES
+} from './global.js';
 import { countFriendly } from './logic.js';
 import { getScore } from './scores.js';
+import { utils } from './utils.js';
 
 function getGameDuration() {
   let gld = game.objects.gameLoop.data;
@@ -52,12 +63,24 @@ function getMTVIE(enemySide) {
   return results.join(' ');
 }
 
-function formatForWebhook(style) {
+function formatForWebhook(style, options = {}) {
+  /**
+   * TODO: "freeze" results from stats on first call,
+   * so background game progress post-win/lose has no effect.
+   *
+   * This may not matter if the copy-to-clipboard feature is retired.
+   */
+
   let styleMap = {
+    html: 'ramac',
+    notification: 'unicode-round',
     default: 'unicode-round',
     discord: 'unicode-round',
     slack: 'compact'
   };
+
+  let isHTML = style === 'html';
+  let isNotification = style === 'notification';
 
   let tableStyle = styleMap[style] || styleMap.default;
 
@@ -155,7 +178,18 @@ function formatForWebhook(style) {
     fundsStats += `, +${fundsCaptured} 🏴‍☠️`;
   }
 
-  let backticks = '```';
+  let markerTypes = {
+    backticks: {
+      start: '```',
+      end: '```'
+    },
+    code: {
+      start: '<code>',
+      end: '</code>'
+    }
+  };
+
+  let markers = !isNotification && !isHTML ? markerTypes.backticks : null;
 
   let difficultyMap = {
     tutorial: 1,
@@ -183,8 +217,17 @@ function formatForWebhook(style) {
     decor = ' ' + '🎖️'.repeat(difficultyMap[gamePrefs.game_type] || 1) + ' ';
   }
 
-  let header =
-    `🚁 ${won ? '🎉' : '🪦'} Battle ${won ? 'won' : 'lost'}: ${levelName}, ${gameTypeMap[gamePrefs.game_type]} ${gameTypeEmoji[gamePrefs.game_type]}${decor}`.trim();
+  let preamble = !isNotification && !isHTML ? `🚁 ${won ? '🎉' : '🪦'} ` : '';
+
+  let battleStatus = !isHTML
+    ? `Battle ${won ? 'won' : 'lost'}${isNotification ? '\n' : ': '}`
+    : '';
+
+  let difficulty = `${gameTypeMap[gamePrefs.game_type]} ${gameTypeEmoji[gamePrefs.game_type]}`;
+
+  let header = isHTML
+    ? `Difficulty: ${difficulty}`
+    : `${preamble}${battleStatus}${levelName}, ${difficulty}${decor}`.trim();
 
   let debugInfo = [];
 
@@ -194,7 +237,9 @@ function formatForWebhook(style) {
       let gpReport = [];
       gpData.forEach((gp) => {
         if (!gp.supported || !gp.inUse) return;
-        gpReport.push(`${gp.prettyLabel}, ${gp.isStandard ? 'standard' : 'remapped'}`);
+        gpReport.push(
+          `${gp.prettyLabel}, ${gp.isStandard ? 'standard' : 'remapped'}`
+        );
       });
       if (gpReport.length) {
         debugInfo.push(`🎮 ${gpReport.join('\n')}`);
@@ -203,27 +248,76 @@ function formatForWebhook(style) {
   }
 
   if (gamePrefs.bnb) {
-    debugInfo.push(`🎸🤘🕹️ Now playing: ${game.data.isBeavis ? 'Beavis' : 'Butt-Head'}`);
+    debugInfo.push(
+      `🎸🤘🕹️ Now playing: ${game.data.isBeavis ? 'Beavis' : 'Butt-Head'}`
+    );
   }
 
-  debugInfo.push(`📺 Avg FPS: ${game.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` + (gamePrefs.game_speed != 1 ? `, ${gamePrefs.game_speed}x speed` : ''));
+  debugInfo.push(
+    `📺 Avg FPS: ${game.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` +
+      (gamePrefs.game_speed != 1 ? `, ${gamePrefs.game_speed}x speed` : '')
+  );
 
-  let report = [
-    backticks,
-    header + '\n \n',
-    `⏱️ Duration: ${getGameDuration()}\n`,
-    `📈 Score: ${getScore(game.players.local)}\n`,
-    `${fundsStats}\n`,
-    `${structureStats}\n`,
-    debugInfo.join('\n') + '\n',
-    `${vTable.toString()}\n`,
-    backticks
-  ].join('');
+  let copyGameStats =
+    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>' +
+    (isNotification ? '\n' : '');
+
+  let betaText = '[ Game stats beta ]';
+
+  copyGameStats = isNotification
+    ? betaText + '\n' + copyGameStats
+    : copyGameStats + ' ' + betaText;
+
+  let report;
+
+  if (isHTML) {
+    report = [
+      markers?.start ? markers?.start + '\n' : '',
+      (isNotification || isHTML) && markerTypes.code.start,
+      `${vTable.toString()}\n`,
+      (isNotification || isHTML) && markerTypes.code.end,
+      header + '\n',
+      `⏱️ Duration: ${getGameDuration()}\n`,
+      `📈 Score: ${getScore(game.players.local)}\n`,
+      `${fundsStats}\n`,
+      `${structureStats}\n`,
+      debugInfo.join('\n') + '\n',
+      isNotification || isHTML
+        ? `<div style="clear:both">${copyGameStats}</div>`
+        : null,
+      markers?.end
+    ]
+      .filter((o) => !!o)
+      .join('');
+  } else {
+    report = [
+      markers?.start ? markers?.start + '\n' : '',
+      header + '\n \n',
+      `⏱️ Duration: ${getGameDuration()}\n`,
+      `📈 Score: ${getScore(game.players.local)}\n`,
+      `${fundsStats}\n`,
+      `${structureStats}\n`,
+      debugInfo.join('\n') + '\n',
+      (isNotification || isHTML) && markerTypes.code.start,
+      `${vTable.toString()}\n`,
+      (isNotification || isHTML) && markerTypes.code.end,
+      isNotification || isHTML ? copyGameStats : null,
+      markers?.end
+    ]
+      .filter((o) => !!o)
+      .join('');
+  }
 
   // hack: drop any double-newlines introduced from above
   report = report.replace(/\n\n/gi, '\n');
 
-  console.log(report);
+  if (isHTML) {
+    report = report.replace(/\n/g, '<br />');
+  }
+
+  if (options.logToConsole) {
+    console.log(report);
+  }
 
   return report;
 }
@@ -263,4 +357,56 @@ function postToService(service) {
   });
 }
 
-export { getGameDuration, getMTVIE, getEnemyChoppersLost, postToService };
+let copyTimer;
+
+// yuck: event handler for clipboard / stats
+function copyToClipboardHandler(e) {
+  let text = formatForWebhook('discord');
+
+  // guard against multiple clicks
+  if (copyTimer) return;
+
+  utils.copyToClipboard(text, (ok) => {
+    // get, and guard/preserve original value.
+    let attr = 'data-original-html';
+    let originalValue = e.target.getAttribute(attr);
+
+    if (!originalValue) {
+      originalValue = e.target.innerHTML;
+      e.target.setAttribute(attr, originalValue);
+    }
+
+    // hackish: replace with strings matching original length.
+    let newHTML = (ok ? '     Copied!     ' : '   Failed. :/   ').replace(
+      /\s/g,
+      '&nbsp;'
+    );
+
+    e.target.innerHTML = newHTML;
+
+    copyTimer = common.setFrameTimeout(() => {
+      copyTimer = null;
+      e.target.innerHTML = originalValue;
+    }, 2000);
+
+    game.objects.notifications.add(
+      (ok ? '✅ Stats copied to clipboard.' : '❌ Could not copy.') +
+        (!isMobile ? '\nSee JS console, too.' : ''),
+      { force: true }
+    );
+  });
+
+  console.log(text);
+
+  e.preventDefault();
+  return false;
+}
+
+export {
+  copyToClipboardHandler,
+  formatForWebhook,
+  getGameDuration,
+  getMTVIE,
+  getEnemyChoppersLost,
+  postToService
+};
