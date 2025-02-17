@@ -70,7 +70,14 @@ import { MissileNapalm } from '../munitions/MissileNapalm.js';
 import { getScore, scoreCreate } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
 import { countFriendly } from './logic.js';
-import { getEnemyChoppersLost, getGameDuration, getMTVIE, postToService } from './game-reporting.js';
+import {
+  copyToClipboardHandler,
+  formatForWebhook,
+  getEnemyChoppersLost,
+  getGameDuration,
+  getMTVIE,
+  postToService
+} from './game-reporting.js';
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
@@ -1141,6 +1148,19 @@ const logEvents = {
         choppers_left:
           !common.unlimitedLivesMode() && game.players.local.data.lives + 1
       }
+    });
+
+    if (!game.data.youWon) {
+      game.objects.notifications.add(formatForWebhook('notification'), {
+        force: true,
+        leftAlign: true,
+        infinite: true
+      });
+    }
+
+    document.querySelectorAll('.copy-game-stats').forEach((el) => {
+      // deliciously old-skool.
+      el.onclick = copyToClipboardHandler;
     });
 
     postToService('discord');
