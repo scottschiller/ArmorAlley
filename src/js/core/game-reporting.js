@@ -249,7 +249,7 @@ function formatForWebhook(style, options = {}) {
     }
   };
 
-  let markers = !isNotification && !isHTML ? markerTypes.backticks : null;
+  let markers = !isHTML ? markerTypes.backticks : null;
 
   let difficultyMap = {
     tutorial: 1,
@@ -326,14 +326,11 @@ function formatForWebhook(style, options = {}) {
   );
 
   let copyGameStats =
-    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>' +
-    (isNotification ? '\n' : '');
+    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>';
 
   let betaText = '<span style="white-space:nowrap">[ Game stats beta ]</span>';
 
-  copyGameStats = isNotification
-    ? betaText + '\n' + copyGameStats
-    : copyGameStats + ' ' + betaText;
+  copyGameStats += ' ' + betaText;
 
   let report;
 
@@ -348,9 +345,9 @@ function formatForWebhook(style, options = {}) {
     let debugOutput = debugInfo.map((i) => li(i)).join('');
     report = [
       markers?.start ? markers?.start + nl : '',
-      (isNotification || isHTML) && markerTypes.code.start,
+      markerTypes.code.start,
       `${vTable.toString()}${nl}`,
-      (isNotification || isHTML) && markerTypes.code.end,
+      markerTypes.code.end,
       `<ul>`,
       li(header),
       li(`⏱️ Duration: ${dc.extra.duration}`),
@@ -359,9 +356,7 @@ function formatForWebhook(style, options = {}) {
       structureStats.map((s) => li(s)).join(''),
       debugOutput,
       `</ul>`,
-      isNotification || isHTML
-        ? `<div class="copy-game-stats-wrapper">${copyGameStats}</div>`
-        : null,
+      `<div class="copy-game-stats-wrapper">${copyGameStats}</div>`,
       markers?.end
     ]
       .filter((o) => !!o)
@@ -373,12 +368,9 @@ function formatForWebhook(style, options = {}) {
       `⏱️ Duration: ${dc.extra.duration}${nl}`,
       `📈 Score: ${dc.extra.score}${nl}`,
       `${fundsStats}${nl}`,
-      structureStats.join(nl),
-      debugInfo.length ? debugInfo.join(nl) + nl : '', // + nl,
-      (isNotification || isHTML) && markerTypes.code.start,
+      structureStats.join(nl) + nl,
+      debugInfo.length ? debugInfo.join(nl) + nl : '',
       `${vTable.toString()}${nl}`,
-      (isNotification || isHTML) && markerTypes.code.end,
-      isNotification || isHTML ? copyGameStats : null,
       markers?.end
     ]
       .filter((o) => !!o)
