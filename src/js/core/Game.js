@@ -1150,14 +1150,6 @@ const logEvents = {
       }
     });
 
-    if (!game.data.youWon) {
-      game.objects.notifications.add(formatForWebhook('notification'), {
-        force: true,
-        leftAlign: true,
-        infinite: true
-      });
-    }
-
     document.querySelectorAll('.copy-game-stats').forEach((el) => {
       // deliciously old-skool.
       el.onclick = copyToClipboardHandler;
