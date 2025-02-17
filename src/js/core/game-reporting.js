@@ -98,26 +98,34 @@ function copy(aObject) {
 
 let dataCache;
 
-function getDataCache() {
-  /**
-   * "Freeze" a copy of game objects for reporting.
-   * This shouldn't be necessary, but the game sort of continues after
-   * the end sequence - so it's safest to make a copy of game state.
-   */
-  if (dataCache) return dataCache;
+function freezeStats() {
+  // only do this once.
+  if (dataCache) return;
   dataCache = {
     players: copy(game.players),
     objects: copy(game.objects),
     extra: {
       friendlyBunkers: countFriendly(TYPES.bunker),
       friendlySuperBunkers: countFriendly(TYPES.superBunker),
-      friendlyTurrets: countFriendly(TYPES.turret)
+      friendlyTurrets: countFriendly(TYPES.turret),
+      duration: getGameDuration(),
+      score: getScore(game.players.local)
     }
   };
-  return dataCache;
 }
 
-window.getDataCache = getDataCache;
+function getDataCache() {
+  /**
+   * "Freeze" a copy of game objects for reporting.
+   * This shouldn't be necessary, but the game sort of continues after
+   * the end sequence - so it's safest to make a copy of game state.
+   */
+  if (!dataCache) {
+    freezeStats();
+  }
+
+  return dataCache;
+}
 
 function formatForWebhook(style, options = {}) {
   let dc = getDataCache();
@@ -131,7 +139,6 @@ function formatForWebhook(style, options = {}) {
   };
 
   let isHTML = style === 'html';
-  let isNotification = style === 'notification';
 
   let tableStyle = styleMap[style] || styleMap.default;
 
@@ -339,8 +346,8 @@ function formatForWebhook(style, options = {}) {
       (isNotification || isHTML) && markerTypes.code.end,
       `<ul>`,
       li(header),
-      li(`⏱️ Duration: ${getGameDuration()}`),
-      li(`📈 Score: ${getScore(game.players.local)}`),
+      li(`⏱️ Duration: ${dc.extra.duration}`),
+      li(`📈 Score: ${dc.extra.score}`),
       li(`${fundsStats}`),
       structureStats.map((s) => li(s)).join(''),
       debugOutput,
@@ -356,8 +363,8 @@ function formatForWebhook(style, options = {}) {
     report = [
       markers?.start ? markers?.start + nl : '',
       header + `${nl} ${nl}`,
-      `⏱️ Duration: ${getGameDuration()}${nl}`,
-      `📈 Score: ${getScore(game.players.local)}${nl}`,
+      `⏱️ Duration: ${dc.extra.duration}${nl}`,
+      `📈 Score: ${dc.extra.score}${nl}`,
       `${fundsStats}${nl}`,
       structureStats.join(nl),
       debugInfo.length ? debugInfo.join(nl) + nl : '', // + nl,
@@ -467,6 +474,7 @@ function copyToClipboardHandler(e) {
 
 export {
   copyToClipboardHandler,
+  freezeStats,
   formatForWebhook,
   getGameDuration,
   getMTVIE,
