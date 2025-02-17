@@ -20,9 +20,9 @@ const Notifications = () => {
   }
 
   function add(text, options = {}) {
-    /* options = { noDuplicate, noRepeat, onRender, onComplete, type } */
+    /* options = { force, infinite, noDuplicate, noRepeat, onRender, onComplete, type } */
 
-    if (game.data.battleOver) return;
+    if (game.data.battleOver && !options.force) return;
 
     let i, j, item, isDuplicate, replacementItem, renderedText;
 
@@ -92,6 +92,7 @@ const Notifications = () => {
       delay: calcDelay(text),
       onComplete: options.onComplete,
       onRender: options.onRender,
+      infinite: options.infinite,
       timer: null
     };
 
@@ -186,23 +187,26 @@ const Notifications = () => {
 
     item = data.items.shift();
 
-    utils.css.add(item.node, css.toastExpiring);
+    // special case: don't physically remove the node if a "forever" notification.
+    if (!item.infinite) {
+      utils.css.add(item.node, css.toastExpiring);
 
-    // hackish: reset opacity manually, because it's been affected by updateListOpacity().
-    item.node.style.opacity = 0;
+      // hackish: reset opacity manually, because it's been affected by updateListOpacity().
+      item.node.style.opacity = 0;
 
-    if (item.onComplete) {
-      item.onComplete();
-    }
+      if (item.onComplete) {
+        item.onComplete();
+      }
 
-    // slide / fade out of view, and then disappear.
-    common.setFixedFrameTimeout(() => {
-      utils.css.add(item.node, css.toastExpired);
+      // slide / fade out of view, and then disappear.
       common.setFixedFrameTimeout(() => {
-        item?.node?.remove();
-        updateListOpacity();
+        utils.css.add(item.node, css.toastExpired);
+        common.setFixedFrameTimeout(() => {
+          item?.node?.remove();
+          updateListOpacity();
+        }, 550);
       }, 550);
-    }, 550);
+    }
 
     if (!data.items.length) {
       // all done.
