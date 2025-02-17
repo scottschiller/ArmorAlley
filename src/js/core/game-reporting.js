@@ -63,13 +63,64 @@ function getMTVIE(enemySide) {
   return results.join(' ');
 }
 
-function formatForWebhook(style, options = {}) {
+function copy(aObject) {
+  // guard
+  if (!aObject) return aObject;
+
+  let bObject = Array.isArray(aObject) ? [] : {};
+
+  for (const key in aObject) {
+    // Prevent self-references to parent object
+    if (Object.is(aObject[key], aObject)) continue;
+
+    // don't copy functions.
+    if (aObject[key] instanceof Function) continue;
+
+    // don't copy DOM nodes.
+    if (aObject[key]?.nodeType >= 0) continue;
+
+    // don't copy references to other objects.
+    if (
+      key === 'parent' ||
+      key === 'oParent' ||
+      key === 'objects' ||
+      key === 'target' ||
+      key === 'attacker'
+    )
+      continue;
+
+    bObject[key] =
+      typeof aObject[key] === 'object' ? copy(aObject[key]) : aObject[key];
+  }
+
+  return bObject;
+}
+
+let dataCache;
+
+function getDataCache() {
   /**
-   * TODO: "freeze" results from stats on first call,
-   * so background game progress post-win/lose has no effect.
-   *
-   * This may not matter if the copy-to-clipboard feature is retired.
+   * "Freeze" a copy of game objects for reporting.
+   * This shouldn't be necessary, but the game sort of continues after
+   * the end sequence - so it's safest to make a copy of game state.
    */
+  if (dataCache) return dataCache;
+  dataCache = {
+    players: copy(game.players),
+    objects: copy(game.objects),
+    extra: {
+      friendlyBunkers: countFriendly(TYPES.bunker),
+      friendlySuperBunkers: countFriendly(TYPES.superBunker),
+      friendlyTurrets: countFriendly(TYPES.turret)
+    }
+  };
+  return dataCache;
+}
+
+window.getDataCache = getDataCache;
+
+function formatForWebhook(style, options = {}) {
+  let dc = getDataCache();
 
   let styleMap = {
     html: 'ramac',
@@ -84,8 +135,8 @@ function formatForWebhook(style, options = {}) {
 
   let tableStyle = styleMap[style] || styleMap.default;
 
-  let yourData = game.objects.stats.data.player;
-  let theirData = game.objects.stats.data.enemy;
+  let yourData = dc.objects.stats.data.player;
+  let theirData = dc.objects.stats.data.enemy;
 
   let units = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'];
 
@@ -99,7 +150,7 @@ function formatForWebhook(style, options = {}) {
 
   // helicopter purchases and losses
   yourUnits.unshift(
-    `${game.players.local.data.livesPurchased} ${-game.players.local.data.livesLost}`
+    `${dc.players.local.data.livesPurchased} ${-dc.players.local.data.livesLost}`
   );
 
   theirUnits.unshift(
@@ -141,30 +192,32 @@ function formatForWebhook(style, options = {}) {
   theirUnits.unshift('Right');
 
   let destroyedBunkers =
-    game.objects.stats.data.enemy.destroyed.bunker +
-    game.objects.stats.data.player.destroyed.bunker;
+    dc.objects.stats.data.enemy.destroyed.bunker +
+    dc.objects.stats.data.player.destroyed.bunker;
 
-  let structureStats = `⛳ Bunkers: ${countFriendly(TYPES.bunker)}/${game.objects[TYPES.bunker].length - destroyedBunkers}`;
+  let bunkerString = `⛳ Bunkers: ${dc.extra.friendlyBunkers}/${dc.objects[TYPES.bunker].length - destroyedBunkers}`;
+  if (destroyedBunkers) bunkerString += ` (${destroyedBunkers} destroyed)`;
 
-  if (destroyedBunkers) {
-    structureStats += ` (${destroyedBunkers} destroyed)`;
+  let structureStats = [bunkerString];
+
+  if (dc.objects[TYPES.superBunker].length) {
+    structureStats.push(
+      `⛳ Super Bunkers: ${dc.extra.friendlySuperBunkers}/${dc.objects[TYPES.superBunker].length}`
+    );
   }
 
-  if (game.objects[TYPES.superBunker].length) {
-    structureStats += `\n⛳ Super Bunkers: ${countFriendly(TYPES.superBunker)}/${game.objects[TYPES.superBunker].length}`;
-  }
-
-  if (game.objects[TYPES.turret].length) {
-    let deadTurrets = game.objects[TYPES.turret].filter(
+  if (dc.objects[TYPES.turret].length) {
+    let deadTurrets = dc.objects[TYPES.turret].filter(
       (t) => t.data.dead
     ).length;
-    structureStats +=
-      `\n📡 Turrets: ${countFriendly(TYPES.turret)}/${game.objects[TYPES.turret].length}` +
-      (deadTurrets ? ` (${deadTurrets} dead)` : ``);
+    structureStats.push(
+      `📡 Turrets: ${dc.extra.friendlyTurrets}/${dc.objects[TYPES.turret].length}` +
+        (deadTurrets ? ` (${deadTurrets} dead)` : ``)
+    );
   }
 
   let endBunker =
-    game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0].data;
+    dc.objects[TYPES.endBunker][dc.players.local.data.isEnemy ? 1 : 0].data;
 
   let { fundsLost, fundsCaptured, fundsSpent, fundsEarned } = endBunker;
 
@@ -254,7 +307,7 @@ function formatForWebhook(style, options = {}) {
   }
 
   debugInfo.push(
-    `📺 Avg FPS: ${game.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` +
+    `📺 Avg FPS: ${dc.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` +
       (gamePrefs.game_speed != 1 ? `, ${gamePrefs.game_speed}x speed` : '')
   );
 
@@ -262,7 +315,7 @@ function formatForWebhook(style, options = {}) {
     '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>' +
     (isNotification ? '\n' : '');
 
-  let betaText = '[ Game stats beta ]';
+  let betaText = '<span style="white-space:nowrap">[ Game stats beta ]</span>';
 
   copyGameStats = isNotification
     ? betaText + '\n' + copyGameStats
@@ -270,20 +323,30 @@ function formatForWebhook(style, options = {}) {
 
   let report;
 
+  function li(s) {
+    if (!s?.length) return '';
+    return `<li>${s}</li>`;
+  }
+
+  let nl = '\n';
+
   if (isHTML) {
+    let debugOutput = debugInfo.map((i) => li(i)).join('');
     report = [
-      markers?.start ? markers?.start + '\n' : '',
+      markers?.start ? markers?.start + nl : '',
       (isNotification || isHTML) && markerTypes.code.start,
-      `${vTable.toString()}\n`,
+      `${vTable.toString()}${nl}`,
       (isNotification || isHTML) && markerTypes.code.end,
-      header + '\n',
-      `⏱️ Duration: ${getGameDuration()}\n`,
-      `📈 Score: ${getScore(game.players.local)}\n`,
-      `${fundsStats}\n`,
-      `${structureStats}\n`,
-      debugInfo.join('\n') + '\n',
+      `<ul>`,
+      li(header),
+      li(`⏱️ Duration: ${getGameDuration()}`),
+      li(`📈 Score: ${getScore(game.players.local)}`),
+      li(`${fundsStats}`),
+      structureStats.map((s) => li(s)).join(''),
+      debugOutput,
+      `</ul>`,
       isNotification || isHTML
-        ? `<div style="clear:both">${copyGameStats}</div>`
+        ? `<div class="copy-game-stats-wrapper">${copyGameStats}</div>`
         : null,
       markers?.end
     ]
@@ -291,15 +354,15 @@ function formatForWebhook(style, options = {}) {
       .join('');
   } else {
     report = [
-      markers?.start ? markers?.start + '\n' : '',
-      header + '\n \n',
-      `⏱️ Duration: ${getGameDuration()}\n`,
-      `📈 Score: ${getScore(game.players.local)}\n`,
-      `${fundsStats}\n`,
-      `${structureStats}\n`,
-      debugInfo.join('\n') + '\n',
+      markers?.start ? markers?.start + nl : '',
+      header + `${nl} ${nl}`,
+      `⏱️ Duration: ${getGameDuration()}${nl}`,
+      `📈 Score: ${getScore(game.players.local)}${nl}`,
+      `${fundsStats}${nl}`,
+      structureStats.join(nl),
+      debugInfo.length ? debugInfo.join(nl) + nl : '', // + nl,
       (isNotification || isHTML) && markerTypes.code.start,
-      `${vTable.toString()}\n`,
+      `${vTable.toString()}${nl}`,
       (isNotification || isHTML) && markerTypes.code.end,
       isNotification || isHTML ? copyGameStats : null,
       markers?.end
