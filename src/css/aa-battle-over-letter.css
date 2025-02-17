@@ -255,10 +255,10 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 }
 
 .animated-mail .letter {
-  left: calc(20px * var(--gs));
+  left: calc(10px * var(--gs));
   bottom: 0;
   position: absolute;
-  width: calc(160px * var(--gs));
+  width: calc(180px * var(--gs));
   transform: translate3d(0, calc(100% - calc(60px * var(--gs))), 0);
   will-change: transform;
   /**
