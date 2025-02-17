@@ -1,5 +1,6 @@
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
+import { formatForWebhook } from '../core/game-reporting.js';
 import { IMAGE_ROOT, rndInt } from '../core/global.js';
 import { levelName } from './default.js';
 
@@ -205,7 +206,11 @@ let defeatMessages = [
 ];
 
 function getDefeatMessage() {
-  return `<div class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</div><a href="${window.location.href}" data-ignore-touch="true" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`;
+  return [
+    `<div class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</div>`,
+    `<div class="game-over-stats-wrapper"><div class="game-over-stats">${formatForWebhook('html')}</div></div>`,
+    `<a href="${window.location.href}" data-ignore-touch="true" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`
+  ].join('');
 }
 
 export { getVictoryMessage, getDefeatMessage };
