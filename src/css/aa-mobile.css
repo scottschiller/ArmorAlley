@@ -588,7 +588,7 @@ body:not(.is-mobile).has-gamepad.mobile-controls_right-aligned
 
   body:not(.is-mobile) #game-tips #game-announcements {
     /* desktop */
-    font-size: calc(24px * var(--gs));
+    font-size: calc(18px * var(--gs));
   }
 }
 
