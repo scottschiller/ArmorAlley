@@ -312,6 +312,8 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 
 .animated-mail .letter .letter-context-body .game-stats ul {
   display: inline-block;
+  /* guard against wrapping */
+  max-width: 45%;
   margin: 0px;
   margin-left: 1em;
   padding: 0px;
