@@ -67,7 +67,7 @@ import { addItem as addTerrainItem } from '../elements/Terrain.js';
 import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
-import { getScore, scoreCreate } from './scores.js';
+import { getScore, scoreCreate, scoreGameOver } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
 import { countFriendly } from './logic.js';
 import {
@@ -1101,6 +1101,10 @@ const game = (() => {
 
 const logEvents = {
   GAME_OVER: () => {
+    if (game.data.youWon) {
+      // add bonus to score
+      scoreGameOver(game.players.local);
+    }
 
     // "bake" the data for stats / reporting
     freezeStats();
