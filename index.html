@@ -162,7 +162,9 @@
         let forceProd = wlhref.match(/prod=1/i);
 
         let isProdHost = wlhost.match(/armor-alley\.net/i);
-        let isProd = isProdHost || forceProd;
+
+        // cases where assets are loaded from dist/ - including floppy disk build
+        let isProd = isProdHost || forceProd || window.aaFloppy;
 
         // For testing in production
         let noVersion = wlhref.match(/noversion/i);
