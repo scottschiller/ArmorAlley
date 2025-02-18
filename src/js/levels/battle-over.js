@@ -1,7 +1,7 @@
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
 import { formatForWebhook } from '../core/game-reporting.js';
-import { IMAGE_ROOT, rndInt } from '../core/global.js';
+import { rndInt } from '../core/global.js';
 import { levelName } from './default.js';
 
 // network-specific battles, tutorial etc.
