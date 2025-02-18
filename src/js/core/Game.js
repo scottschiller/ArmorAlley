@@ -1109,56 +1109,6 @@ const logEvents = {
     // "bake" the data for stats / reporting
     freezeStats();
 
-    let wl = game.data.youWon ? 'BATTLE_WON' : 'BATTLE_LOST';
-
-    let endBunker =
-      game.objects[TYPES.endBunker][game.players.local.data.isEnemy ? 1 : 0]
-        .data;
-
-    utils.log({
-      info: {
-        // NET_BATTLE_WON / NET_BATTLE_LOST
-        event: net.active ? `NET${wl}` : wl,
-        game_duration: getGameDuration(),
-        score_with_bonus: getScore(game.players.local),
-        game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
-        level_name: levelName,
-        net_game_style: net.active && gamePrefs.net_game_style,
-        net_host: net.active && net.isHost,
-        net_guest: net.active && !net.isHost,
-        using_gamepad: gamepad.data.active,
-        is_bnb: gamePrefs.bnb,
-        game_fps: gamePrefs.game_fps,
-        fps_avg: game.objects.gameLoop.data.fpsAverage,
-        game_fps_auto:
-          gamePrefs.game_fps_auto !== gamePrefs.game_fps
-            ? gamePrefs.game_fps_auto
-            : 0,
-        latency: net.active && net.halfTrip,
-        units: getMTVIE(),
-        bunkers_owned: `${countFriendly(TYPES.bunker)}/${game.objects[TYPES.bunker].length}`,
-        super_bunkers_owned: !game.objects[TYPES.superBunker].length
-          ? 0
-          : `${countFriendly(TYPES.superBunker)}/${game.objects[TYPES.superBunker].length}`,
-        bunkers_destroyed:
-          game.objects.stats.data.enemy.destroyed.bunker +
-          game.objects.stats.data.player.destroyed.bunker,
-        funds_earned: endBunker.fundsEarned,
-        funds_captured: endBunker.fundsCaptured,
-        funds_spent: endBunker.fundsSpent,
-        funds_lost: endBunker.fundsLost,
-        their_choppers_lost: getEnemyChoppersLost(),
-        your_choppers_lost: game.players.local.data.livesLost,
-        choppers_purchased: game.players.local.data.livesPurchased,
-        /**
-         * NOTE: game is over when lives goes to -1, so last chopper is 0.
-         * But zero and false-y values are filtered out, so we add 1.
-         */
-        choppers_left:
-          !common.unlimitedLivesMode() && game.players.local.data.lives + 1
-      }
-    });
-
     document.querySelectorAll('.copy-game-stats').forEach((el) => {
       // deliciously old-skool.
       el.onclick = copyToClipboardHandler;
