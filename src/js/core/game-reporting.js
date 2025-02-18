@@ -181,6 +181,18 @@ function formatForWebhook(style, options = {}) {
     return val.toString().split(' ');
   }
 
+  function li(s) {
+    if (!s?.length) return '';
+    if (!isHTML) return s;
+    return `<li>${s}</li>`;
+  }
+
+  function nowrap(s) {
+    if (!s?.length) return '';
+    if (!isHTML) return s;
+    return `<span style="white-space: nowrap">${s}</span>`;
+  }
+
   let vTableHeaders = ['Unit', 'L+', 'L-', 'R+', 'R-'];
 
   const vTable = new AsciiTable3('Orders + Losses')
@@ -228,15 +240,19 @@ function formatForWebhook(style, options = {}) {
 
   let { fundsLost, fundsCaptured, fundsSpent, fundsEarned } = endBunker;
 
-  let fundsStats = `💰 Funds: +${fundsEarned}, ${-fundsSpent} 🚚 of ${DEFAULT_FUNDS + fundsEarned - fundsLost + fundsCaptured} 🏦`;
+  let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned - fundsLost + fundsCaptured} 🏦`;
+
+  let lostOrCaptured = [];
 
   if (fundsLost) {
-    fundsStats += `, ${-fundsLost} 💸`;
+    lostOrCaptured.push(', ' + nowrap(`${-fundsLost} 💸`));
   }
 
   if (fundsCaptured) {
-    fundsStats += `, +${fundsCaptured} 🏴‍☠️`;
+    lostOrCaptured.push(', ' + nowrap(`+${fundsCaptured} 🏴‍☠️`));
   }
+
+  fundsStats += lostOrCaptured.join('');
 
   let markerTypes = {
     backticks: {
@@ -333,11 +349,6 @@ function formatForWebhook(style, options = {}) {
   copyGameStats += ' ' + betaText;
 
   let report;
-
-  function li(s) {
-    if (!s?.length) return '';
-    return `<li>${s}</li>`;
-  }
 
   let nl = '\n';
 
