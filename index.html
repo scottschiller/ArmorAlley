@@ -227,6 +227,8 @@
           loadJS(bootFileSrc);
         }
 
+        let docReady = !!document.readyState?.match?.(/interactive|complete/i);
+
         if (isProd) {
           // Production: boot from dist/ version first, with fallback.
           loadJS(bootFile, () => {
@@ -235,7 +237,11 @@
           });
         } else {
           // Dev: boot from src/ - wait for DOM ready
-          window.addEventListener('DOMContentLoaded', bootDev);
+          if (docReady) {
+            bootDev();
+          } else {
+            window.addEventListener('DOMContentLoaded', bootDev);
+          }
         }
 
         // Special case: exclude WOFF2 when storage is at a premium. 💾🗜️
