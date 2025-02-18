@@ -296,7 +296,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 
 .animated-mail .letter .letter-context-body .game-stats {
   position: relative;
-  color: #4f4f4f;
+  color: #444;
   font-family: monospace;
   /* compress a little bit */
   letter-spacing: -0.25px;
