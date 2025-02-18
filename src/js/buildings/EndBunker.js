@@ -196,7 +196,7 @@ const EndBunker = (options = {}) => {
   }
 
   function distributeFunds() {
-    if (game.objects.editor) return;
+    if (game.objects.editor || game.data.battleOver) return;
 
     // edge case: tutorial mode, and no enemy chopper present yet
     if (!objects.helicopters.length) return;
