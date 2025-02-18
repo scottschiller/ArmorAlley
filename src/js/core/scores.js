@@ -120,21 +120,17 @@ function getScore(player) {
 function scoreGameOver(player) {
   // at the end of the battle, combine score and bonus.
   scores[player.data.isEnemy ? 1 : 0] += scoreBonus(player);
-  dropBonusState();
+  dropScoreStates();
 }
 
-function dropBonusState() {
-  // hackish: don't show bonus once battle has ended.
-  delete states.bonus;
-  // update list of keys, and "roll back" one accordingly.
-  keys = Object.keys(states);
-  if (state > 0) {
-    state--;
-  }
+function dropScoreStates() {
+  // just show battle + difficulty once game has ended.
+  state = keys.length - 1;
+  updateScoreUI();
 }
 
 function animate() {
-  if (!game.data.started) return;
+  if (!game.data.started || game.data.battleOver) return;
   // 2x for 60 FPS
   let interval = Math.floor(
     scoreModulus * FPS * (FPS / 30) * GAME_SPEED_RATIOED
