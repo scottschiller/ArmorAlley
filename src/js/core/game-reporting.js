@@ -334,10 +334,15 @@ function formatForWebhook(style, options = {}) {
     );
   }
 
+  // drop redundant decimal places - i.e., 60.00 == 60
+  if (dc.objects.gameLoop.data.fpsAverage == gamePrefs.game_fps) {
+    dc.objects.gameLoop.data.fpsAverage = gamePrefs.game_fps;
+  }
+
   debugInfo.push(
     `📺 Avg FPS: ${dc.objects.gameLoop.data.fpsAverage} / ${gamePrefs.game_fps}` +
       (gamePrefs.game_speed != 1
-        ? `, ${gamePrefs.game_speed * 100}% speed`
+        ? `, ${parseInt(gamePrefs.game_speed * 100, 10)}% speed`
         : '')
   );
 
