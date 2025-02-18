@@ -5,8 +5,9 @@ import { rndInt } from '../core/global.js';
 import { levelName } from './default.js';
 
 // network-specific battles, tutorial etc.
-let genericVictory =
-  'Congratulations!\nYou have won the battle. <span class="inline-emoji">🎉</span>';
+function genericVictory() {
+  return `Congratulations!\nYou have won the battle. <span class="inline-emoji">🎉</span>${getGameStats()}`;
+}
 
 // reused a few times
 let youWon = `You've defeated the enemy and rescued the 'Old Tanker'...`;
@@ -14,7 +15,7 @@ let youWon = `You've defeated the enemy and rescued the 'Old Tanker'...`;
 let victoryMessages = {
   // if unspecified / no match, use 'easy' as default.
   'Tutorial': {
-    easy: `${genericVictory}<br />Try playing the <u>REAL</u> thing!`
+    easy: () => `${genericVictory()}<br />Try playing the <u>REAL</u> thing!`
   },
   'Cake Walk': {
     easy: `You've done a good job in the first battle. Congratulations! But look out - the enemy is alerted now...`,
@@ -154,13 +155,15 @@ function getMedals() {
 
 function getVictoryMessage() {
   let msgs = victoryMessages[levelName];
-  // if no match for the level (e.g., network-specific battle?), return a generic string.
-  if (!msgs) return genericVictory;
+
+  // if no match for the level (e.g., network-specific battle?), return the generic.
+  if (!msgs) return genericVictory();
 
   // default to 'easy', if no gameType-specific one found.
   let msg = msgs[gameType] || msgs['easy'];
 
-  return msg + getMedals();
+  // message is a string, or a function that returns one. :P
+  return (msg instanceof Function ? msg() : msg) + getMedals();
 }
 
 let defeatMessages = [
@@ -205,10 +208,14 @@ let defeatMessages = [
   `When your helicopter is destroyed, fire weapons to continue viewing the scene.`
 ];
 
+function getGameStats() {
+  return `<div class="game-over-stats-wrapper"><div class="game-over-stats">${formatForWebhook('html')}</div></div>`;
+}
+
 function getDefeatMessage() {
   return [
     `<div class="game-over-tip"><span class="inline-emoji">💡</span>${defeatMessages[rndInt(defeatMessages.length)]}</div>`,
-    `<div class="game-over-stats-wrapper"><div class="game-over-stats">${formatForWebhook('html')}</div></div>`,
+    getGameStats(),
     `<a href="${window.location.href}" data-ignore-touch="true" class="game-start large">Try again &nbsp;<span class="inline-emoji emoji-text">🚁</span></a>`
   ].join('');
 }
