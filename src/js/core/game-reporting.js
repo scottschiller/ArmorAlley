@@ -49,20 +49,6 @@ function getGameDuration() {
   return time.join(':');
 }
 
-function getMTVIE(enemySide) {
-  let key = enemySide ? 'enemy' : 'player';
-  // TODO: sort out what happens when you are playing as the enemy in the network case. :X
-  let yourData = game.objects.stats.data.player;
-  let theirData = game.objects.stats.data.enemy;
-  let results = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'].map(
-    (item) => {
-      // created / destroyed
-      return `${item.charAt(0).toUpperCase()}:(${yourData.created[item]}/${yourData.destroyed[item]}, ${theirData.created[item]}/${theirData.destroyed[item]})`;
-    }
-  );
-  return results.join(' ');
-}
-
 function copy(aObject) {
   // guard
   if (!aObject) return aObject;
@@ -492,7 +478,6 @@ export {
   freezeStats,
   formatForWebhook,
   getGameDuration,
-  getMTVIE,
   getEnemyChoppersLost,
   postToService
 };
