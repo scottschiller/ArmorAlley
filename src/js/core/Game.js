@@ -1144,7 +1144,7 @@ const logEvents = {
         is_bnb: gamePrefs.bnb,
         game_fps: gamePrefs.game_fps,
         game_fps_auto:
-          gamePrefs.game_fps_auto !== gamePrefs.game_fps
+          gamePrefs.game_fps_auto != gamePrefs.game_fps
             ? gamePrefs.game_fps_auto
             : 0,
         latency: net.active && net.halfTrip
