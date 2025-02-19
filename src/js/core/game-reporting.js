@@ -173,7 +173,7 @@ function formatForWebhook(style, options = {}) {
 
   let vTableHeaders = ['Unit', 'L+', 'L-', 'R+', 'R-'];
 
-  const vTable = new AsciiTable3('Orders + Losses')
+  const vTable = new AsciiTable3(`Gains + losses per team`)
     .setHeading(...vTableHeaders)
     .setHeadingAlign(AlignmentEnum.CENTER)
     .setAlignLeft(1);
