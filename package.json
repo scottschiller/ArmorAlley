@@ -45,6 +45,7 @@
     "gulp-gzip": "^1.4.2",
     "gulp-image-resize": "^0.13.1",
     "gulp-imagemin": "^9.0.0",
+    "gulp-minify-inline": "^1.1.0",
     "gulp-replace": "^1.1.4",
     "gulp.spritesmith": "^6.13.0",
     "http-server": "^14.1.1",

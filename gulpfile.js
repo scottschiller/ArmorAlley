@@ -56,6 +56,7 @@ const { rollup } = require('rollup');
 const cleanCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const htmlmin = require('gulp-htmlmin');
+const minifyInline = require('gulp-minify-inline');
 const imageInliner = require('postcss-image-inliner');
 const postcss = require('gulp-postcss');
 
@@ -182,9 +183,40 @@ const bootBundleFile = () => distJS('aa-boot_bundle');
 const mainJSFile = () => js('aa');
 const bundleFile = () => distJS('aa');
 
+const htmlminOpts = {
+  collapseWhitespace: true,
+  // needed to retain spacing in some modals
+  conservativeCollapse: true,
+  minifyCSS: true,
+  minifyJS: true,
+  removeComments: true,
+  removeScriptTypeAttributes: true,
+  removeStyleLinkTypeAttributes: true
+};
+
 const imageInlinerOpts = {
   assetPaths: [imageRoot],
   maxFileSize: 2048
+};
+
+const minifyInlineOpts = {
+  js: {
+    output: {
+      comments: false,
+      ecma: '2016'
+    }
+  },
+  jsSelector: 'script',
+  css: {
+    level: { 2: { specialComments: 0 } }
+  },
+  cssSelector: 'style'
+};
+
+const terserOpts = {
+  // https://github.com/terser/terser#minify-options
+  compress: true,
+  ecma: '2016'
 };
 
 const rollupOpts = {
@@ -206,27 +238,11 @@ async function bundleBootFile() {
 }
 
 function minifyBootBundle() {
-  return src(bootBundleFile())
-    .pipe(
-      terser({
-        // https://github.com/terser/terser#minify-options
-        compress: true,
-        ecma: '2016'
-      })
-    )
-    .pipe(dest(dp.js));
+  return src(bootBundleFile()).pipe(terser(terserOpts)).pipe(dest(dp.js));
 }
 
 function minifyJS() {
-  return src(bundleFile())
-    .pipe(
-      terser({
-        // https://github.com/terser/terser#minify-options
-        compress: true,
-        ecma: '2016'
-      })
-    )
-    .pipe(dest(dp.js));
+  return src(bundleFile()).pipe(terser(terserOpts)).pipe(dest(dp.js));
 }
 
 function headerJS() {
@@ -264,11 +280,10 @@ function minifyCSS() {
 }
 
 function minifyHTML() {
-  return (
-    src(html('*'))
-      // .pipe(htmlmin({ collapseWhitespace: true, conservativeCollapse: true }))
-      .pipe(dest(dp.html))
-  );
+  return src(html('*'))
+    .pipe(minifyInline(minifyInlineOpts))
+    .pipe(htmlmin(htmlminOpts))
+    .pipe(dest(dp.html));
 }
 
 function buildSpriteSheet() {
@@ -667,18 +682,32 @@ function gzipThatFloppy() {
   const gzipOptions = {
     level: 9
   };
+
   return merge([
-    // index.html -> aa.html.gz (a new index.html "boot loader" will be created)
-    src(`index.html`).pipe(gzip(gzipOptions)).pipe(dest(floppyRoot)),
+    // index.html -> index.html.gz (a new index.html "boot loader" will be created)
+    src(`index.html`)
+      .pipe(minifyInline(minifyInlineOpts))
+      .pipe(htmlmin(htmlminOpts))
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(floppyRoot)),
 
     // CSS
-    src(distCSS('*')).pipe(gzip(gzipOptions)).pipe(dest(dp.css)),
+    src(distCSS('*'))
+      .pipe(cleanCSS({ level: 2 }))
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(dp.css)),
 
     // HTML
-    src(`${dp.html}/*.html`).pipe(gzip(gzipOptions)).pipe(dest(dp.html)),
+    src(`${dp.html}/*.html`)
+      .pipe(minifyInline(minifyInlineOpts))
+      .pipe(htmlmin(htmlminOpts))
+      .pipe(gzip(gzipOptions))
+      .pipe(dest(dp.html)),
 
     // JS (excluding aa-boot_bundle)
     src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
+      // note: re-run through terser to drop header comment.
+      .pipe(terser(terserOpts))
       .pipe(gzip(gzipOptions))
       .pipe(dest(dp.js))
   ]);
@@ -687,9 +716,24 @@ function gzipThatFloppy() {
 function bootThatFloppy() {
   // floppy boot -> index.html "boot loader"
   // this will fetch the actual game at index.html.gz
-  return src('src/floppy/index-floppy.html')
-    .pipe(rename('index.html'))
-    .pipe(dest(floppyRoot));
+
+  /**
+   * Rewrite <script> to point to `dist/js/`
+   * Potentially dangerous: greedy pattern.
+   */
+  let pattern = '<script src="';
+
+  return merge([
+    src('src/floppy/index-floppy.html')
+      .pipe(minifyInline(minifyInlineOpts))
+      .pipe(htmlmin(htmlminOpts))
+      // some.js -> dist/some.js
+      .pipe(replace(pattern, `${pattern}${distRootPath}/${jsPath}/`))
+      .pipe(rename('index.html'))
+      .pipe(dest(floppyRoot)),
+
+    src('src/floppy/*.js').pipe(terser(terserOpts)).pipe(dest(dp.js))
+  ]);
 }
 
 function lastFloppyCleanup() {
