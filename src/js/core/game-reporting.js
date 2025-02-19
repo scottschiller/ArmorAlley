@@ -272,7 +272,8 @@ function formatForWebhook(style, options = {}) {
   }
 
   // "out of lives" vs. "lost battle"
-  let isDefeat = !won && !common.unlimitedLivesMode();
+  let isDefeat =
+    !won && !common.unlimitedLivesMode() && game.players.local.data.lives < 0;
 
   let preamble = !isHTML ? `🚁 ${won ? '🎉' : isDefeat ? '🪦' : '🏳️'} ` : '';
 
