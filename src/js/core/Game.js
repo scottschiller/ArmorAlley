@@ -19,7 +19,7 @@ import {
 } from './global.js';
 import { utils } from './utils.js';
 import { zones } from './zones.js';
-import { gamePrefs } from '../UI/preferences.js';
+import { defaultPrefs, gamePrefs } from '../UI/preferences.js';
 import { handleOrientationChange } from '../UI/mobile.js';
 import { playSound, preloadCommonSounds, sounds } from './sound.js';
 import { Stats } from '../UI/Stats.js';
@@ -67,16 +67,11 @@ import { addItem as addTerrainItem } from '../elements/Terrain.js';
 import { Smoke } from '../elements/Smoke.js';
 import { AimedMissile } from '../munitions/AimedMissile.js';
 import { MissileNapalm } from '../munitions/MissileNapalm.js';
-import { getScore, scoreCreate, scoreGameOver } from './scores.js';
+import { scoreCreate, scoreGameOver } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
-import { countFriendly } from './logic.js';
 import {
   copyToClipboardHandler,
-  formatForWebhook,
   freezeStats,
-  getEnemyChoppersLost,
-  getGameDuration,
-  getMTVIE,
   postToService
 } from './game-reporting.js';
 
@@ -1120,28 +1115,57 @@ const logEvents = {
 
   GAME_START: () => {
     // GAME_START
+    let url_params = [];
+
+    try {
+      // Object.fromEntries is pretty new, 2020-ish and 95%+ of modern browsers.
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+
+      let keysToOmit = {
+        customLevel: true
+      };
+
+      for (let key in params) {
+        if (!keysToOmit[key]) {
+          url_params.push(`${key}=${params[key]}`);
+        }
+      }
+    } catch (e) {
+      // just in case
+    }
+
+    let user_prefs = [];
+
+    let prefsToOmit = {
+      game_level: true,
+      game_type: true,
+      last_battle: true,
+      net_game_level: true,
+      net_game_type: true
+    };
+
+    Object.keys(gamePrefs).forEach((key) => {
+      // account for "1" == 1 etc.
+      if (!prefsToOmit[key] && gamePrefs[key] != defaultPrefs[key]) {
+        user_prefs.push(`${key}=${gamePrefs[key]}`);
+      }
+    });
+
     utils.log({
       info: {
         event: net.active ? 'NET_GAME_START' : 'GAME_START',
         game_type: net.active ? gamePrefs.net_game_type : gamePrefs.game_type,
         level_name: levelName,
+        url_params: url_params.length && url_params.join('&'),
+        /*
         custom_level: new URLSearchParams(window.location.search).get(
           'customLevel'
         ),
-        net_game_style: net.active && gamePrefs.net_game_style,
-        net_host: net.active && net.isHost,
-        net_guest: net.active && !net.isHost,
-        is_mobile: isMobile ? navigator.userAgent : null,
-        unlimited_inv: gamePrefs.unlimited_inventory,
-        radar_enhanced_fx: gamePrefs.radar_enhanced_fx,
-        no_bananas: !gamePrefs.alt_smart_missiles,
-        weapons_interval_classic: gamePrefs.weapons_interval_classic,
-        show_health_status:
-          gamePrefs.show_health_status !== 'sometimes'
-            ? gamePrefs.show_health_status
-            : null,
+        */
+        ua: navigator.userAgent,
         using_gamepad: gamepad.data.active,
-        is_bnb: gamePrefs.bnb,
+        user_prefs: user_prefs.length && user_prefs.join('&'),
         game_fps: gamePrefs.game_fps,
         game_fps_auto:
           gamePrefs.game_fps_auto != gamePrefs.game_fps

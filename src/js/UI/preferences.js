@@ -2296,4 +2296,4 @@ function PrefsManager() {
   };
 }
 
-export { gamePrefs, prefs, PREFS, PrefsManager };
+export { defaultPrefs, gamePrefs, prefs, PREFS, PrefsManager };
