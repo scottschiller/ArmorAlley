@@ -142,25 +142,17 @@ function formatForWebhook(style, options = {}) {
   );
 
   // helicopter purchases and losses
-  yourUnits.unshift(
-    `${dc.players.local.data.livesPurchased} ${-dc.players.local.data.livesLost}`
-  );
+  let localData = `${dc.players.local.data.livesPurchased} ${-dc.players.local.data.livesLost}`;
+  let opponentData = `${getEnemyChoppersPurchased()} ${-getEnemyChoppersLost()}`;
 
-  theirUnits.unshift(
-    `${getEnemyChoppersPurchased()} ${-getEnemyChoppersLost()}`
-  );
-
-  let tableData = {
-    heading: ['Team', 'H', 'ML', 'Tank', 'Van', 'Inf', 'Eng'],
-    rows: [yourUnits, theirUnits]
-  };
-
-  const table = new AsciiTable3('Units ordered + lost')
-    .setHeading(...tableData.heading)
-    .setAlignLeft(1)
-    .addRowMatrix(tableData.rows);
-
-  table.setStyle(tableStyle);
+  // "yours" vs. "theirs" depends on who local player is.
+  if (dc.players.local.data.isEnemy) {
+    yourUnits.unshift(opponentData);
+    theirUnits.unshift(localData);
+  } else {
+    yourUnits.unshift(localData);
+    theirUnits.unshift(opponentData);
+  }
 
   function sp(val) {
     // guard against integers, etc.
