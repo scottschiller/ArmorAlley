@@ -219,6 +219,11 @@ body.tutorial-mode #tutorial-window.active {
   opacity: 1;
 }
 
+body.tutorial-mode.game-over #tutorial-window {
+   /* Hide if the game ends, e.g., van reached a base. */
+  display: none !important;
+}
+
 body.game-paused #tutorial-window {
   display: none !important;
 }
