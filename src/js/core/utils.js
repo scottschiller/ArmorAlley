@@ -661,11 +661,30 @@ const utils = {
       info.event = `*${info.event}*`;
     }
 
-    let params = new URLSearchParams(info).toString();
-    let options = { method: 'GET' };
-
     function doLog() {
-      fetch(`/events/?${params}`, options);
+
+      let url_params = [];
+
+      try {
+        // Object.fromEntries is pretty new, 2020-ish and 95%+ of modern browsers.
+        const urlSearchParams = new URLSearchParams(info);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        for (let key in params) {
+            url_params.push(`${key}=${params[key]}`);
+        }
+      } catch (e) {
+        // just in case
+      }
+  
+      fetch('/events/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          msg: url_params.join(' ')
+        })
+      });
     }
 
     if (delay) {
