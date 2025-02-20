@@ -16,7 +16,7 @@ let youWon = `You've defeated the enemy and rescued the 'Old Tanker'...`;
 let victoryMessages = {
   // if unspecified / no match, use 'easy' as default.
   'Tutorial': {
-    easy: () => `${genericVictory()}<br />Try playing the <u>REAL</u> thing!`
+    easy: () => `Congratulations!\nYou have passed the tutorial. <span class="inline-emoji">🎉</span><br />Try playing the <u>REAL</u> thing!`
   },
   'Cake Walk': {
     easy: `You've done a good job in the first battle. Congratulations! But look out - the enemy is alerted now...`,
