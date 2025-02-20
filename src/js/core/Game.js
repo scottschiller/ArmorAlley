@@ -1137,13 +1137,21 @@ const logEvents = {
 
     let user_prefs = [];
 
-    let prefsToOmit = {
+    // exclude network prefs if not a network game.
+    let networkToOmit = net.active ? {
+      'net_game_level': true,
+      'net_game_type': true,
+      'net_game_style': true,
+      'lock_step': false,
+      'net_player_name': true,
+      'net_remote_player_name': true
+    } : {};
+
+    let prefsToOmit = Object.assign({
       game_level: true,
       game_type: true,
-      last_battle: true,
-      net_game_level: true,
-      net_game_type: true
-    };
+      last_battle: true
+    }, networkToOmit);
 
     Object.keys(gamePrefs).forEach((key) => {
       // account for "1" == 1 etc.
