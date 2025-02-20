@@ -47,6 +47,14 @@ const Tutorial = () => {
 
     if (!dom.lastItem) {
       // tutorial complete!
+
+      // hack the game state...
+      game.data.battleOver = true;
+      game.data.youWon = true;
+      game.data.theyWon = false;
+      game.data.didEnemyWin = false;
+
+      // update tutorial bits.
       utils.css.remove(dom.o, css.active);
       utils.css.remove(dom.oTutorialWindow, css.active);
       game.objects.envelope.show();
