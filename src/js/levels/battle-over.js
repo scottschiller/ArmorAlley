@@ -2,6 +2,7 @@ import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
 import { formatForWebhook } from '../core/game-reporting.js';
 import { rndInt } from '../core/global.js';
+import { net } from '../core/network.js';
 import { levelName } from './default.js';
 
 // network-specific battles, tutorial etc.
@@ -163,7 +164,15 @@ function getVictoryMessage() {
   let msg = msgs[gameType] || msgs['easy'];
 
   // message is a string, or a function that returns one. :P
-  return (msg instanceof Function ? msg() : msg) + getMedals();
+  let text = (msg instanceof Function ? msg() : msg);
+
+  if (net.active) {
+    // network game: no medals, just message.
+    return text + getGameStats();
+  }
+
+  // default case
+  return text + getMedals();
 }
 
 let defeatMessages = [
