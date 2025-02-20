@@ -218,7 +218,7 @@ function formatForWebhook(style, options = {}) {
 
   let { fundsLost, fundsCaptured, fundsSpent, fundsEarned } = endBunker;
 
-  let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned - fundsLost + fundsCaptured} 🏦`;
+  let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned + fundsCaptured} 🏦`;
 
   let lostOrCaptured = [];
 
