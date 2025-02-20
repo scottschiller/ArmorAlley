@@ -1109,8 +1109,8 @@ const logEvents = {
       el.onclick = copyToClipboardHandler;
     });
 
-    postToService('discord');
-    postToService('slack');
+    postToService('discord', { debug: true });
+    postToService('slack', { debug: true });
   },
 
   GAME_START: () => {

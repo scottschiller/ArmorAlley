@@ -304,6 +304,14 @@ function formatForWebhook(style, options = {}) {
 
     networkInfo.push(`🐌 Latency: ${net.halfTrip.toFixed(2)} ms`);
 
+    if (options.debug) {
+      let statsByType = net.getStatsByType();
+      let stats = [];
+      for (let type in statsByType) {
+        stats.push(`${type}: ${statsByType[type].tx}↑, ${statsByType[type].rx}↓`)
+      }
+      networkInfo.push(`Packets, tx/rx: ${stats.join(',')}`);    
+    }
   }
 
   let debugInfo = [];
@@ -341,6 +349,11 @@ function formatForWebhook(style, options = {}) {
         ? `, ${parseInt(gamePrefs.game_speed * 100, 10)}% speed`
         : '')
   );
+
+  if (options.debug) {
+    // funds debugging
+    debugInfo.push(`funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}`);
+  }
 
   let copyGameStats =
     '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>';
@@ -426,7 +439,7 @@ function getEnemyChoppersLost() {
   return lost;
 }
 
-function postToService(service) {
+function postToService(service, options = {}) {
   fetch('/events/hook/', {
     method: 'POST',
     headers: {
@@ -434,7 +447,7 @@ function postToService(service) {
     },
     body: JSON.stringify({
       service,
-      msg: formatForWebhook(service)
+      msg: formatForWebhook(service, options)
     })
   });
 }
