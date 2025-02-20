@@ -824,6 +824,8 @@ const net = {
   sendDelayedMessage,
   sendMessage,
 
+  getStatsByType: () => statsByType,
+
   init: (onInitCallback, startGameCallback) => {
     if (!window.Peer) {
       // go get it, then call this method again.

@@ -19,6 +19,7 @@ import {
   TYPES
 } from './global.js';
 import { countFriendly } from './logic.js';
+import { net } from './network.js';
 import { getScore } from './scores.js';
 import { utils } from './utils.js';
 
@@ -289,6 +290,22 @@ function formatForWebhook(style, options = {}) {
     ? `Difficulty: ${difficulty}`
     : `${preamble}${battleStatus}${levelName}, ${difficulty}${decor}`.trim();
 
+  let networkInfo = [];
+
+  if (net.active) {
+    let localName = !gamePrefs.net_player_name.match(/host|guest/i) ? gamePrefs.net_player_name : '';
+    let remoteName = !gamePrefs.net_remote_player_name.match(/host|guest/i) ? gamePrefs.net_remote_player_name : '';
+
+    networkInfo.push(`🌐 ${gamePrefs.net_game_style} network game (${net.isHost ? 'host' : 'guest'})`);
+
+    if (localName || remoteName) {
+      networkInfo.push(`🕹️ Players: "${localName}" and "${remoteName}"`);
+    }
+
+    networkInfo.push(`🐌 Latency: ${net.halfTrip.toFixed(2)} ms`);
+
+  }
+
   let debugInfo = [];
 
   if (gamepad.data.active) {
@@ -337,7 +354,6 @@ function formatForWebhook(style, options = {}) {
   let nl = '\n';
 
   if (isHTML) {
-    let debugOutput = debugInfo.map((i) => li(i)).join('');
     report = [
       markers?.start ? markers?.start + nl : '',
       markerTypes.code.start,
@@ -345,11 +361,12 @@ function formatForWebhook(style, options = {}) {
       markerTypes.code.end,
       `<ul>`,
       li(header),
+      networkInfo.map((s) => li(s)).join(''),
       li(`⏱️ Duration: ${dc.extra.duration}`),
       li(`📈 Score: ${dc.extra.score}`),
       li(`${fundsStats}`),
       structureStats.map((s) => li(s)).join(''),
-      debugOutput,
+      debugInfo.map((i) => li(i)).join(''),
       `</ul>`,
       `<div class="copy-game-stats-wrapper">${copyGameStats}</div>`,
       markers?.end
@@ -360,6 +377,7 @@ function formatForWebhook(style, options = {}) {
     report = [
       markers?.start ? markers?.start + nl : '',
       header + `${nl} ${nl}`,
+      networkInfo.length ? networkInfo.join(nl) + nl : '',
       `⏱️ Duration: ${dc.extra.duration}${nl}`,
       `📈 Score: ${dc.extra.score}${nl}`,
       `${fundsStats}${nl}`,
