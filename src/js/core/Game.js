@@ -1173,7 +1173,7 @@ const logEvents = {
         */
         ua: navigator.userAgent,
         using_gamepad: gamepad.data.active,
-        user_prefs: user_prefs.length && user_prefs.join('&'),
+        user_prefs: user_prefs.length && user_prefs.join(', '),
         game_fps: gamePrefs.game_fps,
         game_fps_auto:
           gamePrefs.game_fps_auto != gamePrefs.game_fps
