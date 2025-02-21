@@ -501,6 +501,7 @@ export {
   copyToClipboardHandler,
   freezeStats,
   formatForWebhook,
+  getDataCache,
   getGameDuration,
   getEnemyChoppersLost,
   postToService
