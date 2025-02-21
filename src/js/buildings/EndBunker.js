@@ -100,7 +100,7 @@ const EndBunker = (options = {}) => {
     let beneficiary = endBunkers[target.data.isEnemy ? 1 : 0];
 
     // 100% or 50% of available funds, if > 0.
-    capturedFunds = Math.max(0, allFunds ? data.funds : data.funds >> 1);
+    capturedFunds = parseInt(Math.max(0, allFunds ? data.funds : data.funds >> 1), 10);
 
     // track how much was stolen from local player, before going negative.
     data.fundsLost += parseInt(data.funds, 10);
