@@ -160,6 +160,8 @@ const EndBunker = (options = {}) => {
     beneficiary.data.funds += capturedFunds;
     beneficiary.data.fundsCaptured += capturedFunds;
 
+    beneficiary.debugFunds(`C${capturedFunds}`);
+
     game.objects.view.updateFundsUI();
 
     if (target) {
