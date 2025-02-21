@@ -133,51 +133,51 @@ const game = (() => {
     // add the object to game arrays, before firing init method (DOM I/O etc.)
     // hackish: `noInit` applies for inventory ordering purposes, should be refactored.
 
-    if (!options.noInit) {
-      if (!objectsById[object.data.id]) {
-        objectsById[object.data.id] = object;
-      } else {
-        // this shouldn't happen.
-        console.warn(
-          'objectsById: already assigned. Ignoring duplicate, returning original.',
-          object.data.id
-        );
-        return objectsById[object.data.id];
-      }
+    if (options.noInit) return object;
 
-      // special case: override, e.g., smoke object that wants to be in objects.backgroundSmoke vs. objects.smoke
-      if (object.data.gameObjectGroup && objects[object.data.gameObjectGroup]) {
-        objects[object.data.gameObjectGroup].push(object);
-      } else {
-        // TYPES.van -> game.objects['van'], etc.
-        objects[type].push(object);
-      }
-
-      /**
-       * Narrow cases for exclusion: paratrooper -> infantry is "free" in terms of points,
-       * paratrooper silently dies and an infantry object is created which should not impact score.
-       */
-      if (!options.excludeFromScoreCreate) {
-        scoreCreate(object);
-      }
-
-      // hackish: for editor mode, set vX and vY to 0 so things don't move across the battlefield.
-      if (game.objects.editor) {
-        if (object.data.vX !== undefined) {
-          object.data.vX = 0;
-        }
-        if (object.data.vY !== undefined) {
-          object.data.vY = 0;
-        }
-      }
-
-      if (!options.skipInit) {
-        object?.init?.();
-      }
-
-      // and caculate the zone, which will further map things.
-      zones.refreshZone(object);
+    if (!objectsById[object.data.id]) {
+      objectsById[object.data.id] = object;
+    } else {
+      // this shouldn't happen.
+      console.warn(
+        'objectsById: already assigned. Ignoring duplicate, returning original.',
+        object.data.id
+      );
+      return objectsById[object.data.id];
     }
+
+    // special case: override, e.g., smoke object that wants to be in objects.backgroundSmoke vs. objects.smoke
+    if (object.data.gameObjectGroup && objects[object.data.gameObjectGroup]) {
+      objects[object.data.gameObjectGroup].push(object);
+    } else {
+      // TYPES.van -> game.objects['van'], etc.
+      objects[type].push(object);
+    }
+
+    /**
+     * Narrow cases for exclusion: paratrooper -> infantry is "free" in terms of points,
+     * paratrooper silently dies and an infantry object is created which should not impact score.
+     */
+    if (!options.excludeFromScoreCreate) {
+      scoreCreate(object);
+    }
+
+    // hackish: for editor mode, set vX and vY to 0 so things don't move across the battlefield.
+    if (game.objects.editor) {
+      if (object.data.vX !== undefined) {
+        object.data.vX = 0;
+      }
+      if (object.data.vY !== undefined) {
+        object.data.vY = 0;
+      }
+    }
+
+    if (!options.skipInit) {
+      object?.init?.();
+    }
+
+    // and caculate the zone, which will further map things.
+    zones.refreshZone(object);
 
     return object;
   }
