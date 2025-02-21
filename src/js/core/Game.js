@@ -72,6 +72,7 @@ import { gamepad } from '../UI/gamepad.js';
 import {
   copyToClipboardHandler,
   freezeStats,
+  getDataCache,
   postToService
 } from './game-reporting.js';
 
@@ -1111,6 +1112,22 @@ const logEvents = {
 
     postToService('discord', { debug: true });
     postToService('slack', { debug: true });
+
+    // funds debugging
+    let dc = getDataCache();
+
+    if (dc?.objects?.[TYPES.endBunker]?.[0]?.data?.debugLog) {
+      fetch('/events/hook/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          service: 'slack',
+          msg: dc.objects[TYPES.endBunker][0].data.debugLog?.join(',')
+        })
+      });
+    }
   },
 
   GAME_START: () => {
