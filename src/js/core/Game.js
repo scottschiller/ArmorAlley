@@ -1124,7 +1124,7 @@ const logEvents = {
         },
         body: JSON.stringify({
           service: 'slack',
-          msg: dc.objects[TYPES.endBunker][0].data.debugLog?.join(',')
+          msg: dc.objects[TYPES.endBunker][0].data.debugLog?.join(' ')
         })
       });
     }
