@@ -259,6 +259,15 @@ const Inventory = () => {
       return;
     }
 
+    // prevent ordering helicopters when it'd be redundant.
+    if (type === TYPES.helicopter && common.unlimitedLivesMode()) {
+      game.objects.notifications.addNoRepeat(noChopperPurchase);
+      if (sounds.inventory.denied) {
+        playSound(sounds.inventory.denied);
+      }
+      return;
+    }
+
     let orderObject, orderSize, cost, pendingNotification;
 
     // default off-screen setting
@@ -337,12 +346,6 @@ const Inventory = () => {
       // Insufficient funds. "We require more vespene gas."
       if (sounds.inventory.denied) {
         playSound(sounds.inventory.denied);
-      }
-
-      // special case: helicopter.
-      if (type === TYPES.helicopter && common.unlimitedLivesMode()) {
-        game.objects.notifications.addNoRepeat(noChopperPurchase);
-        return;
       }
 
       game.objects.notifications.add('%s1%s2: %c1/%c2 💰 🤏 🤷', {
