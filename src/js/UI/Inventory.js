@@ -314,9 +314,11 @@ const Inventory = () => {
 
     const bunkerOffset = player.data.isEnemy ? 1 : 0;
 
+    let endBunker = game.objects[TYPES.endBunker][bunkerOffset];
+
     // got the funds?
     let canAfford =
-      game.objects[TYPES.endBunker][bunkerOffset].data.funds >= cost;
+      endBunker.data.funds >= cost;
 
     // at present, CPUs are not subject to inventory limits.
     // also, allow unlimited during network games for simplicity's sake.
@@ -327,8 +329,11 @@ const Inventory = () => {
       withinUnitLimits(type, player.data.isEnemy);
 
     if (canAfford && canOrder) {
-      game.objects[TYPES.endBunker][bunkerOffset].data.fundsSpent += cost;
-      game.objects[TYPES.endBunker][bunkerOffset].data.funds -= cost;
+      endBunker.data.fundsSpent += cost;
+
+      endBunker.debugFunds(`${type.charAt(0).toUpperCase()}:${endBunker.data.fundsSpent}`);
+
+      endBunker.data.funds -= cost;
 
       game.objects.view.updateFundsUI();
 
