@@ -192,6 +192,11 @@ function formatForWebhook(style, options = {}) {
   yourUnits.unshift('Left');
   theirUnits.unshift('Right');
 
+  // balloons you popped are owned by the opposing team.
+  let poppedBalloons = (theirData.destroyed?.balloon || 0) + (yourData.destroyed?.balloon || 0);
+
+  let balloonString = poppedBalloons ? `🎈 Balloons: ${poppedBalloons} 💥` : ``;
+
   let destroyedBunkers =
     theirData.destroyed.bunker +
     yourData.destroyed.bunker;
@@ -199,7 +204,13 @@ function formatForWebhook(style, options = {}) {
   let bunkerString = `⛳ Bunkers: ${dc.extra.friendlyBunkers}/${dc.objects[TYPES.bunker].length - destroyedBunkers}`;
   if (destroyedBunkers) bunkerString += ` (${destroyedBunkers} destroyed)`;
 
-  let structureStats = [bunkerString];
+  let structureStats = [];
+
+  if (balloonString) {
+    structureStats.push(balloonString);
+  }
+
+  structureStats.push(bunkerString);
 
   if (dc.objects[TYPES.superBunker].length) {
     structureStats.push(
