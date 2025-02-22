@@ -638,12 +638,13 @@ const common = {
     // NOTE: attacker may not always be defined.
     const attacker = dieOptions.attacker || target?.data?.attacker;
 
-    // stats
-    game.objects.stats.destroy(target, dieOptions);
-
     if (!game.objects.editor && !dieOptions.silent) {
-      // ignore "silent" deaths, e.g., infantry being picked up by helicopter
+      /**
+       * Ignore "silent" deaths - e.g., infantry being picked up by helicopter
+       * or unit being recycled after reaching the other end of the battlefield
+       */
       scoreDestroy(target);
+      game.objects.stats.destroy(target, dieOptions);
     }
 
     // callback-style methods
