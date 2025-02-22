@@ -88,10 +88,13 @@ let dataCache;
 function freezeStats() {
   // only do this once.
   if (dataCache) return;
+  let teamStats = game.objects.stats.getTeamDataByPlayer(game.players.local);
   dataCache = {
     players: copy(game.players),
     objects: copy(game.objects),
     extra: {
+      playerTeamStats: teamStats.us,
+      opponentTeamStats: teamStats.them,
       friendlyBunkers: countFriendly(TYPES.bunker),
       friendlySuperBunkers: countFriendly(TYPES.superBunker),
       friendlyTurrets: countFriendly(TYPES.turret),
@@ -129,8 +132,8 @@ function formatForWebhook(style, options = {}) {
 
   let tableStyle = styleMap[style] || styleMap.default;
 
-  let yourData = dc.objects.stats.data.player;
-  let theirData = dc.objects.stats.data.enemy;
+  let yourData = dc.extra.playerTeamStats;
+  let theirData = dc.extra.opponentTeamStats;
 
   let units = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'];
 
@@ -190,8 +193,8 @@ function formatForWebhook(style, options = {}) {
   theirUnits.unshift('Right');
 
   let destroyedBunkers =
-    dc.objects.stats.data.enemy.destroyed.bunker +
-    dc.objects.stats.data.player.destroyed.bunker;
+    theirData.destroyed.bunker +
+    yourData.destroyed.bunker;
 
   let bunkerString = `⛳ Bunkers: ${dc.extra.friendlyBunkers}/${dc.objects[TYPES.bunker].length - destroyedBunkers}`;
   if (destroyedBunkers) bunkerString += ` (${destroyedBunkers} destroyed)`;
