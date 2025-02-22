@@ -795,7 +795,10 @@ function recycleTest(obj) {
     // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
     refund = (costObj.funds / (costObj.count || 1)) * 2;
 
-    game.objects[TYPES.endBunker][isEnemy ? 1 : 0].data.funds += refund;
+    let endBunker = game.objects[TYPES.endBunker][isEnemy ? 1 : 0];
+
+    endBunker.data.funds += refund;
+    endBunker.data.fundsRefunded += refund;
 
     if (game.players.local.data.isEnemy === isEnemy) {
       // notify player that a unit has been recycled?

@@ -395,6 +395,7 @@ const EndBunker = (options = {}) => {
       fundsSpent: 0,
       fundsCaptured: 0,
       fundsLost: 0,
+      fundsRefunded: 0,
       // give CPU an advantage via "discount" on ordering, so it can send out larger convoys up front on tougher battles.
       // up to 200% scale plus 12%, for Midnight Oasis on Armorgeddon where the enemy can afford the largest convoys up-front.
       fundsMultiplier:
