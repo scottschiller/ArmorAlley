@@ -8,6 +8,11 @@ import { canNotify } from '../core/logic.js';
 
 const UNKNOWN_VERB = 'UNKNOWN_VERB';
 
+const TEAMS = {
+  left: 'leftTeam',
+  right: 'rightTeam'
+};
+
 function Stats() {
   let data, exports;
 
@@ -56,6 +61,15 @@ function Stats() {
     };
   }
 
+  function getTeamDataByPlayer(player) {
+    let playerIsEnemy = !!player?.data?.isEnemy;
+    let teamData = {
+      us: playerIsEnemy ? data[TEAMS.right] : data[TEAMS.left],
+      them: playerIsEnemy ? data[TEAMS.left] : data[TEAMS.right]
+    }
+    return teamData;
+  }
+
   function normalizeObj(obj) {
     if (obj && !obj.data && obj.oParent) {
       obj = obj.oParent;
@@ -80,9 +94,12 @@ function Stats() {
     if (obj.data.type === 'radar-item') return;
 
     let dataObj, type;
+
     obj = normalizeObj(obj);
     type = normalizeType(obj);
-    dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].created;
+
+    dataObj = data[obj.data.isEnemy ? TEAMS.right : TEAMS.left].created;
+
     if (dataObj[type] !== undefined) {
       dataObj[type]++;
     }
@@ -117,7 +134,7 @@ function Stats() {
     }
 
     // increment the relevant stat
-    dataObj = data[obj.data.isEnemy ? 'enemy' : 'player'].destroyed;
+    dataObj = data[obj.data.isEnemy ? TEAMS.right : TEAMS.left].destroyed;
 
     if (dataObj[type] !== undefined) {
       dataObj[type]++;
@@ -612,7 +629,7 @@ function Stats() {
     let i, j, k, items, cols, type, offset, dataSource;
     items = document.getElementById('stats-endgame').getElementsByTagName('tr');
     // data sources
-    dataSource = [data.player.destroyed, data.enemy.destroyed];
+    dataSource = [data[TEAMS.left].destroyed, data[TEAMS.right].destroyed];
     offset = 1;
     for (i = 0, j = items.length; i < j; i++) {
       type = items[i].getAttribute('data-type');
@@ -634,11 +651,11 @@ function Stats() {
       start: new Date(),
       end: null
     },
-    player: {
+    [TEAMS.left]: {
       created: statsStructure(),
       destroyed: statsStructure()
     },
-    enemy: {
+    [TEAMS.right]: {
       created: statsStructure(),
       destroyed: statsStructure()
     }
@@ -649,6 +666,7 @@ function Stats() {
     create,
     destroy,
     formatForDisplay,
+    getTeamDataByPlayer,
     markEnd,
     displayEndGameStats
   };
