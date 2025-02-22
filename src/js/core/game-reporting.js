@@ -193,7 +193,7 @@ function formatForWebhook(style, options = {}) {
   theirUnits.unshift('Right');
 
   // balloons you popped are owned by the opposing team.
-  let poppedBalloons = (theirData.destroyed?.balloon || 0) + (yourData.destroyed?.balloon || 0);
+  let poppedBalloons = (theirData.destroyed?.balloon || 0);
 
   let balloonString = poppedBalloons ? `🎈 Balloons: ${poppedBalloons} 💥` : ``;
 
