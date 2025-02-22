@@ -217,9 +217,9 @@ function formatForWebhook(style, options = {}) {
   let endBunker =
     dc.objects[TYPES.endBunker][dc.players.local.data.isEnemy ? 1 : 0].data;
 
-  let { fundsLost, fundsCaptured, fundsSpent, fundsEarned } = endBunker;
+  let { fundsLost, fundsCaptured, fundsSpent, fundsEarned, fundsRefunded } = endBunker;
 
-  let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned + fundsCaptured} 🏦`;
+  let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned + fundsCaptured + fundsRefunded} 🏦`;
 
   let lostOrCaptured = [];
 
@@ -229,6 +229,10 @@ function formatForWebhook(style, options = {}) {
 
   if (fundsCaptured) {
     lostOrCaptured.push(', ' + nowrap(`+${fundsCaptured} 🏴‍☠️`));
+  }
+
+  if (fundsRefunded) {
+    lostOrCaptured.push(', ' + nowrap(`+${fundsRefunded} ♻️`));
   }
 
   fundsStats += lostOrCaptured.join('');
@@ -352,7 +356,7 @@ function formatForWebhook(style, options = {}) {
 
   if (options.debug) {
     // funds debugging
-    debugInfo.push(`funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}`);
+    debugInfo.push(`funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}, refunded=${fundsRefunded}`);
   }
 
   let copyGameStats =
