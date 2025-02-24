@@ -376,10 +376,6 @@ function formatForWebhook(style, options = {}) {
   let copyGameStats =
     '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>';
 
-  let betaText = '<span style="white-space:nowrap">[ Game stats beta ]</span>';
-
-  copyGameStats += ' ' + betaText;
-
   let report;
 
   let nl = '\n';
