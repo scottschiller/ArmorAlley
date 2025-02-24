@@ -331,8 +331,6 @@ const Inventory = () => {
     if (canAfford && canOrder) {
       endBunker.data.fundsSpent += cost;
 
-      endBunker.debugFunds(`${type.charAt(0).toUpperCase()}:${endBunker.data.fundsSpent}`);
-
       endBunker.data.funds -= cost;
 
       game.objects.view.updateFundsUI();
