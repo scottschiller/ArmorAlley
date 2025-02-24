@@ -1392,6 +1392,8 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   font-size: calc(5.5px * var(--gs));
   line-height: 150%;
   font-family: monospace;
+  /* reset cheddar font shenanigans */
+  text-transform: initial;
 }
 
 #game-announcements div.game-over-stats ul {
