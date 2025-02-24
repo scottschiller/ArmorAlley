@@ -193,13 +193,11 @@ function formatForWebhook(style, options = {}) {
   theirUnits.unshift('Right');
 
   // balloons you popped are owned by the opposing team.
-  let poppedBalloons = (theirData.destroyed?.balloon || 0);
+  let poppedBalloons = theirData.destroyed?.balloon || 0;
 
   let balloonString = poppedBalloons ? `🎈 Balloons: ${poppedBalloons} 💥` : ``;
 
-  let destroyedBunkers =
-    theirData.destroyed.bunker +
-    yourData.destroyed.bunker;
+  let destroyedBunkers = theirData.destroyed.bunker + yourData.destroyed.bunker;
 
   let bunkerString = `⛳ Bunkers: ${dc.extra.friendlyBunkers}/${dc.objects[TYPES.bunker].length - destroyedBunkers}`;
   if (destroyedBunkers) bunkerString += ` (${destroyedBunkers} destroyed)`;
@@ -231,7 +229,8 @@ function formatForWebhook(style, options = {}) {
   let endBunker =
     dc.objects[TYPES.endBunker][dc.players.local.data.isEnemy ? 1 : 0].data;
 
-  let { fundsLost, fundsCaptured, fundsSpent, fundsEarned, fundsRefunded } = endBunker;
+  let { fundsLost, fundsCaptured, fundsSpent, fundsEarned, fundsRefunded } =
+    endBunker;
 
   let fundsStats = `💰 Funds: ${fundsSpent} 📦 of ${DEFAULT_FUNDS + fundsEarned + fundsCaptured + fundsRefunded} 🏦`;
 
@@ -311,10 +310,16 @@ function formatForWebhook(style, options = {}) {
   let networkInfo = [];
 
   if (net.active) {
-    let localName = !gamePrefs.net_player_name.match(/host|guest/i) ? gamePrefs.net_player_name : '';
-    let remoteName = !gamePrefs.net_remote_player_name.match(/host|guest/i) ? gamePrefs.net_remote_player_name : '';
+    let localName = !gamePrefs.net_player_name.match(/host|guest/i)
+      ? gamePrefs.net_player_name
+      : '';
+    let remoteName = !gamePrefs.net_remote_player_name.match(/host|guest/i)
+      ? gamePrefs.net_remote_player_name
+      : '';
 
-    networkInfo.push(`🌐 ${gamePrefs.net_game_style} network game (${net.isHost ? 'host' : 'guest'})`);
+    networkInfo.push(
+      `🌐 ${gamePrefs.net_game_style} network game (${net.isHost ? 'host' : 'guest'})`
+    );
 
     if (localName || remoteName) {
       networkInfo.push(`🕹️ Players: "${localName}" and "${remoteName}"`);
@@ -326,9 +331,11 @@ function formatForWebhook(style, options = {}) {
       let statsByType = net.getStatsByType();
       let stats = [];
       for (let type in statsByType) {
-        stats.push(`${type}: ${statsByType[type].tx}↑, ${statsByType[type].rx}↓`)
+        stats.push(
+          `${type}: ${statsByType[type].tx}↑, ${statsByType[type].rx}↓`
+        );
       }
-      networkInfo.push(`Packets, tx/rx: ${stats.join(',')}`);    
+      networkInfo.push(`Packets, tx/rx: ${stats.join(',')}`);
     }
   }
 
@@ -370,7 +377,9 @@ function formatForWebhook(style, options = {}) {
 
   if (options.debug) {
     // funds debugging
-    debugInfo.push(`funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}, refunded=${fundsRefunded}`);
+    debugInfo.push(
+      `funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}, refunded=${fundsRefunded}`
+    );
   }
 
   let copyGameStats =
