@@ -1068,7 +1068,12 @@ function PrefsManager() {
       // form values will be 0, 1, or a non-numeric string.
       // try for int, e.g., "0" -> 0 - otherwise, keep original string.
       let number = parseInt(value, 10);
-      data[key] = isNaN(number) ? value : number;
+      if (key === 'webhook_url') {
+        // hack: guard against null / false etc.
+        data[key] = value || '';
+      } else {
+        data[key] = isNaN(number) ? value : number;
+      }
     });
 
     // special case: sliders.
@@ -1167,7 +1172,8 @@ function PrefsManager() {
 
       inputs.forEach((input) => {
         if (input.type === 'text' || input.type === 'url') {
-          input.value = gamePrefs[key];
+          // one more hack: guard against false values sneaking in.
+          input.value = !gamePrefs[key] ? '' : gamePrefs[key];
         } else if (input.type === 'range') {
           // volume: nevermind boolean - convert back from model to form input.
           input.value = gamePrefs[key] * 10;
