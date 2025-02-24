@@ -71,6 +71,7 @@ import { scoreCreate, scoreGameOver } from './scores.js';
 import { gamepad } from '../UI/gamepad.js';
 import {
   copyToClipboardHandler,
+  formatForWebhook,
   freezeStats,
   getDataCache,
   postToService
@@ -1109,6 +1110,42 @@ const logEvents = {
       // deliciously old-skool.
       el.onclick = copyToClipboardHandler;
     });
+
+    // user-provided webhook?
+    if (gamePrefs.webhook_url) {
+      let service = gamePrefs.webhook_url.match(/discord/i)
+        ? 'discord'
+        : gamePrefs.webhook_url.match(/slack/i)
+          ? 'slack'
+          : '';
+
+      if (!service) {
+        console.warn('webhook_url: not a Discord or Slack webhook?');
+      } else {
+        let fieldNames = {
+          discord: 'content',
+          slack: 'text'
+        };
+
+        let options = {
+          body: JSON.stringify({
+            service,
+            [fieldNames[service]]: formatForWebhook(service)
+          })
+        };
+
+        if (service === 'discord') {
+          options.headers = {
+            'Content-Type': 'application/json'
+          };
+        }
+
+        fetch(gamePrefs.webhook_url, {
+          method: 'POST',
+          ...options
+        });
+      }
+    }
 
     postToService('discord', { debug: true });
     postToService('slack', { debug: true });
