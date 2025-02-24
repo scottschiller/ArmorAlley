@@ -1,13 +1,14 @@
 import { aaLoader } from '../core/aa-loader.js';
 import { gameType } from '../aa.js';
 import { common } from '../core/common.js';
-import { isMobile, searchParams } from '../core/global.js';
+import { isMobile, searchParams, TYPES } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { campaignBattles, levelName } from '../levels/default.js';
 import { game } from '../core/Game.js';
 import {
   copyToClipboardHandler,
-  formatForWebhook
+  formatForWebhook,
+  getDataCache
 } from '../core/game-reporting.js';
 
 let gameTypeParam;
@@ -50,6 +51,37 @@ function Envelope() {
     updateGameType();
   }
 
+  function formatLetter(html) {
+    // if present, swap in live numbers for lost units - %T for tank, etc.
+    // "%T tanks. %H helicopters. %I infantry. %V vans. %M missile launchers."
+    let mtvie = html.match(/\%[MTVIEH]/gi);
+
+    if (!mtvie?.length) return html;
+
+    let dc = getDataCache();
+    let yourData = dc?.extra?.playerTeamStats;
+
+    if (!yourData) return html;
+
+    let map = {
+      M: TYPES.missileLauncher,
+      T: TYPES.tank,
+      V: TYPES.van,
+      I: TYPES.infantry,
+      E: TYPES.engineer,
+      H: TYPES.helicopter
+    };
+
+    mtvie.forEach((match) => {
+      // %T -> map[T]
+      // note, leading slash for %
+      let pattern = new RegExp(`\\${match}`, 'g');
+      html = html.replace(pattern, yourData.destroyed[map[match.substr(1)]]);
+    });
+
+    return html;
+  }
+
   function applyLevel() {
     if (!dom.o) return;
 
@@ -61,8 +93,9 @@ function Envelope() {
           ?.innerHTML || 'missing'
       }</h1>`,
       `<div class="game-stats">${formatForWebhook('html')}</div>`,
-      dom.oLetterSource.querySelector(`dd[data-battle="${level}"]`)
-        ?.innerHTML || 'missing'
+      formatLetter(
+        dom.oLetterSource.querySelector(`dd[data-battle="${level}"]`)?.innerHTML
+      ) || 'missing'
     ].join('');
 
     const currentOffset = campaignBattles.indexOf(level);
