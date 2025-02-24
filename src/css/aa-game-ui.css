@@ -1061,7 +1061,7 @@ body:not(.game-over)
     'Helvetica Neue',
     sans-serif;
   line-height: 1em;
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 /* ugh, Firefox. */
