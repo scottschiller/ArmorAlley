@@ -1387,8 +1387,7 @@ function PrefsManager() {
       return;
     }
 
-    dom.oFormSubmit.innerHTML =
-      (data.remoteReadyToStart ? 'START' : 'READY');
+    dom.oFormSubmit.innerHTML = data.remoteReadyToStart ? 'START' : 'READY';
 
     // highlight local button if remote is ready, or reset if not.
     utils.css.addOrRemove(
