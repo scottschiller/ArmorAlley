@@ -791,9 +791,9 @@ function recycleTest(obj) {
 
     costObj = COSTS[TYPES[type]];
 
-    // reward player for their good work. 200% return on "per-item" cost.
-    // e.g., tank cost = 4 credits, return = 8. for 5 infantry, 10.
-    refund = (costObj.funds / (costObj.count || 1)) * 2;
+    // reward player for their good work. 100% return on "per-item" cost.
+    // e.g., tank cost = 4 credits, return = 4. for 5 infantry, 5 credits.
+    refund = costObj.funds / (costObj.count || 1);
 
     let endBunker = game.objects[TYPES.endBunker][isEnemy ? 1 : 0];
 
