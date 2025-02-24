@@ -1298,6 +1298,9 @@ function PrefsManager() {
           prefsFromStorage[key] === 'host'
         )
           prefsFromStorage[key] = '';
+      } else if (key === 'webhook_url') {
+        // hack: guard against null / false etc.
+        value = value || '';
       } else if (value) {
         prefsFromStorage[key] = stringToBool(value);
       }
