@@ -7,9 +7,9 @@
 
 `02/2025, work in progress`
 
-Game statistics: time, score, inventory and other details when battle is won or lost. https://github.com/scottschiller/ArmorAlley/commit/e6edc475ad0c6d3c80731238a8400348d7c6c053 https://github.com/scottschiller/ArmorAlley/commit/408dcc7e82ea2bf10dcc17aeeca233951ba4198b 
+Support for posting game stats to Discord or Slack via webhooks. https://github.com/scottschiller/ArmorAlley/commit/f6b290c535c20457842ca6dde55fdd9cd3f4604b https://github.com/scottschiller/ArmorAlley/commit/039bb4c6b8f4857d804553a8f69df29f5a2a27d5 https://github.com/scottschiller/ArmorAlley/commit/f08287ac95ef4ebf83bf590e39180086de3fc50f
 
-Work in progress: Support for posting game stats to Discord + Slack via webhooks. https://github.com/scottschiller/ArmorAlley/commit/f08287ac95ef4ebf83bf590e39180086de3fc50f
+Game statistics: time, score, inventory and other details when battle is won or lost. https://github.com/scottschiller/ArmorAlley/commit/e6edc475ad0c6d3c80731238a8400348d7c6c053 https://github.com/scottschiller/ArmorAlley/commit/408dcc7e82ea2bf10dcc17aeeca233951ba4198b 
 
 `01/2025, work in progress`
 

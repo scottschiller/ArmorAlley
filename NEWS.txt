@@ -3,9 +3,9 @@ This is a summary of work in progress. For code-level details, see the changelog
 
 `Game Statistics V2.0`
 
-· Game stats: time, score, inventory and other details when battle is won or lost. "Copy to clipboard" for those who might be interested.
+· Work in progress: Support for posting game stats to Discord or Slack via webhooks.
 
-· Work in progress: Support for posting game stats to Discord + Slack via webhooks.
+· Game stats: time, score, inventory and other details when battle is won or lost. "Copy to clipboard" for those who might be interested.
 
 `Gamepad Support: V1.0 (Experimental) 🎮🤞`
 
