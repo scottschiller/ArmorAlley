@@ -129,7 +129,8 @@ const defaultPrefs = {
   'scan_ui_battlefield_friendly': true,
   'scan_ui_radar_enemy': true,
   'scan_ui_radar_friendly': true,
-  'unlimited_lives': true
+  'unlimited_lives': true,
+  'webhook_url': null
 };
 
 // certain prefs should be treated as numbers.
@@ -1165,7 +1166,9 @@ function PrefsManager() {
       if (!inputs?.forEach) return;
 
       inputs.forEach((input) => {
-        if (input.type === 'range') {
+        if (input.type === 'text' || input.type === 'url') {
+          input.value = gamePrefs[key];
+        } else if (input.type === 'range') {
           // volume: nevermind boolean - convert back from model to form input.
           input.value = gamePrefs[key] * 10;
         } else {
