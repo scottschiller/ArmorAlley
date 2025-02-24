@@ -130,7 +130,7 @@ const defaultPrefs = {
   'scan_ui_radar_enemy': true,
   'scan_ui_radar_friendly': true,
   'unlimited_lives': true,
-  'webhook_url': null
+  'webhook_url': ''
 };
 
 // certain prefs should be treated as numbers.
