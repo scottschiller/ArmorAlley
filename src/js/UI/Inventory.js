@@ -317,8 +317,7 @@ const Inventory = () => {
     let endBunker = game.objects[TYPES.endBunker][bunkerOffset];
 
     // got the funds?
-    let canAfford =
-      endBunker.data.funds >= cost;
+    let canAfford = endBunker.data.funds >= cost;
 
     // at present, CPUs are not subject to inventory limits.
     // also, allow unlimited during network games for simplicity's sake.
