@@ -479,6 +479,8 @@ body.game-started #start-game-button-mobile {
   /* similar to buttons */
   text-indent: var(--text-indent);
   font-family: 'Cheddar Gothic Stencil';
+  /* font subset tricks: only uppercase letters defined. */
+  text-transform: uppercase;
   min-height: calc(18px * var(--menu-scale));
   text-indent: var(--text-indent);
   padding: 0;
@@ -759,6 +761,8 @@ body.is_firefox #home-video-wrapper {
 
 #game-menu-wrapper button.game-start {
   font-family: 'Cheddar Gothic Stencil';
+  /* font subset tricks: only uppercase letters defined. */
+  text-transform: uppercase;
   background-color: rgba(0, 255, 0, 0.2);
   font-size: calc(13.75px * var(--menu-scale));
   padding: calc(3.33px * var(--menu-scale));

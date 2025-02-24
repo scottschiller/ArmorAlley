@@ -75,6 +75,8 @@
     arial,
     sans-serif;
   font-weight: 400;
+  /* font subset tricks: only uppercase letters defined. */
+  text-transform: uppercase;
   font-size: calc(15px * var(--gs));
   line-height: 1em;
   margin-top: calc(4px * var(--gs));
