@@ -252,7 +252,8 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 
 #game-prefs-modal .body pre.block {
   margin-top: 0.5em;
-  font-size: 90%;
+  margin-bottom: 0.5em;
+  font-size: 85%;
   white-space: break-spaces;
 }
 
