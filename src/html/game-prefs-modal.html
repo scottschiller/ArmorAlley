@@ -2425,6 +2425,83 @@
                     </li>
                   </ul>
                 </fieldset>
+                <fieldset>
+                  <legend>Discord / Slack Integration 🌐🪝</legend>
+
+                  <p class="non-indented">
+                    Webhooks enable sharing of your game stats with others via
+                    Discord or Slack, popular gaming and real-time messaging
+                    apps.
+                  </p>
+
+                  <p class="non-indented more-top-spacing more-bottom-spacing">
+                    Webhooks are effectively secret links you create on those
+                    services, allowing message posting to a specified channel.
+                    For Discord, see
+                    <code class="inline"
+                      >Preferences &gt; Integrations &gt; Webhooks</code
+                    >. For Slack, see
+                    <a
+                      href="https://api.slack.com/messaging/webhooks"
+                      title="Slack API: Webhooks"
+                      target="_blank"
+                      >using incoming webhooks</a
+                    >.
+                  </p>
+
+                  <p class="non-indented more-top-spacing more-bottom-spacing">
+                    A note on security: Your browser posts directly to the
+                    webhook URL you provide. It is not logged or otherwise
+                    stored on the Armor Alley server.
+                  </p>
+
+                  <p class="options-heading non-indented">Stats example</p>
+
+                  <p class="non-indented">
+                    Details vary by battle, depending on features.
+                  </p>
+
+                  <pre style="float: left; margin-right: 1em" class="block">
+╭────────────────────────────╮
+│   Gains + losses by team   │
+├──────┬────┬─────┬────┬─────┤
+│ Unit │ L+ │ L-  │ R+ │ R-  │
+├──────┼────┼─────┼────┼─────┤
+│ Heli │  0 │ -12 │  0 │ -67 │
+│ ML   │ 12 │  -9 │  8 │  -8 │
+│ Tank │  4 │  -4 │ 10 │ -10 │
+│ Van  │ 11 │  -5 │ 34 │ -34 │
+│ Inf  │ 56 │ -26 │ 49 │ -36 │
+│ Eng  │ 16 │ -14 │  0 │   0 │
+╰──────┴────┴─────┴────┴─────╯</pre
+                  >
+                  <pre class="block">
+🚁 🎉 Battle won: Scrapyard, Conflict 😰 🎖️🎖️🎖️
+
+⏱️ Duration: 18:16
+📈 Score: 34744
+💰 Funds: 129 📦 of 145 🏦
+🎈 Balloons: 10 💥
+⛳ Bunkers: 6/7 (2 destroyed)
+⛳ Super Bunkers: 2/2
+📡 Turrets: 6/7 (1 dead)</pre
+                  >
+                  <div>
+                    <label for="webhook-url" class="full-width"
+                      ><span class="label-text">Webhook URL</span></label
+                    >
+                    <input
+                      id="webhook-url"
+                      name="webhook_url"
+                      type="url"
+                      autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      data-gramm="false"
+                      placeholder="https://discord.com/api/webhooks/..." />
+                  </div>
+                </fieldset>
               </div>
             </div>
           </form>

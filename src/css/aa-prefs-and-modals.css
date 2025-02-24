@@ -245,6 +245,17 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   scrollbar-width: thin;
 }
 
+#game-prefs-modal .body code.inline {
+  font-size: 90%;
+  letter-spacing: -0.5px;
+}
+
+#game-prefs-modal .body pre.block {
+  margin-top: 0.5em;
+  font-size: 90%;
+  white-space: break-spaces;
+}
+
 #game-prefs-modal .battle-list {
   /* center reasonably when modal is wider. */
   text-align: center;
@@ -794,7 +805,13 @@ b.gamepad-button,
   vertical-align: middle;
 }
 
-.mac-classic input[type='text'] {
+.mac-classic label.full-width {
+  display: inline-block;
+  width: 100%;
+}
+
+.mac-classic input[type='text'],
+.mac-classic input[type='url'] {
   border: 1px solid #000;
   box-sizing: border-box;
   display: block;
@@ -803,7 +820,8 @@ b.gamepad-button,
   width: 100%;
 }
 
-.mac-classic input[type='text']:focus {
+.mac-classic input[type='text']:focus,
+.mac-classic input[type='url']:focus {
   outline: 0;
 }
 
