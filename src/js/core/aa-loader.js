@@ -349,15 +349,15 @@ function isProd() {
 }
 
 function getAudioRoot() {
-  return isProd() ? 'dist/audio' : 'assets/audio';
+  return isProd() || isFloppy ? 'dist/audio' : 'assets/audio';
 }
 
 function getImageRoot() {
-  return isProd() ? 'dist/image' : 'assets/image';
+  return isProd() || isFloppy ? 'dist/image' : 'assets/image';
 }
 
 function getVideoRoot() {
-  return isProd() ? 'dist/video' : 'assets/video';
+  return isProd() || isFloppy ? 'dist/video' : 'assets/video';
 }
 
 function localFetch(src, fetchMethod, onload) {
