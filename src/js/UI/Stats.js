@@ -141,6 +141,30 @@ function Stats() {
     }
   }
 
+  function recycle(obj, options) {
+    // exclude during level previews, and battle-over destruction sequences
+    if (!game.data.started || game.data.battleOver) return;
+
+    // ignore radar items.
+    if (obj.data.type === 'radar-item') return;
+
+    // there might be no data, so go up the chain.
+
+    let dataObj, type;
+
+    // most objects have oParent, except vans which are "hidden" from radar.
+    obj = normalizeObj(obj.oParent || obj);
+
+    type = normalizeType(obj);
+
+    // increment the relevant stat
+    dataObj = data[obj.data.isEnemy ? TEAMS.right : TEAMS.left].recycled;
+
+    if (dataObj[type] !== undefined) {
+      dataObj[type]++;
+    }
+  }
+
   const aimedMissile = {
     // special case: smart missiles are the "attacker" only when hostile.
     'hostilePrefix': 'a hostile ',
@@ -653,22 +677,25 @@ function Stats() {
     },
     [TEAMS.left]: {
       created: statsStructure(),
-      destroyed: statsStructure()
+      destroyed: statsStructure(),
+      recycled: statsStructure()
     },
     [TEAMS.right]: {
       created: statsStructure(),
-      destroyed: statsStructure()
+      destroyed: statsStructure(),
+      recycled: statsStructure()
     }
   };
 
   exports = {
-    data,
     create,
+    data,
     destroy,
+    displayEndGameStats,
     formatForDisplay,
     getTeamDataByPlayer,
     markEnd,
-    displayEndGameStats
+    recycle
   };
 
   return exports;

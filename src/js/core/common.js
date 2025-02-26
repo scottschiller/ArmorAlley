@@ -647,6 +647,10 @@ const common = {
       game.objects.stats.destroy(target, dieOptions);
     }
 
+    if (dieOptions.recycled) {
+      game.objects.stats.recycle(target, dieOptions);
+    }
+
     // callback-style methods
 
     if (attacker?.data?.parent?.onKill) {

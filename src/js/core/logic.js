@@ -779,7 +779,7 @@ function recycleTest(obj) {
     if (oData.dead) return;
 
     // die silently, and go away.
-    obj.die({ silent: true });
+    obj.die({ silent: true, recycled: true });
 
     // tank, infantry etc., or special-case: engineer.
     type = oData.role ? oData.roles[oData.role] : oData.type;
