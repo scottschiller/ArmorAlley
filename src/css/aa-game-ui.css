@@ -827,7 +827,14 @@ body.game-over #game-tips {
 }
 
 #game-tips .game-over-tip {
-  color: #339933;
+  color: #009900;
+  font-family: 'EB Garamond', 'Times New Roman', serif;
+  font-size: calc(12px * var(--gs));
+  line-height: 125%;
+  font-weight: 300;
+  letter-spacing: -0.033em;
+  max-width: 26em;
+  margin: 0px auto;
 }
 
 #game-tips hr {
@@ -980,10 +987,16 @@ body.game-started #game-tips.active .tips-container {
 #game-tips .tips-container .animation-node,
 #game-tips .tips-container .tip {
   animation: scrollText calc(24s * var(--gs-frac)) linear;
+  font-family: 'EB Garamond', 'Times New Roman', serif;
   font-weight: 300;
   padding: 1px;
-  text-rendering: optimizeSpeed; /* "ticker-tape" style? */
-  /* animation-timing-function: steps(150); */
+  text-rendering: optimizeSpeed;
+  /**
+   * "ticker-tape" style?
+   * animation-timing-function: steps(150);
+   */
+  opacity: 0.75;
+  letter-spacing: -0.033em;
 }
 
 /* go bigger on landscape. */
