@@ -808,8 +808,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   position: absolute;
   font-family: 'Cheddar Gothic Stencil';
   font-weight: 400;
-  /* font subset tricks: only uppercase letters defined. */
-  text-transform: uppercase;
   /* will be repositioned higher up on small portrait screens. */
   top: 23.5%;
   left: 0;
@@ -841,8 +839,6 @@ body.game-over #game-tips {
   /* game over, "try again" button */
   display: inline-block;
   font-family: 'Cheddar Gothic Stencil';
-  /* font subset tricks: only uppercase letters defined. */
-  text-transform: uppercase;
   background-color: rgba(0, 255, 0, 0.2);
   font-size: calc(20px * var(--gs));
   margin-top: calc(12px * var(--gs));
