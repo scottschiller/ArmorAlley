@@ -66,7 +66,7 @@ function Stats() {
     let teamData = {
       us: playerIsEnemy ? data[TEAMS.right] : data[TEAMS.left],
       them: playerIsEnemy ? data[TEAMS.left] : data[TEAMS.right]
-    }
+    };
     return teamData;
   }
 
