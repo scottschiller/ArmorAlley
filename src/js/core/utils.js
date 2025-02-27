@@ -699,7 +699,7 @@ const utils = {
 
     // avoid redundant work.
     if (preRendered.all) return;
-    if (preRendered.subset) return;
+    if (preRendered.subset && !options.all) return;
 
     // TODO: preload snow versions of sprites, as applicable.
     const urls = Object.keys(imageSpriteConfig);
