@@ -1460,11 +1460,12 @@ button.copy-game-stats {
   background: rgba(0, 128, 0, 0.9);
   border: 1px solid rgba(0, 160, 0, 0.9);
   color: #ccc;
-  padding: calc(2px * var(--gs)) calc(4px * var(--gs));
+  padding: calc(1px * var(--gs)) calc(2px * var(--gs));
   border-radius: calc(2px * var(--gs));
   margin-top: 3px;
   margin-bottom: 3px;
   margin-right: 0px;
+  min-width: auto;
 }
 
 body.game-over.you-won button.copy-game-stats {
