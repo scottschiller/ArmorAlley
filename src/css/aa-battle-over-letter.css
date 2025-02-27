@@ -332,7 +332,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   font-size: calc(4px * var(--gs));
   float: left;
   line-height: 130%;
-  margin: 0px 1.5em 0px 0px;
+  margin: 0px 1.5em 1em 0px;
 }
 
 .animated-mail .letter .letter-context-body .game-stats + p {
