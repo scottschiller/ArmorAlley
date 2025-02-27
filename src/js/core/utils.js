@@ -697,6 +697,8 @@ const utils = {
     // Pre-render and cache certain animation sequences, reduce flicker on game start.
     if (!imageSpriteConfig) return;
 
+    let complete;
+
     // avoid redundant work.
     if (preRendered.all) return;
     if (preRendered.subset && !options.all) return;
@@ -732,6 +734,9 @@ const utils = {
     let i = 0;
 
     function preloadNext() {
+      // guard
+      if (i >= preloadURLs.length) return;
+
       const url = preloadURLs[i].substring(1);
       utils.image.getImageObject(url, loaded);
       i++;
@@ -741,13 +746,22 @@ const utils = {
       // note: getImageObject() has requestAnimationFrame() in callbacks.
       if (i < preloadURLs.length) {
         preloadNext();
-      } else if (options.callback instanceof Function) {
-        options.callback();
+      } else if (!complete) {
+        // this will fire multiple times due to parallel work.
+        complete = true;
+        console.info(`Pre-rendered ${i} sprites`);
+        if (options.callback instanceof Function) {
+          options.callback();
+        }
       }
     }
 
-    // start pre-fetch
-    preloadNext();
+    let parallel = 5;
+
+    // start pre-fetch, in parallel
+    for (let x = 0; x < parallel; x++) {
+      preloadNext();
+    }
   }
 };
 
