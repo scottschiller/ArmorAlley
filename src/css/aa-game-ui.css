@@ -890,7 +890,7 @@ body.has-gamepad.gamepad-active #game-tips .generic-cta:focus-visible {
 
 #game-tips .tips-container {
   border-radius: 1em;
-  color: #707070;
+  color: #888;
   display: none;
   left: 50%;
   overflow: hidden;
