@@ -138,16 +138,18 @@ function formatForWebhook(style, options = {}) {
   let units = ['missile-launcher', 'tank', 'van', 'infantry', 'engineer'];
 
   let yourUnits = units.map(
-    (item) => `${yourData.created[item]} ${-yourData.destroyed[item]}`
+    (item) =>
+      `${yourData.created[item]} ${yourData.destroyed[item]} ${yourData.recycled[item]}`
   );
 
   let theirUnits = units.map(
-    (item) => `${theirData.created[item]} ${-theirData.destroyed[item]}`
+    (item) =>
+      `${theirData.created[item]} ${theirData.destroyed[item]} ${theirData.recycled[item]}`
   );
 
-  // helicopter purchases and losses
-  let localData = `${dc.players.local.data.livesPurchased} ${-dc.players.local.data.livesLost}`;
-  let opponentData = `${getEnemyChoppersPurchased()} ${-getEnemyChoppersLost()}`;
+  // helicopter purchases and losses (no recycling)
+  let localData = `${dc.players.local.data.livesPurchased} ${dc.players.local.data.livesLost} 0`;
+  let opponentData = `${getEnemyChoppersPurchased()} ${getEnemyChoppersLost()} 0`;
 
   // "yours" vs. "theirs" depends on who local player is.
   if (dc.players.local.data.isEnemy) {
@@ -175,9 +177,9 @@ function formatForWebhook(style, options = {}) {
     return `<span style="white-space: nowrap">${s}</span>`;
   }
 
-  let vTableHeaders = ['Unit', 'L+', 'L-', 'R+', 'R-'];
+  let vTableHeaders = ['Unit', 'L+', '-', '♻', 'R+', '-', '♻'];
 
-  const vTable = new AsciiTable3(`Gains + losses by team`)
+  const vTable = new AsciiTable3(`Orders, losses, recycled`)
     .setHeading(...vTableHeaders)
     .setHeadingAlign(AlignmentEnum.CENTER)
     .setAlignLeft(1);
