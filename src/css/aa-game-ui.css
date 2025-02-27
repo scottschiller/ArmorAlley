@@ -1413,6 +1413,16 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   list-style-type: disc;
 }
 
+@media screen and (max-width: 480px) {
+  /* iPhone et al, narrow screens */
+  #game-announcements div.game-over-stats {
+    font-size: calc(4.5px * var(--gs));
+  }
+  #game-announcements div.game-over-stats ul {
+    max-width: 45%;
+  }
+}
+
 #game-announcements div.game-over-stats ul li {
   margin: 0px;
   padding: 0px;
