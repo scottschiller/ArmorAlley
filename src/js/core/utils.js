@@ -662,7 +662,6 @@ const utils = {
     }
 
     function doLog() {
-
       let url_params = [];
 
       try {
@@ -670,12 +669,12 @@ const utils = {
         const urlSearchParams = new URLSearchParams(info);
         const params = Object.fromEntries(urlSearchParams.entries());
         for (let key in params) {
-            url_params.push(`${key}=${params[key]}`);
+          url_params.push(`${key}=${params[key]}`);
         }
       } catch (e) {
         // just in case
       }
-  
+
       fetch('/events/', {
         method: 'POST',
         headers: {
