@@ -177,9 +177,9 @@ function formatForWebhook(style, options = {}) {
     return `<span style="white-space: nowrap">${s}</span>`;
   }
 
-  let vTableHeaders = ['Unit', 'L+', '-', '♻', 'R+', '-', '♻'];
+  let vTableHeaders = ['Unit', 'L+', 'L-', '♻', 'R+', 'R-', '♻'];
 
-  const vTable = new AsciiTable3(`Orders, losses, recycled`)
+  const vTable = new AsciiTable3(`Ordered, lost, recycled per team`)
     .setHeading(...vTableHeaders)
     .setHeadingAlign(AlignmentEnum.CENTER)
     .setAlignLeft(1);
