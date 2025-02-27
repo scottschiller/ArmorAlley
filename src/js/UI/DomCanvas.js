@@ -481,6 +481,16 @@ const DomCanvas = () => {
       return;
     }
 
+    if (img && !img.src.complete) {
+      /**
+       * Note incomplete images, not necessarily "broken."
+       * This can occur when a sprite is first loaded,
+       * without having been prefetched.
+       */
+      console.info('Image has not completed', data.type, data.id);
+      return;
+    }
+
     let { source, target } = img;
 
     if (!target) target = {};
