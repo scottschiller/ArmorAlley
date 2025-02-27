@@ -318,8 +318,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   max-width: 40%;
   margin: 0px;
   padding: 0px;
-  padding-left: 1em;
-  list-style-type: disc;
+  list-style-type: none;
 }
 
 .animated-mail .letter .letter-context-body .game-stats ul li {
