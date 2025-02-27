@@ -385,7 +385,7 @@ function formatForWebhook(style, options = {}) {
   }
 
   let copyGameStats =
-    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy to clipboard</button>';
+    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy</button>';
 
   let report;
 
@@ -489,25 +489,6 @@ function copyToClipboardHandler(e) {
   utils.copyToClipboard(text, (ok) => {
     // get, and guard/preserve original value.
     let attr = 'data-original-html';
-    let originalValue = e.target.getAttribute(attr);
-
-    if (!originalValue) {
-      originalValue = e.target.innerHTML;
-      e.target.setAttribute(attr, originalValue);
-    }
-
-    // hackish: replace with strings matching original length.
-    let newHTML = (ok ? '     Copied!     ' : '   Failed. :/   ').replace(
-      /\s/g,
-      '&nbsp;'
-    );
-
-    e.target.innerHTML = newHTML;
-
-    copyTimer = common.setFrameTimeout(() => {
-      copyTimer = null;
-      e.target.innerHTML = originalValue;
-    }, 2000);
 
     game.objects.notifications.add(
       (ok ? '✅ Stats copied to clipboard.' : '❌ Could not copy.') +
