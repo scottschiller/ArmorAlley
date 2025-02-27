@@ -1408,9 +1408,8 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 #game-announcements div.game-over-stats ul {
   display: inline-block;
   margin: 0px;
-  margin-left: 1em;
   padding: 0px;
-  list-style-type: disc;
+  list-style-type: none;
 }
 
 @media screen and (max-width: 480px) {
