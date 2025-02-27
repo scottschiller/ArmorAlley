@@ -213,8 +213,8 @@ function applyShadowBlur(originalSrc, img, blurData, callback) {
     blurredImg.onload = () => {
       blurredImg.onload = null;
       callback?.(blurredImg);
-      // blob no longer needed, revoke momentarily
-      window.requestAnimationFrame(() => URL.revokeObjectURL(url));
+      // blob no longer needed
+      URL.revokeObjectURL(url);
     };
 
     blurredImg.src = url;
@@ -817,8 +817,8 @@ function imageResourceReady(ssImg, imgRef, callback) {
     extractedImg.onload = () => {
       extractedImg.onload = null;
       callback?.(extractedImg);
-      // blob no longer needed, revoke momentarily
-      window.requestAnimationFrame(() => URL.revokeObjectURL(url));
+      // blob no longer needed
+      URL.revokeObjectURL(url);
     };
 
     extractedImg.src = url;
