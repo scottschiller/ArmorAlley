@@ -177,14 +177,27 @@ function formatForWebhook(style, options = {}) {
     return `<span style="white-space: nowrap">${s}</span>`;
   }
 
-  let vTableHeaders = ['Unit', 'L+', 'L-', '♻', 'R+', 'R-', '♻'];
+  let layouts = {
+    compact: {
+      title: 'Ordered, lost, recycled by team',
+      headers: ['✪', 'L+', 'L-', '♻', 'R+', 'R-', '♻'],
+      units: ['H', 'M', 'T', 'V', 'I', 'E']
+    },
+    default: {
+      title: 'Ordered, lost, recycled per team',
+      headers: ['Unit', 'L+', 'L-', 'L♻', 'R+', 'R-', 'R♻'],
+      units: ['Heli', 'ML', 'Tank', 'Van', 'Inf', 'Eng']
+    }
+  };
 
-  const vTable = new AsciiTable3(`Ordered, lost, recycled per team`)
-    .setHeading(...vTableHeaders)
+  let layout = layouts[style === 'slack' ? 'compact' : 'default'];
+
+  const vTable = new AsciiTable3(layout.title)
+    .setHeading(...layout.headers)
     .setHeadingAlign(AlignmentEnum.CENTER)
     .setAlignLeft(1);
 
-  ['Heli', 'ML', 'Tank', 'Van', 'Inf', 'Eng'].forEach((title, i) => {
+  layout.units.forEach((title, i) => {
     vTable.addRow(title, ...sp(yourUnits[i]), ...sp(theirUnits[i]));
   });
 
@@ -497,7 +510,9 @@ function copyToClipboardHandler(e) {
     );
   });
 
-  console.log(text);
+  console.log(`Standard layout\n${text}`);
+
+  console.log(`Compact layout\n${formatForWebhook('slack')}`);
 
   e.preventDefault();
   return false;
