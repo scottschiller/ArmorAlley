@@ -414,7 +414,7 @@ function formatForWebhook(style, options = {}) {
       li(header),
       networkInfo.map((s) => li(s)).join(''),
       li(`⏱️ Duration: ${dc.extra.duration}`),
-      li(`📈 Score: ${dc.extra.score}`),
+      li(`📈 Score: ${dc.extra.score.toLocaleString()}`),
       li(`${fundsStats}`),
       structureStats.map((s) => li(s)).join(''),
       debugInfo.map((i) => li(i)).join(''),
