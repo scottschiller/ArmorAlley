@@ -390,13 +390,6 @@ function formatForWebhook(style, options = {}) {
         : '')
   );
 
-  if (options.debug) {
-    // funds debugging
-    debugInfo.push(
-      `funds DEFAULT=${DEFAULT_FUNDS}, lost=${fundsLost}, captured=${fundsCaptured}, spent=${fundsSpent}, earned=${fundsEarned}, refunded=${fundsRefunded}`
-    );
-  }
-
   let copyGameStats =
     '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy</button>';
 
