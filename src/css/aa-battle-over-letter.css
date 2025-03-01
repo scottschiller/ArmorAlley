@@ -298,6 +298,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 
 .animated-mail .letter .letter-context-body .game-stats {
   position: relative;
+  display: flex;
   color: #444;
   font-family: monospace;
   /* compress a little bit */
@@ -307,15 +308,21 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   line-height: 150%;
 }
 
+.animated-mail .letter .letter-context-body .game-stats code {
+  flex-shrink: 0;
+  white-space: pre-wrap;
+  font-size: calc(4px * var(--gs));
+  line-height: 130%;
+  margin: 0px 1.5em 0px 0px;
+}
+
 .animated-mail .letter .letter-context-body .copy-game-stats-wrapper br {
   /* hacks! */
   display: none;
 }
 
 .animated-mail .letter .letter-context-body .game-stats ul {
-  display: inline-block;
   /* guard against wrapping */
-  max-width: 40%;
   margin: 0px;
   padding: 0px;
   list-style-type: none;
@@ -324,14 +331,6 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 .animated-mail .letter .letter-context-body .game-stats ul li {
   margin: 0px;
   padding: 0px;
-}
-
-.animated-mail .letter .letter-context-body .game-stats code {
-  white-space: pre-wrap;
-  font-size: calc(4px * var(--gs));
-  float: left;
-  line-height: 130%;
-  margin: 0px 1.5em 1em 0px;
 }
 
 .animated-mail .letter .letter-context-body .game-stats + p {
