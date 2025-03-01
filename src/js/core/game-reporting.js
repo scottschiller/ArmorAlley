@@ -391,7 +391,7 @@ function formatForWebhook(style, options = {}) {
   );
 
   let copyGameStats =
-    '\n<button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy</button>';
+    '<div class="copy-game-stats-wrapper"><button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy</button></div>';
 
   let report;
 
@@ -411,8 +411,8 @@ function formatForWebhook(style, options = {}) {
       li(`${fundsStats}`),
       structureStats.map((s) => li(s)).join(''),
       debugInfo.map((i) => li(i)).join(''),
+      li(copyGameStats),
       `</ul>`,
-      `<div class="copy-game-stats-wrapper">${copyGameStats}</div>`,
       markers?.end
     ]
       .filter((o) => !!o)
