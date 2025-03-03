@@ -35,7 +35,8 @@ const ENERGY_TIMER_DELAY = 2;
 const ENERGY_TIMER_FADE_RATIO = 0.125;
 
 // defaults, until overridden or set via prefs
-let FPS = 30;
+let DEFAULT_FPS = 60;
+let FPS = DEFAULT_FPS;
 let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
 let GAME_SPEED_RATIOED;
 let FRAMERATE = 1000 / FPS;
@@ -150,7 +151,7 @@ let GAME_SPEED = getDefaultGameSpeed();
 
 GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
 
-function setFrameRate(fps = 30) {
+function setFrameRate(fps = DEFAULT_FPS) {
   FPS = fps;
   FRAMERATE = 1000 / FPS;
   GAME_SPEED_RATIO = FPS == 60 ? 0.5 : 1;
@@ -473,6 +474,7 @@ export {
   gameTypeEmoji,
   imageSpriteConfig,
   AUDIO_SPRITE_ROOT,
+  DEFAULT_FPS,
   DEFAULT_FUNDS,
   ENEMY_COLOR,
   ENEMY_GUNFIRE_COLOR,

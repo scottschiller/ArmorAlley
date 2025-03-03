@@ -1,6 +1,7 @@
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 import {
+  DEFAULT_FPS,
   defaultMissileMode,
   demo,
   GAME_SPEED,
@@ -65,8 +66,8 @@ const DEFAULT_VOLUME_MULTIPLIER = 0.7;
 // game defaults
 const defaultPrefs = {
   'auto_flip': !!isMobile,
-  'game_fps': isMobile ? 60 : 30,
-  'game_fps_auto': 1, // 1 | 60 | 30
+  'game_fps': DEFAULT_FPS,
+  'game_fps_auto': 1,
   'game_speed': 1,
   'game_speed_pitch': false,
   'game_type': 'easy', // [easy|hard|extreme|armorgeddon]
@@ -228,15 +229,6 @@ function PrefsManager() {
     dom.oGameSpeedSlider.min = 0;
     dom.oGameSpeedSlider.max = GAME_SPEED_MAX;
     dom.oGameSpeedSlider.step = GAME_SPEED_INCREMENT;
-
-    /**
-     * Hackish: if game_fps is 60, apply to ensure the change takes effect.
-     * The game defaults to 30 FPS, with the exception of mobile.
-     * If the user chooses 30 FPS, it will be read and applied from storage.
-     */
-    if (defaultPrefs.game_fps == 60) {
-      events.onPrefChange['game_fps']?.(defaultPrefs.game_fps);
-    }
 
     // network game + custom level case
     const customGroup = gameMenu.getCustomGroup();
@@ -936,16 +928,6 @@ function PrefsManager() {
       // manually disable button, until the network is connected.
       // this is separate from the "ready to start" logic.
       dom.oFormSubmit.disabled = true;
-
-      // set 30 FPS, if none has been chosen yet.
-      if (gamePrefs.game_fps_auto < 30) {
-        applyNewPrefs({
-          ...gamePrefs,
-          game_fps_auto: 30,
-          game_fps: 30
-        });
-        updateForm();
-      }
 
       startNetwork();
     } else {
@@ -1864,21 +1846,10 @@ function PrefsManager() {
         }
       },
 
-      game_fps_auto: (newGameFPSAuto) => {
-        // if not the default "auto-detect", then update FPS directly.
-        if (newGameFPSAuto == 1) {
-          game?.objects?.gameLoop?.restartFrameTiming();
-        } else {
-          // user has manually set 30 / 60 FPS
-          events.onPrefChange['game_fps']?.(newGameFPSAuto);
-        }
-      },
-
       game_fps: (newGameFPS) => {
         newGameFPS = parseInt(newGameFPS, 10);
         setFrameRate(newGameFPS);
         net.updateFrameTiming();
-        game?.objects?.gameLoop?.updateFPS();
         // update helicopter gunfire rate, etc.
         common.applyGameSpeedToAll();
       },
