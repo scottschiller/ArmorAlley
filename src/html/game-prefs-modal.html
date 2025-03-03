@@ -1292,32 +1292,32 @@
                     <span class="no-emoji-substitution">⚠️</span> Network games
                     at 60 fps are experimental.
                   </p>
-                  <!-- TODO: three radio buttons - choose best, 30, 60. -->
                   <ul class="less-bottom-spacing">
                     <li class="hide-if-network">
                       <input
-                        type="radio"
-                        id="radio_game_fps_auto_auto"
+                        type="checkbox"
+                        id="radio_game_fps_auto"
                         name="game_fps_auto"
                         value="1"
                         checked />
-                      <label for="radio_game_fps_auto_auto">Choose best</label>
+                      <label for="radio_game_fps_auto">Choose best</label>
                     </li>
                     <li>
                       <input
                         type="radio"
-                        id="radio_game_fps_auto_30"
-                        name="game_fps_auto"
+                        id="radio_game_fps_30"
+                        name="game_fps"
                         value="30" />
-                      <label for="radio_game_fps_auto_30">30 fps</label>
+                      <label for="radio_game_fps_30">30 fps</label>
                     </li>
                     <li>
                       <input
                         type="radio"
-                        id="radio_game_fps_auto_60"
-                        name="game_fps_auto"
-                        value="60" />
-                      <label for="radio_game_fps_auto_60">60 fps</label>
+                        id="radio_game_fps_60"
+                        name="game_fps"
+                        value="60"
+                        checked />
+                      <label for="radio_game_fps_60">60 fps</label>
                     </li>
                   </ul>
                 </fieldset>
