@@ -1,13 +1,15 @@
-`The latest and greatest: February 2025 Edition 🗞️`
+`The latest and greatest: March 2025 Edition 🗞️`
 This is a summary of work in progress. For code-level details, see the changelog section below.
+
+· Game tips use Times New Roman-style serif type, like the original Mac version.
 
 `Game Statistics V2.0`
 
-· Work in progress: Support for posting game stats to Discord or Slack via webhooks.
-
 · Game stats: time, score, inventory and other details when battle is won or lost. "Copy to clipboard" for those who might be interested.
 
-`Gamepad Support: V1.0 (Experimental) 🎮🤞`
+· Work in progress: Support for posting game stats to Discord or Slack via webhooks.
+
+`Gamepad Support: V1.0 🎮`
 
 · Designed for "standard" game controller layout - e.g., XBOX and PlayStation: two joysticks, one D-pad, ABXY and shoulder buttons. Desktop + mobile. Rumble features where supported. (From testing: Chrome and Safari on desktop.)
 
