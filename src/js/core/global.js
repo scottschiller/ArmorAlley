@@ -40,23 +40,6 @@ let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
 let GAME_SPEED_RATIOED;
 let FRAMERATE = 1000 / FPS;
 
-/**
- * Skip frame(s) as needed, prevent the game from running too fast.
- *
- * Note: 144 hz monitors (maybe on Windows?) may need 0.33 or less,
- * or else the loop may run at 35+ FPS. This may be a 144 hz
- * monitor thing, not necessarily tied to Windows. TBD.
- *
- * It may be this value needs to be made dynamic, starting at 0.5
- * and trickling down to 0.33 or so if the frame rate is > 30FPS.
- *
- */
-const frameOffset = parseFloat(searchParams.get('frameOffset')) || 0.33;
-
-let FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
-
-const unlimitedFrameRate = searchParams.get('frameRate=*');
-
 // you should never do user-agent sniffing, ever - except for when you have to, for some very good reason. :X
 const isWebkit = ua.match(/webkit/i);
 const isChrome = !!ua.match(/chrome/i); // MS' Edge is likely to include Chrome + 'edg' as an identifier.
@@ -172,7 +155,6 @@ function setFrameRate(fps = 30) {
   FRAMERATE = 1000 / FPS;
   GAME_SPEED_RATIO = FPS == 60 ? 0.5 : 1;
   GAME_SPEED_RATIOED = GAME_SPEED * GAME_SPEED_RATIO;
-  FRAME_MIN_TIME = (1000 / 60) * (60 / FPS) - (1000 / 60) * frameOffset;
 }
 
 function updateGameSpeed(gameSpeed = getDefaultGameSpeed()) {
@@ -512,7 +494,6 @@ export {
   PRETTY_TYPES,
   COSTS,
   winloc,
-  FRAME_MIN_TIME,
   FPS,
   FRAMERATE,
   clientFeatures,
@@ -540,7 +521,6 @@ export {
   noRadar,
   rad2Deg,
   searchParams,
-  unlimitedFrameRate,
   worldWidth,
   worldHeight,
   worldOverflow,

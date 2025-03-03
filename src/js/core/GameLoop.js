@@ -3,8 +3,6 @@ import { gameEvents } from './GameEvents.js';
 import { gamePrefs } from '../UI/preferences.js';
 import {
   debugCollision,
-  unlimitedFrameRate,
-  FRAME_MIN_TIME,
   debug,
   TYPES,
   FRAMERATE,
@@ -138,20 +136,19 @@ const GameLoop = () => {
     if (!data.fpsTimer && game.data.started) data.fpsTimer = ts;
 
     /**
-     * first things first: always request the next frame right away.
-     * if expensive work is done here, at least the browser can plan accordingly
+     * First things first: always request the next frame right away.
+     * If expensive work is done here, at least the browser can plan accordingly
      * if this frame misses its VSync (vertical synchronization) window.
      * https://developer.mozilla.org/en-US/docs/Games/Anatomy#Building_a_main_loop_in_JavaScript
      * https://www.html5rocks.com/en/tutorials/speed/rendering/
      */
     window.requestAnimationFrame(animateRAF);
 
-    /**
-     * frame-rate limiting: exit if it isn't approximately time to render the next frame.
-     * this still counts as a frame render - we just got here early. Good!
-     * hat tip: https://riptutorial.com/html5-canvas/example/18718/set-frame-rate-using-requestanimationframe
-     */
-    if (!unlimitedFrameRate && ts - data.lastExec <= FRAME_MIN_TIME) {
+    // how long has it been?
+    data.elapsed = ts - data.lastExec;
+
+    // exit if too early
+    if (data.elapsed <= FRAMERATE) {
       // the below applies only to the network case.
       if (!net.active) return;
 
@@ -201,12 +198,13 @@ const GameLoop = () => {
         }
       }
 
+      // network "sync" work finished at this point.
       return;
     }
 
-    if (!net.active) {
-      measureFrameTiming(ts);
-    } else {
+    // we're going to render a frame.
+
+    if (net.active) {
       net.updateUI();
     }
 
@@ -264,7 +262,11 @@ const GameLoop = () => {
       data.excludeTransformCount = 0;
     }
 
-    data.lastExec = ts;
+    /**
+     * Draw the next frame, accounting for FRAMERATE not necessarily being a multiple of 16.67
+     * Hat tip: https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe/19772220#19772220
+     */
+    data.lastExec = ts - (data.elapsed % FRAMERATE);
 
     animate();
 
@@ -321,8 +323,7 @@ const GameLoop = () => {
     if (data.timer) return;
 
     data.timer = true;
-    resetFrameTiming();
-    animateRAF();
+    window.requestAnimationFrame(animateRAF);
   }
 
   function stop() {
@@ -538,6 +539,7 @@ const GameLoop = () => {
   };
 
   data = {
+    elapsed: 0,
     frameCount: 0,
     remoteFrameCount: 0,
     frameSamples: 0,
