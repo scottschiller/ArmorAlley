@@ -423,7 +423,7 @@ function formatForWebhook(style, options = {}) {
       header + `${nl} ${nl}`,
       networkInfo.length ? networkInfo.join(nl) + nl : '',
       `⏱️ Duration: ${dc.extra.duration}${nl}`,
-      `📈 Score: ${dc.extra.score}${nl}`,
+      `📈 Score: ${parseInt(dc.extra.score, 10).toLocaleString()}${nl}`,
       `${fundsStats}${nl}`,
       structureStats.join(nl) + nl,
       debugInfo.length ? debugInfo.join(nl) + nl : '',
