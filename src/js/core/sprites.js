@@ -8,7 +8,6 @@ import {
   FPS,
   isChrome,
   rnd,
-  TYPES,
   useDOMPruning,
   winloc
 } from '../core/global.js';
