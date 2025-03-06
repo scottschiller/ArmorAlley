@@ -721,7 +721,7 @@ const game = (() => {
     );
 
     // delay, to allow FPS test etc. to finish.
-    window.setTimeout(() => {
+    common.setFrameTimeout(() => {
       game.logEvent('GAME_START');
     }, 5000);
 
