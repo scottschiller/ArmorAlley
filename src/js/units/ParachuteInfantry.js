@@ -2,7 +2,6 @@ import { game } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
-  rndInt,
   worldHeight,
   tutorialMode,
   TYPES,
@@ -143,7 +142,7 @@ const ParachuteInfantry = (options = {}) => {
 
           data.domCanvas.img.source.frameX = bgX;
           // choose a new wind modulus, too.
-          data.windModulus = 64 + rndInt(64);
+          data.windModulus = 64 + rngInt(64, data.type);
         } else {
           // reset wind effect
 
