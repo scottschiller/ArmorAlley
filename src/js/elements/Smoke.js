@@ -2,7 +2,6 @@ import {
   rnd,
   rndInt,
   plusMinus,
-  oneOf,
   TYPES,
   GAME_SPEED_RATIOED,
   worldWidth

@@ -12,8 +12,7 @@ import {
   clientFeatures,
   FPS,
   isMobile,
-  isSafari,
-  rndInt
+  isSafari
 } from '../core/global.js';
 import { utils } from '../core/utils.js';
 import { updateAsNavigation } from './gamepad-menu-navigation.js';

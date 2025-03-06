@@ -12,7 +12,6 @@ import {
   oneOf,
   worldHeight,
   GAME_SPEED_RATIOED,
-  ENEMY_COLOR,
   isSafari,
   rngBool
 } from '../core/global.js';
