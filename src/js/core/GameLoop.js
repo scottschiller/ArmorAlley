@@ -145,7 +145,7 @@ const GameLoop = () => {
     data.elapsed = ts - data.lastExec;
 
     // exit if too early
-    if (data.elapsed <= FRAMERATE) {
+    if (data.elapsed < FRAMERATE) {
       // the below applies only to the network case.
       if (!net.active) return;
 
@@ -200,6 +200,12 @@ const GameLoop = () => {
     }
 
     // we're going to render a frame.
+
+    /**
+     * Draw the next frame, accounting for FRAMERATE not necessarily being a multiple of 16.67
+     * Hat tip: https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe/19772220#19772220
+     */
+    data.lastExec = ts - (data.elapsed % FRAMERATE);
 
     if (net.active) {
       net.updateUI();
@@ -258,12 +264,6 @@ const GameLoop = () => {
       data.transformCount = 0;
       data.excludeTransformCount = 0;
     }
-
-    /**
-     * Draw the next frame, accounting for FRAMERATE not necessarily being a multiple of 16.67
-     * Hat tip: https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe/19772220#19772220
-     */
-    data.lastExec = ts - (data.elapsed % FRAMERATE);
 
     animate();
 
