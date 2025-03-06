@@ -4,8 +4,8 @@ import {
   COSTS,
   FPS,
   PRETTY_TYPES,
-  rnd,
-  rndInt,
+  rng,
+  rngInt,
   TYPES,
   worldWidth
 } from '../core/global.js';
@@ -701,7 +701,7 @@ const Inventory = () => {
       return [];
     }
 
-    let option = options[rndInt(options.length)];
+    let option = options[rngInt(options.length, 'inventory')];
 
     let queue = [];
 
@@ -752,7 +752,7 @@ const Inventory = () => {
 
         // randomize a bit, too.
         if (!net.active) {
-          adjustedDelay = Math.floor(adjustedDelay * (1 + rnd(0.25)));
+          adjustedDelay = Math.floor(adjustedDelay * (1 + rng(0.25, 'inventory')));
         }
 
         // delay before next convoy

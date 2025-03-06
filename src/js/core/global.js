@@ -284,6 +284,8 @@ function setSeedsByType() {
       seedsByType[type] = Math.floor(defaultSeed);
     }
   }
+  // special / extra cases
+  seedsByType.inventory = Math.floor(defaultSeed);
 }
 
 // start with the default, until (and if) updated via network.
