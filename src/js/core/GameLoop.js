@@ -78,10 +78,7 @@ const GameLoop = () => {
                 continue;
             }
 
-            if (
-              gameObjects[item][i].animate &&
-              gameObjects[item][i].animate()
-            ) {
+            if (gameObjects[item][i].animate?.()) {
               // object is dead - take it out.
               common.unlinkObject(gameObjects[item][i]);
               spliceArgs[0] = i;
