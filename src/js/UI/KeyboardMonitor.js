@@ -412,6 +412,7 @@ function KeyboardMonitor() {
   };
 
   return {
+    data,
     init: initKeyboardMonitor,
     isDown,
     keydown: events.keydown,
