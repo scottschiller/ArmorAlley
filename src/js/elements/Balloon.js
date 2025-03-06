@@ -297,7 +297,7 @@ const Balloon = (options = {}) => {
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
-        data.windModulus = 32 + rndInt(32);
+        data.windModulus = 32 + rngInt(32, data.type);
       }
 
       // if at end of world, change the wind and prevent randomization until within world limits
