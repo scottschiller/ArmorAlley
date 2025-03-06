@@ -458,6 +458,7 @@ const aaLoader = {
   getVideoRoot,
   hello,
   isFloppy,
+  isProd,
   loadCSS,
   loadGA,
   loadGeneric,
