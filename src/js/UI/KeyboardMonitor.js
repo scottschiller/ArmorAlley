@@ -71,6 +71,10 @@ function KeyboardMonitor() {
     [keyMap.rubberChicken]: true
   };
 
+  function updateDownKeyCount() {
+    data.downKeyCount = Object.keys(data.downKeys).length;
+  }
+
   // call out to the helicopter, e.g., ('setMissileLaunching', true)
   const processInput = (player, method, params) =>
     player.callAction(method, params);
@@ -79,6 +83,7 @@ function KeyboardMonitor() {
     if (!e.metaKey && keys[codeOrChar]?.down) {
       if (!data.downKeys[codeOrChar]) {
         data.downKeys[codeOrChar] = true;
+        updateDownKeyCount();
         keys[codeOrChar].down(e);
       }
       if (keys[codeOrChar].allowEvent === undefined) {
@@ -100,6 +105,7 @@ function KeyboardMonitor() {
   function handleKeyUp(e, codeOrChar) {
     if (!e.metaKey && data.downKeys[codeOrChar] && keys[codeOrChar]) {
       delete data.downKeys[codeOrChar];
+      updateDownKeyCount();
       if (keys[codeOrChar].up) {
         keys[codeOrChar].up(e);
       }
@@ -371,6 +377,7 @@ function KeyboardMonitor() {
         });
       }
     }
+    updateDownKeyCount();
   }
 
   function attachEvents() {
