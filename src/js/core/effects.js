@@ -3,7 +3,6 @@ import { game } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { rnd, rndInt, plusMinus, rad2Deg, TYPES } from '../core/global.js';
-import { Smoke } from '../elements/Smoke.js';
 import { GunFire } from '../munitions/GunFire.js';
 import { common } from './common.js';
 import { snowStorm } from '../lib/snowstorm.js';
