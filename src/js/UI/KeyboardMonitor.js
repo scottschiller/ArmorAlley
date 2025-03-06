@@ -21,9 +21,6 @@ function KeyboardMonitor() {
   let keys;
   let events;
 
-  // hash for keys being pressed
-  const downKeys = {};
-
   // meaningful labels for key values
   // NOTE: ASCII values are for upper-case characters, as applicable
   const keyMap = {
@@ -80,8 +77,8 @@ function KeyboardMonitor() {
 
   function handleKeyDown(e, codeOrChar) {
     if (!e.metaKey && keys[codeOrChar]?.down) {
-      if (!downKeys[codeOrChar]) {
-        downKeys[codeOrChar] = true;
+      if (!data.downKeys[codeOrChar]) {
+        data.downKeys[codeOrChar] = true;
         keys[codeOrChar].down(e);
       }
       if (keys[codeOrChar].allowEvent === undefined) {
@@ -101,8 +98,8 @@ function KeyboardMonitor() {
   }
 
   function handleKeyUp(e, codeOrChar) {
-    if (!e.metaKey && downKeys[codeOrChar] && keys[codeOrChar]) {
-      downKeys[codeOrChar] = null;
+    if (!e.metaKey && data.downKeys[codeOrChar] && keys[codeOrChar]) {
+      delete data.downKeys[codeOrChar];
       if (keys[codeOrChar].up) {
         keys[codeOrChar].up(e);
       }
@@ -360,14 +357,14 @@ function KeyboardMonitor() {
   function isDown(labelOrCode) {
     // check for a pressed key based on '37' or 'left', etc.
     return keyMap[labelOrCode] !== undefined
-      ? downKeys[keyMap[labelOrCode]]
-      : downKeys[labelOrCode];
+      ? data.downKeys[keyMap[labelOrCode]]
+      : data.downKeys[labelOrCode];
   }
 
   function releaseAll() {
     // reset all pressed key states.
-    for (let item in downKeys) {
-      if (downKeys[item]) {
+    for (let item in data.downKeys) {
+      if (data.downKeys[item]) {
         // simulate the keyup event
         events.keyup({
           keyCode: item
@@ -402,7 +399,9 @@ function KeyboardMonitor() {
   }
 
   data = {
-    didInit: false
+    didInit: false,
+    downKeys: {},
+    downKeyCount: 0
   };
 
   return {
