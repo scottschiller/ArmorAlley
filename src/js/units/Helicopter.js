@@ -1460,7 +1460,7 @@ const Helicopter = (options = {}) => {
         (!tutorialMode && gameType !== 'easy'
           ? aiRNG() > 0.5
           : aiRNG() > 0.25)) ||
-        (data.isLocal && rng(data.type) > 0.66))
+        (data.isLocal && rng(1, data.type) > 0.66))
     ) {
       data.deployedParachute = true;
       deployParachuteInfantry({
