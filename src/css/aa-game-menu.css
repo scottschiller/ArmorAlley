@@ -671,11 +671,6 @@ body.is_iphone #game-menu .cta-checkbox input[type='checkbox']:before {
   vertical-align: bottom;
 }
 
-#game-menu .cta:hover .emoji {
-  filter: grayscale(0);
-  opacity: 1;
-}
-
 #game-description {
   color: #ccc;
   font-size: calc(4px * var(--menu-chicago-scale));
