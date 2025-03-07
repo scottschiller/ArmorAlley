@@ -3,7 +3,6 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
   rndInt,
-  rnd,
   TYPES,
   FPS,
   rng,
@@ -213,7 +212,7 @@ const Bunker = (options = {}) => {
 
     detachBalloon();
 
-    const rndXY = 1 + rnd(1);
+    const rndXY = 1 + rngInt(1, data.type);
 
     effects.shrapnelExplosion(data, {
       count: 24 + rngInt(24, data.type),
