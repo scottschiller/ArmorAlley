@@ -212,6 +212,14 @@ body.game-started #game-status {
   min-width: 1em;
 }
 
+body.is-mobile #queue .queue-item {
+  /**
+   * Filters here seem to kill compositing performance in iOS Safari,
+   * and makes the whole game slow when a decent order is queued.
+   */
+  filter: none !important;
+}
+
 #queue .queue-item.queued {
   filter: blur(0);
   margin-top: 0;
