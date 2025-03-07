@@ -191,7 +191,7 @@ body.game-started #game-status {
   background: 0 0;
   color: #ccc;
   display: inline-block;
-  filter: grayscale(1) blur(8px);
+  filter: blur(8px);
   font-family:
     JetBrains Mono,
     SF Mono,
@@ -213,27 +213,27 @@ body.game-started #game-status {
 }
 
 #queue .queue-item.queued {
-  filter: grayscale(1) blur(0);
+  filter: blur(0);
   margin-top: 0;
   opacity: 0.66;
 }
 
 #queue .queue-item.building {
-  filter: grayscale(0) blur(0);
+  filter: blur(0);
   opacity: 1;
 }
 
 #queue .queue-item.complete {
   color: #999;
-  filter: grayscale(0);
+  filter: none;
 }
 
 #queue .queue-item.complete .counter {
-  filter: grayscale(1);
+  filter: none;
 }
 
 #queue .queue-item.collapsing {
-  filter: grayscale(0) blur(8px);
+  filter: blur(8px);
   opacity: 0;
   /* faster */
   transition-duration: 0.33s;
