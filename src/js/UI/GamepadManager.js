@@ -704,6 +704,11 @@ const GamepadManager = (options = {}) => {
 
     if (!pad) return;
 
+    /**
+     * Trigger rumble in sn30 pro, connected in X-mode?
+     * gp.vibrationActuator.effects = ['trigger-rumble', 'dual-rumble'];
+     */
+
     // https://caniuse.com/?search=vibrationActuator
 
     // Firefox?
