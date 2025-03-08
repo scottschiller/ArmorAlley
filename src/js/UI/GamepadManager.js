@@ -397,8 +397,12 @@ const GamepadManager = (options = {}) => {
       lgs.joysticks[i].button = js.button;
 
       // new live values
-      let x = parseFloat(ls[`gp${gpi}/${o.axes[0]}`].value * (opt?.invertXAxis ? -1 : 1));
-      let y = parseFloat(ls[`gp${gpi}/${o.axes[1]}`].value * (opt?.invertYAxis ? -1 : 1));
+      let x = parseFloat(
+        ls[`gp${gpi}/${o.axes[0]}`].value * (opt?.invertXAxis ? -1 : 1)
+      );
+      let y = parseFloat(
+        ls[`gp${gpi}/${o.axes[1]}`].value * (opt?.invertYAxis ? -1 : 1)
+      );
 
       let jp = opt?.precision;
 
@@ -418,10 +422,8 @@ const GamepadManager = (options = {}) => {
 
       // minimum
       if (opt?.zeroPoint) {
-        if (x !== 0 && absX <opt.zeroPoint)
-          x = 0;
-        if (y !== 0 && absY < opt.zeroPoint)
-          y = 0;
+        if (x !== 0 && absX < opt.zeroPoint) x = 0;
+        if (y !== 0 && absY < opt.zeroPoint) y = 0;
       }
 
       // update
