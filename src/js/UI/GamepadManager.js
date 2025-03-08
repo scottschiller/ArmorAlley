@@ -715,39 +715,39 @@ const GamepadManager = (options = {}) => {
     if (pad.hapticActuators) {
       let ha = pad.hapticActuators;
       // actuators array may exist, but be empty despite "dual-rumble" e.g., on PS4 Dualshock.
-      if (ha.length) {
-        console.log('pad.hapticActuators', ha, magnitude, duration, reason);
+      if (ha?.length) {
+        // console.log('pad.hapticActuators', ha, magnitude, duration, reason);
         ha[0]?.pulse?.(magnitude, duration);
       } else {
-        console.log('No haptic actuators found.');
+        // console.log('No haptic actuators found.');
       }
     }
 
     // Chrome, Edge, Safari
-    if (pad.vibrationActuator) {
-      let va = pad.vibrationActuator;
+    let va = pad?.vibrationActuator;
 
-      /**
-       * If effects[] (as in Chrome), take the first; otherwise, use the type.
-       * This may be redundant and perhaps `type` should always be used.
-       */
-      let effect = va.effects?.[0] || va.type;
+    if (va) return;
 
-      if (
-        va.type &&
-        // Safari implements `canPlayEffectType()` - use if defined.
-        (!va.canPlayEffectType || va.canPlayEffectType?.(effect))
-      ) {
-        console.log('gamepad effect', effect, magnitude, duration, reason);
-        va.playEffect(effect, {
-          startDelay: 0,
-          duration,
-          weakMagnitude: 0,
-          strongMagnitude: magnitude
-        });
-      } else {
-        console.log('no vibration actuator effects found.');
-      }
+    let defaultEffect = 'dual-rumble';
+
+    /**
+     * If effects[] (as in Chrome), take the first; otherwise, use the type.
+     * This may be redundant and perhaps `type` should always be used.
+     */
+    let effect =
+      va.effects?.[va.effects.indexOf(defaultEffect) || 0] || va.type;
+
+    if (
+      va.type &&
+      // Safari implements `canPlayEffectType()` - use if defined.
+      (!va.canPlayEffectType || va.canPlayEffectType?.(effect))
+    ) {
+      va.playEffect(effect, {
+        startDelay: 0,
+        duration,
+        weakMagnitude: 0,
+        strongMagnitude: magnitude
+      });
     }
   }
 
