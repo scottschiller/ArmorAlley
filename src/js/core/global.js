@@ -320,6 +320,11 @@ function setDefaultSeed(newDefaultSeed, newDefaultSeeds) {
 function rng(number = 1, type, seedOffset) {
   let t;
 
+  if (type && !seedsByType[type]) {
+    console.warn('WTF: no seedsByType for type?', type);
+    seedsByType[type] = Math.floor(defaultSeed);
+  }
+
   if (type && seedsByType[type]) {
     t = seedsByType[type] += 0x6d2b79f5;
   } else if (seedOffset >= 0 && defaultSeeds[seedOffset]) {
