@@ -471,7 +471,11 @@ const View = () => {
   }
 
   function assignMouseInput(player, x, y) {
-    // assign to the appropriate helicopter, where it will be picked up.
+    /**
+     * Assign to the appropriate helicopter, where it will be picked up.
+     * Ignore dead choppers, so decelerate animation can take effect before reset.
+     */
+    if (player.data.dead) return;
     player.data.mouse.x = x;
     player.data.mouse.y = y;
   }
