@@ -102,7 +102,7 @@ const View = () => {
     if (decelerateScrollActive) return;
     if (game.data.battleOver) return;
     decelerateScrollFrames = [];
-    decelerateScrollDuration = FPS * (1 / GAME_SPEED);
+    decelerateScrollDuration = FPS * 2 * (1 / GAME_SPEED);
     for (let i = 0; i <= decelerateScrollDuration; i++) {
       // 1/x, up to 1
       decelerateScrollFrames[i] = dropOff(i / decelerateScrollDuration);
