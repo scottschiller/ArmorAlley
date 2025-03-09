@@ -277,6 +277,19 @@ let seed = Math.floor(defaultSeed);
 
 let seedsByType = {};
 
+// for recording / export purposes
+let originalSeedCopy = {
+  defaultSeed: null,
+  defaultSeeds: null
+};
+
+function updateOriginalSeedCopy() {
+  originalSeedCopy.defaultSeed = Math.floor(defaultSeed);
+  originalSeedCopy.defaultSeeds = structuredClone(defaultSeeds);
+}
+
+updateOriginalSeedCopy();
+
 function setSeedsByType() {
   // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
   for (let type in TYPES) {
@@ -296,6 +309,8 @@ function setDefaultSeed(newDefaultSeed, newDefaultSeeds) {
   defaultSeeds = newDefaultSeeds;
 
   seed = Math.floor(defaultSeed);
+
+  updateOriginalSeedCopy();
 
   setSeedsByType();
 }
@@ -533,6 +548,7 @@ export {
   rubberChickenMode,
   bananaMode,
   oneOf,
+  originalSeedCopy,
   rnd,
   rng,
   rngBool,
