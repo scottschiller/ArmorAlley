@@ -1574,7 +1574,7 @@ const Helicopter = (options = {}) => {
   };
 
   function getBombParams() {
-    let vX = data.vX * 0.625;
+    let vX = data.vX;
 
     // CPU advantage: subtract some of the difference between CPU and target vX.
     if (data.isCPU && data.bombTargets?.[0]) {
