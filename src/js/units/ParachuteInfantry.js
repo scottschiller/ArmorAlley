@@ -99,13 +99,15 @@ const ParachuteInfantry = (options = {}) => {
       if (data.y >= data.parachuteOpensAtY) {
         openParachute();
       } else if (
-        data.frameCount % (data.panicModulus * (1 / GAME_SPEED_RATIOED)) ===
-        0
+        data.frameCount >=
+        data.panicModulus * (1 / GAME_SPEED_RATIOED)
       ) {
         // like Tom Petty, free fallin'.
         // alternate between 0/1
         data.panicFrame = !data.panicFrame;
         data.domCanvas.img.source.frameX = 3 + data.panicFrame;
+        // recycle
+        data.frameCount = 0;
       }
     } else {
       // "range" of rotation
