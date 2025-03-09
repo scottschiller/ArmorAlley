@@ -555,10 +555,10 @@ const View = () => {
     net.sendMessage({
       type: 'RAW_COORDS',
       id: player.data.id,
-      x: player.data.mouse.delayedInputX,
-      y: player.data.mouse.delayedInputY,
-      // needed by remote helicopter.animate()
-      scrollLeft: player.data.scrollLeft
+      // raw mouse x/y coordinates, relative to screen
+      // TODO: send raw X/Y also??
+      x: player.data.mouse.delayedInputX / data.browser.width,
+      y: player.data.mouse.delayedInputY / data.browser.height
     });
   }
 

@@ -302,11 +302,10 @@ const messageActions = {
       helicopter.data.vY = data.vY;
     } else {
       // *** HUMAN PLAYER ***
-      helicopter.data.mouse.x = data.x || 0;
-      helicopter.data.mouse.y = data.y || 0;
-
-      // view
-      helicopter.data.scrollLeft = data.scrollLeft;
+      helicopter.data.mouse.x =
+        (data.x || 0) * game.objects.view.data.browser.width;
+      helicopter.data.mouse.y =
+        (data.y || 0) * game.objects.view.data.browser.height;
     }
 
     if (debugNetwork) {
