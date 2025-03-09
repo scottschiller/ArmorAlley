@@ -789,12 +789,6 @@ const Helicopter = (options = {}) => {
     const respawnY = data.yMax - data.yMaxOffset;
 
     if (state) {
-      // hackish: hard reset battlefield scroll
-      data.scrollLeft = data.isEnemy
-        ? common.getLandingPadOffsetX(exports) -
-          game.objects.view.data.browser.halfWidth
-        : 0;
-
       moveTo(common.getLandingPadOffsetX(exports), respawnY);
 
       // assign landing pad object
@@ -1325,12 +1319,6 @@ const Helicopter = (options = {}) => {
       // guard against resetting scroll during battle-over sequence
       if (game.data.battleOver) return;
 
-      // hackish: hard reset battlefield scroll
-      data.scrollLeft = data.isEnemy
-        ? common.getLandingPadOffsetX(exports) -
-          game.objects.view.data.browser.halfWidth
-        : 0;
-
       game.objects.view.animateLeftScrollTo(
         common.getLandingPadOffsetX(exports) +
           data.width * (1 / screenScale) -
@@ -1525,12 +1513,6 @@ const Helicopter = (options = {}) => {
       if (sounds.helicopter.engine.sound)
         sounds.helicopter.engine.sound.setVolume(0);
     }
-
-    // ensure we aren't going anywhere.
-    data.vX = 0;
-    data.vY = 0;
-
-    data.scrollLeft = 0;
 
     common.onDie(exports, dieOptions);
 
