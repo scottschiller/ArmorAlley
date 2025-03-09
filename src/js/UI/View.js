@@ -18,7 +18,6 @@ import {
   debug,
   isMobile,
   worldWidth,
-  worldOverflow,
   winloc,
   defaultMissileMode,
   rubberChickenMode,
@@ -94,8 +93,6 @@ const View = () => {
         common.easing[easingMethod](i / animateScrollDuration) *
           animateScrollDelta;
     }
-
-    game.players.local.data.scrollLeft = 0;
   }
 
   function decelerateScroll() {
@@ -121,48 +118,21 @@ const View = () => {
       return;
     }
 
-    const allowOverride = true;
     let x;
 
+    // reset battlefield scrolling velocity
+    data.scrollVX = 0;
+
     x =
-      helicopter.data.x +
-      helicopter.data.width * (1 / data.screenScale) -
+      game.players.local.data.x +
+      game.players.local.data.halfWidth -
       data.browser.halfWidth;
 
-    setLeftScroll(x, allowOverride);
+    setLeftScroll(x);
   }
 
-  function setLeftScroll(x, allowOverride) {
-    // slightly hackish: apply scroll offsets to both game view, and local player.
-    if (allowOverride) {
-      data.battleField.scrollLeft = x;
-
-      if (game.players.local) {
-        game.players.local.data.scrollLeft = x;
-      }
-    } else {
-      // editor case...
-      if (game.objects.editor) {
-        data.battleField.scrollLeft = x;
-      } else {
-        // scroll the battlefield by relative amount.
-        game.players.local.data.scrollLeft = Math.max(
-          -worldOverflow,
-          Math.min(
-            data.battleField.width - data.browser.halfWidth,
-            game.players.local.data.scrollLeft + x
-          )
-        );
-
-        data.battleField.scrollLeft = Math.max(
-          -worldOverflow,
-          Math.min(
-            data.battleField.width - data.browser.halfWidth,
-            data.battleField.scrollLeft + x
-          )
-        );
-      }
-    }
+  function setLeftScroll(x) {
+    data.battleField.scrollLeft = x;
 
     data.battleField.scrollLeftWithBrowserWidth =
       data.battleField.scrollLeft + data.browser.width;
@@ -599,9 +569,7 @@ const View = () => {
 
     // we're "warping" back to the landing pad for a respawn - or, a base for the end of the game.
     if (animateScrollActive) {
-      const override = true;
-
-      setLeftScroll(animateScrollFrames[animateScrollFrame], override);
+      setLeftScroll(animateScrollFrames[animateScrollFrame]);
 
       animateScrollFrame++;
 
@@ -619,21 +587,31 @@ const View = () => {
       }
     }
 
-    // don't scroll if helicopter is respawning, or not moving.
     if (
-      !game.players.local.data.respawning &&
-      game.players.local.data.vX !== 0
+      !game.players.local.data.landed &&
+      !game.players.local.data.respawning
     ) {
+      /**
+       * How much the view can "slide" to the left or right,
+       * allowing the helicopter to get closer to the edge when moving fast.
+       */
+
+      // hackish: always apply some friction - handy when slowing down
+      // and/or reversing directions.
+      data.scrollVX *= 0.99;
+
+      if (data.scrollVX !== game.players.local.data.vX) {
+        data.scrollVX += (game.players.local.data.vX - data.scrollVX) * 0.035;
+      }
+    }
+
+    // scroll is almost always active.
+    if (!game.players.local.data.respawning) {
       // TODO: review. This is likely always true for a remote CPU player, playing "locally" via &remoteCPU=1.
       if (game.players.local.data.mouse.x === undefined) return;
 
-      // is the mouse to the right, or left?
-      mouseDelta = game.players.local.data.mouse.x - data.browser.halfWidth;
-
-      // how much...
-      scrollAmount = mouseDelta / data.browser.halfWidth;
-
-      // and scale
+      // continue existing chopper velocity
+      scrollAmount = game.players.local.data.vX;
 
       // special case: slow down battlefield scroll after helicopter dies, then go back to base.
       if (decelerateScrollActive) {
@@ -641,10 +619,10 @@ const View = () => {
         if (game.data.battleOver) return;
 
         setLeftScroll(
-          scrollAmount *
-            data.maxScroll *
-            GAME_SPEED_RATIOED *
-            decelerateScrollFrames[decelerateScrollFrame]
+          data.battleField.scrollLeft +
+            scrollAmount *
+              GAME_SPEED_RATIOED *
+              decelerateScrollFrames[decelerateScrollFrame]
         );
 
         decelerateScrollFrame++;
@@ -653,8 +631,19 @@ const View = () => {
           decelerateScrollActive = false;
         }
       } else if (!game.players.local.data.dead && !game.data.battleOver) {
-        // regular in-game scrolling, live chopper
-        setLeftScroll(scrollAmount * data.maxScroll * GAME_SPEED_RATIOED);
+        /**
+         * Regular in-game scrolling, live chopper.
+         * Scroll relative to chopper position, relative to screen.
+         */
+        setLeftScroll(
+          game.players.local.data.x +
+            game.players.local.data.halfWidth -
+            data.browser.halfWidth -
+            // boundary amount? TODO: review helicopter vX vs. view positioning.
+            data.browser.halfWidth *
+              0.4 *
+              (data.scrollVX / game.players.local.data.vXMax)
+        );
       }
     }
   }
@@ -1326,6 +1315,7 @@ const View = () => {
     noPause,
     ignoreMouseEvents: false,
     ignoreMouseMove: false,
+    scrollVX: 0,
     browser: {
       screenWidth: 0,
       screenHeight: 0,
@@ -1383,7 +1373,6 @@ const View = () => {
     },
     marqueeModulus: 1,
     marqueeIncrement: 1,
-    maxScroll: 6,
     missileMode: null,
     screenScale: 1,
     mobileInventoryActive: false,

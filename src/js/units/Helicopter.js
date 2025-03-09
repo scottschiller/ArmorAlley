@@ -2436,18 +2436,33 @@ const Helicopter = (options = {}) => {
 
       if (!data.isCPU) {
         // only allow X-axis if not on ground...
-        if (mouse.x) {
-          // accelerate scroll vX, so chopper nearly matches mouse when scrolling
-          data.vX =
-            (data.scrollLeft + mouse.x - data.x - data.halfWidth) * 0.075;
+        if (!isNaN(mouse.x)) {
+          // velocity is based on mouse position relative to center of screen.
+          // pad slightly with a "hair width" on each end, so maximum speed isn't at the last pixel.
+          // TODO: review if vXMax * 0.75 is accurate for human players vs. CPU.
+          if (mouse.x >= game.objects.view.data.browser.halfWidth) {
+            data.vX =
+              ((mouse.x - game.objects.view.data.browser.halfWidth) /
+                game.objects.view.data.browser.fractionWidth) *
+              data.vXMax;
+          } else {
+            data.vX =
+              ((mouse.x - game.objects.view.data.browser.halfWidth) /
+                game.objects.view.data.browser.fractionWidth) *
+              data.vXMax;
+          }
 
           // and limit
-          data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
+          // NOTE: big restraint on "real" vXMax, here.
+          data.vX = Math.max(
+            -data.vXMax * 0.6,
+            Math.min(data.vXMax * 0.6, data.vX)
+          );
         }
 
-        if (mouse.y) {
+        if (!isNaN(mouse.y)) {
           data.vY =
-            (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.066;
+            (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.05;
 
           // and limit
           data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
@@ -2457,7 +2472,7 @@ const Helicopter = (options = {}) => {
 
     // prevent X-axis motion if landed, including on landing pad
     // Y-axis is motion still allowed, so helicopter can move upward and leave this state
-    if (data.landed || data.onLandingPad) {
+    if (!data.dead && (data.landed || data.onLandingPad)) {
       data.vX = 0;
     }
 
@@ -2479,16 +2494,10 @@ const Helicopter = (options = {}) => {
             'You hit the ground going too fast. 🚁💥'
           );
           die();
-          data.vX = 0;
-          data.vY = 0;
           return;
         }
 
         maybeRumbleOnLanding();
-
-        // only "reset" for human player
-        data.vX = 0;
-        data.vY = 0;
       }
 
       moveTo(data.x, data.y);
@@ -2536,26 +2545,6 @@ const Helicopter = (options = {}) => {
 
     if (!data.dead) {
       newX = data.x + data.vX * RELATIVE_GAME_SPEED;
-
-      // is this near the edge of the screen? limit to near screen width if helicopter is ahead of the scrolling screen.
-
-      if (data.isLocal) {
-        newX = Math.max(
-          game.players.local.data.scrollLeft +
-            view.data.browser.width *
-              (net.active ? 0 : HELICOPTER_BOUNDARY_LEFT) +
-            data.halfWidth +
-            data.xMin,
-          Math.min(
-            view.data.browser.width *
-              (net.active ? 1 : HELICOPTER_BOUNDARY_RIGHT) +
-              game.players.local.data.scrollLeft -
-              data.xMaxOffset -
-              data.width * 1.5,
-            newX
-          )
-        );
-      }
 
       moveTo(newX, data.y + data.vY * RELATIVE_GAME_SPEED);
 
@@ -3025,9 +3014,6 @@ const Helicopter = (options = {}) => {
     // before we move, or anything else - determine xMax + yMax.
     refreshCoords();
 
-    // set some scroll stuff, initial positioning.
-    data.scrollLeft = common.getLandingPadOffsetX(exports);
-
     // if not specified (e.g., 0), assign landing pad position.
     if (!data.x) {
       data.x = common.getLandingPadOffsetX(exports);
@@ -3257,7 +3243,6 @@ const Helicopter = (options = {}) => {
         vX: 0,
         vY: 0
       },
-      scrollLeft: 0,
       // a buffer for local input delay.
       mouseHistory: new Array(32),
       missileMode: null,
