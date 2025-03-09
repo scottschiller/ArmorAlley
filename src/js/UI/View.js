@@ -203,6 +203,7 @@ const View = () => {
     data.browser.width = width / data.screenScale;
     data.browser.height = height / data.screenScale;
 
+    data.browser.hairWidth = data.browser.width / 32;
     data.browser.eighthWidth = data.browser.width / 8;
     data.browser.fractionWidth = data.browser.width / 3;
     data.browser.halfWidth = data.browser.width / 2;
@@ -1330,6 +1331,7 @@ const View = () => {
       screenHeight: 0,
       width: 0,
       eighthWidth: 0,
+      hairWidth: 0,
       fractionWidth: 0,
       halfWidth: 0,
       twoThirdsWidth: 0,
