@@ -596,12 +596,8 @@ const View = () => {
        * allowing the helicopter to get closer to the edge when moving fast.
        */
 
-      // hackish: always apply some friction - handy when slowing down
-      // and/or reversing directions.
-      data.scrollVX *= 0.99;
-
       if (data.scrollVX !== game.players.local.data.vX) {
-        data.scrollVX += (game.players.local.data.vX - data.scrollVX) * 0.035;
+        data.scrollVX += (game.players.local.data.vX - data.scrollVX) * 0.01;
       }
     }
 
