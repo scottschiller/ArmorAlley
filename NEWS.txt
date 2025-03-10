@@ -1,6 +1,16 @@
 `The latest and greatest: March 2025 Edition 🗞️`
 This is a summary of work in progress. For code-level details, see the changelog section below.
 
+`Helicopter / Mouse "Physics" Update`
+
+· The battlefield view scrolls with the chopper more smoothly, leaving more space to see inbound units.
+
+· Helicopter responsiveness: Slightly more "realistic" response to horizontal velocity changes, not as fast as a mouse cursor. Bomb targeting, etc., may require some adjustments.
+
+· Horizontal movement: The helicopter is more responsive to horizontal mouse position. Previously, you had to move the mouse near the screen edges for top speed.
+
+`UI miscellany`
+
 · Game tips use Times New Roman-style serif type, like the original Mac version.
 
 `Game Statistics V2.0`

@@ -319,6 +319,8 @@ const Notifications = () => {
       }, 5000);
     }
 
+    add(`🚧 MARCH 2025: Helicopter / mouse\nupdates. See "What's New" for details.`)
+
     common.setFixedFrameTimeout(
       () => gameEvents.fireEvent(EVENTS.switchPlayers, 'announcePlayer'),
       2000
