@@ -2471,7 +2471,7 @@ const Helicopter = (options = {}) => {
 
       if (!data.isCPU) {
         // "safety" check: if moving too fast, this is a crash as per the original game.
-        if (!data.dead && Math.abs(data.vX) >= data.vXMax - 2) {
+        if (!data.dead && Math.abs(data.vX) >= (data.vXMax / 2) - 2) {
           game.objects.notifications.add(
             'You hit the ground going too fast. 🚁💥'
           );
