@@ -726,7 +726,7 @@ const GamepadManager = (options = {}) => {
     // Chrome, Edge, Safari
     let va = pad?.vibrationActuator;
 
-    if (va) return;
+    if (!va) return;
 
     let defaultEffect = 'dual-rumble';
 
