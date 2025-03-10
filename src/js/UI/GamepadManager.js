@@ -735,7 +735,7 @@ const GamepadManager = (options = {}) => {
      * This may be redundant and perhaps `type` should always be used.
      */
     let effect =
-      va.effects?.[va.effects.indexOf(defaultEffect) || 0] || va.type;
+      va.effects?.[va.effects?.indexOf(defaultEffect) || 0] || va?.type;
 
     if (
       va.type &&
