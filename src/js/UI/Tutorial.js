@@ -340,11 +340,7 @@ const Tutorial = () => {
           game.addObject(TYPES.helicopter, {
             isEnemy: true,
             isCPU: true,
-            x: Math.min(
-              game.players.local.data.x +
-                game.objects.view.data.browser.width * 2,
-              game.objects.view.data.battleField.width - 64
-            ),
+            x: game.objects.view.data.battleField.width - 64,
             y: 72,
             // give the player a serious advantage, here.
             fireModulus: FPS / 3,
@@ -372,7 +368,7 @@ const Tutorial = () => {
         game.objects[TYPES.superBunker][0].data.energy = 0;
 
         missileX = Math.min(
-          game.players.local.data.x + game.objects.view.data.browser.width * 2,
+          game.players.local.data.x + 2048,
           game.objects.view.data.battleField.width - 64
         );
 
