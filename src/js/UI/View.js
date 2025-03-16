@@ -1,6 +1,7 @@
 import { gameType, keyboardMonitor, prefsManager } from '../aa.js';
 import {
   clientFeatures,
+  float,
   FPS,
   FRAMERATE,
   GAME_SPEED,
@@ -120,7 +121,7 @@ const View = () => {
 
     let x;
 
-    // reset battlefield scrolling velocity
+    // prevent battlefield scroll from jumping
     data.scrollVX = 0;
 
     x =
@@ -183,7 +184,7 @@ const View = () => {
     data.world.height = dom.worldWrapper.offsetHeight;
 
     data.world.x = 0;
-    data.world.y = dom.worldWrapper.offsetTop / data.screenScale;
+    data.world.y = 0;
 
     // keep track of width-only resize, because canvas sprites need scaling.
     let widthChange = data.browser.screenWidth !== width;
@@ -557,13 +558,13 @@ const View = () => {
       id: player.data.id,
       // raw mouse x/y coordinates, relative to screen
       // TODO: send raw X/Y also??
-      x: player.data.mouse.delayedInputX / data.browser.width,
-      y: player.data.mouse.delayedInputY / data.browser.height
+      x: player.data.mouse.delayedInputX,
+      y: player.data.mouse.delayedInputY
     });
   }
 
   function animate() {
-    let scrollAmount, mouseDelta;
+    let scrollAmount;
 
     if (!game.players.local) return;
 
@@ -582,23 +583,21 @@ const View = () => {
 
         data.scrollLeft = data.isEnemy
           ? common.getLandingPadOffsetX(exports) -
-            game.objects.view.data.browser.halfWidth
+            game.objects.view.data.browser.halfWidth +
+            game.players.local.data.halfWidth
           : 0;
       }
     }
 
-    if (
-      !game.players.local.data.landed &&
-      !game.players.local.data.respawning
-    ) {
-      /**
-       * How much the view can "slide" to the left or right,
-       * allowing the helicopter to get closer to the edge when moving fast.
-       */
+    /**
+     * How much the view can "slide" to the left or right,
+     * allowing the helicopter to get closer to the edge when moving fast.
+     */
 
-      if (data.scrollVX !== game.players.local.data.vX) {
-        data.scrollVX += (game.players.local.data.vX - data.scrollVX) * 0.01;
-      }
+    let scrollDelta = game.players.local.data.vX - data.scrollVX;
+
+    if (scrollDelta) {
+      data.scrollVX += scrollDelta / FPS / 10;
     }
 
     // scroll is almost always active.
@@ -631,6 +630,7 @@ const View = () => {
          * Regular in-game scrolling, live chopper.
          * Scroll relative to chopper position, relative to screen.
          */
+
         setLeftScroll(
           game.players.local.data.x +
             game.players.local.data.halfWidth -
@@ -1332,7 +1332,7 @@ const View = () => {
       clientX: 0,
       clientY: 0,
       delayedInputX: 0,
-      delayedInputY: 0,
+      delayedInputY: 1,
       x: 0,
       y: 0
     },
@@ -1444,23 +1444,26 @@ const View = () => {
       data.mouse.clientX = e.clientX;
       data.mouse.clientY = e.clientY;
 
-      if (!net.active) {
-        data.mouse.x = e.clientX / data.screenScale;
-        data.mouse.y = e.clientY / data.screenScale;
+      // mouse coordinates are relative to screen dimensions.
+      data.mouse.x = float(e.clientX / data.browser.screenWidth, 3);
+      data.mouse.y = float(e.clientY / data.browser.screenHeight, 3);
 
+      if (!net.active) {
         if (game.objects.editor) {
           game.objects.editor.events.mousemove(e);
         }
       } else {
         // record here; this gets processed within the game loop and put into a buffer.
-        data.mouse.delayedInputX = e.clientX / data.screenScale;
-        data.mouse.delayedInputY = e.clientY / data.screenScale;
+        if (data.mouse.x !== undefined && data.mouse.y !== undefined) {
+          data.mouse.delayedInputX = data.mouse.x;
+          data.mouse.delayedInputY = data.mouse.y;
 
-        if (game.players.local) {
-          game.players.local.data.mouse.delayedInputX =
-            data.mouse.delayedInputX;
-          game.players.local.data.mouse.delayedInputY =
-            data.mouse.delayedInputY;
+          if (game.players.local) {
+            game.players.local.data.mouse.delayedInputX =
+              data.mouse.delayedInputX;
+            game.players.local.data.mouse.delayedInputY =
+              data.mouse.delayedInputY;
+          }
         }
       }
     },
@@ -1498,6 +1501,9 @@ const View = () => {
     mouseup(e) {
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mouseup(e);
+      if (game.data.started) {
+        game.players.local.events.mouseup(e);
+      }
     },
 
     contextmenu(e) {

@@ -2382,13 +2382,11 @@ const Helicopter = (options = {}) => {
 
     // move according to delta between helicopter x/y and mouse, up to a max.
 
-    let i, j, view, mouse, jamming, newX, spliceArgs, maxY, yOffset;
+    let i, j, mouse, jamming, spliceArgs, maxY, yOffset;
 
     spliceArgs = [i, 1];
 
     jamming = 0;
-
-    view = game.objects.view;
 
     // trailer history
     // push x/y to trailer history arrays, maintain size
@@ -2418,37 +2416,71 @@ const Helicopter = (options = {}) => {
 
       if (!data.isCPU) {
         // only allow X-axis if not on ground...
-        if (!isNaN(mouse.x)) {
-          // velocity is based on mouse position relative to center of screen.
-          // pad slightly with a "hair width" on each end, so maximum speed isn't at the last pixel.
-          // TODO: review if vXMax * 0.75 is accurate for human players vs. CPU.
-          if (mouse.x >= game.objects.view.data.browser.halfWidth) {
-            data.vX =
-              ((mouse.x - game.objects.view.data.browser.halfWidth) /
-                game.objects.view.data.browser.fractionWidth) *
-              data.vXMax;
+
+        if (isNaN(mouse.x)) {
+          console.warn('isNaN(mouse.x) - setting "safe" default');
+          mouse.x = 0.5;
+        }
+
+        if (isNaN(mouse.y)) {
+          console.warn('mouse.y: isNaN - Setting "safe" default');
+          mouse.y = 1;
+        }
+
+        // mouse coordinates relative to screen dimensions
+        let mouseX = mouse.x * game.objects.view.data.browser.width;
+        let mouseY = mouse.y * game.objects.view.data.browser.height;
+
+        /**
+         * X-velocity is based on mouse position relative to the helicopter.
+         * Mouse coordinates are normally based on screen dimensions.
+         */
+
+        // testing - recording / playback
+        if (data.isRemote) {
+          updateVirtualPointer?.(mouse.x, mouse.y);
+        }
+
+        if (!net.active && data.isLocal && !data.isCPU) {
+          /**
+           * "Fancier" vX movement for local, non-network / non-CPU player
+           */
+
+          // the center of the helicopter
+          let targetX = data.x + data.halfWidth;
+
+          // the mouse pointer, relative to helicopter with scroll
+          let virtualMouseX =
+            game.objects.view.data.battleField.scrollLeft + mouseX;
+
+          data.vX =
+            ((virtualMouseX - targetX) /
+              game.objects.view.data.browser.fractionWidth) *
+            data.vXMax;
+        } else {
+          /**
+           * Simplified movement for all in network games
+           * fractionWidth = 33% (of screen)
+           */
+
+          if (mouse.x >= 0.5) {
+            data.vX = ((mouse.x - 0.5) / 0.33) * data.vXMax;
           } else {
-            data.vX =
-              ((mouse.x - game.objects.view.data.browser.halfWidth) /
-                game.objects.view.data.browser.fractionWidth) *
-              data.vXMax;
+            data.vX = (-(0.5 - mouse.x) / 0.33) * data.vXMax;
           }
-
-          // and limit
-          // NOTE: big restraint on "real" vXMax, here.
-          data.vX = Math.max(
-            -data.vXMax * 0.6,
-            Math.min(data.vXMax * 0.6, data.vX)
-          );
         }
 
-        if (!isNaN(mouse.y)) {
-          data.vY =
-            (mouse.y - data.y - view.data.world.y - data.halfHeight) * 0.05;
+        // and limit
+        // NOTE: big restraint on "real" vXMax, here.
+        data.vX = Math.max(
+          -data.vXMax * 0.6,
+          Math.min(data.vXMax * 0.6, data.vX)
+        );
 
-          // and limit
-          data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
-        }
+        data.vY = (mouseY - data.y - data.halfHeight) * 0.05;
+
+        // and limit
+        data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
       }
     }
 
@@ -2469,9 +2501,10 @@ const Helicopter = (options = {}) => {
       // slightly annoying: allow one additional pixel when landing.
       data.y = maxY + 1;
 
-      if (!data.isCPU) {
+      if (data.isLocal && !data.isCPU) {
+        // TODO: notify of opponent crash when in network, etc.
         // "safety" check: if moving too fast, this is a crash as per the original game.
-        if (!data.dead && Math.abs(data.vX) >= (data.vXMax / 2) - 2) {
+        if (!data.dead && Math.abs(data.vX) >= data.vXMax / 2 - 2) {
           game.objects.notifications.add(
             'You hit the ground going too fast. 🚁💥'
           );
@@ -2526,9 +2559,10 @@ const Helicopter = (options = {}) => {
     const RELATIVE_GAME_SPEED = GAME_SPEED_RATIOED; // (GAME_SPEED < 1 ? (1 - (GAME_SPEED / 2)) : GAME_SPEED);
 
     if (!data.dead) {
-      newX = data.x + data.vX * RELATIVE_GAME_SPEED;
-
-      moveTo(newX, data.y + data.vY * RELATIVE_GAME_SPEED);
+      moveTo(
+        data.x + data.vX * RELATIVE_GAME_SPEED,
+        data.y + data.vY * RELATIVE_GAME_SPEED
+      );
 
       collisionTest(collision, exports);
 
@@ -3217,11 +3251,13 @@ const Helicopter = (options = {}) => {
         decay: 0.95
       },
       // things originally stored on the view
+      // NOTE: start at 50% / 100%, i.e,. on landing pad.
       mouse: {
-        x: 0,
-        y: 0,
+        x: 0.5,
+        y: 1,
         vX: 0,
-        vY: 0
+        vY: 0,
+        mouseDown: false
       },
       // a buffer for local input delay.
       mouseHistory: new Array(32),
@@ -3291,6 +3327,7 @@ const Helicopter = (options = {}) => {
     mousedown(e) {
       let args;
 
+      data.mouse.mouseDown = true;
       if (e.button !== 0 || isMobile || data.isCPU || !data.fuel) return;
 
       if (!game.data.battleOver) {
@@ -3368,6 +3405,9 @@ const Helicopter = (options = {}) => {
           );
         }
       }
+    },
+    mouseup(e) {
+      data.mouse.mouseDown = false;
     }
   };
 

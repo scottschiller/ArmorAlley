@@ -8,8 +8,7 @@ import {
   FRAMERATE,
   FPS,
   isMobile,
-  demo,
-  float
+  demo
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
