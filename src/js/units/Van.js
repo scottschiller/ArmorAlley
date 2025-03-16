@@ -173,8 +173,8 @@ const Van = (options = {}) => {
         // look for nearby bad guys
         enemyHelicopter = enemyHelicopterNearby(
           data,
-          levelConfig.vanJammingI ||
-            game.objects.view.data.browser.twoThirdsWidth
+          // safe van jamming default?
+          levelConfig.vanJammingI
         );
 
         if (!data.jamming && enemyHelicopter) {
