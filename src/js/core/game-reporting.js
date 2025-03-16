@@ -383,10 +383,13 @@ function formatForWebhook(style, options = {}) {
     dc.objects.gameLoop.data.fpsAverage = gamePrefs.game_fps;
   }
 
+  // guard against NaN / bad `game_speed` value (TODO: sort out cause; LS / cookies disabled, maybe?)
+  let gameSpeed = parseFloat(gamePrefs.game_speed) || 1;
+
   debugInfo.push(
     `📺 Avg FPS: ${dc.objects.gameLoop.data.fpsAverage}` +
       (gamePrefs.game_speed != 1
-        ? `, ${parseInt(gamePrefs.game_speed * 100, 10)}% speed`
+        ? `, ${parseInt(gameSpeed * 100, 10)}% speed`
         : '')
   );
 
