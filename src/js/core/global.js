@@ -111,6 +111,13 @@ const enemyColors = {
   }
 };
 
+const DEFAULT_POINTS = 15;
+
+function float(x, points = DEFAULT_POINTS) {
+  // return a number, not a string.
+  return +(x).toFixed(points);
+}
+
 // buildings on radar
 let ENEMY_COLOR;
 
@@ -340,7 +347,7 @@ function rng(number = 1, type, seedOffset) {
 }
 
 function rnd(number) {
-  return Math.random() * number;
+  return float(Math.random() * number);
 }
 
 function rngBool(type) {
@@ -353,15 +360,15 @@ function rngInt(number, type) {
 }
 
 function rndInt(number) {
-  return parseInt(rnd(number), 10);
+  return parseInt(Math.random() * number, 10);
 }
 
 function rngPlusMinus(number = 1, type) {
-  return rng(number, type) >= 0.5 ? number : -number;
+  return float(rng(number, type) >= 0.5 ? number : -number);
 }
 
 function plusMinus(number = 1) {
-  return Math.random() >= 0.5 ? number : -number;
+  return float(Math.random() >= 0.5 ? number : -number);
 }
 
 function oneOf(array) {
@@ -552,6 +559,7 @@ export {
   defaultMissileMode,
   rubberChickenMode,
   bananaMode,
+  float,
   oneOf,
   originalSeedCopy,
   rnd,
