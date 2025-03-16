@@ -2601,8 +2601,6 @@ const Helicopter = (options = {}) => {
       centerView();
 
       if (game.objects.gameLoop.data.frameCount % data.targetingModulus === 0) {
-        const rng = aiRNG();
-
         // determines smart missile counter-measures
         let defendB = (game.iQuickRandom() & 0xf) < levelConfig.clipSpeedI;
 
@@ -2616,7 +2614,7 @@ const Helicopter = (options = {}) => {
         data.targeting.tanks =
           levelConfig.killTankB && levelConfig.scatterBombB;
 
-        data.targeting.clouds = rng > 0.65;
+        data.targeting.clouds = aiRNG() > 0.65;
         data.targeting.bunkers = true;
         data.targeting.superBunkers = game.objects[TYPES.superBunker].length;
         data.targeting.endBunkers = stealB && levelConfig.killEndB;
