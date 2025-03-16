@@ -11,7 +11,8 @@ import {
   worldWidth,
   TYPES,
   rng,
-  isMobile
+  isMobile,
+  rngInt
 } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -111,7 +112,7 @@ const Base = (options = {}) => {
     // re-load and fire ze missles, now more aggressive!
     missileVMax = Math.min(data.missileVMax, missileVMax + 1);
 
-    common.setFrameTimeout(fire, 250 + rng(250, data.type));
+    common.setFrameTimeout(fire, 250 + rngInt(250, data.type));
   }
 
   function delayedNukeAndLetter() {
