@@ -1321,7 +1321,7 @@ const Helicopter = (options = {}) => {
 
       game.objects.view.animateLeftScrollTo(
         common.getLandingPadOffsetX(exports) +
-          data.width * (1 / screenScale) -
+          data.halfWidth -
           game.objects.view.data.browser.halfWidth,
         override,
         scrollDuration
