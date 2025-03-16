@@ -506,7 +506,7 @@ const Base = (options = {}) => {
     if (!gamePrefs.alt_smart_missiles) return defaultMissileMode;
 
     // 20% chance of default, 40% chance of chickens or bananas
-    const rnd = Math.random();
+    const rnd = rng(1, data.type);
 
     if (rnd <= 0.2) return defaultMissileMode;
     if (rnd > 0.2 && rnd < 0.6) return rubberChickenMode;
