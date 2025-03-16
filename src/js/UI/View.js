@@ -1328,6 +1328,7 @@ const View = () => {
     },
     chatVisible: false,
     mouse: {
+      lastUpdateFrame: -1,
       clientX: 0,
       clientY: 0,
       delayedInputX: 0,
@@ -1425,6 +1426,18 @@ const View = () => {
           maybeShowDisabledMouseCursor();
           return;
         }
+      }
+
+      /**
+       * Mouse events can fire at a higher rate than the game, e.g.,
+       * 60fps vs. game @ 30fps. So, only update at most once per frame.
+       */
+      if (
+        data.mouse.lastUpdateFrame !== game.objects.gameLoop.data.frameCount
+      ) {
+        data.mouse.lastUpdateFrame = game.objects.gameLoop.data.frameCount;
+      } else {
+        return;
       }
 
       // always track the raw values - for gamepad sync, if nothing else.
