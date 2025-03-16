@@ -39,7 +39,8 @@ const Base = (options = {}) => {
 
     targetHelicopter = enemyHelicopterNearby(
       data,
-      game.objects.view.data.browser.fractionWidth
+      // standard base visibility?
+      320
     );
 
     if (!targetHelicopter) return;
@@ -100,7 +101,8 @@ const Base = (options = {}) => {
     // check again, within a screen's distance.
     const targetHelicopter = enemyHelicopterNearby(
       data,
-      game.objects.view.data.browser.width
+      // standard base visibility range?
+      320
     );
 
     // if not within range, reset vX + vY max for next time
