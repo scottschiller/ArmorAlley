@@ -13,7 +13,8 @@ import {
   worldHeight,
   GAME_SPEED_RATIOED,
   isSafari,
-  rngBool
+  rngBool,
+  FPS
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -189,13 +190,15 @@ const Balloon = (options = {}) => {
 
   function holdWind() {
     // don't allow a change in wind / direction for 5-10 seconds.
-    data.windModulus = 150 + rngInt(150, data.type);
+    data.holdingWind = true;
+    data.windModulus = FPS * 5 + rngInt(FPS * 5, data.type);
   }
 
   function checkDirection() {
     if (
-      (data.windOffsetX > 0 && data.direction !== 1) |
-      (data.windOffsetX < 0 && data.direction !== -1)
+      !data.holdingWind &&
+      ((data.windOffsetX > 0 && data.direction !== 1) ||
+        (data.windOffsetX < 0 && data.direction !== -1))
     ) {
       // changing winds.
       data.direction *= -1;
@@ -287,17 +290,19 @@ const Balloon = (options = {}) => {
 
       // for network games, never change the wind.
       if (!net.active && data.frameCount % data.windModulus === 0) {
-        data.windOffsetX += rngPlusMinus(1, data.type) * 0.25;
+        data.holdingWind = false;
+        data.windOffsetX += rngPlusMinus(1, data.type);
         data.windOffsetX = Math.max(
           -windOffsetXMax,
           Math.min(windOffsetXMax, data.windOffsetX)
         );
 
-        data.windOffsetY += rngPlusMinus(1, data.type) * 0.05;
+        data.windOffsetY += rngPlusMinus(1, data.type);
         data.windOffsetY = Math.max(-0.5, Math.min(0.5, data.windOffsetY));
 
         // and randomize
-        data.windModulus = 32 + rngInt(32, data.type);
+        // dropped for now to avoid de-sync in replay
+        // data.windModulus = 32 + rngInt(32, data.type);
       }
 
       // if at end of world, change the wind and prevent randomization until within world limits
@@ -448,7 +453,7 @@ const Balloon = (options = {}) => {
       type: TYPES.balloon,
       canRespawn: false,
       frameCount: 0,
-      windModulus: 16,
+      windModulus: FPS * 3,
       windOffsetX: 0,
       windOffsetY: 0,
       energy,
@@ -456,8 +461,9 @@ const Balloon = (options = {}) => {
       direction: 0,
       detached: !objects.bunker,
       hostile: !objects.bunker, // dangerous when detached
-      verticalDirection: rngPlusMinus(1, TYPES.balloon),
-      verticalDirectionDefault: 1,
+      holdingWind: false,
+      verticalDirection: -1,
+      verticalDirectionDefault: -1,
       facing: options.isEnemy ? -4 : 4,
       lastFacingX: null,
       facingRatio: facingMax / (windOffsetXMax * 0.75),
