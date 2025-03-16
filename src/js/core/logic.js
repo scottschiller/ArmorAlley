@@ -437,10 +437,13 @@ function getNearestObject(source, options = {}) {
        */
       if (tData.type === TYPES.balloon && !tData.hostile) continue;
 
+      distanceX = Math.abs(Math.abs(tData.x) - Math.abs(sData.x));
+
       // if a van, target only if it has a radar item OR is on-screen.
       if (
         tData.type === TYPES.van &&
-        !tData.isOnScreen &&
+        distanceX > 512 &&
+        // !tData.isOnScreen &&
         !itemArray[k].radarItem
       )
         continue;
@@ -555,7 +558,8 @@ function objectsInView(
   // defaults
   options.triggerDistance = net.active
     ? NET_TRIGGER_DISTANCE
-    : options.triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+    // standard distance?
+    : options.triggerDistance || 512;
 
   options.friendlyOnly = !!options.friendlyOnly;
   options.enemyOnly = !options.friendlyOnly && !!options.enemyOnly;
@@ -670,7 +674,7 @@ function nearbyTest(nearby, source) {
   nearby.options.after?.();
 }
 
-function enemyNearby(data, targets, triggerDistance) {
+function enemyNearby(data, targets, triggerDistance = 512) {
   // TODO: optimize this using zones.
 
   let i, j, k, l, targetData, results;
@@ -699,7 +703,7 @@ function enemyNearby(data, targets, triggerDistance) {
   return results;
 }
 
-function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
+function enemyHelicopterNearby(data, triggerDistance = 512, useCircleMath) {
   if (game.data.battleOver) return;
 
   let i, j, result;
@@ -711,7 +715,8 @@ function enemyHelicopterNearby(data, triggerDistance, useCircleMath) {
   triggerDistance =
     net.active && data.type !== TYPES.van && !useCircleMath
       ? NET_TRIGGER_DISTANCE
-      : triggerDistance || game.objects.view.data.browser.twoThirdsWidth;
+      // standard trigger distance?
+      : triggerDistance;
 
   for (i = 0, j = helicopter.length; i < j; i++) {
     /**
