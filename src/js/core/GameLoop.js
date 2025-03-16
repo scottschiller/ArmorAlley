@@ -8,7 +8,8 @@ import {
   FRAMERATE,
   FPS,
   isMobile,
-  demo
+  demo,
+  float
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { playQueuedSounds } from './sound.js';
@@ -38,7 +39,6 @@ const GameLoop = () => {
   function animate() {
     // loop through all objects, animate.
     if (game.data.started) {
-      data.frameCount++;
     }
 
     if (net.active) {
@@ -123,6 +123,10 @@ const GameLoop = () => {
     // debug stuff
     if (debugCollision) {
       common.animateDebugRects();
+    }
+    // finally: post-increment, since this frame is "done."
+    if (game.data.started) {
+      data.frameCount++;
     }
   }
 
