@@ -543,7 +543,6 @@ const Balloon = (options = {}) => {
 
 function getSpriteURL(data) {
   const offset = FRAME_Y_MIDDLE + data.facing;
-  if (data.facing === undefined) debugger;
   return gamePrefs.weather === 'snow'
     ? 'snow/balloon_mac_snow.png'
     : `balloon_${offset}.png`;
