@@ -11,7 +11,9 @@ import {
   worldHeight,
   TYPES,
   getTypes,
-  GAME_SPEED_RATIOED
+  GAME_SPEED_RATIOED,
+  rngInt,
+  rngPlusMinus
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -209,7 +211,7 @@ const Bomb = (options = {}) => {
             data.y
           ) -
           (dieOptions.spark
-            ? -(3 + rnd(halfHeight))
+            ? -(3 + rngInt(halfHeight, data.type))
             : data.height * (data.scale || 1));
 
         // go there immediately
@@ -219,9 +221,12 @@ const Bomb = (options = {}) => {
           // special case: align to turret, and randomize a bit.
           const halfWidth = dieOptions.target.data.halfWidth || 3;
           data.x =
-            dieOptions.target.data.x + halfWidth + plusMinus(rnd(halfWidth));
+            dieOptions.target.data.x +
+            halfWidth +
+            rngPlusMinus(rngInt(halfWidth, data.type), data.type);
           data.y =
-            dieOptions.target.data.y + rnd(dieOptions.target.data.height);
+            dieOptions.target.data.y +
+            rngInt(dieOptions.target.data.height, data.type);
           dieOptions.extraY = 0;
         }
 
@@ -329,7 +334,7 @@ const Bomb = (options = {}) => {
         hidden,
         bottomAlign,
         // and a few extra pixels down, for tanks (visual correction vs. boxy collision math)
-        extraY: target.data.type?.match(/tank/i) ? 3 + rndInt(3) : 0,
+        extraY: target.data.type?.match(/tank/i) ? 3 + rngInt(3, data.type) : 0,
         target
       });
     }
