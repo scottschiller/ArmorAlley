@@ -59,9 +59,6 @@ const GameLoop = () => {
     // hackish: hook to add new shrapnel.
     effects.animate();
 
-    // view will have jumped to player or enemy base.
-    // ensure all units' on-screen status is updated first, then animate one more frame so they can be repositioned.
-
     for (item in gameObjects) {
       if (gameObjects[item]) {
         // array of objects
