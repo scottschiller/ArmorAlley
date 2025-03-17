@@ -16,7 +16,7 @@ import { sprites } from './sprites.js';
 import { net } from './network.js';
 import { snowStorm } from '../lib/snowstorm.js';
 import { effects } from './effects.js';
-import { prefsManager } from '../aa.js';
+import { keyboardMonitor, prefsManager } from '../aa.js';
 import { score } from './scores.js';
 
 const GameLoop = () => {
@@ -37,6 +37,8 @@ const GameLoop = () => {
 
   function animate() {
     // loop through all objects, animate.
+    // apply keyboard changes
+    keyboardMonitor.applyInput();
     if (game.data.started) {
     }
 

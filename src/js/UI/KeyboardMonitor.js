@@ -75,9 +75,23 @@ function KeyboardMonitor() {
     data.downKeyCount = Object.keys(data.downKeys).length;
   }
 
-  // call out to the helicopter, e.g., ('setMissileLaunching', true)
-  const processInput = (player, method, params) =>
-    player.callAction(method, params);
+  /**
+   * Decouple key events and game loop, as keys can change between
+   * frames; more likely at 30 fps. This may contribute to de-sync.
+   */
+
+  let inputQueue = [];
+
+  function applyInput() {
+    if (!inputQueue.length) return;
+    inputQueue.forEach((item) => item());
+    inputQueue = [];
+  }
+
+  function queueInput(player, method, params) {
+    // call out to the helicopter, e.g., ('setMissileLaunching', true)
+    inputQueue.push(() => player.callAction(method, params));
+  }
 
   function handleKeyDown(e, codeOrChar) {
     if (!e.metaKey && keys[codeOrChar]?.down) {
@@ -153,21 +167,21 @@ function KeyboardMonitor() {
 
     [keyMap.backtick]: {
       down() {
-        processInput(game.players.local, 'eject');
+        queueInput(game.players.local, 'eject');
       }
     },
 
     // delete
     [keyMap.delete_1]: {
       down() {
-        processInput(game.players.local, 'eject');
+        queueInput(game.players.local, 'eject');
       }
     },
 
     // same as above (TODO: DRY)
     [keyMap.delete_2]: {
       down() {
-        processInput(game.players.local, 'eject');
+        queueInput(game.players.local, 'eject');
       }
     },
 
@@ -183,11 +197,11 @@ function KeyboardMonitor() {
       allowEvent: true,
 
       down() {
-        processInput(game.players.local, 'setFiring', true);
+        queueInput(game.players.local, 'setFiring', true);
       },
 
       up() {
-        processInput(game.players.local, 'setFiring', false);
+        queueInput(game.players.local, 'setFiring', false);
       }
     },
 
@@ -201,21 +215,21 @@ function KeyboardMonitor() {
       allowEvent: true,
 
       down() {
-        processInput(game.players.local, 'setBombing', true);
+        queueInput(game.players.local, 'setBombing', true);
       },
 
       up() {
-        processInput(game.players.local, 'setBombing', false);
+        queueInput(game.players.local, 'setBombing', false);
       }
     },
 
     [keyMap.space]: {
       down() {
-        processInput(game.players.local, 'setParachuting', true);
+        queueInput(game.players.local, 'setParachuting', true);
       },
 
       up() {
-        processInput(game.players.local, 'setParachuting', false);
+        queueInput(game.players.local, 'setParachuting', false);
       }
     },
 
@@ -256,11 +270,11 @@ function KeyboardMonitor() {
         // heat-seeking banana
         game.objects.view.setMissileMode(bananaMode);
 
-        processInput(game.players.local, 'setMissileLaunching', true);
+        queueInput(game.players.local, 'setMissileLaunching', true);
       },
 
       up() {
-        processInput(game.players.local, 'setMissileLaunching', false);
+        queueInput(game.players.local, 'setMissileLaunching', false);
       }
     },
 
@@ -269,11 +283,11 @@ function KeyboardMonitor() {
         // heat-seeking rubber chicken
         game.objects.view.setMissileMode(rubberChickenMode);
 
-        processInput(game.players.local, 'setMissileLaunching', true);
+        queueInput(game.players.local, 'setMissileLaunching', true);
       },
 
       up() {
-        processInput(game.players.local, 'setMissileLaunching', false);
+        queueInput(game.players.local, 'setMissileLaunching', false);
       }
     },
 
@@ -282,11 +296,11 @@ function KeyboardMonitor() {
         // standard heat-seeking missile
         game.objects.view.setMissileMode(defaultMissileMode);
 
-        processInput(game.players.local, 'setMissileLaunching', true);
+        queueInput(game.players.local, 'setMissileLaunching', true);
       },
 
       up() {
-        processInput(game.players.local, 'setMissileLaunching', false);
+        queueInput(game.players.local, 'setMissileLaunching', false);
       }
     },
 
@@ -412,6 +426,7 @@ function KeyboardMonitor() {
   };
 
   return {
+    applyInput,
     data,
     init: initKeyboardMonitor,
     isDown,
