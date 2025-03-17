@@ -56,7 +56,6 @@ const HelicopterAI = (options = {}) => {
   let target;
   let tData;
 
-  let ahead;
   let lastTarget;
 
   // "AI-assigned" opposing helicopter targeting
@@ -419,7 +418,6 @@ const HelicopterAI = (options = {}) => {
     /**
      * Identify incoming / nearby things to fire at, but not chase.
      * NOTE: only fire at things the chopper is facing - no backwards firing tricks.
-     * TODO: cpuCanTarget on smartMissile and parachuteInfantry?
      */
 
     // allow missiles to be shot at, IF enabled in level config, we have bullets, and enough of 'em
