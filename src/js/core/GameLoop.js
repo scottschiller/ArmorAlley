@@ -37,6 +37,9 @@ const GameLoop = () => {
 
   function animate() {
     // loop through all objects, animate.
+    // apply latest mousemove() event
+    game.objects.view.applyMouseMove();
+
     // apply keyboard changes
     keyboardMonitor.applyInput();
     if (game.data.started) {

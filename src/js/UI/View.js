@@ -69,7 +69,7 @@ let decelerateScrollFrames = [];
 let decelerateScrollDuration;
 
 const View = () => {
-  let css, data, dom, events, exports;
+  let css, data, dom, lastMouseEvent, events, exports;
 
   const disableScaling = winloc.match(/noscal/i);
   let noPause = winloc.match(/noPause/i);
@@ -1196,6 +1196,41 @@ const View = () => {
     }, 1000);
   }
 
+  function applyMouseMove() {
+    // apply the latest mouse input.
+
+    let e = lastMouseEvent;
+
+    if (!e) return;
+
+    // always track the raw values - for gamepad sync, if nothing else.
+    data.mouse.clientX = e.clientX;
+    data.mouse.clientY = e.clientY;
+
+    // mouse coordinates are relative to screen dimensions.
+    data.mouse.x = float(e.clientX / data.browser.screenWidth, 3);
+    data.mouse.y = float(e.clientY / data.browser.screenHeight, 3);
+
+    if (!net.active) {
+      if (game.objects.editor) {
+        game.objects.editor.events.mousemove(e);
+      }
+    } else {
+      // record here; this gets processed within the game loop and put into a buffer.
+      if (data.mouse.x !== undefined && data.mouse.y !== undefined) {
+        data.mouse.delayedInputX = data.mouse.x;
+        data.mouse.delayedInputY = data.mouse.y;
+
+        if (game.players.local) {
+          game.players.local.data.mouse.delayedInputX =
+            data.mouse.delayedInputX;
+          game.players.local.data.mouse.delayedInputY =
+            data.mouse.delayedInputY;
+        }
+      }
+    }
+  }
+
   function addEvents() {
     /**
      * Mouse, touch, window event handlers.
@@ -1429,43 +1464,12 @@ const View = () => {
       }
 
       /**
-       * Mouse events can fire at a higher rate than the game, e.g.,
-       * 60fps vs. game @ 30fps. So, only update at most once per frame.
+       * Mouse move events can fire at a higher rate than the game, e.g.,
+       * 60fps vs. game @ 30fps. Always track, but apply only once per frame.
        */
-      if (
-        data.mouse.lastUpdateFrame !== game.objects.gameLoop.data.frameCount
-      ) {
-        data.mouse.lastUpdateFrame = game.objects.gameLoop.data.frameCount;
-      } else {
-        return;
-      }
 
-      // always track the raw values - for gamepad sync, if nothing else.
-      data.mouse.clientX = e.clientX;
-      data.mouse.clientY = e.clientY;
-
-      // mouse coordinates are relative to screen dimensions.
-      data.mouse.x = float(e.clientX / data.browser.screenWidth, 3);
-      data.mouse.y = float(e.clientY / data.browser.screenHeight, 3);
-
-      if (!net.active) {
-        if (game.objects.editor) {
-          game.objects.editor.events.mousemove(e);
-        }
-      } else {
-        // record here; this gets processed within the game loop and put into a buffer.
-        if (data.mouse.x !== undefined && data.mouse.y !== undefined) {
-          data.mouse.delayedInputX = data.mouse.x;
-          data.mouse.delayedInputY = data.mouse.y;
-
-          if (game.players.local) {
-            game.players.local.data.mouse.delayedInputX =
-              data.mouse.delayedInputX;
-            game.players.local.data.mouse.delayedInputY =
-              data.mouse.delayedInputY;
-          }
-        }
-      }
+      // track the last mouse event.
+      lastMouseEvent = e;
     },
 
     sendChatMessage() {
@@ -1638,6 +1642,7 @@ const View = () => {
     animate,
     animateLeftScrollTo,
     applyScreenScale,
+    applyMouseMove,
     bufferMouseInput,
     clearAnnouncement,
     data,
