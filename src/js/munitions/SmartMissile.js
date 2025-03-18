@@ -12,7 +12,6 @@ import {
   rnd,
   rndInt,
   rng,
-  rngInt,
   TYPES
 } from '../core/global.js';
 import {
@@ -257,7 +256,7 @@ const SmartMissile = (options = {}) => {
 
     if (data.armed) {
       effects.shrapnelExplosion(data, {
-        count: 3 + rngInt(3, TYPES.shrapnel),
+        count: 4,
         velocity,
         parentVX: data.vX,
         parentVY: data.vY
@@ -1034,7 +1033,7 @@ const SmartMissile = (options = {}) => {
       vY: net.active ? 1 : 1 + Math.random(),
       vXMax: vMax,
       vYMax: vMax,
-      thrust: net.active ? 0.5 : 0.5 + rng(0.5, type),
+      thrust: 0.5,
       deadTimer: null,
       trailerCount: 16,
       xHistory: [],
