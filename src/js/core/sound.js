@@ -8,7 +8,6 @@ import {
   worldWidth,
   DEFAULT_VOLUME,
   GAME_SPEED,
-  isSafari,
   AUDIO_SPRITE_ROOT
 } from './global.js';
 import { common } from './common.js';
