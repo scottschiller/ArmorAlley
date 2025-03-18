@@ -1,5 +1,4 @@
 import { game } from '../core/Game.js';
-import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
