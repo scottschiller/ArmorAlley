@@ -199,9 +199,6 @@ const useDOMPruning = !searchParams.get('noDomPruning');
 
 const debug = searchParams.get('debug');
 
-// TODO: get rid of this.
-const debugType = searchParams.get('debugType');
-
 const debugCollision = searchParams.get('debugCollision');
 
 const DEFAULT_VOLUME = 25;
@@ -547,7 +544,6 @@ export {
   useDOMPruning,
   debug,
   debugCollision,
-  debugType,
   DEFAULT_VOLUME,
   noRadar,
   rad2Deg,

@@ -2,7 +2,6 @@ import { common } from './common.js';
 import { gamePrefs, PREFS } from '../UI/preferences.js';
 import {
   debug,
-  debugType,
   ENERGY_TIMER_DELAY,
   ENERGY_TIMER_FADE_RATIO,
   FPS,
@@ -52,10 +51,6 @@ const sprites = {
     if (!options?.className?.match(/terrain/i)) {
       o._style.setProperty('top', '0px');
       o._style.setProperty('left', '0px');
-    }
-
-    if (debugType) {
-      o._style.setProperty('font-size', '3px');
     }
 
     return o;
