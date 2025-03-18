@@ -568,6 +568,9 @@ const View = () => {
 
     if (!game.players.local) return;
 
+    // in the editor case, scrolling is handled entirely via mouse events.
+    if (game.objects.editor) return;
+
     // we're "warping" back to the landing pad for a respawn - or, a base for the end of the game.
     if (animateScrollActive) {
       setLeftScroll(animateScrollFrames[animateScrollFrame]);
@@ -1211,11 +1214,7 @@ const View = () => {
     data.mouse.x = float(e.clientX / data.browser.screenWidth, 3);
     data.mouse.y = float(e.clientY / data.browser.screenHeight, 3);
 
-    if (!net.active) {
-      if (game.objects.editor) {
-        game.objects.editor.events.mousemove(e);
-      }
-    } else {
+    if (net.active) {
       // record here; this gets processed within the game loop and put into a buffer.
       if (data.mouse.x !== undefined && data.mouse.y !== undefined) {
         data.mouse.delayedInputX = data.mouse.x;
@@ -1470,6 +1469,11 @@ const View = () => {
 
       // track the last mouse event.
       lastMouseEvent = e;
+
+      // always update if in the editor.
+      if (game.objects.editor) {
+        game.objects.editor.events.mousemove(e);
+      }
     },
 
     sendChatMessage() {
