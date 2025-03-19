@@ -762,10 +762,16 @@ const game = (() => {
           }
         } else {
           // simulate a native mouse event, with clientX and clientY
-          objects.view.events.mousemove({
-            clientX: x * vData.browser.screenWidth,
-            clientY: y * vData.browser.screenHeight
-          });
+          // hackish: force this event to fire, even if "ignoring" "mouse" events.
+          // (TODO: separate method to set "last mouse event")
+          let force = true;
+          objects.view.events.mousemove(
+            {
+              clientX: x * vData.browser.screenWidth,
+              clientY: y * vData.browser.screenHeight
+            },
+            force
+          );
         }
       };
     } else {

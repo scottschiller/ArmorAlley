@@ -1447,13 +1447,14 @@ const View = () => {
       game.resume();
     },
 
-    mousemove(e) {
+    mousemove(e, force) {
       if (
-        (!game.data.started && !game.objects.editor) ||
-        data.ignoreMouseEvents ||
-        data.ignoreMouseMove ||
-        game.players?.local?.data?.dead ||
-        game.players?.local?.data?.isCPU
+        ((!game.data.started && !game.objects.editor) ||
+          data.ignoreMouseEvents ||
+          data.ignoreMouseMove ||
+          game.players?.local?.data?.dead ||
+          game.players?.local?.data?.isCPU) &&
+        !force
       ) {
         // special case: temporarily show mouse cursor, IF gamepad present and active.
         if (gamepad.data.enabled && gamepad.data.active) {
