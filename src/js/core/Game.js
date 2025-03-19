@@ -761,8 +761,11 @@ const game = (() => {
             game.players.local.data.mouse.delayedInputY = y;
           }
         } else {
-          vData.mouse.x = x;
-          vData.mouse.y = y;
+          // simulate a native mouse event, with clientX and clientY
+          objects.view.events.mousemove({
+            clientX: x * vData.browser.screenWidth,
+            clientY: y * vData.browser.screenHeight
+          });
         }
       };
     } else {
