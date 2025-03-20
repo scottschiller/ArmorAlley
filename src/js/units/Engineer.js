@@ -44,7 +44,7 @@ const Engineer = (options = {}) => {
   const engineer = Infantry(options);
 
   // override infantry method
-  engineer.data.domCanvas.radarItem = Engineer.radarItemConfig();
+  engineer.domCanvas.radarItem = Engineer.radarItemConfig();
 
   return engineer;
 };
