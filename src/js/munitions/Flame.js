@@ -7,7 +7,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { game } from '../core/Game.js';
 
 const Flame = (options = {}) => {
-  let data, dom, collision, exports;
+  let data, dom, domCanvas, collision, exports;
 
   function die(force) {
     // aieee!
@@ -74,7 +74,7 @@ const Flame = (options = {}) => {
   const spriteWidth = 64;
   const spriteHeight = 36;
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: utils.image.getImageObject(
         data.isEnemy ? 'tank_flame-flipped.png' : 'tank_flame.png'
@@ -107,6 +107,7 @@ const Flame = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initFlame
   };
