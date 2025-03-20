@@ -6,7 +6,7 @@ import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 
 const MissileNapalm = (options = {}) => {
-  let collision, data, dom, exports, radarItem;
+  let collision, data, dom, domCanvas, exports, radarItem;
 
   const width = 22;
   const height = 20;
@@ -33,17 +33,16 @@ const MissileNapalm = (options = {}) => {
     if (data.dead) return true;
 
     // avoid rolling over too many frames
-    if (data.frameCount % data.domCanvas.img.animationModulus === 0) {
-      data.domCanvas.img.animationFrame +=
-        data.domCanvas.img.animationFrameDirection;
+    if (data.frameCount % domCanvas.img.animationModulus === 0) {
+      domCanvas.img.animationFrame += domCanvas.img.animationFrameDirection;
 
-      if (data.domCanvas.img.animationFrame >= animationFrameCount) {
-        data.domCanvas.img.animationFrameDirection *= -1;
+      if (domCanvas.img.animationFrame >= animationFrameCount) {
+        domCanvas.img.animationFrameDirection *= -1;
       }
 
-      if (data.domCanvas.img.animationFrame >= 0) {
-        data.domCanvas.img.src = utils.image.getImageObject(
-          `shrapnel_v${data.domCanvas.img.frameMap[data.domCanvas.img.animationFrame]}.png`
+      if (domCanvas.img.animationFrame >= 0) {
+        domCanvas.img.src = utils.image.getImageObject(
+          `shrapnel_v${domCanvas.img.frameMap[domCanvas.img.animationFrame]}.png`
         );
       } else {
         // -1 = end of animation
@@ -100,7 +99,7 @@ const MissileNapalm = (options = {}) => {
   // number of frames to iterate through
   const animationFrameCount = 3;
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       // NOTE: start on smallest spark / flame sprite
       src: utils.image.getImageObject(`shrapnel_v3.png`),
@@ -164,6 +163,7 @@ const MissileNapalm = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initMissileNapalm
   };
