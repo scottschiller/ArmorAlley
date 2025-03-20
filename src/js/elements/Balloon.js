@@ -27,7 +27,7 @@ const FRAME_Y_MIDDLE = 4;
 const FACING = 4;
 
 const Balloon = (options = {}) => {
-  let css, data, dom, objects, radarItem, reset, exports;
+  let css, data, dom, domCanvas, objects, radarItem, reset, exports;
 
   const windOffsetXMax = 3;
 
@@ -67,17 +67,17 @@ const Balloon = (options = {}) => {
         reverseDirection: isEnemy
       },
       onEnd: () => {
-        data.domCanvas.ownershipAnimation = null;
+        domCanvas.ownershipAnimation = null;
       }
     };
 
-    data.domCanvas.ownershipAnimation = common.domCanvas.canvasAnimation(
+    domCanvas.ownershipAnimation = common.domCanvas.canvasAnimation(
       exports,
       animConfig
     );
 
     // hackish: apply the same to the radar item, too.
-    data.domCanvas.radarItemImg = data.domCanvas.img;
+    domCanvas.radarItemImg = domCanvas.img;
   }
 
   function attachChain(chain = null) {
@@ -127,8 +127,8 @@ const Balloon = (options = {}) => {
       }
     }
 
-    data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-    data.domCanvas.img = null;
+    domCanvas.dieExplosion = effects.genericExplosion(exports);
+    domCanvas.img = null;
 
     effects.inertGunfireExplosion({ exports });
 
@@ -163,7 +163,7 @@ const Balloon = (options = {}) => {
 
     data.deadTimer = common.setFrameTimeout(() => {
       data.deadTimer = null;
-      data.domCanvas.dieExplosion = null;
+      domCanvas.dieExplosion = null;
       // sanity check: don't hide if already respawned
       if (!data.dead) return;
     }, 1000);
@@ -229,15 +229,14 @@ const Balloon = (options = {}) => {
        * HACKISH: offset sprite to match collision box, because sprite is drawn at full-width.
        * This repositions the sprite so that e.g., the non-moving narrow balloon is drawn with the hitbox centered.
        */
-      if (data.domCanvas.img) {
-        data.domCanvas.img.target.xOffset =
-          -(data.facingWidths[0] - data.width) / 2;
+      if (domCanvas.img) {
+        domCanvas.img.target.xOffset = -(data.facingWidths[0] - data.width) / 2;
         /**
          * Update sprite position, moving up/down from center.
          * Each balloon frame is 16px tall, when scaled down.
          */
         if (gamePrefs.weather === 'snow') {
-          data.domCanvas.img.source.frameY = FRAME_Y_MIDDLE + data.facing;
+          domCanvas.img.source.frameY = FRAME_Y_MIDDLE + data.facing;
         }
         updateSprite();
       }
@@ -248,7 +247,7 @@ const Balloon = (options = {}) => {
     if (data.dead) {
       checkRespawn();
 
-      data.domCanvas?.dieExplosion?.animate();
+      domCanvas?.dieExplosion?.animate();
 
       // explosion underway: move, accounting for scroll
       if (data.deadTimer) {
@@ -266,8 +265,8 @@ const Balloon = (options = {}) => {
 
     // not dead...
 
-    if (data.domCanvas?.ownershipAnimation) {
-      data.domCanvas.ownershipAnimation.animate();
+    if (domCanvas?.ownershipAnimation) {
+      domCanvas.ownershipAnimation.animate();
     }
 
     effects.smokeRelativeToDamage(exports);
@@ -368,10 +367,10 @@ const Balloon = (options = {}) => {
     animate();
 
     // stop any animation...
-    data.domCanvas.ownershipAnimation = null;
+    domCanvas.ownershipAnimation = null;
 
     // and reset
-    data.domCanvas.img = getCanvasBalloon(data);
+    domCanvas.img = getCanvasBalloon(data);
 
     // randomize again
     css.explodingType = randomExplosionType();
@@ -503,6 +502,25 @@ const Balloon = (options = {}) => {
     o: null
   };
 
+  domCanvas = {
+    ownershipAnimation: null,
+    // hack: note delayed assignment below once exports is defined
+    radarItem: null, // Balloon.radarItemConfig(exports),
+    img: getCanvasBalloon(data),
+    radarItemImg: getCanvasBalloon(data)
+  };
+
+  function updateSprite() {
+    if (!domCanvas?.img) return;
+    domCanvas.img.src = utils.image.getImageObject(
+      getSpriteURL(data),
+      (newImg) => {
+        // update the radar balloon, also.
+        domCanvas.radarItemImg.src = newImg;
+      }
+    );
+  }
+
   exports = {
     animate,
     attachChain,
@@ -510,6 +528,8 @@ const Balloon = (options = {}) => {
     detachFromBunker,
     die,
     dom,
+    // hack - see below.
+    domCanvas,
     init: initBalloon,
     isOnScreenChange,
     objects,
@@ -518,23 +538,7 @@ const Balloon = (options = {}) => {
     updateSprite
   };
 
-  function updateSprite() {
-    if (!data?.domCanvas?.img) return;
-    data.domCanvas.img.src = utils.image.getImageObject(
-      getSpriteURL(data),
-      (newImg) => {
-        // update the radar balloon, also.
-        data.domCanvas.radarItemImg.src = newImg;
-      }
-    );
-  }
-
-  data.domCanvas = {
-    ownershipAnimation: null,
-    radarItem: Balloon.radarItemConfig(exports),
-    img: getCanvasBalloon(data),
-    radarItemImg: getCanvasBalloon(data)
-  };
+  domCanvas.radarItem = Balloon.radarItemConfig({ exports });
 
   return exports;
 };
@@ -577,7 +581,7 @@ function getCanvasBalloon(data, onload = () => {}) {
   };
 }
 
-Balloon.radarItemConfig = (exports) => ({
+Balloon.radarItemConfig = ({ exports }) => ({
   width: 4,
   height: 2,
   excludeFillStroke: true,
@@ -611,7 +615,8 @@ Balloon.radarItemConfig = (exports) => ({
 
     function render() {
       // in preview mode, no live battlefield image.
-      const radarItemImg = data?.domCanvas.img || data?.domCanvas.radarItemImg;
+      const radarItemImg =
+        exports.domCanvas?.img || exports.domCanvas?.radarItemImg;
 
       let targetX = left;
       let targetY = obj.data.top - scaledHeight / 2;
@@ -639,10 +644,10 @@ Balloon.radarItemConfig = (exports) => ({
     }
 
     // this covers the initial game menu / level preview case...
-    if (!data.domCanvas.radarItemImg) {
-      data.domCanvas.radarItemImg = getCanvasBalloon(data, (newImg) => {
+    if (!exports.domCanvas.radarItemImg) {
+      exports.domCanvas.radarItemImg = getCanvasBalloon(data, (newImg) => {
         // ensure the image is set before rendering
-        data.domCanvas.radarItemImg.src = newImg;
+        exports.domCanvas.radarItemImg.src = newImg;
         render();
       });
     } else {
