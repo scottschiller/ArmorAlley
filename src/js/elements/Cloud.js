@@ -44,26 +44,26 @@ const MAX_VY = 0.5;
 const MIN_SPEED = 0.5;
 const NEAR_END_DISTANCE = 128;
 
-const Cloud = (options = {}) => {
-  let type = TYPES.cloud;
+const type = TYPES.cloud;
 
+const Cloud = (options = {}) => {
   const cloudData = cloudTypes[rngInt(cloudTypes.length, type)];
 
   const { className, src, width, height } = cloudData;
 
-  let css, dom, data, exports;
-
-  function initCloud() {
-    initDOM();
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
-    game.objects.radar.addItem(exports);
-  }
+  let css,
+    dom = {},
+    domCanvas;
 
   css = common.inheritCSS({ className });
 
-  data = common.inheritData(
+  let exports = {
+    css,
+    dom,
+    options
+  };
+
+  exports.data = common.inheritData(
     {
       type,
       isNeutral: true,
@@ -85,7 +85,9 @@ const Cloud = (options = {}) => {
     options
   );
 
-  data.domCanvas = {
+  let { data } = exports;
+
+  domCanvas = {
     img: {
       src: utils.image.getImageObject(src),
       source: {
@@ -138,14 +140,13 @@ const Cloud = (options = {}) => {
     o: null
   };
 
-  exports = {
-    animate,
-    data,
-    drift,
-    dom,
-    init: initCloud,
-    startDrift
-  };
+  Object.assign(exports, {
+    animate: () => animate(exports),
+    domCanvas,
+    drift: () => drift(exports),
+    init: () => initCloud(exports),
+    startDrift: () => startDrift(exports)
+  });
 
   return exports;
 };
@@ -258,4 +259,15 @@ function initDOM(exports) {
     dom.o = {};
   }
 }
+
+function initCloud(exports) {
+  initDOM(exports);
+
+  let { data, dom } = exports;
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  game.objects.radar.addItem(exports);
+}
+
 export { Cloud };
