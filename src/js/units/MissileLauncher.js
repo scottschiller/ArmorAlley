@@ -26,7 +26,20 @@ const MISSILE_LAUNCHER_SCAN_RADIUS = 320;
 const MISSILE_LAUNCHER_SCAN_BUFFER = 16;
 
 const MissileLauncher = (options = {}) => {
-  let css, data, dom, friendlyNearby, height, width, radarItem, exports;
+  let css,
+    data,
+    dom,
+    domCanvas,
+    friendlyNearby,
+    height,
+    width,
+    radarItem,
+    exports;
+
+  const spriteWidth = 108;
+  const spriteHeight = 144;
+  const frameWidth = spriteWidth;
+  const frameHeight = spriteHeight / 4;
 
   function stop() {
     data.stopped = true;
@@ -46,8 +59,8 @@ const MissileLauncher = (options = {}) => {
         playSound(sounds.genericExplosion, exports);
       }
 
-      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-      data.domCanvas.img = null;
+      domCanvas.dieExplosion = effects.genericExplosion(exports);
+      domCanvas.img = null;
 
       effects.inertGunfireExplosion({ exports });
 
@@ -231,16 +244,16 @@ const MissileLauncher = (options = {}) => {
           data.stateModulus = 4 * fpsMultiplier;
         }
 
-        if (data.domCanvas.img) {
-          data.domCanvas.img.source.frameY = data.state;
+        if (domCanvas.img) {
+          domCanvas.img.source.frameY = data.state;
         }
       } else if (
         data.frameCount % data.stateModulus === 2 * fpsMultiplier &&
         data.isOnScreen
       ) {
         // next frame - reset.
-        if (data.domCanvas.img) {
-          data.domCanvas.img.source.frameY = 0;
+        if (domCanvas.img) {
+          domCanvas.img.source.frameY = 0;
         }
       }
     }
@@ -357,29 +370,7 @@ const MissileLauncher = (options = {}) => {
     o: null
   };
 
-  exports = {
-    animate,
-    data,
-    dom,
-    die,
-    init: initMissileLauncher,
-    radarItem,
-    refreshSprite,
-    resize
-  };
-
-  const spriteWidth = 108;
-  const spriteHeight = 144;
-  const frameWidth = spriteWidth;
-  const frameHeight = spriteHeight / 4;
-
-  function refreshSprite() {
-    data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
-    );
-  }
-
-  data.domCanvas = {
+  domCanvas = {
     radarItem: MissileLauncher.radarItemConfig(),
     img: {
       src: null,
@@ -400,6 +391,24 @@ const MissileLauncher = (options = {}) => {
       }
     }
   };
+
+  exports = {
+    animate,
+    data,
+    dom,
+    domCanvas,
+    die,
+    init: initMissileLauncher,
+    radarItem,
+    refreshSprite,
+    resize
+  };
+
+  function refreshSprite() {
+    domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
+    );
+  }
 
   refreshSprite();
 
