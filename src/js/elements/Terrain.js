@@ -248,8 +248,8 @@ function addItem(className, x, options = {}) {
   }
 
   function updateSprite() {
-    if (!data.domCanvas?.img?.src) return;
-    data.domCanvas.img.src = getSpriteURL();
+    if (!domCanvas?.img?.src) return;
+    domCanvas.img.src = getSpriteURL();
   }
 
   data = Object.assign(
@@ -269,34 +269,36 @@ function addItem(className, x, options = {}) {
       width,
       height,
       isOnScreen: null,
-      visible: true,
-      domCanvas: {
-        img: {
-          src: getSpriteURL(),
-          source: {
-            x: 0,
-            y: 0,
-            // note: sprite source is 2x
-            width: width * 2,
-            height: height * 2
-          },
-          target: {
-            x,
-            y: worldHeight,
-            width,
-            height
-          }
-        }
-      }
+      visible: true
     },
     options
   );
+
+  let domCanvas = {
+    img: {
+      src: getSpriteURL(),
+      source: {
+        x: 0,
+        y: 0,
+        // note: sprite source is 2x
+        width: width * 2,
+        height: height * 2
+      },
+      target: {
+        x,
+        y: worldHeight,
+        width,
+        height
+      }
+    }
+  };
 
   // basic structure for a terrain item
   exports = {
     animate,
     data,
     dom: _dom,
+    domCanvas,
     dismiss,
     summon,
     updateSprite
