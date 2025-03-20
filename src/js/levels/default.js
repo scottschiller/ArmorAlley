@@ -71,14 +71,14 @@ const networkBattles = [
 
 /**
  * Battle "flags" from the original game
- * 
+ *
  * [B]ullets: helicopters are equipped with bullets, vs. aimed missiles.
- * 
+ *
  * [N]apalm: the helicopters are equipped with napalm
  * (Bombs explode larger, instead of just a "spark" when they hit targets.)
- * 
+ *
  * [S]tealth: the opposing team's helicopters do not appear on the radar.
- * 
+ *
  * [J]amming: the radars do not operate.
  *
  * Ratings:
