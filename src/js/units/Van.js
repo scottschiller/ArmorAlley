@@ -20,7 +20,19 @@ import { levelConfig } from '../levels/default.js';
 import { getDefeatMessage, getVictoryMessage } from '../levels/battle-over.js';
 
 const Van = (options = {}) => {
-  let css, dom, data, friendlyNearby, height, pads, radarItem, exports;
+  let css,
+    dom,
+    domCanvas,
+    data,
+    friendlyNearby,
+    height,
+    pads,
+    radarItem,
+    exports;
+
+  const spriteWidth = 76;
+  const spriteHeight = 96;
+  const frameHeight = 32;
 
   function stop() {
     data.stopped = true;
@@ -40,8 +52,8 @@ const Van = (options = {}) => {
 
     data.dead = true;
 
-    data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-    data.domCanvas.img = null;
+    domCanvas.dieExplosion = effects.genericExplosion(exports);
+    domCanvas.img = null;
 
     // stop moving while exploding
     data.vX = 0;
@@ -110,7 +122,7 @@ const Van = (options = {}) => {
     let enemyHelicopter;
 
     if (data.dead) {
-      data.domCanvas.dieExplosion?.animate?.();
+      domCanvas.dieExplosion?.animate?.();
     }
 
     if (!data.stopped && !game.data.battleOver) {
@@ -156,13 +168,13 @@ const Van = (options = {}) => {
             data.imageOffset = 0;
           }
 
-          if (data.domCanvas.img) {
-            // data.domCanvas.img.source.frameY = data.state;
+          if (domCanvas.img) {
+            // domCanvas.img.source.frameY = data.state;
             refreshSprite();
           }
         } else if (data.frameCount % (data.stateModulus / 2) === 2) {
           // next frame - reset.
-          if (data.domCanvas.img) {
+          if (domCanvas.img) {
             data.imageOffset = 0;
             refreshSprite();
           }
@@ -323,30 +335,8 @@ const Van = (options = {}) => {
     o: null
   };
 
-  exports = {
-    animate,
-    data,
-    dom,
-    die,
-    init: initVan,
-    radarItem,
-    refreshSprite
-  };
-
-  const spriteWidth = 76;
-  const spriteHeight = 96;
-  const frameHeight = 32;
-
-  function refreshSprite() {
-    data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy
-        ? `van-enemy_${data.imageOffset}.png`
-        : `van_${data.imageOffset}.png`
-    );
-  }
-
-  data.domCanvas = {
-    radarItem: Van.radarItemConfig(exports),
+  domCanvas = {
+    radarItem: Van.radarItemConfig(),
     img: {
       src: null,
       source: {
@@ -367,6 +357,25 @@ const Van = (options = {}) => {
       }
     }
   };
+
+  exports = {
+    animate,
+    data,
+    dom,
+    domCanvas,
+    die,
+    init: initVan,
+    radarItem,
+    refreshSprite
+  };
+
+  function refreshSprite() {
+    domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy
+        ? `van-enemy_${data.imageOffset}.png`
+        : `van_${data.imageOffset}.png`
+    );
+  }
 
   refreshSprite();
 
