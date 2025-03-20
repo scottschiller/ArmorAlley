@@ -27,7 +27,7 @@ import { campaignBattles, levelName } from '../levels/default.js';
 import { utils } from '../core/utils.js';
 
 const Base = (options = {}) => {
-  let css, data, dom, exports, height, missileVMax, width, didWin;
+  let css, data, dom, domCanvas, exports, height, missileVMax, width, didWin;
 
   let counter = 0;
   let canShowLetter;
@@ -325,7 +325,7 @@ const Base = (options = {}) => {
       })();
 
       // replace the base sprite
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(
+      domCanvas.animation = common.domCanvas.canvasAnimation(
         exports,
         burningConfig
       );
@@ -356,7 +356,7 @@ const Base = (options = {}) => {
 
       // add the nuke overlay
       if (!game.objects.editor) {
-        data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
+        domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
           exports,
           nukeConfig
         );
@@ -491,8 +491,8 @@ const Base = (options = {}) => {
   function animate() {
     sprites.moveWithScrollOffset(exports);
 
-    data.domCanvas.animation?.animate();
-    data.domCanvas.nukeAnimation?.animate();
+    domCanvas.animation?.animate();
+    domCanvas.nukeAnimation?.animate();
 
     if (data.dead) return;
 
@@ -539,7 +539,7 @@ const Base = (options = {}) => {
   }
 
   function applySpriteURL() {
-    if (!data.domCanvas.animation) return;
+    if (!domCanvas.animation) return;
 
     // maybe handle snow update
     refreshSprite();
@@ -576,10 +576,7 @@ const Base = (options = {}) => {
       };
     })();
 
-    data.domCanvas.animation = common.domCanvas.canvasAnimation(
-      exports,
-      animConfig
-    );
+    domCanvas.animation = common.domCanvas.canvasAnimation(exports, animConfig);
   }
 
   function initBase() {
@@ -645,18 +642,19 @@ const Base = (options = {}) => {
     oSubSpriteNuke: null
   };
 
+  domCanvas = {
+    radarItem: Base.radarItemConfig()
+  };
+
   exports = {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initBase,
     isOnScreenChange,
     updateSprite: applySpriteURL
-  };
-
-  data.domCanvas = {
-    radarItem: Base.radarItemConfig()
   };
 
   return exports;
