@@ -170,7 +170,7 @@ const SmartMissile = (options = {}) => {
 
   function spark() {
     // TODO: random rotation?
-    data.domCanvas.img = effects.spark();
+    exports.domCanvas.img = effects.spark();
     data.excludeBlink = true;
   }
 
@@ -478,7 +478,7 @@ const SmartMissile = (options = {}) => {
   function animate() {
     let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth;
 
-    data.domCanvas.animation?.animate();
+    exports.domCanvas.animation?.animate();
 
     // notify caller if now dead and can be removed.
     if (data.dead) {
@@ -1103,7 +1103,7 @@ const SmartMissile = (options = {}) => {
 
   const { scale, spriteWidth, spriteHeight } = spriteObj;
 
-  data.domCanvas = {
+  let domCanvas = {
     img: {
       src: !game.objects.editor
         ? utils.image.getImageObject(spriteObj.src || spriteObj.sprite.url)
@@ -1164,6 +1164,7 @@ const SmartMissile = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initSmartMissile,
     maybeTargetDecoy,
@@ -1193,7 +1194,7 @@ const SmartMissile = (options = {}) => {
 
   if (data.isRubberChicken) {
     // replace the base sprite
-    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+    exports.domCanvas.animation = common.domCanvas.canvasAnimation(
       exports,
       spriteObj
     );
