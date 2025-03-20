@@ -18,10 +18,10 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
-  let data, dom, collision, exports, frameTimeout, radarItem;
+  let data, dom, domCanvas, collision, exports, frameTimeout, radarItem;
 
   function spark() {
-    data.domCanvas.img = effects.spark();
+    domCanvas.img = effects.spark();
     data.excludeBlink = true;
   }
 
@@ -226,7 +226,7 @@ const GunFire = (options = {}) => {
       data.frameCount > data.expireFrameCount
     ) {
       data.expired = true;
-      data.domCanvas.backgroundColor = data.inertColor;
+      domCanvas.backgroundColor = data.inertColor;
     }
 
     if (data.isInert || data.expired) {
@@ -316,7 +316,7 @@ const GunFire = (options = {}) => {
     options
   );
 
-  data.domCanvas = {
+  domCanvas = {
     backgroundColor: options.isInert ? data.inertColor : FRIENDLY_GUNFIRE_COLOR,
     borderRadius: 1,
     radarItem: {
@@ -335,7 +335,7 @@ const GunFire = (options = {}) => {
           obj.data.top - height,
           width,
           height,
-          data.domCanvas.borderRadius * game.objects.radar.data.cssRadarScale
+          domCanvas.borderRadius * game.objects.radar.data.cssRadarScale
         );
       }
     }
@@ -352,6 +352,7 @@ const GunFire = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initGunFire
   };
