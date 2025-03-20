@@ -151,7 +151,7 @@ const Radar = () => {
     };
 
     // domCanvas case: layout is N/A
-    if (itemObject.data.domCanvas && !itemObject.dom.o?.nodeName) return result;
+    if (itemObject.domCanvas && !itemObject.dom.o?.nodeName) return result;
 
     // if we hit this, something is wrong.
     if (!itemObject?.dom?.o) {
@@ -201,7 +201,7 @@ const Radar = () => {
     itemObject = RadarItem({
       // special case: null-ish for domCanvas, provided there no scan node.
       o:
-        item.data.domCanvas && !scanNodeTypes[item.data.type]
+        item.domCanvas && !scanNodeTypes[item.data.type]
           ? {}
           : sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
@@ -427,12 +427,11 @@ const Radar = () => {
       targetItem.oParent.data.type === TYPES.missileLauncher
     ) {
       // HACK
-      if (targetItem.oParent.data.domCanvas) {
+      let parentDomCanvas = targetItem.oParent.domCanvas;
+      if (parentDomCanvas) {
         targetItem.layout = {
-          width: pos.width(targetItem.oParent.data.domCanvas.radarItem.width),
-          height: pos.heightNoStroke(
-            targetItem.oParent.data.domCanvas.radarItem.height
-          )
+          width: pos.width(parentDomCanvas.radarItem.width),
+          height: pos.heightNoStroke(parentDomCanvas.radarItem.height)
         };
       }
     }
@@ -710,7 +709,7 @@ const Radar = () => {
       if (
         data.isStale ||
         !objects.items[i].isStatic ||
-        objects.items[i].data.domCanvas ||
+        objects.items[i].domCanvas ||
         data.animateEveryFrameTypes[objects.items[i].oParent.data.type]
       ) {
         if (
@@ -744,10 +743,7 @@ const Radar = () => {
         }
 
         // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
-        if (
-          !objects.items[i].layout?.width &&
-          !objects.items[i].data.domCanvas
-        ) {
+        if (!objects.items[i].layout?.width && !objects.items[i].domCanvas) {
           objects.items[i] = common.mixin(
             objects.items[i],
             getLayout(objects.items[i])

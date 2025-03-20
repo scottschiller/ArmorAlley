@@ -207,11 +207,6 @@ function RadarItem(options) {
     o: options.o
   };
 
-  if (options.oParent.data?.domCanvas?.radarItem) {
-    // inherit
-    data.domCanvas = options.oParent.data.domCanvas.radarItem;
-  }
-
   oParent = options.oParent;
 
   initRadarItem();
@@ -230,6 +225,11 @@ function RadarItem(options) {
     dismiss,
     updateScanNode
   };
+
+  if (oParent.domCanvas?.radarItem) {
+    // inherit
+    exports.domCanvas = oParent.domCanvas.radarItem;
+  }
 
   return exports;
 }
