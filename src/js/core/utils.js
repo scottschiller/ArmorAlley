@@ -64,6 +64,7 @@ const upscaleByName = {
   'super-bunker_mac.png': 2,
   'tank_flame.png': 2,
   'tree.png': 2,
+  'tumbleweed.png': 2,
   'turret-sprite.png': 2
 };
 
