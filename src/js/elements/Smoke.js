@@ -14,7 +14,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { levelFlags } from '../levels/default.js';
 
 const Smoke = (options = {}) => {
-  let dom, data, exports;
+  let dom, domCanvas, data, exports;
 
   function die() {
     if (data.dead) return;
@@ -80,7 +80,7 @@ const Smoke = (options = {}) => {
       // first, animate through sprite. then, fade opacity.
       if (data.spriteFrame < data.spriteFrames) {
         data.spriteFrame++;
-        data.domCanvas.img.src = refreshSprite();
+        domCanvas.img.src = refreshSprite();
       } else {
         data.isFading = true;
       }
@@ -91,8 +91,7 @@ const Smoke = (options = {}) => {
       data.fadeFrame += GAME_SPEED_RATIOED;
 
       if (data.fadeFrame < data.fadeFrames) {
-        data.domCanvas.img.target.opacity =
-          1 - data.fadeFrame / data.fadeFrames;
+        domCanvas.img.target.opacity = 1 - data.fadeFrame / data.fadeFrames;
       }
 
       if (data.fadeFrame > data.fadeFrames) {
@@ -113,30 +112,30 @@ const Smoke = (options = {}) => {
           x: data.x,
           y: data.y,
           // fake it 'til you make it.
-          isOnScreen: true,
-          domCanvas: {
-            width: 1.75,
-            height: 1.75,
-            ctxName: 'radar',
-            draw: (ctx, obj, pos, width, height) => {
-              // special case: don't draw smoke from a cloaked helicopter (i.e., in a cloud.)
-              if (data.parentWasCloaked) return;
-              const left =
-                pos.left(
-                  (obj.data.x / worldWidth) *
-                    game.objects.view.data.browser.screenWidth
-                ) - width;
-              const top =
-                (data.y / game.objects.view.data.battleField.height) *
-                  game.objects.radar.data.height -
-                height;
-              if (data.domCanvas.img?.target?.opacity) {
-                ctx.fillStyle = `rgba(153, 153, 153, ${data.domCanvas.img?.target?.opacity}`;
-              } else {
-                ctx.fillStyle = '#999';
-              }
-              ctx.fillRect(left, top, width, height);
+          isOnScreen: true
+        },
+        domCanvas: {
+          width: 1.75,
+          height: 1.75,
+          ctxName: 'radar',
+          draw: (ctx, obj, pos, width, height) => {
+            // special case: don't draw smoke from a cloaked helicopter (i.e., in a cloud.)
+            if (data.parentWasCloaked) return;
+            const left =
+              pos.left(
+                (obj.data.x / worldWidth) *
+                  game.objects.view.data.browser.screenWidth
+              ) - width;
+            const top =
+              (data.y / game.objects.view.data.battleField.height) *
+                game.objects.radar.data.height -
+              height;
+            if (domCanvas.img?.target?.opacity) {
+              ctx.fillStyle = `rgba(153, 153, 153, ${domCanvas.img?.target?.opacity}`;
+            } else {
+              ctx.fillStyle = '#999';
             }
+            ctx.fillRect(left, top, width, height);
           }
         }
       });
@@ -194,7 +193,7 @@ const Smoke = (options = {}) => {
     return utils.image.getImageObject(`smoke_v${data.spriteFrame}.png`);
   }
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: refreshSprite(),
       source: {
@@ -244,6 +243,7 @@ const Smoke = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die
   };
 
