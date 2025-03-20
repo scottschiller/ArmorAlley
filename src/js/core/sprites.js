@@ -60,19 +60,21 @@ const sprites = {
     exports.data.x = x;
     exports.data.y = y;
 
+    let { domCanvas } = exports;
+
     // TODO: figure out how to refresh this efficiently.
-    if (exports.data.domCanvas?.img) {
-      if (exports.data.domCanvas?.img.forEach) {
-        exports.data.domCanvas?.img.forEach((imgObj) => {
+    if (domCanvas?.img) {
+      if (domCanvas?.img.forEach) {
+        domCanvas?.img.forEach((imgObj) => {
           if (imgObj.target) {
             imgObj.target.x = exports.data.x;
             imgObj.target.y = exports.data.y;
           }
         });
       }
-      if (exports.data.domCanvas?.img?.target) {
-        exports.data.domCanvas.img.target.x = exports.data.x;
-        exports.data.domCanvas.img.target.y = exports.data.y;
+      if (domCanvas?.img?.target) {
+        domCanvas.img.target.x = exports.data.x;
+        domCanvas.img.target.y = exports.data.y;
       }
     }
 
@@ -133,7 +135,10 @@ const sprites = {
     // hackish: if this lives on the canvas, handle that here.
     // we don't care about on/off-screen at this juncture, because logic may still need to run.
     // furthermore: don't draw if there is an animation defined, it will take care of itself.
-    if (exports?.data?.domCanvas && !exports.data.domCanvas.animation) {
+
+    let domCanvas = exports?.domCanvas;
+
+    if (domCanvas && !domCanvas.animation) {
       common.domCanvas.draw(exports);
     }
 
@@ -181,8 +186,9 @@ const sprites = {
     // TODO: review
     // a pooled node may have just been released; ignore if no `_style`.
     if (!o._style) {
-      if (!exports?.data?.domCanvas) {
+      if (!exports?.data?.domCanvas && !exports?.domCanvas) {
         console.warn('setTransformXY(): WTF no o._style?', o);
+        debugger;
       }
       return;
     }

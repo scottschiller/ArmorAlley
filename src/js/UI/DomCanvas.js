@@ -204,14 +204,17 @@ const DomCanvas = () => {
     };
 
     // adding to existing sprite(s) as an array, e.g., an explosion on top of a turret before it dies
-    if (options.overlay && data.domCanvas.img) {
-      if (Array.isArray(data.domCanvas.img)) {
-        data.domCanvas.img.push(newImg);
+
+    let { domCanvas } = exports;
+
+    if (options.overlay && domCanvas.img) {
+      if (Array.isArray(domCanvas.img)) {
+        domCanvas.img.push(newImg);
       } else {
-        data.domCanvas.img = [data.domCanvas.img, newImg];
+        domCanvas.img = [domCanvas.img, newImg];
       }
     } else {
-      data.domCanvas.img = newImg;
+      domCanvas.img = newImg;
     }
 
     // assign a reference to the new source (e.g., on a turret), whether replaced or added.
@@ -463,7 +466,7 @@ const DomCanvas = () => {
 
   function drawImage(ctx, exports, imgObject, drawOpacity = 1) {
     const { data } = exports;
-    const { domCanvas } = data;
+    const { domCanvas } = exports;
     const ss = game.objects.view.data.screenScale;
 
     const img = imgObject || domCanvas.img;
@@ -694,8 +697,7 @@ const DomCanvas = () => {
     // original object data
     const { data } = exports;
 
-    // canvas-specific bits
-    const oData = data.domCanvas;
+    const oData = exports.domCanvas;
 
     if (!oData) {
       console.warn('DomCanvas: no data?', oData);
@@ -715,7 +717,7 @@ const DomCanvas = () => {
 
     // determine target canvas by type - specified by object, type, or default.
     const ctx =
-      dom.ctx[data.domCanvas.ctxName] ||
+      dom.ctx[oData.ctxName] ||
       dom.ctx[ctxByType[data.type] || ctxByType.default];
 
     // shared logic for <canvas> elements
@@ -755,7 +757,7 @@ const DomCanvas = () => {
     if (!exports.data.isOnScreen) return;
 
     // special radar no-draw cases
-    if (data.type === 'radar-item' || data.domCanvas.ctxName === 'radar') {
+    if (data.type === 'radar-item' || oData.ctxName === 'radar') {
       // jammed
       if (game.objects.radar.data.isJammed) return;
 
@@ -771,7 +773,7 @@ const DomCanvas = () => {
       levelFlags.jamming &&
       !gamePrefs.radar_interference_blank &&
       game.data.started &&
-      (data.type === 'radar-item' || data.domCanvas.ctxName === 'radar') &&
+      (data.type === 'radar-item' || oData.ctxName === 'radar') &&
       oData.jammingOpacity === undefined
     ) {
       oData.jammingOpacity = 0.125 + rng(0.75, 'radar');
@@ -981,7 +983,7 @@ const DomCanvas = () => {
       left += exports.data.halfWidth + (exports.data.isEnemy ? 0 : 3);
       top -= outerRadius + 5;
       // special infantry offset case, accounting for moving back and forth while firing; also, yuck.
-      left += exports.data.domCanvas?.animation?.img?.target?.xOffset || 0;
+      left += exports.domCanvas?.animation?.img?.target?.xOffset || 0;
     } else if (exports.data.type === TYPES.turret) {
       left += exports.data.width - 1;
       top -= outerRadius + 4;
