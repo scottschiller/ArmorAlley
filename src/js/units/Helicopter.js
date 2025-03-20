@@ -70,6 +70,7 @@ const Helicopter = (options = {}) => {
   let css,
     data,
     dom,
+    domCanvas,
     events,
     exports,
     objects,
@@ -90,7 +91,7 @@ const Helicopter = (options = {}) => {
     data.cloaked = game.objects.gameLoop.data.frameCount;
 
     data.opacity = 0.33;
-    data.domCanvas.img.target.opacity = data.opacity;
+    domCanvas.img.target.opacity = data.opacity;
 
     // Tough times with turrets? “The answer, my friend, is blowing in the wind.” 🌬️🚁
     cloud?.drift(data.isEnemy);
@@ -158,7 +159,7 @@ const Helicopter = (options = {}) => {
 
     data.cloaked = false;
     data.opacity = 1;
-    data.domCanvas.img.target.opacity = data.opacity;
+    domCanvas.img.target.opacity = data.opacity;
     data.cloakedFrameStart = 0;
     data.wentIntoHiding = false;
     data.cloakedCommentary = false;
@@ -2371,7 +2372,7 @@ const Helicopter = (options = {}) => {
       net.sendMessage({ type: 'PING' });
     }
 
-    data.domCanvas.animation?.animate();
+    domCanvas.animation?.animate();
 
     if (data.respawning) {
       sprites.moveWithScrollOffset(exports);
@@ -3319,6 +3320,33 @@ const Helicopter = (options = {}) => {
     })()
   };
 
+  domCanvas = {
+    radarItem: null, // see below: Helicopter.radarItemConfig(exports)
+    img: {
+      src: null,
+      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
+      frameCount: 0,
+      animationFrame: 0,
+      animationFrameCount: 0,
+      isSequence: true,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: 0,
+        height: 0,
+        frameWidth: 0,
+        frameHeight: 0,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 0,
+        height: 0
+      }
+    }
+  };
+
   events = {
     resize() {
       refreshCoords();
@@ -3424,6 +3452,7 @@ const Helicopter = (options = {}) => {
     isFacingTarget,
     data,
     dom,
+    domCanvas,
     die,
     eject,
     events,
@@ -3450,6 +3479,8 @@ const Helicopter = (options = {}) => {
     updateLives,
     updateStatusUI
   };
+
+  domCanvas.radarItem = Helicopter.radarItemConfig({ data });
 
   if (options.isCPU) {
     data.ai = HelicopterAI({ exports });
@@ -3501,45 +3532,18 @@ const Helicopter = (options = {}) => {
     }
   };
 
-  data.domCanvas = {
-    radarItem: Helicopter.radarItemConfig(exports),
-    img: {
-      src: null,
-      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
-      frameCount: 0,
-      animationFrame: 0,
-      animationFrameCount: 0,
-      isSequence: true,
-      source: {
-        x: 0,
-        y: 0,
-        is2X: true,
-        width: 0,
-        height: 0,
-        frameWidth: 0,
-        frameHeight: 0,
-        frameX: 0,
-        frameY: 0
-      },
-      target: {
-        width: 0,
-        height: 0
-      }
-    }
-  };
-
   function swapSprite(newSprite = spriteConfig.default, options = {}) {
     const props = ['width', 'height', 'frameWidth', 'frameHeight'];
     props.forEach((prop) => {
-      data.domCanvas.img.source[prop] = newSprite[prop];
+      domCanvas.img.source[prop] = newSprite[prop];
     });
     // assign target width + height based on source frame width + height
-    data.domCanvas.img.target.width = newSprite.frameWidth;
-    data.domCanvas.img.target.height = newSprite.frameHeight;
+    domCanvas.img.target.width = newSprite.frameWidth;
+    domCanvas.img.target.height = newSprite.frameHeight;
     // animation?
     if (newSprite.animationConfig) {
       const { width, height, frameWidth, frameHeight } = newSprite;
-      data.domCanvas.animation = common.domCanvas.canvasAnimation(exports, {
+      domCanvas.animation = common.domCanvas.canvasAnimation(exports, {
         skipFrame: !!options.skipFrame,
         sprite: {
           width,
@@ -3729,44 +3733,44 @@ const Helicopter = (options = {}) => {
   return exports;
 };
 
-Helicopter.radarItemConfig = (exports) => ({
+Helicopter.radarItemConfig = ({ data }) => ({
   width: 2.5 * (isiPhone ? 1.33 : 1),
   height: 2.5 * (isiPhone ? 1.33 : 1),
   draw: (ctx, obj, pos, width, height) => {
     // don't draw other team's choppers if playing a battle with steath mode, and not in view
     if (
-      exports?.data?.cloaked ||
-      (exports.data.stealth &&
-        !exports.data.isOnScreen &&
-        exports.data.isEnemy !== game.players.local.data.isEnemy)
+      data?.cloaked ||
+      (data.stealth &&
+        !data.isOnScreen &&
+        data.isEnemy !== game.players.local.data.isEnemy)
     )
       return;
 
-    const isLocal = exports.data.id === game.players.local.data.id;
+    const isLocal = data.id === game.players.local.data.id;
 
-    const radarData = exports.data.radarItem?.data;
+    const radarData = data.radarItem?.data;
 
-    if (isLocal && radarData && exports.data.blinkCounter >= 0) {
+    if (isLocal && radarData && data.blinkCounter >= 0) {
       // local chopper blinks continuously
-      exports.data.blinkCounter++;
-      if (exports.data.blinkCounter === exports.data.blinkCounterHide) {
+      data.blinkCounter++;
+      if (data.blinkCounter === data.blinkCounterHide) {
         radarData.visible = !radarData.visible;
-      } else if (exports.data.blinkCounter >= exports.data.blinkCounterReset) {
+      } else if (data.blinkCounter >= data.blinkCounterReset) {
         radarData.visible = !radarData.visible;
-        exports.data.blinkCounter = 0;
+        data.blinkCounter = 0;
       }
     }
 
     // don't draw if not visible.
-    if (isLocal && !radarData.visible && !exports.data.respawning) return;
+    if (isLocal && !radarData.visible && !data.respawning) return;
 
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.heightNoStroke(height);
 
     // triangle depends on friendly / enemy + flip
-    let direction = exports.data.flipped ? 1 : -1;
+    let direction = data.flipped ? 1 : -1;
 
-    if (exports.data.isEnemy) {
+    if (data.isEnemy) {
       // reverse for the enemy chopper.
       direction *= -1;
     }
