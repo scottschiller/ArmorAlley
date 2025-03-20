@@ -26,7 +26,7 @@ const AimedMissile = (options = {}) => {
    * "Dumb" missile, armed with napalm.
    */
 
-  let dom, data, radarItem, objects, collision, launchSound, exports;
+  let dom, domCanvas, data, radarItem, objects, collision, launchSound, exports;
 
   function moveTrailers() {
     if (!data.isOnScreen) return;
@@ -70,7 +70,7 @@ const AimedMissile = (options = {}) => {
     // close enough to the ground to generate a napalm trail?
     if (data.y >= worldHeight - 15) {
       // stop drawing the missile sprite altogether
-      data.domCanvas.img = null;
+      domCanvas.img = null;
 
       const napalmParams = getNapalmParams();
 
@@ -119,7 +119,7 @@ const AimedMissile = (options = {}) => {
   }
 
   function spark() {
-    data.domCanvas.img = effects.spark();
+    domCanvas.img = effects.spark();
   }
 
   function sparkAndDie(target) {
@@ -201,7 +201,7 @@ const AimedMissile = (options = {}) => {
   function animate() {
     let deltaX, deltaY, newX, newY, newTarget, targetData, targetHalfWidth;
 
-    data.domCanvas.animation?.animate();
+    domCanvas.animation?.animate();
 
     // notify caller if now dead and can be removed.
     if (data.dead) {
@@ -346,7 +346,7 @@ const AimedMissile = (options = {}) => {
 
   const { scale, spriteWidth, spriteHeight } = spriteConfig;
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: !game.objects.editor
         ? utils.image.getImageObject(
@@ -399,6 +399,7 @@ const AimedMissile = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initAimedMissile,
     radarItem,
