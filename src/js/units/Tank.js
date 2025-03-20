@@ -27,7 +27,21 @@ import { net } from '../core/network.js';
 import { levelConfig } from '../levels/default.js';
 
 const Tank = (options = {}) => {
-  let css, data, dom, radarItem, nearby, friendlyNearby, exports, tankHeight;
+  let css,
+    data,
+    dom,
+    domCanvas,
+    radarItem,
+    nearby,
+    friendlyNearby,
+    exports,
+    tankHeight;
+
+  const spriteWidth = 116;
+  const spriteHeight = 114;
+
+  const frameWidth = spriteWidth;
+  const frameHeight = spriteHeight / 3;
 
   function fire() {
     let collisionItems;
@@ -155,8 +169,8 @@ const Tank = (options = {}) => {
     if (!dieOptions.silent) {
       playSound(sounds.genericExplosion, exports);
 
-      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
-      data.domCanvas.img = null;
+      domCanvas.dieExplosion = effects.genericExplosion(exports);
+      domCanvas.img = null;
 
       effects.damageExplosion(exports);
 
@@ -296,34 +310,30 @@ const Tank = (options = {}) => {
     // exit early if dead
     if (data.dead) {
       sprites.moveWithScrollOffset(exports);
-      data.domCanvas.dieExplosion?.animate?.();
+      domCanvas.dieExplosion?.animate?.();
 
       return !data.deadTimer && !dom.o;
     }
 
-    if (!data.stopped && data.domCanvas?.img) {
+    if (!data.stopped && domCanvas?.img) {
       // animate tank treads
       if (
-        data.domCanvas.img.frameCount > 0 &&
-        data.domCanvas.img.frameCount % data.domCanvas.img.animationModulus ===
-          0
+        domCanvas.img.frameCount > 0 &&
+        domCanvas.img.frameCount % domCanvas.img.animationModulus === 0
       ) {
         // advance frame
-        data.domCanvas.img.animationFrame++;
+        domCanvas.img.animationFrame++;
         refreshSprite();
-        if (
-          data.domCanvas.img.animationFrame >=
-          data.domCanvas.img.animationFrameCount
-        ) {
+        if (domCanvas.img.animationFrame >= domCanvas.img.animationFrameCount) {
           // loop / repeat animation
-          data.domCanvas.img.animationFrame = 0;
+          domCanvas.img.animationFrame = 0;
           refreshSprite();
         } else {
           // keep on truckin'.
-          data.domCanvas.img.frameCount++;
+          domCanvas.img.frameCount++;
         }
       } else {
-        data.domCanvas.img.frameCount++;
+        domCanvas.img.frameCount++;
       }
     }
 
@@ -446,37 +456,7 @@ const Tank = (options = {}) => {
     o: null
   };
 
-  exports = {
-    animate,
-    data,
-    dom,
-    die,
-    init: initDOM,
-    radarItem,
-    refreshSprite,
-    resume,
-    stop,
-    updateHealth
-  };
-
-  const spriteWidth = 116;
-  const spriteHeight = 114;
-
-  const frameWidth = spriteWidth;
-  const frameHeight = spriteHeight / 3;
-
-  function refreshSprite() {
-    const offset = data.domCanvas.img.animationFrame || 0;
-    if (offset >= 3) {
-      // hack: don't draw a blank / empty last frame, just keep existing sprite.
-      return;
-    }
-    data.domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? `tank-enemy_${offset}.png` : `tank_${offset}.png`
-    );
-  }
-
-  data.domCanvas = {
+  domCanvas = {
     radarItem: Tank.radarItemConfig(),
     img: {
       src: null,
@@ -503,6 +483,31 @@ const Tank = (options = {}) => {
       }
     }
   };
+
+  exports = {
+    animate,
+    data,
+    dom,
+    domCanvas,
+    die,
+    init: initDOM,
+    radarItem,
+    refreshSprite,
+    resume,
+    stop,
+    updateHealth
+  };
+
+  function refreshSprite() {
+    const offset = domCanvas.img.animationFrame || 0;
+    if (offset >= 3) {
+      // hack: don't draw a blank / empty last frame, just keep existing sprite.
+      return;
+    }
+    domCanvas.img.src = utils.image.getImageObject(
+      data.isEnemy ? `tank-enemy_${offset}.png` : `tank_${offset}.png`
+    );
+  }
 
   refreshSprite();
 
