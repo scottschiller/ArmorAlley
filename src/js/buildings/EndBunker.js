@@ -25,7 +25,7 @@ slashPattern.src =
 let pattern;
 
 const EndBunker = (options = {}) => {
-  let css, dom, data, exports, height, nearby, objects, radarItem;
+  let css, dom, domCanvas, data, exports, height, nearby, objects, radarItem;
 
   function setFiring(state) {
     if (state && data.energy) {
@@ -318,8 +318,8 @@ const EndBunker = (options = {}) => {
   }
 
   function applySpriteURL() {
-    if (!data.domCanvas.img) return;
-    data.domCanvas.img.src = utils.image.getImageObject(getSpriteURL());
+    if (!domCanvas.img) return;
+    domCanvas.img.src = utils.image.getImageObject(getSpriteURL());
   }
 
   function initEndBunker() {
@@ -352,7 +352,7 @@ const EndBunker = (options = {}) => {
       }
     };
 
-    data.domCanvas.img = spriteConfig;
+    domCanvas.img = spriteConfig;
 
     // this will set x + y for domCanvas
     sprites.moveTo(exports, data.x, data.y);
@@ -434,10 +434,15 @@ const EndBunker = (options = {}) => {
     rightHelicopter: null
   };
 
+  domCanvas = {
+    radarItem: EndBunker.radarItemConfig()
+  };
+
   exports = {
     animate,
     data,
     dom,
+    domCanvas,
     hit,
     init: initEndBunker,
     onNeutralHiddenChange,
@@ -512,10 +517,6 @@ const EndBunker = (options = {}) => {
       exports
     }),
     targets: []
-  };
-
-  data.domCanvas = {
-    radarItem: EndBunker.radarItemConfig()
   };
 
   return exports;
