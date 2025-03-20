@@ -39,6 +39,7 @@ const Turret = (options = {}) => {
   let css,
     data,
     dom,
+    domCanvas,
     objects,
     height,
     radarItem,
@@ -61,12 +62,7 @@ const Turret = (options = {}) => {
     // don't fire at things while in the editor. :P
     if (game.objects.editor) return;
 
-    let deltaX,
-      deltaY,
-      angle,
-      otherTargets,
-      target,
-      moveOK;
+    let deltaX, deltaY, angle, otherTargets, target, moveOK;
 
     if (!data.targetGroundUnits) {
       target = enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode);
@@ -235,7 +231,7 @@ const Turret = (options = {}) => {
 
     if (!dieOptions.silent) {
       updateDomCanvas({ dead: true });
-      data.domCanvas.dieExplosion = effects.genericExplosion(exports);
+      domCanvas.dieExplosion = effects.genericExplosion(exports);
     }
 
     // special case: when turret is initially rendered as dead, don't explode etc.
@@ -279,7 +275,7 @@ const Turret = (options = {}) => {
       }
 
       common.setFrameTimeout(() => {
-        data.domCanvas.dieExplosion = null;
+        domCanvas.dieExplosion = null;
       }, 1500);
 
       effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
@@ -613,7 +609,7 @@ const Turret = (options = {}) => {
     if (!data.dead) {
       fire();
     } else {
-      data.domCanvas.dieExplosion?.animate?.();
+      domCanvas.dieExplosion?.animate?.();
     }
 
     if (!data.dead && data.energy > 0) {
@@ -702,7 +698,7 @@ const Turret = (options = {}) => {
   }
 
   function updateDomCanvas(state) {
-    data.domCanvas.img = state.dead ? turretDead : [turretBase, turretGun];
+    domCanvas.img = state.dead ? turretDead : [turretBase, turretGun];
   }
 
   function initDOM() {
@@ -864,27 +860,6 @@ const Turret = (options = {}) => {
     oSubSprite: null
   };
 
-  objects = {
-    cornholio: null
-  };
-
-  exports = {
-    animate,
-    data,
-    destroy,
-    die,
-    dom,
-    engineerCanInteract,
-    engineerHit,
-    init: initTurret,
-    objects,
-    radarItem,
-    refreshCollisionItems,
-    resize,
-    repair,
-    updateHealth
-  };
-
   const src = 'turret-sprite.png';
 
   const spriteWidth = 36;
@@ -961,23 +936,46 @@ const Turret = (options = {}) => {
     }
   };
 
-  data.domCanvas = {
+  domCanvas = {
     img: [turretBase, turretGun],
-    radarItem: Turret.radarItemConfig(exports)
+    radarItem: Turret.radarItemConfig({ data })
+  };
+
+  objects = {
+    cornholio: null
+  };
+
+  exports = {
+    animate,
+    data,
+    destroy,
+    die,
+    dom,
+    // hackish: see below.
+    domCanvas,
+    engineerCanInteract,
+    engineerHit,
+    init: initTurret,
+    objects,
+    radarItem,
+    refreshCollisionItems,
+    resize,
+    repair,
+    updateHealth
   };
 
   return exports;
 };
 
-Turret.radarItemConfig = (exports) => ({
+Turret.radarItemConfig = ({ data }) => ({
   width: 1.5,
   height: 2.25,
   draw: (ctx, obj, pos, width, height) => {
-    ctx.fillStyle = exports?.data?.dead
-      ? exports?.data?.isEnemy
+    ctx.fillStyle = data?.dead
+      ? data?.isEnemy
         ? ENEMY_UNIT_COLOR_RGBA
         : 'rgba(23, 160, 7, 0.25)'
-      : exports?.data?.isEnemy
+      : data?.isEnemy
         ? ENEMY_UNIT_COLOR
         : '#17a007';
 
@@ -1006,7 +1004,7 @@ Turret.radarItemConfig = (exports) => ({
 
     common.domCanvas.rotate(
       ctx,
-      exports.data.angle,
+      data.angle,
       left + barrelWidth / 2,
       pos.bottomAlign(height),
       barrelWidth / 2,
