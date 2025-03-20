@@ -21,8 +21,11 @@ import { effects } from '../core/effects.js';
 import { aaLoader } from '../core/aa-loader.js';
 
 const Bomb = (options = {}) => {
+  let exports = {
+    options
+  };
 
-  data = common.inheritData(
+  exports.data = common.inheritData(
     {
       type: 'bomb',
       parent: options.parent || null,
@@ -60,11 +63,12 @@ const Bomb = (options = {}) => {
     options
   );
 
-  data.domCanvas = {
+  exports.domCanvas = {
     radarItem: {
       width: 1.25,
       height: 2.5,
       draw: (ctx, obj, pos, width, height) => {
+        let { data } = exports;
         if (data.isEnemy) {
           ctx.fillStyle = '#cc0000';
         }
@@ -94,19 +98,11 @@ const Bomb = (options = {}) => {
     }
   };
 
-  dom = {
+  exports.dom = {
     o: null
   };
 
-  exports = {
-    animate,
-    data,
-    die,
-    dom,
-    init: initBomb
-  };
-
-  collision = {
+  exports.collision = {
     options: {
       source: exports,
       targets: undefined,
@@ -121,7 +117,7 @@ const Bomb = (options = {}) => {
           }
           return;
         }
-        bombHitTarget(target);
+        bombHitTarget(exports, target);
       }
     },
     // note: "all" parachutes + infantry + engineers can be hit, but friendly collisions happen only when `data.hostile` is true.
@@ -135,29 +131,14 @@ const Bomb = (options = {}) => {
     )
   };
 
-  const spriteConfig = (() => {
-    const spriteWidth = 26;
-    const spriteHeight = 10;
-    return {
-      src: utils.image.getImageObject('bomb.png'),
-      source: {
-        x: 0,
-        y: 0,
-        width: spriteWidth,
-        height: spriteHeight,
-        is2X: true,
-        frameWidth: spriteWidth,
-        frameHeight: spriteHeight,
-        frameX: 0,
-        frameY: 0
-      },
-      target: {
-        width: spriteWidth / 2,
-        height: spriteHeight / 2,
-        useDataAngle: true
-      }
-    };
-  })();
+  Object.assign(exports, {
+    die: (dieOptions = {}) => die(exports, dieOptions),
+    bombHitTarget: (target) => bombHitTarget(exports, target),
+    animate: () => animate(exports),
+    initBomb: () => initBomb(exports)
+  });
+
+  exports.initBomb();
 
   return exports;
 };
