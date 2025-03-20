@@ -249,7 +249,7 @@ const Chain = (options = {}) => {
     options
   );
 
-  data.domCanvas = {
+  let domCanvas = {
     draw: (ctx, obj, pos, width, height) => {
       if (!pattern) {
         pattern = ctx.createPattern(
@@ -297,6 +297,7 @@ const Chain = (options = {}) => {
     data,
     detachFromBunker,
     dom,
+    domCanvas,
     die,
     init: initChain,
     isJerking,
