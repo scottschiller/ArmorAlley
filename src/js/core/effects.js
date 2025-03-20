@@ -418,20 +418,20 @@ const effects = {
       height: exports.data.height,
       bottomAligned: exports.data.bottomAligned,
       alwaysDraw: true,
-      isOnScreen: exports.data.isOnScreen,
+      isOnScreen: exports.data.isOnScreen
+    };
+
+    const localExports = {
+      data,
       domCanvas: {
         explosion: null,
         img: null
       }
     };
 
-    const localExports = {
-      data
-    };
-
     const explosion = canvasExplosion(localExports);
 
-    data.domCanvas.explosion = explosion;
+    localExports.domCanvas.explosion = explosion;
 
     // center based on explosion width
     // note: sprites are 2x, so half the frame width is used for centering.
