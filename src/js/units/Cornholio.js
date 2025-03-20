@@ -5,7 +5,7 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
 const Cornholio = (options = {}) => {
-  let css, data, dom, exports, height;
+  let css, data, dom, domCanvas, exports, height;
 
   function setVisible(visible) {
     if (data.visible === visible) return;
@@ -26,9 +26,9 @@ const Cornholio = (options = {}) => {
     data.speaking = speaking;
 
     if (speaking) {
-      data.domCanvas.img.source.frameX = 1 + rndInt(2);
+      domCanvas.img.source.frameX = 1 + rndInt(2);
     } else {
-      data.domCanvas.img.source.frameX = 0;
+      domCanvas.img.source.frameX = 0;
     }
 
     if (data.speaking) {
@@ -81,7 +81,7 @@ const Cornholio = (options = {}) => {
   const frameWidth = spriteWidth / 3;
   const frameHeight = spriteHeight;
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: !game.objects.editor
         ? utils.image.getImageObject('bnb/beavis-cornholio.png')
@@ -112,6 +112,7 @@ const Cornholio = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     hide: () => setVisible(false),
     init: initDOM,
     show: () => setVisible(true),
