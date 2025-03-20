@@ -720,7 +720,7 @@ const Editor = () => {
 
     // ugly hack for terrain items, not quite right. TODO: isolate and fix.
     if (gameObj.data.isTerrainItem) {
-      gameObj.data.domCanvas.img.target.yOffset = (gameObj.data.height * 3) / 4;
+      gameObj.domCanvas.img.target.yOffset = (gameObj.data.height * 3) / 4;
     }
 
     sprites.moveTo(gameObj, gameObj.data.x, gameObj.data.y);
