@@ -15,12 +15,12 @@ import {
   worldHeight
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
-import { Smoke } from './Smoke.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 
 const Shrapnel = (options = {}) => {
   let dom,
+    domCanvas,
     data,
     collision,
     radarItem,
@@ -44,9 +44,9 @@ const Shrapnel = (options = {}) => {
 
     data.relativeScale = relativeScale;
 
-    data.domCanvas.img.target.scale = data.relativeScale;
+    domCanvas.img.target.scale = data.relativeScale;
 
-    data.domCanvas.img.target.angle = data.spinAngle;
+    domCanvas.img.target.angle = data.spinAngle;
 
     sprites.moveTo(exports, x, y);
   }
@@ -215,8 +215,7 @@ const Shrapnel = (options = {}) => {
       data.fadeFrame += GAME_SPEED_RATIOED;
 
       if (data.fadeFrame < data.fadeFrames) {
-        data.domCanvas.img.target.opacity =
-          1 - data.fadeFrame / data.fadeFrames;
+        domCanvas.img.target.opacity = 1 - data.fadeFrame / data.fadeFrames;
       }
 
       if (data.fadeFrame > data.fadeFrames) {
@@ -341,7 +340,7 @@ const Shrapnel = (options = {}) => {
     options
   );
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: utils.image.getImageObject(`shrapnel_v${data.spriteType}.png`),
       source: {
@@ -392,6 +391,7 @@ const Shrapnel = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initShrapnel
   };
