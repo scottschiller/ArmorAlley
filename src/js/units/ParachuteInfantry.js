@@ -18,13 +18,13 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
 const ParachuteInfantry = (options = {}) => {
-  let dom, data, radarItem, exports;
+  let dom, data, domCanvas, radarItem, exports;
 
   function openParachute() {
     if (data.parachuteOpen) return;
 
     // undo manual assignment from free-fall animation
-    data.domCanvas.img.source.frameX = 0;
+    domCanvas.img.source.frameX = 0;
 
     // update model with open height
     data.height = 19;
@@ -44,7 +44,7 @@ const ParachuteInfantry = (options = {}) => {
   function die(dieOptions = {}) {
     if (data.dead) return;
 
-    data.domCanvas.img = null;
+    domCanvas.img = null;
 
     if (!dieOptions?.silent) {
       effects.inertGunfireExplosion({ exports });
@@ -105,7 +105,7 @@ const ParachuteInfantry = (options = {}) => {
         // like Tom Petty, free fallin'.
         // alternate between 0/1
         data.panicFrame = !data.panicFrame;
-        data.domCanvas.img.source.frameX = 3 + data.panicFrame;
+        domCanvas.img.source.frameX = 3 + data.panicFrame;
         // recycle
         data.frameCount = 0;
       }
@@ -142,7 +142,7 @@ const ParachuteInfantry = (options = {}) => {
             bgX = 0;
           }
 
-          data.domCanvas.img.source.frameX = bgX;
+          domCanvas.img.source.frameX = bgX;
           // choose a new wind modulus, too.
           data.windModulus = 64 + rngInt(64, data.type);
         } else {
@@ -150,7 +150,7 @@ const ParachuteInfantry = (options = {}) => {
 
           data.vX = 0;
 
-          data.domCanvas.img.source.frameX = 0;
+          domCanvas.img.source.frameX = 0;
         }
       }
     }
@@ -330,7 +330,7 @@ const ParachuteInfantry = (options = {}) => {
   const frameWidth = spriteWidth / 5;
   const frameHeight = spriteHeight;
 
-  data.domCanvas = {
+  domCanvas = {
     img: {
       src: utils.image.getImageObject(getSpriteURL()),
       source: {
@@ -361,14 +361,10 @@ const ParachuteInfantry = (options = {}) => {
       },
       draw: (ctx, obj, pos, width, height) => {
         const scaledWidth = pos.width(
-          data.parachuteOpen
-            ? data.domCanvas.radarItem.parachuteOpen.width
-            : width
+          data.parachuteOpen ? domCanvas.radarItem.parachuteOpen.width : width
         );
         const scaledHeight = pos.heightNoStroke(
-          data.parachuteOpen
-            ? data.domCanvas.radarItem.parachuteOpen.height
-            : height
+          data.parachuteOpen ? domCanvas.radarItem.parachuteOpen.height : height
         );
         const left = pos.left(obj.data.left) - scaledWidth / 2;
         const top = obj.data.top - scaledHeight / 2;
@@ -391,6 +387,7 @@ const ParachuteInfantry = (options = {}) => {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     hit,
     init: initParachuteInfantry,
