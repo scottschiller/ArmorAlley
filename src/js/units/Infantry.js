@@ -18,8 +18,9 @@ import { net } from '../core/network.js';
 
 const Infantry = (options = {}) => {
   let css,
-    dom,
     data,
+    dom,
+    domCanvas,
     defaultLookAhead,
     defaultItems,
     width,
@@ -40,7 +41,7 @@ const Infantry = (options = {}) => {
 
     // hackish: ensure that animation is set.
     // this may be stuck if an engineer stops to repair a turret, but then is trying to fire at something else? :X
-    if (!data.domCanvas.animation) {
+    if (!domCanvas.animation) {
       resume();
     }
 
@@ -48,7 +49,7 @@ const Infantry = (options = {}) => {
     const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
 
     // apply offset to the canvas-based animation
-    data.domCanvas.animation.img.target.xOffset = offset;
+    domCanvas.animation.img.target.xOffset = offset;
 
     data.vxFrameTick += GAME_SPEED_RATIOED;
 
@@ -105,7 +106,7 @@ const Infantry = (options = {}) => {
     data.flipX = !!isFlipped;
     // swap flipped / non-flipped sprites, when not BnB + engineers
     if (!data.role || !gamePrefs.bnb) {
-      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+      domCanvas?.animation?.updateSprite(getInfantryEngURL());
     }
   }
 
@@ -118,7 +119,7 @@ const Infantry = (options = {}) => {
     if (data.role) {
       getSpriteURL();
     } else {
-      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+      domCanvas?.animation?.updateSprite(getInfantryEngURL());
     }
 
     // engineers always stop, e.g., to repair and/or capture turrets.
@@ -138,7 +139,7 @@ const Infantry = (options = {}) => {
     if (data.role) {
       getSpriteURL();
     } else {
-      data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+      domCanvas?.animation?.updateSprite(getInfantryEngURL());
     }
   }
 
@@ -262,7 +263,7 @@ const Infantry = (options = {}) => {
 
     // infantry are "always" walking, even when "stopped" (in which case they're firing.)
     // engineers fully stop to claim and/or repair bunkers.
-    data.domCanvas?.animation?.animate?.();
+    domCanvas?.animation?.animate?.();
 
     if (!data.stopped) {
       if (data.roles[data.role] === TYPES.infantry) {
@@ -336,7 +337,7 @@ const Infantry = (options = {}) => {
 
     refreshHeight();
 
-    // note: data.domCanvas must exist before this call, because it causes modifications. :X
+    // note: domCanvas must exist before this call, because it causes modifications. :X
     // we also need to know the role, before doing canvas stuff here.
     getSpriteURL();
 
@@ -456,10 +457,16 @@ const Infantry = (options = {}) => {
     o: null
   };
 
+  domCanvas = {
+    radarItem: Infantry.radarItemConfig(),
+    animation: null
+  };
+
   exports = {
     animate,
     data,
     dom,
+    domCanvas,
     die,
     init: initInfantry,
     moveTo,
@@ -471,7 +478,7 @@ const Infantry = (options = {}) => {
         // possible BnB case
         getSpriteURL();
       } else {
-        data.domCanvas?.animation?.updateSprite(getInfantryEngURL());
+        domCanvas?.animation?.updateSprite(getInfantryEngURL());
       }
     },
     resume,
@@ -504,7 +511,7 @@ const Infantry = (options = {}) => {
       game.players.local.data.isEnemy === data.isEnemy
     ) {
       if (data.isBeavis) {
-        data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        domCanvas.animation = common.domCanvas.canvasAnimation(
           exports,
           data.stopped ? beavisHeadbanging : beavisWalking
         );
@@ -513,7 +520,7 @@ const Infantry = (options = {}) => {
           : 'bnb/beavis-walking.png';
       }
       if (data.isButthead) {
-        data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        domCanvas.animation = common.domCanvas.canvasAnimation(
           exports,
           data.stopped ? buttheadHeadbanging : buttheadWalking
         );
@@ -525,18 +532,18 @@ const Infantry = (options = {}) => {
       if (data.stopped) {
         // hack: reset to proper frame.
         // "freeze" animation, stop at "feet planted" frame for both types.
-        if (data.domCanvas.animation) {
-          data.domCanvas.animation.img.source.frameX = data.isEnemy ? 0 : 2;
-          data.domCanvas.animation.stop();
+        if (domCanvas.animation) {
+          domCanvas.animation.img.source.frameX = data.isEnemy ? 0 : 2;
+          domCanvas.animation.stop();
         }
       } else {
-        if (!data.domCanvas.animation) {
-          data.domCanvas.animation = common.domCanvas.canvasAnimation(
+        if (!domCanvas.animation) {
+          domCanvas.animation = common.domCanvas.canvasAnimation(
             exports,
             animConfig
           );
         } else {
-          data.domCanvas.animation?.resume();
+          domCanvas.animation?.resume();
         }
       }
     }
@@ -594,11 +601,6 @@ const Infantry = (options = {}) => {
       horizontal: true,
       loop: true
     }
-  };
-
-  data.domCanvas = {
-    radarItem: Infantry.radarItemConfig(),
-    animation: null
   };
 
   const animConfig = {
