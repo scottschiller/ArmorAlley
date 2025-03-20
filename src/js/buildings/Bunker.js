@@ -19,7 +19,7 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
 const Bunker = (options = {}) => {
-  let css, data, dom, objects, radarItem, exports;
+  let css, data, dom, domCanvas, objects, radarItem, exports;
 
   function createBalloon() {
     if (!objects.balloon) {
@@ -258,7 +258,7 @@ const Bunker = (options = {}) => {
     })();
 
     // replace the base sprite
-    data.domCanvas.animation = common.domCanvas.canvasAnimation(
+    domCanvas.animation = common.domCanvas.canvasAnimation(
       exports,
       burningConfig
     );
@@ -291,7 +291,7 @@ const Bunker = (options = {}) => {
     })();
 
     // add the nuke overlay
-    data.domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
+    domCanvas.nukeAnimation = common.domCanvas.canvasAnimation(
       exports,
       nukeConfig
     );
@@ -309,9 +309,9 @@ const Bunker = (options = {}) => {
         data.burninating = false;
 
         // stop animations
-        data.domCanvas.animation = null;
-        data.domCanvas.nukeAnimation = null;
-        data.shadowBlur = 0;
+        domCanvas.animation = null;
+        domCanvas.nukeAnimation = null;
+        exports.shadowBlur = 0;
 
         // apply dead sprite
         applySpriteURL();
@@ -323,7 +323,7 @@ const Bunker = (options = {}) => {
 
         // TODO: sort out the offset issue
         deadConfig.target.yOffset = -8;
-        data.domCanvas.img = deadConfig;
+        domCanvas.img = deadConfig;
       }, burninatingTime);
     }, 1200);
 
@@ -359,8 +359,8 @@ const Bunker = (options = {}) => {
   }
 
   function animate() {
-    data.domCanvas?.animation?.animate();
-    data.domCanvas?.nukeAnimation?.animate();
+    domCanvas?.animation?.animate();
+    domCanvas?.nukeAnimation?.animate();
 
     sprites.moveWithScrollOffset(exports);
 
@@ -469,7 +469,7 @@ const Bunker = (options = {}) => {
     } else {
       dom.o = {};
     }
-    data.domCanvas.img = [spriteConfig, arrowConfig];
+    domCanvas.img = [spriteConfig, arrowConfig];
     sprites.moveTo(exports, data.x, data.y);
   }
 
@@ -558,6 +558,10 @@ const Bunker = (options = {}) => {
     helicopter: null
   };
 
+  domCanvas = {
+    radarItem: Bunker.radarItemConfig()
+  };
+
   exports = {
     animate,
     capture,
@@ -565,6 +569,7 @@ const Bunker = (options = {}) => {
     data,
     die,
     dom,
+    domCanvas,
     engineerHit,
     infantryHit,
     init: initBunker,
@@ -573,10 +578,6 @@ const Bunker = (options = {}) => {
     radarItem,
     repair,
     updateSprite: applySpriteURL
-  };
-
-  data.domCanvas = {
-    radarItem: Bunker.radarItemConfig()
   };
 
   const spriteConfig = (() => {
