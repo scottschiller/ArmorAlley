@@ -833,7 +833,7 @@ function previewLevel(levelName) {
 
       // render on canvas
       if (game.objectConstructors[TYPES.balloon]?.radarItemConfig) {
-        balloonExports.data.domCanvas = {
+        balloonExports.domCanvas = {
           radarItem: game.objectConstructors[TYPES.balloon]?.radarItemConfig({
             exports: balloonExports
           })
