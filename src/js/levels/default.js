@@ -757,8 +757,12 @@ function previewLevel(levelName) {
 
     // if present, render on canvas.
     if (game.objectConstructors[item[0]]?.radarItemConfig) {
-      exports.data.domCanvas = {
-        radarItem: game.objectConstructors[item[0]]?.radarItemConfig(exports)
+      exports.domCanvas = {
+        radarItem: game.objectConstructors[item[0]]?.radarItemConfig({
+          // provide both common sources
+          data: exports.data,
+          exports
+        })
       };
     }
 
@@ -830,10 +834,9 @@ function previewLevel(levelName) {
       // render on canvas
       if (game.objectConstructors[TYPES.balloon]?.radarItemConfig) {
         balloonExports.data.domCanvas = {
-          radarItem:
-            game.objectConstructors[TYPES.balloon]?.radarItemConfig(
-              balloonExports
-            )
+          radarItem: game.objectConstructors[TYPES.balloon]?.radarItemConfig({
+            exports: balloonExports
+          })
         };
       }
 
