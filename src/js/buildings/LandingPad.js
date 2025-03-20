@@ -5,10 +5,10 @@ import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
 
 const LandingPad = (options = {}) => {
-  let css, dom, data, collision, exports;
+  let css, dom, domCanvas, data, collision, exports;
 
   function animate() {
-    data.domCanvas?.animation?.animate();
+    domCanvas?.animation?.animate();
 
     sprites.moveWithScrollOffset(exports);
 
@@ -61,10 +61,7 @@ const LandingPad = (options = {}) => {
       };
     })();
 
-    data.domCanvas.animation = common.domCanvas.canvasAnimation(
-      exports,
-      animConfig
-    );
+    domCanvas.animation = common.domCanvas.canvasAnimation(exports, animConfig);
 
     sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
@@ -130,16 +127,17 @@ const LandingPad = (options = {}) => {
     o: null
   };
 
+  domCanvas = {
+    radarItem: LandingPad.radarItemConfig({ data })
+  };
+
   exports = {
     animate,
     data,
     dom,
+    domCanvas,
     init: initLandingPad,
     isOnScreenChange
-  };
-
-  data.domCanvas = {
-    radarItem: LandingPad.radarItemConfig(exports)
   };
 
   collision = {
@@ -173,12 +171,12 @@ const LandingPad = (options = {}) => {
   return exports;
 };
 
-LandingPad.radarItemConfig = (exports) => ({
+LandingPad.radarItemConfig = ({ data }) => ({
   width: 5.5,
   height: 0.75,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    if (exports.data.isObscured) return;
+    if (data.isObscured) return;
     ctx.fillStyle = '#aaa';
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
@@ -187,9 +185,9 @@ LandingPad.radarItemConfig = (exports) => ({
     const cornerHeightOffset = pos.bottomAlign(height) - cornerHeight;
 
     // alternate light colors
-    exports.data.lightFrameCount++;
-    if (exports.data.lightFrameCount % exports.data.lightFrameInterval === 0) {
-      exports.data.lightFrameColors.reverse();
+    data.lightFrameCount++;
+    if (data.lightFrameCount % data.lightFrameInterval === 0) {
+      data.lightFrameColors.reverse();
     }
 
     ctx.fillRect(
@@ -200,7 +198,7 @@ LandingPad.radarItemConfig = (exports) => ({
     );
 
     // left-side light
-    ctx.fillStyle = exports.data.lightFrameColors?.[0] || '#aaa';
+    ctx.fillStyle = data.lightFrameColors?.[0] || '#aaa';
     ctx.fillRect(
       pos.left(obj.data.left),
       cornerHeightOffset,
@@ -209,7 +207,7 @@ LandingPad.radarItemConfig = (exports) => ({
     );
 
     // right-side light
-    ctx.fillStyle = exports.data.lightFrameColors?.[1] || '#aaa';
+    ctx.fillStyle = data.lightFrameColors?.[1] || '#aaa';
     ctx.fillRect(
       pos.left(obj.data.left) + scaledWidth - cornerWidth,
       cornerHeightOffset,
