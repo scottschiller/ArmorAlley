@@ -30,7 +30,7 @@ slashPattern.src =
 let pattern;
 
 const SuperBunker = (options = {}) => {
-  let css, dom, data, width, height, nearby, radarItem, exports;
+  let css, dom, domCanvas, data, width, height, nearby, radarItem, exports;
 
   const FIRE_MODULUS = 6;
 
@@ -276,7 +276,7 @@ const SuperBunker = (options = {}) => {
 
   function onArrowHiddenChange(isVisible) {
     // update domCanvas config
-    data.domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
+    domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
   }
 
   function initDOM() {
@@ -289,7 +289,7 @@ const SuperBunker = (options = {}) => {
       dom.o = {};
     }
 
-    data.domCanvas.img = gamePrefs.super_bunker_arrows
+    domCanvas.img = gamePrefs.super_bunker_arrows
       ? [spriteConfig, arrowConfig]
       : spriteConfig;
 
@@ -386,6 +386,10 @@ const SuperBunker = (options = {}) => {
     o: null
   };
 
+  domCanvas = {
+    radarItem: SuperBunker.radarItemConfig({ data })
+  };
+
   exports = {
     animate,
     capture,
@@ -393,6 +397,7 @@ const SuperBunker = (options = {}) => {
     destroy,
     die,
     dom,
+    domCanvas,
     hit,
     init: initSuperBunker,
     onArrowHiddenChange,
@@ -439,10 +444,6 @@ const SuperBunker = (options = {}) => {
       yOffset: -11,
       angle: data.isEnemy ? 180 : data.isHostile ? -90 : 0
     }
-  };
-
-  data.domCanvas = {
-    radarItem: SuperBunker.radarItemConfig(exports)
   };
 
   nearby = {
@@ -580,21 +581,19 @@ const SuperBunker = (options = {}) => {
   return exports;
 };
 
-SuperBunker.radarItemConfig = (exports) => ({
+SuperBunker.radarItemConfig = ({ data }) => ({
   width: 6.5,
   height: 3,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    if (exports?.data.hostile && gamePrefs.super_bunker_arrows) {
+    if (data?.hostile && gamePrefs.super_bunker_arrows) {
       if (!pattern) {
         pattern = ctx.createPattern(slashPattern, 'repeat');
       }
       ctx.fillStyle = pattern;
     } else {
       ctx.fillStyle =
-        exports?.data.hostile || exports?.data.isEnemy
-          ? ENEMY_COLOR
-          : '#17a007';
+        !data || data.hostile || data.isEnemy ? ENEMY_COLOR : '#17a007';
     }
 
     const left = pos.left(obj.data.left);
