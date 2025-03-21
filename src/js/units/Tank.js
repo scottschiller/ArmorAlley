@@ -44,365 +44,6 @@ const Tank = (options = {}) => {
 
   let css, data, dom, domCanvas, radarItem, nearby, friendlyNearby;
 
-  function fire() {
-    let collisionItems;
-
-    if (data.frameCount % data.fireModulus !== 0) return;
-
-    /**
-     * Special case: tanks don't stop to shoot bunkers, but allow gunfire to hit and damage bunkers
-     * ONLY IF the tank is targeting a helicopter (i.e., defense) or another tank.
-     *
-     * Otherwise, let bullets pass through bunkers and kill whatever "lesser" units the tank is firing at.
-     *
-     * This should be an improvement from the original game, where tanks could get "stuck" shooting into
-     * a bunker and eventually destroying it while trying to take out an infantry.
-     */
-
-    if (
-      data.lastNearbyTarget?.data?.type === TYPES.helicopter ||
-      data.lastNearbyTarget?.data?.type === TYPES.tank
-    ) {
-      // allow bullets to hit bunkers when firing at a helicopter or tank
-      collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
-    } else if (gamePrefs.tank_gunfire_miss_bunkers) {
-      // bullets "pass through" bunkers when targeting infantry, engineers, missile launchers, and vans.
-      collisionItems = nearby.items;
-    }
-
-    /**
-     * Is this target flamethrower-eligible?
-     * Super Bunkers and End Bunkers always get flames - infantry and engineers depend on level config.
-     */
-    if (
-      (data.lastNearbyTarget?.data &&
-        data.lastNearbyTarget.data.type.match(/super-bunker|end-bunker/i)) ||
-      (levelConfig.bFlameThrower &&
-        data.lastNearbyTarget.data.type.match(/infantry|engineer/i))
-    ) {
-      data.flame = game.addObject(TYPES.flame, {
-        parent: exports,
-        parentType: data.type,
-        isEnemy: data.isEnemy,
-        damagePoints: 2, // tanks fire at half-rate, so double damage.
-        collisionItems,
-        x: data.x + data.width * (data.isEnemy ? 0 : 1),
-        y: data.y - 2,
-        vX: 0,
-        vY: 0
-      });
-
-      return;
-    }
-
-    game.addObject(TYPES.gunfire, {
-      parent: exports,
-      parentType: data.type,
-      isEnemy: data.isEnemy,
-      damagePoints: 5,
-      collisionItems,
-      x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
-      // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry
-      y: data.y + data.halfHeight,
-      vX: data.vX * 2,
-      vY: 0
-    });
-
-    if (sounds.tankGunFire) {
-      playSound(sounds.tankGunFire, exports);
-    }
-  }
-
-  function moveTo(x, y) {
-    data.x = x;
-    data.y = y;
-
-    zones.refreshZone(exports);
-
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-  }
-
-  function updateHealth() {
-    sprites.updateEnergy(exports);
-  }
-
-  function repair() {
-    if (data.frameCount % (data.repairModulus / 15) === 0) {
-      if (data.energy < data.energyMax) {
-        data.lastEnergy = parseFloat(data.energy);
-        data.energy += 1.5 / 15;
-        updateHealth();
-      }
-    }
-  }
-
-  function isAttackerValid() {
-    // special die() case: check if attacker is still alive, and on-screen.
-    const attacker = data?.attacker?.data;
-
-    // attacker may be not only dead, but nulled out; if so, ignore.
-    if (!attacker) return;
-
-    // normalize object to check: gunfire -> tank (for example), vs. helicopter crashing into a tank
-    const actor = attacker.parentType ? attacker.parent.data : attacker.data;
-
-    // just in case
-    if (!actor) return;
-
-    // enemy (tank/helicopter etc.) directly killed your tank, and is dead or off-screen.
-    if (actor.dead || !actor.isOnScreen) return;
-
-    return true;
-  }
-
-  function die(dieOptions = {}) {
-    if (data.dead) return;
-
-    data.dead = true;
-
-    const attackerType = data?.attacker?.data.type;
-
-    if (!dieOptions.silent) {
-      playSound(sounds.genericExplosion, exports);
-
-      domCanvas.dieExplosion = effects.genericExplosion(exports);
-      domCanvas.img = null;
-
-      effects.damageExplosion(exports);
-
-      effects.shrapnelExplosion(data, {
-        velocity: 4 + rngInt(4, TYPES.shrapnel)
-      });
-
-      effects.inertGunfireExplosion({ exports });
-
-      effects.domFetti(exports, dieOptions.attacker);
-
-      effects.smokeRing(exports, { isGroundUnit: true });
-
-      data.deadTimer = common.setFrameTimeout(() => {
-        sprites.removeNodesAndUnlink(exports);
-        data.deadTimer = null;
-      }, 1500);
-
-      // special case: you destroyed a tank, and didn't crash into one.
-      if (gamePrefs.bnb && data.isEnemy && attackerType !== TYPES.helicopter) {
-        // helicopter bombed / shot / missiled tank
-        if (
-          data.isOnScreen &&
-          data?.attacker?.data?.parentType === TYPES.helicopter &&
-          Math.random() > 0.75
-        ) {
-          if (game.data.isBeavis) {
-            playSound(
-              addSequence(
-                sounds.bnb.buttheadDirectHitBeavis,
-                sounds.bnb.beavisThanks
-              ),
-              exports
-            );
-          } else {
-            playSound(sounds.bnb.beavisBattleship, exports);
-          }
-        } else {
-          // generic
-          playSoundWithDelay(
-            oneOf([sounds.bnb.beavisYes, sounds.bnb.buttheadWhoaCool]),
-            250
-          );
-        }
-      }
-
-      // other special case: beavis saw an on-screen tank get taken out while butt-head is playing.
-      if (gamePrefs.bnb && !data.isEnemy) {
-        if (
-          game.data.isButthead &&
-          sounds.bnb.beavisCmonButthead &&
-          isAttackerValid()
-        ) {
-          // basically, just long enough for three tanks to duke it out.
-          // your first one gets shot, then your second takes the enemy one out.
-          // if the enemy lives through this common sequence, then have Beavis comment.
-          const delay = 1500;
-
-          playSoundWithDelay(
-            sounds.bnb.beavisCmonButthead,
-            exports,
-            {
-              onplay: (sound) => {
-                if (!isAttackerValid()) skipSound(sound);
-              }
-            },
-            delay
-          );
-        } else {
-          // generic commentary for failure
-          playSoundWithDelay(
-            sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']
-          );
-        }
-      }
-      common.addGravestone(exports);
-    } else {
-      sprites.removeNodesAndUnlink(exports);
-    }
-
-    if (
-      !net.connected &&
-      gamePrefs[`notify_${data.type}`] &&
-      !data.isOnScreen &&
-      attackerType !== TYPES.smartMissile
-    ) {
-      if (data.isEnemy === game.players.local.data.isEnemy) {
-        // ignore if attacker is the enemy helicopter, i.e., it bombed our tank - that's reported elsewhere.
-        if (
-          attackerType !== TYPES.helicopter &&
-          data?.attacker?.data?.parentType !== TYPES.helicopter &&
-          // ignore tanks being recycled, they have their own notifications and aren't a "loss."
-          !data.isRecycling
-        ) {
-          game.objects.notifications.add('You lost a tank 💥');
-        }
-      } else {
-        game.objects.notifications.add('You destroyed a tank 💥');
-      }
-    }
-
-    // stop moving while exploding
-    data.vX = 0;
-
-    data.energy = 0;
-
-    radarItem?.die(dieOptions);
-
-    common.onDie(exports, dieOptions);
-  }
-
-  function shouldFireAtTarget(target) {
-    if (!target?.data) return false;
-
-    // TODO: ensure the target is "in front of" the tank.
-
-    // fire at "bad guys" that have energy left. this includes end-bunkers and super-bunkers which haven't yet been neutralized.
-    if (target.data.isEnemy !== data.isEnemy && target.data.energy !== 0)
-      return true;
-  }
-
-  function stop() {
-    data.stopped = true;
-  }
-
-  function resume() {
-    if (data.lastNearbyTarget) return;
-    // wait until flame is "out" before resuming
-    if (data.flame && !data.flame.data.dead) return;
-    data.flame = null;
-    data.stopped = false;
-  }
-
-  function animate() {
-    data.frameCount++;
-
-    // exit early if dead
-    if (data.dead) {
-      sprites.moveWithScrollOffset(exports);
-      domCanvas.dieExplosion?.animate?.();
-
-      return !data.deadTimer && !dom.o;
-    }
-
-    if (!data.stopped && domCanvas?.img) {
-      // animate tank treads
-      if (
-        domCanvas.img.frameCount > 0 &&
-        domCanvas.img.frameCount % domCanvas.img.animationModulus === 0
-      ) {
-        // advance frame
-        domCanvas.img.animationFrame++;
-        refreshSprite();
-        if (domCanvas.img.animationFrame >= domCanvas.img.animationFrameCount) {
-          // loop / repeat animation
-          domCanvas.img.animationFrame = 0;
-          refreshSprite();
-        } else {
-          // keep on truckin'.
-          domCanvas.img.frameCount++;
-        }
-      } else {
-        domCanvas.img.frameCount++;
-      }
-    }
-
-    repair();
-
-    effects.smokeRelativeToDamage(exports);
-
-    if (!data.stopped) {
-      moveTo(data.x + data.vX * GAME_SPEED_RATIOED, data.y);
-    } else {
-      sprites.setTransformXY(
-        exports,
-        dom.o,
-        `${data.x}px`,
-        `${data.y - data.yOffset}px`
-      );
-
-      if (shouldFireAtTarget(data.lastNearbyTarget)) {
-        // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
-        // the original game had something like this, too.
-        if (data.frameCount % FPS === 0) {
-          // run "moving" animation for a few frames
-          moveTo(data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED_RATIOED, data.y);
-        }
-
-        // only fire (i.e., GunFire objects) when stopped
-        fire();
-      }
-    }
-
-    // start, or stop firing?
-    nearbyTest(nearby, exports);
-
-    // stop moving, if we approach another friendly tank
-    if (gamePrefs.ground_unit_traffic_control) {
-      nearbyTest(friendlyNearby, exports);
-    }
-
-    recycleTest(exports);
-
-    return data.dead && !data.deadTimer && !dom.o;
-  }
-
-  function initDOM() {
-    if (options.noInit) return;
-
-    if (!game.objects.editor) {
-      dom.o = {};
-    } else {
-      dom.o = sprites.create({
-        className: css.className,
-        id: data.id
-      });
-    }
-
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-
-    radarItem = game.objects.radar.addItem(exports);
-
-    common.initNearby(nearby, exports);
-    common.initNearby(friendlyNearby, exports);
-  }
-
   css = common.inheritCSS({
     className: TYPES.tank
   });
@@ -492,17 +133,6 @@ const Tank = (options = {}) => {
     updateHealth
   };
 
-  function refreshSprite() {
-    const offset = domCanvas.img.animationFrame || 0;
-    if (offset >= 3) {
-      // hack: don't draw a blank / empty last frame, just keep existing sprite.
-      return;
-    }
-    domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? `tank-enemy_${offset}.png` : `tank_${offset}.png`
-    );
-  }
-
   refreshSprite();
 
   friendlyNearby = {
@@ -554,6 +184,402 @@ const Tank = (options = {}) => {
 
   return exports;
 };
+
+function refreshSprite(exports) {
+  let { data, domCanvas } = exports;
+
+  const offset = domCanvas.img.animationFrame || 0;
+  if (offset >= 3) {
+    // hack: don't draw a blank / empty last frame, just keep existing sprite.
+    return;
+  }
+  domCanvas.img.src = utils.image.getImageObject(
+    data.isEnemy ? `tank-enemy_${offset}.png` : `tank_${offset}.png`
+  );
+}
+
+function fire(exports) {
+  let { data, nearby } = exports;
+
+  let collisionItems;
+
+  if (data.frameCount % data.fireModulus !== 0) return;
+
+  /**
+   * Special case: tanks don't stop to shoot bunkers, but allow gunfire to hit and damage bunkers
+   * ONLY IF the tank is targeting a helicopter (i.e., defense) or another tank.
+   *
+   * Otherwise, let bullets pass through bunkers and kill whatever "lesser" units the tank is firing at.
+   *
+   * This should be an improvement from the original game, where tanks could get "stuck" shooting into
+   * a bunker and eventually destroying it while trying to take out an infantry.
+   */
+
+  if (
+    data.lastNearbyTarget?.data?.type === TYPES.helicopter ||
+    data.lastNearbyTarget?.data?.type === TYPES.tank
+  ) {
+    // allow bullets to hit bunkers when firing at a helicopter or tank
+    collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
+  } else if (gamePrefs.tank_gunfire_miss_bunkers) {
+    // bullets "pass through" bunkers when targeting infantry, engineers, missile launchers, and vans.
+    collisionItems = nearby.items;
+  }
+
+  /**
+   * Is this target flamethrower-eligible?
+   * Super Bunkers and End Bunkers always get flames - infantry and engineers depend on level config.
+   */
+  if (
+    (data.lastNearbyTarget?.data &&
+      data.lastNearbyTarget.data.type.match(/super-bunker|end-bunker/i)) ||
+    (levelConfig.bFlameThrower &&
+      data.lastNearbyTarget.data.type.match(/infantry|engineer/i))
+  ) {
+    data.flame = game.addObject(TYPES.flame, {
+      parent: exports,
+      parentType: data.type,
+      isEnemy: data.isEnemy,
+      damagePoints: 2, // tanks fire at half-rate, so double damage.
+      collisionItems,
+      x: data.x + data.width * (data.isEnemy ? 0 : 1),
+      y: data.y - 2,
+      vX: 0,
+      vY: 0
+    });
+
+    return;
+  }
+
+  game.addObject(TYPES.gunfire, {
+    parent: exports,
+    parentType: data.type,
+    isEnemy: data.isEnemy,
+    damagePoints: 5,
+    collisionItems,
+    x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
+    // data.y + 3 is visually correct, but halfHeight gets the bullets so they hit infantry
+    y: data.y + data.halfHeight,
+    vX: data.vX * 2,
+    vY: 0
+  });
+
+  if (sounds.tankGunFire) {
+    playSound(sounds.tankGunFire, exports);
+  }
+}
+
+function moveTo(exports, x, y) {
+  let { data, dom } = exports;
+  data.x = x;
+  data.y = y;
+
+  zones.refreshZone(exports);
+
+  sprites.setTransformXY(
+    exports,
+    dom.o,
+    `${data.x}px`,
+    `${data.y - data.yOffset}px`
+  );
+}
+
+function updateHealth(exports) {
+  sprites.updateEnergy(exports);
+}
+
+function repair(exports) {
+  let { data } = exports;
+  if (data.frameCount % (data.repairModulus / 15) === 0) {
+    if (data.energy < data.energyMax) {
+      data.lastEnergy = parseFloat(data.energy);
+      data.energy += 1.5 / 15;
+      updateHealth(exports);
+    }
+  }
+  /*
+      if (tankIP->iHits != maxHitsI) {
+    if (!(gameClockUI & 7))
+      tankIP->iHits++;
+    damageSmoke(tankIP, maxHitsI, tankIP->iHits);
+  }
+  */
+}
+
+function isAttackerValid(exports) {
+  let { data } = exports;
+
+  // special die() case: check if attacker is still alive, and on-screen.
+  const attacker = data?.attacker?.data;
+
+  // attacker may be not only dead, but nulled out; if so, ignore.
+  if (!attacker) return;
+
+  // normalize object to check: gunfire -> tank (for example), vs. helicopter crashing into a tank
+  const actor = attacker.parentType ? attacker.parent.data : attacker.data;
+
+  // just in case
+  if (!actor) return;
+
+  // enemy (tank/helicopter etc.) directly killed your tank, and is dead or off-screen.
+  if (actor.dead || !actor.isOnScreen) return;
+
+  return true;
+}
+
+function die(exports, dieOptions = {}) {
+  let { data, domCanvas, radarItem } = exports;
+
+  if (data.dead) return;
+
+  data.dead = true;
+
+  const attackerType = data?.attacker?.data.type;
+
+  if (!dieOptions.silent) {
+    playSound(sounds.genericExplosion, exports);
+
+    domCanvas.dieExplosion = effects.genericExplosion(exports);
+    domCanvas.img = null;
+
+    effects.damageExplosion(exports);
+
+    effects.shrapnelExplosion(data, {
+      velocity: 4 + rngInt(4, TYPES.shrapnel)
+    });
+
+    effects.inertGunfireExplosion({ exports });
+
+    effects.domFetti(exports, dieOptions.attacker);
+
+    effects.smokeRing(exports, { isGroundUnit: true });
+
+    data.deadTimer = common.setFrameTimeout(() => {
+      sprites.removeNodesAndUnlink(exports);
+      data.deadTimer = null;
+    }, 1500);
+
+    // special case: you destroyed a tank, and didn't crash into one.
+    if (gamePrefs.bnb && data.isEnemy && attackerType !== TYPES.helicopter) {
+      // helicopter bombed / shot / missiled tank
+      if (
+        data.isOnScreen &&
+        data?.attacker?.data?.parentType === TYPES.helicopter &&
+        Math.random() > 0.75
+      ) {
+        if (game.data.isBeavis) {
+          playSound(
+            addSequence(
+              sounds.bnb.buttheadDirectHitBeavis,
+              sounds.bnb.beavisThanks
+            ),
+            exports
+          );
+        } else {
+          playSound(sounds.bnb.beavisBattleship, exports);
+        }
+      } else {
+        // generic
+        playSoundWithDelay(
+          oneOf([sounds.bnb.beavisYes, sounds.bnb.buttheadWhoaCool]),
+          250
+        );
+      }
+    }
+
+    // other special case: beavis saw an on-screen tank get taken out while butt-head is playing.
+    if (gamePrefs.bnb && !data.isEnemy) {
+      if (
+        game.data.isButthead &&
+        sounds.bnb.beavisCmonButthead &&
+        isAttackerValid()
+      ) {
+        // basically, just long enough for three tanks to duke it out.
+        // your first one gets shot, then your second takes the enemy one out.
+        // if the enemy lives through this common sequence, then have Beavis comment.
+        const delay = 1500;
+
+        playSoundWithDelay(
+          sounds.bnb.beavisCmonButthead,
+          exports,
+          {
+            onplay: (sound) => {
+              if (!isAttackerValid()) skipSound(sound);
+            }
+          },
+          delay
+        );
+      } else {
+        // generic commentary for failure
+        playSoundWithDelay(
+          sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']
+        );
+      }
+    }
+    common.addGravestone(exports);
+  } else {
+    sprites.removeNodesAndUnlink(exports);
+  }
+
+  if (
+    !net.connected &&
+    gamePrefs[`notify_${data.type}`] &&
+    !data.isOnScreen &&
+    attackerType !== TYPES.smartMissile
+  ) {
+    if (data.isEnemy === game.players.local.data.isEnemy) {
+      // ignore if attacker is the enemy helicopter, i.e., it bombed our tank - that's reported elsewhere.
+      if (
+        attackerType !== TYPES.helicopter &&
+        data?.attacker?.data?.parentType !== TYPES.helicopter &&
+        // ignore tanks being recycled, they have their own notifications and aren't a "loss."
+        !data.isRecycling
+      ) {
+        game.objects.notifications.add('You lost a tank 💥');
+      }
+    } else {
+      game.objects.notifications.add('You destroyed a tank 💥');
+    }
+  }
+
+  // stop moving while exploding
+  data.vX = 0;
+
+  data.energy = 0;
+
+  radarItem?.die(dieOptions);
+
+  common.onDie(exports, dieOptions);
+}
+
+function shouldFireAtTarget(exports, target) {
+  let { data } = exports;
+
+  if (!target?.data) return false;
+
+  // TODO: ensure the target is "in front of" the tank.
+
+  // fire at "bad guys" that have energy left. this includes end-bunkers and super-bunkers which haven't yet been neutralized.
+  if (target.data.isEnemy !== data.isEnemy && target.data.energy !== 0)
+    return true;
+}
+
+function stop(exports) {
+  exports.data.stopped = true;
+}
+
+function resume(exports) {
+  let { data } = exports;
+
+  if (data.lastNearbyTarget) return;
+  // wait until flame is "out" before resuming
+  if (data.flame && !data.flame.data.dead) return;
+  data.flame = null;
+  data.stopped = false;
+}
+
+function animate(exports) {
+  let { data, dom, domCanvas } = exports;
+
+  data.frameCount++;
+
+  // exit early if dead
+  if (data.dead) {
+    sprites.moveWithScrollOffset(exports);
+    domCanvas.dieExplosion?.animate?.();
+
+    return !data.deadTimer && !dom.o;
+  }
+
+  if (!data.stopped && domCanvas?.img) {
+    // animate tank treads
+    if (
+      domCanvas.img.frameCount > 0 &&
+      domCanvas.img.frameCount % domCanvas.img.animationModulus === 0
+    ) {
+      // advance frame
+      domCanvas.img.animationFrame++;
+      refreshSprite(exports);
+      if (domCanvas.img.animationFrame >= domCanvas.img.animationFrameCount) {
+        // loop / repeat animation
+        domCanvas.img.animationFrame = 0;
+        refreshSprite(exports);
+      } else {
+        // keep on truckin'.
+        domCanvas.img.frameCount++;
+      }
+    } else {
+      domCanvas.img.frameCount++;
+    }
+  }
+
+  repair(exports);
+
+  effects.smokeRelativeToDamage(exports);
+
+  if (!data.stopped) {
+    moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
+  } else {
+    sprites.setTransformXY(
+      exports,
+      dom.o,
+      `${data.x}px`,
+      `${data.y - data.yOffset}px`
+    );
+
+    if (shouldFireAtTarget(exports, data.lastNearbyTarget)) {
+      // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
+      // the original game had something like this, too.
+      if (data.frameCount % FPS === 0) {
+        // run "moving" animation for a few frames
+        moveTo(
+          exports,
+          data.x + (data.isEnemy ? -1 : 1) * GAME_SPEED_RATIOED,
+          data.y
+        );
+      }
+
+      // only fire (i.e., GunFire objects) when stopped
+      fire(exports);
+    }
+  }
+
+  // start, or stop firing?
+  nearbyTest(exports.nearby, exports);
+
+  // stop moving, if we approach another friendly tank
+  if (gamePrefs.ground_unit_traffic_control) {
+    nearbyTest(exports.friendlyNearby, exports);
+  }
+
+  recycleTest(exports);
+
+  return data.dead && !data.deadTimer && !dom.o;
+}
+
+function initDOM(exports, options) {
+  let { css, data, dom } = exports;
+
+  if (options.noInit) return;
+
+  if (!game.objects.editor) {
+    dom.o = {};
+  } else {
+    dom.o = sprites.create({
+      className: css.className,
+      id: data.id
+    });
+  }
+
+  sprites.setTransformXY(
+    exports,
+    dom.o,
+    `${data.x}px`,
+    `${data.y - data.yOffset}px`
+  );
+
+  exports.radarItem = game.objects.radar.addItem(exports);
+}
 
 Tank.radarItemConfig = () => ({
   width: 4,
