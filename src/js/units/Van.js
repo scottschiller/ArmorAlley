@@ -19,30 +19,20 @@ import { net } from '../core/network.js';
 import { levelConfig } from '../levels/default.js';
 import { getDefeatMessage, getVictoryMessage } from '../levels/battle-over.js';
 
+const spriteWidth = 76;
+const spriteHeight = 96;
+const frameHeight = 32;
+const height = 16;
+const energy = 12;
+
 const Van = (options = {}) => {
-  let css,
-    dom,
-    domCanvas,
-    data,
-    friendlyNearby,
-    height,
-    pads,
-    radarItem,
-    exports;
+  let exports;
 
-  const spriteWidth = 76;
-  const spriteHeight = 96;
-  const frameHeight = 32;
-
-
-
-  height = 16;
+  let css, dom, domCanvas, data, radarItem;
 
   css = common.inheritCSS({
     className: TYPES.van
   });
-
-  const energy = 12;
 
   data = common.inheritData(
     {
@@ -111,25 +101,26 @@ const Van = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    die,
-    init: initVan,
+    die: () => die(exports),
+    init: () => initVan(exports),
     radarItem,
-    refreshSprite
+    refreshSprite: () => refreshSprite(exports)
   };
 
-  friendlyNearby = {
+  exports.friendlyNearby = {
     options: {
       source: exports,
       targets: undefined,
       useLookAhead: true,
       // stop moving if we roll up behind a friendly vehicle
       friendlyOnly: true,
-      hit: stop,
-      miss: resume
+      hit: () => stop(exports),
+      miss: () => resume(exports)
     },
     // who are we looking for nearby?
     items: getTypes('tank, missileLauncher, van', {
@@ -138,6 +129,8 @@ const Van = (options = {}) => {
     }),
     targets: []
   };
+
+  refreshSprite(exports);
 
   return exports;
 };
