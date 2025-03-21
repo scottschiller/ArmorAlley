@@ -120,20 +120,21 @@ const Tank = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    die,
-    init: initDOM,
+    die: () => die(exports),
+    init: () => initDOM(exports, options),
     radarItem,
-    refreshSprite,
-    resume,
-    stop,
-    updateHealth
+    refreshSprite: () => refreshSprite(exports),
+    resume: () => resume(exports),
+    stop: () => stop(exports),
+    updateHealth: () => updateHealth(exports)
   };
 
-  refreshSprite();
+  refreshSprite(exports);
 
   friendlyNearby = {
     options: {
@@ -143,7 +144,10 @@ const Tank = (options = {}) => {
       // stop moving if we roll up behind a friendly tank
       friendlyOnly: true,
       hit: (target) =>
-        common.friendlyNearbyHit(target, exports, { resume, stop }),
+        common.friendlyNearbyHit(target, exports, {
+          resume: exports.resume,
+          stop: exports.stop
+        }),
       // resume, if tank is not also firing
       miss: resume
     },
@@ -159,19 +163,19 @@ const Tank = (options = {}) => {
       useLookAhead: true,
       hit(target) {
         // determine whether to fire, or resume (if no friendly tank nearby)
-        if (shouldFireAtTarget(target)) {
+        if (shouldFireAtTarget(exports, target)) {
           data.lastNearbyTarget = target;
-          stop();
+          stop(exports);
         } else {
           // resume, if not also stopped for a nearby friendly tank
           data.lastNearbyTarget = null;
-          resume();
+          resume(exports);
         }
       },
       miss() {
         // resume moving, stop firing.
         data.lastNearbyTarget = null;
-        resume();
+        resume(exports);
       }
     },
     // who gets fired at?
@@ -181,6 +185,14 @@ const Tank = (options = {}) => {
     ),
     targets: []
   };
+
+  // TODO: review and DRY
+
+  exports.friendlyNearby = friendlyNearby;
+  exports.nearby = nearby;
+
+  common.initNearby(exports.nearby, exports);
+  common.initNearby(exports.friendlyNearby, exports);
 
   return exports;
 };
