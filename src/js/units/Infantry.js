@@ -16,31 +16,69 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
+const DEFAULT_HEIGHT = 11;
+const BNB_HEIGHT = 30.66;
+
+let width = 10;
+let height = DEFAULT_HEIGHT;
+
+const energy = 5;
+
+const beavisWalking = {
+  sprite: {
+    url: 'bnb/beavis-walking.png',
+    // engineer sprite is packed slightly tighter.
+    width: 430,
+    height: 92,
+    frameWidth: 43,
+    frameHeight: 92,
+    animationDuration: 0.8,
+    horizontal: true,
+    loop: true
+  }
+};
+
+const beavisHeadbanging = {
+  sprite: {
+    url: 'bnb/beavis-headbang.png',
+    width: 228,
+    height: 96,
+    frameWidth: 57,
+    frameHeight: 96,
+    animationDuration: 1.5,
+    horizontal: true,
+    loop: true
+  }
+};
+
+const buttheadWalking = {
+  sprite: {
+    url: 'bnb/butthead-walking.png',
+    width: 430,
+    height: 92,
+    frameWidth: 43,
+    frameHeight: 92,
+    animationDuration: 0.8,
+    horizontal: true,
+    loop: true
+  }
+};
+
+const buttheadHeadbanging = {
+  sprite: {
+    url: 'bnb/butthead-headbang.png',
+    width: 220,
+    height: 96,
+    frameWidth: 55,
+    frameHeight: 96,
+    animationDuration: 1,
+    horizontal: true,
+    loop: true
+  }
+};
+
 const Infantry = (options = {}) => {
-  let css,
-    data,
-    dom,
-    domCanvas,
-    defaultLookAhead,
-    defaultItems,
-    width,
-    height,
-    radarItem,
-    nearby,
-    collision,
-    exports;
-
-  const DEFAULT_HEIGHT = 11;
-  const BNB_HEIGHT = 30.66;
-
-  }
-
-  }
-
-  }
-
-  }
-
+  let css, data, dom, domCanvas, defaultLookAhead, exports;
 
   // engineers stop closer to turrets vs. infantry.
   defaultLookAhead = options.role ? 4 : 8;
@@ -54,16 +92,12 @@ const Infantry = (options = {}) => {
     stopped: 'stopped'
   });
 
-  width = 10;
-  height = DEFAULT_HEIGHT;
-
-  const energy = 5;
-
   data = common.inheritData(
     {
       type: TYPES.infantry,
       frameCount: Math.random() > 0.5 ? 5 : 0,
       bottomAligned: true,
+      defaultLookAhead,
       energy,
       energyMax: energy,
       role: options.role || 0,
@@ -118,59 +152,33 @@ const Infantry = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    die,
-    init: initInfantry,
-    moveTo,
-    refreshHeight,
+    die: (dieOptions) => die(exports, dieOptions),
+    init: (options) => initInfantry(exports, options),
+    moveTo: (x, y) => moveTo(exports, x, y),
+    options,
+    refreshHeight: () => refreshHeight(exports),
     refreshSprite: () => {
       // standard infantry / engineer
-      animConfig.sprite.url = getInfantryEngURL();
+      exports.animConfig.sprite.url = getInfantryEngURL(data);
       if (data.role) {
         // possible BnB case
-        getSpriteURL();
+        getSpriteURL(exports);
       } else {
-        domCanvas?.animation?.updateSprite(getInfantryEngURL());
+        domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
       }
     },
-    resume,
-    stop
+    resume: () => resume(exports),
+    stop: (noFire) => stop(exports, noFire)
   };
 
-  };
-
-  const buttheadWalking = {
+  exports.animConfig = {
     sprite: {
-      url: 'bnb/butthead-walking.png',
-      width: 430,
-      height: 92,
-      frameWidth: 43,
-      frameHeight: 92,
-      animationDuration: 0.8,
-      horizontal: true,
-      loop: true
-    }
-  };
-
-  const buttheadHeadbanging = {
-    sprite: {
-      url: 'bnb/butthead-headbang.png',
-      width: 220,
-      height: 96,
-      frameWidth: 55,
-      frameHeight: 96,
-      animationDuration: 1,
-      horizontal: true,
-      loop: true
-    }
-  };
-
-  const animConfig = {
-    sprite: {
-      url: getInfantryEngURL(),
+      url: getInfantryEngURL(data),
       // engineer sprite is packed slightly tighter.
       width: data.role ? 100 : 110,
       height: 22,
@@ -183,12 +191,12 @@ const Infantry = (options = {}) => {
     }
   };
 
-  defaultItems = getTypes(
+  exports.defaultItems = getTypes(
     'tank, van, missileLauncher, infantry, engineer, helicopter, turret',
     { exports }
   );
 
-  nearby = {
+  exports.nearby = {
     options: {
       source: exports,
       targets: undefined,
@@ -202,14 +210,14 @@ const Infantry = (options = {}) => {
           let deltaX = target.data.x - data.x - (data.xLookAheadTurret || 0);
           if (deltaX > 0) {
             // nothing to see here.
-            resume();
+            resume(exports);
           }
           if (target.engineerCanInteract(data.isEnemy)) {
-            stop(true);
+            stop(exports, true);
             target.engineerHit(exports);
           } else {
             // nothing to see here.
-            resume();
+            resume(exports);
           }
         } else if (
           gamePrefs.engineers_repair_bunkers &&
@@ -227,7 +235,7 @@ const Infantry = (options = {}) => {
           // we don't want either types firing at bunkers.
           if (tData.type === TYPES.bunker) {
             // ensure we're moving, in case we were stopped
-            resume();
+            resume(exports);
             return;
           }
 
@@ -237,31 +245,31 @@ const Infantry = (options = {}) => {
             (data.isEnemy && tData.x < data.x) ||
             (!data.isEnemy && data.x < tData.x)
           ) {
-            stop();
+            stop(exports);
           } else {
             // infantry has already passed the nearby unit.
-            resume();
+            resume(exports);
           }
         } else {
           // failsafe: infantry may have stopped to fire at an engineer repairing a bunker.
           // ensure the infantry stop firing, by resuming "walking."
-          resume();
+          resume(exports);
         }
       },
       miss() {
         // resume moving, stop firing.
-        resume();
+        resume(exports);
       }
     },
     // who gets fired at (or interacted with)?
     // infantry can also claim enemy bunkers, or repair the balloons on friendly ones.
     items:
       options.nearbyItems ||
-      defaultItems.concat(getTypes('bunker:all', { exports })),
+      exports.defaultItems.concat(getTypes('bunker:all', { exports })),
     targets: []
   };
 
-  collision = {
+  exports.collision = {
     options: {
       source: exports,
       targets: undefined,
@@ -284,7 +292,7 @@ const Infantry = (options = {}) => {
         ) {
           // probably a tank.
           data.attacker = target;
-          die({ attacker: target });
+          die(exports, { attacker: target });
         }
       }
     },
