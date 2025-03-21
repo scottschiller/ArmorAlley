@@ -41,282 +41,7 @@ const MissileLauncher = (options = {}) => {
   const frameWidth = spriteWidth;
   const frameHeight = spriteHeight / 4;
 
-  function stop() {
-    data.stopped = true;
-  }
 
-  function resume() {
-    data.stopped = false;
-  }
-
-  function die(dieOptions = {}) {
-    if (data.dead) return;
-
-    if (!dieOptions?.silent) {
-      utils.css.add(dom.o, css.exploding);
-
-      if (sounds.genericExplosion) {
-        playSound(sounds.genericExplosion, exports);
-      }
-
-      domCanvas.dieExplosion = effects.genericExplosion(exports);
-      domCanvas.img = null;
-
-      effects.inertGunfireExplosion({ exports });
-
-      effects.domFetti(exports, dieOptions.attacker);
-
-      // only cause damage if there was an attacker.
-      // otherwise, regular self-destruct case will also stop the missile. ;)
-      if (dieOptions.attacker) {
-        effects.damageExplosion(exports);
-      }
-
-      // account for .scan-node transition time
-      common.setFrameTimeout(() => {
-        sprites.removeNodesAndUnlink(exports);
-      }, 1100);
-
-      if (!dieOptions.firingMissile) {
-        common.addGravestone(exports);
-        const attackerType = dieOptions.attacker?.data?.type;
-        if (
-          !net.connected &&
-          game.players.local.data.isEnemy === data.isEnemy &&
-          gamePrefs.notify_missile_launcher &&
-          !data.isOnScreen &&
-          attackerType !== TYPES.smartMissile
-        ) {
-          game.objects.notifications.add('You lost a missile launcher 💥');
-        }
-      }
-    } else {
-      sprites.removeNodesAndUnlink(exports);
-    }
-
-    // stop moving while exploding
-    data.vX = 0;
-
-    data.energy = 0;
-
-    data.dead = true;
-
-    resize();
-
-    radarItem.die(dieOptions);
-
-    common.onDie(exports, dieOptions);
-  }
-
-  function fire() {
-    let i, j, similarMissileCount, targetHelicopter;
-
-    if (data.frameCount % data.fireModulus !== 0) return;
-
-    // is an enemy helicopter nearby?
-    targetHelicopter = enemyHelicopterNearby(
-      data,
-      data.scanDistance + MISSILE_LAUNCHER_SCAN_BUFFER,
-      data.hasScanNode
-    );
-
-    if (!targetHelicopter) return;
-
-    // we have a possible target. any missiles already chasing it?
-    similarMissileCount = 0;
-
-    for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
-      if (
-        game.objects[TYPES.smartMissile][i].objects.target === targetHelicopter
-      ) {
-        similarMissileCount++;
-      }
-    }
-
-    if (similarMissileCount) return;
-
-    /**
-     * player's missile launchers: fire and target enemy chopper only when "unattended."
-     * e.g., don't fire if a friendly turret or helicopter is nearby; they can handle it.
-     * CPU makes missile launchers routinely, whereas they're strategic for human player.
-     * in the enemy case, fire at player regardless of who's nearby. makes game tougher.
-     */
-
-    if (!data.isEnemy) {
-      // friendly turret
-      if (
-        objectInView(data, {
-          triggerDistance: data.scanDistance,
-          items: TYPES.turret,
-          friendlyOnly: true
-        })
-      ) {
-        return;
-      }
-
-      // friendly helicopter, and armed with at least one missile
-      if (
-        objectInView(data, {
-          triggerDistance: data.scanDistance,
-          items: TYPES.helicopter,
-          friendlyOnly: true
-        }) &&
-        game.players.local.data.smartMissiles > 0
-      ) {
-        return;
-      }
-    }
-
-    // self-destruct, FIRE ZE MISSILE
-    die({ firingMissile: true });
-
-    const params = {
-      id: `${data.id}_missile`,
-      staticID: true,
-      parent: exports,
-      parentType: data.type,
-      isEnemy: data.isEnemy,
-      isBanana:
-        gamePrefs.alt_smart_missiles &&
-        game.objects.view.data.missileMode === bananaMode,
-      isRubberChicken:
-        gamePrefs.alt_smart_missiles &&
-        game.objects.view.data.missileMode === rubberChickenMode,
-      x: data.x + data.width / 2,
-      y: data.y,
-      target: targetHelicopter
-    };
-
-    const missile = game.addObject(TYPES.smartMissile, params);
-
-    /**
-     * For consistency, ensure a missile exists on both sides.
-     *
-     * It's possible, given lag(?), that one missile launcher may have been blown up
-     * on the other side by something else before it had a chance to launch.
-     *
-     * This is bad as it could mean your helicopter mysteriously gets hit, when
-     * the active missile on the other side hits it.
-     */
-    if (net.active) {
-      net.sendMessage({
-        type: 'ADD_OBJECT',
-        objectType: missile.data.type,
-        params
-      });
-    }
-  }
-
-  function animate() {
-    data.frameCount++;
-
-    const fpsMultiplier = 1 / GAME_SPEED_RATIOED;
-
-    if (!data.stopped) {
-      sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
-    } else {
-      // if stopped, just take scroll into effect
-      sprites.moveWithScrollOffset(exports);
-    }
-
-    data?.domCanvas?.dieExplosion?.animate();
-
-    if (data.dead) return !dom.o;
-
-    effects.smokeRelativeToDamage(exports);
-
-    if (data.orderComplete && !data.stopped) {
-      // regular timer or back wheel bump
-      if (data.frameCount % data.stateModulus === 0) {
-        data.state++;
-
-        if (data.state > data.stateMax) {
-          data.state = 0;
-        }
-
-        // reset frameCount (timer)
-        data.frameCount = 0;
-
-        // first wheel, delay, then a few frames until we animate the next two.
-        if (data.state === 1 || data.state === 3) {
-          data.stateModulus = 36 * fpsMultiplier;
-        } else {
-          data.stateModulus = 4 * fpsMultiplier;
-        }
-
-        if (domCanvas.img) {
-          domCanvas.img.source.frameY = data.state;
-        }
-      } else if (
-        data.frameCount % data.stateModulus === 2 * fpsMultiplier &&
-        data.isOnScreen
-      ) {
-        // next frame - reset.
-        if (domCanvas.img) {
-          domCanvas.img.source.frameY = 0;
-        }
-      }
-    }
-
-    recycleTest(exports);
-
-    // (maybe) fire?
-    fire();
-
-    if (gamePrefs.ground_unit_traffic_control) {
-      nearbyTest(friendlyNearby, exports);
-    }
-
-    return data.dead && !dom.o;
-  }
-
-  function resize() {
-    return common.resizeScanNode(exports, radarItem, css.className);
-  }
-
-  function initDOM() {
-    dom.o = sprites.create({
-      className: game.objects.editor ? css.className : 'placeholder',
-      id: data.id,
-      isEnemy: data.isEnemy ? css.enemy : false
-    });
-
-    dom.oScanNode = document.createElement('div');
-    dom.oScanNode.className = css.scanNode;
-    dom.o.appendChild(dom.oScanNode);
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-  }
-
-  function initMissileLauncher() {
-    if (options.noInit) return;
-
-    initDOM();
-
-    common.initNearby(friendlyNearby, exports);
-
-    data.frameTimeout = common.setFrameTimeout(() => {
-      data.orderComplete = true;
-      data.frameTimeout = null;
-    }, 2000);
-
-    common.setFrameTimeout(() => {
-      if (data.dead) return;
-      resize();
-    }, 150);
-
-    radarItem = game.objects.radar.addItem(
-      exports,
-      game.objects.editor
-        ? dom.o.className
-        : data.isEnemy
-          ? 'scan-node enemy'
-          : 'scan-node'
-    );
-
-    // missile launchers also get a scan node.
-    radarItem.initScanNode();
-  }
 
   width = 54;
   height = 18;
@@ -404,12 +129,6 @@ const MissileLauncher = (options = {}) => {
     resize
   };
 
-  function refreshSprite() {
-    domCanvas.img.src = utils.image.getImageObject(
-      data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
-    );
-  }
-
   refreshSprite();
 
   friendlyNearby = {
@@ -433,6 +152,300 @@ const MissileLauncher = (options = {}) => {
 
   return exports;
 };
+
+function refreshSprite(exports) {
+  let { domCanvas, data } = exports;
+  domCanvas.img.src = utils.image.getImageObject(
+    data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
+  );
+}
+
+function stop(exports) {
+  exports.data.stopped = true;
+}
+
+function resume(exports) {
+  exports.data.stopped = false;
+}
+
+function die(exports, dieOptions = {}) {
+  let { css, data, dom, domCanvas, radarItem } = exports;
+  if (data.dead) return;
+
+  if (!dieOptions?.silent) {
+    utils.css.add(dom.o, css.exploding);
+
+    if (sounds.genericExplosion) {
+      playSound(sounds.genericExplosion, exports);
+    }
+
+    domCanvas.dieExplosion = effects.genericExplosion(exports);
+    domCanvas.img = null;
+
+    effects.inertGunfireExplosion({ exports });
+
+    effects.domFetti(exports, dieOptions.attacker);
+
+    // only cause damage if there was an attacker.
+    // otherwise, regular self-destruct case will also stop the missile. ;)
+    if (dieOptions.attacker) {
+      effects.damageExplosion(exports);
+    }
+
+    // account for .scan-node transition time
+    common.setFrameTimeout(() => {
+      sprites.removeNodesAndUnlink(exports);
+    }, 1100);
+
+    if (!dieOptions.firingMissile) {
+      common.addGravestone(exports);
+      const attackerType = dieOptions.attacker?.data?.type;
+      if (
+        !net.connected &&
+        game.players.local.data.isEnemy === data.isEnemy &&
+        gamePrefs.notify_missile_launcher &&
+        !data.isOnScreen &&
+        attackerType !== TYPES.smartMissile
+      ) {
+        game.objects.notifications.add('You lost a missile launcher 💥');
+      }
+    }
+  } else {
+    sprites.removeNodesAndUnlink(exports);
+  }
+
+  // stop moving while exploding
+  data.vX = 0;
+
+  data.energy = 0;
+
+  data.dead = true;
+
+  resize(exports);
+
+  radarItem.die(dieOptions);
+
+  common.onDie(exports, dieOptions);
+}
+
+function fire(exports) {
+  let { data } = exports;
+  let i, j, similarMissileCount, targetHelicopter;
+
+  if (data.frameCount % data.fireModulus !== 0) return;
+
+  // is an enemy helicopter nearby?
+  targetHelicopter = enemyHelicopterNearby(
+    data,
+    data.scanDistance + MISSILE_LAUNCHER_SCAN_BUFFER,
+    data.hasScanNode
+  );
+
+  if (!targetHelicopter) return;
+
+  // we have a possible target. any missiles already chasing it?
+  similarMissileCount = 0;
+
+  for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
+    if (
+      game.objects[TYPES.smartMissile][i].objects.target === targetHelicopter
+    ) {
+      similarMissileCount++;
+    }
+  }
+
+  if (similarMissileCount) return;
+
+  /**
+   * player's missile launchers: fire and target enemy chopper only when "unattended."
+   * e.g., don't fire if a friendly turret or helicopter is nearby; they can handle it.
+   * CPU makes missile launchers routinely, whereas they're strategic for human player.
+   * in the enemy case, fire at player regardless of who's nearby. makes game tougher.
+   */
+
+  if (!data.isEnemy) {
+    // friendly turret
+    if (
+      objectInView(data, {
+        triggerDistance: data.scanDistance,
+        items: TYPES.turret,
+        friendlyOnly: true
+      })
+    ) {
+      return;
+    }
+
+    // friendly helicopter, and armed with at least one missile
+    if (
+      objectInView(data, {
+        triggerDistance: data.scanDistance,
+        items: TYPES.helicopter,
+        friendlyOnly: true
+      }) &&
+      game.players.local.data.smartMissiles > 0
+    ) {
+      return;
+    }
+  }
+
+  // self-destruct, FIRE ZE MISSILE
+  die(exports, { firingMissile: true });
+
+  const params = {
+    id: `${data.id}_missile`,
+    staticID: true,
+    parent: exports,
+    parentType: data.type,
+    isEnemy: data.isEnemy,
+    isBanana:
+      gamePrefs.alt_smart_missiles &&
+      game.objects.view.data.missileMode === bananaMode,
+    isRubberChicken:
+      gamePrefs.alt_smart_missiles &&
+      game.objects.view.data.missileMode === rubberChickenMode,
+    x: data.x + data.width / 2,
+    y: data.y,
+    target: targetHelicopter
+  };
+
+  const missile = game.addObject(TYPES.smartMissile, params);
+
+  /**
+   * For consistency, ensure a missile exists on both sides.
+   *
+   * It's possible, given lag(?), that one missile launcher may have been blown up
+   * on the other side by something else before it had a chance to launch.
+   *
+   * This is bad as it could mean your helicopter mysteriously gets hit, when
+   * the active missile on the other side hits it.
+   */
+  if (net.active) {
+    net.sendMessage({
+      type: 'ADD_OBJECT',
+      objectType: missile.data.type,
+      params
+    });
+  }
+}
+
+function animate(exports) {
+  let { data, dom, domCanvas } = exports;
+  data.frameCount++;
+
+  const fpsMultiplier = 1 / GAME_SPEED_RATIOED;
+
+  if (!data.stopped) {
+    sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
+  } else {
+    // if stopped, just take scroll into effect
+    sprites.moveWithScrollOffset(exports);
+  }
+
+  domCanvas?.dieExplosion?.animate();
+
+  if (data.dead) return !dom.o;
+
+  effects.smokeRelativeToDamage(exports);
+
+  if (data.orderComplete && !data.stopped) {
+    // regular timer or back wheel bump
+    if (data.frameCount % data.stateModulus === 0) {
+      data.state++;
+
+      if (data.state > data.stateMax) {
+        data.state = 0;
+      }
+
+      // reset frameCount (timer)
+      data.frameCount = 0;
+
+      // first wheel, delay, then a few frames until we animate the next two.
+      if (data.state === 1 || data.state === 3) {
+        data.stateModulus = 36 * fpsMultiplier;
+      } else {
+        data.stateModulus = 4 * fpsMultiplier;
+      }
+
+      if (domCanvas.img) {
+        domCanvas.img.source.frameY = data.state;
+      }
+    } else if (
+      data.frameCount % data.stateModulus === 2 * fpsMultiplier &&
+      data.isOnScreen
+    ) {
+      // next frame - reset.
+      if (domCanvas.img) {
+        domCanvas.img.source.frameY = 0;
+      }
+    }
+  }
+
+  recycleTest(exports);
+
+  // (maybe) fire?
+  fire(exports);
+
+  if (gamePrefs.ground_unit_traffic_control) {
+    nearbyTest(exports.friendlyNearby, exports);
+  }
+
+  return data.dead && !dom.o;
+}
+
+function resize(exports) {
+  return common.resizeScanNode(
+    exports,
+    exports.radarItem,
+    exports.css.className
+  );
+}
+
+function initDOM(exports) {
+  let { css, data, dom } = exports;
+  dom.o = sprites.create({
+    className: game.objects.editor ? css.className : 'placeholder',
+    id: data.id,
+    isEnemy: data.isEnemy ? css.enemy : false
+  });
+
+  dom.oScanNode = document.createElement('div');
+  dom.oScanNode.className = css.scanNode;
+  dom.o.appendChild(dom.oScanNode);
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+}
+
+function initMissileLauncher(options, exports) {
+  if (options.noInit) return;
+
+  let { data, dom } = exports;
+
+  initDOM(exports);
+
+  common.initNearby(exports.friendlyNearby, exports);
+
+  data.frameTimeout = common.setFrameTimeout(() => {
+    data.orderComplete = true;
+    data.frameTimeout = null;
+  }, 2000);
+
+  common.setFrameTimeout(() => {
+    if (data.dead) return;
+    resize(exports);
+  }, 150);
+
+  exports.radarItem = game.objects.radar.addItem(
+    exports,
+    game.objects.editor
+      ? dom.o.className
+      : data.isEnemy
+        ? 'scan-node enemy'
+        : 'scan-node'
+  );
+
+  // missile launchers also get a scan node.
+  exports.radarItem.initScanNode();
+}
 
 MissileLauncher.radarItemConfig = () => ({
   width: 4,
