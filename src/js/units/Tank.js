@@ -26,22 +26,23 @@ import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 import { levelConfig } from '../levels/default.js';
 
+const spriteWidth = 116;
+const spriteHeight = 114;
+
+const frameWidth = spriteWidth;
+const frameHeight = spriteHeight / 3;
+
+const width = 58;
+const height = 18;
+const fireModulus = 12;
+
+// original game says 25, but 8 helicopter bullets can take out a tank - and 3 bombs...
+const energy = 15;
+
 const Tank = (options = {}) => {
-  let css,
-    data,
-    dom,
-    domCanvas,
-    radarItem,
-    nearby,
-    friendlyNearby,
-    exports,
-    tankHeight;
+  let exports;
 
-  const spriteWidth = 116;
-  const spriteHeight = 114;
-
-  const frameWidth = spriteWidth;
-  const frameHeight = spriteHeight / 3;
+  let css, data, dom, domCanvas, radarItem, nearby, friendlyNearby;
 
   function fire() {
     let collisionItems;
@@ -402,16 +403,9 @@ const Tank = (options = {}) => {
     common.initNearby(friendlyNearby, exports);
   }
 
-  tankHeight = 18;
-
   css = common.inheritCSS({
     className: TYPES.tank
   });
-
-  const width = 58;
-  const fireModulus = 12;
-
-  const energy = 15;
 
   data = common.inheritData(
     {
@@ -431,13 +425,13 @@ const Tank = (options = {}) => {
       vX: options.isEnemy ? -1 : 1,
       vXDefault: options.isEnemy ? -1 : 1,
       width,
-      height: tankHeight,
+      height,
       halfWidth: 28,
-      halfHeight: tankHeight / 2,
+      halfHeight: height / 2,
       stopped: false,
       lastNearbyTarget: null,
       x: options.x || 0,
-      y: game.objects.view.data.world.height - tankHeight,
+      y: game.objects.view.data.world.height - height,
       // hackish: logical vs. sprite alignment offset
       yOffset: 2,
       stepOffset: options.stepOffset,
@@ -478,8 +472,8 @@ const Tank = (options = {}) => {
         frameY: 0
       },
       target: {
-        width: 58,
-        height: 18
+        width,
+        height
       }
     }
   };
