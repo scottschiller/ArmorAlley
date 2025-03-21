@@ -7,68 +7,6 @@ import { game } from '../core/Game.js';
 const LandingPad = (options = {}) => {
   let css, dom, domCanvas, data, collision, exports;
 
-  function animate() {
-    domCanvas?.animation?.animate();
-
-    sprites.moveWithScrollOffset(exports);
-
-    collisionTest(collision, exports);
-  }
-
-  function isOnScreenChange(isOnScreen) {
-    if (!isOnScreen) return;
-
-    setWelcomeMessage();
-  }
-
-  function setWelcomeMessage() {
-    let eat, drink;
-
-    eat = data.edible[rndInt(data.edible.length)];
-    drink = data.drinkable[rndInt(data.drinkable.length)];
-
-    data.welcomeMessage = `-* 🚁 Welcome to ${
-      data.name || 'THE MIDWAY'
-    }${" ⛽🛠️ *-<br />Today's feature: %s1 %s2 &middot; Enjoy your stay."
-      .replace('%s1', drink)
-      .replace('%s2', eat)}`;
-  }
-
-  function initLandingPad() {
-    if (game.objects.editor) {
-      dom.o = sprites.create({
-        id: data.id,
-        className: css.className
-      });
-    } else {
-      dom.o = {};
-    }
-
-    const animConfig = (() => {
-      const spriteWidth = 162;
-      const spriteHeight = 14;
-      return {
-        sprite: {
-          url: 'landing-pad_#.png',
-          width: spriteWidth,
-          height: spriteHeight,
-          frameWidth: spriteWidth,
-          frameHeight: spriteHeight,
-          animationDuration: 2,
-          animationFrameCount: 4,
-          loop: true
-        }
-      };
-    })();
-
-    domCanvas.animation = common.domCanvas.canvasAnimation(exports, animConfig);
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
-    game.objects.radar.addItem(exports);
-
-    setWelcomeMessage();
-  }
 
   css = common.inheritCSS({
     className: 'landing-pad'
@@ -170,6 +108,75 @@ const LandingPad = (options = {}) => {
 
   return exports;
 };
+
+function animate(exports) {
+  let { domCanvas, collision } = exports;
+
+  domCanvas?.animation?.animate();
+
+  sprites.moveWithScrollOffset(exports);
+
+  collisionTest(collision, exports);
+}
+
+function isOnScreenChange(exports, isOnScreen) {
+  if (!isOnScreen) return;
+
+  setWelcomeMessage(exports);
+}
+
+function setWelcomeMessage(exports) {
+  let { data } = exports;
+
+  let eat, drink;
+
+  eat = data.edible[rndInt(data.edible.length)];
+  drink = data.drinkable[rndInt(data.drinkable.length)];
+
+  data.welcomeMessage = `-* 🚁 Welcome to ${
+    data.name || 'THE MIDWAY'
+  }${" ⛽🛠️ *-<br />Today's feature: %s1 %s2 &middot; Enjoy your stay."
+    .replace('%s1', drink)
+    .replace('%s2', eat)}`;
+}
+
+function initLandingPad(exports) {
+  let { data, dom, css, domCanvas } = exports;
+
+  if (game.objects.editor) {
+    dom.o = sprites.create({
+      id: data.id,
+      className: css.className
+    });
+  } else {
+    dom.o = {};
+  }
+
+  const animConfig = (() => {
+    const spriteWidth = 162;
+    const spriteHeight = 14;
+    return {
+      sprite: {
+        url: 'landing-pad_#.png',
+        width: spriteWidth,
+        height: spriteHeight,
+        frameWidth: spriteWidth,
+        frameHeight: spriteHeight,
+        animationDuration: 2,
+        animationFrameCount: 4,
+        loop: true
+      }
+    };
+  })();
+
+  domCanvas.animation = common.domCanvas.canvasAnimation(exports, animConfig);
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  game.objects.radar.addItem(exports);
+
+  setWelcomeMessage(exports);
+}
 
 LandingPad.radarItemConfig = ({ data }) => ({
   width: 5.5,
