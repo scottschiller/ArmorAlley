@@ -25,34 +25,24 @@ import { net } from '../core/network.js';
 const MISSILE_LAUNCHER_SCAN_RADIUS = 320;
 const MISSILE_LAUNCHER_SCAN_BUFFER = 16;
 
+const spriteWidth = 108;
+const spriteHeight = 144;
+const frameWidth = spriteWidth;
+const frameHeight = spriteHeight / 4;
+const width = 54;
+const height = 18;
+const energy = 8;
+
 const MissileLauncher = (options = {}) => {
-  let css,
-    data,
-    dom,
-    domCanvas,
-    friendlyNearby,
-    height,
-    width,
-    radarItem,
-    exports;
+  let exports;
 
-  const spriteWidth = 108;
-  const spriteHeight = 144;
-  const frameWidth = spriteWidth;
-  const frameHeight = spriteHeight / 4;
-
-
-
-  width = 54;
-  height = 18;
+  let css, data, dom, domCanvas, friendlyNearby;
 
   css = common.inheritCSS({
     className: 'missile-launcher',
     exploding: 'exploding',
     scanNode: 'scan-node'
   });
-
-  const energy = 8;
 
   data = common.inheritData(
     {
@@ -118,20 +108,22 @@ const MissileLauncher = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    die,
-    init: initMissileLauncher,
-    radarItem,
-    refreshSprite,
-    resize
+    die: () => die(exports),
+    friendlyNearby,
+    init: () => initMissileLauncher(options, exports),
+    // radarItem,
+    refreshSprite: () => refreshSprite(exports),
+    resize: () => resize(exports),
+    resume: () => resume(exports),
+    stop: () => stop(exports)
   };
 
-  refreshSprite();
-
-  friendlyNearby = {
+  exports.friendlyNearby = {
     options: {
       source: exports,
       targets: undefined,
@@ -139,7 +131,10 @@ const MissileLauncher = (options = {}) => {
       // stop moving if we roll up behind a friendly vehicle
       friendlyOnly: true,
       hit: (target) =>
-        common.friendlyNearbyHit(target, exports, { resume, stop }),
+        common.friendlyNearbyHit(target, exports, {
+          resume: exports.resume,
+          stop: exports.stop
+        }),
       miss: resume
     },
     // who are we looking for nearby?
@@ -149,6 +144,8 @@ const MissileLauncher = (options = {}) => {
     }),
     targets: []
   };
+
+  refreshSprite(exports);
 
   return exports;
 };
