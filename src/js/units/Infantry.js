@@ -33,359 +33,14 @@ const Infantry = (options = {}) => {
   const DEFAULT_HEIGHT = 11;
   const BNB_HEIGHT = 30.66;
 
-  function fire() {
-    if (data.noFire) return;
-
-    // walking is synced with animation, but bullets fire less often
-    // always do positioning work, and maybe fire
-
-    // hackish: ensure that animation is set.
-    // this may be stuck if an engineer stops to repair a turret, but then is trying to fire at something else? :X
-    if (!domCanvas.animation) {
-      resume();
-    }
-
-    // only infantry: move back and forth a bit, and flip animation, while firing - like original game
-    const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
-
-    // apply offset to the canvas-based animation
-    domCanvas.animation.img.target.xOffset = offset;
-
-    data.vxFrameTick += GAME_SPEED_RATIOED;
-
-    if (data.vxFrameTick >= 1) {
-      data.vxFrameTick = 0;
-      data.vXFrameOffset += 3;
-    }
-
-    if (data.vXFrameOffset >= data.vXFrames.length) {
-      // reverse direction!
-      data.vXFrameOffset = 0;
-      // toggle
-      setFlip(!data.flipX);
-    }
-
-    // only fire every so often
-    if ((data.frameCount + data.fireModulusOffset) % data.fireModulus !== 0)
-      return;
-
-    game.addObject(TYPES.gunfire, {
-      parent: exports,
-      parentType: data.type,
-      isEnemy: data.isEnemy,
-      // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.
-      collisionItems: gamePrefs.tank_gunfire_miss_bunkers
-        ? defaultItems
-        : nearby.items,
-      x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
-      y: data.y + data.halfHeight - 2,
-      vX: data.vX, // same velocity
-      vY: 0
-    });
-
-    if (sounds.infantryGunFire) {
-      playSound(sounds.infantryGunFire, exports);
-    }
   }
 
-  function moveTo(x = data.x, y = data.y) {
-    data.x = x;
-    data.y = y;
-
-    zones.refreshZone(exports);
-
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${x}px`,
-      `${data.y - data.yOffset}px`
-    );
   }
 
-  function setFlip(isFlipped) {
-    data.flipX = !!isFlipped;
-    // swap flipped / non-flipped sprites, when not BnB + engineers
-    if (!data.role || !gamePrefs.bnb) {
-      domCanvas?.animation?.updateSprite(getInfantryEngURL());
-    }
   }
 
-  function stop(noFire) {
-    if (data.stopped) return;
-
-    data.stopped = true;
-    data.noFire = !!noFire;
-
-    if (data.role) {
-      getSpriteURL();
-    } else {
-      domCanvas?.animation?.updateSprite(getInfantryEngURL());
-    }
-
-    // engineers always stop, e.g., to repair and/or capture turrets.
-    // infantry keep animation, but will appear to walk back and forth while firing.
-    if (!data.noFire) {
-      // infantry: reset "walking" offset, so initial movement is reduced
-      data.vXFrameOffset = 0;
-    }
   }
 
-  function resume() {
-    if (!data.stopped) return;
-    setFlip(false);
-    data.stopped = false;
-    data.noFire = false;
-
-    if (data.role) {
-      getSpriteURL();
-    } else {
-      domCanvas?.animation?.updateSprite(getInfantryEngURL());
-    }
-  }
-
-  function setRole(role, force) {
-    // TODO: minimize CSS thrashing, track lastClass etc.
-    if (data.role !== role || force) {
-      // role
-      data.role = role;
-    }
-  }
-
-  function die(dieOptions = {}) {
-    if (data.dead) return;
-
-    if (!dieOptions?.silent) {
-      playSound(sounds.genericSplat, exports);
-
-      if (gamePrefs.bnb) {
-        if (data.isEnemy) {
-          playSound(sounds.bnb.dvdPrincipalScream, exports);
-        } else if (data.role) {
-          // engineer case
-          if (data.isBeavis) {
-            playSound(sounds.bnb.beavisScreamShort, exports);
-          } else {
-            playSound(sounds.bnb.buttheadScreamShort, exports);
-          }
-        } else {
-          // friendly infantry
-          playSound(sounds.bnb.screamShort, exports);
-        }
-      } else {
-        playSound(sounds.scream, exports);
-      }
-
-      effects.inertGunfireExplosion({
-        exports,
-        inertColor: '#ccbbaa',
-        vX: plusMinus(rnd(3)),
-        vY: rnd(5)
-      });
-
-      const isInfantry = data.roles[data.role] === TYPES.infantry;
-      const isEngineer = data.roles[data.role] === TYPES.engineer;
-
-      const attacker = dieOptions?.attacker?.data;
-
-      // generic notification
-      if (
-        !net.connected &&
-        !data.isOnScreen &&
-        // special case: certain attackers are handled separately.
-        attacker?.type !== TYPES.tank &&
-        attacker?.type !== TYPES.flame &&
-        attacker?.type !== TYPES.smartMissile &&
-        attacker?.type !== TYPES.helicopter &&
-        attacker?.parentType !== TYPES.tank &&
-        attacker?.parentType !== TYPES.infantry &&
-        attacker?.parentType !== TYPES.superBunker &&
-        attacker?.parentType !== TYPES.helicopter
-      ) {
-        // infantry / engineer lost
-        const contexts = {
-          [TYPES.shrapnel]: 'Shrapnel ',
-          [TYPES.gunfire]: 'Gunfire ',
-          [TYPES.bomb]: 'A bomb '
-        };
-        const context = contexts[attacker?.type] || '';
-        const isOpponent = game.players.local.data.isEnemy !== data.isEnemy;
-        const emoji = '<span class="no-emoji-substitution">☠️</span>';
-        const str = context
-          ? `${context} killed %s ${emoji}`
-          : isOpponent
-            ? `You killed %s ${emoji}`
-            : `You lost %s ${emoji}`;
-        const maybeEnemy = isOpponent ? 'an enemy ' : 'an ';
-        if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
-          game.objects.notifications.add(
-            str.replace('%s', `${maybeEnemy}infantry`)
-          );
-        } else if (isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
-          game.objects.notifications.add(
-            str.replace('%s', `${maybeEnemy}engineer`)
-          );
-        }
-      }
-
-      common.addGravestone(exports);
-    }
-
-    sprites.removeNodesAndUnlink(exports);
-
-    data.energy = 0;
-
-    // stop moving while exploding
-    data.vX = 0;
-
-    data.dead = true;
-
-    radarItem?.die(dieOptions);
-
-    if (dieOptions.attacker) {
-      data.attacker = dieOptions.attacker;
-    }
-
-    common.onDie(exports, dieOptions);
-  }
-
-  function animate() {
-    if (data.dead) {
-      // keep in sync with battlefield
-      sprites.setTransformXY(
-        exports,
-        dom.o,
-        `${data.x}px`,
-        `${data.y - data.yOffset}px`
-      );
-
-      return !dom.o;
-    }
-
-    // infantry are "always" walking, even when "stopped" (in which case they're firing.)
-    // engineers fully stop to claim and/or repair bunkers.
-    domCanvas?.animation?.animate?.();
-
-    if (!data.stopped) {
-      if (data.roles[data.role] === TYPES.infantry) {
-        // infantry walking "pace" varies slightly, similar to original game
-        moveTo(
-          data.x +
-            data.vX * GAME_SPEED_RATIOED * data.vXFrames[data.vXFrameOffset],
-          data.y
-        );
-
-        data.vxFrameTick += GAME_SPEED_RATIOED;
-        if (data.vxFrameTick >= 1) {
-          data.vxFrameTick = 0;
-          data.vXFrameOffset++;
-        }
-        if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
-      } else {
-        // engineers always move one pixel at a time; let's say it's because of the backpacks.
-        moveTo(data.x + data.vX * GAME_SPEED_RATIOED, data.y);
-      }
-    } else {
-      sprites.setTransformXY(
-        exports,
-        dom.o,
-        `${data.x}px`,
-        `${data.y - data.yOffset}px`
-      );
-
-      if (!data.noFire) {
-        // firing, or reclaiming/repairing?
-        // only fire (i.e., GunFire objects) when stopped
-        fire();
-      }
-    }
-
-    collisionTest(collision, exports);
-
-    // start, or stop firing?
-    nearbyTest(nearby, exports);
-
-    recycleTest(exports);
-
-    data.frameCount++;
-
-    return data.dead && !dom.o;
-  }
-
-  function initDOM() {
-    if (!game.objects.editor) {
-      dom.o = {};
-    } else {
-      dom.o = sprites.create({
-        className: css.className,
-        id: data.id
-      });
-    }
-
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-  }
-
-  function initInfantry() {
-    if (options.noInit) return;
-
-    // infantry, or engineer?
-    setRole(data.role, true);
-
-    refreshHeight();
-
-    // note: domCanvas must exist before this call, because it causes modifications. :X
-    // we also need to know the role, before doing canvas stuff here.
-    getSpriteURL();
-
-    initDOM();
-
-    radarItem = game.objects.radar.addItem(exports);
-
-    common.initNearby(nearby, exports);
-
-    moveTo(data.x, data.y);
-  }
-
-  function refreshMeasurements() {
-    // hackish: make butthead stops to the left, and beavis stops to the right of (e.g.) a turret.
-    if (gamePrefs.bnb && !data.isEnemy) {
-      // override regular look-ahead, special case.
-      data.xLookAhead = options.isButthead ? -28 : 15;
-      // TODO: review - BnB are not spaced out enough, not far apart.
-      data.xLookAheadTurret = data.isButthead ? 36 : 24;
-    } else {
-      data.xLookAhead = data.isEnemy
-        ? 12
-        : options.xLookAhead || defaultLookAhead;
-      data.xLookAheadTurret = data.isEnemy ? 0 : 12;
-    }
-
-    data.halfHeight = data.height / 2;
-    data.y = game.objects.view.data.world.height - data.height - 1;
-  }
-
-  function refreshHeight() {
-    // special case: BnB pref change / init logic
-    if (options.isEnemy || !gamePrefs.bnb) {
-      height = DEFAULT_HEIGHT;
-    } else {
-      // if role (engineer), then BnB now
-      height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
-    }
-
-    if (options.role) {
-      // if an engineer, ensure the proper sprite / animation is applied.
-      getSpriteURL();
-    }
-
-    data.height = height;
-
-    refreshMeasurements();
-  }
 
   // engineers stop closer to turrets vs. infantry.
   defaultLookAhead = options.role ? 4 : 8;
@@ -485,96 +140,6 @@ const Infantry = (options = {}) => {
     stop
   };
 
-  function getInfantryEngURL() {
-    const parts = [];
-
-    // infantry / engineer
-    parts.push(data.roles[data.role]);
-
-    if (data.isEnemy) parts.push('enemy');
-
-    // file name pattern
-    parts.push('sprite-horizontal');
-
-    if (data.flipX) parts.push('flipped');
-
-    return `${parts.join('-')}.png`;
-  }
-
-  function getSpriteURL() {
-    // TODO: refactor, split sprite URL + animation logic.
-    if (
-      // NOTE: Only friendly side has BnB, for now
-      gamePrefs.bnb &&
-      !data.isEnemy &&
-      data.role &&
-      game.players.local.data.isEnemy === data.isEnemy
-    ) {
-      if (data.isBeavis) {
-        domCanvas.animation = common.domCanvas.canvasAnimation(
-          exports,
-          data.stopped ? beavisHeadbanging : beavisWalking
-        );
-        return data.stopped
-          ? 'bnb/beavis-headbang.png'
-          : 'bnb/beavis-walking.png';
-      }
-      if (data.isButthead) {
-        domCanvas.animation = common.domCanvas.canvasAnimation(
-          exports,
-          data.stopped ? buttheadHeadbanging : buttheadWalking
-        );
-        return data.stopped
-          ? 'bnb/butthead-headbang.png'
-          : 'bnb/butthead-walking.png';
-      }
-    } else {
-      if (data.stopped) {
-        // hack: reset to proper frame.
-        // "freeze" animation, stop at "feet planted" frame for both types.
-        if (domCanvas.animation) {
-          domCanvas.animation.img.source.frameX = data.isEnemy ? 0 : 2;
-          domCanvas.animation.stop();
-        }
-      } else {
-        if (!domCanvas.animation) {
-          domCanvas.animation = common.domCanvas.canvasAnimation(
-            exports,
-            animConfig
-          );
-        } else {
-          domCanvas.animation?.resume();
-        }
-      }
-    }
-    return getInfantryEngURL();
-  }
-
-  const beavisWalking = {
-    sprite: {
-      url: 'bnb/beavis-walking.png',
-      // engineer sprite is packed slightly tighter.
-      width: 430,
-      height: 92,
-      frameWidth: 43,
-      frameHeight: 92,
-      animationDuration: 0.8,
-      horizontal: true,
-      loop: true
-    }
-  };
-
-  const beavisHeadbanging = {
-    sprite: {
-      url: 'bnb/beavis-headbang.png',
-      width: 228,
-      height: 96,
-      frameWidth: 57,
-      frameHeight: 96,
-      animationDuration: 1.5,
-      horizontal: true,
-      loop: true
-    }
   };
 
   const buttheadWalking = {
@@ -728,6 +293,452 @@ const Infantry = (options = {}) => {
 
   return exports;
 };
+
+function fire(exports) {
+  let { data, defaultItems, domCanvas, nearby } = exports;
+
+  if (data.noFire) return;
+
+  // walking is synced with animation, but bullets fire less often
+  // always do positioning work, and maybe fire
+
+  // hackish: ensure that animation is set.
+  // this may be stuck if an engineer stops to repair a turret, but then is trying to fire at something else? :X
+  if (!domCanvas.animation) {
+    resume(exports);
+  }
+
+  // only infantry: move back and forth a bit, and flip animation, while firing - like original game
+  const offset = data.vX * data.vXFrames[data.vXFrameOffset] * 4;
+
+  // apply offset to the canvas-based animation
+  domCanvas.animation.img.target.xOffset = offset;
+
+  data.vxFrameTick += GAME_SPEED_RATIOED;
+
+  if (data.vxFrameTick >= 1) {
+    data.vxFrameTick = 0;
+    data.vXFrameOffset += 3;
+  }
+
+  if (data.vXFrameOffset >= data.vXFrames.length) {
+    // reverse direction!
+    data.vXFrameOffset = 0;
+    // toggle
+    setFlip(exports, !data.flipX);
+  }
+
+  // only fire every so often
+  if ((data.frameCount + data.fireModulusOffset) % data.fireModulus !== 0)
+    return;
+
+  game.addObject(TYPES.gunfire, {
+    parent: exports,
+    parentType: data.type,
+    isEnemy: data.isEnemy,
+    // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.
+    collisionItems: gamePrefs.tank_gunfire_miss_bunkers
+      ? defaultItems
+      : nearby.items,
+    x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
+    y: data.y + data.halfHeight - 2,
+    vX: data.vX, // same velocity
+    vY: 0
+  });
+
+  if (sounds.infantryGunFire) {
+    playSound(sounds.infantryGunFire, exports);
+  }
+}
+
+function moveTo(exports, x = exports.data.x, y = exports.data.y) {
+  let { data, dom } = exports;
+
+  data.x = x;
+  data.y = y;
+
+  zones.refreshZone(exports);
+
+  sprites.setTransformXY(
+    exports,
+    dom.o,
+    `${x}px`,
+    `${data.y - data.yOffset}px`
+  );
+}
+
+function setFlip(exports, isFlipped) {
+  let { data, domCanvas } = exports;
+
+  data.flipX = !!isFlipped;
+  // swap flipped / non-flipped sprites, when not BnB + engineers
+  if (!data.role || !gamePrefs.bnb) {
+    domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
+  }
+}
+
+function stop(exports, noFire) {
+  let { data, domCanvas } = exports;
+
+  if (data.stopped) return;
+
+  data.stopped = true;
+  data.noFire = !!noFire;
+
+  if (data.role) {
+    getSpriteURL(exports);
+  } else {
+    domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
+  }
+
+  // engineers always stop, e.g., to repair and/or capture turrets.
+  // infantry keep animation, but will appear to walk back and forth while firing.
+  if (!data.noFire) {
+    // infantry: reset "walking" offset, so initial movement is reduced
+    data.vXFrameOffset = 0;
+  }
+}
+
+function resume(exports) {
+  let { data, domCanvas } = exports;
+
+  if (!data.stopped) return;
+  setFlip(exports, false);
+  data.stopped = false;
+  data.noFire = false;
+
+  if (data.role) {
+    getSpriteURL(exports);
+  } else {
+    domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
+  }
+}
+
+function setRole(exports, role, force) {
+  let { data } = exports;
+
+  // TODO: minimize CSS thrashing, track lastClass etc.
+  if (data.role !== role || force) {
+    // role
+    data.role = role;
+  }
+}
+
+function die(exports, dieOptions = {}) {
+  let { data, radarItem } = exports;
+
+  if (data.dead) return;
+
+  if (!dieOptions?.silent) {
+    playSound(sounds.genericSplat, exports);
+
+    if (gamePrefs.bnb) {
+      if (data.isEnemy) {
+        playSound(sounds.bnb.dvdPrincipalScream, exports);
+      } else if (data.role) {
+        // engineer case
+        if (data.isBeavis) {
+          playSound(sounds.bnb.beavisScreamShort, exports);
+        } else {
+          playSound(sounds.bnb.buttheadScreamShort, exports);
+        }
+      } else {
+        // friendly infantry
+        playSound(sounds.bnb.screamShort, exports);
+      }
+    } else {
+      playSound(sounds.scream, exports);
+    }
+
+    effects.inertGunfireExplosion({
+      exports,
+      inertColor: '#ccbbaa',
+      vX: plusMinus(rnd(3)),
+      vY: rnd(5)
+    });
+
+    const isInfantry = data.roles[data.role] === TYPES.infantry;
+    const isEngineer = data.roles[data.role] === TYPES.engineer;
+
+    const attacker = dieOptions?.attacker?.data;
+
+    // generic notification
+    if (
+      !net.connected &&
+      !data.isOnScreen &&
+      // special case: certain attackers are handled separately.
+      attacker?.type !== TYPES.tank &&
+      attacker?.type !== TYPES.flame &&
+      attacker?.type !== TYPES.smartMissile &&
+      attacker?.type !== TYPES.helicopter &&
+      attacker?.parentType !== TYPES.tank &&
+      attacker?.parentType !== TYPES.infantry &&
+      attacker?.parentType !== TYPES.superBunker &&
+      attacker?.parentType !== TYPES.helicopter
+    ) {
+      // infantry / engineer lost
+      const contexts = {
+        [TYPES.shrapnel]: 'Shrapnel ',
+        [TYPES.gunfire]: 'Gunfire ',
+        [TYPES.bomb]: 'A bomb '
+      };
+      const context = contexts[attacker?.type] || '';
+      const isOpponent = game.players.local.data.isEnemy !== data.isEnemy;
+      const emoji = '<span class="no-emoji-substitution">☠️</span>';
+      const str = context
+        ? `${context} killed %s ${emoji}`
+        : isOpponent
+          ? `You killed %s ${emoji}`
+          : `You lost %s ${emoji}`;
+      const maybeEnemy = isOpponent ? 'an enemy ' : 'an ';
+      if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
+        game.objects.notifications.add(
+          str.replace('%s', `${maybeEnemy}infantry`)
+        );
+      } else if (isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
+        game.objects.notifications.add(
+          str.replace('%s', `${maybeEnemy}engineer`)
+        );
+      }
+    }
+
+    common.addGravestone(exports);
+  }
+
+  sprites.removeNodesAndUnlink(exports);
+
+  data.energy = 0;
+
+  // stop moving while exploding
+  data.vX = 0;
+
+  data.dead = true;
+
+  radarItem?.die(dieOptions);
+
+  if (dieOptions.attacker) {
+    data.attacker = dieOptions.attacker;
+  }
+
+  common.onDie(exports, dieOptions);
+}
+
+function animate(exports) {
+  let { collision, data, dom, domCanvas, nearby } = exports;
+
+  if (data.dead) {
+    // keep in sync with battlefield
+    sprites.setTransformXY(
+      exports,
+      dom.o,
+      `${data.x}px`,
+      `${data.y - data.yOffset}px`
+    );
+
+    return !dom.o;
+  }
+
+  // infantry are "always" walking, even when "stopped" (in which case they're firing.)
+  // engineers fully stop to claim and/or repair bunkers.
+  domCanvas?.animation?.animate?.();
+
+  if (!data.stopped) {
+    if (data.roles[data.role] === TYPES.infantry) {
+      // infantry walking "pace" varies slightly, similar to original game
+      moveTo(
+        exports,
+        data.x +
+          data.vX * GAME_SPEED_RATIOED * data.vXFrames[data.vXFrameOffset],
+        data.y
+      );
+
+      data.vxFrameTick += GAME_SPEED_RATIOED;
+      if (data.vxFrameTick >= 1) {
+        data.vxFrameTick = 0;
+        data.vXFrameOffset++;
+      }
+      if (data.vXFrameOffset >= data.vXFrames.length) data.vXFrameOffset = 0;
+    } else {
+      // engineers always move one pixel at a time; let's say it's because of the backpacks.
+      moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
+    }
+  } else {
+    sprites.setTransformXY(
+      exports,
+      dom.o,
+      `${data.x}px`,
+      `${data.y - data.yOffset}px`
+    );
+
+    if (!data.noFire) {
+      // firing, or reclaiming/repairing?
+      // only fire (i.e., GunFire objects) when stopped
+      fire(exports);
+    }
+  }
+
+  collisionTest(collision, exports);
+
+  // start, or stop firing?
+  nearbyTest(nearby, exports);
+
+  recycleTest(exports);
+
+  data.frameCount++;
+
+  return data.dead && !dom.o;
+}
+
+function initDOM(exports) {
+  let { css, data, dom } = exports;
+
+  if (!game.objects.editor) {
+    dom.o = {};
+  } else {
+    dom.o = sprites.create({
+      className: css.className,
+      id: data.id
+    });
+  }
+
+  sprites.setTransformXY(
+    exports,
+    dom.o,
+    `${data.x}px`,
+    `${data.y - data.yOffset}px`
+  );
+}
+
+function initInfantry(exports, options = {}) {
+  let { data, nearby } = exports;
+
+  if (options?.noInit) return;
+
+  // infantry, or engineer?
+  setRole(exports, data.role, true);
+
+  refreshHeight(exports);
+
+  // note: domCanvas must exist before this call, because it causes modifications. :X
+  // we also need to know the role, before doing canvas stuff here.
+  getSpriteURL(exports);
+
+  initDOM(exports);
+
+  exports.radarItem = game.objects.radar.addItem(exports);
+
+  common.initNearby(nearby, exports);
+
+  moveTo(exports, data.x, data.y);
+}
+
+function refreshMeasurements(exports) {
+  let { data, options } = exports;
+
+  // hackish: make butthead stops to the left, and beavis stops to the right of (e.g.) a turret.
+  if (gamePrefs.bnb && !data.isEnemy) {
+    // override regular look-ahead, special case.
+    data.xLookAhead = options.isButthead ? -28 : 15;
+    // TODO: review - BnB are not spaced out enough, not far apart.
+    data.xLookAheadTurret = options.isButthead ? 36 : 24;
+  } else {
+    data.xLookAhead = data.isEnemy
+      ? 12
+      : options.xLookAhead || data.defaultLookAhead;
+    data.xLookAheadTurret = data.isEnemy ? 0 : 12;
+  }
+
+  data.halfHeight = data.height / 2;
+  data.y = game.objects.view.data.world.height - data.height - 1;
+}
+
+function refreshHeight(exports) {
+  let { data, options } = exports;
+
+  // special case: BnB pref change / init logic
+  if (options.isEnemy || !gamePrefs.bnb) {
+    height = DEFAULT_HEIGHT;
+  } else {
+    // if role (engineer), then BnB now
+    height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
+  }
+
+  if (options.role) {
+    // if an engineer, ensure the proper sprite / animation is applied.
+    getSpriteURL(exports);
+  }
+
+  data.height = height;
+
+  refreshMeasurements(exports);
+}
+
+function getInfantryEngURL(data) {
+  const parts = [];
+
+  // infantry / engineer
+  parts.push(data.roles[data.role]);
+
+  if (data.isEnemy) parts.push('enemy');
+
+  // file name pattern
+  parts.push('sprite-horizontal');
+
+  if (data.flipX) parts.push('flipped');
+
+  return `${parts.join('-')}.png`;
+}
+
+function getSpriteURL(exports) {
+  let { animConfig, data, domCanvas } = exports;
+
+  // TODO: refactor, split sprite URL + animation logic.
+  if (
+    // NOTE: Only friendly side has BnB, for now
+    gamePrefs.bnb &&
+    !data.isEnemy &&
+    data.role &&
+    game.players.local.data.isEnemy === data.isEnemy
+  ) {
+    if (data.isBeavis) {
+      domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        data.stopped ? beavisHeadbanging : beavisWalking
+      );
+      return data.stopped
+        ? 'bnb/beavis-headbang.png'
+        : 'bnb/beavis-walking.png';
+    }
+    if (data.isButthead) {
+      domCanvas.animation = common.domCanvas.canvasAnimation(
+        exports,
+        data.stopped ? buttheadHeadbanging : buttheadWalking
+      );
+      return data.stopped
+        ? 'bnb/butthead-headbang.png'
+        : 'bnb/butthead-walking.png';
+    }
+  } else {
+    if (data.stopped) {
+      // hack: reset to proper frame.
+      // "freeze" animation, stop at "feet planted" frame for both types.
+      if (domCanvas.animation) {
+        domCanvas.animation.img.source.frameX = data.isEnemy ? 0 : 2;
+        domCanvas.animation.stop();
+      }
+    } else {
+      if (!domCanvas.animation) {
+        domCanvas.animation = common.domCanvas.canvasAnimation(
+          exports,
+          animConfig
+        );
+      } else {
+        domCanvas.animation?.resume();
+      }
+    }
+  }
+  return getInfantryEngURL(data);
+}
 
 Infantry.radarItemConfig = () => ({
   width: 1.25,
