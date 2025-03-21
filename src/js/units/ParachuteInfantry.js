@@ -17,18 +17,21 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
+let type = TYPES.parachuteInfantry;
+
+const spriteWidth = 140;
+const spriteHeight = 40;
+
+// horizontal sprite arrangement.
+const frameWidth = spriteWidth / 5;
+const frameHeight = spriteHeight;
+
+const energy = 5;
+
 const ParachuteInfantry = (options = {}) => {
-  let dom, data, domCanvas, radarItem, exports;
+  let exports;
 
-
-
-  function initParachuteInfantry() {
-    initDOM();
-
-    radarItem = game.objects.radar.addItem(exports);
-
-
-  const energy = 5;
+  let dom, data, domCanvas;
 
   data = common.inheritData(
     {
@@ -72,7 +75,7 @@ const ParachuteInfantry = (options = {}) => {
 
   domCanvas = {
     img: {
-      src: utils.image.getImageObject(getSpriteURL()),
+      src: utils.image.getImageObject(getSpriteURL(data)),
       source: {
         x: 0,
         y: 0,
@@ -124,15 +127,26 @@ const ParachuteInfantry = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die,
-    hit,
-    init: initParachuteInfantry,
-    radarItem
+    die: () => die(exports),
+    hit: () => hit(exports),
+    init: () => initParachuteInfantry(exports),
+    radarItem: null // assigned later
   };
+
+  // note: duration param.
+  makeStepFrames(exports, 1);
+
+  // animation "half-way"
+  data.stepFrame = Math.floor(data.stepFrames.length / 2);
+
+  // reverse animation
+  if (rng(1, data.type) >= 0.5) {
+    data.stepFrameIncrement *= -1;
+  }
 
   return exports;
 };
