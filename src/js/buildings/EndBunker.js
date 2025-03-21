@@ -24,12 +24,13 @@ slashPattern.src =
 
 let pattern;
 
+// TODO: review use, scope and naming.
+let height = 19;
+
 const EndBunker = (options = {}) => {
-  let css, dom, domCanvas, data, exports, height, nearby, objects, radarItem;
+  let exports;
 
-
-
-  height = 19;
+  let css, dom, domCanvas, data, objects;
 
   css = common.inheritCSS({
     className: TYPES.endBunker,
@@ -106,19 +107,22 @@ const EndBunker = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    hit,
-    init: initEndBunker,
-    onNeutralHiddenChange,
-    registerHelicopter,
-    updateHealth,
-    updateSprite: applySpriteURL
+    hit: (points, target) => hit(exports, points, target),
+    init: () => initEndBunker(exports),
+    objects,
+    onNeutralHiddenChange: (isVisible) =>
+      onNeutralHiddenChange(exports, isVisible),
+    registerHelicopter: (helicopter) => registerHelicopter(exports, helicopter),
+    updateHealth: (attacker) => updateHealth(exports, attacker),
+    updateSprite: (exports) => applySpriteURL(exports)
   };
 
-  nearby = {
+  exports.nearby = {
     options: {
       source: exports,
       targets: undefined,
@@ -128,7 +132,7 @@ const EndBunker = (options = {}) => {
 
         if (!isFriendly && data.energy) {
           // nearby enemy, and defenses activated? let 'em have it.
-          setFiring(true);
+          setFiring(exports, true);
         }
 
         // nearby infantry or engineer?
@@ -140,7 +144,7 @@ const EndBunker = (options = {}) => {
               collisionCheckMidPoint(target, exports) &&
               (!target.data.role || gamePrefs.engineers_rob_the_bank)
             ) {
-              captureFunds(target);
+              captureFunds(exports, target);
               data.energy = 0;
             }
           } else if (
@@ -168,7 +172,7 @@ const EndBunker = (options = {}) => {
               game.objects.funds.setFunds(data.funds);
             }
             sprites.updateEnergy(exports);
-            onEnergyUpdate();
+            onEnergyUpdate(exports);
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);
@@ -176,7 +180,7 @@ const EndBunker = (options = {}) => {
         }
       },
       miss() {
-        setFiring(false);
+        setFiring(exports, false);
       }
     },
     // who gets fired at (and for friendly infantry, who can enter the door.)
