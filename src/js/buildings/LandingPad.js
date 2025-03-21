@@ -5,8 +5,9 @@ import { sprites } from '../core/sprites.js';
 import { game } from '../core/Game.js';
 
 const LandingPad = (options = {}) => {
-  let css, dom, domCanvas, data, collision, exports;
+  let exports;
 
+  let css, dom, domCanvas, data, collision;
 
   css = common.inheritCSS({
     className: 'landing-pad'
@@ -70,12 +71,13 @@ const LandingPad = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,
-    init: initLandingPad,
-    isOnScreenChange
+    init: () => initLandingPad(exports),
+    isOnScreenChange: (...args) => isOnScreenChange(exports, ...args)
   };
 
   collision = {
@@ -105,6 +107,8 @@ const LandingPad = (options = {}) => {
     },
     items: getTypes('helicopter:all', { exports })
   };
+
+  exports.collision = collision;
 
   return exports;
 };
