@@ -91,6 +91,7 @@ const Base = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
+    css,
     data,
     dom,
     domCanvas,

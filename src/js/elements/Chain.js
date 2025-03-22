@@ -89,6 +89,7 @@ const Chain = (options = {}) => {
     animate: () => animate(exports),
     applyHeight: () => applyHeight(exports),
     attachBalloon: (balloon) => attachBalloon(exports, balloon),
+    css,
     data,
     detachFromBunker: () => detachFromBunker(exports),
     dom,
