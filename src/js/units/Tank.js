@@ -404,7 +404,7 @@ function die(exports, dieOptions = {}) {
       if (
         game.data.isButthead &&
         sounds.bnb.beavisCmonButthead &&
-        isAttackerValid()
+        isAttackerValid(exports)
       ) {
         // basically, just long enough for three tanks to duke it out.
         // your first one gets shot, then your second takes the enemy one out.
@@ -416,7 +416,7 @@ function die(exports, dieOptions = {}) {
           exports,
           {
             onplay: (sound) => {
-              if (!isAttackerValid()) skipSound(sound);
+              if (!isAttackerValid(exports)) skipSound(sound);
             }
           },
           delay
