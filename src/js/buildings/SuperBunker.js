@@ -29,15 +29,19 @@ slashPattern.src =
 
 let pattern;
 
+const FIRE_MODULUS = 6;
+
+const width = 66;
+const height = 28;
+
+const spriteWidth = 132;
+const spriteHeight = 56;
+
+const arrowWidth = 6;
+const arrowHeight = 10;
+
 const SuperBunker = (options = {}) => {
-  let css, dom, domCanvas, data, width, height, nearby, radarItem, exports;
-
-  const FIRE_MODULUS = 6;
-
-
-
-
-
+  let css, dom, domCanvas, data, nearby, exports;
 
   css = common.inheritCSS({
     className: TYPES.superBunker,
@@ -93,25 +97,6 @@ const SuperBunker = (options = {}) => {
     radarItem: SuperBunker.radarItemConfig({ data })
   };
 
-  exports = {
-    animate,
-    capture,
-    data,
-    destroy,
-    die,
-    dom,
-    domCanvas,
-    hit,
-    init: initSuperBunker,
-    onArrowHiddenChange,
-    refreshNearbyItems,
-    updateHealth,
-    updateSprite: applySpriteURL
-  };
-
-  const spriteWidth = 132;
-  const spriteHeight = 56;
-
   const spriteConfig = {
     src: utils.image.getImageObject(getSpriteURL()),
     source: {
@@ -125,9 +110,6 @@ const SuperBunker = (options = {}) => {
       height: spriteHeight / 2
     }
   };
-
-  const arrowWidth = 6;
-  const arrowHeight = 10;
 
   const arrowConfig = {
     src: utils.image.getImageObject('arrow-right.png'),
@@ -149,6 +131,34 @@ const SuperBunker = (options = {}) => {
     }
   };
 
+  exports = {
+    animate: () => animate(exports),
+    arrowConfig,
+    capture: (isEnemy) => capture(exports, isEnemy),
+    css,
+    data,
+    destroy: () => destroy(exports),
+    die: (dieOptions) => die(exports, dieOptions),
+    dom,
+    domCanvas,
+    hit: (points, target) => hit(exports, points, target),
+    init: () => initSuperBunker(exports),
+    nearby,
+    onArrowHiddenChange: (isVisible) => onArrowHiddenChange(exports, isVisible),
+    refreshNearbyItems: () => refreshNearbyItems(exports),
+    spriteConfig,
+    updateHealth: (attacker) => updateHealth(exports, attacker),
+    updateSprite: () => applySpriteURL(exports),
+    updateStatus: (newStatus) => updateStatus(exports, newStatus)
+  };
+
+  updateFireModulus(exports);
+
+  if (data.energy === 0) {
+    // initially neutral/hostile only if 0 energy
+    updateStatus(exports, { hostile: true });
+  }
+
   nearby = {
     options: {
       source: exports,
@@ -162,7 +172,7 @@ const SuperBunker = (options = {}) => {
       },
       after() {
         // hits may have been counted
-        setFiring(nearby.options.fireTargetCount > 0);
+        setFiring(exports, nearby.options.fireTargetCount > 0);
       },
       hit(target) {
         let isFriendly = !data.hostile && target.data.isEnemy === data.isEnemy;
@@ -198,7 +208,7 @@ const SuperBunker = (options = {}) => {
           data.dead = false;
 
           // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
-          capture(target.data.isEnemy);
+          capture(exports, target.data.isEnemy);
 
           // update, now that capture has happened.
           isFriendly = target.data.isEnemy === data.isEnemy;
@@ -246,11 +256,11 @@ const SuperBunker = (options = {}) => {
         data.energy = Math.min(data.energyMax, data.energy);
 
         // firing speed relative to # of infantry.
-        updateFireModulus();
+        updateFireModulus(exports);
 
         if (data.energy === 0) {
           // un-manned, but dangerous to helicopters on both sides.
-          updateStatus({ hostile: true });
+          updateStatus(exports, { hostile: true });
 
           if (isTargetFriendlyToPlayer) {
             game.objects.notifications.add(
@@ -272,7 +282,7 @@ const SuperBunker = (options = {}) => {
       },
 
       miss() {
-        setFiring(false);
+        setFiring(exports, false);
       }
     },
 
@@ -280,6 +290,8 @@ const SuperBunker = (options = {}) => {
     items: null,
     targets: []
   };
+
+  exports.nearby = nearby;
 
   return exports;
 };
