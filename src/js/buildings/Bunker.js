@@ -18,11 +18,14 @@ import { zones } from '../core/zones.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 
+// how long bunkers take to "burn out"
+const burninatingTime = 10000;
+const energy = 69;
+
 const Bunker = (options = {}) => {
-  let css, data, dom, domCanvas, objects, radarItem, exports;
+  let exports;
 
-
-
+  let css, data, dom, domCanvas, objects, radarItem;
 
   css = common.inheritCSS({
     className: TYPES.bunker,
@@ -37,13 +40,7 @@ const Bunker = (options = {}) => {
     nuke: 'nuke'
   });
 
-  // how long bunkers take to "burn out"
-  const burninatingTime = 10000;
-  const burnOutFade = 0.5;
-
   const smokeFrames = (burninatingTime / 1000) * FPS;
-
-  const energy = 69;
 
   data = common.inheritData(
     {
@@ -90,29 +87,11 @@ const Bunker = (options = {}) => {
     radarItem: Bunker.radarItemConfig()
   };
 
-  exports = {
-    animate,
-    capture,
-    objects,
-    data,
-    die,
-    dom,
-    domCanvas,
-    engineerHit,
-    infantryHit,
-    init: initBunker,
-    nullifyChain,
-    nullifyBalloon,
-    radarItem,
-    repair,
-    updateSprite: applySpriteURL
-  };
-
   const spriteConfig = (() => {
     const spriteWidth = 106;
     const spriteHeight = 52;
     return {
-      src: utils.image.getImageObject(getSpriteURL()),
+      src: utils.image.getImageObject(getSpriteURL(data)),
       source: {
         x: 0,
         y: 0,
@@ -168,6 +147,28 @@ const Bunker = (options = {}) => {
       }
     };
   })();
+
+  exports = {
+    animate: () => animate(exports),
+    arrowConfig,
+    capture: (isEnemy) => capture(exports, isEnemy),
+    css,
+    objects,
+    data,
+    deadConfig,
+    die: (dieOptions) => die(exports, dieOptions),
+    dom,
+    domCanvas,
+    engineerHit: (target) => engineerHit(exports, target),
+    infantryHit: (target) => infantryHit(exports, target),
+    init: () => initBunker(exports),
+    nullifyChain: () => nullifyChain(exports),
+    nullifyBalloon: () => nullifyBalloon(exports),
+    radarItem,
+    repair: (engineer) => repair(exports, engineer),
+    spriteConfig,
+    updateSprite: () => applySpriteURL(exports)
+  };
 
   return exports;
 };
