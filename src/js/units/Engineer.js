@@ -19,7 +19,7 @@ const Engineer = (options = {}) => {
 
   // special case 2: BnB bunker offsets
   options.xLookAheadBunker = {
-    beavis: 11,
+    beavis: 21,
     butthead: -9
   };
 
