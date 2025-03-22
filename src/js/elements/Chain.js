@@ -10,8 +10,9 @@ import { GAME_SPEED_RATIOED, worldHeight } from '../core/global.js';
 let pattern;
 
 const Chain = (options = {}) => {
-  let css, data, dom, objects, exports, defaultHeight;
+  let exports;
 
+  let css, data, dom, objects, defaultHeight;
 
   css = common.inheritCSS({
     className: 'chain',
@@ -26,6 +27,7 @@ const Chain = (options = {}) => {
       energy: 1,
       hostile: !!options.hostile, // applies when detached from base or balloon
       width: 3,
+      defaultHeight,
       /**
        * slightly complex: element height is basically fixed, moved via transforms,
        * set at init, zeroed when chain drops and reset if balloon respawns.
@@ -84,18 +86,18 @@ const Chain = (options = {}) => {
   };
 
   exports = {
-    animate,
-    applyHeight,
-    attachBalloon,
+    animate: () => animate(exports),
+    applyHeight: () => applyHeight(exports),
+    attachBalloon: (balloon) => attachBalloon(exports, balloon),
     data,
-    detachFromBunker,
+    detachFromBunker: () => detachFromBunker(exports),
     dom,
     domCanvas,
-    die,
-    init: initChain,
-    isJerking,
+    die: () => die(exports),
+    init: () => initChain(exports),
+    isJerking: (intent) => isJerking(exports, intent),
     objects,
-    setEnemy
+    setEnemy: (isEnemy) => setEnemy(exports, isEnemy)
   };
 
   return exports;
