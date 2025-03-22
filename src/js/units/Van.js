@@ -216,8 +216,8 @@ function onOurSide(exports) {
   return game.players.local.data.isEnemy === exports.data.isEnemy;
 }
 
-function getGameOverAnnouncement() {
-  return onOurSide()
+function getGameOverAnnouncement(exports) {
+  return onOurSide(exports)
     ? getVictoryMessage()
     : 'The enemy has won the battle.\nBetter luck next time. <span class="inline-emoji no-emoji-substitution">🏳️</span><hr />' +
         getDefeatMessage();
@@ -254,21 +254,21 @@ function animate(exports) {
   if (game.data.battleOver) return;
 
   if (data.isEnemy && data.x <= data.xGameOver && !game.objects.editor) {
-    stop();
+    stop(exports);
 
-    game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
+    game.objects.view.setAnnouncement(getGameOverAnnouncement(exports), -1);
 
-    gameOver(onOurSide());
+    gameOver(exports, onOurSide(exports));
   } else if (
     !data.isEnemy &&
     data.x >= data.xGameOver &&
     !game.objects.editor
   ) {
-    stop();
+    stop(exports);
 
-    game.objects.view.setAnnouncement(getGameOverAnnouncement(), -1);
+    game.objects.view.setAnnouncement(getGameOverAnnouncement(exports), -1);
 
-    gameOver(onOurSide());
+    gameOver(exports, onOurSide(exports));
   } else {
     // bounce wheels after the first few seconds
 
@@ -333,8 +333,9 @@ function animate(exports) {
   return data.dead && !data.deadTimer;
 }
 
-function gameOver(youWon) {
+function gameOver(exports, youWon) {
   // somebody's base is about to get blown up.
+  let { data } = exports;
 
   let yourBase, otherBase;
 
