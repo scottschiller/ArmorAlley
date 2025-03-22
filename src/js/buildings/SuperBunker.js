@@ -34,300 +34,10 @@ const SuperBunker = (options = {}) => {
 
   const FIRE_MODULUS = 6;
 
-  function updateFireModulus() {
-    // firing speed increases with # of infantry
-    const gsRatio = 1 / GAME_SPEED_RATIOED;
-    data.fireModulus = Math.max(
-      1,
-      FIRE_MODULUS * gsRatio - data.energy * gsRatio
-    );
-    // hackish: apply this back to the "1X" value, for scaling vs. game speed and FPS
-    data.fireModulus1X = data.fireModulus;
-  }
 
-  function capture(isEnemy) {
-    let isFriendlyCapture = isEnemy === game.players.local.data.isEnemy;
 
-    updateStatus({ isEnemy });
 
-    if (isFriendlyCapture) {
-      game.objects.notifications.add(
-        'You captured and armed a super bunker ⛳'
-      );
 
-      playSoundWithDelay(sounds.friendlyClaim, exports, 500);
-    } else {
-      game.objects.notifications.add(
-        'The enemy captured and armed a super bunker 🚩'
-      );
-
-      playSoundWithDelay(sounds.enemyClaim, exports, 500);
-    }
-
-    // check if enemy convoy production should stop or start
-    checkProduction();
-  }
-
-  function updateStatus(status) {
-    /**
-     * status = { isEnemy, hostile }
-     * If we are friendly or enemy, then we cannot be hostile.
-     * Conversely, if we are hostile, friendly/enemy can be ignored.
-     */
-    if (status.isEnemy !== undefined) {
-      status.hostile = false;
-    } else if (status.hostile) {
-      // "no change."
-      status.isEnemy = data.isEnemy;
-    }
-
-    // exit if no change
-    if (status.hostile === data.hostile && status.isEnemy === data.isEnemy)
-      return;
-
-    // apply updates
-    data.isEnemy = status.isEnemy;
-    data.hostile = status.hostile;
-
-    updateArrowState();
-
-    zones.changeOwnership(exports);
-  }
-
-  function setFiring(state) {
-    // firing only works, of course, when there is also energy.
-    data.firing = !!(state && data.energy);
-  }
-
-  function updateHealth(attacker) {
-    // notify if just disarmed by tank gunfire
-    // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
-    if (data.energy) return;
-
-    const isFriendly =
-      attacker.data.isEnemy === game.players.local.data.isEnemy;
-
-    // we have a tank, after all
-    if (isFriendly) {
-      game.objects.notifications.addNoRepeat('You disarmed a super bunker ⛳');
-    } else {
-      game.objects.notifications.addNoRepeat(
-        'The enemy disarmed a super bunker 🚩'
-      );
-    }
-
-    // disarmed super bunkers are dangerous to both sides.
-
-    updateStatus({ hostile: true });
-  }
-
-  function hit(points, target) {
-    // only tank flamethrowers - or, gunfire - counts against super bunkers.
-    if (
-      target &&
-      (target.data.type === TYPES.flame ||
-        target.data.type === TYPES.gunfire) &&
-      target.data.parentType === TYPES.tank
-    ) {
-      data.energy = Math.max(0, data.energy - points);
-      updateFireModulus();
-      sprites.updateEnergy(exports);
-    }
-  }
-
-  function die() {
-    if (data.dead) return;
-    // gunfire from both sides should now hit this element.
-
-    data.energy = 0;
-
-    updateFireModulus();
-
-    // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
-    data.dead = false;
-
-    // un-manned, but dangerous to helicopters on both sides.
-    updateStatus({ hostile: true });
-
-    sprites.updateEnergy(exports);
-
-    // check if enemy convoy production should stop or start
-    checkProduction();
-
-    common.onDie(exports);
-  }
-
-  function fire() {
-    // TODO: BUG FIX - figure out why super bunker doesn't fire at local helicopter on right side. :X
-
-    let fireOptions;
-
-    if (
-      !data.firing ||
-      !data.energy ||
-      data.frameCount % data.fireModulus !== 0
-    )
-      return;
-
-    fireOptions = {
-      parent: exports,
-      parentType: data.type,
-      isEnemy: data.isEnemy,
-      collisionItems: nearby.items,
-      x: data.x + data.width - 2,
-      y: data.y + data.gunYOffset, // position of bunker gun
-      fixedXY: true,
-      vX: 2,
-      vY: 0,
-      damagePoints: 5
-    };
-
-    game.addObject(TYPES.gunfire, fireOptions);
-
-    // other side
-    fireOptions.x = data.x;
-
-    // and reverse direction
-    fireOptions.vX *= -1;
-
-    game.addObject(TYPES.gunfire, fireOptions);
-
-    if (sounds.genericGunFire) {
-      playSound(sounds.genericGunFire, exports);
-    }
-  }
-
-  function animate() {
-    sprites.moveWithScrollOffset(exports);
-
-    data.frameCount++;
-
-    nearbyTest(nearby, exports);
-
-    fire();
-
-    if (data.arrowFrameActive) {
-      arrowConfig.target.angle = data.arrowFrames[data.arrowFrame];
-      data.arrowFrame++;
-      if (data.arrowFrame >= data.arrowFrames.length) {
-        data.arrowFrameActive = false;
-      }
-    }
-
-    // note: super bunkers never die, but leaving this in anyway.
-    return !dom.o;
-  }
-
-  function refreshNearbyItems() {
-    /**
-     * Set on init, updated with `zones.changeOwnership()` as targets change sides.
-     * NOTE: Super Bunkers likely fire at all units when armed, but not when neutral.
-     */
-    nearby.items = getTypes(
-      'infantry:all, engineer, missileLauncher, van, helicopter',
-      { group: 'enemy', exports }
-    );
-  }
-
-  function updateArrowState() {
-    // TODO: DRY / utility function
-    function dropOff(x) {
-      // x from 0 to 1 returns from 1 to 0, with in-out easing.
-      // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
-      // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
-      return (Math.cos(Math.PI * x) + 1) / 2;
-    }
-
-    function makeArrowFrames(angleDelta) {
-      const duration = FPS * 0.5 * (1 / GAME_SPEED);
-
-      data.arrowFrames = [];
-
-      for (let i = 0; i <= duration; i++) {
-        // 1/x, up to 1
-        data.arrowFrames[i] =
-          arrowConfig.target.angle + dropOff(i / duration) * angleDelta;
-      }
-      // we want 0 to 1.
-      data.arrowFrames.reverse();
-
-      data.arrowFrame = 0;
-      data.arrowFrameActive = true;
-    }
-
-    const angles = {
-      left: -180,
-      up: -90,
-      right: 0
-    };
-
-    const toAngle =
-      angles[data.hostile ? 'up' : data.isEnemy ? 'left' : 'right'];
-
-    let delta = toAngle - arrowConfig.target.angle;
-
-    // don't loop / turn around the wrong way.
-    if (delta <= -180) {
-      delta += 360;
-    }
-
-    makeArrowFrames(delta);
-  }
-
-  function onArrowHiddenChange(isVisible) {
-    // update domCanvas config
-    domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
-  }
-
-  function initDOM() {
-    if (game.objects.editor) {
-      dom.o = sprites.create({
-        className: css.className,
-        id: data.id
-      });
-    } else {
-      dom.o = {};
-    }
-
-    domCanvas.img = gamePrefs.super_bunker_arrows
-      ? [spriteConfig, arrowConfig]
-      : spriteConfig;
-
-    onArrowHiddenChange(gamePrefs.super_bunker_arrows);
-
-    // this will set x + y for domCanvas
-    sprites.moveTo(exports, data.x, data.y);
-  }
-
-  function initSuperBunker() {
-    refreshNearbyItems();
-
-    initDOM();
-
-    updateFireModulus();
-
-    radarItem = game.objects.radar.addItem(exports);
-  }
-
-  function destroy() {
-    radarItem?.die();
-    sprites.removeNodes(dom);
-  }
-
-  function getSpriteURL() {
-    const file = 'super-bunker_mac';
-    return gamePrefs.weather === 'snow'
-      ? `snow/${file}_snow.png`
-      : `${file}.png`;
-  }
-
-  function applySpriteURL() {
-    if (!spriteConfig) return;
-    spriteConfig.src = utils.image.getImageObject(getSpriteURL());
-  }
-
-  width = 66;
-  height = 28;
 
   css = common.inheritCSS({
     className: TYPES.superBunker,
@@ -365,13 +75,6 @@ const SuperBunker = (options = {}) => {
     },
     options
   );
-
-  updateFireModulus();
-
-  if (data.energy === 0) {
-    // initially neutral/hostile only if 0 energy
-    updateStatus({ hostile: true });
-  }
 
   // coordinates of the doorway
   data.midPoint = {
@@ -580,6 +283,314 @@ const SuperBunker = (options = {}) => {
 
   return exports;
 };
+
+function updateFireModulus(exports) {
+  let { data } = exports;
+
+  // firing speed increases with # of infantry
+  const gsRatio = 1 / GAME_SPEED_RATIOED;
+  data.fireModulus = Math.max(
+    1,
+    FIRE_MODULUS * gsRatio - data.energy * gsRatio
+  );
+  // hackish: apply this back to the "1X" value, for scaling vs. game speed and FPS
+  data.fireModulus1X = data.fireModulus;
+}
+
+function capture(exports, isEnemy) {
+  let isFriendlyCapture = isEnemy === game.players.local.data.isEnemy;
+
+  updateStatus(exports, { isEnemy });
+
+  if (isFriendlyCapture) {
+    game.objects.notifications.add('You captured and armed a super bunker ⛳');
+
+    playSoundWithDelay(sounds.friendlyClaim, exports, 500);
+  } else {
+    game.objects.notifications.add(
+      'The enemy captured and armed a super bunker 🚩'
+    );
+
+    playSoundWithDelay(sounds.enemyClaim, exports, 500);
+  }
+
+  // check if enemy convoy production should stop or start
+  checkProduction();
+}
+
+function updateStatus(exports, status) {
+  let { data } = exports;
+
+  /**
+   * status = { isEnemy, hostile }
+   * If we are friendly or enemy, then we cannot be hostile.
+   * Conversely, if we are hostile, friendly/enemy can be ignored.
+   */
+  if (status.isEnemy !== undefined) {
+    status.hostile = false;
+  } else if (status.hostile) {
+    // "no change."
+    status.isEnemy = data.isEnemy;
+  }
+
+  // exit if no change
+  if (status.hostile === data.hostile && status.isEnemy === data.isEnemy)
+    return;
+
+  // apply updates
+  data.isEnemy = status.isEnemy;
+  data.hostile = status.hostile;
+
+  updateArrowState(exports);
+
+  zones.changeOwnership(exports);
+}
+
+function setFiring(exports, state) {
+  let { data } = exports;
+
+  // firing only works, of course, when there is also energy.
+  data.firing = !!(state && data.energy);
+}
+
+function updateHealth(exports, attacker) {
+  let { data } = exports;
+
+  // notify if just disarmed by tank gunfire
+  // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
+  if (data.energy) return;
+
+  const isFriendly = attacker.data.isEnemy === game.players.local.data.isEnemy;
+
+  // we have a tank, after all
+  if (isFriendly) {
+    game.objects.notifications.addNoRepeat('You disarmed a super bunker ⛳');
+  } else {
+    game.objects.notifications.addNoRepeat(
+      'The enemy disarmed a super bunker 🚩'
+    );
+  }
+
+  // disarmed super bunkers are dangerous to both sides.
+
+  updateStatus(exports, { hostile: true });
+}
+
+function hit(exports, points, target) {
+  let { data } = exports;
+
+  // only tank flamethrowers - or, gunfire - counts against super bunkers.
+  if (
+    target &&
+    (target.data.type === TYPES.flame || target.data.type === TYPES.gunfire) &&
+    target.data.parentType === TYPES.tank
+  ) {
+    data.energy = Math.max(0, data.energy - points);
+    updateFireModulus();
+    sprites.updateEnergy(exports);
+  }
+}
+
+function die(exports) {
+  let { data } = exports;
+
+  if (data.dead) return;
+  // gunfire from both sides should now hit this element.
+
+  data.energy = 0;
+
+  updateFireModulus(exports);
+
+  // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
+  data.dead = false;
+
+  // un-manned, but dangerous to helicopters on both sides.
+  updateStatus(exports, { hostile: true });
+
+  sprites.updateEnergy(exports);
+
+  // check if enemy convoy production should stop or start
+  checkProduction();
+
+  common.onDie(exports);
+}
+
+function fire(exports) {
+  // TODO: BUG FIX - figure out why super bunker doesn't fire at local helicopter on right side. :X
+
+  let { data } = exports;
+
+  let fireOptions;
+
+  if (!data.firing || !data.energy || data.frameCount % data.fireModulus !== 0)
+    return;
+
+  fireOptions = {
+    parent: exports,
+    parentType: data.type,
+    isEnemy: data.isEnemy,
+    collisionItems: nearby.items,
+    x: data.x + data.width - 2,
+    y: data.y + data.gunYOffset, // position of bunker gun
+    fixedXY: true,
+    vX: 2,
+    vY: 0,
+    damagePoints: 5
+  };
+
+  game.addObject(TYPES.gunfire, fireOptions);
+
+  // other side
+  fireOptions.x = data.x;
+
+  // and reverse direction
+  fireOptions.vX *= -1;
+
+  game.addObject(TYPES.gunfire, fireOptions);
+
+  if (sounds.genericGunFire) {
+    playSound(sounds.genericGunFire, exports);
+  }
+}
+
+function animate(exports) {
+  let { arrowConfig, data, dom, nearby } = exports;
+
+  sprites.moveWithScrollOffset(exports);
+
+  data.frameCount++;
+
+  nearbyTest(nearby, exports);
+
+  fire(exports);
+
+  if (data.arrowFrameActive) {
+    arrowConfig.target.angle = data.arrowFrames[data.arrowFrame];
+    data.arrowFrame++;
+    if (data.arrowFrame >= data.arrowFrames.length) {
+      data.arrowFrameActive = false;
+    }
+  }
+
+  // note: super bunkers never die, but leaving this in anyway.
+  return !dom.o;
+}
+
+function refreshNearbyItems(exports) {
+  let { nearby } = exports;
+  /**
+   * Set on init, updated with `zones.changeOwnership()` as targets change sides.
+   * NOTE: Super Bunkers likely fire at all units when armed, but not when neutral.
+   */
+  nearby.items = getTypes(
+    'infantry:all, engineer, missileLauncher, van, helicopter',
+    { group: 'enemy', exports }
+  );
+}
+
+function updateArrowState(exports) {
+  let { arrowConfig, data } = exports;
+
+  // TODO: DRY / utility function
+  function dropOff(x) {
+    // x from 0 to 1 returns from 1 to 0, with in-out easing.
+    // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+    // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+    return (Math.cos(Math.PI * x) + 1) / 2;
+  }
+
+  function makeArrowFrames(angleDelta) {
+    const duration = FPS * 0.5 * (1 / GAME_SPEED);
+
+    data.arrowFrames = [];
+
+    for (let i = 0; i <= duration; i++) {
+      // 1/x, up to 1
+      data.arrowFrames[i] =
+        arrowConfig.target.angle + dropOff(i / duration) * angleDelta;
+    }
+    // we want 0 to 1.
+    data.arrowFrames.reverse();
+
+    data.arrowFrame = 0;
+    data.arrowFrameActive = true;
+  }
+
+  const angles = {
+    left: -180,
+    up: -90,
+    right: 0
+  };
+
+  const toAngle = angles[data.hostile ? 'up' : data.isEnemy ? 'left' : 'right'];
+
+  let delta = toAngle - arrowConfig.target.angle;
+
+  // don't loop / turn around the wrong way.
+  if (delta <= -180) {
+    delta += 360;
+  }
+
+  makeArrowFrames(delta);
+}
+
+function onArrowHiddenChange(exports, isVisible) {
+  let { arrowConfig, domCanvas, spriteConfig } = exports;
+
+  // update domCanvas config
+  domCanvas.img = isVisible ? [spriteConfig, arrowConfig] : spriteConfig;
+}
+
+function initDOM(exports) {
+  let { arrowConfig, css, data, dom, domCanvas, spriteConfig } = exports;
+
+  if (game.objects.editor) {
+    dom.o = sprites.create({
+      className: css.className,
+      id: data.id
+    });
+  } else {
+    dom.o = {};
+  }
+
+  domCanvas.img = gamePrefs.super_bunker_arrows
+    ? [spriteConfig, arrowConfig]
+    : spriteConfig;
+
+  onArrowHiddenChange(exports, gamePrefs.super_bunker_arrows);
+
+  // this will set x + y for domCanvas
+  sprites.moveTo(exports, data.x, data.y);
+}
+
+function initSuperBunker(exports) {
+  refreshNearbyItems(exports);
+
+  initDOM(exports);
+
+  updateFireModulus(exports);
+
+  exports.radarItem = game.objects.radar.addItem(exports);
+}
+
+function destroy(exports) {
+  let { dom, radarItem } = exports;
+
+  radarItem?.die();
+  sprites.removeNodes(dom);
+}
+
+function getSpriteURL() {
+  const file = 'super-bunker_mac';
+  return gamePrefs.weather === 'snow' ? `snow/${file}_snow.png` : `${file}.png`;
+}
+
+function applySpriteURL(exports) {
+  let { spriteConfig } = exports;
+
+  if (!spriteConfig) return;
+  spriteConfig.src = utils.image.getImageObject(getSpriteURL());
+}
 
 SuperBunker.radarItemConfig = ({ data }) => ({
   width: 6.5,
